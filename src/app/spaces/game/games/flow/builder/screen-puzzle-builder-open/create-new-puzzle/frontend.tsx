@@ -1,9 +1,12 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { isErr, RemoteResult, Result } from '~/@/result'
+import { Posix } from '~/@/time/posix'
+import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
 import { Button, IconPlus } from '~/app/@/ui'
 import { FlowFrontendCmd } from '../../../@/frontend/cmd'
 import { Puzzle } from '../../../@/puzzle/puzzle'
+import { IPuzzleDb } from '../../../@/puzzle/puzzle-db'
 import { Variant, VariantDimensions } from '../../../@/variant'
 import { FrontendModule } from '../../types'
 import { MsgFrontend, MsgToBackend } from './types'
@@ -18,21 +21,12 @@ const update: FrontendModule['update'] = (input) => {
         },
         msgCmd: [playSound(APP_SOUND.tap)],
         async eff(dispatch) {
-          const puzzleNew = await Puzzle.create({
-            createdAt: input.ctx.now,
-            createdBy: input.ctx.currentUserId,
-            flow: Variant.init({
-              terminalsByGroupId: {},
-              dimensions: VariantDimensions.init({ t: 'flow-grid', height: 8, width: 8 }),
-            }),
+          const result = await createNewPuzzle({
+            createdByUserId: input.ctx.currentUserId,
+            now: input.ctx.now,
+            puzzleDb: input.ctx.puzzleDb,
           })
-
-          const result = await input.ctx.puzzleDb.put(puzzleNew)
-
-          dispatch({
-            t: 'create-new-puzzle.db-inserted-puzzle',
-            result: Result.mapOk(result, () => puzzleNew),
-          })
+          dispatch({ t: 'create-new-puzzle.db-inserted-puzzle', result })
         },
       }
     }
@@ -101,6 +95,21 @@ const update: FrontendModule['update'] = (input) => {
   }
 
   return { model: input.model }
+}
+
+const createNewPuzzle = async (input: { now: Posix; createdByUserId: UserId; puzzleDb: IPuzzleDb }) => {
+  const puzzleNew = await Puzzle.create({
+    createdAt: input.now,
+    createdBy: input.createdByUserId,
+    flow: Variant.init({
+      terminalsByGroupId: {},
+      dimensions: VariantDimensions.init({ t: 'flow-grid', height: 8, width: 8 }),
+    }),
+  })
+
+  const result = await input.puzzleDb.put(puzzleNew)
+
+  return Result.mapOk(result, () => puzzleNew)
 }
 
 const ViewCreateFab: FrontendModule['View'] = (input) => {

@@ -286,7 +286,7 @@ const ViewUnsavedChangesDrawer: FrontendModule['View'] = (input) => {
         />
         <Button
           className='w-full'
-          text={input.ctx.t('app.dont-save')}
+          text={input.ctx.t("app.don't-save")}
           onClick={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-discard-and-exit' })}
         />
         <div className='w-full' />

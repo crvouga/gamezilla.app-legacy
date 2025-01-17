@@ -103,6 +103,45 @@ export const obj = <T>(parsers: {
   }
 }
 
+export const partialObj = <T>(parsers: {
+  [K in keyof T]: Parser<T[K]>
+}): Parser<Partial<T>> => {
+  return {
+    parse(input) {
+      if (typeof input !== 'object' || input === null) {
+        return Err([
+          {
+            message: 'Expected object',
+            path: [],
+          },
+        ])
+      }
+
+      const objInput = input as Record<string, unknown>
+      const result: Partial<T> = {}
+      const errors: ParserError[] = []
+
+      for (const key in parsers) {
+        if (key in objInput) {
+          const parsed = parsers[key].parse(objInput[key])
+          if (parsed.t === 'ok') {
+            result[key] = parsed.value
+          } else {
+            errors.push(
+              ...parsed.error.map((err) => ({
+                ...err,
+                path: [key, ...err.path],
+              })),
+            )
+          }
+        }
+      }
+
+      return errors.length > 0 ? Err(errors) : Ok(result)
+    },
+  }
+}
+
 export const str: Parser<string> = {
   parse(input) {
     if (typeof input !== 'string') {

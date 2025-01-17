@@ -5,7 +5,7 @@ import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-
 import { FlowFrontendCtx } from '../../@/frontend/ctx'
 import { QueryPuzzlesInput } from '../../@/puzzle/puzzle-db/query'
 import { PuzzleListFrontend } from '../../@/puzzle/puzzle-list/frontend'
-import type { FrontendModule } from '../types'
+import type { FrontendModule, ModelSpace } from '../types'
 import { CreateNewPuzzleFrontend } from './create-new-puzzle/frontend'
 
 const update: FrontendModule['update'] = (input) => {
@@ -32,21 +32,23 @@ const updateMain: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const toPuzzleQuery = (input: { ctx: FlowFrontendCtx }): QueryPuzzlesInput => {
-  return {
-    order: {
-      lastUpdatedAt: 'desc',
-    },
-    pagination: {
-      offset: 0,
-      limit: 10,
-    },
-    where: {
-      createdBy: {
-        equals: input.ctx.currentUserId,
+const toPuzzleQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): QueryPuzzlesInput => {
+  return (
+    input.modelSpace.screenPuzzleBuilderOpen?.query ?? {
+      order: {
+        lastUpdatedAt: 'desc',
       },
-    },
-  }
+      pagination: {
+        offset: 0,
+        limit: 10,
+      },
+      where: {
+        createdBy: {
+          equals: input.ctx.currentUserId,
+        },
+      },
+    }
+  )
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
@@ -71,7 +73,10 @@ const View: FrontendModule['View'] = (input) => {
         model={input.ctx.puzzleList}
         query={query}
         onQueryChanged={(query) => {
-          console.log('onQueryChanged', query)
+          input.dispatch({
+            t: 'got-msg-space',
+            c: { t: 'screen-puzzle-builder-open.puzzle-list-query-changed', query, userId: input.ctx.currentUserId },
+          })
         }}
         onClick={(puzzle) =>
           input.dispatch({

@@ -1,3 +1,5 @@
+import { p } from '../parser'
+
 export type Query<T, TWhereOperator = WhereOperator> = {
   limit: number
   offset: number
@@ -39,10 +41,12 @@ export type WhereOperator =
 
 export type WhereValue<T> = T[keyof T] | T[keyof T][]
 
-export type Pagination = {
-  limit: number
-  offset: number
-}
+export const Pagination = p.obj({
+  limit: p.num,
+  offset: p.num,
+})
+
+export type Pagination = p.Infer<typeof Pagination>
 
 export type PaginationResult = Pagination & {
   total: number

@@ -3,7 +3,7 @@ import { PlayMode } from '../../@/play-mode'
 import type { UpdateSpace } from '../types'
 import { CreateNewPuzzleSpace } from './create-new-puzzle/space'
 
-const updateSpaceMain: UpdateSpace = ({ modelSpace, msgSpace, ctx }) => {
+const updateClickedPuzzleListItem: UpdateSpace = ({ modelSpace, msgSpace, ctx }) => {
   switch (msgSpace.t) {
     case 'screen-puzzle-builder-open.clicked-puzzle-list-item': {
       return {
@@ -31,11 +31,27 @@ const updateSpaceMain: UpdateSpace = ({ modelSpace, msgSpace, ctx }) => {
   }
 }
 
+const updateQueryChanged: UpdateSpace = (input) => {
+  switch (input.msgSpace.t) {
+    case 'screen-puzzle-builder-open.puzzle-list-query-changed': {
+      return {
+        ...input.modelSpace,
+        screenPuzzleBuilderOpen: {
+          query: input.msgSpace.query,
+        },
+      }
+    }
+
+    default: {
+      return input.modelSpace
+    }
+  }
+}
+
+const updates = [CreateNewPuzzleSpace.updateSpace, updateClickedPuzzleListItem, updateQueryChanged]
+
 const updateSpace: UpdateSpace = (input) => {
-  return [CreateNewPuzzleSpace.updateSpace, updateSpaceMain].reduce(
-    (acc, updateSpace) => updateSpace({ ...input, modelSpace: acc }),
-    input.modelSpace,
-  )
+  return updates.reduce((modelSpace, update) => update({ ...input, modelSpace }), input.modelSpace)
 }
 
 export const ScreenPuzzleBuilderOpenSpace = { updateSpace }

@@ -37,6 +37,7 @@
     "Propgation",
     "pscale",
     "psql",
+    "pushstate",
     "registrator",
     "snabbdom",
     "sslmode",

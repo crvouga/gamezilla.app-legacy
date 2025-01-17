@@ -1,6 +1,8 @@
 import type { Translations } from '~/@/l18n'
 
 export type Text = {
+  'app.last-updated-desc': string
+  'app.created-at-desc': string
   'app.last-updated': string
   'app.created-at': string
   'app.screen-not-found': string
@@ -16,7 +18,7 @@ export type Text = {
   'app.copied-to-clipboard': string
   'app.copy': string
   'app.saved-changes': string
-  'app.dont-save': string
+  "app.don't-save": string
   'app.save': string
   'app.cancel': string
   'app.close': string
@@ -45,6 +47,8 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   en: {
+    'app.created-at-desc': 'Most recent first',
+    'app.last-updated-desc': 'Most recently updated',
     'app.created-at': 'Created at',
     'app.last-updated': 'Last updated',
     'app.screen-not-found': 'Screen not found',
@@ -60,7 +64,7 @@ export const translations: Translations<Text> = {
     'app.copied-to-clipboard': 'Copied to clipboard',
     'app.copy': 'Copy',
     'app.saved-changes': 'Saved changes',
-    'app.dont-save': "Don't Save",
+    "app.don't-save": "Don't Save",
     'app.save': 'Save',
     'app.cancel': 'Cancel',
     'app.close': 'Close',
@@ -87,6 +91,8 @@ export const translations: Translations<Text> = {
     'app.save-changes-warning': `Your changes will be lost if you don't save them before exiting.`,
   },
   ar: {
+    'app.created-at-desc': 'الأحدث أولاً',
+    'app.last-updated-desc': 'الأحدث تحديثًا',
     'app.created-at': 'تم الإنشاء في',
     'app.last-updated': 'آخر تحديث',
     'app.screen-not-found': 'الشاشة غير موجودة',
@@ -102,7 +108,7 @@ export const translations: Translations<Text> = {
     'app.copied-to-clipboard': 'تم النسخ إلى الحافظة',
     'app.copy': 'نسخ',
     'app.saved-changes': 'تم حفظ التغييرات',
-    'app.dont-save': 'لا تحفظ',
+    "app.don't-save": 'لا تحفظ',
     'app.save': 'حفظ',
     'app.cancel': 'إلغاء',
     'app.close': 'إغلاق',
@@ -129,6 +135,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'حفظ التغييرات؟',
   },
   de: {
+    'app.created-at-desc': 'Neueste zuerst',
+    'app.last-updated-desc': 'Zuletzt aktualisiert',
     'app.created-at': 'Erstellt am',
     'app.last-updated': 'Zuletzt aktualisiert',
     'app.screen-not-found': 'Bildschirm nicht gefunden',
@@ -144,7 +152,7 @@ export const translations: Translations<Text> = {
     'app.copied-to-clipboard': 'In die Zwischenablage kopiert',
     'app.copy': 'Kopieren',
     'app.saved-changes': 'Änderungen gespeichert',
-    'app.dont-save': 'Nicht speichern',
+    "app.don't-save": 'Nicht speichern',
     'app.save': 'Speichern',
     'app.cancel': 'Stornieren',
     'app.close': 'Schließen',
@@ -171,6 +179,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Änderungen speichern?',
   },
   es: {
+    'app.created-at-desc': 'Más reciente primero',
+    'app.last-updated-desc': 'Más recientemente actualizado',
     'app.created-at': 'Creado en',
     'app.last-updated': 'Última actualización',
     'app.screen-not-found': 'Pantalla no encontrada',
@@ -186,7 +196,7 @@ export const translations: Translations<Text> = {
     'app.copied-to-clipboard': 'Copiado al portapapeles',
     'app.copy': 'Copiar',
     'app.saved-changes': 'Cambios guardados',
-    'app.dont-save': 'No guardar',
+    "app.don't-save": 'No guardar',
     'app.save': 'Guardar',
     'app.cancel': 'Cancelar',
     'app.close': 'Cerrar',
@@ -213,6 +223,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '¿Guardar cambios?',
   },
   fr: {
+    'app.created-at-desc': 'Le plus récent en premier',
+    'app.last-updated-desc': 'Le plus récemment mis à jour',
     'app.created-at': 'Créé à',
     'app.last-updated': 'Dernière mise à jour',
     'app.screen-not-found': 'Écran non trouvé',
@@ -228,7 +240,7 @@ export const translations: Translations<Text> = {
     'app.copied-to-clipboard': 'Copié dans le presse-papiers',
     'app.copy': 'Copier',
     'app.saved-changes': 'Modifications enregistrées',
-    'app.dont-save': 'Ne pas enregistrer',
+    "app.don't-save": 'Ne pas enregistrer',
     'app.save': 'Enregistrer',
     'app.cancel': 'Annuler',
     'app.close': 'Fermer',
@@ -255,6 +267,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Enregistrer les modifications?',
   },
   it: {
+    'app.created-at-desc': 'Più recenti prima',
+    'app.last-updated-desc': 'Più recentemente aggiornato',
     'app.created-at': 'Creato a',
     'app.last-updated': 'Ultimo aggiornamento',
     'app.screen-not-found': 'Schermo non trovato',
@@ -270,7 +284,7 @@ export const translations: Translations<Text> = {
     'app.copied-to-clipboard': 'Copiato negli appunti',
     'app.copy': 'Copia',
     'app.saved-changes': 'Modifiche salvate',
-    'app.dont-save': 'Non salvare',
+    "app.don't-save": 'Non salvare',
     'app.save': 'Salvare',
     'app.cancel': 'Annulla',
     'app.close': 'Chiudere',
@@ -297,6 +311,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Salvare le modifiche?',
   },
   ja: {
+    'app.created-at-desc': '最新のものが最初',
+    'app.last-updated-desc': '最新のもの',
     'app.created-at': '作成日',
     'app.last-updated': '最終更新',
     'app.screen-not-found': '画面が見つかりません',
@@ -312,7 +328,7 @@ export const translations: Translations<Text> = {
     'app.copied-to-clipboard': 'クリップボードにコピーしました',
     'app.copy': 'コピー',
     'app.saved-changes': '変更を保存しました',
-    'app.dont-save': '保存しない',
+    "app.don't-save": '保存しない',
     'app.save': '保存',
     'app.cancel': 'キャンセル',
     'app.close': '閉じる',
@@ -339,6 +355,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '変更を保存しますか？',
   },
   ko: {
+    'app.created-at-desc': '최신 순',
+    'app.last-updated-desc': '최근 업데이트',
     'app.created-at': '생성 날짜',
     'app.last-updated': '마지막 업데이트',
     'app.screen-not-found': '화면을 찾을 수 없습니다',
@@ -354,7 +372,7 @@ export const translations: Translations<Text> = {
     'app.copied-to-clipboard': '클립 보드에 복사됨',
     'app.copy': '부',
     'app.saved-changes': '변경 사항 저장됨',
-    'app.dont-save': '저장하지 마세요',
+    "app.don't-save": '저장하지 마세요',
     'app.save': '저장',
     'app.cancel': '취소',
     'app.close': '닫기',
@@ -381,6 +399,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '변경 사항 저장?',
   },
   pt: {
+    'app.created-at-desc': 'Mais recente primeiro',
+    'app.last-updated-desc': 'Mais recentemente atualizado',
     'app.created-at': 'Criado em',
     'app.last-updated': 'Última atualização',
     'app.screen-not-found': 'Tela não encontrada',
@@ -396,7 +416,7 @@ export const translations: Translations<Text> = {
     'app.copied-to-clipboard': 'Copiado para a área de transferência',
     'app.copy': 'Cópia',
     'app.saved-changes': 'Alterações salvas',
-    'app.dont-save': 'Não Salvar',
+    "app.don't-save": 'Não Salvar',
     'app.save': 'Salvar',
     'app.cancel': 'Cancelar',
     'app.close': 'Fechar',
@@ -423,6 +443,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Salvar alterações?',
   },
   ru: {
+    'app.created-at-desc': 'Сначала самые новые',
+    'app.last-updated-desc': 'Последнее обновление',
     'app.created-at': 'Создано в',
     'app.last-updated': 'Последнее обновление',
     'app.screen-not-found': 'Экран не найден',
@@ -438,7 +460,7 @@ export const translations: Translations<Text> = {
     'app.copied-to-clipboard': 'Скопировано в буфер обмена',
     'app.copy': 'Копировать',
     'app.saved-changes': 'Изменения сохранены',
-    'app.dont-save': 'Не сохранять',
+    "app.don't-save": 'Не сохранять',
     'app.save': 'Сохранить',
     'app.cancel': 'Отмена',
     'app.close': 'Закрыть',
@@ -465,6 +487,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Сохранить изменения?',
   },
   zh: {
+    'app.created-at-desc': '最新的在前',
+    'app.last-updated-desc': '最近更新',
     'app.created-at': '创建于',
     'app.last-updated': '最后更新',
     'app.screen-not-found': '找不到屏幕',
@@ -480,7 +504,7 @@ export const translations: Translations<Text> = {
     'app.copied-to-clipboard': '已复制到剪贴板',
     'app.copy': '复制',
     'app.saved-changes': '已保存更改',
-    'app.dont-save': '不要保存',
+    "app.don't-save": '不要保存',
     'app.save': '保存',
     'app.cancel': '取消',
     'app.close': '关闭',
@@ -507,6 +531,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '保存更改？',
   },
   hi: {
+    'app.created-at-desc': 'सबसे हाल का पहले',
+    'app.last-updated-desc': 'सबसे हाल में अपडेट',
     'app.created-at': 'पर बनाया गया',
     'app.last-updated': 'अंतिम अपडेट',
     'app.screen-not-found': 'स्क्रीन नहीं मिली',
@@ -522,7 +548,7 @@ export const translations: Translations<Text> = {
     'app.copied-to-clipboard': 'क्लिपबोर्ड पर कॉपी किया गया',
     'app.copy': 'कॉपी',
     'app.saved-changes': 'परिवर्तन सहेजे गए',
-    'app.dont-save': 'न बचाएं',
+    "app.don't-save": 'न बचाएं',
     'app.save': 'सहेजें',
     'app.cancel': 'रद्द करें',
     'app.close': 'बंद करें',

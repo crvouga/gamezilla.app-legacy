@@ -43,7 +43,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxRoot; onChange: (query:
         <Chip
           size='sm'
           renderStartIcon={(input) => <IconArrowDownShortWide {...input} />}
-          label={input.ctx.t('app.last-updated')}
+          label={input.ctx.t('app.last-updated-desc')}
           onClick={() => dispatch({ t: 'toggled-last-updated-chip' })}
         />
       )}
@@ -52,8 +52,8 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxRoot; onChange: (query:
         <Chip
           size='sm'
           renderStartIcon={(input) => <IconArrowDownShortWide {...input} />}
-          label={input.ctx.t('app.last-updated')}
-          onClick={() => dispatch({ t: 'toggled-last-updated-chip' })}
+          label={input.ctx.t('app.created-at-desc')}
+          onClick={() => dispatch({ t: 'toggled-created-at-chip' })}
         />
       )}
     </div>
