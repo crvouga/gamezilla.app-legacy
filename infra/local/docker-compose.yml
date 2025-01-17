@@ -6,16 +6,16 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      POSTGRES_USER: gamezilla-app
-      POSTGRES_PASSWORD: gamezilla-app
-      POSTGRES_DB: gamezilla-app
+      POSTGRES_USER: gamezilla_app
+      POSTGRES_PASSWORD: gamezilla_app
+      POSTGRES_DB: gamezilla_app
     ports:
-      - '5433:5432'
+      - '5432:5432'
     volumes:
       - gamezilla-app-postgres-data:/var/lib/postgresql/data
     command: ['-c', 'listen_addresses=*', '-c', 'port=5432', '-c', 'ssl=off', '-c', 'wal_level=logical']
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U gamezilla-app']
+      test: ['CMD-SHELL', 'pg_isready -U gamezilla_app']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -32,8 +32,8 @@ services:
       - ../../powersync:/powersync
     environment:
       POWERSYNC_CONFIG_PATH: /powersync/config.yaml
-      PS_POSTGRES_STORAGE_DATABASE_URL: postgresql://powersync_storage_user:powersync_storage_user@postgres:5432/gamezilla-app
-      PS_POSTGRES_REPLICATION_DATABASE_URL: postgresql://gamezilla-app:gamezilla-app@postgres:5432/gamezilla-app
+      PS_POSTGRES_STORAGE_DATABASE_URL: postgresql://powersync_storage:powersync_storage@postgres:5432/powersync_storage
+      PS_POSTGRES_REPLICATION_DATABASE_URL: postgresql://gamezilla_app:gamezilla_app@postgres:5432/gamezilla_app
       PS_JWKS_URI: http://host.docker.internal:5002/powersync/jwks
     ports:
       - 8080:8080

@@ -1,3 +1,2 @@
-CREATE USER powersync_storage_user WITH PASSWORD 'powersync_storage_user';
-GRANT CREATE ON DATABASE postgres TO powersync_storage_user;
-GRANT CREATE ON DATABASE postgres TO powersync_storage_user;
+CREATE USER powersync_storage WITH PASSWORD 'powersync_storage';
+CREATE DATABASE powersync_storage WITH OWNER powersync_storage;
