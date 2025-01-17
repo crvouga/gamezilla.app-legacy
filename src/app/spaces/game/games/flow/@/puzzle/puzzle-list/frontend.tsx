@@ -13,6 +13,7 @@ import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './query-form'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
 import { Translator } from '~/@/l18n/generated'
+import { Gutter } from '~/app/@/ui/gutter'
 
 const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(
@@ -106,7 +107,7 @@ const View = (input: {
           </div>
         )}
 
-        <div className='w-full py-24'></div>
+        <Gutter />
       </div>
 
       {input.fab && <div className='absolute bottom-6 right-4 bg-black'>{input.fab}</div>}

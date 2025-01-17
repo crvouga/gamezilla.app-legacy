@@ -15,6 +15,7 @@ import { BoardLayout } from '../../../@/ui/layout'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
 import type { FrontendModule } from '../../types'
+import { Gutter } from '~/app/@/ui/gutter'
 
 export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
@@ -258,7 +259,7 @@ const ScreenPuzzleMore: Pick<FrontendModule, 'update' | 'View'> = {
               })
             }
           />
-          <div className='w-full p-2' />
+          <Gutter />
         </Drawer>
       </>
     )

@@ -14,6 +14,7 @@ import { ScreenPuzzleBuilderSpace } from './space'
 import { DeleteForeverFrontend } from './delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './save-changes/frontend'
+import { Gutter } from '~/app/@/ui/gutter'
 
 //
 //
@@ -377,7 +378,7 @@ export const ViewMoreDrawer: BuilderTypes.FrontendModule['View'] = (input) => {
     >
       <EditPuzzleNameFrontend.View {...input} />
       <DeleteForeverFrontend.View {...input} />
-      <div className='w-full pb-2' />
+      <Gutter />
     </Drawer>
   )
 }

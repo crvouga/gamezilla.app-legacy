@@ -2,6 +2,7 @@ import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Button, IconArrowLeftOnRect, IconSpinner, IconUserPen, TopBar, Typography } from '~/app/@/ui'
 import type { ModelFrontend, MsgFrontend } from '../types'
+import { Gutter } from '~/app/@/ui/gutter'
 
 export const ViewProfileScreen = (input: {
   ctx: AppFrontendCtx | AnonymousFrontendCtx
@@ -46,7 +47,7 @@ export const ViewProfileScreen = (input: {
             iconStart={(iconInput) => <IconArrowLeftOnRect {...iconInput} />}
             text={input.ctx.t('auth.logout')}
           />
-          <div className='w-full p-4' />
+          <Gutter />
         </div>
       </div>
     )

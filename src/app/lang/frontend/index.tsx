@@ -1,5 +1,6 @@
 import { LocalStorage } from '~/@/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
+import { Gutter } from '~/app/@/ui/gutter'
 import { APP_SOUND, back, closeStatusBar, playSound, pushScreen } from '../../@/frontend/cmd'
 import { translatorSubscriptions } from '../../@/frontend/translator'
 import {
@@ -213,7 +214,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
             }
           />
         ))}
-        <div className='w-full p-8' />
+        <Gutter />
       </div>
     </div>
   )
