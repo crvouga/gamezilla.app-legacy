@@ -2,7 +2,6 @@ import { p } from '~/@/parser'
 import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../flow'
-import { AlgoSolve } from '../solutions/algo-solve'
 import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
 import * as FlowVariant from '../variant/variant'
 import { PuzzleId } from './puzzle-id'
@@ -50,8 +49,8 @@ const random = async (input?: { flow?: FlowVariant.Model; createdBy?: UserId; cr
       ['A', ' '],
       [' ', 'A'],
     ])
-  const solutions = AlgoSolve.solutions(flow)
-  const solution = next(solutions)
+  // const solutions = AlgoSolve.solutions(flow)
+  // const solution = next(solutions)
   return {
     createdAt,
     createdBy,
@@ -61,16 +60,10 @@ const random = async (input?: { flow?: FlowVariant.Model; createdBy?: UserId; cr
     lastUpdatedAt: Posix.now(),
     lastUpdatedBy: createdBy,
     id: PuzzleId.generate(),
-    solutions: solution ? [solution] : [],
+    solutions: [],
+    // solutions: solution ? [solution] : [],
     flow,
   }
-}
-
-const next = <T>(iter: Iterable<T>): T | undefined => {
-  for (const item of iter) {
-    return item
-  }
-  return undefined
 }
 
 export const Puzzle = {

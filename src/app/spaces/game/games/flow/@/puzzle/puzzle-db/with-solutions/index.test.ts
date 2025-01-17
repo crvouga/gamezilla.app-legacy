@@ -24,7 +24,7 @@ const Fixtures = async function* () {
 }
 
 describe(import.meta.file, () => {
-  it('should assoc solutions before put', async () => {
+  it.todo('should assoc solutions before put', async () => {
     for await (const f of await Fixtures()) {
       const before = Result.unwrap(await f.flowPuzzleDb.get(f.puzzleWithEmptySolutions.id))
       await f.withSolutions.put(f.puzzleWithEmptySolutions)

@@ -20,10 +20,10 @@ export const BaseFixtures = async () => {
 
   configs.push({
     t: 'with-ensure-tables',
-    dbConnSql: f.dbConnPostgres,
+    dbConnSql: f.dbConnSqlite,
     puzzleDb: PuzzleDb({
       t: 'db-conn-sql',
-      dbConnSql: f.dbConnPostgres,
+      dbConnSql: f.dbConnSqlite,
       logger: Logger({ t: 'noop' }),
     }),
   })

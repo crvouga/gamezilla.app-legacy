@@ -36,8 +36,8 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         FROM
           game_flow_puzzle
         WHERE
-            id = :id
-        AND deleted_at IS NULL
+          id = :id
+          AND deleted_at IS NULL
         LIMIT 1
         `,
         vars: {
@@ -58,10 +58,110 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       })
 
       const awaited = await Promise.all(queriedPuzzle)
-
       const flowPuzzles = awaited.flat()
 
       return Ok(flowPuzzles[0] ?? null)
+    },
+
+    async put(flowPuzzle) {
+      const got = await this.get(flowPuzzle.id)
+      if (isErr(got)) {
+        return got
+      }
+      if (got.value) {
+        // First try to update existing record
+        const updateResult = await config.dbConnSql.query({
+          parser: p.num,
+          sql: `
+          UPDATE game_flow_puzzle
+          SET
+            flow_puzzle_name = :name,
+            flow = :flow,
+            last_updated_at_posix = :lastUpdatedAt,
+            last_updated_by_user_id = :lastUpdatedBy,
+            flow_solutions = :solutions
+          WHERE
+            id = :id
+          `,
+          vars: {
+            id: flowPuzzle.id,
+            name: flowPuzzle.name,
+            flow: Sql.json(flowPuzzle.flow),
+            lastUpdatedAt: flowPuzzle.lastUpdatedAt,
+            lastUpdatedBy: flowPuzzle.lastUpdatedBy,
+            solutions: Sql.json(flowPuzzle.solutions),
+          },
+        })
+
+        if (isErr(updateResult)) {
+          return updateResult
+        }
+
+        return Ok(null)
+      }
+
+      const insertResult = await config.dbConnSql.query({
+        parser: p.unknown,
+        sql: `
+          INSERT INTO game_flow_puzzle (
+            id,
+            flow_puzzle_name,
+            flow,
+            created_at_posix,
+            created_by_user_id,
+            last_updated_at_posix,
+            last_updated_by_user_id,
+            flow_solutions
+          )
+          VALUES (
+            :id,
+            :name,
+            :flow,
+            :createdAt,
+            :createdBy,
+            :lastUpdatedAt,
+            :lastUpdatedBy,
+            :solutions
+          )
+          `,
+        vars: {
+          id: flowPuzzle.id,
+          name: flowPuzzle.name,
+          flow: Sql.json(flowPuzzle.flow),
+          createdAt: flowPuzzle.createdAt,
+          createdBy: flowPuzzle.createdBy,
+          lastUpdatedAt: flowPuzzle.lastUpdatedAt,
+          lastUpdatedBy: flowPuzzle.lastUpdatedBy,
+          solutions: Sql.json(flowPuzzle.solutions),
+        },
+      })
+
+      if (isErr(insertResult)) {
+        return insertResult
+      }
+
+      return Ok(null)
+    },
+
+    async zap(input) {
+      const queried = await config.dbConnSql.query({
+        parser: p.num,
+        sql: `
+        UPDATE
+          game_flow_puzzle
+        SET
+          deleted_at = :deletedAt,
+          deleted_by_user_id = :deletedBy
+        WHERE
+          id = :id
+        `,
+        vars: {
+          deletedAt: Posix.now(),
+          deletedBy: input.deletedByUserId,
+          id: input.id,
+        },
+      })
+      return Result.mapOk(queried, () => null)
     },
 
     async count(input) {
@@ -69,7 +169,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
 
       const queried = await config.dbConnSql.query({
         parser: p.obj({
-          count: p.str,
+          count: p.maybe(p.or(p.str, p.num)),
         }),
         sql: `
         SELECT
@@ -81,7 +181,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         vars: where.variables,
       })
 
-      return Result.mapOk(queried, (x) => Number.parseFloat(x[0]?.count ?? '0'))
+      return Result.mapOk(queried, (x) => Number.parseFloat(String(x[0]?.count ?? '0')))
     },
 
     async query(input) {
@@ -98,15 +198,15 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
 
       const queriedCount = await config.dbConnSql.query({
         parser: p.obj({
-          count: p.str,
+          count: p.maybe(p.or(p.str, p.num)),
         }),
         sql: `
-				SELECT
-					COUNT(id) AS count
-				FROM
+        SELECT
+          COUNT(id) AS count
+        FROM
           game_flow_puzzle
-				${sql.where.str}
-				`,
+        ${sql.where.str}
+        `,
         vars: sql.variables,
       })
 
@@ -123,10 +223,8 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       })
 
       const awaited = await Promise.all(queriedPuzzle)
-
       const flowPuzzles = awaited.flat()
-
-      const total = Number.parseFloat(queriedCount.value[0]?.count ?? '0') ?? 0
+      const total = Number.parseFloat(String(queriedCount.value[0]?.count ?? '0')) ?? 0
 
       return Ok({
         puzzles: {
@@ -139,72 +237,6 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       })
     },
 
-    async put(flowPuzzle) {
-      const queried = await config.dbConnSql.query({
-        parser: p.unknown,
-        sql: `
-				INSERT INTO game_flow_puzzle (
-					id,
-					flow_puzzle_name,
-					flow,
-					created_at_posix,
-					created_by_user_id,
-					last_updated_at_posix,
-					last_updated_by_user_id,
-					flow_solutions
-				)
-				VALUES (
-					:id,
-					:flow_puzzle_name,
-					:flow,
-					:created_at_posix,
-					:created_by_user_id,
-					:last_updated_at_posix,
-					:last_updated_by_user_id,
-					:flow_solutions
-				) ON CONFLICT (id) DO
-				UPDATE SET
-					flow_puzzle_name = :flow_puzzle_name,
-					flow = :flow,
-					last_updated_at_posix = :last_updated_at_posix,
-					last_updated_by_user_id = :last_updated_by_user_id,
-					flow_solutions = :flow_solutions
-				`,
-        vars: {
-          id: flowPuzzle.id,
-          flow_puzzle_name: flowPuzzle.name,
-          flow: Sql.json(flowPuzzle.flow),
-          flow_solutions: Sql.json(flowPuzzle.solutions),
-          created_at_posix: flowPuzzle.createdAt,
-          created_by_user_id: flowPuzzle.createdBy,
-          last_updated_at_posix: flowPuzzle.lastUpdatedAt,
-          last_updated_by_user_id: flowPuzzle.lastUpdatedBy,
-        },
-      })
-      return Result.mapOk(queried, () => null)
-    },
-
-    async zap(input) {
-      const queried = await config.dbConnSql.query({
-        parser: p.num,
-        sql: `
-				UPDATE
-					game_flow_puzzle
-				SET
-					deleted_at = :deleted_at,
-					deleted_by_user_id = :deleted_by_user_id
-				WHERE
-					id = :id
-				`,
-        vars: {
-          deleted_at: Posix.now(),
-          deleted_by_user_id: input.deletedByUserId,
-          id: input.id,
-        },
-      })
-      return Result.mapOk(queried, () => null)
-    },
-
     sub(input: QueryPuzzlesInput) {
       const sql = toQuerySql(input)
       return Sub.map(
@@ -213,11 +245,12 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           sql: sql.str,
           vars: sql.variables,
         }),
-        (rows) =>
-          rows.flatMap((row) => {
+        (rows) => {
+          return rows.flatMap((row) => {
             const puzzle = Row.rowToPuzzle(row)
             return puzzle ? [puzzle] : []
-          }),
+          })
+        },
       )
     },
   }
@@ -232,6 +265,7 @@ const toQuerySql = (input: { where: WhereClause; order?: OrderClause; pagination
     ...where.variables,
     ...pagination.variables,
   }
+
   const str = `
     SELECT
       id,
@@ -260,20 +294,20 @@ const toQuerySql = (input: { where: WhereClause; order?: OrderClause; pagination
 
 const toSqlWhere = (input: { where: WhereClause }) => {
   const variables: Sql.Vars = {}
-  const where: string[] = [
-    //
-    'deleted_at IS NULL',
-  ]
+  const where: string[] = ['deleted_at IS NULL']
 
   if (input.where.createdBy?.equals) {
-    where.push('created_by_user_id = :created_by_user_id')
-    variables.created_by_user_id = input.where.createdBy?.equals
+    where.push('created_by_user_id = :createdBy')
+    variables.createdBy = input.where.createdBy.equals
   }
 
   if (input.where.puzzleId?.in) {
-    if (input.where.puzzleId?.in.length > 0) {
-      const puzzleIds = input.where.puzzleId?.in.map((puzzleId) => `'${puzzleId}'`).join(', ')
-      where.push(`id IN (${puzzleIds})`)
+    if (input.where.puzzleId.in.length > 0) {
+      const placeholders = input.where.puzzleId.in.map((_, idx) => `:puzzleId${idx}`).join(', ')
+      where.push(`id IN (${placeholders})`)
+      input.where.puzzleId.in.forEach((id, idx) => {
+        variables[`puzzleId${idx}`] = id
+      })
     } else {
       where.push('FALSE')
     }
