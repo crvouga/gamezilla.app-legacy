@@ -6,19 +6,7 @@ import { newPowerSyncDatabase } from '../../../../powersync/frontend/database'
 import { Logger } from '../../logger'
 import { p } from '../../parser'
 import { isErr, isOk } from '../../result'
-import '../../vdom/test-render/happydom'
 import { Config, DbConnSql } from '../backend/impl'
-
-// @ts-ignore
-if (!globalThis.readAsync) {
-  // @ts-ignore
-  globalThis.readAsync = async (file) => {
-    const fs = require('fs/promises') // Use Node.js's fs.promises
-    const path = require('path')
-    const resolvedPath = path.resolve(file)
-    return fs.readFile(resolvedPath)
-  }
-}
 
 const Fixture = async (config: Config) => {
   const dbConnSql = await DbConnSql(config)
