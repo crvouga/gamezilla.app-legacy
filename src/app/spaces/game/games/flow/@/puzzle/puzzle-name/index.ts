@@ -4,12 +4,12 @@ import { p } from '~/@/parser'
 
 export type PuzzleName = Brand<string, 'PuzzleName'>
 
-const generate = async ({ count }: { count: number }) => {
+const generate = async (input: { count?: number }) => {
   const { adjectives, nouns } = await getWords()
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)]
   const noun = nouns[Math.floor(Math.random() * nouns.length)]
-  const name = `Puzzle ${count} - ${adjective} ${noun}` as PuzzleName
-  return name
+  const name = [input.count ? `Puzzle ${input.count}` : null, `${adjective} ${noun}`].filter(Boolean).join(' - ')
+  return name as PuzzleName
 }
 
 const is = (x: unknown): x is PuzzleName => typeof x === 'string'

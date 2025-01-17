@@ -1,50 +1,32 @@
-import { NotAsked, type RemoteResult, Result } from '~/@/result'
 import { p } from '~/@/parser'
-import { Posix } from '~/@/time/posix'
+import { NotAsked, type RemoteResult, Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 
-//
-//
-//
-//
-//
-
 export type ModelFrontend = {
-  puzzleCreateRequest: RemoteResult<string, null>
-  puzzleCreateRequestedAt: Posix
+  puzzleCreateRequest: RemoteResult<string, unknown>
 }
 
 export const initFrontend: ModelFrontend = {
   puzzleCreateRequest: NotAsked,
-  puzzleCreateRequestedAt: Posix.now(),
 }
 
 export type ModelBackend = {}
 
-//
-//
-//
-//
-
-export type MsgFrontend = {
-  t: 'create-new-puzzle.user-clicked-create-button'
-}
+export type MsgFrontend =
+  | {
+      t: 'create-new-puzzle.user-clicked-create-button'
+    }
+  | {
+      t: 'create-new-puzzle.db-inserted-puzzle'
+      result: Result<string, Puzzle>
+    }
 
 export type MsgBackend = { t: 'noop' }
 
-export type MsgToBackend = { t: 'create-new-puzzle.user-clicked-create-button' }
+export type MsgToBackend = { t: 'noop' }
 
-export type MsgToFrontend = {
-  t: 'created-puzzle'
-  created: Result<string, Puzzle>
-}
-
-//
-//
-//
-//
-//
+export type MsgToFrontend = { t: 'noop' }
 
 export const MsgSpace = p.obj({
   t: p.l('create-new-puzzle.user-created-puzzle'),

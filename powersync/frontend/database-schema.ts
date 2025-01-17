@@ -6,18 +6,26 @@ const game_flow_pack = new Table({
 })
 export type GameFlowPack = AppSchema['game_flow_pack']
 
-const game_flow_puzzle = new Table({
-  id: column.text,
-  flow_puzzle_name: column.text,
-  flow: column.text,
-  created_at_posix: column.integer,
-  created_by_user_id: column.text,
-  last_updated_at_posix: column.integer,
-  last_updated_by_user_id: column.text,
-  deleted_at: column.integer,
-  deleted_by_user_id: column.text,
-  flow_solutions: column.text,
-})
+const game_flow_puzzle = new Table(
+  {
+    id: column.text,
+    flow_puzzle_name: column.text,
+    flow: column.text,
+    created_at_posix: column.integer,
+    created_by_user_id: column.text,
+    last_updated_at_posix: column.integer,
+    last_updated_by_user_id: column.text,
+    deleted_at: column.integer,
+    deleted_by_user_id: column.text,
+    flow_solutions: column.text,
+  },
+  {
+    indexes: {
+      idx_created_by_user_id: ['created_by_user_id'],
+      idx_deleted_by_user_id: ['deleted_by_user_id'],
+    },
+  },
+)
 export type GameFlowPuzzle = AppSchema['game_flow_puzzle']
 
 export const AppSchema = new Schema({

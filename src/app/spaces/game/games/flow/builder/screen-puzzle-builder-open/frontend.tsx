@@ -51,7 +51,6 @@ const toPuzzleQuery = (input: { ctx: FlowFrontendCtx }): QueryPuzzlesInput => {
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch([
-    CreateNewPuzzleFrontend.subscriptions(input),
     PuzzleListFrontend.watch(input.ctx, toPuzzleQuery(input), (c) => ({ t: 'got-puzzle-list-msg', c })),
   ])
 }

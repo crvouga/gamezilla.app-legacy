@@ -21,7 +21,7 @@ const parser = p.obj({
 export type Puzzle = p.Infer<typeof parser>
 
 const create = async (input: {
-  count: number
+  count?: number
   flow: FlowVariant.Model
   createdAt: Posix
   createdBy: UserId
@@ -29,7 +29,7 @@ const create = async (input: {
   return {
     flow: input.flow,
     name: await PuzzleName.generate({
-      count: input.count,
+      // count: input.count,
     }),
     id: PuzzleId.generate(),
     createdAt: input.createdAt,

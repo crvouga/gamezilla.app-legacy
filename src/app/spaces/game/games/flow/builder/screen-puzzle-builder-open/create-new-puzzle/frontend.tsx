@@ -1,9 +1,6 @@
-import { isErr, isLoading, Result } from '~/@/result'
-import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
-import { Time } from '~/@/time/time'
-import { TimeSpan } from '~/@/time/time-span'
-import { showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
+import { withEventId } from '~/@/event-sourced/event'
+import { isErr, RemoteResult, Result } from '~/@/result'
+import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
 import { Button, IconPlus } from '~/app/@/ui'
 import { FlowFrontendCmd } from '../../../@/frontend/cmd'
 import { Puzzle } from '../../../@/puzzle/puzzle'
@@ -17,10 +14,13 @@ const update: FrontendModule['update'] = (input) => {
   switch (msg?.t) {
     case 'create-new-puzzle.user-clicked-create-button': {
       return {
-        model,
-        eff: async (_dispatch) => {
+        model: {
+          ...model,
+          puzzleCreateRequest: RemoteResult.Loading,
+        },
+        msgCmd: [playSound(APP_SOUND.tap)],
+        async eff(dispatch) {
           const puzzleNew = await Puzzle.create({
-            count: 0,
             createdAt: input.ctx.now,
             createdBy: input.ctx.currentUserId,
             flow: Variant.init({
@@ -29,41 +29,29 @@ const update: FrontendModule['update'] = (input) => {
             }),
           })
 
-          const put = await ctx.puzzleDb.put(puzzleNew)
+          const result = await ctx.puzzleDb.put(puzzleNew)
 
-          console.log(put)
+          dispatch({
+            t: 'create-new-puzzle.db-inserted-puzzle',
+            result: Result.mapOk(result, () => puzzleNew),
+          })
         },
-
-        // msgCmd: [
-        //   playSound(APP_SOUND.tap),
-        //   sendToBackend<{
-        //     MsgFrontend: MsgFrontend
-        //     MsgToBackend: MsgToBackend
-        //   }>({
-        //     t: 'create-new-puzzle.user-clicked-create-button',
-        //   }),
-        // ],
       }
     }
 
-    case 'time-passed': {
-      if (
-        isLoading(model.puzzleCreateRequest) &&
-        TimeSpan.gte(Posix.diff(model.puzzleCreateRequestedAt, ctx.now), TimeSpan.seconds(5))
-      ) {
-        return {
-          model: {
-            ...model,
-            puzzleCreateRequest: Result.Err(ctx.t('app.something-went-wrong')),
-          },
-          msgCmd: showErrSm<{
-            MsgFrontend: MsgFrontend
-            MsgToBackend: MsgToBackend
-          }>(input.ctx.t('app.something-went-wrong')),
-        }
-      }
+    case 'create-new-puzzle.db-inserted-puzzle': {
       return {
-        model,
+        model: {
+          ...model,
+          puzzleCreateRequest: msg.result,
+        },
+        msgSpace: [
+          withEventId({
+            t: 'create-new-puzzle.user-created-puzzle',
+            created: msg.result,
+            userId: ctx.currentUserId,
+          }),
+        ],
       }
     }
 
@@ -76,10 +64,7 @@ const update: FrontendModule['update'] = (input) => {
     case 'create-new-puzzle.user-created-puzzle': {
       if (isErr(msgSpace.created)) {
         return {
-          model: {
-            ...model,
-            puzzleCreateRequest: msgSpace.created,
-          },
+          model,
           msgCmd: showErrSm<{
             MsgFrontend: MsgFrontend
             MsgToBackend: MsgToBackend
@@ -107,10 +92,7 @@ const update: FrontendModule['update'] = (input) => {
       ]
 
       return {
-        model: {
-          ...model,
-          puzzleCreateRequest: Result.mapOk(msgSpace.created, () => null),
-        },
+        model,
         msgCmd,
       }
     }
@@ -121,21 +103,6 @@ const update: FrontendModule['update'] = (input) => {
   }
 
   return { model }
-}
-
-const id = 'puzzle-create-request'
-
-const subscriptions: FrontendModule['subscriptions'] = ({ model }) => {
-  switch (model.puzzleCreateRequest.t) {
-    case 'loading': {
-      return Time.interval(id, TimeSpan.seconds(1), () => ({
-        t: 'time-passed',
-      }))
-    }
-    default: {
-      return Sub.None
-    }
-  }
 }
 
 const ViewCreateFab: FrontendModule['View'] = (input) => {
@@ -155,5 +122,4 @@ const ViewCreateFab: FrontendModule['View'] = (input) => {
 export const CreateNewPuzzleFrontend = {
   update,
   ViewCreateFab,
-  subscriptions,
 }
