@@ -473,7 +473,7 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
 }
 
 const LoadingStateLogo = () => {
-  return <div className='flex h-full w-full flex-col items-center justify-center text-[68px]'>🦕</div>
+  return <div className='fixed left-1/2 top-1/2 box-border -translate-x-1/2 -translate-y-1/2 text-[68px]'>🦕</div>
 }
 
 const ViewScreen = (input: {
@@ -491,7 +491,6 @@ const ViewScreen = (input: {
         />
       )
     }
-
     default: {
       switch (input.model.auth.currentUser.t) {
         case 'loading': {
