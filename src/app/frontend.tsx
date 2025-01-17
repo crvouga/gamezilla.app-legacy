@@ -11,7 +11,7 @@ import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
-import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
+import { IconGamepad, IconUserCircle, Portal } from '~/app/@/ui'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { newPowerSyncDatabase } from '../../powersync/frontend/database'
@@ -472,6 +472,10 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
   )
 }
 
+const LoadingStateLogo = () => {
+  return <div className='flex h-full w-full flex-col items-center justify-center text-[68px]'>🦕</div>
+}
+
 const ViewScreen = (input: {
   ctx: AppFrontendCtx | AnonymousFrontendCtx
   model: ModelFrontend
@@ -491,7 +495,7 @@ const ViewScreen = (input: {
     default: {
       switch (input.model.auth.currentUser.t) {
         case 'loading': {
-          return <LoadingState />
+          return <LoadingStateLogo />
         }
 
         case 'logged-in': {
