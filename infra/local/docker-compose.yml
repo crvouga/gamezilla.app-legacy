@@ -1,5 +1,7 @@
 version: '3.1'
 
+name: gamezilla-app
+
 services:
   postgres:
     container_name: gamezilla-app-postgres
@@ -43,7 +45,7 @@ services:
     image: electricsql/electric
     restart: always
     environment:
-      DATABASE_URL: postgresql://gamezilla-app:gamezilla-app@postgres:5432/gamezilla-app?sslmode=disable
+      DATABASE_URL: postgresql://gamezilla_app:gamezilla_app@postgres:5432/gamezilla_app
     ports:
       - '3000:3000'
     depends_on:
