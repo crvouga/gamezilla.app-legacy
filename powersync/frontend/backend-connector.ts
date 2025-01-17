@@ -9,7 +9,7 @@ export class Connector extends BaseObserver<{}> implements PowerSyncBackendConne
   }
   async fetchCredentials() {
     try {
-      const got = await BackendAppRpc.getPowersyncCredentials()
+      const got = await BackendAppRpc.getPowerSyncCredentials()
 
       const { token } = unwrap(got)
 

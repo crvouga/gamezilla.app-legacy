@@ -8,15 +8,15 @@ export type DbConnSqlNotification = {
   payload?: string
 }
 
-export type DbConnQueryInput<TRow> = {
+export type DbConnSqlQueryInput<TRow> = {
   parser: p.Parser<TRow>
   sql: string
   vars: Sql.Vars
 }
 
 export type IDbConnSql = {
-  query: <TRow>(input: DbConnQueryInput<TRow>) => Promise<Result<string, TRow[]>>
-  sub: <TRow>(input: DbConnQueryInput<TRow>) => Sub<TRow[]>
+  query: <TRow>(input: DbConnSqlQueryInput<TRow>) => Promise<Result<string, TRow[]>>
+  sub: <TRow>(input: DbConnSqlQueryInput<TRow>) => Sub<TRow[]>
   // execute: (rawSql: string, variables: Sql.Vars) => Promise<Result<string, null>>
   listen: (channel: string, callback: (notification: DbConnSqlNotification) => void) => Promise<() => Promise<void>>
   notify: (channel: string, payload: string) => Promise<Result<string, null>>

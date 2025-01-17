@@ -21,33 +21,50 @@ export type IFixtureAppBackend = {
   ctx: AppBackendCtx
   dbConnKv: IDbConnKv
   pubSubTopicBased: IPubSubTopicBased
-  dbConnSql: IDbConnSql
+  dbConnPostgres: IDbConnSql
+  dbConnSqlite: IDbConnSql
 }
 
 export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const logger = Logger({ t: 'noop' })
+
+  const sms = SMS({ t: 'fake', logger })
+
+  const pubSub = await PubSubTopicBased({ t: 'noop' })
+
+  const profileCache = await ProfileCache({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'in-memory' }) })
+
   const ctx: AppBackendCtx = {
     env: 'test',
     dbConnKv: await DbConnKv({ t: 'hash-map' }),
     dbConnSql: dbConnSqlNoop,
     logger,
     now: Posix.now(),
-    sms: SMS({ t: 'fake', logger }),
+    sms,
     sleep: async () => null,
-    pubSub: await PubSubTopicBased({ t: 'noop' }),
-    profileCache: await ProfileCache({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'in-memory' }) }),
+    pubSub,
+    profileCache,
     runtime: Runtime({ t: 'noop' }),
     httpServer: HttpServer({ t: 'bun', logger }),
     backendInstanceId: BackendInstanceId.generate(),
   }
 
+  const dbConnSqlite = await DbConnSql({
+    t: 'bun-sqlite',
+    fileSystem: {
+      t: 'in-memory',
+    },
+    logger,
+  })
+
   if (!CONFIG_SHARED.IS_INTEGRATION_TEST) {
     return {
       t: 'unit',
       ctx,
+      dbConnSqlite,
       dbConnKv: await DbConnKv({ t: 'hash-map' }),
       pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', map: new Map() }),
-      dbConnSql: dbConnSqlNoop,
+      dbConnPostgres: dbConnSqlNoop,
     }
   }
 
@@ -55,7 +72,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     throw new Error('DATABASE_URL is not set')
   }
 
-  const dbConnSql = await DbConnSql({
+  const dbConnPostgres = await DbConnSql({
     t: 'postgres',
     databaseUrl: CONFIG_BACKEND.DATABASE_URL,
     logger,
@@ -78,7 +95,8 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   return {
     t: 'integration',
     ctx,
-    dbConnSql,
+    dbConnSqlite,
+    dbConnPostgres,
     dbConnKv,
     pubSubTopicBased,
   }

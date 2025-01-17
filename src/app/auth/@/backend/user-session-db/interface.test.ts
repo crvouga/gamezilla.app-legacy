@@ -58,14 +58,14 @@ const Fixtures = async () => {
   if (testEnv.t === 'integration') {
     configs.push({
       t: 'postgres',
-      dbConnSql: testEnv.dbConnSql,
+      dbConnSql: testEnv.dbConnPostgres,
       logger: Logger({ t: 'noop' }),
     })
 
     configs.push({
       t: 'postgres-with-cache',
       dbConnKv: testEnv.dbConnKv,
-      dbConnSql: testEnv.dbConnSql,
+      dbConnSql: testEnv.dbConnPostgres,
       pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', map: new Map() }),
       logger: Logger({ t: 'noop' }),
     })

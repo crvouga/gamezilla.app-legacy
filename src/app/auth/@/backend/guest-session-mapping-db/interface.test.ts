@@ -11,7 +11,7 @@ const Fixture = async () => {
     case 'integration': {
       const guestSessionMappingDb = GuestSessionMappingDb({
         t: 'postgres',
-        dbConnSql: testEnv.dbConnSql,
+        dbConnSql: testEnv.dbConnPostgres,
       })
 
       return {

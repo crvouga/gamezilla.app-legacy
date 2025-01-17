@@ -7,7 +7,7 @@ Logger.useDefaults()
 
 Logger.setLevel(Logger.DEBUG)
 
-export const newPowersyncDatabase = (input?: { dbFilename?: string }) => {
+export const newPowerSyncDatabase = (input?: { dbFilename?: string }) => {
   return new PowerSyncDatabase({
     // The schema you defined in the previous step
     schema: AppSchema,
@@ -25,7 +25,7 @@ export const newPowersyncDatabase = (input?: { dbFilename?: string }) => {
 }
 
 export const setup = async () => {
-  const powersync = newPowersyncDatabase()
+  const powersync = newPowerSyncDatabase()
 
   // @ts-expect-error
   window.powersync = powersync

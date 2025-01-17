@@ -15,7 +15,7 @@ const FixtureVariant = async () => {
       return {
         verificationDb: VerificationDb({
           t: 'postgres',
-          dbConnSql: testEnv.dbConnSql,
+          dbConnSql: testEnv.dbConnPostgres,
         }),
       }
     }

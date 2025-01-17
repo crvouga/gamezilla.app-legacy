@@ -35,7 +35,7 @@ const Fixtures = async () => {
   const configs: Config[] = [{ t: 'in-memory', map: new Map() }]
 
   if (testEnv.t === 'integration') {
-    configs.push({ t: 'postgres', dbConnSql: testEnv.dbConnSql, logger: Logger({ t: 'noop' }) })
+    configs.push({ t: 'postgres', dbConnSql: testEnv.dbConnPostgres, logger: Logger({ t: 'noop' }) })
     configs.push({ t: 'redis', redisUrl: CONFIG_BACKEND.REDIS_URL, logger: Logger({ t: 'noop' }) })
   }
 

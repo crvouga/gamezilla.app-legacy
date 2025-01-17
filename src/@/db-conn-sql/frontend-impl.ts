@@ -1,9 +1,9 @@
 import * as ImplNoop from './impl-noop'
 import * as ImplPgLite from './impl-pglite'
-import * as ImplPowersync from './impl-powersync'
+import * as ImplPowerSync from './impl-powersync'
 import type { IDbConnSql } from './interface'
 
-export type Config = ImplNoop.Config | ImplPgLite.Config | ImplPowersync.Config
+export type Config = ImplNoop.Config | ImplPgLite.Config | ImplPowerSync.Config
 
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   switch (config.t) {
@@ -14,7 +14,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       return ImplPgLite.DbConnSql(config)
     }
     case 'powersync': {
-      return ImplPowersync.DbConnSql(config)
+      return ImplPowerSync.DbConnSql(config)
     }
   }
 }

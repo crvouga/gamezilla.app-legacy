@@ -13,7 +13,7 @@ const Fixture = async () => {
     case 'integration': {
       const flowPackDb = PackDb({
         t: 'db-conn-sql',
-        dbConnSql: testEnv.dbConnSql,
+        dbConnSql: testEnv.dbConnPostgres,
       })
 
       return {

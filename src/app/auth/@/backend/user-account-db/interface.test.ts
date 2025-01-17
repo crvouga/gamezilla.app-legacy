@@ -15,7 +15,7 @@ const Fixture = async () => {
       return {
         userAccountDb: UserAccountDb({
           t: 'postgres',
-          dbConnSql: testEnv.dbConnSql,
+          dbConnSql: testEnv.dbConnPostgres,
         }),
       }
     }

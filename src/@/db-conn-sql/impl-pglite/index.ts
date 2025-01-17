@@ -7,7 +7,7 @@ import { PubSub, Sub } from '~/@/sub'
 import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
 import { Sleep } from '../../promise/sleep'
-import type { DbConnQueryInput, IDbConnSql } from '../interface'
+import type { DbConnSqlQueryInput, IDbConnSql } from '../interface'
 import { PGLiteFileSystem } from './pglite-file-system'
 
 export type Config = {
@@ -44,7 +44,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   })
 
   const subscribe = async <TRow>(
-    input: DbConnQueryInput<TRow> & {
+    input: DbConnSqlQueryInput<TRow> & {
       onChange: (rows: TRow[]) => void
     },
   ) => {
@@ -91,7 +91,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   >()
 
   return {
-    sub<TRow>(input: DbConnQueryInput<TRow>) {
+    sub<TRow>(input: DbConnSqlQueryInput<TRow>) {
       const sql = Sql.to(input.sql, input.vars)
       const subscriptionKey = sql
       logger.debug(`subscriptionKey=${subscriptionKey}`)

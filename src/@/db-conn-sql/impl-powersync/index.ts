@@ -3,7 +3,7 @@ import { ILogger, Logger } from '~/@/logger'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { PubSub, Sub } from '~/@/sub'
-import { DbConnQueryInput, IDbConnSql } from '../interface'
+import { DbConnSqlQueryInput, IDbConnSql } from '../interface'
 
 export type Config = {
   t: 'powersync'
@@ -26,7 +26,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
   }
 
   const subscribe = async <TRow>(
-    input: DbConnQueryInput<TRow> & {
+    input: DbConnSqlQueryInput<TRow> & {
       onChange: (rows: TRow[]) => void
     },
   ) => {
@@ -58,7 +58,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     }
   >()
 
-  const sub: IDbConnSql['sub'] = <TRow>(input: DbConnQueryInput<TRow>) => {
+  const sub: IDbConnSql['sub'] = <TRow>(input: DbConnSqlQueryInput<TRow>) => {
     const sql = Sql.to(input.sql, input.vars)
     const subscriptionKey = sql
     logger.debug(`subscriptionKey=${subscriptionKey}`)

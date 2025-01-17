@@ -31,18 +31,18 @@ const BaseFixture = async (): Promise<{ ctx: BackendCtx }> => {
     case 'integration': {
       const userAccountDb = UserAccountDb({
         t: 'postgres',
-        dbConnSql: testEnv.dbConnSql,
+        dbConnSql: testEnv.dbConnPostgres,
       })
       const userSessionDb = await UserSessionDb({
         t: 'postgres-with-cache',
-        dbConnSql: testEnv.dbConnSql,
+        dbConnSql: testEnv.dbConnPostgres,
         dbConnKv: testEnv.dbConnKv,
         logger: f.ctx.logger,
         pubSubTopicBased: f.ctx.pubSub,
       })
       const guestSessionMappingDb = GuestSessionMappingDb({
         t: 'postgres',
-        dbConnSql: testEnv.dbConnSql,
+        dbConnSql: testEnv.dbConnPostgres,
       })
       return {
         ctx: {

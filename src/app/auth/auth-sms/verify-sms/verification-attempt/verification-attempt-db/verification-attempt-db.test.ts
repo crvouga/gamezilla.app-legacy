@@ -13,7 +13,7 @@ const Fixture = async () => {
       return {
         verificationAttemptDb: VerificationAttemptDb({
           t: 'postgres',
-          dbConnSql: testEnv.dbConnSql,
+          dbConnSql: testEnv.dbConnPostgres,
         }),
       }
     }

@@ -2,7 +2,7 @@ import { p } from '~/@/parser'
 import { Err, isErr, Ok, Result } from '~/@/result'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 
-const getPowersyncCredentials = async (): Promise<Result<string, { token: string }>> => {
+const getPowerSyncCredentials = async (): Promise<Result<string, { token: string }>> => {
   try {
     const PATH = '/powersync/credentials'
     let urlString = PATH
@@ -43,5 +43,5 @@ const ensureProtocol = (url: string) => {
 }
 
 export const BackendAppRpc = {
-  getPowersyncCredentials,
+  getPowerSyncCredentials,
 }

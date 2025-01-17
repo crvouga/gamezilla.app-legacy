@@ -20,10 +20,10 @@ export const BaseFixtures = async () => {
 
   configs.push({
     t: 'with-ensure-tables',
-    dbConnSql: f.dbConnSql,
+    dbConnSql: f.dbConnPostgres,
     puzzleDb: PuzzleDb({
       t: 'db-conn-sql',
-      dbConnSql: f.dbConnSql,
+      dbConnSql: f.dbConnPostgres,
       logger: Logger({ t: 'noop' }),
     }),
   })
@@ -31,7 +31,7 @@ export const BaseFixtures = async () => {
   if (f.t === 'integration') {
     configs.push({
       t: 'db-conn-sql',
-      dbConnSql: f.dbConnSql,
+      dbConnSql: f.dbConnPostgres,
       logger: Logger({ t: 'noop' }),
     })
   }

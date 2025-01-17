@@ -7,7 +7,7 @@ import { Logger } from '../logger'
 import { p } from '../parser'
 import { isErr, isOk } from '../result'
 import { Config, DbConnSql } from './backend-impl'
-import { newPowersyncDatabase } from '../../../powersync/frontend/database'
+import { newPowerSyncDatabase } from '../../../powersync/frontend/database'
 
 // @ts-ignore
 if (!globalThis.readAsync) {
@@ -40,7 +40,7 @@ const Fixtures = async () => {
   if (SHOULD_TEST_POWERSYNC) {
     configs.push({
       t: 'powersync',
-      powersync: newPowersyncDatabase({
+      powersync: newPowerSyncDatabase({
         dbFilename: ':memory:',
       }),
       logger: Logger({ t: 'noop' }),

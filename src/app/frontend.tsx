@@ -14,7 +14,7 @@ import { Posix } from '~/@/time/posix'
 import { IconGamepad, IconUserCircle, LoadingState, Portal } from '~/app/@/ui'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
-import { newPowersyncDatabase } from '../../powersync/frontend/database'
+import { newPowerSyncDatabase } from '../../powersync/frontend/database'
 import { ILogger, Logger } from '../@/logger'
 import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
@@ -76,7 +76,7 @@ export const initCtx = async (): Promise<FrontendCtx> => {
   // const dbConnSql = dbConnSqlNoop
   const dbConnSql = await DbConnSql({
     t: 'powersync',
-    powersync: newPowersyncDatabase(),
+    powersync: newPowerSyncDatabase(),
     logger: loggerNoop,
   })
 
