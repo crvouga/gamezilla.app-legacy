@@ -74,30 +74,54 @@ const Fixtures = async () => {
 describe('db-conn-sql', () => {
   test('querying ok', async () => {
     for (const f of await Fixtures()) {
-      const result = await f.dbConnSql.query(p.unknown, `SELECT 1`, {})
+      const result = await f.dbConnSql.query({
+        parser: p.unknown,
+        rawSql: `SELECT 1`,
+        variables: {},
+      })
       expect(isOk(result)).toBe(true)
     }
   })
 
   test('querying err', async () => {
     for (const f of await Fixtures()) {
-      const result = await f.dbConnSql.query(p.unknown, `SELECT foo`, {})
+      const result = await f.dbConnSql.query({
+        parser: p.unknown,
+        rawSql: `SELECT foo`,
+        variables: {},
+      })
       expect(isErr(result)).toBe(true)
     }
   })
 
   test('create, insert, query, drop', async () => {
     for (const f of await Fixtures()) {
-      const created = await f.dbConnSql.query(p.unknown, `CREATE TABLE foo (id SERIAL PRIMARY KEY)`, {})
+      const created = await f.dbConnSql.query({
+        parser: p.unknown,
+        rawSql: `CREATE TABLE foo (id SERIAL PRIMARY KEY)`,
+        variables: {},
+      })
       expect(isOk(created)).toBe(true)
-      const inserted = await f.dbConnSql.query(p.unknown, `INSERT INTO foo DEFAULT VALUES`, {})
+      const inserted = await f.dbConnSql.query({
+        parser: p.unknown,
+        rawSql: `INSERT INTO foo DEFAULT VALUES`,
+        variables: {},
+      })
       expect(isOk(inserted)).toBe(true)
-      const queried = await f.dbConnSql.query(p.obj({ id: p.num }), `SELECT id FROM foo`, {})
+      const queried = await f.dbConnSql.query({
+        parser: p.obj({ id: p.num }),
+        rawSql: `SELECT id FROM foo`,
+        variables: {},
+      })
       expect(isOk(queried)).toBe(true)
       if (isOk(queried)) {
         expect(queried.value).toEqual([{ id: 1 }])
       }
-      const dropped = await f.dbConnSql.query(p.unknown, `DROP TABLE foo`, {})
+      const dropped = await f.dbConnSql.query({
+        parser: p.unknown,
+        rawSql: `DROP TABLE foo`,
+        variables: {},
+      })
       expect(isOk(dropped)).toBe(true)
     }
   })

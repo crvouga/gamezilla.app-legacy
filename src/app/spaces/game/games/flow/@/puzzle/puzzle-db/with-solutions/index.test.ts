@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import { Result } from '~/@/result'
-import { VariantGridShorthand } from '../../variant/grid'
-import { Puzzle } from '../puzzle'
-import { PuzzleDbFixture } from './fixture'
-import { WithSolutions } from './with-solutions'
+import { VariantGridShorthand } from '../../../variant/grid'
+import { Puzzle } from '../../puzzle'
+import { PuzzleDbFixture } from '../fixture'
+import { WithSolutions } from '.'
 
 const Fixture = async () => {
   const f = await PuzzleDbFixture()

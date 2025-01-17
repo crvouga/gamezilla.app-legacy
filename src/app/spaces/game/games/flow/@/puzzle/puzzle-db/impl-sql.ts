@@ -15,9 +15,9 @@ import { Row } from './sql/row'
 export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }): IPuzzleDb => {
   return {
     async get(flowPuzzleId) {
-      const queried = await config.dbConnSql.query(
-        Row,
-        `
+      const queried = await config.dbConnSql.query({
+        parser: Row,
+        rawSql: `
         SELECT
           id,
           flow_puzzle_name,
@@ -34,10 +34,10 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
         AND deleted_at IS NULL
         LIMIT 1
         `,
-        {
+        variables: {
           id: flowPuzzleId,
         },
-      )
+      })
 
       if (isErr(queried)) {
         return queried
@@ -61,43 +61,48 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
     async count(input) {
       const where = toSqlWhere(input)
 
-      const queried = await config.dbConnSql.query(
-        p.obj({
+      const queried = await config.dbConnSql.query({
+        parser: p.obj({
           count: p.str,
         }),
-        `
+        rawSql: `
         SELECT
           COUNT(id) AS count
         FROM
           game_flow_puzzle
         ${where.str}
         `,
-        where.variables,
-      )
+        variables: where.variables,
+      })
+
       return Result.mapOk(queried, (x) => Number.parseFloat(x[0]?.count ?? '0'))
     },
 
     async query(input) {
       const sql = toQuerySql(input)
-      const queried = await config.dbConnSql.query(Row, sql.str, sql.variables)
+      const queried = await config.dbConnSql.query({
+        parser: Row,
+        rawSql: sql.str,
+        variables: sql.variables,
+      })
 
       if (isErr(queried)) {
         return queried
       }
 
-      const queriedCount = await config.dbConnSql.query(
-        p.obj({
+      const queriedCount = await config.dbConnSql.query({
+        parser: p.obj({
           count: p.str,
         }),
-        `
+        rawSql: `
 				SELECT
 					COUNT(id) AS count
 				FROM
           game_flow_puzzle
 				${sql.where.str}
 				`,
-        sql.variables,
-      )
+        variables: sql.variables,
+      })
 
       if (isErr(queriedCount)) {
         return queriedCount
@@ -129,9 +134,9 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
     },
 
     async put(flowPuzzle) {
-      const queried = await config.dbConnSql.query(
-        p.unknown,
-        `
+      const queried = await config.dbConnSql.query({
+        parser: p.unknown,
+        rawSql: `
 				INSERT INTO game_flow_puzzle (
 					id,
 					flow_puzzle_name,
@@ -159,7 +164,7 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
 					last_updated_by_user_id = :last_updated_by_user_id,
 					flow_solutions = :flow_solutions
 				`,
-        {
+        variables: {
           id: flowPuzzle.id,
           flow_puzzle_name: flowPuzzle.name,
           flow: Sql.json(flowPuzzle.flow),
@@ -169,14 +174,14 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
           last_updated_at_posix: flowPuzzle.lastUpdatedAt,
           last_updated_by_user_id: flowPuzzle.lastUpdatedBy,
         },
-      )
+      })
       return Result.mapOk(queried, () => null)
     },
 
     async zap(input) {
-      const queried = await config.dbConnSql.query(
-        p.num,
-        `
+      const queried = await config.dbConnSql.query({
+        parser: p.num,
+        rawSql: `
 				UPDATE
 					game_flow_puzzle
 				SET
@@ -185,12 +190,12 @@ export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }):
 				WHERE
 					id = :id
 				`,
-        {
+        variables: {
           deleted_at: Posix.now(),
           deleted_by_user_id: input.deletedByUserId,
           id: input.id,
         },
-      )
+      })
       return Result.mapOk(queried, () => null)
     },
 

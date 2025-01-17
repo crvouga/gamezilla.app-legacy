@@ -9,16 +9,20 @@ export type DbConnSqlNotification = {
 }
 
 export type IDbConnSql = {
-  query: <TRow>(parser: p.Parser<TRow>, rawSql: string, variables: Sql.Vars) => Promise<Result<string, TRow[]>>
+  query: <TRow>(input: {
+    parser: p.Parser<TRow>
+    rawSql: string
+    variables: Sql.Vars
+  }) => Promise<Result<string, TRow[]>>
   // execute: (rawSql: string, variables: Sql.Vars) => Promise<Result<string, null>>
   listen: (channel: string, callback: (notification: DbConnSqlNotification) => void) => Promise<() => Promise<void>>
   notify: (channel: string, payload: string) => Promise<Result<string, null>>
-  subscribe: <TRow>(
-    parser: p.Parser<TRow>,
-    rawSql: string,
-    variables: Sql.Vars,
-    onChange: (rows: TRow[]) => void,
-  ) => Promise<{
+  subscribe: <TRow>(input: {
+    parser: p.Parser<TRow>
+    rawSql: string
+    variables: Sql.Vars
+    onChange: (rows: TRow[]) => void
+  }) => Promise<{
     initialRows: TRow[]
     unsubscribe: () => Promise<void>
     refresh: () => Promise<void>

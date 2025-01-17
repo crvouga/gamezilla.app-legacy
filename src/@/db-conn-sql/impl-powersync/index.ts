@@ -14,24 +14,37 @@ export type Config = {
 
 export const DbConnSql = (config: Config): IDbConnSql => {
   const logger = Logger.prefix('powersync', config.logger)
-  const query: IDbConnSql['query'] = async <TRow>(rowParser: p.Parser<TRow>, rawSql: string, variables: Sql.Vars) => {
+  const query: IDbConnSql['query'] = async <TRow>({
+    rawSql,
+    parser,
+    variables,
+  }: {
+    parser: p.Parser<TRow>
+    rawSql: string
+    variables: Sql.Vars
+  }) => {
     try {
       const sql = Sql.to(rawSql, variables)
       const rows = await config.powersync.getAll?.(sql)
       if (!rows) return Err('No results')
-      const parsedRows: TRow[] = rows.map(rowParser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : []))
+      const parsedRows: TRow[] = rows.map(parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : []))
       return Ok(parsedRows)
     } catch (error) {
       return Err(String(error))
     }
   }
 
-  const subscribe: IDbConnSql['subscribe'] = async <TRow>(
-    parser: p.Parser<TRow>,
-    rawSql: string,
-    variables: Sql.Vars,
-    onChange: (rows: TRow[]) => void,
-  ) => {
+  const subscribe: IDbConnSql['subscribe'] = async <TRow>({
+    onChange,
+    parser,
+    rawSql,
+    variables,
+  }: {
+    parser: p.Parser<TRow>
+    rawSql: string
+    variables: Sql.Vars
+    onChange: (rows: TRow[]) => void
+  }) => {
     const sql = Sql.to(rawSql, variables)
 
     config.powersync.getAll?.(sql).then((rows) => {
@@ -89,17 +102,22 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     const pubSub = PubSub.create<TRow[]>()
     let lastPublished: TRow[] | null = null
 
-    const subscribed = subscribe(input.parser, input.rawSql, input.variables, (rows) => {
-      if (
-        lastPublished &&
-        rows.length === lastPublished.length &&
-        rows.every((row, idx) => lastPublished && JSON.stringify(row) === JSON.stringify(lastPublished[idx]))
-      ) {
-        return
-      }
+    const subscribed = subscribe({
+      parser: input.parser,
+      rawSql: input.rawSql,
+      variables: input.variables,
+      onChange: (rows) => {
+        if (
+          lastPublished &&
+          rows.length === lastPublished.length &&
+          rows.every((row, idx) => lastPublished && JSON.stringify(row) === JSON.stringify(lastPublished[idx]))
+        ) {
+          return
+        }
 
-      lastPublished = rows
-      pubSub.pub(rows)
+        lastPublished = rows
+        pubSub.pub(rows)
+      },
     })
 
     activeSubscriptions.set(subscriptionKey, {

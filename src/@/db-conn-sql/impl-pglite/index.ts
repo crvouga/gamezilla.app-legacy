@@ -43,8 +43,8 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     },
   })
 
-  const subscribe: IDbConnSql['subscribe'] = async (parser, rawSql, params, onChange) => {
-    const sql = Sql.to(rawSql, params)
+  const subscribe: IDbConnSql['subscribe'] = async ({ parser, rawSql, variables, onChange }) => {
+    const sql = Sql.to(rawSql, variables)
 
     logger.debug(`subscribing to sql=${sql}`)
 
@@ -108,17 +108,22 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       const pubSub = PubSub.create<TRow[]>()
       let lastPublished: TRow[] | null = null
 
-      const subscribed = subscribe(input.parser, input.rawSql, input.variables, (rows) => {
-        if (
-          lastPublished &&
-          rows.length === lastPublished.length &&
-          rows.every((row, idx) => lastPublished && JSON.stringify(row) === JSON.stringify(lastPublished[idx]))
-        ) {
-          return
-        }
+      const subscribed = subscribe({
+        parser: input.parser,
+        rawSql: input.rawSql,
+        variables: input.variables,
+        onChange: (rows) => {
+          if (
+            lastPublished &&
+            rows.length === lastPublished.length &&
+            rows.every((row, idx) => lastPublished && JSON.stringify(row) === JSON.stringify(lastPublished[idx]))
+          ) {
+            return
+          }
 
-        lastPublished = rows
-        pubSub.pub(rows)
+          lastPublished = rows
+          pubSub.pub(rows)
+        },
       })
 
       let syncShape: Promise<SyncShapeToTableResult>
@@ -163,8 +168,8 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       }
     },
 
-    async query(rowParser, rawSql, params) {
-      const sql = Sql.to(rawSql, params)
+    async query({ parser, rawSql, variables }) {
+      const sql = Sql.to(rawSql, variables)
 
       try {
         const start = process.hrtime.bigint()
@@ -178,16 +183,17 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
         const durationMs = Number(end - start) / 1e6
         const durationFormatted = `${durationMs.toFixed(2)}ms`
         logger.debug(
-          `duration=${durationFormatted}\nsql=\n${cleanSql(rawSql)}\nparams=${JSON.stringify(params, null, 4).slice(
-            0,
-            500,
-          )}`,
+          `duration=${durationFormatted}\nsql=\n${cleanSql(rawSql)}\nvariables=${JSON.stringify(
+            variables,
+            null,
+            4,
+          ).slice(0, 500)}`,
         )
 
-        const output: p.Infer<typeof rowParser>[] = []
+        const output: p.Infer<typeof parser>[] = []
 
         for (const row of results.rows) {
-          const parsed = rowParser.parse(row)
+          const parsed = parser.parse(row)
 
           switch (parsed.t) {
             case 'err': {

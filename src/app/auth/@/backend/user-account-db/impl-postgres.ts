@@ -45,9 +45,9 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
         return Ok(null)
       }
 
-      const queried = await dbConnSql.query(
-        UserAccountRow,
-        `
+      const queried = await dbConnSql.query({
+        parser: UserAccountRow,
+        rawSql: `
         SELECT
 					id,
 					created_at_posix,
@@ -58,10 +58,10 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
 				WHERE
 					id = :id
 				`,
-        {
+        variables: {
           id: input.userId,
         },
-      )
+      })
 
       if (isErr(queried)) {
         return queried
@@ -81,9 +81,9 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
     },
 
     async findOneByPhoneNumber(input) {
-      const queried = await dbConnSql.query(
-        UserAccountRow,
-        `
+      const queried = await dbConnSql.query({
+        parser: UserAccountRow,
+        rawSql: `
 				SELECT
 					id,
 					created_at_posix,
@@ -94,10 +94,10 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
 				WHERE
 					phone_number = :phone_number
 				`,
-        {
+        variables: {
           phone_number: PhoneNumber.toString(input.phoneNumber),
         },
-      )
+      })
 
       if (isErr(queried)) {
         return queried
@@ -122,9 +122,9 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
         user_role: input.account.role,
         phone_number: input.account.phoneNumber ? PhoneNumber.toString(input.account.phoneNumber) : null,
       }
-      const inserted = await dbConnSql.query(
-        p.unknown,
-        `
+      const inserted = await dbConnSql.query({
+        parser: p.unknown,
+        rawSql: `
         INSERT INTO user_account (
 					phone_number,
 					user_role,
@@ -137,8 +137,8 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
 					:id,
 					:created_at_posix
 				)`,
-        row,
-      )
+        variables: row,
+      })
       return Result.mapOk(inserted, () => null)
     },
   }

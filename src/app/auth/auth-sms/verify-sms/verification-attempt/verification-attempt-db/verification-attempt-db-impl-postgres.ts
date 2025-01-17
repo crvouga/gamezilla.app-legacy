@@ -40,7 +40,11 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
         inputted_code_hash: Sql.json(input.codeHash),
         created_at_posix: input.createdAt,
       }
-      const queried = await deps.dbConnSql.query(p.unknown, query, vars)
+      const queried = await deps.dbConnSql.query({
+        parser: p.unknown,
+        rawSql: query,
+        variables: vars,
+      })
       return Result.mapOk(queried, () => null)
     },
     async find(input) {
@@ -57,7 +61,11 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
 				ORDER BY created_at_posix DESC
 			`
 
-      const queried = await deps.dbConnSql.query(Row, query, where.vars)
+      const queried = await deps.dbConnSql.query({
+        parser: Row,
+        rawSql: query,
+        variables: where.vars,
+      })
 
       return Result.mapOk(queried, (rows) => rows.flatMap(rowToVerificationAttempt))
     },

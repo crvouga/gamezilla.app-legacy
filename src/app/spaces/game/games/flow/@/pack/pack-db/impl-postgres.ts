@@ -77,8 +77,12 @@ const ensureNumber = (maybeNumber: unknown): number => {
 export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackDb => {
   return {
     async get(id) {
-      const queried = await dbConnSql.query(Row, 'SELECT * FROM game_flow_pack WHERE id = :id', {
-        id: id,
+      const queried = await dbConnSql.query({
+        parser: Row,
+        rawSql: 'SELECT * FROM game_flow_pack WHERE id = :id',
+        variables: {
+          id: id,
+        },
       })
       return Result.mapOk(queried, (row) => (row[0] ? rowToPack(row[0]) : null))
     },
@@ -94,13 +98,13 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
 				${where.str}
 			`
 
-      const queried = await dbConnSql.query(
-        p.obj({
+      const queried = await dbConnSql.query({
+        parser: p.obj({
           count: p.or(p.num, p.str),
         }),
-        str,
-        vars,
-      )
+        rawSql: str,
+        variables: vars,
+      })
 
       return Result.mapOk(queried, (rows) => ensureNumber(rows[0]?.count))
     },
@@ -122,7 +126,7 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
 				${sqlPagination.str}
 			`
 
-      const queried = await dbConnSql.query(Row, str, vars)
+      const queried = await dbConnSql.query({ parser: Row, rawSql: str, variables: vars })
 
       const total = Result.unwrapOr(await this.count(input), 0)
 
@@ -141,9 +145,9 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
     },
 
     async put(input) {
-      const queried = await dbConnSql.query(
-        p.unknown,
-        `
+      const queried = await dbConnSql.query({
+        parser: p.unknown,
+        rawSql: `
 				INSERT INTO game_flow_pack (
 					id,
 					flow_pack_name,
@@ -170,7 +174,7 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
 					last_updated_at_posix = :last_updated_at_posix,
 					last_updated_by_user_id = :last_updated_by_user_id
 				`,
-        {
+        variables: {
           id: input.id,
           flow_pack_name: input.name,
           flow_puzzle_ids: Sql.commas(input.puzzleIds),
@@ -181,13 +185,17 @@ export const PackDbPostgres = ({ dbConnSql }: { dbConnSql: IDbConnSql }): IPackD
           deleted_at_posix: null,
           deleted_by_user_id: null,
         },
-      )
+      })
       return Result.mapOk(queried, () => input)
     },
 
     async zap(input) {
-      const queried = await dbConnSql.query(p.unknown, 'DELETE FROM game_flow_pack WHERE id = :id', {
-        id: input.id,
+      const queried = await dbConnSql.query({
+        parser: p.unknown,
+        rawSql: 'DELETE FROM game_flow_pack WHERE id = :id',
+        variables: {
+          id: input.id,
+        },
       })
       return Result.mapOk(queried, () => null)
     },

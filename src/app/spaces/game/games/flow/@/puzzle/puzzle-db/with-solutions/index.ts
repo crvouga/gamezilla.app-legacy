@@ -1,6 +1,6 @@
 import { Ok, isErr } from '~/@/result'
-import { AlgoSolveAsync } from '../../solutions/algo-solve-async'
-import type { IPuzzleDb } from './interface'
+import { AlgoSolveAsync } from '../../../solutions/algo-solve-async'
+import type { IPuzzleDb } from '../interface'
 
 export const SKIP_QUERIES = true
 

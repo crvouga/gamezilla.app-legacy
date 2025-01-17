@@ -18,7 +18,11 @@ export const PubSub = (config: Config): IPubSub => {
   const instanceId = Math.random().toString(36).substring(2)
   const SEPARATOR = '___'
 
-  config.dbConnSql.query(p.unknown, `LISTEN ${config.channel}`, {})
+  config.dbConnSql.query({
+    parser: p.unknown,
+    rawSql: `LISTEN ${config.channel}`,
+    variables: {},
+  })
 
   config.dbConnSql.listen(config.channel, (notification) => {
     if (notification.payload === undefined) {
@@ -46,7 +50,11 @@ export const PubSub = (config: Config): IPubSub => {
 
   return {
     async pub(msg) {
-      config.dbConnSql.query(p.unknown, `NOTIFY ${config.channel}, '${instanceId}${SEPARATOR}${msg}'`, {})
+      config.dbConnSql.query({
+        parser: p.unknown,
+        rawSql: `NOTIFY ${config.channel}, '${instanceId}${SEPARATOR}${msg}'`,
+        variables: {},
+      })
     },
 
     async sub(subscriber) {

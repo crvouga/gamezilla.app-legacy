@@ -23,7 +23,7 @@ describe(import.meta.file, () => {
   it('should render select pack screen', async () => {
     const f = await Fixture()
     const r = f.render(f.initial)
-    expect(r.getByRole('heading', f.ctx.t('flow.play'))).toBeTruthy()
+    expect(r.getByRole('heading', f.ctx.t('flow.select-a-pack'))).toBeTruthy()
   })
 
   it('should show pack screen after opening pack', async () => {

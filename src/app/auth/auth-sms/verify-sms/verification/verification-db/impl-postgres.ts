@@ -41,7 +41,11 @@ export const VerificationDb = (config: Config): IVerificationDb => {
         ...pagination.vars,
         ...order.vars,
       }
-      const queried = await config.dbConnSql.query(Row, query, vars)
+      const queried = await config.dbConnSql.query({
+        parser: Row,
+        rawSql: query,
+        variables: vars,
+      })
 
       if (isErr(queried)) {
         return queried
@@ -51,13 +55,13 @@ export const VerificationDb = (config: Config): IVerificationDb => {
 				SELECT COUNT(*) FROM auth_sms_verification
 				${where.str}
 			`
-      const queriedCount = await config.dbConnSql.query(
-        p.obj({
+      const queriedCount = await config.dbConnSql.query({
+        parser: p.obj({
           count: p.str,
         }),
-        queryCount,
-        vars,
-      )
+        rawSql: queryCount,
+        variables: vars,
+      })
 
       if (isErr(queriedCount)) {
         return queriedCount
@@ -106,7 +110,11 @@ export const VerificationDb = (config: Config): IVerificationDb => {
         code_hash: Sql.json(verification.codeHash),
         verified_at_posix: verification.verifiedAtPosix,
       }
-      const queried = await config.dbConnSql.query(p.unknown, query, vars)
+      const queried = await config.dbConnSql.query({
+        parser: p.unknown,
+        rawSql: query,
+        variables: vars,
+      })
 
       return Result.mapOk(queried, () => null)
     },
@@ -115,7 +123,11 @@ export const VerificationDb = (config: Config): IVerificationDb => {
       const vars = {
         id: verificationId,
       }
-      const queried = await config.dbConnSql.query(p.unknown, query, vars)
+      const queried = await config.dbConnSql.query({
+        parser: p.unknown,
+        rawSql: query,
+        variables: vars,
+      })
 
       return Result.mapOk(queried, () => null)
     },

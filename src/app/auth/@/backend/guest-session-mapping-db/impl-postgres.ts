@@ -29,13 +29,13 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
       const vars = {
         session_id: sessionId,
       }
-      const queried = await config.dbConnSql.query(
-        p.obj({
+      const queried = await config.dbConnSql.query({
+        parser: p.obj({
           id: UserId,
         }),
-        query,
-        vars,
-      )
+        rawSql: query,
+        variables: vars,
+      })
 
       if (isErr(queried)) {
         return queried
@@ -55,7 +55,11 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
         session_id: input.sessionId,
         created_at_posix: Posix.now(),
       }
-      const inserted = await config.dbConnSql.query(p.unknown, query, vars)
+      const inserted = await config.dbConnSql.query({
+        parser: p.unknown,
+        rawSql: query,
+        variables: vars,
+      })
       if (isErr(inserted)) {
         return inserted
       }

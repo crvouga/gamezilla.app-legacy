@@ -24,8 +24,12 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
     async get(key, parser) {
       try {
         const [queried, duration] = await withDuration(() =>
-          config.dbConnSql.query(Row, 'SELECT id, value FROM key_value WHERE id = :id', {
-            id: key,
+          config.dbConnSql.query({
+            parser: Row,
+            rawSql: 'SELECT id, value FROM key_value WHERE id = :id',
+            variables: {
+              id: key,
+            },
           }),
         )
         logger.info(`duration=${TimeSpan.toMilliseconds(duration)}ms get: key=${key}`)
@@ -70,7 +74,11 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
         const keysStr = keys.map((key) => `'${key}'`).join(', ')
 
         const [queried, duration] = await withDuration(() =>
-          config.dbConnSql.query(Row, `SELECT id, value FROM key_value WHERE id IN (${keysStr})`, {}),
+          config.dbConnSql.query({
+            parser: Row,
+            rawSql: `SELECT id, value FROM key_value WHERE id IN (${keysStr})`,
+            variables: {},
+          }),
         )
 
         logger.info(`duration=${TimeSpan.toMilliseconds(duration)}ms get: keys=${keys.join(', ')}`)
@@ -106,14 +114,15 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
     async set(key, value) {
       try {
-        const queried = await config.dbConnSql.query(
-          Row,
-          'INSERT INTO key_value (id, value) VALUES (:id, :value) ON CONFLICT (id) DO UPDATE SET value = :value',
-          {
+        const queried = await config.dbConnSql.query({
+          parser: Row,
+          rawSql:
+            'INSERT INTO key_value (id, value) VALUES (:id, :value) ON CONFLICT (id) DO UPDATE SET value = :value',
+          variables: {
             id: key,
             value: JSON.stringify(value),
           },
-        )
+        })
 
         if (isErr(queried)) {
           return queried
@@ -134,11 +143,11 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
       try {
         const valuesStr = entries.map(([key, value]) => `('${key}', '${JSON.stringify(value)}')`).join(', ')
 
-        const queried = await config.dbConnSql.query(
-          Row,
-          `INSERT INTO key_value (id, value) VALUES ${valuesStr} ON CONFLICT (id) DO UPDATE SET value = EXCLUDED.value`,
-          {},
-        )
+        const queried = await config.dbConnSql.query({
+          parser: Row,
+          rawSql: `INSERT INTO key_value (id, value) VALUES ${valuesStr} ON CONFLICT (id) DO UPDATE SET value = EXCLUDED.value`,
+          variables: {},
+        })
 
         if (isErr(queried)) {
           return queried
@@ -153,8 +162,12 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
     async zap(key) {
       try {
-        const queried = await config.dbConnSql.query(Row, 'DELETE FROM key_value WHERE id = :id', {
-          id: key,
+        const queried = await config.dbConnSql.query({
+          parser: Row,
+          rawSql: 'DELETE FROM key_value WHERE id = :id',
+          variables: {
+            id: key,
+          },
         })
 
         return Result.mapOk(queried, () => null)
