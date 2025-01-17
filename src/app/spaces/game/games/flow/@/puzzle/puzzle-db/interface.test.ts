@@ -13,7 +13,7 @@ const Fixtures = async () => {
   return await BaseFixtures()
 }
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   it('should be able to insert', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
