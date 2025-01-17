@@ -27,8 +27,6 @@ export const newPowersyncDatabase = (input?: { dbFilename?: string }) => {
 export const setup = async () => {
   const powersync = newPowersyncDatabase()
 
-  // await powersync.init()
-
   // @ts-expect-error
   window.powersync = powersync
 
