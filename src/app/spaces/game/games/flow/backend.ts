@@ -1,13 +1,12 @@
-import { Logger } from '~/@/logger'
 import { Sub } from '~/@/sub'
 import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
+import { FlowBackendCtx } from './@/backend/ctx'
 import { PackDb } from './@/pack/pack-db'
 import { PackListBackend } from './@/pack/pack-list'
 import { PackPuzzlesGridBackend } from './@/pack/pack-puzzles-grid/backend'
 import { PuzzleDb } from './@/puzzle/puzzle-db'
-import { FlowBackendCtx } from './@/backend/ctx'
 import { Solutions } from './@/solutions/solutions'
 import { BuilderBackend } from './builder/backend'
 import { PlayBackend } from './play/backend'
@@ -16,8 +15,8 @@ import type { BackendModule } from './types'
 export const initCtx = (input: { ctx: SpaceBackendCtx }): FlowBackendCtx => {
   return {
     ...input.ctx,
-    puzzleDb: PuzzleDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: Logger({ t: 'noop' }) }),
-    packDb: PackDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql }),
+    puzzleDb: PuzzleDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: input.ctx.logger }),
+    packDb: PackDb({ t: 'sql', dbConnSql: input.ctx.dbConnSql, logger: input.ctx.logger }),
     solutions: Solutions.init,
   }
 }

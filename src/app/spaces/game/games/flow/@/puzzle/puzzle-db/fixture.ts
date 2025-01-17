@@ -19,7 +19,7 @@ export const BaseFixtures = async () => {
   })
 
   configs.push({
-    t: 'with-ensure-tables',
+    t: 'with-sql-tables',
     dbConnSql: f.dbConnSqlite,
     puzzleDb: PuzzleDb({
       t: 'db-conn-sql',

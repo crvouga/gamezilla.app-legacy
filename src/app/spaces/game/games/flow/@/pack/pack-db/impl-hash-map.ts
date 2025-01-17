@@ -4,7 +4,11 @@ import type { IPackDb } from './interface'
 
 const db = new Map<string, Pack>()
 
-export const PackDbHashMap = (): IPackDb => {
+export type Config = {
+  t: 'hash-map'
+}
+
+export const PackDb = (_config: Config): IPackDb => {
   return {
     async get(id) {
       return Ok(db.get(id) ?? null)

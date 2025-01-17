@@ -70,7 +70,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
         return Ok(output)
       } catch (error) {
         logger.error(`${error} sql=${sql}`)
-        return Err(String(error))
+        return Err(`${error} sql=${sql}`)
       }
     },
 

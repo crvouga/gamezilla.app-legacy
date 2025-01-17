@@ -1,24 +1,20 @@
-import type { IDbConnSql } from '~/@/db-conn-sql'
+import * as ImplHashMap from './impl-hash-map'
+import * as ImplSql from './impl-sql'
+import * as WithSqlTables from './with-sql-tables'
 import type { IPackDb } from './interface'
-import { PackDbHashMap } from './impl-hash-map'
-import { PackDbPostgres } from './impl-postgres'
 
-export type Impl =
-  | {
-      t: 'hash-map'
-    }
-  | {
-      t: 'db-conn-sql'
-      dbConnSql: IDbConnSql
-    }
+export type Config = ImplHashMap.Config | ImplSql.Config | WithSqlTables.Config
 
-export const PackDb = (impl: Impl): IPackDb => {
-  switch (impl.t) {
+export const PackDb = (config: Config): IPackDb => {
+  switch (config.t) {
     case 'hash-map': {
-      return PackDbHashMap()
+      return ImplHashMap.PackDb(config)
     }
-    case 'db-conn-sql': {
-      return PackDbPostgres(impl)
+    case 'sql': {
+      return ImplSql.PackDb(config)
+    }
+    case 'with-sql-tables': {
+      return WithSqlTables.PackDb(config)
     }
   }
 }

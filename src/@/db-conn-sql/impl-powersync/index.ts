@@ -31,12 +31,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     },
   ) => {
     const sql = Sql.to(input.sql, input.vars)
-
-    config.powersync.getAll?.(sql).then((rows) => {
-      const parsedRows = rows?.map(input.parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : [])) ?? []
-      input.onChange(parsedRows)
-    })
-    let abortController = new AbortController()
+    const abortController = new AbortController()
     const watch = async () => {
       for await (const result of config.powersync.watch(sql, [], { signal: abortController.signal })) {
         const parsedRows =

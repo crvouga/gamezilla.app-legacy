@@ -153,11 +153,24 @@ const mapOk = <TError, A, B>(result: ResultInternal<TError, A>, mapper: (a: A) =
   }
 }
 
+const flatMapOk = <TError, A, B>(
+  result: ResultInternal<TError, A>,
+  mapper: (a: A) => ResultInternal<TError, B>,
+): ResultInternal<TError, B> => {
+  switch (result.t) {
+    case 'err':
+      return result
+    case 'ok':
+      return mapper(result.value)
+  }
+}
+
 export const ResultInternal = {
   is,
   Ok,
   Err,
   mapOk,
+  flatMapOk,
   mapErr,
   fromNullable,
   unwrapOr,

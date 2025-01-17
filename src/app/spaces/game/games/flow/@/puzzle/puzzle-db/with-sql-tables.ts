@@ -3,7 +3,7 @@ import { p } from '~/@/parser'
 import { IPuzzleDb } from './interface'
 
 export type Config = {
-  t: 'with-ensure-tables'
+  t: 'with-sql-tables'
   dbConnSql: IDbConnSql
   puzzleDb: IPuzzleDb
 }

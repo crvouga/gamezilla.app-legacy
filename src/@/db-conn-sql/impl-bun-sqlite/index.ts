@@ -27,8 +27,8 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       return Sub.None
     },
 
-    async query({ parser, sql: rawSql, vars: variables }) {
-      const sql = Sql.to(rawSql, variables)
+    async query(input) {
+      const sql = Sql.to(input.sql, input.vars)
 
       try {
         const start = process.hrtime.bigint()
@@ -42,17 +42,16 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
         const durationMs = Number(end - start) / 1e6
         const durationFormatted = `${durationMs.toFixed(2)}ms`
         logger.debug(
-          `duration=${durationFormatted}\nsql=\n${cleanSql(rawSql)}\nvariables=${JSON.stringify(
-            variables,
-            null,
-            4,
-          ).slice(0, 500)}`,
+          `duration=${durationFormatted}\nsql=\n${cleanSql(input.sql)}\vars=${JSON.stringify(input.vars, null, 4).slice(
+            0,
+            500,
+          )}`,
         )
 
-        const output: p.Infer<typeof parser>[] = []
+        const output: p.Infer<typeof input.parser>[] = []
 
         for (const row of rows) {
-          const parsed = parser.parse(row)
+          const parsed = input.parser.parse(row)
 
           switch (parsed.t) {
             case 'err': {
@@ -72,7 +71,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
         return Ok(output)
       } catch (error) {
         logger.error(`${error} sql=${sql}`)
-        return Err(String(error))
+        return Err(`${error} sql=${sql}`)
       }
     },
 

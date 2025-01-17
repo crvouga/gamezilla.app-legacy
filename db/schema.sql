@@ -100,11 +100,26 @@ CREATE TABLE public.game_chess_puzzle_profile (
 CREATE TABLE public.game_flow_pack (
     id text NOT NULL,
     flow_pack_name text NOT NULL,
-    flow_puzzle_ids text[] NOT NULL,
     created_at_posix bigint NOT NULL,
     created_by_user_id text NOT NULL,
     last_updated_at_posix bigint NOT NULL,
     last_updated_by_user_id text NOT NULL,
+    deleted_at_posix bigint,
+    deleted_by_user_id text
+);
+
+
+--
+-- Name: game_flow_pack_item; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.game_flow_pack_item (
+    id text NOT NULL,
+    pack_id text NOT NULL,
+    puzzle_id text NOT NULL,
+    "position" bigint NOT NULL,
+    created_at_posix bigint NOT NULL,
+    created_by_user_id text NOT NULL,
     deleted_at_posix bigint,
     deleted_by_user_id text
 );
@@ -248,6 +263,14 @@ ALTER TABLE ONLY public.game_chess_puzzle_profile
 
 
 --
+-- Name: game_flow_pack_item game_flow_pack_item_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.game_flow_pack_item
+    ADD CONSTRAINT game_flow_pack_item_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: game_flow_pack game_flow_pack_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -355,6 +378,13 @@ CREATE INDEX idx_game_chess_puzzle_rating ON public.game_chess_puzzle USING btre
 
 
 --
+-- Name: idx_game_flow_pack_item_pack_id_not_deleted; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_game_flow_pack_item_pack_id_not_deleted ON public.game_flow_pack_item USING btree (pack_id) WHERE (deleted_at_posix IS NULL);
+
+
+--
 -- Name: idx_user_guest_session_mapping_session_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -394,6 +424,13 @@ CREATE INDEX idx_username ON public.user_profile USING btree (username);
 --
 
 CREATE PUBLICATION electric_publication_default WITH (publish = 'insert, update, delete, truncate');
+
+
+--
+-- Name: powersync; Type: PUBLICATION; Schema: -; Owner: -
+--
+
+CREATE PUBLICATION powersync FOR ALL TABLES WITH (publish = 'insert, update, delete, truncate');
 
 
 --
@@ -440,4 +477,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240530071956'),
     ('20240630071855'),
     ('20250110223606'),
-    ('20250116191615');
+    ('20250116191615'),
+    ('20250117215818');

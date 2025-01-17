@@ -2,9 +2,9 @@ import { Logger } from '~/@/logger'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
 import { SpaceGameFixtureBackend } from '../../../../@/testing/backend'
+import { FlowBackendCtx } from '../../../@/backend/ctx'
 import { PackDb } from '../../../@/pack/pack-db'
 import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
-import { FlowBackendCtx } from '../../../@/backend/ctx'
 import { Solutions } from '../../../@/solutions/solutions'
 import { BuilderSpace } from '../../space'
 import { initBackend } from '../../types'
@@ -15,7 +15,11 @@ const initCtx = async (ctx: SpaceBackendCtx): Promise<FlowBackendCtx> => {
     case 'integration': {
       return {
         ...ctx,
-        packDb: PackDb({ t: 'db-conn-sql', dbConnSql: testEnv.dbConnPostgres }),
+        packDb: PackDb({
+          t: 'sql',
+          dbConnSql: testEnv.dbConnPostgres,
+          logger: Logger({ t: 'noop' }),
+        }),
         puzzleDb: await PuzzleDb({
           t: 'db-conn-sql',
           dbConnSql: testEnv.dbConnPostgres,
