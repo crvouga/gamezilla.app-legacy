@@ -1,7 +1,7 @@
-import type { Result } from '~/@/result'
 import type { p } from '~/@/parser'
+import type { Result } from '~/@/result'
 import type { Sql } from '~/@/sql'
-import { Sub } from '../sub'
+import { Sub } from '../../sub'
 
 export type DbConnSqlNotification = {
   channel: string

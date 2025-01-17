@@ -1,6 +1,6 @@
 import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
 import { type IDbConnSql } from '~/@/db-conn-sql'
-import { DbConnSql } from '~/@/db-conn-sql/backend-impl'
+import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
 import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
 import { HttpServer } from '~/@/http-server'
 import { Logger } from '~/@/logger'

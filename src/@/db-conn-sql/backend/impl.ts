@@ -1,9 +1,9 @@
-import * as ImplBunSqlite from './impl-bun-sqlite'
-import * as ImplNoop from './impl-noop'
-import * as ImplPgLite from './impl-pglite'
-import * as ImplPostgres from './impl-postgres'
-import * as ImplPowerSync from './impl-powersync'
-import type { IDbConnSql } from './interface'
+import * as ImplBunSqlite from '../impl-bun-sqlite'
+import * as ImplNoop from '../impl-noop'
+import * as ImplPgLite from '../impl-pglite'
+import * as ImplPostgres from '../impl-postgres'
+import * as ImplPowerSync from '../impl-powersync'
+import type { IDbConnSql } from '../interface'
 
 export type Config =
   | ImplPostgres.Config

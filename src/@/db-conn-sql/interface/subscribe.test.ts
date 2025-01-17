@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'bun:test'
 import 'fake-indexeddb/auto'
-import { Logger } from '../logger'
-import { p } from '../parser'
-import { Config, DbConnSql } from './backend-impl'
+import { Logger } from '../../logger'
+import { p } from '../../parser'
+import { Config, DbConnSql } from '../backend/impl'
 
 const Fixture = async (config: Config) => {
   const dbConnSql = await DbConnSql(config)

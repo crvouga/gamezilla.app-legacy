@@ -1,5 +1,5 @@
 import { Browser } from '~/@/browser'
-import { DbConnSql } from '~/@/db-conn-sql/frontend-impl'
+import { DbConnSql } from '~/@/db-conn-sql/frontend/impl'
 import { Eff } from '~/@/eff'
 import { eq } from '~/@/equals/equals'
 import { HttpClient } from '~/@/http-client'
