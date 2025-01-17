@@ -224,6 +224,8 @@ export const translations: Text = {
   'profile.profile': 'प्रोफ़ाइल',
   'profile-avatar.seed': 'बीज',
   'profile.update-username.update-username': 'उपयोगकर्ता नाम अपड (डेट करें',
+  'app.created-at': 'पर बनाया गया',
+  'app.last-updated': 'अंतिम अपडेट',
   'app.screen-not-found': 'स्क्रीन नहीं मिली',
   'app.back': 'वापस',
   'app.gamezilla-app': 'गेमजिला.एप',

@@ -219,6 +219,8 @@ export const translations: Text = {
   'profile.profile': '프로필',
   'profile-avatar.seed': '씨앗',
   'profile.update-username.update-username': '사용자 이름 업데이트',
+  'app.created-at': '생성 날짜',
+  'app.last-updated': '마지막 업데이트',
   'app.screen-not-found': '화면을 찾을 수 없습니다',
   'app.back': '뒤로',
   'app.gamezilla-app': 'gamezilla.app',

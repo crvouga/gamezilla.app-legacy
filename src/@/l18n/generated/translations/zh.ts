@@ -213,6 +213,8 @@ export const translations: Text = {
   'profile.profile': '个人资料',
   'profile-avatar.seed': '种子',
   'profile.update-username.update-username': '更新用户名',
+  'app.created-at': '创建于',
+  'app.last-updated': '最后更新',
   'app.screen-not-found': '找不到屏幕',
   'app.back': '返回',
   'app.gamezilla-app': 'gamezilla.app',

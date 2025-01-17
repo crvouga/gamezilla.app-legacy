@@ -3,14 +3,15 @@ import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { VDom } from '~/@/vdom/vdom'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { EmptyState, IconPuzzlePiece, Spinner } from '~/app/@/ui'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { VariantBoard } from '../../variant'
 import type { Puzzle } from '../puzzle'
 import { QueryPuzzlesInput } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
+import { QueryForm } from './query-form'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
-import { Spinner } from '~/app/@/ui'
 
 const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(
@@ -30,6 +31,7 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
     }
   }
 }
+
 const updateFromMsg: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'got-puzzle-db-puzzles': {
@@ -73,19 +75,29 @@ const View = (input: {
   ctx: FlowFrontendCtxRoot
   query: QueryPuzzlesInput
   model: ModelFrontend
+  onQueryChanged?: (query: QueryPuzzlesInput) => void
   onClick: (puzzle: Puzzle) => void
   fab?: VDom
 }) => {
   const queryKey = QueryPuzzlesInput.toKey(input.query)
   const puzzleIds = input.model.queries[queryKey] ?? []
-  const isLoading = !(queryKey in input.model.queries)
   const puzzles = puzzleIds.flatMap((id) => (input.ctx.puzzles[id] ? [input.ctx.puzzles[id]] : []))
+
+  const isLoading = !(queryKey in input.model.queries)
+  const isEmpty = !isLoading && puzzles.length === 0
+
   return (
     <div className='relative flex h-full w-full flex-col gap-2 overflow-hidden'>
+      <QueryForm.View ctx={input.ctx} query={input.query} />
+
       <div className='relative flex w-full flex-1 flex-col items-center overflow-y-scroll'>
         {puzzles.map((puzzle) => (
           <ViewListItem key={puzzle.id} now={input.ctx.now} puzzle={puzzle} onClick={() => input.onClick(puzzle)} />
         ))}
+
+        {isEmpty && (
+          <EmptyState renderIcon={(input) => <IconPuzzlePiece {...input} />} label={input.ctx.t('flow.no-puzzles')} />
+        )}
 
         {isLoading && (
           <div className='flex h-full w-full flex-col items-center'>

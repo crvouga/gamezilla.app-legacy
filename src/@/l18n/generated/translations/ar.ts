@@ -225,6 +225,8 @@ export const translations: Text = {
   'profile.profile': 'الملف الشخصي',
   'profile-avatar.seed': 'بذرة',
   'profile.update-username.update-username': 'تحديث اسم المستخدم',
+  'app.created-at': 'تم الإنشاء في',
+  'app.last-updated': 'آخر تحديث',
   'app.screen-not-found': 'الشاشة غير موجودة',
   'app.back': 'عودة',
   'app.gamezilla-app': 'gamezilla.app',

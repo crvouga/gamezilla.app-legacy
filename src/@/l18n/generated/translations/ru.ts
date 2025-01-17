@@ -225,6 +225,8 @@ export const translations: Text = {
   'profile.profile': 'Профиль',
   'profile-avatar.seed': 'Семя',
   'profile.update-username.update-username': 'Обновить имя пользователя',
+  'app.created-at': 'Создано в',
+  'app.last-updated': 'Последнее обновление',
   'app.screen-not-found': 'Экран не найден',
   'app.back': 'Назад',
   'app.gamezilla-app': 'gamezilla.app',

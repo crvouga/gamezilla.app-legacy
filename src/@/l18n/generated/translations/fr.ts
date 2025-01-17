@@ -213,6 +213,8 @@ export const translations: Text = {
   'profile.profile': 'Profil',
   'profile-avatar.seed': 'Graine',
   'profile.update-username.update-username': "Mettre à jour le nom d'utilisateur",
+  'app.created-at': 'Créé à',
+  'app.last-updated': 'Dernière mise à jour',
   'app.screen-not-found': 'Écran non trouvé',
   'app.back': 'Retour',
   'app.gamezilla-app': 'gamezilla.app',

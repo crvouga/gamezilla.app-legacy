@@ -215,6 +215,8 @@ export const translations: Text = {
   'profile.profile': 'Perfil',
   'profile-avatar.seed': 'Semilla',
   'profile.update-username.update-username': 'Actualizar nombre de usuario',
+  'app.created-at': 'Creado en',
+  'app.last-updated': 'Última actualización',
   'app.screen-not-found': 'Pantalla no encontrada',
   'app.back': 'Atrás',
   'app.gamezilla-app': 'gamezilla.app',

@@ -56,6 +56,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
+  const query = toPuzzleQuery(input)
   return (
     <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden'>
       <TopBar
@@ -68,15 +69,11 @@ const View: FrontendModule['View'] = (input) => {
       <PuzzleListFrontend.View
         ctx={input.ctx}
         model={input.ctx.puzzleList}
-        query={toPuzzleQuery(input)}
+        query={query}
         onClick={(puzzle) =>
           input.dispatch({
             t: 'got-msg-space',
-            c: {
-              t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
-              puzzle,
-              userId: input.ctx.currentUserId,
-            },
+            c: { t: 'screen-puzzle-builder-open.clicked-puzzle-list-item', puzzle, userId: input.ctx.currentUserId },
           })
         }
         fab={<CreateNewPuzzleFrontend.ViewCreateFab {...input} />}

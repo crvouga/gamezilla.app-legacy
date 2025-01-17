@@ -221,6 +221,8 @@ export const translations: Text = {
   'profile.profile': 'プロフィール',
   'profile-avatar.seed': 'シード',
   'profile.update-username.update-username': 'ユーザー名を更新',
+  'app.created-at': '作成日',
+  'app.last-updated': '最終更新',
   'app.screen-not-found': '画面が見つかりません',
   'app.back': '戻る',
   'app.gamezilla-app': 'gamezilla.app',
