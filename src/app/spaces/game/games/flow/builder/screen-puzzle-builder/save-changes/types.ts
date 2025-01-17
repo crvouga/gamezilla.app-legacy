@@ -8,17 +8,13 @@ import { Puzzle } from '../../../@/puzzle/puzzle'
 //
 
 export type ModelFrontend = {
-  puzzleSaveChangesRequest?: RemoteResult<string, null>
+  puzzleSaveChangesRequest?: RemoteResult<string, unknown>
   puzzleSaveChangesIsExiting?: boolean
 }
 
 export const initFrontend: ModelFrontend = {}
 
 export type ModelBackend = {}
-
-//
-//
-//
 
 export type MsgFrontend =
   | {
@@ -33,24 +29,17 @@ export type MsgFrontend =
   | {
       t: 'screen-puzzle-builder.save-changes.user-clicked-discard-and-exit'
     }
+  | {
+      t: 'screen-puzzle-builder.save-changed.db-saved-puzzle'
+      saved: Result<string, Puzzle>
+      userId: UserId
+    }
 
 export type MsgBackend = { t: 'noop' }
 
-export type MsgToBackend =
-  | {
-      t: 'screen-puzzle-builder.save-changes.user-clicked-save-button'
-      puzzle: Puzzle
-    }
-  | {
-      t: 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit'
-      puzzle: Puzzle
-    }
+export type MsgToBackend = { t: 'noop' }
 
 export type MsgToFrontend = { t: 'noop' }
-
-//
-//
-//
 
 export const MsgSpace = p.obj({
   t: p.l('screen-puzzle-builder.saved-puzzle'),
