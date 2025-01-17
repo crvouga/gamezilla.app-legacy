@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { Ok } from '~/@/result'
-import { AppBackendTestEnv, FixtureAppBackend } from '~/app/@/backend/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { FlowHash } from '../../flow/hash'
 import { VariantGridShorthand } from '../../variant/grid'
 import { Solutions } from '../solutions'
@@ -15,7 +15,7 @@ const Fixture = async (config: Config) => {
 }
 
 const Fixtures = async () => {
-  const env = await AppBackendTestEnv()
+  const env = await FixtureAppBackend()
   const f = await FixtureAppBackend()
 
   const configs: Config[] = [
@@ -25,7 +25,7 @@ const Fixtures = async () => {
     },
   ]
 
-  if (env.t === 'integration' || env.t === 'all') {
+  if (env.t === 'integration') {
     configs.push({
       t: 'postgres',
       dbConnSql: f.ctx.dbConnSql,

@@ -1,31 +1,40 @@
-import { AppBackendTestEnv } from '~/app/@/backend/fixture'
 import { Logger } from '~/@/logger'
-import { PuzzleDb } from './impl'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
+import { Config, PuzzleDb } from './impl'
 
-export const PuzzleDbFixture = async () => {
-  const testEnv = await AppBackendTestEnv()
-  switch (testEnv.t) {
-    case 'all':
-    case 'integration': {
-      const flowPuzzleDb = PuzzleDb({
-        t: 'db-conn-sql',
-        dbConnSql: testEnv.dbConnSql,
-        logger: Logger({
-          t: 'noop',
-        }),
-      })
-
-      return {
-        flowPuzzleDb,
-      }
-    }
-    case 'unit': {
-      const flowPuzzleDb = PuzzleDb({
-        t: 'hash-map',
-      })
-      return {
-        flowPuzzleDb,
-      }
-    }
+const BaseFixture = (config: Config) => {
+  const flowPuzzleDb = PuzzleDb(config)
+  return {
+    flowPuzzleDb,
   }
+}
+
+export const BaseFixtures = async () => {
+  const f = await FixtureAppBackend()
+
+  const configs: Config[] = []
+
+  configs.push({
+    t: 'hash-map',
+  })
+
+  configs.push({
+    t: 'with-ensure-tables',
+    dbConnSql: f.dbConnSql,
+    puzzleDb: PuzzleDb({
+      t: 'db-conn-sql',
+      dbConnSql: f.dbConnSql,
+      logger: Logger({ t: 'noop' }),
+    }),
+  })
+
+  if (f.t === 'integration') {
+    configs.push({
+      t: 'db-conn-sql',
+      dbConnSql: f.dbConnSql,
+      logger: Logger({ t: 'noop' }),
+    })
+  }
+
+  return Promise.all(configs.map(BaseFixture))
 }

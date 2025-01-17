@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { ascend, descend } from '~/@/array/sorting'
 import { Ok, unwrap } from '~/@/result'
-import { AppBackendTestEnv } from '~/app/@/backend/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Verification } from '../verification'
 import { VerificationDb } from './impl'
 import { Posix } from '~/@/time/posix'
@@ -9,9 +9,8 @@ import { TimeSpan } from '~/@/time/time-span'
 
 const FixtureVariant = async () => {
   //
-  const testEnv = await AppBackendTestEnv()
+  const testEnv = await FixtureAppBackend()
   switch (testEnv.t) {
-    case 'all':
     case 'integration': {
       return {
         verificationDb: VerificationDb({

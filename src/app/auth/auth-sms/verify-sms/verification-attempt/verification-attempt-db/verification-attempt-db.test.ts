@@ -1,15 +1,14 @@
 import { describe, expect, it } from 'bun:test'
-import { AppBackendTestEnv } from '~/app/@/backend/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { VerificationAttempt } from '../verification-attempt'
 import { VerificationAttemptDb } from './verification-attempt-db-impl'
 import { unwrap } from '~/@/result'
 import { VerificationId } from '../../verification/verification-id'
 
 const Fixture = async () => {
-  const testEnv = await AppBackendTestEnv()
+  const testEnv = await FixtureAppBackend()
 
   switch (testEnv.t) {
-    case 'all':
     case 'integration': {
       return {
         verificationAttemptDb: VerificationAttemptDb({

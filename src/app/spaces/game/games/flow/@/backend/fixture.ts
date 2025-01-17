@@ -2,8 +2,8 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
 import { FixtureSpaceBackend } from '~/app/spaces/@/fixture/backend'
-import { FlowSpace } from '../../space'
 import { FlowBackend } from '../../backend'
+import { FlowSpace } from '../../space'
 import { ModelSpace } from '../../types'
 import { PackDb } from '../pack/pack-db'
 import { PuzzleDb } from '../puzzle/puzzle-db'
@@ -22,7 +22,7 @@ export const FixtureFlowBackend = async () => {
     ...f.ctx,
     solutions: Solutions.init,
     packDb: PackDb({ t: 'hash-map' }),
-    puzzleDb: PuzzleDb({ t: 'hash-map' }),
+    puzzleDb: await PuzzleDb({ t: 'hash-map' }),
   }
 
   const updates = async (outputs: NonEmpty<Output>, inputs: Input[]): Promise<NonEmpty<Output>> => {

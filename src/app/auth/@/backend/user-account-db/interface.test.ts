@@ -2,16 +2,15 @@ import { describe, expect, it } from 'bun:test'
 import { Ok, Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 import type { UserAccount } from '~/app/@/data/account'
-import { AppBackendTestEnv } from '~/app/@/backend/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserAccountDb } from './impl'
 import { Posix } from '~/@/time/posix'
 import { PhoneNumber } from '~/@/phone-number'
 
 const Fixture = async () => {
-  const testEnv = await AppBackendTestEnv()
+  const testEnv = await FixtureAppBackend()
 
   switch (testEnv.t) {
-    case 'all':
     case 'integration': {
       return {
         userAccountDb: UserAccountDb({

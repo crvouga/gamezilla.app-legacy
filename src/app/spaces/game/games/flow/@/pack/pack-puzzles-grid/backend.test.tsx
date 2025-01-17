@@ -34,7 +34,7 @@ const Fixture = async () => {
   const ctx: FlowBackendCtx = {
     ...f.ctx,
     packDb: PackDb({ t: 'hash-map' }),
-    puzzleDb: PuzzleDb({ t: 'hash-map' }),
+    puzzleDb: await PuzzleDb({ t: 'hash-map' }),
     solutions: Solutions.init,
   }
   const frontend = randomAuthenticatedFrontend()

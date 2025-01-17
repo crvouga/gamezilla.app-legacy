@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'bun:test'
-import { isErr, unwrap } from '~/@/result'
 import { Logger } from '~/@/logger'
-import { AppBackendTestEnv } from '~/app/@/backend/fixture'
+import { PhoneNumber } from '~/@/phone-number'
+import { isErr, unwrap } from '~/@/result'
 import { Config, VerifySMS } from './impl'
 import { VerifySMSInHouseFixture } from './impl/impl-in-house/@/fixture'
-import { PhoneNumber } from '~/@/phone-number'
 
 const Fixture = (config: Config) => {
   const verifySMS = VerifySMS(config)
@@ -16,12 +15,13 @@ const Fixture = (config: Config) => {
 }
 
 const Fixtures = async () => {
+  const configs: Config[] = []
+
   const inHouseFixture = await VerifySMSInHouseFixture()
-  const testEnv = await AppBackendTestEnv()
+  configs.push(inHouseFixture)
 
-  const configs: Config[] = [inHouseFixture]
-
-  if (testEnv.t === 'all') {
+  const TEST_TWILIO = false
+  if (TEST_TWILIO) {
     configs.push({ t: 'twilio', logger: Logger({ t: 'console' }) })
   }
 

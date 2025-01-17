@@ -1,4 +1,4 @@
-import { AppBackendTestEnv } from '~/app/@/backend/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Config, WireSessionDb } from './impl'
 import { Logger } from '~/@/logger'
 import { describe, expect, test } from 'bun:test'
@@ -11,7 +11,7 @@ const Fixture = async (config: Config) => {
 }
 
 const Fixtures = async () => {
-  const testEnv = await AppBackendTestEnv()
+  const testEnv = await FixtureAppBackend()
   const logger = Logger({ t: 'noop' })
   const configs: Config[] = [
     {

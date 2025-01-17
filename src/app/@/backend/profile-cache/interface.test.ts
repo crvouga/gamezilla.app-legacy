@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'bun:test'
 import { unwrapOr } from '~/@/result'
 import { Profile } from '~/app/@/data/profile'
-import { AppBackendTestEnv } from '~/app/@/backend/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { ProfileCache } from './impl'
 
 const Fixture = async () => {
-  const testEnv = await AppBackendTestEnv()
+  const testEnv = await FixtureAppBackend()
   const profileCache = await ProfileCache({
     t: 'db-conn-kv',
     dbConnKv: testEnv.dbConnKv,

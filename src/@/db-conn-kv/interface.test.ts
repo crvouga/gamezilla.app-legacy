@@ -3,7 +3,7 @@ import { p } from '~/@/parser'
 import { Ok, Result } from '~/@/result'
 import { Runtime } from '~/@/runtime'
 import { CONFIG_BACKEND } from '~/config/backend'
-import { AppBackendTestEnv } from '../../app/@/backend/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
 import { TimeSpan } from '../time/time-span'
@@ -11,11 +11,10 @@ import { Uuid } from '../uuid/uuid'
 import { DbConnKv } from './impl'
 
 const Fixture = async () => {
-  const testEnv = await AppBackendTestEnv()
+  const testEnv = await FixtureAppBackend()
   const logger = Logger({ t: 'noop' })
 
   switch (testEnv.t) {
-    case 'all':
     case 'integration': {
       const dbConnKv = testEnv.dbConnKv
 

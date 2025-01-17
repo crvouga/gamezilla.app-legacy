@@ -12,7 +12,13 @@ import type { IPuzzleDb } from './interface'
 import { OrderClause, QueryPuzzlesInput, WhereClause } from './query'
 import { Row } from './sql/row'
 
-export const PuzzleDbSql = (config: { logger: ILogger; dbConnSql: IDbConnSql }): IPuzzleDb => {
+export type Config = {
+  t: 'db-conn-sql'
+  logger: ILogger
+  dbConnSql: IDbConnSql
+}
+
+export const PuzzleDb = (config: Config): IPuzzleDb => {
   return {
     async get(flowPuzzleId) {
       const queried = await config.dbConnSql.query({

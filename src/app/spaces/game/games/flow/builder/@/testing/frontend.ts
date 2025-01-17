@@ -128,7 +128,7 @@ export const initial = {
 export const testFlowFrontendCtx = async (): Promise<FlowFrontendCtx> => {
   return {
     ...(await testSpaceFrontendCtx()),
-    puzzleDb: PuzzleDb({ t: 'hash-map' }),
+    puzzleDb: await PuzzleDb({ t: 'hash-map' }),
     packs: {},
     puzzles: {},
     puzzleList: PuzzleListTypes.initFrontend,

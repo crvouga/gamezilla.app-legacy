@@ -16,7 +16,11 @@ const calls = {
 
 const ERROR_EVERY = Number.POSITIVE_INFINITY
 
-export const PuzzleDbHashMap = (): IPuzzleDb => {
+export type Config = {
+  t: 'hash-map'
+}
+
+export const PuzzleDb = (_config: Config): IPuzzleDb => {
   return {
     async get(id) {
       calls.get++

@@ -1,16 +1,15 @@
 import { describe, expect, it } from 'bun:test'
 import { SMS } from './impl'
-import { AppBackendTestEnv } from '../../app/@/backend/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Logger } from '../logger'
 import { isOk, unwrap } from '~/@/result'
 import { PhoneNumber } from '../phone-number'
 
 const Fixture = async () => {
-  const testEnv = await AppBackendTestEnv()
+  const testEnv = await FixtureAppBackend()
   const logger = Logger({ t: 'noop' })
   const phoneNumber = unwrap(PhoneNumber.fromString('+14802098698'))
   switch (testEnv.t) {
-    case 'all':
     case 'integration': {
       const sms = SMS({
         t: 'fake',

@@ -1,7 +1,7 @@
 import { describe, expect, mock, test } from 'bun:test'
 import { p } from '~/@/parser'
 import { CONFIG_BACKEND } from '~/config/backend'
-import { AppBackendTestEnv } from '../../app/@/backend/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Logger } from '../logger'
 import { Config, PubSubTopicBased } from './impl'
 
@@ -31,7 +31,7 @@ const randomMyEvent = (): MyEvent => ({
 const encode = (myEvent: MyEvent) => JSON.stringify(myEvent)
 
 const Fixtures = async () => {
-  const testEnv = await AppBackendTestEnv()
+  const testEnv = await FixtureAppBackend()
   const configs: Config[] = [{ t: 'in-memory', map: new Map() }]
 
   if (testEnv.t === 'integration') {

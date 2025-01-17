@@ -1,30 +1,20 @@
-import type { IDbConnSql } from '~/@/db-conn-sql'
-import type { ILogger } from '~/@/logger'
-import { PuzzleDbHashMap } from './impl-hash-map'
-import { PuzzleDbSql } from './impl-sql'
+import * as ImplHashMap from './impl-hash-map'
+import * as ImplSql from './impl-sql'
 import type { IPuzzleDb } from './interface'
+import * as ImplWithEnsureTables from './with-ensure-tables'
 
-export type PuzzleDbImpl =
-  | {
-      t: 'hash-map'
-    }
-  | {
-      t: 'db-conn-sql'
-      dbConnSql: IDbConnSql
-      logger: ILogger
-    }
+export type Config = ImplHashMap.Config | ImplSql.Config | ImplWithEnsureTables.Config
 
-const PuzzleDbBase = (impl: PuzzleDbImpl): IPuzzleDb => {
-  switch (impl.t) {
+export const PuzzleDb = (config: Config): IPuzzleDb => {
+  switch (config.t) {
     case 'hash-map': {
-      return PuzzleDbHashMap()
+      return ImplHashMap.PuzzleDb(config)
     }
     case 'db-conn-sql': {
-      return PuzzleDbSql(impl)
+      return ImplSql.PuzzleDb(config)
+    }
+    case 'with-ensure-tables': {
+      return ImplWithEnsureTables.PuzzleDb(config)
     }
   }
-}
-
-export const PuzzleDb = (impl: PuzzleDbImpl): IPuzzleDb => {
-  return PuzzleDbBase(impl)
 }

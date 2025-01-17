@@ -1,6 +1,6 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
-import { IPuzzleDb } from './interface'
 import { p } from '~/@/parser'
+import { IPuzzleDb } from './interface'
 
 export type Config = {
   t: 'with-ensure-tables'
@@ -22,11 +22,15 @@ CREATE TABLE IF NOT EXISTS game_flow_puzzle (
     flow_solutions TEXT NOT NULL
 );
 `
-export const WithEnureTables = async (config: Config): Promise<IPuzzleDb> => {
-  await config.dbConnSql.query({
-    parser: p.unknown,
-    sql: query,
-    vars: {},
-  })
+export const PuzzleDb = (config: Config): IPuzzleDb => {
+  // config.dbConnSql
+  //   .query({
+  //     parser: p.unknown,
+  //     sql: query,
+  //     vars: {},
+  //   })
+  //   .then(() => {
+  //     //
+  //   })
   return config.puzzleDb
 }

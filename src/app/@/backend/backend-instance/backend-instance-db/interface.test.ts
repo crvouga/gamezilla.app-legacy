@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { Ok, unwrap } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { AppBackendTestEnv } from '../../fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { BackendInstance } from '../backend-instance'
 import { Config } from './impl'
 import { BackendInstanceDb } from './impl-db-conn-kv'
@@ -15,7 +15,7 @@ const Fixture = (config: Config) => {
 }
 
 const Fixtures = async () => {
-  const f = await AppBackendTestEnv()
+  const f = await FixtureAppBackend()
 
   const configs: Config[] = [
     {

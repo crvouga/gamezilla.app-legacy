@@ -1,16 +1,15 @@
 import { describe, expect, it } from 'bun:test'
 import { Ok, Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
-import { AppBackendTestEnv } from '~/app/@/backend/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { PuzzleId } from '../../puzzle/puzzle-id'
 import { Pack } from '../pack'
 import { PackName } from '../pack-name'
 import { PackDb } from './impl'
 
 const Fixture = async () => {
-  const testEnv = await AppBackendTestEnv()
+  const testEnv = await FixtureAppBackend()
   switch (testEnv.t) {
-    case 'all':
     case 'integration': {
       const flowPackDb = PackDb({
         t: 'db-conn-sql',

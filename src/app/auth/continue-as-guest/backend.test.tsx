@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'bun:test'
 import { isOk } from '~/@/result'
-import { SessionId } from '~/app/@/data/session-id'
+import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { ClientId } from '~/app/@/data/client-id'
-import { AppBackendTestEnv, FixtureAppBackend } from '~/app/@/backend/fixture'
+import { SessionId } from '~/app/@/data/session-id'
+import { GuestSessionMappingDb } from '../@/backend/guest-session-mapping-db'
 import { UserAccountDb } from '../@/backend/user-account-db'
 import { UserSessionDb } from '../@/backend/user-session-db'
 import * as AuthBackend from '../backend'
 import type { BackendCtx } from '../types'
 import { ContinueAsGuestBackend } from './backend'
 import type * as ContinueAsGuestTypes from './types'
-import { GuestSessionMappingDb } from '../@/backend/guest-session-mapping-db'
-import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 
 type Input =
   | {
@@ -24,11 +24,10 @@ type Input =
     }
 
 const BaseFixture = async (): Promise<{ ctx: BackendCtx }> => {
-  const testEnv = await AppBackendTestEnv()
+  const testEnv = await FixtureAppBackend()
   const f = await FixtureAppBackend()
 
   switch (testEnv.t) {
-    case 'all':
     case 'integration': {
       const userAccountDb = UserAccountDb({
         t: 'postgres',

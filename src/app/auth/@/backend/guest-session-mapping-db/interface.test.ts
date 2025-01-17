@@ -3,12 +3,11 @@ import { GuestSessionMappingDb } from './impl'
 import { SessionId } from '~/app/@/data/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { unwrap } from '~/@/result'
-import { AppBackendTestEnv } from '~/app/@/backend/fixture'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 
 const Fixture = async () => {
-  const testEnv = await AppBackendTestEnv()
+  const testEnv = await FixtureAppBackend()
   switch (testEnv.t) {
-    case 'all':
     case 'integration': {
       const guestSessionMappingDb = GuestSessionMappingDb({
         t: 'postgres',
@@ -20,7 +19,7 @@ const Fixture = async () => {
       }
     }
 
-    case 'unit': {
+    default: {
       const guestSessionMappingDb = GuestSessionMappingDb({
         t: 'hash-map',
       })
