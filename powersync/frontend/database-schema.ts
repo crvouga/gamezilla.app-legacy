@@ -21,7 +21,8 @@ const game_flow_puzzle = new Table(
   },
   {
     indexes: {
-      idx_common: ['created_by_user_id', 'deleted_at'],
+      idx_created_by_last_updated: ['created_by_user_id', 'deleted_at', 'last_updated_at_posix'],
+      idx_created_by_created_at: ['created_by_user_id', 'deleted_at', 'created_at_posix'],
     },
   },
 )
