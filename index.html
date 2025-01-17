@@ -15,12 +15,44 @@
     <meta name="theme-color" content="#000000" />
   </head>
 
-  <body class="bg-black text-white">
-    <noscript class="flex h-screen w-screen items-center justify-center p-6 text-center">
-      You need JavaScript enabled to run this app
-    </noscript>
+  <body style="background-color: black; color: white">
     <div id="root">
-      <!-- <p class="flex h-screen w-screen animate-pulse items-center justify-center p-6 text-center">Downloading...</p> -->
+      <div class="spinner-root">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          class="spinner"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M12 19a7 7 0 100-14 7 7 0 000 14zm0 3c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"
+            clip-rule="evenodd"
+            opacity="0.2"
+          />
+          <path d="M2 12C2 6.477 6.477 2 12 2v3a7 7 0 00-7 7H2z" />
+        </svg>
+      </div>
+      <style>
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        .spinner {
+          width: 64px;
+          height: 64px;
+          animation: spin 1s linear infinite;
+        }
+        .spinner-root {
+          position: fixed;
+          transform: translate(-50%, -50%);
+          padding-top: 20px;
+          top: 50%;
+          left: 50%;
+        }
+      </style>
     </div>
     <script type="module" src="./src/main/frontend.tsx"></script>
   </body>

@@ -18,6 +18,8 @@ const main = async () => {
 
   const ctx = await AppFrontend.initCtx()
 
+  root.innerHTML = ''
+
   await Program.run({
     initCtx: () => ctx,
     updateCtx: AppFrontend.updateCtx,
