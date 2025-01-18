@@ -24,9 +24,15 @@ export type ModelBackend = Record<string, unknown>
 //
 //
 
-export type MsgFrontend = {
-  t: 'create-new-pack.clicked-create-button'
-}
+export type MsgFrontend =
+  | {
+      t: 'create-new-pack.clicked-create-button'
+    }
+  | {
+      t: 'create-new-pack.db-put-pack'
+      created: Result<string, Pack>
+      userId: UserId
+    }
 
 export type MsgToBackend = { t: 'create-new-pack.clicked-create-button' }
 

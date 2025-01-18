@@ -1,56 +1,52 @@
 import { Loading, Ok } from '~/@/result'
-import { APP_SOUND, playSound, sendToBackend, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { Button, IconPlus } from '~/app/@/ui'
+import { Pack } from '../../../@/pack/pack'
+import { PackId } from '../../../@/pack/pack-id'
+import { PackName } from '../../../@/pack/pack-name'
 import type { FrontendModule } from '../../types'
+import { withEventId } from '~/@/event-sourced/event'
 
 const update: FrontendModule['update'] = (input) => {
-  const { model, msg, msgSpace, msgBackend } = input
-
-  switch (msg?.t) {
+  switch (input.msg?.t) {
     case 'create-new-pack.clicked-create-button': {
       return {
         model: {
-          ...model,
+          ...input.model,
           packCreateNewRequest: Loading,
         },
-        msgCmd: [
-          playSound(APP_SOUND.tap),
-          sendToBackend({
-            t: 'create-new-pack.clicked-create-button',
-          }),
-        ],
+        msgCmd: [playSound(APP_SOUND.tap)],
+        async eff(dispatch) {
+          const userId = input.ctx.currentUserId
+          const packNew: Pack = {
+            createdAt: input.ctx.now,
+            createdBy: userId,
+            id: PackId.generate(),
+            lastUpdatedAt: input.ctx.now,
+            lastUpdatedBy: userId,
+            name: await PackName.generate(),
+            puzzleIds: [],
+          }
+
+          const created = await input.ctx.packDb.put(packNew)
+
+          dispatch({ t: 'create-new-pack.db-put-pack', created, userId })
+        },
       }
     }
-  }
-
-  switch (msgBackend?.t) {
-    case 'create-new-pack.created-pack': {
-      return {
-        model,
-        msgSpace: [
-          {
-            t: 'user-created-pack',
-            created: msgBackend.created,
-            userId: input.ctx.currentUserId,
-          },
-        ],
-      }
-    }
-  }
-
-  switch (msgSpace?.t) {
-    case 'user-created-pack': {
+    case 'create-new-pack.db-put-pack': {
       return {
         model: {
-          ...model,
+          ...input.model,
           packCreateNewRequest: Ok(null),
         },
         msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.pack-created'))],
+        msgSpace: [withEventId({ ...input.msg, t: 'user-created-pack' })],
       }
     }
   }
 
-  return { model }
+  return { model: input.model }
 }
 
 const ViewCreateFab: FrontendModule['View'] = (input) => {

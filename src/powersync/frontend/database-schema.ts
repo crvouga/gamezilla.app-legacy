@@ -29,8 +29,8 @@ const game_flow_pack = new Table(
     created_at_posix: column.integer,
     created_by_user_id: column.text,
     last_updated_at_posix: column.integer,
-    last_updated_by: column.text,
-    deleted_at: column.integer,
+    last_updated_by_user_id: column.text,
+    deleted_at_posix: column.integer,
     deleted_by_user_id: column.text,
   },
   {
