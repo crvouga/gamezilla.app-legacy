@@ -1,90 +1,82 @@
-import { RemoteResult, isLoading } from '~/@/result'
-import { APP_SOUND, playSound, sendToBackend, showCreatedSm } from '~/app/@/frontend/cmd'
+import { withEventId } from '~/@/event-sourced/event'
+import { Ok, RemoteResult, isLoading } from '~/@/result'
+import { APP_SOUND, playSound, showCreatedSm } from '~/app/@/frontend/cmd'
 import { ConfirmationDrawer, IconDeleteForever, ListItemButton } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
+import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 import type { FrontendModule } from '../../types'
 import { MsgFrontend, MsgToBackend } from './types'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
     { model: input.model },
-    (model) =>
-      updateFromMsg({
-        ...input,
-        model,
-      }),
-    (model) =>
-      updateFromMsgSpace({
-        ...input,
-        model,
-      }),
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromMsgSpace({ ...input, model }),
   )
 }
 
 const updateFromMsg: FrontendModule['update'] = (input) => {
-  const { msg, model } = input
-
-  switch (msg?.t) {
+  switch (input.msg?.t) {
     case 'delete-forever.user-clicked-delete-button': {
       return {
-        model: {
-          ...model,
-          puzzleBuilderOpened: 'delete-forever',
-        },
+        model: { ...input.model, puzzleBuilderOpened: 'delete-forever' },
         msgCmd: [playSound(APP_SOUND.alertErrorSm)],
       }
     }
 
     case 'delete-forever.user-closed-drawer': {
       return {
-        model: {
-          ...model,
-          puzzleBuilderOpened: null,
-        },
+        model: { ...input.model, puzzleBuilderOpened: null },
       }
     }
 
     case 'delete-forever.user-clicked-cancel-button': {
       return {
-        model: {
-          ...model,
-          puzzleBuilderOpened: 'more',
-        },
+        model: { ...input.model, puzzleBuilderOpened: 'more' },
       }
     }
 
     case 'delete-forever.user-clicked-confirm-button': {
       return {
-        model: {
-          ...model,
-          puzzleDeleteForeverRequest: RemoteResult.Loading,
+        model: { ...input.model, puzzleDeleteForeverRequest: RemoteResult.Loading },
+        msgCmd: [playSound(APP_SOUND.tap)],
+        async eff(dispatch) {
+          const puzzleId = input.modelSpace.screenPuzzleBuilder?.puzzle.id
+
+          const deleted = puzzleId
+            ? await input.ctx.puzzleDb.zap({ deletedByUserId: input.ctx.currentUserId, id: puzzleId })
+            : Ok(null)
+
+          dispatch({
+            t: 'delete-forever.db-zapped-puzzle',
+            deleted,
+            puzzleId: puzzleId ?? PuzzleId.generate(),
+            userId: input.ctx.currentUserId,
+          })
         },
-        msgCmd: [
-          sendToBackend({
-            t: 'delete-forever.user-confirmed',
-          }),
-          playSound(APP_SOUND.tap),
-        ],
+      }
+    }
+
+    case 'delete-forever.db-zapped-puzzle': {
+      return {
+        model: { ...input.model, puzzleDeleteForeverRequest: input.msg.deleted },
+        msgSpace: [withEventId({ ...input.msg, t: 'user-deleted-puzzle' })],
       }
     }
 
     default: {
-      return {
-        model,
-      }
+      return { model: input.model }
     }
   }
 }
 
 const updateFromMsgSpace: FrontendModule['update'] = (input) => {
-  const { msgSpace, model } = input
-
-  switch (msgSpace?.t) {
+  switch (input.msgSpace?.t) {
     case 'user-deleted-puzzle': {
       return {
         model: {
-          ...model,
-          puzzleDeleteForeverRequest: msgSpace.deleted,
+          ...input.model,
+          puzzleDeleteForeverRequest: input.msgSpace.deleted,
           puzzleBuilderOpened: null,
         },
         msgCmd: [
@@ -95,7 +87,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
           {
             t: 'flow-cmd.remove-puzzles',
             puzzles: {
-              [msgSpace.flowPuzzleId]: msgSpace.flowPuzzleId,
+              [input.msgSpace.puzzleId]: input.msgSpace.puzzleId,
             },
             causedBy: input,
           },
@@ -104,56 +96,35 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
     }
 
     default: {
-      return {
-        model,
-      }
+      return { model: input.model }
     }
   }
 }
 
 const View: FrontendModule['View'] = (input) => {
-  const { model, dispatch } = input
   return (
     <>
       <ListItemButton
         icon={(input) => <IconDeleteForever {...input} />}
         label={input.ctx.t('flow.delete-forever')}
         color='danger'
-        onClick={() =>
-          dispatch({
-            t: 'delete-forever.user-clicked-delete-button',
-          })
-        }
+        onClick={() => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' })}
       />
 
       <ConfirmationDrawer
         id='delete-forever-drawer'
-        open={input.model.puzzleBuilderOpened === 'delete-forever' || isLoading(model.puzzleDeleteForeverRequest)}
-        onClose={() =>
-          dispatch({
-            t: 'delete-forever.user-closed-drawer',
-          })
-        }
+        open={input.model.puzzleBuilderOpened === 'delete-forever' || isLoading(input.model.puzzleDeleteForeverRequest)}
+        onClose={() => input.dispatch({ t: 'delete-forever.user-closed-drawer' })}
         variant='danger'
         position='bottom'
         title={input.ctx.t('flow.delete-puzzle-forever?')}
         body={input.ctx.t('app.this-action-cannot-be-undone')}
-        //
-        confirmLoading={isLoading(model.puzzleDeleteForeverRequest)}
+        confirmLoading={isLoading(input.model.puzzleDeleteForeverRequest)}
         confirmText={input.ctx.t('app.delete')}
         cancelText={input.ctx.t('app.cancel')}
-        onConfirm={() =>
-          dispatch({
-            t: 'delete-forever.user-clicked-confirm-button',
-          })
-        }
-        //
-        cancelDisabled={isLoading(model.puzzleDeleteForeverRequest)}
-        onCancel={() =>
-          dispatch({
-            t: 'delete-forever.user-clicked-cancel-button',
-          })
-        }
+        onConfirm={() => input.dispatch({ t: 'delete-forever.user-clicked-confirm-button' })}
+        cancelDisabled={isLoading(input.model.puzzleDeleteForeverRequest)}
+        onCancel={() => input.dispatch({ t: 'delete-forever.user-clicked-cancel-button' })}
       />
     </>
   )
