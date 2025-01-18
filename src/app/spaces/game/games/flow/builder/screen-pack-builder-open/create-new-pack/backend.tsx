@@ -30,9 +30,7 @@ const updateFromFrontend: BackendModule['update'] = async (input) => {
         id: PackId.generate(),
         lastUpdatedAt: input.ctx.now,
         lastUpdatedBy: input.msgFrontend.userId,
-        name: await PackName.generate({
-          count: counted.value,
-        }),
+        name: await PackName.generate(),
         puzzleIds: [],
       }
 

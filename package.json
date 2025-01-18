@@ -35,6 +35,7 @@
     "powersync:development-token": "cd powersync/test-client && node dist/bin.js generate-token --config path/to/powersync.yaml --sub test-user",
     "powersync:test-client:build": "cd powersync/test-client && tsc -b",
     "powersync:test-client:get": "bun x degit powersync-ja/powersync-service/test-client powersync/test-client",
+    "powersync:tunnel": "ngrok http 8080",
     "pretty": "bun x sort-package-json && bun x prettier --write .",
     "preview": "bun frontend:build && bun frontend:serve",
     "tc": "bun x tsc --noEmit --watch",

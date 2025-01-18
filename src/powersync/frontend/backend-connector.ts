@@ -13,10 +13,7 @@ export class Connector extends BaseObserver<{}> implements PowerSyncBackendConne
 
       const { token } = unwrap(got)
 
-      return {
-        token,
-        endpoint: String(CONFIG_FRONTEND.VITE_POWERSYNC_URL),
-      }
+      return { token, endpoint: String(CONFIG_FRONTEND.VITE_POWERSYNC_URL) }
     } catch (error) {
       console.error('Failed to fetchCredentials:', error)
       throw error
