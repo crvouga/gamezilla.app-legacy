@@ -2,6 +2,7 @@ import { PowerSyncDatabase } from '@powersync/web'
 import Logger from 'js-logger'
 import { Connector } from './backend-connector'
 import { AppSchema } from './database-schema'
+
 Logger.useDefaults()
 Logger.setLevel(Logger.DEBUG)
 
@@ -26,9 +27,7 @@ export const setupNewPowerSyncDatabase = async () => {
 
   const connector = new Connector()
 
-  powerSync.connect(connector).then(() => {
-    Logger.info('Connected to PowerSync')
-  })
+  powerSync.connect(connector).then(() => console.log('Connected to PowerSync'))
 
   return powerSync
 }
