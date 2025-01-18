@@ -44,6 +44,7 @@ sync_rules:
         data:
           - SELECT * FROM game_flow_puzzle
           - SELECT * FROM game_flow_pack
+          - SELECT * FROM game_flow_pack_item
           - SELECT * FROM game_flow_solutions
           - SELECT * FROM user_session
 
