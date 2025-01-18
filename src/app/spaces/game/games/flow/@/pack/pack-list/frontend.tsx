@@ -230,17 +230,12 @@ const didLoad = <TCmd,>(output: { msgCmd?: (MsgInCmdFrontend | TCmd)[] }): boole
   )
 }
 
-const subscribeQuery = <T,>(_query: Parameters<IPackDb['list']>[0]): Sub<T> => {
+const watch = <T,>(_query: Parameters<IPackDb['list']>[0]): Sub<T> => {
   return Sub.None
 }
 
-const readQuery = (_query: Parameters<IPackDb['list']>[0]) => {
-  return []
-}
-
 export const PackListFrontend = {
-  subscribeQuery,
-  readQuery,
+  watch,
   load,
   didLoad,
   initFrontend,

@@ -1,7 +1,7 @@
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { TopBar } from '~/app/@/ui'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
-import { QueryPuzzlesInput } from '../../../@/puzzle/puzzle-db/query'
+import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
 import { PuzzleListFrontend } from '../../../@/puzzle/puzzle-list/frontend'
 import type { FrontendModule } from '../../types'
 
@@ -28,7 +28,7 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const toQuery = (input: { ctx: FlowFrontendCtx }): QueryPuzzlesInput => {
+const toQuery = (input: { ctx: FlowFrontendCtx }): PuzzleDbQuery => {
   return {
     order: {
       createdAt: 'asc',

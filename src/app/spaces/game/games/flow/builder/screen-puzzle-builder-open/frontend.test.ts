@@ -3,7 +3,7 @@ import { withEventMeta } from '~/@/event-sourced/event'
 import { didPlaySound } from '~/app/@/frontend/cmd'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { FixtureFlowBuilderFrontend } from '../@/fixture/frontend'
-import { QueryPuzzlesInput } from '../../@/puzzle/puzzle-db/query'
+import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
 
 const Fixture = async () => {
   const f = await FixtureFlowBuilderFrontend()
@@ -62,7 +62,7 @@ describe(import.meta.file, () => {
         msgSpace: withEventMeta({
           t: 'screen-puzzle-builder-open.puzzle-list-query-changed',
           userId: f.ctx.currentUserId,
-          query: QueryPuzzlesInput.random(),
+          query: PuzzleDbQuery.random(),
         }),
       },
     ])

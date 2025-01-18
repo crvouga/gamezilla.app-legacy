@@ -9,9 +9,11 @@ import { PuzzleId } from '../../puzzle/puzzle-id'
 import type { Pack } from '../pack'
 import { PackId } from '../pack-id'
 import { PackName } from '../pack-name'
-import type { IPackDb, OrderClause, WhereClause } from './interface'
+import type { IPackDb } from './interface'
 import { Uuid } from '~/@/uuid/uuid'
 import { ILogger, Logger } from '~/@/logger'
+import { OrderClause, WhereClause } from '../../puzzle/puzzle-db/query'
+import { Sub } from '~/@/sub'
 
 export type Config = {
   t: 'sql'
@@ -69,10 +71,12 @@ const rowToPack = (row: Row, items: RowItem[]): Pack | null => {
 
 const toSqlWhere = (where: WhereClause) => {
   const clauses: string[] = []
-  const vars: Record<string, any> = {}
-  if (where.createdBy) {
+
+  const vars: Record<string, string | number | undefined | null> = {}
+
+  if (where.createdBy?.equals) {
     clauses.push('created_by_user_id = :created_by_user_id')
-    vars['created_by_user_id'] = where.createdBy
+    vars['created_by_user_id'] = where.createdBy?.equals
   }
 
   const str = clauses.length > 0 ? `WHERE ${clauses.join('\nAND\t')}` : ''
@@ -146,10 +150,65 @@ export const PackDb = (config: Config): IPackDb => {
           count: p.maybe(p.or(p.num, p.str)),
         }),
         sql: str,
-        vars: vars,
+        vars,
       })
 
       return Result.mapOk(queried, (rows) => ensureNumber(rows[0]?.count))
+    },
+
+    sub(input) {
+      const sqlWhere = toSqlWhere(input.where)
+      const sqlOrder = toSqlOrder(input.order)
+      const sqlPagination = Sql.pagination(input.pagination)
+      const vars = {
+        ...sqlWhere.vars,
+        ...sqlOrder.vars,
+        ...sqlPagination.vars,
+      }
+
+      const packsSql = `
+				SELECT
+          *
+        FROM
+          game_flow_pack
+				${sqlWhere.str}
+				${sqlOrder.str}
+				${sqlPagination.str}
+			`
+      const packsSub = config.dbConnSql.sub({
+        parser: Row,
+        sql: packsSql,
+        vars,
+      })
+
+      const packItemsSql = `
+        SELECT
+          *
+        FROM
+          game_flow_pack_item
+        JOIN
+          game_flow_pack ON game_flow_pack_item.pack_id = game_flow_pack.id
+        ${sqlWhere.str}
+        ${sqlOrder.str}
+        ${sqlPagination.str}
+        )
+      `
+
+      const packItemsSub = config.dbConnSql.sub({
+        parser: RowItem,
+        sql: packItemsSql,
+        vars,
+      })
+
+      return Sub.flatMap(packsSub, (packRows) => {
+        return Sub.map(packItemsSub, (packItemRows) => {
+          const packs = packRows.flatMap((row) => {
+            const pack = rowToPack(row, packItemRows)
+            return pack ? [pack] : []
+          })
+          return packs
+        })
+      })
     },
 
     async list(input) {
@@ -169,7 +228,7 @@ export const PackDb = (config: Config): IPackDb => {
 				${sqlPagination.str}
 			`
 
-      const queried = await config.dbConnSql.query({ parser: Row, sql: str, vars: vars })
+      const queried = await config.dbConnSql.query({ parser: Row, sql: str, vars })
 
       const counted = await this.count(input)
 
@@ -182,14 +241,11 @@ export const PackDb = (config: Config): IPackDb => {
           *
         FROM
           game_flow_pack_item
-        WHERE pack_id IN (
-          SELECT 
-            id 
-          FROM game_flow_pack
-          ${sqlWhere.str}
-          ${sqlOrder.str}
-          ${sqlPagination.str}
-        )
+        JOIN
+          game_flow_pack ON game_flow_pack_item.pack_id = game_flow_pack.id
+        ${sqlWhere.str}
+        ${sqlOrder.str}
+        ${sqlPagination.str}
         `,
         vars,
       })

@@ -9,7 +9,7 @@ import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { FlowFrontendEvtIn } from '../../frontend/evt'
 import type { Puzzle } from '../puzzle'
-import { QueryPuzzlesInput } from '../puzzle-db/query'
+import { PuzzleDbQuery } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 
 //
@@ -22,7 +22,7 @@ export type ModelFrontend = {
     [queryKey: string]: PuzzleId[]
   }
   queries: {
-    [name: string]: QueryPuzzlesInput
+    [name: string]: PuzzleDbQuery
   }
 }
 
@@ -35,7 +35,7 @@ export type ModelBackend = null
 
 export type MsgFrontend = {
   t: 'got-puzzle-db-puzzles'
-  query: QueryPuzzlesInput
+  query: PuzzleDbQuery
   puzzles: Puzzle[]
 }
 

@@ -79,7 +79,9 @@ describe(import.meta.file, () => {
           offset: 0,
         },
         where: {
-          createdBy: pack.createdBy,
+          createdBy: {
+            equals: pack.createdBy,
+          },
         },
       })
       expect(listed.t).toEqual('ok')
@@ -112,7 +114,9 @@ describe(import.meta.file, () => {
           offset: 0,
         },
         where: {
-          createdBy: pack.createdBy,
+          createdBy: {
+            equals: pack.createdBy,
+          },
         },
       })
       expect(listed.t).toEqual('ok')
@@ -129,7 +133,9 @@ describe(import.meta.file, () => {
       unwrap(await f.packDb.put(pack))
       const count = await f.packDb.count({
         where: {
-          createdBy: pack.createdBy,
+          createdBy: {
+            equals: pack.createdBy,
+          },
         },
       })
       expect(count).toEqual(Ok(1))

@@ -14,7 +14,9 @@ const updateFromFrontend: BackendModule['update'] = async (input) => {
     case 'create-new-pack.clicked-create-button': {
       const counted = await input.ctx.packDb.count({
         where: {
-          createdBy: input.msgFrontend.userId,
+          createdBy: {
+            equals: input.msgFrontend.userId,
+          },
         },
       })
 

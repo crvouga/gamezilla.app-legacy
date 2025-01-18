@@ -10,7 +10,7 @@ import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { VariantBoard } from '../../variant'
 import type { Puzzle } from '../puzzle'
-import { QueryPuzzlesInput } from '../puzzle-db/query'
+import { PuzzleDbQuery } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './query-form'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
@@ -42,7 +42,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
           ...input.model,
           results: {
             ...input.model.results,
-            [QueryPuzzlesInput.toKey(input.msg.query)]: input.msg.puzzles.map((p) => p.id),
+            [PuzzleDbQuery.toKey(input.msg.query)]: input.msg.puzzles.map((p) => p.id),
           },
         },
         msgCmd: [
@@ -69,19 +69,19 @@ const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   }
 }
 
-const watch = <TMsg,>(ctx: FlowFrontendCtxRoot, query: QueryPuzzlesInput, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
+const watch = <TMsg,>(ctx: FlowFrontendCtxRoot, query: PuzzleDbQuery, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
   return Sub.map(ctx.puzzleDb.sub(query), (puzzles) => map({ t: 'got-puzzle-db-puzzles', query, puzzles }))
 }
 
 const View = (input: {
   ctx: FlowFrontendCtxRoot
-  query: QueryPuzzlesInput
+  query: PuzzleDbQuery
   model: ModelFrontend
-  onQueryChanged: (query: QueryPuzzlesInput) => void
+  onQueryChanged: (query: PuzzleDbQuery) => void
   onClick: (puzzle: Puzzle) => void
   fab?: VDom
 }) => {
-  const queryKey = QueryPuzzlesInput.toKey(input.query)
+  const queryKey = PuzzleDbQuery.toKey(input.query)
   const puzzleIds = input.model.results[queryKey] ?? []
   const puzzles = puzzleIds.flatMap((id) => (input.ctx.puzzles[id] ? [input.ctx.puzzles[id]] : []))
 

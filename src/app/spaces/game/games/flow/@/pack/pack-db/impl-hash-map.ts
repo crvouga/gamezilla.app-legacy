@@ -1,4 +1,5 @@
 import { Ok, Result } from '~/@/result'
+import { Sub } from '~/@/sub'
 import type { Pack } from '../pack'
 import type { IPackDb } from './interface'
 
@@ -12,6 +13,10 @@ export const PackDb = (_config: Config): IPackDb => {
   return {
     async get(id) {
       return Ok(db.get(id) ?? null)
+    },
+
+    sub(_input) {
+      return Sub.None
     },
 
     async count(input) {
@@ -32,7 +37,9 @@ export const PackDb = (_config: Config): IPackDb => {
     async list(input) {
       const all = Array.from(db.values())
 
-      const filtered = all.filter((pack) => (input.where.createdBy ? pack.createdBy === input.where.createdBy : true))
+      const filtered = all.filter((pack) =>
+        input.where.createdBy?.equals ? pack.createdBy === input.where.createdBy.equals : true,
+      )
       const sliced = filtered.slice(input.pagination.offset, input.pagination.offset + input.pagination.limit)
       return Ok({
         total: filtered.length,

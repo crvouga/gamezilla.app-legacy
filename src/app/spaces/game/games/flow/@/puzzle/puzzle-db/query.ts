@@ -31,9 +31,9 @@ const parser = p.obj({
   order: OrderClause,
 })
 
-export type QueryPuzzlesInput = p.Infer<typeof parser>
+export type PuzzleDbQuery = p.Infer<typeof parser>
 
-const toKey = (input: QueryPuzzlesInput): string => {
+const toKey = (input: PuzzleDbQuery): string => {
   return [
     'limit',
     input.pagination.limit,
@@ -50,7 +50,7 @@ const toKey = (input: QueryPuzzlesInput): string => {
   ].join(':')
 }
 
-const random = (): QueryPuzzlesInput => {
+const random = (): PuzzleDbQuery => {
   return {
     order: {
       createdAt: 'asc',
@@ -67,7 +67,7 @@ const random = (): QueryPuzzlesInput => {
   }
 }
 
-export const QueryPuzzlesInput = {
+export const PuzzleDbQuery = {
   ...parser,
   toKey,
   random,

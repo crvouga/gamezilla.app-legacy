@@ -2,7 +2,7 @@ import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { TopBar } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCtx } from '../../@/frontend/ctx'
-import { QueryPuzzlesInput } from '../../@/puzzle/puzzle-db/query'
+import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
 import { PuzzleListFrontend } from '../../@/puzzle/puzzle-list/frontend'
 import type { FrontendModule, ModelSpace } from '../types'
 import { CreateNewPuzzleFrontend } from './create-new-puzzle/frontend'
@@ -34,7 +34,7 @@ const updateMain: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const toPuzzleQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): QueryPuzzlesInput => {
+const toPuzzleQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): PuzzleDbQuery => {
   return (
     input.modelSpace.screenPuzzleBuilderOpen?.query ?? {
       order: {

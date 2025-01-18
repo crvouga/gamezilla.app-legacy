@@ -40,13 +40,15 @@ const toQuery = (input: { currentUserId: UserId; offset: number }) => {
       lastUpdatedAt: 'asc',
     },
     where: {
-      createdBy: input.currentUserId,
+      createdBy: {
+        equals: input.currentUserId,
+      },
     },
   } as const
 }
 
-const subscriptions: FrontendModule['subscriptions'] = (_input) => {
-  return PackListFrontend.subscribeQuery(toQuery({ currentUserId: _input.ctx.currentUserId, offset: 0 }))
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  return PackListFrontend.watch(toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 }))
 }
 
 const View: FrontendModule['View'] = (input) => {

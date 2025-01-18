@@ -3,9 +3,9 @@ import { IconUserCircle } from '~/app/@/ui'
 import { Chip } from '~/app/@/ui/chip'
 import { IconArrowDownShortWide } from '~/app/@/ui/icon/icon-arrow-down-short-wide'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
-import { QueryPuzzlesInput } from '../puzzle-db/query'
+import { PuzzleDbQuery } from '../puzzle-db/query'
 
-type Model = QueryPuzzlesInput
+type Model = PuzzleDbQuery
 
 type Msg =
   | { t: 'toggled-last-updated-chip' }

@@ -9,7 +9,7 @@ import { Posix } from '~/@/time/posix'
 import { Solutions } from '../../solutions/solutions'
 import { Puzzle } from '../puzzle'
 import type { IPuzzleDb } from './interface'
-import { OrderClause, QueryPuzzlesInput, WhereClause } from './query'
+import { OrderClause, PuzzleDbQuery, WhereClause } from './query'
 import { Row } from './sql/row'
 
 export type Config = {
@@ -237,7 +237,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       })
     },
 
-    sub(input: QueryPuzzlesInput) {
+    sub(input: PuzzleDbQuery) {
       const sql = toQuerySql(input)
       return Sub.map(
         config.dbConnSql.sub({
