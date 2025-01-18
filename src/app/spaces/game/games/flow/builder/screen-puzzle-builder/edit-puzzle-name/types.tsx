@@ -1,14 +1,9 @@
-import { type RemoteResult, Result, NotAsked } from '~/@/result'
-import { PuzzleId } from '../../../@/puzzle/puzzle-id'
-import { UserId } from '~/app/@/data/user-id'
-import { p } from '~/@/parser'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-
-//
-//
-//
-//
+import { p } from '~/@/parser'
+import { NotAsked, type RemoteResult, Result } from '~/@/result'
+import { UserId } from '~/app/@/data/user-id'
+import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 
 export type ModelFrontend = {
   puzzleEditNameRequest: RemoteResult<string, null>
@@ -38,40 +33,25 @@ export const editNameValidationErrorToString = (
   }
 }
 
-export type ModelBackend = {}
-
-//
-//
-//
-//
-
 export type MsgFrontend =
-  | {
-      t: 'puzzle.edit-name.user-inputted-draft-name'
-      draftName: string
-    }
+  | { t: 'puzzle.edit-name.user-inputted-draft-name'; draftName: string }
   | { t: 'puzzle.edit-name.user-closed-drawer' }
   | { t: 'puzzle.edit-name.user-clicked-button' }
   | { t: 'puzzle.edit-name.user-clicked-save-button' }
   | { t: 'puzzle.edit-name.user-clicked-cancel-button' }
+  | { t: 'puzzle.edit-name.db-updated'; result: Result<string, null> }
 
-export type MsgBackend = { t: 'noop' }
+export type MsgBackend = {
+  t: 'noop'
+}
 
 export type MsgToBackend = {
-  t: 'puzzle.edit-name.user-clicked-save-button'
-  newName: string
-  flowPuzzleId: PuzzleId
+  t: 'noop'
 }
 
 export type MsgToFrontend = {
   t: 'noop'
 }
-
-//
-//
-//
-//
-//
 
 export const MsgSpace = p.obj({
   t: p.l('user-edited-puzzle-name'),

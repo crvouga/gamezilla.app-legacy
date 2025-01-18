@@ -1,19 +1,19 @@
-import { isLoading, isOk, Loading } from '~/@/result'
+import { withEventId } from '~/@/event-sourced/event'
+import { Err, isErr, isLoading, isOk, Loading } from '~/@/result'
+import { Posix } from '~/@/time/posix'
 import type { VDomChildren } from '~/@/vdom/vdom'
-import { APP_SOUND, playSound, sendToBackend, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
+import { UserId } from '~/app/@/data/user-id'
+import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
 import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCmd } from '../../../@/frontend/cmd'
+import { FlowFrontendCmdRoot } from '../../../@/frontend/cmd-root'
+import { Puzzle } from '../../../@/puzzle/puzzle'
+import { IPuzzleDb } from '../../../@/puzzle/puzzle-db'
+import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 import { PuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { FrontendModule } from '../../types'
 import { editNameValidationErrorToString, MsgFrontend, MsgToBackend } from './types'
-
-//
-//
-//
-//
-//
-//
 
 const update: FrontendModule['update'] = (input) => {
   const { model } = input
@@ -28,18 +28,55 @@ const update: FrontendModule['update'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   return (
     <ViewDrawer {...input}>
-      <p className='px-4 pt-4 text-2xl font-bold'>Edit name</p>
-      <ViewDraftNameInput {...input} />
-      <ViewFormButtons {...input} />
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          input.dispatch({ t: 'puzzle.edit-name.user-clicked-save-button' })
+        }}
+      >
+        <p className='px-4 pt-4 text-2xl font-bold'>Edit name</p>
+        <div className='w-full p-4'>
+          <TextField
+            id='edit-name-input'
+            label={input.ctx.t('flow.edit-puzzle-name.name')}
+            value={input.model.puzzleEditNameDraft}
+            onChange={(draftName) =>
+              input.dispatch({
+                t: 'puzzle.edit-name.user-inputted-draft-name',
+                draftName,
+              })
+            }
+            error={Boolean(input.model.puzzleEditNameValidationError)}
+            helperText={editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError)}
+          />
+        </div>
+        <div className='flex w-full items-center gap-4 p-4 pb-6'>
+          <Button
+            className='flex-1'
+            text={input.ctx.t('app.cancel')}
+            onClick={() =>
+              input.dispatch({
+                t: 'puzzle.edit-name.user-clicked-cancel-button',
+              })
+            }
+          />
+          <Button
+            className='flex-1'
+            color='primary'
+            type='submit'
+            variant='contained'
+            text={input.ctx.t('app.save')}
+            loading={isLoading(input.model.puzzleEditNameRequest)}
+            disabled={
+              input.modelSpace.screen.t !== 'screen-puzzle-builder' ||
+              input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name
+            }
+          />
+        </div>
+      </form>
     </ViewDrawer>
   )
 }
-
-//
-//
-//
-//
-//
 
 const updateFormButtons: FrontendModule['update'] = (input) => {
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
@@ -56,6 +93,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
           puzzleBuilderOpened: 'more',
           puzzleEditNameValidationError: null,
         },
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
@@ -78,12 +116,34 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
           puzzleEditNameRequest: Loading,
           puzzleEditNameValidationError: null,
         },
-        msgCmd: [
-          playSound(APP_SOUND.tap),
-          sendToBackend({
-            t: 'puzzle.edit-name.user-clicked-save-button',
-            newName,
+        msgCmd: [playSound(APP_SOUND.tap)],
+        async eff(dispatch) {
+          const result = await patchName({
             flowPuzzleId: puzzleBuilder.puzzle.id,
+            newName,
+            userId: input.ctx.currentUserId,
+            puzzleDb: input.ctx.puzzleDb,
+          })
+          dispatch({ t: 'puzzle.edit-name.db-updated', result })
+        },
+      }
+    }
+
+    case 'puzzle.edit-name.db-updated': {
+      return {
+        model: {
+          ...input.model,
+          puzzleEditNameRequest: input.msg.result,
+        },
+
+        msgCmd: [playSound(APP_SOUND.refreshFeed)],
+        msgSpace: [
+          withEventId({
+            t: 'user-edited-puzzle-name',
+            edited: input.msg.result,
+            flowPuzzleId: puzzleBuilder.puzzle.id,
+            newName: input.model.puzzleEditNameDraft,
+            userId: input.ctx.currentUserId,
           }),
         ],
       }
@@ -104,24 +164,13 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
         }
       }
 
-      const msgCmd: FlowFrontendCmd<{
-        MsgFrontend: MsgFrontend
-        MsgToBackend: MsgToBackend
-      }>[] = [
+      type WireTypes = { MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }
+
+      const msgCmd: FlowFrontendCmd<WireTypes>[] = [
+        FlowFrontendCmdRoot.addPuzzles(puzzlesNew, input),
         ...(isOk(input.msgSpace.edited)
-          ? showCreatedSm<{
-              MsgFrontend: MsgFrontend
-              MsgToBackend: MsgToBackend
-            }>(input.ctx.t('flow.saved-name'))
-          : showErrSm<{
-              MsgFrontend: MsgFrontend
-              MsgToBackend: MsgToBackend
-            }>(input.ctx.t('app.something-went-wrong'))),
-        {
-          t: 'flow-cmd.add-puzzles',
-          puzzles: puzzlesNew,
-          causedBy: input,
-        },
+          ? showCreatedSm<WireTypes>(input.ctx.t('flow.saved-name'))
+          : showErrSm<WireTypes>(input.ctx.t('app.something-went-wrong'))),
       ]
 
       return {
@@ -138,71 +187,63 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const ViewFormButtons: FrontendModule['View'] = (input) => {
-  return (
-    <div className='flex w-full items-center gap-4 p-4 pb-6'>
-      <Button
-        className='flex-1'
-        text={input.ctx.t('app.cancel')}
-        onClick={() =>
-          input.dispatch({
-            t: 'puzzle.edit-name.user-clicked-cancel-button',
-          })
-        }
-      />
-      <Button
-        className='flex-1'
-        color='primary'
-        variant='contained'
-        text={input.ctx.t('app.save')}
-        loading={isLoading(input.model.puzzleEditNameRequest)}
-        disabled={
-          input.modelSpace.screen.t !== 'screen-puzzle-builder' ||
-          input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name
-        }
-        onClick={() =>
-          input.dispatch({
-            t: 'puzzle.edit-name.user-clicked-save-button',
-          })
-        }
-      />
-    </div>
-  )
+const patchName = async (input: { flowPuzzleId: PuzzleId; newName: string; userId: UserId; puzzleDb: IPuzzleDb }) => {
+  const result = await input.puzzleDb.get(input.flowPuzzleId)
+
+  if (isErr(result)) {
+    return result
+  }
+
+  const puzzle = result.value
+
+  if (!puzzle) {
+    return Err('Failed to find puzzle')
+  }
+
+  if (puzzle.createdBy !== input.userId) {
+    return Err('You must be the creator of this puzzle to edit it.')
+  }
+
+  const newNameFinal = typeof input.newName === 'string' && input.newName.length > 0 ? input.newName : puzzle.name
+
+  if (!PuzzleName.is(newNameFinal)) {
+    return Err('Invalid name')
+  }
+
+  const patched: Puzzle = {
+    ...puzzle,
+    name: newNameFinal,
+    lastUpdatedAt: Posix.now(),
+    lastUpdatedBy: input.userId,
+  }
+
+  const put = await input.puzzleDb.put(patched)
+
+  return put
 }
 
-//
-//
-//
-//
-//
-
 const updateDrawer: FrontendModule['update'] = (input) => {
-  const { msg, model, modelSpace } = input
-
-  switch (msg?.t) {
+  switch (input.msg?.t) {
     case 'puzzle.edit-name.user-clicked-button': {
       return {
         model: {
-          ...model,
+          ...input.model,
           puzzleBuilderOpened: 'edit-name',
-          puzzleEditNameDraft: modelSpace.screenPuzzleBuilder?.puzzle.name ?? '',
+          puzzleEditNameDraft: input.modelSpace.screenPuzzleBuilder?.puzzle.name ?? '',
         },
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
     case 'puzzle.edit-name.user-closed-drawer': {
       return {
-        model: {
-          ...model,
-          puzzleBuilderOpened: null,
-        },
+        model: { ...input.model, puzzleBuilderOpened: null },
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
     default: {
-      return {
-        model,
-      }
+      return { model: input.model }
     }
   }
 }
@@ -212,41 +253,25 @@ const ViewDrawer = (
     children: VDomChildren
   },
 ) => {
-  const { children, dispatch, model } = input
   return (
     <>
       <ListItemButton
         icon={(input) => <IconPenToSquare {...input} />}
         label={input.ctx.t('puzzle.edit-name')}
-        onClick={() =>
-          dispatch({
-            t: 'puzzle.edit-name.user-clicked-button',
-          })
-        }
+        onClick={() => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' })}
       />
 
       <Drawer
         id='edit-name-drawer'
-        open={model.puzzleBuilderOpened === 'edit-name'}
-        onClose={() =>
-          dispatch({
-            t: 'puzzle.edit-name.user-closed-drawer',
-          })
-        }
+        open={input.model.puzzleBuilderOpened === 'edit-name'}
+        onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
         position='bottom'
       >
-        {children}
+        {input.children}
       </Drawer>
     </>
   )
 }
-
-//
-//
-//
-//
-//
-//
 
 const updateDraftNameInput: FrontendModule['update'] = ({ model, msg }) => {
   switch (msg?.t) {
@@ -266,33 +291,6 @@ const updateDraftNameInput: FrontendModule['update'] = ({ model, msg }) => {
     }
   }
 }
-
-const ViewDraftNameInput: FrontendModule['View'] = (input) => {
-  return (
-    <div className='w-full p-4'>
-      <TextField
-        id='edit-name-input'
-        label={input.ctx.t('flow.edit-puzzle-name.name')}
-        value={input.model.puzzleEditNameDraft}
-        onChange={(draftName) =>
-          input.dispatch({
-            t: 'puzzle.edit-name.user-inputted-draft-name',
-            draftName,
-          })
-        }
-        error={Boolean(input.model.puzzleEditNameValidationError)}
-        helperText={editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError)}
-      />
-    </div>
-  )
-}
-
-//
-//
-//
-//
-//
-//
 
 export const EditPuzzleNameFrontend = {
   update,

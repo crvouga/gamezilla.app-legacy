@@ -33,7 +33,7 @@ export const Button = (input: ButtonInput) => {
   return (
     <button
       disabled={input.disabled || input.loading}
-      type={input.type}
+      type={input.type ?? 'button'}
       className={cn(
         input.className,
         BASE_CLASS,
