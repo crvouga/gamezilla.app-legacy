@@ -259,7 +259,7 @@ const ScreenPuzzleMore: Pick<FrontendModule, 'update' | 'View'> = {
               })
             }
           />
-          <Gutter />
+          <Gutter variant='screen' />
         </Drawer>
       </>
     )

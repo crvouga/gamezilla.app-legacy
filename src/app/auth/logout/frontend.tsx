@@ -1,7 +1,7 @@
 import { NotAsked, Ok } from '~/@/result'
 import { APP_SOUND, playSound, sendToBackend, showToast } from '~/app/@/frontend/cmd'
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
-import { ConfirmationDrawer } from '~/app/@/ui'
+import { ConfirmationFormDrawer } from '~/app/@/ui'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from '../types'
 
 //
@@ -101,7 +101,7 @@ const View = ({
   dispatch: (msg: MsgFrontend) => void
 }) => {
   return (
-    <ConfirmationDrawer
+    <ConfirmationFormDrawer
       open={model.opened === 'logged-out'}
       title={ctx.t('auth.logout-of-gamezilla.app')}
       body={ctx.t('auth.logout-of-gamezilla.app-body')}

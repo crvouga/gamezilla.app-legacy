@@ -107,7 +107,7 @@ const View = (input: {
           </div>
         )}
 
-        <Gutter />
+        <Gutter variant='screen' />
       </div>
 
       {input.fab && <div className='absolute bottom-6 right-4 bg-black'>{input.fab}</div>}

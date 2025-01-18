@@ -1,5 +1,6 @@
-import { Portal } from '../../portal'
 import { cn } from '../../cn'
+import { Gutter } from '../../gutter'
+import { Portal } from '../../portal'
 import type { DrawerInput } from '../drawer-shared'
 import './drawer-element'
 import { drawerSub } from './drawer-shared'
@@ -16,7 +17,9 @@ export const DrawerWebComponent = (input: DrawerInput) => {
             input.position === 'bottom' ? 'rounded-t-2xl' : 'rounded-b-2xl',
           )}
         >
+          {input.position === 'top' && <Gutter variant='drawer' />}
           {input.children}
+          {input.position === 'bottom' && <Gutter variant='drawer' />}
         </div>
         {/* @ts-ignore */}
       </drawer-element>

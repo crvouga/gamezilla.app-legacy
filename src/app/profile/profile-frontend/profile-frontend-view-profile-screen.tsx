@@ -47,7 +47,7 @@ export const ViewProfileScreen = (input: {
             iconStart={(iconInput) => <IconArrowLeftOnRect {...iconInput} />}
             text={input.ctx.t('auth.logout')}
           />
-          <Gutter />
+          <Gutter variant='screen' />
         </div>
       </div>
     )

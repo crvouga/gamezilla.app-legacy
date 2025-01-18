@@ -10,11 +10,10 @@ import { PlayMode } from '../../@/play-mode'
 import { BoardLayout } from '../../@/ui/layout'
 import { VariantBoard } from '../../@/variant'
 import * as BuilderTypes from '../types'
-import { ScreenPuzzleBuilderSpace } from './space'
 import { DeleteForeverFrontend } from './delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './save-changes/frontend'
-import { Gutter } from '~/app/@/ui/gutter'
+import { ScreenPuzzleBuilderSpace } from './space'
 
 //
 //
@@ -378,7 +377,6 @@ export const ViewMoreDrawer: BuilderTypes.FrontendModule['View'] = (input) => {
     >
       <EditPuzzleNameFrontend.View {...input} />
       <DeleteForeverFrontend.View {...input} />
-      <Gutter />
     </Drawer>
   )
 }

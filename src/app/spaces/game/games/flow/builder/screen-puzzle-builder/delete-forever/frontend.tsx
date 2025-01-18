@@ -1,11 +1,12 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Ok, RemoteResult, isLoading } from '~/@/result'
 import { APP_SOUND, playSound, showCreatedSm } from '~/app/@/frontend/cmd'
-import { ConfirmationDrawer, IconDeleteForever, ListItemButton } from '~/app/@/ui'
+import { ConfirmationFormDrawer, IconDeleteForever, ListItemButton } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 import type { FrontendModule } from '../../types'
 import { MsgFrontend, MsgToBackend } from './types'
+import { FlowFrontendCmdRoot } from '../../../@/frontend/cmd-root'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -27,12 +28,14 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'delete-forever.user-closed-drawer': {
       return {
         model: { ...input.model, puzzleBuilderOpened: null },
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
     case 'delete-forever.user-clicked-cancel-button': {
       return {
         model: { ...input.model, puzzleBuilderOpened: 'more' },
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
@@ -70,6 +73,8 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
   }
 }
 
+type WireTypes = { MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }
+
 const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-deleted-puzzle': {
@@ -80,17 +85,8 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
           puzzleBuilderOpened: null,
         },
         msgCmd: [
-          ...showCreatedSm<{
-            MsgFrontend: MsgFrontend
-            MsgToBackend: MsgToBackend
-          }>(input.ctx.t('flow.puzzle-deleted')),
-          {
-            t: 'flow-cmd.remove-puzzles',
-            puzzles: {
-              [input.msgSpace.puzzleId]: input.msgSpace.puzzleId,
-            },
-            causedBy: input,
-          },
+          FlowFrontendCmdRoot.removePuzzles({ [input.msgSpace.puzzleId]: input.msgSpace.puzzleId }, input),
+          ...showCreatedSm<WireTypes>(input.ctx.t('flow.puzzle-deleted')),
         ],
       }
     }
@@ -111,7 +107,7 @@ const View: FrontendModule['View'] = (input) => {
         onClick={() => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' })}
       />
 
-      <ConfirmationDrawer
+      <ConfirmationFormDrawer
         id='delete-forever-drawer'
         open={input.model.puzzleBuilderOpened === 'delete-forever' || isLoading(input.model.puzzleDeleteForeverRequest)}
         onClose={() => input.dispatch({ t: 'delete-forever.user-closed-drawer' })}
@@ -130,7 +126,7 @@ const View: FrontendModule['View'] = (input) => {
   )
 }
 
-export const DeleteForeverFrontend: Pick<FrontendModule, 'update' | 'View'> = {
+export const DeleteForeverFrontend = {
   update,
   View,
 }

@@ -56,8 +56,17 @@ const addSolutions = (solutions: Solutions, causedBy: unknown): FlowFrontendCmdR
   }
 }
 
+const removePuzzles = (puzzles: { [puzzleId: PuzzleId]: PuzzleId }, causedBy: unknown): FlowFrontendCmdRoot => {
+  return {
+    t: 'flow-cmd.remove-puzzles',
+    puzzles,
+    causedBy,
+  }
+}
+
 export const FlowFrontendCmdRoot = {
   addPuzzles,
   addSolutions,
   addPacks,
+  removePuzzles,
 }

@@ -214,7 +214,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
             }
           />
         ))}
-        <Gutter />
+        <Gutter variant='screen' />
       </div>
     </div>
   )

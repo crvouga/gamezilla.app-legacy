@@ -1,19 +1,19 @@
 import type { UpdateSpace } from '../../types'
 
-const updateSpace: UpdateSpace = ({ modelSpace, msgSpace }) => {
-  switch (msgSpace.t) {
+const updateSpace: UpdateSpace = (input) => {
+  switch (input.msgSpace.t) {
     case 'user-deleted-puzzle': {
       return {
-        ...modelSpace,
+        ...input.modelSpace,
         screenPuzzleBuilder: null,
         screen: {
-          t: 'screen-main-menu',
+          t: 'screen-puzzle-builder-open',
         },
         option: 'puzzles',
       }
     }
     default: {
-      return modelSpace
+      return input.modelSpace
     }
   }
 }
