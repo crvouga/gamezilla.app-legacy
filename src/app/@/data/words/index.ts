@@ -1,10 +1,13 @@
+import { adjectives } from './adjective'
+import { nouns } from './noun'
+
 export const getAdjectives = async () => {
-  const { adjectives } = await import('./adjective')
+  // const { adjectives } = await import('./adjective')
   return adjectives
 }
 
 export const getNouns = async () => {
-  const { nouns } = await import('./noun')
+  // const { nouns } = await import('./noun')
   return nouns
 }
 
