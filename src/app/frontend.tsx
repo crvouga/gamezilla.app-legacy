@@ -5,7 +5,6 @@ import { eq } from '~/@/equals/equals'
 import { HttpClient } from '~/@/http-client'
 import { HttpServerImpl } from '~/@/http-server/http-server-impl'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
-import { loggerNoop } from '~/@/logger/impl-noop'
 import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screen/generated/screens'
@@ -14,8 +13,8 @@ import { Posix } from '~/@/time/posix'
 import { IconGamepad, IconUserCircle, Portal } from '~/app/@/ui'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
-import { setupNewPowerSyncDatabase } from '../powersync/frontend/database'
 import { ILogger, Logger } from '../@/logger'
+import { setupNewPowerSyncDatabase } from '../powersync/frontend/database'
 import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { FrontendEvt } from './@/frontend/evt'
@@ -78,7 +77,7 @@ export const initCtx = async (): Promise<FrontendCtx> => {
   const dbConnSql = await DbConnSql({
     t: 'powersync',
     powersync: await setupNewPowerSyncDatabase(),
-    logger: loggerNoop,
+    logger,
   })
 
   return {

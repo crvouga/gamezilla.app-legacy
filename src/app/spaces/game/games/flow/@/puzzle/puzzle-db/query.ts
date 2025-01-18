@@ -42,7 +42,7 @@ const toKey = (input: QueryPuzzlesInput): string => {
     'where.createdBy.equals',
     input.where.createdBy?.equals,
     'where.puzzleId.in',
-    input.where.puzzleId?.in,
+    input.where.puzzleId?.in.join(','),
     'order.createdAt',
     input.order.createdAt,
     'order.lastUpdatedAt',

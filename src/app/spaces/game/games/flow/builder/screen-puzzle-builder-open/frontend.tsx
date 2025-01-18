@@ -1,4 +1,3 @@
-import { Sub } from '~/@/sub'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { TopBar } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -55,9 +54,7 @@ const toPuzzleQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }):
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return Sub.batch([
-    PuzzleListFrontend.watch(input.ctx, toPuzzleQuery(input), (c) => ({ t: 'got-puzzle-list-msg', c })),
-  ])
+  return PuzzleListFrontend.watch(input.ctx, toPuzzleQuery(input), (c) => ({ t: 'got-puzzle-list-msg', c }))
 }
 
 const View: FrontendModule['View'] = (input) => {

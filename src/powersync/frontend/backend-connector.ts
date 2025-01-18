@@ -24,6 +24,9 @@ export class Connector extends BaseObserver<{}> implements PowerSyncBackendConne
   }
 
   async uploadData(database: AbstractPowerSyncDatabase): Promise<void> {
+    const crudTransaction = await database.getNextCrudTransaction()
+
+    console.log('crudTransaction', crudTransaction)
     console.log('uploadData not implemented yet', database)
   }
 }
