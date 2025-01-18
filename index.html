@@ -13,11 +13,24 @@
     <link rel="apple-touch-icon" href="./apple-touch-icon.png" sizes="180x180" />
     <link rel="mask-icon" href="./mask-icon.png" color="#000000" />
     <meta name="theme-color" content="#000000" />
+    <style>
+      body {
+        background-color: black;
+        color: white;
+      }
+      #logo {
+        position: fixed;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        left: 50%;
+        font-size: 68px;
+      }
+    </style>
   </head>
 
-  <body style="background-color: black; color: white">
+  <body>
     <div id="root">
-      <div style="position: fixed; transform: translate(-50%, -50%); top: 50%; left: 50%; font-size: 68px">🦕</div>
+      <div id="logo">🦕</div>
     </div>
     <script type="module" src="./src/main/frontend.tsx"></script>
   </body>
