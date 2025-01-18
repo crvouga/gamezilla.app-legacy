@@ -28,17 +28,38 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      powersync-storage-postgres:
+        condition: service_healthy
     image: journeyapps/powersync-service:latest
     command: ['start', '-r', 'unified']
     volumes:
       - ../../src/powersync:/powersync
     environment:
       POWERSYNC_CONFIG_PATH: /powersync/config.yaml
-      PS_POSTGRES_STORAGE_DATABASE_URL: postgresql://powersync_storage:powersync_storage@postgres:5432/powersync_storage
+      PS_POSTGRES_STORAGE_DATABASE_URL: postgresql://powersync_storage:powersync_storage@powersync-storage-postgres:5432/powersync_storage
       PS_POSTGRES_REPLICATION_DATABASE_URL: postgresql://gamezilla_app:gamezilla_app@postgres:5432/gamezilla_app
       PS_JWKS_URI: http://host.docker.internal:5002/powersync/jwks
     ports:
       - 8080:8080
+
+  powersync-storage-postgres:
+    container_name: gamezilla-app-powersync-storage-postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: powersync_storage
+      POSTGRES_PASSWORD: powersync_storage
+      POSTGRES_DB: powersync_storage
+    ports:
+      - '5433:5433'
+    volumes:
+      - gamezilla-app-powersync-storage-postgres-data:/var/lib/postgresql/data
+    command: ['-c', 'listen_addresses=*', '-c', 'port=5432', '-c', 'ssl=off', '-c', 'wal_level=logical']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U powersync_storage']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   electric:
     container_name: gamezilla-app-electric
@@ -60,3 +81,4 @@ services:
 
 volumes:
   gamezilla-app-postgres-data:
+  gamezilla-app-powersync-storage-postgres-data:
