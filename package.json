@@ -13,6 +13,7 @@
     "check": "bun cir-deps && bun x tsc && bun test",
     "check-imports": "bun scripts/check-imports.ts",
     "cir-deps": "bun backend:cir-deps && bun frontend:cir-deps",
+    "clean-install": "rm -rf node_modules && rm -rf dist && rm bun.lockb && bun install",
     "cloc": "bun x cloc src",
     "db": "bun env && psql \"$DATABASE_URL\"",
     "db:down": "bun x dbmate -e DATABASE_URL down",
@@ -31,16 +32,15 @@
     "gen:screens": "bun src/@/screen/screens-gen.ts",
     "infra:down": "docker-compose -f ./infra/local/docker-compose.yml down",
     "infra:up": "docker-compose -f ./infra/local/docker-compose.yml up -d",
-    "powersync:test-client:get": "bun x degit powersync-ja/powersync-service/test-client powersync/test-client",
-    "powersync:test-client:build": "cd powersync/test-client && tsc -b",
     "powersync:development-token": "cd powersync/test-client && node dist/bin.js generate-token --config path/to/powersync.yaml --sub test-user",
+    "powersync:test-client:build": "cd powersync/test-client && tsc -b",
+    "powersync:test-client:get": "bun x degit powersync-ja/powersync-service/test-client powersync/test-client",
     "pretty": "bun x sort-package-json && bun x prettier --write .",
     "preview": "bun frontend:build && bun frontend:serve",
     "tc": "bun x tsc --noEmit --watch",
     "test:int": "IS_INTEGRATION_TEST=true bun test",
     "test:unit": "IS_INTEGRATION_TEST=false bun test",
-    "viz-bundle": "bun x vite-bundle-visualizer",
-    "clean-install": "rm -rf node_modules && rm -rf dist && rm bun.lockb && bun install"
+    "viz-bundle": "bun x vite-bundle-visualizer"
   },
   "prettier": {
     "jsxSingleQuote": true,

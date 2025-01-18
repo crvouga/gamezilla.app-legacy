@@ -23,7 +23,7 @@
 }
 
 .clickable {
-  @apply enabled:cursor-pointer enabled:active:opacity-50 enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50;
+  @apply enabled:cursor-pointer enabled:hover:opacity-90 enabled:active:opacity-50 disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 /*
