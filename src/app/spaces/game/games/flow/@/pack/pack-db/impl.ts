@@ -10,7 +10,7 @@ export const PackDb = (config: Config): IPackDb => {
     case 'hash-map': {
       return ImplHashMap.PackDb(config)
     }
-    case 'sql': {
+    case 'db-conn-sql': {
       return ImplSql.PackDb(config)
     }
     case 'with-sql-tables': {

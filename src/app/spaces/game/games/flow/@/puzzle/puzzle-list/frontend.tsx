@@ -3,8 +3,7 @@ import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { VDom } from '~/@/vdom/vdom'
-import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { EmptyState, IconPuzzlePiece, Spinner, Typography } from '~/app/@/ui'
+import { EmptyState, IconPuzzlePiece, SpinnerBlock, Typography } from '~/app/@/ui'
 import { Gutter } from '~/app/@/ui/gutter'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
@@ -16,25 +15,16 @@ import { QueryForm } from './query-form'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
 
 const update: FrontendModule['update'] = (input) => {
-  return AppFrontendModule.andThen(
-    { model: input.model },
-    (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model }),
-  )
-}
-
-const updateFromCmd: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
     case 'got-msg': {
-      return updateFromMsg({ ...input, msg: input.msgCmd.c.msg })
-    }
-    default: {
-      return { model: input.model }
+      return update({
+        ...input,
+        msgCmd: null,
+        msg: input.msgCmd.c.msg,
+      })
     }
   }
-}
 
-const updateFromMsg: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'got-puzzle-db-puzzles': {
       return {
@@ -53,10 +43,9 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         ],
       }
     }
-    default: {
-      return { model: input.model }
-    }
   }
+
+  return { model: input.model }
 }
 
 const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
@@ -101,11 +90,7 @@ const View = (input: {
           <EmptyState renderIcon={(input) => <IconPuzzlePiece {...input} />} label={input.ctx.t('flow.no-puzzles')} />
         )}
 
-        {isLoading && (
-          <div className='flex h-full w-full flex-col items-center'>
-            <Spinner />
-          </div>
-        )}
+        {isLoading && <SpinnerBlock />}
 
         <Gutter variant='screen' />
       </div>

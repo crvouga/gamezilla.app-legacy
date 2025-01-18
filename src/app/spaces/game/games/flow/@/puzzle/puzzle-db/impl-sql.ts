@@ -239,19 +239,12 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
 
     sub(input: PuzzleDbQuery) {
       const sql = toQuerySql(input)
-      return Sub.map(
-        config.dbConnSql.sub({
-          parser: Row,
-          sql: sql.str,
-          vars: sql.variables,
-        }),
-        (rows) => {
-          return rows.flatMap((row) => {
-            const puzzle = Row.rowToPuzzle(row)
-            return puzzle ? [puzzle] : []
-          })
-        },
-      )
+      return Sub.map(config.dbConnSql.sub({ parser: Row, sql: sql.str, vars: sql.variables }), (rows) => {
+        return rows.flatMap((row) => {
+          const puzzle = Row.rowToPuzzle(row)
+          return puzzle ? [puzzle] : []
+        })
+      })
     },
   }
 }

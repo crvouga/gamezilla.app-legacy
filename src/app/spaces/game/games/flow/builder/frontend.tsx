@@ -82,7 +82,10 @@ const ViewFeedItem: FrontendModule['ViewFeedItem'] = () => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return Sub.batch([ScreenPuzzleBuilderOpenFrontend.subscriptions(input)])
+  return Sub.batch([
+    ScreenPuzzleBuilderOpenFrontend.subscriptions(input),
+    ScreenPackBuilderOpenFrontend.subscriptions(input),
+  ])
 }
 
 export const BuilderFrontend: FrontendModule = {

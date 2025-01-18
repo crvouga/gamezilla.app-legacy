@@ -1,9 +1,7 @@
-import { Sub } from '~/@/sub'
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import { ScreenPackBuilderOpenBackend } from './screen-pack-builder-open/backend'
 import { ScreenPackBuilderBackend } from './screen-pack-builder/backend'
-
-import { initBackend, type BackendModule } from './types'
+import { type BackendModule } from './types'
 
 const update: BackendModule['update'] = async (input) => {
   return GameBackendModule.andThen(
@@ -13,12 +11,6 @@ const update: BackendModule['update'] = async (input) => {
   )
 }
 
-const subscriptions: BackendModule['subscriptions'] = async () => {
-  return Sub.None
-}
-
 export const BuilderBackend = {
-  init: initBackend,
   update,
-  subscriptions,
 }

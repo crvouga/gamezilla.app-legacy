@@ -1,54 +1,40 @@
+import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { IconGamepad, TopBar } from '~/app/@/ui'
-import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGameCoverArtHeader } from '../../../@/ui/layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../../../@/ui/users-in-space-list'
-import { PackListFrontend } from '../../@/pack/pack-list'
+import { PacksDbQuery } from '../../@/pack/pack-db/query'
+import { PackListFrontend } from '../../@/pack/pack-list/frontend'
 import type { FrontendModule } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
-  return GameFrontendModule.andThen(
-    { model: input.model },
-    (model) => updateFromMsgSpace({ ...input, model }),
-    (model) => updateLoadPacks({ ...input, model }),
-  )
-}
-
-const updateLoadPacks: FrontendModule['update'] = (input) => {
-  if (
-    input.msgEvt?.t === 'flow-evt.user-changed-mode' ||
-    input.msgEvt?.t === 'space-evt.synced' ||
-    input.msgSpace?.t === 'user-clicked-exit-pack-button' ||
-    input.msgSpace?.t === 'user-clicked-select-next-pack'
-  ) {
-    return {
-      model: input.model,
-      msgCmd: [PackListFrontend.load()],
-    }
-  }
-
-  return { model: input.model }
-}
-
-const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-clicked-open-pack-list-item': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)],
-      }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
     }
     case 'user-clicked-exit-play-mode-button': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
-      }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }
-    default: {
-      return {
-        model: input.model,
-      }
-    }
+  }
+  return {
+    model: input.model,
+  }
+}
+
+const toQuery = (input: { ctx: { currentUserId: UserId } }): PacksDbQuery => {
+  return {
+    order: {
+      lastUpdatedAt: 'desc',
+    },
+    pagination: {
+      limit: 25,
+      offset: 0,
+    },
+    where: {
+      createdBy: {
+        equals: input.ctx.currentUserId,
+      },
+    },
   }
 }
 
@@ -81,6 +67,8 @@ const View: FrontendModule['View'] = (input) => {
     )
   }
 
+  const query = toQuery(input)
+
   return (
     <div className='flex h-full w-full flex-1 flex-col'>
       <TopBar
@@ -95,13 +83,12 @@ const View: FrontendModule['View'] = (input) => {
       />
       <PackListFrontend.View
         ctx={input.ctx}
-        dispatch={(_c) => {}}
         model={input.ctx.packList}
-        emits={{
-          clickedPackItem(pack) {
-            input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-open-pack-list-item', pack } })
-          },
+        query={query}
+        onQueryChanged={(query) => {
+          console.log('query', query)
         }}
+        onClick={(pack) => input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-open-pack-list-item', pack } })}
       />
     </div>
   )

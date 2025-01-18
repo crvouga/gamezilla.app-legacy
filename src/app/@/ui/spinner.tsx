@@ -12,3 +12,11 @@ export const Spinner = (input: { className?: string }) => {
     />
   )
 }
+
+export const SpinnerBlock = (input: { className?: string }) => {
+  return (
+    <div className={cn('flex h-full w-full flex-col items-center', input.className)}>
+      <Spinner />
+    </div>
+  )
+}

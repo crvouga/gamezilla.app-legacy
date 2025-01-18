@@ -27,6 +27,22 @@ const parser = p.obj({
 
 export type PacksDbQuery = p.Infer<typeof parser>
 
+const toKey = (input: PacksDbQuery): string => {
+  return [
+    'limit',
+    input.pagination.limit,
+    'offset',
+    input.pagination.offset,
+    'where.createdBy.equals',
+    input.where.createdBy?.equals,
+    'order.createdAt',
+    input.order.createdAt,
+    'order.lastUpdatedAt',
+    input.order.lastUpdatedAt,
+  ].join(':')
+}
+
 export const PacksDbQuery = {
   ...parser,
+  toKey,
 }

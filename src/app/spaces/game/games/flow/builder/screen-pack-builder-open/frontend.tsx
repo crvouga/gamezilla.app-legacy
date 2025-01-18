@@ -1,10 +1,10 @@
+import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { TopBar } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { PackListFrontend } from '../../@/pack/pack-list'
+import { PackListFrontend } from '../../@/pack/pack-list/frontend'
 import type { FrontendModule } from '../types'
 import { PackCreateNewFrontend } from './create-new-pack/frontend'
-import { UserId } from '~/app/@/data/user-id'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -22,11 +22,19 @@ export const updateMain: FrontendModule['update'] = (input) => {
         msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
     }
-    default: {
+  }
+
+  switch (input.msg?.t) {
+    case 'screen-pack-builder-open.got-pack-list-msg': {
       return {
         model: input.model,
+        msgCmd: [PackListFrontend.gotMsg(input.msg.c)],
       }
     }
+  }
+
+  return {
+    model: input.model,
   }
 }
 
@@ -48,44 +56,44 @@ const toQuery = (input: { currentUserId: UserId; offset: number }) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return PackListFrontend.watch(toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 }))
+  return PackListFrontend.watch(input.ctx, toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 }), (c) => ({
+    t: 'screen-pack-builder-open.got-pack-list-msg',
+    c,
+  }))
 }
 
 const View: FrontendModule['View'] = (input) => {
+  const query = toQuery({
+    currentUserId: input.ctx.currentUserId,
+    offset: 0,
+  })
   return (
     <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden'>
       <TopBar
         onBack={() =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'user-clicked-back-button',
-              userId: input.ctx.currentUserId,
-            },
-          })
+          input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } })
         }
         ctx={input.ctx}
         title={input.ctx.t('flow.pack-builder')}
       />
       <PackListFrontend.View
         {...input}
-        dispatch={(_c) => {}}
         model={input.ctx.packList}
-        // query={input.model.packBuilderOpen.query}
-        slots={{
-          fab: () => <PackCreateNewFrontend.ViewCreateFab {...input} />,
+        query={query}
+        fab={<PackCreateNewFrontend.ViewCreateFab {...input} />}
+        onQueryChanged={(query) => {
+          console.log('query changed', query)
         }}
-        emits={{
-          clickedPackItem: (pack) =>
-            input.dispatch({
-              t: 'got-msg-space',
-              c: {
-                t: 'screen-pack-builder-open.user-clicked-pack-item',
-                pack,
-                userId: input.ctx.currentUserId,
-              },
-            }),
-        }}
+        onClick={(pack) =>
+          input.dispatch({
+            t: 'got-msg-space',
+            c: {
+              t: 'screen-pack-builder-open.user-clicked-pack-item',
+              pack,
+              userId: input.ctx.currentUserId,
+            },
+          })
+        }
       />
     </div>
   )

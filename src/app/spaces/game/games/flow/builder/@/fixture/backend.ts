@@ -7,7 +7,6 @@ import { PackDb } from '../../../@/pack/pack-db/impl'
 import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
 import { Solutions } from '../../../@/solutions/solutions'
 import { BuilderSpace } from '../../space'
-import { initBackend } from '../../types'
 
 const initCtx = async (ctx: SpaceBackendCtx): Promise<FlowBackendCtx> => {
   const testEnv = await FixtureAppBackend()
@@ -16,7 +15,7 @@ const initCtx = async (ctx: SpaceBackendCtx): Promise<FlowBackendCtx> => {
       return {
         ...ctx,
         packDb: PackDb({
-          t: 'sql',
+          t: 'db-conn-sql',
           dbConnSql: testEnv.dbConnPostgres,
           logger: Logger({ t: 'noop' }),
         }),
@@ -42,12 +41,11 @@ const initCtx = async (ctx: SpaceBackendCtx): Promise<FlowBackendCtx> => {
 export const FlowCreateFixtureBackend = async () => {
   const f = await SpaceGameFixtureBackend()
   const ctx = await initCtx(f.ctx)
-  const model = initBackend
+
   const modelSpace = BuilderSpace.initSpace({ ctx })
   return {
     ...f,
     ctx,
-    model,
     modelSpace,
   }
 }

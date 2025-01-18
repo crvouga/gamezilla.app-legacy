@@ -10,6 +10,7 @@ import { PuzzleListTypes } from '../puzzle/puzzle-list'
 import { Solutions } from '../solutions/solutions'
 import type { FlowFrontendCtx } from './ctx'
 import { PuzzleDb } from '../puzzle/puzzle-db'
+import { PackDb } from '../pack/pack-db/impl'
 
 export const FixtureFlowFrontend = async () => {
   const f = await FixtureSpacesFrontend()
@@ -21,7 +22,8 @@ export const FixtureFlowFrontend = async () => {
     puzzleList: PuzzleListTypes.initFrontend,
     packList: PackListTypes.initFrontend,
     packPuzzleGrid: PackPuzzlesGridTypes.initFrontend,
-    puzzleDb: await PuzzleDb({ ...f.ctx, t: 'db-conn-sql' }),
+    puzzleDb: PuzzleDb({ ...f.ctx, t: 'db-conn-sql' }),
+    packDb: PackDb({ ...f.ctx, t: 'db-conn-sql' }),
   }
   type Input = {
     ctx?: FlowFrontendCtx | null

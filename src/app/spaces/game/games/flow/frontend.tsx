@@ -7,21 +7,24 @@ import { IconGamepad, IconScrewdriverWrench } from '~/app/@/ui'
 import { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
+import { CoverArt } from './@/cover-art'
 import { FlowFrontendCmd } from './@/frontend/cmd'
 import type { FlowFrontendCtx } from './@/frontend/ctx'
 import { FlowFrontendEvt } from './@/frontend/evt'
-import { CoverArt } from './@/cover-art'
 import { Pack } from './@/pack/pack'
-import { PackListFrontend, PackListTypes } from './@/pack/pack-list'
+import { IPackDb } from './@/pack/pack-db'
+import { PackDb } from './@/pack/pack-db/impl'
+import { PackListTypes } from './@/pack/pack-list'
+import { PackListFrontend } from './@/pack/pack-list/frontend'
 import { PackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
 import { PackPuzzlesGridFrontend } from './@/pack/pack-puzzles-grid/frontend'
+import { IPuzzleDb, PuzzleDb } from './@/puzzle/puzzle-db'
 import { PuzzleListTypes } from './@/puzzle/puzzle-list'
 import { PuzzleListFrontend } from './@/puzzle/puzzle-list/frontend'
 import { Solutions } from './@/solutions/solutions'
 import { BuilderFrontend } from './builder/frontend'
 import { PlayFrontend } from './play/frontend'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgToBackend } from './types'
-import { IPuzzleDb, PuzzleDb } from './@/puzzle/puzzle-db'
 
 const init: FrontendModule['init'] = {
   builder: BuilderFrontend.init,
@@ -35,13 +38,14 @@ const init: FrontendModule['init'] = {
 }
 
 let puzzleDb: IPuzzleDb
+let packDb: IPackDb
 const toFlowFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): FlowFrontendCtx => {
-  if (!puzzleDb) {
-    puzzleDb = PuzzleDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: input.ctx.logger })
-  }
+  puzzleDb ??= PuzzleDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: input.ctx.logger })
+  packDb ??= PackDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: input.ctx.logger })
   return {
     ...input.ctx,
     puzzleDb,
+    packDb,
     packs: input.model.packs,
     puzzles: input.model.puzzles,
     puzzleList: input.model.puzzleList,

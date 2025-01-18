@@ -31,15 +31,24 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     },
   ) => {
     const sql = Sql.to(input.sql, input.vars)
+
     const abortController = new AbortController()
-    const watch = async () => {
-      for await (const result of config.powersync.watch(sql, [], { signal: abortController.signal })) {
-        const parsedRows =
-          result.rows?._array.map(input.parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : [])) ?? []
-        input.onChange(parsedRows)
-      }
-    }
-    watch()
+
+    config.powersync.watchWithCallback(
+      sql,
+      [],
+      {
+        onResult(results) {
+          const parsedRows =
+            results.rows?._array.map(input.parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : [])) ?? []
+          input.onChange(parsedRows)
+        },
+      },
+      {
+        signal: abortController.signal,
+      },
+    )
+
     return async () => {
       abortController.abort()
     }
@@ -50,17 +59,28 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     {
       unsubscribe: () => void
       pubSub: PubSub<unknown[]>
+      unsubscribeTimeout?: ReturnType<typeof setTimeout>
     }
   >()
 
   const sub: IDbConnSql['sub'] = <TRow>(input: DbConnSqlQueryInput<TRow>) => {
     const sql = Sql.to(input.sql, input.vars)
     const subscriptionKey = sql
+      .replaceAll(/\s+/g, ' ')
+      .replaceAll(/\n/g, ' ')
+      .replaceAll(/\t/g, ' ')
+      .replaceAll(' ', ' ')
+      .trim()
     logger.debug(`subscriptionKey=${subscriptionKey}`)
 
-    if (activeSubscriptions.has(subscriptionKey)) {
+    const activeSubscription = activeSubscriptions.get(subscriptionKey)
+
+    if (activeSubscription) {
       logger.debug('returning active sub')
-      return activeSubscriptions.get(subscriptionKey)!.pubSub as Sub<TRow[]>
+
+      clearTimeout(activeSubscription.unsubscribeTimeout)
+
+      return activeSubscription.pubSub as Sub<TRow[]>
     }
 
     const pubSub = PubSub.create<TRow[]>()
@@ -70,7 +90,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
       parser: input.parser,
       sql: input.sql,
       vars: input.vars,
-      onChange: (rows) => {
+      onChange(rows) {
         if (
           lastPublished &&
           rows.length === lastPublished.length &&
@@ -86,21 +106,27 @@ export const DbConnSql = (config: Config): IDbConnSql => {
 
     activeSubscriptions.set(subscriptionKey, {
       pubSub: pubSub as PubSub<unknown[]>,
-      unsubscribe: async () => {
-        unsubscribe.then((unsub) => unsub())
-        activeSubscriptions.delete(subscriptionKey)
+      unsubscribe() {
+        unsubscribe.then((unsub) => {
+          unsub()
+          activeSubscriptions.delete(subscriptionKey)
+        })
       },
     })
 
     return {
       sub(subscriber: (rows: TRow[]) => void) {
         const unsub = pubSub.sub(subscriber)
-
         return () => {
-          unsub()
-          const activeSub = activeSubscriptions.get(subscriptionKey)
-          activeSub?.unsubscribe()
-          activeSubscriptions.delete(subscriptionKey)
+          const activeSubscription = activeSubscriptions.get(subscriptionKey)
+          if (!activeSubscription) {
+            unsub()
+            return
+          }
+          activeSubscription.unsubscribeTimeout = setTimeout(() => {
+            unsub()
+            activeSubscription.unsubscribe()
+          }, 1000)
         }
       },
     }
@@ -120,10 +146,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     const chan = got ?? PubSub.create<string>()
     channels.set(channel, chan)
     const unsub = chan.sub((payload) => {
-      callback({
-        channel,
-        payload,
-      })
+      callback({ channel, payload })
     })
     return async () => {
       unsub()

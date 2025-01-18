@@ -1,22 +1,22 @@
 import { ascend } from '~/@/array/sorting'
 import type { IDbConnSql } from '~/@/db-conn-sql'
+import { ILogger, Logger } from '~/@/logger'
 import { p } from '~/@/parser'
 import { isErr, isOk, Result, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
+import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
+import { Uuid } from '~/@/uuid/uuid'
 import { UserId } from '~/app/@/data/user-id'
+import { OrderClause, WhereClause } from '../../puzzle/puzzle-db/query'
 import { PuzzleId } from '../../puzzle/puzzle-id'
 import type { Pack } from '../pack'
 import { PackId } from '../pack-id'
 import { PackName } from '../pack-name'
 import type { IPackDb } from './interface'
-import { Uuid } from '~/@/uuid/uuid'
-import { ILogger, Logger } from '~/@/logger'
-import { OrderClause, WhereClause } from '../../puzzle/puzzle-db/query'
-import { Sub } from '~/@/sub'
 
 export type Config = {
-  t: 'sql'
+  t: 'db-conn-sql'
   dbConnSql: IDbConnSql
   logger: ILogger
 }
@@ -181,7 +181,7 @@ export const PackDb = (config: Config): IPackDb => {
         vars,
       })
 
-      const packItemsSql = `
+      ;`
         SELECT
           *
         FROM
@@ -194,20 +194,12 @@ export const PackDb = (config: Config): IPackDb => {
         )
       `
 
-      const packItemsSub = config.dbConnSql.sub({
-        parser: RowItem,
-        sql: packItemsSql,
-        vars,
-      })
-
-      return Sub.flatMap(packsSub, (packRows) => {
-        return Sub.map(packItemsSub, (packItemRows) => {
-          const packs = packRows.flatMap((row) => {
-            const pack = rowToPack(row, packItemRows)
-            return pack ? [pack] : []
-          })
-          return packs
+      return Sub.map(packsSub, (packRows) => {
+        const packs = packRows.flatMap((row) => {
+          const pack = rowToPack(row, [])
+          return pack ? [pack] : []
         })
+        return packs
       })
     },
 

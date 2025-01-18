@@ -27,7 +27,17 @@ export const setupNewPowerSyncDatabase = async () => {
 
   const connector = new Connector()
 
-  powerSync.connect(connector).then(() => console.log('Connected to PowerSync'))
+  powerSync.connect(connector).then(() => {
+    console.log('PowerSync connected to backend')
+  })
+
+  powerSync.init().then(() => {
+    console.log('PowerSync initialized')
+  })
+
+  powerSync.waitForFirstSync().then(() => {
+    console.log('PowerSync first sync completed')
+  })
 
   return powerSync
 }

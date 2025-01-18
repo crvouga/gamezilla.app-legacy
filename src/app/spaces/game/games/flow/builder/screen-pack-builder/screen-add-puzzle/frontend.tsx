@@ -20,7 +20,7 @@ const update: FrontendModule['update'] = (input) => {
   }
 
   switch (input.msg?.t) {
-    case 'got-puzzle-list-msg': {
+    case 'screen-pack-builder.screen-add.puzzle.got-puzzle-list-msg': {
       return { model: input.model, msgCmd: [PuzzleListFrontend.gotMsg(input.msg.c)] }
     }
   }
@@ -46,7 +46,10 @@ const toQuery = (input: { ctx: FlowFrontendCtx }): PuzzleDbQuery => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return PuzzleListFrontend.watch(input.ctx, toQuery(input), (c) => ({ t: 'got-puzzle-list-msg', c }))
+  return PuzzleListFrontend.watch(input.ctx, toQuery(input), (c) => ({
+    t: 'screen-pack-builder.screen-add.puzzle.got-puzzle-list-msg',
+    c,
+  }))
 }
 
 const View: FrontendModule['View'] = (input) => {

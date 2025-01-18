@@ -1,18 +1,12 @@
-import { p } from '~/@/parser'
-import { RequestResponse } from '~/@/request-response/request-response'
-import { RemoteResult } from '~/@/result'
-import type { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
-import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
 import { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
 import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
-import { FlowBackendCtx } from '../../backend/ctx'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { FlowFrontendEvtIn } from '../../frontend/evt'
 import type { Pack } from '../pack'
-import type { IPackDb } from '../pack-db'
+import { PacksDbQuery } from '../pack-db/query'
+import { PackId } from '../pack-id'
 
 //
 //
@@ -20,54 +14,30 @@ import type { IPackDb } from '../pack-db'
 //
 
 export type ModelFrontend = {
-  request: RequestResponse<string, null>
-}
-
-export const initFrontend: ModelFrontend = {
-  request: RemoteResult.NotAsked,
-}
-
-export const ModelBackend = p.l(null)
-export type ModelBackend = p.Infer<typeof ModelBackend>
-
-export const initBackend: ModelBackend = null
-
-export const MsgFrontend = p.or(p.obj({ t: p.l('user-observed-end-of-list') }), p.obj({ t: p.l('elapsed') }))
-export type MsgFrontend = p.Infer<typeof MsgFrontend>
-
-export type MsgBackend = { t: 'noop' }
-
-export type MsgToBackend = {
-  t: 'list-packs'
-  input: ListPackInput
-}
-
-export const MsgToFrontend = p.obj({
-  t: p.l('listed-packs'),
-  listed: p.custom((x: unknown): x is ListPackOutput => Boolean(x), 'ListPackOutput'),
-})
-
-export type MsgToFrontend = {
-  t: 'listed-packs'
-  listed: ListPackOutput
-}
-
-export type ListPackInput = Parameters<IPackDb['list']>[0]
-
-export type ListPackOutput = Awaited<ReturnType<IPackDb['list']>>
-
-export type MsgInCmdFrontend = {
-  t: 'pack-list'
-  c: {
-    t: 'load'
+  results: {
+    [queryKey: string]: PackId[]
+  }
+  queries: {
+    [name: string]: PacksDbQuery
   }
 }
 
-//
-//
-//
-//
-//
+export const initFrontend: ModelFrontend = {
+  results: {},
+  queries: {},
+}
+
+export type MsgFrontend = {
+  t: 'got-pack-db-packs'
+  query: PacksDbQuery
+  packs: Pack[]
+}
+
+export type MsgBackend = { t: 'noop' }
+
+export type MsgToBackend = { t: 'noop' }
+
+export type MsgToFrontend = { t: 'noop' }
 
 export type MsgOutCmdFrontend =
   | SpaceFrontendCmd<{
@@ -75,6 +45,14 @@ export type MsgOutCmdFrontend =
       MsgToBackend: MsgToBackend
     }>
   | FlowFrontendCmdRoot
+
+export type MsgInCmdFrontend = {
+  t: 'pack-list'
+  c: {
+    t: 'got-msg'
+    msg: MsgFrontend
+  }
+}
 
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend
@@ -92,14 +70,4 @@ export type FrontendModule = AppFrontendModule<{
   ViewEmit: {
     clickedPackItem: Pack
   }
-}>
-
-export type BackendModule = AppBackendModule<{
-  Model: ModelBackend
-  Msg: MsgBackend
-  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
-  Ctx: FlowBackendCtx
-  MsgEvtIn: SpaceBackendEvt
 }>

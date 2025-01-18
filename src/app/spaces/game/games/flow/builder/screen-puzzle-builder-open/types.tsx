@@ -19,7 +19,7 @@ export const initFrontend: ModelFrontend = {
 export type MsgFrontend =
   | CreateNewPuzzleTypes.MsgFrontend
   | {
-      t: 'got-puzzle-list-msg'
+      t: 'screen-puzzle-builder-open.got-puzzle-list-msg'
       c: PuzzleListTypes.MsgFrontend
     }
 

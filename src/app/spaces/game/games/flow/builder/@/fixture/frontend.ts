@@ -5,12 +5,14 @@ import { Ok } from '~/@/result'
 import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { testSpaceFrontendCtx } from '~/app/spaces/game/games/@/testing/frontend'
-import type { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { Flow } from '../../../@/flow'
+import type { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { Pack } from '../../../@/pack/pack'
+import { PackDb } from '../../../@/pack/pack-db/impl'
 import { PackListTypes } from '../../../@/pack/pack-list'
 import { PackPuzzlesGridTypes } from '../../../@/pack/pack-puzzles-grid'
 import { Puzzle } from '../../../@/puzzle/puzzle'
+import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
 import type { PuzzleId } from '../../../@/puzzle/puzzle-id'
 import { PuzzleListTypes } from '../../../@/puzzle/puzzle-list'
 import { Solutions } from '../../../@/solutions/solutions'
@@ -18,7 +20,6 @@ import { samples } from '../../../@/variant/grid/grid-samples'
 import { BuilderFrontend } from '../../frontend'
 import { BuilderSpace } from '../../space'
 import * as BuilderTypes from '../../types'
-import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
 
 export type FixtureUpdateInput = {
   ctx?: FlowFrontendCtx
@@ -101,6 +102,7 @@ export const FixtureFlowBuilderFrontend = async () => {
     packPuzzleGrid: PackPuzzlesGridTypes.initFrontend,
     solutions: Solutions.init,
     puzzleDb: PuzzleDb({ t: 'db-conn-sql', dbConnSql: f.ctx.dbConnSql, logger: f.ctx.logger }),
+    packDb: PackDb({ t: 'db-conn-sql', dbConnSql: f.ctx.dbConnSql, logger: f.ctx.logger }),
   }
   const model = BuilderTypes.initFrontend
   const modelSpace = BuilderSpace.initSpace({ ctx })
@@ -128,7 +130,8 @@ export const initial = {
 export const testFlowFrontendCtx = async (): Promise<FlowFrontendCtx> => {
   return {
     ...(await testSpaceFrontendCtx()),
-    puzzleDb: await PuzzleDb({ t: 'hash-map' }),
+    puzzleDb: PuzzleDb({ t: 'hash-map' }),
+    packDb: PackDb({ t: 'hash-map' }),
     packs: {},
     puzzles: {},
     puzzleList: PuzzleListTypes.initFrontend,

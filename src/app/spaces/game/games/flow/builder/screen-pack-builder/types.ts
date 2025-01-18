@@ -1,12 +1,13 @@
-import { Result } from '~/@/result'
 import { p } from '~/@/parser'
+import { Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
-import { PlayMode } from '../../@/play-mode'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridTypes } from '../../@/pack/pack-puzzles-grid'
-import { PuzzleResult } from '../../@/puzzle/puzzle-result'
+import { PlayMode } from '../../@/play-mode'
 import { Puzzle } from '../../@/puzzle/puzzle'
+import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { EditPackNameTypes } from './edit-pack-name'
+import { PuzzleListTypes } from '../../@/puzzle/puzzle-list'
 
 //
 //
@@ -26,19 +27,20 @@ export const initFrontend: ModelFrontend = {
   },
 }
 
-export type ModelBackend = null
-
-export const initBackend: ModelBackend = null
-
 //
 //
 //
 //
 
-export type MsgFrontend = {
-  t: 'screen-pack-builder.flow-pack-grid'
-  c: PackPuzzlesGridTypes.MsgFrontend
-}
+export type MsgFrontend =
+  | {
+      t: 'screen-pack-builder.flow-pack-grid'
+      c: PackPuzzlesGridTypes.MsgFrontend
+    }
+  | {
+      t: 'screen-pack-builder.screen-add.puzzle.got-puzzle-list-msg'
+      c: PuzzleListTypes.MsgFrontend
+    }
 
 export type MsgBackend = {
   t: 'screen-pack-builder.flow-pack-grid'

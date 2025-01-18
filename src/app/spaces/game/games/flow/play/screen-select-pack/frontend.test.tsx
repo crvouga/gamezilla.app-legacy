@@ -3,7 +3,6 @@ import { EventId, withEventMeta } from '~/@/event-sourced/event'
 import { LamportTimestamp } from '~/@/lamport-clock'
 import { didPlaySound } from '~/app/@/frontend/cmd'
 import { Pack } from '../../@/pack/pack'
-import { PackListFrontend } from '../../@/pack/pack-list'
 import { FixturePlayFrontend } from '../@/frontend/fixture'
 
 const Fixture = async () => {
@@ -75,35 +74,5 @@ describe(import.meta.file, () => {
     ])
 
     expect(didPlaySound(output)).toBe(true)
-  })
-
-  test('load packs on exiting select puzzle screen', async () => {
-    const f = await Fixture()
-
-    const output = f.update(f.initial, [
-      {
-        msgSpace: withEventMeta({
-          t: 'user-clicked-exit-pack-button',
-          userId: f.ctx.currentUserId,
-        }),
-      },
-    ])
-
-    expect(PackListFrontend.didLoad(output)).toBe(true)
-  })
-
-  test('load packs on clicking select new pack', async () => {
-    const f = await Fixture()
-
-    const output = f.update(f.initial, [
-      {
-        msgSpace: withEventMeta({
-          t: 'user-clicked-select-next-pack',
-          userId: f.ctx.currentUserId,
-        }),
-      },
-    ])
-
-    expect(PackListFrontend.didLoad(output)).toBe(true)
   })
 })

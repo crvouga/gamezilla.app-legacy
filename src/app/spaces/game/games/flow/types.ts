@@ -1,11 +1,12 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
 import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
-import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
+import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
+import { FlowBackendCtx } from './@/backend/ctx'
 import { FlowFrontendCmd, FlowFrontendCmdLocal } from './@/frontend/cmd'
 import { FlowFrontendEvtIn } from './@/frontend/evt'
 import { Pack } from './@/pack/pack'
@@ -15,7 +16,6 @@ import { PackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
 import type { Puzzle } from './@/puzzle/puzzle'
 import type { PuzzleId } from './@/puzzle/puzzle-id'
 import { PuzzleListTypes } from './@/puzzle/puzzle-list'
-import { FlowBackendCtx } from './@/backend/ctx'
 import { Solutions } from './@/solutions/solutions'
 import { BuilderTypes } from './builder'
 import { PlayTypes } from './play'
@@ -44,10 +44,6 @@ export type ModelFrontend = {
 export const ModelBackend = p.or(
   p.obj({
     t: p.l('none'),
-  }),
-  p.obj({
-    t: p.l('builder'),
-    c: BuilderTypes.ModelBackend,
   }),
   p.obj({
     t: p.l('play'),
