@@ -158,7 +158,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         vars: {
           deletedAt: Posix.now(),
           deletedBy: input.deletedByUserId,
-          id: input.id,
+          id: input.puzzleId,
         },
       })
       return Result.mapOk(queried, () => null)

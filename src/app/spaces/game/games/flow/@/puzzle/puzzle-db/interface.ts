@@ -14,6 +14,6 @@ export type IPuzzleDb = {
   query: (input: QueryPuzzlesInput) => Task<string, { puzzles: Paginated<Puzzle>; solutions: Solutions }>
   get: (id: PuzzleId) => Task<string, Puzzle | null>
   put: (input: Puzzle) => Task<string, null>
-  zap: (input: { id: PuzzleId; deletedByUserId: UserId }) => Task<string, null>
+  zap: (input: { puzzleId: PuzzleId; deletedByUserId: UserId }) => Task<string, null>
   sub: (input: QueryPuzzlesInput) => Sub<Puzzle[]>
 }

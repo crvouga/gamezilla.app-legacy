@@ -201,7 +201,7 @@ describe(import.meta.file, () => {
       await f.flowPuzzleDb.put(puzzle)
       const before = Result.unwrapOr(await f.flowPuzzleDb.get(puzzle.id), null)
       await f.flowPuzzleDb.zap({
-        id: puzzle.id,
+        puzzleId: puzzle.id,
         deletedByUserId: UserId.generate(),
       })
       const after = Result.unwrapOr(await f.flowPuzzleDb.get(puzzle.id), null)

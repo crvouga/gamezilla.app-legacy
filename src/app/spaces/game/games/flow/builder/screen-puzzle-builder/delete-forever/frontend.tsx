@@ -3,10 +3,9 @@ import { Ok, RemoteResult, isLoading } from '~/@/result'
 import { APP_SOUND, playSound, showCreatedSm } from '~/app/@/frontend/cmd'
 import { ConfirmationFormDrawer, IconDeleteForever, ListItemButton } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { PuzzleId } from '../../../@/puzzle/puzzle-id'
+import { FlowFrontendCmdRoot } from '../../../@/frontend/cmd-root'
 import type { FrontendModule } from '../../types'
 import { MsgFrontend, MsgToBackend } from './types'
-import { FlowFrontendCmdRoot } from '../../../@/frontend/cmd-root'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -44,17 +43,16 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         model: { ...input.model, puzzleDeleteForeverRequest: RemoteResult.Loading },
         msgCmd: [playSound(APP_SOUND.tap)],
         async eff(dispatch) {
-          const puzzleId = input.modelSpace.screenPuzzleBuilder?.puzzle.id
+          const puzzleId = input.modelSpace.screenPuzzleBuilder?.puzzle.id ?? null
+          const deletedByUserId = input.ctx.currentUserId
 
-          const deleted = puzzleId
-            ? await input.ctx.puzzleDb.zap({ deletedByUserId: input.ctx.currentUserId, id: puzzleId })
-            : Ok(null)
+          const deleted = puzzleId ? await input.ctx.puzzleDb.zap({ deletedByUserId, puzzleId }) : Ok(null)
 
           dispatch({
             t: 'delete-forever.db-zapped-puzzle',
             deleted,
-            puzzleId: puzzleId ?? PuzzleId.generate(),
-            userId: input.ctx.currentUserId,
+            puzzleId,
+            deletedByUserId,
           })
         },
       }
@@ -85,7 +83,10 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
           puzzleBuilderOpened: null,
         },
         msgCmd: [
-          FlowFrontendCmdRoot.removePuzzles({ [input.msgSpace.puzzleId]: input.msgSpace.puzzleId }, input),
+          FlowFrontendCmdRoot.removePuzzles(
+            input.msgSpace.puzzleId ? { [input.msgSpace.puzzleId]: input.msgSpace.puzzleId } : {},
+            input,
+          ),
           ...showCreatedSm<WireTypes>(input.ctx.t('flow.puzzle-deleted')),
         ],
       }

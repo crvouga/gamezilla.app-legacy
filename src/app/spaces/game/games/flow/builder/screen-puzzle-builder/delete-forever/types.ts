@@ -19,8 +19,8 @@ export type MsgFrontend =
   | {
       t: 'delete-forever.db-zapped-puzzle'
       deleted: Result<string, null>
-      userId: UserId
-      puzzleId: PuzzleId
+      deletedByUserId: UserId
+      puzzleId: PuzzleId | null
     }
 
 export type MsgToBackend = { t: 'noop' }
@@ -32,7 +32,7 @@ export type MsgBackend = { t: 'noop' }
 export const MsgSpace = p.obj({
   t: p.l('user-deleted-puzzle'),
   deleted: Result.parser(p.str, p.l(null)),
-  puzzleId: PuzzleId,
-  userId: UserId,
+  deletedByUserId: UserId,
+  puzzleId: p.maybe(PuzzleId),
 })
 export type MsgSpace = p.Infer<typeof MsgSpace>

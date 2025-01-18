@@ -119,7 +119,7 @@ export const PuzzleDb = (_config: Config): IPuzzleDb => {
       return Ok(null)
     },
 
-    async zap({ id }) {
+    async zap({ puzzleId: id }) {
       calls.zap++
       if (calls.zap % ERROR_EVERY === 0) {
         return Err('zap demo error')
