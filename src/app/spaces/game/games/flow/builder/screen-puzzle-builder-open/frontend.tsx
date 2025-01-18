@@ -21,6 +21,9 @@ const updateMain: FrontendModule['update'] = (input) => {
     case 'screen-puzzle-builder-open.clicked-puzzle-list-item': {
       return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
     }
+    case 'screen-puzzle-builder-open.puzzle-list-query-changed': {
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
+    }
   }
 
   switch (input.msg?.t) {

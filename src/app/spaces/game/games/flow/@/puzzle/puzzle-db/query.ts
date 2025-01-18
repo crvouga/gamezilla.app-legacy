@@ -50,7 +50,25 @@ const toKey = (input: QueryPuzzlesInput): string => {
   ].join(':')
 }
 
+const random = (): QueryPuzzlesInput => {
+  return {
+    order: {
+      createdAt: 'asc',
+    },
+    pagination: {
+      limit: 10,
+      offset: 0,
+    },
+    where: {
+      createdBy: {
+        equals: UserId.generate(),
+      },
+    },
+  }
+}
+
 export const QueryPuzzlesInput = {
   ...parser,
   toKey,
+  random,
 }
