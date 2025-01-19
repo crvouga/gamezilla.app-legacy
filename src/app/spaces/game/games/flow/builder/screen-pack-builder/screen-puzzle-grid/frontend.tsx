@@ -125,7 +125,7 @@ export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
 const ButtonAddPuzzle: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
     switch (input.msgSpace?.t) {
-      case 'screen-pack-builder.user-opened-add-puzzle-screen': {
+      case 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button': {
         return {
           model: input.model,
           msgCmd: [playSound(APP_SOUND.navForwardMin)],
@@ -142,7 +142,7 @@ const ButtonAddPuzzle: Pick<FrontendModule, 'update' | 'View'> = {
           input.dispatch({
             t: 'got-msg-space',
             c: {
-              t: 'screen-pack-builder.user-opened-add-puzzle-screen',
+              t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
               userId: input.ctx.currentUserId,
             },
           })

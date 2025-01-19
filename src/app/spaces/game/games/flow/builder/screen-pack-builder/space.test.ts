@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceGameSpaceFixture } from '~/app/spaces/game/games/@/testing/sync'
-import { FlowSpaceCtx } from '../../@/space/ctx'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { Solutions } from '../../@/solutions/solutions'
+import { FlowSpaceCtx } from '../../@/space/ctx'
 import { BuilderSpace } from '../space'
 import type { ModelSpace } from '../types'
 import { ScreenPackBuilderSpace } from './space'
@@ -262,7 +262,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelSpace = f.updateModelSpace([
       {
-        t: 'screen-pack-builder.user-opened-add-puzzle-screen',
+        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
         userId: f.currentUserId,
       },
     ])
@@ -273,7 +273,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelSpace = f.updateModelSpace([
       {
-        t: 'screen-pack-builder.user-opened-add-puzzle-screen',
+        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
         userId: f.currentUserId,
       },
       {
@@ -369,7 +369,7 @@ describe(import.meta.file, () => {
         userId: f.currentUserId,
       },
       {
-        t: 'screen-pack-builder.user-opened-add-puzzle-screen',
+        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
         userId: f.currentUserId,
       },
       {
@@ -379,6 +379,178 @@ describe(import.meta.file, () => {
 
     expect(ScreenPackBuilderSpace.toSlideIndex(f.modelSpace.screenPackBuilder)).toBe(0)
     expect(ScreenPackBuilderSpace.toSlideIndex(modelSpace.screenPackBuilder)).toBe(1)
+  })
+
+  it('should open puzzle when user clickes puzzle grid item', async () => {
+    const f = await Fixture()
+
+    const output = f.updateModelSpace([
+      {
+        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        userId: f.currentUserId,
+      },
+      {
+        t: 'screen-pack-builder.user-clicked-add-puzzle-item',
+        puzzle: f.puzzles[0],
+        userId: f.currentUserId,
+      },
+      {
+        t: 'screen-pack-builder.user-clicked-pack-item',
+        puzzleResult: { t: 'got', c: f.puzzles[0] },
+        puzzleIndex: 0,
+      },
+    ])
+
+    expect(
+      output.screenPackBuilder?.screen.t === 'screen-puzzle' && output.screenPackBuilder.screen.puzzleIndex === 0,
+    ).toBe(true)
+  })
+
+  it('should open puzzle picker when user clicks add puzzle button', async () => {
+    const f = await Fixture()
+    const output = f.updateModelSpace([
+      {
+        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        userId: f.currentUserId,
+      },
+    ])
+    expect(output.screenPackBuilder?.screen.t === 'screen-add-puzzle').toBe(true)
+  })
+
+  it('should close puzzle picker when user clicks closes', async () => {
+    const f = await Fixture()
+    const output = f.updateModelSpace([
+      {
+        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        userId: f.currentUserId,
+      },
+      {
+        t: 'screen-pack-builder.user-closed-add-puzzle-screen',
+      },
+    ])
+    expect(output.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
+  })
+
+  it('should add puzzle to the pack after clicking a puzzle in the picker', async () => {
+    const f = await Fixture()
+    const puzzle = await Puzzle.random()
+    const output = f.updateModelSpace([
+      {
+        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        userId: f.currentUserId,
+      },
+      {
+        t: 'screen-pack-builder.user-clicked-add-puzzle-item',
+        puzzle,
+        userId: f.currentUserId,
+      },
+    ])
+
+    expect(output.screenPackBuilder && Pack.includes(output.screenPackBuilder.pack, puzzle.id)).toBe(true)
+  })
+
+  it('should close puzzle picker after adding a puzzle to the pack', async () => {
+    const f = await Fixture()
+    const puzzle = await Puzzle.random()
+    const output = f.updateModelSpace([
+      {
+        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        userId: f.currentUserId,
+      },
+      {
+        t: 'screen-pack-builder.user-clicked-add-puzzle-item',
+        puzzle,
+        userId: f.currentUserId,
+      },
+    ])
+    expect(output.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
+  })
+
+  it('should go back to grid after exiting puzzle', async () => {
+    const f = await Fixture()
+    const puzzle = f.puzzles[0]
+    const output = f.updateModelSpace([
+      {
+        t: 'screen-pack-builder.user-clicked-pack-item',
+        puzzleResult: { t: 'got', c: puzzle },
+        puzzleIndex: 0,
+      },
+      {
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
+        userId: f.currentUserId,
+      },
+    ])
+    expect(output.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
+  })
+
+  it('should open the more drawer after clicking "more" button', async () => {
+    const f = await Fixture()
+    const puzzle = f.puzzles[0]
+    const puzzleIndex = 0
+    const output = f.updateModelSpace([
+      {
+        t: 'screen-pack-builder.user-clicked-pack-item',
+        puzzleResult: { t: 'got', c: puzzle },
+        puzzleIndex,
+      },
+      {
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
+        userId: f.currentUserId,
+      },
+    ])
+
+    expect(
+      output.screenPackBuilder?.screen.t === 'screen-puzzle' && output.screenPackBuilder?.screen.opened === 'more',
+    ).toBe(true)
+  })
+
+  it('should close the more drawer', async () => {
+    const f = await Fixture()
+    const puzzle = f.puzzles[0]
+    const puzzleIndex = 0
+    const output = f.updateModelSpace([
+      {
+        t: 'screen-pack-builder.user-clicked-pack-item',
+        puzzleResult: { t: 'got', c: puzzle },
+        puzzleIndex,
+      },
+      {
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
+        userId: f.currentUserId,
+      },
+      {
+        t: 'screen-pack-builder.puzzle-screen.user-closed-more-drawer',
+        userId: f.currentUserId,
+      },
+    ])
+    expect(
+      output.screenPackBuilder?.screen.t === 'screen-puzzle' && output.screenPackBuilder?.screen.opened === null,
+    ).toBe(true)
+  })
+
+  it('should should remove puzzle from pack clicking remove from pack button', async () => {
+    const f = await Fixture()
+    const puzzle = f.puzzles[0]
+    const puzzleIndex = 0
+    const output = f.updateModelSpace([
+      {
+        t: 'screen-pack-builder.user-clicked-pack-item',
+        puzzleResult: { t: 'got', c: puzzle },
+        puzzleIndex,
+      },
+      {
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
+        userId: f.currentUserId,
+      },
+      {
+        t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
+        userId: f.currentUserId,
+        puzzleIndex,
+      },
+    ])
+    expect(output.screenPackBuilder?.screen.t === 'screen-puzzle-grid').toBe(true)
+    expect(output.screenPackBuilder).toBeTruthy()
+    expect(output.screenPackBuilder?.pack.puzzleIds.includes(puzzle.id)).toBe(false)
   })
 
   it('should open the correct level when opening puzzle screen', async () => {

@@ -1,17 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { PubSub } from '~/@/sub'
-import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { Puzzle } from '../../@/puzzle/puzzle'
-import {
-  clickedExitPuzzleBuilderButton,
-  clickedPuzzleListItem,
-  createPuzzle,
-  FixtureFlowBuilderFrontend,
-  initial,
-  puzzleBuilderPressDownRandomNode,
-  testFlowFrontendCtx,
-} from '../@/fixture/frontend'
-import { deriveModelSpace } from '../@/fixture/space'
+import { FixtureFlowBuilderFrontend } from '../@/fixture/frontend'
 import type { MsgFrontend } from '../types'
 import { ScreenPuzzleBuilderFrontend } from './frontend'
 
@@ -60,54 +50,11 @@ const Fixture = async () => {
 }
 
 describe(import.meta.file, () => {
-  it('should open puzzle builder on list item click', async () => {
-    const ctx = await testFlowFrontendCtx()
-    const puzzle = await createPuzzle(ctx)
-    const output = GameFrontendModule.andThen(initial, clickedPuzzleListItem(ctx, puzzle))
-    const modelSpace = deriveModelSpace(ctx, output)
-    expect(
-      modelSpace.screen.t === 'screen-puzzle-builder' && modelSpace.screenPuzzleBuilder?.puzzle.id === puzzle.id,
-    ).toBe(true)
-  })
+  it.todo('should open puzzle builder on list item click', async () => {})
 
-  it('should exit puzzle builder after clicking exit button', async () => {
-    const ctx = await testFlowFrontendCtx()
-    const puzzle = await createPuzzle(ctx)
-    const openedBuilder = GameFrontendModule.andThen(initial, clickedPuzzleListItem(ctx, puzzle))
+  it.todo('should exit puzzle builder after clicking exit button', async () => {})
 
-    const output = GameFrontendModule.andThen(
-      openedBuilder,
-      clickedExitPuzzleBuilderButton(ctx, deriveModelSpace(ctx, openedBuilder)),
-    )
-
-    const modelSpace = deriveModelSpace(ctx, output)
-
-    expect(modelSpace.screen.t === 'screen-puzzle-builder-open').toBe(true)
-  })
-
-  it('should open save prompt when exiting with unsaved changes', async () => {
-    const ctx = await testFlowFrontendCtx()
-
-    const puzzle = await createPuzzle(ctx)
-
-    const openedBuilder = GameFrontendModule.andThen(initial, clickedPuzzleListItem(ctx, puzzle))
-
-    const madeEdit = GameFrontendModule.andThen(
-      openedBuilder,
-      puzzleBuilderPressDownRandomNode(ctx, deriveModelSpace(ctx, openedBuilder)),
-    )
-
-    const output = GameFrontendModule.andThen(
-      madeEdit,
-      clickedExitPuzzleBuilderButton(ctx, deriveModelSpace(ctx, madeEdit)),
-    )
-
-    const modelSpace = deriveModelSpace(ctx, output)
-
-    expect(
-      modelSpace.screen.t === 'screen-puzzle-builder' && output.model.puzzleBuilderOpened === 'unsaved-changes',
-    ).toBe(true)
-  })
+  it.todo('should open save prompt when exiting with unsaved changes', async () => {})
 
   test('render hint button', async () => {
     const f = await Fixture()

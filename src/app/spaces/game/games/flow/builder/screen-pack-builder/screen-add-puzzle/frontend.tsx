@@ -14,6 +14,10 @@ const update: FrontendModule['update'] = (input) => {
       }
     }
 
+    case 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button': {
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
+    }
+
     case 'screen-pack-builder.user-closed-add-puzzle-screen': {
       return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }
@@ -64,22 +68,20 @@ const View: FrontendModule['View'] = (input) => {
           input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.user-closed-add-puzzle-screen' } })
         }
       />
-      <div className='h-full max-h-full w-full max-w-full flex-1 overflow-hidden overflow-y-scroll'>
-        <PuzzleListFrontend.View
-          ctx={input.ctx}
-          model={input.ctx.puzzleList}
-          query={query}
-          onQueryChanged={(query) => {
-            console.log('onQueryChanged,', query)
-          }}
-          onClick={(puzzle) =>
-            input.dispatch({
-              t: 'got-msg-space',
-              c: { t: 'screen-pack-builder.user-clicked-add-puzzle-item', puzzle, userId: input.ctx.currentUserId },
-            })
-          }
-        />
-      </div>
+      <PuzzleListFrontend.View
+        ctx={input.ctx}
+        model={input.ctx.puzzleList}
+        query={query}
+        onQueryChanged={(query) => {
+          console.log('onQueryChanged,', query)
+        }}
+        onClick={(puzzle) =>
+          input.dispatch({
+            t: 'got-msg-space',
+            c: { t: 'screen-pack-builder.user-clicked-add-puzzle-item', puzzle, userId: input.ctx.currentUserId },
+          })
+        }
+      />
     </div>
   )
 }

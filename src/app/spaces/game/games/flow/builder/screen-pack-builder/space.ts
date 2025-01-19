@@ -78,7 +78,7 @@ updates.push(({ modelSpace, msgSpace }) => {
 
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
-    case 'screen-pack-builder.user-opened-add-puzzle-screen': {
+    case 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button': {
       if (!modelSpace.screenPackBuilder) {
         return modelSpace
       }
