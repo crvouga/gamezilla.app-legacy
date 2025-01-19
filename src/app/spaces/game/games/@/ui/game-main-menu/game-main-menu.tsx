@@ -93,7 +93,7 @@ export const View = ({
   ctx: SpaceFrontendCtx
   title: TranslatedText
   dispatch: (msg: Msg) => void
-  renderCoverArt: (input: { className: string; key: string }) => VDom
+  renderCoverArt: (input: { className: string }) => VDom
   buttons: MainMenuButton[]
 }) => {
   if (ctx.currentUserId !== ctx.space.hostId) {

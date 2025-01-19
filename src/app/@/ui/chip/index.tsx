@@ -15,7 +15,11 @@ export const Chip = (input: ChipProps) => {
   return (
     <Tag
       tagName={typeof input.onClick === 'function' ? 'button' : 'div'}
-      className={cn('flex items-center gap-1 border font-semibold', toSizeClass(input), toButtonClass(input))}
+      className={cn(
+        'flex items-center gap-1 border border-white/30 font-semibold',
+        toSizeClass(input),
+        toButtonClass(input),
+      )}
       onClick={input.onClick}
     >
       {input.renderStartIcon?.({ className: toIconSizeClass(input) })}

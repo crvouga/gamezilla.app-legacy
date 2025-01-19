@@ -1,13 +1,13 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
+import { AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/gomoku/gomoku-ui'
-import type { ModelFrontend, ModelBackend, MsgFrontend, MsgToFrontend } from './gomoku.types'
+import type { ModelBackend, ModelFrontend, MsgFrontend, MsgToFrontend } from './gomoku.types'
 import * as VsBot from './vs-bot/vs-bot.frontend'
 import * as VsUser from './vs-user/vs-user.frontend'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 
 //
 //
@@ -250,7 +250,7 @@ export const view = ({
       return (
         <GameMainMenu.View
           title={ctx.t('gomoku')}
-          renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
+          renderCoverArt={(input) => <CoverArt {...input} />}
           ctx={spaceCtx}
           dispatch={() => {
             //

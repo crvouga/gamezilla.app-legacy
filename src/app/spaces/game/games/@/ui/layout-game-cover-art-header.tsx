@@ -5,7 +5,7 @@ import { cn, TopBar } from '~/app/@/ui'
 
 export const LayoutGameCoverArtHeader = (input: {
   title: TranslatedText
-  renderCoverArt?: (input: { key: string; className: string }) => VDom
+  renderCoverArt?: (input: { className: string }) => VDom
   onBack: (() => void) | false
   ctx: {
     t: Translator
@@ -17,20 +17,16 @@ export const LayoutGameCoverArtHeader = (input: {
     <div className='flex h-full w-full flex-1 flex-col items-center gap-4 pb-4'>
       <TopBar ctx={input.ctx} onBack={input.onBack} title={input.title} center />
       <div className='flex w-full flex-1 flex-col items-center overflow-y-auto'>
-        {renderCoverArt_({
-          key: input.title,
-          className: 'w-28 h-28 overflow-hidden rounded-lg',
-        })}
+        {renderCoverArt_({ className: 'size-28 overflow-hidden rounded-lg' })}
         {input.renderContent()}
       </div>
     </div>
   )
 }
 
-const renderDefaultCoverArt = (input: { key: string; className: string }) => {
+const renderDefaultCoverArt = (input: { className: string }) => {
   return (
     <div
-      key={input.key}
       className={cn(
         'text-secondary bg-paper flex items-center justify-center overflow-hidden rounded-lg p-4',
         input.className,

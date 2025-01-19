@@ -378,7 +378,7 @@ const View: FrontendModule['View'] = (input) => {
     case 'none': {
       return (
         <GameMainMenu.View
-          renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
+          renderCoverArt={(input) => <CoverArt {...input} />}
           ctx={ctx}
           title={ctx.t('flow')}
           dispatch={input.dispatch}

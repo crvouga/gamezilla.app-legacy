@@ -334,7 +334,7 @@ export const View: Frontend['View'] = (input) => {
         <GameMainMenu.View
           title={input.ctx.t('chess')}
           ctx={input.ctx}
-          renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
+          renderCoverArt={(input) => <CoverArt {...input} />}
           onBack={() => input.dispatch({ t: 'game-main-menu.clicked-exit-game-button' })}
           dispatch={input.dispatch}
           buttons={[

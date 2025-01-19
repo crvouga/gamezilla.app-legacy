@@ -225,7 +225,7 @@ const View: Module['View'] = (input) => {
         <GameMainMenu.View
           ctx={input.ctx}
           title={input.ctx.t('connect-four')}
-          renderCoverArt={(input) => <CoverArt {...input} key={input.key} />}
+          renderCoverArt={(input) => <CoverArt {...input} />}
           onBack={() => input.dispatch({ t: 'game-main-menu.clicked-exit-game-button' })}
           dispatch={input.dispatch}
           buttons={[

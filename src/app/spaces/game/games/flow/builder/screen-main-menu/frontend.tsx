@@ -47,7 +47,7 @@ const View: FrontendModule['View'] = (input) => {
         })
       }
       renderCoverArt={(input) => (
-        <div {...input} key={input.key}>
+        <div {...input}>
           <div className='h-full w-full p-4'>
             <IconScrewdriverWrench className='h-full w-full' />
           </div>
