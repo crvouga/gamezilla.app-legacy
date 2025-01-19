@@ -20,15 +20,13 @@ const init = ({ pack }: { pack: Pack }): ModelSpace => {
 const updates: UpdateSpace[] = []
 
 const update: UpdateSpace = (input) => {
-  return updates.reduce(
-    (modelSpace, updateSpace) => updateSpace({ ctx: input.ctx, msgSpace: input.msgSpace, modelSpace }),
-    input.modelSpace,
-  )
+  const { ctx, msgSpace, modelSpace } = input
+  return updates.reduce((modelSpace, updateSpace) => updateSpace({ ctx, msgSpace, modelSpace }), modelSpace)
 }
 
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
-    case 'user-created-pack': {
+    case 'create-new-pack.user-created-pack': {
       if (isErr(msgSpace.created)) {
         return modelSpace
       }

@@ -41,7 +41,7 @@ const update: FrontendModule['update'] = (input) => {
           packCreateNewRequest: Ok(null),
         },
         msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.pack-created'))],
-        msgSpace: [withEventId({ ...input.msg, t: 'user-created-pack' })],
+        msgSpace: [withEventId({ ...input.msg, t: 'create-new-pack.user-created-pack' })],
       }
     }
   }

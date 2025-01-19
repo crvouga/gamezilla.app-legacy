@@ -31,7 +31,7 @@ export const Fixture = async () => {
 }
 
 describe(import.meta.file, () => {
-  it.only('should play sound opening add puzzle screen', async () => {
+  it('should play sound opening add puzzle screen', async () => {
     const f = await Fixture()
 
     const output = ScreenAddPuzzle.update({

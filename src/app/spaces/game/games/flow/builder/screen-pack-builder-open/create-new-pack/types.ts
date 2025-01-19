@@ -52,7 +52,7 @@ export type MsgToFrontend = {
 //
 
 export const MsgSpace = p.obj({
-  t: p.l('user-created-pack'),
+  t: p.l('create-new-pack.user-created-pack'),
   created: Result.parser(p.str, Pack),
   userId: UserId,
 })

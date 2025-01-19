@@ -7,9 +7,9 @@ import { Puzzle } from '../../@/puzzle/puzzle'
 import { Solutions } from '../../@/solutions/solutions'
 import { FlowSpaceCtx } from '../../@/space/ctx'
 import { BuilderSpace } from '../space'
-import type { ModelSpace } from '../types'
+import type { ModelSpace, MsgSpace } from '../types'
 import { ScreenPackBuilderSpace } from './space'
-import type { MsgSpace } from './types'
+import { Ok } from '~/@/result'
 
 const Fixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Puzzle }) => {
   const f = await SpaceGameSpaceFixture()
@@ -65,6 +65,21 @@ const Fixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Puzz
 }
 
 describe(import.meta.file, () => {
+  it('should open pack builder after user creates a new pack', async () => {
+    const f = await Fixture()
+    const pack = await Pack.random()
+    const modelSpace = f.updateModelSpace([
+      {
+        t: 'create-new-pack.user-created-pack',
+        userId: f.currentUserId,
+        created: Ok(pack),
+      },
+    ])
+
+    expect(modelSpace.screenPackBuilder).toBeTruthy()
+    expect(modelSpace.screen.t).toEqual('screen-pack-builder')
+  })
+
   it('should remove puzzle from pack after clicking remove button', async () => {
     const f = await Fixture()
 

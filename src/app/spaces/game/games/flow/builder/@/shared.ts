@@ -3,7 +3,7 @@ import { UserId } from '~/app/@/data/user-id'
 
 export const MsgSpace = p.or(
   p.obj({
-    t: p.l('user-created-pack'),
+    t: p.l('create-new-pack.user-created-pack'),
     userId: UserId,
   }),
   p.obj({
