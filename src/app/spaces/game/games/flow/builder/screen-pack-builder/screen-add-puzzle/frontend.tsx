@@ -4,13 +4,24 @@ import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
 import { PuzzleListFrontend } from '../../../@/puzzle/puzzle-list/frontend'
 import type { FrontendModule } from '../../types'
+import { ScreenPackBuilderSpace } from '../space'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'screen-pack-builder.user-clicked-add-puzzle-item': {
+      const { msgSpace } = input
       return {
         model: input.model,
         msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.puzzle-added'))],
+        async eff(dispatch) {
+          const modelSpace = ScreenPackBuilderSpace.update({ ...input, msgSpace })
+
+          if (!modelSpace.screenPackBuilder) return
+
+          const saved = await input.ctx.packDb.put(modelSpace.screenPackBuilder.pack)
+
+          dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.saved-pack', saved } })
+        },
       }
     }
 

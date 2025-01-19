@@ -7,33 +7,6 @@ import type { BackendModule } from '../types'
 import { EditPackNameBackend } from './edit-pack-name/backend'
 import { ScreenPackBuilderSpace } from './space'
 
-const SavePack: Pick<BackendModule, 'update'> = {
-  async update(input) {
-    switch (input.msgSpace?.t) {
-      case 'screen-pack-builder.user-clicked-add-puzzle-item': {
-        if (!input.modelSpace.screenPackBuilder) {
-          return {}
-        }
-
-        const saved = await input.ctx.packDb.put(input.modelSpace.screenPackBuilder.pack)
-
-        return {
-          msgSpace: [
-            {
-              t: 'screen-pack-builder.saved-pack',
-              saved,
-            },
-          ],
-        }
-      }
-
-      default: {
-        return {}
-      }
-    }
-  },
-}
-
 const PuzzleGrid: Pick<BackendModule, 'update'> = {
   async update(input) {
     const pack = input.modelSpace.screenPackBuilder?.pack
@@ -111,7 +84,7 @@ export const ScreenPackBuilderBackend: Pick<BackendModule, 'update'> = {
   async update(input) {
     return GameBackendModule.andThen(
       {},
-      () => SavePack.update(input),
+
       () => RemovedPuzzleFromPack.update(input),
       () => PuzzleGrid.update(input),
       () => EditPackName.update(input),
