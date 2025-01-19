@@ -3,7 +3,7 @@ version: '3.1'
 name: gamezilla-app
 
 services:
-  frontend-server:
+  frontend:
     container_name: frontend
     image: oven/bun:latest
     working_dir: /app
@@ -21,12 +21,34 @@ services:
       - '5173:5173'
     environment:
       NODE_ENV: development
+      VITE_BACKEND_URL: http://localhost:5002
+      VITE_POWERSYNC_URL: http://localhost:8080
+    depends_on:
+      - backend
+  backend:
+    container_name: backend
+    image: oven/bun:latest
+    working_dir: /app
+    volumes:
+      - type: bind
+        source: ${PWD}
+        target: /app
+    command: >
+      sh -c "
+        ls -la /app &&
+        echo 'Contents of /app:' &&
+        bun install && 
+        bun backend"
+    ports:
+      - '5002:5002'
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://gamezilla_app:gamezilla_app@postgres:5432/gamezilla_app
     depends_on:
       - redis
       - postgres
       - powersync
       - electric
-
   postgres:
     container_name: postgres
     image: postgres:latest
@@ -49,7 +71,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
   powersync:
     container_name: powersync
     restart: unless-stopped
@@ -69,7 +90,6 @@ services:
       PS_JWKS_URI: http://host.docker.internal:5002/powersync/jwks
     ports:
       - 8080:8080
-
   powersync-storage-postgres:
     container_name: powersync-storage-postgres
     image: postgres:latest
@@ -94,7 +114,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
   electric:
     container_name: electric
     image: electricsql/electric
@@ -105,7 +124,6 @@ services:
       - '3000:3000'
     depends_on:
       - postgres
-
   redis:
     container_name: redis
     image: redis:6.2.6

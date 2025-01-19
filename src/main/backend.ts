@@ -1,5 +1,3 @@
-import { FileSystem } from '~/@/file-system'
-import { withSinglePageApp } from '~/@/http-server/with-single-page-app'
 import { ProgramImpure } from '~/@/program/program-impure'
 import { withRPC } from '~/@/rpc/rpc'
 import { AppTypes } from '~/app'
@@ -24,24 +22,13 @@ const main = async () => {
     handlers: AppBackend.rpc({ ctx }),
   })
 
-  const SERVE_SINGLE_PAGE_APP = false
-
   ctx.httpServer.registerHandler((request) => {
     return PowerSyncBackendApp.respond({ request, ctx: { userSessionDb: ctx.auth.userSessionDb } })
   })
 
-  if (SERVE_SINGLE_PAGE_APP) {
-    withSinglePageApp({
-      directory: 'dist',
-      fileSystem: FileSystem({ t: 'bun' }),
-      indexFile: 'index.html',
-      httpServer: ctx.httpServer,
-    })
-  } else {
-    ctx.httpServer.registerHandler((_request) => {
-      return new Response('Hello from gamezilla.app backend', { status: 200 })
-    })
-  }
+  ctx.httpServer.registerHandler((_request) => {
+    return new Response('Hello from gamezilla.app backend', { status: 200 })
+  })
 
   if (!CONFIG_BACKEND.SERVER_PORT) {
     throw new Error('SERVER_PORT is not set')
