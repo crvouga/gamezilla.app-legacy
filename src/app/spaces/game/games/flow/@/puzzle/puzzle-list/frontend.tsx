@@ -105,7 +105,7 @@ const ViewListItem = (input: { ctx: { t: Translator; now: Posix }; puzzle: Puzzl
     <button
       key={input.puzzle.id}
       type='button'
-      className='clickable box-border flex w-full items-center text-left hover:bg-neutral-900'
+      className='clickable box-border flex w-full items-center text-left'
       onClick={input.onClick}
     >
       <div className='flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden'>

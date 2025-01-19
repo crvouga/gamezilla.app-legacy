@@ -30,9 +30,7 @@ const create = async (input: {
     createdAt: input.now,
     lastUpdatedBy: input.createdBy,
     lastUpdatedAt: input.now,
-    name: await PackName.generate({
-      count: input.count ?? 0,
-    }),
+    name: await PackName.generate(),
     puzzleIds: input.puzzleIds,
   }
 }
@@ -91,9 +89,7 @@ const random = async (input?: { createdBy?: UserId; puzzleIds?: PuzzleId[] }): P
     id: PackId.generate(),
     lastUpdatedAt: Posix.now(),
     lastUpdatedBy: createdBy,
-    name: await PackName.generate({
-      count: 0,
-    }),
+    name: await PackName.generate(),
     puzzleIds: input?.puzzleIds ?? [],
   }
 }

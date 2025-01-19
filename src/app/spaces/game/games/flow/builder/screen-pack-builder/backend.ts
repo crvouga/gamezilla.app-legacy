@@ -53,10 +53,7 @@ const PuzzleGrid: Pick<BackendModule, 'update'> = {
       msgCmd: input.msgCmd,
       msgFrontend:
         input.msgFrontend?.t === 'screen-pack-builder.flow-pack-grid'
-          ? {
-              ...input.msgFrontend,
-              ...input.msgFrontend.c,
-            }
+          ? { ...input.msgFrontend, ...input.msgFrontend.c }
           : null,
       deps: input.deps,
       msgEvt: input.msgEvt,
@@ -102,13 +99,7 @@ const EditPackName: Pick<BackendModule, 'update'> = {
     const updated = await EditPackNameBackend.update({
       ...input,
       modelSpace: input.modelSpace.screenPackBuilder.editPackName,
-      msgSpace:
-        input.msgSpace?.t === 'got-edit-pack-name-msg'
-          ? {
-              ...input.msgSpace,
-              ...input.msgSpace.c,
-            }
-          : null,
+      msgSpace: input.msgSpace?.t === 'got-edit-pack-name-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     })
     return {
       msgSpace: (updated.msgSpace ?? []).map((c) => ({ c, t: 'got-edit-pack-name-msg' })),

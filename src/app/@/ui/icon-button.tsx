@@ -9,7 +9,10 @@ export const IconButton = (input: {
 }) => {
   return (
     <button
-      className={cn('display flex h-12 w-12 items-center justify-center overflow-hidden rounded-full', input.className)}
+      className={cn(
+        'clickable display flex h-12 w-12 items-center justify-center overflow-hidden rounded-full',
+        input.className,
+      )}
       onClick={input.onClick}
       aria-label={input.label}
     >

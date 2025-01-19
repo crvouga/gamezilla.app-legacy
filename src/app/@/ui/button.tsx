@@ -39,7 +39,7 @@ export const Button = (input: ButtonInput) => {
         BASE_CLASS,
         toColorClass(input),
         toSizeClass(input),
-        input.rounded && 'rounded-3xl',
+        input.rounded && 'rounded-3xl shadow-2xl',
         input.disabled && 'cursor-not-allowed opacity-60',
         input.loading && 'cursor-wait opacity-70',
       )}
@@ -61,7 +61,7 @@ export const Button = (input: ButtonInput) => {
 }
 
 const BASE_CLASS =
-  'relative flex shrink-0 select-none appearance-none flex-nowrap items-center justify-center overflow-hidden rounded font-semibold'
+  'clickable relative flex shrink-0 select-none appearance-none flex-nowrap items-center justify-center overflow-hidden rounded font-semibold'
 
 const toSizeClass = (input: ButtonInput): string => {
   switch (input.size ?? 'lg') {

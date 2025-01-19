@@ -165,9 +165,7 @@ describe(import.meta.file, () => {
       const before = Result.unwrapOr(await f.packDb.get(pack.id), null)
       const updated: Pack = {
         ...pack,
-        name: await PackName.generate({
-          count: 1,
-        }),
+        name: await PackName.generate(),
         puzzleIds: [PuzzleId.generate(), PuzzleId.generate()],
       }
 
