@@ -44,6 +44,11 @@ services:
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://gamezilla_app:gamezilla_app@postgres:5432/gamezilla_app
+      REDIS_URL: redis://redis:6379
+      PORT: 5002
+      TWILIO_ACCOUNT_SID: ''
+      TWILIO_AUTH_TOKEN: ''
+      TWILIO_MESSAGING_SERVICE_SID: ''
     depends_on:
       - redis
       - postgres
