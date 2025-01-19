@@ -5,8 +5,9 @@ import { EditPackNameFrontend } from './edit-pack-name/frontend'
 import { ScreenAddPuzzle } from './screen-add-puzzle/frontend'
 import { ScreenPuzzlePlay } from './screen-play-puzzle/frontend'
 import { ScreenPuzzleGrid } from './screen-puzzle-grid/frontend'
+import { Sub } from '~/@/sub'
 
-export const ScreenPackBuilderFrontend: Pick<FrontendModule, 'update' | 'View'> = {
+export const ScreenPackBuilderFrontend: Pick<FrontendModule, 'update' | 'View' | 'subscriptions'> = {
   update(input) {
     return GameFrontendModule.andThen(
       { model: input.model },
@@ -17,6 +18,10 @@ export const ScreenPackBuilderFrontend: Pick<FrontendModule, 'update' | 'View'> 
       (model) => EditPackName.update({ ...input, model }),
       (model) => updateRecordPack({ ...input, model }),
     )
+  },
+
+  subscriptions(input) {
+    return Sub.batch([ScreenAddPuzzle.subscriptions(input)])
   },
 
   View(input) {

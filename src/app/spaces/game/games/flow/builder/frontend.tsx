@@ -85,6 +85,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch([
     ScreenPuzzleBuilderOpenFrontend.subscriptions(input),
     ScreenPackBuilderOpenFrontend.subscriptions(input),
+    ScreenPackBuilderFrontend.subscriptions(input),
   ])
 }
 
