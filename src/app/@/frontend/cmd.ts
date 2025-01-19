@@ -424,20 +424,20 @@ export type SoundCmd = {
 }
 
 export const APP_SOUND = {
-  tap: './app/tap.wav',
-  alertErrorLg: './app/alert-error-lg.wav',
-  alertErrorMd: './app/alert-error-md.wav',
-  alertErrorSm: './app/alert-error-sm.wav',
-  celebration: './app/celebration.wav',
-  celebrationDecorative: './app/celebration-decorative.wav',
-  navForward: './app/nav-forward.wav',
-  navBackward: './app/nav-backward.wav',
-  navForwardMin: './app/nav-forward-min.wav',
-  navBackwardMin: './app/nav-backward-min.wav',
-  navTransitionLeft: './app/nav-transition-left.wav',
-  stateChangeUp: './app/state-change-up.wav',
-  stateChangeDown: './app/state-change-down.wav',
-  refreshFeed: './app/refresh-feed.wav',
+  tap: './sound/tap.wav',
+  alertErrorLg: './sound/alert-error-lg.wav',
+  alertErrorMd: './sound/alert-error-md.wav',
+  alertErrorSm: './sound/alert-error-sm.wav',
+  celebration: './sound/celebration.wav',
+  celebrationDecorative: './sound/celebration-decorative.wav',
+  navForward: './sound/nav-forward.wav',
+  navBackward: './sound/nav-backward.wav',
+  navForwardMin: './sound/nav-forward-min.wav',
+  navBackwardMin: './sound/nav-backward-min.wav',
+  navTransitionLeft: './sound/nav-transition-left.wav',
+  stateChangeUp: './sound/state-change-up.wav',
+  stateChangeDown: './sound/state-change-down.wav',
+  refreshFeed: './sound/refresh-feed.wav',
 }
 
 export const playSound = (
