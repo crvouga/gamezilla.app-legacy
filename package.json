@@ -22,7 +22,7 @@
     "db:up": "bun x dbmate -e DATABASE_URL up",
     "env": "export $(grep -v '^#' .env | xargs)",
     "format": "bun x prettier --write gamezilla-app",
-    "frontend": "bun --bun vite",
+    "frontend": "bun --bun vite --host 0.0.0.0",
     "frontend:build": "vite build",
     "frontend:cir-deps": "dpdm --progress --no-warning --no-tree ./src/main/frontend.tsx",
     "frontend:serve": "bun x serve -s dist -p 3001",

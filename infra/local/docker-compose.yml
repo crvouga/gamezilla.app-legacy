@@ -3,8 +3,32 @@ version: '3.1'
 name: gamezilla-app
 
 services:
+  frontend-server:
+    container_name: frontend
+    image: oven/bun:latest
+    working_dir: /app
+    volumes:
+      - type: bind
+        source: ${PWD}
+        target: /app
+    command: >
+      sh -c "
+        ls -la /app &&
+        echo 'Contents of /app:' &&
+        bun install && 
+        bun frontend"
+    ports:
+      - '5173:5173'
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - redis
+      - postgres
+      - powersync
+      - electric
+
   postgres:
-    container_name: gamezilla-app-postgres
+    container_name: postgres
     image: postgres:latest
     restart: always
     environment:
@@ -27,7 +51,7 @@ services:
       retries: 5
 
   powersync:
-    container_name: gamezilla-app-powersync
+    container_name: powersync
     restart: unless-stopped
     depends_on:
       postgres:
@@ -47,7 +71,7 @@ services:
       - 8080:8080
 
   powersync-storage-postgres:
-    container_name: gamezilla-app-powersync-storage-postgres
+    container_name: powersync-storage-postgres
     image: postgres:latest
     restart: always
     environment:
@@ -72,7 +96,7 @@ services:
       retries: 5
 
   electric:
-    container_name: gamezilla-app-electric
+    container_name: electric
     image: electricsql/electric
     restart: always
     environment:
@@ -83,7 +107,7 @@ services:
       - postgres
 
   redis:
-    container_name: gamezilla-app-redis
+    container_name: redis
     image: redis:6.2.6
     restart: always
     ports:
