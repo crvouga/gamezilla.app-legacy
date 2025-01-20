@@ -1,9 +1,9 @@
-FROM oven/bun:1.1.38
+FROM oven/bun:latest
 
 # Set working directory
 WORKDIR /app
 
-# Install essential dependencies
+# Install essential dependencies and PostgreSQL client
 RUN apt-get update && \
     apt-get install -y \
     libnss3 \
@@ -15,23 +15,7 @@ RUN apt-get update && \
     libcurl4 \
     libatomic1 \
     build-essential \
-    # Additional dependencies that might help with WASM
-    libssl-dev \
-    pkg-config \
-    python3 \
-    gcc \
-    g++ \
-    cmake \
+    postgresql-client \
     && apt-get clean
-
-# Set environment variables for WebAssembly
-ENV NODE_OPTIONS="--experimental-wasm-threads --experimental-wasm-bulk-memory"
-ENV PGLITE_DISABLE_WASM_MEMORY_CONTROL=1
-ENV PGLITE_WASM_MEMORY_MB=1024
-ENV BUN_WASM_EXECUTION=sync
-ENV BUN_WASM_VERBOSE=1
-ENV BUN_WASM_MEMORY_SIZE=65536
-ENV BUN_WASM_DEBUG=2
-
 
 COPY . .
