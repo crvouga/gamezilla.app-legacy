@@ -35,7 +35,7 @@ const generateId = (length: number): string => {
   return runningId
 }
 
-const namespace = 'frontend'
+const namespace = 'client'
 const separator = ':'
 
 const generate = (): ClientId => {
@@ -47,7 +47,7 @@ const generate = (): ClientId => {
     return clientId
   }
 
-  throw new Error('generated invalid frontend id')
+  throw new Error('generated invalid client id')
 }
 
 export const ClientId = {
