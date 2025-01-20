@@ -30,6 +30,7 @@
     "gen:guard": "bun ./src/@/guards/guards-gen.ts",
     "gen:l18n": "bun ./src/@/l18n/l18n-gen.ts",
     "gen:screens": "bun ./src/@/screen/screens-gen.ts",
+    "infra:backend:execute": "docker-compose --env-file .env -f ./infra/local/docker-compose.yml exec backend",
     "infra:down": "docker-compose --env-file .env -f ./infra/local/docker-compose.yml down",
     "infra:build": "docker-compose --env-file .env -f ./infra/local/docker-compose.yml build --no-cache",
     "infra:restart": "docker-compose --env-file .env -f ./infra/local/docker-compose.yml restart",

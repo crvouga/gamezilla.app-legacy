@@ -3,15 +3,20 @@ export type SecretString = {
   toString: () => string
   toJSON: () => string
 }
-export const SecretString = (name: string, value: unknown): SecretString => {
+
+const of = (name: string, value: unknown): SecretString => {
   if (typeof value !== 'string') {
     throw new Error('SecretString must be a string. This is used to prevent accidental logging of secrets.')
   }
-  const message = `SecretString(${name})`
+  const message = `SecretString.of(${name})`
   return {
     dangerouslyReadValue: () => value,
     toString: () => message,
     [Symbol.for('nodejs.util.inspect.custom')]: () => message,
     toJSON: () => message,
   }
+}
+
+export const SecretString = {
+  of,
 }
