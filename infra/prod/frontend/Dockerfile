@@ -17,7 +17,7 @@ ENV VITE_POWERSYNC_URL=${VITE_POWERSYNC_URL}
 
 RUN bun frontend:build
 
-FROM nginx:latest AS serve
+FROM nginxdemos/nginx-brotli AS serve
 
 COPY --from=build /app/dist /usr/share/nginx/html
 
