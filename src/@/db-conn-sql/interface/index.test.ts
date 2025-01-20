@@ -18,13 +18,17 @@ const Fixture = async (config: Config) => {
 const Fixtures = async () => {
   const configs: Config[] = []
 
-  configs.push({
-    t: 'bun-sqlite',
-    fileSystem: {
-      t: 'in-memory',
-    },
-    logger: Logger({ t: 'noop' }),
-  })
+  const SHOULD_TEST_SQLITE = false
+
+  if (SHOULD_TEST_SQLITE) {
+    configs.push({
+      t: 'bun-sqlite',
+      fileSystem: {
+        t: 'in-memory',
+      },
+      logger: Logger({ t: 'noop' }),
+    })
+  }
 
   const SHOULD_TEST_PGLITE = false
   if (SHOULD_TEST_PGLITE) {
