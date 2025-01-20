@@ -46,12 +46,12 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
   //
   //
 
-  const frontends = new Map<ClientId, ServerWebSocket<BackendWebSocketData>>()
+  const clients = new Map<ClientId, ServerWebSocket<BackendWebSocketData>>()
   const unlistens = new Map<ClientId, () => void>()
   const frontendsBySessionId = new Map<SessionId, Set<ClientId>>()
 
   const addFrontend = async (ws: ServerWebSocket<BackendWebSocketData>) => {
-    frontends.set(ws.data.clientId, ws)
+    clients.set(ws.data.clientId, ws)
     const clientIds = frontendsBySessionId.get(ws.data.sessionId) ?? new Set<ClientId>()
     clientIds.add(ws.data.clientId)
     frontendsBySessionId.set(ws.data.sessionId, clientIds)
@@ -65,7 +65,7 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
   }
 
   const removeFrontend = async (ws: ServerWebSocket<BackendWebSocketData>) => {
-    frontends.delete(ws.data.clientId)
+    clients.delete(ws.data.clientId)
     frontendsBySessionId.get(ws.data.sessionId)?.delete(ws.data.clientId)
     unlistens.get(ws.data.clientId)?.()
   }
@@ -163,10 +163,13 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
   const send = async (ws: ServerWebSocket<BackendWebSocketData>, msg: MsgBackendToMsgFrontend<MsgToFrontend>) => {
     switch (ws.readyState) {
       case 1: {
-        ws.send(JSON.stringify(msg))
+        const encoded = JSON.stringify(msg)
+        const status = ws.send(encoded)
+        logger.debug(`sent msg for clientId=${ws.data.clientId} status=${status}`)
         return
       }
       default: {
+        logger.error(`could not send msg to clientId=${ws.data.clientId} because readyState=${ws.readyState}`)
         return
       }
     }
@@ -182,7 +185,7 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
   }
 
   transport.toFrontendBroadcast.sub((msgs) => {
-    for (const frontend of frontends.values()) {
+    for (const frontend of clients.values()) {
       sendWithPub(frontend, msgs)
     }
   })
@@ -190,7 +193,7 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
   transport.toFrontend.sub((toFrontend) => {
     for (const clientId in toFrontend) {
       const toFrontendSingle = toFrontend[clientId as ClientId]!
-      const frontend = frontends.get(clientId as ClientId)
+      const frontend = clients.get(clientId as ClientId)
 
       if (!frontend) {
         continue

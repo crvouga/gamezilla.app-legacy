@@ -26,10 +26,6 @@ const main = async () => {
     return PowerSyncBackendApp.respond({ request, ctx: { userSessionDb: ctx.auth.userSessionDb } })
   })
 
-  ctx.httpServer.registerHandler((_request) => {
-    return new Response('Hello from gamezilla.app backend', { status: 200 })
-  })
-
   if (!CONFIG_BACKEND.SERVER_PORT) {
     throw new Error('SERVER_PORT is not set')
   }
@@ -38,6 +34,10 @@ const main = async () => {
 
   ctx.logger.info({
     SERVER_PORT: CONFIG_BACKEND.SERVER_PORT,
+  })
+
+  ctx.httpServer.registerHandler((_request) => {
+    return new Response('Hello from gamezilla.app backend', { status: 200 })
   })
 }
 
