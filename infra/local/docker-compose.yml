@@ -78,9 +78,9 @@ services:
       wait"
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U gamezilla_app']
-      interval: 1s
-      timeout: 0s
-      retries: 10
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   powersync:
     container_name: powersync
@@ -123,9 +123,9 @@ services:
       wait"
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U powersync_storage']
-      interval: 1s
-      timeout: 0s
-      retries: 10
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   electric:
     container_name: electric
@@ -146,9 +146,9 @@ services:
       - '6379:6379'
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
-      interval: 1s
-      timeout: 0s
-      retries: 10
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - gamezilla-app-redis-data:/data
 
