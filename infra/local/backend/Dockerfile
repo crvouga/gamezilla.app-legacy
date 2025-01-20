@@ -1,21 +1,15 @@
 FROM oven/bun:latest
 
-# Set working directory
 WORKDIR /app
 
-# Install essential dependencies and PostgreSQL client
+COPY ./ ./
+
 RUN apt-get update && \
+    apt-get install -y wget gnupg lsb-release && \
+    echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    apt-get update && \
     apt-get install -y \
-    libnss3 \
-    libstdc++6 \
-    libgcc1 \
-    libc6 \
-    libsqlite3-0 \
-    libc6-dev \
-    libcurl4 \
-    libatomic1 \
     build-essential \
     postgresql-client \
     && apt-get clean
-
-COPY . .
