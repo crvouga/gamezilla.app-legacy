@@ -22,7 +22,7 @@ const TARGET_FILE_SUFFIX = '.type.ts'
 
 async function generateGuardFiles(files: string[]) {
   for (const file of files) {
-    const COMMAND = `npx ts-auto-guard ${file}`
+    const COMMAND = `bun x ts-auto-guard ${file}`
 
     exec(COMMAND, (error, stdout, stderr) => {
       console.log(stdout)
