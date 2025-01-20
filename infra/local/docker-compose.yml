@@ -149,7 +149,10 @@ services:
       interval: 1s
       timeout: 0s
       retries: 10
+    volumes:
+      - gamezilla-app-redis-data:/data
 
 volumes:
   gamezilla-app-postgres-data:
   gamezilla-app-powersync-storage-postgres-data:
+  gamezilla-app-redis-data:
