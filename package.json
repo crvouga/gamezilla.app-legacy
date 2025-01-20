@@ -6,8 +6,7 @@
   "scripts": {
     "app:down": "docker-compose --env-file .env -f ./infra/local/docker-compose.yml down",
     "app:restart": "docker-compose --env-file .env -f ./infra/local/docker-compose.yml restart",
-    "app:up": "docker-compose --env-file .env -f ./infra/local/docker-compose.yml up",
-    "app:up:fresh": "cp .env.keys .env && bun app:down && bun app:up",
+    "app:up": "cp .env.keys .env && docker-compose --env-file .env -f ./infra/local/docker-compose.yml up",
     "backend": "bun --watch ./src/main/backend.ts",
     "backend:build": "bun db:up",
     "backend:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./src/main/backend.ts",
