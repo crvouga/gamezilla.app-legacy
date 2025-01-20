@@ -23,7 +23,13 @@ services:
       VITE_BACKEND_URL: ${VITE_BACKEND_URL}
       VITE_POWERSYNC_URL: ${VITE_POWERSYNC_URL}
     depends_on:
-      - backend
+      backend:
+        condition: service_started
+      powersync:
+        condition: service_started
+      electric:
+        condition: service_started
+
   backend:
     container_name: backend
     image: oven/bun:latest
@@ -48,10 +54,11 @@ services:
       TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
       TWILIO_MESSAGING_SERVICE_SID: ${TWILIO_MESSAGING_SERVICE_SID}
     depends_on:
-      - redis
-      - postgres
-      - powersync
-      - electric
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
   postgres:
     container_name: postgres
     image: postgres:latest
@@ -71,9 +78,10 @@ services:
       wait"
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U gamezilla_app']
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 1s
+      timeout: 0s
+      retries: 10
+
   powersync:
     container_name: powersync
     restart: unless-stopped
@@ -93,6 +101,7 @@ services:
       PS_JWKS_URI: ${PS_JWKS_URI}
     ports:
       - 8080:8080
+
   powersync-storage-postgres:
     container_name: powersync-storage-postgres
     image: postgres:latest
@@ -114,9 +123,10 @@ services:
       wait"
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U powersync_storage']
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 1s
+      timeout: 0s
+      retries: 10
+
   electric:
     container_name: electric
     image: electricsql/electric
@@ -127,12 +137,18 @@ services:
       - '3000:3000'
     depends_on:
       - postgres
+
   redis:
     container_name: redis
     image: redis:6.2.6
     restart: always
     ports:
       - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 1s
+      timeout: 0s
+      retries: 10
 
 volumes:
   gamezilla-app-postgres-data:
