@@ -44,7 +44,7 @@ services:
         echo 'Contents of /app:' &&
         bun install &&
         bun backend:build &&
-        bun backend --inspect=0.0.0.0:9229"
+        bun backend"
     ports:
       - '${PORT}:${PORT}'
       - '9229:9229' # Expose the debug port
