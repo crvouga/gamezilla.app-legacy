@@ -14,6 +14,9 @@ const main = async () => {
     init: AppBackend.init,
     update: AppBackend.update,
     subscriptions: AppBackend.subscriptions,
+    crash(input) {
+      console.error('program crashed!', input.error)
+    },
   })
 
   withRPC({

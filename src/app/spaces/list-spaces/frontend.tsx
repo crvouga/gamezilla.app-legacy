@@ -1,8 +1,8 @@
 import { RequestResponse, startedRequest } from '~/@/request-response/request-response'
 import { Ok } from '~/@/result'
-import { APP_SOUND, playSound, pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
 import type { SpaceId } from '~/app/@/data/space-id'
-import { IconGamepad, Spinner, TopBar } from '~/app/@/ui'
+import { APP_SOUND, playSound, pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
+import { IconGamepad, TopBar } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import type { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesSpaceFrontend } from '../space/frontend'
@@ -131,14 +131,12 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   const spaces = toSpaces(input.model)
 
-  const showSpinner = input.model.listSpacesRequest.t === 'loading'
-
   return (
     <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
       <TopBar onBack={false} ctx={input.ctx} center title={input.ctx.t('spaces.spaces')} />
 
       <div className='relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8'>
-        {!showSpinner && spaces.length === 0 && (
+        {spaces.length === 0 && (
           <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
         )}
 
@@ -151,11 +149,6 @@ const View: SpaceFrontendModule['View'] = (input) => {
               state={state}
             />
           ))}
-          {showSpinner && (
-            <div className='flex w-full items-center justify-center p-4'>
-              <Spinner />
-            </div>
-          )}
         </div>
       </div>
 

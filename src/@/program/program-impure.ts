@@ -6,7 +6,7 @@ export type ProgramImpure<TMsg, TCtx> = {
   init: (input: { ctx: TCtx }) => Promise<{}>
   update: (input: { ctx: TCtx; msg: TMsg }) => Promise<{}>
   subscriptions: (input: { intervalId: string; ctx: TCtx }) => Promise<Sub<TMsg>>
-  crash?: (input: { error: unknown }) => void
+  crash: (input: { error: unknown }) => void
 }
 
 function generateProgramId() {
@@ -36,7 +36,7 @@ export async function run<TMsg, TCtx>(program: ProgramImpure<TMsg, TCtx> & {}) {
 
       updateSubscriptions(ctx)
     } catch (error) {
-      program.crash?.({
+      program.crash({
         error,
       })
     }
