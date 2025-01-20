@@ -28,11 +28,7 @@ export const Typography = (input: {
   color?: 'inherit' | 'text-primary' | 'text-secondary' | null
 }) => {
   return (
-    <div
-      className={cn(variantClasses[input.variant], input.color ? colorClasses[input.color] : null, input.className)}
-      role={input.role}
-      aria-label={input.text}
-    >
+    <div className={cn(variantClasses[input.variant], input.color ? colorClasses[input.color] : null, input.className)}>
       {input.text}
     </div>
   )
