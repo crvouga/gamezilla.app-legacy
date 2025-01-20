@@ -1,11 +1,24 @@
 import { createPortal } from '~/@/vdom/render'
 import { VDomChildren } from '~/@/vdom/vdom'
 
+const cache = new Map<string, HTMLElement>()
+const querySelector = (selector: string): HTMLElement | null => {
+  if (cache.has(selector)) {
+    return cache.get(selector) ?? null
+  }
+  const element = document.querySelector(selector)
+  if (element instanceof HTMLElement) {
+    cache.set(selector, element)
+    return element
+  }
+  return null
+}
+
 const getExit = (portalId: string): HTMLElement | null => {
   if (typeof document === 'undefined') {
     return null
   }
-  return (document.querySelector(`[data-portal-exit][data-portal-id="${portalId}"]`) ?? null) as HTMLElement | null
+  return (querySelector(`[data-portal-exit][data-portal-id="${portalId}"]`) ?? null) as HTMLElement | null
 }
 
 const Entrance = (input: { portalId: string; children: VDomChildren }) => {

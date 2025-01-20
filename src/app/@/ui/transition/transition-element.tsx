@@ -1,4 +1,4 @@
-import { transitionSub, type Transitioninput } from './transition-shared'
+import { transitionSub, type TransitionInput } from './transition-shared'
 
 declare global {
   namespace JSX {
@@ -15,7 +15,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
   class Transition extends HTMLElement {
     observer: MutationObserver
     unsubscribe: () => void
-    input: Transitioninput
+    input: TransitionInput
     enterQueue: Array<Node> = []
     activeExits = 0
 
@@ -37,9 +37,9 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
       this.observer.observe(this, {
         childList: true,
       })
-      this.unsubscribe = transitionSub.sub((msgEvt) => {
-        if (msgEvt.id === this.getAttribute('id')) {
-          this.input = msgEvt
+      this.unsubscribe = transitionSub.sub((event) => {
+        if (event.id === this.getAttribute('id')) {
+          this.input = event
           this.syncUI()
         }
       })
