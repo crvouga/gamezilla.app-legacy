@@ -20,9 +20,8 @@ services:
     ports:
       - '5173:5173'
     environment:
-      NODE_ENV: development
-      VITE_BACKEND_URL: http://localhost:5002
-      VITE_POWERSYNC_URL: http://localhost:8080
+      VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+      VITE_POWERSYNC_URL: ${VITE_POWERSYNC_URL}
     depends_on:
       - backend
   backend:
@@ -40,15 +39,14 @@ services:
         bun install && 
         bun backend"
     ports:
-      - '5002:5002'
+      - '${PORT}:${PORT}'
     environment:
-      NODE_ENV: development
-      DATABASE_URL: postgresql://gamezilla_app:gamezilla_app@postgres:5432/gamezilla_app
-      REDIS_URL: redis://redis:6379
-      PORT: 5002
-      TWILIO_ACCOUNT_SID: 'noop'
-      TWILIO_AUTH_TOKEN: 'noop'
-      TWILIO_MESSAGING_SERVICE_SID: 'noop'
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      PORT: ${PORT}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
+      TWILIO_MESSAGING_SERVICE_SID: ${TWILIO_MESSAGING_SERVICE_SID}
     depends_on:
       - redis
       - postgres
@@ -90,9 +88,9 @@ services:
       - ../../src/powersync:/powersync
     environment:
       POWERSYNC_CONFIG_PATH: /powersync/config.yaml
-      PS_POSTGRES_STORAGE_DATABASE_URL: postgresql://powersync_storage:powersync_storage@powersync-storage-postgres:5432/powersync_storage
-      PS_POSTGRES_REPLICATION_DATABASE_URL: postgresql://gamezilla_app:gamezilla_app@postgres:5432/gamezilla_app
-      PS_JWKS_URI: http://host.docker.internal:5002/powersync/jwks
+      PS_POSTGRES_STORAGE_DATABASE_URL: ${PS_POSTGRES_STORAGE_DATABASE_URL}
+      PS_POSTGRES_REPLICATION_DATABASE_URL: ${PS_POSTGRES_REPLICATION_DATABASE_URL}
+      PS_JWKS_URI: ${PS_JWKS_URI}
     ports:
       - 8080:8080
   powersync-storage-postgres:
@@ -124,7 +122,7 @@ services:
     image: electricsql/electric
     restart: always
     environment:
-      DATABASE_URL: postgresql://gamezilla_app:gamezilla_app@postgres:5432/gamezilla_app
+      DATABASE_URL: ${DATABASE_URL}
     ports:
       - '3000:3000'
     depends_on:

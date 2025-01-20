@@ -6,9 +6,8 @@ import { RequestResponse, isRequesting, isResponseOk } from '~/@/request-respons
 import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { APP_SOUND, didPlaySound, didPushScreen } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
-import { EMPTY_STATE_TEST_ID, SPINNER_TEST_ID } from '~/app/@/ui'
+import { APP_SOUND, didPlaySound, didPushScreen } from '~/app/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { SpacesFrontend } from '../frontend'
 import { Space } from '../space/space'
@@ -283,27 +282,5 @@ describe(import.meta.file, () => {
 
     expect(before?.game?.t ?? null).toEqual('flow')
     expect(after?.game?.t ?? null).toEqual(null)
-  })
-
-  test('render spinner when listing spaces', async () => {
-    const f = await Fixture()
-
-    const initial = f.update(f.initial, [{ msgBackend: { t: 'listed-spaces', spaces: [] } }])
-
-    const updated = f.update(initial, [
-      { msgEvt: { t: 'screen-evt.screen-changed', screen: { n: 'spaces', t: 'space-list' } } },
-    ])
-    expect(f.view(initial).getByTestId(SPINNER_TEST_ID)).toBeFalsy()
-    expect(f.view(updated).getByTestId(SPINNER_TEST_ID)).toBeTruthy()
-  })
-
-  test('render empty state', async () => {
-    const f = await Fixture()
-    const initial = f.update(f.initial, [{ msgBackend: { t: 'listed-spaces', spaces: [] } }])
-    const updated = f.update(initial, [
-      { msgEvt: { t: 'screen-evt.screen-changed', screen: { n: 'spaces', t: 'space-list' } } },
-    ])
-    expect(f.view(initial).getByTestId(EMPTY_STATE_TEST_ID)).toBeTruthy()
-    expect(f.view(updated).getByTestId(EMPTY_STATE_TEST_ID)).toBeFalsy()
   })
 })

@@ -11,3 +11,5 @@ export const CONFIG_BACKEND = {
   DATABASE_URL,
   REDIS_URL,
 }
+
+console.log(CONFIG_BACKEND)
