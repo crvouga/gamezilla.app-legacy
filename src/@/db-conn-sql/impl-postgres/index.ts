@@ -1,16 +1,17 @@
-import { Err, Ok } from '~/@/result'
-import type { p } from '~/@/parser'
-import { Sql } from '~/@/sql'
 import postgres from 'postgres'
+import type { p } from '~/@/parser'
+import { Err, Ok } from '~/@/result'
+import { SecretString } from '~/@/secrets/secret-string'
+import { Sql } from '~/@/sql'
 import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
-import type { IDbConnSql } from '../interface'
 import { Sleep } from '../../promise/sleep'
 import { Sub } from '../../sub'
+import type { IDbConnSql } from '../interface'
 
 export type Config = {
   t: 'postgres'
-  databaseUrl: string
+  databaseUrl: SecretString
   logger: ILogger
   simulateLatency?: Sleep
 }
@@ -19,7 +20,7 @@ let postgresClient: postgres.Sql<{}>
 
 export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   const logger = Logger.prefix('postgres', config.logger)
-  postgresClient ??= postgres(config.databaseUrl)
+  postgresClient ??= postgres(config.databaseUrl.dangerouslyReadValue())
 
   return {
     sub() {

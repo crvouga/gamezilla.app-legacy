@@ -19,10 +19,21 @@ const Fixtures = async () => {
   const configs: Config[] = []
 
   configs.push({
-    t: 'pglite',
-    fileSystem: { t: 'in-memory' },
+    t: 'bun-sqlite',
+    fileSystem: {
+      t: 'in-memory',
+    },
     logger: Logger({ t: 'noop' }),
   })
+
+  const SHOULD_TEST_PGLITE = false
+  if (SHOULD_TEST_PGLITE) {
+    configs.push({
+      t: 'pglite',
+      fileSystem: { t: 'in-memory' },
+      logger: Logger({ t: 'noop' }),
+    })
+  }
 
   const SHOULD_TEST_POWERSYNC = false
   if (SHOULD_TEST_POWERSYNC) {
@@ -48,7 +59,7 @@ const Fixtures = async () => {
     })
   }
 
-  if (CONFIG_SHARED.IS_INTEGRATION_TEST && typeof CONFIG_BACKEND.DATABASE_URL === 'string') {
+  if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
     configs.push({
       t: 'postgres',
       databaseUrl: CONFIG_BACKEND.DATABASE_URL,
@@ -92,15 +103,16 @@ describe('db-conn-sql', () => {
       expect(isOk(created)).toBe(true)
       const inserted = await f.dbConnSql.query({
         parser: p.unknown,
-        sql: `INSERT INTO foo DEFAULT VALUES`,
+        sql: `INSERT INTO foo(id) VALUES (1)`,
         vars: {},
       })
       expect(isOk(inserted)).toBe(true)
       const queried = await f.dbConnSql.query({
-        parser: p.obj({ id: p.num }),
+        parser: p.obj({ id: p.maybe(p.or(p.num, p.str, p.bool)) }),
         sql: `SELECT id FROM foo`,
         vars: {},
       })
+
       expect(isOk(queried)).toBe(true)
       if (isOk(queried)) {
         expect(queried.value).toEqual([{ id: 1 }])

@@ -1,6 +1,6 @@
 version: '3.1'
 
-name: gamezilla-app
+name: gamezilla_app
 
 services:
   frontend:
@@ -32,7 +32,9 @@ services:
 
   backend:
     container_name: backend
-    image: oven/bun:latest
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
     working_dir: /app
     volumes:
       - type: bind
@@ -42,7 +44,7 @@ services:
       sh -c "
         ls -la /app &&
         echo 'Contents of /app:' &&
-        bun install && 
+        bun install &&
         bun backend"
     ports:
       - '${PORT}:${PORT}'
@@ -64,20 +66,20 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      POSTGRES_USER: gamezilla_app
-      POSTGRES_PASSWORD: gamezilla_app
-      POSTGRES_DB: gamezilla_app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
       - '5432:5432'
     volumes:
-      - gamezilla-app-postgres-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     command: >
       sh -c "docker-entrypoint.sh postgres -c listen_addresses='*' -c port=5432 -c ssl=off -c wal_level=logical &
-      until pg_isready -U gamezilla_app; do sleep 1; done;
-      psql -U gamezilla_app -d gamezilla_app -c \"CREATE PUBLICATION powersync FOR ALL TABLES;\";
+      until pg_isready -U postgres; do sleep 1; done;
+      psql -U postgres -d postgres -c \"CREATE PUBLICATION powersync FOR ALL TABLES;\";
       wait"
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U gamezilla_app']
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -88,7 +90,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      powersync-storage-postgres:
+      powersync_storage_postgres:
         condition: service_healthy
     image: journeyapps/powersync-service:latest
     command: ['start', '-r', 'unified']
@@ -102,27 +104,24 @@ services:
     ports:
       - 8080:8080
 
-  powersync-storage-postgres:
-    container_name: powersync-storage-postgres
+  powersync_storage_postgres:
+    container_name: powersync_storage_postgres
     image: postgres:latest
     restart: always
     environment:
-      POSTGRES_USER: powersync_storage
-      POSTGRES_PASSWORD: powersync_storage
-      POSTGRES_DB: powersync_storage
+      POSTGRES_USER: powersync_storage_postgres
+      POSTGRES_PASSWORD: powersync_storage_postgres
+      POSTGRES_DB: powersync_storage_postgres
     ports:
       - '5433:5433'
     volumes:
-      - gamezilla-app-powersync-storage-postgres-data:/var/lib/postgresql/data
-    # command: ['-c', 'listen_addresses=*', '-c', 'port=5432', '-c', 'ssl=off', '-c', 'wal_level=logical']
+      - powersync_storage_postgres_data:/var/lib/postgresql/data
     command: >
       sh -c "docker-entrypoint.sh postgres -c listen_addresses='*' -c port=5432 -c ssl=off -c wal_level=logical &
-      until pg_isready -U powersync_storage; do sleep 1; done;
-      psql -U powersync_storage -d powersync_storage -c \"CREATE USER powersync_storage_user WITH PASSWORD 'powersync_storage_user';\";
-      psql -U powersync_storage -d powersync_storage -c \"GRANT CREATE ON DATABASE postgres TO powersync_storage_user;\";
+      until pg_isready -U powersync_storage_postgres; do sleep 1; done;
       wait"
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U powersync_storage']
+      test: ['CMD-SHELL', 'pg_isready -U powersync_storage_postgres']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -150,9 +149,9 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - gamezilla-app-redis-data:/data
+      - redis_data:/data
 
 volumes:
-  gamezilla-app-postgres-data:
-  gamezilla-app-powersync-storage-postgres-data:
-  gamezilla-app-redis-data:
+  postgres_data:
+  powersync_storage_postgres_data:
+  redis_data:

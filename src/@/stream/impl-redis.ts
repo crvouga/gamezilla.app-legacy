@@ -1,11 +1,12 @@
 import { Err, Ok, Result } from '~/@/result'
 import { ILogger, Logger } from '../logger'
 import { IRedis, newRedis } from '../redis'
+import { SecretString } from '../secrets/secret-string'
 import { IStream } from './interface'
 
 export type Config<T> = {
   t: 'redis'
-  redisUrl: string
+  redisUrl: SecretString
   encode: (value: T) => Result<string, string>
   decode: (value: string) => Result<string, T>
   logger: ILogger

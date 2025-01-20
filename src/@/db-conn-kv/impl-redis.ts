@@ -6,12 +6,13 @@ import { Err, Ok, isErr } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import { withDuration } from '~/@/time/with-duration'
 import { IRedis, newRedis } from '../redis'
+import { SecretString } from '../secrets/secret-string'
 import type { IDbConnKv } from './interface'
 
 export type Config = {
   t: 'redis'
   logger: ILogger
-  redisUrl: string
+  redisUrl: SecretString
   simulateLatency: Sleep
 }
 

@@ -1,10 +1,11 @@
 import { ILogger } from '../logger'
 import { IRedis, newRedis } from '../redis'
+import { SecretString } from '../secrets/secret-string'
 import { IPubSubTopicBased } from './interface'
 
 export type Config = {
   t: 'redis'
-  redisUrl: string
+  redisUrl: SecretString
   logger: ILogger
 }
 

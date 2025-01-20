@@ -68,20 +68,12 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     }
   }
 
-  if (typeof CONFIG_BACKEND.DATABASE_URL !== 'string') {
-    throw new Error('DATABASE_URL is not set')
-  }
-
   const dbConnPostgres = await DbConnSql({
     t: 'postgres',
     databaseUrl: CONFIG_BACKEND.DATABASE_URL,
     logger,
     simulateLatency: async () => {},
   })
-
-  if (typeof CONFIG_BACKEND.REDIS_URL !== 'string') {
-    throw new Error('REDIS_URL is not set')
-  }
 
   const dbConnKv = await DbConnKv({
     t: 'redis',

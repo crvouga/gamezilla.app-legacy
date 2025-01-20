@@ -1,6 +1,8 @@
-const DATABASE_URL: unknown = import.meta.env?.DATABASE_URL
+import { SecretString } from '~/@/secrets/secret-string'
 
-const REDIS_URL: unknown = import.meta.env?.REDIS_URL
+const DATABASE_URL = SecretString('DATABASE_URL', import.meta.env?.DATABASE_URL)
+
+const REDIS_URL = SecretString('REDIS_URL', import.meta.env?.REDIS_URL)
 
 const PORT: number = Number(import.meta.env?.PORT)
 
@@ -11,5 +13,3 @@ export const CONFIG_BACKEND = {
   DATABASE_URL,
   REDIS_URL,
 }
-
-console.log(CONFIG_BACKEND)

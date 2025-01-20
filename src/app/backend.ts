@@ -55,10 +55,6 @@ const initCtx = async (): Promise<BackendCtx> => {
     ? async () => {}
     : async () => sleep(TimeSpan.milliseconds(100 + Math.random() * 100))
 
-  if (typeof CONFIG_BACKEND.DATABASE_URL !== 'string') {
-    throw new Error('DATABASE_URL is not set')
-  }
-
   const dbConnSql = await DbConnSql({
     t: 'postgres',
     databaseUrl: CONFIG_BACKEND.DATABASE_URL,
