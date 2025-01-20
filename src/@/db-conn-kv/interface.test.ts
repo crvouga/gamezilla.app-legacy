@@ -9,6 +9,7 @@ import { PubSub } from '../pub-sub'
 import { TimeSpan } from '../time/time-span'
 import { Uuid } from '../uuid/uuid'
 import { DbConnKv } from './impl'
+import { CONFIG_SHARED } from '~/config/shared'
 
 const Fixture = async () => {
   const testEnv = await FixtureAppBackend()
@@ -40,105 +41,109 @@ type Implementation = {
   Fixture: () => ReturnType<typeof Fixture>
 }
 
-const implementations: Implementation[] = [
-  {
-    name: 'base',
-    Fixture,
-  },
-  {
-    name: 'with-cache',
-    async Fixture() {
-      const f = await Fixture()
-      return {
-        ...f,
-        dbConnKv: await DbConnKv({
-          t: 'with-cache',
-          cache: await DbConnKv({
-            t: 'hash-map',
-          }),
-          source: f.dbConnKv,
-          logger: f.logger,
-        }),
-      }
+const Fixtures = (): Implementation[] => {
+  const fixtures: Implementation[] = [
+    {
+      name: 'base',
+      Fixture,
     },
-  },
-  {
-    name: 'with-reduced-parsing',
-    async Fixture() {
-      const f = await Fixture()
-      return {
-        ...f,
-        dbConnKv: await DbConnKv({
-          t: 'with-reduced-parsing',
-          dbConnKv: f.dbConnKv,
-          verifiedKeys: new Set(),
-          logger: f.logger,
-        }),
-      }
-    },
-  },
-  {
-    name: 'with-throttled-writes-to-source',
-    async Fixture() {
-      const f = await Fixture()
-      return {
-        ...f,
-        dbConnKv: await DbConnKv({
-          t: 'with-cache',
-          cache: await DbConnKv({
-            t: 'hash-map',
+    {
+      name: 'with-cache',
+      async Fixture() {
+        const f = await Fixture()
+        return {
+          ...f,
+          dbConnKv: await DbConnKv({
+            t: 'with-cache',
+            cache: await DbConnKv({
+              t: 'hash-map',
+            }),
+            source: f.dbConnKv,
+            logger: f.logger,
           }),
-          source: await DbConnKv({
-            t: 'with-throttled-writes',
+        }
+      },
+    },
+    {
+      name: 'with-reduced-parsing',
+      async Fixture() {
+        const f = await Fixture()
+        return {
+          ...f,
+          dbConnKv: await DbConnKv({
+            t: 'with-reduced-parsing',
             dbConnKv: f.dbConnKv,
+            verifiedKeys: new Set(),
             logger: f.logger,
-            throttle: TimeSpan.seconds(10),
-            runtime: Runtime({ t: 'noop' }),
           }),
-          logger: f.logger,
-        }),
-      }
+        }
+      },
     },
-  },
-
-  {
-    name: 'with-distributed-invalidations-for-cache',
-    async Fixture() {
-      const f = await Fixture()
-      return {
-        ...f,
-        dbConnKv: await DbConnKv({
-          t: 'with-cache',
-          source: f.dbConnKv,
-          logger: f.logger,
-          cache: await DbConnKv({
-            t: 'with-distributed-invalidations',
-            cache: await DbConnKv({ t: 'hash-map' }),
+    {
+      name: 'with-throttled-writes-to-source',
+      async Fixture() {
+        const f = await Fixture()
+        return {
+          ...f,
+          dbConnKv: await DbConnKv({
+            t: 'with-cache',
+            cache: await DbConnKv({
+              t: 'hash-map',
+            }),
+            source: await DbConnKv({
+              t: 'with-throttled-writes',
+              dbConnKv: f.dbConnKv,
+              logger: f.logger,
+              throttle: TimeSpan.seconds(10),
+              runtime: Runtime({ t: 'noop' }),
+            }),
             logger: f.logger,
-            pubSub: await PubSub({ t: 'in-memory' }),
           }),
-        }),
-      }
+        }
+      },
     },
-  },
-
-  {
-    name: 'redis',
-    async Fixture() {
-      const f = await Fixture()
-
-      return {
-        ...f,
-        dbConnKv: await DbConnKv({
-          t: 'redis',
-          simulateLatency: async () => {},
-          redisUrl: CONFIG_BACKEND.REDIS_URL,
-          logger: f.logger,
-        }),
-      }
+    {
+      name: 'with-distributed-invalidations-for-cache',
+      async Fixture() {
+        const f = await Fixture()
+        return {
+          ...f,
+          dbConnKv: await DbConnKv({
+            t: 'with-cache',
+            source: f.dbConnKv,
+            logger: f.logger,
+            cache: await DbConnKv({
+              t: 'with-distributed-invalidations',
+              cache: await DbConnKv({ t: 'hash-map' }),
+              logger: f.logger,
+              pubSub: await PubSub({ t: 'in-memory' }),
+            }),
+          }),
+        }
+      },
     },
-  },
-]
+  ]
+
+  if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
+    fixtures.push({
+      name: 'redis',
+      async Fixture() {
+        const f = await Fixture()
+        return {
+          ...f,
+          dbConnKv: await DbConnKv({
+            t: 'redis',
+            simulateLatency: async () => {},
+            redisUrl: CONFIG_BACKEND.REDIS_URL,
+            logger: f.logger,
+          }),
+        }
+      },
+    })
+  }
+
+  return fixtures
+}
 
 const Item = p.obj({ id: p.str })
 
@@ -160,7 +165,7 @@ const normalizeItemArrayResult = <T>(result: Result<T, Item[]>): Result<T, Item[
 
 describe(`${import.meta.file} ${name}`, () => {
   it('should set correctly', async () => {
-    for (const { Fixture } of implementations) {
+    for (const { Fixture } of Fixtures()) {
       const f = await Fixture()
 
       const item = randomItem()
@@ -175,7 +180,7 @@ describe(`${import.meta.file} ${name}`, () => {
   })
 
   test('setMany empty input', async () => {
-    for (const { Fixture } of implementations) {
+    for (const { Fixture } of Fixtures()) {
       const f = await Fixture()
 
       const set = await f.dbConnKv.setMany([])
@@ -185,7 +190,7 @@ describe(`${import.meta.file} ${name}`, () => {
   })
 
   it('should set many correctly', async () => {
-    for (const { Fixture } of implementations) {
+    for (const { Fixture } of Fixtures()) {
       const f = await Fixture()
 
       const items = [randomItem(), randomItem(), randomItem()]
@@ -208,7 +213,7 @@ describe(`${import.meta.file} ${name}`, () => {
   })
 
   it('should get correctly', async () => {
-    for (const { Fixture } of implementations) {
+    for (const { Fixture } of Fixtures()) {
       const f = await Fixture()
 
       const item = randomItem()
@@ -222,7 +227,7 @@ describe(`${import.meta.file} ${name}`, () => {
   })
 
   it('should get many correctly', async () => {
-    for (const { Fixture } of implementations) {
+    for (const { Fixture } of Fixtures()) {
       const f = await Fixture()
 
       const items = [randomItem(), randomItem(), randomItem()]
@@ -239,7 +244,7 @@ describe(`${import.meta.file} ${name}`, () => {
   })
 
   test('get many empty', async () => {
-    for (const { Fixture } of implementations) {
+    for (const { Fixture } of Fixtures()) {
       const f = await Fixture()
 
       const items = [randomItem(), randomItem(), randomItem()]
@@ -252,7 +257,7 @@ describe(`${import.meta.file} ${name}`, () => {
   })
 
   it('should zap items correctly', async () => {
-    for (const { Fixture } of implementations) {
+    for (const { Fixture } of Fixtures()) {
       const f = await Fixture()
 
       const item = randomItem()
