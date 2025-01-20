@@ -43,6 +43,7 @@ services:
         ls -la /app &&
         echo 'Contents of /app:' &&
         bun install &&
+        bun backend:build &&
         bun backend"
     ports:
       - '${PORT}:${PORT}'
