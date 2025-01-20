@@ -20,17 +20,42 @@ const colorClasses: { [color in TypographyColor]: string } = {
   inherit: 'text-inherit',
 }
 
-export const Typography = (input: {
+type Input = {
   text: TranslatedText
   variant: TypographyVariant
   className?: string
   role?: AriaRole
   color?: 'inherit' | 'text-primary' | 'text-secondary' | null
-}) => {
+}
+
+const toAriaLevel = (input: Input): number | undefined => {
+  switch (input.role) {
+    case 'heading': {
+      switch (input.variant) {
+        case 'title':
+          return 1
+        case 'body':
+          return 2
+        case 'label':
+          return 3
+        case 'subtitle':
+          return 4
+        case 'caption':
+          return 5
+      }
+    }
+    default: {
+      return undefined
+    }
+  }
+}
+
+export const Typography = (input: Input) => {
   return (
     <div
       className={cn(variantClasses[input.variant], input.color ? colorClasses[input.color] : null, input.className)}
       role={input.role}
+      aria-level={toAriaLevel(input)}
       aria-label={input.text}
     >
       {input.text}
