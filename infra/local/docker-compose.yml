@@ -44,9 +44,10 @@ services:
         echo 'Contents of /app:' &&
         bun install &&
         bun backend:build &&
-        bun backend"
+        bun backend --inspect=0.0.0.0:9229"
     ports:
       - '${PORT}:${PORT}'
+      - '9229:9229' # Expose the debug port
     environment:
       DATABASE_URL: ${DATABASE_URL}
       REDIS_URL: ${REDIS_URL}
