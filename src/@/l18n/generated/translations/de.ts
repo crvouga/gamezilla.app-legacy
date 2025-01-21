@@ -261,6 +261,7 @@ export const translations: Text = {
   'app.save-changes?': 'Änderungen speichern?',
   'username-title': 'Benutzername',
   username: (username) => `@${username}`,
+  'app.add': 'Hinzufügen',
   'time-span.month-plural': (months) => `${Math.floor(months)} Monate`,
   'time-span.month-singular': '1 Monat',
   'time-span.day-plural': (days) => `${Math.floor(days)} Tage`,

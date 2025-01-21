@@ -267,6 +267,7 @@ export const translations: Text = {
   'app.save-changes?': '変更を保存しますか？',
   'username-title': 'ユーザー名',
   username: (username) => `@${username}`,
+  'app.add': '追加',
   'time-span.month-plural': (months) => `${Math.floor(months)} \u30F6\u6708`,
   'time-span.month-singular': '1 ヶ月',
   'time-span.day-plural': (days) => `${Math.floor(days)} \u65E5`,

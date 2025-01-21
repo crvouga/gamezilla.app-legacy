@@ -259,6 +259,7 @@ export const translations: Text = {
   'app.save-changes-warning': "Your changes will be lost if you don't save them before exiting.",
   'username-title': 'Username',
   username: (username) => `@${username}`,
+  'app.add': 'Add',
   'time-span.day-plural': (days) => `${Math.floor(days)} days`,
   'time-span.day-singular': '1 day',
   'time-span.month-plural': (months) => `${Math.floor(months)} months`,

@@ -77,7 +77,7 @@ const View: FrontendModule['View'] = (input) => {
             },
           })
         }}
-        onClick={(puzzle) =>
+        onItemClick={(puzzle) =>
           input.dispatch({
             t: 'got-msg-space',
             c: {

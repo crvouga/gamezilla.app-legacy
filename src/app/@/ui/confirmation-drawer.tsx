@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
-import { Button } from './button'
 import { Drawer, type DrawerInput } from './drawer'
+import { FormBottomButtons } from './form-button-buttons'
 import { Typography } from './typography'
 
 type input = DrawerInput & {
@@ -30,22 +30,14 @@ export const ConfirmationFormDrawer = (input: input) => {
 
         <Typography className='p-4' variant='body' text={input.body} />
 
-        <div className='flex w-full items-center gap-4 p-4'>
-          <Button
-            className='flex-1'
-            onClick={input.onCancel}
-            text={input.cancelText ?? 'Cancel'}
-            disabled={input.cancelDisabled}
-          />
-          <Button
-            className='flex-1'
-            type='submit'
-            color={input.variant === 'danger' ? 'danger' : 'default'}
-            variant='contained'
-            text={input.confirmText}
-            loading={input.confirmLoading}
-          />
-        </div>
+        <FormBottomButtons
+          cancelText={input.cancelText}
+          confirmText={input.confirmText}
+          onCancel={input.onCancel}
+          cancelDisabled={input.cancelDisabled}
+          confirmLoading={input.confirmLoading}
+          variant={input.variant}
+        />
       </form>
     </Drawer>
   )

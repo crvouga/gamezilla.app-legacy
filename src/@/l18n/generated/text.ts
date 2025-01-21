@@ -49,8 +49,9 @@ import type { Text as Text46 } from '../../../app/profile/$l18n'
 import type { Text as Text47 } from '../../../app/profile/update-username/update-username.$l18n'
 import type { Text as Text48 } from '../../../app/@/frontend/$l18n'
 import type { Text as Text49 } from '../../../app/@/data/username/username.$l18n'
-import type { Text as Text50 } from '../../time/time-span.$l18n'
-import type { Text as Text51 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
+import type { Text as Text50 } from '../../../app/@/l18n/add.$l18n'
+import type { Text as Text51 } from '../../time/time-span.$l18n'
+import type { Text as Text52 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
 
 export type Text = Text0 &
   Text1 &
@@ -103,4 +104,5 @@ export type Text = Text0 &
   Text48 &
   Text49 &
   Text50 &
-  Text51
+  Text51 &
+  Text52

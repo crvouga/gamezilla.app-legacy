@@ -271,6 +271,7 @@ export const translations: Text = {
   'app.save-changes?': 'परिवर्तन सहेजें?',
   'username-title': 'उपयोगकर्ता नाम',
   username: (username) => `@${username}`,
+  'app.add': 'जोड़ें',
   'time-span.month-plural': (months) => `${Math.floor(months)} \u092E\u0939\u0940\u0928\u0947`,
   'time-span.month-singular': '1 महीना',
   'time-span.day-plural': (days) => `${Math.floor(days)} \u0926\u093F\u0928`,

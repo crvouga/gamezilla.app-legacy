@@ -14,6 +14,7 @@ import { PuzzleDbQuery } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './query-form'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
+import { Checkbox } from '~/app/@/ui/checkbox'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
@@ -71,11 +72,12 @@ const watch = <TMsg,>(
 }
 
 const ViewList = (input: {
+  selectable?: boolean
   ctx: FlowFrontendCtxRoot
   query: PuzzleDbQuery
   model: ModelFrontend
   onQueryChanged: (query: PuzzleDbQuery) => void
-  onClick: (puzzle: Puzzle) => void
+  onItemClick: (puzzle: Puzzle) => void
   fab?: VDom
 }) => {
   const queryKey = PuzzleDbQuery.toKey(input.query)
@@ -92,11 +94,12 @@ const ViewList = (input: {
       <div className='relative flex w-full flex-1 flex-col items-center overflow-y-scroll'>
         {puzzles.map((puzzle) => (
           <ViewListItem
+            selectable={input.selectable}
             query={input.query}
             key={puzzle.id}
             ctx={input.ctx}
             puzzle={puzzle}
-            onClick={() => input.onClick(puzzle)}
+            onClick={() => input.onItemClick(puzzle)}
           />
         ))}
 
@@ -115,6 +118,7 @@ const ViewList = (input: {
 }
 
 const ViewListItem = (input: {
+  selectable?: boolean
   query: PuzzleDbQuery
   ctx: { t: Translator; now: Posix }
   puzzle: Puzzle
@@ -127,9 +131,16 @@ const ViewListItem = (input: {
       className='clickable box-border flex w-full items-center text-left'
       onClick={input.onClick}
     >
+      {input.selectable && (
+        <div className='px-4'>
+          <Checkbox checked={false} onChange={() => {}} />
+        </div>
+      )}
+
       <div className='flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden'>
         <VariantBoard.View disabled model={input.puzzle.flow} />
       </div>
+
       <div className='flex flex-col gap-1 overflow-hidden truncate px-4'>
         <Typography
           variant='body'

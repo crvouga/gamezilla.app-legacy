@@ -5,10 +5,11 @@ import { PuzzleDbQueryFrontend } from '../../../@/puzzle/puzzle-db-query/fronten
 import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
 import type { ModelSpace, FrontendModule } from '../../types'
 import { ScreenPackBuilderSpace } from '../space'
+import { FormBottomButtons } from '~/app/@/ui/form-button-buttons'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
-    case 'screen-pack-builder.user-clicked-add-puzzle-item': {
+    case 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle': {
       const { msgSpace } = input
       return {
         model: input.model,
@@ -29,7 +30,7 @@ const update: FrontendModule['update'] = (input) => {
       return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
     }
 
-    case 'screen-pack-builder.user-closed-add-puzzle-screen': {
+    case 'screen-pack-builder.screen-add-puzzle.user-clicked-close': {
       return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }
   }
@@ -39,7 +40,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const toQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): PuzzleDbQuery => {
   return (
-    input.modelSpace.screenPackBuilder?.screenAddPuzzle.puzzleDbQuery ?? {
+    input.modelSpace.screenPackBuilder?.screenAddPuzzlePuzzleDbQuery ?? {
       order: {
         createdAt: 'asc',
       },
@@ -69,10 +70,11 @@ const View: FrontendModule['View'] = (input) => {
         ctx={input.ctx}
         title={input.ctx.t('flow.add-puzzle')}
         onBack={() =>
-          input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.user-closed-add-puzzle-screen' } })
+          input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close' } })
         }
       />
       <PuzzleDbQueryFrontend.ViewList
+        selectable
         ctx={input.ctx}
         model={input.ctx.puzzleDbQuery}
         query={query}
@@ -80,21 +82,31 @@ const View: FrontendModule['View'] = (input) => {
           input.dispatch({
             t: 'got-msg-space',
             c: {
-              t: 'got-screen-add-puzzle-msg',
-              c: {
-                t: 'puzzle-db-query-query-changed',
-                query,
-                userId: input.ctx.currentUserId,
-              },
+              t: 'screen-pack-builder.screen-add-puzzle.puzzle-db-query-query-changed',
+              query,
+              userId: input.ctx.currentUserId,
             },
           })
         }}
-        onClick={(puzzle) =>
+        onItemClick={(puzzle) => {
           input.dispatch({
             t: 'got-msg-space',
-            c: { t: 'screen-pack-builder.user-clicked-add-puzzle-item', puzzle, userId: input.ctx.currentUserId },
+            c: {
+              t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle',
+              puzzle,
+              userId: input.ctx.currentUserId,
+            },
           })
+        }}
+      />
+      <FormBottomButtons
+        cancelText={input.ctx.t('app.cancel')}
+        confirmText={input.ctx.t('app.add')}
+        onCancel={() =>
+          input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close' } })
         }
+        cancelDisabled={false}
+        confirmLoading={false}
       />
     </div>
   )

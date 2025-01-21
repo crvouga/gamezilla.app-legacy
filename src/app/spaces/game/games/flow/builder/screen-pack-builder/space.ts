@@ -5,13 +5,13 @@ import { PlayMode } from '../../@/play-mode'
 import type { UpdateSpace } from '../types'
 import * as ParentTypes from '../types'
 import { EditPackNameSpace } from './edit-pack-name/space'
-import { ScreenAddPuzzleSpace } from './screen-add-puzzle/space'
 import type { ModelSpace } from './types'
+import { ScreenAddPuzzleSpace } from './screen-add-puzzle/space'
 
 const init = ({ pack }: { pack: Pack }): ModelSpace => {
   return {
+    screenAddPuzzlePuzzleDbQuery: null,
     editPackName: EditPackNameSpace.init({ pack }),
-    screenAddPuzzle: ScreenAddPuzzleSpace.init(),
     pack,
     slideIndex: 0,
     screen: {
@@ -27,32 +27,7 @@ const update: UpdateSpace = (input) => {
   return updates.reduce((modelSpace, updateSpace) => updateSpace({ ctx, msgSpace, modelSpace }), modelSpace)
 }
 
-updates.push((input) => {
-  switch (input.msgSpace.t) {
-    case 'got-screen-add-puzzle-msg': {
-      if (!input.modelSpace.screenPackBuilder) {
-        return input.modelSpace
-      }
-
-      const modelSpaceNew: ParentTypes.ModelSpace = {
-        ...input.modelSpace,
-        screenPackBuilder: {
-          ...input.modelSpace.screenPackBuilder,
-          screenAddPuzzle: ScreenAddPuzzleSpace.update({
-            modelSpace: input.modelSpace.screenPackBuilder.screenAddPuzzle,
-            msgSpace: input.msgSpace.c,
-          }),
-        },
-      }
-
-      return modelSpaceNew
-    }
-
-    default: {
-      return input.modelSpace
-    }
-  }
-})
+updates.push(ScreenAddPuzzleSpace.update)
 
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
@@ -81,33 +56,6 @@ updates.push(({ modelSpace, msgSpace }) => {
 
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
-    case 'screen-pack-builder.user-clicked-add-puzzle-item': {
-      if (!modelSpace.screenPackBuilder) {
-        return modelSpace
-      }
-      return {
-        ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          pack: Pack.add(modelSpace.screenPackBuilder.pack, msgSpace.puzzle.id),
-          screen: {
-            t: 'screen-puzzle-grid',
-            slideIndex: 0,
-          },
-          opened: {
-            t: null,
-          },
-        },
-      }
-    }
-    default: {
-      return modelSpace
-    }
-  }
-})
-
-updates.push(({ modelSpace, msgSpace }) => {
-  switch (msgSpace.t) {
     case 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button': {
       if (!modelSpace.screenPackBuilder) {
         return modelSpace
@@ -118,31 +66,6 @@ updates.push(({ modelSpace, msgSpace }) => {
           ...modelSpace.screenPackBuilder,
           screen: {
             t: 'screen-add-puzzle',
-          },
-        },
-      }
-    }
-    default: {
-      return modelSpace
-    }
-  }
-})
-
-updates.push(({ modelSpace, msgSpace }) => {
-  switch (msgSpace.t) {
-    case 'screen-pack-builder.user-closed-add-puzzle-screen': {
-      if (!modelSpace.screenPackBuilder) {
-        return modelSpace
-      }
-      return {
-        ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          opened: {
-            t: null,
-          },
-          screen: {
-            t: 'screen-puzzle-grid',
           },
         },
       }

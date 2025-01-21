@@ -273,6 +273,7 @@ export const translations: Text = {
   'app.save-changes?': 'حفظ التغييرات؟',
   'username-title': 'اسم المستخدم',
   username: (username) => `@${username}`,
+  'app.add': 'إضافة',
   'time-span.month-plural': (months) => `${Math.floor(months)} \u0623\u0634\u0647\u0631`,
   'time-span.month-singular': 'شهر واحد',
   'time-span.day-plural': (days) => `${Math.floor(days)} \u0623\u064A\u0627\u0645`,
