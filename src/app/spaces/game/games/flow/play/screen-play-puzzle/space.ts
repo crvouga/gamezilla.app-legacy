@@ -188,7 +188,7 @@ const updateSpaceMain: SpaceModule['updateSpace'] = ({ modelSpace, msgSpace }) =
             ...modelSpace,
             screen: {
               t: 'screen-select-puzzle',
-              flowPack: modelSpace.screen.flowPack,
+              pack: modelSpace.screen.flowPack,
               slideIndex: 0,
             },
           }

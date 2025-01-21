@@ -21,12 +21,12 @@ const update: SpaceModule['updateSpace'] = ({ modelSpace, msgSpace, ctx }) => {
       }
     }
 
-    case 'user-clicked-open-pack-list-item': {
+    case 'user-clicked-open-pack-puzzle-grid-item': {
       return {
         ...modelSpace,
         screen: {
           t: 'screen-select-puzzle',
-          flowPack: msgSpace.pack,
+          pack: msgSpace.pack,
           slideIndex: 0,
         },
       }
@@ -45,7 +45,7 @@ const update: SpaceModule['updateSpace'] = ({ modelSpace, msgSpace, ctx }) => {
           return {
             ...modelSpace,
             screen: ScreenPlayPuzzleSpace.initSpace({
-              flowPack: modelSpace.screen.flowPack,
+              flowPack: modelSpace.screen.pack,
               puzzleIndex: msgSpace.puzzleIndex,
               flowPuzzle: msgSpace.flowPuzzle,
               ctx,

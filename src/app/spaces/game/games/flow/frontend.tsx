@@ -11,16 +11,13 @@ import { CoverArt } from './@/cover-art'
 import { FlowFrontendCmd } from './@/frontend/cmd'
 import type { FlowFrontendCtx } from './@/frontend/ctx'
 import { FlowFrontendEvt } from './@/frontend/evt'
-import { Pack } from './@/pack/pack'
 import { IPackDb } from './@/pack/pack-db'
+import { PackDbQueryTypes } from './@/pack/pack-db-query'
+import { PackDbQueryFrontend } from './@/pack/pack-db-query/frontend'
 import { PackDb } from './@/pack/pack-db/impl'
-import { PackListTypes } from './@/pack/pack-list'
-import { PackListFrontend } from './@/pack/pack-list/frontend'
-import { PackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
-import { PackPuzzlesGridFrontend } from './@/pack/pack-puzzles-grid/frontend'
 import { IPuzzleDb, PuzzleDb } from './@/puzzle/puzzle-db'
-import { PuzzleListTypes } from './@/puzzle/puzzle-list'
-import { PuzzleListFrontend } from './@/puzzle/puzzle-list/frontend'
+import { PuzzleDbQueryTypes } from './@/puzzle/puzzle-db-query'
+import { PuzzleDbQueryFrontend } from './@/puzzle/puzzle-db-query/frontend'
 import { Solutions } from './@/solutions/solutions'
 import { BuilderFrontend } from './builder/frontend'
 import { PlayFrontend } from './play/frontend'
@@ -32,9 +29,8 @@ const init: FrontendModule['init'] = {
   puzzles: {},
   packs: {},
   solutions: Solutions.init,
-  packPuzzleGrid: PackPuzzlesGridTypes.initFrontend,
-  puzzleList: PuzzleListTypes.initFrontend,
-  packList: PackListTypes.initFrontend,
+  puzzleDbQuery: PuzzleDbQueryTypes.initFrontend,
+  packDbQuery: PackDbQueryTypes.initFrontend,
 }
 
 let puzzleDb: IPuzzleDb
@@ -48,9 +44,8 @@ const toFlowFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): Flow
     packDb,
     packs: input.model.packs,
     puzzles: input.model.puzzles,
-    puzzleList: input.model.puzzleList,
-    packList: input.model.packList,
-    packPuzzleGrid: input.model.packPuzzleGrid,
+    puzzleDbQuery: input.model.puzzleDbQuery,
+    packDbQuery: input.model.packDbQuery,
     solutions: input.model.solutions,
   }
 }
@@ -122,67 +117,48 @@ const updateChild: FrontendModule['update'] = (input) => {
     (model) => updateFromCmd({ ...input, model }),
     (model) => updateModePlay({ ...input, model }),
     (model) => updateModeBuilder({ ...input, model }),
-    (model) => updatePackList({ ...input, model }),
-    (model) => updatePackPuzzlesGrid({ ...input, model }),
-    (model) => updatePuzzleList({ ...input, model }),
+    (model) => updatePackDbQuery({ ...input, model }),
+    (model) => updatePuzzleDbQuery({ ...input, model }),
   )
 }
 
-const updatePuzzleList: FrontendModule['update'] = (input) => {
+const updatePuzzleDbQuery: FrontendModule['update'] = (input) => {
   const ctx = toFlowFrontendCtx(input)
 
-  const updated = PuzzleListFrontend.update({
+  const updated = PuzzleDbQueryFrontend.update({
     ctx,
-    model: input.model.puzzleList,
-    msg: input.msg?.t === 'puzzle-list' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'puzzle-list' ? input.msgCmd : null,
+    model: input.model.puzzleDbQuery,
+    msg: input.msg?.t === 'puzzle-db-query' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'puzzle-db-query' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
-    msgBackend: input.msgBackend?.t === 'puzzle-list' ? input.msgBackend.c : null,
+    msgBackend: input.msgBackend?.t === 'puzzle-db-query' ? input.msgBackend.c : null,
   })
 
   return {
-    model: { ...input.model, puzzleList: updated.model },
-    eff: Eff.tag('puzzle-list', updated.eff),
-    msgCmd: FlowFrontendCmd.tag('puzzle-list', updated.msgCmd),
+    model: { ...input.model, puzzleDbQuery: updated.model },
+    eff: Eff.tag('puzzle-db-query', updated.eff),
+    msgCmd: FlowFrontendCmd.tag('puzzle-db-query', updated.msgCmd),
     msgEvt: [],
   }
 }
 
-const updatePackList: FrontendModule['update'] = (input) => {
+const updatePackDbQuery: FrontendModule['update'] = (input) => {
   const ctx = toFlowFrontendCtx(input)
 
-  const updated = PackListFrontend.update({
+  const updated = PackDbQueryFrontend.update({
     ctx,
-    model: input.model.packList,
-    msg: input.msg?.t === 'pack-list' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'pack-list' ? input.msgCmd : null,
+    model: input.model.packDbQuery,
+    msg: input.msg?.t === 'pack-db-query' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'pack-db-query' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
-    msgBackend: input.msgBackend?.t === 'pack-list' ? input.msgBackend.c : null,
+    msgBackend: input.msgBackend?.t === 'pack-db-query' ? input.msgBackend.c : null,
   })
 
   return {
-    model: { ...input.model, packList: updated.model },
-    eff: Eff.tag('pack-list', updated.eff),
-    msgCmd: FlowFrontendCmd.tag('pack-list', updated.msgCmd),
+    model: { ...input.model, packDbQuery: updated.model },
+    eff: Eff.tag('pack-db-query', updated.eff),
+    msgCmd: FlowFrontendCmd.tag('pack-db-query', updated.msgCmd),
     msgEvt: [],
-  }
-}
-
-const updatePackPuzzlesGrid: FrontendModule['update'] = (input) => {
-  const updated = PackPuzzlesGridFrontend.update({
-    ctx: { ...input.ctx, pack: Pack.randomSync() },
-    model: { ...input.model.packPuzzleGrid, puzzles: input.model.puzzles },
-    msg: input.msg?.t === 'pack-puzzles-grid' ? input.msg.c : null,
-    msgBackend: input.msgBackend?.t === 'pack-puzzles-grid' ? input.msgBackend.c : null,
-    msgEvt: input.msgEvt,
-    msgCmd: input.msgCmd?.t === 'pack-puzzles-grid' ? input.msgCmd : null,
-  })
-  return {
-    model: { ...input.model, packPuzzleGrid: updated.model, puzzles: updated.model.puzzles },
-    eff: Eff.tag('pack-puzzles-grid', updated.eff),
-    msgEvt: [],
-    msgCmd: SpaceFrontendCmd.tag('pack-puzzles-grid', updated.msgCmd),
-    msgSpace: [],
   }
 }
 
@@ -323,8 +299,7 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
       }
     }
 
-    case 'pack-list':
-    case 'pack-puzzles-grid': {
+    case 'pack-db-query': {
       return {
         model: input.model,
       }
@@ -354,13 +329,6 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
     Sub.tag(
       'builder',
       BuilderFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.builder, model: input.model.builder }),
-    ),
-    Sub.tag(
-      'pack-puzzles-grid',
-      PackPuzzlesGridFrontend.subscriptions({
-        ctx: { ...ctx, pack: Pack.randomSync() },
-        model: input.model.packPuzzleGrid,
-      }),
     ),
   ])
 }

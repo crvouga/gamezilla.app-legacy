@@ -8,7 +8,6 @@ import { FlowBackendCtx } from '../@/backend/ctx'
 import { FlowFrontendCmd } from '../@/frontend/cmd'
 import type { FlowFrontendCtx } from '../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../@/frontend/evt'
-import { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
 import { FlowSpaceCtx } from '../@/space/ctx'
 import { FlowSpaceEvt } from '../@/space/event'
 import { ScreenMainMenu } from './screen-main-menu'
@@ -39,7 +38,7 @@ export type FrontendModule = GameFrontendModule<{
     MsgFrontend: MsgFrontend
   }>
   MsgEvtIn: FlowFrontendEvtIn
-  MsgCmdIn: PackPuzzlesGridTypes.MsgInCmdFrontend
+  MsgCmdIn: null
 }>
 
 export type BackendModule = GameBackendModule<{

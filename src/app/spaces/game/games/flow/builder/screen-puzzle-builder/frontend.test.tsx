@@ -15,7 +15,7 @@ const Fixture = async () => {
       msg: {
         t: 'got-msg-space',
         c: {
-          t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
+          t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
           puzzle: flowPuzzle,
           userId: f.ctx.currentUserId,
         },

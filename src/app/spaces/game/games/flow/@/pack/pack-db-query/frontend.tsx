@@ -49,7 +49,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   return {
-    t: 'pack-list',
+    t: 'pack-db-query',
     c: {
       t: 'got-msg',
       msg,
@@ -126,7 +126,7 @@ const ViewPackListItem = ({
 const plural = (arr: unknown[], singular: string, plural: string) =>
   `${arr.length} ${arr.length === 1 ? singular : plural}`
 
-export const PackListFrontend = {
+export const PackDbQueryFrontend = {
   watch,
   gotMsg,
   initFrontend,

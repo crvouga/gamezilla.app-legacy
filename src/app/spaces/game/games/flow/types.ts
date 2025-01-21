@@ -10,12 +10,11 @@ import { FlowBackendCtx } from './@/backend/ctx'
 import { FlowFrontendCmd, FlowFrontendCmdLocal } from './@/frontend/cmd'
 import { FlowFrontendEvtIn } from './@/frontend/evt'
 import { Pack } from './@/pack/pack'
+import { PackDbQueryTypes } from './@/pack/pack-db-query'
 import type { PackId } from './@/pack/pack-id'
-import { PackListTypes } from './@/pack/pack-list'
-import { PackPuzzlesGridTypes } from './@/pack/pack-puzzles-grid'
 import type { Puzzle } from './@/puzzle/puzzle'
+import { PuzzleDbQueryTypes } from './@/puzzle/puzzle-db-query'
 import type { PuzzleId } from './@/puzzle/puzzle-id'
-import { PuzzleListTypes } from './@/puzzle/puzzle-list'
 import { Solutions } from './@/solutions/solutions'
 import { BuilderTypes } from './builder'
 import { PlayTypes } from './play'
@@ -34,23 +33,15 @@ export type ModelFrontend = {
     [packId: PackId]: Pack
   }
   solutions: Solutions
-  puzzleList: PuzzleListTypes.ModelFrontend
-  packList: PackListTypes.ModelFrontend
-  packPuzzleGrid: PackPuzzlesGridTypes.ModelFrontend
+  puzzleDbQuery: PuzzleDbQueryTypes.ModelFrontend
+  packDbQuery: PackDbQueryTypes.ModelFrontend
   builder: BuilderTypes.ModelFrontend
   play: PlayTypes.ModelFrontend
 }
 
-export const ModelBackend = p.or(
-  p.obj({
-    t: p.l('none'),
-  }),
-  p.obj({
-    t: p.l('play'),
-    c: PlayTypes.ModelBackend,
-  }),
-)
-
+export const ModelBackend = p.obj({
+  t: p.l('noop'),
+})
 export type ModelBackend = p.Infer<typeof ModelBackend>
 
 //
@@ -64,30 +55,26 @@ export type MsgFrontend =
   | { t: 'got-msg-space'; c: MsgSpace }
   | { t: 'builder'; c: BuilderTypes.MsgFrontend }
   | { t: 'play'; c: PlayTypes.MsgFrontend }
-  | { t: 'pack-list'; c: PackListTypes.MsgFrontend }
-  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgFrontend }
-  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgFrontend }
+  | { t: 'pack-db-query'; c: PackDbQueryTypes.MsgFrontend }
+  | { t: 'puzzle-db-query'; c: PuzzleDbQueryTypes.MsgFrontend }
 
 export type MsgBackend =
   | { t: 'builder'; c: BuilderTypes.MsgBackend }
   | { t: 'play'; c: PlayTypes.MsgBackend }
-  | { t: 'pack-list'; c: PackListTypes.MsgBackend }
-  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgBackend }
-  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgBackend }
+  | { t: 'pack-db-query'; c: PackDbQueryTypes.MsgBackend }
+  | { t: 'puzzle-db-query'; c: PuzzleDbQueryTypes.MsgBackend }
 
 export type MsgToBackend =
   | { t: 'builder'; c: BuilderTypes.MsgToBackend }
   | { t: 'play'; c: PlayTypes.MsgToBackend }
-  | { t: 'pack-list'; c: PackListTypes.MsgToBackend }
-  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgToBackend }
-  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgToBackend }
+  | { t: 'pack-db-query'; c: PackDbQueryTypes.MsgToBackend }
+  | { t: 'puzzle-db-query'; c: PuzzleDbQueryTypes.MsgToBackend }
 
 export type MsgToFrontend =
   | { t: 'builder'; c: BuilderTypes.MsgToFrontend }
   | { t: 'play'; c: PlayTypes.MsgToFrontend }
-  | { t: 'pack-list'; c: PackListTypes.MsgToFrontend }
-  | { t: 'pack-puzzles-grid'; c: PackPuzzlesGridTypes.MsgToFrontend }
-  | { t: 'puzzle-list'; c: PuzzleListTypes.MsgToFrontend }
+  | { t: 'pack-db-query'; c: PackDbQueryTypes.MsgToFrontend }
+  | { t: 'puzzle-db-query'; c: PuzzleDbQueryTypes.MsgToFrontend }
 
 const MODE = ['builder', 'play'] as const
 export const Mode = p.enumeration(MODE)

@@ -2,7 +2,7 @@ import { p } from '~/@/parser'
 import { Pack } from '../../@/pack/pack'
 import { CreateNewPackTypes } from './create-new-pack'
 import { UserId } from '~/app/@/data/user-id'
-import { PackListTypes } from '../../@/pack/pack-list'
+import { PackDbQueryTypes } from '../../@/pack/pack-db-query'
 
 export type ModelFrontend = CreateNewPackTypes.ModelFrontend & {}
 
@@ -13,8 +13,8 @@ export const initFrontend: ModelFrontend = {
 export type MsgFrontend =
   | CreateNewPackTypes.MsgFrontend
   | {
-      t: 'screen-pack-builder-open.got-pack-list-msg'
-      c: PackListTypes.MsgFrontend
+      t: 'screen-pack-builder-open.got-pack-db-query-msg'
+      c: PackDbQueryTypes.MsgFrontend
     }
 
 export const MsgSpace = p.or(

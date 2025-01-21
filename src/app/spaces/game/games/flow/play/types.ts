@@ -2,60 +2,44 @@ import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
+import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import type { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import type { GameSpaceModule } from '~/app/spaces/game/games/@/architecture/game-space'
-import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import { GameMainMenu } from '../../@/ui/game-main-menu'
+import { FlowBackendCtx } from '../@/backend/ctx'
 import { FlowFrontendCmd } from '../@/frontend/cmd'
 import type { FlowFrontendCtx } from '../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../@/frontend/evt'
+import { Pack } from '../@/pack/pack'
+import { PackDbQueryTypes } from '../@/pack/pack-db-query'
+import { PuzzleDbQueryTypes } from '../@/puzzle/puzzle-db-query'
+import { PuzzleResult } from '../@/puzzle/puzzle-result'
 import { FlowSpaceCtx } from '../@/space/ctx'
 import { FlowSpaceEvt } from '../@/space/event'
-import { Pack } from '../@/pack/pack'
-import type { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
-import { PuzzleResult } from '../@/puzzle/puzzle-result'
-import { FlowBackendCtx } from '../@/backend/ctx'
 import { ScreenPuzzleTypes } from './screen-play-puzzle'
-import { ScreenOpenPackTypes } from './screen-open-pack'
-
-//
-//
-//
-//
-//
-//
 
 export type ModelFrontend = null
 
-export const ModelBackend = p.obj({})
-export type ModelBackend = p.Infer<typeof ModelBackend>
-
-//
-//
-//
-//
-//
-//
-
 export type MsgFrontend =
   | GameMainMenu.Msg
-  | ScreenOpenPackTypes.MsgFrontend
   | {
       t: 'got-msg-space'
       c: MsgSpace
     }
+  | {
+      t: 'got-pack-db-query-msg'
+      c: PackDbQueryTypes.MsgFrontend
+    }
+  | {
+      t: 'got-puzzle-db-query-msg'
+      c: PuzzleDbQueryTypes.MsgFrontend
+    }
 
-export type MsgBackend = {
-  t: 'noop'
-}
+export type MsgBackend = { t: 'noop' }
 
-export type MsgToBackend = {
-  t: 'noop'
-}
+export type MsgToBackend = { t: 'noop' }
 
-export type MsgToFrontend = {
-  t: 'noop'
-}
+export type MsgToFrontend = { t: 'noop' }
 
 export const MsgSpace = p.or(
   p.obj({
@@ -67,7 +51,7 @@ export const MsgSpace = p.or(
     userId: UserId,
   }),
   p.obj({
-    t: p.l('user-clicked-open-pack-list-item'),
+    t: p.l('user-clicked-open-pack-puzzle-grid-item'),
     pack: Pack,
   }),
   p.obj({
@@ -94,7 +78,7 @@ const Screen = p.or(
   }),
   p.obj({
     t: p.l('screen-select-puzzle'),
-    flowPack: Pack,
+    pack: Pack,
     slideIndex: p.num,
   }),
   ScreenPuzzleTypes.ModelSpace,
@@ -125,11 +109,10 @@ export type FrontendModule = GameFrontendModule<{
     MsgToBackend: MsgToBackend
     MsgFrontend: MsgFrontend
   }>
-  MsgCmdIn: PackPuzzlesGridTypes.MsgInCmdFrontend
+  MsgCmdIn: null
 }>
 
 export type BackendModule = GameBackendModule<{
-  Model: ModelBackend
   Msg: MsgBackend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend

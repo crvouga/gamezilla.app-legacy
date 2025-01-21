@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'bun:test'
+import { describe, expect, it } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { didPlaySound } from '~/app/@/frontend/cmd'
 import { Pack } from '../../@/pack/pack'
@@ -12,7 +12,7 @@ const Fixture = async () => {
     puzzleIds: [puzzle.id],
   })
   const initial = f.update(f.initial, [
-    { msg: { t: 'got-msg-space', c: { t: 'user-clicked-open-pack-list-item', pack } } },
+    { msg: { t: 'got-msg-space', c: { t: 'user-clicked-open-pack-puzzle-grid-item', pack } } },
   ])
   return {
     ...f,
@@ -95,19 +95,5 @@ describe(import.meta.file, () => {
       },
     ])
     expect(didPlaySound(output)).toBe(true)
-  })
-
-  test('load puzzles for pack after user opens pack', async () => {
-    const f = await Fixture()
-    const output = f.update(f.initial, [
-      {
-        msgSpace: withEventMeta({
-          t: 'user-clicked-open-pack-list-item',
-          pack: f.pack,
-        }),
-      },
-    ])
-
-    expect(output.msgCmd?.some((m) => m.t === 'pack-puzzles-grid' && m.c.t === 'load')).toBe(true)
   })
 })

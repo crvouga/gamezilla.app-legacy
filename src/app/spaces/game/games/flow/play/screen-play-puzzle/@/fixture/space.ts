@@ -35,7 +35,7 @@ export const ScreenPuzzlePlaySpaceFixture = async (input?: { flow?: Variant.Mode
 
   const init = f.update(f.init, [
     {
-      t: 'user-clicked-open-pack-list-item',
+      t: 'user-clicked-open-pack-puzzle-grid-item',
       pack,
     },
     {

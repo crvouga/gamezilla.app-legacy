@@ -3,24 +3,20 @@ import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { IconGamepad, TopBar } from '~/app/@/ui'
 import { LayoutGameCoverArtHeader } from '../../../@/ui/layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../../../@/ui/users-in-space-list'
+import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
 import { PacksDbQuery } from '../../@/pack/pack-db/query'
-import { PackListFrontend } from '../../@/pack/pack-list/frontend'
 import type { FrontendModule } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
-    case 'user-clicked-open-pack-list-item': {
+    case 'user-clicked-open-pack-puzzle-grid-item': {
       return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
     }
     case 'user-clicked-exit-play-mode-button': {
       return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }
   }
-  switch (input.msg?.t) {
-    case 'screen-open-pack.got-pack-list-msg': {
-      return { model: input.model, msgCmd: [PackListFrontend.gotMsg(input.msg.c)] }
-    }
-  }
+
   return {
     model: input.model,
   }
@@ -44,7 +40,7 @@ const toQuery = (input: { ctx: { currentUserId: UserId } }): PacksDbQuery => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return PackListFrontend.watch(input.ctx, toQuery(input), (c) => ({ t: 'screen-open-pack.got-pack-list-msg', c }))
+  return PackDbQueryFrontend.watch(input.ctx, toQuery(input), (c) => ({ t: 'got-pack-db-query-msg', c }))
 }
 
 const View: FrontendModule['View'] = (input) => {
@@ -90,14 +86,16 @@ const View: FrontendModule['View'] = (input) => {
         }
         title={input.ctx.t('flow.select-a-pack')}
       />
-      <PackListFrontend.View
+      <PackDbQueryFrontend.View
         ctx={input.ctx}
-        model={input.ctx.packList}
+        model={input.ctx.packDbQuery}
         query={query}
         onQueryChanged={(query) => {
           console.log('query', query)
         }}
-        onClick={(pack) => input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-open-pack-list-item', pack } })}
+        onClick={(pack) =>
+          input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-open-pack-puzzle-grid-item', pack } })
+        }
       />
     </div>
   )

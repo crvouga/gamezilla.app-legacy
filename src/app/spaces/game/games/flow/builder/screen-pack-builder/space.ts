@@ -1,6 +1,6 @@
 import { isErr } from '~/@/result'
 import { Pack } from '../../@/pack/pack'
-import { PackPuzzlesGridUI } from '../../@/pack/pack-puzzles-grid/ui'
+import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import type { UpdateSpace } from '../types'
 import { EditPackNameSpace } from './edit-pack-name/space'
 import type { ModelSpace } from './types'
@@ -179,7 +179,7 @@ updates.push(({ modelSpace, msgSpace }) => {
         return modelSpace
       }
 
-      const slideIndex = PackPuzzlesGridUI.toSlideIndex(puzzleIndex)
+      const slideIndex = PackPuzzleGridUI.toSlideIndex(puzzleIndex)
 
       return {
         ...modelSpace,
@@ -442,7 +442,7 @@ updates.push((input) => {
     ...input.modelSpace,
     screenPackBuilder: {
       ...input.modelSpace.screenPackBuilder,
-      slideIndex: PackPuzzlesGridUI.clampSlideIndex(
+      slideIndex: PackPuzzleGridUI.clampSlideIndex(
         input.modelSpace.screenPackBuilder.slideIndex,
         input.modelSpace.screenPackBuilder.pack.puzzleIds.length,
       ),

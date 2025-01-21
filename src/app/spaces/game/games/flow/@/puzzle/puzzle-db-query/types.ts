@@ -48,7 +48,7 @@ export type MsgToFrontend = {
 }
 
 export type MsgInCmdFrontend = {
-  t: 'puzzle-list'
+  t: 'puzzle-db-query'
   c: {
     t: 'got-msg'
     msg: MsgFrontend

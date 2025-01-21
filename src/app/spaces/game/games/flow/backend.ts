@@ -4,7 +4,6 @@ import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import { FlowBackendCtx } from './@/backend/ctx'
 import { PackDb } from './@/pack/pack-db/impl'
-import { PackPuzzlesGridBackend } from './@/pack/pack-puzzles-grid/backend'
 import { PuzzleDb } from './@/puzzle/puzzle-db'
 import { Solutions } from './@/solutions/solutions'
 import { BuilderBackend } from './builder/backend'
@@ -21,7 +20,7 @@ export const initCtx = (input: { ctx: SpaceBackendCtx }): FlowBackendCtx => {
 }
 
 const init: BackendModule['init'] = {
-  t: 'none',
+  t: 'noop',
 }
 
 const update: BackendModule['update'] = async (input) => {
@@ -29,22 +28,7 @@ const update: BackendModule['update'] = async (input) => {
     {},
     () => updatePlay(input),
     () => updateBuilder(input),
-    () => updatePackPuzzlesGrid(input),
   )
-}
-
-const updatePackPuzzlesGrid: BackendModule['update'] = async (input) => {
-  const updated = await PackPuzzlesGridBackend.update({
-    ...input,
-    msg: input.msg?.t === 'pack-puzzles-grid' ? input.msg.c : null,
-    msgFrontend: input.msgFrontend?.t === 'pack-puzzles-grid' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
-    deps: null,
-  })
-
-  return {
-    msgCmd: SpaceBackendCmd.tag('pack-puzzles-grid', updated.msgCmd),
-    msgEvt: updated.msgEvt,
-  }
 }
 
 const updateBuilder: BackendModule['update'] = async (input) => {

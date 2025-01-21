@@ -1,14 +1,12 @@
 import type { FrontendCmdTypes } from '~/app/@/frontend/cmd'
 import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
-import { PackListTypes } from '../pack/pack-list'
-import { PackPuzzlesGridTypes } from '../pack/pack-puzzles-grid'
-import { PuzzleListTypes } from '../puzzle/puzzle-list'
+import { PackDbQueryTypes } from '../pack/pack-db-query'
+import { PuzzleDbQueryTypes } from '../puzzle/puzzle-db-query'
 import { FlowFrontendCmdRoot } from './cmd-root'
 
 type FlowFrontendCmdInternal =
-  | PackListTypes.MsgInCmdFrontend
-  | PackPuzzlesGridTypes.MsgInCmdFrontend
-  | PuzzleListTypes.MsgInCmdFrontend
+  | PackDbQueryTypes.MsgInCmdFrontend
+  | PuzzleDbQueryTypes.MsgInCmdFrontend
   | FlowFrontendCmdRoot
 
 export type FlowFrontendCmd<T extends FrontendCmdTypes> = SpaceFrontendCmd<T> | FlowFrontendCmdInternal
@@ -20,9 +18,8 @@ const isFlowFrontendCmdInternal = <T extends FrontendCmdTypes>(
     case 'flow-cmd.add-packs':
     case 'flow-cmd.remove-puzzles':
     case 'flow-cmd.add-puzzles':
-    case 'pack-puzzles-grid':
-    case 'puzzle-list':
-    case 'pack-list':
+    case 'puzzle-db-query':
+    case 'pack-db-query':
     case 'flow-cmd.add-solutions': {
       return true
     }

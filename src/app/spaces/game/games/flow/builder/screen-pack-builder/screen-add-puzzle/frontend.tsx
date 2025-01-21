@@ -2,7 +2,7 @@ import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { TopBar } from '~/app/@/ui'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
-import { PuzzleListFrontend } from '../../../@/puzzle/puzzle-list/frontend'
+import { PuzzleDbQueryFrontend } from '../../../@/puzzle/puzzle-db-query/frontend'
 import type { FrontendModule } from '../../types'
 import { ScreenPackBuilderSpace } from '../space'
 
@@ -35,8 +35,8 @@ const update: FrontendModule['update'] = (input) => {
   }
 
   switch (input.msg?.t) {
-    case 'screen-pack-builder.screen-add.puzzle.got-puzzle-list-msg': {
-      return { model: input.model, msgCmd: [PuzzleListFrontend.gotMsg(input.msg.c)] }
+    case 'screen-pack-builder.screen-add.puzzle.got-puzzle-db-query-msg': {
+      return { model: input.model, msgCmd: [PuzzleDbQueryFrontend.gotMsg(input.msg.c)] }
     }
   }
 
@@ -61,8 +61,8 @@ const toQuery = (input: { ctx: FlowFrontendCtx }): PuzzleDbQuery => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return PuzzleListFrontend.watch(input.ctx, toQuery(input), (c) => ({
-    t: 'screen-pack-builder.screen-add.puzzle.got-puzzle-list-msg',
+  return PuzzleDbQueryFrontend.watch(input.ctx, toQuery(input), (c) => ({
+    t: 'screen-pack-builder.screen-add.puzzle.got-puzzle-db-query-msg',
     c,
   }))
 }
@@ -79,9 +79,9 @@ const View: FrontendModule['View'] = (input) => {
           input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.user-closed-add-puzzle-screen' } })
         }
       />
-      <PuzzleListFrontend.View
+      <PuzzleDbQueryFrontend.View
         ctx={input.ctx}
-        model={input.ctx.puzzleList}
+        model={input.ctx.puzzleDbQuery}
         query={query}
         onQueryChanged={(query) => {
           console.log('onQueryChanged,', query)

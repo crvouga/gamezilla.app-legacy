@@ -13,6 +13,7 @@ import type { FrontendModule } from '../types'
 import * as CopyPuzzleFrontend from './copy-puzzle/frontend'
 import { ScreenPlayPuzzleSpace } from './space'
 import { LastPuzzleFrontend } from './last-puzzle/frontend'
+import { Sub } from '~/@/sub'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -25,7 +26,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
-    case 'user-clicked-open-pack-list-item': {
+    case 'user-clicked-open-pack-puzzle-grid-item': {
       return {
         model: input.model,
       }
@@ -112,6 +113,10 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   return {
     model: input.model,
   }
+}
+
+const subscriptions: FrontendModule['subscriptions'] = (_input) => {
+  return Sub.None
 }
 
 const CHECKMARK_DURATION = TimeSpan.seconds(1 / 2)
@@ -348,4 +353,5 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
 export const ScreenPuzzleFrontend = {
   View,
   update,
+  subscriptions,
 }

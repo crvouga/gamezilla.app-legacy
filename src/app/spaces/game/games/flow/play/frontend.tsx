@@ -1,10 +1,12 @@
 import { Sub } from '~/@/sub'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import type { FrontendModule } from './types'
-import { ScreenPuzzleFrontend } from './screen-play-puzzle/frontend'
+import { GameMainMenu } from '../../@/ui/game-main-menu'
+import { PackDbQueryFrontend } from '../@/pack/pack-db-query/frontend'
+import { PuzzleDbQueryFrontend } from '../@/puzzle/puzzle-db-query/frontend'
 import { ScreenOpenPackFrontend } from './screen-open-pack/frontend'
 import { ScreenOpenPuzzleFrontend } from './screen-open-puzzle/frontend'
-import { GameMainMenu } from '../../@/ui/game-main-menu'
+import { ScreenPuzzleFrontend } from './screen-play-puzzle/frontend'
+import type { FrontendModule } from './types'
 
 const init: FrontendModule['init'] = null
 
@@ -14,12 +16,12 @@ const update: FrontendModule['update'] = (input) => {
     (model) => ScreenPuzzleFrontend.update({ ...input, model }),
     (model) => ScreenOpenPackFrontend.update({ ...input, model }),
     (model) => ScreenOpenPuzzleFrontend.update({ ...input, model }),
-    (model) => updateGotMsgSpace({ ...input, model }),
+    (model) => updateFromMsg({ ...input, model }),
     (model) => GameMainMenu.update({ ...input, model }),
   )
 }
 
-const updateGotMsgSpace: FrontendModule['update'] = (input) => {
+const updateFromMsg: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'got-msg-space': {
       return {
@@ -27,13 +29,25 @@ const updateGotMsgSpace: FrontendModule['update'] = (input) => {
         msgSpace: [input.msg.c],
       }
     }
+
+    case 'got-pack-db-query-msg': {
+      return { model: input.model, msgCmd: [PackDbQueryFrontend.gotMsg(input.msg.c)] }
+    }
+
+    case 'got-puzzle-db-query-msg': {
+      return { model: input.model, msgCmd: [PuzzleDbQueryFrontend.gotMsg(input.msg.c)] }
+    }
   }
 
   return { model: input.model }
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return Sub.batch([ScreenOpenPackFrontend.subscriptions(input)])
+  return Sub.batch([
+    ScreenOpenPackFrontend.subscriptions(input),
+    ScreenOpenPuzzleFrontend.subscriptions(input),
+    ScreenPuzzleFrontend.subscriptions(input),
+  ])
 }
 
 const View: FrontendModule['View'] = (input) => {

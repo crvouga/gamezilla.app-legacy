@@ -6,19 +6,6 @@ const COLUMN_COUNT = 5
 const ROW_COUNT = 6
 const PER_SLIDE_ITEM_COUNT = COLUMN_COUNT * ROW_COUNT
 
-const toIndex = ({ x, y }: { x: number; y: number }) => {
-  return y * COLUMN_COUNT + x
-}
-
-const toSlideIndex = (index: number) => {
-  return Math.floor(index / (COLUMN_COUNT * ROW_COUNT))
-}
-
-const clampSlideIndex = (slideIndex: number, itemCount: number): number => {
-  const slideCount = Math.ceil(itemCount / PER_SLIDE_ITEM_COUNT)
-  return Math.min(slideIndex, slideCount - 1)
-}
-
 const ViewPackPuzzleGridSlide = (input: {
   slideIndex: number
   puzzleIds: PuzzleId[]
@@ -148,7 +135,20 @@ const ViewErrorCell = ({ onClick, index }: { onClick: () => void; index: number 
   )
 }
 
-export const PackPuzzlesGridUI = {
+const toIndex = ({ x, y }: { x: number; y: number }) => {
+  return y * COLUMN_COUNT + x
+}
+
+const toSlideIndex = (index: number) => {
+  return Math.floor(index / (COLUMN_COUNT * ROW_COUNT))
+}
+
+const clampSlideIndex = (slideIndex: number, itemCount: number): number => {
+  const slideCount = Math.ceil(itemCount / PER_SLIDE_ITEM_COUNT)
+  return Math.min(slideIndex, slideCount - 1)
+}
+
+export const PackPuzzleGridUI = {
   PER_SLIDE_ITEM_COUNT,
   ROW_COUNT,
   COLUMN_COUNT,

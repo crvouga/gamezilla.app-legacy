@@ -1,44 +1,8 @@
 import { isErr } from '~/@/result'
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
-import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
-
-import { PackPuzzlesGridBackend } from '../../@/pack/pack-puzzles-grid/backend'
 import type { BackendModule } from '../types'
 import { EditPackNameBackend } from './edit-pack-name/backend'
 import { ScreenPackBuilderSpace } from './space'
-
-const PuzzleGrid: Pick<BackendModule, 'update'> = {
-  async update(input) {
-    const pack = input.modelSpace.screenPackBuilder?.pack
-
-    if (!pack) {
-      return {}
-    }
-
-    const ctx = {
-      ...input.ctx,
-      pack,
-    }
-
-    const updated = await PackPuzzlesGridBackend.update({
-      ctx,
-      msg: input.msg?.t === 'screen-pack-builder.flow-pack-grid' ? input.msg.c : null,
-      msgCmd: input.msgCmd,
-      msgFrontend:
-        input.msgFrontend?.t === 'screen-pack-builder.flow-pack-grid'
-          ? { ...input.msgFrontend, ...input.msgFrontend.c }
-          : null,
-      deps: input.deps,
-      msgEvt: input.msgEvt,
-    })
-
-    return {
-      msgCmd: SpaceBackendCmd.tag('screen-pack-builder.flow-pack-grid', updated.msgCmd),
-      msgEvt: updated.msgEvt,
-      msgSpace: [],
-    }
-  },
-}
 
 const RemovedPuzzleFromPack: Pick<BackendModule, 'update'> = {
   async update(input) {
@@ -86,7 +50,6 @@ export const ScreenPackBuilderBackend: Pick<BackendModule, 'update'> = {
       {},
 
       () => RemovedPuzzleFromPack.update(input),
-      () => PuzzleGrid.update(input),
       () => EditPackName.update(input),
     )
   },

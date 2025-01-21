@@ -26,7 +26,7 @@ describe(import.meta.file, () => {
         msg: {
           t: 'got-msg-space',
           c: {
-            t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
+            t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
             puzzle: f.puzzle,
             userId: f.ctx.currentUserId,
           },
@@ -45,7 +45,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msgSpace: withEventMeta({
-          t: 'screen-puzzle-builder-open.clicked-puzzle-list-item',
+          t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
           puzzle: f.puzzle,
           userId: f.ctx.currentUserId,
         }),
@@ -60,7 +60,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         msgSpace: withEventMeta({
-          t: 'screen-puzzle-builder-open.puzzle-list-query-changed',
+          t: 'screen-puzzle-builder-open.puzzle-db-query-query-changed',
           userId: f.ctx.currentUserId,
           query: PuzzleDbQuery.random(),
         }),

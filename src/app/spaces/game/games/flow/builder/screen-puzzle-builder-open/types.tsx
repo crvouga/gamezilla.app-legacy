@@ -2,7 +2,7 @@ import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
-import { PuzzleListTypes } from '../../@/puzzle/puzzle-list'
+import { PuzzleDbQueryTypes } from '../../@/puzzle/puzzle-db-query'
 import { CreateNewPuzzleTypes } from './create-new-puzzle'
 
 //
@@ -19,8 +19,8 @@ export const initFrontend: ModelFrontend = {
 export type MsgFrontend =
   | CreateNewPuzzleTypes.MsgFrontend
   | {
-      t: 'screen-puzzle-builder-open.got-puzzle-list-msg'
-      c: PuzzleListTypes.MsgFrontend
+      t: 'screen-puzzle-builder-open.got-puzzle-db-query-msg'
+      c: PuzzleDbQueryTypes.MsgFrontend
     }
 
 export type MsgBackend = CreateNewPuzzleTypes.MsgBackend
@@ -38,12 +38,12 @@ export type ModelSpace = p.Infer<typeof ModelSpace>
 export const MsgSpace = p.or(
   CreateNewPuzzleTypes.MsgSpace,
   p.obj({
-    t: p.l('screen-puzzle-builder-open.clicked-puzzle-list-item'),
+    t: p.l('screen-puzzle-builder-open.clicked-puzzle-db-query-item'),
     puzzle: Puzzle,
     userId: UserId,
   }),
   p.obj({
-    t: p.l('screen-puzzle-builder-open.puzzle-list-query-changed'),
+    t: p.l('screen-puzzle-builder-open.puzzle-db-query-query-changed'),
     query: PuzzleDbQuery,
     userId: UserId,
   }),

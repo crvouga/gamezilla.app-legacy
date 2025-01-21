@@ -42,7 +42,7 @@ export const FixtureScreenPlayPuzzleFrontend = async () => {
       msg: {
         t: 'got-msg-space',
         c: {
-          t: 'user-clicked-open-pack-list-item',
+          t: 'user-clicked-open-pack-puzzle-grid-item',
           pack,
         },
       },

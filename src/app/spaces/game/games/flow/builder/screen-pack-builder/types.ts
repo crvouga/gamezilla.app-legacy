@@ -2,12 +2,11 @@ import { p } from '~/@/parser'
 import { Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../../@/pack/pack'
-import { PackPuzzlesGridTypes } from '../../@/pack/pack-puzzles-grid'
 import { PlayMode } from '../../@/play-mode'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { EditPackNameTypes } from './edit-pack-name'
-import { PuzzleListTypes } from '../../@/puzzle/puzzle-list'
+import { PuzzleDbQueryTypes } from '../../@/puzzle/puzzle-db-query'
 
 //
 //
@@ -15,47 +14,25 @@ import { PuzzleListTypes } from '../../@/puzzle/puzzle-list'
 //
 //
 
-export type ModelFrontend = {
-  packBuilder: {
-    flowPackPuzzleGrid: PackPuzzlesGridTypes.ModelFrontend
-  }
+export type ModelFrontend = {}
+
+export const initFrontend: ModelFrontend = {}
+
+//
+//
+//
+//
+
+export type MsgFrontend = {
+  t: 'screen-pack-builder.screen-add.puzzle.got-puzzle-db-query-msg'
+  c: PuzzleDbQueryTypes.MsgFrontend
 }
 
-export const initFrontend: ModelFrontend = {
-  packBuilder: {
-    flowPackPuzzleGrid: PackPuzzlesGridTypes.initFrontend,
-  },
-}
+export type MsgBackend = { t: 'noop' }
 
-//
-//
-//
-//
+export type MsgToBackend = { t: 'noop' }
 
-export type MsgFrontend =
-  | {
-      t: 'screen-pack-builder.flow-pack-grid'
-      c: PackPuzzlesGridTypes.MsgFrontend
-    }
-  | {
-      t: 'screen-pack-builder.screen-add.puzzle.got-puzzle-list-msg'
-      c: PuzzleListTypes.MsgFrontend
-    }
-
-export type MsgBackend = {
-  t: 'screen-pack-builder.flow-pack-grid'
-  c: PackPuzzlesGridTypes.MsgBackend
-}
-
-export type MsgToBackend = {
-  t: 'screen-pack-builder.flow-pack-grid'
-  c: PackPuzzlesGridTypes.MsgToBackend
-}
-
-export type MsgToFrontend = {
-  t: 'screen-pack-builder.flow-pack-grid'
-  c: PackPuzzlesGridTypes.MsgToFrontend
-}
+export type MsgToFrontend = { t: 'noop' }
 
 //
 //

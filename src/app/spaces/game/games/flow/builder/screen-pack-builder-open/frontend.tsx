@@ -2,7 +2,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { TopBar } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { PackListFrontend } from '../../@/pack/pack-list/frontend'
+import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
 import type { FrontendModule } from '../types'
 import { PackCreateNewFrontend } from './create-new-pack/frontend'
 
@@ -25,10 +25,10 @@ export const updateMain: FrontendModule['update'] = (input) => {
   }
 
   switch (input.msg?.t) {
-    case 'screen-pack-builder-open.got-pack-list-msg': {
+    case 'screen-pack-builder-open.got-pack-db-query-msg': {
       return {
         model: input.model,
-        msgCmd: [PackListFrontend.gotMsg(input.msg.c)],
+        msgCmd: [PackDbQueryFrontend.gotMsg(input.msg.c)],
       }
     }
   }
@@ -56,8 +56,8 @@ const toQuery = (input: { currentUserId: UserId; offset: number }) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return PackListFrontend.watch(input.ctx, toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 }), (c) => ({
-    t: 'screen-pack-builder-open.got-pack-list-msg',
+  return PackDbQueryFrontend.watch(input.ctx, toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 }), (c) => ({
+    t: 'screen-pack-builder-open.got-pack-db-query-msg',
     c,
   }))
 }
@@ -76,9 +76,9 @@ const View: FrontendModule['View'] = (input) => {
         ctx={input.ctx}
         title={input.ctx.t('flow.pack-builder')}
       />
-      <PackListFrontend.View
+      <PackDbQueryFrontend.View
         {...input}
-        model={input.ctx.packList}
+        model={input.ctx.packDbQuery}
         query={query}
         fab={<PackCreateNewFrontend.ViewCreateFab {...input} />}
         onQueryChanged={(query) => {

@@ -33,7 +33,7 @@ describe(import.meta.file, () => {
         msg: {
           t: 'got-msg-space',
           c: {
-            t: 'user-clicked-open-pack-list-item',
+            t: 'user-clicked-open-pack-puzzle-grid-item',
             pack,
           },
         },
@@ -49,7 +49,7 @@ describe(import.meta.file, () => {
     const updated = f.update(f.initial, [
       {
         msgSpace: {
-          t: 'user-clicked-open-pack-list-item',
+          t: 'user-clicked-open-pack-puzzle-grid-item',
           pack,
           eventId: EventId.generate(),
           happenedAt: LamportTimestamp.fromNumber(0),

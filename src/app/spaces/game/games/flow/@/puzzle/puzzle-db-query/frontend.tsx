@@ -50,7 +50,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   return {
-    t: 'puzzle-list',
+    t: 'puzzle-db-query',
     c: {
       t: 'got-msg',
       msg,
@@ -58,7 +58,14 @@ const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   }
 }
 
-const watch = <TMsg,>(ctx: FlowFrontendCtxRoot, query: PuzzleDbQuery, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
+const watch = <TMsg,>(
+  ctx: FlowFrontendCtxRoot,
+  query: PuzzleDbQuery | null,
+  map: (m: MsgFrontend) => TMsg,
+): Sub<TMsg> => {
+  if (!query) {
+    return Sub.None
+  }
   return Sub.map(ctx.puzzleDb.sub(query), (puzzles) => map({ t: 'got-puzzle-db-puzzles', query, puzzles }))
 }
 
@@ -125,7 +132,7 @@ const ViewListItem = (input: { ctx: { t: Translator; now: Posix }; puzzle: Puzzl
   )
 }
 
-export const PuzzleListFrontend = {
+export const PuzzleDbQueryFrontend = {
   update,
   watch,
   gotMsg,
