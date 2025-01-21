@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import { Err, Ok } from '~/@/result'
 import { SpaceFixture } from '~/app/spaces/@/fixture/space'
 import { Pack } from '../../../../@/pack/pack'
 import { EditPackNameSpace } from '../space'
@@ -62,30 +61,6 @@ describe(import.meta.file, () => {
     expect(model.result.t).toBe('loading')
   })
 
-  it('should be ok if persisting pack is ok', async () => {
-    const f = await Fixture()
-    const model = f.update(f.init, [
-      {
-        t: 'edit-pack-name.backend-persisted-pack',
-        userId: f.hostId,
-        result: Ok(null),
-      },
-    ])
-    expect(model.result.t).toBe('ok')
-  })
-
-  it('should be error if persisting pack is error', async () => {
-    const f = await Fixture()
-    const model = f.update(f.init, [
-      {
-        t: 'edit-pack-name.backend-persisted-pack',
-        userId: f.hostId,
-        result: Err('some error'),
-      },
-    ])
-    expect(model.result.t).toBe('err')
-  })
-
   it('should error if name is empty', async () => {
     const f = await Fixture()
     const model = f.update(f.init, [
@@ -130,27 +105,5 @@ describe(import.meta.file, () => {
       },
     ])
     expect(String(model.pack.name)).toBe(newPackName)
-  })
-
-  it('should rollback pack name if persiting errors', async () => {
-    const f = await Fixture()
-    const model = f.update(f.init, [
-      {
-        t: 'edit-pack-name.user-inputted-draft-name',
-        userId: f.hostId,
-        packNameDraft: `${f.pack.name} edits`,
-      },
-      {
-        t: 'edit-pack-name.user-clicked-save-button',
-        userId: f.hostId,
-      },
-      {
-        t: 'edit-pack-name.backend-persisted-pack',
-        userId: f.hostId,
-        result: Err('some error'),
-      },
-    ])
-
-    expect(model.pack.name).toBe(f.pack.name)
   })
 })

@@ -1,6 +1,4 @@
 import { withEventId } from '~/@/event-sourced/event'
-import { isErr } from '~/@/result'
-import { showErrSm } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { Button, Drawer, DrawerHeader, TextField } from '~/app/@/ui'
 import type { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -25,20 +23,6 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: input.model,
         msgSpace: [withEventId(input.msg)],
-      }
-    }
-  }
-
-  switch (input.msgSpace?.t) {
-    case 'edit-pack-name.backend-persisted-pack': {
-      if (isErr(input.msgSpace.result)) {
-        return {
-          model: input.model,
-          msgCmd: showErrSm(input.ctx.t('app.something-went-wrong')),
-        }
-      }
-      return {
-        model: input.model,
       }
     }
   }

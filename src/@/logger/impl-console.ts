@@ -20,5 +20,6 @@ export const LoggerConsole = (): ILogger => {
     fatal(msg) {
       console.error(`[ftl]`, msg)
     },
+    noop() {},
   }
 }

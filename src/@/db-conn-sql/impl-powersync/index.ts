@@ -71,12 +71,12 @@ export const DbConnSql = (config: Config): IDbConnSql => {
       .replaceAll(/\t/g, ' ')
       .replaceAll(' ', ' ')
       .trim()
-    // logger.debug(`subscriptionKey=${subscriptionKey}`)
+    logger.noop(`subscriptionKey=${subscriptionKey}`)
 
     const activeSubscription = activeSubscriptions.get(subscriptionKey)
 
     if (activeSubscription) {
-      // logger.debug('returning active sub')
+      logger.noop('returning active sub')
 
       clearTimeout(activeSubscription.unsubscribeTimeout)
 

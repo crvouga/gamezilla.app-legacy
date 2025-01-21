@@ -1,7 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import { withEventId } from '~/@/event-sourced/event'
-import { Err } from '~/@/result'
-import { didShowErrorSm } from '~/app/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 import { Pack } from '../../../../@/pack/pack'
 import { EditPackNameFrontend } from '../frontend'
@@ -48,18 +45,5 @@ describe(import.meta.file, () => {
       })
       expect(output.msgSpace?.some((msg) => msg.t === msgSpace.t)).toBe(true)
     }
-  })
-
-  it('should show error if persisting pack fails', async () => {
-    const f = await Fixture()
-    const output = EditPackNameFrontend.update({
-      ...f,
-      msgSpace: withEventId({
-        t: 'edit-pack-name.backend-persisted-pack',
-        result: Err('something errored'),
-        userId: f.ctx.space.hostId,
-      }),
-    })
-    expect(didShowErrorSm(output)).toBe(true)
   })
 })

@@ -58,23 +58,6 @@ const update = <TModel extends ModelSpace, TMsg extends MsgSpace>(input: {
       }
     }
 
-    case 'edit-pack-name.backend-persisted-pack': {
-      if (isErr(input.msgSpace.result)) {
-        return {
-          ...input.modelSpace,
-          result: input.msgSpace.result,
-          pack: {
-            ...input.modelSpace.pack,
-            name: input.modelSpace.rollback,
-          },
-        }
-      }
-      return {
-        ...input.modelSpace,
-        result: input.msgSpace.result,
-      }
-    }
-
     default: {
       return input.modelSpace
     }

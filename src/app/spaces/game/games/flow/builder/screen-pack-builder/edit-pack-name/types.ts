@@ -1,5 +1,5 @@
-import { RemoteResult, Result } from '~/@/result'
 import { p } from '~/@/parser'
+import { RemoteResult } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../../../@/pack/pack'
 import { PackName } from '../../../@/pack/pack-name'
@@ -30,11 +30,6 @@ export const MsgSpace = p.or(
   p.obj({
     t: p.l('edit-pack-name.user-clicked-save-button'),
     userId: UserId,
-  }),
-  p.obj({
-    t: p.l('edit-pack-name.backend-persisted-pack'),
-    userId: UserId,
-    result: Result.parser(p.str, p.unknown),
   }),
   p.obj({
     t: p.l('edit-pack-name.user-closed-drawer'),

@@ -24,6 +24,7 @@ export const Logger = (impl: Impl): ILogger => {
 
 const prefix = (prefix: string, logger: ILogger): ILogger => {
   return {
+    noop() {},
     debug(msg) {
       logger.debug(`[${prefix}] ${msg}`)
     },
