@@ -3,7 +3,7 @@ import { withRPC } from '~/@/rpc/rpc'
 import { AppTypes } from '~/app'
 import { AppBackend } from '~/app/backend'
 import { CONFIG_BACKEND } from '~/config/backend'
-import { PowerSyncBackendApp } from '../powersync/backend/respond'
+import { PowerSyncBackendApp } from './service-powersync/backend/respond'
 
 const main = async () => {
   const ctx = await AppBackend.initCtx()
