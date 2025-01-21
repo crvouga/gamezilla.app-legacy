@@ -323,14 +323,27 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
 //
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  const ctx = toFlowFrontendCtx(input)
-  return Sub.batch<MsgFrontend>([
-    Sub.tag('play', PlayFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.play, model: input.model.play })),
-    Sub.tag(
-      'builder',
-      BuilderFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.builder, model: input.model.builder }),
-    ),
-  ])
+  switch (input.modelSpace.mode) {
+    case 'builder': {
+      const ctx = toFlowFrontendCtx(input)
+      return Sub.tag(
+        'builder',
+        BuilderFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.builder, model: input.model.builder }),
+      )
+    }
+
+    case 'play': {
+      const ctx = toFlowFrontendCtx(input)
+      return Sub.tag(
+        'play',
+        PlayFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.play, model: input.model.play }),
+      )
+    }
+
+    case 'none': {
+      return Sub.None
+    }
+  }
 }
 
 //

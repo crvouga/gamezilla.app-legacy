@@ -25,12 +25,6 @@ const updateMain: FrontendModule['update'] = (input) => {
     }
   }
 
-  switch (input.msg?.t) {
-    case 'screen-puzzle-builder-open.got-puzzle-db-query-msg': {
-      return { model: input.model, msgCmd: [PuzzleDbQueryFrontend.gotMsg(input.msg.c)] }
-    }
-  }
-
   return { model: input.model }
 }
 
@@ -55,10 +49,7 @@ const toPuzzleQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }):
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   const query = toPuzzleQuery(input)
-  return PuzzleDbQueryFrontend.watch(input.ctx, query, (c) => ({
-    t: 'screen-puzzle-builder-open.got-puzzle-db-query-msg',
-    c,
-  }))
+  return PuzzleDbQueryFrontend.watch(input.ctx, query, (c) => ({ t: 'got-puzzle-db-query-msg', c }))
 }
 
 const View: FrontendModule['View'] = (input) => {

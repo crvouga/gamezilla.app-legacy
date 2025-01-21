@@ -25,23 +25,13 @@ export type MsgFrontend =
   | EditPuzzleNameTypes.MsgFrontend
   | DeleteForeverTypes.MsgFrontend
   | SaveChangesTypes.MsgFrontend
-  | {
-      t: 'screen-puzzle-builder.got-edit-msg'
-      c: EditMode.Msg
-    }
-  | {
-      t: 'screen-puzzle-builder.got-play-msg'
-      c: PlayMode.Msg
-    }
+  | { t: 'screen-puzzle-builder.got-edit-msg'; c: EditMode.Msg }
+  | { t: 'screen-puzzle-builder.got-play-msg'; c: PlayMode.Msg }
   | { t: 'screen-puzzle-builder.user-clicked-more-button' }
   | { t: 'screen-puzzle-builder.user-closed-more-drawer' }
   | { t: 'screen-puzzle-builder.user-clicked-exit-button' }
-  | {
-      t: 'screen-puzzle-builder.user-clicked-edit-mode-button'
-    }
-  | {
-      t: 'screen-puzzle-builder.user-clicked-play-mode-button'
-    }
+  | { t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }
+  | { t: 'screen-puzzle-builder.user-clicked-play-mode-button' }
 
 export type MsgToFrontend =
   | SaveChangesTypes.MsgToFrontend

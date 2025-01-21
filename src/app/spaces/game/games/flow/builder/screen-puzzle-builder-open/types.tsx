@@ -2,7 +2,6 @@ import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
-import { PuzzleDbQueryTypes } from '../../@/puzzle/puzzle-db-query'
 import { CreateNewPuzzleTypes } from './create-new-puzzle'
 
 //
@@ -16,12 +15,7 @@ export const initFrontend: ModelFrontend = {
   ...CreateNewPuzzleTypes.initFrontend,
 }
 
-export type MsgFrontend =
-  | CreateNewPuzzleTypes.MsgFrontend
-  | {
-      t: 'screen-puzzle-builder-open.got-puzzle-db-query-msg'
-      c: PuzzleDbQueryTypes.MsgFrontend
-    }
+export type MsgFrontend = CreateNewPuzzleTypes.MsgFrontend
 
 export type MsgBackend = CreateNewPuzzleTypes.MsgBackend
 

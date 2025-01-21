@@ -3,6 +3,7 @@ import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-
 import { GameMainMenu } from '../../../@/ui/game-main-menu'
 import type { FrontendModule } from '../types'
 import { playSound, APP_SOUND } from '~/app/@/frontend/cmd'
+import { Sub } from '~/@/sub'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen({ model: input.model }, (model) => updateFromMsgSpace({ ...input, model }))
@@ -88,7 +89,12 @@ const View: FrontendModule['View'] = (input) => {
   )
 }
 
+const subscriptions: FrontendModule['subscriptions'] = (_input) => {
+  return Sub.None
+}
+
 export const ScreenMainMenuFrontend = {
   update,
+  subscriptions,
   View,
 }

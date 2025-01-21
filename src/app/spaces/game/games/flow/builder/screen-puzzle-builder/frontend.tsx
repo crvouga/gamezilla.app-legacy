@@ -1,4 +1,5 @@
 import { withEventId } from '~/@/event-sourced/event'
+import { Sub } from '~/@/sub'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { Drawer, IconEllipsisVertical, IconPen, IconPlay, TopBar } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
@@ -381,14 +382,12 @@ export const ViewMoreDrawer: BuilderTypes.FrontendModule['View'] = (input) => {
   )
 }
 
-//
-//
-//
-//
-//
-//
+const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (_input) => {
+  return Sub.None
+}
 
 export const ScreenPuzzleBuilderFrontend = {
   update,
   View,
+  subscriptions,
 }

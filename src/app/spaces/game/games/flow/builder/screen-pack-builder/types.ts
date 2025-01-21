@@ -6,7 +6,6 @@ import { PlayMode } from '../../@/play-mode'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { EditPackNameTypes } from './edit-pack-name'
-import { PuzzleDbQueryTypes } from '../../@/puzzle/puzzle-db-query'
 
 //
 //
@@ -23,10 +22,7 @@ export const initFrontend: ModelFrontend = {}
 //
 //
 
-export type MsgFrontend = {
-  t: 'screen-pack-builder.screen-add.puzzle.got-puzzle-db-query-msg'
-  c: PuzzleDbQueryTypes.MsgFrontend
-}
+export type MsgFrontend = { t: 'noop' }
 
 export type MsgBackend = { t: 'noop' }
 

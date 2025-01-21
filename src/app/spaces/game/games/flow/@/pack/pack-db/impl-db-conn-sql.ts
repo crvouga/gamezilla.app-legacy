@@ -77,7 +77,7 @@ const toSqlWhere = (where: WhereClause) => {
   const vars: Record<string, string | number | undefined | null> = {}
 
   if (where.createdBy?.equals) {
-    clauses.push('created_by_user_id = :created_by_user_id')
+    clauses.push('game_flow_pack.created_by_user_id = :created_by_user_id')
     vars['created_by_user_id'] = where.createdBy?.equals
   }
 
@@ -90,10 +90,10 @@ const toSqlOrder = (order: OrderClause) => {
   const clauses: string[] = []
   const vars: Record<string, any> = {}
   if (order.createdAt) {
-    clauses.push(`created_at_posix ${order.createdAt === 'asc' ? 'ASC' : 'DESC'}`)
+    clauses.push(`game_flow_pack.created_at_posix ${order.createdAt === 'asc' ? 'ASC' : 'DESC'}`)
   }
   if (order.lastUpdatedAt) {
-    clauses.push(`last_updated_at_posix ${order.lastUpdatedAt === 'asc' ? 'ASC' : 'DESC'}`)
+    clauses.push(`game_flow_pack.last_updated_at_posix ${order.lastUpdatedAt === 'asc' ? 'ASC' : 'DESC'}`)
   }
 
   const str = clauses.length > 0 ? `ORDER BY ${clauses.join(',\n')}` : ''

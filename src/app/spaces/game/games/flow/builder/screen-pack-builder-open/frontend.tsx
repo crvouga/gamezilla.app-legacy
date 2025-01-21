@@ -24,15 +24,6 @@ export const updateMain: FrontendModule['update'] = (input) => {
     }
   }
 
-  switch (input.msg?.t) {
-    case 'screen-pack-builder-open.got-pack-db-query-msg': {
-      return {
-        model: input.model,
-        msgCmd: [PackDbQueryFrontend.gotMsg(input.msg.c)],
-      }
-    }
-  }
-
   return {
     model: input.model,
   }
@@ -56,10 +47,8 @@ const toQuery = (input: { currentUserId: UserId; offset: number }) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return PackDbQueryFrontend.watch(input.ctx, toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 }), (c) => ({
-    t: 'screen-pack-builder-open.got-pack-db-query-msg',
-    c,
-  }))
+  const query = toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 })
+  return PackDbQueryFrontend.watch(input.ctx, query, (c) => ({ t: 'got-pack-db-query-msg', c }))
 }
 
 const View: FrontendModule['View'] = (input) => {

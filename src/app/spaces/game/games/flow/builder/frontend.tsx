@@ -1,6 +1,7 @@
-import { Sub } from '~/@/sub'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
+import { PackDbQueryFrontend } from '../@/pack/pack-db-query/frontend'
+import { PuzzleDbQueryFrontend } from '../@/puzzle/puzzle-db-query/frontend'
 import { ScreenMainMenuFrontend } from './screen-main-menu/frontend'
 import { ScreenPackBuilderOpenFrontend } from './screen-pack-builder-open/frontend'
 import { ScreenPackBuilderFrontend } from './screen-pack-builder/frontend'
@@ -16,7 +17,7 @@ const update: FrontendModule['update'] = (input) => {
     (model) => ScreenPuzzleBuilderFrontend.update({ ...input, model }),
     (model) => ScreenPuzzleBuilderOpenFrontend.update({ ...input, model }),
     (model) => ScreenMainMenuFrontend.update({ ...input, model }),
-    (model) => updateGotMsgSpace({ ...input, model }),
+    (model) => updateFromMsg({ ...input, model }),
     (model) => updateBackButton({ ...input, model }),
   )
 }
@@ -37,13 +38,16 @@ const updateBackButton: FrontendModule['update'] = (input) => {
   }
 }
 
-const updateGotMsgSpace: FrontendModule['update'] = (input) => {
+const updateFromMsg: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'got-msg-space': {
-      return {
-        model: input.model,
-        msgSpace: [input.msg.c],
-      }
+      return { model: input.model, msgSpace: [input.msg.c] }
+    }
+    case 'got-pack-db-query-msg': {
+      return { model: input.model, msgCmd: [PackDbQueryFrontend.gotMsg(input.msg.c)] }
+    }
+    case 'got-puzzle-db-query-msg': {
+      return { model: input.model, msgCmd: [PuzzleDbQueryFrontend.gotMsg(input.msg.c)] }
     }
     default: {
       return {
@@ -82,14 +86,26 @@ const ViewFeedItem: FrontendModule['ViewFeedItem'] = () => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return Sub.batch([
-    ScreenPuzzleBuilderOpenFrontend.subscriptions(input),
-    ScreenPackBuilderOpenFrontend.subscriptions(input),
-    ScreenPackBuilderFrontend.subscriptions(input),
-  ])
+  switch (input.modelSpace.screen.t) {
+    case 'screen-main-menu': {
+      return ScreenMainMenuFrontend.subscriptions(input)
+    }
+    case 'screen-pack-builder': {
+      return ScreenPackBuilderFrontend.subscriptions(input)
+    }
+    case 'screen-pack-builder-open': {
+      return ScreenPackBuilderOpenFrontend.subscriptions(input)
+    }
+    case 'screen-puzzle-builder': {
+      return ScreenPuzzleBuilderFrontend.subscriptions(input)
+    }
+    case 'screen-puzzle-builder-open': {
+      return ScreenPuzzleBuilderOpenFrontend.subscriptions(input)
+    }
+  }
 }
 
-export const BuilderFrontend: FrontendModule = {
+export const BuilderFrontend = {
   init: initFrontend,
   update,
   subscriptions,
