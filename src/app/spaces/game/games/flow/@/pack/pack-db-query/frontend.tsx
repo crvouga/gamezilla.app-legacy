@@ -1,10 +1,11 @@
 import { descend } from '~/@/array/sorting'
+import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { VDom } from '~/@/vdom/vdom'
-import { IconBox, SpinnerBlock } from '~/app/@/ui'
+import { IconBox, SpinnerBlock, Typography } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
@@ -61,7 +62,7 @@ const watch = <TMsg,>(ctx: FlowFrontendCtxRoot, query: PacksDbQuery, map: (m: Ms
   return Sub.map(ctx.packDb.sub(query), (packs) => map({ t: 'got-pack-db-packs', query, packs }))
 }
 
-const View = (input: {
+const ViewList = (input: {
   ctx: FlowFrontendCtxRoot
   query: PacksDbQuery
   model: ModelFrontend
@@ -93,43 +94,39 @@ const View = (input: {
   )
 }
 
-const ViewPackListItem = ({
-  pack,
-  onClick,
-  ctx,
-}: {
-  ctx: {
-    now: Posix
-    t: Translator
-  }
-  pack: Pack
-  onClick: () => void
-}) => {
+const ViewPackListItem = (input: { ctx: { now: Posix; t: Translator }; pack: Pack; onClick: () => void }) => {
   return (
     <button
       type='button'
       className='clickable flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left'
-      onClick={onClick}
+      onClick={input.onClick}
     >
       {false && <IconBox className='h-9 w-9 shrink-0' />}
       <div className='flex flex-1 flex-col overflow-hidden'>
-        <p className='overflow-hidden text-ellipsis whitespace-nowrap text-lg font-bold'>{pack.name}</p>
-        <p className='text-secondary text-sm'>
-          {TimeSpan.humanFriendlyString(Posix.diff(pack.lastUpdatedAt, ctx.now), ctx.t)}
-        </p>
+        <Typography text={TranslatedText.of(input.pack.name)} variant='body' />
+        <Typography text={toListItemSecondaryText(input)} variant='subtitle' color='text-secondary' />
       </div>
-      <p className='text-secondary flex shrink-0 text-sm'>{plural(pack.puzzleIds, 'puzzle', 'puzzles')}</p>
+      <Typography
+        text={input.ctx.t('flow.puzzle-count', input.pack.puzzleIds.length)}
+        variant='body'
+        color='text-secondary'
+        className='text-xs'
+      />
     </button>
   )
 }
 
-const plural = (arr: unknown[], singular: string, plural: string) =>
-  `${arr.length} ${arr.length === 1 ? singular : plural}`
+const toListItemSecondaryText = (input: { ctx: { now: Posix; t: Translator }; pack: Pack }): TranslatedText => {
+  return input.ctx.t(
+    'app.last-updated-at',
+    TimeSpan.humanFriendlyString(Posix.diff(input.pack.lastUpdatedAt, input.ctx.now), input.ctx.t),
+  )
+}
 
 export const PackDbQueryFrontend = {
   watch,
   gotMsg,
   initFrontend,
   update,
-  View,
+  ViewList,
 }

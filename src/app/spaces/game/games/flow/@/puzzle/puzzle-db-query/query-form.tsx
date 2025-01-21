@@ -62,7 +62,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxRoot; onChange: (query:
         <Chip
           size='sm'
           renderStartIcon={(input) => <IconArrowDownShortWide {...input} />}
-          label={input.ctx.t('app.last-updated-desc')}
+          label={input.ctx.t('app.last-updated-at-desc')}
           onClick={() => dispatch({ t: 'toggled-last-updated-chip' })}
         />
       )}

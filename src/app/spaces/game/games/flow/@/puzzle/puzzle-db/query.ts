@@ -67,8 +67,19 @@ const random = (): PuzzleDbQuery => {
   }
 }
 
+const toOrderField = (input: PuzzleDbQuery): keyof PuzzleDbQuery['order'] | null => {
+  if (input.order.createdAt) {
+    return 'createdAt'
+  }
+  if (input.order.lastUpdatedAt) {
+    return 'lastUpdatedAt'
+  }
+  return null
+}
+
 export const PuzzleDbQuery = {
   ...parser,
   toKey,
+  toOrderField,
   random,
 }

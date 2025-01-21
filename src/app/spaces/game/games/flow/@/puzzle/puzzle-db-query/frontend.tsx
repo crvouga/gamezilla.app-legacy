@@ -91,7 +91,13 @@ const ViewList = (input: {
 
       <div className='relative flex w-full flex-1 flex-col items-center overflow-y-scroll'>
         {puzzles.map((puzzle) => (
-          <ViewListItem key={puzzle.id} ctx={input.ctx} puzzle={puzzle} onClick={() => input.onClick(puzzle)} />
+          <ViewListItem
+            query={input.query}
+            key={puzzle.id}
+            ctx={input.ctx}
+            puzzle={puzzle}
+            onClick={() => input.onClick(puzzle)}
+          />
         ))}
 
         {isEmpty && (
@@ -108,7 +114,12 @@ const ViewList = (input: {
   )
 }
 
-const ViewListItem = (input: { ctx: { t: Translator; now: Posix }; puzzle: Puzzle; onClick?: () => void }) => {
+const ViewListItem = (input: {
+  query: PuzzleDbQuery
+  ctx: { t: Translator; now: Posix }
+  puzzle: Puzzle
+  onClick?: () => void
+}) => {
   return (
     <button
       key={input.puzzle.id}
@@ -123,19 +134,42 @@ const ViewListItem = (input: { ctx: { t: Translator; now: Posix }; puzzle: Puzzl
         <Typography
           variant='body'
           color='text-primary'
-          text={TranslatedText.fromString(input.puzzle.name)}
-          className='truncate text-sm'
+          text={TranslatedText.of(input.puzzle.name)}
+          className='truncate'
         />
 
         <Typography
           variant='subtitle'
           color='text-secondary'
-          text={TimeSpan.humanFriendlyString(Posix.diff(input.puzzle.createdAt, input.ctx.now), input.ctx.t)}
+          text={toListItemSecondaryText(input)}
           className='truncate text-xs'
         />
       </div>
     </button>
   )
+}
+
+const toListItemSecondaryText = (input: {
+  ctx: { t: Translator; now: Posix }
+  puzzle: Puzzle
+  query: PuzzleDbQuery
+}): TranslatedText => {
+  const orderField = PuzzleDbQuery.toOrderField(input.query)
+  switch (orderField) {
+    case 'createdAt':
+    default: {
+      return input.ctx.t(
+        'app.created-at',
+        TimeSpan.humanFriendlyString(Posix.diff(input.puzzle.createdAt, input.ctx.now), input.ctx.t),
+      )
+    }
+    case 'lastUpdatedAt': {
+      return input.ctx.t(
+        'app.last-updated-at',
+        TimeSpan.humanFriendlyString(Posix.diff(input.puzzle.lastUpdatedAt, input.ctx.now), input.ctx.t),
+      )
+    }
+  }
 }
 
 export const PuzzleDbQueryFrontend = {

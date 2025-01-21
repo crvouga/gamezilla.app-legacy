@@ -1,11 +1,11 @@
-import type { Translations } from '~/@/l18n'
+import type { TranslatedText, Translations } from '~/@/l18n'
 
 export type Text = {
-  'app.last-updated-desc': string
+  'app.last-updated-at-desc': string
   'app.created-at-desc': string
   'app.created-by-you': string
-  'app.last-updated': string
-  'app.created-at': string
+  'app.last-updated-at': (timeSpanDescription: TranslatedText) => string
+  'app.created-at': (timeSpanDescription: TranslatedText) => string
   'app.screen-not-found': string
   'app.gamezilla-app': string
   'app.something-went-wrong': string
@@ -50,9 +50,9 @@ export const translations: Translations<Text> = {
   en: {
     'app.created-by-you': 'Created by you',
     'app.created-at-desc': 'Recently created',
-    'app.last-updated-desc': 'Recently updated',
-    'app.created-at': 'Created at',
-    'app.last-updated': 'Last updated',
+    'app.last-updated-at-desc': 'Recently updated',
+    'app.created-at': (timeSpanDescription) => `Created ${timeSpanDescription.toLowerCase()}`,
+    'app.last-updated-at': (timeSpanDescription) => `Last updated ${timeSpanDescription.toLowerCase()}`,
     'app.screen-not-found': 'Screen not found',
     'app.back': 'Back',
     'app.gamezilla-app': 'gamezilla.app',
@@ -95,9 +95,9 @@ export const translations: Translations<Text> = {
   ar: {
     'app.created-by-you': 'تم إنشاؤه بواسطتك',
     'app.created-at-desc': 'الأحدث أولاً',
-    'app.last-updated-desc': 'الأحدث تحديثًا',
-    'app.created-at': 'تم الإنشاء في',
-    'app.last-updated': 'آخر تحديث',
+    'app.last-updated-at-desc': 'الأحدث تحديثًا',
+    'app.created-at': (timeSpanDescription) => `تم الإنشاء ${timeSpanDescription}`,
+    'app.last-updated-at': (timeSpanDescription) => `آخر تحديث ${timeSpanDescription}`,
     'app.screen-not-found': 'الشاشة غير موجودة',
     'app.back': 'عودة',
     'app.gamezilla-app': 'gamezilla.app',
@@ -140,9 +140,9 @@ export const translations: Translations<Text> = {
   de: {
     'app.created-by-you': 'Von Ihnen erstellt',
     'app.created-at-desc': 'Neueste zuerst',
-    'app.last-updated-desc': 'Zuletzt aktualisiert',
-    'app.created-at': 'Erstellt am',
-    'app.last-updated': 'Zuletzt aktualisiert',
+    'app.last-updated-at-desc': 'Zuletzt aktualisiert',
+    'app.created-at': (timeSpanDescription) => `Erstellt ${timeSpanDescription}`,
+    'app.last-updated-at': (timeSpanDescription) => `Zuletzt aktualisiert ${timeSpanDescription}`,
     'app.screen-not-found': 'Bildschirm nicht gefunden',
     'app.back': 'Zurück',
     'app.gamezilla-app': 'gamezilla.app',
@@ -185,9 +185,9 @@ export const translations: Translations<Text> = {
   es: {
     'app.created-by-you': 'Creado por ti',
     'app.created-at-desc': 'Más reciente primero',
-    'app.last-updated-desc': 'Más recientemente actualizado',
-    'app.created-at': 'Creado en',
-    'app.last-updated': 'Última actualización',
+    'app.last-updated-at-desc': 'Más recientemente actualizado',
+    'app.created-at': (timeSpanDescription) => `Creado ${timeSpanDescription}`,
+    'app.last-updated-at': (timeSpanDescription) => `Última actualización ${timeSpanDescription}`,
     'app.screen-not-found': 'Pantalla no encontrada',
     'app.back': 'Atrás',
     'app.gamezilla-app': 'gamezilla.app',
@@ -230,9 +230,9 @@ export const translations: Translations<Text> = {
   fr: {
     'app.created-by-you': 'Créé par vous',
     'app.created-at-desc': 'Le plus récent en premier',
-    'app.last-updated-desc': 'Le plus récemment mis à jour',
-    'app.created-at': 'Créé à',
-    'app.last-updated': 'Dernière mise à jour',
+    'app.last-updated-at-desc': 'Le plus récemment mis à jour',
+    'app.created-at': (timeSpanDescription) => `Créé ${timeSpanDescription}`,
+    'app.last-updated-at': (timeSpanDescription) => `Dernière mise à jour ${timeSpanDescription}`,
     'app.screen-not-found': 'Écran non trouvé',
     'app.back': 'Retour',
     'app.gamezilla-app': 'gamezilla.app',
@@ -275,9 +275,9 @@ export const translations: Translations<Text> = {
   it: {
     'app.created-by-you': 'Creato da te',
     'app.created-at-desc': 'Più recenti prima',
-    'app.last-updated-desc': 'Più recentemente aggiornato',
-    'app.created-at': 'Creato a',
-    'app.last-updated': 'Ultimo aggiornamento',
+    'app.last-updated-at-desc': 'Più recentemente aggiornato',
+    'app.created-at': (timeSpanDescription) => `Creato ${timeSpanDescription}`,
+    'app.last-updated-at': (timeSpanDescription) => `Ultimo aggiornamento ${timeSpanDescription}`,
     'app.screen-not-found': 'Schermo non trovato',
     'app.back': 'Indietro',
     'app.gamezilla-app': 'gamezilla.app',
@@ -320,9 +320,9 @@ export const translations: Translations<Text> = {
   ja: {
     'app.created-by-you': 'あなたが作成',
     'app.created-at-desc': '最新のものが最初',
-    'app.last-updated-desc': '最新のもの',
-    'app.created-at': '作成日',
-    'app.last-updated': '最終更新',
+    'app.last-updated-at-desc': '最新のもの',
+    'app.created-at': (timeSpanDescription) => `作成日 ${timeSpanDescription}`,
+    'app.last-updated-at': (timeSpanDescription) => `最終更新 ${timeSpanDescription}`,
     'app.screen-not-found': '画面が見つかりません',
     'app.back': '戻る',
     'app.gamezilla-app': 'gamezilla.app',
@@ -365,9 +365,9 @@ export const translations: Translations<Text> = {
   ko: {
     'app.created-by-you': '당신이 만든',
     'app.created-at-desc': '최신 순',
-    'app.last-updated-desc': '최근 업데이트',
-    'app.created-at': '생성 날짜',
-    'app.last-updated': '마지막 업데이트',
+    'app.last-updated-at-desc': '최근 업데이트',
+    'app.created-at': (timeSpanDescription) => `생성 ${timeSpanDescription}`,
+    'app.last-updated-at': (timeSpanDescription) => `마지막 업데이트 ${timeSpanDescription}`,
     'app.screen-not-found': '화면을 찾을 수 없습니다',
     'app.back': '뒤로',
     'app.gamezilla-app': 'gamezilla.app',
@@ -410,9 +410,9 @@ export const translations: Translations<Text> = {
   pt: {
     'app.created-by-you': 'Criado por você',
     'app.created-at-desc': 'Mais recente primeiro',
-    'app.last-updated-desc': 'Mais recentemente atualizado',
-    'app.created-at': 'Criado em',
-    'app.last-updated': 'Última atualização',
+    'app.last-updated-at-desc': 'Mais recentemente atualizado',
+    'app.created-at': (timeSpanDescription) => `Criado ${timeSpanDescription}`,
+    'app.last-updated-at': (timeSpanDescription) => `Última atualização ${timeSpanDescription}`,
     'app.screen-not-found': 'Tela não encontrada',
     'app.back': 'Voltar',
     'app.gamezilla-app': 'gamezilla.app',
@@ -455,9 +455,9 @@ export const translations: Translations<Text> = {
   ru: {
     'app.created-by-you': 'Создано вами',
     'app.created-at-desc': 'Сначала самые новые',
-    'app.last-updated-desc': 'Последнее обновление',
-    'app.created-at': 'Создано в',
-    'app.last-updated': 'Последнее обновление',
+    'app.last-updated-at-desc': 'Последнее обновление',
+    'app.created-at': (timeSpanDescription) => `Создано ${timeSpanDescription}`,
+    'app.last-updated-at': (timeSpanDescription) => `Последнее обновление ${timeSpanDescription}`,
     'app.screen-not-found': 'Экран не найден',
     'app.back': 'Назад',
     'app.gamezilla-app': 'gamezilla.app',
@@ -500,9 +500,9 @@ export const translations: Translations<Text> = {
   zh: {
     'app.created-by-you': '由您创建',
     'app.created-at-desc': '最新的在前',
-    'app.last-updated-desc': '最近更新',
-    'app.created-at': '创建于',
-    'app.last-updated': '最后更新',
+    'app.last-updated-at-desc': '最近更新',
+    'app.created-at': (timeSpanDescription) => `创建于 ${timeSpanDescription}`,
+    'app.last-updated-at': (timeSpanDescription) => `最后更新 ${timeSpanDescription}`,
     'app.screen-not-found': '找不到屏幕',
     'app.back': '返回',
     'app.gamezilla-app': 'gamezilla.app',
@@ -545,9 +545,9 @@ export const translations: Translations<Text> = {
   hi: {
     'app.created-by-you': 'आपके द्वारा बनाया गया',
     'app.created-at-desc': 'सबसे हाल का पहले',
-    'app.last-updated-desc': 'सबसे हाल में अपडेट',
-    'app.created-at': 'पर बनाया गया',
-    'app.last-updated': 'अंतिम अपडेट',
+    'app.last-updated-at-desc': 'सबसे हाल में अपडेट',
+    'app.created-at': (timeSpanDescription) => `बनाया गया ${timeSpanDescription}`,
+    'app.last-updated-at': (timeSpanDescription) => `अंतिम अपडेट ${timeSpanDescription}`,
     'app.screen-not-found': 'स्क्रीन नहीं मिली',
     'app.back': 'वापस',
     'app.gamezilla-app': 'गेमजिला.एप',

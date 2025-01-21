@@ -65,7 +65,7 @@ const View: FrontendModule['View'] = (input) => {
         ctx={input.ctx}
         title={input.ctx.t('flow.pack-builder')}
       />
-      <PackDbQueryFrontend.View
+      <PackDbQueryFrontend.ViewList
         {...input}
         model={input.ctx.packDbQuery}
         query={query}
