@@ -8,6 +8,7 @@ const WhereClause = p.partialObj({
       equals: UserId,
     }),
   ),
+  isOfficial: p.maybe(p.obj({ equals: p.bool })),
 })
 
 export type WhereClause = p.Infer<typeof WhereClause>

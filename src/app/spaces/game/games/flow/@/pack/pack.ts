@@ -7,13 +7,14 @@ import { PackId } from './pack-id'
 import { PackName } from './pack-name'
 
 const parser = p.obj({
-  id: p.custom(PackId.is, 'Invalid flow pack id'),
-  createdBy: p.custom(UserId.is, 'Invalid user id'),
-  createdAt: p.custom(Posix.is, 'Invalid posix'),
-  lastUpdatedBy: p.custom(UserId.is, 'Invalid user id'),
-  lastUpdatedAt: p.custom(Posix.is, 'Invalid posix'),
-  name: p.custom(PackName.is, 'Invalid flow pack name'),
-  puzzleIds: p.arr(p.custom(PuzzleId.is, 'Invalid flow puzzle id')),
+  id: PackId,
+  createdBy: UserId,
+  createdAt: Posix,
+  lastUpdatedBy: UserId,
+  lastUpdatedAt: Posix,
+  name: PackName,
+  puzzleIds: p.arr(PuzzleId),
+  isOfficial: p.maybe(p.bool),
 })
 
 export type Pack = p.Infer<typeof parser>
@@ -32,6 +33,7 @@ const create = async (input: {
     lastUpdatedAt: input.now,
     name: await PackName.generate(),
     puzzleIds: input.puzzleIds,
+    isOfficial: false,
   }
 }
 
@@ -78,6 +80,7 @@ const randomSync = (input?: { createdBy?: UserId; puzzleIds?: PuzzleId[] }): Pac
     lastUpdatedBy: createdBy,
     name: unwrap(PackName.parse(`Pack 0`)),
     puzzleIds: input?.puzzleIds ?? [],
+    isOfficial: false,
   }
 }
 
@@ -91,6 +94,7 @@ const random = async (input?: { createdBy?: UserId; puzzleIds?: PuzzleId[] }): P
     lastUpdatedBy: createdBy,
     name: await PackName.generate(),
     puzzleIds: input?.puzzleIds ?? [],
+    isOfficial: false,
   }
 }
 

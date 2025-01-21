@@ -20,4 +20,7 @@ export type IDbConnSql = {
   // execute: (rawSql: string, variables: Sql.Vars) => Promise<Result<string, null>>
   listen: (channel: string, callback: (notification: DbConnSqlNotification) => void) => Promise<() => Promise<void>>
   notify: (channel: string, payload: string) => Promise<Result<string, null>>
+  aggregate: {
+    StringConcat: (column: string, seperator: string) => string
+  }
 }

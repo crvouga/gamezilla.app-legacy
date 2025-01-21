@@ -92,6 +92,9 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
   >()
 
   return {
+    aggregate: {
+      StringConcat: (column, seperator) => `STRING_AGG(${column}, '${seperator}')`,
+    },
     sub<TRow>(input: DbConnSqlQueryInput<TRow>) {
       const sql = Sql.to(input.sql, input.vars)
       const subscriptionKey = sql

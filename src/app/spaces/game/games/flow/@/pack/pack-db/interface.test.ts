@@ -44,7 +44,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe(import.meta.file, () => {
+describe.only(import.meta.file, () => {
   it('should be able to put', async () => {
     for (const f of await Fixtures()) {
       const pack = await Pack.random()

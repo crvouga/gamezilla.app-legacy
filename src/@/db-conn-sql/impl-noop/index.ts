@@ -8,6 +8,9 @@ export type Config = {
 
 export const DbConnSql = (_config: Config): IDbConnSql => {
   return {
+    aggregate: {
+      StringConcat: (column, seperator) => `GROUP_CONCAT(${column}, '${seperator}')`,
+    },
     sub() {
       return Sub.None
     },

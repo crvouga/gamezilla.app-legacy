@@ -30,6 +30,7 @@ const Row = p.obj({
   last_updated_by_user_id: UserId,
   deleted_at_posix: p.maybe(p.or(p.num, p.str)),
   deleted_by_user_id: p.maybe(UserId),
+  is_official: p.maybe(p.bool),
 })
 
 type Row = p.Infer<typeof Row>
@@ -49,6 +50,7 @@ type RowItem = p.Infer<typeof RowItem>
 
 const rowToPack = (row: Row, items: RowItem[]): Pack | null => {
   return {
+    isOfficial: row.is_official ?? false,
     createdAt: Posix.init(row.created_at_posix),
     createdBy: row.created_by_user_id,
     id: row.id,
@@ -168,36 +170,32 @@ export const PackDb = (config: Config): IPackDb => {
 
       const packsSql = `
 				SELECT
-          *
+          game_flow_pack.*,
+          ${config.dbConnSql.aggregate.StringConcat('game_flow_pack_item.puzzle_id', ',')} AS puzzle_ids_csv
         FROM
           game_flow_pack
-				${sqlWhere.str}
-				${sqlOrder.str}
-				${sqlPagination.str}
+        LEFT JOIN
+          game_flow_pack_item ON game_flow_pack_item.pack_id = game_flow_pack.id
+        ${sqlWhere.str}
+        GROUP BY
+          game_flow_pack.id
+        ${sqlOrder.str}
+        ${sqlPagination.str};
 			`
       const packsSub = config.dbConnSql.sub({
-        parser: Row,
+        parser: p.and(Row, p.obj({ puzzle_ids_csv: p.str })),
         sql: packsSql,
         vars,
       })
 
-      ;`
-        SELECT
-          *
-        FROM
-          game_flow_pack_item
-        JOIN
-          game_flow_pack ON game_flow_pack_item.pack_id = game_flow_pack.id
-        ${sqlWhere.str}
-        ${sqlOrder.str}
-        ${sqlPagination.str}
-        )
-      `
-
       return Sub.map(packsSub, (packRows) => {
         const packs = packRows.flatMap((row) => {
+          const puzzleIds = row.puzzle_ids_csv.split(',').flatMap((id) => {
+            const puzzleId = PuzzleId.parse(id)
+            return isOk(puzzleId) ? [puzzleId.value] : []
+          })
           const pack = rowToPack(row, [])
-          return pack ? [pack] : []
+          return pack ? [{ ...pack, puzzleIds }] : []
         })
         return packs
       })

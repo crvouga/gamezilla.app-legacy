@@ -19,6 +19,7 @@ const update: FrontendModule['update'] = (input) => {
         async eff(dispatch) {
           const userId = input.ctx.currentUserId
           const packNew: Pack = {
+            isOfficial: false,
             createdAt: input.ctx.now,
             createdBy: userId,
             id: PackId.generate(),

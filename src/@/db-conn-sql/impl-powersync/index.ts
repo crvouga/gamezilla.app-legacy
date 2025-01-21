@@ -154,6 +154,9 @@ export const DbConnSql = (config: Config): IDbConnSql => {
   }
 
   return {
+    aggregate: {
+      StringConcat: (column, seperator) => `GROUP_CONCAT(${column}, '${seperator}')`,
+    },
     query,
     sub,
     notify,

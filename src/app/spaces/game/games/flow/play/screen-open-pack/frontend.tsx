@@ -22,7 +22,7 @@ const update: FrontendModule['update'] = (input) => {
   }
 }
 
-const toQuery = (input: { ctx: { currentUserId: UserId } }): PacksDbQuery => {
+const toQuery = (_input: { ctx: { currentUserId: UserId } }): PacksDbQuery => {
   return {
     order: {
       lastUpdatedAt: 'desc',
@@ -32,8 +32,8 @@ const toQuery = (input: { ctx: { currentUserId: UserId } }): PacksDbQuery => {
       offset: 0,
     },
     where: {
-      createdBy: {
-        equals: input.ctx.currentUserId,
+      isOfficial: {
+        equals: true,
       },
     },
   }
@@ -60,10 +60,7 @@ const View: FrontendModule['View'] = (input) => {
         renderContent={() => (
           <ViewUsersInSpaceList
             onOpenUserDetails={(userId) =>
-              input.dispatch({
-                t: 'game-main-menu.clicked-open-user-details-button',
-                userId,
-              })
+              input.dispatch({ t: 'game-main-menu.clicked-open-user-details-button', userId })
             }
             ctx={input.ctx}
           />
