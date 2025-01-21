@@ -4,8 +4,8 @@ import { Sub } from '~/@/sub'
 import * as VsBot from './vs-bot/vs-bot.backend'
 import * as VsUser from './vs-user/vs-user.backend'
 import type { Mode, ModelBackend, MsgBackend, MsgToBackend } from './gomoku.types'
-import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
-import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
+import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 
 //
 //

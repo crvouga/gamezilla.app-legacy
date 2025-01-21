@@ -1,6 +1,6 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
+import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.frontend'
 import { FlowFrontend } from './flow/frontend'

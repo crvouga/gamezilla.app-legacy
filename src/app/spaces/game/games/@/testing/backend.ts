@@ -1,7 +1,7 @@
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
+import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 
 export const SpaceGameFixtureBackend = async () => {
   const f = await FixtureAppBackend()

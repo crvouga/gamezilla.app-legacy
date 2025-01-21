@@ -1,6 +1,6 @@
 import { Sub } from '~/@/sub'
-import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
-import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
+import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import { FlowBackendCtx } from './@/backend/ctx'
 import { PackDb } from './@/pack/pack-db/impl'

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { didPlaySound } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
-import { exitGame } from '~/app/spaces/@/space-frontend/cmd'
+import { exitGame } from '~/app/spaces/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { SpacesSpaceFrontend } from '../space/frontend'
 import { GameName } from './games/@/game-name'

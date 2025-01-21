@@ -1,7 +1,7 @@
 import { Sub } from '~/@/sub'
-import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
-import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
+import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import type { ModelSpace, ModelBackend, MsgSpace, MsgBackend, MsgToFrontend, MsgToBackend } from './connect-four.types'
 

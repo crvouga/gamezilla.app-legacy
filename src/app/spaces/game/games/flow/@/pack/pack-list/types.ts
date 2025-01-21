@@ -1,6 +1,6 @@
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
-import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
+import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
+import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { FlowFrontendEvtIn } from '../../frontend/evt'

@@ -12,7 +12,7 @@ import { Space } from '../../space/space'
 import { GamesBackend } from '../../game/games/backend'
 import { SpacesBackend } from '../../backend'
 import { BackendCtx } from '../../types'
-import { SpaceBackendCtx } from '../space-backend/ctx'
+import { SpaceBackendCtx } from '../backend/ctx'
 
 export const FixtureSpaceBackend = async () => {
   const f = await FixtureAppBackend()

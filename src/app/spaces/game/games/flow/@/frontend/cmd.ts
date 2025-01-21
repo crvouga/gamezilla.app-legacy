@@ -1,5 +1,5 @@
 import type { FrontendCmdTypes } from '~/app/@/frontend/cmd'
-import { SpaceFrontendCmd } from '~/app/spaces/@/space-frontend/cmd'
+import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
 import { PackListTypes } from '../pack/pack-list'
 import { PackPuzzlesGridTypes } from '../pack/pack-puzzles-grid'
 import { PuzzleListTypes } from '../puzzle/puzzle-list'

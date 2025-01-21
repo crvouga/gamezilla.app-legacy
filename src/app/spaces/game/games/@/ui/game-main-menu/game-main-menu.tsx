@@ -8,8 +8,8 @@ import {
   type SpaceFrontendCmdTypes,
   exitGame,
   openUserDetails,
-} from '~/app/spaces/@/space-frontend/cmd'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+} from '~/app/spaces/@/frontend/cmd'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { LayoutGameCoverArtHeader } from '../layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../users-in-space-list'
 

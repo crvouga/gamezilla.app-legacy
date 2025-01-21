@@ -1,5 +1,5 @@
 import { type AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { VsUserSetupScreen } from '~/app/spaces/game/games/@/vs-user'
 import { toTurn } from '../@/tic-tic-toe/tic-tac-toe'
 import { CoverArt, PlayerTypeIcon } from '../@/tic-tic-toe/tic-tac-toe-ui'

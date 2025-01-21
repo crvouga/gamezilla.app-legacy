@@ -2,7 +2,7 @@ import { Keyboard } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
 import { Sub } from '~/@/sub'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Maze } from './@/maze'
 import { Direction, type Position } from './@/position'
 import {

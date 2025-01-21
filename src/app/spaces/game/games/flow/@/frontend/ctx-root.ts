@@ -1,4 +1,4 @@
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Pack } from '../pack/pack'
 import { PackId } from '../pack/pack-id'
 import type { Puzzle } from '../puzzle/puzzle'

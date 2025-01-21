@@ -6,7 +6,7 @@ import { Sub } from '~/@/sub'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import type { UserId } from '~/app/@/data/user-id'
 import { Button, IconArrowLeftOnRect } from '~/app/@/ui'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Chess } from '../@/chess'
 import {
   type SpaceModel,

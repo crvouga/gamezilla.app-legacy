@@ -1,6 +1,6 @@
 import { isErr } from '~/@/result'
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
-import { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
+import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 
 import { PackPuzzlesGridBackend } from '../../@/pack/pack-puzzles-grid/backend'
 import type { BackendModule } from '../types'

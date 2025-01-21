@@ -4,7 +4,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 
 const currentUserId = 'test-user-id' as UserId
 

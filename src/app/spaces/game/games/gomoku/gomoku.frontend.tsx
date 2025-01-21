@@ -2,7 +2,7 @@ import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/gomoku/gomoku-ui'
 import type { ModelBackend, ModelFrontend, MsgFrontend, MsgToFrontend } from './gomoku.types'

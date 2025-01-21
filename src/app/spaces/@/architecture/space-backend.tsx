@@ -8,7 +8,7 @@ import type { BackendEvt } from '~/app/@/backend/evt'
 import { SpaceEvent } from '../../space/space-event'
 import type { MsgBackend, MsgToFrontend, MsgToBackend, BackendCtx } from '../../types'
 import type { Space } from '../space/space'
-import type { SpaceBackendCmd } from '../space-backend/cmd'
+import type { SpaceBackendCmd } from '../backend/cmd'
 
 type Ctx = BackendCtx & {
   space?: Space

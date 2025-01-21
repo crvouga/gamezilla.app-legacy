@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Button, Drawer, IconQuestionMark, Typography } from '~/app/@/ui'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { LayoutGameCoverArtHeader } from '../../ui/layout-game-cover-art-header'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 

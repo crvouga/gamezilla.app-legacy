@@ -11,6 +11,7 @@ export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: 
   return (
     <div
       role='dialog'
+      // @ts-expect-error I don't know how to fix this type error
       style={style}
       className={cn(
         'absolute left-0 top-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out',

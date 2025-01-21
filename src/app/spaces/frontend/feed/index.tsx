@@ -1,5 +1,5 @@
 import { WithEventId } from '~/@/event-sourced/event'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { FeedItem } from '../../@/feed-item'
 import { SpacesSpaceFrontend } from '../../space/frontend'
 import type { SpaceEvent } from '../../space/space-event'

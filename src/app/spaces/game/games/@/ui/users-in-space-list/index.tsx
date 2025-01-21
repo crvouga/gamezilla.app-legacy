@@ -1,6 +1,6 @@
 import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Typography } from '~/app/@/ui'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ViewHostChip } from './host-chip'
 import { ViewYouChip } from './you-chip'
 

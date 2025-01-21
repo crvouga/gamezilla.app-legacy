@@ -1,5 +1,5 @@
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceFrontendEvt } from '~/app/spaces/@/space-frontend/evt'
+import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 
 export type FlowFrontendEvtIn = SpaceFrontendEvt | FlowFrontendEvt
 

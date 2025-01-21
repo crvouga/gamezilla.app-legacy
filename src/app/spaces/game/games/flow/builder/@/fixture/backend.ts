@@ -1,6 +1,6 @@
 import { Logger } from '~/@/logger'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
+import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceGameFixtureBackend } from '../../../../@/testing/backend'
 import { FlowBackendCtx } from '../../../@/backend/ctx'
 import { PackDb } from '../../../@/pack/pack-db/impl'

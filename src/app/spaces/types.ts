@@ -18,7 +18,7 @@ import { Space } from './space/space'
 import { SpaceEvent } from './space/space-event'
 import { GamesTypes } from './game/games'
 import { GameName } from './game/games/@/game-name'
-import { SpaceFrontendCmd } from './@/space-frontend/cmd'
+import { SpaceFrontendCmd } from './@/frontend/cmd'
 import { Pagination } from '~/@/query/query'
 
 //

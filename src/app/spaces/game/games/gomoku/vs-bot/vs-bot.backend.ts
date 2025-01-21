@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
+import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { handleBotMove, initShared, type ModelBackend, type MsgBackend, type MsgToBackend } from './vs-bot.types'
 
 //

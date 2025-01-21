@@ -1,8 +1,8 @@
 import { Err, Ok } from '~/@/result'
 import { pipe } from '~/@/function/pipe'
-import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
-import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
+import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
+import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { TicTacToe } from '../@/tic-tic-toe'
 import {
   initSpaceModel,

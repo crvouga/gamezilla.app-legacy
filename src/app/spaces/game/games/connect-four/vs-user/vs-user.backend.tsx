@@ -1,9 +1,9 @@
 import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
-import type { SpaceBackendCmd } from '~/app/spaces/@/space-backend/cmd'
+import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { Sub } from '~/@/sub'
 import type { MsgSpace, ModelSpace, ModelBackend, MsgBackend, MsgToFrontend, MsgToBackend } from './vs-user.types'
-import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
+import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 
 //
 //

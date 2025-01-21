@@ -1,5 +1,5 @@
-import { SpaceBackendCtx } from '~/app/spaces/@/space-backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/space-backend/evt'
+import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { initShared, type ModelBackend, type MsgBackend, type MsgToBackend } from './vs-user.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'

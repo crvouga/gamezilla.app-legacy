@@ -1,7 +1,7 @@
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import type { SpaceId } from '~/app/@/data/space-id'
 import { ScreenTitleButton } from '~/app/@/ui/screen-title-button'
-import { SpaceFrontendCtx } from '~/app/spaces/@/space-frontend/ctx'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
 import { SpacesSpaceFrontend } from '../../space/frontend'
 import { EndSpaceFrontend } from '../../end-space/end-space.frontend'
