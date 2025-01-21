@@ -23,6 +23,7 @@ const colorClasses: { [color in TypographyColor]: string } = {
 type Input = {
   text: TranslatedText
   variant: TypographyVariant
+  skeleton?: boolean
   className?: string
   role?: AriaRole
   color?: 'inherit' | 'text-primary' | 'text-secondary' | null
@@ -50,11 +51,19 @@ const toAriaLevel = (input: Input): number | undefined => {
   }
 }
 
+const SKELETON_CLASS = 'animate-pulse text-transparent select-none pointer-events-none bg-neutral-500 rounded'
+
 export const Typography = (input: Input) => {
   return (
     <div
-      className={cn(variantClasses[input.variant], input.color ? colorClasses[input.color] : null, input.className)}
+      className={cn(
+        variantClasses[input.variant],
+        input.color && !input.skeleton ? colorClasses[input.color] : null,
+        input.skeleton ? SKELETON_CLASS : null,
+        input.className,
+      )}
       role={input.role}
+      aria-busy={input.skeleton}
       aria-level={toAriaLevel(input)}
       aria-label={input.text}
     >

@@ -36,7 +36,7 @@ const toPuzzleQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }):
       },
       pagination: {
         offset: 0,
-        limit: 10,
+        limit: 100,
       },
       where: {
         createdBy: {
@@ -63,7 +63,7 @@ const View: FrontendModule['View'] = (input) => {
         ctx={input.ctx}
         title={input.ctx.t('flow.puzzle-builder')}
       />
-      <PuzzleDbQueryFrontend.View
+      <PuzzleDbQueryFrontend.ViewList
         ctx={input.ctx}
         model={input.ctx.puzzleDbQuery}
         query={query}

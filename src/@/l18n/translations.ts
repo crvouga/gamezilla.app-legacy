@@ -11,6 +11,10 @@ export type Translations<TText extends TranslationText> = {
 
 export type TranslatedText = Brand<'TranslatedText', string>
 
+export const TranslatedText = {
+  fromString: (text: string): TranslatedText => text as TranslatedText,
+}
+
 export const createTranslator =
   <TTranslationText extends TranslationText>(text: TTranslationText) =>
   <

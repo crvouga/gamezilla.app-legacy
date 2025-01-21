@@ -6,6 +6,7 @@ import { PlayMode } from '../../@/play-mode'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { EditPackNameTypes } from './edit-pack-name'
+import { ScreenAddPuzzleTypes } from './screen-add-puzzle'
 
 //
 //
@@ -59,16 +60,16 @@ export const ModelSpace = p.obj({
   screen: Screen,
   slideIndex: p.num,
   editPackName: EditPackNameTypes.ModelSpace,
+  screenAddPuzzle: ScreenAddPuzzleTypes.ModelSpace,
 })
 
-export type ModelSpace = {
-  pack: Pack
-  screen: Screen
-  slideIndex: number
-  editPackName: EditPackNameTypes.ModelSpace
-}
+export type ModelSpace = p.Infer<typeof ModelSpace>
 
 export const MsgSpace = p.or(
+  p.obj({
+    t: p.l('got-screen-add-puzzle-msg'),
+    c: ScreenAddPuzzleTypes.MsgSpace,
+  }),
   p.obj({
     t: p.l('got-edit-pack-name-msg'),
     c: EditPackNameTypes.MsgSpace,

@@ -1025,7 +1025,7 @@ export const adjectives = [
   'coarse',
   'bleeding',
   'striped',
-  'msgEvtual',
+  'eventual',
   'residential',
   'hysterical',
   'pathetic',

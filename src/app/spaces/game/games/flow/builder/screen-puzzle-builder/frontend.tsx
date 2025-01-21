@@ -233,14 +233,8 @@ const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
             <BottomButtons.Button
               icon={(input) => <IconPlay {...input} />}
               label={input.ctx.t('flow.play-mode')}
-              classNames={{
-                button: 'text-blue-500',
-              }}
-              onClick={() =>
-                input.dispatch({
-                  t: 'screen-puzzle-builder.user-clicked-play-mode-button',
-                })
-              }
+              classNames={{ button: 'text-blue-500' }}
+              onClick={() => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' })}
             />
             {more}
           </BottomButtons.Root>

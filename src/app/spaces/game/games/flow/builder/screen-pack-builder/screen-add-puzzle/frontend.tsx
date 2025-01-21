@@ -3,7 +3,7 @@ import { TopBar } from '~/app/@/ui'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { PuzzleDbQueryFrontend } from '../../../@/puzzle/puzzle-db-query/frontend'
 import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
-import type { FrontendModule } from '../../types'
+import type { ModelSpace, FrontendModule } from '../../types'
 import { ScreenPackBuilderSpace } from '../space'
 
 const update: FrontendModule['update'] = (input) => {
@@ -37,21 +37,23 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const toQuery = (input: { ctx: FlowFrontendCtx }): PuzzleDbQuery => {
-  return {
-    order: {
-      createdAt: 'asc',
-    },
-    pagination: {
-      offset: 0,
-      limit: 10,
-    },
-    where: {
-      createdBy: {
-        equals: input.ctx.currentUserId,
+const toQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): PuzzleDbQuery => {
+  return (
+    input.modelSpace.screenPackBuilder?.screenAddPuzzle.puzzleDbQuery ?? {
+      order: {
+        createdAt: 'asc',
       },
-    },
-  }
+      pagination: {
+        offset: 0,
+        limit: 10,
+      },
+      where: {
+        createdBy: {
+          equals: input.ctx.currentUserId,
+        },
+      },
+    }
+  )
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
@@ -70,12 +72,22 @@ const View: FrontendModule['View'] = (input) => {
           input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.user-closed-add-puzzle-screen' } })
         }
       />
-      <PuzzleDbQueryFrontend.View
+      <PuzzleDbQueryFrontend.ViewList
         ctx={input.ctx}
         model={input.ctx.puzzleDbQuery}
         query={query}
         onQueryChanged={(query) => {
-          console.log('onQueryChanged,', query)
+          input.dispatch({
+            t: 'got-msg-space',
+            c: {
+              t: 'got-screen-add-puzzle-msg',
+              c: {
+                t: 'puzzle-db-query-query-changed',
+                query,
+                userId: input.ctx.currentUserId,
+              },
+            },
+          })
         }}
         onClick={(puzzle) =>
           input.dispatch({

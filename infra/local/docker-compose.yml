@@ -10,11 +10,7 @@ services:
         source: ${PWD}
         target: /app
     command: >
-      sh -c "
-        ls -la /app &&
-        echo 'Contents of /app:' &&
-        bun install && 
-        bun frontend"
+      sh -c "bun install && bun frontend"
     ports:
       - '5173:5173'
     environment:
@@ -37,12 +33,7 @@ services:
         source: ${PWD}
         target: /app
     command: >
-      sh -c "
-        ls -la /app &&
-        echo 'Contents of /app:' &&
-        bun install &&
-        bun backend:build &&
-        bun backend"
+      sh -c "bun install && bun backend:build && bun backend"
     ports:
       - '${PORT}:${PORT}'
     environment:

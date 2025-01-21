@@ -1,3 +1,4 @@
+import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
@@ -8,7 +9,7 @@ import { Gutter } from '~/app/@/ui/gutter'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { VariantBoard } from '../../variant'
-import type { Puzzle } from '../puzzle'
+import { Puzzle } from '../puzzle'
 import { PuzzleDbQuery } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './query-form'
@@ -69,7 +70,7 @@ const watch = <TMsg,>(
   return Sub.map(ctx.puzzleDb.sub(query), (puzzles) => map({ t: 'got-puzzle-db-puzzles', query, puzzles }))
 }
 
-const View = (input: {
+const ViewList = (input: {
   ctx: FlowFrontendCtxRoot
   query: PuzzleDbQuery
   model: ModelFrontend
@@ -107,7 +108,7 @@ const View = (input: {
   )
 }
 
-const ViewListItem = (input: { ctx: { t: Translator; now: Posix }; puzzle: Puzzle; onClick: () => void }) => {
+const ViewListItem = (input: { ctx: { t: Translator; now: Posix }; puzzle: Puzzle; onClick?: () => void }) => {
   return (
     <button
       key={input.puzzle.id}
@@ -118,14 +119,19 @@ const ViewListItem = (input: { ctx: { t: Translator; now: Posix }; puzzle: Puzzl
       <div className='flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden'>
         <VariantBoard.View disabled model={input.puzzle.flow} />
       </div>
-      <div className='overflow-hidden truncate px-4'>
-        <p className='flex-nowrap overflow-hidden truncate text-ellipsis whitespace-nowrap text-base font-bold'>
-          {input.puzzle.name}
-        </p>
+      <div className='flex flex-col gap-1 overflow-hidden truncate px-4'>
+        <Typography
+          variant='body'
+          color='text-primary'
+          text={TranslatedText.fromString(input.puzzle.name)}
+          className='truncate text-sm'
+        />
+
         <Typography
           variant='subtitle'
+          color='text-secondary'
           text={TimeSpan.humanFriendlyString(Posix.diff(input.puzzle.createdAt, input.ctx.now), input.ctx.t)}
-          className='text-secondary truncate text-xs'
+          className='truncate text-xs'
         />
       </div>
     </button>
@@ -136,5 +142,5 @@ export const PuzzleDbQueryFrontend = {
   update,
   watch,
   gotMsg,
-  View,
+  ViewList,
 }

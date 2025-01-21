@@ -1,14 +1,17 @@
 import { isErr } from '~/@/result'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
-import type { UpdateSpace } from '../types'
-import { EditPackNameSpace } from './edit-pack-name/space'
-import type { ModelSpace } from './types'
 import { PlayMode } from '../../@/play-mode'
+import type { UpdateSpace } from '../types'
+import * as ParentTypes from '../types'
+import { EditPackNameSpace } from './edit-pack-name/space'
+import { ScreenAddPuzzleSpace } from './screen-add-puzzle/space'
+import type { ModelSpace } from './types'
 
 const init = ({ pack }: { pack: Pack }): ModelSpace => {
   return {
     editPackName: EditPackNameSpace.init({ pack }),
+    screenAddPuzzle: ScreenAddPuzzleSpace.init(),
     pack,
     slideIndex: 0,
     screen: {
@@ -24,6 +27,33 @@ const update: UpdateSpace = (input) => {
   return updates.reduce((modelSpace, updateSpace) => updateSpace({ ctx, msgSpace, modelSpace }), modelSpace)
 }
 
+updates.push((input) => {
+  switch (input.msgSpace.t) {
+    case 'got-screen-add-puzzle-msg': {
+      if (!input.modelSpace.screenPackBuilder) {
+        return input.modelSpace
+      }
+
+      const modelSpaceNew: ParentTypes.ModelSpace = {
+        ...input.modelSpace,
+        screenPackBuilder: {
+          ...input.modelSpace.screenPackBuilder,
+          screenAddPuzzle: ScreenAddPuzzleSpace.update({
+            modelSpace: input.modelSpace.screenPackBuilder.screenAddPuzzle,
+            msgSpace: input.msgSpace.c,
+          }),
+        },
+      }
+
+      return modelSpaceNew
+    }
+
+    default: {
+      return input.modelSpace
+    }
+  }
+})
+
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
     case 'create-new-pack.user-created-pack': {
@@ -31,7 +61,7 @@ updates.push(({ modelSpace, msgSpace }) => {
         return modelSpace
       }
 
-      return {
+      const modelSpaceNew: ParentTypes.ModelSpace = {
         ...modelSpace,
         screen: {
           t: 'screen-pack-builder',
@@ -40,6 +70,8 @@ updates.push(({ modelSpace, msgSpace }) => {
           pack: msgSpace.created.value,
         }),
       }
+
+      return modelSpaceNew
     }
     default: {
       return modelSpace
