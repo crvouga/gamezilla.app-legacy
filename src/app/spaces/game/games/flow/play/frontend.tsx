@@ -2,8 +2,8 @@ import { Sub } from '~/@/sub'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import type { FrontendModule } from './types'
 import { ScreenPuzzleFrontend } from './screen-play-puzzle/frontend'
-import { ScreenSelectPackFrontend } from './screen-select-pack/frontend'
-import { ScreenSelectPuzzleFrontend } from './screen-select-puzzle/frontend'
+import { ScreenOpenPackFrontend } from './screen-open-pack/frontend'
+import { ScreenOpenPuzzleFrontend } from './screen-open-puzzle/frontend'
 import { GameMainMenu } from '../../@/ui/game-main-menu'
 
 const init: FrontendModule['init'] = null
@@ -12,8 +12,8 @@ const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
     { model: input.model },
     (model) => ScreenPuzzleFrontend.update({ ...input, model }),
-    (model) => ScreenSelectPackFrontend.update({ ...input, model }),
-    (model) => ScreenSelectPuzzleFrontend.update({ ...input, model }),
+    (model) => ScreenOpenPackFrontend.update({ ...input, model }),
+    (model) => ScreenOpenPuzzleFrontend.update({ ...input, model }),
     (model) => updateGotMsgSpace({ ...input, model }),
     (model) => GameMainMenu.update({ ...input, model }),
   )
@@ -32,8 +32,8 @@ const updateGotMsgSpace: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const subscriptions: FrontendModule['subscriptions'] = (_input) => {
-  return Sub.None
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  return Sub.batch([ScreenOpenPackFrontend.subscriptions(input)])
 }
 
 const View: FrontendModule['View'] = (input) => {
@@ -47,11 +47,11 @@ const View: FrontendModule['View'] = (input) => {
 const ViewScreen: typeof View = (input) => {
   switch (input.modelSpace.screen.t) {
     case 'screen-select-puzzle': {
-      return <ScreenSelectPuzzleFrontend.View {...input} />
+      return <ScreenOpenPuzzleFrontend.View {...input} />
     }
 
     case 'screen-select-pack': {
-      return <ScreenSelectPackFrontend.View {...input} />
+      return <ScreenOpenPackFrontend.View {...input} />
     }
 
     case 'screen-play-puzzle': {

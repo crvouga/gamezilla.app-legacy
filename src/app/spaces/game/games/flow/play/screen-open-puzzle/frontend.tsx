@@ -133,7 +133,7 @@ const View: FrontendModule['View'] = (input) => {
   )
 }
 
-export const ScreenSelectPuzzleFrontend = {
+export const ScreenOpenPuzzleFrontend = {
   update,
   View,
 }

@@ -1,10 +1,9 @@
 import { describe, expect, it, test } from 'bun:test'
-import { LamportTimestamp } from '~/@/lamport-clock'
-import { EventId, withEventMeta } from '~/@/event-sourced/event'
+import { withEventMeta } from '~/@/event-sourced/event'
+import { didPlaySound } from '~/app/@/frontend/cmd'
 import { Pack } from '../../@/pack/pack'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { FixturePlayFrontend } from '../@/frontend/fixture'
-import { didPlaySound } from '~/app/@/frontend/cmd'
 
 const Fixture = async () => {
   const f = await FixturePlayFrontend()
@@ -13,15 +12,7 @@ const Fixture = async () => {
     puzzleIds: [puzzle.id],
   })
   const initial = f.update(f.initial, [
-    {
-      msg: {
-        t: 'got-msg-space',
-        c: {
-          t: 'user-clicked-open-pack-list-item',
-          pack,
-        },
-      },
-    },
+    { msg: { t: 'got-msg-space', c: { t: 'user-clicked-open-pack-list-item', pack } } },
   ])
   return {
     ...f,
@@ -57,12 +48,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msg: {
-          t: 'got-msg-space',
-          c: {
-            t: 'user-clicked-exit-pack-button',
-          },
-        },
+        msg: { t: 'got-msg-space', c: { t: 'user-clicked-exit-pack-button' } },
       },
     ])
     expect(output.modelSpace.screen.t).toBe('screen-select-pack')
@@ -70,15 +56,7 @@ describe(import.meta.file, () => {
 
   it('should play nav back sound on exit', async () => {
     const f = await Fixture()
-    const output = f.update(f.initial, [
-      {
-        msgSpace: {
-          t: 'user-clicked-exit-pack-button',
-          eventId: EventId.generate(),
-          happenedAt: LamportTimestamp.fromNumber(1),
-        },
-      },
-    ])
+    const output = f.update(f.initial, [{ msgSpace: withEventMeta({ t: 'user-clicked-exit-pack-button' }) }])
     expect(didPlaySound(output)).toBe(true)
   })
 
@@ -109,13 +87,11 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgSpace: {
+        msgSpace: withEventMeta({
           t: 'user-clicked-open-puzzle-grid-item',
           flowPuzzle: { t: 'got', c: f.puzzle },
-          eventId: EventId.generate(),
-          happenedAt: LamportTimestamp.fromNumber(1),
           puzzleIndex: 0,
-        },
+        }),
       },
     ])
     expect(didPlaySound(output)).toBe(true)

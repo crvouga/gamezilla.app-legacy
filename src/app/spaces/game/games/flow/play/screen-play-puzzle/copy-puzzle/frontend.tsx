@@ -1,10 +1,12 @@
-import { APP_SOUND, copyToClipboard, playSound, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND, copyToClipboard, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { IconCopy } from '~/app/@/ui'
 import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import { PlayMode } from '../../../@/play-mode'
 import { VariantGridShorthand } from '../../../@/variant/grid'
 import type { FrontendModule, MsgFrontend } from '../../types'
+import { Json } from '~/@/json/json'
+import { isErr } from '~/@/result'
 
 export const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -43,14 +45,21 @@ export const update: FrontendModule['update'] = (input) => {
 
       const shorthand = VariantGridShorthand.fromGrid(flow)
 
-      const encoded = JSON.stringify(shorthand)
+      const encoded = Json.stringify(shorthand)
+
+      if (isErr(encoded)) {
+        return {
+          model: input.model,
+          msgCmd: showErrSm(input.ctx.t('app.something-went-wrong')),
+        }
+      }
 
       return {
         model: input.model,
         msgCmd: [
           playSound(APP_SOUND.refreshFeed),
           showToast(input.ctx.t('app.copied-to-clipboard')),
-          copyToClipboard(encoded),
+          copyToClipboard(encoded.value),
         ],
       }
     }

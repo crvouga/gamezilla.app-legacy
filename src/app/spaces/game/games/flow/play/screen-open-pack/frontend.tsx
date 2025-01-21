@@ -16,6 +16,11 @@ const update: FrontendModule['update'] = (input) => {
       return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }
   }
+  switch (input.msg?.t) {
+    case 'screen-open-pack.got-pack-list-msg': {
+      return { model: input.model, msgCmd: [PackListFrontend.gotMsg(input.msg.c)] }
+    }
+  }
   return {
     model: input.model,
   }
@@ -36,6 +41,10 @@ const toQuery = (input: { ctx: { currentUserId: UserId } }): PacksDbQuery => {
       },
     },
   }
+}
+
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  return PackListFrontend.watch(input.ctx, toQuery(input), (c) => ({ t: 'screen-open-pack.got-pack-list-msg', c }))
 }
 
 const View: FrontendModule['View'] = (input) => {
@@ -94,7 +103,8 @@ const View: FrontendModule['View'] = (input) => {
   )
 }
 
-export const ScreenSelectPackFrontend = {
+export const ScreenOpenPackFrontend = {
   update,
+  subscriptions,
   View,
 }

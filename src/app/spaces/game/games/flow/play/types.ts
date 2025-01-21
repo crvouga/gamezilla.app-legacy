@@ -16,6 +16,7 @@ import type { PackPuzzlesGridTypes } from '../@/pack/pack-puzzles-grid'
 import { PuzzleResult } from '../@/puzzle/puzzle-result'
 import { FlowBackendCtx } from '../@/backend/ctx'
 import { ScreenPuzzleTypes } from './screen-play-puzzle'
+import { ScreenOpenPackTypes } from './screen-open-pack'
 
 //
 //
@@ -38,6 +39,7 @@ export type ModelBackend = p.Infer<typeof ModelBackend>
 
 export type MsgFrontend =
   | GameMainMenu.Msg
+  | ScreenOpenPackTypes.MsgFrontend
   | {
       t: 'got-msg-space'
       c: MsgSpace
