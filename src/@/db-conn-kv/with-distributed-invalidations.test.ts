@@ -49,7 +49,7 @@ const Fixture = async () => {
             t: 'pub-sub-topic-based',
             pubSubTopicBased: await PubSubTopicBased({
               t: 'in-memory',
-              map: pubSubMap,
+              subscribersByTopic: pubSubMap,
             }),
             topic: 'my-event-cache-invalidation',
           }),

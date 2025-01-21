@@ -30,7 +30,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const sms = SMS({ t: 'fake', logger })
 
-  const pubSub = await PubSubTopicBased({ t: 'noop' })
+  const pubSub = await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() })
 
   const profileCache = await ProfileCache({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'in-memory' }) })
 
@@ -63,7 +63,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
       ctx,
       dbConnSqlite,
       dbConnKv: await DbConnKv({ t: 'hash-map' }),
-      pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', map: new Map() }),
+      pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() }),
       dbConnPostgres: dbConnSqlNoop,
     }
   }

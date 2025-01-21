@@ -169,7 +169,7 @@ export const PackDb = (config: Config): IPackDb => {
       }
 
       const packsSql = `
-				SELECT
+        SELECT
           game_flow_pack.*,
           ${config.dbConnSql.aggregate.StringConcat('game_flow_pack_item.puzzle_id', ',')} AS puzzle_ids_csv
         FROM
@@ -183,14 +183,19 @@ export const PackDb = (config: Config): IPackDb => {
         ${sqlPagination.str};
 			`
       const packsSub = config.dbConnSql.sub({
-        parser: p.and(Row, p.obj({ puzzle_ids_csv: p.str })),
+        parser: p.and(
+          Row,
+          p.obj({
+            puzzle_ids_csv: p.maybe(p.str),
+          }),
+        ),
         sql: packsSql,
         vars,
       })
 
       return Sub.map(packsSub, (packRows) => {
         const packs = packRows.flatMap((row) => {
-          const puzzleIds = row.puzzle_ids_csv.split(',').flatMap((id) => {
+          const puzzleIds = (row.puzzle_ids_csv ?? '').split(',').flatMap((id) => {
             const puzzleId = PuzzleId.parse(id)
             return isOk(puzzleId) ? [puzzleId.value] : []
           })

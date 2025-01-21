@@ -13,14 +13,13 @@ const MAX_MSG_LOG_LENGTH = 100
 let publisher: IRedis
 let hasSubscribed = false
 export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBased> => {
-  publisher ??= newRedis(config.redisUrl)
+  publisher ??= await newRedis(config.redisUrl)
   if (!hasSubscribed) {
     publisher.on('error', (err) => {
       config.logger.error(`publisher error: ${err}`)
     })
     hasSubscribed = true
   }
-  await publisher.ping()
 
   let runningSubscriberId = 0
   const subscribers = new Map<number, IRedis>()
@@ -34,7 +33,7 @@ export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBase
     async sub(topic, callback) {
       const id = runningSubscriberId
       runningSubscriberId++
-      const subscriber = newRedis(config.redisUrl)
+      const subscriber = await newRedis(config.redisUrl)
       subscriber.on('error', (err) => {
         config.logger.error(`subscriber error: ${err}`)
       })

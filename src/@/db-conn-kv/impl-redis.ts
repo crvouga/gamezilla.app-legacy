@@ -20,9 +20,8 @@ let redis: IRedis
 
 export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
   const logger = Logger.prefix('redis', config.logger)
-  redis ??= newRedis(config.redisUrl)
 
-  await redis.ping()
+  redis ??= await newRedis(config.redisUrl)
 
   const SIMULATE_LATENCY = TimeSpan.milliseconds(3)
 

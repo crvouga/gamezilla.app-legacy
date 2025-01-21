@@ -44,25 +44,19 @@ const Fixture = async () => {
 }
 
 describe(import.meta.file, () => {
-  test('recording connected frontends', async () => {
+  test('recording connected clients', async () => {
     const f = await Fixture()
-
     const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
-
     const before = await f.ctx.wireSessionDb.findBySessionIds([sessionId])
-
     await f.update({}, [{ msg: { t: 'frontend-connected', clientId, sessionId } }])
-
     const after = await f.ctx.wireSessionDb.findBySessionIds([sessionId])
-
     const expected: WireSession = pipe(WireSession.init(sessionId), (x) => WireSession.addClientId(x, clientId))
-
     expect(before).toEqual(Ok([]))
     expect(after).toEqual(Ok([expected]))
   })
 
-  test('indexing frontends by user id', async () => {
+  test('indexing clients by user id', async () => {
     const f = await Fixture()
     const user = UserAccount.random()
     const clientId = ClientId.generate()

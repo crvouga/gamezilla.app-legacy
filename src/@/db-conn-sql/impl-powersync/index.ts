@@ -40,7 +40,14 @@ export const DbConnSql = (config: Config): IDbConnSql => {
       {
         onResult(results) {
           const parsedRows =
-            results.rows?._array.map(input.parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : [])) ?? []
+            results.rows?._array.flatMap((row) => {
+              const parsed = input.parser.parse(row)
+              if (isOk(parsed)) {
+                return [parsed.value]
+              }
+              console.error('failed to parse row', { row, parsed })
+              return []
+            }) ?? []
           input.onChange(parsedRows)
         },
       },

@@ -4,11 +4,11 @@ import { p } from '~/@/parser'
 
 export type PuzzleId = Brand<string, 'PuzzleId'>
 
-const namespace = 'flow-puzzle'
+const namespace = 'puzzle'
 const separator = ':'
 
-const is = (flowPuzzleId: unknown): flowPuzzleId is PuzzleId => {
-  return typeof flowPuzzleId === 'string'
+const is = (maybePuzzleId: unknown): maybePuzzleId is PuzzleId => {
+  return typeof maybePuzzleId === 'string' && maybePuzzleId.trim().length > 0
 }
 
 const parser = p.custom(is, 'Invalid flow puzzle id')

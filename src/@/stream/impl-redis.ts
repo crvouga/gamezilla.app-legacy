@@ -16,8 +16,7 @@ let redis: IRedis
 
 export const Stream = async <T>(config: Config<T>): Promise<IStream<T>> => {
   const logger = Logger.prefix('redis', config.logger)
-  redis ??= newRedis(config.redisUrl)
-  await redis.ping()
+  redis ??= await newRedis(config.redisUrl)
 
   return {
     async append(streamId, eventId, event) {
