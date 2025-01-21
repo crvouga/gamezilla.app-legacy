@@ -2,43 +2,49 @@ import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
 import { TranslatedText } from '~/@/l18n'
 
-export const ListItemButton = ({
-  label,
-  icon,
-  onClick,
-  color = 'default',
-  end,
-  className,
-}: {
+type Input = {
   className?: string
   icon: (input: { className: string }) => VDom
   end?: () => VDom
   label: TranslatedText
   onClick?: () => void
-  color?: 'default' | 'danger' | 'warning' | 'success' | 'inherit' | 'selected'
-}) => {
+  color?: Color
+}
+
+export const ListItemButton = (input: Input) => {
   return (
     <button
       type='button'
       role='button'
-      onClick={onClick}
-      aria-label={label}
-      name={label}
-      className={cn(
-        className,
-        'flex w-full shrink-0 items-center truncate p-4 text-lg font-bold',
-        color === 'warning' && 'text-orange-500',
-        color === 'danger' && 'text-red-500',
-      )}
+      onClick={input.onClick}
+      aria-label={input.label}
+      name={input.label}
+      className={cn(input.className, BASE_CLASS, toColorClass(input))}
     >
       <div className='flex flex-1 items-center gap-3 truncate'>
-        {icon({
-          className: 'h-6 w-6',
-        })}
+        {input.icon({ className: 'h-6 w-6' })}
 
-        {label}
+        {input.label}
       </div>
-      {end && <div className='shrink-0'>{end()}</div>}
+      {input.end && <div className='shrink-0'>{input.end()}</div>}
     </button>
   )
+}
+
+const BASE_CLASS = 'clickable flex w-full shrink-0 items-center truncate p-4 text-lg font-bold'
+
+type Color = 'default' | 'danger' | 'warning' | 'success' | 'inherit' | 'selected'
+
+const toColorClass = (input: Input) => {
+  switch (input.color ?? 'default') {
+    case 'warning': {
+      return 'text-orange-500'
+    }
+    case 'danger': {
+      return 'text-red-500'
+    }
+    default: {
+      return ''
+    }
+  }
 }

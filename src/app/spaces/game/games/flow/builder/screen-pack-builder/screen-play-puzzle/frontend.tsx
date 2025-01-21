@@ -11,11 +11,10 @@ import {
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameFrontendModule } from '../../../../@/architecture/game-frontend-v2'
 import { PlayMode } from '../../../@/play-mode'
-import { BoardLayout } from '../../../@/ui/layout'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
+import { BoardLayout } from '../../../@/ui/layout'
 import type { FrontendModule } from '../../types'
-import { Gutter } from '~/app/@/ui/gutter'
 
 export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
@@ -259,7 +258,6 @@ const ScreenPuzzleMore: Pick<FrontendModule, 'update' | 'View'> = {
               })
             }
           />
-          <Gutter variant='screen' />
         </Drawer>
       </>
     )
