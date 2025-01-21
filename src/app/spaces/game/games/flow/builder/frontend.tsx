@@ -8,17 +8,43 @@ import { ScreenPackBuilderFrontend } from './screen-pack-builder/frontend'
 import { ScreenPuzzleBuilderOpenFrontend } from './screen-puzzle-builder-open/frontend'
 import { ScreenPuzzleBuilderFrontend } from './screen-puzzle-builder/frontend'
 import { initFrontend, type FrontendModule } from './types'
+import { Eff } from '~/@/eff'
+import { FlowFrontendCmd } from '../@/frontend/cmd'
+import { Sub } from '~/@/sub'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
     { model: input.model },
     (model) => ScreenPackBuilderOpenFrontend.update({ ...input, model }),
-    (model) => ScreenPackBuilderFrontend.update({ ...input, model }),
     (model) => ScreenPuzzleBuilderFrontend.update({ ...input, model }),
     (model) => ScreenPuzzleBuilderOpenFrontend.update({ ...input, model }),
     (model) => ScreenMainMenuFrontend.update({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateBackButton({ ...input, model }),
+    (model) => {
+      if (!input.modelSpace.screenPackBuilder) {
+        return { model }
+      }
+      const updated = ScreenPackBuilderFrontend.update({
+        ...input,
+        modelSpace: input.modelSpace.screenPackBuilder,
+        model: model,
+        msg: input.msg?.t === 'got-screen-pack-builder-msg' ? input.msg.c : null,
+        msgBackend: input.msgBackend?.t === 'got-screen-pack-builder-msg' ? input.msgBackend.c : null,
+        msgSpace:
+          input.msgSpace?.t === 'got-screen-pack-builder-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
+      })
+      return {
+        model: {
+          ...model,
+          screenPackBuilder: updated,
+        },
+        eff: Eff.tag('got-screen-pack-builder-msg', updated.eff),
+        msgCmd: FlowFrontendCmd.tag('got-screen-pack-builder-msg', updated.msgCmd),
+        msgEvt: updated.msgEvt,
+        msgSpace: updated.msgSpace?.map((c) => ({ ...c, t: 'got-screen-pack-builder-msg', c })),
+      }
+    },
   )
 }
 
@@ -67,16 +93,26 @@ const View: FrontendModule['View'] = (input) => {
       return <ScreenPuzzleBuilderFrontend.View {...input} />
     }
 
-    case 'screen-pack-builder': {
-      return <ScreenPackBuilderFrontend.View {...input} />
-    }
-
     case 'screen-pack-builder-open': {
       return <ScreenPackBuilderOpenFrontend.View {...input} />
     }
 
     case 'screen-puzzle-builder-open': {
       return <ScreenPuzzleBuilderOpenFrontend.View {...input} />
+    }
+
+    case 'screen-pack-builder': {
+      if (!input.modelSpace.screenPackBuilder) {
+        return null
+      }
+      return (
+        <ScreenPackBuilderFrontend.View
+          {...input}
+          dispatch={(c) => input.dispatch({ t: 'got-screen-pack-builder-msg', c })}
+          model={input.model}
+          modelSpace={input.modelSpace.screenPackBuilder}
+        />
+      )
     }
   }
 }
@@ -90,9 +126,6 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
     case 'screen-main-menu': {
       return ScreenMainMenuFrontend.subscriptions(input)
     }
-    case 'screen-pack-builder': {
-      return ScreenPackBuilderFrontend.subscriptions(input)
-    }
     case 'screen-pack-builder-open': {
       return ScreenPackBuilderOpenFrontend.subscriptions(input)
     }
@@ -101,6 +134,15 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
     }
     case 'screen-puzzle-builder-open': {
       return ScreenPuzzleBuilderOpenFrontend.subscriptions(input)
+    }
+    case 'screen-pack-builder': {
+      if (!input.modelSpace.screenPackBuilder) {
+        return Sub.None
+      }
+      return Sub.tag(
+        'got-screen-pack-builder-msg',
+        ScreenPackBuilderFrontend.subscriptions({ ...input, modelSpace: input.modelSpace.screenPackBuilder }),
+      )
     }
   }
 }

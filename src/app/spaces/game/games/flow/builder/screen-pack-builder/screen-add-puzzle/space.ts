@@ -1,5 +1,5 @@
 import { Pack } from '../../../@/pack/pack'
-import { UpdateSpace } from '../../types'
+import { UpdateSpace } from '../types'
 
 const updates: UpdateSpace[] = []
 
@@ -10,15 +10,9 @@ const update: UpdateSpace = (input) => {
 updates.push((input) => {
   switch (input.msgSpace?.t) {
     case 'screen-pack-builder.screen-add-puzzle.puzzle-db-query-query-changed': {
-      if (!input.modelSpace.screenPackBuilder) {
-        return input.modelSpace
-      }
       return {
         ...input.modelSpace,
-        screenPackBuilder: {
-          ...input.modelSpace.screenPackBuilder,
-          screenAddPuzzlePuzzleDbQuery: input.msgSpace.query,
-        },
+        screenAddPuzzlePuzzleDbQuery: input.msgSpace.query,
       }
     }
     default: {
@@ -30,21 +24,16 @@ updates.push((input) => {
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
     case 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle': {
-      if (!modelSpace.screenPackBuilder) {
-        return modelSpace
-      }
       return {
         ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          pack: Pack.add(modelSpace.screenPackBuilder.pack, msgSpace.puzzle.id),
-          screen: {
-            t: 'screen-puzzle-grid',
-            slideIndex: 0,
-          },
-          opened: {
-            t: null,
-          },
+
+        pack: Pack.add(modelSpace.pack, msgSpace.puzzle.id),
+        screen: {
+          t: 'screen-puzzle-grid',
+          slideIndex: 0,
+        },
+        opened: {
+          t: null,
         },
       }
     }
@@ -57,19 +46,13 @@ updates.push(({ modelSpace, msgSpace }) => {
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
     case 'screen-pack-builder.screen-add-puzzle.user-clicked-close': {
-      if (!modelSpace.screenPackBuilder) {
-        return modelSpace
-      }
       return {
         ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          opened: {
-            t: null,
-          },
-          screen: {
-            t: 'screen-puzzle-grid',
-          },
+        opened: {
+          t: null,
+        },
+        screen: {
+          t: 'screen-puzzle-grid',
         },
       }
     }

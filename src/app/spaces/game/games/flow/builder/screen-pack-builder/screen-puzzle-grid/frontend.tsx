@@ -1,7 +1,7 @@
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { TopBar } from '~/app/@/ui'
 import { PackPuzzleGridUI } from '../../../@/pack/pack-puzzle-grid-ui'
-import type { FrontendModule } from '../../types'
+import type { FrontendModule } from '../types'
 import { ScreenPackBuilderSpace } from '../space'
 
 export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
@@ -19,7 +19,7 @@ export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
     }
   },
   View(input) {
-    const packBuilder = input.modelSpace.screenPackBuilder
+    const packBuilder = input.modelSpace
 
     if (!packBuilder) {
       return null
@@ -33,7 +33,7 @@ export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
               input.dispatch({
                 t: 'got-msg-space',
                 c: {
-                  t: 'user-clicked-back-button',
+                  t: 'screen-pack-builder.user-clicked-back-button',
                   userId: input.ctx.currentUserId,
                 },
               })

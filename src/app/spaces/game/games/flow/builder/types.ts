@@ -92,8 +92,8 @@ export type MsgFrontend =
   | ScreenPuzzleBuilderOpenTypes.MsgFrontend
   | ScreenPuzzleBuilderTypes.MsgFrontend
   | ScreenMainMenu.MsgFrontend
-  | ScreenPackBuilderTypes.MsgFrontend
   | ScreenPackBuilderOpenTypes.MsgFrontend
+  | { t: 'got-screen-pack-builder-msg'; c: ScreenPackBuilderTypes.MsgFrontend }
   | { t: 'got-msg-space'; c: MsgSpace }
   | { t: 'got-pack-db-query-msg'; c: PackDbQueryTypes.MsgFrontend }
   | { t: 'got-puzzle-db-query-msg'; c: PuzzleDbQueryTypes.MsgFrontend }
@@ -101,20 +101,20 @@ export type MsgFrontend =
 export type MsgBackend =
   | ScreenPuzzleBuilderOpenTypes.MsgBackend
   | ScreenPuzzleBuilderTypes.MsgBackend
-  | ScreenPackBuilderTypes.MsgBackend
   | ScreenPackBuilderOpenTypes.MsgBackend
+  | { t: 'got-screen-pack-builder-msg'; c: ScreenPackBuilderTypes.MsgBackend }
 
 export type MsgToBackend =
   | ScreenPuzzleBuilderTypes.MsgToBackend
   | ScreenPuzzleBuilderOpenTypes.MsgToBackend
-  | ScreenPackBuilderTypes.MsgToBackend
   | ScreenPackBuilderOpenTypes.MsgToBackend
+  | { t: 'got-screen-pack-builder-msg'; c: ScreenPackBuilderTypes.MsgToBackend }
 
 export type MsgToFrontend =
   | ScreenPuzzleBuilderTypes.MsgToFrontend
   | ScreenPuzzleBuilderOpenTypes.MsgToFrontend
-  | ScreenPackBuilderTypes.MsgToFrontend
   | ScreenPackBuilderOpenTypes.MsgToFrontend
+  | { t: 'got-screen-pack-builder-msg'; c: ScreenPackBuilderTypes.MsgToFrontend }
 
 //
 //
@@ -128,8 +128,11 @@ export const MsgSpace = p.or(
   ScreenMainMenu.MsgSpace,
   ScreenPuzzleBuilderTypes.MsgSpace,
   ScreenPuzzleBuilderOpenTypes.MsgSpace,
-  ScreenPackBuilderTypes.MsgSpace,
   ScreenPackBuilderOpenTypes.MsgSpace,
+  p.obj({
+    t: p.l('got-screen-pack-builder-msg'),
+    c: ScreenPackBuilderTypes.MsgSpace,
+  }),
   p.obj({
     t: p.l('user-clicked-back-button'),
     userId: UserId,

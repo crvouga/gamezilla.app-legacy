@@ -1,11 +1,13 @@
+import { Sub } from '~/@/sub'
 import { Button, IconArrowLeftOnRect } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import type { FrontendModule } from '../types'
 import { EditPackNameFrontend } from './edit-pack-name/frontend'
 import { ScreenAddPuzzle } from './screen-add-puzzle/frontend'
 import { ScreenPuzzlePlay } from './screen-play-puzzle/frontend'
 import { ScreenPuzzleGrid } from './screen-puzzle-grid/frontend'
-import { Sub } from '~/@/sub'
+import type { FrontendModule } from './types'
+import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
+import { PuzzleDbQueryFrontend } from '../../@/puzzle/puzzle-db-query/frontend'
 
 export const ScreenPackBuilderFrontend: Pick<FrontendModule, 'update' | 'View' | 'subscriptions'> = {
   update(input) {
@@ -17,6 +19,7 @@ export const ScreenPackBuilderFrontend: Pick<FrontendModule, 'update' | 'View' |
       (model) => ScreenPuzzlePlay.update({ ...input, model }),
       (model) => EditPackName.update({ ...input, model }),
       (model) => updateRecordPack({ ...input, model }),
+      (model) => updateFromMsg({ ...input, model }),
     )
   },
 
@@ -25,7 +28,7 @@ export const ScreenPackBuilderFrontend: Pick<FrontendModule, 'update' | 'View' |
   },
 
   View(input) {
-    switch (input.modelSpace.screenPackBuilder?.screen.t) {
+    switch (input.modelSpace?.screen.t) {
       case 'screen-add-puzzle': {
         return <ScreenAddPuzzle.View {...input} />
       }
@@ -45,6 +48,25 @@ export const ScreenPackBuilderFrontend: Pick<FrontendModule, 'update' | 'View' |
   },
 }
 
+const updateFromMsg: FrontendModule['update'] = (input) => {
+  switch (input.msg?.t) {
+    case 'got-msg-space': {
+      return { model: input.model, msgSpace: [input.msg.c] }
+    }
+    case 'got-pack-db-query-msg': {
+      return { model: input.model, msgCmd: [PackDbQueryFrontend.gotMsg(input.msg.c)] }
+    }
+    case 'got-puzzle-db-query-msg': {
+      return { model: input.model, msgCmd: [PuzzleDbQueryFrontend.gotMsg(input.msg.c)] }
+    }
+    default: {
+      return {
+        model: input.model,
+      }
+    }
+  }
+}
+
 const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
     return { model: input.model }
@@ -60,7 +82,7 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
           input.dispatch({
             t: 'got-msg-space',
             c: {
-              t: 'user-clicked-back-button',
+              t: 'screen-pack-builder.user-clicked-back-button',
               userId: input.ctx.currentUserId,
             },
           })
@@ -72,14 +94,14 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
 
 const EditPackName: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
-    if (!input.modelSpace.screenPackBuilder) {
+    if (!input.modelSpace) {
       return {
         model: input.model,
       }
     }
     const updated = EditPackNameFrontend.update({
       ...input,
-      modelSpace: input.modelSpace.screenPackBuilder.editPackName,
+      modelSpace: input.modelSpace.editPackName,
       msg: input.msgSpace?.t === 'got-edit-pack-name-msg' ? input.msgSpace.c : null,
       msgSpace: input.msgSpace?.t === 'got-edit-pack-name-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     })
@@ -92,15 +114,15 @@ const EditPackName: Pick<FrontendModule, 'update' | 'View'> = {
     }
   },
   View(input) {
-    if (!input.modelSpace.screenPackBuilder) {
+    if (!input.modelSpace) {
       return null
     }
     return (
       <>
         <EditPackNameFrontend.ViewDrawer
           ctx={input.ctx}
-          model={input.modelSpace.screenPackBuilder.editPackName}
-          modelSpace={input.modelSpace.screenPackBuilder.editPackName}
+          model={input.modelSpace.editPackName}
+          modelSpace={input.modelSpace.editPackName}
           dispatch={(c) =>
             input.dispatch({
               t: 'got-msg-space',
@@ -118,14 +140,14 @@ const EditPackName: Pick<FrontendModule, 'update' | 'View'> = {
 
 const updateRecordPack: FrontendModule['update'] = (input) => {
   const hasMsg = input.msgSpace || input.msgCmd || input.msgEvt || input.msgBackend || input.msg
-  if (hasMsg && input.modelSpace.screenPackBuilder?.pack) {
+  if (hasMsg && input.modelSpace?.pack) {
     return {
       model: input.model,
       msgCmd: [
         {
           t: 'flow-cmd.add-packs',
           packs: {
-            [input.modelSpace.screenPackBuilder.pack.id]: input.modelSpace.screenPackBuilder.pack,
+            [input.modelSpace.pack.id]: input.modelSpace.pack,
           },
           causedBy: input,
         },

@@ -1,3 +1,4 @@
+import { isErr } from '~/@/result'
 import { FlowSpaceCtx } from '../@/space/ctx'
 import { ScreenMainMenuSpace } from './screen-main-menu/space'
 import { ScreenPackBuilderOpenSpace } from './screen-pack-builder-open/space'
@@ -14,6 +15,18 @@ const initSpace = (_input: { ctx: FlowSpaceCtx }): ModelSpace => {
     screenPuzzleBuilder: null,
     screenPackBuilderOpen: null,
   }
+}
+
+const updates: UpdateSpace[] = [
+  ScreenPuzzleBuilderSpace.updateSpace,
+  ScreenPuzzleBuilderOpenSpace.updateSpace,
+
+  ScreenPackBuilderOpenSpace.update,
+  ScreenMainMenuSpace.update,
+]
+
+const updateSpace: UpdateSpace = (input) => {
+  return updates.reduce((acc, update) => update({ ...input, modelSpace: acc }), input.modelSpace)
 }
 
 const toPreviousScreen = (screen: Screen): Screen => {
@@ -46,7 +59,7 @@ const toPreviousScreen = (screen: Screen): Screen => {
   }
 }
 
-const updateBackButton: UpdateSpace = (input) => {
+updates.push((input) => {
   switch (input.msgSpace.t) {
     case 'user-clicked-back-button': {
       return {
@@ -58,20 +71,70 @@ const updateBackButton: UpdateSpace = (input) => {
       return input.modelSpace
     }
   }
-}
+})
 
-const updates: UpdateSpace[] = [
-  ScreenPuzzleBuilderSpace.updateSpace,
-  ScreenPuzzleBuilderOpenSpace.updateSpace,
-  ScreenPackBuilderSpace.update,
-  ScreenPackBuilderOpenSpace.update,
-  ScreenMainMenuSpace.update,
-  updateBackButton,
-]
+updates.push(({ modelSpace, msgSpace }) => {
+  switch (msgSpace.t) {
+    case 'create-new-pack.user-created-pack': {
+      if (isErr(msgSpace.created)) {
+        return modelSpace
+      }
 
-const updateSpace: UpdateSpace = (input) => {
-  return updates.reduce((acc, update) => update({ ...input, modelSpace: acc }), input.modelSpace)
-}
+      const modelSpaceNew: ModelSpace = {
+        ...modelSpace,
+        screen: {
+          t: 'screen-pack-builder',
+        },
+        screenPackBuilder: ScreenPackBuilderSpace.initSpace({
+          pack: msgSpace.created.value,
+        }),
+      }
+
+      return modelSpaceNew
+    }
+    default: {
+      return modelSpace
+    }
+  }
+})
+
+updates.push((input) => {
+  switch (input.msgSpace.t) {
+    case 'got-screen-pack-builder-msg': {
+      if (!input.modelSpace.screenPackBuilder) {
+        return input.modelSpace
+      }
+      const updated = ScreenPackBuilderSpace.updateSpace({
+        ctx: input.ctx,
+        modelSpace: input.modelSpace.screenPackBuilder,
+        msgSpace: input.msgSpace.c,
+      })
+      const modelNew: ModelSpace = {
+        ...input.modelSpace,
+        screenPackBuilder: updated,
+      }
+
+      const msg = updated.msgs?.[0]
+
+      switch (msg?.t) {
+        case 'exit-pack-builder': {
+          return {
+            ...modelNew,
+            screen: {
+              t: 'screen-pack-builder-open',
+            },
+          }
+        }
+        default: {
+          return modelNew
+        }
+      }
+    }
+    default: {
+      return input.modelSpace
+    }
+  }
+})
 
 export const BuilderSpace = {
   initSpace,

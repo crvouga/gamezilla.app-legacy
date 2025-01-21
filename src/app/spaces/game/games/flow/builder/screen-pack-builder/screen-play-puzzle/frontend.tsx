@@ -14,7 +14,7 @@ import { PlayMode } from '../../../@/play-mode'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
 import { BoardLayout } from '../../../@/ui/layout'
-import type { FrontendModule } from '../../types'
+import type { FrontendModule } from '../types'
 
 export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
@@ -31,19 +31,15 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
           }
 
           case 'screen-pack-builder.got-flow-play-msg': {
-            const playMode =
-              input.modelSpace.screenPackBuilder?.screen.t === 'screen-puzzle'
-                ? input.modelSpace.screenPackBuilder.screen.play
-                : null
+            const playMode = input.modelSpace?.screen.t === 'screen-puzzle' ? input.modelSpace.screen.play : null
 
             if (!playMode) {
               return { model }
             }
 
             const flowPuzzle: Puzzle | null =
-              input.modelSpace.screenPackBuilder?.screen.t === 'screen-puzzle' &&
-              input.modelSpace.screenPackBuilder.screen.puzzleResult.t === 'got'
-                ? input.modelSpace.screenPackBuilder.screen.puzzleResult.c
+              input.modelSpace?.screen.t === 'screen-puzzle' && input.modelSpace.screen.puzzleResult.t === 'got'
+                ? input.modelSpace.screen.puzzleResult.c
                 : null
 
             if (!flowPuzzle) {
@@ -93,16 +89,16 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
   },
 
   View(input) {
-    if (!input.modelSpace.screenPackBuilder) {
+    if (!input.modelSpace) {
       return null
     }
 
-    if (input.modelSpace.screenPackBuilder.screen.t !== 'screen-puzzle') {
+    if (input.modelSpace.screen.t !== 'screen-puzzle') {
       return null
     }
 
-    const pack = input.modelSpace.screenPackBuilder.pack
-    const screen = input.modelSpace.screenPackBuilder.screen
+    const pack = input.modelSpace.pack
+    const screen = input.modelSpace.screen
 
     const previousPuzzleId = pack.puzzleIds[screen.puzzleIndex - 1]
     const previousPuzzle = previousPuzzleId ? input.ctx.puzzles[previousPuzzleId] : null
@@ -204,11 +200,11 @@ const ScreenPuzzleMore: Pick<FrontendModule, 'update' | 'View'> = {
   View(input) {
     const { dispatch, ctx, modelSpace } = input
 
-    if (!modelSpace.screenPackBuilder) {
+    if (!modelSpace) {
       return null
     }
 
-    const screen = modelSpace.screenPackBuilder.screen
+    const screen = modelSpace.screen
 
     if (screen.t !== 'screen-puzzle') {
       return null

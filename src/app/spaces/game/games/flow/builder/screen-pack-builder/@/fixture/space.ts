@@ -4,9 +4,8 @@ import { Pack } from '../../../../@/pack/pack'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { Solutions } from '../../../../@/solutions/solutions'
 import { FlowSpaceCtx } from '../../../../@/space/ctx'
-import { BuilderSpace } from '../../../space'
-import type { ModelSpace, MsgSpace } from '../../../types'
 import { ScreenPackBuilderSpace } from '../../space'
+import type { ModelSpace, MsgSpace, UpdateSpace } from '../../types'
 
 export const ScreenPackBuilderSpaceFixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Puzzle }) => {
   const f = await SpaceGameSpaceFixture()
@@ -38,23 +37,23 @@ export const ScreenPackBuilderSpaceFixture = async (input?: { puzzleCount?: numb
     createdBy,
     puzzleIds: puzzles.map((puzzle) => puzzle.id),
   })
-  const init = BuilderSpace.initSpace({ ctx })
-  const modelSpace: ModelSpace = {
-    ...init,
-    screenPackBuilder: ScreenPackBuilderSpace.init({ pack }),
-  }
 
-  const updateModelSpace = (msgs: MsgSpace[]): ModelSpace => {
-    return msgs.reduce(
-      (modelSpace, msgSpace) => ScreenPackBuilderSpace.update({ ctx, modelSpace, msgSpace }),
-      modelSpace,
-    )
+  const modelSpace: ModelSpace = ScreenPackBuilderSpace.initSpace({ pack })
+
+  const update = (msgs: MsgSpace[]) => {
+    return msgs.reduce<ReturnType<UpdateSpace>>((acc, msgSpace) => {
+      const updated = ScreenPackBuilderSpace.updateSpace({ ctx, modelSpace: acc, msgSpace })
+      return {
+        ...updated,
+        msgs: [...(acc.msgs ?? []), ...(updated.msgs ?? [])],
+      }
+    }, modelSpace)
   }
 
   return {
     ...f,
-    updateModelSpace,
-    currentUserId: createdBy,
+    update,
+    createdBy,
     pack,
     puzzles,
     modelSpace,

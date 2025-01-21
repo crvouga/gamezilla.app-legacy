@@ -1,11 +1,11 @@
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { TopBar } from '~/app/@/ui'
+import { FormBottomButtons } from '~/app/@/ui/form-button-buttons'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { PuzzleDbQueryFrontend } from '../../../@/puzzle/puzzle-db-query/frontend'
 import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
-import type { ModelSpace, FrontendModule } from '../../types'
 import { ScreenPackBuilderSpace } from '../space'
-import { FormBottomButtons } from '~/app/@/ui/form-button-buttons'
+import type { FrontendModule, ModelSpace } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -15,11 +15,12 @@ const update: FrontendModule['update'] = (input) => {
         model: input.model,
         msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.puzzle-added'))],
         async eff(dispatch) {
-          const modelSpace = ScreenPackBuilderSpace.update({ ...input, msgSpace })
+          const modelSpace = ScreenPackBuilderSpace.updateSpace({
+            ...input,
+            msgSpace,
+          })
 
-          if (!modelSpace.screenPackBuilder) return
-
-          const saved = await input.ctx.packDb.put(modelSpace.screenPackBuilder.pack)
+          const saved = await input.ctx.packDb.put(modelSpace.pack)
 
           dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.saved-pack', saved } })
         },
@@ -40,7 +41,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const toQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): PuzzleDbQuery => {
   return (
-    input.modelSpace.screenPackBuilder?.screenAddPuzzlePuzzleDbQuery ?? {
+    input.modelSpace?.screenAddPuzzlePuzzleDbQuery ?? {
       order: {
         createdAt: 'asc',
       },

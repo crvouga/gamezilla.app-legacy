@@ -10,7 +10,7 @@ const updateSpaceMain: UpdateSpace = ({ modelSpace, msgSpace }) => {
         screen: {
           t: 'screen-pack-builder',
         },
-        screenPackBuilder: ScreenPackBuilderSpace.init({
+        screenPackBuilder: ScreenPackBuilderSpace.initSpace({
           pack: msgSpace.pack,
         }),
       }

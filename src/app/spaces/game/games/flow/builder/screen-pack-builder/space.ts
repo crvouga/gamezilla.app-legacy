@@ -1,14 +1,11 @@
-import { isErr } from '~/@/result'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { PlayMode } from '../../@/play-mode'
-import type { UpdateSpace } from '../types'
-import * as ParentTypes from '../types'
 import { EditPackNameSpace } from './edit-pack-name/space'
-import type { ModelSpace } from './types'
 import { ScreenAddPuzzleSpace } from './screen-add-puzzle/space'
+import type { ModelSpace, UpdateSpace } from './types'
 
-const init = ({ pack }: { pack: Pack }): ModelSpace => {
+const initSpace = ({ pack }: { pack: Pack }): ModelSpace => {
   return {
     screenAddPuzzlePuzzleDbQuery: null,
     editPackName: EditPackNameSpace.init({ pack }),
@@ -22,34 +19,27 @@ const init = ({ pack }: { pack: Pack }): ModelSpace => {
 
 const updates: UpdateSpace[] = []
 
-const update: UpdateSpace = (input) => {
+const updateSpace: UpdateSpace = (input) => {
   const { ctx, msgSpace, modelSpace } = input
   return updates.reduce((modelSpace, updateSpace) => updateSpace({ ctx, msgSpace, modelSpace }), modelSpace)
 }
 
 updates.push(ScreenAddPuzzleSpace.update)
 
-updates.push(({ modelSpace, msgSpace }) => {
-  switch (msgSpace.t) {
-    case 'create-new-pack.user-created-pack': {
-      if (isErr(msgSpace.created)) {
-        return modelSpace
+updates.push((input) => {
+  switch (input.msgSpace.t) {
+    case 'screen-pack-builder.user-clicked-back-button': {
+      return {
+        ...input.modelSpace,
+        msgs: [
+          {
+            t: 'exit-pack-builder',
+          },
+        ],
       }
-
-      const modelSpaceNew: ParentTypes.ModelSpace = {
-        ...modelSpace,
-        screen: {
-          t: 'screen-pack-builder',
-        },
-        screenPackBuilder: init({
-          pack: msgSpace.created.value,
-        }),
-      }
-
-      return modelSpaceNew
     }
     default: {
-      return modelSpace
+      return input.modelSpace
     }
   }
 })
@@ -57,16 +47,10 @@ updates.push(({ modelSpace, msgSpace }) => {
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
     case 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button': {
-      if (!modelSpace.screenPackBuilder) {
-        return modelSpace
-      }
       return {
         ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          screen: {
-            t: 'screen-add-puzzle',
-          },
+        screen: {
+          t: 'screen-add-puzzle',
         },
       }
     }
@@ -79,11 +63,7 @@ updates.push(({ modelSpace, msgSpace }) => {
 updates.push(({ modelSpace, msgSpace, ctx }) => {
   switch (msgSpace.t) {
     case 'screen-pack-builder.user-clicked-pack-item': {
-      if (!modelSpace.screenPackBuilder) {
-        return modelSpace
-      }
-
-      const puzzleId = modelSpace.screenPackBuilder.pack.puzzleIds[msgSpace.puzzleIndex]
+      const puzzleId = modelSpace.pack.puzzleIds[msgSpace.puzzleIndex]
 
       if (msgSpace.puzzleResult.t === 'got' && msgSpace.puzzleResult.c.id !== puzzleId) {
         return modelSpace
@@ -91,23 +71,20 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
 
       return {
         ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          screen: {
-            opened: null,
-            t: 'screen-puzzle',
-            puzzleIndex: msgSpace.puzzleIndex,
-            puzzleResult: msgSpace.puzzleResult,
-            play:
-              msgSpace.puzzleResult.t === 'got'
-                ? PlayMode.init({
-                    ctx: PlayMode.initCtx({
-                      flow: msgSpace.puzzleResult.c.flow,
-                      solutions: ctx.solutions,
-                    }),
-                  })
-                : null,
-          },
+        screen: {
+          opened: null,
+          t: 'screen-puzzle',
+          puzzleIndex: msgSpace.puzzleIndex,
+          puzzleResult: msgSpace.puzzleResult,
+          play:
+            msgSpace.puzzleResult.t === 'got'
+              ? PlayMode.init({
+                  ctx: PlayMode.initCtx({
+                    flow: msgSpace.puzzleResult.c.flow,
+                    solutions: ctx.solutions,
+                  }),
+                })
+              : null,
         },
       }
     }
@@ -121,14 +98,7 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
     case 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle': {
-      if (!modelSpace.screenPackBuilder) {
-        return modelSpace
-      }
-
-      const puzzleIndex =
-        modelSpace.screenPackBuilder.screen.t === 'screen-puzzle'
-          ? modelSpace.screenPackBuilder.screen.puzzleIndex
-          : null
+      const puzzleIndex = modelSpace.screen.t === 'screen-puzzle' ? modelSpace.screen.puzzleIndex : null
 
       if (puzzleIndex === null) {
         return modelSpace
@@ -138,12 +108,9 @@ updates.push(({ modelSpace, msgSpace }) => {
 
       return {
         ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          slideIndex: slideIndex,
-          screen: {
-            t: 'screen-puzzle-grid',
-          },
+        slideIndex: slideIndex,
+        screen: {
+          t: 'screen-puzzle-grid',
         },
       }
     }
@@ -157,15 +124,12 @@ updates.push(({ modelSpace, msgSpace }) => {
 updates.push((input) => {
   switch (input.msgSpace.t) {
     case 'screen-pack-builder.user-changed-slide': {
-      if (!input.modelSpace.screenPackBuilder) {
+      if (!input.modelSpace) {
         return input.modelSpace
       }
       return {
         ...input.modelSpace,
-        screenPackBuilder: {
-          ...input.modelSpace.screenPackBuilder,
-          slideIndex: input.msgSpace.newSlideIndex,
-        },
+        slideIndex: input.msgSpace.newSlideIndex,
       }
     }
     default: {
@@ -177,15 +141,15 @@ updates.push((input) => {
 updates.push(({ modelSpace, msgSpace, ctx }) => {
   switch (msgSpace.t) {
     case 'screen-pack-builder.got-flow-play-msg': {
-      if (!modelSpace.screenPackBuilder) {
+      if (!modelSpace) {
         return modelSpace
       }
 
-      if (modelSpace.screenPackBuilder.screen.t !== 'screen-puzzle') {
+      if (modelSpace.screen.t !== 'screen-puzzle') {
         return modelSpace
       }
 
-      const screen = modelSpace.screenPackBuilder.screen
+      const screen = modelSpace.screen
 
       if (!screen.play) {
         return modelSpace
@@ -205,15 +169,12 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
 
       return {
         ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          screen: {
-            opened: null,
-            t: 'screen-puzzle',
-            puzzleIndex: modelSpace.screenPackBuilder.screen.puzzleIndex,
-            puzzleResult: modelSpace.screenPackBuilder.screen.puzzleResult,
-            play: updatedPlay.model,
-          },
+        screen: {
+          opened: null,
+          t: 'screen-puzzle',
+          puzzleIndex: modelSpace.screen.puzzleIndex,
+          puzzleResult: modelSpace.screen.puzzleResult,
+          play: updatedPlay.model,
         },
       }
     }
@@ -224,7 +185,7 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
 })
 
 updates.push(({ modelSpace, msgSpace, ctx }) => {
-  if (modelSpace.screenPackBuilder?.screen.t !== 'screen-puzzle') {
+  if (modelSpace?.screen.t !== 'screen-puzzle') {
     return modelSpace
   }
 
@@ -232,7 +193,7 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
     case 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle': {
       const doesPackIncludePuzzle =
         msgSpace.nextPuzzleResult.t === 'got'
-          ? modelSpace.screenPackBuilder.pack.puzzleIds.includes(msgSpace.nextPuzzleResult.c.id)
+          ? modelSpace.pack.puzzleIds.includes(msgSpace.nextPuzzleResult.c.id)
           : false
 
       if (!doesPackIncludePuzzle) {
@@ -241,27 +202,20 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
 
       return {
         ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          screen: {
-            t: 'screen-puzzle',
-            opened: null,
-            puzzleIndex: clamp(
-              modelSpace.screenPackBuilder.screen.puzzleIndex + 1,
-              0,
-              modelSpace.screenPackBuilder.pack.puzzleIds.length - 1,
-            ),
-            play:
-              msgSpace.nextPuzzleResult.t === 'got'
-                ? PlayMode.init({
-                    ctx: PlayMode.initCtx({
-                      flow: msgSpace.nextPuzzleResult.c.flow,
-                      solutions: ctx.solutions,
-                    }),
-                  })
-                : modelSpace.screenPackBuilder.screen.play,
-            puzzleResult: msgSpace.nextPuzzleResult,
-          },
+        screen: {
+          t: 'screen-puzzle',
+          opened: null,
+          puzzleIndex: clamp(modelSpace.screen.puzzleIndex + 1, 0, modelSpace.pack.puzzleIds.length - 1),
+          play:
+            msgSpace.nextPuzzleResult.t === 'got'
+              ? PlayMode.init({
+                  ctx: PlayMode.initCtx({
+                    flow: msgSpace.nextPuzzleResult.c.flow,
+                    solutions: ctx.solutions,
+                  }),
+                })
+              : modelSpace.screen.play,
+          puzzleResult: msgSpace.nextPuzzleResult,
         },
       }
     }
@@ -273,7 +227,7 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
 })
 
 updates.push(({ modelSpace, msgSpace, ctx }) => {
-  if (modelSpace.screenPackBuilder?.screen.t !== 'screen-puzzle') {
+  if (modelSpace?.screen.t !== 'screen-puzzle') {
     return modelSpace
   }
 
@@ -281,34 +235,27 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
     case 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
       const doesPackIncludePuzzle =
         msgSpace.previousPuzzleResult.t === 'got'
-          ? modelSpace.screenPackBuilder.pack.puzzleIds.includes(msgSpace.previousPuzzleResult.c.id)
+          ? modelSpace.pack.puzzleIds.includes(msgSpace.previousPuzzleResult.c.id)
           : false
       if (!doesPackIncludePuzzle) {
         return modelSpace
       }
       return {
         ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          screen: {
-            t: 'screen-puzzle',
-            opened: null,
-            puzzleIndex: clamp(
-              modelSpace.screenPackBuilder.screen.puzzleIndex - 1,
-              0,
-              modelSpace.screenPackBuilder.pack.puzzleIds.length - 1,
-            ),
-            play:
-              msgSpace.previousPuzzleResult.t === 'got'
-                ? PlayMode.init({
-                    ctx: PlayMode.initCtx({
-                      flow: msgSpace.previousPuzzleResult.c.flow,
-                      solutions: ctx.solutions,
-                    }),
-                  })
-                : modelSpace.screenPackBuilder.screen.play,
-            puzzleResult: msgSpace.previousPuzzleResult,
-          },
+        screen: {
+          t: 'screen-puzzle',
+          opened: null,
+          puzzleIndex: clamp(modelSpace.screen.puzzleIndex - 1, 0, modelSpace.pack.puzzleIds.length - 1),
+          play:
+            msgSpace.previousPuzzleResult.t === 'got'
+              ? PlayMode.init({
+                  ctx: PlayMode.initCtx({
+                    flow: msgSpace.previousPuzzleResult.c.flow,
+                    solutions: ctx.solutions,
+                  }),
+                })
+              : modelSpace.screen.play,
+          puzzleResult: msgSpace.previousPuzzleResult,
         },
       }
     }
@@ -321,32 +268,26 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
     case 'screen-pack-builder.puzzle-screen.user-clicked-more-button': {
-      if (!modelSpace.screenPackBuilder) {
+      if (!modelSpace) {
         return modelSpace
       }
       return {
         ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          screen: {
-            ...modelSpace.screenPackBuilder.screen,
-            opened: 'more',
-          },
+        screen: {
+          ...modelSpace.screen,
+          opened: 'more',
         },
       }
     }
     case 'screen-pack-builder.puzzle-screen.user-closed-more-drawer': {
-      if (!modelSpace.screenPackBuilder) {
+      if (!modelSpace) {
         return modelSpace
       }
       return {
         ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          screen: {
-            ...modelSpace.screenPackBuilder.screen,
-            opened: null,
-          },
+        screen: {
+          ...modelSpace.screen,
+          opened: null,
         },
       }
     }
@@ -363,22 +304,19 @@ const clamp = (value: number, min: number, max: number): number => {
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
     case 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button': {
-      if (!modelSpace.screenPackBuilder) {
+      if (!modelSpace) {
         return modelSpace
       }
 
-      const pack = modelSpace.screenPackBuilder.pack
+      const pack = modelSpace.pack
 
       const packNew = Pack.remove(pack, msgSpace.puzzleIndex)
 
       return {
         ...modelSpace,
-        screenPackBuilder: {
-          ...modelSpace.screenPackBuilder,
-          pack: packNew,
-          screen: {
-            t: 'screen-puzzle-grid',
-          },
+        pack: packNew,
+        screen: {
+          t: 'screen-puzzle-grid',
         },
       }
     }
@@ -389,19 +327,13 @@ updates.push(({ modelSpace, msgSpace }) => {
 })
 
 updates.push((input) => {
-  if (!input.modelSpace.screenPackBuilder) {
+  if (!input.modelSpace) {
     return input.modelSpace
   }
 
   return {
     ...input.modelSpace,
-    screenPackBuilder: {
-      ...input.modelSpace.screenPackBuilder,
-      slideIndex: PackPuzzleGridUI.clampSlideIndex(
-        input.modelSpace.screenPackBuilder.slideIndex,
-        input.modelSpace.screenPackBuilder.pack.puzzleIds.length,
-      ),
-    },
+    slideIndex: PackPuzzleGridUI.clampSlideIndex(input.modelSpace.slideIndex, input.modelSpace.pack.puzzleIds.length),
   }
 })
 
@@ -411,6 +343,6 @@ const toSlideIndex = (modelSpace?: ModelSpace | null | undefined): number => {
 
 export const ScreenPackBuilderSpace = {
   toSlideIndex,
-  init,
-  update,
+  initSpace,
+  updateSpace,
 }
