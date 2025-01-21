@@ -83,7 +83,7 @@ services:
     image: journeyapps/powersync-service:latest
     command: ['start', '-r', 'unified']
     volumes:
-      - ../../src/powersync:/powersync
+      - ../../src/service-powersync:/powersync
     environment:
       POWERSYNC_CONFIG_PATH: /powersync/config.yaml
       PS_POSTGRES_STORAGE_DATABASE_URL: ${PS_POSTGRES_STORAGE_DATABASE_URL}
