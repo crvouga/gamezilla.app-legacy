@@ -41,14 +41,14 @@ describe(import.meta.file, () => {
     const exitButton = r.getByRole('button', f.ctx.t('app.exit'))
     exitButton?.click()
     const msg = await r.msgs.once()
-    expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-exit-pack-button' } })
+    expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-exit-screen-open-pack' } })
   })
 
   it('should exit to pack list on exit button pack click', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msg: { t: 'got-msg-space', c: { t: 'user-clicked-exit-pack-button' } },
+        msg: { t: 'got-msg-space', c: { t: 'user-clicked-exit-screen-open-pack' } },
       },
     ])
     expect(output.modelSpace.screen.t).toBe('screen-select-pack')
@@ -56,7 +56,7 @@ describe(import.meta.file, () => {
 
   it('should play nav back sound on exit', async () => {
     const f = await Fixture()
-    const output = f.update(f.initial, [{ msgSpace: withEventMeta({ t: 'user-clicked-exit-pack-button' }) }])
+    const output = f.update(f.initial, [{ msgSpace: withEventMeta({ t: 'user-clicked-exit-screen-open-pack' }) }])
     expect(didPlaySound(output)).toBe(true)
   })
 
@@ -67,7 +67,7 @@ describe(import.meta.file, () => {
         msg: {
           t: 'got-msg-space',
           c: {
-            t: 'user-clicked-open-puzzle-grid-item',
+            t: 'user-clicked-open-screen-play-puzzle',
             flowPuzzle: { t: 'got', c: f.puzzle },
             puzzleIndex: 0,
           },
@@ -88,7 +88,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgSpace: withEventMeta({
-          t: 'user-clicked-open-puzzle-grid-item',
+          t: 'user-clicked-open-screen-play-puzzle',
           flowPuzzle: { t: 'got', c: f.puzzle },
           puzzleIndex: 0,
         }),

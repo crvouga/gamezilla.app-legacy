@@ -8,14 +8,14 @@ import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
-    case 'user-clicked-exit-pack-button': {
+    case 'user-clicked-exit-screen-open-pack': {
       return {
         model: input.model,
         msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       }
     }
 
-    case 'user-clicked-open-puzzle-grid-item': {
+    case 'user-clicked-open-screen-play-puzzle': {
       return {
         model: input.model,
         msgCmd: [playSound(APP_SOUND.navForwardMin)],
@@ -56,7 +56,9 @@ const View: FrontendModule['View'] = (input) => {
       <TopBar
         ctx={input.ctx}
         onBack={
-          isSpectating ? false : () => input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-exit-pack-button' } })
+          isSpectating
+            ? false
+            : () => input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-exit-screen-open-pack' } })
         }
         title={input.ctx.t('flow-pack-name', pack.name)}
       />
@@ -96,7 +98,7 @@ const View: FrontendModule['View'] = (input) => {
                   input.dispatch({
                     t: 'got-msg-space',
                     c: {
-                      t: 'user-clicked-open-puzzle-grid-item',
+                      t: 'user-clicked-open-screen-play-puzzle',
                       flowPuzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
                       puzzleIndex: inputCell.index,
                     },

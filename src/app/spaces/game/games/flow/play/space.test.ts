@@ -29,7 +29,7 @@ describe(import.meta.file, () => {
     ])
     const after = f.update(before, [
       {
-        t: 'user-clicked-exit-pack-button',
+        t: 'user-clicked-exit-screen-open-pack',
       },
     ])
     expect(before.screen.t).toEqual('screen-select-puzzle')
@@ -52,7 +52,7 @@ describe(import.meta.file, () => {
 
     const after = f.update(before, [
       {
-        t: 'user-clicked-open-puzzle-grid-item',
+        t: 'user-clicked-open-screen-play-puzzle',
         flowPuzzle: {
           t: 'got',
           c: puzzle,

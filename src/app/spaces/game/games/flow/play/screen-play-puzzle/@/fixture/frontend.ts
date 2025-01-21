@@ -51,7 +51,7 @@ export const FixtureScreenPlayPuzzleFrontend = async () => {
       msg: {
         t: 'got-msg-space',
         c: {
-          t: 'user-clicked-open-puzzle-grid-item',
+          t: 'user-clicked-open-screen-play-puzzle',
           flowPuzzle: { t: 'got', c: puzzle },
           puzzleIndex,
         },

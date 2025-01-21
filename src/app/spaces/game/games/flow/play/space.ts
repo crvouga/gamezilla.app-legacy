@@ -31,7 +31,7 @@ const update: SpaceModule['updateSpace'] = ({ modelSpace, msgSpace, ctx }) => {
         },
       }
     }
-    case 'user-clicked-exit-pack-button': {
+    case 'user-clicked-exit-screen-open-pack': {
       return {
         ...modelSpace,
         screen: {
@@ -39,7 +39,7 @@ const update: SpaceModule['updateSpace'] = ({ modelSpace, msgSpace, ctx }) => {
         },
       }
     }
-    case 'user-clicked-open-puzzle-grid-item': {
+    case 'user-clicked-open-screen-play-puzzle': {
       switch (modelSpace.screen.t) {
         case 'screen-select-puzzle': {
           return {

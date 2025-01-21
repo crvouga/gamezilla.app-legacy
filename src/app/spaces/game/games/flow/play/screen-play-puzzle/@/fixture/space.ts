@@ -39,7 +39,7 @@ export const ScreenPuzzlePlaySpaceFixture = async (input?: { flow?: Variant.Mode
       pack,
     },
     {
-      t: 'user-clicked-open-puzzle-grid-item',
+      t: 'user-clicked-open-screen-play-puzzle',
       flowPuzzle: { t: 'got', c: puzzle },
       puzzleIndex,
     },

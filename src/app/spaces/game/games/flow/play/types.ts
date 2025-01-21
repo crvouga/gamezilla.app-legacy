@@ -55,10 +55,10 @@ export const MsgSpace = p.or(
     pack: Pack,
   }),
   p.obj({
-    t: p.l('user-clicked-exit-pack-button'),
+    t: p.l('user-clicked-exit-screen-open-pack'),
   }),
   p.obj({
-    t: p.l('user-clicked-open-puzzle-grid-item'),
+    t: p.l('user-clicked-open-screen-play-puzzle'),
     flowPuzzle: PuzzleResult,
     puzzleIndex: p.num,
   }),
