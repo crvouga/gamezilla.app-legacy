@@ -483,6 +483,7 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (initialModel, setMo
    */
   const send = (data: { model: any; action: any }) => {
     buffer.push(data)
+
     if (!isProcessing) {
       processBuffer()
     }
