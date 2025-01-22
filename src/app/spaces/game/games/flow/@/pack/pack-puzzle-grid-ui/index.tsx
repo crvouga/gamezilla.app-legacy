@@ -20,8 +20,9 @@ const View = (input: {
   const slideCount = Math.ceil((input.puzzleIds.length + 1) / (COLUMN_COUNT * ROW_COUNT))
 
   for (let slideIndex = 0; slideIndex < slideCount; slideIndex++) {
-    const startPosition = slideIndex * PER_SLIDE_ITEM_COUNT + 1
-    const endPosition = startPosition + PER_SLIDE_ITEM_COUNT
+    const startIndex = slideIndex * PER_SLIDE_ITEM_COUNT
+    const startPosition = startIndex + 1
+    const endPosition = startIndex + PER_SLIDE_ITEM_COUNT
     const slideTitle = `${startPosition} - ${endPosition}`
     slides.push(
       <Swiper.Slide key={slideIndex} className='flex h-full w-3/4 flex-col items-center justify-center'>

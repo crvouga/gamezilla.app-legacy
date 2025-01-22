@@ -268,4 +268,25 @@ describe(import.meta.file, () => {
     ])
     expect(output?.screenAddPuzzle_selected).toEqual([])
   })
+
+  test.only('unselect all after closing screen', async () => {
+    const f = await Fixture()
+    const puzzles = await Promise.all(Array.from({ length: 10 }, () => Puzzle.random()))
+    const puzzleIds = puzzles.map((p) => p.id)
+    const before = f.update(f.initial, [
+      {
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox',
+        puzzleIds: puzzleIds,
+        userId: f.createdBy,
+      },
+    ])
+    const after = f.update(before, [
+      {
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
+        userId: f.createdBy,
+      },
+    ])
+    expect(before?.screenAddPuzzle_selected.length > 0).toBe(true)
+    expect(after?.screenAddPuzzle_selected.length).toEqual(0)
+  })
 })
