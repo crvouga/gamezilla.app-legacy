@@ -33,7 +33,7 @@ services:
         source: ${PWD}
         target: /app
     command: >
-      sh -c "bun install && bun backend:build && bun backend"
+      sh -c "bun install && bun backend:build && bun backend:watch"
     ports:
       - '${PORT}:${PORT}'
     environment:

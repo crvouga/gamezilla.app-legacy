@@ -4,10 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "backend": "bun --watch ./src/backend.ts",
+    "backend": "bun ./src/backend.ts",
     "backend:build": "bun db:up",
     "backend:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./src/backend.ts",
     "backend:ngrok": "ngrok http 5002 --subdomain=gamezilla",
+    "backend:watch": "bun --watch ./src/backend.ts",
     "bash": "bun infra:backend:bash",
     "cg": "bun gen:l18n && bun gen:screens && bun gen:events",
     "cg:watch": "bun --watch cg",
