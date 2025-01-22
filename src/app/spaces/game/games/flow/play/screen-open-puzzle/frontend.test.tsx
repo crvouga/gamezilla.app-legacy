@@ -38,7 +38,7 @@ describe(import.meta.file, () => {
   it('should emit msg from clicking exit button', async () => {
     const f = await Fixture()
     const r = f.render(f.initial)
-    const exitButton = r.getByRole('button', f.ctx.t('app.exit'))
+    const exitButton = r.getByRole('button', f.ctx.t('app.exit'))[0]
     exitButton?.click()
     const msg = await r.msgs.once()
     expect(msg).toEqual({ t: 'got-msg-space', c: { userId: f.hostId, t: 'user-clicked-exit-screen-open-pack' } })

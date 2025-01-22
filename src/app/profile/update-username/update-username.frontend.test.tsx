@@ -38,7 +38,7 @@ describe(import.meta.file, () => {
   test('render save button', async () => {
     const f = await Fixture()
     const r = f.render(f.initial)
-    const button = r.getByRole('button', f.ctx.t('app.save'))
+    const button = r.getByRole('button', f.ctx.t('app.save'))[0]
     expect(button).toBeTruthy()
     button?.click()
     const msg = await r.msgs.once()
@@ -48,7 +48,7 @@ describe(import.meta.file, () => {
   test('render exit button', async () => {
     const f = await Fixture()
     const r = f.render(f.initial)
-    const button = r.getByRole('button', f.ctx.t('app.exit'))
+    const button = r.getByRole('button', f.ctx.t('app.exit'))[0]
     expect(button).toBeTruthy()
   })
 })

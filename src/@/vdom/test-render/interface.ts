@@ -3,9 +3,9 @@ import type { AriaRole } from '../aria-role'
 
 export type TestNode = {
   click: () => void
-  query: (cssSelector: string) => TestNode | null
-  getByRole: (ariaRole: AriaRole, ariaName?: string) => TestNode | null
-  getByTestId: (testId: string | number) => TestNode | null
+  query: (cssSelector: string) => TestNode[]
+  getByRole: (ariaRole: AriaRole, ariaName?: string) => TestNode[]
+  getByTestId: (testId: string | number) => TestNode[]
   getAttribute: (attribute: string) => string | null
   disabled: boolean
 }

@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
+import { PubSub } from '~/@/sub'
 import { didPlaySound } from '~/app/@/frontend/cmd'
 import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
-import { ScreenAddPuzzle } from './frontend'
-import { PubSub } from '~/@/sub'
 import { MsgFrontend } from '../types'
+import { ScreenAddPuzzle } from './frontend'
 import { ScreenAddPuzzleSpace } from './space'
 
 const Fixture = async () => {
@@ -23,20 +23,6 @@ const Fixture = async () => {
 }
 
 describe(import.meta.file, () => {
-  test('play sound opening add puzzle screen', async () => {
-    const f = await Fixture()
-
-    const output = ScreenAddPuzzle.update({
-      ...f,
-      msgSpace: withEventMeta({
-        t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
-        userId: f.ctx.currentUserId,
-      }),
-    })
-
-    expect(didPlaySound(output)).toBe(true)
-  })
-
   test('play sound sound clicking puzzle list item', async () => {
     const f = await Fixture()
 
@@ -56,7 +42,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = ScreenAddPuzzle.update({ ...f })
     const r = f.render({ model: output.model, modelSpace: f.modelSpace })
-    const submitButton = r.query("[type='submit']")
+    const submitButton = r.query("[type='submit']")[0]
     expect(submitButton?.disabled).toBe(true)
   })
 
@@ -71,7 +57,7 @@ describe(import.meta.file, () => {
       }),
     })
     const r = f.render({ model: f.model, modelSpace })
-    const submitButton = r.query("[type='submit']")
+    const submitButton = r.query("[type='submit']")[0]
     expect(submitButton?.disabled).toBe(false)
   })
 })

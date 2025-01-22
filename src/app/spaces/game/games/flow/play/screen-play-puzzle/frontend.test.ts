@@ -43,8 +43,8 @@ describe(import.meta.file, () => {
   it('should render next puzzle button only when puzzle is completed', async () => {
     const f = await Fixture()
     const output = f.update(f.init, [...f.completePuzzleMsgs])
-    const before = f.render(f.init).getByRole('button', f.ctx.t('app.next'))
-    const after = f.render(output).getByRole('button', f.ctx.t('app.next'))
+    const before = f.render(f.init).getByRole('button', f.ctx.t('app.next'))[0]
+    const after = f.render(output).getByRole('button', f.ctx.t('app.next'))[0]
 
     expect(before).toBeFalsy()
     expect(after).toBeTruthy()
@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.init, [...f.completePuzzleMsgs])
     const r = f.render(output)
-    const nextButton = r.getByRole('button', f.ctx.t('app.next'))
+    const nextButton = r.getByRole('button', f.ctx.t('app.next'))[0]
     nextButton?.click()
     const msg = await r.msgs.once()
     expect(msg.t === 'got-msg-space' && msg.c.t === 'user-clicked-next-puzzle').toBe(true)
@@ -110,7 +110,7 @@ describe(import.meta.file, () => {
       },
       ...f.completePuzzleMsgs,
     ])
-    const nextButton = f.render(output).getByRole('button', f.ctx.t('app.next'))
+    const nextButton = f.render(output).getByRole('button', f.ctx.t('app.next'))[0]
     expect(nextButton?.disabled).toBe(true)
   })
 
@@ -124,14 +124,14 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.init, f.completePuzzleMsgs)
     const r = f.render(output)
-    expect(r.getByRole('dialog')?.getByRole('heading', f.ctx.t('flow.puzzle-completed'))).toBeTruthy()
+    expect(r.getByRole('dialog')[0]?.getByRole('heading', f.ctx.t('flow.puzzle-completed'))).toBeTruthy()
   })
 
   it('should render next puzzle button in completion dialog', async () => {
     const f = await Fixture()
     const output = f.update(f.init, f.completePuzzleMsgs)
     const r = f.render(output)
-    expect(r.getByRole('dialog')?.getByRole('button', f.ctx.t('flow.next-puzzle'))).toBeTruthy()
+    expect(r.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.next-puzzle'))[0]).toBeTruthy()
   })
 
   it('should play sound after completing a puzzle', async () => {
@@ -178,7 +178,7 @@ describe(import.meta.file, () => {
   test('reset button msg dispatch', async () => {
     const f = await Fixture()
     const r = f.render(f.init)
-    const btn = r.getByRole('button', f.ctx.t('app.reset'))
+    const btn = r.getByRole('button', f.ctx.t('app.reset'))[0]
     btn?.click()
     const msg = await r.msgs.once()
     expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-reset-puzzle', userId: f.hostId } })
@@ -205,7 +205,7 @@ describe(import.meta.file, () => {
   test('hint button click', async () => {
     const f = await Fixture()
     const r = f.render(f.init)
-    const btn = r.getByRole('button', f.ctx.t('game.hint'))
+    const btn = r.getByRole('button', f.ctx.t('game.hint'))[0]
     btn?.click()
     const msg = await r.msgs.once()
     expect(msg.t).toBe('got-msg-space')
@@ -217,7 +217,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.init, [...f.completePuzzleMsgs])
     const r = f.render(output)
-    const btn = r.getByRole('button', f.ctx.t('game.hint'))
+    const btn = r.getByRole('button', f.ctx.t('game.hint'))[0]
     expect(btn).toBeFalsy()
   })
 
@@ -264,7 +264,7 @@ describe(import.meta.file, () => {
           }),
         },
       ])
-      expect(f.render(output).getByRole('button', f.ctx.t('game.hint'))).toBeFalsy()
+      expect(f.render(output).getByRole('button', f.ctx.t('game.hint'))).toEqual([])
     })
 
     test('hidden reset button', async () => {
@@ -281,7 +281,7 @@ describe(import.meta.file, () => {
           }),
         },
       ])
-      expect(f.render(output).getByRole('button', f.ctx.t('app.reset'))).toBeFalsy()
+      expect(f.render(output).getByRole('button', f.ctx.t('app.reset'))).toEqual([])
     })
 
     test('hidden copy to clipboard button', async () => {
@@ -298,9 +298,9 @@ describe(import.meta.file, () => {
           }),
         },
       ])
-      expect(
-        f.render(output, { ...f.ctx, currentUserRole: 'super' }).getByRole('button', f.ctx.t('app.copy')),
-      ).toBeFalsy()
+      expect(f.render(output, { ...f.ctx, currentUserRole: 'super' }).getByRole('button', f.ctx.t('app.copy'))).toEqual(
+        [],
+      )
     })
 
     test('visible next puzzle button', async () => {
@@ -317,7 +317,7 @@ describe(import.meta.file, () => {
           }),
         },
       ])
-      expect(f.render(output).getByRole('button', f.ctx.t('app.next'))).toBeTruthy()
+      expect(f.render(output).getByRole('button', f.ctx.t('app.next')).length).toBe(1)
     })
   })
 })

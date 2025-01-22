@@ -17,6 +17,6 @@ describe(import.meta.file, () => {
   it('should NOT render pagination dots if there is only one slide', async () => {
     const f = await Fixture()
     const r = f.render(<PaginationDots activeIndex={0} count={1} />)
-    expect(r.getByTestId(PAGINATION_DOTS_TEST_ID)).toBe(null)
+    expect(r.getByTestId(PAGINATION_DOTS_TEST_ID)[0] ?? null).toBe(null)
   })
 })

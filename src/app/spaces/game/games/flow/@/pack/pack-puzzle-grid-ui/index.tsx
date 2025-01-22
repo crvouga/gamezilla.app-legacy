@@ -9,19 +9,21 @@ const ROW_COUNT = 6
 const PER_SLIDE_ITEM_COUNT = COLUMN_COUNT * ROW_COUNT
 
 const View = (input: {
-  id: string
-  slideIndex: number
-  onSlideIndexChanged: (slideIndex: number) => void
-  puzzleIds: PuzzleId[]
-  onClickPuzzleCell: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
+  id?: string
+  slideIndex?: number
+  onSlideIndexChanged?: (slideIndex: number) => void
+  puzzleIds?: PuzzleId[]
+  onClickPuzzleCell?: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
   addCell?: {
     include: boolean
-    onClick: () => void
+    onClick?: () => void
   }
 }) => {
   const slides: VDom[] = []
+  const puzzleIds = input.puzzleIds ?? []
+  const cellCount = (puzzleIds.length ?? 0) + (input.addCell?.include ? 1 : 0)
 
-  const slideCount = Math.ceil((input.puzzleIds.length + 1) / (COLUMN_COUNT * ROW_COUNT))
+  const slideCount = Math.ceil(cellCount / (COLUMN_COUNT * ROW_COUNT))
 
   for (let slideIndex = 0; slideIndex < slideCount; slideIndex++) {
     const startIndex = slideIndex * PER_SLIDE_ITEM_COUNT
@@ -39,9 +41,9 @@ const View = (input: {
           <ViewPackPuzzleGridSlide
             key={slideIndex}
             slideIndex={slideIndex}
-            puzzleIds={input.puzzleIds}
+            puzzleIds={input.puzzleIds ?? []}
             renderCell={(inputCell) => {
-              if (inputCell.index === input.puzzleIds.length && input.addCell?.include) {
+              if (inputCell.index === puzzleIds.length && input.addCell?.include) {
                 return <ViewAddCell onClick={input.addCell?.onClick} />
               }
 
@@ -53,7 +55,7 @@ const View = (input: {
 
               return (
                 <ViewPuzzleCell
-                  onClick={() => input.onClickPuzzleCell({ puzzleId, puzzleIndex: inputCell.index })}
+                  onClick={() => input.onClickPuzzleCell?.({ puzzleId, puzzleIndex: inputCell.index })}
                   index={inputCell.index}
                 />
               )
@@ -68,14 +70,14 @@ const View = (input: {
     <div className='flex h-full w-full flex-col gap-4 py-6'>
       <Swiper.Container
         onSlideIndexChanged={input.onSlideIndexChanged}
-        id={input.id}
-        slideIndex={input.slideIndex}
+        id={input.id ?? 'pack-puzzle-grid-swiper-container'}
+        slideIndex={input.slideIndex ?? 0}
         className='flex h-full w-full items-center justify-center'
       >
         {slides}
       </Swiper.Container>
 
-      <PaginationDots count={slideCount} activeIndex={input.slideIndex} />
+      <PaginationDots count={slideCount} activeIndex={input.slideIndex ?? 0} />
     </div>
   )
 }
@@ -120,7 +122,7 @@ const ViewPackPuzzleGridSlide = (input: {
   )
 }
 
-const ViewAddCell = (input: { onClick: () => void }) => {
+const ViewAddCell = (input: { onClick?: () => void }) => {
   return (
     <button
       onClick={input.onClick}

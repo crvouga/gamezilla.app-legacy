@@ -35,20 +35,14 @@ describe(import.meta.file, () => {
         currentUserRole,
       })
       const r = f.render(f.init, f.ctx)
-      const button = r.getByRole('button', f.ctx.t('flow.copy-puzzle-to-clipboard'))
+      const button = r.getByRole('button', f.ctx.t('flow.copy-puzzle-to-clipboard'))[0]
       expect(button).toBeFalsy()
     }
   })
 
   test('play sound', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, [
-      {
-        msgSpace: withEventMeta({
-          t: 'user-clicked-copy-to-clipboard',
-        }),
-      },
-    ])
+    const output = f.update(f.init, [{ msgSpace: withEventMeta({ t: 'user-clicked-copy-to-clipboard' }) }])
     expect(didPlaySound(output)).toBe(true)
   })
 

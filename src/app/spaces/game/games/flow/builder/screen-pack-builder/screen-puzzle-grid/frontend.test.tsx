@@ -8,7 +8,7 @@ const Fixture = async () => {
   const f = await FixturePackBuilderFrontend()
   return { ...f }
 }
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   test('play sound opening add puzzle screen', async () => {
     const f = await Fixture()
     const output = f.update(f.init, [

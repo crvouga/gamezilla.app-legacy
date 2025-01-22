@@ -41,23 +41,20 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
         userEvent.click(baseElement)
       },
       query(cssSelector) {
-        const element = baseElement.querySelector(cssSelector)
-        if (!element) {
-          return null
-        }
-        return createTestNode(element as HTMLElement)
+        return Array.from(baseElement.querySelectorAll(cssSelector)).map((element) => {
+          return createTestNode(element as HTMLElement)
+        })
       },
       getByRole(role, name) {
         try {
-          const element = within(baseElement).getByRole(role, {
+          const elements = within(baseElement).getAllByRole(role, {
             name,
           })
-          if (!element) {
-            return null
-          }
-          return createTestNode(element)
+          return elements.map((element) => {
+            return createTestNode(element as HTMLElement)
+          })
         } catch {
-          return null
+          return []
         }
       },
       getAttribute(attribute) {
@@ -65,13 +62,12 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
       },
       getByTestId(testId) {
         try {
-          const element = within(baseElement).getByTestId(testId)
-          if (!element) {
-            return null
-          }
-          return createTestNode(element as HTMLElement)
+          const element = within(baseElement).getAllByTestId(testId)
+          return element.map((element) => {
+            return createTestNode(element as HTMLElement)
+          })
         } catch {
-          return null
+          return []
         }
       },
     }

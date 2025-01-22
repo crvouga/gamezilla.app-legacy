@@ -16,7 +16,7 @@ declare global {
 }
 const mountedElementIds = new Set<string>()
 
-const onContainer = async (input: { id: string; onSlideIndexChanged: (index: number) => void }) => {
+const onContainer = async (input: { id: string; onSlideIndexChanged?: (index: number) => void }) => {
   if (mountedElementIds.has(input.id)) {
     return
   }
@@ -36,7 +36,7 @@ const onContainer = async (input: { id: string; onSlideIndexChanged: (index: num
     const swiper = event?.detail?.[0]
     const activeIndex = swiper?.activeIndex ?? 0
     if (activeIndex !== previousActiveIndex) {
-      input.onSlideIndexChanged(activeIndex)
+      input.onSlideIndexChanged?.(activeIndex)
       previousActiveIndex = activeIndex
     }
   }
@@ -65,7 +65,7 @@ const onContainer = async (input: { id: string; onSlideIndexChanged: (index: num
 
 const Container = (input: {
   id: string
-  onSlideIndexChanged: (index: number) => void
+  onSlideIndexChanged?: (index: number) => void
   children?: VDomChildren
   className?: string
   slideIndex: number
@@ -81,6 +81,7 @@ const Container = (input: {
       centered-slides
       initial-slide={input.slideIndex}
       slide={input.slideIndex}
+      role='tablist'
     >
       {input.children}
       {/* @ts-ignore */}
@@ -89,8 +90,13 @@ const Container = (input: {
 }
 
 const Slide = (input: { children?: VDomChildren; className?: string }) => {
-  // @ts-ignore
-  return <swiper-slide className={input.className}>{input.children}</swiper-slide>
+  return (
+    // @ts-ignore
+    <swiper-slide className={input.className} role='tabpanel'>
+      {input.children}
+      {/*  @ts-ignore */}
+    </swiper-slide>
+  )
 }
 
 export const Swiper = {
