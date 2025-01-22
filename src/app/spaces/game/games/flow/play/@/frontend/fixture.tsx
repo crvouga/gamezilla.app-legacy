@@ -40,12 +40,7 @@ export const FixturePlayFrontend = async () => {
       })
       const msgSpace = [...(input.msgSpace ? [input.msgSpace] : []), ...(nextOutput.msgSpace ?? [])].flat(2)
       const nextModelSpace = msgSpace.reduce(
-        (modelSpace, msgSpace) =>
-          PlaySpace.updateSpace({
-            ctx: f.ctx,
-            modelSpace,
-            msgSpace,
-          }),
+        (modelSpace, msgSpace) => PlaySpace.updateSpace({ ctx: f.ctx, modelSpace, msgSpace }),
         lastOutput.modelSpace,
       )
       outputs.push({

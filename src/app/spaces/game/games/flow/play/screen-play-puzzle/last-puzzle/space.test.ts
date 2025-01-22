@@ -16,6 +16,7 @@ describe(import.meta.file, () => {
     const after = f.update(before, [
       {
         t: 'user-clicked-select-next-pack',
+        userId: f.hostId,
       },
     ])
     expect(before.screen.t).toBe('screen-play-puzzle')

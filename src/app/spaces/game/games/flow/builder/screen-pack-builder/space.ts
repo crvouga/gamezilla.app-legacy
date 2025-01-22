@@ -97,7 +97,7 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
 
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
-    case 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle': {
+    case 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen': {
       const puzzleIndex = modelSpace.screen.t === 'screen-puzzle' ? modelSpace.screen.puzzleIndex : null
 
       if (puzzleIndex === null) {

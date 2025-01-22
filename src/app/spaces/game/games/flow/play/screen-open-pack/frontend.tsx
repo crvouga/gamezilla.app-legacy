@@ -91,7 +91,10 @@ const View: FrontendModule['View'] = (input) => {
           console.log('query', query)
         }}
         onClick={(pack) =>
-          input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-open-pack-puzzle-grid-item', pack } })
+          input.dispatch({
+            t: 'got-msg-space',
+            c: { userId: input.ctx.currentUserId, t: 'user-clicked-open-pack-puzzle-grid-item', pack },
+          })
         }
       />
     </div>

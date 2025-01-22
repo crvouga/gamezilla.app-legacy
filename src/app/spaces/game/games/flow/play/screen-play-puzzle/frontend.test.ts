@@ -26,13 +26,17 @@ describe(import.meta.file, () => {
 
   it('should make a sound after clicking exit button', async () => {
     const f = await Fixture()
-    const updated = f.update(f.init, [{ msgSpace: withEventMeta({ t: 'user-clicked-exit-puzzle' }) }])
+    const updated = f.update(f.init, [
+      { msgSpace: withEventMeta({ t: 'user-clicked-exit-play-puzzle-screen', userId: f.hostId }) },
+    ])
     expect(didPlaySound(updated)).toBe(true)
   })
 
   it('should exit to pack after clicking exit puzzle button', async () => {
     const f = await Fixture()
-    const updated = f.update(f.init, [{ msg: { t: 'got-msg-space', c: { t: 'user-clicked-exit-puzzle' } } }])
+    const updated = f.update(f.init, [
+      { msg: { t: 'got-msg-space', c: { userId: f.hostId, t: 'user-clicked-exit-play-puzzle-screen' } } },
+    ])
     expect(updated.modelSpace.screen.t).toBe('screen-select-puzzle')
   })
 
@@ -66,6 +70,7 @@ describe(import.meta.file, () => {
             t: 'user-clicked-next-puzzle',
             nextPuzzle: f.nextPuzzle,
             nextPuzzleIndex: f.nextPuzzleIndex,
+            userId: f.hostId,
           },
         },
       },
@@ -82,6 +87,7 @@ describe(import.meta.file, () => {
           t: 'user-clicked-next-puzzle',
           nextPuzzle: f.nextPuzzle,
           nextPuzzleIndex: f.nextPuzzleIndex,
+          userId: f.hostId,
         }),
       },
     ])
@@ -98,6 +104,7 @@ describe(import.meta.file, () => {
             t: 'user-clicked-next-puzzle',
             nextPuzzle: f.nextPuzzle,
             nextPuzzleIndex: f.nextPuzzleIndex,
+            userId: f.hostId,
           },
         },
       },
@@ -174,7 +181,7 @@ describe(import.meta.file, () => {
     const btn = r.getByRole('button', f.ctx.t('app.reset'))
     btn?.click()
     const msg = await r.msgs.once()
-    expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-reset-puzzle' } })
+    expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-reset-puzzle', userId: f.hostId } })
   })
 
   test('reset button sound', async () => {
@@ -183,6 +190,7 @@ describe(import.meta.file, () => {
       {
         msgSpace: withEventMeta({
           t: 'user-clicked-reset-puzzle',
+          userId: f.hostId,
         }),
       },
     ])
@@ -220,6 +228,7 @@ describe(import.meta.file, () => {
       {
         msgSpace: withEventMeta({
           t: 'user-closed-puzzle-complete-dialog',
+          userId: f.hostId,
         }),
       },
     ])
@@ -232,6 +241,7 @@ describe(import.meta.file, () => {
       {
         msgSpace: withEventMeta({
           t: 'user-toggled-action-buttons-drawer',
+          userId: f.hostId,
         }),
       },
     ])
@@ -250,6 +260,7 @@ describe(import.meta.file, () => {
               t: 'not-found',
             },
             nextPuzzleIndex: f.nextPuzzleIndex,
+            userId: f.hostId,
           }),
         },
       ])
@@ -266,6 +277,7 @@ describe(import.meta.file, () => {
               t: 'not-found',
             },
             nextPuzzleIndex: f.nextPuzzleIndex,
+            userId: f.hostId,
           }),
         },
       ])
@@ -282,6 +294,7 @@ describe(import.meta.file, () => {
               t: 'not-found',
             },
             nextPuzzleIndex: f.nextPuzzleIndex,
+            userId: f.hostId,
           }),
         },
       ])
@@ -300,6 +313,7 @@ describe(import.meta.file, () => {
               t: 'not-found',
             },
             nextPuzzleIndex: f.nextPuzzleIndex,
+            userId: f.hostId,
           }),
         },
       ])

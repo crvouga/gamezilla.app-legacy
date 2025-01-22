@@ -44,6 +44,7 @@ export const FixtureScreenPlayPuzzleFrontend = async () => {
         c: {
           t: 'user-clicked-open-pack-puzzle-grid-item',
           pack,
+          userId: f.hostId,
         },
       },
     },
@@ -52,7 +53,8 @@ export const FixtureScreenPlayPuzzleFrontend = async () => {
         t: 'got-msg-space',
         c: {
           t: 'user-clicked-open-screen-play-puzzle',
-          flowPuzzle: { t: 'got', c: puzzle },
+          userId: f.hostId,
+          puzzle: { t: 'got', c: puzzle },
           puzzleIndex,
         },
       },
@@ -70,6 +72,7 @@ export const FixtureScreenPlayPuzzleFrontend = async () => {
       msgSpace: withEventMeta({
         t: 'user-clicked-next-puzzle',
         nextPuzzleIndex: lastPuzzleIndex,
+        userId: f.hostId,
         nextPuzzle: {
           t: 'got',
           c: lastPuzzle,

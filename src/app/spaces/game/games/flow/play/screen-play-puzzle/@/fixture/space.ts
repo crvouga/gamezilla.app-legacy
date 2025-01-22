@@ -37,11 +37,13 @@ export const FixtureScreenPuzzlePlaySpace = async (input?: { flow?: Variant.Mode
     {
       t: 'user-clicked-open-pack-puzzle-grid-item',
       pack,
+      userId: f.hostId,
     },
     {
       t: 'user-clicked-open-screen-play-puzzle',
-      flowPuzzle: { t: 'got', c: puzzle },
+      puzzle: { t: 'got', c: puzzle },
       puzzleIndex,
+      userId: f.hostId,
     },
   ])
 
@@ -88,8 +90,8 @@ export const FixtureScreenPuzzlePlaySpaceChild = async (input?: { flow?: Variant
 
   const init: ModelSpace = ScreenPlayPuzzleSpace.initSpace({
     ctx: f.ctx,
-    flowPack: f.pack,
-    flowPuzzle: { t: 'got', c: f.puzzle },
+    pack: f.pack,
+    puzzle: { t: 'got', c: f.puzzle },
     puzzleIndex: f.puzzleIndex,
   })
 

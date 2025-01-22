@@ -12,7 +12,7 @@ const Fixture = async () => {
     puzzleIds: [puzzle.id],
   })
   const initial = f.update(f.initial, [
-    { msg: { t: 'got-msg-space', c: { t: 'user-clicked-open-pack-puzzle-grid-item', pack } } },
+    { msg: { t: 'got-msg-space', c: { userId: f.hostId, t: 'user-clicked-open-pack-puzzle-grid-item', pack } } },
   ])
   return {
     ...f,
@@ -41,14 +41,20 @@ describe(import.meta.file, () => {
     const exitButton = r.getByRole('button', f.ctx.t('app.exit'))
     exitButton?.click()
     const msg = await r.msgs.once()
-    expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-exit-screen-open-pack' } })
+    expect(msg).toEqual({ t: 'got-msg-space', c: { userId: f.hostId, t: 'user-clicked-exit-screen-open-pack' } })
   })
 
   it('should exit to pack list on exit button pack click', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msg: { t: 'got-msg-space', c: { t: 'user-clicked-exit-screen-open-pack' } },
+        msg: {
+          t: 'got-msg-space',
+          c: {
+            userId: f.hostId,
+            t: 'user-clicked-exit-screen-open-pack',
+          },
+        },
       },
     ])
     expect(output.modelSpace.screen.t).toBe('screen-select-pack')
@@ -56,7 +62,9 @@ describe(import.meta.file, () => {
 
   it('should play nav back sound on exit', async () => {
     const f = await Fixture()
-    const output = f.update(f.initial, [{ msgSpace: withEventMeta({ t: 'user-clicked-exit-screen-open-pack' }) }])
+    const output = f.update(f.initial, [
+      { msgSpace: withEventMeta({ t: 'user-clicked-exit-screen-open-pack', userId: f.hostId }) },
+    ])
     expect(didPlaySound(output)).toBe(true)
   })
 
@@ -68,7 +76,8 @@ describe(import.meta.file, () => {
           t: 'got-msg-space',
           c: {
             t: 'user-clicked-open-screen-play-puzzle',
-            flowPuzzle: { t: 'got', c: f.puzzle },
+            puzzle: { t: 'got', c: f.puzzle },
+            userId: f.hostId,
             puzzleIndex: 0,
           },
         },
@@ -89,8 +98,9 @@ describe(import.meta.file, () => {
       {
         msgSpace: withEventMeta({
           t: 'user-clicked-open-screen-play-puzzle',
-          flowPuzzle: { t: 'got', c: f.puzzle },
+          puzzle: { t: 'got', c: f.puzzle },
           puzzleIndex: 0,
+          userId: f.hostId,
         }),
       },
     ])

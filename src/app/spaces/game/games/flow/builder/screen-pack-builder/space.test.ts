@@ -26,7 +26,7 @@ describe(import.meta.file, () => {
 
     const modelSpace = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
         userId: f.createdBy,
       },
     ])
@@ -184,7 +184,7 @@ describe(import.meta.file, () => {
         puzzleIndex: 1,
       },
       {
-        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
         userId: f.createdBy,
       },
     ])
@@ -218,7 +218,7 @@ describe(import.meta.file, () => {
         puzzleIndex: f.puzzles.length - 1,
       },
       {
-        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
         userId: f.createdBy,
       },
     ])
@@ -269,7 +269,7 @@ describe(import.meta.file, () => {
         puzzleIndex: 0,
       },
       {
-        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
         userId: f.createdBy,
       },
     ])

@@ -113,7 +113,7 @@ export const MsgSpace = p.or(
     c: PlayMode.Msg,
   }),
   p.obj({
-    t: p.l('screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle'),
+    t: p.l('screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen'),
     userId: UserId,
   }),
   p.obj({

@@ -45,9 +45,9 @@ const update: SpaceModule['updateSpace'] = ({ modelSpace, msgSpace, ctx }) => {
           return {
             ...modelSpace,
             screen: ScreenPlayPuzzleSpace.initSpace({
-              flowPack: modelSpace.screen.pack,
+              pack: modelSpace.screen.pack,
               puzzleIndex: msgSpace.puzzleIndex,
-              flowPuzzle: msgSpace.flowPuzzle,
+              puzzle: msgSpace.puzzle,
               ctx,
             }),
           }

@@ -14,9 +14,11 @@ describe(import.meta.file, () => {
     const output = f.updates(f.init, [
       {
         t: 'user-toggled-action-buttons-drawer',
+        userId: f.hostId,
       },
       {
         t: 'user-clicked-copy-to-clipboard',
+        // userId: f.hostId,
       },
     ])
     expect(output[0].opened).toBe(null)

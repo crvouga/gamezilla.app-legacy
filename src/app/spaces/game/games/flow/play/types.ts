@@ -53,14 +53,17 @@ export const MsgSpace = p.or(
   p.obj({
     t: p.l('user-clicked-open-pack-puzzle-grid-item'),
     pack: Pack,
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-clicked-exit-screen-open-pack'),
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-clicked-open-screen-play-puzzle'),
-    flowPuzzle: PuzzleResult,
+    puzzle: PuzzleResult,
     puzzleIndex: p.num,
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-changed-slides'),

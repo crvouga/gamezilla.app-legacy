@@ -1,6 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { EventId, withEventMeta } from '~/@/event-sourced/event'
-import { LamportTimestamp } from '~/@/lamport-clock'
+import { withEventMeta } from '~/@/event-sourced/event'
 import { didPlaySound } from '~/app/@/frontend/cmd'
 import { Pack } from '../../@/pack/pack'
 import { FixturePlayFrontend } from '../@/frontend/fixture'
@@ -35,6 +34,7 @@ describe(import.meta.file, () => {
           c: {
             t: 'user-clicked-open-pack-puzzle-grid-item',
             pack,
+            userId: f.hostId,
           },
         },
       },
@@ -48,12 +48,11 @@ describe(import.meta.file, () => {
     const pack = await Pack.random()
     const updated = f.update(f.initial, [
       {
-        msgSpace: {
+        msgSpace: withEventMeta({
           t: 'user-clicked-open-pack-puzzle-grid-item',
           pack,
-          eventId: EventId.generate(),
-          happenedAt: LamportTimestamp.fromNumber(0),
-        },
+          userId: f.hostId,
+        }),
       },
     ])
     expect(didPlaySound(updated)).toBe(true)

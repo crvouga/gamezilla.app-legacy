@@ -23,7 +23,7 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
       (model) => ScreenPuzzleMore.update({ ...input, model }),
       (model) => {
         switch (input.msgSpace?.t) {
-          case 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle': {
+          case 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen': {
             return {
               model,
               msgCmd: [playSound(APP_SOUND.navBackwardMin)],
@@ -119,7 +119,10 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
           onBack={() =>
             input.dispatch({
               t: 'got-msg-space',
-              c: { t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle', userId: input.ctx.currentUserId },
+              c: {
+                t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
+                userId: input.ctx.currentUserId,
+              },
             })
           }
         />

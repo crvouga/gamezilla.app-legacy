@@ -17,29 +17,36 @@ export const MsgSpace = p.or(
     userId: UserId,
   }),
   p.obj({
-    t: p.l('user-clicked-exit-puzzle'),
+    t: p.l('user-clicked-exit-play-puzzle-screen'),
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-clicked-next-puzzle'),
     nextPuzzle: PuzzleResult,
     nextPuzzleIndex: p.num,
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-clicked-prev-puzzle'),
     prevPuzzle: PuzzleResult,
     prevPuzzleIndex: p.num,
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-closed-puzzle-complete-dialog'),
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-clicked-select-next-pack'),
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-clicked-reset-puzzle'),
+    userId: UserId,
   }),
   p.obj({
     t: p.l('user-toggled-action-buttons-drawer'),
+    userId: UserId,
   }),
 )
 
@@ -62,7 +69,7 @@ export type MsgSpaceEvt = p.Infer<typeof MsgSpaceEvt>
 
 export const ModelSpace = p.obj({
   t: p.l('screen-play-puzzle'),
-  flowPack: Pack,
+  pack: Pack,
   puzzleResult: PuzzleResult,
   playMode: p.or(PlayMode.Model, p.l(null)),
   puzzleIndex: p.num,

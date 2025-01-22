@@ -160,6 +160,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
 
   return {
     ...f,
+    hostId: currentUser.userId,
     ctx,
     initial,
     currentUser,

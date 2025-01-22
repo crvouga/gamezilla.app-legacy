@@ -12,6 +12,7 @@ describe(import.meta.file, () => {
       {
         t: 'user-clicked-open-pack-puzzle-grid-item',
         pack: await Pack.random(),
+        userId: f.hostId,
       },
     ])
 
@@ -24,11 +25,13 @@ describe(import.meta.file, () => {
     const before = f.update(f.init, [
       {
         t: 'user-clicked-open-pack-puzzle-grid-item',
+        userId: f.hostId,
         pack: await Pack.random(),
       },
     ])
     const after = f.update(before, [
       {
+        userId: f.hostId,
         t: 'user-clicked-exit-screen-open-pack',
       },
     ])
@@ -47,17 +50,19 @@ describe(import.meta.file, () => {
       {
         t: 'user-clicked-open-pack-puzzle-grid-item',
         pack,
+        userId: f.hostId,
       },
     ])
 
     const after = f.update(before, [
       {
         t: 'user-clicked-open-screen-play-puzzle',
-        flowPuzzle: {
+        puzzle: {
           t: 'got',
           c: puzzle,
         },
         puzzleIndex: 0,
+        userId: f.hostId,
       },
     ])
     expect(before.screen.t).toEqual('screen-select-puzzle')
@@ -78,6 +83,7 @@ describe(import.meta.file, () => {
       {
         t: 'user-clicked-open-pack-puzzle-grid-item',
         pack,
+        userId: f.hostId,
       },
     ])
 

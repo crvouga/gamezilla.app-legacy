@@ -39,7 +39,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
       }
     }
 
-    case 'user-clicked-exit-puzzle': {
+    case 'user-clicked-exit-play-puzzle-screen': {
       return {
         model: input.model,
         msgCmd: [playSound(APP_SOUND.navBackwardMin)],
@@ -132,7 +132,7 @@ const View: FrontendModule['View'] = (input) => {
 
   //
   const nextPuzzleIndex = puzzleIndex + 1
-  const nextPuzzleId = input.modelSpace.screen.flowPack.puzzleIds[nextPuzzleIndex]
+  const nextPuzzleId = input.modelSpace.screen.pack.puzzleIds[nextPuzzleIndex]
   const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
 
   const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
@@ -178,7 +178,15 @@ const View: FrontendModule['View'] = (input) => {
     >
       <TopBar
         ctx={input.ctx}
-        onBack={() => input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-exit-puzzle' } })}
+        onBack={() =>
+          input.dispatch({
+            t: 'got-msg-space',
+            c: {
+              userId: input.ctx.currentUserId,
+              t: 'user-clicked-exit-play-puzzle-screen',
+            },
+          })
+        }
         title={input.ctx.t('flow.level', puzzleIndex + 1)}
       />
 
@@ -211,12 +219,20 @@ const View: FrontendModule['View'] = (input) => {
       <BottomButtons.View
         id='screen-play-puzzle-bottom-bar'
         ctx={input.ctx}
-        onToggle={() => input.dispatch({ t: 'got-msg-space', c: { t: 'user-toggled-action-buttons-drawer' } })}
+        onToggle={() =>
+          input.dispatch({
+            t: 'got-msg-space',
+            c: {
+              userId: input.ctx.currentUserId,
+              t: 'user-toggled-action-buttons-drawer',
+            },
+          })
+        }
         open={input.modelSpace.screen.opened === 'action-drawer'}
         buttons={[
           PrebuiltBottomButtons.next({
             ...input,
-            disabled: puzzleIndex >= input.modelSpace.screen.flowPack.puzzleIds.length - 1,
+            disabled: puzzleIndex >= input.modelSpace.screen.pack.puzzleIds.length - 1,
             hidden: !isSolved && flowPuzzle.t !== 'not-found',
             color: 'success',
             onClick: () =>
@@ -224,6 +240,7 @@ const View: FrontendModule['View'] = (input) => {
                 t: 'got-msg-space',
                 c: {
                   t: 'user-clicked-next-puzzle',
+                  userId: input.ctx.currentUserId,
                   nextPuzzle: nextPuzzle
                     ? {
                         t: 'got',
@@ -273,6 +290,7 @@ const View: FrontendModule['View'] = (input) => {
                 t: 'got-msg-space',
                 c: {
                   t: 'user-clicked-reset-puzzle',
+                  userId: input.ctx.currentUserId,
                 },
               }),
           }),
@@ -295,10 +313,10 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
 
   //
   const nextPuzzleIndex = puzzleIndex + 1
-  const nextPuzzleId = input.modelSpace.screen.flowPack.puzzleIds[nextPuzzleIndex]
+  const nextPuzzleId = input.modelSpace.screen.pack.puzzleIds[nextPuzzleIndex]
   const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
 
-  const isLastPuzzle = input.modelSpace.screen.puzzleIndex >= input.modelSpace.screen.flowPack.puzzleIds.length - 1
+  const isLastPuzzle = input.modelSpace.screen.puzzleIndex >= input.modelSpace.screen.pack.puzzleIds.length - 1
 
   const isSolvedPuzzleDialogOpen = isSolved && input.modelSpace.screen.opened === 'puzzle-complete'
 
@@ -318,6 +336,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
           t: 'got-msg-space',
           c: {
             t: 'user-closed-puzzle-complete-dialog',
+            userId: input.ctx.currentUserId,
           },
         })
       }
@@ -331,6 +350,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
             input.dispatch({
               t: 'got-msg-space',
               c: {
+                userId: input.ctx.currentUserId,
                 t: 'user-clicked-next-puzzle',
                 nextPuzzle: nextPuzzle
                   ? {

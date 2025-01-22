@@ -1,17 +1,17 @@
 import { describe, expect, it, test } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../../@/flow'
+import { Pack } from '../../@/pack/pack'
+import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { PlayMode } from '../../@/play-mode'
+import { Puzzle } from '../../@/puzzle/puzzle'
 import { Solutions } from '../../@/solutions/solutions'
 import { type Variant } from '../../@/variant'
 import { VariantGrid, VariantGridShorthand } from '../../@/variant/grid'
+import { FlowPlaySpaceFixture } from '../@/space/fixture'
 import { FixtureScreenPuzzlePlaySpaceChild } from './@/fixture/space'
 import { ScreenPlayPuzzleSpace } from './space'
 import type { MsgSpace } from './types'
-import { FlowPlaySpaceFixture } from '../@/space/fixture'
-import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
-import { Puzzle } from '../../@/puzzle/puzzle'
-import { Pack } from '../../@/pack/pack'
 
 const Fixture = async (input?: { flow?: Variant.Model }) => {
   const f = await FixtureScreenPuzzlePlaySpaceChild(input)
@@ -24,7 +24,7 @@ const Fixture = async (input?: { flow?: Variant.Model }) => {
 describe(import.meta.file, () => {
   it('should close puzzle after clicking exit puzzle button', async () => {
     const f = await Fixture()
-    const after = f.parent.update(f.parent.init, [{ t: 'user-clicked-exit-puzzle' }])
+    const after = f.parent.update(f.parent.init, [{ t: 'user-clicked-exit-play-puzzle-screen', userId: f.hostId }])
     expect(f.parent.init.screen.t).toEqual('screen-play-puzzle')
     expect(after.screen.t).toEqual('screen-select-puzzle')
   })
@@ -52,6 +52,7 @@ describe(import.meta.file, () => {
         t: 'user-clicked-next-puzzle',
         nextPuzzle: f.nextPuzzle,
         nextPuzzleIndex: f.nextPuzzleIndex,
+        userId: f.hostId,
       },
     ])
 
@@ -66,6 +67,7 @@ describe(import.meta.file, () => {
         t: 'user-clicked-next-puzzle',
         nextPuzzle: f.nextPuzzle,
         nextPuzzleIndex: f.nextPuzzleIndex,
+        userId: f.hostId,
       },
     ])
     const after = f.update(before, [
@@ -73,6 +75,7 @@ describe(import.meta.file, () => {
         t: 'user-clicked-prev-puzzle',
         prevPuzzle: { t: 'got', c: f.puzzle },
         prevPuzzleIndex: f.puzzleIndex,
+        userId: f.hostId,
       },
     ])
     expect(before.puzzleIndex).toEqual(f.puzzleIndex + 1)
@@ -98,6 +101,7 @@ describe(import.meta.file, () => {
         t: 'user-clicked-next-puzzle',
         nextPuzzle: f.nextPuzzle,
         nextPuzzleIndex: f.nextPuzzleIndex,
+        userId: f.hostId,
       },
     ])
 
@@ -173,6 +177,7 @@ describe(import.meta.file, () => {
     const after = f.update(before, [
       {
         t: 'user-closed-puzzle-complete-dialog',
+        userId: f.hostId,
       },
     ])
     expect(ScreenPlayPuzzleSpace.toStatus(after) === 'solved' && after.opened === null).toBe(true)
@@ -186,6 +191,7 @@ describe(import.meta.file, () => {
         t: 'user-clicked-next-puzzle',
         nextPuzzle: f.nextPuzzle,
         nextPuzzleIndex: f.nextPuzzleIndex,
+        userId: f.hostId,
       },
     ])
     expect(after.opened === null).toBe(true)
@@ -201,6 +207,7 @@ describe(import.meta.file, () => {
       ...f.solvePuzzleMsgs,
       {
         t: 'user-closed-puzzle-complete-dialog',
+        userId: f.hostId,
       },
     ])
     const after = f.update(before, [
@@ -225,6 +232,7 @@ describe(import.meta.file, () => {
         t: 'user-clicked-prev-puzzle',
         prevPuzzle: f.prevPuzzle,
         prevPuzzleIndex: f.prevPuzzleIndex,
+        userId: f.hostId,
       },
     ])
     expect(before.opened === 'puzzle-complete').toBe(true)
@@ -237,6 +245,7 @@ describe(import.meta.file, () => {
       ...f.solvePuzzleMsgs,
       {
         t: 'user-clicked-reset-puzzle',
+        userId: f.hostId,
       },
     ])
     expect(before.playMode).toEqual(
@@ -257,6 +266,7 @@ describe(import.meta.file, () => {
         t: 'user-clicked-next-puzzle',
         nextPuzzle: f.nextPuzzle,
         nextPuzzleIndex: f.nextPuzzleIndex,
+        userId: f.hostId,
       },
     ])
     expect(ScreenPlayPuzzleSpace.toStatus(output)).toBe('solving')
@@ -270,6 +280,7 @@ describe(import.meta.file, () => {
         t: 'user-clicked-prev-puzzle',
         prevPuzzle: f.prevPuzzle,
         prevPuzzleIndex: f.prevPuzzleIndex,
+        userId: f.hostId,
       },
     ])
     expect(ScreenPlayPuzzleSpace.toStatus(output)).toBe('solving')
@@ -280,6 +291,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'user-toggled-action-buttons-drawer',
+        userId: f.hostId,
       },
     ])
     expect(output.opened).toBe('action-drawer')
@@ -290,9 +302,11 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'user-toggled-action-buttons-drawer',
+        userId: f.hostId,
       },
       {
         t: 'user-toggled-action-buttons-drawer',
+        userId: f.hostId,
       },
     ])
     expect(output.opened).toBe(null)
@@ -303,9 +317,11 @@ describe(import.meta.file, () => {
     const output = f.updates(f.init, [
       {
         t: 'user-toggled-action-buttons-drawer',
+        userId: f.hostId,
       },
       {
         t: 'user-clicked-copy-to-clipboard',
+        // userId: f.hostId,
       },
     ])
     expect(output[0].opened).toBe(null)
@@ -318,6 +334,7 @@ describe(import.meta.file, () => {
         t: 'user-clicked-next-puzzle',
         nextPuzzle: { t: 'not-found' },
         nextPuzzleIndex: f.nextPuzzleIndex,
+        userId: f.hostId,
       },
     ])
     expect(output[1]?.puzzleResult.t).toBe('not-found')
@@ -330,6 +347,7 @@ describe(import.meta.file, () => {
         t: 'user-clicked-prev-puzzle',
         prevPuzzle: { t: 'not-found' },
         prevPuzzleIndex: f.prevPuzzleIndex,
+        userId: f.hostId,
       },
     ])
     expect(output[1]?.puzzleResult.t).toBe('not-found')
@@ -353,7 +371,7 @@ describe(import.meta.file, () => {
     expect(output.events?.some((e) => e.t === 'user-used-hint')).toBe(true)
   })
 
-  test('when exiting play puzzle screen it should be on the slide index corresponding with the opened puzzle', async () => {
+  it('should be on the slide index corresponding with the opened puzzle', async () => {
     const f = await FlowPlaySpaceFixture()
     const puzzles = await Promise.all(
       Array.from({ length: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT * 2 }, () => Puzzle.random()),
@@ -365,16 +383,19 @@ describe(import.meta.file, () => {
       {
         t: 'user-clicked-open-pack-puzzle-grid-item',
         pack,
+        userId: f.hostId,
       },
     ])
     const after = f.update(before, [
       {
         t: 'user-clicked-open-screen-play-puzzle',
-        flowPuzzle: { t: 'got', c: secondSlidePuzzle },
+        puzzle: { t: 'got', c: secondSlidePuzzle },
         puzzleIndex: puzzles.findIndex((p) => p.id === secondSlidePuzzle.id),
+        userId: f.hostId,
       },
       {
-        t: 'user-clicked-exit-puzzle',
+        t: 'user-clicked-exit-play-puzzle-screen',
+        userId: f.hostId,
       },
     ])
 

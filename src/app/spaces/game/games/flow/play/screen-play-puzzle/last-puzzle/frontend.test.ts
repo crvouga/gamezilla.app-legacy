@@ -27,21 +27,14 @@ describe(import.meta.file, () => {
     const button = rendered.getByRole('dialog')?.getByRole('button', f.ctx.t('flow.select-next-pack'))
     button?.click()
     const msg = await rendered.msgs.once()
-    expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-select-next-pack' } })
+    expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-select-next-pack', userId: f.hostId } })
   })
 
   it('should output select next pack event', async () => {
     const f = await Fixture()
     const initial = f.update(f.init, f.completeLastPuzzleMsgs)
     const output = f.update(initial, [
-      {
-        msg: {
-          t: 'got-msg-space',
-          c: {
-            t: 'user-clicked-select-next-pack',
-          },
-        },
-      },
+      { msg: { t: 'got-msg-space', c: { t: 'user-clicked-select-next-pack', userId: f.hostId } } },
     ])
     expect(output.msgSpace?.some((m) => m.t === 'user-clicked-select-next-pack')).toBe(true)
   })
@@ -61,7 +54,13 @@ describe(import.meta.file, () => {
     button?.click()
     expect(button).toBeTruthy()
     const msg = await r.msgs.once()
-    expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-select-next-pack' } })
+    expect(msg).toEqual({
+      t: 'got-msg-space',
+      c: {
+        userId: f.hostId,
+        t: 'user-clicked-select-next-pack',
+      },
+    })
   })
 
   it('should play sound after clicking select next pack button', async () => {
@@ -71,6 +70,7 @@ describe(import.meta.file, () => {
       {
         msgSpace: withEventMeta({
           t: 'user-clicked-select-next-pack',
+          userId: f.hostId,
         }),
       },
     ])

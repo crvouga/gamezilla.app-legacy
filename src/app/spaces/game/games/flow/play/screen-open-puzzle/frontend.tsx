@@ -58,7 +58,11 @@ const View: FrontendModule['View'] = (input) => {
         onBack={
           isSpectating
             ? false
-            : () => input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-exit-screen-open-pack' } })
+            : () =>
+                input.dispatch({
+                  t: 'got-msg-space',
+                  c: { t: 'user-clicked-exit-screen-open-pack', userId: input.ctx.currentUserId },
+                })
         }
         title={input.ctx.t('flow-pack-name', pack.name)}
       />
@@ -98,8 +102,9 @@ const View: FrontendModule['View'] = (input) => {
                     t: 'got-msg-space',
                     c: {
                       t: 'user-clicked-open-screen-play-puzzle',
-                      flowPuzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
+                      puzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
                       puzzleIndex: inputCell.index,
+                      userId: input.ctx.currentUserId,
                     },
                   })
                 }

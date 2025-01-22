@@ -75,7 +75,7 @@ const updateScreen = (input: {
             case 'solved': {
               return {
                 t: 'user-completed-puzzle',
-                packId: input.modelSpace.flowPack.id,
+                packId: input.modelSpace.pack.id,
                 puzzleIndex: input.modelSpace.puzzleIndex,
                 userId,
               }
@@ -182,14 +182,14 @@ const updateScreen = (input: {
 
 const updateSpaceMain: SpaceModule['updateSpace'] = ({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
-    case 'user-clicked-exit-puzzle': {
+    case 'user-clicked-exit-play-puzzle-screen': {
       switch (modelSpace.screen.t) {
         case 'screen-play-puzzle': {
           return {
             ...modelSpace,
             screen: {
               t: 'screen-select-puzzle',
-              pack: modelSpace.screen.flowPack,
+              pack: modelSpace.screen.pack,
               slideIndex: PackPuzzleGridUI.toSlideIndex(modelSpace.screen.puzzleIndex),
             },
           }
@@ -205,27 +205,18 @@ const updateSpaceMain: SpaceModule['updateSpace'] = ({ modelSpace, msgSpace }) =
   }
 }
 
-const initSpace = (input: {
-  flowPack: Pack
-  flowPuzzle: PuzzleResult
-  puzzleIndex: number
-  ctx: FlowSpaceCtx
-}): ModelSpace => {
+const initSpace = (input: { pack: Pack; puzzle: PuzzleResult; puzzleIndex: number; ctx: FlowSpaceCtx }): ModelSpace => {
   return {
-    ...input,
+    pack: input.pack,
+    puzzleIndex: input.puzzleIndex,
     playMode:
-      input.flowPuzzle.t === 'got'
-        ? PlayMode.init({
-            ctx: PlayMode.initCtx({
-              flow: input.flowPuzzle.c.flow,
-              solutions: input.ctx.solutions,
-            }),
-          })
+      input.puzzle.t === 'got'
+        ? PlayMode.init({ ctx: PlayMode.initCtx({ flow: input.puzzle.c.flow, solutions: input.ctx.solutions }) })
         : null,
     opened: null,
     t: 'screen-play-puzzle',
     hints: {},
-    puzzleResult: input.flowPuzzle,
+    puzzleResult: input.puzzle,
   }
 }
 
@@ -237,14 +228,7 @@ const updates = [
   //
 ]
 const updateSpace: SpaceModule['updateSpace'] = (input) => {
-  return updates.reduce(
-    (acc, update) =>
-      update({
-        ...input,
-        modelSpace: acc,
-      }),
-    input.modelSpace,
-  )
+  return updates.reduce((acc, update) => update({ ...input, modelSpace: acc }), input.modelSpace)
 }
 
 const toStatus = (modelSpace: ModelSpace) => {
