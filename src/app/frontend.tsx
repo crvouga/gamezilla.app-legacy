@@ -450,7 +450,7 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
   const frontendCtx = toFrontendCtx(input)
 
   return (
-    <div className='fixed left-1/2 top-1/2 flex h-[100dvh] w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden bg-black text-white subpixel-antialiased'>
+    <div className='fixed left-1/2 top-1/2 flex h-[100dvh] w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden bg-black text-white'>
       <div className='relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded min-[520px]:border'>
         <ViewStatusBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
 
