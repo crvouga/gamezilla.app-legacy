@@ -269,7 +269,7 @@ describe(import.meta.file, () => {
     expect(output?.screenAddPuzzle_selected).toEqual([])
   })
 
-  test.only('unselect all after closing screen', async () => {
+  test('unselect all after closing screen', async () => {
     const f = await Fixture()
     const puzzles = await Promise.all(Array.from({ length: 10 }, () => Puzzle.random()))
     const puzzleIds = puzzles.map((p) => p.id)
