@@ -22,7 +22,7 @@ const colorClasses: { [color in TypographyColor]: string } = {
 
 type Input = {
   text: TranslatedText
-  variant: TypographyVariant
+  variant?: TypographyVariant
   skeleton?: boolean
   className?: string
   role?: AriaRole
@@ -43,6 +43,8 @@ const toAriaLevel = (input: Input): number | undefined => {
           return 4
         case 'caption':
           return 5
+        default:
+          return undefined
       }
     }
     default: {
@@ -57,7 +59,7 @@ export const Typography = (input: Input) => {
   return (
     <div
       className={cn(
-        variantClasses[input.variant],
+        input.variant ? variantClasses[input.variant] : null,
         input.color && !input.skeleton ? colorClasses[input.color] : null,
         input.skeleton ? SKELETON_CLASS : null,
         input.className,

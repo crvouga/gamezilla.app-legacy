@@ -1,6 +1,7 @@
 import type { VDom } from '~/@/vdom/vdom'
-import { IconPlus, Swiper } from '~/app/@/ui'
+import { IconPlus, Swiper, Typography } from '~/app/@/ui'
 import type { PuzzleId } from '../../puzzle/puzzle-id'
+import { TranslatedText } from '~/@/l18n'
 
 const COLUMN_COUNT = 5
 const ROW_COUNT = 6
@@ -68,14 +69,24 @@ const View = (input: {
   const slideCount = Math.ceil((input.puzzleIds.length + 1) / (COLUMN_COUNT * ROW_COUNT))
 
   for (let slideIndex = 0; slideIndex < slideCount; slideIndex++) {
+    const startPosition = slideIndex * PER_SLIDE_ITEM_COUNT + 1
+    const endPosition = startPosition + PER_SLIDE_ITEM_COUNT
+    const slideTitle = `${startPosition} - ${endPosition}`
     slides.push(
       <Swiper.Slide key={slideIndex} className='flex h-full w-3/4 flex-col items-center justify-center'>
-        <ViewPackPuzzleGridSlide
-          key={slideIndex}
-          slideIndex={slideIndex}
-          puzzleIds={input.puzzleIds}
-          renderCell={input.renderCell}
-        />
+        <div className='flex w-fit flex-col items-center justify-center gap-1'>
+          <Typography
+            text={TranslatedText.of(slideTitle)}
+            className='flex w-full items-center justify-start p-1 text-3xl'
+          />
+
+          <ViewPackPuzzleGridSlide
+            key={slideIndex}
+            slideIndex={slideIndex}
+            puzzleIds={input.puzzleIds}
+            renderCell={input.renderCell}
+          />
+        </div>
       </Swiper.Slide>,
     )
   }
@@ -107,7 +118,7 @@ const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number
   return (
     <button
       onClick={onClick}
-      className='bg-paper clickable flex h-full w-full items-center justify-center overflow-hidden rounded text-xl font-bold'
+      className='bg-paper clickable flex h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal'
     >
       {index + 1}
     </button>
