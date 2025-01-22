@@ -382,8 +382,8 @@ const View: FrontendModule['View'] = (input) => {
             },
             {
               renderIcon: (input) => <IconScrewdriverWrench {...input} />,
-              title: ctx.t('flow.builder'),
-              description: ctx.t('flow.builder-description'),
+              title: ctx.t('flow.build'),
+              description: ctx.t('flow.build-description'),
               onClick: () => {
                 input.dispatch({
                   t: 'got-msg-space',

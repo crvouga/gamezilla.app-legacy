@@ -11,7 +11,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
-    case 'flow.builder.screen-main-menu.user-clicked-option': {
+    case 'flow.build.screen-main-menu.user-clicked-option': {
       return {
         model: input.model,
         msgCmd: [playSound(APP_SOUND.navForwardMin)],
@@ -54,7 +54,7 @@ const View: FrontendModule['View'] = (input) => {
           </div>
         </div>
       )}
-      title={input.ctx.t('flow.builder')}
+      title={input.ctx.t('flow.build')}
       buttons={[
         {
           renderIcon: (input) => <IconPuzzlePiece {...input} />,
@@ -64,7 +64,7 @@ const View: FrontendModule['View'] = (input) => {
             input.dispatch({
               t: 'got-msg-space',
               c: {
-                t: 'flow.builder.screen-main-menu.user-clicked-option',
+                t: 'flow.build.screen-main-menu.user-clicked-option',
                 option: 'puzzle-builder',
                 userId: input.ctx.currentUserId,
               },
@@ -78,7 +78,7 @@ const View: FrontendModule['View'] = (input) => {
             input.dispatch({
               t: 'got-msg-space',
               c: {
-                t: 'flow.builder.screen-main-menu.user-clicked-option',
+                t: 'flow.build.screen-main-menu.user-clicked-option',
                 option: 'pack-builder',
                 userId: input.ctx.currentUserId,
               },
