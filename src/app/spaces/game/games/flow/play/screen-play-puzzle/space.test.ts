@@ -42,7 +42,7 @@ describe(import.meta.file, () => {
       ),
     )
 
-    expect(f.init.ModePlay).not.toEqual(after.ModePlay)
+    expect(f.init.modePlay).not.toEqual(after.modePlay)
   })
 
   it('should go to next puzzle after the user clicks the next button', async () => {
@@ -105,8 +105,8 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(before.ModePlay).not.toEqual(after.ModePlay)
-    expect(after.ModePlay).toEqual(
+    expect(before.modePlay).not.toEqual(after.modePlay)
+    expect(after.modePlay).toEqual(
       f.nextPuzzle.t === 'got'
         ? ModePlay.init({
             ctx: ModePlay.initCtx({
@@ -125,7 +125,7 @@ describe(import.meta.file, () => {
     const afterFlow = ModePlay.toFlow({
       flow: f.puzzle.flow,
       model:
-        after.ModePlay ??
+        after.modePlay ??
         ModePlay.init({
           ctx: ModePlay.initCtx({ flow: f.puzzle.flow, solutions: await Solutions.find([f.puzzle.flow]) }),
         }),
@@ -248,7 +248,7 @@ describe(import.meta.file, () => {
         userId: f.hostId,
       },
     ])
-    expect(before.ModePlay).toEqual(
+    expect(before.modePlay).toEqual(
       ModePlay.init({
         ctx: ModePlay.initCtx({
           flow: f.puzzle.flow,

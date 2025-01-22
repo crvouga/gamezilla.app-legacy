@@ -31,9 +31,9 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
           }
 
           case 'screen-pack-builder.got-flow-play-msg': {
-            const ModePlay = input.modelSpace?.screen.t === 'screen-puzzle' ? input.modelSpace.screen.play : null
+            const modePlay = input.modelSpace?.screen.t === 'screen-puzzle' ? input.modelSpace.screen.play : null
 
-            if (!ModePlay) {
+            if (!modePlay) {
               return { model }
             }
 
@@ -51,7 +51,7 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
                 flow: flowPuzzle.flow,
                 solutions: input.ctx.solutions,
               }),
-              model: ModePlay,
+              model: modePlay,
               msg: input.msgSpace.c,
             })
 

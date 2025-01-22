@@ -71,7 +71,7 @@ export const ModelSpace = p.obj({
   t: p.l('screen-play-puzzle'),
   pack: Pack,
   puzzleResult: PuzzleResult,
-  ModePlay: p.or(ModePlay.Model, p.l(null)),
+  modePlay: p.or(ModePlay.Model, p.l(null)),
   puzzleIndex: p.num,
   opened: p.or(p.l('puzzle-complete'), p.l('action-drawer'), p.l(null)),
   hints: p.partialDict(GroupId, GroupId),

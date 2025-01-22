@@ -86,8 +86,8 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
           model: input.model,
         }
       }
-      const ModePlay =
-        input.modelSpace.screen.ModePlay ??
+      const modePlay =
+        input.modelSpace.screen.modePlay ??
         ModePlay.init({
           ctx: ModePlay.initCtx({
             flow: input.modelSpace.screen.puzzleResult.c.flow,
@@ -97,7 +97,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 
       const output = ModePlay.update({
         msg: input.msgSpace.c,
-        model: ModePlay,
+        model: modePlay,
         ctx: ModePlay.initCtx({
           flow: input.modelSpace.screen.puzzleResult.c.flow,
           solutions: input.ctx.solutions,
@@ -126,7 +126,7 @@ const View: FrontendModule['View'] = (input) => {
     return null
   }
   const flowPuzzle = input.modelSpace.screen.puzzleResult
-  const ModePlay = input.modelSpace.screen.ModePlay
+  const modePlay = input.modelSpace.screen.modePlay
   const isSolved = ScreenPlayPuzzleSpace.toStatus(input.modelSpace.screen) === 'solved'
   const puzzleIndex = input.modelSpace.screen.puzzleIndex
 
@@ -156,7 +156,7 @@ const View: FrontendModule['View'] = (input) => {
                 key={flowPuzzle.c.id}
                 flow={flowPuzzle.c.flow}
                 model={
-                  ModePlay ??
+                  modePlay ??
                   ModePlay.init({ ctx: ModePlay.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
                 }
                 dispatch={() => {}}
@@ -198,7 +198,7 @@ const View: FrontendModule['View'] = (input) => {
               key={flowPuzzle.c.id}
               flow={flowPuzzle.c.flow}
               model={
-                ModePlay ??
+                modePlay ??
                 ModePlay.init({ ctx: ModePlay.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
               }
               dispatch={(c) =>
@@ -257,7 +257,7 @@ const View: FrontendModule['View'] = (input) => {
           flowPuzzle.t === 'got' && !isSolved
             ? ModePlay.viewHintAction({
                 model:
-                  ModePlay ??
+                  modePlay ??
                   ModePlay.init({
                     ctx: ModePlay.initCtx({
                       flow: flowPuzzle.c.flow,

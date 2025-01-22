@@ -38,8 +38,8 @@ const updateScreen = (input: {
         return input.modelSpace
       }
 
-      const ModePlay =
-        input.modelSpace.ModePlay ??
+      const modelPlay =
+        input.modelSpace.modePlay ??
         ModePlay.init({
           ctx: ModePlay.initCtx({
             flow: input.modelSpace.puzzleResult.c.flow,
@@ -47,23 +47,20 @@ const updateScreen = (input: {
           }),
         })
 
-      const ModePlayNew = ModePlay.update({
+      const modelPlayNew = ModePlay.update({
         msg: input.msgSpace.c,
-        model: ModePlay,
-        ctx: ModePlay.initCtx({
-          flow: input.modelSpace.puzzleResult.c.flow,
-          solutions: input.ctx.solutions,
-        }),
+        model: modelPlay,
+        ctx: ModePlay.initCtx({ flow: input.modelSpace.puzzleResult.c.flow, solutions: input.ctx.solutions }),
       })
 
-      const didSolve = ModePlayNew.events?.some((e) => e.t === 'solved')
+      const didSolve = modelPlayNew.events?.some((e) => e.t === 'solved')
       const userId = input.msgSpace.userId
 
       return {
         ...input.modelSpace,
-        ModePlay: ModePlayNew.model,
+        modePlay: modelPlayNew.model,
         opened: didSolve ? 'puzzle-complete' : input.modelSpace.opened,
-        events: ModePlayNew.events?.flatMap((event) => {
+        events: modelPlayNew.events?.flatMap((event) => {
           switch (event.t) {
             case 'used-hint': {
               return {
@@ -111,7 +108,7 @@ const updateScreen = (input: {
         case 'got': {
           return {
             ...input.modelSpace,
-            ModePlay: ModePlay.init({
+            modePlay: ModePlay.init({
               ctx: ModePlay.initCtx({
                 flow: input.msgSpace.nextPuzzle.c.flow,
                 solutions: input.ctx.solutions,
@@ -130,7 +127,7 @@ const updateScreen = (input: {
         case 'got': {
           return {
             ...input.modelSpace,
-            ModePlay: ModePlay.init({
+            modePlay: ModePlay.init({
               ctx: ModePlay.initCtx({
                 flow: input.msgSpace.prevPuzzle.c.flow,
                 solutions: input.ctx.solutions,
@@ -158,7 +155,7 @@ const updateScreen = (input: {
       }
       return {
         ...input.modelSpace,
-        ModePlay: ModePlay.init({
+        modePlay: ModePlay.init({
           ctx: ModePlay.initCtx({
             flow: input.modelSpace.puzzleResult.c.flow,
             solutions: input.ctx.solutions,
@@ -209,7 +206,7 @@ const initSpace = (input: { pack: Pack; puzzle: PuzzleResult; puzzleIndex: numbe
   return {
     pack: input.pack,
     puzzleIndex: input.puzzleIndex,
-    ModePlay:
+    modePlay:
       input.puzzle.t === 'got'
         ? ModePlay.init({ ctx: ModePlay.initCtx({ flow: input.puzzle.c.flow, solutions: input.ctx.solutions }) })
         : null,
@@ -236,15 +233,15 @@ const toStatus = (modelSpace: ModelSpace) => {
     return 'not-playing'
   }
 
-  const ModePlay = modelSpace.ModePlay
+  const modelPlay = modelSpace.modePlay
 
-  if (!ModePlay) {
+  if (!modelPlay) {
     return 'solving'
   }
 
   return ModePlay.toStatus({
     flow: modelSpace.puzzleResult.c.flow,
-    model: ModePlay,
+    model: modelPlay,
   })
 }
 
