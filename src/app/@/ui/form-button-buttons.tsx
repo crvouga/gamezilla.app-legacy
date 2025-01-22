@@ -7,6 +7,7 @@ export const FormBottomButtons = (input: {
   cancelDisabled?: boolean
   confirmText: TranslatedText
   confirmLoading?: boolean
+  confirmDisabled?: boolean
   variant?: 'danger'
 }) => {
   return (
@@ -19,6 +20,7 @@ export const FormBottomButtons = (input: {
         variant='contained'
         text={input.confirmText}
         loading={input.confirmLoading}
+        disabled={input.confirmDisabled}
       />
     </div>
   )

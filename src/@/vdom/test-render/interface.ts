@@ -3,6 +3,7 @@ import type { AriaRole } from '../aria-role'
 
 export type TestNode = {
   click: () => void
+  query: (cssSelector: string) => TestNode | null
   getByRole: (ariaRole: AriaRole, ariaName?: string) => TestNode | null
   getByTestId: (testId: string | number) => TestNode | null
   getAttribute: (attribute: string) => string | null

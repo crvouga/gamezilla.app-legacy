@@ -177,6 +177,7 @@ export const translations: Text = {
   'flow.puzzle-not-found': 'Quebra-cabeça não encontrado',
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': 'Sem quebra-cabeças',
+  'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} de ${totalCount} selecionados`,
   'flow-play.no-hints-available': 'Nenhumas dicas disponíveis',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'flow.no-packs': 'Sem pacotes',

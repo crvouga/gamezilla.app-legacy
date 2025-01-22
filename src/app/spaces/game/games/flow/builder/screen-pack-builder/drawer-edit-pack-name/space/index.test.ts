@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { FixtureSpace } from '~/app/spaces/@/fixture/space'
 import { Pack } from '../../../../@/pack/pack'
-import { EditPackNameSpace } from '../space'
+import { EditPackNameSpace } from '.'
 import type { ModelSpace, MsgSpace } from '../types'
 
 const Fixture = async () => {

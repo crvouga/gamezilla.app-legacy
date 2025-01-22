@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 import { Pack } from '../../../../@/pack/pack'
-import { EditPackNameFrontend } from '../frontend'
+import { EditPackNameFrontend } from '.'
 import { EditPackNameSpace } from '../space'
 import type { MsgSpace } from '../types'
 

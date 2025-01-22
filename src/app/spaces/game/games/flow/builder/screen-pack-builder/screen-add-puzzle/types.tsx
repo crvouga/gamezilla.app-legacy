@@ -1,7 +1,6 @@
 import { p } from '~/@/parser'
-import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
 import { UserId } from '~/app/@/data/user-id'
-import { Puzzle } from '../../../@/puzzle/puzzle'
+import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
 import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 
 export const ModelSpace = p.obj({
@@ -27,7 +26,12 @@ export const MsgSpace = p.or(
   }),
   p.obj({
     t: p.l('screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item'),
-    puzzle: Puzzle,
+    puzzleId: PuzzleId,
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l('screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox'),
+    puzzleIds: p.arr(PuzzleId),
     userId: UserId,
   }),
 )

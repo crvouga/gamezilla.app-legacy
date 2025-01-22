@@ -178,6 +178,8 @@ export const translations: Text = {
   'flow.puzzle-not-found': 'パズルが見つかりません',
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': 'パズルなし',
+  'flow.puzzles-selected': ({ totalCount, selectedCount }) =>
+    `${selectedCount} / ${totalCount} \u304C\u9078\u629E\u3055\u308C\u307E\u3057\u305F`,
   'flow-play.no-hints-available': 'ヒントはありません',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'flow.no-packs': 'パックなし',

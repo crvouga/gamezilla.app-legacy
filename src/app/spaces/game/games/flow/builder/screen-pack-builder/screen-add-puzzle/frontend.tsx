@@ -102,6 +102,16 @@ const View: FrontendModule['View'] = (input) => {
         model={input.ctx.puzzleDbQuery}
         selected={input.modelSpace.screenAddPuzzle_selected}
         query={query}
+        onHeaderCheckboxClick={(allPuzzleIds) => {
+          input.dispatch({
+            t: 'got-msg-space',
+            c: {
+              t: 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox',
+              puzzleIds: allPuzzleIds,
+              userId: input.ctx.currentUserId,
+            },
+          })
+        }}
         onQueryChanged={(query) => {
           input.dispatch({
             t: 'got-msg-space',
@@ -117,7 +127,7 @@ const View: FrontendModule['View'] = (input) => {
             t: 'got-msg-space',
             c: {
               t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-              puzzle,
+              puzzleId: puzzle.id,
               userId: input.ctx.currentUserId,
             },
           })
@@ -137,6 +147,7 @@ const View: FrontendModule['View'] = (input) => {
         }
         cancelDisabled={false}
         confirmLoading={false}
+        confirmDisabled={input.modelSpace.screenAddPuzzle_selected.length === 0}
       />
     </form>
   )

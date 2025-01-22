@@ -40,6 +40,13 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
       click(): void {
         userEvent.click(baseElement)
       },
+      query(cssSelector) {
+        const element = baseElement.querySelector(cssSelector)
+        if (!element) {
+          return null
+        }
+        return createTestNode(element as HTMLElement)
+      },
       getByRole(role, name) {
         try {
           const element = within(baseElement).getByRole(role, {

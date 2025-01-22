@@ -27,7 +27,7 @@ describe(import.meta.file, () => {
     const before = f.update(f.initial, [
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-        puzzle,
+        puzzleId: puzzle.id,
         userId: f.createdBy,
       },
     ])
@@ -50,7 +50,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-        puzzle,
+        puzzleId: puzzle.id,
         userId: f.createdBy,
       },
     ])
@@ -66,14 +66,14 @@ describe(import.meta.file, () => {
     const before = f.update(f.initial, [
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-        puzzle,
+        puzzleId: puzzle.id,
         userId: f.createdBy,
       },
     ])
     const after = f.update(before, [
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-        puzzle,
+        puzzleId: puzzle.id,
         userId: f.createdBy,
       },
     ])
@@ -104,7 +104,7 @@ describe(import.meta.file, () => {
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-        puzzle: newPuzzle,
+        puzzleId: newPuzzle.id,
         userId: f.createdBy,
       },
       {
@@ -150,7 +150,7 @@ describe(import.meta.file, () => {
       },
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-        puzzle: f.puzzles[0],
+        puzzleId: f.puzzles[0].id,
         userId: f.createdBy,
       },
       {
@@ -203,7 +203,7 @@ describe(import.meta.file, () => {
       },
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-        puzzle,
+        puzzleId: puzzle.id,
         userId: f.createdBy,
       },
       {
@@ -225,7 +225,7 @@ describe(import.meta.file, () => {
       },
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-        puzzle,
+        puzzleId: puzzle.id,
         userId: f.createdBy,
       },
       {
@@ -234,5 +234,38 @@ describe(import.meta.file, () => {
       },
     ])
     expect(output?.screen.t === 'screen-puzzle-grid').toBe(true)
+  })
+
+  test('select all puzzles after clicking header checkbox', async () => {
+    const f = await Fixture()
+    const puzzles = await Promise.all(Array.from({ length: 10 }, () => Puzzle.random()))
+    const puzzleIds = puzzles.map((p) => p.id)
+    const output = f.update(f.initial, [
+      {
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox',
+        puzzleIds: puzzleIds,
+        userId: f.createdBy,
+      },
+    ])
+    expect(output?.screenAddPuzzle_selected).toEqual(puzzleIds)
+  })
+
+  test('unselect all puzzles after clicking header checkbox when all are selected', async () => {
+    const f = await Fixture()
+    const puzzles = await Promise.all(Array.from({ length: 10 }, () => Puzzle.random()))
+    const puzzleIds = puzzles.map((p) => p.id)
+    const output = f.update(f.initial, [
+      {
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox',
+        puzzleIds: puzzleIds,
+        userId: f.createdBy,
+      },
+      {
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox',
+        puzzleIds: puzzleIds,
+        userId: f.createdBy,
+      },
+    ])
+    expect(output?.screenAddPuzzle_selected).toEqual([])
   })
 })

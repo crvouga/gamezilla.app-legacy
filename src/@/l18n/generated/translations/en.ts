@@ -177,6 +177,7 @@ export const translations: Text = {
   'flow.puzzle-not-found': 'Puzzle not found',
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': 'No puzzles',
+  'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} of ${totalCount} selected`,
   'flow-play.no-hints-available': 'No hints available',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'flow.no-packs': 'No packs',

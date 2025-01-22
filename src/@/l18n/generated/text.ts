@@ -30,7 +30,7 @@ import type { Text as Text27 } from '../../../app/spaces/game/games/flow/builder
 import type { Text as Text28 } from '../../../app/spaces/game/games/flow/builder/screen-puzzle-builder/$l18n'
 import type { Text as Text29 } from '../../../app/spaces/game/games/flow/builder/screen-puzzle-builder/delete-forever/$l18n'
 import type { Text as Text30 } from '../../../app/spaces/game/games/flow/builder/screen-pack-builder/$l18n'
-import type { Text as Text31 } from '../../../app/spaces/game/games/flow/builder/screen-pack-builder/edit-pack-name/frontend/$l18n'
+import type { Text as Text31 } from '../../../app/spaces/game/games/flow/builder/screen-pack-builder/drawer-edit-pack-name/frontend/$l18n'
 import type { Text as Text32 } from '../../../app/spaces/game/games/flow/@/copy-to-clipboard/$l18n'
 import type { Text as Text33 } from '../../../app/spaces/game/games/flow/@/frontend/$l18n'
 import type { Text as Text34 } from '../../../app/spaces/game/games/flow/@/puzzle/puzzle-name/$l18n'

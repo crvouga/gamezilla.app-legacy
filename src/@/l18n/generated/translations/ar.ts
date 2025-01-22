@@ -178,6 +178,8 @@ export const translations: Text = {
   'flow.puzzle-not-found': 'اللغز غير موجود',
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': 'لا توجد ألغاز',
+  'flow.puzzles-selected': ({ totalCount, selectedCount }) =>
+    `${selectedCount} \u0645\u0646 ${totalCount} \u062A\u0645 \u062A\u062D\u062F\u064A\u062F\u0647\u0627`,
   'flow-play.no-hints-available': 'لا تتوفر تلميحات',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'flow.no-packs': 'لا توجد حزم',

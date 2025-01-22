@@ -1,7 +1,7 @@
 import { Sub } from '~/@/sub'
 import { Button, IconArrowLeftOnRect } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { EditPackNameFrontend } from './edit-pack-name/frontend'
+import { EditPackNameFrontend } from './drawer-edit-pack-name/frontend'
 import { ScreenAddPuzzle } from './screen-add-puzzle/frontend'
 import { ScreenPuzzlePlay } from './screen-play-puzzle/frontend'
 import { ScreenPuzzleGrid } from './screen-puzzle-grid/frontend'

@@ -1,7 +1,7 @@
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { PlayMode } from '../../@/play-mode'
-import { EditPackNameSpace } from './edit-pack-name/space'
+import { EditPackNameSpace } from './drawer-edit-pack-name/space'
 import { ScreenAddPuzzleSpace } from './screen-add-puzzle/space'
 import type { ModelSpace, UpdateSpace } from './types'
 

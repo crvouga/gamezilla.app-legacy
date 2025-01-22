@@ -5,6 +5,7 @@ import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { VDom } from '~/@/vdom/vdom'
 import { EmptyState, IconPuzzlePiece, SpinnerBlock, Typography } from '~/app/@/ui'
+import { Checkbox, CheckboxState } from '~/app/@/ui/checkbox'
 import { Gutter } from '~/app/@/ui/gutter'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
@@ -14,7 +15,6 @@ import { PuzzleDbQuery } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './query-form'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
-import { Checkbox } from '~/app/@/ui/checkbox'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
@@ -79,6 +79,7 @@ const ViewList = (input: {
   model: ModelFrontend
   onQueryChanged: (query: PuzzleDbQuery) => void
   onItemClick: (puzzle: Puzzle) => void
+  onHeaderCheckboxClick?: (allPuzzleIds: PuzzleId[]) => void
   fab?: VDom
 }) => {
   const queryKey = PuzzleDbQuery.toKey(input.query)
@@ -88,9 +89,31 @@ const ViewList = (input: {
   const isLoading = !(queryKey in input.model.results)
   const isEmpty = !isLoading && puzzles.length === 0
 
+  const totalCount = puzzles.length
+  const selectedCount = Math.min(input.selected?.length ?? 0, totalCount)
+
   return (
-    <div className='relative flex h-full w-full flex-col gap-2 overflow-hidden'>
+    <div className='relative flex h-full w-full flex-col overflow-hidden'>
       <QueryForm.View ctx={input.ctx} query={input.query} onChange={input.onQueryChanged} />
+
+      {input.selectable && (
+        <button
+          className='clickable flex w-fit items-center gap-4 px-4 py-2'
+          type='button'
+          onClick={() => input.onHeaderCheckboxClick?.(puzzleIds)}
+        >
+          <Checkbox state={toTopLevelCheckboxState({ totalCount, selectedCount })} />
+          <Typography
+            variant='body'
+            color='text-secondary'
+            className='text-lg'
+            text={input.ctx.t('flow.puzzles-selected', {
+              totalCount: puzzles.length,
+              selectedCount: input.selected?.length ?? 0,
+            })}
+          />
+        </button>
+      )}
 
       <div className='relative flex w-full flex-1 flex-col items-center overflow-y-scroll'>
         {puzzles.map((puzzle) => (
@@ -119,6 +142,16 @@ const ViewList = (input: {
   )
 }
 
+const toTopLevelCheckboxState = (input: { totalCount: number; selectedCount: number }): CheckboxState => {
+  if (input.selectedCount === 0) {
+    return 'unchecked'
+  }
+  if (input.selectedCount === input.totalCount) {
+    return 'checked'
+  }
+  return 'indeterminate'
+}
+
 const ViewListItem = (input: {
   selectable?: boolean
   query: PuzzleDbQuery
@@ -136,7 +169,7 @@ const ViewListItem = (input: {
     >
       {input.selectable && (
         <div className='px-4'>
-          <Checkbox checked={input.selected} />
+          <Checkbox state={input.selected ? 'checked' : 'unchecked'} />
         </div>
       )}
 

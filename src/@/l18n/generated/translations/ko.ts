@@ -176,6 +176,7 @@ export const translations: Text = {
   'flow.puzzle-not-found': '퍼즐을 찾을 수 없습니다',
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': '퍼즐이 없습니다',
+  'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} / ${totalCount} \uC120\uD0DD\uB428`,
   'flow-play.no-hints-available': '힌트 없음',
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
   'flow.no-packs': '팩 없음',

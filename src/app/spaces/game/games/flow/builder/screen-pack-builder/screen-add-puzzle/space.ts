@@ -35,7 +35,28 @@ updates.push((input) => {
     case 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item': {
       return {
         ...input.modelSpace,
-        screenAddPuzzle_selected: togglePuzzleId(input.modelSpace.screenAddPuzzle_selected, input.msgSpace.puzzle.id),
+        screenAddPuzzle_selected: togglePuzzleId(input.modelSpace.screenAddPuzzle_selected, input.msgSpace.puzzleId),
+      }
+    }
+    default: {
+      return input.modelSpace
+    }
+  }
+})
+
+updates.push((input) => {
+  switch (input.msgSpace?.t) {
+    case 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox': {
+      const isAllSelected = input.modelSpace.screenAddPuzzle_selected.length === input.msgSpace.puzzleIds.length
+      if (isAllSelected) {
+        return {
+          ...input.modelSpace,
+          screenAddPuzzle_selected: [],
+        }
+      }
+      return {
+        ...input.modelSpace,
+        screenAddPuzzle_selected: input.msgSpace.puzzleIds,
       }
     }
     default: {
