@@ -2,60 +2,11 @@ import type { VDom } from '~/@/vdom/vdom'
 import { IconPlus, Swiper, Typography } from '~/app/@/ui'
 import type { PuzzleId } from '../../puzzle/puzzle-id'
 import { TranslatedText } from '~/@/l18n'
+import { PaginationDots } from '~/app/@/ui/pagination-dots'
 
 const COLUMN_COUNT = 5
 const ROW_COUNT = 6
 const PER_SLIDE_ITEM_COUNT = COLUMN_COUNT * ROW_COUNT
-
-const ViewPackPuzzleGridSlide = (input: {
-  slideIndex: number
-  puzzleIds: PuzzleId[]
-  renderCell: (input: { x: number; y: number; index: number; puzzleId: PuzzleId | null; empty: boolean }) => VDom
-}) => {
-  const columns: VDom[] = []
-  const indexOffset = input.slideIndex * (COLUMN_COUNT * ROW_COUNT)
-
-  for (let y = 0; y < ROW_COUNT; y++) {
-    const row: VDom[] = []
-    for (let x = 0; x < COLUMN_COUNT; x++) {
-      const index =
-        toIndex({
-          x,
-          y,
-        }) + indexOffset
-      const puzzleId = input.puzzleIds[index] ?? null
-      const empty = index >= input.puzzleIds.length
-
-      row.push(
-        <div
-          role='gridcell'
-          key={`${y}-${x}`}
-          className='flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16'
-        >
-          {input.renderCell({
-            x,
-            y,
-            puzzleId,
-            empty,
-            index,
-          })}
-        </div>,
-      )
-    }
-
-    columns.push(
-      <div key={y} className='flex w-full items-center justify-center'>
-        {row}
-      </div>,
-    )
-  }
-
-  return (
-    <div role='grid' className='aspect-square w-full'>
-      {columns}
-    </div>
-  )
-}
 
 const View = (input: {
   id: string
@@ -77,7 +28,7 @@ const View = (input: {
         <div className='flex w-fit flex-col items-center justify-center gap-1'>
           <Typography
             text={TranslatedText.of(slideTitle)}
-            className='flex w-full items-center justify-start p-1 text-3xl'
+            className='flex w-full items-center justify-start p-1 text-2xl'
           />
 
           <ViewPackPuzzleGridSlide
@@ -92,14 +43,58 @@ const View = (input: {
   }
 
   return (
-    <Swiper.Container
-      onSlideIndexChanged={input.onSlideIndexChanged}
-      id={input.id}
-      slideIndex={input.slideIndex}
-      className='flex h-full w-full items-center justify-center'
-    >
-      {slides}
-    </Swiper.Container>
+    <div className='flex h-full w-full flex-col gap-4 py-6'>
+      <Swiper.Container
+        onSlideIndexChanged={input.onSlideIndexChanged}
+        id={input.id}
+        slideIndex={input.slideIndex}
+        className='flex h-full w-full items-center justify-center'
+      >
+        {slides}
+      </Swiper.Container>
+
+      <PaginationDots count={slideCount} activeIndex={input.slideIndex} />
+    </div>
+  )
+}
+
+const ViewPackPuzzleGridSlide = (input: {
+  slideIndex: number
+  puzzleIds: PuzzleId[]
+  renderCell: (input: { x: number; y: number; index: number; puzzleId: PuzzleId | null; empty: boolean }) => VDom
+}) => {
+  const columns: VDom[] = []
+  const indexOffset = input.slideIndex * (COLUMN_COUNT * ROW_COUNT)
+
+  for (let y = 0; y < ROW_COUNT; y++) {
+    const row: VDom[] = []
+    for (let x = 0; x < COLUMN_COUNT; x++) {
+      const index = toIndex({ x, y }) + indexOffset
+      const puzzleId = input.puzzleIds[index] ?? null
+      const empty = index >= input.puzzleIds.length
+
+      row.push(
+        <div
+          role='gridcell'
+          key={`${y}-${x}`}
+          className='flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16'
+        >
+          {input.renderCell({ x, y, puzzleId, empty, index })}
+        </div>,
+      )
+    }
+
+    columns.push(
+      <div key={y} className='flex w-full items-center justify-center'>
+        {row}
+      </div>,
+    )
+  }
+
+  return (
+    <div role='grid' className='aspect-square w-full'>
+      {columns}
+    </div>
   )
 }
 
