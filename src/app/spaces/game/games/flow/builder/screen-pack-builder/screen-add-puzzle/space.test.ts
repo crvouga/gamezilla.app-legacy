@@ -36,6 +36,32 @@ describe.only(import.meta.file, () => {
     expect(output?.screenAddPuzzle_selected.includes(puzzle.id)).toEqual(true)
   })
 
+  test('toggling puzzles', async () => {
+    const f = await Fixture()
+    const puzzle = await Puzzle.random()
+
+    const before = f.update(f.initial, [
+      {
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+        puzzle,
+        userId: f.createdBy,
+      },
+    ])
+    const after = f.update(before, [
+      {
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+        puzzle,
+        userId: f.createdBy,
+      },
+    ])
+
+    expect(before?.screenAddPuzzle_selected.length).toEqual(1)
+    expect(before?.screenAddPuzzle_selected.includes(puzzle.id)).toEqual(true)
+    //
+    expect(after?.screenAddPuzzle_selected.length).toEqual(0)
+    expect(after?.screenAddPuzzle_selected.includes(puzzle.id)).toEqual(false)
+  })
+
   it('should be able to close add puzzle screen', async () => {
     const f = await Fixture()
     const modelSpace = f.update(f.initial, [

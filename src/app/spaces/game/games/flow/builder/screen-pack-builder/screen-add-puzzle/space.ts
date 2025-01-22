@@ -1,4 +1,5 @@
 import { Pack } from '../../../@/pack/pack'
+import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 import { UpdateSpace } from '../types'
 import { ModelSpace } from './types'
 
@@ -34,7 +35,7 @@ updates.push((input) => {
     case 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item': {
       return {
         ...input.modelSpace,
-        screenAddPuzzle_selected: [...input.modelSpace.screenAddPuzzle_selected, input.msgSpace.puzzle.id],
+        screenAddPuzzle_selected: togglePuzzleId(input.modelSpace.screenAddPuzzle_selected, input.msgSpace.puzzle.id),
       }
     }
     default: {
@@ -42,6 +43,13 @@ updates.push((input) => {
     }
   }
 })
+
+const togglePuzzleId = (puzzleIds: PuzzleId[], puzzleId: PuzzleId) => {
+  if (puzzleIds.includes(puzzleId)) {
+    return puzzleIds.filter((id) => id !== puzzleId)
+  }
+  return [...puzzleIds, puzzleId]
+}
 
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
