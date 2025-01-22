@@ -1,6 +1,6 @@
 import { withEventMeta } from '~/@/event-sourced/event'
 import { UserId } from '~/app/@/data/user-id'
-import { PlayMode } from '../../../../@/play-mode'
+import { ModePlay } from '../../../../@/mode-play'
 import { Pack } from '../../../../@/pack/pack'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
@@ -8,7 +8,7 @@ import { FixturePlayFrontend, type FixtureUpdateInput } from '../../../@/fronten
 
 const toCompletePuzzleMsgs = (puzzle: Puzzle) => {
   const userId = UserId.generate()
-  return PlayMode.toSolutionMsgs({
+  return ModePlay.toSolutionMsgs({
     flow: puzzle.flow,
   }).map(
     (c): FixtureUpdateInput => ({

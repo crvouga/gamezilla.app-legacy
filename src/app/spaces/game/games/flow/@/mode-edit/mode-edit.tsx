@@ -102,10 +102,7 @@ export const isUnsavedChanges = (model: Model, flow: FlowVariant.Model): boolean
 export const Msg = p.or(
   p.obj({ t: p.l('dragged-over'), nodeId: NodeId }),
   p.obj({ t: p.l('pressed-up-node'), nodeId: NodeId }),
-  p.obj({
-    t: p.l('pressed-down-node'),
-    nodeId: NodeId,
-  }),
+  p.obj({ t: p.l('pressed-down-node'), nodeId: NodeId }),
   p.obj({ t: p.l('clicked-clear') }),
   p.obj({ t: p.l('clicked-undo') }),
   p.obj({ t: p.l('clicked-redo') }),
@@ -113,10 +110,7 @@ export const Msg = p.or(
   p.obj({ t: p.l('dimensions-form.closed') }),
   p.obj({ t: p.l('dimensions-form.clicked-cancel') }),
   p.obj({ t: p.l('dimensions-form.clicked-save') }),
-  p.obj({
-    t: p.l('dimensions-form.inputted'),
-    dimensions: FlowVariantDimensions.Model,
-  }),
+  p.obj({ t: p.l('dimensions-form.inputted'), dimensions: FlowVariantDimensions.Model }),
 )
 export type Msg = p.Infer<typeof Msg>
 

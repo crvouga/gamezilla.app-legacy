@@ -1,6 +1,6 @@
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
-import { PlayMode } from '../../@/play-mode'
+import { ModePlay } from '../../@/mode-play'
 import { EditPackNameSpace } from './drawer-edit-pack-name/space'
 import { ScreenAddPuzzleSpace } from './screen-add-puzzle/space'
 import type { ModelSpace, UpdateSpace } from './types'
@@ -78,8 +78,8 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
           puzzleResult: msgSpace.puzzleResult,
           play:
             msgSpace.puzzleResult.t === 'got'
-              ? PlayMode.init({
-                  ctx: PlayMode.initCtx({
+              ? ModePlay.init({
+                  ctx: ModePlay.initCtx({
                     flow: msgSpace.puzzleResult.c.flow,
                     solutions: ctx.solutions,
                   }),
@@ -157,8 +157,8 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
 
       const updatedPlay =
         screen.puzzleResult.t === 'got'
-          ? PlayMode.update({
-              ctx: PlayMode.initCtx({
+          ? ModePlay.update({
+              ctx: ModePlay.initCtx({
                 flow: screen.puzzleResult.c.flow,
                 solutions: ctx.solutions,
               }),
@@ -208,8 +208,8 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
           puzzleIndex: clamp(modelSpace.screen.puzzleIndex + 1, 0, modelSpace.pack.puzzleIds.length - 1),
           play:
             msgSpace.nextPuzzleResult.t === 'got'
-              ? PlayMode.init({
-                  ctx: PlayMode.initCtx({
+              ? ModePlay.init({
+                  ctx: ModePlay.initCtx({
                     flow: msgSpace.nextPuzzleResult.c.flow,
                     solutions: ctx.solutions,
                   }),
@@ -248,8 +248,8 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
           puzzleIndex: clamp(modelSpace.screen.puzzleIndex - 1, 0, modelSpace.pack.puzzleIds.length - 1),
           play:
             msgSpace.previousPuzzleResult.t === 'got'
-              ? PlayMode.init({
-                  ctx: PlayMode.initCtx({
+              ? ModePlay.init({
+                  ctx: ModePlay.initCtx({
                     flow: msgSpace.previousPuzzleResult.c.flow,
                     solutions: ctx.solutions,
                   }),

@@ -5,7 +5,7 @@ import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend
 import { Button, Drawer, IconFloppyDisk, Typography } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { EditMode } from '../../../@/edit-mode'
+import { ModeEdit } from '../../../@/mode-edit'
 import type { Puzzle } from '../../../@/puzzle/puzzle'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgSpace } from '../../types'
 
@@ -33,8 +33,8 @@ const updateExitBuilder: FrontendModule['update'] = (input) => {
       }
 
       if (
-        EditMode.isUnsavedChanges(
-          input.modelSpace.screenPuzzleBuilder.editMode,
+        ModeEdit.isUnsavedChanges(
+          input.modelSpace.screenPuzzleBuilder.ModeEdit,
           input.modelSpace.screenPuzzleBuilder.puzzle.flow,
         )
       ) {
@@ -166,8 +166,8 @@ const saveChanges: FrontendModule['update'] = (input) => {
     ...puzzleBuilder.puzzle,
     lastUpdatedAt: input.ctx.now,
     lastUpdatedBy: input.ctx.currentUserId,
-    flow: EditMode.toFlowMemoized({
-      model: puzzleBuilder.editMode,
+    flow: ModeEdit.toFlowMemoized({
+      model: puzzleBuilder.ModeEdit,
     }),
   }
 

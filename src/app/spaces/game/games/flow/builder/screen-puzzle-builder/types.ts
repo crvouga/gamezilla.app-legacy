@@ -1,8 +1,8 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../@/puzzle/puzzle'
-import { EditMode } from '../../@/edit-mode'
-import { PlayMode } from '../../@/play-mode'
+import { ModeEdit } from '../../@/mode-edit'
+import { ModePlay } from '../../@/mode-play'
 import { DeleteForeverTypes } from './drawer-delete-forever'
 import { EditPuzzleNameTypes } from './drawer-edit-puzzle-name'
 import { SaveChangesTypes } from './drawer-save-changes'
@@ -25,8 +25,8 @@ export type MsgFrontend =
   | EditPuzzleNameTypes.MsgFrontend
   | DeleteForeverTypes.MsgFrontend
   | SaveChangesTypes.MsgFrontend
-  | { t: 'screen-puzzle-builder.got-edit-msg'; c: EditMode.Msg }
-  | { t: 'screen-puzzle-builder.got-play-msg'; c: PlayMode.Msg }
+  | { t: 'screen-puzzle-builder.got-edit-msg'; c: ModeEdit.Msg }
+  | { t: 'screen-puzzle-builder.got-play-msg'; c: ModePlay.Msg }
   | { t: 'screen-puzzle-builder.user-clicked-more-button' }
   | { t: 'screen-puzzle-builder.user-closed-more-drawer' }
   | { t: 'screen-puzzle-builder.user-clicked-exit-button' }
@@ -57,8 +57,8 @@ export const ModelSpace = p.obj({
   t: p.l('puzzle-builder'),
   puzzle: Puzzle,
   mode: Mode,
-  playMode: PlayMode.Model,
-  editMode: EditMode.Model,
+  ModePlay: ModePlay.Model,
+  ModeEdit: ModeEdit.Model,
 })
 export type ModelSpace = p.Infer<typeof ModelSpace>
 
@@ -68,11 +68,11 @@ export const MsgSpace = p.or(
   EditPuzzleNameTypes.MsgSpace,
   p.obj({
     t: p.l('screen-puzzle-builder.got-play-msg'),
-    c: PlayMode.Msg,
+    c: ModePlay.Msg,
   }),
   p.obj({
     t: p.l('screen-puzzle-builder.got-edit-msg'),
-    c: EditMode.Msg,
+    c: ModeEdit.Msg,
   }),
   p.obj({
     t: p.l('screen-puzzle-builder.user-clicked-edit-mode-button'),

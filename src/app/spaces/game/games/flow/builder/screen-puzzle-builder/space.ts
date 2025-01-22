@@ -1,6 +1,6 @@
 import { FlowSpaceCtx } from '../../@/space/ctx'
-import { EditMode } from '../../@/edit-mode'
-import { PlayMode } from '../../@/play-mode'
+import { ModeEdit } from '../../@/mode-edit'
+import { ModePlay } from '../../@/mode-play'
 import { Variant } from '../../@/variant'
 import * as BuilderTypes from '../types'
 import { DeleteForeverSpace } from './drawer-delete-forever/space'
@@ -9,17 +9,17 @@ import { SaveChangesSpace } from './drawer-save-changes/space'
 import { ModelSpace } from './types'
 
 const toStatus = (modelSpace: ModelSpace): 'solving' | 'solved' => {
-  return PlayMode.toStatus({ model: modelSpace.playMode, flow: toFlow(modelSpace) })
+  return ModePlay.toStatus({ model: modelSpace.ModePlay, flow: toFlow(modelSpace) })
 }
 
 const toFlow = (modelSpace: ModelSpace): Variant.Model => {
   switch (modelSpace.mode.t) {
     case 'edit': {
-      return EditMode.toFlow({ model: modelSpace.editMode })
+      return ModeEdit.toFlow({ model: modelSpace.ModeEdit })
     }
 
     case 'play': {
-      return PlayMode.toFlow({ flow: EditMode.toFlow({ model: modelSpace.editMode }), model: modelSpace.playMode })
+      return ModePlay.toFlow({ flow: ModeEdit.toFlow({ model: modelSpace.ModeEdit }), model: modelSpace.ModePlay })
     }
   }
 }
@@ -39,21 +39,21 @@ const updateSpaceMain = ({
         return modelSpace
       }
 
-      const flow = EditMode.toFlowMemoized({
-        model: modelSpace.screenPuzzleBuilder.editMode,
+      const flow = ModeEdit.toFlowMemoized({
+        model: modelSpace.screenPuzzleBuilder.ModeEdit,
       })
 
-      const updated = PlayMode.update({
-        model: modelSpace.screenPuzzleBuilder.playMode,
+      const updated = ModePlay.update({
+        model: modelSpace.screenPuzzleBuilder.ModePlay,
         msg: msgSpace.c,
-        ctx: PlayMode.initCtx({ flow, solutions: ctx.solutions }),
+        ctx: ModePlay.initCtx({ flow, solutions: ctx.solutions }),
       })
 
       return {
         ...modelSpace,
         screenPuzzleBuilder: {
           ...modelSpace.screenPuzzleBuilder,
-          playMode: updated.model,
+          ModePlay: updated.model,
         },
       }
     }
@@ -63,8 +63,8 @@ const updateSpaceMain = ({
         return modelSpace
       }
 
-      const updated = EditMode.update({
-        model: modelSpace.screenPuzzleBuilder.editMode,
+      const updated = ModeEdit.update({
+        model: modelSpace.screenPuzzleBuilder.ModeEdit,
         msg: msgSpace.c,
         flow: modelSpace.screenPuzzleBuilder.puzzle.flow,
       })
@@ -73,7 +73,7 @@ const updateSpaceMain = ({
         ...modelSpace,
         screenPuzzleBuilder: {
           ...modelSpace.screenPuzzleBuilder,
-          editMode: updated.model,
+          ModeEdit: updated.model,
         },
       }
     }
@@ -102,10 +102,10 @@ const updateSpaceMain = ({
       if (!modelSpace.screenPuzzleBuilder) {
         return modelSpace
       }
-      const initial = PlayMode.init({
-        ctx: PlayMode.initCtx({
-          flow: EditMode.toFlowMemoized({
-            model: modelSpace.screenPuzzleBuilder.editMode,
+      const initial = ModePlay.init({
+        ctx: ModePlay.initCtx({
+          flow: ModeEdit.toFlowMemoized({
+            model: modelSpace.screenPuzzleBuilder.ModeEdit,
           }),
           solutions: ctx.solutions,
         }),
@@ -117,7 +117,7 @@ const updateSpaceMain = ({
           mode: {
             t: 'play',
           },
-          playMode: initial,
+          ModePlay: initial,
         },
       }
     }

@@ -1,7 +1,7 @@
 import { isErr } from '~/@/result'
 import type { UpdateSpace } from '../../types'
-import { EditMode } from '../../../@/edit-mode'
-import { PlayMode } from '../../../@/play-mode'
+import { ModeEdit } from '../../../@/mode-edit'
+import { ModePlay } from '../../../@/mode-play'
 
 const updateSpace: UpdateSpace = ({ modelSpace, msgSpace, ctx }) => {
   switch (msgSpace.t) {
@@ -21,11 +21,11 @@ const updateSpace: UpdateSpace = ({ modelSpace, msgSpace, ctx }) => {
           mode: {
             t: 'edit',
           },
-          editMode: EditMode.init({
+          ModeEdit: ModeEdit.init({
             flow: flowPuzzleNew.flow,
           }),
-          playMode: PlayMode.init({
-            ctx: PlayMode.initCtx({
+          ModePlay: ModePlay.init({
+            ctx: ModePlay.initCtx({
               flow: flowPuzzleNew.flow,
               solutions: ctx.solutions,
             }),

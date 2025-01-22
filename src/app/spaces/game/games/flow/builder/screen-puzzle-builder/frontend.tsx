@@ -6,8 +6,8 @@ import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
-import { EditMode } from '../../@/edit-mode'
-import { PlayMode } from '../../@/play-mode'
+import { ModeEdit } from '../../@/mode-edit'
+import { ModePlay } from '../../@/mode-play'
 import { BoardLayout } from '../../@/ui/layout'
 import { VariantBoard } from '../../@/variant'
 import * as BuilderTypes from '../types'
@@ -111,10 +111,10 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
         }
       }
       const flow = ScreenPuzzleBuilderSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
-      const updated = PlayMode.update({
+      const updated = ModePlay.update({
         msg: input.msgSpace.c,
-        model: input.modelSpace.screenPuzzleBuilder.playMode,
-        ctx: PlayMode.initCtx({
+        model: input.modelSpace.screenPuzzleBuilder.ModePlay,
+        ctx: ModePlay.initCtx({
           flow,
           solutions: input.ctx.solutions,
         }),
@@ -122,7 +122,7 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
 
       return {
         model: input.model,
-        msgCmd: PlayMode.eventsToFrontendCmd(input.ctx, updated.events),
+        msgCmd: ModePlay.eventsToFrontendCmd(input.ctx, updated.events),
       }
     }
     case 'screen-puzzle-builder.got-edit-msg': {
@@ -131,8 +131,8 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
           model: input.model,
         }
       }
-      const updated = EditMode.update({
-        model: input.modelSpace.screenPuzzleBuilder.editMode,
+      const updated = ModeEdit.update({
+        model: input.modelSpace.screenPuzzleBuilder.ModeEdit,
         msg: input.msgSpace.c,
         flow: input.modelSpace.screenPuzzleBuilder.puzzle.flow,
       })
@@ -221,8 +221,8 @@ const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
     case 'edit': {
       return (
         <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
-          <EditMode.View
-            model={puzzleBuilder.editMode}
+          <ModeEdit.View
+            model={puzzleBuilder.ModeEdit}
             ctx={input.ctx}
             dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
           />
@@ -252,8 +252,8 @@ const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
           <BoardLayout
             top={<div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>}
             board={
-              <PlayMode.View
-                model={puzzleBuilder.playMode}
+              <ModePlay.View
+                model={puzzleBuilder.ModePlay}
                 flow={flow}
                 dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c })}
                 showSolvedAnimation
@@ -266,17 +266,17 @@ const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
                 open={false}
                 onToggle={() => {}}
                 buttons={[
-                  PlayMode.viewHintAction({
-                    ctx: PlayMode.initCtx({ ...input.ctx, flow }),
+                  ModePlay.viewHintAction({
+                    ctx: ModePlay.initCtx({ ...input.ctx, flow }),
                     dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
-                    model: puzzleBuilder.playMode,
+                    model: puzzleBuilder.ModePlay,
                     disabled: status === 'solved',
                   }),
-                  PlayMode.viewResetAction({
+                  ModePlay.viewResetAction({
                     ctx: input.ctx,
                     dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
                     flow,
-                    model: puzzleBuilder.playMode,
+                    model: puzzleBuilder.ModePlay,
                   }),
                 ]}
               />

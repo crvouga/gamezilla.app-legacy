@@ -10,7 +10,7 @@ import { FlowFrontendCmd } from '../../@/frontend/cmd'
 import { FlowFrontendCtx } from '../../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../../@/frontend/evt'
 import { Pack } from '../../@/pack/pack'
-import { PlayMode } from '../../@/play-mode'
+import { ModePlay } from '../../@/mode-play'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { FlowSpaceCtx } from '../../@/space/ctx'
 import { EditPackNameTypes } from './drawer-edit-pack-name'
@@ -61,7 +61,7 @@ export const Screen = p.or(
     t: p.l('screen-puzzle'),
     puzzleIndex: p.num,
     puzzleResult: PuzzleResult,
-    play: p.maybe(PlayMode.Model),
+    play: p.maybe(ModePlay.Model),
     opened: p.maybe(p.l('more')),
   }),
 )
@@ -110,7 +110,7 @@ export const MsgSpace = p.or(
   }),
   p.obj({
     t: p.l('screen-pack-builder.got-flow-play-msg'),
-    c: PlayMode.Msg,
+    c: ModePlay.Msg,
   }),
   p.obj({
     t: p.l('screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen'),

@@ -3,7 +3,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../../@/flow'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
-import { PlayMode } from '../../@/play-mode'
+import { ModePlay } from '../../@/mode-play'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { Solutions } from '../../@/solutions/solutions'
 import { type Variant } from '../../@/variant'
@@ -33,7 +33,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const after = f.update(
       f.init,
-      PlayMode.randomMsgs(f.puzzle).map(
+      ModePlay.randomMsgs(f.puzzle).map(
         (c): MsgSpace => ({
           userId: UserId.generate(),
           t: 'got-flow-play-msg',
@@ -42,7 +42,7 @@ describe(import.meta.file, () => {
       ),
     )
 
-    expect(f.init.playMode).not.toEqual(after.playMode)
+    expect(f.init.ModePlay).not.toEqual(after.ModePlay)
   })
 
   it('should go to next puzzle after the user clicks the next button', async () => {
@@ -85,7 +85,7 @@ describe(import.meta.file, () => {
   it('should start with empty puzzle after going to next puzzle', async () => {
     const f = await Fixture()
 
-    const msgs = PlayMode.randomMsgs({
+    const msgs = ModePlay.randomMsgs({
       flow: f.puzzle.flow,
     }).map(
       (c): MsgSpace => ({
@@ -105,11 +105,11 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(before.playMode).not.toEqual(after.playMode)
-    expect(after.playMode).toEqual(
+    expect(before.ModePlay).not.toEqual(after.ModePlay)
+    expect(after.ModePlay).toEqual(
       f.nextPuzzle.t === 'got'
-        ? PlayMode.init({
-            ctx: PlayMode.initCtx({
+        ? ModePlay.init({
+            ctx: ModePlay.initCtx({
               flow: f.nextPuzzle.c.flow,
               solutions: await Solutions.find([f.nextPuzzle.c.flow]),
             }),
@@ -122,12 +122,12 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const before = f.init
     const after = f.update(before, f.solvePuzzleMsgs)
-    const afterFlow = PlayMode.toFlow({
+    const afterFlow = ModePlay.toFlow({
       flow: f.puzzle.flow,
       model:
-        after.playMode ??
-        PlayMode.init({
-          ctx: PlayMode.initCtx({ flow: f.puzzle.flow, solutions: await Solutions.find([f.puzzle.flow]) }),
+        after.ModePlay ??
+        ModePlay.init({
+          ctx: ModePlay.initCtx({ flow: f.puzzle.flow, solutions: await Solutions.find([f.puzzle.flow]) }),
         }),
     })
 
@@ -248,9 +248,9 @@ describe(import.meta.file, () => {
         userId: f.hostId,
       },
     ])
-    expect(before.playMode).toEqual(
-      PlayMode.init({
-        ctx: PlayMode.initCtx({
+    expect(before.ModePlay).toEqual(
+      ModePlay.init({
+        ctx: ModePlay.initCtx({
           flow: f.puzzle.flow,
           solutions: await Solutions.find([f.puzzle.flow]),
         }),

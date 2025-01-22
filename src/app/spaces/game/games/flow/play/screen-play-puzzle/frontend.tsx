@@ -6,7 +6,7 @@ import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
-import { PlayMode } from '../../@/play-mode'
+import { ModePlay } from '../../@/mode-play'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { BoardLayout } from '../../@/ui/layout'
 import type { FrontendModule } from '../types'
@@ -86,19 +86,19 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
           model: input.model,
         }
       }
-      const playMode =
-        input.modelSpace.screen.playMode ??
-        PlayMode.init({
-          ctx: PlayMode.initCtx({
+      const ModePlay =
+        input.modelSpace.screen.ModePlay ??
+        ModePlay.init({
+          ctx: ModePlay.initCtx({
             flow: input.modelSpace.screen.puzzleResult.c.flow,
             solutions: input.ctx.solutions,
           }),
         })
 
-      const output = PlayMode.update({
+      const output = ModePlay.update({
         msg: input.msgSpace.c,
-        model: playMode,
-        ctx: PlayMode.initCtx({
+        model: ModePlay,
+        ctx: ModePlay.initCtx({
           flow: input.modelSpace.screen.puzzleResult.c.flow,
           solutions: input.ctx.solutions,
         }),
@@ -106,7 +106,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 
       return {
         model: input.model,
-        msgCmd: PlayMode.eventsToFrontendCmd(input.ctx, output.events),
+        msgCmd: ModePlay.eventsToFrontendCmd(input.ctx, output.events),
       }
     }
   }
@@ -126,7 +126,7 @@ const View: FrontendModule['View'] = (input) => {
     return null
   }
   const flowPuzzle = input.modelSpace.screen.puzzleResult
-  const playMode = input.modelSpace.screen.playMode
+  const ModePlay = input.modelSpace.screen.ModePlay
   const isSolved = ScreenPlayPuzzleSpace.toStatus(input.modelSpace.screen) === 'solved'
   const puzzleIndex = input.modelSpace.screen.puzzleIndex
 
@@ -151,13 +151,13 @@ const View: FrontendModule['View'] = (input) => {
               />
             }
             board={
-              <PlayMode.View
+              <ModePlay.View
                 disabled
                 key={flowPuzzle.c.id}
                 flow={flowPuzzle.c.flow}
                 model={
-                  playMode ??
-                  PlayMode.init({ ctx: PlayMode.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
+                  ModePlay ??
+                  ModePlay.init({ ctx: ModePlay.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
                 }
                 dispatch={() => {}}
                 showSolvedAnimation
@@ -194,12 +194,12 @@ const View: FrontendModule['View'] = (input) => {
         top={null}
         board={
           flowPuzzle.t === 'got' ? (
-            <PlayMode.View
+            <ModePlay.View
               key={flowPuzzle.c.id}
               flow={flowPuzzle.c.flow}
               model={
-                playMode ??
-                PlayMode.init({ ctx: PlayMode.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
+                ModePlay ??
+                ModePlay.init({ ctx: ModePlay.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
               }
               dispatch={(c) =>
                 input.dispatch({
@@ -255,16 +255,16 @@ const View: FrontendModule['View'] = (input) => {
           }),
 
           flowPuzzle.t === 'got' && !isSolved
-            ? PlayMode.viewHintAction({
+            ? ModePlay.viewHintAction({
                 model:
-                  playMode ??
-                  PlayMode.init({
-                    ctx: PlayMode.initCtx({
+                  ModePlay ??
+                  ModePlay.init({
+                    ctx: ModePlay.initCtx({
                       flow: flowPuzzle.c.flow,
                       solutions: input.ctx.solutions,
                     }),
                   }),
-                ctx: PlayMode.initCtx({
+                ctx: ModePlay.initCtx({
                   ...input.ctx,
                   flow: flowPuzzle.c.flow,
                   solutions: input.ctx.solutions,

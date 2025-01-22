@@ -2,7 +2,7 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { pipe } from '~/@/function/pipe'
 import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../../../../@/pack/pack'
-import { PlayMode } from '../../../../@/play-mode'
+import { ModePlay } from '../../../../@/mode-play'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
 import { Solutions } from '../../../../@/solutions/solutions'
@@ -48,7 +48,7 @@ export const FixtureScreenPuzzlePlaySpace = async (input?: { flow?: Variant.Mode
   ])
 
   const userId = UserId.generate()
-  const solvePuzzleMsgs = pipe(PlayMode.toSolutionMsgs(puzzle), (msgs) =>
+  const solvePuzzleMsgs = pipe(ModePlay.toSolutionMsgs(puzzle), (msgs) =>
     msgs.map((c): MsgSpace => ({ userId, t: 'got-flow-play-msg', c })),
   )
 

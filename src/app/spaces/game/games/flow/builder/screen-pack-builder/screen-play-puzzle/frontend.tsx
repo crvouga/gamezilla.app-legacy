@@ -10,7 +10,7 @@ import {
 } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 import { GameFrontendModule } from '../../../../@/architecture/game-frontend-v2'
-import { PlayMode } from '../../../@/play-mode'
+import { ModePlay } from '../../../@/mode-play'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
 import { BoardLayout } from '../../../@/ui/layout'
@@ -31,9 +31,9 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
           }
 
           case 'screen-pack-builder.got-flow-play-msg': {
-            const playMode = input.modelSpace?.screen.t === 'screen-puzzle' ? input.modelSpace.screen.play : null
+            const ModePlay = input.modelSpace?.screen.t === 'screen-puzzle' ? input.modelSpace.screen.play : null
 
-            if (!playMode) {
+            if (!ModePlay) {
               return { model }
             }
 
@@ -46,18 +46,18 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
               return { model }
             }
 
-            const updated = PlayMode.update({
-              ctx: PlayMode.initCtx({
+            const updated = ModePlay.update({
+              ctx: ModePlay.initCtx({
                 flow: flowPuzzle.flow,
                 solutions: input.ctx.solutions,
               }),
-              model: playMode,
+              model: ModePlay,
               msg: input.msgSpace.c,
             })
 
             return {
               model,
-              msgCmd: PlayMode.eventsToFrontendCmd(input.ctx, updated.events),
+              msgCmd: ModePlay.eventsToFrontendCmd(input.ctx, updated.events),
             }
           }
 
@@ -131,7 +131,7 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
           top={null}
           board={
             screen.puzzleResult.t === 'got' && screen.play ? (
-              <PlayMode.View
+              <ModePlay.View
                 dispatch={(c) =>
                   input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
                 }

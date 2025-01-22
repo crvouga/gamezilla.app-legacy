@@ -2,7 +2,7 @@ import { APP_SOUND, copyToClipboard, playSound, showErrSm, showToast } from '~/a
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { IconCopy } from '~/app/@/ui'
 import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
-import { PlayMode } from '../../../@/play-mode'
+import { ModePlay } from '../../../@/mode-play'
 import { VariantGridShorthand } from '../../../@/variant/grid'
 import type { FrontendModule, MsgFrontend } from '../../types'
 import { Json } from '~/@/json/json'
@@ -23,18 +23,18 @@ export const update: FrontendModule['update'] = (input) => {
         }
       }
 
-      const playMode =
-        input.modelSpace.screen.playMode ??
-        PlayMode.init({
-          ctx: PlayMode.initCtx({
+      const ModePlay =
+        input.modelSpace.screen.ModePlay ??
+        ModePlay.init({
+          ctx: ModePlay.initCtx({
             flow: input.modelSpace.screen.puzzleResult.c.flow,
             solutions: input.ctx.solutions,
           }),
         })
 
-      const flow = PlayMode.toFlow({
+      const flow = ModePlay.toFlow({
         flow: input.modelSpace.screen.puzzleResult.c.flow,
-        model: playMode,
+        model: ModePlay,
       })
 
       if (flow.t !== 'flow-grid') {

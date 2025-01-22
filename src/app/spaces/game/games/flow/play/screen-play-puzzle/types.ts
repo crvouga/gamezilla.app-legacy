@@ -5,7 +5,7 @@ import type { GameSpaceModule } from '~/app/spaces/game/games/@/architecture/gam
 import { GroupId } from '../../@/flow/group-id'
 import { Pack } from '../../@/pack/pack'
 import { PackId } from '../../@/pack/pack-id'
-import { PlayMode } from '../../@/play-mode'
+import { ModePlay } from '../../@/mode-play'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { CopyPuzzleTypes } from './button-copy-puzzle'
 
@@ -13,7 +13,7 @@ export const MsgSpace = p.or(
   CopyPuzzleTypes.MsgSpace,
   p.obj({
     t: p.l('got-flow-play-msg'),
-    c: PlayMode.Msg,
+    c: ModePlay.Msg,
     userId: UserId,
   }),
   p.obj({
@@ -71,7 +71,7 @@ export const ModelSpace = p.obj({
   t: p.l('screen-play-puzzle'),
   pack: Pack,
   puzzleResult: PuzzleResult,
-  playMode: p.or(PlayMode.Model, p.l(null)),
+  ModePlay: p.or(ModePlay.Model, p.l(null)),
   puzzleIndex: p.num,
   opened: p.or(p.l('puzzle-complete'), p.l('action-drawer'), p.l(null)),
   hints: p.partialDict(GroupId, GroupId),

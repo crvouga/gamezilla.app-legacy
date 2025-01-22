@@ -1,28 +1,28 @@
 import { describe, expect, it, test } from 'bun:test'
-import { PlayMode } from '.'
+import { ModePlay } from '.'
 import { Flow } from '../flow'
 import { Solutions } from '../solutions/solutions'
 import type { Variant } from '../variant'
 import { VariantGrid } from '../variant/grid'
 import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
-import { toStatus } from './play-mode'
+import { toStatus } from './mode-play'
 
 const Fixture = async (input: { ctxFlow: Variant.Model }) => {
-  const ctx: PlayMode.Ctx = PlayMode.initCtx({
+  const ctx: ModePlay.Ctx = ModePlay.initCtx({
     solutions: await Solutions.find([input.ctxFlow]),
     flow: input.ctxFlow,
   })
 
-  const init = PlayMode.init({ ctx })
+  const init = ModePlay.init({ ctx })
 
-  const update = (init: PlayMode.Model, msgs: PlayMode.Msg[]) => {
-    return msgs.reduce<ReturnType<typeof PlayMode.update>>(
-      (output, msg) => PlayMode.update({ ctx, model: output.model, msg }),
+  const update = (init: ModePlay.Model, msgs: ModePlay.Msg[]) => {
+    return msgs.reduce<ReturnType<typeof ModePlay.update>>(
+      (output, msg) => ModePlay.update({ ctx, model: output.model, msg }),
       { model: init },
     )
   }
 
-  const solutionMsgs = PlayMode.toSolutionMsgs({
+  const solutionMsgs = ModePlay.toSolutionMsgs({
     flow: input.ctxFlow,
   })
 
@@ -46,16 +46,16 @@ describe(import.meta.file, () => {
       ctxFlow: flow,
     })
 
-    const msgs = PlayMode.toSolutionMsgs({
+    const msgs = ModePlay.toSolutionMsgs({
       flow,
     })
 
-    const before = PlayMode.toFlow({
+    const before = ModePlay.toFlow({
       flow,
       model: f.init,
     })
 
-    const after = PlayMode.toFlow({
+    const after = ModePlay.toFlow({
       flow,
       model: f.update(f.init, msgs).model,
     })
@@ -330,7 +330,7 @@ describe(import.meta.file, () => {
       ctxFlow: flow,
     })
 
-    const msgs: PlayMode.Msg[] = [
+    const msgs: ModePlay.Msg[] = [
       {
         t: 'user-pressed-down-node',
         nodeId: VariantGrid.toNodeId({
@@ -375,7 +375,7 @@ describe(import.meta.file, () => {
       },
     ]).model
 
-    const flowNew = PlayMode.toFlow({
+    const flowNew = ModePlay.toFlow({
       flow,
       model,
     })
@@ -393,7 +393,7 @@ describe(import.meta.file, () => {
       ctxFlow: flow,
     })
 
-    const msgs: PlayMode.Msg[] = [
+    const msgs: ModePlay.Msg[] = [
       {
         t: 'user-pressed-down-node',
         nodeId: VariantGrid.toNodeId({
@@ -440,11 +440,11 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const before = PlayMode.toFlow({
+    const before = ModePlay.toFlow({
       flow: f.flow,
       model: f.init,
     })
-    const after = PlayMode.toFlow({
+    const after = ModePlay.toFlow({
       flow: f.flow,
       model: output.model,
     })

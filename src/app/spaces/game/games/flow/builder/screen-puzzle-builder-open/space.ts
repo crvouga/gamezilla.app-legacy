@@ -1,5 +1,5 @@
-import { EditMode } from '../../@/edit-mode'
-import { PlayMode } from '../../@/play-mode'
+import { ModeEdit } from '../../@/mode-edit'
+import { ModePlay } from '../../@/mode-play'
 import type { UpdateSpace } from '../types'
 import { CreateNewPuzzleSpace } from './button-create-new-puzzle/space'
 
@@ -23,11 +23,11 @@ updates.push(({ modelSpace, msgSpace, ctx }) => {
         },
         screenPuzzleBuilder: {
           t: 'puzzle-builder',
-          editMode: EditMode.init({
+          ModeEdit: ModeEdit.init({
             flow: msgSpace.puzzle.flow,
           }),
-          playMode: PlayMode.init({
-            ctx: PlayMode.initCtx({
+          ModePlay: ModePlay.init({
+            ctx: ModePlay.initCtx({
               flow: msgSpace.puzzle.flow,
               solutions: ctx.solutions,
             }),
