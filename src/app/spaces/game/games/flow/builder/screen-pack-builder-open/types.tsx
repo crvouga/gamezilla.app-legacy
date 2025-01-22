@@ -1,7 +1,7 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../../@/pack/pack'
-import { CreateNewPackTypes } from './create-new-pack'
+import { CreateNewPackTypes } from './button-create-new-pack'
 
 export type ModelFrontend = CreateNewPackTypes.ModelFrontend & {}
 

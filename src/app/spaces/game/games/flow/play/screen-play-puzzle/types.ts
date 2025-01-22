@@ -7,7 +7,7 @@ import { Pack } from '../../@/pack/pack'
 import { PackId } from '../../@/pack/pack-id'
 import { PlayMode } from '../../@/play-mode'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
-import { CopyPuzzleTypes } from './copy-puzzle'
+import { CopyPuzzleTypes } from './button-copy-puzzle'
 
 export const MsgSpace = p.or(
   CopyPuzzleTypes.MsgSpace,

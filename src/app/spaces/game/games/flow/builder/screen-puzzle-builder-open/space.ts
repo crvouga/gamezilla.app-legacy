@@ -1,7 +1,7 @@
 import { EditMode } from '../../@/edit-mode'
 import { PlayMode } from '../../@/play-mode'
 import type { UpdateSpace } from '../types'
-import { CreateNewPuzzleSpace } from './create-new-puzzle/space'
+import { CreateNewPuzzleSpace } from './button-create-new-puzzle/space'
 
 const updates: UpdateSpace[] = []
 

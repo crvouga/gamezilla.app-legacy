@@ -2,7 +2,7 @@ import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
-import { CreateNewPuzzleTypes } from './create-new-puzzle'
+import { CreateNewPuzzleTypes } from './button-create-new-puzzle'
 
 //
 //

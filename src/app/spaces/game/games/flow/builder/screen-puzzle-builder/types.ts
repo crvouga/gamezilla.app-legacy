@@ -3,9 +3,9 @@ import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { EditMode } from '../../@/edit-mode'
 import { PlayMode } from '../../@/play-mode'
-import { DeleteForeverTypes } from './delete-forever'
-import { EditPuzzleNameTypes } from './edit-puzzle-name'
-import { SaveChangesTypes } from './save-changes'
+import { DeleteForeverTypes } from './drawer-delete-forever'
+import { EditPuzzleNameTypes } from './drawer-edit-puzzle-name'
+import { SaveChangesTypes } from './drawer-save-changes'
 
 export type ModelFrontend = SaveChangesTypes.ModelFrontend &
   EditPuzzleNameTypes.ModelFrontend &

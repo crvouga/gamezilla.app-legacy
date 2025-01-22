@@ -11,9 +11,9 @@ import { PlayMode } from '../../@/play-mode'
 import { BoardLayout } from '../../@/ui/layout'
 import { VariantBoard } from '../../@/variant'
 import * as BuilderTypes from '../types'
-import { DeleteForeverFrontend } from './delete-forever/frontend'
-import { EditPuzzleNameFrontend } from './edit-puzzle-name/frontend'
-import { SaveChangesFrontend } from './save-changes/frontend'
+import { DeleteForeverFrontend } from './drawer-delete-forever/frontend'
+import { EditPuzzleNameFrontend } from './drawer-edit-puzzle-name/frontend'
+import { SaveChangesFrontend } from './drawer-save-changes/frontend'
 import { ScreenPuzzleBuilderSpace } from './space'
 
 //

@@ -3,9 +3,9 @@ import { EditMode } from '../../@/edit-mode'
 import { PlayMode } from '../../@/play-mode'
 import { Variant } from '../../@/variant'
 import * as BuilderTypes from '../types'
-import { DeleteForeverSpace } from './delete-forever/space'
-import { EditPuzzleNameSpace } from './edit-puzzle-name/space'
-import { SaveChangesSpace } from './save-changes/space'
+import { DeleteForeverSpace } from './drawer-delete-forever/space'
+import { EditPuzzleNameSpace } from './drawer-edit-puzzle-name/space'
+import { SaveChangesSpace } from './drawer-save-changes/space'
 import { ModelSpace } from './types'
 
 const toStatus = (modelSpace: ModelSpace): 'solving' | 'solved' => {

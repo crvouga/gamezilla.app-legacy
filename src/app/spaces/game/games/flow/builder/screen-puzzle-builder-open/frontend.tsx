@@ -5,7 +5,7 @@ import { FlowFrontendCtx } from '../../@/frontend/ctx'
 import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
 import { PuzzleDbQueryFrontend } from '../../@/puzzle/puzzle-db-query/frontend'
 import type { FrontendModule, ModelSpace } from '../types'
-import { CreateNewPuzzleFrontend } from './create-new-puzzle/frontend'
+import { CreateNewPuzzleFrontend } from './button-create-new-puzzle/frontend'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(

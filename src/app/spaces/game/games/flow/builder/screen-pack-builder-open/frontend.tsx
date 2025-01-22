@@ -4,7 +4,7 @@ import { TopBar } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
 import type { FrontendModule } from '../types'
-import { PackCreateNewFrontend } from './create-new-pack/frontend'
+import { PackCreateNewFrontend } from './button-create-new-pack/frontend'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(

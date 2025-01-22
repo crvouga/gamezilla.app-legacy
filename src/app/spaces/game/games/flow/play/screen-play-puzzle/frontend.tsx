@@ -10,9 +10,9 @@ import { PlayMode } from '../../@/play-mode'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { BoardLayout } from '../../@/ui/layout'
 import type { FrontendModule } from '../types'
-import * as CopyPuzzleFrontend from './copy-puzzle/frontend'
+import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
 import { ScreenPlayPuzzleSpace } from './space'
-import { LastPuzzleFrontend } from './last-puzzle/frontend'
+import { LastPuzzleFrontend } from './dialog-last-puzzle/frontend'
 import { Sub } from '~/@/sub'
 
 const update: FrontendModule['update'] = (input) => {
