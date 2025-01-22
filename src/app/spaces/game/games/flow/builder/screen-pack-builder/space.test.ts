@@ -195,7 +195,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
       },
     ])

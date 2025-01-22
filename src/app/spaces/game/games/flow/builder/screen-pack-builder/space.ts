@@ -46,7 +46,7 @@ updates.push((input) => {
 
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
-    case 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button': {
+    case 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button': {
       return {
         ...modelSpace,
         screen: {

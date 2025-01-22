@@ -9,7 +9,7 @@ const Fixture = async (...params: Parameters<typeof ScreenPackBuilderSpaceFixtur
   const f = await ScreenPackBuilderSpaceFixture(...params)
   const initial = f.update(f.initial, [
     {
-      t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+      t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
       userId: f.createdBy,
     },
   ])
@@ -127,7 +127,7 @@ describe(import.meta.file, () => {
         userId: f.createdBy,
       },
       {
-        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
       },
       {
@@ -145,7 +145,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
       },
       {
@@ -171,7 +171,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
       },
     ])
@@ -182,7 +182,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
       },
       {
@@ -198,7 +198,7 @@ describe(import.meta.file, () => {
     const puzzle = await Puzzle.random()
     const output = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
       },
       {
@@ -220,7 +220,7 @@ describe(import.meta.file, () => {
     const puzzle = await Puzzle.random()
     const output = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
       },
       {

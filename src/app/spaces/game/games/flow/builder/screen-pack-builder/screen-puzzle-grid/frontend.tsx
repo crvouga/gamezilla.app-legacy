@@ -1,22 +1,21 @@
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { TopBar } from '~/app/@/ui'
 import { PackPuzzleGridUI } from '../../../@/pack/pack-puzzle-grid-ui'
-import type { FrontendModule } from '../types'
 import { ScreenPackBuilderSpace } from '../space'
+import type { FrontendModule } from '../types'
 
 export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
     switch (input.msgSpace?.t) {
       case 'screen-pack-builder.user-clicked-pack-item': {
-        return {
-          model: input.model,
-          msgCmd: [playSound(APP_SOUND.navForwardMin)],
-        }
+        return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
       }
-      default: {
-        return { model: input.model }
+
+      case 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button': {
+        return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
       }
     }
+    return { model: input.model }
   },
   View(input) {
     const packBuilder = input.modelSpace
@@ -51,71 +50,33 @@ export const ScreenPuzzleGrid: Pick<FrontendModule, 'update' | 'View'> = {
                   c: { t: 'screen-pack-builder.user-changed-slide', newSlideIndex, userId: input.ctx.currentUserId },
                 })
               }}
-              renderCell={(inputCell) => {
-                if (inputCell.index === packBuilder.pack.puzzleIds.length) {
-                  return <ButtonAddPuzzle.View {...input} />
-                }
-
-                if (!inputCell.puzzleId) {
-                  return <PackPuzzleGridUI.ViewEmptyCell />
-                }
-
-                // return <PackPuzzlesGridUI.ViewLoadingCell />
-
-                const puzzleId = packBuilder.pack.puzzleIds[inputCell.index]
-
-                const puzzle = puzzleId ? input.ctx.puzzles[puzzleId] : null
-
-                return (
-                  <PackPuzzleGridUI.ViewPuzzleCell
-                    onClick={() =>
-                      input.dispatch({
-                        t: 'got-msg-space',
-                        c: {
-                          t: 'screen-pack-builder.user-clicked-pack-item',
-                          puzzleResult: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
-                          puzzleIndex: inputCell.index,
-                        },
-                      })
-                    }
-                    index={inputCell.index}
-                  />
-                )
+              onClickPuzzleCell={({ puzzleIndex, puzzleId }) => {
+                const puzzle = input.ctx.puzzles[puzzleId]
+                input.dispatch({
+                  t: 'got-msg-space',
+                  c: {
+                    t: 'screen-pack-builder.user-clicked-pack-item',
+                    puzzleIndex,
+                    puzzleResult: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
+                  },
+                })
+              }}
+              addCell={{
+                include: true,
+                onClick: () => {
+                  input.dispatch({
+                    t: 'got-msg-space',
+                    c: {
+                      t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
+                      userId: input.ctx.currentUserId,
+                    },
+                  })
+                },
               }}
             />
           </div>
         </div>
       </div>
-    )
-  },
-}
-
-const ButtonAddPuzzle: Pick<FrontendModule, 'update' | 'View'> = {
-  update(input) {
-    switch (input.msgSpace?.t) {
-      case 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button': {
-        return {
-          model: input.model,
-          msgCmd: [playSound(APP_SOUND.navForwardMin)],
-        }
-      }
-    }
-    return { model: input.model }
-  },
-
-  View(input) {
-    return (
-      <PackPuzzleGridUI.ViewAddCell
-        onClick={() =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
-              userId: input.ctx.currentUserId,
-            },
-          })
-        }
-      />
     )
   },
 }

@@ -27,10 +27,6 @@ const update: FrontendModule['update'] = (input) => {
       }
     }
 
-    case 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
-    }
-
     case 'screen-pack-builder.screen-add-puzzle.user-clicked-close': {
       return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }

@@ -3,8 +3,8 @@ import { cn, TopBar } from '~/app/@/ui'
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { PuzzleDbQueryFrontend } from '../../@/puzzle/puzzle-db-query/frontend'
-import type { FrontendModule, ModelSpace } from '../types'
 import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
+import type { FrontendModule, ModelSpace } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -87,29 +87,17 @@ const View: FrontendModule['View'] = (input) => {
             })
           }
           puzzleIds={pack.puzzleIds}
-          renderCell={(inputCell) => {
-            if (!inputCell.puzzleId) {
-              return <PackPuzzleGridUI.ViewEmptyCell />
-            }
-
-            const puzzle = input.ctx.puzzles[inputCell.puzzleId]
-
-            return (
-              <PackPuzzleGridUI.ViewPuzzleCell
-                index={inputCell.index}
-                onClick={() =>
-                  input.dispatch({
-                    t: 'got-msg-space',
-                    c: {
-                      t: 'user-clicked-open-screen-play-puzzle',
-                      puzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
-                      puzzleIndex: inputCell.index,
-                      userId: input.ctx.currentUserId,
-                    },
-                  })
-                }
-              />
-            )
+          onClickPuzzleCell={({ puzzleIndex, puzzleId }) => {
+            const puzzle = input.ctx.puzzles[puzzleId]
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                t: 'user-clicked-open-screen-play-puzzle',
+                puzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
+                puzzleIndex,
+                userId: input.ctx.currentUserId,
+              },
+            })
           }}
         />
       </div>

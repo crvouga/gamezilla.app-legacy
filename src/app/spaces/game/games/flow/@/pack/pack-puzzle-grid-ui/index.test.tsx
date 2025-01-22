@@ -8,7 +8,7 @@ const Fixture = async () => {
   return f
 }
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   it('should not render pagination dots if there is only one slide', async () => {
     const f = await Fixture()
     const r = f.render(
@@ -17,7 +17,7 @@ describe.only(import.meta.file, () => {
         slideIndex={0}
         onSlideIndexChanged={() => {}}
         puzzleIds={[]}
-        renderCell={() => null}
+        onClickPuzzleCell={() => {}}
       />,
     )
     expect(r.getByTestId(PAGINATION_DOTS_TEST_ID)).toBe(null)

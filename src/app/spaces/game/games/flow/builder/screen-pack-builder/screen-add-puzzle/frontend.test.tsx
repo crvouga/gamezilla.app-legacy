@@ -29,7 +29,7 @@ describe(import.meta.file, () => {
     const output = ScreenAddPuzzle.update({
       ...f,
       msgSpace: withEventMeta({
-        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
         userId: f.ctx.currentUserId,
       }),
     })

@@ -95,7 +95,7 @@ export const MsgSpace = p.or(
     saved: Result.parser(p.str, Pack),
   }),
   p.obj({
-    t: p.l('screen-pack-builder.user-clicked-open-add-puzzle-screen-button'),
+    t: p.l('screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button'),
     userId: UserId,
   }),
   p.obj({

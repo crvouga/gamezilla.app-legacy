@@ -1,8 +1,8 @@
+import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
 import { IconPlus, Swiper, Typography } from '~/app/@/ui'
-import type { PuzzleId } from '../../puzzle/puzzle-id'
-import { TranslatedText } from '~/@/l18n'
 import { PaginationDots } from '~/app/@/ui/pagination-dots'
+import type { PuzzleId } from '../../puzzle/puzzle-id'
 
 const COLUMN_COUNT = 5
 const ROW_COUNT = 6
@@ -11,9 +11,13 @@ const PER_SLIDE_ITEM_COUNT = COLUMN_COUNT * ROW_COUNT
 const View = (input: {
   id: string
   slideIndex: number
-  onSlideIndexChanged: (index: number) => void
+  onSlideIndexChanged: (slideIndex: number) => void
   puzzleIds: PuzzleId[]
-  renderCell: (input: { x: number; y: number; empty: boolean; puzzleId: PuzzleId | null; index: number }) => VDom
+  onClickPuzzleCell: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
+  addCell?: {
+    include: boolean
+    onClick: () => void
+  }
 }) => {
   const slides: VDom[] = []
 
@@ -36,7 +40,24 @@ const View = (input: {
             key={slideIndex}
             slideIndex={slideIndex}
             puzzleIds={input.puzzleIds}
-            renderCell={input.renderCell}
+            renderCell={(inputCell) => {
+              if (inputCell.index === input.puzzleIds.length && input.addCell?.include) {
+                return <ViewAddCell onClick={input.addCell?.onClick} />
+              }
+
+              const { puzzleId } = inputCell
+
+              if (!puzzleId) {
+                return <ViewEmptyCell />
+              }
+
+              return (
+                <ViewPuzzleCell
+                  onClick={() => input.onClickPuzzleCell({ puzzleId, puzzleIndex: inputCell.index })}
+                  index={inputCell.index}
+                />
+              )
+            }}
           />
         </div>
       </Swiper.Slide>,
@@ -125,13 +146,13 @@ const ViewEmptyCell = () => {
   return <div className='flex h-full w-full items-center justify-center overflow-hidden rounded border-2 opacity-70' />
 }
 
-const ViewLoadingCell = () => {
+export const _ViewLoadingCell = () => {
   return (
     <div className='bg-paper flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded opacity-70' />
   )
 }
 
-const ViewErrorCell = ({ onClick, index }: { onClick: () => void; index: number }) => {
+export const _ViewErrorCell = ({ onClick, index }: { onClick: () => void; index: number }) => {
   return (
     <button
       onClick={onClick}
@@ -163,9 +184,4 @@ export const PackPuzzleGridUI = {
   toIndex,
   toSlideIndex,
   View,
-  ViewAddCell,
-  ViewPuzzleCell,
-  ViewEmptyCell,
-  ViewLoadingCell,
-  ViewErrorCell,
 }

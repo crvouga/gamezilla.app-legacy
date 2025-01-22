@@ -7,7 +7,7 @@ const Fixture = async () => {
   return f
 }
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   it('should render pagination dots if there is more than one slide', async () => {
     const f = await Fixture()
     const r = f.render(<PaginationDots activeIndex={0} count={2} />)
