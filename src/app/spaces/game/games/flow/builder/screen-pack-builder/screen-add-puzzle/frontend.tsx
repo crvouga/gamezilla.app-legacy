@@ -34,6 +34,10 @@ const update: FrontendModule['update'] = (input) => {
     case 'screen-pack-builder.screen-add-puzzle.user-clicked-close': {
       return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }
+
+    case 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item': {
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
+    }
   }
 
   return { model: input.model }

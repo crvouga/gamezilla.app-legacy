@@ -57,13 +57,9 @@ updates.push(({ modelSpace, msgSpace }) => {
       return {
         ...modelSpace,
         pack: Pack.add(modelSpace.pack, modelSpace.screenAddPuzzle_selected),
-        screen: {
-          t: 'screen-puzzle-grid',
-          slideIndex: 0,
-        },
-        opened: {
-          t: null,
-        },
+        screenAddPuzzle_selected: [],
+        screen: { t: 'screen-puzzle-grid', slideIndex: 0 },
+        opened: { t: null },
       }
     }
     default: {
