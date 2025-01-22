@@ -28,7 +28,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     },
 
     aggregate: {
-      StringConcat: (column, seperator) => `GROUP_CONCAT(${column}, '${seperator}')`,
+      StringConcat: (column, separator) => `GROUP_CONCAT(${column}, '${separator}')`,
     },
 
     async query(input) {
