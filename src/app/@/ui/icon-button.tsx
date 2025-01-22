@@ -13,6 +13,7 @@ export const IconButton = (input: {
         'clickable display flex h-12 w-12 items-center justify-center overflow-hidden rounded-full',
         input.className,
       )}
+      type='button'
       onClick={input.onClick}
       aria-label={input.label}
     >

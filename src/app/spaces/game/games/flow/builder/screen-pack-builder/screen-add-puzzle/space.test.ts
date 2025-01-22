@@ -1,22 +1,47 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { Pack } from '../../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../../@/pack/pack-puzzle-grid-ui'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { ScreenPackBuilderSpaceFixture } from '../@/fixture/space'
 import { ScreenPackBuilderSpace } from '../space'
 
-const Fixture = ScreenPackBuilderSpaceFixture
+const Fixture = async (...params: Parameters<typeof ScreenPackBuilderSpaceFixture>) => {
+  const f = await ScreenPackBuilderSpaceFixture(...params)
+  const initial = f.update(f.initial, [
+    {
+      t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+      userId: f.createdBy,
+    },
+  ])
 
-describe(import.meta.file, () => {
-  it('should be able to close add puzzle screen', async () => {
+  return {
+    ...f,
+    initial,
+  }
+}
+
+describe.only(import.meta.file, () => {
+  test('selecting puzzles', async () => {
     const f = await Fixture()
-    const modelSpace = f.update([
+    const puzzle = await Puzzle.random()
+    const output = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+        puzzle,
         userId: f.createdBy,
       },
+    ])
+
+    expect(output?.screenAddPuzzle_selected.length).toEqual(1)
+    expect(output?.screenAddPuzzle_selected.includes(puzzle.id)).toEqual(true)
+  })
+
+  it('should be able to close add puzzle screen', async () => {
+    const f = await Fixture()
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
+        userId: f.createdBy,
       },
     ])
     expect(modelSpace?.screen.t === 'screen-puzzle-grid').toBe(true)
@@ -27,10 +52,14 @@ describe(import.meta.file, () => {
     const newPuzzle = await Puzzle.random({
       createdBy: f.createdBy,
     })
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
-        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
         puzzle: newPuzzle,
+        userId: f.createdBy,
+      },
+      {
+        t: 'screen-pack-builder.screen-add-puzzle.user-submitted-add-puzzles-form',
         userId: f.createdBy,
       },
     ])
@@ -42,7 +71,7 @@ describe(import.meta.file, () => {
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
 
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-changed-slide',
         newSlideIndex: 1,
@@ -54,24 +83,29 @@ describe(import.meta.file, () => {
       },
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
+        userId: f.createdBy,
       },
     ])
 
-    expect(ScreenPackBuilderSpace.toSlideIndex(f.modelSpace)).toBe(0)
+    expect(ScreenPackBuilderSpace.toSlideIndex(f.initial)).toBe(0)
     expect(ScreenPackBuilderSpace.toSlideIndex(modelSpace)).toBe(1)
   })
 
   it('should open puzzle when user clicks puzzle grid item', async () => {
     const f = await Fixture()
 
-    const output = f.update([
+    const output = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
       },
       {
-        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
         puzzle: f.puzzles[0],
+        userId: f.createdBy,
+      },
+      {
+        t: 'screen-pack-builder.screen-add-puzzle.user-submitted-add-puzzles-form',
         userId: f.createdBy,
       },
       {
@@ -86,7 +120,7 @@ describe(import.meta.file, () => {
 
   it('should open puzzle picker when user clicks add puzzle button', async () => {
     const f = await Fixture()
-    const output = f.update([
+    const output = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
@@ -97,13 +131,14 @@ describe(import.meta.file, () => {
 
   it('should close puzzle picker when user clicks closes', async () => {
     const f = await Fixture()
-    const output = f.update([
+    const output = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
       },
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
+        userId: f.createdBy,
       },
     ])
     expect(output?.screen.t === 'screen-puzzle-grid').toBe(true)
@@ -112,14 +147,18 @@ describe(import.meta.file, () => {
   it('should add puzzle to the pack after clicking a puzzle in the picker', async () => {
     const f = await Fixture()
     const puzzle = await Puzzle.random()
-    const output = f.update([
+    const output = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
       },
       {
-        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
         puzzle,
+        userId: f.createdBy,
+      },
+      {
+        t: 'screen-pack-builder.screen-add-puzzle.user-submitted-add-puzzles-form',
         userId: f.createdBy,
       },
     ])
@@ -130,14 +169,18 @@ describe(import.meta.file, () => {
   it('should close puzzle picker after adding a puzzle to the pack', async () => {
     const f = await Fixture()
     const puzzle = await Puzzle.random()
-    const output = f.update([
+    const output = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
       },
       {
-        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle',
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
         puzzle,
+        userId: f.createdBy,
+      },
+      {
+        t: 'screen-pack-builder.screen-add-puzzle.user-submitted-add-puzzles-form',
         userId: f.createdBy,
       },
     ])

@@ -73,6 +73,7 @@ const watch = <TMsg,>(
 
 const ViewList = (input: {
   selectable?: boolean
+  selected?: PuzzleId[]
   ctx: FlowFrontendCtxRoot
   query: PuzzleDbQuery
   model: ModelFrontend
@@ -98,6 +99,7 @@ const ViewList = (input: {
             query={input.query}
             key={puzzle.id}
             ctx={input.ctx}
+            selected={input.selected?.some((id) => id === puzzle.id) ?? false}
             puzzle={puzzle}
             onClick={() => input.onItemClick(puzzle)}
           />
@@ -123,6 +125,7 @@ const ViewListItem = (input: {
   ctx: { t: Translator; now: Posix }
   puzzle: Puzzle
   onClick?: () => void
+  selected: boolean
 }) => {
   return (
     <button
@@ -133,7 +136,7 @@ const ViewListItem = (input: {
     >
       {input.selectable && (
         <div className='px-4'>
-          <Checkbox checked={false} onChange={() => {}} />
+          <Checkbox checked={input.selected} />
         </div>
       )}
 

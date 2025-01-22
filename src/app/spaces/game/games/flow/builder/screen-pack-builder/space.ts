@@ -7,7 +7,7 @@ import type { ModelSpace, UpdateSpace } from './types'
 
 const initSpace = ({ pack }: { pack: Pack }): ModelSpace => {
   return {
-    screenAddPuzzlePuzzleDbQuery: null,
+    ...ScreenAddPuzzleSpace.initSpace(),
     editPackName: EditPackNameSpace.init({ pack }),
     pack,
     slideIndex: 0,
@@ -24,7 +24,7 @@ const updateSpace: UpdateSpace = (input) => {
   return updates.reduce((modelSpace, updateSpace) => updateSpace({ ctx, msgSpace, modelSpace }), modelSpace)
 }
 
-updates.push(ScreenAddPuzzleSpace.update)
+updates.push(ScreenAddPuzzleSpace.updateSpace)
 
 updates.push((input) => {
   switch (input.msgSpace.t) {

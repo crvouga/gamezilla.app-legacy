@@ -10,7 +10,7 @@ describe(import.meta.file, () => {
   it('should remove puzzle from pack after clicking remove button', async () => {
     const f = await Fixture()
 
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
         userId: f.createdBy,
@@ -24,7 +24,7 @@ describe(import.meta.file, () => {
   it('should be able to exit puzzle screen', async () => {
     const f = await Fixture()
 
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-puzzle',
         userId: f.createdBy,
@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
   it('should open puzzle screen when clicking puzzle grid item', async () => {
     const f = await Fixture()
 
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[0] },
@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
 
   it("should be able to open 'more' drawer", async () => {
     const f = await Fixture()
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[0] },
@@ -70,7 +70,7 @@ describe(import.meta.file, () => {
 
   it("should be able to close 'more' drawer", async () => {
     const f = await Fixture()
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[0] },
@@ -86,7 +86,7 @@ describe(import.meta.file, () => {
 
   it('should be able to go to next puzzle', async () => {
     const f = await Fixture()
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[0] },
@@ -107,7 +107,7 @@ describe(import.meta.file, () => {
 
   it('should do nothing if next puzzle is not in pack', async () => {
     const f = await Fixture()
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[0] },
@@ -130,7 +130,7 @@ describe(import.meta.file, () => {
 
   it('should be able to go to previous puzzle', async () => {
     const f = await Fixture()
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[1] },
@@ -151,7 +151,7 @@ describe(import.meta.file, () => {
 
   it('should do nothing if previous puzzle is not in pack', async () => {
     const f = await Fixture()
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[1] },
@@ -177,7 +177,7 @@ describe(import.meta.file, () => {
 
   it('should be able to exit puzzle screen', async () => {
     const f = await Fixture()
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[1] },
@@ -193,7 +193,7 @@ describe(import.meta.file, () => {
 
   it('should be able to open add puzzle screen', async () => {
     const f = await Fixture()
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
@@ -211,7 +211,7 @@ describe(import.meta.file, () => {
 
     if (!puzzle) throw new Error('Puzzle not found')
 
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: puzzle },
@@ -233,14 +233,14 @@ describe(import.meta.file, () => {
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
 
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-changed-slide',
         newSlideIndex: 1,
         userId: f.createdBy,
       },
     ])
-    expect(ScreenPackBuilderSpace.toSlideIndex(f.modelSpace)).toBe(0)
+    expect(ScreenPackBuilderSpace.toSlideIndex(f.initial)).toBe(0)
     expect(ScreenPackBuilderSpace.toSlideIndex(modelSpace)).toBe(1)
   })
 
@@ -249,7 +249,7 @@ describe(import.meta.file, () => {
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
     const expectedSlide = PackPuzzleGridUI.toSlideIndex(PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1)
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-changed-slide',
         newSlideIndex: 100000,
@@ -262,7 +262,7 @@ describe(import.meta.file, () => {
   it('should go back to grid after exiting puzzle', async () => {
     const f = await Fixture()
     const puzzle = f.puzzles[0]
-    const output = f.update([
+    const output = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: puzzle },
@@ -280,7 +280,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const puzzle = f.puzzles[0]
     const puzzleIndex = 0
-    const output = f.update([
+    const output = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: puzzle },
@@ -299,7 +299,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const puzzle = f.puzzles[0]
     const puzzleIndex = 0
-    const output = f.update([
+    const output = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: puzzle },
@@ -321,7 +321,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const puzzle = f.puzzles[0]
     const puzzleIndex = 0
-    const output = f.update([
+    const output = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: puzzle },
@@ -347,7 +347,7 @@ describe(import.meta.file, () => {
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
     const indexNextPage = PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[indexNextPage]! },
@@ -363,7 +363,7 @@ describe(import.meta.file, () => {
       appendDuplicatesOf: puzzle,
     })
 
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: f.puzzles[f.puzzles.length - 1]! },
@@ -386,7 +386,7 @@ describe(import.meta.file, () => {
 
     if (!puzzleLast) throw new Error('Puzzle not found')
 
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'got', c: puzzleLast },
@@ -399,7 +399,7 @@ describe(import.meta.file, () => {
 
   it('should open not-found puzzle', async () => {
     const f = await Fixture()
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
         puzzleResult: { t: 'not-found' },
@@ -411,7 +411,7 @@ describe(import.meta.file, () => {
 
   test('exit pack builder', async () => {
     const f = await Fixture()
-    const modelSpace = f.update([
+    const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-back-button',
         userId: f.createdBy,

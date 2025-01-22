@@ -2,9 +2,11 @@ import { p } from '~/@/parser'
 import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../../@/puzzle/puzzle'
+import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 
 export const ModelSpace = p.obj({
-  screenAddPuzzlePuzzleDbQuery: p.maybe(PuzzleDbQuery),
+  screenAddPuzzle_puzzleDbQuery: p.maybe(PuzzleDbQuery),
+  screenAddPuzzle_selected: p.arr(PuzzleId),
 })
 
 export type ModelSpace = p.Infer<typeof ModelSpace>
@@ -17,9 +19,14 @@ export const MsgSpace = p.or(
   }),
   p.obj({
     t: p.l('screen-pack-builder.screen-add-puzzle.user-clicked-close'),
+    userId: UserId,
   }),
   p.obj({
-    t: p.l('screen-pack-builder.screen-add-puzzle.user-clicked-puzzle'),
+    t: p.l('screen-pack-builder.screen-add-puzzle.user-submitted-add-puzzles-form'),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l('screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item'),
     puzzle: Puzzle,
     userId: UserId,
   }),

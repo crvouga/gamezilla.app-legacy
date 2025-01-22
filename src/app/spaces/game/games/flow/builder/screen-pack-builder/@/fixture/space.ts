@@ -38,16 +38,16 @@ export const ScreenPackBuilderSpaceFixture = async (input?: { puzzleCount?: numb
     puzzleIds: puzzles.map((puzzle) => puzzle.id),
   })
 
-  const modelSpace: ModelSpace = ScreenPackBuilderSpace.initSpace({ pack })
+  const initial: ModelSpace = ScreenPackBuilderSpace.initSpace({ pack })
 
-  const update = (msgs: MsgSpace[]) => {
+  const update = (initial: ModelSpace, msgs: MsgSpace[]) => {
     return msgs.reduce<ReturnType<UpdateSpace>>((acc, msgSpace) => {
       const updated = ScreenPackBuilderSpace.updateSpace({ ctx, modelSpace: acc, msgSpace })
       return {
         ...updated,
         msgs: [...(acc.msgs ?? []), ...(updated.msgs ?? [])],
       }
-    }, modelSpace)
+    }, initial)
   }
 
   return {
@@ -56,6 +56,6 @@ export const ScreenPackBuilderSpaceFixture = async (input?: { puzzleCount?: numb
     createdBy,
     pack,
     puzzles,
-    modelSpace,
+    initial,
   }
 }

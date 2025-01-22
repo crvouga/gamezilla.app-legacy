@@ -41,10 +41,10 @@ const includes = (pack: Pack, puzzleId: PuzzleId): boolean => {
   return pack.puzzleIds.includes(puzzleId)
 }
 
-const add = (pack: Pack, puzzleId: PuzzleId): Pack => {
+const add = (pack: Pack, puzzleId: PuzzleId[]): Pack => {
   return {
     ...pack,
-    puzzleIds: [...pack.puzzleIds, puzzleId],
+    puzzleIds: [...pack.puzzleIds, ...puzzleId],
   }
 }
 
