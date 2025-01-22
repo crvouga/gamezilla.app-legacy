@@ -5,12 +5,16 @@ import { PlayMode } from '../../@/play-mode'
 import { Solutions } from '../../@/solutions/solutions'
 import { type Variant } from '../../@/variant'
 import { VariantGrid, VariantGridShorthand } from '../../@/variant/grid'
-import { ScreenPuzzlePlaySpaceChildFixture } from './@/fixture/space'
+import { FixtureScreenPuzzlePlaySpaceChild } from './@/fixture/space'
 import { ScreenPlayPuzzleSpace } from './space'
 import type { MsgSpace } from './types'
+import { FlowPlaySpaceFixture } from '../@/space/fixture'
+import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
+import { Puzzle } from '../../@/puzzle/puzzle'
+import { Pack } from '../../@/pack/pack'
 
 const Fixture = async (input?: { flow?: Variant.Model }) => {
-  const f = await ScreenPuzzlePlaySpaceChildFixture(input)
+  const f = await FixtureScreenPuzzlePlaySpaceChild(input)
 
   return {
     ...f,
@@ -20,12 +24,8 @@ const Fixture = async (input?: { flow?: Variant.Model }) => {
 describe(import.meta.file, () => {
   it('should close puzzle after clicking exit puzzle button', async () => {
     const f = await Fixture()
-    const after = f.updateParent(f.initParent, [
-      {
-        t: 'user-clicked-exit-puzzle',
-      },
-    ])
-    expect(f.initParent.screen.t).toEqual('screen-play-puzzle')
+    const after = f.parent.update(f.parent.init, [{ t: 'user-clicked-exit-puzzle' }])
+    expect(f.parent.init.screen.t).toEqual('screen-play-puzzle')
     expect(after.screen.t).toEqual('screen-select-puzzle')
   })
 
@@ -346,13 +346,41 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'got-flow-play-msg',
-        c: {
-          t: 'user-clicked-use-hint',
-          solutions: f.ctx.solutions,
-        },
+        c: { t: 'user-clicked-use-hint', solutions: f.ctx.solutions },
         userId: UserId.generate(),
       },
     ])
     expect(output.events?.some((e) => e.t === 'user-used-hint')).toBe(true)
+  })
+
+  test.only('when exiting play puzzle screen it should be on the slide index corresponding with the opened puzzle', async () => {
+    const f = await FlowPlaySpaceFixture()
+    const puzzles = await Promise.all(
+      Array.from({ length: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT * 2 }, () => Puzzle.random()),
+    )
+    const pack = await Pack.random({ puzzleIds: puzzles.map((p) => p.id) })
+    const secondSlidePuzzle = puzzles[PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1]
+    if (!secondSlidePuzzle) throw new Error('failed to setup test')
+    const before = f.update(f.init, [
+      {
+        t: 'user-clicked-open-pack-puzzle-grid-item',
+        pack,
+      },
+    ])
+    const after = f.update(before, [
+      {
+        t: 'user-clicked-open-screen-play-puzzle',
+        flowPuzzle: { t: 'got', c: secondSlidePuzzle },
+        puzzleIndex: puzzles.findIndex((p) => p.id === secondSlidePuzzle.id),
+      },
+      {
+        t: 'user-clicked-exit-puzzle',
+      },
+    ])
+
+    expect(before.screen.t).toEqual('screen-select-puzzle')
+    if (before.screen.t === 'screen-select-puzzle') expect(before.screen.slideIndex).toEqual(0)
+    expect(after.screen.t).toEqual('screen-select-puzzle')
+    if (after.screen.t === 'screen-select-puzzle') expect(after.screen.slideIndex).toEqual(1)
   })
 })

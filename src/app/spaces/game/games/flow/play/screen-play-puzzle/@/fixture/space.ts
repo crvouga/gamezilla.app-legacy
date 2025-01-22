@@ -12,7 +12,7 @@ import { FlowPlaySpaceFixture } from '../../../@/space/fixture'
 import { ScreenPlayPuzzleSpace } from '../../space'
 import type { ModelSpace, MsgSpace } from '../../types'
 
-export const ScreenPuzzlePlaySpaceFixture = async (input?: { flow?: Variant.Model }) => {
+export const FixtureScreenPuzzlePlaySpace = async (input?: { flow?: Variant.Model }) => {
   const f = await FlowPlaySpaceFixture()
   const puzzle = await Puzzle.random(input)
   const puzzleIndex = 1
@@ -65,8 +65,8 @@ export const ScreenPuzzlePlaySpaceFixture = async (input?: { flow?: Variant.Mode
   }
 }
 
-export const ScreenPuzzlePlaySpaceChildFixture = async (input?: { flow?: Variant.Model }) => {
-  const f = await ScreenPuzzlePlaySpaceFixture(input)
+export const FixtureScreenPuzzlePlaySpaceChild = async (input?: { flow?: Variant.Model }) => {
+  const f = await FixtureScreenPuzzlePlaySpace(input)
 
   const updates = (
     init: ModelSpace,
@@ -95,9 +95,8 @@ export const ScreenPuzzlePlaySpaceChildFixture = async (input?: { flow?: Variant
 
   return {
     ...f,
+    parent: f,
     updates,
-    initParent: f.init,
-    updateParent: f.update,
     update,
     init,
   }

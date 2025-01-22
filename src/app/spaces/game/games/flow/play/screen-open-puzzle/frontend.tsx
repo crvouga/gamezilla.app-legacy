@@ -62,6 +62,7 @@ const View: FrontendModule['View'] = (input) => {
         }
         title={input.ctx.t('flow-pack-name', pack.name)}
       />
+
       <div
         className={cn(
           'flex w-full flex-1 flex-col items-center justify-center',
@@ -86,8 +87,6 @@ const View: FrontendModule['View'] = (input) => {
             if (!inputCell.puzzleId) {
               return <PackPuzzleGridUI.ViewEmptyCell />
             }
-
-            // return <PackPuzzlesGridUI.ViewLoadingCell />
 
             const puzzle = input.ctx.puzzles[inputCell.puzzleId]
 

@@ -6,7 +6,7 @@ import { ScreenAddPuzzle } from './frontend'
 
 const Fixture = FixturePackBuilderFrontend
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   test('play sound opening add puzzle screen', async () => {
     const f = await Fixture()
 

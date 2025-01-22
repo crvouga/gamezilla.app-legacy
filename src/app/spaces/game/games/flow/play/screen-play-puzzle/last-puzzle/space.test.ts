@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test'
-import { ScreenPuzzlePlaySpaceFixture } from '../@/fixture/space'
+import { FixtureScreenPuzzlePlaySpace } from '../@/fixture/space'
 
 const Fixture = async () => {
-  const f = await ScreenPuzzlePlaySpaceFixture()
+  const f = await FixtureScreenPuzzlePlaySpace()
 
   return {
     ...f,

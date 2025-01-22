@@ -4,23 +4,13 @@ import { Space } from '../../space/space'
 import { SpaceCtx } from '../space/ctx'
 import { makeSpace } from './shared'
 
-export const SpaceFixture = async () => {
+export const FixtureSpace = async () => {
   const spaceId = SpaceId.generate()
   const hostId = UserId.generate()
   const guestId = UserId.generate()
-  const spaceState = Space.toSpaceStarted(
-    makeSpace({
-      spaceId,
-      hostId,
-      guestId,
-    }),
-  )
-  if (!spaceState) {
-    throw new Error('SpaceFixture: spaceState is null')
-  }
-  const ctx: SpaceCtx = {
-    space: spaceState,
-  }
+  const spaceState = Space.toSpaceStarted(makeSpace({ spaceId, hostId, guestId }))
+  if (!spaceState) throw new Error('SpaceFixture: spaceState is null')
+  const ctx: SpaceCtx = { space: spaceState }
   return {
     ctx,
     spaceId,

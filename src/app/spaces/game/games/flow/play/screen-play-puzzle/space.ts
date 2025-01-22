@@ -1,8 +1,9 @@
-import { FlowSpaceCtx } from '../../@/space/ctx'
 import { Pack } from '../../@/pack/pack'
+import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { PlayMode } from '../../@/play-mode'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
-import type { SpaceModule, MsgSpace } from '../types'
+import { FlowSpaceCtx } from '../../@/space/ctx'
+import type { MsgSpace, SpaceModule } from '../types'
 import * as CopyPuzzleSpace from './copy-puzzle/space'
 import { LastPuzzleSpace } from './last-puzzle/space'
 import type { ModelSpace, MsgSpaceEvt } from './types'
@@ -189,7 +190,7 @@ const updateSpaceMain: SpaceModule['updateSpace'] = ({ modelSpace, msgSpace }) =
             screen: {
               t: 'screen-select-puzzle',
               pack: modelSpace.screen.flowPack,
-              slideIndex: 0,
+              slideIndex: PackPuzzleGridUI.toSlideIndex(modelSpace.screen.puzzleIndex),
             },
           }
         }

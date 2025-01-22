@@ -26,28 +26,13 @@ describe(import.meta.file, () => {
 
   it('should make a sound after clicking exit button', async () => {
     const f = await Fixture()
-    const updated = f.update(f.init, [
-      {
-        msgSpace: withEventMeta({
-          t: 'user-clicked-exit-puzzle',
-        }),
-      },
-    ])
+    const updated = f.update(f.init, [{ msgSpace: withEventMeta({ t: 'user-clicked-exit-puzzle' }) }])
     expect(didPlaySound(updated)).toBe(true)
   })
 
   it('should exit to pack after clicking exit puzzle button', async () => {
     const f = await Fixture()
-    const updated = f.update(f.init, [
-      {
-        msg: {
-          t: 'got-msg-space',
-          c: {
-            t: 'user-clicked-exit-puzzle',
-          },
-        },
-      },
-    ])
+    const updated = f.update(f.init, [{ msg: { t: 'got-msg-space', c: { t: 'user-clicked-exit-puzzle' } } }])
     expect(updated.modelSpace.screen.t).toBe('screen-select-puzzle')
   })
 

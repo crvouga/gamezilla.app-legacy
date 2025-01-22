@@ -24,10 +24,7 @@ const update: FrontendModule['update'] = (input) => {
 const updateFromMsg: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'got-msg-space': {
-      return {
-        model: input.model,
-        msgSpace: [input.msg.c],
-      }
+      return { model: input.model, msgSpace: [input.msg.c] }
     }
 
     case 'got-pack-db-query-msg': {

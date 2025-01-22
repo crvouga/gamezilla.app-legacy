@@ -145,8 +145,8 @@ const toIndex = ({ x, y }: { x: number; y: number }) => {
   return y * COLUMN_COUNT + x
 }
 
-const toSlideIndex = (index: number) => {
-  return Math.floor(index / (COLUMN_COUNT * ROW_COUNT))
+const toSlideIndex = (puzzleIndex: number) => {
+  return Math.floor(puzzleIndex / (COLUMN_COUNT * ROW_COUNT))
 }
 
 const clampSlideIndex = (slideIndex: number, itemCount: number): number => {
