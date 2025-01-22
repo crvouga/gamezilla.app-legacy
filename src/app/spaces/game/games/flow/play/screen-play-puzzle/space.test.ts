@@ -353,7 +353,7 @@ describe(import.meta.file, () => {
     expect(output.events?.some((e) => e.t === 'user-used-hint')).toBe(true)
   })
 
-  test.only('when exiting play puzzle screen it should be on the slide index corresponding with the opened puzzle', async () => {
+  test('when exiting play puzzle screen it should be on the slide index corresponding with the opened puzzle', async () => {
     const f = await FlowPlaySpaceFixture()
     const puzzles = await Promise.all(
       Array.from({ length: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT * 2 }, () => Puzzle.random()),
