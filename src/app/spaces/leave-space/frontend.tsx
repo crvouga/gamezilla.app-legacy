@@ -2,18 +2,18 @@ import { withEventId } from '~/@/event-sourced/event'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
 import { Button } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpaceFrontend } from '../space/frontend'
-import type { SpaceEvent } from '../space/space-event'
+import { SpacesCore } from '../core/core'
+import type { MsgSpace } from '../core/space-msg'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
     { model: input.model },
-    (model) => updateFromSpaceEvent({ ...input, model }),
+    (model) => updateFromMsgSpace({ ...input, model }),
     (model) => updateLeaveSpaceButton({ ...input, model }),
   )
 }
 
-const updateFromSpaceEvent: SpaceFrontendModule['update'] = ({ model, msgSpace: msgSpace, ctx }) => {
+const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: msgSpace, ctx }) => {
   switch (msgSpace?.t) {
     case 'user-left-space': {
       if (!ctx.currentUserId) {
@@ -22,7 +22,7 @@ const updateFromSpaceEvent: SpaceFrontendModule['update'] = ({ model, msgSpace: 
         }
       }
 
-      const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model, ctx.currentUserId)
 
       if (msgSpace.spaceId !== currentUserSpaceId) {
         return {
@@ -72,7 +72,7 @@ const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg
         }
       }
 
-      const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model, ctx.currentUserId)
 
       if (!currentUserSpaceId) {
         return {
@@ -80,7 +80,7 @@ const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg
         }
       }
 
-      const spaceEventNew = withEventId<SpaceEvent>({
+      const spaceEventNew = withEventId<MsgSpace>({
         t: 'user-left-space',
         spaceId: currentUserSpaceId,
         userId: ctx.currentUserId,

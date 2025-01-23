@@ -3,7 +3,7 @@ import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { type Input, type Output, SpaceBackendModule } from './@/architecture/space-backend'
 import { Space } from './@/space/space'
-import { SpaceBackend } from './space/backend'
+import { SpacesCoreAsync } from './core/core-async'
 import { GameBackend } from './game/backend'
 import { JoinSpaceBackend } from './join-space/backend'
 import { ListSpacesBackend } from './list-spaces/backend'
@@ -24,7 +24,7 @@ const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
   return {
     ...input.ctx,
 
-    spaceBackend: await SpaceBackend({
+    spacesCore: await SpacesCoreAsync({
       t: 'db-conn-kv',
       dbConnKv: input.ctx.dbConnKv,
       logger: input.ctx.logger,
@@ -96,7 +96,7 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
 const updateChild: SpaceBackendModule['update'] = async (input) => {
   return SpaceBackendModule.andThen(
     {},
-    () => updateSpacesFromSpaceEvent(input),
+    () => updateSpacesFromMsgSpace(input),
     () => ListSpacesBackend.update(input),
     () => SyncBackend.update(input),
     () => StartSpaceBackend.update(input),
@@ -105,12 +105,12 @@ const updateChild: SpaceBackendModule['update'] = async (input) => {
   )
 }
 
-const updateSpacesFromSpaceEvent: SpaceBackendModule['update'] = async (input) => {
+const updateSpacesFromMsgSpace: SpaceBackendModule['update'] = async (input) => {
   if (!input.msgSpace) {
     return {}
   }
 
-  await input.ctx.spaceBackend.update(input.msgSpace)
+  await input.ctx.spacesCore.update(input.msgSpace)
 
   return {}
 }

@@ -7,8 +7,8 @@ import { SessionId } from '~/app/@/data/session-id'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import { SpaceBackend } from '../../space/backend'
-import { Space } from '../../space/space'
+import { SpacesCoreAsync } from '../../core/core-async'
+import { Space } from '../../core/space'
 import { GamesBackend } from '../../game/games/backend'
 import { SpacesBackend } from '../../backend'
 import { BackendCtx } from '../../types'
@@ -61,7 +61,7 @@ export const FixtureSpaceBackend = async () => {
 
   const backendCtx: BackendCtx = {
     ...f.ctx,
-    spaceBackend: await SpaceBackend({
+    spacesCore: await SpacesCoreAsync({
       t: 'db-conn-kv',
       dbConnKv: f.ctx.dbConnKv,
       logger: f.ctx.logger,

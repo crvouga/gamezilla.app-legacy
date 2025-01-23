@@ -8,8 +8,8 @@ import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { makeSpace } from '../@/fixture/shared'
-import { SpaceFrontend } from '../space/frontend'
-import { Space } from '../space/space'
+import { SpacesCore } from '../core/core'
+import { Space } from '../core/space'
 
 const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
   return items.filter(predicate).length === 1
@@ -67,7 +67,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const listed = SpaceFrontend.listSpaces({
+    const listed = SpacesCore.listSpaces({
       model: output.model,
       offset: 0,
       limit: Number.POSITIVE_INFINITY,
@@ -94,7 +94,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
+    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
 
     expect(currentUserSpaceId).toEqual(spaceId)
   })

@@ -5,7 +5,7 @@ import type { ClientId } from '~/app/@/data/client-id'
 import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 import type { BackendEvt } from '~/app/@/backend/evt'
-import { SpaceEvent } from '../../space/space-event'
+import { MsgSpace } from '../../core/space-msg'
 import type { MsgBackend, MsgToFrontend, MsgToBackend, BackendCtx } from '../../types'
 import type { Space } from '../space/space'
 import type { SpaceBackendCmd } from '../backend/cmd'
@@ -26,7 +26,7 @@ export type Input = {
     | null
   msgEvt?: BackendEvt | null
   msgCmd?: SpaceBackendCmd<MsgToFrontend> | null
-  msgSpace?: WithEventId<SpaceEvent> | null
+  msgSpace?: WithEventId<MsgSpace> | null
 }
 
 export type MaybePromise<T> = T | Promise<T>
@@ -34,7 +34,7 @@ export type MaybePromise<T> = T | Promise<T>
 export type Output = {
   msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
   msgEvt?: unknown[]
-  msgSpace?: WithEventId<SpaceEvent>[]
+  msgSpace?: WithEventId<MsgSpace>[]
 }
 
 export type SpaceBackendModule = {

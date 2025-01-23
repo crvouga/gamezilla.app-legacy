@@ -7,14 +7,14 @@ const update: SpaceBackendModule['update'] = (input) => {
   return SpaceBackendModule.andThen(
     {},
     //
-    () => updateFromSpaceEvent({ ...input }),
+    () => updateFromMsgSpace({ ...input }),
   )
 }
 
-const updateFromSpaceEvent: SpaceBackendModule['update'] = async (input) => {
+const updateFromMsgSpace: SpaceBackendModule['update'] = async (input) => {
   switch (input.msgSpace?.t) {
     case 'user-joined-space': {
-      const space = Result.unwrapOr(await input.ctx.spaceBackend.get(input.msgSpace.spaceId), null)
+      const space = Result.unwrapOr(await input.ctx.spacesCore.get(input.msgSpace.spaceId), null)
 
       if (!space) {
         return {}

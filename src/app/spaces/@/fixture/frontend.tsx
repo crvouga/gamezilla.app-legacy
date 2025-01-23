@@ -12,7 +12,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpacesFrontend } from '../../frontend'
-import { Space } from '../../space/space'
+import { Space } from '../../core/space'
 import type * as SpacesTypes from '../../types'
 
 export const SpaceFrontendFixture = async () => {
@@ -33,20 +33,12 @@ export const SpaceFrontendFixture = async () => {
     for (const msg of msgs) {
       switch (msg.t) {
         case 'msg': {
-          const output = SpacesFrontend.update({
-            ctx: f.ctx,
-            model: initial,
-            msg: msg.c,
-          })
+          const output = SpacesFrontend.update({ ctx: f.ctx, model: initial, msg: msg.c })
           outputs.push(output)
           break
         }
         case 'msg-backend': {
-          const output = SpacesFrontend.update({
-            ctx: f.ctx,
-            model: initial,
-            msgBackend: msg.c,
-          })
+          const output = SpacesFrontend.update({ ctx: f.ctx, model: initial, msgBackend: msg.c })
           outputs.push(output)
           break
         }

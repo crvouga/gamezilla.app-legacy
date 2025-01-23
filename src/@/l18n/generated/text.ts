@@ -39,7 +39,7 @@ import type { Text as Text36 } from '../../../app/spaces/game/games/flow/@/pack/
 import type { Text as Text37 } from '../../../app/spaces/game/games/flow/@/pack/pack-db-query/$l18n'
 import type { Text as Text38 } from '../../../app/spaces/game/games/flow/@/mode-edit/$l18n'
 import type { Text as Text39 } from '../../../app/spaces/game/games/flow/@/mode-play/$l18n'
-import type { Text as Text40 } from '../../../app/spaces/end-space/end-space.$l18n'
+import type { Text as Text40 } from '../../../app/spaces/end-space/$l18n'
 import type { Text as Text41 } from '../../../app/spaces/join-space/$l18n'
 import type { Text as Text42 } from '../../../app/spaces/list-spaces/$l18n'
 import type { Text as Text43 } from '../../../app/spaces/list-spaces/space-card/$l18n'

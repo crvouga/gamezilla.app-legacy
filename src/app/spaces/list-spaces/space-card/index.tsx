@@ -3,7 +3,7 @@ import { Avatar, cn, Typography } from '~/app/@/ui'
 import { ViewHostChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/host-chip'
 import { ViewYouChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/you-chip'
 import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
-import { SpaceState } from '../../space/space-state'
+import { SpaceState } from '../../core/space-state'
 
 const MAX_AVATAR_COUNT = 3
 

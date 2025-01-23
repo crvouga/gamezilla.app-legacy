@@ -9,21 +9,21 @@ import { IStream } from '~/@/stream/interface'
 import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space'
-import { SpaceEvent } from '../space-event'
+import { MsgSpace } from '../space-msg'
 import { SpaceState } from '../space-state'
 import * as ImplDbConnKv from './impl-db-conn-kv'
-import type { ISpaceBackend, SpaceBackendConfig } from './interface'
+import type { ISpacesCoreAsync, SpacesCoreConfig } from './interface'
 
-export type Config = SpaceBackendConfig & {
+export type Config = SpacesCoreConfig & {
   t: 'stream'
   dbConnKv: IDbConnKv
-  stream: IStream<WithEventMeta<SpaceEvent>>
+  stream: IStream<WithEventMeta<MsgSpace>>
   logger: ILogger
   runtime: IRuntime
 }
 
-export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
-  const implDbConnKb = await ImplDbConnKv.SpaceBackend({
+export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync> => {
+  const implDbConnKb = await ImplDbConnKv.SpacesCoreAsync({
     t: 'db-conn-kv',
     dbConnKv: config.dbConnKv,
     logger: Logger.prefix('db-conn-kv', config.logger),
@@ -37,7 +37,7 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
     parser: SpaceState.State,
   })
 
-  const upsert: ISpaceBackend['upsert'] = async (space) => {
+  const upsert: ISpacesCoreAsync['upsert'] = async (space) => {
     implDbConnKb.upsert(space)
 
     const snapshot = EventSourced.toState(Space.config, space)
@@ -55,7 +55,7 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
     return Ok(null)
   }
 
-  const update: ISpaceBackend['update'] = async (event) => {
+  const update: ISpacesCoreAsync['update'] = async (event) => {
     implDbConnKb.update(event)
     if (await hasEvent(event.spaceId, event.eventId)) {
       return Ok(null)
@@ -70,7 +70,7 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
     return upsert(spaceNew)
   }
 
-  const get: ISpaceBackend['get'] = async (spaceId) => {
+  const get: ISpacesCoreAsync['get'] = async (spaceId) => {
     if (!spaceId) {
       return Ok(null)
     }
@@ -100,19 +100,19 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
     return Ok(model)
   }
 
-  const hasEvent: ISpaceBackend['hasEvent'] = async (spaceId, eventId) => {
+  const hasEvent: ISpacesCoreAsync['hasEvent'] = async (spaceId, eventId) => {
     return unwrapOr(await config.stream.has(spaceId, eventId), false)
   }
 
-  const getByUserId: ISpaceBackend['getByUserId'] = async (userId) => {
+  const getByUserId: ISpacesCoreAsync['getByUserId'] = async (userId) => {
     return implDbConnKb.getByUserId(userId)
   }
 
-  const list: ISpaceBackend['list'] = async (input) => {
+  const list: ISpacesCoreAsync['list'] = async (input) => {
     return implDbConnKb.list(input)
   }
 
-  const merge: ISpaceBackend['merge'] = async (space) => {
+  const merge: ISpacesCoreAsync['merge'] = async (space) => {
     const spaceId = Space.toSpaceId(space)
 
     const currentSpace = unwrapOr(await get(spaceId), null) ?? Space.init

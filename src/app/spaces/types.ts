@@ -12,10 +12,10 @@ import { UserId } from '~/app/@/data/user-id'
 import { BackendCmd } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
-import { SpaceFrontend } from './space/frontend'
-import { ISpaceBackend } from './space/backend/interface'
-import { Space } from './space/space'
-import { SpaceEvent } from './space/space-event'
+import { SpacesCore } from './core/core'
+import { ISpacesCoreAsync } from './core/core-async/interface'
+import { Space } from './core/space'
+import { MsgSpace } from './core/space-msg'
 import { GamesTypes } from './game/games'
 import { GameName } from './game/games/@/game-name'
 import { SpaceFrontendCmd } from './@/frontend/cmd'
@@ -30,13 +30,13 @@ import { Pagination } from '~/@/query/query'
 //
 
 export type BackendCtx = AppBackendCtx & {
-  spaceBackend: ISpaceBackend
+  spacesCore: ISpacesCoreAsync
   games: GamesTypes.GameBackendCtx
 }
 
 export type ModelBackend = null
 
-export type ModelFrontend = SpaceFrontend.Model & {
+export type ModelFrontend = SpacesCore.Model & {
   games: {
     [spaceId: SpaceId]: GamesTypes.ModelFrontend
   }
@@ -54,7 +54,7 @@ export type ModelFrontend = SpaceFrontend.Model & {
 //
 
 export type MsgBackend =
-  | { t: 'got-msg-space'; c: WithEventId<SpaceEvent> }
+  | { t: 'got-msg-space'; c: WithEventId<MsgSpace> }
   | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgBackend }
 
 export type MsgFrontend =
@@ -77,7 +77,7 @@ export type MsgToFrontend = MsgToFrontendExtra &
   (
     | {
         t: 'got-msg-space'
-        c: WithEventMeta<SpaceEvent>
+        c: WithEventMeta<MsgSpace>
       }
     | {
         t: 'listed-spaces'
@@ -103,7 +103,7 @@ export type MsgToBackend = MsgToBackendExtra &
   (
     | {
         t: 'got-msg-space'
-        c: WithEventMeta<SpaceEvent>
+        c: WithEventMeta<MsgSpace>
       }
     | {
         t: 'sync'

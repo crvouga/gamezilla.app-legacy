@@ -4,7 +4,7 @@ import { p } from '~/@/parser'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Space } from '../space'
-import type { SpaceEvent } from '../space-event'
+import type { MsgSpace } from '../space-msg'
 import { SpaceState } from '../space-state'
 
 //
@@ -32,13 +32,6 @@ export const init: Model = {
   indexSpaceIdByUserId: {},
   errors: {},
 }
-
-//
-//
-//
-//
-//
-//
 
 export const listSpaces = ({
   model,
@@ -183,16 +176,9 @@ export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceSta
   return spaceState
 }
 
-//
-//
-//
-//
-//
-//
-
 export const update = (input: {
-  model: Model
-  msgSpace: WithEventId<SpaceEvent>
+  modelSpace: Model
+  msgSpace: WithEventId<MsgSpace>
 }): {
   model: Model
 } => {
@@ -206,10 +192,10 @@ export const update = (input: {
     }
 
     case 'user-ended-space': {
-      const userIds = Space.toUserIds(input.model.spaces[input.msgSpace.spaceId] ?? Space.init)
+      const userIds = Space.toUserIds(input.modelSpace.spaces[input.msgSpace.spaceId] ?? Space.init)
 
       const spaceIdByUserIdNew = {
-        ...input.model.indexSpaceIdByUserId,
+        ...input.modelSpace.indexSpaceIdByUserId,
       }
       for (const userId of userIds) {
         delete spaceIdByUserIdNew[userId]
@@ -226,14 +212,14 @@ export const update = (input: {
     }
 
     case 'user-joined-space': {
-      const spaceId = input.model.indexSpaceIdByUserId[input.msgSpace.userId]
+      const spaceId = input.modelSpace.indexSpaceIdByUserId[input.msgSpace.userId]
 
       if (spaceId) {
         return {
           model: {
-            ...input.model,
+            ...input.modelSpace,
             errors: {
-              ...input.model.errors,
+              ...input.modelSpace.errors,
               [input.msgSpace.eventId]: {
                 t: 'user-already-in-a-space',
                 userId: input.msgSpace.userId,
@@ -244,7 +230,7 @@ export const update = (input: {
       }
 
       const spaceIdByUserIdNew = {
-        ...input.model.indexSpaceIdByUserId,
+        ...input.modelSpace.indexSpaceIdByUserId,
         [input.msgSpace.userId]: input.msgSpace.spaceId,
       }
 
@@ -260,10 +246,10 @@ export const update = (input: {
 
     case 'user-left-space': {
       const spaceIdByUserIdNew = {
-        ...input.model.indexSpaceIdByUserId,
+        ...input.modelSpace.indexSpaceIdByUserId,
       }
 
-      if (input.msgSpace.spaceId === input.model.indexSpaceIdByUserId[input.msgSpace.userId]) {
+      if (input.msgSpace.spaceId === input.modelSpace.indexSpaceIdByUserId[input.msgSpace.userId]) {
         delete spaceIdByUserIdNew[input.msgSpace.userId]
       }
 
@@ -279,7 +265,7 @@ export const update = (input: {
 
     case 'user-started-space': {
       const spaceIdByUserIdNew = {
-        ...input.model.indexSpaceIdByUserId,
+        ...input.modelSpace.indexSpaceIdByUserId,
         [input.msgSpace.userId]: input.msgSpace.spaceId,
       }
 
@@ -296,22 +282,22 @@ export const update = (input: {
 }
 
 const append = (input: {
-  model: Model
-  msgSpace: WithEventId<SpaceEvent>
+  modelSpace: Model
+  msgSpace: WithEventId<MsgSpace>
 }): {
   model: Model
 } => {
   const spaceId = input.msgSpace.spaceId
 
-  const space = input.model.spaces[spaceId] ?? Space.init
+  const space = input.modelSpace.spaces[spaceId] ?? Space.init
 
   const spaceNew = EventSourced.appendEvent(Space.config, space, input.msgSpace)
 
   return {
     model: {
-      ...input.model,
+      ...input.modelSpace,
       spaces: {
-        ...input.model.spaces,
+        ...input.modelSpace.spaces,
         [spaceId]: spaceNew,
       },
     },

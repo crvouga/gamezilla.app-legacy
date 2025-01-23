@@ -3,7 +3,7 @@ import { withEventMeta } from '~/@/event-sourced/event'
 import { SpaceId } from '~/app/@/data/space-id'
 import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 import { FixtureSpaceBackend } from '../@/fixture/backend'
-import { Space } from '../space/space'
+import { Space } from '../core/space'
 
 const Fixture = async () => {
   const f = await FixtureSpaceBackend()

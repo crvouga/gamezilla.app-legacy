@@ -4,15 +4,15 @@ import { pipe } from '~/@/function/pipe'
 import { p } from '~/@/parser'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceEvent } from '../space-event'
+import { MsgSpace } from '../space-msg'
 import { SpaceState } from '../space-state'
 
-export const Model = EventSourced.parser(SpaceEvent, SpaceState.State)
+export const Model = EventSourced.parser(MsgSpace, SpaceState.State)
 export type Model = p.Infer<typeof Model>
 
 export const init: Model = EventSourced.init(SpaceState.init)
 
-export const config: EventSourcedConfig<SpaceEvent, SpaceState.State> = {
+export const config: EventSourcedConfig<MsgSpace, SpaceState.State> = {
   reducer: SpaceState.updateSpace,
 }
 

@@ -3,7 +3,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { SpaceBackendModule } from '../@/architecture/space-backend'
 import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { Space } from '../space/space'
+import { Space } from '../core/space'
 import { GamesBackend } from '../game/games/backend'
 import type { MsgBackend } from '../types'
 import { GamesBackendCtx } from './types'
@@ -28,7 +28,7 @@ const updateGame: SpaceBackendModule['update'] = async (input) => {
     return {}
   }
 
-  const spaceState = Space.toSpaceStarted(Result.unwrapOr(await input.ctx.spaceBackend.get(spaceId), null))
+  const spaceState = Space.toSpaceStarted(Result.unwrapOr(await input.ctx.spacesCore.get(spaceId), null))
 
   if (!spaceState?.game) {
     return {}

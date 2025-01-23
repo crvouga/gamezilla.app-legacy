@@ -3,7 +3,7 @@ import { unwrapOr } from '~/@/result'
 import { Paginated } from '~/app/@/data/pagination'
 import { sendToFrontend } from '~/app/@/backend/cmd'
 import type { SpaceBackendModule } from '../@/architecture/space-backend'
-import { Space } from '../space/space'
+import { Space } from '../core/space'
 
 //
 //
@@ -16,7 +16,7 @@ import { Space } from '../space/space'
 const update: SpaceBackendModule['update'] = async (input) => {
   switch (input.msgFrontend?.t) {
     case 'list-spaces': {
-      const listed = await input.ctx.spaceBackend.list(input.msgFrontend)
+      const listed = await input.ctx.spacesCore.list(input.msgFrontend)
       const spaces = unwrapOr(listed, Paginated.init())
       const started = spaces.items.map(EventSourced.startFromLatestSnapshot)
       const userIds = spaces.items.flatMap(Space.toUserIds)

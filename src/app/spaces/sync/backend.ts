@@ -3,8 +3,8 @@ import { unwrapOr } from '~/@/result'
 import { broadcast, sendToFrontend, sendToUser } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { SpaceBackendModule } from '../@/architecture/space-backend'
-import { Space } from '../space/space'
-import { SpaceState } from '../space/space-state'
+import { Space } from '../core/space'
+import { SpaceState } from '../core/space-state'
 import type { MsgToFrontend } from '../types'
 
 const update: SpaceBackendModule['update'] = async (input) => {
@@ -13,8 +13,8 @@ const update: SpaceBackendModule['update'] = async (input) => {
     () => updateFromFrontend(input),
     () => updateCurrentUserSpace(input),
     () => updateProfileCache(input),
-    () => sendSpaceEventToFrontend(input),
-    () => outputSpaceEventsFromBackend(input),
+    () => sendMsgSpaceToFrontend(input),
+    () => outputMsgSpacesFromBackend(input),
   )
 }
 
@@ -26,7 +26,7 @@ const updateProfileCache: SpaceBackendModule['update'] = async (input) => {
 const updateFromFrontend: SpaceBackendModule['update'] = async (input) => {
   switch (input.msgFrontend?.t) {
     case 'sync': {
-      await input.ctx.spaceBackend.merge(input.msgFrontend.space)
+      await input.ctx.spacesCore.merge(input.msgFrontend.space)
 
       const spaceId = Space.toSpaceId(input.msgFrontend.space)
 
@@ -34,7 +34,7 @@ const updateFromFrontend: SpaceBackendModule['update'] = async (input) => {
         return {}
       }
 
-      const spaceNew = unwrapOr(await input.ctx.spaceBackend.get(spaceId), null)
+      const spaceNew = unwrapOr(await input.ctx.spacesCore.get(spaceId), null)
 
       if (!spaceNew) {
         return {}
@@ -82,7 +82,7 @@ const getAssociatedProfiles = async (ctx: AppBackendCtx, spaces: Space.Model[]) 
 const updateCurrentUserSpace: SpaceBackendModule['update'] = async (input) => {
   switch (input.msgEvt?.t) {
     case 'auth-evt.client-authenticated': {
-      const space = unwrapOr(await input.ctx.spaceBackend.getByUserId(input.msgEvt.user.userId), null)
+      const space = unwrapOr(await input.ctx.spacesCore.getByUserId(input.msgEvt.user.userId), null)
 
       if (!space) {
         return {}
@@ -113,12 +113,12 @@ const updateCurrentUserSpace: SpaceBackendModule['update'] = async (input) => {
   }
 }
 
-const sendSpaceEventToFrontend: SpaceBackendModule['update'] = async (input) => {
+const sendMsgSpaceToFrontend: SpaceBackendModule['update'] = async (input) => {
   if (!input.msgSpace) {
     return {}
   }
 
-  const got = await input.ctx.spaceBackend.get(input.msgSpace.spaceId)
+  const got = await input.ctx.spacesCore.get(input.msgSpace.spaceId)
 
   const space = unwrapOr(got, null) ?? Space.init
 
@@ -152,7 +152,7 @@ const sendSpaceEventToFrontend: SpaceBackendModule['update'] = async (input) => 
   }
 }
 
-const outputSpaceEventsFromBackend: SpaceBackendModule['update'] = (input) => {
+const outputMsgSpacesFromBackend: SpaceBackendModule['update'] = (input) => {
   switch (input.msgFrontend?.t) {
     case 'got-msg-space': {
       return {

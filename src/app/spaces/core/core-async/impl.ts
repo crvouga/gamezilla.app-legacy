@@ -1,16 +1,16 @@
 import * as ImplDbConnKv from './impl-db-conn-kv'
 import * as ImplStream from './impl-stream'
-import type { ISpaceBackend } from './interface'
+import type { ISpacesCoreAsync } from './interface'
 
 export type Config = ImplDbConnKv.Config | ImplStream.Config
 
-export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
+export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync> => {
   switch (config.t) {
     case 'db-conn-kv': {
-      return ImplDbConnKv.SpaceBackend(config)
+      return ImplDbConnKv.SpacesCoreAsync(config)
     }
     case 'stream': {
-      return ImplStream.SpaceBackend(config)
+      return ImplStream.SpacesCoreAsync(config)
     }
   }
 }

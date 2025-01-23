@@ -4,7 +4,7 @@ import type { UserId } from '~/app/@/data/user-id'
 import { Space } from '~/app/spaces/@/space/space'
 import * as GameSpace from '../../game/games/space'
 import * as Game from '../../game/games/types'
-import { SpaceEvent } from '../space-event'
+import { MsgSpace } from '../space-msg'
 
 //
 //
@@ -74,7 +74,7 @@ export const toUserIds = (state: State): UserId[] => {
 //
 //
 
-export const updateSpace = (state: State, msgSpace: WithEventMeta<SpaceEvent>): State => {
+export const updateSpace = (state: State, msgSpace: WithEventMeta<MsgSpace>): State => {
   switch (state.type) {
     case 'ended': {
       return state

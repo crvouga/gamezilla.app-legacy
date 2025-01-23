@@ -6,12 +6,12 @@ import { Paginated } from '~/app/@/data/pagination'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Space } from '../space'
-import { SpaceEvent } from '../space-event'
+import { MsgSpace } from '../space-msg'
 
-export type ISpaceBackend = {
+export type ISpacesCoreAsync = {
   list: (input: {
     pagination: Pagination
-    whereAnd?: SpaceBackendWhereAnd
+    whereAnd?: SpacesCoreWhereAnd
   }) => Promise<Result<string, Paginated<Space.Model>>>
 
   get: (spaceId: SpaceId | null) => Promise<Result<string, Space.Model | null>>
@@ -22,17 +22,17 @@ export type ISpaceBackend = {
 
   hasEvent: (spaceId: SpaceId, eventId: EventId) => Promise<boolean>
 
-  update: (spaceEvent: WithEventId<SpaceEvent>) => Promise<Result<string, null>>
+  update: (spaceEvent: WithEventId<MsgSpace>) => Promise<Result<string, null>>
 
   merge: (space: Space.Model) => Promise<Result<string, null>>
 }
 
-export type SpaceBackendWhereAnd = {
+export type SpacesCoreWhereAnd = {
   equalsSpaceId?: SpaceId
   equalsUserId?: UserId
 }
 
-export type SpaceBackendConfig = {
+export type SpacesCoreConfig = {
   /**
    * This is used for testing purposes only. Testing invalid data
    */

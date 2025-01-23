@@ -13,13 +13,13 @@ import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Space } from '../space'
-import { SpaceEvent } from '../space-event'
+import { MsgSpace } from '../space-msg'
 import { SpaceState } from '../space-state'
-import { Config, SpaceBackend } from './impl'
+import { Config, SpacesCoreAsync } from './impl'
 
 const Fixture = async (config: Config) => {
   const _dangerouslyOverrideModel = PubSub.create<Space.Model>()
-  const spaceBackend = await SpaceBackend({
+  const spaceBackend = await SpacesCoreAsync({
     ...config,
     _dangerouslyOverrideModel,
   })
@@ -55,7 +55,7 @@ const Fixtures = async () => {
       t: 'stream',
       dbConnKv: await DbConnKv({ t: 'hash-map' }),
       logger: Logger({ t: 'noop' }),
-      stream: await Stream({ t: 'in-memory', parser: p.and(SpaceEvent, EventMeta) }),
+      stream: await Stream({ t: 'in-memory', parser: p.and(MsgSpace, EventMeta) }),
       runtime: Runtime({ t: 'noop' }),
     })
   }

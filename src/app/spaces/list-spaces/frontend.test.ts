@@ -10,7 +10,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND, didPlaySound, didPushScreen } from '~/app/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { SpacesFrontend } from '../frontend'
-import { Space } from '../space/space'
+import { Space } from '../core/space'
 
 const Fixture = async (input?: { currentScreen?: Screen }) => {
   const f = await FixtureSpacesFrontend(input)
@@ -43,9 +43,7 @@ describe(import.meta.file, () => {
         t: 'space-list',
       },
     })
-    const output = SpacesFrontend.init({
-      ctx: f.ctx,
-    })
+    const output = SpacesFrontend.init({ ctx: f.ctx })
     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'wire' && msgCmd.c.toBackend?.t === 'list-spaces')).toBe(true)
   })
 

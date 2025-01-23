@@ -7,7 +7,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 import { FixtureSpaceBackend } from '../@/fixture/backend'
-import { Space } from '../space/space'
+import { Space } from '../core/space'
 
 const Fixture = async () => {
   const f = await FixtureSpaceBackend()
@@ -18,7 +18,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
 
-    const before = Space.toSpaceStarted(unwrap(await f.backendCtx.spaceBackend.get(spaceId)))
+    const before = Space.toSpaceStarted(unwrap(await f.backendCtx.spacesCore.get(spaceId)))
 
     await f.update([
       {
@@ -35,7 +35,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const after = Space.toSpaceStarted(unwrap(await f.backendCtx.spaceBackend.get(spaceId)))
+    const after = Space.toSpaceStarted(unwrap(await f.backendCtx.spacesCore.get(spaceId)))
 
     expect(before).toBeFalsy()
     expect(after?.spaceId).toEqual(spaceId)

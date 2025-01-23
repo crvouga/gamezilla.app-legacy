@@ -1,14 +1,14 @@
+import { Eff } from '~/@/eff'
+import { WithEventId } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
+import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
-import type { Space } from '../space/space'
+import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
+import { MsgSpace } from '../../core/space-msg'
+import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from '../../types'
 import type { SpaceFrontendCmd } from '../frontend/cmd'
 import { SpaceFrontendEvt } from '../frontend/evt'
-import type { ModelFrontend, MsgFrontend, MsgToFrontend, MsgToBackend } from '../../types'
-import { WithEventId } from '~/@/event-sourced/event'
-import { SpaceEvent } from '../../space/space-event'
-import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
-import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
+import type { Space } from '../space/space'
 
 type Ctx = BaseFrontendCtx & {
   space?: Space
@@ -24,7 +24,7 @@ export type Input = {
     MsgFrontend: MsgFrontend
     MsgToBackend: MsgToBackend
   }> | null
-  msgSpace?: WithEventId<SpaceEvent> | null
+  msgSpace?: WithEventId<MsgSpace> | null
 }
 
 export type Output = {
@@ -35,7 +35,7 @@ export type Output = {
     MsgToBackend: MsgToBackend
   }>[]
   msgEvt?: SpaceFrontendEvt[]
-  msgSpace?: WithEventId<SpaceEvent>[]
+  msgSpace?: WithEventId<MsgSpace>[]
 }
 
 export type SpaceFrontendModule = {

@@ -1,19 +1,19 @@
 import { EventSourced } from '~/@/event-sourced'
 import { addProfiles, sendToBackend } from '~/app/@/frontend/cmd'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpaceFrontend } from '../space/frontend'
+import { SpacesCore } from '../core/core'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
     { model: input.model },
     (model) => updateProfiles({ ...input, model }),
     (model) => updateSpace({ ...input, model }),
-    (model) => sendSpaceEventToBackend({ ...input, model }),
-    (model) => outputSpaceEventsFromBackend({ ...input, model }),
+    (model) => sendMsgSpaceToBackend({ ...input, model }),
+    (model) => outputMsgSpacesFromBackend({ ...input, model }),
   )
 }
 
-const outputSpaceEventsFromBackend: SpaceFrontendModule['update'] = (input) => {
+const outputMsgSpacesFromBackend: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgBackend?.t) {
     case 'got-msg-space': {
       return {
@@ -26,12 +26,12 @@ const outputSpaceEventsFromBackend: SpaceFrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const sendSpaceEventToBackend: SpaceFrontendModule['update'] = ({ ctx, model, msgSpace: msgSpace }) => {
+const sendMsgSpaceToBackend: SpaceFrontendModule['update'] = ({ ctx, model, msgSpace: msgSpace }) => {
   if (!msgSpace) {
     return { model }
   }
 
-  const spaceEventWithMeta = SpaceFrontend.toEventWithMeta(model, msgSpace.spaceId, msgSpace.eventId)
+  const spaceEventWithMeta = SpacesCore.toEventWithMeta(model, msgSpace.spaceId, msgSpace.eventId)
 
   if (!spaceEventWithMeta) {
     return { model }
@@ -73,7 +73,7 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
 
       const currentUserProfile = currentUserId ? input.ctx.profiles[currentUserId] : null
 
-      const currentUserSpace = SpaceFrontend.toSpaceByUserId({
+      const currentUserSpace = SpacesCore.toSpaceByUserId({
         model,
         userId: currentUserId,
       })
@@ -107,7 +107,7 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
   switch (msgBackend?.t) {
     case 'synced':
     case 'current-user-space': {
-      const merged = SpaceFrontend.merge(model, msgBackend.space)
+      const merged = SpacesCore.merge(model, msgBackend.space)
       return {
         model: {
           ...model,

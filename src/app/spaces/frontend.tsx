@@ -5,7 +5,7 @@ import { isAppFrontendCtx } from '../@/frontend/ctx'
 import { type Input, type Output, SpaceFrontendModule } from './@/architecture/space-frontend'
 import { SpaceFrontendCmd } from './@/frontend/cmd'
 import { SpaceFrontendEvt } from './@/frontend/evt'
-import { EndSpaceFrontend } from './end-space/end-space.frontend'
+import { EndSpaceFrontend } from './end-space/frontend'
 import { CurrentSpaceBottomBar } from './frontend/current-space-bottom-bar'
 import { GoHome } from './frontend/go-home'
 import { People } from './frontend/people'
@@ -14,22 +14,14 @@ import { GameFrontend } from './game/frontend'
 import { JoinSpaceFrontend } from './join-space/frontend'
 import { LeaveSpaceFrontend } from './leave-space/frontend'
 import { ListSpacesFrontend } from './list-spaces/frontend'
-import { SpaceFrontend } from './space/frontend'
+import { SpacesCore } from './core/core'
 import { StartSpaceFrontend } from './start-space/frontend'
 import { SyncFrontend } from './sync/frontend'
 import type { FrontendModule, ModelFrontend } from './types'
 
-//
-//
-//
-// Model
-//
-//
-//
-
 const init: FrontendModule['init'] = ({ ctx }) => {
   const model: ModelFrontend = {
-    ...SpaceFrontend.init,
+    ...SpacesCore.init,
     games: {},
     modal: null,
     modalPreviewUserId: null,
@@ -46,24 +38,10 @@ const init: FrontendModule['init'] = ({ ctx }) => {
   }
 }
 
-//
-//
-//
-// Update
-//
-//
-//
-
 const update: FrontendModule['update'] = (input) => {
   const updated = updateLoop({
     ...input,
-    ctx: {
-      ...input.ctx,
-      profiles: {
-        ...input.ctx.profiles,
-        ...input.msgBackend?.profiles,
-      },
-    },
+    ctx: { ...input.ctx, profiles: { ...input.ctx.profiles, ...input.msgBackend?.profiles } },
   })
 
   return {
@@ -135,7 +113,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
 }
 
 const updateChild: SpaceFrontendModule['update'] = (input) => {
-  if (input.msgSpace && SpaceFrontend.hasEvent(input.model, input.msgSpace.spaceId, input.msgSpace.eventId)) {
+  if (input.msgSpace && SpacesCore.hasEvent(input.model, input.msgSpace.spaceId, input.msgSpace.eventId)) {
     return { model: input.model }
   }
 
@@ -144,7 +122,7 @@ const updateChild: SpaceFrontendModule['update'] = (input) => {
     (model) => EndSpaceFrontend.update({ ...input, model }),
     (model) => LeaveSpaceFrontend.update({ ...input, model }),
     (model) => GameFrontend.update({ ...input, model }),
-    (model) => updateSpacesFromSpaceEvent({ ...input, model }),
+    (model) => updateSpacesFromMsgSpace({ ...input, model }),
     (model) => SyncFrontend.update({ ...input, model }),
     (model) => StartSpaceFrontend.update({ ...input, model }),
     (model) => JoinSpaceFrontend.update({ ...input, model }),
@@ -155,42 +133,19 @@ const updateChild: SpaceFrontendModule['update'] = (input) => {
   )
 }
 
-const updateSpacesFromSpaceEvent: SpaceFrontendModule['update'] = ({ msgSpace, model }) => {
+const updateSpacesFromMsgSpace: SpaceFrontendModule['update'] = ({ msgSpace, model }) => {
   if (!msgSpace) {
     return { model }
   }
 
-  const updated = SpaceFrontend.update({
-    model,
-    msgSpace: msgSpace,
-  })
+  const updated = SpacesCore.update({ modelSpace: model, msgSpace })
 
   return { model: { ...model, ...updated.model } }
 }
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return GameFrontend.subscriptions(input)
 }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 const View: FrontendModule['View'] = (input) => {
   switch (input.ctx.currentScreen.n) {

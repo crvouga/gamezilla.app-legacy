@@ -2,8 +2,8 @@ import { withEventId } from '~/@/event-sourced/event'
 import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd'
 import { Button } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpaceFrontend } from '../space/frontend'
-import { SpaceEvent } from '../space/space-event'
+import { SpacesCore } from '../core/core'
+import { MsgSpace } from '../core/space-msg'
 import { LayoutGameCoverArtHeader } from '../game/games/@/ui/layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../game/games/@/ui/users-in-space-list'
 import { GameCoverArt } from '../game/games/cover-art'
@@ -25,7 +25,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
         }
       }
 
-      const spaceEventNew = withEventId<SpaceEvent>({
+      const spaceEventNew = withEventId<MsgSpace>({
         t: 'user-joined-space',
         spaceId: input.msg.spaceId,
         userId: input.ctx.currentUserId,
@@ -47,7 +47,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
 const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-joined-space': {
-      const error = SpaceFrontend.toErrorByEvenId(input.model, input.msgSpace.eventId)
+      const error = SpacesCore.toErrorByEvenId(input.model, input.msgSpace.eventId)
 
       switch (error?.t) {
         case 'user-already-in-a-space': {
@@ -64,7 +64,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
         }
       }
 
-      const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
 
       if (input.msgSpace.spaceId !== currentUserSpaceId) {
         return {
@@ -112,7 +112,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     return null
   }
 
-  const spaceState = SpaceFrontend.toSpaceStarted(input.model, space?.spaceId)
+  const spaceState = SpacesCore.toSpaceStarted(input.model, space?.spaceId)
 
   if (!spaceState) {
     return null

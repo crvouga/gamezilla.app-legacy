@@ -3,7 +3,7 @@ import { didPlaySound } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { exitGame } from '~/app/spaces/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
-import { SpaceFrontend } from '../space/frontend'
+import { SpacesCore } from '../core/core'
 import { GameName } from './games/@/game-name'
 import { NonEmpty } from '~/@/array/non-empty'
 
@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const gameName = SpaceFrontend.toSpaceStarted(output.model, spaceId)?.game?.t
+    const gameName = SpacesCore.toSpaceStarted(output.model, spaceId)?.game?.t
     expect(gameName).toBe(gameNameExpected)
   })
 
@@ -79,7 +79,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const gameName = SpaceFrontend.toSpaceStarted(NonEmpty.last(outputs).model, spaceId)?.game?.t ?? null
+    const gameName = SpacesCore.toSpaceStarted(NonEmpty.last(outputs).model, spaceId)?.game?.t ?? null
 
     expect(gameName).toBeNull()
   })
