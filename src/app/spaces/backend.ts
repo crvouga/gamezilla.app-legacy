@@ -23,7 +23,6 @@ import { TimeSpan } from '~/@/time/time-span'
 const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
   return {
     ...input.ctx,
-
     spacesCore: await SpacesCoreAsync({
       t: 'db-conn-kv',
       dbConnKv: input.ctx.dbConnKv,
@@ -31,12 +30,6 @@ const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
       runtime: input.ctx.runtime,
       writeThrottle: TimeSpan.seconds(10),
     }),
-    // spaceBackend: await SpaceBackend({
-    //   t: 'stream',
-    //   stream: await Stream({ t: 'in-memory', parser: WithEventMeta(MsgSpace) }),
-    //   dbConnKv: ctx.dbConnKv,
-    //   logger: ctx.logger
-    // }),
     games: GameBackend.initCtx({ ctx: { ...input.ctx, space: Space.random() } }),
   }
 }
