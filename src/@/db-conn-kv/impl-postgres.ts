@@ -54,7 +54,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
             logger.error(`get: not a value: ${key} ${errorStr}`)
 
-            return Ok(null)
+            return Err(errorStr)
           }
           case 'ok': {
             return parsed
