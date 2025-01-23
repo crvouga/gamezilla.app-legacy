@@ -1,57 +1,67 @@
 import { describe, expect, it } from 'bun:test'
-import { Sub } from '../sub'
-import { Program } from './program'
+import { PubSub, Sub } from '../sub'
+import { Program, ProgramCrashReport } from './program'
 
-type Model = { count: number }
-type Msg = { t: 'inc' } | { t: 'dec' }
+type Model = { counter: { count: number } }
+type Msg = { t: 'inc' } | { t: 'dec' } | { t: 'set-model'; c: Model }
 type Ctx = {}
 
 const Fixture = async () => {
+  const crashes = PubSub.create<ProgramCrashReport<Model, Msg, Ctx>>()
   const program = await Program.run<Model, Msg, Ctx>({
-    crash: (input) => console.error('Crash!', input),
+    crash: (crashReport) => {
+      crashes.pub(crashReport)
+    },
     initCtx: () => ({}),
     updateCtx: (ctx) => ctx,
-    init: () => ({ model: { count: 0 } }),
+    init: () => ({ model: { counter: { count: 0 } } }),
     subscriptions: () => Sub.None,
     update: ({ model, msg }) => {
       switch (msg.t) {
         case 'inc':
-          return { model: { count: model.count + 1 } }
+          return { model: { counter: { count: model.counter.count + 1 } } }
         case 'dec':
-          return { model: { count: model.count - 1 } }
+          return { model: { counter: { count: model.counter.count - 1 } } }
+        case 'set-model':
+          return { model: msg.c }
       }
     },
   })
 
   return {
+    crashes,
     program,
   }
 }
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   it('should work', async () => {
     const f = await Fixture()
-    expect(f.program.getModel()).toEqual({ count: 0 })
+    expect(f.program.getModel()).toEqual({ counter: { count: 0 } })
     await f.program.dispatch({ t: 'inc' })
-    expect(f.program.getModel()).toEqual({ count: 1 })
+    expect(f.program.getModel()).toEqual({ counter: { count: 1 } })
     await f.program.dispatch({ t: 'inc' })
-    expect(f.program.getModel()).toEqual({ count: 2 })
+    expect(f.program.getModel()).toEqual({ counter: { count: 2 } })
     await f.program.dispatch({ t: 'dec' })
-    expect(f.program.getModel()).toEqual({ count: 1 })
+    expect(f.program.getModel()).toEqual({ counter: { count: 1 } })
   })
 
   it('should ignore crashing message and continue to work', async () => {
     const f = await Fixture()
 
-    expect(f.program.getModel()).toEqual({ count: 0 })
+    expect(f.program.getModel()).toEqual({ counter: { count: 0 } })
     await f.program.dispatch({ t: 'inc' })
-    expect(f.program.getModel()).toEqual({ count: 1 })
+    expect(f.program.getModel()).toEqual({ counter: { count: 1 } })
     await f.program.dispatch(
-      // @ts-expect-error testing invalid message
-      { t: 'invalid-message' },
+      // @ts-expect-error corrupting model on purpose
+      { t: 'set-model', c: { some_invalid_model: true } },
     )
-    expect(f.program.getModel()).toEqual({ count: 1 })
+    let crashReport: ProgramCrashReport<Model, Msg, Ctx> | undefined
+    f.crashes.sub((m) => {
+      crashReport = m
+    })
     await f.program.dispatch({ t: 'inc' })
-    expect(f.program.getModel()).toEqual({ count: 2 })
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    expect(crashReport).toBeTruthy()
   })
 })

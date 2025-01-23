@@ -40,7 +40,7 @@ describe(import.meta.file, () => {
     expect(slides.length).toBe(2)
   })
 
-  it.only('should change slide when clicking pagination dots', async () => {
+  it('should change slide when clicking pagination dots', async () => {
     const f = await Fixture()
     const slideIndex = PubSub.create<number>()
     const r = f.render(

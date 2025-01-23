@@ -21,7 +21,7 @@ describe(import.meta.file, () => {
     expect(r.getByTestId(PAGINATION_DOTS_TEST_ID)[0] ?? null).toBe(null)
   })
 
-  test.only('clicked dots', async () => {
+  test('clicked dots', async () => {
     const f = await Fixture()
     const clickedIndex = PubSub.create<number>()
     const r = f.render(<PaginationDots activeIndex={0} count={3} onClick={clickedIndex.pub} />)

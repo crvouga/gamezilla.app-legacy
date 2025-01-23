@@ -11,6 +11,14 @@ export type CrashResolution =
       t: 'ignore-crashing-update'
     }
 
+export type ProgramCrashReport<TModel, TMsg, TCtx> = {
+  message: string
+  error: unknown
+  msg: TMsg
+  model: TModel
+  ctx: TCtx
+}
+
 export type Program<TModel, TMsg, TCtx> = {
   initCtx: () => MaybePromise<TCtx>
 
@@ -22,7 +30,7 @@ export type Program<TModel, TMsg, TCtx> = {
 
   subscriptions: (input: { intervalId: string; ctx: TCtx; model: TModel }) => MaybePromise<Sub<TMsg>>
 
-  crash: (input: { error: unknown; msg: TMsg; model: TModel; ctx: TCtx }) => unknown
+  crash: (input: ProgramCrashReport<TModel, TMsg, TCtx>) => MaybePromise<unknown>
 
   debugger?: ProgramDebugger
 
@@ -94,7 +102,8 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
         dispatch(msg)
       }
     } catch (error) {
-      program.crash({
+      await program.crash({
+        message: 'Program crashed while dispatching message',
         error,
         msg,
         ctx,
