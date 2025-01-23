@@ -31,6 +31,14 @@ const update: FrontendModule['update'] = (input) => {
       return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }
 
+    case 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox': {
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
+    }
+
+    case 'screen-pack-builder.screen-add-puzzle.puzzle-db-query-query-changed': {
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
+    }
+
     case 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item': {
       return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
     }

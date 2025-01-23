@@ -6,6 +6,7 @@ import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
 import { MsgFrontend } from '../types'
 import { ScreenAddPuzzle } from './frontend'
 import { ScreenAddPuzzleSpace } from './space'
+import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
 
 const Fixture = async () => {
   const f = await FixturePackBuilderFrontend()
@@ -59,5 +60,33 @@ describe(import.meta.file, () => {
     const r = f.render({ model: f.model, modelSpace })
     const submitButton = r.query("[type='submit']")[0]
     expect(submitButton?.disabled).toBe(false)
+  })
+
+  test('play sound when puzzle db query changes', async () => {
+    const f = await Fixture()
+    const output = ScreenAddPuzzle.update({
+      ...f,
+      msgSpace: withEventMeta({
+        t: 'screen-pack-builder.screen-add-puzzle.puzzle-db-query-query-changed',
+        userId: f.ctx.currentUserId,
+        query: PuzzleDbQuery.random(),
+      }),
+    })
+
+    expect(didPlaySound(output)).toBe(true)
+  })
+
+  test('play sound toggling header checkbox', async () => {
+    const f = await Fixture()
+    const output = ScreenAddPuzzle.update({
+      ...f,
+      msgSpace: withEventMeta({
+        t: 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox',
+        userId: f.ctx.currentUserId,
+        puzzleIds: [f.puzzle.id],
+      }),
+    })
+
+    expect(didPlaySound(output)).toBe(true)
   })
 })
