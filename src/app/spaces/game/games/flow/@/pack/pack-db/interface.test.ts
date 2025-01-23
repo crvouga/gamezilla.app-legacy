@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { Ok, Result, unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserId } from '~/app/@/data/user-id'
@@ -175,6 +175,27 @@ describe(import.meta.file, () => {
 
       expect(before).toEqual(pack)
       expect(after).toEqual(updated)
+    }
+  })
+
+  test.only('updates should be independent', async () => {
+    for (const f of await Fixtures()) {
+      const packA = await Pack.random()
+      const packB = await Pack.random()
+      unwrap(await f.packDb.put(packA))
+      const beforeInsert = unwrap(await f.packDb.get(packA.id))
+      unwrap(await f.packDb.put(packB))
+      const beforeUpdate = unwrap(await f.packDb.get(packA.id))
+      const packBUpdated: Pack = {
+        ...(await Pack.random()),
+        id: packB.id,
+      }
+      unwrap(await f.packDb.put(packBUpdated))
+      const afterUpdate = unwrap(await f.packDb.get(packA.id))
+
+      expect(beforeInsert).toEqual(packA)
+      expect(beforeUpdate).toEqual(packA)
+      expect(afterUpdate).toEqual(packA)
     }
   })
 })

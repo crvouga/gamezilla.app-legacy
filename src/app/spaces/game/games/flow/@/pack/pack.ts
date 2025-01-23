@@ -93,7 +93,7 @@ const random = async (input?: { createdBy?: UserId; puzzleIds?: PuzzleId[] }): P
     lastUpdatedAt: Posix.now(),
     lastUpdatedBy: createdBy,
     name: await PackName.generate(),
-    puzzleIds: input?.puzzleIds ?? [],
+    puzzleIds: input?.puzzleIds ?? Array.from({ length: 3 }, () => PuzzleId.generate()),
     isOfficial: false,
   }
 }
