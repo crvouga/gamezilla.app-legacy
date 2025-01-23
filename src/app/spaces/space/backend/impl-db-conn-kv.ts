@@ -33,7 +33,7 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
   const throttle = config.writeThrottle
   const dbConnKv = await pipe(
     config.dbConnKv,
-    async (dbConnKv) => DbConnKv({ t: 'with-throttled-writes', logger, dbConnKv, throttle, runtime }),
+    async (dbConnKv) => DbConnKv({ t: 'with-throttled-writes', logger, dbConnKv: await dbConnKv, throttle, runtime }),
     async (dbConnKv) => DbConnKv({ t: 'with-cache', logger, source: await dbConnKv, cache }),
     async (dbConnKv) => DbConnKv({ t: 'with-reduced-parsing', logger, dbConnKv: await dbConnKv, verifiedKeys }),
   )

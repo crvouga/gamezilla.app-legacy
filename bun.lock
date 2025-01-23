@@ -1,5 +1,5 @@
 {
-  "lockfileVersion": 1,
+  "lockfileVersion": 0,
   "workspaces": {
     "": {
       "name": "gamezilla.app",
@@ -277,7 +277,7 @@
 
     "@types/estree": ["@types/estree@1.0.6", "", {}, "sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw=="],
 
-    "@types/node": ["@types/node@22.10.7", "", { "dependencies": { "undici-types": "~6.20.0" } }, "sha512-V09KvXxFiutGp6B7XkpaDXlNadZxrzajcY50EuoLIpQ6WWYCSvf19lVIazzfIzQvhUN2HjX12spLojTnhuKlGg=="],
+    "@types/node": ["@types/node@22.10.9", "", { "dependencies": { "undici-types": "~6.20.0" } }, "sha512-Ir6hwgsKyNESl/gLOcEz3krR4CBGgliDqBQ2ma4wIhEx0w+xnoeTq3tdrNw15kU3SxogDjOgv9sqdtLW8mIHaw=="],
 
     "@types/react": ["@types/react@19.0.7", "", { "dependencies": { "csstype": "^3.0.2" } }, "sha512-MoFsEJKkAtZCrC1r6CM8U22GzhG7u2Wir8ons/aCKH6MBdD1ibV24zOSSkdZVUKqN5i396zG5VKLYZ3yaUZdLA=="],
 
@@ -397,7 +397,7 @@
 
     "eastasianwidth": ["eastasianwidth@0.2.0", "", {}, "sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA=="],
 
-    "electron-to-chromium": ["electron-to-chromium@1.5.85", "", {}, "sha512-UgTI7ZHxtSjOUwV0vZLpqT604U1Z8L3bq8mAtAKtuRPlMZ/6dLFMYgYnLdXSi/urbVTP2ykDb9EDDUrdIzw4Qg=="],
+    "electron-to-chromium": ["electron-to-chromium@1.5.86", "", {}, "sha512-/D7GAAaCRBQFBBcop6SfAAGH37djtpWkOuYhyAajw0l5vsfeSsUQYxaFPwr1c/mC/flARCDdKFo5gpFqNI+18w=="],
 
     "emoji-regex": ["emoji-regex@8.0.0", "", {}, "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A=="],
 
