@@ -1,5 +1,5 @@
-import { DbConnKv } from '~/@/db-conn-kv'
-import * as ImplDbConnKv from './impl-db-conn-kv'
+import { KeyValueDb } from '~/@/db-conn-kv'
+import * as ImplKeyValueDb from './impl-db-conn-kv'
 import type { IProfileCache } from './interface'
 
 export type Config = {
@@ -7,8 +7,8 @@ export type Config = {
 }
 
 export const ProfileCache = async (_config: Config): Promise<IProfileCache> => {
-  return ImplDbConnKv.ProfileCache({
+  return ImplKeyValueDb.ProfileCache({
     t: 'db-conn-kv',
-    dbConnKv: await DbConnKv({ t: 'hash-map' }),
+    keyValueDb: await KeyValueDb({ t: 'hash-map' }),
   })
 }

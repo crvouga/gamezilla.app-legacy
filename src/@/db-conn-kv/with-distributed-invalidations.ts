@@ -1,6 +1,6 @@
 import { Logger, type ILogger } from '../logger'
 import { IPubSub } from '../pub-sub'
-import { IDbConnKv } from './interface'
+import { IKeyValueDb } from './interface'
 
 const DistributedUpdateType = {
   SET: 0,
@@ -33,13 +33,13 @@ const decode = (str: string): DistributedUpdate => {
 export type Config = {
   t: 'with-distributed-invalidations'
   logger: ILogger
-  cache: IDbConnKv
+  cache: IKeyValueDb
   pubSub: IPubSub
 }
 
 export const withDistributedInvalidations = async (
   config: Config,
-): Promise<IDbConnKv & { unsubscribe: () => void }> => {
+): Promise<IKeyValueDb & { unsubscribe: () => void }> => {
   const logger = Logger.prefix('with-distributed-invalidations', config.logger)
 
   const unsubscribe = await config.pubSub.sub(async (encoded) => {

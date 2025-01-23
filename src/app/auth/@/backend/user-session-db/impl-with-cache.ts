@@ -2,7 +2,7 @@ import { Result, isOk } from '~/@/result'
 import { p } from '~/@/parser'
 import { SessionId } from '~/app/@/data/session-id'
 import { UserId } from '~/app/@/data/user-id'
-import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
 import type { IUserSessionDb } from './interface'
 
 //
@@ -12,19 +12,19 @@ import type { IUserSessionDb } from './interface'
 //
 
 export type Config = {
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   userSessionDb: IUserSessionDb
 }
 
-export const WithCache = ({ userSessionDb, dbConnKv }: Config): IUserSessionDb => {
-  const userIdBySessionId = DbConnKv.withNamespace<SessionId, UserId>({
-    dbConnKv,
+export const WithCache = ({ userSessionDb, keyValueDb }: Config): IUserSessionDb => {
+  const userIdBySessionId = KeyValueDb.withNamespace<SessionId, UserId>({
+    keyValueDb,
     namespace: ['auth-session', 'user-id-by-session-id'],
     parser: UserId,
   })
 
-  const sessionIdsByUserId = DbConnKv.withNamespace<UserId, SessionId[]>({
-    dbConnKv,
+  const sessionIdsByUserId = KeyValueDb.withNamespace<UserId, SessionId[]>({
+    keyValueDb,
     namespace: ['auth-session', 'session-ids-by-user-id'],
     parser: p.arr(SessionId),
   })

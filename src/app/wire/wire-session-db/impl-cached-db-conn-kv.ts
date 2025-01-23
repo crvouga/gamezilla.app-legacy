@@ -1,14 +1,14 @@
 import { LRUCache } from '~/@/least-recently-used-cache'
-import { DbConnKv, IDbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb, IKeyValueDb } from '~/@/db-conn-kv'
 import { ILogger, Logger } from '~/@/logger'
 import { PubSub } from '~/@/pub-sub'
 import { IPubSubTopicBased } from '~/@/pub-sub-topic-based'
-import * as ImplDbConnKv from './impl-db-conn-kv'
+import * as ImplKeyValueDb from './impl-db-conn-kv'
 import type { IWireSessionDb } from './interface'
 
 export type Config = {
   t: 'cached-db-conn-kv'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   logger: ILogger
   pubSubTopicBased: IPubSubTopicBased
 }
@@ -16,7 +16,7 @@ export type Config = {
 export const WireSessionDb = async (config: Config): Promise<IWireSessionDb> => {
   const logger = Logger.prefix('impl-cached-db-conn-kv', config.logger)
 
-  const cache = await DbConnKv({
+  const cache = await KeyValueDb({
     t: 'with-distributed-invalidations',
     logger,
     pubSub: await PubSub({
@@ -24,7 +24,7 @@ export const WireSessionDb = async (config: Config): Promise<IWireSessionDb> => 
       pubSubTopicBased: config.pubSubTopicBased,
       topic: 'wire-session-db-cache-invalidation',
     }),
-    cache: await DbConnKv({
+    cache: await KeyValueDb({
       t: 'hash-map',
       map: LRUCache({
         maxCapacity: 2000,
@@ -32,17 +32,17 @@ export const WireSessionDb = async (config: Config): Promise<IWireSessionDb> => 
     }),
   })
 
-  const dbConnKv = await DbConnKv({
+  const keyValueDb = await KeyValueDb({
     t: 'with-reduced-parsing',
-    dbConnKv: await DbConnKv({
+    keyValueDb: await KeyValueDb({
       t: 'with-cache',
       logger,
-      source: config.dbConnKv,
+      source: config.keyValueDb,
       cache,
     }),
     verifiedKeys: new Set(),
     logger,
   })
 
-  return ImplDbConnKv.WireSessionDb({ t: 'db-conn-kv', dbConnKv, logger })
+  return ImplKeyValueDb.WireSessionDb({ t: 'db-conn-kv', keyValueDb, logger })
 }

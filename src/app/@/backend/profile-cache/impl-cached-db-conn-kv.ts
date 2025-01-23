@@ -1,44 +1,44 @@
-import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
 import { pipe } from '~/@/function/pipe'
 import { LRUCache } from '~/@/least-recently-used-cache'
 import { IRuntime } from '~/@/runtime'
 import { TimeSpan } from '~/@/time/time-span'
 import { ILogger, Logger } from '../../../../@/logger'
-import * as ImplDbConnKv from './impl-db-conn-kv'
+import * as ImplKeyValueDb from './impl-db-conn-kv'
 import type { IProfileCache } from './interface'
 
 export type Config = {
   t: 'cached-db-conn-kv'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   logger: ILogger
   runtime: IRuntime
 }
 
 export const ProfileCache = async (config: Config): Promise<IProfileCache> => {
   const logger = Logger.prefix('profile-cache', config.logger)
-  return ImplDbConnKv.ProfileCache({
+  return ImplKeyValueDb.ProfileCache({
     t: 'db-conn-kv',
-    dbConnKv: await pipe(
-      config.dbConnKv,
-      async (dbConnKv) =>
-        DbConnKv({
+    keyValueDb: await pipe(
+      config.keyValueDb,
+      async (keyValueDb) =>
+        KeyValueDb({
           t: 'with-throttled-writes',
           logger,
-          dbConnKv,
+          keyValueDb,
           throttle: TimeSpan.seconds(10),
           runtime: config.runtime,
         }),
-      async (dbConnKv) =>
-        DbConnKv({
+      async (keyValueDb) =>
+        KeyValueDb({
           t: 'with-cache',
           logger,
-          source: await dbConnKv,
-          cache: await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 100_000 }) }),
+          source: await keyValueDb,
+          cache: await KeyValueDb({ t: 'hash-map', map: LRUCache({ maxCapacity: 100_000 }) }),
         }),
-      async (dbConnKv) =>
-        DbConnKv({
+      async (keyValueDb) =>
+        KeyValueDb({
           t: 'with-reduced-parsing',
-          dbConnKv: await dbConnKv,
+          keyValueDb: await keyValueDb,
           logger,
           verifiedKeys: new Set(),
         }),

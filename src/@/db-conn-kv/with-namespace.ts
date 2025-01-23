@@ -1,9 +1,9 @@
 import { Task } from '~/@/promise/task'
 import type { Parser } from '~/@/parser/parser'
-import { IDbConnKv } from './interface'
+import { IKeyValueDb } from './interface'
 
 export const withNamespace = <TKey extends string = string, TValue = unknown>(config: {
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   namespace: string[]
   parser: Parser<TValue>
 }): {
@@ -16,21 +16,21 @@ export const withNamespace = <TKey extends string = string, TValue = unknown>(co
   const toKey = (key: string) => [...config.namespace, key].join(':')
   return {
     get(key) {
-      return config.dbConnKv.get(toKey(key), config.parser)
+      return config.keyValueDb.get(toKey(key), config.parser)
     },
     getMany(keys) {
       const namespacedKeys = keys.map(toKey)
-      return config.dbConnKv.getMany(namespacedKeys, config.parser)
+      return config.keyValueDb.getMany(namespacedKeys, config.parser)
     },
     set(key, value) {
-      return config.dbConnKv.set(toKey(key), value)
+      return config.keyValueDb.set(toKey(key), value)
     },
     setMany(entries) {
       const namespacedEntries = entries.map(([key, value]): [string, TValue] => [toKey(key), value])
-      return config.dbConnKv.setMany(namespacedEntries)
+      return config.keyValueDb.setMany(namespacedEntries)
     },
     zap(key) {
-      return config.dbConnKv.zap(toKey(key))
+      return config.keyValueDb.zap(toKey(key))
     },
   }
 }

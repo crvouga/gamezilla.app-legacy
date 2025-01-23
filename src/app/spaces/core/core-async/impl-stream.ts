@@ -1,4 +1,4 @@
-import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
 import { EventSourced } from '~/@/event-sourced'
 import { WithEventMeta } from '~/@/event-sourced/event'
 import { ILogger, Logger } from '~/@/logger'
@@ -11,28 +11,28 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space'
 import { MsgSpace } from '../space-msg'
 import { SpaceState } from '../space-state'
-import * as ImplDbConnKv from './impl-db-conn-kv'
+import * as ImplKeyValueDb from './impl-db-conn-kv'
 import type { ISpacesCoreAsync, SpacesCoreConfig } from './interface'
 
 export type Config = SpacesCoreConfig & {
   t: 'stream'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   stream: IStream<WithEventMeta<MsgSpace>>
   logger: ILogger
   runtime: IRuntime
 }
 
 export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync> => {
-  const implDbConnKb = await ImplDbConnKv.SpacesCoreAsync({
+  const implDbConnKb = await ImplKeyValueDb.SpacesCoreAsync({
     t: 'db-conn-kv',
-    dbConnKv: config.dbConnKv,
+    keyValueDb: config.keyValueDb,
     logger: Logger.prefix('db-conn-kv', config.logger),
     runtime: config.runtime,
     writeThrottle: TimeSpan.milliseconds(0),
   })
 
-  const snapshots = DbConnKv.withNamespace<SpaceId, SpaceState.State>({
-    dbConnKv: config.dbConnKv,
+  const snapshots = KeyValueDb.withNamespace<SpaceId, SpaceState.State>({
+    keyValueDb: config.keyValueDb,
     namespace: ['spaces', 'snapshots'],
     parser: SpaceState.State,
   })

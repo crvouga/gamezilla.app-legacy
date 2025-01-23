@@ -1,7 +1,7 @@
 import { type PubSub } from '~/@/sub'
 import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
-import { IDbConnKv } from './interface'
+import { IKeyValueDb } from './interface'
 
 const DistributedUpdateType = {
   SET: 0,
@@ -27,17 +27,17 @@ export type DistributedUpdate =
 export type Config = {
   t: 'with-distributed-updates'
   logger: ILogger
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   pubSub: PubSub<DistributedUpdate>
 }
 
-export const withDistributedUpdates = (config: Config): IDbConnKv & { unsubscribe: () => void } => {
+export const withDistributedUpdates = (config: Config): IKeyValueDb & { unsubscribe: () => void } => {
   const logger = Logger.prefix('with-distributed-updates', config.logger)
   const unsubscribe = config.pubSub.sub((update) => {
     switch (update.t) {
       case DistributedUpdateType.SET: {
         logger.info(`distributed set: key=${update.k}`)
-        config.dbConnKv.set(update.k, update.v)
+        config.keyValueDb.set(update.k, update.v)
         break
       }
       case DistributedUpdateType.SET_MANY: {
@@ -46,18 +46,18 @@ export const withDistributedUpdates = (config: Config): IDbConnKv & { unsubscrib
           key = `${key},${update.e[i]?.[0]}`
         }
         logger.info(`distributed setMany: keys=${key}`)
-        config.dbConnKv.setMany(update.e)
+        config.keyValueDb.setMany(update.e)
         break
       }
       case DistributedUpdateType.ZAP: {
         logger.info(`distributed zap: key=${update.k}`)
-        config.dbConnKv.zap(update.k)
+        config.keyValueDb.zap(update.k)
         break
       }
     }
   })
   return {
-    ...config.dbConnKv,
+    ...config.keyValueDb,
     unsubscribe,
     set(key, value) {
       config.pubSub.pub({
@@ -65,21 +65,21 @@ export const withDistributedUpdates = (config: Config): IDbConnKv & { unsubscrib
         k: key,
         v: value,
       })
-      return config.dbConnKv.set(key, value)
+      return config.keyValueDb.set(key, value)
     },
     setMany(entries) {
       config.pubSub.pub({
         t: DistributedUpdateType.SET_MANY,
         e: entries,
       })
-      return config.dbConnKv.setMany(entries)
+      return config.keyValueDb.setMany(entries)
     },
     zap(key) {
       config.pubSub.pub({
         t: DistributedUpdateType.ZAP,
         k: key,
       })
-      return config.dbConnKv.zap(key)
+      return config.keyValueDb.zap(key)
     },
   }
 }

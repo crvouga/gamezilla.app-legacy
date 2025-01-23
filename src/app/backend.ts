@@ -1,4 +1,4 @@
-import { DbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb } from '~/@/db-conn-kv'
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
 import { HttpServer } from '~/@/http-server'
 import { Logger } from '~/@/logger'
@@ -62,7 +62,7 @@ const initCtx = async (): Promise<BackendCtx> => {
     simulateLatency,
   })
 
-  const dbConnKv = await DbConnKv({
+  const keyValueDb = await KeyValueDb({
     t: 'postgres',
     dbConnSql,
     logger,
@@ -100,7 +100,7 @@ const initCtx = async (): Promise<BackendCtx> => {
 
   const profileCache = await ProfileCache({
     t: 'cached-db-conn-kv',
-    dbConnKv,
+    keyValueDb,
     logger,
     runtime,
   })
@@ -111,7 +111,7 @@ const initCtx = async (): Promise<BackendCtx> => {
     env,
     sms,
     dbConnSql,
-    dbConnKv,
+    keyValueDb,
     logger,
     now: Posix.now(),
     sleep,

@@ -29,7 +29,7 @@ export const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx
     userSessionDb: await UserSessionDb({
       t: 'postgres-with-cache',
       dbConnSql: input.ctx.dbConnSql,
-      dbConnKv: input.ctx.dbConnKv,
+      keyValueDb: input.ctx.keyValueDb,
       logger: input.ctx.logger,
       pubSubTopicBased: input.ctx.pubSub,
     }),

@@ -2,7 +2,7 @@ import { Result } from '~/@/result'
 import { p } from '~/@/parser'
 import { SessionId } from '~/app/@/data/session-id'
 import { UserId } from '~/app/@/data/user-id'
-import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
 import type { IUserSessionDb } from './interface'
 
 //
@@ -26,17 +26,17 @@ export type Row = p.Infer<typeof isRow>
 
 export type Config = {
   t: 'db-conn-kv'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
 }
 
 export const UserSessionDb = (config: Config): IUserSessionDb => {
-  const sessionIdsByUserId = DbConnKv.withNamespace({
-    dbConnKv: config.dbConnKv,
+  const sessionIdsByUserId = KeyValueDb.withNamespace({
+    keyValueDb: config.keyValueDb,
     namespace: ['auth-session', 'session-ids-by-user-id'],
     parser: p.arr(SessionId),
   })
-  const userIdBySessionId = DbConnKv.withNamespace({
-    dbConnKv: config.dbConnKv,
+  const userIdBySessionId = KeyValueDb.withNamespace({
+    keyValueDb: config.keyValueDb,
     namespace: ['auth-session', 'user-id-by-session-id'],
     parser: UserId,
   })

@@ -1,6 +1,6 @@
 import { Err, Ok } from '~/@/result'
 import type { p } from '~/@/parser'
-import type { IDbConnKv } from './interface'
+import type { IKeyValueDb } from './interface'
 import { ILogger, Logger } from '../logger'
 
 export type Config = {
@@ -9,7 +9,7 @@ export type Config = {
   logger?: ILogger
 }
 
-export const DbConnKv = (config: Config): IDbConnKv => {
+export const KeyValueDb = (config: Config): IKeyValueDb => {
   const logger = config.logger ? Logger.prefix('hash-map', config.logger) : null
   const hashMap = config?.map ?? new Map<string, unknown>()
   return {

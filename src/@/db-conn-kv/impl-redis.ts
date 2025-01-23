@@ -7,7 +7,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { withDuration } from '~/@/time/with-duration'
 import { IRedis, newRedis } from '../redis'
 import { SecretString } from '../secrets/secret-string'
-import type { IDbConnKv } from './interface'
+import type { IKeyValueDb } from './interface'
 
 export type Config = {
   t: 'redis'
@@ -18,7 +18,7 @@ export type Config = {
 
 let redis: IRedis
 
-export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
+export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
   const logger = Logger.prefix('redis', config.logger)
 
   redis ??= await newRedis(config.redisUrl)

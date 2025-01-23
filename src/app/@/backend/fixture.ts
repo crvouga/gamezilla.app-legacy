@@ -1,4 +1,4 @@
-import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
 import { type IDbConnSql } from '~/@/db-conn-sql'
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
 import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
@@ -19,7 +19,7 @@ import { ProfileCache } from './profile-cache'
 export type IFixtureAppBackend = {
   t: 'unit' | 'integration'
   ctx: AppBackendCtx
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   pubSubTopicBased: IPubSubTopicBased
   dbConnPostgres: IDbConnSql
   dbConnSqlite: IDbConnSql
@@ -32,11 +32,11 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const pubSub = await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() })
 
-  const profileCache = await ProfileCache({ t: 'db-conn-kv', dbConnKv: await DbConnKv({ t: 'in-memory' }) })
+  const profileCache = await ProfileCache({ t: 'db-conn-kv', keyValueDb: await KeyValueDb({ t: 'in-memory' }) })
 
   const ctx: AppBackendCtx = {
     env: 'test',
-    dbConnKv: await DbConnKv({ t: 'hash-map' }),
+    keyValueDb: await KeyValueDb({ t: 'hash-map' }),
     dbConnSql: dbConnSqlNoop,
     logger,
     now: Posix.now(),
@@ -62,7 +62,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
       t: 'unit',
       ctx,
       dbConnSqlite,
-      dbConnKv: await DbConnKv({ t: 'hash-map' }),
+      keyValueDb: await KeyValueDb({ t: 'hash-map' }),
       pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() }),
       dbConnPostgres: dbConnSqlNoop,
     }
@@ -75,7 +75,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     simulateLatency: async () => {},
   })
 
-  const dbConnKv = await DbConnKv({
+  const keyValueDb = await KeyValueDb({
     t: 'redis',
     logger,
     redisUrl: CONFIG_BACKEND.REDIS_URL,
@@ -93,7 +93,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     ctx,
     dbConnSqlite,
     dbConnPostgres,
-    dbConnKv,
+    keyValueDb,
     pubSubTopicBased,
   }
 }

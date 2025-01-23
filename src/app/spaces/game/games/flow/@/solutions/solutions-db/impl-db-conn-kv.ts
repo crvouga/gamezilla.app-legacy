@@ -1,4 +1,4 @@
-import { DbConnKv, IDbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb, IKeyValueDb } from '~/@/db-conn-kv'
 import { p } from '~/@/parser'
 import { isErr, Ok } from '~/@/result'
 import { Solution } from '../solution'
@@ -7,12 +7,12 @@ import { Solutions } from '../solutions'
 
 export type Config = {
   t: 'db-conn-kv'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
 }
 
 export const SolutionsDb = (config: Config): ISolutionsDb => {
-  const solutionsByHash = DbConnKv.withNamespace({
-    dbConnKv: config.dbConnKv,
+  const solutionsByHash = KeyValueDb.withNamespace({
+    keyValueDb: config.keyValueDb,
     namespace: ['flow', 'solutions-by-hash'],
     parser: p.arr(Solution),
   })

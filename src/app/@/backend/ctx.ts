@@ -2,7 +2,7 @@ import { IRuntime } from '~/@/runtime'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { IHttpServer } from '~/@/http-server'
-import type { IDbConnKv } from '../../../@/db-conn-kv'
+import type { IKeyValueDb } from '../../../@/db-conn-kv'
 import type { IDbConnSql } from '../../../@/db-conn-sql/interface'
 import type { ILogger } from '../../../@/logger/interface'
 import { IPubSubTopicBased } from '../../../@/pub-sub-topic-based'
@@ -12,7 +12,7 @@ import { BackendInstanceId } from './backend-instance/backend-instance-id'
 
 export type AppBackendCtx = {
   dbConnSql: IDbConnSql
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   now: Posix
   logger: ILogger
   sms: ISMS

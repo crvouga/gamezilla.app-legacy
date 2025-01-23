@@ -1,6 +1,6 @@
 import { isErr, Ok, unwrapOr } from '~/@/result'
 import { p } from '~/@/parser'
-import { DbConnKv, IDbConnKv } from '../../../../../@/db-conn-kv'
+import { KeyValueDb, IKeyValueDb } from '../../../../../@/db-conn-kv'
 import { BackendInstance } from '../backend-instance'
 import { BackendInstanceId } from '../backend-instance-id'
 import { IBackendInstanceDb } from './interface'
@@ -9,18 +9,18 @@ import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {
   t: 'db-conn-kv'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
 }
 
 export const BackendInstanceDb = (config: Config): IBackendInstanceDb => {
-  const byId = DbConnKv.withNamespace({
-    dbConnKv: config.dbConnKv,
+  const byId = KeyValueDb.withNamespace({
+    keyValueDb: config.keyValueDb,
     namespace: ['backend-instance-by-id'],
     parser: BackendInstance,
   })
   const ALL_IDS_KEY = 'all'
-  const indexAllIds = DbConnKv.withNamespace({
-    dbConnKv: config.dbConnKv,
+  const indexAllIds = KeyValueDb.withNamespace({
+    keyValueDb: config.keyValueDb,
     namespace: ['backend-instance-ids'],
     parser: p.arr(BackendInstanceId),
   })

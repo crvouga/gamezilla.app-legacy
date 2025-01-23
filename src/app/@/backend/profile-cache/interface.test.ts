@@ -8,7 +8,7 @@ const Fixture = async () => {
   const testEnv = await FixtureAppBackend()
   const profileCache = await ProfileCache({
     t: 'db-conn-kv',
-    dbConnKv: testEnv.dbConnKv,
+    keyValueDb: testEnv.keyValueDb,
   })
   return { profileCache }
 }

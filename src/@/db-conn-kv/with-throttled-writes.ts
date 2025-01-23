@@ -2,18 +2,18 @@ import { Ok } from '~/@/result'
 import { IRuntime } from '~/@/runtime'
 import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
-import type { IDbConnKv } from './interface'
+import type { IKeyValueDb } from './interface'
 import { TimeSpan } from '../time/time-span'
 
 export type Config = {
   t: 'with-throttled-writes'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   throttle: TimeSpan
   logger: ILogger
   runtime: IRuntime
 }
 
-export const withThrottledWrites = ({ dbConnKv, throttle, runtime, ...config }: Config): IDbConnKv => {
+export const withThrottledWrites = ({ keyValueDb, throttle, runtime, ...config }: Config): IKeyValueDb => {
   const logger = Logger.prefix('with-throttled-writes', config.logger)
   const throttleMs = TimeSpan.toMilliseconds(throttle)
   const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
@@ -25,7 +25,7 @@ export const withThrottledWrites = ({ dbConnKv, throttle, runtime, ...config }: 
         key,
         setTimeout(() => {
           const valueToSet = lastValues.get(key)
-          dbConnKv.set(key, valueToSet)
+          keyValueDb.set(key, valueToSet)
           timeouts.delete(key)
           lastValues.delete(key)
         }, throttleMs),
@@ -41,7 +41,7 @@ export const withThrottledWrites = ({ dbConnKv, throttle, runtime, ...config }: 
         key,
         setTimeout(() => {
           const entriesToSet = lastValues.get(key)
-          dbConnKv.setMany(entriesToSet as [string, unknown][])
+          keyValueDb.setMany(entriesToSet as [string, unknown][])
           timeouts.delete(key)
           lastValues.delete(key)
         }, throttleMs),
@@ -57,9 +57,9 @@ export const withThrottledWrites = ({ dbConnKv, throttle, runtime, ...config }: 
       clearTimeout(timeout)
       const valueToSet = lastValues.get(key)
       if (valueToSet && Array.isArray(valueToSet) && Array.isArray(valueToSet[0])) {
-        await dbConnKv.setMany(valueToSet)
+        await keyValueDb.setMany(valueToSet)
       } else {
-        await dbConnKv.set(key, valueToSet)
+        await keyValueDb.set(key, valueToSet)
       }
       timeouts.delete(key)
       lastValues.delete(key)
@@ -77,7 +77,7 @@ export const withThrottledWrites = ({ dbConnKv, throttle, runtime, ...config }: 
   })
 
   return {
-    ...dbConnKv,
+    ...keyValueDb,
     async set(key, value) {
       scheduleSet(key, value)
       return Ok(null)

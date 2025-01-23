@@ -1,15 +1,15 @@
 import { Result } from '~/@/result'
 import { ILogger, Logger } from '../logger'
-import { IDbConnKv } from './interface'
+import { IKeyValueDb } from './interface'
 
 export type Config = {
   t: 'with-cache'
-  cache: IDbConnKv
-  source: IDbConnKv
+  cache: IKeyValueDb
+  source: IKeyValueDb
   logger: ILogger
 }
 
-export const withCache = (config: Config): IDbConnKv => {
+export const withCache = (config: Config): IKeyValueDb => {
   const logger = Logger.prefix('with-cache', config.logger)
   return {
     async get(key, parser) {

@@ -8,7 +8,7 @@ import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
 import { TimeSpan } from '../time/time-span'
 import { Uuid } from '../uuid/uuid'
-import { DbConnKv } from './impl'
+import { KeyValueDb } from './impl'
 import { CONFIG_SHARED } from '~/config/shared'
 
 const Fixture = async () => {
@@ -17,20 +17,20 @@ const Fixture = async () => {
 
   switch (testEnv.t) {
     case 'integration': {
-      const dbConnKv = testEnv.dbConnKv
+      const keyValueDb = testEnv.keyValueDb
 
       return {
         logger,
-        dbConnKv,
+        keyValueDb,
       }
     }
 
     case 'unit': {
-      const dbConnKv = await DbConnKv({ t: 'hash-map' })
+      const keyValueDb = await KeyValueDb({ t: 'hash-map' })
 
       return {
         logger,
-        dbConnKv,
+        keyValueDb,
       }
     }
   }
@@ -53,12 +53,12 @@ const Fixtures = (): Implementation[] => {
         const f = await Fixture()
         return {
           ...f,
-          dbConnKv: await DbConnKv({
+          keyValueDb: await KeyValueDb({
             t: 'with-cache',
-            cache: await DbConnKv({
+            cache: await KeyValueDb({
               t: 'hash-map',
             }),
-            source: f.dbConnKv,
+            source: f.keyValueDb,
             logger: f.logger,
           }),
         }
@@ -70,9 +70,9 @@ const Fixtures = (): Implementation[] => {
         const f = await Fixture()
         return {
           ...f,
-          dbConnKv: await DbConnKv({
+          keyValueDb: await KeyValueDb({
             t: 'with-reduced-parsing',
-            dbConnKv: f.dbConnKv,
+            keyValueDb: f.keyValueDb,
             verifiedKeys: new Set(),
             logger: f.logger,
           }),
@@ -85,14 +85,14 @@ const Fixtures = (): Implementation[] => {
         const f = await Fixture()
         return {
           ...f,
-          dbConnKv: await DbConnKv({
+          keyValueDb: await KeyValueDb({
             t: 'with-cache',
-            cache: await DbConnKv({
+            cache: await KeyValueDb({
               t: 'hash-map',
             }),
-            source: await DbConnKv({
+            source: await KeyValueDb({
               t: 'with-throttled-writes',
-              dbConnKv: f.dbConnKv,
+              keyValueDb: f.keyValueDb,
               logger: f.logger,
               throttle: TimeSpan.seconds(10),
               runtime: Runtime({ t: 'noop' }),
@@ -108,13 +108,13 @@ const Fixtures = (): Implementation[] => {
         const f = await Fixture()
         return {
           ...f,
-          dbConnKv: await DbConnKv({
+          keyValueDb: await KeyValueDb({
             t: 'with-cache',
-            source: f.dbConnKv,
+            source: f.keyValueDb,
             logger: f.logger,
-            cache: await DbConnKv({
+            cache: await KeyValueDb({
               t: 'with-distributed-invalidations',
-              cache: await DbConnKv({ t: 'hash-map' }),
+              cache: await KeyValueDb({ t: 'hash-map' }),
               logger: f.logger,
               pubSub: await PubSub({ t: 'in-memory' }),
             }),
@@ -131,7 +131,7 @@ const Fixtures = (): Implementation[] => {
         const f = await Fixture()
         return {
           ...f,
-          dbConnKv: await DbConnKv({
+          keyValueDb: await KeyValueDb({
             t: 'redis',
             simulateLatency: async () => {},
             redisUrl: CONFIG_BACKEND.REDIS_URL,
@@ -170,9 +170,9 @@ describe(`${import.meta.file} ${name}`, () => {
 
       const item = randomItem()
 
-      const before = await f.dbConnKv.get(item.id, Item)
-      await f.dbConnKv.set(item.id, item)
-      const after = await f.dbConnKv.get(item.id, Item)
+      const before = await f.keyValueDb.get(item.id, Item)
+      await f.keyValueDb.set(item.id, item)
+      const after = await f.keyValueDb.get(item.id, Item)
 
       expect(before).toEqual(Ok(null))
       expect(after).toEqual(Ok(item))
@@ -183,7 +183,7 @@ describe(`${import.meta.file} ${name}`, () => {
     for (const { Fixture } of Fixtures()) {
       const f = await Fixture()
 
-      const set = await f.dbConnKv.setMany([])
+      const set = await f.keyValueDb.setMany([])
 
       expect(set).toEqual(Ok(null))
     }
@@ -195,14 +195,14 @@ describe(`${import.meta.file} ${name}`, () => {
 
       const items = [randomItem(), randomItem(), randomItem()]
 
-      const before = await f.dbConnKv.getMany(
+      const before = await f.keyValueDb.getMany(
         items.map((item) => item.id),
         Item,
       )
 
-      await f.dbConnKv.setMany(items.map((item) => [item.id, item]))
+      await f.keyValueDb.setMany(items.map((item) => [item.id, item]))
 
-      const after = await f.dbConnKv.getMany(
+      const after = await f.keyValueDb.getMany(
         items.map((item) => item.id),
         Item,
       )
@@ -218,9 +218,9 @@ describe(`${import.meta.file} ${name}`, () => {
 
       const item = randomItem()
 
-      await f.dbConnKv.set(item.id, item)
+      await f.keyValueDb.set(item.id, item)
 
-      const got = await f.dbConnKv.get(item.id, Item)
+      const got = await f.keyValueDb.get(item.id, Item)
 
       expect(got).toEqual(Ok(item))
     }
@@ -232,9 +232,9 @@ describe(`${import.meta.file} ${name}`, () => {
 
       const items = [randomItem(), randomItem(), randomItem()]
 
-      await f.dbConnKv.setMany(items.map((item) => [item.id, item]))
+      await f.keyValueDb.setMany(items.map((item) => [item.id, item]))
 
-      const got = await f.dbConnKv.getMany(
+      const got = await f.keyValueDb.getMany(
         items.map((item) => item.id),
         Item,
       )
@@ -248,9 +248,9 @@ describe(`${import.meta.file} ${name}`, () => {
       const f = await Fixture()
 
       const items = [randomItem(), randomItem(), randomItem()]
-      await f.dbConnKv.setMany(items.map((item) => [item.id, item]))
+      await f.keyValueDb.setMany(items.map((item) => [item.id, item]))
 
-      const got = await f.dbConnKv.getMany([], Item)
+      const got = await f.keyValueDb.getMany([], Item)
 
       expect(got).toEqual(Ok([]))
     }
@@ -262,13 +262,13 @@ describe(`${import.meta.file} ${name}`, () => {
 
       const item = randomItem()
 
-      await f.dbConnKv.set(item.id, item)
+      await f.keyValueDb.set(item.id, item)
 
-      const before = await f.dbConnKv.get(item.id, Item)
+      const before = await f.keyValueDb.get(item.id, Item)
 
-      await f.dbConnKv.zap(item.id)
+      await f.keyValueDb.zap(item.id)
 
-      const after = await f.dbConnKv.get(item.id, Item)
+      const after = await f.keyValueDb.get(item.id, Item)
 
       expect(before).toEqual(Ok(item))
       expect(after).toEqual(Ok(null))

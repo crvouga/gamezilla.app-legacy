@@ -1,26 +1,26 @@
 import { isErr } from '~/@/result'
 import { p } from '~/@/parser'
-import type { IDbConnKv } from './interface'
+import type { IKeyValueDb } from './interface'
 import { ILogger, Logger } from '../logger'
 
 export type Config = {
   t: 'with-reduced-parsing'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   verifiedKeys: Set<string>
   logger: ILogger
 }
 
-export const withReducedParsing = ({ dbConnKv, verifiedKeys, ...config }: Config): IDbConnKv => {
+export const withReducedParsing = ({ keyValueDb, verifiedKeys, ...config }: Config): IKeyValueDb => {
   const logger = Logger.prefix('with-reduced-parsing', config.logger)
   return {
-    ...dbConnKv,
+    ...keyValueDb,
 
     async get<TValue>(key: string, parser: p.Parser<TValue>) {
       if (verifiedKeys.has(key)) {
-        return dbConnKv.get(key, p.noop<TValue>())
+        return keyValueDb.get(key, p.noop<TValue>())
       }
 
-      const got = await dbConnKv.get(key, parser)
+      const got = await keyValueDb.get(key, parser)
 
       if (isErr(got)) {
         return got
@@ -37,10 +37,10 @@ export const withReducedParsing = ({ dbConnKv, verifiedKeys, ...config }: Config
       const key = keys.join(',')
 
       if (verifiedKeys.has(key)) {
-        return dbConnKv.getMany(keys, p.noop<TValue>())
+        return keyValueDb.getMany(keys, p.noop<TValue>())
       }
 
-      const got = await dbConnKv.getMany(keys, parser)
+      const got = await keyValueDb.getMany(keys, parser)
 
       if (isErr(got)) {
         return got

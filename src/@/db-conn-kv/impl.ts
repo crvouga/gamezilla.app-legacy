@@ -3,7 +3,7 @@ import * as ImplHashMap from './impl-hash-map'
 import * as ImplInMemory from './impl-in-memory'
 import * as ImplPostgres from './impl-postgres'
 import * as ImplRedis from './impl-redis'
-import type { IDbConnKv } from './interface'
+import type { IKeyValueDb } from './interface'
 import * as WithCache from './with-cache'
 import * as WithDistributedInvalidations from './with-distributed-invalidations'
 import * as WithDistributedUpdates from './with-distributed-updates'
@@ -22,20 +22,20 @@ export type Config =
   | WithThrottledWrites.Config
   | WithDistributedInvalidations.Config
 
-export const DbConnKv = async (configInput: Config): Promise<IDbConnKv> => {
+export const KeyValueDb = async (configInput: Config): Promise<IKeyValueDb> => {
   const logger = Logger.prefix('db-conn-kv', configInput.logger ?? Logger({ t: 'noop' }))
   const config: Config = { ...configInput, logger }
   switch (config.t) {
     case 'hash-map': {
-      return ImplHashMap.DbConnKv(config)
+      return ImplHashMap.KeyValueDb(config)
     }
 
     case 'redis': {
-      return ImplRedis.DbConnKv(config)
+      return ImplRedis.KeyValueDb(config)
     }
 
     case 'postgres': {
-      return ImplPostgres.DbConnKv(config)
+      return ImplPostgres.KeyValueDb(config)
     }
 
     case 'with-cache': {
@@ -59,9 +59,9 @@ export const DbConnKv = async (configInput: Config): Promise<IDbConnKv> => {
     }
 
     case 'in-memory': {
-      return ImplInMemory.DbConnKv(config)
+      return ImplInMemory.KeyValueDb(config)
     }
   }
 }
 
-DbConnKv.withNamespace = WithNamespace.withNamespace
+KeyValueDb.withNamespace = WithNamespace.withNamespace

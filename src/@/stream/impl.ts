@@ -1,14 +1,14 @@
-import * as ImplDbConnKv from './impl-db-conn-kv'
+import * as ImplKeyValueDb from './impl-db-conn-kv'
 import * as ImplInMemory from './impl-in-memory'
 import * as ImplRedis from './impl-redis'
 import { IStream } from './interface'
 
-export type Config<T> = ImplDbConnKv.Config<T> | ImplInMemory.Config<T> | ImplRedis.Config<T>
+export type Config<T> = ImplKeyValueDb.Config<T> | ImplInMemory.Config<T> | ImplRedis.Config<T>
 
 export const Stream = async <T>(config: Config<T>): Promise<IStream<T>> => {
   switch (config.t) {
     case 'db-conn-kv': {
-      return ImplDbConnKv.Stream(config)
+      return ImplKeyValueDb.Stream(config)
     }
     case 'in-memory': {
       return ImplInMemory.Stream(config)

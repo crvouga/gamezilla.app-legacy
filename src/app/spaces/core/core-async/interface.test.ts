@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
-import { DbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb } from '~/@/db-conn-kv'
 import { EventSourced } from '~/@/event-sourced'
 import { EventMeta, withEventId } from '~/@/event-sourced/event'
 import { Logger } from '~/@/logger'
@@ -41,8 +41,8 @@ const Fixtures = async () => {
 
   configs.push({
     t: 'db-conn-kv',
-    dbConnKv: await DbConnKv({ t: 'hash-map' }),
-    // dbConnKv: f.dbConnKv,
+    keyValueDb: await KeyValueDb({ t: 'hash-map' }),
+    // keyValueDb: f.keyValueDb,
     logger: Logger({ t: 'noop' }),
     runtime: Runtime({ t: 'noop' }),
     writeThrottle: TimeSpan.milliseconds(0),
@@ -53,7 +53,7 @@ const Fixtures = async () => {
   if (TEST) {
     configs.push({
       t: 'stream',
-      dbConnKv: await DbConnKv({ t: 'hash-map' }),
+      keyValueDb: await KeyValueDb({ t: 'hash-map' }),
       logger: Logger({ t: 'noop' }),
       stream: await Stream({ t: 'in-memory', parser: p.and(MsgSpace, EventMeta) }),
       runtime: Runtime({ t: 'noop' }),

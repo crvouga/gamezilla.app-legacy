@@ -1,4 +1,4 @@
-import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
 import { EventSourced } from '~/@/event-sourced'
 import { pipe } from '~/@/function/pipe'
 import { LRUCache } from '~/@/least-recently-used-cache'
@@ -14,7 +14,7 @@ import type { ISpacesCoreAsync, SpacesCoreConfig } from './interface'
 
 export type Config = SpacesCoreConfig & {
   t: 'db-conn-kv'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   logger: ILogger
   runtime: IRuntime
   writeThrottle: TimeSpan
@@ -29,27 +29,28 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
   //
 
   const verifiedKeys = new Set<string>()
-  const cache = await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 10_000 }) })
+  const cache = await KeyValueDb({ t: 'hash-map', map: LRUCache({ maxCapacity: 10_000 }) })
   const throttle = config.writeThrottle
-  const dbConnKv = await pipe(
-    config.dbConnKv,
-    async (dbConnKv) => DbConnKv({ t: 'with-throttled-writes', logger, dbConnKv: await dbConnKv, throttle, runtime }),
-    async (dbConnKv) => DbConnKv({ t: 'with-cache', logger, source: await dbConnKv, cache }),
-    async (dbConnKv) => DbConnKv({ t: 'with-reduced-parsing', logger, dbConnKv: await dbConnKv, verifiedKeys }),
+  const keyValueDb = await pipe(
+    config.keyValueDb,
+    async (keyValueDb) =>
+      KeyValueDb({ t: 'with-throttled-writes', logger, keyValueDb: await keyValueDb, throttle, runtime }),
+    async (keyValueDb) => KeyValueDb({ t: 'with-cache', logger, source: await keyValueDb, cache }),
+    async (keyValueDb) => KeyValueDb({ t: 'with-reduced-parsing', logger, keyValueDb: await keyValueDb, verifiedKeys }),
   )
 
-  const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, Space.Model>({
-    dbConnKv,
+  const spacesBySpaceId = KeyValueDb.withNamespace<SpaceId, Space.Model>({
+    keyValueDb,
     namespace: ['spaces', 'space-by-id'],
     parser: Space.Model,
   })
-  const indexSpaceIdByUserId = DbConnKv.withNamespace<UserId, SpaceId>({
-    dbConnKv,
+  const indexSpaceIdByUserId = KeyValueDb.withNamespace<UserId, SpaceId>({
+    keyValueDb,
     namespace: ['spaces', 'space-id-by-user-id'],
     parser: SpaceId,
   })
-  const indexSpaceIds = DbConnKv.withNamespace<string, SpaceId[]>({
-    dbConnKv,
+  const indexSpaceIds = KeyValueDb.withNamespace<string, SpaceId[]>({
+    keyValueDb,
     namespace: ['spaces', 'space-ids'],
     parser: p.arr(SpaceId),
   })
@@ -68,7 +69,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
     config.logger.debug(`Dangerously setting model for spaceId=${spaceId}`)
 
     verifiedKeys.clear()
-    await Promise.all([cache.zap(spaceId), config.dbConnKv.zap(spaceId), upsert(model)])
+    await Promise.all([cache.zap(spaceId), config.keyValueDb.zap(spaceId), upsert(model)])
   })
 
   //

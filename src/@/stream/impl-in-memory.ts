@@ -1,6 +1,6 @@
 import { Parser } from '~/@/parser/parser'
-import { DbConnKv } from '../db-conn-kv'
-import * as ImplDbConnKv from './impl-db-conn-kv'
+import { KeyValueDb } from '../db-conn-kv'
+import * as ImplKeyValueDb from './impl-db-conn-kv'
 import { IStream } from './interface'
 
 export type Config<T> = {
@@ -9,9 +9,9 @@ export type Config<T> = {
 }
 
 export const Stream = async <T>(config: Config<T>): Promise<IStream<T>> => {
-  return ImplDbConnKv.Stream<T>({
+  return ImplKeyValueDb.Stream<T>({
     t: 'db-conn-kv',
-    dbConnKv: await DbConnKv({
+    keyValueDb: await KeyValueDb({
       t: 'hash-map',
       map: new Map(),
     }),

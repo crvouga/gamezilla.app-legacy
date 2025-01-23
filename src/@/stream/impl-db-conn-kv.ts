@@ -1,24 +1,24 @@
 import { Err, Ok, unwrapOr } from '~/@/result'
 import { p } from '~/@/parser'
 import { Parser } from '~/@/parser/parser'
-import { DbConnKv, IDbConnKv } from '../db-conn-kv'
+import { KeyValueDb, IKeyValueDb } from '../db-conn-kv'
 import { EventId } from './event-id'
 import { IStream } from './interface'
 
 export type Config<T> = {
   t: 'db-conn-kv'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   parser: Parser<T>
 }
 
 export const Stream = <T>(config: Config<T>): IStream<T> => {
-  const eventIdsByStreamId = DbConnKv.withNamespace({
-    dbConnKv: config.dbConnKv,
+  const eventIdsByStreamId = KeyValueDb.withNamespace({
+    keyValueDb: config.keyValueDb,
     namespace: ['stream', 'event-ids-by-stream-id'],
     parser: p.arr(EventId.parser),
   })
-  const eventsById = DbConnKv.withNamespace({
-    dbConnKv: config.dbConnKv,
+  const eventsById = KeyValueDb.withNamespace({
+    keyValueDb: config.keyValueDb,
     namespace: ['stream', 'events-by-id'],
     parser: p.arr(config.parser),
   })

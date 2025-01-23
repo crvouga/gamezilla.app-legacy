@@ -3,7 +3,7 @@ import { p } from '~/@/parser'
 import type { IDbConnSql } from '../db-conn-sql'
 import type { ILogger } from '../logger/interface'
 import { withDuration } from '../time/with-duration'
-import type { IDbConnKv } from './interface'
+import type { IKeyValueDb } from './interface'
 import { Logger } from '../logger'
 import { TimeSpan } from '../time/time-span'
 
@@ -18,7 +18,7 @@ export type Config = {
   logger: ILogger
 }
 
-export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
+export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
   const logger = Logger.prefix('postgres', config.logger)
   return {
     async get(key, parser) {

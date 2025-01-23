@@ -1,16 +1,16 @@
 import { Ok, isErr } from '~/@/result'
 import { Profile } from '~/app/@/data/profile'
-import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
 import type { IProfileCache } from './interface'
 
 export type Config = {
   t: 'db-conn-kv'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
 }
 
 export const ProfileCache = (config: Config): IProfileCache => {
-  const profilesKv = DbConnKv.withNamespace({
-    dbConnKv: config.dbConnKv,
+  const profilesKv = KeyValueDb.withNamespace({
+    keyValueDb: config.keyValueDb,
     namespace: ['spaces', 'profile-cache'],
     parser: Profile,
   })

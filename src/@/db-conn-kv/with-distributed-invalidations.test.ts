@@ -3,7 +3,7 @@ import { Ok } from '~/@/result'
 import { p } from '~/@/parser'
 import { Logger } from '../logger'
 import { PubSubTopicBased } from '../pub-sub-topic-based'
-import { DbConnKv } from './impl'
+import { KeyValueDb } from './impl'
 import { withNamespace } from './with-namespace'
 import { PubSub } from '../pub-sub'
 import { PubSubTopicBasedMap } from '../pub-sub-topic-based/impl-in-memory'
@@ -35,15 +35,15 @@ const Fixture = async () => {
     return withNamespace({
       namespace: ['my-event'],
       parser: MyEvent,
-      dbConnKv: await DbConnKv({
+      keyValueDb: await KeyValueDb({
         t: 'with-cache',
-        source: await DbConnKv({
+        source: await KeyValueDb({
           t: 'hash-map',
           logger: Logger.prefix('source', logger),
           map: sourceMap,
         }),
         logger: loggerChild,
-        cache: await DbConnKv({
+        cache: await KeyValueDb({
           t: 'with-distributed-invalidations',
           pubSub: await PubSub({
             t: 'pub-sub-topic-based',
@@ -54,7 +54,7 @@ const Fixture = async () => {
             topic: 'my-event-cache-invalidation',
           }),
           logger: loggerChild,
-          cache: await DbConnKv({
+          cache: await KeyValueDb({
             t: 'hash-map',
             map: new Map(),
             logger: loggerChild,

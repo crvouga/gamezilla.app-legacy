@@ -1,5 +1,5 @@
 import { pipe } from '~/@/function/pipe'
-import { DbConnKv, IDbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb, IKeyValueDb } from '~/@/db-conn-kv'
 import { IDbConnSql } from '~/@/db-conn-sql'
 import { LRUCache } from '~/@/least-recently-used-cache'
 import { ILogger } from '~/@/logger'
@@ -11,21 +11,21 @@ import type { IUserSessionDb } from './interface'
 
 export type Config = {
   t: 'postgres-with-cache'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   dbConnSql: IDbConnSql
   pubSubTopicBased: IPubSubTopicBased
   logger: ILogger
 }
 
 export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => {
-  const dbConnKv = await pipe(
-    config.dbConnKv,
-    async (dbConnKv) =>
-      DbConnKv({
+  const keyValueDb = await pipe(
+    config.keyValueDb,
+    async (keyValueDb) =>
+      KeyValueDb({
         ...config,
         t: 'with-cache',
-        source: dbConnKv,
-        cache: await DbConnKv({
+        source: keyValueDb,
+        cache: await KeyValueDb({
           ...config,
           t: 'with-distributed-invalidations',
           pubSub: await PubSub({
@@ -33,18 +33,18 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
             pubSubTopicBased: config.pubSubTopicBased,
             topic: 'user-session-db-cache-invalidation',
           }),
-          cache: await DbConnKv({
+          cache: await KeyValueDb({
             t: 'hash-map',
             map: LRUCache({ maxCapacity: 2000 }),
           }),
         }),
       }),
 
-    async (dbConnKv) =>
-      DbConnKv({
+    async (keyValueDb) =>
+      KeyValueDb({
         ...config,
         t: 'with-reduced-parsing',
-        dbConnKv: await dbConnKv,
+        keyValueDb: await keyValueDb,
         verifiedKeys: new Set(),
       }),
   )
@@ -56,7 +56,7 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
   })
 
   return WithCache({
-    dbConnKv,
+    keyValueDb,
     userSessionDb,
   })
 }

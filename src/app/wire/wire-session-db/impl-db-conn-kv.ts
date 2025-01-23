@@ -1,4 +1,4 @@
-import { DbConnKv, IDbConnKv } from '~/@/db-conn-kv'
+import { KeyValueDb, IKeyValueDb } from '~/@/db-conn-kv'
 import { ILogger } from '~/@/logger'
 import { p } from '~/@/parser'
 import { isErr, unwrapOr } from '~/@/result'
@@ -8,19 +8,19 @@ import type { IWireSessionDb } from './interface'
 
 export type Config = {
   t: 'db-conn-kv'
-  dbConnKv: IDbConnKv
+  keyValueDb: IKeyValueDb
   logger: ILogger
 }
 
 export const WireSessionDb = (config: Config): IWireSessionDb => {
-  const wireSessionBySessionId = DbConnKv.withNamespace({
-    dbConnKv: config.dbConnKv,
+  const wireSessionBySessionId = KeyValueDb.withNamespace({
+    keyValueDb: config.keyValueDb,
     namespace: ['wire-session-db', 'wire-sessions-by-session-id'],
     parser: WireSession,
   })
 
-  const indexSessionIdsByUserId = DbConnKv.withNamespace({
-    dbConnKv: config.dbConnKv,
+  const indexSessionIdsByUserId = KeyValueDb.withNamespace({
+    keyValueDb: config.keyValueDb,
     namespace: ['wire-session-db', 'index-session-ids-by-user-id'],
     parser: p.arr(SessionId),
   })

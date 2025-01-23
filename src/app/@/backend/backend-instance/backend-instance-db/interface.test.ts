@@ -20,7 +20,7 @@ const Fixtures = async () => {
   const configs: Config[] = [
     {
       t: 'db-conn-kv',
-      dbConnKv: f.dbConnKv,
+      keyValueDb: f.keyValueDb,
     },
   ]
 
