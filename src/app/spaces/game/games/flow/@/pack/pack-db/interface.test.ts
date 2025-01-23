@@ -178,7 +178,7 @@ describe(import.meta.file, () => {
     }
   })
 
-  test.only('updates should be independent', async () => {
+  test('updates should be independent', async () => {
     for (const f of await Fixtures()) {
       const packA = await Pack.random()
       const packB = await Pack.random()
