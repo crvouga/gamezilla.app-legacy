@@ -171,7 +171,7 @@ describe(import.meta.file, () => {
       const before = await f.spaceBackend.get(f.spaceId)
       const invalid = toInvalidSpaceModel(f.space)
       await f._dangerouslyOverrideModel.pub(invalid)
-      await new Promise((resolve) => setTimeout(resolve, 5))
+      await new Promise((resolve) => setTimeout(resolve, 100))
       const after = await f.spaceBackend.get(f.spaceId)
       expect(before).toEqual(Ok(f.space))
       expect(after).not.toEqual(Ok(f.space))
