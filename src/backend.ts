@@ -25,8 +25,9 @@ const main = async () => {
     handlers: AppBackend.rpc({ ctx }),
   })
 
-  ctx.httpServer.registerHandler((request) => {
-    return PowerSyncBackendApp.respond({ request, ctx: { userSessionDb: ctx.auth.userSessionDb } })
+  PowerSyncBackendApp.withHandlers({
+    httpServer: ctx.httpServer,
+    ctx: { userSessionDb: ctx.auth.userSessionDb },
   })
 
   ctx.httpServer.registerHandler((request) => {

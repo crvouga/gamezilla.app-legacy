@@ -1,4 +1,5 @@
 // https://docs.powersync.com/installation/authentication-setup/custom
+import { IHttpServer } from '~/@/http-server/interface.js'
 import { PowerSyncCredentials } from './credentials/respond.js'
 import { Ctx } from './ctx.js'
 import { PowerSyncJwks } from './jwks/respond.js'
@@ -20,6 +21,12 @@ const respond = async (input: { request: Request; ctx: Ctx }): Promise<Response 
   }
 }
 
+const withHandlers = (config: { httpServer: IHttpServer; ctx: Ctx }) => {
+  config.httpServer.registerHandler((request) => {
+    return respond({ request, ctx: config.ctx })
+  })
+}
+
 export const PowerSyncBackendApp = {
-  respond,
+  withHandlers,
 }
