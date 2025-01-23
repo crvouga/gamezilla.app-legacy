@@ -5,17 +5,17 @@ import { EventSourced } from '~/@/event-sourced'
 import { EventMeta, withEventId } from '~/@/event-sourced/event'
 import { Logger } from '~/@/logger'
 import { p } from '~/@/parser'
-import { isErr, Ok, unwrap } from '~/@/result'
+import { Ok, unwrap } from '~/@/result'
 import { Runtime } from '~/@/runtime'
 import { Stream } from '~/@/stream/impl'
 import { PubSub } from '~/@/sub'
+import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Space } from '../space'
 import { SpaceEvent } from '../space-event'
 import { SpaceState } from '../space-state'
 import { Config, SpaceBackend } from './impl'
-import { TimeSpan } from '~/@/time/time-span'
 
 const Fixture = async (config: Config) => {
   const _dangerouslyOverrideModel = PubSub.create<Space.Model>()
@@ -165,7 +165,7 @@ describe(import.meta.file, () => {
     }
   })
 
-  test.only('error when db has invalid data', async () => {
+  test('error when db has invalid data', async () => {
     for (const f of await Fixtures()) {
       unwrap(await f.spaceBackend.upsert(f.space))
       const before = await f.spaceBackend.get(f.spaceId)
@@ -175,7 +175,7 @@ describe(import.meta.file, () => {
       const after = await f.spaceBackend.get(f.spaceId)
       expect(before).toEqual(Ok(f.space))
       expect(after).not.toEqual(Ok(f.space))
-      expect(isErr(after)).toEqual(true)
+      expect(after.t).toEqual('err')
       expect(before).toEqual(Ok(f.space))
     }
   })
@@ -188,9 +188,9 @@ const toInvalidSpaceModel = (space: Space.Model) => {
 
   const latestSnapshot = space.snapshots._valuesByKey[latestEventId]
 
-  if (!latestSnapshot) throw new Error('atestSnapshot not found')
+  if (!latestSnapshot) throw new Error('latestSnapshot not found')
 
-  const corruptedSnapshot: Partial<SpaceState.Started> = {
+  const invalidSnapshot: Partial<SpaceState.Started> = {
     game: undefined,
     hostId: undefined,
     latestEventId: undefined,
@@ -206,7 +206,7 @@ const toInvalidSpaceModel = (space: Space.Model) => {
       space.snapshots,
       latestEventId,
       // @ts-expect-error We are intentionally corrupting the snapshot
-      corruptedSnapshot,
+      invalidSnapshot,
     ),
   }
 
