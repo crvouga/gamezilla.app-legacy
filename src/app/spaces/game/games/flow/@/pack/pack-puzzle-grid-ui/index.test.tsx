@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
-import { PAGINATION_DOTS_TEST_ID } from '~/app/@/ui/pagination-dots'
+import { PAGINATION_DOTS_TEST_ID, toPaginationDotSelector } from '~/app/@/ui/pagination-dots'
 import { PackPuzzleGridUI } from '.'
 import { PuzzleId } from '../../puzzle/puzzle-id'
+import { PubSub } from '~/@/sub'
 
 const Fixture = async () => {
   const f = await FixtureAppFrontend()
@@ -37,5 +38,18 @@ describe(import.meta.file, () => {
     )
     const slides = r.getByRole('tabpanel')
     expect(slides.length).toBe(2)
+  })
+
+  it.only('should change slide when clicking pagination dots', async () => {
+    const f = await Fixture()
+    const slideIndex = PubSub.create<number>()
+    const r = f.render(
+      <PackPuzzleGridUI.View
+        puzzleIds={Array.from({ length: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT * 2 }, PuzzleId.generate)}
+        onSlideIndexChanged={slideIndex.pub}
+      />,
+    )
+    r.query(toPaginationDotSelector(1))[0]?.click()
+    expect(await slideIndex.once()).toEqual(1)
   })
 })
