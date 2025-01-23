@@ -3,6 +3,14 @@ import { Sub } from '../sub'
 
 type MaybePromise<T> = T | Promise<T>
 
+export type CrashResolution =
+  | {
+      t: 'halt-program'
+    }
+  | {
+      t: 'ignore-crashing-update'
+    }
+
 export type Program<TModel, TMsg, TCtx> = {
   initCtx: () => MaybePromise<TCtx>
 
@@ -14,9 +22,9 @@ export type Program<TModel, TMsg, TCtx> = {
 
   subscriptions: (input: { intervalId: string; ctx: TCtx; model: TModel }) => MaybePromise<Sub<TMsg>>
 
-  debugger?: ProgramDebugger
+  crash: (input: { error: unknown; msg: TMsg; model: TModel; ctx: TCtx }) => unknown
 
-  crash: (input: { error: unknown; msg: TMsg; model: TModel; ctx: TCtx }) => void
+  debugger?: ProgramDebugger
 
   render?: (input: { model: TModel; ctx: TCtx; dispatch: (msg: TMsg) => void }) => void
 }
@@ -40,48 +48,12 @@ export type ProgramDebugger = (
 ) => MaybePromise<(model: unknown, msg?: unknown) => void>
 
 export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCtx> & {}) {
-  let model: TModel | null = null
-
-  //
-  //
-  //
-  //
-  //
-  //
-
-  function updateUI(model: TModel, ctx: TCtx) {
-    program.render?.({
-      model,
-      ctx,
-      dispatch,
-    })
-  }
-
-  function updateEff(eff?: Eff<TMsg> | null) {
-    if (eff) {
-      Promise.resolve().then(function runEffect() {
-        eff(dispatch)
-      })
-    }
-  }
-
-  const intervalId = generateProgramId()
-  let cleanUpSubscriptions = () => {}
-  async function updateSubscriptions(model: TModel, ctx: TCtx) {
-    const sub = await program.subscriptions({
-      intervalId,
-      ctx,
-      model,
-    })
-    cleanUpSubscriptions()
-    cleanUpSubscriptions = sub.sub(dispatch)
-  }
+  const ctx = await program.initCtx()
+  const init = await program.init({ ctx })
+  let model: TModel = init.model
 
   let isUpdating = false
   const queue: TMsg[] = []
-
-  const ctx = await program.initCtx()
-
   async function dispatch(msg: TMsg) {
     if (!model) {
       return
@@ -106,7 +78,11 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
 
       model = updated.model
       updateDebugger?.(model, msg)
-      updateUI(model, ctxNew)
+      program.render?.({
+        model,
+        ctx: ctxNew,
+        dispatch,
+      })
       updateEff(updated.eff)
       updateSubscriptions(model, ctxNew)
 
@@ -127,9 +103,25 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
     }
   }
 
-  const init = await program.init({ ctx })
+  function updateEff(eff?: Eff<TMsg> | null) {
+    if (eff) {
+      Promise.resolve().then(function runEffect() {
+        eff(dispatch)
+      })
+    }
+  }
 
-  model = init.model
+  const intervalId = generateProgramId()
+  let cleanUpSubscriptions = () => {}
+  async function updateSubscriptions(model: TModel, ctx: TCtx) {
+    const sub = await program.subscriptions({
+      intervalId,
+      ctx,
+      model,
+    })
+    cleanUpSubscriptions()
+    cleanUpSubscriptions = sub.sub(dispatch)
+  }
 
   const updateDebugger = await program.debugger?.(model, async function debuggerSetModel(modelNew) {
     const ctxNew = await program.updateCtx(ctx)
@@ -144,7 +136,7 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
   })
 
   updateDebugger?.(model, '@INIT')
-  updateUI(model, ctx)
+  program.render?.({ model, ctx, dispatch })
   updateEff(init.eff)
   updateSubscriptions(model, ctx)
 
@@ -152,6 +144,7 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
     getModel() {
       return model
     },
+    dispatch,
   }
 }
 

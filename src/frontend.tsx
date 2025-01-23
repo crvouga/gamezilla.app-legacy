@@ -2,7 +2,7 @@ import { Program } from '~/@/program/program'
 import { Renderer } from '~/@/vdom/render'
 import * as AppFrontend from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { DebuggerReduxDevTools } from './@/program/debugger'
+import { DebuggerConsole } from './@/program/debugger/debugger-console'
 
 const main = async () => {
   const root = document.getElementById('root')
@@ -21,10 +21,14 @@ const main = async () => {
     init: AppFrontend.init,
     update: AppFrontend.update,
     subscriptions: AppFrontend.subscriptions,
-    render: (input) => render(<AppFrontend.View {...input} />),
-    crash: (input) => console.error('Crash!', input),
-    // debugger: DebuggerConsole,
-    debugger: localStorage.getItem(DEBUG_KEY) ? DebuggerReduxDevTools : undefined,
+    render(input) {
+      render(<AppFrontend.View {...input} />)
+    },
+    crash: (input) => {
+      console.error('Crash!', input)
+    },
+    debugger: DebuggerConsole,
+    // debugger: localStorage.getItem(DEBUG_KEY) ? DebuggerReduxDevTools : undefined,
   })
 
   await ctx.transport.start()
