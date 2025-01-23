@@ -16,7 +16,7 @@ export type Program<TModel, TMsg, TCtx> = {
 
   debugger?: ProgramDebugger
 
-  crash: (input: { error: unknown; msg: TMsg }) => void
+  crash: (input: { error: unknown; msg: TMsg; model: TModel; ctx: TCtx }) => void
 
   render?: (input: { model: TModel; ctx: TCtx; dispatch: (msg: TMsg) => void }) => void
 }
@@ -121,6 +121,8 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
       program.crash({
         error,
         msg,
+        ctx,
+        model,
       })
     }
   }
