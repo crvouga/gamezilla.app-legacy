@@ -4,11 +4,11 @@ import type { IPuzzleDb } from '../interface'
 
 export const SKIP_QUERIES = true
 
-export const WithSolutions = (flowPuzzleDb: IPuzzleDb): IPuzzleDb => {
+export const WithSolutions = (puzzleDb: IPuzzleDb): IPuzzleDb => {
   return {
-    ...flowPuzzleDb,
+    ...puzzleDb,
     async query(input) {
-      const listed = await flowPuzzleDb.query(input)
+      const listed = await puzzleDb.query(input)
 
       if (SKIP_QUERIES) {
         return listed
@@ -39,7 +39,7 @@ export const WithSolutions = (flowPuzzleDb: IPuzzleDb): IPuzzleDb => {
       })
     },
     async get(id) {
-      const got = await flowPuzzleDb.get(id)
+      const got = await puzzleDb.get(id)
 
       if (SKIP_QUERIES) {
         return got
@@ -68,7 +68,7 @@ export const WithSolutions = (flowPuzzleDb: IPuzzleDb): IPuzzleDb => {
         ...puzzle,
         solutions: solution ? [solution] : [],
       }
-      const output = await flowPuzzleDb.put(withSolution)
+      const output = await puzzleDb.put(withSolution)
       return output
     },
   }

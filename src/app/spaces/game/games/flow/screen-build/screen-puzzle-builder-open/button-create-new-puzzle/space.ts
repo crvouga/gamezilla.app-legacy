@@ -9,7 +9,7 @@ const updateSpace: UpdateSpace = ({ modelSpace, msgSpace }) => {
       if (isErr(msgSpace.created)) {
         return modelSpace
       }
-      const flowPuzzleNew = msgSpace.created.value
+      const puzzleNew = msgSpace.created.value
       return {
         ...modelSpace,
         screen: {
@@ -19,9 +19,9 @@ const updateSpace: UpdateSpace = ({ modelSpace, msgSpace }) => {
         screenPuzzleBuilder: {
           t: 'puzzle-builder',
           mode: { t: 'edit' },
-          ModeEdit: ModeEdit.init({ flow: flowPuzzleNew.flow }),
-          ModePlay: ModePlay.init({ ctx: ModePlay.initCtx({ flow: flowPuzzleNew.flow }) }),
-          puzzle: flowPuzzleNew,
+          ModeEdit: ModeEdit.init({ flow: puzzleNew.flow }),
+          ModePlay: ModePlay.init({ ctx: ModePlay.initCtx({ flow: puzzleNew.flow }) }),
+          puzzle: puzzleNew,
         },
       }
     }

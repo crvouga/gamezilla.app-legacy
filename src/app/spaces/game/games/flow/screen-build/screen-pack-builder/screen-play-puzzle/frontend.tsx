@@ -37,18 +37,18 @@ export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
               return { model }
             }
 
-            const flowPuzzle: Puzzle | null =
+            const puzzle: Puzzle | null =
               input.modelSpace?.screen.t === 'screen-puzzle' && input.modelSpace.screen.puzzleResult.t === 'got'
                 ? input.modelSpace.screen.puzzleResult.c
                 : null
 
-            if (!flowPuzzle) {
+            if (!puzzle) {
               return { model }
             }
 
             const updated = ModePlay.update({
               ctx: ModePlay.initCtx({
-                flow: flowPuzzle.flow,
+                flow: puzzle.flow,
                 solutions: input.ctx.solutions,
               }),
               model: modePlay,

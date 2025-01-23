@@ -20,7 +20,7 @@ export type Config = {
 
 export const PuzzleDb = (config: Config): IPuzzleDb => {
   return {
-    async get(flowPuzzleId) {
+    async get(puzzleId) {
       const queried = await config.dbConnSql.query({
         parser: Row,
         sql: `
@@ -41,7 +41,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         LIMIT 1
         `,
         vars: {
-          id: flowPuzzleId,
+          id: puzzleId,
         },
       })
 
@@ -50,21 +50,21 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       }
 
       const queriedPuzzle = queried.value.map(async (row): Promise<Puzzle[]> => {
-        const flowPuzzle = Row.rowToPuzzle(row)
-        if (!flowPuzzle) {
+        const puzzle = Row.rowToPuzzle(row)
+        if (!puzzle) {
           return []
         }
-        return [flowPuzzle]
+        return [puzzle]
       })
 
       const awaited = await Promise.all(queriedPuzzle)
-      const flowPuzzles = awaited.flat()
+      const puzzles = awaited.flat()
 
-      return Ok(flowPuzzles[0] ?? null)
+      return Ok(puzzles[0] ?? null)
     },
 
-    async put(flowPuzzle) {
-      const got = await this.get(flowPuzzle.id)
+    async put(puzzle) {
+      const got = await this.get(puzzle.id)
       if (isErr(got)) {
         return got
       }
@@ -84,12 +84,12 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
             id = :id
           `,
           vars: {
-            id: flowPuzzle.id,
-            name: flowPuzzle.name,
-            flow: Sql.json(flowPuzzle.flow),
-            lastUpdatedAt: flowPuzzle.lastUpdatedAt,
-            lastUpdatedBy: flowPuzzle.lastUpdatedBy,
-            solutions: Sql.json(flowPuzzle.solutions),
+            id: puzzle.id,
+            name: puzzle.name,
+            flow: Sql.json(puzzle.flow),
+            lastUpdatedAt: puzzle.lastUpdatedAt,
+            lastUpdatedBy: puzzle.lastUpdatedBy,
+            solutions: Sql.json(puzzle.solutions),
           },
         })
 
@@ -125,14 +125,14 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           )
           `,
         vars: {
-          id: flowPuzzle.id,
-          name: flowPuzzle.name,
-          flow: Sql.json(flowPuzzle.flow),
-          createdAt: flowPuzzle.createdAt,
-          createdBy: flowPuzzle.createdBy,
-          lastUpdatedAt: flowPuzzle.lastUpdatedAt,
-          lastUpdatedBy: flowPuzzle.lastUpdatedBy,
-          solutions: Sql.json(flowPuzzle.solutions),
+          id: puzzle.id,
+          name: puzzle.name,
+          flow: Sql.json(puzzle.flow),
+          createdAt: puzzle.createdAt,
+          createdBy: puzzle.createdBy,
+          lastUpdatedAt: puzzle.lastUpdatedAt,
+          lastUpdatedBy: puzzle.lastUpdatedBy,
+          solutions: Sql.json(puzzle.solutions),
         },
       })
 
@@ -215,20 +215,20 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       }
 
       const queriedPuzzle = queried.value.map(async (row): Promise<Puzzle[]> => {
-        const flowPuzzle = Row.rowToPuzzle(row)
-        if (!flowPuzzle) {
+        const puzzle = Row.rowToPuzzle(row)
+        if (!puzzle) {
           return []
         }
-        return [flowPuzzle]
+        return [puzzle]
       })
 
       const awaited = await Promise.all(queriedPuzzle)
-      const flowPuzzles = awaited.flat()
+      const puzzles = awaited.flat()
       const total = Number.parseFloat(String(queriedCount.value[0]?.count ?? '0')) ?? 0
 
       return Ok({
         puzzles: {
-          items: flowPuzzles,
+          items: puzzles,
           total: total,
           limit: input.pagination.limit,
           offset: input.pagination.offset,

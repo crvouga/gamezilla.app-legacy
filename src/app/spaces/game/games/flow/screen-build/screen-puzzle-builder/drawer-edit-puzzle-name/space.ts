@@ -18,7 +18,7 @@ const updateSpace = ({
         return modelSpace
       }
 
-      if (msgSpace.flowPuzzleId !== puzzleBuilder.puzzle.id) {
+      if (msgSpace.puzzleId !== puzzleBuilder.puzzle.id) {
         return modelSpace
       }
       if (msgSpace.edited.t === 'err') {

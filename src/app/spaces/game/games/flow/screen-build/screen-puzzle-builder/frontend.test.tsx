@@ -8,7 +8,7 @@ import { ScreenPuzzleBuilderFrontend } from './frontend'
 const Fixture = async () => {
   const f = await FixtureFlowBuilderFrontend()
 
-  const flowPuzzle = await Puzzle.random({})
+  const puzzle = await Puzzle.random({})
 
   const init = f.update(f.init, [
     {
@@ -16,7 +16,7 @@ const Fixture = async () => {
         t: 'got-msg-space',
         c: {
           t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
-          puzzle: flowPuzzle,
+          puzzle: puzzle,
           userId: f.ctx.currentUserId,
         },
       },
@@ -43,7 +43,7 @@ const Fixture = async () => {
       model: init.model,
       modelSpace: init.modelSpace,
     },
-    flowPuzzle,
+    puzzle,
     renderMsg,
     render,
   }

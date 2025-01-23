@@ -15,10 +15,10 @@ const parser = p.custom(is, 'Invalid flow puzzle id')
 
 const generate = () => {
   const id = Uuid.generate()
-  const flowPuzzleId = `${namespace}${separator}${id}`
+  const puzzleId = `${namespace}${separator}${id}`
 
-  if (is(flowPuzzleId)) {
-    return flowPuzzleId
+  if (is(puzzleId)) {
+    return puzzleId
   }
 
   throw new Error('impossible condition. generated invalid id.')

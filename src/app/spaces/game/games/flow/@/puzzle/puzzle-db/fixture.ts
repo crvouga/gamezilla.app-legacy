@@ -3,9 +3,9 @@ import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Config, PuzzleDb } from './impl'
 
 const BaseFixture = (config: Config) => {
-  const flowPuzzleDb = PuzzleDb(config)
+  const puzzleDb = PuzzleDb(config)
   return {
-    flowPuzzleDb,
+    puzzleDb,
   }
 }
 

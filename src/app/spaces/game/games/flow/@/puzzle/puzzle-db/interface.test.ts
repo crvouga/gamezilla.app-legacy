@@ -17,7 +17,7 @@ describe(import.meta.file, () => {
   it('should be able to insert', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
-      const inserted = await f.flowPuzzleDb.put(puzzle)
+      const inserted = await f.puzzleDb.put(puzzle)
       expect(inserted.t).toBe('ok')
     }
   })
@@ -25,9 +25,9 @@ describe(import.meta.file, () => {
   it('should be ok', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
-      const before = await f.flowPuzzleDb.get(puzzle.id)
-      const inserted = await f.flowPuzzleDb.put(puzzle)
-      const after = await f.flowPuzzleDb.get(puzzle.id)
+      const before = await f.puzzleDb.get(puzzle.id)
+      const inserted = await f.puzzleDb.put(puzzle)
+      const after = await f.puzzleDb.get(puzzle.id)
 
       expect(before.t).toBe('ok')
       expect(inserted.t).toBe('ok')
@@ -38,9 +38,9 @@ describe(import.meta.file, () => {
   it('should be able to insert puzzles', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
-      const before = await f.flowPuzzleDb.get(puzzle.id)
-      await f.flowPuzzleDb.put(puzzle)
-      const after = await f.flowPuzzleDb.get(puzzle.id)
+      const before = await f.puzzleDb.get(puzzle.id)
+      await f.puzzleDb.put(puzzle)
+      const after = await f.puzzleDb.get(puzzle.id)
 
       expect(before).toEqual(Ok(null))
       expect(after).toEqual(Ok(puzzle))
@@ -50,13 +50,13 @@ describe(import.meta.file, () => {
   it('should be able to list puzzles by created by', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
-      await f.flowPuzzleDb.put(puzzle)
+      await f.puzzleDb.put(puzzle)
 
       for (let i = 0; i < 3; i++) {
-        await f.flowPuzzleDb.put(await Puzzle.random())
+        await f.puzzleDb.put(await Puzzle.random())
       }
 
-      const listed = await f.flowPuzzleDb.query({
+      const listed = await f.puzzleDb.query({
         order: {
           createdAt: 'asc',
         },
@@ -81,15 +81,15 @@ describe(import.meta.file, () => {
   it('should be able to list puzzles by id', async () => {
     for await (const f of await Fixtures()) {
       const puzzleA = await Puzzle.random()
-      await f.flowPuzzleDb.put(puzzleA)
+      await f.puzzleDb.put(puzzleA)
       const puzzleB = await Puzzle.random()
-      await f.flowPuzzleDb.put(puzzleB)
+      await f.puzzleDb.put(puzzleB)
 
       for (let i = 0; i < 1; i++) {
-        await f.flowPuzzleDb.put(await Puzzle.random())
+        await f.puzzleDb.put(await Puzzle.random())
       }
 
-      const listed = await f.flowPuzzleDb.query({
+      const listed = await f.puzzleDb.query({
         order: {
           createdAt: 'asc',
         },
@@ -117,17 +117,17 @@ describe(import.meta.file, () => {
     for await (const f of await Fixtures()) {
       const createdBy = UserId.generate()
       for (let i = 0; i < EXPECTED_COUNT; i++) {
-        await f.flowPuzzleDb.put(
+        await f.puzzleDb.put(
           await Puzzle.random({
             createdBy,
           }),
         )
       }
       for (let i = 0; i < 1; i++) {
-        await f.flowPuzzleDb.put(await Puzzle.random())
+        await f.puzzleDb.put(await Puzzle.random())
       }
 
-      const counted = await f.flowPuzzleDb.count({
+      const counted = await f.puzzleDb.count({
         where: {
           createdBy: {
             equals: createdBy,
@@ -150,12 +150,12 @@ describe(import.meta.file, () => {
         })
         createdAt = Posix.future(createdAt, TimeSpan.seconds(1))
         puzzles.push(puzzle)
-        Result.unwrap(await f.flowPuzzleDb.put(puzzle))
+        Result.unwrap(await f.puzzleDb.put(puzzle))
       }
       puzzles.sort(ascend((p) => p.createdAt))
       for (let limit = 0; limit < puzzles.length; limit++) {
         for (let offset = 0; offset < puzzles.length; offset++) {
-          const listed = await f.flowPuzzleDb.query({
+          const listed = await f.puzzleDb.query({
             order: {
               createdAt: 'asc',
             },
@@ -182,15 +182,15 @@ describe(import.meta.file, () => {
   it('should update existing record when upserting', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
-      await f.flowPuzzleDb.put(puzzle)
+      await f.puzzleDb.put(puzzle)
       const updatedPuzzle = {
         ...puzzle,
         name: await PuzzleName.generate({
           count: 1,
         }),
       }
-      await f.flowPuzzleDb.put(updatedPuzzle)
-      const after = Result.unwrapOr(await f.flowPuzzleDb.get(puzzle.id), null)
+      await f.puzzleDb.put(updatedPuzzle)
+      const after = Result.unwrapOr(await f.puzzleDb.get(puzzle.id), null)
       expect(after).toEqual(updatedPuzzle)
     }
   })
@@ -198,13 +198,13 @@ describe(import.meta.file, () => {
   it('should be able to zap records', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
-      await f.flowPuzzleDb.put(puzzle)
-      const before = Result.unwrapOr(await f.flowPuzzleDb.get(puzzle.id), null)
-      await f.flowPuzzleDb.zap({
+      await f.puzzleDb.put(puzzle)
+      const before = Result.unwrapOr(await f.puzzleDb.get(puzzle.id), null)
+      await f.puzzleDb.zap({
         puzzleId: puzzle.id,
         deletedByUserId: UserId.generate(),
       })
-      const after = Result.unwrapOr(await f.flowPuzzleDb.get(puzzle.id), null)
+      const after = Result.unwrapOr(await f.puzzleDb.get(puzzle.id), null)
       expect(before).toEqual(puzzle)
       expect(after).toBe(null)
     }
@@ -212,7 +212,7 @@ describe(import.meta.file, () => {
 
   test('list by id with empty id list', async () => {
     for await (const f of await Fixtures()) {
-      const listed = await f.flowPuzzleDb.query({
+      const listed = await f.puzzleDb.query({
         where: {
           puzzleId: {
             in: [],

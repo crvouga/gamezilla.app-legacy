@@ -125,7 +125,7 @@ const View: FrontendModule['View'] = (input) => {
   if (input.modelSpace.screen.t !== 'screen-play-puzzle') {
     return null
   }
-  const flowPuzzle = input.modelSpace.screen.puzzleResult
+  const puzzle = input.modelSpace.screen.puzzleResult
   const modePlay = input.modelSpace.screen.modePlay
   const isSolved = ScreenPlayPuzzleSpace.toStatus(input.modelSpace.screen) === 'solved'
   const puzzleIndex = input.modelSpace.screen.puzzleIndex
@@ -141,7 +141,7 @@ const View: FrontendModule['View'] = (input) => {
     return (
       <LayoutGame ctx={input.ctx} isSpectating>
         <TopBar ctx={input.ctx} onBack={false} title={input.ctx.t('flow.level', puzzleIndex + 1)} />
-        {flowPuzzle.t === 'got' ? (
+        {puzzle.t === 'got' ? (
           <BoardLayout
             top={
               <ProfileListItem
@@ -153,11 +153,11 @@ const View: FrontendModule['View'] = (input) => {
             board={
               <ModePlay.View
                 disabled
-                key={flowPuzzle.c.id}
-                flow={flowPuzzle.c.flow}
+                key={puzzle.c.id}
+                flow={puzzle.c.flow}
                 model={
                   modePlay ??
-                  ModePlay.init({ ctx: ModePlay.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
+                  ModePlay.init({ ctx: ModePlay.initCtx({ flow: puzzle.c.flow, solutions: input.ctx.solutions }) })
                 }
                 dispatch={() => {}}
                 showSolvedAnimation
@@ -174,7 +174,7 @@ const View: FrontendModule['View'] = (input) => {
   return (
     <div
       className='flex w-full flex-1 flex-col overflow-hidden'
-      data-puzzle-id={flowPuzzle.t === 'got' ? flowPuzzle.c.id : null}
+      data-puzzle-id={puzzle.t === 'got' ? puzzle.c.id : null}
     >
       <TopBar
         ctx={input.ctx}
@@ -193,13 +193,13 @@ const View: FrontendModule['View'] = (input) => {
       <BoardLayout
         top={null}
         board={
-          flowPuzzle.t === 'got' ? (
+          puzzle.t === 'got' ? (
             <ModePlay.View
-              key={flowPuzzle.c.id}
-              flow={flowPuzzle.c.flow}
+              key={puzzle.c.id}
+              flow={puzzle.c.flow}
               model={
                 modePlay ??
-                ModePlay.init({ ctx: ModePlay.initCtx({ flow: flowPuzzle.c.flow, solutions: input.ctx.solutions }) })
+                ModePlay.init({ ctx: ModePlay.initCtx({ flow: puzzle.c.flow, solutions: input.ctx.solutions }) })
               }
               dispatch={(c) =>
                 input.dispatch({
@@ -233,7 +233,7 @@ const View: FrontendModule['View'] = (input) => {
           PrebuiltBottomButtons.next({
             ...input,
             disabled: puzzleIndex >= input.modelSpace.screen.pack.puzzleIds.length - 1,
-            hidden: !isSolved && flowPuzzle.t !== 'not-found',
+            hidden: !isSolved && puzzle.t !== 'not-found',
             color: 'success',
             onClick: () =>
               input.dispatch({
@@ -254,19 +254,19 @@ const View: FrontendModule['View'] = (input) => {
               }),
           }),
 
-          flowPuzzle.t === 'got' && !isSolved
+          puzzle.t === 'got' && !isSolved
             ? ModePlay.viewHintAction({
                 model:
                   modePlay ??
                   ModePlay.init({
                     ctx: ModePlay.initCtx({
-                      flow: flowPuzzle.c.flow,
+                      flow: puzzle.c.flow,
                       solutions: input.ctx.solutions,
                     }),
                   }),
                 ctx: ModePlay.initCtx({
                   ...input.ctx,
-                  flow: flowPuzzle.c.flow,
+                  flow: puzzle.c.flow,
                   solutions: input.ctx.solutions,
                 }),
                 disabled: false,
@@ -284,7 +284,7 @@ const View: FrontendModule['View'] = (input) => {
 
           PrebuiltBottomButtons.reset({
             ...input,
-            hidden: flowPuzzle.t === 'not-found',
+            hidden: puzzle.t === 'not-found',
             onClick: () =>
               input.dispatch({
                 t: 'got-msg-space',
@@ -295,7 +295,7 @@ const View: FrontendModule['View'] = (input) => {
               }),
           }),
 
-          flowPuzzle.t === 'not-found' ? null : CopyPuzzleFrontend.viewButtonAction(input),
+          puzzle.t === 'not-found' ? null : CopyPuzzleFrontend.viewButtonAction(input),
         ]}
       />
 

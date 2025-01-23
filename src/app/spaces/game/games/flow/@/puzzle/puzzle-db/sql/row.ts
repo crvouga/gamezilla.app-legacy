@@ -26,7 +26,7 @@ const ensureNumber = (x: string | number): number => {
 }
 
 const rowToPuzzle = (row: Row): Puzzle | null => {
-  const flowPuzzleId = PuzzleId.is(row.id) ? row.id : null
+  const puzzleId = PuzzleId.is(row.id) ? row.id : null
   const puzzleName = PuzzleName.is(row.flow_puzzle_name) ? row.flow_puzzle_name : null
 
   const rowFlow = typeof row.flow === 'string' ? JSON.parse(row.flow) : row.flow
@@ -41,9 +41,9 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
   const parsedFlowSolutions = p.arr(p.or(Variant.Model, Flow.Model)).parse(row.flow_solutions)
   const solutions = Result.unwrapOr(parsedFlowSolutions, [])
 
-  if (flowPuzzleId && puzzleName && flow && createdAt && createdBy && lastUpdatedAt && lastUpdatedBy) {
+  if (puzzleId && puzzleName && flow && createdAt && createdBy && lastUpdatedAt && lastUpdatedBy) {
     return {
-      id: flowPuzzleId,
+      id: puzzleId,
       name: puzzleName,
       flow: flow,
       createdAt,

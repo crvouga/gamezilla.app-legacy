@@ -18,7 +18,7 @@ const Fixtures = async function* () {
     yield {
       ...f,
       puzzleWithEmptySolutions,
-      withSolutions: WithSolutions(f.flowPuzzleDb),
+      withSolutions: WithSolutions(f.puzzleDb),
     }
   }
 }
@@ -26,9 +26,9 @@ const Fixtures = async function* () {
 describe(import.meta.file, () => {
   it.todo('should assoc solutions before put', async () => {
     for await (const f of await Fixtures()) {
-      const before = Result.unwrap(await f.flowPuzzleDb.get(f.puzzleWithEmptySolutions.id))
+      const before = Result.unwrap(await f.puzzleDb.get(f.puzzleWithEmptySolutions.id))
       await f.withSolutions.put(f.puzzleWithEmptySolutions)
-      const after = Result.unwrap(await f.flowPuzzleDb.get(f.puzzleWithEmptySolutions.id))
+      const after = Result.unwrap(await f.puzzleDb.get(f.puzzleWithEmptySolutions.id))
       expect((before?.solutions.length ?? 0) === 0).toBe(true)
       expect((after?.solutions.length ?? 0) > 0).toBe(true)
     }
@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
   it.todo('should assoc solutions before get', async () => {
     for await (const f of await Fixtures()) {
       const before = Result.unwrap(await f.withSolutions.get(f.puzzleWithEmptySolutions.id))
-      await f.flowPuzzleDb.put(f.puzzleWithEmptySolutions)
+      await f.puzzleDb.put(f.puzzleWithEmptySolutions)
       const after = Result.unwrap(await f.withSolutions.get(f.puzzleWithEmptySolutions.id))
       expect((before?.solutions.length ?? 0) === 0).toBe(true)
       expect((after?.solutions.length ?? 0) > 0).toBe(true)
@@ -47,7 +47,7 @@ describe(import.meta.file, () => {
   it.todo('should assoc solutions before list', async () => {
     for await (const f of await Fixtures()) {
       const before = Result.unwrap(
-        await f.flowPuzzleDb.query({
+        await f.puzzleDb.query({
           where: {
             puzzleId: {
               in: [f.puzzleWithEmptySolutions.id],
@@ -62,7 +62,7 @@ describe(import.meta.file, () => {
           },
         }),
       )
-      await f.flowPuzzleDb.put(f.puzzleWithEmptySolutions)
+      await f.puzzleDb.put(f.puzzleWithEmptySolutions)
       const after = Result.unwrap(
         await f.withSolutions.query({
           where: {

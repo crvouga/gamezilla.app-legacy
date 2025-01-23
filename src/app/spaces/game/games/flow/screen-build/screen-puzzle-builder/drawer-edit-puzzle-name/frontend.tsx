@@ -119,7 +119,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
         msgCmd: [playSound(APP_SOUND.tap)],
         async eff(dispatch) {
           const result = await patchName({
-            flowPuzzleId: puzzleBuilder.puzzle.id,
+            puzzleId: puzzleBuilder.puzzle.id,
             newName,
             userId: input.ctx.currentUserId,
             puzzleDb: input.ctx.puzzleDb,
@@ -141,7 +141,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
           withEventId({
             t: 'user-edited-puzzle-name',
             edited: input.msg.result,
-            flowPuzzleId: puzzleBuilder.puzzle.id,
+            puzzleId: puzzleBuilder.puzzle.id,
             newName: input.model.puzzleEditNameDraft,
             userId: input.ctx.currentUserId,
           }),
@@ -155,10 +155,10 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
       const puzzlesNew = {
         ...input.ctx.puzzles,
       }
-      const puzzle = puzzlesNew[input.msgSpace.flowPuzzleId]
+      const puzzle = puzzlesNew[input.msgSpace.puzzleId]
 
       if (puzzle && PuzzleName.is(input.msgSpace.newName)) {
-        puzzlesNew[input.msgSpace.flowPuzzleId] = {
+        puzzlesNew[input.msgSpace.puzzleId] = {
           ...puzzle,
           name: input.msgSpace.newName,
         }
@@ -187,8 +187,8 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const patchName = async (input: { flowPuzzleId: PuzzleId; newName: string; userId: UserId; puzzleDb: IPuzzleDb }) => {
-  const result = await input.puzzleDb.get(input.flowPuzzleId)
+const patchName = async (input: { puzzleId: PuzzleId; newName: string; userId: UserId; puzzleDb: IPuzzleDb }) => {
+  const result = await input.puzzleDb.get(input.puzzleId)
 
   if (isErr(result)) {
     return result
