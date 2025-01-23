@@ -1,4 +1,4 @@
-import { Ok } from '~/@/result'
+import { Err, Ok } from '~/@/result'
 import type { p } from '~/@/parser'
 import type { IDbConnKv } from './interface'
 import { ILogger, Logger } from '../logger'
@@ -15,15 +15,21 @@ export const DbConnKv = (config: Config): IDbConnKv => {
   return {
     async get(key, parser) {
       logger?.debug(`get: key=${key}`)
+      if (!hashMap.has(key)) {
+        return Ok(null)
+      }
+
       const got = hashMap.get(key) ?? null
 
       const parsed = parser.parse(got)
 
       switch (parsed.t) {
-        case 'err':
-          return Ok(null)
-        case 'ok':
+        case 'err': {
+          return Err(parsed.error.join(', '))
+        }
+        case 'ok': {
           return Ok(parsed.value)
+        }
       }
     },
 

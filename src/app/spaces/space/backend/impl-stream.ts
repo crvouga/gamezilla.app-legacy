@@ -1,19 +1,19 @@
-import { isErr, Ok, unwrapOr } from '~/@/result'
+import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
 import { EventSourced } from '~/@/event-sourced'
 import { WithEventMeta } from '~/@/event-sourced/event'
-import { IRuntime } from '~/@/runtime'
-import { SpaceId } from '~/app/@/data/space-id'
-import { DbConnKv, type IDbConnKv } from '~/@/db-conn-kv'
 import { ILogger, Logger } from '~/@/logger'
+import { isErr, Ok, unwrapOr } from '~/@/result'
+import { IRuntime } from '~/@/runtime'
 import { EventId } from '~/@/stream/event-id'
 import { IStream } from '~/@/stream/interface'
+import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space'
 import { SpaceEvent } from '../space-event'
 import { SpaceState } from '../space-state'
 import * as ImplDbConnKv from './impl-db-conn-kv'
-import type { ISpaceBackend } from './interface'
+import type { ISpaceBackend, SpaceBackendConfig } from './interface'
 
-export type Config = {
+export type Config = SpaceBackendConfig & {
   t: 'stream'
   dbConnKv: IDbConnKv
   stream: IStream<WithEventMeta<SpaceEvent>>

@@ -2,7 +2,7 @@ import { EventId, WithEventMeta } from '~/@/event-sourced/event'
 import { p } from '~/@/parser'
 import type { UserId } from '~/app/@/data/user-id'
 import { Space } from '~/app/spaces/@/space/space'
-import * as GameGame from '../../game/games/space'
+import * as GameSpace from '../../game/games/space'
 import * as Game from '../../game/games/types'
 import { SpaceEvent } from '../space-event'
 
@@ -106,13 +106,13 @@ export const updateSpace = (state: State, msgSpace: WithEventMeta<SpaceEvent>): 
         case 'game': {
           const game =
             state.game ??
-            GameGame.initSpace({
+            GameSpace.initSpace({
               gameName: msgSpace.c.t,
               ctx: {
                 space: state,
               },
             })
-          const gameNew = GameGame.updateSpace({
+          const gameNew = GameSpace.updateSpace({
             ctx: {
               space: state,
             },
@@ -143,7 +143,7 @@ export const updateSpace = (state: State, msgSpace: WithEventMeta<SpaceEvent>): 
           return {
             ...state,
             latestEventId: msgSpace.eventId,
-            game: msgSpace.game ? GameGame.initSpace({ gameName: msgSpace.game, ctx: { space: state } }) : null,
+            game: msgSpace.game ? GameSpace.initSpace({ gameName: msgSpace.game, ctx: { space: state } }) : null,
           }
         }
 

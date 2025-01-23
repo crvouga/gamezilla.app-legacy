@@ -1,16 +1,12 @@
 import { EventId, WithEventId } from '~/@/event-sourced/event'
+import { Pagination } from '~/@/query/query'
 import { Result } from '~/@/result'
+import { Sub } from '~/@/sub'
 import { Paginated } from '~/app/@/data/pagination'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Space } from '../space'
 import { SpaceEvent } from '../space-event'
-import { Pagination } from '~/@/query/query'
-
-export type SpaceBackendWhereAnd = {
-  equalsSpaceId?: SpaceId
-  equalsUserId?: UserId
-}
 
 export type ISpaceBackend = {
   list: (input: {
@@ -29,4 +25,16 @@ export type ISpaceBackend = {
   update: (spaceEvent: WithEventId<SpaceEvent>) => Promise<Result<string, null>>
 
   merge: (space: Space.Model) => Promise<Result<string, null>>
+}
+
+export type SpaceBackendWhereAnd = {
+  equalsSpaceId?: SpaceId
+  equalsUserId?: UserId
+}
+
+export type SpaceBackendConfig = {
+  /**
+   * This is used for testing purposes only. Testing invalid data
+   */
+  _dangerouslyOverrideModel?: Sub<Space.Model>
 }
