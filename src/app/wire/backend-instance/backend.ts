@@ -10,7 +10,7 @@ import { rpcContract, type MsgBackend, type BackendCtx, type BackendModule } fro
 
 const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
   const backendInstanceDb = BackendInstanceDb({
-    t: 'db-conn-kv',
+    t: 'key-value-db',
     keyValueDb: input.ctx.keyValueDb,
   })
 

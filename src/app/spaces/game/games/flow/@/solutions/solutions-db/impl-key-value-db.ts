@@ -1,4 +1,4 @@
-import { KeyValueDb, IKeyValueDb } from '~/@/db-conn-kv'
+import { KeyValueDb, IKeyValueDb } from '~/@/key-value-db'
 import { p } from '~/@/parser'
 import { isErr, Ok } from '~/@/result'
 import { Solution } from '../solution'
@@ -6,7 +6,7 @@ import { ISolutionsDb } from './interface'
 import { Solutions } from '../solutions'
 
 export type Config = {
-  t: 'db-conn-kv'
+  t: 'key-value-db'
   keyValueDb: IKeyValueDb
 }
 

@@ -1,4 +1,4 @@
-import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import { type IDbConnSql } from '~/@/db-conn-sql'
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
 import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
@@ -32,7 +32,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const pubSub = await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() })
 
-  const profileCache = await ProfileCache({ t: 'db-conn-kv', keyValueDb: await KeyValueDb({ t: 'in-memory' }) })
+  const profileCache = await ProfileCache({ t: 'key-value-db', keyValueDb: await KeyValueDb({ t: 'in-memory' }) })
 
   const ctx: AppBackendCtx = {
     env: 'test',

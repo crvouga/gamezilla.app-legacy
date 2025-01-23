@@ -34,7 +34,7 @@ export const initCtx = async <TMsgToFrontend, TMsgToBackend>(input: {
     transport: input.transport,
     backendInstance: await BackendInstanceBackend.initCtx({ ctx: input.ctx }),
     wireSessionDb: await WireSessionDb({
-      t: 'cached-db-conn-kv',
+      t: 'cached-key-value-db',
       keyValueDb: input.ctx.keyValueDb,
       pubSubTopicBased: input.ctx.pubSub,
       logger,

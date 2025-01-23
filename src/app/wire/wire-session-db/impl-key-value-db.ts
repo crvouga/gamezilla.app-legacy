@@ -1,4 +1,4 @@
-import { KeyValueDb, IKeyValueDb } from '~/@/db-conn-kv'
+import { KeyValueDb, IKeyValueDb } from '~/@/key-value-db'
 import { ILogger } from '~/@/logger'
 import { p } from '~/@/parser'
 import { isErr, unwrapOr } from '~/@/result'
@@ -7,7 +7,7 @@ import { WireSession } from '../wire-session'
 import type { IWireSessionDb } from './interface'
 
 export type Config = {
-  t: 'db-conn-kv'
+  t: 'key-value-db'
   keyValueDb: IKeyValueDb
   logger: ILogger
 }

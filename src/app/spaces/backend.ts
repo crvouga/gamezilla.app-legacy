@@ -24,7 +24,7 @@ const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
   return {
     ...input.ctx,
     spacesCore: await SpacesCoreAsync({
-      t: 'db-conn-kv',
+      t: 'key-value-db',
       keyValueDb: input.ctx.keyValueDb,
       logger: input.ctx.logger,
       runtime: input.ctx.runtime,

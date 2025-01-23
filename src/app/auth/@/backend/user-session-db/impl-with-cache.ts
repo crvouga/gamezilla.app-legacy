@@ -2,7 +2,7 @@ import { Result, isOk } from '~/@/result'
 import { p } from '~/@/parser'
 import { SessionId } from '~/app/@/data/session-id'
 import { UserId } from '~/app/@/data/user-id'
-import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { IUserSessionDb } from './interface'
 
 //

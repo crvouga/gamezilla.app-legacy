@@ -1,4 +1,4 @@
-import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import { EventSourced } from '~/@/event-sourced'
 import { WithEventMeta } from '~/@/event-sourced/event'
 import { ILogger, Logger } from '~/@/logger'
@@ -11,7 +11,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space'
 import { MsgSpace } from '../space-msg'
 import { SpaceState } from '../space-state'
-import * as ImplKeyValueDb from './impl-db-conn-kv'
+import * as ImplKeyValueDb from './impl-key-value-db'
 import type { ISpacesCoreAsync, SpacesCoreConfig } from './interface'
 
 export type Config = SpacesCoreConfig & {
@@ -24,9 +24,9 @@ export type Config = SpacesCoreConfig & {
 
 export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync> => {
   const implDbConnKb = await ImplKeyValueDb.SpacesCoreAsync({
-    t: 'db-conn-kv',
+    t: 'key-value-db',
     keyValueDb: config.keyValueDb,
-    logger: Logger.prefix('db-conn-kv', config.logger),
+    logger: Logger.prefix('key-value-db', config.logger),
     runtime: config.runtime,
     writeThrottle: TimeSpan.milliseconds(0),
   })

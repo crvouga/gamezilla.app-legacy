@@ -5,7 +5,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { BackendInstance } from '../backend-instance'
 import { Config } from './impl'
-import { BackendInstanceDb } from './impl-db-conn-kv'
+import { BackendInstanceDb } from './impl-key-value-db'
 
 const Fixture = (config: Config) => {
   const backendInstanceDb = BackendInstanceDb(config)
@@ -19,7 +19,7 @@ const Fixtures = async () => {
 
   const configs: Config[] = [
     {
-      t: 'db-conn-kv',
+      t: 'key-value-db',
       keyValueDb: f.keyValueDb,
     },
   ]

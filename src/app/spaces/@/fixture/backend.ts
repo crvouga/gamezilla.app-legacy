@@ -62,7 +62,7 @@ export const FixtureSpaceBackend = async () => {
   const backendCtx: BackendCtx = {
     ...f.ctx,
     spacesCore: await SpacesCoreAsync({
-      t: 'db-conn-kv',
+      t: 'key-value-db',
       keyValueDb: f.ctx.keyValueDb,
       logger: f.ctx.logger,
       runtime: f.ctx.runtime,

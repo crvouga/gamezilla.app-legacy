@@ -1,4 +1,4 @@
-import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import { EventSourced } from '~/@/event-sourced'
 import { pipe } from '~/@/function/pipe'
 import { LRUCache } from '~/@/least-recently-used-cache'
@@ -13,7 +13,7 @@ import { Space } from '../space'
 import type { ISpacesCoreAsync, SpacesCoreConfig } from './interface'
 
 export type Config = SpacesCoreConfig & {
-  t: 'db-conn-kv'
+  t: 'key-value-db'
   keyValueDb: IKeyValueDb
   logger: ILogger
   runtime: IRuntime
@@ -22,7 +22,7 @@ export type Config = SpacesCoreConfig & {
 
 export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync> => {
   const { runtime } = config
-  const logger = Logger.prefix('db-conn-kv', config.logger)
+  const logger = Logger.prefix('key-value-db', config.logger)
 
   //
   //

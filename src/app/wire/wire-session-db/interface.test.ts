@@ -15,12 +15,12 @@ const Fixtures = async () => {
   const logger = Logger({ t: 'noop' })
   const configs: Config[] = [
     {
-      t: 'db-conn-kv',
+      t: 'key-value-db',
       keyValueDb: testEnv.keyValueDb,
       logger,
     },
     {
-      t: 'cached-db-conn-kv',
+      t: 'cached-key-value-db',
       keyValueDb: testEnv.keyValueDb,
       logger,
       pubSubTopicBased: testEnv.pubSubTopicBased,

@@ -1,6 +1,6 @@
 import { isErr, Ok, unwrapOr } from '~/@/result'
 import { p } from '~/@/parser'
-import { KeyValueDb, IKeyValueDb } from '../../../../../@/db-conn-kv'
+import { KeyValueDb, IKeyValueDb } from '../../../../../@/key-value-db'
 import { BackendInstance } from '../backend-instance'
 import { BackendInstanceId } from '../backend-instance-id'
 import { IBackendInstanceDb } from './interface'
@@ -8,7 +8,7 @@ import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {
-  t: 'db-conn-kv'
+  t: 'key-value-db'
   keyValueDb: IKeyValueDb
 }
 

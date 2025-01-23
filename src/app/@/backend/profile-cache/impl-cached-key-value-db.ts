@@ -1,14 +1,14 @@
-import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import { pipe } from '~/@/function/pipe'
 import { LRUCache } from '~/@/least-recently-used-cache'
 import { IRuntime } from '~/@/runtime'
 import { TimeSpan } from '~/@/time/time-span'
 import { ILogger, Logger } from '../../../../@/logger'
-import * as ImplKeyValueDb from './impl-db-conn-kv'
+import * as ImplKeyValueDb from './impl-key-value-db'
 import type { IProfileCache } from './interface'
 
 export type Config = {
-  t: 'cached-db-conn-kv'
+  t: 'cached-key-value-db'
   keyValueDb: IKeyValueDb
   logger: ILogger
   runtime: IRuntime
@@ -17,7 +17,7 @@ export type Config = {
 export const ProfileCache = async (config: Config): Promise<IProfileCache> => {
   const logger = Logger.prefix('profile-cache', config.logger)
   return ImplKeyValueDb.ProfileCache({
-    t: 'db-conn-kv',
+    t: 'key-value-db',
     keyValueDb: await pipe(
       config.keyValueDb,
       async (keyValueDb) =>

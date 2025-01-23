@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
-import { KeyValueDb } from '~/@/db-conn-kv'
+import { KeyValueDb } from '~/@/key-value-db'
 import { EventSourced } from '~/@/event-sourced'
 import { EventMeta, withEventId } from '~/@/event-sourced/event'
 import { Logger } from '~/@/logger'
@@ -40,7 +40,7 @@ const Fixtures = async () => {
   const configs: Config[] = []
 
   configs.push({
-    t: 'db-conn-kv',
+    t: 'key-value-db',
     keyValueDb: await KeyValueDb({ t: 'hash-map' }),
     // keyValueDb: f.keyValueDb,
     logger: Logger({ t: 'noop' }),

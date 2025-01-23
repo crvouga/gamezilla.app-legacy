@@ -1,4 +1,4 @@
-import { KeyValueDb } from '~/@/db-conn-kv'
+import { KeyValueDb } from '~/@/key-value-db'
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
 import { HttpServer } from '~/@/http-server'
 import { Logger } from '~/@/logger'
@@ -99,7 +99,7 @@ const initCtx = async (): Promise<BackendCtx> => {
   )
 
   const profileCache = await ProfileCache({
-    t: 'cached-db-conn-kv',
+    t: 'cached-key-value-db',
     keyValueDb,
     logger,
     runtime,

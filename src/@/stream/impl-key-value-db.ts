@@ -1,12 +1,12 @@
 import { Err, Ok, unwrapOr } from '~/@/result'
 import { p } from '~/@/parser'
 import { Parser } from '~/@/parser/parser'
-import { KeyValueDb, IKeyValueDb } from '../db-conn-kv'
+import { KeyValueDb, IKeyValueDb } from '../key-value-db'
 import { EventId } from './event-id'
 import { IStream } from './interface'
 
 export type Config<T> = {
-  t: 'db-conn-kv'
+  t: 'key-value-db'
   keyValueDb: IKeyValueDb
   parser: Parser<T>
 }

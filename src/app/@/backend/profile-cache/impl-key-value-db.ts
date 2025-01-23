@@ -1,10 +1,10 @@
 import { Ok, isErr } from '~/@/result'
 import { Profile } from '~/app/@/data/profile'
-import { KeyValueDb, type IKeyValueDb } from '~/@/db-conn-kv'
+import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { IProfileCache } from './interface'
 
 export type Config = {
-  t: 'db-conn-kv'
+  t: 'key-value-db'
   keyValueDb: IKeyValueDb
 }
 

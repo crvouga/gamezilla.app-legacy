@@ -23,7 +23,7 @@ export type Config =
   | WithDistributedInvalidations.Config
 
 export const KeyValueDb = async (configInput: Config): Promise<IKeyValueDb> => {
-  const logger = Logger.prefix('db-conn-kv', configInput.logger ?? Logger({ t: 'noop' }))
+  const logger = Logger.prefix('key-value-db', configInput.logger ?? Logger({ t: 'noop' }))
   const config: Config = { ...configInput, logger }
   switch (config.t) {
     case 'hash-map': {

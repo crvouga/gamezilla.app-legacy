@@ -4,7 +4,7 @@ import { p } from '~/@/parser'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { NonEmpty } from '../array/non-empty'
-import { KeyValueDb } from '../db-conn-kv'
+import { KeyValueDb } from '../key-value-db'
 import { Logger } from '../logger'
 import { EventId } from './event-id'
 import { Config, Stream } from './impl'
@@ -34,7 +34,7 @@ const randomMyEvent = (prevEvent: MyEvent | null): MyEvent => ({
 const Fixtures = async () => {
   const configs: Config<MyEvent>[] = [
     {
-      t: 'db-conn-kv',
+      t: 'key-value-db',
       keyValueDb: await KeyValueDb({
         t: 'hash-map',
         map: new Map(),

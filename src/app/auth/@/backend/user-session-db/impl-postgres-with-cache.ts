@@ -1,5 +1,5 @@
 import { pipe } from '~/@/function/pipe'
-import { KeyValueDb, IKeyValueDb } from '~/@/db-conn-kv'
+import { KeyValueDb, IKeyValueDb } from '~/@/key-value-db'
 import { IDbConnSql } from '~/@/db-conn-sql'
 import { LRUCache } from '~/@/least-recently-used-cache'
 import { ILogger } from '~/@/logger'
