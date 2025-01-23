@@ -5,7 +5,7 @@ import { EventSourced } from '~/@/event-sourced'
 import { EventMeta, withEventId } from '~/@/event-sourced/event'
 import { Logger } from '~/@/logger'
 import { p } from '~/@/parser'
-import { Ok, unwrap } from '~/@/result'
+import { isErr, Ok, unwrap } from '~/@/result'
 import { Runtime } from '~/@/runtime'
 import { Stream } from '~/@/stream/impl'
 import { PubSub } from '~/@/sub'
@@ -15,6 +15,7 @@ import { Space } from '../space'
 import { SpaceEvent } from '../space-event'
 import { SpaceState } from '../space-state'
 import { Config, SpaceBackend } from './impl'
+import { TimeSpan } from '~/@/time/time-span'
 
 const Fixture = async (config: Config) => {
   const _dangerouslyOverrideModel = PubSub.create<Space.Model>()
@@ -34,13 +35,17 @@ const Fixture = async (config: Config) => {
 }
 
 const Fixtures = async () => {
+  // const f = await FixtureAppBackend()
+
   const configs: Config[] = []
 
   configs.push({
     t: 'db-conn-kv',
     dbConnKv: await DbConnKv({ t: 'hash-map' }),
+    // dbConnKv: f.dbConnKv,
     logger: Logger({ t: 'noop' }),
     runtime: Runtime({ t: 'noop' }),
+    writeThrottle: TimeSpan.milliseconds(0),
   })
 
   const TEST = false
@@ -160,14 +165,17 @@ describe(import.meta.file, () => {
     }
   })
 
-  test('ignore invalid data', async () => {
+  test.only('error when db has invalid data', async () => {
     for (const f of await Fixtures()) {
       unwrap(await f.spaceBackend.upsert(f.space))
       const before = await f.spaceBackend.get(f.spaceId)
-      await f._dangerouslyOverrideModel.pub(toInvalidSpaceModel(f.space))
+      const invalid = toInvalidSpaceModel(f.space)
+      await f._dangerouslyOverrideModel.pub(invalid)
+      await new Promise((resolve) => setTimeout(resolve, 5))
       const after = await f.spaceBackend.get(f.spaceId)
       expect(before).toEqual(Ok(f.space))
-      expect(after).toEqual(Ok(null))
+      expect(after).not.toEqual(Ok(f.space))
+      expect(isErr(after)).toEqual(true)
       expect(before).toEqual(Ok(f.space))
     }
   })
@@ -188,7 +196,7 @@ const toInvalidSpaceModel = (space: Space.Model) => {
     latestEventId: undefined,
     spaceId: 'spaceId' in latestSnapshot ? latestSnapshot.spaceId : undefined,
     type: 'started',
-    users: undefined,
+    users: {},
     visibility: undefined,
   }
 

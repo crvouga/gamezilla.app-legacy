@@ -50,7 +50,7 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
 
         switch (parsed.t) {
           case 'err': {
-            const errorStr = JSON.stringify(parsed.error, null, 2)
+            const errorStr = parsed.error.map((e) => e.message).join(', ')
 
             logger.error(`get: not a value: ${key} ${errorStr}`)
 
@@ -61,8 +61,10 @@ export const DbConnKv = async (config: Config): Promise<IDbConnKv> => {
           }
         }
       } catch (e) {
-        logger.error(`get: ${key} ${String(e)}`)
-        return Err(String(e))
+        const errorStr = `Caught error: get: ${String(e)}`
+        logger.error(errorStr)
+
+        return Err(errorStr)
       }
     },
 

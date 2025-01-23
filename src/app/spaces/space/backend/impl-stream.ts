@@ -6,6 +6,7 @@ import { isErr, Ok, unwrapOr } from '~/@/result'
 import { IRuntime } from '~/@/runtime'
 import { EventId } from '~/@/stream/event-id'
 import { IStream } from '~/@/stream/interface'
+import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space'
 import { SpaceEvent } from '../space-event'
@@ -27,6 +28,7 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
     dbConnKv: config.dbConnKv,
     logger: Logger.prefix('db-conn-kv', config.logger),
     runtime: config.runtime,
+    writeThrottle: TimeSpan.milliseconds(0),
   })
 
   const snapshots = DbConnKv.withNamespace<SpaceId, SpaceState.State>({

@@ -25,7 +25,7 @@ export const DbConnKv = (config: Config): IDbConnKv => {
 
       switch (parsed.t) {
         case 'err': {
-          return Err(parsed.error.join(', '))
+          return Err(parsed.error.map((e) => e.message).join(', '))
         }
         case 'ok': {
           return Ok(parsed.value)

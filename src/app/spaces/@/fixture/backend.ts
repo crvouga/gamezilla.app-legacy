@@ -13,6 +13,7 @@ import { GamesBackend } from '../../game/games/backend'
 import { SpacesBackend } from '../../backend'
 import { BackendCtx } from '../../types'
 import { SpaceBackendCtx } from '../backend/ctx'
+import { TimeSpan } from '~/@/time/time-span'
 
 export const FixtureSpaceBackend = async () => {
   const f = await FixtureAppBackend()
@@ -65,6 +66,7 @@ export const FixtureSpaceBackend = async () => {
       dbConnKv: f.ctx.dbConnKv,
       logger: f.ctx.logger,
       runtime: f.ctx.runtime,
+      writeThrottle: TimeSpan.milliseconds(0),
     }),
     games: await GamesBackend.initCtx({
       ...f.ctx,

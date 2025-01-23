@@ -17,6 +17,7 @@ export type Config = SpaceBackendConfig & {
   dbConnKv: IDbConnKv
   logger: ILogger
   runtime: IRuntime
+  writeThrottle: TimeSpan
 }
 
 export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
@@ -29,7 +30,7 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
 
   const verifiedKeys = new Set<string>()
   const cache = await DbConnKv({ t: 'hash-map', map: LRUCache({ maxCapacity: 10_000 }) })
-  const throttle = TimeSpan.seconds(10)
+  const throttle = config.writeThrottle
   const dbConnKv = await pipe(
     config.dbConnKv,
     async (dbConnKv) => DbConnKv({ t: 'with-throttled-writes', logger, dbConnKv, throttle, runtime }),
@@ -58,16 +59,16 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
   //
   //
 
-  config._dangerouslyOverrideModel?.sub((model) => {
-    verifiedKeys.clear()
+  config._dangerouslyOverrideModel?.sub(async (model) => {
     const spaceId = Space.toSpaceId(model)
     if (!spaceId) {
       config.logger.error('Failed to dangerously set model. Failed to derive spaceId from model')
       return
     }
-    cache.zap(spaceId)
     config.logger.debug(`Dangerously setting model for spaceId=${spaceId}`)
-    spacesBySpaceId.set(spaceId, model)
+
+    verifiedKeys.clear()
+    await Promise.all([cache.zap(spaceId), config.dbConnKv.zap(spaceId), upsert(model)])
   })
 
   //

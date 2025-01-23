@@ -10,6 +10,7 @@ import { ListSpacesBackend } from './list-spaces/backend'
 import { StartSpaceBackend } from './start-space/backend'
 import { SyncBackend } from './sync/backend'
 import type { BackendCtx, BackendModule } from './types'
+import { TimeSpan } from '~/@/time/time-span'
 
 //
 //
@@ -28,6 +29,7 @@ const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
       dbConnKv: input.ctx.dbConnKv,
       logger: input.ctx.logger,
       runtime: input.ctx.runtime,
+      writeThrottle: TimeSpan.seconds(10),
     }),
     // spaceBackend: await SpaceBackend({
     //   t: 'stream',
