@@ -22,7 +22,7 @@ const main = async () => {
     update: AppFrontend.update,
     subscriptions: AppFrontend.subscriptions,
     render: (input) => render(<AppFrontend.View {...input} />),
-    crash: (input) => console.error('Crash!', input.error),
+    crash: (input) => console.error('Crash!', input),
     // debugger: DebuggerConsole,
     debugger: localStorage.getItem(DEBUG_KEY) ? DebuggerReduxDevTools : undefined,
   })
