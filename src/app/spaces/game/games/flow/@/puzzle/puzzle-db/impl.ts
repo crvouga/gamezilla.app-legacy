@@ -1,9 +1,9 @@
 import * as ImplHashMap from './impl-hash-map'
 import * as ImplDbConnSql from './impl-db-conn-sql'
 import type { IPuzzleDb } from './interface'
-import * as ImplWithEnsureTables from './with-sql-tables'
+import * as ImplWithSqlTables from './with-sql-tables'
 
-export type Config = ImplHashMap.Config | ImplDbConnSql.Config | ImplWithEnsureTables.Config
+export type Config = ImplHashMap.Config | ImplDbConnSql.Config | ImplWithSqlTables.Config
 
 export const PuzzleDb = (config: Config): IPuzzleDb => {
   switch (config.t) {
@@ -14,7 +14,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       return ImplDbConnSql.PuzzleDb(config)
     }
     case 'with-sql-tables': {
-      return ImplWithEnsureTables.PuzzleDb(config)
+      return ImplWithSqlTables.PuzzleDb(config)
     }
   }
 }
