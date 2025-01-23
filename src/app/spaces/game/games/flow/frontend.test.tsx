@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
         msgSpace: withEventMeta({
           t: 'user-changed-mode',
           userId: f.ctx.currentUserId,
-          mode: 'builder',
+          mode: 'build',
         }),
       },
     ])

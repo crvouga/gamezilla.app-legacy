@@ -14,7 +14,6 @@ import type { Variant } from '../../variant'
 
 export type Ctx = {
   flow: Variant.Model
-  solutions: Solutions
 }
 
 export const initCtx = (input: Ctx): Ctx => {
@@ -193,7 +192,10 @@ export const toFlow = (input: { model: Model; flow: Variant.Model }): Variant.Mo
 export const viewUseHintAction = (input: {
   model: Model
   dispatch: (msg: Msg) => void
-  ctx: AppFrontendCtx & Ctx
+  ctx: AppFrontendCtx &
+    Ctx & {
+      solutions: Solutions
+    }
   disabled: boolean
 }): BottomButtonInput => {
   return {

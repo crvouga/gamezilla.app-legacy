@@ -19,13 +19,13 @@ import { IPuzzleDb, PuzzleDb } from './@/puzzle/puzzle-db'
 import { PuzzleDbQueryTypes } from './@/puzzle/puzzle-db-query'
 import { PuzzleDbQueryFrontend } from './@/puzzle/puzzle-db-query/frontend'
 import { Solutions } from './@/solutions/solutions'
-import { BuilderFrontend } from './builder/frontend'
-import { PlayFrontend } from './play/frontend'
+import { BuildFrontend } from './screen-build/frontend'
+import { PlayFrontend } from './screen-play/frontend'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgToBackend } from './types'
 
 const init: FrontendModule['init'] = {
-  builder: BuilderFrontend.init,
-  play: PlayFrontend.init,
+  screenBuild: BuildFrontend.init,
+  screenPlay: PlayFrontend.init,
   puzzles: {},
   packs: {},
   solutions: Solutions.init,
@@ -167,43 +167,43 @@ const updateModePlay: FrontendModule['update'] = (input) => {
 
   const updated = PlayFrontend.update({
     ctx,
-    modelSpace: input.modelSpace.play,
-    model: input.model.play,
+    modelSpace: input.modelSpace.screenPlay,
+    model: input.model.screenPlay,
     msgCmd: null,
     msgEvt: input.msgEvt,
-    msgBackend: input.msgBackend?.t === 'play' ? input.msgBackend.c : null,
-    msgSpace: input.msgSpace?.t === 'play' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
-    msg: input.msg?.t === 'play' ? input.msg.c : null,
+    msgBackend: input.msgBackend?.t === 'got-msg-play' ? input.msgBackend.c : null,
+    msgSpace: input.msgSpace?.t === 'got-msg-play' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
+    msg: input.msg?.t === 'got-msg-play' ? input.msg.c : null,
   })
 
   return {
-    model: { ...input.model, play: updated.model },
-    eff: Eff.tag('play', updated.eff),
+    model: { ...input.model, screenPlay: updated.model },
+    eff: Eff.tag('got-msg-play', updated.eff),
     msgEvt: [],
-    msgCmd: FlowFrontendCmd.tag('play', updated.msgCmd),
-    msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'play' })),
+    msgCmd: FlowFrontendCmd.tag('got-msg-play', updated.msgCmd),
+    msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'got-msg-play' })),
   }
 }
 
 const updateModeBuilder: FrontendModule['update'] = (input) => {
   const ctx = toFlowFrontendCtx(input)
 
-  const updated = BuilderFrontend.update({
+  const updated = BuildFrontend.update({
     ctx,
-    modelSpace: input.modelSpace.builder,
-    model: input.model.builder,
+    modelSpace: input.modelSpace.screenBuild,
+    model: input.model.screenBuild,
     msgCmd: null,
     msgEvt: input.msgEvt,
-    msgBackend: input.msgBackend?.t === 'builder' ? input.msgBackend.c : null,
-    msgSpace: input.msgSpace?.t === 'builder' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
-    msg: input.msg?.t === 'builder' ? input.msg.c : null,
+    msgBackend: input.msgBackend?.t === 'got-msg-build' ? input.msgBackend.c : null,
+    msgSpace: input.msgSpace?.t === 'got-msg-build' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
+    msg: input.msg?.t === 'got-msg-build' ? input.msg.c : null,
   })
 
   return {
-    model: { ...input.model, builder: updated.model },
-    eff: Eff.tag('builder', updated.eff),
-    msgCmd: FlowFrontendCmd.tag('builder', updated.msgCmd),
-    msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'builder' })),
+    model: { ...input.model, screenBuild: updated.model },
+    eff: Eff.tag('got-msg-build', updated.eff),
+    msgCmd: FlowFrontendCmd.tag('got-msg-build', updated.msgCmd),
+    msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'got-msg-build' })),
     msgEvt: [],
   }
 }
@@ -214,8 +214,8 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          play: PlayFrontend.init,
-          builder: BuilderFrontend.init,
+          screenPlay: PlayFrontend.init,
+          screenBuild: BuildFrontend.init,
         },
         msgCmd: [playSound(APP_SOUND.navForwardMin)],
         msgEvt: [
@@ -324,19 +324,19 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   switch (input.modelSpace.mode) {
-    case 'builder': {
+    case 'build': {
       const ctx = toFlowFrontendCtx(input)
       return Sub.tag(
-        'builder',
-        BuilderFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.builder, model: input.model.builder }),
+        'got-msg-build',
+        BuildFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.screenBuild, model: input.model.screenBuild }),
       )
     }
 
     case 'play': {
       const ctx = toFlowFrontendCtx(input)
       return Sub.tag(
-        'play',
-        PlayFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.play, model: input.model.play }),
+        'got-msg-play',
+        PlayFrontend.subscriptions({ ctx, modelSpace: input.modelSpace.screenPlay, model: input.model.screenPlay }),
       )
     }
 
@@ -389,7 +389,7 @@ const View: FrontendModule['View'] = (input) => {
                   t: 'got-msg-space',
                   c: {
                     t: 'user-changed-mode',
-                    mode: 'builder',
+                    mode: 'build',
                     userId: input.ctx.currentUserId,
                   },
                 })
@@ -400,13 +400,13 @@ const View: FrontendModule['View'] = (input) => {
       )
     }
 
-    case 'builder': {
+    case 'build': {
       return (
-        <BuilderFrontend.View
+        <BuildFrontend.View
           ctx={ctx}
-          dispatch={(c) => input.dispatch({ t: 'builder', c })}
-          modelSpace={input.modelSpace.builder}
-          model={input.model.builder}
+          dispatch={(c) => input.dispatch({ t: 'got-msg-build', c })}
+          modelSpace={input.modelSpace.screenBuild}
+          model={input.model.screenBuild}
         />
       )
     }
@@ -415,9 +415,9 @@ const View: FrontendModule['View'] = (input) => {
       return (
         <PlayFrontend.View
           ctx={ctx}
-          dispatch={(c) => input.dispatch({ t: 'play', c })}
-          modelSpace={input.modelSpace.play}
-          model={input.model.play}
+          dispatch={(c) => input.dispatch({ t: 'got-msg-play', c })}
+          modelSpace={input.modelSpace.screenPlay}
+          model={input.model.screenPlay}
         />
       )
     }

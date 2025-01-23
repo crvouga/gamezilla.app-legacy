@@ -26,10 +26,9 @@ import { UseHint } from './use-hint'
 
 export type Ctx = UseHint.Ctx & {
   flow: Variant.Model
-  solutions: Solutions
 }
 
-export const initCtx = <TCtx,>(input: { flow: Variant.Model; solutions: Solutions } & TCtx): Ctx & TCtx => {
+export const initCtx = <TCtx,>(input: { flow: Variant.Model } & TCtx): Ctx & TCtx => {
   return {
     ...UseHint.initCtx(input),
     ...input,

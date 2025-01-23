@@ -5,7 +5,7 @@ export type FlowFrontendEvtIn = SpaceFrontendEvt | FlowFrontendEvt
 
 export type FlowFrontendEvt = {
   t: 'flow-evt.user-changed-mode'
-  mode: 'play' | 'builder' | 'none'
+  mode: 'play' | 'build' | 'none'
   userId: UserId
 }
 

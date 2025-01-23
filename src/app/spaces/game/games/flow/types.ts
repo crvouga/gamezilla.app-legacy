@@ -16,8 +16,8 @@ import type { Puzzle } from './@/puzzle/puzzle'
 import { PuzzleDbQueryTypes } from './@/puzzle/puzzle-db-query'
 import type { PuzzleId } from './@/puzzle/puzzle-id'
 import { Solutions } from './@/solutions/solutions'
-import { BuilderTypes } from './builder'
-import { PlayTypes } from './play'
+import { BuildTypes } from './screen-build'
+import { PlayTypes } from './screen-play'
 
 //
 //
@@ -35,8 +35,8 @@ export type ModelFrontend = {
   solutions: Solutions
   puzzleDbQuery: PuzzleDbQueryTypes.ModelFrontend
   packDbQuery: PackDbQueryTypes.ModelFrontend
-  builder: BuilderTypes.ModelFrontend
-  play: PlayTypes.ModelFrontend
+  screenBuild: BuildTypes.ModelFrontend
+  screenPlay: PlayTypes.ModelFrontend
 }
 
 export const ModelBackend = p.obj({
@@ -53,30 +53,30 @@ export type ModelBackend = p.Infer<typeof ModelBackend>
 export type MsgFrontend =
   | GameMainMenu.Msg
   | { t: 'got-msg-space'; c: MsgSpace }
-  | { t: 'builder'; c: BuilderTypes.MsgFrontend }
-  | { t: 'play'; c: PlayTypes.MsgFrontend }
+  | { t: 'got-msg-build'; c: BuildTypes.MsgFrontend }
+  | { t: 'got-msg-play'; c: PlayTypes.MsgFrontend }
   | { t: 'pack-db-query'; c: PackDbQueryTypes.MsgFrontend }
   | { t: 'puzzle-db-query'; c: PuzzleDbQueryTypes.MsgFrontend }
 
 export type MsgBackend =
-  | { t: 'builder'; c: BuilderTypes.MsgBackend }
-  | { t: 'play'; c: PlayTypes.MsgBackend }
+  | { t: 'got-msg-build'; c: BuildTypes.MsgBackend }
+  | { t: 'got-msg-play'; c: PlayTypes.MsgBackend }
   | { t: 'pack-db-query'; c: PackDbQueryTypes.MsgBackend }
   | { t: 'puzzle-db-query'; c: PuzzleDbQueryTypes.MsgBackend }
 
 export type MsgToBackend =
-  | { t: 'builder'; c: BuilderTypes.MsgToBackend }
-  | { t: 'play'; c: PlayTypes.MsgToBackend }
+  | { t: 'got-msg-build'; c: BuildTypes.MsgToBackend }
+  | { t: 'got-msg-play'; c: PlayTypes.MsgToBackend }
   | { t: 'pack-db-query'; c: PackDbQueryTypes.MsgToBackend }
   | { t: 'puzzle-db-query'; c: PuzzleDbQueryTypes.MsgToBackend }
 
 export type MsgToFrontend =
-  | { t: 'builder'; c: BuilderTypes.MsgToFrontend }
-  | { t: 'play'; c: PlayTypes.MsgToFrontend }
+  | { t: 'got-msg-build'; c: BuildTypes.MsgToFrontend }
+  | { t: 'got-msg-play'; c: PlayTypes.MsgToFrontend }
   | { t: 'pack-db-query'; c: PackDbQueryTypes.MsgToFrontend }
   | { t: 'puzzle-db-query'; c: PuzzleDbQueryTypes.MsgToFrontend }
 
-const MODE = ['builder', 'play'] as const
+const MODE = ['build', 'play'] as const
 export const Mode = p.enumeration(MODE)
 export type Mode = p.Infer<typeof Mode>
 
@@ -95,21 +95,20 @@ export const MsgSpace = p.or(
     userId: UserId,
   }),
   p.obj({
-    t: p.l('play'),
+    t: p.l('got-msg-play'),
     c: PlayTypes.MsgSpace,
   }),
   p.obj({
-    t: p.l('builder'),
-    c: BuilderTypes.MsgSpace,
+    t: p.l('got-msg-build'),
+    c: BuildTypes.MsgSpace,
   }),
 )
 export type MsgSpace = p.Infer<typeof MsgSpace>
 
 export const ModelSpace = p.obj({
   mode: p.or(Mode, p.l('none')),
-  play: PlayTypes.ModelSpace,
-  builder: BuilderTypes.ModelSpace,
-  solutions: Solutions,
+  screenPlay: PlayTypes.ModelSpace,
+  screenBuild: BuildTypes.ModelSpace,
 })
 export type ModelSpace = p.Infer<typeof ModelSpace>
 

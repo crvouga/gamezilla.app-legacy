@@ -1,22 +1,16 @@
 import type { WithEventMeta } from '~/@/event-sourced/event'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
-import { Solutions } from './@/solutions/solutions'
-import { BuilderSpace } from './builder/space'
-import { PlaySpace } from './play/space'
-import type { ModelSpace, MsgSpace } from './types'
 import { FlowSpaceCtx } from './@/space/ctx'
+import { BuildSpace } from './screen-build/space'
+import { PlaySpace } from './screen-play/space'
+import type { ModelSpace, MsgSpace } from './types'
 
 const initSpace = (input: { ctx: SpaceCtx }): ModelSpace => {
-  const solutions = Solutions.init
-  const ctx: FlowSpaceCtx = {
-    ...input.ctx,
-    solutions,
-  }
+  const ctx: FlowSpaceCtx = input.ctx
   return {
     mode: 'none',
-    solutions,
-    builder: BuilderSpace.initSpace({ ctx }),
-    play: PlaySpace.initSpace({ ctx }),
+    screenBuild: BuildSpace.initSpace({ ctx }),
+    screenPlay: PlaySpace.initSpace({ ctx }),
   }
 }
 
@@ -25,37 +19,38 @@ const updateSpace = (input: {
   msgSpace: WithEventMeta<MsgSpace>
   modelSpace: ModelSpace
 }): ModelSpace => {
-  const ctx: FlowSpaceCtx = {
-    ...input.ctx,
-    solutions: input.modelSpace.solutions,
-  }
+  const ctx: FlowSpaceCtx = input.ctx
   switch (input.msgSpace.t) {
-    case 'play': {
-      const updated = PlaySpace.updateSpace({ ctx, msgSpace: input.msgSpace.c, modelSpace: input.modelSpace.play })
-
-      switch (updated.event?.t) {
-        case 'user-clicked-exit-mode-button': {
-          return { ...input.modelSpace, play: updated, mode: 'none' }
-        }
-        default: {
-          return { ...input.modelSpace, play: updated }
-        }
-      }
-    }
-
-    case 'builder': {
-      const updated = BuilderSpace.updateSpace({
+    case 'got-msg-play': {
+      const updated = PlaySpace.updateSpace({
         ctx,
         msgSpace: input.msgSpace.c,
-        modelSpace: input.modelSpace.builder,
+        modelSpace: input.modelSpace.screenPlay,
       })
 
       switch (updated.event?.t) {
         case 'user-clicked-exit-mode-button': {
-          return { ...input.modelSpace, builder: updated, mode: 'none' }
+          return { ...input.modelSpace, screenPlay: updated, mode: 'none' }
         }
         default: {
-          return { ...input.modelSpace, builder: updated }
+          return { ...input.modelSpace, screenPlay: updated }
+        }
+      }
+    }
+
+    case 'got-msg-build': {
+      const updated = BuildSpace.updateSpace({
+        ctx,
+        msgSpace: input.msgSpace.c,
+        modelSpace: input.modelSpace.screenBuild,
+      })
+
+      switch (updated.event?.t) {
+        case 'user-clicked-exit-mode-button': {
+          return { ...input.modelSpace, screenBuild: updated, mode: 'none' }
+        }
+        default: {
+          return { ...input.modelSpace, screenBuild: updated }
         }
       }
     }
@@ -68,8 +63,8 @@ const updateSpace = (input: {
       return {
         ...input.modelSpace,
         mode: input.msgSpace.mode,
-        play: PlaySpace.initSpace({ ctx }),
-        builder: BuilderSpace.initSpace({ ctx }),
+        screenPlay: PlaySpace.initSpace({ ctx }),
+        screenBuild: BuildSpace.initSpace({ ctx }),
       }
     }
   }
