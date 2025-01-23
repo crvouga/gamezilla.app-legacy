@@ -124,65 +124,70 @@ export const SpaceBackend = async (config: Config): Promise<ISpaceBackend> => {
     return Boolean(got.value && eventId in got.value.eventIds)
   }
 
+  const getByUserId: ISpaceBackend['getByUserId'] = async (userId) => {
+    if (!userId) {
+      return Ok(null)
+    }
+
+    const got = await indexSpaceIdByUserId.get(userId)
+
+    if (isErr(got)) {
+      return got
+    }
+
+    return get(got.value)
+  }
+
+  const list: ISpaceBackend['list'] = async (input) => {
+    const allSpaceIds = Result.unwrapOr(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? []
+
+    const subset = allSpaceIds.slice(input.pagination.offset, input.pagination.offset + input.pagination.limit)
+
+    const got = await spacesBySpaceId.getMany(subset)
+
+    if (isErr(got)) {
+      return got
+    }
+
+    return Ok({
+      items: got.value,
+      total: allSpaceIds.length,
+      limit: input.pagination.limit,
+      offset: input.pagination.offset,
+    })
+  }
+
+  const update: ISpaceBackend['update'] = async (spaceEvent) => {
+    if (await hasEvent(spaceEvent.spaceId, spaceEvent.eventId)) {
+      return Ok(null)
+    }
+
+    const maybeSpace = unwrapOr(await spacesBySpaceId.get(spaceEvent.spaceId), null)
+
+    const space = maybeSpace ?? Space.init
+
+    const spaceNew = EventSourced.appendEvent(Space.config, space, spaceEvent)
+
+    return upsert(spaceNew)
+  }
+
+  const merge: ISpaceBackend['merge'] = async (space) => {
+    const spaceId = Space.toSpaceId(space)
+
+    const currentSpace = Result.unwrapOr(await get(spaceId), null) ?? Space.init
+
+    const spaceNew = EventSourced.mergeLeft(space, currentSpace)
+
+    return upsert(spaceNew)
+  }
+
   return {
     get,
     upsert,
     hasEvent,
-    async getByUserId(userId) {
-      if (!userId) {
-        return Ok(null)
-      }
-
-      const got = await indexSpaceIdByUserId.get(userId)
-
-      if (isErr(got)) {
-        return got
-      }
-
-      return get(got.value)
-    },
-
-    async list(input) {
-      const allSpaceIds = Result.unwrapOr(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? []
-
-      const subset = allSpaceIds.slice(input.pagination.offset, input.pagination.offset + input.pagination.limit)
-
-      const got = await spacesBySpaceId.getMany(subset)
-
-      if (isErr(got)) {
-        return got
-      }
-
-      return Ok({
-        items: got.value,
-        total: allSpaceIds.length,
-        limit: input.pagination.limit,
-        offset: input.pagination.offset,
-      })
-    },
-
-    async update(spaceEvent) {
-      if (await hasEvent(spaceEvent.spaceId, spaceEvent.eventId)) {
-        return Ok(null)
-      }
-
-      const maybeSpace = unwrapOr(await spacesBySpaceId.get(spaceEvent.spaceId), null)
-
-      const space = maybeSpace ?? Space.init
-
-      const spaceNew = EventSourced.appendEvent(Space.config, space, spaceEvent)
-
-      return upsert(spaceNew)
-    },
-
-    async merge(space) {
-      const spaceId = Space.toSpaceId(space)
-
-      const currentSpace = Result.unwrapOr(await get(spaceId), null) ?? Space.init
-
-      const spaceNew = EventSourced.mergeLeft(space, currentSpace)
-
-      return upsert(spaceNew)
-    },
+    getByUserId,
+    list,
+    update,
+    merge,
   }
 }

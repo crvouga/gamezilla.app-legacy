@@ -1,7 +1,7 @@
 import { WithEventId } from '~/@/event-sourced/event'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { FeedItem } from '../../@/feed-item'
-import { SpacesSpaceFrontend } from '../../space/frontend'
+import { SpaceFrontend } from '../../space/frontend'
 import type { SpaceEvent } from '../../space/space-event'
 import { SpaceState } from '../../space/space-state'
 import { GamesFrontend } from '../../game/games/frontend'
@@ -19,7 +19,7 @@ const View = ({
 }) => {
   const msgEvt =
     spaceState.type === 'started'
-      ? SpacesSpaceFrontend.toEventWithMeta(model, spaceState.spaceId, spaceState.latestEventId)
+      ? SpaceFrontend.toEventWithMeta(model, spaceState.spaceId, spaceState.latestEventId)
       : null
 
   return (

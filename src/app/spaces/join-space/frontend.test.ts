@@ -1,7 +1,7 @@
 import { withEventMeta } from '~/@/event-sourced/event'
 import { describe, expect, it, test } from 'bun:test'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
-import { SpacesSpaceFrontend } from '../space/frontend'
+import { SpaceFrontend } from '../space/frontend'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Profile } from '~/app/@/data/profile'
 import { didShowToast, didShowErrorSm } from '~/app/@/frontend/cmd'
@@ -122,7 +122,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(SpacesSpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(f.spaceId)
+    expect(SpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(f.spaceId)
   })
 
   it('current user leaving joined space', async () => {
@@ -151,7 +151,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(SpacesSpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(null)
+    expect(SpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(null)
   })
 
   it('preventing joining a space if already in a space', async () => {
@@ -184,7 +184,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(SpacesSpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(spaceA)
+    expect(SpaceFrontend.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(spaceA)
     expect(didShowErrorSm(output)).toBe(true)
   })
 })

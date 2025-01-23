@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd'
 import { Button } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpacesSpaceFrontend } from '../space/frontend'
+import { SpaceFrontend } from '../space/frontend'
 import { SpaceEvent } from '../space/space-event'
 import { LayoutGameCoverArtHeader } from '../game/games/@/ui/layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../game/games/@/ui/users-in-space-list'
@@ -47,7 +47,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
 const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-joined-space': {
-      const error = SpacesSpaceFrontend.toErrorByEvenId(input.model, input.msgSpace.eventId)
+      const error = SpaceFrontend.toErrorByEvenId(input.model, input.msgSpace.eventId)
 
       switch (error?.t) {
         case 'user-already-in-a-space': {
@@ -64,7 +64,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
         }
       }
 
-      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
 
       if (input.msgSpace.spaceId !== currentUserSpaceId) {
         return {
@@ -112,7 +112,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     return null
   }
 
-  const spaceState = SpacesSpaceFrontend.toSpaceStarted(input.model, space?.spaceId)
+  const spaceState = SpaceFrontend.toSpaceStarted(input.model, space?.spaceId)
 
   if (!spaceState) {
     return null

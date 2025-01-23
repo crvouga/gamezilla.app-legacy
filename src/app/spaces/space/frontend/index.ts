@@ -1,1 +1,1 @@
-export * as SpacesSpaceFrontend from './frontend'
+export * as SpaceFrontend from './frontend'

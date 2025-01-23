@@ -7,7 +7,7 @@ import { UserAccount } from '~/app/@/data/account'
 import { TopBar, Typography } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
-import { SpacesSpaceFrontend } from '../space/frontend'
+import { SpaceFrontend } from '../space/frontend'
 import { Space } from '../space/space'
 import { SpaceEvent } from '../space/space-event'
 import type { MsgFrontend } from '../types'
@@ -31,7 +31,7 @@ const updateFromMsg: SpaceFrontendModule['update'] = ({ msg, model, ctx }) => {
     case 'clicked-game-tile': {
       const currentUserId = ctx.currentUserId
 
-      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(model, currentUserId)
+      const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(model, currentUserId)
 
       if (!currentUserId || !currentUserSpaceId) {
         return {
@@ -63,7 +63,7 @@ const updateFromCmd: SpaceFrontendModule['update'] = ({ msgCmd, model, ctx }) =>
   switch (msgCmd?.t) {
     case 'space-cmd.exit-game': {
       const currentUserId = ctx.currentUserId
-      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(model, currentUserId)
+      const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(model, currentUserId)
 
       if (!currentUserSpaceId || !currentUserId) {
         return {
@@ -101,7 +101,7 @@ const updateFromSpaceEvent: SpaceFrontendModule['update'] = (input) => {
         }
       }
 
-      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
 
       if (input.msgSpace.spaceId === currentUserSpaceId) {
         return {
@@ -153,7 +153,7 @@ const updateGame: SpaceFrontendModule['update'] = (input) => {
     return { model: input.model }
   }
 
-  const spaceState = SpacesSpaceFrontend.toSpaceStarted(input.model, spaceId)
+  const spaceState = SpaceFrontend.toSpaceStarted(input.model, spaceId)
 
   if (!spaceState || !spaceState.game) {
     return { model: input.model }
@@ -228,7 +228,7 @@ const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (inpu
     currentUser: input.ctx.currentUser,
   }
 
-  const spaceId = SpacesSpaceFrontend.toSpaceIdByUserId(input.model, frontendCtx.currentUserId)
+  const spaceId = SpaceFrontend.toSpaceIdByUserId(input.model, frontendCtx.currentUserId)
 
   if (!spaceId) {
     return Sub.None
@@ -280,7 +280,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     return null
   }
 
-  const space = SpacesSpaceFrontend.toSpaceStarted(model, ctx.space?.spaceId)
+  const space = SpaceFrontend.toSpaceStarted(model, ctx.space?.spaceId)
 
   if (!space) {
     return null

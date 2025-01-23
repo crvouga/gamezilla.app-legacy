@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { didPlaySound, didPushScreen, didSendToBackend, didShowToast } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
-import { SpacesSpaceFrontend } from '../space/frontend'
+import { SpaceFrontend } from '../space/frontend'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -36,8 +36,8 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const before = SpacesSpaceFrontend.toSpaceIdByUserId(f.initial.model, f.ctx.currentUserId)
-    const after = SpacesSpaceFrontend.toSpaceIdByUserId(started.model, f.ctx.currentUserId)
+    const before = SpaceFrontend.toSpaceIdByUserId(f.initial.model, f.ctx.currentUserId)
+    const after = SpaceFrontend.toSpaceIdByUserId(started.model, f.ctx.currentUserId)
     expect(before).toEqual(null)
     expect(after).toEqual(spaceId)
   })

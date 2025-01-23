@@ -2,14 +2,14 @@ import { APP_SOUND, playSound, pushScreen } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { Avatar, Button, Typography } from '~/app/@/ui'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
-import { SpacesSpaceFrontend } from '../../space/frontend'
+import { SpaceFrontend } from '../../space/frontend'
 import { GameCoverArt } from '../../game/games/cover-art'
 import type { ModelFrontend, MsgFrontend } from '../../types'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'clicked-current-space-bottom-bar': {
-      const currentUsersSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const currentUsersSpaceId = SpaceFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
 
       if (!currentUsersSpaceId) {
         return {
@@ -45,7 +45,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
     return null
   }
 
-  const space = SpacesSpaceFrontend.toSpaceStarted(input.model, userSpaceId)
+  const space = SpaceFrontend.toSpaceStarted(input.model, userSpaceId)
 
   if (!space) {
     return null

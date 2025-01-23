@@ -1,7 +1,7 @@
 import { EventSourced } from '~/@/event-sourced'
 import { addProfiles, sendToBackend } from '~/app/@/frontend/cmd'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpacesSpaceFrontend } from '../space/frontend'
+import { SpaceFrontend } from '../space/frontend'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -31,7 +31,7 @@ const sendSpaceEventToBackend: SpaceFrontendModule['update'] = ({ ctx, model, ms
     return { model }
   }
 
-  const spaceEventWithMeta = SpacesSpaceFrontend.toEventWithMeta(model, msgSpace.spaceId, msgSpace.eventId)
+  const spaceEventWithMeta = SpaceFrontend.toEventWithMeta(model, msgSpace.spaceId, msgSpace.eventId)
 
   if (!spaceEventWithMeta) {
     return { model }
@@ -73,7 +73,7 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
 
       const currentUserProfile = currentUserId ? input.ctx.profiles[currentUserId] : null
 
-      const currentUserSpace = SpacesSpaceFrontend.toSpaceByUserId({
+      const currentUserSpace = SpaceFrontend.toSpaceByUserId({
         model,
         userId: currentUserId,
       })
@@ -87,10 +87,7 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
       const started = EventSourced.startFromLatestSnapshot(currentUserSpace)
 
       return {
-        model: {
-          ...model,
-          isSycing: true,
-        },
+        model,
         msgCmd: [
           sendToBackend({
             t: 'sync',
@@ -110,7 +107,7 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
   switch (msgBackend?.t) {
     case 'synced':
     case 'current-user-space': {
-      const merged = SpacesSpaceFrontend.merge(model, msgBackend.space)
+      const merged = SpaceFrontend.merge(model, msgBackend.space)
       return {
         model: {
           ...model,

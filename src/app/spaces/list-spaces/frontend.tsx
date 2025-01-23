@@ -5,7 +5,7 @@ import { APP_SOUND, playSound, pushScreen, sendToBackend } from '~/app/@/fronten
 import { IconGamepad, TopBar } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
 import type { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpacesSpaceFrontend } from '../space/frontend'
+import { SpaceFrontend } from '../space/frontend'
 import { SpaceState } from '../space/space-state'
 import { StartSpaceFrontend } from '../start-space/frontend'
 import { ViewSpaceCard } from './space-card'
@@ -88,7 +88,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
   switch (input.msgBackend?.t) {
     case 'listed-spaces': {
-      const merged = input.msgBackend.spaces.reduce(SpacesSpaceFrontend.merge, input.model)
+      const merged = input.msgBackend.spaces.reduce(SpaceFrontend.merge, input.model)
       return {
         model: {
           ...input.model,
@@ -111,10 +111,10 @@ const update: SpaceFrontendModule['update'] = (input) => {
 //
 //
 
-const toSpaces = (model: SpacesSpaceFrontend.Model) => {
+const toSpaces = (model: SpaceFrontend.Model) => {
   const spaces: SpaceState.Started[] = []
   for (const spaceId in model.spaces) {
-    const started = SpacesSpaceFrontend.toSpaceStarted(model, spaceId as SpaceId)
+    const started = SpaceFrontend.toSpaceStarted(model, spaceId as SpaceId)
     if (started) {
       spaces.push(started)
     }

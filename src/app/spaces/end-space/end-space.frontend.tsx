@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
 import { Button, Typography } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpacesSpaceFrontend } from '../space/frontend'
+import { SpaceFrontend } from '../space/frontend'
 import type { SpaceEvent } from '../space/space-event'
 
 const update: SpaceFrontendModule['update'] = (input) => {
@@ -20,7 +20,7 @@ const updateFromAppEvent: SpaceFrontendModule['update'] = (input) => {
   switch (msgEvt?.t) {
     case 'auth-evt.unauthenticated': {
       const { currentUserId } = ctx
-      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(model, currentUserId)
+      const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(model, currentUserId)
       if (!currentUserId || !currentUserSpaceId) {
         return {
           model,
@@ -58,7 +58,7 @@ const updateFromSpaceEvent: SpaceFrontendModule['update'] = (input) => {
         }
       }
 
-      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
 
       if (msgSpace.spaceId !== currentUserSpaceId) {
         return {
@@ -135,7 +135,7 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = ({ msg, model, ctx }
         }
       }
 
-      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
 
       if (!currentUserSpaceId) {
         return {
@@ -163,7 +163,7 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = ({ msg, model, ctx }
 }
 
 export const ViewEndSpaceButton: SpaceFrontendModule['View'] = (input) => {
-  const userSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+  const userSpaceId = SpaceFrontend.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
   if (!userSpaceId) {
     return null
   }

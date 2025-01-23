@@ -14,7 +14,7 @@ import { GameFrontend } from './game/frontend'
 import { JoinSpaceFrontend } from './join-space/frontend'
 import { LeaveSpaceFrontend } from './leave-space/frontend'
 import { ListSpacesFrontend } from './list-spaces/frontend'
-import { SpacesSpaceFrontend } from './space/frontend'
+import { SpaceFrontend } from './space/frontend'
 import { StartSpaceFrontend } from './start-space/frontend'
 import { SyncFrontend } from './sync/frontend'
 import type { FrontendModule, ModelFrontend } from './types'
@@ -29,7 +29,7 @@ import type { FrontendModule, ModelFrontend } from './types'
 
 const init: FrontendModule['init'] = ({ ctx }) => {
   const model: ModelFrontend = {
-    ...SpacesSpaceFrontend.init,
+    ...SpaceFrontend.init,
     games: {},
     modal: null,
     modalPreviewUserId: null,
@@ -135,7 +135,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
 }
 
 const updateChild: SpaceFrontendModule['update'] = (input) => {
-  if (input.msgSpace && SpacesSpaceFrontend.hasEvent(input.model, input.msgSpace.spaceId, input.msgSpace.eventId)) {
+  if (input.msgSpace && SpaceFrontend.hasEvent(input.model, input.msgSpace.spaceId, input.msgSpace.eventId)) {
     return { model: input.model }
   }
 
@@ -160,7 +160,7 @@ const updateSpacesFromSpaceEvent: SpaceFrontendModule['update'] = ({ msgSpace, m
     return { model }
   }
 
-  const updated = SpacesSpaceFrontend.update({
+  const updated = SpaceFrontend.update({
     model,
     msgSpace: msgSpace,
   })

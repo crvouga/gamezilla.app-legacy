@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
 import { Button } from '~/app/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpacesSpaceFrontend } from '../space/frontend'
+import { SpaceFrontend } from '../space/frontend'
 import type { SpaceEvent } from '../space/space-event'
 
 const update: SpaceFrontendModule['update'] = (input) => {
@@ -22,7 +22,7 @@ const updateFromSpaceEvent: SpaceFrontendModule['update'] = ({ model, msgSpace: 
         }
       }
 
-      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
 
       if (msgSpace.spaceId !== currentUserSpaceId) {
         return {
@@ -72,7 +72,7 @@ const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg
         }
       }
 
-      const currentUserSpaceId = SpacesSpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpaceFrontend.toSpaceIdByUserId(model, ctx.currentUserId)
 
       if (!currentUserSpaceId) {
         return {

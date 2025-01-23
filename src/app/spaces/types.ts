@@ -12,7 +12,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { BackendCmd } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
-import { SpacesSpaceFrontend } from './space/frontend'
+import { SpaceFrontend } from './space/frontend'
 import { ISpaceBackend } from './space/backend/interface'
 import { Space } from './space/space'
 import { SpaceEvent } from './space/space-event'
@@ -36,7 +36,7 @@ export type BackendCtx = AppBackendCtx & {
 
 export type ModelBackend = null
 
-export type ModelFrontend = SpacesSpaceFrontend.Model & {
+export type ModelFrontend = SpaceFrontend.Model & {
   games: {
     [spaceId: SpaceId]: GamesTypes.ModelFrontend
   }
