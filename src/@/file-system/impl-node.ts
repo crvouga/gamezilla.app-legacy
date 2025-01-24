@@ -26,5 +26,16 @@ export const FileSystem = (_config: Config): IFileSystem => {
       })
       return readableStream
     },
+
+    async listDirectory(path) {
+      return fs.readdir(path)
+    },
+
+    async getFileInfo(path) {
+      const stats = await fs.stat(path)
+      return {
+        isDirectory: () => stats.isDirectory(),
+      }
+    },
   }
 }

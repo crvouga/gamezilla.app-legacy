@@ -108,32 +108,20 @@ const updateAutoFocus: Module['update'] = (input) => {
     case 'screen-evt.screen-changed': {
       switch (input.msgEvt.screen.t) {
         case 'login-sms-request': {
-          return {
-            model: input.model,
-            msgCmd: [focusView(PHONE_NUMBER_INPUT_VIEW_ID)],
-          }
+          return { model: input.model, msgCmd: [focusView(PHONE_NUMBER_INPUT_VIEW_ID)] }
         }
 
         case 'login-sms-verify': {
-          return {
-            model: input.model,
-            msgCmd: [focusView(CODE_INPUT_VIEW_ID)],
-          }
+          return { model: input.model, msgCmd: [focusView(CODE_INPUT_VIEW_ID)] }
         }
 
         default: {
-          return {
-            model: input.model,
-          }
+          return { model: input.model }
         }
       }
     }
-    default: {
-      return {
-        model: input.model,
-      }
-    }
   }
+  return { model: input.model }
 }
 
 const updateFromMsg: Module['update'] = (input) => {
@@ -265,6 +253,9 @@ const updateFromMsg: Module['update'] = (input) => {
             phoneNumber: input.msg.phoneNumber,
           }),
         ],
+        async eff(_dispatch) {
+          // const sent = await input.ctx.rpc.sendCode({})
+        },
       }
     }
 

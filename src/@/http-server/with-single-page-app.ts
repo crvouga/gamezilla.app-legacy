@@ -12,35 +12,54 @@ export type Config = {
   toFilePath?: (pathname: string) => string
   toHeaders?: (filePath: string) => Record<string, string>
 }
-export const withSinglePageApp = (config: Config) => {
+
+export const withSinglePageApp = async (config: Config) => {
   const toExtname = config.toExtname ?? path.extname
   const toFilePath = config.toFilePath ?? ((pathname) => pathname)
   const toHeaders: (filePath: string) => Record<string, string> = config.toHeaders ?? (() => ({}))
 
-  config.httpServer.registerRespond(async (req) => {
-    try {
-      const url = new URL(req.url)
-      const pathname = decodeURIComponent(url.pathname)
-      let filePath = toFilePath(path.join(config.directory, pathname === '/' ? config.indexFile : pathname))
+  const registerFile = async (filePath: string) => {
+    const relativePath = path.relative(config.directory, filePath)
+    const file = await config.fileSystem.read(filePath)
+    const ext = toExtname(filePath)
+    const contentType = fileExtensionToContentType(ext)
+    const headers = toHeaders(filePath)
+    headers['Content-Type'] = contentType
 
-      let file: ReadableStream<ArrayBufferView | ArrayBufferLike>
-      if (await config.fileSystem.exists(filePath)) {
-        file = await config.fileSystem.read(filePath)
-      } else {
-        filePath = toFilePath(path.join(config.directory, config.indexFile))
-        file = await config.fileSystem.read(filePath)
-      }
-
-      const ext = toExtname(filePath)
-      const contentType = fileExtensionToContentType(ext)
-      const headers = toHeaders(filePath)
-      headers['Content-Type'] = contentType
-      return new Response(file, {
+    config.httpServer.registerStatic(
+      relativePath,
+      new Response(file, {
         headers,
         status: 200,
-      })
-    } catch (e) {
-      return new Response(`Backend Error: ${String(e)}`, { status: 500 })
+      }),
+    )
+
+    // Also register as index.html for SPA routing
+    if (path.basename(filePath) === config.indexFile) {
+      config.httpServer.registerStatic(
+        '',
+        new Response(file, {
+          headers,
+          status: 200,
+        }),
+      )
     }
-  })
+  }
+
+  const traverseDirectory = async (dirPath: string) => {
+    const entries = await config.fileSystem.listDirectory(dirPath)
+
+    for (const entry of entries) {
+      const fullPath = path.join(dirPath, entry)
+      const fileInfo = await config.fileSystem.getFileInfo(fullPath)
+
+      if (fileInfo.isDirectory()) {
+        await traverseDirectory(fullPath)
+      } else {
+        await registerFile(toFilePath(fullPath))
+      }
+    }
+  }
+
+  await traverseDirectory(config.directory)
 }
