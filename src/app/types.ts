@@ -123,7 +123,7 @@ export type FrontendCtx = {
   dbConnSql: IDbConnSql
   logger: ILogger
   now: Posix
-  rpc: RPC.Frontend<typeof rpcContract>
+  rpc: RPC.Client<typeof rpcContract>
   location: Browser.Location
   navigatorLanguage: LanguageCodeISO_639_1
   transport: IFrontendTransport<{

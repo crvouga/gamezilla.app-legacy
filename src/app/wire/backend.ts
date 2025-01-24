@@ -250,7 +250,7 @@ export const subscriptions = <TMsgToBackend, TMsgToFrontend>(input: {
 }
 
 export const rpc = <TMsgToFrontend, TMsgToBackend>(input: { ctx: BackendCtx<TMsgToFrontend, TMsgToBackend> }) => {
-  return RPC.initBackend(rpcContract, {
+  return RPC.initServer(rpcContract, {
     backendInstance: BackendInstanceBackend.rpc({ ctx: input.ctx.backendInstance }),
   })
 }

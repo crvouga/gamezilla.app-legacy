@@ -82,5 +82,5 @@ export const rpcContract = RPC.initContract({
 })
 
 export type FrontendCtx = (AppFrontendCtx | AnonymousFrontendCtx) & {
-  rpc: RPC.Frontend<typeof rpcContract>
+  rpc: RPC.Client<typeof rpcContract>
 }

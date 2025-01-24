@@ -22,7 +22,7 @@ await ProgramImpure.run({
 RPC.registerRespond({
   httpServer: ctx.httpServer,
   contract: AppTypes.rpcContract,
-  handlers: AppBackend.rpc({ ctx }),
+  implementation: AppBackend.rpc({ ctx }),
 })
 
 PowerSyncBackendApp.registerRespond({

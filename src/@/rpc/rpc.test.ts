@@ -15,7 +15,7 @@ const childRpcContract = RPC.initContract({
   },
 })
 
-const childRpcBackend = RPC.initBackend(childRpcContract, {
+const childRpcBackend = RPC.initServer(childRpcContract, {
   async baz(input) {
     return {
       message: `Yo, ${input.name}`,
@@ -23,7 +23,7 @@ const childRpcBackend = RPC.initBackend(childRpcContract, {
   },
 })
 
-const rpcContract = RPC.initContract({
+const contract = RPC.initContract({
   child: childRpcContract,
   foo: {
     input: p.obj({
@@ -44,7 +44,7 @@ const rpcContract = RPC.initContract({
   },
 })
 
-const rpcBackend = RPC.initBackend(rpcContract, {
+const server = RPC.initServer(contract, {
   child: childRpcBackend,
   async bar(input) {
     return {
@@ -67,12 +67,16 @@ const rpcBackend = RPC.initBackend(rpcContract, {
 const httpServer = HttpServer({ t: 'bun', logger: Logger({ t: 'noop' }) })
 const httpClient = HttpClient({ t: 'fetch', fetch: fetch as Fetch })
 
-RPC.registerRespond({ httpServer, contract: rpcContract, handlers: rpcBackend })
+RPC.registerRespond({
+  httpServer,
+  contract,
+  implementation: server,
+})
 
-const rpcClient = RPC.initClient(httpClient, rpcContract)
+const client = RPC.initClient(httpClient, contract)
 
 export const example = async () => {
-  await rpcClient.foo({ name: 'Alice', age: 30 })
-  await rpcClient.bar({ name: 'Bob' })
-  await rpcClient.child.baz({ name: 'Charlie' })
+  await client.foo({ name: 'Alice', age: 30 })
+  await client.bar({ name: 'Bob' })
+  await client.child.baz({ name: 'Charlie' })
 }

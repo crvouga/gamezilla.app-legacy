@@ -12,19 +12,19 @@ export type Endpoint<TInput, TOutput> = {
 
 export type Contract<TEndpoints extends Record<string, Endpoint<any, any> | Contract<any>>> = TEndpoints
 
-export type Frontend<T extends Base> = {
+export type Client<T extends Base> = {
   [K in keyof T]: T[K] extends Endpoint<unknown, unknown>
     ? (input: p.Infer<T[K]['input']>) => Promise<Result<string, p.Infer<T[K]['output']>>>
     : T[K] extends Contract<any>
-      ? Frontend<T[K]>
+      ? Client<T[K]>
       : never
 }
 
-export type Backend<T extends Base> = {
+export type Server<T extends Base> = {
   [K in keyof T]: T[K] extends Endpoint<unknown, unknown>
     ? (input: p.Infer<T[K]['input']>) => Promise<p.Infer<T[K]['output']>>
     : T[K] extends Contract<any>
-      ? Backend<T[K]>
+      ? Server<T[K]>
       : never
 }
 
@@ -32,7 +32,7 @@ export const initContract = <TEndpoints extends Record<string, Endpoint<any, any
   endpoints: TEndpoints,
 ): Contract<TEndpoints> => endpoints
 
-export const initClient = <T extends Base>(webFrontend: IHttpClient, contract: T): Frontend<T> => {
+export const initClient = <T extends Base>(webFrontend: IHttpClient, contract: T): Client<T> => {
   const createFrontend = (contract: Base, path: string[] = []): any => {
     const frontend: any = {}
 
@@ -75,20 +75,20 @@ export const initClient = <T extends Base>(webFrontend: IHttpClient, contract: T
   return createFrontend(contract)
 }
 
-export const initBackend = <T extends Base>(_contract: T, handlers: Backend<T>): Backend<T> => {
+export const initServer = <T extends Base>(_contract: T, handlers: Server<T>): Server<T> => {
   return handlers
 }
 
 export const registerRespond = <T extends Base>({
   contract,
-  handlers,
+  implementation: handlers,
   httpServer,
 }: {
   httpServer: IHttpServer
   contract: T
-  handlers: Backend<T>
+  implementation: Server<T>
 }) => {
-  const handleRequest = async (contract: Contract<any>, handlers: Backend<any>, path: string[], request: Request) => {
+  const handleRequest = async (contract: Contract<any>, handlers: Server<any>, path: string[], request: Request) => {
     const endpointName = path[0]
     if (!endpointName) {
       return null
@@ -124,7 +124,7 @@ export const registerRespond = <T extends Base>({
       }
     } else {
       // Nested contract
-      return handleRequest(endpointConfig as Contract<any>, handler as Backend<any>, path.slice(1), request)
+      return handleRequest(endpointConfig as Contract<any>, handler as Server<any>, path.slice(1), request)
     }
   }
 

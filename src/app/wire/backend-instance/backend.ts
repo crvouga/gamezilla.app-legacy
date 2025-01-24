@@ -105,7 +105,7 @@ const subscriptions: BackendModule['subscriptions'] = async (input) => {
 const INTERVAL_ID = 'backend-instance-heartbeat'
 
 const rpc = (input: { ctx: BackendCtx }) => {
-  return RPC.initBackend(rpcContract, {
+  return RPC.initServer(rpcContract, {
     async listAlive() {
       const listed = await input.ctx.backendInstanceDb.listAlive({
         minimalHeartRate: BackendInstance.HEARTBEAT,

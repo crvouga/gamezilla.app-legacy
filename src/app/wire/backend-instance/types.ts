@@ -28,7 +28,7 @@ export type MsgBackend =
 export type MsgFrontend = { t: 'noop' }
 
 export type FrontendCtx = (AnonymousFrontendCtx | AppFrontendCtx) & {
-  rpc: RPC.Frontend<typeof rpcContract>
+  rpc: RPC.Client<typeof rpcContract>
 }
 
 export type BackendCtx = AppBackendCtx & {
