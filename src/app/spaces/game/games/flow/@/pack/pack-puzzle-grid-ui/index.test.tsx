@@ -77,4 +77,10 @@ describe(import.meta.file, () => {
     expect(slide2Title?.textContent).toBeTruthy()
     expect(slide2Title?.textContent).toContain(puzzleCount.toString())
   })
+
+  test('hide slide title if no puzzles', async () => {
+    const r = f.render(<PackPuzzleGridUI.View puzzleIds={[]} />)
+    const slideTitle = r.getByRole('tabpanel')[0]?.getByRole('heading')[0]
+    expect(slideTitle).toBeFalsy()
+  })
 })

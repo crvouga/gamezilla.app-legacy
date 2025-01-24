@@ -26,19 +26,10 @@ const View = (input: {
   const slideCount = Math.ceil(cellCount / (COLUMN_COUNT * ROW_COUNT))
 
   for (let slideIndex = 0; slideIndex < slideCount; slideIndex++) {
-    const startIndex = slideIndex * PER_SLIDE_ITEM_COUNT
-    const startPosition = startIndex + 1
-    const endPosition = startIndex + PER_SLIDE_ITEM_COUNT
-    const endPositionPuzzle = Math.min(endPosition, puzzleIds.length)
-    const slideTitle = `${startPosition} - ${endPositionPuzzle}`
     slides.push(
       <Swiper.Slide key={slideIndex} className='flex h-full w-3/4 flex-col items-center justify-center'>
         <div className='flex w-fit flex-col items-center justify-center gap-1'>
-          <Typography
-            text={TranslatedText.of(slideTitle)}
-            className='flex w-full items-center justify-start p-1 text-2xl'
-            role='heading'
-          />
+          <ViewSlideHeading slideIndex={slideIndex} puzzleIds={puzzleIds} />
 
           <ViewPackPuzzleGridSlide
             key={slideIndex}
@@ -87,6 +78,25 @@ const View = (input: {
         // onClick={input.onSlideIndexChanged}
       />
     </div>
+  )
+}
+
+const ViewSlideHeading = (input: { slideIndex: number; puzzleIds: PuzzleId[] }) => {
+  const startIndex = input.slideIndex * PER_SLIDE_ITEM_COUNT
+  const startPosition = startIndex + 1
+  const endPosition = startIndex + PER_SLIDE_ITEM_COUNT
+  const endPositionPuzzle = Math.min(endPosition, input.puzzleIds.length)
+  const hasPuzzles = input.puzzleIds.length > 0
+
+  if (!hasPuzzles) return null
+
+  const slideTitle = `${startPosition} - ${endPositionPuzzle}`
+  return (
+    <Typography
+      text={TranslatedText.of(slideTitle)}
+      className='flex w-full items-center justify-start p-1 text-2xl'
+      role='heading'
+    />
   )
 }
 
