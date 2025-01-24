@@ -2,58 +2,73 @@ import * as http from 'node:http'
 import { Logger, type ILogger } from '~/@/logger'
 import { PubSub } from '../sub'
 import { Posix } from '../time/posix'
-import { HttpServerEvent, type Handler, type IHttpServer } from './interface'
+import { HttpServerEvent, type Respond, type IHttpServer } from './interface'
 import { getIpAddress } from './ip-address'
 
 export type Config = {
   t: 'node'
   logger: ILogger
 }
-
-export const HttpServerNode = (config: Config) => {
+export const HttpServerNode = (
+  config: Config,
+): IHttpServer & {
+  t: 'node'
+} => {
   const logger = Logger.prefix('node', config.logger)
   const httpServer = new http.Server()
-  const handlers: Handler[] = []
+  const handlers: Respond[] = []
   const events: PubSub<HttpServerEvent> = PubSub.create()
 
-  const base: IHttpServer = {
-    events,
-    async start(port) {
-      try {
-        await new Promise<void>((r) => httpServer.listen(port, r))
-        events.pub({
-          t: 'web-backend/started',
-          ipAddress: getIpAddress(),
-          port,
-          startedAt: Posix.now(),
-        })
-      } catch (error) {
-        console.error('error', error)
-      }
+  const staticResponses: Record<`/${string}`, Response> = {}
 
-      logger.info(`Listening on port ${port}`)
-
-      httpServer.on('request', async (req, res) => {
-        const request = await incomingMessageToFetchRequest(req)
-        for (const handler of handlers) {
-          const response = await handler(request, httpServer)
-          if (response) {
-            applyFetchResponseToNodeResponse(res, response)
-            return
-          }
-        }
-      })
-    },
-
-    registerHandler(handler) {
-      handlers.push(handler)
-    },
+  const respondNode = async (req: http.IncomingMessage, res: http.ServerResponse) => {
+    const request = await incomingMessageToFetchRequest(req)
+    const response = await respond(request)
+    if (response) {
+      await applyFetchResponseToNodeResponse(res, response)
+    }
   }
+
+  const respond = async (request: Request): Promise<Response> => {
+    const staticResponse = staticResponses[`/${request.url.replace(/^\//, '')}`]
+    if (staticResponse) {
+      return staticResponse
+    }
+
+    for (const handler of handlers) {
+      const response = await handler(request, httpServer)
+      if (response) {
+        return response
+      }
+    }
+
+    return new Response('Not found', { status: 404 })
+  }
+
+  const start = async (port: number) => {
+    httpServer.listen(port, () => {
+      events.pub({ t: 'web-backend/started', ipAddress: getIpAddress(), port, startedAt: Posix.now() })
+      logger.info(`Listening on port ${port}`)
+    })
+
+    httpServer.on('request', respondNode)
+  }
+
+  const registerRespond = (handler: Respond) => {
+    handlers.push(handler)
+  }
+
+  const registerStatic = (path: string, response: Response) => {
+    staticResponses[`/${path.replace(/^\//, '')}`] = response
+  }
+
   return {
-    ...base,
-    httpServer,
+    events,
+    start,
+    registerRespond,
+    registerStatic,
     t: 'node',
-  } as const
+  }
 }
 
 export type HttpServerNode = ReturnType<typeof HttpServerNode>

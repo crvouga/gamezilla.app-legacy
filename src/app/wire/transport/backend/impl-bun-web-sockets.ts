@@ -110,7 +110,7 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
     },
   })
 
-  config.httpServer.registerHandler((request, maybeBackend) => {
+  config.httpServer.registerRespond((request, maybeBackend) => {
     const backend = maybeBackend as Server
     const url = new URL(request.url)
 

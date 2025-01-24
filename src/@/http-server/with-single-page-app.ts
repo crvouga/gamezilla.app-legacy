@@ -17,7 +17,7 @@ export const withSinglePageApp = (config: Config) => {
   const toFilePath = config.toFilePath ?? ((pathname) => pathname)
   const toHeaders: (filePath: string) => Record<string, string> = config.toHeaders ?? (() => ({}))
 
-  config.httpServer.registerHandler(async (req) => {
+  config.httpServer.registerRespond(async (req) => {
     try {
       const url = new URL(req.url)
       const pathname = decodeURIComponent(url.pathname)

@@ -3,7 +3,7 @@ import { Posix } from '../time/posix'
 
 type MaybePromise<T> = Promise<T> | T
 
-export type Handler = (request: Request, backend: unknown) => MaybePromise<Response | null | undefined>
+export type Respond = (request: Request, backend: unknown) => MaybePromise<Response | null | undefined>
 
 export type HttpServerEvent =
   | {
@@ -19,6 +19,7 @@ export type HttpServerEvent =
 
 export type IHttpServer = {
   start: (port: number) => Promise<void>
-  registerHandler: (handler: Handler) => void
+  registerRespond: (handler: Respond) => void
+  registerStatic: (path: string, response: Response) => void
   events: Sub<HttpServerEvent>
 }

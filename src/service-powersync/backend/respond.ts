@@ -22,7 +22,7 @@ const respond = async (input: { request: Request; ctx: Ctx }): Promise<Response 
 }
 
 const withHandlers = (config: { httpServer: IHttpServer; ctx: Ctx }) => {
-  config.httpServer.registerHandler((request) => {
+  config.httpServer.registerRespond((request) => {
     return respond({ request, ctx: config.ctx })
   })
 }

@@ -29,7 +29,7 @@ PowerSyncBackendApp.withHandlers({
   ctx: { userSessionDb: ctx.auth.userSessionDb },
 })
 
-ctx.httpServer.registerHandler((request) => {
+ctx.httpServer.registerRespond((request) => {
   const pathname = new URL(request.url).pathname
   switch (pathname) {
     case '/health': {
@@ -44,7 +44,7 @@ ctx.httpServer.registerHandler((request) => {
   }
 })
 
-ctx.httpServer.registerHandler((_request) => {
+ctx.httpServer.registerRespond((_request) => {
   return new Response('Hello from gamezilla.app backend', {
     status: 200,
     headers: { 'Content-Type': 'text/plain' },

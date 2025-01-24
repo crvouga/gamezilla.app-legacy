@@ -128,7 +128,7 @@ export const withRPC = <T extends Base>({
     }
   }
 
-  httpServer.registerHandler(async (request) => {
+  httpServer.registerRespond(async (request) => {
     try {
       const url = new URL(request.url)
       const path = url.pathname.replace('/rpc/', '').split('/')

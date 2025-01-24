@@ -2,7 +2,7 @@ import type { Server, WebSocketHandler } from 'bun'
 import { Logger, type ILogger } from '~/@/logger'
 import { PubSub } from '../sub'
 import { Posix } from '../time/posix'
-import { HttpServerEvent, type Handler, type IHttpServer } from './interface'
+import { HttpServerEvent, type Respond, type IHttpServer } from './interface'
 import { getIpAddress } from './ip-address'
 
 export type Config = {
@@ -12,17 +12,20 @@ export type Config = {
 
 export const HttpServerBun = <T>(config: Config) => {
   const logger = Logger.prefix('bun', config.logger)
-  const handlers: Handler[] = []
+  const handlers: Respond[] = []
   let webSocketHandler: WebSocketHandler<T>
   let backend: Server
 
   const events: PubSub<HttpServerEvent> = PubSub.create()
+
+  const staticResponses: Record<`/${string}`, Response> = {}
 
   const base: IHttpServer = {
     events,
     async start(port) {
       backend = Bun.serve({
         port: port,
+        static: staticResponses,
         async fetch(req) {
           try {
             for (const handler of handlers) {
@@ -54,8 +57,11 @@ export const HttpServerBun = <T>(config: Config) => {
 
       logger.info(`Listening on port ${port}`)
     },
-    registerHandler(handler) {
+    registerRespond(handler) {
       handlers.push(handler)
+    },
+    registerStatic(path, response) {
+      staticResponses[`/${path.replace(/^\//, '')}`] = response
     },
   }
   return {
