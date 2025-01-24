@@ -42,4 +42,4 @@ if (!CONFIG_BACKEND.SERVER_PORT) throw new Error('SERVER_PORT is not set')
 
 await ctx.httpServer.start(CONFIG_BACKEND.SERVER_PORT)
 
-ctx.logger.info({ SERVER_PORT: CONFIG_BACKEND.SERVER_PORT })
+ctx.logger.info(CONFIG_BACKEND)

@@ -24,10 +24,9 @@ await Program.run({
     render(<AppFrontend.View {...input} />)
   },
   crash: (input) => {
-    console.error('Crash!', input)
+    console.error('program crashed!', input)
   },
   debugger: DebuggerConsole,
-  // debugger: ToggleDebugger.isOn() ? DebuggerReduxDevTools : undefined,
 })
 
 await ctx.transport.start()
