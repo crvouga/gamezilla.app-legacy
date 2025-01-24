@@ -81,8 +81,6 @@ const View = (input: {
       >
         {slides}
       </Swiper.Container>
-
-      input.slideIndex={input.slideIndex}
       <PaginationDots count={slideCount} activeIndex={input.slideIndex ?? 0} onClick={input.onSlideIndexChanged} />
     </div>
   )

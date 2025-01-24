@@ -126,7 +126,6 @@ updates.push((input) => {
       if (!input.modelSpace) {
         return input.modelSpace
       }
-      debugger
       return {
         ...input.modelSpace,
         slideIndex: input.msgSpace.newSlideIndex,
