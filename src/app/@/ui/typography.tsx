@@ -68,6 +68,7 @@ export const Typography = (input: Input) => {
       aria-busy={input.skeleton}
       aria-level={toAriaLevel(input)}
       aria-label={input.text}
+      
     >
       {input.text}
     </div>

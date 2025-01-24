@@ -37,6 +37,9 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
           ariaDisabledAttr === ''
         )
       },
+      get textContent(): string | null {
+        return baseElement.textContent
+      },
       click(): void {
         userEvent.click(baseElement)
       },

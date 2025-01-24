@@ -29,13 +29,15 @@ const View = (input: {
     const startIndex = slideIndex * PER_SLIDE_ITEM_COUNT
     const startPosition = startIndex + 1
     const endPosition = startIndex + PER_SLIDE_ITEM_COUNT
-    const slideTitle = `${startPosition} - ${endPosition}`
+    const endPositionPuzzle = Math.min(endPosition, puzzleIds.length)
+    const slideTitle = `${startPosition} - ${endPositionPuzzle}`
     slides.push(
       <Swiper.Slide key={slideIndex} className='flex h-full w-3/4 flex-col items-center justify-center'>
         <div className='flex w-fit flex-col items-center justify-center gap-1'>
           <Typography
             text={TranslatedText.of(slideTitle)}
             className='flex w-full items-center justify-start p-1 text-2xl'
+            role='heading'
           />
 
           <ViewPackPuzzleGridSlide

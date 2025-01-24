@@ -8,6 +8,7 @@ export type TestNode = {
   getByTestId: (testId: string | number) => TestNode[]
   getAttribute: (attribute: string) => string | null
   disabled: boolean
+  textContent: string | null
 }
 
 export type ITestRender = (vdom: VDom) => TestNode
