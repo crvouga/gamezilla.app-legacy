@@ -21,12 +21,12 @@ const respond = async (input: { request: Request; ctx: Ctx }): Promise<Response 
   }
 }
 
-const withHandlers = (config: { httpServer: IHttpServer; ctx: Ctx }) => {
+const registerRespond = (config: { httpServer: IHttpServer; ctx: Ctx }) => {
   config.httpServer.registerRespond((request) => {
     return respond({ request, ctx: config.ctx })
   })
 }
 
 export const PowerSyncBackendApp = {
-  withHandlers,
+  registerRespond,
 }

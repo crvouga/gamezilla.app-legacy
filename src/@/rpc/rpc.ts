@@ -79,7 +79,7 @@ export const initBackend = <T extends Base>(_contract: T, handlers: Backend<T>):
   return handlers
 }
 
-export const withRPC = <T extends Base>({
+export const registerRespond = <T extends Base>({
   contract,
   handlers,
   httpServer,

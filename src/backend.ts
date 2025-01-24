@@ -1,13 +1,14 @@
 import { ProgramImpure } from '~/@/program/program-impure'
-import { withRPC } from '~/@/rpc/rpc'
 import { AppTypes } from '~/app'
 import { AppBackend } from '~/app/backend'
 import { CONFIG_BACKEND } from '~/config/backend'
+import { HealthCheck } from './@/health-check/health-check'
+import { RPC } from './@/rpc'
 import { PowerSyncBackendApp } from './service-powersync/backend/respond'
 
 const ctx = await AppBackend.initCtx()
 
-await ProgramImpure.run<AppTypes.MsgBackend, AppTypes.BackendCtx>({
+await ProgramImpure.run({
   initCtx: async () => ctx,
   updateCtx: AppBackend.updateCtx,
   init: AppBackend.init,
@@ -18,45 +19,27 @@ await ProgramImpure.run<AppTypes.MsgBackend, AppTypes.BackendCtx>({
   },
 })
 
-withRPC({
+RPC.registerRespond({
   httpServer: ctx.httpServer,
   contract: AppTypes.rpcContract,
   handlers: AppBackend.rpc({ ctx }),
 })
 
-PowerSyncBackendApp.withHandlers({
+PowerSyncBackendApp.registerRespond({
   httpServer: ctx.httpServer,
   ctx: { userSessionDb: ctx.auth.userSessionDb },
 })
 
-ctx.httpServer.registerRespond((request) => {
-  const pathname = new URL(request.url).pathname
-  switch (pathname) {
-    case '/health': {
-      return new Response('OK', {
-        status: 200,
-        headers: { 'Content-Type': 'text/plain' },
-      })
-    }
-    default: {
-      return null
-    }
-  }
+HealthCheck.registerRespond({
+  httpServer: ctx.httpServer,
 })
 
 ctx.httpServer.registerRespond((_request) => {
-  return new Response('Hello from gamezilla.app backend', {
-    status: 200,
-    headers: { 'Content-Type': 'text/plain' },
-  })
+  return new Response('Hello from gamezilla.app backend', { status: 200, headers: { 'Content-Type': 'text/plain' } })
 })
 
-if (!CONFIG_BACKEND.SERVER_PORT) {
-  throw new Error('SERVER_PORT is not set')
-}
+if (!CONFIG_BACKEND.SERVER_PORT) throw new Error('SERVER_PORT is not set')
 
 await ctx.httpServer.start(CONFIG_BACKEND.SERVER_PORT)
 
-ctx.logger.info({
-  SERVER_PORT: CONFIG_BACKEND.SERVER_PORT,
-})
+ctx.logger.info({ SERVER_PORT: CONFIG_BACKEND.SERVER_PORT })

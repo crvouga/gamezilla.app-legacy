@@ -1,5 +1,5 @@
 import { IFileSystem } from './interface'
-import { readdir } from 'node:fs/promises'
+import { readdir } from '~/@/fs/promises'
 
 export type Config = {
   t: 'bun'
