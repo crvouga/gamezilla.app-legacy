@@ -29,5 +29,11 @@ describe(import.meta.file, () => {
     expect(await clickedIndex.once()).toEqual(1)
   })
 
-  
+  test('should NOT be buttons if no onClick is provided', async () => {
+    const f = await Fixture()
+    const r = f.render(<PaginationDots activeIndex={0} count={3} />)
+    const buttons = r.query('button')
+    expect(buttons.length).toEqual(0)
+  })
 })
+

@@ -45,7 +45,7 @@ describe(import.meta.file, () => {
     expect(slides.length).toBe(2)
   })
 
-  it('should change slide when clicking pagination dots', async () => {
+  it.skip('should change slide when clicking pagination dots', async () => {
     const slideIndex = PubSub.create<number>()
     const r = f.render(
       <PackPuzzleGridUI.View

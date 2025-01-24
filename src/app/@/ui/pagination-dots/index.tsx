@@ -16,12 +16,13 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
       data-testid={PAGINATION_DOTS_TEST_ID}
     >
       {Array.from({ length: input.count }, (_, i) => {
+        const Element = input.onClick ? 'button' : 'div'
         return (
-          <button
+          <Element
             key={i}
-            className={cn('clickable size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500')}
+            className={cn('size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500', input.onClick && 'clickable')}
             role='tab'
-            onClick={() => input.onClick?.(i)}
+            onClick={input.onClick ? () => input.onClick?.(i) : undefined}
             data-pagination-dot-index={i}
             aria-selected={i === input.activeIndex}
             aria-label={`Page ${i + 1}`}
@@ -31,3 +32,4 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
     </div>
   )
 }
+
