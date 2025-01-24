@@ -46,7 +46,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
             logger.error(`get: not a value: ${key} ${errorStr}`)
 
-            return Ok(null)
+            return Err(errorStr)
           }
           case 'ok': {
             return parsed

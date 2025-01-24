@@ -36,4 +36,3 @@ describe(import.meta.file, () => {
     expect(buttons.length).toEqual(0)
   })
 })
-

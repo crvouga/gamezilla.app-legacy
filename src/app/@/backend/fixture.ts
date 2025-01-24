@@ -1,13 +1,16 @@
-import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import { type IDbConnSql } from '~/@/db-conn-sql'
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
 import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
 import { HttpServer } from '~/@/http-server'
+import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
+import type { ILogger } from '~/@/logger'
 import { Logger } from '~/@/logger'
 import { IPubSubTopicBased, PubSubTopicBased } from '~/@/pub-sub-topic-based'
+import type { IRuntime } from '~/@/runtime'
 import { Runtime } from '~/@/runtime'
 import { SMS } from '~/@/sms'
 import { Posix } from '~/@/time/posix'
+import { TimeSpan } from '~/@/time/time-span'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { ClientId } from '../data/client-id'
@@ -16,14 +19,25 @@ import { BackendInstanceId } from './backend-instance/backend-instance-id'
 import type { AppBackendCtx } from './ctx'
 import { ProfileCache } from './profile-cache'
 
-export type IFixtureAppBackend = {
-  t: 'unit' | 'integration'
+export type IFixtureAppBackendUnit = {
+  t: 'unit'
   ctx: AppBackendCtx
-  keyValueDb: IKeyValueDb
+  runtime: IRuntime
+  logger: ILogger
   pubSubTopicBased: IPubSubTopicBased
-  dbConnPostgres: IDbConnSql
   dbConnSqlite: IDbConnSql
+  keyValueDbHashMap: IKeyValueDb
 }
+
+export type IFixtureAppBackendIntegration = Omit<IFixtureAppBackendUnit, 't'> & {
+  t: 'integration'
+  dbConnPostgres: IDbConnSql
+  keyValueDbRedis: IKeyValueDb
+  keyValueDbPostgres: IKeyValueDb
+  keyValueDbSqlite: IKeyValueDb
+}
+
+export type IFixtureAppBackend = IFixtureAppBackendUnit | IFixtureAppBackendIntegration
 
 export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const logger = Logger({ t: 'noop' })
@@ -34,37 +48,46 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const profileCache = await ProfileCache({ t: 'key-value-db', keyValueDb: await KeyValueDb({ t: 'in-memory' }) })
 
+  const runtime = Runtime({ t: 'process', logger, shutoffFGracePeriod: TimeSpan.seconds(0) })
+
+  const httpServer = HttpServer({ t: 'bun', logger })
+
+  const keyValueDbHashMap = await KeyValueDb({ t: 'hash-map' })
+
+  const dbConnSqlite = await DbConnSql({ t: 'bun-sqlite', fileSystem: { t: 'in-memory' }, logger })
+
+  const now = Posix.now()
+
+  const sleep = async () => {}
+
+  const backendInstanceId = BackendInstanceId.generate()
+
   const ctx: AppBackendCtx = {
     env: 'test',
-    keyValueDb: await KeyValueDb({ t: 'hash-map' }),
+    keyValueDb: keyValueDbHashMap,
     dbConnSql: dbConnSqlNoop,
     logger,
-    now: Posix.now(),
+    now,
     sms,
-    sleep: async () => null,
+    sleep,
     pubSub,
     profileCache,
-    runtime: Runtime({ t: 'noop' }),
-    httpServer: HttpServer({ t: 'bun', logger }),
-    backendInstanceId: BackendInstanceId.generate(),
+    runtime,
+    httpServer,
+    backendInstanceId,
   }
 
-  const dbConnSqlite = await DbConnSql({
-    t: 'bun-sqlite',
-    fileSystem: {
-      t: 'in-memory',
-    },
-    logger,
-  })
-
   if (!CONFIG_SHARED.IS_INTEGRATION_TEST) {
+    const pubSubTopicBased = await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() })
+
     return {
       t: 'unit',
       ctx,
       dbConnSqlite,
-      keyValueDb: await KeyValueDb({ t: 'hash-map' }),
-      pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() }),
-      dbConnPostgres: dbConnSqlNoop,
+      keyValueDbHashMap,
+      pubSubTopicBased,
+      runtime,
+      logger,
     }
   }
 
@@ -75,11 +98,23 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     simulateLatency: async () => {},
   })
 
-  const keyValueDb = await KeyValueDb({
+  const keyValueDbRedis = await KeyValueDb({
     t: 'redis',
     logger,
     redisUrl: CONFIG_BACKEND.REDIS_URL,
     simulateLatency: async () => {},
+  })
+
+  const keyValueDbPostgres = await KeyValueDb({
+    t: 'db-conn-sql',
+    dbConnSql: dbConnPostgres,
+    logger,
+  })
+
+  const keyValueDbSqlite = await KeyValueDb({
+    t: 'db-conn-sql',
+    dbConnSql: dbConnSqlite,
+    logger,
   })
 
   const pubSubTopicBased = await PubSubTopicBased({
@@ -93,8 +128,13 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     ctx,
     dbConnSqlite,
     dbConnPostgres,
-    keyValueDb,
+    keyValueDbSqlite,
+    keyValueDbHashMap,
+    keyValueDbRedis,
+    keyValueDbPostgres,
     pubSubTopicBased,
+    runtime,
+    logger,
   }
 }
 

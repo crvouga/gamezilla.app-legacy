@@ -1,7 +1,7 @@
 import preact from '@preact/preset-vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig, PluginOption } from 'vite'
-// @ts-expect-error 
+// @ts-expect-error
 import inferno from 'vite-plugin-inferno'
 // import topLevelAwait from 'vite-plugin-top-level-await'
 // import wasm from 'vite-plugin-wasm'

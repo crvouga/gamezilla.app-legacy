@@ -13,13 +13,13 @@ const Row = p.obj({
 })
 
 export type Config = {
-  t: 'postgres'
+  t: 'db-conn-sql'
   dbConnSql: IDbConnSql
   logger: ILogger
 }
 
 export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
-  const logger = Logger.prefix('postgres', config.logger)
+  const logger = Logger.prefix('db-conn-sql', config.logger)
   return {
     async get(key, parser) {
       try {
@@ -89,9 +89,17 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
           return queried
         }
 
+        const rowMap = new Map(queried.value.map((row) => [row.id, row]))
+
         const rows: p.Infer<typeof parser>[] = []
 
-        for (const row of queried.value) {
+        for (const key of keys) {
+          const row = rowMap.get(key)
+
+          if (!row) {
+            continue
+          }
+
           const json = JSON.parse(row.value)
 
           const parsed = parser.parse(json)

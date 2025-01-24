@@ -20,6 +20,7 @@ export type Config = SpacesCoreConfig & {
   stream: IStream<WithEventMeta<MsgSpace>>
   logger: ILogger
   runtime: IRuntime
+  namespace: string[]
 }
 
 export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync> => {
@@ -29,6 +30,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
     logger: Logger.prefix('key-value-db', config.logger),
     runtime: config.runtime,
     writeThrottle: TimeSpan.milliseconds(0),
+    namespace: config.namespace,
   })
 
   const snapshots = KeyValueDb.withNamespace<SpaceId, SpaceState.State>({

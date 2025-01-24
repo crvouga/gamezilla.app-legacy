@@ -20,7 +20,11 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
         return (
           <Element
             key={i}
-            className={cn('size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500', input.onClick && 'clickable')}
+            className={cn(
+              'size-2 rounded-full',
+              i === input.activeIndex ? 'bg-white' : 'bg-neutral-500',
+              input.onClick && 'clickable',
+            )}
             role='tab'
             onClick={input.onClick ? () => input.onClick?.(i) : undefined}
             data-pagination-dot-index={i}
@@ -32,4 +36,3 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
     </div>
   )
 }
-

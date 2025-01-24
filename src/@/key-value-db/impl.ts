@@ -1,7 +1,7 @@
 import { Logger } from '../logger'
 import * as ImplHashMap from './impl-hash-map'
 import * as ImplInMemory from './impl-in-memory'
-import * as ImplPostgres from './impl-postgres'
+import * as ImplDbConnSql from './impl-db-conn-sql'
 import * as ImplRedis from './impl-redis'
 import type { IKeyValueDb } from './interface'
 import * as WithCache from './with-cache'
@@ -10,10 +10,11 @@ import * as WithDistributedUpdates from './with-distributed-updates'
 import * as WithNamespace from './with-namespace'
 import * as WithReducedParsing from './with-reduced-parsing'
 import * as WithThrottledWrites from './with-throttled-writes'
+import * as WithSqlTables from './with-sql-tables'
 
 export type Config =
   | ImplHashMap.Config
-  | ImplPostgres.Config
+  | ImplDbConnSql.Config
   | ImplRedis.Config
   | ImplInMemory.Config
   | WithCache.Config
@@ -21,6 +22,7 @@ export type Config =
   | WithReducedParsing.Config
   | WithThrottledWrites.Config
   | WithDistributedInvalidations.Config
+  | WithSqlTables.Config
 
 export const KeyValueDb = async (configInput: Config): Promise<IKeyValueDb> => {
   const logger = Logger.prefix('key-value-db', configInput.logger ?? Logger({ t: 'noop' }))
@@ -34,8 +36,8 @@ export const KeyValueDb = async (configInput: Config): Promise<IKeyValueDb> => {
       return ImplRedis.KeyValueDb(config)
     }
 
-    case 'postgres': {
-      return ImplPostgres.KeyValueDb(config)
+    case 'db-conn-sql': {
+      return ImplDbConnSql.KeyValueDb(config)
     }
 
     case 'with-cache': {
@@ -60,6 +62,10 @@ export const KeyValueDb = async (configInput: Config): Promise<IKeyValueDb> => {
 
     case 'in-memory': {
       return ImplInMemory.KeyValueDb(config)
+    }
+
+    case 'with-sql-tables': {
+      return WithSqlTables.KeyValueDb(config)
     }
   }
 }

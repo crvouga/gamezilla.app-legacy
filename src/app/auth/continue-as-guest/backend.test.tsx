@@ -36,7 +36,7 @@ const BaseFixture = async (): Promise<{ ctx: BackendCtx }> => {
       const userSessionDb = await UserSessionDb({
         t: 'postgres-with-cache',
         dbConnSql: testEnv.dbConnPostgres,
-        keyValueDb: testEnv.keyValueDb,
+        keyValueDb: testEnv.keyValueDbHashMap,
         logger: f.ctx.logger,
         pubSubTopicBased: f.ctx.pubSub,
       })

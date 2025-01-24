@@ -3,142 +3,142 @@ import { p } from '~/@/parser'
 import { Ok, Result } from '~/@/result'
 import { Runtime } from '~/@/runtime'
 import { CONFIG_BACKEND } from '~/config/backend'
-import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import { Logger } from '../logger'
+import { CONFIG_SHARED } from '~/config/shared'
 import { PubSub } from '../pub-sub'
 import { TimeSpan } from '../time/time-span'
 import { Uuid } from '../uuid/uuid'
 import { KeyValueDb } from './impl'
-import { CONFIG_SHARED } from '~/config/shared'
+import { IKeyValueDb } from './interface'
+import { Logger } from '../logger'
+import { DbConnSql } from '../db-conn-sql/backend/impl'
 
-const Fixture = async () => {
-  const testEnv = await FixtureAppBackend()
+type Fixture = {
+  name: string
+  keyValueDb: IKeyValueDb
+}
+const Fixtures = async (): Promise<Fixture[]> => {
   const logger = Logger({ t: 'noop' })
 
-  switch (testEnv.t) {
-    case 'integration': {
-      const keyValueDb = testEnv.keyValueDb
+  const fixtures: Fixture[] = []
 
-      return {
+  fixtures.push({
+    name: 'hash-map',
+    keyValueDb: await KeyValueDb({
+      t: 'hash-map',
+      logger,
+    }),
+  })
+
+  fixtures.push({
+    name: 'with-cache',
+    keyValueDb: await KeyValueDb({
+      t: 'with-cache',
+      cache: await KeyValueDb({
+        t: 'hash-map',
+      }),
+      source: await KeyValueDb({
+        t: 'hash-map',
         logger,
-        keyValueDb,
-      }
-    }
+      }),
+      logger,
+    }),
+  })
 
-    case 'unit': {
-      const keyValueDb = await KeyValueDb({ t: 'hash-map' })
-
-      return {
+  fixtures.push({
+    name: 'with-reduced-parsing',
+    keyValueDb: await KeyValueDb({
+      t: 'with-reduced-parsing',
+      keyValueDb: await KeyValueDb({
+        t: 'hash-map',
         logger,
-        keyValueDb,
-      }
-    }
-  }
-}
+      }),
+      verifiedKeys: new Set(),
+      logger,
+    }),
+  })
 
-type Implementation = {
-  name: string
-  Fixture: () => ReturnType<typeof Fixture>
-}
+  fixtures.push({
+    name: 'with-throttled-writes-to-source',
+    keyValueDb: await KeyValueDb({
+      t: 'with-cache',
+      cache: await KeyValueDb({
+        t: 'hash-map',
+      }),
+      source: await KeyValueDb({
+        t: 'with-throttled-writes',
+        keyValueDb: await KeyValueDb({
+          t: 'hash-map',
+          logger,
+        }),
+        logger,
+        throttle: TimeSpan.seconds(10),
+        runtime: Runtime({ t: 'noop' }),
+      }),
+      logger,
+    }),
+  })
 
-const Fixtures = (): Implementation[] => {
-  const fixtures: Implementation[] = [
-    {
-      name: 'base',
-      Fixture,
+  fixtures.push({
+    name: 'with-distributed-invalidations-for-cache',
+    keyValueDb: await KeyValueDb({
+      t: 'with-cache',
+      source: await KeyValueDb({
+        t: 'hash-map',
+        logger,
+      }),
+      logger,
+      cache: await KeyValueDb({
+        t: 'with-distributed-invalidations',
+        cache: await KeyValueDb({ t: 'hash-map' }),
+        logger,
+        pubSub: await PubSub({ t: 'in-memory' }),
+      }),
+    }),
+  })
+
+  const dbConnSqlSqlite = await DbConnSql({
+    t: 'bun-sqlite',
+    logger,
+    fileSystem: {
+      t: 'in-memory',
     },
-    {
-      name: 'with-cache',
-      async Fixture() {
-        const f = await Fixture()
-        return {
-          ...f,
-          keyValueDb: await KeyValueDb({
-            t: 'with-cache',
-            cache: await KeyValueDb({
-              t: 'hash-map',
-            }),
-            source: f.keyValueDb,
-            logger: f.logger,
-          }),
-        }
-      },
-    },
-    {
-      name: 'with-reduced-parsing',
-      async Fixture() {
-        const f = await Fixture()
-        return {
-          ...f,
-          keyValueDb: await KeyValueDb({
-            t: 'with-reduced-parsing',
-            keyValueDb: f.keyValueDb,
-            verifiedKeys: new Set(),
-            logger: f.logger,
-          }),
-        }
-      },
-    },
-    {
-      name: 'with-throttled-writes-to-source',
-      async Fixture() {
-        const f = await Fixture()
-        return {
-          ...f,
-          keyValueDb: await KeyValueDb({
-            t: 'with-cache',
-            cache: await KeyValueDb({
-              t: 'hash-map',
-            }),
-            source: await KeyValueDb({
-              t: 'with-throttled-writes',
-              keyValueDb: f.keyValueDb,
-              logger: f.logger,
-              throttle: TimeSpan.seconds(10),
-              runtime: Runtime({ t: 'noop' }),
-            }),
-            logger: f.logger,
-          }),
-        }
-      },
-    },
-    {
-      name: 'with-distributed-invalidations-for-cache',
-      async Fixture() {
-        const f = await Fixture()
-        return {
-          ...f,
-          keyValueDb: await KeyValueDb({
-            t: 'with-cache',
-            source: f.keyValueDb,
-            logger: f.logger,
-            cache: await KeyValueDb({
-              t: 'with-distributed-invalidations',
-              cache: await KeyValueDb({ t: 'hash-map' }),
-              logger: f.logger,
-              pubSub: await PubSub({ t: 'in-memory' }),
-            }),
-          }),
-        }
-      },
-    },
-  ]
+  })
+
+  fixtures.push({
+    name: 'sqlite',
+    keyValueDb: await KeyValueDb({
+      t: 'with-sql-tables',
+      dbConnSql: dbConnSqlSqlite,
+      keyValueDb: await KeyValueDb({
+        t: 'db-conn-sql',
+        dbConnSql: dbConnSqlSqlite,
+        logger,
+      }),
+    }),
+  })
 
   if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
     fixtures.push({
       name: 'redis',
-      async Fixture() {
-        const f = await Fixture()
-        return {
-          ...f,
-          keyValueDb: await KeyValueDb({
-            t: 'redis',
-            simulateLatency: async () => {},
-            redisUrl: CONFIG_BACKEND.REDIS_URL,
-            logger: f.logger,
-          }),
-        }
-      },
+      keyValueDb: await KeyValueDb({
+        t: 'redis',
+        simulateLatency: async () => {},
+        redisUrl: CONFIG_BACKEND.REDIS_URL,
+        logger,
+      }),
+    })
+
+    fixtures.push({
+      name: 'postgres',
+      keyValueDb: await KeyValueDb({
+        t: 'db-conn-sql',
+        dbConnSql: await DbConnSql({
+          t: 'postgres',
+          logger,
+          databaseUrl: CONFIG_BACKEND.DATABASE_URL,
+        }),
+        logger,
+      }),
     })
   }
 
@@ -165,14 +165,13 @@ const normalizeItemArrayResult = <T>(result: Result<T, Item[]>): Result<T, Item[
 
 describe(`${import.meta.file} ${name}`, () => {
   it('should set correctly', async () => {
-    for (const { Fixture } of Fixtures()) {
-      const f = await Fixture()
-
+    const fixtures = await Fixtures()
+    for (const fixture of fixtures) {
       const item = randomItem()
 
-      const before = await f.keyValueDb.get(item.id, Item)
-      await f.keyValueDb.set(item.id, item)
-      const after = await f.keyValueDb.get(item.id, Item)
+      const before = await fixture.keyValueDb.get(item.id, Item)
+      await fixture.keyValueDb.set(item.id, item)
+      const after = await fixture.keyValueDb.get(item.id, Item)
 
       expect(before).toEqual(Ok(null))
       expect(after).toEqual(Ok(item))
@@ -180,29 +179,27 @@ describe(`${import.meta.file} ${name}`, () => {
   })
 
   test('setMany empty input', async () => {
-    for (const { Fixture } of Fixtures()) {
-      const f = await Fixture()
-
-      const set = await f.keyValueDb.setMany([])
+    const fixtures = await Fixtures()
+    for (const fixture of fixtures) {
+      const set = await fixture.keyValueDb.setMany([])
 
       expect(set).toEqual(Ok(null))
     }
   })
 
   it('should set many correctly', async () => {
-    for (const { Fixture } of Fixtures()) {
-      const f = await Fixture()
-
+    const fixtures = await Fixtures()
+    for (const fixture of fixtures) {
       const items = [randomItem(), randomItem(), randomItem()]
 
-      const before = await f.keyValueDb.getMany(
+      const before = await fixture.keyValueDb.getMany(
         items.map((item) => item.id),
         Item,
       )
 
-      await f.keyValueDb.setMany(items.map((item) => [item.id, item]))
+      await fixture.keyValueDb.setMany(items.map((item) => [item.id, item]))
 
-      const after = await f.keyValueDb.getMany(
+      const after = await fixture.keyValueDb.getMany(
         items.map((item) => item.id),
         Item,
       )
@@ -213,65 +210,82 @@ describe(`${import.meta.file} ${name}`, () => {
   })
 
   it('should get correctly', async () => {
-    for (const { Fixture } of Fixtures()) {
-      const f = await Fixture()
-
+    const fixtures = await Fixtures()
+    for (const fixture of fixtures) {
       const item = randomItem()
 
-      await f.keyValueDb.set(item.id, item)
+      await fixture.keyValueDb.set(item.id, item)
 
-      const got = await f.keyValueDb.get(item.id, Item)
+      const got = await fixture.keyValueDb.get(item.id, Item)
 
       expect(got).toEqual(Ok(item))
     }
   })
 
   it('should get many correctly', async () => {
-    for (const { Fixture } of Fixtures()) {
-      const f = await Fixture()
-
+    const fixtures = await Fixtures()
+    for (const fixture of fixtures) {
       const items = [randomItem(), randomItem(), randomItem()]
 
-      await f.keyValueDb.setMany(items.map((item) => [item.id, item]))
+      await fixture.keyValueDb.setMany(items.map((item) => [item.id, item]))
 
-      const got = await f.keyValueDb.getMany(
+      const got = await fixture.keyValueDb.getMany(
         items.map((item) => item.id),
         Item,
       )
-
       expect(got).toEqual(Ok(items))
     }
   })
 
   test('get many empty', async () => {
-    for (const { Fixture } of Fixtures()) {
-      const f = await Fixture()
-
+    const fixtures = await Fixtures()
+    for (const fixture of fixtures) {
       const items = [randomItem(), randomItem(), randomItem()]
-      await f.keyValueDb.setMany(items.map((item) => [item.id, item]))
+      await fixture.keyValueDb.setMany(items.map((item) => [item.id, item]))
 
-      const got = await f.keyValueDb.getMany([], Item)
+      const got = await fixture.keyValueDb.getMany([], Item)
 
       expect(got).toEqual(Ok([]))
     }
   })
 
   it('should zap items correctly', async () => {
-    for (const { Fixture } of Fixtures()) {
-      const f = await Fixture()
-
+    const fixtures = await Fixtures()
+    for (const fixture of fixtures) {
       const item = randomItem()
 
-      await f.keyValueDb.set(item.id, item)
+      await fixture.keyValueDb.set(item.id, item)
 
-      const before = await f.keyValueDb.get(item.id, Item)
+      const before = await fixture.keyValueDb.get(item.id, Item)
 
-      await f.keyValueDb.zap(item.id)
+      await fixture.keyValueDb.zap(item.id)
 
-      const after = await f.keyValueDb.get(item.id, Item)
+      const after = await fixture.keyValueDb.get(item.id, Item)
 
       expect(before).toEqual(Ok(item))
       expect(after).toEqual(Ok(null))
+    }
+  })
+
+  it.skip('should handle overwriting existing keys', async () => {
+    const fixtures = await Fixtures()
+    for (const fixture of fixtures) {
+      const key = 'test-key'
+      const initialItem = randomItem()
+      initialItem.id = key
+      const updatedItem = randomItem()
+      updatedItem.id = key
+
+      // Set initial value
+      await fixture.keyValueDb.set(key, initialItem)
+      const initial = await fixture.keyValueDb.get(key, Item)
+      expect(initial).toEqual(Ok(initialItem))
+
+      // Overwrite with new value
+      await fixture.keyValueDb.set(key, updatedItem)
+      const updated = await fixture.keyValueDb.get(key, Item)
+      expect(updated).toEqual(Ok(updatedItem))
+      expect(updated).not.toEqual(initial)
     }
   })
 })

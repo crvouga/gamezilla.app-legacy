@@ -59,9 +59,5 @@
     // "resolveJsonModule": true
   },
   "exclude": ["node_modules"],
-  "include": [
-    "vite.config.ts",
-    "tailwind.config.ts",
-    "src/**/*",
-  ]
+  "include": ["vite.config.ts", "tailwind.config.ts", "src/**/*"]
 }

@@ -16,12 +16,12 @@ const Fixtures = async () => {
   const configs: Config[] = [
     {
       t: 'key-value-db',
-      keyValueDb: testEnv.keyValueDb,
+      keyValueDb: testEnv.keyValueDbHashMap,
       logger,
     },
     {
       t: 'cached-key-value-db',
-      keyValueDb: testEnv.keyValueDb,
+      keyValueDb: testEnv.keyValueDbHashMap,
       logger,
       pubSubTopicBased: testEnv.pubSubTopicBased,
     },

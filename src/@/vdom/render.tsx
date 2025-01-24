@@ -10,7 +10,7 @@ export let createPortal: CreatePortal | null = null
 export const Renderer = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<Render> => {
   switch (vDomImpl) {
     case 'inferno': {
-      // @ts-expect-error 
+      // @ts-expect-error
       const Inferno = await import('inferno')
       createPortal = Inferno.createPortal
       return function render(vDom) {

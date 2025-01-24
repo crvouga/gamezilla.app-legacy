@@ -63,7 +63,7 @@ const initCtx = async (): Promise<BackendCtx> => {
   })
 
   const keyValueDb = await KeyValueDb({
-    t: 'postgres',
+    t: 'db-conn-sql',
     dbConnSql,
     logger,
   })
@@ -78,9 +78,7 @@ const initCtx = async (): Promise<BackendCtx> => {
     t: CONFIG_SHARED.HTTP_SERVER_IMPL,
   })
 
-  const pubSub = await PubSubTopicBased({
-    t: 'noop',
-  })
+  const pubSub = await PubSubTopicBased({ t: 'noop' })
 
   const transport = await BackendTransport<MsgToBackend, MsgToFrontend>(
     httpServer.t === 'bun'
@@ -107,19 +105,23 @@ const initCtx = async (): Promise<BackendCtx> => {
 
   const env = CONFIG_SHARED.IS_PROD ? 'prod' : 'dev'
 
+  const now = Posix.now()
+
+  const backendInstanceId = BackendInstanceId.generate()
+
   const ctx: AppBackendCtx = {
     env,
     sms,
     dbConnSql,
     keyValueDb,
     logger,
-    now: Posix.now(),
+    now,
+    backendInstanceId,
     sleep,
     pubSub,
     profileCache,
     httpServer,
     runtime,
-    backendInstanceId: BackendInstanceId.generate(),
   }
 
   const wire = await WireBackend.initCtx({ ctx, transport })

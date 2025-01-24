@@ -334,7 +334,7 @@ describe(import.meta.file, () => {
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
     const firstPuzzleIndexNextSlide = PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT
-    
+
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
@@ -342,7 +342,9 @@ describe(import.meta.file, () => {
         puzzleIndex: firstPuzzleIndexNextSlide,
       },
     ])
-    expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === firstPuzzleIndexNextSlide).toBe(true)
+    expect(
+      modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === firstPuzzleIndexNextSlide,
+    ).toBe(true)
   })
 
   it('should open the correct level when opening puzzle screen event when there is duplicate puzzles in the pack', async () => {

@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, test } from 'bun:test'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { PAGINATION_DOTS_TEST_ID, toPaginationDotSelector } from '~/app/@/ui/pagination-dots'
-import { PackPuzzleGridUI,  } from '.'
+import { PackPuzzleGridUI } from '.'
 import { PuzzleId } from '../../puzzle/puzzle-id'
 import { PubSub } from '~/@/sub'
 
 const Fixture = async () => {
   const f = await FixtureAppFrontend()
   return {
-    ...f
+    ...f,
   }
 }
 
@@ -59,11 +59,7 @@ describe(import.meta.file, () => {
 
   test('slide title should show correct end position based on actual puzzle count', async () => {
     const puzzleCount = Math.floor(PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT / 2)
-    const r = f.render(
-      <PackPuzzleGridUI.View
-        puzzleIds={Array.from({ length: puzzleCount }, PuzzleId.generate)}
-      />,
-    )
+    const r = f.render(<PackPuzzleGridUI.View puzzleIds={Array.from({ length: puzzleCount }, PuzzleId.generate)} />)
     const slideTitle = r.getByRole('tabpanel')[0]?.getByRole('heading')[0]
     expect(slideTitle?.textContent).toBeTruthy()
     expect(slideTitle?.textContent).not.toContain(PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT.toString())
@@ -71,12 +67,8 @@ describe(import.meta.file, () => {
   })
 
   test('slide title should show correct end position based on actual puzzle count on second slide', async () => {
-    const puzzleCount = PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT  + Math.floor(PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT / 2)
-    const r = f.render(
-      <PackPuzzleGridUI.View
-        puzzleIds={Array.from({ length: puzzleCount }, PuzzleId.generate)}
-      />,
-    )
+    const puzzleCount = PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + Math.floor(PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT / 2)
+    const r = f.render(<PackPuzzleGridUI.View puzzleIds={Array.from({ length: puzzleCount }, PuzzleId.generate)} />)
     const slide1Title = r.getByRole('tabpanel')[0]?.getByRole('heading')[0]
     expect(slide1Title?.textContent).toBeTruthy()
     expect(slide1Title?.textContent).toContain(PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT.toString())
