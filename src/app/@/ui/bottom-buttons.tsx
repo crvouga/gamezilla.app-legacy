@@ -90,11 +90,11 @@ const Button = (input: BottomButtonInput) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 text-sm',
+        'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 text-sm font-bold',
         'clickable disabled:cursor-not-allowed disabled:opacity-50',
-        input.color === 'danger' && 'font-bold text-red-500',
-        input.color === 'success' && 'font-bold text-green-500',
-        input.color === 'selected' && 'font-bold text-blue-500',
+        input.color === 'danger' && 'text-red-500',
+        input.color === 'success' && 'text-green-500',
+        input.color === 'selected' && 'text-blue-500',
         input.hidden ? 'hidden' : '',
         input.classNames?.button,
       )}
