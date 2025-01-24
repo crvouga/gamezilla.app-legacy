@@ -24,25 +24,24 @@ type Input =
     }
 
 const BaseFixture = async (): Promise<{ ctx: BackendCtx }> => {
-  const testEnv = await FixtureAppBackend()
   const f = await FixtureAppBackend()
 
-  switch (testEnv.t) {
+  switch (f.t) {
     case 'integration': {
       const userAccountDb = UserAccountDb({
         t: 'postgres',
-        dbConnSql: testEnv.dbConnPostgres,
+        dbConnSql: f.dbConnPostgres,
       })
       const userSessionDb = await UserSessionDb({
         t: 'postgres-with-cache',
-        dbConnSql: testEnv.dbConnPostgres,
-        keyValueDb: testEnv.keyValueDbHashMap,
+        dbConnSql: f.dbConnPostgres,
+        keyValueDb: f.keyValueDbHashMap,
         logger: f.ctx.logger,
         pubSubTopicBased: f.ctx.pubSub,
       })
       const guestSessionMappingDb = GuestSessionMappingDb({
         t: 'postgres',
-        dbConnSql: testEnv.dbConnPostgres,
+        dbConnSql: f.dbConnPostgres,
       })
       return {
         ctx: {

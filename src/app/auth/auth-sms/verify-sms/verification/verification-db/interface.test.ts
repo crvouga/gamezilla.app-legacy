@@ -9,13 +9,13 @@ import { TimeSpan } from '~/@/time/time-span'
 
 const FixtureVariant = async () => {
   //
-  const testEnv = await FixtureAppBackend()
-  switch (testEnv.t) {
+  const f = await FixtureAppBackend()
+  switch (f.t) {
     case 'integration': {
       return {
         verificationDb: VerificationDb({
           t: 'postgres',
-          dbConnSql: testEnv.dbConnPostgres,
+          dbConnSql: f.dbConnPostgres,
         }),
       }
     }

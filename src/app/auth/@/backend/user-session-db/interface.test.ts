@@ -47,7 +47,7 @@ const Fixture = async (config: Config) => {
 }
 
 const Fixtures = async () => {
-  const testEnv = await FixtureAppBackend()
+  const f = await FixtureAppBackend()
   const configs: Config[] = [
     {
       t: 'in-memory',
@@ -55,17 +55,17 @@ const Fixtures = async () => {
     },
   ]
 
-  if (testEnv.t === 'integration') {
+  if (f.t === 'integration') {
     configs.push({
       t: 'postgres',
-      dbConnSql: testEnv.dbConnPostgres,
+      dbConnSql: f.dbConnPostgres,
       logger: Logger({ t: 'noop' }),
     })
 
     configs.push({
       t: 'postgres-with-cache',
-      keyValueDb: testEnv.keyValueDbHashMap,
-      dbConnSql: testEnv.dbConnPostgres,
+      keyValueDb: f.keyValueDbHashMap,
+      dbConnSql: f.dbConnPostgres,
       pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() }),
       logger: Logger({ t: 'noop' }),
     })

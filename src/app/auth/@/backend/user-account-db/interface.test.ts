@@ -8,14 +8,14 @@ import { Posix } from '~/@/time/posix'
 import { PhoneNumber } from '~/@/phone-number'
 
 const Fixture = async () => {
-  const testEnv = await FixtureAppBackend()
+  const f = await FixtureAppBackend()
 
-  switch (testEnv.t) {
+  switch (f.t) {
     case 'integration': {
       return {
         userAccountDb: UserAccountDb({
           t: 'postgres',
-          dbConnSql: testEnv.dbConnPostgres,
+          dbConnSql: f.dbConnPostgres,
         }),
       }
     }

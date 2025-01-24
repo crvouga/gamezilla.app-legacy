@@ -31,11 +31,11 @@ const randomMyEvent = (): MyEvent => ({
 const encode = (myEvent: MyEvent) => JSON.stringify(myEvent)
 
 const Fixtures = async () => {
-  const testEnv = await FixtureAppBackend()
+  const f = await FixtureAppBackend()
   const configs: Config[] = [{ t: 'in-memory', subscribersByTopic: new Map() }]
 
-  if (testEnv.t === 'integration') {
-    configs.push({ t: 'postgres', dbConnSql: testEnv.dbConnPostgres, logger: Logger({ t: 'noop' }) })
+  if (f.t === 'integration') {
+    configs.push({ t: 'postgres', dbConnSql: f.dbConnPostgres, logger: Logger({ t: 'noop' }) })
     configs.push({
       t: 'redis',
       redisUrl: CONFIG_BACKEND.REDIS_URL,

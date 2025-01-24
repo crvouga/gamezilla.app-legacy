@@ -6,12 +6,12 @@ import { unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 
 const Fixture = async () => {
-  const testEnv = await FixtureAppBackend()
-  switch (testEnv.t) {
+  const f = await FixtureAppBackend()
+  switch (f.t) {
     case 'integration': {
       const guestSessionMappingDb = GuestSessionMappingDb({
         t: 'postgres',
-        dbConnSql: testEnv.dbConnPostgres,
+        dbConnSql: f.dbConnPostgres,
       })
 
       return {

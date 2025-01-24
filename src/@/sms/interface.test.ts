@@ -6,10 +6,10 @@ import { isOk, unwrap } from '~/@/result'
 import { PhoneNumber } from '../phone-number'
 
 const Fixture = async () => {
-  const testEnv = await FixtureAppBackend()
+  const f = await FixtureAppBackend()
   const logger = Logger({ t: 'noop' })
   const phoneNumber = unwrap(PhoneNumber.fromString('+14802098698'))
-  switch (testEnv.t) {
+  switch (f.t) {
     case 'integration': {
       const sms = SMS({
         t: 'fake',

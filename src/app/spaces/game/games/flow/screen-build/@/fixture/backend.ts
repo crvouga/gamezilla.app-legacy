@@ -9,19 +9,19 @@ import { Solutions } from '../../../@/solutions/solutions'
 import { BuildSpace } from '../../space'
 
 const initCtx = async (ctx: SpaceBackendCtx): Promise<FlowBackendCtx> => {
-  const testEnv = await FixtureAppBackend()
-  switch (testEnv.t) {
+  const f = await FixtureAppBackend()
+  switch (f.t) {
     case 'integration': {
       return {
         ...ctx,
         packDb: PackDb({
           t: 'db-conn-sql',
-          dbConnSql: testEnv.dbConnPostgres,
+          dbConnSql: f.dbConnPostgres,
           logger: Logger({ t: 'noop' }),
         }),
         puzzleDb: await PuzzleDb({
           t: 'db-conn-sql',
-          dbConnSql: testEnv.dbConnPostgres,
+          dbConnSql: f.dbConnPostgres,
           logger: Logger({ t: 'noop' }),
         }),
         solutions: Solutions.init,

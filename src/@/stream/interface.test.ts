@@ -47,9 +47,9 @@ const Fixtures = async () => {
     },
   ]
 
-  const testEnv = await FixtureAppBackend()
+  const f = await FixtureAppBackend()
 
-  if (testEnv.t === 'integration') {
+  if (f.t === 'integration') {
     configs.push({
       t: 'redis',
       decode: (encoded) => Ok(JSON.parse(encoded)),

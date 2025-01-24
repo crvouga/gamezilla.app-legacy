@@ -6,14 +6,14 @@ import { unwrap } from '~/@/result'
 import { VerificationId } from '../../verification/verification-id'
 
 const Fixture = async () => {
-  const testEnv = await FixtureAppBackend()
+  const f = await FixtureAppBackend()
 
-  switch (testEnv.t) {
+  switch (f.t) {
     case 'integration': {
       return {
         verificationAttemptDb: VerificationAttemptDb({
           t: 'postgres',
-          dbConnSql: testEnv.dbConnPostgres,
+          dbConnSql: f.dbConnPostgres,
         }),
       }
     }

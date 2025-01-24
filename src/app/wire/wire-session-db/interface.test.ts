@@ -11,19 +11,19 @@ const Fixture = async (config: Config) => {
 }
 
 const Fixtures = async () => {
-  const testEnv = await FixtureAppBackend()
+  const f = await FixtureAppBackend()
   const logger = Logger({ t: 'noop' })
   const configs: Config[] = [
     {
       t: 'key-value-db',
-      keyValueDb: testEnv.keyValueDbHashMap,
+      keyValueDb: f.keyValueDbHashMap,
       logger,
     },
     {
       t: 'cached-key-value-db',
-      keyValueDb: testEnv.keyValueDbHashMap,
+      keyValueDb: f.keyValueDbHashMap,
       logger,
-      pubSubTopicBased: testEnv.pubSubTopicBased,
+      pubSubTopicBased: f.pubSubTopicBased,
     },
   ]
 

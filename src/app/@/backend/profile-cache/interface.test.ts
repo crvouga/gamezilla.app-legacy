@@ -5,10 +5,10 @@ import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { ProfileCache } from './impl'
 
 const Fixture = async () => {
-  const testEnv = await FixtureAppBackend()
+  const f = await FixtureAppBackend()
   const profileCache = await ProfileCache({
     t: 'key-value-db',
-    keyValueDb: testEnv.keyValueDbHashMap,
+    keyValueDb: f.keyValueDbHashMap,
   })
   return { profileCache }
 }
