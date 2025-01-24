@@ -126,6 +126,7 @@ updates.push((input) => {
       if (!input.modelSpace) {
         return input.modelSpace
       }
+      debugger
       return {
         ...input.modelSpace,
         slideIndex: input.msgSpace.newSlideIndex,
@@ -323,13 +324,13 @@ updates.push(({ modelSpace, msgSpace }) => {
 })
 
 updates.push((input) => {
-  if (!input.modelSpace) {
-    return input.modelSpace
-  }
-
   return {
     ...input.modelSpace,
-    slideIndex: PackPuzzleGridUI.clampSlideIndex(input.modelSpace.slideIndex, input.modelSpace.pack.puzzleIds.length),
+    slideIndex: PackPuzzleGridUI.clampSlideIndex({
+      slideIndex: input.modelSpace.slideIndex,
+      puzzleCount: input.modelSpace.pack.puzzleIds.length,
+      isAddButtonIncluded: true,
+    }),
   }
 })
 

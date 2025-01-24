@@ -71,7 +71,10 @@ const View = (input: {
   return (
     <div className='flex h-full w-full flex-col gap-4 py-6'>
       <Swiper.Container
-        onSlideIndexChanged={input.onSlideIndexChanged}
+        onSlideIndexChanged={(slideIndex) => {
+          console.log('slideIndex', slideIndex)
+          input.onSlideIndexChanged?.(slideIndex)
+        }}
         id={input.id ?? 'pack-puzzle-grid-swiper-container'}
         slideIndex={input.slideIndex ?? 0}
         className='flex h-full w-full items-center justify-center'
@@ -79,6 +82,7 @@ const View = (input: {
         {slides}
       </Swiper.Container>
 
+      input.slideIndex={input.slideIndex}
       <PaginationDots count={slideCount} activeIndex={input.slideIndex ?? 0} onClick={input.onSlideIndexChanged} />
     </div>
   )
@@ -175,9 +179,10 @@ const toSlideIndex = (puzzleIndex: number) => {
   return Math.floor(puzzleIndex / (COLUMN_COUNT * ROW_COUNT))
 }
 
-const clampSlideIndex = (slideIndex: number, itemCount: number): number => {
+const clampSlideIndex = (input: { slideIndex: number; puzzleCount: number; isAddButtonIncluded: boolean }): number => {
+  const itemCount = input.puzzleCount + (input.isAddButtonIncluded ? 1 : 0)
   const slideCount = Math.ceil(itemCount / PER_SLIDE_ITEM_COUNT)
-  return Math.min(slideIndex, slideCount - 1)
+  return Math.min(input.slideIndex, slideCount - 1)
 }
 
 export const PackPuzzleGridUI = {

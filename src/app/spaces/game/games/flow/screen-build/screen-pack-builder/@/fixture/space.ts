@@ -16,14 +16,11 @@ export const ScreenPackBuildSpaceFixture = async (input?: { puzzleCount?: number
   const puzzlesPromises = [Puzzle.random({ createdBy }), Puzzle.random({ createdBy }), Puzzle.random({ createdBy })]
 
   for (let i = 0; i < (input?.puzzleCount ?? 0); i++) {
-    puzzlesPromises.push(
-      Puzzle.random({
-        createdBy,
-      }),
-    )
+    puzzlesPromises.push(Puzzle.random({createdBy,}))
   }
 
-  const puzzles = (await Promise.all(puzzlesPromises)) as [Puzzle, Puzzle, Puzzle, ...Puzzle[]]
+  const puzzlesAll = await Promise.all(puzzlesPromises)
+  const puzzles = puzzlesAll.slice(0, input?.puzzleCount ?? 3)
 
   if (input?.appendDuplicatesOf) {
     for (let i = 0; i < 3; i++) {

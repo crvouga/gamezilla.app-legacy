@@ -28,4 +28,6 @@ describe(import.meta.file, () => {
     r.query(toPaginationDotSelector(1))[0]?.click()
     expect(await clickedIndex.once()).toEqual(1)
   })
+
+  
 })

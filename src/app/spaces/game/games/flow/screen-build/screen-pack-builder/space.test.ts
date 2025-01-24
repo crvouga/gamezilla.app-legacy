@@ -1,15 +1,20 @@
-import { describe, expect, it, test } from 'bun:test'
+import { beforeEach, describe, expect, it, test } from 'bun:test'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { ScreenPackBuildSpaceFixture } from './@/fixture/space'
 import { ScreenPackBuildSpace } from './space'
+import { assertNotNullish } from '~/@/assert'
 
 const Fixture = ScreenPackBuildSpaceFixture
 
 describe(import.meta.file, () => {
-  it('should remove puzzle from pack after clicking remove button', async () => {
-    const f = await Fixture()
+  let f: Awaited<ReturnType<typeof Fixture>>
 
+  beforeEach(async () => {
+    f = await Fixture()
+  })
+
+  it('should remove puzzle from pack after clicking remove button', async () => {
     const modelSpace = f.update(f.initial, [
       {
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
@@ -18,12 +23,10 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(modelSpace?.pack.puzzleIds.includes(f.puzzles[0].id)).toBe(false)
+    expect(modelSpace?.pack.puzzleIds.includes(assertNotNullish(f.puzzles[0]).id)).toBe(false)
   })
 
   it('should be able to exit puzzle screen', async () => {
-    const f = await Fixture()
-
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
@@ -35,12 +38,10 @@ describe(import.meta.file, () => {
   })
 
   it('should open puzzle screen when clicking puzzle grid item', async () => {
-    const f = await Fixture()
-
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzleResult: { t: 'got', c: f.puzzles[0] },
+        puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[0]) },
         puzzleIndex: 0,
       },
     ])
@@ -48,16 +49,15 @@ describe(import.meta.file, () => {
     expect(
       modelSpace?.screen.t === 'screen-puzzle' &&
         modelSpace.screen.puzzleResult.t === 'got' &&
-        modelSpace.screen.puzzleResult.c.id === f.puzzles[0].id,
+        modelSpace.screen.puzzleResult.c.id === assertNotNullish(f.puzzles[0]).id,
     ).toBe(true)
   })
 
   it("should be able to open 'more' drawer", async () => {
-    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzleResult: { t: 'got', c: f.puzzles[0] },
+        puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[0]) },
         puzzleIndex: 0,
       },
       {
@@ -69,11 +69,10 @@ describe(import.meta.file, () => {
   })
 
   it("should be able to close 'more' drawer", async () => {
-    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzleResult: { t: 'got', c: f.puzzles[0] },
+        puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[0]) },
         puzzleIndex: 0,
       },
       {
@@ -85,32 +84,30 @@ describe(import.meta.file, () => {
   })
 
   it('should be able to go to next puzzle', async () => {
-    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzleResult: { t: 'got', c: f.puzzles[0] },
+        puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[0]) },
         puzzleIndex: 0,
       },
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
         userId: f.createdBy,
-        nextPuzzleResult: { t: 'got', c: f.puzzles[1] },
+        nextPuzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[1]) },
       },
     ])
     expect(
       modelSpace?.screen.t === 'screen-puzzle' &&
         modelSpace?.screen.puzzleResult.t === 'got' &&
-        modelSpace?.screen.puzzleResult.c.id === f.puzzles[1].id,
+        modelSpace?.screen.puzzleResult.c.id === assertNotNullish(f.puzzles[1]).id,
     ).toBe(true)
   })
 
   it('should do nothing if next puzzle is not in pack', async () => {
-    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzleResult: { t: 'got', c: f.puzzles[0] },
+        puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[0]) },
         puzzleIndex: 0,
       },
       {
@@ -129,32 +126,30 @@ describe(import.meta.file, () => {
   })
 
   it('should be able to go to previous puzzle', async () => {
-    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzleResult: { t: 'got', c: f.puzzles[1] },
+        puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[1]) },
         puzzleIndex: 1,
       },
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
         userId: f.createdBy,
-        previousPuzzleResult: { t: 'got', c: f.puzzles[0] },
+        previousPuzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[0]) },
       },
     ])
     expect(
       modelSpace?.screen.t === 'screen-puzzle' &&
         modelSpace?.screen.puzzleResult.t === 'got' &&
-        modelSpace?.screen.puzzleResult.c.id === f.puzzles[0].id,
+        modelSpace?.screen.puzzleResult.c.id === assertNotNullish(f.puzzles[0]).id,
     ).toBe(true)
   })
 
   it('should do nothing if previous puzzle is not in pack', async () => {
-    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzleResult: { t: 'got', c: f.puzzles[1] },
+        puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[1]) },
         puzzleIndex: 1,
       },
       {
@@ -171,16 +166,15 @@ describe(import.meta.file, () => {
     expect(
       modelSpace?.screen.t === 'screen-puzzle' &&
         modelSpace?.screen.puzzleResult.t === 'got' &&
-        modelSpace?.screen.puzzleResult.c.id === f.puzzles[1].id,
+        modelSpace?.screen.puzzleResult.c.id === assertNotNullish(f.puzzles[1]).id,
     ).toBe(true)
   })
 
   it('should be able to exit puzzle screen', async () => {
-    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzleResult: { t: 'got', c: f.puzzles[1] },
+        puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[1]) },
         puzzleIndex: 1,
       },
       {
@@ -192,7 +186,6 @@ describe(import.meta.file, () => {
   })
 
   it('should be able to open add puzzle screen', async () => {
-    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
@@ -203,13 +196,11 @@ describe(import.meta.file, () => {
   })
 
   it('should be on the correct slide index after exiting the puzzle screen', async () => {
-    const f = await Fixture({
+    f = await Fixture({
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
 
-    const puzzle = f.puzzles[f.puzzles.length - 1]
-
-    if (!puzzle) throw new Error('Puzzle not found')
+    const puzzle = assertNotNullish(f.puzzles[f.puzzles.length - 1])
 
     const modelSpace = f.update(f.initial, [
       {
@@ -229,7 +220,7 @@ describe(import.meta.file, () => {
   })
 
   it('should allow user to change slide', async () => {
-    const f = await Fixture({
+    f = await Fixture({
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
 
@@ -245,7 +236,7 @@ describe(import.meta.file, () => {
   })
 
   it('should prevent slide index from going out of bounds', async () => {
-    const f = await Fixture({
+    f = await Fixture({
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
     const expectedSlide = PackPuzzleGridUI.toSlideIndex(PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1)
@@ -260,8 +251,7 @@ describe(import.meta.file, () => {
   })
 
   it('should go back to grid after exiting puzzle', async () => {
-    const f = await Fixture()
-    const puzzle = f.puzzles[0]
+    const puzzle = assertNotNullish(f.puzzles[0])
     const output = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
@@ -277,8 +267,7 @@ describe(import.meta.file, () => {
   })
 
   it('should open the more drawer after clicking "more" button', async () => {
-    const f = await Fixture()
-    const puzzle = f.puzzles[0]
+    const puzzle = assertNotNullish(f.puzzles[0])
     const puzzleIndex = 0
     const output = f.update(f.initial, [
       {
@@ -296,8 +285,7 @@ describe(import.meta.file, () => {
   })
 
   it('should close the more drawer', async () => {
-    const f = await Fixture()
-    const puzzle = f.puzzles[0]
+    const puzzle = assertNotNullish(f.puzzles[0])
     const puzzleIndex = 0
     const output = f.update(f.initial, [
       {
@@ -318,8 +306,7 @@ describe(import.meta.file, () => {
   })
 
   it('should should remove puzzle from pack clicking remove from pack button', async () => {
-    const f = await Fixture()
-    const puzzle = f.puzzles[0]
+    const puzzle = assertNotNullish(f.puzzles[0])
     const puzzleIndex = 0
     const output = f.update(f.initial, [
       {
@@ -343,30 +330,31 @@ describe(import.meta.file, () => {
   })
 
   it('should open the correct level when opening puzzle screen', async () => {
-    const f = await Fixture({
+    f = await Fixture({
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
-    const indexNextPage = PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1
+    const firstPuzzleIndexNextSlide = PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT
+    
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzleResult: { t: 'got', c: f.puzzles[indexNextPage]! },
-        puzzleIndex: indexNextPage,
+        puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[firstPuzzleIndexNextSlide]) },
+        puzzleIndex: firstPuzzleIndexNextSlide,
       },
     ])
-    expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === indexNextPage).toBe(true)
+    expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === firstPuzzleIndexNextSlide).toBe(true)
   })
 
   it('should open the correct level when opening puzzle screen event when there is duplicate puzzles in the pack', async () => {
     const puzzle = await Puzzle.random()
-    const f = await Fixture({
+    f = await Fixture({
       appendDuplicatesOf: puzzle,
     })
 
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzleResult: { t: 'got', c: f.puzzles[f.puzzles.length - 1]! },
+        puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[f.puzzles.length - 1]) },
         puzzleIndex: f.puzzles.length - 1,
       },
     ])
@@ -378,13 +366,11 @@ describe(import.meta.file, () => {
 
   it('should not open pack item if puzzle is not at index given', async () => {
     const puzzle = await Puzzle.random()
-    const f = await Fixture({
+    f = await Fixture({
       appendDuplicatesOf: puzzle,
     })
 
-    const puzzleLast = f.puzzles[f.puzzles.length - 1]
-
-    if (!puzzleLast) throw new Error('Puzzle not found')
+    const puzzleLast = assertNotNullish(f.puzzles[f.puzzles.length - 1])
 
     const modelSpace = f.update(f.initial, [
       {
@@ -398,7 +384,6 @@ describe(import.meta.file, () => {
   })
 
   it('should open not-found puzzle', async () => {
-    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
@@ -410,7 +395,6 @@ describe(import.meta.file, () => {
   })
 
   test('exit pack builder', async () => {
-    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-back-button',
@@ -419,5 +403,28 @@ describe(import.meta.file, () => {
     ])
     expect(modelSpace.msgs?.length).toBe(1)
     expect(modelSpace.msgs?.some((m) => m.t === 'exit-pack-builder')).toBe(true)
+  })
+
+  test('clamp slide index', async () => {
+    const modelSpace = f.update(f.initial, [
+      {
+        t: 'screen-pack-builder.user-changed-slide',
+        userId: f.createdBy,
+        newSlideIndex: 100000,
+      },
+    ])
+    expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(0)
+  })
+
+  test('clamp slide index should account for add puzzle cell', async () => {
+    f = await Fixture({ puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT })
+    const modelSpace = f.update(f.initial, [
+      {
+        t: 'screen-pack-builder.user-changed-slide',
+        userId: f.createdBy,
+        newSlideIndex: 1,
+      },
+    ])
+    expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(1)
   })
 })

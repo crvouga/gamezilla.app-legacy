@@ -1,9 +1,10 @@
-import { describe, expect, it, test } from 'bun:test'
+import { beforeEach, describe, expect, it, test } from 'bun:test'
 import { Pack } from '../../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../../@/pack/pack-puzzle-grid-ui'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { ScreenPackBuildSpaceFixture } from '../@/fixture/space'
 import { ScreenPackBuildSpace } from '../space'
+import { assertNotNullish } from '~/@/assert'
 
 const Fixture = async (...params: Parameters<typeof ScreenPackBuildSpaceFixture>) => {
   const f = await ScreenPackBuildSpaceFixture(...params)
@@ -21,8 +22,13 @@ const Fixture = async (...params: Parameters<typeof ScreenPackBuildSpaceFixture>
 }
 
 describe(import.meta.file, () => {
+  let f: Awaited<ReturnType<typeof Fixture>>
+
+  beforeEach(async () => {
+    f = await Fixture()
+  })
+
   it('should unselect all puzzles after submitting form', async () => {
-    const f = await Fixture()
     const puzzle = await Puzzle.random()
     const before = f.update(f.initial, [
       {
@@ -45,7 +51,6 @@ describe(import.meta.file, () => {
   })
 
   test('selecting puzzles', async () => {
-    const f = await Fixture()
     const puzzle = await Puzzle.random()
     const output = f.update(f.initial, [
       {
@@ -60,7 +65,6 @@ describe(import.meta.file, () => {
   })
 
   test('toggling puzzles', async () => {
-    const f = await Fixture()
     const puzzle = await Puzzle.random()
 
     const before = f.update(f.initial, [
@@ -86,7 +90,6 @@ describe(import.meta.file, () => {
   })
 
   it('should be able to close add puzzle screen', async () => {
-    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
@@ -97,7 +100,6 @@ describe(import.meta.file, () => {
   })
 
   it('should be able to add new puzzle', async () => {
-    const f = await Fixture()
     const newPuzzle = await Puzzle.random({
       createdBy: f.createdBy,
     })
@@ -116,7 +118,7 @@ describe(import.meta.file, () => {
   })
 
   it('should be on the correct slide when closing the add puzzle screen', async () => {
-    const f = await Fixture({
+    f = await Fixture({
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
 
@@ -141,8 +143,6 @@ describe(import.meta.file, () => {
   })
 
   it('should open puzzle when user clicks puzzle grid item', async () => {
-    const f = await Fixture()
-
     const output = f.update(f.initial, [
       {
         t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
@@ -150,7 +150,7 @@ describe(import.meta.file, () => {
       },
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-        puzzleId: f.puzzles[0].id,
+        puzzleId: assertNotNullish(f.puzzles[0]).id,
         userId: f.createdBy,
       },
       {
@@ -159,7 +159,7 @@ describe(import.meta.file, () => {
       },
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzleResult: { t: 'got', c: f.puzzles[0] },
+        puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[0]) },
         puzzleIndex: 0,
       },
     ])
@@ -168,7 +168,6 @@ describe(import.meta.file, () => {
   })
 
   it('should open puzzle picker when user clicks add puzzle button', async () => {
-    const f = await Fixture()
     const output = f.update(f.initial, [
       {
         t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
@@ -179,7 +178,6 @@ describe(import.meta.file, () => {
   })
 
   it('should close puzzle picker when user clicks closes', async () => {
-    const f = await Fixture()
     const output = f.update(f.initial, [
       {
         t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
@@ -194,7 +192,6 @@ describe(import.meta.file, () => {
   })
 
   it('should add puzzle to the pack after clicking a puzzle in the picker', async () => {
-    const f = await Fixture()
     const puzzle = await Puzzle.random()
     const output = f.update(f.initial, [
       {
@@ -216,7 +213,6 @@ describe(import.meta.file, () => {
   })
 
   it('should close puzzle picker after adding a puzzle to the pack', async () => {
-    const f = await Fixture()
     const puzzle = await Puzzle.random()
     const output = f.update(f.initial, [
       {
@@ -237,7 +233,6 @@ describe(import.meta.file, () => {
   })
 
   test('select all puzzles after clicking header checkbox', async () => {
-    const f = await Fixture()
     const puzzles = await Promise.all(Array.from({ length: 10 }, () => Puzzle.random()))
     const puzzleIds = puzzles.map((p) => p.id)
     const output = f.update(f.initial, [
@@ -251,7 +246,6 @@ describe(import.meta.file, () => {
   })
 
   test('unselect all puzzles after clicking header checkbox when all are selected', async () => {
-    const f = await Fixture()
     const puzzles = await Promise.all(Array.from({ length: 10 }, () => Puzzle.random()))
     const puzzleIds = puzzles.map((p) => p.id)
     const output = f.update(f.initial, [
@@ -270,7 +264,6 @@ describe(import.meta.file, () => {
   })
 
   test('unselect all after closing screen', async () => {
-    const f = await Fixture()
     const puzzles = await Promise.all(Array.from({ length: 10 }, () => Puzzle.random()))
     const puzzleIds = puzzles.map((p) => p.id)
     const before = f.update(f.initial, [
