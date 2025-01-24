@@ -1,8 +1,8 @@
+import { HttpClient } from '~/@/http-client'
+import { HttpServer } from '~/@/http-server'
+import { Logger } from '~/@/logger'
 import { p } from '~/@/parser'
 import * as RPC from './rpc'
-import { HttpServer } from '~/@/http-server'
-import { HttpClient } from '~/@/http-client'
-import { Logger } from '~/@/logger'
 
 const childRpcContract = RPC.initContract({
   baz: {
@@ -65,14 +65,14 @@ const rpcBackend = RPC.initBackend(rpcContract, {
 //
 
 const httpServer = HttpServer({ t: 'bun', logger: Logger({ t: 'noop' }) })
-const webFrontend = HttpClient({ t: 'fetch', fetch: fetch as Fetch })
+const httpClient = HttpClient({ t: 'fetch', fetch: fetch as Fetch })
 
-RPC.withRPC({ httpServer, contract: rpcContract, handlers: rpcBackend })
+RPC.registerRespond({ httpServer, contract: rpcContract, handlers: rpcBackend })
 
-const rpcFrontend = RPC.initFrontend(webFrontend, rpcContract)
+const rpcClient = RPC.initClient(httpClient, rpcContract)
 
-;async () => {
-  await rpcFrontend.foo({ name: 'Alice', age: 30 })
-
-  await rpcFrontend.bar({ name: 'Bob' })
+export const example = async () => {
+  await rpcClient.foo({ name: 'Alice', age: 30 })
+  await rpcClient.bar({ name: 'Bob' })
+  await rpcClient.child.baz({ name: 'Charlie' })
 }

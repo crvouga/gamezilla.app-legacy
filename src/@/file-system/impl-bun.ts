@@ -1,5 +1,5 @@
 import { IFileSystem } from './interface'
-import { readdir } from '~/@/fs/promises'
+import { readdir } from 'node:fs/promises'
 
 export type Config = {
   t: 'bun'
@@ -18,7 +18,8 @@ export const FileSystem = (_config: Config): IFileSystem => {
     },
 
     async listDirectory(path) {
-      return Array.from(await readdir(path))
+      const entries = await readdir(path)
+      return Array.from(entries)
     },
 
     async getFileInfo(path) {

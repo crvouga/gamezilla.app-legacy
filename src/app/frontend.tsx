@@ -70,7 +70,7 @@ export const initCtx = async (): Promise<FrontendCtx> => {
     fetch: fetch as Fetch,
   })
 
-  const rpc = RPC.initFrontend(httpClient, rpcContract)
+  const rpc = RPC.initClient(httpClient, rpcContract)
 
   // const dbConnSql = dbConnSqlNoop
 

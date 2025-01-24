@@ -32,7 +32,7 @@ export const initContract = <TEndpoints extends Record<string, Endpoint<any, any
   endpoints: TEndpoints,
 ): Contract<TEndpoints> => endpoints
 
-export const initFrontend = <T extends Base>(webFrontend: IHttpClient, contract: T): Frontend<T> => {
+export const initClient = <T extends Base>(webFrontend: IHttpClient, contract: T): Frontend<T> => {
   const createFrontend = (contract: Base, path: string[] = []): any => {
     const frontend: any = {}
 
