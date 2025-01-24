@@ -83,10 +83,7 @@ describe(import.meta.file, () => {
     for (const f of await Fixtures()) {
       const before = unwrap(
         await f.spaceBackend.list({
-          pagination: {
-            limit: 10,
-            offset: 0,
-          },
+          pagination: { limit: 10, offset: 0 },
         }),
       )
 

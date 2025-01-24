@@ -47,13 +47,12 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
-    "types": ["bun-types", "vite/client", "preact", "react", "inferno"],
+    "types": ["bun-types", "vite/client", "preact", "react"],
     "jsx": "preserve",
     // "jsxImportSource": "vue",
     "allowJs": false,
     //
     "paths": {
-      "vite-plugin-inferno": ["./node_modules/vite-plugin-inferno/types/index.d.ts"],
       "~/*": ["./src/*"]
     },
     "skipLibCheck": true
