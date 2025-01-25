@@ -295,27 +295,9 @@ describe(import.meta.file, () => {
     })
 
     const output = f.update(f.init, [
-      {
-        t: 'user-pressed-down-node',
-        nodeId: VariantGrid.toNodeId({
-          x: 1,
-          y: 1,
-        }),
-      },
-      {
-        t: 'user-dragged-over-node',
-        nodeId: VariantGrid.toNodeId({
-          x: 1,
-          y: 0,
-        }),
-      },
-      {
-        t: 'user-pressed-up-node',
-        nodeId: VariantGrid.toNodeId({
-          x: 1,
-          y: 0,
-        }),
-      },
+      { t: 'user-pressed-down-node', nodeId: VariantGrid.toNodeId({ x: 1, y: 1 }) },
+      { t: 'user-dragged-over-node', nodeId: VariantGrid.toNodeId({ x: 1, y: 0 }) },
+      { t: 'user-pressed-up-node', nodeId: VariantGrid.toNodeId({ x: 1, y: 0 }) },
     ])
 
     expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
@@ -331,27 +313,9 @@ describe(import.meta.file, () => {
     })
 
     const msgs: ModePlay.Msg[] = [
-      {
-        t: 'user-pressed-down-node',
-        nodeId: VariantGrid.toNodeId({
-          x: 1,
-          y: 1,
-        }),
-      },
-      {
-        t: 'user-dragged-over-node',
-        nodeId: VariantGrid.toNodeId({
-          x: 1,
-          y: 0,
-        }),
-      },
-      {
-        t: 'user-pressed-up-node',
-        nodeId: VariantGrid.toNodeId({
-          x: 1,
-          y: 0,
-        }),
-      },
+      { t: 'user-pressed-down-node', nodeId: VariantGrid.toNodeId({ x: 1, y: 1 }) },
+      { t: 'user-dragged-over-node', nodeId: VariantGrid.toNodeId({ x: 1, y: 0 }) },
+      { t: 'user-pressed-up-node', nodeId: VariantGrid.toNodeId({ x: 1, y: 0 }) },
     ]
 
     const output = f.update(f.init, msgs)
