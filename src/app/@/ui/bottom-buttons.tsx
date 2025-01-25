@@ -40,18 +40,14 @@ const View = ({
   const firstButtons = cleanedButtons.slice(0, limit)
   const lastButtons = cleanedButtons.slice(limit)
   return (
-    <BottomButtons.Root>
+    <Root>
       {firstButtons.map((button) => (
-        <BottomButtons.Button {...button} key={button.label} />
+        <Button {...button} key={button.label} />
       ))}
 
       {lastButtons.length > 0 && (
         <>
-          <BottomButtons.Button
-            icon={(input) => <IconEllipsisVertical {...input} />}
-            label={ctx.t('app.more')}
-            onClick={onToggle}
-          />
+          <Button icon={(input) => <IconEllipsisVertical {...input} />} label={ctx.t('app.more')} onClick={onToggle} />
           <Drawer id={id} onClose={onToggle} open={open} position='bottom'>
             {lastButtons.map((button) =>
               button.hidden ? null : (
@@ -67,7 +63,7 @@ const View = ({
           </Drawer>
         </>
       )}
-    </BottomButtons.Root>
+    </Root>
   )
 }
 
@@ -120,6 +116,4 @@ const Button = (input: BottomButtonInput) => {
 
 export const BottomButtons = {
   View,
-  Root,
-  Button,
 }

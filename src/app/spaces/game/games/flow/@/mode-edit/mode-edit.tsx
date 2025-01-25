@@ -491,43 +491,37 @@ export const View = (input: { ctx: AppFrontendCtx; model: Model; dispatch: (m: M
       }
       bottom={
         <>
-          <BottomButtons.Root>
-            <BottomButtons.Button
-              icon={(input) => <IconArrowRotateLeft {...input} />}
-              label={input.ctx.t('app.undo')}
-              onClick={() => input.dispatch({ t: 'clicked-undo' })}
-              disabled={!History.canUndo(input.model.form)}
-            />
-            <BottomButtons.Button
-              icon={(input) => <IconArrowRotateRight {...input} />}
-              label={input.ctx.t('app.redo')}
-              disabled={!History.canRedo(input.model.form)}
-              onClick={() =>
-                input.dispatch({
-                  t: 'clicked-redo',
-                })
-              }
-            />
-            <BottomButtons.Button
-              icon={(input) => <IconXMark {...input} />}
-              label={input.ctx.t('app.clear')}
-              disabled={!canClear(input.model)}
-              onClick={() =>
-                input.dispatch({
-                  t: 'clicked-clear',
-                })
-              }
-            />
-            <BottomButtons.Button
-              icon={(input) => <IconExpand {...input} />}
-              label={input.ctx.t('app.dimensions')}
-              onClick={() =>
-                input.dispatch({
-                  t: 'dimensions-form.clicked-open',
-                })
-              }
-            />
-          </BottomButtons.Root>
+          <BottomButtons.View
+            id='mode-edit-buttons'
+            ctx={input.ctx}
+            open={false}
+            onToggle={() => {}}
+            buttons={[
+              {
+                icon: (input) => <IconArrowRotateLeft {...input} />,
+                label: input.ctx.t('app.undo'),
+                onClick: () => input.dispatch({ t: 'clicked-undo' }),
+                disabled: !History.canUndo(input.model.form),
+              },
+              {
+                icon: (input) => <IconArrowRotateRight {...input} />,
+                label: input.ctx.t('app.redo'),
+                disabled: !History.canRedo(input.model.form),
+                onClick: () => input.dispatch({ t: 'clicked-redo' }),
+              },
+              {
+                icon: (input) => <IconXMark {...input} />,
+                label: input.ctx.t('app.clear'),
+                disabled: !canClear(input.model),
+                onClick: () => input.dispatch({ t: 'clicked-clear' }),
+              },
+              {
+                icon: (input) => <IconExpand {...input} />,
+                label: input.ctx.t('app.dimensions'),
+                onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
+              },
+            ]}
+          />
           <Drawer
             open={input.model.opened === 'dimensions'}
             onClose={() =>

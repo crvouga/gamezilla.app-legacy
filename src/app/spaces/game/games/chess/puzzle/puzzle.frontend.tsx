@@ -1,5 +1,7 @@
+import { Eff } from '~/@/eff'
+import { Translator } from '~/@/l18n/generated'
 import { isErr } from '~/@/result'
-import type { VDomChildren } from '~/@/vdom/vdom'
+import { APP_SOUND, AppFrontendCmd, playSound, sendToBackend } from '~/app/@/frontend/cmd'
 import {
   Avatar,
   IconArrowCircle,
@@ -12,13 +14,9 @@ import {
   Spinner,
   cn,
 } from '~/app/@/ui'
-import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-
-import { Eff } from '~/@/eff'
-import { Translator } from '~/@/l18n/generated'
-import { APP_SOUND, AppFrontendCmd, playSound, sendToBackend } from '~/app/@/frontend/cmd'
-import { BottomButtons } from '~/app/@/ui/bottom-buttons'
+import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
+import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../@/ui/layout-game'
 import { Chess } from '../@/chess'
 import { Chessboard } from '../@/chess-ui/chessboard'
@@ -393,65 +391,51 @@ export const BottomBarActions = ({
   ctx: {
     t: Translator
   }
-}): VDomChildren => {
-  const exit = (
-    <BottomButtons.Button
-      icon={(input) => <IconArrowLeftOnRect {...input} />}
-      label={ctx.t('app.exit')}
-      onClick={onClose}
-    />
-  )
+}): BottomButtonInput[] => {
+  const exit: BottomButtonInput = {
+    icon: (input) => <IconArrowLeftOnRect {...input} />,
+    label: ctx.t('app.exit'),
+    onClick: onClose,
+  }
 
-  const hint = (
-    <BottomButtons.Button
-      icon={(input) => <IconLightbulb {...input} />}
-      label={ctx.t('game.hint')}
-      disabled={isNoMoreHints(model) || model.t === 'loading'}
-      onClick={() =>
-        dispatch({
-          t: 'show-hint',
-        })
-      }
-    />
-  )
+  const hint: BottomButtonInput = {
+    icon: (input) => <IconLightbulb {...input} />,
+    label: ctx.t('game.hint'),
+    disabled: isNoMoreHints(model) || model.t === 'loading',
+    onClick: () =>
+      dispatch({
+        t: 'show-hint',
+      }),
+  }
 
-  const retry = (
-    <BottomButtons.Button
-      icon={(input) => <IconArrowRotateLeft {...input} />}
-      label={ctx.t('app.retry')}
-      onClick={() =>
-        dispatch({
-          t: 'retry',
-        })
-      }
-      color='danger'
-    />
-  )
+  const retry: BottomButtonInput = {
+    icon: (input) => <IconArrowRotateLeft {...input} />,
+    label: ctx.t('app.retry'),
+    onClick: () =>
+      dispatch({
+        t: 'retry',
+      }),
+    color: 'danger',
+  }
 
-  const skip = (
-    <BottomButtons.Button
-      icon={(input) => <IconArrowRight {...input} />}
-      label={ctx.t('app.skip')}
-      onClick={() =>
-        dispatch({
-          t: 'skip',
-        })
-      }
-    />
-  )
+  const skip: BottomButtonInput = {
+    icon: (input) => <IconArrowRight {...input} />,
+    label: ctx.t('app.skip'),
+    onClick: () =>
+      dispatch({
+        t: 'skip',
+      }),
+  }
 
-  const next = (
-    <BottomButtons.Button
-      icon={(input) => <IconArrowCircle {...input} />}
-      label={ctx.t('app.next')}
-      color='success'
-      onClick={() =>
-        dispatch({
-          t: 'next',
-        })
-      }
-    />
-  )
+  const next: BottomButtonInput = {
+    icon: (input) => <IconArrowCircle {...input} />,
+    label: ctx.t('app.next'),
+    color: 'success',
+    onClick: () =>
+      dispatch({
+        t: 'next',
+      }),
+  }
 
   if (model.t === 'loading') {
     return [exit, hint]

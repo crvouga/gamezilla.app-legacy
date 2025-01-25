@@ -262,46 +262,50 @@ const View: Module['View'] = (input) => {
             </div>
           </div>
 
-          <BottomButtons.Root>
-            {input.modelSpace.type === 'game' && (
-              <BottomButtons.Button
-                icon={(input) => <IconFlag {...input} />}
-                label={input.ctx.t('app.resign')}
-                onClick={() => {
-                  input.dispatch({
-                    t: 'clicked-resign',
-                    userId: input.ctx.currentUserId,
-                  })
-                }}
-              />
-            )}
-
-            {input.modelSpace.type === 'game-over' && input.ctx.currentUserId === input.ctx.space.hostId && (
-              <>
-                <BottomButtons.Button
-                  icon={(input) => <IconArrowLeftOnRect {...input} />}
-                  label={input.ctx.t('app.exit')}
-                  onClick={() => {
-                    input.dispatch({
-                      t: 'user-stopped-game',
-                      userId: input.ctx.currentUserId,
-                    })
-                  }}
-                />
-
-                <BottomButtons.Button
-                  icon={(input) => <IconArrowRotateLeft {...input} />}
-                  label={input.ctx.t('game.rematch')}
-                  onClick={() => {
-                    input.dispatch({
-                      t: 'user-requested-rematch',
-                      userId: input.ctx.currentUserId,
-                    })
-                  }}
-                />
-              </>
-            )}
-          </BottomButtons.Root>
+          <BottomButtons.View
+            id='game-buttons'
+            ctx={input.ctx}
+            open={false}
+            onToggle={() => {}}
+            buttons={[
+              input.modelSpace.type === 'game'
+                ? {
+                    icon: (props: { className?: string }) => <IconFlag {...props} />,
+                    label: input.ctx.t('app.resign'),
+                    onClick: () => {
+                      input.dispatch({
+                        t: 'clicked-resign',
+                        userId: input.ctx.currentUserId,
+                      })
+                    },
+                  }
+                : null,
+              input.modelSpace.type === 'game-over' && input.ctx.currentUserId === input.ctx.space.hostId
+                ? {
+                    icon: (props: { className?: string }) => <IconArrowLeftOnRect {...props} />,
+                    label: input.ctx.t('app.exit'),
+                    onClick: () => {
+                      input.dispatch({
+                        t: 'user-stopped-game',
+                        userId: input.ctx.currentUserId,
+                      })
+                    },
+                  }
+                : null,
+              input.modelSpace.type === 'game-over' && input.ctx.currentUserId === input.ctx.space.hostId
+                ? {
+                    icon: (props: { className?: string }) => <IconArrowRotateLeft {...props} />,
+                    label: input.ctx.t('game.rematch'),
+                    onClick: () => {
+                      input.dispatch({
+                        t: 'user-requested-rematch',
+                        userId: input.ctx.currentUserId,
+                      })
+                    },
+                  }
+                : null,
+            ]}
+          />
 
           <ConfirmationDialog
             headerIcon={<IconFlag className='h-10 w-10' />}

@@ -442,13 +442,19 @@ export const View = ({
         />
         {bottomSlot}
       </div>
-      <BottomButtons.Root>
-        <BottomButtons.Button
-          icon={(input) => <IconArrowLeftOnRect {...input} />}
-          label={ctx.t('app.exit')}
-          onClick={onClose}
-        />
-      </BottomButtons.Root>
+      <BottomButtons.View
+        id='vs-bot-buttons'
+        ctx={ctx}
+        open={false}
+        onToggle={() => {}}
+        buttons={[
+          {
+            icon: (props) => <IconArrowLeftOnRect {...props} />,
+            label: ctx.t('app.exit'),
+            onClick: onClose,
+          },
+        ]}
+      />
     </LayoutGame>
   )
 }

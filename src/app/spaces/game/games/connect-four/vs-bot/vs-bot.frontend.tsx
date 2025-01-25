@@ -448,25 +448,29 @@ const View: Module['View'] = (input) => {
       </div>
 
       {input.ctx.currentUserId === input.modelSpace.playingUserId && (
-        <BottomButtons.Root>
-          <BottomButtons.Button
-            icon={(input) => <IconArrowLeftOnRect {...input} />}
-            label={input.ctx.t('app.exit')}
-            onClick={() => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUserId })}
-          />
-
-          <BottomButtons.Button
-            icon={(input) => <IconRightLeft {...input} />}
-            label={input.ctx.t('game.swap-sides')}
-            onClick={() => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUserId })}
-          />
-
-          <BottomButtons.Button
-            icon={(input) => <IconArrowRotateLeft {...input} />}
-            label={input.ctx.t('app.restart')}
-            onClick={() => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUserId })}
-          />
-        </BottomButtons.Root>
+        <BottomButtons.View
+          id='vs-bot-buttons'
+          ctx={input.ctx}
+          open={false}
+          onToggle={() => {}}
+          buttons={[
+            {
+              icon: (props) => <IconArrowLeftOnRect {...props} />,
+              label: input.ctx.t('app.exit'),
+              onClick: () => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUserId }),
+            },
+            {
+              icon: (props) => <IconRightLeft {...props} />,
+              label: input.ctx.t('game.swap-sides'),
+              onClick: () => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUserId }),
+            },
+            {
+              icon: (props) => <IconArrowRotateLeft {...props} />,
+              label: input.ctx.t('app.restart'),
+              onClick: () => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUserId }),
+            },
+          ]}
+        />
       )}
     </LayoutGame>
   )
