@@ -4,7 +4,7 @@ import { p } from '~/@/parser'
 
 export type PuzzleId = Brand<string, 'PuzzleId'>
 
-const namespace = 'puzzle'
+const namespace = 'game-flow-puzzle'
 const separator = ':'
 
 const is = (maybePuzzleId: unknown): maybePuzzleId is PuzzleId => {

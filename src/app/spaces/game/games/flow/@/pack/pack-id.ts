@@ -6,7 +6,7 @@ const parser = p.brand(p.str, 'PackId')
 export type PackId = p.Infer<typeof parser>
 
 const generate = () => {
-  return `flow-pack:${Uuid.generate()}` as PackId
+  return `game-flow-pack:${Uuid.generate()}` as PackId
 }
 
 const is = (flowPackId: unknown): flowPackId is PackId => {
