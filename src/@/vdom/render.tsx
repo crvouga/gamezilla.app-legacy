@@ -1,5 +1,12 @@
 import type { VDom } from './vdom'
 import type { VDomImpl } from './vdom-impl'
+// @ts-expect-error
+import * as Inferno from 'inferno'
+import * as Preact from 'preact'
+import * as PreactCompat from 'preact/compat'
+// import * as React from 'react'
+import * as ReactDOM from 'react-dom'
+import * as ReactDOMClient from 'react-dom/client'
 
 export type Render = (vDom: VDom) => void
 
@@ -7,11 +14,9 @@ export type CreatePortal = (vDom: VDom, container: Element) => VDom
 
 export let createPortal: CreatePortal | null = null
 
-export const Renderer = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<Render> => {
+export const Renderer = (vDomImpl: VDomImpl, root: HTMLElement): Render => {
   switch (vDomImpl) {
     case 'inferno': {
-      // @ts-expect-error
-      const Inferno = await import('inferno')
       createPortal = Inferno.createPortal
       return function render(vDom) {
         Inferno.render(vDom, root)
@@ -19,7 +24,6 @@ export const Renderer = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<R
     }
 
     case 'preact': {
-      const [Preact, PreactCompat] = await Promise.all([import('preact'), import('preact/compat')])
       createPortal = PreactCompat.createPortal
       return function render(vDom) {
         Preact.render(vDom, root)
@@ -28,12 +32,7 @@ export const Renderer = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<R
 
     case 'react':
     case 'react-with-compiler': {
-      const [ReactDOMFrontend, ReactDOM, _React] = await Promise.all([
-        import('react-dom/client'),
-        import('react-dom'),
-        import('react'),
-      ])
-      const reactRoot = ReactDOMFrontend.createRoot(root)
+      const reactRoot = ReactDOMClient.createRoot(root)
       createPortal = ReactDOM.createPortal
       return function render(vDom) {
         reactRoot.render(vDom)
