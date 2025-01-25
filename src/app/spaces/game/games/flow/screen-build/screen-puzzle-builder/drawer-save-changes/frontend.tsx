@@ -3,7 +3,7 @@ import type { Translator } from '~/@/l18n/generated'
 import { Loading, Result, isOk } from '~/@/result'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
 import { Button, Drawer, IconFloppyDisk, Typography } from '~/app/@/ui'
-import { BottomButtons } from '~/app/@/ui/bottom-buttons'
+import { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { ModeEdit } from '../../../@/mode-edit'
 import type { Puzzle } from '../../../@/puzzle/puzzle'
@@ -234,7 +234,7 @@ const updateDbSavedPuzzle: FrontendModule['update'] = (input) => {
 //
 //
 
-export const ViewBottomButtons = ({
+export const viewBottomButtons = ({
   model,
   dispatch,
   ctx,
@@ -244,21 +244,18 @@ export const ViewBottomButtons = ({
   }
   model: ModelFrontend
   dispatch: (msg: MsgFrontend) => void
-}) => {
-  return (
-    <>
-      <BottomButtons.Button
-        icon={(input) => <IconFloppyDisk {...input} />}
-        label={ctx.t('app.save')}
-        onClick={() =>
-          dispatch({
-            t: 'screen-puzzle-builder.save-changes.user-clicked-save-button',
-          })
-        }
-        loading={model.puzzleSaveChangesRequest?.t === 'loading'}
-      />
-    </>
-  )
+}): BottomButtonInput[] => {
+  return [
+    {
+      icon: (input) => <IconFloppyDisk {...input} />,
+      label: ctx.t('app.save'),
+      onClick: () =>
+        dispatch({
+          t: 'screen-puzzle-builder.save-changes.user-clicked-save-button',
+        }),
+      loading: model.puzzleSaveChangesRequest?.t === 'loading',
+    },
+  ]
 }
 
 const ViewUnsavedChangesDrawer: FrontendModule['View'] = (input) => {
@@ -301,7 +298,7 @@ const ViewUnsavedChangesDrawer: FrontendModule['View'] = (input) => {
 }
 
 export const SaveChangesFrontend = {
-  ViewBottomButtons,
+  viewBottomButtons,
   update,
   ViewUnsavedChangesDrawer,
 }

@@ -262,35 +262,38 @@ export const View = (input: {
         />
       </div>
 
-      <BottomButtons.Root>
-        <BottomButtons.Button
-          icon={(input) => <IconArrowLeftOnRect {...input} />}
-          label={input.ctx.t('app.exit')}
-          onClick={() =>
-            input.dispatch({
-              t: 'stop-game',
-            })
-          }
-        />
-        <BottomButtons.Button
-          icon={(input) => <IconRightLeft {...input} />}
-          label={input.ctx.t('game.swap-sides')}
-          onClick={() =>
-            input.dispatch({
-              t: 'swap-sides',
-            })
-          }
-        />
-        <BottomButtons.Button
-          icon={(input) => <IconArrowRotateLeft {...input} />}
-          label={input.ctx.t('app.restart')}
-          onClick={() =>
-            input.dispatch({
-              t: 'restart',
-            })
-          }
-        />
-      </BottomButtons.Root>
+      <BottomButtons.View
+        id='tic-tac-toe-vs-bot-buttons'
+        ctx={input.ctx}
+        buttons={[
+          {
+            icon: (input) => <IconArrowLeftOnRect {...input} />,
+            label: input.ctx.t('app.exit'),
+            onClick: () =>
+              input.dispatch({
+                t: 'stop-game',
+              }),
+          },
+          {
+            icon: (input) => <IconRightLeft {...input} />,
+            label: input.ctx.t('game.swap-sides'),
+            onClick: () =>
+              input.dispatch({
+                t: 'swap-sides',
+              }),
+          },
+          {
+            icon: (input) => <IconArrowRotateLeft {...input} />,
+            label: input.ctx.t('app.restart'),
+            onClick: () =>
+              input.dispatch({
+                t: 'restart',
+              }),
+          },
+        ]}
+        open={false}
+        onToggle={() => {}}
+      />
     </div>
   )
 }

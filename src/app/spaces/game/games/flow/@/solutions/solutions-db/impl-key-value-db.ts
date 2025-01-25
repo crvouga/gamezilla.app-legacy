@@ -13,7 +13,7 @@ export type Config = {
 export const SolutionsDb = (config: Config): ISolutionsDb => {
   const solutionsByHash = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
-    namespace: ['flow', 'solutions-by-hash'],
+    namespace: ['game', 'flow', 'solutions-by-hash'],
     parser: p.arr(Solution),
   })
   return {

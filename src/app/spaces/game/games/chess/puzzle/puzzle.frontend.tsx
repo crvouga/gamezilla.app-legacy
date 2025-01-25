@@ -24,11 +24,11 @@ import { Chess } from '../@/chess'
 import { Chessboard } from '../@/chess-ui/chessboard'
 import { CHESS_SOUND } from '../@/chess/chess-sounds'
 import {
-  type SpaceModel,
   type ModelFrontend,
   type MsgFrontend,
-  type MsgToFrontend,
   type MsgToBackend,
+  type MsgToFrontend,
+  type SpaceModel,
   initSpace,
   isIncorrect,
   isNoMoreHints,
@@ -236,7 +236,6 @@ const toDurationMs = (ctx: SpaceFrontendCtx, model: ModelFrontend) => {
 
 export const View = ({
   model,
-  onClose,
   ctx,
   dispatch,
 }: {
@@ -342,14 +341,6 @@ export const View = ({
           </div>
         </div>
       </div>
-
-      {!isSpectating ? (
-        <BottomButtons.Root>
-          <BottomBarActions ctx={ctx} model={model} onClose={onClose} dispatch={dispatch} />
-        </BottomButtons.Root>
-      ) : (
-        <></>
-      )}
     </LayoutGame>
   )
 }

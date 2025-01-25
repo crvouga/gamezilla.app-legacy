@@ -229,21 +229,26 @@ const ViewModeEdit: BuilderTypes.FrontendModule['View'] = (input) => {
         dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
       />
 
-      <BottomButtons.Root>
-        <SaveChangesFrontend.ViewBottomButtons {...input} model={input.model} />
-
-        <BottomButtons.Button
-          icon={(input) => <IconPlay {...input} />}
-          label={input.ctx.t('flow.play-mode')}
-          classNames={{ button: 'text-blue-500' }}
-          onClick={() => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' })}
-        />
-        <BottomButtons.Button
-          icon={(input) => <IconEllipsisVertical {...input} />}
-          label={input.ctx.t('app.more')}
-          onClick={() => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-more-button' })}
-        />
-      </BottomButtons.Root>
+      <BottomButtons.View
+        id='puzzle-builder-edit-buttons'
+        ctx={input.ctx}
+        open={false}
+        onToggle={() => {}}
+        buttons={[
+          ...SaveChangesFrontend.viewBottomButtons({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
+          {
+            icon: (input) => <IconPlay {...input} />,
+            label: input.ctx.t('flow.play-mode'),
+            classNames: { button: 'text-blue-500' },
+            onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
+          },
+          {
+            icon: (input) => <IconEllipsisVertical {...input} />,
+            label: input.ctx.t('app.more'),
+            onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-more-button' }),
+          },
+        ]}
+      />
     </div>
   )
 }
@@ -293,21 +298,26 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
         }
       />
 
-      <BottomButtons.Root>
-        <SaveChangesFrontend.ViewBottomButtons {...input} model={input.model} />
-
-        <BottomButtons.Button
-          icon={(input) => <IconPen {...input} />}
-          label={input.ctx.t('flow.edit-mode')}
-          classNames={{ button: 'text-amber-500' }}
-          onClick={() => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' })}
-        />
-        <BottomButtons.Button
-          icon={(input) => <IconEllipsisVertical {...input} />}
-          label={input.ctx.t('app.more')}
-          onClick={() => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-more-button' })}
-        />
-      </BottomButtons.Root>
+      <BottomButtons.View
+        id='puzzle-builder-buttons'
+        ctx={input.ctx}
+        open={false}
+        onToggle={() => {}}
+        buttons={[
+          ...SaveChangesFrontend.viewBottomButtons({ ...input, model: input.model }),
+          {
+            icon: (input) => <IconPen {...input} />,
+            label: input.ctx.t('flow.edit-mode'),
+            classNames: { button: 'text-amber-500' },
+            onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
+          },
+          {
+            icon: (input) => <IconEllipsisVertical {...input} />,
+            label: input.ctx.t('app.more'),
+            onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-more-button' }),
+          },
+        ]}
+      />
     </div>
   )
 }
