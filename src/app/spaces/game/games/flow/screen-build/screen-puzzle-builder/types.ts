@@ -27,7 +27,7 @@ export type MsgFrontend =
   | SaveChangesTypes.MsgFrontend
   | { t: 'screen-puzzle-builder.got-edit-msg'; c: ModeEdit.Msg }
   | { t: 'screen-puzzle-builder.got-play-msg'; c: ModePlay.Msg }
-  | { t: 'screen-puzzle-builder.user-clicked-more-button' }
+  | { t: 'screen-puzzle-builder.user-clicked-open-more-drawer-button' }
   | { t: 'screen-puzzle-builder.user-closed-more-drawer' }
   | { t: 'screen-puzzle-builder.user-clicked-exit-button' }
   | { t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }

@@ -8,7 +8,7 @@ const Fixture = async () => {
   return f
 }
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   it('should render checkbox with correct state', async () => {
     const f = await Fixture()
     const r = f.render(<Checkbox state='checked' />)

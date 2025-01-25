@@ -182,10 +182,8 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
         this.backdrop.classList.add('visible')
         this.root.tabIndex = 0
         this.tabIndex = 0
-        this.ariaHidden = 'false'
       } else {
-        this.blur() // this prevents console error when setting ariaHidden to true
-        this.ariaHidden = 'true'
+        this.blur()
         this.tabIndex = -1
         this.root.tabIndex = -1
         this.backdrop.classList.remove('visible')

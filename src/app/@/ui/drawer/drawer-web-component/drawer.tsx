@@ -12,6 +12,9 @@ export const DrawerWebComponent = (input: DrawerInput) => {
       {/* @ts-ignore */}
       <drawer-element id={input.id} position={input.position}>
         <div
+          aria-hidden={!input.open}
+          role='dialog'
+          aria-label={input.ariaLabel}
           className={cn(
             'bg-surface h-fit max-h-full w-full overflow-hidden border',
             input.position === 'bottom' ? 'rounded-t-2xl' : 'rounded-b-2xl',

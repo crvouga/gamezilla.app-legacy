@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
-import type { VDom, VDomChildren } from '~/@/vdom/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { Drawer, IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/app/@/ui'
 
 export type BottomButtonInput = {
@@ -21,14 +21,9 @@ type Ctx = {
   t: Translator
 }
 
-const View = ({
-  id,
-  ctx,
-  buttons,
-  open,
-  onToggle,
-  limit = 4,
-}: {
+const DEFAULT_LIMIT = 4
+
+const View = (input: {
   id: string
   ctx: Ctx
   buttons: (BottomButtonInput | null)[]
@@ -36,19 +31,29 @@ const View = ({
   onToggle: () => void
   limit?: number
 }) => {
-  const cleanedButtons = buttons.filter((button) => button !== null)
-  const firstButtons = cleanedButtons.slice(0, limit)
-  const lastButtons = cleanedButtons.slice(limit)
+  const cleanedButtons = input.buttons.filter((button) => button !== null)
+  const firstButtons = cleanedButtons.slice(0, input.limit ?? DEFAULT_LIMIT)
+  const lastButtons = cleanedButtons.slice(input.limit ?? DEFAULT_LIMIT)
   return (
-    <Root>
+    <div className='flex h-16 w-full shrink-0 items-center' role='toolbar'>
       {firstButtons.map((button) => (
         <Button {...button} key={button.label} />
       ))}
 
       {lastButtons.length > 0 && (
         <>
-          <Button icon={(input) => <IconEllipsisVertical {...input} />} label={ctx.t('app.more')} onClick={onToggle} />
-          <Drawer id={id} onClose={onToggle} open={open} position='bottom'>
+          <Button
+            icon={(input) => <IconEllipsisVertical {...input} />}
+            label={input.ctx.t('app.more')}
+            onClick={input.onToggle}
+          />
+          <Drawer
+            id={input.id}
+            ariaLabel={input.ctx.t('app.more')}
+            onClose={input.onToggle}
+            open={input.open}
+            position='bottom'
+          >
             {lastButtons.map((button) =>
               button.hidden ? null : (
                 <ListItemButton
@@ -63,12 +68,8 @@ const View = ({
           </Drawer>
         </>
       )}
-    </Root>
+    </div>
   )
-}
-
-const Root = ({ children }: { children: VDomChildren }) => {
-  return <div className='flex h-16 w-full shrink-0 items-center'>{children}</div>
 }
 
 const Button = (input: BottomButtonInput) => {

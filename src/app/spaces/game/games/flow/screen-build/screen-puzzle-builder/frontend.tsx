@@ -65,32 +65,23 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
       return {
         model,
         msgSpace: [
-          withEventId({
-            t: 'screen-puzzle-builder.user-clicked-play-mode-button',
-            userId: ctx.currentUserId,
-          }),
+          withEventId({ t: 'screen-puzzle-builder.user-clicked-play-mode-button', userId: ctx.currentUserId }),
         ],
         msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
     }
 
-    case 'screen-puzzle-builder.user-clicked-more-button': {
+    case 'screen-puzzle-builder.user-clicked-open-more-drawer-button': {
       return {
-        model: {
-          ...model,
-          puzzleBuilderOpened: 'more',
-        },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        model: { ...model, puzzleBuilderOpened: 'more' },
+        msgCmd: [playSound(APP_SOUND.drawerOpened)],
       }
     }
 
     case 'screen-puzzle-builder.user-closed-more-drawer': {
       return {
-        model: {
-          ...model,
-          puzzleBuilderOpened: null,
-        },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        model: { ...model, puzzleBuilderOpened: null },
+        msgCmd: [playSound(APP_SOUND.drawerClosed)],
       }
     }
 
@@ -245,7 +236,7 @@ const ViewModeEdit: BuilderTypes.FrontendModule['View'] = (input) => {
           {
             icon: (input) => <IconEllipsisVertical {...input} />,
             label: input.ctx.t('app.more'),
-            onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-more-button' }),
+            onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-open-more-drawer-button' }),
           },
         ]}
       />
@@ -314,7 +305,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
           {
             icon: (input) => <IconEllipsisVertical {...input} />,
             label: input.ctx.t('app.more'),
-            onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-more-button' }),
+            onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-open-more-drawer-button' }),
           },
         ]}
       />
@@ -357,39 +348,24 @@ const updateMoreDrawer: BuilderTypes.FrontendModule['update'] = (input) => {
   const { msg, model } = input
   switch (msg?.t) {
     case 'screen-puzzle-builder.user-closed-more-drawer': {
-      return {
-        model: {
-          ...model,
-          puzzleBuilderOpened: null,
-        },
-      }
+      return { model: { ...model, puzzleBuilderOpened: null } }
     }
-    case 'screen-puzzle-builder.user-clicked-more-button': {
-      return {
-        model: {
-          ...model,
-          puzzleBuilderOpened: 'more',
-        },
-      }
+    case 'screen-puzzle-builder.user-clicked-open-more-drawer-button': {
+      return { model: { ...model, puzzleBuilderOpened: 'more' } }
     }
     default: {
-      return {
-        model,
-      }
+      return { model }
     }
   }
 }
 
-export const ViewMoreDrawer: BuilderTypes.FrontendModule['View'] = (input) => {
+const ViewMoreDrawer: BuilderTypes.FrontendModule['View'] = (input) => {
   return (
     <Drawer
+      ariaLabel={input.ctx.t('app.more')}
       id='more-drawer'
       open={input.model.puzzleBuilderOpened === 'more'}
-      onClose={() =>
-        input.dispatch({
-          t: 'screen-puzzle-builder.user-closed-more-drawer',
-        })
-      }
+      onClose={() => input.dispatch({ t: 'screen-puzzle-builder.user-closed-more-drawer' })}
       position='bottom'
     >
       <EditPuzzleNameFrontend.View {...input} />

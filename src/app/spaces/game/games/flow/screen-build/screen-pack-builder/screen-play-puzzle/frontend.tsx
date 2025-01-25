@@ -9,19 +9,15 @@ import type { FrontendModule } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
-    case 'screen-pack-builder.puzzle-screen.user-closed-more-drawer':
-    case 'screen-pack-builder.puzzle-screen.user-clicked-more-button': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.tap)],
-      }
+    case 'screen-pack-builder.puzzle-screen.user-closed-more-drawer': {
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.drawerOpened)] }
+    }
+    case 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button': {
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.drawerClosed)] }
     }
 
     case 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
-      }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }
 
     case 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
@@ -138,16 +134,16 @@ const View: FrontendModule['View'] = (input) => {
       <BottomButtons.View
         id='screen-puzzle-buttons'
         ctx={input.ctx}
-        open={screen.opened === 'more'}
+        open={input.modelSpace.opened === 'more'}
         limit={2}
         onToggle={() =>
           input.dispatch({
             t: 'got-msg-space',
             c: {
               t:
-                screen.opened === 'more'
+                input.modelSpace.opened === 'more'
                   ? 'screen-pack-builder.puzzle-screen.user-closed-more-drawer'
-                  : 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
+                  : 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
               userId: input.ctx.currentUserId,
             },
           })

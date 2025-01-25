@@ -1,3 +1,4 @@
+import { Msg } from '~/@/msg/msg'
 import type { ProgramDebugger } from '../program'
 
 export const DebuggerConsole: ProgramDebugger = (initialModel, setModel) => {
@@ -5,7 +6,6 @@ export const DebuggerConsole: ProgramDebugger = (initialModel, setModel) => {
   // @ts-ignore
   window.setModel = setModel
   return async (model, msg) => {
-    console.log('DebuggerConsole: model', model)
-    console.log('Debugger Console: msg ', msg)
+    console.log('[Debugger]', Msg.toType(msg), Msg.toPayload(msg), msg, model)
   }
 }

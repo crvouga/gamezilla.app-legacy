@@ -80,7 +80,7 @@ updates.push(({ modelSpace, msgSpace }) => {
         pack: Pack.add(modelSpace.pack, modelSpace.screenAddPuzzle_selected),
         screenAddPuzzle_selected: [],
         screen: { t: 'screen-puzzle-grid', slideIndex: 0 },
-        opened: { t: null },
+        opened: null,
       }
     }
     default: {
@@ -94,7 +94,7 @@ updates.push(({ modelSpace, msgSpace }) => {
     case 'screen-pack-builder.screen-add-puzzle.user-clicked-close': {
       return {
         ...modelSpace,
-        opened: { t: null },
+        opened: null,
         screenAddPuzzle_selected: [],
         screen: { t: 'screen-puzzle-grid' },
       }

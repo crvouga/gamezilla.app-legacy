@@ -27,14 +27,14 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'delete-forever.user-closed-drawer': {
       return {
         model: { ...input.model, puzzleBuilderOpened: null },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgCmd: [playSound(APP_SOUND.drawerClosed)],
       }
     }
 
     case 'delete-forever.user-clicked-cancel-button': {
       return {
         model: { ...input.model, puzzleBuilderOpened: 'more' },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgCmd: [playSound(APP_SOUND.drawerClosed)],
       }
     }
 
@@ -109,6 +109,8 @@ const View: FrontendModule['View'] = (input) => {
       />
 
       <ConfirmationFormDrawer
+        ctx={input.ctx}
+        ariaLabel={input.ctx.t('flow.delete-puzzle-forever?')}
         id='delete-forever-drawer'
         open={input.model.puzzleBuilderOpened === 'delete-forever' || isLoading(input.model.puzzleDeleteForeverRequest)}
         onClose={() => input.dispatch({ t: 'delete-forever.user-closed-drawer' })}

@@ -4,7 +4,9 @@ import { Posix } from '~/@/time/posix'
 import type { VDomChildren } from '~/@/vdom/vdom'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
-import { Button, Drawer, IconPenToSquare, ListItemButton, TextField } from '~/app/@/ui'
+import { Drawer, DrawerHeader, IconPenToSquare, ListItemButton, TextField } from '~/app/@/ui'
+import { ViewForm } from '~/app/@/ui/form'
+import { FormBottomButtons } from '~/app/@/ui/form-button-buttons'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCmd } from '../../../@/frontend/cmd'
 import { FlowFrontendCmdRoot } from '../../../@/frontend/cmd-root'
@@ -28,13 +30,17 @@ const update: FrontendModule['update'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   return (
     <ViewDrawer {...input}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
+      <ViewForm
+        name={input.ctx.t('puzzle.edit-name')}
+        onSubmit={() => {
           input.dispatch({ t: 'puzzle.edit-name.user-clicked-save-button' })
         }}
       >
-        <p className='px-4 pt-4 text-2xl font-bold'>Edit name</p>
+        <DrawerHeader
+          ctx={input.ctx}
+          title={input.ctx.t('puzzle.edit-name')}
+          onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
+        />
         <div className='w-full p-4'>
           <TextField
             id='edit-name-input'
@@ -50,30 +56,14 @@ const View: FrontendModule['View'] = (input) => {
             helperText={editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError)}
           />
         </div>
-        <div className='flex w-full items-center gap-4 p-4 pb-6'>
-          <Button
-            className='flex-1'
-            text={input.ctx.t('app.cancel')}
-            onClick={() =>
-              input.dispatch({
-                t: 'puzzle.edit-name.user-clicked-cancel-button',
-              })
-            }
-          />
-          <Button
-            className='flex-1'
-            color='primary'
-            type='submit'
-            variant='contained'
-            text={input.ctx.t('app.save')}
-            loading={isLoading(input.model.puzzleEditNameRequest)}
-            disabled={
-              input.modelSpace.screen.t !== 'screen-puzzle-builder' ||
-              input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name
-            }
-          />
-        </div>
-      </form>
+        <FormBottomButtons
+          onCancel={() => input.dispatch({ t: 'puzzle.edit-name.user-clicked-cancel-button' })}
+          cancelText={input.ctx.t('app.cancel')}
+          submitText={input.ctx.t('app.save')}
+          submitLoading={isLoading(input.model.puzzleEditNameRequest)}
+          submitDisabled={input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name}
+        />
+      </ViewForm>
     </ViewDrawer>
   )
 }
@@ -88,12 +78,8 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'puzzle.edit-name.user-clicked-cancel-button': {
       return {
-        model: {
-          ...input.model,
-          puzzleBuilderOpened: 'more',
-          puzzleEditNameValidationError: null,
-        },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        model: { ...input.model, puzzleBuilderOpened: 'more', puzzleEditNameValidationError: null },
+        msgCmd: [playSound(APP_SOUND.drawerClosed)],
       }
     }
 
@@ -231,14 +217,14 @@ const updateDrawer: FrontendModule['update'] = (input) => {
           puzzleBuilderOpened: 'edit-name',
           puzzleEditNameDraft: input.modelSpace.screenPuzzleBuilder?.puzzle.name ?? '',
         },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgCmd: [playSound(APP_SOUND.drawerOpened)],
       }
     }
 
     case 'puzzle.edit-name.user-closed-drawer': {
       return {
         model: { ...input.model, puzzleBuilderOpened: null },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgCmd: [playSound(APP_SOUND.drawerClosed)],
       }
     }
 
@@ -262,6 +248,7 @@ const ViewDrawer = (
       />
 
       <Drawer
+        ariaLabel={input.ctx.t('puzzle.edit-name')}
         id='edit-name-drawer'
         open={input.model.puzzleBuilderOpened === 'edit-name'}
         onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}

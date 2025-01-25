@@ -6,6 +6,7 @@ import { PuzzleDbQueryFrontend } from '../../../@/puzzle/puzzle-db-query/fronten
 import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
 import { ScreenPackBuildSpace } from '../space'
 import type { FrontendModule, ModelSpace } from '../types'
+import { ViewForm } from '~/app/@/ui/form'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -71,10 +72,10 @@ const View: FrontendModule['View'] = (input) => {
   const query = toQuery(input)
 
   return (
-    <form
+    <ViewForm
       className='flex h-full max-h-full w-full flex-col overflow-hidden'
-      onSubmit={(e) => {
-        e.preventDefault()
+      name={input.ctx.t('flow.add-puzzle')}
+      onSubmit={() => {
         input.dispatch({
           t: 'got-msg-space',
           c: {
@@ -136,7 +137,7 @@ const View: FrontendModule['View'] = (input) => {
       />
       <FormBottomButtons
         cancelText={input.ctx.t('app.cancel')}
-        confirmText={input.ctx.t('app.add')}
+        submitText={input.ctx.t('app.add')}
         onCancel={() =>
           input.dispatch({
             t: 'got-msg-space',
@@ -147,10 +148,10 @@ const View: FrontendModule['View'] = (input) => {
           })
         }
         cancelDisabled={false}
-        confirmLoading={false}
-        confirmDisabled={input.modelSpace.screenAddPuzzle_selected.length === 0}
+        submitLoading={false}
+        submitDisabled={input.modelSpace.screenAddPuzzle_selected.length === 0}
       />
-    </form>
+    </ViewForm>
   )
 }
 

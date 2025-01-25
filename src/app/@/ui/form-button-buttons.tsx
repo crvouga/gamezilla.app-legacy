@@ -5,9 +5,9 @@ export const FormBottomButtons = (input: {
   onCancel: () => void
   cancelText: TranslatedText
   cancelDisabled?: boolean
-  confirmText: TranslatedText
-  confirmLoading?: boolean
-  confirmDisabled?: boolean
+  submitText: TranslatedText
+  submitLoading?: boolean
+  submitDisabled?: boolean
   variant?: 'danger'
 }) => {
   return (
@@ -18,9 +18,9 @@ export const FormBottomButtons = (input: {
         type='submit'
         color={input.variant === 'danger' ? 'danger' : 'default'}
         variant='contained'
-        text={input.confirmText}
-        loading={input.confirmLoading}
-        disabled={input.confirmDisabled}
+        text={input.submitText}
+        loading={input.submitLoading}
+        disabled={input.submitDisabled}
       />
     </div>
   )

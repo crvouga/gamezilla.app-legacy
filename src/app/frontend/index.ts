@@ -1,5 +1,5 @@
 export * as CurrentScreen from './current-screen'
 export * as Platform from './platform'
 export * as Sound from './sound'
-export * as StatusBar from './status-bar'
+export * as StatusBar from './status-bar/status-bar'
 export * as Toast from './toast'

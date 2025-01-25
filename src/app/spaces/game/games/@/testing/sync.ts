@@ -6,6 +6,8 @@ const hostUserId = 'test-user-id' as UserId
 
 const currentSpaceId = 'test-space-id' as SpaceId
 
+const guestUserId = 'test-guest-user-id' as UserId
+
 export const SpaceGameSpaceFixture = async () => {
   const ctx: SpaceCtx = {
     space: {
@@ -13,6 +15,7 @@ export const SpaceGameSpaceFixture = async () => {
       spaceId: currentSpaceId,
       users: {
         [hostUserId]: hostUserId,
+        [guestUserId]: guestUserId,
       },
       visibility: 'public',
     },
@@ -20,5 +23,7 @@ export const SpaceGameSpaceFixture = async () => {
 
   return {
     ctx,
+    hostId: hostUserId,
+    guestId: guestUserId,
   }
 }

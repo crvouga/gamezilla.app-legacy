@@ -12,10 +12,11 @@ type Input = {
 }
 
 export const ListItemButton = (input: Input) => {
+  const Component = input.onClick ? 'button' : 'div'
   return (
-    <button
-      type='button'
-      role='button'
+    <Component
+      type={Component === 'button' ? 'button' : undefined}
+      role={Component === 'button' ? 'button' : undefined}
       onClick={input.onClick}
       aria-label={input.label}
       name={input.label}
@@ -27,7 +28,7 @@ export const ListItemButton = (input: Input) => {
         {input.label}
       </div>
       {input.end && <div className='shrink-0'>{input.end()}</div>}
-    </button>
+    </Component>
   )
 }
 

@@ -585,6 +585,7 @@ const ViewStatusBar: typeof View = (input) => {
 
   return (
     <StatusBar.View
+      ctx={frontendCtx}
       model={input.model.statusBar}
       dispatch={(c) => input.dispatch({ t: 'status-bar', c })}
       slots={{

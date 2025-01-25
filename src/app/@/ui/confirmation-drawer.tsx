@@ -1,9 +1,14 @@
 import { TranslatedText } from '~/@/l18n'
-import { Drawer, type DrawerInput } from './drawer'
+import { Translator } from '~/@/l18n/generated'
+import { Drawer, DrawerHeader, type DrawerInput } from './drawer'
+import { ViewForm } from './form'
 import { FormBottomButtons } from './form-button-buttons'
 import { Typography } from './typography'
 
 type input = DrawerInput & {
+  ctx: {
+    t: Translator
+  }
   title: TranslatedText
   body: TranslatedText
   variant?: 'danger'
@@ -20,25 +25,20 @@ type input = DrawerInput & {
 export const ConfirmationFormDrawer = (input: input) => {
   return (
     <Drawer {...input}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          input.onConfirm()
-        }}
-      >
-        <Typography variant='title' className='w-full px-4 pt-4 text-left' text={input.title} />
+      <ViewForm name={input.title} onSubmit={input.onConfirm}>
+        <DrawerHeader title={input.title} ctx={input.ctx} onClose={input.onCancel} />
 
         <Typography className='p-4' variant='body' text={input.body} />
 
         <FormBottomButtons
           cancelText={input.cancelText}
-          confirmText={input.confirmText}
+          submitText={input.confirmText}
           onCancel={input.onCancel}
           cancelDisabled={input.cancelDisabled}
-          confirmLoading={input.confirmLoading}
+          submitLoading={input.confirmLoading}
           variant={input.variant}
         />
-      </form>
+      </ViewForm>
     </Drawer>
   )
 }

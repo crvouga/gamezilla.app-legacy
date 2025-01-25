@@ -1,6 +1,7 @@
 import type { VDom } from '~/@/vdom/vdom'
-import { APP_SOUND, AppFrontendCmd, playSound, StatusBarCmd } from '../@/frontend/cmd'
-import { Drawer } from '../@/ui'
+import { APP_SOUND, AppFrontendCmd, playSound, StatusBarCmd } from '../../@/frontend/cmd'
+import { Drawer } from '../../@/ui'
+import { Translator } from '~/@/l18n/generated'
 
 export type Model = {
   isDrawerOpen: boolean
@@ -68,11 +69,15 @@ export const View = ({
   model,
   dispatch,
   slots,
+  ctx,
 }: {
   slots: {
     barLeft: VDom
     barRight: VDom
     drawerContent: VDom
+  }
+  ctx: {
+    t: Translator
   }
   model: Model
   dispatch: (m: Msg) => void
@@ -93,6 +98,7 @@ export const View = ({
       </button>
 
       <Drawer
+        ariaLabel={ctx.t('status-bar.status-bar')}
         position='top'
         id='status-bar-drawer'
         open={model.isDrawerOpen}

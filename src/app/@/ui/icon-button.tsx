@@ -1,9 +1,10 @@
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
+import { TranslatedText } from '~/@/l18n'
 
 export const IconButton = (input: {
   onClick?: () => void
-  label: string
+  label: TranslatedText
   renderIcon: (input: { className: string }) => VDom
   className?: string
 }) => {
@@ -16,6 +17,7 @@ export const IconButton = (input: {
       type='button'
       onClick={input.onClick}
       aria-label={input.label}
+      title={input.label}
     >
       {input.renderIcon({
         className: 'w-7 h-7',

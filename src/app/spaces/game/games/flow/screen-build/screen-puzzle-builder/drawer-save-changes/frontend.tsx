@@ -52,11 +52,8 @@ const updateExitBuilder: FrontendModule['update'] = (input) => {
 
     case 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit': {
       return {
-        model: {
-          ...input.model,
-          puzzleBuilderOpened: null,
-        },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        model: { ...input.model, puzzleBuilderOpened: null },
+        msgCmd: [playSound(APP_SOUND.drawerClosed)],
       }
     }
 
@@ -262,6 +259,7 @@ const ViewUnsavedChangesDrawer: FrontendModule['View'] = (input) => {
   return (
     <Drawer
       id='unsaved-changes-drawer'
+      ariaLabel={input.ctx.t('app.save-changes?')}
       onClose={() =>
         input.dispatch({
           t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit',

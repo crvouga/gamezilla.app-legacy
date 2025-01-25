@@ -102,6 +102,8 @@ const View = ({
 }) => {
   return (
     <ConfirmationFormDrawer
+      ctx={ctx}
+      ariaLabel={ctx.t('auth.logout-of-gamezilla.app')}
       open={model.opened === 'logged-out'}
       title={ctx.t('auth.logout-of-gamezilla.app')}
       body={ctx.t('auth.logout-of-gamezilla.app-body')}

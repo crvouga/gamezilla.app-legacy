@@ -9,14 +9,14 @@ import { FlowBackendCtx } from '../../@/backend/ctx'
 import { FlowFrontendCmd } from '../../@/frontend/cmd'
 import { FlowFrontendCtx } from '../../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../../@/frontend/evt'
-import { Pack } from '../../@/pack/pack'
 import { ModePlay } from '../../@/mode-play'
-import { PuzzleResult } from '../../@/puzzle/puzzle-result'
-import { FlowSpaceCtx } from '../../@/space/ctx'
-import { EditPackNameTypes } from './drawer-edit-pack-name'
-import { ScreenAddPuzzleTypes } from './screen-add-puzzle'
+import { Pack } from '../../@/pack/pack'
 import { PackDbQueryTypes } from '../../@/pack/pack-db-query'
 import { PuzzleDbQueryTypes } from '../../@/puzzle/puzzle-db-query'
+import { PuzzleResult } from '../../@/puzzle/puzzle-result'
+import { FlowSpaceCtx } from '../../@/space/ctx'
+import { DrawerEditPackNameTypes } from './drawer-edit-pack-name'
+import { ScreenAddPuzzleTypes } from './screen-add-puzzle'
 
 //
 //
@@ -62,7 +62,6 @@ export const Screen = p.or(
     puzzleIndex: p.num,
     puzzleResult: PuzzleResult,
     play: p.maybe(ModePlay.Model),
-    opened: p.maybe(p.l('more')),
   }),
 )
 
@@ -70,11 +69,12 @@ type Screen = p.Infer<typeof Screen>
 
 export const ModelSpace = p.and(
   ScreenAddPuzzleTypes.ModelSpace,
+  DrawerEditPackNameTypes.ModelSpace,
   p.obj({
     pack: Pack,
     screen: Screen,
     slideIndex: p.num,
-    editPackName: EditPackNameTypes.ModelSpace,
+    opened: p.maybe(p.or(p.l('edit-pack-name-drawer'), p.l('more'))),
   }),
 )
 
@@ -82,10 +82,7 @@ export type ModelSpace = p.Infer<typeof ModelSpace>
 
 export const MsgSpace = p.or(
   ScreenAddPuzzleTypes.MsgSpace,
-  p.obj({
-    t: p.l('got-edit-pack-name-msg'),
-    c: EditPackNameTypes.MsgSpace,
-  }),
+  DrawerEditPackNameTypes.MsgSpace,
   p.obj({
     t: p.l('screen-pack-builder.user-clicked-back-button'),
     userId: UserId,
@@ -127,7 +124,7 @@ export const MsgSpace = p.or(
     previousPuzzleResult: PuzzleResult,
   }),
   p.obj({
-    t: p.l('screen-pack-builder.puzzle-screen.user-clicked-more-button'),
+    t: p.l('screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button'),
     userId: UserId,
   }),
   p.obj({

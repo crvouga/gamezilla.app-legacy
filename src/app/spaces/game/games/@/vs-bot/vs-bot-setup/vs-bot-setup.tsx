@@ -200,6 +200,7 @@ export const View = ({
       )}
 
       <Drawer
+        ariaLabel={ctx.t('game.change-bot')}
         position='bottom'
         id='change-bot'
         open={model.opened === 'change-bot'}

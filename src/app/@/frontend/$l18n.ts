@@ -1,6 +1,8 @@
 import type { TranslatedText, Translations } from '~/@/l18n'
 
 export type Text = {
+  'app.edit-name': string
+  'app.updated-name': string
   'app.last-updated-at-desc': string
   'app.created-at-desc': string
   'app.created-by-you': string
@@ -48,6 +50,8 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   en: {
+    'app.edit-name': 'Edit name',
+    'app.updated-name': 'Updated name',
     'app.created-by-you': 'Created by you',
     'app.created-at-desc': 'Recently created',
     'app.last-updated-at-desc': 'Recently updated',
@@ -93,6 +97,8 @@ export const translations: Translations<Text> = {
     'app.save-changes-warning': `Your changes will be lost if you don't save them before exiting.`,
   },
   ar: {
+    'app.edit-name': 'تعديل الاسم',
+    'app.updated-name': 'تم تعديل الاسم',
     'app.created-by-you': 'تم إنشاؤه بواسطتك',
     'app.created-at-desc': 'الأحدث أولاً',
     'app.last-updated-at-desc': 'الأحدث تحديثًا',
@@ -138,6 +144,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'حفظ التغييرات؟',
   },
   de: {
+    'app.edit-name': 'Name bearbeiten',
+    'app.updated-name': 'Name aktualisiert',
     'app.created-by-you': 'Von Ihnen erstellt',
     'app.created-at-desc': 'Neueste zuerst',
     'app.last-updated-at-desc': 'Zuletzt aktualisiert',
@@ -183,6 +191,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Änderungen speichern?',
   },
   es: {
+    'app.edit-name': 'Editar nombre',
+    'app.updated-name': 'Nombre actualizado',
     'app.created-by-you': 'Creado por ti',
     'app.created-at-desc': 'Más reciente primero',
     'app.last-updated-at-desc': 'Más recientemente actualizado',
@@ -228,6 +238,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '¿Guardar cambios?',
   },
   fr: {
+    'app.edit-name': 'Modifier le nom',
+    'app.updated-name': 'Nom mis à jour',
     'app.created-by-you': 'Créé par vous',
     'app.created-at-desc': 'Le plus récent en premier',
     'app.last-updated-at-desc': 'Le plus récemment mis à jour',
@@ -273,6 +285,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Enregistrer les modifications?',
   },
   it: {
+    'app.edit-name': 'Modifica nome',
+    'app.updated-name': 'Nome aggiornato',
     'app.created-by-you': 'Creato da te',
     'app.created-at-desc': 'Più recenti prima',
     'app.last-updated-at-desc': 'Più recentemente aggiornato',
@@ -318,6 +332,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Salvare le modifiche?',
   },
   ja: {
+    'app.edit-name': '名前を編集',
+    'app.updated-name': '名前が更新されました',
     'app.created-by-you': 'あなたが作成',
     'app.created-at-desc': '最新のものが最初',
     'app.last-updated-at-desc': '最新のもの',
@@ -363,6 +379,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '変更を保存しますか？',
   },
   ko: {
+    'app.edit-name': '이름 수정',
+    'app.updated-name': '이름이 업데이트됨',
     'app.created-by-you': '당신이 만든',
     'app.created-at-desc': '최신 순',
     'app.last-updated-at-desc': '최근 업데이트',
@@ -408,6 +426,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '변경 사항 저장?',
   },
   pt: {
+    'app.edit-name': 'Editar nome',
+    'app.updated-name': 'Nome atualizado',
     'app.created-by-you': 'Criado por você',
     'app.created-at-desc': 'Mais recente primeiro',
     'app.last-updated-at-desc': 'Mais recentemente atualizado',
@@ -453,6 +473,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Salvar alterações?',
   },
   ru: {
+    'app.edit-name': 'Изменить имя',
+    'app.updated-name': 'Имя обновлено',
     'app.created-by-you': 'Создано вами',
     'app.created-at-desc': 'Сначала самые новые',
     'app.last-updated-at-desc': 'Последнее обновление',
@@ -498,6 +520,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': 'Сохранить изменения?',
   },
   zh: {
+    'app.edit-name': '编辑名称',
+    'app.updated-name': '名称已更新',
     'app.created-by-you': '由您创建',
     'app.created-at-desc': '最新的在前',
     'app.last-updated-at-desc': '最近更新',
@@ -543,6 +567,8 @@ export const translations: Translations<Text> = {
     'app.save-changes?': '保存更改？',
   },
   hi: {
+    'app.edit-name': 'नाम संपादित करें',
+    'app.updated-name': 'नाम अपडेट किया गया',
     'app.created-by-you': 'आपके द्वारा बनाया गया',
     'app.created-at-desc': 'सबसे हाल का पहले',
     'app.last-updated-at-desc': 'सबसे हाल में अपडेट',

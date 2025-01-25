@@ -22,6 +22,7 @@ import { FrontendEvt } from '~/app/@/frontend/evt'
 import { AlertError, Button, IconMobilePhone, Select, TextField, TopBar, Typography } from '~/app/@/ui'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend, MsgToBackend } from './types'
 import { sendCodeProblemToString, verifyCodeProblemToString } from './verify-sms/interface'
+import { ViewForm } from '~/app/@/ui/form'
 
 //
 //
@@ -450,10 +451,10 @@ const ViewSendCode: Module['View'] = (input) => {
         title={input.ctx.t('auth-sms.login-with-phone')}
       />
 
-      <form
+      <ViewForm
         className='flex w-full flex-col gap-6 p-4 py-6'
-        onSubmit={(e) => {
-          e.preventDefault()
+        name={input.ctx.t('auth-sms.login-with-phone')}
+        onSubmit={() => {
           input.dispatch({ t: 'user-clicked-send-code-button' })
         }}
       >
@@ -506,7 +507,7 @@ const ViewSendCode: Module['View'] = (input) => {
           loading={input.model.sendCode.t === 'loading'}
           type='submit'
         />
-      </form>
+      </ViewForm>
 
       {isErr(input.model.sendCode) && (
         <div className='w-full p-4'>
@@ -541,10 +542,10 @@ const ViewVerifyCode: Module['View'] = (input) => {
         title={input.ctx.t('auth-sms.login-with-phone')}
       />
 
-      <form
+      <ViewForm
         className='flex w-full flex-col gap-6 p-4 py-6'
-        onSubmit={(e) => {
-          e.preventDefault()
+        name={input.ctx.t('auth-sms.login-with-phone')}
+        onSubmit={() => {
           input.dispatch({
             t: 'user-clicked-verify-code-button',
             phoneNumber,
@@ -590,7 +591,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
           loading={input.model.verifyCode.t === 'loading' || input.model.verifyCode.t === 'ok'}
           type='submit'
         />
-      </form>
+      </ViewForm>
 
       {isErr(input.model.verifyCode) && (
         <div className='w-full p-4'>

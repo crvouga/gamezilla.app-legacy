@@ -4,25 +4,19 @@ import { History } from '~/@/history'
 import { p } from '~/@/parser'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import {
-  Button,
-  Drawer,
-  DrawerHeader,
-  IconArrowRotateLeft,
-  IconArrowRotateRight,
-  IconExpand,
-  IconXMark,
-} from '~/app/@/ui'
+import { Drawer, DrawerHeader, IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/app/@/ui'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
-import { BoardLayout } from '../ui/layout'
-import * as FlowUI from '../ui/color'
-import * as FlowVariant from '../variant/variant'
-import * as FlowVariantDimensions from '../variant/variant-dimensions'
+import { ViewForm } from '~/app/@/ui/form'
+import { FormBottomButtons } from '~/app/@/ui/form-button-buttons'
 import * as Flow from '../flow/flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
 import { Terminal } from '../flow/terminal'
+import * as FlowUI from '../ui/color'
+import { BoardLayout } from '../ui/layout'
 import { VariantBoard } from '../variant'
+import * as FlowVariant from '../variant/variant'
+import * as FlowVariantDimensions from '../variant/variant-dimensions'
 
 //
 //
@@ -256,40 +250,22 @@ export const update = ({
 
     case 'dimensions-form.clicked-open': {
       return {
-        model: resetDimensionsForm({
-          ...model,
-          opened: 'dimensions',
-        }),
-        msgCmd: {
-          t: 'play-sound',
-          sourceSrc: APP_SOUND.navForwardMin,
-        },
+        model: resetDimensionsForm({ ...model, opened: 'dimensions' }),
+        msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.drawerOpened },
       }
     }
 
     case 'dimensions-form.closed': {
       return {
-        model: resetDimensionsForm({
-          ...model,
-          opened: null,
-        }),
-        msgCmd: {
-          t: 'play-sound',
-          sourceSrc: APP_SOUND.navBackwardMin,
-        },
+        model: resetDimensionsForm({ ...model, opened: null }),
+        msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.drawerClosed },
       }
     }
 
     case 'dimensions-form.clicked-cancel': {
       return {
-        model: resetDimensionsForm({
-          ...model,
-          opened: null,
-        }),
-        msgCmd: {
-          t: 'play-sound',
-          sourceSrc: APP_SOUND.navBackwardMin,
-        },
+        model: resetDimensionsForm({ ...model, opened: null }),
+        msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.drawerClosed },
       }
     }
   }
@@ -523,6 +499,7 @@ export const View = (input: { ctx: AppFrontendCtx; model: Model; dispatch: (m: M
             ]}
           />
           <Drawer
+            ariaLabel={input.ctx.t('app.dimensions')}
             open={input.model.opened === 'dimensions'}
             onClose={() =>
               input.dispatch({
@@ -532,48 +509,33 @@ export const View = (input: { ctx: AppFrontendCtx; model: Model; dispatch: (m: M
             id='dimensions'
             position='bottom'
           >
-            <DrawerHeader
-              onClose={() =>
-                input.dispatch({
-                  t: 'dimensions-form.closed',
-                })
-              }
-            />
+            <ViewForm
+              name={input.ctx.t('app.dimensions')}
+              onSubmit={() => input.dispatch({ t: 'dimensions-form.clicked-save' })}
+            >
+              <DrawerHeader
+                ctx={input.ctx}
+                title={input.ctx.t('app.dimensions')}
+                onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
+              />
 
-            <FlowVariantDimensions.ViewForm
-              ctx={input.ctx}
-              form={input.model.dimensions}
-              onInput={(dimensions) =>
-                input.dispatch({
-                  t: 'dimensions-form.inputted',
-                  dimensions,
-                })
-              }
-            />
-
-            <div className='flex w-full items-center gap-4 p-4'>
-              <Button
-                text={input.ctx.t('app.cancel')}
-                className='flex-1'
-                onClick={() =>
+              <FlowVariantDimensions.ViewForm
+                ctx={input.ctx}
+                form={input.model.dimensions}
+                onInput={(dimensions) =>
                   input.dispatch({
-                    t: 'dimensions-form.clicked-cancel',
+                    t: 'dimensions-form.inputted',
+                    dimensions,
                   })
                 }
               />
-              <Button
-                text={input.ctx.t('app.save')}
-                className='flex-1'
-                variant='contained'
-                color='primary'
-                disabled={!canSubmitDimensionsForm(input.model)}
-                onClick={() =>
-                  input.dispatch({
-                    t: 'dimensions-form.clicked-save',
-                  })
-                }
+              <FormBottomButtons
+                onCancel={() => input.dispatch({ t: 'dimensions-form.clicked-cancel' })}
+                cancelText={input.ctx.t('app.cancel')}
+                submitText={input.ctx.t('app.save')}
+                submitDisabled={!canSubmitDimensionsForm(input.model)}
               />
-            </div>
+            </ViewForm>
           </Drawer>
         </>
       }

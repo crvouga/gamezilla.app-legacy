@@ -61,11 +61,11 @@ describe(import.meta.file, () => {
         puzzleIndex: 0,
       },
       {
-        t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
         userId: f.createdBy,
       },
     ])
-    expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.opened === 'more').toBe(true)
+    expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.opened === 'more').toBe(true)
   })
 
   it("should be able to close 'more' drawer", async () => {
@@ -80,7 +80,7 @@ describe(import.meta.file, () => {
         userId: f.createdBy,
       },
     ])
-    expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.opened === null).toBe(true)
+    expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.opened === null).toBe(true)
   })
 
   it('should be able to go to next puzzle', async () => {
@@ -276,12 +276,12 @@ describe(import.meta.file, () => {
         puzzleIndex,
       },
       {
-        t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
         userId: f.createdBy,
       },
     ])
 
-    expect(output?.screen.t === 'screen-puzzle' && output?.screen.opened === 'more').toBe(true)
+    expect(output?.screen.t === 'screen-puzzle' && output?.opened === 'more').toBe(true)
   })
 
   it('should close the more drawer', async () => {
@@ -294,7 +294,7 @@ describe(import.meta.file, () => {
         puzzleIndex,
       },
       {
-        t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
         userId: f.createdBy,
       },
       {
@@ -302,7 +302,7 @@ describe(import.meta.file, () => {
         userId: f.createdBy,
       },
     ])
-    expect(output?.screen.t === 'screen-puzzle' && output?.screen.opened === null).toBe(true)
+    expect(output?.screen.t === 'screen-puzzle' && output?.opened === null).toBe(true)
   })
 
   it('should should remove puzzle from pack clicking remove from pack button', async () => {
@@ -315,7 +315,7 @@ describe(import.meta.file, () => {
         puzzleIndex,
       },
       {
-        t: 'screen-pack-builder.puzzle-screen.user-clicked-more-button',
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
         userId: f.createdBy,
       },
       {

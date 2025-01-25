@@ -1,19 +1,18 @@
 import { ModePlay } from '../../@/mode-play'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
-import { EditPackNameSpace } from './drawer-edit-pack-name/space'
+import { DrawerEditPackNameSpace } from './drawer-edit-pack-name/space'
 import { ScreenAddPuzzleSpace } from './screen-add-puzzle/space'
 import type { ModelSpace, UpdateSpace } from './types'
 
 const initSpace = ({ pack }: { pack: Pack }): ModelSpace => {
   return {
     ...ScreenAddPuzzleSpace.initSpace(),
-    editPackName: EditPackNameSpace.init({ pack }),
+    ...DrawerEditPackNameSpace.initSpace({ pack }),
     pack,
     slideIndex: 0,
-    screen: {
-      t: 'screen-puzzle-grid',
-    },
+    opened: null,
+    screen: { t: 'screen-puzzle-grid' },
   }
 }
 
@@ -25,6 +24,7 @@ const updateSpace: UpdateSpace = (input) => {
 }
 
 updates.push(ScreenAddPuzzleSpace.updateSpace)
+updates.push(DrawerEditPackNameSpace.updateSpace)
 
 updates.push((input) => {
   switch (input.msgSpace.t) {
@@ -263,16 +263,13 @@ updates.push(({ modelSpace, msgSpace }) => {
 
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
-    case 'screen-pack-builder.puzzle-screen.user-clicked-more-button': {
+    case 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button': {
       if (!modelSpace) {
         return modelSpace
       }
       return {
         ...modelSpace,
-        screen: {
-          ...modelSpace.screen,
-          opened: 'more',
-        },
+        opened: 'more',
       }
     }
     case 'screen-pack-builder.puzzle-screen.user-closed-more-drawer': {
@@ -281,10 +278,7 @@ updates.push(({ modelSpace, msgSpace }) => {
       }
       return {
         ...modelSpace,
-        screen: {
-          ...modelSpace.screen,
-          opened: null,
-        },
+        opened: null,
       }
     }
     default: {
@@ -313,6 +307,7 @@ updates.push(({ modelSpace, msgSpace }) => {
         pack: packNew,
         screen: {
           t: 'screen-puzzle-grid',
+          opened: null,
         },
       }
     }

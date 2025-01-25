@@ -4,6 +4,7 @@ import { Translator } from '~/@/l18n/generated'
 import { type Result, isErr } from '~/@/result'
 import { ScreenCmd } from '~/app/@/frontend/cmd'
 import { AlertError, AlertSuccess, Button, TextField, TopBar } from '~/app/@/ui'
+import { ViewForm } from '~/app/@/ui/form'
 
 //
 //
@@ -164,10 +165,10 @@ export const View = (input: {
         title={input.ctx.t('auth-email.login-with-email')}
       />
 
-      <form
+      <ViewForm
         className='flex flex-col gap-6 p-4'
-        onSubmit={(e) => {
-          e.preventDefault()
+        name={input.ctx.t('auth-email.login-with-email')}
+        onSubmit={() => {
           input.dispatch({
             t: 'clicked-send-login-link',
           })
@@ -222,7 +223,7 @@ export const View = (input: {
             </div>
           </AlertSuccess>
         )}
-      </form>
+      </ViewForm>
     </div>
   )
 }
