@@ -21,31 +21,32 @@ const update: FrontendModule['update'] = (input) => {
     (model) => ScreenMainMenuFrontend.update({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateBackButton({ ...input, model }),
-    (model) => {
-      if (!input.modelSpace.screenPackBuilder) {
-        return { model }
-      }
-      const updated = ScreenPackBuilderFrontend.update({
-        ...input,
-        modelSpace: input.modelSpace.screenPackBuilder,
-        model: model,
-        msg: input.msg?.t === 'got-screen-pack-builder-msg' ? input.msg.c : null,
-        msgBackend: input.msgBackend?.t === 'got-screen-pack-builder-msg' ? input.msgBackend.c : null,
-        msgSpace:
-          input.msgSpace?.t === 'got-screen-pack-builder-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
-      })
-      return {
-        model: {
-          ...model,
-          screenPackBuilder: updated,
-        },
-        eff: Eff.tag('got-screen-pack-builder-msg', updated.eff),
-        msgCmd: FlowFrontendCmd.tag('got-screen-pack-builder-msg', updated.msgCmd),
-        msgEvt: updated.msgEvt,
-        msgSpace: updated.msgSpace?.map((c) => ({ ...c, t: 'got-screen-pack-builder-msg', c })),
-      }
-    },
+    (model) => updateScreenPackBuilder({ ...input, model }),
   )
+}
+
+const updateScreenPackBuilder: FrontendModule['update'] = (input) => {
+  if (!input.modelSpace.screenPackBuilder) {
+    return { model: input.model }
+  }
+  const updated = ScreenPackBuilderFrontend.update({
+    ...input,
+    modelSpace: input.modelSpace.screenPackBuilder,
+    model: input.model,
+    msg: input.msg?.t === 'got-screen-pack-builder-msg' ? input.msg.c : null,
+    msgBackend: input.msgBackend?.t === 'got-screen-pack-builder-msg' ? input.msgBackend.c : null,
+    msgSpace: input.msgSpace?.t === 'got-screen-pack-builder-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
+  })
+  return {
+    model: {
+      ...input.model,
+      screenPackBuilder: updated,
+    },
+    eff: Eff.tag('got-screen-pack-builder-msg', updated.eff),
+    msgCmd: FlowFrontendCmd.tag('got-screen-pack-builder-msg', updated.msgCmd),
+    msgEvt: updated.msgEvt,
+    msgSpace: updated.msgSpace?.map((c) => ({ ...c, t: 'got-screen-pack-builder-msg', c })),
+  }
 }
 
 const updateBackButton: FrontendModule['update'] = (input) => {
