@@ -63,7 +63,6 @@ const View = (input: {
     <div className='flex h-full w-full flex-col gap-4 py-6'>
       <Swiper.Container
         onSlideIndexChanged={(slideIndex) => {
-          console.log('slideIndex', slideIndex)
           input.onSlideIndexChanged?.(slideIndex)
         }}
         id={input.id ?? 'pack-puzzle-grid-swiper-container'}
