@@ -40,8 +40,11 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
       get textContent(): string | null {
         return baseElement.textContent
       },
-      click(): void {
-        userEvent.click(baseElement)
+      async click(): Promise<void> {
+        await userEvent.click(baseElement)
+      },
+      async keydown(key: string): Promise<void> {
+        await userEvent.keyboard(`{${key}}`)
       },
       query(cssSelector) {
         return Array.from(baseElement.querySelectorAll(cssSelector)).map((element) => {

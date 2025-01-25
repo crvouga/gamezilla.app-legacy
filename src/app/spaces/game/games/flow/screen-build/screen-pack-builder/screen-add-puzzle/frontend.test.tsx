@@ -89,4 +89,17 @@ describe(import.meta.file, () => {
 
     expect(didPlaySound(output)).toBe(true)
   })
+
+  test('clicking checkbox', async () => {
+    const f = await Fixture()
+    const r = f.render({ model: f.model, modelSpace: f.modelSpace })
+    let msgs: MsgFrontend[] = []
+    f.renderMsg.sub((msg) => msgs.push(msg))
+    const checkbox = r.query("[type='checkbox']")[0]
+    checkbox?.click()
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    expect(msgs.length).toBe(1)
+    expect(msgs[0]?.t).toBe('got-msg-space')
+    expect(msgs[0]?.c?.t).toBe('screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox')
+  })
 })

@@ -15,10 +15,7 @@ const update: FrontendModule['update'] = (input) => {
         model: input.model,
         msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.puzzle-added'))],
         async eff(dispatch) {
-          const modelSpace = ScreenPackBuildSpace.updateSpace({
-            ...input,
-            msgSpace,
-          })
+          const modelSpace = ScreenPackBuildSpace.updateSpace({ ...input, msgSpace })
 
           const saved = await input.ctx.packDb.put(modelSpace.pack)
 
