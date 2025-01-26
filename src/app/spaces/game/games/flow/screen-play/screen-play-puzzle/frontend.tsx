@@ -27,92 +27,48 @@ const update: FrontendModule['update'] = (input) => {
 const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-clicked-open-pack-puzzle-grid-item': {
-      return {
-        model: input.model,
-      }
+      return { model: input.model }
     }
 
     case 'user-clicked-reset-puzzle': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.navTransitionLeft)],
-      }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.navTransitionLeft)] }
     }
 
     case 'user-clicked-exit-play-puzzle-screen': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
-      }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }
 
     case 'user-clicked-next-puzzle': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)],
-      }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
     }
 
     case 'user-clicked-prev-puzzle': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
-      }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }
 
     case 'user-closed-puzzle-complete-dialog': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
-      }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }
 
     case 'user-toggled-action-buttons-drawer': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.tap)],
-      }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
     }
 
     case 'got-flow-play-msg': {
-      if (input.modelSpace.screen.t !== 'screen-play-puzzle') {
-        return {
-          model: input.model,
-        }
-      }
+      if (input.modelSpace.screen.t !== 'screen-play-puzzle') return { model: input.model }
+      if (input.modelSpace.screen.puzzleResult.t === 'not-found') return { model: input.model }
 
-      if (input.modelSpace.screen.puzzleResult.t === 'not-found') {
-        return {
-          model: input.model,
-        }
-      }
-      const modePlay =
-        input.modelSpace.screen.modePlay ??
-        ModePlay.init({
-          ctx: ModePlay.initCtx({
-            flow: input.modelSpace.screen.puzzleResult.c.flow,
-            solutions: input.ctx.solutions,
-          }),
-        })
-
-      const output = ModePlay.update({
-        msg: input.msgSpace.c,
-        model: modePlay,
-        ctx: ModePlay.initCtx({
-          flow: input.modelSpace.screen.puzzleResult.c.flow,
-          solutions: input.ctx.solutions,
-        }),
+      const playCtx = ModePlay.initCtx({
+        flow: input.modelSpace.screen.puzzleResult.c.flow,
+        solutions: input.ctx.solutions,
       })
+      const modePlay = input.modelSpace.screen.modePlay ?? ModePlay.init({ ctx: playCtx })
+      const output = ModePlay.update({ msg: input.msgSpace.c, model: modePlay, ctx: playCtx })
 
-      return {
-        model: input.model,
-        msgCmd: ModePlay.eventsToFrontendCmd(input.ctx, output.events),
-      }
+      return { model: input.model, msgCmd: ModePlay.eventsToFrontendCmd(input.ctx, output.events) }
     }
   }
-  return {
-    model: input.model,
-  }
+  return { model: input.model }
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (_input) => {
