@@ -305,9 +305,9 @@ updates.push(({ modelSpace, msgSpace }) => {
       return {
         ...modelSpace,
         pack: packNew,
+        opened: null,
         screen: {
           t: 'screen-puzzle-grid',
-          opened: null,
         },
       }
     }

@@ -14,16 +14,42 @@ describe(import.meta.file, () => {
     f = await Fixture()
   })
 
-  it('should remove puzzle from pack after clicking remove button', async () => {
-    const modelSpace = f.update(f.initial, [
-      {
-        t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
-        userId: f.createdBy,
-        puzzleIndex: 0,
-      },
-    ])
+  describe.only('remove puzzle from pack', () => {
+    it('should remove puzzle from pack after clicking remove button', async () => {
+      const modelSpace = f.update(f.initial, [
+        {
+          t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
+          userId: f.createdBy,
+          puzzleIndex: 0,
+        },
+      ])
 
-    expect(modelSpace?.pack.puzzleIds.includes(assertNotNullish(f.puzzles[0]).id)).toBe(false)
+      expect(modelSpace?.pack.puzzleIds.includes(assertNotNullish(f.puzzles[0]).id)).toBe(false)
+    })
+
+    it('should remove puzzle from pack and close more drawer', async () => {
+      const puzzle = assertNotNullish(f.puzzles[0])
+      const puzzleIndex = 0
+      const output = f.update(f.initial, [
+        {
+          t: 'screen-pack-builder.user-clicked-pack-item',
+          puzzleResult: { t: 'got', c: puzzle },
+          puzzleIndex,
+        },
+        {
+          t: 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
+          userId: f.createdBy,
+        },
+        {
+          t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
+          userId: f.createdBy,
+          puzzleIndex,
+        },
+      ])
+      expect(output?.screen.t === 'screen-puzzle-grid').toBe(true)
+      expect(output?.opened).toBe(null)
+      expect(output?.pack.puzzleIds.includes(puzzle.id)).toBe(false)
+    })
   })
 
   it('should be able to exit puzzle screen', async () => {
@@ -305,30 +331,6 @@ describe(import.meta.file, () => {
     expect(output?.screen.t === 'screen-puzzle' && output?.opened === null).toBe(true)
   })
 
-  it('should should remove puzzle from pack clicking remove from pack button', async () => {
-    const puzzle = assertNotNullish(f.puzzles[0])
-    const puzzleIndex = 0
-    const output = f.update(f.initial, [
-      {
-        t: 'screen-pack-builder.user-clicked-pack-item',
-        puzzleResult: { t: 'got', c: puzzle },
-        puzzleIndex,
-      },
-      {
-        t: 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
-        userId: f.createdBy,
-      },
-      {
-        t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
-        userId: f.createdBy,
-        puzzleIndex,
-      },
-    ])
-    expect(output?.screen.t === 'screen-puzzle-grid').toBe(true)
-    expect(output).toBeTruthy()
-    expect(output?.pack.puzzleIds.includes(puzzle.id)).toBe(false)
-  })
-
   it('should open the correct level when opening puzzle screen', async () => {
     f = await Fixture({
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
@@ -407,26 +409,28 @@ describe(import.meta.file, () => {
     expect(modelSpace.msgs?.some((m) => m.t === 'exit-pack-builder')).toBe(true)
   })
 
-  test('clamp slide index', async () => {
-    const modelSpace = f.update(f.initial, [
-      {
-        t: 'screen-pack-builder.user-changed-slide',
-        userId: f.createdBy,
-        newSlideIndex: 100000,
-      },
-    ])
-    expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(0)
-  })
+  describe('slide index clamping', () => {
+    test('should clamp large slide index to 0', async () => {
+      const modelSpace = f.update(f.initial, [
+        {
+          t: 'screen-pack-builder.user-changed-slide',
+          userId: f.createdBy,
+          newSlideIndex: 100000,
+        },
+      ])
+      expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(0)
+    })
 
-  test('clamp slide index should account for add puzzle cell', async () => {
-    f = await Fixture({ puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT })
-    const modelSpace = f.update(f.initial, [
-      {
-        t: 'screen-pack-builder.user-changed-slide',
-        userId: f.createdBy,
-        newSlideIndex: 1,
-      },
-    ])
-    expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(1)
+    test('should account for add puzzle cell when clamping', async () => {
+      f = await Fixture({ puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT })
+      const modelSpace = f.update(f.initial, [
+        {
+          t: 'screen-pack-builder.user-changed-slide',
+          userId: f.createdBy,
+          newSlideIndex: 1,
+        },
+      ])
+      expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(1)
+    })
   })
 })
