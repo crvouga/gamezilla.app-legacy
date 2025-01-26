@@ -75,7 +75,7 @@ const View: FrontendModule['View'] = (input) => {
 
   const nextPuzzleId = pack.puzzleIds[screen.puzzleIndex + 1]
   const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
-  const canGoNext = screen.puzzleIndex + 2 < pack.puzzleIds.length
+  const canGoNext = screen.puzzleIndex + 1 < pack.puzzleIds.length
 
   return (
     <div className='flex w-full flex-1 flex-col overflow-hidden'>

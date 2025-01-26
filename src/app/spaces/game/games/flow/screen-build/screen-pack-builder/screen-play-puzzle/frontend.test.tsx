@@ -126,4 +126,13 @@ describe(import.meta.file, () => {
     const m = f.renderMsgs[0]
     expect(m?.c.t).toBe('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle')
   })
+
+  test('can go next when at second to last puzzle', async () => {
+    let f = await Fixture()
+    f = await Fixture({ puzzleIndex: f.modelSpace.pack.puzzleIds.length - 2 })
+    const r = f.render(f)
+    await r.getByRole('button', f.ctx.t('app.next'))[0]?.click()
+    const m = f.renderMsgs[0]
+    expect(m?.c.t).toBe('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle')
+  })
 })
