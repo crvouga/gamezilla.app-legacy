@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it } from 'bun:test'
 import { assertNotNullish } from '~/@/assert'
-import { Puzzle } from '../../../@/puzzle/puzzle'
 import { ScreenPackBuildSpaceFixture } from '../@/fixture/space'
 
 const Fixture = ScreenPackBuildSpaceFixture
@@ -60,28 +59,6 @@ describe('puzzle screen navigation', () => {
       ).toBe(true)
     })
 
-    it('should do nothing if next puzzle is not in pack', async () => {
-      const modelSpace = f.update(f.initial, [
-        {
-          t: 'screen-pack-builder.user-clicked-pack-item',
-          puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[0]) },
-          puzzleIndex: 0,
-        },
-        {
-          t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
-          userId: f.createdBy,
-          nextPuzzleResult: {
-            t: 'got',
-            c: await Puzzle.random({
-              createdBy: f.createdBy,
-            }),
-          },
-        },
-      ])
-
-      expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === 0).toBe(true)
-    })
-
     it('should be able to go to previous puzzle', async () => {
       const modelSpace = f.update(f.initial, [
         {
@@ -102,7 +79,7 @@ describe('puzzle screen navigation', () => {
       ).toBe(true)
     })
 
-    it('should do nothing if previous puzzle is not in pack', async () => {
+    it('should go to previous puzzle even when puzzle result is not found', async () => {
       const modelSpace = f.update(f.initial, [
         {
           t: 'screen-pack-builder.user-clicked-pack-item',
@@ -112,19 +89,26 @@ describe('puzzle screen navigation', () => {
         {
           t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
           userId: f.createdBy,
-          previousPuzzleResult: {
-            t: 'got',
-            c: await Puzzle.random({
-              createdBy: f.createdBy,
-            }),
-          },
+          previousPuzzleResult: { t: 'not-found' },
         },
       ])
-      expect(
-        modelSpace?.screen.t === 'screen-puzzle' &&
-          modelSpace?.screen.puzzleResult.t === 'got' &&
-          modelSpace?.screen.puzzleResult.c.id === assertNotNullish(f.puzzles[1]).id,
-      ).toBe(true)
+      expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === 0).toBe(true)
+    })
+
+    it('should go to next puzzle even when puzzle result is not found', async () => {
+      const modelSpace = f.update(f.initial, [
+        {
+          t: 'screen-pack-builder.user-clicked-pack-item',
+          puzzleResult: { t: 'got', c: assertNotNullish(f.puzzles[0]) },
+          puzzleIndex: 0,
+        },
+        {
+          t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
+          userId: f.createdBy,
+          nextPuzzleResult: { t: 'not-found' },
+        },
+      ])
+      expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === 1).toBe(true)
     })
   })
 })

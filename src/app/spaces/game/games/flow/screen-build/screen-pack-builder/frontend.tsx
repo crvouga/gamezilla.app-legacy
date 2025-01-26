@@ -1,4 +1,5 @@
 import { Sub } from '~/@/sub'
+import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { Button, IconArrowLeftOnRect } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
@@ -78,6 +79,11 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 
 const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
+    switch (input.msgSpace?.t) {
+      case 'screen-pack-builder.user-clicked-back-button': {
+        return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
+      }
+    }
     return { model: input.model }
   },
 

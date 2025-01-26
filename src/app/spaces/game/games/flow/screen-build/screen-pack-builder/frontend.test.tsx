@@ -1,4 +1,6 @@
 import { describe, expect, test } from 'bun:test'
+import { withEventMeta } from '~/@/event-sourced/event'
+import { didPlaySound } from '~/app/@/frontend/cmd'
 import { FixturePackBuilderFrontend } from './@/fixture/frontend'
 import { ScreenPackBuilderFrontend } from './frontend'
 
@@ -26,5 +28,17 @@ describe(import.meta.file, () => {
     const r = f.render(<ScreenPackBuilderFrontend.View {...f} modelSpace={{ ...f.modelSpace }} />)
     const drawers = r.getByRole('dialog', f.ctx.t('flow.edit-pack-name.pack-name'))
     expect(drawers.length).toBe(0)
+  })
+
+  test.only('play sound exiting pack builder', async () => {
+    const f = await Fixture()
+    const output = ScreenPackBuilderFrontend.update({
+      ...f,
+      msgSpace: withEventMeta({
+        t: 'screen-pack-builder.user-clicked-back-button',
+        userId: f.hostId,
+      }),
+    })
+    expect(didPlaySound(output)).toBe(true)
   })
 })

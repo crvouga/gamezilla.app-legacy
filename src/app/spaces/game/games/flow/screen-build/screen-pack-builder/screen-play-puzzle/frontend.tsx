@@ -21,17 +21,11 @@ const update: FrontendModule['update'] = (input) => {
     }
 
     case 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.tap)],
-      }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
     }
 
     case 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle': {
-      return {
-        model: input.model,
-        msgCmd: [playSound(APP_SOUND.tap)],
-      }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
     }
 
     case 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button': {
@@ -44,24 +38,17 @@ const update: FrontendModule['update'] = (input) => {
     case 'screen-pack-builder.got-flow-play-msg': {
       const modePlay = input.modelSpace?.screen.t === 'screen-puzzle' ? input.modelSpace.screen.play : null
 
-      if (!modePlay) {
-        return { model: input.model }
-      }
+      if (!modePlay) return { model: input.model }
 
       const puzzle: Puzzle | null =
         input.modelSpace?.screen.t === 'screen-puzzle' && input.modelSpace.screen.puzzleResult.t === 'got'
           ? input.modelSpace.screen.puzzleResult.c
           : null
 
-      if (!puzzle) {
-        return { model: input.model }
-      }
+      if (!puzzle) return { model: input.model }
 
       const updated = ModePlay.update({
-        ctx: ModePlay.initCtx({
-          flow: puzzle.flow,
-          solutions: input.ctx.solutions,
-        }),
+        ctx: ModePlay.initCtx({ flow: puzzle.flow, solutions: input.ctx.solutions }),
         model: modePlay,
         msg: input.msgSpace.c,
       })
@@ -77,24 +64,18 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  if (!input.modelSpace) {
-    return null
-  }
-
-  if (input.modelSpace.screen.t !== 'screen-puzzle') {
-    return null
-  }
+  const screen = input.modelSpace.screen
+  if (screen.t !== 'screen-puzzle') return null
 
   const pack = input.modelSpace.pack
-  const screen = input.modelSpace.screen
 
   const previousPuzzleId = pack.puzzleIds[screen.puzzleIndex - 1]
   const previousPuzzle = previousPuzzleId ? input.ctx.puzzles[previousPuzzleId] : null
-  const canGoPrevious = Boolean(previousPuzzle)
+  const canGoPrevious = screen.puzzleIndex - 1 >= 0
 
   const nextPuzzleId = pack.puzzleIds[screen.puzzleIndex + 1]
   const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
-  const canGoNext = Boolean(nextPuzzle)
+  const canGoNext = screen.puzzleIndex + 2 < pack.puzzleIds.length
 
   return (
     <div className='flex w-full flex-1 flex-col overflow-hidden'>

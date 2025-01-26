@@ -189,15 +189,6 @@ updates.push(({ modelSpace, msgSpace }) => {
 
   switch (msgSpace.t) {
     case 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle': {
-      const doesPackIncludePuzzle =
-        msgSpace.nextPuzzleResult.t === 'got'
-          ? modelSpace.pack.puzzleIds.includes(msgSpace.nextPuzzleResult.c.id)
-          : false
-
-      if (!doesPackIncludePuzzle) {
-        return modelSpace
-      }
-
       return {
         ...modelSpace,
         screen: {
@@ -230,13 +221,6 @@ updates.push(({ modelSpace, msgSpace }) => {
 
   switch (msgSpace.t) {
     case 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
-      const doesPackIncludePuzzle =
-        msgSpace.previousPuzzleResult.t === 'got'
-          ? modelSpace.pack.puzzleIds.includes(msgSpace.previousPuzzleResult.c.id)
-          : false
-      if (!doesPackIncludePuzzle) {
-        return modelSpace
-      }
       return {
         ...modelSpace,
         screen: {
