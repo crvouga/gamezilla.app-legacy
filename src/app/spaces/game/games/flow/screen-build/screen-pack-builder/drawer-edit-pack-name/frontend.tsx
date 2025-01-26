@@ -16,16 +16,16 @@ const ViewDrawer: FrontendModule['View'] = (input) => {
   return (
     <Drawer
       ctx={input.ctx}
-      ariaLabel={input.ctx.t('flow.edit-pack-name.pack-name')}
+      ariaLabel={input.ctx.t('app.edit-name')}
       id='edit-pack-name'
       open={input.modelSpace.opened === 'edit-pack-name-drawer'}
       onClose={onClose}
       position='bottom'
     >
-      <DrawerHeader title={input.ctx.t('flow.edit-pack-name')} ctx={input.ctx} onClose={onClose} />
+      <DrawerHeader title={input.ctx.t('app.edit-name')} ctx={input.ctx} onClose={onClose} />
       <TextField
         id='pack-name'
-        label={input.ctx.t('flow.edit-pack-name.pack-name')}
+        label={input.ctx.t('app.edit-name')}
         value={input.modelSpace.editPackName_draft}
         onChange={(packNameDraft) =>
           input.dispatch({

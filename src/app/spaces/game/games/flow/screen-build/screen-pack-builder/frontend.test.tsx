@@ -19,14 +19,14 @@ describe(import.meta.file, () => {
     const r = f.render(
       <ScreenPackBuilderFrontend.View {...f} modelSpace={{ ...f.modelSpace, opened: 'edit-pack-name-drawer' }} />,
     )
-    const drawers = r.getByRole('dialog', f.ctx.t('flow.edit-pack-name.pack-name'))
+    const drawers = r.getByRole('dialog', f.ctx.t('app.edit-name'))
     expect(drawers.length).toBe(1)
   })
 
   test('render NOT edit name drawer', async () => {
     const f = await Fixture()
     const r = f.render(<ScreenPackBuilderFrontend.View {...f} modelSpace={{ ...f.modelSpace }} />)
-    const drawers = r.getByRole('dialog', f.ctx.t('flow.edit-pack-name.pack-name'))
+    const drawers = r.getByRole('dialog', f.ctx.t('app.edit-name'))
     expect(drawers.length).toBe(0)
   })
 

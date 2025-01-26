@@ -31,14 +31,14 @@ const View: FrontendModule['View'] = (input) => {
   return (
     <ViewDrawer {...input}>
       <ViewForm
-        name={input.ctx.t('puzzle.edit-name')}
+        name={input.ctx.t('app.edit-name')}
         onSubmit={() => {
           input.dispatch({ t: 'puzzle.edit-name.user-clicked-save-button' })
         }}
       >
         <DrawerHeader
           ctx={input.ctx}
-          title={input.ctx.t('puzzle.edit-name')}
+          title={input.ctx.t('app.edit-name')}
           onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
         />
         <div className='w-full p-4'>
@@ -243,13 +243,13 @@ const ViewDrawer = (
     <>
       <ListItemButton
         icon={(input) => <IconPenToSquare {...input} />}
-        label={input.ctx.t('puzzle.edit-name')}
+        label={input.ctx.t('app.edit-name')}
         onClick={() => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' })}
       />
 
       <Drawer
         ctx={input.ctx}
-        ariaLabel={input.ctx.t('puzzle.edit-name')}
+        ariaLabel={input.ctx.t('app.edit-name')}
         id='edit-name-drawer'
         open={input.model.puzzleBuilderOpened === 'edit-name'}
         onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}

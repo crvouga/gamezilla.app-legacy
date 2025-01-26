@@ -9,6 +9,9 @@ export const DrawerComponent = (props: DrawerInput) => {
     <Portal.Entrance portalId='app-root'>
       <div
         id={props.id}
+        aria-hidden={!props.open}
+        role='dialog'
+        aria-label={props.ariaLabel}
         className={cn(
           'absolute inset-0 z-50 flex',
           props.position === 'bottom' ? 'flex-col' : 'flex-col-reverse',
@@ -29,9 +32,6 @@ export const DrawerComponent = (props: DrawerInput) => {
         />
 
         <div
-          aria-hidden={!props.open}
-          role='dialog'
-          aria-label={props.ariaLabel}
           className={cn(
             'bg-surface h-fit w-full border transition-transform duration-200',
             props.position === 'bottom'

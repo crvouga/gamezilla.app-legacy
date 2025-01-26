@@ -22,7 +22,7 @@ describe(import.meta.file, () => {
       />,
     )
     const closeButton = r
-      .getByRole('dialog', f.ctx.t('flow.edit-pack-name.pack-name'))[0]
+      .getByRole('dialog', f.ctx.t('app.edit-name'))[0]
       ?.getByRole('button', f.ctx.t('drawer.close'))[0]
     await closeButton?.click()
     expect(f.renderMsgs[0]).toEqual({
