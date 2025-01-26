@@ -4,7 +4,7 @@ import { FormBottomButtons } from '~/app/@/ui/form-button-buttons'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { PuzzleDbQueryFrontend } from '../../../@/puzzle/puzzle-db-query/frontend'
 import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
-import { ScreenPackBuildSpace } from '../space'
+import { ScreenPackBuildSpace } from '../space/space'
 import type { FrontendModule, ModelSpace } from '../types'
 import { ViewForm } from '~/app/@/ui/form'
 

@@ -3,7 +3,7 @@ import { Pack } from '../../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../../@/pack/pack-puzzle-grid-ui'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { ScreenPackBuildSpaceFixture } from '../@/fixture/space'
-import { ScreenPackBuildSpace } from '../space'
+import { ScreenPackBuildSpace } from '../space/space'
 import { assertNotNullish } from '~/@/assert'
 
 const Fixture = async (...params: Parameters<typeof ScreenPackBuildSpaceFixture>) => {

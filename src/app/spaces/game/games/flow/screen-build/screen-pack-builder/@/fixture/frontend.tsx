@@ -3,7 +3,7 @@ import { Pack } from '../../../../@/pack/pack'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { FixtureFlowBuilderFrontend } from '../../../@/fixture/frontend'
 import { ScreenPackBuilderFrontend } from '../../frontend'
-import { ScreenPackBuildSpace } from '../../space'
+import { ScreenPackBuildSpace } from '../../space/space'
 import type { ModelFrontend, ModelSpace } from '../../types'
 import { Msg } from '~/@/msg/msg'
 

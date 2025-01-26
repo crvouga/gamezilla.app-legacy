@@ -1,9 +1,9 @@
-import { ModePlay } from '../../@/mode-play'
-import { Pack } from '../../@/pack/pack'
-import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
-import { DrawerEditPackNameSpace } from './drawer-edit-pack-name/space'
-import { ScreenAddPuzzleSpace } from './screen-add-puzzle/space'
-import type { ModelSpace, UpdateSpace } from './types'
+import { ModePlay } from '../../../@/mode-play'
+import { Pack } from '../../../@/pack/pack'
+import { PackPuzzleGridUI } from '../../../@/pack/pack-puzzle-grid-ui'
+import { DrawerEditPackNameSpace } from '../drawer-edit-pack-name/space'
+import { ScreenAddPuzzleSpace } from '../screen-add-puzzle/space'
+import type { ModelSpace, UpdateSpace } from '../types'
 
 const initSpace = ({ pack }: { pack: Pack }): ModelSpace => {
   return {

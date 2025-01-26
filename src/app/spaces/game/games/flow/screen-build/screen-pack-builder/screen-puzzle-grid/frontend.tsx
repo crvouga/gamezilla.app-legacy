@@ -1,7 +1,7 @@
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { IconPen, TopBar } from '~/app/@/ui'
 import { PackPuzzleGridUI } from '../../../@/pack/pack-puzzle-grid-ui'
-import { ScreenPackBuildSpace } from '../space'
+import { ScreenPackBuildSpace } from '../space/space'
 import type { FrontendModule } from '../types'
 import { BottomButtons } from '~/app/@/ui/bottom-buttons'
 

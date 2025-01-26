@@ -1,5 +1,5 @@
 import type { UpdateSpace } from '../types'
-import { ScreenPackBuildSpace } from '../screen-pack-builder/space'
+import { ScreenPackBuildSpace } from '../screen-pack-builder/space/space'
 import { PackCreateNewSpace } from './button-create-new-pack/space'
 
 const updateSpaceMain: UpdateSpace = ({ modelSpace, msgSpace }) => {
