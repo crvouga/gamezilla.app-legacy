@@ -30,14 +30,11 @@ describe(import.meta.file, () => {
     expect(drawers.length).toBe(0)
   })
 
-  test.only('play sound exiting pack builder', async () => {
+  test('play sound exiting pack builder', async () => {
     const f = await Fixture()
     const output = ScreenPackBuilderFrontend.update({
       ...f,
-      msgSpace: withEventMeta({
-        t: 'screen-pack-builder.user-clicked-back-button',
-        userId: f.hostId,
-      }),
+      msgSpace: withEventMeta({ t: 'screen-pack-builder.user-clicked-back-button', userId: f.hostId }),
     })
     expect(didPlaySound(output)).toBe(true)
   })
