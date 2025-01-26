@@ -24,6 +24,9 @@ declare global {
 }
 
 if (typeof window !== 'undefined' && 'customElements' in window) {
+  const ANIMATION_START_DELAY = 10
+  const ANIMATION_DURATION = 200
+
   class Drawer extends HTMLElement {
     private backdrop: HTMLElement | null = null
     private content: HTMLElement | null = null
@@ -37,6 +40,8 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
       this.attachShadow({
         mode: 'open',
       })
+      // Bind methods to ensure correct 'this' context
+      this.onKeyDown = this.onKeyDown.bind(this)
     }
 
     disconnectedCallback() {
@@ -101,6 +106,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
           flex: 1;
           width: 100%;
           opacity: 0;
+          transition: opacity 0.2s ease-in-out;
         }
         .darken-background {
           background-color: rgba(0, 0, 0, 0.8);
@@ -111,7 +117,8 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
         .open {
           transform: translateY(0%);
         }
-        .pointer-events-none {
+        .hidden {
+          visibility: hidden;
           pointer-events: none;
         }
       </style>
@@ -128,10 +135,12 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
       this.content = this.shadowRoot.querySelector('.content')
 
       this.backdrop?.addEventListener('click', () => {
-        this.input?.onClose()
+        this.onClose()
       })
 
-      this.root?.classList.add('pointer-events-none')
+      if (this.root) {
+        this.root.classList.add('hidden')
+      }
 
       const position = this.getAttribute('position')
 
@@ -143,14 +152,16 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
     }
 
     setupPosition(position: string | null | undefined) {
+      if (!this.root || !this.content) return
+
       switch (position) {
         case 'bottom':
-          this.root?.classList.add('root-bottom')
-          this.content?.classList.add('content-bottom')
+          this.root.classList.add('root-bottom')
+          this.content.classList.add('content-bottom')
           break
         case 'top':
-          this.root?.classList.add('root-top')
-          this.content?.classList.add('content-top')
+          this.root.classList.add('root-top')
+          this.content.classList.add('content-top')
           break
         default: {
           break
@@ -164,9 +175,17 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
       }
     }
 
+    onClose() {
+      if (this.root) {
+        this.root.blur()
+      }
+      this.blur()
+      this.input?.onClose()
+    }
+
     onKeyDown(keyboardEvent: KeyboardEvent) {
       if (keyboardEvent.key === 'Escape') {
-        this.input?.onClose()
+        this.onClose()
       }
     }
 
@@ -176,12 +195,15 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
       }
 
       if (this.input.open) {
-        this.content.classList.add('open')
-        this.root.classList.remove('pointer-events-none')
-        this.root.classList.add('darken-background')
-        this.backdrop.classList.add('visible')
-        this.root.tabIndex = 0
-        this.tabIndex = 0
+        this.root.classList.remove('hidden')
+        setTimeout(() => {
+          if (!this.content || !this.root || !this.backdrop) return
+          this.content.classList.add('open')
+          this.root.classList.add('darken-background')
+          this.backdrop.classList.add('visible')
+          this.root.tabIndex = 0
+          this.tabIndex = 0
+        }, ANIMATION_START_DELAY)
       } else {
         this.blur()
         this.tabIndex = -1
@@ -189,7 +211,12 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
         this.backdrop.classList.remove('visible')
         this.content.classList.remove('open')
         this.root.classList.remove('darken-background')
-        this.root.classList.add('pointer-events-none')
+
+        // Wait for animation to complete before hiding
+        setTimeout(() => {
+          if (!this.root) return
+          this.root.classList.add('hidden')
+        }, ANIMATION_DURATION)
       }
 
       switch (this.input.position) {

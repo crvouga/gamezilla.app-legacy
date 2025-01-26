@@ -48,6 +48,7 @@ const View = (input: {
             onClick={input.onToggle}
           />
           <Drawer
+            ctx={input.ctx}
             id={input.id}
             ariaLabel={input.ctx.t('app.more')}
             onClose={input.onToggle}

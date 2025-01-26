@@ -13,6 +13,7 @@ type Combo = `${ButtonVariant}-${ButtonColor}`
 
 export type ButtonEvent = {
   stopPropagation: () => void
+  currentTarget: HTMLButtonElement
 }
 
 type ButtonInput = {
@@ -21,7 +22,7 @@ type ButtonInput = {
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
   className?: string
-  onClick?: (msgEvt: ButtonEvent) => void
+  onClick?: (event: ButtonEvent) => void
   iconStart?: (input: { className?: string }) => VDom
   variant?: ButtonVariant
   color?: ButtonColor
@@ -44,7 +45,12 @@ export const Button = (input: ButtonInput) => {
         input.loading && 'cursor-wait opacity-70',
       )}
       role='button'
-      onClick={(e) => input.onClick?.({ stopPropagation: () => e.stopPropagation() })}
+      onClick={(e) =>
+        input.onClick?.({
+          currentTarget: e.currentTarget,
+          stopPropagation: () => e.stopPropagation(),
+        })
+      }
     >
       <div className={cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent')}>
         {input.iconStart?.({ className: 'mr-2 w-7 h-7' })}

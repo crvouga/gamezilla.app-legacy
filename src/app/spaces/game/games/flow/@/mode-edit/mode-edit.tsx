@@ -499,6 +499,7 @@ export const View = (input: { ctx: AppFrontendCtx; model: Model; dispatch: (m: M
             ]}
           />
           <Drawer
+            ctx={input.ctx}
             ariaLabel={input.ctx.t('app.dimensions')}
             open={input.model.opened === 'dimensions'}
             onClose={() =>

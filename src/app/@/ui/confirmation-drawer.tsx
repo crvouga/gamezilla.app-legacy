@@ -13,6 +13,8 @@ type input = DrawerInput & {
   body: TranslatedText
   variant?: 'danger'
   //
+  onClose: () => void
+  //
   cancelText: TranslatedText
   cancelDisabled?: boolean
   onCancel: () => void
@@ -26,7 +28,7 @@ export const ConfirmationFormDrawer = (input: input) => {
   return (
     <Drawer {...input}>
       <ViewForm name={input.title} onSubmit={input.onConfirm}>
-        <DrawerHeader title={input.title} ctx={input.ctx} onClose={input.onCancel} />
+        <DrawerHeader title={input.title} ctx={input.ctx} onClose={input.onClose} />
 
         <Typography className='p-4' variant='body' text={input.body} />
 

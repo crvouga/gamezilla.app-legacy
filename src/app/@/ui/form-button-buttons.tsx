@@ -1,5 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Button } from './button'
+import { preventConsoleErrorWhenClosingDrawer } from './drawer'
 
 export const FormBottomButtons = (input: {
   onCancel: () => void
@@ -12,7 +13,15 @@ export const FormBottomButtons = (input: {
 }) => {
   return (
     <div className='flex w-full items-center gap-4 p-4'>
-      <Button className='flex-1' onClick={input.onCancel} text={input.cancelText} disabled={input.cancelDisabled} />
+      <Button
+        className='flex-1'
+        onClick={(event) => {
+          preventConsoleErrorWhenClosingDrawer(event)
+          input.onCancel()
+        }}
+        text={input.cancelText}
+        disabled={input.cancelDisabled}
+      />
       <Button
         className='flex-1'
         type='submit'

@@ -1,6 +1,7 @@
+import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
-import { TranslatedText } from '~/@/l18n'
+import { preventConsoleErrorWhenClosingDrawer } from './drawer'
 
 type Input = {
   className?: string
@@ -17,7 +18,10 @@ export const ListItemButton = (input: Input) => {
     <Component
       type={Component === 'button' ? 'button' : undefined}
       role={Component === 'button' ? 'button' : undefined}
-      onClick={input.onClick}
+      onClick={(event) => {
+        preventConsoleErrorWhenClosingDrawer(event)
+        input.onClick?.()
+      }}
       aria-label={input.label}
       name={input.label}
       className={cn(input.className, BASE_CLASS, toColorClass(input))}

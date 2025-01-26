@@ -258,6 +258,7 @@ export const viewBottomButtons = ({
 const ViewUnsavedChangesDrawer: FrontendModule['View'] = (input) => {
   return (
     <Drawer
+      ctx={input.ctx}
       id='unsaved-changes-drawer'
       ariaLabel={input.ctx.t('app.save-changes?')}
       onClose={() =>

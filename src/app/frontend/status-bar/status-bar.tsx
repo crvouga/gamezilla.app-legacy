@@ -98,6 +98,7 @@ export const View = ({
       </button>
 
       <Drawer
+        ctx={ctx}
         ariaLabel={ctx.t('status-bar.status-bar')}
         position='top'
         id='status-bar-drawer'

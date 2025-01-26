@@ -200,6 +200,7 @@ export const View = ({
       )}
 
       <Drawer
+        ctx={ctx}
         ariaLabel={ctx.t('game.change-bot')}
         position='bottom'
         id='change-bot'

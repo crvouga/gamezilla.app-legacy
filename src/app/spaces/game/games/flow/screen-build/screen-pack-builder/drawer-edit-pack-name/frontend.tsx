@@ -15,6 +15,7 @@ const ViewDrawer: FrontendModule['View'] = (input) => {
 
   return (
     <Drawer
+      ctx={input.ctx}
       ariaLabel={input.ctx.t('flow.edit-pack-name.pack-name')}
       id='edit-pack-name'
       open={input.modelSpace.opened === 'edit-pack-name-drawer'}

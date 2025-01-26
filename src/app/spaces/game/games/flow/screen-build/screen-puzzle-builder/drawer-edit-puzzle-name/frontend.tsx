@@ -248,6 +248,7 @@ const ViewDrawer = (
       />
 
       <Drawer
+        ctx={input.ctx}
         ariaLabel={input.ctx.t('puzzle.edit-name')}
         id='edit-name-drawer'
         open={input.model.puzzleBuilderOpened === 'edit-name'}

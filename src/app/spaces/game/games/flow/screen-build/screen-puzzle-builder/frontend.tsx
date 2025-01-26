@@ -362,6 +362,7 @@ const updateMoreDrawer: BuilderTypes.FrontendModule['update'] = (input) => {
 const ViewMoreDrawer: BuilderTypes.FrontendModule['View'] = (input) => {
   return (
     <Drawer
+      ctx={input.ctx}
       ariaLabel={input.ctx.t('app.more')}
       id='more-drawer'
       open={input.model.puzzleBuilderOpened === 'more'}

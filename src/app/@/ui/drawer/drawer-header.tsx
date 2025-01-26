@@ -1,8 +1,9 @@
+import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { IconButton } from '../icon-button'
 import { IconXMark } from '../icon/icon-x-mark'
-import { TranslatedText } from '~/@/l18n'
 import { Typography } from '../typography'
+import { preventConsoleErrorWhenClosingDrawer } from './drawer'
 
 export const DrawerHeader = (input: { ctx: { t: Translator }; title: TranslatedText | null; onClose?: () => void }) => {
   return (
@@ -10,7 +11,10 @@ export const DrawerHeader = (input: { ctx: { t: Translator }; title: TranslatedT
       <div className='flex-1'>{input.title && <Typography text={input.title} variant='title' />}</div>
       <IconButton
         label={input.ctx.t('drawer.close')}
-        onClick={input.onClose}
+        onClick={(event) => {
+          preventConsoleErrorWhenClosingDrawer(event)
+          input.onClose?.()
+        }}
         className='-mr-1'
         renderIcon={(inputIcon) => <IconXMark {...inputIcon} />}
       />

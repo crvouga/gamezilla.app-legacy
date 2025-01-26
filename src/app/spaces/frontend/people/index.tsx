@@ -131,6 +131,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
   return (
     <>
       <Drawer
+        ctx={input.ctx}
         ariaLabel={input.ctx.t('app.people')}
         position='top'
         id='users'
@@ -149,6 +150,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       </Drawer>
 
       <Drawer
+        ctx={input.ctx}
         ariaLabel={input.ctx.t('spaces.see-profile')}
         position='top'
         id='user-preview'

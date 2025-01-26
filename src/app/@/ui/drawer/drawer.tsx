@@ -1,13 +1,30 @@
+import { TranslatedText } from '~/@/l18n'
 import type { VDom, VDomChildren } from '~/@/vdom/vdom'
+import { DrawerComponent } from './drawer-component'
 import type { PrivateDrawerInput } from './drawer-shared'
 import { DrawerWebComponent } from './drawer-web-component'
-import { TranslatedText } from '~/@/l18n'
+import { Translator } from '~/@/l18n/generated'
 
 export type DrawerInput = PrivateDrawerInput & {
   children?: VDomChildren
   ariaLabel: TranslatedText
+  ctx: {
+    t: Translator
+  }
+}
+
+const USE_WEB_COMPONENT = false
+
+export const preventConsoleErrorWhenClosingDrawer = (event: {
+  currentTarget?: HTMLDivElement | HTMLButtonElement | null
+}) => {
+  event.currentTarget?.blur()
 }
 
 export const Drawer = (input: DrawerInput): VDom => {
-  return <DrawerWebComponent {...input} />
+  if (USE_WEB_COMPONENT) {
+    return <DrawerWebComponent {...input} />
+  }
+
+  return <DrawerComponent {...input} />
 }

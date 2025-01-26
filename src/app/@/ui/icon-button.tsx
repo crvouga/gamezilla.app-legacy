@@ -3,7 +3,7 @@ import { cn } from './cn'
 import { TranslatedText } from '~/@/l18n'
 
 export const IconButton = (input: {
-  onClick?: () => void
+  onClick?: (event: { currentTarget: HTMLButtonElement }) => void
   label: TranslatedText
   renderIcon: (input: { className: string }) => VDom
   className?: string
@@ -11,7 +11,7 @@ export const IconButton = (input: {
   return (
     <button
       className={cn(
-        'clickable display flex h-12 w-12 items-center justify-center overflow-hidden rounded-full',
+        'clickable display flex size-12 items-center justify-center overflow-hidden rounded-full',
         input.className,
       )}
       type='button'
@@ -27,5 +27,5 @@ export const IconButton = (input: {
 }
 
 export const IconButtonEmpty = () => {
-  return <div className='h-12 w-12'></div>
+  return <div className='size-12'></div>
 }
