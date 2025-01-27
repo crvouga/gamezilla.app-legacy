@@ -89,7 +89,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     <ScreenLayout
       id='list-spaces'
       ctx={input.ctx}
-      topBar={{
+      nav={{
         title: input.ctx.t('spaces.spaces'),
       }}
       parent={input.ctx.parentScreen}

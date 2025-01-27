@@ -22,7 +22,7 @@ export const LayoutGameCoverArtHeader = (input: {
     <ScreenLayout
       id='game-cover-art-header'
       ctx={input.ctx}
-      topBar={input.topBar}
+      nav={input.topBar}
       renderBody={() => (
         <div className='flex w-full flex-1 flex-col items-center overflow-y-auto'>
           {renderCoverArt_({ className: 'size-28 overflow-hidden rounded-lg' })}

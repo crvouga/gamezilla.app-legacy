@@ -80,7 +80,7 @@ const View: FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='screen-puzzle'
       ctx={input.ctx}
-      topBar={{
+      nav={{
         title: input.ctx.t('flow.level', screen.puzzleIndex + 1),
         subtitle: screen.puzzleResult.t === 'got' ? input.ctx.t('flow-puzzle-name', screen.puzzleResult.c.name) : null,
         onBack: () =>

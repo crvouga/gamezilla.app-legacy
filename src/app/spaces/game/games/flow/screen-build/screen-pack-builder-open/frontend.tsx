@@ -60,7 +60,7 @@ const View: FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='screen-pack-builder-open'
       ctx={input.ctx}
-      topBar={{
+      nav={{
         title: input.ctx.t('flow.pack-builder'),
         onBack: () =>
           input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } }),

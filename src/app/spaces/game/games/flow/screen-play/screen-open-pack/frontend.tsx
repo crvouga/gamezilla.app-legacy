@@ -75,7 +75,7 @@ const View: FrontendModule['View'] = (input) => {
     <ScreenLayout
       ctx={input.ctx}
       id='screen-open-pack'
-      topBar={{
+      nav={{
         title: input.ctx.t('flow.select-a-pack'),
         onBack: () =>
           input.dispatch({

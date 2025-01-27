@@ -182,7 +182,7 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='puzzle-builder-screen'
       ctx={input.ctx}
-      topBar={{
+      nav={{
         onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
         title: input.ctx.t('flow-puzzle-name', input.modelSpace.screenPuzzleBuilder.puzzle.name),
       }}

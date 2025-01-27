@@ -38,7 +38,7 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
     <ScreenLayout
       ctx={input.ctx}
       parent={input.ctx.parentScreen}
-      topBar={{
+      nav={{
         title: input.ctx.t('username', input.profile.username),
       }}
       id='profile-screen'
@@ -78,7 +78,7 @@ const ViewOtherProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch:
       ctx={input.ctx}
       id='profile-screen'
       parent={input.ctx.parentScreen}
-      topBar={{
+      nav={{
         title: input.ctx.t('username', input.profile.username),
         onBack: () =>
           input.dispatch({

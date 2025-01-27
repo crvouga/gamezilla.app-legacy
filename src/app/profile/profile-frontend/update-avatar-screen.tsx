@@ -13,7 +13,7 @@ const View = (input: {
     <ScreenLayout
       id='profile-update-avatar'
       ctx={input.ctx}
-      topBar={{
+      nav={{
         title: input.ctx.t('profile.update-avatar'),
         onBack: () =>
           input.dispatch({

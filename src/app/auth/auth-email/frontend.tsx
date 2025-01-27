@@ -157,7 +157,7 @@ export const View = (input: {
     <ScreenLayout
       id='auth-email'
       ctx={input.ctx}
-      topBar={{
+      nav={{
         title: input.ctx.t('auth-email.login-with-email'),
         onBack: () =>
           input.dispatch({

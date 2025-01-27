@@ -48,7 +48,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         input.form?.onSubmit()
       }}
     >
-      {input.topBar && <ScreenNavBarMobile ctx={input.ctx} onBack={input.topBar.onBack} title={input.topBar.title} />}
+      {input.nav && <ScreenNavBarMobile ctx={input.ctx} onBack={input.nav.onBack} title={input.nav.title} />}
       {actionPosition === 'top' && actions}
 
       <div className='relative flex w-full flex-1 flex-col overflow-hidden'>

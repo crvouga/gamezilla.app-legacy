@@ -13,13 +13,13 @@ export type ScreenLayoutProps = {
   ctx: {
     t: Translator
   }
-  topBar?: {
+  nav?: {
     title: TranslatedText
     subtitle?: TranslatedText | null
     onBack?: () => void
   }
   actionPosition?: 'top' | 'bottom'
-  parent?: Pick<ScreenLayoutProps, 'actions' | 'topBar'> | null
+  parent?: Pick<ScreenLayoutProps, 'actions' | 'nav'> | null
   actions?: ScreenLayoutActionsProps | null
   renderBody: () => VDom
   renderFab?: () => VDom

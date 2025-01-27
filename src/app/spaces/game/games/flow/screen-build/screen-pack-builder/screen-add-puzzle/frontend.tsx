@@ -73,7 +73,7 @@ const View: FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='screen-pack-builder-add-puzzle'
       ctx={input.ctx}
-      topBar={{
+      nav={{
         title: input.ctx.t('flow.add-puzzle'),
         onBack: () =>
           input.dispatch({

@@ -96,7 +96,7 @@ export const View = (input: {
     <ScreenLayout
       id='profile-update-username'
       ctx={input.ctx}
-      topBar={{
+      nav={{
         title: input.ctx.t('profile.update-username.update-username'),
         onBack: () => input.dispatch({ t: 'profile.update-username.clicked-back' }),
       }}
