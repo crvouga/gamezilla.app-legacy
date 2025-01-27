@@ -109,7 +109,7 @@ export const View = (input: {
         submitDisabled: false,
         cancelDisabled: false,
       }}
-      main={
+      renderBody={() => (
         <div className='flex w-full flex-col gap-4 p-4'>
           <TextField
             id='username'
@@ -118,7 +118,7 @@ export const View = (input: {
             onChange={(username) => input.dispatch({ t: 'profile.update-username.inputted-username', username })}
           />
         </div>
-      }
+      )}
     />
   )
 }

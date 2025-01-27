@@ -131,30 +131,32 @@ const View: SpaceFrontendModule['View'] = (input) => {
         title: input.ctx.t('spaces.spaces'),
       }}
       actions={input.ctx.parentScreenActions}
-      main={
-        <div className='relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8'>
-          {spaces.length === 0 && (
-            <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
-          )}
+      renderBody={() => {
+        return (
+          <div className='relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8'>
+            {spaces.length === 0 && (
+              <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
+            )}
 
-          <div className='flex w-full flex-1 flex-col gap-5 p-5'>
-            {spaces.flatMap((state) => (
-              <ViewSpaceCard
-                key={state.spaceId}
-                ctx={{ ...input.ctx, currentUserId: input.ctx.currentUserId }}
-                onClick={() => input.dispatch({ t: 'clicked-space-card', spaceId: state.spaceId })}
-                state={state}
-              />
-            ))}
-          </div>
-
-          {!currentUserSpaceId && (
-            <div className='absolute bottom-6 right-4'>
-              <StartSpaceFrontend.ViewStartSpaceButton {...input} />
+            <div className='flex w-full flex-1 flex-col gap-5 p-5'>
+              {spaces.flatMap((state) => (
+                <ViewSpaceCard
+                  key={state.spaceId}
+                  ctx={{ ...input.ctx, currentUserId: input.ctx.currentUserId }}
+                  onClick={() => input.dispatch({ t: 'clicked-space-card', spaceId: state.spaceId })}
+                  state={state}
+                />
+              ))}
             </div>
-          )}
-        </div>
-      }
+
+            {!currentUserSpaceId && (
+              <div className='absolute bottom-6 right-4'>
+                <StartSpaceFrontend.ViewStartSpaceButton {...input} />
+              </div>
+            )}
+          </div>
+        )
+      }}
     />
   )
 }

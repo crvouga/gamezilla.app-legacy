@@ -67,7 +67,7 @@ export const FixtureSpaceBackend = async () => {
       logger: f.ctx.logger,
       runtime: f.ctx.runtime,
       writeThrottle: TimeSpan.milliseconds(0),
-      namespace: []
+      namespace: [],
     }),
     games: await GamesBackend.initCtx({
       ...f.ctx,

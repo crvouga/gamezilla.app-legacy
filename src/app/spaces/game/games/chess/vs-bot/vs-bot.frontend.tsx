@@ -414,19 +414,20 @@ export const View = ({
   const topSlot = boardOrientation === model.spaceModel.userColor ? botSlot : userSlot
 
   const bottomSlot = boardOrientation === model.spaceModel.userColor ? userSlot : botSlot
+  const board = model.spaceModel.board
 
   return (
     <ScreenLayout
       ctx={ctx}
       id='chess-vs-bot'
-      main={
+      renderBody={() => (
         <LayoutGame ctx={ctx}>
           <div className='flex w-full flex-1 flex-col items-center justify-center'>
             {topSlot}
 
             <Chessboard
               id='chessboard'
-              model={model.spaceModel.board}
+              model={board}
               orientation={boardOrientation}
               onPieceDrop={(move) => {
                 const msg: MsgFrontend = {
@@ -440,14 +441,13 @@ export const View = ({
 
                 dispatch(msg)
 
-                // return result.t === "ok";
                 return true
               }}
             />
             {bottomSlot}
           </div>
         </LayoutGame>
-      }
+      )}
       actions={{
         id: 'vs-bot-buttons',
         open: false,

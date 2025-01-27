@@ -297,7 +297,13 @@ const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
   if (!input.ctx.currentUser) return null
 
   const isSpectator = input.ctx.space.hostId !== input.ctx.currentUser.userId
-
+  const spaceCtx = {
+    ...input.ctx,
+    space: input.ctx.space,
+    currentUserId: input.ctx.currentUser.userId,
+    currentUserRole: input.ctx.currentUser.role,
+    currentUser: input.ctx.currentUser,
+  }
   return (
     <ScreenLayout
       id='game-selection-screen'
@@ -306,22 +312,11 @@ const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
         title: input.ctx.t('spaces.games'),
         onBack: () => input.dispatch({ t: 'clicked-go-home-button' }),
       }}
-      main={
+      renderBody={() =>
         isSpectator ? (
           <ViewUsersInSpaceList
-            onOpenUserDetails={(userId) =>
-              input.dispatch({
-                t: 'clicked-user',
-                userId,
-              })
-            }
-            ctx={{
-              ...input.ctx,
-              space: input.ctx.space,
-              currentUserId: input.ctx.currentUser.userId,
-              currentUserRole: input.ctx.currentUser.role,
-              currentUser: input.ctx.currentUser,
-            }}
+            onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
+            ctx={spaceCtx}
           />
         ) : (
           <div className='grid flex-1 grid-cols-3 justify-between gap-8 p-4'>

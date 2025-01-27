@@ -108,7 +108,7 @@ const View: FrontendModule['View'] = (input) => {
         submitLoading: false,
         submitDisabled: input.modelSpace.screenAddPuzzle_selected.length === 0,
       }}
-      main={
+      renderBody={() => (
         <PuzzleDbQueryFrontend.ViewList
           selectable
           ctx={input.ctx}
@@ -146,7 +146,7 @@ const View: FrontendModule['View'] = (input) => {
             })
           }}
         />
-      }
+      )}
     />
   )
 }

@@ -454,7 +454,7 @@ export const View = (input: { ctx: AppFrontendCtx; model: Model; dispatch: (m: M
       <ScreenLayout
         id='mode-edit-screen'
         ctx={input.ctx}
-        main={
+        renderBody={() => (
           <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-auto'>
             <ViewStatus {...input} />
 
@@ -465,7 +465,7 @@ export const View = (input: { ctx: AppFrontendCtx; model: Model; dispatch: (m: M
               onPressUp={(nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId })}
             />
           </div>
-        }
+        )}
         actions={{
           open: false,
           onToggle: () => {},

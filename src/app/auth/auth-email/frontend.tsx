@@ -181,7 +181,7 @@ export const View = (input: {
         },
         cancelDisabled: false,
       }}
-      main={
+      renderBody={() => (
         <div className='flex flex-col gap-6 p-4'>
           <TextField
             autoFocus
@@ -223,7 +223,7 @@ export const View = (input: {
             </AlertSuccess>
           )}
         </div>
-      }
+      )}
     />
   )
 }

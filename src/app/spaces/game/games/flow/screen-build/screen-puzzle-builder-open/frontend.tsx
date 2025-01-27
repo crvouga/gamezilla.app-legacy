@@ -63,7 +63,7 @@ const View: FrontendModule['View'] = (input) => {
         onBack: () =>
           input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } }),
       }}
-      main={
+      renderBody={() => (
         <PuzzleDbQueryFrontend.ViewList
           ctx={input.ctx}
           model={input.ctx.puzzleDbQuery}
@@ -90,7 +90,7 @@ const View: FrontendModule['View'] = (input) => {
           }
           fab={<CreateNewPuzzleFrontend.ViewCreateFab {...input} />}
         />
-      }
+      )}
     />
   )
 }

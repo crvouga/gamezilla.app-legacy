@@ -463,7 +463,7 @@ const ViewSendCode: Module['View'] = (input) => {
         submitLoading: input.model.sendCode.t === 'loading',
         submitDisabled: false,
       }}
-      main={
+      renderBody={() => (
         <div className='flex w-full flex-col gap-6 p-4'>
           <Select
             id='countryCode'
@@ -510,7 +510,7 @@ const ViewSendCode: Module['View'] = (input) => {
             />
           )}
         </div>
-      }
+      )}
     />
   )
 }
@@ -550,7 +550,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
         submitLoading: input.model.verifyCode.t === 'loading' || input.model.verifyCode.t === 'ok',
         submitDisabled: false,
       }}
-      main={
+      renderBody={() => (
         <div className='flex w-full flex-col gap-6 p-4'>
           <Typography
             role='status'
@@ -589,7 +589,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
             />
           )}
         </div>
-      }
+      )}
     />
   )
 }

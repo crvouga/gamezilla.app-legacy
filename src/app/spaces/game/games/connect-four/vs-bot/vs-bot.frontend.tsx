@@ -410,12 +410,13 @@ const View: Module['View'] = (input) => {
   }
 
   const isSpectating = input.ctx.currentUserId !== input.modelSpace.playingUserId
+  const columns = input.modelSpace.columns
 
   return (
     <ScreenLayout
       ctx={input.ctx}
       id='connect-four-vs-bot'
-      main={
+      renderBody={() => (
         <LayoutGame ctx={input.ctx} isSpectating={isSpectating}>
           <div className='flex w-full flex-1 flex-col items-center justify-center gap-1'>
             <VsBotGame.VsBotPlayerSection {...vsBotGameInput} />
@@ -425,7 +426,7 @@ const View: Module['View'] = (input) => {
             <div className='relative flex w-full flex-col items-center justify-center overflow-hidden'>
               <ViewColumns
                 gameId={0}
-                columns={input.modelSpace.columns}
+                columns={columns}
                 disabled={isSpectating || status.type !== 'Playing'}
                 onDropDisc={(columnIndex) => {
                   input.dispatch({
@@ -445,13 +446,13 @@ const View: Module['View'] = (input) => {
                       userId: input.ctx.currentUserId,
                     })
                   }
-                  gameOver={toGameOver(input.modelSpace.columns)}
+                  gameOver={toGameOver(columns)}
                 />
               )}
             </div>
           </div>
         </LayoutGame>
-      }
+      )}
       actions={
         input.ctx.currentUserId === input.modelSpace.playingUserId
           ? {

@@ -109,7 +109,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
         cancelDisabled: false,
         submitDisabled: false,
       }}
-      main={
+      renderBody={() => (
         <LayoutGameCoverArtHeader
           ctx={input.ctx}
           topBar={{
@@ -130,7 +130,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
             />
           )}
         />
-      }
+      )}
     />
   )
 }

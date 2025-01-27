@@ -81,6 +81,8 @@ const View: FrontendModule['View'] = (input) => {
     )
   }
 
+  const screen = input.modelSpace.screen
+
   return (
     <ScreenLayout
       ctx={input.ctx}
@@ -93,10 +95,10 @@ const View: FrontendModule['View'] = (input) => {
             c: { t: 'user-clicked-exit-screen-open-pack', userId: input.ctx.currentUserId },
           }),
       }}
-      main={
+      renderBody={() => (
         <PackPuzzleGridUI.View
           id='pack-puzzle-grid'
-          slideIndex={input.modelSpace.screen.slideIndex}
+          slideIndex={screen.slideIndex}
           onSlideIndexChanged={(slideIndex) =>
             input.dispatch({
               t: 'got-msg-space',
@@ -121,7 +123,7 @@ const View: FrontendModule['View'] = (input) => {
             })
           }}
         />
-      }
+      )}
     />
   )
 }

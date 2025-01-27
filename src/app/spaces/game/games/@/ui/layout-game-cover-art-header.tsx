@@ -23,12 +23,12 @@ export const LayoutGameCoverArtHeader = (input: {
       id='game-cover-art-header'
       ctx={input.ctx}
       topBar={input.topBar}
-      main={
+      renderBody={() => (
         <div className='flex w-full flex-1 flex-col items-center overflow-y-auto'>
           {renderCoverArt_({ className: 'size-28 overflow-hidden rounded-lg' })}
           {input.renderContent()}
         </div>
-      }
+      )}
     />
   )
 }

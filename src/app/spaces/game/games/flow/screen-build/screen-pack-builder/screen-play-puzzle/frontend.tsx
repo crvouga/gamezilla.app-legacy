@@ -92,7 +92,7 @@ const View: FrontendModule['View'] = (input) => {
             },
           }),
       }}
-      main={
+      renderBody={() =>
         screen.puzzleResult.t === 'got' && screen.play ? (
           <ModePlay.View
             dispatch={(c) =>

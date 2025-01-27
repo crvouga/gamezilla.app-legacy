@@ -186,14 +186,14 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
         onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
         title: input.ctx.t('flow-puzzle-name', input.modelSpace.screenPuzzleBuilder.puzzle.name),
       }}
-      main={
+      renderBody={() => (
         <>
           <EditPuzzleNameFrontend.View {...input} />
           <DeleteForeverFrontend.View {...input} />
           <SaveChangesFrontend.ViewUnsavedChangesDrawer {...input} />
           <ViewMode {...input} />
         </>
-      }
+      )}
       actions={{
         limit: 2,
         buttons: [
@@ -275,7 +275,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='puzzle-builder-screen-mode-play'
       ctx={input.ctx}
-      main={
+      renderBody={() => (
         <div className='flex w-full flex-1 flex-col'>
           <div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>
           <ModePlay.View
@@ -285,7 +285,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
             showSolvedAnimation
           />
         </div>
-      }
+      )}
       actions={{
         open: false,
         onToggle: () => {},

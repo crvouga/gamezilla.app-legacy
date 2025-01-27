@@ -38,7 +38,7 @@ const View: FrontendModule['View'] = (input) => {
             },
           }),
       }}
-      main={
+      renderBody={() => (
         <PackPuzzleGridUI.View
           id={packBuilder.pack.id}
           slideIndex={ScreenPackBuildSpace.toSlideIndex(packBuilder)}
@@ -73,7 +73,7 @@ const View: FrontendModule['View'] = (input) => {
             },
           }}
         />
-      }
+      )}
       actions={{
         open: true,
         onToggle: () => {},

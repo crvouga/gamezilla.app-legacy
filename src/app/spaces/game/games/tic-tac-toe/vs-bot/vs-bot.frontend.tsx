@@ -237,14 +237,15 @@ export const View = (input: {
     isSpectating: false,
   }
 
-  const turn = toTurn(input.model.board)
-  const status = toStatus(input.model.board)
+  const board = input.model.board
+  const turn = toTurn(board)
+  const status = toStatus(board)
 
   return (
     <ScreenLayout
       ctx={input.ctx}
       id='tic-tac-toe-vs-bot'
-      main={
+      renderBody={() => (
         <div className='flex flex-col items-center justify-center'>
           <VsBotGame.VsBotPlayerSection {...vsBotGameInput} />
 
@@ -254,17 +255,9 @@ export const View = (input: {
             color={gameTheme.background}
           />
 
-          <ViewBoard
-            board={input.model.board}
-            onClick={(position) =>
-              input.dispatch({
-                t: 'input-move',
-                position,
-              })
-            }
-          />
+          <ViewBoard board={board} onClick={(position) => input.dispatch({ t: 'input-move', position })} />
         </div>
-      }
+      )}
       actions={{
         buttons: [
           {

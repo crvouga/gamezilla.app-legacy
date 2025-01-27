@@ -183,7 +183,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
             t: 'choose-lang.clicked-done',
           }),
       }}
-      main={
+      renderBody={() => (
         <div className='flex flex-1 flex-col overflow-y-scroll'>
           {LanguageCodeISO_639_1.ALL.map((code) => (
             <ListItemButton
@@ -211,7 +211,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
           ))}
           <Gutter variant='screen' />
         </div>
-      }
+      )}
     />
   )
 }

@@ -23,7 +23,7 @@ const View = (input: {
             },
           }),
       }}
-      main={
+      renderBody={() => (
         <div className='flex w-full flex-1 flex-col gap-8 p-4'>
           <Avatar
             src={
@@ -51,7 +51,7 @@ const View = (input: {
             />
           </div>
         </div>
-      }
+      )}
     />
   )
 }

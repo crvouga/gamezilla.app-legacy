@@ -42,17 +42,17 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
 
   const spacesBySpaceId = KeyValueDb.withNamespace<SpaceId, Space.Model>({
     keyValueDb,
-    namespace: [...config.namespace,'spaces', 'space-by-id'],
+    namespace: [...config.namespace, 'spaces', 'space-by-id'],
     parser: Space.Model,
   })
   const indexSpaceIdByUserId = KeyValueDb.withNamespace<UserId, SpaceId>({
     keyValueDb,
-    namespace: [...config.namespace,'spaces', 'space-id-by-user-id'],
+    namespace: [...config.namespace, 'spaces', 'space-id-by-user-id'],
     parser: SpaceId,
   })
   const indexSpaceIds = KeyValueDb.withNamespace<string, SpaceId[]>({
     keyValueDb,
-    namespace: [...config.namespace,'spaces', 'space-ids'],
+    namespace: [...config.namespace, 'spaces', 'space-ids'],
     parser: p.arr(SpaceId),
   })
   const INDEX_SPACE_IDS_KEY_ALL = 'all'

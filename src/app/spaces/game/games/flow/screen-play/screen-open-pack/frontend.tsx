@@ -83,7 +83,7 @@ const View: FrontendModule['View'] = (input) => {
             c: { t: 'user-clicked-exit-play-mode-button', userId: input.ctx.currentUserId },
           }),
       }}
-      main={
+      renderBody={() => (
         <PackDbQueryFrontend.ViewList
           ctx={input.ctx}
           model={input.ctx.packDbQuery}
@@ -98,7 +98,7 @@ const View: FrontendModule['View'] = (input) => {
             })
           }
         />
-      }
+      )}
     />
   )
 }

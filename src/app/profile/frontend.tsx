@@ -464,7 +464,7 @@ const ViewUpdateScreen: typeof View = (input) => {
             },
           }),
       }}
-      main={
+      renderBody={() => (
         <div className='flex w-full flex-col items-center gap-4 p-4'>
           <Avatar
             src={profile?.avatarUrl}
@@ -500,7 +500,7 @@ const ViewUpdateScreen: typeof View = (input) => {
             value={input.ctx.t('username', profile.username)}
           />
         </div>
-      }
+      )}
     />
   )
 }

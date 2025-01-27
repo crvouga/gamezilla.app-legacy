@@ -223,27 +223,28 @@ const View: Module['View'] = (input) => {
     case 'game-over': {
       const currentUserPlayerType = toPlayerType(input.ctx.currentUserId, input.modelSpace)
       const isSpectating = currentUserPlayerType === null
+      const modelSpace = input.modelSpace
       return (
         <ScreenLayout
           id='connect-four-vs-user'
           ctx={input.ctx}
-          main={
+          renderBody={() => (
             <LayoutGame
               isSpectating={isSpectating}
               className='flex w-full flex-1 flex-col items-center justify-center gap-2'
               ctx={input.ctx}
             >
               <div className='flex w-full items-center gap-2 px-2'>
-                <PlayerSlot playerType='player-one' modelSpace={input.modelSpace} ctx={input.ctx} />
-                <PlayerSlot playerType='player-two' modelSpace={input.modelSpace} ctx={input.ctx} />
+                <PlayerSlot playerType='player-one' modelSpace={modelSpace} ctx={input.ctx} />
+                <PlayerSlot playerType='player-two' modelSpace={modelSpace} ctx={input.ctx} />
               </div>
 
-              <Feedback ctx={input.ctx} modelSpace={input.modelSpace} />
+              <Feedback ctx={input.ctx} modelSpace={modelSpace} />
 
               <div className='relative w-full'>
                 <ViewColumns
-                  columns={input.modelSpace.columns}
-                  gameId={input.modelSpace.gameId}
+                  columns={modelSpace.columns}
+                  gameId={modelSpace.gameId}
                   onDropDisc={(columnIndex) =>
                     input.dispatch({
                       t: 'user-dropped-disc',
@@ -257,9 +258,7 @@ const View: Module['View'] = (input) => {
                       columnIndex,
                     })
                   }
-                  disabled={
-                    toTurn(input.modelSpace.columns) !== currentUserPlayerType || input.modelSpace.type === 'game-over'
-                  }
+                  disabled={toTurn(modelSpace.columns) !== currentUserPlayerType || modelSpace.type === 'game-over'}
                 />
                 {input.modelSpace.type === 'game-over' && (
                   <div className='absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50'>
@@ -291,7 +290,7 @@ const View: Module['View'] = (input) => {
                 open={input.model.openedModal === 'confirm-resign'}
               />
             </LayoutGame>
-          }
+          )}
           actions={{
             id: 'game-buttons',
             open: false,

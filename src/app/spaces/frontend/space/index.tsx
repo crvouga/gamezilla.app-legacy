@@ -65,12 +65,12 @@ const View = (input: {
             open: false,
             onToggle: () => {},
           }}
-          main={
+          renderBody={() => (
             <>
               <People.View {...inputNew} />
               <GameFrontend.View {...inputNew} />
             </>
-          }
+          )}
         />
       )
     }

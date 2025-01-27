@@ -29,7 +29,7 @@ const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
       logger: input.ctx.logger,
       runtime: input.ctx.runtime,
       writeThrottle: TimeSpan.seconds(10),
-      namespace: []
+      namespace: [],
     }),
     games: GameBackend.initCtx({ ctx: { ...input.ctx, space: Space.random() } }),
   }

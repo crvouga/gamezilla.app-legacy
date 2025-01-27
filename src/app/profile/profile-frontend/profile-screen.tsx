@@ -26,7 +26,12 @@ const View = (input: {
 
 const ViewLoading = (input: { ctx: FrontendCtx; parentActions?: ScreenActionsProps | null }) => {
   return (
-    <ScreenLayout ctx={input.ctx} parentActions={input.parentActions} id='profile-screen' main={<SpinnerBlock />} />
+    <ScreenLayout
+      ctx={input.ctx}
+      parentActions={input.parentActions}
+      id='profile-screen'
+      renderBody={() => <SpinnerBlock />}
+    />
   )
 }
 
@@ -39,7 +44,7 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
         title: input.ctx.t('username', input.profile.username),
       }}
       id='profile-screen'
-      main={
+      renderBody={() => (
         <div className='flex flex-1 shrink-0 flex-col items-center justify-start gap-4 overflow-x-hidden overflow-y-scroll p-4'>
           <Avatar className='h-28 w-28' src={input.profile?.avatarUrl} alt='profile avatar' />
           <Button
@@ -64,7 +69,7 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
           />
           <Gutter variant='screen' />
         </div>
-      }
+      )}
     />
   )
 }
@@ -86,12 +91,12 @@ const ViewOtherProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch:
             },
           }),
       }}
-      main={
+      renderBody={() => (
         <div className='flex flex-col items-center justify-center gap-4 overflow-x-hidden p-4'>
           <Avatar className='h-28 w-28' src={input.profile?.avatarUrl} alt='profile avatar' />
           <Typography variant='title' text={input.ctx.t('username', input.profile.username)} />
         </div>
-      }
+      )}
     />
   )
 }

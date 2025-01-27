@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { VDomChildren } from '~/@/vdom/vdom'
+import { VDom, VDomChildren } from '~/@/vdom/vdom'
 import { FormBottomButtons } from './form-button-buttons'
 import { ScreenAction, ScreenActions } from './screen-actions'
 import { TopBar } from './top-bar'
@@ -28,7 +28,7 @@ export type ScreenLayoutProps = {
   actionPosition?: 'top' | 'bottom'
   parentActions?: ScreenActionsProps | null
   actions?: ScreenActionsProps | null
-  main: VDomChildren
+  renderBody: () => VDom
   form?: {
     onSubmit: () => void
     cancelText: TranslatedText
@@ -85,6 +85,7 @@ const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       )}
     </>
   )
+
   return (
     <Element
       className='flex w-full flex-1 flex-col overflow-hidden'
@@ -94,13 +95,10 @@ const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       }}
     >
       {input.topBar && <TopBar ctx={input.ctx} onBack={input.topBar.onBack} title={input.topBar.title} />}
-
       {actionPosition === 'top' && actions}
 
-      <div className='flex w-full flex-1 flex-col overflow-hidden'>{input.main}</div>
-
+      <div className='flex w-full flex-1 flex-col overflow-hidden'>{input.renderBody()}</div>
       {input.form && <FormBottomButtons {...input.form} />}
-
       {actionPosition === 'bottom' && actions}
     </Element>
   )

@@ -65,7 +65,7 @@ const View: FrontendModule['View'] = (input) => {
         onBack: () =>
           input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } }),
       }}
-      main={
+      renderBody={() => (
         <PackDbQueryFrontend.ViewList
           {...input}
           model={input.ctx.packDbQuery}
@@ -85,7 +85,7 @@ const View: FrontendModule['View'] = (input) => {
             })
           }
         />
-      }
+      )}
     />
   )
 }

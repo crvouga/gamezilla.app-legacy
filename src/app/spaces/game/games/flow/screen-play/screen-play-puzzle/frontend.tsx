@@ -112,7 +112,7 @@ const View: FrontendModule['View'] = (input) => {
               },
             }),
         }}
-        main={
+        renderBody={() => (
           <div
             className='flex w-full flex-1 items-center justify-center'
             data-puzzle-id={puzzle.t === 'got' ? puzzle.c.id : null}
@@ -137,7 +137,7 @@ const View: FrontendModule['View'] = (input) => {
               <PuzzleResult.ViewNotFound ctx={input.ctx} />
             )}
           </div>
-        }
+        )}
         actions={{
           id: 'screen-play-puzzle-bottom-bar',
           open: input.modelSpace.screen.opened === 'action-drawer',
@@ -239,7 +239,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
       topBar={{
         title: input.ctx.t('flow.level', puzzleIndex + 1),
       }}
-      main={
+      renderBody={() => (
         <LayoutGame isSpectating ctx={input.ctx}>
           <ProfileListItem
             ctx={input.ctx}
@@ -264,7 +264,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
             )}
           </div>
         </LayoutGame>
-      }
+      )}
     />
   )
 }
