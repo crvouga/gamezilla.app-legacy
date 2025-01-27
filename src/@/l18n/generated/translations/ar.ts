@@ -156,7 +156,6 @@ export const translations: Text = {
   'flow.edit-puzzle-name.name': 'الاسم',
   'flow.puzzle-deleted': 'تم حذف اللغز',
   'flow.delete-puzzle-forever?': 'هل تريد حذف اللغز نهائياً؟',
-  'flow.delete-forever': 'حذف نهائي',
   'flow.add-puzzle': 'إضافة لغز',
   'flow.puzzle-removed': 'تمت إزالة اللغز',
   'flow.puzzle-added': 'تمت إضافة اللغز',

@@ -155,7 +155,6 @@ export const translations: Text = {
   'flow.edit-puzzle-name.name': 'Nome',
   'flow.puzzle-deleted': 'Quebra-cabeça excluído',
   'flow.delete-puzzle-forever?': 'Excluir quebra-cabeça para sempre?',
-  'flow.delete-forever': 'Excluir para sempre',
   'flow.add-puzzle': 'Adicionar quebra-cabeça',
   'flow.puzzle-removed': 'Quebra-cabeça removido',
   'flow.puzzle-added': 'Quebra-cabeça adicionado',

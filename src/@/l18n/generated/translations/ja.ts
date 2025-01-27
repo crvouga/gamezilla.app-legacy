@@ -156,7 +156,6 @@ export const translations: Text = {
   'flow.edit-puzzle-name.name': '名前',
   'flow.puzzle-deleted': 'パズルが削除されました',
   'flow.delete-puzzle-forever?': 'パズルを完全に削除しますか？',
-  'flow.delete-forever': '完全に削除',
   'flow.add-puzzle': 'パズルを追加',
   'flow.puzzle-removed': 'パズルが削除されました',
   'flow.puzzle-added': 'パズルが追加されました',

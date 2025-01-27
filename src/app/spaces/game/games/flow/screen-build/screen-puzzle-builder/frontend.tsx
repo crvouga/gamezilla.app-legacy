@@ -222,7 +222,7 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
           },
           {
             icon: (input) => <IconDeleteForever {...input} />,
-            label: input.ctx.t('flow.delete-forever'),
+            label: input.ctx.t('app.delete'),
             color: 'danger',
             onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
           },

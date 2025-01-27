@@ -153,7 +153,6 @@ export const translations: Text = {
   'flow.edit-puzzle-name.name': '名称',
   'flow.puzzle-deleted': '拼图已删除',
   'flow.delete-puzzle-forever?': '永久删除拼图？',
-  'flow.delete-forever': '永久删除',
   'flow.add-puzzle': '添加拼图',
   'flow.puzzle-removed': '拼图已删除',
   'flow.puzzle-added': '拼图已添加',
