@@ -106,7 +106,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
               <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
             )}
 
-            <div className='flex w-full flex-1 flex-col gap-5 p-5'>
+            <div className='flex w-full flex-1 flex-col gap-6'>
               {spaces.flatMap((state) => (
                 <ViewSpaceCard
                   key={state.spaceId}
