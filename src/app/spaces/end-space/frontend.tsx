@@ -1,11 +1,11 @@
 import { withEventId } from '~/@/event-sourced/event'
+import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
-import { Button, Typography } from '~/@/ui'
+import { ScreenAction } from '~/app/@/ui/screen-actions'
+import { ScreenTitleButton } from '~/app/@/ui/screen-title-button'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import type { MsgSpace } from '../core/space-msg'
-import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
-import { ScreenAction } from '~/app/@/ui/screen-actions'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -104,16 +104,11 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
 
 const ViewSpaceEnded: SpaceFrontendModule['View'] = (input) => {
   return (
-    <div className='flex flex-1 flex-col items-center justify-center gap-4'>
-      <Typography text={input.ctx.t('spaces.space-ended')} variant='title' />
-      <Button
-        onClick={() => input.dispatch({ t: 'clicked-go-home-button' })}
-        size='lg'
-        variant='contained'
-        color='primary'
-        text={input.ctx.t('spaces.go-home')}
-      />
-    </div>
+    <ScreenTitleButton
+      title={input.ctx.t('spaces.space-ended')}
+      buttonText={input.ctx.t('spaces.go-home')}
+      onClick={() => input.dispatch({ t: 'clicked-go-home-button' })}
+    />
   )
 }
 
