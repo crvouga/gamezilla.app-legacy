@@ -274,6 +274,7 @@ export const translations: Text = {
   '?': '؟',
   'app.save-changes-warning': 'سيتم فقدان تغييراتك إذا لم تقم بحفظها قبل الخروج.',
   'app.save-changes?': 'حفظ التغييرات؟',
+  'app.remove': 'إزالة',
   'username-title': 'اسم المستخدم',
   username: (username) => `@${username}`,
   'app.add': 'إضافة',

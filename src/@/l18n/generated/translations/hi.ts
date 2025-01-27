@@ -272,6 +272,7 @@ export const translations: Text = {
   '?': '?',
   'app.save-changes-warning': 'आपके परिवर्तन खो जाएंगे अगर आप उन्हें बाहर निकलने से पहले सहेजते नहीं हैं।',
   'app.save-changes?': 'परिवर्तन सहेजें?',
+  'app.remove': 'हटाएं',
   'username-title': 'उपयोगकर्ता नाम',
   username: (username) => `@${username}`,
   'app.add': 'जोड़ें',

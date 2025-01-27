@@ -10,6 +10,7 @@ import { AuthSMSFrontend } from './auth-sms/frontend'
 import { ContinueAsGuestFrontend } from './continue-as-guest/frontend'
 import { LogoutFrontend } from './logout/frontend'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
+import { ScreenBodyContent } from '../@/ui/screen-layout'
 
 //
 //
@@ -266,7 +267,7 @@ export const View: FrontendModule['View'] = (input) => {
 
 const ViewLoginScreen: FrontendModule['View'] = (input) => {
   return (
-    <div className='relative flex h-full w-full flex-1 flex-col'>
+    <ScreenBodyContent>
       <div className='flex flex-1 flex-col items-center justify-center gap-8 p-4'>
         <div className='flex w-full flex-col items-start justify-center'>
           <Typography text={input.ctx.t('auth.sign-in-to')} variant='title' />
@@ -306,7 +307,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
           <ContinueAsGuestFrontend.ViewButton {...input} />
         </div>
       </div>
-    </div>
+    </ScreenBodyContent>
   )
 }
 

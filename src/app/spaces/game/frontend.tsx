@@ -319,7 +319,7 @@ const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
             ctx={spaceCtx}
           />
         ) : (
-          <div className='grid flex-1 grid-cols-3 justify-between gap-8 p-4'>
+          <div className='3xl:grid-cols-8 grid flex-1 grid-cols-3 justify-between gap-8 p-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7'>
             {gameNameList.map((gameName) => (
               <div key={gameName}>
                 <button

@@ -268,6 +268,7 @@ export const translations: Text = {
   '?': '？',
   'app.save-changes-warning': '終了する前に保存しないと、変更が失われます。',
   'app.save-changes?': '変更を保存しますか？',
+  'app.remove': '削除',
   'username-title': 'ユーザー名',
   username: (username) => `@${username}`,
   'app.add': '追加',

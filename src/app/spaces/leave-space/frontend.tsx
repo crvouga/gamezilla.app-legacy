@@ -1,5 +1,5 @@
 import { withEventId } from '~/@/event-sourced/event'
-import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
+import { IconArrowLeftOnRect } from '~/@/ui'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen-actions/props'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
@@ -93,7 +93,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
   const spaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
   if (!spaceId) return null
   return {
-    icon: (inputIcon) => <IconArrowRightOnRect {...inputIcon} />,
+    icon: (inputIcon) => <IconArrowLeftOnRect {...inputIcon} />,
     label: input.ctx.t('spaces.leave'),
     onClick: () => input.dispatch({ t: 'clicked-leave-space-button', spaceId }),
     color: 'danger',

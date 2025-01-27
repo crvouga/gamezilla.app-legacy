@@ -265,6 +265,7 @@ export const translations: Text = {
   '?': '?',
   'app.save-changes-warning': '저장하지 않으면 종료하기 전에 변경 사항이 손실됩니다.',
   'app.save-changes?': '변경 사항 저장?',
+  'app.remove': '제거',
   'username-title': '사용자 이름',
   username: (username) => `@${username}`,
   'app.add': '추가',

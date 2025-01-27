@@ -1,10 +1,11 @@
 import { RequestResponse, startedRequest } from '~/@/request-response/request-response'
 import { Ok } from '~/@/result'
-import type { SpaceId } from '~/app/@/data/space-id'
-import { APP_SOUND, playSound, pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
 import { IconGamepad } from '~/@/ui'
 import { EmptyState } from '~/@/ui/empty-state'
-import { ScreenLayout } from '~/app/@/ui/screen-layout'
+import { Gutter } from '~/@/ui/gutter'
+import type { SpaceId } from '~/app/@/data/space-id'
+import { APP_SOUND, playSound, pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
+import { ScreenBodyContent, ScreenLayout } from '~/app/@/ui/screen-layout'
 import type { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { SpaceState } from '../core/space-state'
@@ -100,7 +101,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       }}
       renderBody={() => {
         return (
-          <div className='relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8'>
+          <ScreenBodyContent>
             {spaces.length === 0 && (
               <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
             )}
@@ -115,7 +116,9 @@ const View: SpaceFrontendModule['View'] = (input) => {
                 />
               ))}
             </div>
-          </div>
+
+            <Gutter variant='screen' />
+          </ScreenBodyContent>
         )
       }}
     />

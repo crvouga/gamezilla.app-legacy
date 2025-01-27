@@ -260,6 +260,7 @@ export const translations: Text = {
   '?': '?',
   'app.save-changes-warning': 'Suas alterações serão perdidas se você não salvá-las antes de sair.',
   'app.save-changes?': 'Salvar alterações?',
+  'app.remove': 'Remover',
   'username-title': 'Nome de usuário',
   username: (username) => `@${username}`,
   'app.add': 'Adicionar',

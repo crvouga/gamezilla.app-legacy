@@ -273,6 +273,7 @@ export const translations: Text = {
   '?': '?',
   'app.save-changes-warning': 'Ваши изменения будут потеряны, если вы не сохраните их перед выходом.',
   'app.save-changes?': 'Сохранить изменения?',
+  'app.remove': 'Удалить',
   'username-title': 'Имя пользователя',
   username: (username) => `@${username}`,
   'app.add': 'Добавить',

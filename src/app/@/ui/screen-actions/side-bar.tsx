@@ -1,52 +1,18 @@
-import { Drawer, IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/@/ui'
+import { Spinner, Typography, cn } from '~/@/ui'
 import { ScreenAction, ScreenActionProps } from './props'
-
-const DEFAULT_LIMIT = 4
 
 const View = (input: ScreenActionProps) => {
   const cleanedButtons = input.buttons.filter((button) => button !== null)
-  const firstButtons = cleanedButtons.slice(0, input.limit ?? DEFAULT_LIMIT)
-  const lastButtons = cleanedButtons.slice(input.limit ?? DEFAULT_LIMIT)
-  const size = input.size ?? 'md'
+  const size = 'md' as 'md' | 'sm'
+
   return (
     <div
-      className={cn('flex w-full shrink-0 items-center', size === 'sm' && 'h-12', size === 'md' && 'h-16')}
+      className={cn('flex w-24 shrink-0 flex-col', size === 'sm' && 'gap-1 p-2', size === 'md' && 'gap-3 p-4')}
       role='toolbar'
     >
-      {firstButtons.map((button) => (
-        <ScreenActionButton {...button} size={input.size} key={button.label} />
+      {cleanedButtons.map((button) => (
+        <ScreenActionButton {...button} size={size} key={button.label} />
       ))}
-
-      {lastButtons.length > 0 && (
-        <>
-          <ScreenActionButton
-            icon={(input) => <IconEllipsisVertical {...input} />}
-            label={input.ctx.t('app.more')}
-            size={input.size}
-            onClick={input.onToggle}
-          />
-          <Drawer
-            ctx={input.ctx}
-            id={input.id}
-            ariaLabel={input.ctx.t('app.more')}
-            onClose={input.onToggle}
-            open={input.open}
-            position='bottom'
-          >
-            {lastButtons.map((button) =>
-              button.hidden ? null : (
-                <ListItemButton
-                  key={button.label}
-                  icon={button.icon}
-                  label={button.label}
-                  onClick={button.onClick}
-                  color={button.color}
-                />
-              ),
-            )}
-          </Drawer>
-        </>
-      )}
     </div>
   )
 }
@@ -67,27 +33,25 @@ const ScreenActionButton = (input: ScreenAction) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 font-normal',
-        'clickable disabled:cursor-not-allowed disabled:opacity-50',
+        'relative flex w-full flex-col items-center gap-1.5 rounded-xl p-3 font-normal',
+        'clickable hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
         input.classNames?.button,
         toSizeClasses(size),
       )}
     >
-      <div
-        className={cn(
-          'flex h-full w-full flex-col items-center justify-center gap-0.5 truncate',
-          input.loading ? 'opacity-0' : 'opacity-100',
-        )}
-      >
+      <div className={cn('flex flex-col items-center', input.loading ? 'opacity-0' : 'opacity-100')}>
         {input.icon({ className: toIconSizeClasses(size) })}
-        <Typography variant='label' text={input.label} className={cn('truncate', input.classNames?.label)} />
+        <Typography
+          text={input.label}
+          className={cn('truncate text-center text-sm', 'text-inherit', input.classNames?.label)}
+        />
       </div>
 
       {input.loading && (
         <div className={'absolute inset-0 flex h-full w-full items-center justify-center'}>
-          <Spinner className={toSpinnerSizeClasses(size)} />
+          <Spinner className={toIconSizeClasses(size)} />
         </div>
       )}
     </button>
@@ -97,11 +61,11 @@ const ScreenActionButton = (input: ScreenAction) => {
 const toColorClasses = (input: ScreenAction): string => {
   switch (input.color) {
     case 'danger':
-      return 'text-red-500'
+      return 'text-red-500 hover:bg-red-800'
     case 'success':
-      return 'text-green-500'
+      return 'text-green-500 hover:bg-green-800'
     case 'selected':
-      return 'text-blue-500'
+      return 'text-blue-500 bg-neutral-800'
     default:
       return ''
   }
@@ -110,30 +74,20 @@ const toColorClasses = (input: ScreenAction): string => {
 const toSizeClasses = (size: ScreenAction['size']): string => {
   switch (size) {
     case 'sm':
-      return 'p-1.5 text-xs'
+      return 'text-lg'
     case 'md':
     default:
-      return 'p-2 text-sm'
+      return 'text-lg'
   }
 }
 
 const toIconSizeClasses = (size: ScreenAction['size']): string => {
   switch (size) {
     case 'sm':
-      return 'size-5'
+      return 'size-6'
     case 'md':
     default:
       return 'size-7'
-  }
-}
-
-const toSpinnerSizeClasses = (size: ScreenAction['size']): string => {
-  switch (size) {
-    case 'sm':
-      return 'size-5'
-    case 'md':
-    default:
-      return 'size-8'
   }
 }
 

@@ -315,7 +315,7 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
         e.preventDefault()
       }}
     >
-      <div className='bg-black'>
+      <div className='ml-auto max-w-lg bg-black'>
         <div
           className={cn(
             'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',

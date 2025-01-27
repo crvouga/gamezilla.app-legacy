@@ -12,7 +12,6 @@ import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { IconGamepad, IconUserCircle, Portal } from '~/@/ui'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
-import { VDomChildren } from '~/@/vdom/vdom'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { ILogger, Logger } from '../@/logger'
@@ -21,6 +20,7 @@ import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
+import { RootLayout } from './@/ui/screen-layout'
 import { ScreenLayoutProps } from './@/ui/screen-layout/props'
 import * as AuthFrontend from './auth/frontend'
 import { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
@@ -398,7 +398,7 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
   const frontendCtx = toFrontendCtx(input)
 
   return (
-    <Root>
+    <RootLayout>
       <ViewStatusBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
 
       <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
@@ -414,17 +414,7 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
       <Portal.Exit portalId='app-root' />
 
       <Toast.View ctx={frontendCtx} model={input.model.toast} dispatch={(c) => input.dispatch({ t: 'toast', c })} />
-    </Root>
-  )
-}
-
-const Root = (input: { children: VDomChildren }) => {
-  return (
-    <div className='fixed left-1/2 top-1/2 flex h-[100dvh] w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden bg-black text-white'>
-      <div className='relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded min-[520px]:border'>
-        {input.children}
-      </div>
-    </div>
+    </RootLayout>
   )
 }
 

@@ -2,7 +2,7 @@ import { Avatar, Button, IconArrowLeftOnRect, IconUserPen, SpinnerBlock, Typogra
 import { Gutter } from '~/@/ui/gutter'
 import { Profile } from '~/app/@/data/profile'
 import type { UserId } from '~/app/@/data/user-id'
-import { ScreenLayout } from '~/app/@/ui/screen-layout'
+import { ScreenBodyContent, ScreenLayout } from '~/app/@/ui/screen-layout'
 import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
 
 const View = (input: {
@@ -43,7 +43,7 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
       }}
       id='profile-screen'
       renderBody={() => (
-        <div className='flex flex-1 shrink-0 flex-col items-center justify-start gap-4 overflow-x-hidden overflow-y-scroll p-4'>
+        <ScreenBodyContent>
           <Avatar className='h-28 w-28' src={input.profile?.avatarUrl} alt='profile avatar' />
           <Button
             onClick={() =>
@@ -66,7 +66,7 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
             text={input.ctx.t('auth.logout')}
           />
           <Gutter variant='screen' />
-        </div>
+        </ScreenBodyContent>
       )}
     />
   )

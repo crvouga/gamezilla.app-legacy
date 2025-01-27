@@ -154,7 +154,7 @@ const View: FrontendModule['View'] = (input) => {
           },
           {
             icon: (input) => <IconDeleteForever {...input} />,
-            label: input.ctx.t('flow.remove-from-pack'),
+            label: input.ctx.t('app.remove'),
             color: 'danger',
             onClick: () =>
               input.dispatch({

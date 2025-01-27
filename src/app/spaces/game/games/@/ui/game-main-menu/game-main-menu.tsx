@@ -96,7 +96,9 @@ export const View = ({
   renderCoverArt: (input: { className: string }) => VDom
   buttons: MainMenuButton[]
 }) => {
-  if (ctx.currentUserId !== ctx.space.hostId) {
+  const isSpectating = ctx.currentUserId !== ctx.space.hostId
+
+  if (isSpectating) {
     return (
       <LayoutGameCoverArtHeader
         ctx={ctx}

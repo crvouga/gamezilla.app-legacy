@@ -87,7 +87,7 @@ const ScreenActionButton = (input: ScreenAction) => {
 
       {input.loading && (
         <div className={'absolute inset-0 flex h-full w-full items-center justify-center'}>
-          <Spinner className={toSpinnerSizeClasses(size)} />
+          <Spinner className={toIconSizeClasses(size)} />
         </div>
       )}
     </button>
@@ -124,16 +124,6 @@ const toIconSizeClasses = (size: ScreenAction['size']): string => {
     case 'md':
     default:
       return 'size-7'
-  }
-}
-
-const toSpinnerSizeClasses = (size: ScreenAction['size']): string => {
-  switch (size) {
-    case 'sm':
-      return 'size-5'
-    case 'md':
-    default:
-      return 'size-8'
   }
 }
 

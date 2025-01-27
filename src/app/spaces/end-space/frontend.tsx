@@ -1,5 +1,5 @@
 import { withEventId } from '~/@/event-sourced/event'
-import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
+import { IconArrowLeftOnRect } from '~/@/ui'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen-actions/props'
 import { ScreenTitleButton } from '~/app/@/ui/screen-title-button'
@@ -95,7 +95,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
   if (!spaceId) return null
 
   return {
-    icon: (inputIcon) => <IconArrowRightOnRect {...inputIcon} />,
+    icon: (inputIcon) => <IconArrowLeftOnRect {...inputIcon} />,
     label: input.ctx.t('spaces.end'),
     onClick: () => input.dispatch({ t: 'clicked-end-space-button', spaceId }),
     color: 'danger',

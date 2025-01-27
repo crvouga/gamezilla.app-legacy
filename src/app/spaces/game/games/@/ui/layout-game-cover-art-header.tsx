@@ -1,8 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import type { VDom } from '~/@/vdom/vdom'
 import { cn } from '~/@/ui'
-import { ScreenLayout } from '~/app/@/ui/screen-layout'
+import type { VDom } from '~/@/vdom/vdom'
+import { ScreenBodyContent, ScreenLayout } from '~/app/@/ui/screen-layout'
 
 export const LayoutGameCoverArtHeader = (input: {
   topBar?: {
@@ -24,10 +24,10 @@ export const LayoutGameCoverArtHeader = (input: {
       ctx={input.ctx}
       nav={input.topBar}
       renderBody={() => (
-        <div className='flex w-full flex-1 flex-col items-center overflow-y-auto'>
+        <ScreenBodyContent>
           {renderCoverArt_({ className: 'size-28 overflow-hidden rounded-lg' })}
           {input.renderContent()}
-        </div>
+        </ScreenBodyContent>
       )}
     />
   )
