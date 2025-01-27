@@ -99,12 +99,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
         onClose={() => input.dispatch({ t: 'closed-modal' })}
       >
         <ViewUsersInSpaceList
-          onOpenUserDetails={(userId) =>
-            input.dispatch({
-              t: 'clicked-user',
-              userId,
-            })
-          }
+          onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
           ctx={spaceCtx}
         />
       </Drawer>
@@ -121,11 +116,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
           <button
             type='button'
             className='flex w-full flex-col items-center justify-center gap-2 p-4'
-            onClick={() =>
-              input.dispatch({
-                t: 'clicked-preview-user-link',
-              })
-            }
+            onClick={() => input.dispatch({ t: 'clicked-preview-user-link' })}
           >
             <Avatar
               src={
@@ -144,11 +135,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
           <div className='w-full px-4 pb-8'>
             <Button
-              onClick={() =>
-                input.dispatch({
-                  t: 'clicked-preview-user-link',
-                })
-              }
+              onClick={() => input.dispatch({ t: 'clicked-preview-user-link' })}
               className='w-full'
               text={input.ctx.t('spaces.see-profile')}
             />
