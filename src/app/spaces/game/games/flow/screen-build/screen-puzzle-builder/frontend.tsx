@@ -1,7 +1,7 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { Drawer, IconDeleteForever, IconPen, IconPlay } from '~/app/@/ui'
+import { IconDeleteForever, IconPen, IconPlay } from '~/app/@/ui'
 import { ScreenLayout } from '~/app/@/ui/screen'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../@/ui/layout-game'
@@ -179,62 +179,65 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
   }
 
   return (
-    <>
-      <ViewMoreDrawer {...input} />
-      <SaveChangesFrontend.ViewUnsavedChangesDrawer {...input} />
-      <ScreenLayout
-        id='puzzle-builder-screen'
-        ctx={input.ctx}
-        topBar={{
-          onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
-          title: input.ctx.t('flow-puzzle-name', input.modelSpace.screenPuzzleBuilder.puzzle.name),
-        }}
-        actions={{
-          limit: 2,
-          buttons: [
-            ...SaveChangesFrontend.viewBottomButtons({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
-            input.modelSpace.screenPuzzleBuilder.mode.t === 'edit'
-              ? {
-                  icon: (input) => <IconPlay {...input} />,
-                  label: input.ctx.t('flow.play-mode'),
-                  classNames: { button: 'text-blue-500' },
-                  onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
-                }
-              : null,
+    <ScreenLayout
+      id='puzzle-builder-screen'
+      ctx={input.ctx}
+      topBar={{
+        onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
+        title: input.ctx.t('flow-puzzle-name', input.modelSpace.screenPuzzleBuilder.puzzle.name),
+      }}
+      main={
+        <>
+          <EditPuzzleNameFrontend.View {...input} />
+          <DeleteForeverFrontend.View {...input} />
+          <SaveChangesFrontend.ViewUnsavedChangesDrawer {...input} />
+          <ViewMode {...input} />
+        </>
+      }
+      actions={{
+        limit: 2,
+        buttons: [
+          ...SaveChangesFrontend.viewBottomButtons({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
+          input.modelSpace.screenPuzzleBuilder.mode.t === 'edit'
+            ? {
+                icon: (input) => <IconPlay {...input} />,
+                label: input.ctx.t('flow.play-mode'),
+                classNames: { button: 'text-blue-500' },
+                onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
+              }
+            : null,
 
-            input.modelSpace.screenPuzzleBuilder.mode.t === 'play'
-              ? {
-                  icon: (input) => <IconPen {...input} />,
-                  label: input.ctx.t('flow.edit-mode'),
-                  classNames: { button: 'text-amber-500' },
-                  onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
-                }
-              : null,
-            {
-              icon: (input) => <IconPen {...input} />,
-              label: input.ctx.t('app.edit-name'),
-              onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
-            },
-            {
-              icon: (input) => <IconDeleteForever {...input} />,
-              label: input.ctx.t('flow.delete-forever'),
-              color: 'danger',
-              onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
-            },
-          ],
-          onToggle: () => {
-            if (input.model.puzzleBuilderOpened === 'more') {
-              input.dispatch({ t: 'screen-puzzle-builder.user-closed-more-drawer' })
-              return
-            }
-
-            input.dispatch({ t: 'screen-puzzle-builder.user-clicked-open-more-drawer-button' })
+          input.modelSpace.screenPuzzleBuilder.mode.t === 'play'
+            ? {
+                icon: (input) => <IconPen {...input} />,
+                label: input.ctx.t('flow.edit-mode'),
+                classNames: { button: 'text-amber-500' },
+                onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
+              }
+            : null,
+          {
+            icon: (input) => <IconPen {...input} />,
+            label: input.ctx.t('app.edit-name'),
+            onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
           },
-          open: input.model.puzzleBuilderOpened === 'more',
-        }}
-        main={<ViewMode {...input} />}
-      />
-    </>
+          {
+            icon: (input) => <IconDeleteForever {...input} />,
+            label: input.ctx.t('flow.delete-forever'),
+            color: 'danger',
+            onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
+          },
+        ],
+        onToggle: () => {
+          if (input.model.puzzleBuilderOpened === 'more') {
+            input.dispatch({ t: 'screen-puzzle-builder.user-closed-more-drawer' })
+            return
+          }
+
+          input.dispatch({ t: 'screen-puzzle-builder.user-clicked-open-more-drawer-button' })
+        },
+        open: input.model.puzzleBuilderOpened === 'more',
+      }}
+    />
   )
 }
 
@@ -349,22 +352,6 @@ const updateMoreDrawer: BuilderTypes.FrontendModule['update'] = (input) => {
       return { model }
     }
   }
-}
-
-const ViewMoreDrawer: BuilderTypes.FrontendModule['View'] = (input) => {
-  return (
-    <Drawer
-      ctx={input.ctx}
-      ariaLabel={input.ctx.t('app.more')}
-      id='more-drawer'
-      open={input.model.puzzleBuilderOpened === 'more'}
-      onClose={() => input.dispatch({ t: 'screen-puzzle-builder.user-closed-more-drawer' })}
-      position='bottom'
-    >
-      <EditPuzzleNameFrontend.View {...input} />
-      <DeleteForeverFrontend.View {...input} />
-    </Drawer>
-  )
 }
 
 const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (_input) => {

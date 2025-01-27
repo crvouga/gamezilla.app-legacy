@@ -2,10 +2,11 @@ import { TranslatedText } from '~/@/l18n'
 import { Loading, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { Avatar, Button, IconChevronRight, TopBar, Typography } from '~/app/@/ui'
+import { Avatar, Button, IconChevronRight, Typography } from '~/app/@/ui'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { back, logout, pushScreen, replaceScreen, sendToBackend } from '../@/frontend/cmd'
+import { ScreenLayout } from '../@/ui/screen'
 import { ProfileScreen } from './profile-frontend/profile-screen'
 import { UpdateAvatarScreen } from './profile-frontend/update-avatar-screen'
 import type { FrontendModule, ModelFrontend } from './types'
@@ -445,67 +446,62 @@ export const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewUpdateScreen: typeof View = (input) => {
-  if (!input.ctx.currentUserId) {
-    return null
-  }
-
+  if (!input.ctx.currentUserId) return null
   const profile = input.ctx.profiles[input.ctx.currentUserId]
-
-  if (!profile) {
-    return null
-  }
+  if (!profile) return null
 
   return (
-    <div className='flex h-full w-full flex-col items-center'>
-      <TopBar
-        ctx={input.ctx}
-        onBack={() =>
+    <ScreenLayout
+      id='profile-update'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('profile.update-profile'),
+        onBack: () =>
           input.dispatch({
             t: 'clicked-back-button',
             from: {
               t: 'profile-update',
             },
-          })
-        }
-        title={input.ctx.t('profile.update-profile')}
-      />
+          }),
+      }}
+      main={
+        <div className='flex w-full flex-col items-center gap-4 p-4'>
+          <Avatar
+            src={profile?.avatarUrl}
+            className='h-28 w-28'
+            alt='profile avatar'
+            onClick={() =>
+              input.dispatch({
+                t: 'clicked-avatar',
+              })
+            }
+          />
 
-      <div className='flex w-full flex-col items-center gap-4 p-4'>
-        <Avatar
-          src={profile?.avatarUrl}
-          className='h-28 w-28'
-          alt='profile avatar'
-          onClick={() =>
-            input.dispatch({
-              t: 'clicked-avatar',
-            })
-          }
-        />
+          <Button
+            size='sm'
+            color='primary'
+            variant='text'
+            className='block'
+            onClick={() =>
+              input.dispatch({
+                t: 'clicked-change-avatar-button',
+              })
+            }
+            text={input.ctx.t('profile.update-avatar')}
+          />
 
-        <Button
-          size='sm'
-          color='primary'
-          variant='text'
-          className='block'
-          onClick={() =>
-            input.dispatch({
-              t: 'clicked-change-avatar-button',
-            })
-          }
-          text={input.ctx.t('profile.update-avatar')}
-        />
-      </div>
-
-      <ViewField
-        onClick={() =>
-          input.dispatch({
-            t: 'clicked-update-username-button',
-          })
-        }
-        label={input.ctx.t('username-title')}
-        value={input.ctx.t('username', profile.username)}
-      />
-    </div>
+          <ViewField
+            onClick={() =>
+              input.dispatch({
+                t: 'clicked-update-username-button',
+              })
+            }
+            label={input.ctx.t('username-title')}
+            value={input.ctx.t('username', profile.username)}
+          />
+        </div>
+      }
+    />
   )
 }
 
@@ -527,39 +523,3 @@ const ViewField = ({
     <IconChevronRight className='h-6 w-6' />
   </button>
 )
-
-// const ViewUpdateUsernameScreen = (input: { model: ModelFrontend; dispatch: (msg: MsgFrontend) => void; ctx: Ctx }) => {
-//   const currentUsername = input.ctx.currentUserId ? input.model.profiles[input.ctx.currentUserId]?.username : null
-
-//   const inputVal = input.model.draft?.username ?? currentUsername ?? ''
-//   return (
-//     <div className='flex h-full w-full flex-col'>
-//       <TopBar
-//         onBack={() =>
-//           input.dispatch({
-//             t: 'clicked-back-button',
-//             from: {
-//               t: 'profile-update-username'
-//             }
-//           })
-//         }
-//         title={input.ctx.t('username-title')}
-//         ctx={input.ctx}
-//       />
-
-//       <div className='w-full p-4'>
-//         <TextField
-//           label='Username'
-//           value={inputVal}
-//           id={'username'}
-//           onChange={(username) =>
-//             input.dispatch({
-//               t: 'inputted-username',
-//               username
-//             })
-//           }
-//         />
-//       </div>
-//     </div>
-//   )
-// }

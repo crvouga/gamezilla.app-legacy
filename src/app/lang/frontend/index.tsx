@@ -1,16 +1,10 @@
 import { LocalStorage } from '~/@/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Gutter } from '~/app/@/ui/gutter'
+import { ScreenLayout } from '~/app/@/ui/screen'
 import { APP_SOUND, back, closeStatusBar, playSound, pushScreen } from '../../@/frontend/cmd'
 import { translatorSubscriptions } from '../../@/frontend/translator'
-import {
-  IconCheckmarkCircle,
-  IconCheckmarkCircleEmpty,
-  IconLanguage,
-  ListItemButton,
-  Spinner,
-  TopBar,
-} from '../../@/ui'
+import { IconCheckmarkCircle, IconCheckmarkCircleEmpty, IconLanguage, ListItemButton, Spinner } from '../../@/ui'
 import type { FrontendModule, TranslationLoading } from '../types'
 
 //
@@ -179,44 +173,45 @@ export const View: FrontendModule['View'] = (input) => {
 
 const ViewChooseLang: FrontendModule['View'] = (input) => {
   return (
-    <div className='relative flex h-full w-full flex-col overflow-hidden'>
-      <TopBar
-        ctx={input.ctx}
-        onBack={() =>
+    <ScreenLayout
+      id='choose-lang'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('lang.choose-language'),
+        onBack: () =>
           input.dispatch({
             t: 'choose-lang.clicked-done',
-          })
-        }
-        title={input.ctx.t('lang.choose-language')}
-      />
+          }),
+      }}
+      main={
+        <div className='flex flex-1 flex-col overflow-y-scroll'>
+          {LanguageCodeISO_639_1.ALL.map((code) => (
+            <ListItemButton
+              key={code}
+              label={input.ctx.t(code)}
+              icon={(inputIcon) => {
+                if (input.model.loading[code]?.endedAt === null) {
+                  return <Spinner {...inputIcon} />
+                }
 
-      <div className='flex flex-1 flex-col overflow-y-scroll'>
-        {LanguageCodeISO_639_1.ALL.map((code) => (
-          <ListItemButton
-            key={code}
-            label={input.ctx.t(code)}
-            icon={(inputIcon) => {
-              if (input.model.loading[code]?.endedAt === null) {
-                return <Spinner {...inputIcon} />
+                if (input.model.lang === code) {
+                  return <IconCheckmarkCircle {...inputIcon} />
+                }
+
+                return <IconCheckmarkCircleEmpty {...inputIcon} />
+              }}
+              end={() => <div>{input.ctx.t(code)}</div>}
+              onClick={() =>
+                input.dispatch({
+                  t: 'choose-lang.clicked-lang',
+                  lang: code,
+                })
               }
-
-              if (input.model.lang === code) {
-                return <IconCheckmarkCircle {...inputIcon} />
-              }
-
-              return <IconCheckmarkCircleEmpty {...inputIcon} />
-            }}
-            end={() => <div>{input.ctx.t(code)}</div>}
-            onClick={() =>
-              input.dispatch({
-                t: 'choose-lang.clicked-lang',
-                lang: code,
-              })
-            }
-          />
-        ))}
-        <Gutter variant='screen' />
-      </div>
-    </div>
+            />
+          ))}
+          <Gutter variant='screen' />
+        </div>
+      }
+    />
   )
 }

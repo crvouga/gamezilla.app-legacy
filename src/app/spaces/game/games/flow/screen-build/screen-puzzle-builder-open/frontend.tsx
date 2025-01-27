@@ -1,9 +1,9 @@
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { TopBar } from '~/app/@/ui'
+import { ScreenLayout } from '~/app/@/ui/screen'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCtx } from '../../@/frontend/ctx'
-import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
 import { PuzzleDbQueryFrontend } from '../../@/puzzle/puzzle-db-query/frontend'
+import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
 import type { FrontendModule, ModelSpace } from '../types'
 import { CreateNewPuzzleFrontend } from './button-create-new-puzzle/frontend'
 
@@ -55,41 +55,43 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   const query = toPuzzleQuery(input)
   return (
-    <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden'>
-      <TopBar
-        onBack={() =>
-          input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } })
-        }
-        ctx={input.ctx}
-        title={input.ctx.t('flow.puzzle-builder')}
-      />
-      <PuzzleDbQueryFrontend.ViewList
-        ctx={input.ctx}
-        model={input.ctx.puzzleDbQuery}
-        query={query}
-        onQueryChanged={(query) => {
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-puzzle-builder-open.puzzle-db-query-query-changed',
-              query,
-              userId: input.ctx.currentUserId,
-            },
-          })
-        }}
-        onItemClick={(puzzle) =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
-              puzzle,
-              userId: input.ctx.currentUserId,
-            },
-          })
-        }
-        fab={<CreateNewPuzzleFrontend.ViewCreateFab {...input} />}
-      />
-    </div>
+    <ScreenLayout
+      id='screen-puzzle-builder-open'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('flow.puzzle-builder'),
+        onBack: () =>
+          input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } }),
+      }}
+      main={
+        <PuzzleDbQueryFrontend.ViewList
+          ctx={input.ctx}
+          model={input.ctx.puzzleDbQuery}
+          query={query}
+          onQueryChanged={(query) => {
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                t: 'screen-puzzle-builder-open.puzzle-db-query-query-changed',
+                query,
+                userId: input.ctx.currentUserId,
+              },
+            })
+          }}
+          onItemClick={(puzzle) =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
+                puzzle,
+                userId: input.ctx.currentUserId,
+              },
+            })
+          }
+          fab={<CreateNewPuzzleFrontend.ViewCreateFab {...input} />}
+        />
+      }
+    />
   )
 }
 

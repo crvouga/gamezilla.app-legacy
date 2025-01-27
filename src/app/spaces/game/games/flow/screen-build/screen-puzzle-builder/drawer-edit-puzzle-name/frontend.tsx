@@ -1,10 +1,9 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Err, isErr, isLoading, isOk, Loading } from '~/@/result'
 import { Posix } from '~/@/time/posix'
-import type { VDomChildren } from '~/@/vdom/vdom'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
-import { Drawer, DrawerHeader, IconPenToSquare, ListItemButton, TextField } from '~/app/@/ui'
+import { Drawer, DrawerHeader, TextField } from '~/app/@/ui'
 import { ViewForm } from '~/app/@/ui/form'
 import { FormBottomButtons } from '~/app/@/ui/form-button-buttons'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -29,7 +28,14 @@ const update: FrontendModule['update'] = (input) => {
 
 const View: FrontendModule['View'] = (input) => {
   return (
-    <ViewDrawer {...input}>
+    <Drawer
+      ctx={input.ctx}
+      ariaLabel={input.ctx.t('app.edit-name')}
+      id='edit-name-drawer'
+      open={input.model.puzzleBuilderOpened === 'edit-name'}
+      onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
+      position='bottom'
+    >
       <ViewForm
         name={input.ctx.t('app.edit-name')}
         onSubmit={() => {
@@ -64,7 +70,7 @@ const View: FrontendModule['View'] = (input) => {
           submitDisabled={input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name}
         />
       </ViewForm>
-    </ViewDrawer>
+    </Drawer>
   )
 }
 
@@ -176,25 +182,17 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
 const patchName = async (input: { puzzleId: PuzzleId; newName: string; userId: UserId; puzzleDb: IPuzzleDb }) => {
   const result = await input.puzzleDb.get(input.puzzleId)
 
-  if (isErr(result)) {
-    return result
-  }
+  if (isErr(result)) return result
 
   const puzzle = result.value
 
-  if (!puzzle) {
-    return Err('Failed to find puzzle')
-  }
+  if (!puzzle) return Err('Failed to find puzzle')
 
-  if (puzzle.createdBy !== input.userId) {
-    return Err('You must be the creator of this puzzle to edit it.')
-  }
+  if (puzzle.createdBy !== input.userId) return Err('You must be the creator of this puzzle to edit it.')
 
   const newNameFinal = typeof input.newName === 'string' && input.newName.length > 0 ? input.newName : puzzle.name
 
-  if (!PuzzleName.is(newNameFinal)) {
-    return Err('Invalid name')
-  }
+  if (!PuzzleName.is(newNameFinal)) return Err('Invalid name')
 
   const patched: Puzzle = {
     ...puzzle,
@@ -232,33 +230,6 @@ const updateDrawer: FrontendModule['update'] = (input) => {
       return { model: input.model }
     }
   }
-}
-
-const ViewDrawer = (
-  input: Parameters<FrontendModule['View']>[0] & {
-    children: VDomChildren
-  },
-) => {
-  return (
-    <>
-      <ListItemButton
-        icon={(input) => <IconPenToSquare {...input} />}
-        label={input.ctx.t('app.edit-name')}
-        onClick={() => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' })}
-      />
-
-      <Drawer
-        ctx={input.ctx}
-        ariaLabel={input.ctx.t('app.edit-name')}
-        id='edit-name-drawer'
-        open={input.model.puzzleBuilderOpened === 'edit-name'}
-        onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
-        position='bottom'
-      >
-        {input.children}
-      </Drawer>
-    </>
-  )
 }
 
 const updateDraftNameInput: FrontendModule['update'] = ({ model, msg }) => {

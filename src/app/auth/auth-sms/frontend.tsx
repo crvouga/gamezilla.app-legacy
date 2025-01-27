@@ -19,10 +19,10 @@ import {
 } from '~/app/@/frontend/cmd'
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
 import { FrontendEvt } from '~/app/@/frontend/evt'
-import { AlertError, Button, IconMobilePhone, Select, TextField, TopBar, Typography } from '~/app/@/ui'
-import type { ModelFrontend, MsgFrontend, MsgToFrontend, MsgToBackend } from './types'
+import { AlertError, IconMobilePhone, Select, TextField, Typography } from '~/app/@/ui'
+import { ScreenLayout } from '~/app/@/ui/screen'
+import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from './types'
 import { sendCodeProblemToString, verifyCodeProblemToString } from './verify-sms/interface'
-import { ViewForm } from '~/app/@/ui/form'
 
 //
 //
@@ -440,25 +440,31 @@ const View: Module['View'] = (input) => {
 
 const ViewSendCode: Module['View'] = (input) => {
   return (
-    <div className='w-full flex-1'>
-      <TopBar
-        onBack={() =>
+    <ScreenLayout
+      id='auth-sms-send-code'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('auth-sms.login-with-phone'),
+        onBack: () =>
           input.dispatch({
             t: 'clicked-back-button',
-          })
-        }
-        ctx={input.ctx}
-        title={input.ctx.t('auth-sms.login-with-phone')}
-      />
-
-      <ViewForm
-        className='flex w-full flex-col gap-6 p-4 py-6'
-        name={input.ctx.t('auth-sms.login-with-phone')}
-        onSubmit={() => {
+          }),
+      }}
+      form={{
+        cancelDisabled: false,
+        cancelText: input.ctx.t('app.cancel'),
+        onCancel: () => {
+          input.dispatch({ t: 'clicked-back-button' })
+        },
+        onSubmit: () => {
           input.dispatch({ t: 'user-clicked-send-code-button' })
-        }}
-      >
-        {true && (
+        },
+        submitText: input.ctx.t('auth-sms.send-code'),
+        submitLoading: input.model.sendCode.t === 'loading',
+        submitDisabled: false,
+      }}
+      main={
+        <div className='flex w-full flex-col gap-6 p-4'>
           <Select
             id='countryCode'
             label={input.ctx.t('auth-sms.country')}
@@ -473,53 +479,39 @@ const ViewSendCode: Module['View'] = (input) => {
             toKey={(countryCode) => countryCode}
             toName={(countryCode) => Iso3166Alpha2Code.toNameWithEmoji(countryCode)}
           />
-        )}
 
-        <TextField
-          id='phoneNumberInput'
-          label={input.ctx.t('auth-sms.phone-number')}
-          type='tel'
-          startIcon={<IconMobilePhone className='h-5 w-5' />}
-          error={typeof input.model.phoneNumberError === 'string'}
-          value={input.model.inputtedPhoneNumber}
-          helperText={input.model.phoneNumberError}
-          onChange={(value) => {
-            input.dispatch({
-              t: 'inputted-phone-number',
-              phoneNumber: value,
-            })
-          }}
-          onClear={() => {
-            input.dispatch({
-              t: 'clicked-phone-number-clear',
-            })
-          }}
-        />
-
-        <div className='w-full'></div>
-
-        <Button
-          text={input.ctx.t('auth-sms.send-code')}
-          className='w-full'
-          variant='contained'
-          color='primary'
-          size='lg'
-          loading={input.model.sendCode.t === 'loading'}
-          type='submit'
-        />
-      </ViewForm>
-
-      {isErr(input.model.sendCode) && (
-        <div className='w-full p-4'>
-          <AlertError
-            text={sendCodeProblemToString({
-              problem: input.model.sendCode.error,
-              t: input.ctx.t,
-            })}
+          <TextField
+            id='phoneNumberInput'
+            label={input.ctx.t('auth-sms.phone-number')}
+            type='tel'
+            startIcon={<IconMobilePhone className='h-5 w-5' />}
+            error={typeof input.model.phoneNumberError === 'string'}
+            value={input.model.inputtedPhoneNumber}
+            helperText={input.model.phoneNumberError}
+            onChange={(value) => {
+              input.dispatch({
+                t: 'inputted-phone-number',
+                phoneNumber: value,
+              })
+            }}
+            onClear={() => {
+              input.dispatch({
+                t: 'clicked-phone-number-clear',
+              })
+            }}
           />
+
+          {isErr(input.model.sendCode) && (
+            <AlertError
+              text={sendCodeProblemToString({
+                problem: input.model.sendCode.error,
+                t: input.ctx.t,
+              })}
+            />
+          )}
         </div>
-      )}
-    </div>
+      }
+    />
   )
 }
 
@@ -531,79 +523,74 @@ const ViewVerifyCode: Module['View'] = (input) => {
   const phoneNumber = input.ctx.currentScreen.phoneNumber
 
   return (
-    <div className='w-full flex-1'>
-      <TopBar
-        onBack={() =>
+    <ScreenLayout
+      id='auth-sms-verify'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('auth-sms.login-with-phone'),
+        onBack: () =>
           input.dispatch({
             t: 'clicked-back-button',
-          })
-        }
-        ctx={input.ctx}
-        title={input.ctx.t('auth-sms.login-with-phone')}
-      />
-
-      <ViewForm
-        className='flex w-full flex-col gap-6 p-4 py-6'
-        name={input.ctx.t('auth-sms.login-with-phone')}
-        onSubmit={() => {
+          }),
+      }}
+      form={{
+        cancelDisabled: false,
+        cancelText: input.ctx.t('app.cancel'),
+        onCancel: () => {
+          input.dispatch({ t: 'clicked-back-button' })
+        },
+        onSubmit: () => {
           input.dispatch({
             t: 'user-clicked-verify-code-button',
             phoneNumber,
             inputtedCode: input.model.inputtedCode,
           })
-        }}
-      >
-        <Typography
-          role='status'
-          className='text-lg'
-          variant='body'
-          text={input.ctx.t('auth-sms.enter-code-sent-to', PhoneNumber.format(phoneNumber))}
-        />
-        <TextField
-          id={CODE_INPUT_VIEW_ID}
-          label={input.ctx.t('auth-sms.code')}
-          error={typeof input.model.inputtedCodeError === 'string'}
-          helperText={typeof input.model.inputtedCodeError === 'string' ? input.model.inputtedCodeError : null}
-          autoFocus
-          type='tel'
-          value={input.model.inputtedCode}
-          onChange={(value) => {
-            input.dispatch({
-              t: 'inputted-code',
-              inputtedCode: value,
-            })
-          }}
-          onClear={() => {
-            input.dispatch({
-              t: 'clicked-code-clear',
-            })
-          }}
-        />
-
-        <div className='w-full'></div>
-
-        <Button
-          className='w-full'
-          text={input.ctx.t('auth-sms.verify-code')}
-          color='primary'
-          variant='contained'
-          size='lg'
-          loading={input.model.verifyCode.t === 'loading' || input.model.verifyCode.t === 'ok'}
-          type='submit'
-        />
-      </ViewForm>
-
-      {isErr(input.model.verifyCode) && (
-        <div className='w-full p-4'>
-          <AlertError
-            text={verifyCodeProblemToString({
-              problem: input.model.verifyCode.error,
-              t: input.ctx.t,
-            })}
+        },
+        submitText: input.ctx.t('auth-sms.verify-code'),
+        submitLoading: input.model.verifyCode.t === 'loading' || input.model.verifyCode.t === 'ok',
+        submitDisabled: false,
+      }}
+      main={
+        <div className='flex w-full flex-col gap-6 p-4'>
+          <Typography
+            role='status'
+            className='text-lg'
+            variant='body'
+            text={input.ctx.t('auth-sms.enter-code-sent-to', PhoneNumber.format(phoneNumber))}
           />
+
+          <TextField
+            id={CODE_INPUT_VIEW_ID}
+            label={input.ctx.t('auth-sms.code')}
+            error={typeof input.model.inputtedCodeError === 'string'}
+            helperText={typeof input.model.inputtedCodeError === 'string' ? input.model.inputtedCodeError : null}
+            autoFocus
+            type='tel'
+            value={input.model.inputtedCode}
+            onChange={(value) => {
+              input.dispatch({
+                t: 'inputted-code',
+                inputtedCode: value,
+              })
+            }}
+            onClear={() => {
+              input.dispatch({
+                t: 'clicked-code-clear',
+              })
+            }}
+          />
+
+          {isErr(input.model.verifyCode) && (
+            <AlertError
+              text={verifyCodeProblemToString({
+                problem: input.model.verifyCode.error,
+                t: input.ctx.t,
+              })}
+            />
+          )}
         </div>
-      )}
-    </div>
+      }
+    />
   )
 }
 

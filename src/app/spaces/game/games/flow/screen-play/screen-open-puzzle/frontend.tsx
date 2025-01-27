@@ -1,5 +1,6 @@
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { IconGamepad, TopBar } from '~/app/@/ui'
+import { IconGamepad } from '~/app/@/ui'
+import { ScreenLayout } from '~/app/@/ui/screen'
 import { LayoutGameCoverArtHeader } from '../../../@/ui/layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../../../@/ui/users-in-space-list'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
@@ -80,18 +81,18 @@ const View: FrontendModule['View'] = (input) => {
   }
 
   return (
-    <div className='flex h-full w-full flex-1 flex-col'>
-      <TopBar
-        ctx={input.ctx}
-        onBack={() =>
+    <ScreenLayout
+      ctx={input.ctx}
+      id='screen-open-puzzle'
+      topBar={{
+        title: input.ctx.t('flow-pack-name', pack.name),
+        onBack: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: { t: 'user-clicked-exit-screen-open-pack', userId: input.ctx.currentUserId },
-          })
-        }
-        title={input.ctx.t('flow-pack-name', pack.name)}
-      />
-      <div className='flex w-full flex-1 flex-col items-center justify-center'>
+          }),
+      }}
+      main={
         <PackPuzzleGridUI.View
           id='pack-puzzle-grid'
           slideIndex={input.modelSpace.screen.slideIndex}
@@ -119,8 +120,8 @@ const View: FrontendModule['View'] = (input) => {
             })
           }}
         />
-      </div>
-    </div>
+      }
+    />
   )
 }
 

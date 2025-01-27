@@ -1,7 +1,7 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Ok, RemoteResult, isLoading } from '~/@/result'
 import { APP_SOUND, playSound, showCreatedSm } from '~/app/@/frontend/cmd'
-import { ConfirmationFormDrawer, IconDeleteForever, ListItemButton } from '~/app/@/ui'
+import { ConfirmationFormDrawer } from '~/app/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCmdRoot } from '../../../@/frontend/cmd-root'
 import type { FrontendModule } from '../../types'
@@ -100,32 +100,23 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 
 const View: FrontendModule['View'] = (input) => {
   return (
-    <>
-      <ListItemButton
-        icon={(input) => <IconDeleteForever {...input} />}
-        label={input.ctx.t('flow.delete-forever')}
-        color='danger'
-        onClick={() => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' })}
-      />
-
-      <ConfirmationFormDrawer
-        ctx={input.ctx}
-        ariaLabel={input.ctx.t('flow.delete-puzzle-forever?')}
-        id='delete-forever-drawer'
-        open={input.model.puzzleBuilderOpened === 'delete-forever' || isLoading(input.model.puzzleDeleteForeverRequest)}
-        onClose={() => input.dispatch({ t: 'delete-forever.user-closed-drawer' })}
-        variant='danger'
-        position='bottom'
-        title={input.ctx.t('flow.delete-puzzle-forever?')}
-        body={input.ctx.t('app.this-action-cannot-be-undone')}
-        confirmLoading={isLoading(input.model.puzzleDeleteForeverRequest)}
-        confirmText={input.ctx.t('app.delete')}
-        cancelText={input.ctx.t('app.cancel')}
-        onConfirm={() => input.dispatch({ t: 'delete-forever.user-clicked-confirm-button' })}
-        cancelDisabled={isLoading(input.model.puzzleDeleteForeverRequest)}
-        onCancel={() => input.dispatch({ t: 'delete-forever.user-clicked-cancel-button' })}
-      />
-    </>
+    <ConfirmationFormDrawer
+      ctx={input.ctx}
+      ariaLabel={input.ctx.t('flow.delete-puzzle-forever?')}
+      id='delete-forever-drawer'
+      open={input.model.puzzleBuilderOpened === 'delete-forever' || isLoading(input.model.puzzleDeleteForeverRequest)}
+      onClose={() => input.dispatch({ t: 'delete-forever.user-closed-drawer' })}
+      variant='danger'
+      position='bottom'
+      title={input.ctx.t('flow.delete-puzzle-forever?')}
+      body={input.ctx.t('app.this-action-cannot-be-undone')}
+      confirmLoading={isLoading(input.model.puzzleDeleteForeverRequest)}
+      confirmText={input.ctx.t('app.delete')}
+      cancelText={input.ctx.t('app.cancel')}
+      onConfirm={() => input.dispatch({ t: 'delete-forever.user-clicked-confirm-button' })}
+      cancelDisabled={isLoading(input.model.puzzleDeleteForeverRequest)}
+      onCancel={() => input.dispatch({ t: 'delete-forever.user-clicked-cancel-button' })}
+    />
   )
 }
 

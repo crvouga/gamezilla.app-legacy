@@ -1,7 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
-import { cn, TopBar } from '~/app/@/ui'
+import { cn } from '~/app/@/ui'
+import { ScreenLayout } from '~/app/@/ui/screen'
 
 export const LayoutGameCoverArtHeader = (input: {
   title: TranslatedText
@@ -14,13 +15,20 @@ export const LayoutGameCoverArtHeader = (input: {
 }) => {
   const renderCoverArt_ = input.renderCoverArt || renderDefaultCoverArt
   return (
-    <div className='flex h-full w-full flex-1 flex-col items-center gap-4 pb-4'>
-      <TopBar ctx={input.ctx} onBack={input.onBack} title={input.title} />
-      <div className='flex w-full flex-1 flex-col items-center overflow-y-auto'>
-        {renderCoverArt_({ className: 'size-28 overflow-hidden rounded-lg' })}
-        {input.renderContent()}
-      </div>
-    </div>
+    <ScreenLayout
+      id='game-cover-art-header'
+      ctx={input.ctx}
+      topBar={{
+        title: input.title,
+        onBack: input.onBack || undefined,
+      }}
+      main={
+        <div className='flex w-full flex-1 flex-col items-center overflow-y-auto'>
+          {renderCoverArt_({ className: 'size-28 overflow-hidden rounded-lg' })}
+          {input.renderContent()}
+        </div>
+      }
+    />
   )
 }
 

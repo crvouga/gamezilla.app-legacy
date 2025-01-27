@@ -93,7 +93,7 @@ const ViewList = (input: {
   const selectedCount = Math.min(input.selected?.length ?? 0, totalCount)
 
   return (
-    <div className='relative flex h-full w-full flex-col overflow-hidden'>
+    <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
       <QueryForm.View ctx={input.ctx} query={input.query} onChange={input.onQueryChanged} />
 
       {input.selectable && (

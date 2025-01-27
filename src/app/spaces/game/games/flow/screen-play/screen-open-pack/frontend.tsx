@@ -1,6 +1,7 @@
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { IconGamepad, TopBar } from '~/app/@/ui'
+import { IconGamepad } from '~/app/@/ui'
+import { ScreenLayout } from '~/app/@/ui/screen'
 import { LayoutGameCoverArtHeader } from '../../../@/ui/layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../../../@/ui/users-in-space-list'
 import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
@@ -72,32 +73,34 @@ const View: FrontendModule['View'] = (input) => {
   const query = toQuery(input)
 
   return (
-    <div className='flex h-full w-full flex-1 flex-col'>
-      <TopBar
-        ctx={input.ctx}
-        onBack={() =>
+    <ScreenLayout
+      ctx={input.ctx}
+      id='screen-open-pack'
+      topBar={{
+        title: input.ctx.t('flow.select-a-pack'),
+        onBack: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: { t: 'user-clicked-exit-play-mode-button', userId: input.ctx.currentUserId },
-          })
-        }
-        title={input.ctx.t('flow.select-a-pack')}
-      />
-      <PackDbQueryFrontend.ViewList
-        ctx={input.ctx}
-        model={input.ctx.packDbQuery}
-        query={query}
-        onQueryChanged={(query) => {
-          console.log('query', query)
-        }}
-        onClick={(pack) =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: { userId: input.ctx.currentUserId, t: 'user-clicked-open-pack-puzzle-grid-item', pack },
-          })
-        }
-      />
-    </div>
+          }),
+      }}
+      main={
+        <PackDbQueryFrontend.ViewList
+          ctx={input.ctx}
+          model={input.ctx.packDbQuery}
+          query={query}
+          onQueryChanged={(query) => {
+            console.log('query', query)
+          }}
+          onClick={(pack) =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: { userId: input.ctx.currentUserId, t: 'user-clicked-open-pack-puzzle-grid-item', pack },
+            })
+          }
+        />
+      }
+    />
   )
 }
 

@@ -3,8 +3,8 @@ import { exhaustive } from '~/@/function/exhaustive'
 import { Translator } from '~/@/l18n/generated'
 import { type Result, isErr } from '~/@/result'
 import { ScreenCmd } from '~/app/@/frontend/cmd'
-import { AlertError, AlertSuccess, Button, TextField, TopBar } from '~/app/@/ui'
-import { ViewForm } from '~/app/@/ui/form'
+import { AlertError, AlertSuccess, TextField } from '~/app/@/ui'
+import { ScreenLayout } from '~/app/@/ui/screen'
 
 //
 //
@@ -154,76 +154,76 @@ export const View = (input: {
   }
 }) => {
   return (
-    <div className='flex h-full w-full flex-col'>
-      <TopBar
-        onBack={() =>
+    <ScreenLayout
+      id='auth-email'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('auth-email.login-with-email'),
+        onBack: () =>
           input.dispatch({
             t: 'clicked-back',
-          })
-        }
-        ctx={input.ctx}
-        title={input.ctx.t('auth-email.login-with-email')}
-      />
-
-      <ViewForm
-        className='flex flex-col gap-6 p-4'
-        name={input.ctx.t('auth-email.login-with-email')}
-        onSubmit={() => {
+          }),
+      }}
+      form={{
+        onSubmit: () => {
           input.dispatch({
             t: 'clicked-send-login-link',
           })
-        }}
-      >
-        <TextField
-          autoFocus
-          id='email-address'
-          type='email'
-          label={input.ctx.t('auth-email.email-address')}
-          value={input.model.emailAddress}
-          onChange={(emailAddress) => {
-            input.dispatch({
-              t: 'inputted-email-address',
-              emailAddress,
-            })
-          }}
-          onClear={() =>
-            input.dispatch({
-              t: 'inputted-email-address',
-              emailAddress: '',
-            })
-          }
-          error={input.model.validation === 'invalid-email'}
-          helperText={
-            input.model.validation === 'invalid-email'
-              ? input.ctx.t('auth-email.please-enter-valid-email-address')
-              : undefined
-          }
-        />
+        },
+        submitText: input.ctx.t('auth-email.send-login-link'),
+        submitLoading: input.model.submission.type === 'loading',
+        submitDisabled: false,
+        cancelText: input.ctx.t('app.cancel'),
+        onCancel: () => {
+          input.dispatch({
+            t: 'clicked-back',
+          })
+        },
+        cancelDisabled: false,
+      }}
+      main={
+        <div className='flex flex-col gap-6 p-4'>
+          <TextField
+            autoFocus
+            id='email-address'
+            type='email'
+            label={input.ctx.t('auth-email.email-address')}
+            value={input.model.emailAddress}
+            onChange={(emailAddress) => {
+              input.dispatch({
+                t: 'inputted-email-address',
+                emailAddress,
+              })
+            }}
+            onClear={() =>
+              input.dispatch({
+                t: 'inputted-email-address',
+                emailAddress: '',
+              })
+            }
+            error={input.model.validation === 'invalid-email'}
+            helperText={
+              input.model.validation === 'invalid-email'
+                ? input.ctx.t('auth-email.please-enter-valid-email-address')
+                : undefined
+            }
+          />
 
-        <Button
-          variant='contained'
-          size='lg'
-          className='w-full'
-          color='primary'
-          type='submit'
-          loading={input.model.submission.type === 'loading'}
-          text={input.ctx.t('auth-email.send-login-link')}
-        />
+          {input.model.submission.type === 'problem' && <AlertError text={input.model.submission.message} />}
 
-        {input.model.submission.type === 'problem' && <AlertError text={input.model.submission.message} />}
-
-        {input.model.submission.type === 'ok' && (
-          <AlertSuccess>
-            <div className='flex flex-col gap-1'>
-              <div className='text-lg'>Check your email</div>
-              <div className='font-light'>
-                Login link was send to{' '}
-                <span className='font-semibold text-white'>{input.model.submission.sentToEmailAddress}</span>
+          {input.model.submission.type === 'ok' && (
+            <AlertSuccess>
+              <div className='flex flex-col gap-1'>
+                <div className='text-lg'>Check your email</div>
+                <div className='font-light'>
+                  Login link was send to{' '}
+                  <span className='font-semibold text-white'>{input.model.submission.sentToEmailAddress}</span>
+                </div>
               </div>
-            </div>
-          </AlertSuccess>
-        )}
-      </ViewForm>
-    </div>
+            </AlertSuccess>
+          )}
+        </div>
+      }
+    />
   )
 }

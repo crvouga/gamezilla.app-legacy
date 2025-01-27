@@ -1,6 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { VDomChildren } from '~/@/vdom/vdom'
+import { FormBottomButtons } from './form-button-buttons'
 import { ScreenAction, ScreenActions } from './screen-actions'
 import { TopBar } from './top-bar'
 
@@ -13,6 +14,9 @@ export type ScreenActionsProps = {
   open: boolean
 }
 
+/**
+ * Primary screen layout component. Use this everywhere.
+ */
 export const ScreenLayout = (input: {
   id: string
   ctx: {
@@ -26,11 +30,30 @@ export const ScreenLayout = (input: {
   parentActions?: ScreenActionsProps | null
   actions?: ScreenActionsProps | null
   main: VDomChildren
+  form?: {
+    onSubmit: () => void
+    cancelText: TranslatedText
+    submitText: TranslatedText
+    onCancel: () => void
+    submitLoading: boolean
+    cancelDisabled: boolean
+    submitDisabled: boolean
+  }
 }) => {
+  const Element = input.form ? 'form' : 'div'
   return (
-    <div className='flex w-full flex-1 flex-col'>
+    <Element
+      className='flex w-full flex-1 flex-col overflow-hidden'
+      onSubmit={(e) => {
+        e.preventDefault()
+        input.form?.onSubmit()
+      }}
+    >
       {input.topBar && <TopBar ctx={input.ctx} onBack={input.topBar.onBack} title={input.topBar.title} />}
+
       <div className='flex w-full flex-1 flex-col overflow-hidden'>{input.main}</div>
+
+      {input.form && <FormBottomButtons {...input.form} />}
 
       {input.actions && (
         <>
@@ -59,6 +82,6 @@ export const ScreenLayout = (input: {
           />
         </>
       )}
-    </div>
+    </Element>
   )
 }

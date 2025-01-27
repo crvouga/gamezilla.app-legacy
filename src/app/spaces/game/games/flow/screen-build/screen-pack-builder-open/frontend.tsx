@@ -1,6 +1,6 @@
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { TopBar } from '~/app/@/ui'
+import { ScreenLayout } from '~/app/@/ui/screen'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
 import type { FrontendModule } from '../types'
@@ -57,34 +57,36 @@ const View: FrontendModule['View'] = (input) => {
     offset: 0,
   })
   return (
-    <div className='relative flex h-full w-full flex-col items-center justify-center overflow-hidden'>
-      <TopBar
-        onBack={() =>
-          input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } })
-        }
-        ctx={input.ctx}
-        title={input.ctx.t('flow.pack-builder')}
-      />
-      <PackDbQueryFrontend.ViewList
-        {...input}
-        model={input.ctx.packDbQuery}
-        query={query}
-        fab={<PackCreateNewFrontend.ViewCreateFab {...input} />}
-        onQueryChanged={(query) => {
-          console.log('query changed', query)
-        }}
-        onClick={(pack) =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-pack-builder-open.user-clicked-pack-item',
-              pack,
-              userId: input.ctx.currentUserId,
-            },
-          })
-        }
-      />
-    </div>
+    <ScreenLayout
+      id='screen-pack-builder-open'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('flow.pack-builder'),
+        onBack: () =>
+          input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } }),
+      }}
+      main={
+        <PackDbQueryFrontend.ViewList
+          {...input}
+          model={input.ctx.packDbQuery}
+          query={query}
+          fab={<PackCreateNewFrontend.ViewCreateFab {...input} />}
+          onQueryChanged={(query) => {
+            console.log('query changed', query)
+          }}
+          onClick={(pack) =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                t: 'screen-pack-builder-open.user-clicked-pack-item',
+                pack,
+                userId: input.ctx.currentUserId,
+              },
+            })
+          }
+        />
+      }
+    />
   )
 }
 

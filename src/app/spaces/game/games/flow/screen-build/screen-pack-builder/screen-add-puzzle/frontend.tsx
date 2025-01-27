@@ -1,12 +1,10 @@
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
-import { TopBar } from '~/app/@/ui'
-import { FormBottomButtons } from '~/app/@/ui/form-button-buttons'
+import { ScreenLayout } from '~/app/@/ui/screen'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { PuzzleDbQueryFrontend } from '../../../@/puzzle/puzzle-db-query/frontend'
 import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
 import { ScreenPackBuildSpace } from '../space/space'
 import type { FrontendModule, ModelSpace } from '../types'
-import { ViewForm } from '~/app/@/ui/form'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -72,86 +70,84 @@ const View: FrontendModule['View'] = (input) => {
   const query = toQuery(input)
 
   return (
-    <ViewForm
-      className='flex h-full max-h-full w-full flex-col overflow-hidden'
-      name={input.ctx.t('flow.add-puzzle')}
-      onSubmit={() => {
-        input.dispatch({
-          t: 'got-msg-space',
-          c: {
-            t: 'screen-pack-builder.screen-add-puzzle.user-submitted-add-puzzles-form',
-            userId: input.ctx.currentUserId,
-          },
-        })
+    <ScreenLayout
+      id='screen-pack-builder-add-puzzle'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('flow.add-puzzle'),
+        onBack: () =>
+          input.dispatch({
+            t: 'got-msg-space',
+            c: {
+              t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
+              userId: input.ctx.currentUserId,
+            },
+          }),
       }}
-    >
-      <TopBar
-        ctx={input.ctx}
-        title={input.ctx.t('flow.add-puzzle')}
-        onBack={() =>
+      form={{
+        onSubmit: () => {
+          input.dispatch({
+            t: 'got-msg-space',
+            c: {
+              t: 'screen-pack-builder.screen-add-puzzle.user-submitted-add-puzzles-form',
+              userId: input.ctx.currentUserId,
+            },
+          })
+        },
+        cancelText: input.ctx.t('app.cancel'),
+        submitText: input.ctx.t('app.add'),
+        onCancel: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: {
               t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
               userId: input.ctx.currentUserId,
             },
-          })
-        }
-      />
-      <PuzzleDbQueryFrontend.ViewList
-        selectable
-        ctx={input.ctx}
-        model={input.ctx.puzzleDbQuery}
-        selected={input.modelSpace.screenAddPuzzle_selected}
-        query={query}
-        onHeaderCheckboxClick={(allPuzzleIds) => {
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox',
-              puzzleIds: allPuzzleIds,
-              userId: input.ctx.currentUserId,
-            },
-          })
-        }}
-        onQueryChanged={(query) => {
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-pack-builder.screen-add-puzzle.puzzle-db-query-query-changed',
-              query,
-              userId: input.ctx.currentUserId,
-            },
-          })
-        }}
-        onItemClick={(puzzle) => {
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-              puzzleId: puzzle.id,
-              userId: input.ctx.currentUserId,
-            },
-          })
-        }}
-      />
-      <FormBottomButtons
-        cancelText={input.ctx.t('app.cancel')}
-        submitText={input.ctx.t('app.add')}
-        onCancel={() =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
-              userId: input.ctx.currentUserId,
-            },
-          })
-        }
-        cancelDisabled={false}
-        submitLoading={false}
-        submitDisabled={input.modelSpace.screenAddPuzzle_selected.length === 0}
-      />
-    </ViewForm>
+          }),
+        cancelDisabled: false,
+        submitLoading: false,
+        submitDisabled: input.modelSpace.screenAddPuzzle_selected.length === 0,
+      }}
+      main={
+        <PuzzleDbQueryFrontend.ViewList
+          selectable
+          ctx={input.ctx}
+          model={input.ctx.puzzleDbQuery}
+          selected={input.modelSpace.screenAddPuzzle_selected}
+          query={query}
+          onHeaderCheckboxClick={(allPuzzleIds) => {
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                t: 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox',
+                puzzleIds: allPuzzleIds,
+                userId: input.ctx.currentUserId,
+              },
+            })
+          }}
+          onQueryChanged={(query) => {
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                t: 'screen-pack-builder.screen-add-puzzle.puzzle-db-query-query-changed',
+                query,
+                userId: input.ctx.currentUserId,
+              },
+            })
+          }}
+          onItemClick={(puzzle) => {
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
+                puzzleId: puzzle.id,
+                userId: input.ctx.currentUserId,
+              },
+            })
+          }}
+        />
+      }
+    />
   )
 }
 

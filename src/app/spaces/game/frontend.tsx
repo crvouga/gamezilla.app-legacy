@@ -1,19 +1,20 @@
 import { Eff } from '~/@/eff'
 import { WithEventId, withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
+import { UserAccount } from '~/app/@/data/account'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { UserAccount } from '~/app/@/data/account'
-import { TopBar, Typography } from '~/app/@/ui'
-import { SpaceFrontendModule } from '../@/architecture/space-frontend'
+import { Typography } from '~/app/@/ui'
+import { ScreenLayout } from '~/app/@/ui/screen'
 import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
+import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { Space } from '../core/space'
 import { MsgSpace } from '../core/space-msg'
 import type { MsgFrontend } from '../types'
 import { ViewUsersInSpaceList } from './games/@/ui/users-in-space-list'
-import { GamesFrontend } from './games/frontend'
 import { GameCoverArt } from './games/cover-art'
+import { GamesFrontend } from './games/frontend'
 import { gameNameList } from './games/types'
 
 const update: SpaceFrontendModule['update'] = (input) => {
@@ -217,9 +218,7 @@ const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
 }
 
 const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (input) => {
-  if (!input.ctx.currentUser) {
-    return Sub.None
-  }
+  if (!input.ctx.currentUser) return Sub.None
 
   const frontendCtx: AppFrontendCtx = {
     ...input.ctx,
@@ -230,27 +229,15 @@ const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (inpu
 
   const spaceId = SpacesCore.toSpaceIdByUserId(input.model, frontendCtx.currentUserId)
 
-  if (!spaceId) {
-    return Sub.None
-  }
+  if (!spaceId) return Sub.None
 
   const spaceModel = input.model.spaces[spaceId]
 
-  if (!spaceModel) {
-    return Sub.None
-  }
-
   const spaceState = Space.toSpaceStarted(spaceModel)
 
-  if (!spaceState) {
-    return Sub.None
-  }
+  const modelSpace = spaceState?.game
 
-  const modelSpace = spaceState.game
-
-  if (!modelSpace) {
-    return Sub.None
-  }
+  if (!modelSpace) return Sub.None
 
   const gameModel = input.model.games[spaceId] ?? GamesFrontend.init(modelSpace.t)
 
@@ -274,53 +261,53 @@ const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (inpu
 //
 
 const View: SpaceFrontendModule['View'] = (input) => {
-  const { model, ctx, dispatch } = input
+  if (!input.ctx.space) return null
+  if (!input.ctx.currentUser) return null
 
-  if (!ctx.space || !ctx.currentUser) {
-    return null
-  }
+  const space = SpacesCore.toSpaceStarted(input.model, input.ctx.space?.spaceId)
 
-  const space = SpacesCore.toSpaceStarted(model, ctx.space?.spaceId)
+  if (!space) return null
 
-  if (!space) {
-    return null
-  }
+  if (!space.game) return <ViewScreenNotInGame {...input} />
 
-  if (space.game) {
-    return (
-      <GamesFrontend.View
-        modelSpace={space.game}
-        ctx={{
-          ...ctx,
-          space,
-          currentUserId: ctx.currentUser.userId,
-          currentUserRole: ctx.currentUser.role,
-          currentUser: ctx.currentUser,
-        }}
-        dispatch={(c) =>
-          dispatch({
-            t: 'game',
-            spaceId: space.spaceId,
-            c,
-          })
-        }
-        model={model.games[ctx.space.spaceId] ?? GamesFrontend.init(space.game.t)}
-      />
-    )
-  }
-
-  return <ViewScreenNotInGame {...input} />
+  return (
+    <GamesFrontend.View
+      modelSpace={space.game}
+      ctx={{
+        ...input.ctx,
+        space,
+        currentUserId: input.ctx.currentUser.userId,
+        currentUserRole: input.ctx.currentUser.role,
+        currentUser: input.ctx.currentUser,
+      }}
+      dispatch={(c) =>
+        input.dispatch({
+          t: 'game',
+          spaceId: space.spaceId,
+          c,
+        })
+      }
+      model={input.model.games[space.spaceId] ?? GamesFrontend.init(space.game.t)}
+    />
+  )
 }
 
 const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
-  if (!input.ctx.space || !input.ctx.currentUser) {
-    return null
-  }
+  if (!input.ctx.space) return null
+  if (!input.ctx.currentUser) return null
 
-  if (input.ctx.space.hostId !== input.ctx.currentUserId) {
-    return (
-      <div className='flex h-full w-full flex-1 flex-col'>
-        <div className='w-full flex-1'>
+  const isSpectator = input.ctx.space.hostId !== input.ctx.currentUser.userId
+
+  return (
+    <ScreenLayout
+      id='game-selection-screen'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('spaces.games'),
+        onBack: () => input.dispatch({ t: 'clicked-go-home-button' }),
+      }}
+      main={
+        isSpectator ? (
           <ViewUsersInSpaceList
             onOpenUserDetails={(userId) =>
               input.dispatch({
@@ -336,59 +323,37 @@ const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
               currentUser: input.ctx.currentUser,
             }}
           />
-        </div>
-      </div>
-    )
-  }
+        ) : (
+          <div className='grid flex-1 grid-cols-3 justify-between gap-8 p-4'>
+            {gameNameList.map((gameName) => (
+              <div key={gameName}>
+                <button
+                  type='button'
+                  aria-label={gameName}
+                  onClick={() =>
+                    input.dispatch({
+                      t: 'clicked-game-tile',
+                      gameName,
+                    })
+                  }
+                  className='flex aspect-square overflow-hidden rounded-lg border'
+                >
+                  <GameCoverArt gameName={gameName} />
+                </button>
 
-  return (
-    <div className='flex h-full w-full flex-1 flex-col'>
-      <TopBar
-        ctx={input.ctx}
-        onBack={() =>
-          input.dispatch({
-            t: 'clicked-go-home-button',
-          })
-        }
-        title={input.ctx.t('spaces.games')}
-      />
-
-      <div className='grid flex-1 grid-cols-3 justify-between gap-8 p-4'>
-        {gameNameList.map((gameName) => (
-          <div key={gameName}>
-            <button
-              type='button'
-              aria-label={gameName}
-              onClick={() =>
-                input.dispatch({
-                  t: 'clicked-game-tile',
-                  gameName,
-                })
-              }
-              className='flex aspect-square overflow-hidden rounded-lg border'
-            >
-              <GameCoverArt gameName={gameName} />
-            </button>
-
-            <Typography
-              className='mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold'
-              variant='label'
-              text={input.ctx.t(gameName)}
-            />
+                <Typography
+                  className='mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold'
+                  variant='label'
+                  text={input.ctx.t(gameName)}
+                />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
+        )
+      }
+    />
   )
 }
-
-//
-//
-//
-//
-//
-//
-//
 
 export const GameFrontend = {
   View,

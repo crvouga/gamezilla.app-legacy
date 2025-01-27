@@ -1,9 +1,10 @@
 import { RequestResponse } from '~/@/request-response/request-response'
-import { Button, TextField, TopBar } from '~/app/@/ui'
-import { ModelFrontend, MsgFrontend, MsgToBackend } from './update-username.types'
 import { AppFrontendCmd, pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
-import { AppFrontendCtx, AnonymousFrontendCtx } from '~/app/@/frontend/ctx'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { FrontendEvt } from '~/app/@/frontend/evt'
+import { TextField } from '~/app/@/ui'
+import { ScreenLayout } from '~/app/@/ui/screen'
+import { ModelFrontend, MsgFrontend, MsgToBackend } from './update-username.types'
 
 export const init = <TModel extends ModelFrontend>(input: {
   ctx: AppFrontendCtx | AnonymousFrontendCtx
@@ -92,28 +93,32 @@ export const View = (input: {
   dispatch: (m: MsgFrontend) => void
 }) => {
   return (
-    <div className='flex flex-col'>
-      <TopBar
-        ctx={input.ctx}
-        onBack={() => input.dispatch({ t: 'profile.update-username.clicked-back' })}
-        title={input.ctx.t('profile.update-username.update-username')}
-      />
-      <div className='flex w-full flex-col gap-4 p-4'>
-        <TextField
-          id='username'
-          label={input.ctx.t('username-title')}
-          value={input.model['profile.update-username.username'] ?? ''}
-          onChange={(username) => input.dispatch({ t: 'profile.update-username.inputted-username', username })}
-        />
-        <div className='w-full pt-4'>
-          <Button
-            text={input.ctx.t('app.save')}
-            className='w-full'
-            loading={input.model['profile-update-username.request']?.t === 'loading'}
-            onClick={() => input.dispatch({ t: 'profile.update-username.clicked-save' })}
+    <ScreenLayout
+      id='profile-update-username'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('profile.update-username.update-username'),
+        onBack: () => input.dispatch({ t: 'profile.update-username.clicked-back' }),
+      }}
+      form={{
+        onSubmit: () => input.dispatch({ t: 'profile.update-username.clicked-save' }),
+        submitText: input.ctx.t('app.save'),
+        cancelText: input.ctx.t('app.cancel'),
+        onCancel: () => input.dispatch({ t: 'profile.update-username.clicked-back' }),
+        submitLoading: input.model['profile-update-username.request']?.t === 'loading',
+        submitDisabled: false,
+        cancelDisabled: false,
+      }}
+      main={
+        <div className='flex w-full flex-col gap-4 p-4'>
+          <TextField
+            id='username'
+            label={input.ctx.t('username-title')}
+            value={input.model['profile.update-username.username'] ?? ''}
+            onChange={(username) => input.dispatch({ t: 'profile.update-username.inputted-username', username })}
           />
         </div>
-      </div>
-    </div>
+      }
+    />
   )
 }
