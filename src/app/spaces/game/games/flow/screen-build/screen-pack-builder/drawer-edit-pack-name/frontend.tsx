@@ -1,7 +1,12 @@
 import { Button, Drawer, DrawerHeader, TextField } from '~/app/@/ui'
 import { FrontendModule } from '../types'
+import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 
 const update: FrontendModule['update'] = (input) => {
+  switch (input.msgSpace?.t) {
+    case 'edit-pack-name.user-clicked-open-drawer-button':
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.drawerOpened)] }
+  }
   return { model: input.model }
 }
 
