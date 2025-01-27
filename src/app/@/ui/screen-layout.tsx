@@ -1,48 +1,8 @@
-import { TranslatedText } from '~/@/l18n'
-import { Translator } from '~/@/l18n/generated'
-import { VDom, VDomChildren } from '~/@/vdom/vdom'
 import { FormBottomButtons } from './form-button-buttons'
-import { ScreenAction, ScreenActions } from './screen-actions'
+import { ScreenActions } from './screen-actions'
+import { ScreenLayoutProps } from './screen-layout-props'
 import { TopBar } from './top-bar'
 
-export type ScreenActionsProps = {
-  id?: string
-  limit?: number
-  size?: 'sm' | 'md'
-  top?: VDomChildren
-  buttons: (ScreenAction | null)[]
-  onToggle: () => void
-  open: boolean
-}
-
-export type ScreenLayoutProps = {
-  id: string
-  ctx: {
-    t: Translator
-  }
-  topBar?: {
-    title: TranslatedText
-    subtitle?: TranslatedText | null
-    onBack?: () => void
-  }
-  actionPosition?: 'top' | 'bottom'
-  parent?: Pick<ScreenLayoutProps, 'actions' | 'topBar'> | null
-  actions?: ScreenActionsProps | null
-  renderBody: () => VDom
-  form?: {
-    onSubmit: () => void
-    cancelText: TranslatedText
-    submitText: TranslatedText
-    onCancel: () => void
-    submitLoading: boolean
-    cancelDisabled: boolean
-    submitDisabled: boolean
-  }
-}
-
-/**
- * Primary screen layout component. Use this everywhere.
- */
 export const ScreenLayout = (input: ScreenLayoutProps) => {
   const isMobile = true
   if (isMobile) return <ScreenLayoutMobile {...input} />
