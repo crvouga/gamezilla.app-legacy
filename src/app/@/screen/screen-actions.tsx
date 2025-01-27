@@ -101,13 +101,10 @@ const ScreenActionButton = (input: ScreenAction) => {
       className={cn(
         'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 font-normal',
         'clickable disabled:cursor-not-allowed disabled:opacity-50',
-        input.color === 'danger' && 'text-red-500',
-        input.color === 'success' && 'text-green-500',
-        input.color === 'selected' && 'text-blue-500',
+        toColorClasses(input),
         input.hidden ? 'hidden' : '',
         input.classNames?.button,
-        size === 'sm' && 'p-1.5 text-xs',
-        size === 'md' && 'p-2 text-sm',
+        toSizeClasses(size),
       )}
     >
       <div
@@ -116,17 +113,60 @@ const ScreenActionButton = (input: ScreenAction) => {
           input.loading ? 'opacity-0' : 'opacity-100',
         )}
       >
-        {input.icon({ className: cn(size === 'sm' && 'size-5', size === 'md' && 'size-7') })}
+        {input.icon({ className: toIconSizeClasses(size) })}
         <Typography variant='label' text={input.label} className={cn('truncate', input.classNames?.label)} />
       </div>
 
       {input.loading && (
         <div className={'absolute inset-0 flex h-full w-full items-center justify-center'}>
-          <Spinner className={cn(size === 'sm' && 'size-5', size === 'md' && 'size-8')} />
+          <Spinner className={toSpinnerSizeClasses(size)} />
         </div>
       )}
     </button>
   )
+}
+
+const toColorClasses = (input: ScreenAction): string => {
+  switch (input.color) {
+    case 'danger':
+      return 'text-red-500'
+    case 'success':
+      return 'text-green-500'
+    case 'selected':
+      return 'text-blue-500'
+    default:
+      return ''
+  }
+}
+
+const toSizeClasses = (size: ScreenAction['size']): string => {
+  switch (size) {
+    case 'sm':
+      return 'p-1.5 text-xs'
+    case 'md':
+    default:
+      return 'p-2 text-sm'
+  }
+}
+
+const toIconSizeClasses = (size: ScreenAction['size']): string => {
+  switch (size) {
+    case 'sm':
+      return 'size-5'
+    case 'md':
+    default:
+      return 'size-7'
+  }
+}
+
+const toSpinnerSizeClasses = (size: ScreenAction['size']): string => {
+  switch (size) {
+    case 'sm':
+      return 'size-5'
+    case 'md':
+    default:
+      return 'size-8'
+  }
 }
 
 export const ScreenActions = {
