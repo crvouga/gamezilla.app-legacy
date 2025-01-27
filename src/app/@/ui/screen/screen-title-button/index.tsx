@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
-import { Typography } from '../typography'
-import { Button } from '../button'
+import { Button } from '~/app/@/ui/button'
+import { Typography } from '~/app/@/ui/typography'
 
 export const ScreenTitleButton = (input: {
   title: TranslatedText

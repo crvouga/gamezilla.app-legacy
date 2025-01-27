@@ -3,7 +3,7 @@ import { AppFrontendCmd, pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { FrontendEvt } from '~/app/@/frontend/evt'
 import { TextField } from '~/app/@/ui'
-import { ScreenLayout } from '~/app/@/ui/screen'
+import { ScreenLayout } from '~/app/@/ui/screen/screen-layout'
 import { ModelFrontend, MsgFrontend, MsgToBackend } from './update-username.types'
 
 export const init = <TModel extends ModelFrontend>(input: {

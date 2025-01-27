@@ -1,7 +1,7 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Ok, RemoteResult, isLoading } from '~/@/result'
 import { APP_SOUND, playSound, showCreatedSm } from '~/app/@/frontend/cmd'
-import { ConfirmationFormDrawer } from '~/app/@/ui'
+import { ConfirmationFormDrawer } from '~/app/@/ui/screen/confirmation-drawer'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCmdRoot } from '../../../@/frontend/cmd-root'
 import type { FrontendModule } from '../../types'

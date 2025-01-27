@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
-import { Button } from './button'
-import { preventConsoleErrorWhenClosingDrawer } from './drawer'
+import { Button } from '../button'
+import { preventConsoleErrorWhenClosingDrawer } from '../drawer'
 
 export const FormBottomButtons = (input: {
   onCancel: () => void

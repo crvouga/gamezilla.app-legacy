@@ -1,8 +1,9 @@
 import { Sub } from '~/@/sub'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
+import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import {
   Avatar,
   Button,
-  ConfirmationDialog,
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconCheckmarkCircle,
@@ -11,6 +12,7 @@ import {
   IconXMark,
 } from '~/app/@/ui'
 import { ScreenActions } from '~/app/@/ui/screen-actions'
+import { ConfirmationDialog } from '~/app/@/ui/screen/confirmation-dialog'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -24,14 +26,12 @@ import {
   type ModelSpace,
   type MsgFrontend,
   type MsgSpace,
-  type MsgToFrontend,
   type MsgToBackend,
+  type MsgToFrontend,
   type StateGame,
   type StateGameOver,
   toPlayerType,
 } from './vs-user.types'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 
 //
 //

@@ -13,7 +13,7 @@ import { BackendCmd } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendEvt } from '../@/backend/evt'
 import * as UpdateUsernameTypes from './update-username/update-username.types'
-import { ScreenActionsProps } from '../@/ui/screen'
+import { ScreenActionsProps } from '../@/ui/screen/screen-layout'
 //
 //
 //

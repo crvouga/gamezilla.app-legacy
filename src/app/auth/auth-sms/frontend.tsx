@@ -20,7 +20,7 @@ import {
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
 import { FrontendEvt } from '~/app/@/frontend/evt'
 import { AlertError, IconMobilePhone, Select, TextField, Typography } from '~/app/@/ui'
-import { ScreenLayout } from '~/app/@/ui/screen'
+import { ScreenLayout } from '~/app/@/ui/screen/screen-layout'
 import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from './types'
 import { sendCodeProblemToString, verifyCodeProblemToString } from './verify-sms/interface'
 

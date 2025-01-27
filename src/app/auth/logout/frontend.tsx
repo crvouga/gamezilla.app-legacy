@@ -1,7 +1,7 @@
 import { NotAsked, Ok } from '~/@/result'
 import { APP_SOUND, playSound, sendToBackend, showToast } from '~/app/@/frontend/cmd'
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
-import { ConfirmationFormDrawer } from '~/app/@/ui'
+import { ConfirmationFormDrawer } from '~/app/@/ui/screen/confirmation-drawer'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from '../types'
 
 //

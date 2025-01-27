@@ -1,9 +1,9 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { Drawer, DrawerHeader, type DrawerInput } from './drawer'
+import { Drawer, DrawerHeader, type DrawerInput } from '~/app/@/ui/drawer'
+import { Typography } from '~/app/@/ui/typography'
 import { ViewForm } from './form'
 import { FormBottomButtons } from './form-button-buttons'
-import { Typography } from './typography'
 
 type input = DrawerInput & {
   ctx: {
