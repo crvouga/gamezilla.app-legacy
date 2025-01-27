@@ -5,7 +5,7 @@ import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton, IconButtonEmpty } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
 
-export const TopBar = (input: {
+export const ScreenNavBarMobile = (input: {
   title: TranslatedText
   subtitle?: TranslatedText | null
   // center?: boolean

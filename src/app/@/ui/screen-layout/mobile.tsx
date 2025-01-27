@@ -1,7 +1,7 @@
 import { FormBottomButtons } from '../form-button-buttons'
 import { ScreenActionsHorizontalBar } from '../screen-actions/horizontal-bar.tsx'
 import { ScreenLayoutProps } from './props'
-import { TopBar } from './top-bar'
+import { ScreenNavBarMobile } from '../screen-nav-bar/mobile.tsx'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.form ? 'form' : 'div'
@@ -48,7 +48,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         input.form?.onSubmit()
       }}
     >
-      {input.topBar && <TopBar ctx={input.ctx} onBack={input.topBar.onBack} title={input.topBar.title} />}
+      {input.topBar && <ScreenNavBarMobile ctx={input.ctx} onBack={input.topBar.onBack} title={input.topBar.title} />}
       {actionPosition === 'top' && actions}
 
       <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
