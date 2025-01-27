@@ -11,12 +11,6 @@ import { SpaceState } from '../core/space-state'
 import { StartSpaceFrontend } from '../start-space/frontend'
 import { ViewSpaceCard } from './space-card'
 
-//
-//
-//
-//
-//
-
 const sendListSpacesRequest: SpaceFrontendModule['update'] = ({ model, ctx }) => {
   if (model.listSpacesRequest.t === 'loading') {
     return { model }
@@ -31,24 +25,9 @@ const sendListSpacesRequest: SpaceFrontendModule['update'] = ({ model, ctx }) =>
   }
 }
 
-//
-//
-//
-//
-//
-//
-
 const init: SpaceFrontendModule['init'] = ({ model, ctx }) => {
   return sendListSpacesRequest({ model, ctx })
 }
-
-//
-//
-//
-//
-//
-//
-//
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgEvt?.t) {
@@ -56,9 +35,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
       if (input.msgEvt.screen.t === 'space-list') {
         return sendListSpacesRequest(input)
       }
-      return {
-        model: input.model,
-      }
+      return { model: input.model }
     }
 
     case 'wire-evt.backend-connected': {
@@ -95,14 +72,6 @@ const update: SpaceFrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-//
-//
-//
-// View
-//
-//
-//
-
 const toSpaces = (model: SpacesCore.Model) => {
   const spaces: SpaceState.Started[] = []
   for (const spaceId in model.spaces) {
@@ -115,9 +84,7 @@ const toSpaces = (model: SpacesCore.Model) => {
 }
 
 const View: SpaceFrontendModule['View'] = (input) => {
-  if (!input.ctx.currentUserId) {
-    return null
-  }
+  if (!input.ctx.currentUserId) return null
 
   const currentUserSpaceId = input.model.indexSpaceIdByUserId[input.ctx.currentUserId]
 
@@ -132,8 +99,9 @@ const View: SpaceFrontendModule['View'] = (input) => {
       }}
       parent={input.ctx.parentScreen}
       renderFab={() => {
-        if (!currentUserSpaceId) return <StartSpaceFrontend.ViewStartSpaceButton {...input} />
-        return null
+        if (currentUserSpaceId) return null
+
+        return <StartSpaceFrontend.ViewStartSpaceButton {...input} />
       }}
       renderBody={() => {
         return (
