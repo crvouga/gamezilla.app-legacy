@@ -1,10 +1,10 @@
 import { type WithEventId, withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
+import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from '~/@/ui'
 import type { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, AppFrontendCmd, playSound } from '~/app/@/frontend/cmd'
-import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from '~/@/ui'
-import { ScreenActions } from '~/app/@/screen/screen-actions'
+import { ScreenLayout } from '~/app/@/screen/screen-layout'
 import { FeedItem } from '~/app/spaces/@/feed-item'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
@@ -344,7 +344,7 @@ const View: Module['View'] = (input) => {
     },
     bot: {
       label: input.ctx.t('connect-four.bot-level', input.modelSpace.botLevel),
-      renderIcon: (iconinput) => <ViewBotLevel {...iconinput} level={input.modelSpace.botLevel} />,
+      renderIcon: (iconInput) => <ViewBotLevel {...iconInput} level={input.modelSpace.botLevel} />,
     },
     playerOne: {
       label: input.ctx.t('connect-four.red'),
@@ -412,67 +412,73 @@ const View: Module['View'] = (input) => {
   const isSpectating = input.ctx.currentUserId !== input.modelSpace.playingUserId
 
   return (
-    <LayoutGame ctx={input.ctx} isSpectating={isSpectating}>
-      <div className='flex w-full flex-1 flex-col items-center justify-center gap-1'>
-        <VsBotGame.VsBotPlayerSection {...vsBotGameInput} />
+    <ScreenLayout
+      ctx={input.ctx}
+      id='connect-four-vs-bot'
+      main={
+        <LayoutGame ctx={input.ctx} isSpectating={isSpectating}>
+          <div className='flex w-full flex-1 flex-col items-center justify-center gap-1'>
+            <VsBotGame.VsBotPlayerSection {...vsBotGameInput} />
 
-        <VsBotGame.ViewStatusBar {...vsBotSetupInput} status={toVsBotStatus(status)} />
+            <VsBotGame.ViewStatusBar {...vsBotSetupInput} status={toVsBotStatus(status)} />
 
-        <div className='relative flex w-full flex-col items-center justify-center overflow-hidden'>
-          <ViewColumns
-            gameId={0}
-            columns={input.modelSpace.columns}
-            disabled={isSpectating || status.type !== 'Playing'}
-            onDropDisc={(columnIndex) => {
-              input.dispatch({
-                t: 'user-dropped-disc',
-                columnIndex,
-                userId: input.ctx.currentUserId,
-              })
-            }}
-          />
-          {input.model && (
-            <VsBotGame.ViewGameOverOverlay
-              {...vsBotGameInput}
-              model={input.model.vsBotGame}
-              onPlayAgain={() =>
-                input.dispatch({
-                  t: 'user-restarted-game',
-                  userId: input.ctx.currentUserId,
-                })
-              }
-              gameOver={toGameOver(input.modelSpace.columns)}
-            />
-          )}
-        </div>
-      </div>
-
-      {input.ctx.currentUserId === input.modelSpace.playingUserId && (
-        <ScreenActions.View
-          id='vs-bot-buttons'
-          ctx={input.ctx}
-          open={false}
-          onToggle={() => {}}
-          buttons={[
-            {
-              icon: (props) => <IconArrowLeftOnRect {...props} />,
-              label: input.ctx.t('app.exit'),
-              onClick: () => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUserId }),
-            },
-            {
-              icon: (props) => <IconRightLeft {...props} />,
-              label: input.ctx.t('game.swap-sides'),
-              onClick: () => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUserId }),
-            },
-            {
-              icon: (props) => <IconArrowRotateLeft {...props} />,
-              label: input.ctx.t('app.restart'),
-              onClick: () => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUserId }),
-            },
-          ]}
-        />
-      )}
-    </LayoutGame>
+            <div className='relative flex w-full flex-col items-center justify-center overflow-hidden'>
+              <ViewColumns
+                gameId={0}
+                columns={input.modelSpace.columns}
+                disabled={isSpectating || status.type !== 'Playing'}
+                onDropDisc={(columnIndex) => {
+                  input.dispatch({
+                    t: 'user-dropped-disc',
+                    columnIndex,
+                    userId: input.ctx.currentUserId,
+                  })
+                }}
+              />
+              {input.model && (
+                <VsBotGame.ViewGameOverOverlay
+                  {...vsBotGameInput}
+                  model={input.model.vsBotGame}
+                  onPlayAgain={() =>
+                    input.dispatch({
+                      t: 'user-restarted-game',
+                      userId: input.ctx.currentUserId,
+                    })
+                  }
+                  gameOver={toGameOver(input.modelSpace.columns)}
+                />
+              )}
+            </div>
+          </div>
+        </LayoutGame>
+      }
+      actions={
+        input.ctx.currentUserId === input.modelSpace.playingUserId
+          ? {
+              id: 'vs-bot-buttons',
+              open: false,
+              onToggle: () => {},
+              buttons: [
+                {
+                  icon: (props) => <IconArrowLeftOnRect {...props} />,
+                  label: input.ctx.t('app.exit'),
+                  onClick: () => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUserId }),
+                },
+                {
+                  icon: (props) => <IconRightLeft {...props} />,
+                  label: input.ctx.t('game.swap-sides'),
+                  onClick: () => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUserId }),
+                },
+                {
+                  icon: (props) => <IconArrowRotateLeft {...props} />,
+                  label: input.ctx.t('app.restart'),
+                  onClick: () => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUserId }),
+                },
+              ],
+            }
+          : undefined
+      }
+    />
   )
 }
 

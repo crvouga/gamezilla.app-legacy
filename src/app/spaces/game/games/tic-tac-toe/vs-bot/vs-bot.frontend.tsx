@@ -1,9 +1,9 @@
 import type { Eff } from '~/@/eff'
 import { Posix } from '~/@/time/posix'
+import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from '~/@/ui'
 import { AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from '~/@/ui'
-import { ScreenActions } from '~/app/@/screen/screen-actions'
+import { ScreenLayout } from '~/app/@/screen/screen-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { IconBotCute, IconBotLevel1, IconBotScary, VsBotGame, VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
 import { type BotLevel, allBotLevels, toStatus, toTurn } from '../@/tic-tic-toe/tic-tac-toe'
@@ -143,13 +143,13 @@ export const View = (input: {
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  const vsBotinput: VsBotSetup.VsBotSetupInput = {
+  const vsBotInput: VsBotSetup.VsBotSetupInput = {
     bot: {
       label: input.ctx.t('tic-tac-toe.bot-level', input.model.botLevel),
-      renderIcon: (iconinput) =>
+      renderIcon: (iconInput) =>
         renderBotLevel({
           level: input.model.botLevel,
-          ...iconinput,
+          ...iconInput,
         }),
     },
     onSwapSides: () =>
@@ -222,15 +222,15 @@ export const View = (input: {
             c,
           })
         }
-        {...vsBotinput}
+        {...vsBotInput}
       />
     )
   }
 
   const vsBotGameInput: VsBotGame.VsBotGameInput = {
-    ...vsBotinput,
+    ...vsBotInput,
     human: {
-      ...vsBotinput.human,
+      ...vsBotInput.human,
       userId: input.model.player,
     },
     turn: null,
@@ -241,31 +241,32 @@ export const View = (input: {
   const status = toStatus(input.model.board)
 
   return (
-    <div className='flex h-full w-full flex-col'>
-      <div className='flex flex-1 flex-col items-center justify-center'>
-        <VsBotGame.VsBotPlayerSection {...vsBotGameInput} />
+    <ScreenLayout
+      ctx={input.ctx}
+      id='tic-tac-toe-vs-bot'
+      main={
+        <div className='flex flex-col items-center justify-center'>
+          <VsBotGame.VsBotPlayerSection {...vsBotGameInput} />
 
-        <LoadingBar
-          className='w-full'
-          disabled={input.model.userPlayerType === turn || status.type !== 'Turn'}
-          color={gameTheme.background}
-        />
+          <LoadingBar
+            className='w-full'
+            disabled={input.model.userPlayerType === turn || status.type !== 'Turn'}
+            color={gameTheme.background}
+          />
 
-        <ViewBoard
-          board={input.model.board}
-          onClick={(position) =>
-            input.dispatch({
-              t: 'input-move',
-              position,
-            })
-          }
-        />
-      </div>
-
-      <ScreenActions.View
-        id='tic-tac-toe-vs-bot-buttons'
-        ctx={input.ctx}
-        buttons={[
+          <ViewBoard
+            board={input.model.board}
+            onClick={(position) =>
+              input.dispatch({
+                t: 'input-move',
+                position,
+              })
+            }
+          />
+        </div>
+      }
+      actions={{
+        buttons: [
           {
             icon: (input) => <IconArrowLeftOnRect {...input} />,
             label: input.ctx.t('app.exit'),
@@ -290,11 +291,11 @@ export const View = (input: {
                 t: 'restart',
               }),
           },
-        ]}
-        open={false}
-        onToggle={() => {}}
-      />
-    </div>
+        ],
+        open: false,
+        onToggle: () => {},
+      }}
+    />
   )
 }
 

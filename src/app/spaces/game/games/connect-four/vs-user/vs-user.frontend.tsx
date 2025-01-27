@@ -1,6 +1,4 @@
 import { Sub } from '~/@/sub'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import {
   Avatar,
   Button,
@@ -11,8 +9,10 @@ import {
   IconSpinner,
   IconXMark,
 } from '~/@/ui'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
+import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ConfirmationDialog } from '~/app/@/screen/confirmation-dialog'
-import { ScreenActions } from '~/app/@/screen/screen-actions'
+import { ScreenLayout } from '~/app/@/screen/screen-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -222,52 +222,81 @@ const View: Module['View'] = (input) => {
     case 'game':
     case 'game-over': {
       const currentUserPlayerType = toPlayerType(input.ctx.currentUserId, input.modelSpace)
-
+      const isSpectating = currentUserPlayerType === null
       return (
-        <LayoutGame ctx={input.ctx} isSpectating={currentUserPlayerType === null}>
-          <div className='flex w-full flex-1 flex-col items-center justify-center gap-2'>
-            <div className='flex w-full items-center gap-2 px-2'>
-              <PlayerSlot playerType='player-one' modelSpace={input.modelSpace} ctx={input.ctx} />
-              <PlayerSlot playerType='player-two' modelSpace={input.modelSpace} ctx={input.ctx} />
-            </div>
+        <ScreenLayout
+          id='connect-four-vs-user'
+          ctx={input.ctx}
+          main={
+            <LayoutGame
+              isSpectating={isSpectating}
+              className='flex w-full flex-1 flex-col items-center justify-center gap-2'
+              ctx={input.ctx}
+            >
+              <div className='flex w-full items-center gap-2 px-2'>
+                <PlayerSlot playerType='player-one' modelSpace={input.modelSpace} ctx={input.ctx} />
+                <PlayerSlot playerType='player-two' modelSpace={input.modelSpace} ctx={input.ctx} />
+              </div>
 
-            <Feedback ctx={input.ctx} modelSpace={input.modelSpace} />
+              <Feedback ctx={input.ctx} modelSpace={input.modelSpace} />
 
-            <div className='relative w-full'>
-              <ViewColumns
-                columns={input.modelSpace.columns}
-                gameId={input.modelSpace.gameId}
-                onDropDisc={(columnIndex) =>
+              <div className='relative w-full'>
+                <ViewColumns
+                  columns={input.modelSpace.columns}
+                  gameId={input.modelSpace.gameId}
+                  onDropDisc={(columnIndex) =>
+                    input.dispatch({
+                      t: 'user-dropped-disc',
+                      userId: input.ctx.currentUserId,
+                      columnIndex,
+                    })
+                  }
+                  onHover={(columnIndex) =>
+                    input.dispatch({
+                      t: 'hovered-over-columns',
+                      columnIndex,
+                    })
+                  }
+                  disabled={
+                    toTurn(input.modelSpace.columns) !== currentUserPlayerType || input.modelSpace.type === 'game-over'
+                  }
+                />
+                {input.modelSpace.type === 'game-over' && (
+                  <div className='absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50'>
+                    <ViewGameOverMessage dispatch={input.dispatch} ctx={input.ctx} modelSpace={input.modelSpace} />
+                  </div>
+                )}
+              </div>
+
+              <ConfirmationDialog
+                headerIcon={<IconFlag className='h-10 w-10' />}
+                title={input.ctx.t('app.resign')}
+                onCancel={() =>
                   input.dispatch({
-                    t: 'user-dropped-disc',
+                    t: 'close-modal',
+                  })
+                }
+                onClose={() =>
+                  input.dispatch({
+                    t: 'close-modal',
+                  })
+                }
+                confirmTitle={input.ctx.t('app.resign')}
+                onConfirm={() =>
+                  input.dispatch({
+                    t: 'user-resigned',
                     userId: input.ctx.currentUserId,
-                    columnIndex,
                   })
                 }
-                onHover={(columnIndex) =>
-                  input.dispatch({
-                    t: 'hovered-over-columns',
-                    columnIndex,
-                  })
-                }
-                disabled={
-                  toTurn(input.modelSpace.columns) !== currentUserPlayerType || input.modelSpace.type === 'game-over'
-                }
+                open={input.model.openedModal === 'confirm-resign'}
               />
-              {input.modelSpace.type === 'game-over' && (
-                <div className='absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50'>
-                  <ViewGameOverMessage dispatch={input.dispatch} ctx={input.ctx} modelSpace={input.modelSpace} />
-                </div>
-              )}
-            </div>
-          </div>
-
-          <ScreenActions.View
-            id='game-buttons'
-            ctx={input.ctx}
-            open={false}
-            onToggle={() => {}}
-            buttons={[
+            </LayoutGame>
+          }
+          actions={{
+            id: 'game-buttons',
+            open: false,
+            onToggle: () => {},
+            buttons: [
               input.modelSpace.type === 'game'
                 ? {
                     icon: (props: { className?: string }) => <IconFlag {...props} />,
@@ -304,32 +333,9 @@ const View: Module['View'] = (input) => {
                     },
                   }
                 : null,
-            ]}
-          />
-
-          <ConfirmationDialog
-            headerIcon={<IconFlag className='h-10 w-10' />}
-            title={input.ctx.t('app.resign')}
-            onCancel={() =>
-              input.dispatch({
-                t: 'close-modal',
-              })
-            }
-            onClose={() =>
-              input.dispatch({
-                t: 'close-modal',
-              })
-            }
-            confirmTitle={input.ctx.t('app.resign')}
-            onConfirm={() =>
-              input.dispatch({
-                t: 'user-resigned',
-                userId: input.ctx.currentUserId,
-              })
-            }
-            open={input.model.openedModal === 'confirm-resign'}
-          />
-        </LayoutGame>
+            ],
+          }}
+        />
       )
     }
   }

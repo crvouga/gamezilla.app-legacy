@@ -3,9 +3,9 @@ import { exhaustive } from '~/@/function/exhaustive'
 import { pipe } from '~/@/function/pipe'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from '~/@/ui'
-import { ScreenActions } from '~/app/@/screen/screen-actions'
+import { AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
+import { ScreenLayout } from '~/app/@/screen/screen-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
 import { LayoutGame } from '../../@/ui/layout-game'
@@ -416,46 +416,51 @@ export const View = ({
   const bottomSlot = boardOrientation === model.spaceModel.userColor ? userSlot : botSlot
 
   return (
-    <LayoutGame ctx={ctx}>
-      <div className='flex w-full flex-1 flex-col items-center justify-center'>
-        {topSlot}
+    <ScreenLayout
+      ctx={ctx}
+      id='chess-vs-bot'
+      main={
+        <LayoutGame ctx={ctx}>
+          <div className='flex w-full flex-1 flex-col items-center justify-center'>
+            {topSlot}
 
-        <Chessboard
-          id='chessboard'
-          model={model.spaceModel.board}
-          orientation={boardOrientation}
-          onPieceDrop={(move) => {
-            const msg: MsgFrontend = {
-              t: 'input-move',
-              move: {
-                from: move.source,
-                to: move.target,
-                promotion: 'q',
-              },
-            }
+            <Chessboard
+              id='chessboard'
+              model={model.spaceModel.board}
+              orientation={boardOrientation}
+              onPieceDrop={(move) => {
+                const msg: MsgFrontend = {
+                  t: 'input-move',
+                  move: {
+                    from: move.source,
+                    to: move.target,
+                    promotion: 'q',
+                  },
+                }
 
-            dispatch(msg)
+                dispatch(msg)
 
-            // return result.t === "ok";
-            return true
-          }}
-        />
-        {bottomSlot}
-      </div>
-      <ScreenActions.View
-        id='vs-bot-buttons'
-        ctx={ctx}
-        open={false}
-        onToggle={() => {}}
-        buttons={[
+                // return result.t === "ok";
+                return true
+              }}
+            />
+            {bottomSlot}
+          </div>
+        </LayoutGame>
+      }
+      actions={{
+        id: 'vs-bot-buttons',
+        open: false,
+        onToggle: () => {},
+        buttons: [
           {
             icon: (props) => <IconArrowLeftOnRect {...props} />,
             label: ctx.t('app.exit'),
             onClick: onClose,
           },
-        ]}
-      />
-    </LayoutGame>
+        ],
+      }}
+    />
   )
 }
 
