@@ -67,15 +67,6 @@ const update: SpaceFrontendModule['update'] = (input) => {
   }
 
   switch (input.msg?.t) {
-    case 'time-passed': {
-      return {
-        model: {
-          ...input.model,
-          listSpacesRequest: RequestResponse.timePassed(input.model.listSpacesRequest, input.ctx.now),
-        },
-      }
-    }
-
     case 'clicked-space-card': {
       return {
         model: input.model,

@@ -58,7 +58,6 @@ export type MsgBackend =
 
 export type MsgFrontend =
   | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgFrontend }
-  | { t: 'time-passed' }
   | { t: 'clicked-go-home-button' }
   | { t: 'clicked-game-tile'; gameName: GameName }
   | { t: 'submitted-join-space-form'; spaceId: SpaceId }

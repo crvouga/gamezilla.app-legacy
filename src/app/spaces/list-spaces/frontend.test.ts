@@ -2,15 +2,13 @@ import { describe, expect, it, test } from 'bun:test'
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
-import { RequestResponse, isRequesting, isResponseOk } from '~/@/request-response/request-response'
+import { isRequesting, isResponseOk } from '~/@/request-response/request-response'
 import type { Screen } from '~/@/screen/generated/screens'
-import { Posix } from '~/@/time/posix'
-import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND, didPlaySound, didPushScreen } from '~/app/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
-import { SpacesFrontend } from '../frontend'
 import { Space } from '../core/space'
+import { SpacesFrontend } from '../frontend'
 
 const Fixture = async (input?: { currentScreen?: Screen }) => {
   const f = await FixtureSpacesFrontend(input)
@@ -63,31 +61,6 @@ describe(import.meta.file, () => {
     expect(output.model.listSpacesRequest.t === 'loading').toBe(true)
   })
 
-  it('should timeout request', async () => {
-    const f = await Fixture()
-    const output = f.update(f.initial, [
-      {
-        msgEvt: {
-          t: 'screen-evt.screen-changed',
-          screen: {
-            n: 'spaces',
-            t: 'space-list',
-          },
-        },
-      },
-      {
-        ctx: {
-          ...f.ctx,
-          now: Posix.future(f.ctx.now, TimeSpan.minutes(5)),
-        },
-        msg: {
-          t: 'time-passed',
-        },
-      },
-    ])
-    expect(RequestResponse.didRequestTimeout(output.model.listSpacesRequest)).toBe(true)
-  })
-
   it('should be ok when backend responds with a list of spaces', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
@@ -109,39 +82,6 @@ describe(import.meta.file, () => {
       },
     ])
     expect(isResponseOk(output.model.listSpacesRequest)).toBe(true)
-  })
-
-  it('should be ok when backend responds with a list of spaces even when it timed out', async () => {
-    const f = await Fixture()
-    const updated = f.update(f.initial, [
-      {
-        msgEvt: {
-          t: 'screen-evt.screen-changed',
-          screen: {
-            n: 'spaces',
-            t: 'space-list',
-          },
-        },
-      },
-      {
-        ctx: {
-          ...f.ctx,
-          now: Posix.future(f.ctx.now, TimeSpan.minutes(5)),
-        },
-        msg: {
-          t: 'time-passed',
-        },
-      },
-      {
-        msgBackend: {
-          t: 'listed-spaces',
-          spaces: [Space.random(), Space.random(), Space.random()],
-          causedBy: null,
-        },
-      },
-    ])
-
-    expect(isResponseOk(updated.model.listSpacesRequest)).toBe(true)
   })
 
   it('should navigate to space screen after clicking a space card', async () => {
