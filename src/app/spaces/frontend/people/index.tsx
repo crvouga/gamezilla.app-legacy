@@ -1,5 +1,4 @@
-import { Avatar, Button, Drawer, IconButton, IconUserGroup, Typography } from '~/@/ui'
-import { Badge } from '~/@/ui/badge'
+import { Avatar, Button, Drawer, IconUserGroup, Typography } from '~/@/ui'
 import { APP_SOUND, openProfile, playSound } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/screen/screen-actions'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -22,59 +21,32 @@ const update: SpaceFrontendModule['update'] = (input) => {
 const updateUserPreview: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
     case 'clicked-preview-user-link': {
-      if (!model.modalPreviewUserId) {
-        return {
-          model,
-        }
-      }
+      if (!model.modalPreviewUserId) return { model }
 
-      return {
-        model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin), openProfile(model.modalPreviewUserId)],
-      }
-    }
-
-    default: {
-      return {
-        model,
-      }
+      return { model, msgCmd: [playSound(APP_SOUND.navForwardMin), openProfile(model.modalPreviewUserId)] }
     }
   }
+  return { model }
 }
 
 const updatePeopleModals: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
     case 'closed-modal': {
-      return {
-        model: { ...model, modal: null },
-        msgCmd: [playSound(APP_SOUND.tap)],
-      }
+      return { model: { ...model, modal: null }, msgCmd: [playSound(APP_SOUND.tap)] }
     }
 
     case 'clicked-people-button': {
-      return {
-        model: { ...model, modal: 'users' },
-        msgCmd: [playSound(APP_SOUND.tap)],
-      }
+      return { model: { ...model, modal: 'users' }, msgCmd: [playSound(APP_SOUND.tap)] }
     }
 
     case 'clicked-user': {
       return {
-        model: {
-          ...model,
-          modalPreviewUserId: msg.userId,
-          modal: 'user-preview',
-        },
+        model: { ...model, modalPreviewUserId: msg.userId, modal: 'user-preview' },
         msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
-
-    default: {
-      return {
-        model,
-      }
-    }
   }
+  return { model }
 }
 
 const updateFromCmd: SpaceFrontendModule['update'] = ({ msgCmd, model }) => {
@@ -89,36 +61,22 @@ const updateFromCmd: SpaceFrontendModule['update'] = ({ msgCmd, model }) => {
         msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
-    default: {
-      return {
-        model,
-      }
-    }
   }
+  return { model }
 }
 
 const updateFromEvent: SpaceFrontendModule['update'] = ({ msgEvt, model }) => {
   switch (msgEvt?.t) {
     case 'screen-evt.screen-changed': {
-      return {
-        model: {
-          ...model,
-          modal: null,
-        },
-      }
-    }
-    default: {
-      return {
-        model,
-      }
+      return { model: { ...model, modal: null } }
     }
   }
+  return { model }
 }
 
 const View: SpaceFrontendModule['View'] = (input) => {
-  if (!input.ctx.space || !input.ctx.currentUser) {
-    return null
-  }
+  if (!input.ctx.space) return null
+  if (!input.ctx.currentUser) return null
 
   const spaceCtx: SpaceFrontendCtx = {
     ...input.ctx,
@@ -129,7 +87,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
   }
 
   const modalProfile = input.model.modalPreviewUserId ? input.ctx.profiles[input.model.modalPreviewUserId] : null
-  const position: 'top' | 'bottom' = 'bottom'
+  const position: 'top' | 'bottom' = 'top'
   return (
     <>
       <Drawer
@@ -201,27 +159,6 @@ const View: SpaceFrontendModule['View'] = (input) => {
   )
 }
 
-const ViewIconButton: SpaceFrontendModule['View'] = (input) => {
-  if (!input.ctx.space) return null
-  if (!input.ctx.currentUserId) return null
-
-  const peopleCount = Object.keys(input.ctx.space.users).length
-
-  return (
-    <Badge id='people-button' badgeContent={peopleCount > 1 ? peopleCount : false}>
-      <IconButton
-        onClick={() =>
-          input.dispatch({
-            t: 'clicked-people-button',
-          })
-        }
-        label={input.ctx.t('spaces.people-count', peopleCount)}
-        renderIcon={(inputIcon) => <IconUserGroup {...inputIcon} />}
-      />
-    </Badge>
-  )
-}
-
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
   if (!input.ctx.space) return null
   if (!input.ctx.currentUserId) return null
@@ -238,7 +175,6 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
 
 export const People = {
   update,
-  ViewIconButton,
   View,
   viewAction,
 }

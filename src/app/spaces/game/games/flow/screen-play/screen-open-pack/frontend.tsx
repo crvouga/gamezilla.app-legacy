@@ -49,9 +49,7 @@ const View: FrontendModule['View'] = (input) => {
     return (
       <LayoutGameCoverArtHeader
         ctx={input.ctx}
-        topBar={{
-          title: input.ctx.t('flow.play'),
-        }}
+        topBar={{ title: input.ctx.t('flow.play') }}
         renderCoverArt={(input) => (
           <div {...input}>
             <div className='h-full w-full p-4'>

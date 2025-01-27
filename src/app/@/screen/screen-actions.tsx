@@ -25,7 +25,7 @@ type Ctx = {
 
 const DEFAULT_LIMIT = 4
 
-const View = (input: {
+export type ScreenActionProps = {
   id: string
   ctx: Ctx
   buttons: (ScreenAction | null)[]
@@ -33,7 +33,9 @@ const View = (input: {
   onToggle: () => void
   limit?: number
   size?: 'sm' | 'md'
-}) => {
+}
+
+const View = (input: ScreenActionProps) => {
   const cleanedButtons = input.buttons.filter((button) => button !== null)
   const firstButtons = cleanedButtons.slice(0, input.limit ?? DEFAULT_LIMIT)
   const lastButtons = cleanedButtons.slice(input.limit ?? DEFAULT_LIMIT)
@@ -41,7 +43,7 @@ const View = (input: {
     <div
       className={cn(
         'flex w-full shrink-0 items-center',
-        input.size === 'sm' && 'h-14',
+        input.size === 'sm' && 'h-12',
         (!input.size || input.size === 'md') && 'h-16',
       )}
       role='toolbar'
@@ -86,6 +88,7 @@ const View = (input: {
 
 const ScreenActionButton = (input: ScreenAction) => {
   const isDisabled = input.disabled || input.loading
+  const size = input.size ?? 'md'
   if (input.hidden) return null
   return (
     <button
@@ -106,8 +109,8 @@ const ScreenActionButton = (input: ScreenAction) => {
         input.color === 'selected' && 'text-blue-500',
         input.hidden ? 'hidden' : '',
         input.classNames?.button,
-        input.size === 'sm' && 'p-1.5 text-xs',
-        input.size === 'md' && 'p-2 text-sm',
+        size === 'sm' && 'p-1.5 text-xs',
+        size === 'md' && 'p-2 text-sm',
       )}
     >
       <div
@@ -117,14 +120,14 @@ const ScreenActionButton = (input: ScreenAction) => {
         )}
       >
         {input.icon({
-          className: cn(input.size === 'sm' && 'size-5', (!input.size || input.size === 'md') && 'size-7'),
+          className: cn(size === 'sm' && 'size-4', size === 'md' && 'size-7'),
         })}
         <Typography variant='label' text={input.label} className={cn('truncate', input.classNames?.label)} />
       </div>
 
       {input.loading && (
         <div className={'absolute inset-0 flex h-full w-full items-center justify-center'}>
-          <Spinner className={cn(input.size === 'sm' && 'size-6', (!input.size || input.size === 'md') && 'size-8')} />
+          <Spinner className={cn(size === 'sm' && 'size-5', size === 'md' && 'size-8')} />
         </div>
       )}
     </button>

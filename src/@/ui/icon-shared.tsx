@@ -5,4 +5,5 @@ export type IconInput = {
   y?: number
   width?: number
   height?: number
+  style?: React.CSSProperties
 }

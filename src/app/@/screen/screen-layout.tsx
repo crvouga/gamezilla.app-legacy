@@ -8,6 +8,7 @@ import { TopBar } from './top-bar'
 export type ScreenActionsProps = {
   id?: string
   limit?: number
+  size?: 'sm' | 'md'
   top?: VDomChildren
   buttons: (ScreenAction | null)[]
   onToggle: () => void
@@ -24,6 +25,7 @@ export type ScreenLayoutProps = {
     subtitle?: TranslatedText | null
     onBack?: () => void
   }
+  actionPosition?: 'top' | 'bottom'
   parentActions?: ScreenActionsProps | null
   actions?: ScreenActionsProps | null
   main: VDomChildren
@@ -42,82 +44,29 @@ export type ScreenLayoutProps = {
  * Primary screen layout component. Use this everywhere.
  */
 export const ScreenLayout = (input: ScreenLayoutProps) => {
-  const isMobile = false
+  const isMobile = true
   if (isMobile) return <ScreenLayoutMobile {...input} />
   return <ScreenLayoutDesktop {...input} />
 }
 
 const ScreenLayoutDesktop = (input: ScreenLayoutProps) => {
-  const Element = input.form ? 'form' : 'div'
-  return (
-    <Element
-      className='flex w-full flex-1 flex-col overflow-hidden'
-      onSubmit={(e) => {
-        e.preventDefault()
-        input.form?.onSubmit()
-      }}
-    >
-      {input.topBar && <TopBar ctx={input.ctx} onBack={input.topBar.onBack} title={input.topBar.title} />}
-
-      <div className='flex w-full flex-1 flex-col overflow-hidden'>{input.main}</div>
-
-      {input.form && <FormBottomButtons {...input.form} />}
-
-      {input.actions && (
-        <>
-          {input.actions.top}
-          <ScreenActions.View
-            id={input.actions.id ?? `${input.id}-bottom-buttons`}
-            ctx={input.ctx}
-            buttons={input.actions.buttons}
-            limit={input.actions.limit}
-            onToggle={input.actions.onToggle}
-            open={input.actions.open}
-          />
-        </>
-      )}
-
-      {input.parentActions && (
-        <>
-          {input.parentActions.top}
-          <ScreenActions.View
-            id={input.parentActions.id ?? `${input.id}-bottom-buttons`}
-            ctx={input.ctx}
-            buttons={input.parentActions.buttons}
-            limit={input.parentActions.limit}
-            onToggle={input.parentActions.onToggle}
-            open={input.parentActions.open}
-          />
-        </>
-      )}
-    </Element>
-  )
+  return <ScreenLayoutMobile {...input} />
 }
 
 const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.form ? 'form' : 'div'
-  return (
-    <Element
-      className='flex w-full flex-1 flex-col overflow-hidden'
-      onSubmit={(e) => {
-        e.preventDefault()
-        input.form?.onSubmit()
-      }}
-    >
-      {input.topBar && <TopBar ctx={input.ctx} onBack={input.topBar.onBack} title={input.topBar.title} />}
-
-      <div className='flex w-full flex-1 flex-col overflow-hidden'>{input.main}</div>
-
-      {input.form && <FormBottomButtons {...input.form} />}
-
+  const actionPosition = input.actionPosition ?? 'bottom'
+  const actions = (
+    <>
       {input.actions && (
         <>
           {input.actions.top}
           <ScreenActions.View
-            id={input.actions.id ?? `${input.id}-bottom-buttons`}
+            id={input.actions.id ?? `${input.id}-actions`}
             ctx={input.ctx}
             buttons={input.actions.buttons}
             limit={input.actions.limit}
+            size={input.actions.size}
             onToggle={input.actions.onToggle}
             open={input.actions.open}
           />
@@ -128,7 +77,8 @@ const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         <>
           {input.parentActions.top}
           <ScreenActions.View
-            id={input.parentActions.id ?? `${input.id}-bottom-buttons`}
+            size={input.parentActions.size}
+            id={input.parentActions.id ?? `${input.id}-actions`}
             ctx={input.ctx}
             buttons={input.parentActions.buttons}
             limit={input.parentActions.limit}
@@ -137,6 +87,25 @@ const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
           />
         </>
       )}
+    </>
+  )
+  return (
+    <Element
+      className='flex w-full flex-1 flex-col overflow-hidden'
+      onSubmit={(e) => {
+        e.preventDefault()
+        input.form?.onSubmit()
+      }}
+    >
+      {input.topBar && <TopBar ctx={input.ctx} onBack={input.topBar.onBack} title={input.topBar.title} />}
+
+      {actionPosition === 'top' && actions}
+
+      <div className='flex w-full flex-1 flex-col overflow-hidden'>{input.main}</div>
+
+      {input.form && <FormBottomButtons {...input.form} />}
+
+      {actionPosition === 'bottom' && actions}
     </Element>
   )
 }
