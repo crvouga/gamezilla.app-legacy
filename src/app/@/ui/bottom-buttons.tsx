@@ -3,7 +3,7 @@ import type { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
 import { Drawer, IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/app/@/ui'
 
-export type BottomButtonInput = {
+export type ScreenAction = {
   label: TranslatedText
   disabled?: boolean
   icon: (input: { className: string }) => VDom
@@ -26,7 +26,7 @@ const DEFAULT_LIMIT = 4
 const View = (input: {
   id: string
   ctx: Ctx
-  buttons: (BottomButtonInput | null)[]
+  buttons: (ScreenAction | null)[]
   open: boolean
   onToggle: () => void
   limit?: number
@@ -37,12 +37,12 @@ const View = (input: {
   return (
     <div className='flex h-16 w-full shrink-0 items-center' role='toolbar'>
       {firstButtons.map((button) => (
-        <Button {...button} key={button.label} />
+        <ScreenActionButton {...button} key={button.label} />
       ))}
 
       {lastButtons.length > 0 && (
         <>
-          <Button
+          <ScreenActionButton
             icon={(input) => <IconEllipsisVertical {...input} />}
             label={input.ctx.t('app.more')}
             onClick={input.onToggle}
@@ -73,7 +73,7 @@ const View = (input: {
   )
 }
 
-const Button = (input: BottomButtonInput) => {
+const ScreenActionButton = (input: ScreenAction) => {
   const isDisabled = input.disabled || input.loading
   if (input.hidden) return null
   return (
@@ -116,6 +116,6 @@ const Button = (input: BottomButtonInput) => {
   )
 }
 
-export const BottomButtons = {
+export const ScreenActions = {
   View,
 }

@@ -2,7 +2,7 @@ import { p } from '~/@/parser'
 import { APP_SOUND, AppFrontendCmd, copyToClipboard, playSound, showToast } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { IconCopy } from '~/app/@/ui'
-import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
+import type { ScreenAction } from '~/app/@/ui/bottom-buttons'
 import { Variant } from '../variant'
 import { VariantGridShorthand } from '../variant/grid'
 
@@ -52,13 +52,7 @@ const update = <TModel,>(input: {
   }
 }
 
-const viewAction = ({
-  ctx,
-  dispatch,
-}: {
-  ctx: AppFrontendCtx
-  dispatch: (m: MsgFrontend) => void
-}): BottomButtonInput[] => {
+const viewAction = ({ ctx, dispatch }: { ctx: AppFrontendCtx; dispatch: (m: MsgFrontend) => void }): ScreenAction[] => {
   return [
     {
       icon: (input) => <IconCopy {...input} />,

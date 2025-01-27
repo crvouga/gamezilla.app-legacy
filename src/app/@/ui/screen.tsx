@@ -1,5 +1,5 @@
 import { VDomChildren } from '~/@/vdom/vdom'
-import { BottomButtonInput, BottomButtons } from './bottom-buttons'
+import { ScreenAction, ScreenActions } from './bottom-buttons'
 import { TranslatedText } from '~/@/l18n'
 import { TopBar } from './top-bar'
 import { Translator } from '~/@/l18n/generated'
@@ -15,7 +15,7 @@ export const Screen = (input: {
     onBack?: () => void
   }
   bottomButtons?: {
-    buttons: BottomButtonInput[]
+    buttons: ScreenAction[]
     onToggle: () => void
     open: boolean
   }
@@ -26,7 +26,7 @@ export const Screen = (input: {
       {input.topBar && <TopBar ctx={input.ctx} onBack={input.topBar.onBack} title={input.topBar.title} />}
       <div className='flex w-full flex-1 flex-col overflow-hidden'>{input.children}</div>
       {input.bottomButtons && (
-        <BottomButtons.View
+        <ScreenActions.View
           id={`${input.id}-bottom-buttons`}
           ctx={input.ctx}
           buttons={input.bottomButtons.buttons}

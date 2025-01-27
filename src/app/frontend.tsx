@@ -19,7 +19,7 @@ import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
-import { BottomButtons } from './@/ui/bottom-buttons'
+import { ScreenActions } from './@/ui/bottom-buttons'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
 import * as AuthFrontend from './auth/frontend'
 import { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
@@ -648,7 +648,7 @@ const ViewBottomNavBar = (input: {
         />
       )}
 
-      <BottomButtons.View
+      <ScreenActions.View
         ctx={input.ctx}
         id='app-bottom-nav'
         onToggle={() => {}}

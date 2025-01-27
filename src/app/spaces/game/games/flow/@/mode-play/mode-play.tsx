@@ -4,7 +4,7 @@ import { p } from '~/@/parser'
 import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, AppFrontendCmd, playSound, showToast } from '~/app/@/frontend/cmd'
 import { IconCheckmark, Portal, Transition } from '~/app/@/ui'
-import { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
+import { ScreenAction } from '~/app/@/ui/bottom-buttons'
 import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
 import { Flow } from '../flow'
 import { AlgoDrawPipes } from './algo-draw-pipes'
@@ -593,7 +593,7 @@ export const viewResetAction = (input: {
   ctx: {
     t: Translator
   }
-}): BottomButtonInput => {
+}): ScreenAction => {
   const flow = toFlow({
     model: input.model,
     flow: input.flow,

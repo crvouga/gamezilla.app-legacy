@@ -3,7 +3,7 @@ import { IconPen, TopBar } from '~/app/@/ui'
 import { PackPuzzleGridUI } from '../../../@/pack/pack-puzzle-grid-ui'
 import { ScreenPackBuildSpace } from '../space/space'
 import type { FrontendModule } from '../types'
-import { BottomButtons } from '~/app/@/ui/bottom-buttons'
+import { ScreenActions } from '~/app/@/ui/bottom-buttons'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -72,7 +72,7 @@ const View: FrontendModule['View'] = (input) => {
           },
         }}
       />
-      <BottomButtons.View
+      <ScreenActions.View
         id='screen-puzzle-grid-bottom-buttons'
         ctx={input.ctx}
         open={true}

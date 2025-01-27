@@ -1,7 +1,7 @@
 import type { Eff } from '~/@/eff'
 import { Posix } from '~/@/time/posix'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from '~/app/@/ui'
-import { BottomButtons } from '~/app/@/ui/bottom-buttons'
+import { ScreenActions } from '~/app/@/ui/bottom-buttons'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { IconBotCute, IconBotLevel1, IconBotScary, VsBotGame, VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
 import { type BotLevel, allBotLevels, toStatus, toTurn } from '../@/tic-tic-toe/tic-tac-toe'
@@ -262,7 +262,7 @@ export const View = (input: {
         />
       </div>
 
-      <BottomButtons.View
+      <ScreenActions.View
         id='tic-tac-toe-vs-bot-buttons'
         ctx={input.ctx}
         buttons={[

@@ -3,7 +3,7 @@ import type { Translator } from '~/@/l18n/generated'
 import { Loading, Result, isOk } from '~/@/result'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
 import { Button, Drawer, IconFloppyDisk, Typography } from '~/app/@/ui'
-import { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
+import { ScreenAction } from '~/app/@/ui/bottom-buttons'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { ModeEdit } from '../../../@/mode-edit'
 import type { Puzzle } from '../../../@/puzzle/puzzle'
@@ -241,7 +241,7 @@ export const viewBottomButtons = ({
   }
   model: ModelFrontend
   dispatch: (msg: MsgFrontend) => void
-}): BottomButtonInput[] => {
+}): ScreenAction[] => {
   return [
     {
       icon: (input) => <IconFloppyDisk {...input} />,

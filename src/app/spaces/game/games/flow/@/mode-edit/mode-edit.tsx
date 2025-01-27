@@ -5,7 +5,7 @@ import { p } from '~/@/parser'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { Drawer, DrawerHeader, IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/app/@/ui'
-import { BottomButtons } from '~/app/@/ui/bottom-buttons'
+import { ScreenActions } from '~/app/@/ui/bottom-buttons'
 import { ViewForm } from '~/app/@/ui/form'
 import { FormBottomButtons } from '~/app/@/ui/form-button-buttons'
 import * as Flow from '../flow/flow'
@@ -467,7 +467,7 @@ export const View = (input: { ctx: AppFrontendCtx; model: Model; dispatch: (m: M
       }
       bottom={
         <>
-          <BottomButtons.View
+          <ScreenActions.View
             id='mode-edit-buttons'
             ctx={input.ctx}
             open={false}

@@ -4,7 +4,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, AppFrontendCmd, playSound } from '~/app/@/frontend/cmd'
 import type { UserId } from '~/app/@/data/user-id'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from '~/app/@/ui'
-import { BottomButtons } from '~/app/@/ui/bottom-buttons'
+import { ScreenActions } from '~/app/@/ui/bottom-buttons'
 import { FeedItem } from '~/app/spaces/@/feed-item'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
@@ -448,7 +448,7 @@ const View: Module['View'] = (input) => {
       </div>
 
       {input.ctx.currentUserId === input.modelSpace.playingUserId && (
-        <BottomButtons.View
+        <ScreenActions.View
           id='vs-bot-buttons'
           ctx={input.ctx}
           open={false}

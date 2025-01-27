@@ -14,7 +14,7 @@ import {
   Spinner,
   cn,
 } from '~/app/@/ui'
-import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
+import type { ScreenAction } from '~/app/@/ui/bottom-buttons'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../@/ui/layout-game'
@@ -391,14 +391,14 @@ export const BottomBarActions = ({
   ctx: {
     t: Translator
   }
-}): BottomButtonInput[] => {
-  const exit: BottomButtonInput = {
+}): ScreenAction[] => {
+  const exit: ScreenAction = {
     icon: (input) => <IconArrowLeftOnRect {...input} />,
     label: ctx.t('app.exit'),
     onClick: onClose,
   }
 
-  const hint: BottomButtonInput = {
+  const hint: ScreenAction = {
     icon: (input) => <IconLightbulb {...input} />,
     label: ctx.t('game.hint'),
     disabled: isNoMoreHints(model) || model.t === 'loading',
@@ -408,7 +408,7 @@ export const BottomBarActions = ({
       }),
   }
 
-  const retry: BottomButtonInput = {
+  const retry: ScreenAction = {
     icon: (input) => <IconArrowRotateLeft {...input} />,
     label: ctx.t('app.retry'),
     onClick: () =>
@@ -418,7 +418,7 @@ export const BottomBarActions = ({
     color: 'danger',
   }
 
-  const skip: BottomButtonInput = {
+  const skip: ScreenAction = {
     icon: (input) => <IconArrowRight {...input} />,
     label: ctx.t('app.skip'),
     onClick: () =>
@@ -427,7 +427,7 @@ export const BottomBarActions = ({
       }),
   }
 
-  const next: BottomButtonInput = {
+  const next: ScreenAction = {
     icon: (input) => <IconArrowCircle {...input} />,
     label: ctx.t('app.next'),
     color: 'success',

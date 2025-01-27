@@ -1,6 +1,6 @@
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { IconChevronLeft, IconChevronRight, IconDeleteForever, TopBar } from '~/app/@/ui'
-import { BottomButtons } from '~/app/@/ui/bottom-buttons'
+import { ScreenActions } from '~/app/@/ui/bottom-buttons'
 import { ModePlay } from '../../../@/mode-play'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
@@ -112,7 +112,7 @@ const View: FrontendModule['View'] = (input) => {
         }
         bottom={null}
       />
-      <BottomButtons.View
+      <ScreenActions.View
         id='screen-puzzle-buttons'
         ctx={input.ctx}
         open={input.modelSpace.opened === 'more'}

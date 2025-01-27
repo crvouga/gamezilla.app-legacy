@@ -10,7 +10,7 @@ import {
   IconSpinner,
   IconXMark,
 } from '~/app/@/ui'
-import { BottomButtons } from '~/app/@/ui/bottom-buttons'
+import { ScreenActions } from '~/app/@/ui/bottom-buttons'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -262,7 +262,7 @@ const View: Module['View'] = (input) => {
             </div>
           </div>
 
-          <BottomButtons.View
+          <ScreenActions.View
             id='game-buttons'
             ctx={input.ctx}
             open={false}

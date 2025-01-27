@@ -1,7 +1,7 @@
 import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from '~/app/@/ui'
-import { BottomButtons } from '~/app/@/ui/bottom-buttons'
+import { ScreenActions } from '~/app/@/ui/bottom-buttons'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
@@ -172,7 +172,7 @@ const View: FrontendModule['View'] = (input) => {
         bottom={null}
       />
 
-      <BottomButtons.View
+      <ScreenActions.View
         id='screen-play-puzzle-bottom-bar'
         ctx={input.ctx}
         onToggle={() =>

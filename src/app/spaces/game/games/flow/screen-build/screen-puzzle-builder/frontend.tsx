@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { Drawer, IconEllipsisVertical, IconPen, IconPlay, TopBar } from '~/app/@/ui'
-import { BottomButtons } from '~/app/@/ui/bottom-buttons'
+import { ScreenActions } from '~/app/@/ui/bottom-buttons'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
@@ -220,7 +220,7 @@ const ViewModeEdit: BuilderTypes.FrontendModule['View'] = (input) => {
         dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
       />
 
-      <BottomButtons.View
+      <ScreenActions.View
         id='puzzle-builder-edit-buttons'
         ctx={input.ctx}
         open={false}
@@ -266,7 +266,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
           />
         }
         bottom={
-          <BottomButtons.View
+          <ScreenActions.View
             ctx={input.ctx}
             id='hint-button'
             open={false}
@@ -289,7 +289,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
         }
       />
 
-      <BottomButtons.View
+      <ScreenActions.View
         id='puzzle-builder-buttons'
         ctx={input.ctx}
         open={false}

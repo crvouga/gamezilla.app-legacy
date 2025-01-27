@@ -5,7 +5,7 @@ import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from '~/app/@/ui'
-import { BottomButtons } from '~/app/@/ui/bottom-buttons'
+import { ScreenActions } from '~/app/@/ui/bottom-buttons'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
 import { LayoutGame } from '../../@/ui/layout-game'
@@ -442,7 +442,7 @@ export const View = ({
         />
         {bottomSlot}
       </div>
-      <BottomButtons.View
+      <ScreenActions.View
         id='vs-bot-buttons'
         ctx={ctx}
         open={false}

@@ -2,7 +2,7 @@ import { Eff } from '~/@/eff'
 import { p } from '~/@/parser'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { IconLightbulb } from '~/app/@/ui'
-import type { BottomButtonInput } from '~/app/@/ui/bottom-buttons'
+import type { ScreenAction } from '~/app/@/ui/bottom-buttons'
 import { Flow } from '../../flow'
 import { GroupId } from '../../flow/group-id'
 import { FlowHash } from '../../flow/hash'
@@ -197,7 +197,7 @@ export const viewUseHintAction = (input: {
       solutions: Solutions
     }
   disabled: boolean
-}): BottomButtonInput => {
+}): ScreenAction => {
   return {
     icon: (input) => <IconLightbulb {...input} />,
     label: input.ctx.t('game.hint'),
