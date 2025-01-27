@@ -12,15 +12,10 @@ import { StartSpaceFrontend } from '../start-space/frontend'
 import { ViewSpaceCard } from './space-card'
 
 const sendListSpacesRequest: SpaceFrontendModule['update'] = ({ model, ctx }) => {
-  if (model.listSpacesRequest.t === 'loading') {
-    return { model }
-  }
+  if (model.listSpacesRequest.t === 'loading') return { model }
 
   return {
-    model: {
-      ...model,
-      listSpacesRequest: startedRequest(ctx.now),
-    },
+    model: { ...model, listSpacesRequest: startedRequest(ctx.now) },
     msgCmd: [sendToBackend({ t: 'list-spaces', pagination: { limit: 1000, offset: 0 } })],
   }
 }
