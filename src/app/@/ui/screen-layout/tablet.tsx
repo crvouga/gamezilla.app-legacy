@@ -15,17 +15,6 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
       }}
     >
       <div className='flex w-full flex-1 flex-row overflow-hidden'>
-        {input.actions && (
-          <ScreenActionsSideBar.View
-            id={input.actions.id ?? `${input.id}-actions`}
-            ctx={input.ctx}
-            buttons={input.actions.buttons}
-            size={input.actions.size}
-            open={input.actions.open}
-            onToggle={input.actions.onToggle}
-          />
-        )}
-
         {input.parent?.actions && (
           <ScreenActionsSideBar.View
             id={input.parent.actions.id ?? `${input.id}-actions`}
@@ -34,6 +23,17 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
             size={input.parent.actions.size}
             open={input.parent.actions.open}
             onToggle={input.parent.actions.onToggle}
+          />
+        )}
+
+        {input.actions && (
+          <ScreenActionsSideBar.View
+            id={input.actions.id ?? `${input.id}-actions`}
+            ctx={input.ctx}
+            buttons={input.actions.buttons}
+            size={input.actions.size}
+            open={input.actions.open}
+            onToggle={input.actions.onToggle}
           />
         )}
 
