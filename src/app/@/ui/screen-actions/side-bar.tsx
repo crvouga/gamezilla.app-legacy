@@ -7,7 +7,7 @@ const View = (input: ScreenActionProps) => {
 
   return (
     <div
-      className={cn('flex w-24 shrink-0 flex-col', size === 'sm' && 'gap-1 p-2', size === 'md' && 'gap-3 p-4')}
+      className={cn('flex w-32 shrink-0 flex-col', size === 'sm' && 'gap-1 p-2', size === 'md' && 'gap-3 p-4')}
       role='toolbar'
     >
       {cleanedButtons.map((button) => (

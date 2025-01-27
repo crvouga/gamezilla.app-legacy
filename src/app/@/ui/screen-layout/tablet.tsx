@@ -46,7 +46,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
           </div>
 
           {input.form && (
-            <div className='flex w-full items-center justify-end'>
+            <div className='flex w-full items-center justify-center'>
               <div className='w-full max-w-2xl'>
                 <FormBottomButtons {...input.form} />
               </div>
