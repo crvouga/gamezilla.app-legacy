@@ -240,11 +240,7 @@ const updateLoop = (ctx: FrontendCtx, acc: Output): Output => {
   const [msgCmd, ...msgCmdRest] = acc.msgCmd
 
   if (msgCmd) {
-    const updatedCmd = updateChild({
-      ctx,
-      model: acc.model,
-      msgCmd,
-    })
+    const updatedCmd = updateChild({ ctx, model: acc.model, msgCmd })
     return updateLoop(ctx, {
       model: updatedCmd.model,
       msgCmd: Msg.batch(msgCmdRest, updatedCmd.msgCmd),
@@ -256,11 +252,7 @@ const updateLoop = (ctx: FrontendCtx, acc: Output): Output => {
   const [msgEvt, ...msgEvtRest] = acc.msgEvt
 
   if (msgEvt) {
-    const updatedEvt = updateChild({
-      ctx,
-      model: acc.model,
-      msgEvt,
-    })
+    const updatedEvt = updateChild({ ctx, model: acc.model, msgEvt })
     return updateLoop(ctx, {
       model: updatedEvt.model,
       msgCmd: Msg.batch(msgCmdRest, updatedEvt.msgCmd),
