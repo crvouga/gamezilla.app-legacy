@@ -1,11 +1,12 @@
-import { APP_SOUND, openProfile, playSound } from '~/app/@/frontend/cmd'
 import { Avatar, Button, Drawer, IconButton, IconUserGroup, Typography } from '~/@/ui'
 import { Badge } from '~/@/ui/badge'
-import { SpaceFrontendModule } from '../../@/architecture/space-frontend'
+import { APP_SOUND, openProfile, playSound } from '~/app/@/frontend/cmd'
+import { ScreenAction } from '~/app/@/screen/screen-actions'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ViewUsersInSpaceList } from '~/app/spaces/game/games/@/ui/users-in-space-list'
 import { ViewHostChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/host-chip'
 import { ViewYouChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/you-chip'
+import { SpaceFrontendModule } from '../../@/architecture/space-frontend'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   const { model } = input
@@ -128,12 +129,13 @@ const View: SpaceFrontendModule['View'] = (input) => {
   }
 
   const modalProfile = input.model.modalPreviewUserId ? input.ctx.profiles[input.model.modalPreviewUserId] : null
+  const position: 'top' | 'bottom' = 'bottom'
   return (
     <>
       <Drawer
         ctx={input.ctx}
         ariaLabel={input.ctx.t('app.people')}
-        position='top'
+        position={position}
         id='users'
         open={input.model.modal === 'users'}
         onClose={() => input.dispatch({ t: 'closed-modal' })}
@@ -152,14 +154,10 @@ const View: SpaceFrontendModule['View'] = (input) => {
       <Drawer
         ctx={input.ctx}
         ariaLabel={input.ctx.t('spaces.see-profile')}
-        position='top'
+        position={position}
         id='user-preview'
         open={input.model.modal === 'user-preview'}
-        onClose={() =>
-          input.dispatch({
-            t: 'closed-modal',
-          })
-        }
+        onClose={() => input.dispatch({ t: 'closed-modal' })}
       >
         <div>
           <button
@@ -204,9 +202,8 @@ const View: SpaceFrontendModule['View'] = (input) => {
 }
 
 const ViewIconButton: SpaceFrontendModule['View'] = (input) => {
-  if (!input.ctx.space || !input.ctx.currentUserId) {
-    return null
-  }
+  if (!input.ctx.space) return null
+  if (!input.ctx.currentUserId) return null
 
   const peopleCount = Object.keys(input.ctx.space.users).length
 
@@ -225,8 +222,23 @@ const ViewIconButton: SpaceFrontendModule['View'] = (input) => {
   )
 }
 
+const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
+  if (!input.ctx.space) return null
+  if (!input.ctx.currentUserId) return null
+
+  const peopleCount = Object.keys(input.ctx.space.users).length
+
+  return {
+    icon: (inputIcon) => <IconUserGroup {...inputIcon} />,
+    label: input.ctx.t('spaces.people-count', peopleCount),
+    onClick: () => input.dispatch({ t: 'clicked-people-button' }),
+    badge: peopleCount > 1 ? peopleCount : undefined,
+  }
+}
+
 export const People = {
   update,
   ViewIconButton,
   View,
+  viewAction,
 }

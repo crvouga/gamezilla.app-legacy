@@ -4,6 +4,8 @@ import { Button } from '~/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import type { MsgSpace } from '../core/space-msg'
+import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
+import { ScreenAction } from '~/app/@/screen/screen-actions'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -103,9 +105,7 @@ const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg
 const ViewLeaveSpaceButton: SpaceFrontendModule['View'] = (input) => {
   const userSpaceId = input.ctx.currentUserId ? input.model.indexSpaceIdByUserId[input.ctx.currentUserId] : null
 
-  if (!userSpaceId) {
-    return null
-  }
+  if (!userSpaceId) return null
 
   return (
     <Button
@@ -123,7 +123,19 @@ const ViewLeaveSpaceButton: SpaceFrontendModule['View'] = (input) => {
   )
 }
 
+const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
+  const spaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+  if (!spaceId) return null
+  return {
+    icon: (inputIcon) => <IconArrowRightOnRect {...inputIcon} />,
+    label: input.ctx.t('spaces.leave'),
+    onClick: () => input.dispatch({ t: 'clicked-leave-space-button', spaceId }),
+    color: 'danger',
+  }
+}
+
 export const LeaveSpaceFrontend = {
   update,
   ViewLeaveSpaceButton,
+  viewAction,
 }

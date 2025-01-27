@@ -15,6 +15,8 @@ export type ScreenAction = {
   loading?: boolean
   color?: 'danger' | 'success' | 'inherit' | 'selected'
   hidden?: boolean
+  badge?: number
+  size?: 'sm' | 'md'
 }
 
 type Ctx = {
@@ -30,14 +32,22 @@ const View = (input: {
   open: boolean
   onToggle: () => void
   limit?: number
+  size?: 'sm' | 'md'
 }) => {
   const cleanedButtons = input.buttons.filter((button) => button !== null)
   const firstButtons = cleanedButtons.slice(0, input.limit ?? DEFAULT_LIMIT)
   const lastButtons = cleanedButtons.slice(input.limit ?? DEFAULT_LIMIT)
   return (
-    <div className='flex h-16 w-full shrink-0 items-center' role='toolbar'>
+    <div
+      className={cn(
+        'flex w-full shrink-0 items-center',
+        input.size === 'sm' && 'h-14',
+        (!input.size || input.size === 'md') && 'h-16',
+      )}
+      role='toolbar'
+    >
       {firstButtons.map((button) => (
-        <ScreenActionButton {...button} key={button.label} />
+        <ScreenActionButton {...button} size={input.size} key={button.label} />
       ))}
 
       {lastButtons.length > 0 && (
@@ -45,6 +55,7 @@ const View = (input: {
           <ScreenActionButton
             icon={(input) => <IconEllipsisVertical {...input} />}
             label={input.ctx.t('app.more')}
+            size={input.size}
             onClick={input.onToggle}
           />
           <Drawer
@@ -88,13 +99,15 @@ const ScreenActionButton = (input: ScreenAction) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 text-sm font-normal',
+        'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 font-normal',
         'clickable disabled:cursor-not-allowed disabled:opacity-50',
         input.color === 'danger' && 'text-red-500',
         input.color === 'success' && 'text-green-500',
         input.color === 'selected' && 'text-blue-500',
         input.hidden ? 'hidden' : '',
         input.classNames?.button,
+        input.size === 'sm' && 'p-1.5 text-xs',
+        input.size === 'md' && 'p-2 text-sm',
       )}
     >
       <div
@@ -103,13 +116,15 @@ const ScreenActionButton = (input: ScreenAction) => {
           input.loading ? 'opacity-0' : 'opacity-100',
         )}
       >
-        {input.icon({ className: 'size-7' })}
+        {input.icon({
+          className: cn(input.size === 'sm' && 'size-5', (!input.size || input.size === 'md') && 'size-7'),
+        })}
         <Typography variant='label' text={input.label} className={cn('truncate', input.classNames?.label)} />
       </div>
 
       {input.loading && (
         <div className={'absolute inset-0 flex h-full w-full items-center justify-center'}>
-          <Spinner className='h-8 w-8' />
+          <Spinner className={cn(input.size === 'sm' && 'size-6', (!input.size || input.size === 'md') && 'size-8')} />
         </div>
       )}
     </button>

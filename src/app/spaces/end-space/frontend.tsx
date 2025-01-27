@@ -4,6 +4,8 @@ import { Button, Typography } from '~/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import type { MsgSpace } from '../core/space-msg'
+import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
+import { ScreenAction } from '~/app/@/screen/screen-actions'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -157,23 +159,29 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = ({ msg, model, ctx }
 
 export const ViewEndSpaceButton: SpaceFrontendModule['View'] = (input) => {
   const userSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
-  if (!userSpaceId) {
-    return null
-  }
+  if (!userSpaceId) return null
+
   return (
     <Button
       color='danger'
       variant='text'
       size='xs'
       text={input.ctx.t('spaces.end')}
-      onClick={() =>
-        input.dispatch({
-          t: 'clicked-end-space-button',
-          spaceId: userSpaceId,
-        })
-      }
+      onClick={() => input.dispatch({ t: 'clicked-end-space-button', spaceId: userSpaceId })}
     />
   )
+}
+
+const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
+  const spaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+  if (!spaceId) return null
+
+  return {
+    icon: (inputIcon) => <IconArrowRightOnRect {...inputIcon} />,
+    label: input.ctx.t('spaces.end'),
+    onClick: () => input.dispatch({ t: 'clicked-end-space-button', spaceId }),
+    color: 'danger',
+  }
 }
 
 const ViewSpaceEnded: SpaceFrontendModule['View'] = (input) => {
@@ -181,11 +189,7 @@ const ViewSpaceEnded: SpaceFrontendModule['View'] = (input) => {
     <div className='flex flex-1 flex-col items-center justify-center gap-4'>
       <Typography text={input.ctx.t('spaces.space-ended')} variant='title' />
       <Button
-        onClick={() =>
-          input.dispatch({
-            t: 'clicked-go-home-button',
-          })
-        }
+        onClick={() => input.dispatch({ t: 'clicked-go-home-button' })}
         size='lg'
         variant='contained'
         color='primary'
@@ -199,4 +203,5 @@ export const EndSpaceFrontend = {
   ViewSpaceEnded,
   ViewEndSpaceButton,
   update,
+  viewAction,
 }

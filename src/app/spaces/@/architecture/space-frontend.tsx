@@ -11,13 +11,13 @@ import type { SpaceFrontendCmd } from '../frontend/cmd'
 import { SpaceFrontendEvt } from '../frontend/evt'
 import type { Space } from '../space/space'
 
-type Ctx = BaseFrontendCtx & {
+export type SpaceFrontendCtx = BaseFrontendCtx & {
   space?: Space
   parentScreenActions?: ScreenActionsProps | null
 }
 
 export type Input = {
-  ctx: Ctx
+  ctx: SpaceFrontendCtx
   model: ModelFrontend
   msg?: MsgFrontend | null
   msgBackend?: MsgToFrontend | null
@@ -41,10 +41,10 @@ export type Output = {
 }
 
 export type SpaceFrontendModule = {
-  init: (input: { ctx: Ctx; model: ModelFrontend }) => Output
+  init: (input: { ctx: SpaceFrontendCtx; model: ModelFrontend }) => Output
   update: (input: Input) => Output
-  subscriptions: (input: { ctx: Ctx; model: ModelFrontend }) => Sub<MsgFrontend>
-  View: (input: { ctx: Ctx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => VDom
+  subscriptions: (input: { ctx: SpaceFrontendCtx; model: ModelFrontend }) => Sub<MsgFrontend>
+  View: (input: { ctx: SpaceFrontendCtx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => VDom
 }
 
 const andThen = (acc: Output, ...updates: ((model: ModelFrontend) => Output)[]): Output => {

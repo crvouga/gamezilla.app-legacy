@@ -1,5 +1,6 @@
 import type { SpaceId } from '~/app/@/data/space-id'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { ScreenActions } from '~/app/@/screen/screen-actions'
 import { ScreenTitleButton } from '~/app/@/screen/screen-title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
@@ -51,24 +52,40 @@ const View = (input: {
       return (
         <div className='flex h-full w-full flex-1 flex-col'>
           <People.View {...input} ctx={spaceCtx} />
-
-          <ViewTopBar {...input} ctx={spaceCtx} />
-
+          {/* <ViewTopBar {...input} ctx={spaceCtx} /> */}
           {false && <Feed.View spaceState={spaceState} ctx={spaceCtx} model={input.model} dispatch={input.dispatch} />}
-
           <div className='flex w-full flex-1 flex-col overflow-hidden'>
             <GameFrontend.View {...input} ctx={spaceCtx} />
           </div>
+          <ViewActions {...input} ctx={spaceCtx} />
         </div>
       )
     }
   }
 }
 
-const ViewTopBar: SpaceFrontendModule['View'] = (input) => {
+const ViewActions: SpaceFrontendModule['View'] = (input) => {
   const isHost = input.ctx.space?.hostId === input.ctx.currentUserId
   return (
-    <div className='flex h-12 w-full items-center gap-2 px-4'>
+    <ScreenActions.View
+      id='space-actions'
+      ctx={input.ctx}
+      size='sm'
+      buttons={[
+        GoHome.viewAction(input),
+        People.viewAction(input),
+        isHost ? EndSpaceFrontend.viewAction(input) : LeaveSpaceFrontend.viewAction(input),
+      ]}
+      open={false}
+      onToggle={() => {}}
+    />
+  )
+}
+
+export const ViewTopBar: SpaceFrontendModule['View'] = (input) => {
+  const isHost = input.ctx.space?.hostId === input.ctx.currentUserId
+  return (
+    <div className='flex h-16 w-full items-center gap-2 px-4'>
       <div className='-ml-2'>
         <GoHome.ViewIconButton {...input} />
       </div>
