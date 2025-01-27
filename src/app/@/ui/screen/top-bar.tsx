@@ -1,9 +1,9 @@
 import type { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
-import { cn } from './cn'
-import { IconButton, IconButtonEmpty } from './icon-button'
-import { IconArrowLeft } from './icon'
-import { Typography } from './typography'
+import { cn } from '~/app/@/ui/cn'
+import { IconArrowLeft } from '~/app/@/ui/icon'
+import { IconButton, IconButtonEmpty } from '~/app/@/ui/icon-button'
+import { Typography } from '~/app/@/ui/typography'
 
 export const TopBar = (input: {
   title: TranslatedText

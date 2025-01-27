@@ -1,10 +1,10 @@
 import { type WithEventId, withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
-import { APP_SOUND, AppFrontendCmd, playSound } from '~/app/@/frontend/cmd'
 import type { UserId } from '~/app/@/data/user-id'
+import { APP_SOUND, AppFrontendCmd, playSound } from '~/app/@/frontend/cmd'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft } from '~/app/@/ui'
-import { ScreenActions } from '~/app/@/ui/screen-actions'
+import { ScreenActions } from '~/app/@/ui/screen/screen-actions'
 import { FeedItem } from '~/app/spaces/@/feed-item'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
@@ -19,8 +19,8 @@ import {
   type ModelSpace,
   type MsgFrontend,
   type MsgSpace,
-  type MsgToFrontend,
   type MsgToBackend,
+  type MsgToFrontend,
   updateSpace,
 } from './vs-bot.types'
 

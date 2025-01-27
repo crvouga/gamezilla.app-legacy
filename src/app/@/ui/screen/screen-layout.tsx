@@ -2,8 +2,8 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { VDomChildren } from '~/@/vdom/vdom'
 import { FormBottomButtons } from './form-button-buttons'
-import { ScreenAction, ScreenActions } from '../screen-actions'
-import { TopBar } from '../top-bar'
+import { ScreenAction, ScreenActions } from './screen-actions'
+import { TopBar } from './top-bar'
 
 export type ScreenActionsProps = {
   id?: string

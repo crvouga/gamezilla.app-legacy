@@ -5,7 +5,7 @@ import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
 import { Avatar, IconArrowLeftOnRect, IconRobot, Spinner } from '~/app/@/ui'
-import { ScreenActions } from '~/app/@/ui/screen-actions'
+import { ScreenActions } from '~/app/@/ui/screen/screen-actions'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
 import { LayoutGame } from '../../@/ui/layout-game'
@@ -13,12 +13,12 @@ import { Chess } from '../@/chess'
 import { ChessBotLevel } from '../@/chess-bot-level/chess-bot-level'
 import { Chessboard, CoverArt, PlayerIcon } from '../@/chess-ui'
 import {
-  type SpaceModel,
-  type ModelFrontend,
   type ModelBackend,
+  type ModelFrontend,
   type MsgFrontend,
-  type MsgToFrontend,
   type MsgToBackend,
+  type MsgToFrontend,
+  type SpaceModel,
   initSpace,
   isBotTurn,
   updateSpace,

@@ -1,22 +1,22 @@
 import type { Eff } from '~/@/eff'
 import { Posix } from '~/@/time/posix'
+import { AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
+import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { IconArrowLeftOnRect, IconArrowRotateLeft, IconRightLeft, LoadingBar } from '~/app/@/ui'
-import { ScreenActions } from '~/app/@/ui/screen-actions'
+import { ScreenActions } from '~/app/@/ui/screen/screen-actions'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { IconBotCute, IconBotLevel1, IconBotScary, VsBotGame, VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
 import { type BotLevel, allBotLevels, toStatus, toTurn } from '../@/tic-tic-toe/tic-tac-toe'
 import { CoverArt, PlayerTypeIcon, ViewBoard, gameTheme } from '../@/tic-tic-toe/tic-tac-toe-ui'
 import {
-  type ModelFrontend,
   type ModelBackend,
+  type ModelFrontend,
   type MsgFrontend,
-  type MsgToFrontend,
   type MsgToBackend,
+  type MsgToFrontend,
   handle,
   initSpaceModel,
 } from './vs-bot.types'
-import { AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 
 //
 //
