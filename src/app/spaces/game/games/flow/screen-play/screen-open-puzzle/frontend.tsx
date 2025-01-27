@@ -1,6 +1,7 @@
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { cn, TopBar } from '~/app/@/ui'
-import { LayoutGame } from '../../../@/ui/layout-game'
+import { IconGamepad, TopBar } from '~/app/@/ui'
+import { LayoutGameCoverArtHeader } from '../../../@/ui/layout-game-cover-art-header'
+import { ViewUsersInSpaceList } from '../../../@/ui/users-in-space-list'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { PuzzleDbQueryFrontend } from '../../@/puzzle/puzzle-db-query/frontend'
 import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
@@ -49,30 +50,48 @@ const View: FrontendModule['View'] = (input) => {
   if (input.modelSpace.screen.t !== 'screen-select-puzzle') {
     return null
   }
+
   const pack = input.modelSpace.screen.pack
   const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
+
+  if (isSpectating) {
+    return (
+      <LayoutGameCoverArtHeader
+        ctx={input.ctx}
+        onBack={false}
+        title={input.ctx.t('flow.play')}
+        renderCoverArt={(input) => (
+          <div {...input}>
+            <div className='h-full w-full p-4'>
+              <IconGamepad className='h-full w-full' />
+            </div>
+          </div>
+        )}
+        renderContent={() => (
+          <ViewUsersInSpaceList
+            onOpenUserDetails={(userId) =>
+              input.dispatch({ t: 'game-main-menu.clicked-open-user-details-button', userId })
+            }
+            ctx={input.ctx}
+          />
+        )}
+      />
+    )
+  }
+
   return (
-    <LayoutGame ctx={input.ctx} isSpectating={isSpectating} className='flex h-full w-full flex-1 flex-col'>
+    <div className='flex h-full w-full flex-1 flex-col'>
       <TopBar
         ctx={input.ctx}
-        onBack={
-          isSpectating
-            ? false
-            : () =>
-                input.dispatch({
-                  t: 'got-msg-space',
-                  c: { t: 'user-clicked-exit-screen-open-pack', userId: input.ctx.currentUserId },
-                })
+        onBack={() =>
+          input.dispatch({
+            t: 'got-msg-space',
+            c: { t: 'user-clicked-exit-screen-open-pack', userId: input.ctx.currentUserId },
+          })
         }
         title={input.ctx.t('flow-pack-name', pack.name)}
       />
-
-      <div
-        className={cn(
-          'flex w-full flex-1 flex-col items-center justify-center',
-          isSpectating && 'pointer-events-none select-none',
-        )}
-      >
+      <div className='flex w-full flex-1 flex-col items-center justify-center'>
         <PackPuzzleGridUI.View
           id='pack-puzzle-grid'
           slideIndex={input.modelSpace.screen.slideIndex}
@@ -101,7 +120,7 @@ const View: FrontendModule['View'] = (input) => {
           }}
         />
       </div>
-    </LayoutGame>
+    </div>
   )
 }
 
