@@ -39,13 +39,10 @@ const View = (input: ScreenActionProps) => {
   const cleanedButtons = input.buttons.filter((button) => button !== null)
   const firstButtons = cleanedButtons.slice(0, input.limit ?? DEFAULT_LIMIT)
   const lastButtons = cleanedButtons.slice(input.limit ?? DEFAULT_LIMIT)
+  const size = input.size ?? 'md'
   return (
     <div
-      className={cn(
-        'flex w-full shrink-0 items-center',
-        input.size === 'sm' && 'h-12',
-        (!input.size || input.size === 'md') && 'h-16',
-      )}
+      className={cn('flex w-full shrink-0 items-center', size === 'sm' && 'h-12', size === 'md' && 'h-16')}
       role='toolbar'
     >
       {firstButtons.map((button) => (
@@ -119,9 +116,7 @@ const ScreenActionButton = (input: ScreenAction) => {
           input.loading ? 'opacity-0' : 'opacity-100',
         )}
       >
-        {input.icon({
-          className: cn(size === 'sm' && 'size-4', size === 'md' && 'size-7'),
-        })}
+        {input.icon({ className: cn(size === 'sm' && 'size-5', size === 'md' && 'size-7') })}
         <Typography variant='label' text={input.label} className={cn('truncate', input.classNames?.label)} />
       </div>
 

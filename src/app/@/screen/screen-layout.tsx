@@ -49,10 +49,6 @@ export const ScreenLayout = (input: ScreenLayoutProps) => {
   return <ScreenLayoutDesktop {...input} />
 }
 
-const ScreenLayoutDesktop = (input: ScreenLayoutProps) => {
-  return <ScreenLayoutMobile {...input} />
-}
-
 const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.form ? 'form' : 'div'
   const actionPosition = input.actionPosition ?? 'bottom'
@@ -108,4 +104,8 @@ const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       {actionPosition === 'bottom' && actions}
     </Element>
   )
+}
+
+const ScreenLayoutDesktop = (input: ScreenLayoutProps) => {
+  return <ScreenLayoutMobile {...input} />
 }

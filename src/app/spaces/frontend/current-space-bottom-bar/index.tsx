@@ -11,50 +11,30 @@ const update: SpaceFrontendModule['update'] = (input) => {
     case 'clicked-current-space-bottom-bar': {
       const currentUsersSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
 
-      if (!currentUsersSpaceId) {
-        return {
-          model: input.model,
-        }
-      }
+      if (!currentUsersSpaceId) return { model: input.model }
 
       return {
         model: input.model,
         msgCmd: [
           playSound(APP_SOUND.navForwardMin),
-          pushScreen({
-            n: 'spaces',
-            t: 'space',
-            spaceId: currentUsersSpaceId,
-          }),
+          pushScreen({ n: 'spaces', t: 'space', spaceId: currentUsersSpaceId }),
         ],
       }
     }
-
-    default: {
-      return {
-        model: input.model,
-      }
-    }
   }
+  return { model: input.model }
 }
 
 const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   const userSpaceId = input.model.indexSpaceIdByUserId[input.ctx.currentUserId]
-
-  if (!userSpaceId) {
-    return null
-  }
-
   const space = SpacesCore.toSpaceStarted(input.model, userSpaceId)
 
-  if (!space) {
-    return null
-  }
+  if (!space) return null
 
   const hostProfile = input.ctx.profiles[space.hostId]
 
   const userCount = Object.values(space.users).length
-
+  const isCurrentUserHost = input.ctx.currentUserId === space.hostId
   return (
     <div className='flex w-full flex-col items-center justify-center overflow-hidden text-inherit'>
       <div className='h-1 w-full bg-gradient-to-tr from-blue-700 via-blue-600 to-sky-500' />
@@ -95,32 +75,22 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
         </button>
 
         <div className='pr-4'>
-          {input.ctx.currentUserId === space.hostId && (
+          {isCurrentUserHost && (
             <Button
               color='danger'
               variant='text'
               text={input.ctx.t('spaces.end')}
-              onClick={() =>
-                input.dispatch({
-                  t: 'clicked-end-space-button',
-                  spaceId: userSpaceId,
-                })
-              }
+              onClick={() => input.dispatch({ t: 'clicked-end-space-button', spaceId: space.spaceId })}
               size='sm'
             />
           )}
 
-          {input.ctx.currentUserId !== space.hostId && (
+          {!isCurrentUserHost && (
             <Button
               color='danger'
               variant='text'
               text={input.ctx.t('spaces.leave')}
-              onClick={() =>
-                input.dispatch({
-                  t: 'clicked-leave-space-button',
-                  spaceId: userSpaceId,
-                })
-              }
+              onClick={() => input.dispatch({ t: 'clicked-leave-space-button', spaceId: space.spaceId })}
               size='sm'
             />
           )}
