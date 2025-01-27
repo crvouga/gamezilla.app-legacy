@@ -558,7 +558,7 @@ export const View = (input: {
   const flow = toFlow(input)
 
   return (
-    <>
+    <div className='relative aspect-square h-full max-h-full w-full touch-none select-none overflow-hidden'>
       <VariantBoard.View
         disabled={input.disabled}
         model={flow}
@@ -577,10 +577,8 @@ export const View = (input: {
         usedHints={UseHint.toUsedHints(input.model)}
       />
 
-      <Portal.Entrance portalId='app-root'>
-        <CheckmarkAnimation open={Boolean(input.model.showCheckmarkAnimation && input.showSolvedAnimation)} />
-      </Portal.Entrance>
-    </>
+      <CheckmarkAnimation open={Boolean(input.model.showCheckmarkAnimation && input.showSolvedAnimation)} />
+    </div>
   )
 }
 

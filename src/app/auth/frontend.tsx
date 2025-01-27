@@ -267,45 +267,43 @@ export const View: FrontendModule['View'] = (input) => {
 
 const ViewLoginScreen: FrontendModule['View'] = (input) => {
   return (
-    <ScreenBodyContent>
-      <div className='flex flex-1 flex-col items-center justify-center gap-8 p-4'>
-        <div className='flex w-full flex-col items-start justify-center'>
-          <Typography text={input.ctx.t('auth.sign-in-to')} variant='title' />
-          <span className='bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent'>
-            {input.ctx.t('app.gamezilla-app')}
-          </span>
-        </div>
+    <ScreenBodyContent className='justify-center'>
+      <div className='flex w-full flex-col items-start justify-center'>
+        <Typography text={input.ctx.t('auth.sign-in-to')} variant='title' />
+        <span className='bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent'>
+          {input.ctx.t('app.gamezilla-app')}
+        </span>
+      </div>
 
-        <div className='flex w-full flex-col gap-6'>
+      <div className='flex w-full flex-col gap-6'>
+        <Button
+          onClick={() => input.dispatch({ t: 'user-clicked-login-with-phone' })}
+          size='lg'
+          className='w-full'
+          iconStart={(iconInput) => <IconMobilePhone {...iconInput} />}
+          text={input.ctx.t('auth.continue-with-phone')}
+        />
+
+        {false && (
           <Button
-            onClick={() => input.dispatch({ t: 'user-clicked-login-with-phone' })}
+            onClick={() => input.dispatch({ t: 'user-clicked-login-with-email' })}
+            color='default'
             size='lg'
             className='w-full'
-            iconStart={(iconInput) => <IconMobilePhone {...iconInput} />}
-            text={input.ctx.t('auth.continue-with-phone')}
+            iconStart={(iconInput) => <IconEnvelope {...iconInput} />}
+            text={input.ctx.t('auth.continue-with-email')}
           />
+        )}
 
-          {false && (
-            <Button
-              onClick={() => input.dispatch({ t: 'user-clicked-login-with-email' })}
-              color='default'
-              size='lg'
-              className='w-full'
-              iconStart={(iconInput) => <IconEnvelope {...iconInput} />}
-              text={input.ctx.t('auth.continue-with-email')}
-            />
-          )}
-
-          <div className='flex w-full items-center justify-center py-1'>
-            <Typography
-              variant='body'
-              className='text-secondary text-base font-bold uppercase'
-              text={input.ctx.t('auth.or')}
-            />
-          </div>
-
-          <ContinueAsGuestFrontend.ViewButton {...input} />
+        <div className='flex w-full items-center justify-center py-1'>
+          <Typography
+            variant='body'
+            className='text-secondary text-base font-bold uppercase'
+            text={input.ctx.t('auth.or')}
+          />
         </div>
+
+        <ContinueAsGuestFrontend.ViewButton {...input} />
       </div>
     </ScreenBodyContent>
   )
