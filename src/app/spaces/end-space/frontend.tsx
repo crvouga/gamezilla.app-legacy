@@ -5,7 +5,7 @@ import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import type { MsgSpace } from '../core/space-msg'
 import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
-import { ScreenAction } from '~/app/@/screen/screen-actions'
+import { ScreenAction } from '~/app/@/ui/screen-actions'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(

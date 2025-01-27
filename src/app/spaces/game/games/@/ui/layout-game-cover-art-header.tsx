@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from '~/@/ui'
-import { ScreenLayout } from '~/app/@/screen/screen-layout'
+import { ScreenLayout } from '~/app/@/ui/screen-layout'
 
 export const LayoutGameCoverArtHeader = (input: {
   topBar?: {

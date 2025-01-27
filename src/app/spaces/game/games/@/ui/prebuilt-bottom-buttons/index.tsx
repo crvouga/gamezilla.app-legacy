@@ -1,6 +1,6 @@
 import type { Translator } from '~/@/l18n/generated'
 import { IconArrowCircle, IconArrowLeftOnRect, IconArrowRotateLeft, IconChevronLeft } from '~/@/ui'
-import { ScreenAction } from '~/app/@/screen/screen-actions'
+import { ScreenAction } from '~/app/@/ui/screen-actions'
 
 type PrebuiltBottomButtonInput = Partial<ScreenAction> & {
   onClick: () => void

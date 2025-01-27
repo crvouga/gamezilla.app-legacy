@@ -4,7 +4,7 @@ import { Translator } from '~/@/l18n/generated'
 import { type Result, isErr } from '~/@/result'
 import { ScreenCmd } from '~/app/@/frontend/cmd'
 import { AlertError, AlertSuccess, TextField } from '~/@/ui'
-import { ScreenLayout } from '~/app/@/screen/screen-layout'
+import { ScreenLayout } from '~/app/@/ui/screen-layout'
 
 //
 //

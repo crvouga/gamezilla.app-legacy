@@ -2,7 +2,7 @@ import { Profile } from '~/app/@/data/profile'
 import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Button, IconArrowLeftOnRect, IconUserPen, SpinnerBlock, Typography } from '~/@/ui'
 import { Gutter } from '~/@/ui/gutter'
-import { ScreenActionsProps, ScreenLayout } from '~/app/@/screen/screen-layout'
+import { ScreenActionsProps, ScreenLayout } from '~/app/@/ui/screen-layout'
 import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
 
 const View = (input: {
