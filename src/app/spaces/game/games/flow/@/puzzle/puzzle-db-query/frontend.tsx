@@ -3,7 +3,6 @@ import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { VDom } from '~/@/vdom/vdom'
 import { EmptyState, IconPuzzlePiece, SpinnerBlock, Typography } from '~/@/ui'
 import { Checkbox, CheckboxState } from '~/@/ui/checkbox/checkbox'
 import { Gutter } from '~/@/ui/gutter'
@@ -80,7 +79,6 @@ const ViewList = (input: {
   onQueryChanged: (query: PuzzleDbQuery) => void
   onItemClick: (puzzle: Puzzle) => void
   onHeaderCheckboxClick?: (allPuzzleIds: PuzzleId[]) => void
-  fab?: VDom
 }) => {
   const queryKey = PuzzleDbQuery.toKey(input.query)
   const puzzleIds = input.model.results[queryKey] ?? []
@@ -136,8 +134,6 @@ const ViewList = (input: {
 
         <Gutter variant='screen' />
       </div>
-
-      {input.fab && <div className='absolute bottom-6 right-4 bg-black'>{input.fab}</div>}
     </div>
   )
 }

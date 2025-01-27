@@ -4,7 +4,6 @@ import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { VDom } from '~/@/vdom/vdom'
 import { IconBox, SpinnerBlock, Typography } from '~/@/ui'
 import { EmptyState } from '~/@/ui/empty-state'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
@@ -68,7 +67,6 @@ const ViewList = (input: {
   model: ModelFrontend
   onQueryChanged: (query: PacksDbQuery) => void
   onClick: (pack: Pack) => void
-  fab?: VDom
 }) => {
   const queryKey = PacksDbQuery.toKey(input.query)
   const packIds = input.model.results[queryKey] ?? []
@@ -88,8 +86,6 @@ const ViewList = (input: {
 
         {isLoading && <SpinnerBlock />}
       </div>
-
-      {input.fab && <div className='absolute bottom-6 right-4 bg-black'>{input.fab}</div>}
     </div>
   )
 }

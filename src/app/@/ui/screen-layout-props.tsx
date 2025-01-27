@@ -27,6 +27,7 @@ export type ScreenLayoutProps = {
   parent?: Pick<ScreenLayoutProps, 'actions' | 'topBar'> | null
   actions?: ScreenActionsProps | null
   renderBody: () => VDom
+  renderFab?: () => VDom
   form?: {
     onSubmit: () => void
     cancelText: TranslatedText

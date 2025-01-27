@@ -131,6 +131,10 @@ const View: SpaceFrontendModule['View'] = (input) => {
         title: input.ctx.t('spaces.spaces'),
       }}
       parent={input.ctx.parentScreen}
+      renderFab={() => {
+        if (!currentUserSpaceId) return <StartSpaceFrontend.ViewStartSpaceButton {...input} />
+        return null
+      }}
       renderBody={() => {
         return (
           <div className='relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8'>
@@ -148,12 +152,6 @@ const View: SpaceFrontendModule['View'] = (input) => {
                 />
               ))}
             </div>
-
-            {!currentUserSpaceId && (
-              <div className='absolute bottom-6 right-4'>
-                <StartSpaceFrontend.ViewStartSpaceButton {...input} />
-              </div>
-            )}
           </div>
         )
       }}

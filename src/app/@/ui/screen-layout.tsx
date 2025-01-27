@@ -57,7 +57,10 @@ const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       {input.topBar && <TopBar ctx={input.ctx} onBack={input.topBar.onBack} title={input.topBar.title} />}
       {actionPosition === 'top' && actions}
 
-      <div className='flex w-full flex-1 flex-col overflow-hidden'>{input.renderBody()}</div>
+      <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
+        {input.renderBody()}
+        {input.renderFab && <div className='absolute bottom-6 right-4 bg-black'>{input.renderFab()}</div>}
+      </div>
       {input.form && <FormBottomButtons {...input.form} />}
       {actionPosition === 'bottom' && actions}
     </Element>
