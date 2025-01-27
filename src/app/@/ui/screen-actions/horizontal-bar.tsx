@@ -137,6 +137,6 @@ const toSpinnerSizeClasses = (size: ScreenAction['size']): string => {
   }
 }
 
-export const ScreenActions = {
+export const ScreenActionsHorizontalBar = {
   View,
 }

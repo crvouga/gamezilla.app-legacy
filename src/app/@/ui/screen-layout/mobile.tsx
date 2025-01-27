@@ -1,5 +1,5 @@
 import { FormBottomButtons } from '../form-button-buttons'
-import { ScreenActions } from '../screen-actions'
+import { ScreenActionsHorizontalBar } from '../screen-actions/horizontal-bar.tsx'
 import { ScreenLayoutProps } from './props'
 import { TopBar } from './top-bar'
 
@@ -11,7 +11,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       {input.actions && (
         <>
           {input.actions.top}
-          <ScreenActions.View
+          <ScreenActionsHorizontalBar.View
             id={input.actions.id ?? `${input.id}-actions`}
             ctx={input.ctx}
             buttons={input.actions.buttons}
@@ -26,7 +26,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       {input.parent?.actions && (
         <>
           {input.parent.actions.top}
-          <ScreenActions.View
+          <ScreenActionsHorizontalBar.View
             size={input.parent.actions.size}
             id={input.parent.actions.id ?? `${input.id}-actions`}
             ctx={input.ctx}
