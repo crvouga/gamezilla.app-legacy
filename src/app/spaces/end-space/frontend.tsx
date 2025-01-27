@@ -17,159 +17,77 @@ const update: SpaceFrontendModule['update'] = (input) => {
 }
 
 const updateFromAppEvent: SpaceFrontendModule['update'] = (input) => {
-  const { ctx, model, msgEvt } = input
-
-  switch (msgEvt?.t) {
+  switch (input.msgEvt?.t) {
     case 'auth-evt.unauthenticated': {
-      const { currentUserId } = ctx
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model, currentUserId)
-      if (!currentUserId || !currentUserSpaceId) {
-        return {
-          model,
-        }
-      }
+      if (!input.ctx.currentUserId) return { model: input.model }
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      if (!currentUserSpaceId) return { model: input.model }
 
       return {
-        model,
+        model: input.model,
         msgSpace: [
-          withEventId({
+          withEventId({ t: 'user-ended-space', spaceId: currentUserSpaceId, userId: input.ctx.currentUserId }),
+        ],
+      }
+    }
+  }
+  return { model: input.model }
+}
+
+const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
+  switch (input.msgSpace?.t) {
+    case 'user-ended-space': {
+      if (!input.ctx.currentUserId) return { model: input.model }
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const msgSpace = input.msgSpace
+      if (msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
+
+      return SpaceFrontendModule.andThen(
+        { model: input.model },
+        (model) => ({ model, msgCmd: [playSound(APP_SOUND.navBackward)] }),
+        (model) => {
+          if (input.ctx.currentScreen.t === 'space' && input.ctx.currentScreen.spaceId === msgSpace.spaceId) {
+            return { model, msgCmd: [pushScreen({ n: 'spaces', t: 'space-list' })] }
+          }
+          return { model, msgCmd: [] }
+        },
+        (model) => {
+          if (msgSpace.userId === input.ctx.currentUserId) {
+            return { model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-current-user'))] }
+          }
+          const profile = input.ctx.profiles[msgSpace.userId]
+          if (!profile) {
+            return { model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-host'))] }
+          }
+          return { model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-other-user', profile.username))] }
+        },
+      )
+    }
+  }
+  return { model: input.model }
+}
+
+const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
+  switch (input.msg?.t) {
+    case 'clicked-end-space-button': {
+      if (!input.ctx.currentUserId) return { model: input.model }
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      if (!currentUserSpaceId) return { model: input.model }
+
+      return {
+        model: input.model,
+        msgSpace: [
+          withEventId<MsgSpace>({
             t: 'user-ended-space',
             spaceId: currentUserSpaceId,
-            userId: currentUserId,
+            userId: input.ctx.currentUserId,
           }),
         ],
       }
     }
-
-    default: {
-      return {
-        model,
-      }
-    }
+    default:
+      return { model: input.model }
   }
-}
-
-const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
-  const { ctx, model, msgSpace } = input
-
-  switch (msgSpace?.t) {
-    case 'user-ended-space': {
-      if (!ctx.currentUserId) {
-        return {
-          model,
-        }
-      }
-
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model, ctx.currentUserId)
-
-      if (msgSpace.spaceId !== currentUserSpaceId) {
-        return {
-          model,
-        }
-      }
-
-      return SpaceFrontendModule.andThen(
-        { model },
-        (model) => {
-          return {
-            model,
-            msgCmd: [playSound(APP_SOUND.navBackward)],
-          }
-        },
-        (model) => {
-          if (ctx.currentScreen.t === 'space' && ctx.currentScreen.spaceId === msgSpace.spaceId) {
-            return {
-              model,
-              msgCmd: [pushScreen({ n: 'spaces', t: 'space-list' })],
-            }
-          }
-          return {
-            model,
-            msgCmd: [],
-          }
-        },
-        (model) => {
-          if (msgSpace.userId === ctx.currentUserId) {
-            return {
-              model,
-              msgCmd: [showToast(input.ctx.t('spaces.ended-space-current-user'))],
-            }
-          }
-
-          const profile = ctx.profiles[msgSpace.userId]
-
-          if (!profile) {
-            return {
-              model,
-              msgCmd: [showToast(input.ctx.t('spaces.ended-space-host'))],
-            }
-          }
-
-          return {
-            model,
-            msgCmd: [showToast(input.ctx.t('spaces.ended-space-other-user', profile.username))],
-          }
-        },
-      )
-    }
-
-    default: {
-      return {
-        model,
-      }
-    }
-  }
-}
-
-const updateEndSpaceButton: SpaceFrontendModule['update'] = ({ msg, model, ctx }) => {
-  switch (msg?.t) {
-    case 'clicked-end-space-button': {
-      if (!ctx.currentUserId) {
-        return {
-          model,
-        }
-      }
-
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model, ctx.currentUserId)
-
-      if (!currentUserSpaceId) {
-        return {
-          model,
-        }
-      }
-
-      const spaceEventNew = withEventId<MsgSpace>({
-        t: 'user-ended-space',
-        spaceId: currentUserSpaceId,
-        userId: ctx.currentUserId,
-      })
-
-      return {
-        model,
-        msgSpace: [spaceEventNew],
-      }
-    }
-    default: {
-      return {
-        model,
-      }
-    }
-  }
-}
-
-export const ViewEndSpaceButton: SpaceFrontendModule['View'] = (input) => {
-  const userSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
-  if (!userSpaceId) return null
-
-  return (
-    <Button
-      color='danger'
-      variant='text'
-      size='xs'
-      text={input.ctx.t('spaces.end')}
-      onClick={() => input.dispatch({ t: 'clicked-end-space-button', spaceId: userSpaceId })}
-    />
-  )
 }
 
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
@@ -201,7 +119,6 @@ const ViewSpaceEnded: SpaceFrontendModule['View'] = (input) => {
 
 export const EndSpaceFrontend = {
   ViewSpaceEnded,
-  ViewEndSpaceButton,
   update,
   viewAction,
 }
