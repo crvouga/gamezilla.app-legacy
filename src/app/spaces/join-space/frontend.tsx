@@ -18,7 +18,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
 const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'clicked-join-space-button': {
+    case 'submitted-join-space-form': {
       if (!input.ctx.currentUserId) return { model: input.model }
 
       return {
@@ -88,12 +88,20 @@ const View: SpaceFrontendModule['View'] = (input) => {
   const spaceState = SpacesCore.toSpaceStarted(input.model, space?.spaceId)
   if (!spaceState) return null
 
+  const spaceCtx = {
+    ...input.ctx,
+    space: space,
+    currentUserId: currentUser.userId,
+    currentUserRole: currentUser.role,
+    currentUser,
+  }
+
   return (
     <ScreenLayout
       id='join-space'
       ctx={input.ctx}
       form={{
-        onSubmit: () => input.dispatch({ t: 'clicked-join-space-button', spaceId: space.spaceId }),
+        onSubmit: () => input.dispatch({ t: 'submitted-join-space-form', spaceId: space.spaceId }),
         submitText: input.ctx.t('spaces.join-space'),
         cancelText: input.ctx.t('app.cancel'),
         onCancel: () => input.dispatch({ t: 'clicked-go-home-button' }),
@@ -106,10 +114,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
           ctx={input.ctx}
           topBar={{
             title: spaceState.game ? input.ctx.t(spaceState.game.t) : input.ctx.t('spaces.space'),
-            onBack: () =>
-              input.dispatch({
-                t: 'clicked-go-home-button',
-              }),
+            onBack: () => input.dispatch({ t: 'clicked-go-home-button' }),
           }}
           renderCoverArt={(inputCoverArt) =>
             spaceState.game && (
@@ -120,19 +125,8 @@ const View: SpaceFrontendModule['View'] = (input) => {
           }
           renderContent={() => (
             <ViewUsersInSpaceList
-              ctx={{
-                ...input.ctx,
-                space: space,
-                currentUserId: currentUser.userId,
-                currentUserRole: currentUser.role,
-                currentUser,
-              }}
-              onOpenUserDetails={(userId) =>
-                input.dispatch({
-                  t: 'clicked-user',
-                  userId,
-                })
-              }
+              ctx={spaceCtx}
+              onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
             />
           )}
         />

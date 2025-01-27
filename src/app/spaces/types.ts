@@ -35,14 +35,12 @@ export type BackendCtx = AppBackendCtx & {
   games: GamesTypes.GameBackendCtx
 }
 
-export type ModelBackend = null
-
 export type ModelFrontend = SpacesCore.Model & {
   games: {
     [spaceId: SpaceId]: GamesTypes.ModelFrontend
   }
   modalPreviewUserId: UserId | null
-  modal: null | 'user-preview' | 'users'
+  modal: null | 'user-preview' | 'users' | 'end-space' | 'leave-space'
   listSpacesRequest: RequestResponse<string, null>
 }
 
@@ -63,9 +61,11 @@ export type MsgFrontend =
   | { t: 'time-passed' }
   | { t: 'clicked-go-home-button' }
   | { t: 'clicked-game-tile'; gameName: GameName }
-  | { t: 'clicked-join-space-button'; spaceId: SpaceId }
+  | { t: 'submitted-join-space-form'; spaceId: SpaceId }
   | { t: 'clicked-end-space-button'; spaceId: SpaceId }
+  | { t: 'submitted-end-space-form'; spaceId: SpaceId }
   | { t: 'clicked-leave-space-button'; spaceId: SpaceId }
+  | { t: 'submitted-leave-space-button'; spaceId: SpaceId }
   | { t: 'clicked-start-space-button'; spaceId: SpaceId }
   | { t: 'closed-modal' }
   | { t: 'clicked-people-button' }
@@ -171,7 +171,6 @@ export type BackendModule = AppBackendModule<{
   Ctx: BackendCtx
   MsgCmdIn: null
   MsgEvtIn: BackendEvt
-  Model: ModelBackend
   Msg: MsgBackend
   MsgCmdOut: BackendCmd<MsgToFrontend>
   MsgEvtOut: null

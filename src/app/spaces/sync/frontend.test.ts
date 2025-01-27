@@ -139,7 +139,7 @@ describe(import.meta.file, () => {
       },
       {
         msg: {
-          t: 'clicked-join-space-button',
+          t: 'submitted-join-space-form',
           spaceId,
         },
       },
