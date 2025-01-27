@@ -16,52 +16,25 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
       {
-        msg: {
-          t: 'clicked-start-space-button',
-          spaceId,
-        },
+        msg: { t: 'clicked-start-space-button', spaceId },
       },
       {
-        msg: {
-          t: 'clicked-end-space-button',
-          spaceId,
-        },
-        ctx: {
-          ...f.ctx,
-          currentScreen: {
-            n: 'spaces',
-            t: 'space',
-            spaceId,
-          },
-        },
+        msg: { t: 'clicked-end-space-button', spaceId },
+        ctx: { ...f.ctx, currentScreen: { n: 'spaces', t: 'space', spaceId } },
       },
     ])
 
     expect(didPushScreen(output)).toBe(true)
   })
 
-  it('should not redirect to space list after ending space if not on space screen', async () => {
+  it('should NOT redirect to space list after ending space if NOT on space screen', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
+      { msg: { t: 'clicked-start-space-button', spaceId } },
       {
-        msg: {
-          t: 'clicked-start-space-button',
-          spaceId,
-        },
-      },
-      {
-        msg: {
-          t: 'clicked-end-space-button',
-          spaceId,
-        },
-        ctx: {
-          ...f.ctx,
-          currentScreen: {
-            n: 'spaces',
-            t: 'space-list',
-          },
-        },
+        msg: { t: 'clicked-end-space-button', spaceId },
+        ctx: { ...f.ctx, currentScreen: { n: 'spaces', t: 'space-list' } },
       },
     ])
 
@@ -72,24 +45,10 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
+      { msg: { t: 'clicked-start-space-button', spaceId } },
       {
-        msg: {
-          t: 'clicked-start-space-button',
-          spaceId,
-        },
-      },
-      {
-        msg: {
-          t: 'clicked-end-space-button',
-          spaceId,
-        },
-        ctx: {
-          ...f.ctx,
-          currentScreen: {
-            n: 'spaces',
-            t: 'space-list',
-          },
-        },
+        msg: { t: 'clicked-end-space-button', spaceId },
+        ctx: { ...f.ctx, currentScreen: { n: 'spaces', t: 'space-list' } },
       },
     ])
     expect(didPlaySound(output)).toBe(true)
