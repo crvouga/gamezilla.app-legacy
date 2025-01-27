@@ -14,7 +14,7 @@ export type CreatePortal = (vDom: VDom, container: Element) => VDom
 
 export let createPortal: CreatePortal | null = null
 
-export const Renderer = (vDomImpl: VDomImpl, root: HTMLElement): Render => {
+export const Renderer = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<Render> => {
   switch (vDomImpl) {
     case 'inferno': {
       createPortal = Inferno.createPortal

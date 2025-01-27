@@ -14,10 +14,7 @@ export type ScreenActionsProps = {
   open: boolean
 }
 
-/**
- * Primary screen layout component. Use this everywhere.
- */
-export const ScreenLayout = (input: {
+export type ScreenLayoutProps = {
   id: string
   ctx: {
     t: Translator
@@ -39,7 +36,65 @@ export const ScreenLayout = (input: {
     cancelDisabled: boolean
     submitDisabled: boolean
   }
-}) => {
+}
+
+/**
+ * Primary screen layout component. Use this everywhere.
+ */
+export const ScreenLayout = (input: ScreenLayoutProps) => {
+  const isMobile = false
+  if (isMobile) return <ScreenLayoutMobile {...input} />
+  return <ScreenLayoutDesktop {...input} />
+}
+
+const ScreenLayoutDesktop = (input: ScreenLayoutProps) => {
+  const Element = input.form ? 'form' : 'div'
+  return (
+    <Element
+      className='flex w-full flex-1 flex-col overflow-hidden'
+      onSubmit={(e) => {
+        e.preventDefault()
+        input.form?.onSubmit()
+      }}
+    >
+      {input.topBar && <TopBar ctx={input.ctx} onBack={input.topBar.onBack} title={input.topBar.title} />}
+
+      <div className='flex w-full flex-1 flex-col overflow-hidden'>{input.main}</div>
+
+      {input.form && <FormBottomButtons {...input.form} />}
+
+      {input.actions && (
+        <>
+          {input.actions.top}
+          <ScreenActions.View
+            id={input.actions.id ?? `${input.id}-bottom-buttons`}
+            ctx={input.ctx}
+            buttons={input.actions.buttons}
+            limit={input.actions.limit}
+            onToggle={input.actions.onToggle}
+            open={input.actions.open}
+          />
+        </>
+      )}
+
+      {input.parentActions && (
+        <>
+          {input.parentActions.top}
+          <ScreenActions.View
+            id={input.parentActions.id ?? `${input.id}-bottom-buttons`}
+            ctx={input.ctx}
+            buttons={input.parentActions.buttons}
+            limit={input.parentActions.limit}
+            onToggle={input.parentActions.onToggle}
+            open={input.parentActions.open}
+          />
+        </>
+      )}
+    </Element>
+  )
+}
+
+const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.form ? 'form' : 'div'
   return (
     <Element

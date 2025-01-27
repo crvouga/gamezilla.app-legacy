@@ -12,6 +12,7 @@ import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { IconGamepad, IconUserCircle, Portal } from '~/@/ui'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
+import { VDomChildren } from '~/@/vdom/vdom'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { ILogger, Logger } from '../@/logger'
@@ -449,23 +450,31 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
   const frontendCtx = toFrontendCtx(input)
 
   return (
+    <Root>
+      <ViewStatusBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
+
+      <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
+        <ViewScreen model={input.model} dispatch={input.dispatch} ctx={frontendCtx} />
+      </div>
+
+      <AuthFrontend.ViewModals
+        ctx={frontendCtx}
+        dispatch={(c) => input.dispatch({ t: 'auth', c })}
+        model={input.model.auth}
+      />
+
+      <Portal.Exit portalId='app-root' />
+
+      <Toast.View ctx={frontendCtx} model={input.model.toast} dispatch={(c) => input.dispatch({ t: 'toast', c })} />
+    </Root>
+  )
+}
+
+const Root = (input: { children: VDomChildren }) => {
+  return (
     <div className='fixed left-1/2 top-1/2 flex h-[100dvh] w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden bg-black text-white'>
       <div className='relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded min-[520px]:border'>
-        <ViewStatusBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
-
-        <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
-          <ViewScreen model={input.model} dispatch={input.dispatch} ctx={frontendCtx} />
-        </div>
-
-        <AuthFrontend.ViewModals
-          ctx={frontendCtx}
-          dispatch={(c) => input.dispatch({ t: 'auth', c })}
-          model={input.model.auth}
-        />
-
-        <Portal.Exit portalId='app-root' />
-
-        <Toast.View ctx={frontendCtx} model={input.model.toast} dispatch={(c) => input.dispatch({ t: 'toast', c })} />
+        {input.children}
       </div>
     </div>
   )
