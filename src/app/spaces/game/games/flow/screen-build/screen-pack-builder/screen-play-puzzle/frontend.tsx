@@ -1,10 +1,9 @@
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
-import { IconChevronLeft, IconChevronRight, IconDeleteForever, TopBar } from '~/app/@/ui'
-import { ScreenActions } from '~/app/@/ui/bottom-buttons'
+import { IconChevronLeft, IconChevronRight, IconDeleteForever } from '~/app/@/ui'
+import { ScreenLayout } from '~/app/@/ui/screen'
 import { ModePlay } from '../../../@/mode-play'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
-import { BoardLayout } from '../../../@/ui/layout'
 import type { FrontendModule } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
@@ -78,46 +77,40 @@ const View: FrontendModule['View'] = (input) => {
   const canGoNext = screen.puzzleIndex + 1 < pack.puzzleIds.length
 
   return (
-    <div className='flex w-full flex-1 flex-col overflow-hidden'>
-      <TopBar
-        ctx={input.ctx}
-        title={input.ctx.t('flow.level', screen.puzzleIndex + 1)}
-        subtitle={screen.puzzleResult.t === 'got' ? input.ctx.t('flow-puzzle-name', screen.puzzleResult.c.name) : null}
-        onBack={() =>
+    <ScreenLayout
+      id='screen-puzzle'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('flow.level', screen.puzzleIndex + 1),
+        subtitle: screen.puzzleResult.t === 'got' ? input.ctx.t('flow-puzzle-name', screen.puzzleResult.c.name) : null,
+        onBack: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: {
               t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
               userId: input.ctx.currentUserId,
             },
-          })
-        }
-      />
-
-      <BoardLayout
-        top={null}
-        board={
-          screen.puzzleResult.t === 'got' && screen.play ? (
-            <ModePlay.View
-              dispatch={(c) =>
-                input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
-              }
-              flow={screen.puzzleResult.c.flow}
-              model={screen.play}
-              showSolvedAnimation
-            />
-          ) : (
-            <PuzzleResult.ViewNotFound ctx={input.ctx} />
-          )
-        }
-        bottom={null}
-      />
-      <ScreenActions.View
-        id='screen-puzzle-buttons'
-        ctx={input.ctx}
-        open={input.modelSpace.opened === 'more'}
-        limit={2}
-        onToggle={() =>
+          }),
+      }}
+      main={
+        screen.puzzleResult.t === 'got' && screen.play ? (
+          <ModePlay.View
+            dispatch={(c) =>
+              input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
+            }
+            flow={screen.puzzleResult.c.flow}
+            model={screen.play}
+            showSolvedAnimation
+          />
+        ) : (
+          <PuzzleResult.ViewNotFound ctx={input.ctx} />
+        )
+      }
+      actions={{
+        id: 'screen-puzzle-buttons',
+        open: input.modelSpace.opened === 'more',
+        limit: 2,
+        onToggle: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: {
@@ -127,9 +120,8 @@ const View: FrontendModule['View'] = (input) => {
                   : 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
               userId: input.ctx.currentUserId,
             },
-          })
-        }
-        buttons={[
+          }),
+        buttons: [
           {
             icon: (input) => <IconChevronLeft {...input} />,
             label: input.ctx.t('app.prev'),
@@ -174,9 +166,9 @@ const View: FrontendModule['View'] = (input) => {
                 },
               }),
           },
-        ]}
-      />
-    </div>
+        ],
+      }}
+    />
   )
 }
 

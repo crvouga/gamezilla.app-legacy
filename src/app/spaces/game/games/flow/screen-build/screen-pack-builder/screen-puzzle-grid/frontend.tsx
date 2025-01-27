@@ -1,9 +1,9 @@
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { IconPen, TopBar } from '~/app/@/ui'
+import { IconPen } from '~/app/@/ui'
 import { PackPuzzleGridUI } from '../../../@/pack/pack-puzzle-grid-ui'
 import { ScreenPackBuildSpace } from '../space/space'
 import type { FrontendModule } from '../types'
-import { ScreenActions } from '~/app/@/ui/bottom-buttons'
+import { ScreenLayout } from '~/app/@/ui/screen'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -24,60 +24,60 @@ const View: FrontendModule['View'] = (input) => {
     return null
   }
   return (
-    <div className='flex w-full flex-1 flex-col items-center justify-center overflow-hidden'>
-      <TopBar
-        ctx={input.ctx}
-        onBack={() =>
+    <ScreenLayout
+      id='screen-puzzle-grid'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('flow-pack-name', packBuilder.pack.name),
+        onBack: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: {
               t: 'screen-pack-builder.user-clicked-back-button',
               userId: input.ctx.currentUserId,
             },
-          })
-        }
-        title={input.ctx.t('flow-pack-name', packBuilder.pack.name)}
-      />
-      <PackPuzzleGridUI.View
-        id={packBuilder.pack.id}
-        slideIndex={ScreenPackBuildSpace.toSlideIndex(packBuilder)}
-        puzzleIds={packBuilder.pack.puzzleIds}
-        onSlideIndexChanged={(newSlideIndex) => {
-          input.dispatch({
-            t: 'got-msg-space',
-            c: { t: 'screen-pack-builder.user-changed-slide', newSlideIndex, userId: input.ctx.currentUserId },
-          })
-        }}
-        onClickPuzzleCell={({ puzzleIndex, puzzleId }) => {
-          const puzzle = input.ctx.puzzles[puzzleId]
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-pack-builder.user-clicked-pack-item',
-              puzzleIndex,
-              puzzleResult: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
-            },
-          })
-        }}
-        addCell={{
-          include: true,
-          onClick: () => {
+          }),
+      }}
+      main={
+        <PackPuzzleGridUI.View
+          id={packBuilder.pack.id}
+          slideIndex={ScreenPackBuildSpace.toSlideIndex(packBuilder)}
+          puzzleIds={packBuilder.pack.puzzleIds}
+          onSlideIndexChanged={(newSlideIndex) => {
+            input.dispatch({
+              t: 'got-msg-space',
+              c: { t: 'screen-pack-builder.user-changed-slide', newSlideIndex, userId: input.ctx.currentUserId },
+            })
+          }}
+          onClickPuzzleCell={({ puzzleIndex, puzzleId }) => {
+            const puzzle = input.ctx.puzzles[puzzleId]
             input.dispatch({
               t: 'got-msg-space',
               c: {
-                t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
-                userId: input.ctx.currentUserId,
+                t: 'screen-pack-builder.user-clicked-pack-item',
+                puzzleIndex,
+                puzzleResult: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
               },
             })
-          },
-        }}
-      />
-      <ScreenActions.View
-        id='screen-puzzle-grid-bottom-buttons'
-        ctx={input.ctx}
-        open={true}
-        onToggle={() => {}}
-        buttons={[
+          }}
+          addCell={{
+            include: true,
+            onClick: () => {
+              input.dispatch({
+                t: 'got-msg-space',
+                c: {
+                  t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
+                  userId: input.ctx.currentUserId,
+                },
+              })
+            },
+          }}
+        />
+      }
+      actions={{
+        open: true,
+        onToggle: () => {},
+        buttons: [
           {
             icon: (input) => <IconPen {...input} />,
             label: input.ctx.t('app.edit-name'),
@@ -91,9 +91,9 @@ const View: FrontendModule['View'] = (input) => {
               })
             },
           },
-        ]}
-      />
-    </div>
+        ],
+      }}
+    />
   )
 }
 

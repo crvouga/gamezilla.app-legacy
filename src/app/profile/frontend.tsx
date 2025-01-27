@@ -3,11 +3,11 @@ import { Loading, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { Avatar, Button, IconChevronRight, TopBar, Typography } from '~/app/@/ui'
-import { back, logout, pushScreen, replaceScreen, sendToBackend } from '../@/frontend/cmd'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
-import { ViewProfileScreen } from './profile-frontend/profile-frontend-view-profile-screen'
-import { ViewUpdateAvatarScreen } from './profile-frontend/profile-frontend-view-update-avatar-screen'
+import { back, logout, pushScreen, replaceScreen, sendToBackend } from '../@/frontend/cmd'
+import { ProfileScreen } from './profile-frontend/profile-screen'
+import { UpdateAvatarScreen } from './profile-frontend/update-avatar-screen'
 import type { FrontendModule, ModelFrontend } from './types'
 import * as UpdateUsernameFrontend from './update-username/update-username.frontend'
 
@@ -412,16 +412,12 @@ export const View: FrontendModule['View'] = (input) => {
       switch (input.ctx.currentScreen.t) {
         case 'profile': {
           return (
-            <div className='relative flex h-full w-full flex-col'>
-              <ViewProfileScreen
-                model={input.model}
-                ctx={input.ctx}
-                dispatch={input.dispatch}
-                userId={input.ctx.currentScreen.userId}
-              />
-
-              {input.slots?.bottomBar(null)}
-            </div>
+            <ProfileScreen.View
+              model={input.model}
+              ctx={input.ctx}
+              dispatch={input.dispatch}
+              userId={input.ctx.currentScreen.userId}
+            />
           )
         }
 
@@ -430,7 +426,7 @@ export const View: FrontendModule['View'] = (input) => {
         }
 
         case 'profile-edit-avatar': {
-          return <ViewUpdateAvatarScreen ctx={input.ctx} model={input.model} dispatch={input.dispatch} />
+          return <UpdateAvatarScreen.View ctx={input.ctx} model={input.model} dispatch={input.dispatch} />
         }
 
         case 'profile-edit-username': {

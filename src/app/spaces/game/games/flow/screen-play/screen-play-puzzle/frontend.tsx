@@ -1,19 +1,18 @@
+import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { Button, Dialog, DialogHeader, DialogSurface, TopBar } from '~/app/@/ui'
-import { ScreenActions } from '~/app/@/ui/bottom-buttons'
+import { Button, Dialog, DialogHeader, DialogSurface } from '~/app/@/ui'
+import { ScreenLayout } from '~/app/@/ui/screen'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { LayoutGame } from '../../../@/ui/layout-game'
 import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
 import { ModePlay } from '../../@/mode-play'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
-import { BoardLayout } from '../../@/ui/layout'
 import type { FrontendModule } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
-import { ScreenPlayPuzzleSpace } from './space'
 import { LastPuzzleFrontend } from './dialog-last-puzzle/frontend'
-import { Sub } from '~/@/sub'
+import { ScreenPlayPuzzleSpace } from './space'
+import { LayoutGame } from '../../../@/ui/layout-game'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -94,19 +93,161 @@ const View: FrontendModule['View'] = (input) => {
   const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
 
   if (isSpectating) {
-    return (
-      <LayoutGame ctx={input.ctx} isSpectating>
-        <TopBar ctx={input.ctx} onBack={false} title={input.ctx.t('flow.level', puzzleIndex + 1)} />
-        {puzzle.t === 'got' ? (
-          <BoardLayout
-            top={
-              <ProfileListItem
-                ctx={input.ctx}
-                profile={input.ctx.profiles[input.ctx.space.hostId]}
-                subtitle={input.ctx.t('game.player')}
+    return <ViewSpectating {...input} />
+  }
+
+  return (
+    <>
+      <ScreenLayout
+        id='screen-play-puzzle'
+        ctx={input.ctx}
+        topBar={{
+          title: input.ctx.t('flow.level', puzzleIndex + 1),
+          onBack: () =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                userId: input.ctx.currentUserId,
+                t: 'user-clicked-exit-play-puzzle-screen',
+              },
+            }),
+        }}
+        main={
+          <div
+            className='flex w-full flex-1 items-center justify-center'
+            data-puzzle-id={puzzle.t === 'got' ? puzzle.c.id : null}
+          >
+            {puzzle.t === 'got' ? (
+              <ModePlay.View
+                key={puzzle.c.id}
+                flow={puzzle.c.flow}
+                model={
+                  modePlay ??
+                  ModePlay.init({ ctx: ModePlay.initCtx({ flow: puzzle.c.flow, solutions: input.ctx.solutions }) })
+                }
+                dispatch={(c) =>
+                  input.dispatch({
+                    t: 'got-msg-space',
+                    c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUserId },
+                  })
+                }
+                showSolvedAnimation
               />
-            }
-            board={
+            ) : (
+              <PuzzleResult.ViewNotFound ctx={input.ctx} />
+            )}
+          </div>
+        }
+        actions={{
+          id: 'screen-play-puzzle-bottom-bar',
+          open: input.modelSpace.screen.opened === 'action-drawer',
+          onToggle: () =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                userId: input.ctx.currentUserId,
+                t: 'user-toggled-action-buttons-drawer',
+              },
+            }),
+          buttons: [
+            PrebuiltBottomButtons.next({
+              ...input,
+              disabled: puzzleIndex >= input.modelSpace.screen.pack.puzzleIds.length - 1,
+              hidden: !isSolved && puzzle.t !== 'not-found',
+              color: 'success',
+              onClick: () =>
+                input.dispatch({
+                  t: 'got-msg-space',
+                  c: {
+                    t: 'user-clicked-next-puzzle',
+                    userId: input.ctx.currentUserId,
+                    nextPuzzle: nextPuzzle
+                      ? {
+                          t: 'got',
+                          c: nextPuzzle,
+                        }
+                      : {
+                          t: 'not-found',
+                        },
+                    nextPuzzleIndex,
+                  },
+                }),
+            }),
+
+            puzzle.t === 'got' && !isSolved
+              ? ModePlay.viewHintAction({
+                  model:
+                    modePlay ??
+                    ModePlay.init({
+                      ctx: ModePlay.initCtx({
+                        flow: puzzle.c.flow,
+                        solutions: input.ctx.solutions,
+                      }),
+                    }),
+                  ctx: ModePlay.initCtx({
+                    ...input.ctx,
+                    flow: puzzle.c.flow,
+                    solutions: input.ctx.solutions,
+                  }),
+                  disabled: false,
+                  dispatch: (c) =>
+                    input.dispatch({
+                      t: 'got-msg-space',
+                      c: {
+                        t: 'got-flow-play-msg',
+                        c,
+                        userId: input.ctx.currentUserId,
+                      },
+                    }),
+                })
+              : null,
+
+            PrebuiltBottomButtons.reset({
+              ...input,
+              hidden: puzzle.t === 'not-found',
+              onClick: () =>
+                input.dispatch({
+                  t: 'got-msg-space',
+                  c: {
+                    t: 'user-clicked-reset-puzzle',
+                    userId: input.ctx.currentUserId,
+                  },
+                }),
+            }),
+
+            puzzle.t === 'not-found' ? null : CopyPuzzleFrontend.viewButtonAction(input),
+          ],
+        }}
+      />
+      <ViewSolvedModal {...input} />
+    </>
+  )
+}
+
+const ViewSpectating: FrontendModule['View'] = (input) => {
+  if (input.modelSpace.screen.t !== 'screen-play-puzzle') {
+    return null
+  }
+  const puzzle = input.modelSpace.screen.puzzleResult
+  const modePlay = input.modelSpace.screen.modePlay
+  const puzzleIndex = input.modelSpace.screen.puzzleIndex
+
+  return (
+    <ScreenLayout
+      id='flow-spectating'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('flow.level', puzzleIndex + 1),
+      }}
+      main={
+        <LayoutGame isSpectating ctx={input.ctx}>
+          <ProfileListItem
+            ctx={input.ctx}
+            profile={input.ctx.profiles[input.ctx.space.hostId]}
+            subtitle={input.ctx.t('game.player')}
+          />
+          <div className='flex flex-1 items-center justify-center'>
+            {puzzle.t === 'got' ? (
               <ModePlay.View
                 disabled
                 key={puzzle.c.id}
@@ -118,145 +259,13 @@ const View: FrontendModule['View'] = (input) => {
                 dispatch={() => {}}
                 showSolvedAnimation
               />
-            }
-            bottom={null}
-          />
-        ) : (
-          <PuzzleResult.ViewNotFound ctx={input.ctx} />
-        )}
-      </LayoutGame>
-    )
-  }
-  return (
-    <div
-      className='flex w-full flex-1 flex-col overflow-hidden'
-      data-puzzle-id={puzzle.t === 'got' ? puzzle.c.id : null}
-    >
-      <TopBar
-        ctx={input.ctx}
-        onBack={() =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              userId: input.ctx.currentUserId,
-              t: 'user-clicked-exit-play-puzzle-screen',
-            },
-          })
-        }
-        title={input.ctx.t('flow.level', puzzleIndex + 1)}
-      />
-
-      <BoardLayout
-        top={null}
-        board={
-          puzzle.t === 'got' ? (
-            <ModePlay.View
-              key={puzzle.c.id}
-              flow={puzzle.c.flow}
-              model={
-                modePlay ??
-                ModePlay.init({ ctx: ModePlay.initCtx({ flow: puzzle.c.flow, solutions: input.ctx.solutions }) })
-              }
-              dispatch={(c) =>
-                input.dispatch({
-                  t: 'got-msg-space',
-                  c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUserId },
-                })
-              }
-              showSolvedAnimation
-            />
-          ) : (
-            <PuzzleResult.ViewNotFound ctx={input.ctx} />
-          )
-        }
-        bottom={null}
-      />
-
-      <ScreenActions.View
-        id='screen-play-puzzle-bottom-bar'
-        ctx={input.ctx}
-        onToggle={() =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              userId: input.ctx.currentUserId,
-              t: 'user-toggled-action-buttons-drawer',
-            },
-          })
-        }
-        open={input.modelSpace.screen.opened === 'action-drawer'}
-        buttons={[
-          PrebuiltBottomButtons.next({
-            ...input,
-            disabled: puzzleIndex >= input.modelSpace.screen.pack.puzzleIds.length - 1,
-            hidden: !isSolved && puzzle.t !== 'not-found',
-            color: 'success',
-            onClick: () =>
-              input.dispatch({
-                t: 'got-msg-space',
-                c: {
-                  t: 'user-clicked-next-puzzle',
-                  userId: input.ctx.currentUserId,
-                  nextPuzzle: nextPuzzle
-                    ? {
-                        t: 'got',
-                        c: nextPuzzle,
-                      }
-                    : {
-                        t: 'not-found',
-                      },
-                  nextPuzzleIndex,
-                },
-              }),
-          }),
-
-          puzzle.t === 'got' && !isSolved
-            ? ModePlay.viewHintAction({
-                model:
-                  modePlay ??
-                  ModePlay.init({
-                    ctx: ModePlay.initCtx({
-                      flow: puzzle.c.flow,
-                      solutions: input.ctx.solutions,
-                    }),
-                  }),
-                ctx: ModePlay.initCtx({
-                  ...input.ctx,
-                  flow: puzzle.c.flow,
-                  solutions: input.ctx.solutions,
-                }),
-                disabled: false,
-                dispatch: (c) =>
-                  input.dispatch({
-                    t: 'got-msg-space',
-                    c: {
-                      t: 'got-flow-play-msg',
-                      c,
-                      userId: input.ctx.currentUserId,
-                    },
-                  }),
-              })
-            : null,
-
-          PrebuiltBottomButtons.reset({
-            ...input,
-            hidden: puzzle.t === 'not-found',
-            onClick: () =>
-              input.dispatch({
-                t: 'got-msg-space',
-                c: {
-                  t: 'user-clicked-reset-puzzle',
-                  userId: input.ctx.currentUserId,
-                },
-              }),
-          }),
-
-          puzzle.t === 'not-found' ? null : CopyPuzzleFrontend.viewButtonAction(input),
-        ]}
-      />
-
-      <ViewSolvedModal {...input} />
-    </div>
+            ) : (
+              <PuzzleResult.ViewNotFound ctx={input.ctx} />
+            )}
+          </div>
+        </LayoutGame>
+      }
+    />
   )
 }
 

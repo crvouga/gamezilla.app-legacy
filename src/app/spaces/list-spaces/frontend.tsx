@@ -2,8 +2,9 @@ import { RequestResponse, startedRequest } from '~/@/request-response/request-re
 import { Ok } from '~/@/result'
 import type { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND, playSound, pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
-import { IconGamepad, TopBar } from '~/app/@/ui'
+import { IconGamepad } from '~/app/@/ui'
 import { EmptyState } from '~/app/@/ui/empty-state'
+import { ScreenLayout } from '~/app/@/ui/screen'
 import type { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { SpaceState } from '../core/space-state'
@@ -132,32 +133,38 @@ const View: SpaceFrontendModule['View'] = (input) => {
   const spaces = toSpaces(input.model)
 
   return (
-    <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
-      <TopBar onBack={false} ctx={input.ctx} title={input.ctx.t('spaces.spaces')} />
+    <ScreenLayout
+      id='list-spaces'
+      ctx={input.ctx}
+      topBar={{
+        title: input.ctx.t('spaces.spaces'),
+      }}
+      actions={input.ctx.parentScreenActions}
+      main={
+        <div className='relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8'>
+          {spaces.length === 0 && (
+            <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
+          )}
 
-      <div className='relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8'>
-        {spaces.length === 0 && (
-          <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
-        )}
+          <div className='flex w-full flex-1 flex-col gap-5 p-5'>
+            {spaces.flatMap((state) => (
+              <ViewSpaceCard
+                key={state.spaceId}
+                ctx={{ ...input.ctx, currentUserId: input.ctx.currentUserId }}
+                onClick={() => input.dispatch({ t: 'clicked-space-card', spaceId: state.spaceId })}
+                state={state}
+              />
+            ))}
+          </div>
 
-        <div className='flex w-full flex-1 flex-col gap-5 p-5'>
-          {spaces.flatMap((state) => (
-            <ViewSpaceCard
-              key={state.spaceId}
-              ctx={{ ...input.ctx, currentUserId: input.ctx.currentUserId }}
-              onClick={() => input.dispatch({ t: 'clicked-space-card', spaceId: state.spaceId })}
-              state={state}
-            />
-          ))}
+          {!currentUserSpaceId && (
+            <div className='absolute bottom-6 right-4'>
+              <StartSpaceFrontend.ViewStartSpaceButton {...input} />
+            </div>
+          )}
         </div>
-      </div>
-
-      {!currentUserSpaceId && (
-        <div className='absolute bottom-6 right-4'>
-          <StartSpaceFrontend.ViewStartSpaceButton {...input} />
-        </div>
-      )}
-    </div>
+      }
+    />
   )
 }
 

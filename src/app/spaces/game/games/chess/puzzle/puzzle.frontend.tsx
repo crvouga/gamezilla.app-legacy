@@ -14,7 +14,7 @@ import {
   Spinner,
   cn,
 } from '~/app/@/ui'
-import type { ScreenAction } from '~/app/@/ui/bottom-buttons'
+import type { ScreenAction } from '~/app/@/ui/screen-actions'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../@/ui/layout-game'

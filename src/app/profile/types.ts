@@ -13,6 +13,7 @@ import { BackendCmd } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendEvt } from '../@/backend/evt'
 import * as UpdateUsernameTypes from './update-username/update-username.types'
+import { ScreenActionsProps } from '../@/ui/screen'
 //
 //
 //
@@ -131,7 +132,9 @@ export type BackendModule = AppBackendModule<{
   Deps: null
 }>
 
-export type FrontendCtx = AppFrontendCtx | AnonymousFrontendCtx
+export type FrontendCtx = (AppFrontendCtx | AnonymousFrontendCtx) & {
+  parentScreenActions?: ScreenActionsProps | null
+}
 
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend
@@ -146,7 +149,4 @@ export type FrontendModule = AppFrontendModule<{
     MsgToBackend: MsgToBackend
   }>
   MsgEvtOut: FrontendEvt
-  ViewSlot: {
-    bottomBar: null
-  }
 }>

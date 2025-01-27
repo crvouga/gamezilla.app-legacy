@@ -41,7 +41,10 @@ const init: FrontendModule['init'] = ({ ctx }) => {
 const update: FrontendModule['update'] = (input) => {
   const updated = updateLoop({
     ...input,
-    ctx: { ...input.ctx, profiles: { ...input.ctx.profiles, ...input.msgBackend?.profiles } },
+    ctx: {
+      ...input.ctx,
+      profiles: { ...input.ctx.profiles, ...input.msgBackend?.profiles },
+    },
   })
 
   return {
@@ -152,13 +155,7 @@ const View: FrontendModule['View'] = (input) => {
     case 'spaces': {
       switch (input.ctx.currentScreen.t) {
         case 'space-list': {
-          return (
-            <>
-              <ListSpacesFrontend.View dispatch={input.dispatch} ctx={input.ctx} model={input.model} />
-
-              {input.slots?.bottomBar(null)}
-            </>
-          )
+          return <ListSpacesFrontend.View dispatch={input.dispatch} ctx={input.ctx} model={input.model} />
         }
         case 'space': {
           if (isAppFrontendCtx(input.ctx)) {

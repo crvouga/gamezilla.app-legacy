@@ -42,7 +42,7 @@ export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: 
 
 export const DialogSurface = (input: { children: VDomChildren }) => {
   return (
-    <div className='bg-surface flex w-80 flex-col gap-6 rounded-lg border p-6 shadow-2xl drop-shadow-2xl'>
+    <div className='bg-surface border-surface flex w-80 flex-col gap-6 rounded-lg border p-8 shadow-2xl drop-shadow-2xl'>
       {input.children}
     </div>
   )

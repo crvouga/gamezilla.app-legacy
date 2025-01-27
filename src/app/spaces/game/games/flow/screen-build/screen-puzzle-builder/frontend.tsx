@@ -2,13 +2,12 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { Drawer, IconEllipsisVertical, IconPen, IconPlay, TopBar } from '~/app/@/ui'
-import { ScreenActions } from '~/app/@/ui/bottom-buttons'
+import { ScreenLayout } from '~/app/@/ui/screen'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
 import { ModeEdit } from '../../@/mode-edit'
 import { ModePlay } from '../../@/mode-play'
-import { BoardLayout } from '../../@/ui/layout'
 import { VariantBoard } from '../../@/variant'
 import * as BuilderTypes from '../types'
 import { DeleteForeverFrontend } from './drawer-delete-forever/frontend'
@@ -213,19 +212,11 @@ const ViewModeEdit: BuilderTypes.FrontendModule['View'] = (input) => {
   if (!puzzleBuilder) return null
 
   return (
-    <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
-      <ModeEdit.View
-        model={puzzleBuilder.ModeEdit}
-        ctx={input.ctx}
-        dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
-      />
-
-      <ScreenActions.View
-        id='puzzle-builder-edit-buttons'
-        ctx={input.ctx}
-        open={false}
-        onToggle={() => {}}
-        buttons={[
+    <ScreenLayout
+      id='puzzle-builder-screen'
+      ctx={input.ctx}
+      actions={{
+        buttons: [
           ...SaveChangesFrontend.viewBottomButtons({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
           {
             icon: (input) => <IconPlay {...input} />,
@@ -238,9 +229,20 @@ const ViewModeEdit: BuilderTypes.FrontendModule['View'] = (input) => {
             label: input.ctx.t('app.more'),
             onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-open-more-drawer-button' }),
           },
-        ]}
-      />
-    </div>
+        ],
+        onToggle: () => {},
+        open: false,
+      }}
+      main={
+        <div className='flex w-full flex-1 flex-col items-center justify-center overflow-hidden'>
+          <ModeEdit.View
+            model={puzzleBuilder.ModeEdit}
+            ctx={input.ctx}
+            dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
+          />
+        </div>
+      }
+    />
   )
 }
 
@@ -254,47 +256,11 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
     : 'solving'
 
   return (
-    <div className='flex h-full w-full flex-col items-center justify-center overflow-hidden'>
-      <BoardLayout
-        top={<div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>}
-        board={
-          <ModePlay.View
-            model={puzzleBuilder.ModePlay}
-            flow={flow}
-            dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c })}
-            showSolvedAnimation
-          />
-        }
-        bottom={
-          <ScreenActions.View
-            ctx={input.ctx}
-            id='hint-button'
-            open={false}
-            onToggle={() => {}}
-            buttons={[
-              ModePlay.viewHintAction({
-                ctx: ModePlay.initCtx({ ...input.ctx, flow }),
-                dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
-                model: puzzleBuilder.ModePlay,
-                disabled: status === 'solved',
-              }),
-              ModePlay.viewResetAction({
-                ctx: input.ctx,
-                dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
-                flow,
-                model: puzzleBuilder.ModePlay,
-              }),
-            ]}
-          />
-        }
-      />
-
-      <ScreenActions.View
-        id='puzzle-builder-buttons'
-        ctx={input.ctx}
-        open={false}
-        onToggle={() => {}}
-        buttons={[
+    <ScreenLayout
+      id='puzzle-builder-screen'
+      ctx={input.ctx}
+      actions={{
+        buttons: [
           ...SaveChangesFrontend.viewBottomButtons({ ...input, model: input.model }),
           {
             icon: (input) => <IconPen {...input} />,
@@ -307,9 +273,48 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
             label: input.ctx.t('app.more'),
             onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-open-more-drawer-button' }),
           },
-        ]}
-      />
-    </div>
+        ],
+        onToggle: () => {},
+        open: false,
+      }}
+      main={
+        <ScreenLayout
+          id='puzzle-builder-screen-mode-play'
+          ctx={input.ctx}
+          main={
+            <div className='flex w-full flex-1 flex-col items-center justify-center'>
+              <div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>
+              <div className='w-full'>
+                <ModePlay.View
+                  model={puzzleBuilder.ModePlay}
+                  flow={flow}
+                  dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c })}
+                  showSolvedAnimation
+                />
+              </div>
+            </div>
+          }
+          actions={{
+            open: false,
+            onToggle: () => {},
+            buttons: [
+              ModePlay.viewHintAction({
+                ctx: ModePlay.initCtx({ ...input.ctx, flow }),
+                dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
+                model: puzzleBuilder.ModePlay,
+                disabled: status === 'solved',
+              }),
+              ModePlay.viewResetAction({
+                ctx: input.ctx,
+                dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
+                flow,
+                model: puzzleBuilder.ModePlay,
+              }),
+            ],
+          }}
+        />
+      }
+    />
   )
 }
 

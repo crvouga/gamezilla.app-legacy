@@ -4,6 +4,7 @@ import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
+import { ScreenActionsProps } from '~/app/@/ui/screen'
 import { MsgSpace } from '../../core/space-msg'
 import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from '../../types'
 import type { SpaceFrontendCmd } from '../frontend/cmd'
@@ -12,6 +13,7 @@ import type { Space } from '../space/space'
 
 type Ctx = BaseFrontendCtx & {
   space?: Space
+  parentScreenActions?: ScreenActionsProps | null
 }
 
 export type Input = {

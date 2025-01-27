@@ -1,25 +1,26 @@
 import type { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
+import { Pagination } from '~/@/query/query'
 import { RequestResponse } from '~/@/request-response/request-response'
-import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { FrontendEvt } from '~/app/@/frontend/evt'
+import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { BackendCmd } from '~/app/@/backend/cmd'
+import { AppBackendCtx } from '~/app/@/backend/ctx'
+import { BackendEvt } from '~/app/@/backend/evt'
 import { UserAccount } from '~/app/@/data/account'
 import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { BackendCmd } from '~/app/@/backend/cmd'
-import { AppBackendCtx } from '~/app/@/backend/ctx'
-import { BackendEvt } from '~/app/@/backend/evt'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { FrontendEvt } from '~/app/@/frontend/evt'
+import { ScreenActionsProps } from '../@/ui/screen'
+import { SpaceFrontendCmd } from './@/frontend/cmd'
 import { SpacesCore } from './core/core'
 import { ISpacesCoreAsync } from './core/core-async/interface'
 import { Space } from './core/space'
 import { MsgSpace } from './core/space-msg'
 import { GamesTypes } from './game/games'
 import { GameName } from './game/games/@/game-name'
-import { SpaceFrontendCmd } from './@/frontend/cmd'
-import { Pagination } from '~/@/query/query'
 
 //
 //
@@ -144,8 +145,12 @@ export type MsgToBackendExtra = {
 //
 //
 
+type SpaceFrontendCtx = (AnonymousFrontendCtx | AppFrontendCtx) & {
+  parentScreenActions?: ScreenActionsProps | null
+}
+
 export type FrontendModule = AppFrontendModule<{
-  Ctx: AnonymousFrontendCtx | AppFrontendCtx
+  Ctx: SpaceFrontendCtx
   MsgCmdIn: SpaceFrontendCmd<{
     MsgToBackend: MsgToBackend
     MsgFrontend: MsgFrontend
@@ -160,9 +165,6 @@ export type FrontendModule = AppFrontendModule<{
   MsgEvtOut: FrontendEvt
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  ViewSlot: {
-    bottomBar: null
-  }
 }>
 
 export type BackendModule = AppBackendModule<{

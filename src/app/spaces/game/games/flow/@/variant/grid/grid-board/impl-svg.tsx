@@ -43,7 +43,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
   return (
     <svg
       className={cn(
-        'h-full w-full touch-none select-none',
+        'aspect-square h-full max-h-full w-full touch-none select-none overflow-hidden',
         input.isDragging && 'cursor-grabbing',
         input.disabled && 'pointer-events-none',
         input.className,

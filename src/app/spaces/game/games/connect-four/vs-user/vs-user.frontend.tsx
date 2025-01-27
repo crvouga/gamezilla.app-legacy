@@ -10,7 +10,7 @@ import {
   IconSpinner,
   IconXMark,
 } from '~/app/@/ui'
-import { ScreenActions } from '~/app/@/ui/bottom-buttons'
+import { ScreenActions } from '~/app/@/ui/screen-actions'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'

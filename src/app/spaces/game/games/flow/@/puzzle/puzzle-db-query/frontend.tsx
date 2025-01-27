@@ -173,7 +173,7 @@ const ViewListItem = (input: {
         </div>
       )}
 
-      <div className='flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden'>
+      <div className='flex aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden'>
         <VariantBoard.View disabled model={input.puzzle.flow} />
       </div>
 

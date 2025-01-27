@@ -1,9 +1,8 @@
-import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { Avatar, TextField, TopBar } from '~/app/@/ui'
 import type { ModelFrontend, MsgFrontend } from '../types'
-
-export const ViewUpdateAvatarScreen = (input: {
+const View = (input: {
   model: ModelFrontend
   dispatch: (msg: MsgFrontend) => void
   ctx: AnonymousFrontendCtx | AppFrontendCtx
@@ -52,4 +51,8 @@ export const ViewUpdateAvatarScreen = (input: {
       </div>
     </div>
   )
+}
+
+export const UpdateAvatarScreen = {
+  View,
 }

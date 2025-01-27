@@ -19,11 +19,10 @@ import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
-import { ScreenActions } from './@/ui/bottom-buttons'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
+import { ScreenActionsProps } from './@/ui/screen'
 import * as AuthFrontend from './auth/frontend'
 import { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
-import './frontend/styles.css'
 import * as LangFrontend from './lang/frontend'
 import * as ProfileFrontend from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
@@ -542,10 +541,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
         <ProfileFrontend.View
           dispatch={(m) => input.dispatch({ t: 'profile', c: m })}
           model={input.model.profile}
-          ctx={input.ctx}
-          slots={{
-            bottomBar: () => <ViewBottomNavBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />,
-          }}
+          ctx={{ ...input.ctx, parentScreenActions: toScreenActions(input) }}
         />
       )
     }
@@ -555,10 +551,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
         <SpacesFrontend.View
           dispatch={(m) => input.dispatch({ t: 'spaces', c: m })}
           model={input.model.spaces}
-          ctx={input.ctx}
-          slots={{
-            bottomBar: () => <ViewBottomNavBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />,
-          }}
+          ctx={{ ...input.ctx, parentScreenActions: toScreenActions(input) }}
         />
       )
     }
@@ -619,11 +612,11 @@ const ViewStatusBar: typeof View = (input) => {
   )
 }
 
-const ViewBottomNavBar = (input: {
+const toScreenActions = (input: {
   ctx: AppFrontendCtx | BaseFrontendCtx
   model: ModelFrontend
   dispatch: (m: MsgFrontend) => void
-}) => {
+}): ScreenActionsProps | null => {
   if (!input.ctx.currentUserId) {
     return null
   }
@@ -638,40 +631,35 @@ const ViewBottomNavBar = (input: {
     t: 'profile',
     userId: input.ctx.currentUserId,
   }
-  return (
-    <div className='flex w-full shrink-0 flex-col items-center justify-center'>
-      {isAppFrontendCtx(input.ctx) && (
-        <SpacesFrontend.ViewCurrentSpaceBar
-          ctx={input.ctx}
-          model={input.model.spaces}
-          dispatch={(c) => input.dispatch({ t: 'spaces', c })}
-        />
-      )}
 
-      <ScreenActions.View
+  return {
+    id: 'app-bar',
+    top: isAppFrontendCtx(input.ctx) && (
+      <SpacesFrontend.ViewCurrentSpaceBar
         ctx={input.ctx}
-        id='app-bottom-nav'
-        onToggle={() => {}}
-        open={false}
-        buttons={[
-          {
-            label: input.ctx.t('spaces.spaces'),
-            icon: (input) => <IconGamepad {...input} />,
-            color: eq(input.model.currentScreen.currentScreen, screenSpace) ? 'selected' : 'inherit',
-            onClick() {
-              input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } })
-            },
-          },
-          {
-            label: input.ctx.t('profile.profile'),
-            icon: (input) => <IconUserCircle {...input} />,
-            color: eq(input.model.currentScreen.currentScreen, screenProfile) ? 'selected' : 'inherit',
-            onClick() {
-              input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } })
-            },
-          },
-        ]}
+        model={input.model.spaces}
+        dispatch={(c) => input.dispatch({ t: 'spaces', c })}
       />
-    </div>
-  )
+    ),
+    buttons: [
+      {
+        label: input.ctx.t('spaces.spaces'),
+        icon: (input) => <IconGamepad {...input} />,
+        color: eq(input.model.currentScreen.currentScreen, screenSpace) ? 'selected' : 'inherit',
+        onClick() {
+          input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } })
+        },
+      },
+      {
+        label: input.ctx.t('profile.profile'),
+        icon: (input) => <IconUserCircle {...input} />,
+        color: eq(input.model.currentScreen.currentScreen, screenProfile) ? 'selected' : 'inherit',
+        onClick() {
+          input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } })
+        },
+      },
+    ],
+    onToggle: () => {},
+    open: false,
+  }
 }

@@ -5,15 +5,14 @@ import { p } from '~/@/parser'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { Drawer, DrawerHeader, IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/app/@/ui'
-import { ScreenActions } from '~/app/@/ui/bottom-buttons'
 import { ViewForm } from '~/app/@/ui/form'
 import { FormBottomButtons } from '~/app/@/ui/form-button-buttons'
+import { ScreenLayout } from '~/app/@/ui/screen'
 import * as Flow from '../flow/flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
 import { Terminal } from '../flow/terminal'
 import * as FlowUI from '../ui/color'
-import { BoardLayout } from '../ui/layout'
 import { VariantBoard } from '../variant'
 import * as FlowVariant from '../variant/variant'
 import * as FlowVariantDimensions from '../variant/variant-dimensions'
@@ -451,96 +450,93 @@ export const toFlowMemoized = memoize({
 
 export const View = (input: { ctx: AppFrontendCtx; model: Model; dispatch: (m: Msg) => void }) => {
   return (
-    <BoardLayout
-      top={
-        <div className='flex flex-col items-center justify-end'>
-          <ViewStatus {...input} />
-        </div>
-      }
-      board={
-        <VariantBoard.View
-          model={toFlow(input)}
-          onDraggedOver={(nodeId) => input.dispatch({ t: 'dragged-over', nodeId })}
-          onPressDown={(nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId })}
-          onPressUp={(nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId })}
-        />
-      }
-      bottom={
-        <>
-          <ScreenActions.View
-            id='mode-edit-buttons'
+    <>
+      <ScreenLayout
+        id='mode-edit-screen'
+        ctx={input.ctx}
+        main={
+          <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-auto'>
+            <ViewStatus {...input} />
+
+            <VariantBoard.View
+              model={toFlow(input)}
+              onDraggedOver={(nodeId) => input.dispatch({ t: 'dragged-over', nodeId })}
+              onPressDown={(nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId })}
+              onPressUp={(nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId })}
+            />
+          </div>
+        }
+        actions={{
+          open: false,
+          onToggle: () => {},
+          buttons: [
+            {
+              icon: (input) => <IconArrowRotateLeft {...input} />,
+              label: input.ctx.t('app.undo'),
+              onClick: () => input.dispatch({ t: 'clicked-undo' }),
+              disabled: !History.canUndo(input.model.form),
+            },
+            {
+              icon: (input) => <IconArrowRotateRight {...input} />,
+              label: input.ctx.t('app.redo'),
+              disabled: !History.canRedo(input.model.form),
+              onClick: () => input.dispatch({ t: 'clicked-redo' }),
+            },
+            {
+              icon: (input) => <IconXMark {...input} />,
+              label: input.ctx.t('app.clear'),
+              disabled: !canClear(input.model),
+              onClick: () => input.dispatch({ t: 'clicked-clear' }),
+            },
+            {
+              icon: (input) => <IconExpand {...input} />,
+              label: input.ctx.t('app.dimensions'),
+              onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
+            },
+          ],
+        }}
+      />
+      <Drawer
+        ctx={input.ctx}
+        ariaLabel={input.ctx.t('app.dimensions')}
+        open={input.model.opened === 'dimensions'}
+        onClose={() =>
+          input.dispatch({
+            t: 'dimensions-form.closed',
+          })
+        }
+        id='dimensions'
+        position='bottom'
+      >
+        <ViewForm
+          name={input.ctx.t('app.dimensions')}
+          onSubmit={() => input.dispatch({ t: 'dimensions-form.clicked-save' })}
+        >
+          <DrawerHeader
             ctx={input.ctx}
-            open={false}
-            onToggle={() => {}}
-            buttons={[
-              {
-                icon: (input) => <IconArrowRotateLeft {...input} />,
-                label: input.ctx.t('app.undo'),
-                onClick: () => input.dispatch({ t: 'clicked-undo' }),
-                disabled: !History.canUndo(input.model.form),
-              },
-              {
-                icon: (input) => <IconArrowRotateRight {...input} />,
-                label: input.ctx.t('app.redo'),
-                disabled: !History.canRedo(input.model.form),
-                onClick: () => input.dispatch({ t: 'clicked-redo' }),
-              },
-              {
-                icon: (input) => <IconXMark {...input} />,
-                label: input.ctx.t('app.clear'),
-                disabled: !canClear(input.model),
-                onClick: () => input.dispatch({ t: 'clicked-clear' }),
-              },
-              {
-                icon: (input) => <IconExpand {...input} />,
-                label: input.ctx.t('app.dimensions'),
-                onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
-              },
-            ]}
+            title={input.ctx.t('app.dimensions')}
+            onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
           />
-          <Drawer
+
+          <FlowVariantDimensions.ViewForm
             ctx={input.ctx}
-            ariaLabel={input.ctx.t('app.dimensions')}
-            open={input.model.opened === 'dimensions'}
-            onClose={() =>
+            form={input.model.dimensions}
+            onInput={(dimensions) =>
               input.dispatch({
-                t: 'dimensions-form.closed',
+                t: 'dimensions-form.inputted',
+                dimensions,
               })
             }
-            id='dimensions'
-            position='bottom'
-          >
-            <ViewForm
-              name={input.ctx.t('app.dimensions')}
-              onSubmit={() => input.dispatch({ t: 'dimensions-form.clicked-save' })}
-            >
-              <DrawerHeader
-                ctx={input.ctx}
-                title={input.ctx.t('app.dimensions')}
-                onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
-              />
-
-              <FlowVariantDimensions.ViewForm
-                ctx={input.ctx}
-                form={input.model.dimensions}
-                onInput={(dimensions) =>
-                  input.dispatch({
-                    t: 'dimensions-form.inputted',
-                    dimensions,
-                  })
-                }
-              />
-              <FormBottomButtons
-                onCancel={() => input.dispatch({ t: 'dimensions-form.clicked-cancel' })}
-                cancelText={input.ctx.t('app.cancel')}
-                submitText={input.ctx.t('app.save')}
-                submitDisabled={!canSubmitDimensionsForm(input.model)}
-              />
-            </ViewForm>
-          </Drawer>
-        </>
-      }
-    />
+          />
+          <FormBottomButtons
+            onCancel={() => input.dispatch({ t: 'dimensions-form.clicked-cancel' })}
+            cancelText={input.ctx.t('app.cancel')}
+            submitText={input.ctx.t('app.save')}
+            submitDisabled={!canSubmitDimensionsForm(input.model)}
+          />
+        </ViewForm>
+      </Drawer>
+    </>
   )
 }
 
