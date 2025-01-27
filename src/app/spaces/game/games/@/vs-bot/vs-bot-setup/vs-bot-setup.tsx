@@ -142,9 +142,11 @@ export const View = ({
     <div className='flex w-full flex-1 flex-col'>
       <LayoutGameCoverArtHeader
         ctx={ctx}
-        onBack={onQuit}
+        topBar={{
+          title,
+          onBack: onQuit,
+        }}
         renderCoverArt={renderCoverArt}
-        title={title}
         renderContent={() => (
           <div className='flex w-full flex-col gap-2 p-4'>
             <div className='grid w-full grid-cols-7'>

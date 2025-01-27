@@ -25,7 +25,7 @@ export const FormBottomButtons = (input: {
       <Button
         className='flex-1'
         type='submit'
-        color={input.variant === 'danger' ? 'danger' : 'default'}
+        color={input.variant === 'danger' ? 'danger' : 'primary'}
         variant='contained'
         text={input.submitText}
         loading={input.submitLoading}

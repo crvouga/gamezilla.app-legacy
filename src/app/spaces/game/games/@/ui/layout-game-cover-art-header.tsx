@@ -5,23 +5,24 @@ import { cn } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/screen/screen-layout'
 
 export const LayoutGameCoverArtHeader = (input: {
-  title: TranslatedText
+  topBar?: {
+    title: TranslatedText
+    subtitle?: TranslatedText | null
+    onBack?: () => void
+  }
   renderCoverArt?: (input: { className: string }) => VDom
-  onBack: (() => void) | false
   ctx: {
     t: Translator
   }
-  renderContent: VDom
+
+  renderContent: () => VDom
 }) => {
   const renderCoverArt_ = input.renderCoverArt || renderDefaultCoverArt
   return (
     <ScreenLayout
       id='game-cover-art-header'
       ctx={input.ctx}
-      topBar={{
-        title: input.title,
-        onBack: input.onBack || undefined,
-      }}
+      topBar={input.topBar}
       main={
         <div className='flex w-full flex-1 flex-col items-center overflow-y-auto'>
           {renderCoverArt_({ className: 'size-28 overflow-hidden rounded-lg' })}

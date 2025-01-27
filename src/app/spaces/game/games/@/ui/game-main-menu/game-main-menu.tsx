@@ -100,8 +100,9 @@ export const View = ({
     return (
       <LayoutGameCoverArtHeader
         ctx={ctx}
-        onBack={false}
-        title={title}
+        topBar={{
+          title,
+        }}
         renderCoverArt={renderCoverArt}
         renderContent={() => (
           <ViewUsersInSpaceList
@@ -121,8 +122,10 @@ export const View = ({
   return (
     <LayoutGameCoverArtHeader
       ctx={ctx}
-      onBack={onBack}
-      title={title}
+      topBar={{
+        title,
+        onBack,
+      }}
       renderCoverArt={renderCoverArt}
       renderContent={() => (
         <div className='flex w-full flex-col p-4'>

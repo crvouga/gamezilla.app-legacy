@@ -152,8 +152,10 @@ export const VsUserSetupScreen = ({
     <div className='flex h-full w-full flex-1 flex-col overflow-hidden'>
       <LayoutGameCoverArtHeader
         ctx={ctx}
-        onBack={onQuit}
-        title={title}
+        topBar={{
+          title,
+          onBack: onQuit,
+        }}
         renderCoverArt={renderCoverArt}
         renderContent={() => <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />}
       />
