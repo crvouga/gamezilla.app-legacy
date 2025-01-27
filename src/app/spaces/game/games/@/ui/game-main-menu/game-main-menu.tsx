@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
-import { IconRobot, IconUsers, Typography } from '~/app/@/ui'
+import { IconRobot, IconUsers, Typography } from '~/@/ui'
 import {
   type SpaceFrontendCmd,
   type SpaceFrontendCmdTypes,

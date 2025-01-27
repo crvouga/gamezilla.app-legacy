@@ -1,6 +1,6 @@
 import { p } from '~/@/parser'
 import { Translator } from '~/@/l18n/generated'
-import { IconXMark, Slider } from '~/app/@/ui'
+import { IconXMark, Slider } from '~/@/ui'
 
 export const Model = p.obj({
   t: p.l('flow-grid'),

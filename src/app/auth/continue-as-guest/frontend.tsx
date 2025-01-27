@@ -1,7 +1,7 @@
 import { isRequesting, isResponseOk, RequestResponse } from '~/@/request-response/request-response'
 import { isErr, NotAsked } from '~/@/result'
 import { APP_SOUND, playSound, sendToBackend, showErrSm } from '~/app/@/frontend/cmd'
-import { Button, IconUserCircle } from '~/app/@/ui'
+import { Button, IconUserCircle } from '~/@/ui'
 import type { FrontendModule } from '../types'
 import type { ModelFrontend } from './types'
 

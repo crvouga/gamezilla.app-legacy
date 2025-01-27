@@ -1,7 +1,7 @@
 import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { type AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { Button, Dialog, DialogHeader, DialogSurface } from '~/app/@/ui'
+import { Button, Dialog, DialogHeader, DialogSurface } from '~/@/ui'
 import type { FrontendModule, MsgFrontend } from '../../types'
 
 const update: FrontendModule['update'] = (input) => {

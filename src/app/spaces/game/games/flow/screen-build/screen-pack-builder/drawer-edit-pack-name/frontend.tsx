@@ -1,4 +1,4 @@
-import { Button, Drawer, DrawerHeader, TextField } from '~/app/@/ui'
+import { Button, Drawer, DrawerHeader, TextField } from '~/@/ui'
 import { FrontendModule } from '../types'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 

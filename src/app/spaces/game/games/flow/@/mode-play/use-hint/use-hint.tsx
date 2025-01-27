@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { p } from '~/@/parser'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { IconLightbulb } from '~/app/@/ui'
+import { IconLightbulb } from '~/@/ui'
 import { ScreenAction } from '~/app/@/screen/screen-actions'
 import { Flow } from '../../flow'
 import { GroupId } from '../../flow/group-id'

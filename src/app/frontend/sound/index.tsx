@@ -6,7 +6,7 @@ import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND, SoundCmd, playSound } from '~/app/@/frontend/cmd'
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
 import { FrontendEvt } from '~/app/@/frontend/evt'
-import { IconVolumeHigh, IconVolumeXMark, ListItemButton, ToggleButton } from '~/app/@/ui'
+import { IconVolumeHigh, IconVolumeXMark, ListItemButton, ToggleButton } from '~/@/ui'
 
 //
 //

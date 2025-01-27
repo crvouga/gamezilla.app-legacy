@@ -1,6 +1,6 @@
 import { pushScreen, playSound, APP_SOUND } from '~/app/@/frontend/cmd'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
-import { IconButton, IconHome } from '~/app/@/ui'
+import { IconButton, IconHome } from '~/@/ui'
 
 const update: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {

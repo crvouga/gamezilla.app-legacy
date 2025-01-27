@@ -1,5 +1,5 @@
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { IconPen } from '~/app/@/ui'
+import { IconPen } from '~/@/ui'
 import { PackPuzzleGridUI } from '../../../@/pack/pack-puzzle-grid-ui'
 import { ScreenPackBuildSpace } from '../space/space'
 import type { FrontendModule } from '../types'

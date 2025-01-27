@@ -1,6 +1,6 @@
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { IconGamepad } from '~/app/@/ui'
+import { IconGamepad } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/screen/screen-layout'
 import { LayoutGameCoverArtHeader } from '../../../@/ui/layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../../../@/ui/users-in-space-list'

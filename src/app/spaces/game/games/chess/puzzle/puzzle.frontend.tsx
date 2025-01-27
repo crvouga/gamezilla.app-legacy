@@ -1,7 +1,6 @@
 import { Eff } from '~/@/eff'
 import { Translator } from '~/@/l18n/generated'
 import { isErr } from '~/@/result'
-import { APP_SOUND, AppFrontendCmd, playSound, sendToBackend } from '~/app/@/frontend/cmd'
 import {
   Avatar,
   IconArrowCircle,
@@ -13,7 +12,8 @@ import {
   IconXMark,
   Spinner,
   cn,
-} from '~/app/@/ui'
+} from '~/@/ui'
+import { APP_SOUND, AppFrontendCmd, playSound, sendToBackend } from '~/app/@/frontend/cmd'
 import type { ScreenAction } from '~/app/@/screen/screen-actions'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'

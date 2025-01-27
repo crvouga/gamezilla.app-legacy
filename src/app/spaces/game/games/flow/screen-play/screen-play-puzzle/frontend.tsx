@@ -1,7 +1,7 @@
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { Button, Dialog, DialogHeader, DialogSurface } from '~/app/@/ui'
+import { Button, Dialog, DialogHeader, DialogSurface } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/screen/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'

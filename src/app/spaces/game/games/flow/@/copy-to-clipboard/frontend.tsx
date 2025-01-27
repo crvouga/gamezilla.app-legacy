@@ -1,7 +1,7 @@
 import { p } from '~/@/parser'
 import { APP_SOUND, AppFrontendCmd, copyToClipboard, playSound, showToast } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { IconCopy } from '~/app/@/ui'
+import { IconCopy } from '~/@/ui'
 import { ScreenAction } from '~/app/@/screen/screen-actions'
 import { Variant } from '../variant'
 import { VariantGridShorthand } from '../variant/grid'

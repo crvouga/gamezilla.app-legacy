@@ -1,9 +1,9 @@
-import { IconBox, IconPuzzlePiece, IconScrewdriverWrench } from '~/app/@/ui'
+import { Sub } from '~/@/sub'
+import { IconBox, IconPuzzlePiece, IconScrewdriverWrench } from '~/@/ui'
+import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../../../@/ui/game-main-menu'
 import type { FrontendModule } from '../types'
-import { playSound, APP_SOUND } from '~/app/@/frontend/cmd'
-import { Sub } from '~/@/sub'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen({ model: input.model }, (model) => updateFromMsgSpace({ ...input, model }))

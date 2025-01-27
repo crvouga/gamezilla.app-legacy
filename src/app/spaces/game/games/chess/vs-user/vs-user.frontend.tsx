@@ -5,7 +5,7 @@ import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import type { UserId } from '~/app/@/data/user-id'
-import { Button, IconArrowLeftOnRect } from '~/app/@/ui'
+import { Button, IconArrowLeftOnRect } from '~/@/ui'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Chess } from '../@/chess'
 import {

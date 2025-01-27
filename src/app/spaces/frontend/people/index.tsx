@@ -1,6 +1,6 @@
 import { APP_SOUND, openProfile, playSound } from '~/app/@/frontend/cmd'
-import { Avatar, Button, Drawer, IconButton, IconUserGroup, Typography } from '~/app/@/ui'
-import { Badge } from '~/app/@/ui/badge'
+import { Avatar, Button, Drawer, IconButton, IconUserGroup, Typography } from '~/@/ui'
+import { Badge } from '~/@/ui/badge'
 import { SpaceFrontendModule } from '../../@/architecture/space-frontend'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ViewUsersInSpaceList } from '~/app/spaces/game/games/@/ui/users-in-space-list'

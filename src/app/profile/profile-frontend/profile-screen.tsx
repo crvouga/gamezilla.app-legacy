@@ -1,7 +1,7 @@
 import { Profile } from '~/app/@/data/profile'
 import type { UserId } from '~/app/@/data/user-id'
-import { Avatar, Button, IconArrowLeftOnRect, IconUserPen, SpinnerBlock, Typography } from '~/app/@/ui'
-import { Gutter } from '~/app/@/ui/gutter'
+import { Avatar, Button, IconArrowLeftOnRect, IconUserPen, SpinnerBlock, Typography } from '~/@/ui'
+import { Gutter } from '~/@/ui/gutter'
 import { ScreenActionsProps, ScreenLayout } from '~/app/@/screen/screen-layout'
 import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
 

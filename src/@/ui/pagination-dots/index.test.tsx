@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { PubSub } from '~/@/sub'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
-import { PAGINATION_DOTS_TEST_ID, PaginationDots, toPaginationDotSelector } from '~/app/@/ui/pagination-dots'
+import { PAGINATION_DOTS_TEST_ID, PaginationDots, toPaginationDotSelector } from '~/@/ui/pagination-dots'
 
 const Fixture = async () => {
   const f = await FixtureAppFrontend()

@@ -1,7 +1,7 @@
+import { Translator } from '~/@/l18n/generated'
+import { Drawer } from '~/@/ui'
 import type { VDom } from '~/@/vdom/vdom'
 import { APP_SOUND, AppFrontendCmd, playSound, StatusBarCmd } from '../../@/frontend/cmd'
-import { Drawer } from '../../@/ui'
-import { Translator } from '~/@/l18n/generated'
 
 export type Model = {
   isDrawerOpen: boolean

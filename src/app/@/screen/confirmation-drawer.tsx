@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { Drawer, DrawerHeader, type DrawerInput } from '~/app/@/ui/drawer'
-import { Typography } from '~/app/@/ui/typography'
+import { Drawer, DrawerHeader, type DrawerInput } from '~/@/ui/drawer'
+import { Typography } from '~/@/ui/typography'
 import { ViewForm } from './form'
 import { FormBottomButtons } from './form-button-buttons'
 

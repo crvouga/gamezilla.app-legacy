@@ -10,7 +10,7 @@ import {
   IconFlag,
   IconSpinner,
   IconXMark,
-} from '~/app/@/ui'
+} from '~/@/ui'
 import { ConfirmationDialog } from '~/app/@/screen/confirmation-dialog'
 import { ScreenActions } from '~/app/@/screen/screen-actions'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'

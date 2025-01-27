@@ -1,6 +1,6 @@
 import { Translator } from '~/@/l18n/generated'
 import { p } from '~/@/parser'
-import { IconExclamationCircle, Typography } from '~/app/@/ui'
+import { IconExclamationCircle, Typography } from '~/@/ui'
 import { Puzzle } from './puzzle'
 
 const parser = p.or(

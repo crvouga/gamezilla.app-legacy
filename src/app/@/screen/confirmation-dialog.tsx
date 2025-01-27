@@ -1,8 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
-import { Button } from '~/app/@/ui/button'
-import { cn } from '~/app/@/ui/cn'
-import { Typography } from '~/app/@/ui/typography'
+import { Button } from '~/@/ui/button'
+import { cn } from '~/@/ui/cn'
+import { Typography } from '~/@/ui/typography'
 
 export const ConfirmationDialog = ({
   open,

@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
-import { cn } from '~/app/@/ui'
+import { cn } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/screen/screen-layout'
 
 export const LayoutGameCoverArtHeader = (input: {

@@ -1,7 +1,7 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { IconDeleteForever, IconPen, IconPlay } from '~/app/@/ui'
+import { IconDeleteForever, IconPen, IconPlay } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/screen/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../@/ui/layout-game'

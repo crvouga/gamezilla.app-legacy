@@ -1,4 +1,4 @@
-import { cn } from '~/app/@/ui'
+import { cn } from '~/@/ui'
 import type { VDomChildren } from '~/@/vdom/vdom'
 import { Translator } from '~/@/l18n/generated'
 

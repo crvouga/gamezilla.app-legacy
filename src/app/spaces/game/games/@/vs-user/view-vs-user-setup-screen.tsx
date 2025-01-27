@@ -1,6 +1,6 @@
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
-import { Avatar, Button, IconQuestionMark, Typography } from '~/app/@/ui'
+import { Avatar, Button, IconQuestionMark, Typography } from '~/@/ui'
 
 import { LayoutGameCoverArtHeader } from '../ui/layout-game-cover-art-header'
 import { TranslatedText } from '~/@/l18n'

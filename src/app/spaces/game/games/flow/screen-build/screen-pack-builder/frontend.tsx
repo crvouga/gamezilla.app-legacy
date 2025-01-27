@@ -1,6 +1,6 @@
 import { Sub } from '~/@/sub'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { Button, IconArrowLeftOnRect } from '~/app/@/ui'
+import { Button, IconArrowLeftOnRect } from '~/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
 import { PuzzleDbQueryFrontend } from '../../@/puzzle/puzzle-db-query/frontend'

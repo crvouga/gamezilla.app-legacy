@@ -1,5 +1,5 @@
-import { cn } from '~/app/@/ui'
-import { Canvas } from '~/app/@/ui/canvas'
+import { cn } from '~/@/ui'
+import { Canvas } from '~/@/ui/canvas'
 import { NodeId } from '../../../flow/node-id'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'

@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
-import { IconPlus, Swiper, Typography } from '~/app/@/ui'
-import { PaginationDots } from '~/app/@/ui/pagination-dots'
+import { IconPlus, Swiper, Typography } from '~/@/ui'
+import { PaginationDots } from '~/@/ui/pagination-dots'
 import type { PuzzleId } from '../../puzzle/puzzle-id'
 
 const COLUMN_COUNT = 5

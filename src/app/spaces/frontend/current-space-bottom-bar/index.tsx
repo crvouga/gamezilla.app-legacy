@@ -1,6 +1,6 @@
 import { APP_SOUND, playSound, pushScreen } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { Avatar, Button, Typography } from '~/app/@/ui'
+import { Avatar, Button, Typography } from '~/@/ui'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
 import { SpacesCore } from '../../core/core'
 import { GameCoverArt } from '../../game/games/cover-art'

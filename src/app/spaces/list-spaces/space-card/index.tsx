@@ -1,5 +1,5 @@
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
-import { Avatar, cn, Typography } from '~/app/@/ui'
+import { Avatar, cn, Typography } from '~/@/ui'
 import { ViewHostChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/host-chip'
 import { ViewYouChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/you-chip'
 import { GameCoverArt } from '~/app/spaces/game/games/cover-art'

@@ -1,6 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
-import { Button, Typography } from '~/app/@/ui'
+import { Button, Typography } from '~/@/ui'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import type { MsgSpace } from '../core/space-msg'

@@ -1,5 +1,5 @@
 import type { VDom } from '~/@/vdom/vdom'
-import { IconCheckmark, cn } from '~/app/@/ui'
+import { IconCheckmark, cn } from '~/@/ui'
 import { Flow } from '../../../flow'
 import { NodeId } from '../../../flow/node-id'
 import { BoardInput } from '../../../ui/board'

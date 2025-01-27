@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
-import { Drawer, IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/app/@/ui'
+import { Drawer, IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/@/ui'
 
 export type ScreenAction = {
   label: TranslatedText

@@ -1,7 +1,7 @@
 import { UserId } from '~/app/@/data/user-id'
-import { IconUserCircle } from '~/app/@/ui'
-import { Chip } from '~/app/@/ui/chip'
-import { IconArrowDownShortWide } from '~/app/@/ui/icon/icon-arrow-down-short-wide'
+import { IconUserCircle } from '~/@/ui'
+import { Chip } from '~/@/ui/chip'
+import { IconArrowDownShortWide } from '~/@/ui/icon/icon-arrow-down-short-wide'
 import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
 import { PuzzleDbQuery } from '../puzzle-db/query'
 

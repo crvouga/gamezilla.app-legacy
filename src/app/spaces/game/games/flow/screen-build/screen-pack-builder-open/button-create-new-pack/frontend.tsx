@@ -1,6 +1,6 @@
 import { Loading, Ok } from '~/@/result'
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
-import { Button, IconPlus } from '~/app/@/ui'
+import { Button, IconPlus } from '~/@/ui'
 import { Pack } from '../../../@/pack/pack'
 import { PackId } from '../../../@/pack/pack-id'
 import { PackName } from '../../../@/pack/pack-name'
