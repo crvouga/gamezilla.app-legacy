@@ -1,6 +1,6 @@
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { ScreenLayout } from '~/app/@/ui/screen/screen-layout'
+import { ScreenLayout } from '~/app/@/screen/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
 import type { FrontendModule } from '../types'

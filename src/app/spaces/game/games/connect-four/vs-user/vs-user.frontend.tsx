@@ -11,8 +11,8 @@ import {
   IconSpinner,
   IconXMark,
 } from '~/app/@/ui'
-import { ConfirmationDialog } from '~/app/@/ui/screen/confirmation-dialog'
-import { ScreenActions } from '~/app/@/ui/screen/screen-actions'
+import { ConfirmationDialog } from '~/app/@/screen/confirmation-dialog'
+import { ScreenActions } from '~/app/@/screen/screen-actions'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'

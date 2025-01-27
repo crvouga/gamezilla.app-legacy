@@ -3,7 +3,7 @@ import { IconPen } from '~/app/@/ui'
 import { PackPuzzleGridUI } from '../../../@/pack/pack-puzzle-grid-ui'
 import { ScreenPackBuildSpace } from '../space/space'
 import type { FrontendModule } from '../types'
-import { ScreenLayout } from '~/app/@/ui/screen/screen-layout'
+import { ScreenLayout } from '~/app/@/screen/screen-layout'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {

@@ -1,5 +1,5 @@
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { ScreenLayout } from '~/app/@/ui/screen/screen-layout'
+import { ScreenLayout } from '~/app/@/screen/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCtx } from '../../@/frontend/ctx'
 import { PuzzleDbQueryFrontend } from '../../@/puzzle/puzzle-db-query/frontend'

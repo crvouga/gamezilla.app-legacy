@@ -1,7 +1,7 @@
 import { LocalStorage } from '~/@/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Gutter } from '~/app/@/ui/gutter'
-import { ScreenLayout } from '~/app/@/ui/screen/screen-layout'
+import { ScreenLayout } from '~/app/@/screen/screen-layout'
 import { APP_SOUND, back, closeStatusBar, playSound, pushScreen } from '../../@/frontend/cmd'
 import { translatorSubscriptions } from '../../@/frontend/translator'
 import { IconCheckmarkCircle, IconCheckmarkCircleEmpty, IconLanguage, ListItemButton, Spinner } from '../../@/ui'

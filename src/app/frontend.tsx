@@ -20,7 +20,7 @@ import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
 import { IntersectionObserverEmitter } from './@/ui/intersection-observer'
-import { ScreenActionsProps } from './@/ui/screen/screen-layout'
+import { ScreenActionsProps } from './@/screen/screen-layout'
 import * as AuthFrontend from './auth/frontend'
 import { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
 import * as LangFrontend from './lang/frontend'

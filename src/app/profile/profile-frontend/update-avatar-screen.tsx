@@ -1,7 +1,7 @@
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { Avatar, TextField } from '~/app/@/ui'
-import { ScreenLayout } from '~/app/@/ui/screen/screen-layout'
+import { ScreenLayout } from '~/app/@/screen/screen-layout'
 import type { ModelFrontend, MsgFrontend } from '../types'
 
 const View = (input: {
