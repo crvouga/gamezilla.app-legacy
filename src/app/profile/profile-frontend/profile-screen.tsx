@@ -1,8 +1,8 @@
-import { Profile } from '~/app/@/data/profile'
-import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Button, IconArrowLeftOnRect, IconUserPen, SpinnerBlock, Typography } from '~/@/ui'
 import { Gutter } from '~/@/ui/gutter'
-import { ScreenActionsProps, ScreenLayout } from '~/app/@/ui/screen-layout'
+import { Profile } from '~/app/@/data/profile'
+import type { UserId } from '~/app/@/data/user-id'
+import { ScreenLayout } from '~/app/@/ui/screen-layout'
 import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
 
 const View = (input: {
@@ -13,22 +13,20 @@ const View = (input: {
 }) => {
   const profile = input.model.profiles[input.userId]
 
-  if (!profile) {
-    return <ViewLoading ctx={input.ctx} parentActions={input.ctx.parentScreenActions} />
-  }
+  if (!profile) return <ViewLoading ctx={input.ctx} />
 
-  if (profile?.userId === input.ctx.currentUserId) {
-    return <ViewOwnProfile ctx={input.ctx} profile={profile} dispatch={input.dispatch} />
-  }
+  const isCurrentUserProfile = profile?.userId === input.ctx.currentUserId
 
-  return <ViewOtherProfile ctx={input.ctx} profile={profile} dispatch={input.dispatch} />
+  if (isCurrentUserProfile) return <ViewOwnProfile {...input} profile={profile} />
+
+  return <ViewOtherProfile {...input} profile={profile} />
 }
 
-const ViewLoading = (input: { ctx: FrontendCtx; parentActions?: ScreenActionsProps | null }) => {
+const ViewLoading = (input: { ctx: FrontendCtx }) => {
   return (
     <ScreenLayout
       ctx={input.ctx}
-      parentActions={input.parentActions}
+      parent={input.ctx.parentScreen}
       id='profile-screen'
       renderBody={() => <SpinnerBlock />}
     />
@@ -39,7 +37,7 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
   return (
     <ScreenLayout
       ctx={input.ctx}
-      parentActions={input.ctx.parentScreenActions}
+      parent={input.ctx.parentScreen}
       topBar={{
         title: input.ctx.t('username', input.profile.username),
       }}
@@ -79,7 +77,7 @@ const ViewOtherProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch:
     <ScreenLayout
       ctx={input.ctx}
       id='profile-screen'
-      parentActions={input.ctx.parentScreenActions}
+      parent={input.ctx.parentScreen}
       topBar={{
         title: input.ctx.t('username', input.profile.username),
         onBack: () =>

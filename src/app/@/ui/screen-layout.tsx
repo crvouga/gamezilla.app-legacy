@@ -26,7 +26,7 @@ export type ScreenLayoutProps = {
     onBack?: () => void
   }
   actionPosition?: 'top' | 'bottom'
-  parentActions?: ScreenActionsProps | null
+  parent?: Pick<ScreenLayoutProps, 'actions' | 'topBar'> | null
   actions?: ScreenActionsProps | null
   renderBody: () => VDom
   form?: {
@@ -69,17 +69,17 @@ const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         </>
       )}
 
-      {input.parentActions && (
+      {input.parent?.actions && (
         <>
-          {input.parentActions.top}
+          {input.parent.actions.top}
           <ScreenActions.View
-            size={input.parentActions.size}
-            id={input.parentActions.id ?? `${input.id}-actions`}
+            size={input.parent.actions.size}
+            id={input.parent.actions.id ?? `${input.id}-actions`}
             ctx={input.ctx}
-            buttons={input.parentActions.buttons}
-            limit={input.parentActions.limit}
-            onToggle={input.parentActions.onToggle}
-            open={input.parentActions.open}
+            buttons={input.parent.actions.buttons}
+            limit={input.parent.actions.limit}
+            onToggle={input.parent.actions.onToggle}
+            open={input.parent.actions.open}
           />
         </>
       )}

@@ -21,7 +21,7 @@ import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
-import { ScreenActionsProps } from './@/ui/screen-layout'
+import { ScreenLayoutProps } from './@/ui/screen-layout'
 import * as AuthFrontend from './auth/frontend'
 import { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
 import * as LangFrontend from './lang/frontend'
@@ -542,7 +542,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
         <ProfileFrontend.View
           dispatch={(m) => input.dispatch({ t: 'profile', c: m })}
           model={input.model.profile}
-          ctx={{ ...input.ctx, parentScreenActions: toScreenActions(input) }}
+          ctx={{ ...input.ctx, parentScreen: toScreenLayoutProps(input) }}
         />
       )
     }
@@ -552,7 +552,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
         <SpacesFrontend.View
           dispatch={(m) => input.dispatch({ t: 'spaces', c: m })}
           model={input.model.spaces}
-          ctx={{ ...input.ctx, parentScreenActions: toScreenActions(input) }}
+          ctx={{ ...input.ctx, parentScreen: toScreenLayoutProps(input) }}
         />
       )
     }
@@ -613,11 +613,11 @@ const ViewStatusBar: typeof View = (input) => {
   )
 }
 
-const toScreenActions = (input: {
+const toScreenLayoutProps = (input: {
   ctx: AppFrontendCtx | BaseFrontendCtx
   model: ModelFrontend
   dispatch: (m: MsgFrontend) => void
-}): ScreenActionsProps | null => {
+}): ScreenLayoutProps['parent'] | null => {
   if (!input.ctx.currentUserId) {
     return null
   }
@@ -634,33 +634,34 @@ const toScreenActions = (input: {
   }
 
   return {
-    id: 'app-bar',
-    top: isAppFrontendCtx(input.ctx) && (
-      <SpacesFrontend.ViewCurrentSpaceBar
-        ctx={input.ctx}
-        model={input.model.spaces}
-        dispatch={(c) => input.dispatch({ t: 'spaces', c })}
-      />
-    ),
-    buttons: [
-      {
-        label: input.ctx.t('spaces.spaces'),
-        icon: (input) => <IconGamepad {...input} />,
-        color: eq(input.model.currentScreen.currentScreen, screenSpace) ? 'selected' : 'inherit',
-        onClick() {
-          input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } })
+    actions: {
+      top: isAppFrontendCtx(input.ctx) && (
+        <SpacesFrontend.ViewCurrentSpaceBar
+          ctx={input.ctx}
+          model={input.model.spaces}
+          dispatch={(c) => input.dispatch({ t: 'spaces', c })}
+        />
+      ),
+      buttons: [
+        {
+          label: input.ctx.t('spaces.spaces'),
+          icon: (input) => <IconGamepad {...input} />,
+          color: eq(input.model.currentScreen.currentScreen, screenSpace) ? 'selected' : 'inherit',
+          onClick() {
+            input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } })
+          },
         },
-      },
-      {
-        label: input.ctx.t('profile.profile'),
-        icon: (input) => <IconUserCircle {...input} />,
-        color: eq(input.model.currentScreen.currentScreen, screenProfile) ? 'selected' : 'inherit',
-        onClick() {
-          input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } })
+        {
+          label: input.ctx.t('profile.profile'),
+          icon: (input) => <IconUserCircle {...input} />,
+          color: eq(input.model.currentScreen.currentScreen, screenProfile) ? 'selected' : 'inherit',
+          onClick() {
+            input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } })
+          },
         },
-      },
-    ],
-    onToggle: () => {},
-    open: false,
+      ],
+      onToggle: () => {},
+      open: false,
+    },
   }
 }

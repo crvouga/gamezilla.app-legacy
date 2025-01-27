@@ -130,7 +130,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       topBar={{
         title: input.ctx.t('spaces.spaces'),
       }}
-      actions={input.ctx.parentScreenActions}
+      parent={input.ctx.parentScreen}
       renderBody={() => {
         return (
           <div className='relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8'>

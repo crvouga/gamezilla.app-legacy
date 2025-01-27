@@ -1,19 +1,19 @@
 import type { RemoteResult, Result } from '~/@/result'
-import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { AppBackendModule } from '../@/architecture/app-backend'
-import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
-import { FrontendEvt } from '../@/frontend/evt'
+import { AppFrontendModule } from '../@/architecture/app-frontend'
+import { BackendCmd } from '../@/backend/cmd'
+import { AppBackendCtx } from '../@/backend/ctx'
+import { BackendEvt } from '../@/backend/evt'
 import { ClientId } from '../@/data/client-id'
 import { Profile } from '../@/data/profile'
 import { ProfileAvatar, ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { Username } from '../@/data/username'
-import { BackendCmd } from '../@/backend/cmd'
-import { AppBackendCtx } from '../@/backend/ctx'
-import { BackendEvt } from '../@/backend/evt'
+import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
+import { FrontendEvt } from '../@/frontend/evt'
+import { ScreenLayoutProps } from '../@/ui/screen-layout'
 import * as UpdateUsernameTypes from './update-username/update-username.types'
-import { ScreenActionsProps } from '../@/ui/screen-layout'
 //
 //
 //
@@ -133,7 +133,7 @@ export type BackendModule = AppBackendModule<{
 }>
 
 export type FrontendCtx = (AppFrontendCtx | AnonymousFrontendCtx) & {
-  parentScreenActions?: ScreenActionsProps | null
+  parentScreen?: ScreenLayoutProps['parent'] | null
 }
 
 export type FrontendModule = AppFrontendModule<{
