@@ -23,7 +23,7 @@ export const ViewProfileScreen = (input: {
   if (profile?.userId === input.ctx.currentUserId) {
     return (
       <div className='flex w-full flex-1 flex-col overflow-hidden'>
-        <TopBar center onBack={false} ctx={input.ctx} title={input.ctx.t('username', profile.username)} />
+        <TopBar onBack={false} ctx={input.ctx} title={input.ctx.t('username', profile.username)} />
 
         <div className='flex flex-1 shrink-0 flex-col items-center justify-start gap-4 overflow-x-hidden overflow-y-scroll p-4'>
           <Avatar className='h-28 w-28' src={profile?.avatarUrl} alt='profile avatar' />

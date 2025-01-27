@@ -15,7 +15,7 @@ export const LayoutGameCoverArtHeader = (input: {
   const renderCoverArt_ = input.renderCoverArt || renderDefaultCoverArt
   return (
     <div className='flex h-full w-full flex-1 flex-col items-center gap-4 pb-4'>
-      <TopBar ctx={input.ctx} onBack={input.onBack} title={input.title} center />
+      <TopBar ctx={input.ctx} onBack={input.onBack} title={input.title} />
       <div className='flex w-full flex-1 flex-col items-center overflow-y-auto'>
         {renderCoverArt_({ className: 'size-28 overflow-hidden rounded-lg' })}
         {input.renderContent()}

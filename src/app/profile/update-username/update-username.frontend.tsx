@@ -95,7 +95,6 @@ export const View = (input: {
     <div className='flex flex-col'>
       <TopBar
         ctx={input.ctx}
-        center
         onBack={() => input.dispatch({ t: 'profile.update-username.clicked-back' })}
         title={input.ctx.t('profile.update-username.update-username')}
       />

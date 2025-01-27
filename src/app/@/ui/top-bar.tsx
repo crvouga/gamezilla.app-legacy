@@ -8,13 +8,13 @@ import { Typography } from './typography'
 export const TopBar = (input: {
   title: TranslatedText
   subtitle?: TranslatedText | null
-  center?: boolean
+  // center?: boolean
   ctx: {
     t: Translator
   }
-  onBack: (() => void) | false
+  onBack?: (() => void) | false | null
 }) => {
-  const isCenter = input.center || true
+  const isCenter = true
   return (
     <div className={cn('flex h-16 w-full shrink-0 items-center truncate px-4', isCenter && 'text-center')}>
       {input.onBack && (

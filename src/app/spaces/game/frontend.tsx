@@ -345,7 +345,6 @@ const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
     <div className='flex h-full w-full flex-1 flex-col'>
       <TopBar
         ctx={input.ctx}
-        center
         onBack={() =>
           input.dispatch({
             t: 'clicked-go-home-button',
