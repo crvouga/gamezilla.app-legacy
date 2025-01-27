@@ -21,18 +21,11 @@ describe(import.meta.file, () => {
       {
         msgBackend: {
           t: 'got-msg-space',
-          c: withEventMeta({
-            t: 'user-started-space',
-            spaceId: f.spaceId,
-            userId: f.userA.userId,
-          }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.userId }),
         },
       },
       {
-        msg: {
-          t: 'submitted-join-space-form',
-          spaceId: f.spaceId,
-        },
+        msg: { t: 'submitted-join-space-form', spaceId: f.spaceId },
       },
     ])
 
