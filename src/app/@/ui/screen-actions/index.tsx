@@ -1,39 +1,7 @@
-import { TranslatedText } from '~/@/l18n'
-import type { Translator } from '~/@/l18n/generated'
-import type { VDom } from '~/@/vdom/vdom'
 import { Drawer, IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/@/ui'
-
-export type ScreenAction = {
-  label: TranslatedText
-  disabled?: boolean
-  icon: (input: { className: string }) => VDom
-  classNames?: {
-    button?: string
-    label?: string
-  }
-  onClick: () => void
-  loading?: boolean
-  color?: 'danger' | 'success' | 'inherit' | 'selected'
-  hidden?: boolean
-  badge?: number
-  size?: 'sm' | 'md'
-}
-
-type Ctx = {
-  t: Translator
-}
+import { ScreenAction, ScreenActionProps } from './props'
 
 const DEFAULT_LIMIT = 4
-
-export type ScreenActionProps = {
-  id: string
-  ctx: Ctx
-  buttons: (ScreenAction | null)[]
-  open: boolean
-  onToggle: () => void
-  limit?: number
-  size?: 'sm' | 'md'
-}
 
 const View = (input: ScreenActionProps) => {
   const cleanedButtons = input.buttons.filter((button) => button !== null)

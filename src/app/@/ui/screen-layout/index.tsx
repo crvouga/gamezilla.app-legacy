@@ -1,6 +1,6 @@
-import { ScreenLayoutMobile } from './screen-layout-mobile'
-import { ScreenLayoutProps } from './screen-layout-props'
-import { ScreenLayoutTablet } from './screen-layout-tablet'
+import { ScreenLayoutMobile } from './mobile'
+import { ScreenLayoutProps } from './props'
+import { ScreenLayoutTablet } from './tablet'
 
 export const ScreenLayout = (input: ScreenLayoutProps) => {
   const isMobile = true

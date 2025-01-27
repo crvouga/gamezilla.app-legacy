@@ -2,7 +2,7 @@ import { p } from '~/@/parser'
 import { APP_SOUND, AppFrontendCmd, copyToClipboard, playSound, showToast } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { IconCopy } from '~/@/ui'
-import { ScreenAction } from '~/app/@/ui/screen-actions'
+import { ScreenAction } from '~/app/@/ui/screen-actions/props'
 import { Variant } from '../variant'
 import { VariantGridShorthand } from '../variant/grid'
 

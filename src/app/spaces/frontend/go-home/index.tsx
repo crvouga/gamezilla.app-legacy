@@ -1,6 +1,6 @@
 import { IconButton, IconHome } from '~/@/ui'
 import { APP_SOUND, playSound, pushScreen } from '~/app/@/frontend/cmd'
-import { ScreenAction } from '~/app/@/ui/screen-actions'
+import { ScreenAction } from '~/app/@/ui/screen-actions/props'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
 
 const update: SpaceFrontendModule['update'] = ({ msg, model }) => {

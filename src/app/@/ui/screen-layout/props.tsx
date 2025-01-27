@@ -1,17 +1,12 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { VDom, VDomChildren } from '~/@/vdom/vdom'
-import { ScreenAction } from './screen-actions'
+import { ScreenActionProps } from '../screen-actions/props'
 
-export type ScreenActionsProps = {
-  id?: string
-  limit?: number
-  size?: 'sm' | 'md'
-  top?: VDomChildren
-  buttons: (ScreenAction | null)[]
-  onToggle: () => void
-  open: boolean
-}
+export type ScreenLayoutActionsProps = Omit<ScreenActionProps, 'id' | 'ctx'> &
+  Partial<Pick<ScreenActionProps, 'id' | 'ctx'>> & {
+    top?: VDomChildren
+  }
 
 export type ScreenLayoutProps = {
   id: string
@@ -25,7 +20,7 @@ export type ScreenLayoutProps = {
   }
   actionPosition?: 'top' | 'bottom'
   parent?: Pick<ScreenLayoutProps, 'actions' | 'topBar'> | null
-  actions?: ScreenActionsProps | null
+  actions?: ScreenLayoutActionsProps | null
   renderBody: () => VDom
   renderFab?: () => VDom
   form?: {

@@ -1,6 +1,6 @@
-import { FormBottomButtons } from './form-button-buttons'
-import { ScreenActions } from './screen-actions'
-import { ScreenLayoutProps } from './screen-layout-props'
+import { FormBottomButtons } from '../form-button-buttons'
+import { ScreenActions } from '../screen-actions'
+import { ScreenLayoutProps } from './props'
 import { TopBar } from './top-bar'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
