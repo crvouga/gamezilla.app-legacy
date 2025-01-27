@@ -38,16 +38,6 @@ import {
 import * as WireFrontend from './wire/frontend'
 import { FrontendTransport } from './wire/transport/frontend'
 
-//
-//
-//
-//
-// Ctx
-//
-//
-//
-//
-
 export const initCtx = async (): Promise<FrontendCtx> => {
   const logger = Logger({
     t: 'console',
@@ -141,14 +131,6 @@ const toFrontendTransportConfig = (input: {
   }
 }
 
-//
-//
-//
-// Init
-//
-//
-//
-
 export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
   const screen = CurrentScreen.init({ location: input.ctx.location })
 
@@ -198,14 +180,6 @@ export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?:
 
   return updated
 }
-
-//
-//
-//
-// Update
-//
-//
-//
 
 export const update = (input: {
   ctx: FrontendCtx
@@ -405,16 +379,6 @@ const updateChild = (input: {
   }
 }
 
-//
-//
-//
-//
-// Subscriptions
-//
-//
-//
-//
-
 export const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend }): Sub<MsgFrontend> => {
   const ctx = toFrontendCtx(input)
 
@@ -429,14 +393,6 @@ export const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend })
     Sub.tag('spaces', SpacesFrontend.subscriptions({ ctx, model: input.model.spaces })),
   ])
 }
-
-//
-//
-//
-// View
-//
-//
-//
 
 export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   const frontendCtx = toFrontendCtx(input)
@@ -482,7 +438,7 @@ const ViewScreen = (input: {
   dispatch: (m: MsgFrontend) => void
 }) => {
   switch (input.model.currentScreen.currentScreen.n) {
-    case 'lang': {
+    case 'lang':
       return (
         <LangFrontend.View
           ctx={input.ctx}
@@ -490,20 +446,16 @@ const ViewScreen = (input: {
           model={input.model.lang}
         />
       )
-    }
     default: {
       switch (input.model.auth.currentUser.t) {
-        case 'loading': {
+        case 'loading':
           return <LoadingStateLogo />
-        }
 
-        case 'logged-in': {
+        case 'logged-in':
           return <ViewScreenLoggedIn model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
-        }
 
-        case 'logged-out': {
+        case 'logged-out':
           return <ViewScreenLoggedOut model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
-        }
       }
     }
   }
@@ -511,7 +463,7 @@ const ViewScreen = (input: {
 
 const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
   switch (input.ctx.currentScreen.n) {
-    case 'auth-login': {
+    case 'auth-login':
       return (
         <AuthFrontend.View
           model={input.model.auth}
@@ -519,10 +471,9 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
           dispatch={(c) => input.dispatch({ t: 'auth', c })}
         />
       )
-    }
     case 'spaces':
     case 'profile':
-    case 'lang': {
+    case 'lang':
       return (
         <IntersectionObserverEmitter
           id='app-intersection-observer'
@@ -531,13 +482,12 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
           }
         />
       )
-    }
   }
 }
 
 const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
   switch (input.ctx.currentScreen.n) {
-    case 'profile': {
+    case 'profile':
       return (
         <ProfileFrontend.View
           dispatch={(m) => input.dispatch({ t: 'profile', c: m })}
@@ -545,9 +495,8 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
           ctx={{ ...input.ctx, parentScreen: toScreenLayoutProps(input) }}
         />
       )
-    }
 
-    case 'spaces': {
+    case 'spaces':
       return (
         <SpacesFrontend.View
           dispatch={(m) => input.dispatch({ t: 'spaces', c: m })}
@@ -555,10 +504,9 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
           ctx={{ ...input.ctx, parentScreen: toScreenLayoutProps(input) }}
         />
       )
-    }
 
     case 'lang':
-    case 'auth-login': {
+    case 'auth-login':
       return (
         <IntersectionObserverEmitter
           id='app-intersection-observer'
@@ -567,15 +515,11 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
           }
         />
       )
-    }
   }
 }
 
 const ViewStatusBar: typeof View = (input) => {
-  const frontendCtx = toFrontendCtx({
-    model: input.model,
-    ctx: input.ctx,
-  })
+  const frontendCtx = toFrontendCtx({ model: input.model, ctx: input.ctx })
 
   return (
     <StatusBar.View
@@ -618,24 +562,14 @@ const toScreenLayoutProps = (input: {
   model: ModelFrontend
   dispatch: (m: MsgFrontend) => void
 }): ScreenLayoutProps['parent'] | null => {
-  if (!input.ctx.currentUserId) {
-    return null
-  }
+  if (!isAppFrontendCtx(input.ctx)) return null
 
-  const screenSpace: Screen = {
-    n: 'spaces',
-    t: 'space-list',
-  }
-
-  const screenProfile: Screen = {
-    n: 'profile',
-    t: 'profile',
-    userId: input.ctx.currentUserId,
-  }
+  const screenSpace: Screen = { n: 'spaces', t: 'space-list' }
+  const screenProfile: Screen = { n: 'profile', t: 'profile', userId: input.ctx.currentUserId }
 
   return {
     actions: {
-      top: isAppFrontendCtx(input.ctx) && (
+      top: (
         <SpacesFrontend.ViewCurrentSpaceBar
           ctx={input.ctx}
           model={input.model.spaces}
