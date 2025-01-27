@@ -15,7 +15,10 @@ type Profile = {
   avatarUrl: string
 }
 
+export type ScreenSize = 'mobile' | 'tablet'
+
 export type BaseFrontendCtx = {
+  screenSize: ScreenSize
   dbConnSql: IDbConnSql
   logger: ILogger
   t: Translator

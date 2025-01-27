@@ -4,12 +4,13 @@ import { ScreenLayoutProps } from './props'
 import { ScreenLayoutTablet } from './tablet'
 import { cn } from '~/@/ui'
 
-const MAX_MOBILE_SIZE_PX = 600
-const isScreenMobile = () => window.innerWidth < MAX_MOBILE_SIZE_PX
-
 export const ScreenLayout = (input: ScreenLayoutProps) => {
-  if (isScreenMobile()) return <ScreenLayoutMobile {...input} />
-  return <ScreenLayoutTablet {...input} />
+  switch (input.ctx.screenSize) {
+    case 'mobile':
+      return <ScreenLayoutMobile {...input} />
+    case 'tablet':
+      return <ScreenLayoutTablet {...input} />
+  }
 }
 
 export const ScreenBodyContent = (input: { children: VDomChildren; className?: string }) => {

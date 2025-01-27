@@ -24,6 +24,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     navigatorLanguage: 'en',
     now: Posix.now(),
     profiles: {},
+    screenSize: 'mobile',
     t: Translator('en'),
     currentUser: {
       userId: currentUserId,

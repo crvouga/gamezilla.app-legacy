@@ -98,6 +98,7 @@ const toFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx =
     documentVisibilityState: input.model.platform.documentVisibilityState,
     currentScreen: input.model.currentScreen.currentScreen,
     currentUserId: null,
+    screenSize: input.model.platform.screenSize,
   }
   if (input.model.auth.currentUser.t === 'logged-in') {
     return {
@@ -133,6 +134,7 @@ const toFrontendTransportConfig = (input: {
 
 export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
   const screen = CurrentScreen.init({ location: input.ctx.location })
+  const platform = Platform.init({ stored: input.ctx.stored })
 
   const ctx: AnonymousFrontendCtx = {
     ...input.ctx,
@@ -141,6 +143,7 @@ export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?:
     currentUserId: null,
     documentVisibilityState: 'visible',
     profiles: {},
+    screenSize: platform.model.screenSize,
   }
 
   const lang = LangFrontend.init({ ctx, stored: input.ctx.stored })
@@ -150,7 +153,6 @@ export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?:
   const space = SpacesFrontend.init({ ctx, stored: input.ctx.stored })
   const profile = ProfileFrontend.init({ ctx, stored: input.ctx.stored })
   const sound = Sound.init({ ctx, stored: input.ctx.stored })
-  const platform = Platform.init({ stored: input.ctx.stored })
   const statusBar = StatusBar.init({ stored: input.ctx.stored })
 
   const initialModel: ModelFrontend = {

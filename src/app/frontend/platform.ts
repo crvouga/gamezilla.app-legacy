@@ -3,9 +3,25 @@ import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
 import type { PlatformCmd } from '../@/frontend/cmd'
+import { pipe } from '~/@/function/pipe'
+
+export type ScreenSize = 'mobile' | 'tablet'
 
 export type Model = {
   documentVisibilityState: DocumentVisibilityState
+  screenSize: ScreenSize
+}
+
+const toScreenSize = (width: number): ScreenSize => {
+  if (width < 720) {
+    return 'mobile'
+  }
+
+  return 'tablet'
+}
+
+const getScreenSize = (): ScreenSize => {
+  return toScreenSize(typeof window === 'undefined' ? 0 : window.innerWidth)
 }
 
 export const init = (_input: {
@@ -14,16 +30,13 @@ export const init = (_input: {
   model: Model
 } => {
   if (typeof window === 'undefined') {
-    return {
-      model: {
-        documentVisibilityState: 'visible',
-      },
-    }
+    return { model: { documentVisibilityState: 'visible', screenSize: getScreenSize() } }
   }
 
   return {
     model: {
       documentVisibilityState: document.visibilityState,
+      screenSize: getScreenSize(),
     },
   }
 }
@@ -31,6 +44,7 @@ export const init = (_input: {
 export type Msg =
   | { t: 'document-became-hidden' }
   | { t: 'document-became-visible' }
+  | { t: 'screen-size-changed'; screenSize: ScreenSize }
   | { t: 'copied-to-clipboard'; text: string }
   | { t: 'element-focused'; id: string }
 
@@ -90,6 +104,15 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
     case 'copied-to-clipboard': {
       return {
         model,
+      }
+    }
+
+    case 'screen-size-changed': {
+      return {
+        model: {
+          ...model,
+          screenSize: msg.screenSize,
+        },
       }
     }
   }
@@ -175,7 +198,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
   }
 }
 
-export const subscriptions: Sub<Msg> = Browser.onDocumentVisibilityState<Msg>((state) => {
+const visibilityStateSubscriptions: Sub<Msg> = Browser.onDocumentVisibilityState<Msg>((state) => {
   switch (state) {
     case 'hidden': {
       return {
@@ -190,3 +213,10 @@ export const subscriptions: Sub<Msg> = Browser.onDocumentVisibilityState<Msg>((s
     }
   }
 })
+
+const screenSizeSubscriptions: Sub<Msg> = pipe(
+  Browser.onWindowResize<Msg>(() => ({ t: 'screen-size-changed', screenSize: getScreenSize() })),
+  (sub) => Sub.deduplicate('screen-size', (msg) => (msg.t === 'screen-size-changed' ? msg.screenSize : 'mobile'), sub),
+)
+
+export const subscriptions: Sub<Msg> = Sub.batch([visibilityStateSubscriptions, screenSizeSubscriptions])

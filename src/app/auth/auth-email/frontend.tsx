@@ -5,6 +5,7 @@ import { type Result, isErr } from '~/@/result'
 import { ScreenCmd } from '~/app/@/frontend/cmd'
 import { AlertError, AlertSuccess, TextField } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/ui/screen-layout'
+import { ScreenSize } from '~/app/@/frontend/ctx'
 
 //
 //
@@ -151,6 +152,7 @@ export const View = (input: {
   dispatch: (msg: Msg) => void
   ctx: {
     t: Translator
+    screenSize: ScreenSize
   }
 }) => {
   return (

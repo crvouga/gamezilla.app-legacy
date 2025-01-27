@@ -24,6 +24,7 @@ const ctx: AnonymousFrontendCtx = {
   documentVisibilityState: 'visible',
   now: Posix.now(),
   profiles: {},
+  screenSize: 'mobile',
   currentUserId: null,
 }
 

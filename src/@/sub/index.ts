@@ -122,6 +122,21 @@ const flat = <A>(sub: Sub<A[]>): Sub<A> => {
     },
   }
 }
+const lastKeyById = new Map<string, string>()
+const deduplicate = <Msg>(id: string, keyFn: (msg: Msg) => string, sub: Sub<Msg>): Sub<Msg> => {
+  return {
+    sub: (subscriber) => {
+      return sub.sub((msg) => {
+        const newKey = keyFn(msg)
+        const lastKey = lastKeyById.get(id)
+        if (lastKey !== newKey) {
+          lastKeyById.set(id, newKey)
+          subscriber(msg)
+        }
+      })
+    },
+  }
+}
 
 const tag = <Tag extends string, Msg>(t: Tag, sub: Sub<Msg>): Sub<{ t: Tag; c: Msg }> => {
   return Sub.map(sub, (c) => ({ t, c }))
@@ -168,6 +183,7 @@ export const Sub = {
   tag,
   next,
   flatMap,
+  deduplicate,
 }
 
 export const Pub = {

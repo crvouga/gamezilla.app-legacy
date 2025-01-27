@@ -2,6 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { cn } from '~/@/ui'
 import type { VDom } from '~/@/vdom/vdom'
+import { ScreenSize } from '~/app/@/frontend/ctx'
 import { ScreenBodyContent, ScreenLayout } from '~/app/@/ui/screen-layout'
 
 export const LayoutGameCoverArtHeader = (input: {
@@ -13,6 +14,7 @@ export const LayoutGameCoverArtHeader = (input: {
   renderCoverArt?: (input: { className: string }) => VDom
   ctx: {
     t: Translator
+    screenSize: ScreenSize
   }
 
   renderContent: () => VDom

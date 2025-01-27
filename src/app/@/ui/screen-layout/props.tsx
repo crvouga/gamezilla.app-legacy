@@ -1,6 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { VDom, VDomChildren } from '~/@/vdom/vdom'
+import { ScreenSize } from '../../frontend/ctx'
 import { ScreenActionProps } from '../screen-actions/props'
 
 export type ScreenLayoutActionsProps = Omit<ScreenActionProps, 'id' | 'ctx'> &
@@ -12,6 +13,7 @@ export type ScreenLayoutProps = {
   id: string
   ctx: {
     t: Translator
+    screenSize: ScreenSize
   }
   nav?: {
     title: TranslatedText
