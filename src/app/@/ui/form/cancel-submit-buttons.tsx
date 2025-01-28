@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Button, ButtonInput } from '~/@/ui/button'
 import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/drawer/drawer-shared'
 
-export const FormButtons = (input: {
+export const CancelSubmitButtons = (input: {
   onCancel: () => void
   cancelText: TranslatedText
   cancelDisabled?: boolean

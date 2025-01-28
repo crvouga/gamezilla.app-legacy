@@ -1,4 +1,4 @@
-import { FormButtons } from '../form/form-buttons.tsx'
+import { CancelSubmitButtons } from '../form/cancel-submit-buttons.tsx'
 import { ScreenActionsHorizontalBar } from '../screen-actions/horizontal-bar.tsx'
 import { ScreenLayoutProps } from './props'
 import { ScreenNavBarMobile } from '../screen-nav-bar/mobile.tsx'
@@ -55,7 +55,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         {input.renderBody()}
         {input.renderFab && <div className='absolute bottom-6 right-4 bg-black'>{input.renderFab()}</div>}
       </div>
-      {input.form && <FormButtons {...input.form} />}
+      {input.form && <CancelSubmitButtons {...input.form} />}
       {actionPosition === 'bottom' && actions}
     </Element>
   )

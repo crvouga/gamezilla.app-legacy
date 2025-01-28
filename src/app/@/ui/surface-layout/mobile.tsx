@@ -1,5 +1,5 @@
 import { Drawer, DrawerHeader } from '~/@/ui'
-import { FormButtons } from '../form/form-buttons'
+import { CancelSubmitButtons } from '../form/cancel-submit-buttons'
 import { SurfaceLayoutProps } from './props'
 
 export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
@@ -29,7 +29,7 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
         )}
         <div className='flex w-full flex-1 flex-col'>{props.renderBody()}</div>
         {props.form && (
-          <FormButtons
+          <CancelSubmitButtons
             variant={props.form?.variant}
             cancelText={props.form?.cancelText ?? props.ctx.t('app.cancel')}
             onCancel={props.form?.onCancel ?? (() => {})}

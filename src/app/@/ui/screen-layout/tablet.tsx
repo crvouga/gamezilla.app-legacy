@@ -1,5 +1,5 @@
 import { cn } from '~/@/ui'
-import { FormButtons } from '../form/form-buttons'
+import { CancelSubmitButtons } from '../form/cancel-submit-buttons'
 import { ScreenActionsSideBar } from '../screen-actions/side-bar'
 import { ScreenNavBarTablet } from '../screen-nav-bar/tablet'
 import { ScreenLayoutProps } from './props'
@@ -43,7 +43,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
               renderEnd={() =>
                 input.form && (
                   <div className='w-full max-w-xs'>
-                    <FormButtons {...input.form} size='md' />
+                    <CancelSubmitButtons {...input.form} size='md' />
                   </div>
                 )
               }

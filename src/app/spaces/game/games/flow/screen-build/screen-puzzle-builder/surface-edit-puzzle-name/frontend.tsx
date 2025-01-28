@@ -68,9 +68,7 @@ const View: FrontendModule['View'] = (input) => {
 const updateFormButtons: FrontendModule['update'] = (input) => {
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
 
-  if (!puzzleBuilder) {
-    return { model: input.model }
-  }
+  if (!puzzleBuilder) return { model: input.model }
 
   switch (input.msg?.t) {
     case 'puzzle.edit-name.user-clicked-cancel-button': {

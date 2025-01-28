@@ -20,7 +20,7 @@ import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
-import { LoadingStateLogo } from './@/ui/logo/logo'
+import { LogoBlock } from './@/ui/logo/logo-block'
 import { RootLayout } from './@/ui/screen-layout'
 import { ScreenLayoutProps } from './@/ui/screen-layout/props'
 import * as AuthFrontend from './auth/frontend'
@@ -438,7 +438,7 @@ const ViewScreen = (input: {
     default: {
       switch (input.model.auth.currentUser.t) {
         case 'loading':
-          return <LoadingStateLogo />
+          return <LogoBlock />
 
         case 'logged-in':
           return <ViewScreenLoggedIn model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
