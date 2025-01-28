@@ -31,6 +31,11 @@ export default defineConfig({
     tsconfigPaths(),
     vDomPlugin(),
   ],
+  resolve: {
+    alias: {
+      crypto: 'crypto-browserify',
+    },
+  },
   optimizeDeps: {
     // https://pglite.dev/docs/bundler-support
     exclude: ['@electric-sql/pglite', '@journeyapps/wa-sqlite', '@powersync/web'],
