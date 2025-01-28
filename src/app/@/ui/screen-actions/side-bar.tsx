@@ -8,10 +8,14 @@ const View = (input: ScreenActionProps & { renderNavBar?: () => VDom }) => {
   const size = 'md' as 'md' | 'sm'
 
   return (
-    <div className='flex w-28 shrink-0 flex-col gap-3'>
+    <div className='flex shrink-0 flex-col gap-3 px-2'>
       <ScreenNavBarTabletRoot>{input.renderNavBar?.()}</ScreenNavBarTabletRoot>
       <div
-        className={cn('flex w-full shrink-0 flex-col', size === 'sm' && 'gap-1 px-2', size === 'md' && 'gap-3 px-4')}
+        className={cn(
+          'flex w-full shrink-0 flex-col overflow-hidden rounded bg-neutral-900',
+          // size === 'sm' && 'gap-1 px-2',
+          // size === 'md' && 'gap-3 px-4',
+        )}
         role='toolbar'
       >
         {cleanedButtons.map((button) => (
@@ -38,7 +42,7 @@ const ScreenActionButton = (input: ScreenAction) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'relative flex w-full flex-col items-center rounded-xl p-3 font-normal',
+        'relative flex aspect-square w-20 flex-col items-center p-3 font-normal',
         'clickable hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
@@ -50,7 +54,7 @@ const ScreenActionButton = (input: ScreenAction) => {
         {input.icon({ className: toIconSizeClasses(size) })}
         <Typography
           text={input.label}
-          className={cn('truncate text-center text-sm', 'text-inherit', input.classNames?.label)}
+          className={cn('truncate text-center text-xs', 'text-inherit', input.classNames?.label)}
         />
       </div>
 
@@ -66,11 +70,11 @@ const ScreenActionButton = (input: ScreenAction) => {
 const toColorClasses = (input: ScreenAction): string => {
   switch (input.color) {
     case 'danger':
-      return 'text-red-500 hover:bg-red-900'
+      return 'text-red-500'
     case 'success':
-      return 'text-green-500 hover:bg-green-900'
+      return 'text-green-500'
     case 'selected':
-      return 'text-blue-500 bg-neutral-900'
+      return 'text-blue-500'
     default:
       return ''
   }

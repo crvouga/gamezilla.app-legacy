@@ -11,7 +11,7 @@ import { LeaveSpaceFrontend } from '../../leave-space/frontend'
 import type { ModelFrontend, MsgFrontend } from '../../types'
 import { GoHome } from '../go-home'
 import { People } from '../people'
-import { NavBarLogo } from '~/app/@/ui/logo'
+// import { NavBarLogo } from '~/app/@/ui/logo'
 
 const View = (input: {
   model: ModelFrontend
@@ -57,7 +57,7 @@ const View = (input: {
           ctx={spaceCtx}
           actionPosition='top'
           actions={{
-            renderNavBar: () => <NavBarLogo onClick={() => inputNew.dispatch({ t: 'clicked-go-home-button' })} />,
+            // renderNavBar: () => <NavBarLogo onClick={() => inputNew.dispatch({ t: 'clicked-go-home-button' })} />,
             id: 'space-actions',
             buttons: [
               GoHome.viewAction(inputNew),

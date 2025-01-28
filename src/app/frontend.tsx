@@ -20,7 +20,7 @@ import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
-import { LoadingStateLogo, NavBarLogo } from './@/ui/logo'
+import { LoadingStateLogo } from './@/ui/logo'
 import { RootLayout } from './@/ui/screen-layout'
 import { ScreenLayoutProps } from './@/ui/screen-layout/props'
 import * as AuthFrontend from './auth/frontend'
@@ -566,7 +566,7 @@ const toScreenLayoutProps = (input: {
       />
     ),
     actions: {
-      renderNavBar: () => <NavBarLogo onClick={pushSpaceList} />,
+      // renderNavBar: () => <NavBarLogo onClick={pushSpaceList} />,
       buttons: [
         {
           label: ctx.t('spaces.spaces'),
