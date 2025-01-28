@@ -43,24 +43,9 @@ export default defineConfig({
   optimizeDeps: {
     // https://pglite.dev/docs/bundler-support
     exclude: ['@electric-sql/pglite', '@journeyapps/wa-sqlite', '@powersync/web'],
-    include: ['@powersync/web > js-logger', 'crypto-browserify'],
+    include: ['@powersync/web > js-logger'],
     esbuildOptions: {
       target: 'esnext',
-    },
-  },
-  build: {
-    target: 'esnext',
-    emptyOutDir: true,
-    commonjsOptions: {
-      transformMixedEsModules: true,
-    },
-    rollupOptions: {
-      external: ['crypto'],
-      output: {
-        globals: {
-          crypto: 'crypto',
-        },
-      },
     },
   },
   worker: {
