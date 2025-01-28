@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react'
 import { defineConfig, PluginOption } from 'vite'
 // @ts-expect-error
 import inferno from 'vite-plugin-inferno'
-// import topLevelAwait from 'vite-plugin-top-level-await'
-// import wasm from 'vite-plugin-wasm'
+import topLevelAwait from 'vite-plugin-top-level-await'
+import wasm from 'vite-plugin-wasm'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { CONFIG_FRONTEND } from './src/config/frontend'
 
@@ -27,24 +27,31 @@ const vDomPlugin = (): PluginOption => {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    // wasm(), topLevelAwait(),
+    wasm(), // Enable WASM support
+    topLevelAwait(), // Enable top-level await
     tsconfigPaths(),
     vDomPlugin(),
   ],
   optimizeDeps: {
     // https://pglite.dev/docs/bundler-support
-    exclude: ['@electric-sql/pglite', '@journeyapps/wa-sqlite', '@powersync/web'],
+    // Removed exclusion of '@electric-sql/pglite' to ensure WASM processing
+    exclude: ['@journeyapps/wa-sqlite', '@powersync/web'],
     include: ['@powersync/web > js-logger'],
     esbuildOptions: {
-      target: 'esnext',
+      target: 'es2022', // Use es2022 for better compatibility
     },
   },
   build: {
-    target: 'esnext',
+    target: 'es2022', // Use es2022 for better compatibility
     emptyOutDir: true,
   },
   worker: {
     format: 'es',
-    // plugins: () => [wasm(), topLevelAwait()],
+    plugins: () => [wasm(), topLevelAwait()], // Enable WASM and top-level await for workers
   },
+  assetsInclude: [
+    '**/*.wasm', // Ensure WASM files are included in the build
+    'node_modules/@electric-sql/pglite/dist/*.wasm',
+  ],
+  logLevel: 'info', // Enable verbose logging for easier debugging
 })
