@@ -1,21 +1,12 @@
 import { IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/@/ui'
 import { SurfaceLayout } from '../../surface/layout'
-import { ScreenAction, ScreenActionBarProps } from './props'
+import { ScreenAction, ScreenActionBarProps, ScreenActionsUniform, ScreenActionsSpaceBetween } from './props'
 
 const DEFAULT_LIMIT = 4
 
-type VariantProps = {
-  limit?: number
-  size?: 'sm' | 'md'
-  ctx: ScreenActionBarProps['ctx']
-  id: string
-  open: boolean
-  onToggle: () => void
-}
-
-const ViewUniform = (input: VariantProps & { actions: (ScreenAction | null)[] }) => {
+const Uniform = (input: ScreenActionBarProps & ScreenActionsUniform) => {
   const size = input.size ?? 'md'
-  const limit = input.limit ?? DEFAULT_LIMIT
+  const limit = input.limit?.max ?? DEFAULT_LIMIT
   const [firstButtons, lastButtons] = [input.actions.slice(0, limit), input.actions.slice(limit)]
 
   return (
@@ -34,14 +25,14 @@ const ViewUniform = (input: VariantProps & { actions: (ScreenAction | null)[] })
             icon={(input) => <IconEllipsisVertical {...input} />}
             label={input.ctx.t('app.more')}
             size={input.size}
-            onClick={input.onToggle}
+            onClick={input.limit?.onToggle ?? (() => {})}
           />
           <SurfaceLayout
             ctx={input.ctx}
             id={input.id}
             ariaLabel={input.ctx.t('app.more')}
-            onClose={input.onToggle}
-            open={input.open}
+            onClose={input.limit?.onToggle ?? (() => {})}
+            open={input.limit?.open ?? false}
             renderBody={() => (
               <>
                 {lastButtons.map((button) => {
@@ -65,85 +56,45 @@ const ViewUniform = (input: VariantProps & { actions: (ScreenAction | null)[] })
   )
 }
 
-const ViewSpaceBetween = (input: VariantProps & { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
+const SpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpaceBetween) => {
   const size = input.size ?? 'md'
-  const limit = input.limit ?? DEFAULT_LIMIT
-  const allButtons = [...input.start, ...input.end]
-  const [firstButtons, lastButtons] = [allButtons.slice(0, limit), allButtons.slice(limit)]
 
   return (
     <div
-      className={cn('flex w-full shrink-0 items-center', size === 'sm' && 'h-12', size === 'md' && 'h-16')}
+      className={cn(
+        'flex w-full shrink-0 items-center justify-between',
+        size === 'sm' && 'h-12',
+        size === 'md' && 'h-16',
+      )}
       role='toolbar'
     >
-      {firstButtons.map((button) => {
-        if (!button) return null
-        return <ScreenActionButton {...button} size={input.size} key={button.label} />
-      })}
+      <div className='flex items-center'>
+        {input.start.map((button) => {
+          if (!button) return null
+          return <ScreenActionButton {...button} size={input.size} key={button.label} className='min-w-20' />
+        })}
+      </div>
 
-      {lastButtons.some((button) => button !== null) && (
-        <>
-          <ScreenActionButton
-            icon={(input) => <IconEllipsisVertical {...input} />}
-            label={input.ctx.t('app.more')}
-            size={input.size}
-            onClick={input.onToggle}
-          />
-          <SurfaceLayout
-            ctx={input.ctx}
-            id={input.id}
-            ariaLabel={input.ctx.t('app.more')}
-            onClose={input.onToggle}
-            open={input.open}
-            renderBody={() => (
-              <>
-                {lastButtons.map((button) => {
-                  if (!button || button.hidden) return null
-                  return (
-                    <ListItemButton
-                      key={button.label}
-                      icon={button.icon}
-                      label={button.label}
-                      onClick={button.onClick}
-                      color={button.color}
-                    />
-                  )
-                })}
-              </>
-            )}
-          />
-        </>
-      )}
+      <div className='flex items-center'>
+        {input.end.map((button) => {
+          if (!button) return null
+          return <ScreenActionButton {...button} size={input.size} key={button.label} className='min-w-20' />
+        })}
+      </div>
     </div>
   )
 }
 
 const View = (input: ScreenActionBarProps) => {
-  return input.actions.t === 'uniform' ? (
-    <ViewUniform
-      actions={input.actions.actions}
-      limit={input.limit}
-      size={input.size}
-      ctx={input.ctx}
-      id={input.id}
-      open={input.open}
-      onToggle={input.onToggle}
-    />
-  ) : (
-    <ViewSpaceBetween
-      start={input.actions.start}
-      end={input.actions.end}
-      limit={input.limit}
-      size={input.size}
-      ctx={input.ctx}
-      id={input.id}
-      open={input.open}
-      onToggle={input.onToggle}
-    />
-  )
+  switch (input.variant.t) {
+    case 'uniform':
+      return <Uniform {...input} {...input.variant} />
+    case 'space-between':
+      return <SpaceBetween {...input} {...input.variant} />
+  }
 }
 
-const ScreenActionButton = (input: ScreenAction) => {
+const ScreenActionButton = (input: ScreenAction & { className?: string }) => {
   const isDisabled = input.disabled || input.loading
   const size = input.size ?? 'md'
   if (input.hidden) return null
@@ -165,6 +116,7 @@ const ScreenActionButton = (input: ScreenAction) => {
         input.hidden ? 'hidden' : '',
         input.classNames?.button,
         toSizeClasses(size),
+        input.className,
       )}
     >
       <div

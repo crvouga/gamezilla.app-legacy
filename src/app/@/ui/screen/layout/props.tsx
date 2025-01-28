@@ -5,9 +5,7 @@ import { ScreenSize } from '../screen-size'
 import { ScreenActionBarProps } from '../action-bar/props'
 
 export type ScreenLayoutActionBarProps = Partial<ScreenActionBarProps> & {
-  actions: ScreenActionBarProps['actions']
-  open: ScreenActionBarProps['open']
-  onToggle: ScreenActionBarProps['onToggle']
+  variant: ScreenActionBarProps['variant']
 }
 
 export type ScreenLayoutFormProps = {

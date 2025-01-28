@@ -285,9 +285,7 @@ const View: Module['View'] = (input) => {
           )}
           actionBar={{
             id: 'game-buttons',
-            open: false,
-            onToggle: () => {},
-            actions: {
+            variant: {
               t: 'uniform',
               actions: [
                 input.modelSpace.type === 'game'

@@ -75,9 +75,7 @@ const View: FrontendModule['View'] = (input) => {
         />
       )}
       actionBar={{
-        open: true,
-        onToggle: () => {},
-        actions: {
+        variant: {
           t: 'uniform',
           actions: [
             {

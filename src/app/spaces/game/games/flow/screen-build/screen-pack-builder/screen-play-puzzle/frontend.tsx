@@ -108,20 +108,23 @@ const View: FrontendModule['View'] = (input) => {
       }
       actionBar={{
         id: 'screen-puzzle-buttons',
-        open: input.modelSpace.opened === 'more',
-        limit: 2,
-        onToggle: () =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t:
-                input.modelSpace.opened === 'more'
-                  ? 'screen-pack-builder.puzzle-screen.user-closed-more-drawer'
-                  : 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
-              userId: input.ctx.currentUserId,
-            },
-          }),
-        actions: {
+
+        variant: {
+          limit: {
+            max: 2,
+            open: input.modelSpace.opened === 'more',
+            onToggle: () =>
+              input.dispatch({
+                t: 'got-msg-space',
+                c: {
+                  t:
+                    input.modelSpace.opened === 'more'
+                      ? 'screen-pack-builder.puzzle-screen.user-closed-more-drawer'
+                      : 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
+                  userId: input.ctx.currentUserId,
+                },
+              }),
+          },
           t: 'uniform',
           actions: [
             {

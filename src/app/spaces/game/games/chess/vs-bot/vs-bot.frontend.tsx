@@ -450,9 +450,7 @@ export const View = ({
       )}
       actionBar={{
         id: 'vs-bot-buttons',
-        open: false,
-        onToggle: () => {},
-        actions: {
+        variant: {
           t: 'uniform',
           actions: [
             {

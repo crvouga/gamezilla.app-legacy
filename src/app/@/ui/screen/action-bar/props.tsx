@@ -22,6 +22,11 @@ export type ScreenAction = {
 export type ScreenActionsUniform = {
   t: 'uniform'
   actions: (ScreenAction | null)[]
+  limit?: {
+    max: number
+    open: boolean
+    onToggle: () => void
+  }
 }
 
 export type ScreenActionsSpaceBetween = {
@@ -38,10 +43,7 @@ export type ScreenActionBarProps = {
     t: Translator
     screenSize: ScreenSize
   }
-  actions: ScreenActions
-  open: boolean
-  onToggle: () => void
-  limit?: number
+  variant: ScreenActions
   size?: 'sm' | 'md'
   renderNavBar?: () => VDom
 }

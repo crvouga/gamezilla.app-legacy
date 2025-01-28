@@ -7,13 +7,13 @@ const SIZE = 'md' as 'md' | 'sm'
 
 const View = (input: ScreenActionBarProps & { renderNavBar?: () => VDom }) => {
   return (
-    <div className='flex shrink-0 flex-col gap-1 px-2 pb-6'>
+    <div className='flex w-44 shrink-0 flex-col gap-1 px-2 pb-6'>
       <ScreenNavBarTabletRoot>{input.renderNavBar?.()}</ScreenNavBarTabletRoot>
 
-      {input.actions.t === 'uniform' ? (
-        <Uniform actions={input.actions.actions} />
+      {input.variant.t === 'uniform' ? (
+        <Uniform actions={input.variant.actions} />
       ) : (
-        <SpaceBetween start={input.actions.start} end={input.actions.end} />
+        <SpaceBetween start={input.variant.start} end={input.variant.end} />
       )}
     </div>
   )
@@ -72,7 +72,7 @@ const ScreenActionButton = (input: ScreenAction) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'relative flex w-full flex-row items-center gap-3 px-5 py-3 font-normal',
+        'relative flex w-full flex-row items-center gap-3 px-5 py-3',
         'hover:bg-neutral-800/50 disabled:cursor-not-allowed disabled:opacity-50',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
@@ -82,7 +82,10 @@ const ScreenActionButton = (input: ScreenAction) => {
     >
       <div className={cn('flex flex-row items-center gap-3', input.loading ? 'opacity-0' : 'opacity-100')}>
         {input.icon({ className: toIconSizeClasses(size) })}
-        <Typography text={input.label} className={cn('truncate text-base', 'text-inherit', input.classNames?.label)} />
+        <Typography
+          text={input.label}
+          className={cn('truncate font-semibold', 'text-inherit', input.classNames?.label)}
+        />
       </div>
 
       {input.loading && (
@@ -110,20 +113,20 @@ const toColorClasses = (input: ScreenAction): string => {
 const toSizeClasses = (size: ScreenAction['size']): string => {
   switch (size) {
     case 'sm':
-      return 'text-base'
+      return 'text-lg'
     case 'md':
     default:
-      return 'text-base'
+      return 'text-lg'
   }
 }
 
 const toIconSizeClasses = (size: ScreenAction['size']): string => {
   switch (size) {
     case 'sm':
-      return 'size-6'
+      return 'size-8'
     case 'md':
     default:
-      return 'size-6'
+      return 'size-8'
   }
 }
 

@@ -191,8 +191,19 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
         </>
       )}
       actionBar={{
-        limit: 2,
-        actions: {
+        variant: {
+          limit: {
+            max: 2,
+            onToggle: () => {
+              if (input.model.puzzleBuilderOpened === 'more') {
+                input.dispatch({ t: 'screen-puzzle-builder.user-closed-more-drawer' })
+                return
+              }
+
+              input.dispatch({ t: 'screen-puzzle-builder.user-clicked-open-more-drawer-button' })
+            },
+            open: input.model.puzzleBuilderOpened === 'more',
+          },
           t: 'uniform',
           actions: [
             ...SaveChangesFrontend.viewBottomButtons({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
@@ -226,15 +237,6 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
             },
           ],
         },
-        onToggle: () => {
-          if (input.model.puzzleBuilderOpened === 'more') {
-            input.dispatch({ t: 'screen-puzzle-builder.user-closed-more-drawer' })
-            return
-          }
-
-          input.dispatch({ t: 'screen-puzzle-builder.user-clicked-open-more-drawer-button' })
-        },
-        open: input.model.puzzleBuilderOpened === 'more',
       }}
     />
   )
@@ -296,9 +298,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
         </div>
       )}
       actionBar={{
-        open: false,
-        onToggle: () => {},
-        actions: {
+        variant: {
           t: 'uniform',
           actions: [
             ModePlay.viewHintAction({

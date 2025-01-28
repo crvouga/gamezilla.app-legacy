@@ -457,9 +457,7 @@ const View: Module['View'] = (input) => {
         input.ctx.currentUserId === input.modelSpace.playingUserId
           ? {
               id: 'vs-bot-buttons',
-              open: false,
-              onToggle: () => {},
-              actions: {
+              variant: {
                 t: 'uniform',
                 actions: [
                   {

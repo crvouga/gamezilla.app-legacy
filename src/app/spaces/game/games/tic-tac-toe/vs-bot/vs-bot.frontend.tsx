@@ -259,7 +259,7 @@ export const View = (input: {
         </div>
       )}
       actionBar={{
-        actions: {
+        variant: {
           t: 'uniform',
           actions: [
             {
@@ -288,8 +288,6 @@ export const View = (input: {
             },
           ],
         },
-        open: false,
-        onToggle: () => {},
       }}
     />
   )

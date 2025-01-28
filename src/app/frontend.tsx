@@ -567,7 +567,7 @@ const toScreenLayoutProps = (input: {
     ),
     actionBar: {
       // renderNavBar: () => <NavBarLogo onClick={pushSpaceList} />,
-      actions: {
+      variant: {
         t: 'uniform',
         actions: [
           {
@@ -586,8 +586,6 @@ const toScreenLayoutProps = (input: {
           },
         ],
       },
-      onToggle: () => {},
-      open: false,
     },
   }
 }

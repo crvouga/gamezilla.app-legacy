@@ -460,9 +460,7 @@ export const View = (input: {
       id='mode-edit-screen'
       ctx={input.ctx}
       actionBar={{
-        open: false,
-        onToggle: () => {},
-        actions: {
+        variant: {
           t: 'uniform',
           actions: [
             {

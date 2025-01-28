@@ -140,17 +140,21 @@ const View: FrontendModule['View'] = (input) => {
         )}
         actionBar={{
           id: 'screen-play-puzzle-bottom-bar',
-          open: input.modelSpace.screen.opened === 'action-drawer',
-          onToggle: () =>
-            input.dispatch({
-              t: 'got-msg-space',
-              c: {
-                userId: input.ctx.currentUserId,
-                t: 'user-toggled-action-buttons-drawer',
-              },
-            }),
-          actions: {
+
+          variant: {
             t: 'uniform',
+            limit: {
+              max: 3,
+              open: input.modelSpace.screen.opened === 'action-drawer',
+              onToggle: () =>
+                input.dispatch({
+                  t: 'got-msg-space',
+                  c: {
+                    userId: input.ctx.currentUserId,
+                    t: 'user-toggled-action-buttons-drawer',
+                  },
+                }),
+            },
             actions: [
               PrebuiltBottomButtons.next({
                 ...input,

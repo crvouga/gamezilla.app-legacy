@@ -12,13 +12,9 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         <>
           {input.renderMiniPlayer?.()}
           <ScreenActionHorizontalBar.View
+            {...input.actionBar}
             id={input.actionBar.id ?? `${input.id}-actions`}
             ctx={input.ctx}
-            actions={input.actionBar.actions}
-            limit={input.actionBar.limit}
-            size={input.actionBar.size}
-            onToggle={input.actionBar.onToggle}
-            open={input.actionBar.open}
           />
         </>
       )}
@@ -27,13 +23,9 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         <>
           {input.parent.renderMiniPlayer?.()}
           <ScreenActionHorizontalBar.View
-            size={input.parent.actionBar.size}
+            {...input.parent.actionBar}
             id={input.parent.actionBar.id ?? `${input.id}-actions`}
             ctx={input.ctx}
-            actions={input.parent.actionBar.actions}
-            limit={input.parent.actionBar.limit}
-            onToggle={input.parent.actionBar.onToggle}
-            open={input.parent.actionBar.open}
           />
         </>
       )}

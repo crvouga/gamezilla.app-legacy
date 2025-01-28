@@ -16,7 +16,10 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
       }}
     >
       <div
-        className={cn('flex w-full flex-1 gap-6 overflow-hidden', input.isTopLevel ? 'flex-row' : 'flex-row-reverse')}
+        className={cn(
+          'flex w-full flex-1 divide-x overflow-hidden',
+          input.isTopLevel ? 'flex-row' : 'flex-row-reverse',
+        )}
       >
         {input.parent?.actionBar && (
           <ScreenActionVerticalBar.View
