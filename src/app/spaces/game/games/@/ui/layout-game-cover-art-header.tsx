@@ -26,7 +26,7 @@ export const LayoutGameCoverArtHeader = (input: {
       ctx={input.ctx}
       nav={input.topBar}
       renderBody={() => (
-        <ScreenBodyContent>
+        <ScreenBodyContent className='gap-4 p-6'>
           {renderCoverArt_({ className: 'size-28 overflow-hidden rounded-lg' })}
           {input.renderContent()}
         </ScreenBodyContent>

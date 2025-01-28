@@ -52,6 +52,7 @@ const View = (input: {
 
       return (
         <ScreenLayout
+          isTopLevel
           id='space'
           ctx={spaceCtx}
           actionPosition='top'

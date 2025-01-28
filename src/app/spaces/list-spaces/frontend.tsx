@@ -88,6 +88,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   return (
     <ScreenLayout
+      isTopLevel
       id='list-spaces'
       ctx={input.ctx}
       nav={{
@@ -101,7 +102,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       }}
       renderBody={() => {
         return (
-          <ScreenBodyContent>
+          <ScreenBodyContent className='gap-4 p-6'>
             {spaces.length === 0 && (
               <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
             )}

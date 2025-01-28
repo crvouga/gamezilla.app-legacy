@@ -38,7 +38,7 @@ const ScreenActionButton = (input: ScreenAction) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'relative flex w-full flex-col items-center gap-2 rounded-xl p-3 font-normal',
+        'relative flex w-full flex-col items-center rounded-xl p-3 font-normal',
         'clickable hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
@@ -46,7 +46,7 @@ const ScreenActionButton = (input: ScreenAction) => {
         toSizeClasses(size),
       )}
     >
-      <div className={cn('flex flex-col items-center', input.loading ? 'opacity-0' : 'opacity-100')}>
+      <div className={cn('flex flex-col items-center gap-1', input.loading ? 'opacity-0' : 'opacity-100')}>
         {input.icon({ className: toIconSizeClasses(size) })}
         <Typography
           text={input.label}

@@ -1,3 +1,4 @@
+import { cn } from '~/@/ui'
 import { FormButtons } from '../form-buttons'
 import { ScreenActionsSideBar } from '../screen-actions/side-bar'
 import { ScreenNavBarTablet } from '../screen-nav-bar/tablet'
@@ -14,7 +15,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
         input.form?.onSubmit()
       }}
     >
-      <div className='flex w-full flex-1 flex-row overflow-hidden'>
+      <div className={cn('flex w-full flex-1 overflow-hidden', input.isTopLevel ? 'flex-row' : 'flex-row-reverse')}>
         {input.parent?.actions && (
           <ScreenActionsSideBar.View
             {...input.parent.actions}

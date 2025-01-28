@@ -15,12 +15,7 @@ export const ScreenLayout = (input: ScreenLayoutProps) => {
 
 export const ScreenBodyContent = (input: { children: VDomChildren; className?: string }) => {
   return (
-    <div
-      className={cn(
-        'mx-auto flex w-full max-w-2xl flex-1 flex-col items-center gap-4 overflow-y-auto p-6',
-        input.className,
-      )}
-    >
+    <div className={cn('mx-auto flex w-full max-w-2xl flex-1 flex-col items-center overflow-y-auto', input.className)}>
       {input.children}
     </div>
   )
@@ -29,7 +24,7 @@ export const ScreenBodyContent = (input: { children: VDomChildren; className?: s
 export const RootLayout = (input: { children: VDomChildren }) => {
   return (
     <div className='fixed left-1/2 top-1/2 flex h-[100dvh] w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden bg-black text-white'>
-      <div className='relative flex h-full max-h-[915px] w-full max-w-[1200px] flex-col items-center justify-center overflow-hidden rounded min-[1200px]:border'>
+      <div className='relative flex h-full w-full max-w-[1200px] flex-col items-center justify-center overflow-hidden rounded'>
         {input.children}
       </div>
     </div>

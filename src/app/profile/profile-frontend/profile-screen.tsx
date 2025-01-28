@@ -25,6 +25,7 @@ const View = (input: {
 const ViewLoading = (input: { ctx: FrontendCtx }) => {
   return (
     <ScreenLayout
+      isTopLevel
       ctx={input.ctx}
       parent={input.ctx.parentScreen}
       id='profile-screen'
@@ -36,6 +37,7 @@ const ViewLoading = (input: { ctx: FrontendCtx }) => {
 const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (msg: MsgFrontend) => void }) => {
   return (
     <ScreenLayout
+      isTopLevel
       ctx={input.ctx}
       parent={input.ctx.parentScreen}
       nav={{
@@ -43,7 +45,7 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
       }}
       id='profile-screen'
       renderBody={() => (
-        <ScreenBodyContent>
+        <ScreenBodyContent className='gap-4 p-6'>
           <Avatar className='h-28 w-28' src={input.profile?.avatarUrl} alt='profile avatar' />
           <Button
             onClick={() =>
@@ -75,6 +77,7 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
 const ViewOtherProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (msg: MsgFrontend) => void }) => {
   return (
     <ScreenLayout
+      isTopLevel
       ctx={input.ctx}
       id='profile-screen'
       parent={input.ctx.parentScreen}

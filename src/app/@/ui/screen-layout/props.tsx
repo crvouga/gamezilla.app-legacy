@@ -21,6 +21,7 @@ export type ScreenLayoutProps = {
     subtitle?: TranslatedText | null
     onBack?: () => void
   }
+  isTopLevel?: boolean
   actionPosition?: 'top' | 'bottom'
   parent?: Pick<ScreenLayoutProps, 'actions' | 'nav' | 'renderMiniPlayer'> | null
   actions?: ScreenLayoutActionsProps | null
