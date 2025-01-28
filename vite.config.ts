@@ -31,10 +31,6 @@ export default defineConfig({
     tsconfigPaths(),
     vDomPlugin(),
   ],
-  define: {
-    global: 'globalThis',
-    'process.env': {},
-  },
   optimizeDeps: {
     // https://pglite.dev/docs/bundler-support
     exclude: ['@electric-sql/pglite', '@journeyapps/wa-sqlite', '@powersync/web'],
@@ -42,6 +38,10 @@ export default defineConfig({
     esbuildOptions: {
       target: 'esnext',
     },
+  },
+  build: {
+    target: 'esnext',
+    emptyOutDir: true,
   },
   worker: {
     format: 'es',
