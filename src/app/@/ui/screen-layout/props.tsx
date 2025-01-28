@@ -1,13 +1,14 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { VDom, VDomChildren } from '~/@/vdom/vdom'
+import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '../../frontend/ctx'
 import { ScreenActionProps } from '../screen-actions/props'
 
-export type ScreenLayoutActionsProps = Omit<ScreenActionProps, 'id' | 'ctx'> &
-  Partial<Pick<ScreenActionProps, 'id' | 'ctx'>> & {
-    top?: VDomChildren
-  }
+export type ScreenLayoutActionsProps = Partial<ScreenActionProps> & {
+  buttons: ScreenActionProps['buttons']
+  open: ScreenActionProps['open']
+  onToggle: ScreenActionProps['onToggle']
+}
 
 export type ScreenLayoutProps = {
   id: string
@@ -21,8 +22,9 @@ export type ScreenLayoutProps = {
     onBack?: () => void
   }
   actionPosition?: 'top' | 'bottom'
-  parent?: Pick<ScreenLayoutProps, 'actions' | 'nav'> | null
+  parent?: Pick<ScreenLayoutProps, 'actions' | 'nav' | 'renderMiniPlayer'> | null
   actions?: ScreenLayoutActionsProps | null
+  renderMiniPlayer?: () => VDom
   renderBody: () => VDom
   renderFab?: () => VDom
   form?: {

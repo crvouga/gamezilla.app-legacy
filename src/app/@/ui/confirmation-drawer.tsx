@@ -3,7 +3,7 @@ import { Translator } from '~/@/l18n/generated'
 import { Drawer, DrawerHeader, type DrawerInput } from '~/@/ui/drawer'
 import { Typography } from '~/@/ui/typography'
 import { ViewForm } from './form'
-import { FormBottomButtons } from './form-button-buttons'
+import { FormButtons } from './form-buttons'
 
 type input = DrawerInput & {
   ctx: {
@@ -32,7 +32,7 @@ export const ConfirmationFormDrawer = (input: input) => {
 
         <Typography className='p-4' variant='body' text={input.body} />
 
-        <FormBottomButtons
+        <FormButtons
           cancelText={input.cancelText}
           submitText={input.confirmText}
           onCancel={input.onCancel}

@@ -123,7 +123,7 @@ const toIconSizeClasses = (size: ScreenAction['size']): string => {
       return 'size-5'
     case 'md':
     default:
-      return 'size-7'
+      return 'size-8'
   }
 }
 

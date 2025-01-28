@@ -20,6 +20,7 @@ import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
+import { LoadingStateLogo, NavBarLogo } from './@/ui/logo'
 import { RootLayout } from './@/ui/screen-layout'
 import { ScreenLayoutProps } from './@/ui/screen-layout/props'
 import * as AuthFrontend from './auth/frontend'
@@ -420,10 +421,6 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
   )
 }
 
-const LoadingStateLogo = () => {
-  return <div className='fixed left-1/2 top-1/2 box-border -translate-x-1/2 -translate-y-1/2 text-[68px]'>🦕</div>
-}
-
 const ViewScreen = (input: {
   ctx: AppFrontendCtx | AnonymousFrontendCtx
   model: ModelFrontend
@@ -554,31 +551,31 @@ const toScreenLayoutProps = (input: {
   model: ModelFrontend
   dispatch: (m: MsgFrontend) => void
 }): ScreenLayoutProps['parent'] | null => {
-  if (!isAppFrontendCtx(input.ctx)) return null
+  const { ctx } = input
+  if (!isAppFrontendCtx(ctx)) return null
 
   const screenSpace: Screen = { n: 'spaces', t: 'space-list' }
-  const screenProfile: Screen = { n: 'profile', t: 'profile', userId: input.ctx.currentUserId }
-
+  const screenProfile: Screen = { n: 'profile', t: 'profile', userId: ctx.currentUserId }
+  const pushSpaceList = () => input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } })
   return {
+    renderMiniPlayer: () => (
+      <SpacesFrontend.ViewCurrentSpaceBar
+        ctx={ctx}
+        model={input.model.spaces}
+        dispatch={(c) => input.dispatch({ t: 'spaces', c })}
+      />
+    ),
     actions: {
-      top: (
-        <SpacesFrontend.ViewCurrentSpaceBar
-          ctx={input.ctx}
-          model={input.model.spaces}
-          dispatch={(c) => input.dispatch({ t: 'spaces', c })}
-        />
-      ),
+      renderNavBar: () => <NavBarLogo onClick={pushSpaceList} />,
       buttons: [
         {
-          label: input.ctx.t('spaces.spaces'),
+          label: ctx.t('spaces.spaces'),
           icon: (input) => <IconGamepad {...input} />,
           color: eq(input.model.currentScreen.currentScreen, screenSpace) ? 'selected' : 'inherit',
-          onClick() {
-            input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } })
-          },
+          onClick: pushSpaceList,
         },
         {
-          label: input.ctx.t('profile.profile'),
+          label: ctx.t('profile.profile'),
           icon: (input) => <IconUserCircle {...input} />,
           color: eq(input.model.currentScreen.currentScreen, screenProfile) ? 'selected' : 'inherit',
           onClick() {

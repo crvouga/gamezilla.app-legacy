@@ -5,7 +5,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
 import { Drawer, DrawerHeader, TextField } from '~/@/ui'
 import { ViewForm } from '~/app/@/ui/form'
-import { FormBottomButtons } from '~/app/@/ui/form-button-buttons'
+import { FormButtons } from '~/app/@/ui/form-buttons'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCmd } from '../../../@/frontend/cmd'
 import { FlowFrontendCmdRoot } from '../../../@/frontend/cmd-root'
@@ -62,7 +62,7 @@ const View: FrontendModule['View'] = (input) => {
             helperText={editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError)}
           />
         </div>
-        <FormBottomButtons
+        <FormButtons
           onCancel={() => input.dispatch({ t: 'puzzle.edit-name.user-clicked-cancel-button' })}
           cancelText={input.ctx.t('app.cancel')}
           submitText={input.ctx.t('app.save')}

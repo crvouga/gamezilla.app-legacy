@@ -30,4 +30,5 @@ export type ScreenActionProps = {
   onToggle: () => void
   limit?: number
   size?: 'sm' | 'md'
+  renderNavBar?: () => VDom
 }

@@ -6,7 +6,7 @@ import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { Drawer, DrawerHeader, IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/@/ui'
 import { ViewForm } from '~/app/@/ui/form'
-import { FormBottomButtons } from '~/app/@/ui/form-button-buttons'
+import { FormButtons } from '~/app/@/ui/form-buttons'
 import { ScreenLayout } from '~/app/@/ui/screen-layout'
 import * as Flow from '../flow/flow'
 import { GroupId } from '../flow/group-id'
@@ -16,6 +16,7 @@ import * as FlowUI from '../ui/color'
 import { VariantBoard } from '../variant'
 import * as FlowVariant from '../variant/variant'
 import * as FlowVariantDimensions from '../variant/variant-dimensions'
+import { ScreenLayoutProps } from '~/app/@/ui/screen-layout/props'
 
 //
 //
@@ -448,13 +449,48 @@ export const toFlowMemoized = memoize({
 //
 //
 
-export const View = (input: { ctx: AppFrontendCtx; model: Model; dispatch: (m: Msg) => void }) => {
+export const View = (input: {
+  ctx: AppFrontendCtx
+  model: Model
+  dispatch: (m: Msg) => void
+  screenLayout: Partial<ScreenLayoutProps>
+}) => {
   return (
-    <>
-      <ScreenLayout
-        id='mode-edit-screen'
-        ctx={input.ctx}
-        renderBody={() => (
+    <ScreenLayout
+      {...input.screenLayout}
+      id='mode-edit-screen'
+      ctx={input.ctx}
+      actions={{
+        open: false,
+        onToggle: () => {},
+        buttons: [
+          {
+            icon: (input) => <IconArrowRotateLeft {...input} />,
+            label: input.ctx.t('app.undo'),
+            onClick: () => input.dispatch({ t: 'clicked-undo' }),
+            disabled: !History.canUndo(input.model.form),
+          },
+          {
+            icon: (input) => <IconArrowRotateRight {...input} />,
+            label: input.ctx.t('app.redo'),
+            disabled: !History.canRedo(input.model.form),
+            onClick: () => input.dispatch({ t: 'clicked-redo' }),
+          },
+          {
+            icon: (input) => <IconXMark {...input} />,
+            label: input.ctx.t('app.clear'),
+            disabled: !canClear(input.model),
+            onClick: () => input.dispatch({ t: 'clicked-clear' }),
+          },
+          {
+            icon: (input) => <IconExpand {...input} />,
+            label: input.ctx.t('app.dimensions'),
+            onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
+          },
+        ],
+      }}
+      renderBody={() => (
+        <>
           <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-auto'>
             <ViewStatus {...input} />
 
@@ -465,78 +501,49 @@ export const View = (input: { ctx: AppFrontendCtx; model: Model; dispatch: (m: M
               onPressUp={(nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId })}
             />
           </div>
-        )}
-        actions={{
-          open: false,
-          onToggle: () => {},
-          buttons: [
-            {
-              icon: (input) => <IconArrowRotateLeft {...input} />,
-              label: input.ctx.t('app.undo'),
-              onClick: () => input.dispatch({ t: 'clicked-undo' }),
-              disabled: !History.canUndo(input.model.form),
-            },
-            {
-              icon: (input) => <IconArrowRotateRight {...input} />,
-              label: input.ctx.t('app.redo'),
-              disabled: !History.canRedo(input.model.form),
-              onClick: () => input.dispatch({ t: 'clicked-redo' }),
-            },
-            {
-              icon: (input) => <IconXMark {...input} />,
-              label: input.ctx.t('app.clear'),
-              disabled: !canClear(input.model),
-              onClick: () => input.dispatch({ t: 'clicked-clear' }),
-            },
-            {
-              icon: (input) => <IconExpand {...input} />,
-              label: input.ctx.t('app.dimensions'),
-              onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
-            },
-          ],
-        }}
-      />
-      <Drawer
-        ctx={input.ctx}
-        ariaLabel={input.ctx.t('app.dimensions')}
-        open={input.model.opened === 'dimensions'}
-        onClose={() =>
-          input.dispatch({
-            t: 'dimensions-form.closed',
-          })
-        }
-        id='dimensions'
-        position='bottom'
-      >
-        <ViewForm
-          name={input.ctx.t('app.dimensions')}
-          onSubmit={() => input.dispatch({ t: 'dimensions-form.clicked-save' })}
-        >
-          <DrawerHeader
+          <Drawer
             ctx={input.ctx}
-            title={input.ctx.t('app.dimensions')}
-            onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
-          />
-
-          <FlowVariantDimensions.ViewForm
-            ctx={input.ctx}
-            form={input.model.dimensions}
-            onInput={(dimensions) =>
+            ariaLabel={input.ctx.t('app.dimensions')}
+            open={input.model.opened === 'dimensions'}
+            onClose={() =>
               input.dispatch({
-                t: 'dimensions-form.inputted',
-                dimensions,
+                t: 'dimensions-form.closed',
               })
             }
-          />
-          <FormBottomButtons
-            onCancel={() => input.dispatch({ t: 'dimensions-form.clicked-cancel' })}
-            cancelText={input.ctx.t('app.cancel')}
-            submitText={input.ctx.t('app.save')}
-            submitDisabled={!canSubmitDimensionsForm(input.model)}
-          />
-        </ViewForm>
-      </Drawer>
-    </>
+            id='dimensions'
+            position='bottom'
+          >
+            <ViewForm
+              name={input.ctx.t('app.dimensions')}
+              onSubmit={() => input.dispatch({ t: 'dimensions-form.clicked-save' })}
+            >
+              <DrawerHeader
+                ctx={input.ctx}
+                title={input.ctx.t('app.dimensions')}
+                onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
+              />
+
+              <FlowVariantDimensions.ViewForm
+                ctx={input.ctx}
+                form={input.model.dimensions}
+                onInput={(dimensions) =>
+                  input.dispatch({
+                    t: 'dimensions-form.inputted',
+                    dimensions,
+                  })
+                }
+              />
+              <FormButtons
+                onCancel={() => input.dispatch({ t: 'dimensions-form.clicked-cancel' })}
+                cancelText={input.ctx.t('app.cancel')}
+                submitText={input.ctx.t('app.save')}
+                submitDisabled={!canSubmitDimensionsForm(input.model)}
+              />
+            </ViewForm>
+          </Drawer>
+        </>
+      )}
+    />
   )
 }
 

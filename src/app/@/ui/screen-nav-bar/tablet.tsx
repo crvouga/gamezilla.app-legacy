@@ -3,6 +3,7 @@ import type { Translator } from '~/@/l18n/generated'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
+import { VDom, VDomChildren } from '~/@/vdom/vdom'
 
 export const ScreenNavBarTablet = (input: {
   title: TranslatedText
@@ -11,9 +12,10 @@ export const ScreenNavBarTablet = (input: {
     t: Translator
   }
   onBack?: (() => void) | false | null
+  renderEnd?: () => VDom
 }) => {
   return (
-    <div className='flex h-16 w-full shrink-0 items-center truncate px-4'>
+    <ScreenNavBarTabletRoot>
       {input.onBack && (
         <IconButton
           onClick={input.onBack}
@@ -35,6 +37,11 @@ export const ScreenNavBarTablet = (input: {
           />
         )}
       </div>
-    </div>
+      {input.renderEnd?.()}
+    </ScreenNavBarTabletRoot>
   )
+}
+
+export const ScreenNavBarTabletRoot = (input: { children: VDomChildren }) => {
+  return <div className='flex h-24 w-full shrink-0 items-center truncate px-4'>{input.children}</div>
 }

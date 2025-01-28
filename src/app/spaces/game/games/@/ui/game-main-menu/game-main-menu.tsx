@@ -130,7 +130,7 @@ export const View = ({
       }}
       renderCoverArt={renderCoverArt}
       renderContent={() => (
-        <div className='flex w-full flex-col p-4'>
+        <div className='flex w-full flex-col'>
           {buttons.map(({ renderIcon, title, description, onClick }, index) => (
             <button
               className='bg-paper clickable mb-6 flex w-full items-center rounded p-6'

@@ -182,10 +182,6 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='puzzle-builder-screen'
       ctx={input.ctx}
-      nav={{
-        onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
-        title: input.ctx.t('flow-puzzle-name', input.modelSpace.screenPuzzleBuilder.puzzle.name),
-      }}
       renderBody={() => (
         <>
           <EditPuzzleNameFrontend.View {...input} />
@@ -255,6 +251,12 @@ const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
           model={puzzleBuilder.ModeEdit}
           ctx={input.ctx}
           dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
+          screenLayout={{
+            nav: {
+              onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
+              title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
+            },
+          }}
         />
       )
     case 'play':
@@ -275,6 +277,10 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='puzzle-builder-screen-mode-play'
       ctx={input.ctx}
+      nav={{
+        onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
+        title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
+      }}
       renderBody={() => (
         <div className='flex w-full flex-1 flex-col'>
           <div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>

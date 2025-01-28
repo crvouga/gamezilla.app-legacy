@@ -1,18 +1,23 @@
 import { Spinner, Typography, cn } from '~/@/ui'
 import { ScreenAction, ScreenActionProps } from './props'
+import { VDom } from '~/@/vdom/vdom'
+import { ScreenNavBarTabletRoot } from '../screen-nav-bar/tablet'
 
-const View = (input: ScreenActionProps) => {
+const View = (input: ScreenActionProps & { renderNavBar?: () => VDom }) => {
   const cleanedButtons = input.buttons.filter((button) => button !== null)
   const size = 'md' as 'md' | 'sm'
 
   return (
-    <div
-      className={cn('flex w-32 shrink-0 flex-col', size === 'sm' && 'gap-1 p-2', size === 'md' && 'gap-3 p-4')}
-      role='toolbar'
-    >
-      {cleanedButtons.map((button) => (
-        <ScreenActionButton {...button} size={size} key={button.label} />
-      ))}
+    <div className='flex w-28 shrink-0 flex-col gap-3'>
+      <ScreenNavBarTabletRoot>{input.renderNavBar?.()}</ScreenNavBarTabletRoot>
+      <div
+        className={cn('flex w-full shrink-0 flex-col', size === 'sm' && 'gap-1 px-2', size === 'md' && 'gap-3 px-4')}
+        role='toolbar'
+      >
+        {cleanedButtons.map((button) => (
+          <ScreenActionButton {...button} size={size} key={button.label} />
+        ))}
+      </div>
     </div>
   )
 }
@@ -33,7 +38,7 @@ const ScreenActionButton = (input: ScreenAction) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'relative flex w-full flex-col items-center gap-1.5 rounded-xl p-3 font-normal',
+        'relative flex w-full flex-col items-center gap-2 rounded-xl p-3 font-normal',
         'clickable hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
@@ -61,11 +66,11 @@ const ScreenActionButton = (input: ScreenAction) => {
 const toColorClasses = (input: ScreenAction): string => {
   switch (input.color) {
     case 'danger':
-      return 'text-red-500 hover:bg-red-800'
+      return 'text-red-500 hover:bg-red-900'
     case 'success':
-      return 'text-green-500 hover:bg-green-800'
+      return 'text-green-500 hover:bg-green-900'
     case 'selected':
-      return 'text-blue-500 bg-neutral-800'
+      return 'text-blue-500 bg-neutral-900'
     default:
       return ''
   }
@@ -87,7 +92,7 @@ const toIconSizeClasses = (size: ScreenAction['size']): string => {
       return 'size-6'
     case 'md':
     default:
-      return 'size-7'
+      return 'size-8'
   }
 }
 

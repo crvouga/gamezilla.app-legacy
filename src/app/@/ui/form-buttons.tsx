@@ -1,8 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
-import { Button } from '~/@/ui/button'
+import { Button, ButtonInput } from '~/@/ui/button'
 import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/drawer'
 
-export const FormBottomButtons = (input: {
+export const FormButtons = (input: {
   onCancel: () => void
   cancelText: TranslatedText
   cancelDisabled?: boolean
@@ -10,11 +10,13 @@ export const FormBottomButtons = (input: {
   submitLoading?: boolean
   submitDisabled?: boolean
   variant?: 'danger'
+  size?: ButtonInput['size']
 }) => {
   return (
     <div className='flex w-full items-center gap-4 p-4'>
       <Button
         className='flex-1'
+        size={input.size}
         onClick={(event) => {
           preventConsoleErrorWhenClosingDrawer(event)
           input.onCancel()
@@ -24,6 +26,7 @@ export const FormBottomButtons = (input: {
       />
       <Button
         className='flex-1'
+        size={input.size}
         type='submit'
         color={input.variant === 'danger' ? 'danger' : 'primary'}
         variant='contained'

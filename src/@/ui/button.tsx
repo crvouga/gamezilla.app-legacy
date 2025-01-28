@@ -16,7 +16,7 @@ export type ButtonEvent = {
   currentTarget: HTMLButtonElement
 }
 
-type ButtonInput = {
+export type ButtonInput = {
   rounded?: boolean
   text?: TranslatedText
   disabled?: boolean
@@ -53,13 +53,13 @@ export const Button = (input: ButtonInput) => {
       }
     >
       <div className={cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent')}>
-        {input.iconStart?.({ className: 'mr-2 w-7 h-7' })}
+        {input.iconStart?.({ className: 'mr-2 size-8' })}
         {input.text}
       </div>
 
       {input.loading && (
         <div className='absolute inset-0 flex items-center justify-center'>
-          <Spinner className='h-7 w-7' />
+          <Spinner className='size-8' />
         </div>
       )}
     </button>

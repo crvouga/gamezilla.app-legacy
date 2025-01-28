@@ -284,36 +284,11 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
     <div
       id={String(input.toast.toastId)}
       className='pointer-events-none absolute left-0 top-0 z-40 w-full overflow-visible p-4'
-      //
-      onMouseDown={() =>
-        input.dispatch({
-          t: 'pressed-down-on-toast',
-          toast: input.toast,
-        })
-      }
-      onMouseUp={() =>
-        input.dispatch({
-          t: 'pressed-up-on-toast',
-          toast: input.toast,
-        })
-      }
-      //
-      onTouchStart={() =>
-        input.dispatch({
-          t: 'pressed-down-on-toast',
-          toast: input.toast,
-        })
-      }
-      onTouchEnd={() =>
-        input.dispatch({
-          t: 'pressed-up-on-toast',
-          toast: input.toast,
-        })
-      }
-      //
-      onContextMenu={(e) => {
-        e.preventDefault()
-      }}
+      onMouseDown={() => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast })}
+      onMouseUp={() => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast })}
+      onTouchStart={() => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast })}
+      onTouchEnd={() => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast })}
+      onContextMenu={(e) => e.preventDefault()}
     >
       <div className='ml-auto max-w-lg bg-black'>
         <div

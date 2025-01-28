@@ -20,7 +20,7 @@ export const IconButton = (input: {
       title={input.label}
     >
       {input.renderIcon({
-        className: 'w-7 h-7',
+        className: 'size-8',
       })}
     </button>
   )

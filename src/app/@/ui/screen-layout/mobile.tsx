@@ -1,4 +1,4 @@
-import { FormBottomButtons } from '../form-button-buttons'
+import { FormButtons } from '../form-buttons.tsx'
 import { ScreenActionsHorizontalBar } from '../screen-actions/horizontal-bar.tsx'
 import { ScreenLayoutProps } from './props'
 import { ScreenNavBarMobile } from '../screen-nav-bar/mobile.tsx'
@@ -10,7 +10,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
     <>
       {input.actions && (
         <>
-          {input.actions.top}
+          {input.renderMiniPlayer?.()}
           <ScreenActionsHorizontalBar.View
             id={input.actions.id ?? `${input.id}-actions`}
             ctx={input.ctx}
@@ -25,7 +25,6 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
 
       {input.parent?.actions && (
         <>
-          {input.parent.actions.top}
           <ScreenActionsHorizontalBar.View
             size={input.parent.actions.size}
             id={input.parent.actions.id ?? `${input.id}-actions`}
@@ -55,7 +54,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         {input.renderBody()}
         {input.renderFab && <div className='absolute bottom-6 right-4 bg-black'>{input.renderFab()}</div>}
       </div>
-      {input.form && <FormBottomButtons {...input.form} />}
+      {input.form && <FormButtons {...input.form} />}
       {actionPosition === 'bottom' && actions}
     </Element>
   )
