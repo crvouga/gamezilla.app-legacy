@@ -3,35 +3,26 @@ import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
 import type { PlatformCmd } from '../@/frontend/cmd'
-import { pipe } from '~/@/function/pipe'
-import { ScreenSize } from '../@/ui/screen/screen-size'
+import { ScreenSizeFrontend } from './screen-size'
 
 export type Model = {
   documentVisibilityState: DocumentVisibilityState
-  screenSize: ScreenSize
+  screenSize: ScreenSizeFrontend.Model
 }
 
-export const init = (_input: {
-  stored: Record<string, unknown> | null
-}): {
-  model: Model
-} => {
-  if (typeof window === 'undefined') {
-    return { model: { documentVisibilityState: 'visible', screenSize: ScreenSize.get() } }
-  }
-
+export const init = (_input: { stored: Record<string, unknown> | null }): { model: Model } => {
   return {
     model: {
-      documentVisibilityState: document.visibilityState,
-      screenSize: ScreenSize.get(),
+      documentVisibilityState: typeof window === 'undefined' ? 'visible' : document.visibilityState,
+      screenSize: ScreenSizeFrontend.init().model,
     },
   }
 }
 
 export type Msg =
+  | { t: 'got-screen-size-msg'; c: ScreenSizeFrontend.Msg }
   | { t: 'document-became-hidden' }
   | { t: 'document-became-visible' }
-  | { t: 'screen-size-changed'; screenSize: ScreenSize }
   | { t: 'copied-to-clipboard'; text: string }
   | { t: 'element-focused'; id: string }
 
@@ -60,55 +51,34 @@ export const update = <TMsgFrontend>({
 }
 
 const updateFromMsg: typeof update = ({ msg, model }) => {
-  if (!msg) {
-    return { model }
-  }
+  if (!msg) return { model }
+
   switch (msg.t) {
     case 'document-became-hidden': {
-      return {
-        model: {
-          ...model,
-          documentVisibilityState: 'hidden',
-        },
-      }
+      return { model: { ...model, documentVisibilityState: 'hidden' } }
     }
 
     case 'document-became-visible': {
-      return {
-        model: {
-          ...model,
-          documentVisibilityState: 'visible',
-        },
-      }
+      return { model: { ...model, documentVisibilityState: 'visible' } }
     }
 
     case 'element-focused': {
-      return {
-        model,
-      }
+      return { model }
     }
 
     case 'copied-to-clipboard': {
-      return {
-        model,
-      }
+      return { model }
     }
 
-    case 'screen-size-changed': {
-      return {
-        model: {
-          ...model,
-          screenSize: msg.screenSize,
-        },
-      }
+    case 'got-screen-size-msg': {
+      const updated = ScreenSizeFrontend.update({ msg: msg.c, model: model.screenSize })
+      return { model: { ...model, screenSize: updated.model } }
     }
   }
 }
 
 const updateFromCmd: typeof update = ({ msgCmd, model }) => {
-  if (!msgCmd) {
-    return { model }
-  }
+  if (!msgCmd) return { model }
 
   const platformCmd = msgCmd.c
 
@@ -201,9 +171,7 @@ const visibilityStateSubscriptions: Sub<Msg> = Browser.onDocumentVisibilityState
   }
 })
 
-const screenSizeSubscriptions: Sub<Msg> = pipe(
-  Browser.onWindowResize<Msg>(({ width }) => ({ t: 'screen-size-changed', screenSize: ScreenSize.to(width) })),
-  (sub) => Sub.deduplicate('screen-size', (msg) => (msg.t === 'screen-size-changed' ? msg.screenSize : 'mobile'), sub),
-)
-
-export const subscriptions: Sub<Msg> = Sub.batch([visibilityStateSubscriptions, screenSizeSubscriptions])
+export const subscriptions: Sub<Msg> = Sub.batch([
+  visibilityStateSubscriptions,
+  Sub.tag('got-screen-size-msg', ScreenSizeFrontend.subscriptions),
+])
