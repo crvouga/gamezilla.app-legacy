@@ -13,7 +13,7 @@ export type Config = {
   toHeaders?: (filePath: string) => Record<string, string>
 }
 
-export const withSinglePageApp = async (config: Config) => {
+const registerRespond = async (config: Config) => {
   const toExtname = config.toExtname ?? path.extname
   const toFilePath = config.toFilePath ?? ((pathname) => pathname)
   const toHeaders: (filePath: string) => Record<string, string> = config.toHeaders ?? (() => ({}))
@@ -62,4 +62,8 @@ export const withSinglePageApp = async (config: Config) => {
   }
 
   await traverseDirectory(config.directory)
+}
+
+export const SinglePageApp = {
+  registerRespond,
 }

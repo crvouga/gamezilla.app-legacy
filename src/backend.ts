@@ -5,6 +5,8 @@ import { CONFIG_BACKEND } from '~/config/backend'
 import { HealthCheck } from './@/health-check/health-check'
 import { RPC } from './@/rpc'
 import { PowerSyncBackendApp } from './service-powersync/backend/respond'
+import { SinglePageApp } from './@/http-server/single-page-app'
+import { FileSystem } from './@/file-system'
 
 const ctx = await AppBackend.initCtx()
 
@@ -32,6 +34,13 @@ PowerSyncBackendApp.registerRespond({
 
 HealthCheck.registerRespond({
   httpServer: ctx.httpServer,
+})
+
+SinglePageApp.registerRespond({
+  httpServer: ctx.httpServer,
+  directory: 'dist',
+  indexFile: 'index.html',
+  fileSystem: FileSystem({ t: 'bun' }),
 })
 
 ctx.httpServer.registerRespond((_request) => {
