@@ -62,6 +62,19 @@ const registerRespond = async (config: Config) => {
   }
 
   await traverseDirectory(config.directory)
+
+  config.httpServer.registerRespond(async (_request) => {
+    // return index.html for SPA routing
+    const indexPath = path.join(config.directory, config.indexFile)
+    const indexFile = await config.fileSystem.read(indexPath)
+    const headers = toHeaders(indexPath)
+    headers['Content-Type'] = fileExtensionToContentType('.html')
+
+    return new Response(indexFile, {
+      headers,
+      status: 200,
+    })
+  })
 }
 
 export const SinglePageApp = {
