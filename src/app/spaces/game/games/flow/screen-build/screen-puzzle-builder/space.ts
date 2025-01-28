@@ -5,7 +5,7 @@ import { Variant } from '../../@/variant'
 import * as BuilderTypes from '../types'
 import { DeleteForeverSpace } from './surface-delete-forever/space'
 import { EditPuzzleNameSpace } from './surface-edit-puzzle-name/space'
-import { SaveChangesSpace } from './drawer-save-changes/space'
+import { SaveChangesSpace } from './surface-save-changes/space'
 import { ModelSpace } from './types'
 
 const toStatus = (modelSpace: ModelSpace): 'solving' | 'solved' => {

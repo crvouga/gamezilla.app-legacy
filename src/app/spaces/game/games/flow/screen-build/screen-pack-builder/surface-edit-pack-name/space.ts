@@ -77,7 +77,7 @@ const updateSpace: UpdateSpace = (input) => {
   }
 }
 
-export const DrawerEditPackNameSpace = {
+export const EditPackNameSpace = {
   updateSpace,
   initSpace,
 }

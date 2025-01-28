@@ -15,7 +15,7 @@ import { PackDbQueryTypes } from '../../@/pack/pack-db-query'
 import { PuzzleDbQueryTypes } from '../../@/puzzle/puzzle-db-query'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { FlowSpaceCtx } from '../../@/space/ctx'
-import { DrawerEditPackNameTypes } from './drawer-edit-pack-name'
+import { EditPackNameTypes } from './surface-edit-pack-name'
 import { ScreenAddPuzzleTypes } from './screen-add-puzzle'
 
 //
@@ -69,7 +69,7 @@ type Screen = p.Infer<typeof Screen>
 
 export const ModelSpace = p.and(
   ScreenAddPuzzleTypes.ModelSpace,
-  DrawerEditPackNameTypes.ModelSpace,
+  EditPackNameTypes.ModelSpace,
   p.obj({
     pack: Pack,
     screen: Screen,
@@ -82,7 +82,7 @@ export type ModelSpace = p.Infer<typeof ModelSpace>
 
 export const MsgSpace = p.or(
   ScreenAddPuzzleTypes.MsgSpace,
-  DrawerEditPackNameTypes.MsgSpace,
+  EditPackNameTypes.MsgSpace,
   p.obj({
     t: p.l('screen-pack-builder.user-clicked-back-button'),
     userId: UserId,

@@ -1,6 +1,7 @@
-import { Avatar, Button, Drawer, IconUserGroup, Typography } from '~/@/ui'
+import { Avatar, Button, IconUserGroup, Typography } from '~/@/ui'
 import { APP_SOUND, openProfile, playSound } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen-actions/props'
+import { SurfaceLayout } from '~/app/@/ui/surface-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ViewUsersInSpaceList } from '~/app/spaces/game/games/@/ui/users-in-space-list'
 import { ViewHostChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/host-chip'
@@ -90,58 +91,60 @@ const View: SpaceFrontendModule['View'] = (input) => {
   const position: 'top' | 'bottom' = 'top'
   return (
     <>
-      <Drawer
-        ctx={input.ctx}
-        ariaLabel={input.ctx.t('app.people')}
+      <SurfaceLayout
         position={position}
         id='users'
+        ctx={input.ctx}
+        ariaLabel={input.ctx.t('app.people')}
         open={input.model.modal === 'users'}
         onClose={() => input.dispatch({ t: 'closed-modal' })}
-      >
-        <ViewUsersInSpaceList
-          onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
-          ctx={spaceCtx}
-        />
-      </Drawer>
+        renderBody={() => (
+          <ViewUsersInSpaceList
+            onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
+            ctx={spaceCtx}
+          />
+        )}
+      />
 
-      <Drawer
+      <SurfaceLayout
         ctx={input.ctx}
-        ariaLabel={input.ctx.t('spaces.see-profile')}
         position={position}
+        ariaLabel={input.ctx.t('spaces.see-profile')}
         id='user-preview'
         open={input.model.modal === 'user-preview'}
         onClose={() => input.dispatch({ t: 'closed-modal' })}
-      >
-        <div>
-          <button
-            type='button'
-            className='flex w-full flex-col items-center justify-center gap-2 p-4'
-            onClick={() => input.dispatch({ t: 'clicked-preview-user-link' })}
-          >
-            <Avatar
-              src={
-                input.model.modalPreviewUserId
-                  ? input.ctx.profiles[input.model.modalPreviewUserId]?.avatarUrl
-                  : undefined
-              }
-              className='size-24'
-            />
-            {modalProfile && <Typography variant='title' text={input.ctx.t('username', modalProfile.username)} />}
-            <div className='flex items-center gap-2'>
-              {spaceCtx.space.hostId === input.model.modalPreviewUserId && <ViewHostChip ctx={input.ctx} />}
-              {spaceCtx.currentUserId === input.model.modalPreviewUserId && <ViewYouChip ctx={input.ctx} />}
-            </div>
-          </button>
-
-          <div className='w-full px-4 pb-8'>
-            <Button
+        renderBody={() => (
+          <div>
+            <button
+              type='button'
+              className='flex w-full flex-col items-center justify-center gap-2 p-4'
               onClick={() => input.dispatch({ t: 'clicked-preview-user-link' })}
-              className='w-full'
-              text={input.ctx.t('spaces.see-profile')}
-            />
+            >
+              <Avatar
+                src={
+                  input.model.modalPreviewUserId
+                    ? input.ctx.profiles[input.model.modalPreviewUserId]?.avatarUrl
+                    : undefined
+                }
+                className='size-24'
+              />
+              {modalProfile && <Typography variant='title' text={input.ctx.t('username', modalProfile.username)} />}
+              <div className='flex items-center gap-2'>
+                {spaceCtx.space.hostId === input.model.modalPreviewUserId && <ViewHostChip ctx={input.ctx} />}
+                {spaceCtx.currentUserId === input.model.modalPreviewUserId && <ViewYouChip ctx={input.ctx} />}
+              </div>
+            </button>
+
+            <div className='w-full px-4 pb-8'>
+              <Button
+                onClick={() => input.dispatch({ t: 'clicked-preview-user-link' })}
+                className='w-full'
+                text={input.ctx.t('spaces.see-profile')}
+              />
+            </div>
           </div>
-        </div>
-      </Drawer>
+        )}
+      />
     </>
   )
 }

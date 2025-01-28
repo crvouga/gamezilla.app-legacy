@@ -1,7 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
+import { Avatar, Button, IconQuestionMark, Typography } from '~/@/ui'
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
-import { Avatar, Button, Drawer, IconQuestionMark, Typography } from '~/@/ui'
+import { SurfaceLayout } from '~/app/@/ui/surface-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { LayoutGameCoverArtHeader } from '../../ui/layout-game-cover-art-header'
 import type { PlayerType, VsBotInput } from '../vs-bot'
@@ -201,7 +202,7 @@ export const View = ({
         </div>
       )}
 
-      <Drawer
+      <SurfaceLayout
         ctx={ctx}
         ariaLabel={ctx.t('game.change-bot')}
         position='bottom'
@@ -212,9 +213,14 @@ export const View = ({
             t: 'closed-modal',
           })
         }
-      >
-        <div className='flex flex-col pb-6'>
-          <Typography className='p-4 text-2xl font-bold' variant='title' text={ctx.t('game.change-bot')} />
+        header={{
+          title: ctx.t('game.change-bot'),
+          onClose: () =>
+            dispatch({
+              t: 'closed-modal',
+            }),
+        }}
+        renderBody={() => (
           <div>
             {botVariants.map((botLevel) => {
               const onClick = () => {
@@ -237,8 +243,8 @@ export const View = ({
               )
             })}
           </div>
-        </div>
-      </Drawer>
+        )}
+      />
     </div>
   )
 }

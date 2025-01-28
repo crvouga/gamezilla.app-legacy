@@ -1,7 +1,6 @@
-import { Drawer, DrawerHeader, TextField } from '~/@/ui'
+import { TextField } from '~/@/ui'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { ViewForm } from '~/app/@/ui/form/form'
-import { FormButtons } from '~/app/@/ui/form/form-buttons'
+import { SurfaceLayout } from '~/app/@/ui/surface-layout'
 import { FrontendModule } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
@@ -12,7 +11,7 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const ViewDrawer: FrontendModule['View'] = (input) => {
+const ViewSurface: FrontendModule['View'] = (input) => {
   const onClose = () => {
     input.dispatch({
       t: 'got-msg-space',
@@ -21,24 +20,31 @@ const ViewDrawer: FrontendModule['View'] = (input) => {
   }
 
   return (
-    <Drawer
+    <SurfaceLayout
       ctx={input.ctx}
       ariaLabel={input.ctx.t('app.edit-name')}
       id='edit-pack-name'
       open={input.modelSpace.opened === 'edit-pack-name-drawer'}
       onClose={onClose}
       position='bottom'
-    >
-      <ViewForm
-        name={input.ctx.t('app.edit-name')}
-        onSubmit={() =>
+      form={{
+        onSubmit: () =>
           input.dispatch({
             t: 'got-msg-space',
             c: { t: 'edit-pack-name.user-submitted-form', userId: input.ctx.currentUserId },
-          })
-        }
-      >
-        <DrawerHeader title={input.ctx.t('app.edit-name')} ctx={input.ctx} onClose={onClose} />
+          }),
+        cancelText: input.ctx.t('app.cancel'),
+        submitText: input.ctx.t('app.save'),
+        onCancel: onClose,
+        submitLoading: false,
+        cancelDisabled: false,
+        submitDisabled: false,
+      }}
+      header={{
+        title: input.ctx.t('app.edit-name'),
+        onClose: onClose,
+      }}
+      renderBody={() => (
         <TextField
           id='pack-name'
           label={input.ctx.t('app.edit-name')}
@@ -50,13 +56,12 @@ const ViewDrawer: FrontendModule['View'] = (input) => {
             })
           }
         />
-        <FormButtons cancelText={input.ctx.t('app.cancel')} submitText={input.ctx.t('app.save')} onCancel={onClose} />
-      </ViewForm>
-    </Drawer>
+      )}
+    />
   )
 }
 
-export const DrawerEditPackNameFrontend = {
+export const EditPackNameFrontend = {
   update,
-  ViewDrawer,
+  ViewSurface,
 }

@@ -1,6 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
+import { ScreenSize } from '../../frontend/ctx'
 
 export type ScreenAction = {
   label: TranslatedText
@@ -20,6 +21,7 @@ export type ScreenAction = {
 
 export type ScreenActionCtx = {
   t: Translator
+  screenSize: ScreenSize
 }
 
 export type ScreenActionProps = {

@@ -16,6 +16,7 @@ export type SurfaceLayoutProps = {
     title: TranslatedText
     onClose?: () => void
   }
+  position?: 'top' | 'bottom'
   renderBody: () => VDom
   form?: {
     onSubmit: () => void

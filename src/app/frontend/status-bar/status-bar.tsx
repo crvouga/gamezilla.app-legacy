@@ -1,7 +1,8 @@
 import { Translator } from '~/@/l18n/generated'
-import { Drawer } from '~/@/ui'
 import type { VDom } from '~/@/vdom/vdom'
+import { SurfaceLayout } from '~/app/@/ui/surface-layout'
 import { APP_SOUND, AppFrontendCmd, playSound, StatusBarCmd } from '../../@/frontend/cmd'
+import { ScreenSize } from '../platform'
 
 export type Model = {
   isDrawerOpen: boolean
@@ -78,6 +79,7 @@ export const View = ({
   }
   ctx: {
     t: Translator
+    screenSize: ScreenSize
   }
   model: Model
   dispatch: (m: Msg) => void
@@ -97,7 +99,7 @@ export const View = ({
         {slots.barRight}
       </button>
 
-      <Drawer
+      <SurfaceLayout
         ctx={ctx}
         ariaLabel={ctx.t('status-bar.status-bar')}
         position='top'
@@ -108,9 +110,8 @@ export const View = ({
             t: 'closed-status-bar-drawer',
           })
         }
-      >
-        {slots.drawerContent}
-      </Drawer>
+        renderBody={() => slots.drawerContent}
+      />
     </div>
   )
 }

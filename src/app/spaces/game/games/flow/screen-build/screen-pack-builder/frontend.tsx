@@ -4,7 +4,7 @@ import { Button, IconArrowLeftOnRect } from '~/@/ui'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
 import { PuzzleDbQueryFrontend } from '../../@/puzzle/puzzle-db-query/frontend'
-import { DrawerEditPackNameFrontend } from './drawer-edit-pack-name/frontend'
+import { EditPackNameFrontend } from './surface-edit-pack-name/frontend'
 import { ScreenAddPuzzle } from './screen-add-puzzle/frontend'
 import { ScreenPuzzlePlay } from './screen-play-puzzle/frontend'
 import { ScreenPuzzleGrid } from './screen-puzzle-grid/frontend'
@@ -14,7 +14,7 @@ const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
     { model: input.model },
     (model) => ButtonExitBuilder.update({ ...input, model }),
-    (model) => DrawerEditPackNameFrontend.update({ ...input, model }),
+    (model) => EditPackNameFrontend.update({ ...input, model }),
     (model) => ScreenAddPuzzle.update({ ...input, model }),
     (model) => ScreenPuzzleGrid.update({ ...input, model }),
     (model) => ScreenPuzzlePlay.update({ ...input, model }),
@@ -31,7 +31,7 @@ const View: FrontendModule['View'] = (input) => {
   return (
     <>
       <ViewScreen {...input} />
-      <DrawerEditPackNameFrontend.ViewDrawer {...input} />
+      <EditPackNameFrontend.ViewSurface {...input} />
     </>
   )
 }

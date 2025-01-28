@@ -1,4 +1,5 @@
-import { Drawer, IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/@/ui'
+import { IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/@/ui'
+import { SurfaceLayout } from '../surface-layout'
 import { ScreenAction, ScreenActionProps } from './props'
 
 const DEFAULT_LIMIT = 4
@@ -25,26 +26,28 @@ const View = (input: ScreenActionProps) => {
             size={input.size}
             onClick={input.onToggle}
           />
-          <Drawer
+          <SurfaceLayout
             ctx={input.ctx}
             id={input.id}
             ariaLabel={input.ctx.t('app.more')}
             onClose={input.onToggle}
             open={input.open}
-            position='bottom'
-          >
-            {lastButtons.map((button) =>
-              button.hidden ? null : (
-                <ListItemButton
-                  key={button.label}
-                  icon={button.icon}
-                  label={button.label}
-                  onClick={button.onClick}
-                  color={button.color}
-                />
-              ),
+            renderBody={() => (
+              <>
+                {lastButtons.map((button) =>
+                  button.hidden ? null : (
+                    <ListItemButton
+                      key={button.label}
+                      icon={button.icon}
+                      label={button.label}
+                      onClick={button.onClick}
+                      color={button.color}
+                    />
+                  ),
+                )}
+              </>
             )}
-          </Drawer>
+          />
         </>
       )}
     </div>

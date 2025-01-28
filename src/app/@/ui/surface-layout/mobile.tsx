@@ -1,9 +1,9 @@
 import { Drawer, DrawerHeader } from '~/@/ui'
-import { SurfaceLayoutProps } from './props'
-import { ViewForm } from '../form/form'
 import { FormButtons } from '../form/form-buttons'
+import { SurfaceLayoutProps } from './props'
 
 export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
+  const Element = props.form ? 'form' : 'div'
   return (
     <Drawer
       id='surface-layout'
@@ -13,7 +13,13 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
       ctx={props.ctx}
       ariaLabel={props.ariaLabel}
     >
-      <ViewForm onSubmit={props.form?.onSubmit ?? (() => {})} name={props.ariaLabel}>
+      <Element
+        onSubmit={(e) => {
+          e.preventDefault()
+          props.form?.onSubmit?.()
+        }}
+        name={props.ariaLabel}
+      >
         {props.header && (
           <DrawerHeader
             ctx={props.ctx}
@@ -30,7 +36,7 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
           submitDisabled={props.form?.submitDisabled ?? false}
           cancelDisabled={props.form?.cancelDisabled ?? false}
         />
-      </ViewForm>
+      </Element>
     </Drawer>
   )
 }

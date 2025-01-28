@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
-import { DrawerEditPackNameFrontend } from './frontend'
+import { EditPackNameFrontend } from './frontend'
 import { MsgFrontend } from '../types'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { didPlaySound } from '~/app/@/frontend/cmd'
@@ -25,10 +25,7 @@ describe(import.meta.file, () => {
   test('close drawer', async () => {
     const f = await Fixture()
     const r = f.render(
-      <DrawerEditPackNameFrontend.ViewDrawer
-        {...f}
-        modelSpace={{ ...f.modelSpace, opened: 'edit-pack-name-drawer' }}
-      />,
+      <EditPackNameFrontend.ViewSurface {...f} modelSpace={{ ...f.modelSpace, opened: 'edit-pack-name-drawer' }} />,
     )
     const closeButton = r
       .getByRole('dialog', f.ctx.t('app.edit-name'))[0]

@@ -1,9 +1,10 @@
 import { withEventId } from '~/@/event-sourced/event'
 import type { Translator } from '~/@/l18n/generated'
 import { Loading, Result, isOk } from '~/@/result'
+import { IconFloppyDisk } from '~/@/ui'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
-import { Button, Drawer, IconFloppyDisk, Typography } from '~/@/ui'
 import { ScreenAction } from '~/app/@/ui/screen-actions/props'
+import { SurfaceUnsavedChanges } from '~/app/@/ui/surface-unsaved-changes'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { ModeEdit } from '../../../@/mode-edit'
 import type { Puzzle } from '../../../@/puzzle/puzzle'
@@ -255,49 +256,31 @@ export const viewBottomButtons = ({
   ]
 }
 
-const ViewUnsavedChangesDrawer: FrontendModule['View'] = (input) => {
+const ViewSurface: FrontendModule['View'] = (input) => {
   return (
-    <Drawer
+    <SurfaceUnsavedChanges
       ctx={input.ctx}
-      id='unsaved-changes-drawer'
-      ariaLabel={input.ctx.t('app.save-changes?')}
+      title={input.ctx.t('app.save-changes?')}
+      body={input.ctx.t('app.save-changes-warning')}
+      open={input.model.puzzleBuilderOpened === 'unsaved-changes'}
       onClose={() =>
         input.dispatch({
           t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit',
         })
       }
-      open={input.model.puzzleBuilderOpened === 'unsaved-changes'}
-      position='bottom'
-    >
-      <Typography className='px-4 pt-4 text-3xl font-bold' variant='title' text={input.ctx.t('app.save-changes?')} />
-      <Typography className='text-secondary p-4' variant='body' text={input.ctx.t('app.save-changes-warning')} />
-      <div className='flex w-full flex-col gap-4 p-4'>
-        <Button
-          className='w-full'
-          text={input.ctx.t('app.save')}
-          variant='contained'
-          color='primary'
-          loading={input.model.puzzleSaveChangesRequest?.t === 'loading'}
-          onClick={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit' })}
-        />
-        <Button
-          className='w-full'
-          text={input.ctx.t("app.don't-save")}
-          onClick={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-discard-and-exit' })}
-        />
-        <div className='w-full' />
-        <Button
-          className='w-full'
-          text={input.ctx.t('app.cancel')}
-          onClick={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit' })}
-        />
-      </div>
-    </Drawer>
+      saveText={input.ctx.t('app.save')}
+      onSave={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit' })}
+      saveLoading={input.model.puzzleSaveChangesRequest?.t === 'loading'}
+      discardText={input.ctx.t("app.don't-save")}
+      onDiscard={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-discard-and-exit' })}
+      cancelText={input.ctx.t('app.cancel')}
+      onCancel={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit' })}
+    />
   )
 }
 
 export const SaveChangesFrontend = {
   viewBottomButtons,
   update,
-  ViewUnsavedChangesDrawer,
+  ViewSurface,
 }

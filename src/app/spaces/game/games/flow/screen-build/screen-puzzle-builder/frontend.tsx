@@ -12,7 +12,7 @@ import { VariantBoard } from '../../@/variant'
 import * as BuilderTypes from '../types'
 import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
-import { SaveChangesFrontend } from './drawer-save-changes/frontend'
+import { SaveChangesFrontend } from './surface-save-changes/frontend'
 import { ScreenPuzzleBuildSpace } from './space'
 
 //
@@ -186,7 +186,7 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
         <>
           <EditPuzzleNameFrontend.View {...input} />
           <DeleteForeverFrontend.View {...input} />
-          <SaveChangesFrontend.ViewUnsavedChangesDrawer {...input} />
+          <SaveChangesFrontend.ViewSurface {...input} />
           <ViewMode {...input} />
         </>
       )}
@@ -315,9 +315,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
 }
 
 const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
-  if (!input.modelSpace.screenPuzzleBuilder) {
-    return null
-  }
+  if (!input.modelSpace.screenPuzzleBuilder) return null
 
   return (
     <LayoutGame ctx={input.ctx} isSpectating>

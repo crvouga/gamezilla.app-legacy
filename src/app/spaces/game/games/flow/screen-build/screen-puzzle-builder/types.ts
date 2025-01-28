@@ -5,7 +5,7 @@ import { ModeEdit } from '../../@/mode-edit'
 import { ModePlay } from '../../@/mode-play'
 import { DeleteForeverTypes } from './surface-delete-forever'
 import { EditPuzzleNameTypes } from './surface-edit-puzzle-name'
-import { SaveChangesTypes } from './drawer-save-changes'
+import { SaveChangesTypes } from './surface-save-changes'
 
 export type ModelFrontend = SaveChangesTypes.ModelFrontend &
   EditPuzzleNameTypes.ModelFrontend &
