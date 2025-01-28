@@ -5,47 +5,53 @@ import { ScreenAction, ScreenActionProps } from './props'
 
 const SIZE = 'md' as 'md' | 'sm'
 
-const ViewUniform = (input: { actions: (ScreenAction | null)[] }) => {
-  return (
-    <div className='flex w-full shrink-0 flex-col overflow-hidden rounded bg-neutral-900' role='toolbar'>
-      {input.actions.map((action) => {
-        if (!action) return null
-        return <ScreenActionButton {...action} size={SIZE} key={action.label} />
-      })}
-    </div>
-  )
-}
-
-const ViewSpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
-  return (
-    <div className='flex w-full flex-1 shrink-0 flex-col overflow-hidden' role='toolbar'>
-      <div className='flex w-full shrink-0 flex-col overflow-hidden rounded bg-neutral-900'>
-        {input.start.map((action) => {
-          if (!action) return null
-          return <ScreenActionButton {...action} size={SIZE} key={action.label} />
-        })}
-      </div>
-      <div className='flex-1' />
-      <div className='flex w-full shrink-0 flex-col overflow-hidden rounded bg-neutral-900'>
-        {input.end.map((action) => {
-          if (!action) return null
-          return <ScreenActionButton {...action} size={SIZE} key={action.label} />
-        })}
-      </div>
-    </div>
-  )
-}
-
 const View = (input: ScreenActionProps & { renderNavBar?: () => VDom }) => {
   return (
-    <div className='flex shrink-0 flex-col gap-3 px-2 pb-6'>
+    <div className='flex shrink-0 flex-col gap-1 px-2 pb-6'>
       <ScreenNavBarTabletRoot>{input.renderNavBar?.()}</ScreenNavBarTabletRoot>
 
       {input.actions.t === 'uniform' ? (
-        <ViewUniform actions={input.actions.actions} />
+        <Uniform actions={input.actions.actions} />
       ) : (
-        <ViewSpaceBetween start={input.actions.start} end={input.actions.end} />
+        <SpaceBetween start={input.actions.start} end={input.actions.end} />
       )}
+    </div>
+  )
+}
+
+const Uniform = (input: { actions: (ScreenAction | null)[] }) => {
+  return (
+    <Toolbar>
+      <ActionButtonList actions={input.actions} />
+    </Toolbar>
+  )
+}
+
+const SpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
+  return (
+    <Toolbar>
+      <ActionButtonList actions={input.start} />
+      <div className='flex-1' />
+      <ActionButtonList actions={input.end} />
+    </Toolbar>
+  )
+}
+
+const Toolbar = (input: { children: VDom }) => {
+  return (
+    <div className='flex w-full flex-1 shrink-0 flex-col overflow-hidden' role='toolbar'>
+      {input.children}
+    </div>
+  )
+}
+
+const ActionButtonList = ({ actions }: { actions: (ScreenAction | null)[] }) => {
+  return (
+    <div className='flex w-full shrink-0 flex-col gap-2 overflow-hidden'>
+      {actions.map((action) => {
+        if (!action) return null
+        return <ScreenActionButton {...action} size={SIZE} key={action.label} />
+      })}
     </div>
   )
 }
@@ -66,20 +72,17 @@ const ScreenActionButton = (input: ScreenAction) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'relative flex aspect-square w-20 flex-col items-center p-3 font-normal',
-        'clickable hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50',
+        'relative flex w-full flex-row items-center gap-3 px-5 py-3 font-normal',
+        'hover:bg-neutral-800/50 disabled:cursor-not-allowed disabled:opacity-50',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
         input.classNames?.button,
         toSizeClasses(size),
       )}
     >
-      <div className={cn('flex flex-col items-center gap-1', input.loading ? 'opacity-0' : 'opacity-100')}>
+      <div className={cn('flex flex-row items-center gap-3', input.loading ? 'opacity-0' : 'opacity-100')}>
         {input.icon({ className: toIconSizeClasses(size) })}
-        <Typography
-          text={input.label}
-          className={cn('truncate text-center text-xs', 'text-inherit', input.classNames?.label)}
-        />
+        <Typography text={input.label} className={cn('truncate text-base', 'text-inherit', input.classNames?.label)} />
       </div>
 
       {input.loading && (
@@ -107,10 +110,10 @@ const toColorClasses = (input: ScreenAction): string => {
 const toSizeClasses = (size: ScreenAction['size']): string => {
   switch (size) {
     case 'sm':
-      return 'text-lg'
+      return 'text-base'
     case 'md':
     default:
-      return 'text-lg'
+      return 'text-base'
   }
 }
 
@@ -120,7 +123,7 @@ const toIconSizeClasses = (size: ScreenAction['size']): string => {
       return 'size-6'
     case 'md':
     default:
-      return 'size-8'
+      return 'size-6'
   }
 }
 
