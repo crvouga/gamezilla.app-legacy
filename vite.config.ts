@@ -25,8 +25,6 @@ const vDomPlugin = (): PluginOption => {
 }
 
 // https://vitejs.dev/config/
-// ... existing imports ...
-
 export default defineConfig({
   plugins: [
     // wasm(), topLevelAwait(),
