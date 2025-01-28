@@ -1,4 +1,4 @@
-import { FormButtons } from '../form-buttons.tsx'
+import { FormButtons } from '../form/form-buttons.tsx'
 import { ScreenActionsHorizontalBar } from '../screen-actions/horizontal-bar.tsx'
 import { ScreenLayoutProps } from './props'
 import { ScreenNavBarMobile } from '../screen-nav-bar/mobile.tsx'

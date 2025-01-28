@@ -1,7 +1,7 @@
 import { Drawer, DrawerHeader, TextField } from '~/@/ui'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { ViewForm } from '~/app/@/ui/form'
-import { FormButtons } from '~/app/@/ui/form-buttons'
+import { ViewForm } from '~/app/@/ui/form/form'
+import { FormButtons } from '~/app/@/ui/form/form-buttons'
 import { FrontendModule } from '../types'
 
 const update: FrontendModule['update'] = (input) => {

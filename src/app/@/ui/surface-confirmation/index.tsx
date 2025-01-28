@@ -2,10 +2,10 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Drawer, DrawerHeader, type DrawerInput } from '~/@/ui/drawer'
 import { Typography } from '~/@/ui/typography'
-import { ViewForm } from './form'
-import { FormButtons } from './form-buttons'
+import { ViewForm } from '../form/form'
+import { FormButtons } from '../form/form-buttons'
 
-type input = DrawerInput & {
+export type SurfaceConfirmationProps = DrawerInput & {
   ctx: {
     t: Translator
   }
@@ -24,7 +24,7 @@ type input = DrawerInput & {
   confirmLoading?: boolean
 }
 
-export const ConfirmationFormDrawer = (input: input) => {
+export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
   return (
     <Drawer {...input}>
       <ViewForm name={input.title} onSubmit={input.onConfirm}>

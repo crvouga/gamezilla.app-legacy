@@ -1,7 +1,7 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Ok, RemoteResult, isLoading } from '~/@/result'
 import { APP_SOUND, playSound, showCreatedSm } from '~/app/@/frontend/cmd'
-import { ConfirmationFormDrawer } from '~/app/@/ui/confirmation-drawer'
+import { SurfaceConfirmation } from '~/app/@/ui/surface-confirmation'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCmdRoot } from '../../../@/frontend/cmd-root'
 import type { FrontendModule } from '../../types'
@@ -100,7 +100,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 
 const View: FrontendModule['View'] = (input) => {
   return (
-    <ConfirmationFormDrawer
+    <SurfaceConfirmation
       ctx={input.ctx}
       ariaLabel={input.ctx.t('flow.delete-puzzle-forever?')}
       id='delete-forever-drawer'

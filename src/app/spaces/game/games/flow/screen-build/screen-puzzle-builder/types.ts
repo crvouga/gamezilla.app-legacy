@@ -3,8 +3,8 @@ import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { ModeEdit } from '../../@/mode-edit'
 import { ModePlay } from '../../@/mode-play'
-import { DeleteForeverTypes } from './drawer-delete-forever'
-import { EditPuzzleNameTypes } from './drawer-edit-puzzle-name'
+import { DeleteForeverTypes } from './surface-delete-forever'
+import { EditPuzzleNameTypes } from './surface-edit-puzzle-name'
 import { SaveChangesTypes } from './drawer-save-changes'
 
 export type ModelFrontend = SaveChangesTypes.ModelFrontend &

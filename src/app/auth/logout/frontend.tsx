@@ -1,7 +1,7 @@
 import { NotAsked, Ok } from '~/@/result'
 import { APP_SOUND, playSound, sendToBackend, showToast } from '~/app/@/frontend/cmd'
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
-import { ConfirmationFormDrawer } from '~/app/@/ui/confirmation-drawer'
+import { SurfaceConfirmation } from '~/app/@/ui/surface-confirmation'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from '../types'
 
 //
@@ -101,7 +101,7 @@ const View = ({
   dispatch: (msg: MsgFrontend) => void
 }) => {
   return (
-    <ConfirmationFormDrawer
+    <SurfaceConfirmation
       ctx={ctx}
       ariaLabel={ctx.t('auth.logout-of-gamezilla.app')}
       open={model.opened === 'logged-out'}

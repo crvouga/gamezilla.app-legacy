@@ -1,11 +1,10 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Err, isErr, isLoading, isOk, Loading } from '~/@/result'
 import { Posix } from '~/@/time/posix'
+import { TextField } from '~/@/ui'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
-import { Drawer, DrawerHeader, TextField } from '~/@/ui'
-import { ViewForm } from '~/app/@/ui/form'
-import { FormButtons } from '~/app/@/ui/form-buttons'
+import { SurfaceLayout } from '~/app/@/ui/surface-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCmd } from '../../../@/frontend/cmd'
 import { FlowFrontendCmdRoot } from '../../../@/frontend/cmd-root'
@@ -28,49 +27,41 @@ const update: FrontendModule['update'] = (input) => {
 
 const View: FrontendModule['View'] = (input) => {
   return (
-    <Drawer
+    <SurfaceLayout
+      id='edit-name-drawer'
       ctx={input.ctx}
       ariaLabel={input.ctx.t('app.edit-name')}
-      id='edit-name-drawer'
       open={input.model.puzzleBuilderOpened === 'edit-name'}
       onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
-      position='bottom'
-    >
-      <ViewForm
-        name={input.ctx.t('app.edit-name')}
-        onSubmit={() => {
-          input.dispatch({ t: 'puzzle.edit-name.user-clicked-save-button' })
-        }}
-      >
-        <DrawerHeader
-          ctx={input.ctx}
-          title={input.ctx.t('app.edit-name')}
-          onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
+      header={{
+        title: input.ctx.t('app.edit-name'),
+        onClose: () => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' }),
+      }}
+      form={{
+        onSubmit: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-save-button' }),
+        onCancel: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-cancel-button' }),
+        cancelDisabled: false,
+        cancelText: input.ctx.t('app.cancel'),
+        submitText: input.ctx.t('app.save'),
+        submitLoading: isLoading(input.model.puzzleEditNameRequest),
+        submitDisabled: input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name,
+      }}
+      renderBody={() => (
+        <TextField
+          id='edit-name-input'
+          label={input.ctx.t('flow.edit-puzzle-name.name')}
+          value={input.model.puzzleEditNameDraft}
+          onChange={(draftName) =>
+            input.dispatch({
+              t: 'puzzle.edit-name.user-inputted-draft-name',
+              draftName,
+            })
+          }
+          error={Boolean(input.model.puzzleEditNameValidationError)}
+          helperText={editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError)}
         />
-        <div className='w-full p-4'>
-          <TextField
-            id='edit-name-input'
-            label={input.ctx.t('flow.edit-puzzle-name.name')}
-            value={input.model.puzzleEditNameDraft}
-            onChange={(draftName) =>
-              input.dispatch({
-                t: 'puzzle.edit-name.user-inputted-draft-name',
-                draftName,
-              })
-            }
-            error={Boolean(input.model.puzzleEditNameValidationError)}
-            helperText={editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError)}
-          />
-        </div>
-        <FormButtons
-          onCancel={() => input.dispatch({ t: 'puzzle.edit-name.user-clicked-cancel-button' })}
-          cancelText={input.ctx.t('app.cancel')}
-          submitText={input.ctx.t('app.save')}
-          submitLoading={isLoading(input.model.puzzleEditNameRequest)}
-          submitDisabled={input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name}
-        />
-      </ViewForm>
-    </Drawer>
+      )}
+    />
   )
 }
 

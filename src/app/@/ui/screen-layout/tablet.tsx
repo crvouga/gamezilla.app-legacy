@@ -1,5 +1,5 @@
 import { cn } from '~/@/ui'
-import { FormButtons } from '../form-buttons'
+import { FormButtons } from '../form/form-buttons'
 import { ScreenActionsSideBar } from '../screen-actions/side-bar'
 import { ScreenNavBarTablet } from '../screen-nav-bar/tablet'
 import { ScreenLayoutProps } from './props'

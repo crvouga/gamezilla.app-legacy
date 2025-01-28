@@ -1,7 +1,7 @@
 import { Drawer, DrawerHeader } from '~/@/ui'
 import { SurfaceLayoutProps } from './props'
-import { ViewForm } from '../form'
-import { FormButtons } from '../form-buttons'
+import { ViewForm } from '../form/form'
+import { FormButtons } from '../form/form-buttons'
 
 export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
   return (

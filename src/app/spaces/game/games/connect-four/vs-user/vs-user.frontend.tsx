@@ -11,7 +11,7 @@ import {
 } from '~/@/ui'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { ConfirmationDialog } from '~/app/@/ui/confirmation-dialog'
+import { SurfaceConfirmation } from '~/app/@/ui/surface-confirmation'
 import { ScreenLayout } from '~/app/@/ui/screen-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
@@ -267,27 +267,19 @@ const View: Module['View'] = (input) => {
                 )}
               </div>
 
-              <ConfirmationDialog
-                headerIcon={<IconFlag className='h-10 w-10' />}
+              <SurfaceConfirmation
+                id='resign-confirmation'
+                position='bottom'
                 title={input.ctx.t('app.resign')}
-                onCancel={() =>
-                  input.dispatch({
-                    t: 'close-modal',
-                  })
-                }
-                onClose={() =>
-                  input.dispatch({
-                    t: 'close-modal',
-                  })
-                }
-                confirmTitle={input.ctx.t('app.resign')}
-                onConfirm={() =>
-                  input.dispatch({
-                    t: 'user-resigned',
-                    userId: input.ctx.currentUserId,
-                  })
-                }
+                ariaLabel={input.ctx.t('app.resign')}
+                onCancel={() => input.dispatch({ t: 'close-modal' })}
+                onClose={() => input.dispatch({ t: 'close-modal' })}
+                confirmText={input.ctx.t('app.resign')}
+                onConfirm={() => input.dispatch({ t: 'user-resigned', userId: input.ctx.currentUserId })}
                 open={input.model.openedModal === 'confirm-resign'}
+                ctx={input.ctx}
+                body={input.ctx.t('app.resign')}
+                cancelText={input.ctx.t('app.cancel')}
               />
             </LayoutGame>
           )}
