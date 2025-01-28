@@ -462,31 +462,34 @@ export const View = (input: {
       actions={{
         open: false,
         onToggle: () => {},
-        buttons: [
-          {
-            icon: (input) => <IconArrowRotateLeft {...input} />,
-            label: input.ctx.t('app.undo'),
-            onClick: () => input.dispatch({ t: 'clicked-undo' }),
-            disabled: !History.canUndo(input.model.form),
-          },
-          {
-            icon: (input) => <IconArrowRotateRight {...input} />,
-            label: input.ctx.t('app.redo'),
-            disabled: !History.canRedo(input.model.form),
-            onClick: () => input.dispatch({ t: 'clicked-redo' }),
-          },
-          {
-            icon: (input) => <IconXMark {...input} />,
-            label: input.ctx.t('app.clear'),
-            disabled: !canClear(input.model),
-            onClick: () => input.dispatch({ t: 'clicked-clear' }),
-          },
-          {
-            icon: (input) => <IconExpand {...input} />,
-            label: input.ctx.t('app.dimensions'),
-            onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
-          },
-        ],
+        actions: {
+          t: 'uniform',
+          actions: [
+            {
+              icon: (input) => <IconArrowRotateLeft {...input} />,
+              label: input.ctx.t('app.undo'),
+              onClick: () => input.dispatch({ t: 'clicked-undo' }),
+              disabled: !History.canUndo(input.model.form),
+            },
+            {
+              icon: (input) => <IconArrowRotateRight {...input} />,
+              label: input.ctx.t('app.redo'),
+              disabled: !History.canRedo(input.model.form),
+              onClick: () => input.dispatch({ t: 'clicked-redo' }),
+            },
+            {
+              icon: (input) => <IconXMark {...input} />,
+              label: input.ctx.t('app.clear'),
+              disabled: !canClear(input.model),
+              onClick: () => input.dispatch({ t: 'clicked-clear' }),
+            },
+            {
+              icon: (input) => <IconExpand {...input} />,
+              label: input.ctx.t('app.dimensions'),
+              onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
+            },
+          ],
+        },
       }}
       renderBody={() => (
         <>

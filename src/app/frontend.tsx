@@ -567,22 +567,25 @@ const toScreenLayoutProps = (input: {
     ),
     actions: {
       // renderNavBar: () => <NavBarLogo onClick={pushSpaceList} />,
-      buttons: [
-        {
-          label: ctx.t('spaces.spaces'),
-          icon: (input) => <IconGamepad {...input} />,
-          color: eq(input.model.currentScreen.currentScreen, screenSpace) ? 'selected' : 'inherit',
-          onClick: pushSpaceList,
-        },
-        {
-          label: ctx.t('profile.profile'),
-          icon: (input) => <IconUserCircle {...input} />,
-          color: eq(input.model.currentScreen.currentScreen, screenProfile) ? 'selected' : 'inherit',
-          onClick() {
-            input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } })
+      actions: {
+        t: 'uniform',
+        actions: [
+          {
+            label: ctx.t('spaces.spaces'),
+            icon: (input) => <IconGamepad {...input} />,
+            color: eq(input.model.currentScreen.currentScreen, screenSpace) ? 'selected' : 'inherit',
+            onClick: pushSpaceList,
           },
-        },
-      ],
+          {
+            label: ctx.t('profile.profile'),
+            icon: (input) => <IconUserCircle {...input} />,
+            color: eq(input.model.currentScreen.currentScreen, screenProfile) ? 'selected' : 'inherit',
+            onClick() {
+              input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } })
+            },
+          },
+        ],
+      },
       onToggle: () => {},
       open: false,
     },

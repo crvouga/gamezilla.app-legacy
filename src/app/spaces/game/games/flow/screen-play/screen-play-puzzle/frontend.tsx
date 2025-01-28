@@ -149,74 +149,77 @@ const View: FrontendModule['View'] = (input) => {
                 t: 'user-toggled-action-buttons-drawer',
               },
             }),
-          buttons: [
-            PrebuiltBottomButtons.next({
-              ...input,
-              disabled: puzzleIndex >= input.modelSpace.screen.pack.puzzleIds.length - 1,
-              hidden: !isSolved && puzzle.t !== 'not-found',
-              color: 'success',
-              onClick: () =>
-                input.dispatch({
-                  t: 'got-msg-space',
-                  c: {
-                    t: 'user-clicked-next-puzzle',
-                    userId: input.ctx.currentUserId,
-                    nextPuzzle: nextPuzzle
-                      ? {
-                          t: 'got',
-                          c: nextPuzzle,
-                        }
-                      : {
-                          t: 'not-found',
-                        },
-                    nextPuzzleIndex,
-                  },
-                }),
-            }),
-
-            puzzle.t === 'got' && !isSolved
-              ? ModePlay.viewHintAction({
-                  model:
-                    modePlay ??
-                    ModePlay.init({
-                      ctx: ModePlay.initCtx({
-                        flow: puzzle.c.flow,
-                        solutions: input.ctx.solutions,
-                      }),
-                    }),
-                  ctx: ModePlay.initCtx({
-                    ...input.ctx,
-                    flow: puzzle.c.flow,
-                    solutions: input.ctx.solutions,
+          actions: {
+            t: 'uniform',
+            actions: [
+              PrebuiltBottomButtons.next({
+                ...input,
+                disabled: puzzleIndex >= input.modelSpace.screen.pack.puzzleIds.length - 1,
+                hidden: !isSolved && puzzle.t !== 'not-found',
+                color: 'success',
+                onClick: () =>
+                  input.dispatch({
+                    t: 'got-msg-space',
+                    c: {
+                      t: 'user-clicked-next-puzzle',
+                      userId: input.ctx.currentUserId,
+                      nextPuzzle: nextPuzzle
+                        ? {
+                            t: 'got',
+                            c: nextPuzzle,
+                          }
+                        : {
+                            t: 'not-found',
+                          },
+                      nextPuzzleIndex,
+                    },
                   }),
-                  disabled: false,
-                  dispatch: (c) =>
-                    input.dispatch({
-                      t: 'got-msg-space',
-                      c: {
-                        t: 'got-flow-play-msg',
-                        c,
-                        userId: input.ctx.currentUserId,
-                      },
+              }),
+
+              puzzle.t === 'got' && !isSolved
+                ? ModePlay.viewHintAction({
+                    model:
+                      modePlay ??
+                      ModePlay.init({
+                        ctx: ModePlay.initCtx({
+                          flow: puzzle.c.flow,
+                          solutions: input.ctx.solutions,
+                        }),
+                      }),
+                    ctx: ModePlay.initCtx({
+                      ...input.ctx,
+                      flow: puzzle.c.flow,
+                      solutions: input.ctx.solutions,
                     }),
-                })
-              : null,
+                    disabled: false,
+                    dispatch: (c) =>
+                      input.dispatch({
+                        t: 'got-msg-space',
+                        c: {
+                          t: 'got-flow-play-msg',
+                          c,
+                          userId: input.ctx.currentUserId,
+                        },
+                      }),
+                  })
+                : null,
 
-            PrebuiltBottomButtons.reset({
-              ...input,
-              hidden: puzzle.t === 'not-found',
-              onClick: () =>
-                input.dispatch({
-                  t: 'got-msg-space',
-                  c: {
-                    t: 'user-clicked-reset-puzzle',
-                    userId: input.ctx.currentUserId,
-                  },
-                }),
-            }),
+              PrebuiltBottomButtons.reset({
+                ...input,
+                hidden: puzzle.t === 'not-found',
+                onClick: () =>
+                  input.dispatch({
+                    t: 'got-msg-space',
+                    c: {
+                      t: 'user-clicked-reset-puzzle',
+                      userId: input.ctx.currentUserId,
+                    },
+                  }),
+              }),
 
-            puzzle.t === 'not-found' ? null : CopyPuzzleFrontend.viewButtonAction(input),
-          ],
+              puzzle.t === 'not-found' ? null : CopyPuzzleFrontend.viewButtonAction(input),
+            ],
+          },
         }}
       />
       <ViewSolvedModal {...input} />

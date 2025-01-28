@@ -1,27 +1,51 @@
 import { Spinner, Typography, cn } from '~/@/ui'
-import { ScreenAction, ScreenActionProps } from './props'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenNavBarTabletRoot } from '../screen-nav-bar/tablet'
+import { ScreenAction, ScreenActionProps } from './props'
+
+const SIZE = 'md' as 'md' | 'sm'
+
+const ViewUniform = (input: { actions: (ScreenAction | null)[] }) => {
+  return (
+    <div className='flex w-full shrink-0 flex-col overflow-hidden rounded bg-neutral-900' role='toolbar'>
+      {input.actions.map((action) => {
+        if (!action) return null
+        return <ScreenActionButton {...action} size={SIZE} key={action.label} />
+      })}
+    </div>
+  )
+}
+
+const ViewSpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
+  return (
+    <div className='flex w-full flex-1 shrink-0 flex-col overflow-hidden' role='toolbar'>
+      <div className='flex w-full shrink-0 flex-col overflow-hidden rounded bg-neutral-900'>
+        {input.start.map((action) => {
+          if (!action) return null
+          return <ScreenActionButton {...action} size={SIZE} key={action.label} />
+        })}
+      </div>
+      <div className='flex-1' />
+      <div className='flex w-full shrink-0 flex-col overflow-hidden rounded bg-neutral-900'>
+        {input.end.map((action) => {
+          if (!action) return null
+          return <ScreenActionButton {...action} size={SIZE} key={action.label} />
+        })}
+      </div>
+    </div>
+  )
+}
 
 const View = (input: ScreenActionProps & { renderNavBar?: () => VDom }) => {
-  const cleanedButtons = input.buttons.filter((button) => button !== null)
-  const size = 'md' as 'md' | 'sm'
-
   return (
-    <div className='flex shrink-0 flex-col gap-3 px-2'>
+    <div className='flex shrink-0 flex-col gap-3 px-2 pb-6'>
       <ScreenNavBarTabletRoot>{input.renderNavBar?.()}</ScreenNavBarTabletRoot>
-      <div
-        className={cn(
-          'flex w-full shrink-0 flex-col overflow-hidden rounded bg-neutral-900',
-          // size === 'sm' && 'gap-1 px-2',
-          // size === 'md' && 'gap-3 px-4',
-        )}
-        role='toolbar'
-      >
-        {cleanedButtons.map((button) => (
-          <ScreenActionButton {...button} size={size} key={button.label} />
-        ))}
-      </div>
+
+      {input.actions.t === 'uniform' ? (
+        <ViewUniform actions={input.actions.actions} />
+      ) : (
+        <ViewSpaceBetween start={input.actions.start} end={input.actions.end} />
+      )}
     </div>
   )
 }

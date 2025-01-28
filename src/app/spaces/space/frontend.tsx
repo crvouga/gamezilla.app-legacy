@@ -59,12 +59,11 @@ const View = (input: {
           actions={{
             // renderNavBar: () => <NavBarLogo onClick={() => inputNew.dispatch({ t: 'clicked-go-home-button' })} />,
             id: 'space-actions',
-            buttons: [
-              GoHome.viewAction(inputNew),
-              People.viewAction(inputNew),
-              isHost ? EndSpaceFrontend.viewAction(inputNew) : LeaveSpaceFrontend.viewAction(inputNew),
-            ],
-            size: 'sm',
+            actions: {
+              t: 'space-between',
+              start: [GoHome.viewAction(inputNew), People.viewAction(inputNew)],
+              end: [isHost ? EndSpaceFrontend.viewAction(inputNew) : LeaveSpaceFrontend.viewAction(inputNew)],
+            },
             open: false,
             onToggle: () => {},
           }}

@@ -77,21 +77,24 @@ const View: FrontendModule['View'] = (input) => {
       actions={{
         open: true,
         onToggle: () => {},
-        buttons: [
-          {
-            icon: (input) => <IconPen {...input} />,
-            label: input.ctx.t('app.edit-name'),
-            onClick: () => {
-              input.dispatch({
-                t: 'got-msg-space',
-                c: {
-                  t: 'edit-pack-name.user-clicked-open-drawer-button',
-                  userId: input.ctx.currentUserId,
-                },
-              })
+        actions: {
+          t: 'uniform',
+          actions: [
+            {
+              icon: (input) => <IconPen {...input} />,
+              label: input.ctx.t('app.edit-name'),
+              onClick: () => {
+                input.dispatch({
+                  t: 'got-msg-space',
+                  c: {
+                    t: 'edit-pack-name.user-clicked-open-drawer-button',
+                    userId: input.ctx.currentUserId,
+                  },
+                })
+              },
             },
-          },
-        ],
+          ],
+        },
       }}
     />
   )

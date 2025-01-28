@@ -459,23 +459,26 @@ const View: Module['View'] = (input) => {
               id: 'vs-bot-buttons',
               open: false,
               onToggle: () => {},
-              buttons: [
-                {
-                  icon: (props) => <IconArrowLeftOnRect {...props} />,
-                  label: input.ctx.t('app.exit'),
-                  onClick: () => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUserId }),
-                },
-                {
-                  icon: (props) => <IconRightLeft {...props} />,
-                  label: input.ctx.t('game.swap-sides'),
-                  onClick: () => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUserId }),
-                },
-                {
-                  icon: (props) => <IconArrowRotateLeft {...props} />,
-                  label: input.ctx.t('app.restart'),
-                  onClick: () => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUserId }),
-                },
-              ],
+              actions: {
+                t: 'uniform',
+                actions: [
+                  {
+                    icon: (props) => <IconArrowLeftOnRect {...props} />,
+                    label: input.ctx.t('app.exit'),
+                    onClick: () => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUserId }),
+                  },
+                  {
+                    icon: (props) => <IconRightLeft {...props} />,
+                    label: input.ctx.t('game.swap-sides'),
+                    onClick: () => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUserId }),
+                  },
+                  {
+                    icon: (props) => <IconArrowRotateLeft {...props} />,
+                    label: input.ctx.t('app.restart'),
+                    onClick: () => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUserId }),
+                  },
+                ],
+              },
             }
           : undefined
       }

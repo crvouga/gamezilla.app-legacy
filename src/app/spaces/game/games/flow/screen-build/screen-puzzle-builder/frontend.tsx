@@ -192,37 +192,40 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
       )}
       actions={{
         limit: 2,
-        buttons: [
-          ...SaveChangesFrontend.viewBottomButtons({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
-          input.modelSpace.screenPuzzleBuilder.mode.t === 'edit'
-            ? {
-                icon: (input) => <IconPlay {...input} />,
-                label: input.ctx.t('flow.play-mode'),
-                classNames: { button: 'text-blue-500' },
-                onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
-              }
-            : null,
+        actions: {
+          t: 'uniform',
+          actions: [
+            ...SaveChangesFrontend.viewBottomButtons({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
+            input.modelSpace.screenPuzzleBuilder.mode.t === 'edit'
+              ? {
+                  icon: (input) => <IconPlay {...input} />,
+                  label: input.ctx.t('flow.play-mode'),
+                  classNames: { button: 'text-blue-500' },
+                  onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
+                }
+              : null,
 
-          input.modelSpace.screenPuzzleBuilder.mode.t === 'play'
-            ? {
-                icon: (input) => <IconPen {...input} />,
-                label: input.ctx.t('flow.edit-mode'),
-                classNames: { button: 'text-amber-500' },
-                onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
-              }
-            : null,
-          {
-            icon: (input) => <IconPen {...input} />,
-            label: input.ctx.t('app.edit-name'),
-            onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
-          },
-          {
-            icon: (input) => <IconDeleteForever {...input} />,
-            label: input.ctx.t('app.delete'),
-            color: 'danger',
-            onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
-          },
-        ],
+            input.modelSpace.screenPuzzleBuilder.mode.t === 'play'
+              ? {
+                  icon: (input) => <IconPen {...input} />,
+                  label: input.ctx.t('flow.edit-mode'),
+                  classNames: { button: 'text-amber-500' },
+                  onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
+                }
+              : null,
+            {
+              icon: (input) => <IconPen {...input} />,
+              label: input.ctx.t('app.edit-name'),
+              onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
+            },
+            {
+              icon: (input) => <IconDeleteForever {...input} />,
+              label: input.ctx.t('app.delete'),
+              color: 'danger',
+              onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
+            },
+          ],
+        },
         onToggle: () => {
           if (input.model.puzzleBuilderOpened === 'more') {
             input.dispatch({ t: 'screen-puzzle-builder.user-closed-more-drawer' })
@@ -295,20 +298,23 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
       actions={{
         open: false,
         onToggle: () => {},
-        buttons: [
-          ModePlay.viewHintAction({
-            ctx: ModePlay.initCtx({ ...input.ctx, flow }),
-            dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
-            model: puzzleBuilder.ModePlay,
-            disabled: status === 'solved',
-          }),
-          ModePlay.viewResetAction({
-            ctx: input.ctx,
-            dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
-            flow,
-            model: puzzleBuilder.ModePlay,
-          }),
-        ],
+        actions: {
+          t: 'uniform',
+          actions: [
+            ModePlay.viewHintAction({
+              ctx: ModePlay.initCtx({ ...input.ctx, flow }),
+              dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
+              model: puzzleBuilder.ModePlay,
+              disabled: status === 'solved',
+            }),
+            ModePlay.viewResetAction({
+              ctx: input.ctx,
+              dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
+              flow,
+              model: puzzleBuilder.ModePlay,
+            }),
+          ],
+        },
       }}
     />
   )

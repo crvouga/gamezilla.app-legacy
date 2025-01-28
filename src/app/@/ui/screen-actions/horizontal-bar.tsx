@@ -4,21 +4,31 @@ import { ScreenAction, ScreenActionProps } from './props'
 
 const DEFAULT_LIMIT = 4
 
-const View = (input: ScreenActionProps) => {
-  const cleanedButtons = input.buttons.filter((button) => button !== null)
-  const firstButtons = cleanedButtons.slice(0, input.limit ?? DEFAULT_LIMIT)
-  const lastButtons = cleanedButtons.slice(input.limit ?? DEFAULT_LIMIT)
+type VariantProps = {
+  limit?: number
+  size?: 'sm' | 'md'
+  ctx: ScreenActionProps['ctx']
+  id: string
+  open: boolean
+  onToggle: () => void
+}
+
+const ViewUniform = (input: VariantProps & { actions: (ScreenAction | null)[] }) => {
   const size = input.size ?? 'md'
+  const limit = input.limit ?? DEFAULT_LIMIT
+  const [firstButtons, lastButtons] = [input.actions.slice(0, limit), input.actions.slice(limit)]
+
   return (
     <div
       className={cn('flex w-full shrink-0 items-center', size === 'sm' && 'h-12', size === 'md' && 'h-16')}
       role='toolbar'
     >
-      {firstButtons.map((button) => (
-        <ScreenActionButton {...button} size={input.size} key={button.label} />
-      ))}
+      {firstButtons.map((button) => {
+        if (!button) return null
+        return <ScreenActionButton {...button} size={input.size} key={button.label} />
+      })}
 
-      {lastButtons.length > 0 && (
+      {lastButtons.some((button) => button !== null) && (
         <>
           <ScreenActionButton
             icon={(input) => <IconEllipsisVertical {...input} />}
@@ -34,8 +44,9 @@ const View = (input: ScreenActionProps) => {
             open={input.open}
             renderBody={() => (
               <>
-                {lastButtons.map((button) =>
-                  button.hidden ? null : (
+                {lastButtons.map((button) => {
+                  if (!button || button.hidden) return null
+                  return (
                     <ListItemButton
                       key={button.label}
                       icon={button.icon}
@@ -43,14 +54,92 @@ const View = (input: ScreenActionProps) => {
                       onClick={button.onClick}
                       color={button.color}
                     />
-                  ),
-                )}
+                  )
+                })}
               </>
             )}
           />
         </>
       )}
     </div>
+  )
+}
+
+const ViewSpaceBetween = (input: VariantProps & { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
+  const size = input.size ?? 'md'
+  const limit = input.limit ?? DEFAULT_LIMIT
+  const allButtons = [...input.start, ...input.end]
+  const [firstButtons, lastButtons] = [allButtons.slice(0, limit), allButtons.slice(limit)]
+
+  return (
+    <div
+      className={cn('flex w-full shrink-0 items-center', size === 'sm' && 'h-12', size === 'md' && 'h-16')}
+      role='toolbar'
+    >
+      {firstButtons.map((button) => {
+        if (!button) return null
+        return <ScreenActionButton {...button} size={input.size} key={button.label} />
+      })}
+
+      {lastButtons.some((button) => button !== null) && (
+        <>
+          <ScreenActionButton
+            icon={(input) => <IconEllipsisVertical {...input} />}
+            label={input.ctx.t('app.more')}
+            size={input.size}
+            onClick={input.onToggle}
+          />
+          <SurfaceLayout
+            ctx={input.ctx}
+            id={input.id}
+            ariaLabel={input.ctx.t('app.more')}
+            onClose={input.onToggle}
+            open={input.open}
+            renderBody={() => (
+              <>
+                {lastButtons.map((button) => {
+                  if (!button || button.hidden) return null
+                  return (
+                    <ListItemButton
+                      key={button.label}
+                      icon={button.icon}
+                      label={button.label}
+                      onClick={button.onClick}
+                      color={button.color}
+                    />
+                  )
+                })}
+              </>
+            )}
+          />
+        </>
+      )}
+    </div>
+  )
+}
+
+const View = (input: ScreenActionProps) => {
+  return input.actions.t === 'uniform' ? (
+    <ViewUniform
+      actions={input.actions.actions}
+      limit={input.limit}
+      size={input.size}
+      ctx={input.ctx}
+      id={input.id}
+      open={input.open}
+      onToggle={input.onToggle}
+    />
+  ) : (
+    <ViewSpaceBetween
+      start={input.actions.start}
+      end={input.actions.end}
+      limit={input.limit}
+      size={input.size}
+      ctx={input.ctx}
+      id={input.id}
+      open={input.open}
+      onToggle={input.onToggle}
+    />
   )
 }
 

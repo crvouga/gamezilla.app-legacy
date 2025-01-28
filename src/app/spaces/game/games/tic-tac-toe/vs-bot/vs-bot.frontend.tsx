@@ -259,32 +259,35 @@ export const View = (input: {
         </div>
       )}
       actions={{
-        buttons: [
-          {
-            icon: (input) => <IconArrowLeftOnRect {...input} />,
-            label: input.ctx.t('app.exit'),
-            onClick: () =>
-              input.dispatch({
-                t: 'stop-game',
-              }),
-          },
-          {
-            icon: (input) => <IconRightLeft {...input} />,
-            label: input.ctx.t('game.swap-sides'),
-            onClick: () =>
-              input.dispatch({
-                t: 'swap-sides',
-              }),
-          },
-          {
-            icon: (input) => <IconArrowRotateLeft {...input} />,
-            label: input.ctx.t('app.restart'),
-            onClick: () =>
-              input.dispatch({
-                t: 'restart',
-              }),
-          },
-        ],
+        actions: {
+          t: 'uniform',
+          actions: [
+            {
+              icon: (input) => <IconArrowLeftOnRect {...input} />,
+              label: input.ctx.t('app.exit'),
+              onClick: () =>
+                input.dispatch({
+                  t: 'stop-game',
+                }),
+            },
+            {
+              icon: (input) => <IconRightLeft {...input} />,
+              label: input.ctx.t('game.swap-sides'),
+              onClick: () =>
+                input.dispatch({
+                  t: 'swap-sides',
+                }),
+            },
+            {
+              icon: (input) => <IconArrowRotateLeft {...input} />,
+              label: input.ctx.t('app.restart'),
+              onClick: () =>
+                input.dispatch({
+                  t: 'restart',
+                }),
+            },
+          ],
+        },
         open: false,
         onToggle: () => {},
       }}

@@ -5,7 +5,7 @@ import { ScreenSize } from '../../frontend/screen-size'
 import { ScreenActionProps } from '../screen-actions/props'
 
 export type ScreenLayoutActionsProps = Partial<ScreenActionProps> & {
-  buttons: ScreenActionProps['buttons']
+  actions: ScreenActionProps['actions']
   open: ScreenActionProps['open']
   onToggle: ScreenActionProps['onToggle']
 }

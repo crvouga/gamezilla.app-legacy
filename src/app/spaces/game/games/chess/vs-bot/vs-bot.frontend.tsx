@@ -452,13 +452,16 @@ export const View = ({
         id: 'vs-bot-buttons',
         open: false,
         onToggle: () => {},
-        buttons: [
-          {
-            icon: (props) => <IconArrowLeftOnRect {...props} />,
-            label: ctx.t('app.exit'),
-            onClick: onClose,
-          },
-        ],
+        actions: {
+          t: 'uniform',
+          actions: [
+            {
+              icon: (props) => <IconArrowLeftOnRect {...props} />,
+              label: ctx.t('app.exit'),
+              onClick: onClose,
+            },
+          ],
+        },
       }}
     />
   )

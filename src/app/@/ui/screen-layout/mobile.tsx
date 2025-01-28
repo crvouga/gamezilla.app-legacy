@@ -14,7 +14,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
           <ScreenActionsHorizontalBar.View
             id={input.actions.id ?? `${input.id}-actions`}
             ctx={input.ctx}
-            buttons={input.actions.buttons}
+            actions={input.actions.actions}
             limit={input.actions.limit}
             size={input.actions.size}
             onToggle={input.actions.onToggle}
@@ -30,7 +30,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
             size={input.parent.actions.size}
             id={input.parent.actions.id ?? `${input.id}-actions`}
             ctx={input.ctx}
-            buttons={input.parent.actions.buttons}
+            actions={input.parent.actions.actions}
             limit={input.parent.actions.limit}
             onToggle={input.parent.actions.onToggle}
             open={input.parent.actions.open}

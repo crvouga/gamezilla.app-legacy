@@ -516,9 +516,7 @@ const ViewSendCode: Module['View'] = (input) => {
 }
 
 const ViewVerifyCode: Module['View'] = (input) => {
-  if (input.ctx.currentScreen.t !== 'login-sms-verify') {
-    return null
-  }
+  if (input.ctx.currentScreen.t !== 'login-sms-verify') return null
 
   const phoneNumber = input.ctx.currentScreen.phoneNumber
 
@@ -551,7 +549,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
         submitDisabled: false,
       }}
       renderBody={() => (
-        <div className='flex w-full flex-col gap-6 p-4'>
+        <div className='flex w-full flex-col gap-6 p-6'>
           <Typography
             role='status'
             className='text-lg'

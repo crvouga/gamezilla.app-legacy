@@ -19,15 +19,26 @@ export type ScreenAction = {
   size?: 'sm' | 'md'
 }
 
-export type ScreenActionCtx = {
-  t: Translator
-  screenSize: ScreenSize
+export type ScreenActionsUniform = {
+  t: 'uniform'
+  actions: (ScreenAction | null)[]
 }
+
+export type ScreenActionsSpaceBetween = {
+  t: 'space-between'
+  start: (ScreenAction | null)[]
+  end: (ScreenAction | null)[]
+}
+
+export type ScreenActions = ScreenActionsUniform | ScreenActionsSpaceBetween
 
 export type ScreenActionProps = {
   id: string
-  ctx: ScreenActionCtx
-  buttons: (ScreenAction | null)[]
+  ctx: {
+    t: Translator
+    screenSize: ScreenSize
+  }
+  actions: ScreenActions
   open: boolean
   onToggle: () => void
   limit?: number

@@ -121,52 +121,55 @@ const View: FrontendModule['View'] = (input) => {
               userId: input.ctx.currentUserId,
             },
           }),
-        buttons: [
-          {
-            icon: (input) => <IconChevronLeft {...input} />,
-            label: input.ctx.t('app.prev'),
-            disabled: !canGoPrevious,
-            onClick: () => {
-              input.dispatch({
-                t: 'got-msg-space',
-                c: {
-                  t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
-                  userId: input.ctx.currentUserId,
-                  previousPuzzleResult: previousPuzzle ? { t: 'got', c: previousPuzzle } : { t: 'not-found' },
-                },
-              })
+        actions: {
+          t: 'uniform',
+          actions: [
+            {
+              icon: (input) => <IconChevronLeft {...input} />,
+              label: input.ctx.t('app.prev'),
+              disabled: !canGoPrevious,
+              onClick: () => {
+                input.dispatch({
+                  t: 'got-msg-space',
+                  c: {
+                    t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
+                    userId: input.ctx.currentUserId,
+                    previousPuzzleResult: previousPuzzle ? { t: 'got', c: previousPuzzle } : { t: 'not-found' },
+                  },
+                })
+              },
             },
-          },
-          {
-            icon: (input) => <IconChevronRight {...input} />,
-            label: input.ctx.t('app.next'),
-            disabled: !canGoNext,
-            onClick: () => {
-              input.dispatch({
-                t: 'got-msg-space',
-                c: {
-                  t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
-                  userId: input.ctx.currentUserId,
-                  nextPuzzleResult: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' },
-                },
-              })
+            {
+              icon: (input) => <IconChevronRight {...input} />,
+              label: input.ctx.t('app.next'),
+              disabled: !canGoNext,
+              onClick: () => {
+                input.dispatch({
+                  t: 'got-msg-space',
+                  c: {
+                    t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
+                    userId: input.ctx.currentUserId,
+                    nextPuzzleResult: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' },
+                  },
+                })
+              },
             },
-          },
-          {
-            icon: (input) => <IconDeleteForever {...input} />,
-            label: input.ctx.t('app.remove'),
-            color: 'danger',
-            onClick: () =>
-              input.dispatch({
-                t: 'got-msg-space',
-                c: {
-                  t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
-                  userId: input.ctx.currentUserId,
-                  puzzleIndex: screen.puzzleIndex,
-                },
-              }),
-          },
-        ],
+            {
+              icon: (input) => <IconDeleteForever {...input} />,
+              label: input.ctx.t('app.remove'),
+              color: 'danger',
+              onClick: () =>
+                input.dispatch({
+                  t: 'got-msg-space',
+                  c: {
+                    t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
+                    userId: input.ctx.currentUserId,
+                    puzzleIndex: screen.puzzleIndex,
+                  },
+                }),
+            },
+          ],
+        },
       }}
     />
   )
