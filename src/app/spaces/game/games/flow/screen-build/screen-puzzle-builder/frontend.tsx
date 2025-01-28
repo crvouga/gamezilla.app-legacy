@@ -190,7 +190,7 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
           <ViewMode {...input} />
         </>
       )}
-      actions={{
+      actionBar={{
         limit: 2,
         actions: {
           t: 'uniform',
@@ -255,7 +255,7 @@ const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
           ctx={input.ctx}
           dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
           screenLayout={{
-            nav: {
+            navBar: {
               onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
               title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
             },
@@ -280,7 +280,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='puzzle-builder-screen-mode-play'
       ctx={input.ctx}
-      nav={{
+      navBar={{
         onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
         title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
       }}
@@ -295,7 +295,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
           />
         </div>
       )}
-      actions={{
+      actionBar={{
         open: false,
         onToggle: () => {},
         actions: {

@@ -87,7 +87,7 @@ const View: FrontendModule['View'] = (input) => {
     <ScreenLayout
       ctx={input.ctx}
       id='screen-open-puzzle'
-      nav={{
+      navBar={{
         title: input.ctx.t('flow-pack-name', pack.name),
         onBack: () =>
           input.dispatch({

@@ -1,6 +1,6 @@
 import { TextField } from '~/@/ui'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { SurfaceLayout } from '~/app/@/ui/surface-layout'
+import { SurfaceLayout } from '~/app/@/ui/surface/layout'
 import { FrontendModule } from '../types'
 
 const update: FrontendModule['update'] = (input) => {

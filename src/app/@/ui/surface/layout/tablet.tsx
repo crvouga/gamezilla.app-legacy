@@ -1,5 +1,5 @@
 import { Dialog, DialogHeader, DialogSurface } from '~/@/ui'
-import { CancelSubmitButtons } from '../form/cancel-submit-buttons'
+import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { SurfaceLayoutProps } from './props'
 
 export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {

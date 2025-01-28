@@ -58,7 +58,7 @@ const View: FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='screen-puzzle-builder-open'
       ctx={input.ctx}
-      nav={{
+      navBar={{
         title: input.ctx.t('flow.puzzle-builder'),
         onBack: () =>
           input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } }),

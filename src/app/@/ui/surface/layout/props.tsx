@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { VDom } from '~/@/vdom/vdom'
-import { ScreenSize } from '../../frontend/screen-size'
+import { ScreenSize } from '../../screen/screen-size'
 
 export type SurfaceLayoutProps = {
   id: string

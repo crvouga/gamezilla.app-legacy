@@ -258,7 +258,7 @@ export const View = (input: {
           <ViewBoard board={board} onClick={(position) => input.dispatch({ t: 'input-move', position })} />
         </div>
       )}
-      actions={{
+      actionBar={{
         actions: {
           t: 'uniform',
           actions: [

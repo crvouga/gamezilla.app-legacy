@@ -453,7 +453,7 @@ const View: Module['View'] = (input) => {
           </div>
         </LayoutGame>
       )}
-      actions={
+      actionBar={
         input.ctx.currentUserId === input.modelSpace.playingUserId
           ? {
               id: 'vs-bot-buttons',

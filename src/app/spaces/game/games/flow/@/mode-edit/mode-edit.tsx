@@ -7,7 +7,7 @@ import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout'
 import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/props'
-import { SurfaceLayout } from '~/app/@/ui/surface-layout'
+import { SurfaceLayout } from '~/app/@/ui/surface/layout'
 import * as Flow from '../flow/flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
@@ -459,7 +459,7 @@ export const View = (input: {
       {...input.screenLayout}
       id='mode-edit-screen'
       ctx={input.ctx}
-      actions={{
+      actionBar={{
         open: false,
         onToggle: () => {},
         actions: {

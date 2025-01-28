@@ -40,7 +40,7 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
       isTopLevel
       ctx={input.ctx}
       parent={input.ctx.parentScreen}
-      nav={{ title: input.ctx.t('username', input.profile.username) }}
+      navBar={{ title: input.ctx.t('username', input.profile.username) }}
       id='profile-screen'
       renderBody={() => (
         <ScreenBodyRoot className='gap-4 p-6'>
@@ -71,7 +71,7 @@ const ViewOtherProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch:
       ctx={input.ctx}
       id='profile-screen'
       parent={input.ctx.parentScreen}
-      nav={{
+      navBar={{
         title: input.ctx.t('username', input.profile.username),
         onBack: () =>
           input.dispatch({ t: 'clicked-back-button', from: { t: 'profile', userId: input.profile?.userId } }),

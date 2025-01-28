@@ -4,7 +4,7 @@ import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
 import type { PlatformCmd } from '../@/frontend/cmd'
 import { pipe } from '~/@/function/pipe'
-import { ScreenSize } from '../@/frontend/screen-size'
+import { ScreenSize } from '../@/ui/screen/screen-size'
 
 export type Model = {
   documentVisibilityState: DocumentVisibilityState

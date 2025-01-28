@@ -8,32 +8,32 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const actionPosition = input.actionPosition ?? 'bottom'
   const actions = (
     <>
-      {input.actions && (
+      {input.actionBar && (
         <>
           {input.renderMiniPlayer?.()}
           <ScreenActionHorizontalBar.View
-            id={input.actions.id ?? `${input.id}-actions`}
+            id={input.actionBar.id ?? `${input.id}-actions`}
             ctx={input.ctx}
-            actions={input.actions.actions}
-            limit={input.actions.limit}
-            size={input.actions.size}
-            onToggle={input.actions.onToggle}
-            open={input.actions.open}
+            actions={input.actionBar.actions}
+            limit={input.actionBar.limit}
+            size={input.actionBar.size}
+            onToggle={input.actionBar.onToggle}
+            open={input.actionBar.open}
           />
         </>
       )}
 
-      {input.parent?.actions && (
+      {input.parent?.actionBar && (
         <>
           {input.parent.renderMiniPlayer?.()}
           <ScreenActionHorizontalBar.View
-            size={input.parent.actions.size}
-            id={input.parent.actions.id ?? `${input.id}-actions`}
+            size={input.parent.actionBar.size}
+            id={input.parent.actionBar.id ?? `${input.id}-actions`}
             ctx={input.ctx}
-            actions={input.parent.actions.actions}
-            limit={input.parent.actions.limit}
-            onToggle={input.parent.actions.onToggle}
-            open={input.parent.actions.open}
+            actions={input.parent.actionBar.actions}
+            limit={input.parent.actionBar.limit}
+            onToggle={input.parent.actionBar.onToggle}
+            open={input.parent.actionBar.open}
           />
         </>
       )}
@@ -48,7 +48,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         input.form?.onSubmit()
       }}
     >
-      {input.nav && <ScreenNavBarMobile ctx={input.ctx} onBack={input.nav.onBack} title={input.nav.title} />}
+      {input.navBar && <ScreenNavBarMobile ctx={input.ctx} onBack={input.navBar.onBack} title={input.navBar.title} />}
       {actionPosition === 'top' && actions}
 
       <div className='relative flex w-full flex-1 flex-col overflow-hidden'>

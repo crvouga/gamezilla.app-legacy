@@ -308,7 +308,7 @@ const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
     <ScreenLayout
       id='game-selection-screen'
       ctx={input.ctx}
-      nav={{
+      navBar={{
         title: input.ctx.t('spaces.games'),
         onBack: () => input.dispatch({ t: 'clicked-go-home-button' }),
       }}

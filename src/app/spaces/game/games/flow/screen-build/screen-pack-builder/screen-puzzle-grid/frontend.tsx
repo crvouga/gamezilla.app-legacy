@@ -27,7 +27,7 @@ const View: FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='screen-puzzle-grid'
       ctx={input.ctx}
-      nav={{
+      navBar={{
         title: input.ctx.t('flow-pack-name', packBuilder.pack.name),
         onBack: () =>
           input.dispatch({
@@ -74,7 +74,7 @@ const View: FrontendModule['View'] = (input) => {
           }}
         />
       )}
-      actions={{
+      actionBar={{
         open: true,
         onToggle: () => {},
         actions: {

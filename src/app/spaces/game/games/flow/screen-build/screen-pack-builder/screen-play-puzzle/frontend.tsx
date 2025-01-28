@@ -80,7 +80,7 @@ const View: FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='screen-puzzle'
       ctx={input.ctx}
-      nav={{
+      navBar={{
         title: input.ctx.t('flow.level', screen.puzzleIndex + 1),
         subtitle: screen.puzzleResult.t === 'got' ? input.ctx.t('flow-puzzle-name', screen.puzzleResult.c.name) : null,
         onBack: () =>
@@ -106,7 +106,7 @@ const View: FrontendModule['View'] = (input) => {
           <PuzzleResult.ViewNotFound ctx={input.ctx} />
         )
       }
-      actions={{
+      actionBar={{
         id: 'screen-puzzle-buttons',
         open: input.modelSpace.opened === 'more',
         limit: 2,

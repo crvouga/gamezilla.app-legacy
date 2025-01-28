@@ -101,7 +101,7 @@ const View: FrontendModule['View'] = (input) => {
       <ScreenLayout
         id='screen-play-puzzle'
         ctx={input.ctx}
-        nav={{
+        navBar={{
           title: input.ctx.t('flow.level', puzzleIndex + 1),
           onBack: () =>
             input.dispatch({
@@ -138,7 +138,7 @@ const View: FrontendModule['View'] = (input) => {
             )}
           </div>
         )}
-        actions={{
+        actionBar={{
           id: 'screen-play-puzzle-bottom-bar',
           open: input.modelSpace.screen.opened === 'action-drawer',
           onToggle: () =>
@@ -239,7 +239,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='flow-spectating'
       ctx={input.ctx}
-      nav={{
+      navBar={{
         title: input.ctx.t('flow.level', puzzleIndex + 1),
       }}
       renderBody={() => (

@@ -4,7 +4,7 @@ import { Translator } from '~/@/l18n/generated'
 import { type Result, isErr } from '~/@/result'
 import { AlertError, AlertSuccess, TextField } from '~/@/ui'
 import { ScreenCmd } from '~/app/@/frontend/cmd'
-import { ScreenSize } from '~/app/@/frontend/screen-size'
+import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { ScreenLayout } from '~/app/@/ui/screen/layout'
 
 //
@@ -159,7 +159,7 @@ export const View = (input: {
     <ScreenLayout
       id='auth-email'
       ctx={input.ctx}
-      nav={{
+      navBar={{
         title: input.ctx.t('auth-email.login-with-email'),
         onBack: () =>
           input.dispatch({

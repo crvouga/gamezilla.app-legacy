@@ -1,5 +1,5 @@
 import { IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/@/ui'
-import { SurfaceLayout } from '../../surface-layout'
+import { SurfaceLayout } from '../../surface/layout'
 import { ScreenAction, ScreenActionBarProps } from './props'
 
 const DEFAULT_LIMIT = 4

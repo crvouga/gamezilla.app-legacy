@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { cn } from '~/@/ui'
 import type { VDom } from '~/@/vdom/vdom'
-import { ScreenSize } from '~/app/@/frontend/screen-size'
+import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { ScreenBodyRoot, ScreenLayout } from '~/app/@/ui/screen/layout'
 
 export const LayoutGameCoverArtHeader = (input: {
@@ -24,7 +24,7 @@ export const LayoutGameCoverArtHeader = (input: {
     <ScreenLayout
       id='game-cover-art-header'
       ctx={input.ctx}
-      nav={input.topBar}
+      navBar={input.topBar}
       renderBody={() => (
         <ScreenBodyRoot className='gap-4 p-6'>
           {renderCoverArt_({ className: 'size-28 overflow-hidden rounded-lg' })}

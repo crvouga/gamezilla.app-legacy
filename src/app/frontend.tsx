@@ -565,7 +565,7 @@ const toScreenLayoutProps = (input: {
         dispatch={(c) => input.dispatch({ t: 'spaces', c })}
       />
     ),
-    actions: {
+    actionBar: {
       // renderNavBar: () => <NavBarLogo onClick={pushSpaceList} />,
       actions: {
         t: 'uniform',

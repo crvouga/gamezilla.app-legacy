@@ -443,7 +443,7 @@ const ViewSendCode: Module['View'] = (input) => {
     <ScreenLayout
       id='auth-sms-send-code'
       ctx={input.ctx}
-      nav={{
+      navBar={{
         title: input.ctx.t('auth-sms.login-with-phone'),
         onBack: () =>
           input.dispatch({
@@ -524,7 +524,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
     <ScreenLayout
       id='auth-sms-verify'
       ctx={input.ctx}
-      nav={{
+      navBar={{
         title: input.ctx.t('auth-sms.login-with-phone'),
         onBack: () =>
           input.dispatch({

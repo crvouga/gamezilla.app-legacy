@@ -56,7 +56,7 @@ const View = (input: {
           id='space'
           ctx={spaceCtx}
           actionPosition='top'
-          actions={{
+          actionBar={{
             // renderNavBar: () => <NavBarLogo onClick={() => inputNew.dispatch({ t: 'clicked-go-home-button' })} />,
             id: 'space-actions',
             actions: {

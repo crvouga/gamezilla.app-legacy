@@ -448,7 +448,7 @@ export const View = ({
           </div>
         </LayoutGame>
       )}
-      actions={{
+      actionBar={{
         id: 'vs-bot-buttons',
         open: false,
         onToggle: () => {},

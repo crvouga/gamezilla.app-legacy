@@ -283,7 +283,7 @@ const View: Module['View'] = (input) => {
               />
             </LayoutGame>
           )}
-          actions={{
+          actionBar={{
             id: 'game-buttons',
             open: false,
             onToggle: () => {},

@@ -91,7 +91,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       isTopLevel
       id='list-spaces'
       ctx={input.ctx}
-      nav={{
+      navBar={{
         title: input.ctx.t('spaces.spaces'),
       }}
       parent={input.ctx.parentScreen}

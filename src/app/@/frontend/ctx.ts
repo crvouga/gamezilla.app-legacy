@@ -8,7 +8,7 @@ import { UserAccount } from '../data/account'
 import { UserId } from '../data/user-id'
 import { UserRole } from '../data/user-role'
 import { Username } from '../data/username'
-import { ScreenSize } from './screen-size'
+import { ScreenSize } from '../ui/screen/screen-size'
 
 type Profile = {
   userId: UserId

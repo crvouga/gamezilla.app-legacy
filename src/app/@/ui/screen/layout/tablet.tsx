@@ -18,32 +18,32 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
       <div
         className={cn('flex w-full flex-1 gap-6 overflow-hidden', input.isTopLevel ? 'flex-row' : 'flex-row-reverse')}
       >
-        {input.parent?.actions && (
+        {input.parent?.actionBar && (
           <ScreenActionVerticalBar.View
-            {...input.parent.actions}
-            id={input.parent.actions.id ?? `${input.id}-parent-actions`}
+            {...input.parent.actionBar}
+            id={input.parent.actionBar.id ?? `${input.id}-parent-actions`}
             ctx={input.ctx}
           />
         )}
 
-        {input.actions && (
+        {input.actionBar && (
           <ScreenActionVerticalBar.View
-            {...input.actions}
-            id={input.actions.id ?? `${input.id}-actions`}
+            {...input.actionBar}
+            id={input.actionBar.id ?? `${input.id}-actions`}
             ctx={input.ctx}
           />
         )}
 
         <div className='flex flex-1 flex-col overflow-hidden'>
-          {input.nav && (
+          {input.navBar && (
             <ScreenNavBarTablet
               ctx={input.ctx}
-              onBack={input.nav.onBack}
-              title={input.nav.title}
+              onBack={input.navBar.onBack}
+              title={input.navBar.title}
               renderEnd={() =>
                 input.form && (
                   <div className='w-full max-w-xs'>
-                    <CancelSubmitButtons {...input.form} size='md' />
+                    <CancelSubmitButtons {...input.form} size='sm' />
                   </div>
                 )
               }
