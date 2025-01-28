@@ -1,10 +1,10 @@
 import type { VDom } from './vdom'
 import type { VDomImpl } from './vdom-impl'
-// @ts-expect-error
 import * as Inferno from 'inferno'
 import * as Preact from 'preact'
 import * as PreactCompat from 'preact/compat'
-// import * as React from 'react'
+// @ts-expect-error
+import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import * as ReactDOMClient from 'react-dom/client'
 
