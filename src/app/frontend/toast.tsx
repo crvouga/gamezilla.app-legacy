@@ -4,21 +4,15 @@ import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
-import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { IconXMark, Show, Transition, cn } from '~/@/ui'
+import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND, SoundCmd, ToastCmd, playSound } from '../@/frontend/cmd'
-
-//
-//
-//
-// Module
-//
-//
-//
+import { ScreenSize } from '../@/ui/screen/screen-size'
 
 type Ctx = {
   now: Posix
   t: Translator
+  screenSize: ScreenSize
 }
 
 type Module = AppFrontendModule<{
@@ -35,14 +29,6 @@ type Module = AppFrontendModule<{
   MsgEvtIn: null
   MsgEvtOut: null
 }>
-
-//
-//
-//
-// Model
-//
-//
-//
 
 export type Model = {
   runningId: number
@@ -63,29 +49,15 @@ export type Toast = {
 }
 
 export const init: Module['init'] = () => {
-  return {
-    model: { runningId: 0, hold: {} },
-  }
+  return { model: { runningId: 0, hold: {} } }
 }
-
-//
-//
-//
-// Update
-//
-//
-//
 
 export type Msg =
   | { t: 'time-passed' }
   | { t: 'pressed-down-on-toast'; toast: Toast }
   | { t: 'pressed-up-on-toast'; toast: Toast }
   | { t: 'clicked-dismiss-button'; toastId: number }
-  | {
-      t: 'clicked-see-error'
-      errorMsg: string
-      toastId: number
-    }
+  | { t: 'clicked-see-error'; errorMsg: string; toastId: number }
 
 export const update: Module['update'] = (input) => {
   return AppFrontendModule.andThen(
@@ -96,189 +68,100 @@ export const update: Module['update'] = (input) => {
 }
 
 const updateFromMsg: Module['update'] = (input) => {
-  if (!input.msg) {
-    return { model: input.model }
-  }
+  if (!input.msg) return { model: input.model }
 
-  const { ctx, model, msg } = input
-
-  switch (msg.t) {
+  switch (input.msg.t) {
     case 'clicked-dismiss-button': {
-      return {
-        model: {
-          ...model,
-          toast: null,
-        },
-        msgCmd: [playSound(APP_SOUND.tap)],
-      }
+      return { model: { ...input.model, toast: null }, msgCmd: [playSound(APP_SOUND.tap)] }
     }
 
     case 'time-passed': {
-      if (!model.toast) {
-        return {
-          model,
-        }
-      }
+      if (!input.model.toast) return { model: input.model }
 
-      const isToastInactive = TimeSpan.lte(model.toast.duration, Posix.diff(model.toast.createdAt, ctx.now))
+      const isToastActive = TimeSpan.lte(
+        Posix.diff(input.model.toast.createdAt, input.ctx.now),
+        input.model.toast.duration,
+      )
 
-      if (isToastInactive) {
-        return {
-          model: {
-            ...model,
-            toast: null,
-          },
-        }
-      }
+      if (isToastActive) return { model: input.model }
 
-      return {
-        model,
-      }
+      return { model: { ...input.model, toast: null } }
     }
 
     case 'pressed-down-on-toast': {
       return {
-        model: {
-          ...model,
-          hold: {
-            ...model.hold,
-            [msg.toast.toastId]: msg.toast,
-          },
-        },
+        model: { ...input.model, hold: { ...input.model.hold, [input.msg.toast.toastId]: input.msg.toast } },
       }
     }
 
     case 'pressed-up-on-toast': {
-      const holdNew = {
-        ...model.hold,
-      }
-      delete holdNew[msg.toast.toastId]
-      return {
-        model: {
-          ...model,
-          hold: holdNew,
-        },
-      }
+      const holdNew = { ...input.model.hold }
+      delete holdNew[input.msg.toast.toastId]
+      return { model: { ...input.model, hold: holdNew } }
     }
 
     case 'clicked-see-error': {
       return {
-        model: {
-          ...model,
-          errorModal: {
-            errorMsg: msg.errorMsg,
-            toastId: msg.toastId,
-          },
-        },
+        model: { ...input.model, errorModal: { errorMsg: input.msg.errorMsg, toastId: input.msg.toastId } },
       }
     }
   }
 }
 
 const updateFromCmd: Module['update'] = (input) => {
-  if (!input.msgCmd) {
-    return { model: input.model }
-  }
+  if (!input.msgCmd) return { model: input.model }
 
-  const { ctx, msgCmd, model } = input
-
-  const toastCmd = msgCmd.c
+  const toastCmd = input.msgCmd.c
 
   switch (toastCmd.t) {
     case 'enqueue': {
       const toastNew: Toast = {
-        toastId: model.runningId,
+        toastId: input.model.runningId,
         text: toastCmd.text,
         duration: toastCmd.duration ?? TimeSpan.seconds(2),
         variant: toastCmd.toastVariant ?? 'info',
-        createdAt: ctx.now,
+        createdAt: input.ctx.now,
         errorMsg: toastCmd.errorMsg ?? null,
       }
 
-      return {
-        model: {
-          ...model,
-          runningId: model.runningId + 1,
-          toast: toastNew,
-        },
-      }
+      return { model: { ...input.model, runningId: input.model.runningId + 1, toast: toastNew } }
     }
   }
 }
 
-//
-//
-//
-//
-//
-//
-
 export const subscriptions: Module['subscriptions'] = ({ model }) => {
-  if (model.toast) {
-    return Time.interval('toasts', model.toast.duration, () => ({
-      t: 'time-passed',
-    }))
-  }
-
-  return Sub.None
+  if (!model.toast) return Sub.None
+  return Time.interval('toasts', model.toast.duration, () => ({ t: 'time-passed' }))
 }
-
-//
-//
-//
-// View
-//
-//
-//
 
 export const View: Module['View'] = (input) => {
   return (
     <Transition mode='out-in' id='toast-root' onEnter={onEnter} onExit={onExit}>
       <Show
         when={() => input.model.toast}
-        render={(toast) => <Toast key={toast.toastId} toast={toast} dispatch={input.dispatch} />}
+        render={(toast) => <Toast key={toast.toastId} ctx={input.ctx} toast={toast} dispatch={input.dispatch} />}
       />
     </Transition>
   )
 }
 
 const onEnter = async (node: HTMLElement) => {
-  await node?.animate(
-    [
-      {
-        transform: 'translateY(-150%)',
-      },
-      {
-        transform: 'translateY(0%)',
-      },
-    ],
-    {
-      duration: 200,
-      easing: 'ease-in-out',
-      fill: 'both',
-    },
-  ).finished
+  await node?.animate([{ transform: 'translateY(-150%)' }, { transform: 'translateY(0%)' }], {
+    duration: 200,
+    easing: 'ease-in-out',
+    fill: 'both',
+  }).finished
 }
 
 const onExit = async (node: HTMLElement) => {
-  await node?.animate(
-    [
-      {
-        transform: 'translateY(0%)',
-      },
-      {
-        transform: 'translateY(-150%)',
-      },
-    ],
-    {
-      duration: 200,
-      easing: 'ease-in-out',
-      fill: 'both',
-    },
-  ).finished
+  await node?.animate([{ transform: 'translateY(0%)' }, { transform: 'translateY(-150%)' }], {
+    duration: 200,
+    easing: 'ease-in-out',
+    fill: 'both',
+  }).finished
 }
 
-const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
+const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) => {
   const errorMsg = input.toast.errorMsg
   return (
     <div
@@ -290,7 +173,7 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
       onTouchEnd={() => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast })}
       onContextMenu={(e) => e.preventDefault()}
     >
-      <div className='ml-auto max-w-lg bg-black'>
+      <div className={cn('ml-auto bg-black', toWidthClass(input))}>
         <div
           className={cn(
             'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
@@ -306,11 +189,7 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
                 type='button'
                 className='font-bold'
                 onClick={() =>
-                  input.dispatch({
-                    t: 'clicked-see-error',
-                    errorMsg: errorMsg,
-                    toastId: input.toast.toastId,
-                  })
+                  input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId })
                 }
               >
                 See Error
@@ -332,4 +211,13 @@ const Toast = (input: { toast: Toast; dispatch: (m: Msg) => void }) => {
       </div>
     </div>
   )
+}
+
+const toWidthClass = (input: { ctx: Ctx }) => {
+  switch (input.ctx.screenSize) {
+    case 'mobile':
+      return 'w-full'
+    case 'tablet':
+      return 'w-full max-w-sm'
+  }
 }

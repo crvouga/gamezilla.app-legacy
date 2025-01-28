@@ -99,7 +99,7 @@ const toFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx =
     documentVisibilityState: input.model.platform.documentVisibilityState,
     currentScreen: input.model.currentScreen.currentScreen,
     currentUserId: null,
-    screenSize: input.model.platform.screenSize,
+    screenSize: input.model.platform.screenSize.screenSize,
   }
   if (input.model.auth.currentUser.t === 'logged-in') {
     return {
@@ -144,7 +144,7 @@ export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?:
     currentUserId: null,
     documentVisibilityState: 'visible',
     profiles: {},
-    screenSize: platform.model.screenSize,
+    screenSize: platform.model.screenSize.screenSize,
   }
 
   const lang = LangFrontend.init({ ctx, stored: input.ctx.stored })
