@@ -31,7 +31,7 @@ export const ViewForm = ({
 }) => {
   return (
     <>
-      <div className='flex items-center justify-center gap-1 text-center text-5xl font-bold'>
+      <div className='flex items-center justify-center gap-1 text-center text-4xl font-bold'>
         <p>{`${form.width}w`}</p>
 
         <IconXMark className='h-6 w-6' />
@@ -41,12 +41,7 @@ export const ViewForm = ({
 
       <div className='flex flex-col gap-3 p-4 pb-8'>
         <Slider
-          onInput={(width) =>
-            onInput({
-              ...form,
-              width,
-            })
-          }
+          onInput={(width) => onInput({ ...form, width })}
           value={form.width}
           label={ctx.t('app.width')}
           min={3}
@@ -54,12 +49,7 @@ export const ViewForm = ({
           step={1}
         />
         <Slider
-          onInput={(height) =>
-            onInput({
-              ...form,
-              height,
-            })
-          }
+          onInput={(height) => onInput({ ...form, height })}
           value={form.height}
           label={ctx.t('app.height')}
           min={3}

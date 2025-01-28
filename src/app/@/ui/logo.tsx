@@ -1,7 +1,7 @@
 export const LOGO_TEXT = '🦕'
 export const NavBarLogo = (input: { onClick: () => void }) => {
   return (
-    <button className='flex h-full w-full items-center justify-center text-5xl' onClick={input.onClick}>
+    <button className='flex h-full w-full items-center justify-center text-4xl' onClick={input.onClick}>
       {LOGO_TEXT}
     </button>
   )
