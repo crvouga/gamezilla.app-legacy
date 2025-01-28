@@ -15,7 +15,9 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
         input.form?.onSubmit()
       }}
     >
-      <div className={cn('flex w-full flex-1 overflow-hidden', input.isTopLevel ? 'flex-row' : 'flex-row-reverse')}>
+      <div
+        className={cn('flex w-full flex-1 gap-6 overflow-hidden', input.isTopLevel ? 'flex-row' : 'flex-row-reverse')}
+      >
         {input.parent?.actions && (
           <ScreenActionsSideBar.View
             {...input.parent.actions}

@@ -1,6 +1,8 @@
-import { Button, Drawer, DrawerHeader, TextField } from '~/@/ui'
-import { FrontendModule } from '../types'
+import { Drawer, DrawerHeader, TextField } from '~/@/ui'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { ViewForm } from '~/app/@/ui/form'
+import { FormButtons } from '~/app/@/ui/form-buttons'
+import { FrontendModule } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -27,37 +29,29 @@ const ViewDrawer: FrontendModule['View'] = (input) => {
       onClose={onClose}
       position='bottom'
     >
-      <DrawerHeader title={input.ctx.t('app.edit-name')} ctx={input.ctx} onClose={onClose} />
-      <TextField
-        id='pack-name'
-        label={input.ctx.t('app.edit-name')}
-        value={input.modelSpace.editPackName_draft}
-        onChange={(packNameDraft) =>
+      <ViewForm
+        name={input.ctx.t('app.edit-name')}
+        onSubmit={() =>
           input.dispatch({
             t: 'got-msg-space',
-            c: {
-              t: 'edit-pack-name.user-inputted-draft-name',
-              packNameDraft,
-              userId: input.ctx.currentUserId,
-            },
+            c: { t: 'edit-pack-name.user-submitted-form', userId: input.ctx.currentUserId },
           })
         }
-      />
-      <div>
-        <Button text={input.ctx.t('app.cancel')} onClick={onClose} />
-        <Button
-          text={input.ctx.t('app.save')}
-          onClick={() =>
+      >
+        <DrawerHeader title={input.ctx.t('app.edit-name')} ctx={input.ctx} onClose={onClose} />
+        <TextField
+          id='pack-name'
+          label={input.ctx.t('app.edit-name')}
+          value={input.modelSpace.editPackName_draft}
+          onChange={(packNameDraft) =>
             input.dispatch({
               t: 'got-msg-space',
-              c: {
-                t: 'edit-pack-name.user-submitted-form',
-                userId: input.ctx.currentUserId,
-              },
+              c: { t: 'edit-pack-name.user-inputted-draft-name', packNameDraft, userId: input.ctx.currentUserId },
             })
           }
         />
-      </div>
+        <FormButtons cancelText={input.ctx.t('app.cancel')} submitText={input.ctx.t('app.save')} onCancel={onClose} />
+      </ViewForm>
     </Drawer>
   )
 }
