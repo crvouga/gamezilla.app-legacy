@@ -1,7 +1,7 @@
 import { cn } from '~/@/ui'
 import { CancelSubmitButtons } from '../form/cancel-submit-buttons'
-import { ScreenActionsSideBar } from '../screen-actions/side-bar'
-import { ScreenNavBarTablet } from '../screen-nav-bar/tablet'
+import { ScreenActionVerticalBar } from './screen-action-bar/vertical-bar'
+import { ScreenNavBarTablet } from './screen-nav-bar/tablet'
 import { ScreenLayoutProps } from './props'
 
 export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
@@ -19,7 +19,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
         className={cn('flex w-full flex-1 gap-6 overflow-hidden', input.isTopLevel ? 'flex-row' : 'flex-row-reverse')}
       >
         {input.parent?.actions && (
-          <ScreenActionsSideBar.View
+          <ScreenActionVerticalBar.View
             {...input.parent.actions}
             id={input.parent.actions.id ?? `${input.id}-parent-actions`}
             ctx={input.ctx}
@@ -27,7 +27,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
         )}
 
         {input.actions && (
-          <ScreenActionsSideBar.View
+          <ScreenActionVerticalBar.View
             {...input.actions}
             id={input.actions.id ?? `${input.id}-actions`}
             ctx={input.ctx}

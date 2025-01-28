@@ -1,7 +1,7 @@
 import { CancelSubmitButtons } from '../form/cancel-submit-buttons.tsx'
-import { ScreenActionsHorizontalBar } from '../screen-actions/horizontal-bar.tsx'
+import { ScreenActionHorizontalBar } from './screen-action-bar/horizontal-bar.tsx'
 import { ScreenLayoutProps } from './props'
-import { ScreenNavBarMobile } from '../screen-nav-bar/mobile.tsx'
+import { ScreenNavBarMobile } from './screen-nav-bar/mobile.tsx'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.form ? 'form' : 'div'
@@ -11,7 +11,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       {input.actions && (
         <>
           {input.renderMiniPlayer?.()}
-          <ScreenActionsHorizontalBar.View
+          <ScreenActionHorizontalBar.View
             id={input.actions.id ?? `${input.id}-actions`}
             ctx={input.ctx}
             actions={input.actions.actions}
@@ -26,7 +26,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       {input.parent?.actions && (
         <>
           {input.parent.renderMiniPlayer?.()}
-          <ScreenActionsHorizontalBar.View
+          <ScreenActionHorizontalBar.View
             size={input.parent.actions.size}
             id={input.parent.actions.id ?? `${input.id}-actions`}
             ctx={input.ctx}

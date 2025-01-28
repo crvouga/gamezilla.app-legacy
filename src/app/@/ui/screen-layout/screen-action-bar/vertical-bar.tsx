@@ -127,6 +127,6 @@ const toIconSizeClasses = (size: ScreenAction['size']): string => {
   }
 }
 
-export const ScreenActionsSideBar = {
+export const ScreenActionVerticalBar = {
   View,
 }

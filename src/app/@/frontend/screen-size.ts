@@ -1,7 +1,9 @@
 export type ScreenSize = 'mobile' | 'tablet'
 
+const MAX_MOBILE_SCREEN_WIDTH = 800
+
 const to = (width: number): ScreenSize => {
-  if (width < 720) {
+  if (width < MAX_MOBILE_SCREEN_WIDTH) {
     return 'mobile'
   }
 

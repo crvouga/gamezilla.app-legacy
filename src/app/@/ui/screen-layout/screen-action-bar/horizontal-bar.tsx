@@ -1,5 +1,5 @@
 import { IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/@/ui'
-import { SurfaceLayout } from '../surface-layout'
+import { SurfaceLayout } from '../../surface-layout'
 import { ScreenAction, ScreenActionProps } from './props'
 
 const DEFAULT_LIMIT = 4
@@ -219,6 +219,6 @@ const toIconSizeClasses = (size: ScreenAction['size']): string => {
   }
 }
 
-export const ScreenActionsHorizontalBar = {
+export const ScreenActionHorizontalBar = {
   View,
 }

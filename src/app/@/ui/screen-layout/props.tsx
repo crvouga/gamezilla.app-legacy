@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '../../frontend/screen-size'
-import { ScreenActionProps } from '../screen-actions/props'
+import { ScreenActionProps } from './screen-action-bar/props'
 
 export type ScreenLayoutActionsProps = Partial<ScreenActionProps> & {
   actions: ScreenActionProps['actions']
