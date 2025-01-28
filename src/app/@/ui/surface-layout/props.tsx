@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { VDom } from '~/@/vdom/vdom'
-import { ScreenSize } from '../../frontend/ctx'
+import { ScreenSize } from '../../frontend/screen-size'
 
 export type SurfaceLayoutProps = {
   id: string
@@ -19,6 +19,7 @@ export type SurfaceLayoutProps = {
   position?: 'top' | 'bottom'
   renderBody: () => VDom
   form?: {
+    variant?: 'danger'
     onSubmit: () => void
     cancelText: TranslatedText
     submitText: TranslatedText

@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
-import { preventConsoleErrorWhenClosingDrawer } from './drawer'
+import { preventConsoleErrorWhenClosingDrawer } from './drawer/drawer-shared'
 
 type Input = {
   className?: string

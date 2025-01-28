@@ -8,14 +8,13 @@ import { UserAccount } from '../data/account'
 import { UserId } from '../data/user-id'
 import { UserRole } from '../data/user-role'
 import { Username } from '../data/username'
+import { ScreenSize } from './screen-size'
 
 type Profile = {
   userId: UserId
   username: Username
   avatarUrl: string
 }
-
-export type ScreenSize = 'mobile' | 'tablet'
 
 export type BaseFrontendCtx = {
   screenSize: ScreenSize

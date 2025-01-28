@@ -1,7 +1,7 @@
 import { cn } from '~/@/ui/cn'
 import { Gutter } from '~/@/ui/gutter'
 import { Portal } from '~/@/ui/portal'
-import { preventConsoleErrorWhenClosingDrawer } from './drawer'
+import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
 import type { DrawerInput } from './drawer-shared'
 
 export const DrawerComponent = (props: DrawerInput) => {

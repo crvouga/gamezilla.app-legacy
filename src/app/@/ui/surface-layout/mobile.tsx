@@ -9,7 +9,7 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
       id='surface-layout'
       onClose={props.onClose ?? (() => {})}
       open={props.open ?? false}
-      position='bottom'
+      position={props.position ?? 'bottom'}
       ctx={props.ctx}
       ariaLabel={props.ariaLabel}
     >
@@ -27,15 +27,18 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
             onClose={props.header?.onClose ?? (() => {})}
           />
         )}
-        <div className='flex w-full flex-1 flex-col p-6'>{props.renderBody()}</div>
-        <FormButtons
-          cancelText={props.form?.cancelText ?? props.ctx.t('app.cancel')}
-          onCancel={props.form?.onCancel ?? (() => {})}
-          submitText={props.form?.submitText ?? props.ctx.t('app.submit')}
-          submitLoading={props.form?.submitLoading ?? false}
-          submitDisabled={props.form?.submitDisabled ?? false}
-          cancelDisabled={props.form?.cancelDisabled ?? false}
-        />
+        <div className='flex w-full flex-1 flex-col'>{props.renderBody()}</div>
+        {props.form && (
+          <FormButtons
+            variant={props.form?.variant}
+            cancelText={props.form?.cancelText ?? props.ctx.t('app.cancel')}
+            onCancel={props.form?.onCancel ?? (() => {})}
+            submitText={props.form?.submitText ?? props.ctx.t('app.submit')}
+            submitLoading={props.form?.submitLoading ?? false}
+            submitDisabled={props.form?.submitDisabled ?? false}
+            cancelDisabled={props.form?.cancelDisabled ?? false}
+          />
+        )}
       </Element>
     </Drawer>
   )

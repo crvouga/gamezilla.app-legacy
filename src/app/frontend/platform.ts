@@ -4,24 +4,11 @@ import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
 import type { PlatformCmd } from '../@/frontend/cmd'
 import { pipe } from '~/@/function/pipe'
-
-export type ScreenSize = 'mobile' | 'tablet'
+import { ScreenSize } from '../@/frontend/screen-size'
 
 export type Model = {
   documentVisibilityState: DocumentVisibilityState
   screenSize: ScreenSize
-}
-
-const toScreenSize = (width: number): ScreenSize => {
-  if (width < 720) {
-    return 'mobile'
-  }
-
-  return 'tablet'
-}
-
-const getScreenSize = (): ScreenSize => {
-  return toScreenSize(typeof window === 'undefined' ? 0 : window.innerWidth)
 }
 
 export const init = (_input: {
@@ -30,13 +17,13 @@ export const init = (_input: {
   model: Model
 } => {
   if (typeof window === 'undefined') {
-    return { model: { documentVisibilityState: 'visible', screenSize: getScreenSize() } }
+    return { model: { documentVisibilityState: 'visible', screenSize: ScreenSize.get() } }
   }
 
   return {
     model: {
       documentVisibilityState: document.visibilityState,
-      screenSize: getScreenSize(),
+      screenSize: ScreenSize.get(),
     },
   }
 }
@@ -215,7 +202,7 @@ const visibilityStateSubscriptions: Sub<Msg> = Browser.onDocumentVisibilityState
 })
 
 const screenSizeSubscriptions: Sub<Msg> = pipe(
-  Browser.onWindowResize<Msg>(() => ({ t: 'screen-size-changed', screenSize: getScreenSize() })),
+  Browser.onWindowResize<Msg>(({ width }) => ({ t: 'screen-size-changed', screenSize: ScreenSize.to(width) })),
   (sub) => Sub.deduplicate('screen-size', (msg) => (msg.t === 'screen-size-changed' ? msg.screenSize : 'mobile'), sub),
 )
 

@@ -13,13 +13,7 @@ export type DrawerInput = PrivateDrawerInput & {
   }
 }
 
-const USE_WEB_COMPONENT = false
-
-export const preventConsoleErrorWhenClosingDrawer = (event: {
-  currentTarget?: HTMLDivElement | HTMLButtonElement | null
-}) => {
-  event.currentTarget?.blur()
-}
+export const USE_WEB_COMPONENT = false
 
 export const Drawer = (input: DrawerInput): VDom => {
   if (USE_WEB_COMPONENT) {

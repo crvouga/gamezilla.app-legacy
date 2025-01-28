@@ -1,9 +1,9 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { type DrawerInput } from '~/@/ui/drawer'
-import { ScreenSize } from '../../frontend/ctx'
-import { SurfaceLayout } from '../surface-layout'
 import { Typography } from '~/@/ui'
+import { type DrawerInput } from '~/@/ui/drawer'
+import { ScreenSize } from '../../frontend/screen-size'
+import { SurfaceLayout } from '../surface-layout'
 
 export type SurfaceConfirmationProps = DrawerInput & {
   ctx: {
@@ -46,6 +46,7 @@ export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
         cancelDisabled: input.cancelDisabled ?? false,
         submitLoading: input.confirmLoading ?? false,
         submitDisabled: false,
+        variant: input.variant,
       }}
       renderBody={() => <Typography className='p-4' variant='body' text={input.body} />}
     />

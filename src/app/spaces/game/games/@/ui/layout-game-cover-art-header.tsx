@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { cn } from '~/@/ui'
 import type { VDom } from '~/@/vdom/vdom'
-import { ScreenSize } from '~/app/@/frontend/ctx'
+import { ScreenSize } from '~/app/@/frontend/screen-size'
 import { ScreenBodyRoot, ScreenLayout } from '~/app/@/ui/screen-layout'
 
 export const LayoutGameCoverArtHeader = (input: {

@@ -2,7 +2,7 @@ import { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
 import { SurfaceLayout } from '~/app/@/ui/surface-layout'
 import { APP_SOUND, AppFrontendCmd, playSound, StatusBarCmd } from '../../@/frontend/cmd'
-import { ScreenSize } from '../platform'
+import { ScreenSize } from '~/app/@/frontend/screen-size'
 
 export type Model = {
   isDrawerOpen: boolean
@@ -29,20 +29,14 @@ export const update = (input: {
   switch (input.msg?.t) {
     case 'clicked-status-bar': {
       return {
-        model: {
-          ...input.model,
-          isDrawerOpen: true,
-        },
+        model: { ...input.model, isDrawerOpen: true },
         msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
     case 'closed-status-bar-drawer': {
       return {
-        model: {
-          ...input.model,
-          isDrawerOpen: false,
-        },
+        model: { ...input.model, isDrawerOpen: false },
         msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
@@ -52,12 +46,7 @@ export const update = (input: {
     case 'status-bar': {
       switch (input.msgCmd.c.t) {
         case 'close': {
-          return {
-            model: {
-              ...input.model,
-              isDrawerOpen: false,
-            },
-          }
+          return { model: { ...input.model, isDrawerOpen: false } }
         }
       }
     }
@@ -105,11 +94,7 @@ export const View = ({
         position='top'
         id='status-bar-drawer'
         open={model.isDrawerOpen}
-        onClose={() =>
-          dispatch({
-            t: 'closed-status-bar-drawer',
-          })
-        }
+        onClose={() => dispatch({ t: 'closed-status-bar-drawer' })}
         renderBody={() => slots.drawerContent}
       />
     </div>

@@ -1,7 +1,7 @@
 import { Typography, Button } from '~/@/ui'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { ScreenSize } from '../../frontend/ctx'
+import { ScreenSize } from '../../frontend/screen-size'
 import { SurfaceLayout } from '../surface-layout'
 
 export type SurfaceUnsavedChangesProps = {

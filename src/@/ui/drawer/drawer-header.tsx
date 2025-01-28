@@ -3,7 +3,7 @@ import { Translator } from '~/@/l18n/generated'
 import { IconButton } from '../icon-button'
 import { IconXMark } from '../icon/icon-x-mark'
 import { Typography } from '../typography'
-import { preventConsoleErrorWhenClosingDrawer } from './drawer'
+import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
 
 export const DrawerHeader = (input: { ctx: { t: Translator }; title: TranslatedText | null; onClose?: () => void }) => {
   return (

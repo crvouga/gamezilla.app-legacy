@@ -14,8 +14,8 @@ export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: 
       // @ts-expect-error I don't know how to fix this type error
       style={style}
       className={cn(
-        'absolute left-0 top-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out',
-        input.open ? 'scale-100 opacity-100' : 'pointer-events-none scale-0 opacity-0',
+        'fixed left-0 top-0 z-50 grid h-full w-full place-items-center bg-black/50 transition-opacity duration-300 ease-in-out',
+        input.open ? 'opacity-100' : 'pointer-events-none opacity-0',
       )}
       onClick={(e) => {
         if (e.target !== e.currentTarget) {
@@ -42,7 +42,7 @@ export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: 
 
 export const DialogSurface = (input: { children: VDomChildren }) => {
   return (
-    <div className='bg-surface border-surface flex w-80 flex-col gap-6 rounded-lg border p-8 shadow-2xl drop-shadow-2xl'>
+    <div className='bg-surface border-surface relative z-50 flex scale-0 flex-col gap-6 rounded-lg border shadow-2xl drop-shadow-2xl transition-transform duration-300 ease-in-out [.opacity-100_&]:scale-100'>
       {input.children}
     </div>
   )
