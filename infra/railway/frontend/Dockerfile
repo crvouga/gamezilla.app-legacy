@@ -15,7 +15,7 @@ ARG VITE_POWERSYNC_URL
 
 ENV VITE_POWERSYNC_URL=${VITE_POWERSYNC_URL}
 
-RUN bun run frontend:build --verbose
+RUN bun run frontend:build
 
 FROM nginx:latest AS serve
 
