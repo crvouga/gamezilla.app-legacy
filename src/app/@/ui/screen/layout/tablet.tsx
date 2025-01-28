@@ -15,12 +15,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
         input.form?.onSubmit()
       }}
     >
-      <div
-        className={cn(
-          'flex w-full flex-1 divide-x overflow-hidden',
-          input.isTopLevel ? 'flex-row' : 'flex-row-reverse',
-        )}
-      >
+      <div className={cn('flex w-full flex-1 overflow-hidden', input.isTopLevel ? 'flex-row' : 'flex-row-reverse')}>
         {input.parent?.actionBar && (
           <ScreenActionVerticalBar.View
             {...input.parent.actionBar}
@@ -37,7 +32,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
           />
         )}
 
-        <div className='flex flex-1 flex-col overflow-hidden'>
+        <div className={cn('flex flex-1 flex-col overflow-hidden', input.isTopLevel ? 'border-l' : '')}>
           {input.navBar && (
             <ScreenNavBarTablet
               ctx={input.ctx}
@@ -58,8 +53,10 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
             {input.renderFab && <div className='absolute bottom-6 right-6 bg-black'>{input.renderFab()}</div>}
           </div>
 
-          {input.renderMiniPlayer?.()}
-          {input.parent?.renderMiniPlayer?.()}
+          <div className='mx-auto w-full max-w-2xl'>
+            {input.renderMiniPlayer?.()}
+            {input.parent?.renderMiniPlayer?.()}
+          </div>
         </div>
       </div>
     </Element>
