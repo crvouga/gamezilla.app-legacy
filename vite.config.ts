@@ -31,11 +31,6 @@ export default defineConfig({
     tsconfigPaths(),
     vDomPlugin(),
   ],
-  resolve: {
-    alias: {
-      crypto: 'crypto-browserify',
-    },
-  },
   define: {
     global: 'globalThis',
     'process.env': {},
