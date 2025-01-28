@@ -27,7 +27,7 @@ export const ListItemButton = (input: Input) => {
       className={cn(input.className, BASE_CLASS, toColorClass(input))}
     >
       <div className='flex flex-1 items-center gap-3 truncate'>
-        {input.icon({ className: 'h-6 w-6' })}
+        {input.icon({ className: 'size-6' })}
 
         {input.label}
       </div>

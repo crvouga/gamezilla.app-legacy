@@ -5,7 +5,7 @@ export const IconRightLeft = (input: IconInput) => {
     <svg
       xmlns='http://www.w3.org/2000/svg'
       viewBox='0 0 512 512'
-      className='h-6 w-6 fill-current'
+      className='size-6 fill-current'
       fill='currentColor'
       {...input}
     >

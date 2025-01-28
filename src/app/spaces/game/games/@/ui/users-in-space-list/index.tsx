@@ -24,7 +24,7 @@ export const ViewUsersInSpaceList = ({
               onClick={() => onOpenUserDetails(profile.userId)}
               className='clickable flex w-full items-center gap-2 p-2 px-4'
             >
-              <Avatar src={profile.avatarUrl} />
+              <Avatar className='size-12' src={profile.avatarUrl} />
               <p>{profile.username}</p>
               {profile.userId === ctx.space.hostId && <ViewHostChip ctx={ctx} />}
               {profile.userId === ctx.currentUserId && <ViewYouChip ctx={ctx} />}

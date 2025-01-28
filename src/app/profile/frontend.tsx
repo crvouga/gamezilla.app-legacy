@@ -520,6 +520,6 @@ const ViewField = ({
       {value && <Typography variant='body' text={value} />}
     </div>
 
-    <IconChevronRight className='h-6 w-6' />
+    <IconChevronRight className='size-6' />
   </button>
 )

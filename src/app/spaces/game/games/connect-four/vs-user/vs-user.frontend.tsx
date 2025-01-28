@@ -423,7 +423,7 @@ const ViewGameOverMessage = ({
         <>
           <div className='flex w-full items-center justify-center'>
             <PlayerIcon playerType={winner} />
-            <Avatar alt='' src={ctx.profiles[modelSpace.players[winner]]?.avatarUrl} />
+            <Avatar className='size-12' alt='' src={ctx.profiles[modelSpace.players[winner]]?.avatarUrl} />
           </div>
           <p>Winner</p>
         </>

@@ -247,14 +247,14 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
 const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { winner: PlayerType }) => {
   const humanSlot = (
     <>
-      <Avatar className='h-16 w-16' src={ctx.profiles[human.userId]?.avatarUrl} />
+      <Avatar className='size-16' src={ctx.profiles[human.userId]?.avatarUrl} />
     </>
   )
 
   const botSlot = (
     <>
       {bot.renderIcon({
-        className: 'h-16 w-16',
+        className: 'size-16',
       })}
     </>
   )
@@ -263,7 +263,7 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
     <div className='flex flex-col items-center justify-center gap-3'>
       <div className='flex items-center justify-center gap-3'>
         {playerOne.renderIcon({
-          className: 'h-16 w-16',
+          className: 'size-16',
         })}
         {human.player === 'player-one' ? humanSlot : botSlot}
       </div>
@@ -280,7 +280,7 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
     <div className='flex flex-col items-center justify-center gap-3'>
       <div className='flex items-center justify-center gap-3'>
         {playerTwo.renderIcon({
-          className: 'h-16 w-16',
+          className: 'size-16',
         })}
 
         {human.player === 'player-two' ? humanSlot : botSlot}
@@ -311,7 +311,7 @@ const Draw = (input: Input) => {
 
   const botSlot = (
     <>
-      <IconRobot className='h-6 w-6' />
+      <IconRobot className='size-6' />
     </>
   )
 
@@ -348,7 +348,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
   const profile = ctx.profiles[human.userId]
   const humanSlot = (
     <>
-      <Avatar className='h-6 w-6' src={ctx.profiles[human.userId]?.avatarUrl} />
+      <Avatar className='size-6' src={ctx.profiles[human.userId]?.avatarUrl} />
       {profile && <Typography className='truncate' variant='body' text={ctx.t('username', profile.username)} />}
     </>
   )
@@ -356,7 +356,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
   const botSlot = (
     <>
       {bot.renderIcon({
-        className: 'h-6 w-6 flex-shrink-0',
+        className: 'size-6 flex-shrink-0',
       })}
       <Typography className='truncate' variant='body' text={bot.label} />
     </>
@@ -368,7 +368,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
         <Slot active={turn === 'player-one'}>
           <div>
             {playerOne.renderIcon({
-              className: 'h-6 w-6',
+              className: 'size-6',
             })}
           </div>
           {human.player === 'player-one' ? humanSlot : botSlot}
@@ -378,7 +378,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
       <div className='flex w-1/2 items-center justify-center overflow-hidden'>
         <Slot active={turn === 'player-two'}>
           {playerTwo.renderIcon({
-            className: 'h-6 w-6',
+            className: 'size-6',
           })}
           {human.player === 'player-two' ? humanSlot : botSlot}
         </Slot>

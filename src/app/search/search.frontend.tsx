@@ -135,7 +135,7 @@ export const View = ({
         {/* input */}
         <div className='w-full p-4'>
           <div className='bg-paper flex w-full items-center gap-2 rounded-full px-4 py-2'>
-            <IconMagnifyingGlass className='h-6 w-6' />
+            <IconMagnifyingGlass className='size-6' />
             <input
               id={searchInputId}
               className='flex-1 bg-transparent text-lg outline-none'
@@ -156,7 +156,7 @@ export const View = ({
                 })
               }
             >
-              <IconXMark className='h-6 w-6' />
+              <IconXMark className='size-6' />
             </button>
           </div>
         </div>

@@ -472,7 +472,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
   if (input.model.t === 'incorrect') {
     return (
       <div className='flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white'>
-        <IconXMark className='h-6 w-6' />
+        <IconXMark className='size-6' />
         <p className='text-xl'>Incorrect</p>
       </div>
     )
@@ -481,7 +481,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
   if (input.model.t === 'solved') {
     return (
       <div className='flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white'>
-        <IconCheckmarkCircle className='h-6 w-6' />
+        <IconCheckmarkCircle className='size-6' />
         <p className='text-xl'>Correct</p>
       </div>
     )
@@ -497,7 +497,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
       >
         <div
           className={cn(
-            'h-6 w-6 rounded-full border-2',
+            'size-6 rounded-full border-2',
             toPlayerColor(input.model.puzzle) === 'b' ? 'border-[#ababab] bg-black' : 'border-black bg-white',
           )}
         />
@@ -509,7 +509,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
   if (input.model.t === 'solved-with-hint') {
     return (
       <div className='bg-paper flex w-full items-center justify-center gap-2 p-2 text-white'>
-        <IconCheckmarkCircle className='h-6 w-6' />
+        <IconCheckmarkCircle className='size-6' />
         <p className='text-xl'>Solved with hint</p>
       </div>
     )

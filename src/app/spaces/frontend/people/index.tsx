@@ -124,7 +124,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
                   ? input.ctx.profiles[input.model.modalPreviewUserId]?.avatarUrl
                   : undefined
               }
-              className='h-24 w-24'
+              className='size-24'
             />
             {modalProfile && <Typography variant='title' text={input.ctx.t('username', modalProfile.username)} />}
             <div className='flex items-center gap-2'>

@@ -65,7 +65,7 @@ export const TextField = (input: {
               input.onClear?.()
             }}
           >
-            <IconXMark className='h-6 w-6' />
+            <IconXMark className='size-6' />
           </button>
         )}
       </div>

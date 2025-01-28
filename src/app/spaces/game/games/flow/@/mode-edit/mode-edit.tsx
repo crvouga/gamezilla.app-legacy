@@ -552,7 +552,7 @@ const ViewStatus: typeof View = (input) => {
   return (
     <div className='flex w-full items-center justify-center gap-1 p-2'>
       {`Placing ${position}`}
-      <ViewTerminal groupId={toCurrentPlacingGroupId(input.model)} className='h-6 w-6' />
+      <ViewTerminal groupId={toCurrentPlacingGroupId(input.model)} className='size-6' />
     </div>
   )
 }

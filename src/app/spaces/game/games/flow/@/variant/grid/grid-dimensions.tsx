@@ -34,7 +34,7 @@ export const ViewForm = ({
       <div className='flex items-center justify-center gap-1 text-center text-4xl font-bold'>
         <p>{`${form.width}w`}</p>
 
-        <IconXMark className='h-6 w-6' />
+        <IconXMark className='size-6' />
 
         <p>{`${form.height}h`}</p>
       </div>

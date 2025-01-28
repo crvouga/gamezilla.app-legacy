@@ -11,7 +11,7 @@ export const AlertError = ({ className, text }: { text?: string; className?: str
       className={cn('flex w-full items-center rounded-md bg-red-500 p-4 text-white', className)}
     >
       <div className='mr-2'>
-        <IconExclamationCircle className='h-6 w-6' />
+        <IconExclamationCircle className='size-6' />
       </div>
 
       {text}
@@ -23,7 +23,7 @@ export const AlertInfo = ({ children, className }: { children?: VDomChildren; cl
   return (
     <div className={cn(className, 'flex w-full items-center rounded-md bg-blue-500 p-4 text-white')}>
       <div className='mr-2'>
-        <IconInfoCircle className='h-6 w-6' />
+        <IconInfoCircle className='size-6' />
       </div>
       {children}
     </div>
@@ -34,7 +34,7 @@ export const AlertSuccess = ({ children, className }: { children?: VDomChildren;
   return (
     <div className={cn(className, 'flex w-full items-center rounded-md bg-green-500 p-4 text-white')}>
       <div className='mr-2'>
-        <IconCheckmarkCircle className='h-6 w-6' />
+        <IconCheckmarkCircle className='size-6' />
       </div>
       {children}
     </div>

@@ -46,7 +46,7 @@ const renderDefaultCoverArt = (input: { className: string }) => {
       <svg
         xmlns='http://www.w3.org/2000/svg'
         viewBox='0 0 640 512'
-        className='h-16 w-16'
+        className='size-16'
         fill='currentColor'
         stroke='currentColor'
       >

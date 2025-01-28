@@ -4,7 +4,7 @@ export const IconComputerDesktop = (input: { className?: string }) => {
       xmlns='http://www.w3.org/2000/svg'
       viewBox='0 0 24 24'
       fill='currentColor'
-      className={input.className ? input.className : 'h-6 w-6'}
+      className={input.className ? input.className : 'size-6'}
     >
       <path
         fillRule='evenodd'

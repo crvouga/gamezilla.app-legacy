@@ -44,7 +44,7 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
       id='profile-screen'
       renderBody={() => (
         <ScreenBodyRoot className='gap-4 p-6'>
-          <Avatar className='h-28 w-28' src={input.profile?.avatarUrl} alt='profile avatar' />
+          <Avatar className='size-28' src={input.profile?.avatarUrl} alt='profile avatar' />
           <Button
             onClick={() => input.dispatch({ t: 'clicked-edit-profile-button' })}
             className='w-full'
@@ -78,7 +78,7 @@ const ViewOtherProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch:
       }}
       renderBody={() => (
         <ScreenBodyRoot className='gap-4 p-6'>
-          <Avatar className='h-28 w-28' src={input.profile?.avatarUrl} alt='profile avatar' />
+          <Avatar className='size-28' src={input.profile?.avatarUrl} alt='profile avatar' />
           <Typography variant='title' text={input.ctx.t('username', input.profile.username)} />
         </ScreenBodyRoot>
       )}

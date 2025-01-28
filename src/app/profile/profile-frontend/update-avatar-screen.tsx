@@ -34,7 +34,7 @@ const View = (input: {
                   })
                 : undefined
             }
-            className='mx-auto h-32 w-32'
+            className='mx-auto size-28'
           />
 
           <div className='flex w-full flex-col gap-4'>
