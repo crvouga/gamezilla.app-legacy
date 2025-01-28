@@ -12,7 +12,7 @@ import { Username } from '../@/data/username'
 import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { FrontendEvt } from '../@/frontend/evt'
-import { ScreenLayoutProps } from '../@/ui/screen-layout/props'
+import { ScreenLayoutProps } from '../@/ui/screen/layout/props'
 import * as UpdateUsernameTypes from './update-username/update-username.types'
 //
 //

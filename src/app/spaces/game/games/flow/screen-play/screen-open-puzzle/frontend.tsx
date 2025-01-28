@@ -1,6 +1,6 @@
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { IconGamepad } from '~/@/ui'
-import { ScreenLayout } from '~/app/@/ui/screen-layout'
+import { ScreenLayout } from '~/app/@/ui/screen/layout'
 import { LayoutGameCoverArtHeader } from '../../../@/ui/layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../../../@/ui/users-in-space-list'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'

@@ -1,6 +1,6 @@
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { IconChevronLeft, IconChevronRight, IconDeleteForever } from '~/@/ui'
-import { ScreenLayout } from '~/app/@/ui/screen-layout'
+import { ScreenLayout } from '~/app/@/ui/screen/layout'
 import { ModePlay } from '../../../@/mode-play'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'

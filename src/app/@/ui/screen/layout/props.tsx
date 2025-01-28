@@ -1,13 +1,13 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { VDom } from '~/@/vdom/vdom'
-import { ScreenSize } from '../../frontend/screen-size'
-import { ScreenActionProps } from './screen-action-bar/props'
+import { ScreenSize } from '../../../frontend/screen-size'
+import { ScreenActionBarProps } from '../action-bar/props'
 
-export type ScreenLayoutActionsProps = Partial<ScreenActionProps> & {
-  actions: ScreenActionProps['actions']
-  open: ScreenActionProps['open']
-  onToggle: ScreenActionProps['onToggle']
+export type ScreenLayoutActionsProps = Partial<ScreenActionBarProps> & {
+  actions: ScreenActionBarProps['actions']
+  open: ScreenActionBarProps['open']
+  onToggle: ScreenActionBarProps['onToggle']
 }
 
 export type ScreenLayoutProps = {

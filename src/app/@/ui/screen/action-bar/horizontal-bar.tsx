@@ -1,13 +1,13 @@
 import { IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/@/ui'
 import { SurfaceLayout } from '../../surface-layout'
-import { ScreenAction, ScreenActionProps } from './props'
+import { ScreenAction, ScreenActionBarProps } from './props'
 
 const DEFAULT_LIMIT = 4
 
 type VariantProps = {
   limit?: number
   size?: 'sm' | 'md'
-  ctx: ScreenActionProps['ctx']
+  ctx: ScreenActionBarProps['ctx']
   id: string
   open: boolean
   onToggle: () => void
@@ -118,7 +118,7 @@ const ViewSpaceBetween = (input: VariantProps & { start: (ScreenAction | null)[]
   )
 }
 
-const View = (input: ScreenActionProps) => {
+const View = (input: ScreenActionBarProps) => {
   return input.actions.t === 'uniform' ? (
     <ViewUniform
       actions={input.actions.actions}

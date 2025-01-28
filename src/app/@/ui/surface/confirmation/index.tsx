@@ -2,8 +2,8 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Typography } from '~/@/ui'
 import { type DrawerInput } from '~/@/ui/drawer'
-import { ScreenSize } from '../../frontend/screen-size'
-import { SurfaceLayout } from '../surface-layout'
+import { ScreenSize } from '~/app/@/frontend/screen-size'
+import { SurfaceLayout } from '~/app/@/ui/surface-layout'
 
 export type SurfaceConfirmationProps = DrawerInput & {
   ctx: {

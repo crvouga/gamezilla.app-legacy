@@ -32,7 +32,7 @@ export type ScreenActionsSpaceBetween = {
 
 export type ScreenActions = ScreenActionsUniform | ScreenActionsSpaceBetween
 
-export type ScreenActionProps = {
+export type ScreenActionBarProps = {
   id: string
   ctx: {
     t: Translator

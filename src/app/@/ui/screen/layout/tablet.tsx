@@ -1,7 +1,7 @@
 import { cn } from '~/@/ui'
-import { CancelSubmitButtons } from '../form/cancel-submit-buttons'
-import { ScreenActionVerticalBar } from './screen-action-bar/vertical-bar'
-import { ScreenNavBarTablet } from './screen-nav-bar/tablet'
+import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
+import { ScreenActionVerticalBar } from '../action-bar/vertical-bar'
+import { ScreenNavBarTablet } from '../nav-bar/tablet'
 import { ScreenLayoutProps } from './props'
 
 export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {

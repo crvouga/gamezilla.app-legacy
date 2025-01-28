@@ -1,7 +1,7 @@
-import { CancelSubmitButtons } from '../form/cancel-submit-buttons.tsx'
-import { ScreenActionHorizontalBar } from './screen-action-bar/horizontal-bar.tsx'
-import { ScreenLayoutProps } from './props'
-import { ScreenNavBarMobile } from './screen-nav-bar/mobile.tsx'
+import { CancelSubmitButtons } from '../../form/cancel-submit-buttons.tsx'
+import { ScreenActionHorizontalBar } from '../action-bar/horizontal-bar.tsx'
+import { ScreenLayoutProps } from './props.tsx'
+import { ScreenNavBarMobile } from '../nav-bar/mobile.tsx'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.form ? 'form' : 'div'

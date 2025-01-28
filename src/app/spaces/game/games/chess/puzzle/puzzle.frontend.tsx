@@ -14,7 +14,7 @@ import {
   cn,
 } from '~/@/ui'
 import { APP_SOUND, AppFrontendCmd, playSound, sendToBackend } from '~/app/@/frontend/cmd'
-import { ScreenAction } from '~/app/@/ui/screen-layout/screen-action-bar/props'
+import { ScreenAction } from '~/app/@/ui/screen/action-bar/props'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../@/ui/layout-game'

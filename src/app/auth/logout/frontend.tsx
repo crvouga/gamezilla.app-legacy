@@ -1,7 +1,7 @@
 import { NotAsked, Ok } from '~/@/result'
 import { APP_SOUND, playSound, sendToBackend, showToast } from '~/app/@/frontend/cmd'
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
-import { SurfaceConfirmation } from '~/app/@/ui/surface-confirmation'
+import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from '../types'
 
 //

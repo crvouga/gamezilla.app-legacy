@@ -1,11 +1,11 @@
 import { Spinner, Typography, cn } from '~/@/ui'
 import { VDom } from '~/@/vdom/vdom'
-import { ScreenNavBarTabletRoot } from '../screen-nav-bar/tablet'
-import { ScreenAction, ScreenActionProps } from './props'
+import { ScreenNavBarTabletRoot } from '../nav-bar/tablet'
+import { ScreenAction, ScreenActionBarProps } from './props'
 
 const SIZE = 'md' as 'md' | 'sm'
 
-const View = (input: ScreenActionProps & { renderNavBar?: () => VDom }) => {
+const View = (input: ScreenActionBarProps & { renderNavBar?: () => VDom }) => {
   return (
     <div className='flex shrink-0 flex-col gap-1 px-2 pb-6'>
       <ScreenNavBarTabletRoot>{input.renderNavBar?.()}</ScreenNavBarTabletRoot>

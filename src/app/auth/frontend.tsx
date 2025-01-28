@@ -10,7 +10,7 @@ import { AuthSMSFrontend } from './auth-sms/frontend'
 import { ContinueAsGuestFrontend } from './continue-as-guest/frontend'
 import { LogoutFrontend } from './logout/frontend'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
-import { ScreenBodyRoot } from '../@/ui/screen-layout'
+import { ScreenBodyRoot } from '../@/ui/screen/layout'
 
 //
 //
