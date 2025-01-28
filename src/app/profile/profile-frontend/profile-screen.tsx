@@ -2,7 +2,7 @@ import { Avatar, Button, IconArrowLeftOnRect, IconUserPen, SpinnerBlock, Typogra
 import { Gutter } from '~/@/ui/gutter'
 import { Profile } from '~/app/@/data/profile'
 import type { UserId } from '~/app/@/data/user-id'
-import { ScreenBodyContent, ScreenLayout } from '~/app/@/ui/screen-layout'
+import { ScreenBodyRoot, ScreenLayout } from '~/app/@/ui/screen-layout'
 import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
 
 const View = (input: {
@@ -40,35 +40,25 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
       isTopLevel
       ctx={input.ctx}
       parent={input.ctx.parentScreen}
-      nav={{
-        title: input.ctx.t('username', input.profile.username),
-      }}
+      nav={{ title: input.ctx.t('username', input.profile.username) }}
       id='profile-screen'
       renderBody={() => (
-        <ScreenBodyContent className='gap-4 p-6'>
+        <ScreenBodyRoot className='gap-4 p-6'>
           <Avatar className='h-28 w-28' src={input.profile?.avatarUrl} alt='profile avatar' />
           <Button
-            onClick={() =>
-              input.dispatch({
-                t: 'clicked-edit-profile-button',
-              })
-            }
+            onClick={() => input.dispatch({ t: 'clicked-edit-profile-button' })}
             className='w-full'
             iconStart={(iconInput) => <IconUserPen {...iconInput} />}
             text={input.ctx.t('profile.update-profile')}
           />
           <Button
-            onClick={() =>
-              input.dispatch({
-                t: 'clicked-logout-button',
-              })
-            }
+            onClick={() => input.dispatch({ t: 'clicked-logout-button' })}
             className='w-full'
             iconStart={(iconInput) => <IconArrowLeftOnRect {...iconInput} />}
             text={input.ctx.t('auth.logout')}
           />
           <Gutter variant='screen' />
-        </ScreenBodyContent>
+        </ScreenBodyRoot>
       )}
     />
   )
@@ -84,19 +74,13 @@ const ViewOtherProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch:
       nav={{
         title: input.ctx.t('username', input.profile.username),
         onBack: () =>
-          input.dispatch({
-            t: 'clicked-back-button',
-            from: {
-              t: 'profile',
-              userId: input.profile?.userId,
-            },
-          }),
+          input.dispatch({ t: 'clicked-back-button', from: { t: 'profile', userId: input.profile?.userId } }),
       }}
       renderBody={() => (
-        <div className='flex flex-col items-center justify-center gap-4 overflow-x-hidden p-4'>
+        <ScreenBodyRoot className='gap-4 p-6'>
           <Avatar className='h-28 w-28' src={input.profile?.avatarUrl} alt='profile avatar' />
           <Typography variant='title' text={input.ctx.t('username', input.profile.username)} />
-        </div>
+        </ScreenBodyRoot>
       )}
     />
   )
