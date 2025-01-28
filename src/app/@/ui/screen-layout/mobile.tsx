@@ -25,6 +25,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
 
       {input.parent?.actions && (
         <>
+          {input.parent.renderMiniPlayer?.()}
           <ScreenActionsHorizontalBar.View
             size={input.parent.actions.size}
             id={input.parent.actions.id ?? `${input.id}-actions`}
