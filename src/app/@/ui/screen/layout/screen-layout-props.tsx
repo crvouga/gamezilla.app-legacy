@@ -33,7 +33,7 @@ export type NavBarProps = {
   onBack?: () => void
 }
 
-export type ParentScreenProps = Pick<ScreenLayoutProps, 'actionBar' | 'navBar' | 'renderMiniPlayer' | 'parentScreen'>
+export type ParentScreenProps = Omit<ScreenLayoutProps, 'ctx' | 'renderBody'>
 
 export type ScreenLayoutProps = {
   id: string

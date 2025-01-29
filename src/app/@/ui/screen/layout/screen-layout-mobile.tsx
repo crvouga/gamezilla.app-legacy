@@ -2,35 +2,53 @@ import { Button } from '~/@/ui/button.tsx'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons.tsx'
 import { HorizontalActionBar } from '../action-bar/screen-action-bar-horizontal.tsx'
 import { ScreenNavBarMobile } from '../nav-bar/screen-nav-bar-mobile.tsx'
-import { ScreenLayoutProps } from './screen-layout-props.tsx'
+import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props.tsx'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.editAction ? 'form' : 'div'
 
-  const parentActionPosition = input.parentScreen?.actionBar?.position ?? 'bottom'
-  const parentActions = (
-    <>
-      {input.parentScreen?.renderMiniPlayer?.()}
-      {input.parentScreen?.actionBar && (
-        <HorizontalActionBar
-          {...input.parentScreen.actionBar}
-          id={input.parentScreen.actionBar.id ?? `${input.id}-actions`}
-          ctx={input.ctx}
-        />
-      )}
-    </>
+  const renderActionBars = (screen: ScreenLayoutProps | null): React.ReactNode[] => {
+    if (!screen) return []
+    const bars = []
+    if (screen.actionBar) {
+      const position = screen.actionBar.position ?? 'bottom'
+      bars.push(
+        <div key={screen.id} className={position === 'top' ? 'order-first' : 'order-last'}>
+          {screen.renderMiniPlayer?.()}
+          <HorizontalActionBar
+            {...screen.actionBar}
+            id={screen.actionBar.id ?? `${screen.id}-actions`}
+            ctx={screen.ctx}
+            key={screen.id}
+          />
+        </div>,
+      )
+    }
+    if (screen.parentScreen) {
+      bars.push(...renderActionBars(screen.parentScreen as ScreenLayoutProps))
+    }
+    return bars
+  }
+
+  const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps | null): React.ReactNode[] => {
+    if (!screen) return []
+    const bars = []
+    if (screen.navBar) {
+      bars.push(
+        <ScreenNavBarMobile key={screen.id} ctx={ctx} onBack={screen.navBar.onBack} title={screen.navBar.title} />,
+      )
+    }
+    if (screen.parentScreen) {
+      bars.push(...renderNavBars(ctx, screen.parentScreen))
+    }
+    return bars
+  }
+
+  const topBars = renderActionBars(input).filter(
+    (_, i) => input.actionBar?.position === 'top' || (input.parentScreen?.actionBar?.position === 'top' && i > 0),
   )
-
-  const actionPosition = input.actionBar?.position ?? 'bottom'
-
-  const actions = (
-    <>
-      {input.renderMiniPlayer?.()}
-
-      {input.actionBar && (
-        <HorizontalActionBar {...input.actionBar} id={input.actionBar.id ?? `${input.id}-actions`} ctx={input.ctx} />
-      )}
-    </>
+  const bottomBars = renderActionBars(input).filter(
+    (_, i) => input.actionBar?.position !== 'top' || (input.parentScreen?.actionBar?.position !== 'top' && i > 0),
   )
 
   return (
@@ -41,11 +59,9 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         input.editAction?.onSubmit()
       }}
     >
-      {parentActionPosition === 'top' && parentActions}
+      {topBars}
 
-      {input.navBar && <ScreenNavBarMobile ctx={input.ctx} onBack={input.navBar.onBack} title={input.navBar.title} />}
-
-      {actionPosition === 'top' && actions}
+      {renderNavBars(input.ctx, input)}
 
       <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
         {input.renderBody()}
@@ -69,9 +85,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
 
       {input.editAction && <CancelSubmitButtons {...input.editAction} />}
 
-      {actionPosition === 'bottom' && actions}
-
-      {parentActionPosition === 'bottom' && parentActions}
+      {bottomBars}
     </Element>
   )
 }

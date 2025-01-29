@@ -2,7 +2,7 @@ import { IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~
 import { SurfaceLayout } from '../../surface/layout'
 import { ScreenAction, ScreenActionBarProps, ScreenActionsSpaceBetween, ScreenActionsUniform } from './props'
 
-const DEFAULT_LIMIT = 4
+const DEFAULT_LIMIT = Infinity
 
 const Uniform = (input: ScreenActionBarProps & ScreenActionsUniform) => {
   const size = input.size ?? 'md'

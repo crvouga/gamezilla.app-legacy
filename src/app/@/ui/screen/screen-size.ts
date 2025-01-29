@@ -1,3 +1,5 @@
+import { getWindowWidth } from '~/@/browser/browser'
+
 export type ScreenSize = 'mobile' | 'tablet'
 
 const MAX_MOBILE_SCREEN_WIDTH = 800
@@ -11,7 +13,7 @@ const to = (width: number): ScreenSize => {
 }
 
 const get = (): ScreenSize => {
-  return to(typeof window === 'undefined' ? 0 : window.innerWidth)
+  return to(getWindowWidth())
 }
 
 export const ScreenSize = {

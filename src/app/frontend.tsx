@@ -1,7 +1,6 @@
 import { Browser } from '~/@/browser'
 import { DbConnSql } from '~/@/db-conn-sql/frontend/impl'
 import { Eff } from '~/@/eff'
-import { eq } from '~/@/equals/equals'
 import { HttpClient } from '~/@/http-client'
 import { HttpServerImpl } from '~/@/http-server/http-server-impl'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
@@ -520,6 +519,7 @@ const toScreenLayoutProps = (input: {
   const screenProfile: Screen = { n: 'profile', t: 'profile', userId: ctx.currentUserId }
   const pushSpaceList = () => input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } })
   return {
+    id: 'app-screen-layout',
     parentScreen: null,
     renderMiniPlayer: () => {
       if (!isAppFrontendCtx(input.ctx)) return null
@@ -538,13 +538,13 @@ const toScreenLayoutProps = (input: {
           {
             label: ctx.t('spaces.spaces'),
             icon: (input) => <IconGamepad {...input} />,
-            color: eq(input.model.currentScreen.currentScreen, screenSpace) ? 'selected' : 'inherit',
+            color: input.model.currentScreen.currentScreen.n === 'spaces' ? 'selected' : 'inherit',
             onClick: pushSpaceList,
           },
           {
             label: ctx.t('profile.profile'),
             icon: (input) => <IconUserCircle {...input} />,
-            color: eq(input.model.currentScreen.currentScreen, screenProfile) ? 'selected' : 'inherit',
+            color: input.model.currentScreen.currentScreen.n === 'profile' ? 'selected' : 'inherit',
             onClick() {
               input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } })
             },

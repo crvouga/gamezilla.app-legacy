@@ -51,6 +51,7 @@ const View = (input: {
       const spaceCtxFinal: SpaceFrontendCtx = {
         ...spaceCtx,
         parentScreen: {
+          id: 'space-screen',
           parentScreen: null,
           actionBar: {
             id: 'space-actions',

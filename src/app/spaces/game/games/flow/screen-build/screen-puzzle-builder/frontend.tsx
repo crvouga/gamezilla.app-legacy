@@ -185,6 +185,7 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
   if (!puzzleBuilder) return input.ctx.parentScreen
   return {
+    id: 'puzzle-builder-screen',
     parentScreen: input.ctx.parentScreen,
     actionBar: {
       id: 'puzzle-builder-actions',
@@ -257,6 +258,7 @@ const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
           ctx={input.ctx}
           dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
           screenLayout={{
+            parentScreen: input.ctx.parentScreen,
             navBar: {
               onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
               title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),

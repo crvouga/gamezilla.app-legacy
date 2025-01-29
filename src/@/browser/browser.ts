@@ -237,16 +237,22 @@ export const getDocumentVisibilityState = (): VisibilityState => {
   return document.visibilityState
 }
 
-const windowWidth = PubSub.create<number>()
+const windowWidth = PubSub.create<{ width: number }>()
 
 export const onWindowResize = <T>(fn: (input: { width: number }) => T): Sub<T> => {
-  return Sub.map(windowWidth, (width) => fn({ width }))
+  return Sub.map(windowWidth, fn)
 }
 
 if (typeof window !== 'undefined') {
-  window.addEventListener('resize', () => {
-    windowWidth.pub(window.innerWidth)
-  })
+  window.addEventListener(
+    'resize',
+    () => {
+      windowWidth.pub({ width: window.innerWidth })
+    },
+    {
+      passive: true,
+    },
+  )
 }
 
 export const getWindowWidth = (): number => {
