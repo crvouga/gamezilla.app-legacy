@@ -44,9 +44,10 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
               onBack={input.navBar.onBack}
               title={input.navBar.title}
               renderEnd={() =>
-                input.form && (
-                  <div className='w-full max-w-xs'>
-                    <CancelSubmitButtons {...input.form} size='sm' />
+                (input.form || input.renderFab) && (
+                  <div className='flex w-full max-w-xs items-center justify-end'>
+                    {input.form && <CancelSubmitButtons {...input.form} size='sm' />}
+                    {input.renderFab?.()}
                   </div>
                 )
               }
@@ -57,7 +58,6 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
             {input.renderBody()}
             {(input.renderFab || input.renderMiniPlayer || input.parent?.renderMiniPlayer) && (
               <div className='absolute bottom-8 right-8 bg-black'>
-                {input.renderFab?.()}
                 {input.renderMiniPlayer?.()}
                 {input.parent?.renderMiniPlayer?.()}
               </div>

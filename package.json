@@ -26,7 +26,7 @@
     "dir:reset:hard": "rm -rf dist node_modules bun.lock && bun dir:reset",
     "env": "export $(grep -v '^#' .env.test | xargs)",
     "frontend": "bun --bun vite --host 0.0.0.0",
-    "frontend:build": "bun x vite build -d",
+    "frontend:build": "bun x vite build",
     "frontend:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./src/frontend.tsx",
     "frontend:serve": "bun x serve -s dist -p 3001",
     "gen:events": "bun ./src/@/events/events-gen.ts",

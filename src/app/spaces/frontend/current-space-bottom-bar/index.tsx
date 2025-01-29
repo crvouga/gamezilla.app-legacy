@@ -1,10 +1,11 @@
 import { APP_SOUND, playSound, pushScreen } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { Avatar, Button, Typography } from '~/@/ui'
+import { Avatar, Button, cn, Typography } from '~/@/ui'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
 import { SpacesCore } from '../../core/core'
 import { GameCoverArt } from '../../game/games/cover-art'
 import type { ModelFrontend, MsgFrontend } from '../../types'
+import { SPACE_CARD_GRADIENT_CLASS_NAME } from '../../list-spaces/space-card/space-card-gradient'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
@@ -36,65 +37,68 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
   const userCount = Object.values(space.users).length
   const isCurrentUserHost = input.ctx.currentUserId === space.hostId
   return (
-    <div className='flex w-full flex-col items-center justify-center overflow-hidden rounded-lg border text-inherit'>
-      <div className='h-1 w-full bg-gradient-to-tr from-blue-700 via-blue-600 to-sky-500' />
-      <div className='flex w-full items-center overflow-hidden text-inherit'>
-        <button
-          type='button'
-          className='flex flex-1 items-center gap-3 overflow-hidden'
-          onClick={() => input.dispatch({ t: 'clicked-current-space-bottom-bar' })}
-        >
-          <div className='p-2'>
-            {!space.game ? (
-              <Avatar src={hostProfile?.avatarUrl} alt='Host Avatar' className='size-14' />
-            ) : (
-              <div className='size-14 overflow-hidden rounded border'>
-                <GameCoverArt gameName={space.game.t} />
-              </div>
-            )}
-          </div>
-
-          <div className='flex flex-1 flex-col gap-0.5 overflow-hidden py-3 pr-3'>
-            <Typography
-              variant='title'
-              className='truncate text-left text-lg font-normal'
-              text={
-                hostProfile
-                  ? input.ctx.t('spaces.current-space', {
-                      hostUsername: hostProfile.username,
-                    })
-                  : input.ctx.t('spaces.space')
-              }
-            />
-            <Typography
-              variant='subtitle'
-              className='truncate text-left'
-              text={input.ctx.t('space-card.people-count', userCount)}
-            />
-          </div>
-        </button>
-
-        <div className='pr-4'>
-          {isCurrentUserHost && (
-            <Button
-              color='danger'
-              variant='text'
-              text={input.ctx.t('spaces.end')}
-              onClick={() => input.dispatch({ t: 'clicked-end-space-button', spaceId: space.spaceId })}
-              size='sm'
-            />
-          )}
-
-          {!isCurrentUserHost && (
-            <Button
-              color='danger'
-              variant='text'
-              text={input.ctx.t('spaces.leave')}
-              onClick={() => input.dispatch({ t: 'clicked-leave-space-button', spaceId: space.spaceId })}
-              size='sm'
-            />
+    <div
+      className={cn(
+        'flex w-full flex-row items-center justify-center overflow-hidden rounded-lg border text-inherit',
+        SPACE_CARD_GRADIENT_CLASS_NAME,
+        'rounded-lg',
+      )}
+    >
+      <button
+        type='button'
+        className='flex flex-1 items-center gap-3 overflow-hidden'
+        onClick={() => input.dispatch({ t: 'clicked-current-space-bottom-bar' })}
+      >
+        <div className='p-2'>
+          {!space.game ? (
+            <Avatar src={hostProfile?.avatarUrl} alt='Host Avatar' className='size-14' />
+          ) : (
+            <div className='size-14 overflow-hidden rounded border'>
+              <GameCoverArt gameName={space.game.t} />
+            </div>
           )}
         </div>
+
+        <div className='flex flex-1 flex-col gap-0.5 overflow-hidden py-3 pr-3'>
+          <Typography
+            variant='title'
+            className='truncate text-left text-lg font-normal'
+            text={
+              hostProfile
+                ? input.ctx.t('spaces.current-space', {
+                    hostUsername: hostProfile.username,
+                  })
+                : input.ctx.t('spaces.space')
+            }
+          />
+          <Typography
+            variant='subtitle'
+            className='truncate text-left'
+            text={input.ctx.t('space-card.people-count', userCount)}
+          />
+        </div>
+      </button>
+
+      <div className='pr-4'>
+        {isCurrentUserHost && (
+          <Button
+            color='danger'
+            variant='text'
+            text={input.ctx.t('spaces.end')}
+            onClick={() => input.dispatch({ t: 'clicked-end-space-button', spaceId: space.spaceId })}
+            size='sm'
+          />
+        )}
+
+        {!isCurrentUserHost && (
+          <Button
+            color='danger'
+            variant='text'
+            text={input.ctx.t('spaces.leave')}
+            onClick={() => input.dispatch({ t: 'clicked-leave-space-button', spaceId: space.spaceId })}
+            size='sm'
+          />
+        )}
       </div>
     </div>
   )

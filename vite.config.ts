@@ -1,6 +1,7 @@
 import preact from '@preact/preset-vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig, PluginOption } from 'vite'
+// @ts-expect-error missing types
 import inferno from 'vite-plugin-inferno'
 // import topLevelAwait from 'vite-plugin-top-level-await'
 // import wasm from 'vite-plugin-wasm'
@@ -34,9 +35,6 @@ export default defineConfig({
     // https://pglite.dev/docs/bundler-support
     exclude: ['@electric-sql/pglite', '@journeyapps/wa-sqlite', '@powersync/web'],
     include: ['@powersync/web > js-logger'],
-    esbuildOptions: {
-      target: 'esnext',
-    },
   },
   build: {
     target: 'esnext',

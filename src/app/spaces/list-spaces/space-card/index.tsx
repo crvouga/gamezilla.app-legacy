@@ -4,6 +4,7 @@ import { ViewHostChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/h
 import { ViewYouChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/you-chip'
 import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
 import { SpaceState } from '../../core/space-state'
+import { SPACE_CARD_GRADIENT_CLASS_NAME } from './space-card-gradient'
 
 const MAX_AVATAR_COUNT = 3
 
@@ -32,7 +33,8 @@ export const ViewSpaceCard = (input: { ctx: BaseFrontendCtx; state: SpaceState.S
       onClick={input.onClick}
       disabled={!input.onClick}
       className={cn(
-        'flex flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr from-blue-700 via-blue-600 to-sky-500 p-4',
+        SPACE_CARD_GRADIENT_CLASS_NAME,
+        'flex flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr p-4',
         input.onClick && 'clickable',
       )}
     >
