@@ -166,7 +166,7 @@ export const View = (input: {
             t: 'clicked-back',
           }),
       }}
-      form={{
+      editAction={{
         onSubmit: () => {
           input.dispatch({
             t: 'clicked-send-login-link',

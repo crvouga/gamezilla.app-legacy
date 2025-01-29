@@ -8,7 +8,7 @@ export type ScreenLayoutActionBarProps = Partial<ScreenActionBarProps> & {
   variant: ScreenActionBarProps['variant']
 }
 
-export type ScreenLayoutFormProps = {
+export type EditActionProps = {
   onSubmit: () => void
   cancelText: TranslatedText
   submitText: TranslatedText
@@ -18,7 +18,7 @@ export type ScreenLayoutFormProps = {
   submitDisabled: boolean
 }
 
-export type ScreenLayoutNavBarProps = {
+export type NavBarProps = {
   title: TranslatedText
   subtitle?: TranslatedText | null
   onBack?: () => void
@@ -30,7 +30,7 @@ export type ScreenLayoutProps = {
     t: Translator
     screenSize: ScreenSize
   }
-  navBar?: ScreenLayoutNavBarProps
+  navBar?: NavBarProps
   isTopLevel?: boolean
   actionPosition?: 'top' | 'bottom'
   parent?: Pick<ScreenLayoutProps, 'actionBar' | 'navBar' | 'renderMiniPlayer'> | null
@@ -38,5 +38,5 @@ export type ScreenLayoutProps = {
   renderMiniPlayer?: () => VDom
   renderBody: () => VDom
   renderFab?: () => VDom
-  form?: ScreenLayoutFormProps
+  editAction?: EditActionProps
 }

@@ -100,7 +100,7 @@ export const View = (input: {
         title: input.ctx.t('profile.update-username.update-username'),
         onBack: () => input.dispatch({ t: 'profile.update-username.clicked-back' }),
       }}
-      form={{
+      editAction={{
         onSubmit: () => input.dispatch({ t: 'profile.update-username.clicked-save' }),
         submitText: input.ctx.t('app.save'),
         cancelText: input.ctx.t('app.cancel'),

@@ -4,7 +4,7 @@ import { ScreenLayoutProps } from './props.tsx'
 import { ScreenNavBarMobile } from '../nav-bar/mobile.tsx'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
-  const Element = input.form ? 'form' : 'div'
+  const Element = input.editAction ? 'form' : 'div'
   const actionPosition = input.actionPosition ?? 'bottom'
   const actions = (
     <>
@@ -37,7 +37,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       className='flex w-full flex-1 flex-col overflow-hidden'
       onSubmit={(e) => {
         e.preventDefault()
-        input.form?.onSubmit()
+        input.editAction?.onSubmit()
       }}
     >
       {input.navBar && <ScreenNavBarMobile ctx={input.ctx} onBack={input.navBar.onBack} title={input.navBar.title} />}
@@ -47,7 +47,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         {input.renderBody()}
         {input.renderFab && <div className='absolute bottom-6 right-4 bg-black'>{input.renderFab()}</div>}
       </div>
-      {input.form && <CancelSubmitButtons {...input.form} />}
+      {input.editAction && <CancelSubmitButtons {...input.editAction} />}
       {actionPosition === 'bottom' && actions}
     </Element>
   )

@@ -450,7 +450,7 @@ const ViewSendCode: Module['View'] = (input) => {
             t: 'clicked-back-button',
           }),
       }}
-      form={{
+      editAction={{
         cancelDisabled: false,
         cancelText: input.ctx.t('app.cancel'),
         onCancel: () => {
@@ -531,7 +531,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
             t: 'clicked-back-button',
           }),
       }}
-      form={{
+      editAction={{
         cancelDisabled: false,
         cancelText: input.ctx.t('app.cancel'),
         onCancel: () => {

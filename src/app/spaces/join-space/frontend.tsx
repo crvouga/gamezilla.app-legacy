@@ -100,7 +100,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     <ScreenLayout
       id='join-space'
       ctx={input.ctx}
-      form={{
+      editAction={{
         onSubmit: () => input.dispatch({ t: 'submitted-join-space-form', spaceId: space.spaceId }),
         submitText: input.ctx.t('spaces.join-space'),
         cancelText: input.ctx.t('app.cancel'),

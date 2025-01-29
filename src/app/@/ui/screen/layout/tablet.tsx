@@ -5,14 +5,14 @@ import { ScreenNavBarTablet } from '../nav-bar/tablet'
 import { ScreenLayoutProps } from './props'
 
 export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
-  const Element = input.form ? 'form' : 'div'
+  const Element = input.editAction ? 'form' : 'div'
 
   return (
     <Element
       className='flex w-full flex-1 flex-col overflow-hidden'
       onSubmit={(e) => {
         e.preventDefault()
-        input.form?.onSubmit()
+        input.editAction?.onSubmit()
       }}
     >
       <div className={cn('flex w-full flex-1 overflow-hidden', input.isTopLevel ? 'flex-row' : 'flex-row-reverse')}>
@@ -44,9 +44,9 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
               onBack={input.navBar.onBack}
               title={input.navBar.title}
               renderEnd={() =>
-                (input.form || input.renderFab) && (
+                (input.editAction || input.renderFab) && (
                   <div className='flex w-full max-w-xs items-center justify-end'>
-                    {input.form && <CancelSubmitButtons {...input.form} size='sm' />}
+                    {input.editAction && <CancelSubmitButtons {...input.editAction} size='sm' />}
                     {input.renderFab?.()}
                   </div>
                 )

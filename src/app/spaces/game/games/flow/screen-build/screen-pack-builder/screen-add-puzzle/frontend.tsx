@@ -84,7 +84,7 @@ const View: FrontendModule['View'] = (input) => {
             },
           }),
       }}
-      form={{
+      editAction={{
         onSubmit: () => {
           input.dispatch({
             t: 'got-msg-space',
