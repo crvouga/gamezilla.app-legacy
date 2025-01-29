@@ -6,14 +6,17 @@ import { ScreenLayoutProps } from './props.tsx'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.editAction ? 'form' : 'div'
-  const actionPosition = input.actionPosition ?? 'bottom'
+  const actionPosition = input.actionBar?.position ?? 'bottom'
   const actions = (
     <>
       {input.renderMiniPlayer?.()}
+
       {input.parentScreen?.renderMiniPlayer?.()}
+
       {input.actionBar && (
         <HorizontalActionBar {...input.actionBar} id={input.actionBar.id ?? `${input.id}-actions`} ctx={input.ctx} />
       )}
+
       {input.parentScreen?.actionBar && (
         <HorizontalActionBar
           {...input.parentScreen.actionBar}
@@ -33,10 +36,12 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       }}
     >
       {input.navBar && <ScreenNavBarMobile ctx={input.ctx} onBack={input.navBar.onBack} title={input.navBar.title} />}
+
       {actionPosition === 'top' && actions}
 
       <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
         {input.renderBody()}
+
         {input.createAction && (
           <div className='absolute bottom-6 right-4 bg-black'>
             <Button
@@ -53,7 +58,9 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
           </div>
         )}
       </div>
+
       {input.editAction && <CancelSubmitButtons {...input.editAction} />}
+
       {actionPosition === 'bottom' && actions}
     </Element>
   )

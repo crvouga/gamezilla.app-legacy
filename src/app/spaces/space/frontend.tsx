@@ -54,10 +54,9 @@ const View = (input: {
           isTopLevel
           id='space'
           ctx={spaceCtx}
-          actionPosition='top'
           actionBar={{
-            // renderNavBar: () => <NavBarLogo onClick={() => inputNew.dispatch({ t: 'clicked-exit-space-button' })} />,
             id: 'space-actions',
+            position: 'top',
             variant: {
               t: 'space-between',
               start: [GoHome.viewAction(inputNew), People.viewAction(inputNew)],

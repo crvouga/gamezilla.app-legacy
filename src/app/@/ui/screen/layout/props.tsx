@@ -6,6 +6,7 @@ import { ScreenActionBarProps } from '../action-bar/props'
 
 export type ScreenLayoutActionBarProps = Partial<ScreenActionBarProps> & {
   variant: ScreenActionBarProps['variant']
+  position?: 'top' | 'bottom'
 }
 
 export type EditActionProps = {
@@ -40,7 +41,6 @@ export type ScreenLayoutProps = {
   }
   navBar?: NavBarProps
   isTopLevel?: boolean
-  actionPosition?: 'top' | 'bottom'
   parentScreen?: Pick<ScreenLayoutProps, 'actionBar' | 'navBar' | 'renderMiniPlayer'> | null
   actionBar?: ScreenLayoutActionBarProps | null
   renderMiniPlayer?: () => VDom
