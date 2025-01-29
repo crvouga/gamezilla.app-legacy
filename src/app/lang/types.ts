@@ -4,7 +4,7 @@ import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { AppBackendModule } from '../@/architecture/app-backend'
 import { AppFrontendCmd } from '../@/frontend/cmd'
 import { AnonymousFrontendCtx } from '../@/frontend/ctx'
-import { FrontendEvt } from '../@/frontend/evt'
+import { AppFrontendEvt } from '../@/frontend/evt'
 import type { TranslatorMsg } from '../@/frontend/translator'
 import { BackendCmd } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
@@ -57,7 +57,7 @@ export type FrontendModule = AppFrontendModule<{
   MsgToFrontend: MsgToFrontend
   Msg: MsgFrontend
   MsgCmdIn: null
-  MsgEvtIn: FrontendEvt
+  MsgEvtIn: AppFrontendEvt
   MsgCmdOut: AppFrontendCmd<{
     MsgToBackend: MsgToBackend
     MsgFrontend: MsgFrontend

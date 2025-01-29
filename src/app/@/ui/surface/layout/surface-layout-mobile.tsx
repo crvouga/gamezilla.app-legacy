@@ -20,14 +20,16 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
         }}
         name={props.ariaLabel}
       >
-        {props.header && (
-          <DrawerHeader
-            ctx={props.ctx}
-            title={props.header?.title ?? null}
-            onClose={props.header?.onClose ?? (() => {})}
-          />
-        )}
-        <div className='flex w-full flex-1 flex-col'>{props.renderBody()}</div>
+        <div className='flex w-full flex-col gap-4 p-6 pb-2'>
+          {props.header && (
+            <DrawerHeader
+              ctx={props.ctx}
+              title={props.header?.title ?? null}
+              onClose={props.header?.onClose ?? (() => {})}
+            />
+          )}
+          <div className='flex w-full flex-1 flex-col'>{props.renderBody()}</div>
+        </div>
         {props.form && (
           <CancelSubmitButtons
             variant={props.form?.variant}

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { FrontendEvt } from '~/app/@/frontend/evt'
+import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { APP_SOUND, SoundCmd, playSound } from '../../@/frontend/cmd'
 import { FixtureAppFrontend } from '../../@/frontend/fixture'
 import * as Sound from './index'
@@ -16,7 +16,7 @@ type Input =
     }
   | {
       ctx?: AppFrontendCtx
-      msgEvt: FrontendEvt
+      msgEvt: AppFrontendEvt
     }
 
 const Fixture = async () => {

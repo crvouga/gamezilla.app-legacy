@@ -48,7 +48,7 @@ export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
         submitDisabled: false,
         variant: input.variant,
       }}
-      renderBody={() => <Typography className='p-4' variant='body' text={input.body} />}
+      renderBody={() => <Typography variant='body' text={input.body} />}
     />
   )
 }

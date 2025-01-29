@@ -3,7 +3,7 @@ import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
 import type { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCtx } from '../@/frontend/ctx'
-import { FrontendEvt } from '../@/frontend/evt'
+import { AppFrontendEvt } from '../@/frontend/evt'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './types'
 
 //
@@ -147,7 +147,7 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: FrontendEvt
+  msg: AppFrontendEvt
   model: ModelFrontend
 }): {
   model: ModelFrontend

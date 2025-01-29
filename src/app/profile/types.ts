@@ -11,8 +11,8 @@ import { UserId } from '../@/data/user-id'
 import { Username } from '../@/data/username'
 import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
-import { FrontendEvt } from '../@/frontend/evt'
-import * as UpdateUsernameTypes from './update-username/update-username.types'
+import { AppFrontendEvt } from '../@/frontend/evt'
+import * as UpdateUsernameTypes from './update-username/types'
 //
 //
 //
@@ -39,7 +39,8 @@ export const profileCoreToProfile = (profile: ProfileCore): Profile => {
   }
 }
 
-export type ModelFrontend = UpdateUsernameTypes.ModelFrontend & {
+export type ModelFrontend = {
+  updateUsername: UpdateUsernameTypes.ModelFrontend
   profiles: {
     [userId: UserId]: Profile
   }
@@ -63,30 +64,18 @@ export type ModelFrontend = UpdateUsernameTypes.ModelFrontend & {
 
 export type MsgFrontend =
   | Req
-  | UpdateUsernameTypes.MsgFrontend
+  | { t: 'got-update-username-msg'; c: UpdateUsernameTypes.MsgFrontend }
   | {
       t: 'clicked-back-button'
       from:
-        | {
-            t: 'profile'
-            userId: UserId
-          }
-        | {
-            t: 'profile-avatar'
-          }
-        | {
-            t: 'profile-update'
-          }
-        | {
-            t: 'profile-update-username'
-          }
+        | { t: 'profile'; userId: UserId }
+        | { t: 'profile-avatar' }
+        | { t: 'profile-update' }
+        | { t: 'profile-update-username' }
     }
   | { t: 'inputted-username'; username: string }
   | { t: 'inputted-avatar-seed'; seed: string }
-  | {
-      t: 'inputted-avatar-style'
-      style: ProfileAvatarStyle
-    }
+  | { t: 'inputted-avatar-style'; style: ProfileAvatarStyle }
   | { t: 'clicked-generate-random-seed' }
   | { t: 'clicked-logout-button' }
   | { t: 'clicked-edit-profile-button' }
@@ -94,10 +83,12 @@ export type MsgFrontend =
   | { t: 'clicked-avatar' }
   | { t: 'clicked-update-username-button' }
 
-export type MsgBackend = UpdateUsernameTypes.MsgBackend | { t: 'handled'; clientId: ClientId; msg: MsgToFrontend }
+export type MsgBackend =
+  | { t: 'got-update-username-msg'; c: UpdateUsernameTypes.MsgBackend }
+  | { t: 'handled'; clientId: ClientId; msg: MsgToFrontend }
 
 export type MsgToFrontend =
-  | UpdateUsernameTypes.MsgToFrontend
+  | { t: 'got-update-username-msg'; c: UpdateUsernameTypes.MsgToFrontend }
   | {
       t: 'current-user-profile'
       result: Result<string, Profile>
@@ -106,7 +97,7 @@ export type MsgToFrontend =
     }
   | Res
 
-export type MsgToBackend = Req | UpdateUsernameTypes.MsgToBackend
+export type MsgToBackend = Req | { t: 'got-update-username-msg'; c: UpdateUsernameTypes.MsgToBackend }
 
 export type Req =
   | { t: 'find-one'; userId: UserId }
@@ -140,10 +131,10 @@ export type FrontendModule = AppFrontendModule<{
   MsgToBackend: MsgToBackend
   Ctx: FrontendCtx
   MsgCmdIn: ProfileCmd
-  MsgEvtIn: FrontendEvt
+  MsgEvtIn: AppFrontendEvt
   MsgCmdOut: AppFrontendCmd<{
     MsgFrontend: MsgFrontend
     MsgToBackend: MsgToBackend
   }>
-  MsgEvtOut: FrontendEvt
+  MsgEvtOut: AppFrontendEvt
 }>

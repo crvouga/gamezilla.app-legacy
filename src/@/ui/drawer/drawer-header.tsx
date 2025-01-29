@@ -7,7 +7,7 @@ import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
 
 export const DrawerHeader = (input: { ctx: { t: Translator }; title: TranslatedText | null; onClose?: () => void }) => {
   return (
-    <div className='flex w-full items-center px-4 pb-2 pt-4'>
+    <div className='flex w-full items-center'>
       <div className='flex-1'>{input.title && <Typography text={input.title} variant='title' />}</div>
       <IconButton
         label={input.ctx.t('drawer.close')}

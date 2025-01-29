@@ -1,0 +1,103 @@
+import { RequestResponse } from '~/@/request-response/request-response'
+import { TextField } from '~/@/ui'
+import { pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
+import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { FrontendModule } from './types'
+
+const init: FrontendModule['init'] = (input) => {
+  return {
+    model: {
+      'profile.update-username.username': input.ctx.currentUserId
+        ? (input.ctx.profiles[input.ctx.currentUserId]?.username ?? '')
+        : '',
+    },
+  }
+}
+
+const update: FrontendModule['update'] = (input) => {
+  switch (input.msg?.t) {
+    case 'profile.update-username.clicked-back': {
+      return {
+        model: input.model,
+        msgCmd: [pushScreen({ t: 'profile-edit', n: 'profile' })],
+      }
+    }
+
+    case 'profile.update-username.clicked-save': {
+      return {
+        model: {
+          ...input.model,
+          'profile-update-username.request': RequestResponse.startedRequest(input.ctx.now),
+        },
+        msgCmd: [
+          sendToBackend({
+            t: 'profile.update-username.clicked-save',
+            username: input.model['profile.update-username.username'] ?? '',
+          }),
+        ],
+      }
+    }
+
+    case 'profile.update-username.inputted-username': {
+      return {
+        model: {
+          ...input.model,
+          'profile.update-username.username': input.msg.username,
+        },
+      }
+    }
+  }
+
+  switch (input.msgEvt?.t) {
+    case 'profile-evt.current-user-profile': {
+      return init({ ctx: input.ctx })
+    }
+
+    case 'screen-evt.screen-changed': {
+      if (input.msgEvt.screen.t === 'profile-edit-username') {
+        return init({ ctx: input.ctx })
+      }
+      return { model: input.model }
+    }
+  }
+
+  return { model: input.model }
+}
+
+const View: FrontendModule['View'] = (input) => {
+  return (
+    <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
+      id='profile-update-username'
+      ctx={input.ctx}
+      navBar={{
+        title: input.ctx.t('profile.update-username.update-username'),
+        onBack: () => input.dispatch({ t: 'profile.update-username.clicked-back' }),
+      }}
+      editAction={{
+        onSubmit: () => input.dispatch({ t: 'profile.update-username.clicked-save' }),
+        submitText: input.ctx.t('app.save'),
+        cancelText: input.ctx.t('app.cancel'),
+        onCancel: () => input.dispatch({ t: 'profile.update-username.clicked-back' }),
+        submitLoading: input.model['profile-update-username.request']?.t === 'loading',
+        submitDisabled: false,
+        cancelDisabled: false,
+      }}
+      renderBody={() => (
+        <div className='flex w-full flex-col gap-4 p-4'>
+          <TextField
+            id='username'
+            label={input.ctx.t('username.username-label')}
+            value={input.model['profile.update-username.username'] ?? ''}
+            onChange={(username) => input.dispatch({ t: 'profile.update-username.inputted-username', username })}
+          />
+        </div>
+      )}
+    />
+  )
+}
+export const UpdateUsernameFrontend = {
+  init,
+  update,
+  View,
+}

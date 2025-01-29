@@ -18,7 +18,7 @@ import {
   type AppFrontendCmd,
 } from '~/app/@/frontend/cmd'
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
-import { FrontendEvt } from '~/app/@/frontend/evt'
+import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { AlertError, IconMobilePhone, Select, TextField, Typography } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from './types'
@@ -39,12 +39,12 @@ type Module = AppFrontendModule<{
   MsgToBackend: MsgToBackend
   Ctx: BaseFrontendCtx
   MsgCmdIn: null
-  MsgEvtIn: FrontendEvt
+  MsgEvtIn: AppFrontendEvt
   MsgCmdOut: AppFrontendCmd<{
     MsgFrontend: MsgFrontend
     MsgToBackend: MsgToBackend
   }>
-  MsgEvtOut: FrontendEvt
+  MsgEvtOut: AppFrontendEvt
 }>
 
 //

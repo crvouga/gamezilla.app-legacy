@@ -33,68 +33,57 @@ export const update: BackendModule['update'] = async (input) => {
 }
 
 const updateFromMsg: BackendModule['update'] = async ({ msg }) => {
-  if (!msg) {
-    return {}
-  }
+  if (!msg) return {}
 
   switch (msg.t) {
-    case 'profile.update-username.noop': {
+    case 'got-update-username-msg': {
       return {}
     }
     case 'handled': {
-      return {
-        msgCmd: [sendToFrontend([msg.clientId], msg.msg)],
-      }
+      return { msgCmd: [sendToFrontend([msg.clientId], msg.msg)] }
     }
   }
 }
 
 const updateFromFrontend: BackendModule['update'] = async ({ msgFrontend, ctx }) => {
-  if (!msgFrontend) {
-    return {}
-  }
+  if (!msgFrontend) return {}
 
-  if (msgFrontend.t === 'profile.update-username.clicked-save') {
-    return {}
-  }
+  switch (msgFrontend.t) {
+    case 'got-update-username-msg': {
+      return {}
+    }
+    default: {
+      const userId = msgFrontend.userId
+      if (!userId) return {}
+      const ProfileDb = createProfileDb({ dbConnSql: ctx.dbConnSql })
 
-  const userId = msgFrontend.userId
+      const result = await handler({
+        ProfileDb,
+        msg: msgFrontend,
+        ctx: {
+          ...ctx,
+          currentUserId: userId,
+        },
+      })
 
-  if (!userId) {
-    return {}
-  }
-
-  const ProfileDb = createProfileDb({
-    dbConn: ctx.dbConnSql,
-  })
-
-  const result = await handler({
-    ProfileDb,
-    msg: msgFrontend,
-    ctx: {
-      ...ctx,
-      currentUserId: userId,
-    },
-  })
-
-  return {
-    msgCmd: [
-      sendToFrontend([msgFrontend.clientId], {
-        ...msgFrontend,
-        result,
-      }),
-    ],
+      return {
+        msgCmd: [
+          sendToFrontend([msgFrontend.clientId], {
+            ...msgFrontend,
+            result,
+          }),
+        ],
+      }
+    }
   }
 }
 
 const updateFromEvent: BackendModule['update'] = async ({ msgEvt, ctx }) => {
-  if (!msgEvt) {
-    return {}
-  }
+  if (!msgEvt) return {}
 
   switch (msgEvt.t) {
     case 'auth-evt.client-authenticated': {
-      const ProfileDb = createProfileDb({ dbConn: ctx.dbConnSql })
+      const ProfileDb = createProfileDb({ dbConnSql: ctx.dbConnSql })
       const result = await findElseInsertNew({
         ProfileDb,
         userId: msgEvt.user.userId,

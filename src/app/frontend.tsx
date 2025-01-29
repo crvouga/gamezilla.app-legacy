@@ -17,7 +17,7 @@ import { setupNewPowerSyncDatabase } from '~/service-powersync/frontend/database
 import { ILogger, Logger } from '../@/logger'
 import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
-import { FrontendEvt } from './@/frontend/evt'
+import { AppFrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
 import { ViewAppRoot } from './@/ui/app-root/app-root'
 import { LogoBlock } from './@/ui/logo/logo-block'
@@ -210,7 +210,7 @@ export const update = (input: {
 type Output = {
   model: ModelFrontend
   eff: Eff<MsgFrontend>
-  msgEvt: FrontendEvt[]
+  msgEvt: AppFrontendEvt[]
   msgCmd: AppFrontendCmd<{
     MsgToBackend: MsgToBackend
     MsgFrontend: MsgFrontend
@@ -250,7 +250,7 @@ const updateChild = (input: {
   model: ModelFrontend
   msg?: MsgFrontend
   msgBackend?: MsgToFrontend
-  msgEvt?: FrontendEvt
+  msgEvt?: AppFrontendEvt
   msgCmd?: AppFrontendCmd<{
     MsgToBackend: MsgToBackend
     MsgFrontend: MsgFrontend
@@ -359,7 +359,7 @@ const updateChild = (input: {
       Eff.tag('wire', wire.eff),
       Eff.tag('lang', lang.eff),
     ]),
-    msgEvt: Msg.batch<FrontendEvt>(
+    msgEvt: Msg.batch<AppFrontendEvt>(
       auth.msgEvt,
       profile.msgEvt,
       screen.msgEvt,

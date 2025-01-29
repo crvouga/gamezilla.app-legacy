@@ -1,16 +1,15 @@
-import { TranslatedText } from '~/@/l18n'
+import { Eff } from '~/@/eff'
 import { Loading, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { Avatar, Button, IconChevronRight, Typography } from '~/@/ui'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
-import { back, logout, pushScreen, replaceScreen, sendToBackend } from '../@/frontend/cmd'
-import { ScreenLayout } from '../@/ui/screen/layout/screen-layout'
+import { AppFrontendCmd, back, logout, pushScreen, replaceScreen, sendToBackend } from '../@/frontend/cmd'
 import { ProfileScreen } from './profile-frontend/profile-screen'
 import { UpdateAvatarScreen } from './profile-frontend/update-avatar-screen'
+import { UpdateProfileScreen } from './profile-frontend/update-profile-screen'
 import type { FrontendModule, ModelFrontend } from './types'
-import * as UpdateUsernameFrontend from './update-username/update-username.frontend'
+import { UpdateUsernameFrontend } from './update-username/frontend'
 
 //
 //
@@ -21,12 +20,13 @@ import * as UpdateUsernameFrontend from './update-username/update-username.front
 //
 
 export const init: FrontendModule['init'] = ({ ctx }) => {
+  const updateUsername = UpdateUsernameFrontend.init({ ctx })
   const initialModel: ModelFrontend = {
     profiles: {},
     requests: {},
     draft: {},
+    updateUsername: updateUsername.model,
   }
-
   const model = initialModel
 
   if (ctx.currentScreen.n === 'profile' && ctx.currentScreen.t === 'profile') {
@@ -47,13 +47,21 @@ export const init: FrontendModule['init'] = ({ ctx }) => {
 export const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(
     { model: input.model },
-    (model) =>
-      UpdateUsernameFrontend.update({
+    (model) => {
+      const updated = UpdateUsernameFrontend.update({
         ctx: input.ctx,
-        msg: input.msg && 'n' in input?.msg && input.msg.n === 'profile.update-username' ? input.msg : null,
-        model,
+        msg: input.msg?.t === 'got-update-username-msg' ? input.msg.c : null,
+        msgBackend: input.msgBackend?.t === 'got-update-username-msg' ? input.msgBackend.c : null,
+        model: model.updateUsername,
         msgEvt: input.msgEvt,
-      }),
+      })
+      return {
+        model: { ...model, updateUsername: updated.model },
+        msgCmd: AppFrontendCmd.tag('got-update-username-msg', updated.msgCmd),
+        msgEvt: updated.msgEvt,
+        eff: Eff.tag('got-update-username-msg', updated.eff),
+      }
+    },
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateFromBackend({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
@@ -156,8 +164,8 @@ const updateFromBackend: FrontendModule['update'] = (input) => {
       }
     }
 
-    case 'profile.update-username.updated-username': {
-      return { model }
+    case 'got-update-username-msg': {
+      return { model: input.model }
     }
 
     default: {
@@ -423,7 +431,7 @@ export const View: FrontendModule['View'] = (input) => {
         }
 
         case 'profile-edit': {
-          return <ViewUpdateScreen {...input} />
+          return <UpdateProfileScreen.View {...input} />
         }
 
         case 'profile-edit-avatar': {
@@ -431,7 +439,13 @@ export const View: FrontendModule['View'] = (input) => {
         }
 
         case 'profile-edit-username': {
-          return <UpdateUsernameFrontend.View {...input} />
+          return (
+            <UpdateUsernameFrontend.View
+              ctx={input.ctx}
+              model={input.model.updateUsername}
+              dispatch={(c) => input.dispatch({ t: 'got-update-username-msg', c })}
+            />
+          )
         }
 
         default: {
@@ -444,83 +458,3 @@ export const View: FrontendModule['View'] = (input) => {
     }
   }
 }
-
-const ViewUpdateScreen: typeof View = (input) => {
-  if (!input.ctx.currentUserId) return null
-  const profile = input.ctx.profiles[input.ctx.currentUserId]
-  if (!profile) return null
-
-  return (
-    <ScreenLayout
-      id='profile-update'
-      ctx={input.ctx}
-      parentScreen={input.ctx.parentScreen}
-      navBar={{
-        title: input.ctx.t('profile.update-profile'),
-        onBack: () =>
-          input.dispatch({
-            t: 'clicked-back-button',
-            from: {
-              t: 'profile-update',
-            },
-          }),
-      }}
-      renderBody={() => (
-        <div className='flex w-full flex-col items-center gap-4 p-4'>
-          <Avatar
-            src={profile?.avatarUrl}
-            className='h-28 w-28'
-            alt='profile avatar'
-            onClick={() =>
-              input.dispatch({
-                t: 'clicked-avatar',
-              })
-            }
-          />
-
-          <Button
-            size='sm'
-            color='primary'
-            variant='text'
-            className='block'
-            onClick={() =>
-              input.dispatch({
-                t: 'clicked-change-avatar-button',
-              })
-            }
-            text={input.ctx.t('profile.update-avatar')}
-          />
-
-          <ViewField
-            onClick={() =>
-              input.dispatch({
-                t: 'clicked-update-username-button',
-              })
-            }
-            label={input.ctx.t('username-title')}
-            value={input.ctx.t('username', profile.username)}
-          />
-        </div>
-      )}
-    />
-  )
-}
-
-const ViewField = ({
-  label,
-  value,
-  onClick,
-}: {
-  label: TranslatedText
-  value: TranslatedText
-  onClick?: () => void
-}) => (
-  <button onClick={onClick} className='flex w-full items-center justify-start px-4 py-2'>
-    <div className='flex flex-1 flex-col items-start'>
-      <Typography variant='label' text={label} />
-      {value && <Typography variant='body' text={value} />}
-    </div>
-
-    <IconChevronRight className='size-6' />
-  </button>
-)

@@ -12,7 +12,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { FrontendEvt } from '~/app/@/frontend/evt'
+import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { SpaceFrontendCmd } from './@/frontend/cmd'
 import { SpacesCore } from './core/core'
 import { ISpacesCoreAsync } from './core/core-async/interface'
@@ -151,14 +151,14 @@ export type FrontendModule = AppFrontendModule<{
     MsgToBackend: MsgToBackend
     MsgFrontend: MsgFrontend
   }>
-  MsgEvtIn: FrontendEvt
+  MsgEvtIn: AppFrontendEvt
   Model: ModelFrontend
   Msg: MsgFrontend
   MsgCmdOut: AppFrontendCmd<{
     MsgToBackend: MsgToBackend
     MsgFrontend: MsgFrontend
   }>
-  MsgEvtOut: FrontendEvt
+  MsgEvtOut: AppFrontendEvt
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
 }>

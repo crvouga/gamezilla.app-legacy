@@ -7,7 +7,7 @@ import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { FrontendEvt } from '~/app/@/frontend/evt'
+import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { BackendCmd } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
@@ -50,7 +50,7 @@ export type FrontendModule = AppFrontendModule<{
   MsgToBackend: MsgToBackend
   MsgToFrontend: MsgToFrontend
   Msg: MsgBackend
-  MsgEvtIn: FrontendEvt
+  MsgEvtIn: AppFrontendEvt
   MsgEvtOut: null
   MsgCmdOut: AppFrontendCmd<{
     MsgToBackend: MsgToBackend

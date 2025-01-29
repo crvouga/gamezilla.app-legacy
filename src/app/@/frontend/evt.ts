@@ -2,7 +2,7 @@ import type { Screen } from '~/@/screen/generated/screens'
 import type { UserAccount } from '../data/account'
 import { Profile } from '../data/profile'
 
-export type FrontendEvt =
+export type AppFrontendEvt =
   | {
       t: 'auth-evt.authenticated'
       account: UserAccount
@@ -27,10 +27,10 @@ export type FrontendEvt =
       profile: Profile
     }
 
-export const screenChanged = (screen: Screen): FrontendEvt => {
+export const screenChanged = (screen: Screen): AppFrontendEvt => {
   return { t: 'screen-evt.screen-changed', screen }
 }
 
-export const backendConnected = (): FrontendEvt => {
+export const backendConnected = (): AppFrontendEvt => {
   return { t: 'wire-evt.backend-connected' }
 }

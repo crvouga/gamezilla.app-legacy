@@ -14,8 +14,10 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
           }}
           name={props.ariaLabel}
         >
-          {props.header && <DialogHeader title={props.header.title} />}
-          <div className='flex w-full flex-1 flex-col'>{props.renderBody()}</div>
+          <div className='flex w-full flex-col gap-4 p-6 pb-2'>
+            {props.header && <DialogHeader title={props.header.title} />}
+            <div className='flex w-full flex-1 flex-col items-center justify-center'>{props.renderBody()}</div>
+          </div>
           {props.form && (
             <CancelSubmitButtons
               variant={props.form?.variant}

@@ -4,7 +4,7 @@ import type { AppFrontendModule } from '../@/architecture/app-frontend'
 import type { AppBackendModule } from '../@/architecture/app-backend'
 import type { AppFrontendCmd, AuthCmd } from '../@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
-import { FrontendEvt } from '../@/frontend/evt'
+import { AppFrontendEvt } from '../@/frontend/evt'
 import type { UserAccount } from '../@/data/account'
 import { BackendCmd } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
@@ -91,12 +91,12 @@ export type FrontendModule = AppFrontendModule<{
   MsgToBackend: MsgToBackend
   Ctx: AnonymousFrontendCtx | AppFrontendCtx
   MsgCmdIn: AuthCmd
-  MsgEvtIn: FrontendEvt
+  MsgEvtIn: AppFrontendEvt
   MsgCmdOut: AppFrontendCmd<{
     MsgFrontend: MsgFrontend
     MsgToBackend: MsgToBackend
   }>
-  MsgEvtOut: FrontendEvt
+  MsgEvtOut: AppFrontendEvt
 }>
 
 export type BackendModule = AppBackendModule<{

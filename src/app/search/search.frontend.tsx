@@ -5,7 +5,7 @@ import { pipe } from '~/@/function/pipe'
 import type { VDom } from '~/@/vdom/vdom'
 import { IconMagnifyingGlass, IconXMark } from '~/@/ui'
 import { AppFrontendCmd, sendToBackend } from '../@/frontend/cmd'
-import { FrontendEvt } from '../@/frontend/evt'
+import { AppFrontendEvt } from '../@/frontend/evt'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend, MsgToBackend } from './search.types'
 
 //
@@ -58,7 +58,7 @@ export const update = ({
 }): {
   model: ModelFrontend
   eff?: Eff<Msg>
-  msgEvt?: FrontendEvt[]
+  msgEvt?: AppFrontendEvt[]
   msgCmd?: AppFrontendCmd<{
     MsgToBackend: MsgToBackend
     MsgFrontend: MsgFrontend

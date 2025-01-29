@@ -47,15 +47,16 @@ import type { Text as Text44 } from '../../../app/spaces/@/frontend/$l18n'
 import type { Text as Text45 } from '../../../app/lang/frontend/$l18n'
 import type { Text as Text46 } from '../../../app/profile/$l18n/edit-profile.$l18n'
 import type { Text as Text47 } from '../../../app/profile/$l18n/$l18n'
-import type { Text as Text48 } from '../../../app/profile/update-username/update-username.$l18n'
-import type { Text as Text49 } from '../../../app/@/data/username/username.$l18n'
-import type { Text as Text50 } from '../../../app/@/l18n/open-settings.$l18n'
-import type { Text as Text51 } from '../../../app/@/l18n/submit.$l18n'
-import type { Text as Text52 } from '../../../app/@/l18n/$l18n'
-import type { Text as Text53 } from '../../../app/@/l18n/add.$l18n'
-import type { Text as Text54 } from '../../ui/drawer/$l18n'
-import type { Text as Text55 } from '../../time/time-span.$l18n'
-import type { Text as Text56 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
+import type { Text as Text48 } from '../../../app/profile/update-username/$l18n'
+import type { Text as Text49 } from '../../../app/@/data/profile-avatar/profile-avatar.$l18n'
+import type { Text as Text50 } from '../../../app/@/data/username/username.$l18n'
+import type { Text as Text51 } from '../../../app/@/l18n/open-settings.$l18n'
+import type { Text as Text52 } from '../../../app/@/l18n/submit.$l18n'
+import type { Text as Text53 } from '../../../app/@/l18n/$l18n'
+import type { Text as Text54 } from '../../../app/@/l18n/add.$l18n'
+import type { Text as Text55 } from '../../ui/drawer/$l18n'
+import type { Text as Text56 } from '../../time/time-span.$l18n'
+import type { Text as Text57 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
 
 export type Text = Text0 &
   Text1 &
@@ -113,4 +114,5 @@ export type Text = Text0 &
   Text53 &
   Text54 &
   Text55 &
-  Text56
+  Text56 &
+  Text57

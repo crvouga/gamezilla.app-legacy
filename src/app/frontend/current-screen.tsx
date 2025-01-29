@@ -2,7 +2,7 @@ import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import type { Screen } from '~/@/screen/generated/screens'
 import { APP_SOUND, playSound, type ScreenCmd, type SoundCmd } from '~/app/@/frontend/cmd'
-import { FrontendEvt } from '../@/frontend/evt'
+import { AppFrontendEvt } from '../@/frontend/evt'
 
 //
 //
@@ -80,7 +80,7 @@ export const update = (input: {
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgEvt?: FrontendEvt[]
+  msgEvt?: AppFrontendEvt[]
   msgCmd?: SoundCmd[]
 } => {
   if (input.msg) {

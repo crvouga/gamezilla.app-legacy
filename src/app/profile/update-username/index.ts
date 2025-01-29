@@ -1,1 +1,1 @@
-export * as UpdateUsernameTypes from './update-username.types'
+export * as UpdateUsernameTypes from './types'

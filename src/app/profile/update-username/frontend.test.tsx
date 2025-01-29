@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
-import { init, View } from './update-username.frontend'
-import { ModelFrontend, MsgFrontend } from './update-username.types'
+import { UpdateUsernameFrontend } from './frontend'
+import { ModelFrontend, MsgFrontend } from './types'
 import { PubSub } from '~/@/sub'
 
 const Fixture = async () => {
@@ -10,12 +10,12 @@ const Fixture = async () => {
   const render = (model: ModelFrontend) => {
     const msgs = PubSub.create<MsgFrontend>()
     return {
-      ...f.render(<View ctx={f.ctx} model={model} dispatch={msgs.pub} />),
+      ...f.render(<UpdateUsernameFrontend.View ctx={f.ctx} model={model} dispatch={msgs.pub} />),
       msgs,
     }
   }
 
-  const initial = init({ ...f, model: {} }).model
+  const initial = UpdateUsernameFrontend.init({ ...f, stored: {} }).model
 
   return {
     ...f,
@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
   test('render username input', async () => {
     const f = await Fixture()
     const r = f.render(f.initial)
-    const textbox = r.getByRole('textbox', f.ctx.t('username-title'))
+    const textbox = r.getByRole('textbox', f.ctx.t('username.username-label'))
     expect(textbox).toBeTruthy()
     // textbox?.input('new-username')
     // const msg = await r.msgs.once()

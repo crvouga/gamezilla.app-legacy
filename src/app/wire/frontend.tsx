@@ -4,7 +4,7 @@ import { Sub } from '~/@/sub'
 import { ListItemButton, cn } from '~/@/ui'
 import { andThen } from '~/@/update/and-then'
 import { AppFrontendCmd, showToast } from '../@/frontend/cmd'
-import { FrontendEvt } from '../@/frontend/evt'
+import { AppFrontendEvt } from '../@/frontend/evt'
 import { BackendInstanceFrontend } from './backend-instance/frontend'
 import type { IFrontendTransport } from './transport/frontend'
 import type { FrontendCtx, ModelFrontend, MsgFrontend, MsgToFrontend } from './types'
@@ -42,7 +42,7 @@ export const init = (input: { ctx: FrontendCtx; stored: Record<string, unknown> 
 
 type Output = {
   model: ModelFrontend
-  msgEvt?: FrontendEvt[]
+  msgEvt?: AppFrontendEvt[]
   eff?: Eff<MsgFrontend>
 }
 

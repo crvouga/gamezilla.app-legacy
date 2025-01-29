@@ -1,6 +1,6 @@
 import { BackendCmd } from '~/app/@/backend/cmd'
 import { ProfileDb } from '../profile-db/profile-db'
-import { MsgBackend, MsgToFrontend, MsgToBackend } from './update-username.types'
+import { MsgBackend, MsgToFrontend, MsgToBackend } from './types'
 
 export const update = async (input: {
   deps: {

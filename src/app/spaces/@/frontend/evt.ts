@@ -1,4 +1,4 @@
-import type { FrontendEvt } from '~/app/@/frontend/evt'
+import type { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { UserAccount } from '~/app/@/data/account'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
@@ -22,7 +22,7 @@ type SpaceFrontendEvtBase = {
   currentUser?: UserAccount | null
 }
 
-export type SpaceFrontendEvt = SpaceFrontendEvtBase & (FrontendEvt | SpaceEvt)
+export type SpaceFrontendEvt = SpaceFrontendEvtBase & (AppFrontendEvt | SpaceEvt)
 
 const toSpaceFrontendEvt = (evt?: SpaceFrontendEvt[] | null): SpaceFrontendEvt[] => {
   return (evt ?? []).flatMap((evt): SpaceEvt[] => {
@@ -39,8 +39,8 @@ const toSpaceFrontendEvt = (evt?: SpaceFrontendEvt[] | null): SpaceFrontendEvt[]
   })
 }
 
-const toFrontendEvt = (evt?: SpaceFrontendEvt[] | null): FrontendEvt[] => {
-  return (evt ?? []).flatMap((evt): FrontendEvt[] => {
+const toFrontendEvt = (evt?: SpaceFrontendEvt[] | null): AppFrontendEvt[] => {
+  return (evt ?? []).flatMap((evt): AppFrontendEvt[] => {
     switch (evt.t) {
       case 'space-evt.user-joined-space':
       case 'space-evt.user-left-space':

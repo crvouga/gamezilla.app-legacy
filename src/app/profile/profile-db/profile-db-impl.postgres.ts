@@ -45,7 +45,7 @@ const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
   })
 }
 
-export const createProfileDb = ({ dbConn }: { dbConn: IDbConnSql }): ProfileDb => {
+export const createProfileDb = ({ dbConnSql: dbConn }: { dbConnSql: IDbConnSql }): ProfileDb => {
   return {
     findOneByUserId: async (userId) => {
       const sql = `

@@ -3,7 +3,7 @@ import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import { FrontendEvt } from '~/app/@/frontend/evt'
+import { AppFrontendEvt } from '~/app/@/frontend/evt'
 
 export type GameFrontendTypes = {
   //
@@ -32,7 +32,7 @@ type Output<T extends GameFrontendTypes> = {
 export type InMsg<T extends GameFrontendTypes> =
   | ({ variant: 'msg' } & T['MsgFrontend'])
   | ({ variant: 'to-frontend' } & T['MsgToFrontend'])
-  | ({ variant: 'event' } & FrontendEvt)
+  | ({ variant: 'event' } & AppFrontendEvt)
 
 export type OutMsg<T extends GameFrontendTypes> =
   | ({ variant: 'msgCmd' } & AppFrontendCmd<T>)
@@ -49,7 +49,7 @@ export type GameFrontend<T extends GameFrontendTypes> = {
     //
     msg?: T['MsgFrontend'] | null
     msgBackend?: T['MsgToFrontend'] | null
-    msgEvt?: FrontendEvt | null
+    msgEvt?: AppFrontendEvt | null
     msgSpace?: WithEventMeta<T['MsgSpace']> | null
   }) => Output<T>
 
