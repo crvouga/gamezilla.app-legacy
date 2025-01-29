@@ -41,7 +41,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
           <div className='absolute bottom-6 right-4 bg-black'>
             <Button
               color='primary'
-              size='sm'
+              size='lg'
               variant='contained'
               rounded
               onClick={input.createAction.onSubmit}
