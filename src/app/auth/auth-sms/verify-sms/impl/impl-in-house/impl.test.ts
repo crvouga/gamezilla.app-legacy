@@ -5,7 +5,7 @@ import { Hashing } from '~/@/hashing'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { Translator } from '~/app/@/frontend/translator'
-import { VerificationDb } from '../../verification/verification-db'
+import { VerificationDb } from '../../in-house/verification/verification-db'
 import { VerifySMSInHouseFixture } from './@/fixture'
 import { PhoneNumber } from '~/@/phone-number'
 

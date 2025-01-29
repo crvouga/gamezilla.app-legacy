@@ -17,9 +17,9 @@ import { UserAccountDb } from '../@/backend/user-account-db/impl'
 import type { BackendModule } from './types'
 import { VerifySMS } from './verify-sms/impl/impl'
 import { verifyCodeProblemToString, type IVerifySMS, type VerifyCodeProblem } from './verify-sms/interface'
-import { VerificationAttemptDb } from './verify-sms/verification-attempt'
-import { VerificationCodeGenerator } from './verify-sms/verification-code-generator'
-import { VerificationDb } from './verify-sms/verification/verification-db'
+import { VerificationAttemptDb } from './verify-sms/in-house/verification-attempt'
+import { VerificationCodeGenerator } from './verify-sms/in-house/verification-code-generator'
+import { VerificationDb } from './verify-sms/in-house/verification/verification-db'
 
 //
 //
