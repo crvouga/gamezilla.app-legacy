@@ -42,5 +42,5 @@ export const ScreenNavBarTablet = (input: {
 }
 
 export const ScreenNavBarTabletRoot = (input: { children: VDomChildren }) => {
-  return <div className='flex h-24 w-full shrink-0 items-center truncate px-4'>{input.children}</div>
+  return <div className='flex h-20 w-full shrink-0 items-center truncate px-4'>{input.children}</div>
 }

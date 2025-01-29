@@ -1,8 +1,8 @@
 import { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
+import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout'
 import { APP_SOUND, AppFrontendCmd, playSound, StatusBarCmd } from '../../@/frontend/cmd'
-import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 
 export type Model = {
   isDrawerOpen: boolean
@@ -56,9 +56,7 @@ export const View = ({
   ctx,
 }: {
   slots: {
-    mobileBarLeft: VDom
-    mobileBarRight: VDom
-    tabletBarRight: VDom
+    topBar: (props: { onClick: () => void }) => VDom
     surfaceContent: VDom
   }
   ctx: {
@@ -70,34 +68,7 @@ export const View = ({
 }) => {
   return (
     <>
-      {ctx.screenSize === 'mobile' && (
-        <button
-          type='button'
-          aria-label='open status bar'
-          className='text-secondary flex w-full items-center gap-2 p-0.5 px-2 text-xs'
-          onClick={() => dispatch({ t: 'clicked-status-bar' })}
-        >
-          {slots.mobileBarLeft}
-
-          <div className='flex-1' />
-
-          {slots.mobileBarRight}
-        </button>
-      )}
-
-      {ctx.screenSize === 'tablet' && (
-        <div className='flex w-full items-center justify-end'>
-          <button
-            type='button'
-            aria-label='open status bar'
-            onClick={() => dispatch({ t: 'clicked-status-bar' })}
-            className='text-secondary flex w-fit items-center gap-2 p-2 text-xs'
-          >
-            {slots.tabletBarRight}
-          </button>
-        </div>
-      )}
-
+      {slots.topBar({ onClick: () => dispatch({ t: 'clicked-status-bar' }) })}
       <SurfaceLayout
         ctx={ctx}
         ariaLabel={ctx.t('status-bar.status-bar')}

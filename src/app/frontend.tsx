@@ -10,7 +10,7 @@ import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
-import { IconGamepad, IconUserCircle, Portal } from '~/@/ui'
+import { cn, IconGamepad, IconGear, IconUserCircle, Portal } from '~/@/ui'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
@@ -20,8 +20,8 @@ import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
-import { LogoBlock } from './@/ui/logo/logo-block'
 import { AppRoot } from './@/ui/app-layout'
+import { LogoBlock } from './@/ui/logo/logo-block'
 import { ScreenLayoutProps } from './@/ui/screen/layout/props'
 import * as AuthFrontend from './auth/frontend'
 import { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
@@ -516,17 +516,19 @@ const ViewStatusBar: typeof View = (input) => {
       model={input.model.statusBar}
       dispatch={(c) => input.dispatch({ t: 'status-bar', c })}
       slots={{
-        mobileBarLeft: <WireFrontend.ViewDot className='size-2' ctx={frontendCtx} model={input.model.wire} />,
-
-        mobileBarRight: <Sound.ViewIcon model={input.model.sound} className='size-4' />,
-
-        tabletBarRight: (
-          <div className='flex items-center gap-4'>
-            <WireFrontend.ViewDot ctx={frontendCtx} model={input.model.wire} className='size-4 shrink-0' />
-            <Sound.ViewIcon model={input.model.sound} className='size-6 shrink-0' />
-          </div>
-        ),
-
+        topBar: (props) => {
+          const SIZE_CLASS = frontendCtx.screenSize === 'mobile' ? 'size-3' : 'size-4'
+          const SPACING_CLASS = frontendCtx.screenSize === 'mobile' ? 'gap-3 px-3 py-1' : 'gap-4 px-6 py-3'
+          return (
+            <div className='flex w-full items-center justify-end'>
+              <button {...props} type='button' className={cn('flex w-fit items-center justify-center', SPACING_CLASS)}>
+                <WireFrontend.ViewDot ctx={frontendCtx} model={input.model.wire} className={SIZE_CLASS} />
+                {/* <Sound.ViewIcon model={input.model.sound} className={SIZE_CLASS} /> */}
+                <IconGear className={SIZE_CLASS} />
+              </button>
+            </div>
+          )
+        },
         surfaceContent: (
           <>
             <WireFrontend.ViewConnectionStatusListItem
