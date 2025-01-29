@@ -7,7 +7,7 @@ const SIZE = 'md' as 'md' | 'sm'
 
 export const VerticalActionBar = (input: ScreenActionBarProps & { renderNavBar?: () => VDom }) => {
   return (
-    <div className='flex w-64 shrink-0 flex-col gap-1'>
+    <div className='flex w-32 shrink-0 flex-col gap-1 lg:w-64'>
       <ScreenNavBarTabletRoot>{input.renderNavBar?.()}</ScreenNavBarTabletRoot>
 
       {input.variant.t === 'uniform' ? (
@@ -73,7 +73,7 @@ const ScreenActionButton = (input: ScreenAction) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'relative flex w-full flex-row items-center gap-3 rounded-lg p-4',
+        'relative flex w-full flex-col items-center gap-3 rounded-lg p-4 lg:flex-row',
         'hover:bg-neutral-800/50 disabled:cursor-not-allowed disabled:opacity-50',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
@@ -81,9 +81,12 @@ const ScreenActionButton = (input: ScreenAction) => {
         toSizeClasses(size),
       )}
     >
-      <div className={cn('flex flex-row items-center gap-3', input.loading ? 'opacity-0' : 'opacity-100')}>
+      <div className={cn('flex flex-col items-center gap-3 lg:flex-row', input.loading ? 'opacity-0' : 'opacity-100')}>
         {input.icon({ className: toIconSizeClasses(size) })}
-        <Typography text={input.label} className={cn('truncate', 'text-inherit', input.classNames?.label)} />
+        <Typography
+          text={input.label}
+          className={cn('truncate text-center lg:text-left', 'text-inherit', input.classNames?.label)}
+        />
       </div>
 
       {input.loading && (

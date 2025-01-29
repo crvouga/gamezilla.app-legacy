@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "kp": "bun env && bun x kill-port $PORT",
     "backend": "bun ./src/backend.ts",
     "backend:build": "bun db:up",
     "backend:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./src/backend.ts",
