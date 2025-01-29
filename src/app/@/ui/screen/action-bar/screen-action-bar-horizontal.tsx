@@ -11,7 +11,7 @@ const Uniform = (input: ScreenActionBarProps & ScreenActionsUniform) => {
 
   return (
     <div
-      className={cn('flex w-full shrink-0 items-center', size === 'sm' && 'h-12', size === 'md' && 'h-16')}
+      className={cn('flex w-full shrink-0 items-center', size === 'sm' && 'h-12', size === 'md' && 'h-20')}
       role='toolbar'
     >
       {firstButtons.map((button) => {
@@ -64,7 +64,7 @@ const SpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpaceBetween) =
       className={cn(
         'flex w-full shrink-0 items-center justify-between',
         size === 'sm' && 'h-12',
-        size === 'md' && 'h-16',
+        size === 'md' && 'h-20',
       )}
       role='toolbar'
     >

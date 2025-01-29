@@ -44,12 +44,15 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
     return bars
   }
 
-  const topBars = renderActionBars(input).filter(
-    (_, i) => input.actionBar?.position === 'top' || (input.parentScreen?.actionBar?.position === 'top' && i > 0),
-  )
-  const bottomBars = renderActionBars(input).filter(
-    (_, i) => input.actionBar?.position !== 'top' || (input.parentScreen?.actionBar?.position !== 'top' && i > 0),
-  )
+  const actionBars = renderActionBars(input)
+  const topBars = actionBars.filter((_, i) => {
+    if (i === 0) return input.actionBar?.position === 'top'
+    return input.parentScreen?.actionBar?.position === 'top'
+  })
+  const bottomBars = actionBars.filter((_, i) => {
+    if (i === 0) return input.actionBar?.position !== 'top'
+    return input.parentScreen?.actionBar?.position !== 'top'
+  })
 
   return (
     <Element

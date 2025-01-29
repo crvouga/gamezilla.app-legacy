@@ -48,11 +48,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  return (
-    <div className='flex h-full w-full flex-col'>
-      <ViewScreen {...input} />
-    </div>
-  )
+  return <ViewScreen {...input} />
 }
 
 const ViewScreen: typeof View = (input) => {

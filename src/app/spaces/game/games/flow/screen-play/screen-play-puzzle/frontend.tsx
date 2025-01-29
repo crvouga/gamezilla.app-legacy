@@ -77,9 +77,8 @@ const subscriptions: FrontendModule['subscriptions'] = (_input) => {
 const CHECKMARK_DURATION = TimeSpan.seconds(1 / 2)
 
 const View: FrontendModule['View'] = (input) => {
-  if (input.modelSpace.screen.t !== 'screen-play-puzzle') {
-    return null
-  }
+  if (input.modelSpace.screen.t !== 'screen-play-puzzle') return null
+
   const puzzle = input.modelSpace.screen.puzzleResult
   const modePlay = input.modelSpace.screen.modePlay
   const isSolved = ScreenPlayPuzzleSpace.toStatus(input.modelSpace.screen) === 'solved'
@@ -92,9 +91,7 @@ const View: FrontendModule['View'] = (input) => {
 
   const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
 
-  if (isSpectating) {
-    return <ViewSpectating {...input} />
-  }
+  if (isSpectating) return <ViewSpectating {...input} />
 
   return (
     <>
@@ -107,10 +104,7 @@ const View: FrontendModule['View'] = (input) => {
           onBack: () =>
             input.dispatch({
               t: 'got-msg-space',
-              c: {
-                userId: input.ctx.currentUserId,
-                t: 'user-clicked-exit-play-puzzle-screen',
-              },
+              c: { userId: input.ctx.currentUserId, t: 'user-clicked-exit-play-puzzle-screen' },
             }),
         }}
         renderBody={() => (
@@ -186,25 +180,14 @@ const View: FrontendModule['View'] = (input) => {
                     model:
                       modePlay ??
                       ModePlay.init({
-                        ctx: ModePlay.initCtx({
-                          flow: puzzle.c.flow,
-                          solutions: input.ctx.solutions,
-                        }),
+                        ctx: ModePlay.initCtx({ flow: puzzle.c.flow, solutions: input.ctx.solutions }),
                       }),
-                    ctx: ModePlay.initCtx({
-                      ...input.ctx,
-                      flow: puzzle.c.flow,
-                      solutions: input.ctx.solutions,
-                    }),
+                    ctx: ModePlay.initCtx({ ...input.ctx, flow: puzzle.c.flow, solutions: input.ctx.solutions }),
                     disabled: false,
                     dispatch: (c) =>
                       input.dispatch({
                         t: 'got-msg-space',
-                        c: {
-                          t: 'got-flow-play-msg',
-                          c,
-                          userId: input.ctx.currentUserId,
-                        },
+                        c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUserId },
                       }),
                   })
                 : null,
@@ -215,10 +198,7 @@ const View: FrontendModule['View'] = (input) => {
                 onClick: () =>
                   input.dispatch({
                     t: 'got-msg-space',
-                    c: {
-                      t: 'user-clicked-reset-puzzle',
-                      userId: input.ctx.currentUserId,
-                    },
+                    c: { t: 'user-clicked-reset-puzzle', userId: input.ctx.currentUserId },
                   }),
               }),
 
