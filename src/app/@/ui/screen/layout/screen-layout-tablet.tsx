@@ -1,8 +1,8 @@
 import { Button, cn } from '~/@/ui'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
-import { VerticalActionBar } from '../action-bar/vertical-action-bar'
-import { ScreenNavBarTablet } from '../nav-bar/tablet'
-import { ScreenLayoutProps } from './props'
+import { VerticalActionBar } from '../action-bar/screen-action-bar-vertical'
+import { ScreenNavBarTablet } from '../nav-bar/screen-nav-bar-tablet'
+import { ScreenLayoutProps } from './screen-layout-props'
 
 export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
   const Element = input.editAction ? 'form' : 'div'

@@ -2,7 +2,7 @@ import { Avatar, Button, IconArrowLeftOnRect, IconUserPen, SpinnerBlock, Typogra
 import { Gutter } from '~/@/ui/gutter'
 import { Profile } from '~/app/@/data/profile'
 import type { UserId } from '~/app/@/data/user-id'
-import { ScreenLayout } from '~/app/@/ui/screen/layout'
+import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenBodyRoot } from '~/app/@/ui/screen/layout/screen-body-root'
 import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
 

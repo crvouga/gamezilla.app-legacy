@@ -1,8 +1,8 @@
 import { Button } from '~/@/ui/button.tsx'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons.tsx'
-import { HorizontalActionBar } from '../action-bar/horizontal-action-bar.tsx'
-import { ScreenNavBarMobile } from '../nav-bar/mobile.tsx'
-import { ScreenLayoutProps } from './props.tsx'
+import { HorizontalActionBar } from '../action-bar/screen-action-bar-horizontal.tsx'
+import { ScreenNavBarMobile } from '../nav-bar/screen-nav-bar-mobile.tsx'
+import { ScreenLayoutProps } from './screen-layout-props.tsx'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.editAction ? 'form' : 'div'
