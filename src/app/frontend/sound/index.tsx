@@ -178,15 +178,15 @@ export const updateFromCmd: Module['update'] = (input) => {
   }
 }
 
-export const ViewStatusBar = (input: { model: Model }) => {
+export const ViewIcon = (input: { model: Model; className: string }) => {
   if (input.model.muted) {
-    return <IconVolumeXMark className='h-4 w-4' />
+    return <IconVolumeXMark className={input.className} />
   }
 
-  return <IconVolumeHigh className='h-4 w-4' />
+  return <IconVolumeHigh className={input.className} />
 }
 
-export const ViewStatusBarDrawer = (input: {
+export const ViewSoundListItem = (input: {
   model: Model
   dispatch: (m: Msg) => void
   ctx: {

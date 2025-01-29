@@ -516,25 +516,32 @@ const ViewStatusBar: typeof View = (input) => {
       model={input.model.statusBar}
       dispatch={(c) => input.dispatch({ t: 'status-bar', c })}
       slots={{
-        barLeft: <WireFrontend.ViewStatusBar ctx={frontendCtx} model={input.model.wire} />,
+        mobileBarLeft: <WireFrontend.ViewDot className='size-2' ctx={frontendCtx} model={input.model.wire} />,
 
-        barRight: <Sound.ViewStatusBar model={input.model.sound} />,
+        mobileBarRight: <Sound.ViewIcon model={input.model.sound} className='size-4' />,
+
+        tabletBarRight: (
+          <div className='flex items-center gap-4'>
+            <WireFrontend.ViewDot ctx={frontendCtx} model={input.model.wire} className='size-4 shrink-0' />
+            <Sound.ViewIcon model={input.model.sound} className='size-6 shrink-0' />
+          </div>
+        ),
 
         surfaceContent: (
           <>
-            <WireFrontend.ViewStatusBarDrawer
+            <WireFrontend.ViewConnectionStatusListItem
               model={input.model.wire}
               dispatch={(c) => input.dispatch({ t: 'wire', c })}
               ctx={frontendCtx}
             />
 
-            <LangFrontend.ViewStatusBarDrawer
+            <LangFrontend.ViewLangListItem
               ctx={frontendCtx}
               dispatch={(c) => input.dispatch({ t: 'lang', c })}
               model={input.model.lang}
             />
 
-            <Sound.ViewStatusBarDrawer
+            <Sound.ViewSoundListItem
               ctx={frontendCtx}
               model={input.model.sound}
               dispatch={(c) => input.dispatch({ t: 'sound', c })}

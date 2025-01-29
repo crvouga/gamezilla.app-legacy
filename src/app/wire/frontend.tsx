@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
-import { ListItemButton, Typography, cn } from '~/@/ui'
+import { ListItemButton, cn } from '~/@/ui'
 import { andThen } from '~/@/update/and-then'
 import { AppFrontendCmd, showToast } from '../@/frontend/cmd'
 import { FrontendEvt } from '../@/frontend/evt'
@@ -215,37 +215,28 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
 //
 //
 
-export const ViewStatusBar = (input: { model: ModelFrontend; ctx: { t: Translator } }) => {
+const Dot = (input: { className: string }) => {
+  return <span className={cn(input.className, 'aspect-square shrink-0 rounded-full')} />
+}
+
+export const ViewDot = (input: { model: ModelFrontend; ctx: { t: Translator }; className: string }) => {
   switch (input.model.state.t) {
     case 'backend-connected': {
-      return <span className='h-2 w-2 rounded-full bg-green-500' />
+      return <Dot className={cn(input.className, 'bg-green-500')} />
     }
 
     case 'backend-connecting':
     case 'backend-connect-error': {
-      return (
-        <div className='flex animate-pulse items-center gap-1'>
-          <span className='h-2 w-2 rounded-full bg-orange-500' />
-          {false && (
-            <Typography className='text-orange-500' variant='caption' text={input.ctx.t('wire.connecting...')} />
-          )}
-        </div>
-      )
+      return <Dot className={cn(input.className, 'animate-pulse bg-orange-500')} />
     }
 
     case 'backend-disconnected': {
-      return (
-        <div className='flex items-center gap-1'>
-          <span className='h-2 w-2 rounded-full bg-red-500' />
-
-          <Typography className='text-orange-500' variant='caption' text={input.ctx.t('wire.offline')} />
-        </div>
-      )
+      return <Dot className={cn(input.className, 'bg-red-500')} />
     }
   }
 }
 
-export const ViewStatusBarDrawer = (input: {
+export const ViewConnectionStatusListItem = (input: {
   model: ModelFrontend
   dispatch: (m: MsgFrontend) => void
   ctx: {
@@ -256,7 +247,7 @@ export const ViewStatusBarDrawer = (input: {
     case 'backend-connected': {
       return (
         <ListItemButton
-          icon={(inputIcon) => <span className={cn(inputIcon.className, 'rounded-full bg-green-500')} />}
+          icon={(inputIcon) => <Dot className={cn(inputIcon.className, 'bg-green-500')} />}
           className='text-green-500'
           label={input.ctx.t('wire.online')}
         />
@@ -267,7 +258,7 @@ export const ViewStatusBarDrawer = (input: {
     case 'backend-connecting': {
       return (
         <ListItemButton
-          icon={(input) => <span className={cn(input.className, 'rounded-full bg-orange-500')} />}
+          icon={(input) => <Dot className={cn(input.className, 'bg-orange-500')} />}
           color='warning'
           label={input.ctx.t('wire.connecting...')}
         />
@@ -277,7 +268,7 @@ export const ViewStatusBarDrawer = (input: {
     case 'backend-disconnected': {
       return (
         <ListItemButton
-          icon={(input) => <span className={cn(input.className, 'rounded-full bg-red-500')} />}
+          icon={(input) => <Dot className={cn(input.className, 'bg-red-500')} />}
           color='danger'
           label={input.ctx.t('wire.offline')}
           end={() => (

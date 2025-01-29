@@ -56,8 +56,9 @@ export const View = ({
   ctx,
 }: {
   slots: {
-    barLeft: VDom
-    barRight: VDom
+    mobileBarLeft: VDom
+    mobileBarRight: VDom
+    tabletBarRight: VDom
     surfaceContent: VDom
   }
   ctx: {
@@ -68,19 +69,34 @@ export const View = ({
   dispatch: (m: Msg) => void
 }) => {
   return (
-    <div className='w-full'>
-      <button
-        type='button'
-        aria-label='open status bar'
-        className='text-secondary flex w-full items-center gap-2 p-0.5 px-2 text-xs'
-        onClick={() => dispatch({ t: 'clicked-status-bar' })}
-      >
-        {slots.barLeft}
+    <>
+      {ctx.screenSize === 'mobile' && (
+        <button
+          type='button'
+          aria-label='open status bar'
+          className='text-secondary flex w-full items-center gap-2 p-0.5 px-2 text-xs'
+          onClick={() => dispatch({ t: 'clicked-status-bar' })}
+        >
+          {slots.mobileBarLeft}
 
-        <div className='flex-1' />
+          <div className='flex-1' />
 
-        {slots.barRight}
-      </button>
+          {slots.mobileBarRight}
+        </button>
+      )}
+
+      {ctx.screenSize === 'tablet' && (
+        <div className='flex w-full items-center justify-end'>
+          <button
+            type='button'
+            aria-label='open status bar'
+            onClick={() => dispatch({ t: 'clicked-status-bar' })}
+            className='text-secondary flex w-fit items-center gap-2 p-2 text-xs'
+          >
+            {slots.tabletBarRight}
+          </button>
+        </div>
+      )}
 
       <SurfaceLayout
         ctx={ctx}
@@ -91,6 +107,6 @@ export const View = ({
         onClose={() => dispatch({ t: 'closed-status-bar-drawer' })}
         renderBody={() => slots.surfaceContent}
       />
-    </div>
+    </>
   )
 }

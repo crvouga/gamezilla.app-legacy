@@ -138,7 +138,7 @@ export const subscriptions: FrontendModule['subscriptions'] = () => {
 //
 //
 
-export const ViewStatusBarDrawer: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
+export const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
   return (
     <ListItemButton
       icon={(input) => <IconLanguage {...input} />}
