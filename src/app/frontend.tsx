@@ -10,7 +10,7 @@ import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
-import { cn, IconGamepad, IconGear, IconUserCircle, Portal } from '~/@/ui'
+import { IconGamepad, IconUserCircle, Portal } from '~/@/ui'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
@@ -20,10 +20,11 @@ import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
-import { AppRoot } from './@/ui/app-layout'
+import { AppRoot } from './@/ui/app-root/app-root'
 import { LogoBlock } from './@/ui/logo/logo-block'
 import { ScreenLayoutProps } from './@/ui/screen/layout/props'
 import * as AuthFrontend from './auth/frontend'
+import { ViewAppStatusBar } from './frontend/app-status-bar'
 import { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
 import * as LangFrontend from './lang/frontend'
 import * as ProfileFrontend from './profile/frontend'
@@ -49,7 +50,7 @@ export const initCtx = async (): Promise<FrontendCtx> => {
   }
 
   const transport = await FrontendTransport<MsgToBackend, MsgToFrontend>(
-    toFrontendTransportConfig({
+    toTransportConfig({
       httpServerImpl: CONFIG_SHARED.HTTP_SERVER_IMPL,
       backendUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
       logger,
@@ -112,24 +113,16 @@ const toFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx =
   return anonymousCtx
 }
 
-const toFrontendTransportConfig = (input: {
+const toTransportConfig = (input: {
   httpServerImpl: HttpServerImpl
   backendUrl: string
   logger: ILogger
 }): Parameters<typeof FrontendTransport>[0] => {
   switch (input.httpServerImpl) {
-    case 'bun': {
-      return {
-        ...input,
-        t: 'standard-web-sockets',
-      }
-    }
-    case 'node': {
-      return {
-        ...input,
-        t: 'noop',
-      }
-    }
+    case 'bun':
+      return { ...input, t: 'standard-web-sockets' }
+    case 'node':
+      return { ...input, t: 'noop' }
   }
 }
 
@@ -179,7 +172,12 @@ export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?:
     preloadSound(Object.values(APP_SOUND)),
   )
 
-  const updated = updateLoop(input.ctx, { model: initialModel, eff: initialEff, msgCmd: initialCmd, msgEvt: [] })
+  const updated = updateLoop(input.ctx, {
+    model: initialModel,
+    eff: initialEff,
+    msgCmd: initialCmd,
+    msgEvt: [],
+  })
 
   return updated
 }
@@ -188,7 +186,10 @@ export const update = (input: {
   ctx: FrontendCtx
   msg: MsgFrontend
   model: ModelFrontend
-}): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
+}): {
+  model: ModelFrontend
+  eff?: Eff<MsgFrontend>
+} => {
   const msgBackend = input.msg.t === '→' ? input.msg.c : undefined
 
   const updatedChild = updateChild({
@@ -344,7 +345,6 @@ const updateChild = (input: {
       wire: wire.model,
       lang: lang.model,
     },
-
     eff: Eff.batch<MsgFrontend>([
       Eff.tag('auth', auth.eff),
       Eff.tag('platform', platform.eff),
@@ -356,7 +356,6 @@ const updateChild = (input: {
       Eff.tag('wire', wire.eff),
       Eff.tag('lang', lang.eff),
     ]),
-
     msgEvt: Msg.batch<FrontendEvt>(
       auth.msgEvt,
       profile.msgEvt,
@@ -367,13 +366,11 @@ const updateChild = (input: {
       wire.msgEvt,
       lang.msgEvt,
     ),
-
     msgCmd: Msg.batch<AppFrontendCmd<{ MsgToBackend: MsgToBackend; MsgFrontend: MsgFrontend }>>(
       AppFrontendCmd.tag('auth', auth.msgCmd),
       AppFrontendCmd.tag('profile', profile.msgCmd),
       AppFrontendCmd.tag('spaces', space.msgCmd),
       AppFrontendCmd.tag('lang', lang.msgCmd),
-
       statusBar.msgCmd,
       screen.msgCmd,
       sound.msgCmd,
@@ -402,7 +399,7 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
 
   return (
     <AppRoot>
-      <ViewStatusBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
+      <ViewAppStatusBar model={input.model} dispatch={input.dispatch} ctx={frontendCtx} />
 
       <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
         <ViewScreen model={input.model} dispatch={input.dispatch} ctx={frontendCtx} />
@@ -505,59 +502,6 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
         />
       )
   }
-}
-
-const ViewStatusBar: typeof View = (input) => {
-  const frontendCtx = toFrontendCtx({ model: input.model, ctx: input.ctx })
-
-  return (
-    <StatusBar.View
-      ctx={frontendCtx}
-      model={input.model.statusBar}
-      dispatch={(c) => input.dispatch({ t: 'status-bar', c })}
-      slots={{
-        topBar: (props) => {
-          const SIZE_CLASS = frontendCtx.screenSize === 'mobile' ? 'size-3' : 'size-4'
-          const SPACING_CLASS = frontendCtx.screenSize === 'mobile' ? 'gap-3 px-3 py-1' : 'gap-4 px-6 py-3'
-          return (
-            <div className='flex w-full items-center justify-end'>
-              <button
-                {...props}
-                type='button'
-                className={cn('flex w-fit items-center justify-center pl-8', SPACING_CLASS)}
-                aria-label={frontendCtx.t('app.open-settings')}
-              >
-                <WireFrontend.ViewDot ctx={frontendCtx} model={input.model.wire} className={SIZE_CLASS} />
-                {/* <Sound.ViewIcon model={input.model.sound} className={SIZE_CLASS} /> */}
-                <IconGear className={SIZE_CLASS} />
-              </button>
-            </div>
-          )
-        },
-        surfaceContent: (
-          <>
-            <WireFrontend.ViewConnectionStatusListItem
-              model={input.model.wire}
-              dispatch={(c) => input.dispatch({ t: 'wire', c })}
-              ctx={frontendCtx}
-            />
-
-            <LangFrontend.ViewLangListItem
-              ctx={frontendCtx}
-              dispatch={(c) => input.dispatch({ t: 'lang', c })}
-              model={input.model.lang}
-            />
-
-            <Sound.ViewSoundListItem
-              ctx={frontendCtx}
-              model={input.model.sound}
-              dispatch={(c) => input.dispatch({ t: 'sound', c })}
-            />
-          </>
-        ),
-      }}
-    />
-  )
 }
 
 const toScreenLayoutProps = (input: {
