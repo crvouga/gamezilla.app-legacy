@@ -15,6 +15,7 @@ import { ScreenPuzzleBuildSpace } from './space'
 import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './surface-save-changes/frontend'
+import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 
 //
 //
@@ -157,71 +158,17 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
 //
 
 const View: BuilderTypes.FrontendModule['View'] = (input) => {
-  const { ctx } = input
+  if (!input.modelSpace.screenPuzzleBuilder) return <ViewSpectating {...input} />
 
-  if (!input.modelSpace.screenPuzzleBuilder) return null
-
-  const isSpectating = ctx.currentUserId !== ctx.space.hostId
+  const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
 
   if (isSpectating) return <ViewSpectating {...input} />
 
-  const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
+  const parentScreen = toParentScreenProps(input)
 
-  const screenCtx: FlowFrontendCtx = {
-    ...input.ctx,
-    parentScreen: {
-      parentScreen: input.ctx.parentScreen,
-      actionBar: {
-        id: 'puzzle-builder-actions',
-        variant: {
-          limit: {
-            max: 3,
-            onToggle: () => {
-              if (input.model.puzzleBuilderOpened === 'more') {
-                input.dispatch({ t: 'screen-puzzle-builder.user-closed-more-drawer' })
-                return
-              }
+  if (!parentScreen) return <ViewSpectating {...input} />
 
-              input.dispatch({ t: 'screen-puzzle-builder.user-clicked-open-more-drawer-button' })
-            },
-            open: input.model.puzzleBuilderOpened === 'more',
-          },
-          t: 'uniform',
-          actions: [
-            ...SaveChangesFrontend.viewBottomButtons({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
-            puzzleBuilder.mode.t === 'edit'
-              ? {
-                  icon: (input) => <IconPlay {...input} />,
-                  label: input.ctx.t('flow.play-mode'),
-                  classNames: { button: 'text-blue-500' },
-                  onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
-                }
-              : null,
-
-            puzzleBuilder.mode.t === 'play'
-              ? {
-                  icon: (input) => <IconPen {...input} />,
-                  label: input.ctx.t('flow.edit-mode'),
-                  classNames: { button: 'text-amber-500' },
-                  onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
-                }
-              : null,
-            {
-              icon: (input) => <IconPen {...input} />,
-              label: input.ctx.t('app.edit-name'),
-              onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
-            },
-            {
-              icon: (input) => <IconDeleteForever {...input} />,
-              label: input.ctx.t('app.delete'),
-              color: 'danger',
-              onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
-            },
-          ],
-        },
-      },
-    },
-  }
+  const screenCtx: FlowFrontendCtx = { ...input.ctx, parentScreen }
 
   return (
     <>
@@ -231,6 +178,63 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
       <ViewMode {...input} ctx={screenCtx} />
     </>
   )
+}
+
+const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View']>[0]): ParentScreenProps | null => {
+  const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
+  if (!puzzleBuilder) return input.ctx.parentScreen
+  return {
+    parentScreen: input.ctx.parentScreen,
+    actionBar: {
+      id: 'puzzle-builder-actions',
+      variant: {
+        limit: {
+          max: 3,
+          onToggle: () => {
+            if (input.model.puzzleBuilderOpened === 'more') {
+              input.dispatch({ t: 'screen-puzzle-builder.user-closed-more-drawer' })
+              return
+            }
+
+            input.dispatch({ t: 'screen-puzzle-builder.user-clicked-open-more-drawer-button' })
+          },
+          open: input.model.puzzleBuilderOpened === 'more',
+        },
+        t: 'uniform',
+        actions: [
+          ...SaveChangesFrontend.viewBottomButtons({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
+          puzzleBuilder.mode.t === 'edit'
+            ? {
+                icon: (input) => <IconPlay {...input} />,
+                label: input.ctx.t('flow.play-mode'),
+                classNames: { button: 'text-blue-500' },
+                onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
+              }
+            : null,
+
+          puzzleBuilder.mode.t === 'play'
+            ? {
+                icon: (input) => <IconPen {...input} />,
+                label: input.ctx.t('flow.edit-mode'),
+                classNames: { button: 'text-amber-500' },
+                onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
+              }
+            : null,
+          {
+            icon: (input) => <IconPen {...input} />,
+            label: input.ctx.t('app.edit-name'),
+            onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
+          },
+          {
+            icon: (input) => <IconDeleteForever {...input} />,
+            label: input.ctx.t('app.delete'),
+            color: 'danger',
+            onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
+          },
+        ],
+      },
+    },
+  }
 }
 
 const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
