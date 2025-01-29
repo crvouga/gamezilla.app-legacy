@@ -10,7 +10,7 @@ import {
   openUserDetails,
 } from '~/app/spaces/@/frontend/cmd'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { LayoutGameCoverArtHeader } from '../layout-game-cover-art-header'
+import { ScreenLayoutGameCoverArt } from '../layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../users-in-space-list'
 import { p } from '~/@/parser'
 import { isOk } from '~/@/result'
@@ -76,9 +76,9 @@ export const View = (props: {
 
   if (isSpectating) {
     return (
-      <LayoutGameCoverArtHeader
+      <ScreenLayoutGameCoverArt
         ctx={props.ctx}
-        topBar={{
+        navBar={{
           title: props.title,
         }}
         renderCoverArt={props.renderCoverArt}
@@ -95,9 +95,9 @@ export const View = (props: {
   }
 
   return (
-    <LayoutGameCoverArtHeader
+    <ScreenLayoutGameCoverArt
       ctx={props.ctx}
-      topBar={{ title: props.title, onBack: props.onBack }}
+      navBar={{ title: props.title, onBack: props.onBack }}
       renderCoverArt={props.renderCoverArt}
       renderContent={() => (
         <div className='flex w-full flex-col gap-6'>

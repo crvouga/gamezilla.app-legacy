@@ -6,7 +6,7 @@ import { SpacesCore } from '../core/core'
 import { MsgSpace } from '../core/space-msg'
 import { ViewUsersInSpaceList } from '../game/games/@/ui/users-in-space-list'
 import { GameCoverArt } from '../game/games/cover-art'
-import { LayoutGameCoverArtHeader } from '../game/games/@/ui/layout-game-cover-art-header'
+import { ScreenLayoutGameCoverArt } from '../game/games/@/ui/layout-game-cover-art-header'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -111,9 +111,9 @@ const View: SpaceFrontendModule['View'] = (input) => {
         submitDisabled: false,
       }}
       renderBody={() => (
-        <LayoutGameCoverArtHeader
+        <ScreenLayoutGameCoverArt
           ctx={input.ctx}
-          topBar={{
+          navBar={{
             title: spaceState.game ? input.ctx.t(spaceState.game.t) : input.ctx.t('spaces.space'),
             onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
           }}

@@ -7,8 +7,8 @@ import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenBodyRoot } from '~/app/@/ui/screen/layout/screen-body-root'
 import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 
-export const LayoutGameCoverArtHeader = (input: {
-  topBar?: {
+export const ScreenLayoutGameCoverArt = (input: {
+  navBar?: {
     title: TranslatedText
     subtitle?: TranslatedText | null
     onBack?: () => void
@@ -27,12 +27,15 @@ export const LayoutGameCoverArtHeader = (input: {
       parentScreen={input.ctx.parentScreen}
       id='game-cover-art-header'
       ctx={input.ctx}
-      navBar={input.topBar}
+      navBar={{
+        ...input.navBar,
+        title: null,
+      }}
       renderBody={() => (
         <ScreenBodyRoot className='flex flex-col items-center gap-6 p-6'>
           {renderCoverArtFinal({ className: 'size-28 overflow-hidden rounded-lg' })}
-          {input.topBar && (
-            <Typography variant='title' sizeClassName='text-5xl font-bold pb-2' text={input.topBar?.title} />
+          {input.navBar && (
+            <Typography variant='title' sizeClassName='text-5xl font-bold pb-2' text={input.navBar?.title} />
           )}
           {input.renderContent()}
         </ScreenBodyRoot>

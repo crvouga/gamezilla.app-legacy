@@ -5,17 +5,18 @@ import { IconButton, IconButtonEmpty } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
 
 export const ScreenNavBarMobile = (input: {
-  title: TranslatedText
+  title?: TranslatedText | null
   subtitle?: TranslatedText | null
-  // center?: boolean
   ctx: {
     t: Translator
   }
   onBack?: (() => void) | false | null
 }) => {
+  if (!input.title && !input.subtitle && !input.onBack) return null
+
   return (
     <div className='flex h-20 w-full shrink-0 items-center truncate px-4 text-center'>
-      {input.onBack && (
+      {typeof input.onBack === 'function' && (
         <IconButton
           onClick={input.onBack}
           className='-ml-2'
@@ -25,15 +26,17 @@ export const ScreenNavBarMobile = (input: {
       )}
 
       <div className='flex flex-1 flex-col truncate'>
-        <Typography
-          role='heading'
-          sizeClassName='text-xl font-bold'
-          className='truncate px-2'
-          variant='title'
-          text={input.title}
-        />
+        {typeof input.title === 'string' && (
+          <Typography
+            role='heading'
+            sizeClassName='text-xl font-bold'
+            className='truncate px-2'
+            variant='title'
+            text={input.title}
+          />
+        )}
 
-        {input.subtitle && (
+        {typeof input.subtitle === 'string' && (
           <Typography
             className='text-secondary truncate px-2 text-xs'
             role='heading'
@@ -43,7 +46,7 @@ export const ScreenNavBarMobile = (input: {
         )}
       </div>
 
-      {input.onBack && <IconButtonEmpty />}
+      {typeof input.onBack === 'function' && <IconButtonEmpty />}
     </div>
   )
 }

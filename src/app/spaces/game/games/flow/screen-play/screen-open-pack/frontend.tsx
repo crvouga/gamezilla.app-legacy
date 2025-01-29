@@ -2,7 +2,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { IconGamepad } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { LayoutGameCoverArtHeader } from '../../../@/ui/layout-game-cover-art-header'
+import { ScreenLayoutGameCoverArt } from '../../../@/ui/layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../../../@/ui/users-in-space-list'
 import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
 import { PacksDbQuery } from '../../@/pack/pack-db/query'
@@ -47,9 +47,9 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   if (input.ctx.currentUserId !== input.ctx.space.hostId) {
     return (
-      <LayoutGameCoverArtHeader
+      <ScreenLayoutGameCoverArt
         ctx={input.ctx}
-        topBar={{ title: input.ctx.t('flow.play') }}
+        navBar={{ title: input.ctx.t('flow.play') }}
         renderCoverArt={(input) => (
           <div {...input}>
             <div className='h-full w-full p-4'>

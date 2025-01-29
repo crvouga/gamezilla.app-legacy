@@ -1,7 +1,7 @@
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { IconGamepad } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { LayoutGameCoverArtHeader } from '../../../@/ui/layout-game-cover-art-header'
+import { ScreenLayoutGameCoverArt } from '../../../@/ui/layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../../../@/ui/users-in-space-list'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { PuzzleDbQueryFrontend } from '../../@/puzzle/puzzle-db-query/frontend'
@@ -57,9 +57,9 @@ const View: FrontendModule['View'] = (input) => {
 
   if (isSpectating) {
     return (
-      <LayoutGameCoverArtHeader
+      <ScreenLayoutGameCoverArt
         ctx={input.ctx}
-        topBar={{
+        navBar={{
           title: input.ctx.t('flow.play'),
         }}
         renderCoverArt={(input) => (

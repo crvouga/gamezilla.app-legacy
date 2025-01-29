@@ -2,7 +2,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { Avatar, Button, IconQuestionMark, Typography } from '~/@/ui'
 
-import { LayoutGameCoverArtHeader } from '../ui/layout-game-cover-art-header'
+import { ScreenLayoutGameCoverArt } from '../ui/layout-game-cover-art-header'
 import { TranslatedText } from '~/@/l18n'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 
@@ -150,9 +150,9 @@ export const VsUserSetupScreen = ({
 }) => {
   return (
     <div className='flex h-full w-full flex-1 flex-col overflow-hidden'>
-      <LayoutGameCoverArtHeader
+      <ScreenLayoutGameCoverArt
         ctx={ctx}
-        topBar={{
+        navBar={{
           title,
           onBack: onQuit,
         }}

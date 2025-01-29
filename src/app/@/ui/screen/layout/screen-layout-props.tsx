@@ -28,7 +28,7 @@ export type CreateActionProps = {
 }
 
 export type NavBarProps = {
-  title: TranslatedText
+  title?: TranslatedText | null
   subtitle?: TranslatedText | null
   onBack?: () => void
 }

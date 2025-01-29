@@ -352,6 +352,7 @@ const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: M
           <Typography
             className='mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold'
             variant='label'
+            sizeClassName='text-base'
             text={input.ctx.t(gameName)}
           />
         </div>
