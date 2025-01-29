@@ -36,7 +36,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
   const userCount = Object.values(space.users).length
   const isCurrentUserHost = input.ctx.currentUserId === space.hostId
   return (
-    <div className='flex w-full flex-col items-center justify-center overflow-hidden text-inherit'>
+    <div className='flex w-full flex-col items-center justify-center overflow-hidden rounded-lg border text-inherit'>
       <div className='h-1 w-full bg-gradient-to-tr from-blue-700 via-blue-600 to-sky-500' />
       <div className='flex w-full items-center overflow-hidden text-inherit'>
         <button

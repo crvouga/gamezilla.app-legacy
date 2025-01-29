@@ -520,7 +520,7 @@ const ViewStatusBar: typeof View = (input) => {
 
         barRight: <Sound.ViewStatusBar model={input.model.sound} />,
 
-        drawerContent: (
+        surfaceContent: (
           <>
             <WireFrontend.ViewStatusBarDrawer
               model={input.model.wire}

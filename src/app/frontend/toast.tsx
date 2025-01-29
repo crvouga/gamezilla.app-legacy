@@ -166,14 +166,14 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
   return (
     <div
       id={String(input.toast.toastId)}
-      className='pointer-events-none absolute left-0 top-0 z-40 w-full overflow-visible p-4'
+      className='pointer-events-none absolute left-0 top-0 z-40 flex w-full items-center justify-center overflow-visible p-4'
       onMouseDown={() => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast })}
       onMouseUp={() => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast })}
       onTouchStart={() => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast })}
       onTouchEnd={() => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast })}
       onContextMenu={(e) => e.preventDefault()}
     >
-      <div className={cn('ml-auto bg-black', toWidthClass(input))}>
+      <div className={cn('w-full bg-black', toWidthClass(input))}>
         <div
           className={cn(
             'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',

@@ -7,7 +7,7 @@ const SIZE = 'md' as 'md' | 'sm'
 
 const View = (input: ScreenActionBarProps & { renderNavBar?: () => VDom }) => {
   return (
-    <div className='flex w-44 shrink-0 flex-col gap-1 px-2 pb-6'>
+    <div className='flex w-52 shrink-0 flex-col gap-1'>
       <ScreenNavBarTabletRoot>{input.renderNavBar?.()}</ScreenNavBarTabletRoot>
 
       {input.variant.t === 'uniform' ? (
@@ -33,13 +33,14 @@ const SpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenActio
       <ActionButtonList actions={input.start} />
       <div className='flex-1' />
       <ActionButtonList actions={input.end} />
+      <div className='w-full pb-6' />
     </Toolbar>
   )
 }
 
 const Toolbar = (input: { children: VDom }) => {
   return (
-    <div className='flex w-full flex-1 shrink-0 flex-col overflow-hidden' role='toolbar'>
+    <div className='flex w-full flex-1 shrink-0 flex-col overflow-hidden px-4' role='toolbar'>
       {input.children}
     </div>
   )
@@ -72,7 +73,7 @@ const ScreenActionButton = (input: ScreenAction) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'relative flex w-full flex-row items-center gap-3 px-5 py-3',
+        'relative flex w-full flex-row items-center gap-3 rounded-lg p-4',
         'hover:bg-neutral-800/50 disabled:cursor-not-allowed disabled:opacity-50',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
@@ -82,10 +83,7 @@ const ScreenActionButton = (input: ScreenAction) => {
     >
       <div className={cn('flex flex-row items-center gap-3', input.loading ? 'opacity-0' : 'opacity-100')}>
         {input.icon({ className: toIconSizeClasses(size) })}
-        <Typography
-          text={input.label}
-          className={cn('truncate font-semibold', 'text-inherit', input.classNames?.label)}
-        />
+        <Typography text={input.label} className={cn('truncate', 'text-inherit', input.classNames?.label)} />
       </div>
 
       {input.loading && (

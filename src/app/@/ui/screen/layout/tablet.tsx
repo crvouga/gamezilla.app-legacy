@@ -32,7 +32,12 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
           />
         )}
 
-        <div className={cn('flex flex-1 flex-col overflow-hidden', input.isTopLevel ? 'border-l' : '')}>
+        <div
+          className={cn(
+            'flex flex-1 flex-col overflow-hidden',
+            // input.isTopLevel ? 'border-l' : ''
+          )}
+        >
           {input.navBar && (
             <ScreenNavBarTablet
               ctx={input.ctx}
@@ -50,12 +55,13 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
 
           <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
             {input.renderBody()}
-            {input.renderFab && <div className='absolute bottom-6 right-6 bg-black'>{input.renderFab()}</div>}
-          </div>
-
-          <div className='mx-auto w-full max-w-2xl'>
-            {input.renderMiniPlayer?.()}
-            {input.parent?.renderMiniPlayer?.()}
+            {(input.renderFab || input.renderMiniPlayer || input.parent?.renderMiniPlayer) && (
+              <div className='absolute bottom-8 right-8 bg-black'>
+                {input.renderFab?.()}
+                {input.renderMiniPlayer?.()}
+                {input.parent?.renderMiniPlayer?.()}
+              </div>
+            )}
           </div>
         </div>
       </div>

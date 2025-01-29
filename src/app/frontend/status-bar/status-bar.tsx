@@ -28,17 +28,11 @@ export const update = (input: {
 } => {
   switch (input.msg?.t) {
     case 'clicked-status-bar': {
-      return {
-        model: { ...input.model, isDrawerOpen: true },
-        msgCmd: [playSound(APP_SOUND.tap)],
-      }
+      return { model: { ...input.model, isDrawerOpen: true }, msgCmd: [playSound(APP_SOUND.tap)] }
     }
 
     case 'closed-status-bar-drawer': {
-      return {
-        model: { ...input.model, isDrawerOpen: false },
-        msgCmd: [playSound(APP_SOUND.tap)],
-      }
+      return { model: { ...input.model, isDrawerOpen: false }, msgCmd: [playSound(APP_SOUND.tap)] }
     }
   }
 
@@ -64,7 +58,7 @@ export const View = ({
   slots: {
     barLeft: VDom
     barRight: VDom
-    drawerContent: VDom
+    surfaceContent: VDom
   }
   ctx: {
     t: Translator
@@ -78,7 +72,7 @@ export const View = ({
       <button
         type='button'
         aria-label='open status bar'
-        className='text-secondary flex w-full items-center gap-2 border-b p-0.5 px-2 text-xs'
+        className='text-secondary flex w-full items-center gap-2 p-0.5 px-2 text-xs'
         onClick={() => dispatch({ t: 'clicked-status-bar' })}
       >
         {slots.barLeft}
@@ -95,7 +89,7 @@ export const View = ({
         id='status-bar-drawer'
         open={model.isDrawerOpen}
         onClose={() => dispatch({ t: 'closed-status-bar-drawer' })}
-        renderBody={() => slots.drawerContent}
+        renderBody={() => slots.surfaceContent}
       />
     </div>
   )

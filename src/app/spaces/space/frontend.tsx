@@ -5,13 +5,12 @@ import { ScreenTitleButton } from '~/app/@/ui/screen/title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpacesCore } from '../core/core'
 import { EndSpaceFrontend } from '../end-space/frontend'
+import { GoHome } from '../frontend/go-home'
+import { People } from '../frontend/people'
 import { GameFrontend } from '../game/frontend'
 import { JoinSpaceFrontend } from '../join-space/frontend'
 import { LeaveSpaceFrontend } from '../leave-space/frontend'
 import type { ModelFrontend, MsgFrontend } from '../types'
-import { GoHome } from '../frontend/go-home'
-import { People } from '../frontend/people'
-// import { NavBarLogo } from '~/app/@/ui/logo'
 
 const View = (input: {
   model: ModelFrontend
