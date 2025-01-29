@@ -1,6 +1,5 @@
 import type { SpaceId } from '~/app/@/data/space-id'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpacesCore } from '../core/core'
@@ -41,20 +40,19 @@ const View = (input: {
       if (currentUserSpaceId !== spaceCtx.space.spaceId) {
         return (
           <>
-            <JoinSpaceFrontend.View {...input} ctx={spaceCtx} />
             <People.View {...input} ctx={spaceCtx} />
+            <JoinSpaceFrontend.View {...input} ctx={spaceCtx} />
           </>
         )
       }
       const inputNew = { ...input, ctx: spaceCtx }
       const isHost = inputNew.ctx.space.hostId === inputNew.ctx.currentUserId
 
-      return (
-        <ScreenLayout
-          isTopLevel
-          id='space'
-          ctx={spaceCtx}
-          actionBar={{
+      const spaceCtxFinal: SpaceFrontendCtx = {
+        ...spaceCtx,
+        parentScreen: {
+          parentScreen: null,
+          actionBar: {
             id: 'space-actions',
             position: 'top',
             variant: {
@@ -62,14 +60,17 @@ const View = (input: {
               start: [GoHome.viewAction(inputNew), People.viewAction(inputNew)],
               end: [isHost ? EndSpaceFrontend.viewAction(inputNew) : LeaveSpaceFrontend.viewAction(inputNew)],
             },
-          }}
-          renderBody={() => (
-            <>
-              <People.View {...inputNew} />
-              <GameFrontend.View {...inputNew} />
-            </>
-          )}
-        />
+          },
+        },
+      }
+
+      const inputFinal = { ...inputNew, ctx: spaceCtxFinal }
+
+      return (
+        <>
+          <People.View {...inputFinal} />
+          <GameFrontend.View {...inputFinal} />
+        </>
       )
     }
   }

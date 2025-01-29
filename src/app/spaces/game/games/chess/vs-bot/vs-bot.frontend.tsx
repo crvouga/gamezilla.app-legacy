@@ -418,6 +418,7 @@ export const View = ({
 
   return (
     <ScreenLayout
+      parentScreen={ctx.parentScreen}
       ctx={ctx}
       id='chess-vs-bot'
       renderBody={() => (

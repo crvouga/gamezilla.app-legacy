@@ -5,6 +5,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenBodyRoot } from '~/app/@/ui/screen/layout/screen-body-root'
+import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 
 export const LayoutGameCoverArtHeader = (input: {
   topBar?: {
@@ -15,6 +16,7 @@ export const LayoutGameCoverArtHeader = (input: {
   ctx: {
     t: Translator
     screenSize: ScreenSize
+    parentScreen: ParentScreenProps | null
   }
   renderCoverArt?: (input: { className: string }) => VDom
   renderContent: () => VDom
@@ -22,6 +24,7 @@ export const LayoutGameCoverArtHeader = (input: {
   const renderCoverArtFinal = input.renderCoverArt || renderDefaultCoverArt
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       id='game-cover-art-header'
       ctx={input.ctx}
       navBar={input.topBar}

@@ -71,6 +71,7 @@ const View: FrontendModule['View'] = (input) => {
 
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       id='screen-pack-builder-add-puzzle'
       ctx={input.ctx}
       navBar={{

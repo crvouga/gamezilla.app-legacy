@@ -4,7 +4,6 @@ import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
-import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { MsgSpace } from '../../core/space-msg'
 import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from '../../types'
 import type { SpaceFrontendCmd } from '../frontend/cmd'
@@ -13,7 +12,6 @@ import type { Space } from '../space/space'
 
 export type SpaceFrontendCtx = BaseFrontendCtx & {
   space?: Space
-  parentScreen?: ScreenLayoutProps['parentScreen'] | null
 }
 
 export type Input = {

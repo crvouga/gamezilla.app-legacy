@@ -22,7 +22,7 @@ import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
 import { ViewAppRoot } from './@/ui/app-root/app-root'
 import { LogoBlock } from './@/ui/logo/logo-block'
-import { ScreenLayoutProps } from './@/ui/screen/layout/screen-layout-props'
+import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import * as AuthFrontend from './auth/frontend'
 import { ViewAppStatusBar } from './frontend/app-status-bar'
 import { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
@@ -101,16 +101,19 @@ const toFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx =
     currentScreen: input.model.currentScreen.currentScreen,
     currentUserId: null,
     screenSize: input.model.platform.screenSize.screenSize,
+    parentScreen: null,
   }
-  if (input.model.auth.currentUser.t === 'logged-in') {
-    return {
-      ...anonymousCtx,
-      currentUser: input.model.auth.currentUser.account,
-      currentUserRole: input.model.auth.currentUser.account.role,
-      currentUserId: input.model.auth.currentUser.account.userId,
-    }
+  switch (input.model.auth.currentUser.t) {
+    case 'logged-in':
+      return {
+        ...anonymousCtx,
+        currentUser: input.model.auth.currentUser.account,
+        currentUserRole: input.model.auth.currentUser.account.role,
+        currentUserId: input.model.auth.currentUser.account.userId,
+      }
+    default:
+      return anonymousCtx
   }
-  return anonymousCtx
 }
 
 const toTransportConfig = (input: {
@@ -138,6 +141,7 @@ export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?:
     documentVisibilityState: 'visible',
     profiles: {},
     screenSize: platform.model.screenSize.screenSize,
+    parentScreen: null,
   }
 
   const lang = LangFrontend.init({ ctx, stored: input.ctx.stored })
@@ -145,7 +149,7 @@ export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?:
   const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire }, stored: input.ctx.stored })
   const auth = AuthFrontend.init({ stored: input.ctx.stored, ctx })
   const space = SpacesFrontend.init({ ctx, stored: input.ctx.stored })
-  const profile = ProfileFrontend.init({ ctx, stored: input.ctx.stored })
+  const profile = ProfileFrontend.init({ ctx: { ...ctx, parentScreen: null }, stored: input.ctx.stored })
   const sound = Sound.init({ ctx, stored: input.ctx.stored })
   const statusBar = StatusBar.init({ stored: input.ctx.stored })
 
@@ -508,7 +512,7 @@ const toScreenLayoutProps = (input: {
   ctx: AppFrontendCtx | BaseFrontendCtx
   model: ModelFrontend
   dispatch: (m: MsgFrontend) => void
-}): ScreenLayoutProps['parentScreen'] | null => {
+}): ParentScreenProps | null => {
   const { ctx } = input
   if (!isAppFrontendCtx(ctx)) return null
 
@@ -516,6 +520,7 @@ const toScreenLayoutProps = (input: {
   const screenProfile: Screen = { n: 'profile', t: 'profile', userId: ctx.currentUserId }
   const pushSpaceList = () => input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } })
   return {
+    parentScreen: null,
     renderMiniPlayer: () => {
       if (!isAppFrontendCtx(input.ctx)) return null
       return (
@@ -527,8 +532,6 @@ const toScreenLayoutProps = (input: {
       )
     },
     actionBar: {
-      // renderNavBar: () => <NavBarLogo onClick={pushSpaceList} />,
-
       variant: {
         t: 'uniform',
         actions: [

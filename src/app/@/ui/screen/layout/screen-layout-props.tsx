@@ -33,15 +33,16 @@ export type NavBarProps = {
   onBack?: () => void
 }
 
+export type ParentScreenProps = Pick<ScreenLayoutProps, 'actionBar' | 'navBar' | 'renderMiniPlayer' | 'parentScreen'>
+
 export type ScreenLayoutProps = {
   id: string
   ctx: {
     t: Translator
     screenSize: ScreenSize
   }
+  parentScreen: ParentScreenProps | null
   navBar?: NavBarProps
-  isTopLevel?: boolean
-  parentScreen?: Pick<ScreenLayoutProps, 'actionBar' | 'navBar' | 'renderMiniPlayer'> | null
   actionBar?: ScreenLayoutActionBarProps | null
   renderMiniPlayer?: () => VDom
   renderBody: () => VDom

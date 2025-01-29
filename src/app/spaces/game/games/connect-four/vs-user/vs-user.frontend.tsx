@@ -226,6 +226,7 @@ const View: Module['View'] = (input) => {
       const modelSpace = input.modelSpace
       return (
         <ScreenLayout
+          parentScreen={input.ctx.parentScreen}
           id='connect-four-vs-user'
           ctx={input.ctx}
           renderBody={() => (

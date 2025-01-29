@@ -13,6 +13,7 @@ import * as AuthFrontend from '../frontend'
 import type { ModelFrontend } from '../types'
 
 const ctx: AnonymousFrontendCtx = {
+  parentScreen: null,
   dbConnSql: dbConnSqlNoop,
   logger: loggerNoop,
   currentScreen: {

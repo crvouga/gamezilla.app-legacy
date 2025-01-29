@@ -99,6 +99,7 @@ const View: FrontendModule['View'] = (input) => {
   return (
     <>
       <ScreenLayout
+        parentScreen={input.ctx.parentScreen}
         id='screen-play-puzzle'
         ctx={input.ctx}
         navBar={{
@@ -232,15 +233,15 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewSpectating: FrontendModule['View'] = (input) => {
-  if (input.modelSpace.screen.t !== 'screen-play-puzzle') {
-    return null
-  }
+  if (input.modelSpace.screen.t !== 'screen-play-puzzle') return null
+
   const puzzle = input.modelSpace.screen.puzzleResult
   const modePlay = input.modelSpace.screen.modePlay
   const puzzleIndex = input.modelSpace.screen.puzzleIndex
 
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       id='flow-spectating'
       ctx={input.ctx}
       navBar={{

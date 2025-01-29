@@ -56,6 +56,7 @@ const View: FrontendModule['View'] = (input) => {
   const query = toPuzzleQuery(input)
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       id='screen-puzzle-builder-open'
       ctx={input.ctx}
       navBar={{

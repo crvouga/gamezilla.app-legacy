@@ -414,6 +414,7 @@ const View: Module['View'] = (input) => {
 
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       ctx={input.ctx}
       id='connect-four-vs-bot'
       renderBody={() => (

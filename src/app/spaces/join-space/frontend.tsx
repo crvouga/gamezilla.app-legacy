@@ -98,6 +98,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       id='join-space'
       ctx={input.ctx}
       editAction={{

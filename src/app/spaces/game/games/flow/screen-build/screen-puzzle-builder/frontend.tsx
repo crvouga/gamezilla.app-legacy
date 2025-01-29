@@ -1,19 +1,20 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { IconDeleteForever, IconPen, IconPlay } from '~/@/ui'
+import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
+import { FlowFrontendCtx } from '../../@/frontend/ctx'
 import { ModeEdit } from '../../@/mode-edit'
 import { ModePlay } from '../../@/mode-play'
 import { VariantBoard } from '../../@/variant'
 import * as BuilderTypes from '../types'
+import { ScreenPuzzleBuildSpace } from './space'
 import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './surface-save-changes/frontend'
-import { ScreenPuzzleBuildSpace } from './space'
 
 //
 //
@@ -95,11 +96,8 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
 const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'screen-puzzle-builder.got-play-msg': {
-      if (input.modelSpace.screenPuzzleBuilder?.mode.t !== 'play') {
-        return {
-          model: input.model,
-        }
-      }
+      if (input.modelSpace.screenPuzzleBuilder?.mode.t !== 'play') return { model: input.model }
+
       const flow = ScreenPuzzleBuildSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
       const updated = ModePlay.update({
         msg: input.msgSpace.c,
@@ -116,22 +114,15 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
       }
     }
     case 'screen-puzzle-builder.got-edit-msg': {
-      if (input.modelSpace.screenPuzzleBuilder?.mode.t !== 'edit') {
-        return {
-          model: input.model,
-        }
-      }
+      if (input.modelSpace.screenPuzzleBuilder?.mode.t !== 'edit') return { model: input.model }
+
       const updated = ModeEdit.update({
         model: input.modelSpace.screenPuzzleBuilder.ModeEdit,
         msg: input.msgSpace.c,
         flow: input.modelSpace.screenPuzzleBuilder.puzzle.flow,
       })
 
-      if (!updated.msgCmd) {
-        return {
-          model: input.model,
-        }
-      }
+      if (!updated.msgCmd) return { model: input.model }
 
       switch (updated.msgCmd.t) {
         case 'play-sound': {
@@ -174,19 +165,14 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
 
   if (isSpectating) return <ViewSpectating {...input} />
 
-  return (
-    <ScreenLayout
-      id='puzzle-builder-screen'
-      ctx={input.ctx}
-      renderBody={() => (
-        <>
-          <EditPuzzleNameFrontend.View {...input} />
-          <DeleteForeverFrontend.View {...input} />
-          <SaveChangesFrontend.ViewSurface {...input} />
-          <ViewMode {...input} />
-        </>
-      )}
-      actionBar={{
+  const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
+
+  const screenCtx: FlowFrontendCtx = {
+    ...input.ctx,
+    parentScreen: {
+      parentScreen: input.ctx.parentScreen,
+      actionBar: {
+        id: 'puzzle-builder-actions',
         variant: {
           limit: {
             max: 3,
@@ -203,7 +189,7 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
           t: 'uniform',
           actions: [
             ...SaveChangesFrontend.viewBottomButtons({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
-            input.modelSpace.screenPuzzleBuilder.mode.t === 'edit'
+            puzzleBuilder.mode.t === 'edit'
               ? {
                   icon: (input) => <IconPlay {...input} />,
                   label: input.ctx.t('flow.play-mode'),
@@ -212,7 +198,7 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
                 }
               : null,
 
-            input.modelSpace.screenPuzzleBuilder.mode.t === 'play'
+            puzzleBuilder.mode.t === 'play'
               ? {
                   icon: (input) => <IconPen {...input} />,
                   label: input.ctx.t('flow.edit-mode'),
@@ -233,8 +219,17 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
             },
           ],
         },
-      }}
-    />
+      },
+    },
+  }
+
+  return (
+    <>
+      <EditPuzzleNameFrontend.View {...input} ctx={screenCtx} />
+      <DeleteForeverFrontend.View {...input} ctx={screenCtx} />
+      <SaveChangesFrontend.ViewSurface {...input} ctx={screenCtx} />
+      <ViewMode {...input} ctx={screenCtx} />
+    </>
   )
 }
 
@@ -274,6 +269,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
 
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       id='puzzle-builder-screen-mode-play'
       ctx={input.ctx}
       navBar={{

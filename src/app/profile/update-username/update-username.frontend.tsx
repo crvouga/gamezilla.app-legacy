@@ -94,6 +94,7 @@ export const View = (input: {
 }) => {
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       id='profile-update-username'
       ctx={input.ctx}
       navBar={{

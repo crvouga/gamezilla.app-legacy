@@ -12,6 +12,7 @@ import { loggerNoop } from '~/@/logger/impl-noop'
 export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => {
   const currentUserId = UserId.generate()
   const ctx: AppFrontendCtx = {
+    parentScreen: null,
     dbConnSql: dbConnSqlNoop,
     logger: loggerNoop,
     currentScreen: input?.currentScreen ?? {

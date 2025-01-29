@@ -11,6 +11,7 @@ const View = (input: {
 }) => {
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       id='profile-update-avatar'
       ctx={input.ctx}
       navBar={{

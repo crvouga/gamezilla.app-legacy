@@ -108,6 +108,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
 
   const ctx: SpaceFrontendCtx = {
     ...f.ctx,
+    parentScreen: null,
     currentScreen: {
       n: 'spaces',
       t: 'space-list',

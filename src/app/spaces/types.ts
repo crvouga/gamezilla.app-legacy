@@ -13,7 +13,6 @@ import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { FrontendEvt } from '~/app/@/frontend/evt'
-import { ScreenLayoutProps } from '../@/ui/screen/layout/screen-layout-props'
 import { SpaceFrontendCmd } from './@/frontend/cmd'
 import { SpacesCore } from './core/core'
 import { ISpacesCoreAsync } from './core/core-async/interface'
@@ -144,9 +143,7 @@ export type MsgToBackendExtra = {
 //
 //
 
-type SpaceFrontendCtx = (AnonymousFrontendCtx | AppFrontendCtx) & {
-  parentScreen?: ScreenLayoutProps['parentScreen'] | null
-}
+type SpaceFrontendCtx = AnonymousFrontendCtx | AppFrontendCtx
 
 export type FrontendModule = AppFrontendModule<{
   Ctx: SpaceFrontendCtx

@@ -7,6 +7,79 @@ import { ScreenLayoutProps } from './screen-layout-props'
 export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
   const Element = input.editAction ? 'form' : 'div'
 
+  const renderActionBars = (screen: ScreenLayoutProps | null): React.ReactNode[] => {
+    if (!screen) return []
+    const bars = []
+    if (screen.actionBar) {
+      const isTopLevel = !Boolean(screen.parentScreen)
+      bars.push(
+        <div className={cn(isTopLevel ? 'order-first' : 'order-last')}>
+          <VerticalActionBar
+            {...screen.actionBar}
+            id={screen.actionBar.id ?? `${screen.id}-actions`}
+            ctx={screen.ctx}
+            key={screen.id}
+          />
+        </div>,
+      )
+    }
+    if (screen.parentScreen) {
+      bars.push(...renderActionBars(screen.parentScreen as ScreenLayoutProps))
+    }
+    return bars
+  }
+
+  const renderNavBars = (screen: ScreenLayoutProps | null): React.ReactNode[] => {
+    if (!screen) return []
+    const bars = []
+    if (screen.navBar) {
+      bars.push(
+        <ScreenNavBarTablet
+          key={screen.id}
+          ctx={screen.ctx}
+          onBack={screen.navBar.onBack}
+          title={screen.navBar.title}
+          renderEnd={() =>
+            (screen.editAction || screen.createAction) && (
+              <div className='flex w-fit items-center justify-end'>
+                {screen.editAction && <CancelSubmitButtons {...screen.editAction} size='sm' />}
+                {screen.createAction && (
+                  <Button
+                    color='primary'
+                    rounded
+                    variant='contained'
+                    size='sm'
+                    onClick={screen.createAction.onSubmit}
+                    disabled={screen.createAction.submitDisabled}
+                    loading={screen.createAction.submitLoading}
+                    text={screen.createAction.submitText}
+                    iconStart={screen.createAction.submitIcon}
+                  />
+                )}
+              </div>
+            )
+          }
+        />,
+      )
+    }
+    if (screen.parentScreen) {
+      bars.push(...renderNavBars(screen.parentScreen as ScreenLayoutProps))
+    }
+    return bars
+  }
+
+  const renderMiniPlayers = (screen: ScreenLayoutProps | null): React.ReactNode[] => {
+    if (!screen) return []
+    const players = []
+    if (screen.renderMiniPlayer) {
+      players.push(screen.renderMiniPlayer())
+    }
+    if (screen.parentScreen) {
+      players.push(...renderMiniPlayers(screen.parentScreen as ScreenLayoutProps))
+    }
+    return players
+  }
+
   return (
     <Element
       className='flex w-full flex-1 flex-col overflow-hidden'
@@ -15,60 +88,16 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
         input.editAction?.onSubmit()
       }}
     >
-      <div className={cn('flex w-full flex-1 overflow-hidden', input.isTopLevel ? 'flex-row' : 'flex-row-reverse')}>
-        {input.parentScreen?.actionBar && (
-          <VerticalActionBar
-            {...input.parentScreen.actionBar}
-            id={input.parentScreen.actionBar.id ?? `${input.id}-parent-actions`}
-            ctx={input.ctx}
-          />
-        )}
+      <div className='flex w-full flex-1 flex-row overflow-hidden'>
+        {renderActionBars(input)}
 
-        {input.actionBar && (
-          <VerticalActionBar {...input.actionBar} id={input.actionBar.id ?? `${input.id}-actions`} ctx={input.ctx} />
-        )}
-
-        <div
-          className={cn(
-            'flex flex-1 flex-col overflow-hidden',
-            // input.isTopLevel ? 'border-l' : ''
-          )}
-        >
-          {input.navBar && (
-            <ScreenNavBarTablet
-              ctx={input.ctx}
-              onBack={input.navBar.onBack}
-              title={input.navBar.title}
-              renderEnd={() =>
-                (input.editAction || input.createAction) && (
-                  <div className='flex w-fit items-center justify-end'>
-                    {input.editAction && <CancelSubmitButtons {...input.editAction} size='sm' />}
-                    {input.createAction && (
-                      <Button
-                        color='primary'
-                        rounded
-                        variant='contained'
-                        size='sm'
-                        onClick={input.createAction.onSubmit}
-                        disabled={input.createAction.submitDisabled}
-                        loading={input.createAction.submitLoading}
-                        text={input.createAction.submitText}
-                        iconStart={input.createAction.submitIcon}
-                      />
-                    )}
-                  </div>
-                )
-              }
-            />
-          )}
+        <div className='flex flex-1 flex-col overflow-hidden'>
+          {renderNavBars(input)}
 
           <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
             {input.renderBody()}
             {(input.createAction || input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) && (
-              <div className='absolute bottom-8 right-8 bg-black'>
-                {input.renderMiniPlayer?.()}
-                {input.parentScreen?.renderMiniPlayer?.()}
-              </div>
+              <div className='absolute bottom-8 right-8 bg-black'>{renderMiniPlayers(input)}</div>
             )}
           </div>
         </div>

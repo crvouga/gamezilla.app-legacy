@@ -6,23 +6,29 @@ import { ScreenLayoutProps } from './screen-layout-props.tsx'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.editAction ? 'form' : 'div'
-  const actionPosition = input.actionBar?.position ?? 'bottom'
-  const actions = (
+
+  const parentActionPosition = input.parentScreen?.actionBar?.position ?? 'bottom'
+  const parentActions = (
     <>
-      {input.renderMiniPlayer?.()}
-
       {input.parentScreen?.renderMiniPlayer?.()}
-
-      {input.actionBar && (
-        <HorizontalActionBar {...input.actionBar} id={input.actionBar.id ?? `${input.id}-actions`} ctx={input.ctx} />
-      )}
-
       {input.parentScreen?.actionBar && (
         <HorizontalActionBar
           {...input.parentScreen.actionBar}
           id={input.parentScreen.actionBar.id ?? `${input.id}-actions`}
           ctx={input.ctx}
         />
+      )}
+    </>
+  )
+
+  const actionPosition = input.actionBar?.position ?? 'bottom'
+
+  const actions = (
+    <>
+      {input.renderMiniPlayer?.()}
+
+      {input.actionBar && (
+        <HorizontalActionBar {...input.actionBar} id={input.actionBar.id ?? `${input.id}-actions`} ctx={input.ctx} />
       )}
     </>
   )
@@ -35,6 +41,8 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         input.editAction?.onSubmit()
       }}
     >
+      {parentActionPosition === 'top' && parentActions}
+
       {input.navBar && <ScreenNavBarMobile ctx={input.ctx} onBack={input.navBar.onBack} title={input.navBar.title} />}
 
       {actionPosition === 'top' && actions}
@@ -62,6 +70,8 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       {input.editAction && <CancelSubmitButtons {...input.editAction} />}
 
       {actionPosition === 'bottom' && actions}
+
+      {parentActionPosition === 'bottom' && parentActions}
     </Element>
   )
 }

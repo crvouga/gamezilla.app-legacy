@@ -2,8 +2,8 @@ import { Avatar, Button, IconArrowLeftOnRect, IconUserPen, SpinnerBlock, Typogra
 import { Gutter } from '~/@/ui/gutter'
 import { Profile } from '~/app/@/data/profile'
 import type { UserId } from '~/app/@/data/user-id'
-import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenBodyRoot } from '~/app/@/ui/screen/layout/screen-body-root'
+import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
 
 const View = (input: {
@@ -26,7 +26,6 @@ const View = (input: {
 const ViewLoading = (input: { ctx: FrontendCtx }) => {
   return (
     <ScreenLayout
-      isTopLevel
       ctx={input.ctx}
       parentScreen={input.ctx.parentScreen}
       id='profile-screen'
@@ -38,7 +37,6 @@ const ViewLoading = (input: { ctx: FrontendCtx }) => {
 const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (msg: MsgFrontend) => void }) => {
   return (
     <ScreenLayout
-      isTopLevel
       ctx={input.ctx}
       parentScreen={input.ctx.parentScreen}
       navBar={{ title: input.ctx.t('username', input.profile.username) }}
@@ -73,7 +71,6 @@ const ViewProfile = (input: {
 }) => {
   return (
     <ScreenLayout
-      isTopLevel
       ctx={input.ctx}
       parentScreen={input.ctx.parentScreen}
       navBar={{ title: input.ctx.t('username', input.profile.username) }}

@@ -16,6 +16,7 @@ import { ViewUsersInSpaceList } from './games/@/ui/users-in-space-list'
 import { GameCoverArt } from './games/cover-art'
 import { GamesFrontend } from './games/frontend'
 import { gameNameList } from './games/types'
+import { SpaceFrontendCtx } from '../@/frontend/ctx'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -296,7 +297,9 @@ const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
   if (!input.ctx.space) return null
   if (!input.ctx.currentUser) return null
 
-  const isSpectator = input.ctx.space.hostId !== input.ctx.currentUser.userId
+  const isHost = input.ctx.space.hostId === input.ctx.currentUser.userId
+  const isGuest = !isHost
+
   const spaceCtx = {
     ...input.ctx,
     space: input.ctx.space,
@@ -306,6 +309,7 @@ const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
   }
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       id='game-selection-screen'
       ctx={input.ctx}
       navBar={{
@@ -313,40 +317,46 @@ const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
         onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
       }}
       renderBody={() =>
-        isSpectator ? (
+        isGuest ? (
           <ViewUsersInSpaceList
             onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
             ctx={spaceCtx}
           />
         ) : (
-          <div className='3xl:grid-cols-8 grid flex-1 grid-cols-3 justify-between gap-8 p-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7'>
-            {gameNameList.map((gameName) => (
-              <div key={gameName}>
-                <button
-                  type='button'
-                  aria-label={gameName}
-                  onClick={() =>
-                    input.dispatch({
-                      t: 'clicked-game-tile',
-                      gameName,
-                    })
-                  }
-                  className='flex aspect-square overflow-hidden rounded-lg border'
-                >
-                  <GameCoverArt gameName={gameName} />
-                </button>
-
-                <Typography
-                  className='mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold'
-                  variant='label'
-                  text={input.ctx.t(gameName)}
-                />
-              </div>
-            ))}
-          </div>
+          <ViewHostGameSelection ctx={spaceCtx} dispatch={input.dispatch} />
         )
       }
     />
+  )
+}
+
+const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
+  return (
+    <div className='3xl:grid-cols-8 grid flex-1 grid-cols-3 justify-between gap-8 p-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7'>
+      {gameNameList.map((gameName) => (
+        <div key={gameName}>
+          <button
+            type='button'
+            aria-label={gameName}
+            onClick={() =>
+              input.dispatch({
+                t: 'clicked-game-tile',
+                gameName,
+              })
+            }
+            className='flex aspect-square overflow-hidden rounded-lg border'
+          >
+            <GameCoverArt gameName={gameName} />
+          </button>
+
+          <Typography
+            className='mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold'
+            variant='label'
+            text={input.ctx.t(gameName)}
+          />
+        </div>
+      ))}
+    </div>
   )
 }
 

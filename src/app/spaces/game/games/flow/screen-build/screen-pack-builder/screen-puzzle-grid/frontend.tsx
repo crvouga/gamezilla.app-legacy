@@ -20,11 +20,11 @@ const update: FrontendModule['update'] = (input) => {
 
 const View: FrontendModule['View'] = (input) => {
   const packBuilder = input.modelSpace
-  if (!packBuilder) {
-    return null
-  }
+  if (!packBuilder) return null
+
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       id='screen-puzzle-grid'
       ctx={input.ctx}
       navBar={{

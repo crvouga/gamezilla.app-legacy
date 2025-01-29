@@ -457,6 +457,7 @@ export const View = (input: {
   return (
     <ScreenLayout
       {...input.screenLayout}
+      parentScreen={input.ctx.parentScreen}
       id='mode-edit-screen'
       ctx={input.ctx}
       actionBar={{

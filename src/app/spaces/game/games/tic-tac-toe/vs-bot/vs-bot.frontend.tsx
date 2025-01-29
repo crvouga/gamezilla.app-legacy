@@ -243,6 +243,7 @@ export const View = (input: {
 
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       ctx={input.ctx}
       id='tic-tac-toe-vs-bot'
       renderBody={() => (

@@ -443,6 +443,7 @@ const ViewSendCode: Module['View'] = (input) => {
     <ScreenLayout
       id='auth-sms-send-code'
       ctx={input.ctx}
+      parentScreen={input.ctx.parentScreen}
       navBar={{
         title: input.ctx.t('auth-sms.login-with-phone'),
         onBack: () =>
@@ -524,6 +525,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
     <ScreenLayout
       id='auth-sms-verify'
       ctx={input.ctx}
+      parentScreen={input.ctx.parentScreen}
       navBar={{
         title: input.ctx.t('auth-sms.login-with-phone'),
         onBack: () =>

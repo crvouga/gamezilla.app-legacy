@@ -6,6 +6,7 @@ import { AlertError, AlertSuccess, TextField } from '~/@/ui'
 import { ScreenCmd } from '~/app/@/frontend/cmd'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 
 //
 //
@@ -153,34 +154,25 @@ export const View = (input: {
   ctx: {
     t: Translator
     screenSize: ScreenSize
+    parentScreen: ParentScreenProps | null
   }
 }) => {
   return (
     <ScreenLayout
       id='auth-email'
       ctx={input.ctx}
+      parentScreen={input.ctx.parentScreen}
       navBar={{
         title: input.ctx.t('auth-email.login-with-email'),
-        onBack: () =>
-          input.dispatch({
-            t: 'clicked-back',
-          }),
+        onBack: () => input.dispatch({ t: 'clicked-back' }),
       }}
       editAction={{
-        onSubmit: () => {
-          input.dispatch({
-            t: 'clicked-send-login-link',
-          })
-        },
+        onSubmit: () => input.dispatch({ t: 'clicked-send-login-link' }),
         submitText: input.ctx.t('auth-email.send-login-link'),
         submitLoading: input.model.submission.type === 'loading',
         submitDisabled: false,
         cancelText: input.ctx.t('app.cancel'),
-        onCancel: () => {
-          input.dispatch({
-            t: 'clicked-back',
-          })
-        },
+        onCancel: () => input.dispatch({ t: 'clicked-back' }),
         cancelDisabled: false,
       }}
       renderBody={() => (

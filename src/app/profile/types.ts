@@ -12,7 +12,6 @@ import { Username } from '../@/data/username'
 import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { FrontendEvt } from '../@/frontend/evt'
-import { ScreenLayoutProps } from '../@/ui/screen/layout/screen-layout-props'
 import * as UpdateUsernameTypes from './update-username/update-username.types'
 //
 //
@@ -132,9 +131,7 @@ export type BackendModule = AppBackendModule<{
   Deps: null
 }>
 
-export type FrontendCtx = (AppFrontendCtx | AnonymousFrontendCtx) & {
-  parentScreen?: ScreenLayoutProps['parentScreen'] | null
-}
+export type FrontendCtx = AppFrontendCtx | AnonymousFrontendCtx
 
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend

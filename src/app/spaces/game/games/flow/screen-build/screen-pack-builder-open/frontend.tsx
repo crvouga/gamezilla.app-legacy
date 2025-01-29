@@ -52,12 +52,10 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  const query = toQuery({
-    currentUserId: input.ctx.currentUserId,
-    offset: 0,
-  })
+  const query = toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 })
   return (
     <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
       id='screen-pack-builder-open'
       ctx={input.ctx}
       navBar={{

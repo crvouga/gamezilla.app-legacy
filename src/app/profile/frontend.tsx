@@ -454,6 +454,7 @@ const ViewUpdateScreen: typeof View = (input) => {
     <ScreenLayout
       id='profile-update'
       ctx={input.ctx}
+      parentScreen={input.ctx.parentScreen}
       navBar={{
         title: input.ctx.t('profile.update-profile'),
         onBack: () =>

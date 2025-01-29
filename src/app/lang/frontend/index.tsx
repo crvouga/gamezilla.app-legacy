@@ -176,6 +176,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
     <ScreenLayout
       id='choose-lang'
       ctx={input.ctx}
+      parentScreen={input.ctx.parentScreen}
       navBar={{
         title: input.ctx.t('lang.choose-language'),
         onBack: () =>

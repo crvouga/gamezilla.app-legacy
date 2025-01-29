@@ -87,13 +87,12 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   return (
     <ScreenLayout
-      isTopLevel
+      parentScreen={input.ctx.parentScreen}
       id='list-spaces'
       ctx={input.ctx}
       navBar={{
         title: input.ctx.t('spaces.spaces'),
       }}
-      parentScreen={input.ctx.parentScreen}
       createAction={StartSpaceFrontend.viewStartSpaceButton(input)}
       renderBody={() => {
         return (

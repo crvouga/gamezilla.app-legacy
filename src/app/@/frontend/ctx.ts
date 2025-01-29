@@ -9,6 +9,7 @@ import { UserId } from '../data/user-id'
 import { UserRole } from '../data/user-role'
 import { Username } from '../data/username'
 import { ScreenSize } from '../ui/screen/screen-size'
+import { ParentScreenProps } from '../ui/screen/layout/screen-layout-props'
 
 type Profile = {
   userId: UserId
@@ -17,6 +18,7 @@ type Profile = {
 }
 
 export type BaseFrontendCtx = {
+  parentScreen: ParentScreenProps | null
   screenSize: ScreenSize
   dbConnSql: IDbConnSql
   logger: ILogger
