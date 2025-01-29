@@ -2,7 +2,9 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { IconDeleteForever, IconPen, IconPlay } from '~/@/ui'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { ScreenAction } from '~/app/@/ui/screen/action-bar/props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../@/ui/layout-game'
 import { ProfileListItem } from '../../../@/ui/profile-list-item'
@@ -15,7 +17,6 @@ import { ScreenPuzzleBuildSpace } from './space'
 import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './surface-save-changes/frontend'
-import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 
 //
 //
@@ -203,23 +204,7 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
         t: 'uniform',
         actions: [
           ...SaveChangesFrontend.viewBottomButtons({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
-          puzzleBuilder.mode.t === 'edit'
-            ? {
-                icon: (input) => <IconPlay {...input} />,
-                label: input.ctx.t('flow.play-mode'),
-                classNames: { button: 'text-blue-500' },
-                onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
-              }
-            : null,
 
-          puzzleBuilder.mode.t === 'play'
-            ? {
-                icon: (input) => <IconPen {...input} />,
-                label: input.ctx.t('flow.edit-mode'),
-                classNames: { button: 'text-amber-500' },
-                onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
-              }
-            : null,
           {
             icon: (input) => <IconPen {...input} />,
             label: input.ctx.t('app.edit-name'),
@@ -234,6 +219,28 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
         ],
       },
     },
+  }
+}
+
+const toToggleModeScreenAction = (
+  mode: 'edit' | 'play',
+  input: Parameters<BuilderTypes.FrontendModule['View']>[0],
+): ScreenAction => {
+  switch (mode) {
+    case 'edit':
+      return {
+        icon: (input) => <IconPlay {...input} />,
+        label: input.ctx.t('flow.play-mode'),
+        classNames: { button: 'text-blue-500' },
+        onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
+      }
+    case 'play':
+      return {
+        icon: (input) => <IconPen {...input} />,
+        label: input.ctx.t('flow.edit-mode'),
+        classNames: { button: 'text-amber-500' },
+        onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
+      }
   }
 }
 
@@ -255,6 +262,7 @@ const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
               title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
             },
           }}
+          actions={[toToggleModeScreenAction(puzzleBuilder.mode.t, input)]}
         />
       )
     case 'play':
@@ -295,6 +303,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
         variant: {
           t: 'uniform',
           actions: [
+            toToggleModeScreenAction(puzzleBuilder.mode.t, input),
             ModePlay.viewHintAction({
               ctx: ModePlay.initCtx({ ...input.ctx, flow }),
               dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),

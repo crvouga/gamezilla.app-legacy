@@ -16,6 +16,7 @@ import * as FlowUI from '../ui/color'
 import { VariantBoard } from '../variant'
 import * as FlowVariant from '../variant/variant'
 import * as FlowVariantDimensions from '../variant/variant-dimensions'
+import { ScreenAction } from '~/app/@/ui/screen/action-bar/props'
 
 //
 //
@@ -453,6 +454,7 @@ export const View = (input: {
   model: Model
   dispatch: (m: Msg) => void
   screenLayout: Partial<ScreenLayoutProps>
+  actions: ScreenAction[]
 }) => {
   return (
     <ScreenLayout
@@ -464,6 +466,7 @@ export const View = (input: {
         variant: {
           t: 'uniform',
           actions: [
+            ...input.actions,
             {
               icon: (input) => <IconArrowRotateLeft {...input} />,
               label: input.ctx.t('app.undo'),
