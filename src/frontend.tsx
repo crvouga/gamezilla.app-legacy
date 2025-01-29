@@ -4,7 +4,7 @@ import * as AppFrontend from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { DebuggerConsole } from './@/program/debugger/debugger-console'
 
-try {
+const main = async () => {
   const root = document.getElementById('root')
 
   if (!root) throw new Error('Root element not found')
@@ -33,6 +33,6 @@ try {
   await ctx.transport.start()
 
   console.log(CONFIG_FRONTEND)
-} catch (e) {
-  console.error(e)
 }
+
+main()

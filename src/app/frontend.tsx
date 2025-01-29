@@ -1,5 +1,5 @@
 import { Browser } from '~/@/browser'
-import { DbConnSql } from '~/@/db-conn-sql/frontend/impl'
+import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
 import { Eff } from '~/@/eff'
 import { eq } from '~/@/equals/equals'
 import { HttpClient } from '~/@/http-client'
@@ -15,7 +15,6 @@ import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { ILogger, Logger } from '../@/logger'
-import { setupNewPowerSyncDatabase } from '../service-powersync/frontend/database'
 import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { FrontendEvt } from './@/frontend/evt'
@@ -63,13 +62,13 @@ export const initCtx = async (): Promise<FrontendCtx> => {
 
   const rpc = RPC.initClient(httpClient, rpcContract)
 
-  // const dbConnSql = dbConnSqlNoop
+  const dbConnSql = dbConnSqlNoop
 
-  const dbConnSql = await DbConnSql({
-    t: 'powersync',
-    powersync: await setupNewPowerSyncDatabase(),
-    logger,
-  })
+  // const dbConnSql = await DbConnSql({
+  //   t: 'powersync',
+  //   powersync: await setupNewPowerSyncDatabase(),
+  //   logger,
+  // })
 
   return {
     dbConnSql,
