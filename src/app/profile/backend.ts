@@ -137,15 +137,11 @@ const handler = async ({
 const findElseInsertNew = async ({ ProfileDb, userId }: { ProfileDb: ProfileDb; userId: UserId }) => {
   const found = await ProfileDb.findOneByUserId(userId)
 
-  if (isErr(found)) {
-    return found
-  }
+  if (isErr(found)) return found
 
   const profile = found.value[0]
 
-  if (profile) {
-    return Ok(profile)
-  }
+  if (profile) return Ok(profile)
 
   const randomSeed = ProfileAvatar.generateRandomSeed()
   const randomUsername = await Username.generate('.')
@@ -158,9 +154,7 @@ const findElseInsertNew = async ({ ProfileDb, userId }: { ProfileDb: ProfileDb; 
 
   const inserted = await ProfileDb.insertOne(profileNew)
 
-  if (isErr(inserted)) {
-    return inserted
-  }
+  if (isErr(inserted)) return inserted
 
   return Ok(profileNew)
 }
