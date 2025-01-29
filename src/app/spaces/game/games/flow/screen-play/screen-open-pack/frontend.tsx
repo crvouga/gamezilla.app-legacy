@@ -1,12 +1,11 @@
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { IconGamepad } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { ScreenLayoutGameCoverArt } from '../../../@/ui/layout-game-cover-art-header'
-import { ViewUsersInSpaceList } from '../../../@/ui/users-in-space-list'
+import { ScreenLayoutHostSettingUpGame } from '../../../@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
 import { PacksDbQuery } from '../../@/pack/pack-db/query'
 import type { FrontendModule } from '../types'
+import { IconGamepad } from '~/@/ui'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -45,26 +44,13 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  if (input.ctx.currentUserId !== input.ctx.space.hostId) {
+  const isCurrentUserSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
+  if (isCurrentUserSpectating) {
     return (
-      <ScreenLayoutGameCoverArt
+      <ScreenLayoutHostSettingUpGame
+        parentScreen={input.ctx.parentScreen}
         ctx={input.ctx}
-        navBar={{ title: input.ctx.t('flow.play') }}
-        renderCoverArt={(input) => (
-          <div {...input}>
-            <div className='h-full w-full p-4'>
-              <IconGamepad className='h-full w-full' />
-            </div>
-          </div>
-        )}
-        renderContent={() => (
-          <ViewUsersInSpaceList
-            onOpenUserDetails={(userId) =>
-              input.dispatch({ t: 'game-main-menu.clicked-open-user-details-button', userId })
-            }
-            ctx={input.ctx}
-          />
-        )}
+        renderCoverArt={(props) => <IconGamepad {...props} />}
       />
     )
   }

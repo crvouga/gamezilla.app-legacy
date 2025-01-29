@@ -4,9 +4,9 @@ import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { MsgSpace } from '../core/space-msg'
-import { ViewUsersInSpaceList } from '../game/games/@/ui/users-in-space-list'
+import { SectionPeopleList } from '../game/games/@/ui/section-people-list/section-people-list'
 import { GameCoverArt } from '../game/games/cover-art'
-import { ScreenLayoutGameCoverArt } from '../game/games/@/ui/layout-game-cover-art-header'
+import { ScreenLayoutGameCoverArt } from '../game/games/@/ui/screen-layout-game-cover-art'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -112,6 +112,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       }}
       renderBody={() => (
         <ScreenLayoutGameCoverArt
+          parentScreen={input.ctx.parentScreen}
           ctx={input.ctx}
           navBar={{
             title: spaceState.game ? input.ctx.t(spaceState.game.t) : input.ctx.t('spaces.space'),
@@ -125,7 +126,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
             )
           }
           renderContent={() => (
-            <ViewUsersInSpaceList
+            <SectionPeopleList
               ctx={spaceCtx}
               onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
             />

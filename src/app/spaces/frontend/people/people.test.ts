@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { didOpenProfile, didPlaySound } from '~/app/@/frontend/cmd'
 import { UserId } from '~/app/@/data/user-id'
-import { People } from '.'
+import { People } from './people'
 import { FixtureSpacesFrontend } from '../../@/fixture/frontend'
 import { openUserDetails } from '~/app/spaces/@/frontend/cmd'
 

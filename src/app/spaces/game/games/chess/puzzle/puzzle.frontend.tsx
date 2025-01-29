@@ -17,7 +17,7 @@ import { APP_SOUND, AppFrontendCmd, playSound, sendToBackend } from '~/app/@/fro
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/props'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { LayoutGame } from '../../@/ui/layout-game'
+import { LayoutGame } from '../../@/ui/game-layout'
 import { Chess } from '../@/chess'
 import { Chessboard } from '../@/chess-ui/chessboard'
 import { CHESS_SOUND } from '../@/chess/chess-sounds'

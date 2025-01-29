@@ -5,14 +5,14 @@ import { Button, Dialog, DialogHeader, DialogSurface } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
-import { ProfileListItem } from '../../../@/ui/profile-list-item'
+import { ProfileListItem } from '../../../@/ui/list-item-profile'
 import { ModePlay } from '../../@/mode-play'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { FrontendModule } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
 import { LastPuzzleFrontend } from './dialog-last-puzzle/frontend'
 import { ScreenPlayPuzzleSpace } from './space'
-import { LayoutGame } from '../../../@/ui/layout-game'
+import { LayoutGame } from '../../../@/ui/game-layout'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(

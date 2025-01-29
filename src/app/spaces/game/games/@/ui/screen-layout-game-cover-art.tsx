@@ -15,22 +15,29 @@ export const ScreenLayoutGameCoverArt = (input: {
   ctx: {
     t: Translator
     screenSize: ScreenSize
-    parentScreen: ParentScreenProps | null
   }
+  parentScreen: ParentScreenProps | null
   renderCoverArt?: (input: { className: string }) => VDom
   renderContent: () => VDom
 }) => {
   const renderCoverArtFinal = input.renderCoverArt || renderDefaultCoverArt
   return (
     <ScreenLayout
-      parentScreen={input.ctx.parentScreen}
+      parentScreen={input.parentScreen}
       id='game-cover-art-header'
       ctx={input.ctx}
       navBar={input.navBar}
       renderBody={() => (
-        <div className='flex flex-col items-center gap-6 p-6'>
-          {renderCoverArtFinal({ className: 'size-28 overflow-hidden rounded-lg' })}
-          {input.renderContent()}
+        <div className='flex w-full flex-1 flex-col items-center justify-start'>
+          <div
+            className={cn(
+              'flex w-full flex-1 flex-col items-center justify-start gap-6 p-6 py-4',
+              input.ctx.screenSize === 'tablet' && 'max-w-2xl',
+            )}
+          >
+            {renderCoverArtFinal({ className: 'size-28 overflow-hidden rounded-lg mx-auto' })}
+            {input.renderContent()}
+          </div>
         </div>
       )}
     />

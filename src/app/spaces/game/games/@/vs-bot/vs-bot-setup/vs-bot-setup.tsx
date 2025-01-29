@@ -4,7 +4,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { ScreenLayoutGameCoverArt } from '../../ui/layout-game-cover-art-header'
+import { ScreenLayoutGameCoverArt } from '../../ui/screen-layout-game-cover-art'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 
 //
@@ -142,6 +142,7 @@ export const View = ({
   return (
     <div className='flex w-full flex-1 flex-col'>
       <ScreenLayoutGameCoverArt
+        parentScreen={ctx.parentScreen}
         ctx={ctx}
         navBar={{
           title,

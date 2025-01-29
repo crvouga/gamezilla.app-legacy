@@ -1,8 +1,7 @@
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { IconGamepad } from '~/@/ui'
+import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { ScreenLayoutGameCoverArt } from '../../../@/ui/layout-game-cover-art-header'
-import { ViewUsersInSpaceList } from '../../../@/ui/users-in-space-list'
+import { ScreenLayoutHostSettingUpGame } from '../../../@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { PuzzleDbQueryFrontend } from '../../@/puzzle/puzzle-db-query/frontend'
 import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
@@ -57,26 +56,13 @@ const View: FrontendModule['View'] = (input) => {
 
   if (isSpectating) {
     return (
-      <ScreenLayoutGameCoverArt
+      <ScreenLayoutHostSettingUpGame
+        parentScreen={input.ctx.parentScreen}
         ctx={input.ctx}
         navBar={{
           title: input.ctx.t('flow.play'),
         }}
-        renderCoverArt={(input) => (
-          <div {...input}>
-            <div className='h-full w-full p-4'>
-              <IconGamepad className='h-full w-full' />
-            </div>
-          </div>
-        )}
-        renderContent={() => (
-          <ViewUsersInSpaceList
-            onOpenUserDetails={(userId) =>
-              input.dispatch({ t: 'game-main-menu.clicked-open-user-details-button', userId })
-            }
-            ctx={input.ctx}
-          />
-        )}
+        renderCoverArt={(input) => <IconGamepad {...input} />}
       />
     )
   }

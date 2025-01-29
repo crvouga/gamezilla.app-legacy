@@ -1,6 +1,6 @@
 import { RequestResponse, startedRequest } from '~/@/request-response/request-response'
 import { Ok } from '~/@/result'
-import { IconGamepad } from '~/@/ui'
+import { cn, IconGamepad } from '~/@/ui'
 import { EmptyState } from '~/@/ui/empty-state'
 import { Gutter } from '~/@/ui/gutter'
 import type { SpaceId } from '~/app/@/data/space-id'
@@ -95,7 +95,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       createAction={StartSpaceFrontend.viewStartSpaceButton(input)}
       renderBody={() => {
         return (
-          <div className='flex flex-col'>
+          <div className={cn('flex flex-1 flex-col', input.ctx.screenSize === 'tablet' && 'max-w-2xl')}>
             {spaces.length === 0 && (
               <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
             )}

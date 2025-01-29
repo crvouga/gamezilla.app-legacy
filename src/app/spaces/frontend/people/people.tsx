@@ -3,9 +3,9 @@ import { APP_SOUND, openProfile, playSound } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { ViewUsersInSpaceList } from '~/app/spaces/game/games/@/ui/users-in-space-list'
-import { ViewHostChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/host-chip'
-import { ViewYouChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/you-chip'
+import { SectionPeopleList } from '~/app/spaces/game/games/@/ui/section-people-list/section-people-list'
+import { ViewHostChip } from '~/app/spaces/game/games/@/ui/section-people-list/host-chip'
+import { ViewYouChip } from '~/app/spaces/game/games/@/ui/section-people-list/you-chip'
 import { SpaceFrontendModule } from '../../@/architecture/space-frontend'
 
 const update: SpaceFrontendModule['update'] = (input) => {
@@ -99,7 +99,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
         open={input.model.modal === 'users'}
         onClose={() => input.dispatch({ t: 'closed-modal' })}
         renderBody={() => (
-          <ViewUsersInSpaceList
+          <SectionPeopleList
             onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
             ctx={spaceCtx}
           />

@@ -42,7 +42,7 @@ export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: 
 
 export const DialogSurface = (input: { children: VDomChildren }) => {
   return (
-    <div className='bg-surface border-surface relative z-50 flex w-full max-w-[400px] scale-0 flex-col gap-6 rounded-lg border shadow-2xl drop-shadow-2xl transition-transform duration-300 ease-in-out [.opacity-100_&]:scale-100'>
+    <div className='bg-surface border-surface relative z-50 flex w-full max-w-[400px] scale-0 flex-col rounded-lg border shadow-2xl drop-shadow-2xl transition-transform duration-300 ease-in-out [.opacity-100_&]:scale-100'>
       {input.children}
     </div>
   )
@@ -50,7 +50,7 @@ export const DialogSurface = (input: { children: VDomChildren }) => {
 
 export const DialogHeader = (input: { title: string }) => {
   return (
-    <h1 role='heading' aria-level={1} title={input.title} className='text-center text-xl font-semibold'>
+    <h1 role='heading' aria-level={1} title={input.title} className='px-6 pb-4 pt-6 text-center text-xl font-semibold'>
       {input.title}
     </h1>
   )

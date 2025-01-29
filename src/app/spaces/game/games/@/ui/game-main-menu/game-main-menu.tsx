@@ -1,8 +1,10 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
+import { p } from '~/@/parser'
+import { isOk } from '~/@/result'
+import { IconRobot, IconUsers, Typography } from '~/@/ui'
 import type { VDom } from '~/@/vdom/vdom'
 import { UserId } from '~/app/@/data/user-id'
-import { IconRobot, IconUsers, Typography } from '~/@/ui'
 import {
   type SpaceFrontendCmd,
   type SpaceFrontendCmdTypes,
@@ -10,10 +12,8 @@ import {
   openUserDetails,
 } from '~/app/spaces/@/frontend/cmd'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { ScreenLayoutGameCoverArt } from '../layout-game-cover-art-header'
-import { ViewUsersInSpaceList } from '../users-in-space-list'
-import { p } from '~/@/parser'
-import { isOk } from '~/@/result'
+import { ScreenLayoutGameCoverArt } from '../screen-layout-game-cover-art'
+import { ScreenLayoutHostSettingUpGame } from '../screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 
 export const Msg = p.or(
   p.obj({ t: p.l('game-main-menu.clicked-open-user-details-button'), userId: UserId }),
@@ -76,26 +76,17 @@ export const View = (props: {
 
   if (isSpectating) {
     return (
-      <ScreenLayoutGameCoverArt
+      <ScreenLayoutHostSettingUpGame
+        parentScreen={props.ctx.parentScreen}
         ctx={props.ctx}
-        navBar={{
-          title: props.title,
-        }}
-        renderCoverArt={props.renderCoverArt}
-        renderContent={() => (
-          <ViewUsersInSpaceList
-            onOpenUserDetails={(userId) =>
-              props.dispatch({ t: 'game-main-menu.clicked-open-user-details-button', userId })
-            }
-            ctx={props.ctx}
-          />
-        )}
+        navBar={{ title: props.title, onBack: props.onBack }}
       />
     )
   }
 
   return (
     <ScreenLayoutGameCoverArt
+      parentScreen={props.ctx.parentScreen}
       ctx={props.ctx}
       navBar={{ title: props.title, onBack: props.onBack }}
       renderCoverArt={props.renderCoverArt}

@@ -1,22 +1,22 @@
 import { Eff } from '~/@/eff'
 import { WithEventId, withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
+import { Typography } from '~/@/ui'
 import { UserAccount } from '~/app/@/data/account'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { Typography } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
+import { SpaceFrontendCtx } from '../@/frontend/ctx'
 import { SpacesCore } from '../core/core'
 import { Space } from '../core/space'
 import { MsgSpace } from '../core/space-msg'
 import type { MsgFrontend } from '../types'
-import { ViewUsersInSpaceList } from './games/@/ui/users-in-space-list'
+import { ScreenLayoutHostSettingUpGame } from './games/@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { GameCoverArt } from './games/cover-art'
 import { GamesFrontend } from './games/frontend'
 import { gameNameList } from './games/types'
-import { SpaceFrontendCtx } from '../@/frontend/ctx'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -307,6 +307,20 @@ const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
     currentUserRole: input.ctx.currentUser.role,
     currentUser: input.ctx.currentUser,
   }
+
+  if (isGuest) {
+    return (
+      <ScreenLayoutHostSettingUpGame
+        parentScreen={input.ctx.parentScreen}
+        ctx={spaceCtx}
+        navBar={{
+          title: input.ctx.t('spaces.games'),
+          onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
+        }}
+      />
+    )
+  }
+
   return (
     <ScreenLayout
       parentScreen={input.ctx.parentScreen}
@@ -316,16 +330,7 @@ const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
         title: input.ctx.t('spaces.games'),
         onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
       }}
-      renderBody={() =>
-        isGuest ? (
-          <ViewUsersInSpaceList
-            onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
-            ctx={spaceCtx}
-          />
-        ) : (
-          <ViewHostGameSelection ctx={spaceCtx} dispatch={input.dispatch} />
-        )
-      }
+      renderBody={() => <ViewHostGameSelection ctx={spaceCtx} dispatch={input.dispatch} />}
     />
   )
 }
