@@ -9,15 +9,15 @@ import { PowerSyncDatabaseEvent } from '~/service-powersync/frontend/database'
 export type Config = {
   t: 'powersync'
   powerSync: {
-    powerSyncDatabase: PowerSyncDatabase
-    powerSyncDatabaseEvents: PubSub<PowerSyncDatabaseEvent>
+    database: PowerSyncDatabase
+    events: PubSub<PowerSyncDatabaseEvent>
   }
   logger: ILogger
 }
 
 export const DbConnSql = (config: Config): IDbConnSql => {
   const logger = Logger.prefix('powersync', config.logger)
-  const { powerSyncDatabase, powerSyncDatabaseEvents } = config.powerSync
+  const { database: powerSyncDatabase, events: powerSyncDatabaseEvents } = config.powerSync
   const query: IDbConnSql['query'] = async (input) => {
     try {
       const sql = Sql.to(input.sql, input.vars)
