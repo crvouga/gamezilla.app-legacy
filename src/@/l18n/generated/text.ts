@@ -25,9 +25,9 @@ import type { Text as Text22 } from '../../../app/spaces/game/games/flow/screen-
 import type { Text as Text23 } from '../../../app/spaces/game/games/flow/screen-build/screen-main-menu/$l18n'
 import type { Text as Text24 } from '../../../app/spaces/game/games/flow/screen-build/$l18n'
 import type { Text as Text25 } from '../../../app/spaces/game/games/flow/screen-build/screen-puzzle-builder-open/button-create-new-puzzle/$l18n'
-import type { Text as Text26 } from '../../../app/spaces/game/games/flow/screen-build/screen-puzzle-builder/$l18n'
-import type { Text as Text27 } from '../../../app/spaces/game/games/flow/screen-build/screen-puzzle-builder/surface-edit-puzzle-name/$l18n'
-import type { Text as Text28 } from '../../../app/spaces/game/games/flow/screen-build/screen-puzzle-builder/surface-delete-forever/$l18n'
+import type { Text as Text26 } from '../../../app/spaces/game/games/flow/screen-build/screen-puzzle-builder/surface-delete-forever/$l18n'
+import type { Text as Text27 } from '../../../app/spaces/game/games/flow/screen-build/screen-puzzle-builder/$l18n'
+import type { Text as Text28 } from '../../../app/spaces/game/games/flow/screen-build/screen-puzzle-builder/surface-edit-puzzle-name/$l18n'
 import type { Text as Text29 } from '../../../app/spaces/game/games/flow/screen-build/screen-pack-builder/$l18n'
 import type { Text as Text30 } from '../../../app/spaces/game/games/flow/screen-play/screen-play-puzzle/button-copy-puzzle/$l18n'
 import type { Text as Text31 } from '../../../app/spaces/game/games/flow/screen-play/screen-open-pack/$l18n'
@@ -48,12 +48,13 @@ import type { Text as Text45 } from '../../../app/lang/frontend/$l18n'
 import type { Text as Text46 } from '../../../app/profile/$l18n'
 import type { Text as Text47 } from '../../../app/profile/update-username/update-username.$l18n'
 import type { Text as Text48 } from '../../../app/@/data/username/username.$l18n'
-import type { Text as Text49 } from '../../../app/@/l18n/submit.$l18n'
-import type { Text as Text50 } from '../../../app/@/l18n/$l18n'
-import type { Text as Text51 } from '../../../app/@/l18n/add.$l18n'
-import type { Text as Text52 } from '../../ui/drawer/$l18n'
-import type { Text as Text53 } from '../../time/time-span.$l18n'
-import type { Text as Text54 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
+import type { Text as Text49 } from '../../../app/@/l18n/open-settings.$l18n'
+import type { Text as Text50 } from '../../../app/@/l18n/submit.$l18n'
+import type { Text as Text51 } from '../../../app/@/l18n/$l18n'
+import type { Text as Text52 } from '../../../app/@/l18n/add.$l18n'
+import type { Text as Text53 } from '../../ui/drawer/$l18n'
+import type { Text as Text54 } from '../../time/time-span.$l18n'
+import type { Text as Text55 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
 
 export type Text = Text0 &
   Text1 &
@@ -109,4 +110,5 @@ export type Text = Text0 &
   Text51 &
   Text52 &
   Text53 &
-  Text54
+  Text54 &
+  Text55

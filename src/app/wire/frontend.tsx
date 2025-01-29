@@ -215,23 +215,27 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
 //
 //
 
-const Dot = (input: { className: string }) => {
-  return <span className={cn(input.className, 'aspect-square shrink-0 rounded-full')} />
+const Dot = (input: { className: string; colorClassName: string }) => {
+  return (
+    <div className={cn(input.className, 'aspect-square shrink-0 p-[1px]')}>
+      <div className={cn(input.colorClassName, 'h-full w-full shrink-0 rounded-full')} />
+    </div>
+  )
 }
 
 export const ViewDot = (input: { model: ModelFrontend; ctx: { t: Translator }; className: string }) => {
   switch (input.model.state.t) {
     case 'backend-connected': {
-      return <Dot className={cn(input.className, 'bg-green-500')} />
+      return <Dot className={input.className} colorClassName='bg-green-500' />
     }
 
     case 'backend-connecting':
     case 'backend-connect-error': {
-      return <Dot className={cn(input.className, 'animate-pulse bg-orange-500')} />
+      return <Dot className={input.className} colorClassName='animate-pulse bg-orange-500' />
     }
 
     case 'backend-disconnected': {
-      return <Dot className={cn(input.className, 'bg-red-500')} />
+      return <Dot className={input.className} colorClassName='bg-red-500' />
     }
   }
 }
@@ -247,7 +251,7 @@ export const ViewConnectionStatusListItem = (input: {
     case 'backend-connected': {
       return (
         <ListItemButton
-          icon={(inputIcon) => <Dot className={cn(inputIcon.className, 'bg-green-500')} />}
+          icon={(inputIcon) => <Dot className={inputIcon.className} colorClassName='bg-green-500' />}
           className='text-green-500'
           label={input.ctx.t('wire.online')}
         />
@@ -258,7 +262,7 @@ export const ViewConnectionStatusListItem = (input: {
     case 'backend-connecting': {
       return (
         <ListItemButton
-          icon={(input) => <Dot className={cn(input.className, 'bg-orange-500')} />}
+          icon={(input) => <Dot className={input.className} colorClassName='bg-orange-500' />}
           color='warning'
           label={input.ctx.t('wire.connecting...')}
         />
@@ -268,7 +272,7 @@ export const ViewConnectionStatusListItem = (input: {
     case 'backend-disconnected': {
       return (
         <ListItemButton
-          icon={(input) => <Dot className={cn(input.className, 'bg-red-500')} />}
+          icon={(input) => <Dot className={input.className} colorClassName='bg-red-500' />}
           color='danger'
           label={input.ctx.t('wire.offline')}
           end={() => (

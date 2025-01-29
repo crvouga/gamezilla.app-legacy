@@ -521,7 +521,12 @@ const ViewStatusBar: typeof View = (input) => {
           const SPACING_CLASS = frontendCtx.screenSize === 'mobile' ? 'gap-3 px-3 py-1' : 'gap-4 px-6 py-3'
           return (
             <div className='flex w-full items-center justify-end'>
-              <button {...props} type='button' className={cn('flex w-fit items-center justify-center', SPACING_CLASS)}>
+              <button
+                {...props}
+                type='button'
+                className={cn('flex w-fit items-center justify-center pl-8', SPACING_CLASS)}
+                aria-label={frontendCtx.t('app.open-settings')}
+              >
                 <WireFrontend.ViewDot ctx={frontendCtx} model={input.model.wire} className={SIZE_CLASS} />
                 {/* <Sound.ViewIcon model={input.model.sound} className={SIZE_CLASS} /> */}
                 <IconGear className={SIZE_CLASS} />
