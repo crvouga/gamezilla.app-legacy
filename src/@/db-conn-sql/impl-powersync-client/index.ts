@@ -37,7 +37,11 @@ export const DbConnSql = (config: Config): IDbConnSql => {
 
     const unsub = config.powerSyncClient.events.sub(async (_event) => {
       const got = await config.powerSyncClient.database.getAll?.(sql)
-      const parsedRows = got.map(input.parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : []))
+      const parsedRows = got.flatMap((row) => {
+        const parsed = input.parser.parse(row)
+        if (isOk(parsed)) return [parsed.value]
+        return []
+      })
       input.onChange(parsedRows)
     })
 
@@ -49,9 +53,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
           const parsedRows =
             results.rows?._array.flatMap((row) => {
               const parsed = input.parser.parse(row)
-              if (isOk(parsed)) {
-                return [parsed.value]
-              }
+              if (isOk(parsed)) return [parsed.value]
               console.error('failed to parse row', { row, parsed })
               return []
             }) ?? []
