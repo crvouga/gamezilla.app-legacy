@@ -145,7 +145,7 @@ export type MsgToBackendExtra = {
 //
 
 type SpaceFrontendCtx = (AnonymousFrontendCtx | AppFrontendCtx) & {
-  parentScreen?: ScreenLayoutProps['parent'] | null
+  parentScreen?: ScreenLayoutProps['parentScreen'] | null
 }
 
 export type FrontendModule = AppFrontendModule<{

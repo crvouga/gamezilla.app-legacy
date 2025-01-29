@@ -28,7 +28,7 @@ const ViewLoading = (input: { ctx: FrontendCtx }) => {
     <ScreenLayout
       isTopLevel
       ctx={input.ctx}
-      parent={input.ctx.parentScreen}
+      parentScreen={input.ctx.parentScreen}
       id='profile-screen'
       renderBody={() => <SpinnerBlock />}
     />
@@ -40,7 +40,7 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
     <ScreenLayout
       isTopLevel
       ctx={input.ctx}
-      parent={input.ctx.parentScreen}
+      parentScreen={input.ctx.parentScreen}
       navBar={{ title: input.ctx.t('username', input.profile.username) }}
       id='profile-screen'
       renderBody={() => (
@@ -75,7 +75,7 @@ const ViewProfile = (input: {
     <ScreenLayout
       isTopLevel
       ctx={input.ctx}
-      parent={input.ctx.parentScreen}
+      parentScreen={input.ctx.parentScreen}
       navBar={{ title: input.ctx.t('username', input.profile.username) }}
       id='profile-screen'
       renderBody={() => (

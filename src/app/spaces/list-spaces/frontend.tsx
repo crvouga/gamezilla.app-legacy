@@ -11,7 +11,7 @@ import type { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { SpaceState } from '../core/space-state'
 import { StartSpaceFrontend } from '../start-space/frontend'
-import { ViewSpaceCard } from './space-card'
+import { ViewSpaceCard } from './space-card/space-card'
 
 const sendListSpacesRequest: SpaceFrontendModule['update'] = ({ model, ctx }) => {
   if (model.listSpacesRequest.t === 'loading') return { model }
@@ -93,7 +93,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       navBar={{
         title: input.ctx.t('spaces.spaces'),
       }}
-      parent={input.ctx.parentScreen}
+      parentScreen={input.ctx.parentScreen}
       createAction={StartSpaceFrontend.viewStartSpaceButton(input)}
       renderBody={() => {
         return (
@@ -102,7 +102,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
               <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
             )}
 
-            <div className='flex max-w-xl flex-1 flex-col gap-4 overflow-y-auto p-6'>
+            <div className='flex flex-1 flex-col gap-4 overflow-y-auto p-6'>
               {spaces.flatMap((state) => (
                 <ViewSpaceCard
                   key={state.spaceId}

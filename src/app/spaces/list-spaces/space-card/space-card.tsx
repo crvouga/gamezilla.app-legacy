@@ -1,0 +1,124 @@
+import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
+import { Avatar, cn, Typography } from '~/@/ui'
+import { ViewHostChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/host-chip'
+import { ViewYouChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/you-chip'
+import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
+import { SpaceState } from '../../core/space-state'
+import { SPACE_CARD_GRADIENT_CLASS_NAME } from './space-card-gradient'
+import { Profile } from '~/app/@/data/profile'
+import { GameName } from '../../game/games/@/game-name'
+
+const MAX_AVATAR_COUNT = 3
+
+export const ViewSpaceCard = (input: { ctx: BaseFrontendCtx; state: SpaceState.Started; onClick?: () => void }) => {
+  const host = input.ctx.profiles[input.state.hostId]
+  const users = Object.values(input.state.users).flatMap((userId): Profile[] => {
+    const profile = input.ctx.profiles[userId]
+    if (!profile) return []
+    return [profile]
+  })
+
+  return (
+    <ViewRoot onClick={input.onClick}>
+      <ViewLiveIndicator ctx={input.ctx} />
+
+      <ViewSpaceCardGame gameName={input.state.game?.t ?? null} ctx={input.ctx} />
+
+      <ViewSpaceCardHost host={host} ctx={input.ctx} />
+
+      <ViewSpaceCardUsers users={users} ctx={input.ctx} />
+    </ViewRoot>
+  )
+}
+
+const ViewRoot = (input: { onClick?: () => void; children: React.ReactNode }) => {
+  const Component = typeof input.onClick === 'function' ? 'button' : 'div'
+  return (
+    <Component
+      type={Component === 'button' ? 'button' : undefined}
+      onClick={input.onClick}
+      disabled={!input.onClick}
+      className={cn(
+        SPACE_CARD_GRADIENT_CLASS_NAME,
+        'flex h-fit flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr p-4',
+        input.onClick && 'clickable',
+      )}
+    >
+      {input.children}
+    </Component>
+  )
+}
+
+const ViewLiveIndicator = (input: { ctx: BaseFrontendCtx }) => {
+  return (
+    <div className='flex items-center justify-start gap-2'>
+      <Typography
+        variant='label'
+        className='block flex-1 text-left text-lg font-bold uppercase text-white'
+        text={input.ctx.t('space-card.live')}
+      />
+    </div>
+  )
+}
+
+const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: BaseFrontendCtx }) => {
+  if (!input.gameName) return null
+
+  return (
+    <div className='flex items-center justify-start gap-2'>
+      <div className='h-12 w-12 overflow-hidden rounded border-2 border-white/40'>
+        <GameCoverArt gameName={input.gameName} />
+      </div>
+      <Typography variant='title' className='truncate text-lg font-normal' text={input.ctx.t(input.gameName)} />
+    </div>
+  )
+}
+
+const ViewSpaceCardHost = (input: { host?: Profile | null; ctx: BaseFrontendCtx }) => {
+  return (
+    <div className='flex max-w-full items-center justify-start gap-2 overflow-hidden'>
+      <Avatar src={input.host?.avatarUrl} alt='avatar' className='h-12 w-12' />
+
+      <div className='flex-1 overflow-hidden'>
+        {input.host && (
+          <Typography
+            variant='title'
+            className='truncate text-lg font-normal'
+            text={input.ctx.t('username', input.host.username)}
+          />
+        )}
+      </div>
+      <ViewHostChip ctx={input.ctx} />
+      {input.ctx.currentUserId === input.host?.userId && <ViewYouChip ctx={input.ctx} />}
+    </div>
+  )
+}
+
+const ViewSpaceCardUsers = (input: { users: Profile[]; ctx: BaseFrontendCtx }) => {
+  if (input.users.length <= 1) return null
+
+  return (
+    <div className='flex items-center justify-start gap-2'>
+      <div className='flex items-center'>
+        {input.users.slice(0, MAX_AVATAR_COUNT).map((user, index) => (
+          <Avatar
+            key={user.username}
+            src={user.avatarUrl}
+            alt='avatar'
+            className={cn('h-8 w-8', index !== 0 && '-ml-2')}
+          />
+        ))}
+        {input.users.length > MAX_AVATAR_COUNT && (
+          <div className='-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30'>
+            <Typography variant='label' text={input.ctx.t('app.+number', input.users.length - MAX_AVATAR_COUNT)} />
+          </div>
+        )}
+      </div>
+      <Typography
+        variant='body'
+        className='truncate text-lg font-normal'
+        text={input.ctx.t('space-card.people-count', input.users.length)}
+      />
+    </div>
+  )
+}

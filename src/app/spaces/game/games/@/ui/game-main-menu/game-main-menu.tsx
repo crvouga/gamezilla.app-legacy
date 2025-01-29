@@ -100,7 +100,7 @@ export const View = (props: {
       topBar={{ title: props.title, onBack: props.onBack }}
       renderCoverArt={props.renderCoverArt}
       renderContent={() => (
-        <div className='flex w-full flex-col gap-6 xl:max-w-xl'>
+        <div className='flex w-full flex-col gap-6'>
           {props.buttons.map((button) => (
             <MainMenuButtonView key={`${button.title}${button.description}`} {...button} />
           ))}

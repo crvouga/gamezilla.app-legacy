@@ -10,14 +10,14 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const actions = (
     <>
       {input.renderMiniPlayer?.()}
-      {input.parent?.renderMiniPlayer?.()}
+      {input.parentScreen?.renderMiniPlayer?.()}
       {input.actionBar && (
         <HorizontalActionBar {...input.actionBar} id={input.actionBar.id ?? `${input.id}-actions`} ctx={input.ctx} />
       )}
-      {input.parent?.actionBar && (
+      {input.parentScreen?.actionBar && (
         <HorizontalActionBar
-          {...input.parent.actionBar}
-          id={input.parent.actionBar.id ?? `${input.id}-actions`}
+          {...input.parentScreen.actionBar}
+          id={input.parentScreen.actionBar.id ?? `${input.id}-actions`}
           ctx={input.ctx}
         />
       )}

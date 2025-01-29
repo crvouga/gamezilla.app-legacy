@@ -16,10 +16,10 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
       }}
     >
       <div className={cn('flex w-full flex-1 overflow-hidden', input.isTopLevel ? 'flex-row' : 'flex-row-reverse')}>
-        {input.parent?.actionBar && (
+        {input.parentScreen?.actionBar && (
           <VerticalActionBar
-            {...input.parent.actionBar}
-            id={input.parent.actionBar.id ?? `${input.id}-parent-actions`}
+            {...input.parentScreen.actionBar}
+            id={input.parentScreen.actionBar.id ?? `${input.id}-parent-actions`}
             ctx={input.ctx}
           />
         )}
@@ -41,7 +41,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
               title={input.navBar.title}
               renderEnd={() =>
                 (input.editAction || input.createAction) && (
-                  <div className='flex w-full max-w-xs items-center justify-end'>
+                  <div className='flex w-fit items-center justify-end'>
                     {input.editAction && <CancelSubmitButtons {...input.editAction} size='sm' />}
                     {input.createAction && (
                       <Button
@@ -64,10 +64,10 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
 
           <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
             {input.renderBody()}
-            {(input.createAction || input.renderMiniPlayer || input.parent?.renderMiniPlayer) && (
+            {(input.createAction || input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) && (
               <div className='absolute bottom-8 right-8 bg-black'>
                 {input.renderMiniPlayer?.()}
-                {input.parent?.renderMiniPlayer?.()}
+                {input.parentScreen?.renderMiniPlayer?.()}
               </div>
             )}
           </div>

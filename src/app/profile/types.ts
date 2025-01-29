@@ -133,7 +133,7 @@ export type BackendModule = AppBackendModule<{
 }>
 
 export type FrontendCtx = (AppFrontendCtx | AnonymousFrontendCtx) & {
-  parentScreen?: ScreenLayoutProps['parent'] | null
+  parentScreen?: ScreenLayoutProps['parentScreen'] | null
 }
 
 export type FrontendModule = AppFrontendModule<{

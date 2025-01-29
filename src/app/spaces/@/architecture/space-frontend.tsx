@@ -13,7 +13,7 @@ import type { Space } from '../space/space'
 
 export type SpaceFrontendCtx = BaseFrontendCtx & {
   space?: Space
-  parentScreen?: ScreenLayoutProps['parent'] | null
+  parentScreen?: ScreenLayoutProps['parentScreen'] | null
 }
 
 export type Input = {

@@ -508,7 +508,7 @@ const toScreenLayoutProps = (input: {
   ctx: AppFrontendCtx | BaseFrontendCtx
   model: ModelFrontend
   dispatch: (m: MsgFrontend) => void
-}): ScreenLayoutProps['parent'] | null => {
+}): ScreenLayoutProps['parentScreen'] | null => {
   const { ctx } = input
   if (!isAppFrontendCtx(ctx)) return null
 

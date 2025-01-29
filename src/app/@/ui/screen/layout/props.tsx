@@ -41,7 +41,7 @@ export type ScreenLayoutProps = {
   navBar?: NavBarProps
   isTopLevel?: boolean
   actionPosition?: 'top' | 'bottom'
-  parent?: Pick<ScreenLayoutProps, 'actionBar' | 'navBar' | 'renderMiniPlayer'> | null
+  parentScreen?: Pick<ScreenLayoutProps, 'actionBar' | 'navBar' | 'renderMiniPlayer'> | null
   actionBar?: ScreenLayoutActionBarProps | null
   renderMiniPlayer?: () => VDom
   renderBody: () => VDom
