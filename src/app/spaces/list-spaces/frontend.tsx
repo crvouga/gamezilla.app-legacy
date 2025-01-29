@@ -6,7 +6,6 @@ import { Gutter } from '~/@/ui/gutter'
 import type { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND, playSound, pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { ScreenBodyRoot } from '~/app/@/ui/screen/layout/screen-body-root'
 import type { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { SpaceState } from '../core/space-state'
@@ -96,7 +95,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       createAction={StartSpaceFrontend.viewStartSpaceButton(input)}
       renderBody={() => {
         return (
-          <ScreenBodyRoot className='flex flex-col'>
+          <div className='flex flex-col'>
             {spaces.length === 0 && (
               <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
             )}
@@ -113,7 +112,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
             </div>
 
             <Gutter variant='screen' />
-          </ScreenBodyRoot>
+          </div>
         )
       }}
     />
