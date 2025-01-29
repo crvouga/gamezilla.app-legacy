@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { cn } from '~/@/ui'
+import { cn, Typography } from '~/@/ui'
 import type { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { ScreenLayout } from '~/app/@/ui/screen/layout'
@@ -12,23 +12,25 @@ export const LayoutGameCoverArtHeader = (input: {
     subtitle?: TranslatedText | null
     onBack?: () => void
   }
-  renderCoverArt?: (input: { className: string }) => VDom
   ctx: {
     t: Translator
     screenSize: ScreenSize
   }
-
+  renderCoverArt?: (input: { className: string }) => VDom
   renderContent: () => VDom
 }) => {
-  const renderCoverArt_ = input.renderCoverArt || renderDefaultCoverArt
+  const renderCoverArtFinal = input.renderCoverArt || renderDefaultCoverArt
   return (
     <ScreenLayout
       id='game-cover-art-header'
       ctx={input.ctx}
       navBar={input.topBar}
       renderBody={() => (
-        <ScreenBodyRoot className='gap-4 p-6'>
-          {renderCoverArt_({ className: 'size-28 overflow-hidden rounded-lg' })}
+        <ScreenBodyRoot className='flex flex-col items-center gap-6 p-6'>
+          {renderCoverArtFinal({ className: 'size-28 overflow-hidden rounded-lg' })}
+          {input.topBar && (
+            <Typography variant='title' sizeClassName='text-5xl font-bold pb-2' text={input.topBar?.title} />
+          )}
           {input.renderContent()}
         </ScreenBodyRoot>
       )}

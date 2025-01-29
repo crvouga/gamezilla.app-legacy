@@ -4,8 +4,8 @@ import { cn } from './cn'
 
 export type TypographyVariant = 'title' | 'body' | 'label' | 'subtitle' | 'caption'
 
-const variantClasses: { [variant in TypographyVariant]: string } = {
-  title: 'text-3xl font-bold text-white',
+const sizeClassNames: { [variant in TypographyVariant]: string } = {
+  title: 'text-3xl',
   body: 'text-base',
   label: 'text-xs',
   subtitle: 'text-sm',
@@ -14,7 +14,7 @@ const variantClasses: { [variant in TypographyVariant]: string } = {
 
 export type TypographyColor = 'inherit' | 'text-primary' | 'text-secondary'
 
-const colorClasses: { [color in TypographyColor]: string } = {
+const colorClassNames: { [color in TypographyColor]: string } = {
   'text-secondary': 'text-secondary',
   'text-primary': 'text-white',
   inherit: 'text-inherit',
@@ -25,6 +25,7 @@ type Input = {
   variant?: TypographyVariant
   skeleton?: boolean
   className?: string
+  sizeClassName?: string
   role?: AriaRole
   color?: 'inherit' | 'text-primary' | 'text-secondary' | null
 }
@@ -56,14 +57,11 @@ const toAriaLevel = (input: Input): number | undefined => {
 const SKELETON_CLASS = 'animate-pulse text-transparent select-none pointer-events-none bg-neutral-500 rounded'
 
 export const Typography = (input: Input) => {
+  const sizeClassName = input.sizeClassName ?? sizeClassNames[input.variant ?? 'body']
+  const colorClassName = input.color && !input.skeleton ? colorClassNames[input.color] : null
   return (
     <div
-      className={cn(
-        input.variant ? variantClasses[input.variant] : null,
-        input.color && !input.skeleton ? colorClasses[input.color] : null,
-        input.skeleton ? SKELETON_CLASS : null,
-        input.className,
-      )}
+      className={cn(sizeClassName, colorClassName, input.skeleton ? SKELETON_CLASS : null, input.className)}
       role={input.role}
       aria-busy={input.skeleton}
       aria-level={toAriaLevel(input)}

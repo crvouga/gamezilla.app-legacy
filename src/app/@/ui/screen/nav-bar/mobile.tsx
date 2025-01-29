@@ -27,7 +27,13 @@ export const ScreenNavBarMobile = (input: {
       )}
 
       <div className='flex flex-1 flex-col truncate'>
-        <Typography role='heading' className='truncate px-2 text-xl font-bold' variant='title' text={input.title} />
+        <Typography
+          role='heading'
+          sizeClassName='text-xl font-bold'
+          className='truncate px-2'
+          variant='title'
+          text={input.title}
+        />
 
         {input.subtitle && (
           <Typography
