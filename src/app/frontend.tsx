@@ -20,7 +20,7 @@ import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
-import { AppRoot } from './@/ui/app-root/app-root'
+import { ViewAppRoot } from './@/ui/app-root/app-root'
 import { LogoBlock } from './@/ui/logo/logo-block'
 import { ScreenLayoutProps } from './@/ui/screen/layout/props'
 import * as AuthFrontend from './auth/frontend'
@@ -398,7 +398,7 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
   const frontendCtx = toFrontendCtx(input)
 
   return (
-    <AppRoot>
+    <ViewAppRoot>
       <ViewAppStatusBar model={input.model} dispatch={input.dispatch} ctx={frontendCtx} />
 
       <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
@@ -414,7 +414,7 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
       <Portal.Exit portalId='app-root' />
 
       <Toast.View ctx={frontendCtx} model={input.model.toast} dispatch={(c) => input.dispatch({ t: 'toast', c })} />
-    </AppRoot>
+    </ViewAppRoot>
   )
 }
 
