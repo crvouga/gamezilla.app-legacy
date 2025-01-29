@@ -26,17 +26,21 @@ const vDomPlugin = (): PluginOption => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [wasm(), topLevelAwait(), tsconfigPaths(), vDomPlugin()],
-  // optimizeDeps: {
-  //   // https://pglite.dev/docs/bundler-support
-  //   exclude: ['@electric-sql/pglite', '@journeyapps/wa-sqlite', '@powersync/web'],
-  //   include: ['@powersync/web > js-logger'],
-  // },
+  plugins: [tsconfigPaths(), vDomPlugin(), wasm(), topLevelAwait()],
+  optimizeDeps: {
+    // https://pglite.dev/docs/bundler-support
+    exclude: [
+      // '@electric-sql/pglite',
+      '@journeyapps/wa-sqlite',
+      '@powersync/web',
+    ],
+    // include: ['@powersync/web > js-logger'],
+  },
   build: {
-    // target: ['es2022', 'chrome100', 'safari15'],
+    target: ['es2022', 'chrome100', 'safari15'],
   },
   worker: {
-    // format: 'es',
-    // plugins: () => [wasm(), topLevelAwait()],
+    format: 'es',
+    plugins: () => [wasm(), topLevelAwait()],
   },
 })

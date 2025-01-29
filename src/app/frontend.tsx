@@ -37,6 +37,8 @@ import {
 } from './types'
 import * as WireFrontend from './wire/frontend'
 import { FrontendTransport } from './wire/transport/frontend'
+import { setupNewPowerSyncDatabase } from '~/service-powersync/frontend/database'
+import { DbConnSql } from '~/@/db-conn-sql/frontend/impl'
 
 export const initCtx = async (): Promise<FrontendCtx> => {
   const logger = Logger({
@@ -62,13 +64,13 @@ export const initCtx = async (): Promise<FrontendCtx> => {
 
   const rpc = RPC.initClient(httpClient, rpcContract)
 
-  const dbConnSql = dbConnSqlNoop
+  // const dbConnSql = dbConnSqlNoop
 
-  // const dbConnSql = await DbConnSql({
-  //   t: 'powersync',
-  //   powersync: await setupNewPowerSyncDatabase(),
-  //   logger,
-  // })
+  const dbConnSql = await DbConnSql({
+    t: 'powersync',
+    powersync: await setupNewPowerSyncDatabase(),
+    logger,
+  })
 
   return {
     dbConnSql,
