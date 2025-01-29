@@ -34,7 +34,7 @@ export const ViewSpaceCard = (input: { ctx: BaseFrontendCtx; state: SpaceState.S
       disabled={!input.onClick}
       className={cn(
         SPACE_CARD_GRADIENT_CLASS_NAME,
-        'flex flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr p-4',
+        'flex h-fit flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr p-4',
         input.onClick && 'clickable',
       )}
     >

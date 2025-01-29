@@ -65,7 +65,7 @@ const View: FrontendModule['View'] = (input) => {
         onBack: () =>
           input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } }),
       }}
-      renderFab={() => <PackCreateNewFrontend.ViewCreateFab {...input} />}
+      createAction={PackCreateNewFrontend.viewCreateAction(input)}
       renderBody={() => (
         <PackDbQueryFrontend.ViewList
           {...input}

@@ -1,6 +1,6 @@
 import { IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/@/ui'
 import { SurfaceLayout } from '../../surface/layout'
-import { ScreenAction, ScreenActionBarProps, ScreenActionsUniform, ScreenActionsSpaceBetween } from './props'
+import { ScreenAction, ScreenActionBarProps, ScreenActionsSpaceBetween, ScreenActionsUniform } from './props'
 
 const DEFAULT_LIMIT = 4
 
@@ -85,7 +85,7 @@ const SpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpaceBetween) =
   )
 }
 
-const View = (input: ScreenActionBarProps) => {
+export const HorizontalActionBar = (input: ScreenActionBarProps) => {
   switch (input.variant.t) {
     case 'uniform':
       return <Uniform {...input} {...input.variant} />
@@ -169,8 +169,4 @@ const toIconSizeClasses = (size: ScreenAction['size']): string => {
     default:
       return 'size-8'
   }
-}
-
-export const ScreenActionHorizontalBar = {
-  View,
 }

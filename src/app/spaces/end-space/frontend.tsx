@@ -106,8 +106,8 @@ const ViewSpaceEnded: SpaceFrontendModule['View'] = (input) => {
   return (
     <ScreenTitleButton
       title={input.ctx.t('spaces.space-ended')}
-      buttonText={input.ctx.t('spaces.go-home')}
-      onClick={() => input.dispatch({ t: 'clicked-go-home-button' })}
+      buttonText={input.ctx.t('spaces.exit-space')}
+      onClick={() => input.dispatch({ t: 'clicked-exit-space-button' })}
     />
   )
 }

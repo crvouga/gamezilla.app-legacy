@@ -205,7 +205,7 @@ export const translations: Text = {
   'space-card.live': 'Прямой эфир',
   'space-card.people-count': (count) => `${count.toLocaleString()} \u0447\u0435\u043B\u043E\u0432\u0435\u043A`,
   'spaces.space-not-found': 'Пространство не найдено',
-  'spaces.go-home': 'Иди домой',
+  'spaces.exit-space': 'Иди домой',
   'spaces.current-user-ended-space': 'Пространство закончено',
   'spaces.other-user-ended-space': (username) =>
     username

@@ -5,7 +5,7 @@ import { ScreenTitleButton } from '~/app/@/ui/screen/title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpacesCore } from '../core/core'
 import { EndSpaceFrontend } from '../end-space/frontend'
-import { GoHome } from '../frontend/go-home'
+import { GoHome } from '../frontend/exit-space/exit-space'
 import { People } from '../frontend/people'
 import { GameFrontend } from '../game/frontend'
 import { JoinSpaceFrontend } from '../join-space/frontend'
@@ -56,7 +56,7 @@ const View = (input: {
           ctx={spaceCtx}
           actionPosition='top'
           actionBar={{
-            // renderNavBar: () => <NavBarLogo onClick={() => inputNew.dispatch({ t: 'clicked-go-home-button' })} />,
+            // renderNavBar: () => <NavBarLogo onClick={() => inputNew.dispatch({ t: 'clicked-exit-space-button' })} />,
             id: 'space-actions',
             variant: {
               t: 'space-between',
@@ -80,8 +80,8 @@ const ViewSpaceNotFound = (input: { ctx: AppFrontendCtx; dispatch: (m: MsgFronte
   return (
     <ScreenTitleButton
       title={input.ctx.t('spaces.space-not-found')}
-      buttonText={input.ctx.t('spaces.go-home')}
-      onClick={() => input.dispatch({ t: 'clicked-go-home-button' })}
+      buttonText={input.ctx.t('spaces.exit-space')}
+      onClick={() => input.dispatch({ t: 'clicked-exit-space-button' })}
     />
   )
 }

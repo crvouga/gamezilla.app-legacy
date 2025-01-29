@@ -82,8 +82,6 @@ const toSpaces = (model: SpacesCore.Model) => {
 const View: SpaceFrontendModule['View'] = (input) => {
   if (!input.ctx.currentUserId) return null
 
-  const currentUserSpaceId = input.model.indexSpaceIdByUserId[input.ctx.currentUserId]
-
   const spaces = toSpaces(input.model)
 
   return (
@@ -95,19 +93,15 @@ const View: SpaceFrontendModule['View'] = (input) => {
         title: input.ctx.t('spaces.spaces'),
       }}
       parent={input.ctx.parentScreen}
-      renderFab={() => {
-        if (currentUserSpaceId) return null
-
-        return <StartSpaceFrontend.ViewStartSpaceButton {...input} />
-      }}
+      createAction={StartSpaceFrontend.viewStartSpaceButton(input)}
       renderBody={() => {
         return (
-          <ScreenBodyRoot className='gap-4 p-6'>
+          <ScreenBodyRoot className='flex flex-col'>
             {spaces.length === 0 && (
               <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
             )}
 
-            <div className='flex w-full flex-1 flex-col gap-6'>
+            <div className='flex max-w-xl flex-1 flex-col gap-4 overflow-y-auto p-6'>
               {spaces.flatMap((state) => (
                 <ViewSpaceCard
                   key={state.spaceId}

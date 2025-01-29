@@ -198,7 +198,7 @@ export const translations: Text = {
   'space-card.live': 'En vivo',
   'space-card.people-count': (count) => `${count.toLocaleString()} personas`,
   'spaces.space-not-found': 'Espacio no encontrado',
-  'spaces.go-home': 'Ir a casa',
+  'spaces.exit-space': 'Ir a casa',
   'spaces.current-user-ended-space': 'Espacio terminado',
   'spaces.other-user-ended-space': (username) => (username ? `${username} termin\xF3 el espacio` : 'Espacio terminado'),
   'spaces.games': 'Juegos',

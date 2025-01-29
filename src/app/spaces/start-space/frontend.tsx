@@ -1,7 +1,8 @@
 import { withEventId } from '~/@/event-sourced/event'
-import { Button, IconPlus } from '~/@/ui'
+import { IconPlus } from '~/@/ui'
 import { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
+import { CreateActionProps } from '~/app/@/ui/screen/layout/props'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import type { MsgSpace } from '../core/space-msg'
 
@@ -67,21 +68,23 @@ const updateStartSpaceButton: SpaceFrontendModule['update'] = (input) => {
   }
 }
 
-const ViewStartSpaceButton: SpaceFrontendModule['View'] = (input) => {
-  return (
-    <Button
-      rounded
-      size='lg'
-      color='primary'
-      variant='contained'
-      iconStart={(iconInput) => <IconPlus {...iconInput} />}
-      onClick={() => input.dispatch({ t: 'clicked-start-space-button', spaceId: SpaceId.generate() })}
-      text={input.ctx.t('spaces.start-space')}
-    />
-  )
+export const viewStartSpaceButton = (input: Parameters<SpaceFrontendModule['View']>[0]): CreateActionProps | null => {
+  if (!input.ctx.currentUserId) return null
+
+  const currentUserSpaceId = input.model.indexSpaceIdByUserId[input.ctx.currentUserId]
+
+  if (currentUserSpaceId) return null
+
+  return {
+    onSubmit: () => input.dispatch({ t: 'clicked-start-space-button', spaceId: SpaceId.generate() }),
+    submitText: input.ctx.t('spaces.start-space'),
+    submitIcon: (iconInput) => <IconPlus {...iconInput} />,
+    submitDisabled: false,
+    submitLoading: false,
+  }
 }
 
 export const StartSpaceFrontend = {
-  ViewStartSpaceButton,
+  viewStartSpaceButton,
   update,
 }

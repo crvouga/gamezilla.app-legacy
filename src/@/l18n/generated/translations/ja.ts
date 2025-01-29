@@ -203,7 +203,7 @@ export const translations: Text = {
   'space-card.live': 'ライブ',
   'space-card.people-count': (count) => `${count.toLocaleString()} \u4EBA`,
   'spaces.space-not-found': 'スペースが見つかりません',
-  'spaces.go-home': '家に帰る',
+  'spaces.exit-space': '家に帰る',
   'spaces.current-user-ended-space': 'スペース終了',
   'spaces.other-user-ended-space': (username) =>
     username

@@ -1,11 +1,12 @@
+import { withEventId } from '~/@/event-sourced/event'
 import { Loading, Ok } from '~/@/result'
+import { IconPlus } from '~/@/ui'
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
-import { Button, IconPlus } from '~/@/ui'
+import { CreateActionProps } from '~/app/@/ui/screen/layout/props'
 import { Pack } from '../../../@/pack/pack'
 import { PackId } from '../../../@/pack/pack-id'
 import { PackName } from '../../../@/pack/pack-name'
 import type { FrontendModule } from '../../types'
-import { withEventId } from '~/@/event-sourced/event'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
@@ -50,25 +51,38 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const ViewCreateFab: FrontendModule['View'] = (input) => {
-  return (
-    <Button
-      rounded
-      text={input.ctx.t('flow.create-pack')}
-      variant='contained'
-      color='primary'
-      loading={input.model.packCreateNewRequest.t === 'loading'}
-      iconStart={(iconInput) => <IconPlus {...iconInput} />}
-      onClick={() =>
-        input.dispatch({
-          t: 'create-new-pack.clicked-create-button',
-        })
-      }
-    />
-  )
+// const ViewCreateFab: FrontendModule['View'] = (input) => {
+//   return (
+//     <Button
+//       rounded
+//       text={input.ctx.t('flow.create-pack')}
+//       variant='contained'
+//       color='primary'
+//       loading={input.model.packCreateNewRequest.t === 'loading'}
+//       iconStart={(iconInput) => <IconPlus {...iconInput} />}
+//       onClick={() =>
+//         input.dispatch({
+//           t: 'create-new-pack.clicked-create-button',
+//         })
+//       }
+//     />
+//   )
+// }
+
+const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): CreateActionProps => {
+  return {
+    onSubmit: () =>
+      input.dispatch({
+        t: 'create-new-pack.clicked-create-button',
+      }),
+    submitText: input.ctx.t('flow.create-pack'),
+    submitLoading: input.model.packCreateNewRequest.t === 'loading',
+    submitDisabled: input.model.packCreateNewRequest.t === 'loading',
+    submitIcon: (iconInput) => <IconPlus {...iconInput} />,
+  }
 }
 
 export const PackCreateNewFrontend = {
+  viewCreateAction,
   update,
-  ViewCreateFab,
 }

@@ -21,7 +21,7 @@ import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
 import { LogoBlock } from './@/ui/logo/logo-block'
-import { RootLayout } from './@/ui/screen/layout'
+import { RootLayout } from './@/ui/root-layout'
 import { ScreenLayoutProps } from './@/ui/screen/layout/props'
 import * as AuthFrontend from './auth/frontend'
 import { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
@@ -558,15 +558,19 @@ const toScreenLayoutProps = (input: {
   const screenProfile: Screen = { n: 'profile', t: 'profile', userId: ctx.currentUserId }
   const pushSpaceList = () => input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } })
   return {
-    renderMiniPlayer: () => (
-      <SpacesFrontend.ViewCurrentSpaceBar
-        ctx={ctx}
-        model={input.model.spaces}
-        dispatch={(c) => input.dispatch({ t: 'spaces', c })}
-      />
-    ),
+    renderMiniPlayer: () => {
+      if (!isAppFrontendCtx(input.ctx)) return null
+      return (
+        <SpacesFrontend.ViewCurrentSpaceBar
+          ctx={input.ctx}
+          model={input.model.spaces}
+          dispatch={(c) => input.dispatch({ t: 'spaces', c })}
+        />
+      )
+    },
     actionBar: {
       // renderNavBar: () => <NavBarLogo onClick={pushSpaceList} />,
+
       variant: {
         t: 'uniform',
         actions: [

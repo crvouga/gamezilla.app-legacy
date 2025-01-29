@@ -19,7 +19,7 @@ const View = (input: {
 
   if (isCurrentUserProfile) return <ViewOwnProfile {...input} profile={profile} />
 
-  return <ViewOtherProfile {...input} profile={profile} />
+  return <ViewProfile {...input} isCurrentUserProfile={isCurrentUserProfile} profile={profile} />
 }
 
 const ViewLoading = (input: { ctx: FrontendCtx }) => {
@@ -64,22 +64,36 @@ const ViewOwnProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (
   )
 }
 
-const ViewOtherProfile = (input: { ctx: FrontendCtx; profile: Profile; dispatch: (msg: MsgFrontend) => void }) => {
+const ViewProfile = (input: {
+  ctx: FrontendCtx
+  isCurrentUserProfile: boolean
+  profile: Profile
+  dispatch: (msg: MsgFrontend) => void
+}) => {
   return (
     <ScreenLayout
       isTopLevel
       ctx={input.ctx}
-      id='profile-screen'
       parent={input.ctx.parentScreen}
-      navBar={{
-        title: input.ctx.t('username', input.profile.username),
-        onBack: () =>
-          input.dispatch({ t: 'clicked-back-button', from: { t: 'profile', userId: input.profile?.userId } }),
-      }}
+      navBar={{ title: input.ctx.t('username', input.profile.username) }}
+      id='profile-screen'
       renderBody={() => (
         <ScreenBodyRoot className='gap-4 p-6'>
           <Avatar className='size-28' src={input.profile?.avatarUrl} alt='profile avatar' />
           <Typography variant='title' text={input.ctx.t('username', input.profile.username)} />
+          <Button
+            onClick={() => input.dispatch({ t: 'clicked-edit-profile-button' })}
+            className='w-full'
+            iconStart={(iconInput) => <IconUserPen {...iconInput} />}
+            text={input.ctx.t('profile.update-profile')}
+          />
+          <Button
+            onClick={() => input.dispatch({ t: 'clicked-logout-button' })}
+            className='w-full'
+            iconStart={(iconInput) => <IconArrowLeftOnRect {...iconInput} />}
+            text={input.ctx.t('auth.logout')}
+          />
+          <Gutter variant='screen' />
         </ScreenBodyRoot>
       )}
     />

@@ -310,7 +310,7 @@ const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
       ctx={input.ctx}
       navBar={{
         title: input.ctx.t('spaces.games'),
-        onBack: () => input.dispatch({ t: 'clicked-go-home-button' }),
+        onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
       }}
       renderBody={() =>
         isSpectator ? (

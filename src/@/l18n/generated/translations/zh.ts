@@ -197,7 +197,7 @@ export const translations: Text = {
   'space-card.live': '现场',
   'space-card.people-count': (count) => `${count.toLocaleString()} \u4EBA`,
   'spaces.space-not-found': '找不到空间',
-  'spaces.go-home': '回家',
+  'spaces.exit-space': '回家',
   'spaces.current-user-ended-space': '结束空间',
   'spaces.other-user-ended-space': (username) =>
     username ? `${username}\u7ED3\u675F\u7A7A\u95F4` : '\u7ED3\u675F\u7A7A\u95F4',

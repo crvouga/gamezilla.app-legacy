@@ -1,37 +1,26 @@
-import { IconButton, IconHome } from '~/@/ui'
+import { IconDoorOpen } from '~/@/ui/icon/icon-door-open'
 import { APP_SOUND, playSound, pushScreen } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/props'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
 
 const update: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
-    case 'clicked-go-home-button': {
+    case 'clicked-exit-space-button': {
       return { model, msgCmd: [pushScreen({ n: 'spaces', t: 'space-list' }), playSound(APP_SOUND.navBackwardMin)] }
     }
   }
   return { model }
 }
 
-const ViewIconButton: SpaceFrontendModule['View'] = (input) => {
-  return (
-    <IconButton
-      onClick={() => input.dispatch({ t: 'clicked-go-home-button' })}
-      label={input.ctx.t('spaces.home')}
-      renderIcon={(inputIcon) => <IconHome {...inputIcon} />}
-    />
-  )
-}
-
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction => {
   return {
-    icon: (inputIcon) => <IconHome {...inputIcon} />,
-    label: input.ctx.t('spaces.home'),
-    onClick: () => input.dispatch({ t: 'clicked-go-home-button' }),
+    icon: (inputIcon) => <IconDoorOpen {...inputIcon} />,
+    label: input.ctx.t('app.exit'),
+    onClick: () => input.dispatch({ t: 'clicked-exit-space-button' }),
   }
 }
 
 export const GoHome = {
   update,
   viewAction,
-  ViewIconButton,
 }

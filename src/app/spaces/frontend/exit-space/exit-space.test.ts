@@ -22,7 +22,7 @@ describe(import.meta.file, () => {
       },
       {
         msg: {
-          t: 'clicked-go-home-button',
+          t: 'clicked-exit-space-button',
         },
       },
     ])
@@ -45,7 +45,7 @@ describe(import.meta.file, () => {
       },
       {
         msg: {
-          t: 'clicked-go-home-button',
+          t: 'clicked-exit-space-button',
         },
       },
     ])

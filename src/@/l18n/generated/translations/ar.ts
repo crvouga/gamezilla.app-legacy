@@ -203,7 +203,7 @@ export const translations: Text = {
   'space-card.live': 'حي',
   'space-card.people-count': (count) => `${count.toLocaleString()} \u0623\u0634\u062E\u0627\u0635`,
   'spaces.space-not-found': 'الفضاء غير موجود',
-  'spaces.go-home': 'اذهب إلى الصفحة الرئيسية',
+  'spaces.exit-space': 'اذهب إلى الصفحة الرئيسية',
   'spaces.current-user-ended-space': 'انتهى الفضاء',
   'spaces.other-user-ended-space': (username) =>
     username

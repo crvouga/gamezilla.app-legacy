@@ -1,33 +1,25 @@
+import { Button } from '~/@/ui/button.tsx'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons.tsx'
-import { ScreenActionHorizontalBar } from '../action-bar/horizontal-bar.tsx'
-import { ScreenLayoutProps } from './props.tsx'
+import { HorizontalActionBar } from '../action-bar/horizontal-action-bar.tsx'
 import { ScreenNavBarMobile } from '../nav-bar/mobile.tsx'
+import { ScreenLayoutProps } from './props.tsx'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.editAction ? 'form' : 'div'
   const actionPosition = input.actionPosition ?? 'bottom'
   const actions = (
     <>
+      {input.renderMiniPlayer?.()}
+      {input.parent?.renderMiniPlayer?.()}
       {input.actionBar && (
-        <>
-          {input.renderMiniPlayer?.()}
-          <ScreenActionHorizontalBar.View
-            {...input.actionBar}
-            id={input.actionBar.id ?? `${input.id}-actions`}
-            ctx={input.ctx}
-          />
-        </>
+        <HorizontalActionBar {...input.actionBar} id={input.actionBar.id ?? `${input.id}-actions`} ctx={input.ctx} />
       )}
-
       {input.parent?.actionBar && (
-        <>
-          {input.parent.renderMiniPlayer?.()}
-          <ScreenActionHorizontalBar.View
-            {...input.parent.actionBar}
-            id={input.parent.actionBar.id ?? `${input.id}-actions`}
-            ctx={input.ctx}
-          />
-        </>
+        <HorizontalActionBar
+          {...input.parent.actionBar}
+          id={input.parent.actionBar.id ?? `${input.id}-actions`}
+          ctx={input.ctx}
+        />
       )}
     </>
   )
@@ -45,7 +37,21 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
 
       <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
         {input.renderBody()}
-        {input.renderFab && <div className='absolute bottom-6 right-4 bg-black'>{input.renderFab()}</div>}
+        {input.createAction && (
+          <div className='absolute bottom-6 right-4 bg-black'>
+            <Button
+              color='primary'
+              size='sm'
+              variant='contained'
+              rounded
+              onClick={input.createAction.onSubmit}
+              disabled={input.createAction.submitDisabled}
+              loading={input.createAction.submitLoading}
+              text={input.createAction.submitText}
+              iconStart={input.createAction.submitIcon}
+            />
+          </div>
+        )}
       </div>
       {input.editAction && <CancelSubmitButtons {...input.editAction} />}
       {actionPosition === 'bottom' && actions}

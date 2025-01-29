@@ -1,11 +1,11 @@
+import { Avatar, cn, IconButton, IconXMark, Typography } from '~/@/ui'
 import { APP_SOUND, playSound, pushScreen } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { Avatar, Button, cn, Typography } from '~/@/ui'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
 import { SpacesCore } from '../../core/core'
 import { GameCoverArt } from '../../game/games/cover-art'
-import type { ModelFrontend, MsgFrontend } from '../../types'
 import { SPACE_CARD_GRADIENT_CLASS_NAME } from '../../list-spaces/space-card/space-card-gradient'
+import type { ModelFrontend, MsgFrontend } from '../../types'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
@@ -81,22 +81,19 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
 
       <div className='pr-4'>
         {isCurrentUserHost && (
-          <Button
-            color='danger'
-            variant='text'
-            text={input.ctx.t('spaces.end')}
+          <IconButton
+            renderIcon={(iconInput) => <IconXMark {...iconInput} />}
+            label={input.ctx.t('spaces.end')}
             onClick={() => input.dispatch({ t: 'clicked-end-space-button', spaceId: space.spaceId })}
-            size='sm'
+            // size='sm'
           />
         )}
 
         {!isCurrentUserHost && (
-          <Button
-            color='danger'
-            variant='text'
-            text={input.ctx.t('spaces.leave')}
+          <IconButton
+            renderIcon={(iconInput) => <IconXMark {...iconInput} />}
+            label={input.ctx.t('spaces.leave')}
             onClick={() => input.dispatch({ t: 'clicked-leave-space-button', spaceId: space.spaceId })}
-            size='sm'
           />
         )}
       </div>

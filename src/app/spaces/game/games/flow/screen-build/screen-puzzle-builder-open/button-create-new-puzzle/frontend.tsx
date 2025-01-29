@@ -1,9 +1,10 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { isErr, RemoteResult, Result } from '~/@/result'
 import { Posix } from '~/@/time/posix'
+import { IconPlus } from '~/@/ui'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
-import { Button, IconPlus } from '~/@/ui'
+import { CreateActionProps } from '~/app/@/ui/screen/layout/props'
 import { FlowFrontendCmd } from '../../../@/frontend/cmd'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { IPuzzleDb } from '../../../@/puzzle/puzzle-db'
@@ -112,21 +113,17 @@ const createNewPuzzle = async (input: { now: Posix; createdByUserId: UserId; puz
   return Result.mapOk(result, () => puzzleNew)
 }
 
-const ViewCreateFab: FrontendModule['View'] = (input) => {
-  return (
-    <Button
-      text={input.ctx.t('flow.create-puzzle')}
-      variant='contained'
-      color='primary'
-      rounded
-      loading={input.model.puzzleCreateRequest.t === 'loading'}
-      iconStart={(iconInput) => <IconPlus {...iconInput} />}
-      onClick={() => input.dispatch({ t: 'create-new-puzzle.user-clicked-create-button' })}
-    />
-  )
+const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): CreateActionProps => {
+  return {
+    onSubmit: () => input.dispatch({ t: 'create-new-puzzle.user-clicked-create-button' }),
+    submitText: input.ctx.t('flow.create-puzzle'),
+    submitLoading: input.model.puzzleCreateRequest.t === 'loading',
+    submitDisabled: input.model.puzzleCreateRequest.t === 'loading',
+    submitIcon: (iconInput) => <IconPlus {...iconInput} />,
+  }
 }
 
 export const CreateNewPuzzleFrontend = {
   update,
-  ViewCreateFab,
+  viewCreateAction,
 }

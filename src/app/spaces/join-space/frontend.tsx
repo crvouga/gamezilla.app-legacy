@@ -104,7 +104,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
         onSubmit: () => input.dispatch({ t: 'submitted-join-space-form', spaceId: space.spaceId }),
         submitText: input.ctx.t('spaces.join-space'),
         cancelText: input.ctx.t('app.cancel'),
-        onCancel: () => input.dispatch({ t: 'clicked-go-home-button' }),
+        onCancel: () => input.dispatch({ t: 'clicked-exit-space-button' }),
         submitLoading: false,
         cancelDisabled: false,
         submitDisabled: false,
@@ -114,7 +114,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
           ctx={input.ctx}
           topBar={{
             title: spaceState.game ? input.ctx.t(spaceState.game.t) : input.ctx.t('spaces.space'),
-            onBack: () => input.dispatch({ t: 'clicked-go-home-button' }),
+            onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
           }}
           renderCoverArt={(inputCoverArt) =>
             spaceState.game && (

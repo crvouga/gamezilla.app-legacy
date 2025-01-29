@@ -199,7 +199,7 @@ export const translations: Text = {
   'space-card.live': '실시간',
   'space-card.people-count': (count) => `${count.toLocaleString()} \uBA85`,
   'spaces.space-not-found': '공간을 찾을 수 없습니다',
-  'spaces.go-home': '집으로 가기',
+  'spaces.exit-space': '집으로 가기',
   'spaces.current-user-ended-space': '공간 종료',
   'spaces.other-user-ended-space': (username) =>
     username

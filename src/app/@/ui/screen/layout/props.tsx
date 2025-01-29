@@ -18,6 +18,14 @@ export type EditActionProps = {
   submitDisabled: boolean
 }
 
+export type CreateActionProps = {
+  submitIcon: (input: { className?: string }) => VDom
+  onSubmit: () => void
+  submitText: TranslatedText
+  submitLoading: boolean
+  submitDisabled: boolean
+}
+
 export type NavBarProps = {
   title: TranslatedText
   subtitle?: TranslatedText | null
@@ -37,6 +45,6 @@ export type ScreenLayoutProps = {
   actionBar?: ScreenLayoutActionBarProps | null
   renderMiniPlayer?: () => VDom
   renderBody: () => VDom
-  renderFab?: () => VDom
+  createAction?: CreateActionProps | null
   editAction?: EditActionProps
 }
