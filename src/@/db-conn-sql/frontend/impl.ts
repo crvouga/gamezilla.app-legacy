@@ -1,6 +1,6 @@
 import * as ImplNoop from '../impl-noop'
 // import type * as ImplPgLite from '../impl-pglite'
-import * as ImplPowerSync from '../impl-powersync'
+import * as ImplPowerSync from '../impl-powersync-client'
 import type { IDbConnSql } from '../interface'
 
 export type Config =
@@ -17,7 +17,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     //   const ImplPgLite = await import('../impl-pglite')
     //   return ImplPgLite.DbConnSql(config)
     // }
-    case 'powersync': {
+    case 'powersync-client': {
       return ImplPowerSync.DbConnSql(config)
     }
   }

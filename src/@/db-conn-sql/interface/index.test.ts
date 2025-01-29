@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import 'fake-indexeddb/auto'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
-import { newPowerSyncDatabase } from '../../../service-powersync/frontend/database'
+import { newPowerSyncClient } from '../../../service-powersync/frontend/database'
 import { Logger } from '../../logger'
 import { p } from '../../parser'
 import { isErr, isOk } from '../../result'
@@ -39,11 +39,11 @@ const Fixtures = async () => {
     })
   }
 
-  const SHOULD_TEST_POWERSYNC = false
-  if (SHOULD_TEST_POWERSYNC) {
+  const SHOULD_TEST_POWERSYNC_CLIENT = false
+  if (SHOULD_TEST_POWERSYNC_CLIENT) {
     configs.push({
-      t: 'powersync',
-      powerSync: await newPowerSyncDatabase({
+      t: 'powersync-client',
+      powerSyncClient: await newPowerSyncClient({
         dbFilename: ':memory:',
       }),
       logger: Logger({ t: 'noop' }),

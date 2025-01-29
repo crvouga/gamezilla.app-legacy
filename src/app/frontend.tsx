@@ -13,7 +13,7 @@ import { IconGamepad, IconUserCircle, Portal } from '~/@/ui'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
-import { setupNewPowerSyncDatabase } from '~/service-powersync/frontend/database'
+import { setupNewPowerSyncClient } from '~/service-powersync/frontend/database'
 import { ILogger, Logger } from '../@/logger'
 import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
@@ -66,8 +66,8 @@ export const initCtx = async (): Promise<FrontendCtx> => {
   // const dbConnSql = dbConnSqlNoop
 
   const dbConnSql = await DbConnSql({
-    t: 'powersync',
-    powerSync: await setupNewPowerSyncDatabase(),
+    t: 'powersync-client',
+    powerSyncClient: await setupNewPowerSyncClient(),
     logger,
   })
 

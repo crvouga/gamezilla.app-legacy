@@ -2,7 +2,7 @@ import * as ImplBunSqlite from '../impl-bun-sqlite'
 import * as ImplNoop from '../impl-noop'
 import * as ImplPgLite from '../impl-pglite'
 import * as ImplPostgres from '../impl-postgres'
-import * as ImplPowerSync from '../impl-powersync'
+import * as ImplPowerSync from '../impl-powersync-client'
 import type { IDbConnSql } from '../interface'
 
 export type Config =
@@ -26,7 +26,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     case 'pglite': {
       return ImplPgLite.DbConnSql(config)
     }
-    case 'powersync': {
+    case 'powersync-client': {
       return ImplPowerSync.DbConnSql(config)
     }
   }

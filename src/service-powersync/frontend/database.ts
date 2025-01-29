@@ -18,7 +18,12 @@ export type PowerSyncDatabaseEvent =
       t: 'first-sync-completed'
     }
 
-export const newPowerSyncDatabase = async (input?: { dbFilename?: string }) => {
+export type IPowerSyncClient = {
+  database: PowerSyncDatabase
+  events: PubSub<PowerSyncDatabaseEvent>
+}
+
+export const newPowerSyncClient = async (input?: { dbFilename?: string }): Promise<IPowerSyncClient> => {
   const database = new PowerSyncDatabase({
     schema: AppSchema,
     database: {
@@ -48,8 +53,8 @@ export const newPowerSyncDatabase = async (input?: { dbFilename?: string }) => {
   }
 }
 
-export const setupNewPowerSyncDatabase = async () => {
-  const powerSync = await newPowerSyncDatabase()
+export const setupNewPowerSyncClient = async () => {
+  const powerSync = await newPowerSyncClient()
 
   // @ts-expect-error - Expose powerSync to the window for debugging
   window.powerSync = powerSync.database
