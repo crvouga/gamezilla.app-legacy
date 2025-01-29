@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  font-family: 'Inter', sans-serif;
+}
+
 .bg-surface {
   @apply bg-neutral-950;
 }
