@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
-import type { UserId } from '~/app/@/data/user-id'
+import { UserId } from '~/app/@/data/user-id'
 import { IconRobot, IconUsers, Typography } from '~/@/ui'
 import {
   type SpaceFrontendCmd,
@@ -12,22 +12,16 @@ import {
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { LayoutGameCoverArtHeader } from '../layout-game-cover-art-header'
 import { ViewUsersInSpaceList } from '../users-in-space-list'
+import { p } from '~/@/parser'
+import { isOk } from '~/@/result'
 
-//
-//
-//
-//
-//
-//
+export const Msg = p.or(
+  p.obj({ t: p.l('game-main-menu.clicked-open-user-details-button'), userId: UserId }),
+  p.obj({ t: p.l('game-main-menu.clicked-exit-game-button') }),
+)
+export type Msg = p.Infer<typeof Msg>
 
-export type Msg =
-  | {
-      t: 'game-main-menu.clicked-open-user-details-button'
-      userId: UserId
-    }
-  | {
-      t: 'game-main-menu.clicked-exit-game-button'
-    }
+const isMsg = (m: unknown): m is Msg => isOk(Msg.parse(m))
 
 export const update = <TModel, TMsg, T extends SpaceFrontendCmdTypes>({
   msg,
@@ -39,30 +33,19 @@ export const update = <TModel, TMsg, T extends SpaceFrontendCmdTypes>({
   model: TModel
   msgCmd: SpaceFrontendCmd<T>[]
 } => {
-  if (typeof msg !== 'object' || !msg || !('t' in msg)) {
-    return { model, msgCmd: [] }
-  }
+  if (!isMsg(msg)) return { model, msgCmd: [] }
 
-  switch (msg?.t) {
+  switch (msg.t) {
     case 'game-main-menu.clicked-exit-game-button': {
-      return {
-        model,
-        msgCmd: [exitGame()],
-      }
+      return { model, msgCmd: [exitGame()] }
     }
 
     case 'game-main-menu.clicked-open-user-details-button': {
-      return {
-        model,
-        msgCmd: [openUserDetails(msg.userId)],
-      }
+      return { model, msgCmd: [openUserDetails(msg.userId)] }
     }
 
     default: {
-      return {
-        model,
-        msgCmd: [],
-      }
+      return { model, msgCmd: [] }
     }
   }
 }
@@ -81,14 +64,7 @@ type MainMenuButton = {
   onClick: () => void
 }
 
-export const View = ({
-  title,
-  renderCoverArt,
-  buttons,
-  ctx,
-  dispatch,
-  onBack,
-}: {
+export const View = (props: {
   onBack: () => void
   ctx: SpaceFrontendCtx
   title: TranslatedText
@@ -96,25 +72,22 @@ export const View = ({
   renderCoverArt: (input: { className: string }) => VDom
   buttons: MainMenuButton[]
 }) => {
-  const isSpectating = ctx.currentUserId !== ctx.space.hostId
+  const isSpectating = props.ctx.currentUserId !== props.ctx.space.hostId
 
   if (isSpectating) {
     return (
       <LayoutGameCoverArtHeader
-        ctx={ctx}
+        ctx={props.ctx}
         topBar={{
-          title,
+          title: props.title,
         }}
-        renderCoverArt={renderCoverArt}
+        renderCoverArt={props.renderCoverArt}
         renderContent={() => (
           <ViewUsersInSpaceList
             onOpenUserDetails={(userId) =>
-              dispatch({
-                t: 'game-main-menu.clicked-open-user-details-button',
-                userId,
-              })
+              props.dispatch({ t: 'game-main-menu.clicked-open-user-details-button', userId })
             }
-            ctx={ctx}
+            ctx={props.ctx}
           />
         )}
       />
@@ -123,33 +96,29 @@ export const View = ({
 
   return (
     <LayoutGameCoverArtHeader
-      ctx={ctx}
-      topBar={{
-        title,
-        onBack,
-      }}
-      renderCoverArt={renderCoverArt}
+      ctx={props.ctx}
+      topBar={{ title: props.title, onBack: props.onBack }}
+      renderCoverArt={props.renderCoverArt}
       renderContent={() => (
-        <div className='flex w-full flex-col'>
-          {buttons.map(({ renderIcon, title, description, onClick }, index) => (
-            <button
-              className='bg-paper clickable mb-6 flex w-full items-center rounded p-6'
-              onClick={onClick}
-              key={`${index} ${title}`}
-            >
-              {renderIcon({
-                className: 'aspect-square w-12 h-12 mr-4',
-              })}
-              <div className='flex flex-1 flex-col gap-1 text-left'>
-                <Typography variant='title' text={title} />
-
-                {description && <Typography variant='label' text={description} />}
-              </div>
-            </button>
+        <div className='flex w-full flex-col gap-6'>
+          {props.buttons.map((button) => (
+            <MainMenuButtonView key={`${button.title}${button.description}`} {...button} />
           ))}
         </div>
       )}
     />
+  )
+}
+
+const MainMenuButtonView = (props: MainMenuButton) => {
+  return (
+    <button className='bg-paper clickable flex w-full items-center gap-4 rounded p-6' onClick={props.onClick}>
+      {props.renderIcon({ className: 'aspect-square size-12' })}
+      <div className='flex flex-1 flex-col gap-1 text-left'>
+        <Typography variant='title' text={props.title} />
+        {props.description && <Typography variant='label' text={props.description} />}
+      </div>
+    </button>
   )
 }
 

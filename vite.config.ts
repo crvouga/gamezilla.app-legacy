@@ -50,7 +50,6 @@ export default defineConfig({
     format: 'es',
     plugins: () => [
       wasm(),
-
       // topLevelAwait()
     ],
   },
