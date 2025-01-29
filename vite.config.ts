@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { defineConfig, PluginOption } from 'vite'
 // @ts-expect-error missing types
 import inferno from 'vite-plugin-inferno'
-import topLevelAwait from 'vite-plugin-top-level-await'
+// import topLevelAwait from 'vite-plugin-top-level-await'
 import wasm from 'vite-plugin-wasm'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { CONFIG_FRONTEND } from './src/config/frontend'
@@ -26,7 +26,12 @@ const vDomPlugin = (): PluginOption => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tsconfigPaths(), vDomPlugin(), wasm(), topLevelAwait()],
+  plugins: [
+    tsconfigPaths(),
+    vDomPlugin(),
+    wasm(),
+    // topLevelAwait()
+  ],
   optimizeDeps: {
     // https://pglite.dev/docs/bundler-support
     exclude: [
@@ -41,6 +46,9 @@ export default defineConfig({
   },
   worker: {
     format: 'es',
-    plugins: () => [wasm(), topLevelAwait()],
+    plugins: () => [
+      wasm(),
+      // topLevelAwait()
+    ],
   },
 })

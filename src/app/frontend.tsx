@@ -1,5 +1,5 @@
 import { Browser } from '~/@/browser'
-import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
+import { DbConnSql } from '~/@/db-conn-sql/frontend/impl'
 import { Eff } from '~/@/eff'
 import { eq } from '~/@/equals/equals'
 import { HttpClient } from '~/@/http-client'
@@ -14,6 +14,7 @@ import { IconGamepad, IconUserCircle, Portal } from '~/@/ui'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
+import { setupNewPowerSyncDatabase } from '~/service-powersync/frontend/database'
 import { ILogger, Logger } from '../@/logger'
 import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
@@ -37,8 +38,6 @@ import {
 } from './types'
 import * as WireFrontend from './wire/frontend'
 import { FrontendTransport } from './wire/transport/frontend'
-import { setupNewPowerSyncDatabase } from '~/service-powersync/frontend/database'
-import { DbConnSql } from '~/@/db-conn-sql/frontend/impl'
 
 export const initCtx = async (): Promise<FrontendCtx> => {
   const logger = Logger({

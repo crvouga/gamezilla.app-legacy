@@ -168,15 +168,11 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
 const View: BuilderTypes.FrontendModule['View'] = (input) => {
   const { ctx } = input
 
-  if (!input.modelSpace.screenPuzzleBuilder) {
-    return null
-  }
+  if (!input.modelSpace.screenPuzzleBuilder) return null
 
   const isSpectating = ctx.currentUserId !== ctx.space.hostId
 
-  if (isSpectating) {
-    return <ViewSpectating {...input} />
-  }
+  if (isSpectating) return <ViewSpectating {...input} />
 
   return (
     <ScreenLayout
@@ -193,7 +189,7 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
       actionBar={{
         variant: {
           limit: {
-            max: 2,
+            max: 3,
             onToggle: () => {
               if (input.model.puzzleBuilderOpened === 'more') {
                 input.dispatch({ t: 'screen-puzzle-builder.user-closed-more-drawer' })
@@ -245,9 +241,7 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
 const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
 
-  if (!puzzleBuilder) {
-    return null
-  }
+  if (!puzzleBuilder) return null
 
   switch (puzzleBuilder.mode.t) {
     case 'edit':
