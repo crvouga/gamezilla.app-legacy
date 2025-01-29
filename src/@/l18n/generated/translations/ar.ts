@@ -221,6 +221,7 @@ export const translations: Text = {
   'lang.choose-language': 'اختر اللغة',
   'lang.done': 'تم',
   'lang.loaded-translations': 'تم تحميل الترجمات',
+  'profile.edit-profile': 'تحرير الملف الشخصي',
   'profile.update-profile': 'تحديث الملف الشخصي',
   'profile.update-avatar': 'تحديث الصورة الرمزية',
   'profile.profile': 'الملف الشخصي',

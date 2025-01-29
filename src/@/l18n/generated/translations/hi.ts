@@ -220,6 +220,7 @@ export const translations: Text = {
   'lang.choose-language': 'भाषा चुनें',
   'lang.done': 'किया',
   'lang.loaded-translations': 'लोड की गई अनुवाद',
+  'profile.edit-profile': 'प्रोफ़ाइल संपादित करें',
   'profile.update-profile': 'प्रोफ़ाइल अपडेट करें',
   'profile.update-avatar': 'अवतार अपडेट करें',
   'profile.profile': 'प्रोफ़ाइल',

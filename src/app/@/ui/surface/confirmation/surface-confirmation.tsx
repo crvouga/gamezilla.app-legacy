@@ -3,7 +3,7 @@ import { Translator } from '~/@/l18n/generated'
 import { Typography } from '~/@/ui'
 import { type DrawerInput } from '~/@/ui/drawer'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
-import { SurfaceLayout } from '~/app/@/ui/surface/layout'
+import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 
 export type SurfaceConfirmationProps = DrawerInput & {
   ctx: {

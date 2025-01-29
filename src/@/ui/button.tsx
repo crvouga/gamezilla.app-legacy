@@ -37,7 +37,7 @@ export const Button = (input: ButtonInput) => {
       type={input.type ?? 'button'}
       className={cn(
         input.className,
-        BASE_CLASS,
+        'clickable relative flex shrink-0 select-none appearance-none flex-nowrap items-center justify-center overflow-hidden truncate rounded font-semibold',
         toColorClass(input),
         toSizeClass(input),
         input.rounded && 'rounded-3xl shadow-2xl',
@@ -53,8 +53,12 @@ export const Button = (input: ButtonInput) => {
       }
     >
       <div className={cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent')}>
-        {input.iconStart?.({ className: 'mr-2 size-8' })}
-        {input.text}
+        <div className='flex-none'>
+          {input.iconStart?.({
+            className: cn(toIconSizeClass(input), 'mr-2'),
+          })}
+        </div>
+        <div className='truncate'>{input.text}</div>
       </div>
 
       {input.loading && (
@@ -66,8 +70,18 @@ export const Button = (input: ButtonInput) => {
   )
 }
 
-const BASE_CLASS =
-  'clickable relative flex shrink-0 select-none appearance-none flex-nowrap items-center justify-center overflow-hidden rounded font-semibold'
+const toIconSizeClass = (input: ButtonInput): string => {
+  switch (input.size ?? 'lg') {
+    case 'lg':
+      return 'size-8'
+    case 'md':
+      return 'size-6'
+    case 'sm':
+      return 'size-4'
+    case 'xs':
+      return 'size-3'
+  }
+}
 
 const toSizeClass = (input: ButtonInput): string => {
   switch (input.size ?? 'lg') {
@@ -76,7 +90,7 @@ const toSizeClass = (input: ButtonInput): string => {
     case 'md':
       return 'px-4 py-2 text-lg'
     case 'sm':
-      return 'text-md  px-4 py-1'
+      return 'text-md  px-4 py-1.5'
     case 'xs':
       return 'px-3 py-1 text-sm'
   }

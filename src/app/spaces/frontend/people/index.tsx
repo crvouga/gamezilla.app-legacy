@@ -1,7 +1,7 @@
 import { Avatar, Button, IconUserGroup, Typography } from '~/@/ui'
 import { APP_SOUND, openProfile, playSound } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/props'
-import { SurfaceLayout } from '~/app/@/ui/surface/layout'
+import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ViewUsersInSpaceList } from '~/app/spaces/game/games/@/ui/users-in-space-list'
 import { ViewHostChip } from '~/app/spaces/game/games/@/ui/users-in-space-list/host-chip'

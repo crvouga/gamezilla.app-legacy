@@ -208,6 +208,7 @@ export const translations: Text = {
   'lang.choose-language': 'Choisir la langue',
   'lang.done': 'Terminé',
   'lang.loaded-translations': 'Traductions chargées',
+  'profile.edit-profile': 'Modifier le profil',
   'profile.update-profile': 'Mettre à jour le profil',
   'profile.update-avatar': "Mettre à jour l'avatar",
   'profile.profile': 'Profil',

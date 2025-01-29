@@ -214,6 +214,7 @@ export const translations: Text = {
   'lang.choose-language': '언어 선택',
   'lang.done': '완료',
   'lang.loaded-translations': '번역이 로드되었습니다',
+  'profile.edit-profile': '프로필 편집',
   'profile.update-profile': '프로필 업데이트',
   'profile.update-avatar': '아바타 업데이트',
   'profile.profile': '프로필',

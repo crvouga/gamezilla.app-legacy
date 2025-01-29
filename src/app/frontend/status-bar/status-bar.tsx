@@ -1,7 +1,7 @@
 import { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
-import { SurfaceLayout } from '~/app/@/ui/surface/layout'
+import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { APP_SOUND, AppFrontendCmd, playSound, StatusBarCmd } from '../../@/frontend/cmd'
 
 export type Model = {

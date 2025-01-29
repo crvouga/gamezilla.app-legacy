@@ -217,6 +217,7 @@ export const translations: Text = {
   'lang.choose-language': '言語を選択',
   'lang.done': '完了',
   'lang.loaded-translations': '翻訳が読み込まれました',
+  'profile.edit-profile': 'プロフィールを編集',
   'profile.update-profile': 'プロフィールを更新',
   'profile.update-avatar': 'アバターを更新',
   'profile.profile': 'プロフィール',

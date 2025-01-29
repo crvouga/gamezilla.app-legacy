@@ -1,6 +1,6 @@
 import { Drawer, DrawerHeader } from '~/@/ui'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
-import { SurfaceLayoutProps } from './props'
+import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
   const Element = props.form ? 'form' : 'div'

@@ -11,7 +11,7 @@ import {
 } from '~/@/ui'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation'
+import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
