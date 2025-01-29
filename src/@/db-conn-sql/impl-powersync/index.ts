@@ -4,19 +4,24 @@ import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { PubSub, Sub } from '~/@/sub'
 import { DbConnSqlQueryInput, IDbConnSql } from '../interface'
+import { PowerSyncDatabaseEvent } from '~/service-powersync/frontend/database'
 
 export type Config = {
   t: 'powersync'
-  powersync: PowerSyncDatabase
+  powerSync: {
+    powerSyncDatabase: PowerSyncDatabase
+    powerSyncDatabaseEvents: PubSub<PowerSyncDatabaseEvent>
+  }
   logger: ILogger
 }
 
 export const DbConnSql = (config: Config): IDbConnSql => {
   const logger = Logger.prefix('powersync', config.logger)
+  const { powerSyncDatabase, powerSyncDatabaseEvents } = config.powerSync
   const query: IDbConnSql['query'] = async (input) => {
     try {
       const sql = Sql.to(input.sql, input.vars)
-      const rows = await config.powersync.getAll?.(sql)
+      const rows = await powerSyncDatabase.getAll?.(sql)
       if (!rows) return Err('No results')
       const parsedRows = rows.map(input.parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : []))
       return Ok(parsedRows)
@@ -34,7 +39,13 @@ export const DbConnSql = (config: Config): IDbConnSql => {
 
     const abortController = new AbortController()
 
-    config.powersync.watchWithCallback(
+    const unsub = powerSyncDatabaseEvents.sub(async (_event) => {
+      const got = await powerSyncDatabase.getAll?.(sql)
+      const parsedRows = got.map(input.parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : []))
+      input.onChange(parsedRows)
+    })
+
+    powerSyncDatabase.watchWithCallback(
       sql,
       [],
       {
@@ -58,6 +69,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
 
     return async () => {
       abortController.abort()
+      unsub()
     }
   }
 

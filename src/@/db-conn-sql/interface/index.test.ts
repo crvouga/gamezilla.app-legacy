@@ -43,7 +43,7 @@ const Fixtures = async () => {
   if (SHOULD_TEST_POWERSYNC) {
     configs.push({
       t: 'powersync',
-      powersync: await newPowerSyncDatabase({
+      powerSync: await newPowerSyncDatabase({
         dbFilename: ':memory:',
       }),
       logger: Logger({ t: 'noop' }),

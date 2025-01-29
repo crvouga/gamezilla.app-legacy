@@ -2,12 +2,13 @@ import { PowerSyncDatabase } from '@powersync/web'
 import Logger from 'js-logger'
 import { Connector } from './backend-connector'
 import { AppSchema } from './database-schema'
+import { PubSub } from '~/@/sub'
 
 Logger.useDefaults()
 Logger.setLevel(Logger.DEBUG)
 
 export const newPowerSyncDatabase = async (input?: { dbFilename?: string }) => {
-  return new PowerSyncDatabase({
+  const powerSyncDatabase = new PowerSyncDatabase({
     schema: AppSchema,
     database: {
       dbFilename: input?.dbFilename ?? 'powersync.db',
@@ -17,25 +18,43 @@ export const newPowerSyncDatabase = async (input?: { dbFilename?: string }) => {
       enableMultiTabs: false,
     },
   })
+
+  const powerSyncDatabaseEvents = PubSub.create<PowerSyncDatabaseEvent>()
+
+  return {
+    powerSyncDatabase,
+    powerSyncDatabaseEvents,
+  }
 }
+
+export type PowerSyncDatabaseEvent =
+  | {
+      t: 'connected'
+    }
+  | {
+      t: 'initialized'
+    }
+  | {
+      t: 'first-sync-completed'
+    }
 
 export const setupNewPowerSyncDatabase = async () => {
   const powerSync = await newPowerSyncDatabase()
 
   // @ts-expect-error - Expose powerSync to the window for debugging
-  window.powerSync = powerSync
+  window.powerSync = powerSync.powerSyncDatabase
 
   const connector = new Connector()
 
-  powerSync.connect(connector).then(() => {
+  powerSync.powerSyncDatabase.connect(connector).then(() => {
     console.log('PowerSync connected to backend')
   })
 
-  powerSync.init().then(() => {
+  powerSync.powerSyncDatabase.init().then(() => {
     console.log('PowerSync initialized')
   })
 
-  powerSync.waitForFirstSync().then(() => {
+  powerSync.powerSyncDatabase.waitForFirstSync().then(() => {
     console.log('PowerSync first sync completed')
   })
 

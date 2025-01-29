@@ -67,7 +67,7 @@ export const initCtx = async (): Promise<FrontendCtx> => {
 
   const dbConnSql = await DbConnSql({
     t: 'powersync',
-    powersync: await setupNewPowerSyncDatabase(),
+    powerSync: await setupNewPowerSyncDatabase(),
     logger,
   })
 
