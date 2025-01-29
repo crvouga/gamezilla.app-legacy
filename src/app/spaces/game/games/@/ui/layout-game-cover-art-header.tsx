@@ -3,7 +3,8 @@ import { Translator } from '~/@/l18n/generated'
 import { cn } from '~/@/ui'
 import type { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
-import { ScreenBodyRoot, ScreenLayout } from '~/app/@/ui/screen/layout'
+import { ScreenLayout } from '~/app/@/ui/screen/layout'
+import { ScreenBodyRoot } from '~/app/@/ui/screen/layout/screen-body-root'
 
 export const LayoutGameCoverArtHeader = (input: {
   topBar?: {

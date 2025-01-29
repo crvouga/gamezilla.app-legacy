@@ -21,7 +21,7 @@ import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx
 import { FrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
 import { LogoBlock } from './@/ui/logo/logo-block'
-import { RootLayout } from './@/ui/root-layout'
+import { AppRoot } from './@/ui/app-layout'
 import { ScreenLayoutProps } from './@/ui/screen/layout/props'
 import * as AuthFrontend from './auth/frontend'
 import { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
@@ -401,7 +401,7 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
   const frontendCtx = toFrontendCtx(input)
 
   return (
-    <RootLayout>
+    <AppRoot>
       <ViewStatusBar model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
 
       <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
@@ -417,7 +417,7 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
       <Portal.Exit portalId='app-root' />
 
       <Toast.View ctx={frontendCtx} model={input.model.toast} dispatch={(c) => input.dispatch({ t: 'toast', c })} />
-    </RootLayout>
+    </AppRoot>
   )
 }
 

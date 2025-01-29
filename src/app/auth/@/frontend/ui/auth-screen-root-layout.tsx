@@ -1,5 +1,5 @@
-import { ScreenBodyRoot } from '~/app/@/ui/screen/layout'
 import { VDomChildren } from '~/@/vdom/vdom'
+import { ScreenBodyRoot } from '~/app/@/ui/screen/layout/screen-body-root'
 
 export const AuthScreenRootLayout = (input: { children: VDomChildren }) => {
   return (

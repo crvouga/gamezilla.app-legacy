@@ -5,7 +5,8 @@ const config: Config = {
   theme: {
     extend: {
       borderColor: {
-        DEFAULT: '#525252',
+        // DEFAULT: '#525252',
+        DEFAULT: '#404040',
       },
     },
   },
