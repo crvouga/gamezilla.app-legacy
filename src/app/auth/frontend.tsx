@@ -6,7 +6,7 @@ import { Button, IconEnvelope, IconMobilePhone, Typography } from '~/@/ui'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND, AppFrontendCmd, playSound, pushScreen, replaceScreen, showToast } from '~/app/@/frontend/cmd'
 import { BaseFrontendCtx } from '../@/frontend/ctx'
-import { AuthScreenRoot } from './@/frontend/ui/auth-screen-root'
+import { AuthScreenLayout } from './@/frontend/ui/auth-screen-root'
 import { AuthSMSFrontend } from './auth-sms/frontend'
 import { ContinueAsGuestFrontend } from './continue-as-guest/frontend'
 import { LogoutFrontend } from './logout/frontend'
@@ -262,14 +262,7 @@ export const View: FrontendModule['View'] = (input) => {
 
 const ViewLoginScreen: FrontendModule['View'] = (input) => {
   return (
-    <AuthScreenRoot>
-      <div className='flex w-full flex-col items-start justify-center'>
-        <Typography text={input.ctx.t('auth.sign-in-to')} variant='title' />
-        <span className='bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent'>
-          {input.ctx.t('app.gamezilla-app')}
-        </span>
-      </div>
-
+    <AuthScreenLayout ctx={input.ctx}>
       <div className='flex w-full flex-col gap-6'>
         <Button
           onClick={() => input.dispatch({ t: 'user-clicked-login-with-phone' })}
@@ -300,7 +293,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
 
         <ContinueAsGuestFrontend.ViewButton {...input} />
       </div>
-    </AuthScreenRoot>
+    </AuthScreenLayout>
   )
 }
 
