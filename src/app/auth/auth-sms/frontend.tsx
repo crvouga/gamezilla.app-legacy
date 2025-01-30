@@ -5,6 +5,7 @@ import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
+import { IconMobilePhone, Select, TextField, Typography } from '~/@/ui'
 import { Uuid } from '~/@/uuid/uuid'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import {
@@ -19,8 +20,7 @@ import {
 } from '~/app/@/frontend/cmd'
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
-import { AlertError, IconMobilePhone, Select, TextField, Typography } from '~/@/ui'
-import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { AuthScreenFormLayout } from '../@/frontend/ui/auth-screen-form-layout'
 import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from './types'
 import { sendCodeProblemToString, verifyCodeProblemToString } from './verify-sms/interface'
 
@@ -440,41 +440,28 @@ const View: Module['View'] = (input) => {
 
 const ViewSendCode: Module['View'] = (input) => {
   return (
-    <ScreenLayout
-      id='auth-sms-send-code'
+    <AuthScreenFormLayout
       ctx={input.ctx}
-      parentScreen={input.ctx.parentScreen}
-      navBar={{
-        title: input.ctx.t('auth-sms.login-with-phone'),
-        onBack: () =>
-          input.dispatch({
-            t: 'clicked-back-button',
-          }),
-      }}
-      editAction={{
-        cancelDisabled: false,
-        cancelText: input.ctx.t('app.cancel'),
-        onCancel: () => {
-          input.dispatch({ t: 'clicked-back-button' })
-        },
-        onSubmit: () => {
-          input.dispatch({ t: 'user-clicked-send-code-button' })
-        },
-        submitText: input.ctx.t('auth-sms.send-code'),
-        submitLoading: input.model.sendCode.t === 'loading',
-        submitDisabled: false,
-      }}
-      renderBody={() => (
-        <div className='flex w-full flex-col gap-6 p-4'>
+      title={input.ctx.t('auth-sms.send-code')}
+      onBack={() => input.dispatch({ t: 'clicked-back-button' })}
+      submitText={input.ctx.t('auth-sms.send-code')}
+      submitLoading={input.model.sendCode.t === 'loading'}
+      submitDisabled={false}
+      error={
+        isErr(input.model.sendCode)
+          ? sendCodeProblemToString({
+              problem: input.model.sendCode.error,
+              t: input.ctx.t,
+            })
+          : null
+      }
+      onSubmit={() => input.dispatch({ t: 'user-clicked-send-code-button' })}
+      renderInputs={() => (
+        <>
           <Select
             id='countryCode'
             label={input.ctx.t('auth-sms.country')}
-            onChange={(countryCodeNew) => {
-              input.dispatch({
-                t: 'inputted-country-code',
-                countryCode: countryCodeNew,
-              })
-            }}
+            onChange={(countryCode) => input.dispatch({ t: 'inputted-country-code', countryCode })}
             value={input.model.countryCodeInput}
             options={Iso3166Alpha2Code.all}
             toKey={(countryCode) => countryCode}
@@ -489,28 +476,10 @@ const ViewSendCode: Module['View'] = (input) => {
             error={typeof input.model.phoneNumberError === 'string'}
             value={input.model.inputtedPhoneNumber}
             helperText={input.model.phoneNumberError}
-            onChange={(value) => {
-              input.dispatch({
-                t: 'inputted-phone-number',
-                phoneNumber: value,
-              })
-            }}
-            onClear={() => {
-              input.dispatch({
-                t: 'clicked-phone-number-clear',
-              })
-            }}
+            onChange={(value) => input.dispatch({ t: 'inputted-phone-number', phoneNumber: value })}
+            onClear={() => input.dispatch({ t: 'clicked-phone-number-clear' })}
           />
-
-          {isErr(input.model.sendCode) && (
-            <AlertError
-              text={sendCodeProblemToString({
-                problem: input.model.sendCode.error,
-                t: input.ctx.t,
-              })}
-            />
-          )}
-        </div>
+        </>
       )}
     />
   )
@@ -522,36 +491,30 @@ const ViewVerifyCode: Module['View'] = (input) => {
   const phoneNumber = input.ctx.currentScreen.phoneNumber
 
   return (
-    <ScreenLayout
-      id='auth-sms-verify'
+    <AuthScreenFormLayout
       ctx={input.ctx}
-      parentScreen={input.ctx.parentScreen}
-      navBar={{
-        title: input.ctx.t('auth-sms.login-with-phone'),
-        onBack: () =>
-          input.dispatch({
-            t: 'clicked-back-button',
-          }),
-      }}
-      editAction={{
-        cancelDisabled: false,
-        cancelText: input.ctx.t('app.cancel'),
-        onCancel: () => {
-          input.dispatch({ t: 'clicked-back-button' })
-        },
-        onSubmit: () => {
-          input.dispatch({
-            t: 'user-clicked-verify-code-button',
-            phoneNumber,
-            inputtedCode: input.model.inputtedCode,
-          })
-        },
-        submitText: input.ctx.t('auth-sms.verify-code'),
-        submitLoading: input.model.verifyCode.t === 'loading' || input.model.verifyCode.t === 'ok',
-        submitDisabled: false,
-      }}
-      renderBody={() => (
-        <div className='flex w-full flex-col gap-6 p-6'>
+      title={input.ctx.t('auth-sms.verify-code')}
+      onBack={() => input.dispatch({ t: 'clicked-back-button' })}
+      submitText={input.ctx.t('auth-sms.verify-code')}
+      submitLoading={input.model.verifyCode.t === 'loading' || input.model.verifyCode.t === 'ok'}
+      submitDisabled={false}
+      error={
+        isErr(input.model.verifyCode)
+          ? verifyCodeProblemToString({
+              problem: input.model.verifyCode.error,
+              t: input.ctx.t,
+            })
+          : null
+      }
+      onSubmit={() =>
+        input.dispatch({
+          t: 'user-clicked-verify-code-button',
+          phoneNumber,
+          inputtedCode: input.model.inputtedCode,
+        })
+      }
+      renderInputs={() => (
+        <>
           <Typography
             role='status'
             className='text-lg'
@@ -567,28 +530,19 @@ const ViewVerifyCode: Module['View'] = (input) => {
             autoFocus
             type='tel'
             value={input.model.inputtedCode}
-            onChange={(value) => {
+            onChange={(value) =>
               input.dispatch({
                 t: 'inputted-code',
                 inputtedCode: value,
               })
-            }}
-            onClear={() => {
+            }
+            onClear={() =>
               input.dispatch({
                 t: 'clicked-code-clear',
               })
-            }}
+            }
           />
-
-          {isErr(input.model.verifyCode) && (
-            <AlertError
-              text={verifyCodeProblemToString({
-                problem: input.model.verifyCode.error,
-                t: input.ctx.t,
-              })}
-            />
-          )}
-        </div>
+        </>
       )}
     />
   )

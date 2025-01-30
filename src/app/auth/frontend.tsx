@@ -6,7 +6,8 @@ import { Button, IconEnvelope, IconMobilePhone, Typography } from '~/@/ui'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND, AppFrontendCmd, playSound, pushScreen, replaceScreen, showToast } from '~/app/@/frontend/cmd'
 import { BaseFrontendCtx } from '../@/frontend/ctx'
-import { AuthScreenLayout } from './@/frontend/ui/auth-screen-root'
+import { AuthScreenPrimaryHeader } from './@/frontend/ui/auth-screen-primary-header'
+import { AuthScreenLayout } from './@/frontend/ui/auth-screen-layout'
 import { AuthSMSFrontend } from './auth-sms/frontend'
 import { ContinueAsGuestFrontend } from './continue-as-guest/frontend'
 import { LogoutFrontend } from './logout/frontend'
@@ -262,8 +263,10 @@ export const View: FrontendModule['View'] = (input) => {
 
 const ViewLoginScreen: FrontendModule['View'] = (input) => {
   return (
-    <AuthScreenLayout ctx={input.ctx}>
-      <div className='flex w-full flex-col gap-6'>
+    <AuthScreenLayout ctx={input.ctx} center>
+      <div className='flex w-full flex-1 flex-col gap-6'>
+        <AuthScreenPrimaryHeader ctx={input.ctx} />
+
         <Button
           onClick={() => input.dispatch({ t: 'user-clicked-login-with-phone' })}
           size='lg'

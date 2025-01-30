@@ -1,0 +1,52 @@
+import { TranslatedText } from '~/@/l18n'
+import { Translator } from '~/@/l18n/generated'
+import { AlertError, Button } from '~/@/ui'
+import { VDom } from '~/@/vdom/vdom'
+import { ScreenSize } from '~/app/@/ui/screen/screen-size'
+import { AuthScreenHeader } from './auth-screen-header'
+import { AuthScreenLayout } from './auth-screen-layout'
+
+export const AuthScreenFormLayout = (input: {
+  ctx: {
+    t: Translator
+    screenSize: ScreenSize
+  }
+  title: TranslatedText
+  onBack: () => void
+  renderInputs: () => VDom
+  submitText: TranslatedText
+  submitLoading: boolean
+  submitDisabled: boolean
+  error: TranslatedText | null
+  onSubmit: () => void
+}) => {
+  return (
+    <AuthScreenLayout ctx={input.ctx}>
+      <AuthScreenHeader ctx={input.ctx} title={input.title} onBack={input.onBack} />
+      <form
+        className='flex w-full flex-col gap-16 pt-4'
+        onSubmit={(e) => {
+          e.preventDefault()
+          input.onSubmit()
+        }}
+      >
+        <div className='flex w-full flex-col gap-6'>
+          {input.renderInputs()}
+
+          {input.error && <AlertError text={input.error} />}
+        </div>
+
+        <Button
+          color='primary'
+          size='lg'
+          className='w-full'
+          variant='contained'
+          type='submit'
+          text={input.submitText}
+          loading={input.submitLoading}
+          disabled={input.submitDisabled}
+        />
+      </form>
+    </AuthScreenLayout>
+  )
+}

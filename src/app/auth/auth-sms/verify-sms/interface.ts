@@ -1,7 +1,7 @@
-import type { Task } from '~/@/promise/task'
-import type { LanguageCodeISO_639_1 } from '~/@/l18n'
+import type { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
 import { PhoneNumber } from '~/@/phone-number'
+import type { Task } from '~/@/promise/task'
 
 export type VerifyCodeProblem =
   | {
@@ -27,7 +27,13 @@ export type VerifyCodeProblem =
       error: string
     }
 
-export const verifyCodeProblemToString = ({ problem, t }: { problem: VerifyCodeProblem; t: Translator }): string => {
+export const verifyCodeProblemToString = ({
+  problem,
+  t,
+}: {
+  problem: VerifyCodeProblem
+  t: Translator
+}): TranslatedText => {
   switch (problem.t) {
     case 'code-incorrect':
       return t('verify-sms-problem.code-incorrect')
@@ -61,7 +67,13 @@ export type SendCodeProblem =
       t: 'limit-reached'
     }
 
-export const sendCodeProblemToString = ({ problem, t }: { problem: SendCodeProblem; t: Translator }): string => {
+export const sendCodeProblemToString = ({
+  problem,
+  t,
+}: {
+  problem: SendCodeProblem
+  t: Translator
+}): TranslatedText => {
   switch (problem.t) {
     case 'database-error':
       return t('verify-sms-problem.database-error')
