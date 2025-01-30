@@ -12,9 +12,9 @@ export const AuthScreenLayout = (input: {
   children: VDomChildren
 }) => {
   const center = input.center || input.ctx.screenSize === 'tablet'
-  const pb = input.ctx.screenSize === 'tablet' ? 'pb-48' : 'pb-12'
+  const paddingTop = center ? 'pt-36' : ''
   return (
-    <div className={cn('flex flex-col items-center justify-center', center && 'flex-1', pb)}>
+    <div className={cn('flex flex-col items-center justify-center', paddingTop)}>
       <div className='flex w-full max-w-xl flex-col items-center justify-center gap-4 p-6'>{input.children}</div>
     </div>
   )
