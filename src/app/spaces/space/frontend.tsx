@@ -17,7 +17,7 @@ const View = (input: {
   dispatch: (m: MsgFrontend) => void
   spaceId: SpaceId
 }) => {
-  const spaceState = SpacesCore.toSpaceState(input.model, input.spaceId)
+  const spaceState = SpacesCore.toSpaceState(input.model.spaces, input.spaceId)
 
   switch (spaceState.type) {
     case 'initial': {
@@ -35,7 +35,7 @@ const View = (input: {
         space: spaceState,
       }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
 
       if (currentUserSpaceId !== spaceCtx.space.spaceId) {
         return (

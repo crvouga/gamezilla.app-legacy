@@ -68,7 +68,7 @@ describe(import.meta.file, () => {
     ])
 
     const listed = SpacesCore.listSpaces({
-      model: output.model,
+      model: output.model.spaces,
       offset: 0,
       limit: Number.POSITIVE_INFINITY,
     })
@@ -94,7 +94,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
+    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)
 
     expect(currentUserSpaceId).toEqual(spaceId)
   })

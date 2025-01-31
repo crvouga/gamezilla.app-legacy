@@ -115,7 +115,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(SpacesCore.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(f.spaceId)
+    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)).toEqual(f.spaceId)
   })
 
   it('current user leaving joined space', async () => {
@@ -144,7 +144,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(SpacesCore.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(null)
+    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)).toEqual(null)
   })
 
   it('preventing joining a space if already in a space', async () => {
@@ -177,7 +177,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(SpacesCore.toSpaceIdByUserId(output.model, f.ctx.currentUserId)).toEqual(spaceA)
+    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)).toEqual(spaceA)
     expect(didShowErrorSm(output)).toBe(true)
   })
 })

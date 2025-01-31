@@ -10,7 +10,7 @@ import type { ModelFrontend, MsgFrontend } from '../../types'
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'clicked-current-space-bottom-bar': {
-      const currentUsersSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const currentUsersSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
 
       if (!currentUsersSpaceId) return { model: input.model }
 
@@ -27,8 +27,8 @@ const update: SpaceFrontendModule['update'] = (input) => {
 }
 
 const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
-  const userSpaceId = input.model.indexSpaceIdByUserId[input.ctx.currentUserId]
-  const space = SpacesCore.toSpaceStarted(input.model, userSpaceId)
+  const userSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+  const space = SpacesCore.toSpaceStarted(input.model.spaces, userSpaceId)
 
   if (!space) return null
 

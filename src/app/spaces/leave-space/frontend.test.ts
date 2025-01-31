@@ -78,7 +78,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model, f.ctx.currentUserId)
+    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)
     expect(currentUserSpaceId).toEqual(null)
   })
 

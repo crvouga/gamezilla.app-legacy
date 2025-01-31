@@ -21,7 +21,7 @@ import type { FrontendModule, ModelFrontend } from './types'
 
 const init: FrontendModule['init'] = ({ ctx }) => {
   const model: ModelFrontend = {
-    ...SpacesCore.init,
+    spaces: SpacesCore.init,
     games: {},
     modal: null,
     modalPreviewUserId: null,
@@ -79,11 +79,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
   const [evt, ...evtRest] = SpaceFrontendEvt.toSpaceFrontendEvt(acc.msgEvt)
 
   if (evt) {
-    const updated = updateChild({
-      ctx: input.ctx,
-      model: acc.model,
-      msgEvt: evt,
-    })
+    const updated = updateChild({ ctx: input.ctx, model: acc.model, msgEvt: evt })
 
     return updateLoop(input, {
       model: updated.model,
@@ -97,11 +93,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
   const [cmd, ...cmdRest] = SpaceFrontendCmd.toSpaceFrontendCmd(acc.msgCmd)
 
   if (cmd) {
-    const updated = updateChild({
-      ctx: input.ctx,
-      model: acc.model,
-      msgCmd: cmd,
-    })
+    const updated = updateChild({ ctx: input.ctx, model: acc.model, msgCmd: cmd })
 
     return updateLoop(input, {
       model: updated.model,
@@ -116,7 +108,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
 }
 
 const updateChild: SpaceFrontendModule['update'] = (input) => {
-  if (input.msgSpace && SpacesCore.hasEvent(input.model, input.msgSpace.spaceId, input.msgSpace.eventId)) {
+  if (input.msgSpace && SpacesCore.hasEvent(input.model.spaces, input.msgSpace.spaceId, input.msgSpace.eventId)) {
     return { model: input.model }
   }
 
@@ -137,13 +129,11 @@ const updateChild: SpaceFrontendModule['update'] = (input) => {
 }
 
 const updateSpacesFromMsgSpace: SpaceFrontendModule['update'] = ({ msgSpace, model }) => {
-  if (!msgSpace) {
-    return { model }
-  }
+  if (!msgSpace) return { model }
 
-  const updated = SpacesCore.update({ modelSpace: model, msgSpace })
+  const updated = SpacesCore.update({ modelSpace: model.spaces, msgSpace })
 
-  return { model: { ...model, ...updated.model } }
+  return { model: { ...model, spaces: updated.model } }
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {

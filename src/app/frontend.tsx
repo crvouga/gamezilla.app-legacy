@@ -521,10 +521,11 @@ const toScreenLayoutProps = (input: {
   return {
     id: 'app-screen-layout',
     parentScreen: null,
-    renderMiniPlayer: () => {
+    renderMiniPlayer: (props) => {
       if (!isAppFrontendCtx(input.ctx)) return null
       return (
         <SpacesFrontend.ViewCurrentSpaceBar
+          key={props.key}
           ctx={input.ctx}
           model={input.model.spaces}
           dispatch={(c) => input.dispatch({ t: 'spaces', c })}

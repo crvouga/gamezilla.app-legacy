@@ -6,8 +6,8 @@ export const Avatar = ({
   alt,
   onClick,
 }: {
-  src?: string | null
-  alt?: string
+  src?: string | null | undefined
+  alt?: string | null | undefined
   className?: string
   onClick?: () => void
 }) => {

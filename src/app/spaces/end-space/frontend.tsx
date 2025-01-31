@@ -20,7 +20,7 @@ const updateFromAppEvent: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgEvt?.t) {
     case 'auth-evt.unauthenticated': {
       if (!input.ctx.currentUserId) return { model: input.model }
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
       if (!currentUserSpaceId) return { model: input.model }
 
       return {
@@ -38,7 +38,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-ended-space': {
       if (!input.ctx.currentUserId) return { model: input.model }
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
       const msgSpace = input.msgSpace
       if (msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
 
@@ -71,7 +71,7 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'clicked-end-space-button': {
       if (!input.ctx.currentUserId) return { model: input.model }
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
       if (!currentUserSpaceId) return { model: input.model }
 
       return {
@@ -91,7 +91,7 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
 }
 
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
-  const spaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+  const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
   if (!spaceId) return null
 
   return {

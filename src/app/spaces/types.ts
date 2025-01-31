@@ -34,7 +34,8 @@ export type BackendCtx = AppBackendCtx & {
   games: GamesTypes.GameBackendCtx
 }
 
-export type ModelFrontend = SpacesCore.Model & {
+export type ModelFrontend = {
+  spaces: SpacesCore.Model
   games: {
     [spaceId: SpaceId]: GamesTypes.ModelFrontend
   }

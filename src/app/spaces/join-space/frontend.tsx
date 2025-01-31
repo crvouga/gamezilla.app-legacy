@@ -39,7 +39,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
 const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-joined-space': {
-      const error = SpacesCore.toErrorByEvenId(input.model, input.msgSpace.eventId)
+      const error = SpacesCore.toErrorByEvenId(input.model.spaces, input.msgSpace.eventId)
 
       switch (error?.t) {
         case 'user-already-in-a-space': {
@@ -54,7 +54,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
         }
       }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
 
       if (input.msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
 
@@ -85,7 +85,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
   if (!currentUser) return null
   const space = input.ctx.space
   if (!space) return null
-  const spaceState = SpacesCore.toSpaceStarted(input.model, space?.spaceId)
+  const spaceState = SpacesCore.toSpaceStarted(input.model.spaces, space?.spaceId)
   if (!spaceState) return null
 
   const spaceCtx = {

@@ -53,12 +53,15 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
   switch (input.msgBackend?.t) {
     case 'listed-spaces': {
-      const merged = input.msgBackend.spaces.reduce(SpacesCore.merge, input.model)
+      const merged = input.msgBackend.spaces.reduce(SpacesCore.merge, input.model.spaces)
       return {
         model: {
           ...input.model,
+          spaces: {
+            ...input.model.spaces,
+            ...merged.spaces,
+          },
           indexSpaceIdByUserId: merged.indexSpaceIdByUserId,
-          spaces: merged.spaces,
           listSpacesRequest: RequestResponse.response(input.model.listSpacesRequest, input.ctx.now, Ok(null)),
         },
       }
@@ -82,7 +85,7 @@ const toSpaces = (model: SpacesCore.Model) => {
 const View: SpaceFrontendModule['View'] = (input) => {
   if (!input.ctx.currentUserId) return null
 
-  const spaces = toSpaces(input.model)
+  const spaces = toSpaces(input.model.spaces)
 
   return (
     <ScreenLayout

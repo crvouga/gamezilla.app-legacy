@@ -5,9 +5,14 @@ import { ScreenAction, ScreenActionBarProps } from './props'
 
 const SIZE = 'md' as 'md' | 'sm'
 
-export const VerticalActionBar = (input: ScreenActionBarProps & { renderNavBar?: () => VDom }) => {
+export const VerticalActionBar = (
+  input: ScreenActionBarProps & {
+    className?: string
+    renderNavBar?: () => VDom
+  },
+) => {
   return (
-    <div className='flex w-32 shrink-0 flex-col gap-1 xl:w-64'>
+    <div className={cn('flex w-32 shrink-0 flex-col gap-1 xl:w-64', input.className)}>
       <ScreenNavBarTabletRoot>{input.renderNavBar?.()}</ScreenNavBarTabletRoot>
 
       {input.variant.t === 'uniform' ? (

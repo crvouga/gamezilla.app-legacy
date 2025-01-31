@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const gameName = SpacesCore.toSpaceStarted(output.model, spaceId)?.game?.t
+    const gameName = SpacesCore.toSpaceStarted(output.model.spaces, spaceId)?.game?.t
     expect(gameName).toBe(gameNameExpected)
   })
 
@@ -79,7 +79,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const gameName = SpacesCore.toSpaceStarted(NonEmpty.last(outputs).model, spaceId)?.game?.t ?? null
+    const gameName = SpacesCore.toSpaceStarted(NonEmpty.last(outputs).model.spaces, spaceId)?.game?.t ?? null
 
     expect(gameName).toBeNull()
   })

@@ -19,7 +19,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: ms
     case 'user-left-space': {
       if (!ctx.currentUserId) return { model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, ctx.currentUserId)
 
       if (msgSpace.spaceId !== currentUserSpaceId) return { model }
 
@@ -55,19 +55,11 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: ms
 const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg }) => {
   switch (msg?.t) {
     case 'clicked-leave-space-button': {
-      if (!ctx.currentUserId) {
-        return {
-          model,
-        }
-      }
+      if (!ctx.currentUserId) return { model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model, ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, ctx.currentUserId)
 
-      if (!currentUserSpaceId) {
-        return {
-          model,
-        }
-      }
+      if (!currentUserSpaceId) return { model }
 
       const spaceEventNew = withEventId<MsgSpace>({
         t: 'user-left-space',
@@ -90,7 +82,7 @@ const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg
 }
 
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
-  const spaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
+  const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
   if (!spaceId) return null
   return {
     icon: (inputIcon) => <IconArrowLeftOnRect {...inputIcon} />,

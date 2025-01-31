@@ -36,8 +36,8 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const before = SpacesCore.toSpaceIdByUserId(f.initial.model, f.ctx.currentUserId)
-    const after = SpacesCore.toSpaceIdByUserId(started.model, f.ctx.currentUserId)
+    const before = SpacesCore.toSpaceIdByUserId(f.initial.model.spaces, f.ctx.currentUserId)
+    const after = SpacesCore.toSpaceIdByUserId(started.model.spaces, f.ctx.currentUserId)
     expect(before).toEqual(null)
     expect(after).toEqual(spaceId)
   })

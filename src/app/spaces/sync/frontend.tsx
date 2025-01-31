@@ -16,10 +16,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 const outputMsgSpacesFromBackend: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgBackend?.t) {
     case 'got-msg-space': {
-      return {
-        model: input.model,
-        msgSpace: [input.msgBackend.c],
-      }
+      return { model: input.model, msgSpace: [input.msgBackend.c] }
     }
   }
 
@@ -27,103 +24,77 @@ const outputMsgSpacesFromBackend: SpaceFrontendModule['update'] = (input) => {
 }
 
 const sendMsgSpaceToBackend: SpaceFrontendModule['update'] = ({ ctx, model, msgSpace: msgSpace }) => {
-  if (!msgSpace) {
-    return { model }
-  }
+  if (!msgSpace) return { model }
 
-  const spaceEventWithMeta = SpacesCore.toEventWithMeta(model, msgSpace.spaceId, msgSpace.eventId)
+  const spaceEventWithMeta = SpacesCore.toEventWithMeta(model.spaces, msgSpace.spaceId, msgSpace.eventId)
 
-  if (!spaceEventWithMeta) {
-    return { model }
-  }
+  if (!spaceEventWithMeta) return { model }
 
   const profile = 'userId' in spaceEventWithMeta ? ctx.profiles[spaceEventWithMeta.userId] : null
 
   const profiles = profile ? { [profile.userId]: profile } : {}
 
-  return {
-    model,
-    msgCmd: [sendToBackend({ t: 'got-msg-space', c: spaceEventWithMeta, profiles })],
-  }
+  return { model, msgCmd: [sendToBackend({ t: 'got-msg-space', c: spaceEventWithMeta, profiles })] }
 }
 
 const updateProfiles: SpaceFrontendModule['update'] = ({ model, msgBackend }) => {
-  if (msgBackend?.profiles) {
-    return {
-      model,
-      msgCmd: [addProfiles(msgBackend.profiles)],
-    }
-  }
+  if (!msgBackend?.profiles) return { model }
 
-  return { model }
+  return { model, msgCmd: [addProfiles(msgBackend.profiles)] }
 }
 
 const updateSpace: SpaceFrontendModule['update'] = (input) => {
-  const { model, msgEvt, msgBackend } = input
-
-  switch (msgEvt?.t) {
+  switch (input.msgEvt?.t) {
     case 'wire-evt.backend-connected': {
       const currentUserId = input.ctx.currentUserId
 
-      if (!currentUserId) {
-        return {
-          model,
-        }
-      }
+      if (!currentUserId) return { model: input.model }
 
       const currentUserProfile = currentUserId ? input.ctx.profiles[currentUserId] : null
 
       const currentUserSpace = SpacesCore.toSpaceByUserId({
-        model,
+        model: input.model.spaces,
         userId: currentUserId,
       })
 
-      if (!currentUserSpace) {
-        return {
-          model,
-        }
-      }
+      if (!currentUserSpace) return { model: input.model }
 
-      const started = EventSourced.startFromLatestSnapshot(currentUserSpace)
+      const space = EventSourced.startFromLatestSnapshot(currentUserSpace)
 
       return {
-        model,
+        model: input.model,
         msgCmd: [
           sendToBackend({
             t: 'sync',
-            space: started,
-            profiles: currentUserProfile
-              ? {
-                  [currentUserId]: currentUserProfile,
-                }
-              : {},
-            causedBy: { msgEvt },
+            space,
+            profiles: currentUserProfile ? { [currentUserId]: currentUserProfile } : {},
+            causedBy: { msgEvt: input.msgEvt },
           }),
         ],
       }
     }
   }
 
-  switch (msgBackend?.t) {
+  switch (input.msgBackend?.t) {
     case 'synced':
     case 'current-user-space': {
-      const merged = SpacesCore.merge(model, msgBackend.space)
+      const merged = SpacesCore.merge(input.model.spaces, input.msgBackend.space)
       return {
         model: {
-          ...model,
-          ...merged,
+          ...input.model,
+          spaces: merged,
         },
         msgEvt: [
           {
             t: 'space-evt.synced',
-            currentUser: 'currentUser' in msgBackend ? msgBackend.currentUser : null,
+            currentUser: 'currentUser' in input.msgBackend ? input.msgBackend.currentUser : null,
           },
         ],
       }
     }
   }
 
-  return { model }
+  return { model: input.model }
 }
 
 export const SyncFrontend = {

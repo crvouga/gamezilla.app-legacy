@@ -71,7 +71,7 @@ const updateStartSpaceButton: SpaceFrontendModule['update'] = (input) => {
 export const viewStartSpaceButton = (input: Parameters<SpaceFrontendModule['View']>[0]): CreateActionProps | null => {
   if (!input.ctx.currentUserId) return null
 
-  const currentUserSpaceId = input.model.indexSpaceIdByUserId[input.ctx.currentUserId]
+  const currentUserSpaceId = input.model.spaces.indexSpaceIdByUserId[input.ctx.currentUserId]
 
   if (currentUserSpaceId) return null
 

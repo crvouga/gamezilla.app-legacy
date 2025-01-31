@@ -10,15 +10,15 @@ const renderActionBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenPro
   const bars = []
   if (screen.actionBar) {
     const isTopLevel = !Boolean(screen.parentScreen)
+    const id = screen.actionBar.id ?? `${screen.id}-actions`
     bars.push(
-      <div key={screen.id} className={cn(isTopLevel ? 'order-first' : 'order-last')}>
-        <VerticalActionBar
-          {...screen.actionBar}
-          id={screen.actionBar.id ?? `${screen.id}-actions`}
-          ctx={ctx}
-          key={screen.id}
-        />
-      </div>,
+      <VerticalActionBar
+        {...screen.actionBar}
+        id={id}
+        ctx={ctx}
+        key={id}
+        className={cn(isTopLevel ? 'order-first' : 'order-last')}
+      />,
     )
   }
   if (screen.parentScreen) {
@@ -71,7 +71,7 @@ const renderMiniPlayers = (screen: ParentScreenProps | null): VDom[] => {
   if (!screen) return []
   const players = []
   if (screen.renderMiniPlayer) {
-    players.push(screen.renderMiniPlayer())
+    players.push(screen.renderMiniPlayer({ key: screen.id }))
   }
   if (screen.parentScreen) {
     players.push(...renderMiniPlayers(screen.parentScreen))

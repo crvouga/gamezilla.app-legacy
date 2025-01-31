@@ -216,7 +216,7 @@ describe(import.meta.file, () => {
     ])
 
     const before = Space.toSpaceStarted(space)
-    const after = Space.toSpaceStarted(updated.model.spaces[spaceId])
+    const after = Space.toSpaceStarted(updated.model.spaces.spaces[spaceId])
 
     expect(before?.game?.t ?? null).toEqual('flow')
     expect(after?.game?.t ?? null).toEqual(null)
