@@ -1,28 +1,38 @@
-import { Button, cn } from '~/@/ui'
+import { Button } from '~/@/ui'
 import { VDom } from '~/@/vdom/vdom'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { VerticalActionBar } from '../action-bar/screen-action-bar-vertical'
 import { ScreenNavBarTablet } from '../nav-bar/screen-nav-bar-tablet'
 import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props'
 
-const renderActionBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps | null): VDom[] => {
+const renderActionBarsStart = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps | null): VDom[] => {
   if (!screen) return []
   const bars = []
   if (screen.actionBar) {
     const isTopLevel = !Boolean(screen.parentScreen)
-    const id = screen.actionBar.id ?? `${screen.id}-actions`
-    bars.push(
-      <VerticalActionBar
-        {...screen.actionBar}
-        id={id}
-        ctx={ctx}
-        key={id}
-        className={cn(isTopLevel ? 'order-first' : 'order-last')}
-      />,
-    )
+    if (isTopLevel) {
+      const id = screen.actionBar.id ?? `${screen.id}-actions`
+      bars.push(<VerticalActionBar {...screen.actionBar} id={id} ctx={ctx} key={id} className='order-first' />)
+    }
   }
   if (screen.parentScreen) {
-    bars.push(...renderActionBars(ctx, screen.parentScreen))
+    bars.push(...renderActionBarsStart(ctx, screen.parentScreen))
+  }
+  return bars
+}
+
+const renderActionBarsEnd = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps | null): VDom[] => {
+  if (!screen) return []
+  const bars = []
+  if (screen.actionBar) {
+    const isTopLevel = !Boolean(screen.parentScreen)
+    if (!isTopLevel) {
+      const id = screen.actionBar.id ?? `${screen.id}-actions`
+      bars.push(<VerticalActionBar {...screen.actionBar} id={id} ctx={ctx} key={id} className='order-last' />)
+    }
+  }
+  if (screen.parentScreen) {
+    bars.push(...renderActionBarsEnd(ctx, screen.parentScreen))
   }
   return bars
 }
@@ -90,9 +100,9 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
         input.editAction?.onSubmit()
       }}
     >
-      {renderActionBars(input.ctx, input)}
+      <div className='flex flex-[1] items-start justify-end'>{renderActionBarsStart(input.ctx, input)}</div>
 
-      <div className='flex max-w-2xl flex-1 flex-col overflow-hidden border-x'>
+      <div className='flex max-w-3xl flex-[2] flex-col overflow-hidden border-x'>
         {renderNavBars(input.ctx, input)}
 
         <div className='flex w-full flex-1 flex-col overflow-hidden'>
@@ -102,6 +112,8 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
           )}
         </div>
       </div>
+
+      <div className='flex flex-[1] items-start justify-start'>{renderActionBarsEnd(input.ctx, input)}</div>
     </Element>
   )
 }
