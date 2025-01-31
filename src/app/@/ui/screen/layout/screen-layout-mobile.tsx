@@ -65,15 +65,11 @@ const renderActionBars = (screen: ScreenLayoutProps | null): VDom[] => {
   const bars = []
   if (screen.actionBar) {
     const position = screen.actionBar.position ?? 'bottom'
+    const id = screen.actionBar.id ?? `${screen.id}-${position}-actions`
     bars.push(
-      <div key={screen.id} className={position === 'top' ? 'order-first' : 'order-last'}>
-        {screen.renderMiniPlayer?.({ key: screen.id })}
-        <HorizontalActionBar
-          {...screen.actionBar}
-          id={screen.actionBar.id ?? `${screen.id}-actions`}
-          ctx={screen.ctx}
-          key={screen.id}
-        />
+      <div key={id} className={position === 'top' ? 'order-first' : 'order-last'}>
+        {screen.renderMiniPlayer?.({ key: `${id}-mini-player` })}
+        <HorizontalActionBar {...screen.actionBar} id={id} ctx={screen.ctx} key={id} />
       </div>,
     )
   }
