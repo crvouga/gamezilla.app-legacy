@@ -193,7 +193,7 @@ describe(import.meta.file, () => {
     expect(didPlaySound(updated, APP_SOUND.navBackwardMin)).toBe(true)
   })
 
-  test.only('listing stale space should not override current state', async () => {
+  test('listing stale space should not override current state', async () => {
     const f = await Fixture()
 
     const spaceId = SpaceId.generate()
