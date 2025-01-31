@@ -1,6 +1,6 @@
 import { RequestResponse, startedRequest } from '~/@/request-response/request-response'
 import { Ok } from '~/@/result'
-import { cn, IconGamepad } from '~/@/ui'
+import { IconGamepad } from '~/@/ui'
 import { EmptyState } from '~/@/ui/empty-state'
 import { Gutter } from '~/@/ui/gutter'
 import type { SpaceId } from '~/app/@/data/space-id'
@@ -93,28 +93,20 @@ const View: SpaceFrontendModule['View'] = (input) => {
       }}
       createAction={StartSpaceFrontend.viewStartSpaceButton(input)}
       renderBody={() => {
+        if (spaces.length === 0)
+          return (
+            <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
+          )
         return (
-          <div
-            className={cn(
-              'flex flex-1 flex-col',
-              // input.ctx.screenSize === 'tablet' && 'max-w-xl'
-            )}
-          >
-            {spaces.length === 0 && (
-              <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
-            )}
-
-            <div className='flex flex-1 flex-col gap-4 overflow-y-auto p-6'>
-              {spaces.flatMap((state) => (
-                <ViewSpaceCard
-                  key={state.spaceId}
-                  ctx={{ ...input.ctx, currentUserId: input.ctx.currentUserId }}
-                  onClick={() => input.dispatch({ t: 'clicked-space-card', spaceId: state.spaceId })}
-                  state={state}
-                />
-              ))}
-            </div>
-
+          <div className='flex flex-1 flex-col gap-4 overflow-y-auto p-6'>
+            {spaces.flatMap((state) => (
+              <ViewSpaceCard
+                key={state.spaceId}
+                ctx={{ ...input.ctx, currentUserId: input.ctx.currentUserId }}
+                onClick={() => input.dispatch({ t: 'clicked-space-card', spaceId: state.spaceId })}
+                state={state}
+              />
+            ))}
             <Gutter variant='screen' />
           </div>
         )
