@@ -8,19 +8,6 @@ import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props.tsx'
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.editAction ? 'form' : 'div'
 
-  const actionBars = renderActionBars(input)
-  const topBars: VDom[] = []
-  const bottomBars: VDom[] = []
-  for (let i = 0; i < actionBars.length; i++) {
-    if (i === 0) {
-      if (input.actionBar?.position === 'top') {
-        topBars.push(actionBars[i])
-      } else {
-        bottomBars.push(actionBars[i])
-      }
-    }
-  }
-
   return (
     <Element
       className='flex w-full flex-1 flex-col overflow-hidden'
@@ -29,33 +16,33 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         input.editAction?.onSubmit()
       }}
     >
-      {topBars}
+      {renderActionBars(input)}
 
-      {renderNavBars(input.ctx, input)}
+      <div className='flex flex-1 flex-col overflow-hidden'>
+        {renderNavBars(input.ctx, input)}
 
-      <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
-        {input.renderBody()}
+        <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
+          {input.renderBody()}
 
-        {input.createAction && (
-          <div className='absolute bottom-6 right-4 bg-black'>
-            <Button
-              color='primary'
-              size='lg'
-              variant='contained'
-              rounded
-              onClick={input.createAction.onSubmit}
-              disabled={input.createAction.submitDisabled}
-              loading={input.createAction.submitLoading}
-              text={input.createAction.submitText}
-              iconStart={input.createAction.submitIcon}
-            />
-          </div>
-        )}
+          {input.createAction && (
+            <div className='absolute bottom-6 right-4 bg-black'>
+              <Button
+                color='primary'
+                size='lg'
+                variant='contained'
+                rounded
+                onClick={input.createAction.onSubmit}
+                disabled={input.createAction.submitDisabled}
+                loading={input.createAction.submitLoading}
+                text={input.createAction.submitText}
+                iconStart={input.createAction.submitIcon}
+              />
+            </div>
+          )}
+        </div>
+
+        {input.editAction && <CancelSubmitButtons {...input.editAction} />}
       </div>
-
-      {input.editAction && <CancelSubmitButtons {...input.editAction} />}
-
-      {bottomBars}
     </Element>
   )
 }
