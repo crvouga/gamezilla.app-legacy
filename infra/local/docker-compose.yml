@@ -2,6 +2,7 @@ name: gamezilla_app
 
 services:
   frontend:
+    profiles: ['web']
     container_name: frontend
     image: oven/bun:latest
     working_dir: /app
@@ -25,6 +26,7 @@ services:
         condition: service_started
 
   backend:
+    profiles: ['web']
     container_name: backend
     image: oven/bun:latest
     working_dir: /app
