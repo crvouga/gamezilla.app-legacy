@@ -1,12 +1,32 @@
 type ClassNameValue = string | null | false | undefined
 
-export type Cn = (...classes: ClassNameValue[]) => string
+export const cn = (
+  a: ClassNameValue,
+  b?: ClassNameValue,
+  c?: ClassNameValue,
+  d?: ClassNameValue,
+  e?: ClassNameValue,
+  f?: ClassNameValue,
+  g?: ClassNameValue,
+) => {
+  return (
+    (a ? a : '') +
+    (b ? ' ' + b : '') +
+    (c ? ' ' + c : '') +
+    (d ? ' ' + d : '') +
+    (e ? ' ' + e : '') +
+    (f ? ' ' + f : '') +
+    (g ? ' ' + g : '')
+  )
+}
 
-export const cn: Cn = (...classes) => {
+export const cnLoop = (...classNames: ClassNameValue[]): string => {
   let result = ''
-  for (const c of classes) {
-    if (c) {
-      result += (result ? ' ' : '') + c
+  const len = classNames.length
+  for (let i = 0; i < len; i++) {
+    const className = classNames[i]
+    if (className) {
+      result += className
     }
   }
   return result
