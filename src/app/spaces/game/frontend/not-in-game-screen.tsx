@@ -51,7 +51,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
 const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
   return (
-    <div className='grid flex-1 grid-cols-3 justify-between gap-8 p-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5'>
+    <div className='grid flex-1 grid-cols-3 justify-between gap-8 p-4 md:grid-cols-4 md:gap-12'>
       {gameNameList.map((gameName) => (
         <GameTile key={gameName} gameName={gameName} ctx={input.ctx} dispatch={input.dispatch} />
       ))}
