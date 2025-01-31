@@ -1,16 +1,16 @@
 import { PubSub } from '~/@/sub'
-import type { VDomChildren } from '~/@/vdom/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 
 export type PrivateSwiperInput = {
   id: string
   onSlideIndexChanged: (index: number) => void
-  children?: VDomChildren
+  children?: VDom
   className?: string
   slideIndex: number
 }
 
 export type SwiperInput = PrivateSwiperInput & {
-  children?: VDomChildren
+  children?: VDom
 }
 
 export const swiperInput = PubSub.create<SwiperInput>()

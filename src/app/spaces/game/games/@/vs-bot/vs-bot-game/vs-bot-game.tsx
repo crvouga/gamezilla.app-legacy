@@ -1,7 +1,7 @@
 import type { UserId } from '~/app/@/data/user-id'
 import { IconRobot, Avatar, Transition, cn, Typography } from '~/@/ui'
 import type { PlayerType, VsBotInput } from '../vs-bot'
-import type { VDom, VDomChildren } from '~/@/vdom/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 
 //
@@ -387,7 +387,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
   )
 }
 
-const Slot = ({ active, children }: { active: boolean; children: VDomChildren }) => {
+const Slot = ({ active, children }: { active: boolean; children: VDom }) => {
   return (
     <div
       className={cn(

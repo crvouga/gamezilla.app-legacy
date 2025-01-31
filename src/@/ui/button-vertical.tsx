@@ -1,4 +1,4 @@
-import type { VDomChildren } from '~/@/vdom/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 
 export const ButtonVertical = ({
   children,
@@ -7,7 +7,7 @@ export const ButtonVertical = ({
 }: {
   className?: string
   onClick?: () => void
-  children?: VDomChildren
+  children?: VDom
 }) => {
   return (
     <button

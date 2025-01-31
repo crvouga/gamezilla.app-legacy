@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import type { VDomChildren } from '~/@/vdom/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 
 export type PrivateDrawerInput = {
   id: string
@@ -11,7 +11,7 @@ export type PrivateDrawerInput = {
 
 export type DrawerInput = PrivateDrawerInput & {
   ariaLabel: TranslatedText
-  children?: VDomChildren
+  children?: VDom
   ctx: {
     t: Translator
   }

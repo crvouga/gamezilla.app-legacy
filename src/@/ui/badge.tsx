@@ -1,7 +1,7 @@
-import { VDomChildren } from '~/@/vdom/vdom'
+import { VDom } from '~/@/vdom/vdom'
 import { Transition } from './transition'
 
-export const Badge = (input: { badgeContent: VDomChildren; children: VDomChildren; id: string }) => {
+export const Badge = (input: { badgeContent: VDom; children: VDom; id: string }) => {
   return (
     <div className='relative h-fit w-fit'>
       <Transition onEnter={onEnterGrow} id={input.id} mode='in-out' onExit={onExitShrink}>

@@ -1,4 +1,4 @@
-import type { VDomChildren } from '~/@/vdom/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import './transition-element'
 import { type TransitionInput, transitionSub } from './transition-shared'
 
@@ -11,7 +11,7 @@ export const Transition = ({
   className,
   mode,
 }: TransitionInput & {
-  children?: VDomChildren
+  children?: VDom
 }) => {
   transitionSub.pub({
     type: 'input',

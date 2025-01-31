@@ -1,6 +1,6 @@
 import { Translator } from '~/@/l18n/generated'
 import { cn } from '~/@/ui'
-import { VDomChildren } from '~/@/vdom/vdom'
+import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 
 export const AuthScreenLayout = (input: {
@@ -9,7 +9,7 @@ export const AuthScreenLayout = (input: {
     screenSize: ScreenSize
   }
   center?: boolean
-  children: VDomChildren
+  children: VDom
 }) => {
   const center = input.center || input.ctx.screenSize === 'tablet'
   const paddingTop = center ? 'pt-36' : ''

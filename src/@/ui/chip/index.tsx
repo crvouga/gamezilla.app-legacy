@@ -1,5 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
-import { VDom, VDomChildren } from '~/@/vdom/vdom'
+import { VDom } from '~/@/vdom/vdom'
 import { cn } from '../cn'
 
 export type ChipSize = 'sm' | 'lg'
@@ -33,7 +33,7 @@ const Tag = ({
   tagName,
   ...input
 }: {
-  children: VDomChildren
+  children: VDom
   tagName: string
   onClick?: () => void
   className?: string

@@ -1,4 +1,4 @@
-import type { VDomChildren } from '~/@/vdom/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { IconExclamationCircle, IconInfoCircle } from './icon'
 import { IconCheckmarkCircle } from './icon/icon-checkmark-circle'
 import { cn } from './cn'
@@ -19,7 +19,7 @@ export const AlertError = ({ className, text }: { text?: string; className?: str
   )
 }
 
-export const AlertInfo = ({ children, className }: { children?: VDomChildren; className?: string }) => {
+export const AlertInfo = ({ children, className }: { children?: VDom; className?: string }) => {
   return (
     <div className={cn(className, 'flex w-full items-center rounded-md bg-blue-500 p-4 text-white')}>
       <div className='mr-2'>
@@ -30,7 +30,7 @@ export const AlertInfo = ({ children, className }: { children?: VDomChildren; cl
   )
 }
 
-export const AlertSuccess = ({ children, className }: { children?: VDomChildren; className?: string }) => {
+export const AlertSuccess = ({ children, className }: { children?: VDom; className?: string }) => {
   return (
     <div className={cn(className, 'flex w-full items-center rounded-md bg-green-500 p-4 text-white')}>
       <div className='mr-2'>

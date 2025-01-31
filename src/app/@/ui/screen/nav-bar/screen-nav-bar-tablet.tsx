@@ -3,7 +3,7 @@ import type { Translator } from '~/@/l18n/generated'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
-import { VDom, VDomChildren } from '~/@/vdom/vdom'
+import { VDom } from '~/@/vdom/vdom'
 
 export const ScreenNavBarTablet = (input: {
   title?: TranslatedText | null
@@ -43,6 +43,6 @@ export const ScreenNavBarTablet = (input: {
   )
 }
 
-export const ScreenNavBarTabletRoot = (input: { children: VDomChildren }) => {
+export const ScreenNavBarTabletRoot = (input: { children: VDom }) => {
   return <div className='flex h-20 w-full shrink-0 items-center truncate px-4'>{input.children}</div>
 }

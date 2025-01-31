@@ -1,6 +1,6 @@
 import { register } from 'swiper/element/bundle'
 import { waitForElementById } from '~/@/dom/dom'
-import type { VDomChildren } from '~/@/vdom/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 
 if (typeof window !== 'undefined') {
   register()
@@ -66,7 +66,7 @@ const onContainer = async (input: { id: string; onSlideIndexChanged?: (index: nu
 const Container = (input: {
   id: string
   onSlideIndexChanged?: (index: number) => void
-  children?: VDomChildren
+  children?: VDom
   className?: string
   slideIndex: number
 }) => {
@@ -89,7 +89,7 @@ const Container = (input: {
   )
 }
 
-const Slide = (input: { children?: VDomChildren; className?: string }) => {
+const Slide = (input: { children?: VDom; className?: string }) => {
   return (
     // @ts-ignore
     <swiper-slide className={input.className} role='tabpanel'>

@@ -1,3 +1,3 @@
-export type VDom = any | string | number | null | undefined
+import type { ReactNode } from 'react'
 
-export type VDomChildren = VDom | VDom[]
+export type VDom = ReactNode | ReactNode[]

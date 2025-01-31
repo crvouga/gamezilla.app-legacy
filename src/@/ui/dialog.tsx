@@ -1,9 +1,9 @@
-import type { VDomChildren } from '~/@/vdom/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
 import { styles } from '~/@/vdom/style'
 import { TimeSpan } from '~/@/time/time-span'
 
-export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: () => void; delay?: TimeSpan }) => {
+export const Dialog = (input: { children: VDom; open: boolean; onClose: () => void; delay?: TimeSpan }) => {
   const delayMs = input.delay ? TimeSpan.toMilliseconds(input.delay) : null
   const style = styles({
     'transition-delay': input.open && delayMs ? `${delayMs}ms` : undefined,
@@ -40,7 +40,7 @@ export const Dialog = (input: { children: VDomChildren; open: boolean; onClose: 
   )
 }
 
-export const DialogSurface = (input: { children: VDomChildren }) => {
+export const DialogSurface = (input: { children: VDom }) => {
   return (
     <div className='bg-surface border-surface relative z-50 flex w-full max-w-[400px] scale-0 flex-col rounded-lg border shadow-2xl drop-shadow-2xl transition-transform duration-300 ease-in-out [.opacity-100_&]:scale-100'>
       {input.children}

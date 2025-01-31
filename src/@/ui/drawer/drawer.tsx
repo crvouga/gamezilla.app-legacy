@@ -1,12 +1,12 @@
 import { TranslatedText } from '~/@/l18n'
-import type { VDom, VDomChildren } from '~/@/vdom/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { DrawerComponent } from './drawer-component'
 import type { PrivateDrawerInput } from './drawer-shared'
 import { DrawerWebComponent } from './drawer-web-component'
 import { Translator } from '~/@/l18n/generated'
 
 export type DrawerInput = PrivateDrawerInput & {
-  children?: VDomChildren
+  children?: VDom
   ariaLabel: TranslatedText
   ctx: {
     t: Translator

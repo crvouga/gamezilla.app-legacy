@@ -1,5 +1,5 @@
 import { cn } from '~/@/ui'
-import type { VDomChildren } from '~/@/vdom/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import { Translator } from '~/@/l18n/generated'
 
 export const LayoutGame = ({
@@ -14,7 +14,7 @@ export const LayoutGame = ({
   }
   className?: string
   isSpectating?: boolean
-  children?: VDomChildren
+  children?: VDom
 }) => {
   return (
     <div

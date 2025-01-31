@@ -1,10 +1,10 @@
-import type { VDomChildren } from '~/@/vdom/vdom'
+import type { VDom } from '~/@/vdom/vdom'
 import './intersection-observer-element'
 import { type IntersectionObserverEmitterinput, sub } from './intersection-observer-shared'
 
 export const IntersectionObserverEmitter = (
   input: IntersectionObserverEmitterinput & {
-    children?: VDomChildren
+    children?: VDom
   },
 ) => {
   // There is some kind of race condition setTimeout fixes
