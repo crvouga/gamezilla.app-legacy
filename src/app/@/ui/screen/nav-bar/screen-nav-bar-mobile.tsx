@@ -29,7 +29,7 @@ export const ScreenNavBarMobile = (input: {
         {typeof input.title === 'string' && (
           <Typography
             role='heading'
-            sizeClassName='text-xl font-bold'
+            sizeClassName='text-lg font-bold'
             className='truncate px-2'
             variant='title'
             text={input.title}
