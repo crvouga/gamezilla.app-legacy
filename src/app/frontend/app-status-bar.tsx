@@ -1,4 +1,4 @@
-import { cn, IconGear, IconLanguage } from '~/@/ui'
+import { cn, IconLanguage } from '~/@/ui'
 import * as LangFrontend from '~/app/lang/frontend'
 import { type ModelFrontend, type MsgFrontend } from '~/app/types'
 import * as WireFrontend from '~/app/wire/frontend'
@@ -31,8 +31,8 @@ export const ViewAppStatusBar = (input: {
             >
               <WireFrontend.ViewDot ctx={input.ctx} model={input.model.wire} className={iconSize} />
               <IconLanguage className={iconSize} />
-              {/* <Sound.ViewIcon model={input.model.sound} className={SIZE_CLASS} /> */}
-              <IconGear className={iconSize} />
+              <Sound.ViewIcon model={input.model.sound} className={iconSize} />
+              {/* <IconGear className={iconSize} /> */}
             </button>
           )
         },

@@ -11,7 +11,7 @@ const renderActionBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenPro
   if (screen.actionBar) {
     const isTopLevel = !Boolean(screen.parentScreen)
     bars.push(
-      <div key={screen.id} className={cn(isTopLevel ? 'order-first border-r' : 'order-last')}>
+      <div key={screen.id} className={cn(isTopLevel ? 'order-first' : 'order-last')}>
         <VerticalActionBar
           {...screen.actionBar}
           id={screen.actionBar.id ?? `${screen.id}-actions`}
@@ -67,14 +67,14 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
   return bars
 }
 
-const renderMiniPlayers = (screen: ScreenLayoutProps | null): VDom[] => {
+const renderMiniPlayers = (screen: ParentScreenProps | null): VDom[] => {
   if (!screen) return []
   const players = []
   if (screen.renderMiniPlayer) {
     players.push(screen.renderMiniPlayer())
   }
   if (screen.parentScreen) {
-    players.push(...renderMiniPlayers(screen.parentScreen as ScreenLayoutProps))
+    players.push(...renderMiniPlayers(screen.parentScreen))
   }
   return players
 }
@@ -84,24 +84,22 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
 
   return (
     <Element
-      className='flex w-full flex-1 flex-col overflow-hidden'
+      className='relative flex w-full flex-1 flex-row overflow-hidden'
       onSubmit={(e) => {
         e.preventDefault()
         input.editAction?.onSubmit()
       }}
     >
-      <div className='relative flex w-full flex-1 flex-row overflow-hidden'>
-        {renderActionBars(input.ctx, input)}
+      {renderActionBars(input.ctx, input)}
 
-        <div className='flex max-w-2xl flex-1 flex-col overflow-hidden border-r'>
-          {renderNavBars(input.ctx, input)}
+      <div className='flex max-w-2xl flex-1 flex-col overflow-hidden border-x'>
+        {renderNavBars(input.ctx, input)}
 
-          <div className='flex w-full flex-1 flex-col overflow-hidden'>
-            {input.renderBody()}
-            {(input.createAction || input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) && (
-              <div className='absolute bottom-8 right-8 bg-black'>{renderMiniPlayers(input)}</div>
-            )}
-          </div>
+        <div className='flex w-full flex-1 flex-col overflow-hidden'>
+          {input.renderBody()}
+          {(input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) && (
+            <div className='absolute bottom-8 right-8 bg-black'>{renderMiniPlayers(input)}</div>
+          )}
         </div>
       </div>
     </Element>
