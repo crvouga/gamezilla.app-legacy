@@ -27,11 +27,18 @@ export const ScreenNavBarTablet = (input: {
 
       <div className='flex flex-1 flex-col truncate'>
         {input.title && (
-          <Typography role='heading' className='truncate px-2 text-4xl font-bold' variant='title' text={input.title} />
+          <Typography
+            role='heading'
+            className='truncate px-2'
+            sizeClassName='text-xl font-bold'
+            variant='title'
+            text={input.title}
+          />
         )}
         {input.subtitle && (
           <Typography
-            className='text-secondary truncate px-2 text-lg'
+            className='text-secondary truncate px-2'
+            sizeClassName='text-lg'
             role='heading'
             variant='subtitle'
             text={input.subtitle}

@@ -1,39 +1,78 @@
-import { Button } from '~/@/ui'
+import { Button, cn } from '~/@/ui'
 import { VDom } from '~/@/vdom/vdom'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { VerticalActionBar } from '../action-bar/screen-action-bar-vertical'
 import { ScreenNavBarTablet } from '../nav-bar/screen-nav-bar-tablet'
 import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props'
 
-const renderActionBarsStart = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps | null): VDom[] => {
-  if (!screen) return []
-  const bars = []
-  if (screen.actionBar) {
-    const isTopLevel = !Boolean(screen.parentScreen)
-    if (isTopLevel) {
-      const id = screen.actionBar.id ?? `${screen.id}-actions`
-      bars.push(<VerticalActionBar {...screen.actionBar} id={id} ctx={ctx} key={id} className='order-first' />)
-    }
-  }
-  if (screen.parentScreen) {
-    bars.push(...renderActionBarsStart(ctx, screen.parentScreen))
-  }
-  return bars
+export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
+  const Element = input.editAction ? 'form' : 'div'
+
+  return (
+    <Element
+      className='relative flex w-full flex-1 flex-row overflow-hidden'
+      onSubmit={(e) => {
+        e.preventDefault()
+        input.editAction?.onSubmit()
+      }}
+    >
+      <ActionBars position='start' input={input} />
+
+      <div className='flex max-w-3xl flex-[3] flex-col overflow-hidden border-x'>
+        {renderNavBars(input.ctx, input)}
+
+        <div className='flex w-full flex-1 flex-col overflow-hidden'>
+          {input.renderBody()}
+          {(input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) && (
+            <div className='absolute bottom-8 right-8 bg-black'>{renderMiniPlayers(input)}</div>
+          )}
+        </div>
+      </div>
+
+      <ActionBars position='end' input={input} />
+    </Element>
+  )
 }
 
-const renderActionBarsEnd = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps | null): VDom[] => {
+const ActionBars = (props: { position: 'start' | 'end'; input: ScreenLayoutProps }) => {
+  return (
+    <div
+      className={cn(
+        'flex h-full flex-1 flex-row items-start',
+        props.position === 'start' ? 'justify-end' : 'justify-start',
+      )}
+    >
+      {renderActionBars(props.input.ctx, props.input, props.position)}
+    </div>
+  )
+}
+
+const renderActionBars = (
+  ctx: ScreenLayoutProps['ctx'],
+  screen: ParentScreenProps | null,
+  position: 'start' | 'end',
+): VDom[] => {
   if (!screen) return []
+
   const bars = []
+
   if (screen.actionBar) {
     const isTopLevel = !Boolean(screen.parentScreen)
-    if (!isTopLevel) {
+    const shouldRenderStart = position === 'start' && isTopLevel
+    const shouldRenderEnd = position === 'end' && !isTopLevel
+
+    if (shouldRenderStart || shouldRenderEnd) {
       const id = screen.actionBar.id ?? `${screen.id}-actions`
-      bars.push(<VerticalActionBar {...screen.actionBar} id={id} ctx={ctx} key={id} className='order-last' />)
+      const className = position === 'start' ? 'order-first' : 'order-last'
+
+      bars.push(<VerticalActionBar {...screen.actionBar} id={id} ctx={ctx} key={id} className={className} />)
     }
   }
+
   if (screen.parentScreen) {
-    bars.push(...renderActionBarsEnd(ctx, screen.parentScreen))
+    bars.push(...renderActionBars(ctx, screen.parentScreen, position))
   }
+
   return bars
 }
 
@@ -87,33 +126,4 @@ const renderMiniPlayers = (screen: ParentScreenProps | null): VDom[] => {
     players.push(...renderMiniPlayers(screen.parentScreen))
   }
   return players
-}
-
-export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
-  const Element = input.editAction ? 'form' : 'div'
-
-  return (
-    <Element
-      className='relative flex w-full flex-1 flex-row overflow-hidden'
-      onSubmit={(e) => {
-        e.preventDefault()
-        input.editAction?.onSubmit()
-      }}
-    >
-      <div className='flex flex-[1] items-start justify-end'>{renderActionBarsStart(input.ctx, input)}</div>
-
-      <div className='flex max-w-3xl flex-[2] flex-col overflow-hidden border-x'>
-        {renderNavBars(input.ctx, input)}
-
-        <div className='flex w-full flex-1 flex-col overflow-hidden'>
-          {input.renderBody()}
-          {(input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) && (
-            <div className='absolute bottom-8 right-8 bg-black'>{renderMiniPlayers(input)}</div>
-          )}
-        </div>
-      </div>
-
-      <div className='flex flex-[1] items-start justify-start'>{renderActionBarsEnd(input.ctx, input)}</div>
-    </Element>
-  )
 }

@@ -12,7 +12,7 @@ export const VerticalActionBar = (
   },
 ) => {
   return (
-    <div className={cn('flex w-32 shrink-0 flex-col gap-1 xl:w-64', input.className)}>
+    <div className={cn('flex max-w-52 flex-1 shrink-0 flex-col gap-1', input.className)}>
       <ScreenNavBarTabletRoot>{input.renderNavBar?.()}</ScreenNavBarTabletRoot>
 
       {input.variant.t === 'uniform' ? (
@@ -45,7 +45,7 @@ const SpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenActio
 
 const Toolbar = (input: { children: VDom }) => {
   return (
-    <div className='flex w-full flex-1 shrink-0 flex-col overflow-hidden px-4' role='toolbar'>
+    <div className='flex w-full flex-1 shrink-0 flex-col overflow-hidden' role='toolbar'>
       {input.children}
     </div>
   )

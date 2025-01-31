@@ -28,16 +28,9 @@ export const ScreenLayoutGameCoverArt = (input: {
       ctx={input.ctx}
       navBar={input.navBar}
       renderBody={() => (
-        <div className='flex w-full flex-1 flex-col items-center justify-start'>
-          <div
-            className={cn(
-              'flex w-full flex-1 flex-col items-center justify-start gap-6 p-6 py-4',
-              input.ctx.screenSize === 'tablet' && 'max-w-2xl',
-            )}
-          >
-            {renderCoverArtFinal({ className: 'size-28 overflow-hidden rounded-lg mx-auto' })}
-            {input.renderContent()}
-          </div>
+        <div className='flex w-full flex-1 flex-col items-center justify-start gap-6 p-6 py-4'>
+          {renderCoverArtFinal({ className: 'size-28 overflow-hidden rounded-lg mx-auto' })}
+          {input.renderContent()}
         </div>
       )}
     />
