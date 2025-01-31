@@ -304,7 +304,7 @@ const append = (input: {
   }
 }
 
-export const merge = (model: Model, space: Space.Model): Model => {
+export const mergeOne = (model: Model, space: Space.Model): Model => {
   const spaceId = Space.toSpaceId(space)
 
   const maybeCurrentSpace = spaceId ? model.spaces[spaceId] : null
@@ -315,12 +315,7 @@ export const merge = (model: Model, space: Space.Model): Model => {
 
   const indexSpaceIdByUserIdNew = updateIndexSpaceIdByUserId(model.indexSpaceIdByUserId, spaceNew)
 
-  const spacesNew: Model['spaces'] = spaceId
-    ? {
-        ...model.spaces,
-        [spaceId]: spaceNew,
-      }
-    : model.spaces
+  const spacesNew: Model['spaces'] = spaceId ? { ...model.spaces, [spaceId]: spaceNew } : model.spaces
 
   return {
     ...model,
@@ -335,9 +330,7 @@ const updateIndexSpaceIdByUserId = (
 ): Model['indexSpaceIdByUserId'] => {
   const spaceState = Space.toSpaceStarted(space)
 
-  if (!spaceState) {
-    return spaceIdByUserId
-  }
+  if (!spaceState) return spaceIdByUserId
 
   const spaceIdByUserIdNew = { ...spaceIdByUserId }
 

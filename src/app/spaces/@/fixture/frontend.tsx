@@ -131,11 +131,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     const outputs: NonEmpty<Output> = [initial]
     for (const input of inputs) {
       const lastOutput = NonEmpty.last(outputs)
-      const output = SpacesFrontend.update({
-        ...input,
-        ctx: input.ctx ?? ctx,
-        model: lastOutput.model,
-      })
+      const output = SpacesFrontend.update({ ...input, ctx: input.ctx ?? ctx, model: lastOutput.model })
       outputs.push(output)
     }
     return outputs

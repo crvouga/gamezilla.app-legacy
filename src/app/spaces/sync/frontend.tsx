@@ -78,7 +78,7 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgBackend?.t) {
     case 'synced':
     case 'current-user-space': {
-      const merged = SpacesCore.merge(input.model.spaces, input.msgBackend.space)
+      const merged = SpacesCore.mergeOne(input.model.spaces, input.msgBackend.space)
       return {
         model: {
           ...input.model,
