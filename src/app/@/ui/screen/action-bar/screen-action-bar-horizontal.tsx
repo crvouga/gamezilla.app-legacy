@@ -1,6 +1,11 @@
 import { IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/@/ui'
 import { SurfaceLayout } from '../../surface/layout/surface-layout'
-import { ScreenAction, ScreenActionBarProps, ScreenActionsSpaceBetween, ScreenActionsUniform } from './props'
+import {
+  ScreenAction,
+  ScreenActionBarProps,
+  ScreenActionsSpaceBetween,
+  ScreenActionsUniform,
+} from './screen-action-bar-props'
 
 const DEFAULT_LIMIT = Infinity
 

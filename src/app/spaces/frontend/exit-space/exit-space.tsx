@@ -1,6 +1,6 @@
 import { IconDoorOpen } from '~/@/ui/icon/icon-door-open'
 import { APP_SOUND, playSound, pushScreen } from '~/app/@/frontend/cmd'
-import { ScreenAction } from '~/app/@/ui/screen/action-bar/props'
+import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
 
 const update: SpaceFrontendModule['update'] = ({ msg, model }) => {

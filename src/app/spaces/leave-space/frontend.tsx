@@ -1,7 +1,7 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { IconArrowLeftOnRect } from '~/@/ui'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
-import { ScreenAction } from '~/app/@/ui/screen/action-bar/props'
+import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import type { MsgSpace } from '../core/space-msg'

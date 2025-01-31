@@ -16,7 +16,7 @@ import * as FlowUI from '../ui/color'
 import { VariantBoard } from '../variant'
 import * as FlowVariant from '../variant/variant'
 import * as FlowVariantDimensions from '../variant/variant-dimensions'
-import { ScreenAction } from '~/app/@/ui/screen/action-bar/props'
+import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 
 //
 //

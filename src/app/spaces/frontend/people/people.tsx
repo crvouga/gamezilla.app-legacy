@@ -1,6 +1,6 @@
 import { Avatar, Button, IconUserGroup, Typography } from '~/@/ui'
 import { APP_SOUND, openProfile, playSound } from '~/app/@/frontend/cmd'
-import { ScreenAction } from '~/app/@/ui/screen/action-bar/props'
+import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SectionPeopleList } from '~/app/spaces/game/games/@/ui/section-people-list/section-people-list'
