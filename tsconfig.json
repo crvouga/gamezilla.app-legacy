@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    // "erasableSyntaxOnly": true,
     "importHelpers": true,
     "target": "esnext",
     "lib": ["DOM", "DOM.Iterable", "esnext", "WebWorker", "es2016", "dom", "ES2015"],
@@ -51,6 +52,7 @@
     "jsx": "preserve",
     // "jsxImportSource": "vue",
     "allowJs": false,
+
     //
     "paths": {
       "~/*": ["./src/*"]

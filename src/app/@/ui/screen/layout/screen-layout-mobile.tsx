@@ -5,6 +5,61 @@ import { HorizontalActionBar } from '../action-bar/screen-action-bar-horizontal.
 import { ScreenNavBarMobile } from '../nav-bar/screen-nav-bar-mobile.tsx'
 import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props.tsx'
 
+export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
+  const Element = input.editAction ? 'form' : 'div'
+
+  const actionBars = renderActionBars(input)
+  const topBars: VDom[] = []
+  const bottomBars: VDom[] = []
+  for (let i = 0; i < actionBars.length; i++) {
+    if (i === 0) {
+      if (input.actionBar?.position === 'top') {
+        topBars.push(actionBars[i])
+      } else {
+        bottomBars.push(actionBars[i])
+      }
+    }
+  }
+
+  return (
+    <Element
+      className='flex w-full flex-1 flex-col overflow-hidden'
+      onSubmit={(e) => {
+        e.preventDefault()
+        input.editAction?.onSubmit()
+      }}
+    >
+      {topBars}
+
+      {renderNavBars(input.ctx, input)}
+
+      <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
+        {input.renderBody()}
+
+        {input.createAction && (
+          <div className='absolute bottom-6 right-4 bg-black'>
+            <Button
+              color='primary'
+              size='lg'
+              variant='contained'
+              rounded
+              onClick={input.createAction.onSubmit}
+              disabled={input.createAction.submitDisabled}
+              loading={input.createAction.submitLoading}
+              text={input.createAction.submitText}
+              iconStart={input.createAction.submitIcon}
+            />
+          </div>
+        )}
+      </div>
+
+      {input.editAction && <CancelSubmitButtons {...input.editAction} />}
+
+      {bottomBars}
+    </Element>
+  )
+}
+
 const renderActionBars = (screen: ScreenLayoutProps | null): VDom[] => {
   if (!screen) return []
   const bars = []
@@ -46,56 +101,4 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
     bars.push(...renderNavBars(ctx, screen.parentScreen))
   }
   return bars
-}
-
-export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
-  const Element = input.editAction ? 'form' : 'div'
-
-  const actionBars = renderActionBars(input)
-  const topBars = actionBars.filter((_, i) => {
-    if (i === 0) return input.actionBar?.position === 'top'
-    return input.parentScreen?.actionBar?.position === 'top'
-  })
-  const bottomBars = actionBars.filter((_, i) => {
-    if (i === 0) return input.actionBar?.position !== 'top'
-    return input.parentScreen?.actionBar?.position !== 'top'
-  })
-
-  return (
-    <Element
-      className='flex w-full flex-1 flex-col overflow-hidden'
-      onSubmit={(e) => {
-        e.preventDefault()
-        input.editAction?.onSubmit()
-      }}
-    >
-      {topBars}
-
-      {renderNavBars(input.ctx, input)}
-
-      <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
-        {input.renderBody()}
-
-        {input.createAction && (
-          <div className='absolute bottom-6 right-4 bg-black'>
-            <Button
-              color='primary'
-              size='lg'
-              variant='contained'
-              rounded
-              onClick={input.createAction.onSubmit}
-              disabled={input.createAction.submitDisabled}
-              loading={input.createAction.submitLoading}
-              text={input.createAction.submitText}
-              iconStart={input.createAction.submitIcon}
-            />
-          </div>
-        )}
-      </div>
-
-      {input.editAction && <CancelSubmitButtons {...input.editAction} />}
-
-      {bottomBars}
-    </Element>
-  )
 }
