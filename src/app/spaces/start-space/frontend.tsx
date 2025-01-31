@@ -3,8 +3,8 @@ import { IconPlus } from '~/@/ui'
 import { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
 import { CreateActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
-import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import type { MsgSpace } from '../core/space/space'
+import { SpaceFrontendModule } from '../architecture/space-frontend'
+import { MsgSpace } from '../core/space-msg/space-msg'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(

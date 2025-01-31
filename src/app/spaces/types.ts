@@ -17,7 +17,7 @@ import { SpaceFrontendCmd } from './@/frontend/cmd'
 import { SpacesCore } from './core/core'
 import { ISpacesCoreAsync } from './core/core-async/interface'
 import { Space } from './core/space'
-import { MsgSpace } from './core/space/space'
+import { MsgSpace } from './core/space-msg/space-msg'
 import { GamesTypes } from './game/games'
 import { GameName } from './game/games/@/game-name'
 

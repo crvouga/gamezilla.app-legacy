@@ -1,6 +1,6 @@
 import { EventSourced } from '~/@/event-sourced'
 import { addProfiles, sendToBackend } from '~/app/@/frontend/cmd'
-import { SpaceFrontendModule } from '../@/architecture/space-frontend'
+import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 
 const update: SpaceFrontendModule['update'] = (input) => {

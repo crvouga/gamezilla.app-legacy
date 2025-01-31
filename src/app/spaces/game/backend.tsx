@@ -1,6 +1,6 @@
 import { Result } from '~/@/result'
 import { withEventId } from '~/@/event-sourced/event'
-import { SpaceBackendModule } from '../@/architecture/space-backend'
+import { SpaceBackendModule } from '../architecture/space-backend'
 import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { Space } from '../core/space'

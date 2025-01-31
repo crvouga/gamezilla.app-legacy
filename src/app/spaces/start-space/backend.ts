@@ -1,4 +1,4 @@
-import { SpaceBackendModule } from '../@/architecture/space-backend'
+import { SpaceBackendModule } from '../architecture/space-backend'
 
 const update: SpaceBackendModule['update'] = (input) => {
   return SpaceBackendModule.andThen({}, () => updateFromMsgSpace(input))

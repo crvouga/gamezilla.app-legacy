@@ -11,7 +11,7 @@ import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Space } from '../space'
-import { MsgSpace } from '../space/space'
+import { MsgSpace } from '../space-msg/space-msg'
 import { SpaceState } from '../space-state'
 import { Config, SpacesCoreAsync } from './impl'
 

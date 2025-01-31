@@ -6,7 +6,7 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SectionPeopleList } from '~/app/spaces/game/games/@/ui/section-people-list/section-people-list'
 import { ViewHostChip } from '~/app/spaces/game/games/@/ui/section-people-list/host-chip'
 import { ViewYouChip } from '~/app/spaces/game/games/@/ui/section-people-list/you-chip'
-import { SpaceFrontendModule } from '../../@/architecture/space-frontend'
+import { SpaceFrontendModule } from '../../architecture/space-frontend'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   const { model } = input

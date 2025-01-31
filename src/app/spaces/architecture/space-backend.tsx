@@ -1,14 +1,14 @@
 import { WithEventId } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
 import { type Sub } from '~/@/sub'
+import type { BackendEvt } from '~/app/@/backend/evt'
 import type { ClientId } from '~/app/@/data/client-id'
 import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
-import type { BackendEvt } from '~/app/@/backend/evt'
-import { MsgSpace } from '../../core/space/space'
-import type { MsgBackend, MsgToFrontend, MsgToBackend, BackendCtx } from '../../types'
-import type { Space } from '../space/space'
-import type { SpaceBackendCmd } from '../backend/cmd'
+import type { SpaceBackendCmd } from '../@/backend/cmd'
+import type { Space } from '../@/space/space'
+import { MsgSpace } from '../core/space-msg/space-msg'
+import type { BackendCtx, MsgBackend, MsgToBackend, MsgToFrontend } from '../types'
 
 type Ctx = BackendCtx & {
   space?: Space

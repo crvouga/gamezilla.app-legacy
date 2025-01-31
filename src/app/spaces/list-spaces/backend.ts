@@ -2,7 +2,7 @@ import { EventSourced } from '~/@/event-sourced'
 import { unwrapOr } from '~/@/result'
 import { Paginated } from '~/app/@/data/pagination'
 import { sendToFrontend } from '~/app/@/backend/cmd'
-import type { SpaceBackendModule } from '../@/architecture/space-backend'
+import type { SpaceBackendModule } from '../architecture/space-backend'
 import { Space } from '../core/space'
 
 //

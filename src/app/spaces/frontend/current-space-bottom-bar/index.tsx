@@ -1,7 +1,7 @@
 import { Avatar, cn, IconButton, IconXMark, Typography } from '~/@/ui'
 import { APP_SOUND, playSound, pushScreen } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import type { SpaceFrontendModule } from '../../@/architecture/space-frontend'
+import type { SpaceFrontendModule } from '../../architecture/space-frontend'
 import { SpacesCore } from '../../core/core'
 import { GameCoverArt } from '../../game/games/cover-art'
 import { SPACE_CARD_GRADIENT_CLASS_NAME } from '../../list-spaces/space-card/space-card-gradient'

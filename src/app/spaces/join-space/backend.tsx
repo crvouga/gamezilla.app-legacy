@@ -1,7 +1,7 @@
 import { EventSourced } from '~/@/event-sourced'
 import { Result } from '~/@/result'
 import { sendToUser } from '~/app/@/backend/cmd'
-import { SpaceBackendModule } from '../@/architecture/space-backend'
+import { SpaceBackendModule } from '../architecture/space-backend'
 
 const update: SpaceBackendModule['update'] = (input) => {
   return SpaceBackendModule.andThen({}, () => updateFromMsgSpace({ ...input }))

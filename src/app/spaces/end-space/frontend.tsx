@@ -3,9 +3,9 @@ import { IconArrowLeftOnRect } from '~/@/ui'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
-import { SpaceFrontendModule } from '../@/architecture/space-frontend'
+import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
-import type { MsgSpace } from '../core/space/space'
+import { MsgSpace } from '../core/space-msg/space-msg'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(

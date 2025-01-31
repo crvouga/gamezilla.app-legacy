@@ -1,7 +1,7 @@
 import { Msg } from '~/@/msg/msg'
 import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
-import { type Input, type Output, SpaceBackendModule } from './@/architecture/space-backend'
+import { type Input, type Output, SpaceBackendModule } from './architecture/space-backend'
 import { Space } from './@/space/space'
 import { SpacesCoreAsync } from './core/core-async'
 import { GameBackend } from './game/backend'
