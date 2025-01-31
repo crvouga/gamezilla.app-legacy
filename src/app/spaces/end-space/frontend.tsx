@@ -5,7 +5,7 @@ import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-pro
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
-import type { MsgSpace } from '../core/space-msg'
+import type { MsgSpace } from '../core/space/space'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(

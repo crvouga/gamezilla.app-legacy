@@ -4,7 +4,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
 import { CreateActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import type { MsgSpace } from '../core/space-msg'
+import type { MsgSpace } from '../core/space/space'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(

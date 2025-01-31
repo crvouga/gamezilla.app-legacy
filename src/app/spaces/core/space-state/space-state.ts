@@ -4,7 +4,7 @@ import type { UserId } from '~/app/@/data/user-id'
 import { Space } from '~/app/spaces/@/space/space'
 import * as GameSpace from '../../game/games/space'
 import * as Game from '../../game/games/types'
-import { MsgSpace } from '../space-msg'
+import { MsgSpace } from '../space/space'
 
 //
 //

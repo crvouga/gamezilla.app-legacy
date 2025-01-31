@@ -3,7 +3,7 @@ import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
 import { SpacesCore } from '../core/core'
-import { MsgSpace } from '../core/space-msg'
+import { MsgSpace } from '../core/space/space'
 import { SectionPeopleList } from '../game/games/@/ui/section-people-list/section-people-list'
 import { GameCoverArt } from '../game/games/cover-art'
 import { ScreenLayoutGameCoverArt } from '../game/games/@/ui/screen-layout-game-cover-art'

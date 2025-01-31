@@ -4,7 +4,7 @@ import { p } from '~/@/parser'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Space } from '../space'
-import type { MsgSpace } from '../space-msg'
+import type { MsgSpace } from '../space/space'
 import { SpaceState } from '../space-state'
 
 //
