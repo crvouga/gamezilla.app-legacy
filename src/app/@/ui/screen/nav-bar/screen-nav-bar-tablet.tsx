@@ -30,7 +30,7 @@ export const ScreenNavBarTablet = (input: {
           <Typography
             role='heading'
             className='truncate px-2'
-            sizeClassName='text-xl font-bold'
+            sizeClassName='text-3xl font-bold'
             variant='title'
             text={input.title}
           />
@@ -38,7 +38,7 @@ export const ScreenNavBarTablet = (input: {
         {input.subtitle && (
           <Typography
             className='text-secondary truncate px-2'
-            sizeClassName='text-lg'
+            sizeClassName='text-xl'
             role='heading'
             variant='subtitle'
             text={input.subtitle}
@@ -51,5 +51,5 @@ export const ScreenNavBarTablet = (input: {
 }
 
 export const ScreenNavBarTabletRoot = (input: { children: VDom }) => {
-  return <div className='flex h-20 w-full shrink-0 items-center truncate px-4'>{input.children}</div>
+  return <div className='flex h-24 w-full shrink-0 items-center truncate px-4'>{input.children}</div>
 }

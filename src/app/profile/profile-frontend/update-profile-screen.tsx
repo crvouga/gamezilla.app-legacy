@@ -20,7 +20,7 @@ export const View = (input: { ctx: FrontendCtx; dispatch: (msg: MsgFrontend) => 
         onBack: () => input.dispatch({ t: 'clicked-back-button', from: { t: 'profile-update' } }),
       }}
       renderBody={() => (
-        <div className='flex w-full flex-1 flex-col items-center gap-4 p-6'>
+        <div className='flex w-full flex-1 flex-col items-center gap-4'>
           <div className='flex w-full flex-col items-center justify-center gap-2'>
             <Avatar
               src={profile?.avatarUrl}
@@ -49,24 +49,18 @@ export const View = (input: { ctx: FrontendCtx; dispatch: (msg: MsgFrontend) => 
   )
 }
 
-const ViewField = ({
-  label,
-  value,
-  onClick,
-}: {
-  label: TranslatedText
-  value: TranslatedText
-  onClick?: () => void
-}) => (
-  <button onClick={onClick} className='flex w-full items-center justify-start px-4 py-2'>
-    <div className='flex flex-1 flex-col items-start'>
-      <Typography variant='label' text={label} />
-      {value && <Typography variant='body' text={value} />}
-    </div>
+const ViewField = (input: { label: TranslatedText; value: TranslatedText; onClick?: () => void }) => {
+  return (
+    <button onClick={input.onClick} className='flex w-full items-center justify-start px-4 py-2'>
+      <div className='flex flex-1 flex-col items-start'>
+        <Typography variant='label' text={input.label} />
+        {input.value && <Typography variant='body' text={input.value} />}
+      </div>
 
-    <IconChevronRight className='size-6' />
-  </button>
-)
+      <IconChevronRight className='size-6' />
+    </button>
+  )
+}
 
 export const UpdateProfileScreen = {
   View,

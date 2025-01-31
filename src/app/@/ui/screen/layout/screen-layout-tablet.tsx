@@ -89,14 +89,18 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
         subtitle={screen.navBar.subtitle}
         renderEnd={() =>
           (screen.editAction || screen.createAction) && (
-            <div className='flex w-fit items-center justify-end'>
-              {screen.editAction && <CancelSubmitButtons {...screen.editAction} size='sm' />}
+            <div className='flex items-center justify-end'>
+              {screen.editAction && (
+                <div className='flex min-w-64 items-center justify-end'>
+                  <CancelSubmitButtons {...screen.editAction} size='md' />
+                </div>
+              )}
               {screen.createAction && (
                 <Button
                   color='primary'
                   rounded
                   variant='contained'
-                  size='sm'
+                  size='md'
                   onClick={screen.createAction.onSubmit}
                   disabled={screen.createAction.submitDisabled}
                   loading={screen.createAction.submitLoading}
