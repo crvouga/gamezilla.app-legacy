@@ -7,7 +7,7 @@ export const EMPTY_STATE_TEST_ID = 'empty-state'
 export const EmptyState = (input: { renderIcon: (input: { className: string }) => VDom; label: TranslatedText }) => {
   return (
     <div
-      className='absolute inset-0 flex h-full w-full flex-1 flex-col items-center justify-center gap-2 px-6 text-center opacity-60'
+      className='flex h-full w-full flex-1 flex-col items-center justify-center gap-2 px-6 text-center opacity-60'
       data-testid={EMPTY_STATE_TEST_ID}
     >
       <div className='flex flex-col items-center justify-center gap-2 pb-20'>

@@ -2,7 +2,7 @@ import { getWindowWidth } from '~/@/browser/browser'
 
 export type ScreenSize = 'mobile' | 'tablet'
 
-const MAX_MOBILE_SCREEN_WIDTH = 800
+const MAX_MOBILE_SCREEN_WIDTH = 850
 
 const to = (width: number): ScreenSize => {
   if (width < MAX_MOBILE_SCREEN_WIDTH) {

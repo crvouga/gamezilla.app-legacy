@@ -11,7 +11,7 @@ const renderActionBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenPro
   if (screen.actionBar) {
     const isTopLevel = !Boolean(screen.parentScreen)
     bars.push(
-      <div key={screen.id} className={cn(isTopLevel ? 'order-first' : 'order-last')}>
+      <div key={screen.id} className={cn(isTopLevel ? 'order-first border-r' : 'order-last')}>
         <VerticalActionBar
           {...screen.actionBar}
           id={screen.actionBar.id ?? `${screen.id}-actions`}
@@ -90,13 +90,13 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
         input.editAction?.onSubmit()
       }}
     >
-      <div className='flex w-full flex-1 flex-row overflow-hidden'>
+      <div className='relative flex w-full flex-1 flex-row overflow-hidden'>
         {renderActionBars(input.ctx, input)}
 
-        <div className='flex flex-1 flex-col overflow-hidden'>
+        <div className='flex max-w-2xl flex-1 flex-col overflow-hidden border-r'>
           {renderNavBars(input.ctx, input)}
 
-          <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
+          <div className='flex w-full flex-1 flex-col overflow-hidden'>
             {input.renderBody()}
             {(input.createAction || input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) && (
               <div className='absolute bottom-8 right-8 bg-black'>{renderMiniPlayers(input)}</div>

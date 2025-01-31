@@ -95,7 +95,12 @@ const View: SpaceFrontendModule['View'] = (input) => {
       createAction={StartSpaceFrontend.viewStartSpaceButton(input)}
       renderBody={() => {
         return (
-          <div className={cn('flex flex-1 flex-col', input.ctx.screenSize === 'tablet' && 'max-w-2xl')}>
+          <div
+            className={cn(
+              'flex flex-1 flex-col',
+              // input.ctx.screenSize === 'tablet' && 'max-w-xl'
+            )}
+          >
             {spaces.length === 0 && (
               <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
             )}

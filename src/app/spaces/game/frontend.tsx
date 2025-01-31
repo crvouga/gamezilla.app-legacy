@@ -1,22 +1,17 @@
 import { Eff } from '~/@/eff'
-import { WithEventId, withEventId } from '~/@/event-sourced/event'
+import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
-import { Typography } from '~/@/ui'
 import { UserAccount } from '~/app/@/data/account'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
 import { SpaceFrontendModule } from '../@/architecture/space-frontend'
-import { SpaceFrontendCtx } from '../@/frontend/ctx'
 import { SpacesCore } from '../core/core'
 import { Space } from '../core/space'
 import { MsgSpace } from '../core/space-msg'
 import type { MsgFrontend } from '../types'
-import { ScreenLayoutHostSettingUpGame } from './games/@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
-import { GameCoverArt } from './games/cover-art'
+import { NotInGameScreenFrontend } from './frontend/not-in-game-screen'
 import { GamesFrontend } from './games/frontend'
-import { gameNameList } from './games/types'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -32,46 +27,34 @@ const updateFromMsg: SpaceFrontendModule['update'] = ({ msg, model, ctx }) => {
   switch (msg?.t) {
     case 'clicked-game-tile': {
       const currentUserId = ctx.currentUserId
+      if (!currentUserId) return { model }
 
       const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model, currentUserId)
 
-      if (!currentUserId || !currentUserSpaceId) {
-        return {
-          model,
-        }
-      }
-
-      const spaceEventNew = withEventId<MsgSpace>({
-        t: 'user-inputted-game',
-        game: msg.gameName,
-        spaceId: currentUserSpaceId,
-        userId: currentUserId,
-      })
+      if (!currentUserSpaceId) return { model }
 
       return {
         model,
-        msgSpace: [spaceEventNew],
-      }
-    }
-
-    default: {
-      return {
-        model,
+        msgSpace: [
+          withEventId({
+            t: 'user-inputted-game',
+            game: msg.gameName,
+            spaceId: currentUserSpaceId,
+            userId: currentUserId,
+          }),
+        ],
       }
     }
   }
+  return { model }
 }
 const updateFromCmd: SpaceFrontendModule['update'] = ({ msgCmd, model, ctx }) => {
   switch (msgCmd?.t) {
     case 'space-cmd.exit-game': {
       const currentUserId = ctx.currentUserId
+      if (!currentUserId) return { model }
       const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model, currentUserId)
-
-      if (!currentUserSpaceId || !currentUserId) {
-        return {
-          model,
-        }
-      }
+      if (!currentUserSpaceId) return { model }
 
       return {
         model,
@@ -85,43 +68,26 @@ const updateFromCmd: SpaceFrontendModule['update'] = ({ msgCmd, model, ctx }) =>
         ],
       }
     }
-
-    default: {
-      return {
-        model,
-      }
-    }
   }
+  return { model }
 }
 
 const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-inputted-game': {
-      if (!input.ctx.currentUserId) {
-        return {
-          model: input.model,
-        }
-      }
+      if (!input.ctx.currentUserId) return { model: input.model }
 
       const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model, input.ctx.currentUserId)
 
-      if (input.msgSpace.spaceId === currentUserSpaceId) {
-        return {
-          model: input.model,
-          msgCmd: [playSound(input.msgSpace.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin)],
-        }
-      }
-      return {
-        model: input.model,
-      }
-    }
+      if (input.msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
 
-    default: {
       return {
         model: input.model,
+        msgCmd: [playSound(input.msgSpace.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin)],
       }
     }
   }
+  return { model: input.model }
 }
 
 const inputToSpaceId = (currentUser: UserAccount, input: Parameters<SpaceFrontendModule['update']>[0]) => {
@@ -145,21 +111,17 @@ const inputToSpaceId = (currentUser: UserAccount, input: Parameters<SpaceFronten
 const updateGame: SpaceFrontendModule['update'] = (input) => {
   const currentUser = input.ctx.currentUser ?? input.msgEvt?.currentUser ?? null
 
-  if (!currentUser) {
-    return { model: input.model }
-  }
+  if (!currentUser) return { model: input.model }
 
   const spaceId = inputToSpaceId(currentUser, input)
 
-  if (!spaceId) {
-    return { model: input.model }
-  }
+  if (!spaceId) return { model: input.model }
 
   const spaceState = SpacesCore.toSpaceStarted(input.model, spaceId)
 
-  if (!spaceState || !spaceState.game) {
-    return { model: input.model }
-  }
+  if (!spaceState) return { model: input.model }
+
+  if (!spaceState.game) return { model: input.model }
 
   const modelGame = input.model.games[spaceId] ?? GamesFrontend.init(spaceState.game.t)
 
@@ -181,28 +143,15 @@ const updateGame: SpaceFrontendModule['update'] = (input) => {
   })
 
   return {
-    model: {
-      ...input.model,
-      games: {
-        ...input.model.games,
-        [spaceId]: gameUpdated.model,
-      },
-    },
+    model: { ...input.model, games: { ...input.model.games, [spaceId]: gameUpdated.model } },
     msgCmd: SpaceFrontendCmd.map(
-      gameUpdated.msgCmd ?? [],
+      gameUpdated.msgCmd,
       (c) => ({ t: 'game', c, spaceId }),
       (c) => ({ t: 'game', c, spaceId }),
     ),
     eff: Eff.map(gameUpdated.eff, (c) => ({ t: 'game', c, spaceId })),
+    msgSpace: gameUpdated.msgSpace?.map((c) => withEventId<MsgSpace>({ spaceId, t: 'game', c })),
     msgEvt: [],
-    msgSpace: (gameUpdated.msgSpace ?? []).map(
-      (c): WithEventId<MsgSpace> =>
-        withEventId({
-          spaceId,
-          t: 'game',
-          c,
-        }),
-    ),
   }
 }
 
@@ -269,7 +218,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   if (!space) return null
 
-  if (!space.game) return <ViewScreenNotInGame {...input} />
+  if (!space.game) return <NotInGameScreenFrontend.View {...input} />
 
   return (
     <GamesFrontend.View
@@ -281,88 +230,9 @@ const View: SpaceFrontendModule['View'] = (input) => {
         currentUserRole: input.ctx.currentUser.role,
         currentUser: input.ctx.currentUser,
       }}
-      dispatch={(c) =>
-        input.dispatch({
-          t: 'game',
-          spaceId: space.spaceId,
-          c,
-        })
-      }
+      dispatch={(c) => input.dispatch({ t: 'game', spaceId: space.spaceId, c })}
       model={input.model.games[space.spaceId] ?? GamesFrontend.init(space.game.t)}
     />
-  )
-}
-
-const ViewScreenNotInGame: SpaceFrontendModule['View'] = (input) => {
-  if (!input.ctx.space) return null
-  if (!input.ctx.currentUser) return null
-
-  const isHost = input.ctx.space.hostId === input.ctx.currentUser.userId
-  const isGuest = !isHost
-
-  const spaceCtx = {
-    ...input.ctx,
-    space: input.ctx.space,
-    currentUserId: input.ctx.currentUser.userId,
-    currentUserRole: input.ctx.currentUser.role,
-    currentUser: input.ctx.currentUser,
-  }
-
-  if (isGuest) {
-    return (
-      <ScreenLayoutHostSettingUpGame
-        parentScreen={input.ctx.parentScreen}
-        ctx={spaceCtx}
-        navBar={{
-          title: input.ctx.t('spaces.games'),
-          onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
-        }}
-      />
-    )
-  }
-
-  return (
-    <ScreenLayout
-      parentScreen={input.ctx.parentScreen}
-      id='game-selection-screen'
-      ctx={input.ctx}
-      navBar={{
-        title: input.ctx.t('spaces.games'),
-        onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
-      }}
-      renderBody={() => <ViewHostGameSelection ctx={spaceCtx} dispatch={input.dispatch} />}
-    />
-  )
-}
-
-const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
-  return (
-    <div className='3xl:grid-cols-8 grid flex-1 grid-cols-3 justify-between gap-8 p-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7'>
-      {gameNameList.map((gameName) => (
-        <div key={gameName}>
-          <button
-            type='button'
-            aria-label={gameName}
-            onClick={() =>
-              input.dispatch({
-                t: 'clicked-game-tile',
-                gameName,
-              })
-            }
-            className='flex aspect-square overflow-hidden rounded-lg border'
-          >
-            <GameCoverArt gameName={gameName} />
-          </button>
-
-          <Typography
-            className='mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold'
-            variant='label'
-            sizeClassName='text-base'
-            text={input.ctx.t(gameName)}
-          />
-        </div>
-      ))}
-    </div>
   )
 }
 
