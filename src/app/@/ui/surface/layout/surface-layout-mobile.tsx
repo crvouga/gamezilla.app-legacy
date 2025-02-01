@@ -13,7 +13,7 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
       ctx={props.ctx}
       ariaLabel={props.ariaLabel}
     >
-      <Element
+      <form
         onSubmit={(e) => {
           e.preventDefault()
           props.form?.onSubmit?.()
@@ -41,7 +41,7 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
             cancelDisabled={props.form?.cancelDisabled ?? false}
           />
         )}
-      </Element>
+      </form>
     </Drawer>
   )
 }

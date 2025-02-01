@@ -6,7 +6,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checked: boo
   const Element = input.onChange ? 'button' : 'div'
   const isChecked = input.state === 'checked'
   return (
-    <Element
+    <button
       className={cn(
         'flex size-6 items-center justify-center rounded border-2 border-neutral-500 text-xl font-black text-neutral-800',
         input.state !== 'unchecked' && 'border-neutral-100 bg-neutral-100',
@@ -25,7 +25,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checked: boo
       }}
     >
       {toCheckboxText(input.state)}
-    </Element>
+    </button>
   )
 }
 

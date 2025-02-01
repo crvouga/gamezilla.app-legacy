@@ -9,7 +9,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
   const Element = input.editAction ? 'form' : 'div'
 
   return (
-    <Element
+    <form
       className='relative flex w-full flex-1 flex-row overflow-hidden'
       onSubmit={(e) => {
         e.preventDefault()
@@ -30,7 +30,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
       </div>
 
       <ActionBars position='end' input={input} />
-    </Element>
+    </form>
   )
 }
 

@@ -5,9 +5,8 @@ export const PAGINATION_DOTS_TEST_ID = 'pagination-dots'
 export const toPaginationDotSelector = (index: number) => `[data-pagination-dot-index="${index}"]`
 
 export const PaginationDots = (input: { count: number; activeIndex: number; onClick?: (index: number) => void }) => {
-  if (input.count <= 1) {
-    return null
-  }
+  if (input.count <= 1) return null
+
   return (
     <div
       className='flex items-center justify-center space-x-2'
@@ -18,7 +17,7 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
       {Array.from({ length: input.count }, (_, i) => {
         const Element = input.onClick ? 'button' : 'div'
         return (
-          <Element
+          <button
             key={i}
             className={cn(
               'size-2 rounded-full',

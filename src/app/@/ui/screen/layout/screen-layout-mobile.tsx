@@ -9,7 +9,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const Element = input.editAction ? 'form' : 'div'
 
   return (
-    <Element
+    <form
       className='flex w-full flex-1 flex-col overflow-hidden'
       onSubmit={(e) => {
         e.preventDefault()
@@ -43,7 +43,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
 
         {input.editAction && <CancelSubmitButtons {...input.editAction} />}
       </div>
-    </Element>
+    </form>
   )
 }
 

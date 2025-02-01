@@ -7,7 +7,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
   return (
     <Dialog open={props.open ?? false} onClose={props.onClose ?? (() => {})}>
       <DialogSurface>
-        <Element
+        <form
           onSubmit={(e) => {
             e.preventDefault()
             props.form?.onSubmit?.()
@@ -29,7 +29,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
               cancelDisabled={props.form?.cancelDisabled ?? false}
             />
           )}
-        </Element>
+        </form>
       </DialogSurface>
     </Dialog>
   )

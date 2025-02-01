@@ -32,10 +32,10 @@ export const ViewSpaceCard = (input: { ctx: BaseFrontendCtx; state: SpaceState.S
 }
 
 const ViewRoot = (input: { onClick?: () => void; children: React.ReactNode }) => {
-  const Component = typeof input.onClick === 'function' ? 'button' : 'div'
+  const Element = typeof input.onClick === 'function' ? 'button' : 'div'
   return (
-    <Component
-      type={Component === 'button' ? 'button' : undefined}
+    <button
+      type={Element === 'button' ? 'button' : undefined}
       onClick={input.onClick}
       disabled={!input.onClick}
       className={cn(
@@ -45,7 +45,7 @@ const ViewRoot = (input: { onClick?: () => void; children: React.ReactNode }) =>
       )}
     >
       {input.children}
-    </Component>
+    </button>
   )
 }
 

@@ -13,11 +13,11 @@ type Input = {
 }
 
 export const ListItemButton = (input: Input) => {
-  const Component = input.onClick ? 'button' : 'div'
+  const Element = input.onClick ? 'button' : 'div'
   return (
-    <Component
-      type={Component === 'button' ? 'button' : undefined}
-      role={Component === 'button' ? 'button' : undefined}
+    <button
+      type={Element === 'button' ? 'button' : undefined}
+      role={Element === 'button' ? 'button' : undefined}
       onClick={(event) => {
         preventConsoleErrorWhenClosingDrawer(event)
         input.onClick?.()
@@ -32,7 +32,7 @@ export const ListItemButton = (input: Input) => {
         {input.label}
       </div>
       {input.end && <div className='shrink-0'>{input.end()}</div>}
-    </Component>
+    </button>
   )
 }
 
