@@ -38,24 +38,26 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
         title: input.title,
         onClose: input.onClose,
       }}
-      renderBody={() => (
-        <>
-          <Typography className='text-secondary p-4' variant='body' text={input.body} />
-          <div className='flex w-full flex-col gap-4 p-4'>
-            <Button
-              className='w-full'
-              text={input.saveText}
-              variant='contained'
-              color='primary'
-              loading={input.saveLoading}
-              onClick={input.onSave}
-            />
-            <Button className='w-full' text={input.discardText} onClick={input.onDiscard} />
-            <div className='w-full' />
-            <Button className='w-full' text={input.cancelText} onClick={input.onCancel} />
-          </div>
-        </>
-      )}
+      body={{
+        render: () => (
+          <>
+            <Typography className='text-secondary p-4' variant='body' text={input.body} />
+            <div className='flex w-full flex-col gap-4 p-4'>
+              <Button
+                className='w-full'
+                text={input.saveText}
+                variant='contained'
+                color='primary'
+                loading={input.saveLoading}
+                onClick={input.onSave}
+              />
+              <Button className='w-full' text={input.discardText} onClick={input.onDiscard} />
+              <div className='w-full' />
+              <Button className='w-full' text={input.cancelText} onClick={input.onCancel} />
+            </div>
+          </>
+        ),
+      }}
     />
   )
 }

@@ -17,7 +17,9 @@ export type SurfaceLayoutProps = {
     onClose?: () => void
   }
   position?: 'top' | 'bottom'
-  renderBody: () => VDom
+  body?: {
+    render?: () => VDom
+  }
   form?: {
     variant?: 'danger'
     onSubmit: () => void

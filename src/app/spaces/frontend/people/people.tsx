@@ -98,12 +98,14 @@ const View: SpaceFrontendModule['View'] = (input) => {
         ariaLabel={input.ctx.t('app.people')}
         open={input.model.modal === 'users'}
         onClose={() => input.dispatch({ t: 'closed-modal' })}
-        renderBody={() => (
-          <SectionPeopleList
-            onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
-            ctx={spaceCtx}
-          />
-        )}
+        body={{
+          render: () => (
+            <SectionPeopleList
+              onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
+              ctx={spaceCtx}
+            />
+          ),
+        }}
       />
 
       <SurfaceLayout
@@ -113,37 +115,39 @@ const View: SpaceFrontendModule['View'] = (input) => {
         id='user-preview'
         open={input.model.modal === 'user-preview'}
         onClose={() => input.dispatch({ t: 'closed-modal' })}
-        renderBody={() => (
-          <div>
-            <button
-              type='button'
-              className='flex w-full flex-col items-center justify-center gap-2 p-4'
-              onClick={() => input.dispatch({ t: 'clicked-preview-user-link' })}
-            >
-              <Avatar
-                src={
-                  input.model.modalPreviewUserId
-                    ? input.ctx.profiles[input.model.modalPreviewUserId]?.avatarUrl
-                    : undefined
-                }
-                className='size-24'
-              />
-              {modalProfile && <Typography variant='title' text={input.ctx.t('username', modalProfile.username)} />}
-              <div className='flex items-center gap-2'>
-                {spaceCtx.space.hostId === input.model.modalPreviewUserId && <ViewHostChip ctx={input.ctx} />}
-                {spaceCtx.currentUserId === input.model.modalPreviewUserId && <ViewYouChip ctx={input.ctx} />}
-              </div>
-            </button>
-
-            <div className='w-full px-4 pb-8'>
-              <Button
+        body={{
+          render: () => (
+            <div>
+              <button
+                type='button'
+                className='flex w-full flex-col items-center justify-center gap-2 p-4'
                 onClick={() => input.dispatch({ t: 'clicked-preview-user-link' })}
-                className='w-full'
-                text={input.ctx.t('spaces.see-profile')}
-              />
+              >
+                <Avatar
+                  src={
+                    input.model.modalPreviewUserId
+                      ? input.ctx.profiles[input.model.modalPreviewUserId]?.avatarUrl
+                      : undefined
+                  }
+                  className='size-24'
+                />
+                {modalProfile && <Typography variant='title' text={input.ctx.t('username', modalProfile.username)} />}
+                <div className='flex items-center gap-2'>
+                  {spaceCtx.space.hostId === input.model.modalPreviewUserId && <ViewHostChip ctx={input.ctx} />}
+                  {spaceCtx.currentUserId === input.model.modalPreviewUserId && <ViewYouChip ctx={input.ctx} />}
+                </div>
+              </button>
+
+              <div className='w-full px-4 pb-8'>
+                <Button
+                  onClick={() => input.dispatch({ t: 'clicked-preview-user-link' })}
+                  className='w-full'
+                  text={input.ctx.t('spaces.see-profile')}
+                />
+              </div>
             </div>
-          </div>
-        )}
+          ),
+        }}
       />
     </>
   )

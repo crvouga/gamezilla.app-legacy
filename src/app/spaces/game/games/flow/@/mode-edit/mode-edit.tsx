@@ -515,13 +515,15 @@ export const View = (input: {
               submitLoading: false,
               submitDisabled: !canSubmitDimensionsForm(input.model),
             }}
-            renderBody={() => (
-              <FlowVariantDimensions.ViewForm
-                ctx={input.ctx}
-                form={input.model.dimensions}
-                onInput={(dimensions) => input.dispatch({ t: 'dimensions-form.inputted', dimensions })}
-              />
-            )}
+            body={{
+              render: () => (
+                <FlowVariantDimensions.ViewForm
+                  ctx={input.ctx}
+                  form={input.model.dimensions}
+                  onInput={(dimensions) => input.dispatch({ t: 'dimensions-form.inputted', dimensions })}
+                />
+              ),
+            }}
           />
         </>
       )}

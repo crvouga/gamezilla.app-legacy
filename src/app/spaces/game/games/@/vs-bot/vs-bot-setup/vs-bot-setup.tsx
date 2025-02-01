@@ -221,30 +221,32 @@ export const View = ({
               t: 'closed-modal',
             }),
         }}
-        renderBody={() => (
-          <div>
-            {botVariants.map((botLevel) => {
-              const onClick = () => {
-                botLevel.onSelect()
-                dispatch({
-                  t: 'closed-modal',
-                })
-              }
-              return (
-                <button
-                  key={botLevel.label}
-                  className='flex w-full items-center gap-3 p-4 text-left text-xl font-bold'
-                  onClick={onClick}
-                >
-                  {botLevel.renderIcon({
-                    className: 'w-10 h-10',
-                  })}
-                  {botLevel.label}
-                </button>
-              )
-            })}
-          </div>
-        )}
+        body={{
+          render: () => (
+            <div>
+              {botVariants.map((botLevel) => {
+                const onClick = () => {
+                  botLevel.onSelect()
+                  dispatch({
+                    t: 'closed-modal',
+                  })
+                }
+                return (
+                  <button
+                    key={botLevel.label}
+                    className='flex w-full items-center gap-3 p-4 text-left text-xl font-bold'
+                    onClick={onClick}
+                  >
+                    {botLevel.renderIcon({
+                      className: 'w-10 h-10',
+                    })}
+                    {botLevel.label}
+                  </button>
+                )
+              })}
+            </div>
+          ),
+        }}
       />
     </div>
   )

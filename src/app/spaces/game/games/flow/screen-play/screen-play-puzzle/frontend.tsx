@@ -1,18 +1,20 @@
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
+import { Button, Dialog } from '~/@/ui'
+import { DialogHeader } from '~/@/ui/dialog/dialog-header'
+import { DialogSurface } from '~/@/ui/dialog/dialog-surface'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { Button, Dialog, DialogHeader, DialogSurface } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
+import { LayoutGame } from '../../../@/ui/game-layout'
 import { ProfileListItem } from '../../../@/ui/list-item-profile'
+import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
 import { ModePlay } from '../../@/mode-play'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { FrontendModule } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
 import { LastPuzzleFrontend } from './dialog-last-puzzle/frontend'
 import { ScreenPlayPuzzleSpace } from './space'
-import { LayoutGame } from '../../../@/ui/game-layout'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -305,14 +307,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
               c: {
                 userId: input.ctx.currentUserId,
                 t: 'user-clicked-next-puzzle',
-                nextPuzzle: nextPuzzle
-                  ? {
-                      t: 'got',
-                      c: nextPuzzle,
-                    }
-                  : {
-                      t: 'not-found',
-                    },
+                nextPuzzle: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' },
                 nextPuzzleIndex,
               },
             })

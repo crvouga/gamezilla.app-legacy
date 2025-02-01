@@ -1,7 +1,10 @@
-import { Dialog, DialogHeader, DialogSurface } from '~/@/ui'
+import { Dialog } from '~/@/ui'
 import { DynamicElement } from '~/@/ui/dynamic-element'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { SurfaceLayoutProps } from './surface-layout-props'
+import { DialogBody } from '~/@/ui/dialog/dialog-body'
+import { DialogHeader } from '~/@/ui/dialog/dialog-header'
+import { DialogSurface } from '~/@/ui/dialog/dialog-surface'
 
 export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
   return (
@@ -17,7 +20,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
         >
           <div className='flex w-full flex-col'>
             {props.header && <DialogHeader title={props.header.title} />}
-            <div className='flex w-full flex-1 flex-col items-center justify-center'>{props.renderBody()}</div>
+            {props.body?.render && <DialogBody>{props.body.render()}</DialogBody>}
           </div>
           {props.form && (
             <CancelSubmitButtons

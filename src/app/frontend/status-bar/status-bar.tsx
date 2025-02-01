@@ -76,7 +76,9 @@ export const View = ({
         id='status-bar-drawer'
         open={model.isDrawerOpen}
         onClose={() => dispatch({ t: 'closed-status-bar-drawer' })}
-        renderBody={() => slots.surfaceContent}
+        body={{
+          render: () => slots.surfaceContent,
+        }}
       />
     </>
   )

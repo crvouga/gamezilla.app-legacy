@@ -44,19 +44,21 @@ const ViewSurface: FrontendModule['View'] = (input) => {
         title: input.ctx.t('app.edit-name'),
         onClose: onClose,
       }}
-      renderBody={() => (
-        <TextField
-          id='pack-name'
-          label={input.ctx.t('app.edit-name')}
-          value={input.modelSpace.editPackName_draft}
-          onChange={(packNameDraft) =>
-            input.dispatch({
-              t: 'got-msg-space',
-              c: { t: 'edit-pack-name.user-inputted-draft-name', packNameDraft, userId: input.ctx.currentUserId },
-            })
-          }
-        />
-      )}
+      body={{
+        render: () => (
+          <TextField
+            id='pack-name'
+            label={input.ctx.t('app.edit-name')}
+            value={input.modelSpace.editPackName_draft}
+            onChange={(packNameDraft) =>
+              input.dispatch({
+                t: 'got-msg-space',
+                c: { t: 'edit-pack-name.user-inputted-draft-name', packNameDraft, userId: input.ctx.currentUserId },
+              })
+            }
+          />
+        ),
+      }}
     />
   )
 }

@@ -46,21 +46,23 @@ const View: FrontendModule['View'] = (input) => {
         submitLoading: isLoading(input.model.puzzleEditNameRequest),
         submitDisabled: input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name,
       }}
-      renderBody={() => (
-        <TextField
-          id='edit-name-input'
-          label={input.ctx.t('flow.edit-puzzle-name.name')}
-          value={input.model.puzzleEditNameDraft}
-          onChange={(draftName) =>
-            input.dispatch({
-              t: 'puzzle.edit-name.user-inputted-draft-name',
-              draftName,
-            })
-          }
-          error={Boolean(input.model.puzzleEditNameValidationError)}
-          helperText={editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError)}
-        />
-      )}
+      body={{
+        render: () => (
+          <TextField
+            id='edit-name-input'
+            label={input.ctx.t('flow.edit-puzzle-name.name')}
+            value={input.model.puzzleEditNameDraft}
+            onChange={(draftName) =>
+              input.dispatch({
+                t: 'puzzle.edit-name.user-inputted-draft-name',
+                draftName,
+              })
+            }
+            error={Boolean(input.model.puzzleEditNameValidationError)}
+            helperText={editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError)}
+          />
+        ),
+      }}
     />
   )
 }
@@ -116,7 +118,6 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
           ...input.model,
           puzzleEditNameRequest: input.msg.result,
         },
-
         msgCmd: [playSound(APP_SOUND.refreshFeed)],
         msgSpace: [
           withEventId({

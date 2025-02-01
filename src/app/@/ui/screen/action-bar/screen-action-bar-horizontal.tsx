@@ -38,22 +38,24 @@ const Uniform = (input: ScreenActionBarProps & ScreenActionsUniform) => {
             ariaLabel={input.ctx.t('app.more')}
             onClose={input.limit?.onToggle ?? (() => {})}
             open={input.limit?.open ?? false}
-            renderBody={() => (
-              <>
-                {lastButtons.map((button) => {
-                  if (!button || button.hidden) return null
-                  return (
-                    <ListItemButton
-                      key={button.label}
-                      icon={button.icon}
-                      label={button.label}
-                      onClick={button.onClick}
-                      color={button.color}
-                    />
-                  )
-                })}
-              </>
-            )}
+            body={{
+              render: () => (
+                <>
+                  {lastButtons.map((button) => {
+                    if (!button || button.hidden) return null
+                    return (
+                      <ListItemButton
+                        key={button.label}
+                        icon={button.icon}
+                        label={button.label}
+                        onClick={button.onClick}
+                        color={button.color}
+                      />
+                    )
+                  })}
+                </>
+              ),
+            }}
           />
         </>
       )}

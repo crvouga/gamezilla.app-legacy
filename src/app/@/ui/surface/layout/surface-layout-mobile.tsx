@@ -1,4 +1,5 @@
 import { Drawer, DrawerHeader } from '~/@/ui'
+import { DrawerBody } from '~/@/ui/drawer/drawer-body'
 import { DynamicElement } from '~/@/ui/dynamic-element'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { SurfaceLayoutProps } from './surface-layout-props'
@@ -29,7 +30,7 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
               onClose={props.header?.onClose ?? (() => {})}
             />
           )}
-          <div className='flex w-full flex-1 flex-col'>{props.renderBody()}</div>
+          {props.body?.render && <DrawerBody>{props.body.render()}</DrawerBody>}
         </div>
         {props.form && (
           <CancelSubmitButtons
