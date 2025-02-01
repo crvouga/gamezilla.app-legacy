@@ -45,7 +45,7 @@ export const initCtx = async (): Promise<FrontendCtx> => {
   })
 
   if (typeof CONFIG_FRONTEND.VITE_BACKEND_URL !== 'string') {
-    throw new Error('BACKEND_URL is undefined')
+    throw new Error('VITE_BACKEND_URL is undefined')
   }
 
   const transport = await FrontendTransport<MsgToBackend, MsgToFrontend>(
