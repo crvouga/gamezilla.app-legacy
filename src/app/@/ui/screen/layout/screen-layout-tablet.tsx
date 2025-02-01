@@ -1,4 +1,5 @@
 import { Button, cn } from '~/@/ui'
+import { DynamicElement } from '~/@/ui/dynamic-element'
 import { VDom } from '~/@/vdom/vdom'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { VerticalActionBar } from '../action-bar/screen-action-bar-vertical'
@@ -6,10 +7,11 @@ import { ScreenNavBarTablet } from '../nav-bar/screen-nav-bar-tablet'
 import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props'
 
 export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
-  const Element = input.editAction ? 'form' : 'div'
+  const element = input.editAction ? 'form' : 'div'
 
   return (
-    <form
+    <DynamicElement
+      element={element}
       className='relative flex w-full flex-1 flex-row overflow-hidden'
       onSubmit={(e) => {
         e.preventDefault()
@@ -30,7 +32,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
       </div>
 
       <ActionBars position='end' input={input} />
-    </form>
+    </DynamicElement>
   )
 }
 

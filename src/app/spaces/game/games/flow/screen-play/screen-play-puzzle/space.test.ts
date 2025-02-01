@@ -122,14 +122,8 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const before = f.init
     const after = f.update(before, f.solvePuzzleMsgs)
-    const afterFlow = ModePlay.toFlow({
-      flow: f.puzzle.flow,
-      model:
-        after.modePlay ??
-        ModePlay.init({
-          ctx: ModePlay.initCtx({ flow: f.puzzle.flow, solutions: await Solutions.find([f.puzzle.flow]) }),
-        }),
-    })
+    if (!after.modePlay) throw new Error('failed to setup test')
+    const afterFlow = ModePlay.toFlow(after.modePlay, f.puzzle.flow)
 
     expect(ScreenPlayPuzzleSpace.toStatus(before)).toBe('solving')
     expect(ScreenPlayPuzzleSpace.toStatus(after)).toBe('solved')

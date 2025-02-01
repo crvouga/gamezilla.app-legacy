@@ -1,4 +1,5 @@
 import { cn } from '../cn'
+import { DynamicElement } from '../dynamic-element'
 
 export const PAGINATION_DOTS_TEST_ID = 'pagination-dots'
 
@@ -15,10 +16,11 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
       data-testid={PAGINATION_DOTS_TEST_ID}
     >
       {Array.from({ length: input.count }, (_, i) => {
-        const Element = input.onClick ? 'button' : 'div'
+        const element = input.onClick ? 'button' : 'div'
         return (
-          <button
+          <DynamicElement
             key={i}
+            element={element}
             className={cn(
               'size-2 rounded-full',
               i === input.activeIndex ? 'bg-white' : 'bg-neutral-500',

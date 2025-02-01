@@ -2,6 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
 import { preventConsoleErrorWhenClosingDrawer } from './drawer/drawer-shared'
+import { DynamicElement } from './dynamic-element'
 
 type Input = {
   className?: string
@@ -13,11 +14,12 @@ type Input = {
 }
 
 export const ListItemButton = (input: Input) => {
-  const Element = input.onClick ? 'button' : 'div'
+  const element = input.onClick ? 'button' : 'div'
   return (
-    <button
-      type={Element === 'button' ? 'button' : undefined}
-      role={Element === 'button' ? 'button' : undefined}
+    <DynamicElement
+      element={element}
+      type={element === 'button' ? 'button' : undefined}
+      role={element === 'button' ? 'button' : undefined}
       onClick={(event) => {
         preventConsoleErrorWhenClosingDrawer(event)
         input.onClick?.()
@@ -32,7 +34,7 @@ export const ListItemButton = (input: Input) => {
         {input.label}
       </div>
       {input.end && <div className='shrink-0'>{input.end()}</div>}
-    </button>
+    </DynamicElement>
   )
 }
 

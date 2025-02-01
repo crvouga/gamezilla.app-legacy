@@ -9,17 +9,17 @@ import { SaveChangesSpace } from './surface-save-changes/space'
 import { ModelSpace } from './types'
 
 const toStatus = (modelSpace: ModelSpace): 'solving' | 'solved' => {
-  return ModePlay.toStatus({ model: modelSpace.ModePlay, flow: toFlow(modelSpace) })
+  return ModePlay.toStatus({ model: modelSpace.modePlay, flow: toFlow(modelSpace) })
 }
 
 const toFlow = (modelSpace: ModelSpace): Variant.Model => {
   switch (modelSpace.mode.t) {
     case 'edit': {
-      return ModeEdit.toFlow({ model: modelSpace.ModeEdit })
+      return ModeEdit.toFlow(modelSpace.modeEdit)
     }
 
     case 'play': {
-      return ModePlay.toFlow({ flow: ModeEdit.toFlow({ model: modelSpace.ModeEdit }), model: modelSpace.ModePlay })
+      return ModePlay.toFlow(modelSpace.modePlay, ModeEdit.toFlow(modelSpace.modeEdit))
     }
   }
 }
@@ -39,12 +39,10 @@ const updateSpaceMain = ({
         return modelSpace
       }
 
-      const flow = ModeEdit.toFlowMemoized({
-        model: modelSpace.screenPuzzleBuilder.ModeEdit,
-      })
+      const flow = ModeEdit.toFlow(modelSpace.screenPuzzleBuilder.modeEdit)
 
       const updated = ModePlay.update({
-        model: modelSpace.screenPuzzleBuilder.ModePlay,
+        model: modelSpace.screenPuzzleBuilder.modePlay,
         msg: msgSpace.c,
         ctx: ModePlay.initCtx({ flow }),
       })
@@ -53,7 +51,7 @@ const updateSpaceMain = ({
         ...modelSpace,
         screenPuzzleBuilder: {
           ...modelSpace.screenPuzzleBuilder,
-          ModePlay: updated.model,
+          modePlay: updated.model,
         },
       }
     }
@@ -64,7 +62,7 @@ const updateSpaceMain = ({
       }
 
       const updated = ModeEdit.update({
-        model: modelSpace.screenPuzzleBuilder.ModeEdit,
+        model: modelSpace.screenPuzzleBuilder.modeEdit,
         msg: msgSpace.c,
         flow: modelSpace.screenPuzzleBuilder.puzzle.flow,
       })
@@ -73,7 +71,7 @@ const updateSpaceMain = ({
         ...modelSpace,
         screenPuzzleBuilder: {
           ...modelSpace.screenPuzzleBuilder,
-          ModeEdit: updated.model,
+          modeEdit: updated.model,
         },
       }
     }
@@ -103,7 +101,7 @@ const updateSpaceMain = ({
         return modelSpace
       }
       const initial = ModePlay.init({
-        ctx: ModePlay.initCtx({ flow: ModeEdit.toFlowMemoized({ model: modelSpace.screenPuzzleBuilder.ModeEdit }) }),
+        ctx: ModePlay.initCtx({ flow: ModeEdit.toFlow(modelSpace.screenPuzzleBuilder.modeEdit) }),
       })
       return {
         ...modelSpace,
@@ -112,7 +110,7 @@ const updateSpaceMain = ({
           mode: {
             t: 'play',
           },
-          ModePlay: initial,
+          modePlay: initial,
         },
       }
     }

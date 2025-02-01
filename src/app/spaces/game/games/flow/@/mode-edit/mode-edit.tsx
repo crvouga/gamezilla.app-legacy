@@ -1,10 +1,10 @@
 import { eq } from '~/@/equals/equals'
-import { memoize } from '~/@/function/memoize'
 import { History } from '~/@/history'
 import { p } from '~/@/parser'
 import { IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/@/ui'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
@@ -16,7 +16,6 @@ import * as FlowUI from '../ui/color'
 import { VariantBoard } from '../variant'
 import * as FlowVariant from '../variant/variant'
 import * as FlowVariantDimensions from '../variant/variant-dimensions'
-import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 
 //
 //
@@ -277,7 +276,7 @@ const canSubmitDimensionsForm = (model: Model): boolean => {
 }
 
 const resetDimensionsForm = (model: Model): Model => {
-  const flow = toFlowMemoized({ model })
+  const flow = toFlow(model)
   return {
     ...model,
     dimensions: FlowVariantDimensions.init(flow),
@@ -425,21 +424,13 @@ export const removeIncompleteTerminals = (draftTerminals: DraftTerminals): Flow.
   return terminalsByGroupId
 }
 
-export const toFlow = ({ model }: { model: Model }): FlowVariant.Model => {
+export const toFlow = (model: Model): FlowVariant.Model => {
   const form = History.present(model.form)
   return FlowVariant.init({
     dimensions: model.dimensions,
     terminalsByGroupId: form.terminalsByGroupId,
   })
 }
-
-export const toFlowMemoized = memoize({
-  func: toFlow,
-  toKey(input) {
-    return JSON.stringify(History.present(input.model.form))
-  },
-  cacheCapacity: 100,
-})
 
 //
 //
@@ -499,7 +490,7 @@ export const View = (input: {
             <ViewStatus {...input} />
 
             <VariantBoard.View
-              model={toFlow(input)}
+              model={toFlow(input.model)}
               onDraggedOver={(nodeId) => input.dispatch({ t: 'dragged-over', nodeId })}
               onPressDown={(nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId })}
               onPressUp={(nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId })}

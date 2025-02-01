@@ -64,10 +64,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const flow = UseHint.toFlow({
-      flow: f.ctx.flow,
-      model: after.model,
-    })
+    const flow = UseHint.toFlow(after.model, f.ctx.flow)
     for (const groupId of UseHint.toShowingHintGroupIds(after.model)) {
       expect(Flow.isTerminalConnectedWithPipes(flow, groupId)).toBe(true)
     }
@@ -96,10 +93,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const flow = UseHint.toFlow({
-      flow: f.ctx.flow,
-      model: output.model,
-    })
+    const flow = UseHint.toFlow(output.model, f.ctx.flow)
     expect(Flow.isSolved(flow)).toBe(true)
   })
 
@@ -175,10 +169,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const derived = UseHint.toFlow({
-      flow: f.ctx.flow,
-      model: output.model,
-    })
+    const derived = UseHint.toFlow(output.model, f.ctx.flow)
 
     expect(Flow.hasMultipleDeadEndPipelines(derived)).toBe(false)
   })
@@ -212,10 +203,7 @@ describe(import.meta.file, () => {
       ],
     )
 
-    const derived = UseHint.toFlow({
-      flow: f.ctx.flow,
-      model: output.model,
-    })
+    const derived = UseHint.toFlow(output.model, f.ctx.flow)
 
     const pipeline = Flow.toPipelineFromGroupId(derived, 'A')
 
@@ -254,10 +242,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const after = UseHint.toFlow({
-      flow: f.ctx.flow,
-      model: updated.model,
-    })
+    const after = UseHint.toFlow(updated.model, f.ctx.flow)
     expect(Flow.toPipelineFromGroupId(before, 'A').length).toEqual(0)
     expect(Flow.toPipelineFromGroupId(before, 'B').length).toEqual(6)
     expect(Flow.toPipelineFromGroupId(after, 'A').length).toEqual(4)
@@ -292,10 +277,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const after = UseHint.toFlow({
-      flow: f.ctx.flow,
-      model: updated.model,
-    })
+    const after = UseHint.toFlow(updated.model, f.ctx.flow)
     expect(Flow.hasBranchingPipelines(after)).toBe(false)
   })
 
@@ -345,15 +327,9 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const before = UseHint.toFlow({
-      flow: f.ctx.flow,
-      model: init,
-    })
+    const before = UseHint.toFlow(init, f.ctx.flow)
 
-    const after = UseHint.toFlow({
-      flow: f.ctx.flow,
-      model: output.model,
-    })
+    const after = UseHint.toFlow(output.model, f.ctx.flow)
 
     expect(Flow.toTerminals(before)).toEqual(Flow.toTerminals(after))
   })
@@ -378,10 +354,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const flowNew = UseHint.toFlow({
-      flow: ctxFlow,
-      model: output.model,
-    })
+    const flowNew = UseHint.toFlow(output.model, ctxFlow)
 
     const expected = Flow.toPipelineFromGroupId(solution, 'A')
     const actual = Flow.toPipelineFromGroupId(flowNew, 'A')

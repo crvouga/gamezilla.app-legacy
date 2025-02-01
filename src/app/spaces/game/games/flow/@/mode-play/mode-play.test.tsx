@@ -50,15 +50,9 @@ describe(import.meta.file, () => {
       flow,
     })
 
-    const before = ModePlay.toFlow({
-      flow,
-      model: f.init,
-    })
+    const before = ModePlay.toFlow(f.init, f.flow)
 
-    const after = ModePlay.toFlow({
-      flow,
-      model: f.update(f.init, msgs).model,
-    })
+    const after = ModePlay.toFlow(f.update(f.init, msgs).model, f.flow)
 
     expect(Flow.isSolved(before)).toBe(false)
     expect(Flow.isSolved(after)).toBe(true)
@@ -339,10 +333,7 @@ describe(import.meta.file, () => {
       },
     ]).model
 
-    const flowNew = ModePlay.toFlow({
-      flow,
-      model,
-    })
+    const flowNew = ModePlay.toFlow(model, flow)
 
     expect(Flow.isSolved(flowNew)).toBe(true)
   })
@@ -404,14 +395,8 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const before = ModePlay.toFlow({
-      flow: f.flow,
-      model: f.init,
-    })
-    const after = ModePlay.toFlow({
-      flow: f.flow,
-      model: output.model,
-    })
+    const before = ModePlay.toFlow(f.init, f.flow)
+    const after = ModePlay.toFlow(output.model, f.flow)
 
     expect(Flow.isPipesEmpty(before)).toBe(false)
     expect(Flow.isPipesEmpty(after)).toBe(true)

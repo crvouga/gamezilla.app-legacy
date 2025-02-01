@@ -74,7 +74,7 @@ export const init = (input: { ctx: Ctx }): Model => {
 }
 
 export const toStatus = (input: { flow: Variant.Model; model: Model }) => {
-  const flow = toFlow(input)
+  const flow = toFlow(input.model, input.flow)
 
   if (input.model.status.t === 'dragging') {
     const terminal = Flow.toTerminalByGroupId(flow, input.model.status.activeGroupId)
@@ -387,10 +387,7 @@ const updateMain: typeof update = ({ model, ctx, msg }) => {
 const updateIdle: typeof update = ({ msg, model, ctx }) => {
   switch (msg.t) {
     case 'user-pressed-down-node': {
-      const current = toFlow({
-        model,
-        flow: ctx.flow,
-      })
+      const current = toFlow(model, ctx.flow)
 
       const groupId = Flow.toGroupId(current, msg.nodeId)
 
@@ -437,10 +434,7 @@ const updateDragging = ({
 } => {
   switch (msg.t) {
     case 'user-dragged-over-node': {
-      const current = toFlow({
-        model,
-        flow: ctx.flow,
-      })
+      const current = toFlow(model, ctx.flow)
 
       const drew = AlgoDrawPipes.drawPipes(current, modelStatus.activeGroupId, msg.nodeId)
 
@@ -457,10 +451,7 @@ const updateDragging = ({
     }
 
     case 'user-pressed-up-node': {
-      const current = toFlow({
-        model,
-        flow: ctx.flow,
-      })
+      const current = toFlow(model, ctx.flow)
       const modelNew: Model = {
         ...model,
         status: {
@@ -504,10 +495,7 @@ const updateDragging = ({
     }
 
     case 'user-dragging-left': {
-      const current = toFlow({
-        flow: ctx.flow,
-        model,
-      })
+      const current = toFlow(model, ctx.flow)
       const isSolved = Flow.isSolved(current)
 
       const terminal = Flow.toTerminalByGroupId(current, modelStatus.activeGroupId)
@@ -532,11 +520,11 @@ const updateDragging = ({
   }
 }
 
-export const toFlow = (input: { flow: Variant.Model; model: Model }): Variant.Model => {
-  const derived = UseHint.toFlow(input)
+export const toFlow = (model: Model, flow: Variant.Model): Variant.Model => {
+  const derived = UseHint.toFlow(model, flow)
   return {
     ...derived,
-    terminalsByGroupId: input.model.terminalsByGroupId,
+    terminalsByGroupId: model.terminalsByGroupId,
   }
 }
 
@@ -555,7 +543,7 @@ export const View = (input: {
   disabled?: boolean
   showSolvedAnimation?: boolean
 }) => {
-  const flow = toFlow(input)
+  const flow = toFlow(input.model, input.flow)
 
   return (
     <div className='relative aspect-square h-full max-h-full w-full touch-none select-none overflow-hidden'>
@@ -592,10 +580,7 @@ export const viewResetAction = (input: {
     t: Translator
   }
 }): ScreenAction => {
-  const flow = toFlow({
-    model: input.model,
-    flow: input.flow,
-  })
+  const flow = toFlow(input.model, input.flow)
   const disabled = Flow.isPipesEmpty(flow)
   return PrebuiltBottomButtons.reset({
     ctx: input.ctx,

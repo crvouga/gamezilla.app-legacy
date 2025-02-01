@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { p } from '~/@/parser'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { IconLightbulb } from '~/@/ui'
+import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { Flow } from '../../flow'
 import { GroupId } from '../../flow/group-id'
@@ -68,7 +68,7 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
     case 'user-clicked-use-hint': {
       const msg = input.msg as Msg
 
-      const flow = toFlow({ flow: input.ctx.flow, model: input.model })
+      const flow = toFlow(input.model, input.ctx.flow)
 
       const nextHintGroupId = toNextHintGroupId(flow)
 
@@ -110,10 +110,7 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
         },
       }
 
-      const flowNew = toFlow({
-        flow,
-        model: modelNew,
-      })
+      const flowNew = toFlow(modelNew, input.ctx.flow)
 
       if (Flow.isSolved(flowNew)) {
         return {
@@ -181,11 +178,11 @@ export const toUsedHints = (
   return model.usedHints
 }
 
-export const toFlow = (input: { model: Model; flow: Variant.Model }): Variant.Model => {
+export const toFlow = (model: Model, flow: Variant.Model): Variant.Model => {
   return {
-    ...input.flow,
-    pipesBySourceId: input.model.pipesBySourceId,
-    terminalsByGroupId: input.model.terminalsByGroupId,
+    ...flow,
+    pipesBySourceId: model.pipesBySourceId,
+    terminalsByGroupId: model.terminalsByGroupId,
   }
 }
 
@@ -202,7 +199,7 @@ export const viewUseHintAction = (input: {
     icon: (input) => <IconLightbulb {...input} />,
     label: input.ctx.t('game.hint'),
     onClick: () => {
-      const flow = toFlow({ flow: input.ctx.flow, model: input.model })
+      const flow = toFlow(input.model, input.ctx.flow)
       const hash = FlowHash.init(flow)
       const solutions = Solutions.limit(input.ctx.solutions, hash)
       input.dispatch({ t: 'user-clicked-use-hint', solutions })

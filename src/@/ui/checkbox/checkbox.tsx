@@ -1,31 +1,33 @@
 import { cn } from '../cn'
+import { DynamicElement } from '../dynamic-element'
 
 export type CheckboxState = 'checked' | 'unchecked' | 'indeterminate'
 
 export const Checkbox = (input: { state: CheckboxState; onChange?: (checked: boolean) => void }) => {
-  const Element = input.onChange ? 'button' : 'div'
+  const element = input.onChange ? 'button' : 'div'
   const isChecked = input.state === 'checked'
   return (
-    <button
+    <DynamicElement
+      element={element}
       className={cn(
         'flex size-6 items-center justify-center rounded border-2 border-neutral-500 text-xl font-black text-neutral-800',
         input.state !== 'unchecked' && 'border-neutral-100 bg-neutral-100',
       )}
       role='checkbox'
       aria-checked={input.state === 'checked'}
-      tabIndex={Element === 'button' ? 0 : undefined}
+      tabIndex={element === 'button' ? 0 : undefined}
       onClick={() => {
         input.onChange?.(!isChecked)
       }}
       onKeyDown={(e) => {
-        if (Element === 'button' && e.key === 'Enter') {
+        if (element === 'button' && e.key === 'Enter') {
           e.preventDefault()
           input.onChange?.(!isChecked)
         }
       }}
     >
       {toCheckboxText(input.state)}
-    </button>
+    </DynamicElement>
   )
 }
 

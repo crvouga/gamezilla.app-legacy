@@ -18,7 +18,7 @@ export type DrawerInput = PrivateDrawerInput & {
 }
 
 export const preventConsoleErrorWhenClosingDrawer = (event: {
-  currentTarget?: HTMLDivElement | HTMLButtonElement | null
+  currentTarget?: HTMLDivElement | HTMLButtonElement | HTMLFormElement | null
 }) => {
   event.currentTarget?.blur()
 }

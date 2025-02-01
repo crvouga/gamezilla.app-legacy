@@ -57,8 +57,8 @@ export const ModelSpace = p.obj({
   t: p.l('puzzle-builder'),
   puzzle: Puzzle,
   mode: Mode,
-  ModePlay: ModePlay.Model,
-  ModeEdit: ModeEdit.Model,
+  modePlay: ModePlay.Model,
+  modeEdit: ModeEdit.Model,
 })
 export type ModelSpace = p.Infer<typeof ModelSpace>
 

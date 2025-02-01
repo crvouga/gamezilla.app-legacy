@@ -23,10 +23,10 @@ updates.push(({ modelSpace, msgSpace }) => {
         },
         screenPuzzleBuilder: {
           t: 'puzzle-builder',
-          ModeEdit: ModeEdit.init({
+          modeEdit: ModeEdit.init({
             flow: msgSpace.puzzle.flow,
           }),
-          ModePlay: ModePlay.init({
+          modePlay: ModePlay.init({
             ctx: ModePlay.initCtx({
               flow: msgSpace.puzzle.flow,
             }),

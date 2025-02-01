@@ -1,9 +1,9 @@
 import { Drawer, DrawerHeader } from '~/@/ui'
+import { DynamicElement } from '~/@/ui/dynamic-element'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
-  const Element = props.form ? 'form' : 'div'
   return (
     <Drawer
       id='surface-layout'
@@ -13,7 +13,8 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
       ctx={props.ctx}
       ariaLabel={props.ariaLabel}
     >
-      <form
+      <DynamicElement
+        element='form'
         onSubmit={(e) => {
           e.preventDefault()
           props.form?.onSubmit?.()
@@ -41,7 +42,7 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
             cancelDisabled={props.form?.cancelDisabled ?? false}
           />
         )}
-      </form>
+      </DynamicElement>
     </Drawer>
   )
 }

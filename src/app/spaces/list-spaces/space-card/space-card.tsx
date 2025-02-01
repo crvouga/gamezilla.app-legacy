@@ -7,6 +7,7 @@ import { SpaceState } from '../../core/space-state'
 import { SPACE_CARD_GRADIENT_CLASS_NAME } from './space-card-gradient'
 import { Profile } from '~/app/@/data/profile'
 import { GameName } from '../../game/games/@/game-name'
+import { DynamicElement } from '~/@/ui/dynamic-element'
 
 const MAX_AVATAR_COUNT = 3
 
@@ -32,10 +33,10 @@ export const ViewSpaceCard = (input: { ctx: BaseFrontendCtx; state: SpaceState.S
 }
 
 const ViewRoot = (input: { onClick?: () => void; children: React.ReactNode }) => {
-  const Element = typeof input.onClick === 'function' ? 'button' : 'div'
   return (
-    <button
-      type={Element === 'button' ? 'button' : undefined}
+    <DynamicElement
+      element={typeof input.onClick === 'function' ? 'button' : 'div'}
+      type={typeof input.onClick === 'function' ? 'button' : undefined}
       onClick={input.onClick}
       disabled={!input.onClick}
       className={cn(
@@ -45,7 +46,7 @@ const ViewRoot = (input: { onClick?: () => void; children: React.ReactNode }) =>
       )}
     >
       {input.children}
-    </button>
+    </DynamicElement>
   )
 }
 

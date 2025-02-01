@@ -1,13 +1,14 @@
 import { Dialog, DialogHeader, DialogSurface } from '~/@/ui'
+import { DynamicElement } from '~/@/ui/dynamic-element'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
-  const Element = props.form ? 'form' : 'div'
   return (
     <Dialog open={props.open ?? false} onClose={props.onClose ?? (() => {})}>
       <DialogSurface>
-        <form
+        <DynamicElement
+          element='form'
           onSubmit={(e) => {
             e.preventDefault()
             props.form?.onSubmit?.()
@@ -29,7 +30,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
               cancelDisabled={props.form?.cancelDisabled ?? false}
             />
           )}
-        </form>
+        </DynamicElement>
       </DialogSurface>
     </Dialog>
   )

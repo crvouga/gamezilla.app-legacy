@@ -35,7 +35,7 @@ const updateExitBuilder: FrontendModule['update'] = (input) => {
 
       if (
         ModeEdit.isUnsavedChanges(
-          input.modelSpace.screenPuzzleBuilder.ModeEdit,
+          input.modelSpace.screenPuzzleBuilder.modeEdit,
           input.modelSpace.screenPuzzleBuilder.puzzle.flow,
         )
       ) {
@@ -164,9 +164,7 @@ const saveChanges: FrontendModule['update'] = (input) => {
     ...puzzleBuilder.puzzle,
     lastUpdatedAt: input.ctx.now,
     lastUpdatedBy: input.ctx.currentUserId,
-    flow: ModeEdit.toFlowMemoized({
-      model: puzzleBuilder.ModeEdit,
-    }),
+    flow: ModeEdit.toFlow(puzzleBuilder.modeEdit),
   }
 
   return {

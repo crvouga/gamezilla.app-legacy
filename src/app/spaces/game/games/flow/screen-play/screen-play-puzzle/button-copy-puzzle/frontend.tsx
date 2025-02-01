@@ -29,10 +29,7 @@ export const update: FrontendModule['update'] = (input) => {
           ctx: ModePlay.initCtx({ flow: input.modelSpace.screen.puzzleResult.c.flow, solutions: input.ctx.solutions }),
         })
 
-      const flow = ModePlay.toFlow({
-        flow: input.modelSpace.screen.puzzleResult.c.flow,
-        model: modePlay,
-      })
+      const flow = ModePlay.toFlow(modePlay, input.modelSpace.screen.puzzleResult.c.flow)
 
       if (flow.t !== 'flow-grid') {
         return {
