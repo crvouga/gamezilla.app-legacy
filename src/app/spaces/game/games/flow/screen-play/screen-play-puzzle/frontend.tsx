@@ -9,7 +9,7 @@ import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../@/ui/game-layout'
 import { ProfileListItem } from '../../../@/ui/list-item-profile'
-import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
+import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { ModePlay } from '../../@/mode-play'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { FrontendModule } from '../types'
@@ -176,7 +176,7 @@ const View: FrontendModule['View'] = (input) => {
                 }),
             },
             actions: [
-              PrebuiltBottomButtons.next({
+              PrebuiltActions.next({
                 ...input,
                 disabled: puzzleIndex >= input.modelSpace.screen.pack.puzzleIds.length - 1,
                 hidden: !isSolved && puzzle.t !== 'not-found',
@@ -201,7 +201,7 @@ const View: FrontendModule['View'] = (input) => {
                   })
                 : null,
 
-              PrebuiltBottomButtons.reset({
+              PrebuiltActions.reset({
                 ...input,
                 hidden: puzzle.t === 'not-found',
                 onClick: () =>

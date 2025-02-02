@@ -204,8 +204,7 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
         },
         t: 'uniform',
         actions: [
-          ...SaveChangesFrontend.viewBottomButtons({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
-
+          ...SaveChangesFrontend.viewActions({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
           {
             icon: (input) => <IconPen {...input} />,
             label: input.ctx.t('app.edit-name'),

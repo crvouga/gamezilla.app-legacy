@@ -5,7 +5,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { IconCheckmark, Transition } from '~/@/ui'
 import { APP_SOUND, AppFrontendCmd, playSound, showToast } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
-import { PrebuiltBottomButtons } from '../../../@/ui/prebuilt-bottom-buttons'
+import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { Flow } from '../flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
@@ -582,7 +582,7 @@ export const viewResetAction = (input: {
 }): ScreenAction => {
   const flow = toFlow(input.model, input.flow)
   const disabled = Flow.isPipesEmpty(flow)
-  return PrebuiltBottomButtons.reset({
+  return PrebuiltActions.reset({
     ctx: input.ctx,
     onClick: () => input.dispatch({ t: 'user-clicked-reset' }),
     disabled,

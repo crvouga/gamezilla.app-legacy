@@ -20,7 +20,7 @@ export type SurfaceLayoutProps = {
     render?: () => VDom
   }
   form?: {
-    variant?: 'danger'
+    variant?: 'danger' | 'default'
     onSubmit: () => void
     cancelText: TranslatedText
     submitText: TranslatedText

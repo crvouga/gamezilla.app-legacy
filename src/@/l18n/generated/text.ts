@@ -15,7 +15,7 @@ import type { Text as Text12 } from '../../../app/spaces/game/games/connect-four
 import type { Text as Text13 } from '../../../app/spaces/game/games/chess/@/chess.$l18n'
 import type { Text as Text14 } from '../../../app/spaces/game/games/chess/@/chess-bot-level/chess-bot-level.$l18n'
 import type { Text as Text15 } from '../../../app/spaces/game/games/@/game-name/$l18n'
-import type { Text as Text16 } from '../../../app/spaces/game/games/@/ui/prebuilt-bottom-buttons/$l18n'
+import type { Text as Text16 } from '../../../app/spaces/game/games/@/ui/prebuilt-actions/$l18n'
 import type { Text as Text17 } from '../../../app/spaces/game/games/@/ui/section-people-list/$l18n'
 import type { Text as Text18 } from '../../../app/spaces/game/games/@/ui/game-main-menu/$l18n'
 import type { Text as Text19 } from '../../../app/spaces/game/games/@/ui/game-layout/$l18n'

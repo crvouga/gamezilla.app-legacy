@@ -9,7 +9,7 @@ export const CancelSubmitButtons = (input: {
   submitText: TranslatedText
   submitLoading?: boolean
   submitDisabled?: boolean
-  variant?: 'danger'
+  variant?: 'danger' | 'default'
   size?: ButtonInput['size']
 }) => {
   return (

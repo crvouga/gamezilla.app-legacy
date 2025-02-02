@@ -230,7 +230,7 @@ const updateDbSavedPuzzle: FrontendModule['update'] = (input) => {
 //
 //
 
-export const viewBottomButtons = ({
+export const viewActions = ({
   model,
   dispatch,
   ctx,
@@ -278,7 +278,7 @@ const ViewSurface: FrontendModule['View'] = (input) => {
 }
 
 export const SaveChangesFrontend = {
-  viewBottomButtons,
+  viewActions,
   update,
   ViewSurface,
 }
