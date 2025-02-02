@@ -124,17 +124,17 @@ const View: SpaceFrontendModule['View'] = (input) => {
       }}
       renderBody={() => (
         <div className='flex w-full flex-col gap-6'>
-          <section className='flex w-full flex-col gap-6 py-3'>
-            <SectionTitle text={input.ctx.t('spaces.game')} />
-            {spaceState.game && (
+          {spaceState.game && (
+            <section className='flex w-full flex-col gap-6 py-3'>
+              <SectionTitle text={input.ctx.t('spaces.game')} />
               <div className='flex w-fit flex-row items-center gap-4 px-6'>
                 <div className='aspect-square size-20 overflow-hidden rounded border'>
                   <GameCoverArt gameName={spaceState.game?.t ?? null} />
                 </div>
                 <Typography variant='label' sizeClassName='text-lg' text={input.ctx.t(spaceState.game.t)} />
               </div>
-            )}
-          </section>
+            </section>
+          )}
 
           <SectionPeopleList
             ctx={spaceCtx}
