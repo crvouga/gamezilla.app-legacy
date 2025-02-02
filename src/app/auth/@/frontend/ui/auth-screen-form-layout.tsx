@@ -21,7 +21,14 @@ export const AuthScreenFormLayout = (input: {
   onSubmit: () => void
 }) => {
   return (
-    <AuthScreenLayout ctx={input.ctx}>
+    <AuthScreenLayout
+      ctx={input.ctx}
+      navBar={{
+        onBack: input.onBack,
+        title: input.title,
+      }}
+      center={false}
+    >
       <AuthScreenHeader ctx={input.ctx} title={input.title} onBack={input.onBack} />
       <form
         className='flex w-full flex-col gap-16 pt-4'

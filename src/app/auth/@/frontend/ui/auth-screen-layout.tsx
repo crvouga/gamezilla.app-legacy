@@ -1,6 +1,7 @@
 import { Translator } from '~/@/l18n/generated'
 import { cn } from '~/@/ui'
 import { VDom } from '~/@/vdom/vdom'
+import { NavBarProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 
 export const AuthScreenLayout = (input: {
@@ -8,13 +9,12 @@ export const AuthScreenLayout = (input: {
     t: Translator
     screenSize: ScreenSize
   }
-  center?: boolean
   children: VDom
+  center: boolean
+  navBar: NavBarProps | null
 }) => {
-  const center = input.center || input.ctx.screenSize === 'tablet'
-  const paddingTop = center ? 'pt-36' : ''
   return (
-    <div className={cn('flex flex-col items-center justify-center', paddingTop)}>
+    <div className={cn('flex h-full flex-col items-center', input.center ? 'justify-center' : 'justify-start')}>
       <div className='flex w-full max-w-xl flex-col items-center justify-center gap-4 p-6'>{input.children}</div>
     </div>
   )

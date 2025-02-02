@@ -42,7 +42,7 @@ export type ScreenLayoutProps = {
     screenSize: ScreenSize
   }
   parentScreen: ParentScreenProps | null
-  navBar?: NavBarProps
+  navBar?: NavBarProps | null
   actionBar?: ScreenLayoutActionBarProps | null
   renderMiniPlayer?: (input: { key: string }) => VDom
   renderBody: () => VDom
