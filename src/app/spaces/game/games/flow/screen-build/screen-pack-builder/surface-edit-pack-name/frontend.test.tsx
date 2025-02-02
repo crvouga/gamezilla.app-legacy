@@ -27,9 +27,7 @@ describe(import.meta.file, () => {
     const r = f.render(
       <EditPackNameFrontend.ViewSurface {...f} modelSpace={{ ...f.modelSpace, opened: 'edit-pack-name-drawer' }} />,
     )
-    const closeButton = r
-      .getByRole('dialog', f.ctx.t('app.edit-name'))[0]
-      ?.getByRole('button', f.ctx.t('drawer.close'))[0]
+    const closeButton = r.getByRole('dialog', f.ctx.t('app.edit-name'))[0]?.getByRole('button', f.ctx.t('app.close'))[0]
     await closeButton?.click()
     expect(f.renderMsgs[0]).toEqual({
       t: 'got-msg-space',
