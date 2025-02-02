@@ -1,9 +1,9 @@
 import { Dialog } from '~/@/ui'
-import { DialogSurface } from '~/@/ui/dialog/dialog-surface'
+import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { DynamicElement } from '~/@/ui/dynamic-element'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
-import { SurfaceBodyText } from '../body-text'
-import { SurfaceHeader } from '../header'
+import { SurfaceBodyText } from '../../../../../@/ui/surface/surface-body-text'
+import { SurfaceHeader } from '../../../../../@/ui/surface/surface-header'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {

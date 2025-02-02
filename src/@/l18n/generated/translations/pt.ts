@@ -160,6 +160,7 @@ export const translations: Text = {
   'flow.puzzle-removed': 'Quebra-cabeça removido',
   'flow.puzzle-added': 'Quebra-cabeça adicionado',
   'flow.remove-from-pack': 'Remover do pacote',
+  'flow.you-have-completed-the-pack': 'Você completou o pacote!',
   'flow.copy-puzzle-to-clipboard': 'Copiar quebra-cabeça para a área de transferência',
   'flow.select-a-pack': 'Selecione um pacote',
   'flow.flow': 'Fluxo',

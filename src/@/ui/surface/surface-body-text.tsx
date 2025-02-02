@@ -1,6 +1,11 @@
 import { TranslatedText } from '~/@/l18n'
 import { Typography } from '~/@/ui/typography'
+import { SurfaceBody } from './surface-body'
 
 export const SurfaceBodyText = (input: { text: TranslatedText }) => {
-  return <Typography className='px-6 py-3 text-left' variant='body' text={input.text} />
+  return (
+    <SurfaceBody>
+      <Typography variant='body' text={input.text} />
+    </SurfaceBody>
+  )
 }

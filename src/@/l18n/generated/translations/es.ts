@@ -161,6 +161,7 @@ export const translations: Text = {
   'flow.puzzle-removed': 'Rompecabezas eliminado',
   'flow.puzzle-added': 'Rompecabezas añadido',
   'flow.remove-from-pack': 'Eliminar del paquete',
+  'flow.you-have-completed-the-pack': '¡Has completado el paquete!',
   'flow.copy-puzzle-to-clipboard': 'Copiar rompecabezas al portapapeles',
   'flow.select-a-pack': 'Seleccionar un paquete',
   'flow.flow': 'Flujo',

@@ -159,6 +159,7 @@ export const translations: Text = {
   'flow.puzzle-removed': '퍼즐이 제거되었습니다',
   'flow.puzzle-added': '퍼즐이 추가되었습니다',
   'flow.remove-from-pack': '팩에서 제거',
+  'flow.you-have-completed-the-pack': '팩을 완료했습니다!',
   'flow.copy-puzzle-to-clipboard': '퍼즐을 클립 보드로 복사',
   'flow.select-a-pack': '팩 선택',
   'flow.flow': '흐름',

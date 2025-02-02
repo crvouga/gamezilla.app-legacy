@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Button, ButtonInput } from '~/@/ui/button'
-import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/drawer/drawer-shared'
+import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/surface-drawer/drawer-shared'
 
 export const CancelSubmitButtons = (input: {
   onCancel: () => void

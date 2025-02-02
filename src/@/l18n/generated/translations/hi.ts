@@ -163,6 +163,7 @@ export const translations: Text = {
   'flow.puzzle-removed': 'पहेली हटा दी गई',
   'flow.puzzle-added': 'पहेली जोड़ी गई',
   'flow.remove-from-pack': 'पैक से हटाएं',
+  'flow.you-have-completed-the-pack': 'आपने पैक पूरा कर लिया है!',
   'flow.copy-puzzle-to-clipboard': 'क्लिपबोर्ड पर पहेली कॉपी करें',
   'flow.select-a-pack': 'पैक चुनें',
   'flow.flow': 'फ्लो',

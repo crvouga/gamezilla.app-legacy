@@ -163,6 +163,7 @@ export const translations: Text = {
   'flow.puzzle-removed': 'Головоломка удалена',
   'flow.puzzle-added': 'Головоломка добавлена',
   'flow.remove-from-pack': 'Удалить из пакета',
+  'flow.you-have-completed-the-pack': 'Вы завершили пакет!',
   'flow.copy-puzzle-to-clipboard': 'Скопировать головоломку в буфер обмена',
   'flow.select-a-pack': 'Выберите пакет',
   'flow.flow': 'Поток',

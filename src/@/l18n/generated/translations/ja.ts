@@ -161,6 +161,7 @@ export const translations: Text = {
   'flow.puzzle-removed': 'パズルが削除されました',
   'flow.puzzle-added': 'パズルが追加されました',
   'flow.remove-from-pack': 'パックから削除',
+  'flow.you-have-completed-the-pack': 'パックを完了しました！',
   'flow.copy-puzzle-to-clipboard': 'パズルをクリップボードにコピー',
   'flow.select-a-pack': 'パックを選択',
   'flow.flow': 'フロー',

@@ -1,8 +1,9 @@
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { Button, Dialog } from '~/@/ui'
-import { DialogHeader } from '~/@/ui/dialog/dialog-header'
-import { DialogSurface } from '~/@/ui/dialog/dialog-surface'
+import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
+import { SurfaceActions } from '~/@/ui/surface/surface-actions'
+import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -275,6 +276,16 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
 
   const isSolvedPuzzleDialogOpen = isSolved && input.modelSpace.screen.opened === 'puzzle-complete'
 
+  const onClose = () => {
+    input.dispatch({
+      t: 'got-msg-space',
+      c: {
+        t: 'user-closed-puzzle-complete-dialog',
+        userId: input.ctx.currentUserId,
+      },
+    })
+  }
+
   return isLastPuzzle ? (
     <LastPuzzleFrontend.View
       delay={CHECKMARK_DURATION}
@@ -283,36 +294,27 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
       dispatch={(c) => input.dispatch(c)}
     />
   ) : (
-    <Dialog
-      delay={CHECKMARK_DURATION}
-      open={isSolvedPuzzleDialogOpen}
-      onClose={() =>
-        input.dispatch({
-          t: 'got-msg-space',
-          c: {
-            t: 'user-closed-puzzle-complete-dialog',
-            userId: input.ctx.currentUserId,
-          },
-        })
-      }
-    >
+    <Dialog delay={CHECKMARK_DURATION} open={isSolvedPuzzleDialogOpen} onClose={onClose}>
       <DialogSurface>
-        <DialogHeader ctx={input.ctx} title={input.ctx.t('flow.puzzle-completed')} />
+        <SurfaceHeader ctx={input.ctx} title={input.ctx.t('flow.puzzle-completed')} onClose={onClose} />
 
-        <Button
-          text={input.ctx.t('flow.next-puzzle')}
-          onClick={() =>
-            input.dispatch({
-              t: 'got-msg-space',
-              c: {
-                userId: input.ctx.currentUserId,
-                t: 'user-clicked-next-puzzle',
-                nextPuzzle: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' },
-                nextPuzzleIndex,
-              },
-            })
-          }
-        />
+        <SurfaceActions>
+          <Button
+            text={input.ctx.t('flow.next-puzzle')}
+            className='w-full'
+            onClick={() =>
+              input.dispatch({
+                t: 'got-msg-space',
+                c: {
+                  userId: input.ctx.currentUserId,
+                  t: 'user-clicked-next-puzzle',
+                  nextPuzzle: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' },
+                  nextPuzzleIndex,
+                },
+              })
+            }
+          />
+        </SurfaceActions>
       </DialogSurface>
     </Dialog>
   )

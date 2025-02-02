@@ -161,6 +161,7 @@ export const translations: Text = {
   'flow.puzzle-removed': 'تمت إزالة اللغز',
   'flow.puzzle-added': 'تمت إضافة اللغز',
   'flow.remove-from-pack': 'إزالة من الحزمة',
+  'flow.you-have-completed-the-pack': 'لقد أكملت الحزمة!',
   'flow.copy-puzzle-to-clipboard': 'نسخ اللغز إلى الحافظة',
   'flow.select-a-pack': 'اختر حزمة',
   'flow.flow': 'تدفق',

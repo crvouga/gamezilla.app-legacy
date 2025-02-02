@@ -159,6 +159,7 @@ export const translations: Text = {
   'flow.puzzle-removed': 'Puzzle rimosso',
   'flow.puzzle-added': 'Puzzle aggiunto',
   'flow.remove-from-pack': 'Rimuovi dal pacchetto',
+  'flow.you-have-completed-the-pack': 'Hai completato il pacchetto!',
   'flow.copy-puzzle-to-clipboard': 'Copia il puzzle negli appunti',
   'flow.select-a-pack': 'Seleziona un pacchetto',
   'flow.flow': 'Flusso',

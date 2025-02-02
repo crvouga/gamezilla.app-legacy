@@ -1,10 +1,12 @@
 import { TimeSpan } from '~/@/time/time-span'
-import { Button, Dialog } from '~/@/ui'
-import { DialogHeader } from '~/@/ui/dialog/dialog-header'
-import { DialogSurface } from '~/@/ui/dialog/dialog-surface'
+import { Button, Dialog, Typography } from '~/@/ui'
+import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
+import { SurfaceActions } from '~/@/ui/surface/surface-actions'
+import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { type AppFrontendCtx } from '~/app/@/frontend/ctx'
 import type { FrontendModule, MsgFrontend } from '../../types'
+import { SurfaceBody } from '~/@/ui/surface/surface-body'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -26,29 +28,34 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgFrontend) => void; ctx: AppFrontendCtx }) => {
-  return (
-    <Dialog
-      delay={TimeSpan.seconds(1)}
-      open={input.open}
-      onClose={() =>
-        input.dispatch({
-          t: 'got-msg-space',
-          c: { t: 'user-closed-puzzle-complete-dialog', userId: input.ctx.currentUserId },
-        })
-      }
-    >
-      <DialogSurface>
-        <DialogHeader ctx={input.ctx} title={input.ctx.t('app.congratulations')} />
+  const onClose = () => {
+    input.dispatch({
+      t: 'got-msg-space',
+      c: { t: 'user-closed-puzzle-complete-dialog', userId: input.ctx.currentUserId },
+    })
+  }
 
-        <Button
-          text={input.ctx.t('flow.select-next-pack')}
-          onClick={() =>
-            input.dispatch({
-              t: 'got-msg-space',
-              c: { t: 'user-clicked-select-next-pack', userId: input.ctx.currentUserId },
-            })
-          }
-        />
+  return (
+    <Dialog delay={TimeSpan.seconds(1)} open={input.open} onClose={onClose}>
+      <DialogSurface>
+        <SurfaceHeader ctx={input.ctx} title={input.ctx.t('app.congratulations')} onClose={onClose} />
+
+        <SurfaceBody>
+          <Typography text={input.ctx.t('flow.you-have-completed-the-pack')} />
+        </SurfaceBody>
+
+        <SurfaceActions>
+          <Button
+            className='w-full'
+            text={input.ctx.t('flow.select-next-pack')}
+            onClick={() =>
+              input.dispatch({
+                t: 'got-msg-space',
+                c: { t: 'user-clicked-select-next-pack', userId: input.ctx.currentUserId },
+              })
+            }
+          />
+        </SurfaceActions>
       </DialogSurface>
     </Dialog>
   )

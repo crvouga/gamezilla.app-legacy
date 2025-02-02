@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { type DrawerInput } from '~/@/ui/drawer'
+import { type DrawerInput } from '~/@/ui/surface-drawer'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 

@@ -1,8 +1,8 @@
 import { Drawer } from '~/@/ui'
 import { DynamicElement } from '~/@/ui/dynamic-element'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
-import { SurfaceBodyText } from '../body-text'
-import { SurfaceHeader } from '../header'
+import { SurfaceBodyText } from '../../../../../@/ui/surface/surface-body-text'
+import { SurfaceHeader } from '../../../../../@/ui/surface/surface-header'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {

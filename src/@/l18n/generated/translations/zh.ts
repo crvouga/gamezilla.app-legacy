@@ -158,6 +158,7 @@ export const translations: Text = {
   'flow.puzzle-removed': '拼图已删除',
   'flow.puzzle-added': '拼图已添加',
   'flow.remove-from-pack': '从包中删除',
+  'flow.you-have-completed-the-pack': '你已完成这个包！',
   'flow.copy-puzzle-to-clipboard': '将拼图复制到剪贴板',
   'flow.select-a-pack': '选择一个包',
   'flow.flow': '流',
