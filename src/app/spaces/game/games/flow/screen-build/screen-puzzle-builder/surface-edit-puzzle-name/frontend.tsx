@@ -3,6 +3,8 @@ import { Err, isErr, isLoading, isOk, Loading } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TextField } from '~/@/ui'
 import { SurfaceBody } from '~/@/ui/surface/surface-body'
+import { SurfaceHeader } from '~/@/ui/surface/surface-header'
+import { VDom } from '~/@/vdom/vdom'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
@@ -15,7 +17,6 @@ import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 import { PuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { FrontendModule } from '../../types'
 import { editNameValidationErrorToString, MsgFrontend, MsgToBackend } from './types'
-import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 
 const update: FrontendModule['update'] = (input) => {
   const { model } = input
@@ -27,7 +28,11 @@ const update: FrontendModule['update'] = (input) => {
   )
 }
 
-const View: FrontendModule['View'] = (input) => {
+const View = (
+  input: Parameters<FrontendModule['View']>[0] & {
+    anchor: VDom
+  },
+) => {
   return (
     <SurfaceLayout
       id='edit-name-drawer'
@@ -53,6 +58,7 @@ const View: FrontendModule['View'] = (input) => {
         submitLoading: isLoading(input.model.puzzleEditNameRequest),
         submitDisabled: input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name,
       }}
+      anchor={input.anchor}
       body={{
         render: () => (
           <SurfaceBody>

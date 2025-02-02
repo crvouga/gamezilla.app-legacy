@@ -6,7 +6,7 @@ type Alignment = 'ending' | 'starting' | 'centered'
 export const DropDown = (props: {
   open: boolean
   onClose: () => void
-  renderAnchor: () => VDom
+  renderReference: () => VDom
   renderFloating: () => VDom
   className?: string
   position?: Position
@@ -17,7 +17,7 @@ export const DropDown = (props: {
 
   return (
     <div className={`relative inline-block ${props.className ?? ''}`}>
-      <div onClick={() => !props.open && props.onClose()}>{props.renderAnchor()}</div>
+      <div onClick={() => !props.open && props.onClose()}>{props.renderReference()}</div>
 
       {props.open && <div className={toPositionClasses(position, alignment)}>{props.renderFloating()}</div>}
     </div>

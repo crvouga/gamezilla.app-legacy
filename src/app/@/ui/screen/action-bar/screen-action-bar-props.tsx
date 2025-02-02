@@ -17,6 +17,7 @@ export type ScreenAction = {
   hidden?: boolean
   badge?: number
   size?: 'sm' | 'md'
+  renderSurface?: (vDom: VDom) => VDom
 }
 
 export type ScreenActionsUniform = {

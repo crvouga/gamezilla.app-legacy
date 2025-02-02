@@ -51,12 +51,14 @@ const Toolbar = (input: { children: VDom }) => {
   )
 }
 
-const ActionButtonList = ({ actions }: { actions: (ScreenAction | null)[] }) => {
+const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
   return (
     <div className='flex w-full shrink-0 flex-col gap-2 overflow-hidden'>
-      {actions.map((action) => {
+      {input.actions.map((action) => {
         if (!action) return null
-        return <ScreenActionButton {...action} size={SIZE} key={action.label} />
+        const button = <ScreenActionButton {...action} size={SIZE} key={action.label} />
+        if (action.renderSurface) return action.renderSurface(button)
+        return button
       })}
     </div>
   )
