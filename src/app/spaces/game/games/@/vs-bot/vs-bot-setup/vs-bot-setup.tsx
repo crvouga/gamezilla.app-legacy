@@ -1,5 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Avatar, Button, IconQuestionMark, Typography } from '~/@/ui'
+import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
@@ -216,8 +217,8 @@ export const View = ({
           })
         }
         header={{
-          render: (props) => (
-            <props.SurfaceHeader title={ctx.t('game.change-bot')} onClose={() => dispatch({ t: 'closed-modal' })} />
+          render: () => (
+            <SurfaceHeader ctx={ctx} title={ctx.t('game.change-bot')} onClose={() => dispatch({ t: 'closed-modal' })} />
           ),
         }}
         body={{

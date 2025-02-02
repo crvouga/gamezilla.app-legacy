@@ -2,6 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Err, isErr, isLoading, isOk, Loading } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TextField } from '~/@/ui'
+import { SurfaceBody } from '~/@/ui/surface/surface-body'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
@@ -14,6 +15,7 @@ import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 import { PuzzleName } from '../../../@/puzzle/puzzle-name'
 import type { FrontendModule } from '../../types'
 import { editNameValidationErrorToString, MsgFrontend, MsgToBackend } from './types'
+import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 
 const update: FrontendModule['update'] = (input) => {
   const { model } = input
@@ -34,8 +36,9 @@ const View: FrontendModule['View'] = (input) => {
       open={input.model.puzzleBuilderOpened === 'edit-name'}
       onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
       header={{
-        render: (props) => (
-          <props.SurfaceHeader
+        render: () => (
+          <SurfaceHeader
+            ctx={input.ctx}
             title={input.ctx.t('app.edit-name')}
             onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
           />
@@ -52,19 +55,16 @@ const View: FrontendModule['View'] = (input) => {
       }}
       body={{
         render: () => (
-          <TextField
-            id='edit-name-input'
-            label={input.ctx.t('flow.edit-puzzle-name.name')}
-            value={input.model.puzzleEditNameDraft}
-            onChange={(draftName) =>
-              input.dispatch({
-                t: 'puzzle.edit-name.user-inputted-draft-name',
-                draftName,
-              })
-            }
-            error={Boolean(input.model.puzzleEditNameValidationError)}
-            helperText={editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError)}
-          />
+          <SurfaceBody>
+            <TextField
+              id='flow-edit-puzzle-name-input'
+              label={input.ctx.t('flow.edit-puzzle-name.name')}
+              value={input.model.puzzleEditNameDraft}
+              onChange={(draftName) => input.dispatch({ t: 'puzzle.edit-name.user-inputted-draft-name', draftName })}
+              error={Boolean(input.model.puzzleEditNameValidationError)}
+              helperText={editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError)}
+            />
+          </SurfaceBody>
         ),
       }}
     />

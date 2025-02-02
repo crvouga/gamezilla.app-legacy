@@ -16,6 +16,7 @@ import * as FlowUI from '../ui/color'
 import { VariantBoard } from '../variant'
 import * as FlowVariant from '../variant/variant'
 import * as FlowVariantDimensions from '../variant/variant-dimensions'
+import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 
 //
 //
@@ -503,8 +504,9 @@ export const View = (input: {
             open={input.model.opened === 'dimensions'}
             onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
             header={{
-              render: (props) => (
-                <props.SurfaceHeader
+              render: () => (
+                <SurfaceHeader
+                  ctx={input.ctx}
                   title={input.ctx.t('app.dimensions')}
                   onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
                 />

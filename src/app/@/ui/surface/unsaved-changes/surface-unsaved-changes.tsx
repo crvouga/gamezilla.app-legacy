@@ -1,6 +1,7 @@
-import { Typography, Button } from '~/@/ui'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
+import { Button, Typography } from '~/@/ui'
+import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { ScreenSize } from '../../screen/screen-size'
 import { SurfaceLayout } from '../layout/surface-layout'
 
@@ -35,7 +36,7 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
       open={input.open}
       position='bottom'
       header={{
-        render: (props) => <props.SurfaceHeader title={input.title} onClose={input.onClose} />,
+        render: () => <SurfaceHeader ctx={input.ctx} title={input.title} onClose={input.onClose} />,
       }}
       body={{
         render: () => (

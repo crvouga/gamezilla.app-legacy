@@ -1,7 +1,7 @@
-import type { VDom } from '~/@/vdom/vdom'
-import { IconXMark } from './icon'
-import { cn } from './cn'
 import { TranslatedText } from '~/@/l18n'
+import type { VDom } from '~/@/vdom/vdom'
+import { cn } from './cn'
+import { IconXMark } from './icon'
 
 export const TextField = (input: {
   startIcon?: VDom

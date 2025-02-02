@@ -1,6 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { type DrawerInput } from '~/@/ui/surface-drawer'
+import { SurfaceBodyText } from '~/@/ui/surface/surface-body-text'
+import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 
@@ -34,7 +36,7 @@ export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
       id='surface-confirmation'
       ariaLabel={input.title}
       header={{
-        render: (props) => props.SurfaceHeader({ title: input.title, onClose: input.onClose }),
+        render: () => <SurfaceHeader ctx={input.ctx} title={input.title} onClose={input.onClose} />,
       }}
       form={{
         onSubmit: input.onConfirm,
@@ -47,7 +49,7 @@ export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
         variant: input.variant,
       }}
       body={{
-        render: (props) => <props.SurfaceBodyText text={input.body} />,
+        render: () => <SurfaceBodyText text={input.body} />,
       }}
     />
   )

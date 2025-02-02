@@ -13,14 +13,11 @@ export type SurfaceLayoutProps = {
   open: boolean
   onClose: () => void
   header?: {
-    render?: (props: { SurfaceHeader: (props: { title: TranslatedText; onClose: () => void }) => VDom }) => VDom
+    render?: () => VDom
   }
   position?: 'top' | 'bottom'
   body?: {
-    render?: (props: {
-      SurfaceBody: (props: { children: VDom }) => VDom
-      SurfaceBodyText: (props: { text: TranslatedText }) => VDom
-    }) => VDom
+    render?: () => VDom
   }
   form?: {
     variant?: 'danger'

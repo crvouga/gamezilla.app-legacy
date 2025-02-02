@@ -1,4 +1,5 @@
 import { TextField } from '~/@/ui'
+import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { FrontendModule } from '../types'
@@ -41,7 +42,7 @@ const ViewSurface: FrontendModule['View'] = (input) => {
         submitDisabled: false,
       }}
       header={{
-        render: (props) => <props.SurfaceHeader title={input.ctx.t('app.edit-name')} onClose={onClose} />,
+        render: () => <SurfaceHeader ctx={input.ctx} title={input.ctx.t('app.edit-name')} onClose={onClose} />,
       }}
       body={{
         render: () => (
