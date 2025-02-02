@@ -24,10 +24,7 @@ const Uniform = (input: ScreenActionBarProps & ScreenActionsUniform) => {
   const [firstButtons, lastButtons] = [input.actions.slice(0, limit), input.actions.slice(limit)]
 
   return (
-    <div
-      className={cn('flex w-full shrink-0 items-center', size === 'sm' && 'h-12', size === 'md' && 'h-20')}
-      role='toolbar'
-    >
+    <div className={cn('flex w-full shrink-0 items-center', toHeightClass(size))} role='toolbar'>
       {firstButtons.map((button) => {
         if (!button) return null
         return <ScreenActionButton {...button} size={input.size} key={button.label} />
@@ -76,14 +73,7 @@ const SpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpaceBetween) =
   const size = input.size ?? 'md'
 
   return (
-    <div
-      className={cn(
-        'flex w-full shrink-0 items-center justify-between',
-        size === 'sm' && 'h-12',
-        size === 'md' && 'h-20',
-      )}
-      role='toolbar'
-    >
+    <div className={cn('flex w-full shrink-0 items-center justify-between', toHeightClass(size))} role='toolbar'>
       <div className='flex items-center'>
         {input.start.map((button) => {
           if (!button) return null
@@ -175,5 +165,15 @@ const toIconSizeClasses = (size: ScreenAction['size']): string => {
     case 'md':
     default:
       return 'size-8'
+  }
+}
+
+const toHeightClass = (size: ScreenAction['size']): string => {
+  switch (size) {
+    case 'sm':
+      return 'h-12'
+    case 'md':
+    default:
+      return 'h-16'
   }
 }

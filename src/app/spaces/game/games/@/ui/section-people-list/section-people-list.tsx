@@ -13,8 +13,8 @@ export const SectionPeopleList = ({
 }) => {
   const profiles = SpaceFrontendCtx.toProfiles(ctx)
   return (
-    <section className='flex w-full flex-col gap-3'>
-      <Typography variant='title' className='px-4' text={ctx.t('app.people')} />
+    <section className='flex w-full flex-col gap-3 overflow-hidden py-6'>
+      <Typography variant='title' className='px-6' text={ctx.t('app.people')} />
 
       <div className='w-full'>
         {profiles.map((profile) => (
@@ -40,7 +40,7 @@ const PeopleListItem = ({
   onClick: () => void
 }) => {
   return (
-    <button key={profile.userId} onClick={onClick} className='clickable flex w-full items-center gap-2 p-2 px-4'>
+    <button key={profile.userId} onClick={onClick} className='clickable flex w-full items-center gap-2 p-2 px-6'>
       <Avatar className='size-12' src={profile.avatarUrl} />
       <p>{profile.username}</p>
       {profile.userId === ctx.space.hostId && <ViewHostChip ctx={ctx} />}

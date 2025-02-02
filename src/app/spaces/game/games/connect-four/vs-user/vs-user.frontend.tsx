@@ -439,8 +439,8 @@ const ViewGameOverMessage = ({
       return (
         <div className='flex w-full flex-col items-center justify-center gap-2'>
           <div className='flex w-full items-center justify-center gap-2'>
-            <PlayerIcon playerType={winner} className='h-20 w-20' />
-            <Avatar className='h-20 w-20' src={ctx.profiles[modelSpace.players[winner]]?.avatarUrl} />
+            <PlayerIcon playerType={winner} className='size-20' />
+            <Avatar className='size-20' src={ctx.profiles[modelSpace.players[winner]]?.avatarUrl} />
           </div>
           <p>Winner</p>
         </div>

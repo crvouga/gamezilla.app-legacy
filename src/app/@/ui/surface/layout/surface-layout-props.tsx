@@ -17,7 +17,10 @@ export type SurfaceLayoutProps = {
   }
   position?: 'top' | 'bottom'
   body?: {
-    render?: (props: { SurfaceBodyText: (props: { text: TranslatedText }) => VDom }) => VDom
+    render?: (props: {
+      SurfaceBody: (props: { children: VDom }) => VDom
+      SurfaceBodyText: (props: { text: TranslatedText }) => VDom
+    }) => VDom
   }
   form?: {
     variant?: 'danger'
