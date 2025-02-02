@@ -41,7 +41,7 @@ const ViewRoot = (input: { onClick?: () => void; children: React.ReactNode }) =>
       disabled={!input.onClick}
       className={cn(
         SPACE_CARD_GRADIENT_CLASS_NAME,
-        'flex h-fit w-full flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr p-4',
+        'flex w-full shrink-0 flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr p-4',
         input.onClick && 'clickable',
       )}
     >
@@ -67,7 +67,7 @@ const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: BaseFrontend
 
   return (
     <div className='flex items-center justify-start gap-2'>
-      <div className='h-12 w-12 overflow-hidden rounded border-2 border-white/40'>
+      <div className='size-12 overflow-hidden rounded border-2 border-white/40'>
         <GameCoverArt gameName={input.gameName} />
       </div>
       <Typography variant='title' className='truncate text-lg font-normal' text={input.ctx.t(input.gameName)} />
@@ -77,10 +77,10 @@ const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: BaseFrontend
 
 const ViewSpaceCardHost = (input: { host?: Profile | null; ctx: BaseFrontendCtx }) => {
   return (
-    <div className='flex max-w-full items-center justify-start gap-2 overflow-hidden'>
-      <Avatar src={input.host?.avatarUrl} alt='avatar' className='h-12 w-12' />
+    <div className='flex max-w-full items-center justify-start gap-2 overflow-x-hidden'>
+      <Avatar src={input.host?.avatarUrl} alt='avatar' className='size-12' />
 
-      <div className='flex-1 overflow-hidden'>
+      <div className='flex-1 overflow-x-hidden'>
         {input.host && (
           <Typography
             variant='title'

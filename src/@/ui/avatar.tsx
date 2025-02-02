@@ -18,7 +18,10 @@ export const Avatar = ({
           onClick={onClick}
           src={src}
           alt={alt ?? 'user avatar'}
-          className={cn('inline-block aspect-square flex-shrink-0 overflow-hidden rounded-full bg-white/40', className)}
+          className={cn(
+            'inline-block aspect-square flex-shrink-0 overflow-hidden rounded-full bg-white/40 object-cover',
+            className,
+          )}
         />
       )
     }

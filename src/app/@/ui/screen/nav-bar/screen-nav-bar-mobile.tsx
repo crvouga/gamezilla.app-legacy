@@ -15,7 +15,7 @@ export const ScreenNavBarMobile = (input: {
   if (!input.title && !input.subtitle && !input.onBack) return null
 
   return (
-    <div className='flex h-16 w-full shrink-0 items-center truncate px-4 text-center'>
+    <div className='flex h-16 w-full shrink-0 items-center truncate px-6 text-center'>
       {typeof input.onBack === 'function' && (
         <IconButton
           onClick={input.onBack}
