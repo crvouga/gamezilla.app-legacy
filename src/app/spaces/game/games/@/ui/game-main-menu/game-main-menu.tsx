@@ -94,7 +94,7 @@ export const View = (props: {
       renderBody={() => (
         <div className='flex w-full flex-col gap-6 px-6'>
           {props.buttons.map((button) => (
-            <MainMenuButtonView key={`${button.title}${button.description}`} {...button} />
+            <MainMenuButton key={`${button.title}${button.description}`} {...button} />
           ))}
         </div>
       )}
@@ -102,9 +102,9 @@ export const View = (props: {
   )
 }
 
-const MainMenuButtonView = (props: MainMenuButton) => {
+const MainMenuButton = (props: MainMenuButton) => {
   return (
-    <button className='bg-paper clickable flex w-full items-center gap-4 rounded p-6' onClick={props.onClick}>
+    <button className='clickable bg-paper flex w-full items-center gap-4 rounded p-6' onClick={props.onClick}>
       {props.renderIcon({ className: 'aspect-square size-12' })}
       <div className='flex flex-1 flex-col gap-1 text-left'>
         <Typography variant='title' text={props.title} />

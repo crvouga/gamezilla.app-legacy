@@ -109,7 +109,7 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
                   disabled={screen.postAction.submitDisabled}
                   loading={screen.postAction.submitLoading}
                   text={screen.postAction.submitText}
-                  iconStart={screen.postAction.submitIcon}
+                  renderIconStart={screen.postAction.submitIcon}
                 />
               )}
             </div>

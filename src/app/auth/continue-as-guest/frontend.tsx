@@ -61,7 +61,7 @@ const ViewButton: FrontendModule['View'] = (input) => {
   return (
     <Button
       onClick={() => input.dispatch({ t: 'guest.clicked-continue-as-guest-button' })}
-      iconStart={(iconInput) => <IconUserCircle {...iconInput} />}
+      renderIconStart={(iconInput) => <IconUserCircle {...iconInput} />}
       text={input.ctx.t('auth.continue-as-guest')}
       loading={isRequesting(input.model.guestRequest) || isResponseOk(input.model.guestRequest)}
     />

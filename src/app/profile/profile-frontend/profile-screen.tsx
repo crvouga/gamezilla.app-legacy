@@ -33,14 +33,14 @@ const ViewBody: typeof View = (input) => {
           <Button
             onClick={() => input.dispatch({ t: 'clicked-edit-profile-button' })}
             className='max-w-64 flex-1'
-            iconStart={(iconInput) => <IconUserPen {...iconInput} />}
+            renderIconStart={(iconInput) => <IconUserPen {...iconInput} />}
             text={input.ctx.t('profile.edit-profile')}
             size='sm'
           />
           <Button
             onClick={() => input.dispatch({ t: 'clicked-logout-button' })}
             className='max-w-64 flex-1'
-            iconStart={(iconInput) => <IconArrowLeftOnRect {...iconInput} />}
+            renderIconStart={(iconInput) => <IconArrowLeftOnRect {...iconInput} />}
             text={input.ctx.t('auth.logout')}
             size='sm'
           />

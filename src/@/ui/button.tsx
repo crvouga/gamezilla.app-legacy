@@ -23,7 +23,7 @@ export type ButtonInput = {
   type?: 'button' | 'submit' | 'reset'
   className?: string
   onClick?: (event: ButtonEvent) => void
-  iconStart?: (input: { className?: string }) => VDom
+  renderIconStart?: (input: { className?: string }) => VDom
   variant?: ButtonVariant
   color?: ButtonColor
   size?: ButtonSize
@@ -54,7 +54,7 @@ export const Button = (input: ButtonInput) => {
     >
       <div className={cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent')}>
         <div className='flex-none'>
-          {input.iconStart?.({
+          {input.renderIconStart?.({
             className: cn(toIconSizeClass(input), 'mr-2'),
           })}
         </div>

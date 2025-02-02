@@ -1,5 +1,5 @@
-import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { IconChevronLeft, IconChevronRight, IconDeleteForever } from '~/@/ui'
+import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ModePlay } from '../../../@/mode-play'
 import { Puzzle } from '../../../@/puzzle/puzzle'
@@ -76,6 +76,17 @@ const View: FrontendModule['View'] = (input) => {
   const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
   const canGoNext = screen.puzzleIndex + 1 < pack.puzzleIds.length
 
+  const onNextPuzzle = () => {
+    input.dispatch({
+      t: 'got-msg-space',
+      c: {
+        t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
+        userId: input.ctx.currentUserId,
+        nextPuzzleResult: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' },
+      },
+    })
+  }
+
   return (
     <ScreenLayout
       parentScreen={input.ctx.parentScreen}
@@ -104,7 +115,10 @@ const View: FrontendModule['View'] = (input) => {
             showSolvedAnimation
           />
         ) : (
-          <PuzzleResult.ViewNotFound ctx={input.ctx} />
+          <PuzzleResult.ViewNotFound
+            ctx={input.ctx}
+            // onNextPuzzle={onNextPuzzle}
+          />
         )
       }
       actionBar={{
@@ -147,16 +161,7 @@ const View: FrontendModule['View'] = (input) => {
               icon: (input) => <IconChevronRight {...input} />,
               label: input.ctx.t('app.next'),
               disabled: !canGoNext,
-              onClick: () => {
-                input.dispatch({
-                  t: 'got-msg-space',
-                  c: {
-                    t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
-                    userId: input.ctx.currentUserId,
-                    nextPuzzleResult: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' },
-                  },
-                })
-              },
+              onClick: onNextPuzzle,
             },
             {
               icon: (input) => <IconDeleteForever {...input} />,

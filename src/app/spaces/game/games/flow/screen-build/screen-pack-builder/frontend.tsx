@@ -90,7 +90,7 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
   View(input) {
     return (
       <Button
-        iconStart={(inputIcons) => <IconArrowLeftOnRect {...inputIcons} />}
+        renderIconStart={(inputIcons) => <IconArrowLeftOnRect {...inputIcons} />}
         className='w-full'
         text={input.ctx.t('app.exit')}
         onClick={() =>

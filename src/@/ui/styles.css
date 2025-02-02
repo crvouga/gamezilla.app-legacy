@@ -12,7 +12,7 @@
 }
 
 .bg-paper {
-  @apply bg-white/15;
+  @apply bg-white/10;
 }
 
 .border-paper {

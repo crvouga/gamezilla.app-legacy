@@ -96,6 +96,25 @@ const View: FrontendModule['View'] = (input) => {
 
   if (isSpectating) return <ViewSpectating {...input} />
 
+  const onNextPuzzle = () => {
+    input.dispatch({
+      t: 'got-msg-space',
+      c: {
+        t: 'user-clicked-next-puzzle',
+        userId: input.ctx.currentUserId,
+        nextPuzzle: nextPuzzle
+          ? {
+              t: 'got',
+              c: nextPuzzle,
+            }
+          : {
+              t: 'not-found',
+            },
+        nextPuzzleIndex,
+      },
+    })
+  }
+
   return (
     <>
       <ScreenLayout
@@ -132,7 +151,10 @@ const View: FrontendModule['View'] = (input) => {
                 showSolvedAnimation
               />
             ) : (
-              <PuzzleResult.ViewNotFound ctx={input.ctx} />
+              <PuzzleResult.ViewNotFound
+                ctx={input.ctx}
+                // onNextPuzzle={onNextPuzzle}
+              />
             )}
           </div>
         )}
@@ -159,23 +181,7 @@ const View: FrontendModule['View'] = (input) => {
                 disabled: puzzleIndex >= input.modelSpace.screen.pack.puzzleIds.length - 1,
                 hidden: !isSolved && puzzle.t !== 'not-found',
                 color: 'success',
-                onClick: () =>
-                  input.dispatch({
-                    t: 'got-msg-space',
-                    c: {
-                      t: 'user-clicked-next-puzzle',
-                      userId: input.ctx.currentUserId,
-                      nextPuzzle: nextPuzzle
-                        ? {
-                            t: 'got',
-                            c: nextPuzzle,
-                          }
-                        : {
-                            t: 'not-found',
-                          },
-                      nextPuzzleIndex,
-                    },
-                  }),
+                onClick: onNextPuzzle,
               }),
 
               puzzle.t === 'got' && !isSolved
@@ -251,7 +257,10 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
                 showSolvedAnimation
               />
             ) : (
-              <PuzzleResult.ViewNotFound ctx={input.ctx} />
+              <PuzzleResult.ViewNotFound
+                ctx={input.ctx}
+                // onNextPuzzle={null}
+              />
             )}
           </div>
         </LayoutGame>

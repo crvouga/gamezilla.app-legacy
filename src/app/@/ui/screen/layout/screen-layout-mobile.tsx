@@ -37,7 +37,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
                 disabled={input.postAction.submitDisabled}
                 loading={input.postAction.submitLoading}
                 text={input.postAction.submitText}
-                iconStart={input.postAction.submitIcon}
+                renderIconStart={input.postAction.submitIcon}
               />
             </div>
           )}

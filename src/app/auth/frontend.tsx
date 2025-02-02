@@ -271,7 +271,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
           onClick={() => input.dispatch({ t: 'user-clicked-login-with-phone' })}
           size='lg'
           className='w-full'
-          iconStart={(iconInput) => <IconMobilePhone {...iconInput} />}
+          renderIconStart={(iconInput) => <IconMobilePhone {...iconInput} />}
           text={input.ctx.t('auth.continue-with-phone')}
         />
 
@@ -281,7 +281,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
             color='default'
             size='lg'
             className='w-full'
-            iconStart={(iconInput) => <IconEnvelope {...iconInput} />}
+            renderIconStart={(iconInput) => <IconEnvelope {...iconInput} />}
             text={input.ctx.t('auth.continue-with-email')}
           />
         )}

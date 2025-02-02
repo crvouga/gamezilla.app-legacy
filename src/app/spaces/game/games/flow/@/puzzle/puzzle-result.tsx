@@ -1,6 +1,6 @@
 import { Translator } from '~/@/l18n/generated'
 import { p } from '~/@/parser'
-import { IconExclamationCircle, Typography } from '~/@/ui'
+import { EmptyState, IconExclamationCircle } from '~/@/ui'
 import { Puzzle } from './puzzle'
 
 const parser = p.or(
@@ -15,14 +15,23 @@ const parser = p.or(
 
 export type PuzzleResult = p.Infer<typeof parser>
 
-const ViewNotFound = (input: { ctx: { t: Translator } }) => {
+const ViewNotFound = (input: {
+  ctx: { t: Translator }
+  // onNextPuzzle: (() => void) | null
+}) => {
   return (
-    <div className='flex w-full flex-1 flex-col items-center justify-center gap-10'>
-      <div className='flex w-full flex-col items-center justify-center gap-4 opacity-80'>
-        <IconExclamationCircle className='h-12 w-12' />
-        <Typography variant='title' className='text-2xl font-bold' text={input.ctx.t('flow.puzzle-not-found')} />
-      </div>
-    </div>
+    <EmptyState
+      renderIcon={(props) => <IconExclamationCircle {...props} />}
+      label={input.ctx.t('flow.puzzle-not-found')}
+      // action={
+      //   input.onNextPuzzle
+      //     ? {
+      //         label: input.ctx.t('app.next'),
+      //         onClick: input.onNextPuzzle,
+      //       }
+      //     : null
+      // }
+    />
   )
 }
 
