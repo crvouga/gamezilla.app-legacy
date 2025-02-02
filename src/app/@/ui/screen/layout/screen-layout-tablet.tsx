@@ -20,7 +20,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
     >
       <ActionBars position='start' input={input} />
 
-      <div className='flex max-w-3xl flex-[2] shrink-0 flex-col overflow-hidden border-x'>
+      <div className='flex max-w-3xl flex-[4] shrink-0 flex-col overflow-hidden border-x'>
         {renderNavBars(input.ctx, input)}
 
         <div className='flex w-full flex-1 flex-col overflow-hidden'>
@@ -37,6 +37,8 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
 }
 
 const ActionBars = (props: { position: 'start' | 'end'; input: ScreenLayoutProps }) => {
+  const actionBars = renderActionBars(props.input.ctx, props.input, props.position)
+  // if (actionBars.length === 0) return null
   return (
     <div
       className={cn(
@@ -44,7 +46,7 @@ const ActionBars = (props: { position: 'start' | 'end'; input: ScreenLayoutProps
         props.position === 'start' ? 'justify-end' : 'justify-start',
       )}
     >
-      {renderActionBars(props.input.ctx, props.input, props.position)}
+      {actionBars}
     </div>
   )
 }
