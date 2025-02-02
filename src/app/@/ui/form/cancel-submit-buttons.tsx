@@ -13,7 +13,7 @@ export const CancelSubmitButtons = (input: {
   size?: ButtonInput['size']
 }) => {
   return (
-    <div className='flex w-full items-center gap-4 p-4'>
+    <div className='flex w-full items-center gap-4 px-6 pb-6 pt-4'>
       <Button
         className='flex-1'
         size={input.size}

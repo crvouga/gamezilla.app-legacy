@@ -35,14 +35,13 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
       open={input.open}
       position='bottom'
       header={{
-        title: input.title,
-        onClose: input.onClose,
+        render: (props) => <props.SurfaceHeader title={input.title} onClose={input.onClose} />,
       }}
       body={{
         render: () => (
           <>
-            <Typography className='text-secondary p-4' variant='body' text={input.body} />
-            <div className='flex w-full flex-col gap-4 p-4'>
+            <Typography className='text-secondary p-4 px-6' variant='body' text={input.body} />
+            <div className='flex w-full flex-col gap-4 p-4 px-6 pb-6'>
               <Button
                 className='w-full'
                 text={input.saveText}

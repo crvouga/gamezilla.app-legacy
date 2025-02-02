@@ -1,17 +1,21 @@
+import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
-import { TranslatedText } from '~/@/l18n'
+
+type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
 export const IconButton = (input: {
   onClick?: (event: { currentTarget: HTMLButtonElement }) => void
   label: TranslatedText
   renderIcon: (input: { className: string }) => VDom
   className?: string
+  size?: IconButtonSize
 }) => {
   return (
     <button
       className={cn(
-        'clickable display flex size-12 items-center justify-center overflow-hidden rounded-full',
+        'clickable display flex items-center justify-center overflow-hidden rounded-full',
+        toSizeClassName(input.size ?? 'md'),
         input.className,
       )}
       type='button'
@@ -20,12 +24,21 @@ export const IconButton = (input: {
       title={input.label}
     >
       {input.renderIcon({
-        className: 'size-8',
+        className: 'w-full h-full',
       })}
     </button>
   )
 }
 
-export const IconButtonEmpty = () => {
-  return <div className='size-12'></div>
+export const IconButtonEmpty = (input: { size?: IconButtonSize }) => {
+  return <div className={toSizeClassName(input.size ?? 'md')}></div>
+}
+
+const toSizeClassName = (size: IconButtonSize): string => {
+  return {
+    xs: 'size-7 p-1',
+    sm: 'size-8 p-1.5',
+    md: 'size-10 p-2',
+    lg: 'size-12 p-2.5',
+  }[size]
 }

@@ -215,11 +215,9 @@ export const View = ({
           })
         }
         header={{
-          title: ctx.t('game.change-bot'),
-          onClose: () =>
-            dispatch({
-              t: 'closed-modal',
-            }),
+          render: (props) => (
+            <props.SurfaceHeader title={ctx.t('game.change-bot')} onClose={() => dispatch({ t: 'closed-modal' })} />
+          ),
         }}
         body={{
           render: () => (

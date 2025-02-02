@@ -41,8 +41,7 @@ const ViewSurface: FrontendModule['View'] = (input) => {
         submitDisabled: false,
       }}
       header={{
-        title: input.ctx.t('app.edit-name'),
-        onClose: onClose,
+        render: (props) => <props.SurfaceHeader title={input.ctx.t('app.edit-name')} onClose={onClose} />,
       }}
       body={{
         render: () => (

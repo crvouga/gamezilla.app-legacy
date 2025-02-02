@@ -38,7 +38,7 @@ const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgFrontend
       }
     >
       <DialogSurface>
-        <DialogHeader title={input.ctx.t('app.congratulations')} />
+        <DialogHeader ctx={input.ctx} title={input.ctx.t('app.congratulations')} />
 
         <Button
           text={input.ctx.t('flow.select-next-pack')}

@@ -16,10 +16,10 @@ import type { Text as Text13 } from '../../../app/spaces/game/games/chess/@/ches
 import type { Text as Text14 } from '../../../app/spaces/game/games/chess/@/chess-bot-level/chess-bot-level.$l18n'
 import type { Text as Text15 } from '../../../app/spaces/game/games/@/game-name/$l18n'
 import type { Text as Text16 } from '../../../app/spaces/game/games/@/ui/prebuilt-bottom-buttons/$l18n'
-import type { Text as Text17 } from '../../../app/spaces/game/games/@/ui/game-main-menu/$l18n'
-import type { Text as Text18 } from '../../../app/spaces/game/games/@/ui/game-layout/$l18n'
-import type { Text as Text19 } from '../../../app/spaces/game/games/@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game.$l18n'
-import type { Text as Text20 } from '../../../app/spaces/game/games/@/ui/section-people-list/$l18n'
+import type { Text as Text17 } from '../../../app/spaces/game/games/@/ui/section-people-list/$l18n'
+import type { Text as Text18 } from '../../../app/spaces/game/games/@/ui/game-main-menu/$l18n'
+import type { Text as Text19 } from '../../../app/spaces/game/games/@/ui/game-layout/$l18n'
+import type { Text as Text20 } from '../../../app/spaces/game/games/@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game.$l18n'
 import type { Text as Text21 } from '../../../app/spaces/game/games/@/game.$l18n'
 import type { Text as Text22 } from '../../../app/spaces/game/games/flow/screen-build/screen-pack-builder-open/button-create-new-pack/$l18n'
 import type { Text as Text23 } from '../../../app/spaces/game/games/flow/screen-build/screen-pack-builder-open/$l18n'
@@ -49,15 +49,16 @@ import type { Text as Text46 } from '../../../app/lang/frontend/$l18n'
 import type { Text as Text47 } from '../../../app/profile/$l18n/edit-profile.$l18n'
 import type { Text as Text48 } from '../../../app/profile/$l18n/$l18n'
 import type { Text as Text49 } from '../../../app/profile/update-username/$l18n'
-import type { Text as Text50 } from '../../../app/@/data/profile-avatar/profile-avatar.$l18n'
-import type { Text as Text51 } from '../../../app/@/data/username/username.$l18n'
-import type { Text as Text52 } from '../../../app/@/l18n/open-settings.$l18n'
-import type { Text as Text53 } from '../../../app/@/l18n/submit.$l18n'
-import type { Text as Text54 } from '../../../app/@/l18n/$l18n'
-import type { Text as Text55 } from '../../../app/@/l18n/add.$l18n'
-import type { Text as Text56 } from '../../ui/drawer/$l18n'
-import type { Text as Text57 } from '../../time/time-span.$l18n'
-import type { Text as Text58 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
+import type { Text as Text50 } from '../../../app/@/ui/surface/unsaved-changes/unsaved-changes.$l18n'
+import type { Text as Text51 } from '../../../app/@/data/profile-avatar/profile-avatar.$l18n'
+import type { Text as Text52 } from '../../../app/@/data/username/username.$l18n'
+import type { Text as Text53 } from '../../../app/@/l18n/open-settings.$l18n'
+import type { Text as Text54 } from '../../../app/@/l18n/submit.$l18n'
+import type { Text as Text55 } from '../../../app/@/l18n/$l18n'
+import type { Text as Text56 } from '../../../app/@/l18n/add.$l18n'
+import type { Text as Text57 } from '../../ui/drawer/$l18n'
+import type { Text as Text58 } from '../../time/time-span.$l18n'
+import type { Text as Text59 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
 
 export type Text = Text0 &
   Text1 &
@@ -117,4 +118,5 @@ export type Text = Text0 &
   Text55 &
   Text56 &
   Text57 &
-  Text58
+  Text58 &
+  Text59

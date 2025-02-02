@@ -4,7 +4,7 @@
 
 
 .bg-surface {
-  @apply bg-neutral-950;
+  @apply bg-black;
 }
 
 .border-surface {
@@ -25,6 +25,10 @@
 
 .clickable {
   @apply enabled:cursor-pointer enabled:hover:opacity-100 enabled:active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.h-bar {
+  @apply h-16;
 }
 
 /*

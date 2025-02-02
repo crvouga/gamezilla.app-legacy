@@ -12,7 +12,7 @@ export const VerticalActionBar = (
   },
 ) => {
   return (
-    <div className={cn('flex max-w-52 flex-1 shrink-0 flex-col gap-1', input.className)}>
+    <div className={cn('flex h-full max-w-48 flex-1 shrink-0 flex-col gap-1', input.className)}>
       <ScreenNavBarTabletRoot>{input.renderNavBar?.()}</ScreenNavBarTabletRoot>
 
       {input.variant.t === 'uniform' ? (

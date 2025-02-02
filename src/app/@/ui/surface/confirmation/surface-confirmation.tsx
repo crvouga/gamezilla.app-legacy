@@ -1,6 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { Typography } from '~/@/ui'
 import { type DrawerInput } from '~/@/ui/drawer'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
@@ -35,8 +34,7 @@ export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
       id='surface-confirmation'
       ariaLabel={input.title}
       header={{
-        title: input.title,
-        onClose: input.onClose,
+        render: (props) => props.SurfaceHeader({ title: input.title, onClose: input.onClose }),
       }}
       form={{
         onSubmit: input.onConfirm,
@@ -49,7 +47,7 @@ export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
         variant: input.variant,
       }}
       body={{
-        render: () => <Typography variant='body' text={input.body} />,
+        render: (props) => <props.SurfaceBodyText text={input.body} />,
       }}
     />
   )

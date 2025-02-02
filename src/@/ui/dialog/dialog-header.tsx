@@ -1,7 +1,31 @@
-export const DialogHeader = (input: { title: string }) => {
+import { TranslatedText } from '~/@/l18n'
+import { Typography } from '../typography'
+import { IconXMark } from '../icon/icon-x-mark'
+import { preventConsoleErrorWhenClosingDrawer } from '../drawer/drawer-shared'
+import { IconButton } from '../icon-button'
+import { Translator } from '~/@/l18n/generated'
+
+export const DialogHeader = (input: {
+  ctx: {
+    t: Translator
+  }
+  title: TranslatedText
+  onClose?: () => void
+}) => {
   return (
-    <h1 role='heading' aria-level={1} title={input.title} className='px-6 pb-2 pt-6 text-center text-2xl'>
-      {input.title}
-    </h1>
+    <div className='flex w-full items-center justify-center px-6 pb-0 pt-4'>
+      <div className='flex-1'>
+        {input.title && <Typography text={input.title} variant='title' sizeClassName='text-2xl' />}
+      </div>
+      <IconButton
+        label={input.ctx.t('app.close')}
+        onClick={(event) => {
+          preventConsoleErrorWhenClosingDrawer(event)
+          input.onClose?.()
+        }}
+        className='-mr-1'
+        renderIcon={(inputIcon) => <IconXMark {...inputIcon} />}
+      />
+    </div>
   )
 }

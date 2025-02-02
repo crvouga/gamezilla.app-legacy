@@ -1,7 +1,8 @@
-import { Drawer, DrawerHeader } from '~/@/ui'
-import { DrawerBody } from '~/@/ui/drawer/drawer-body'
+import { Drawer } from '~/@/ui'
 import { DynamicElement } from '~/@/ui/dynamic-element'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
+import { SurfaceBodyText } from '../body-text'
+import { SurfaceHeader } from '../header'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
@@ -22,16 +23,16 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
         }}
         name={props.ariaLabel}
       >
-        <div className='flex w-full flex-col gap-4 p-6 pb-2'>
-          {props.header && (
-            <DrawerHeader
-              ctx={props.ctx}
-              title={props.header?.title ?? null}
-              onClose={props.header?.onClose ?? (() => {})}
-            />
-          )}
-          {props.body?.render && <DrawerBody>{props.body.render()}</DrawerBody>}
-        </div>
+        {props.header?.render?.({
+          SurfaceHeader: (input) => (
+            <SurfaceHeader ctx={props.ctx} title={input.title ?? null} onClose={input.onClose} />
+          ),
+        })}
+
+        {props.body?.render?.({
+          SurfaceBodyText: (props) => <SurfaceBodyText text={props.text} />,
+        })}
+
         {props.form && (
           <CancelSubmitButtons
             variant={props.form?.variant}

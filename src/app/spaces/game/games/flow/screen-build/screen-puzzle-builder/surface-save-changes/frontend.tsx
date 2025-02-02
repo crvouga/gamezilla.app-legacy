@@ -259,7 +259,7 @@ const ViewSurface: FrontendModule['View'] = (input) => {
     <SurfaceUnsavedChanges
       ctx={input.ctx}
       title={input.ctx.t('app.save-changes?')}
-      body={input.ctx.t('app.save-changes-warning')}
+      body={input.ctx.t('unsaved-changes.unsaved-changes-warning')}
       open={input.model.puzzleBuilderOpened === 'unsaved-changes'}
       onClose={() =>
         input.dispatch({

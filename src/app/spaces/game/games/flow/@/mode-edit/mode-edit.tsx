@@ -503,8 +503,12 @@ export const View = (input: {
             open={input.model.opened === 'dimensions'}
             onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
             header={{
-              title: input.ctx.t('app.dimensions'),
-              onClose: () => input.dispatch({ t: 'dimensions-form.closed' }),
+              render: (props) => (
+                <props.SurfaceHeader
+                  title={input.ctx.t('app.dimensions')}
+                  onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
+                />
+              ),
             }}
             form={{
               onSubmit: () => input.dispatch({ t: 'dimensions-form.clicked-save' }),

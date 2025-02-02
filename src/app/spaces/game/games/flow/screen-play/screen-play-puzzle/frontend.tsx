@@ -297,7 +297,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
       }
     >
       <DialogSurface>
-        <DialogHeader title={input.ctx.t('flow.puzzle-completed')} />
+        <DialogHeader ctx={input.ctx} title={input.ctx.t('flow.puzzle-completed')} />
 
         <Button
           text={input.ctx.t('flow.next-puzzle')}

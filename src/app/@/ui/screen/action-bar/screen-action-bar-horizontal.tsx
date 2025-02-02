@@ -9,6 +9,15 @@ import {
 
 const DEFAULT_LIMIT = Infinity
 
+export const HorizontalActionBar = (input: ScreenActionBarProps) => {
+  switch (input.variant.t) {
+    case 'uniform':
+      return <Uniform {...input} {...input.variant} />
+    case 'space-between':
+      return <SpaceBetween {...input} {...input.variant} />
+  }
+}
+
 const Uniform = (input: ScreenActionBarProps & ScreenActionsUniform) => {
   const size = input.size ?? 'md'
   const limit = input.limit?.max ?? DEFAULT_LIMIT
@@ -90,15 +99,6 @@ const SpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpaceBetween) =
       </div>
     </div>
   )
-}
-
-export const HorizontalActionBar = (input: ScreenActionBarProps) => {
-  switch (input.variant.t) {
-    case 'uniform':
-      return <Uniform {...input} {...input.variant} />
-    case 'space-between':
-      return <SpaceBetween {...input} {...input.variant} />
-  }
 }
 
 const ScreenActionButton = (input: ScreenAction & { className?: string }) => {

@@ -34,8 +34,12 @@ const View: FrontendModule['View'] = (input) => {
       open={input.model.puzzleBuilderOpened === 'edit-name'}
       onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
       header={{
-        title: input.ctx.t('app.edit-name'),
-        onClose: () => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' }),
+        render: (props) => (
+          <props.SurfaceHeader
+            title={input.ctx.t('app.edit-name')}
+            onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
+          />
+        ),
       }}
       form={{
         onSubmit: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-save-button' }),
