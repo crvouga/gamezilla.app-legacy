@@ -4,7 +4,7 @@ import { Posix } from '~/@/time/posix'
 import { IconPlus } from '~/@/ui'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
-import { CreateActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
+import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { FlowFrontendCmd } from '../../../@/frontend/cmd'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { IPuzzleDb } from '../../../@/puzzle/puzzle-db'
@@ -113,7 +113,7 @@ const createNewPuzzle = async (input: { now: Posix; createdByUserId: UserId; puz
   return Result.mapOk(result, () => puzzleNew)
 }
 
-const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): CreateActionProps => {
+const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): PostActionProps => {
   return {
     onSubmit: () => input.dispatch({ t: 'create-new-puzzle.user-clicked-create-button' }),
     submitText: input.ctx.t('flow.create-puzzle'),

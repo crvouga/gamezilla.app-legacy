@@ -219,6 +219,7 @@ export const translations: Text = {
   'spaces.home': 'Главная',
   'spaces.people-count': (peopleCount) =>
     peopleCount === 1 ? '\u041B\u044E\u0434\u0438' : `\u041B\u044E\u0434\u0438 (${peopleCount.toLocaleString()})`,
+  'spaces.game': 'Игра',
   'lang.language': 'Язык',
   'lang.choose-language': 'Выберите язык',
   'lang.done': 'Готово',
@@ -281,6 +282,7 @@ export const translations: Text = {
   '?': '?',
   'app.save-changes?': 'Сохранить изменения?',
   'app.remove': 'Удалить',
+  'app.join': 'Присоединиться',
   'app.add': 'Добавить',
   'drawer.close': 'Закрыть панель',
   'time-span.month-plural': (months) => `${Math.floor(months)} \u043C\u0435\u0441\u044F\u0446\u0435\u0432`,

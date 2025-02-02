@@ -206,6 +206,7 @@ export const translations: Text = {
   'spaces.home': 'Accueil',
   'spaces.people-count': (peopleCount) =>
     peopleCount === 1 ? 'Personne' : `Personnes (${peopleCount.toLocaleString()})`,
+  'spaces.game': 'Jeu',
   'lang.language': 'Langue',
   'lang.choose-language': 'Choisir la langue',
   'lang.done': 'Terminé',
@@ -268,6 +269,7 @@ export const translations: Text = {
   '?': '?',
   'app.save-changes?': 'Enregistrer les modifications?',
   'app.remove': 'Supprimer',
+  'app.join': 'Rejoindre',
   'app.add': 'Ajouter',
   'drawer.close': 'Fermer le drawer',
   'time-span.month-plural': (months) => `${Math.floor(months)} mois`,

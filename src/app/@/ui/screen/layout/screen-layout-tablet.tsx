@@ -7,7 +7,7 @@ import { ScreenNavBarTablet } from '../nav-bar/screen-nav-bar-tablet'
 import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props'
 
 export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
-  const element = input.editAction ? 'form' : 'div'
+  const element = input.patchAction ? 'form' : 'div'
 
   return (
     <DynamicElement
@@ -15,7 +15,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
       className='relative flex w-full flex-1 flex-row overflow-hidden'
       onSubmit={(e) => {
         e.preventDefault()
-        input.editAction?.onSubmit()
+        input.patchAction?.onSubmit()
       }}
     >
       <ActionBars position='start' input={input} />
@@ -90,24 +90,24 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
         title={screen.navBar.title}
         subtitle={screen.navBar.subtitle}
         renderEnd={() =>
-          (screen.editAction || screen.createAction) && (
+          (screen.patchAction || screen.postAction) && (
             <div className='flex items-center justify-end'>
-              {screen.editAction && (
+              {screen.patchAction && (
                 <div className='flex min-w-64 items-center justify-end'>
-                  <CancelSubmitButtons {...screen.editAction} size='md' />
+                  <CancelSubmitButtons {...screen.patchAction} size='md' />
                 </div>
               )}
-              {screen.createAction && (
+              {screen.postAction && (
                 <Button
                   color='primary'
                   rounded
                   variant='contained'
                   size='md'
-                  onClick={screen.createAction.onSubmit}
-                  disabled={screen.createAction.submitDisabled}
-                  loading={screen.createAction.submitLoading}
-                  text={screen.createAction.submitText}
-                  iconStart={screen.createAction.submitIcon}
+                  onClick={screen.postAction.onSubmit}
+                  disabled={screen.postAction.submitDisabled}
+                  loading={screen.postAction.submitLoading}
+                  text={screen.postAction.submitText}
+                  iconStart={screen.postAction.submitIcon}
                 />
               )}
             </div>

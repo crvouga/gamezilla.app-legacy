@@ -7,7 +7,7 @@ import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props.tsx'
 import { DynamicElement } from '~/@/ui/dynamic-element.tsx'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
-  const element = input.editAction ? 'form' : 'div'
+  const element = input.patchAction ? 'form' : 'div'
 
   return (
     <DynamicElement
@@ -15,7 +15,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
       className='flex w-full flex-1 flex-col overflow-hidden'
       onSubmit={(e) => {
         e.preventDefault()
-        input.editAction?.onSubmit()
+        input.patchAction?.onSubmit()
       }}
     >
       {renderActionBars(input)}
@@ -26,24 +26,24 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
           {input.renderBody()}
 
-          {input.createAction && (
+          {input.postAction && (
             <div className='absolute bottom-6 right-4 bg-black'>
               <Button
                 color='primary'
                 size='lg'
                 variant='contained'
                 rounded
-                onClick={input.createAction.onSubmit}
-                disabled={input.createAction.submitDisabled}
-                loading={input.createAction.submitLoading}
-                text={input.createAction.submitText}
-                iconStart={input.createAction.submitIcon}
+                onClick={input.postAction.onSubmit}
+                disabled={input.postAction.submitDisabled}
+                loading={input.postAction.submitLoading}
+                text={input.postAction.submitText}
+                iconStart={input.postAction.submitIcon}
               />
             </div>
           )}
         </div>
 
-        {input.editAction && <CancelSubmitButtons {...input.editAction} />}
+        {input.patchAction && <CancelSubmitButtons {...input.patchAction} />}
       </div>
     </DynamicElement>
   )

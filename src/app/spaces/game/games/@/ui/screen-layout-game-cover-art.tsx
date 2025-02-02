@@ -1,36 +1,21 @@
-import { TranslatedText } from '~/@/l18n'
-import { Translator } from '~/@/l18n/generated'
 import { cn } from '~/@/ui'
 import type { VDom } from '~/@/vdom/vdom'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
-import { ScreenSize } from '~/app/@/ui/screen/screen-size'
+import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 
-export const ScreenLayoutGameCoverArt = (input: {
-  navBar?: {
-    title: TranslatedText
-    subtitle?: TranslatedText | null
-    onBack?: () => void
-  }
-  ctx: {
-    t: Translator
-    screenSize: ScreenSize
-  }
-  parentScreen: ParentScreenProps | null
-  renderCoverArt?: (input: { className: string }) => VDom
-  renderContent: () => VDom
-}) => {
+export const ScreenLayoutGameCoverArt = (
+  input: ScreenLayoutProps & {
+    renderCoverArt?: (input: { className: string }) => VDom
+  },
+) => {
   const renderCoverArtFinal = input.renderCoverArt || renderDefaultCoverArt
   return (
     <ScreenLayout
-      parentScreen={input.parentScreen}
-      id='game-cover-art-header'
-      ctx={input.ctx}
-      navBar={input.navBar}
+      {...input}
       renderBody={() => (
-        <div className='flex w-full flex-1 flex-col items-center justify-start gap-6 p-6 py-4'>
+        <div className='flex w-full flex-1 flex-col items-center justify-start gap-6 py-4'>
           {renderCoverArtFinal({ className: 'size-28 overflow-hidden rounded-lg mx-auto' })}
-          {input.renderContent()}
+          {input.renderBody()}
         </div>
       )}
     />

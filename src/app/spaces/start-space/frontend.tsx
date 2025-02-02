@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { IconPlus } from '~/@/ui'
 import { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
-import { CreateActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
+import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { MsgSpace } from '../core/space-msg/space-msg'
 
@@ -68,7 +68,7 @@ const updateStartSpaceButton: SpaceFrontendModule['update'] = (input) => {
   }
 }
 
-export const viewStartSpaceButton = (input: Parameters<SpaceFrontendModule['View']>[0]): CreateActionProps | null => {
+export const viewStartSpaceButton = (input: Parameters<SpaceFrontendModule['View']>[0]): PostActionProps | null => {
   if (!input.ctx.currentUserId) return null
 
   const currentUserSpaceId = input.model.spaces.indexSpaceIdByUserId[input.ctx.currentUserId]

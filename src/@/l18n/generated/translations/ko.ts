@@ -212,6 +212,7 @@ export const translations: Text = {
   'spaces.home': '홈',
   'spaces.people-count': (peopleCount) =>
     peopleCount === 1 ? '\uC0AC\uB78C' : `\uC0AC\uB78C\uB4E4 (${peopleCount.toLocaleString()})`,
+  'spaces.game': '게임',
   'lang.language': '언어',
   'lang.choose-language': '언어 선택',
   'lang.done': '완료',
@@ -273,6 +274,7 @@ export const translations: Text = {
   '?': '?',
   'app.save-changes?': '변경 사항 저장?',
   'app.remove': '제거',
+  'app.join': '참여',
   'app.add': '추가',
   'drawer.close': '서랍 닫기',
   'time-span.month-plural': (months) => `${Math.floor(months)} \uAC1C\uC6D4`,

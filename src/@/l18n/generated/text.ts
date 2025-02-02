@@ -45,21 +45,23 @@ import type { Text as Text42 } from '../../../app/spaces/end-space/$l18n'
 import type { Text as Text43 } from '../../../app/spaces/join-space/$l18n'
 import type { Text as Text44 } from '../../../app/spaces/list-spaces/$l18n'
 import type { Text as Text45 } from '../../../app/spaces/list-spaces/space-card/$l18n'
-import type { Text as Text46 } from '../../../app/spaces/@/frontend/$l18n'
-import type { Text as Text47 } from '../../../app/lang/frontend/$l18n'
-import type { Text as Text48 } from '../../../app/profile/$l18n/edit-profile.$l18n'
-import type { Text as Text49 } from '../../../app/profile/$l18n/$l18n'
-import type { Text as Text50 } from '../../../app/profile/update-username/$l18n'
-import type { Text as Text51 } from '../../../app/@/ui/surface/unsaved-changes/unsaved-changes.$l18n'
-import type { Text as Text52 } from '../../../app/@/data/profile-avatar/profile-avatar.$l18n'
-import type { Text as Text53 } from '../../../app/@/data/username/username.$l18n'
-import type { Text as Text54 } from '../../../app/@/l18n/open-settings.$l18n'
-import type { Text as Text55 } from '../../../app/@/l18n/submit.$l18n'
-import type { Text as Text56 } from '../../../app/@/l18n/$l18n'
-import type { Text as Text57 } from '../../../app/@/l18n/add.$l18n'
-import type { Text as Text58 } from '../../ui/surface-drawer/$l18n'
-import type { Text as Text59 } from '../../time/time-span.$l18n'
-import type { Text as Text60 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
+import type { Text as Text46 } from '../../../app/spaces/@/l18n/$l18n'
+import type { Text as Text47 } from '../../../app/spaces/@/l18n/game.$l18n'
+import type { Text as Text48 } from '../../../app/lang/frontend/$l18n'
+import type { Text as Text49 } from '../../../app/profile/$l18n/edit-profile.$l18n'
+import type { Text as Text50 } from '../../../app/profile/$l18n/$l18n'
+import type { Text as Text51 } from '../../../app/profile/update-username/$l18n'
+import type { Text as Text52 } from '../../../app/@/ui/surface/unsaved-changes/unsaved-changes.$l18n'
+import type { Text as Text53 } from '../../../app/@/data/profile-avatar/profile-avatar.$l18n'
+import type { Text as Text54 } from '../../../app/@/data/username/username.$l18n'
+import type { Text as Text55 } from '../../../app/@/l18n/open-settings.$l18n'
+import type { Text as Text56 } from '../../../app/@/l18n/submit.$l18n'
+import type { Text as Text57 } from '../../../app/@/l18n/$l18n'
+import type { Text as Text58 } from '../../../app/@/l18n/join.$l18n'
+import type { Text as Text59 } from '../../../app/@/l18n/add.$l18n'
+import type { Text as Text60 } from '../../ui/surface-drawer/$l18n'
+import type { Text as Text61 } from '../../time/time-span.$l18n'
+import type { Text as Text62 } from '../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n'
 
 export type Text = Text0 &
   Text1 &
@@ -121,4 +123,6 @@ export type Text = Text0 &
   Text57 &
   Text58 &
   Text59 &
-  Text60
+  Text60 &
+  Text61 &
+  Text62

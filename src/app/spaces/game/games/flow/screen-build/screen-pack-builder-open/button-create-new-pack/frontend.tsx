@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Loading, Ok } from '~/@/result'
 import { IconPlus } from '~/@/ui'
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
-import { CreateActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
+import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { Pack } from '../../../@/pack/pack'
 import { PackId } from '../../../@/pack/pack-id'
 import { PackName } from '../../../@/pack/pack-name'
@@ -69,7 +69,7 @@ const update: FrontendModule['update'] = (input) => {
 //   )
 // }
 
-const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): CreateActionProps => {
+const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): PostActionProps => {
   return {
     onSubmit: () =>
       input.dispatch({

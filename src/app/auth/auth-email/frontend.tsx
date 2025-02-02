@@ -166,7 +166,7 @@ export const View = (input: {
         title: input.ctx.t('auth-email.login-with-email'),
         onBack: () => input.dispatch({ t: 'clicked-back' }),
       }}
-      editAction={{
+      patchAction={{
         onSubmit: () => input.dispatch({ t: 'clicked-send-login-link' }),
         submitText: input.ctx.t('auth-email.send-login-link'),
         submitLoading: input.model.submission.type === 'loading',

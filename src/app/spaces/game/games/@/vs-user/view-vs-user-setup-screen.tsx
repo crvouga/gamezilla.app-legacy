@@ -151,6 +151,7 @@ export const VsUserSetupScreen = ({
   return (
     <div className='flex h-full w-full flex-1 flex-col overflow-hidden'>
       <ScreenLayoutGameCoverArt
+        id='vs-user-setup'
         parentScreen={ctx.parentScreen}
         ctx={ctx}
         navBar={{
@@ -158,7 +159,7 @@ export const VsUserSetupScreen = ({
           onBack: onQuit,
         }}
         renderCoverArt={renderCoverArt}
-        renderContent={() => <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />}
+        renderBody={() => <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />}
       />
 
       {ctx.currentUserId === ctx.space.hostId && (

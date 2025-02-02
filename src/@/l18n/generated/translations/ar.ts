@@ -219,6 +219,7 @@ export const translations: Text = {
     peopleCount === 1
       ? '\u0627\u0644\u0646\u0627\u0633'
       : `\u0627\u0644\u0646\u0627\u0633 (${peopleCount.toLocaleString()})`,
+  'spaces.game': 'لعبة',
   'lang.language': 'اللغة',
   'lang.choose-language': 'اختر اللغة',
   'lang.done': 'تم',
@@ -282,6 +283,7 @@ export const translations: Text = {
   '?': '؟',
   'app.save-changes?': 'حفظ التغييرات؟',
   'app.remove': 'إزالة',
+  'app.join': 'انضم',
   'app.add': 'إضافة',
   'drawer.close': 'إغلاق الدرج',
   'time-span.month-plural': (months) => `${Math.floor(months)} \u0623\u0634\u0647\u0631`,

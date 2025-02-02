@@ -86,12 +86,13 @@ export const View = (props: {
 
   return (
     <ScreenLayoutGameCoverArt
+      id='game-main-menu'
       parentScreen={props.ctx.parentScreen}
       ctx={props.ctx}
       navBar={{ title: props.title, onBack: props.onBack }}
       renderCoverArt={props.renderCoverArt}
-      renderContent={() => (
-        <div className='flex w-full flex-col gap-6'>
+      renderBody={() => (
+        <div className='flex w-full flex-col gap-6 px-6'>
           {props.buttons.map((button) => (
             <MainMenuButtonView key={`${button.title}${button.description}`} {...button} />
           ))}

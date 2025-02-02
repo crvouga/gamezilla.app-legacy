@@ -1,5 +1,6 @@
+import { Avatar } from '~/@/ui'
 import type { UserId } from '~/app/@/data/user-id'
-import { Avatar, Typography } from '~/@/ui'
+import { SectionTitle } from '~/app/@/ui/section/section-title'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ViewHostChip } from './host-chip'
 import { ViewYouChip } from './you-chip'
@@ -14,7 +15,7 @@ export const SectionPeopleList = ({
   const profiles = SpaceFrontendCtx.toProfiles(ctx)
   return (
     <section className='flex w-full flex-col gap-3 overflow-hidden py-6'>
-      <Typography variant='title' className='px-6' text={ctx.t('app.people')} />
+      <SectionTitle text={ctx.t('app.people')} />
 
       <div className='w-full'>
         {profiles.map((profile) => (

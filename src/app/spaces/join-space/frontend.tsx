@@ -1,10 +1,12 @@
 import { withEventId } from '~/@/event-sourced/event'
+import { Typography } from '~/@/ui'
+import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
 import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { SectionTitle } from '~/app/@/ui/section/section-title'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { MsgSpace } from '../core/space-msg/space-msg'
-import { ScreenLayoutGameCoverArt } from '../game/games/@/ui/screen-layout-game-cover-art'
 import { SectionPeopleList } from '../game/games/@/ui/section-people-list/section-people-list'
 import { GameCoverArt } from '../game/games/cover-art'
 
@@ -95,43 +97,50 @@ const View: SpaceFrontendModule['View'] = (input) => {
     currentUserRole: currentUser.role,
     currentUser,
   }
+  const hostProfile = input.ctx.profiles[spaceState.hostId]
 
   return (
     <ScreenLayout
-      parentScreen={input.ctx.parentScreen}
       id='join-space'
+      parentScreen={input.ctx.parentScreen}
       ctx={input.ctx}
-      editAction={{
+      postAction={{
         onSubmit: () => input.dispatch({ t: 'submitted-join-space-form', spaceId: space.spaceId }),
         submitText: input.ctx.t('spaces.join-space'),
-        cancelText: input.ctx.t('app.cancel'),
-        onCancel: () => input.dispatch({ t: 'clicked-exit-space-button' }),
+        // cancelText: input.ctx.t('app.cancel'),
+        // onCancel: () => input.dispatch({ t: 'clicked-exit-space-button' }),
         submitLoading: false,
-        cancelDisabled: false,
+        // cancelDisabled: false,
         submitDisabled: false,
+        submitIcon: (props) => <IconArrowRightOnRect {...props} />,
+      }}
+      navBar={{
+        title: hostProfile
+          ? input.ctx.t('spaces.current-space', {
+              hostUsername: hostProfile.username,
+            })
+          : null,
+        onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
       }}
       renderBody={() => (
-        <ScreenLayoutGameCoverArt
-          parentScreen={input.ctx.parentScreen}
-          ctx={input.ctx}
-          navBar={{
-            title: spaceState.game ? input.ctx.t(spaceState.game.t) : input.ctx.t('spaces.space'),
-            onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
-          }}
-          renderCoverArt={(inputCoverArt) =>
-            spaceState.game && (
-              <div {...inputCoverArt}>
-                <GameCoverArt gameName={spaceState.game.t} />
+        <div className='flex w-full flex-col gap-6'>
+          <section className='flex w-full flex-col gap-6 py-3'>
+            <SectionTitle text={input.ctx.t('spaces.game')} />
+            {spaceState.game && (
+              <div className='flex w-fit flex-row items-center gap-4 px-6'>
+                <div className='aspect-square size-20 overflow-hidden rounded border'>
+                  <GameCoverArt gameName={spaceState.game?.t ?? null} />
+                </div>
+                <Typography variant='label' sizeClassName='text-lg' text={input.ctx.t(spaceState.game.t)} />
               </div>
-            )
-          }
-          renderContent={() => (
-            <SectionPeopleList
-              ctx={spaceCtx}
-              onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
-            />
-          )}
-        />
+            )}
+          </section>
+
+          <SectionPeopleList
+            ctx={spaceCtx}
+            onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
+          />
+        </div>
       )}
     />
   )

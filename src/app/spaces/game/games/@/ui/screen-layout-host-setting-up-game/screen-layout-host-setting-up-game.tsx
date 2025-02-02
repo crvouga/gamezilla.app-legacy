@@ -21,11 +21,12 @@ export const ScreenLayoutHostSettingUpGame = (input: {
 }) => {
   return (
     <ScreenLayoutGameCoverArt
+      id='host-setting-up-game'
       parentScreen={input.parentScreen}
       ctx={input.ctx}
       navBar={input.navBar}
       renderCoverArt={input.renderCoverArt}
-      renderContent={() => (
+      renderBody={() => (
         <Typography
           text={input.ctx.t('game.host-is-setting-up-game')}
           variant='title'

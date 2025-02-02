@@ -91,7 +91,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       navBar={{
         title: input.ctx.t('spaces.spaces'),
       }}
-      createAction={StartSpaceFrontend.viewStartSpaceButton(input)}
+      postAction={StartSpaceFrontend.viewStartSpaceButton(input)}
       renderBody={() => {
         if (spaces.length === 0)
           return (

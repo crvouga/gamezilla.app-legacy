@@ -9,7 +9,7 @@ export type ScreenLayoutActionBarProps = Partial<ScreenActionBarProps> & {
   position?: 'top' | 'bottom'
 }
 
-export type EditActionProps = {
+export type PatchActionProps = {
   onSubmit: () => void
   cancelText: TranslatedText
   submitText: TranslatedText
@@ -19,7 +19,7 @@ export type EditActionProps = {
   submitDisabled: boolean
 }
 
-export type CreateActionProps = {
+export type PostActionProps = {
   submitIcon: (input: { className?: string }) => VDom
   onSubmit: () => void
   submitText: TranslatedText
@@ -46,6 +46,6 @@ export type ScreenLayoutProps = {
   actionBar?: ScreenLayoutActionBarProps | null
   renderMiniPlayer?: (input: { key: string }) => VDom
   renderBody: () => VDom
-  createAction?: CreateActionProps | null
-  editAction?: EditActionProps
+  postAction?: PostActionProps | null
+  patchAction?: PatchActionProps
 }

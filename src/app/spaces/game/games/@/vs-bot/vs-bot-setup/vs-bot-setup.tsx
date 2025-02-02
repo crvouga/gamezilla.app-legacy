@@ -142,6 +142,7 @@ export const View = ({
   return (
     <div className='flex w-full flex-1 flex-col'>
       <ScreenLayoutGameCoverArt
+        id='vs-bot-setup'
         parentScreen={ctx.parentScreen}
         ctx={ctx}
         navBar={{
@@ -149,7 +150,7 @@ export const View = ({
           onBack: onQuit,
         }}
         renderCoverArt={renderCoverArt}
-        renderContent={() => (
+        renderBody={() => (
           <div className='flex w-full flex-col gap-2 p-4'>
             <div className='grid w-full grid-cols-7'>
               <PlayerIcons player={playerOneProp} ctx={ctx} />
