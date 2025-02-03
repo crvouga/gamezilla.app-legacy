@@ -2,7 +2,9 @@ import { Program } from '~/@/program/program'
 import { Renderer } from '~/@/vdom/render'
 import * as AppFrontend from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
+import { DebuggerReduxDevTools } from './@/program/debugger'
 import { DebuggerConsole } from './@/program/debugger/debugger-console'
+import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {
   const root = document.getElementById('root')
@@ -27,7 +29,8 @@ const main = async () => {
     crash: (input) => {
       console.error('program crashed!', input)
     },
-    debugger: DebuggerConsole,
+    // debugger: DebuggerConsole,
+    debugger: CONFIG_SHARED.IS_PROD ? DebuggerConsole : DebuggerReduxDevTools,
   })
 
   await ctx.transport.start()
