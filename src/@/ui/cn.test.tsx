@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { cn, cnLoop } from './cn'
 
-describe.only('cn performance', () => {
+describe('cn performance', () => {
   test('should be fast for typical usage', () => {
     const iterations = 100000
-    const start = performance.now()
+    const start = process.hrtime.bigint()
 
     for (let i = 0; i < iterations; i++) {
       cn(
@@ -18,8 +18,8 @@ describe.only('cn performance', () => {
       )
     }
 
-    const end = performance.now()
-    const timePerOp = (end - start) / iterations
+    const end = process.hrtime.bigint()
+    const timePerOp = Number(end - start) / iterations / 1_000_000 // Convert nanoseconds to milliseconds
 
     // Should be well under 1ms per operation
     expect(timePerOp).toBeLessThan(0.001)
