@@ -55,3 +55,19 @@ export const init = (input: {
     }
   }
 }
+
+export const toDimensions = (flow: Model): VariantDimensions.Model => {
+  switch (flow.t) {
+    case 'flow-grid': {
+      return VariantGrid.toDimensions(flow)
+    }
+
+    case 'flow-hex': {
+      return VariantHex.toDimensions(flow)
+    }
+
+    case 'flow-tri': {
+      return VariantTri.toDimensions(flow)
+    }
+  }
+}

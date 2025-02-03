@@ -53,3 +53,12 @@ export const distance = (model: Model, a: NodeId, b: NodeId): number => {
 const hexDistance = (a: HexPosition, b: HexPosition): number => {
   return (Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs(a.z - b.z)) / 2
 }
+
+export const toDimensions = (model: Model): VariantHexDimensions.Model => {
+  return {
+    t: 'flow-hex',
+    height: model.height,
+    side: model.side,
+    width: model.width,
+  }
+}

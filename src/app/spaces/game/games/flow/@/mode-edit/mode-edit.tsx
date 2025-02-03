@@ -2,6 +2,7 @@ import { eq } from '~/@/equals/equals'
 import { History } from '~/@/history'
 import { p } from '~/@/parser'
 import { IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/@/ui'
+import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
@@ -16,7 +17,6 @@ import * as FlowUI from '../ui/color'
 import { VariantBoard } from '../variant'
 import * as FlowVariant from '../variant/variant'
 import * as FlowVariantDimensions from '../variant/variant-dimensions'
-import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 
 //
 //
@@ -42,17 +42,25 @@ const Form = p.obj({
 })
 type Form = p.Infer<typeof Form>
 
-const toEmptyForm = ({ flow }: { flow: FlowVariant.Model }): Form => {
+const toEmptyForm = (input: { flow: FlowVariant.Model }): Form => {
   return {
     terminalsByGroupId: {},
-    dimensions: FlowVariantDimensions.init(flow),
+    dimensions: FlowVariantDimensions.init(input.flow),
   }
 }
 
+const Opened = p.or(
+  p.obj({
+    t: p.l('dimensions'),
+    draftDimensions: FlowVariantDimensions.Model,
+  }),
+)
+
+export type Opened = p.Infer<typeof Opened>
+
 export const Model = p.obj({
   form: History.parser(Form),
-  opened: p.maybe(p.l('dimensions')),
-  dimensions: FlowVariantDimensions.Model,
+  opened: p.maybe(Opened),
 })
 export type Model = p.Infer<typeof Model>
 
@@ -60,14 +68,13 @@ export const canClear = (model: Model): boolean => {
   return Object.keys(History.present(model.form).terminalsByGroupId).length > 0
 }
 
-export const init = ({ flow }: { flow: FlowVariant.Model }): Model => {
+export const init = (input: { flow: FlowVariant.Model }): Model => {
   const form: Form = {
-    dimensions: FlowVariantDimensions.init(flow),
-    terminalsByGroupId: flow.terminalsByGroupId,
+    dimensions: FlowVariantDimensions.init(input.flow),
+    terminalsByGroupId: input.flow.terminalsByGroupId,
   }
   return {
     form: History.init(form),
-    dimensions: FlowVariantDimensions.init(flow),
     opened: null,
   }
 }
@@ -113,11 +120,7 @@ export type Cmd = {
   sourceSrc: string
 }
 
-export const update = ({
-  flow,
-  model,
-  msg,
-}: {
+export const update = (input: {
   flow: FlowVariant.Model
   msg: Msg
   model: Model
@@ -125,29 +128,20 @@ export const update = ({
   model: Model
   msgCmd?: Cmd
 } => {
-  switch (msg.t) {
+  switch (input.msg.t) {
     case 'dragged-over': {
-      return {
-        model,
-      }
+      return { model: input.model }
     }
 
     case 'pressed-up-node': {
-      return {
-        model,
-      }
+      return { model: input.model }
     }
 
     case 'clicked-clear': {
       return {
         model: {
-          ...model,
-          form: History.push(
-            model.form,
-            toEmptyForm({
-              flow,
-            }),
-          ),
+          ...input.model,
+          form: History.push(input.model.form, toEmptyForm({ flow: input.flow })),
         },
         msgCmd: {
           t: 'play-sound',
@@ -159,8 +153,8 @@ export const update = ({
     case 'clicked-undo': {
       return {
         model: {
-          ...model,
-          form: History.undo(model.form),
+          ...input.model,
+          form: History.undo(input.model.form),
         },
         msgCmd: {
           t: 'play-sound',
@@ -172,8 +166,8 @@ export const update = ({
     case 'clicked-redo': {
       return {
         model: {
-          ...model,
-          form: History.redo(model.form),
+          ...input.model,
+          form: History.redo(input.model.form),
         },
         msgCmd: {
           t: 'play-sound',
@@ -183,19 +177,19 @@ export const update = ({
     }
 
     case 'pressed-down-node': {
-      const currentPlacingGroupId = toCurrentPlacingGroupId(model)
+      const currentPlacingGroupId = toCurrentPlacingGroupId(input.model)
 
       const draftTerminalsNew = updateDraftTerminalsOnPressedDownNode(
-        History.present(model.form).terminalsByGroupId,
+        History.present(input.model.form).terminalsByGroupId,
         currentPlacingGroupId,
-        msg.nodeId,
+        input.msg.nodeId,
       )
 
       return {
         model: {
-          ...model,
-          form: History.push(model.form, {
-            ...History.present(model.form),
+          ...input.model,
+          form: History.push(input.model.form, {
+            ...History.present(input.model.form),
             terminalsByGroupId: draftTerminalsNew,
           }),
         },
@@ -209,8 +203,11 @@ export const update = ({
     case 'dimensions-form.inputted': {
       return {
         model: {
-          ...model,
-          dimensions: msg.dimensions,
+          ...input.model,
+          opened: {
+            t: 'dimensions',
+            draftDimensions: input.msg.dimensions,
+          },
         },
         msgCmd: {
           t: 'play-sound',
@@ -220,22 +217,33 @@ export const update = ({
     }
 
     case 'dimensions-form.clicked-save': {
-      const present = History.present(model.form)
+      const opened = input.model.opened
+
+      if (opened?.t !== 'dimensions') {
+        return {
+          model: input.model,
+          msgCmd: {
+            t: 'play-sound',
+            sourceSrc: APP_SOUND.drawerClosed,
+          },
+        }
+      }
+
+      const present = History.present(input.model.form)
 
       const flowNew = FlowVariant.init({
-        dimensions: model.dimensions,
+        dimensions: opened.draftDimensions,
         terminalsByGroupId: present.terminalsByGroupId,
       })
 
       const formNew: Form = {
         terminalsByGroupId: flowNew.terminalsByGroupId,
-        dimensions: FlowVariantDimensions.init(flowNew),
+        dimensions: FlowVariant.toDimensions(flowNew),
       }
 
       const modelNew: Model = {
-        ...model,
-        dimensions: FlowVariantDimensions.init(flowNew),
-        form: History.push(model.form, formNew),
+        ...input.model,
+        form: History.push(input.model.form, formNew),
         opened: null,
       }
 
@@ -249,22 +257,29 @@ export const update = ({
     }
 
     case 'dimensions-form.clicked-open': {
+      const present = History.present(input.model.form)
       return {
-        model: resetDimensionsForm({ ...model, opened: 'dimensions' }),
+        model: {
+          ...input.model,
+          opened: { t: 'dimensions', draftDimensions: present.dimensions },
+        },
         msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.drawerOpened },
       }
     }
 
     case 'dimensions-form.closed': {
       return {
-        model: resetDimensionsForm({ ...model, opened: null }),
+        model: { ...input.model, opened: null },
         msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.drawerClosed },
       }
     }
 
     case 'dimensions-form.clicked-cancel': {
       return {
-        model: resetDimensionsForm({ ...model, opened: null }),
+        model: {
+          ...input.model,
+          opened: null,
+        },
         msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.drawerClosed },
       }
     }
@@ -273,15 +288,9 @@ export const update = ({
 
 const canSubmitDimensionsForm = (model: Model): boolean => {
   const present = History.present(model.form)
-  return !eq(present.dimensions, model.dimensions)
-}
-
-const resetDimensionsForm = (model: Model): Model => {
-  const flow = toFlow(model)
-  return {
-    ...model,
-    dimensions: FlowVariantDimensions.init(flow),
-  }
+  const opened = model.opened
+  if (opened?.t !== 'dimensions') return false
+  return !eq(opened.draftDimensions, present.dimensions)
 }
 
 export const updateDraftTerminalsOnPressedDownNode = (
@@ -404,31 +413,11 @@ export const toCurrentPlacingTerminalPosition = (model: Model): 'start' | 'end' 
   return 'start'
 }
 
-export const removeIncompleteTerminals = (draftTerminals: DraftTerminals): Flow.Model['terminalsByGroupId'] => {
-  const terminalsByGroupId: Flow.Model['terminalsByGroupId'] = {}
-
-  for (const groupId in draftTerminals) {
-    const draftTerminal = draftTerminals[groupId as GroupId]
-    if (!draftTerminal) {
-      continue
-    }
-    if (!draftTerminal.endId) {
-      continue
-    }
-    const terminal: Terminal = {
-      startId: draftTerminal.startId,
-      endId: draftTerminal.endId,
-      groupId: draftTerminal.groupId,
-    }
-    terminalsByGroupId[draftTerminal.groupId] = terminal
-  }
-  return terminalsByGroupId
-}
-
 export const toFlow = (model: Model): FlowVariant.Model => {
   const form = History.present(model.form)
+  const dimensions = model.opened?.draftDimensions ?? form.dimensions
   return FlowVariant.init({
-    dimensions: model.dimensions,
+    dimensions,
     terminalsByGroupId: form.terminalsByGroupId,
   })
 }
@@ -454,6 +443,18 @@ export const View = (input: {
       parentScreen={input.ctx.parentScreen}
       id='mode-edit-screen'
       ctx={input.ctx}
+      renderBody={() => (
+        <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-auto'>
+          <ViewStatus {...input} />
+
+          <VariantBoard.View
+            model={toFlow(input.model)}
+            onDraggedOver={(nodeId) => input.dispatch({ t: 'dragged-over', nodeId })}
+            onPressDown={(nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId })}
+            onPressUp={(nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId })}
+          />
+        </div>
+      )}
       actionBar={{
         variant: {
           t: 'uniform',
@@ -481,58 +482,52 @@ export const View = (input: {
               icon: (input) => <IconExpand {...input} />,
               label: input.ctx.t('app.dimensions'),
               onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
+              renderSurface: (anchor) => (
+                <SurfaceLayout
+                  id='dimensions'
+                  ctx={input.ctx}
+                  anchor={anchor}
+                  ariaLabel={input.ctx.t('app.dimensions')}
+                  open={input.model.opened?.t === 'dimensions'}
+                  onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
+                  dropDown={{
+                    position: 'start',
+                    alignment: 'ending',
+                  }}
+                  header={{
+                    render: () => (
+                      <SurfaceHeader
+                        ctx={input.ctx}
+                        title={input.ctx.t('app.dimensions')}
+                        onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
+                      />
+                    ),
+                  }}
+                  form={{
+                    onSubmit: () => input.dispatch({ t: 'dimensions-form.clicked-save' }),
+                    onCancel: () => input.dispatch({ t: 'dimensions-form.clicked-cancel' }),
+                    cancelDisabled: false,
+                    cancelText: input.ctx.t('app.cancel'),
+                    submitText: input.ctx.t('app.apply'),
+                    submitLoading: false,
+                    submitDisabled: !canSubmitDimensionsForm(input.model),
+                  }}
+                  body={{
+                    render: () =>
+                      input.model.opened?.draftDimensions && (
+                        <FlowVariantDimensions.ViewForm
+                          ctx={input.ctx}
+                          form={input.model.opened?.draftDimensions}
+                          onInput={(dimensions) => input.dispatch({ t: 'dimensions-form.inputted', dimensions })}
+                        />
+                      ),
+                  }}
+                />
+              ),
             },
           ],
         },
       }}
-      renderBody={() => (
-        <>
-          <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-auto'>
-            <ViewStatus {...input} />
-
-            <VariantBoard.View
-              model={toFlow(input.model)}
-              onDraggedOver={(nodeId) => input.dispatch({ t: 'dragged-over', nodeId })}
-              onPressDown={(nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId })}
-              onPressUp={(nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId })}
-            />
-          </div>
-          <SurfaceLayout
-            id='dimensions'
-            ctx={input.ctx}
-            ariaLabel={input.ctx.t('app.dimensions')}
-            open={input.model.opened === 'dimensions'}
-            onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
-            header={{
-              render: () => (
-                <SurfaceHeader
-                  ctx={input.ctx}
-                  title={input.ctx.t('app.dimensions')}
-                  onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
-                />
-              ),
-            }}
-            form={{
-              onSubmit: () => input.dispatch({ t: 'dimensions-form.clicked-save' }),
-              onCancel: () => input.dispatch({ t: 'dimensions-form.clicked-cancel' }),
-              cancelDisabled: false,
-              cancelText: input.ctx.t('app.cancel'),
-              submitText: input.ctx.t('app.save'),
-              submitLoading: false,
-              submitDisabled: !canSubmitDimensionsForm(input.model),
-            }}
-            body={{
-              render: () => (
-                <FlowVariantDimensions.ViewForm
-                  ctx={input.ctx}
-                  form={input.model.dimensions}
-                  onInput={(dimensions) => input.dispatch({ t: 'dimensions-form.inputted', dimensions })}
-                />
-              ),
-            }}
-          />
-        </>
-      )}
     />
   )
 }

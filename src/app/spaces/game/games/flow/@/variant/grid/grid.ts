@@ -404,3 +404,11 @@ export const toPipeline = (model: Model, startingNodeId: NodeId): PipeJoined[] =
     currentNodeId = pipe.edge.targetId
   }
 }
+
+export const toDimensions = (model: Model): VariantGridDimensions.Model => {
+  return {
+    t: 'flow-grid',
+    width: model.width,
+    height: model.height,
+  }
+}

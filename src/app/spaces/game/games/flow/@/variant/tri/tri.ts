@@ -28,3 +28,10 @@ export const init = (input: {
 export const distance = (_model: Model, _a: NodeId, _b: NodeId): number => {
   return 0
 }
+
+export const toDimensions = (model: Model): VariantTriDimensions.Model => {
+  return {
+    t: 'flow-tri',
+    side: model.side,
+  }
+}
