@@ -9,14 +9,11 @@ import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-pro
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
-import * as Flow from '../flow/flow'
+import { Flow } from '../flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
-import { Terminal } from '../flow/terminal'
-import * as FlowUI from '../ui/color'
-import { VariantBoard } from '../variant'
-import * as FlowVariant from '../variant/variant'
-import * as FlowVariantDimensions from '../variant/variant-dimensions'
+import { Color } from '../ui/color'
+import { Variant, VariantBoard, VariantDimensions } from '../variant'
 
 //
 //
@@ -38,21 +35,14 @@ type DraftTerminals = p.Infer<typeof DraftTerminals>
 
 const Form = p.obj({
   terminalsByGroupId: DraftTerminals,
-  dimensions: FlowVariantDimensions.Model,
+  dimensions: VariantDimensions.Model,
 })
 type Form = p.Infer<typeof Form>
-
-const toEmptyForm = (input: { flow: FlowVariant.Model }): Form => {
-  return {
-    terminalsByGroupId: {},
-    dimensions: FlowVariantDimensions.init(input.flow),
-  }
-}
 
 const Opened = p.or(
   p.obj({
     t: p.l('dimensions'),
-    draftDimensions: FlowVariantDimensions.Model,
+    draftDimensions: VariantDimensions.Model,
   }),
 )
 
@@ -68,9 +58,9 @@ export const canClear = (model: Model): boolean => {
   return Object.keys(History.present(model.form).terminalsByGroupId).length > 0
 }
 
-export const init = (input: { flow: FlowVariant.Model }): Model => {
+export const init = (input: { flow: Variant.Model }): Model => {
   const form: Form = {
-    dimensions: FlowVariantDimensions.init(input.flow),
+    dimensions: VariantDimensions.init(input.flow),
     terminalsByGroupId: input.flow.terminalsByGroupId,
   }
   return {
@@ -79,12 +69,12 @@ export const init = (input: { flow: FlowVariant.Model }): Model => {
   }
 }
 
-export const isUnsavedChanges = (model: Model, flow: FlowVariant.Model): boolean => {
+export const isUnsavedChanges = (model: Model, flow: Variant.Model): boolean => {
   const draft: Form = History.present(model.form)
 
   const actual: Form = {
     terminalsByGroupId: flow.terminalsByGroupId,
-    dimensions: FlowVariantDimensions.init(flow),
+    dimensions: VariantDimensions.init(flow),
   }
 
   const areTerminalsDifferent = !Flow.isSameTerminalsByGroupId(actual.terminalsByGroupId, draft.terminalsByGroupId)
@@ -111,7 +101,7 @@ export const Msg = p.or(
   p.obj({ t: p.l('dimensions-form.closed') }),
   p.obj({ t: p.l('dimensions-form.clicked-cancel') }),
   p.obj({ t: p.l('dimensions-form.clicked-save') }),
-  p.obj({ t: p.l('dimensions-form.inputted'), dimensions: FlowVariantDimensions.Model }),
+  p.obj({ t: p.l('dimensions-form.inputted'), dimensions: VariantDimensions.Model }),
 )
 export type Msg = p.Infer<typeof Msg>
 
@@ -121,7 +111,7 @@ export type Cmd = {
 }
 
 export const update = (input: {
-  flow: FlowVariant.Model
+  flow: Variant.Model
   msg: Msg
   model: Model
 }): {
@@ -235,14 +225,14 @@ export const update = (input: {
 
       const present = History.present(input.model.form)
 
-      const flowNew = FlowVariant.init({
+      const flowNew = Variant.init({
         dimensions: opened.draftDimensions,
         terminalsByGroupId: present.terminalsByGroupId,
       })
 
       const formNew: Form = {
         terminalsByGroupId: flowNew.terminalsByGroupId,
-        dimensions: FlowVariant.toDimensions(flowNew),
+        dimensions: Variant.toDimensions(flowNew),
       }
 
       const modelNew: Model = {
@@ -417,10 +407,10 @@ export const toCurrentPlacingTerminalPosition = (model: Model): 'start' | 'end' 
   return 'start'
 }
 
-export const toFlow = (model: Model): FlowVariant.Model => {
+export const toFlow = (model: Model): Variant.Model => {
   const form = History.present(model.form)
   const dimensions = model.opened?.draftDimensions ?? form.dimensions
-  return FlowVariant.init({
+  return Variant.init({
     dimensions,
     terminalsByGroupId: form.terminalsByGroupId,
   })
@@ -519,7 +509,7 @@ export const View = (input: {
                   body={{
                     render: () =>
                       input.model.opened?.draftDimensions && (
-                        <FlowVariantDimensions.ViewForm
+                        <VariantDimensions.ViewForm
                           ctx={input.ctx}
                           form={input.model.opened?.draftDimensions}
                           onInput={(dimensions) => input.dispatch({ t: 'dimensions-form.inputted', dimensions })}
@@ -547,7 +537,7 @@ const ViewStatus: typeof View = (input) => {
 }
 
 const ViewTerminal = ({ groupId, className }: { className: string; groupId: GroupId }) => {
-  const color = FlowUI.Color.groupIdToHex(groupId)
+  const color = Color.groupIdToHex(groupId)
   return (
     <svg className={className} viewBox='-1 -1 2 2'>
       <circle cx='0' cy='0' r='0.8' fill={color} />
