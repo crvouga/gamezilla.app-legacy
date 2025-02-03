@@ -1,7 +1,9 @@
 import { describe, expect, it, test } from 'bun:test'
 import { ModeEdit } from '.'
 import { Variant, VariantDimensions } from '../variant'
-import { VariantGrid, VariantGridShorthand } from '../variant/grid'
+import { VariantGridShorthand } from '../variant/grid'
+
+type Output = ReturnType<typeof ModeEdit.update>
 
 const Fixture = async (input?: { flow?: Variant.Model }) => {
   const flow =
@@ -11,17 +13,14 @@ const Fixture = async (input?: { flow?: Variant.Model }) => {
       [' ', 'A'],
     ])
 
-  const init = ModeEdit.init({
-    flow,
-  })
-  const update = (init: ModeEdit.Model, msgs: ModeEdit.Msg[]) => {
-    let updated: ReturnType<typeof ModeEdit.update> = { model: init }
+  const init: Output = {
+    model: ModeEdit.init({ flow }),
+  }
 
-    for (const msg of msgs) {
-      updated = ModeEdit.update({ flow, model: updated.model, msg })
-    }
-
-    return updated
+  const update = (acc: Output, [msg, ...msgs]: ModeEdit.Msg[]): Output => {
+    if (!msg) return acc
+    const updated = ModeEdit.update({ flow, model: acc.model, msg })
+    return update(updated, msgs)
   }
 
   return {
@@ -83,12 +82,12 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    const after = f.update(updated.model, [
+    const after = f.update(updated, [
       {
         t: 'dimensions-form.clicked-cancel',
       },
     ])
-    const beforeDim = Variant.toDimensions(ModeEdit.toFlow(before))
+    const beforeDim = Variant.toDimensions(ModeEdit.toFlow(before.model))
     const updatedDim = Variant.toDimensions(ModeEdit.toFlow(updated.model))
     const afterDim = Variant.toDimensions(ModeEdit.toFlow(after.model))
     expect(beforeDim).toEqual(afterDim)
@@ -113,7 +112,7 @@ describe(import.meta.file, () => {
         t: 'dimensions-form.clicked-save',
       },
     ])
-    const after = f.update(updated.model, [
+    const after = f.update(updated, [
       {
         t: 'dimensions-form.clicked-open',
       },
@@ -148,5 +147,31 @@ describe(import.meta.file, () => {
       },
     ])
     expect(ModeEdit.toCurrentPlacingGroupId(updated.model)).toEqual('A')
+  })
+
+  test.only('clear should only remove terminals not change dimensions', async () => {
+    const f = await Fixture()
+    const dimensionsNew = VariantDimensions.init({
+      t: 'flow-grid',
+      height: Math.floor(Math.random() * 10),
+      width: Math.floor(Math.random() * 10),
+    })
+    const updated = f.update(f.init, [
+      {
+        t: 'dimensions-form.clicked-open',
+      },
+      {
+        t: 'dimensions-form.inputted',
+        dimensions: dimensionsNew,
+      },
+      {
+        t: 'dimensions-form.clicked-save',
+      },
+      {
+        t: 'clicked-clear',
+      },
+    ])
+    const actual = Variant.toDimensions(ModeEdit.toFlow(updated.model))
+    expect(actual).toEqual(dimensionsNew)
   })
 })

@@ -138,10 +138,14 @@ export const update = (input: {
     }
 
     case 'clicked-clear': {
+      const formNew: Form = {
+        dimensions: History.present(input.model.form).dimensions,
+        terminalsByGroupId: {},
+      }
       return {
         model: {
           ...input.model,
-          form: History.push(input.model.form, toEmptyForm({ flow: input.flow })),
+          form: History.push(input.model.form, formNew),
         },
         msgCmd: {
           t: 'play-sound',
