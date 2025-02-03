@@ -23,7 +23,7 @@ const main = async () => {
     init: AppFrontend.init,
     update: AppFrontend.update,
     subscriptions: AppFrontend.subscriptions,
-    render(input) {
+    render: (input) => {
       render(<AppFrontend.View {...input} />)
     },
     crash: (input) => {
