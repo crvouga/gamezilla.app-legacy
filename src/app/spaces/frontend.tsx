@@ -6,7 +6,7 @@ import { type Input, type Output, SpaceFrontendModule } from './architecture/spa
 import { SpaceFrontendCmd } from './@/frontend/cmd'
 import { SpaceFrontendEvt } from './@/frontend/evt'
 import { EndSpaceFrontend } from './end-space/frontend'
-import { CurrentSpaceBottomBar } from './frontend/current-space-bottom-bar'
+import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/current-space-mini-player'
 import { GoHome } from './frontend/exit-space/exit-space'
 import { People } from './frontend/people/people'
 import { SpaceFrontend } from './space/frontend'
@@ -123,7 +123,7 @@ const updateChild: SpaceFrontendModule['update'] = (input) => {
     (model) => JoinSpaceFrontend.update({ ...input, model }),
     (model) => ListSpacesFrontend.update({ ...input, model }),
     (model) => GoHome.update({ ...input, model }),
-    (model) => CurrentSpaceBottomBar.update({ ...input, model }),
+    (model) => CurrentSpaceMiniPlayer.update({ ...input, model }),
     (model) => People.update({ ...input, model }),
   )
 }
@@ -171,7 +171,7 @@ const View: FrontendModule['View'] = (input) => {
   }
 }
 
-const ViewCurrentSpaceBar = CurrentSpaceBottomBar.View
+const ViewCurrentSpaceMiniPlayer = CurrentSpaceMiniPlayer.View
 
 export const SpacesFrontend = {
   init,
@@ -179,5 +179,5 @@ export const SpacesFrontend = {
   updateLoop,
   subscriptions,
   View,
-  ViewCurrentSpaceBar,
+  ViewCurrentSpaceMiniPlayer,
 }

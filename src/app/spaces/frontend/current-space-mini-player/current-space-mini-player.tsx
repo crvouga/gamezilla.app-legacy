@@ -85,7 +85,6 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
             renderIcon={(iconInput) => <IconXMark {...iconInput} />}
             label={input.ctx.t('spaces.end')}
             onClick={() => input.dispatch({ t: 'clicked-end-space-button', spaceId: space.spaceId })}
-            // size='sm'
           />
         )}
 
@@ -101,7 +100,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
   )
 }
 
-export const CurrentSpaceBottomBar = {
+export const CurrentSpaceMiniPlayer = {
   update,
   View,
 }

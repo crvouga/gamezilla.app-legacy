@@ -46,5 +46,5 @@ export type AppFrontendCtx = BaseFrontendCtx & {
 }
 
 export const isAppFrontendCtx = (ctx: BaseFrontendCtx): ctx is AppFrontendCtx => {
-  return ctx.currentUserId !== null && ctx.currentUser !== null && ctx.currentUserRole !== null
+  return ctx.currentUser !== null
 }

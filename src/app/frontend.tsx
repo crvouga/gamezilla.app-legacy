@@ -524,7 +524,7 @@ const toScreenLayoutProps = (input: {
     renderMiniPlayer: (props) => {
       if (!isAppFrontendCtx(input.ctx)) return null
       return (
-        <SpacesFrontend.ViewCurrentSpaceBar
+        <SpacesFrontend.ViewCurrentSpaceMiniPlayer
           key={props.key}
           ctx={input.ctx}
           model={input.model.spaces}
