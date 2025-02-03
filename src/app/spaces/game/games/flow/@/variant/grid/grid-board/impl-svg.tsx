@@ -11,7 +11,7 @@ const TERMINAL_NODE_RADIUS = 0.33
 const EDGE_STROKE_WIDTH = 0.3
 
 let lastDraggedOver: NodeId | null = null
-let isCurrentDeviceTouch = false
+// let isCurrentDeviceTouch = false
 
 const View = (input: BoardInput<VariantGrid.Model>) => {
   const draggedOver = (nodeId: NodeId) => {
