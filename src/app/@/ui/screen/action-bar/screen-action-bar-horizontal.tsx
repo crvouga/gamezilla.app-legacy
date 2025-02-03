@@ -21,16 +21,18 @@ export const HorizontalActionBar = (input: ScreenActionBarProps) => {
 const Uniform = (input: ScreenActionBarProps & ScreenActionsUniform) => {
   const size = input.size ?? 'md'
   const limit = input.limit?.max ?? DEFAULT_LIMIT
-  const [firstButtons, lastButtons] = [input.actions.slice(0, limit), input.actions.slice(limit)]
+  const [firstActions, lastActions] = [input.actions.slice(0, limit), input.actions.slice(limit)]
 
   return (
     <div className={cn('flex w-full shrink-0 items-center', toHeightClass(size))} role='toolbar'>
-      {firstButtons.map((button) => {
-        if (!button) return null
-        return <ScreenActionButton {...button} size={input.size} key={button.label} />
+      {firstActions.map((action) => {
+        if (!action) return null
+        const button = <ScreenActionButton {...action} size={input.size} key={action.label} />
+        if (action.renderSurface) return action.renderSurface(button)
+        return button
       })}
 
-      {lastButtons.some((button) => button !== null) && (
+      {lastActions.some((button) => button !== null) && (
         <>
           <ScreenActionButton
             icon={(input) => <IconEllipsisVertical {...input} />}
@@ -45,22 +47,27 @@ const Uniform = (input: ScreenActionBarProps & ScreenActionsUniform) => {
             onClose={input.limit?.onToggle ?? (() => {})}
             open={input.limit?.open ?? false}
             body={{
-              render: () => (
-                <>
-                  {lastButtons.map((button) => {
-                    if (!button || button.hidden) return null
-                    return (
-                      <ListItemButton
-                        key={button.label}
-                        icon={button.icon}
-                        label={button.label}
-                        onClick={button.onClick}
-                        color={button.color}
-                      />
-                    )
-                  })}
-                </>
-              ),
+              render: () => {
+                return (
+                  <>
+                    {lastActions.map((action) => {
+                      if (!action) return null
+                      if (action.hidden) return null
+                      const listItemButton = (
+                        <ListItemButton
+                          key={action.label}
+                          icon={action.icon}
+                          label={action.label}
+                          onClick={action.onClick}
+                          color={action.color}
+                        />
+                      )
+                      if (action.renderSurface) return action.renderSurface(listItemButton)
+                      return listItemButton
+                    })}
+                  </>
+                )
+              },
             }}
           />
         </>
@@ -75,16 +82,20 @@ const SpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpaceBetween) =
   return (
     <div className={cn('flex w-full shrink-0 items-center justify-between', toHeightClass(size))} role='toolbar'>
       <div className='flex items-center'>
-        {input.start.map((button) => {
-          if (!button) return null
-          return <ScreenActionButton {...button} size={input.size} key={button.label} className='min-w-20' />
+        {input.start.map((action) => {
+          if (!action) return null
+          const button = <ScreenActionButton {...action} size={input.size} key={action.label} className='min-w-20' />
+          if (action.renderSurface) return action.renderSurface(button)
+          return button
         })}
       </div>
 
       <div className='flex items-center'>
-        {input.end.map((button) => {
-          if (!button) return null
-          return <ScreenActionButton {...button} size={input.size} key={button.label} className='min-w-20' />
+        {input.end.map((action) => {
+          if (!action) return null
+          const button = <ScreenActionButton {...action} size={input.size} key={action.label} className='min-w-20' />
+          if (action.renderSurface) return action.renderSurface(button)
+          return button
         })}
       </div>
     </div>
