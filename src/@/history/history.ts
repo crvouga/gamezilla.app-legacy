@@ -38,9 +38,7 @@ const push = <T>(history: History<T>, newPresent: T): History<T> => {
 const undo = <T>(history: History<T>): History<T> => {
   const newPresent = history._past[history._past.length - 1]
 
-  if (!newPresent) {
-    return history
-  }
+  if (!newPresent) return history
 
   const newPast = history._past.slice(0, history._past.length - 1)
   const newFuture = [history._present, ...history._future]
@@ -58,9 +56,7 @@ const undo = <T>(history: History<T>): History<T> => {
 const redo = <T>(history: History<T>): History<T> => {
   const newPresent = history._future[0]
 
-  if (!newPresent) {
-    return history
-  }
+  if (!newPresent) return history
 
   const newFuture = history._future.slice(1)
   const newPast = [...history._past, history._present]
