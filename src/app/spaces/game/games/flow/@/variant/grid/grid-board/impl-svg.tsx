@@ -257,29 +257,38 @@ const ViewClickableNode = (
       width='1'
       height='1'
       fill='transparent'
-      onMouseDown={() => {
-        if (isCurrentDeviceTouch) return
+      // onMouseDown={() => {
+      //   if (isCurrentDeviceTouch) return
 
+      //   input.onPressDown?.(input.node.nodeId)
+      // }}
+      // onMouseUp={(event) => {
+      //   event.stopPropagation()
+      //   input.onPressUp?.(input.node.nodeId)
+      // }}
+      // onMouseEnter={() => {
+      //   input.draggedOver?.(input.node.nodeId)
+      // }}
+      // onTouchStart={() => {
+      //   isCurrentDeviceTouch = true
+      //   input.onPressDown?.(input.node.nodeId)
+      // }}
+      // onTouchCancel={() => {
+      //   isCurrentDeviceTouch = true
+      //   input.onPressUp?.(input.node.nodeId)
+      // }}
+      // onTouchEnd={() => {
+      //   isCurrentDeviceTouch = true
+      //   input.onPressUp?.(input.node.nodeId)
+      // }}
+      onPointerDown={() => {
         input.onPressDown?.(input.node.nodeId)
       }}
-      onMouseUp={(event) => {
-        event.stopPropagation()
+      onPointerUp={() => {
         input.onPressUp?.(input.node.nodeId)
       }}
-      onMouseEnter={() => {
+      onPointerEnter={() => {
         input.draggedOver?.(input.node.nodeId)
-      }}
-      onTouchStart={() => {
-        isCurrentDeviceTouch = true
-        input.onPressDown?.(input.node.nodeId)
-      }}
-      onTouchCancel={() => {
-        isCurrentDeviceTouch = true
-        input.onPressUp?.(input.node.nodeId)
-      }}
-      onTouchEnd={() => {
-        isCurrentDeviceTouch = true
-        input.onPressUp?.(input.node.nodeId)
       }}
     />
   )
