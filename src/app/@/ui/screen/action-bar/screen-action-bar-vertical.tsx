@@ -45,7 +45,7 @@ const SpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenActio
 
 const Toolbar = (input: { children: VDom }) => {
   return (
-    <div className='flex w-full flex-1 shrink-0 flex-col overflow-hidden' role='toolbar'>
+    <div className='flex w-full flex-1 shrink-0 flex-col' role='toolbar'>
       {input.children}
     </div>
   )
@@ -53,7 +53,7 @@ const Toolbar = (input: { children: VDom }) => {
 
 const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
   return (
-    <div className='flex w-full shrink-0 flex-col gap-2 overflow-hidden'>
+    <div className='flex w-full shrink-0 flex-col gap-2'>
       {input.actions.map((action) => {
         if (!action) return null
         const button = <ScreenActionButton {...action} size={SIZE} key={action.label} />

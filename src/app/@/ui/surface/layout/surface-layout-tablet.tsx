@@ -1,25 +1,31 @@
 import { Dialog } from '~/@/ui'
 import { DropDown } from '~/@/ui/drop-down/drop-down'
+import { DropDownSurface } from '~/@/ui/drop-down/drop-down-surface'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { Content } from './content'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
-  const USE_DROP_DOWN = false
-  if (props.anchor && USE_DROP_DOWN) {
+  if (props.anchor) {
     return (
       <DropDown
-        open={props.open ?? false}
-        onClose={props.onClose ?? (() => {})}
+        open={props.open}
+        onClose={props.onClose}
         renderReference={() => props.anchor}
-        renderFloating={() => <Content {...props} />}
+        alignment='ending'
+        position='bottom'
+        renderFloating={() => (
+          <DropDownSurface>
+            <Content {...props} />
+          </DropDownSurface>
+        )}
       />
     )
   }
   return (
     <>
       {props.anchor}
-      <Dialog open={props.open ?? false} onClose={props.onClose ?? (() => {})}>
+      <Dialog open={props.open} onClose={props.onClose}>
         <DialogSurface>
           <Content {...props} />
         </DialogSurface>
