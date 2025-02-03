@@ -1,17 +1,19 @@
 import { VDom } from '~/@/vdom/vdom'
+import { ClickOutside } from '../click-outside/click-outside'
 import { cn } from '../cn'
-
-type Position = 'bottom' | 'start' | 'top' | 'end'
-type Alignment = 'ending' | 'starting' | 'centered'
+import { Transition } from '../transition'
+import { DropDownPosition } from './drop-down-position'
+import { DropDownAlignment } from './drop-down-alignment'
 
 export const DropDown = (props: {
+  id: string
   open: boolean
   onClose: () => void
   renderReference: () => VDom
   renderFloating: () => VDom
   className?: string
-  position?: Position
-  alignment?: Alignment
+  position?: DropDownPosition
+  alignment?: DropDownAlignment
 }) => {
   const position = props.position ?? 'bottom'
   const alignment = props.alignment ?? 'starting'
@@ -19,30 +21,59 @@ export const DropDown = (props: {
   return (
     <div
       className={cn('relative', props.className)}
-      onClick={(event) => {
-        const didClickFloating = (event.target as HTMLElement).dataset.floating === 'true'
-        if (!didClickFloating && props.open) {
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
           props.onClose()
         }
       }}
     >
       {props.renderReference()}
-      {props.open && (
-        <div data-floating='true' className={toPositionClasses(position, alignment)}>
-          {props.renderFloating()}
-        </div>
-      )}
+      <Transition id={`${props.id}-transition`} mode='in-out' onEnter={onEnter} onExit={onExit}>
+        {props.open && (
+          <ClickOutside id={props.id} className={toPositionClasses(position, alignment)} onClickOutside={props.onClose}>
+            {props.renderFloating()}
+          </ClickOutside>
+        )}
+      </Transition>
     </div>
   )
 }
 
-const toPositionClasses = (position: Position, alignment: Alignment): string => {
+const onEnter = async (node: HTMLElement) => {
+  await node?.animate(
+    [
+      { opacity: 0, transform: 'translateY(-8px)' },
+      { opacity: 1, transform: 'translateY(0)' },
+    ],
+    {
+      duration: 150,
+      easing: 'ease-in-out',
+      fill: 'both',
+    },
+  ).finished
+}
+
+const onExit = async (node: HTMLElement) => {
+  await node?.animate(
+    [
+      { opacity: 1, transform: 'translateY(0)' },
+      { opacity: 0, transform: 'translateY(-8px)' },
+    ],
+    {
+      duration: 150,
+      easing: 'ease-in-out',
+      fill: 'both',
+    },
+  ).finished
+}
+
+const toPositionClasses = (position: DropDownPosition, alignment: DropDownAlignment): string => {
   const positionClass = toPositionClass(position)
   const alignmentClass = toAlignmentClass(position, alignment)
   return `absolute z-50 ${positionClass} ${alignmentClass}`
 }
 
-const toPositionClass = (position: Position): string => {
+const toPositionClass = (position: DropDownPosition): string => {
   switch (position) {
     case 'bottom':
       return 'top-full'
@@ -55,7 +86,7 @@ const toPositionClass = (position: Position): string => {
   }
 }
 
-const toAlignmentClass = (position: Position, alignment: Alignment): string => {
+const toAlignmentClass = (position: DropDownPosition, alignment: DropDownAlignment): string => {
   switch (position) {
     case 'bottom':
     case 'top':
@@ -66,7 +97,7 @@ const toAlignmentClass = (position: Position, alignment: Alignment): string => {
   }
 }
 
-const toVerticalAlignmentClass = (alignment: Alignment): string => {
+const toVerticalAlignmentClass = (alignment: DropDownAlignment): string => {
   switch (alignment) {
     case 'ending':
       return 'right-0'
@@ -77,7 +108,7 @@ const toVerticalAlignmentClass = (alignment: Alignment): string => {
   }
 }
 
-const toHorizontalAlignmentClass = (alignment: Alignment): string => {
+const toHorizontalAlignmentClass = (alignment: DropDownAlignment): string => {
   switch (alignment) {
     case 'ending':
       return 'bottom-0'

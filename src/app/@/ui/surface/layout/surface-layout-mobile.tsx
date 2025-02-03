@@ -10,7 +10,7 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
         id='surface-layout'
         onClose={props.onClose ?? (() => {})}
         open={props.open ?? false}
-        position={props.position ?? 'bottom'}
+        position={props.drawer?.position ?? 'bottom'}
         ctx={props.ctx}
         ariaLabel={props.ariaLabel}
       >

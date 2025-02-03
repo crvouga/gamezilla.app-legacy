@@ -5,11 +5,15 @@ import { SurfaceBodyText } from '~/@/ui/surface/surface-body-text'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
+import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 
 export type SurfaceConfirmationProps = DrawerInput & {
   ctx: {
     t: Translator
     screenSize: ScreenSize
+  }
+  drawer?: {
+    position?: DrawerPosition
   }
   title: TranslatedText
   body: TranslatedText
@@ -31,7 +35,6 @@ export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
     <SurfaceLayout
       ctx={input.ctx}
       onClose={input.onClose}
-      position='bottom'
       open={input.open}
       id='surface-confirmation'
       ariaLabel={input.title}

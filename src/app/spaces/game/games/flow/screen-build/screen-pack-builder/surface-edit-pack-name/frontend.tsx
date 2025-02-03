@@ -27,7 +27,9 @@ const ViewSurface: FrontendModule['View'] = (input) => {
       id='edit-pack-name'
       open={input.modelSpace.opened === 'edit-pack-name-drawer'}
       onClose={onClose}
-      position='bottom'
+      drawer={{
+        position: 'bottom',
+      }}
       form={{
         onSubmit: () =>
           input.dispatch({

@@ -1,12 +1,13 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
+import { DrawerPosition } from './drawer-position'
 
 export type PrivateDrawerInput = {
   id: string
   onClose: () => void
   open: boolean
-  position: 'bottom' | 'top'
+  position: DrawerPosition
 }
 
 export type DrawerInput = PrivateDrawerInput & {

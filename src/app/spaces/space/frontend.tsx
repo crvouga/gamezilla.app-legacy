@@ -38,12 +38,7 @@ const View = (input: {
       const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
 
       if (currentUserSpaceId !== spaceCtx.space.spaceId) {
-        return (
-          <>
-            <People.View {...input} ctx={spaceCtx} />
-            <JoinSpaceFrontend.View {...input} ctx={spaceCtx} />
-          </>
-        )
+        return <JoinSpaceFrontend.View {...input} ctx={spaceCtx} />
       }
       const inputNew = { ...input, ctx: spaceCtx }
       const isHost = inputNew.ctx.space.hostId === inputNew.ctx.currentUserId
@@ -67,12 +62,7 @@ const View = (input: {
 
       const inputFinal = { ...inputNew, ctx: spaceCtxFinal }
 
-      return (
-        <>
-          <People.View {...inputFinal} />
-          <GameFrontend.View {...inputFinal} />
-        </>
-      )
+      return <GameFrontend.View {...inputFinal} />
     }
   }
 }

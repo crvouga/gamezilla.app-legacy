@@ -9,11 +9,12 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
   if (props.anchor) {
     return (
       <DropDown
+        id={`${props.id}-drop-down`}
         open={props.open}
         onClose={props.onClose}
         renderReference={() => props.anchor}
-        alignment='ending'
-        position='bottom'
+        alignment={props.dropDown?.alignment ?? 'ending'}
+        position={props.dropDown?.position ?? 'bottom'}
         renderFloating={() => (
           <DropDownSurface>
             <Content {...props} />

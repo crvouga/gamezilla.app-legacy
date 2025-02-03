@@ -18,20 +18,15 @@ export const Dialog = (input: { children: VDom; open: boolean; onClose: () => vo
         input.open ? 'opacity-100' : 'pointer-events-none opacity-0',
       )}
       onClick={(e) => {
-        if (e.target !== e.currentTarget) {
+        if (e.target === e.currentTarget) {
+          input.onClose()
           return
         }
-        input.onClose()
       }}
       onKeyDown={(e) => {
-        switch (e.key) {
-          case 'Escape': {
-            input.onClose()
-            return
-          }
-          default: {
-            return
-          }
+        if (e.key === 'Escape') {
+          input.onClose()
+          return
         }
       }}
     >

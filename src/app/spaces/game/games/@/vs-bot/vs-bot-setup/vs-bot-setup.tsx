@@ -208,7 +208,9 @@ export const View = ({
       <SurfaceLayout
         ctx={ctx}
         ariaLabel={ctx.t('game.change-bot')}
-        position='bottom'
+        drawer={{
+          position: 'bottom',
+        }}
         id='change-bot'
         open={model.opened === 'change-bot'}
         onClose={() =>

@@ -7,6 +7,10 @@ import { ViewHostChip } from '~/app/spaces/game/games/@/ui/section-people-list/h
 import { SectionPeopleList } from '~/app/spaces/game/games/@/ui/section-people-list/section-people-list'
 import { ViewYouChip } from '~/app/spaces/game/games/@/ui/section-people-list/you-chip'
 import { SpaceFrontendModule } from '../../architecture/space-frontend'
+import { VDom } from '~/@/vdom/vdom'
+import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
+import { DropDownAlignment } from '~/@/ui/drop-down/drop-down-alignment'
+import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   const { model } = input
@@ -75,7 +79,15 @@ const updateFromEvent: SpaceFrontendModule['update'] = ({ msgEvt, model }) => {
   return { model }
 }
 
-const View: SpaceFrontendModule['View'] = (input) => {
+const DRAWER_POSITION: DrawerPosition = 'top'
+const DROPDOWN_POSITION: DropDownPosition = 'bottom'
+const DROPDOWN_ALIGNMENT: DropDownAlignment = 'starting'
+
+const ViewSurfaces = (
+  input: Parameters<SpaceFrontendModule['View']>[0] & {
+    anchor: VDom
+  },
+) => {
   if (!input.ctx.space) return null
   if (!input.ctx.currentUser) return null
 
@@ -88,31 +100,44 @@ const View: SpaceFrontendModule['View'] = (input) => {
   }
 
   const modalProfile = input.model.modalPreviewUserId ? input.ctx.profiles[input.model.modalPreviewUserId] : null
-  const position: 'top' | 'bottom' = 'top'
   return (
     <>
       <SurfaceLayout
-        position={position}
-        id='users'
         ctx={input.ctx}
-        ariaLabel={input.ctx.t('app.people')}
-        open={input.model.modal === 'users'}
-        onClose={() => input.dispatch({ t: 'closed-modal' })}
-        body={{
-          render: () => (
-            <SectionPeopleList
-              onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
-              ctx={spaceCtx}
-            />
-          ),
+        drawer={{
+          position: DRAWER_POSITION,
         }}
-      />
-
-      <SurfaceLayout
-        ctx={input.ctx}
-        position={position}
+        dropDown={{
+          position: DROPDOWN_POSITION,
+          alignment: DROPDOWN_ALIGNMENT,
+        }}
         ariaLabel={input.ctx.t('spaces.see-profile')}
         id='user-preview'
+        anchor={
+          <SurfaceLayout
+            drawer={{
+              position: DRAWER_POSITION,
+            }}
+            dropDown={{
+              position: DROPDOWN_POSITION,
+              alignment: DROPDOWN_ALIGNMENT,
+            }}
+            id='users'
+            anchor={input.anchor}
+            ctx={input.ctx}
+            ariaLabel={input.ctx.t('app.people')}
+            open={input.model.modal === 'users'}
+            onClose={() => input.dispatch({ t: 'closed-modal' })}
+            body={{
+              render: () => (
+                <SectionPeopleList
+                  onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
+                  ctx={spaceCtx}
+                />
+              ),
+            }}
+          />
+        }
         open={input.model.modal === 'user-preview'}
         onClose={() => input.dispatch({ t: 'closed-modal' })}
         body={{
@@ -164,11 +189,11 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
     label: input.ctx.t('spaces.people-count', peopleCount),
     onClick: () => input.dispatch({ t: 'clicked-people-button' }),
     badge: peopleCount > 1 ? peopleCount : undefined,
+    renderSurface: (anchor) => <ViewSurfaces {...input} anchor={anchor} />,
   }
 }
 
 export const People = {
   update,
-  View,
   viewAction,
 }

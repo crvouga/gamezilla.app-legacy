@@ -34,7 +34,9 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
       ariaLabel={input.title}
       onClose={input.onClose}
       open={input.open}
-      position='bottom'
+      drawer={{
+        position: 'bottom',
+      }}
       header={{
         render: () => <SurfaceHeader ctx={input.ctx} title={input.title} onClose={input.onClose} />,
       }}

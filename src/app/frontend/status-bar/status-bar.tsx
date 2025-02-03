@@ -72,7 +72,9 @@ export const View = ({
       <SurfaceLayout
         ctx={ctx}
         ariaLabel={ctx.t('status-bar.status-bar')}
-        position='top'
+        drawer={{
+          position: 'top',
+        }}
         id='status-bar-drawer'
         open={model.isDrawerOpen}
         onClose={() => dispatch({ t: 'closed-status-bar-drawer' })}
