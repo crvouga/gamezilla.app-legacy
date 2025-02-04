@@ -11,7 +11,6 @@ const TERMINAL_NODE_RADIUS = 0.33
 const EDGE_STROKE_WIDTH = 0.3
 
 let lastDraggedOver: NodeId | null = null
-// let isCurrentDeviceTouch = false
 
 const View = (input: BoardInput<VariantGrid.Model>) => {
   const draggedOver = (nodeId: NodeId) => {
@@ -257,30 +256,6 @@ const ViewClickableNode = (
       width='1'
       height='1'
       fill='transparent'
-      // onMouseDown={() => {
-      //   if (isCurrentDeviceTouch) return
-
-      //   input.onPressDown?.(input.node.nodeId)
-      // }}
-      // onMouseUp={(event) => {
-      //   event.stopPropagation()
-      //   input.onPressUp?.(input.node.nodeId)
-      // }}
-      // onMouseEnter={() => {
-      //   input.draggedOver?.(input.node.nodeId)
-      // }}
-      // onTouchStart={() => {
-      //   isCurrentDeviceTouch = true
-      //   input.onPressDown?.(input.node.nodeId)
-      // }}
-      // onTouchCancel={() => {
-      //   isCurrentDeviceTouch = true
-      //   input.onPressUp?.(input.node.nodeId)
-      // }}
-      // onTouchEnd={() => {
-      //   isCurrentDeviceTouch = true
-      //   input.onPressUp?.(input.node.nodeId)
-      // }}
       onPointerDown={() => {
         input.onPressDown?.(input.node.nodeId)
       }}
