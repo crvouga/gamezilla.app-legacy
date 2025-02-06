@@ -51,6 +51,7 @@ const View = (input: {
           actionBar: {
             id: 'space-actions',
             position: 'top',
+            size: 'sm',
             variant: {
               t: 'space-between',
               start: [GoHome.viewAction(inputNew), People.viewAction(inputNew)],
