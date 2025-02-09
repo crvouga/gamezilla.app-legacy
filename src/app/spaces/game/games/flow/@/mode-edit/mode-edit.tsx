@@ -252,6 +252,15 @@ export const update = (input: {
 
     case 'dimensions-form.clicked-open': {
       const present = History.present(input.model.form)
+      const isOpen = input.model.opened?.t === 'dimensions'
+
+      if (isOpen) {
+        return {
+          model: { ...input.model, opened: null },
+          msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.drawerClosed },
+        }
+      }
+
       return {
         model: {
           ...input.model,

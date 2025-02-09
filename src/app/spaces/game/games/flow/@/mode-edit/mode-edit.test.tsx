@@ -30,7 +30,7 @@ const Fixture = async (input?: { flow?: Variant.Model }) => {
   }
 }
 
-describe(import.meta.file, () => {
+describe.only(import.meta.file, () => {
   it('should make sounds interacting with dimensions form', async () => {
     const f = await Fixture()
     const msgs: ModeEdit.Msg[] = [
@@ -61,7 +61,7 @@ describe(import.meta.file, () => {
 
     for (const msg of msgs) {
       const updated = f.update(f.init, [msg])
-      console.log(msg)
+
       expect(updated.msgCmd?.t).toBe('play-sound')
     }
   })
@@ -149,7 +149,7 @@ describe(import.meta.file, () => {
     expect(ModeEdit.toCurrentPlacingGroupId(updated.model)).toEqual('A')
   })
 
-  test.only('clear should only remove terminals not change dimensions', async () => {
+  test('clear should only remove terminals not change dimensions', async () => {
     const f = await Fixture()
     const dimensionsNew = VariantDimensions.init({
       t: 'flow-grid',
@@ -173,5 +173,24 @@ describe(import.meta.file, () => {
     ])
     const actual = Variant.toDimensions(ModeEdit.toFlow(updated.model))
     expect(actual).toEqual(dimensionsNew)
+  })
+
+  test('clicking dimensions form open button should toggle open state', async () => {
+    const f = await Fixture()
+
+    const afterOpen = f.update(f.init, [
+      {
+        t: 'dimensions-form.clicked-open',
+      },
+    ])
+
+    const afterSecondClick = f.update(afterOpen, [
+      {
+        t: 'dimensions-form.clicked-open',
+      },
+    ])
+    expect(f.init.model.opened).toBe(null)
+    expect(afterOpen.model.opened?.t).toBe('dimensions')
+    expect(afterSecondClick.model.opened).toBe(null)
   })
 })
