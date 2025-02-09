@@ -29,50 +29,6 @@ const toModelSpace = (
   return msgSpaces.reduce((modelSpace, msgSpace) => BuildSpace.updateSpace({ ctx, modelSpace, msgSpace }), initial)
 }
 
-const updatesReducer =
-  (initCtx: FlowFrontendCtx) => (outputs: NonEmpty<FixtureUpdateOutput>, input: FixtureUpdateInput) => {
-    const ctx = input.ctx ?? initCtx
-    const output = BuildFrontend.update({
-      ...input,
-      model: NonEmpty.last(outputs).model,
-      modelSpace: NonEmpty.last(outputs).modelSpace,
-      ctx,
-    })
-    const modelSpaceOutput = toModelSpace(ctx, NonEmpty.last(outputs).modelSpace, output.msgSpace ?? [])
-    outputs.push({
-      ...output,
-      modelSpace: modelSpaceOutput,
-    })
-    return outputs
-  }
-
-const updates = (
-  init: {
-    model: BuilderTypes.ModelFrontend
-    ctx: FlowFrontendCtx
-    modelSpace: BuilderTypes.ModelSpace
-  },
-  inputs: FixtureUpdateInput[],
-): NonEmpty<FixtureUpdateOutput> => {
-  return inputs.reduce(updatesReducer(init.ctx), [
-    {
-      model: init.model,
-      modelSpace: init.modelSpace,
-    },
-  ])
-}
-const update = (
-  init: {
-    model: BuilderTypes.ModelFrontend
-    ctx: FlowFrontendCtx
-    modelSpace: BuilderTypes.ModelSpace
-  },
-  inputs: FixtureUpdateInput[],
-): FixtureUpdateOutput => {
-  const outputs = updates(init, inputs)
-  return NonEmpty.last(outputs)
-}
-
 export const FixtureFlowBuilderFrontend = async () => {
   const f = await FixtureSpacesFrontend()
   const ctx: FlowFrontendCtx = {
@@ -91,6 +47,36 @@ export const FixtureFlowBuilderFrontend = async () => {
     ctx,
     model,
     modelSpace,
+  }
+
+  const updatesReducer = (outputs: NonEmpty<FixtureUpdateOutput>, input: FixtureUpdateInput) => {
+    const ctx = input.ctx ?? init.ctx
+    const output = BuildFrontend.update({
+      ...input,
+      model: NonEmpty.last(outputs).model,
+      modelSpace: NonEmpty.last(outputs).modelSpace,
+      ctx,
+    })
+    const modelSpaceOutput = toModelSpace(ctx, NonEmpty.last(outputs).modelSpace, output.msgSpace ?? [])
+    outputs.push({
+      ...output,
+      modelSpace: modelSpaceOutput,
+    })
+    return outputs
+  }
+
+  const updates = (init: FixtureUpdateOutput, inputs: FixtureUpdateInput[]): NonEmpty<FixtureUpdateOutput> => {
+    return inputs.reduce(updatesReducer, [
+      {
+        model: init.model,
+        modelSpace: init.modelSpace,
+      },
+    ])
+  }
+
+  const update = (init: FixtureUpdateOutput, inputs: FixtureUpdateInput[]): FixtureUpdateOutput => {
+    const outputs = updates(init, inputs)
+    return NonEmpty.last(outputs)
   }
 
   return {

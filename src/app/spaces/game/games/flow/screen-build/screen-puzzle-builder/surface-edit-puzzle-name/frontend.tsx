@@ -209,6 +209,16 @@ const patchName = async (input: { puzzleId: PuzzleId; newName: string; userId: U
 const updateDrawer: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'puzzle.edit-name.user-clicked-button': {
+      const isOpen = input.model.puzzleBuilderOpened === 'edit-name'
+      if (isOpen) {
+        return {
+          model: {
+            ...input.model,
+            puzzleBuilderOpened: null,
+          },
+          msgCmd: [playSound(APP_SOUND.drawerClosed)],
+        }
+      }
       return {
         model: {
           ...input.model,
