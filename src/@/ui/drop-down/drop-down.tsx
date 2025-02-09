@@ -1,9 +1,8 @@
 import { VDom } from '~/@/vdom/vdom'
-import { ClickOutside } from '../click-outside/click-outside'
 import { cn } from '../cn'
 import { Transition } from '../transition'
-import { DropDownPosition } from './drop-down-position'
 import { DropDownAlignment } from './drop-down-alignment'
+import { DropDownPosition } from './drop-down-position'
 
 export const DropDown = (props: {
   id: string
@@ -24,26 +23,26 @@ export const DropDown = (props: {
     }
   }
 
+  const onKeyDown = (e: unknown) => {
+    if (typeof e === 'object' && e && 'key' in e && e.key === 'Escape') {
+      onClose()
+    }
+  }
+
   return (
-    <ClickOutside
-      id={props.id}
-      onClickOutside={onClose}
-      className={cn('relative', props.className)}
-      onKeyDown={(e) => {
-        if (e.key === 'Escape') {
-          onClose()
-        }
-      }}
-    >
-      {props.renderReference()}
-      <Transition id={`${props.id}-transition`} mode='in-out' onEnter={onEnter} onExit={onExit}>
-        {props.open && (
-          <div id={props.id} className={toPositionClasses(position, alignment)}>
-            {props.renderFloating()}
-          </div>
-        )}
-      </Transition>
-    </ClickOutside>
+    <>
+      {props.open && <div className='fixed inset-0 z-40 bg-black/50' onClick={onClose} onKeyDown={onKeyDown} />}
+      <div id={props.id} className={cn('relative', props.className, props.open && 'z-50')} onKeyDown={onKeyDown}>
+        {props.renderReference()}
+        <Transition id={`${props.id}-transition`} mode='in-out' onEnter={onEnter} onExit={onExit}>
+          {props.open && (
+            <div id={props.id} className={toPositionClasses(position, alignment)}>
+              {props.renderFloating()}
+            </div>
+          )}
+        </Transition>
+      </div>
+    </>
   )
 }
 
