@@ -18,16 +18,16 @@ const Fixtures = async () => {
   const env = await FixtureAppBackend()
   const f = await FixtureAppBackend()
 
-  const configs: Config[] = [
-    {
-      t: 'key-value-db',
-      keyValueDb: f.ctx.keyValueDb,
-    },
-  ]
+  const configs: Config[] = []
+
+  configs.push({
+    t: 'key-value-db',
+    keyValueDb: f.ctx.keyValueDb,
+  })
 
   if (env.t === 'integration') {
     configs.push({
-      t: 'postgres',
+      t: 'db-conn-sql',
       dbConnSql: f.ctx.dbConnSql,
     })
   }
