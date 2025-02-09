@@ -1,12 +1,12 @@
-import { propsSub } from './shared'
+import { propsSub, Props } from './shared'
 import './click-outside-element'
 
-export const ClickOutside = (props: {
-  className?: string
-  children: React.ReactNode
-  id: string
-  onClickOutside?: () => void
-}) => {
+export const ClickOutside = (
+  props: Props & {
+    className?: string
+    children: React.ReactNode
+  },
+) => {
   propsSub.pub(props)
   return (
     // @ts-expect-error unable to type custom elements

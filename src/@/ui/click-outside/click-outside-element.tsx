@@ -6,6 +6,7 @@ if (typeof window !== 'undefined') {
     private props: Props | null = null
     private abortController: AbortController | null = null
     private onClick: (event: MouseEvent) => void
+    private onKeyDown: (event: KeyboardEvent) => void
 
     constructor() {
       super()
@@ -14,11 +15,15 @@ if (typeof window !== 'undefined') {
           this.props?.onClickOutside?.()
         }
       }
+      this.onKeyDown = (e: KeyboardEvent) => {
+        this.props?.onKeyDown?.(e)
+      }
     }
 
     connectedCallback() {
       this.abortController = new AbortController()
       document.addEventListener('click', this.onClick, { signal: this.abortController.signal })
+      document.addEventListener('keydown', this.onKeyDown, { signal: this.abortController.signal })
       this.unsubscribe = propsSub.sub((props) => {
         const id = this.getAttribute('id')
         if (!id) return

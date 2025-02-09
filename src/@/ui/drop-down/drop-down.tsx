@@ -18,24 +18,32 @@ export const DropDown = (props: {
   const position = props.position ?? 'bottom'
   const alignment = props.alignment ?? 'starting'
 
+  const onClose = () => {
+    if (props.open) {
+      props.onClose()
+    }
+  }
+
   return (
-    <div
+    <ClickOutside
+      id={props.id}
+      onClickOutside={onClose}
       className={cn('relative', props.className)}
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
-          props.onClose()
+          onClose()
         }
       }}
     >
       {props.renderReference()}
       <Transition id={`${props.id}-transition`} mode='in-out' onEnter={onEnter} onExit={onExit}>
         {props.open && (
-          <ClickOutside id={props.id} className={toPositionClasses(position, alignment)} onClickOutside={props.onClose}>
+          <div id={props.id} className={toPositionClasses(position, alignment)}>
             {props.renderFloating()}
-          </ClickOutside>
+          </div>
         )}
       </Transition>
-    </div>
+    </ClickOutside>
   )
 }
 

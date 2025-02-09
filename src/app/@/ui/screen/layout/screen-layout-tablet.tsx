@@ -38,7 +38,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
 
 const ActionBars = (props: { position: 'start' | 'end'; input: ScreenLayoutProps }) => {
   const actionBars = renderActionBars(props.input.ctx, props.input, props.position)
-  // if (actionBars.length === 0) return null
+
   return (
     <div
       className={cn(
