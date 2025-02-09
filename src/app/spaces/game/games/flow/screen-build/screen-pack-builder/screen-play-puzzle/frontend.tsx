@@ -9,10 +9,10 @@ import type { FrontendModule } from '../types'
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'screen-pack-builder.puzzle-screen.user-closed-more-drawer': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.drawerClosed)] }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.surfaceClosed)] }
     }
     case 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.drawerOpened)] }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.surfaceOpened)] }
     }
 
     case 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen': {

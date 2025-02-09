@@ -54,7 +54,7 @@ const updateExitBuilder: FrontendModule['update'] = (input) => {
     case 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit': {
       return {
         model: { ...input.model, puzzleBuilderOpened: null },
-        msgCmd: [playSound(APP_SOUND.drawerClosed)],
+        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
       }
     }
 

@@ -37,11 +37,15 @@ const updateUserPreview: SpaceFrontendModule['update'] = ({ msg, model }) => {
 const updatePeopleModals: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
     case 'closed-modal': {
-      return { model: { ...model, modal: null }, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: { ...model, modal: null }, msgCmd: [playSound(APP_SOUND.surfaceClosed)] }
     }
 
     case 'clicked-people-button': {
-      return { model: { ...model, modal: 'users' }, msgCmd: [playSound(APP_SOUND.tap)] }
+      const isOpen = model.modal === 'users'
+      if (isOpen) {
+        return { model: { ...model, modal: null }, msgCmd: [playSound(APP_SOUND.surfaceClosed)] }
+      }
+      return { model: { ...model, modal: 'users' }, msgCmd: [playSound(APP_SOUND.surfaceOpened)] }
     }
 
     case 'clicked-user': {

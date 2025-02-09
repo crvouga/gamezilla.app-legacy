@@ -7,7 +7,7 @@ import { FrontendModule } from '../types'
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'edit-pack-name.user-clicked-open-drawer-button':
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.drawerOpened)] }
+      return { model: input.model, msgCmd: [playSound(APP_SOUND.surfaceOpened)] }
   }
   return { model: input.model }
 }

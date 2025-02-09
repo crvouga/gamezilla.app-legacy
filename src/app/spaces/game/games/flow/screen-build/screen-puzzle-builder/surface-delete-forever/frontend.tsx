@@ -27,14 +27,14 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'delete-forever.user-closed-drawer': {
       return {
         model: { ...input.model, puzzleBuilderOpened: null },
-        msgCmd: [playSound(APP_SOUND.drawerClosed)],
+        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
       }
     }
 
     case 'delete-forever.user-clicked-cancel-button': {
       return {
         model: { ...input.model, puzzleBuilderOpened: 'more' },
-        msgCmd: [playSound(APP_SOUND.drawerClosed)],
+        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
       }
     }
 

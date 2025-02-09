@@ -86,7 +86,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
     case 'puzzle.edit-name.user-clicked-cancel-button': {
       return {
         model: { ...input.model, puzzleBuilderOpened: 'more', puzzleEditNameValidationError: null },
-        msgCmd: [playSound(APP_SOUND.drawerClosed)],
+        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
       }
     }
 
@@ -216,7 +216,7 @@ const updateDrawer: FrontendModule['update'] = (input) => {
             ...input.model,
             puzzleBuilderOpened: null,
           },
-          msgCmd: [playSound(APP_SOUND.drawerClosed)],
+          msgCmd: [playSound(APP_SOUND.surfaceClosed)],
         }
       }
       return {
@@ -225,14 +225,14 @@ const updateDrawer: FrontendModule['update'] = (input) => {
           puzzleBuilderOpened: 'edit-name',
           puzzleEditNameDraft: input.modelSpace.screenPuzzleBuilder?.puzzle.name ?? '',
         },
-        msgCmd: [playSound(APP_SOUND.drawerOpened)],
+        msgCmd: [playSound(APP_SOUND.surfaceOpened)],
       }
     }
 
     case 'puzzle.edit-name.user-closed-drawer': {
       return {
         model: { ...input.model, puzzleBuilderOpened: null },
-        msgCmd: [playSound(APP_SOUND.drawerClosed)],
+        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
       }
     }
 

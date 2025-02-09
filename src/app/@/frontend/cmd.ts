@@ -438,8 +438,8 @@ export const APP_SOUND = {
   stateChangeUp: './sound/state-change-up.wav',
   stateChangeDown: './sound/state-change-down.wav',
   refreshFeed: './sound/refresh-feed.wav',
-  drawerOpened: './sound/drawer-opened.wav',
-  drawerClosed: './sound/drawer-closed.wav',
+  surfaceOpened: './sound/drawer-opened.wav',
+  surfaceClosed: './sound/drawer-closed.wav',
 }
 
 export const playSound = (

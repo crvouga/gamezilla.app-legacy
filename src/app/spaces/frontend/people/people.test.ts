@@ -1,9 +1,9 @@
 import { describe, expect, it, test } from 'bun:test'
-import { didOpenProfile, didPlaySound } from '~/app/@/frontend/cmd'
 import { UserId } from '~/app/@/data/user-id'
-import { People } from './people'
-import { FixtureSpacesFrontend } from '../../@/fixture/frontend'
+import { APP_SOUND, didOpenProfile, didPlaySound } from '~/app/@/frontend/cmd'
 import { openUserDetails } from '~/app/spaces/@/frontend/cmd'
+import { FixtureSpacesFrontend } from '../../@/fixture/frontend'
+import { People } from './people'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -174,5 +174,33 @@ describe(import.meta.file, () => {
       },
     ])
     expect(didPlaySound(output)).toBe(true)
+  })
+
+  test('should toggle people modal when clicking button', async () => {
+    const f = await FixtureSpacesFrontend()
+    const before = f.update(f.initial, [{ msg: { t: 'clicked-people-button' } }])
+    const after = f.update(before, [{ msg: { t: 'clicked-people-button' } }])
+    expect(before.model.modal === 'users').toBe(true)
+    expect(after.model.modal === null).toBe(true)
+  })
+
+  test('should play drawer sounds when toggling people modal', async () => {
+    const f = await FixtureSpacesFrontend()
+    const openOutput = f.update(f.initial, [{ msg: { t: 'clicked-people-button' } }])
+    const closeOutput = f.update(openOutput, [{ msg: { t: 'clicked-people-button' } }])
+    expect(didPlaySound(openOutput, APP_SOUND.surfaceOpened)).toBe(true)
+    expect(didPlaySound(closeOutput, APP_SOUND.surfaceClosed)).toBe(true)
+  })
+
+  test('should play close sound when closing the people surface', async () => {
+    const f = await FixtureSpacesFrontend()
+    const output = f.update(f.initial, [
+      {
+        msg: {
+          t: 'closed-modal',
+        },
+      },
+    ])
+    expect(didPlaySound(output, APP_SOUND.surfaceClosed)).toBe(true)
   })
 })

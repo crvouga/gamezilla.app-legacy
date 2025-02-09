@@ -16,15 +16,15 @@ export const VerticalActionBar = (
       <ScreenNavBarTabletRoot>{input.renderNavBar?.()}</ScreenNavBarTabletRoot>
 
       {input.variant.t === 'uniform' ? (
-        <Uniform actions={input.variant.actions} />
+        <VerticalUniform actions={input.variant.actions} />
       ) : (
-        <SpaceBetween start={input.variant.start} end={input.variant.end} />
+        <VerticalSpaceBetween start={input.variant.start} end={input.variant.end} />
       )}
     </div>
   )
 }
 
-const Uniform = (input: { actions: (ScreenAction | null)[] }) => {
+const VerticalUniform = (input: { actions: (ScreenAction | null)[] }) => {
   return (
     <Toolbar>
       <ActionButtonList actions={input.actions} />
@@ -32,7 +32,7 @@ const Uniform = (input: { actions: (ScreenAction | null)[] }) => {
   )
 }
 
-const SpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
+const VerticalSpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
   return (
     <Toolbar>
       <ActionButtonList actions={input.start} />

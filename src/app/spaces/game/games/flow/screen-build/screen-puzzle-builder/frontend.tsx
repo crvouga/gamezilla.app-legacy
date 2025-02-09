@@ -76,14 +76,14 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
     case 'screen-puzzle-builder.user-clicked-open-more-drawer-button': {
       return {
         model: { ...model, puzzleBuilderOpened: 'more' },
-        msgCmd: [playSound(APP_SOUND.drawerOpened)],
+        msgCmd: [playSound(APP_SOUND.surfaceOpened)],
       }
     }
 
     case 'screen-puzzle-builder.user-closed-more-drawer': {
       return {
         model: { ...model, puzzleBuilderOpened: null },
-        msgCmd: [playSound(APP_SOUND.drawerClosed)],
+        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
       }
     }
 

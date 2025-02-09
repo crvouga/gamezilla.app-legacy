@@ -218,7 +218,7 @@ export const update = (input: {
           model: input.model,
           msgCmd: {
             t: 'play-sound',
-            sourceSrc: APP_SOUND.drawerClosed,
+            sourceSrc: APP_SOUND.surfaceClosed,
           },
         }
       }
@@ -257,7 +257,7 @@ export const update = (input: {
       if (isOpen) {
         return {
           model: { ...input.model, opened: null },
-          msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.drawerClosed },
+          msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.surfaceClosed },
         }
       }
 
@@ -266,14 +266,14 @@ export const update = (input: {
           ...input.model,
           opened: { t: 'dimensions', draftDimensions: present.dimensions },
         },
-        msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.drawerOpened },
+        msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.surfaceOpened },
       }
     }
 
     case 'dimensions-form.closed': {
       return {
         model: { ...input.model, opened: null },
-        msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.drawerClosed },
+        msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.surfaceClosed },
       }
     }
 
@@ -283,7 +283,7 @@ export const update = (input: {
           ...input.model,
           opened: null,
         },
-        msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.drawerClosed },
+        msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.surfaceClosed },
       }
     }
   }
