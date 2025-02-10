@@ -3,5 +3,8 @@
   "build": {
     "builder": "NIXPACKS",
     "dockerfilePath": "./infra/railway/powersync/Dockerfile"
+  },
+  "deploy": {
+    "sleepApplication": true
   }
 }

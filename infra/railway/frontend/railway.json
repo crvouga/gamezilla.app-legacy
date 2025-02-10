@@ -3,5 +3,8 @@
   "build": {
     "builder": "NIXPACKS",
     "dockerfilePath": "./infra/railway/frontend/Dockerfile"
+  },
+  "deploy": {
+    "sleepApplication": true
   }
 }
