@@ -485,11 +485,11 @@ export const View = (input: {
               icon: (input) => <IconExpand {...input} />,
               label: input.ctx.t('app.dimensions'),
               onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
-              renderSurface: (anchor) => (
+              renderSurface: (reference) => (
                 <SurfaceLayout
                   id='dimensions'
                   ctx={input.ctx}
-                  anchor={anchor}
+                  reference={reference}
                   ariaLabel={input.ctx.t('app.dimensions')}
                   open={input.model.opened?.t === 'dimensions'}
                   onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}

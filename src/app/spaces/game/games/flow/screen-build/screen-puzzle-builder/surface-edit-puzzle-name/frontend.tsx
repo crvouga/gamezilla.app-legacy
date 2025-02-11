@@ -30,7 +30,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const View = (
   input: Parameters<FrontendModule['View']>[0] & {
-    anchor: VDom
+    reference: VDom
   },
 ) => {
   return (
@@ -58,7 +58,7 @@ const View = (
         submitLoading: isLoading(input.model.puzzleEditNameRequest),
         submitDisabled: input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name,
       }}
-      anchor={input.anchor}
+      reference={input.reference}
       body={{
         render: () => (
           <SurfaceBody>

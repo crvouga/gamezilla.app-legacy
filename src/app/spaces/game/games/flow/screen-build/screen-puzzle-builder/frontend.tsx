@@ -208,7 +208,9 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
             icon: (input) => <IconPen {...input} />,
             label: input.ctx.t('app.edit-name'),
             onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
-            renderSurface: (anchor) => <EditPuzzleNameFrontend.View {...input} ctx={input.ctx} anchor={anchor} />,
+            renderSurface: (reference) => (
+              <EditPuzzleNameFrontend.View {...input} ctx={input.ctx} reference={reference} />
+            ),
           },
           {
             icon: (input) => <IconDeleteForever {...input} />,

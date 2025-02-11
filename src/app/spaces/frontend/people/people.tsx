@@ -89,7 +89,7 @@ const DROPDOWN_ALIGNMENT: DropDownAlignment = 'starting'
 
 const ViewSurfaces = (
   input: Parameters<SpaceFrontendModule['View']>[0] & {
-    anchor: VDom
+    reference: VDom
   },
 ) => {
   if (!input.ctx.space) return null
@@ -117,7 +117,7 @@ const ViewSurfaces = (
         }}
         ariaLabel={input.ctx.t('spaces.see-profile')}
         id='user-preview'
-        anchor={
+        reference={
           <SurfaceLayout
             drawer={{
               position: DRAWER_POSITION,
@@ -127,7 +127,7 @@ const ViewSurfaces = (
               alignment: DROPDOWN_ALIGNMENT,
             }}
             id='users'
-            anchor={input.anchor}
+            reference={input.reference}
             ctx={input.ctx}
             ariaLabel={input.ctx.t('app.people')}
             open={input.model.modal === 'users'}
@@ -193,7 +193,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
     label: input.ctx.t('spaces.people-count', peopleCount),
     onClick: () => input.dispatch({ t: 'clicked-people-button' }),
     badge: peopleCount > 1 ? peopleCount : undefined,
-    renderSurface: (anchor) => <ViewSurfaces {...input} anchor={anchor} />,
+    renderSurface: (reference) => <ViewSurfaces {...input} reference={reference} />,
   }
 }
 

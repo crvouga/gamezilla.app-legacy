@@ -31,7 +31,7 @@ export const DropDown = (props: {
 
   return (
     <>
-      {props.open && <div className='fixed inset-0 z-40 bg-black/50' onClick={onClose} onKeyDown={onKeyDown} />}
+      <Backdrop open={props.open} onClick={onClose} onKeyDown={onKeyDown} />
       <div id={props.id} className={cn('relative', props.className, props.open && 'z-50')} onKeyDown={onKeyDown}>
         {props.renderReference()}
         <Transition id={`${props.id}-transition`} mode='in-out' onEnter={onEnter} onExit={onExit}>
@@ -44,6 +44,11 @@ export const DropDown = (props: {
       </div>
     </>
   )
+}
+
+const Backdrop = (props: { open: boolean; onClick: () => void; onKeyDown: (e: unknown) => void }) => {
+  if (!props.open) return null
+  return <button className='fixed inset-0 z-40 bg-black/50' onClick={props.onClick} onKeyDown={props.onKeyDown} />
 }
 
 const onEnter = async (node: HTMLElement) => {

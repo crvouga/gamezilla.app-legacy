@@ -15,7 +15,7 @@ export type SurfaceLayoutProps = {
   ariaLabel: TranslatedText
   open: boolean
   onClose: () => void
-  anchor?: VDom
+  reference?: VDom
   header?: {
     render?: () => VDom
   }

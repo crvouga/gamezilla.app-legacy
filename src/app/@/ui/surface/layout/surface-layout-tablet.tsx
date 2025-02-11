@@ -6,13 +6,13 @@ import { Content } from './content'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
-  if (props.anchor) {
+  if (props.reference) {
     return (
       <DropDown
         id={`${props.id}-drop-down`}
         open={props.open}
         onClose={props.onClose}
-        renderReference={() => props.anchor}
+        renderReference={() => props.reference}
         alignment={props.dropDown?.alignment ?? 'ending'}
         position={props.dropDown?.position ?? 'bottom'}
         renderFloating={() => (
@@ -25,7 +25,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
   }
   return (
     <>
-      {props.anchor}
+      {props.reference}
       <Dialog open={props.open} onClose={props.onClose}>
         <DialogSurface>
           <Content {...props} />

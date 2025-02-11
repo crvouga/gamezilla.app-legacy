@@ -73,7 +73,7 @@ export const View = ({
       drawer={{
         position: 'top',
       }}
-      anchor={slots.topBar({ onClick: () => dispatch({ t: 'clicked-status-bar' }) })}
+      reference={slots.topBar({ onClick: () => dispatch({ t: 'clicked-status-bar' }) })}
       id='status-bar-drawer'
       open={model.isOpen}
       onClose={() => dispatch({ t: 'closed-status-bar-drawer' })}
