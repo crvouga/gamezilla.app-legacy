@@ -64,34 +64,22 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
   events?: Event[]
   eff?: Eff<Msg>
 } => {
-  switch (input.msg.t) {
+  const { msg } = input
+  switch (msg.t) {
     case 'user-clicked-use-hint': {
-      const msg = input.msg as Msg
+      if (!('solutions' in msg)) return { model: input.model }
 
       const flow = toFlow(input.model, input.ctx.flow)
 
       const nextHintGroupId = toNextHintGroupId(flow)
 
-      if (!nextHintGroupId) {
-        return {
-          model: input.model,
-        }
-      }
+      if (!nextHintGroupId) return { model: input.model }
 
       const hash = FlowHash.init(flow)
 
       const solution = msg.solutions[hash]?.[0]
 
-      if (!solution) {
-        return {
-          model: input.model,
-          events: [
-            {
-              t: 'no-hints',
-            },
-          ],
-        }
-      }
+      if (!solution) return { model: input.model, events: [{ t: 'no-hints' }] }
 
       const solutionPipeline = Solution.toPipelineByGroupId(solution, nextHintGroupId)
 
@@ -115,33 +103,18 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
       if (Flow.isSolved(flowNew)) {
         return {
           model: modelNew,
-          events: [
-            {
-              t: 'solved',
-            },
-            {
-              t: 'used-hint',
-              groupId: nextHintGroupId,
-            },
-          ],
+          events: [{ t: 'solved' }, { t: 'used-hint', groupId: nextHintGroupId }],
         }
       }
 
       return {
         model: modelNew,
-        events: [
-          {
-            t: 'used-hint',
-            groupId: nextHintGroupId,
-          },
-        ],
+        events: [{ t: 'used-hint', groupId: nextHintGroupId }],
       }
     }
 
     default: {
-      return {
-        model: input.model,
-      }
+      return { model: input.model }
     }
   }
 }
@@ -164,10 +137,7 @@ export const isAnyShowingHint = (model: Model): boolean => {
 }
 
 export const resetUsedHints = <TModel extends Model>(model: TModel): TModel => {
-  return {
-    ...model,
-    usedHints: {},
-  }
+  return { ...model, usedHints: {} }
 }
 
 export const toUsedHints = (
