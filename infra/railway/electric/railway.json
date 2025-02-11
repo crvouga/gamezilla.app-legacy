@@ -3,8 +3,5 @@
   "build": {
     "builder": "NIXPACKS",
     "dockerfilePath": "./infra/railway/electric/Dockerfile"
-  },
-  "deploy": {
-    "sleepApplication": false
   }
 }
