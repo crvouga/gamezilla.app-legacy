@@ -1,6 +1,6 @@
 type ClassNameValue = string | null | false | undefined
 
-export const cn = (
+export const cnParams = (
   a: ClassNameValue,
   b?: ClassNameValue,
   c?: ClassNameValue,
@@ -31,3 +31,9 @@ export const cnLoop = (...classNames: ClassNameValue[]): string => {
   }
   return result
 }
+
+export const cnFilter = (...classNames: ClassNameValue[]): string => {
+  return classNames.filter(Boolean).join(' ')
+}
+
+export const cn = cnFilter
