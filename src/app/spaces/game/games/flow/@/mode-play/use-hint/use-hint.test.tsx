@@ -1,8 +1,9 @@
 import { describe, expect, it, test } from 'bun:test'
 import { pipe } from '~/@/function/pipe'
+import { loggerNoop } from '~/@/logger/impl-noop'
 import { UseHint } from '.'
-import { FixtureFlowFrontend } from '../../frontend/fixture'
 import { Flow } from '../../flow'
+import { FixtureFlowFrontend } from '../../frontend/fixture'
 import { Solutions } from '../../solutions/solutions'
 import { Variant } from '../../variant'
 import { VariantGridShorthand } from '../../variant/grid'
@@ -60,7 +61,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find([f.ctx.flow]),
+          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
         },
       },
     ])
@@ -83,13 +84,13 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find([f.ctx.flow]),
+          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
         },
       },
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find([f.ctx.flow]),
+          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
         },
       },
     ])
@@ -110,7 +111,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find([f.ctx.flow]),
+          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
         },
       },
     ])
@@ -130,19 +131,19 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find([f.ctx.flow]),
+          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
         },
       },
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find([f.ctx.flow]),
+          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
         },
       },
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find([f.ctx.flow]),
+          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
         },
       },
     ])
@@ -164,7 +165,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find([f.ctx.flow]),
+          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
         },
       },
     ])
@@ -197,7 +198,7 @@ describe(import.meta.file, () => {
         {
           msg: {
             t: 'user-clicked-use-hint',
-            solutions: await Solutions.find([f.ctx.flow]),
+            solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
           },
         },
       ],
@@ -216,7 +217,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find([f.ctx.flow]),
+          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
         },
       },
     ])
@@ -238,7 +239,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find([before]),
+          solutions: await Solutions.find({ models: [before], logger: loggerNoop }),
         },
       },
     ])
@@ -273,7 +274,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find([f.ctx.flow]),
+          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
         },
       },
     ])
@@ -322,7 +323,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find([flow]),
+          solutions: await Solutions.find({ models: [flow], logger: loggerNoop }),
         },
       },
     ])

@@ -5,6 +5,7 @@ import { FlowHash } from '../../flow/hash'
 import { VariantGridShorthand } from '../../variant/grid'
 import { Solutions } from '../solutions'
 import { Config, SolutionsDb } from './impl'
+import { loggerNoop } from '~/@/logger/impl-noop'
 
 const Fixture = async (config: Config) => {
   const solutionsDb = await SolutionsDb(config)
@@ -44,7 +45,7 @@ describe.skip(import.meta.file, () => {
         [' ', ' ', 'A'],
       ])
       const hash = FlowHash.init(flow)
-      const solutions = await Solutions.find([flow])
+      const solutions = await Solutions.find({ models: [flow], logger: loggerNoop })
 
       const before = await f.solutionsDb.get(hash)
       const put = await f.solutionsDb.put(solutions)

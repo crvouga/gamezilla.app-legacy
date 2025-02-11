@@ -12,6 +12,7 @@ import { FlowPlaySpaceFixture } from '../@/space/fixture'
 import { FixtureScreenPuzzlePlaySpaceChild } from './@/fixture/space'
 import { ScreenPlayPuzzleSpace } from './space'
 import type { MsgSpace } from './types'
+import { loggerNoop } from '~/@/logger/impl-noop'
 
 const Fixture = async (input?: { flow?: Variant.Model }) => {
   const f = await FixtureScreenPuzzlePlaySpaceChild(input)
@@ -111,7 +112,7 @@ describe(import.meta.file, () => {
         ? ModePlay.init({
             ctx: ModePlay.initCtx({
               flow: f.nextPuzzle.c.flow,
-              solutions: await Solutions.find([f.nextPuzzle.c.flow]),
+              solutions: await Solutions.find({ models: [f.nextPuzzle.c.flow], logger: loggerNoop }),
             }),
           })
         : null,
@@ -242,14 +243,13 @@ describe(import.meta.file, () => {
         userId: f.hostId,
       },
     ])
-    expect(before.modePlay).toEqual(
-      ModePlay.init({
-        ctx: ModePlay.initCtx({
-          flow: f.puzzle.flow,
-          solutions: await Solutions.find([f.puzzle.flow]),
-        }),
-      }),
-    )
+
+    const ctx = ModePlay.initCtx({
+      flow: f.puzzle.flow,
+      solutions: await Solutions.find({ models: [f.puzzle.flow], logger: loggerNoop }),
+    })
+
+    expect(before.modePlay).toEqual(ModePlay.init({ ctx }))
   })
 
   it('should be in a solving state after going to the next puzzle', async () => {

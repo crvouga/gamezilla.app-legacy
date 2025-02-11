@@ -11,6 +11,7 @@ import type { Variant } from '../../../../@/variant'
 import { FlowPlaySpaceFixture } from '../../../@/space/fixture'
 import { ScreenPlayPuzzleSpace } from '../../space'
 import type { ModelSpace, MsgSpace } from '../../types'
+import { loggerNoop } from '~/@/logger/impl-noop'
 
 export const FixtureScreenPuzzlePlaySpace = async (input?: { flow?: Variant.Model }) => {
   const f = await FlowPlaySpaceFixture()
@@ -26,7 +27,10 @@ export const FixtureScreenPuzzlePlaySpace = async (input?: { flow?: Variant.Mode
     puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
   })
 
-  const solutions = await Solutions.find([prevPuzzle, puzzle, nextPuzzle].map((p) => p.flow))
+  const solutions = await Solutions.find({
+    models: [prevPuzzle, puzzle, nextPuzzle].map((p) => p.flow),
+    logger: loggerNoop,
+  })
 
   const ctx: FlowSpaceCtx = {
     ...f.ctx,

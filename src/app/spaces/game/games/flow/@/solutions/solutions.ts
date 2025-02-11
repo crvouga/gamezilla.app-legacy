@@ -1,4 +1,5 @@
 import { NonEmpty } from '~/@/array/non-empty'
+import { ILogger } from '~/@/logger'
 import { p } from '~/@/parser'
 import { Flow } from '../flow'
 import { FlowHash } from '../flow/hash'
@@ -12,8 +13,8 @@ export type Solutions = p.Infer<typeof parser>
 
 const init: Solutions = {}
 
-const findOne = async (model: Variant.Model): Promise<Solutions> => {
-  const found = await AlgoSolveAsync.solve(model)
+const findOne = async (input: { model: Variant.Model; logger: ILogger }): Promise<Solutions> => {
+  const found = await AlgoSolveAsync.solve(input)
   if (!found) {
     return {}
   }
@@ -33,8 +34,8 @@ const of = (model: Variant.Model[]): Solutions => {
   return {}
 }
 
-const find = async (models: Variant.Model[]): Promise<Solutions> => {
-  const found = await Promise.all(models.map((m) => findOne(m)))
+const find = async (input: { models: Variant.Model[]; logger: ILogger }): Promise<Solutions> => {
+  const found = await Promise.all(input.models.map((m) => findOne({ model: m, logger: input.logger })))
   const solutions = found.reduce((acc, cur) => merge(acc, cur), init)
   return solutions
 }

@@ -1,14 +1,20 @@
 import { Ok, isErr } from '~/@/result'
 import { AlgoSolveAsync } from '../../../solutions/algo-solve-async'
 import type { IPuzzleDb } from '../interface'
+import { ILogger } from '~/@/logger'
 
 export const SKIP_QUERIES = true
 
-export const WithSolutions = (puzzleDb: IPuzzleDb): IPuzzleDb => {
+export type Config = {
+  puzzleDb: IPuzzleDb
+  logger: ILogger
+}
+
+export const WithSolutions = (config: Config): IPuzzleDb => {
   return {
-    ...puzzleDb,
+    ...config.puzzleDb,
     async query(input) {
-      const listed = await puzzleDb.query(input)
+      const listed = await config.puzzleDb.query(input)
 
       if (SKIP_QUERIES) {
         return listed
@@ -19,7 +25,7 @@ export const WithSolutions = (puzzleDb: IPuzzleDb): IPuzzleDb => {
       const promises = listed.value.puzzles.items.map(async (puzzle) => {
         if (puzzle.solutions.length > 0) return puzzle
 
-        const solution = await AlgoSolveAsync.solve(puzzle.flow)
+        const solution = await AlgoSolveAsync.solve({ model: puzzle.flow, logger: config.logger })
 
         if (!solution) return puzzle
 
@@ -39,7 +45,7 @@ export const WithSolutions = (puzzleDb: IPuzzleDb): IPuzzleDb => {
       })
     },
     async get(id) {
-      const got = await puzzleDb.get(id)
+      const got = await config.puzzleDb.get(id)
 
       if (SKIP_QUERIES) {
         return got
@@ -51,7 +57,7 @@ export const WithSolutions = (puzzleDb: IPuzzleDb): IPuzzleDb => {
 
       if (got.value.solutions.length > 0) return got
 
-      const solution = await AlgoSolveAsync.solve(got.value.flow)
+      const solution = await AlgoSolveAsync.solve({ model: got.value.flow, logger: config.logger })
 
       if (!solution) return got
 
@@ -63,12 +69,12 @@ export const WithSolutions = (puzzleDb: IPuzzleDb): IPuzzleDb => {
       return Ok(withSolution)
     },
     async put(puzzle) {
-      const solution = await AlgoSolveAsync.solve(puzzle.flow)
+      const solution = await AlgoSolveAsync.solve({ model: puzzle.flow, logger: config.logger })
       const withSolution: typeof puzzle = {
         ...puzzle,
         solutions: solution ? [solution] : [],
       }
-      const output = await puzzleDb.put(withSolution)
+      const output = await config.puzzleDb.put(withSolution)
       return output
     },
   }

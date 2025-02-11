@@ -1,4 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
+import { loggerNoop } from '~/@/logger/impl-noop'
 import { ModePlay } from '.'
 import { Flow } from '../flow'
 import { Solutions } from '../solutions/solutions'
@@ -9,7 +10,7 @@ import { toStatus } from './mode-play'
 
 const Fixture = async (input: { ctxFlow: Variant.Model }) => {
   const ctx: ModePlay.Ctx = ModePlay.initCtx({
-    solutions: await Solutions.find([input.ctxFlow]),
+    solutions: await Solutions.find({ models: [input.ctxFlow], logger: loggerNoop }),
     flow: input.ctxFlow,
   })
 
@@ -329,7 +330,7 @@ describe(import.meta.file, () => {
     const model = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
-        solutions: await Solutions.find([flow]),
+        solutions: await Solutions.find({ models: [flow], logger: loggerNoop }),
       },
     ]).model
 
@@ -413,7 +414,7 @@ describe(import.meta.file, () => {
     const before = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
-        solutions: await Solutions.find([f.flow]),
+        solutions: await Solutions.find({ models: [f.flow], logger: loggerNoop }),
       },
     ])
     const after = f.update(before.model, [
@@ -450,7 +451,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
-        solutions: await Solutions.find([f.flow]),
+        solutions: await Solutions.find({ models: [f.flow], logger: loggerNoop }),
       },
     ])
     expect(output.events?.some((e) => e.t === 'used-hint')).toBe(true)

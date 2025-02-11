@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'bun:test'
+import { loggerNoop } from '~/@/logger/impl-noop'
 import { Result } from '~/@/result'
+import { WithSolutions } from '.'
 import { VariantGridShorthand } from '../../../variant/grid'
 import { Puzzle } from '../../puzzle'
 import { BaseFixtures } from '../fixture'
-import { WithSolutions } from '.'
 
 const Fixtures = async function* () {
   for await (const f of await BaseFixtures()) {
@@ -18,7 +19,7 @@ const Fixtures = async function* () {
     yield {
       ...f,
       puzzleWithEmptySolutions,
-      withSolutions: WithSolutions(f.puzzleDb),
+      withSolutions: WithSolutions({ puzzleDb: f.puzzleDb, logger: loggerNoop }),
     }
   }
 }

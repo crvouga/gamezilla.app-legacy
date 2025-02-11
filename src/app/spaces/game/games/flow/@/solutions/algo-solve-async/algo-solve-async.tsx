@@ -1,10 +1,9 @@
 import type { ILogger } from '~/@/logger'
-import { loggerNoop } from '~/@/logger/impl-noop'
 import type { Variant } from '../../variant'
 import { MsgToMaster, type MsgToWorker } from './algo-solve-async.types'
 
-export const solve = async (model: Variant.Model, logger: ILogger = loggerNoop): Promise<Variant.Model | null> => {
-  logger.info('Solving puzzle with worker')
+export const solve = async (input: { model: Variant.Model; logger: ILogger }): Promise<Variant.Model | null> => {
+  input.logger.info('Solving puzzle with worker')
 
   let url
 
@@ -34,14 +33,14 @@ export const solve = async (model: Variant.Model, logger: ILogger = loggerNoop):
 
   const toWorker: MsgToWorker = {
     t: 'find-solution',
-    model,
+    model: input.model,
   }
 
-  logger.info('Sending solve request to worker')
+  input.logger.info('Sending solve request to worker')
 
   worker.postMessage(toWorker)
 
-  logger.info('Waiting for solution')
+  input.logger.info('Waiting for solution')
 
   const solution = await Promise.race([
     solutionPromise,
@@ -55,13 +54,13 @@ export const solve = async (model: Variant.Model, logger: ILogger = loggerNoop):
     }),
   ])
 
-  logger.info(`Solution: ${solution ? 'found' : 'not found'}`)
+  input.logger.info(`Solution: ${solution ? 'found' : 'not found'}`)
 
-  logger.info('Terminating worker')
+  input.logger.info('Terminating worker')
 
   worker.terminate()
 
-  logger.info('Worker terminated')
+  input.logger.info('Worker terminated')
 
   return solution
 }
