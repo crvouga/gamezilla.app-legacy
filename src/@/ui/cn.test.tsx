@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { cnFilter, cnLoop, cnParams } from './cn'
 
-describe.only('cn performance', () => {
+describe('cn performance', () => {
   test('should be fast for typical usage', () => {
     const iterations = 100000
     const start = process.hrtime.bigint()
