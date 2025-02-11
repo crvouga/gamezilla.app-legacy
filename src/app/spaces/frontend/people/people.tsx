@@ -117,7 +117,7 @@ const ViewSurfaces = (
         }}
         ariaLabel={input.ctx.t('spaces.see-profile')}
         id='user-preview'
-        reference={
+        dropDownReference={
           <SurfaceLayout
             drawer={{
               position: DRAWER_POSITION,
@@ -127,7 +127,7 @@ const ViewSurfaces = (
               alignment: DROPDOWN_ALIGNMENT,
             }}
             id='users'
-            reference={input.reference}
+            dropDownReference={input.reference}
             ctx={input.ctx}
             ariaLabel={input.ctx.t('app.people')}
             open={input.model.modal === 'users'}

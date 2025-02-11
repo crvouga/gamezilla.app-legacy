@@ -9,6 +9,7 @@ import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-
 import { ModeEdit } from '../../../@/mode-edit'
 import type { Puzzle } from '../../../@/puzzle/puzzle'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgSpace } from '../../types'
+import { VDom } from '~/@/vdom/vdom'
 
 //
 //
@@ -254,9 +255,10 @@ export const viewActions = ({
   ]
 }
 
-const ViewSurface: FrontendModule['View'] = (input) => {
+const ViewSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDownReference?: VDom }) => {
   return (
     <SurfaceUnsavedChanges
+      dropDownReference={input.dropDownReference}
       ctx={input.ctx}
       title={input.ctx.t('app.save-changes?')}
       body={input.ctx.t('unsaved-changes.unsaved-changes-warning')}

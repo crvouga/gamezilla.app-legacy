@@ -2,6 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Button, Typography } from '~/@/ui'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
+import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '../../screen/screen-size'
 import { SurfaceLayout } from '../layout/surface-layout'
 
@@ -13,6 +14,7 @@ export type SurfaceUnsavedChangesProps = {
   title: TranslatedText
   body: TranslatedText
   open: boolean
+  dropDownReference?: VDom
   onClose: () => void
   //
   saveText: TranslatedText
@@ -34,6 +36,7 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
       ariaLabel={input.title}
       onClose={input.onClose}
       open={input.open}
+      dropDownReference={input.dropDownReference}
       drawer={{
         position: 'bottom',
       }}

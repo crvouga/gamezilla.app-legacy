@@ -489,7 +489,7 @@ export const View = (input: {
                 <SurfaceLayout
                   id='dimensions'
                   ctx={input.ctx}
-                  reference={reference}
+                  dropDownReference={reference}
                   ariaLabel={input.ctx.t('app.dimensions')}
                   open={input.model.opened?.t === 'dimensions'}
                   onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
