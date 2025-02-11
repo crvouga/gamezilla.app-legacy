@@ -2,10 +2,10 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 import type { FlowFrontendCtx } from '../../../@/frontend/ctx'
-import { PackDbQueryTypes } from '../../../@/pack/pack-db-query'
+import { PackLoaderTypes } from '../../../@/pack/pack-loader'
 import { PackDb } from '../../../@/pack/pack-db/impl'
 import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
-import { PuzzleDbQueryTypes } from '../../../@/puzzle/puzzle-db-query'
+import { PuzzleLoaderTypes } from '../../../@/puzzle/puzzle-loader'
 import { Solutions } from '../../../@/solutions/solutions'
 import { BuildFrontend } from '../../frontend'
 import { BuildSpace } from '../../space'
@@ -35,8 +35,8 @@ export const FixtureFlowBuilderFrontend = async () => {
     ...f.ctx,
     puzzles: {},
     packs: {},
-    puzzleDbQuery: PuzzleDbQueryTypes.initFrontend,
-    packDbQuery: PackDbQueryTypes.initFrontend,
+    puzzleDbQuery: PuzzleLoaderTypes.initFrontend,
+    packDbQuery: PackLoaderTypes.initFrontend,
     solutions: Solutions.init,
     puzzleDb: PuzzleDb({ t: 'db-conn-sql', dbConnSql: f.ctx.dbConnSql, logger: f.ctx.logger }),
     packDb: PackDb({ t: 'db-conn-sql', dbConnSql: f.ctx.dbConnSql, logger: f.ctx.logger }),

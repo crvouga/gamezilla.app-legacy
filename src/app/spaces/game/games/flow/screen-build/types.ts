@@ -8,8 +8,8 @@ import { FlowBackendCtx } from '../@/backend/ctx'
 import { FlowFrontendCmd } from '../@/frontend/cmd'
 import type { FlowFrontendCtx } from '../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../@/frontend/evt'
-import { PackDbQueryTypes } from '../@/pack/pack-db-query'
-import { PuzzleDbQueryTypes } from '../@/puzzle/puzzle-db-query'
+import { PackLoaderTypes } from '../@/pack/pack-loader'
+import { PuzzleLoaderTypes } from '../@/puzzle/puzzle-loader'
 import { FlowSpaceCtx } from '../@/space/ctx'
 import { FlowSpaceEvt } from '../@/space/event'
 import { ScreenMainMenu } from './screen-main-menu'
@@ -95,8 +95,8 @@ export type MsgFrontend =
   | ScreenPackBuilderOpenTypes.MsgFrontend
   | { t: 'got-screen-pack-builder-msg'; c: ScreenPackBuilderTypes.MsgFrontend }
   | { t: 'got-msg-space'; c: MsgSpace }
-  | { t: 'got-pack-db-query-msg'; c: PackDbQueryTypes.MsgFrontend }
-  | { t: 'got-puzzle-db-query-msg'; c: PuzzleDbQueryTypes.MsgFrontend }
+  | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgFrontend }
+  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgFrontend }
 
 export type MsgBackend =
   | ScreenPuzzleBuilderOpenTypes.MsgBackend

@@ -12,12 +12,12 @@ import { FlowFrontendCmd } from './@/frontend/cmd'
 import type { FlowFrontendCtx } from './@/frontend/ctx'
 import { FlowFrontendEvt } from './@/frontend/evt'
 import { IPackDb } from './@/pack/pack-db'
-import { PackDbQueryTypes } from './@/pack/pack-db-query'
-import { PackDbQueryFrontend } from './@/pack/pack-db-query/frontend'
+import { PackLoaderTypes } from './@/pack/pack-loader'
+import { PackLoaderFrontend } from './@/pack/pack-loader/frontend'
 import { PackDb } from './@/pack/pack-db/impl'
 import { IPuzzleDb, PuzzleDb } from './@/puzzle/puzzle-db'
-import { PuzzleDbQueryTypes } from './@/puzzle/puzzle-db-query'
-import { PuzzleDbQueryFrontend } from './@/puzzle/puzzle-db-query/frontend'
+import { PuzzleLoaderTypes } from './@/puzzle/puzzle-loader'
+import { PuzzleLoaderFrontend } from './@/puzzle/puzzle-loader/frontend'
 import { Solutions } from './@/solutions/solutions'
 import { BuildFrontend } from './screen-build/frontend'
 import { PlayFrontend } from './screen-play/frontend'
@@ -29,8 +29,8 @@ const init: FrontendModule['init'] = {
   puzzles: {},
   packs: {},
   solutions: Solutions.init,
-  puzzleDbQuery: PuzzleDbQueryTypes.initFrontend,
-  packDbQuery: PackDbQueryTypes.initFrontend,
+  puzzleDbQuery: PuzzleLoaderTypes.initFrontend,
+  packDbQuery: PackLoaderTypes.initFrontend,
 }
 
 let puzzleDb: IPuzzleDb
@@ -118,14 +118,14 @@ const updateChild: FrontendModule['update'] = (input) => {
     (model) => updateModePlay({ ...input, model }),
     (model) => updateModeBuilder({ ...input, model }),
     (model) => updatePackDbQuery({ ...input, model }),
-    (model) => updatePuzzleDbQuery({ ...input, model }),
+    (model) => updatePuzzleLoader({ ...input, model }),
   )
 }
 
-const updatePuzzleDbQuery: FrontendModule['update'] = (input) => {
+const updatePuzzleLoader: FrontendModule['update'] = (input) => {
   const ctx = toFlowFrontendCtx(input)
 
-  const updated = PuzzleDbQueryFrontend.update({
+  const updated = PuzzleLoaderFrontend.update({
     ctx,
     model: input.model.puzzleDbQuery,
     msg: input.msg?.t === 'puzzle-db-query' ? input.msg.c : null,
@@ -145,7 +145,7 @@ const updatePuzzleDbQuery: FrontendModule['update'] = (input) => {
 const updatePackDbQuery: FrontendModule['update'] = (input) => {
   const ctx = toFlowFrontendCtx(input)
 
-  const updated = PackDbQueryFrontend.update({
+  const updated = PackLoaderFrontend.update({
     ctx,
     model: input.model.packDbQuery,
     msg: input.msg?.t === 'pack-db-query' ? input.msg.c : null,

@@ -6,7 +6,7 @@ import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
 import { MsgFrontend } from '../types'
 import { ScreenAddPuzzle } from './frontend'
 import { ScreenAddPuzzleSpace } from './space'
-import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
+import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/query'
 
 const Fixture = async () => {
   const f = await FixturePackBuilderFrontend()
@@ -69,7 +69,7 @@ describe(import.meta.file, () => {
       msgSpace: withEventMeta({
         t: 'screen-pack-builder.screen-add-puzzle.puzzle-db-query-query-changed',
         userId: f.ctx.currentUserId,
-        query: PuzzleDbQuery.random(),
+        query: PuzzleQuery.random(),
       }),
     })
 

@@ -1,7 +1,7 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../@/puzzle/puzzle'
-import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
+import { PuzzleQuery } from '../../@/puzzle/puzzle-db/query'
 import { CreateNewPuzzleTypes } from './button-create-new-puzzle'
 
 //
@@ -24,7 +24,7 @@ export type MsgToBackend = CreateNewPuzzleTypes.MsgToBackend
 export type MsgToFrontend = CreateNewPuzzleTypes.MsgToFrontend
 
 export const ModelSpace = p.obj({
-  query: PuzzleDbQuery,
+  query: PuzzleQuery,
 })
 
 export type ModelSpace = p.Infer<typeof ModelSpace>
@@ -38,7 +38,7 @@ export const MsgSpace = p.or(
   }),
   p.obj({
     t: p.l('screen-puzzle-builder-open.puzzle-db-query-query-changed'),
-    query: PuzzleDbQuery,
+    query: PuzzleQuery,
     userId: UserId,
   }),
 )

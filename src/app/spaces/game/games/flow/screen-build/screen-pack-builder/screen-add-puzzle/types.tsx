@@ -1,10 +1,10 @@
 import { p } from '~/@/parser'
 import { UserId } from '~/app/@/data/user-id'
-import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
+import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/query'
 import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 
 export const ModelSpace = p.obj({
-  screenAddPuzzle_puzzleDbQuery: p.maybe(PuzzleDbQuery),
+  screenAddPuzzle_puzzleDbQuery: p.maybe(PuzzleQuery),
   screenAddPuzzle_selected: p.arr(PuzzleId),
 })
 
@@ -13,7 +13,7 @@ export type ModelSpace = p.Infer<typeof ModelSpace>
 export const MsgSpace = p.or(
   p.obj({
     t: p.l('screen-pack-builder.screen-add-puzzle.puzzle-db-query-query-changed'),
-    query: PuzzleDbQuery,
+    query: PuzzleQuery,
     userId: UserId,
   }),
   p.obj({

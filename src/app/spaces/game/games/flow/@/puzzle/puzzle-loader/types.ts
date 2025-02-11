@@ -6,23 +6,18 @@ import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { FlowBackendCtx } from '../../backend/ctx'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
-import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
+import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { FlowFrontendEvtIn } from '../../frontend/evt'
 import type { Puzzle } from '../puzzle'
-import { PuzzleDbQuery } from '../puzzle-db/query'
+import { PuzzleQuery } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
-
-//
-//
-//
-//
 
 export type ModelFrontend = {
   results: {
     [queryKey: string]: PuzzleId[]
   }
   queries: {
-    [name: string]: PuzzleDbQuery
+    [name: string]: PuzzleQuery
   }
 }
 
@@ -35,7 +30,7 @@ export type ModelBackend = null
 
 export type MsgFrontend = {
   t: 'got-puzzle-db-puzzles'
-  query: PuzzleDbQuery
+  query: PuzzleQuery
   puzzles: Puzzle[]
 }
 
@@ -60,7 +55,7 @@ export type FrontendModule = AppFrontendModule<{
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  Ctx: FlowFrontendCtxRoot
+  Ctx: FlowFrontendCtxBase
   MsgEvtIn: FlowFrontendEvtIn
   MsgCmdOut: FlowFrontendCmdRoot | SpaceFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>
   MsgCmdIn: MsgInCmdFrontend

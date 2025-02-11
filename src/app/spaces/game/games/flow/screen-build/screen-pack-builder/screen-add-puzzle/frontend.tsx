@@ -1,8 +1,8 @@
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
-import { PuzzleDbQueryFrontend } from '../../../@/puzzle/puzzle-db-query/frontend'
-import { PuzzleDbQuery } from '../../../@/puzzle/puzzle-db/query'
+import { PuzzleLoaderFrontend } from '../../../@/puzzle/puzzle-loader/frontend'
+import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/query'
 import { ScreenPackBuildSpace } from '../space/space'
 import type { FrontendModule, ModelSpace } from '../types'
 
@@ -43,7 +43,7 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const toQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): PuzzleDbQuery => {
+const toQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): PuzzleQuery => {
   return (
     input.modelSpace?.screenAddPuzzle_puzzleDbQuery ?? {
       order: {
@@ -63,7 +63,7 @@ const toQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): Puzzl
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return PuzzleDbQueryFrontend.watch(input.ctx, toQuery(input), (c) => ({ t: 'got-puzzle-db-query-msg', c }))
+  return PuzzleLoaderFrontend.watch(input.ctx, toQuery(input), (c) => ({ t: 'got-puzzle-loader-msg', c }))
 }
 
 const View: FrontendModule['View'] = (input) => {
@@ -110,7 +110,7 @@ const View: FrontendModule['View'] = (input) => {
         submitDisabled: input.modelSpace.screenAddPuzzle_selected.length === 0,
       }}
       renderBody={() => (
-        <PuzzleDbQueryFrontend.ViewList
+        <PuzzleLoaderFrontend.ViewList
           selectable
           ctx={input.ctx}
           model={input.ctx.puzzleDbQuery}

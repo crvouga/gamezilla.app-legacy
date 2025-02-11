@@ -7,7 +7,7 @@ import type { PuzzleId } from '../puzzle/puzzle-id'
 import { Solutions } from '../solutions/solutions'
 import { IPackDb } from '../pack/pack-db'
 
-export type FlowFrontendCtxRoot = SpaceFrontendCtx & {
+export type FlowFrontendCtxBase = SpaceFrontendCtx & {
   packs: {
     [id: PackId]: Pack
   }

@@ -1,8 +1,8 @@
 import { Sub } from '~/@/sub'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../../@/ui/game-main-menu'
-import { PackDbQueryFrontend } from '../@/pack/pack-db-query/frontend'
-import { PuzzleDbQueryFrontend } from '../@/puzzle/puzzle-db-query/frontend'
+import { PackLoaderFrontend } from '../@/pack/pack-loader/frontend'
+import { PuzzleLoaderFrontend } from '../@/puzzle/puzzle-loader/frontend'
 import { ScreenOpenPackFrontend } from './screen-open-pack/frontend'
 import { ScreenOpenPuzzleFrontend } from './screen-open-puzzle/frontend'
 import { ScreenPuzzleFrontend } from './screen-play-puzzle/frontend'
@@ -27,12 +27,12 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return { model: input.model, msgSpace: [input.msg.c] }
     }
 
-    case 'got-pack-db-query-msg': {
-      return { model: input.model, msgCmd: [PackDbQueryFrontend.gotMsg(input.msg.c)] }
+    case 'got-pack-loader-msg': {
+      return { model: input.model, msgCmd: [PackLoaderFrontend.gotMsg(input.msg.c)] }
     }
 
-    case 'got-puzzle-db-query-msg': {
-      return { model: input.model, msgCmd: [PuzzleDbQueryFrontend.gotMsg(input.msg.c)] }
+    case 'got-puzzle-loader-msg': {
+      return { model: input.model, msgCmd: [PuzzleLoaderFrontend.gotMsg(input.msg.c)] }
     }
   }
 

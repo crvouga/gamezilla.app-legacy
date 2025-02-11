@@ -11,8 +11,8 @@ import { FlowFrontendCtx } from '../../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../../@/frontend/evt'
 import { ModePlay } from '../../@/mode-play'
 import { Pack } from '../../@/pack/pack'
-import { PackDbQueryTypes } from '../../@/pack/pack-db-query'
-import { PuzzleDbQueryTypes } from '../../@/puzzle/puzzle-db-query'
+import { PackLoaderTypes } from '../../@/pack/pack-loader'
+import { PuzzleLoaderTypes } from '../../@/puzzle/puzzle-loader'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { FlowSpaceCtx } from '../../@/space/ctx'
 import { EditPackNameTypes } from './surface-edit-pack-name'
@@ -35,8 +35,8 @@ export const initFrontend: ModelFrontend = {}
 
 export type MsgFrontend =
   | { t: 'got-msg-space'; c: MsgSpace }
-  | { t: 'got-pack-db-query-msg'; c: PackDbQueryTypes.MsgFrontend }
-  | { t: 'got-puzzle-db-query-msg'; c: PuzzleDbQueryTypes.MsgFrontend }
+  | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgFrontend }
+  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgFrontend }
 
 export type MsgBackend = { t: 'noop' }
 

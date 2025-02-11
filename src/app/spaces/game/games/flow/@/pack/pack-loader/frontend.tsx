@@ -7,7 +7,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { IconBox, SpinnerBlock, Typography } from '~/@/ui'
 import { EmptyState } from '~/@/ui/empty-state'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
-import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
+import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import type { Pack } from '../pack'
 import { PacksDbQuery } from '../pack-db/query'
 import { PackId } from '../pack-id'
@@ -16,11 +16,7 @@ import { ModelFrontend, MsgFrontend, MsgInCmdFrontend, initFrontend, type Fronte
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
     case 'got-msg': {
-      return update({
-        ...input,
-        msgCmd: null,
-        msg: input.msgCmd.c.msg,
-      })
+      return update({ ...input, msgCmd: null, msg: input.msgCmd.c.msg })
     }
   }
 
@@ -57,12 +53,12 @@ const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   }
 }
 
-const watch = <TMsg,>(ctx: FlowFrontendCtxRoot, query: PacksDbQuery, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
+const watch = <TMsg,>(ctx: FlowFrontendCtxBase, query: PacksDbQuery, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
   return Sub.map(ctx.packDb.sub(query), (packs) => map({ t: 'got-pack-db-packs', query, packs }))
 }
 
 const ViewList = (input: {
-  ctx: FlowFrontendCtxRoot
+  ctx: FlowFrontendCtxBase
   query: PacksDbQuery
   model: ModelFrontend
   onQueryChanged: (query: PacksDbQuery) => void
@@ -119,7 +115,7 @@ const toListItemSecondaryText = (input: { ctx: { now: Posix; t: Translator }; pa
   )
 }
 
-export const PackDbQueryFrontend = {
+export const PackLoaderFrontend = {
   watch,
   gotMsg,
   initFrontend,

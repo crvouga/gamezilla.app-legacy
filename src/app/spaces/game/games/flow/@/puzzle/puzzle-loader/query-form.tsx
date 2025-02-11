@@ -2,10 +2,10 @@ import { UserId } from '~/app/@/data/user-id'
 import { IconUserCircle } from '~/@/ui'
 import { Chip } from '~/@/ui/chip'
 import { IconArrowDownShortWide } from '~/@/ui/icon/icon-arrow-down-short-wide'
-import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
-import { PuzzleDbQuery } from '../puzzle-db/query'
+import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
+import { PuzzleQuery } from '../puzzle-db/query'
 
-type Model = PuzzleDbQuery
+type Model = PuzzleQuery
 
 type Msg =
   | { t: 'toggled-last-updated-chip' }
@@ -40,7 +40,7 @@ const update = (input: { model: Model; msg: Msg }): Model => {
   }
 }
 
-const View = (input: { query: Model; ctx: FlowFrontendCtxRoot; onChange: (query: Model) => void }) => {
+const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query: Model) => void }) => {
   const dispatch = (msg: Msg) => {
     const queryNew = update({ model: input.query, msg })
     input.onChange(queryNew)

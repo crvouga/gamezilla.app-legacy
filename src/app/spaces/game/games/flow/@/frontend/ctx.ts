@@ -1,8 +1,8 @@
-import { PackDbQueryTypes } from '../pack/pack-db-query'
-import { PuzzleDbQueryTypes } from '../puzzle/puzzle-db-query'
-import { FlowFrontendCtxRoot } from './ctx-root'
+import { PackLoaderTypes } from '../pack/pack-loader'
+import { PuzzleLoaderTypes } from '../puzzle/puzzle-loader'
+import { FlowFrontendCtxBase } from './ctx-base'
 
-export type FlowFrontendCtx = FlowFrontendCtxRoot & {
-  puzzleDbQuery: PuzzleDbQueryTypes.ModelFrontend
-  packDbQuery: PackDbQueryTypes.ModelFrontend
+export type FlowFrontendCtx = FlowFrontendCtxBase & {
+  puzzleDbQuery: PuzzleLoaderTypes.ModelFrontend
+  packDbQuery: PackLoaderTypes.ModelFrontend
 }

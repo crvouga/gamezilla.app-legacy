@@ -2,7 +2,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { PackDbQueryFrontend } from '../../@/pack/pack-db-query/frontend'
+import { PackLoaderFrontend } from '../../@/pack/pack-loader/frontend'
 import type { FrontendModule } from '../types'
 import { PackCreateNewFrontend } from './button-create-new-pack/frontend'
 
@@ -48,7 +48,7 @@ const toQuery = (input: { currentUserId: UserId; offset: number }) => {
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   const query = toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 })
-  return PackDbQueryFrontend.watch(input.ctx, query, (c) => ({ t: 'got-pack-db-query-msg', c }))
+  return PackLoaderFrontend.watch(input.ctx, query, (c) => ({ t: 'got-pack-loader-msg', c }))
 }
 
 const View: FrontendModule['View'] = (input) => {
@@ -65,7 +65,7 @@ const View: FrontendModule['View'] = (input) => {
       }}
       postAction={PackCreateNewFrontend.viewCreateAction(input)}
       renderBody={() => (
-        <PackDbQueryFrontend.ViewList
+        <PackLoaderFrontend.ViewList
           {...input}
           model={input.ctx.packDbQuery}
           query={query}

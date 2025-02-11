@@ -3,8 +3,8 @@ import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutHostSettingUpGame } from '../../../@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
-import { PuzzleDbQueryFrontend } from '../../@/puzzle/puzzle-db-query/frontend'
-import { PuzzleDbQuery } from '../../@/puzzle/puzzle-db/query'
+import { PuzzleQuery } from '../../@/puzzle/puzzle-db/query'
+import { PuzzleLoaderFrontend } from '../../@/puzzle/puzzle-loader/frontend'
 import type { FrontendModule, ModelSpace } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
@@ -27,7 +27,7 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const toQuery = (input: { modelSpace: ModelSpace }): PuzzleDbQuery | null => {
+const toQuery = (input: { modelSpace: ModelSpace }): PuzzleQuery | null => {
   if (input.modelSpace.screen.t !== 'screen-select-puzzle') {
     return null
   }
@@ -43,13 +43,11 @@ const toQuery = (input: { modelSpace: ModelSpace }): PuzzleDbQuery | null => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return PuzzleDbQueryFrontend.watch(input.ctx, toQuery(input), (c) => ({ t: 'got-puzzle-db-query-msg', c }))
+  return PuzzleLoaderFrontend.watch(input.ctx, toQuery(input), (c) => ({ t: 'got-puzzle-loader-msg', c }))
 }
 
 const View: FrontendModule['View'] = (input) => {
-  if (input.modelSpace.screen.t !== 'screen-select-puzzle') {
-    return null
-  }
+  if (input.modelSpace.screen.t !== 'screen-select-puzzle') return null
 
   const pack = input.modelSpace.screen.pack
   const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId

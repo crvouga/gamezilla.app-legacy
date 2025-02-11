@@ -2,7 +2,7 @@ import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
-import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
+import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { FlowFrontendEvtIn } from '../../frontend/evt'
 import type { Pack } from '../pack'
 import { PacksDbQuery } from '../pack-db/query'
@@ -59,7 +59,7 @@ export type FrontendModule = AppFrontendModule<{
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  Ctx: FlowFrontendCtxRoot
+  Ctx: FlowFrontendCtxBase
   MsgEvtIn: FlowFrontendEvtIn
   MsgCmdOut: MsgOutCmdFrontend
   MsgCmdIn: MsgInCmdFrontend

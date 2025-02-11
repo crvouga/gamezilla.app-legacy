@@ -1,12 +1,12 @@
 import type { FrontendCmdTypes } from '~/app/@/frontend/cmd'
 import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
-import { PackDbQueryTypes } from '../pack/pack-db-query'
-import { PuzzleDbQueryTypes } from '../puzzle/puzzle-db-query'
+import { PackLoaderTypes } from '../pack/pack-loader'
+import { PuzzleLoaderTypes } from '../puzzle/puzzle-loader'
 import { FlowFrontendCmdRoot } from './cmd-root'
 
 type FlowFrontendCmdInternal =
-  | PackDbQueryTypes.MsgInCmdFrontend
-  | PuzzleDbQueryTypes.MsgInCmdFrontend
+  | PackLoaderTypes.MsgInCmdFrontend
+  | PuzzleLoaderTypes.MsgInCmdFrontend
   | FlowFrontendCmdRoot
 
 export type FlowFrontendCmd<T extends FrontendCmdTypes> = SpaceFrontendCmd<T> | FlowFrontendCmdInternal

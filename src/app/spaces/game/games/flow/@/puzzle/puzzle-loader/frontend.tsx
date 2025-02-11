@@ -7,10 +7,10 @@ import { EmptyState, IconPuzzlePiece, SpinnerBlock, Typography } from '~/@/ui'
 import { Checkbox, CheckboxState } from '~/@/ui/checkbox/checkbox'
 import { Gutter } from '~/@/ui/gutter'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
-import { FlowFrontendCtxRoot } from '../../frontend/ctx-root'
+import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { VariantBoard } from '../../variant'
 import { Puzzle } from '../puzzle'
-import { PuzzleDbQuery } from '../puzzle-db/query'
+import { PuzzleQuery } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './query-form'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
@@ -33,7 +33,7 @@ const update: FrontendModule['update'] = (input) => {
           ...input.model,
           results: {
             ...input.model.results,
-            [PuzzleDbQuery.toKey(input.msg.query)]: input.msg.puzzles.map((p) => p.id),
+            [PuzzleQuery.toKey(input.msg.query)]: input.msg.puzzles.map((p) => p.id),
           },
         },
         msgCmd: [
@@ -60,8 +60,8 @@ const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
 }
 
 const watch = <TMsg,>(
-  ctx: FlowFrontendCtxRoot,
-  query: PuzzleDbQuery | null,
+  ctx: FlowFrontendCtxBase,
+  query: PuzzleQuery | null,
   map: (m: MsgFrontend) => TMsg,
 ): Sub<TMsg> => {
   if (!query) {
@@ -73,14 +73,14 @@ const watch = <TMsg,>(
 const ViewList = (input: {
   selectable?: boolean
   selected?: PuzzleId[]
-  ctx: FlowFrontendCtxRoot
-  query: PuzzleDbQuery
+  ctx: FlowFrontendCtxBase
+  query: PuzzleQuery
   model: ModelFrontend
-  onQueryChanged: (query: PuzzleDbQuery) => void
+  onQueryChanged: (query: PuzzleQuery) => void
   onItemClick: (puzzle: Puzzle) => void
   onHeaderCheckboxClick?: (allPuzzleIds: PuzzleId[]) => void
 }) => {
-  const queryKey = PuzzleDbQuery.toKey(input.query)
+  const queryKey = PuzzleQuery.toKey(input.query)
   const puzzleIds = input.model.results[queryKey] ?? []
   const puzzles = puzzleIds.flatMap((id) => (input.ctx.puzzles[id] ? [input.ctx.puzzles[id]] : []))
 
@@ -150,7 +150,7 @@ const toTopLevelCheckboxState = (input: { totalCount: number; selectedCount: num
 
 const ViewListItem = (input: {
   selectable?: boolean
-  query: PuzzleDbQuery
+  query: PuzzleQuery
   ctx: { t: Translator; now: Posix }
   puzzle: Puzzle
   onClick?: () => void
@@ -195,9 +195,9 @@ const ViewListItem = (input: {
 const toListItemSecondaryText = (input: {
   ctx: { t: Translator; now: Posix }
   puzzle: Puzzle
-  query: PuzzleDbQuery
+  query: PuzzleQuery
 }): TranslatedText => {
-  const orderField = PuzzleDbQuery.toOrderField(input.query)
+  const orderField = PuzzleQuery.toOrderField(input.query)
   switch (orderField) {
     case 'createdAt':
     default: {
@@ -215,7 +215,7 @@ const toListItemSecondaryText = (input: {
   }
 }
 
-export const PuzzleDbQueryFrontend = {
+export const PuzzleLoaderFrontend = {
   update,
   watch,
   gotMsg,
