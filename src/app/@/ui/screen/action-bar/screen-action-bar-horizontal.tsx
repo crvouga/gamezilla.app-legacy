@@ -6,6 +6,7 @@ import {
   ScreenActionsSpaceBetween,
   ScreenActionsUniform,
 } from './screen-action-bar-props'
+import { Frag } from '~/@/ui/frag'
 
 const DEFAULT_LIMIT = Infinity
 
@@ -28,7 +29,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
       {firstActions.map((action) => {
         if (!action) return null
         const button = <ScreenActionButton {...action} size={input.size} key={action.label} />
-        if (action.renderSurface) return action.renderSurface(button)
+        if (action.renderSurface) return <Frag key={action.label}>{action.renderSurface(button)}</Frag>
         return button
       })}
 
@@ -85,7 +86,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
         {input.start.map((action) => {
           if (!action) return null
           const button = <ScreenActionButton {...action} size={input.size} key={action.label} className='min-w-20' />
-          if (action.renderSurface) return action.renderSurface(button)
+          if (action.renderSurface) return <Frag key={action.label}>{action.renderSurface(button)}</Frag>
           return button
         })}
       </div>
@@ -94,7 +95,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
         {input.end.map((action) => {
           if (!action) return null
           const button = <ScreenActionButton {...action} size={input.size} key={action.label} className='min-w-20' />
-          if (action.renderSurface) return action.renderSurface(button)
+          if (action.renderSurface) return <Frag key={action.label}>{action.renderSurface(button)}</Frag>
           return button
         })}
       </div>
