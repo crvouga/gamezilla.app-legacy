@@ -11,53 +11,55 @@ export const ViewAppStatusBar = (input: {
   dispatch: (c: MsgFrontend) => void
 }) => {
   return (
-    <StatusBar.View
-      ctx={input.ctx}
-      model={input.model.statusBar}
-      dispatch={(c) => input.dispatch({ t: 'status-bar', c })}
-      slots={{
-        topBar: (props) => {
-          const iconSize = input.ctx.screenSize === 'mobile' ? 'size-3' : 'size-4'
-          return (
-            <button
-              {...props}
-              type='button'
-              className={cn(
-                input.ctx.screenSize === 'mobile'
-                  ? 'flex w-full items-center justify-end gap-3 px-3 py-1'
-                  : 'absolute right-0 top-0 z-10 flex w-fit justify-center gap-4 px-6 py-3 pl-8',
-              )}
-              aria-label={input.ctx.t('app.open-settings')}
-            >
-              <WireFrontend.ViewDot ctx={input.ctx} model={input.model.wire} className={iconSize} />
-              <IconLanguage className={iconSize} />
-              <Sound.ViewIcon model={input.model.sound} className={iconSize} />
-              {/* <IconGear className={iconSize} /> */}
-            </button>
-          )
-        },
-        surfaceContent: (
-          <>
-            <WireFrontend.ViewConnectionStatusListItem
-              model={input.model.wire}
-              dispatch={(c) => input.dispatch({ t: 'wire', c })}
-              ctx={input.ctx}
-            />
+    <div className={cn(input.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed right-0 top-0 z-10 w-fit')}>
+      <StatusBar.View
+        ctx={input.ctx}
+        model={input.model.statusBar}
+        dispatch={(c) => input.dispatch({ t: 'status-bar', c })}
+        slots={{
+          topBar: (props) => {
+            const iconSize = input.ctx.screenSize === 'mobile' ? 'size-3' : 'size-4'
+            return (
+              <button
+                {...props}
+                type='button'
+                className={cn(
+                  input.ctx.screenSize === 'mobile'
+                    ? 'flex w-full items-center justify-end gap-3 px-3 py-1'
+                    : 'flex w-fit justify-center gap-4 px-6 py-3 pl-8',
+                )}
+                aria-label={input.ctx.t('app.open-settings')}
+              >
+                <WireFrontend.ViewDot ctx={input.ctx} model={input.model.wire} className={iconSize} />
+                <IconLanguage className={iconSize} />
+                <Sound.ViewIcon model={input.model.sound} className={iconSize} />
+                {/* <IconGear className={iconSize} /> */}
+              </button>
+            )
+          },
+          surfaceContent: (
+            <>
+              <WireFrontend.ViewConnectionStatusListItem
+                model={input.model.wire}
+                dispatch={(c) => input.dispatch({ t: 'wire', c })}
+                ctx={input.ctx}
+              />
 
-            <LangFrontend.ViewLangListItem
-              ctx={input.ctx}
-              dispatch={(c) => input.dispatch({ t: 'lang', c })}
-              model={input.model.lang}
-            />
+              <LangFrontend.ViewLangListItem
+                ctx={input.ctx}
+                dispatch={(c) => input.dispatch({ t: 'lang', c })}
+                model={input.model.lang}
+              />
 
-            <Sound.ViewSoundListItem
-              ctx={input.ctx}
-              model={input.model.sound}
-              dispatch={(c) => input.dispatch({ t: 'sound', c })}
-            />
-          </>
-        ),
-      }}
-    />
+              <Sound.ViewSoundListItem
+                ctx={input.ctx}
+                model={input.model.sound}
+                dispatch={(c) => input.dispatch({ t: 'sound', c })}
+              />
+            </>
+          ),
+        }}
+      />
+    </div>
   )
 }

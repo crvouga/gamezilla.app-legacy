@@ -5,13 +5,13 @@ import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { APP_SOUND, AppFrontendCmd, playSound, StatusBarCmd } from '../../@/frontend/cmd'
 
 export type Model = {
-  isDrawerOpen: boolean
+  isOpen: boolean
 }
 
 export const init = (_input: { stored: Record<string, unknown> | null }): { model: Model } => {
   return {
     model: {
-      isDrawerOpen: false,
+      isOpen: false,
     },
   }
 }
@@ -28,11 +28,11 @@ export const update = (input: {
 } => {
   switch (input.msg?.t) {
     case 'clicked-status-bar': {
-      return { model: { ...input.model, isDrawerOpen: true }, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: { ...input.model, isOpen: true }, msgCmd: [playSound(APP_SOUND.tap)] }
     }
 
     case 'closed-status-bar-drawer': {
-      return { model: { ...input.model, isDrawerOpen: false }, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: { ...input.model, isOpen: false }, msgCmd: [playSound(APP_SOUND.tap)] }
     }
   }
 
@@ -40,7 +40,7 @@ export const update = (input: {
     case 'status-bar': {
       switch (input.msgCmd.c.t) {
         case 'close': {
-          return { model: { ...input.model, isDrawerOpen: false } }
+          return { model: { ...input.model, isOpen: false } }
         }
       }
     }
@@ -67,21 +67,19 @@ export const View = ({
   dispatch: (m: Msg) => void
 }) => {
   return (
-    <>
-      {slots.topBar({ onClick: () => dispatch({ t: 'clicked-status-bar' }) })}
-      <SurfaceLayout
-        ctx={ctx}
-        ariaLabel={ctx.t('status-bar.status-bar')}
-        drawer={{
-          position: 'top',
-        }}
-        id='status-bar-drawer'
-        open={model.isDrawerOpen}
-        onClose={() => dispatch({ t: 'closed-status-bar-drawer' })}
-        body={{
-          render: () => slots.surfaceContent,
-        }}
-      />
-    </>
+    <SurfaceLayout
+      ctx={ctx}
+      ariaLabel={ctx.t('status-bar.status-bar')}
+      drawer={{
+        position: 'top',
+      }}
+      anchor={slots.topBar({ onClick: () => dispatch({ t: 'clicked-status-bar' }) })}
+      id='status-bar-drawer'
+      open={model.isOpen}
+      onClose={() => dispatch({ t: 'closed-status-bar-drawer' })}
+      body={{
+        render: () => slots.surfaceContent,
+      }}
+    />
   )
 }

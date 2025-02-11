@@ -30,7 +30,7 @@ const main = async () => {
       console.error('program crashed!', input)
     },
     // debugger: DebuggerConsole,
-    debugger: CONFIG_SHARED.IS_PROD ? DebuggerConsole : DebuggerReduxDevTools,
+    debugger: CONFIG_SHARED.IS_PROD || true ? DebuggerConsole : DebuggerReduxDevTools,
   })
 
   await ctx.transport.start()
