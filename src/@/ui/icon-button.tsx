@@ -14,7 +14,7 @@ export const IconButton = (input: {
   return (
     <button
       className={cn(
-        'clickable display flex items-center justify-center overflow-hidden rounded-full',
+        'clickable-transparent display flex items-center justify-center overflow-hidden rounded-full',
         toSizeClassName(input.size ?? 'md'),
         input.className,
       )}
@@ -24,7 +24,7 @@ export const IconButton = (input: {
       title={input.label}
     >
       {input.renderIcon({
-        className: 'w-full h-full',
+        className: 'w-full h-full cursor-pointer',
       })}
     </button>
   )
@@ -35,10 +35,14 @@ export const IconButtonEmpty = (input: { size?: IconButtonSize }) => {
 }
 
 const toSizeClassName = (size: IconButtonSize): string => {
-  return {
-    xs: 'size-7 p-1',
-    sm: 'size-8 p-1.5',
-    md: 'size-10 p-2',
-    lg: 'size-12 p-2.5',
-  }[size]
+  switch (size) {
+    case 'xs':
+      return 'size-7 p-1'
+    case 'sm':
+      return 'size-8 p-1.5'
+    case 'md':
+      return 'size-10 p-2'
+    case 'lg':
+      return 'size-12 p-2.5'
+  }
 }

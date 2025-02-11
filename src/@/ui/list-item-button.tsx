@@ -38,7 +38,7 @@ export const ListItemButton = (input: Input) => {
   )
 }
 
-const BASE_CLASS = 'clickable flex w-full shrink-0 items-center truncate p-4 text-lg font-bold'
+const BASE_CLASS = 'clickable-transparent flex w-full shrink-0 items-center truncate p-4 text-lg font-bold'
 
 type Color = 'default' | 'danger' | 'warning' | 'success' | 'inherit' | 'selected'
 

@@ -20,6 +20,7 @@ export const ScreenNavBarTablet = (input: {
         <IconButton
           onClick={input.onBack}
           className='-ml-2'
+          size='lg'
           label={input.ctx.t('app.exit')}
           renderIcon={(inputIcon) => <IconArrowLeft {...inputIcon} />}
         />

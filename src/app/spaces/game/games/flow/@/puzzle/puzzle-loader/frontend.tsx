@@ -160,7 +160,7 @@ const ViewListItem = (input: {
     <button
       key={input.puzzle.id}
       type='button'
-      className='clickable box-border flex w-full items-center text-left'
+      className='clickable-transparent box-border flex w-full items-center text-left'
       onClick={input.onClick}
     >
       {input.selectable && (

@@ -90,7 +90,7 @@ const ViewPackListItem = (input: { ctx: { now: Posix; t: Translator }; pack: Pac
   return (
     <button
       type='button'
-      className='clickable flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left'
+      className='clickable-transparent flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left'
       onClick={input.onClick}
     >
       {false && <IconBox className='h-9 w-9 shrink-0' />}

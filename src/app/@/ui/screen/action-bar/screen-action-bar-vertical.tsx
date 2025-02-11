@@ -80,8 +80,7 @@ const ScreenActionButton = (input: ScreenAction) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'relative flex w-full flex-col items-center rounded-lg p-4 xl:flex-row',
-        'hover:bg-neutral-800/50 disabled:cursor-not-allowed disabled:opacity-50',
+        'clickable-transparent relative flex w-full flex-col items-center rounded-lg p-4 xl:flex-row',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
         input.classNames?.button,

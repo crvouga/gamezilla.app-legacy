@@ -166,7 +166,7 @@ export const View = ({
             <li key={result.userId}>
               <button
                 type='button'
-                className='hover:bg-paper flex w-full items-center gap-4 p-4'
+                className='clickable-transparent flex w-full items-center gap-4 p-4'
                 onClick={() =>
                   dispatch({
                     t: 'clicked-result',

@@ -119,7 +119,7 @@ const ScreenActionButton = (input: ScreenAction & { className?: string }) => {
       onClick={input.onClick}
       className={cn(
         'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 font-normal',
-        'clickable disabled:cursor-not-allowed disabled:opacity-50',
+        'clickable-transparent disabled:cursor-not-allowed disabled:opacity-50',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
         input.classNames?.button,
