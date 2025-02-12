@@ -366,20 +366,11 @@ const updateReset: typeof update = ({ model, msg }) => {
 const updateMain: typeof update = ({ model, ctx, msg }) => {
   switch (model.status.t) {
     case 'dragging': {
-      return updateDragging({
-        ctx,
-        msg,
-        model,
-        modelStatus: model.status,
-      })
+      return updateDragging({ ctx, msg, model, modelStatus: model.status })
     }
 
     case 'idle': {
-      return updateIdle({
-        ctx,
-        msg,
-        model,
-      })
+      return updateIdle({ ctx, msg, model })
     }
   }
 }
@@ -391,11 +382,7 @@ const updateIdle: typeof update = ({ msg, model, ctx }) => {
 
       const groupId = Flow.toGroupId(current, msg.nodeId)
 
-      if (!groupId) {
-        return {
-          model,
-        }
-      }
+      if (!groupId) return { model }
 
       const started = AlgoDrawPipes.startDrawPipes(current, groupId, msg.nodeId)
 
@@ -411,19 +398,12 @@ const updateIdle: typeof update = ({ msg, model, ctx }) => {
     }
 
     default: {
-      return {
-        model,
-      }
+      return { model }
     }
   }
 }
 
-const updateDragging = ({
-  msg,
-  modelStatus,
-  model,
-  ctx,
-}: {
+const updateDragging = (input: {
   msg: Msg
   model: Model
   modelStatus: Dragging
@@ -432,40 +412,34 @@ const updateDragging = ({
   model: Model
   events?: Event[]
 } => {
-  switch (msg.t) {
+  switch (input.msg.t) {
     case 'user-dragged-over-node': {
-      const current = toFlow(model, ctx.flow)
+      const current = toFlow(input.model, input.ctx.flow)
 
-      const drew = AlgoDrawPipes.drawPipes(current, modelStatus.activeGroupId, msg.nodeId)
+      const drew = AlgoDrawPipes.drawPipes(current, input.modelStatus.activeGroupId, input.msg.nodeId)
 
       const modelNew: Model = {
-        ...model,
-        status: model.status,
+        ...input.model,
+        status: input.model.status,
         terminalsByGroupId: drew.terminalsByGroupId,
         pipesBySourceId: drew.pipesBySourceId,
       }
 
-      return {
-        model: modelNew,
-      }
+      return { model: modelNew }
     }
 
     case 'user-pressed-up-node': {
-      const current = toFlow(model, ctx.flow)
+      const current = toFlow(input.model, input.ctx.flow)
       const modelNew: Model = {
-        ...model,
+        ...input.model,
         status: {
           t: 'idle',
         },
       }
 
-      const activeGroupTerminal = Flow.toTerminalByGroupId(current, modelStatus.activeGroupId)
+      const activeGroupTerminal = Flow.toTerminalByGroupId(current, input.modelStatus.activeGroupId)
 
-      if (!activeGroupTerminal) {
-        return {
-          model: modelNew,
-        }
-      }
+      if (!activeGroupTerminal) return { model: modelNew }
 
       const isConnected = Flow.isConnectedWithPipes(current, activeGroupTerminal.startId, activeGroupTerminal.endId)
 
@@ -495,26 +469,26 @@ const updateDragging = ({
     }
 
     case 'user-dragging-left': {
-      const current = toFlow(model, ctx.flow)
+      const current = toFlow(input.model, input.ctx.flow)
       const isSolved = Flow.isSolved(current)
 
-      const terminal = Flow.toTerminalByGroupId(current, modelStatus.activeGroupId)
+      const terminal = Flow.toTerminalByGroupId(current, input.modelStatus.activeGroupId)
 
       if (!terminal?.endId) {
         return {
-          model: { ...model, status: { t: 'idle' } },
+          model: { ...input.model, status: { t: 'idle' } },
         }
       }
 
       return {
-        model: { ...model, status: { t: 'idle' } },
+        model: { ...input.model, status: { t: 'idle' } },
         events: isSolved ? [{ t: 'solved' }] : [],
       }
     }
 
     default: {
       return {
-        model,
+        model: input.model,
       }
     }
   }
