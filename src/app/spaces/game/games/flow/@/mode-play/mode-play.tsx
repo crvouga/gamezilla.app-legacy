@@ -348,11 +348,7 @@ const updateReset: typeof update = ({ model, msg }) => {
     case 'user-clicked-reset': {
       return {
         model: pipe(model, resetPipes, UseHint.resetUsedHints),
-        events: [
-          {
-            t: 'reset',
-          },
-        ],
+        events: [{ t: 'reset' }],
       }
     }
     default: {
@@ -363,32 +359,32 @@ const updateReset: typeof update = ({ model, msg }) => {
   }
 }
 
-const updateMain: typeof update = ({ model, ctx, msg }) => {
-  switch (model.status.t) {
+const updateMain: typeof update = (input) => {
+  switch (input.model.status.t) {
     case 'dragging': {
-      return updateDragging({ ctx, msg, model, modelStatus: model.status })
+      return updateDragging({ ...input, modelStatus: input.model.status })
     }
 
     case 'idle': {
-      return updateIdle({ ctx, msg, model })
+      return updateIdle(input)
     }
   }
 }
 
-const updateIdle: typeof update = ({ msg, model, ctx }) => {
-  switch (msg.t) {
+const updateIdle: typeof update = (input) => {
+  switch (input.msg.t) {
     case 'user-pressed-down-node': {
-      const current = toFlow(model, ctx.flow)
+      const current = toFlow(input.model, input.ctx.flow)
 
-      const groupId = Flow.toGroupId(current, msg.nodeId)
+      const groupId = Flow.toGroupId(current, input.msg.nodeId)
 
-      if (!groupId) return { model }
+      if (!groupId) return { model: input.model }
 
-      const started = AlgoDrawPipes.startDrawPipes(current, groupId, msg.nodeId)
+      const started = AlgoDrawPipes.startDrawPipes(current, groupId, input.msg.nodeId)
 
       return {
         model: {
-          ...model,
+          ...input.model,
           terminalsByGroupId: started.terminalsByGroupId,
           pipesBySourceId: started.pipesBySourceId,
           status: { t: 'dragging', activeGroupId: groupId, autocompleteEdge: null },
@@ -398,7 +394,7 @@ const updateIdle: typeof update = ({ msg, model, ctx }) => {
     }
 
     default: {
-      return { model }
+      return { model: input.model }
     }
   }
 }

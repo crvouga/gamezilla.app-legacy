@@ -20,7 +20,9 @@ const updateFromAppEvent: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgEvt?.t) {
     case 'auth-evt.unauthenticated': {
       if (!input.ctx.currentUserId) return { model: input.model }
+
       const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+
       if (!currentUserSpaceId) return { model: input.model }
 
       return {
@@ -38,40 +40,59 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-ended-space': {
       if (!input.ctx.currentUserId) return { model: input.model }
+
       const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+
       const msgSpace = input.msgSpace
+
       if (msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
 
       return SpaceFrontendModule.andThen(
         { model: input.model },
-        (model) => ({ model, msgCmd: [playSound(APP_SOUND.navBackward)] }),
-        (model) => {
-          if (input.ctx.currentScreen.t === 'space' && input.ctx.currentScreen.spaceId === msgSpace.spaceId) {
-            return { model, msgCmd: [pushScreen({ n: 'spaces', t: 'space-list' })] }
-          }
-          return { model, msgCmd: [] }
-        },
-        (model) => {
-          if (msgSpace.userId === input.ctx.currentUserId) {
-            return { model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-current-user'))] }
-          }
-          const profile = input.ctx.profiles[msgSpace.userId]
-          if (!profile) {
-            return { model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-host'))] }
-          }
-          return { model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-other-user', profile.username))] }
-        },
+        (model) => updatePlaySound({ ...input, model }),
+        (model) => updatePushScreen({ ...input, model }),
+        (model) => updateShowToast({ ...input, model }),
       )
     }
   }
   return { model: input.model }
 }
 
+const updatePlaySound: SpaceFrontendModule['update'] = (input) => {
+  return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackward)] }
+}
+
+const updatePushScreen: SpaceFrontendModule['update'] = (input) => {
+  if (input.ctx.currentScreen.t === 'space' && input.ctx.currentScreen.spaceId === input.msgSpace?.spaceId) {
+    return { model: input.model, msgCmd: [pushScreen({ n: 'spaces', t: 'space-list' })] }
+  }
+
+  return { model: input.model, msgCmd: [] }
+}
+
+const updateShowToast: SpaceFrontendModule['update'] = (input) => {
+  if (input.msgSpace?.t !== 'user-ended-space') return { model: input.model }
+
+  if (input.msgSpace?.userId === input.ctx.currentUserId) {
+    return { model: input.model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-current-user'))] }
+  }
+
+  const profile = input.ctx.profiles[input.msgSpace.userId]
+
+  if (!profile) {
+    return { model: input.model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-host'))] }
+  }
+
+  return { model: input.model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-other-user', profile.username))] }
+}
+
 const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'clicked-end-space-button': {
       if (!input.ctx.currentUserId) return { model: input.model }
+
       const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+
       if (!currentUserSpaceId) return { model: input.model }
 
       return {
@@ -92,6 +113,7 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
 
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
   const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+
   if (!spaceId) return null
 
   return {
