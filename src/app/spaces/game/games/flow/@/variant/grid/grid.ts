@@ -190,46 +190,29 @@ export type Edge = Flow.Edge & {
 export const toNode = (model: Model, nodeId: NodeId): Node | null => {
   const node = Flow.toNode(model, nodeId)
 
-  if (!node) {
-    return null
-  }
+  if (!node) return null
 
   const position = model.positions[node.nodeId]
 
-  if (!position) {
-    return null
-  }
+  if (!position) return null
 
-  return {
-    ...position,
-    ...node,
-  }
+  return { ...position, ...node }
 }
 
 export const toEdge = (model: Model, edgeId: EdgeId): Edge | null => {
   const edge = Flow.toEdge(model, edgeId)
 
-  if (!edge) {
-    return null
-  }
+  if (!edge) return null
 
   const source = toNode(model, edge.sourceId)
 
-  if (!source) {
-    return null
-  }
+  if (!source) return null
 
   const target = toNode(model, edge.targetId)
 
-  if (!target) {
-    return null
-  }
+  if (!target) return null
 
-  return {
-    ...edge,
-    source: source,
-    target: target,
-  }
+  return { ...edge, source, target }
 }
 
 /**
@@ -251,9 +234,7 @@ export const addNode = (model: Model, position: Position): Model => {
 export const yieldPositions = function* (model: Model): Generator<Position> {
   for (const node of Flow.yieldNodes(model)) {
     const position = model.positions[node.nodeId]
-    if (!position) {
-      continue
-    }
+    if (!position) continue
     yield position
   }
 }
@@ -262,15 +243,11 @@ export const yieldEdges = function* (model: Model): Generator<Edge> {
   for (const edge of Flow.yieldEdges(model)) {
     const source = toNode(model, edge.sourceId)
 
-    if (!source) {
-      continue
-    }
+    if (!source) continue
 
     const target = toNode(model, edge.targetId)
 
-    if (!target) {
-      continue
-    }
+    if (!target) continue
 
     yield { ...edge, source, target }
   }
@@ -279,9 +256,7 @@ export const yieldEdges = function* (model: Model): Generator<Edge> {
 export const yieldNodes = function* (model: Model): Generator<Node> {
   for (const node of Flow.yieldNodes(model)) {
     const position = model.positions[node.nodeId]
-    if (!position) {
-      continue
-    }
+    if (!position) continue
     yield { ...position, ...node }
   }
 }
@@ -295,9 +270,7 @@ export const yieldTerminals = function* (model: Model): Generator<GridTerminal> 
   for (const terminal of Flow.yieldTerminals(model)) {
     const start = toNode(model, terminal.startId)
 
-    if (!start) {
-      continue
-    }
+    if (!start) continue
 
     const end = terminal.endId ? (toNode(model, terminal.endId) ?? null) : null
 
@@ -314,15 +287,11 @@ export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
   for (const pipe of Flow.yieldPipes(model)) {
     const source = toNode(model, pipe.edge.sourceId)
 
-    if (!source) {
-      continue
-    }
+    if (!source) continue
 
     const target = toNode(model, pipe.edge.targetId)
 
-    if (!target) {
-      continue
-    }
+    if (!target) continue
 
     yield {
       ...pipe,
@@ -341,21 +310,15 @@ export const yieldPipelines = function* (model: Model): Iterable<Iterable<PipeJo
 const pipeToPipeJoined = (model: Model, pipe: Flow.Pipe): PipeJoined[] => {
   const edge = Flow.toEdge(model, pipe.edgeId)
 
-  if (!edge) {
-    return []
-  }
+  if (!edge) return []
 
   const source = toNode(model, edge.sourceId)
 
-  if (!source) {
-    return []
-  }
+  if (!source) return []
 
   const target = toNode(model, edge.targetId)
 
-  if (!target) {
-    return []
-  }
+  if (!target) return []
 
   return [{ ...pipe, source, target, edge }]
 }
