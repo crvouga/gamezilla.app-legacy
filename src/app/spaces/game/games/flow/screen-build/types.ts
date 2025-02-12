@@ -21,43 +21,6 @@ import { ScreenPuzzleBuilderOpenTypes } from './screen-puzzle-builder-open'
 //
 //
 //
-//
-//
-//
-//
-//
-
-export type FrontendModule = GameFrontendModule<{
-  Model: ModelFrontend
-  Msg: MsgFrontend
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
-  MsgSpace: MsgSpace
-  ModelSpace: ModelSpace
-  Ctx: FlowFrontendCtx
-  MsgCmdOut: FlowFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>
-  MsgEvtIn: FlowFrontendEvtIn
-  MsgCmdIn: null
-}>
-
-export type BackendModule = GameBackendModule<{
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
-  MsgSpace: MsgSpace
-  ModelSpace: ModelSpace
-  Ctx: FlowBackendCtx
-  MsgEvtIn: SpaceBackendEvt
-  Msg: MsgBackend
-  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
-  Deps: null
-}>
-
-//
-//
-//
 // Model
 //
 //
@@ -174,3 +137,40 @@ export type UpdateSpace = (input: {
   msgSpace: MsgSpace
   modelSpace: ModelSpace
 }) => ModelSpace & { event?: FlowSpaceEvt }
+
+//
+//
+//
+//
+//
+//
+//
+//
+
+export type FrontendModule = GameFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
+  Ctx: FlowFrontendCtx
+  MsgCmdOut: FlowFrontendCmd<{
+    MsgToBackend: MsgToBackend
+    MsgFrontend: MsgFrontend
+  }>
+  MsgEvtIn: FlowFrontendEvtIn
+  MsgCmdIn: null
+}>
+
+export type BackendModule = GameBackendModule<{
+  MsgToFrontend: MsgToFrontend
+  MsgToBackend: MsgToBackend
+  MsgSpace: MsgSpace
+  ModelSpace: ModelSpace
+  Ctx: FlowBackendCtx
+  MsgEvtIn: SpaceBackendEvt
+  Msg: MsgBackend
+  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
+  Deps: null
+}>

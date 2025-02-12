@@ -26,12 +26,8 @@ import { PlayTypes } from './screen-play'
 //
 
 export type ModelFrontend = {
-  puzzles: {
-    [puzzleId: PuzzleId]: Puzzle
-  }
-  packs: {
-    [packId: PackId]: Pack
-  }
+  puzzles: { [puzzleId: PuzzleId]: Puzzle }
+  packs: { [packId: PackId]: Pack }
   solutions: Solutions
   puzzleDbQuery: PuzzleLoaderTypes.ModelFrontend
   packDbQuery: PackLoaderTypes.ModelFrontend
@@ -39,9 +35,7 @@ export type ModelFrontend = {
   screenPlay: PlayTypes.ModelFrontend
 }
 
-export const ModelBackend = p.obj({
-  t: p.l('noop'),
-})
+export const ModelBackend = p.obj({ t: p.l('noop') })
 export type ModelBackend = p.Infer<typeof ModelBackend>
 
 //
@@ -83,7 +77,7 @@ export type Mode = p.Infer<typeof Mode>
 //
 //
 //
-//
+// Space
 //
 //
 //
@@ -115,7 +109,7 @@ export type ModelSpace = p.Infer<typeof ModelSpace>
 //
 //
 //
-//
+// Module
 //
 //
 //
