@@ -324,48 +324,9 @@ const pipeToPipeJoined = (model: Model, pipe: Flow.Pipe): PipeJoined[] => {
 }
 
 export const toPipeline = (model: Model, startingNodeId: NodeId): PipeJoined[] => {
-  const USE_V2 = true
-  if (USE_V2) {
-    const pipeline = Flow.toPipeline(model, startingNodeId)
-    const pipelineJoined = pipeline.flatMap((pipe) => pipeToPipeJoined(model, pipe))
-    return pipelineJoined
-  }
-  const pipeline: PipeJoined[] = []
-
-  let currentNodeId = startingNodeId
-  const visited = new Set<NodeId>()
-
-  while (true) {
-    if (visited.has(currentNodeId)) {
-      return pipeline
-    }
-    visited.add(currentNodeId)
-    const pipe = Flow.toPipeBySourceId(model, currentNodeId)
-
-    if (!pipe) {
-      return pipeline
-    }
-
-    const source = toNode(model, pipe.edge.sourceId)
-
-    if (!source) {
-      return pipeline
-    }
-
-    const target = toNode(model, pipe.edge.targetId)
-
-    if (!target) {
-      return pipeline
-    }
-
-    pipeline.push({
-      ...pipe,
-      source,
-      target,
-    })
-
-    currentNodeId = pipe.edge.targetId
-  }
+  const pipeline = Flow.toPipeline(model, startingNodeId)
+  const pipelineJoined = pipeline.flatMap((pipe) => pipeToPipeJoined(model, pipe))
+  return pipelineJoined
 }
 
 export const toDimensions = (model: Model): VariantGridDimensions.Model => {
