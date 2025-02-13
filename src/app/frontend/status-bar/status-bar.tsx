@@ -28,7 +28,7 @@ export const update = (input: {
 } => {
   switch (input.msg?.t) {
     case 'clicked-status-bar': {
-      return { model: { ...input.model, isOpen: true }, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: { ...input.model, isOpen: !input.model.isOpen }, msgCmd: [playSound(APP_SOUND.tap)] }
     }
 
     case 'closed-status-bar-drawer': {
