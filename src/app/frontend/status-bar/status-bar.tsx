@@ -49,12 +49,7 @@ export const update = (input: {
   return { model: input.model }
 }
 
-export const View = ({
-  model,
-  dispatch,
-  slots,
-  ctx,
-}: {
+export const View = (props: {
   slots: {
     topBar: (props: { onClick: () => void }) => VDom
     surfaceContent: VDom
@@ -68,17 +63,17 @@ export const View = ({
 }) => {
   return (
     <SurfaceLayout
-      ctx={ctx}
-      ariaLabel={ctx.t('status-bar.status-bar')}
+      ctx={props.ctx}
+      ariaLabel={props.ctx.t('status-bar.status-bar')}
       drawer={{
         position: 'top',
       }}
-      dropDownReference={slots.topBar({ onClick: () => dispatch({ t: 'clicked-status-bar' }) })}
+      dropDownReference={props.slots.topBar({ onClick: () => props.dispatch({ t: 'clicked-status-bar' }) })}
       id='status-bar-drawer'
-      open={model.isOpen}
-      onClose={() => dispatch({ t: 'closed-status-bar-drawer' })}
+      open={props.model.isOpen}
+      onClose={() => props.dispatch({ t: 'closed-status-bar-drawer' })}
       body={{
-        render: () => slots.surfaceContent,
+        render: () => props.slots.surfaceContent,
       }}
     />
   )
