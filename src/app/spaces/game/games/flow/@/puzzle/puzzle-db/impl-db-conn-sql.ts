@@ -6,7 +6,6 @@ import { Ok, Result, isErr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
-import { Solutions } from '../../solutions/solutions'
 import { Puzzle } from '../puzzle'
 import type { IPuzzleDb } from './interface'
 import { OrderClause, PuzzleQuery, WhereClause } from './query'
@@ -233,7 +232,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           limit: input.pagination.limit,
           offset: input.pagination.offset,
         },
-        solutions: Solutions.init,
+        solutions: {},
       })
     },
 

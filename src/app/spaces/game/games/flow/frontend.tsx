@@ -2,8 +2,8 @@ import { Eff } from '~/@/eff'
 import { withEventId } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { IconGamepad, IconScrewdriverWrench } from '~/@/ui'
+import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
@@ -11,10 +11,9 @@ import { CoverArt } from './@/cover-art'
 import { FlowFrontendCmd } from './@/frontend/cmd'
 import type { FlowFrontendCtx } from './@/frontend/ctx'
 import { FlowFrontendEvt } from './@/frontend/evt'
-import { IPackDb } from './@/pack/pack-db'
+import { IPackDb, PackDb } from './@/pack/pack-db'
 import { PackLoaderTypes } from './@/pack/pack-loader'
 import { PackLoaderFrontend } from './@/pack/pack-loader/frontend'
-import { PackDb } from './@/pack/pack-db/impl'
 import { IPuzzleDb, PuzzleDb } from './@/puzzle/puzzle-db'
 import { PuzzleLoaderTypes } from './@/puzzle/puzzle-loader'
 import { PuzzleLoaderFrontend } from './@/puzzle/puzzle-loader/frontend'
@@ -28,7 +27,7 @@ const init: FrontendModule['init'] = {
   screenPlay: PlayFrontend.init,
   puzzles: {},
   packs: {},
-  solutions: Solutions.init,
+  solutions: {},
   puzzleDbQuery: PuzzleLoaderTypes.initFrontend,
   packDbQuery: PackLoaderTypes.initFrontend,
 }

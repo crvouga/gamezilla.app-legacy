@@ -1,13 +1,12 @@
+import { ModePlay } from '../../@/mode-play'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
-import { ModePlay } from '../../@/mode-play'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { FlowSpaceCtx } from '../../@/space/ctx'
 import type { MsgSpace, SpaceModule } from '../types'
 import * as CopyPuzzleSpace from './button-copy-puzzle/space'
 import { LastPuzzleSpace } from './dialog-last-puzzle/space'
 import type { ModelSpace, MsgSpaceEvt } from './types'
-import { Solutions } from '../../@/solutions/solutions'
 
 const updatePuzzleScreen: SpaceModule['updateSpace'] = (input) => {
   switch (input.modelSpace.screen.t) {
@@ -44,14 +43,14 @@ const updateScreen = (input: {
         ModePlay.init({
           ctx: ModePlay.initCtx({
             flow: input.modelSpace.puzzleResult.c.flow,
-            solutions: Solutions.init,
+            solutions: {},
           }),
         })
 
       const modelPlayNew = ModePlay.update({
         msg: input.msgSpace.c,
         model: modelPlay,
-        ctx: ModePlay.initCtx({ flow: input.modelSpace.puzzleResult.c.flow, solutions: Solutions.init }),
+        ctx: ModePlay.initCtx({ flow: input.modelSpace.puzzleResult.c.flow, solutions: {} }),
       })
 
       const didSolve = modelPlayNew.events?.some((e) => e.t === 'solved')
@@ -112,7 +111,7 @@ const updateScreen = (input: {
             modePlay: ModePlay.init({
               ctx: ModePlay.initCtx({
                 flow: input.msgSpace.nextPuzzle.c.flow,
-                solutions: Solutions.init,
+                solutions: {},
               }),
             }),
             opened: input.modelSpace.opened === 'puzzle-complete' ? null : input.modelSpace.opened,
@@ -131,7 +130,7 @@ const updateScreen = (input: {
             modePlay: ModePlay.init({
               ctx: ModePlay.initCtx({
                 flow: input.msgSpace.prevPuzzle.c.flow,
-                solutions: Solutions.init,
+                solutions: {},
               }),
             }),
             opened: input.modelSpace.opened === 'puzzle-complete' ? null : input.modelSpace.opened,
@@ -159,7 +158,7 @@ const updateScreen = (input: {
         modePlay: ModePlay.init({
           ctx: ModePlay.initCtx({
             flow: input.modelSpace.puzzleResult.c.flow,
-            solutions: Solutions.init,
+            solutions: {},
           }),
         }),
       }
@@ -209,7 +208,7 @@ const initSpace = (input: { pack: Pack; puzzle: PuzzleResult; puzzleIndex: numbe
     puzzleIndex: input.puzzleIndex,
     modePlay:
       input.puzzle.t === 'got'
-        ? ModePlay.init({ ctx: ModePlay.initCtx({ flow: input.puzzle.c.flow, solutions: Solutions.init }) })
+        ? ModePlay.init({ ctx: ModePlay.initCtx({ flow: input.puzzle.c.flow, solutions: {} }) })
         : null,
     opened: null,
     t: 'screen-play-puzzle',

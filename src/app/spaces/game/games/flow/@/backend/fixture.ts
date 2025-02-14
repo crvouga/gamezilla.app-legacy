@@ -5,9 +5,8 @@ import { FixtureSpaceBackend } from '~/app/spaces/@/fixture/backend'
 import { FlowBackend } from '../../backend'
 import { FlowSpace } from '../../space'
 import { ModelSpace } from '../../types'
-import { PackDb } from '../pack/pack-db/impl'
+import { PackDb } from '../pack/pack-db'
 import { PuzzleDb } from '../puzzle/puzzle-db'
-import { Solutions } from '../solutions/solutions'
 import type { FlowBackendCtx } from './ctx'
 
 type Input = Parameters<typeof FlowBackend.update>[0]
@@ -20,9 +19,8 @@ export const FixtureFlowBackend = async () => {
   const f = await FixtureSpaceBackend()
   const ctx: FlowBackendCtx = {
     ...f.ctx,
-    solutions: Solutions.init,
     packDb: PackDb({ t: 'hash-map' }),
-    puzzleDb: await PuzzleDb({ t: 'hash-map' }),
+    puzzleDb: PuzzleDb({ t: 'hash-map' }),
   }
 
   const updates = async (outputs: NonEmpty<Output>, inputs: Input[]): Promise<NonEmpty<Output>> => {

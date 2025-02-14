@@ -4,11 +4,10 @@ import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 import { FlowFrontend } from '../../frontend'
 import { FlowSpace } from '../../space'
 import { ModelSpace, MsgFrontend, MsgSpace, MsgToFrontend } from '../../types'
+import { PackDb } from '../pack/pack-db'
 import { PackLoaderTypes } from '../pack/pack-loader'
-import { PackDb } from '../pack/pack-db/impl'
 import { PuzzleDb } from '../puzzle/puzzle-db'
 import { PuzzleLoaderTypes } from '../puzzle/puzzle-loader'
-import { Solutions } from '../solutions/solutions'
 import type { FlowFrontendCtx } from './ctx'
 
 export const FixtureFlowFrontend = async () => {
@@ -17,7 +16,7 @@ export const FixtureFlowFrontend = async () => {
     ...f.ctx,
     packs: {},
     puzzles: {},
-    solutions: Solutions.init,
+    solutions: {},
     puzzleDbQuery: PuzzleLoaderTypes.initFrontend,
     packDbQuery: PackLoaderTypes.initFrontend,
     puzzleDb: PuzzleDb({ ...f.ctx, t: 'db-conn-sql' }),

@@ -1,8 +1,7 @@
 import { Err, isErr, Ok } from '~/@/result'
-import { Solutions } from '../../solutions/solutions'
+import { Sub } from '~/@/sub'
 import type { Puzzle } from '../puzzle'
 import type { IPuzzleDb } from './interface'
-import { Sub } from '~/@/sub'
 
 const db = new Map<string, Puzzle>()
 
@@ -105,7 +104,7 @@ export const PuzzleDb = (_config: Config): IPuzzleDb => {
           limit: input.pagination.limit,
           offset: input.pagination.offset,
         },
-        solutions: Solutions.init,
+        solutions: {},
       })
     },
 

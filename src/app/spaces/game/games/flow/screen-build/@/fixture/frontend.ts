@@ -2,11 +2,10 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 import type { FlowFrontendCtx } from '../../../@/frontend/ctx'
-import { PackLoaderTypes } from '../../../@/pack/pack-loader'
 import { PackDb } from '../../../@/pack/pack-db/impl'
+import { PackLoaderTypes } from '../../../@/pack/pack-loader'
 import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
 import { PuzzleLoaderTypes } from '../../../@/puzzle/puzzle-loader'
-import { Solutions } from '../../../@/solutions/solutions'
 import { BuildFrontend } from '../../frontend'
 import { BuildSpace } from '../../space'
 import * as BuilderTypes from '../../types'
@@ -37,7 +36,7 @@ export const FixtureFlowBuilderFrontend = async () => {
     packs: {},
     puzzleDbQuery: PuzzleLoaderTypes.initFrontend,
     packDbQuery: PackLoaderTypes.initFrontend,
-    solutions: Solutions.init,
+    solutions: {},
     puzzleDb: PuzzleDb({ t: 'db-conn-sql', dbConnSql: f.ctx.dbConnSql, logger: f.ctx.logger }),
     packDb: PackDb({ t: 'db-conn-sql', dbConnSql: f.ctx.dbConnSql, logger: f.ctx.logger }),
   }

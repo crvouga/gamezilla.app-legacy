@@ -22,7 +22,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
 
       if (isErr(got)) return got
 
-      if (!got.value) return Ok(Solutions.init)
+      if (!got.value) return Ok({})
 
       return Ok({ [hash]: got.value ?? [] })
     },

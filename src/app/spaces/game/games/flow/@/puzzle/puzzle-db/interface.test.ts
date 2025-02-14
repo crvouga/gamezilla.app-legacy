@@ -7,7 +7,6 @@ import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../puzzle'
 import { PuzzleName } from '../puzzle-name'
 import { BaseFixtures } from './fixture'
-import { Solutions } from '../../solutions/solutions'
 
 const Fixtures = async () => {
   return await BaseFixtures()
@@ -229,7 +228,7 @@ describe(import.meta.file, () => {
 
       expect(listed).toEqual(
         Ok({
-          solutions: Solutions.init,
+          solutions: {},
           puzzles: { items: [], limit: 10, offset: 0, total: 0 },
         }),
       )

@@ -51,7 +51,7 @@ describe.skip(import.meta.file, () => {
       const put = await f.solutionsDb.put(solutions)
       const after = await f.solutionsDb.get(hash)
 
-      expect(before).toEqual(Ok(Solutions.init))
+      expect(before).toEqual(Ok({}))
       expect(put).toEqual(Ok(null))
       expect(after).toEqual(Ok(solutions))
     }

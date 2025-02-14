@@ -38,8 +38,8 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
       if (isErr(queried)) return queried
 
       // const row = queried.value[0]
-      return Ok(Solutions.init)
-      // if (!row) return Ok(Solutions.init)
+      return Ok({})
+      // if (!row) return Ok({})
 
       // const parsed = Solutions.parse(row.solutions)
 
