@@ -163,7 +163,7 @@ const normalizeItemArrayResult = <T>(result: Result<T, Item[]>): Result<T, Item[
   return Result.mapOk(result, normalizeItemArray)
 }
 
-describe(`${import.meta.file} ${name}`, () => {
+describe(`KeyValueDb`, () => {
   it('should set correctly', async () => {
     const fixtures = await Fixtures()
     for (const fixture of fixtures) {
