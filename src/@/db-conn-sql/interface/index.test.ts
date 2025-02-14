@@ -43,9 +43,7 @@ const Fixtures = async () => {
   if (SHOULD_TEST_POWERSYNC_CLIENT) {
     configs.push({
       t: 'powersync-client',
-      powerSyncClient: await newPowerSyncClient({
-        dbFilename: ':memory:',
-      }),
+      powerSyncClient: await newPowerSyncClient({ test: true }),
       logger: Logger({ t: 'noop' }),
     })
   }
@@ -74,7 +72,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe('db-conn-sql', () => {
+describe('DbConnSql', () => {
   test('querying ok', async () => {
     for (const f of await Fixtures()) {
       const result = await f.dbConnSql.query({

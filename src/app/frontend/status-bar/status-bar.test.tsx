@@ -23,7 +23,7 @@ const Fixture = async () => {
   }
 }
 
-describe.only('StatusBar', () => {
+describe('StatusBar', () => {
   it('should open status bar on click', async () => {
     const f = await Fixture()
     const before = f.init

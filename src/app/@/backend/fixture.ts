@@ -18,6 +18,7 @@ import { SessionId } from '../data/session-id'
 import { BackendInstanceId } from './backend-instance/backend-instance-id'
 import type { AppBackendCtx } from './ctx'
 import { ProfileCache } from './profile-cache'
+// import { newPowerSyncClient } from '~/service-powersync/frontend/database'
 
 export type IFixtureAppBackendUnit = {
   t: 'unit'
@@ -32,6 +33,7 @@ export type IFixtureAppBackendUnit = {
 export type IFixtureAppBackendIntegration = Omit<IFixtureAppBackendUnit, 't'> & {
   t: 'integration'
   dbConnPostgres: IDbConnSql
+  // dbConnPowersyncClient: IDbConnSql
   keyValueDbRedis: IKeyValueDb
   keyValueDbPostgres: IKeyValueDb
   keyValueDbSqlite: IKeyValueDb
@@ -98,6 +100,12 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     simulateLatency: async () => {},
   })
 
+  // const dbConnPowersyncClient = await DbConnSql({
+  //   t: 'powersync-client',
+  //   powerSyncClient: await newPowerSyncClient({ test: true }),
+  //   logger,
+  // })
+
   const keyValueDbRedis = await KeyValueDb({
     t: 'redis',
     logger,
@@ -128,6 +136,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     ctx,
     dbConnSqlite,
     dbConnPostgres,
+    // dbConnPowersyncClient,
     keyValueDbSqlite,
     keyValueDbHashMap,
     keyValueDbRedis,

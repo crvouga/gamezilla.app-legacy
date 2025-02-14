@@ -1,4 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
+import { Logger } from '~/@/logger'
 import { Ok, Result, unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserId } from '~/app/@/data/user-id'
@@ -6,7 +7,6 @@ import { PuzzleId } from '../../puzzle/puzzle-id'
 import { Pack } from '../pack'
 import { PackName } from '../pack-name'
 import { Config, PackDb } from './impl'
-import { Logger } from '~/@/logger'
 
 const Fixture = (config: Config) => {
   const packDb = PackDb(config)
@@ -44,7 +44,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe(import.meta.file, () => {
+describe(`PackDb`, () => {
   it('should be able to put', async () => {
     for (const f of await Fixtures()) {
       const pack = await Pack.random()
@@ -153,6 +153,28 @@ describe(import.meta.file, () => {
       const after = await f.packDb.get(pack.id)
       expect(zapped).toEqual(Ok(null))
       expect(after).toEqual(Ok(null))
+    }
+  })
+
+  it('should be able to zap and verify using list', async () => {
+    for (const f of await Fixtures()) {
+      const pack = await Pack.random()
+      await f.packDb.put(pack)
+      const zapped = await f.packDb.zap({
+        deletedBy: pack.createdBy,
+        id: pack.id,
+      })
+      const listed = await f.packDb.list({
+        order: { createdAt: 'asc' },
+        pagination: { limit: 10, offset: 0 },
+        where: { createdBy: { equals: pack.createdBy } },
+      })
+      expect(zapped).toEqual(Ok(null))
+      expect(listed.t).toEqual('ok')
+      if (listed.t === 'ok') {
+        expect(listed.value.items).toEqual([])
+        expect(listed.value.total).toEqual(0)
+      }
     }
   })
 

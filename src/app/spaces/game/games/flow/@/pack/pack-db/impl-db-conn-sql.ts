@@ -65,14 +65,19 @@ const rowToPack = (row: Row, items: RowItem[]): Pack | null => {
           (i) => i.puzzle_id,
         ),
       )
-      .filter((i) => i.pack_id === row.id)
-      .map((i) => PuzzleId.parse(i.puzzle_id))
-      .flatMap((p) => (isOk(p) ? [p.value] : [])),
+      .flatMap((i) => {
+        if (i.pack_id !== row.id) return []
+        const puzzleId = PuzzleId.parse(i.puzzle_id)
+        if (isErr(puzzleId)) return []
+        return [puzzleId.value]
+      }),
   }
 }
 
 const toSqlWhere = (where: WhereClause) => {
   const clauses: string[] = []
+
+  clauses.push('game_flow_pack.deleted_at_posix IS NULL')
 
   const vars: Record<string, string | number | undefined | null> = {}
 
@@ -111,13 +116,20 @@ const ensureNumber = (maybeNumber: unknown): number => {
   return 0
 }
 
+const puzzleIdCsvToArray = (puzzleIdCsv: string): PuzzleId[] => {
+  return puzzleIdCsv.split(',').flatMap((id) => {
+    const puzzleId = PuzzleId.parse(id)
+    return isOk(puzzleId) ? [puzzleId.value] : []
+  })
+}
+
 export const PackDb = (config: Config): IPackDb => {
   const logger = Logger.prefix('pack db impl sql', config.logger)
   return {
     async get(id) {
       const queried = await config.dbConnSql.query({
         parser: Row,
-        sql: 'SELECT * FROM game_flow_pack WHERE id = :id',
+        sql: 'SELECT * FROM game_flow_pack WHERE id = :id AND deleted_at_posix IS NULL',
         vars: {
           id: id,
         },
@@ -125,7 +137,7 @@ export const PackDb = (config: Config): IPackDb => {
 
       const queriedItems = await config.dbConnSql.query({
         parser: RowItem,
-        sql: 'SELECT * FROM game_flow_pack_item WHERE pack_id = :pack_id',
+        sql: 'SELECT * FROM game_flow_pack_item WHERE pack_id = :pack_id AND deleted_at_posix IS NULL',
         vars: {
           pack_id: id,
         },
@@ -139,22 +151,8 @@ export const PackDb = (config: Config): IPackDb => {
     async count(input) {
       const where = toSqlWhere(input.where)
       const vars = where.vars
-      const str = `
-				SELECT
-					COUNT(*) AS count
-				FROM
-					game_flow_pack
-				${where.str}
-			`
-
-      const queried = await config.dbConnSql.query({
-        parser: p.obj({
-          count: p.maybe(p.or(p.num, p.str)),
-        }),
-        sql: str,
-        vars,
-      })
-
+      const sql = `SELECT COUNT(*) AS count FROM game_flow_pack ${where.str}`
+      const queried = await config.dbConnSql.query({ parser: p.obj({ count: p.maybe(p.or(p.num, p.str)) }), sql, vars })
       return Result.mapOk(queried, (rows) => ensureNumber(rows[0]?.count))
     },
 
@@ -168,7 +166,7 @@ export const PackDb = (config: Config): IPackDb => {
         ...sqlPagination.vars,
       }
 
-      const packsSql = `
+      const sql = `
         SELECT
           game_flow_pack.*,
           ${config.dbConnSql.aggregate.StringConcat('game_flow_pack_item.puzzle_id', ',')} AS puzzle_ids_csv
@@ -183,22 +181,14 @@ export const PackDb = (config: Config): IPackDb => {
         ${sqlPagination.str};
 			`
       const packsSub = config.dbConnSql.sub({
-        parser: p.and(
-          Row,
-          p.obj({
-            puzzle_ids_csv: p.maybe(p.str),
-          }),
-        ),
-        sql: packsSql,
+        parser: p.and(Row, p.obj({ puzzle_ids_csv: p.maybe(p.str) })),
+        sql,
         vars,
       })
 
       return Sub.map(packsSub, (packRows) => {
         const packs = packRows.flatMap((row) => {
-          const puzzleIds = (row.puzzle_ids_csv ?? '').split(',').flatMap((id) => {
-            const puzzleId = PuzzleId.parse(id)
-            return isOk(puzzleId) ? [puzzleId.value] : []
-          })
+          const puzzleIds = puzzleIdCsvToArray(row.puzzle_ids_csv ?? '')
           const pack = rowToPack(row, [])
           return pack ? [{ ...pack, puzzleIds }] : []
         })
@@ -378,9 +368,17 @@ export const PackDb = (config: Config): IPackDb => {
     async zap(input) {
       const queried = await config.dbConnSql.query({
         parser: p.unknown,
-        sql: 'DELETE FROM game_flow_pack WHERE id = :id',
+        sql: `
+          UPDATE game_flow_pack 
+          SET 
+            deleted_at_posix = :deleted_at_posix,
+            deleted_by_user_id = :deleted_by_user_id
+          WHERE id = :id
+        `,
         vars: {
           id: input.id,
+          deleted_at_posix: Posix.now(),
+          deleted_by_user_id: input.deletedBy,
         },
       })
       return Result.mapOk(queried, () => null)

@@ -10,6 +10,14 @@ export type Pub<Msg> = {
 
 export type PubSub<Msg> = Pub<Msg> & Sub<Msg>
 
+const once = <Msg>(sub: Sub<Msg>): Promise<Msg> => {
+  return new Promise<Msg>((resolve) => {
+    const unsubscribe = sub.sub((a) => {
+      resolve(a)
+      unsubscribe()
+    })
+  })
+}
 const create = <Msg>(): PubSub<Msg> => {
   let runningId = 0
   const subscribers = new Map<number, (msg: Msg) => Promise<unknown> | unknown>()
@@ -67,7 +75,7 @@ const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
   }
 }
 
-function flatMap<A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> {
+const flatMap = <A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> => {
   return {
     sub: (subscriber: (msg: B) => void) => {
       const unsubscribeFunctions: Array<() => void> = []
@@ -184,6 +192,7 @@ export const Sub = {
   next,
   flatMap,
   deduplicate,
+  once,
 }
 
 export const Pub = {

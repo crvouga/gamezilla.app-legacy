@@ -23,15 +23,19 @@ export type IPowerSyncClient = {
   events: PubSub<PowerSyncDatabaseEvent>
 }
 
-export const newPowerSyncClient = async (input?: { dbFilename?: string }): Promise<IPowerSyncClient> => {
+export const newPowerSyncClient = async (input?: { test?: boolean }): Promise<IPowerSyncClient> => {
   const database = new PowerSyncDatabase({
     schema: AppSchema,
     database: {
-      dbFilename: input?.dbFilename ?? 'powersync.db',
+      dbFilename: input?.test ? ':memory:' : 'powersync.db',
+      dbLocation: input?.test ? 'test' : undefined,
+      debugMode: input?.test,
     },
     flags: {
       broadcastLogs: true,
       enableMultiTabs: false,
+      ssrMode: false,
+      useWebWorker: false,
     },
   })
 
