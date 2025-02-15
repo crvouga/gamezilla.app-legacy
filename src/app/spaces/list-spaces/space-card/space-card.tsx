@@ -80,16 +80,16 @@ const ViewSpaceCardHost = (input: { host?: Profile | null; ctx: BaseFrontendCtx 
     <div className='flex max-w-full items-center justify-start gap-2 overflow-x-hidden'>
       <Avatar src={input.host?.avatarUrl} alt='avatar' className='size-12' />
 
-      <div className='flex-1 overflow-x-hidden'>
+      <div className='flex flex-1 items-center justify-start gap-2 overflow-x-hidden'>
         {input.host && (
           <Typography
             variant='title'
-            className='truncate text-lg font-normal'
+            className='truncate text-left text-lg font-normal'
             text={input.ctx.t('username', input.host.username)}
           />
         )}
+        <ViewHostChip ctx={input.ctx} />
       </div>
-      <ViewHostChip ctx={input.ctx} />
       {input.ctx.currentUserId === input.host?.userId && <ViewYouChip ctx={input.ctx} />}
     </div>
   )
