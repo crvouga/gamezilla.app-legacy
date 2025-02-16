@@ -5,6 +5,7 @@ import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
 import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SectionTitle } from '~/app/@/ui/section/section-title'
+import { SpaceFrontendCtx } from '../@/frontend/ctx'
 import { SectionPeopleList } from '../@/ui/section-people-list'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
@@ -97,7 +98,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   if (!spaceState) return null
 
-  const spaceCtx = {
+  const spaceCtx: SpaceFrontendCtx = {
     ...input.ctx,
     space: space,
     currentUserId: currentUser.userId,
@@ -132,7 +133,9 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
           <SectionPeopleList
             ctx={spaceCtx}
-            onOpenUserDetails={(userId) => input.dispatch({ t: 'people-action.clicked-person-list-item', userId })}
+            onOpenUserDetails={(_userId) => {
+              // TODO: open the people list
+            }}
           />
         </div>
       )}
@@ -149,10 +152,10 @@ const SectionGame = (props: {
   return (
     <section className='flex w-full flex-col gap-6 py-3'>
       <SectionTitle text={props.ctx.t('spaces.game')} />
+
       <div className='flex w-fit flex-row items-center gap-4 px-6'>
-        <div className='aspect-square size-20 overflow-hidden rounded border'>
-          <GameCoverArt gameName={props.gameName} />
-        </div>
+        <GameCoverArt className='aspect-square size-20 overflow-hidden rounded border' gameName={props.gameName} />
+
         <Typography variant='label' sizeClassName='text-lg' text={props.ctx.t(props.gameName)} />
       </div>
     </section>

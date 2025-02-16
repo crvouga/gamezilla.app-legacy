@@ -3,14 +3,14 @@ import { DropDownAlignment } from '~/@/ui/drop-down/drop-down-alignment'
 import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'
 import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 import { VDom } from '~/@/vdom/vdom'
+import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, openProfile, playSound } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { SpaceFrontendModule } from '../../architecture/space-frontend'
 import { SectionPeopleList } from '../../@/ui/section-people-list'
-import { SectionProfileDetails } from '../../@/ui/section-person-details'
-import { UserId } from '~/app/@/data/user-id'
+import { SectionPersonDetails } from '../../@/ui/section-person-details'
+import { SpaceFrontendModule } from '../../architecture/space-frontend'
 
 export type FrontendMsg =
   | { t: 'people-action.closed-surface' }
@@ -46,16 +46,16 @@ const updatePeopleModals: SpaceFrontendModule['update'] = ({ msg, model }) => {
     }
 
     case 'people-action.clicked-people-action': {
-      const isOpen = model.opened === 'people-surface'
+      const isOpen = model.opened === 'people.people-surface'
       if (isOpen) {
         return { model: { ...model, opened: null }, msgCmd: [playSound(APP_SOUND.surfaceClosed)] }
       }
-      return { model: { ...model, opened: 'people-surface' }, msgCmd: [playSound(APP_SOUND.surfaceOpened)] }
+      return { model: { ...model, opened: 'people.people-surface' }, msgCmd: [playSound(APP_SOUND.surfaceOpened)] }
     }
 
     case 'people-action.clicked-person-list-item': {
       return {
-        model: { ...model, openedPreviewUserId: msg.userId, opened: 'person-preview-surface' },
+        model: { ...model, openedPreviewUserId: msg.userId, opened: 'people.person-preview-surface' },
         msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
@@ -70,7 +70,7 @@ const updateFromCmd: SpaceFrontendModule['update'] = ({ msgCmd, model }) => {
         model: {
           ...model,
           openedPreviewUserId: msgCmd.userId,
-          opened: 'person-preview-surface',
+          opened: 'people.person-preview-surface',
         },
         msgCmd: [playSound(APP_SOUND.tap)],
       }
@@ -135,25 +135,25 @@ const ViewSurfaces = (
             dropDownReference={input.reference}
             ctx={input.ctx}
             ariaLabel={input.ctx.t('app.people')}
-            open={input.model.opened === 'people-surface'}
+            open={input.model.opened === 'people.people-surface'}
             onClose={() => input.dispatch({ t: 'people-action.closed-surface' })}
             body={{
               render: () => (
                 <SectionPeopleList
+                  ctx={spaceCtx}
                   onOpenUserDetails={(userId) =>
                     input.dispatch({ t: 'people-action.clicked-person-list-item', userId })
                   }
-                  ctx={spaceCtx}
                 />
               ),
             }}
           />
         }
-        open={input.model.opened === 'person-preview-surface'}
+        open={input.model.opened === 'people.person-preview-surface'}
         onClose={() => input.dispatch({ t: 'people-action.closed-surface' })}
         body={{
           render: () => (
-            <SectionProfileDetails
+            <SectionPersonDetails
               ctx={spaceCtx}
               profile={modalProfile ?? null}
               onOpenDetails={() => input.dispatch({ t: 'people-action.clicked-preview-user-link' })}

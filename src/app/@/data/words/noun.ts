@@ -5809,7 +5809,6 @@ export const nouns = [
   'metamorphosis',
   'superior',
   'approximation',
-  'girth',
   'tirade',
   'grocer',
   'holdup',

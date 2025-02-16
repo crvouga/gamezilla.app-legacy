@@ -4,7 +4,7 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ViewHostChip } from '~/app/spaces/@/ui/host-chip'
 import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
 
-export const SectionProfileDetails = (input: {
+export const SectionPersonDetails = (input: {
   ctx: SpaceFrontendCtx
   profile: Profile | null
   onOpenDetails: () => void
