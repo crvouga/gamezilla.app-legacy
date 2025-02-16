@@ -5,6 +5,7 @@ import { SpacesCore } from '../core/core'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Profile } from '~/app/@/data/profile'
 import { didShowToast, didShowErrorSm } from '~/app/@/frontend/cmd'
+import { UserId } from '~/app/@/data/user-id'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -14,7 +15,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe.only(import.meta.file, () => {
   test('show toast after current user joining', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
@@ -126,5 +127,19 @@ describe(import.meta.file, () => {
 
     expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)).toEqual(spaceA)
     expect(didShowErrorSm(output)).toBe(true)
+  })
+
+  it('opens person details surface when clicking person list item', async () => {
+    const f = await Fixture()
+    const someUserId = UserId.generate()
+    const output = f.update(f.initial, [
+      {
+        msg: {
+          t: 'join-space.clicked-person-list-item',
+          userId: someUserId,
+        },
+      },
+    ])
+    expect(output.model.opened).toBe('join-space.person-preview-surface')
   })
 })
