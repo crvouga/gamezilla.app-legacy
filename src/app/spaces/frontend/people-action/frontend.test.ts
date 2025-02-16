@@ -200,9 +200,7 @@ describe(import.meta.file, () => {
     const f = await FixtureSpacesFrontend()
     const output = f.update(f.initial, [
       {
-        msg: {
-          t: 'people-action.closed-surface',
-        },
+        msg: { t: 'people-action.closed-surface' },
       },
     ])
     expect(didPlaySound(output, APP_SOUND.surfaceClosed)).toBe(true)

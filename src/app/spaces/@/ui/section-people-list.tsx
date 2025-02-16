@@ -1,4 +1,7 @@
 import { Avatar } from '~/@/ui'
+import { Frag } from '~/@/ui/frag'
+import { VDom } from '~/@/vdom/vdom'
+import { Profile } from '~/app/@/data/profile'
 import type { UserId } from '~/app/@/data/user-id'
 import { SectionTitle } from '~/app/@/ui/section/section-title'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -7,22 +10,31 @@ import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
 
 export const SectionPeopleList = (input: {
   ctx: SpaceFrontendCtx
-  onOpenUserDetails: (userId: UserId) => void
+  onClickItem: (userId: UserId) => void
+  renderItem?: (profile: Profile, vDom: VDom) => VDom
   title?: string
 }) => {
   const profiles = SpaceFrontendCtx.toProfiles(input.ctx)
+
+  const renderItem = input.renderItem ?? ((_profile, vDom) => vDom)
+
   return (
-    <section className='flex w-full flex-col gap-3 overflow-hidden py-6'>
+    <section className='flex w-full flex-col gap-3 py-6'>
       <SectionTitle text={input.ctx.t('app.people')} />
 
-      <div className='w-full'>
+      <div className='flex w-full flex-col'>
         {profiles.map((profile) => (
-          <PersonListItem
-            key={profile.userId}
-            profile={profile}
-            ctx={input.ctx}
-            onClick={() => input.onOpenUserDetails(profile.userId)}
-          />
+          <Frag key={profile.userId}>
+            {renderItem(
+              profile,
+              <PersonListItem
+                key={profile.userId}
+                profile={profile}
+                ctx={input.ctx}
+                onClick={() => input.onClickItem(profile.userId)}
+              />,
+            )}
+          </Frag>
         ))}
       </div>
     </section>

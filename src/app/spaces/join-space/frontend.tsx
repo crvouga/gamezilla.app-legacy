@@ -5,8 +5,10 @@ import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
 import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SectionTitle } from '~/app/@/ui/section/section-title'
+import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { SpaceFrontendCtx } from '../@/frontend/ctx'
 import { SectionPeopleList } from '../@/ui/section-people-list'
+import { SectionPersonDetails } from '../@/ui/section-person-details'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { MsgSpace } from '../core/space-msg/space-msg'
@@ -133,9 +135,27 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
           <SectionPeopleList
             ctx={spaceCtx}
-            onOpenUserDetails={(_userId) => {
-              // TODO: open the people list
-            }}
+            onClickItem={(userId) => input.dispatch({ t: 'join-space.clicked-person-list-item', userId })}
+            renderItem={(profile, vDom) => (
+              <SurfaceLayout
+                ctx={spaceCtx}
+                ariaLabel={input.ctx.t('?')}
+                open={false}
+                onClose={() => {}}
+                drawer={{
+                  position: 'bottom',
+                }}
+                dropDown={{
+                  position: 'bottom',
+                  alignment: 'starting',
+                }}
+                id='user-preview'
+                dropDownReference={vDom}
+                body={{
+                  render: () => <SectionPersonDetails onOpenDetails={() => {}} ctx={spaceCtx} profile={profile} />,
+                }}
+              />
+            )}
           />
         </div>
       )}

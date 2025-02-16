@@ -39,24 +39,14 @@ describe(import.meta.file, () => {
       {
         msgBackend: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({
-            t: 'user-started-space',
-            spaceId: f.spaceId,
-            userId: f.currentUser.userId,
-          }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.currentUser.userId }),
         },
       },
       {
         msgBackend: {
-          profiles: {
-            [otherUser.userId]: otherUser,
-          },
+          profiles: { [otherUser.userId]: otherUser },
           t: 'sync.got-msg-space',
-          c: withEventMeta({
-            t: 'user-joined-space',
-            spaceId: f.spaceId,
-            userId: otherUser.userId,
-          }),
+          c: withEventMeta({ t: 'user-joined-space', spaceId: f.spaceId, userId: otherUser.userId }),
         },
       },
     ])
@@ -73,21 +63,13 @@ describe(import.meta.file, () => {
       {
         msgBackend: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({
-            t: 'user-started-space',
-            spaceId: f.spaceId,
-            userId: f.ctx.currentUserId,
-          }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.ctx.currentUserId }),
         },
       },
       {
         msgBackend: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({
-            t: 'user-joined-space',
-            spaceId: f.spaceId,
-            userId: f.userA.userId,
-          }),
+          c: withEventMeta({ t: 'user-joined-space', spaceId: f.spaceId, userId: f.userA.userId }),
         },
       },
     ])
@@ -101,18 +83,11 @@ describe(import.meta.file, () => {
       {
         msgBackend: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({
-            t: 'user-started-space',
-            spaceId: f.spaceId,
-            userId: f.userA.userId,
-          }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.userId }),
         },
       },
       {
-        msg: {
-          t: 'join-space.submitted-join-space-form',
-          spaceId: f.spaceId,
-        },
+        msg: { t: 'join-space.submitted-join-space-form', spaceId: f.spaceId },
       },
     ])
     expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)).toEqual(f.spaceId)
@@ -124,25 +99,11 @@ describe(import.meta.file, () => {
       {
         msgBackend: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({
-            t: 'user-started-space',
-            spaceId: f.spaceId,
-            userId: f.userA.userId,
-          }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.userId }),
         },
       },
-      {
-        msg: {
-          t: 'join-space.submitted-join-space-form',
-          spaceId: f.spaceId,
-        },
-      },
-      {
-        msg: {
-          t: 'leave-space.clicked-leave-space-button',
-          spaceId: f.spaceId,
-        },
-      },
+      { msg: { t: 'join-space.submitted-join-space-form', spaceId: f.spaceId } },
+      { msg: { t: 'leave-space.clicked-leave-space-button', spaceId: f.spaceId } },
     ])
     expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)).toEqual(null)
   })
@@ -156,25 +117,11 @@ describe(import.meta.file, () => {
       {
         msgBackend: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({
-            t: 'user-started-space',
-            spaceId: spaceA,
-            userId: f.userA.userId,
-          }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: spaceA, userId: f.userA.userId }),
         },
       },
-      {
-        msg: {
-          t: 'join-space.submitted-join-space-form',
-          spaceId: spaceA,
-        },
-      },
-      {
-        msg: {
-          t: 'join-space.submitted-join-space-form',
-          spaceId: spaceB,
-        },
-      },
+      { msg: { t: 'join-space.submitted-join-space-form', spaceId: spaceA } },
+      { msg: { t: 'join-space.submitted-join-space-form', spaceId: spaceB } },
     ])
 
     expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)).toEqual(spaceA)
