@@ -17,7 +17,7 @@ describe(import.meta.file, () => {
     const started = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-start-space-button',
+          t: 'start-space.clicked-start-space-button',
           spaceId: SpaceId.generate(),
         },
       },
@@ -31,7 +31,7 @@ describe(import.meta.file, () => {
     const started = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-start-space-button',
+          t: 'start-space.clicked-start-space-button',
           spaceId,
         },
       },
@@ -47,7 +47,7 @@ describe(import.meta.file, () => {
     const started = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-start-space-button',
+          t: 'start-space.clicked-start-space-button',
           spaceId: SpaceId.generate(),
         },
       },
@@ -61,7 +61,7 @@ describe(import.meta.file, () => {
     const started = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-start-space-button',
+          t: 'start-space.clicked-start-space-button',
           spaceId,
         },
       },
@@ -75,7 +75,7 @@ describe(import.meta.file, () => {
     const started = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-start-space-button',
+          t: 'start-space.clicked-start-space-button',
           spaceId,
         },
       },
@@ -83,7 +83,8 @@ describe(import.meta.file, () => {
     expect(
       didSendToBackend(
         started,
-        (msg) => msg.t === 'got-msg-space' && msg.c.t === 'user-started-space' && msg.c.userId === f.ctx.currentUserId,
+        (msg) =>
+          msg.t === 'sync.got-msg-space' && msg.c.t === 'user-started-space' && msg.c.userId === f.ctx.currentUserId,
       ),
     ).toBe(true)
   })

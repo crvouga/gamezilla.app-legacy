@@ -1,14 +1,15 @@
 import { withEventId } from '~/@/event-sourced/event'
+import { Translator } from '~/@/l18n/generated'
 import { Typography } from '~/@/ui'
 import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
 import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SectionTitle } from '~/app/@/ui/section/section-title'
+import { SectionPeopleList } from '../@/ui/section-people-list'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { MsgSpace } from '../core/space-msg/space-msg'
-
-import { SectionPeopleList } from '../@/ui/section-people-list'
+import { GameName } from '../game/games/@/game-name'
 import { GameCoverArt } from '../game/games/cover-art'
 
 const update: SpaceFrontendModule['update'] = (input) => {
@@ -21,7 +22,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
 const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'submitted-join-space-form': {
+    case 'join-space.submitted-join-space-form': {
       if (!input.ctx.currentUserId) return { model: input.model }
 
       return {
@@ -111,7 +112,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       parentScreen={input.ctx.parentScreen}
       ctx={input.ctx}
       postAction={{
-        onSubmit: () => input.dispatch({ t: 'submitted-join-space-form', spaceId: space.spaceId }),
+        onSubmit: () => input.dispatch({ t: 'join-space.submitted-join-space-form', spaceId: space.spaceId }),
         submitText: input.ctx.t('spaces.join-space'),
         submitLoading: false,
         submitDisabled: false,
@@ -123,21 +124,11 @@ const View: SpaceFrontendModule['View'] = (input) => {
               hostUsername: hostProfile.username,
             })
           : null,
-        onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
+        onBack: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
       }}
       renderBody={() => (
         <div className='flex w-full flex-col gap-6'>
-          {spaceState.game && (
-            <section className='flex w-full flex-col gap-6 py-3'>
-              <SectionTitle text={input.ctx.t('spaces.game')} />
-              <div className='flex w-fit flex-row items-center gap-4 px-6'>
-                <div className='aspect-square size-20 overflow-hidden rounded border'>
-                  <GameCoverArt gameName={spaceState.game?.t ?? null} />
-                </div>
-                <Typography variant='label' sizeClassName='text-lg' text={input.ctx.t(spaceState.game.t)} />
-              </div>
-            </section>
-          )}
+          {spaceState.game && <SectionGame ctx={input.ctx} gameName={spaceState.game.t} />}
 
           <SectionPeopleList
             ctx={spaceCtx}
@@ -146,6 +137,25 @@ const View: SpaceFrontendModule['View'] = (input) => {
         </div>
       )}
     />
+  )
+}
+
+const SectionGame = (props: {
+  ctx: {
+    t: Translator
+  }
+  gameName: GameName
+}) => {
+  return (
+    <section className='flex w-full flex-col gap-6 py-3'>
+      <SectionTitle text={props.ctx.t('spaces.game')} />
+      <div className='flex w-fit flex-row items-center gap-4 px-6'>
+        <div className='aspect-square size-20 overflow-hidden rounded border'>
+          <GameCoverArt gameName={props.gameName} />
+        </div>
+        <Typography variant='label' sizeClassName='text-lg' text={props.ctx.t(props.gameName)} />
+      </div>
+    </section>
   )
 }
 

@@ -10,7 +10,7 @@ import { SpacesCore } from '../core/core'
 import { Space } from '../core/space'
 import { MsgSpace } from '../core/space-msg/space-msg'
 import type { MsgFrontend } from '../types'
-import { NotInGameScreenFrontend } from './frontend/not-in-game-screen'
+import { ScreenNotInGameFrontend } from './frontend/screen-not-in-game'
 import { GamesFrontend } from './games/frontend'
 
 const update: SpaceFrontendModule['update'] = (input) => {
@@ -25,7 +25,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
 const updateFromMsg: SpaceFrontendModule['update'] = ({ msg, model, ctx }) => {
   switch (msg?.t) {
-    case 'clicked-game-tile': {
+    case 'game.clicked-game-tile': {
       const currentUserId = ctx.currentUserId
       if (!currentUserId) return { model }
 
@@ -218,7 +218,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   if (!space) return null
 
-  if (!space.game) return <NotInGameScreenFrontend.View {...input} />
+  if (!space.game) return <ScreenNotInGameFrontend.View {...input} />
 
   return (
     <GamesFrontend.View

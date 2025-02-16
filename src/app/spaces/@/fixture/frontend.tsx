@@ -165,7 +165,9 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
 export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
     msgBackend: {
-      t: 'got-msg-space',
+      profiles: {},
+      causedBy: {},
+      t: 'sync.got-msg-space',
       c: withEventMetaAt(happenedAt, {
         t: 'user-started-space',
         spaceId,
@@ -178,7 +180,9 @@ export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: Sp
 export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
     msgBackend: {
-      t: 'got-msg-space',
+      profiles: {},
+      causedBy: {},
+      t: 'sync.got-msg-space',
       c: withEventMetaAt(happenedAt, {
         t: 'user-left-space',
         spaceId,
@@ -191,7 +195,9 @@ export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: Space
 export const userJoinedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
     msgBackend: {
-      t: 'got-msg-space',
+      profiles: {},
+      causedBy: {},
+      t: 'sync.got-msg-space',
       c: withEventMetaAt(happenedAt, {
         t: 'user-joined-space',
         spaceId,

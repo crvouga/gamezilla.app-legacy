@@ -19,7 +19,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           ...f.frontendA,
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
@@ -30,7 +30,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           ...f.frontendB,
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMetaAt(1, {
             t: 'user-joined-space',
             spaceId,
@@ -40,6 +40,6 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didSendMsgToFrontend(output, (m) => m.t === 'synced')).toBe(true)
+    expect(didSendMsgToFrontend(output, (m) => m.t === 'sync.synced')).toBe(true)
   })
 })

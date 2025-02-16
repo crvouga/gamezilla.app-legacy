@@ -75,7 +75,7 @@ describe(import.meta.file, () => {
       },
       {
         msgBackend: {
-          t: 'listed-spaces',
+          t: 'list-spaces.listed',
           spaces: [Space.random(), Space.random(), Space.random()],
           causedBy: null,
         },
@@ -103,14 +103,14 @@ describe(import.meta.file, () => {
       },
       {
         msgBackend: {
-          t: 'listed-spaces',
+          t: 'list-spaces.listed',
           spaces: [space],
           causedBy: null,
         },
       },
       {
         msg: {
-          t: 'clicked-space-card',
+          t: 'list-spaces.clicked-space-card',
           spaceId,
         },
       },
@@ -138,14 +138,14 @@ describe(import.meta.file, () => {
       },
       {
         msgBackend: {
-          t: 'listed-spaces',
+          t: 'list-spaces.listed',
           spaces: [space],
           causedBy: null,
         },
       },
       {
         msg: {
-          t: 'clicked-space-card',
+          t: 'list-spaces.clicked-space-card',
           spaceId,
         },
       },
@@ -173,20 +173,20 @@ describe(import.meta.file, () => {
       },
       {
         msgBackend: {
-          t: 'listed-spaces',
+          t: 'list-spaces.listed',
           spaces: [space],
           causedBy: null,
         },
       },
       {
         msg: {
-          t: 'clicked-space-card',
+          t: 'list-spaces.clicked-space-card',
           spaceId,
         },
       },
       {
         msg: {
-          t: 'clicked-exit-space-button',
+          t: 'exit-space-action.clicked-exit-space-button',
         },
       },
     ])
@@ -209,10 +209,10 @@ describe(import.meta.file, () => {
 
     const listedSpace = EventSourced.startFromLatestSnapshot(space)
     const updated = f.update(f.initial, [
-      { msgBackend: { t: 'listed-spaces', spaces: [listedSpace] } },
+      { msgBackend: { t: 'list-spaces.listed', spaces: [listedSpace] } },
       { msg: { t: 'game', c: { t: 'flow', c: { t: 'game-main-menu.clicked-exit-game-button' } }, spaceId } },
-      { msgBackend: { t: 'listed-spaces', spaces: [listedSpace] } },
-      { msgBackend: { t: 'current-user-space', currentUser: f.currentUser, space: listedSpace } },
+      { msgBackend: { t: 'list-spaces.listed', spaces: [listedSpace] } },
+      { msgBackend: { t: 'sync.synced', currentUser: f.currentUser, space: listedSpace } },
     ])
 
     const before = Space.toSpaceStarted(space)

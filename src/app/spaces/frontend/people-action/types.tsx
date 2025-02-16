@@ -1,6 +1,6 @@
 import { UserId } from '~/app/@/data/user-id'
 
-export type FrontendMsg =
+export type MsgFrontend =
   | { t: 'people-action.closed-surface' }
   | { t: 'people-action.clicked-people-action' }
   | { t: 'people-action.clicked-person-list-item'; userId: UserId }

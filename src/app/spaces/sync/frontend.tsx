@@ -15,7 +15,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
 const outputMsgSpacesFromBackend: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgBackend?.t) {
-    case 'got-msg-space': {
+    case 'sync.got-msg-space': {
       return { model: input.model, msgSpace: [input.msgBackend.c] }
     }
   }
@@ -34,7 +34,7 @@ const sendMsgSpaceToBackend: SpaceFrontendModule['update'] = ({ ctx, model, msgS
 
   const profiles = profile ? { [profile.userId]: profile } : {}
 
-  return { model, msgCmd: [sendToBackend({ t: 'got-msg-space', c: spaceEventWithMeta, profiles })] }
+  return { model, msgCmd: [sendToBackend({ t: 'sync.got-msg-space', c: spaceEventWithMeta, profiles })] }
 }
 
 const updateProfiles: SpaceFrontendModule['update'] = ({ model, msgBackend }) => {
@@ -65,7 +65,7 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
         model: input.model,
         msgCmd: [
           sendToBackend({
-            t: 'sync',
+            t: 'sync.sync',
             space,
             profiles: currentUserProfile ? { [currentUserId]: currentUserProfile } : {},
             causedBy: { msgEvt: input.msgEvt },
@@ -76,8 +76,7 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
   }
 
   switch (input.msgBackend?.t) {
-    case 'synced':
-    case 'current-user-space': {
+    case 'sync.synced': {
       const merged = SpacesCore.mergeOne(input.model.spaces, input.msgBackend.space)
       return {
         model: {

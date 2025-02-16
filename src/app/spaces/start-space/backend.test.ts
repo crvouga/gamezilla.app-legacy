@@ -23,7 +23,7 @@ describe(import.meta.file, () => {
     await f.update([
       {
         msgFrontend: {
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           clientId: ClientId.generate(),
           sessionId: SessionId.generate(),
           c: withEventMeta({
@@ -41,14 +41,14 @@ describe(import.meta.file, () => {
     expect(after?.spaceId).toEqual(spaceId)
   })
 
-  it('should propagate the user started space event to the frontends', async () => {
+  it('should propagate the user started space event to the frontend', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
 
     const output = await f.update([
       {
         msgFrontend: {
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           clientId: ClientId.generate(),
           sessionId: SessionId.generate(),
           c: withEventMeta({
@@ -63,7 +63,7 @@ describe(import.meta.file, () => {
     expect(
       didSendMsgToFrontend(
         output,
-        (m) => m.t === 'got-msg-space' && m.c.t === 'user-started-space' && m.c.spaceId === spaceId,
+        (m) => m.t === 'sync.got-msg-space' && m.c.t === 'user-started-space' && m.c.spaceId === spaceId,
       ),
     ).toBeTrue()
   })

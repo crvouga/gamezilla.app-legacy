@@ -27,7 +27,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didSendMsgToFrontend(output, (msg) => msg.t === 'listed-spaces')).toBe(true)
+    expect(didSendMsgToFrontend(output, (msg) => msg.t === 'list-spaces.listed')).toBe(true)
   })
   it('should include the started space in the response', async () => {
     const f = await Fixture()
@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           ...f.frontendA,
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId,
@@ -58,7 +58,8 @@ describe(import.meta.file, () => {
     expect(
       didSendMsgToFrontend(
         output,
-        (msg) => msg.t === 'listed-spaces' && msg.spaces.map(Space.toSpaceStarted).some((s) => s?.spaceId === spaceId),
+        (msg) =>
+          msg.t === 'list-spaces.listed' && msg.spaces.map(Space.toSpaceStarted).some((s) => s?.spaceId === spaceId),
       ),
     ).toBe(true)
   })

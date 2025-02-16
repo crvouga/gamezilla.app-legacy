@@ -18,7 +18,11 @@ const updateFromMsgSpace: SpaceBackendModule['update'] = async (input) => {
 
       return {
         msgCmd: [
-          sendToUser([input.msgSpace.userId], { t: 'synced', space: started, causedBy: { msgSpace: input.msgSpace } }),
+          sendToUser([input.msgSpace.userId], {
+            t: 'sync.synced',
+            space: started,
+            causedBy: { msgSpace: input.msgSpace },
+          }),
         ],
       }
     }

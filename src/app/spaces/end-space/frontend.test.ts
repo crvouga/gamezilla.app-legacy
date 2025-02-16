@@ -16,10 +16,10 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
       {
-        msg: { t: 'clicked-start-space-button', spaceId },
+        msg: { t: 'start-space.clicked-start-space-button', spaceId },
       },
       {
-        msg: { t: 'clicked-end-space-button', spaceId },
+        msg: { t: 'end-space.clicked-end-space-button', spaceId },
         ctx: { ...f.ctx, currentScreen: { n: 'spaces', t: 'space', spaceId } },
       },
     ])
@@ -31,9 +31,9 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
-      { msg: { t: 'clicked-start-space-button', spaceId } },
+      { msg: { t: 'start-space.clicked-start-space-button', spaceId } },
       {
-        msg: { t: 'clicked-end-space-button', spaceId },
+        msg: { t: 'end-space.clicked-end-space-button', spaceId },
         ctx: { ...f.ctx, currentScreen: { n: 'spaces', t: 'space-list' } },
       },
     ])
@@ -45,9 +45,9 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
-      { msg: { t: 'clicked-start-space-button', spaceId } },
+      { msg: { t: 'start-space.clicked-start-space-button', spaceId } },
       {
-        msg: { t: 'clicked-end-space-button', spaceId },
+        msg: { t: 'end-space.clicked-end-space-button', spaceId },
         ctx: { ...f.ctx, currentScreen: { n: 'spaces', t: 'space-list' } },
       },
     ])

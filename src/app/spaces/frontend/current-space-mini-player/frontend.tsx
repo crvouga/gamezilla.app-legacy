@@ -9,7 +9,7 @@ import type { ModelFrontend, MsgFrontend } from '../../types'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'clicked-current-space-bottom-bar': {
+    case 'current-space-bar.clicked-current-space-bottom-bar': {
       const currentUsersSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
 
       if (!currentUsersSpaceId) return { model: input.model }
@@ -47,7 +47,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
       <button
         type='button'
         className='flex flex-1 items-center gap-3 overflow-hidden'
-        onClick={() => input.dispatch({ t: 'clicked-current-space-bottom-bar' })}
+        onClick={() => input.dispatch({ t: 'current-space-bar.clicked-current-space-bottom-bar' })}
       >
         <div className='p-2'>
           {!space.game ? (
@@ -84,7 +84,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
           <IconButton
             renderIcon={(iconInput) => <IconXMark {...iconInput} />}
             label={input.ctx.t('spaces.end')}
-            onClick={() => input.dispatch({ t: 'clicked-end-space-button', spaceId: space.spaceId })}
+            onClick={() => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId: space.spaceId })}
           />
         )}
 
@@ -92,7 +92,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
           <IconButton
             renderIcon={(iconInput) => <IconXMark {...iconInput} />}
             label={input.ctx.t('spaces.leave')}
-            onClick={() => input.dispatch({ t: 'clicked-leave-space-button', spaceId: space.spaceId })}
+            onClick={() => input.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId: space.spaceId })}
           />
         )}
       </div>

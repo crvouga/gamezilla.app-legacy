@@ -21,7 +21,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           ...f.frontendA,
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
@@ -38,17 +38,17 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didSendMsgToFrontend(output, (m) => m.t === 'current-user-space')).toBe(true)
+    expect(didSendMsgToFrontend(output, (m) => m.t === 'sync.synced')).toBe(true)
   })
 
-  it('should send back synced response when frontend sends sync message', async () => {
+  it('should send back sync.synced response when frontend sends sync message', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = await f.update([
       {
         msgFrontend: {
           ...f.frontendA,
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
@@ -59,7 +59,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           ...f.frontendA,
-          t: 'sync',
+          t: 'sync.sync',
           space: makeSpace({
             spaceId,
             hostId: f.frontendA.userId,
@@ -68,7 +68,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didSendMsgToFrontend(output, (m) => m.t === 'synced')).toBe(true)
+    expect(didSendMsgToFrontend(output, (m) => m.t === 'sync.synced')).toBe(true)
   })
 
   it('should broadcast space events received from frontends to other frontends', async () => {
@@ -78,7 +78,7 @@ describe(import.meta.file, () => {
       {
         msgFrontend: {
           ...f.frontendA,
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
@@ -88,6 +88,6 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didBroadcast(output, (m) => m.t === 'got-msg-space' && m.c.t === 'user-started-space')).toBe(true)
+    expect(didBroadcast(output, (m) => m.t === 'sync.got-msg-space' && m.c.t === 'user-started-space')).toBe(true)
   })
 })

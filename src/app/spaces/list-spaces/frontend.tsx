@@ -40,7 +40,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
   }
 
   switch (input.msg?.t) {
-    case 'clicked-space-card': {
+    case 'list-spaces.clicked-space-card': {
       return {
         model: input.model,
         msgCmd: [
@@ -52,7 +52,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
   }
 
   switch (input.msgBackend?.t) {
-    case 'listed-spaces': {
+    case 'list-spaces.listed': {
       const merged = input.msgBackend.spaces.reduce<typeof input.model.spaces>(SpacesCore.mergeOne, input.model.spaces)
       return {
         model: {
@@ -103,7 +103,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
               <ViewSpaceCard
                 key={state.spaceId}
                 ctx={{ ...input.ctx, currentUserId: input.ctx.currentUserId }}
-                onClick={() => input.dispatch({ t: 'clicked-space-card', spaceId: state.spaceId })}
+                onClick={() => input.dispatch({ t: 'list-spaces.clicked-space-card', spaceId: state.spaceId })}
                 state={state}
               />
             ))}

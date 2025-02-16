@@ -41,7 +41,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'listed-spaces',
+          t: 'list-spaces.listed',
           spaces: [],
           profiles: someProfiles,
         },
@@ -61,7 +61,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'synced',
+          t: 'sync.synced',
           space: someSpace,
         },
       },
@@ -87,7 +87,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'current-user-space',
+          t: 'sync.synced',
           space: someStartedSpace,
           currentUser: f.ctx.currentUser,
         },
@@ -104,7 +104,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-start-space-button',
+          t: 'start-space.clicked-start-space-button',
           spaceId: SpaceId.generate(),
         },
       },
@@ -118,7 +118,7 @@ describe(import.meta.file, () => {
     expect(
       hasExactlyOne(
         output.msgCmd ?? [],
-        (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-backend' && msgCmd.c.toBackend?.t === 'sync',
+        (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-backend' && msgCmd.c.toBackend?.t === 'sync.sync',
       ),
     ).toBe(true)
   })
@@ -129,7 +129,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMetaAt(0, {
             t: 'user-started-space',
             spaceId,
@@ -139,7 +139,7 @@ describe(import.meta.file, () => {
       },
       {
         msg: {
-          t: 'submitted-join-space-form',
+          t: 'join-space.submitted-join-space-form',
           spaceId,
         },
       },
@@ -151,7 +151,7 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-backend' &&
-          msgCmd.c.toBackend?.t === 'got-msg-space' &&
+          msgCmd.c.toBackend?.t === 'sync.got-msg-space' &&
           msgCmd.c.toBackend?.c.t === 'user-joined-space',
       ),
     ).toBe(true)
@@ -163,7 +163,9 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-space',
+          profiles: {},
+          causedBy: {},
+          t: 'sync.got-msg-space',
           c: withEventMetaAt(0, {
             t: 'user-ended-space',
             spaceId,
@@ -179,7 +181,7 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === 'wire' &&
           msgCmd.c.t === 'send-to-backend' &&
-          msgCmd.c.toBackend?.t === 'got-msg-space' &&
+          msgCmd.c.toBackend?.t === 'sync.got-msg-space' &&
           msgCmd.c.toBackend?.c.t === 'user-ended-space',
       ),
     ).toBe(true)

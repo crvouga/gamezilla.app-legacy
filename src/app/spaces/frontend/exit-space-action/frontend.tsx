@@ -5,7 +5,7 @@ import type { SpaceFrontendModule } from '../../architecture/space-frontend'
 
 const update: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
-    case 'clicked-exit-space-button': {
+    case 'exit-space-action.clicked-exit-space-button': {
       return { model, msgCmd: [pushScreen({ n: 'spaces', t: 'space-list' }), playSound(APP_SOUND.navBackwardMin)] }
     }
   }
@@ -16,7 +16,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
   return {
     icon: (inputIcon) => <IconDoorOpen {...inputIcon} />,
     label: input.ctx.t('app.exit'),
-    onClick: () => input.dispatch({ t: 'clicked-exit-space-button' }),
+    onClick: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
   }
 }
 

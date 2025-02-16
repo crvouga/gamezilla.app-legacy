@@ -6,8 +6,8 @@ import { type Input, type Output, SpaceFrontendModule } from './architecture/spa
 import { SpaceFrontendCmd } from './@/frontend/cmd'
 import { SpaceFrontendEvt } from './@/frontend/evt'
 import { EndSpaceFrontend } from './end-space/frontend'
-import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/current-space-mini-player'
-import { ExitSpaceAction } from './frontend/exit-space-action'
+import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/frontend'
+import { ExitSpaceAction } from './frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from './frontend/people-action/frontend'
 import { SpaceFrontend } from './space/frontend'
 import { GameFrontend } from './game/frontend'
@@ -23,8 +23,8 @@ const init: FrontendModule['init'] = ({ ctx }) => {
   const model: ModelFrontend = {
     spaces: SpacesCore.init,
     games: {},
-    modal: null,
-    modalPreviewUserId: null,
+    opened: null,
+    openedPreviewUserId: null,
     listSpacesRequest: NotAsked,
   }
   const listSpaces = ListSpacesFrontend.init({ ctx, model })

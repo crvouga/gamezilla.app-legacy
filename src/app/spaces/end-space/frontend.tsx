@@ -88,7 +88,7 @@ const updateShowToast: SpaceFrontendModule['update'] = (input) => {
 
 const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'clicked-end-space-button': {
+    case 'end-space.clicked-end-space-button': {
       if (!input.ctx.currentUserId) return { model: input.model }
 
       const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
@@ -119,7 +119,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
   return {
     icon: (inputIcon) => <IconArrowLeftOnRect {...inputIcon} />,
     label: input.ctx.t('spaces.end'),
-    onClick: () => input.dispatch({ t: 'clicked-end-space-button', spaceId }),
+    onClick: () => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId }),
     color: 'danger',
   }
 }
@@ -129,7 +129,7 @@ const ViewSpaceEnded: SpaceFrontendModule['View'] = (input) => {
     <ScreenTitleButton
       title={input.ctx.t('spaces.space-ended')}
       buttonText={input.ctx.t('spaces.exit-space')}
-      onClick={() => input.dispatch({ t: 'clicked-exit-space-button' })}
+      onClick={() => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' })}
     />
   )
 }

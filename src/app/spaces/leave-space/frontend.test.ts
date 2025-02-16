@@ -23,7 +23,7 @@ describe(import.meta.file, () => {
       userJoinedSpace(1, f.ctx.currentUserId, spaceId),
       {
         msg: {
-          t: 'clicked-leave-space-button',
+          t: 'leave-space.clicked-leave-space-button',
           spaceId: spaceId,
         },
       },
@@ -41,7 +41,7 @@ describe(import.meta.file, () => {
       userJoinedSpace(1, userId, spaceId),
       {
         msgBackend: {
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMetaAt(2, {
             t: 'user-left-space',
             spaceId,
@@ -73,7 +73,7 @@ describe(import.meta.file, () => {
       userJoinedSpace(1, f.ctx.currentUserId, spaceId),
       {
         msg: {
-          t: 'clicked-leave-space-button',
+          t: 'leave-space.clicked-leave-space-button',
           spaceId,
         },
       },
@@ -90,7 +90,7 @@ describe(import.meta.file, () => {
       userJoinedSpace(1, f.ctx.currentUserId, spaceId),
       {
         msg: {
-          t: 'clicked-leave-space-button',
+          t: 'leave-space.clicked-leave-space-button',
           spaceId,
         },
       },

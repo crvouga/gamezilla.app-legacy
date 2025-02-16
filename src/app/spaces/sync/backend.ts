@@ -25,7 +25,7 @@ const updateProfileCache: SpaceBackendModule['update'] = async (input) => {
 
 const updateFromFrontend: SpaceBackendModule['update'] = async (input) => {
   switch (input.msgFrontend?.t) {
-    case 'sync': {
+    case 'sync.sync': {
       await input.ctx.spacesCore.merge(input.msgFrontend.space)
 
       const spaceId = Space.toSpaceId(input.msgFrontend.space)
@@ -47,7 +47,7 @@ const updateFromFrontend: SpaceBackendModule['update'] = async (input) => {
       return {
         msgCmd: [
           sendToFrontend<MsgToFrontend>([input.msgFrontend.clientId], {
-            t: 'synced',
+            t: 'sync.synced',
             causedBy: { msgFrontend: input.msgFrontend },
             space: starting,
             profiles: profiles,
@@ -95,7 +95,7 @@ const updateCurrentUserSpace: SpaceBackendModule['update'] = async (input) => {
       return {
         msgCmd: [
           sendToFrontend<MsgToFrontend>([input.msgEvt.clientId], {
-            t: 'current-user-space',
+            t: 'sync.synced',
             space: started,
             profiles,
             currentUser: input.msgEvt.user,
@@ -136,7 +136,7 @@ const sendMsgSpaceToFrontend: SpaceBackendModule['update'] = async (input) => {
   )
 
   const toFrontend: MsgToFrontend = {
-    t: 'got-msg-space',
+    t: 'sync.got-msg-space',
     c: eventWithMeta,
     profiles,
   }
@@ -154,7 +154,7 @@ const sendMsgSpaceToFrontend: SpaceBackendModule['update'] = async (input) => {
 
 const outputMsgSpacesFromBackend: SpaceBackendModule['update'] = (input) => {
   switch (input.msgFrontend?.t) {
-    case 'got-msg-space': {
+    case 'sync.got-msg-space': {
       return {
         msgSpace: [input.msgFrontend.c],
       }

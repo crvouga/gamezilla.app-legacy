@@ -4,7 +4,7 @@ import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-b
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpacesCore } from '../core/core'
 import { EndSpaceFrontend } from '../end-space/frontend'
-import { ExitSpaceAction } from '../frontend/exit-space-action'
+import { ExitSpaceAction } from '../frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from '../frontend/people-action/frontend'
 import { GameFrontend } from '../game/frontend'
 import { JoinSpaceFrontend } from '../join-space/frontend'
@@ -73,7 +73,7 @@ const ViewSpaceNotFound = (input: { ctx: AppFrontendCtx; dispatch: (m: MsgFronte
     <ScreenTitleButton
       title={input.ctx.t('spaces.space-not-found')}
       buttonText={input.ctx.t('spaces.exit-space')}
-      onClick={() => input.dispatch({ t: 'clicked-exit-space-button' })}
+      onClick={() => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' })}
     />
   )
 }

@@ -29,7 +29,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
         ctx={spaceCtx}
         navBar={{
           title: input.ctx.t('spaces.games'),
-          onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
+          onBack: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
         }}
       />
     )
@@ -42,7 +42,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       ctx={input.ctx}
       navBar={{
         title: input.ctx.t('spaces.games'),
-        onBack: () => input.dispatch({ t: 'clicked-exit-space-button' }),
+        onBack: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
       }}
       renderBody={() => <ViewHostGameSelection ctx={spaceCtx} dispatch={input.dispatch} />}
     />
@@ -65,7 +65,7 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
       <button
         type='button'
         aria-label={input.gameName}
-        onClick={() => input.dispatch({ t: 'clicked-game-tile', gameName: input.gameName })}
+        onClick={() => input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName })}
         className='flex aspect-square overflow-hidden rounded-lg border'
       >
         <GameCoverArt gameName={input.gameName} />
@@ -81,6 +81,6 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
   )
 }
 
-export const NotInGameScreenFrontend = {
+export const ScreenNotInGameFrontend = {
   View,
 }

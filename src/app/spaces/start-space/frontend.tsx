@@ -42,7 +42,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: ms
 
 const updateStartSpaceButton: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'clicked-start-space-button': {
+    case 'start-space.clicked-start-space-button': {
       if (!input.ctx.currentUserId) {
         return {
           model: input.model,
@@ -76,7 +76,7 @@ export const viewStartSpaceButton = (input: Parameters<SpaceFrontendModule['View
   if (currentUserSpaceId) return null
 
   return {
-    onSubmit: () => input.dispatch({ t: 'clicked-start-space-button', spaceId: SpaceId.generate() }),
+    onSubmit: () => input.dispatch({ t: 'start-space.clicked-start-space-button', spaceId: SpaceId.generate() }),
     submitText: input.ctx.t('spaces.start-space'),
     submitIcon: (iconInput) => <IconPlus {...iconInput} />,
     submitDisabled: false,

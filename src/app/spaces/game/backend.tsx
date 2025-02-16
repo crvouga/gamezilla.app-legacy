@@ -24,15 +24,11 @@ const update: SpaceBackendModule['update'] = async (input) => {
 const updateGame: SpaceBackendModule['update'] = async (input) => {
   const spaceId = inputToSpaceId(input)
 
-  if (!spaceId) {
-    return {}
-  }
+  if (!spaceId) return {}
 
   const spaceState = Space.toSpaceStarted(Result.unwrapOr(await input.ctx.spacesCore.get(spaceId), null))
 
-  if (!spaceState?.game) {
-    return {}
-  }
+  if (!spaceState?.game) return {}
 
   const updated = await GamesBackend.update({
     deps: null,
@@ -44,6 +40,7 @@ const updateGame: SpaceBackendModule['update'] = async (input) => {
         ? {
             ...input.msgFrontend,
             userId: input.msgFrontend.userId,
+
             ...input.msgFrontend.c,
           }
         : null,

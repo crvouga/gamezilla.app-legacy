@@ -16,7 +16,7 @@ describe(import.meta.file, () => {
   it('should start with no modals open', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [])
-    expect(output.model.modal === null).toBe(true)
+    expect(output.model.opened === null).toBe(true)
   })
 
   it('should open users modal when user clicks on users button', async () => {
@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(output.model.modal === 'users').toBe(true)
+    expect(output.model.opened === 'people-surface').toBe(true)
   })
 
   it('should open user details modal after clicking user', async () => {
@@ -42,7 +42,9 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(output.model.modal === 'user-preview' && output.model.modalPreviewUserId === someUserId).toBe(true)
+    expect(output.model.opened === 'person-preview-surface' && output.model.openedPreviewUserId === someUserId).toBe(
+      true,
+    )
   })
 
   it('should close modal when the current screen changes', async () => {
@@ -65,7 +67,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(output.model.modal === null).toBe(true)
+    expect(output.model.opened === null).toBe(true)
   })
 
   it('should open user details corresponding cmd', async () => {
@@ -79,7 +81,9 @@ describe(import.meta.file, () => {
       msgCmd: openUserDetails(someUserId),
     })
 
-    expect(output.model.modal === 'user-preview' && output.model.modalPreviewUserId === someUserId).toBe(true)
+    expect(output.model.opened === 'person-preview-surface' && output.model.openedPreviewUserId === someUserId).toBe(
+      true,
+    )
   })
 
   it('should navigate to preview users profile page when clicked', async () => {
@@ -180,8 +184,8 @@ describe(import.meta.file, () => {
     const f = await FixtureSpacesFrontend()
     const before = f.update(f.initial, [{ msg: { t: 'people-action.clicked-people-action' } }])
     const after = f.update(before, [{ msg: { t: 'people-action.clicked-people-action' } }])
-    expect(before.model.modal === 'users').toBe(true)
-    expect(after.model.modal === null).toBe(true)
+    expect(before.model.opened === 'people-surface').toBe(true)
+    expect(after.model.opened === null).toBe(true)
   })
 
   test('should play drawer sounds when toggling people modal', async () => {

@@ -1,14 +1,9 @@
-import type { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
-import { Pagination } from '~/@/query/query'
-import { RequestResponse } from '~/@/request-response/request-response'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { BackendCmd } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
-import { UserAccount } from '~/app/@/data/account'
 import { Profile } from '~/app/@/data/profile'
-import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -16,11 +11,16 @@ import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { SpaceFrontendCmd } from './@/frontend/cmd'
 import { SpacesCore } from './core/core'
 import { ISpacesCoreAsync } from './core/core-async/interface'
-import { Space } from './core/space'
-import { MsgSpace } from './core/space-msg/space-msg'
-import { GamesTypes } from './game/games'
-import { GameName } from './game/games/@/game-name'
+import { EndSpaceTypes } from './end-space'
+import { CurrentSpaceMiniPlayerTypes } from './frontend/current-space-mini-player'
+import { ExitSpaceActionTypes } from './frontend/exit-space-action'
 import { PeopleActionTypes } from './frontend/people-action'
+import { GameTypes } from './game'
+import { JoinSpaceTypes } from './join-space'
+import { LeaveSpaceTypes } from './leave-space'
+import { ListSpacesTypes } from './list-spaces'
+import { StartSpaceTypes } from './start-space'
+import { SyncTypes } from './sync'
 
 //
 //
@@ -32,18 +32,16 @@ import { PeopleActionTypes } from './frontend/people-action'
 
 export type BackendCtx = AppBackendCtx & {
   spacesCore: ISpacesCoreAsync
-  games: GamesTypes.GameBackendCtx
+  games: GameTypes.GamesBackendCtx
 }
 
-export type ModelFrontend = {
+type BaseModelFrontend = {
   spaces: SpacesCore.Model
-  games: {
-    [spaceId: SpaceId]: GamesTypes.ModelFrontend
-  }
-  modalPreviewUserId: UserId | null
-  modal: null | 'user-preview' | 'users' | 'end-space' | 'leave-space'
-  listSpacesRequest: RequestResponse<string, null>
+  openedPreviewUserId: UserId | null
+  opened: null | 'person-preview-surface' | 'people-surface' | 'end-space-confirmation' | 'leave-space-confirmation'
 }
+
+export type ModelFrontend = ListSpacesTypes.ModelFrontend & GameTypes.ModelFrontend & BaseModelFrontend
 
 //
 //
@@ -53,87 +51,37 @@ export type ModelFrontend = {
 //
 //
 
-export type MsgBackend =
-  | { t: 'got-msg-space'; c: WithEventId<MsgSpace> }
-  | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgBackend }
+export type MsgBackend = GameTypes.MsgBackend
 
 export type MsgFrontend =
-  | PeopleActionTypes.FrontendMsg
-  | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgFrontend }
-  | { t: 'clicked-exit-space-button' }
-  | { t: 'clicked-game-tile'; gameName: GameName }
-  | { t: 'submitted-join-space-form'; spaceId: SpaceId }
-  | { t: 'clicked-end-space-button'; spaceId: SpaceId }
-  | { t: 'submitted-end-space-form'; spaceId: SpaceId }
-  | { t: 'clicked-leave-space-button'; spaceId: SpaceId }
-  | { t: 'submitted-leave-space-button'; spaceId: SpaceId }
-  | { t: 'clicked-start-space-button'; spaceId: SpaceId }
-  | { t: 'clicked-space-card'; spaceId: SpaceId }
-  | { t: 'clicked-current-space-bottom-bar' }
+  | PeopleActionTypes.MsgFrontend
+  | LeaveSpaceTypes.MsgFrontend
+  | EndSpaceTypes.MsgFrontend
+  | ListSpacesTypes.MsgFrontend
+  | GameTypes.MsgFrontend
+  | JoinSpaceTypes.MsgFrontend
+  | ExitSpaceActionTypes.MsgFrontend
+  | StartSpaceTypes.MsgFrontend
+  | CurrentSpaceMiniPlayerTypes.MsgFrontend
 
-export type MsgToFrontend = MsgToFrontendExtra &
-  (
-    | {
-        t: 'got-msg-space'
-        c: WithEventMeta<MsgSpace>
-      }
-    | {
-        t: 'listed-spaces'
-        spaces: Space.Model[]
-      }
-    | {
-        t: 'synced'
-        space: Space.Model
-      }
-    | {
-        t: 'current-user-space'
-        space: Space.Model
-        currentUser: UserAccount
-      }
-    | {
-        t: 'game'
-        spaceId: SpaceId
-        c: GamesTypes.MsgToFrontend
-      }
-  )
+type MsgToFrontendVariant = ListSpacesTypes.MsgToFrontend | GameTypes.MsgToFrontend | SyncTypes.MsgToFrontend
 
-export type MsgToBackend = MsgToBackendExtra &
-  (
-    | {
-        t: 'got-msg-space'
-        c: WithEventMeta<MsgSpace>
-      }
-    | {
-        t: 'sync'
-        space: Space.Model
-      }
-    | {
-        t: 'list-spaces'
-        pagination: Pagination
-        where?: {
-          spaceId?: SpaceId
-        }
-      }
-    | {
-        t: 'game'
-        spaceId: SpaceId
-        c: GamesTypes.MsgToBackend
-      }
-  )
+export type MsgToFrontend = MsgToFrontendExtra & MsgToFrontendVariant
+
+type MsgToBackendVariant = ListSpacesTypes.MsgToBackend | GameTypes.MsgToBackend | SyncTypes.MsgToBackend
+
+export type MsgToBackend = MsgToBackendExtra & MsgToBackendVariant
 
 export type MsgToFrontendExtra = {
   profiles?: { [userId: UserId]: Profile }
   causedBy?: unknown
-  meta?: Record<string, unknown>
 }
 
 export type MsgToBackendExtra = {
   profiles?: { [userId: UserId]: Profile }
-  meta?: Record<string, unknown>
   causedBy?: unknown
 }
 
-//
 //
 //
 //

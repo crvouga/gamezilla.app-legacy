@@ -14,8 +14,8 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
-      { msg: { t: 'clicked-start-space-button', spaceId } },
-      { msg: { t: 'clicked-exit-space-button' } },
+      { msg: { t: 'start-space.clicked-start-space-button', spaceId } },
+      { msg: { t: 'exit-space-action.clicked-exit-space-button' } },
     ])
 
     const didPush = output.msgCmd?.some(
@@ -28,8 +28,8 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
-      { msg: { t: 'clicked-start-space-button', spaceId } },
-      { msg: { t: 'clicked-exit-space-button' } },
+      { msg: { t: 'start-space.clicked-start-space-button', spaceId } },
+      { msg: { t: 'exit-space-action.clicked-exit-space-button' } },
     ])
 
     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'sound' && msgCmd.c.t === 'play')).toBe(true)

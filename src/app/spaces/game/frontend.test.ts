@@ -22,13 +22,13 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-start-space-button',
+          t: 'start-space.clicked-start-space-button',
           spaceId,
         },
       },
       {
         msg: {
-          t: 'clicked-game-tile',
+          t: 'game.clicked-game-tile',
           gameName: 'flow',
         },
       },
@@ -43,13 +43,13 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-start-space-button',
+          t: 'start-space.clicked-start-space-button',
           spaceId,
         },
       },
       {
         msg: {
-          t: 'clicked-game-tile',
+          t: 'game.clicked-game-tile',
           gameName: gameNameExpected,
         },
       },
@@ -64,13 +64,13 @@ describe(import.meta.file, () => {
     const outputs = f.updates(f.initial, [
       {
         msg: {
-          t: 'clicked-start-space-button',
+          t: 'start-space.clicked-start-space-button',
           spaceId,
         },
       },
       {
         msg: {
-          t: 'clicked-game-tile',
+          t: 'game.clicked-game-tile',
           gameName: 'flow',
         },
       },

@@ -25,7 +25,7 @@ const update: SpaceBackendModule['update'] = async (input) => {
       return {
         msgCmd: [
           sendToFrontend(input.msgFrontend, {
-            t: 'listed-spaces',
+            t: 'list-spaces.listed',
             spaces: started,
             causedBy: { msgFrontend: input.msgFrontend },
             profiles,

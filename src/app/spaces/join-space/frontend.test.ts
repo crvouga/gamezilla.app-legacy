@@ -20,12 +20,12 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.userId }),
         },
       },
       {
-        msg: { t: 'submitted-join-space-form', spaceId: f.spaceId },
+        msg: { t: 'join-space.submitted-join-space-form', spaceId: f.spaceId },
       },
     ])
 
@@ -38,7 +38,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -51,7 +51,7 @@ describe(import.meta.file, () => {
           profiles: {
             [otherUser.userId]: otherUser,
           },
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMeta({
             t: 'user-joined-space',
             spaceId: f.spaceId,
@@ -72,7 +72,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -82,7 +82,7 @@ describe(import.meta.file, () => {
       },
       {
         msgBackend: {
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMeta({
             t: 'user-joined-space',
             spaceId: f.spaceId,
@@ -100,7 +100,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -110,7 +110,7 @@ describe(import.meta.file, () => {
       },
       {
         msg: {
-          t: 'submitted-join-space-form',
+          t: 'join-space.submitted-join-space-form',
           spaceId: f.spaceId,
         },
       },
@@ -123,7 +123,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: f.spaceId,
@@ -133,13 +133,13 @@ describe(import.meta.file, () => {
       },
       {
         msg: {
-          t: 'submitted-join-space-form',
+          t: 'join-space.submitted-join-space-form',
           spaceId: f.spaceId,
         },
       },
       {
         msg: {
-          t: 'clicked-leave-space-button',
+          t: 'leave-space.clicked-leave-space-button',
           spaceId: f.spaceId,
         },
       },
@@ -155,7 +155,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          t: 'got-msg-space',
+          t: 'sync.got-msg-space',
           c: withEventMeta({
             t: 'user-started-space',
             spaceId: spaceA,
@@ -165,13 +165,13 @@ describe(import.meta.file, () => {
       },
       {
         msg: {
-          t: 'submitted-join-space-form',
+          t: 'join-space.submitted-join-space-form',
           spaceId: spaceA,
         },
       },
       {
         msg: {
-          t: 'submitted-join-space-form',
+          t: 'join-space.submitted-join-space-form',
           spaceId: spaceB,
         },
       },

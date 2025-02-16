@@ -54,7 +54,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: ms
 
 const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg }) => {
   switch (msg?.t) {
-    case 'clicked-leave-space-button': {
+    case 'leave-space.clicked-leave-space-button': {
       if (!ctx.currentUserId) return { model }
 
       const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, ctx.currentUserId)
@@ -87,7 +87,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
   return {
     icon: (inputIcon) => <IconArrowLeftOnRect {...inputIcon} />,
     label: input.ctx.t('spaces.leave'),
-    onClick: () => input.dispatch({ t: 'clicked-leave-space-button', spaceId }),
+    onClick: () => input.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId }),
     color: 'danger',
   }
 }

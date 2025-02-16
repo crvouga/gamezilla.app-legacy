@@ -17,13 +17,13 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-start-space-button',
+          t: 'start-space.clicked-start-space-button',
           spaceId,
         },
       },
       {
         msg: {
-          t: 'clicked-current-space-bottom-bar',
+          t: 'current-space-bar.clicked-current-space-bottom-bar',
         },
       },
     ])
@@ -48,13 +48,13 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-start-space-button',
+          t: 'start-space.clicked-start-space-button',
           spaceId,
         },
       },
       {
         msg: {
-          t: 'clicked-current-space-bottom-bar',
+          t: 'current-space-bar.clicked-current-space-bottom-bar',
         },
       },
     ])
