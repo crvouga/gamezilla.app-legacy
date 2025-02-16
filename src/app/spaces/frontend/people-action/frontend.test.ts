@@ -3,7 +3,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, didOpenProfile, didPlaySound } from '~/app/@/frontend/cmd'
 import { openUserDetails } from '~/app/spaces/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '../../@/fixture/frontend'
-import { People } from './people'
+import { PeopleActionFrontend } from './frontend'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -24,7 +24,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-people-button',
+          t: 'people-action.clicked-people-action',
         },
       },
     ])
@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-user',
+          t: 'people-action.clicked-person-list-item',
           userId: someUserId,
         },
       },
@@ -51,7 +51,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-user',
+          t: 'people-action.clicked-person-list-item',
           userId: someUserId,
         },
       },
@@ -73,7 +73,7 @@ describe(import.meta.file, () => {
 
     const someUserId = UserId.generate()
 
-    const output = People.update({
+    const output = PeopleActionFrontend.update({
       model: f.initial.model,
       ctx: f.ctx,
       msgCmd: openUserDetails(someUserId),
@@ -88,13 +88,13 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-user',
+          t: 'people-action.clicked-person-list-item',
           userId: someUserId,
         },
       },
       {
         msg: {
-          t: 'clicked-preview-user-link',
+          t: 'people-action.clicked-preview-user-link',
         },
       },
     ])
@@ -108,13 +108,13 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-user',
+          t: 'people-action.clicked-person-list-item',
           userId: someUserId,
         },
       },
       {
         msg: {
-          t: 'clicked-preview-user-link',
+          t: 'people-action.clicked-preview-user-link',
         },
       },
     ])
@@ -127,7 +127,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-preview-user-link',
+          t: 'people-action.clicked-preview-user-link',
         },
       },
     ])
@@ -143,7 +143,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-people-button',
+          t: 'people-action.clicked-people-action',
         },
       },
     ])
@@ -155,7 +155,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'closed-modal',
+          t: 'people-action.closed-surface',
         },
       },
     ])
@@ -168,7 +168,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'clicked-user',
+          t: 'people-action.clicked-person-list-item',
           userId: someUserId,
         },
       },
@@ -178,16 +178,16 @@ describe(import.meta.file, () => {
 
   test('should toggle people modal when clicking button', async () => {
     const f = await FixtureSpacesFrontend()
-    const before = f.update(f.initial, [{ msg: { t: 'clicked-people-button' } }])
-    const after = f.update(before, [{ msg: { t: 'clicked-people-button' } }])
+    const before = f.update(f.initial, [{ msg: { t: 'people-action.clicked-people-action' } }])
+    const after = f.update(before, [{ msg: { t: 'people-action.clicked-people-action' } }])
     expect(before.model.modal === 'users').toBe(true)
     expect(after.model.modal === null).toBe(true)
   })
 
   test('should play drawer sounds when toggling people modal', async () => {
     const f = await FixtureSpacesFrontend()
-    const openOutput = f.update(f.initial, [{ msg: { t: 'clicked-people-button' } }])
-    const closeOutput = f.update(openOutput, [{ msg: { t: 'clicked-people-button' } }])
+    const openOutput = f.update(f.initial, [{ msg: { t: 'people-action.clicked-people-action' } }])
+    const closeOutput = f.update(openOutput, [{ msg: { t: 'people-action.clicked-people-action' } }])
     expect(didPlaySound(openOutput, APP_SOUND.surfaceOpened)).toBe(true)
     expect(didPlaySound(closeOutput, APP_SOUND.surfaceClosed)).toBe(true)
   })
@@ -197,7 +197,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msg: {
-          t: 'closed-modal',
+          t: 'people-action.closed-surface',
         },
       },
     ])

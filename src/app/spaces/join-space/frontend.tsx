@@ -7,7 +7,8 @@ import { SectionTitle } from '~/app/@/ui/section/section-title'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { MsgSpace } from '../core/space-msg/space-msg'
-import { SectionPeopleList } from '../game/games/@/ui/section-people-list/section-people-list'
+
+import { SectionPeopleList } from '../@/ui/section-people-list'
 import { GameCoverArt } from '../game/games/cover-art'
 
 const update: SpaceFrontendModule['update'] = (input) => {
@@ -84,10 +85,15 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
 
 const View: SpaceFrontendModule['View'] = (input) => {
   const currentUser = input.ctx.currentUser
+
   if (!currentUser) return null
+
   const space = input.ctx.space
+
   if (!space) return null
+
   const spaceState = SpacesCore.toSpaceStarted(input.model.spaces, space?.spaceId)
+
   if (!spaceState) return null
 
   const spaceCtx = {
@@ -107,10 +113,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       postAction={{
         onSubmit: () => input.dispatch({ t: 'submitted-join-space-form', spaceId: space.spaceId }),
         submitText: input.ctx.t('spaces.join-space'),
-        // cancelText: input.ctx.t('app.cancel'),
-        // onCancel: () => input.dispatch({ t: 'clicked-exit-space-button' }),
         submitLoading: false,
-        // cancelDisabled: false,
         submitDisabled: false,
         submitIcon: (props) => <IconArrowRightOnRect {...props} />,
       }}
@@ -138,7 +141,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
           <SectionPeopleList
             ctx={spaceCtx}
-            onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
+            onOpenUserDetails={(userId) => input.dispatch({ t: 'people-action.clicked-person-list-item', userId })}
           />
         </div>
       )}

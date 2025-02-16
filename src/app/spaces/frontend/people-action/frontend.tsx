@@ -1,16 +1,21 @@
-import { Avatar, Button, IconUserGroup, Typography } from '~/@/ui'
+import { IconUserGroup } from '~/@/ui'
+import { DropDownAlignment } from '~/@/ui/drop-down/drop-down-alignment'
+import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'
+import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
+import { VDom } from '~/@/vdom/vdom'
 import { APP_SOUND, openProfile, playSound } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { ViewHostChip } from '~/app/spaces/game/games/@/ui/section-people-list/host-chip'
-import { SectionPeopleList } from '~/app/spaces/game/games/@/ui/section-people-list/section-people-list'
-import { ViewYouChip } from '~/app/spaces/game/games/@/ui/section-people-list/you-chip'
 import { SpaceFrontendModule } from '../../architecture/space-frontend'
-import { VDom } from '~/@/vdom/vdom'
-import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
-import { DropDownAlignment } from '~/@/ui/drop-down/drop-down-alignment'
-import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'
+import { SectionPeopleList } from '../../@/ui/section-people-list'
+import { SectionProfileDetails } from '../../@/ui/section-person-details'
+import { UserId } from '~/app/@/data/user-id'
+
+export type FrontendMsg =
+  | { t: 'people-action.closed-surface' }
+  | { t: 'people-action.clicked-people-action' }
+  | { t: 'people-action.clicked-person-list-item'; userId: UserId }
 
 const update: SpaceFrontendModule['update'] = (input) => {
   const { model } = input
@@ -25,7 +30,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
 const updateUserPreview: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
-    case 'clicked-preview-user-link': {
+    case 'people-action.clicked-preview-user-link': {
       if (!model.modalPreviewUserId) return { model }
 
       return { model, msgCmd: [playSound(APP_SOUND.navForwardMin), openProfile(model.modalPreviewUserId)] }
@@ -36,11 +41,11 @@ const updateUserPreview: SpaceFrontendModule['update'] = ({ msg, model }) => {
 
 const updatePeopleModals: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
-    case 'closed-modal': {
+    case 'people-action.closed-surface': {
       return { model: { ...model, modal: null }, msgCmd: [playSound(APP_SOUND.surfaceClosed)] }
     }
 
-    case 'clicked-people-button': {
+    case 'people-action.clicked-people-action': {
       const isOpen = model.modal === 'users'
       if (isOpen) {
         return { model: { ...model, modal: null }, msgCmd: [playSound(APP_SOUND.surfaceClosed)] }
@@ -48,7 +53,7 @@ const updatePeopleModals: SpaceFrontendModule['update'] = ({ msg, model }) => {
       return { model: { ...model, modal: 'users' }, msgCmd: [playSound(APP_SOUND.surfaceOpened)] }
     }
 
-    case 'clicked-user': {
+    case 'people-action.clicked-person-list-item': {
       return {
         model: { ...model, modalPreviewUserId: msg.userId, modal: 'user-preview' },
         msgCmd: [playSound(APP_SOUND.tap)],
@@ -131,11 +136,13 @@ const ViewSurfaces = (
             ctx={input.ctx}
             ariaLabel={input.ctx.t('app.people')}
             open={input.model.modal === 'users'}
-            onClose={() => input.dispatch({ t: 'closed-modal' })}
+            onClose={() => input.dispatch({ t: 'people-action.closed-surface' })}
             body={{
               render: () => (
                 <SectionPeopleList
-                  onOpenUserDetails={(userId) => input.dispatch({ t: 'clicked-user', userId })}
+                  onOpenUserDetails={(userId) =>
+                    input.dispatch({ t: 'people-action.clicked-person-list-item', userId })
+                  }
                   ctx={spaceCtx}
                 />
               ),
@@ -143,38 +150,14 @@ const ViewSurfaces = (
           />
         }
         open={input.model.modal === 'user-preview'}
-        onClose={() => input.dispatch({ t: 'closed-modal' })}
+        onClose={() => input.dispatch({ t: 'people-action.closed-surface' })}
         body={{
           render: () => (
-            <div>
-              <button
-                type='button'
-                className='flex w-full flex-col items-center justify-center gap-2 p-4'
-                onClick={() => input.dispatch({ t: 'clicked-preview-user-link' })}
-              >
-                <Avatar
-                  src={
-                    input.model.modalPreviewUserId
-                      ? input.ctx.profiles[input.model.modalPreviewUserId]?.avatarUrl
-                      : undefined
-                  }
-                  className='size-24'
-                />
-                {modalProfile && <Typography variant='title' text={input.ctx.t('username', modalProfile.username)} />}
-                <div className='flex items-center gap-2'>
-                  {spaceCtx.space.hostId === input.model.modalPreviewUserId && <ViewHostChip ctx={input.ctx} />}
-                  {spaceCtx.currentUserId === input.model.modalPreviewUserId && <ViewYouChip ctx={input.ctx} />}
-                </div>
-              </button>
-
-              <div className='w-full px-4 pb-8'>
-                <Button
-                  onClick={() => input.dispatch({ t: 'clicked-preview-user-link' })}
-                  className='w-full'
-                  text={input.ctx.t('spaces.see-profile')}
-                />
-              </div>
-            </div>
+            <SectionProfileDetails
+              ctx={spaceCtx}
+              profile={modalProfile ?? null}
+              onOpenDetails={() => input.dispatch({ t: 'people-action.clicked-preview-user-link' })}
+            />
           ),
         }}
       />
@@ -182,7 +165,7 @@ const ViewSurfaces = (
   )
 }
 
-const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
+const view = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
   if (!input.ctx.space) return null
   if (!input.ctx.currentUserId) return null
 
@@ -191,13 +174,13 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
   return {
     icon: (inputIcon) => <IconUserGroup {...inputIcon} />,
     label: input.ctx.t('spaces.people-count', peopleCount),
-    onClick: () => input.dispatch({ t: 'clicked-people-button' }),
+    onClick: () => input.dispatch({ t: 'people-action.clicked-people-action' }),
     badge: peopleCount > 1 ? peopleCount : undefined,
     renderSurface: (reference) => <ViewSurfaces {...input} reference={reference} />,
   }
 }
 
-export const People = {
+export const PeopleActionFrontend = {
   update,
-  viewAction,
+  view,
 }

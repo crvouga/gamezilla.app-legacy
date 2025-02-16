@@ -20,7 +20,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
   }
 }
 
-export const GoHome = {
+export const ExitSpaceAction = {
   update,
   viewAction,
 }

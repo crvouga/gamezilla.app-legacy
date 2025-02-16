@@ -4,8 +4,8 @@ import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-b
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpacesCore } from '../core/core'
 import { EndSpaceFrontend } from '../end-space/frontend'
-import { GoHome } from '../frontend/exit-space/exit-space'
-import { People } from '../frontend/people/people'
+import { ExitSpaceAction } from '../frontend/exit-space-action'
+import { PeopleActionFrontend } from '../frontend/people-action/frontend'
 import { GameFrontend } from '../game/frontend'
 import { JoinSpaceFrontend } from '../join-space/frontend'
 import { LeaveSpaceFrontend } from '../leave-space/frontend'
@@ -54,7 +54,7 @@ const View = (input: {
             size: 'sm',
             variant: {
               t: 'space-between',
-              start: [GoHome.viewAction(inputNew), People.viewAction(inputNew)],
+              start: [ExitSpaceAction.viewAction(inputNew), PeopleActionFrontend.view(inputNew)],
               end: [isHost ? EndSpaceFrontend.viewAction(inputNew) : LeaveSpaceFrontend.viewAction(inputNew)],
             },
           },

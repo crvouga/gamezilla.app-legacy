@@ -20,6 +20,7 @@ import { Space } from './core/space'
 import { MsgSpace } from './core/space-msg/space-msg'
 import { GamesTypes } from './game/games'
 import { GameName } from './game/games/@/game-name'
+import { PeopleActionTypes } from './frontend/people-action'
 
 //
 //
@@ -57,6 +58,7 @@ export type MsgBackend =
   | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgBackend }
 
 export type MsgFrontend =
+  | PeopleActionTypes.FrontendMsg
   | { t: 'game'; spaceId: SpaceId; c: GamesTypes.MsgFrontend }
   | { t: 'clicked-exit-space-button' }
   | { t: 'clicked-game-tile'; gameName: GameName }
@@ -66,11 +68,7 @@ export type MsgFrontend =
   | { t: 'clicked-leave-space-button'; spaceId: SpaceId }
   | { t: 'submitted-leave-space-button'; spaceId: SpaceId }
   | { t: 'clicked-start-space-button'; spaceId: SpaceId }
-  | { t: 'closed-modal' }
-  | { t: 'clicked-people-button' }
   | { t: 'clicked-space-card'; spaceId: SpaceId }
-  | { t: 'clicked-user'; userId: UserId }
-  | { t: 'clicked-preview-user-link' }
   | { t: 'clicked-current-space-bottom-bar' }
 
 export type MsgToFrontend = MsgToFrontendExtra &

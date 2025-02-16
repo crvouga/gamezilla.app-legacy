@@ -1,13 +1,13 @@
-import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
 import { Avatar, cn, Typography } from '~/@/ui'
-import { ViewHostChip } from '~/app/spaces/game/games/@/ui/section-people-list/host-chip'
-import { ViewYouChip } from '~/app/spaces/game/games/@/ui/section-people-list/you-chip'
-import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
-import { SpaceState } from '../../core/space-state'
-import { SPACE_CARD_GRADIENT_CLASS_NAME } from './space-card-gradient'
-import { Profile } from '~/app/@/data/profile'
-import { GameName } from '../../game/games/@/game-name'
 import { DynamicElement } from '~/@/ui/dynamic-element'
+import { Profile } from '~/app/@/data/profile'
+import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
+import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
+import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
+import { ViewHostChip } from '../../@/ui/host-chip'
+import { SpaceState } from '../../core/space-state'
+import { GameName } from '../../game/games/@/game-name'
+import { SPACE_CARD_GRADIENT_CLASS_NAME } from './space-card-gradient'
 
 const MAX_AVATAR_COUNT = 3
 
