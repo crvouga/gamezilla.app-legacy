@@ -25,7 +25,7 @@ import { SyncTypes } from './sync'
 //
 //
 //
-// Model
+// Ctx
 //
 //
 //
@@ -35,13 +35,21 @@ export type BackendCtx = AppBackendCtx & {
   games: GameTypes.GamesBackendCtx
 }
 
-type BaseModelFrontend = {
+//
+//
+//
+// Model
+//
+//
+//
+
+type ModelFrontendBase = {
   spaces: SpacesCore.Model
   openedPreviewUserId: UserId | null
   opened: null | 'person-preview-surface' | 'people-surface' | 'end-space-confirmation' | 'leave-space-confirmation'
 }
 
-export type ModelFrontend = ListSpacesTypes.ModelFrontend & GameTypes.ModelFrontend & BaseModelFrontend
+export type ModelFrontend = ListSpacesTypes.ModelFrontend & GameTypes.ModelFrontend & ModelFrontendBase
 
 //
 //
@@ -64,28 +72,26 @@ export type MsgFrontend =
   | StartSpaceTypes.MsgFrontend
   | CurrentSpaceMiniPlayerTypes.MsgFrontend
 
-type MsgToFrontendVariant = ListSpacesTypes.MsgToFrontend | GameTypes.MsgToFrontend | SyncTypes.MsgToFrontend
-
-export type MsgToFrontend = MsgToFrontendExtra & MsgToFrontendVariant
-
-type MsgToBackendVariant = ListSpacesTypes.MsgToBackend | GameTypes.MsgToBackend | SyncTypes.MsgToBackend
-
-export type MsgToBackend = MsgToBackendExtra & MsgToBackendVariant
-
-export type MsgToFrontendExtra = {
+type MsgToFrontendBase = {
   profiles?: { [userId: UserId]: Profile }
   causedBy?: unknown
 }
 
-export type MsgToBackendExtra = {
+export type MsgToFrontend = MsgToFrontendBase &
+  (ListSpacesTypes.MsgToFrontend | GameTypes.MsgToFrontend | SyncTypes.MsgToFrontend)
+
+type MsgToBackendBase = {
   profiles?: { [userId: UserId]: Profile }
   causedBy?: unknown
 }
 
+export type MsgToBackend = MsgToBackendBase &
+  (ListSpacesTypes.MsgToBackend | GameTypes.MsgToBackend | SyncTypes.MsgToBackend)
+
 //
 //
 //
-//
+// Module
 //
 //
 //
