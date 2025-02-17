@@ -2,10 +2,11 @@ import type { IDbConnSql } from '~/@/db-conn-sql'
 import { Err, Ok, Result, isErr } from '~/@/result'
 import { p } from '~/@/parser'
 import type { ProfileCore } from '../types'
-import type { ProfileDb } from './profile-db'
+import type { IProfileDb } from './interface'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
+import { ILogger } from '~/@/logger'
 
 const ProfileRow = p.obj({
   id: p.str,
@@ -31,23 +32,25 @@ const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
     ? ProfileAvatar.toStyle(row.avatar_style)
     : ProfileAvatar.STYLES['big-ears-neutral']
 
-  const avatarUrl = ProfileAvatar.toUrl({
-    seed: avatarSeed,
-    style: avatarStyle,
-  })
-
-  return Ok({
+  const profile: ProfileCore = {
     userId: row.id,
-    avatarUrl: avatarUrl,
     username: row.username,
     avatarSeed: avatarSeed,
     avatarStyle: avatarStyle,
-  })
+  }
+
+  return Ok(profile)
 }
 
-export const createProfileDb = ({ dbConnSql: dbConn }: { dbConnSql: IDbConnSql }): ProfileDb => {
+export type Config = {
+  t: 'db-conn-sql'
+  dbConnSql: IDbConnSql
+  logger: ILogger
+}
+
+export const ProfileDb = (config: Config): IProfileDb => {
   return {
-    findOneByUserId: async (userId) => {
+    async findByUserId(userId) {
       const sql = `
         SELECT
           id,
@@ -60,7 +63,7 @@ export const createProfileDb = ({ dbConnSql: dbConn }: { dbConnSql: IDbConnSql }
           id = :id
       `
 
-      const queried = await dbConn.query({
+      const queried = await config.dbConnSql.query({
         parser: ProfileRow,
         sql: sql,
         vars: {
@@ -68,19 +71,15 @@ export const createProfileDb = ({ dbConnSql: dbConn }: { dbConnSql: IDbConnSql }
         },
       })
 
-      if (isErr(queried)) {
-        return queried
-      }
+      if (isErr(queried)) return queried
 
       const parsed = Result.combine(queried.value.map(fromProfileRow))
 
-      if (isErr(parsed)) {
-        return parsed
-      }
+      if (isErr(parsed)) return parsed
 
       return Ok(parsed.value)
     },
-    insertOne: async (profile) => {
+    async put(profile) {
       const rowNew: ProfileRow = {
         id: profile.userId,
         username: profile.username,
@@ -88,7 +87,7 @@ export const createProfileDb = ({ dbConnSql: dbConn }: { dbConnSql: IDbConnSql }
         avatar_style: profile.avatarStyle,
       }
 
-      const inserted = await dbConn.query({
+      const upserted = await config.dbConnSql.query({
         parser: ProfileRow,
         sql: `
         INSERT INTO user_profile (
@@ -103,13 +102,15 @@ export const createProfileDb = ({ dbConnSql: dbConn }: { dbConnSql: IDbConnSql }
           :avatar_seed,
           :avatar_style
         )
+        ON CONFLICT (id) DO UPDATE SET
+          username = EXCLUDED.username,
+          avatar_seed = EXCLUDED.avatar_seed,
+          avatar_style = EXCLUDED.avatar_style
         `,
         vars: rowNew,
       })
 
-      if (isErr(inserted)) {
-        return inserted
-      }
+      if (isErr(upserted)) return upserted
 
       return Ok(null)
     },

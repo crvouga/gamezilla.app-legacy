@@ -25,6 +25,19 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
 const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
+    case 'join-space.clicked-person-list-item': {
+      const isOpen = input.model.opened === 'join-space.person-preview-surface'
+      if (isOpen) {
+        return {
+          model: { ...input.model, opened: null },
+          msgCmd: [playSound(APP_SOUND.tap)],
+        }
+      }
+      return {
+        model: { ...input.model, opened: 'join-space.person-preview-surface' },
+        msgCmd: [playSound(APP_SOUND.tap)],
+      }
+    }
     case 'join-space.submitted-join-space-form': {
       if (!input.ctx.currentUserId) return { model: input.model }
 

@@ -121,7 +121,7 @@ const parseUrl = (
   }
 }
 
-const generateRandomSeed = () => {
+const randomSeed = () => {
   return toSeed(String(Math.floor(Math.random() * 10000)))
 }
 
@@ -140,14 +140,14 @@ const shuffle = <T>(xs: T[]): T[] => {
 
 const random = () => {
   const style = randomStyle()
-  const seed = generateRandomSeed()
+  const seed = randomSeed()
 
   return toUrl({ style, seed })
 }
 export const ProfileAvatar = {
   random,
   randomStyle,
-  generateRandomSeed,
+  randomSeed,
   parseUrl,
   toUrl,
   toSeed,

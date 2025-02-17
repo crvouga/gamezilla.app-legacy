@@ -26,7 +26,7 @@ export async function testSpaceFrontendCtx(): Promise<SpaceFrontendCtx> {
     profiles: {
       [currentUserId]: {
         avatarUrl: ProfileAvatar.toUrl({
-          seed: ProfileAvatar.generateRandomSeed(),
+          seed: ProfileAvatar.randomSeed(),
           style: 'fun-emoji',
         }),
         userId: currentUserId,

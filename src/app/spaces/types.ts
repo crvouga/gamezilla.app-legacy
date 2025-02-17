@@ -43,16 +43,18 @@ export type BackendCtx = AppBackendCtx & {
 //
 //
 
+type Opened =
+  | null
+  | 'people.person-preview-surface'
+  | 'people.people-surface'
+  | 'end-space.confirmation'
+  | 'join-space.person-preview-surface'
+  | 'leave-space.confirmation'
+
 type ModelFrontendBase = {
   spaces: SpacesCore.Model
   openedPreviewUserId: UserId | null
-  opened:
-    | null
-    | 'people.person-preview-surface'
-    | 'people.people-surface'
-    | 'end-space.confirmation'
-    | 'join-space.person-preview-surface'
-    | 'leave-space.confirmation'
+  opened: Opened
 }
 
 export type ModelFrontend = ListSpacesTypes.ModelFrontend & GameTypes.ModelFrontend & ModelFrontendBase

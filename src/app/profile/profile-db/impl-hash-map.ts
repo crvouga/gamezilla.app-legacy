@@ -1,12 +1,18 @@
-import type { UserId } from '~/app/@/data/user-id'
 import { Ok } from '~/@/result'
+import type { UserId } from '~/app/@/data/user-id'
 import type { ProfileCore } from '../types'
-import type { ProfileDb } from './profile-db'
+import type { IProfileDb } from './interface'
+import { ILogger } from '~/@/logger'
 
-export const createProfileDb = (): ProfileDb => {
+export type Config = {
+  t: 'hash-map'
+  logger: ILogger
+}
+
+export const ProfileDb = (_config: Config): IProfileDb => {
   const profiles = new Map<UserId, ProfileCore>()
   return {
-    findOneByUserId: async (userId) => {
+    async findByUserId(userId) {
       const output: ProfileCore[] = []
 
       const profile = profiles.get(userId) ?? null
@@ -16,7 +22,7 @@ export const createProfileDb = (): ProfileDb => {
 
       return Ok(output)
     },
-    insertOne: async (profile) => {
+    async put(profile) {
       profiles.set(profile.userId, profile)
       return Ok(null)
     },

@@ -6,8 +6,7 @@ import { UserId } from '../@/data/user-id'
 import { Username } from '../@/data/username'
 import { sendToFrontend } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
-import type { ProfileDb } from './profile-db/profile-db'
-import { createProfileDb } from './profile-db/profile-db-impl.postgres'
+import { type IProfileDb, ProfileDb } from './profile-db'
 import { type ProfileCore, type Req, BackendCtx, BackendModule, profileCoreToProfile } from './types'
 
 //
@@ -55,10 +54,10 @@ const updateFromFrontend: BackendModule['update'] = async ({ msgFrontend, ctx })
     default: {
       const userId = msgFrontend.userId
       if (!userId) return {}
-      const ProfileDb = createProfileDb({ dbConnSql: ctx.dbConnSql })
+      const profileDb = ProfileDb({ t: 'db-conn-sql', dbConnSql: ctx.dbConnSql, logger: ctx.logger })
 
       const result = await handler({
-        ProfileDb,
+        profileDb,
         msg: msgFrontend,
         ctx: {
           ...ctx,
@@ -83,9 +82,9 @@ const updateFromEvent: BackendModule['update'] = async ({ msgEvt, ctx }) => {
 
   switch (msgEvt.t) {
     case 'auth-evt.client-authenticated': {
-      const ProfileDb = createProfileDb({ dbConnSql: ctx.dbConnSql })
+      const profileDb = ProfileDb({ t: 'db-conn-sql', dbConnSql: ctx.dbConnSql, logger: ctx.logger })
       const result = await findElseInsertNew({
-        ProfileDb,
+        profileDb,
         userId: msgEvt.user.userId,
       })
       return {
@@ -107,16 +106,16 @@ const updateFromEvent: BackendModule['update'] = async ({ msgEvt, ctx }) => {
 }
 
 const handler = async ({
-  ProfileDb,
+  profileDb,
   msg,
 }: {
-  ProfileDb: ProfileDb
+  profileDb: IProfileDb
   msg: Req
   ctx: { currentUserId: UserId }
 }): Promise<Result<string, Profile[]>> => {
   switch (msg.t) {
     case 'find-one': {
-      const found = await ProfileDb.findOneByUserId(msg.userId)
+      const found = await profileDb.findByUserId(msg.userId)
       return Result.mapOk(found, (profiles) => profiles.map(profileCoreToProfile))
     }
 
@@ -134,8 +133,8 @@ const handler = async ({
   }
 }
 
-const findElseInsertNew = async ({ ProfileDb, userId }: { ProfileDb: ProfileDb; userId: UserId }) => {
-  const found = await ProfileDb.findOneByUserId(userId)
+const findElseInsertNew = async ({ profileDb, userId }: { profileDb: IProfileDb; userId: UserId }) => {
+  const found = await profileDb.findByUserId(userId)
 
   if (isErr(found)) return found
 
@@ -143,7 +142,7 @@ const findElseInsertNew = async ({ ProfileDb, userId }: { ProfileDb: ProfileDb; 
 
   if (profile) return Ok(profile)
 
-  const randomSeed = ProfileAvatar.generateRandomSeed()
+  const randomSeed = ProfileAvatar.randomSeed()
   const randomUsername = await Username.generate('.')
   const profileNew: ProfileCore = {
     userId,
@@ -152,7 +151,7 @@ const findElseInsertNew = async ({ ProfileDb, userId }: { ProfileDb: ProfileDb; 
     avatarStyle: 'thumbs',
   }
 
-  const inserted = await ProfileDb.insertOne(profileNew)
+  const inserted = await profileDb.put(profileNew)
 
   if (isErr(inserted)) return inserted
 
