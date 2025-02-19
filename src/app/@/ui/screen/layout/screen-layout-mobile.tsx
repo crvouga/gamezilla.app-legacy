@@ -27,7 +27,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
           {input.renderBody()}
 
           {input.postAction && (
-            <div className='absolute bottom-6 right-4 bg-black'>
+            <div className='absolute bottom-6 right-4'>
               <Button
                 color='primary'
                 size='lg'
