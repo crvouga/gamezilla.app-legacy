@@ -27,18 +27,19 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
           {input.renderBody()}
 
           {input.postAction && (
-            <Button
-              className='absolute bottom-6 right-4'
-              color='primary'
-              size='lg'
-              variant='contained'
-              rounded
-              onClick={input.postAction.onSubmit}
-              disabled={input.postAction.submitDisabled}
-              loading={input.postAction.submitLoading}
-              text={input.postAction.submitText}
-              renderIconStart={input.postAction.submitIcon}
-            />
+            <div className='absolute bottom-6 right-4'>
+              <Button
+                color='primary'
+                size='lg'
+                variant='contained'
+                rounded
+                onClick={input.postAction.onSubmit}
+                disabled={input.postAction.submitDisabled}
+                loading={input.postAction.submitLoading}
+                text={input.postAction.submitText}
+                renderIconStart={input.postAction.submitIcon}
+              />
+            </div>
           )}
         </div>
 
