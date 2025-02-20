@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Translator } from '~/@/l18n/generated'
 import { Typography } from '~/@/ui'
 import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
-import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, pushScreen, showErrSm, showToast } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SectionTitle } from '~/app/@/ui/section/section-title'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
@@ -50,6 +50,19 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
             userId: input.ctx.currentUserId,
           }),
         ],
+      }
+    }
+    case 'join-space.closed-person-item-surface': {
+      if (input.model.opened === 'join-space.person-preview-surface') {
+        return { model: { ...input.model, opened: null }, msgCmd: [playSound(APP_SOUND.tap)] }
+      }
+      return { model: input.model }
+    }
+
+    case 'join-space.opened-person-details': {
+      return {
+        model: input.model,
+        msgCmd: [pushScreen({ t: 'profile', n: 'profile', userId: input.msg.userId }, true)],
       }
     }
   }
@@ -153,8 +166,8 @@ const View: SpaceFrontendModule['View'] = (input) => {
               <SurfaceLayout
                 ctx={spaceCtx}
                 ariaLabel={input.ctx.t('?')}
-                open={false}
-                onClose={() => {}}
+                open={input.model.opened === 'join-space.person-preview-surface'}
+                onClose={() => input.dispatch({ t: 'join-space.closed-person-item-surface' })}
                 drawer={{
                   position: 'bottom',
                 }}
@@ -165,7 +178,15 @@ const View: SpaceFrontendModule['View'] = (input) => {
                 id='user-preview'
                 dropDownReference={vDom}
                 body={{
-                  render: () => <SectionPersonDetails onOpenDetails={() => {}} ctx={spaceCtx} profile={profile} />,
+                  render: () => (
+                    <SectionPersonDetails
+                      onOpenDetails={() =>
+                        input.dispatch({ t: 'join-space.opened-person-details', userId: profile.userId })
+                      }
+                      ctx={spaceCtx}
+                      profile={profile}
+                    />
+                  ),
                 }}
               />
             )}

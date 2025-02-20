@@ -4,7 +4,7 @@ import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { SpacesCore } from '../core/core'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Profile } from '~/app/@/data/profile'
-import { didShowToast, didShowErrorSm, didPlaySound } from '~/app/@/frontend/cmd'
+import { didShowToast, didShowErrorSm, didPlaySound, didPushScreen } from '~/app/@/frontend/cmd'
 import { UserId } from '~/app/@/data/user-id'
 
 const Fixture = async () => {
@@ -15,7 +15,7 @@ const Fixture = async () => {
   }
 }
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   test('show toast after current user joining', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
@@ -145,5 +145,22 @@ describe.only(import.meta.file, () => {
     expect(before.model.opened).toBe('join-space.person-preview-surface')
     expect(after.model.opened).toBe(null)
     expect(didPlaySound(after)).toBe(true)
+  })
+
+  it('closes person details surface when closing surface', async () => {
+    const f = await Fixture()
+    const someUserId = UserId.generate()
+    const before = f.update(f.initial, [{ msg: { t: 'join-space.clicked-person-list-item', userId: someUserId } }])
+    const after = f.update(before, [{ msg: { t: 'join-space.closed-person-item-surface' } }])
+    expect(before.model.opened).toBe('join-space.person-preview-surface')
+    expect(after.model.opened).toBe(null)
+    expect(didPlaySound(after)).toBe(true)
+  })
+
+  it('pushes route to profile page when opening person details', async () => {
+    const f = await Fixture()
+    const someUserId = UserId.generate()
+    const output = f.update(f.initial, [{ msg: { t: 'join-space.opened-person-details', userId: someUserId } }])
+    expect(didPushScreen(output, (m) => m.t === 'profile' && m.userId === someUserId)).toBe(true)
   })
 })
