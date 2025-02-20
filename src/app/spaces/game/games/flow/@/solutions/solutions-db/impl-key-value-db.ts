@@ -40,5 +40,8 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
 
       return Ok(null)
     },
+    sub(_hash) {
+      throw new Error('Not implemented')
+    },
   }
 }

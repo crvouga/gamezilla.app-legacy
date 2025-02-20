@@ -1,4 +1,5 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
+import { Json } from '~/@/json/json'
 import { p } from '~/@/parser'
 import { Err, isErr, Ok, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
@@ -6,7 +7,6 @@ import { Posix } from '~/@/time/posix'
 import { Solution } from '../solution'
 import { Solutions } from '../solutions'
 import { ISolutionsDb } from './interface'
-import { Json } from '~/@/json/json'
 
 export type Config = {
   t: 'db-conn-sql'
@@ -101,6 +101,10 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
       if (isErr(result)) return result
 
       return Ok(null)
+    },
+
+    sub(_hash) {
+      throw new Error('Not implemented')
     },
   }
 }
