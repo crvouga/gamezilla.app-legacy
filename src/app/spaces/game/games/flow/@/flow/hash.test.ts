@@ -1,7 +1,8 @@
-import { describe, expect, test } from 'bun:test'
-import { VariantGridShorthand } from '../variant/grid'
+import { describe, expect, it, test } from 'bun:test'
+import { VariantGrid, VariantGridShorthand } from '../variant/grid'
 import { FlowHash } from './hash'
 import { Flow } from '.'
+import { EdgeId } from './edge-id'
 
 describe(import.meta.file, () => {
   test('deterministic', () => {
@@ -41,5 +42,18 @@ describe(import.meta.file, () => {
     const hashA = FlowHash.init(modelA)
     const hashB = FlowHash.init(modelB)
     expect(hashA).toEqual(hashB)
+  })
+
+  it('should be sensitive to edges', () => {
+    const modelA = VariantGridShorthand.toGrid([
+      ['A', ' ', ' '],
+      [' ', ' ', ' '],
+      [' ', ' ', 'A'],
+    ])
+    const edgeId = EdgeId.init(VariantGrid.toNodeId({ x: 0, y: 0 }), VariantGrid.toNodeId({ x: 0, y: 1 }))
+    const modelB = Flow.removeEdge(modelA, edgeId)
+    const hashA = FlowHash.init(modelA)
+    const hashB = FlowHash.init(modelB)
+    expect(hashA).not.toEqual(hashB)
   })
 })

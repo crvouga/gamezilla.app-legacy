@@ -20,10 +20,10 @@ const Fixtures = async () => {
 
   const configs: Config[] = []
 
-  // configs.push({
-  //   t: 'key-value-db',
-  //   keyValueDb: f.keyValueDbHashMap,
-  // })
+  configs.push({
+    t: 'key-value-db',
+    keyValueDb: f.keyValueDbHashMap,
+  })
 
   configs.push({
     t: 'with-sql-tables',
@@ -34,17 +34,17 @@ const Fixtures = async () => {
     }),
   })
 
-  // if (f.t === 'integration') {
-  //   configs.push({
-  //     t: 'db-conn-sql',
-  //     dbConnSql: f.dbConnPostgres,
-  //   })
-  // }
+  if (f.t === 'integration') {
+    configs.push({
+      t: 'db-conn-sql',
+      dbConnSql: f.dbConnPostgres,
+    })
+  }
 
   return Promise.all(configs.map(Fixture))
 }
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   test('get and put', async () => {
     for (const f of await Fixtures()) {
       const flow = VariantGridShorthand.toGrid([

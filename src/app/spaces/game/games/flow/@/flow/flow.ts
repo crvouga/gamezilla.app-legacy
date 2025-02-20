@@ -270,6 +270,15 @@ export const addEdge = (model: Model, edge: Edge): Model => {
   return { ...modelNew, edgeHash }
 }
 
+export const removeEdge = (model: Model, edgeId: EdgeId): Model => {
+  const { [edgeId]: _removedEdge, ...remainingEdges } = model.edges
+
+  return {
+    ...model,
+    edges: remainingEdges,
+  }
+}
+
 /**
  *
  */
