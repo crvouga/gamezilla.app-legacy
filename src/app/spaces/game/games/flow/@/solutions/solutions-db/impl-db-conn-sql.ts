@@ -1,10 +1,12 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
 import { p } from '~/@/parser'
-import { isErr, Ok } from '~/@/result'
+import { Err, isErr, Ok, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Posix } from '~/@/time/posix'
+import { Solution } from '../solution'
 import { Solutions } from '../solutions'
 import { ISolutionsDb } from './interface'
+import { Json } from '~/@/json/json'
 
 export type Config = {
   t: 'db-conn-sql'
@@ -12,8 +14,8 @@ export type Config = {
 }
 
 const Row = p.obj({
-  flow_hash: p.str,
-  solutions: p.json,
+  id: p.str,
+  solutions: p.or(p.str, p.json),
   created_at_posix: p.maybe(Posix),
   last_updated_at_posix: p.maybe(Posix),
 })
@@ -26,26 +28,30 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
       const queried = await config.dbConnSql.query({
         parser: Row,
         sql: `
-          SELECT flow_hash, solutions 
+          SELECT id, solutions 
           FROM game_flow_solutions 
-          WHERE flow_hash = :flow_hash
+          WHERE id = :id
         `,
         vars: {
-          flow_hash: hash,
+          id: hash,
         },
       })
 
       if (isErr(queried)) return queried
 
-      // const row = queried.value[0]
-      return Ok({})
-      // if (!row) return Ok({})
+      const row = queried.value[0]
 
-      // const parsed = Solutions.parse(row.solutions)
+      if (!row) return Ok({})
 
-      // if (isErr(parsed)) return parsed
+      const json = unwrapOr(typeof row.solutions === 'string' ? Json.parse(row.solutions) : Ok(row.solutions), [])
 
-      // return Ok({ [hash]: parsed.value })
+      const parsed = p.arr(Solution).parse(json)
+
+      if (isErr(parsed)) return Err(parsed.error.map((e) => e.message).join('\n'))
+
+      const solutions: Solutions = { [hash]: parsed.value }
+
+      return Ok(solutions)
     },
 
     async put(solutions) {
@@ -56,23 +62,23 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
           parser: Row,
           sql: `
           INSERT INTO game_flow_solutions (
-            flow_hash,
+            id,
             solutions,
             created_at_posix,
             last_updated_at_posix
           )
           VALUES (
-            :flow_hash,
+            :id,
             :solutions,
             :created_at_posix,
             :last_updated_at_posix
           )
-          ON CONFLICT (flow_hash) DO UPDATE SET
+          ON CONFLICT (id) DO UPDATE SET
             solutions = :solutions,
             last_updated_at_posix = :last_updated_at_posix
         `,
           vars: {
-            flow_hash: hash,
+            id: hash,
             solutions: Sql.json(sols),
             created_at_posix: now,
             last_updated_at_posix: now,
@@ -81,6 +87,18 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
 
         if (isErr(result)) return result
       }
+
+      return Ok(null)
+    },
+
+    async zap(hash) {
+      const result = await config.dbConnSql.query({
+        parser: p.unknown,
+        sql: `DELETE FROM game_flow_solutions WHERE id = :id`,
+        vars: { id: hash },
+      })
+
+      if (isErr(result)) return result
 
       return Ok(null)
     },

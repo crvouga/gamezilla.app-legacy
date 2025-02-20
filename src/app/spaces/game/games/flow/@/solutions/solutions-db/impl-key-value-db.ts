@@ -1,9 +1,9 @@
-import { KeyValueDb, IKeyValueDb } from '~/@/key-value-db'
+import { IKeyValueDb, KeyValueDb } from '~/@/key-value-db'
 import { p } from '~/@/parser'
 import { isErr, Ok } from '~/@/result'
 import { Solution } from '../solution'
-import { ISolutionsDb } from './interface'
 import { Solutions } from '../solutions'
+import { ISolutionsDb } from './interface'
 
 export type Config = {
   t: 'key-value-db'
@@ -31,6 +31,13 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
         const put = await solutionsByHash.set(hash, sols)
         if (isErr(put)) return put
       }
+      return Ok(null)
+    },
+    async zap(hash) {
+      const zap = await solutionsByHash.zap(hash)
+
+      if (isErr(zap)) return zap
+
       return Ok(null)
     },
   }
