@@ -327,19 +327,30 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
 }
 
 const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
-  if (!input.modelSpace.screenPuzzleBuilder) return null
+  const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
+  if (!puzzleBuilder) return null
 
   return (
-    <LayoutGame ctx={input.ctx} isSpectating>
-      <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll'>
-        <ProfileListItem
-          ctx={input.ctx}
-          profile={input.ctx.profiles[input.ctx.space.hostId]}
-          subtitle={input.ctx.t('app.editor')}
-        />
-        <VariantBoard.View disabled model={ScreenPuzzleBuildSpace.toFlow(input.modelSpace.screenPuzzleBuilder)} />
-      </div>
-    </LayoutGame>
+    <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
+      id='puzzle-builder-screen-mode-play'
+      ctx={input.ctx}
+      navBar={{
+        title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
+      }}
+      renderBody={() => (
+        <LayoutGame ctx={input.ctx} isSpectating>
+          <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll'>
+            <ProfileListItem
+              ctx={input.ctx}
+              profile={input.ctx.profiles[input.ctx.space.hostId]}
+              subtitle={input.ctx.t('app.editor')}
+            />
+            <VariantBoard.View disabled model={puzzleBuilder.puzzle.flow} />
+          </div>
+        </LayoutGame>
+      )}
+    />
   )
 }
 
