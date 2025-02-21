@@ -22,18 +22,9 @@ export type ModelFrontend = null
 
 export type MsgFrontend =
   | GameMainMenu.Msg
-  | {
-      t: 'got-msg-space'
-      c: MsgSpace
-    }
-  | {
-      t: 'got-pack-loader-msg'
-      c: PackLoaderTypes.MsgFrontend
-    }
-  | {
-      t: 'got-puzzle-loader-msg'
-      c: PuzzleLoaderTypes.MsgFrontend
-    }
+  | { t: 'got-msg-space'; c: MsgSpace }
+  | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgFrontend }
+  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgFrontend }
 
 export type MsgBackend = { t: 'noop' }
 

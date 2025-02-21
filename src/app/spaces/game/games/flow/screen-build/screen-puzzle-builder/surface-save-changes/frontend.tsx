@@ -1,15 +1,14 @@
 import { withEventId } from '~/@/event-sourced/event'
-import type { Translator } from '~/@/l18n/generated'
 import { Loading, Result, isOk } from '~/@/result'
 import { IconFloppyDisk } from '~/@/ui'
+import { VDom } from '~/@/vdom/vdom'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceUnsavedChanges } from '~/app/@/ui/surface/unsaved-changes/surface-unsaved-changes'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { ModeEdit } from '../../../@/mode-edit'
 import type { Puzzle } from '../../../@/puzzle/puzzle'
-import type { FrontendModule, ModelFrontend, MsgFrontend, MsgSpace } from '../../types'
-import { VDom } from '~/@/vdom/vdom'
+import type { FrontendModule, MsgSpace } from '../../types'
 
 //
 //
@@ -231,30 +230,6 @@ const updateDbSavedPuzzle: FrontendModule['update'] = (input) => {
 //
 //
 
-export const viewActions = ({
-  model,
-  dispatch,
-  ctx,
-}: {
-  ctx: {
-    t: Translator
-  }
-  model: ModelFrontend
-  dispatch: (msg: MsgFrontend) => void
-}): ScreenAction[] => {
-  return [
-    {
-      icon: (input) => <IconFloppyDisk {...input} />,
-      label: ctx.t('app.save'),
-      onClick: () =>
-        dispatch({
-          t: 'screen-puzzle-builder.save-changes.user-clicked-save-button',
-        }),
-      loading: model.puzzleSaveChangesRequest?.t === 'loading',
-    },
-  ]
-}
-
 const ViewSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDownReference?: VDom }) => {
   return (
     <SurfaceUnsavedChanges
@@ -279,8 +254,19 @@ const ViewSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDownRe
   )
 }
 
+const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
+  return [
+    {
+      icon: (input) => <IconFloppyDisk {...input} />,
+      label: input.ctx.t('app.save'),
+      onClick: () => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-save-button' }),
+      loading: input.model.puzzleSaveChangesRequest?.t === 'loading',
+      renderSurface: (reference) => <ViewSurface {...input} dropDownReference={reference} />,
+    },
+  ]
+}
+
 export const SaveChangesFrontend = {
   viewActions,
   update,
-  ViewSurface,
 }

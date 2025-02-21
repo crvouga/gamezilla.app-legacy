@@ -8,7 +8,7 @@ import { Solutions } from '../solutions'
 import { Config, SolutionsDb } from './impl'
 
 const Fixture = async (config: Config) => {
-  const solutionsDb = await SolutionsDb(config)
+  const solutionsDb = SolutionsDb(config)
 
   return {
     solutionsDb,

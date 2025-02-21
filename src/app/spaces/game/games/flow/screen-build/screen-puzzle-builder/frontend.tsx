@@ -1,6 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
-import { IconDeleteForever, IconPen, IconPlay } from '~/@/ui'
+import { IconPen, IconPlay } from '~/@/ui'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -54,10 +54,7 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
       return {
         model,
         msgSpace: [
-          withEventId({
-            t: 'screen-puzzle-builder.user-clicked-edit-mode-button',
-            userId: ctx.currentUserId,
-          }),
+          withEventId({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button', userId: ctx.currentUserId }),
         ],
         msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       }
@@ -104,10 +101,7 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
       const updated = ModePlay.update({
         msg: input.msgSpace.c,
         model: input.modelSpace.screenPuzzleBuilder.modePlay,
-        ctx: ModePlay.initCtx({
-          flow,
-          solutions: input.ctx.solutions,
-        }),
+        ctx: ModePlay.initCtx({ flow, solutions: input.ctx.solutions }),
       })
 
       return {
@@ -135,17 +129,13 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
         }
 
         default: {
-          return {
-            model: input.model,
-          }
+          return { model: input.model }
         }
       }
     }
 
     default: {
-      return {
-        model: input.model,
-      }
+      return { model: input.model }
     }
   }
 }
@@ -171,13 +161,7 @@ const View: BuilderTypes.FrontendModule['View'] = (input) => {
 
   const screenCtx: FlowFrontendCtx = { ...input.ctx, parentScreen }
 
-  return (
-    <>
-      <DeleteForeverFrontend.View {...input} ctx={screenCtx} />
-      <SaveChangesFrontend.ViewSurface {...input} ctx={screenCtx} />
-      <ViewMode {...input} ctx={screenCtx} />
-    </>
-  )
+  return <ViewMode {...input} ctx={screenCtx} />
 }
 
 const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View']>[0]): ParentScreenProps | null => {
@@ -196,28 +180,15 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
               input.dispatch({ t: 'screen-puzzle-builder.user-closed-more-drawer' })
               return
             }
-
             input.dispatch({ t: 'screen-puzzle-builder.user-clicked-open-more-drawer-button' })
           },
           open: input.model.puzzleBuilderOpened === 'more',
         },
         t: 'uniform',
         actions: [
-          ...SaveChangesFrontend.viewActions({ model: input.model, dispatch: input.dispatch, ctx: input.ctx }),
-          {
-            icon: (input) => <IconPen {...input} />,
-            label: input.ctx.t('app.edit-name'),
-            onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
-            renderSurface: (reference) => (
-              <EditPuzzleNameFrontend.View {...input} ctx={input.ctx} reference={reference} />
-            ),
-          },
-          {
-            icon: (input) => <IconDeleteForever {...input} />,
-            label: input.ctx.t('app.delete'),
-            color: 'danger',
-            onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
-          },
+          ...SaveChangesFrontend.viewActions(input),
+          ...EditPuzzleNameFrontend.viewActions(input),
+          ...DeleteForeverFrontend.viewActions(input),
         ],
       },
     },
@@ -307,6 +278,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
           t: 'uniform',
           actions: [
             toToggleModeScreenAction(puzzleBuilder.mode.t, input),
+
             ModePlay.viewHintAction({
               ctx: ModePlay.initCtx({ ...input.ctx, flow }),
               dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),

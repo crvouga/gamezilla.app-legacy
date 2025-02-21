@@ -1,6 +1,8 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Ok, RemoteResult, isLoading } from '~/@/result'
+import { IconDeleteForever } from '~/@/ui/icon/icon-delete-forever'
 import { APP_SOUND, playSound, showCreatedSm } from '~/app/@/frontend/cmd'
+import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCmdRoot } from '../../../@/frontend/cmd-root'
@@ -98,7 +100,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   }
 }
 
-const View: FrontendModule['View'] = (input) => {
+const ViewSurface: FrontendModule['View'] = (input) => {
   return (
     <SurfaceConfirmation
       ctx={input.ctx}
@@ -120,7 +122,24 @@ const View: FrontendModule['View'] = (input) => {
   )
 }
 
+const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
+  return [
+    {
+      icon: (input) => <IconDeleteForever {...input} />,
+      label: input.ctx.t('app.delete'),
+      color: 'danger',
+      onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
+      renderSurface: (reference) => (
+        <>
+          {reference}
+          <ViewSurface {...input} />
+        </>
+      ),
+    },
+  ]
+}
+
 export const DeleteForeverFrontend = {
   update,
-  View,
+  viewActions,
 }

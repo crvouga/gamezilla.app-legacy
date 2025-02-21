@@ -27,11 +27,11 @@ import type { FrontendModule, ModelFrontend, MsgFrontend, MsgToBackend } from '.
 const init: FrontendModule['init'] = {
   screenBuild: BuildFrontend.init,
   screenPlay: PlayFrontend.init,
+  puzzleLoader: PuzzleLoaderTypes.initFrontend,
+  packLoader: PackLoaderTypes.initFrontend,
   puzzles: {},
   packs: {},
   solutions: {},
-  puzzleLoader: PuzzleLoaderTypes.initFrontend,
-  packLoader: PackLoaderTypes.initFrontend,
 }
 
 let puzzleDb: IPuzzleDb
@@ -300,12 +300,6 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
           ...input.model,
           puzzles: puzzlesNew,
         },
-      }
-    }
-
-    case 'got-pack-loader-cmd': {
-      return {
-        model: input.model,
       }
     }
 
