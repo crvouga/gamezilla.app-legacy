@@ -1,10 +1,10 @@
-import { Button, Dialog, Typography } from '~/@/ui'
+import { Button, Dialog, IconLightbulb } from '~/@/ui'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { SurfaceActions } from '~/@/ui/surface/surface-actions'
-import { SurfaceBody } from '~/@/ui/surface/surface-body'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
-import type { FrontendModule } from './types'
+import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SolutionHash } from '../solution-hash/solution-hash'
+import type { FrontendModule } from './types'
 
 const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
@@ -13,23 +13,23 @@ const update: FrontendModule['update'] = (input) => {
 const ViewDialog = (
   input: Parameters<FrontendModule['View']>[0] & {
     solutionHash: SolutionHash
-    open: boolean
-    onClose: () => void
   },
 ) => {
+  const open = false
+  const onClose = () => {}
   return (
-    <Dialog open={input.open} onClose={input.onClose}>
+    <Dialog open={open} onClose={onClose}>
       <DialogSurface>
-        <SurfaceHeader ctx={input.ctx} title={input.ctx.t('app.congratulations')} onClose={input.onClose} />
+        <SurfaceHeader ctx={input.ctx} title={input.ctx.t('app.congratulations')} onClose={onClose} />
 
-        <SurfaceBody>
+        {/* <SurfaceBody>
           <Typography text={input.ctx.t('flow.you-have-completed-the-pack')} />
-        </SurfaceBody>
+        </SurfaceBody> */}
 
         <SurfaceActions>
-          <Button className='w-full' text={input.ctx.t('app.cancel')} onClick={input.onClose} />
+          <Button className='flex-1' text={input.ctx.t('app.cancel')} onClick={onClose} />
           <Button
-            className='w-full'
+            className='flex-1'
             text={input.ctx.t('flow.select-next-pack')}
             onClick={() => input.dispatch({ t: 'clicked-find-solutions', hash: input.solutionHash })}
           />
@@ -39,7 +39,18 @@ const ViewDialog = (
   )
 }
 
+const viewHintAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
+  return [
+    {
+      icon: (input) => <IconLightbulb {...input} />,
+      label: input.ctx.t('game.hint'),
+      onClick: () => input.dispatch({ t: 'dialog.clicked-open' }),
+    },
+  ]
+}
+
 export const SolutionsFinderFrontend = {
   update,
   ViewDialog,
+  viewHintAction,
 }

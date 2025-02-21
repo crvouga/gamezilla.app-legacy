@@ -1,7 +1,16 @@
-import { describe } from 'bun:test'
+import { describe, test } from 'bun:test'
+import { FixtureFlowFrontend } from '../../frontend/fixture'
 
-export const Fixture = () => {
-  return {}
+export const Fixture = async () => {
+  const f = await FixtureFlowFrontend()
+
+  return {
+    ...f,
+  }
 }
 
-describe('SolutionsFinderFrontend', () => {})
+describe('SolutionsFinderFrontend', () => {
+  test('should render', async () => {
+    await Fixture()
+  })
+})

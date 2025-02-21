@@ -13,6 +13,7 @@ import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
 
 export type ModelFrontend = {
+  open: 'find-solutions-confirmation' | null
   requests: {
     [hash: SolutionHash]: {
       hash: SolutionHash
@@ -21,7 +22,10 @@ export type ModelFrontend = {
   }
 }
 
-export type MsgFrontend = { t: 'clicked-find-solutions'; hash: SolutionHash }
+export type MsgFrontend =
+  | { t: 'clicked-find-solutions'; hash: SolutionHash }
+  | { t: 'dialog.clicked-open' }
+  | { t: 'dialog.clicked-close' }
 
 export type MsgBackend = { t: 'noop' }
 
