@@ -5,7 +5,6 @@ import { IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
@@ -438,7 +437,6 @@ export const View = (input: {
   model: Model
   dispatch: (m: Msg) => void
   screenLayout: Partial<ScreenLayoutProps>
-  actions: ScreenAction[]
 }) => {
   return (
     <ScreenLayout
@@ -462,7 +460,6 @@ export const View = (input: {
         variant: {
           t: 'uniform',
           actions: [
-            ...input.actions,
             {
               icon: (input) => <IconArrowRotateLeft {...input} />,
               label: input.ctx.t('app.undo'),

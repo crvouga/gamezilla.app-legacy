@@ -241,8 +241,8 @@ const ViewModeEdit: BuilderTypes.FrontendModule['View'] = (input) => {
 
   return (
     <ModeEdit.View
+      {...input}
       model={puzzleBuilder.modeEdit}
-      ctx={input.ctx}
       dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
       screenLayout={{
         parentScreen: input.ctx.parentScreen,
@@ -251,7 +251,6 @@ const ViewModeEdit: BuilderTypes.FrontendModule['View'] = (input) => {
           title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
         },
       }}
-      actions={[]}
     />
   )
 }

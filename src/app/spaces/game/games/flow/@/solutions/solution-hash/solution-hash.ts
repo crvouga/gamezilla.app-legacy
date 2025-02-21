@@ -14,9 +14,9 @@ const init = (model: Flow.Model): SolutionHash => {
   const terminalHash = Flow.deriveTerminalHash(model.terminalsByGroupId)
   const edgeHash = Flow.deriveEdgeHash(model.edges)
   const hash = `${terminalHash}-${edgeHash}`
-  if (is(hash)) {
-    return hash
-  }
+
+  if (is(hash)) return hash
+
   throw new Error('SolutionHash.init: hash is not a SolutionHash')
 }
 
