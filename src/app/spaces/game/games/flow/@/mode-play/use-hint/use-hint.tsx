@@ -5,10 +5,11 @@ import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { Flow } from '../../flow'
 import { GroupId } from '../../flow/group-id'
-import { SolutionHash } from '../../solutions/solution-hash/solution-hash'
 import { NodeId } from '../../flow/node-id'
 import { Terminal } from '../../flow/terminal'
+import { AlgoIsSolved } from '../../solutions/algo-is-solved/algo-is-solved'
 import { Solution } from '../../solutions/solution'
+import { SolutionHash } from '../../solutions/solution-hash/solution-hash'
 import { Solutions } from '../../solutions/solutions'
 import type { Variant } from '../../variant'
 
@@ -100,7 +101,7 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
 
       const flowNew = toFlow(modelNew, input.ctx.flow)
 
-      if (Flow.isSolved(flowNew)) {
+      if (AlgoIsSolved.isSolved(flowNew)) {
         return {
           model: modelNew,
           events: [{ t: 'solved' }, { t: 'used-hint', groupId: nextHintGroupId }],

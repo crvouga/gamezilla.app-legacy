@@ -7,6 +7,7 @@ import { FixtureFlowFrontend } from '../../frontend/fixture'
 import { Solutions } from '../../solutions/solutions'
 import { Variant } from '../../variant'
 import { VariantGridShorthand } from '../../variant/grid'
+import { AlgoIsSolved } from '../../solutions/algo-is-solved/algo-is-solved'
 
 type Input = {
   msg: UseHint.Msg
@@ -95,7 +96,7 @@ describe(import.meta.file, () => {
       },
     ])
     const flow = UseHint.toFlow(output.model, f.ctx.flow)
-    expect(Flow.isSolved(flow)).toBe(true)
+    expect(AlgoIsSolved.isSolved(flow)).toBe(true)
   })
 
   test('output use hint event', async () => {

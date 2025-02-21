@@ -5,6 +5,7 @@ import { GroupId } from '../../flow/group-id'
 import { NodeId } from '../../flow/node-id'
 import { Terminal } from '../../flow/terminal'
 import { Variant } from '../../variant'
+import { AlgoIsSolved } from '../algo-is-solved/algo-is-solved'
 
 export const solve = (model: Variant.Model): Flow.Model | null => {
   for (const solution of solutions(model)) {
@@ -23,16 +24,14 @@ export const solutions = function* (model: Variant.Model): Iterable<Flow.Model> 
 }
 
 const solveStep = function* (model: Variant.Model, disconnectedTerminals: Terminal[]): Iterable<Flow.Model> {
-  if (Flow.isSolved(model)) {
+  if (AlgoIsSolved.isSolved(model)) {
     yield model
     return
   }
 
   const terminal = disconnectedTerminals[0]
 
-  if (!terminal || !terminal.endId) {
-    return
-  }
+  if (!terminal || !terminal.endId) return
 
   const possiblePipelines = toPossiblePipelines(model, terminal.groupId, terminal.startId, terminal.endId)
 

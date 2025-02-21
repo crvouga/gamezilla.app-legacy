@@ -820,18 +820,6 @@ export const isProbablyConnectedWithPipes = (model: Model, sourceId: NodeId, tar
   return hasOutPipe(model, sourceId) && hasInPipe(model, targetId)
 }
 
-export const isSolved = (model: Model): boolean => {
-  for (const terminal of yieldTerminals(model)) {
-    if (!terminal.endId) {
-      continue
-    }
-    if (!isConnectedWithPipes(model, terminal.startId, terminal.endId)) {
-      return false
-    }
-  }
-  return true
-}
-
 export const countConnectedPipes = (model: Model): number => {
   let count = 0
   for (const terminal of yieldTerminals(model)) {

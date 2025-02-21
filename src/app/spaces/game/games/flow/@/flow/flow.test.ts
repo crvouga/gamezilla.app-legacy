@@ -1,70 +1,9 @@
 import { describe, expect, test } from 'bun:test'
+import { pipe } from '~/@/function/pipe'
 import { Flow } from '.'
 import { VariantGrid, VariantGridShorthand } from '../variant/grid'
-import { pipe } from '~/@/function/pipe'
 
 describe(import.meta.file, () => {
-  test('isSolved 3x3 with A terminals and A pipes', () => {
-    const grid = VariantGridShorthand.toGrid([
-      ['A', ' ', ' '],
-      ['a', ' ', ' '],
-      ['a', 'a', 'A'],
-    ])
-    expect(Flow.isSolved(grid)).toBe(true)
-  })
-
-  test('isSolved 3x3 with A terminals', () => {
-    const grid = VariantGridShorthand.toGrid([
-      ['A', ' ', ' '],
-      ['a', ' ', ' '],
-      ['a', ' ', 'A'],
-    ])
-    expect(Flow.isSolved(grid)).toBe(false)
-  })
-
-  test('not isSolved 3x3 with A terminals and A pipes and B terminals', () => {
-    const grid = VariantGridShorthand.toGrid([
-      ['A', 'B', ' '],
-      ['a', ' ', 'B'],
-      ['a', 'a', 'A'],
-    ])
-    expect(Flow.isSolved(grid)).toBe(false)
-  })
-
-  test('not isSolved 3x3 with A terminals and A pipes and B terminals and B pipes', () => {
-    const grid = VariantGridShorthand.toGrid([
-      ['A', 'B', 'b'],
-      ['a', ' ', 'B'],
-      ['a', 'a', 'A'],
-    ])
-    expect(Flow.isSolved(grid)).toBe(true)
-  })
-
-  test('isSolved with A terminals and A pipes long', () => {
-    const grid = VariantGridShorthand.toGrid([
-      ['A', 'a', 'a'],
-      ['a', 'a', 'a'],
-      ['a', 'a', 'A'],
-    ])
-    expect(Flow.isSolved(grid)).toBe(true)
-  })
-
-  test('isSolved with adjacent connected A terminals', () => {
-    const grid = VariantGridShorthand.toGrid([
-      ['Aa', 'A'],
-      [' ', ' '],
-    ])
-    expect(Flow.isSolved(grid)).toBe(true)
-  })
-
-  test('not isSolved with adjacent disconnected A terminals', () => {
-    const grid = VariantGridShorthand.toGrid([
-      ['A', ' '],
-      ['A', ' '],
-    ])
-    expect(Flow.isSolved(grid)).toBe(false)
-  })
-
   test('isConnectedWithPipes with connected terminals', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' '],
@@ -138,7 +77,7 @@ describe(import.meta.file, () => {
     expect(isConnected).toBe(true)
   })
 
-  test('branching pipelines dectection', async () => {
+  test('branching pipelines detection', async () => {
     const gridA = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
@@ -162,7 +101,7 @@ describe(import.meta.file, () => {
     expect(actual).toBe(true)
   })
 
-  test('branching pipelines false postives', async () => {
+  test('branching pipelines false positives', async () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', ' ', ' '],
@@ -221,7 +160,7 @@ describe(import.meta.file, () => {
     expect(isSame).toBe(true)
   })
 
-  test('add pipeline when terminal orentation does not match pipeline being added', async () => {
+  test('add pipeline when terminal orientation does not match pipeline being added', async () => {
     const expected = pipe(
       VariantGridShorthand.toGrid([
         ['A', ' ', ' '],

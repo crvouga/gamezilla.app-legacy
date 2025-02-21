@@ -10,6 +10,7 @@ import { Flow } from '../flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
 import { Terminal } from '../flow/terminal'
+import { AlgoIsSolved } from '../solutions/algo-is-solved/algo-is-solved'
 import { AlgoSolve } from '../solutions/algo-solve'
 import { Solutions } from '../solutions/solutions'
 import { VariantBoard, type Variant } from '../variant'
@@ -79,7 +80,7 @@ export const toStatus = (input: { flow: Variant.Model; model: Model }) => {
   if (input.model.status.t === 'dragging') {
     const terminal = Flow.toTerminalByGroupId(flow, input.model.status.activeGroupId)
     if (!terminal?.endId) {
-      if (Flow.isSolved(flow)) {
+      if (AlgoIsSolved.isSolved(flow)) {
         return 'solved'
       }
       return 'solving'
@@ -88,7 +89,7 @@ export const toStatus = (input: { flow: Variant.Model; model: Model }) => {
     return 'solving'
   }
 
-  if (Flow.isSolved(flow)) {
+  if (AlgoIsSolved.isSolved(flow)) {
     return 'solved'
   }
 
@@ -439,7 +440,7 @@ const updateDragging = (input: {
 
       const isConnected = Flow.isConnectedWithPipes(current, activeGroupTerminal.startId, activeGroupTerminal.endId)
 
-      const isSolved = Flow.isSolved(current)
+      const isSolved = AlgoIsSolved.isSolved(current)
 
       if (isSolved && isConnected) {
         return {
@@ -466,7 +467,7 @@ const updateDragging = (input: {
 
     case 'user-dragging-left': {
       const current = toFlow(input.model, input.ctx.flow)
-      const isSolved = Flow.isSolved(current)
+      const isSolved = AlgoIsSolved.isSolved(current)
 
       const terminal = Flow.toTerminalByGroupId(current, input.modelStatus.activeGroupId)
 

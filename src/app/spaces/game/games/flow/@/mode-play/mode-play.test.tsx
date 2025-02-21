@@ -2,6 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { loggerNoop } from '~/@/logger/impl-noop'
 import { ModePlay } from '.'
 import { Flow } from '../flow'
+import { AlgoIsSolved } from '../solutions/algo-is-solved/algo-is-solved'
 import { Solutions } from '../solutions/solutions'
 import type { Variant } from '../variant'
 import { VariantGrid } from '../variant/grid'
@@ -55,8 +56,8 @@ describe(import.meta.file, () => {
 
     const after = ModePlay.toFlow(f.update(f.init, msgs).model, f.flow)
 
-    expect(Flow.isSolved(before)).toBe(false)
-    expect(Flow.isSolved(after)).toBe(true)
+    expect(AlgoIsSolved.isSolved(before)).toBe(false)
+    expect(AlgoIsSolved.isSolved(after)).toBe(true)
   })
 
   it('should output connected terminals event', async () => {
@@ -336,7 +337,7 @@ describe(import.meta.file, () => {
 
     const flowNew = ModePlay.toFlow(model, flow)
 
-    expect(Flow.isSolved(flowNew)).toBe(true)
+    expect(AlgoIsSolved.isSolved(flowNew)).toBe(true)
   })
 
   it('should not output solved event when drawing from incomplete terminal and then leave drawing', async () => {

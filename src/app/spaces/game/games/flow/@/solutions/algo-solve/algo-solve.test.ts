@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { Flow } from '../../flow'
 import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoSolve from './algo-solve'
+import { AlgoIsSolved } from '../algo-is-solved/algo-is-solved'
 
 const some = <T>(iterable: Iterable<T>, predicate: (value: T) => boolean) => {
   for (const value of iterable) {
@@ -513,7 +514,7 @@ describe(import.meta.file, () => {
     ])
 
     const solution = first(AlgoSolve.solutions(grid))
-    expect(solution && Flow.isSolved(solution)).toBe(true)
+    expect(solution && AlgoIsSolved.isSolved(solution)).toBe(true)
   })
 
   test('3x3 no solutions', () => {

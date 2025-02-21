@@ -1,11 +1,11 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { ILogger } from '~/@/logger'
 import { p } from '~/@/parser'
-import { Flow } from '../flow'
-import { SolutionHash } from './solution-hash/solution-hash'
 import { Variant } from '../variant'
+import { AlgoIsSolved } from './algo-is-solved/algo-is-solved'
 import { AlgoSolveAsync } from './algo-solve-async'
 import { Solution } from './solution'
+import { SolutionHash } from './solution-hash/solution-hash'
 
 const parser = p.dict(SolutionHash, p.arr(Solution))
 
@@ -25,7 +25,7 @@ const findOne = async (input: { model: Variant.Model; logger: ILogger }): Promis
 }
 
 const of = (model: Variant.Model[]): Solutions => {
-  const solved = model.filter((m) => Flow.isSolved(m))
+  const solved = model.filter((m) => AlgoIsSolved.isSolved(m))
   if (NonEmpty.is(solved)) {
     const first = solved[0]
     const hash = SolutionHash.init(first)

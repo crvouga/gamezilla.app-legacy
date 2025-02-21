@@ -1,10 +1,12 @@
 import { describe, expect, it, test } from 'bun:test'
+import { loggerNoop } from '~/@/logger/impl-noop'
 import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../../@/flow'
+import { ModePlay } from '../../@/mode-play'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
-import { ModePlay } from '../../@/mode-play'
 import { Puzzle } from '../../@/puzzle/puzzle'
+import { AlgoIsSolved } from '../../@/solutions/algo-is-solved/algo-is-solved'
 import { Solutions } from '../../@/solutions/solutions'
 import { type Variant } from '../../@/variant'
 import { VariantGrid, VariantGridShorthand } from '../../@/variant/grid'
@@ -12,7 +14,6 @@ import { FlowPlaySpaceFixture } from '../@/space/fixture'
 import { FixtureScreenPuzzlePlaySpaceChild } from './@/fixture/space'
 import { ScreenPlayPuzzleSpace } from './space'
 import type { MsgSpace } from './types'
-import { loggerNoop } from '~/@/logger/impl-noop'
 
 const Fixture = async (input?: { flow?: Variant.Model }) => {
   const f = await FixtureScreenPuzzlePlaySpaceChild(input)
@@ -34,13 +35,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const after = f.update(
       f.init,
-      ModePlay.randomMsgs(f.puzzle).map(
-        (c): MsgSpace => ({
-          userId: UserId.generate(),
-          t: 'got-flow-play-msg',
-          c,
-        }),
-      ),
+      ModePlay.randomMsgs(f.puzzle).map((c): MsgSpace => ({ userId: UserId.generate(), t: 'got-flow-play-msg', c })),
     )
 
     expect(f.init.modePlay).not.toEqual(after.modePlay)
@@ -128,7 +123,7 @@ describe(import.meta.file, () => {
 
     expect(ScreenPlayPuzzleSpace.toStatus(before)).toBe('solving')
     expect(ScreenPlayPuzzleSpace.toStatus(after)).toBe('solved')
-    expect(Flow.isSolved(afterFlow)).toBe(true)
+    expect(AlgoIsSolved.isSolved(afterFlow)).toBe(true)
   })
 
   it('should open puzzle complete dialog after solving', async () => {

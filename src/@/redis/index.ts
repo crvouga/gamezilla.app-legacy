@@ -1,9 +1,9 @@
 import { SecretString } from '../secrets/secret-string'
 
 export const newRedis = async (redisUrl: SecretString) => {
-  if (typeof window !== 'undefined') {
-    throw new Error('Redis is not available in the browser')
-  }
+  // if (typeof window !== 'undefined') {
+  //   throw new Error('Redis is not available in the browser')
+  // }
 
   const { default: IoRedis } = await import('ioredis')
   const instance = new IoRedis(redisUrl.dangerouslyReadValue())
