@@ -50,9 +50,7 @@ export const listSpaces = ({
   if (whereAnd?.spaceId) {
     const space = model.spaces[whereAnd.spaceId]
 
-    if (!space) {
-      return []
-    }
+    if (!space) return []
 
     return [space]
   }
@@ -63,9 +61,7 @@ export const listSpaces = ({
   for (const spaceId in model.spaces) {
     i += 1
 
-    if (i < offset) {
-      continue
-    }
+    if (i < offset) continue
 
     const spaceModel = model.spaces[spaceId as SpaceId]
 
@@ -117,43 +113,31 @@ export const hasEvent = (model: Model, spaceId: SpaceId, eventId: EventId): bool
 export const toSpaceByUserId = ({ model, userId }: { model: Model; userId: UserId }): Space.Model | null => {
   const spaceId = model.indexSpaceIdByUserId[userId]
 
-  if (!spaceId) {
-    return null
-  }
+  if (!spaceId) return null
 
   const space = model.spaces[spaceId]
 
-  if (!space) {
-    return null
-  }
+  if (!space) return null
 
   return space
 }
 
 export const toEventWithMeta = (model: Model, spaceId: SpaceId, msgEvtId?: EventId | null) => {
-  if (!msgEvtId) {
-    return null
-  }
+  if (!msgEvtId) return null
 
   const space = model.spaces[spaceId]
 
-  if (!space) {
-    return null
-  }
+  if (!space) return null
 
   return EventSourced.toEvent(space, msgEvtId)
 }
 
 export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined): SpaceState.State => {
-  if (!spaceId) {
-    return SpaceState.init
-  }
+  if (!spaceId) return SpaceState.init
 
   const spaceModel = model.spaces[spaceId]
 
-  if (!spaceModel) {
-    return SpaceState.init
-  }
+  if (!spaceModel) return SpaceState.init
 
   const spaceState = EventSourced.toState(Space.config, spaceModel)
 
@@ -161,15 +145,11 @@ export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined)
 }
 
 export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceState.Started | null => {
-  if (!spaceId) {
-    return null
-  }
+  if (!spaceId) return null
 
   const spaceModel = model.spaces[spaceId]
 
-  if (!spaceModel) {
-    return null
-  }
+  if (!spaceModel) return null
 
   const spaceState = Space.toSpaceStarted(spaceModel)
 
