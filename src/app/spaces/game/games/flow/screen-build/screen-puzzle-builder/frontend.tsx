@@ -186,6 +186,7 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
         },
         t: 'uniform',
         actions: [
+          ...viewToggleModeAction(puzzleBuilder.mode.t, input),
           ...SaveChangesFrontend.viewActions(input),
           ...EditPuzzleNameFrontend.viewActions(input),
           ...DeleteForeverFrontend.viewActions(input),
@@ -195,55 +196,65 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
   }
 }
 
-const toToggleModeScreenAction = (
+const viewToggleModeAction = (
   mode: 'edit' | 'play',
   input: Parameters<BuilderTypes.FrontendModule['View']>[0],
-): ScreenAction => {
+): ScreenAction[] => {
   switch (mode) {
-    case 'edit':
-      return {
-        icon: (input) => <IconPlay {...input} />,
-        label: input.ctx.t('flow.play-mode'),
-        classNames: { button: 'text-blue-500' },
-        onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
-      }
-    case 'play':
-      return {
-        icon: (input) => <IconPen {...input} />,
-        label: input.ctx.t('flow.edit-mode'),
-        classNames: { button: 'text-amber-500' },
-        onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
-      }
+    case 'edit': {
+      return [
+        {
+          icon: (input) => <IconPlay {...input} />,
+          label: input.ctx.t('flow.play-mode'),
+          classNames: { button: 'text-blue-500' },
+          onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
+        },
+      ]
+    }
+    case 'play': {
+      return [
+        {
+          icon: (input) => <IconPen {...input} />,
+          label: input.ctx.t('flow.edit-mode'),
+          classNames: { button: 'text-amber-500' },
+          onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
+        },
+      ]
+    }
   }
 }
 
 const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
-
   if (!puzzleBuilder) return null
-
   switch (puzzleBuilder.mode.t) {
     case 'edit':
-      return (
-        <ModeEdit.View
-          model={puzzleBuilder.modeEdit}
-          ctx={input.ctx}
-          dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
-          screenLayout={{
-            parentScreen: input.ctx.parentScreen,
-            navBar: {
-              onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
-              title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
-            },
-          }}
-          actions={[toToggleModeScreenAction(puzzleBuilder.mode.t, input)]}
-        />
-      )
+      return <ViewModeEdit {...input} />
     case 'play':
       return <ViewModePlay {...input} />
   }
 }
 
+const ViewModeEdit: BuilderTypes.FrontendModule['View'] = (input) => {
+  const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
+  if (!puzzleBuilder) return null
+
+  return (
+    <ModeEdit.View
+      model={puzzleBuilder.modeEdit}
+      ctx={input.ctx}
+      dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
+      screenLayout={{
+        parentScreen: input.ctx.parentScreen,
+        navBar: {
+          onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
+          title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
+        },
+      }}
+      actions={[]}
+    />
+  )
+}
 const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
   if (!puzzleBuilder) return null
@@ -277,8 +288,6 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
         variant: {
           t: 'uniform',
           actions: [
-            toToggleModeScreenAction(puzzleBuilder.mode.t, input),
-
             ModePlay.viewHintAction({
               ctx: ModePlay.initCtx({ ...input.ctx, flow }),
               dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
