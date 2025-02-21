@@ -20,19 +20,10 @@ describe(import.meta.file, () => {
       ['a', 'a', 'a'],
       ['a', 'a', 'A'],
     ])
-    expect(
-      Flow.isConnectedWithPipes(
-        grid,
-        VariantGrid.toNodeId({
-          x: 0,
-          y: 0,
-        }),
-        VariantGrid.toNodeId({
-          x: 2,
-          y: 2,
-        }),
-      ),
-    ).toBe(true)
+    const start = VariantGrid.toNodeId({ x: 0, y: 0 })
+    const end = VariantGrid.toNodeId({ x: 2, y: 2 })
+    const isConnected = Flow.isConnectedWithPipes(grid, start, end)
+    expect(isConnected).toBe(true)
   })
 
   test('isConnectedWithPipes should not fail in case of cycles', () => {
