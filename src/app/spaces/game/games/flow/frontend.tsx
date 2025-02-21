@@ -351,54 +351,14 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 //
 
 const View: FrontendModule['View'] = (input) => {
-  const ctx = toFlowFrontendCtx(input)
-
   switch (input.modelSpace.mode) {
     case 'none': {
-      return (
-        <GameMainMenu.View
-          renderCoverArt={(input) => <CoverArt {...input} />}
-          ctx={ctx}
-          title={ctx.t('flow')}
-          dispatch={input.dispatch}
-          onBack={() => input.dispatch({ t: 'game-main-menu.clicked-exit-game-button' })}
-          buttons={[
-            {
-              renderIcon: (input) => <IconGamepad {...input} />,
-              title: ctx.t('flow.play'),
-              description: ctx.t('flow.play-description'),
-              onClick: () => {
-                input.dispatch({
-                  t: 'got-msg-space',
-                  c: {
-                    t: 'user-changed-mode',
-                    mode: 'play',
-                    userId: input.ctx.currentUserId,
-                  },
-                })
-              },
-            },
-            {
-              renderIcon: (input) => <IconScrewdriverWrench {...input} />,
-              title: ctx.t('flow.build'),
-              description: ctx.t('flow.build-description'),
-              onClick: () => {
-                input.dispatch({
-                  t: 'got-msg-space',
-                  c: {
-                    t: 'user-changed-mode',
-                    mode: 'build',
-                    userId: input.ctx.currentUserId,
-                  },
-                })
-              },
-            },
-          ]}
-        />
-      )
+      return <ViewMainMenu {...input} />
     }
 
     case 'build': {
+      const ctx = toFlowFrontendCtx(input)
+
       return (
         <BuildFrontend.View
           ctx={ctx}
@@ -410,6 +370,7 @@ const View: FrontendModule['View'] = (input) => {
     }
 
     case 'play': {
+      const ctx = toFlowFrontendCtx(input)
       return (
         <PlayFrontend.View
           ctx={ctx}
@@ -420,6 +381,44 @@ const View: FrontendModule['View'] = (input) => {
       )
     }
   }
+}
+
+const ViewMainMenu: FrontendModule['View'] = (input) => {
+  const ctx = toFlowFrontendCtx(input)
+
+  return (
+    <GameMainMenu.View
+      renderCoverArt={(input) => <CoverArt {...input} />}
+      ctx={ctx}
+      title={ctx.t('flow')}
+      dispatch={input.dispatch}
+      onBack={() => input.dispatch({ t: 'game-main-menu.clicked-exit-game-button' })}
+      buttons={[
+        {
+          renderIcon: (input) => <IconGamepad {...input} />,
+          title: ctx.t('flow.play'),
+          description: ctx.t('flow.play-description'),
+          onClick: () => {
+            input.dispatch({
+              t: 'got-msg-space',
+              c: { t: 'user-changed-mode', mode: 'play', userId: input.ctx.currentUserId },
+            })
+          },
+        },
+        {
+          renderIcon: (input) => <IconScrewdriverWrench {...input} />,
+          title: ctx.t('flow.build'),
+          description: ctx.t('flow.build-description'),
+          onClick: () => {
+            input.dispatch({
+              t: 'got-msg-space',
+              c: { t: 'user-changed-mode', mode: 'build', userId: input.ctx.currentUserId },
+            })
+          },
+        },
+      ]}
+    />
+  )
 }
 
 const ViewFeedItem: FrontendModule['ViewFeedItem'] = (_input) => {
