@@ -18,7 +18,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
         input.patchAction?.onSubmit()
       }}
     >
-      {renderActionBars(input)}
+      {renderActionBars(input.ctx, input)}
 
       <div className='flex flex-1 flex-col overflow-hidden'>
         {renderNavBars(input.ctx, input)}
@@ -49,7 +49,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   )
 }
 
-const renderActionBars = (screen: ScreenLayoutProps | null): VDom[] => {
+const renderActionBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps | null): VDom[] => {
   if (!screen) return []
   const bars = []
   if (screen.actionBar) {
@@ -58,12 +58,12 @@ const renderActionBars = (screen: ScreenLayoutProps | null): VDom[] => {
     bars.push(
       <div key={id} className={position === 'top' ? 'order-first' : 'order-last'}>
         {screen.renderMiniPlayer?.({ key: `${id}-mini-player` })}
-        <HorizontalActionBar {...screen.actionBar} id={id} ctx={screen.ctx} key={id} />
+        <HorizontalActionBar {...screen.actionBar} id={id} ctx={ctx} key={id} />
       </div>,
     )
   }
   if (screen.parentScreen) {
-    bars.push(...renderActionBars(screen.parentScreen as ScreenLayoutProps))
+    bars.push(...renderActionBars(ctx, screen.parentScreen))
   }
   return bars
 }

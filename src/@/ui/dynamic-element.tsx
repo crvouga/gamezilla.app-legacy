@@ -29,17 +29,17 @@ type DynamicElementProps = {
 }
 
 export const DynamicElement = (input: DynamicElementProps) => {
-  const { element, ...props } = input
+  const { element, children, ...props } = input
 
   switch (element) {
     case 'form': {
-      return <form {...props} />
+      return <form {...props}>{children}</form>
     }
     case 'button': {
-      return <button {...props} />
+      return <button {...props}>{children}</button>
     }
     default: {
-      return <div {...props} />
+      return <div {...props}>{children}</div>
     }
   }
 }
