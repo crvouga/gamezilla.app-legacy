@@ -1,29 +1,30 @@
 import { p } from '~/@/parser'
 import { isOk } from '~/@/result'
-import { Flow } from '.'
+import { Flow } from '../../flow'
 
-const parser = p.brand(p.str, 'FlowHash')
+const parser = p.brand(p.str, 'SolutionHash')
 
 /**
  * This represents a hash of a flow where its unique on the flow's terminals
+ * and edges.
  */
-export type FlowHash = p.Infer<typeof parser>
+export type SolutionHash = p.Infer<typeof parser>
 
-const init = (model: Flow.Model): FlowHash => {
+const init = (model: Flow.Model): SolutionHash => {
   const terminalHash = Flow.deriveTerminalHash(model.terminalsByGroupId)
   const edgeHash = Flow.deriveEdgeHash(model.edges)
   const hash = `${terminalHash}-${edgeHash}`
   if (is(hash)) {
     return hash
   }
-  throw new Error('FlowHash.init: hash is not a FlowHash')
+  throw new Error('SolutionHash.init: hash is not a SolutionHash')
 }
 
-const is = (maybeHash: unknown): maybeHash is FlowHash => {
+const is = (maybeHash: unknown): maybeHash is SolutionHash => {
   return isOk(parser.parse(maybeHash))
 }
 
-export const FlowHash = {
+export const SolutionHash = {
   ...parser,
   init,
   is,

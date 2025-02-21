@@ -1,8 +1,8 @@
 import { describe, expect, it, test } from 'bun:test'
-import { VariantGrid, VariantGridShorthand } from '../variant/grid'
-import { FlowHash } from './hash'
-import { Flow } from '.'
-import { EdgeId } from './edge-id'
+import { Flow } from '../../flow'
+import { EdgeId } from '../../flow/edge-id'
+import { VariantGrid, VariantGridShorthand } from '../../variant/grid'
+import { SolutionHash } from './solution-hash'
 
 describe(import.meta.file, () => {
   test('deterministic', () => {
@@ -11,8 +11,8 @@ describe(import.meta.file, () => {
       [' ', ' ', ' '],
       [' ', ' ', 'A'],
     ])
-    const first = FlowHash.init(model)
-    const second = FlowHash.init(model)
+    const first = SolutionHash.init(model)
+    const second = SolutionHash.init(model)
     expect(first).toEqual(second)
   })
 
@@ -27,8 +27,8 @@ describe(import.meta.file, () => {
       [' ', ' ', 'B'],
       [' ', ' ', 'A'],
     ])
-    const hashA = FlowHash.init(modelA)
-    const hashB = FlowHash.init(modelB)
+    const hashA = SolutionHash.init(modelA)
+    const hashB = SolutionHash.init(modelB)
     expect(hashA).not.toEqual(hashB)
   })
 
@@ -39,8 +39,8 @@ describe(import.meta.file, () => {
       [' ', ' ', 'A'],
     ])
     const modelB = Flow.flipAllTerminals(modelA)
-    const hashA = FlowHash.init(modelA)
-    const hashB = FlowHash.init(modelB)
+    const hashA = SolutionHash.init(modelA)
+    const hashB = SolutionHash.init(modelB)
     expect(hashA).toEqual(hashB)
   })
 
@@ -52,8 +52,8 @@ describe(import.meta.file, () => {
     ])
     const edgeId = EdgeId.init(VariantGrid.toNodeId({ x: 0, y: 0 }), VariantGrid.toNodeId({ x: 0, y: 1 }))
     const modelB = Flow.removeEdge(modelA, edgeId)
-    const hashA = FlowHash.init(modelA)
-    const hashB = FlowHash.init(modelB)
+    const hashA = SolutionHash.init(modelA)
+    const hashB = SolutionHash.init(modelB)
     expect(hashA).not.toEqual(hashB)
   })
 })

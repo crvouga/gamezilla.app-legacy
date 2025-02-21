@@ -5,7 +5,7 @@ import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { Flow } from '../../flow'
 import { GroupId } from '../../flow/group-id'
-import { FlowHash } from '../../flow/hash'
+import { SolutionHash } from '../../solutions/solution-hash/solution-hash'
 import { NodeId } from '../../flow/node-id'
 import { Terminal } from '../../flow/terminal'
 import { Solution } from '../../solutions/solution'
@@ -75,9 +75,9 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
 
       if (!nextHintGroupId) return { model: input.model }
 
-      const hash = FlowHash.init(flow)
+      const solutionHash = SolutionHash.init(flow)
 
-      const solution = msg.solutions[hash]?.[0]
+      const solution = msg.solutions[solutionHash]?.[0]
 
       if (!solution) return { model: input.model, events: [{ t: 'no-hints' }] }
 
@@ -170,7 +170,7 @@ export const viewUseHintAction = (input: {
     label: input.ctx.t('game.hint'),
     onClick: () => {
       const flow = toFlow(input.model, input.ctx.flow)
-      const hash = FlowHash.init(flow)
+      const hash = SolutionHash.init(flow)
       const solutions = Solutions.limit(input.ctx.solutions, hash)
       input.dispatch({ t: 'user-clicked-use-hint', solutions })
     },

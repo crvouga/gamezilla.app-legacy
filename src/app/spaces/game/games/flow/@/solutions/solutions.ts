@@ -2,12 +2,12 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { ILogger } from '~/@/logger'
 import { p } from '~/@/parser'
 import { Flow } from '../flow'
-import { FlowHash } from '../flow/hash'
+import { SolutionHash } from './solution-hash/solution-hash'
 import { Variant } from '../variant'
 import { AlgoSolveAsync } from './algo-solve-async'
 import { Solution } from './solution'
 
-const parser = p.dict(FlowHash, p.arr(Solution))
+const parser = p.dict(SolutionHash, p.arr(Solution))
 
 export type Solutions = p.Infer<typeof parser>
 
@@ -18,7 +18,7 @@ const findOne = async (input: { model: Variant.Model; logger: ILogger }): Promis
   if (!found) {
     return {}
   }
-  const hash = FlowHash.init(found)
+  const hash = SolutionHash.init(found)
   return {
     [hash]: [Solution.fromFlow(found)],
   }
@@ -28,7 +28,7 @@ const of = (model: Variant.Model[]): Solutions => {
   const solved = model.filter((m) => Flow.isSolved(m))
   if (NonEmpty.is(solved)) {
     const first = solved[0]
-    const hash = FlowHash.init(first)
+    const hash = SolutionHash.init(first)
     return { [hash]: solved }
   }
   return {}
@@ -44,7 +44,7 @@ const merge = (a: Solutions, b: Solutions): Solutions => {
   const result: Solutions = { ...a }
 
   for (const [key, value] of Object.entries(b)) {
-    if (!FlowHash.is(key)) {
+    if (!SolutionHash.is(key)) {
       continue
     }
 
@@ -59,7 +59,7 @@ const merge = (a: Solutions, b: Solutions): Solutions => {
   return result
 }
 
-const limit = (solutions: Solutions, hash: FlowHash): Solutions => {
+const limit = (solutions: Solutions, hash: SolutionHash): Solutions => {
   return {
     [hash]: (solutions[hash]?.slice(0, 1) ?? []).map(
       (s): Solution => ({
@@ -70,9 +70,9 @@ const limit = (solutions: Solutions, hash: FlowHash): Solutions => {
   }
 }
 
-const iter = function* (solutions: Solutions): Iterable<[FlowHash, Solution[]]> {
+const iter = function* (solutions: Solutions): Iterable<[SolutionHash, Solution[]]> {
   for (const [hash, sols] of Object.entries(solutions)) {
-    if (!FlowHash.is(hash)) {
+    if (!SolutionHash.is(hash)) {
       continue
     }
 

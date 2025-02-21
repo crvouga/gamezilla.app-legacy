@@ -18,6 +18,8 @@ import { IPuzzleDb, PuzzleDb } from './@/puzzle/puzzle-db'
 import { PuzzleLoaderTypes } from './@/puzzle/puzzle-loader'
 import { PuzzleLoaderFrontend } from './@/puzzle/puzzle-loader/frontend'
 import { Solutions } from './@/solutions/solutions'
+import { SolutionsDb } from './@/solutions/solutions-db/impl'
+import { ISolutionsDb } from './@/solutions/solutions-db/interface'
 import { BuildFrontend } from './screen-build/frontend'
 import { PlayFrontend } from './screen-play/frontend'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgToBackend } from './types'
@@ -34,13 +36,16 @@ const init: FrontendModule['init'] = {
 
 let puzzleDb: IPuzzleDb
 let packDb: IPackDb
+let solutionsDb: ISolutionsDb
 const toFlowFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): FlowFrontendCtx => {
   puzzleDb ??= PuzzleDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: input.ctx.logger })
   packDb ??= PackDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: input.ctx.logger })
+  solutionsDb ??= SolutionsDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql })
   return {
     ...input.ctx,
     puzzleDb,
     packDb,
+    solutionsDb,
     packs: input.model.packs,
     puzzles: input.model.puzzles,
     puzzleDbQuery: input.model.puzzleDbQuery,

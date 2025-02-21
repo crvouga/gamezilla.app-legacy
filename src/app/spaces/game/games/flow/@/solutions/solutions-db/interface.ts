@@ -1,11 +1,11 @@
 import { Result } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { FlowHash } from '../../flow/hash'
+import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
 
 export type ISolutionsDb = {
-  get: (hash: FlowHash) => Promise<Result<string, Solutions | null>>
+  get: (hash: SolutionHash) => Promise<Result<string, Solutions | null>>
   put: (solutions: Solutions) => Promise<Result<string, null>>
-  zap: (hash: FlowHash) => Promise<Result<string, null>>
-  sub: (hash: FlowHash) => Sub<Solutions>
+  zap: (hash: SolutionHash) => Promise<Result<string, null>>
+  sub: (hash: SolutionHash) => Sub<Solutions>
 }

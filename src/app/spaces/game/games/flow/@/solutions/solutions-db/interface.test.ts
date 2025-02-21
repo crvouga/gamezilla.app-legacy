@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { loggerNoop } from '~/@/logger/impl-noop'
 import { Ok } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import { FlowHash } from '../../flow/hash'
+import { SolutionHash } from '../solution-hash/solution-hash'
 import { VariantGridShorthand } from '../../variant/grid'
 import { Solutions } from '../solutions'
 import { Config, SolutionsDb } from './impl'
@@ -52,7 +52,7 @@ describe(import.meta.file, () => {
         [' ', ' ', ' '],
         [' ', ' ', 'A'],
       ])
-      const hash = FlowHash.init(flow)
+      const hash = SolutionHash.init(flow)
       const zapped = await f.solutionsDb.zap(hash)
 
       const solutions = await Solutions.find({ models: [flow], logger: loggerNoop })
@@ -75,7 +75,7 @@ describe(import.meta.file, () => {
         [' ', ' ', ' '],
         [' ', ' ', 'A'],
       ])
-      const hash = FlowHash.init(flow)
+      const hash = SolutionHash.init(flow)
       const solutions = await Solutions.find({ models: [flow], logger: loggerNoop })
       await f.solutionsDb.put(solutions)
 
