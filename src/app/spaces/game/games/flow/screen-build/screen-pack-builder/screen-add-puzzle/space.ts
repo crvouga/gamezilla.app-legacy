@@ -5,7 +5,7 @@ import { ModelSpace } from './types'
 
 const initSpace = (): ModelSpace => {
   return {
-    screenAddPuzzle_puzzleDbQuery: null,
+    screenAddPuzzle_puzzleQuery: null,
     screenAddPuzzle_selected: [],
   }
 }
@@ -21,7 +21,7 @@ updates.push((input) => {
     case 'screen-pack-builder.screen-add-puzzle.puzzle-db-query-query-changed': {
       return {
         ...input.modelSpace,
-        screenAddPuzzle_puzzleDbQuery: input.msgSpace.query,
+        screenAddPuzzle_puzzleQuery: input.msgSpace.query,
       }
     }
     default: {

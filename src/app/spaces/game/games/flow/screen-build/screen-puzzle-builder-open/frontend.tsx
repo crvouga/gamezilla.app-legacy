@@ -68,7 +68,7 @@ const View: FrontendModule['View'] = (input) => {
       renderBody={() => (
         <PuzzleLoaderFrontend.ViewList
           ctx={input.ctx}
-          model={input.ctx.puzzleDbQuery}
+          model={input.ctx.puzzleLoader}
           query={query}
           onQueryChanged={(query) => {
             input.dispatch({

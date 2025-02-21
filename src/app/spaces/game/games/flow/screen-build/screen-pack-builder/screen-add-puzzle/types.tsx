@@ -4,7 +4,7 @@ import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/query'
 import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 
 export const ModelSpace = p.obj({
-  screenAddPuzzle_puzzleDbQuery: p.maybe(PuzzleQuery),
+  screenAddPuzzle_puzzleQuery: p.maybe(PuzzleQuery),
   screenAddPuzzle_selected: p.arr(PuzzleId),
 })
 

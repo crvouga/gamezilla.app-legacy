@@ -43,7 +43,7 @@ export type MsgToFrontend = {
 }
 
 export type MsgInCmdFrontend = {
-  t: 'puzzle-db-query'
+  t: 'got-puzzle-loader-cmd'
   c: {
     t: 'got-msg'
     msg: MsgFrontend

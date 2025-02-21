@@ -51,7 +51,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   return {
-    t: 'puzzle-db-query',
+    t: 'got-puzzle-loader-cmd',
     c: {
       t: 'got-msg',
       msg,

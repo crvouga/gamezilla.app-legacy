@@ -45,7 +45,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   return {
-    t: 'pack-db-query',
+    t: 'got-pack-loader-cmd',
     c: {
       t: 'got-msg',
       msg,

@@ -3,6 +3,6 @@ import { PuzzleLoaderTypes } from '../puzzle/puzzle-loader'
 import { FlowFrontendCtxBase } from './ctx-base'
 
 export type FlowFrontendCtx = FlowFrontendCtxBase & {
-  puzzleDbQuery: PuzzleLoaderTypes.ModelFrontend
-  packDbQuery: PackLoaderTypes.ModelFrontend
+  puzzleLoader: PuzzleLoaderTypes.ModelFrontend
+  packLoader: PackLoaderTypes.ModelFrontend
 }

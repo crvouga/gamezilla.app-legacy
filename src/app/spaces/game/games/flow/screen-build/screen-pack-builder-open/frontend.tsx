@@ -67,7 +67,7 @@ const View: FrontendModule['View'] = (input) => {
       renderBody={() => (
         <PackLoaderFrontend.ViewList
           {...input}
-          model={input.ctx.packDbQuery}
+          model={input.ctx.packLoader}
           query={query}
           onQueryChanged={(query) => {
             console.log('query changed', query)

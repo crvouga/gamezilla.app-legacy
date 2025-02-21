@@ -24,7 +24,7 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
-  return { t: 'solutions-db-query', c: { t: 'got-msg', msg } }
+  return { t: 'got-solutions-loader-cmd', c: { t: 'got-msg', msg } }
 }
 
 const watch = <TMsg,>(
@@ -32,9 +32,8 @@ const watch = <TMsg,>(
   solutionHash: SolutionHash | null,
   map: (m: MsgFrontend) => TMsg,
 ): Sub<TMsg> => {
-  if (!solutionHash) {
-    return Sub.None
-  }
+  if (!solutionHash) return Sub.None
+
   return Sub.map(ctx.solutionsDb.sub(solutionHash), (solutions) => map({ t: 'got-solutions-db-solutions', solutions }))
 }
 

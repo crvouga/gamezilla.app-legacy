@@ -30,8 +30,8 @@ const init: FrontendModule['init'] = {
   puzzles: {},
   packs: {},
   solutions: {},
-  puzzleDbQuery: PuzzleLoaderTypes.initFrontend,
-  packDbQuery: PackLoaderTypes.initFrontend,
+  puzzleLoader: PuzzleLoaderTypes.initFrontend,
+  packLoader: PackLoaderTypes.initFrontend,
 }
 
 let puzzleDb: IPuzzleDb
@@ -48,8 +48,8 @@ const toFlowFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): Flow
     solutionsDb,
     packs: input.model.packs,
     puzzles: input.model.puzzles,
-    puzzleDbQuery: input.model.puzzleDbQuery,
-    packDbQuery: input.model.packDbQuery,
+    puzzleLoader: input.model.puzzleLoader,
+    packLoader: input.model.packLoader,
     solutions: input.model.solutions,
   }
 }
@@ -131,17 +131,17 @@ const updatePuzzleLoader: FrontendModule['update'] = (input) => {
 
   const updated = PuzzleLoaderFrontend.update({
     ctx,
-    model: input.model.puzzleDbQuery,
-    msg: input.msg?.t === 'puzzle-db-query' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'puzzle-db-query' ? input.msgCmd : null,
+    model: input.model.puzzleLoader,
+    msg: input.msg?.t === 'got-puzzle-loader-msg' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'got-puzzle-loader-cmd' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
-    msgBackend: input.msgBackend?.t === 'puzzle-db-query' ? input.msgBackend.c : null,
+    msgBackend: input.msgBackend?.t === 'got-puzzle-loader-msg' ? input.msgBackend.c : null,
   })
 
   return {
-    model: { ...input.model, puzzleDbQuery: updated.model },
-    eff: Eff.tag('puzzle-db-query', updated.eff),
-    msgCmd: FlowFrontendCmd.tag('puzzle-db-query', updated.msgCmd),
+    model: { ...input.model, puzzleLoader: updated.model },
+    eff: Eff.tag('got-puzzle-loader-msg', updated.eff),
+    msgCmd: FlowFrontendCmd.tag('got-puzzle-loader-msg', updated.msgCmd),
     msgEvt: [],
   }
 }
@@ -151,17 +151,17 @@ const updatePackDbQuery: FrontendModule['update'] = (input) => {
 
   const updated = PackLoaderFrontend.update({
     ctx,
-    model: input.model.packDbQuery,
-    msg: input.msg?.t === 'pack-db-query' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'pack-db-query' ? input.msgCmd : null,
+    model: input.model.packLoader,
+    msg: input.msg?.t === 'got-pack-loader-msg' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'got-pack-loader-cmd' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
-    msgBackend: input.msgBackend?.t === 'pack-db-query' ? input.msgBackend.c : null,
+    msgBackend: input.msgBackend?.t === 'got-pack-loader-msg' ? input.msgBackend.c : null,
   })
 
   return {
-    model: { ...input.model, packDbQuery: updated.model },
-    eff: Eff.tag('pack-db-query', updated.eff),
-    msgCmd: FlowFrontendCmd.tag('pack-db-query', updated.msgCmd),
+    model: { ...input.model, packLoader: updated.model },
+    eff: Eff.tag('got-pack-loader-msg', updated.eff),
+    msgCmd: FlowFrontendCmd.tag('got-pack-loader-msg', updated.msgCmd),
     msgEvt: [],
   }
 }
@@ -303,7 +303,7 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
       }
     }
 
-    case 'pack-db-query': {
+    case 'got-pack-loader-cmd': {
       return {
         model: input.model,
       }

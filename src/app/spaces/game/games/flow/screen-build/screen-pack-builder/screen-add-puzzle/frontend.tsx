@@ -45,7 +45,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const toQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): PuzzleQuery => {
   return (
-    input.modelSpace?.screenAddPuzzle_puzzleDbQuery ?? {
+    input.modelSpace?.screenAddPuzzle_puzzleQuery ?? {
       order: {
         createdAt: 'asc',
       },
@@ -113,7 +113,7 @@ const View: FrontendModule['View'] = (input) => {
         <PuzzleLoaderFrontend.ViewList
           selectable
           ctx={input.ctx}
-          model={input.ctx.puzzleDbQuery}
+          model={input.ctx.puzzleLoader}
           selected={input.modelSpace.screenAddPuzzle_selected}
           query={query}
           onHeaderCheckboxClick={(allPuzzleIds) => {

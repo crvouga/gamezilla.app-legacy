@@ -18,8 +18,8 @@ const isFlowFrontendCmdInternal = <T extends FrontendCmdTypes>(
     case 'flow-cmd.add-packs':
     case 'flow-cmd.remove-puzzles':
     case 'flow-cmd.add-puzzles':
-    case 'puzzle-db-query':
-    case 'pack-db-query':
+    case 'got-puzzle-loader-cmd':
+    case 'got-pack-loader-cmd':
     case 'flow-cmd.add-solutions': {
       return true
     }

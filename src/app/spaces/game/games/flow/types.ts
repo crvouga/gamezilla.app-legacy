@@ -10,11 +10,11 @@ import { FlowBackendCtx } from './@/backend/ctx'
 import { FlowFrontendCmd, FlowFrontendCmdLocal } from './@/frontend/cmd'
 import { FlowFrontendEvtIn } from './@/frontend/evt'
 import { Pack } from './@/pack/pack'
-import { PackLoaderTypes } from './@/pack/pack-loader'
 import type { PackId } from './@/pack/pack-id'
+import { PackLoaderTypes } from './@/pack/pack-loader'
 import type { Puzzle } from './@/puzzle/puzzle'
-import { PuzzleLoaderTypes } from './@/puzzle/puzzle-loader'
 import type { PuzzleId } from './@/puzzle/puzzle-id'
+import { PuzzleLoaderTypes } from './@/puzzle/puzzle-loader'
 import { Solutions } from './@/solutions/solutions'
 import { BuildTypes } from './screen-build'
 import { PlayTypes } from './screen-play'
@@ -29,8 +29,8 @@ export type ModelFrontend = {
   puzzles: { [puzzleId: PuzzleId]: Puzzle }
   packs: { [packId: PackId]: Pack }
   solutions: Solutions
-  puzzleDbQuery: PuzzleLoaderTypes.ModelFrontend
-  packDbQuery: PackLoaderTypes.ModelFrontend
+  puzzleLoader: PuzzleLoaderTypes.ModelFrontend
+  packLoader: PackLoaderTypes.ModelFrontend
   screenBuild: BuildTypes.ModelFrontend
   screenPlay: PlayTypes.ModelFrontend
 }
@@ -49,26 +49,26 @@ export type MsgFrontend =
   | { t: 'got-msg-space'; c: MsgSpace }
   | { t: 'got-msg-build'; c: BuildTypes.MsgFrontend }
   | { t: 'got-msg-play'; c: PlayTypes.MsgFrontend }
-  | { t: 'pack-db-query'; c: PackLoaderTypes.MsgFrontend }
-  | { t: 'puzzle-db-query'; c: PuzzleLoaderTypes.MsgFrontend }
+  | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgFrontend }
+  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgFrontend }
 
 export type MsgBackend =
   | { t: 'got-msg-build'; c: BuildTypes.MsgBackend }
   | { t: 'got-msg-play'; c: PlayTypes.MsgBackend }
-  | { t: 'pack-db-query'; c: PackLoaderTypes.MsgBackend }
-  | { t: 'puzzle-db-query'; c: PuzzleLoaderTypes.MsgBackend }
+  | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgBackend }
+  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgBackend }
 
 export type MsgToBackend =
   | { t: 'got-msg-build'; c: BuildTypes.MsgToBackend }
   | { t: 'got-msg-play'; c: PlayTypes.MsgToBackend }
-  | { t: 'pack-db-query'; c: PackLoaderTypes.MsgToBackend }
-  | { t: 'puzzle-db-query'; c: PuzzleLoaderTypes.MsgToBackend }
+  | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgToBackend }
+  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgToBackend }
 
 export type MsgToFrontend =
   | { t: 'got-msg-build'; c: BuildTypes.MsgToFrontend }
   | { t: 'got-msg-play'; c: PlayTypes.MsgToFrontend }
-  | { t: 'pack-db-query'; c: PackLoaderTypes.MsgToFrontend }
-  | { t: 'puzzle-db-query'; c: PuzzleLoaderTypes.MsgToFrontend }
+  | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgToFrontend }
+  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgToFrontend }
 
 const MODE = ['build', 'play'] as const
 export const Mode = p.enumeration(MODE)
