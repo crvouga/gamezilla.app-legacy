@@ -182,7 +182,9 @@ export const translations: Text = {
   'flow.no-packs': 'パックなし',
   'flow.puzzle-count': (count) => `${count} \u30D1\u30BA\u30EB`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
-  'space-game-flow-edit.editing': '編集',
+  'flow.editing': '編集',
+  'flow.placing': ({ position }) =>
+    position === 'first' ? '\u6700\u521D\u3092\u914D\u7F6E' : '\u6700\u5F8C\u3092\u914D\u7F6E',
   'flow-play.no-hints-available': 'ヒントはありません',
   'spaces.end': '終了',
   'spaces.end-space': 'スペースを終了',

@@ -1,44 +1,57 @@
 import type { Translations } from '~/@/l18n'
 
 export type Text = {
-  'space-game-flow-edit.editing': string
+  'flow.editing': string
+  'flow.placing': (input: { position: 'first' | 'last' }) => string
 }
 
 export const translations: Translations<Text> = {
   ar: {
-    'space-game-flow-edit.editing': 'تحرير',
+    'flow.editing': 'تحرير',
+    'flow.placing': ({ position }) => (position === 'first' ? 'وضع الأول' : 'وضع الأخير'),
   },
   de: {
-    'space-game-flow-edit.editing': 'Bearbeiten',
+    'flow.editing': 'Bearbeiten',
+    'flow.placing': ({ position }) => (position === 'first' ? 'Platziere ersten' : 'Platziere letzten'),
   },
   en: {
-    'space-game-flow-edit.editing': 'Editing',
+    'flow.editing': 'Editing',
+    'flow.placing': ({ position }) => (position === 'first' ? 'Placing first' : 'Placing last'),
   },
   es: {
-    'space-game-flow-edit.editing': 'Edición',
+    'flow.editing': 'Edición',
+    'flow.placing': ({ position }) => (position === 'first' ? 'Colocando primero' : 'Colocando último'),
   },
   fr: {
-    'space-game-flow-edit.editing': 'Édition',
+    'flow.editing': 'Édition',
+    'flow.placing': ({ position }) => (position === 'first' ? 'Placement du premier' : 'Placement du dernier'),
   },
   hi: {
-    'space-game-flow-edit.editing': 'संपादन',
+    'flow.editing': 'संपादन',
+    'flow.placing': ({ position }) => (position === 'first' ? 'पहला रख रहे हैं' : 'अंतिम रख रहे हैं'),
   },
   it: {
-    'space-game-flow-edit.editing': 'Modifica',
+    'flow.editing': 'Modifica',
+    'flow.placing': ({ position }) => (position === 'first' ? 'Posizionamento primo' : 'Posizionamento ultimo'),
   },
   ja: {
-    'space-game-flow-edit.editing': '編集',
+    'flow.editing': '編集',
+    'flow.placing': ({ position }) => (position === 'first' ? '最初を配置' : '最後を配置'),
   },
   ko: {
-    'space-game-flow-edit.editing': '편집',
+    'flow.editing': '편집',
+    'flow.placing': ({ position }) => (position === 'first' ? '첫 번째 배치' : '마지막 배치'),
   },
   pt: {
-    'space-game-flow-edit.editing': 'Edição',
+    'flow.editing': 'Edição',
+    'flow.placing': ({ position }) => (position === 'first' ? 'Colocando primeiro' : 'Colocando último'),
   },
   ru: {
-    'space-game-flow-edit.editing': 'редактирование',
+    'flow.editing': 'редактирование',
+    'flow.placing': ({ position }) => (position === 'first' ? 'Размещение первого' : 'Размещение последнего'),
   },
   zh: {
-    'space-game-flow-edit.editing': '编辑',
+    'flow.editing': '编辑',
+    'flow.placing': ({ position }) => (position === 'first' ? '放置第一个' : '放置最后一个'),
   },
 }

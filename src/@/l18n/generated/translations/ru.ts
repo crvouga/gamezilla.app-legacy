@@ -184,7 +184,11 @@ export const translations: Text = {
   'flow.no-packs': 'Нет пакетов',
   'flow.puzzle-count': (count) => `${count} \u0433\u043E\u043B\u043E\u0432\u043E\u043B\u043E\u043C\u043E\u043A`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
-  'space-game-flow-edit.editing': 'редактирование',
+  'flow.editing': 'редактирование',
+  'flow.placing': ({ position }) =>
+    position === 'first'
+      ? '\u0420\u0430\u0437\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043F\u0435\u0440\u0432\u043E\u0433\u043E'
+      : '\u0420\u0430\u0437\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043F\u043E\u0441\u043B\u0435\u0434\u043D\u0435\u0433\u043E',
   'flow-play.no-hints-available': 'Подсказки отсутствуют',
   'spaces.end': 'Конец',
   'spaces.end-space': 'Завершить пространство',

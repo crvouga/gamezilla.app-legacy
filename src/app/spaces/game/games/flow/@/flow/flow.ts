@@ -258,7 +258,7 @@ export const deriveTerminalHash = (terminals: Model['terminalsByGroupId']): stri
   const sorted = values.sort(descend((t) => GroupId.toOrder(t.groupId)))
   const hashes = sorted.map((terminal) => Terminal.deriveHash(terminal))
   const hash = hashes.join('_')
-  return hash
+  return djb2Hash(hash)
 }
 
 /**
@@ -282,6 +282,7 @@ export const removeEdge = (model: Model, edgeId: EdgeId): Model => {
   return {
     ...model,
     edges: remainingEdges,
+    edgeHash: deriveEdgeHash(remainingEdges),
   }
 }
 

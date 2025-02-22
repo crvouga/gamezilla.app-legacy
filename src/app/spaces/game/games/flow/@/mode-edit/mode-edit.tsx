@@ -1,7 +1,7 @@
 import { eq } from '~/@/equals/equals'
 import { History } from '~/@/history'
 import { p } from '~/@/parser'
-import { IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/@/ui'
+import { IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark, Typography } from '~/@/ui'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -11,6 +11,7 @@ import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { Flow } from '../flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
+import { BoardLayout } from '../ui/board-layout'
 import { Color } from '../ui/color'
 import { Variant, VariantBoard, VariantDimensions } from '../variant'
 
@@ -445,7 +446,7 @@ export const View = (input: {
       id='mode-edit-screen'
       ctx={input.ctx}
       renderBody={() => (
-        <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-auto'>
+        <BoardLayout>
           <ViewStatus {...input} />
 
           <VariantBoard.View
@@ -454,7 +455,7 @@ export const View = (input: {
             onPressDown={(nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId })}
             onPressUp={(nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId })}
           />
-        </div>
+        </BoardLayout>
       )}
       actionBar={{
         variant: {
@@ -536,7 +537,7 @@ const ViewStatus: typeof View = (input) => {
   const position = toCurrentPlacingTerminalPosition(input.model) === 'start' ? 'first' : 'last'
   return (
     <div className='flex w-full items-center justify-center gap-1 p-2'>
-      {`Placing ${position}`}
+      <Typography variant='body' text={input.ctx.t('flow.placing', { position })} />
       <ViewTerminal groupId={toCurrentPlacingGroupId(input.model)} className='size-6' />
     </div>
   )

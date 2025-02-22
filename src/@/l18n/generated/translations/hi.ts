@@ -184,7 +184,11 @@ export const translations: Text = {
   'flow.no-packs': 'कोई पैक नहीं',
   'flow.puzzle-count': (count) => `${count} \u092A\u0939\u0947\u0932\u093F\u092F\u093E\u0901`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
-  'space-game-flow-edit.editing': 'संपादन',
+  'flow.editing': 'संपादन',
+  'flow.placing': ({ position }) =>
+    position === 'first'
+      ? '\u092A\u0939\u0932\u093E \u0930\u0916 \u0930\u0939\u0947 \u0939\u0948\u0902'
+      : '\u0905\u0902\u0924\u093F\u092E \u0930\u0916 \u0930\u0939\u0947 \u0939\u0948\u0902',
   'flow-play.no-hints-available': 'कोई संकेत उपलब्ध नहीं है',
   'spaces.end': 'समाप्त',
   'spaces.end-space': 'स्थान समाप्त करें',

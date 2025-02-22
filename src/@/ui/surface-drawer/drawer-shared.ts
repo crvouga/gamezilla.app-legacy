@@ -18,6 +18,9 @@ export type DrawerInput = PrivateDrawerInput & {
   }
 }
 
+/**
+ * This prevents a console error when closing the drawer. Something about hiding focused elements.
+ */
 export const preventConsoleErrorWhenClosingDrawer = (event: {
   currentTarget?: HTMLDivElement | HTMLButtonElement | HTMLFormElement | null
 }) => {

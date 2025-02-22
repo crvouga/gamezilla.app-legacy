@@ -4,6 +4,7 @@ import { isErr, Ok } from '~/@/result'
 import { Solution } from '../solution'
 import { Solutions } from '../solutions'
 import { ISolutionsDb } from './interface'
+import { Sub } from '~/@/sub'
 
 export type Config = {
   t: 'key-value-db'
@@ -22,9 +23,9 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
 
       if (isErr(got)) return got
 
-      if (!got.value) return Ok({})
+      if (!got.value) return Ok([])
 
-      return Ok({ [hash]: got.value ?? [] })
+      return Ok([{ [hash]: got.value }])
     },
     async put(solutions) {
       for (const [hash, sols] of Solutions.iter(solutions)) {
@@ -41,7 +42,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
       return Ok(null)
     },
     sub(_hash) {
-      throw new Error('Not implemented')
+      return Sub.None
     },
   }
 }

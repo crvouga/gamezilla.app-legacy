@@ -17,8 +17,8 @@ export type Config = {
 const Row = p.obj({
   id: p.str,
   solutions: p.or(p.str, p.json),
-  created_at_posix: p.maybe(Posix),
-  last_updated_at_posix: p.maybe(Posix),
+  created_at_posix: p.maybe(p.or(Posix, p.str)),
+  last_updated_at_posix: p.maybe(p.or(Posix, p.str)),
 })
 
 export type Row = p.Infer<typeof Row>
@@ -34,9 +34,15 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
       const queried = await config.dbConnSql.query({
         parser: Row,
         sql: `
-          SELECT id, solutions 
-          FROM game_flow_solutions 
-          WHERE id = :id
+          SELECT
+            id,
+            solutions,
+            created_at_posix,
+            last_updated_at_posix
+          FROM
+            game_flow_solutions
+          WHERE
+            id = :id
         `,
         vars: {
           id: hash,
@@ -47,7 +53,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
 
       const row = queried.value[0]
 
-      if (!row) return Ok({})
+      if (!row) return Ok([])
 
       const json = unwrapOr(typeof row.solutions === 'string' ? Json.parse(row.solutions) : Ok(row.solutions), [])
 
@@ -57,7 +63,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
 
       const solutions: Solutions = { [hash]: parsed.value }
 
-      return Ok(solutions)
+      return Ok([solutions])
     },
 
     async put(solutions) {
@@ -127,12 +133,10 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
           vars: { id: hash },
         }),
         (rows) => {
-          return (
-            rows.flatMap((row) => {
-              const solutions = rowToSolutions(row)
-              return solutions ? [solutions] : []
-            })[0] ?? null
-          )
+          return rows.flatMap((row) => {
+            const solutions = rowToSolutions(row)
+            return solutions ? [solutions] : []
+          })
         },
       )
     },

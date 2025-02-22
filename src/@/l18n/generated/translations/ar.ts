@@ -182,7 +182,11 @@ export const translations: Text = {
   'flow.no-packs': 'لا توجد حزم',
   'flow.puzzle-count': (count) => `${count} \u0623\u0644\u063A\u0627\u0632`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
-  'space-game-flow-edit.editing': 'تحرير',
+  'flow.editing': 'تحرير',
+  'flow.placing': ({ position }) =>
+    position === 'first'
+      ? '\u0648\u0636\u0639 \u0627\u0644\u0623\u0648\u0644'
+      : '\u0648\u0636\u0639 \u0627\u0644\u0623\u062E\u064A\u0631',
   'flow-play.no-hints-available': 'لا تتوفر تلميحات',
   'spaces.end': 'نهاية',
   'spaces.end-space': 'انهاء المساحة',

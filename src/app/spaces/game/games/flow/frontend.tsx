@@ -284,7 +284,7 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          solutions: Solutions.merge(input.model.solutions, input.msgCmd.solutions),
+          solutions: input.msgCmd.solutions.reduce(Solutions.merge, input.model.solutions),
         },
       }
     }

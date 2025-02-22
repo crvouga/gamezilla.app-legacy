@@ -179,7 +179,9 @@ export const translations: Text = {
   'flow.no-packs': '没有包',
   'flow.puzzle-count': (count) => `${count} \u62FC\u56FE`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
-  'space-game-flow-edit.editing': '编辑',
+  'flow.editing': '编辑',
+  'flow.placing': ({ position }) =>
+    position === 'first' ? '\u653E\u7F6E\u7B2C\u4E00\u4E2A' : '\u653E\u7F6E\u6700\u540E\u4E00\u4E2A',
   'flow-play.no-hints-available': '没有提示',
   'spaces.end': '结束',
   'spaces.end-space': '结束空间',

@@ -179,7 +179,9 @@ export const translations: Text = {
   'flow.no-packs': '팩 없음',
   'flow.puzzle-count': (count) => `${count} \uD37C\uC990`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
-  'space-game-flow-edit.editing': '편집',
+  'flow.editing': '편집',
+  'flow.placing': ({ position }) =>
+    position === 'first' ? '\uCCAB \uBC88\uC9F8 \uBC30\uCE58' : '\uB9C8\uC9C0\uB9C9 \uBC30\uCE58',
   'flow-play.no-hints-available': '힌트 없음',
   'spaces.end': '종료',
   'spaces.end-space': '공간 종료',
