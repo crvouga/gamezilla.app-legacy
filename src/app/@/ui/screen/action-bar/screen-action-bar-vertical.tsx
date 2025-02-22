@@ -2,6 +2,7 @@ import { Spinner, Typography, cn } from '~/@/ui'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenNavBarTabletRoot } from '../nav-bar/screen-nav-bar-tablet'
 import { ScreenAction, ScreenActionBarProps } from './screen-action-bar-props'
+import { Frag } from '~/@/ui/frag'
 
 const SIZE = 'md' as 'md' | 'sm'
 
@@ -57,7 +58,7 @@ const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
       {input.actions.map((action) => {
         if (!action) return null
         const button = <ScreenActionButton {...action} size={SIZE} key={action.label} />
-        if (action.renderSurface) return action.renderSurface(button)
+        if (action.renderSurface) return <Frag key={action.label}>{action.renderSurface(button)}</Frag>
         return button
       })}
     </div>

@@ -135,7 +135,6 @@ const updatePuzzleLoader: FrontendModule['update'] = (input) => {
     msg: input.msg?.t === 'got-puzzle-loader-msg' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'got-puzzle-loader-cmd' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
-    msgBackend: input.msgBackend?.t === 'got-puzzle-loader-msg' ? input.msgBackend.c : null,
   })
 
   return {

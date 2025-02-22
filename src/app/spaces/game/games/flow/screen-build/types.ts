@@ -17,6 +17,7 @@ import { ScreenPackBuilderOpenTypes } from './pack-builder/screen-pack-builder-o
 import { ScreenPuzzleBuilderTypes } from './puzzle-builder/screen-puzzle-builder'
 import { ScreenPuzzleBuilderOpenTypes } from './puzzle-builder/screen-puzzle-builder-open'
 import { ScreenMainMenu } from './screen-main-menu'
+import { SolutionsLoaderTypes } from '../@/solutions/solutions-loader'
 
 //
 //
@@ -60,24 +61,28 @@ export type MsgFrontend =
   | { t: 'got-msg-space'; c: MsgSpace }
   | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgFrontend }
   | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgFrontend }
+  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgFrontend }
 
 export type MsgBackend =
   | ScreenPuzzleBuilderOpenTypes.MsgBackend
   | ScreenPuzzleBuilderTypes.MsgBackend
   | ScreenPackBuilderOpenTypes.MsgBackend
   | { t: 'got-screen-pack-builder-msg'; c: ScreenPackBuilderTypes.MsgBackend }
+  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgBackend }
 
 export type MsgToBackend =
   | ScreenPuzzleBuilderTypes.MsgToBackend
   | ScreenPuzzleBuilderOpenTypes.MsgToBackend
   | ScreenPackBuilderOpenTypes.MsgToBackend
   | { t: 'got-screen-pack-builder-msg'; c: ScreenPackBuilderTypes.MsgToBackend }
+  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgToBackend }
 
 export type MsgToFrontend =
   | ScreenPuzzleBuilderTypes.MsgToFrontend
   | ScreenPuzzleBuilderOpenTypes.MsgToFrontend
   | ScreenPackBuilderOpenTypes.MsgToFrontend
   | { t: 'got-screen-pack-builder-msg'; c: ScreenPackBuilderTypes.MsgToFrontend }
+  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgToFrontend }
 
 //
 //

@@ -145,7 +145,7 @@ const updateSpace: typeof updateSpaceMain = (input) => {
   return updates.reduce((acc, update) => update({ ...input, modelSpace: acc }), input.modelSpace)
 }
 
-export const ScreenPuzzleBuildSpace = {
+export const ScreenPuzzleBuilderSpace = {
   updateSpace,
   toFlow,
   toStatus,

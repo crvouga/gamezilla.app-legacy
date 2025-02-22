@@ -16,6 +16,7 @@ import type { Puzzle } from './@/puzzle/puzzle'
 import type { PuzzleId } from './@/puzzle/puzzle-id'
 import { PuzzleLoaderTypes } from './@/puzzle/puzzle-loader'
 import { Solutions } from './@/solutions/solutions'
+import { SolutionsLoaderTypes } from './@/solutions/solutions-loader'
 import { BuildTypes } from './screen-build'
 import { PlayTypes } from './screen-play'
 
@@ -51,6 +52,7 @@ export type MsgFrontend =
   | { t: 'got-msg-play'; c: PlayTypes.MsgFrontend }
   | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgFrontend }
   | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgFrontend }
+  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgFrontend }
 
 export type MsgBackend =
   | { t: 'got-msg-build'; c: BuildTypes.MsgBackend }

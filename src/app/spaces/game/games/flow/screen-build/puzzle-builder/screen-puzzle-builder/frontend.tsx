@@ -11,9 +11,11 @@ import { ProfileListItem } from '../../../../@/ui/list-item-profile'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { ModeEdit } from '../../../@/mode-edit'
 import { ModePlay } from '../../../@/mode-play'
+import { SolutionHash } from '../../../@/solutions/solution-hash/solution-hash'
+import { SolutionsLoaderFrontend } from '../../../@/solutions/solutions-loader/frontend'
 import { VariantBoard } from '../../../@/variant'
 import * as BuilderTypes from '../../types'
-import { ScreenPuzzleBuildSpace } from './space'
+import { ScreenPuzzleBuilderSpace } from './space'
 import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './surface-save-changes/frontend'
@@ -97,7 +99,7 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
     case 'screen-puzzle-builder.got-play-msg': {
       if (input.modelSpace.screenPuzzleBuilder?.mode.t !== 'play') return { model: input.model }
 
-      const flow = ScreenPuzzleBuildSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
+      const flow = ScreenPuzzleBuilderSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
       const updated = ModePlay.update({
         msg: input.msgSpace.c,
         model: input.modelSpace.screenPuzzleBuilder.modePlay,
@@ -258,9 +260,9 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
   if (!puzzleBuilder) return null
 
-  const flow = ScreenPuzzleBuildSpace.toFlow(puzzleBuilder)
+  const flow = ScreenPuzzleBuilderSpace.toFlow(puzzleBuilder)
   const status = input.modelSpace.screenPuzzleBuilder
-    ? ScreenPuzzleBuildSpace.toStatus(input.modelSpace.screenPuzzleBuilder)
+    ? ScreenPuzzleBuilderSpace.toStatus(input.modelSpace.screenPuzzleBuilder)
     : 'solving'
 
   return (
@@ -361,8 +363,12 @@ const updateMoreDrawer: BuilderTypes.FrontendModule['update'] = (input) => {
   }
 }
 
-const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (_input) => {
-  return Sub.None
+const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (input) => {
+  if (!input.modelSpace.screenPuzzleBuilder) return Sub.None
+
+  const flow = ScreenPuzzleBuilderSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
+  const solutionsHash = SolutionHash.init(flow)
+  return SolutionsLoaderFrontend.watch(input.ctx, solutionsHash, (msg) => ({ t: 'got-solutions-loader-msg', c: msg }))
 }
 
 export const ScreenPuzzleBuilderFrontend = {
