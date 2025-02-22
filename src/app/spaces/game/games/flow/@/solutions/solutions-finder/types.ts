@@ -9,6 +9,7 @@ import { FlowBackendCtx } from '../../backend/ctx'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { FlowFrontendEvtIn } from '../../frontend/evt'
+import { Variant } from '../../variant'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
 
@@ -51,7 +52,9 @@ export type FrontendModule = AppFrontendModule<{
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  Ctx: FlowFrontendCtxBase
+  Ctx: FlowFrontendCtxBase & {
+    flow?: Variant.Model | null
+  }
   MsgEvtIn: FlowFrontendEvtIn
   MsgCmdOut: FlowFrontendCmdRoot | SpaceFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>
   MsgCmdIn: MsgInCmdFrontend

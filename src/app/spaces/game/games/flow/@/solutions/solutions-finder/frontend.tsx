@@ -2,23 +2,39 @@ import { Button, Dialog, IconLightbulb } from '~/@/ui'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { SurfaceActions } from '~/@/ui/surface/surface-actions'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
+import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SolutionHash } from '../solution-hash/solution-hash'
-import type { FrontendModule, MsgFrontend, MsgInCmdFrontend } from './types'
+import { initFrontend, type FrontendModule, type MsgFrontend, type MsgInCmdFrontend } from './types'
 
 const update: FrontendModule['update'] = (input) => {
+  switch (input.msgCmd?.t) {
+    case 'flow-cmd.got-solutions-finder-cmd': {
+      return update({ ...input, msgCmd: null, msg: input.msgCmd.c.msg })
+    }
+  }
+
+  switch (input.msg?.t) {
+    case 'dialog.clicked-open': {
+      return {
+        model: { ...input.model, open: 'find-solutions-confirmation' },
+        msgCmd: [playSound(APP_SOUND.surfaceOpened)],
+      }
+    }
+    case 'dialog.clicked-close': {
+      return {
+        model: { ...input.model, open: null },
+        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
+      }
+    }
+  }
   return { model: input.model }
 }
 
-const ViewDialog = (
-  input: Parameters<FrontendModule['View']>[0] & {
-    solutionHash: SolutionHash
-  },
-) => {
-  const open = false
-  const onClose = () => {}
+const ViewSurface: FrontendModule['View'] = (input) => {
+  const onClose = () => input.dispatch({ t: 'dialog.clicked-close' })
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={input.model.open === 'find-solutions-confirmation'} onClose={onClose}>
       <DialogSurface>
         <SurfaceHeader ctx={input.ctx} title={input.ctx.t('app.congratulations')} onClose={onClose} />
 
@@ -31,7 +47,11 @@ const ViewDialog = (
           <Button
             className='flex-1'
             text={input.ctx.t('flow.select-next-pack')}
-            onClick={() => input.dispatch({ t: 'clicked-find-solutions', hash: input.solutionHash })}
+            onClick={() => {
+              if (!input.ctx.flow) return
+              const hash = SolutionHash.init(input.ctx.flow)
+              input.dispatch({ t: 'clicked-find-solutions', hash })
+            }}
           />
         </SurfaceActions>
       </DialogSurface>
@@ -45,6 +65,13 @@ const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[
       icon: (input) => <IconLightbulb {...input} />,
       label: input.ctx.t('flow.find-solutions'),
       onClick: () => input.dispatch({ t: 'dialog.clicked-open' }),
+      renderSurface: (vDom) => (
+        <>
+          {vDom}
+          input.model.open={String(input.model.open)}
+          <ViewSurface {...input} />
+        </>
+      ),
     },
   ]
 }
@@ -60,8 +87,9 @@ const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
 }
 
 export const SolutionsFinderFrontend = {
+  init: initFrontend,
   update,
-  ViewDialog,
+  ViewDialog: ViewSurface,
   viewAction,
   gotMsg,
 }
