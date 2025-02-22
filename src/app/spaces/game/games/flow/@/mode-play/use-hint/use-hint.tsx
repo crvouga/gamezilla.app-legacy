@@ -157,13 +157,15 @@ export const toFlow = (model: Model, flow: Variant.Model): Variant.Model => {
   }
 }
 
+export type ViewCtx = AppFrontendCtx &
+  Ctx & {
+    solutions: Solutions
+  }
+
 export const viewUseHintAction = (input: {
   model: Model
   dispatch: (msg: Msg) => void
-  ctx: AppFrontendCtx &
-    Ctx & {
-      solutions: Solutions
-    }
+  ctx: ViewCtx
   disabled: boolean
 }): ScreenAction => {
   return {

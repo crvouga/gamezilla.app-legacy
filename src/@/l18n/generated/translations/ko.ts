@@ -175,6 +175,7 @@ export const translations: Text = {
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': '퍼즐이 없습니다',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} / ${totalCount} \uC120\uD0DD\uB428`,
+  'flow.find-solutions': '해결 방법 찾기',
   'flow.no-packs': '팩 없음',
   'flow.puzzle-count': (count) => `${count} \uD37C\uC990`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,

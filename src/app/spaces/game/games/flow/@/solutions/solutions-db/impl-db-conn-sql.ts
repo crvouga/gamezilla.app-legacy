@@ -3,6 +3,7 @@ import { Json } from '~/@/json/json'
 import { p } from '~/@/parser'
 import { Err, isErr, Ok, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
+import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Solution } from '../solution'
 import { Solutions } from '../solutions'
@@ -21,6 +22,11 @@ const Row = p.obj({
 })
 
 export type Row = p.Infer<typeof Row>
+
+const rowToSolutions = (row: Row): Solutions | null => {
+  const json = unwrapOr(typeof row.solutions === 'string' ? Json.parse(row.solutions) : Ok(row.solutions), [])
+  return p.arr(Solution).parse(json)
+}
 
 export const SolutionsDb = (config: Config): ISolutionsDb => {
   return {
@@ -103,8 +109,32 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
       return Ok(null)
     },
 
-    sub(_hash) {
-      throw new Error('Not implemented')
+    sub(hash) {
+      return Sub.map(
+        config.dbConnSql.sub({
+          parser: Row,
+          sql: `
+            SELECT
+              id,
+              solutions,
+              created_at_posix,
+              last_updated_at_posix
+            FROM
+              game_flow_solutions
+            WHERE
+              id = :id
+          `,
+          vars: { id: hash },
+        }),
+        (rows) => {
+          return (
+            rows.flatMap((row) => {
+              const solutions = rowToSolutions(row)
+              return solutions ? [solutions] : []
+            })[0] ?? null
+          )
+        },
+      )
     },
   }
 }

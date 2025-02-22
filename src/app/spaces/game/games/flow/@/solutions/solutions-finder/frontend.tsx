@@ -39,11 +39,11 @@ const ViewDialog = (
   )
 }
 
-const viewHintAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
+const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
   return [
     {
       icon: (input) => <IconLightbulb {...input} />,
-      label: input.ctx.t('game.hint'),
+      label: input.ctx.t('flow.find-solutions'),
       onClick: () => input.dispatch({ t: 'dialog.clicked-open' }),
     },
   ]
@@ -52,5 +52,5 @@ const viewHintAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAct
 export const SolutionsFinderFrontend = {
   update,
   ViewDialog,
-  viewHintAction,
+  viewAction,
 }

@@ -80,6 +80,11 @@ export const Model = p.obj({
   pipesBySourceId: p.dict(NodeId, Pipe),
 
   /**
+   * A hash of the terminals in the puzzle. Used for memoization.
+   */
+  terminalHash: p.maybe(p.or(p.str, p.num)),
+
+  /**
    * A hash of the edges in the puzzle. Used for memoization.
    */
   edgeHash: p.maybe(p.or(p.str, p.num)),
@@ -101,8 +106,9 @@ export const init: Model = {
   edges: {},
   terminalsByGroupId: {},
   pipesBySourceId: {},
-  edgeHash: 0,
-  nodeHash: 0,
+  edgeHash: null,
+  nodeHash: null,
+  terminalHash: null,
 }
 
 /**

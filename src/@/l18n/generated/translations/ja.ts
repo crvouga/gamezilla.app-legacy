@@ -178,6 +178,7 @@ export const translations: Text = {
   'flow.no-puzzles': 'パズルなし',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) =>
     `${selectedCount} / ${totalCount} \u304C\u9078\u629E\u3055\u308C\u307E\u3057\u305F`,
+  'flow.find-solutions': '解決策を見つける',
   'flow.no-packs': 'パックなし',
   'flow.puzzle-count': (count) => `${count} \u30D1\u30BA\u30EB`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,

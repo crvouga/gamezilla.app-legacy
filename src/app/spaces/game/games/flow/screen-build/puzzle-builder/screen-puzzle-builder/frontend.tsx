@@ -11,7 +11,6 @@ import { ProfileListItem } from '../../../../@/ui/list-item-profile'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { ModeEdit } from '../../../@/mode-edit'
 import { ModePlay } from '../../../@/mode-play'
-import { SolutionHash } from '../../../@/solutions/solution-hash/solution-hash'
 import { SolutionsLoaderFrontend } from '../../../@/solutions/solutions-loader/frontend'
 import { VariantBoard } from '../../../@/variant'
 import * as BuilderTypes from '../../types'
@@ -37,6 +36,7 @@ const update: BuilderTypes.FrontendModule['update'] = (input) => {
     (model) => updateFromMsgSpace({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
+    (model) => updateSolutionsLoader({ ...input, model }),
   )
 }
 
@@ -261,9 +261,6 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
   if (!puzzleBuilder) return null
 
   const flow = ScreenPuzzleBuilderSpace.toFlow(puzzleBuilder)
-  const status = input.modelSpace.screenPuzzleBuilder
-    ? ScreenPuzzleBuilderSpace.toStatus(input.modelSpace.screenPuzzleBuilder)
-    : 'solving'
 
   return (
     <ScreenLayout
@@ -275,7 +272,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
         title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
       }}
       renderBody={() => (
-        <div className='flex w-full flex-1 flex-col'>
+        <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-auto'>
           <div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>
           <ModePlay.View
             model={puzzleBuilder.modePlay}
@@ -289,17 +286,11 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
         variant: {
           t: 'uniform',
           actions: [
-            ModePlay.viewHintAction({
+            ...ModePlay.viewScreenActions({
               ctx: ModePlay.initCtx({ ...input.ctx, flow }),
               dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
               model: puzzleBuilder.modePlay,
-              disabled: status === 'solved',
-            }),
-            ModePlay.viewResetAction({
-              ctx: input.ctx,
-              dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
               flow,
-              model: puzzleBuilder.modePlay,
             }),
           ],
         },
@@ -363,13 +354,37 @@ const updateMoreDrawer: BuilderTypes.FrontendModule['update'] = (input) => {
   }
 }
 
-const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (input) => {
-  if (!input.modelSpace.screenPuzzleBuilder) return Sub.None
+//
+//
+//
+//
+//
+//
 
-  const flow = ScreenPuzzleBuilderSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
-  const solutionsHash = SolutionHash.init(flow)
-  return SolutionsLoaderFrontend.watch(input.ctx, solutionsHash, (msg) => ({ t: 'got-solutions-loader-msg', c: msg }))
+const updateSolutionsLoader: BuilderTypes.FrontendModule['update'] = (input) => {
+  switch (input.msg?.t) {
+    case 'got-solutions-loader-msg': {
+      return { model: input.model, msgCmd: [SolutionsLoaderFrontend.gotMsg(input.msg.c)] }
+    }
+  }
+  return { model: input.model }
 }
+
+const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (_input) => {
+  return Sub.None
+  // if (!input.modelSpace.screenPuzzleBuilder) return Sub.None
+
+  // const flow = ScreenPuzzleBuilderSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
+  // const solutionsHash = SolutionHash.init(flow)
+  // return SolutionsLoaderFrontend.watch(input.ctx, solutionsHash, (msg) => ({ t: 'got-solutions-loader-msg', c: msg }))
+}
+
+//
+//
+//
+//
+//
+//
 
 export const ScreenPuzzleBuilderFrontend = {
   update,

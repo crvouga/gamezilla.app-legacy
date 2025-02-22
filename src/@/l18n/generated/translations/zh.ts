@@ -175,6 +175,7 @@ export const translations: Text = {
   'flow.no-puzzles': '没有拼图',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) =>
     `\u5DF2\u9009\u62E9 ${selectedCount} \u4E2A\uFF0C\u5171 ${totalCount} \u4E2A`,
+  'flow.find-solutions': '找到解决方案',
   'flow.no-packs': '没有包',
   'flow.puzzle-count': (count) => `${count} \u62FC\u56FE`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,

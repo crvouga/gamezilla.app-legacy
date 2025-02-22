@@ -2,11 +2,13 @@ import type { FrontendCmdTypes } from '~/app/@/frontend/cmd'
 import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
 import { PackLoaderTypes } from '../pack/pack-loader'
 import { PuzzleLoaderTypes } from '../puzzle/puzzle-loader'
+import { SolutionsLoaderTypes } from '../solutions/solutions-loader'
 import { FlowFrontendCmdRoot } from './cmd-root'
 
 type FlowFrontendCmdInternal =
   | PackLoaderTypes.MsgInCmdFrontend
   | PuzzleLoaderTypes.MsgInCmdFrontend
+  | SolutionsLoaderTypes.MsgInCmdFrontend
   | FlowFrontendCmdRoot
 
 export type FlowFrontendCmd<T extends FrontendCmdTypes> = SpaceFrontendCmd<T> | FlowFrontendCmdInternal
@@ -20,6 +22,7 @@ const isFlowFrontendCmdInternal = <T extends FrontendCmdTypes>(
     case 'flow-cmd.add-puzzles':
     case 'got-puzzle-loader-cmd':
     case 'got-pack-loader-cmd':
+    case 'got-solutions-loader-cmd':
     case 'flow-cmd.add-solutions': {
       return true
     }

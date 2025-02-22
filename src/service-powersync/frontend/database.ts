@@ -1,8 +1,7 @@
 import { PowerSyncDatabase } from '@powersync/web'
 import Logger from 'js-logger'
-import { Connector } from './backend-connector'
-import { AppSchema } from './database-schema'
 import { PubSub } from '~/@/sub'
+import { AppSchema } from './database-schema'
 
 Logger.useDefaults()
 Logger.setLevel(Logger.DEBUG)
@@ -63,12 +62,12 @@ export const setupNewPowerSyncClient = async () => {
   // @ts-expect-error - Expose powerSync to the window for debugging
   window.powerSync = powerSync.database
 
-  const connector = new Connector()
+  // const connector = new Connector()
 
-  powerSync.database.connect(connector).then(() => {
-    console.log('PowerSync connected to backend')
-    powerSync.events.pub({ t: 'connected' })
-  })
+  // powerSync.database.connect(connector).then(() => {
+  //   console.log('PowerSync connected to backend')
+  //   powerSync.events.pub({ t: 'connected' })
+  // })
 
   return powerSync
 }

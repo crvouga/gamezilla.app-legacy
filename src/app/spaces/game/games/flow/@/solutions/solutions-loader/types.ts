@@ -18,7 +18,7 @@ export type ModelBackend = null
 
 export type MsgFrontend = {
   t: 'got-solutions-db-solutions'
-  solutions: Solutions
+  solutions: Solutions | null
 }
 
 export type MsgBackend = { t: 'noop' }

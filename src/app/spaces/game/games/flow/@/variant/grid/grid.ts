@@ -70,6 +70,7 @@ export const init = (input: {
     edges: {},
     edgeHash: null,
     nodeHash: null,
+    terminalHash: null,
     Flow: true,
     nodes: {},
     terminalsByGroupId: {},

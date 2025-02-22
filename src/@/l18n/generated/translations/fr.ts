@@ -175,6 +175,7 @@ export const translations: Text = {
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': 'Aucun puzzle',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} de ${totalCount} s\xE9lectionn\xE9s`,
+  'flow.find-solutions': 'Trouver des solutions',
   'flow.no-packs': 'Aucun pack',
   'flow.puzzle-count': (count) => `${count} puzzles`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,

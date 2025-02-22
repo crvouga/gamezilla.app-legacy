@@ -180,6 +180,7 @@ export const translations: Text = {
   'flow.no-puzzles': 'कोई पहेली नहीं',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) =>
     `${selectedCount} \u0915\u093E ${totalCount} \u091A\u092F\u0928\u093F\u0924`,
+  'flow.find-solutions': 'समाधान ढूंढें',
   'flow.no-packs': 'कोई पैक नहीं',
   'flow.puzzle-count': (count) => `${count} \u092A\u0939\u0947\u0932\u093F\u092F\u093E\u0901`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,

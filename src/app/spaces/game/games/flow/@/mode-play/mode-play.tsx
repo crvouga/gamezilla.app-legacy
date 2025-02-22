@@ -543,7 +543,7 @@ export const View = (input: {
 
 export const viewHintAction = UseHint.viewUseHintAction
 
-export const viewResetAction = (input: {
+const viewResetAction = (input: {
   flow: Variant.Model
   model: Model
   dispatch: (m: Msg) => void
@@ -558,6 +558,29 @@ export const viewResetAction = (input: {
     onClick: () => input.dispatch({ t: 'user-clicked-reset' }),
     disabled,
   })
+}
+
+export const viewScreenActions = (input: {
+  flow: Variant.Model
+  model: Model
+  dispatch: (m: Msg) => void
+  ctx: UseHint.ViewCtx
+}): ScreenAction[] => {
+  const status = toStatus({ flow: input.flow, model: input.model })
+  return [
+    viewHintAction({
+      ctx: input.ctx,
+      dispatch: input.dispatch,
+      model: input.model,
+      disabled: status === 'solved',
+    }),
+    viewResetAction({
+      ctx: input.ctx,
+      dispatch: input.dispatch,
+      flow: input.flow,
+      model: input.model,
+    }),
+  ]
 }
 
 const defaultCheckmarkAnimationDuration = TimeSpan.seconds(1 / 2)
