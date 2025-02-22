@@ -22,6 +22,11 @@ export type ModelFrontend = {
   }
 }
 
+export const initFrontend: ModelFrontend = {
+  open: null,
+  requests: {},
+}
+
 export type MsgFrontend =
   | { t: 'clicked-find-solutions'; hash: SolutionHash }
   | { t: 'dialog.clicked-open' }

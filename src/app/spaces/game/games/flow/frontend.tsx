@@ -20,6 +20,7 @@ import { PuzzleLoaderFrontend } from './@/puzzle/puzzle-loader/frontend'
 import { Solutions } from './@/solutions/solutions'
 import { SolutionsDb } from './@/solutions/solutions-db/impl'
 import { ISolutionsDb } from './@/solutions/solutions-db/interface'
+import { SolutionsFinderTypes } from './@/solutions/solutions-finder'
 import { BuildFrontend } from './screen-build/frontend'
 import { PlayFrontend } from './screen-play/frontend'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgToBackend } from './types'
@@ -29,6 +30,7 @@ const init: FrontendModule['init'] = {
   screenPlay: PlayFrontend.init,
   puzzleLoader: PuzzleLoaderTypes.initFrontend,
   packLoader: PackLoaderTypes.initFrontend,
+  solutionsFinder: SolutionsFinderTypes.initFrontend,
   puzzles: {},
   packs: {},
   solutions: {},
@@ -51,6 +53,7 @@ const toFlowFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): Flow
     puzzleLoader: input.model.puzzleLoader,
     packLoader: input.model.packLoader,
     solutions: input.model.solutions,
+    solutionsFinder: input.model.solutionsFinder,
   }
 }
 
@@ -121,7 +124,7 @@ const updateChild: FrontendModule['update'] = (input) => {
     (model) => updateFromCmd({ ...input, model }),
     (model) => updateModePlay({ ...input, model }),
     (model) => updateModeBuilder({ ...input, model }),
-    (model) => updatePackDbQuery({ ...input, model }),
+    (model) => updatePackLoader({ ...input, model }),
     (model) => updatePuzzleLoader({ ...input, model }),
   )
 }
@@ -132,7 +135,7 @@ const updatePuzzleLoader: FrontendModule['update'] = (input) => {
   const updated = PuzzleLoaderFrontend.update({
     ctx,
     model: input.model.puzzleLoader,
-    msg: input.msg?.t === 'got-puzzle-loader-msg' ? input.msg.c : null,
+    msg: null,
     msgCmd: input.msgCmd?.t === 'got-puzzle-loader-cmd' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
   })
@@ -145,7 +148,7 @@ const updatePuzzleLoader: FrontendModule['update'] = (input) => {
   }
 }
 
-const updatePackDbQuery: FrontendModule['update'] = (input) => {
+const updatePackLoader: FrontendModule['update'] = (input) => {
   const ctx = toFlowFrontendCtx(input)
 
   const updated = PackLoaderFrontend.update({

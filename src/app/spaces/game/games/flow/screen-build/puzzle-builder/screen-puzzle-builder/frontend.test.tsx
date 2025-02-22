@@ -58,26 +58,14 @@ describe(import.meta.file, () => {
 
   test('render hint button', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, [
-      {
-        msg: {
-          t: 'screen-puzzle-builder.user-clicked-play-mode-button',
-        },
-      },
-    ])
+    const output = f.update(f.init, [{ msg: { t: 'screen-puzzle-builder.user-clicked-play-mode-button' } }])
     const r = f.render(output)
     expect(r.getByRole('button', f.ctx.t('game.hint'))).toBeTruthy()
   })
 
   test('render reset button', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, [
-      {
-        msg: {
-          t: 'screen-puzzle-builder.user-clicked-play-mode-button',
-        },
-      },
-    ])
+    const output = f.update(f.init, [{ msg: { t: 'screen-puzzle-builder.user-clicked-play-mode-button' } }])
     const r = f.render(output)
     expect(r.getByRole('button', f.ctx.t('app.reset'))).toBeTruthy()
   })

@@ -16,6 +16,7 @@ import type { Puzzle } from './@/puzzle/puzzle'
 import type { PuzzleId } from './@/puzzle/puzzle-id'
 import { PuzzleLoaderTypes } from './@/puzzle/puzzle-loader'
 import { Solutions } from './@/solutions/solutions'
+import { SolutionsFinderTypes } from './@/solutions/solutions-finder'
 import { SolutionsLoaderTypes } from './@/solutions/solutions-loader'
 import { BuildTypes } from './screen-build'
 import { PlayTypes } from './screen-play'
@@ -32,6 +33,7 @@ export type ModelFrontend = {
   solutions: Solutions
   puzzleLoader: PuzzleLoaderTypes.ModelFrontend
   packLoader: PackLoaderTypes.ModelFrontend
+  solutionsFinder: SolutionsFinderTypes.ModelFrontend
   screenBuild: BuildTypes.ModelFrontend
   screenPlay: PlayTypes.ModelFrontend
 }
@@ -59,18 +61,21 @@ export type MsgBackend =
   | { t: 'got-msg-play'; c: PlayTypes.MsgBackend }
   | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgBackend }
   | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgBackend }
+  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgBackend }
 
 export type MsgToBackend =
   | { t: 'got-msg-build'; c: BuildTypes.MsgToBackend }
   | { t: 'got-msg-play'; c: PlayTypes.MsgToBackend }
   | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgToBackend }
   | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgToBackend }
+  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgToBackend }
 
 export type MsgToFrontend =
   | { t: 'got-msg-build'; c: BuildTypes.MsgToFrontend }
   | { t: 'got-msg-play'; c: PlayTypes.MsgToFrontend }
   | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgToFrontend }
   | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgToFrontend }
+  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgToFrontend }
 
 const MODE = ['build', 'play'] as const
 export const Mode = p.enumeration(MODE)

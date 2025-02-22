@@ -21,6 +21,7 @@ import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './surface-save-changes/frontend'
 import { MsgFrontend } from './types'
+import { SolutionsFinderFrontend } from '../../../@/solutions/solutions-finder/frontend'
 
 //
 //
@@ -289,6 +290,11 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
         variant: {
           t: 'uniform',
           actions: [
+            ...SolutionsFinderFrontend.viewAction({
+              ctx: input.ctx,
+              dispatch: (m) => input.dispatch({ t: 'got-solutions-finder-msg', c: m }),
+              model: input.ctx.solutionsFinder,
+            }),
             ...ModePlay.viewScreenActions({
               ctx: ModePlay.initCtx({ ...input.ctx, flow }),
               dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
@@ -343,18 +349,15 @@ export const capitalize = (s: string) => {
 //
 
 const updateMoreDrawer: BuilderTypes.FrontendModule['update'] = (input) => {
-  const { msg, model } = input
-  switch (msg?.t) {
+  switch (input.msg?.t) {
     case 'screen-puzzle-builder.user-closed-more-drawer': {
-      return { model: { ...model, puzzleBuilderOpened: null } }
+      return { model: { ...input.model, puzzleBuilderOpened: null } }
     }
     case 'screen-puzzle-builder.user-clicked-open-more-drawer-button': {
-      return { model: { ...model, puzzleBuilderOpened: 'more' } }
-    }
-    default: {
-      return { model }
+      return { model: { ...input.model, puzzleBuilderOpened: 'more' } }
     }
   }
+  return { model: input.model }
 }
 
 //

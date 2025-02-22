@@ -9,6 +9,7 @@ import { PackLoaderTypes } from '../pack/pack-loader'
 import { PuzzleDb } from '../puzzle/puzzle-db'
 import { PuzzleLoaderTypes } from '../puzzle/puzzle-loader'
 import { SolutionsDb } from '../solutions/solutions-db/impl'
+import { SolutionsFinderTypes } from '../solutions/solutions-finder'
 import type { FlowFrontendCtx } from './ctx'
 
 export const FixtureFlowFrontend = async () => {
@@ -20,6 +21,7 @@ export const FixtureFlowFrontend = async () => {
     solutions: {},
     puzzleLoader: PuzzleLoaderTypes.initFrontend,
     packLoader: PackLoaderTypes.initFrontend,
+    solutionsFinder: SolutionsFinderTypes.initFrontend,
     puzzleDb: PuzzleDb({ ...f.ctx, t: 'db-conn-sql' }),
     packDb: PackDb({ ...f.ctx, t: 'db-conn-sql' }),
     solutionsDb: SolutionsDb({ t: 'db-conn-sql', dbConnSql: f.ctx.dbConnSql }),
