@@ -6,7 +6,7 @@ import { FixtureFlowBuilderFrontend } from '../../../@/fixture/frontend'
 const Fixture = async () => {
   const f = await FixtureFlowBuilderFrontend()
   const puzzle = await Puzzle.random({
-    createdBy: f.ctx.currentUserId,
+    createdBy: f.ctx.currentUser.userId,
   })
 
   return {

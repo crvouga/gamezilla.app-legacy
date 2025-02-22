@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const currentUsersSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)
+    const currentUsersSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)
 
     expect(
       output.msgCmd?.some(

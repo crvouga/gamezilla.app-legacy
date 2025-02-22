@@ -34,7 +34,7 @@ const View: FrontendModule['View'] = (input) => {
             t: 'got-msg-space',
             c: {
               t: 'screen-pack-builder.user-clicked-back-button',
-              userId: input.ctx.currentUserId,
+              userId: input.ctx.currentUser.userId,
             },
           }),
       }}
@@ -46,7 +46,7 @@ const View: FrontendModule['View'] = (input) => {
           onSlideIndexChanged={(newSlideIndex) => {
             input.dispatch({
               t: 'got-msg-space',
-              c: { t: 'screen-pack-builder.user-changed-slide', newSlideIndex, userId: input.ctx.currentUserId },
+              c: { t: 'screen-pack-builder.user-changed-slide', newSlideIndex, userId: input.ctx.currentUser.userId },
             })
           }}
           onClickPuzzleCell={({ puzzleIndex, puzzleId }) => {
@@ -67,7 +67,7 @@ const View: FrontendModule['View'] = (input) => {
                 t: 'got-msg-space',
                 c: {
                   t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
-                  userId: input.ctx.currentUserId,
+                  userId: input.ctx.currentUser.userId,
                 },
               })
             },
@@ -86,7 +86,7 @@ const View: FrontendModule['View'] = (input) => {
                   t: 'got-msg-space',
                   c: {
                     t: 'edit-pack-name.user-clicked-open-drawer-button',
-                    userId: input.ctx.currentUserId,
+                    userId: input.ctx.currentUser.userId,
                   },
                 })
               },

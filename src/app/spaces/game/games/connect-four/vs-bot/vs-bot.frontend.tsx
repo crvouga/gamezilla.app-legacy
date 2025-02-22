@@ -156,7 +156,7 @@ const updateFromMsgSpace =
 
     return {
       model,
-      msgCmd: updateSound(ctx.currentUserId, modelSpace, msgSpace),
+      msgCmd: updateSound(ctx.currentUser.userId, modelSpace, msgSpace),
     }
   }
 
@@ -319,12 +319,12 @@ const View: Module['View'] = (input) => {
     onSwapSides: () =>
       input.dispatch({
         t: 'user-swapped-sides',
-        userId: input.ctx.currentUserId,
+        userId: input.ctx.currentUser.userId,
       }),
     onStartGame: () =>
       input.dispatch({
         t: 'user-started-game',
-        userId: input.ctx.currentUserId,
+        userId: input.ctx.currentUser.userId,
       }),
     botVariants: ALL_BOT_LEVELS.map((botLevel) => {
       return {
@@ -334,7 +334,7 @@ const View: Module['View'] = (input) => {
           input.dispatch({
             t: 'user-changed-bot-level',
             botLevel,
-            userId: input.ctx.currentUserId,
+            userId: input.ctx.currentUser.userId,
           }),
       }
     }),
@@ -353,12 +353,12 @@ const View: Module['View'] = (input) => {
         input.dispatch({
           t: 'user-started-playing',
           playerType: 'player-one',
-          userId: input.ctx.currentUserId,
+          userId: input.ctx.currentUser.userId,
         }),
       onStopPlaying: () =>
         input.dispatch({
           t: 'user-stopped-playing',
-          userId: input.ctx.currentUserId,
+          userId: input.ctx.currentUser.userId,
         }),
     },
     playerTwo: {
@@ -368,12 +368,12 @@ const View: Module['View'] = (input) => {
         input.dispatch({
           t: 'user-started-playing',
           playerType: 'player-two',
-          userId: input.ctx.currentUserId,
+          userId: input.ctx.currentUser.userId,
         }),
       onStopPlaying: () =>
         input.dispatch({
           t: 'user-stopped-playing',
-          userId: input.ctx.currentUserId,
+          userId: input.ctx.currentUser.userId,
         }),
     },
   }
@@ -405,11 +405,11 @@ const View: Module['View'] = (input) => {
       ...vsBotSetupInput.human,
       userId: input.modelSpace.playingUserId,
     },
-    isSpectating: input.ctx.currentUserId !== input.modelSpace.playingUserId,
+    isSpectating: input.ctx.currentUser.userId !== input.modelSpace.playingUserId,
     turn: status.type !== 'Playing' ? null : status.turn === 'player-one' ? 'player-one' : 'player-two',
   }
 
-  const isSpectating = input.ctx.currentUserId !== input.modelSpace.playingUserId
+  const isSpectating = input.ctx.currentUser.userId !== input.modelSpace.playingUserId
   const columns = input.modelSpace.columns
 
   return (
@@ -433,7 +433,7 @@ const View: Module['View'] = (input) => {
                   input.dispatch({
                     t: 'user-dropped-disc',
                     columnIndex,
-                    userId: input.ctx.currentUserId,
+                    userId: input.ctx.currentUser.userId,
                   })
                 }}
               />
@@ -444,7 +444,7 @@ const View: Module['View'] = (input) => {
                   onPlayAgain={() =>
                     input.dispatch({
                       t: 'user-restarted-game',
-                      userId: input.ctx.currentUserId,
+                      userId: input.ctx.currentUser.userId,
                     })
                   }
                   gameOver={toGameOver(columns)}
@@ -455,7 +455,7 @@ const View: Module['View'] = (input) => {
         </LayoutGame>
       )}
       actionBar={
-        input.ctx.currentUserId === input.modelSpace.playingUserId
+        input.ctx.currentUser.userId === input.modelSpace.playingUserId
           ? {
               id: 'vs-bot-buttons',
               variant: {
@@ -464,17 +464,17 @@ const View: Module['View'] = (input) => {
                   {
                     icon: (props) => <IconArrowLeftOnRect {...props} />,
                     label: input.ctx.t('app.exit'),
-                    onClick: () => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUserId }),
+                    onClick: () => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUser.userId }),
                   },
                   {
                     icon: (props) => <IconRightLeft {...props} />,
                     label: input.ctx.t('game.swap-sides'),
-                    onClick: () => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUserId }),
+                    onClick: () => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUser.userId }),
                   },
                   {
                     icon: (props) => <IconArrowRotateLeft {...props} />,
                     label: input.ctx.t('app.restart'),
-                    onClick: () => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUserId }),
+                    onClick: () => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUser.userId }),
                   },
                 ],
               },
@@ -520,7 +520,7 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
     }
 
     case 'user-dropped-disc': {
-      if (input.msgSpace.userId === input.ctx.currentUserId) {
+      if (input.msgSpace.userId === input.ctx.currentUser.userId) {
         return <FeedItem.Info text={`${username} dropped disc`} />
       }
 

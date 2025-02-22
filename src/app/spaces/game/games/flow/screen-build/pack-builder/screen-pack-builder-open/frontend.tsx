@@ -47,12 +47,12 @@ const toQuery = (input: { currentUserId: UserId; offset: number }) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  const query = toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 })
+  const query = toQuery({ currentUserId: input.ctx.currentUser.userId, offset: 0 })
   return PackLoaderFrontend.watch(input.ctx, query, (c) => ({ t: 'got-pack-loader-msg', c }))
 }
 
 const View: FrontendModule['View'] = (input) => {
-  const query = toQuery({ currentUserId: input.ctx.currentUserId, offset: 0 })
+  const query = toQuery({ currentUserId: input.ctx.currentUser.userId, offset: 0 })
   return (
     <ScreenLayout
       parentScreen={input.ctx.parentScreen}
@@ -61,7 +61,10 @@ const View: FrontendModule['View'] = (input) => {
       navBar={{
         title: input.ctx.t('flow.pack-builder'),
         onBack: () =>
-          input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } }),
+          input.dispatch({
+            t: 'got-msg-space',
+            c: { t: 'user-clicked-back-button', userId: input.ctx.currentUser.userId },
+          }),
       }}
       postAction={PackCreateNewFrontend.viewCreateAction(input)}
       renderBody={() => (
@@ -78,7 +81,7 @@ const View: FrontendModule['View'] = (input) => {
               c: {
                 t: 'screen-pack-builder-open.user-clicked-pack-item',
                 pack,
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               },
             })
           }

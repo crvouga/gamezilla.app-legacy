@@ -243,7 +243,7 @@ export const View = ({
   onClose: () => void
 }) => {
   const durationMs = toDurationMs(ctx, model)
-  const isSpectating = ctx.currentUserId !== ctx.space.hostId
+  const isSpectating = ctx.currentUser.userId !== ctx.space.hostId
   const nextEloRating = toNextEloRating(model)
   return (
     <LayoutGame ctx={ctx} isSpectating={isSpectating}>
@@ -291,7 +291,7 @@ export const View = ({
               }
               const color = Chess.toColor(input.piece)
 
-              return color === toPlayerColor(model.puzzle) && ctx.space.hostId === ctx.currentUserId
+              return color === toPlayerColor(model.puzzle) && ctx.space.hostId === ctx.currentUser.userId
             }}
             onPieceDrop={(input) => {
               const chessModel = toCurrentBoard(model)

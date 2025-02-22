@@ -400,7 +400,7 @@ const ViewMainMenu: FrontendModule['View'] = (input) => {
           onClick: () => {
             input.dispatch({
               t: 'got-msg-space',
-              c: { t: 'user-changed-mode', mode: 'play', userId: input.ctx.currentUserId },
+              c: { t: 'user-changed-mode', mode: 'play', userId: input.ctx.currentUser.userId },
             })
           },
         },
@@ -411,7 +411,7 @@ const ViewMainMenu: FrontendModule['View'] = (input) => {
           onClick: () => {
             input.dispatch({
               t: 'got-msg-space',
-              c: { t: 'user-changed-mode', mode: 'build', userId: input.ctx.currentUserId },
+              c: { t: 'user-changed-mode', mode: 'build', userId: input.ctx.currentUser.userId },
             })
           },
         },

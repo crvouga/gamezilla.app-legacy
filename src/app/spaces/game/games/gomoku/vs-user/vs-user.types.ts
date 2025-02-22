@@ -1,5 +1,6 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Err, Ok, type Result } from '~/@/result'
+import { UserAccount } from '~/app/@/data/account'
 import type { UserId } from '~/app/@/data/user-id'
 import {
   type Board,
@@ -142,7 +143,7 @@ export const handle = ({
   msg,
   model,
 }: {
-  ctx: { currentUserId: UserId }
+  ctx: { currentUser: UserAccount | null }
   msg: Req
   model: Model
 }): Result<Problem, Model> => {
@@ -160,9 +161,9 @@ export const handle = ({
 
       const modelNew: Model = {
         ...model,
-        [stone]: ctx.currentUserId,
+        [stone]: ctx.currentUser?.userId,
         [toOppositeStone(stone)]:
-          model[toOppositeStone(stone)] === ctx.currentUserId ? null : model[toOppositeStone(stone)],
+          model[toOppositeStone(stone)] === ctx.currentUser?.userId ? null : model[toOppositeStone(stone)],
       }
 
       return Ok(modelNew)
@@ -175,7 +176,7 @@ export const handle = ({
 
       const { stone } = msg
 
-      if (model[stone] !== ctx.currentUserId) {
+      if (model[stone] !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
 
@@ -213,7 +214,7 @@ export const handle = ({
 
       const { position } = msg
 
-      const currentUserStone = model.white === ctx.currentUserId ? 'white' : 'black'
+      const currentUserStone = model.white === ctx.currentUser?.userId ? 'white' : 'black'
 
       const moved = move({
         board: model.board,
@@ -265,11 +266,11 @@ export const handle = ({
         return Err('must-be-playing')
       }
 
-      if (model.white !== ctx.currentUserId && model.black !== ctx.currentUserId) {
+      if (model.white !== ctx.currentUser?.userId && model.black !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
 
-      const currentUserStone = model.white === ctx.currentUserId ? 'white' : 'black'
+      const currentUserStone = model.white === ctx.currentUser?.userId ? 'white' : 'black'
 
       const modelNew = initSpaceOver({
         model,
@@ -291,7 +292,7 @@ export const handle = ({
     }
 
     case 'stop-game': {
-      if (model.black !== ctx.currentUserId && model.white !== ctx.currentUserId) {
+      if (model.black !== ctx.currentUser?.userId && model.white !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
 

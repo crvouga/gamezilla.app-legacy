@@ -60,7 +60,7 @@ export type Output = ReturnType<typeof SpacesFrontend.update>
 export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) => {
   const f = await FixtureAppFrontend(input)
   const currentUser: UserAccount = {
-    userId: f.ctx.currentUserId,
+    userId: f.ctx.currentUser.userId,
     createdAt: Posix.now(),
     phoneNumber: PhoneNumber.random(),
     role: 'normal',

@@ -31,7 +31,7 @@ describe(import.meta.file, () => {
       ...f,
       msgSpace: withEventMeta({
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-        userId: f.ctx.currentUserId,
+        userId: f.ctx.currentUser.userId,
         puzzleId: f.puzzle.id,
       }),
     })
@@ -53,7 +53,7 @@ describe(import.meta.file, () => {
       ...f,
       msgSpace: withEventMeta({
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
-        userId: f.ctx.currentUserId,
+        userId: f.ctx.currentUser.userId,
         puzzleId: f.puzzle.id,
       }),
     })
@@ -68,7 +68,7 @@ describe(import.meta.file, () => {
       ...f,
       msgSpace: withEventMeta({
         t: 'screen-pack-builder.screen-add-puzzle.puzzle-db-query-query-changed',
-        userId: f.ctx.currentUserId,
+        userId: f.ctx.currentUser.userId,
         query: PuzzleQuery.random(),
       }),
     })
@@ -82,7 +82,7 @@ describe(import.meta.file, () => {
       ...f,
       msgSpace: withEventMeta({
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox',
-        userId: f.ctx.currentUserId,
+        userId: f.ctx.currentUser.userId,
         puzzleIds: [f.puzzle.id],
       }),
     })

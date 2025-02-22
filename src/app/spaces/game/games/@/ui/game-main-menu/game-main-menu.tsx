@@ -72,7 +72,7 @@ export const View = (props: {
   renderCoverArt: (input: { className: string }) => VDom
   buttons: MainMenuButton[]
 }) => {
-  const isSpectating = props.ctx.currentUserId !== props.ctx.space.hostId
+  const isSpectating = props.ctx.currentUser.userId !== props.ctx.space.hostId
 
   if (isSpectating) {
     return (

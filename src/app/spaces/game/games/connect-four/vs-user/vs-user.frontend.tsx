@@ -171,7 +171,7 @@ const View: Module['View'] = (input) => {
           onStartGame={() => {
             input.dispatch({
               t: 'user-started-game',
-              userId: input.ctx.currentUserId,
+              userId: input.ctx.currentUser.userId,
             })
           }}
           onQuit={input.ctx.onQuit}
@@ -181,13 +181,13 @@ const View: Module['View'] = (input) => {
               input.dispatch({
                 t: 'user-started-playing',
                 playerType: 'player-one',
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               })
             },
             onStopPlaying: () => {
               input.dispatch({
                 t: 'user-stopped-playing',
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               })
             },
             renderIcon: (input) => {
@@ -200,14 +200,14 @@ const View: Module['View'] = (input) => {
             onStartPlaying: () => {
               input.dispatch({
                 t: 'user-started-playing',
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
                 playerType: 'player-two',
               })
             },
             onStopPlaying: () => {
               input.dispatch({
                 t: 'user-stopped-playing',
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               })
             },
             renderIcon: (input) => {
@@ -221,7 +221,7 @@ const View: Module['View'] = (input) => {
 
     case 'game':
     case 'game-over': {
-      const currentUserPlayerType = toPlayerType(input.ctx.currentUserId, input.modelSpace)
+      const currentUserPlayerType = toPlayerType(input.ctx.currentUser.userId, input.modelSpace)
       const isSpectating = currentUserPlayerType === null
       const modelSpace = input.modelSpace
       return (
@@ -249,7 +249,7 @@ const View: Module['View'] = (input) => {
                   onDropDisc={(columnIndex) =>
                     input.dispatch({
                       t: 'user-dropped-disc',
-                      userId: input.ctx.currentUserId,
+                      userId: input.ctx.currentUser.userId,
                       columnIndex,
                     })
                   }
@@ -276,7 +276,7 @@ const View: Module['View'] = (input) => {
                 onCancel={() => input.dispatch({ t: 'close-modal' })}
                 onClose={() => input.dispatch({ t: 'close-modal' })}
                 confirmText={input.ctx.t('app.resign')}
-                onConfirm={() => input.dispatch({ t: 'user-resigned', userId: input.ctx.currentUserId })}
+                onConfirm={() => input.dispatch({ t: 'user-resigned', userId: input.ctx.currentUser.userId })}
                 open={input.model.openedModal === 'confirm-resign'}
                 ctx={input.ctx}
                 body={input.ctx.t('app.resign')}
@@ -296,31 +296,31 @@ const View: Module['View'] = (input) => {
                       onClick: () => {
                         input.dispatch({
                           t: 'clicked-resign',
-                          userId: input.ctx.currentUserId,
+                          userId: input.ctx.currentUser.userId,
                         })
                       },
                     }
                   : null,
-                input.modelSpace.type === 'game-over' && input.ctx.currentUserId === input.ctx.space.hostId
+                input.modelSpace.type === 'game-over' && input.ctx.currentUser.userId === input.ctx.space.hostId
                   ? {
                       icon: (props: { className?: string }) => <IconArrowLeftOnRect {...props} />,
                       label: input.ctx.t('app.exit'),
                       onClick: () => {
                         input.dispatch({
                           t: 'user-stopped-game',
-                          userId: input.ctx.currentUserId,
+                          userId: input.ctx.currentUser.userId,
                         })
                       },
                     }
                   : null,
-                input.modelSpace.type === 'game-over' && input.ctx.currentUserId === input.ctx.space.hostId
+                input.modelSpace.type === 'game-over' && input.ctx.currentUser.userId === input.ctx.space.hostId
                   ? {
                       icon: (props: { className?: string }) => <IconArrowRotateLeft {...props} />,
                       label: input.ctx.t('game.rematch'),
                       onClick: () => {
                         input.dispatch({
                           t: 'user-requested-rematch',
-                          userId: input.ctx.currentUserId,
+                          userId: input.ctx.currentUser.userId,
                         })
                       },
                     }
@@ -343,7 +343,7 @@ const ViewGameOverMessage = ({
   ctx: AppFrontendCtx
   dispatch: (msg: MsgSpace) => void
 }) => {
-  const currentPlayerType = toPlayerType(ctx.currentUserId, modelSpace)
+  const currentPlayerType = toPlayerType(ctx.currentUser.userId, modelSpace)
 
   if (modelSpace.rematch.type === 'Asking' && modelSpace.rematch.asker === currentPlayerType) {
     return (
@@ -355,7 +355,7 @@ const ViewGameOverMessage = ({
           onClick={() =>
             dispatch({
               t: 'user-cancelled-rematch',
-              userId: ctx.currentUserId,
+              userId: ctx.currentUser.userId,
             })
           }
           text={ctx.t('app.cancel')}
@@ -378,7 +378,7 @@ const ViewGameOverMessage = ({
             onClick={() =>
               dispatch({
                 t: 'user-responded-to-rematch-request',
-                userId: ctx.currentUserId,
+                userId: ctx.currentUser.userId,
                 response: 'Decline',
               })
             }
@@ -391,7 +391,7 @@ const ViewGameOverMessage = ({
             onClick={() =>
               dispatch({
                 t: 'user-responded-to-rematch-request',
-                userId: ctx.currentUserId,
+                userId: ctx.currentUser.userId,
                 response: 'Decline',
               })
             }
@@ -460,7 +460,7 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
 
   const turn = toTurn(modelSpace.columns)
 
-  const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelSpace)
+  const currentUserPlayerType = toPlayerType(ctx.currentUser.userId, modelSpace)
 
   if (currentUserPlayerType !== turn) {
     return (

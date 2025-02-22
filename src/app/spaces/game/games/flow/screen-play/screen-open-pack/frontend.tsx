@@ -44,7 +44,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  const isCurrentUserSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
+  const isCurrentUserSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
   if (isCurrentUserSpectating) {
     return (
       <ScreenLayoutHostSettingUpGame
@@ -67,7 +67,7 @@ const View: FrontendModule['View'] = (input) => {
         onBack: () =>
           input.dispatch({
             t: 'got-msg-space',
-            c: { t: 'user-clicked-exit-play-mode-button', userId: input.ctx.currentUserId },
+            c: { t: 'user-clicked-exit-play-mode-button', userId: input.ctx.currentUser.userId },
           }),
       }}
       renderBody={() => (
@@ -81,7 +81,7 @@ const View: FrontendModule['View'] = (input) => {
           onClick={(pack) =>
             input.dispatch({
               t: 'got-msg-space',
-              c: { userId: input.ctx.currentUserId, t: 'user-clicked-open-pack-puzzle-grid-item', pack },
+              c: { userId: input.ctx.currentUser.userId, t: 'user-clicked-open-pack-puzzle-grid-item', pack },
             })
           }
         />

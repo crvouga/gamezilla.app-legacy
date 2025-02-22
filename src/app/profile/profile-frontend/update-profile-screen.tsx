@@ -4,9 +4,9 @@ import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
 
 export const View = (input: { ctx: FrontendCtx; dispatch: (msg: MsgFrontend) => void; model: ModelFrontend }) => {
-  if (!input.ctx.currentUserId) return null
+  if (!input.ctx.currentUser?.userId) return null
 
-  const profile = input.ctx.profiles[input.ctx.currentUserId]
+  const profile = input.ctx.profiles[input.ctx.currentUser?.userId]
 
   if (!profile) return null
 

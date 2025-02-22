@@ -36,8 +36,8 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const before = SpacesCore.toSpaceIdByUserId(f.initial.model.spaces, f.ctx.currentUserId)
-    const after = SpacesCore.toSpaceIdByUserId(started.model.spaces, f.ctx.currentUserId)
+    const before = SpacesCore.toSpaceIdByUserId(f.initial.model.spaces, f.ctx.currentUser.userId)
+    const after = SpacesCore.toSpaceIdByUserId(started.model.spaces, f.ctx.currentUser.userId)
     expect(before).toEqual(null)
     expect(after).toEqual(spaceId)
   })
@@ -84,7 +84,9 @@ describe(import.meta.file, () => {
       didSendToBackend(
         started,
         (msg) =>
-          msg.t === 'sync.got-msg-space' && msg.c.t === 'user-started-space' && msg.c.userId === f.ctx.currentUserId,
+          msg.t === 'sync.got-msg-space' &&
+          msg.c.t === 'user-started-space' &&
+          msg.c.userId === f.ctx.currentUser.userId,
       ),
     ).toBe(true)
   })

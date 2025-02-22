@@ -47,12 +47,12 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
   }
   return (
     <div className='flex w-full gap-2 px-4 py-4 pt-2'>
-      {input.query.where.createdBy?.equals === input.ctx.currentUserId && (
+      {input.query.where.createdBy?.equals === input.ctx.currentUser.userId && (
         <Chip
           size='sm'
           renderStartIcon={(input) => <IconUserCircle {...input} />}
           label={input.ctx.t('app.created-by-you')}
-          // onClick={() => dispatch({ t: 'toggled-created-by-you', userId: input.ctx.currentUserId })}
+          // onClick={() => dispatch({ t: 'toggled-created-by-you', userId: input.ctx.currentUser.userId })}
         />
       )}
 

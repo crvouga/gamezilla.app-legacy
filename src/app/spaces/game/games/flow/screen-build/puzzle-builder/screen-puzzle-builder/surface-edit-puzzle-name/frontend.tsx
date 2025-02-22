@@ -66,7 +66,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
           const result = await patchName({
             puzzleId: puzzleBuilder.puzzle.id,
             newName,
-            userId: input.ctx.currentUserId,
+            userId: input.ctx.currentUser.userId,
             puzzleDb: input.ctx.puzzleDb,
           })
           dispatch({ t: 'puzzle.edit-name.db-updated', result })
@@ -87,7 +87,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
             edited: input.msg.result,
             puzzleId: puzzleBuilder.puzzle.id,
             newName: input.model.puzzleEditNameDraft,
-            userId: input.ctx.currentUserId,
+            userId: input.ctx.currentUser.userId,
           }),
         ],
       }

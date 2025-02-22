@@ -18,7 +18,7 @@ const update: FrontendModule['update'] = (input) => {
         },
         msgCmd: [playSound(APP_SOUND.tap)],
         async eff(dispatch) {
-          const userId = input.ctx.currentUserId
+          const userId = input.ctx.currentUser.userId
           const packNew: Pack = {
             isOfficial: false,
             createdAt: input.ctx.now,

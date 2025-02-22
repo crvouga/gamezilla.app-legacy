@@ -20,7 +20,7 @@ describe(import.meta.file, () => {
 
     const output = f.update(f.initial, [
       userStartedSpace(0, f.userA.userId, spaceId),
-      userJoinedSpace(1, f.ctx.currentUserId, spaceId),
+      userJoinedSpace(1, f.ctx.currentUser.userId, spaceId),
       {
         msg: {
           t: 'leave-space.clicked-leave-space-button',
@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
     const userId = UserId.generate()
 
     const output = f.update(f.initial, [
-      userStartedSpace(0, f.ctx.currentUserId, spaceId),
+      userStartedSpace(0, f.ctx.currentUser.userId, spaceId),
       userJoinedSpace(1, userId, spaceId),
       {
         msgBackend: {
@@ -58,9 +58,9 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
-      userStartedSpace(0, f.ctx.currentUserId, spaceId),
-      userJoinedSpace(1, f.ctx.currentUserId, spaceId),
-      userLeftSpace(2, f.ctx.currentUserId, spaceId),
+      userStartedSpace(0, f.ctx.currentUser.userId, spaceId),
+      userJoinedSpace(1, f.ctx.currentUser.userId, spaceId),
+      userLeftSpace(2, f.ctx.currentUser.userId, spaceId),
     ])
     expect(didShowToast(output)).toBe(true)
   })
@@ -69,8 +69,8 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
-      userStartedSpace(0, f.ctx.currentUserId, spaceId),
-      userJoinedSpace(1, f.ctx.currentUserId, spaceId),
+      userStartedSpace(0, f.ctx.currentUser.userId, spaceId),
+      userJoinedSpace(1, f.ctx.currentUser.userId, spaceId),
       {
         msg: {
           t: 'leave-space.clicked-leave-space-button',
@@ -78,7 +78,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)
+    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)
     expect(currentUserSpaceId).toEqual(null)
   })
 
@@ -86,8 +86,8 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
-      userStartedSpace(0, f.ctx.currentUserId, spaceId),
-      userJoinedSpace(1, f.ctx.currentUserId, spaceId),
+      userStartedSpace(0, f.ctx.currentUser.userId, spaceId),
+      userJoinedSpace(1, f.ctx.currentUser.userId, spaceId),
       {
         msg: {
           t: 'leave-space.clicked-leave-space-button',

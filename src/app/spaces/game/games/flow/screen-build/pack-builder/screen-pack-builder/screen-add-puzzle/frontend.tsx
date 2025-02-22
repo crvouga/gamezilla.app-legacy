@@ -55,7 +55,7 @@ const toQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): Puzzl
       },
       where: {
         createdBy: {
-          equals: input.ctx.currentUserId,
+          equals: input.ctx.currentUser.userId,
         },
       },
     }
@@ -81,7 +81,7 @@ const View: FrontendModule['View'] = (input) => {
             t: 'got-msg-space',
             c: {
               t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
-              userId: input.ctx.currentUserId,
+              userId: input.ctx.currentUser.userId,
             },
           }),
       }}
@@ -91,7 +91,7 @@ const View: FrontendModule['View'] = (input) => {
             t: 'got-msg-space',
             c: {
               t: 'screen-pack-builder.screen-add-puzzle.user-submitted-add-puzzles-form',
-              userId: input.ctx.currentUserId,
+              userId: input.ctx.currentUser.userId,
             },
           })
         },
@@ -102,7 +102,7 @@ const View: FrontendModule['View'] = (input) => {
             t: 'got-msg-space',
             c: {
               t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
-              userId: input.ctx.currentUserId,
+              userId: input.ctx.currentUser.userId,
             },
           }),
         cancelDisabled: false,
@@ -122,7 +122,7 @@ const View: FrontendModule['View'] = (input) => {
               c: {
                 t: 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox',
                 puzzleIds: allPuzzleIds,
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               },
             })
           }}
@@ -132,7 +132,7 @@ const View: FrontendModule['View'] = (input) => {
               c: {
                 t: 'screen-pack-builder.screen-add-puzzle.puzzle-db-query-query-changed',
                 query,
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               },
             })
           }}
@@ -142,7 +142,7 @@ const View: FrontendModule['View'] = (input) => {
               c: {
                 t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
                 puzzleId: puzzle.id,
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               },
             })
           }}

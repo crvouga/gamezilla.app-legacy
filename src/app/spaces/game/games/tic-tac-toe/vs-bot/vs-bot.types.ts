@@ -12,6 +12,7 @@ import {
   toOpposite,
   toStatus,
 } from '../@/tic-tic-toe/tic-tac-toe'
+import { UserAccount } from '~/app/@/data/account'
 
 //
 //
@@ -108,7 +109,7 @@ export const handle = ({
   msg,
   model,
 }: {
-  ctx: SpaceCtx & { currentUserId: UserId }
+  ctx: SpaceCtx & { currentUser: UserAccount | null }
   msg: Req
   model: SpaceModel
 }): Result<string, SpaceModel> => {
@@ -118,7 +119,7 @@ export const handle = ({
         return Err('must-be-in-setup-mode')
       }
 
-      if (model.player !== ctx.currentUserId) {
+      if (model.player !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
 
@@ -133,14 +134,14 @@ export const handle = ({
         return Err('must-be-in-setup-mode')
       }
 
-      if (model.player && model.player !== ctx.currentUserId) {
+      if (model.player && model.player !== ctx.currentUser?.userId) {
         return Err('not-allowed')
       }
 
       return Ok({
         ...model,
         userPlayerType: msg.playerType,
-        player: ctx.currentUserId,
+        player: ctx.currentUser?.userId,
       })
     }
 
@@ -149,7 +150,7 @@ export const handle = ({
         return Err('must-be-in-setup-mode')
       }
 
-      if (model.player !== ctx.currentUserId) {
+      if (model.player !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
 
@@ -160,17 +161,13 @@ export const handle = ({
     }
 
     case 'start-game': {
-      if (model.type !== 'setup') {
-        return Err('must-be')
-      }
+      if (model.type !== 'setup') return Err('must-be')
 
-      if (model.player === 'none') {
-        return Err('missing_player')
-      }
+      if (model.player === 'none') return Err('missing_player')
 
-      if (model.player !== ctx.currentUserId) {
-        return Err('must-be-player')
-      }
+      if (!model.player) return Err('must-be-player')
+
+      if (model.player !== ctx.currentUser?.userId) return Err('must-be-player')
 
       return Ok({
         type: 'game',
@@ -186,7 +183,7 @@ export const handle = ({
         return Err('must-be-in-game-mode')
       }
 
-      if (model.player !== ctx.currentUserId) {
+      if (model.player !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
 
@@ -203,7 +200,7 @@ export const handle = ({
         return Err('must-be-in-game-mode')
       }
 
-      if (model.player !== ctx.currentUserId) {
+      if (model.player !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
 
@@ -230,7 +227,7 @@ export const handle = ({
         return Err('must-be-in-game-mode')
       }
 
-      if (model.player !== ctx.currentUserId) {
+      if (model.player !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
 
@@ -248,7 +245,7 @@ export const handle = ({
         return Err('must-be-in-game-mode')
       }
 
-      if (model.player !== ctx.currentUserId) {
+      if (model.player !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
 

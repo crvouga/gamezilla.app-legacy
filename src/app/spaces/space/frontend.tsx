@@ -31,17 +31,17 @@ const View = (input: {
     case 'started': {
       const spaceCtx: SpaceFrontendCtx = {
         ...input.ctx,
-        currentUserId: input.ctx.currentUserId,
+        currentUserId: input.ctx.currentUser.userId,
         space: spaceState,
       }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
 
       if (currentUserSpaceId !== spaceCtx.space.spaceId) {
         return <JoinSpaceFrontend.View {...input} ctx={spaceCtx} />
       }
       const inputNew = { ...input, ctx: spaceCtx }
-      const isHost = inputNew.ctx.space.hostId === inputNew.ctx.currentUserId
+      const isHost = inputNew.ctx.space.hostId === inputNew.ctx.currentUser.userId
 
       const spaceCtxFinal: SpaceFrontendCtx = {
         ...spaceCtx,

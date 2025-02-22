@@ -64,7 +64,7 @@ describe(import.meta.file, () => {
       {
         msgBackend: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.ctx.currentUserId }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.ctx.currentUser.userId }),
         },
       },
       {
@@ -91,7 +91,7 @@ describe(import.meta.file, () => {
         msg: { t: 'join-space.submitted-join-space-form', spaceId: f.spaceId },
       },
     ])
-    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)).toEqual(f.spaceId)
+    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)).toEqual(f.spaceId)
   })
 
   it('current user leaving joined space', async () => {
@@ -106,7 +106,7 @@ describe(import.meta.file, () => {
       { msg: { t: 'join-space.submitted-join-space-form', spaceId: f.spaceId } },
       { msg: { t: 'leave-space.clicked-leave-space-button', spaceId: f.spaceId } },
     ])
-    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)).toEqual(null)
+    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)).toEqual(null)
   })
 
   it('preventing joining a space if already in a space', async () => {
@@ -125,7 +125,7 @@ describe(import.meta.file, () => {
       { msg: { t: 'join-space.submitted-join-space-form', spaceId: spaceB } },
     ])
 
-    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)).toEqual(spaceA)
+    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)).toEqual(spaceA)
     expect(didShowErrorSm(output)).toBe(true)
   })
 

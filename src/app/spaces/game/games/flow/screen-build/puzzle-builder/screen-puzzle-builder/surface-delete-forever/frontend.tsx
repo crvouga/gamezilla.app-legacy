@@ -46,7 +46,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         msgCmd: [playSound(APP_SOUND.tap)],
         async eff(dispatch) {
           const puzzleId = input.modelSpace.screenPuzzleBuilder?.puzzle.id ?? null
-          const deletedByUserId = input.ctx.currentUserId
+          const deletedByUserId = input.ctx.currentUser.userId
 
           const deleted = puzzleId ? await input.ctx.puzzleDb.zap({ deletedByUserId, puzzleId }) : Ok(null)
 

@@ -7,8 +7,8 @@ import { FrontendModule } from './types'
 const init: FrontendModule['init'] = (input) => {
   return {
     model: {
-      'profile.update-username.username': input.ctx.currentUserId
-        ? (input.ctx.profiles[input.ctx.currentUserId]?.username ?? '')
+      'profile.update-username.username': input.ctx.currentUser?.userId
+        ? (input.ctx.profiles[input.ctx.currentUser.userId]?.username ?? '')
         : '',
     },
   }

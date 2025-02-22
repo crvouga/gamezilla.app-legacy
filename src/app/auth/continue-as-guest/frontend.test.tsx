@@ -26,7 +26,6 @@ const ctx: AnonymousFrontendCtx = {
   now: Posix.now(),
   profiles: {},
   screenSize: 'mobile',
-  currentUserId: null,
 }
 
 const clickedContinueAsGuestButton = (model: ModelFrontend) =>

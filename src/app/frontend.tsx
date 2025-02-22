@@ -98,7 +98,6 @@ const toFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx =
     now: input.ctx.now,
     documentVisibilityState: input.model.platform.documentVisibilityState,
     currentScreen: input.model.currentScreen.currentScreen,
-    currentUserId: null,
     screenSize: input.model.platform.screenSize.screenSize,
     parentScreen: null,
   }
@@ -136,7 +135,6 @@ export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?:
     ...input.ctx,
     currentScreen: screen.model.currentScreen,
     t: Translator(input.ctx.navigatorLanguage),
-    currentUserId: null,
     documentVisibilityState: 'visible',
     profiles: {},
     screenSize: platform.model.screenSize.screenSize,
@@ -516,7 +514,7 @@ const toScreenLayoutProps = (input: {
   if (!isAppFrontendCtx(ctx)) return null
 
   const screenSpace: Screen = { n: 'spaces', t: 'space-list' }
-  const screenProfile: Screen = { n: 'profile', t: 'profile', userId: ctx.currentUserId }
+  const screenProfile: Screen = { n: 'profile', t: 'profile', userId: ctx.currentUser.userId }
   const pushSpaceList = () => input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } })
   return {
     id: 'app-screen-layout',

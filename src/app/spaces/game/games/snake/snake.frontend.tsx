@@ -61,7 +61,7 @@ export const update = (
         return [model, Eff.None]
       }
 
-      if (model.gameStatus.player[1] !== ctx.currentUserId) {
+      if (model.gameStatus.player[1] !== ctx.currentUser.userId) {
         return [model, Eff.None]
       }
 

@@ -23,7 +23,7 @@ const update: FrontendModule['update'] = (input) => {
         msgCmd: [playSound(APP_SOUND.tap)],
         async eff(dispatch) {
           const result = await createNewPuzzle({
-            createdByUserId: input.ctx.currentUserId,
+            createdByUserId: input.ctx.currentUser.userId,
             now: input.ctx.now,
             puzzleDb: input.ctx.puzzleDb,
           })
@@ -42,7 +42,7 @@ const update: FrontendModule['update'] = (input) => {
           withEventId({
             t: 'create-new-puzzle.user-created-puzzle',
             created: input.msg.result,
-            userId: input.ctx.currentUserId,
+            userId: input.ctx.currentUser.userId,
           }),
         ],
       }

@@ -39,7 +39,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
       }
     }
     case 'join-space.submitted-join-space-form': {
-      if (!input.ctx.currentUserId) return { model: input.model }
+      if (!input.ctx.currentUser?.userId) return { model: input.model }
 
       return {
         model: input.model,
@@ -47,7 +47,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
           withEventId<MsgSpace>({
             t: 'user-joined-space',
             spaceId: input.msg.spaceId,
-            userId: input.ctx.currentUserId,
+            userId: input.ctx.currentUser.userId,
           }),
         ],
       }
@@ -76,7 +76,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
 
       switch (error?.t) {
         case 'user-already-in-a-space': {
-          if (error.userId === input.ctx.currentUserId) {
+          if (error.userId === input.ctx.currentUser?.userId) {
             return {
               model: input.model,
               msgCmd: showErrSm(input.ctx.t("spaces.you're-already-in-a-space")),
@@ -87,11 +87,11 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
         }
       }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
 
       if (input.msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
 
-      if (input.msgSpace.userId !== input.ctx.currentUserId) {
+      if (input.msgSpace.userId !== input.ctx.currentUser?.userId) {
         const username = input.ctx.profiles[input.msgSpace.userId]?.username ?? null
         return {
           model: input.model,

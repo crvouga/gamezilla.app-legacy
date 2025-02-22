@@ -17,13 +17,13 @@ const update: SpaceFrontendModule['update'] = (input) => {
 const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: msgSpace, ctx }) => {
   switch (msgSpace?.t) {
     case 'user-left-space': {
-      if (!ctx.currentUserId) return { model }
+      if (!ctx.currentUser?.userId) return { model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, ctx.currentUser?.userId)
 
       if (msgSpace.spaceId !== currentUserSpaceId) return { model }
 
-      if (msgSpace.userId !== ctx.currentUserId) {
+      if (msgSpace.userId !== ctx.currentUser?.userId) {
         const username = ctx.profiles[msgSpace.userId]?.username
         return {
           model,
@@ -55,16 +55,16 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: ms
 const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg }) => {
   switch (msg?.t) {
     case 'leave-space.clicked-leave-space-button': {
-      if (!ctx.currentUserId) return { model }
+      if (!ctx.currentUser?.userId) return { model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, ctx.currentUser.userId)
 
       if (!currentUserSpaceId) return { model }
 
       const spaceEventNew = withEventId<MsgSpace>({
         t: 'user-left-space',
         spaceId: currentUserSpaceId,
-        userId: ctx.currentUserId,
+        userId: ctx.currentUser.userId,
       })
 
       return {
@@ -82,7 +82,7 @@ const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg
 }
 
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
-  const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+  const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
   if (!spaceId) return null
   return {
     icon: (inputIcon) => <IconArrowLeftOnRect {...inputIcon} />,

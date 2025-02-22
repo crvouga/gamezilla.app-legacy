@@ -207,7 +207,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     return { model }
   }
 
-  if (!ctx.currentUserId) {
+  if (!ctx.currentUser?.userId) {
     return { model }
   }
 
@@ -269,13 +269,14 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         }
 
         case 'profile-update': {
+          if (!ctx.currentUser?.userId) return { model }
           return {
             model,
             msgCmd: [
               replaceScreen({
                 n: 'profile',
                 t: 'profile',
-                userId: ctx.currentUserId,
+                userId: ctx.currentUser.userId,
               }),
             ],
           }

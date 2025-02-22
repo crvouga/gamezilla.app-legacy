@@ -55,7 +55,7 @@ const PersonListItem = (input: {
       <Avatar className='size-12' src={input.profile.avatarUrl} />
       <p>{input.profile.username}</p>
       {input.profile.userId === input.ctx.space.hostId && <ViewHostChip ctx={input.ctx} />}
-      {input.profile.userId === input.ctx.currentUserId && <ViewYouChip ctx={input.ctx} />}
+      {input.profile.userId === input.ctx.currentUser.userId && <ViewYouChip ctx={input.ctx} />}
     </button>
   )
 }

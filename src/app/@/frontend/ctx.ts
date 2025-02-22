@@ -8,8 +8,8 @@ import { UserAccount } from '../data/account'
 import { UserId } from '../data/user-id'
 import { UserRole } from '../data/user-role'
 import { Username } from '../data/username'
-import { ScreenSize } from '../ui/screen/screen-size'
 import { ParentScreenProps } from '../ui/screen/layout/screen-layout-props'
+import { ScreenSize } from '../ui/screen/screen-size'
 
 type Profile = {
   userId: UserId
@@ -29,14 +29,12 @@ export type BaseFrontendCtx = {
   profiles: { [userId: UserId]: Profile }
   documentVisibilityState: DocumentVisibilityState
   currentUser?: UserAccount | null
-  currentUserId?: UserId | null
-  currentUserRole?: UserRole | null
 }
 
 export type AnonymousFrontendCtx = BaseFrontendCtx
 
 export const isAnonymous = (ctx: BaseFrontendCtx): ctx is AnonymousFrontendCtx => {
-  return ctx.currentUserId === null
+  return ctx.currentUser === null
 }
 
 export type AppFrontendCtx = BaseFrontendCtx & {

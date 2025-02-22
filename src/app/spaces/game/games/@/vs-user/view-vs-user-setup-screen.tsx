@@ -67,7 +67,7 @@ export const VsUserSetup = {
 const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
   return (
     <div className='col-span-3 w-full'>
-      {player.userId && player.userId === ctx.currentUserId && (
+      {player.userId && player.userId === ctx.currentUser.userId && (
         <Button
           key='toggle-play-button'
           className='w-full'
@@ -96,7 +96,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
   return (
     <div
       className='col-span-3 grid w-full cursor-pointer grid-cols-2 place-items-center text-center'
-      onClick={player.userId === ctx.currentUserId ? player.onStopPlaying : player.onStartPlaying}
+      onClick={player.userId === ctx.currentUser.userId ? player.onStopPlaying : player.onStartPlaying}
     >
       {player.userId ? (
         <Avatar className='h-14 w-14' src={ctx.profiles[player.userId]?.avatarUrl} alt='' />
@@ -162,7 +162,7 @@ export const VsUserSetupScreen = ({
         renderBody={() => <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />}
       />
 
-      {ctx.currentUserId === ctx.space.hostId && (
+      {ctx.currentUser.userId === ctx.space.hostId && (
         <div className='flex w-full items-center gap-4 p-4'>
           <Button
             disabled={!canStartGame}

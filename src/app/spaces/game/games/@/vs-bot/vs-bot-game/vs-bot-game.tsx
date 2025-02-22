@@ -305,7 +305,7 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
 const Draw = (input: Input) => {
   const humanSlot = (
     <>
-      <Avatar src={input.ctx.profiles[input.ctx.currentUserId]?.avatarUrl} />
+      <Avatar src={input.ctx.profiles[input.ctx.currentUser.userId]?.avatarUrl} />
     </>
   )
 

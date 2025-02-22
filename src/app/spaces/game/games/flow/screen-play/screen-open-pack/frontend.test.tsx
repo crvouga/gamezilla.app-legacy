@@ -67,7 +67,7 @@ describe(import.meta.file, () => {
       {
         msgSpace: withEventMeta({
           t: 'user-clicked-exit-play-mode-button',
-          userId: f.ctx.currentUserId,
+          userId: f.ctx.currentUser.userId,
         }),
       },
     ])

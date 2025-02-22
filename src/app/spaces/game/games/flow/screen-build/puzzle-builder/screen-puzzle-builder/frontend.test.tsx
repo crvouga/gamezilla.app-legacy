@@ -17,7 +17,7 @@ const Fixture = async () => {
         c: {
           t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
           puzzle: puzzle,
-          userId: f.ctx.currentUserId,
+          userId: f.ctx.currentUser.userId,
         },
       },
     },

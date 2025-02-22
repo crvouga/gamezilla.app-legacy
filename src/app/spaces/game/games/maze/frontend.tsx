@@ -192,7 +192,7 @@ export const View = ({
 
   const maze = Maze.makeMemoized(model)
 
-  const currentUserPlayer = model.players[ctx.currentUserId]
+  const currentUserPlayer = model.players[ctx.currentUser.userId]
 
   return (
     <div>
@@ -224,7 +224,7 @@ export const View = ({
                 'input-direction',
                 {
                   direction,
-                  userId: ctx.currentUserId,
+                  userId: ctx.currentUser.userId,
                 },
               ])
             }
@@ -233,7 +233,7 @@ export const View = ({
                 'input-direction',
                 {
                   direction: 'none',
-                  userId: ctx.currentUserId,
+                  userId: ctx.currentUser.userId,
                 },
               ])
             }

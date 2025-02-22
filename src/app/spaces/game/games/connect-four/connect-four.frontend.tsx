@@ -215,7 +215,7 @@ const View: Module['View'] = (input) => {
     input.dispatch({
       t: 'user-changed-mode',
       mode: 'none',
-      userId: input.ctx.currentUserId,
+      userId: input.ctx.currentUser.userId,
     })
   }
 
@@ -235,7 +235,7 @@ const View: Module['View'] = (input) => {
                 input.dispatch({
                   mode: 'vs-user',
                   t: 'user-changed-mode',
-                  userId: input.ctx.currentUserId,
+                  userId: input.ctx.currentUser.userId,
                 }),
             }),
             GameMainMenu.buttons.playComputer({
@@ -244,7 +244,7 @@ const View: Module['View'] = (input) => {
                 input.dispatch({
                   mode: 'vs-bot',
                   t: 'user-changed-mode',
-                  userId: input.ctx.currentUserId,
+                  userId: input.ctx.currentUser.userId,
                 }),
             }),
           ]}
@@ -295,7 +295,7 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
     case 'user-changed-mode': {
       switch (msgSpace.mode) {
         case 'none': {
-          const profile = ctx.profiles[ctx.currentUserId]
+          const profile = ctx.profiles[ctx.currentUser.userId]
 
           if (!profile) {
             return <FeedItem.Info text={'Exited game to main menu'} />
@@ -305,7 +305,7 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
         }
 
         default: {
-          const profile = ctx.profiles[ctx.currentUserId]
+          const profile = ctx.profiles[ctx.currentUser.userId]
 
           if (!profile) {
             return <FeedItem.Info text={'Changed game mode'} />

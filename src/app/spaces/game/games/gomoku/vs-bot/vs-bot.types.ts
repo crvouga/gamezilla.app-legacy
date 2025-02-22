@@ -1,5 +1,6 @@
-import type { UserId } from '~/app/@/data/user-id'
 import { Err, Ok, type Result } from '~/@/result'
+import { UserAccount } from '~/app/@/data/account'
+import type { UserId } from '~/app/@/data/user-id'
 import {
   type Board,
   type BotLevel,
@@ -102,7 +103,7 @@ export const handle = ({
   msg,
   model,
 }: {
-  ctx: { currentUserId: UserId }
+  ctx: { currentUser: UserAccount | null }
   msg: Req
   model: Model
 }): Result<Problem, Model> => {
@@ -111,7 +112,7 @@ export const handle = ({
       if (model.type !== 'setup') {
         return Err('must-be-setup')
       }
-      if (model.userId !== ctx.currentUserId) {
+      if (model.userId !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
       return Ok({
@@ -124,7 +125,7 @@ export const handle = ({
       if (model.type !== 'setup') {
         return Err('must-be-setup')
       }
-      if (model.userId !== ctx.currentUserId) {
+      if (model.userId !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
       return Ok({
@@ -142,7 +143,7 @@ export const handle = ({
       }
       return Ok({
         ...model,
-        userId: ctx.currentUserId,
+        userId: ctx.currentUser?.userId ?? null,
       })
     }
 
@@ -150,7 +151,7 @@ export const handle = ({
       if (model.type !== 'setup') {
         return Err('must-be-setup')
       }
-      if (model.userId !== ctx.currentUserId) {
+      if (model.userId !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
       return Ok({
@@ -163,7 +164,7 @@ export const handle = ({
       if (model.type !== 'setup') {
         return Err('must-be-setup')
       }
-      if (model.userId !== ctx.currentUserId) {
+      if (model.userId !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
       return Ok({
@@ -181,7 +182,7 @@ export const handle = ({
         return Err('must-be-game')
       }
 
-      if (model.userId !== ctx.currentUserId) {
+      if (model.userId !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
 
@@ -205,7 +206,7 @@ export const handle = ({
       if (model.type !== 'game') {
         return Err('must-be-game')
       }
-      if (model.userId !== ctx.currentUserId) {
+      if (model.userId !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
       return Ok({
@@ -220,7 +221,7 @@ export const handle = ({
       if (model.type !== 'game') {
         return Err('must-be-game')
       }
-      if (model.userId !== ctx.currentUserId) {
+      if (model.userId !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
       return Ok({
@@ -233,7 +234,7 @@ export const handle = ({
       if (model.type !== 'game') {
         return Err('must-be-game')
       }
-      if (model.userId !== ctx.currentUserId) {
+      if (model.userId !== ctx.currentUser?.userId) {
         return Err('must-be-player')
       }
       return Ok({

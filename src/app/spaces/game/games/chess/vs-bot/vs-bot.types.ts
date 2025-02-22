@@ -1,4 +1,5 @@
 import { Err, isErr, Ok, Result } from '~/@/result'
+import { UserAccount } from '~/app/@/data/account'
 import type { UserId } from '~/app/@/data/user-id'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import type { VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
@@ -134,7 +135,7 @@ export const updateSpace = ({
   model,
   ctx,
 }: {
-  ctx: SpaceCtx & { currentUserId: UserId }
+  ctx: SpaceCtx & { currentUser: UserAccount | null }
   msg: Req
   model: SpaceModel
 }): Result<string, SpaceModel & { didCapture?: boolean }> => {
@@ -145,7 +146,7 @@ export const updateSpace = ({
           if (!model.userId) {
             return Err('missing-user')
           }
-          if (model.userId !== ctx.currentUserId || model.userId !== ctx.space.hostId) {
+          if (model.userId !== ctx.currentUser?.userId || model.userId !== ctx.space.hostId) {
             return Err('not-allowed')
           }
           return Ok({
@@ -158,7 +159,7 @@ export const updateSpace = ({
         }
 
         case 'input-bot-level': {
-          if (model.userId !== ctx.currentUserId || model.userId !== ctx.space.hostId) {
+          if (model.userId !== ctx.currentUser?.userId || model.userId !== ctx.space.hostId) {
             return Err('not-allowed')
           }
           return Ok({
@@ -168,7 +169,7 @@ export const updateSpace = ({
         }
 
         case 'stop-playing': {
-          if (model.userId !== ctx.currentUserId) {
+          if (model.userId !== ctx.currentUser?.userId) {
             return Err('not-allowed')
           }
           return Ok({
@@ -178,12 +179,12 @@ export const updateSpace = ({
         }
 
         case 'start-playing': {
-          if (model.userId !== null && model.userId !== ctx.currentUserId) {
+          if (model.userId !== null && model.userId !== ctx.currentUser?.userId) {
             return Err('not-allowed')
           }
           return Ok({
             ...model,
-            userId: ctx.currentUserId,
+            userId: ctx.currentUser?.userId ?? null,
             userColor: msg.color,
           })
         }
@@ -197,7 +198,7 @@ export const updateSpace = ({
     case 'game': {
       switch (msg.t) {
         case 'input-move': {
-          if (model.userId !== ctx.currentUserId) {
+          if (model.userId !== ctx.currentUser?.userId) {
             return Err('must-be-playing')
           }
 
@@ -237,7 +238,7 @@ export const updateSpace = ({
         }
 
         case 'stop-game': {
-          if (model.userId !== ctx.currentUserId || ctx.currentUserId !== ctx.space.hostId) {
+          if (model.userId !== ctx.currentUser?.userId || ctx.currentUser?.userId !== ctx.space.hostId) {
             return Err('not-allowed')
           }
           return Ok({
@@ -257,7 +258,7 @@ export const updateSpace = ({
     case 'game-over': {
       switch (msg.t) {
         case 'stop-game': {
-          if (model.userId !== ctx.currentUserId || ctx.currentUserId !== ctx.space.hostId) {
+          if (model.userId !== ctx.currentUser?.userId || ctx.currentUser?.userId !== ctx.space.hostId) {
             return Err('not-allowed')
           }
           return Ok({

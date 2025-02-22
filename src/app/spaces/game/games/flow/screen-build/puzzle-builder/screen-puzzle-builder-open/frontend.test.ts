@@ -8,7 +8,7 @@ import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/query'
 const Fixture = async () => {
   const f = await FixtureFlowBuilderFrontend()
   const puzzle = await Puzzle.random({
-    createdBy: f.ctx.currentUserId,
+    createdBy: f.ctx.currentUser.userId,
   })
 
   return {
@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
           c: {
             t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
             puzzle: f.puzzle,
-            userId: f.ctx.currentUserId,
+            userId: f.ctx.currentUser.userId,
           },
         },
       },
@@ -47,7 +47,7 @@ describe(import.meta.file, () => {
         msgSpace: withEventMeta({
           t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
           puzzle: f.puzzle,
-          userId: f.ctx.currentUserId,
+          userId: f.ctx.currentUser.userId,
         }),
       },
     ])
@@ -61,7 +61,7 @@ describe(import.meta.file, () => {
       {
         msgSpace: withEventMeta({
           t: 'screen-puzzle-builder-open.puzzle-db-query-query-changed',
-          userId: f.ctx.currentUserId,
+          userId: f.ctx.currentUser.userId,
           query: PuzzleQuery.random(),
         }),
       },

@@ -20,7 +20,7 @@ export const SectionPersonDetails = (input: {
         {input.profile && <Typography variant='title' text={input.ctx.t('username', input.profile?.username)} />}
         <div className='flex items-center gap-2'>
           {input.ctx.space.hostId === input.profile?.userId && <ViewHostChip ctx={input.ctx} />}
-          {input.ctx.currentUserId === input.profile?.userId && <ViewYouChip ctx={input.ctx} />}
+          {input.ctx.currentUser.userId === input.profile?.userId && <ViewYouChip ctx={input.ctx} />}
         </div>
       </button>
 

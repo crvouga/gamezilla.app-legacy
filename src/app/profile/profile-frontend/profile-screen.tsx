@@ -23,7 +23,7 @@ const View = (input: {
 const ViewBody: typeof View = (input) => {
   const profile = input.model.profiles[input.userId]
   if (!profile) return <SpinnerBlock />
-  const isCurrentUserProfile = profile.userId === input.ctx.currentUserId
+  const isCurrentUserProfile = profile.userId === input.ctx.currentUser?.userId
   return (
     <div className='flex w-full flex-col items-center gap-4 p-6'>
       <Avatar className='size-28' src={profile.avatarUrl} alt='profile avatar' />

@@ -40,7 +40,7 @@ const toPuzzleQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }):
       },
       where: {
         createdBy: {
-          equals: input.ctx.currentUserId,
+          equals: input.ctx.currentUser.userId,
         },
       },
     }
@@ -62,7 +62,10 @@ const View: FrontendModule['View'] = (input) => {
       navBar={{
         title: input.ctx.t('flow.puzzle-builder'),
         onBack: () =>
-          input.dispatch({ t: 'got-msg-space', c: { t: 'user-clicked-back-button', userId: input.ctx.currentUserId } }),
+          input.dispatch({
+            t: 'got-msg-space',
+            c: { t: 'user-clicked-back-button', userId: input.ctx.currentUser.userId },
+          }),
       }}
       postAction={CreateNewPuzzleFrontend.viewCreateAction(input)}
       renderBody={() => (
@@ -76,7 +79,7 @@ const View: FrontendModule['View'] = (input) => {
               c: {
                 t: 'screen-puzzle-builder-open.puzzle-db-query-query-changed',
                 query,
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               },
             })
           }}
@@ -86,7 +89,7 @@ const View: FrontendModule['View'] = (input) => {
               c: {
                 t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
                 puzzle,
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               },
             })
           }

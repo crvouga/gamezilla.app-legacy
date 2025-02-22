@@ -81,7 +81,7 @@ const View: FrontendModule['View'] = (input) => {
       t: 'got-msg-space',
       c: {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
-        userId: input.ctx.currentUserId,
+        userId: input.ctx.currentUser.userId,
         nextPuzzleResult: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' },
       },
     })
@@ -100,7 +100,7 @@ const View: FrontendModule['View'] = (input) => {
             t: 'got-msg-space',
             c: {
               t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
-              userId: input.ctx.currentUserId,
+              userId: input.ctx.currentUser.userId,
             },
           }),
       }}
@@ -136,7 +136,7 @@ const View: FrontendModule['View'] = (input) => {
                     input.modelSpace.opened === 'more'
                       ? 'screen-pack-builder.puzzle-screen.user-closed-more-drawer'
                       : 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
-                  userId: input.ctx.currentUserId,
+                  userId: input.ctx.currentUser.userId,
                 },
               }),
           },
@@ -151,7 +151,7 @@ const View: FrontendModule['View'] = (input) => {
                   t: 'got-msg-space',
                   c: {
                     t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
-                    userId: input.ctx.currentUserId,
+                    userId: input.ctx.currentUser.userId,
                     previousPuzzleResult: previousPuzzle ? { t: 'got', c: previousPuzzle } : { t: 'not-found' },
                   },
                 })
@@ -172,7 +172,7 @@ const View: FrontendModule['View'] = (input) => {
                   t: 'got-msg-space',
                   c: {
                     t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
-                    userId: input.ctx.currentUserId,
+                    userId: input.ctx.currentUser.userId,
                     puzzleIndex: screen.puzzleIndex,
                   },
                 }),

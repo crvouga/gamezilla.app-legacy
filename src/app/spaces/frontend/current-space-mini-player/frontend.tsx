@@ -10,7 +10,7 @@ import type { ModelFrontend, MsgFrontend } from '../../types'
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'current-space-bar.clicked-current-space-bottom-bar': {
-      const currentUsersSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+      const currentUsersSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
 
       if (!currentUsersSpaceId) return { model: input.model }
 
@@ -27,7 +27,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 }
 
 const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
-  const userSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+  const userSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
   const space = SpacesCore.toSpaceStarted(input.model.spaces, userSpaceId)
 
   if (!space) return null
@@ -35,7 +35,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
   const hostProfile = input.ctx.profiles[space.hostId]
 
   const userCount = Object.values(space.users).length
-  const isCurrentUserHost = input.ctx.currentUserId === space.hostId
+  const isCurrentUserHost = input.ctx.currentUser.userId === space.hostId
   return (
     <div
       className={cn(

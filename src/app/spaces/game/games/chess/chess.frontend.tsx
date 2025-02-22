@@ -344,7 +344,7 @@ export const View: Frontend['View'] = (input) => {
                 input.dispatch({
                   t: 'input-mode',
                   mode: 'vs-bot',
-                  userId: input.ctx.currentUserId,
+                  userId: input.ctx.currentUser.userId,
                 }),
             }),
             GameMainMenu.buttons.playFriend({
@@ -353,7 +353,7 @@ export const View: Frontend['View'] = (input) => {
                 input.dispatch({
                   t: 'input-mode',
                   mode: 'vs-user',
-                  userId: input.ctx.currentUserId,
+                  userId: input.ctx.currentUser.userId,
                 }),
             }),
             {
@@ -364,7 +364,7 @@ export const View: Frontend['View'] = (input) => {
                 input.dispatch({
                   t: 'input-mode',
                   mode: 'puzzle',
-                  userId: input.ctx.currentUserId,
+                  userId: input.ctx.currentUser.userId,
                 }),
             },
           ]}
@@ -383,7 +383,7 @@ export const View: Frontend['View'] = (input) => {
       //       dispatch({
       //         t: "input-mode",
       //         mode: "none",
-      //         userId: ctx.currentUserId,
+      //         userId: ctx.currentUser.userId,
       //       });
       //     }}
       //   />
@@ -401,7 +401,7 @@ export const View: Frontend['View'] = (input) => {
       //       dispatch({
       //         t: "input-mode",
       //         mode: "none",
-      //         userId: ctx.currentUserId,
+      //         userId: ctx.currentUser.userId,
       //       });
       //     }}
       //   />
@@ -419,7 +419,7 @@ export const View: Frontend['View'] = (input) => {
       //       dispatch({
       //         t: "input-mode",
       //         mode: "none",
-      //         userId: ctx.currentUserId,
+      //         userId: ctx.currentUser.userId,
       //       });
       //     }}
       //   />

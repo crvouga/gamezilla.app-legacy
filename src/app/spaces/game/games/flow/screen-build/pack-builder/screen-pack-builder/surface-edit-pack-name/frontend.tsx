@@ -16,7 +16,7 @@ const ViewSurface: FrontendModule['View'] = (input) => {
   const onClose = () => {
     input.dispatch({
       t: 'got-msg-space',
-      c: { t: 'edit-pack-name.user-closed-drawer', userId: input.ctx.currentUserId },
+      c: { t: 'edit-pack-name.user-closed-drawer', userId: input.ctx.currentUser.userId },
     })
   }
 
@@ -34,7 +34,7 @@ const ViewSurface: FrontendModule['View'] = (input) => {
         onSubmit: () =>
           input.dispatch({
             t: 'got-msg-space',
-            c: { t: 'edit-pack-name.user-submitted-form', userId: input.ctx.currentUserId },
+            c: { t: 'edit-pack-name.user-submitted-form', userId: input.ctx.currentUser.userId },
           }),
         cancelText: input.ctx.t('app.cancel'),
         submitText: input.ctx.t('app.save'),
@@ -55,7 +55,11 @@ const ViewSurface: FrontendModule['View'] = (input) => {
             onChange={(packNameDraft) =>
               input.dispatch({
                 t: 'got-msg-space',
-                c: { t: 'edit-pack-name.user-inputted-draft-name', packNameDraft, userId: input.ctx.currentUserId },
+                c: {
+                  t: 'edit-pack-name.user-inputted-draft-name',
+                  packNameDraft,
+                  userId: input.ctx.currentUser.userId,
+                },
               })
             }
           />

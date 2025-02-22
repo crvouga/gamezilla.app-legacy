@@ -19,16 +19,16 @@ const update: SpaceFrontendModule['update'] = (input) => {
 const updateFromAppEvent: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgEvt?.t) {
     case 'auth-evt.unauthenticated': {
-      if (!input.ctx.currentUserId) return { model: input.model }
+      if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
 
       if (!currentUserSpaceId) return { model: input.model }
 
       return {
         model: input.model,
         msgSpace: [
-          withEventId({ t: 'user-ended-space', spaceId: currentUserSpaceId, userId: input.ctx.currentUserId }),
+          withEventId({ t: 'user-ended-space', spaceId: currentUserSpaceId, userId: input.ctx.currentUser.userId }),
         ],
       }
     }
@@ -39,9 +39,9 @@ const updateFromAppEvent: SpaceFrontendModule['update'] = (input) => {
 const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-ended-space': {
-      if (!input.ctx.currentUserId) return { model: input.model }
+      if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
 
       const msgSpace = input.msgSpace
 
@@ -73,7 +73,7 @@ const updatePushScreen: SpaceFrontendModule['update'] = (input) => {
 const updateShowToast: SpaceFrontendModule['update'] = (input) => {
   if (input.msgSpace?.t !== 'user-ended-space') return { model: input.model }
 
-  if (input.msgSpace?.userId === input.ctx.currentUserId) {
+  if (input.msgSpace?.userId === input.ctx.currentUser?.userId) {
     return { model: input.model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-current-user'))] }
   }
 
@@ -89,9 +89,9 @@ const updateShowToast: SpaceFrontendModule['update'] = (input) => {
 const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'end-space.clicked-end-space-button': {
-      if (!input.ctx.currentUserId) return { model: input.model }
+      if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
 
       if (!currentUserSpaceId) return { model: input.model }
 
@@ -101,7 +101,7 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
           withEventId<MsgSpace>({
             t: 'user-ended-space',
             spaceId: currentUserSpaceId,
-            userId: input.ctx.currentUserId,
+            userId: input.ctx.currentUser.userId,
           }),
         ],
       }
@@ -112,7 +112,7 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
 }
 
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
-  const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+  const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
 
   if (!spaceId) return null
 

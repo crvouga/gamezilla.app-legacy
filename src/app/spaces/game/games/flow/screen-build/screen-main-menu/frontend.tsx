@@ -43,7 +43,7 @@ const View: FrontendModule['View'] = (input) => {
           t: 'got-msg-space',
           c: {
             t: 'screen-main-menu.user-clicked-back-button',
-            userId: input.ctx.currentUserId,
+            userId: input.ctx.currentUser.userId,
           },
         })
       }
@@ -66,7 +66,7 @@ const View: FrontendModule['View'] = (input) => {
               c: {
                 t: 'flow.build.screen-main-menu.user-clicked-option',
                 option: 'puzzle-builder',
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               },
             }),
         },
@@ -80,7 +80,7 @@ const View: FrontendModule['View'] = (input) => {
               c: {
                 t: 'flow.build.screen-main-menu.user-clicked-option',
                 option: 'pack-builder',
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               },
             }),
         },

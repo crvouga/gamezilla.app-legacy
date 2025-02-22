@@ -17,7 +17,7 @@ describe(import.meta.file, () => {
       {
         msgSpace: withEventMeta({
           t: 'user-changed-mode',
-          userId: f.ctx.currentUserId,
+          userId: f.ctx.currentUser.userId,
           mode: 'play',
         }),
       },
@@ -31,7 +31,7 @@ describe(import.meta.file, () => {
       {
         msgSpace: withEventMeta({
           t: 'user-changed-mode',
-          userId: f.ctx.currentUserId,
+          userId: f.ctx.currentUser.userId,
           mode: 'build',
         }),
       },
@@ -45,7 +45,7 @@ describe(import.meta.file, () => {
       {
         msgSpace: withEventMeta({
           t: 'user-changed-mode',
-          userId: f.ctx.currentUserId,
+          userId: f.ctx.currentUser.userId,
           mode: 'none',
         }),
       },

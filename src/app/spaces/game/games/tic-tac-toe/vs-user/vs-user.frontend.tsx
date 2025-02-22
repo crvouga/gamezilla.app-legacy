@@ -192,7 +192,7 @@ export const View = ({
           dispatch([
             'start-game',
             {
-              userId: ctx.currentUserId,
+              userId: ctx.currentUser.userId,
             },
           ])
         }
@@ -216,7 +216,7 @@ export const View = ({
               'InputPlayer',
               {
                 playerType: 'X',
-                userId: ctx.currentUserId,
+                userId: ctx.currentUser.userId,
               },
             ])
           },
@@ -225,7 +225,7 @@ export const View = ({
               'InputPlayer',
               {
                 playerType: 'X',
-                userId: ctx.currentUserId,
+                userId: ctx.currentUser.userId,
               },
             ])
           },
@@ -241,7 +241,7 @@ export const View = ({
               'InputPlayer',
               {
                 playerType: 'O',
-                userId: ctx.currentUserId,
+                userId: ctx.currentUser.userId,
               },
             ])
           },
@@ -250,7 +250,7 @@ export const View = ({
               'InputPlayer',
               {
                 playerType: 'O',
-                userId: ctx.currentUserId,
+                userId: ctx.currentUser.userId,
               },
             ])
           },

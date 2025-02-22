@@ -262,7 +262,7 @@ export const view = ({
               onClick: () =>
                 dispatch({
                   t: 'input-mode',
-                  userId: ctx.currentUserId,
+                  userId: ctx.currentUser.userId,
                   mode: 'vs-bot',
                 }),
             }),
@@ -272,7 +272,7 @@ export const view = ({
               onClick: () =>
                 dispatch({
                   t: 'input-mode',
-                  userId: ctx.currentUserId,
+                  userId: ctx.currentUser.userId,
                   mode: 'vs-user',
                 }),
             }),
@@ -290,7 +290,7 @@ export const view = ({
             dispatch({
               t: 'input-mode',
               mode: 'none',
-              userId: ctx.currentUserId,
+              userId: ctx.currentUser.userId,
             })
           }
           dispatch={(c) =>
@@ -312,7 +312,7 @@ export const view = ({
             dispatch({
               t: 'input-mode',
               mode: 'none',
-              userId: ctx.currentUserId,
+              userId: ctx.currentUser.userId,
             })
           }
           dispatch={(c) =>

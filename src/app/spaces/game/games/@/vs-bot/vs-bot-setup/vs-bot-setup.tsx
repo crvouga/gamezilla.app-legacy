@@ -192,7 +192,7 @@ export const View = ({
         )}
       />
 
-      {ctx.currentUserId === ctx.space.hostId && (
+      {ctx.currentUser.userId === ctx.space.hostId && (
         <div className='flex items-center gap-4 p-4'>
           <Button
             disabled={!canStartGame}
@@ -308,7 +308,7 @@ const PlayerButtons = ({
       {!human.userId && (
         <Button onClick={player.onStartPlaying} className='w-full' color='primary' text={ctx.t('game.start-playing')} />
       )}
-      {player.t === 'user' && ctx.currentUserId === player.userId && (
+      {player.t === 'user' && ctx.currentUser.userId === player.userId && (
         <Button
           onClick={player.onStopPlaying}
           className='w-full'
@@ -317,7 +317,7 @@ const PlayerButtons = ({
           text={ctx.t('game.stop-playing')}
         />
       )}
-      {player.t === 'bot' && human.userId === ctx.currentUserId && (
+      {player.t === 'bot' && human.userId === ctx.currentUser.userId && (
         <Button
           onClick={onSwapSides}
           className='w-full'
@@ -326,7 +326,7 @@ const PlayerButtons = ({
           text={ctx.t('game.swap-sides')}
         />
       )}
-      {player.t === 'bot' && human.userId === ctx.currentUserId && (
+      {player.t === 'bot' && human.userId === ctx.currentUser.userId && (
         <Button
           onClick={() =>
             dispatch({

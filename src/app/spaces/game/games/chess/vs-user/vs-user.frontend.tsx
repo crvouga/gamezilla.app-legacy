@@ -247,7 +247,7 @@ export const updateFromBackend = (
       }
 
       const isNotPlaying =
-        spaceModel.type === 'game' && spaceModel.w !== ctx.currentUserId && spaceModel.b !== ctx.currentUserId
+        spaceModel.type === 'game' && spaceModel.w !== ctx.currentUser.userId && spaceModel.b !== ctx.currentUser.userId
 
       if (isNotPlaying) {
         return [
@@ -278,7 +278,7 @@ export const updateFromBackend = (
       const spaceModel = result.value
 
       const isNotPlaying =
-        spaceModel.type === 'game' && spaceModel.w !== ctx.currentUserId && spaceModel.b !== ctx.currentUserId
+        spaceModel.type === 'game' && spaceModel.w !== ctx.currentUser.userId && spaceModel.b !== ctx.currentUser.userId
 
       if (isNotPlaying) {
         return [
@@ -434,11 +434,11 @@ export const View = ({
   // const { w, b } = model.spaceModel;
 
   // const currentUserColor: Chess.Color | "none" | "Both" =
-  //   ctx.currentUserId === w && ctx.currentUserId === b
+  //   ctx.currentUser.userId === w && ctx.currentUser.userId === b
   //     ? "Both"
-  //     : ctx.currentUserId === w
+  //     : ctx.currentUser.userId === w
   //     ? "w"
-  //     : ctx.currentUserId === b
+  //     : ctx.currentUser.userId === b
   //     ? "b"
   //     : "none";
 
@@ -464,7 +464,7 @@ export const View = ({
           const msg: InputMove = [
             "input-move",
             {
-              userId: ctx.currentUserId,
+              userId: ctx.currentUser.userId,
               ...moveInput,
             },
           ];

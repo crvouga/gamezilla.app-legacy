@@ -26,7 +26,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 const updateFromMsg: SpaceFrontendModule['update'] = ({ msg, model, ctx }) => {
   switch (msg?.t) {
     case 'game.clicked-game-tile': {
-      const currentUserId = ctx.currentUserId
+      const currentUserId = ctx.currentUser?.userId
       if (!currentUserId) return { model }
 
       const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, currentUserId)
@@ -51,7 +51,7 @@ const updateFromMsg: SpaceFrontendModule['update'] = ({ msg, model, ctx }) => {
 const updateFromCmd: SpaceFrontendModule['update'] = ({ msgCmd, model, ctx }) => {
   switch (msgCmd?.t) {
     case 'space-cmd.exit-game': {
-      const currentUserId = ctx.currentUserId
+      const currentUserId = ctx.currentUser?.userId
       if (!currentUserId) return { model }
       const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, currentUserId)
       if (!currentUserSpaceId) return { model }
@@ -75,9 +75,9 @@ const updateFromCmd: SpaceFrontendModule['update'] = ({ msgCmd, model, ctx }) =>
 const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-inputted-game': {
-      if (!input.ctx.currentUserId) return { model: input.model }
+      if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUserId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
 
       if (input.msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
 
@@ -177,7 +177,7 @@ const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (inpu
     currentUser: input.ctx.currentUser,
   }
 
-  const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, frontendCtx.currentUserId)
+  const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, frontendCtx.currentUser?.userId)
 
   if (!spaceId) return Sub.None
 

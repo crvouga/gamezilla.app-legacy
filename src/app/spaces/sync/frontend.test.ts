@@ -81,7 +81,7 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const someStartedSpace = makeSpace({
       spaceId,
-      hostId: f.ctx.currentUserId,
+      hostId: f.ctx.currentUser.userId,
     })
 
     const output = f.update(f.initial, [
@@ -94,7 +94,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUserId)
+    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)
 
     expect(currentUserSpaceId).toEqual(spaceId)
   })

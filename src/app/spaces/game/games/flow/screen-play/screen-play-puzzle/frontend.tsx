@@ -92,7 +92,7 @@ const View: FrontendModule['View'] = (input) => {
   const nextPuzzleId = input.modelSpace.screen.pack.puzzleIds[nextPuzzleIndex]
   const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
 
-  const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
+  const isSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
 
   if (isSpectating) return <ViewSpectating {...input} />
 
@@ -101,7 +101,7 @@ const View: FrontendModule['View'] = (input) => {
       t: 'got-msg-space',
       c: {
         t: 'user-clicked-next-puzzle',
-        userId: input.ctx.currentUserId,
+        userId: input.ctx.currentUser.userId,
         nextPuzzle: nextPuzzle
           ? {
               t: 'got',
@@ -126,7 +126,7 @@ const View: FrontendModule['View'] = (input) => {
           onBack: () =>
             input.dispatch({
               t: 'got-msg-space',
-              c: { userId: input.ctx.currentUserId, t: 'user-clicked-exit-play-puzzle-screen' },
+              c: { userId: input.ctx.currentUser.userId, t: 'user-clicked-exit-play-puzzle-screen' },
             }),
         }}
         renderBody={() => (
@@ -145,7 +145,7 @@ const View: FrontendModule['View'] = (input) => {
                 dispatch={(c) =>
                   input.dispatch({
                     t: 'got-msg-space',
-                    c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUserId },
+                    c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUser.userId },
                   })
                 }
                 showSolvedAnimation
@@ -170,7 +170,7 @@ const View: FrontendModule['View'] = (input) => {
                 input.dispatch({
                   t: 'got-msg-space',
                   c: {
-                    userId: input.ctx.currentUserId,
+                    userId: input.ctx.currentUser.userId,
                     t: 'user-toggled-action-buttons-drawer',
                   },
                 }),
@@ -196,7 +196,7 @@ const View: FrontendModule['View'] = (input) => {
                     dispatch: (c) =>
                       input.dispatch({
                         t: 'got-msg-space',
-                        c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUserId },
+                        c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUser.userId },
                       }),
                   })
                 : null,
@@ -207,7 +207,7 @@ const View: FrontendModule['View'] = (input) => {
                 onClick: () =>
                   input.dispatch({
                     t: 'got-msg-space',
-                    c: { t: 'user-clicked-reset-puzzle', userId: input.ctx.currentUserId },
+                    c: { t: 'user-clicked-reset-puzzle', userId: input.ctx.currentUser.userId },
                   }),
               }),
 
@@ -290,7 +290,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
       t: 'got-msg-space',
       c: {
         t: 'user-closed-puzzle-complete-dialog',
-        userId: input.ctx.currentUserId,
+        userId: input.ctx.currentUser.userId,
       },
     })
   }
@@ -315,7 +315,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
               input.dispatch({
                 t: 'got-msg-space',
                 c: {
-                  userId: input.ctx.currentUserId,
+                  userId: input.ctx.currentUser.userId,
                   t: 'user-clicked-next-puzzle',
                   nextPuzzle: nextPuzzle ? { t: 'got', c: nextPuzzle } : { t: 'not-found' },
                   nextPuzzleIndex,

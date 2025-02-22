@@ -46,7 +46,7 @@ const updateProfiles: SpaceFrontendModule['update'] = ({ model, msgBackend }) =>
 const updateSpace: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgEvt?.t) {
     case 'wire-evt.backend-connected': {
-      const currentUserId = input.ctx.currentUserId
+      const currentUserId = input.ctx.currentUser?.userId
 
       if (!currentUserId) return { model: input.model }
 

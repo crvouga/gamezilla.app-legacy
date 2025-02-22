@@ -98,7 +98,7 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
             t: 'got-msg-space',
             c: {
               t: 'screen-pack-builder.user-clicked-back-button',
-              userId: input.ctx.currentUserId,
+              userId: input.ctx.currentUser.userId,
             },
           })
         }

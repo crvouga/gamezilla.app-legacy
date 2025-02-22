@@ -12,8 +12,8 @@ export type UpdateOutput = ReturnType<typeof ScreenPackBuilderFrontend.update>
 
 export const FixturePackBuilderFrontend = async () => {
   const f = await FixtureFlowBuilderFrontend()
-  const puzzle = await Puzzle.random({ createdBy: f.ctx.currentUserId })
-  const pack = await Pack.random({ createdBy: f.ctx.currentUserId, puzzleIds: [puzzle.id] })
+  const puzzle = await Puzzle.random({ createdBy: f.ctx.currentUser.userId })
+  const pack = await Pack.random({ createdBy: f.ctx.currentUser.userId, puzzleIds: [puzzle.id] })
   const ctx: typeof f.ctx = {
     ...f.ctx,
     puzzles: { ...f.ctx.puzzles, [puzzle.id]: puzzle },

@@ -29,7 +29,7 @@ const toHostTitle = (ctx: SpaceFrontendCtx) => {
 }
 
 const isCurrentUserGuest = (ctx: SpaceFrontendCtx) => {
-  return ctx.currentUserId !== ctx.space.hostId
+  return ctx.currentUser.userId !== ctx.space.hostId
 }
 
 export const SpaceFrontendCtx = {

@@ -59,7 +59,7 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
       return {
         model,
         msgSpace: [
-          withEventId({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button', userId: ctx.currentUserId }),
+          withEventId({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button', userId: ctx.currentUser.userId }),
         ],
         msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       }
@@ -69,7 +69,7 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
       return {
         model,
         msgSpace: [
-          withEventId({ t: 'screen-puzzle-builder.user-clicked-play-mode-button', userId: ctx.currentUserId }),
+          withEventId({ t: 'screen-puzzle-builder.user-clicked-play-mode-button', userId: ctx.currentUser.userId }),
         ],
         msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
@@ -156,7 +156,7 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
 const View: BuilderTypes.FrontendModule['View'] = (input) => {
   if (!input.modelSpace.screenPuzzleBuilder) return <ViewSpectating {...input} />
 
-  const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
+  const isSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
 
   if (isSpectating) return <ViewSpectating {...input} />
 

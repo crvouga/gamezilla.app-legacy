@@ -17,7 +17,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: msgSpace, ctx }) => {
   switch (msgSpace?.t) {
     case 'user-started-space': {
-      if (msgSpace.userId === ctx.currentUserId) {
+      if (msgSpace.userId === ctx.currentUser?.userId) {
         return {
           model,
           msgCmd: [
@@ -43,7 +43,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: ms
 const updateStartSpaceButton: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'start-space.clicked-start-space-button': {
-      if (!input.ctx.currentUserId) {
+      if (!input.ctx.currentUser?.userId) {
         return {
           model: input.model,
         }
@@ -52,7 +52,7 @@ const updateStartSpaceButton: SpaceFrontendModule['update'] = (input) => {
       const spaceEventNew = withEventId<MsgSpace>({
         t: 'user-started-space',
         spaceId: input.msg.spaceId,
-        userId: input.ctx.currentUserId,
+        userId: input.ctx.currentUser.userId,
       })
 
       return {
@@ -69,9 +69,9 @@ const updateStartSpaceButton: SpaceFrontendModule['update'] = (input) => {
 }
 
 export const viewStartSpaceButton = (input: Parameters<SpaceFrontendModule['View']>[0]): PostActionProps | null => {
-  if (!input.ctx.currentUserId) return null
+  if (!input.ctx.currentUser?.userId) return null
 
-  const currentUserSpaceId = input.model.spaces.indexSpaceIdByUserId[input.ctx.currentUserId]
+  const currentUserSpaceId = input.model.spaces.indexSpaceIdByUserId[input.ctx.currentUser.userId]
 
   if (currentUserSpaceId) return null
 

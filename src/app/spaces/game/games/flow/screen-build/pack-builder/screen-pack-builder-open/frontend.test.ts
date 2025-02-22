@@ -8,7 +8,7 @@ describe(import.meta.file, () => {
   test('open pack builder', async () => {
     const f = await FixtureFlowBuilderFrontend()
     const pack = await Pack.random({
-      createdBy: f.ctx.currentUserId,
+      createdBy: f.ctx.currentUser.userId,
     })
     const output = f.update(f.init, [
       {
@@ -17,7 +17,7 @@ describe(import.meta.file, () => {
           c: {
             t: 'screen-pack-builder-open.user-clicked-pack-item',
             pack,
-            userId: f.ctx.currentUserId,
+            userId: f.ctx.currentUser.userId,
           },
         },
       },
@@ -29,14 +29,14 @@ describe(import.meta.file, () => {
   test('play sound', async () => {
     const f = await FixtureFlowBuilderFrontend()
     const pack = await Pack.random({
-      createdBy: f.ctx.currentUserId,
+      createdBy: f.ctx.currentUser.userId,
     })
     const output = f.update(f.init, [
       {
         msgSpace: withEventMeta({
           t: 'screen-pack-builder-open.user-clicked-pack-item',
           pack,
-          userId: f.ctx.currentUserId,
+          userId: f.ctx.currentUser.userId,
         }),
       },
     ])

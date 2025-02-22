@@ -79,7 +79,7 @@ const toSpaces = (model: SpacesCore.Model) => {
 }
 
 const View: SpaceFrontendModule['View'] = (input) => {
-  if (!input.ctx.currentUserId) return null
+  if (!input.ctx.currentUser?.userId) return null
 
   const spaces = toSpaces(input.model.spaces)
 
@@ -102,7 +102,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
             {spaces.flatMap((state) => (
               <ViewSpaceCard
                 key={state.spaceId}
-                ctx={{ ...input.ctx, currentUserId: input.ctx.currentUserId }}
+                ctx={{ ...input.ctx, currentUser: input.ctx.currentUser }}
                 onClick={() => input.dispatch({ t: 'list-spaces.clicked-space-card', spaceId: state.spaceId })}
                 state={state}
               />

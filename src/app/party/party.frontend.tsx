@@ -179,7 +179,7 @@ export const ViewPage = ({
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  const user = model.users[ctx.currentUserId]
+  const user = model.users[ctx.currentUser.userId]
 
   if (!user) {
     return <ViewNotInParty ctx={ctx} model={model} dispatch={dispatch} />
@@ -207,7 +207,7 @@ export const ViewBanner = ({
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  const user = model.users[ctx.currentUserId]
+  const user = model.users[ctx.currentUser.userId]
 
   if (!user) {
     return null

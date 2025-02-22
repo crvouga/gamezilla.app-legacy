@@ -31,7 +31,7 @@ const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgFrontend
   const onClose = () => {
     input.dispatch({
       t: 'got-msg-space',
-      c: { t: 'user-closed-puzzle-complete-dialog', userId: input.ctx.currentUserId },
+      c: { t: 'user-closed-puzzle-complete-dialog', userId: input.ctx.currentUser.userId },
     })
   }
 
@@ -51,7 +51,7 @@ const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgFrontend
             onClick={() =>
               input.dispatch({
                 t: 'got-msg-space',
-                c: { t: 'user-clicked-select-next-pack', userId: input.ctx.currentUserId },
+                c: { t: 'user-clicked-select-next-pack', userId: input.ctx.currentUser.userId },
               })
             }
           />

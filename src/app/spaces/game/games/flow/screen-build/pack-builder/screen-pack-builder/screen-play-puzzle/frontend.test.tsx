@@ -48,7 +48,7 @@ describe(import.meta.file, () => {
       ...f,
       msgSpace: withEventMeta({
         t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
-        userId: f.ctx.currentUserId,
+        userId: f.ctx.currentUser.userId,
       }),
     })
     expect(didPlaySound(output)).toBe(true)
@@ -60,7 +60,7 @@ describe(import.meta.file, () => {
       ...f,
       msgSpace: withEventMeta({
         t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
-        userId: f.ctx.currentUserId,
+        userId: f.ctx.currentUser.userId,
         previousPuzzleResult: { t: 'got', c: f.puzzle },
       }),
     })
@@ -73,7 +73,7 @@ describe(import.meta.file, () => {
       ...f,
       msgSpace: withEventMeta({
         t: 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle',
-        userId: f.ctx.currentUserId,
+        userId: f.ctx.currentUser.userId,
         nextPuzzleResult: { t: 'got', c: f.puzzle },
       }),
     })
@@ -86,7 +86,7 @@ describe(import.meta.file, () => {
       ...f,
       msgSpace: withEventMeta({
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
-        userId: f.ctx.currentUserId,
+        userId: f.ctx.currentUser.userId,
         puzzleIndex: 0,
       }),
     })
@@ -99,7 +99,7 @@ describe(import.meta.file, () => {
       ...f,
       msgSpace: withEventMeta({
         t: 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
-        userId: f.ctx.currentUserId,
+        userId: f.ctx.currentUser.userId,
       }),
     })
     expect(didPlaySound(output)).toBe(true)

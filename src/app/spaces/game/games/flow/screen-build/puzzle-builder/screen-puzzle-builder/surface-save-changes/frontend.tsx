@@ -118,7 +118,7 @@ const updateSaveChangesRequest: FrontendModule['update'] = (input) => {
           puzzleSaveChangesRequest: Result.mapOk(input.msgSpace.saved, () => null),
         },
         msgCmd:
-          input.msgSpace.userId === input.ctx.currentUserId
+          input.msgSpace.userId === input.ctx.currentUser.userId
             ? isOk(input.msgSpace.saved)
               ? showCreatedSm(input.ctx.t('app.saved-changes'))
               : showErrSm(input.ctx.t('app.something-went-wrong'))
@@ -141,7 +141,7 @@ const exitBuilderWithSound: FrontendModule['update'] = (input) => {
 const exitBuilder: FrontendModule['update'] = (input) => {
   const msgSpace: MsgSpace = {
     t: 'screen-puzzle-builder.user-clicked-exit-button',
-    userId: input.ctx.currentUserId,
+    userId: input.ctx.currentUser.userId,
   }
 
   return {
@@ -163,7 +163,7 @@ const saveChanges: FrontendModule['update'] = (input) => {
   const puzzleNew: Puzzle = {
     ...puzzleBuilder.puzzle,
     lastUpdatedAt: input.ctx.now,
-    lastUpdatedBy: input.ctx.currentUserId,
+    lastUpdatedBy: input.ctx.currentUser.userId,
     flow: ModeEdit.toFlow(puzzleBuilder.modeEdit),
   }
 
@@ -178,7 +178,7 @@ const saveChanges: FrontendModule['update'] = (input) => {
       dispatch({
         t: 'screen-puzzle-builder.save-changed.db-saved-puzzle',
         saved: Result.mapOk(put, () => puzzleNew),
-        userId: input.ctx.currentUserId,
+        userId: input.ctx.currentUser.userId,
       })
     },
   }

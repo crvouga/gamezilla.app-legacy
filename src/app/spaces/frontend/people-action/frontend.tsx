@@ -163,7 +163,7 @@ const ViewSurfaces = (
 
 const view = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
   if (!input.ctx.space) return null
-  if (!input.ctx.currentUserId) return null
+  if (!input.ctx.currentUser?.userId) return null
 
   const peopleCount = Object.keys(input.ctx.space.users).length
 

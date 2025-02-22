@@ -50,7 +50,7 @@ const View: FrontendModule['View'] = (input) => {
   if (input.modelSpace.screen.t !== 'screen-select-puzzle') return null
 
   const pack = input.modelSpace.screen.pack
-  const isSpectating = input.ctx.currentUserId !== input.ctx.space.hostId
+  const isSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
 
   if (isSpectating) {
     return (
@@ -77,7 +77,7 @@ const View: FrontendModule['View'] = (input) => {
         onBack: () =>
           input.dispatch({
             t: 'got-msg-space',
-            c: { t: 'user-clicked-exit-screen-open-pack', userId: input.ctx.currentUserId },
+            c: { t: 'user-clicked-exit-screen-open-pack', userId: input.ctx.currentUser.userId },
           }),
       }}
       renderBody={() => (
@@ -90,7 +90,7 @@ const View: FrontendModule['View'] = (input) => {
               c: {
                 t: 'user-changed-slides',
                 slideIndex,
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               },
             })
           }
@@ -103,7 +103,7 @@ const View: FrontendModule['View'] = (input) => {
                 t: 'user-clicked-open-screen-play-puzzle',
                 puzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
                 puzzleIndex,
-                userId: input.ctx.currentUserId,
+                userId: input.ctx.currentUser.userId,
               },
             })
           }}
