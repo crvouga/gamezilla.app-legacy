@@ -5,6 +5,8 @@ import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-
 import { FlowFrontendCmd } from '../@/frontend/cmd'
 import { PackLoaderFrontend } from '../@/pack/pack-loader/frontend'
 import { PuzzleLoaderFrontend } from '../@/puzzle/puzzle-loader/frontend'
+import { SolutionsFinderFrontend } from '../@/solutions/solutions-finder/frontend'
+import { SolutionsLoaderFrontend } from '../@/solutions/solutions-loader/frontend'
 import { ScreenPackBuilderOpenFrontend } from './pack-builder/screen-pack-builder-open/frontend'
 import { ScreenPackBuilderFrontend } from './pack-builder/screen-pack-builder/frontend'
 import { ScreenPuzzleBuilderOpenFrontend } from './puzzle-builder/screen-puzzle-builder-open/frontend'
@@ -76,10 +78,14 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'got-puzzle-loader-msg': {
       return { model: input.model, msgCmd: [PuzzleLoaderFrontend.gotMsg(input.msg.c)] }
     }
+    case 'got-solutions-finder-msg': {
+      return { model: input.model, msgCmd: [SolutionsFinderFrontend.gotMsg(input.msg.c)] }
+    }
+    case 'got-solutions-loader-msg': {
+      return { model: input.model, msgCmd: [SolutionsLoaderFrontend.gotMsg(input.msg.c)] }
+    }
     default: {
-      return {
-        model: input.model,
-      }
+      return { model: input.model }
     }
   }
 }
@@ -148,7 +154,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   }
 }
 
-export const BuildFrontend = {
+export const ScreenBuildFrontend = {
   init: initFrontend,
   update,
   subscriptions,

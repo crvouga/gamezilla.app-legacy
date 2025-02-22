@@ -11,6 +11,7 @@ import { LayoutGame } from '../../../@/ui/game-layout'
 import { ProfileListItem } from '../../../@/ui/list-item-profile'
 import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { ModePlay } from '../../@/mode-play'
+import { ModePlayFrontend } from '../../@/mode-play/frontend'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { FrontendModule } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
@@ -135,7 +136,7 @@ const View: FrontendModule['View'] = (input) => {
             data-puzzle-id={puzzle.t === 'got' ? puzzle.c.id : null}
           >
             {puzzle.t === 'got' ? (
-              <ModePlay.View
+              <ModePlayFrontend.View
                 key={puzzle.c.id}
                 flow={puzzle.c.flow}
                 model={
@@ -185,7 +186,7 @@ const View: FrontendModule['View'] = (input) => {
               }),
 
               puzzle.t === 'got' && !isSolved
-                ? ModePlay.viewHintAction({
+                ? ModePlayFrontend.viewUseHintAction({
                     model:
                       modePlay ??
                       ModePlay.init({
@@ -245,7 +246,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
           />
           <div className='flex flex-1 items-center justify-center'>
             {puzzle.t === 'got' ? (
-              <ModePlay.View
+              <ModePlayFrontend.View
                 disabled
                 key={puzzle.c.id}
                 flow={puzzle.c.flow}

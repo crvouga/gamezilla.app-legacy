@@ -2,6 +2,7 @@ import { IconChevronLeft, IconChevronRight, IconDeleteForever } from '~/@/ui'
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ModePlay } from '../../../../@/mode-play'
+import { ModePlayFrontend } from '../../../../@/mode-play/frontend'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
 import type { FrontendModule } from '../types'
@@ -106,7 +107,7 @@ const View: FrontendModule['View'] = (input) => {
       }}
       renderBody={() =>
         screen.puzzleResult.t === 'got' && screen.play ? (
-          <ModePlay.View
+          <ModePlayFrontend.View
             dispatch={(c) =>
               input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
             }

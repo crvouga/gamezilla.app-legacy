@@ -45,7 +45,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   return {
-    t: 'got-pack-loader-cmd',
+    t: 'flow-cmd.got-pack-loader-cmd',
     c: {
       t: 'got-msg',
       msg,

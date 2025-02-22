@@ -24,7 +24,7 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
-  return { t: 'got-solutions-loader-cmd', c: { t: 'got-msg', msg } }
+  return { t: 'flow-cmd.got-solutions-loader-cmd', c: { t: 'got-msg', msg } }
 }
 
 const watch = <TMsg,>(

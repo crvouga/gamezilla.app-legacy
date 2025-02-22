@@ -1,8 +1,5 @@
 import { Eff } from '~/@/eff'
 import { p } from '~/@/parser'
-import { IconLightbulb } from '~/@/ui'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { Flow } from '../../flow'
 import { GroupId } from '../../flow/group-id'
 import { NodeId } from '../../flow/node-id'
@@ -154,29 +151,5 @@ export const toFlow = (model: Model, flow: Variant.Model): Variant.Model => {
     ...flow,
     pipesBySourceId: model.pipesBySourceId,
     terminalsByGroupId: model.terminalsByGroupId,
-  }
-}
-
-export type ViewCtx = AppFrontendCtx &
-  Ctx & {
-    solutions: Solutions
-  }
-
-export const viewUseHintAction = (input: {
-  model: Model
-  dispatch: (msg: Msg) => void
-  ctx: ViewCtx
-  disabled: boolean
-}): ScreenAction => {
-  return {
-    icon: (input) => <IconLightbulb {...input} />,
-    label: input.ctx.t('game.hint'),
-    onClick: () => {
-      const flow = toFlow(input.model, input.ctx.flow)
-      const hash = SolutionHash.init(flow)
-      const solutions = Solutions.limit(input.ctx.solutions, hash)
-      input.dispatch({ t: 'user-clicked-use-hint', solutions })
-    },
-    disabled: input.disabled,
   }
 }

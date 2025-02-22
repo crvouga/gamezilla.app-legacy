@@ -51,7 +51,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   return {
-    t: 'got-puzzle-loader-cmd',
+    t: 'flow-cmd.got-puzzle-loader-cmd',
     c: {
       t: 'got-msg',
       msg,

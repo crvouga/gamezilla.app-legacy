@@ -3,57 +3,12 @@ import { pipe } from '~/@/function/pipe'
 import { loggerNoop } from '~/@/logger/impl-noop'
 import { UseHint } from '.'
 import { Flow } from '../../flow'
-import { FixtureFlowFrontend } from '../../frontend/fixture'
-import { Solutions } from '../../solutions/solutions'
-import { Variant } from '../../variant'
-import { VariantGridShorthand } from '../../variant/grid'
 import { AlgoIsSolved } from '../../solutions/algo-is-solved/algo-is-solved'
+import { Solutions } from '../../solutions/solutions'
+import { VariantGridShorthand } from '../../variant/grid'
+import { FixtureModePlayUseHint } from './fixture'
 
-type Input = {
-  msg: UseHint.Msg
-  ctx?: UseHint.Ctx
-}
-
-const Fixture = async (input?: { ctxFlow?: Variant.Model }) => {
-  const f = await FixtureFlowFrontend()
-
-  const ctxFlow =
-    input?.ctxFlow ??
-    VariantGridShorthand.toGrid([
-      ['A', ' '],
-      [' ', 'A'],
-    ])
-
-  const ctx = UseHint.initCtx({
-    flow: ctxFlow,
-  })
-
-  const update = (init: UseHint.Model, inputs: Input[]): ReturnType<typeof UseHint.update> => {
-    let output: ReturnType<typeof UseHint.update> = {
-      model: init,
-    }
-    for (const input of inputs) {
-      output = UseHint.update({
-        ctx: UseHint.initCtx(input.ctx ?? ctx),
-        model: output.model,
-        msg: input.msg,
-      })
-    }
-    return output
-  }
-
-  const init: UseHint.Model = UseHint.init({ ctx })
-
-  return {
-    ...f,
-    ctx: {
-      ...f.ctx,
-      ...ctx,
-    },
-    update,
-    init,
-  }
-}
+const Fixture = FixtureModePlayUseHint
 
 describe(import.meta.file, () => {
   test('hint', async () => {
@@ -281,23 +236,6 @@ describe(import.meta.file, () => {
     ])
     const after = UseHint.toFlow(updated.model, f.ctx.flow)
     expect(Flow.hasBranchingPipelines(after)).toBe(false)
-  })
-
-  it('should disable hint button if puzzle is solved', async () => {
-    const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
-        ['A', 'B'],
-        ['a', 'b'],
-        ['A', 'B'],
-      ]),
-    })
-    const viewed = UseHint.viewUseHintAction({
-      ctx: f.ctx,
-      dispatch: () => {},
-      model: f.init,
-      disabled: true,
-    })
-    expect(viewed.disabled).toBe(true)
   })
 
   it('should never change the positions of the terminals when using a hint', async () => {

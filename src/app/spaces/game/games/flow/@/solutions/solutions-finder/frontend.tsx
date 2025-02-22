@@ -4,7 +4,7 @@ import { SurfaceActions } from '~/@/ui/surface/surface-actions'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SolutionHash } from '../solution-hash/solution-hash'
-import type { FrontendModule } from './types'
+import type { FrontendModule, MsgFrontend, MsgInCmdFrontend } from './types'
 
 const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
@@ -49,8 +49,19 @@ const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[
   ]
 }
 
+const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
+  return {
+    t: 'flow-cmd.got-solutions-finder-cmd',
+    c: {
+      t: 'got-msg',
+      msg,
+    },
+  }
+}
+
 export const SolutionsFinderFrontend = {
   update,
   ViewDialog,
   viewAction,
+  gotMsg,
 }

@@ -2,7 +2,7 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { PubSub } from '~/@/sub'
 import type { WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureFlowFrontend } from '../../../@/frontend/fixture'
-import { PlayFrontend } from '../../frontend'
+import { ScreenPlayFrontend } from '../../frontend'
 import { PlaySpace } from '../../space'
 import type { ModelSpace, MsgFrontend, MsgSpace, MsgToFrontend } from '../../types'
 
@@ -16,14 +16,14 @@ export const FixturePlayFrontend = async () => {
   const f = await FixtureFlowFrontend()
   const initSpace = PlaySpace.initSpace(f)
 
-  type Output = ReturnType<typeof PlayFrontend.update> & {
+  type Output = ReturnType<typeof ScreenPlayFrontend.update> & {
     modelSpace: ModelSpace
   }
 
   const render = (output: Output, ctx: typeof f.ctx = f.ctx) => {
     const msgs = PubSub.create<MsgFrontend>()
     const rendered = f.render(
-      <PlayFrontend.View ctx={ctx} dispatch={msgs.pub} model={output.model} modelSpace={output.modelSpace} />,
+      <ScreenPlayFrontend.View ctx={ctx} dispatch={msgs.pub} model={output.model} modelSpace={output.modelSpace} />,
     )
     return { ...rendered, msgs }
   }
@@ -32,7 +32,7 @@ export const FixturePlayFrontend = async () => {
     const outputs: NonEmpty<Output> = [output]
     for (const input of inputs) {
       const lastOutput = NonEmpty.last(outputs)
-      const nextOutput = PlayFrontend.update({
+      const nextOutput = ScreenPlayFrontend.update({
         ctx: f.ctx,
         model: lastOutput.model,
         modelSpace: lastOutput.modelSpace,
@@ -56,7 +56,7 @@ export const FixturePlayFrontend = async () => {
   }
 
   const initial: Output = {
-    model: PlayFrontend.init,
+    model: ScreenPlayFrontend.init,
     modelSpace: initSpace,
   }
 

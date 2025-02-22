@@ -1,11 +1,7 @@
 import { pipe } from '~/@/function/pipe'
 import { Translator } from '~/@/l18n/generated'
 import { p } from '~/@/parser'
-import { TimeSpan } from '~/@/time/time-span'
-import { IconCheckmark, Transition } from '~/@/ui'
 import { APP_SOUND, AppFrontendCmd, playSound, showToast } from '~/app/@/frontend/cmd'
-import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
-import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { Flow } from '../flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
@@ -13,7 +9,7 @@ import { Terminal } from '../flow/terminal'
 import { AlgoIsSolved } from '../solutions/algo-is-solved/algo-is-solved'
 import { AlgoSolve } from '../solutions/algo-solve'
 import { Solutions } from '../solutions/solutions'
-import { VariantBoard, type Variant } from '../variant'
+import { type Variant } from '../variant'
 import { AlgoDrawPipes } from './algo-draw-pipes'
 import { UseHint } from './use-hint'
 
@@ -29,7 +25,7 @@ export type Ctx = UseHint.Ctx & {
   flow: Variant.Model
 }
 
-export const initCtx = <TCtx,>(input: { flow: Variant.Model } & TCtx): Ctx & TCtx => {
+export const initCtx = <TCtx>(input: { flow: Variant.Model } & TCtx): Ctx & TCtx => {
   return {
     ...UseHint.initCtx(input),
     ...input,
@@ -207,7 +203,7 @@ export const toSolutionMsgs = ({ flow }: { flow: Variant.Model }): Msg[] => {
   return msgs
 }
 
-const first = <T,>(iterable: Iterable<T>): T | null => {
+const first = <T>(iterable: Iterable<T>): T | null => {
   for (const item of iterable) {
     return item
   }
@@ -497,123 +493,4 @@ export const toFlow = (model: Model, flow: Variant.Model): Variant.Model => {
     ...derived,
     terminalsByGroupId: model.terminalsByGroupId,
   }
-}
-
-//
-//
-//
-// View
-//
-//
-//
-
-export const View = (input: {
-  flow: Variant.Model
-  model: Model
-  dispatch: (m: Msg) => void
-  disabled?: boolean
-  showSolvedAnimation?: boolean
-}) => {
-  const flow = toFlow(input.model, input.flow)
-
-  return (
-    <div className='relative aspect-square h-full max-h-full w-full touch-none select-none overflow-hidden'>
-      <VariantBoard.View
-        disabled={input.disabled}
-        model={flow}
-        showCoordinates={false}
-        isDragging={input.model.status.t === 'dragging'}
-        onDraggedOver={(nodeId) => input.dispatch({ t: 'user-dragged-over-node', nodeId })}
-        onPressDown={(nodeId) => input.dispatch({ t: 'user-pressed-down-node', nodeId })}
-        onPressUp={(nodeId) => input.dispatch({ t: 'user-pressed-up-node', nodeId })}
-        onLeave={() => input.dispatch({ t: 'user-dragging-left' })}
-        autocompleteEdge={
-          input.model.status.t === 'dragging' && input.model.status.autocompleteEdge
-            ? { ...input.model.status.autocompleteEdge, groupId: input.model.status.activeGroupId }
-            : null
-        }
-        isGroupActive={(groupId) => input.model.status.t === 'dragging' && input.model.status.activeGroupId === groupId}
-        usedHints={UseHint.toUsedHints(input.model)}
-      />
-
-      <CheckmarkAnimation open={Boolean(input.model.showCheckmarkAnimation && input.showSolvedAnimation)} />
-    </div>
-  )
-}
-
-export const viewHintAction = UseHint.viewUseHintAction
-
-const viewResetAction = (input: {
-  flow: Variant.Model
-  model: Model
-  dispatch: (m: Msg) => void
-  ctx: {
-    t: Translator
-  }
-}): ScreenAction => {
-  const flow = toFlow(input.model, input.flow)
-  const disabled = Flow.isPipesEmpty(flow)
-  return PrebuiltActions.reset({
-    ctx: input.ctx,
-    onClick: () => input.dispatch({ t: 'user-clicked-reset' }),
-    disabled,
-  })
-}
-
-export const viewScreenActions = (input: {
-  flow: Variant.Model
-  model: Model
-  dispatch: (m: Msg) => void
-  ctx: UseHint.ViewCtx
-}): ScreenAction[] => {
-  const status = toStatus({ flow: input.flow, model: input.model })
-  return [
-    viewHintAction({
-      ctx: input.ctx,
-      dispatch: input.dispatch,
-      model: input.model,
-      disabled: status === 'solved',
-    }),
-    viewResetAction({
-      ctx: input.ctx,
-      dispatch: input.dispatch,
-      flow: input.flow,
-      model: input.model,
-    }),
-  ]
-}
-
-const defaultCheckmarkAnimationDuration = TimeSpan.seconds(1 / 2)
-
-const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan | null | undefined }) => {
-  const duration = input.duration ?? defaultCheckmarkAnimationDuration
-  return (
-    <Transition
-      id='checkmark'
-      onEnter={animateCheckmark({
-        duration,
-      })}
-      onExit={async () => {}}
-      mode='out-in'
-      className='pointer-events-none'
-    >
-      {input.open && (
-        <div className='pointer-events-none absolute inset-0 flex items-center justify-center opacity-0'>
-          <IconCheckmark className='pointer-events-none aspect-square w-full opacity-50' />
-        </div>
-      )}
-    </Transition>
-  )
-}
-
-const animateCheckmark = (input: { duration: TimeSpan }) => async (node: HTMLElement) => {
-  node.style.transition = 'all 0.3s ease-in-out'
-  node.style.opacity = '0'
-  node.style.transform = 'scale(0.8)'
-  await new Promise((r) => setTimeout(r, 50))
-  node.style.opacity = '1'
-  node.style.transform = 'scale(1)'
-  await new Promise((r) => setTimeout(r, TimeSpan.toMilliseconds(input.duration)))
-  node.style.opacity = '0'
-  node.style.transform = 'scale(0.8)'
 }

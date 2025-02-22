@@ -47,7 +47,7 @@ export type MsgOutCmdFrontend =
   | FlowFrontendCmdRoot
 
 export type MsgInCmdFrontend = {
-  t: 'got-pack-loader-cmd'
+  t: 'flow-cmd.got-pack-loader-cmd'
   c: {
     t: 'got-msg'
     msg: MsgFrontend

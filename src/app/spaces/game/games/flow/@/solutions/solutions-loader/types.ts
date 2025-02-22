@@ -30,7 +30,7 @@ export type MsgToFrontend = {
 }
 
 export type MsgInCmdFrontend = {
-  t: 'got-solutions-loader-cmd'
+  t: 'flow-cmd.got-solutions-loader-cmd'
   c: {
     t: 'got-msg'
     msg: MsgFrontend

@@ -11,6 +11,7 @@ import { ProfileListItem } from '../../../../@/ui/list-item-profile'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { ModeEdit } from '../../../@/mode-edit'
 import { ModePlay } from '../../../@/mode-play'
+import { ModePlayFrontend } from '../../../@/mode-play/frontend'
 import { SolutionHash } from '../../../@/solutions/solution-hash/solution-hash'
 import { SolutionsLoaderFrontend } from '../../../@/solutions/solutions-loader/frontend'
 import { BoardLayout } from '../../../@/ui/board-layout'
@@ -21,7 +22,6 @@ import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './surface-save-changes/frontend'
 import { MsgFrontend } from './types'
-import { SolutionsFinderFrontend } from '../../../@/solutions/solutions-finder/frontend'
 
 //
 //
@@ -278,7 +278,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
       renderBody={() => (
         <BoardLayout>
           <div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>
-          <ModePlay.View
+          <ModePlayFrontend.View
             model={puzzleBuilder.modePlay}
             flow={flow}
             dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c })}
@@ -290,16 +290,11 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
         variant: {
           t: 'uniform',
           actions: [
-            ...SolutionsFinderFrontend.viewAction({
-              ctx: input.ctx,
-              dispatch: (m) => input.dispatch({ t: 'got-solutions-finder-msg', c: m }),
-              model: input.ctx.solutionsFinder,
-            }),
-            ...ModePlay.viewScreenActions({
+            ...ModePlayFrontend.viewScreenActions({
               ctx: ModePlay.initCtx({ ...input.ctx, flow }),
               dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
               model: puzzleBuilder.modePlay,
-              flow,
+              dispatchSolutionsFinder: (m) => input.dispatch({ t: 'got-solutions-finder-msg', c: m }),
             }),
           ],
         },

@@ -43,7 +43,7 @@ export type MsgToFrontend = {
 }
 
 export type MsgInCmdFrontend = {
-  t: 'got-puzzle-loader-cmd'
+  t: 'flow-cmd.got-puzzle-loader-cmd'
   c: {
     t: 'got-msg'
     msg: MsgFrontend

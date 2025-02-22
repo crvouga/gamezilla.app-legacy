@@ -75,7 +75,7 @@ const ViewFeedItem: FrontendModule['ViewFeedItem'] = (_input) => {
   return null
 }
 
-export const PlayFrontend = {
+export const ScreenPlayFrontend = {
   init,
   update,
   subscriptions,

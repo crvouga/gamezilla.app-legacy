@@ -21,7 +21,7 @@ const updateSpace = (input: {
 }): ModelSpace => {
   const ctx: FlowSpaceCtx = input.ctx
   switch (input.msgSpace.t) {
-    case 'got-msg-play': {
+    case 'got-screen-play-msg': {
       const updated = PlaySpace.updateSpace({
         ctx,
         msgSpace: input.msgSpace.c,
@@ -38,7 +38,7 @@ const updateSpace = (input: {
       }
     }
 
-    case 'got-msg-build': {
+    case 'got-screen-build-msg': {
       const updated = BuildSpace.updateSpace({
         ctx,
         msgSpace: input.msgSpace.c,
