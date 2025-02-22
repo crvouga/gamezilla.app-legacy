@@ -1,16 +1,16 @@
+import { Eff } from '~/@/eff'
+import { Sub } from '~/@/sub'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
+import { FlowFrontendCmd } from '../@/frontend/cmd'
 import { PackLoaderFrontend } from '../@/pack/pack-loader/frontend'
 import { PuzzleLoaderFrontend } from '../@/puzzle/puzzle-loader/frontend'
+import { ScreenPackBuilderOpenFrontend } from './pack-builder/screen-pack-builder-open/frontend'
+import { ScreenPackBuilderFrontend } from './pack-builder/screen-pack-builder/frontend'
+import { ScreenPuzzleBuilderOpenFrontend } from './puzzle-builder/screen-puzzle-builder-open/frontend'
+import { ScreenPuzzleBuilderFrontend } from './puzzle-builder/screen-puzzle-builder/frontend'
 import { ScreenMainMenuFrontend } from './screen-main-menu/frontend'
-import { ScreenPackBuilderOpenFrontend } from './screen-pack-builder-open/frontend'
-import { ScreenPackBuilderFrontend } from './screen-pack-builder/frontend'
-import { ScreenPuzzleBuilderOpenFrontend } from './screen-puzzle-builder-open/frontend'
-import { ScreenPuzzleBuilderFrontend } from './screen-puzzle-builder/frontend'
 import { initFrontend, type FrontendModule } from './types'
-import { Eff } from '~/@/eff'
-import { FlowFrontendCmd } from '../@/frontend/cmd'
-import { Sub } from '~/@/sub'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(

@@ -1,10 +1,10 @@
 import { isErr } from '~/@/result'
 import { FlowSpaceCtx } from '../@/space/ctx'
+import { ScreenPackBuilderOpenSpace } from './pack-builder/screen-pack-builder-open/space'
+import { ScreenPackBuildSpace } from './pack-builder/screen-pack-builder/space/space'
+import { ScreenPuzzleBuilderOpenSpace } from './puzzle-builder/screen-puzzle-builder-open/space'
+import { ScreenPuzzleBuildSpace } from './puzzle-builder/screen-puzzle-builder/space'
 import { ScreenMainMenuSpace } from './screen-main-menu/space'
-import { ScreenPackBuilderOpenSpace } from './screen-pack-builder-open/space'
-import { ScreenPackBuildSpace } from './screen-pack-builder/space/space'
-import { ScreenPuzzleBuilderOpenSpace } from './screen-puzzle-builder-open/space'
-import { ScreenPuzzleBuildSpace } from './screen-puzzle-builder/space'
 import type { ModelSpace, Screen, UpdateSpace } from './types'
 
 const initSpace = (_input: { ctx: FlowSpaceCtx }): ModelSpace => {

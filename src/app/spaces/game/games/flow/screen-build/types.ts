@@ -12,11 +12,11 @@ import { PackLoaderTypes } from '../@/pack/pack-loader'
 import { PuzzleLoaderTypes } from '../@/puzzle/puzzle-loader'
 import { FlowSpaceCtx } from '../@/space/ctx'
 import { FlowSpaceEvt } from '../@/space/event'
+import { ScreenPackBuilderTypes } from './pack-builder/screen-pack-builder'
+import { ScreenPackBuilderOpenTypes } from './pack-builder/screen-pack-builder-open'
+import { ScreenPuzzleBuilderTypes } from './puzzle-builder/screen-puzzle-builder'
+import { ScreenPuzzleBuilderOpenTypes } from './puzzle-builder/screen-puzzle-builder-open'
 import { ScreenMainMenu } from './screen-main-menu'
-import { ScreenPackBuilderTypes } from './screen-pack-builder'
-import { ScreenPackBuilderOpenTypes } from './screen-pack-builder-open'
-import { ScreenPuzzleBuilderTypes } from './screen-puzzle-builder'
-import { ScreenPuzzleBuilderOpenTypes } from './screen-puzzle-builder-open'
 
 //
 //
