@@ -6,12 +6,13 @@ import { PackDb } from '../../../@/pack/pack-db/impl'
 import { PackLoaderTypes } from '../../../@/pack/pack-loader'
 import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
 import { PuzzleLoaderTypes } from '../../../@/puzzle/puzzle-loader'
+import { Solutions } from '../../../@/solutions/solutions'
 import { SolutionsDb } from '../../../@/solutions/solutions-db/impl-db-conn-sql'
 import { SolutionsFinderTypes } from '../../../@/solutions/solutions-finder'
+import { SolutionsLoaderTypes } from '../../../@/solutions/solutions-loader'
 import { ScreenBuildFrontend } from '../../frontend'
 import { BuildSpace } from '../../space'
 import * as BuilderTypes from '../../types'
-import { SolutionsLoaderTypes } from '../../../@/solutions/solutions-loader'
 export type FixtureUpdateInput = {
   ctx?: FlowFrontendCtx
   msg?: BuilderTypes.MsgFrontend
@@ -40,7 +41,7 @@ export const FixtureFlowBuilderFrontend = async () => {
     packLoader: PackLoaderTypes.initFrontend,
     solutionsFinder: SolutionsFinderTypes.initFrontend,
     solutionsLoader: SolutionsLoaderTypes.initFrontend,
-    solutions: {},
+    solutions: Solutions.init,
     puzzleDb: PuzzleDb({ t: 'db-conn-sql', dbConnSql: f.ctx.dbConnSql, logger: f.ctx.logger }),
     packDb: PackDb({ t: 'db-conn-sql', dbConnSql: f.ctx.dbConnSql, logger: f.ctx.logger }),
     solutionsDb: SolutionsDb({ t: 'db-conn-sql', dbConnSql: f.ctx.dbConnSql }),

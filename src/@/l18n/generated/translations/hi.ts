@@ -180,6 +180,9 @@ export const translations: Text = {
   'flow.no-puzzles': 'कोई पहेली नहीं',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) =>
     `${selectedCount} \u0915\u093E ${totalCount} \u091A\u092F\u0928\u093F\u0924`,
+  'flow.find-solutions-confirmation-body':
+    'इस पहेली के लिए अभी तक आपके डिवाइस पर कोई समाधान लोड नहीं किया गया है। "खोजें" पर क्लिक करने से समाधान की खोज शुरू होगी - कृपया ध्यान दें कि खोज पूरी होने तक ऐप व्यस्त रहेगा।',
+  'flow.solutions-found': 'समाधान मिल गए',
   'flow.find-solutions': 'समाधान ढूंढें',
   'flow.no-packs': 'कोई पैक नहीं',
   'flow.puzzle-count': (count) => `${count} \u092A\u0939\u0947\u0932\u093F\u092F\u093E\u0901`,
@@ -239,6 +242,7 @@ export const translations: Text = {
   'profile.avatar-label': 'अवतार',
   'username.username-label': 'उपयोगकर्ता नाम',
   username: (username) => `@${username}`,
+  'app.find': 'खोजें',
   'app.open-settings': 'सेटिंग्स खोलें',
   'app.submit': 'जमा करें',
   'app.edit-name': 'नाम संपादित करें',

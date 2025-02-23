@@ -32,7 +32,15 @@ const prepend = <T>(x: T, xs: NonEmpty<T>): NonEmpty<T> => {
   return [x, ...xs]
 }
 
+const assert = <T>(xs: T[]): NonEmpty<T> => {
+  if (!is(xs)) {
+    throw new Error('Impossible condition! NonEmpty array has no elements!')
+  }
+  return xs
+}
+
 export const NonEmpty = {
+  assert,
   concat,
   is,
   last,

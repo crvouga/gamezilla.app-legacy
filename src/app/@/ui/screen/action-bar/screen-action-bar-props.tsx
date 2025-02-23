@@ -11,6 +11,7 @@ export type ScreenAction = {
     button?: string
     label?: string
   }
+  testId?: string
   onClick: () => void
   loading?: boolean
   color?: 'danger' | 'success' | 'inherit' | 'selected'

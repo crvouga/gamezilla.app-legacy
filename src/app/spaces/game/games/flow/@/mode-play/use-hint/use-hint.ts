@@ -75,7 +75,7 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
 
       const solutionHash = SolutionHash.init(flow)
 
-      const solution = msg.solutions[solutionHash]?.[0]
+      const solution = Solutions.selectOne(msg.solutions, solutionHash)
 
       if (!solution) return { model: input.model, events: [{ t: 'no-hints' }] }
 

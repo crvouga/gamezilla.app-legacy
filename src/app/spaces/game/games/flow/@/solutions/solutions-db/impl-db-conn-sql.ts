@@ -1,11 +1,10 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
 import { Json } from '~/@/json/json'
 import { p } from '~/@/parser'
-import { Err, isErr, Ok, unwrapOr } from '~/@/result'
+import { Err, isErr, Ok, Result, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
-import { Solution } from '../solution'
 import { Solutions } from '../solutions'
 import { ISolutionsDb } from './interface'
 
@@ -23,9 +22,11 @@ const Row = p.obj({
 
 export type Row = p.Infer<typeof Row>
 
-const rowToSolutions = (row: Row): Solutions | null => {
+const rowToSolutions = (row: Row): Result<string, Solutions> => {
   const json = unwrapOr(typeof row.solutions === 'string' ? Json.parse(row.solutions) : Ok(row.solutions), [])
-  return p.arr(Solution).parse(json)
+  const parsed = Solutions.parse(json)
+  if (isErr(parsed)) return Err(parsed.error.map((e) => e.message).join('\n'))
+  return Ok(parsed.value)
 }
 
 export const SolutionsDb = (config: Config): ISolutionsDb => {
@@ -55,49 +56,73 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
 
       if (!row) return Ok([])
 
-      const json = unwrapOr(typeof row.solutions === 'string' ? Json.parse(row.solutions) : Ok(row.solutions), [])
+      const solutions = rowToSolutions(row)
+      if (isErr(solutions)) return solutions
 
-      const parsed = p.arr(Solution).parse(json)
-
-      if (isErr(parsed)) return Err(parsed.error.map((e) => e.message).join('\n'))
-
-      const solutions: Solutions = { [hash]: parsed.value }
-
-      return Ok([solutions])
+      return Ok(solutions.value)
     },
 
     async put(solutions) {
-      for (const [hash, sols] of Solutions.iter(solutions)) {
+      for (const [hash, sols] of Solutions.groupByHash(solutions)) {
+        const got = await this.get(hash)
+        if (isErr(got)) {
+          return got
+        }
+
         const now = Posix.now()
 
-        const result = await config.dbConnSql.query({
-          parser: Row,
-          sql: `
-          INSERT INTO game_flow_solutions (
-            id,
-            solutions,
-            created_at_posix,
-            last_updated_at_posix
-          )
-          VALUES (
-            :id,
-            :solutions,
-            :created_at_posix,
-            :last_updated_at_posix
-          )
-          ON CONFLICT (id) DO UPDATE SET
-            solutions = :solutions,
-            last_updated_at_posix = :last_updated_at_posix
-        `,
-          vars: {
-            id: hash,
-            solutions: Sql.json(sols),
-            created_at_posix: now,
-            last_updated_at_posix: now,
-          },
-        })
+        if (got.value.length > 0) {
+          // Update existing record
+          const updateResult = await config.dbConnSql.query({
+            parser: p.num,
+            sql: `
+            UPDATE game_flow_solutions
+            SET
+              solutions = :solutions,
+              last_updated_at_posix = :lastUpdatedAt
+            WHERE
+              id = :id
+            `,
+            vars: {
+              id: hash,
+              solutions: Sql.json(sols),
+              lastUpdatedAt: now,
+            },
+          })
 
-        if (isErr(result)) return result
+          if (isErr(updateResult)) {
+            return updateResult
+          }
+        } else {
+          // Insert new record
+          const insertResult = await config.dbConnSql.query({
+            parser: p.unknown,
+            sql: `
+            INSERT INTO game_flow_solutions (
+              id,
+              solutions,
+              created_at_posix,
+              last_updated_at_posix
+            )
+            VALUES (
+              :id,
+              :solutions,
+              :createdAt,
+              :lastUpdatedAt
+            )
+            `,
+            vars: {
+              id: hash,
+              solutions: Sql.json(sols),
+              createdAt: now,
+              lastUpdatedAt: now,
+            },
+          })
+
+          if (isErr(insertResult)) {
+            return insertResult
+          }
+        }
       }
 
       return Ok(null)
@@ -135,7 +160,8 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
         (rows) => {
           return rows.flatMap((row) => {
             const solutions = rowToSolutions(row)
-            return solutions ? [solutions] : []
+            if (isErr(solutions)) return []
+            return solutions.value
           })
         },
       )

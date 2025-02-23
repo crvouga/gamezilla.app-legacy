@@ -1,8 +1,12 @@
 import type { ILogger } from '~/@/logger'
+import { Err, Ok, Result } from '~/@/result'
 import type { Variant } from '../../variant'
-import { MsgToMaster, type MsgToWorker } from './algo-solve-async.types'
+import { MsgToMaster, type MsgToWorker } from './types'
 
-export const solve = async (input: { model: Variant.Model; logger: ILogger }): Promise<Variant.Model | null> => {
+export const solve = async (input: {
+  model: Variant.Model
+  logger: ILogger
+}): Promise<Result<string, Variant.Model | null>> => {
   input.logger.info('Solving puzzle with worker')
 
   let url
@@ -11,7 +15,7 @@ export const solve = async (input: { model: Variant.Model; logger: ILogger }): P
     url = new URL('algo-solve-async-worker.ts', import.meta.url).href
   } catch (e) {
     console.error(e)
-    return null
+    return Err('Failed to load worker')
   }
 
   const worker = new Worker(url)
@@ -31,6 +35,12 @@ export const solve = async (input: { model: Variant.Model; logger: ILogger }): P
     }
   })
 
+  const errorPromise = new Promise<string>((resolve) => {
+    worker.onerror = (event: ErrorEvent) => {
+      resolve(event.message)
+    }
+  })
+
   const toWorker: MsgToWorker = {
     t: 'find-solution',
     model: input.model,
@@ -42,19 +52,23 @@ export const solve = async (input: { model: Variant.Model; logger: ILogger }): P
 
   input.logger.info('Waiting for solution')
 
-  const solution = await Promise.race([
+  const result = await Promise.race([
     solutionPromise,
-    new Promise<Variant.Model | null>((resolve) => {
-      setTimeout(
-        () => {
-          resolve(null)
-        },
-        1000 * 60 * 2,
-      )
+    errorPromise.then((err) => err).catch(() => ''),
+    new Promise<null>((resolve) => {
+      setTimeout(() => resolve(null), 1000 * 60 * 2)
     }),
   ])
 
-  input.logger.info(`Solution: ${solution ? 'found' : 'not found'}`)
+  if (typeof result === 'string') {
+    return Err(result)
+  }
+
+  if (result === null) {
+    return Err('Timed out. Worker took too long to respond')
+  }
+
+  input.logger.info(`Solution: ${result ? 'found' : 'not found'}`)
 
   input.logger.info('Terminating worker')
 
@@ -62,5 +76,5 @@ export const solve = async (input: { model: Variant.Model; logger: ILogger }): P
 
   input.logger.info('Worker terminated')
 
-  return solution
+  return Ok(result)
 }

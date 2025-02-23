@@ -104,7 +104,6 @@ export const PuzzleDb = (_config: Config): IPuzzleDb => {
           limit: input.pagination.limit,
           offset: input.pagination.offset,
         },
-        solutions: {},
       })
     },
 

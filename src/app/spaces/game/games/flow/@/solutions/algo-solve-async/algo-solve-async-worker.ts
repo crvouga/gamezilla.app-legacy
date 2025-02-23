@@ -1,5 +1,5 @@
-import { AlgoSolve } from '../algo-solve'
-import { MsgToWorker } from './algo-solve-async.types'
+import { AlgoSolve } from '../algo-solve/index'
+import { MsgToWorker } from './types'
 
 declare let self: Worker
 

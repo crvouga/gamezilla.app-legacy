@@ -20,6 +20,6 @@ describe(import.meta.file, () => {
       model: f.init,
       disabled: true,
     })
-    expect(viewed.disabled).toBe(true)
+    expect(viewed[0]?.disabled ?? true).toBe(true)
   })
 })

@@ -1,6 +1,6 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { PubSub } from '~/@/sub'
 import type { WithEventMeta } from '~/@/event-sourced/event'
+import { PubSub } from '~/@/sub'
 import { FixtureFlowFrontend } from '../../../@/frontend/fixture'
 import { ScreenPlayFrontend } from '../../frontend'
 import { PlaySpace } from '../../space'

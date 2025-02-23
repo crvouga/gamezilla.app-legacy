@@ -180,6 +180,9 @@ export const translations: Text = {
   'flow.no-puzzles': 'Нет пазлов',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) =>
     `${selectedCount} \u0438\u0437 ${totalCount} \u0432\u044B\u0431\u0440\u0430\u043D\u043E`,
+  'flow.find-solutions-confirmation-body':
+    'Для этой головоломки еще не загружены решения на ваше устройство. Нажатие "Найти" начнет поиск решений - обратите внимание, что приложение будет занято до завершения поиска.',
+  'flow.solutions-found': 'Решения найдены',
   'flow.find-solutions': 'Найти решения',
   'flow.no-packs': 'Нет пакетов',
   'flow.puzzle-count': (count) => `${count} \u0433\u043E\u043B\u043E\u0432\u043E\u043B\u043E\u043C\u043E\u043A`,
@@ -239,6 +242,7 @@ export const translations: Text = {
   'profile.avatar-label': 'Аватар',
   'username.username-label': 'Имя пользователя',
   username: (username) => `@${username}`,
+  'app.find': 'Найти',
   'app.open-settings': 'Открыть настройки',
   'app.submit': 'Отправить',
   'app.edit-name': 'Изменить Имя',

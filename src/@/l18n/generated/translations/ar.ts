@@ -178,6 +178,9 @@ export const translations: Text = {
   'flow.no-puzzles': 'لا توجد ألغاز',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) =>
     `${selectedCount} \u0645\u0646 ${totalCount} \u062A\u0645 \u062A\u062D\u062F\u064A\u062F\u0647\u0627`,
+  'flow.find-solutions-confirmation-body':
+    'لم يتم تحميل أي حلول لهذا اللغز على جهازك بعد. سيؤدي النقر فوق "بحث" إلى بدء البحث عن الحلول - يرجى ملاحظة أن التطبيق سيكون مشغولاً حتى اكتمال البحث.',
+  'flow.solutions-found': 'تم العثور على الحلول',
   'flow.find-solutions': 'البحث عن حلول',
   'flow.no-packs': 'لا توجد حزم',
   'flow.puzzle-count': (count) => `${count} \u0623\u0644\u063A\u0627\u0632`,
@@ -239,6 +242,7 @@ export const translations: Text = {
   'profile.avatar-label': 'الصورة الرمزية',
   'username.username-label': 'اسم المستخدم',
   username: (username) => `@${username}`,
+  'app.find': 'بحث',
   'app.open-settings': 'فتح الإعدادات',
   'app.submit': 'إرسال',
   'app.edit-name': 'تعديل الإسم',

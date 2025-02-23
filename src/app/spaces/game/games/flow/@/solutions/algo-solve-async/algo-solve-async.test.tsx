@@ -1,10 +1,11 @@
 import { describe, expect, test } from 'bun:test'
 import { loggerNoop } from '~/@/logger/impl-noop'
+import { unwrap } from '~/@/result'
 import { Flow } from '../../flow'
 import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoSolveAsync from './algo-solve-async'
 
-describe(import.meta.file, () => {
+describe('AlgoSolveAsync', () => {
   test('solve flow', async () => {
     const flow = VariantGridShorthand.toGrid([
       ['A', 'B', 'C'],
@@ -12,7 +13,7 @@ describe(import.meta.file, () => {
       ['A', 'B', 'C'],
     ])
 
-    const solution = await AlgoSolveAsync.solve({ model: flow, logger: loggerNoop })
+    const solution = unwrap(await AlgoSolveAsync.solve({ model: flow, logger: loggerNoop }))
 
     const expected = VariantGridShorthand.toGrid([
       ['A', 'B', 'C'],

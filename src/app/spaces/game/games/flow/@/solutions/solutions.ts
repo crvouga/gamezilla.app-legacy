@@ -1,37 +1,33 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { ILogger } from '~/@/logger'
 import { p } from '~/@/parser'
+import { unwrapOr } from '~/@/result'
 import { Variant } from '../variant'
 import { AlgoIsSolved } from './algo-is-solved/algo-is-solved'
 import { AlgoSolveAsync } from './algo-solve-async'
 import { Solution } from './solution'
 import { SolutionHash } from './solution-hash/solution-hash'
 
-const parser = p.dict(SolutionHash, p.arr(Solution))
+const parser = p.arr(Solution)
 
 export type Solutions = p.Infer<typeof parser>
 
-const init: Solutions = {}
+const init: Solutions = []
 
 const findOne = async (input: { model: Variant.Model; logger: ILogger }): Promise<Solutions> => {
-  const found = await AlgoSolveAsync.solve(input)
+  const found = unwrapOr(await AlgoSolveAsync.solve(input), null)
   if (!found) {
-    return {}
+    return init
   }
-  const hash = SolutionHash.init(found)
-  return {
-    [hash]: [Solution.fromFlow(found)],
-  }
+  return of([found])
 }
 
 const of = (model: Variant.Model[]): Solutions => {
   const solved = model.filter((m) => AlgoIsSolved.isSolved(m))
-  if (NonEmpty.is(solved)) {
-    const first = solved[0]
-    const hash = SolutionHash.init(first)
-    return { [hash]: solved }
+  if (!NonEmpty.is(solved)) {
+    return init
   }
-  return {}
+  return solved.map(Solution.fromFlow)
 }
 
 const find = async (input: { models: Variant.Model[]; logger: ILogger }): Promise<Solutions> => {
@@ -41,51 +37,38 @@ const find = async (input: { models: Variant.Model[]; logger: ILogger }): Promis
 }
 
 const merge = (a: Solutions, b: Solutions): Solutions => {
-  const result: Solutions = { ...a }
+  const solutionsNew: Solutions = [...a, ...b]
+  return solutionsNew
+}
 
-  for (const [key, value] of Object.entries(b)) {
-    if (!SolutionHash.is(key)) {
-      continue
-    }
-
-    if (result[key]) {
-      result[key] = [...result[key], ...value]
-      continue
-    }
-
-    result[key] = value
+const groupByHash = (solutions: Solutions): Map<SolutionHash, Solution[]> => {
+  const byHash = new Map<SolutionHash, Solution[]>()
+  for (const solution of solutions) {
+    const existing = byHash.get(SolutionHash.init(solution)) || []
+    byHash.set(SolutionHash.init(solution), [...existing, solution])
   }
+  return byHash
+}
 
-  return result
+const selectOne = (solutions: Solutions, hash: SolutionHash): Solution | null => {
+  const group = groupByHash(solutions)
+  const s = group.get(hash)
+  if (!s) return null
+  return s[0] ?? null
 }
 
 const limit = (solutions: Solutions, hash: SolutionHash): Solutions => {
-  return {
-    [hash]: (solutions[hash]?.slice(0, 1) ?? []).map(
-      (s): Solution => ({
-        pipesBySourceId: s.pipesBySourceId,
-        terminalsByGroupId: s.terminalsByGroupId,
-      }),
-    ),
-  }
-}
-
-const iter = function* (solutions: Solutions): Iterable<[SolutionHash, Solution[]]> {
-  for (const [hash, sols] of Object.entries(solutions)) {
-    if (!SolutionHash.is(hash)) {
-      continue
-    }
-
-    yield [hash, sols]
-  }
+  const found = solutions.filter((s) => SolutionHash.init(s) === hash).slice(0, 1)
+  return found
 }
 
 export const Solutions = {
   ...parser,
+  limit,
   find,
   merge,
-  limit,
   of,
-  iter,
+  groupByHash,
   init,
+  selectOne,
 }

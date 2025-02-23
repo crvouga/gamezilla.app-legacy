@@ -177,6 +177,9 @@ export const translations: Text = {
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': 'Sin rompecabezas',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} de ${totalCount} seleccionados`,
+  'flow.find-solutions-confirmation-body':
+    'Este rompecabezas aún no tiene soluciones cargadas en su dispositivo. Al hacer clic en "Buscar" comenzará a buscar soluciones - tenga en cuenta que la aplicación estará ocupada hasta que se complete la búsqueda.',
+  'flow.solutions-found': 'Soluciones encontradas',
   'flow.find-solutions': 'Encontrar soluciones',
   'flow.no-packs': 'Sin paquetes',
   'flow.puzzle-count': (count) => `${count} rompecabezas`,
@@ -225,6 +228,7 @@ export const translations: Text = {
   'profile.avatar-label': 'Avatar',
   'username.username-label': 'Nombre de usuario',
   username: (username) => `@${username}`,
+  'app.find': 'Buscar',
   'app.open-settings': 'Abrir ajustes',
   'app.submit': 'Enviar',
   'app.edit-name': 'Editar Nombre',

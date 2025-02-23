@@ -35,9 +35,9 @@ const init: FrontendModule['init'] = {
   packLoader: PackLoaderTypes.initFrontend,
   solutionsFinder: SolutionsFinderTypes.initFrontend,
   solutionsLoader: SolutionsLoaderTypes.initFrontend,
+  solutions: Solutions.init,
   puzzles: {},
   packs: {},
-  solutions: {},
 }
 
 let puzzleDb: IPuzzleDb
@@ -314,7 +314,7 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
 
     case 'flow-cmd.add-solutions': {
       return {
-        model: { ...input.model, solutions: input.msgCmd.solutions.reduce(Solutions.merge, input.model.solutions) },
+        model: { ...input.model, solutions: Solutions.merge(input.msgCmd.solutions, input.model.solutions) },
       }
     }
 

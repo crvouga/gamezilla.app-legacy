@@ -185,7 +185,7 @@ const View: FrontendModule['View'] = (input) => {
                 onClick: onNextPuzzle,
               }),
 
-              puzzle.t === 'got' && !isSolved
+              ...(puzzle.t === 'got' && !isSolved
                 ? ModePlayFrontend.viewUseHintAction({
                     model:
                       modePlay ??
@@ -200,7 +200,7 @@ const View: FrontendModule['View'] = (input) => {
                         c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUser.userId },
                       }),
                   })
-                : null,
+                : []),
 
               PrebuiltActions.reset({
                 ...input,

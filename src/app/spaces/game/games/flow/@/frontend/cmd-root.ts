@@ -28,7 +28,7 @@ export type FlowFrontendCmdRoot =
     }
   | {
       t: 'flow-cmd.add-solutions'
-      solutions: Solutions[]
+      solutions: Solutions
       causedBy: unknown
     }
 
@@ -48,7 +48,7 @@ const addPacks = (packs: { [packId: PackId]: Pack }, causedBy: unknown): FlowFro
   }
 }
 
-const addSolutions = (solutions: Solutions[], causedBy: unknown): FlowFrontendCmdRoot => {
+const addSolutions = (solutions: Solutions, causedBy: unknown): FlowFrontendCmdRoot => {
   return {
     t: 'flow-cmd.add-solutions',
     solutions,

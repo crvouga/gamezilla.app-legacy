@@ -1,4 +1,4 @@
-import { Ok, isErr } from '~/@/result'
+import { Ok, isErr, unwrapOr } from '~/@/result'
 import { AlgoSolveAsync } from '../../../solutions/algo-solve-async'
 import type { IPuzzleDb } from '../interface'
 import { ILogger } from '~/@/logger'
@@ -25,7 +25,7 @@ export const WithSolutions = (config: Config): IPuzzleDb => {
       const promises = listed.value.puzzles.items.map(async (puzzle) => {
         if (puzzle.solutions.length > 0) return puzzle
 
-        const solution = await AlgoSolveAsync.solve({ model: puzzle.flow, logger: config.logger })
+        const solution = unwrapOr(await AlgoSolveAsync.solve({ model: puzzle.flow, logger: config.logger }), null)
 
         if (!solution) return puzzle
 
@@ -57,7 +57,7 @@ export const WithSolutions = (config: Config): IPuzzleDb => {
 
       if (got.value.solutions.length > 0) return got
 
-      const solution = await AlgoSolveAsync.solve({ model: got.value.flow, logger: config.logger })
+      const solution = unwrapOr(await AlgoSolveAsync.solve({ model: got.value.flow, logger: config.logger }), null)
 
       if (!solution) return got
 
@@ -69,7 +69,7 @@ export const WithSolutions = (config: Config): IPuzzleDb => {
       return Ok(withSolution)
     },
     async put(puzzle) {
-      const solution = await AlgoSolveAsync.solve({ model: puzzle.flow, logger: config.logger })
+      const solution = unwrapOr(await AlgoSolveAsync.solve({ model: puzzle.flow, logger: config.logger }), null)
       const withSolution: typeof puzzle = {
         ...puzzle,
         solutions: solution ? [solution] : [],

@@ -61,9 +61,26 @@ const game_flow_pack_item = new Table(
 )
 export type GameFlowPackItem = AppSchema['game_flow_pack_item']
 
+const game_flow_solutions = new Table(
+  {
+    id: column.text,
+    solutions: column.text,
+    created_at_posix: column.integer,
+    last_updated_at_posix: column.integer,
+  },
+  {
+    indexes: {
+      idx_game_flow_solutions_created_by_last_updated: ['created_by_user_id', 'deleted_at', 'last_updated_at_posix'],
+      idx_game_flow_solutions_created_by_created_at: ['created_by_user_id', 'deleted_at', 'created_at_posix'],
+    },
+  },
+)
+export type GameFlowSolutions = AppSchema['game_flow_solutions']
+
 export const AppSchema = new Schema({
   game_flow_puzzle,
   game_flow_pack,
   game_flow_pack_item,
+  game_flow_solutions,
 })
 export type AppSchema = (typeof AppSchema)['types']

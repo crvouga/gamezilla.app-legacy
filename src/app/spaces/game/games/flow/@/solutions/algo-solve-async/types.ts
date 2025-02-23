@@ -1,5 +1,5 @@
 import { p } from '~/@/parser'
-import { Variant } from '../../variant'
+import * as Variant from '../../variant/variant'
 
 export const MsgToWorker = p.or(
   p.obj({

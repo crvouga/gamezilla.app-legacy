@@ -1,14 +1,9 @@
 import { p } from '~/@/parser'
+import { Flow } from '../flow'
 import { Pipe } from '../flow/flow'
 import { GroupId } from '../flow/group-id'
-import { NodeId } from '../flow/node-id'
-import { Terminal } from '../flow/terminal'
-import { Flow } from '../flow'
 
-const parser = p.obj({
-  pipesBySourceId: p.dict(NodeId, Pipe),
-  terminalsByGroupId: p.partialDict(GroupId, Terminal),
-})
+const parser = Flow.Model
 
 export type Solution = p.Infer<typeof parser>
 
@@ -17,10 +12,7 @@ const toPipelineByGroupId = (solution: Solution, groupId: GroupId): Pipe[] => {
 }
 
 const fromFlow = (model: Flow.Model): Solution => {
-  return {
-    pipesBySourceId: model.pipesBySourceId,
-    terminalsByGroupId: model.terminalsByGroupId,
-  }
+  return model
 }
 
 export const Solution = {

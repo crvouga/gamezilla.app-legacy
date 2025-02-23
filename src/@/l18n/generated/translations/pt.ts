@@ -176,6 +176,9 @@ export const translations: Text = {
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': 'Sem quebra-cabeças',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} de ${totalCount} selecionados`,
+  'flow.find-solutions-confirmation-body':
+    'Este quebra-cabeça ainda não tem soluções carregadas no seu dispositivo. Clicar em "Procurar" iniciará a busca por soluções - observe que o aplicativo ficará ocupado até que a busca seja concluída.',
+  'flow.solutions-found': 'Soluções encontradas',
   'flow.find-solutions': 'Encontrar soluções',
   'flow.no-packs': 'Sem pacotes',
   'flow.puzzle-count': (count) => `${count} quebra-cabe\xE7as`,
@@ -224,6 +227,7 @@ export const translations: Text = {
   'profile.avatar-label': 'Avatar',
   'username.username-label': 'Nome de usuário',
   username: (username) => `@${username}`,
+  'app.find': 'Procurar',
   'app.open-settings': 'Abrir configurações',
   'app.submit': 'Enviar',
   'app.edit-name': 'Editar Nome',

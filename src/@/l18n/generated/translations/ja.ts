@@ -178,6 +178,9 @@ export const translations: Text = {
   'flow.no-puzzles': 'パズルなし',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) =>
     `${selectedCount} / ${totalCount} \u304C\u9078\u629E\u3055\u308C\u307E\u3057\u305F`,
+  'flow.find-solutions-confirmation-body':
+    'このパズルの解決策はまだデバイスに読み込まれていません。「検索」をクリックすると解決策の検索が開始されます - 検索が完了するまでアプリがビジー状態になることにご注意ください。',
+  'flow.solutions-found': '解決策が見つかりました',
   'flow.find-solutions': '解決策を見つける',
   'flow.no-packs': 'パックなし',
   'flow.puzzle-count': (count) => `${count} \u30D1\u30BA\u30EB`,
@@ -233,6 +236,7 @@ export const translations: Text = {
   'profile.avatar-label': 'アバター',
   'username.username-label': 'ユーザー名',
   username: (username) => `@${username}`,
+  'app.find': '検索',
   'app.open-settings': '設定を開く',
   'app.submit': '送信',
   'app.edit-name': '名前を編集',

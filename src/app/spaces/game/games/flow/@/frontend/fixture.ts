@@ -8,6 +8,7 @@ import { PackDb } from '../pack/pack-db'
 import { PackLoaderTypes } from '../pack/pack-loader'
 import { PuzzleDb } from '../puzzle/puzzle-db'
 import { PuzzleLoaderTypes } from '../puzzle/puzzle-loader'
+import { Solutions } from '../solutions/solutions'
 import { SolutionsDb } from '../solutions/solutions-db/impl'
 import { SolutionsFinderTypes } from '../solutions/solutions-finder'
 import { SolutionsLoaderTypes } from '../solutions/solutions-loader'
@@ -19,7 +20,7 @@ export const FixtureFlowFrontend = async () => {
     ...f.ctx,
     packs: {},
     puzzles: {},
-    solutions: {},
+    solutions: Solutions.init,
     puzzleLoader: PuzzleLoaderTypes.initFrontend,
     packLoader: PackLoaderTypes.initFrontend,
     solutionsFinder: SolutionsFinderTypes.initFrontend,

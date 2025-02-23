@@ -15,7 +15,7 @@ const update: FrontendModule['update'] = (input) => {
     case 'got-solutions-db-solutions': {
       return {
         model: input.model,
-        msgCmd: input.msg.solutions ? [FlowFrontendCmdRoot.addSolutions(input.msg.solutions, input.msg)] : [],
+        msgCmd: [FlowFrontendCmdRoot.addSolutions(input.msg.solutions, input.msg)],
       }
     }
   }

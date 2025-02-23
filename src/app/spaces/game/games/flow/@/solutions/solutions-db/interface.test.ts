@@ -64,7 +64,7 @@ describe(import.meta.file, () => {
       expect(zapped).toEqual(Ok(null))
       expect(before).toEqual(Ok([]))
       expect(put).toEqual(Ok(null))
-      expect(after).toEqual(Ok([solutions]))
+      expect(after).toEqual(Ok(solutions))
     }
   })
 
@@ -83,7 +83,7 @@ describe(import.meta.file, () => {
       const zap = await f.solutionsDb.zap(hash)
       const after = await f.solutionsDb.get(hash)
 
-      expect(before).toEqual(Ok([solutions]))
+      expect(before).toEqual(Ok(solutions))
       expect(zap).toEqual(Ok(null))
       expect(after).toEqual(Ok([]))
     }

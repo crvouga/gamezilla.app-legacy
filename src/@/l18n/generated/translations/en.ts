@@ -176,6 +176,9 @@ export const translations: Text = {
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': 'No puzzles',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} of ${totalCount} selected`,
+  'flow.find-solutions-confirmation-body':
+    'This puzzle has no solutions loaded on your device yet. Clicking "Find" will start searching for solutions - please note that the app will be busy until the search is complete.',
+  'flow.solutions-found': 'Solutions found',
   'flow.find-solutions': 'Find Solutions',
   'flow.no-packs': 'No packs',
   'flow.puzzle-count': (count) => (count === 1 ? `${count} puzzle` : `${count} puzzles`),
@@ -223,6 +226,7 @@ export const translations: Text = {
   'profile.avatar-label': 'Avatar',
   'username.username-label': 'Username',
   username: (username) => `@${username}`,
+  'app.find': 'Find',
   'app.open-settings': 'Open settings',
   'app.submit': 'Submit',
   'app.edit-name': 'Edit name',

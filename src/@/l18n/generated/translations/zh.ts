@@ -175,6 +175,9 @@ export const translations: Text = {
   'flow.no-puzzles': '没有拼图',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) =>
     `\u5DF2\u9009\u62E9 ${selectedCount} \u4E2A\uFF0C\u5171 ${totalCount} \u4E2A`,
+  'flow.find-solutions-confirmation-body':
+    '此拼图在您的设备上尚未加载任何解决方案。点击"查找"将开始搜索解决方案 - 请注意，在搜索完成之前，应用程序将处于繁忙状态。',
+  'flow.solutions-found': '已找到解决方案',
   'flow.find-solutions': '找到解决方案',
   'flow.no-packs': '没有包',
   'flow.puzzle-count': (count) => `${count} \u62FC\u56FE`,
@@ -225,6 +228,7 @@ export const translations: Text = {
   'profile.avatar-label': '头像',
   'username.username-label': '用户名',
   username: (username) => `@${username}`,
+  'app.find': '查找',
   'app.open-settings': '打开设置',
   'app.submit': '提交',
   'app.edit-name': '编辑名称',

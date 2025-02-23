@@ -54,14 +54,16 @@ const viewResetAction = (input: {
   ctx: {
     t: Translator
   }
-}): ScreenAction => {
+}): ScreenAction[] => {
   const flow = toFlow(input.model, input.flow)
   const disabled = Flow.isPipesEmpty(flow)
-  return PrebuiltActions.reset({
-    ctx: input.ctx,
-    onClick: () => input.dispatch({ t: 'user-clicked-reset' }),
-    disabled,
-  })
+  return [
+    PrebuiltActions.reset({
+      ctx: input.ctx,
+      onClick: () => input.dispatch({ t: 'user-clicked-reset' }),
+      disabled,
+    }),
+  ]
 }
 
 const viewScreenActions = (input: {
@@ -77,13 +79,13 @@ const viewScreenActions = (input: {
       dispatch: input.dispatchSolutionsFinder,
       model: input.ctx.solutionsFinder,
     }),
-    UseHintFrontend.viewUseHintAction({
+    ...UseHintFrontend.viewUseHintAction({
       ctx: input.ctx,
       dispatch: input.dispatch,
       model: input.model,
       disabled: status === 'solved',
     }),
-    viewResetAction({
+    ...viewResetAction({
       ctx: input.ctx,
       dispatch: input.dispatch,
       flow: input.ctx.flow,

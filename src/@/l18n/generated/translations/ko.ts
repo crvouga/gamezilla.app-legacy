@@ -175,6 +175,9 @@ export const translations: Text = {
   'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
   'flow.no-puzzles': '퍼즐이 없습니다',
   'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} / ${totalCount} \uC120\uD0DD\uB428`,
+  'flow.find-solutions-confirmation-body':
+    '이 퍼즐에 대한 해결책이 아직 기기에 로드되지 않았습니다. "찾기"를 클릭하면 해결책 검색이 시작됩니다 - 검색이 완료될 때까지 앱이 사용 중 상태가 됩니다.',
+  'flow.solutions-found': '해결 방법을 찾았습니다',
   'flow.find-solutions': '해결 방법 찾기',
   'flow.no-packs': '팩 없음',
   'flow.puzzle-count': (count) => `${count} \uD37C\uC990`,
@@ -230,6 +233,7 @@ export const translations: Text = {
   'profile.avatar-label': '아바타',
   'username.username-label': '사용자 이름',
   username: (username) => `@${username}`,
+  'app.find': '찾기',
   'app.open-settings': '설정 열기',
   'app.submit': '제출',
   'app.edit-name': '이름 수정',

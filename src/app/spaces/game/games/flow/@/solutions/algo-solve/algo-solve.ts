@@ -7,14 +7,14 @@ import { Terminal } from '../../flow/terminal'
 import { Variant } from '../../variant'
 import { AlgoIsSolved } from '../algo-is-solved/algo-is-solved'
 
-export const solve = (model: Variant.Model): Flow.Model | null => {
+export const solve = (model: Variant.Model): Variant.Model | null => {
   for (const solution of solutions(model)) {
     return solution
   }
   return null
 }
 
-export const solutions = function* (model: Variant.Model): Iterable<Flow.Model> {
+export const solutions = function* (model: Variant.Model): Iterable<Variant.Model> {
   const cleared = Flow.removeAllPipelines(model)
   const disconnectedTerminals = Flow.toTerminals(cleared)
 
@@ -23,7 +23,7 @@ export const solutions = function* (model: Variant.Model): Iterable<Flow.Model> 
   yield* solveStep(cleared, disconnectedTerminals)
 }
 
-const solveStep = function* (model: Variant.Model, disconnectedTerminals: Terminal[]): Iterable<Flow.Model> {
+const solveStep = function* (model: Variant.Model, disconnectedTerminals: Terminal[]): Iterable<Variant.Model> {
   if (AlgoIsSolved.isSolved(model)) {
     yield model
     return

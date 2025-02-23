@@ -1,4 +1,4 @@
-import { RemoteResult } from '~/@/result'
+import { RemoteResult, Result } from '~/@/result'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
@@ -13,13 +13,15 @@ import { Variant } from '../../variant'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
 
+export type FindSolutionRequest = {
+  hash: SolutionHash
+  result: RemoteResult<string, { solutions: Solutions }>
+}
+
 export type ModelFrontend = {
   open: 'find-solutions-confirmation' | null
   requests: {
-    [hash: SolutionHash]: {
-      hash: SolutionHash
-      result: RemoteResult<string, { solutions: Solutions }>
-    }
+    [hash: SolutionHash]: FindSolutionRequest
   }
 }
 
@@ -29,7 +31,8 @@ export const initFrontend: ModelFrontend = {
 }
 
 export type MsgFrontend =
-  | { t: 'clicked-find-solutions'; hash: SolutionHash }
+  | { t: 'clicked-find-solutions'; flow: Variant.Model }
+  | { t: 'found-solution'; flow: Variant.Model; result: Result<string, { solutions: Solutions }> }
   | { t: 'dialog.clicked-open' }
   | { t: 'dialog.clicked-close' }
 

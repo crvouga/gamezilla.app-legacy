@@ -228,7 +228,6 @@ describe(import.meta.file, () => {
 
       expect(listed).toEqual(
         Ok({
-          solutions: {},
           puzzles: { items: [], limit: 10, offset: 0, total: 0 },
         }),
       )

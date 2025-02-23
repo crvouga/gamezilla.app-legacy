@@ -1,13 +1,14 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { type DrawerInput } from '~/@/ui/surface-drawer'
+import { DrawerInput } from '~/@/ui'
+import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 import { SurfaceBodyText } from '~/@/ui/surface/surface-body-text'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
+import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
-import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 
-export type SurfaceConfirmationProps = DrawerInput & {
+type PropsBase = {
   ctx: {
     t: Translator
     screenSize: ScreenSize
@@ -17,6 +18,7 @@ export type SurfaceConfirmationProps = DrawerInput & {
   }
   title: TranslatedText
   body: TranslatedText
+  dropDownReference?: VDom
   variant?: 'danger'
   //
   onClose: () => void
@@ -30,12 +32,12 @@ export type SurfaceConfirmationProps = DrawerInput & {
   confirmLoading?: boolean
 }
 
+export type SurfaceConfirmationProps = DrawerInput & PropsBase
+
 export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
   return (
     <SurfaceLayout
-      ctx={input.ctx}
-      onClose={input.onClose}
-      open={input.open}
+      {...input}
       id='surface-confirmation'
       ariaLabel={input.title}
       header={{
