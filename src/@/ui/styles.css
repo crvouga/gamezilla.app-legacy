@@ -106,6 +106,10 @@ Scrollbar
 Prevent double tap to zoom on mobile
 https://stackoverflow.com/questions/13591640/prevent-double-tap-to-zoom-on-mobile-safari
 */
-* {
-  touch-action: manipulation !important;
+button,
+a,
+input,
+textarea,
+select {
+  touch-action: manipulation;
 }
