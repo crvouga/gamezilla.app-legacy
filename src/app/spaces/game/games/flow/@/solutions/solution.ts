@@ -12,7 +12,16 @@ const toPipelineByGroupId = (solution: Solution, groupId: GroupId): Pipe[] => {
 }
 
 const fromFlow = (model: Flow.Model): Solution => {
-  return model
+  return {
+    edgeHash: model.edgeHash,
+    nodeHash: model.nodeHash,
+    pipesBySourceId: model.pipesBySourceId,
+    edges: model.edges,
+    Flow: true,
+    nodes: model.nodes,
+    terminalsByGroupId: model.terminalsByGroupId,
+    terminalHash: model.terminalHash,
+  }
 }
 
 export const Solution = {

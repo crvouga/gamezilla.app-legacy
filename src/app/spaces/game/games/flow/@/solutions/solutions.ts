@@ -32,7 +32,7 @@ const of = (model: Variant.Model[]): Solutions => {
 
 const find = async (input: { models: Variant.Model[]; logger: ILogger }): Promise<Solutions> => {
   const found = await Promise.all(input.models.map((m) => findOne({ model: m, logger: input.logger })))
-  const solutions = found.reduce((acc, cur) => merge(acc, cur), init)
+  const solutions: Solutions = found.reduce((acc, cur) => merge(acc, cur), init)
   return solutions
 }
 
