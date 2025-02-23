@@ -1,6 +1,5 @@
 import { isErr, Loading, Ok, Result } from '~/@/result'
 import { IconLightbulb } from '~/@/ui'
-import { Frag } from '~/@/ui/frag'
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
@@ -119,28 +118,25 @@ const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[
       onClick: () => input.dispatch({ t: 'dialog.clicked-open' }),
       testId: TEST_ID,
       renderSurface: ({ reference }) => (
-        <Frag>
-          {reference}
-          <SurfaceConfirmation
-            title={input.ctx.t('flow.find-solutions')}
-            body={input.ctx.t('flow.find-solutions-confirmation-body')}
-            ctx={input.ctx}
-            dropDownReference={reference}
-            id='solutions-finder'
-            ariaLabel={input.ctx.t('flow.find-solutions')}
-            onClose={() => input.dispatch({ t: 'dialog.clicked-close' })}
-            open={input.model.open === 'find-solutions-confirmation'}
-            onCancel={() => input.dispatch({ t: 'dialog.clicked-close' })}
-            cancelText={input.ctx.t('app.cancel')}
-            position='bottom'
-            confirmText={input.ctx.t('app.find')}
-            confirmLoading={isLoading(input.model, hash)}
-            onConfirm={() => {
-              if (!input.ctx.flow) return
-              input.dispatch({ t: 'clicked-find-solutions', flow: input.ctx.flow })
-            }}
-          />
-        </Frag>
+        <SurfaceConfirmation
+          title={input.ctx.t('flow.find-solutions')}
+          body={input.ctx.t('flow.find-solutions-confirmation-body')}
+          ctx={input.ctx}
+          dropDownReference={reference}
+          id='solutions-finder'
+          ariaLabel={input.ctx.t('flow.find-solutions')}
+          onClose={() => input.dispatch({ t: 'dialog.clicked-close' })}
+          open={input.model.open === 'find-solutions-confirmation'}
+          onCancel={() => input.dispatch({ t: 'dialog.clicked-close' })}
+          cancelText={input.ctx.t('app.cancel')}
+          position='bottom'
+          confirmText={input.ctx.t('app.find')}
+          confirmLoading={isLoading(input.model, hash)}
+          onConfirm={() => {
+            if (!input.ctx.flow) return
+            input.dispatch({ t: 'clicked-find-solutions', flow: input.ctx.flow })
+          }}
+        />
       ),
     },
   ]
