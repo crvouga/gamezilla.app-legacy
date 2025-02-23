@@ -101,3 +101,11 @@ Scrollbar
   scrollbar-width: none;
   scrollbar-gutter: stable both-edges;
 }
+
+/*
+Prevent double tap to zoom on mobile
+https://stackoverflow.com/questions/13591640/prevent-double-tap-to-zoom-on-mobile-safari
+*/
+* {
+  touch-action: manipulation !important;
+}
