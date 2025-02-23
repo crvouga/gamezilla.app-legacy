@@ -58,7 +58,10 @@ const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
       {input.actions.map((action) => {
         if (!action) return null
         const button = <ScreenActionButton {...action} size={SIZE} key={action.label} />
-        if (action.renderSurface) return <Frag key={action.label}>{action.renderSurface(button)}</Frag>
+        if (action.renderSurface)
+          return (
+            <Frag key={action.label}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
+          )
         return button
       })}
     </div>

@@ -118,13 +118,14 @@ const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[
       label: input.ctx.t('game.hint'),
       onClick: () => input.dispatch({ t: 'dialog.clicked-open' }),
       testId: TEST_ID,
-      renderSurface: (vDom) => (
+      renderSurface: ({ reference }) => (
         <Frag>
+          {reference}
           <SurfaceConfirmation
             title={input.ctx.t('flow.find-solutions')}
             body={input.ctx.t('flow.find-solutions-confirmation-body')}
             ctx={input.ctx}
-            dropDownReference={vDom}
+            dropDownReference={reference}
             id='solutions-finder'
             ariaLabel={input.ctx.t('flow.find-solutions')}
             onClose={() => input.dispatch({ t: 'dialog.clicked-close' })}

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { didPlaySound } from '~/app/@/frontend/cmd'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { FixtureFlowBuilderFrontend } from '../../../@/fixture/frontend'
@@ -46,5 +46,39 @@ describe(import.meta.file, () => {
     expect(f.init.model.puzzleBuilderOpened).not.toBe('edit-name')
     expect(afterOpen.model.puzzleBuilderOpened).toBe('edit-name')
     expect(afterSecondClick.model.puzzleBuilderOpened).not.toBe('edit-name')
+  })
+
+  it('should close when user clicks cancel when action location is bar', async () => {
+    const f = await Fixture()
+
+    const before = f.update(f.init, [
+      {
+        msg: { t: 'puzzle.edit-name.user-clicked-button' },
+      },
+    ])
+    const after = f.update(before, [
+      {
+        msg: { t: 'puzzle.edit-name.user-clicked-cancel-button', screenActionLocation: 'bar' },
+      },
+    ])
+    expect(before.model.puzzleBuilderOpened).toBe('edit-name')
+    expect(after.model.puzzleBuilderOpened).toBe(null)
+  })
+
+  it('should open more drawer when user clicks cancel when action location is more drawer', async () => {
+    const f = await Fixture()
+
+    const before = f.update(f.init, [
+      {
+        msg: { t: 'puzzle.edit-name.user-clicked-button' },
+      },
+    ])
+    const after = f.update(before, [
+      {
+        msg: { t: 'puzzle.edit-name.user-clicked-cancel-button', screenActionLocation: 'more-drawer' },
+      },
+    ])
+    expect(before.model.puzzleBuilderOpened).toBe('edit-name')
+    expect(after.model.puzzleBuilderOpened).toBe('more')
   })
 })

@@ -172,7 +172,7 @@ const view = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction |
     label: input.ctx.t('spaces.people-count', peopleCount),
     onClick: () => input.dispatch({ t: 'people-action.clicked-people-action' }),
     badge: peopleCount > 1 ? peopleCount : undefined,
-    renderSurface: (reference) => <ViewSurfaces {...input} reference={reference} />,
+    renderSurface: ({ reference }) => <ViewSurfaces {...input} reference={reference} />,
   }
 }
 

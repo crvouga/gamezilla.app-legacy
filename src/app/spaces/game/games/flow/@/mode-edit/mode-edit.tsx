@@ -483,7 +483,7 @@ export const View = (input: {
               icon: (input) => <IconExpand {...input} />,
               label: input.ctx.t('app.dimensions'),
               onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
-              renderSurface: (reference) => (
+              renderSurface: ({ reference }) => (
                 <SurfaceLayout
                   id='dimensions'
                   ctx={input.ctx}

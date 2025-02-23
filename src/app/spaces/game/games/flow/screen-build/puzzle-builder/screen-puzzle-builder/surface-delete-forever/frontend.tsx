@@ -1,5 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Ok, RemoteResult, isLoading } from '~/@/result'
+import { Frag } from '~/@/ui/frag'
 import { IconDeleteForever } from '~/@/ui/icon/icon-delete-forever'
 import { APP_SOUND, playSound, showCreatedSm } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
@@ -129,11 +130,11 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       label: input.ctx.t('app.delete'),
       color: 'danger',
       onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
-      renderSurface: (reference) => (
-        <>
+      renderSurface: ({ reference }) => (
+        <Frag>
           {reference}
           <ViewSurface {...input} />
-        </>
+        </Frag>
       ),
     },
   ]

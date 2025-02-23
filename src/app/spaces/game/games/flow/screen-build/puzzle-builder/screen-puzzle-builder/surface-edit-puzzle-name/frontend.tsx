@@ -7,7 +7,7 @@ import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { VDom } from '~/@/vdom/vdom'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
-import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
+import { ScreenAction, ScreenActionLocation } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCmd } from '../../../../@/frontend/cmd'
@@ -30,19 +30,21 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const updateFormButtons: FrontendModule['update'] = (input) => {
-  const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
-
-  if (!puzzleBuilder) return { model: input.model }
-
   switch (input.msg?.t) {
     case 'puzzle.edit-name.user-clicked-cancel-button': {
       return {
-        model: { ...input.model, puzzleBuilderOpened: 'more', puzzleEditNameValidationError: null },
+        model: {
+          ...input.model,
+          puzzleBuilderOpened: input.msg.screenActionLocation === 'more-drawer' ? 'more' : null,
+          puzzleEditNameValidationError: null,
+        },
         msgCmd: [playSound(APP_SOUND.surfaceClosed)],
       }
     }
 
     case 'puzzle.edit-name.user-clicked-save-button': {
+      const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
+      if (!puzzleBuilder) return { model: input.model }
       const newName = input.model.puzzleEditNameDraft ?? ''
 
       if (newName.length === 0) {
@@ -75,6 +77,8 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
     }
 
     case 'puzzle.edit-name.db-updated': {
+      const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
+      if (!puzzleBuilder) return { model: input.model }
       return {
         model: {
           ...input.model,
@@ -219,7 +223,9 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       icon: (input) => <IconPen {...input} />,
       label: input.ctx.t('app.edit-name'),
       onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
-      renderSurface: (reference) => <ViewSurface {...input} ctx={input.ctx} reference={reference} />,
+      renderSurface: ({ reference, screenActionLocation }) => (
+        <ViewSurface {...input} ctx={input.ctx} reference={reference} screenActionLocation={screenActionLocation} />
+      ),
     },
   ]
 }
@@ -227,6 +233,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
 const ViewSurface = (
   input: Parameters<FrontendModule['View']>[0] & {
     reference: VDom
+    screenActionLocation: ScreenActionLocation
   },
 ) => {
   return (
@@ -247,7 +254,11 @@ const ViewSurface = (
       }}
       form={{
         onSubmit: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-save-button' }),
-        onCancel: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-cancel-button' }),
+        onCancel: () =>
+          input.dispatch({
+            t: 'puzzle.edit-name.user-clicked-cancel-button',
+            screenActionLocation: input.screenActionLocation,
+          }),
         cancelDisabled: false,
         cancelText: input.ctx.t('app.cancel'),
         submitText: input.ctx.t('app.save'),

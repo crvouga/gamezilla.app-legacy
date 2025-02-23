@@ -3,6 +3,7 @@ import { Translator } from '~/@/l18n/generated'
 import { p } from '~/@/parser'
 import { NotAsked, type RemoteResult, Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
+import { ScreenActionLocation } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { PuzzleId } from '../../../../@/puzzle/puzzle-id'
 
 export type ModelFrontend = {
@@ -38,7 +39,7 @@ export type MsgFrontend =
   | { t: 'puzzle.edit-name.user-closed-drawer' }
   | { t: 'puzzle.edit-name.user-clicked-button' }
   | { t: 'puzzle.edit-name.user-clicked-save-button' }
-  | { t: 'puzzle.edit-name.user-clicked-cancel-button' }
+  | { t: 'puzzle.edit-name.user-clicked-cancel-button'; screenActionLocation: ScreenActionLocation }
   | { t: 'puzzle.edit-name.db-updated'; result: Result<string, null> }
 
 export type MsgBackend = {

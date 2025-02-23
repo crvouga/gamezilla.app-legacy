@@ -3,6 +3,8 @@ import type { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '../screen-size'
 
+export type ScreenActionLocation = 'bar' | 'more-drawer'
+
 export type ScreenAction = {
   label: TranslatedText
   disabled?: boolean
@@ -18,7 +20,7 @@ export type ScreenAction = {
   hidden?: boolean
   badge?: number
   size?: 'sm' | 'md'
-  renderSurface?: (vDom: VDom) => VDom
+  renderSurface?: (props: { reference: VDom; screenActionLocation: ScreenActionLocation }) => VDom
 }
 
 export type ScreenActionsUniform = {
