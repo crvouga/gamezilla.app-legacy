@@ -5,8 +5,8 @@ import { Transition } from '~/@/ui/transition/transition'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { Flow } from '../flow'
-import { SolutionsFinderTypes } from '../solutions/solutions-finder'
-import { SolutionsFinderFrontend } from '../solutions/solutions-finder/frontend'
+import { HintLoaderTypes } from '../solutions/hint-loader'
+import { HintLoaderFrontend } from '../solutions/hint-loader/frontend'
 import { Variant, VariantBoard } from '../variant'
 import { ModePlayFrontendCtx } from './frontend/ctx'
 import { Model, Msg, toFlow, toStatus } from './mode-play'
@@ -69,15 +69,15 @@ const viewResetAction = (input: {
 const viewScreenActions = (input: {
   model: Model
   dispatch: (m: Msg) => void
-  dispatchSolutionsFinder: (m: SolutionsFinderTypes.MsgFrontend) => void
+  dispatchHintLoader: (m: HintLoaderTypes.MsgFrontend) => void
   ctx: ModePlayFrontendCtx
 }): ScreenAction[] => {
   const status = toStatus({ flow: input.ctx.flow, model: input.model })
   return [
-    ...SolutionsFinderFrontend.viewAction({
+    ...HintLoaderFrontend.viewAction({
       ctx: input.ctx,
-      dispatch: input.dispatchSolutionsFinder,
-      model: input.ctx.solutionsFinder,
+      dispatch: input.dispatchHintLoader,
+      model: input.ctx.HintLoader,
     }),
     ...UseHintFrontend.viewUseHintAction({
       ctx: input.ctx,

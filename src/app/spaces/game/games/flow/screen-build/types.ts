@@ -18,7 +18,7 @@ import { ScreenPuzzleBuilderTypes } from './puzzle-builder/screen-puzzle-builder
 import { ScreenPuzzleBuilderOpenTypes } from './puzzle-builder/screen-puzzle-builder-open'
 import { ScreenMainMenu } from './screen-main-menu'
 import { SolutionsLoaderTypes } from '../@/solutions/solutions-loader'
-import { SolutionsFinderTypes } from '../@/solutions/solutions-finder'
+import { HintLoaderTypes } from '../@/solutions/hint-loader'
 
 //
 //
@@ -63,7 +63,7 @@ export type MsgFrontend =
   | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgFrontend }
   | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgFrontend }
   | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgFrontend }
-  | { t: 'got-solutions-finder-msg'; c: SolutionsFinderTypes.MsgFrontend }
+  | { t: 'got-hint-loader-msg'; c: HintLoaderTypes.MsgFrontend }
 
 export type MsgBackend =
   | ScreenPuzzleBuilderOpenTypes.MsgBackend

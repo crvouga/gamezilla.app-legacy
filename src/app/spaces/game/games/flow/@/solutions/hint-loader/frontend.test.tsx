@@ -5,7 +5,7 @@ import { FixtureFlowFrontend } from '../../frontend/fixture'
 import { VariantGridShorthand } from '../../variant/grid'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
-import { SolutionsFinderFrontend } from './frontend'
+import { HintLoaderFrontend } from './frontend'
 
 export const Fixture = async () => {
   const f = await FixtureFlowFrontend()
@@ -29,14 +29,14 @@ export const Fixture = async () => {
   }
 }
 
-describe.only('SolutionsFinderFrontend', () => {
+describe.only('HintLoaderFrontend', () => {
   test('open dialog', async () => {
     const f = await Fixture()
-    const before = SolutionsFinderFrontend.update({
+    const before = HintLoaderFrontend.update({
       ...f,
-      model: SolutionsFinderFrontend.init,
+      model: HintLoaderFrontend.init,
     })
-    const after = SolutionsFinderFrontend.update({
+    const after = HintLoaderFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'dialog.clicked-open' },
@@ -48,12 +48,12 @@ describe.only('SolutionsFinderFrontend', () => {
 
   test('toggle open dialog', async () => {
     const f = await Fixture()
-    const before = SolutionsFinderFrontend.update({
+    const before = HintLoaderFrontend.update({
       ...f,
-      model: SolutionsFinderFrontend.init,
+      model: HintLoaderFrontend.init,
       msg: { t: 'dialog.clicked-open' },
     })
-    const after = SolutionsFinderFrontend.update({
+    const after = HintLoaderFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'dialog.clicked-open' },
@@ -64,12 +64,12 @@ describe.only('SolutionsFinderFrontend', () => {
 
   test('close dialog', async () => {
     const f = await Fixture()
-    const before = SolutionsFinderFrontend.update({
+    const before = HintLoaderFrontend.update({
       ...f,
-      model: SolutionsFinderFrontend.init,
+      model: HintLoaderFrontend.init,
       msg: { t: 'dialog.clicked-open' },
     })
-    const after = SolutionsFinderFrontend.update({
+    const after = HintLoaderFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'dialog.clicked-close' },
@@ -81,14 +81,14 @@ describe.only('SolutionsFinderFrontend', () => {
 
   test('handle got msg cmd', async () => {
     const f = await Fixture()
-    const actual = SolutionsFinderFrontend.update({
+    const actual = HintLoaderFrontend.update({
       ...f,
-      model: SolutionsFinderFrontend.init,
-      msgCmd: SolutionsFinderFrontend.gotMsg({ t: 'dialog.clicked-open' }),
+      model: HintLoaderFrontend.init,
+      msgCmd: HintLoaderFrontend.gotMsg({ t: 'dialog.clicked-open' }),
     })
-    const expected = SolutionsFinderFrontend.update({
+    const expected = HintLoaderFrontend.update({
       ...f,
-      model: SolutionsFinderFrontend.init,
+      model: HintLoaderFrontend.init,
       msg: { t: 'dialog.clicked-open' },
     })
     expect(actual).toEqual(expected)
@@ -97,18 +97,18 @@ describe.only('SolutionsFinderFrontend', () => {
   test('clicked find solutions', async () => {
     const f = await Fixture()
 
-    const before = SolutionsFinderFrontend.update({
+    const before = HintLoaderFrontend.update({
       ...f,
-      model: SolutionsFinderFrontend.init,
+      model: HintLoaderFrontend.init,
       msg: { t: 'dialog.clicked-open' },
     })
 
-    const after = SolutionsFinderFrontend.update({
+    const after = HintLoaderFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'clicked-find-solutions', flow: f.flow },
     })
-    expect(SolutionsFinderFrontend.isLoading(after.model, f.hash)).toBe(true)
+    expect(HintLoaderFrontend.isLoading(after.model, f.hash)).toBe(true)
     expect(didPlaySound(after)).toBe(true)
     expect(after.eff).not.toBeUndefined()
   })
@@ -116,17 +116,17 @@ describe.only('SolutionsFinderFrontend', () => {
   test('found solution ok', async () => {
     const f = await Fixture()
 
-    const before = SolutionsFinderFrontend.update({
+    const before = HintLoaderFrontend.update({
       ...f,
-      model: SolutionsFinderFrontend.init,
+      model: HintLoaderFrontend.init,
       msg: { t: 'clicked-find-solutions', flow: f.flow },
     })
-    const after = SolutionsFinderFrontend.update({
+    const after = HintLoaderFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'found-solution', flow: f.flow, found: Ok({ solutions: f.solutions }) },
     })
-    expect(SolutionsFinderFrontend.isLoading(after.model, f.hash)).toBe(false)
+    expect(HintLoaderFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
     expect(didPlaySound(after)).toBe(true)
     expect(didShowToast(after)).toBe(true)
@@ -134,17 +134,17 @@ describe.only('SolutionsFinderFrontend', () => {
 
   test('found solution err', async () => {
     const f = await Fixture()
-    const before = SolutionsFinderFrontend.update({
+    const before = HintLoaderFrontend.update({
       ...f,
-      model: SolutionsFinderFrontend.init,
+      model: HintLoaderFrontend.init,
       msg: { t: 'clicked-find-solutions', flow: f.flow },
     })
-    const after = SolutionsFinderFrontend.update({
+    const after = HintLoaderFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'found-solution', flow: f.flow, found: Err('some error') },
     })
-    expect(SolutionsFinderFrontend.isLoading(after.model, f.hash)).toBe(false)
+    expect(HintLoaderFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
     expect(didShowErrorSm(after)).toBe(true)
   })

@@ -19,7 +19,7 @@ import {
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.t) {
-    case 'flow-cmd.got-solutions-finder-cmd': {
+    case 'flow-cmd.got-hint-loader-cmd': {
       return update({ ...input, msgCmd: null, msg: input.msgCmd.c.msg })
     }
   }
@@ -101,7 +101,7 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const TEST_ID = 'find-solutions'
+const TEST_ID = 'hint-loader'
 
 const isFindSolutionsScreenAction = (action: ScreenAction): boolean => {
   return action.testId === TEST_ID
@@ -124,7 +124,7 @@ const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[
           body={input.ctx.t('flow.find-solutions-confirmation-body')}
           ctx={input.ctx}
           dropDownReference={reference}
-          id='solutions-finder'
+          id='hint-loader'
           ariaLabel={input.ctx.t('flow.find-solutions')}
           onClose={() => input.dispatch({ t: 'dialog.clicked-close' })}
           open={input.model.open === 'find-solutions-confirmation'}
@@ -145,7 +145,7 @@ const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[
 
 const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   return {
-    t: 'flow-cmd.got-solutions-finder-cmd',
+    t: 'flow-cmd.got-hint-loader-cmd',
     c: {
       t: 'got-msg',
       msg,
@@ -157,7 +157,7 @@ const isLoading = (model: ModelFrontend, hash: SolutionHash): boolean => {
   return model.requests[hash]?.result.t === 'loading'
 }
 
-export const SolutionsFinderFrontend = {
+export const HintLoaderFrontend = {
   init: initFrontend,
   isLoading,
   update,
