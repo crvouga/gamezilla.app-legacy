@@ -9,6 +9,7 @@ import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
 import {
   FindSolutionRequest,
+  FoundSolutionResult,
   initFrontend,
   ModelFrontend,
   type FrontendModule,
@@ -60,14 +61,13 @@ const update: FrontendModule['update'] = (input) => {
         },
         msgCmd: [playSound(APP_SOUND.tap)],
         async eff(dispatch) {
-          const solved = await AlgoSolveAsync.solve({ model: flow, logger: input.ctx.logger })
-          // const solved = Ok(AlgoSolve.solve(flow))
-          const result = pipe(
+          const solved = await AlgoSolveAsync.solveInProcess({ model: flow, logger: input.ctx.logger })
+          const found: FoundSolutionResult = pipe(
             solved,
             (s) => mapOk(s, (solution) => Solutions.of(solution ? [solution] : [])),
             (s) => mapOk(s, (solutions) => ({ solutions })),
           )
-          dispatch({ t: 'found-solution', flow, result })
+          dispatch({ t: 'found-solution', flow, found })
         },
       }
     }
@@ -76,7 +76,7 @@ const update: FrontendModule['update'] = (input) => {
       const hash = SolutionHash.init(msg.flow)
       const requestNew: FindSolutionRequest = {
         hash,
-        result: input.msg.result,
+        result: input.msg.found,
       }
       return {
         model: {
@@ -87,13 +87,13 @@ const update: FrontendModule['update'] = (input) => {
           },
         },
 
-        msgCmd: isErr(msg.result)
-          ? showErrSm(input.ctx.t('app.something-went-wrong'), msg.result.error)
+        msgCmd: isErr(msg.found)
+          ? showErrSm(input.ctx.t('app.something-went-wrong'), msg.found.error)
           : [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.solutions-found'))],
 
         async eff() {
-          if (isErr(msg.result)) return
-          await input.ctx.solutionsDb.put(msg.result.value.solutions)
+          if (isErr(msg.found)) return
+          await input.ctx.solutionsDb.put(msg.found.value.solutions)
         },
       }
     }

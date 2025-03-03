@@ -30,9 +30,11 @@ export const initFrontend: ModelFrontend = {
   requests: {},
 }
 
+export type FoundSolutionResult = Result<string, { solutions: Solutions }>
+
 export type MsgFrontend =
   | { t: 'clicked-find-solutions'; flow: Variant.Model }
-  | { t: 'found-solution'; flow: Variant.Model; result: Result<string, { solutions: Solutions }> }
+  | { t: 'found-solution'; flow: Variant.Model; found: FoundSolutionResult }
   | { t: 'dialog.clicked-open' }
   | { t: 'dialog.clicked-close' }
 

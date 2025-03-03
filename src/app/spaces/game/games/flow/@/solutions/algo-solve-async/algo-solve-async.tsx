@@ -1,12 +1,20 @@
 import type { ILogger } from '~/@/logger'
 import { Err, Ok, Result } from '~/@/result'
 import type { Variant } from '../../variant'
+import { AlgoSolve } from '../algo-solve'
 import { MsgToMaster, type MsgToWorker } from './types'
 
-export const solve = async (input: {
-  model: Variant.Model
-  logger: ILogger
-}): Promise<Result<string, Variant.Model | null>> => {
+type SolveAsync = (input: { model: Variant.Model; logger: ILogger }) => Promise<Result<string, Variant.Model | null>>
+
+export const solve: SolveAsync = async (input) => {
+  return solveWorker(input)
+}
+
+export const solveInProcess: SolveAsync = async (input) => {
+  return Ok(AlgoSolve.solve(input.model))
+}
+
+export const solveWorker: SolveAsync = async (input) => {
   input.logger.info('Solving puzzle with worker')
 
   let url

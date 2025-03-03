@@ -124,7 +124,7 @@ describe.only('SolutionsFinderFrontend', () => {
     const after = SolutionsFinderFrontend.update({
       ...f,
       model: before.model,
-      msg: { t: 'found-solution', flow: f.flow, result: Ok({ solutions: f.solutions }) },
+      msg: { t: 'found-solution', flow: f.flow, found: Ok({ solutions: f.solutions }) },
     })
     expect(SolutionsFinderFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
@@ -142,7 +142,7 @@ describe.only('SolutionsFinderFrontend', () => {
     const after = SolutionsFinderFrontend.update({
       ...f,
       model: before.model,
-      msg: { t: 'found-solution', flow: f.flow, result: Err('some error') },
+      msg: { t: 'found-solution', flow: f.flow, found: Err('some error') },
     })
     expect(SolutionsFinderFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
