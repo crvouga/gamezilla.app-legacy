@@ -85,6 +85,7 @@ const update: FrontendModule['update'] = (input) => {
             ...input.model.requests,
             [hash]: requestNew,
           },
+          open: null,
         },
 
         msgCmd: isErr(msg.found)

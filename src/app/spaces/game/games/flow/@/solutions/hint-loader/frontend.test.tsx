@@ -148,4 +148,22 @@ describe.only('HintLoaderFrontend', () => {
     expect(after.model.open).toBe(null)
     expect(didShowErrorSm(after)).toBe(true)
   })
+
+  test('close surface after finding solutions', async () => {
+    const f = await Fixture()
+
+    const before = HintLoaderFrontend.update({
+      ...f,
+      model: HintLoaderFrontend.init,
+      msg: { t: 'dialog.clicked-open' },
+    })
+    const after = HintLoaderFrontend.update({
+      ...f,
+      model: before.model,
+      msg: { t: 'found-solution', flow: f.flow, found: Ok({ solutions: f.solutions }) },
+    })
+    expect(before.model.open).toBe('find-solutions-confirmation')
+    expect(after.model.open).toBe(null)
+    expect(didPlaySound(after)).toBe(true)
+  })
 })
