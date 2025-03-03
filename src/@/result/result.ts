@@ -144,7 +144,10 @@ const combine = <E, A>(results: ResultInternal<E, A>[]): ResultInternal<E, A[]> 
   return Ok(values)
 }
 
-const mapOk = <TError, A, B>(result: ResultInternal<TError, A>, mapper: (a: A) => B): ResultInternal<TError, B> => {
+export const mapOk = <TError, A, B>(
+  result: ResultInternal<TError, A>,
+  mapper: (a: A) => B,
+): ResultInternal<TError, B> => {
   switch (result.t) {
     case 'err':
       return result

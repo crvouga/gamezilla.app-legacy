@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { Ok } from '~/@/result'
-import { didPlaySound, didShowToast } from '~/app/@/frontend/cmd'
+import { Err, Ok } from '~/@/result'
+import { didPlaySound, didShowErrorSm, didShowToast } from '~/app/@/frontend/cmd'
 import { FixtureFlowFrontend } from '../../frontend/fixture'
 import { VariantGridShorthand } from '../../variant/grid'
 import { SolutionHash } from '../solution-hash/solution-hash'
@@ -29,7 +29,7 @@ export const Fixture = async () => {
   }
 }
 
-describe('SolutionsFinderFrontend', () => {
+describe.only('SolutionsFinderFrontend', () => {
   test('open dialog', async () => {
     const f = await Fixture()
     const before = SolutionsFinderFrontend.update({
@@ -130,5 +130,22 @@ describe('SolutionsFinderFrontend', () => {
     expect(after.model.open).toBe(null)
     expect(didPlaySound(after)).toBe(true)
     expect(didShowToast(after)).toBe(true)
+  })
+
+  test('found solution err', async () => {
+    const f = await Fixture()
+    const before = SolutionsFinderFrontend.update({
+      ...f,
+      model: SolutionsFinderFrontend.init,
+      msg: { t: 'clicked-find-solutions', flow: f.flow },
+    })
+    const after = SolutionsFinderFrontend.update({
+      ...f,
+      model: before.model,
+      msg: { t: 'found-solution', flow: f.flow, result: Err('some error') },
+    })
+    expect(SolutionsFinderFrontend.isLoading(after.model, f.hash)).toBe(false)
+    expect(after.model.open).toBe(null)
+    expect(didShowErrorSm(after)).toBe(true)
   })
 })

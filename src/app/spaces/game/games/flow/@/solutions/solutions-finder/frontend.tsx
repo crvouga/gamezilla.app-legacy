@@ -1,9 +1,10 @@
-import { isErr, Loading, Ok, Result } from '~/@/result'
+import { pipe } from '~/@/function/pipe'
+import { isErr, Loading, mapOk } from '~/@/result'
 import { IconLightbulb } from '~/@/ui'
-import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
-import { AlgoSolve } from '../algo-solve'
+import { AlgoSolveAsync } from '../algo-solve-async'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
 import {
@@ -59,21 +60,14 @@ const update: FrontendModule['update'] = (input) => {
         },
         msgCmd: [playSound(APP_SOUND.tap)],
         async eff(dispatch) {
-          const [solved] = await Promise.all([
-            // AlgoSolveAsync.solve({ model: flow, logger: input.ctx.logger }),
-            Ok(AlgoSolve.solve(flow)),
-            new Promise((resolve) => setTimeout(resolve, 1500)),
-          ])
-          const result: Result<string, { solutions: Solutions }> = Result.flatMapOk(
+          const solved = await AlgoSolveAsync.solve({ model: flow, logger: input.ctx.logger })
+          // const solved = Ok(AlgoSolve.solve(flow))
+          const result = pipe(
             solved,
-            //
-            (solution) => Ok({ solutions: Solutions.of(solution ? [solution] : []) }),
+            (s) => mapOk(s, (solution) => Solutions.of(solution ? [solution] : [])),
+            (s) => mapOk(s, (solutions) => ({ solutions })),
           )
-          dispatch({
-            t: 'found-solution',
-            flow,
-            result,
-          })
+          dispatch({ t: 'found-solution', flow, result })
         },
       }
     }
@@ -85,14 +79,21 @@ const update: FrontendModule['update'] = (input) => {
         result: input.msg.result,
       }
       return {
-        model: { ...input.model, requests: { ...input.model.requests, [hash]: requestNew } },
-        msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.solutions-found'))],
+        model: {
+          ...input.model,
+          requests: {
+            ...input.model.requests,
+            [hash]: requestNew,
+          },
+        },
+
+        msgCmd: isErr(msg.result)
+          ? showErrSm(input.ctx.t('app.something-went-wrong'), msg.result.error)
+          : [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.solutions-found'))],
+
         async eff() {
           if (isErr(msg.result)) return
-          const put = await input.ctx.solutionsDb.put(msg.result.value.solutions)
-          console.log('put', put)
-          const got = await input.ctx.solutionsDb.get(hash)
-          console.log('got', got)
+          await input.ctx.solutionsDb.put(msg.result.value.solutions)
         },
       }
     }
