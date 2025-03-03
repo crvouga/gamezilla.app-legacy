@@ -64,6 +64,29 @@ const isUnsolvableDueToSplittingTerminal = (model: Variant.Model): boolean => {
   return false
 }
 
+/**
+ * Returns true when a terminal
+ */
+export const hasSmotheredTerminal = (model: Variant.Model): boolean => {
+  const terminals = Flow.toTerminals(model)
+  for (const terminal of terminals) {
+    if (isSmotheredTerminal(model, terminal)) {
+      return true
+    }
+  }
+  return false
+}
+
+const isSmotheredTerminal = (model: Variant.Model, terminal: Terminal): boolean => {
+  const terminals = Flow.toTerminals(model)
+  for (const otherTerminal of terminals) {
+    if (otherTerminal.groupId === terminal.groupId) {
+      continue
+    }
+  }
+  return false
+}
+
 export const isUnsolvable = (model: Variant.Model): boolean => {
   if (isUnsolvableDueToSplittingTerminal(model)) {
     return true
