@@ -180,6 +180,9 @@ export const translations: Text = {
     'This puzzle has no solutions loaded on your device yet. Clicking "Find" will start searching for solutions - please note that the app will be busy until the search is complete.',
   'flow.solutions-found': 'Solutions found',
   'flow.find-solutions': 'Find Solutions',
+  'flow.no-hints-loaded': 'No hints loaded',
+  'flow.no-hints-loaded-body':
+    'No hints are loaded on your device. Would you like to calculate solutions now to enable hints?',
   'flow.no-packs': 'No packs',
   'flow.puzzle-count': (count) => (count === 1 ? `${count} puzzle` : `${count} puzzles`),
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -226,6 +229,7 @@ export const translations: Text = {
   'profile.avatar-label': 'Avatar',
   'username.username-label': 'Username',
   username: (username) => `@${username}`,
+  'app.load': 'Load',
   'app.find': 'Find',
   'app.open-settings': 'Open settings',
   'app.submit': 'Submit',

@@ -184,6 +184,9 @@ export const translations: Text = {
     'Для этой головоломки еще не загружены решения на ваше устройство. Нажатие "Найти" начнет поиск решений - обратите внимание, что приложение будет занято до завершения поиска.',
   'flow.solutions-found': 'Решения найдены',
   'flow.find-solutions': 'Найти решения',
+  'flow.no-hints-loaded': 'Подсказки не загружены',
+  'flow.no-hints-loaded-body':
+    'На вашем устройстве не загружены подсказки. Хотите рассчитать решения сейчас, чтобы включить подсказки?',
   'flow.no-packs': 'Нет пакетов',
   'flow.puzzle-count': (count) => `${count} \u0433\u043E\u043B\u043E\u0432\u043E\u043B\u043E\u043C\u043E\u043A`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -242,6 +245,7 @@ export const translations: Text = {
   'profile.avatar-label': 'Аватар',
   'username.username-label': 'Имя пользователя',
   username: (username) => `@${username}`,
+  'app.load': 'Загрузить',
   'app.find': 'Найти',
   'app.open-settings': 'Открыть настройки',
   'app.submit': 'Отправить',

@@ -179,6 +179,9 @@ export const translations: Text = {
     '이 퍼즐에 대한 해결책이 아직 기기에 로드되지 않았습니다. "찾기"를 클릭하면 해결책 검색이 시작됩니다 - 검색이 완료될 때까지 앱이 사용 중 상태가 됩니다.',
   'flow.solutions-found': '해결 방법을 찾았습니다',
   'flow.find-solutions': '해결 방법 찾기',
+  'flow.no-hints-loaded': '힌트가 로드되지 않음',
+  'flow.no-hints-loaded-body':
+    '기기에 힌트가 로드되지 않았습니다. 힌트를 활성화하기 위해 지금 해결책을 계산하시겠습니까?',
   'flow.no-packs': '팩 없음',
   'flow.puzzle-count': (count) => `${count} \uD37C\uC990`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -233,6 +236,7 @@ export const translations: Text = {
   'profile.avatar-label': '아바타',
   'username.username-label': '사용자 이름',
   username: (username) => `@${username}`,
+  'app.load': '불러오기',
   'app.find': '찾기',
   'app.open-settings': '설정 열기',
   'app.submit': '제출',

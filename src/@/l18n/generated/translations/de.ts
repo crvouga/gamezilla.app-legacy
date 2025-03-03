@@ -181,6 +181,9 @@ export const translations: Text = {
     'Für dieses Puzzle sind noch keine Lösungen auf Ihrem Gerät geladen. Wenn Sie auf "Finden" klicken, wird die Suche nach Lösungen gestartet - bitte beachten Sie, dass die App beschäftigt sein wird, bis die Suche abgeschlossen ist.',
   'flow.solutions-found': 'Lösungen gefunden',
   'flow.find-solutions': 'Lösungen finden',
+  'flow.no-hints-loaded': 'Keine Hinweise geladen',
+  'flow.no-hints-loaded-body':
+    'Auf Ihrem Gerät sind keine Hinweise geladen. Möchten Sie jetzt Lösungen berechnen, um Hinweise zu aktivieren?',
   'flow.no-packs': 'Keine Packs',
   'flow.puzzle-count': (count) => `${count} R\xE4tsel`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -229,6 +232,7 @@ export const translations: Text = {
   'profile.avatar-label': 'Avatar',
   'username.username-label': 'Benutzername',
   username: (username) => `@${username}`,
+  'app.load': 'Laden',
   'app.find': 'Finden',
   'app.open-settings': 'Einstellungen öffnen',
   'app.submit': 'Absenden',

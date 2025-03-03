@@ -180,6 +180,9 @@ export const translations: Text = {
     'Este quebra-cabeça ainda não tem soluções carregadas no seu dispositivo. Clicar em "Procurar" iniciará a busca por soluções - observe que o aplicativo ficará ocupado até que a busca seja concluída.',
   'flow.solutions-found': 'Soluções encontradas',
   'flow.find-solutions': 'Encontrar soluções',
+  'flow.no-hints-loaded': 'Nenhuma dica carregada',
+  'flow.no-hints-loaded-body':
+    'Não há dicas carregadas no seu dispositivo. Gostaria de calcular soluções agora para ativar as dicas?',
   'flow.no-packs': 'Sem pacotes',
   'flow.puzzle-count': (count) => `${count} quebra-cabe\xE7as`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -227,6 +230,7 @@ export const translations: Text = {
   'profile.avatar-label': 'Avatar',
   'username.username-label': 'Nome de usuário',
   username: (username) => `@${username}`,
+  'app.load': 'Carregar',
   'app.find': 'Procurar',
   'app.open-settings': 'Abrir configurações',
   'app.submit': 'Enviar',

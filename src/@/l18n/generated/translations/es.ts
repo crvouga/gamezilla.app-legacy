@@ -181,6 +181,9 @@ export const translations: Text = {
     'Este rompecabezas aún no tiene soluciones cargadas en su dispositivo. Al hacer clic en "Buscar" comenzará a buscar soluciones - tenga en cuenta que la aplicación estará ocupada hasta que se complete la búsqueda.',
   'flow.solutions-found': 'Soluciones encontradas',
   'flow.find-solutions': 'Encontrar soluciones',
+  'flow.no-hints-loaded': 'No hay pistas cargadas',
+  'flow.no-hints-loaded-body':
+    'No hay pistas cargadas en su dispositivo. ¿Le gustaría calcular soluciones ahora para habilitar las pistas?',
   'flow.no-packs': 'Sin paquetes',
   'flow.puzzle-count': (count) => `${count} rompecabezas`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -228,6 +231,7 @@ export const translations: Text = {
   'profile.avatar-label': 'Avatar',
   'username.username-label': 'Nombre de usuario',
   username: (username) => `@${username}`,
+  'app.load': 'Cargar',
   'app.find': 'Buscar',
   'app.open-settings': 'Abrir ajustes',
   'app.submit': 'Enviar',

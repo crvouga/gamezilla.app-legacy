@@ -109,8 +109,9 @@ const isFindSolutionsScreenAction = (action: ScreenAction): boolean => {
 }
 
 const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
-  if (!input.ctx.flow) return []
-  const hash = SolutionHash.init(input.ctx.flow)
+  const { flow } = input.ctx
+  if (!flow) return []
+  const hash = SolutionHash.init(flow)
   const hasSolution = Solutions.selectOne(input.ctx.solutions, hash) !== null
   if (hasSolution) return []
   return [
@@ -121,23 +122,20 @@ const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[
       testId: TEST_ID,
       renderSurface: ({ reference }) => (
         <SurfaceConfirmation
-          title={input.ctx.t('flow.find-solutions')}
-          body={input.ctx.t('flow.find-solutions-confirmation-body')}
+          title={input.ctx.t('flow.no-hints-loaded')}
+          body={input.ctx.t('flow.no-hints-loaded-body')}
           ctx={input.ctx}
           dropDownReference={reference}
-          id='hint-loader'
-          ariaLabel={input.ctx.t('flow.find-solutions')}
+          id={TEST_ID}
+          ariaLabel={input.ctx.t('flow.no-hints-loaded')}
           onClose={() => input.dispatch({ t: 'dialog.clicked-close' })}
           open={input.model.open === 'find-solutions-confirmation'}
           onCancel={() => input.dispatch({ t: 'dialog.clicked-close' })}
           cancelText={input.ctx.t('app.cancel')}
           position='bottom'
-          confirmText={input.ctx.t('app.find')}
+          confirmText={input.ctx.t('app.load')}
           confirmLoading={isLoading(input.model, hash)}
-          onConfirm={() => {
-            if (!input.ctx.flow) return
-            input.dispatch({ t: 'clicked-find-solutions', flow: input.ctx.flow })
-          }}
+          onConfirm={() => input.dispatch({ t: 'clicked-find-solutions', flow })}
         />
       ),
     },

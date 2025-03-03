@@ -184,6 +184,9 @@ export const translations: Text = {
     'इस पहेली के लिए अभी तक आपके डिवाइस पर कोई समाधान लोड नहीं किया गया है। "खोजें" पर क्लिक करने से समाधान की खोज शुरू होगी - कृपया ध्यान दें कि खोज पूरी होने तक ऐप व्यस्त रहेगा।',
   'flow.solutions-found': 'समाधान मिल गए',
   'flow.find-solutions': 'समाधान ढूंढें',
+  'flow.no-hints-loaded': 'कोई संकेत लोड नहीं किया गया',
+  'flow.no-hints-loaded-body':
+    'आपके डिवाइस पर कोई संकेत लोड नहीं किए गए हैं। क्या आप संकेत सक्षम करने के लिए अभी समाधान की गणना करना चाहेंगे?',
   'flow.no-packs': 'कोई पैक नहीं',
   'flow.puzzle-count': (count) => `${count} \u092A\u0939\u0947\u0932\u093F\u092F\u093E\u0901`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -242,6 +245,7 @@ export const translations: Text = {
   'profile.avatar-label': 'अवतार',
   'username.username-label': 'उपयोगकर्ता नाम',
   username: (username) => `@${username}`,
+  'app.load': 'लोड करें',
   'app.find': 'खोजें',
   'app.open-settings': 'सेटिंग्स खोलें',
   'app.submit': 'जमा करें',

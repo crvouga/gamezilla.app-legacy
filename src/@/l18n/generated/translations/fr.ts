@@ -179,6 +179,9 @@ export const translations: Text = {
     "Ce puzzle n'a pas encore de solutions chargées sur votre appareil. En cliquant sur \"Rechercher\", vous lancerez la recherche de solutions - notez que l'application sera occupée jusqu'à ce que la recherche soit terminée.",
   'flow.solutions-found': 'Solutions trouvées',
   'flow.find-solutions': 'Trouver des solutions',
+  'flow.no-hints-loaded': 'Aucun indice chargé',
+  'flow.no-hints-loaded-body':
+    "Aucun indice n'est chargé sur votre appareil. Voulez-vous calculer des solutions maintenant pour activer les indices ?",
   'flow.no-packs': 'Aucun pack',
   'flow.puzzle-count': (count) => `${count} puzzles`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -227,6 +230,7 @@ export const translations: Text = {
   'profile.avatar-label': 'Avatar',
   'username.username-label': "Nom d'utilisateur",
   username: (username) => `@${username}`,
+  'app.load': 'Charger',
   'app.find': 'Rechercher',
   'app.open-settings': 'Ouvrir les paramètres',
   'app.submit': 'Soumettre',
