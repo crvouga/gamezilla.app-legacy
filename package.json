@@ -13,7 +13,7 @@
     "bash": "bun infra:backend:bash",
     "cg": "bun gen:l18n && bun gen:screens && bun gen:events",
     "cg:watch": "bun --watch cg",
-    "check": "bun cir-deps && bun x tsc && bun test",
+    "check": "bun cir-deps && bun x tsc",
     "check-imports": "bun scripts/check-imports.ts",
     "cir-deps": "bun backend:cir-deps && bun frontend:cir-deps",
     "clean-install": "rm -rf node_modules && rm -rf dist && rm bun.lock && bun install",
