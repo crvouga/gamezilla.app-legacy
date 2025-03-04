@@ -12,7 +12,7 @@ const parser = p.obj({
 export type TerminalFull = p.Infer<typeof parser>
 
 const is = (terminal: Terminal): terminal is TerminalFull => {
-  return terminal.endId !== null
+  return Boolean(terminal.endId)
 }
 
 export const TerminalFull = {

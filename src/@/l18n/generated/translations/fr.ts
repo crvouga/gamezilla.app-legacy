@@ -185,6 +185,7 @@ export const translations: Text = {
   'flow.no-hints-available-body':
     "Aucun indice n'est chargé sur votre appareil. Voulez-vous calculer des solutions maintenant pour activer les indices ?",
   'flow.no-hints-calculated': 'Aucun indice calculé',
+  'flow.no-solutions-found': 'Aucune solution trouvée',
   'flow.no-hints-available': 'Aucun indice disponible',
   'flow.no-packs': 'Aucun pack',
   'flow.puzzle-count': (count) => `${count} puzzles`,

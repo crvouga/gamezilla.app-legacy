@@ -190,6 +190,7 @@ export const translations: Text = {
   'flow.no-hints-available-body':
     'На вашем устройстве не загружены подсказки. Хотите рассчитать решения сейчас, чтобы включить подсказки?',
   'flow.no-hints-calculated': 'Подсказки не вычислены',
+  'flow.no-solutions-found': 'Решения не найдены',
   'flow.no-hints-available': 'Подсказки недоступны',
   'flow.no-packs': 'Нет пакетов',
   'flow.puzzle-count': (count) => `${count} \u0433\u043E\u043B\u043E\u0432\u043E\u043B\u043E\u043C\u043E\u043A`,

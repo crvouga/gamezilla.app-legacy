@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { Err, Ok } from '~/@/result'
-import { didPlaySound, didShowErrorSm, didShowToast } from '~/app/@/frontend/cmd'
+import { didPlaySound, didShowErrorSm, didShowOkSm, didShowWarningSm } from '~/app/@/frontend/cmd'
 import { FixtureFlowFrontend } from '../../frontend/fixture'
 import { VariantGridShorthand } from '../../variant/grid'
 import { SolutionHash } from '../solution-hash/solution-hash'
@@ -29,7 +29,7 @@ export const Fixture = async () => {
   }
 }
 
-describe('HintCalculatorFrontend', () => {
+describe.only('HintCalculatorFrontend', () => {
   test('open dialog', async () => {
     const f = await Fixture()
     const before = HintCalculatorFrontend.update({
@@ -128,8 +128,25 @@ describe('HintCalculatorFrontend', () => {
     })
     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
-    expect(didPlaySound(after)).toBe(true)
-    expect(didShowToast(after)).toBe(true)
+    expect(didShowOkSm(after)).toBe(true)
+  })
+
+  test('found no solutions', async () => {
+    const f = await Fixture()
+
+    const before = HintCalculatorFrontend.update({
+      ...f,
+      model: HintCalculatorFrontend.init,
+      msg: { t: 'clicked-find-solutions', flow: f.flow },
+    })
+    const after = HintCalculatorFrontend.update({
+      ...f,
+      model: before.model,
+      msg: { t: 'found-solution', flow: f.flow, found: Ok({ solutions: Solutions.init }) },
+    })
+    expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
+    expect(after.model.open).toBe(null)
+    expect(didShowWarningSm(after)).toBe(true)
   })
 
   test('found solution err', async () => {

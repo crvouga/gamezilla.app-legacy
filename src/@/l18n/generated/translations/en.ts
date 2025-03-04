@@ -185,6 +185,7 @@ export const translations: Text = {
     'No hints are loaded on your device. Would you like to calculate solutions now to enable hints?',
   'flow.no-hints-available-body': 'No hints are available. Calculate a solution to enable hints?',
   'flow.no-hints-calculated': 'No hints calculated',
+  'flow.no-solutions-found': 'No solutions found',
   'flow.no-hints-available': 'No hints available',
   'flow.no-packs': 'No packs',
   'flow.puzzle-count': (count) => (count === 1 ? `${count} puzzle` : `${count} puzzles`),

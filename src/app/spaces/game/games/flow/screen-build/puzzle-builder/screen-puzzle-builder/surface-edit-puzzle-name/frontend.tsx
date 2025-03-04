@@ -6,7 +6,7 @@ import { SurfaceBody } from '~/@/ui/surface/surface-body'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { VDom } from '~/@/vdom/vdom'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, showOkSm, showErrSm } from '~/app/@/frontend/cmd'
 import { ScreenAction, ScreenActionLocation } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -117,7 +117,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
       const msgCmd: FlowFrontendCmd<WireTypes>[] = [
         FlowFrontendCmdRoot.addPuzzles(puzzlesNew, input),
         ...(isOk(input.msgSpace.edited)
-          ? showCreatedSm<WireTypes>(input.ctx.t('flow.saved-name'))
+          ? showOkSm<WireTypes>(input.ctx.t('flow.saved-name'))
           : showErrSm<WireTypes>(input.ctx.t('app.something-went-wrong'))),
       ]
 

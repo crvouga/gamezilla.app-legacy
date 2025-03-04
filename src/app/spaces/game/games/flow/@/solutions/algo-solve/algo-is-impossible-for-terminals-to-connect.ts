@@ -11,7 +11,6 @@ export const isImpossibleForTerminalsToConnect = (model: Variant.Model, terminal
     if (availableSpaces < minPathLength) {
       return true
     }
-
     if (isTerminalCutOff(model, terminal)) {
       return true
     }

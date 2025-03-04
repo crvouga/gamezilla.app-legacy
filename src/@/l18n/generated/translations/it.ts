@@ -185,6 +185,7 @@ export const translations: Text = {
   'flow.no-hints-available-body':
     'Non ci sono suggerimenti caricati sul tuo dispositivo. Vuoi calcolare le soluzioni ora per abilitare i suggerimenti?',
   'flow.no-hints-calculated': 'Nessun suggerimento calcolato',
+  'flow.no-solutions-found': 'Nessuna soluzione trovata',
   'flow.no-hints-available': 'Nessun suggerimento disponibile',
   'flow.no-packs': 'Nessun pacchetto',
   'flow.puzzle-count': (count) => `${count} puzzle`,

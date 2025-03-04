@@ -185,6 +185,7 @@ export const translations: Text = {
   'flow.no-hints-available-body':
     '기기에 힌트가 로드되지 않았습니다. 힌트를 활성화하기 위해 지금 해결책을 계산하시겠습니까?',
   'flow.no-hints-calculated': '힌트가 계산되지 않음',
+  'flow.no-solutions-found': '해결 방법을 찾을 수 없습니다',
   'flow.no-hints-available': '힌트가 없습니다',
   'flow.no-packs': '팩 없음',
   'flow.puzzle-count': (count) => `${count} \uD37C\uC990`,

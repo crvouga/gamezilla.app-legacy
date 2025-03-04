@@ -186,6 +186,7 @@ export const translations: Text = {
   'flow.no-hints-loaded-body': 'لا توجد تلميحات محملة على جهازك. هل تريد حساب الحلول الآن لتمكين التلميحات؟',
   'flow.no-hints-available-body': 'لا توجد تلميحات محملة على جهازك. هل تريد حساب الحلول الآن لتمكين التلميحات؟',
   'flow.no-hints-calculated': 'لم يتم حساب أي تلميحات',
+  'flow.no-solutions-found': 'لم يتم العثور على حلول',
   'flow.no-hints-available': 'لا توجد تلميحات متاحة',
   'flow.no-packs': 'لا توجد حزم',
   'flow.puzzle-count': (count) => `${count} \u0623\u0644\u063A\u0627\u0632`,

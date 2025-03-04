@@ -188,6 +188,7 @@ export const translations: Text = {
   'flow.no-hints-available-body':
     'デバイスにヒントが読み込まれていません。ヒントを有効にするために今すぐ解決策を計算しますか？',
   'flow.no-hints-calculated': 'ヒントが計算されていません',
+  'flow.no-solutions-found': '解決策が見つかりません',
   'flow.no-hints-available': 'ヒントがありません',
   'flow.no-packs': 'パックなし',
   'flow.puzzle-count': (count) => `${count} \u30D1\u30BA\u30EB`,

@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Loading, Result, isOk } from '~/@/result'
 import { IconFloppyDisk } from '~/@/ui'
 import { VDom } from '~/@/vdom/vdom'
-import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, showOkSm, showErrSm } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceUnsavedChanges } from '~/app/@/ui/surface/unsaved-changes/surface-unsaved-changes'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -120,7 +120,7 @@ const updateSaveChangesRequest: FrontendModule['update'] = (input) => {
         msgCmd:
           input.msgSpace.userId === input.ctx.currentUser.userId
             ? isOk(input.msgSpace.saved)
-              ? showCreatedSm(input.ctx.t('app.saved-changes'))
+              ? showOkSm(input.ctx.t('app.saved-changes'))
               : showErrSm(input.ctx.t('app.something-went-wrong'))
             : [],
       }

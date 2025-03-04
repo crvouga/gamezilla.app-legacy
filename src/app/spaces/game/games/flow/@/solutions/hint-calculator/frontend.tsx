@@ -1,7 +1,7 @@
 import { pipe } from '~/@/function/pipe'
 import { isErr, Loading, mapOk } from '~/@/result'
 import { IconLightbulb } from '~/@/ui'
-import { APP_SOUND, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, showErrSm, showOkSm, showWarningSm } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import { AlgoSolveAsync } from '../algo-solve-async'
@@ -72,29 +72,19 @@ const update: FrontendModule['update'] = (input) => {
       }
     }
     case 'found-solution': {
-      const { msg } = input
-      const hash = SolutionHash.init(msg.flow)
-      const requestNew: FindSolutionRequest = {
-        hash,
-        result: input.msg.found,
-      }
+      const result = input.msg.found
+      const hash = SolutionHash.init(input.msg.flow)
+      const requestNew: FindSolutionRequest = { hash, result }
       return {
-        model: {
-          ...input.model,
-          requests: {
-            ...input.model.requests,
-            [hash]: requestNew,
-          },
-          open: null,
-        },
-
-        msgCmd: isErr(msg.found)
-          ? showErrSm(input.ctx.t('app.something-went-wrong'), msg.found.error)
-          : [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.solutions-found'))],
-
+        model: { ...input.model, requests: { ...input.model.requests, [hash]: requestNew }, open: null },
+        msgCmd: isErr(result)
+          ? showErrSm(input.ctx.t('app.something-went-wrong'), result.error)
+          : Solutions.isEmpty(result.value.solutions)
+            ? showWarningSm(input.ctx.t('flow.no-solutions-found'))
+            : showOkSm(input.ctx.t('flow.solutions-found')),
         async eff() {
-          if (isErr(msg.found)) return
-          await input.ctx.solutionsDb.put(msg.found.value.solutions)
+          if (isErr(result)) return
+          await input.ctx.solutionsDb.put(result.value.solutions)
         },
       }
     }

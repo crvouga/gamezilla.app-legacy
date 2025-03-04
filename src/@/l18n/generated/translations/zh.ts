@@ -183,6 +183,7 @@ export const translations: Text = {
   'flow.no-hints-loaded-body': '您的设备上未加载提示。您想现在计算解决方案以启用提示吗？',
   'flow.no-hints-available-body': '您的设备上未加载提示。您想现在计算解决方案以启用提示吗？',
   'flow.no-hints-calculated': '未计算提示',
+  'flow.no-solutions-found': '未找到解决方案',
   'flow.no-hints-available': '没有可用提示',
   'flow.no-packs': '没有包',
   'flow.puzzle-count': (count) => `${count} \u62FC\u56FE`,

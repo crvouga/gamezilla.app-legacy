@@ -190,6 +190,7 @@ export const translations: Text = {
   'flow.no-hints-available-body':
     'आपके डिवाइस पर कोई संकेत लोड नहीं किए गए हैं। क्या आप संकेत सक्षम करने के लिए अभी समाधान की गणना करना चाहेंगे?',
   'flow.no-hints-calculated': 'कोई संकेत गणना नहीं किया गया',
+  'flow.no-solutions-found': 'कोई समाधान नहीं मिला',
   'flow.no-hints-available': 'कोई संकेत उपलब्ध नहीं है',
   'flow.no-packs': 'कोई पैक नहीं',
   'flow.puzzle-count': (count) => `${count} \u092A\u0939\u0947\u0932\u093F\u092F\u093E\u0901`,

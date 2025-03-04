@@ -3,7 +3,7 @@ import { isErr, RemoteResult, Result } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { IconPlus } from '~/@/ui'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, playSound, showCreatedSm, showErrSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, showOkSm, showErrSm } from '~/app/@/frontend/cmd'
 import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { FlowFrontendCmd } from '../../../../@/frontend/cmd'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
@@ -71,7 +71,7 @@ const update: FrontendModule['update'] = (input) => {
         MsgFrontend: MsgFrontend
         MsgToBackend: MsgToBackend
       }>[] = [
-        ...showCreatedSm<{
+        ...showOkSm<{
           MsgFrontend: MsgFrontend
           MsgToBackend: MsgToBackend
         }>(input.ctx.t('flow.puzzle-created')),

@@ -13,7 +13,7 @@ const some = <T>(iterable: Iterable<T>, predicate: (value: T) => boolean) => {
   return false
 }
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   test('2x2 with A terminals', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' '],
@@ -34,6 +34,17 @@ describe.only(import.meta.file, () => {
     const actual = AlgoSolve.solutions(grid)
 
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+  })
+
+  test.only('3x3 one full terminals', async () => {
+    const flow = VariantGridShorthand.toGrid([
+      ['A', ' ', ' '],
+      [' ', 'B', ' '],
+      [' ', ' ', 'A'],
+    ])
+
+    const solution = AlgoSolve.solve(flow)
+    expect(solution).not.toBeNull()
   })
 
   test('3x3 with A terminals and B terminals', () => {
