@@ -29,7 +29,7 @@ export const Fixture = async () => {
   }
 }
 
-describe.only('HintCalculatorFrontend', () => {
+describe('HintCalculatorFrontend', () => {
   test('open dialog', async () => {
     const f = await Fixture()
     const before = HintCalculatorFrontend.update({

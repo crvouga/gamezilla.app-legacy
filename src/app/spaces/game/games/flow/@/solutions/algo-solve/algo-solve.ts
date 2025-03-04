@@ -6,6 +6,7 @@ import { NodeId } from '../../flow/node-id'
 import { Terminal } from '../../flow/terminal'
 import { Variant } from '../../variant'
 import { AlgoIsSolved } from '../algo-is-solved/algo-is-solved'
+import { TerminalFull } from '../../flow/terminal-full'
 
 export const solve = (model: Variant.Model): Variant.Model | null => {
   for (const solution of solutions(model)) {
@@ -16,36 +17,56 @@ export const solve = (model: Variant.Model): Variant.Model | null => {
 
 export const solutions = function* (model: Variant.Model): Iterable<Variant.Model> {
   const cleared = Flow.removeAllPipelines(model)
-  const disconnectedTerminals = Flow.toTerminals(cleared)
+  const disconnectedTerminals = Flow.toFullTerminals(cleared)
 
   disconnectedTerminals.sort(ascend((terminal) => toTerminalDistance(cleared, terminal)))
 
   yield* solveStep(cleared, disconnectedTerminals)
 }
 
-const solveStep = function* (model: Variant.Model, disconnectedTerminals: Terminal[]): Iterable<Variant.Model> {
+const solveStep = function* (model: Variant.Model, disconnectedTerminals: TerminalFull[]): Iterable<Variant.Model> {
+  if (isImpossibleForTerminalsToConnect(model, disconnectedTerminals)) {
+    return
+  }
+
   if (AlgoIsSolved.isSolved(model)) {
     yield model
     return
   }
 
-  const terminal = disconnectedTerminals[0]
+  const [terminal, ...rest] = disconnectedTerminals
 
-  if (!terminal || !terminal.endId) return
+  if (!terminal) return
 
-  const possiblePipelines = toPossiblePipelines(model, terminal.groupId, terminal.startId, terminal.endId)
+  const allPossiblePipelines = toAllPossiblePipelines(model, terminal.groupId, terminal.startId, terminal.endId)
 
-  const disconnectedTerminalsRest = disconnectedTerminals.slice(1)
-
-  for (const possiblePipeline of possiblePipelines) {
+  for (const possiblePipeline of allPossiblePipelines) {
     const drew = drawPipeline(model, terminal, possiblePipeline)
-    yield* solveStep(drew, disconnectedTerminalsRest)
+    yield* solveStep(drew, rest)
   }
 }
 
-// const MAX_ITERATIONS = 5000;
+const isImpossibleForTerminalsToConnect = (model: Variant.Model, terminals: TerminalFull[]): boolean => {
+  for (const terminal of terminals) {
+    if (
+      isSurroundedByDifferentGroup(model, terminal.groupId, terminal.startId) ||
+      isSurroundedByDifferentGroup(model, terminal.groupId, terminal.endId)
+    ) {
+      return true
+    }
+  }
+  return false
+}
 
-const toPossiblePipelines = function* (
+const isSurroundedByDifferentGroup = (model: Variant.Model, groupId: GroupId, nodeId: NodeId): boolean => {
+  const neighbors = Array.from(Flow.yieldEdgesOut(model, nodeId)).map((edgeOut) => edgeOut.targetId)
+  const neighborGroupIds = neighbors.map((neighborId) => Flow.toGroupId(model, neighborId))
+  return neighborGroupIds.every((neighborGroupId) => neighborGroupId !== groupId && neighborGroupId !== null)
+}
+
+const MAX_ITERATIONS = 5000
+
+const toAllPossiblePipelines = function* (
   model: Variant.Model,
   groupId: GroupId,
   startId: NodeId,
@@ -61,6 +82,7 @@ const toPossiblePipelines = function* (
 
   const minHeap = new MinHeap<HeapItem>((a, b) => a.heuristic - b.heuristic)
   const visitedPaths = new Set<string>()
+  let iterations = 0
 
   minHeap.insert({
     path: [],
@@ -70,7 +92,8 @@ const toPossiblePipelines = function* (
     heuristic: Variant.distance(model, startId, endId),
   })
 
-  while (!minHeap.isEmpty()) {
+  while (!minHeap.isEmpty() && iterations < MAX_ITERATIONS) {
+    iterations++
     const min = minHeap.extractMin()
 
     if (!min) {

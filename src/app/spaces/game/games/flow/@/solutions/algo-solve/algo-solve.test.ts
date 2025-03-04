@@ -13,7 +13,7 @@ const some = <T>(iterable: Iterable<T>, predicate: (value: T) => boolean) => {
   return false
 }
 
-describe(import.meta.file, () => {
+describe.only(import.meta.file, () => {
   test('2x2 with A terminals', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' '],
@@ -538,7 +538,7 @@ describe(import.meta.file, () => {
     expect(isEmpty(solutions)).toBe(false)
   })
 
-  test.todo('8x8 no solutions', () => {
+  test('8x8 no solutions', () => {
     const grid = VariantGridShorthand.toGrid([
       ['C', ' ', ' ', 'D', ' ', ' ', ' ', 'A'],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],

@@ -1,0 +1,21 @@
+import { p } from '~/@/parser'
+import { GroupId } from './group-id'
+import { NodeId } from './node-id'
+import { Terminal } from './terminal'
+
+const parser = p.obj({
+  groupId: GroupId,
+  startId: NodeId,
+  endId: NodeId,
+})
+
+export type TerminalFull = p.Infer<typeof parser>
+
+const is = (terminal: Terminal): terminal is TerminalFull => {
+  return terminal.endId !== null
+}
+
+export const TerminalFull = {
+  ...parser,
+  is,
+}
