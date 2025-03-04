@@ -182,6 +182,10 @@ export const translations: Text = {
   'flow.no-hints-loaded': 'Aucun indice chargé',
   'flow.no-hints-loaded-body':
     "Aucun indice n'est chargé sur votre appareil. Voulez-vous calculer des solutions maintenant pour activer les indices ?",
+  'flow.no-hints-available-body':
+    "Aucun indice n'est chargé sur votre appareil. Voulez-vous calculer des solutions maintenant pour activer les indices ?",
+  'flow.no-hints-calculated': 'Aucun indice calculé',
+  'flow.no-hints-available': 'Aucun indice disponible',
   'flow.no-packs': 'Aucun pack',
   'flow.puzzle-count': (count) => `${count} puzzles`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -282,6 +286,7 @@ export const translations: Text = {
   'app.apply': 'Appliquer',
   'app.join': 'Rejoindre',
   'app.add': 'Ajouter',
+  'app.calculate': 'Calculer',
   'drawer.close': 'Fermer le drawer',
   'time-span.month-plural': (months) => `${Math.floor(months)} mois`,
   'time-span.month-singular': '1 mois',

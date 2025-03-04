@@ -182,6 +182,10 @@ export const translations: Text = {
   'flow.no-hints-loaded': 'Nessun suggerimento caricato',
   'flow.no-hints-loaded-body':
     'Non ci sono suggerimenti caricati sul tuo dispositivo. Vuoi calcolare le soluzioni ora per abilitare i suggerimenti?',
+  'flow.no-hints-available-body':
+    'Non ci sono suggerimenti caricati sul tuo dispositivo. Vuoi calcolare le soluzioni ora per abilitare i suggerimenti?',
+  'flow.no-hints-calculated': 'Nessun suggerimento calcolato',
+  'flow.no-hints-available': 'Nessun suggerimento disponibile',
   'flow.no-packs': 'Nessun pacchetto',
   'flow.puzzle-count': (count) => `${count} puzzle`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -280,6 +284,7 @@ export const translations: Text = {
   'app.apply': 'Applica',
   'app.join': 'Unisciti',
   'app.add': 'Aggiungi',
+  'app.calculate': 'Calcola',
   'drawer.close': 'Chiudi cassetto',
   'time-span.month-plural': (months) => `${Math.floor(months)} mesi`,
   'time-span.month-singular': '1 mese',

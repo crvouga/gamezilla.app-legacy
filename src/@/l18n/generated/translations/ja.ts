@@ -185,6 +185,10 @@ export const translations: Text = {
   'flow.no-hints-loaded': 'ヒントが読み込まれていません',
   'flow.no-hints-loaded-body':
     'デバイスにヒントが読み込まれていません。ヒントを有効にするために今すぐ解決策を計算しますか？',
+  'flow.no-hints-available-body':
+    'デバイスにヒントが読み込まれていません。ヒントを有効にするために今すぐ解決策を計算しますか？',
+  'flow.no-hints-calculated': 'ヒントが計算されていません',
+  'flow.no-hints-available': 'ヒントがありません',
   'flow.no-packs': 'パックなし',
   'flow.puzzle-count': (count) => `${count} \u30D1\u30BA\u30EB`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -291,6 +295,7 @@ export const translations: Text = {
   'app.apply': '適用',
   'app.join': '参加',
   'app.add': '追加',
+  'app.calculate': '計算',
   'drawer.close': 'ドロワーを閉じる',
   'time-span.month-plural': (months) => `${Math.floor(months)} \u30F6\u6708`,
   'time-span.month-singular': '1 ヶ月',

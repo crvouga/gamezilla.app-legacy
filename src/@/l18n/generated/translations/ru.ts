@@ -187,6 +187,10 @@ export const translations: Text = {
   'flow.no-hints-loaded': 'Подсказки не загружены',
   'flow.no-hints-loaded-body':
     'На вашем устройстве не загружены подсказки. Хотите рассчитать решения сейчас, чтобы включить подсказки?',
+  'flow.no-hints-available-body':
+    'На вашем устройстве не загружены подсказки. Хотите рассчитать решения сейчас, чтобы включить подсказки?',
+  'flow.no-hints-calculated': 'Подсказки не вычислены',
+  'flow.no-hints-available': 'Подсказки недоступны',
   'flow.no-packs': 'Нет пакетов',
   'flow.puzzle-count': (count) => `${count} \u0433\u043E\u043B\u043E\u0432\u043E\u043B\u043E\u043C\u043E\u043A`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -298,6 +302,7 @@ export const translations: Text = {
   'app.apply': 'Применить',
   'app.join': 'Присоединиться',
   'app.add': 'Добавить',
+  'app.calculate': 'Вычислить',
   'drawer.close': 'Закрыть панель',
   'time-span.month-plural': (months) => `${Math.floor(months)} \u043C\u0435\u0441\u044F\u0446\u0435\u0432`,
   'time-span.month-singular': '1 месяц',

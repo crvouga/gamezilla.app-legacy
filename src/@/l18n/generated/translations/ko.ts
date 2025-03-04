@@ -182,6 +182,10 @@ export const translations: Text = {
   'flow.no-hints-loaded': '힌트가 로드되지 않음',
   'flow.no-hints-loaded-body':
     '기기에 힌트가 로드되지 않았습니다. 힌트를 활성화하기 위해 지금 해결책을 계산하시겠습니까?',
+  'flow.no-hints-available-body':
+    '기기에 힌트가 로드되지 않았습니다. 힌트를 활성화하기 위해 지금 해결책을 계산하시겠습니까?',
+  'flow.no-hints-calculated': '힌트가 계산되지 않음',
+  'flow.no-hints-available': '힌트가 없습니다',
   'flow.no-packs': '팩 없음',
   'flow.puzzle-count': (count) => `${count} \uD37C\uC990`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -288,6 +292,7 @@ export const translations: Text = {
   'app.apply': '적용',
   'app.join': '참여',
   'app.add': '추가',
+  'app.calculate': '계산',
   'drawer.close': '서랍 닫기',
   'time-span.month-plural': (months) => `${Math.floor(months)} \uAC1C\uC6D4`,
   'time-span.month-singular': '1 개월',

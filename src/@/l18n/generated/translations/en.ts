@@ -183,6 +183,9 @@ export const translations: Text = {
   'flow.no-hints-loaded': 'No hints loaded',
   'flow.no-hints-loaded-body':
     'No hints are loaded on your device. Would you like to calculate solutions now to enable hints?',
+  'flow.no-hints-available-body': 'No hints are available. Calculate a solution to enable hints?',
+  'flow.no-hints-calculated': 'No hints calculated',
+  'flow.no-hints-available': 'No hints available',
   'flow.no-packs': 'No packs',
   'flow.puzzle-count': (count) => (count === 1 ? `${count} puzzle` : `${count} puzzles`),
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -281,6 +284,7 @@ export const translations: Text = {
   'app.apply': 'Apply',
   'app.join': 'Join',
   'app.add': 'Add',
+  'app.calculate': 'Calculate',
   'drawer.close': 'Close drawer',
   'time-span.day-plural': (days) => `${Math.floor(days)} days`,
   'time-span.day-singular': '1 day',

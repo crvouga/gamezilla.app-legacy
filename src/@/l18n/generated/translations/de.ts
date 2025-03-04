@@ -184,6 +184,10 @@ export const translations: Text = {
   'flow.no-hints-loaded': 'Keine Hinweise geladen',
   'flow.no-hints-loaded-body':
     'Auf Ihrem Gerät sind keine Hinweise geladen. Möchten Sie jetzt Lösungen berechnen, um Hinweise zu aktivieren?',
+  'flow.no-hints-available-body':
+    'Auf Ihrem Gerät sind keine Hinweise geladen. Möchten Sie jetzt Lösungen berechnen, um Hinweise zu aktivieren?',
+  'flow.no-hints-calculated': 'Keine Hinweise berechnet',
+  'flow.no-hints-available': 'Keine Hinweise verfügbar',
   'flow.no-packs': 'Keine Packs',
   'flow.puzzle-count': (count) => `${count} R\xE4tsel`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -284,6 +288,7 @@ export const translations: Text = {
   'app.apply': 'Anwenden',
   'app.join': 'Beitreten',
   'app.add': 'Hinzufügen',
+  'app.calculate': 'Berechnen',
   'drawer.close': 'Schublade schließen',
   'time-span.month-plural': (months) => `${Math.floor(months)} Monate`,
   'time-span.month-singular': '1 Monat',

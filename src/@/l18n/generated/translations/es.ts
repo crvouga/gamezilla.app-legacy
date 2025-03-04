@@ -184,6 +184,10 @@ export const translations: Text = {
   'flow.no-hints-loaded': 'No hay pistas cargadas',
   'flow.no-hints-loaded-body':
     'No hay pistas cargadas en su dispositivo. ¿Le gustaría calcular soluciones ahora para habilitar las pistas?',
+  'flow.no-hints-available-body':
+    'No hay pistas cargadas en su dispositivo. ¿Le gustaría calcular soluciones ahora para habilitar las pistas?',
+  'flow.no-hints-calculated': 'No hay pistas calculadas',
+  'flow.no-hints-available': 'No hay pistas disponibles',
   'flow.no-packs': 'Sin paquetes',
   'flow.puzzle-count': (count) => `${count} rompecabezas`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -283,6 +287,7 @@ export const translations: Text = {
   'app.apply': 'Aplicar',
   'app.join': 'Unirse',
   'app.add': 'Añadir',
+  'app.calculate': 'Calcular',
   'drawer.close': 'Cerrar el drawer',
   'time-span.month-plural': (months) => `${Math.floor(months)} meses`,
   'time-span.month-singular': '1 mes',

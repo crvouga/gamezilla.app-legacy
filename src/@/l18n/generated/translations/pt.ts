@@ -183,6 +183,10 @@ export const translations: Text = {
   'flow.no-hints-loaded': 'Nenhuma dica carregada',
   'flow.no-hints-loaded-body':
     'Não há dicas carregadas no seu dispositivo. Gostaria de calcular soluções agora para ativar as dicas?',
+  'flow.no-hints-available-body':
+    'Não há dicas carregadas no seu dispositivo. Gostaria de calcular soluções agora para ativar as dicas?',
+  'flow.no-hints-calculated': 'Nenhuma dica calculada',
+  'flow.no-hints-available': 'Nenhuma dica disponível',
   'flow.no-packs': 'Sem pacotes',
   'flow.puzzle-count': (count) => `${count} quebra-cabe\xE7as`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -282,6 +286,7 @@ export const translations: Text = {
   'app.apply': 'Aplicar',
   'app.join': 'Juntar',
   'app.add': 'Adicionar',
+  'app.calculate': 'Calcular',
   'drawer.close': 'Fechar gaveta',
   'time-span.month-plural': (months) => `${Math.floor(months)} meses`,
   'time-span.month-singular': '1 mês',

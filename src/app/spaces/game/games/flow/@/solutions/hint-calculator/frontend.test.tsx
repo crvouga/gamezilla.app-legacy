@@ -5,7 +5,7 @@ import { FixtureFlowFrontend } from '../../frontend/fixture'
 import { VariantGridShorthand } from '../../variant/grid'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
-import { HintLoaderFrontend } from './frontend'
+import { HintCalculatorFrontend } from './frontend'
 
 export const Fixture = async () => {
   const f = await FixtureFlowFrontend()
@@ -29,14 +29,14 @@ export const Fixture = async () => {
   }
 }
 
-describe.only('HintLoaderFrontend', () => {
+describe.only('HintCalculatorFrontend', () => {
   test('open dialog', async () => {
     const f = await Fixture()
-    const before = HintLoaderFrontend.update({
+    const before = HintCalculatorFrontend.update({
       ...f,
-      model: HintLoaderFrontend.init,
+      model: HintCalculatorFrontend.init,
     })
-    const after = HintLoaderFrontend.update({
+    const after = HintCalculatorFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'dialog.clicked-open' },
@@ -48,12 +48,12 @@ describe.only('HintLoaderFrontend', () => {
 
   test('toggle open dialog', async () => {
     const f = await Fixture()
-    const before = HintLoaderFrontend.update({
+    const before = HintCalculatorFrontend.update({
       ...f,
-      model: HintLoaderFrontend.init,
+      model: HintCalculatorFrontend.init,
       msg: { t: 'dialog.clicked-open' },
     })
-    const after = HintLoaderFrontend.update({
+    const after = HintCalculatorFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'dialog.clicked-open' },
@@ -64,12 +64,12 @@ describe.only('HintLoaderFrontend', () => {
 
   test('close dialog', async () => {
     const f = await Fixture()
-    const before = HintLoaderFrontend.update({
+    const before = HintCalculatorFrontend.update({
       ...f,
-      model: HintLoaderFrontend.init,
+      model: HintCalculatorFrontend.init,
       msg: { t: 'dialog.clicked-open' },
     })
-    const after = HintLoaderFrontend.update({
+    const after = HintCalculatorFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'dialog.clicked-close' },
@@ -81,14 +81,14 @@ describe.only('HintLoaderFrontend', () => {
 
   test('handle got msg cmd', async () => {
     const f = await Fixture()
-    const actual = HintLoaderFrontend.update({
+    const actual = HintCalculatorFrontend.update({
       ...f,
-      model: HintLoaderFrontend.init,
-      msgCmd: HintLoaderFrontend.gotMsg({ t: 'dialog.clicked-open' }),
+      model: HintCalculatorFrontend.init,
+      msgCmd: HintCalculatorFrontend.gotMsg({ t: 'dialog.clicked-open' }),
     })
-    const expected = HintLoaderFrontend.update({
+    const expected = HintCalculatorFrontend.update({
       ...f,
-      model: HintLoaderFrontend.init,
+      model: HintCalculatorFrontend.init,
       msg: { t: 'dialog.clicked-open' },
     })
     expect(actual).toEqual(expected)
@@ -97,18 +97,18 @@ describe.only('HintLoaderFrontend', () => {
   test('clicked find solutions', async () => {
     const f = await Fixture()
 
-    const before = HintLoaderFrontend.update({
+    const before = HintCalculatorFrontend.update({
       ...f,
-      model: HintLoaderFrontend.init,
+      model: HintCalculatorFrontend.init,
       msg: { t: 'dialog.clicked-open' },
     })
 
-    const after = HintLoaderFrontend.update({
+    const after = HintCalculatorFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'clicked-find-solutions', flow: f.flow },
     })
-    expect(HintLoaderFrontend.isLoading(after.model, f.hash)).toBe(true)
+    expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(true)
     expect(didPlaySound(after)).toBe(true)
     expect(after.eff).not.toBeUndefined()
   })
@@ -116,17 +116,17 @@ describe.only('HintLoaderFrontend', () => {
   test('found solution ok', async () => {
     const f = await Fixture()
 
-    const before = HintLoaderFrontend.update({
+    const before = HintCalculatorFrontend.update({
       ...f,
-      model: HintLoaderFrontend.init,
+      model: HintCalculatorFrontend.init,
       msg: { t: 'clicked-find-solutions', flow: f.flow },
     })
-    const after = HintLoaderFrontend.update({
+    const after = HintCalculatorFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'found-solution', flow: f.flow, found: Ok({ solutions: f.solutions }) },
     })
-    expect(HintLoaderFrontend.isLoading(after.model, f.hash)).toBe(false)
+    expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
     expect(didPlaySound(after)).toBe(true)
     expect(didShowToast(after)).toBe(true)
@@ -134,17 +134,17 @@ describe.only('HintLoaderFrontend', () => {
 
   test('found solution err', async () => {
     const f = await Fixture()
-    const before = HintLoaderFrontend.update({
+    const before = HintCalculatorFrontend.update({
       ...f,
-      model: HintLoaderFrontend.init,
+      model: HintCalculatorFrontend.init,
       msg: { t: 'clicked-find-solutions', flow: f.flow },
     })
-    const after = HintLoaderFrontend.update({
+    const after = HintCalculatorFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'found-solution', flow: f.flow, found: Err('some error') },
     })
-    expect(HintLoaderFrontend.isLoading(after.model, f.hash)).toBe(false)
+    expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
     expect(didShowErrorSm(after)).toBe(true)
   })
@@ -152,12 +152,12 @@ describe.only('HintLoaderFrontend', () => {
   test('close surface after finding solutions', async () => {
     const f = await Fixture()
 
-    const before = HintLoaderFrontend.update({
+    const before = HintCalculatorFrontend.update({
       ...f,
-      model: HintLoaderFrontend.init,
+      model: HintCalculatorFrontend.init,
       msg: { t: 'dialog.clicked-open' },
     })
-    const after = HintLoaderFrontend.update({
+    const after = HintCalculatorFrontend.update({
       ...f,
       model: before.model,
       msg: { t: 'found-solution', flow: f.flow, found: Ok({ solutions: f.solutions }) },

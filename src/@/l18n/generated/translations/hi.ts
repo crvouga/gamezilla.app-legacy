@@ -187,6 +187,10 @@ export const translations: Text = {
   'flow.no-hints-loaded': 'कोई संकेत लोड नहीं किया गया',
   'flow.no-hints-loaded-body':
     'आपके डिवाइस पर कोई संकेत लोड नहीं किए गए हैं। क्या आप संकेत सक्षम करने के लिए अभी समाधान की गणना करना चाहेंगे?',
+  'flow.no-hints-available-body':
+    'आपके डिवाइस पर कोई संकेत लोड नहीं किए गए हैं। क्या आप संकेत सक्षम करने के लिए अभी समाधान की गणना करना चाहेंगे?',
+  'flow.no-hints-calculated': 'कोई संकेत गणना नहीं किया गया',
+  'flow.no-hints-available': 'कोई संकेत उपलब्ध नहीं है',
   'flow.no-packs': 'कोई पैक नहीं',
   'flow.puzzle-count': (count) => `${count} \u092A\u0939\u0947\u0932\u093F\u092F\u093E\u0901`,
   'flow-pack-name': (flowPackName) => `${flowPackName}`,
@@ -298,6 +302,7 @@ export const translations: Text = {
   'app.apply': 'लागू करें',
   'app.join': 'शामिल हों',
   'app.add': 'जोड़ें',
+  'app.calculate': 'गणना करें',
   'drawer.close': 'दराज बंद करें',
   'time-span.month-plural': (months) => `${Math.floor(months)} \u092E\u0939\u0940\u0928\u0947`,
   'time-span.month-singular': '1 महीना',

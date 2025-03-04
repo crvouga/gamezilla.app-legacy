@@ -19,7 +19,7 @@ import {
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.t) {
-    case 'flow-cmd.got-hint-loader-cmd': {
+    case 'flow-cmd.got-hint-calculator-cmd': {
       return update({ ...input, msgCmd: null, msg: input.msgCmd.c.msg })
     }
   }
@@ -102,7 +102,7 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const TEST_ID = 'hint-loader'
+const TEST_ID = 'hint-calculator'
 
 const isFindSolutionsScreenAction = (action: ScreenAction): boolean => {
   return action.testId === TEST_ID
@@ -122,18 +122,18 @@ const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[
       testId: TEST_ID,
       renderSurface: ({ reference }) => (
         <SurfaceConfirmation
-          title={input.ctx.t('flow.no-hints-loaded')}
-          body={input.ctx.t('flow.no-hints-loaded-body')}
+          title={input.ctx.t('flow.no-hints-available')}
+          body={input.ctx.t('flow.no-hints-available-body')}
           ctx={input.ctx}
           dropDownReference={reference}
           id={TEST_ID}
-          ariaLabel={input.ctx.t('flow.no-hints-loaded')}
+          ariaLabel={input.ctx.t('flow.no-hints-available')}
           onClose={() => input.dispatch({ t: 'dialog.clicked-close' })}
           open={input.model.open === 'find-solutions-confirmation'}
           onCancel={() => input.dispatch({ t: 'dialog.clicked-close' })}
           cancelText={input.ctx.t('app.cancel')}
           position='bottom'
-          confirmText={input.ctx.t('app.load')}
+          confirmText={input.ctx.t('app.calculate')}
           confirmLoading={isLoading(input.model, hash)}
           onConfirm={() => input.dispatch({ t: 'clicked-find-solutions', flow })}
         />
@@ -144,7 +144,7 @@ const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[
 
 const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   return {
-    t: 'flow-cmd.got-hint-loader-cmd',
+    t: 'flow-cmd.got-hint-calculator-cmd',
     c: {
       t: 'got-msg',
       msg,
@@ -156,7 +156,7 @@ const isLoading = (model: ModelFrontend, hash: SolutionHash): boolean => {
   return model.requests[hash]?.result.t === 'loading'
 }
 
-export const HintLoaderFrontend = {
+export const HintCalculatorFrontend = {
   init: initFrontend,
   isLoading,
   update,

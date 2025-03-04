@@ -5,7 +5,7 @@ import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-
 import { FlowFrontendCmd } from '../@/frontend/cmd'
 import { PackLoaderFrontend } from '../@/pack/pack-loader/frontend'
 import { PuzzleLoaderFrontend } from '../@/puzzle/puzzle-loader/frontend'
-import { HintLoaderFrontend } from '../@/solutions/hint-loader/frontend'
+import { HintCalculatorFrontend } from '../@/solutions/hint-calculator/frontend'
 import { SolutionsLoaderFrontend } from '../@/solutions/solutions-loader/frontend'
 import { ScreenPackBuilderOpenFrontend } from './pack-builder/screen-pack-builder-open/frontend'
 import { ScreenPackBuilderFrontend } from './pack-builder/screen-pack-builder/frontend'
@@ -78,8 +78,8 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'got-puzzle-loader-msg': {
       return { model: input.model, msgCmd: [PuzzleLoaderFrontend.gotMsg(input.msg.c)] }
     }
-    case 'got-hint-loader-msg': {
-      return { model: input.model, msgCmd: [HintLoaderFrontend.gotMsg(input.msg.c)] }
+    case 'got-hint-calculator-msg': {
+      return { model: input.model, msgCmd: [HintCalculatorFrontend.gotMsg(input.msg.c)] }
     }
     case 'got-solutions-loader-msg': {
       return { model: input.model, msgCmd: [SolutionsLoaderFrontend.gotMsg(input.msg.c)] }

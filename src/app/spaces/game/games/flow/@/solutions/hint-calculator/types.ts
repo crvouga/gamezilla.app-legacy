@@ -45,7 +45,7 @@ export type MsgToBackend = { t: 'noop' }
 export type MsgToFrontend = { t: 'noop' }
 
 export type MsgInCmdFrontend = {
-  t: 'flow-cmd.got-hint-loader-cmd'
+  t: 'flow-cmd.got-hint-calculator-cmd'
   c: {
     t: 'got-msg'
     msg: MsgFrontend

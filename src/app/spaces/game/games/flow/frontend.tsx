@@ -20,8 +20,8 @@ import { PuzzleLoaderFrontend } from './@/puzzle/puzzle-loader/frontend'
 import { Solutions } from './@/solutions/solutions'
 import { SolutionsDb } from './@/solutions/solutions-db/impl'
 import { ISolutionsDb } from './@/solutions/solutions-db/interface'
-import { HintLoaderTypes } from './@/solutions/hint-loader'
-import { HintLoaderFrontend } from './@/solutions/hint-loader/frontend'
+import { HintCalculatorTypes } from './@/solutions/hint-calculator'
+import { HintCalculatorFrontend } from './@/solutions/hint-calculator/frontend'
 import { SolutionsLoaderTypes } from './@/solutions/solutions-loader'
 import { SolutionsLoaderFrontend } from './@/solutions/solutions-loader/frontend'
 import { ScreenBuildFrontend } from './screen-build/frontend'
@@ -33,7 +33,7 @@ const init: FrontendModule['init'] = {
   screenPlay: ScreenPlayFrontend.init,
   puzzleLoader: PuzzleLoaderTypes.initFrontend,
   packLoader: PackLoaderTypes.initFrontend,
-  HintLoader: HintLoaderTypes.initFrontend,
+  HintCalculator: HintCalculatorTypes.initFrontend,
   solutionsLoader: SolutionsLoaderTypes.initFrontend,
   solutions: Solutions.init,
   puzzles: {},
@@ -57,7 +57,7 @@ const toFlowFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): Flow
     puzzleLoader: input.model.puzzleLoader,
     packLoader: input.model.packLoader,
     solutions: input.model.solutions,
-    HintLoader: input.model.HintLoader,
+    HintCalculator: input.model.HintCalculator,
     solutionsLoader: input.model.solutionsLoader,
   }
 }
@@ -131,7 +131,7 @@ const updateChild: FrontendModule['update'] = (input) => {
     (model) => updateScreenBuild({ ...input, model }),
     (model) => updatePackLoader({ ...input, model }),
     (model) => updatePuzzleLoader({ ...input, model }),
-    (model) => updateHintLoader({ ...input, model }),
+    (model) => updateHintCalculator({ ...input, model }),
     (model) => updateSolutionsLoader({ ...input, model }),
   )
 }
@@ -175,21 +175,21 @@ const updatePackLoader: FrontendModule['update'] = (input) => {
   }
 }
 
-const updateHintLoader: FrontendModule['update'] = (input) => {
+const updateHintCalculator: FrontendModule['update'] = (input) => {
   const ctx = toFlowFrontendCtx(input)
 
-  const updated = HintLoaderFrontend.update({
+  const updated = HintCalculatorFrontend.update({
     ctx,
-    model: input.model.HintLoader,
-    msg: input.msg?.t === 'got-hint-loader-msg' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'flow-cmd.got-hint-loader-cmd' ? input.msgCmd : null,
+    model: input.model.HintCalculator,
+    msg: input.msg?.t === 'got-hint-calculator-msg' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'flow-cmd.got-hint-calculator-cmd' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
   })
 
   return {
-    model: { ...input.model, HintLoader: updated.model },
-    eff: Eff.tag('got-hint-loader-msg', updated.eff),
-    msgCmd: FlowFrontendCmd.tag('got-hint-loader-msg', updated.msgCmd),
+    model: { ...input.model, HintCalculator: updated.model },
+    eff: Eff.tag('got-hint-calculator-msg', updated.eff),
+    msgCmd: FlowFrontendCmd.tag('got-hint-calculator-msg', updated.msgCmd),
     msgEvt: [],
   }
 }
