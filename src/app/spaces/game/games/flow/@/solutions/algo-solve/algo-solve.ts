@@ -4,7 +4,7 @@ import { Terminal } from '../../flow/terminal'
 import { TerminalFull } from '../../flow/terminal-full'
 import { Variant } from '../../variant'
 import { AlgoIsSolved } from '../algo-is-solved/algo-is-solved'
-import { toAllPossiblePipelines } from './algo-all-possible-paths'
+import { toAllPossiblePipelines } from './algo-all-possible-pipelines'
 import { isImpossibleForTerminalsToConnect } from './algo-is-impossible-for-terminals-to-connect'
 
 export const solve = (model: Variant.Model): Variant.Model | null => {
