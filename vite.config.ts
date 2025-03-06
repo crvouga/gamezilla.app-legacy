@@ -1,5 +1,6 @@
 import preact from '@preact/preset-vite'
 import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig, PluginOption } from 'vite'
 // @ts-expect-error missing types
 import inferno from 'vite-plugin-inferno'
@@ -33,6 +34,7 @@ export default defineConfig({
     vDomPlugin(),
     wasm(),
     // topLevelAwait(),
+    VitePWA(),
   ],
   optimizeDeps: {
     // https://pglite.dev/docs/bundler-support
