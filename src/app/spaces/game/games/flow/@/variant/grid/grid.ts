@@ -36,15 +36,11 @@ export const toNodeId = (position: Position): NodeId => {
 export const distance = (model: Model, a: NodeId, b: NodeId): number => {
   const positionA = model.positions[a]
 
-  if (!positionA) {
-    return Number.POSITIVE_INFINITY
-  }
+  if (!positionA) return Number.POSITIVE_INFINITY
 
   const positionB = model.positions[b]
 
-  if (!positionB) {
-    return Number.POSITIVE_INFINITY
-  }
+  if (!positionB) return Number.POSITIVE_INFINITY
 
   return Position.manhattanDistance(positionA, positionB)
 }

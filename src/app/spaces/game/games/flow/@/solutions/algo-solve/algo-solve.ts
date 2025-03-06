@@ -18,7 +18,7 @@ export const solutions = function* (model: Variant.Model): Iterable<Variant.Mode
   const cleared = Flow.removeAllPipelines(model)
 
   const disconnectedTerminals = Flow.toFullTerminals(cleared)
-  disconnectedTerminals.sort(ascend((terminal) => toTerminalDistance(cleared, terminal)))
+  disconnectedTerminals.sort(ascend((terminal) => Variant.toTerminalDistance(cleared, terminal)))
 
   yield* solveStep(cleared, disconnectedTerminals)
 }
@@ -59,11 +59,4 @@ const drawPipeline = (model: Variant.Model, terminal: Terminal, path: Flow.Edge[
     ...model,
     pipesBySourceId,
   }
-}
-
-const toTerminalDistance = (model: Variant.Model, terminal: Terminal): number => {
-  if (!terminal.endId) {
-    return Number.POSITIVE_INFINITY
-  }
-  return Variant.distance(model, terminal.startId, terminal.endId)
 }

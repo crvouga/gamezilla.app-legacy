@@ -5,6 +5,7 @@ import { VariantGrid } from './grid'
 import { VariantHex } from './hex'
 import { VariantTri } from './tri'
 import type * as VariantDimensions from './variant-dimensions'
+import { Terminal } from '../flow/terminal'
 
 export const Model = p.or(VariantGrid.Model, VariantHex.Model, VariantTri.Model)
 export type Model = p.Infer<typeof Model>
@@ -35,6 +36,11 @@ export const distance = (flow: Model, a: NodeId, b: NodeId): number => {
       return VariantTri.distance(flow, a, b)
     }
   }
+}
+
+export const toTerminalDistance = (model: Model, terminal: Terminal): number => {
+  if (!terminal.endId) return Number.POSITIVE_INFINITY
+  return distance(model, terminal.startId, terminal.endId)
 }
 
 export const init = (input: {

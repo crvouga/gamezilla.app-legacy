@@ -19,9 +19,8 @@ export const isImpossibleForTerminalsToConnect = (model: Variant.Model, terminal
 }
 
 const isTerminalCutOff = (model: Variant.Model, terminal: TerminalFull): boolean => {
-  const { startId, endId, groupId } = terminal
   const visited = new Set<NodeId>()
-  const stack = [startId]
+  const stack = [terminal.startId]
 
   while (stack.length > 0) {
     const nodeId = stack.pop()!
@@ -31,11 +30,13 @@ const isTerminalCutOff = (model: Variant.Model, terminal: TerminalFull): boolean
       const targetId = edge.targetId
       const targetGroupId = Flow.toGroupId(model, targetId)
 
-      if (targetId === endId) {
+      if (targetId === terminal.endId) {
         return false
       }
 
-      if (!visited.has(targetId) && (targetGroupId === null || targetGroupId === groupId)) {
+      if (visited.has(targetId)) continue
+
+      if (targetGroupId === null || targetGroupId === terminal.groupId) {
         stack.push(targetId)
       }
     }
