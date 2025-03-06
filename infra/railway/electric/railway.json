@@ -5,6 +5,6 @@
     "dockerfilePath": "./infra/railway/electric/Dockerfile"
   },
   "deploy": {
-    "sleepApplication": true
+    "sleepApplication": false
   }
 }
