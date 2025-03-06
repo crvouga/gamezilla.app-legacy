@@ -322,7 +322,7 @@ export const didShowToast = <T>(
   )
 }
 
-export const showCreatedSm = <T extends FrontendCmdTypes>(text: TranslatedText): AppFrontendCmd<T>[] => {
+export const showOkSm = <T extends FrontendCmdTypes>(text: TranslatedText): AppFrontendCmd<T>[] => {
   return [
     {
       t: 'toast',
@@ -339,6 +339,71 @@ export const showCreatedSm = <T extends FrontendCmdTypes>(text: TranslatedText):
       },
     },
   ]
+}
+
+export const didShowOkSm = <TCmd>({ msgCmd }: { msgCmd?: (ToastCmd | SoundCmd | TCmd)[] | null }): boolean => {
+  const isSomeToast =
+    msgCmd?.some(
+      (cmd) =>
+        typeof cmd === 'object' &&
+        cmd &&
+        't' in cmd &&
+        cmd.t === 'toast' &&
+        cmd.c.t === 'enqueue' &&
+        !cmd.c.toastVariant,
+    ) ?? false
+
+  const isSomeSound =
+    msgCmd?.some(
+      (cmd) =>
+        typeof cmd === 'object' &&
+        cmd &&
+        't' in cmd &&
+        cmd.t === 'sound' &&
+        cmd.c.t === 'play' &&
+        cmd.c.src === APP_SOUND.refreshFeed,
+    ) ?? false
+
+  return isSomeToast && isSomeSound
+}
+
+export const showWarningSm = <T extends FrontendCmdTypes>(text: TranslatedText): AppFrontendCmd<T>[] => {
+  return [
+    {
+      t: 'toast',
+      c: {
+        t: 'enqueue',
+        text,
+        toastVariant: 'info',
+      },
+    },
+    {
+      t: 'sound',
+      c: {
+        t: 'play',
+        src: APP_SOUND.alertErrorMd,
+      },
+    },
+  ]
+}
+
+export const didShowWarningSm = <TCmd>({ msgCmd }: { msgCmd?: (ToastCmd | SoundCmd | TCmd)[] | null }): boolean => {
+  const isSomeToast =
+    msgCmd?.some((cmd) => typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'toast' && cmd.c.t === 'enqueue') ??
+    false
+
+  const isSomeSound =
+    msgCmd?.some(
+      (cmd) =>
+        typeof cmd === 'object' &&
+        cmd &&
+        't' in cmd &&
+        cmd.t === 'sound' &&
+        cmd.c.t === 'play' &&
+        cmd.c.src === APP_SOUND.alertErrorMd,
+    ) ?? false
+
+  return isSomeToast && isSomeSound
 }
 
 export const showErrSm = <T extends FrontendCmdTypes>(

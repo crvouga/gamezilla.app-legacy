@@ -62,6 +62,10 @@ const limit = (solutions: Solutions, hash: SolutionHash): Solutions => {
   return found
 }
 
+const isEmpty = (solutions: Solutions): boolean => {
+  return solutions.length === 0
+}
+
 export const Solutions = {
   ...parser,
   limit,
@@ -71,4 +75,5 @@ export const Solutions = {
   groupByHash,
   init,
   selectOne,
+  isEmpty,
 }

@@ -16,7 +16,7 @@ import type { Puzzle } from './@/puzzle/puzzle'
 import type { PuzzleId } from './@/puzzle/puzzle-id'
 import { PuzzleLoaderTypes } from './@/puzzle/puzzle-loader'
 import { Solutions } from './@/solutions/solutions'
-import { SolutionsFinderTypes } from './@/solutions/solutions-finder'
+import { HintCalculatorTypes } from './@/solutions/hint-calculator'
 import { SolutionsLoaderTypes } from './@/solutions/solutions-loader'
 import { BuildTypes } from './screen-build'
 import { PlayTypes } from './screen-play'
@@ -33,7 +33,7 @@ export type ModelFrontend = {
   solutions: Solutions
   puzzleLoader: PuzzleLoaderTypes.ModelFrontend
   packLoader: PackLoaderTypes.ModelFrontend
-  solutionsFinder: SolutionsFinderTypes.ModelFrontend
+  HintCalculator: HintCalculatorTypes.ModelFrontend
   solutionsLoader: SolutionsLoaderTypes.ModelFrontend
   screenBuild: BuildTypes.ModelFrontend
   screenPlay: PlayTypes.ModelFrontend
@@ -56,7 +56,7 @@ export type MsgFrontend =
   | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgFrontend }
   | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgFrontend }
   | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgFrontend }
-  | { t: 'got-solutions-finder-msg'; c: SolutionsFinderTypes.MsgFrontend }
+  | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgFrontend }
 
 export type MsgBackend =
   | { t: 'got-screen-build-msg'; c: BuildTypes.MsgBackend }
@@ -64,7 +64,7 @@ export type MsgBackend =
   | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgBackend }
   | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgBackend }
   | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgBackend }
-  | { t: 'got-solutions-finder-msg'; c: SolutionsFinderTypes.MsgBackend }
+  | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgBackend }
 
 export type MsgToBackend =
   | { t: 'got-screen-build-msg'; c: BuildTypes.MsgToBackend }
@@ -72,7 +72,7 @@ export type MsgToBackend =
   | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgToBackend }
   | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgToBackend }
   | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgToBackend }
-  | { t: 'got-solutions-finder-msg'; c: SolutionsFinderTypes.MsgToBackend }
+  | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgToBackend }
 
 export type MsgToFrontend =
   | { t: 'got-screen-build-msg'; c: BuildTypes.MsgToFrontend }
@@ -80,7 +80,7 @@ export type MsgToFrontend =
   | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgToFrontend }
   | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgToFrontend }
   | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgToFrontend }
-  | { t: 'got-solutions-finder-msg'; c: SolutionsFinderTypes.MsgToFrontend }
+  | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgToFrontend }
 
 const MODE = ['build', 'play'] as const
 export const Mode = p.enumeration(MODE)

@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Ok, RemoteResult, isLoading } from '~/@/result'
 import { Frag } from '~/@/ui/frag'
 import { IconDeleteForever } from '~/@/ui/icon/icon-delete-forever'
-import { APP_SOUND, playSound, showCreatedSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, showOkSm } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -90,7 +90,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
             input.msgSpace.puzzleId ? { [input.msgSpace.puzzleId]: input.msgSpace.puzzleId } : {},
             input,
           ),
-          ...showCreatedSm<WireTypes>(input.ctx.t('flow.puzzle-deleted')),
+          ...showOkSm<WireTypes>(input.ctx.t('flow.puzzle-deleted')),
         ],
       }
     }

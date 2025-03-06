@@ -36,6 +36,17 @@ describe(import.meta.file, () => {
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
 
+  test.only('3x3 one full terminals', async () => {
+    const flow = VariantGridShorthand.toGrid([
+      ['A', ' ', ' '],
+      [' ', 'B', ' '],
+      [' ', ' ', 'A'],
+    ])
+
+    const solution = AlgoSolve.solve(flow)
+    expect(solution).not.toBeNull()
+  })
+
   test('3x3 with A terminals and B terminals', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', 'B', ' '],
@@ -538,7 +549,7 @@ describe(import.meta.file, () => {
     expect(isEmpty(solutions)).toBe(false)
   })
 
-  test.todo('8x8 no solutions', () => {
+  test('8x8 no solutions', () => {
     const grid = VariantGridShorthand.toGrid([
       ['C', ' ', ' ', 'D', ' ', ' ', ' ', 'A'],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],

@@ -61,5 +61,10 @@
     // "resolveJsonModule": true
   },
   "exclude": ["node_modules"],
-  "include": ["vite.config.ts", "tailwind.config.ts", "src/**/*"]
+  "include": [
+    "vite.config.ts",
+    "tailwind.config.ts",
+    "src/**/*",
+    "src/app/spaces/game/games/flow/@/solutions/hint-calculator/l18n/.$l18n.ts"
+  ]
 }

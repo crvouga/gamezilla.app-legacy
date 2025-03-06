@@ -8,6 +8,7 @@ import { EdgeId } from './edge-id'
 import { GroupId } from './group-id'
 import { NodeId } from './node-id'
 import { Terminal } from './terminal'
+import { TerminalFull } from './terminal-full'
 
 /**
  * Represents a connection between two nodes.
@@ -488,15 +489,15 @@ export const yieldTerminals = function* (model: Pick<Model, 'terminalsByGroupId'
   }
 }
 
-export const yieldFullTerminals = function* (model: Model): Iterable<Terminal> {
+export const yieldFullTerminals = function* (model: Model): Iterable<TerminalFull> {
   for (const terminal of yieldTerminals(model)) {
-    if (terminal.endId) {
+    if (TerminalFull.is(terminal)) {
       yield terminal
     }
   }
 }
 
-export const toFullTerminals = (model: Model): Terminal[] => {
+export const toFullTerminals = (model: Model): TerminalFull[] => {
   return Array.from(yieldFullTerminals(model))
 }
 
@@ -571,7 +572,7 @@ export const yieldPipeline = (model: Model, startingNodeId: NodeId): Iterable<Pi
 }
 
 /**
- *
+ * Returns the group group the inputted node belongs to. So if it's associated with a pipe or terminal.
  */
 export const toGroupId = (model: Model, nodeId: NodeId): GroupId | null => {
   for (const pipe of yieldPipes(model)) {

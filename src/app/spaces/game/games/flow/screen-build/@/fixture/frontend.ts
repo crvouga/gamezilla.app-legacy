@@ -8,7 +8,7 @@ import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
 import { PuzzleLoaderTypes } from '../../../@/puzzle/puzzle-loader'
 import { Solutions } from '../../../@/solutions/solutions'
 import { SolutionsDb } from '../../../@/solutions/solutions-db/impl-db-conn-sql'
-import { SolutionsFinderTypes } from '../../../@/solutions/solutions-finder'
+import { HintCalculatorTypes } from '../../../@/solutions/hint-calculator'
 import { SolutionsLoaderTypes } from '../../../@/solutions/solutions-loader'
 import { ScreenBuildFrontend } from '../../frontend'
 import { BuildSpace } from '../../space'
@@ -39,7 +39,7 @@ export const FixtureFlowBuilderFrontend = async () => {
     packs: {},
     puzzleLoader: PuzzleLoaderTypes.initFrontend,
     packLoader: PackLoaderTypes.initFrontend,
-    solutionsFinder: SolutionsFinderTypes.initFrontend,
+    HintCalculator: HintCalculatorTypes.initFrontend,
     solutionsLoader: SolutionsLoaderTypes.initFrontend,
     solutions: Solutions.init,
     puzzleDb: PuzzleDb({ t: 'db-conn-sql', dbConnSql: f.ctx.dbConnSql, logger: f.ctx.logger }),

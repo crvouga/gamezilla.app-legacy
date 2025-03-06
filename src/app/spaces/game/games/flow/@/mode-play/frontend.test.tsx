@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { ModePlay } from '.'
 import { FixtureFlowFrontend } from '../frontend/fixture'
-import { SolutionsFinderFrontend } from '../solutions/solutions-finder/frontend'
+import { HintCalculatorFrontend } from '../solutions/hint-calculator/frontend'
 import { VariantGridShorthand } from '../variant/grid'
 import { ModePlayFrontend } from './frontend'
 import { ModePlayFrontendCtx } from './frontend/ctx'
@@ -37,9 +37,9 @@ describe('ModePlayFrontend', () => {
       ctx: f.ctx,
       model: f.init,
       dispatch: () => {},
-      dispatchSolutionsFinder: () => {},
+      dispatchHintCalculator: () => {},
     })
-    expect(screenActions.some(SolutionsFinderFrontend.isFindSolutionsScreenAction)).toBe(true)
+    expect(screenActions.some(HintCalculatorFrontend.isFindSolutionsScreenAction)).toBe(true)
     expect(screenActions.some(UseHintFrontend.isUseHintScreenAction)).toBe(false)
   })
   test('screen actions show use hint when solutions are loaded', async () => {
@@ -52,9 +52,9 @@ describe('ModePlayFrontend', () => {
       ctx: ctxWithSolutions,
       model: f.init,
       dispatch: () => {},
-      dispatchSolutionsFinder: () => {},
+      dispatchHintCalculator: () => {},
     })
-    expect(screenActions.some(SolutionsFinderFrontend.isFindSolutionsScreenAction)).toBe(false)
+    expect(screenActions.some(HintCalculatorFrontend.isFindSolutionsScreenAction)).toBe(false)
     expect(screenActions.some(UseHintFrontend.isUseHintScreenAction)).toBe(true)
   })
 })

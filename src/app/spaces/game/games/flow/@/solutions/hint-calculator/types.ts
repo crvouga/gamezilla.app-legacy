@@ -30,9 +30,11 @@ export const initFrontend: ModelFrontend = {
   requests: {},
 }
 
+export type FoundSolutionResult = Result<string, { solutions: Solutions }>
+
 export type MsgFrontend =
   | { t: 'clicked-find-solutions'; flow: Variant.Model }
-  | { t: 'found-solution'; flow: Variant.Model; result: Result<string, { solutions: Solutions }> }
+  | { t: 'found-solution'; flow: Variant.Model; found: FoundSolutionResult }
   | { t: 'dialog.clicked-open' }
   | { t: 'dialog.clicked-close' }
 
@@ -43,7 +45,7 @@ export type MsgToBackend = { t: 'noop' }
 export type MsgToFrontend = { t: 'noop' }
 
 export type MsgInCmdFrontend = {
-  t: 'flow-cmd.got-solutions-finder-cmd'
+  t: 'flow-cmd.got-hint-calculator-cmd'
   c: {
     t: 'got-msg'
     msg: MsgFrontend
