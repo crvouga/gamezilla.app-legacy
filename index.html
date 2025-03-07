@@ -5,6 +5,8 @@
     <base href="/" />
     <title>gamezilla.app</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta
       name="description"
       content="gamezilla.app is a multiplayer gaming app. Play games online with your friends. There is no need for any downloads. Just play. Play games like Flow, Chess, Battleship, and more."
@@ -17,6 +19,12 @@
       body {
         background-color: black;
         color: white;
+        overflow: hidden;
+        position: fixed;
+        width: 100dvw;
+        height: 100dvh;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: none;
       }
     </style>
   </head>
