@@ -29,15 +29,12 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
       {firstActions.map((action) => {
         if (!action) return null
         const button = <ScreenActionButton {...action} size={input.size} key={action.key} />
-        if (action.renderSurface)
-          return (
-            <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
-          )
-        return button
+        if (!action.renderSurface) return button
+        return <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
       })}
 
       {lastActions.some((button) => button !== null) && (
-        <>
+        <Frag key={input.ctx.t('app.more')}>
           <ScreenActionButton
             key={input.ctx.t('app.more')}
             icon={(input) => <IconEllipsisVertical {...input} />}
@@ -79,7 +76,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
               },
             }}
           />
-        </>
+        </Frag>
       )}
     </div>
   )
