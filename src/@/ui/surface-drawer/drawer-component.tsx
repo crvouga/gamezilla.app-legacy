@@ -13,17 +13,13 @@ export const DrawerComponent = (props: DrawerInput) => {
         role='dialog'
         aria-label={props.ariaLabel}
         className={cn(
-          'absolute inset-0 z-50 flex',
+          'absolute inset-0 z-50 flex bg-black/80 transition-opacity duration-200',
           props.position === 'bottom' ? 'flex-col' : 'flex-col-reverse',
-          props.open ? 'pointer-events-auto' : 'pointer-events-none',
+          props.open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
         )}
       >
         <div
-          className={cn(
-            'flex-1 bg-black/80 transition-opacity duration-200',
-            props.open ? 'opacity-100' : 'opacity-0',
-            !props.open && 'pointer-events-none',
-          )}
+          className='w-full flex-1'
           aria-label={props.ctx.t('drawer.close')}
           onClick={(event) => {
             preventConsoleErrorWhenClosingDrawer(event)
