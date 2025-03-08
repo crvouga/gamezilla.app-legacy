@@ -1,6 +1,7 @@
 import { cn } from '../../cn'
 import { Gutter } from '../../gutter'
 import { Portal } from '../../portal'
+import { DRAWER_PORTAL_ID } from '../drawer-portal-exit'
 import type { DrawerInput } from '../drawer-shared'
 import './drawer-element'
 import { drawerSub } from './drawer-shared'
@@ -8,7 +9,7 @@ import { drawerSub } from './drawer-shared'
 export const DrawerWebComponent = (input: DrawerInput) => {
   drawerSub.pub({ type: 'input', ...input })
   return (
-    <Portal.Entrance portalId='app-root'>
+    <Portal.Entrance portalId={DRAWER_PORTAL_ID}>
       {/* @ts-ignore */}
       <drawer-element id={input.id} position={input.position}>
         <div

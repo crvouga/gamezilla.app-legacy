@@ -4,7 +4,10 @@
     <meta charset="utf-8" />
     <base href="/" />
     <title>gamezilla.app</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover"
+    />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta
@@ -26,21 +29,26 @@
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: none;
       }
+      #splash-screen {
+        position: fixed;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        left: 50%;
+        font-size: 68px;
+        box-sizing: border-box;
+        background-color: black;
+        width: 100dvw;
+        height: 100dvh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     </style>
   </head>
 
   <body>
     <div id="root">
-      <div id="logo">🦕</div>
-      <style>
-        #logo {
-          position: fixed;
-          transform: translate(-50%, -50%);
-          top: 50%;
-          left: 50%;
-          font-size: 68px;
-        }
-      </style>
+      <div id="splash-screen">🦕</div>
     </div>
     <script type="module" src="./src/frontend.tsx"></script>
   </body>

@@ -9,8 +9,9 @@ import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
-import { IconGamepad, IconUserCircle, Portal } from '~/@/ui'
+import { IconGamepad, IconUserCircle } from '~/@/ui'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
+import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { setupNewPowerSyncClient } from '~/service-powersync/frontend/database'
@@ -20,7 +21,7 @@ import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx
 import { AppFrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
 import { ViewAppRoot } from './@/ui/app-root/app-root'
-import { LogoBlock } from './@/ui/logo/logo-block'
+import { SplashScreen } from './@/ui/logo/logo-block'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import * as AuthFrontend from './auth/frontend'
 import { ViewAppStatusBar } from './frontend/app-status-bar'
@@ -412,7 +413,7 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
         model={input.model.auth}
       />
 
-      <Portal.Exit portalId='app-root' />
+      <DrawerPortalExit />
 
       <Toast.View ctx={frontendCtx} model={input.model.toast} dispatch={(c) => input.dispatch({ t: 'toast', c })} />
     </ViewAppRoot>
@@ -436,7 +437,7 @@ const ViewScreen = (input: {
     default: {
       switch (input.model.auth.currentUser.t) {
         case 'loading':
-          return <LogoBlock />
+          return <SplashScreen />
 
         case 'logged-in':
           return <ViewScreenLoggedIn model={input.model} dispatch={input.dispatch} ctx={input.ctx} />

@@ -1,12 +1,13 @@
 import { cn } from '~/@/ui/cn'
 import { Gutter } from '~/@/ui/gutter'
+import { Portal } from '../portal'
+import { DRAWER_PORTAL_ID } from './drawer-portal-exit'
 import type { DrawerInput } from './drawer-shared'
 import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
-import { Portal } from '../portal'
 
 export const DrawerComponent = (props: DrawerInput) => {
   return (
-    <Portal.Entrance portalId='app-root'>
+    <Portal.Entrance portalId={DRAWER_PORTAL_ID}>
       <div
         id={props.id}
         aria-hidden={!props.open}
