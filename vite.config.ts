@@ -2,7 +2,6 @@ import preact from '@preact/preset-vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig, PluginOption } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
-import topLevelAwait from 'vite-plugin-top-level-await'
 // @ts-expect-error
 import inferno from 'vite-plugin-inferno'
 import wasm from 'vite-plugin-wasm'
@@ -34,7 +33,6 @@ export default defineConfig({
     tsconfigPaths(),
     vDomPlugin(),
     wasm(),
-    topLevelAwait(),
     VitePWA(),
   ],
   optimizeDeps: {
@@ -51,7 +49,7 @@ export default defineConfig({
   },
   worker: {
     format: 'es',
-    plugins: () => [wasm(), topLevelAwait()],
+    plugins: () => [wasm()],
   },
   resolve: {
     alias: {
