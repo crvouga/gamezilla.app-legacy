@@ -1,6 +1,7 @@
 // https://docs.powersync.com/installation/authentication-setup/custom
-import { KeyLike, importJWK } from 'jose'
-import { generateKeyPair } from './keys-generate.js'
+import { importJWK } from '~/@/json-crypto/import-jwk.js'
+import { KeyLike } from '~/@/json-crypto/key-like'
+import { keysGenerate } from './keys-generate.js'
 
 type Key = {
   alg: string
@@ -30,7 +31,7 @@ const ensureKeys = async () => {
     console.warn(
       'Private key has not been supplied in import.meta.env?.POWERSYNC_PRIVATE_KEY. A temporary key pair will be generated.',
     )
-    const generated = await generateKeyPair()
+    const generated = await keysGenerate()
     base64Keys.private = generated.privateBase64
     base64Keys.public = generated.publicBase64
   }

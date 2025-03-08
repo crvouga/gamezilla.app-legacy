@@ -1,21 +1,22 @@
-import * as jose from 'jose'
 import * as crypto from 'crypto'
+import { exportJWK } from '~/@/json-crypto/export-jwk'
+import { generateKeyPair } from '~/@/json-crypto/generate-key-pair'
 
-export const generateKeyPair = async () => {
-  const alg = 'RS256'
+export const keysGenerate = async () => {
+  const alg = 'RSA'
   const kid = `powersync-${crypto.randomBytes(5).toString('hex')}`
 
-  const { publicKey, privateKey } = await jose.generateKeyPair(alg, {
+  const { publicKey, privateKey } = await generateKeyPair(alg, {
     extractable: true,
   })
 
   const privateJwk = {
-    ...(await jose.exportJWK(privateKey)),
+    ...(await exportJWK(privateKey)),
     alg,
     kid,
   }
   const publicJwk = {
-    ...(await jose.exportJWK(publicKey)),
+    ...(await exportJWK(publicKey)),
     alg,
     kid,
   }

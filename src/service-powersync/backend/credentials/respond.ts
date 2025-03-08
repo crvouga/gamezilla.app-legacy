@@ -1,4 +1,5 @@
-import { SignJWT } from 'jose'
+import { pipe } from '~/@/function/pipe'
+import * as SignJWT from '~/@/json-crypto/sign-jwt'
 import { isErr } from '~/@/result/result'
 import { SessionIdCookie } from '~/app/wire/transport/session-id-cookie'
 import { Ctx } from '../ctx'
@@ -13,18 +14,20 @@ const respondMain = async (input: { request: Request; ctx: Ctx }) => {
     return new Response('No session ID found in the request', { status: 401 })
   }
 
-  const userId = await input.ctx.userSessionDb.findUserIdBySessionId(maybeSessionId)
+  const foundUserId = await input.ctx.userSessionDb.findUserIdBySessionId(maybeSessionId)
 
-  if (isErr(userId)) {
+  if (isErr(foundUserId)) {
     return new Response(
-      `Internal Server Error. Errored while finding userID associated with request session ID: ${userId.error}`,
+      `Internal Server Error. Errored while finding userID associated with request session ID: ${foundUserId.error}`,
       {
         status: 500,
       },
     )
   }
 
-  if (!userId.value) {
+  const userId = foundUserId.value
+
+  if (!userId) {
     return new Response('No user id found to be associated with the request session ID', { status: 401 })
   }
 
@@ -32,23 +35,21 @@ const respondMain = async (input: { request: Request; ctx: Ctx }) => {
     return new Response('Internal Server Error. PowerSync private key algorithm is not a string', { status: 500 })
   }
 
-  const token = await new SignJWT({})
-    .setProtectedHeader({
-      alg: powerSyncKey?.alg,
-      kid: powerSyncKey?.kid,
-    })
-    .setSubject(userId.value)
-    .setIssuedAt()
-    .setIssuer(
-      '',
-      // config?.powersync?.jwtIssuer ?? ''
-    )
-    .setAudience(
-      'powersync',
-      // config?.powersync?.url ?? ''
-    )
-    .setExpirationTime('5m')
-    .sign(powerSyncKey?.key)
+  const jwt = pipe(
+    SignJWT.createJWT(),
+    (jwt) =>
+      SignJWT.setProtectedHeader(jwt, {
+        alg: powerSyncKey?.alg,
+        kid: powerSyncKey?.kid,
+      }),
+    (jwt) => SignJWT.setSubject(jwt, userId),
+    (jwt) => SignJWT.setIssuedAt(jwt),
+    (jwt) => SignJWT.setIssuer(jwt, ''), // config?.powersync?.jwtIssuer ?? ''
+    (jwt) => SignJWT.setAudience(jwt, 'powersync'), // config?.powersync?.url ?? ''
+    (jwt) => SignJWT.setExpirationTime(jwt, '5m'),
+  )
+
+  const token = await SignJWT.sign(jwt, powerSyncKey?.key)
 
   const response = new Response(
     JSON.stringify({
