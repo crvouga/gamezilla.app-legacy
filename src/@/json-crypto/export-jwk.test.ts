@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'bun:test'
 import { exportJWK } from './export-jwk'
 
-describe.only('exportJWK', () => {
+describe('exportJWK', () => {
   it('should export an extractable key to JWK format', async () => {
     // Generate a test key that is extractable
     const keyPair = await crypto.subtle.generateKey(

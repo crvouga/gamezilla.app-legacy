@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'bun:test'
 import { importJWK } from './import-jwk'
 
-describe.only('importJWK', () => {
+describe('importJWK', () => {
   test('should import an RSA public key', async () => {
     const publicJwk: JsonWebKey = {
       kty: 'RSA',

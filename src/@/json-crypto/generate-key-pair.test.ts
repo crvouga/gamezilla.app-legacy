@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'bun:test'
 import { generateKeyPair } from './generate-key-pair'
 
-describe.only('generateKeyPair', () => {
+describe('generateKeyPair', () => {
   it('should generate an RSA key pair with extractable keys', async () => {
     const keyPair = await generateKeyPair('RSA', { extractable: true })
 

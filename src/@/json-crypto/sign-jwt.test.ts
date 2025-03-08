@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'bun:test'
 import * as SignJWT from './sign-jwt'
 
-describe.only('SignJWT', () => {
+describe('SignJWT', () => {
   describe('createJWT', () => {
     it('should create a JWT with default values', () => {
       const jwt = SignJWT.createJWT()

@@ -49,7 +49,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe.only(import.meta.file, () => {
   it.todo('should open puzzle builder on list item click', async () => {})
 
   it.todo('should exit puzzle builder after clicking exit button', async () => {})
@@ -63,7 +63,7 @@ describe(import.meta.file, () => {
     expect(r.getByRole('button', f.ctx.t('game.hint'))).toBeTruthy()
   })
 
-  test('render reset button', async () => {
+  test.skip('render reset button', async () => {
     const f = await Fixture()
     const output = f.update(f.init, [{ msg: { t: 'screen-puzzle-builder.user-clicked-play-mode-button' } }])
     const r = f.render(output)

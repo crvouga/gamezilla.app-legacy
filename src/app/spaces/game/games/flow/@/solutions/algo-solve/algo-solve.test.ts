@@ -6,7 +6,7 @@ import { AlgoIsSolved } from '../algo-is-solved/algo-is-solved'
 
 const SHOULD_TEST_LARGE_PUZZLES = false
 
-describe.only('AlgoSolve', () => {
+describe('AlgoSolve', () => {
   test('2x2 with A terminals', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' '],
@@ -29,7 +29,7 @@ describe.only('AlgoSolve', () => {
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
 
-  test.only('3x3 one full terminals', async () => {
+  test('3x3 one full terminals', async () => {
     const flow = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       [' ', 'B', ' '],
