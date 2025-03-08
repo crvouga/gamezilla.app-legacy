@@ -21,13 +21,8 @@ const main = async () => {
     init: AppFrontend.init,
     update: AppFrontend.update,
     subscriptions: AppFrontend.subscriptions,
-    render: (input) => {
-      render(<AppFrontend.View {...input} />)
-    },
-    crash: (input) => {
-      console.error('program crashed!', input)
-    },
-    // debugger: DebuggerConsole,
+    render: (input) => render(<AppFrontend.View {...input} />),
+    crash: (input) => console.error('program crashed!', input),
     debugger: CONFIG_SHARED.IS_PROD || true ? DebuggerConsole : DebuggerReduxDevTools,
   })
 
