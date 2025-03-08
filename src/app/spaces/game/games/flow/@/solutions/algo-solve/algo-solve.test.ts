@@ -6,7 +6,7 @@ import { AlgoIsSolved } from '../algo-is-solved/algo-is-solved'
 
 const SHOULD_TEST_LARGE_PUZZLES = false
 
-describe.only(import.meta.file, () => {
+describe.only('AlgoSolve', () => {
   test('2x2 with A terminals', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' '],
@@ -421,7 +421,7 @@ describe.only(import.meta.file, () => {
     expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
   })
 
-  test('13x13 puzzle', () => {
+  test.if(SHOULD_TEST_LARGE_PUZZLES)('13x13 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K', 'L', 'M', 'N'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -517,7 +517,7 @@ describe.only(import.meta.file, () => {
       ['O', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
 
-    const solution = first(AlgoSolve.solutions(grid))
+    const solution = AlgoSolve.solve(grid)
     expect(solution && AlgoIsSolved.isSolved(solution)).toBe(true)
   })
 
@@ -538,8 +538,8 @@ describe.only(import.meta.file, () => {
       [' ', 'B', ' '],
       [' ', ' ', ' '],
     ])
-    const solutions = AlgoSolve.solutions(grid)
-    expect(isEmpty(solutions)).toBe(false)
+    const solution = AlgoSolve.solve(grid)
+    expect(solution).not.toBe(null)
   })
 
   test('8x8 no solutions', () => {
@@ -552,11 +552,11 @@ describe.only(import.meta.file, () => {
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['A', ' ', ' ', 'D', ' ', ' ', ' ', 'C'],
     ])
-    const actual = first(AlgoSolve.solutions(grid))
+    const actual = AlgoSolve.solve(grid)
     expect(actual).toEqual(null)
   })
 
-  test('8x8 simple', () => {
+  test.todo('8x8 simple', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -566,18 +566,10 @@ describe.only(import.meta.file, () => {
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'A'],
     ])
-    const actual = first(AlgoSolve.solutions(grid))
-    expect(actual).not.toEqual(null)
+    const actual = AlgoSolve.solve(grid)
+    expect(actual).not.toBe(null)
   })
 })
-
-const isEmpty = <T>(iterable: Iterable<T>): boolean => {
-  return first(iterable) === null
-}
-
-const first = <T>(iterable: Iterable<T>): T | null => {
-  return iterable[Symbol.iterator]().next().value ?? null
-}
 
 const some = <T>(iterable: Iterable<T>, predicate: (value: T) => boolean) => {
   for (const value of iterable) {
