@@ -455,6 +455,7 @@ export const View = ({
           t: 'uniform',
           actions: [
             {
+              key: ctx.t('app.exit'),
               icon: (props) => <IconArrowLeftOnRect {...props} />,
               label: ctx.t('app.exit'),
               onClick: onClose,

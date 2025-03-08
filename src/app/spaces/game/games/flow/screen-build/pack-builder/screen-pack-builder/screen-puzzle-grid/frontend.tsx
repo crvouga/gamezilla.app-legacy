@@ -79,6 +79,7 @@ const View: FrontendModule['View'] = (input) => {
           t: 'uniform',
           actions: [
             {
+              key: input.ctx.t('app.edit-name'),
               icon: (input) => <IconPen {...input} />,
               label: input.ctx.t('app.edit-name'),
               onClick: () => {

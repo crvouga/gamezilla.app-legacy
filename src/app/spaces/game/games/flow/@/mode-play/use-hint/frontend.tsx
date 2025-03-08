@@ -23,6 +23,7 @@ const viewUseHintAction = (input: {
   if (!hasSolution) return []
   return [
     {
+      key: input.ctx.t('game.hint'),
       icon: (input) => <IconLightbulb {...input} />,
       label: input.ctx.t('game.hint'),
       onClick: () => {

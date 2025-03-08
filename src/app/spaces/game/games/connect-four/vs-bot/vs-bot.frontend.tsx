@@ -462,16 +462,19 @@ const View: Module['View'] = (input) => {
                 t: 'uniform',
                 actions: [
                   {
+                    key: input.ctx.t('app.exit'),
                     icon: (props) => <IconArrowLeftOnRect {...props} />,
                     label: input.ctx.t('app.exit'),
                     onClick: () => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUser.userId }),
                   },
                   {
+                    key: input.ctx.t('game.swap-sides'),
                     icon: (props) => <IconRightLeft {...props} />,
                     label: input.ctx.t('game.swap-sides'),
                     onClick: () => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUser.userId }),
                   },
                   {
+                    key: input.ctx.t('app.restart'),
                     icon: (props) => <IconArrowRotateLeft {...props} />,
                     label: input.ctx.t('app.restart'),
                     onClick: () => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUser.userId }),

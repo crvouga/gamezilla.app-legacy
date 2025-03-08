@@ -1,5 +1,5 @@
 import { Drawer } from '~/@/ui'
-import { Content } from './content'
+import { SurfaceContent } from './surface-content'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
@@ -14,7 +14,7 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
         ctx={props.ctx}
         ariaLabel={props.ariaLabel}
       >
-        <Content {...props} />
+        <SurfaceContent {...props} />
       </Drawer>
     </>
   )

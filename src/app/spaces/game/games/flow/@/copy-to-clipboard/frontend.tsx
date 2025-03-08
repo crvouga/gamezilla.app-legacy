@@ -55,6 +55,7 @@ const update = <TModel,>(input: {
 const viewAction = ({ ctx, dispatch }: { ctx: AppFrontendCtx; dispatch: (m: MsgFrontend) => void }): ScreenAction[] => {
   return [
     {
+      key: ctx.t('flow.copy-puzzle-to-clipboard'),
       icon: (input) => <IconCopy {...input} />,
       label: ctx.t('flow.copy-puzzle-to-clipboard'),
       onClick: () =>

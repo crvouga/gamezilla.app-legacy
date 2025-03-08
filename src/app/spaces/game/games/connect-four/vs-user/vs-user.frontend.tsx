@@ -291,6 +291,7 @@ const View: Module['View'] = (input) => {
               actions: [
                 input.modelSpace.type === 'game'
                   ? {
+                      key: input.ctx.t('app.resign'),
                       icon: (props: { className?: string }) => <IconFlag {...props} />,
                       label: input.ctx.t('app.resign'),
                       onClick: () => {
@@ -303,6 +304,7 @@ const View: Module['View'] = (input) => {
                   : null,
                 input.modelSpace.type === 'game-over' && input.ctx.currentUser.userId === input.ctx.space.hostId
                   ? {
+                      key: input.ctx.t('app.exit'),
                       icon: (props: { className?: string }) => <IconArrowLeftOnRect {...props} />,
                       label: input.ctx.t('app.exit'),
                       onClick: () => {
@@ -315,6 +317,7 @@ const View: Module['View'] = (input) => {
                   : null,
                 input.modelSpace.type === 'game-over' && input.ctx.currentUser.userId === input.ctx.space.hostId
                   ? {
+                      key: input.ctx.t('game.rematch'),
                       icon: (props: { className?: string }) => <IconArrowRotateLeft {...props} />,
                       label: input.ctx.t('game.rematch'),
                       onClick: () => {

@@ -2,7 +2,7 @@ import { Dialog } from '~/@/ui'
 import { DropDown } from '~/@/ui/drop-down/drop-down'
 import { DropDownSurface } from '~/@/ui/drop-down/drop-down-surface'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
-import { Content } from './content'
+import { SurfaceContent } from './surface-content'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
@@ -17,7 +17,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
         position={props.dropDown?.position ?? 'bottom'}
         renderFloating={() => (
           <DropDownSurface>
-            <Content {...props} />
+            <SurfaceContent {...props} />
           </DropDownSurface>
         )}
       />
@@ -28,7 +28,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
       {props.dropDownReference}
       <Dialog open={props.open} onClose={props.onClose}>
         <DialogSurface>
-          <Content {...props} />
+          <SurfaceContent {...props} />
         </DialogSurface>
       </Dialog>
     </>

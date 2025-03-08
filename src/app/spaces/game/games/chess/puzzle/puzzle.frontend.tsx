@@ -393,12 +393,14 @@ export const BottomBarActions = ({
   }
 }): ScreenAction[] => {
   const exit: ScreenAction = {
+    key: ctx.t('app.exit'),
     icon: (input) => <IconArrowLeftOnRect {...input} />,
     label: ctx.t('app.exit'),
     onClick: onClose,
   }
 
   const hint: ScreenAction = {
+    key: ctx.t('game.hint'),
     icon: (input) => <IconLightbulb {...input} />,
     label: ctx.t('game.hint'),
     disabled: isNoMoreHints(model) || model.t === 'loading',
@@ -409,6 +411,7 @@ export const BottomBarActions = ({
   }
 
   const retry: ScreenAction = {
+    key: ctx.t('app.retry'),
     icon: (input) => <IconArrowRotateLeft {...input} />,
     label: ctx.t('app.retry'),
     onClick: () =>
@@ -419,6 +422,7 @@ export const BottomBarActions = ({
   }
 
   const skip: ScreenAction = {
+    key: ctx.t('app.skip'),
     icon: (input) => <IconArrowRight {...input} />,
     label: ctx.t('app.skip'),
     onClick: () =>
@@ -428,13 +432,11 @@ export const BottomBarActions = ({
   }
 
   const next: ScreenAction = {
+    key: ctx.t('app.next'),
     icon: (input) => <IconArrowCircle {...input} />,
     label: ctx.t('app.next'),
     color: 'success',
-    onClick: () =>
-      dispatch({
-        t: 'next',
-      }),
+    onClick: () => dispatch({ t: 'next' }),
   }
 
   if (model.t === 'loading') {

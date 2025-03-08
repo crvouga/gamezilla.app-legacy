@@ -264,6 +264,7 @@ export const View = (input: {
           t: 'uniform',
           actions: [
             {
+              key: input.ctx.t('app.exit'),
               icon: (input) => <IconArrowLeftOnRect {...input} />,
               label: input.ctx.t('app.exit'),
               onClick: () =>
@@ -272,6 +273,7 @@ export const View = (input: {
                 }),
             },
             {
+              key: input.ctx.t('game.swap-sides'),
               icon: (input) => <IconRightLeft {...input} />,
               label: input.ctx.t('game.swap-sides'),
               onClick: () =>
@@ -280,6 +282,7 @@ export const View = (input: {
                 }),
             },
             {
+              key: input.ctx.t('app.restart'),
               icon: (input) => <IconArrowRotateLeft {...input} />,
               label: input.ctx.t('app.restart'),
               onClick: () =>

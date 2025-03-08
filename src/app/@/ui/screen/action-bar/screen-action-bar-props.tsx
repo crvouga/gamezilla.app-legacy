@@ -6,6 +6,7 @@ import { ScreenSize } from '../screen-size'
 export type ScreenActionLocation = 'bar' | 'more-drawer'
 
 export type ScreenAction = {
+  key: string
   label: TranslatedText
   disabled?: boolean
   icon: (input: { className: string }) => VDom

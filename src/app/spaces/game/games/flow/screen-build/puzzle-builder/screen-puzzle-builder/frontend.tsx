@@ -210,6 +210,7 @@ const viewToggleModeAction = (
     case 'edit': {
       return [
         {
+          key: input.ctx.t('flow.play-mode'),
           icon: (input) => <IconPlay {...input} />,
           label: input.ctx.t('flow.play-mode'),
           classNames: { button: 'text-blue-500' },
@@ -220,6 +221,7 @@ const viewToggleModeAction = (
     case 'play': {
       return [
         {
+          key: input.ctx.t('flow.edit-mode'),
           icon: (input) => <IconPen {...input} />,
           label: input.ctx.t('flow.edit-mode'),
           classNames: { button: 'text-amber-500' },

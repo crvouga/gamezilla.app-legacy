@@ -117,6 +117,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
   if (!spaceId) return null
 
   return {
+    key: input.ctx.t('spaces.end'),
     icon: (inputIcon) => <IconArrowLeftOnRect {...inputIcon} />,
     label: input.ctx.t('spaces.end'),
     onClick: () => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId }),

@@ -1,9 +1,8 @@
 import { DynamicElement } from '~/@/ui/dynamic-element'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { SurfaceLayoutProps } from './surface-layout-props'
-import { Frag } from '~/@/ui/frag'
 
-export const Content = (props: SurfaceLayoutProps) => {
+export const SurfaceContent = (props: SurfaceLayoutProps) => {
   return (
     <DynamicElement
       element={typeof props.form?.onSubmit === 'function' ? 'form' : 'div'}
@@ -13,8 +12,8 @@ export const Content = (props: SurfaceLayoutProps) => {
       }}
       name={props.ariaLabel}
     >
-      <Frag>{props.header?.render?.()}</Frag>
-      <Frag>{props.body?.render?.()}</Frag>
+      {props.header?.render?.()}
+      {props.body?.render?.()}
       {props.form && (
         <CancelSubmitButtons
           variant={props.form?.variant}

@@ -168,6 +168,7 @@ const view = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction |
   const peopleCount = Object.keys(input.ctx.space.users).length
 
   return {
+    key: input.ctx.t('app.people'),
     icon: (inputIcon) => <IconUserGroup {...inputIcon} />,
     label: input.ctx.t('spaces.people-count', peopleCount),
     onClick: () => input.dispatch({ t: 'people-action.clicked-people-action' }),

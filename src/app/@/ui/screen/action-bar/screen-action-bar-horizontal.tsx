@@ -28,10 +28,10 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
     <div className={cn('flex w-full shrink-0 items-center', toHeightClass(size))} role='toolbar'>
       {firstActions.map((action) => {
         if (!action) return null
-        const button = <ScreenActionButton {...action} size={input.size} key={action.label} />
+        const button = <ScreenActionButton {...action} size={input.size} key={action.key} />
         if (action.renderSurface)
           return (
-            <Frag key={action.label}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
+            <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
           )
         return button
       })}
@@ -39,6 +39,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
       {lastActions.some((button) => button !== null) && (
         <>
           <ScreenActionButton
+            key={input.ctx.t('app.more')}
             icon={(input) => <IconEllipsisVertical {...input} />}
             label={input.ctx.t('app.more')}
             size={input.size}
@@ -53,24 +54,27 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
             body={{
               render: () => {
                 return (
-                  <>
+                  <Frag>
                     {lastActions.map((action) => {
                       if (!action) return null
                       if (action.hidden) return null
                       const listItemButton = (
                         <ListItemButton
-                          key={action.label}
+                          key={action.key}
                           icon={action.icon}
                           label={action.label}
                           onClick={action.onClick}
                           color={action.color}
                         />
                       )
-                      if (action.renderSurface)
-                        return action.renderSurface({ reference: listItemButton, screenActionLocation: 'more-drawer' })
-                      return listItemButton
+                      if (!action.renderSurface) return listItemButton
+                      return (
+                        <Frag key={action.key}>
+                          {action.renderSurface({ reference: listItemButton, screenActionLocation: 'more-drawer' })}
+                        </Frag>
+                      )
                     })}
-                  </>
+                  </Frag>
                 )
               },
             }}
@@ -89,10 +93,10 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
       <div className='flex items-center'>
         {input.start.map((action) => {
           if (!action) return null
-          const button = <ScreenActionButton {...action} size={input.size} key={action.label} className='min-w-20' />
+          const button = <ScreenActionButton {...action} size={input.size} key={action.key} className='min-w-20' />
           if (action.renderSurface)
             return (
-              <Frag key={action.label}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
+              <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
             )
           return button
         })}
@@ -101,10 +105,10 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
       <div className='flex items-center'>
         {input.end.map((action) => {
           if (!action) return null
-          const button = <ScreenActionButton {...action} size={input.size} key={action.label} className='min-w-20' />
+          const button = <ScreenActionButton {...action} size={input.size} key={action.key} className='min-w-20' />
           if (action.renderSurface)
             return (
-              <Frag key={action.label}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
+              <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
             )
           return button
         })}

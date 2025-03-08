@@ -144,6 +144,7 @@ const View: FrontendModule['View'] = (input) => {
           t: 'uniform',
           actions: [
             {
+              key: input.ctx.t('app.prev'),
               icon: (input) => <IconChevronLeft {...input} />,
               label: input.ctx.t('app.prev'),
               disabled: !canGoPrevious,
@@ -159,12 +160,14 @@ const View: FrontendModule['View'] = (input) => {
               },
             },
             {
+              key: input.ctx.t('app.next'),
               icon: (input) => <IconChevronRight {...input} />,
               label: input.ctx.t('app.next'),
               disabled: !canGoNext,
               onClick: onNextPuzzle,
             },
             {
+              key: input.ctx.t('app.remove'),
               icon: (input) => <IconDeleteForever {...input} />,
               label: input.ctx.t('app.remove'),
               color: 'danger',
