@@ -1,11 +1,10 @@
 import preact from '@preact/preset-vite'
 import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig, PluginOption } from 'vite'
-// @ts-expect-error missing types
-import inferno from 'vite-plugin-inferno'
-// @ts-expect-error may be unused
+import { VitePWA } from 'vite-plugin-pwa'
 import topLevelAwait from 'vite-plugin-top-level-await'
+// @ts-expect-error
+import inferno from 'vite-plugin-inferno'
 import wasm from 'vite-plugin-wasm'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { CONFIG_FRONTEND } from './src/config/frontend'
@@ -26,6 +25,8 @@ const vDomPlugin = (): PluginOption => {
   }
 }
 
+const IS_PROD = process.env.NODE_ENV === 'production'
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -33,7 +34,7 @@ export default defineConfig({
     tsconfigPaths(),
     vDomPlugin(),
     wasm(),
-    // topLevelAwait(),
+    topLevelAwait(),
     VitePWA(),
   ],
   optimizeDeps: {
@@ -50,9 +51,11 @@ export default defineConfig({
   },
   worker: {
     format: 'es',
-    plugins: () => [
-      wasm(),
-      // topLevelAwait()
-    ],
+    plugins: () => [wasm(), topLevelAwait()],
+  },
+  resolve: {
+    alias: {
+      inferno: IS_PROD ? 'inferno' : 'inferno/dist/index.dev.mjs',
+    },
   },
 })

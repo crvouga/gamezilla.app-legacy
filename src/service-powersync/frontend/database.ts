@@ -32,9 +32,9 @@ export const newPowerSyncClient = async (input?: { test?: boolean }): Promise<IP
     },
     flags: {
       broadcastLogs: true,
-      enableMultiTabs: false,
+      enableMultiTabs: true,
       ssrMode: false,
-      useWebWorker: false,
+      useWebWorker: true,
     },
   })
 

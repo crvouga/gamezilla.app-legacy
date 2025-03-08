@@ -13,7 +13,7 @@ const HTTP_SERVER_IMPL = HttpServerImpl.of(TRANSPORT_IMPL === 'bun-web-sockets' 
 
 const IS_PROD = Boolean(import.meta.env?.PROD)
 
-const IS_DEV = !IS_PROD
+const IS_LOCAL = !IS_PROD
 
 export const CONFIG_SHARED = {
   IS_INTEGRATION_TEST,
@@ -22,5 +22,5 @@ export const CONFIG_SHARED = {
   TRANSPORT_IMPL,
   HTTP_SERVER_IMPL,
   IS_PROD,
-  IS_DEV,
+  IS_LOCAL,
 }

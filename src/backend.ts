@@ -5,6 +5,7 @@ import { CONFIG_BACKEND } from '~/config/backend'
 import { HealthCheck } from './@/health-check/health-check'
 import { RPC } from './@/rpc'
 import { PowerSyncBackendApp } from './service-powersync/backend/respond'
+import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {
   const ctx = await AppBackend.initCtx()
@@ -43,7 +44,7 @@ const main = async () => {
 
   await ctx.httpServer.start(CONFIG_BACKEND.SERVER_PORT)
 
-  ctx.logger.info(CONFIG_BACKEND)
+  ctx.logger.info({ ...CONFIG_SHARED, ...CONFIG_BACKEND })
 }
 
 main()

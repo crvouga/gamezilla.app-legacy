@@ -33,7 +33,7 @@ const main = async () => {
 
   await ctx.transport.start()
 
-  console.log(CONFIG_FRONTEND)
+  console.log({ ...CONFIG_SHARED, ...CONFIG_FRONTEND })
 }
 
 main()
