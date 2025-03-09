@@ -14,9 +14,13 @@ const querySelector = (selector: string): HTMLElement | null => {
   return null
 }
 
+const toExitQuerySelector = (portalId: string): string => {
+  return `[data-portal-exit][data-portal-id="${portalId}"]`
+}
+
 const getExit = (portalId: string): HTMLElement | null => {
   if (typeof document === 'undefined') return null
-  return (querySelector(`[data-portal-exit][data-portal-id="${portalId}"]`) ?? null) as HTMLElement | null
+  return (querySelector(toExitQuerySelector(portalId)) ?? null) as HTMLElement | null
 }
 
 const Entrance = (input: { portalId: string; children: VDom }) => {
@@ -34,7 +38,6 @@ const Exit = (input: { portalId: string }) => {
 }
 
 export const Portal = {
-  getExit,
   Entrance,
   Exit,
 }
