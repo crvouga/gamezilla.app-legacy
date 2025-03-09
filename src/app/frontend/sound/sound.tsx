@@ -1,4 +1,4 @@
-import { Translator } from '~/@/l18n/generated'
+import { Translator as SoundFrontend } from '~/@/l18n/generated'
 import { UnitInterval } from '~/@/range/unit-interval'
 import { Err, Ok, type Result } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
@@ -190,7 +190,7 @@ export const ViewSoundListItem = (input: {
   model: Model
   dispatch: (m: Msg) => void
   ctx: {
-    t: Translator
+    t: SoundFrontend
   }
 }) => {
   return (

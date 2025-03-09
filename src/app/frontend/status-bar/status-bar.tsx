@@ -1,4 +1,4 @@
-import { Translator } from '~/@/l18n/generated'
+import { Translator as StatusBarFrontend } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
@@ -55,7 +55,7 @@ export const View = (props: {
     surfaceContent: VDom
   }
   ctx: {
-    t: Translator
+    t: StatusBarFrontend
     screenSize: ScreenSize
   }
   model: Model

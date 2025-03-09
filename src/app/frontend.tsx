@@ -24,8 +24,16 @@ import { ViewAppRoot } from './@/ui/app-root/app-root'
 import { SplashScreen } from './@/ui/logo/logo-block'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import * as AuthFrontend from './auth/frontend'
-import { ViewAppStatusBar } from './frontend/app-status-bar'
-import { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
+import { ViewAppStatusBar } from './frontend/app-status-bar/app-status-bar'
+import { CopyToClipboardFrontend } from './frontend/copy-to-clipboard'
+import { CurrentScreenFrontend } from './frontend/current-screen'
+import { FocusFrontend } from './frontend/focus'
+import { ScreenSizeFrontend } from './frontend/screen-size'
+import { SoundFrontend } from './frontend/sound'
+import { StatusBarFrontend } from './frontend/status-bar/index'
+import { TimeFrontend } from './frontend/time'
+import { ToastFrontend } from './frontend/toast'
+import { VisibilityFrontend } from './frontend/visibility'
 import * as LangFrontend from './lang/frontend'
 import * as ProfileFrontend from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
@@ -97,9 +105,9 @@ const toFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx =
     t: Translator(input.model.lang.lang),
     profiles: input.model.profile.profiles,
     now: input.ctx.now,
-    documentVisibilityState: input.model.platform.documentVisibilityState,
+    documentVisibilityState: input.model.visibility.documentVisibilityState,
     currentScreen: input.model.currentScreen.currentScreen,
-    screenSize: input.model.platform.screenSize.screenSize,
+    screenSize: input.model.screenSize.screenSize,
     parentScreen: null,
   }
   switch (input.model.auth.currentUser.t) {
@@ -129,39 +137,47 @@ const toTransportConfig = (input: {
 }
 
 export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
-  const screen = CurrentScreen.init({ location: input.ctx.location })
-  const platform = Platform.init({ stored: input.ctx.stored })
+  const screen = CurrentScreenFrontend.init({ location: input.ctx.location })
+  const visibility = VisibilityFrontend.init({ stored: input.ctx.stored })
+  const screenSize = ScreenSizeFrontend.init()
 
   const ctx: AnonymousFrontendCtx = {
     ...input.ctx,
     currentScreen: screen.model.currentScreen,
     t: Translator(input.ctx.navigatorLanguage),
-    documentVisibilityState: 'visible',
+    documentVisibilityState: visibility.model.documentVisibilityState,
     profiles: {},
-    screenSize: platform.model.screenSize.screenSize,
+    screenSize: screenSize.model.screenSize,
     parentScreen: null,
   }
 
   const lang = LangFrontend.init({ ctx, stored: input.ctx.stored })
-  const toast = Toast.init({ stored: input.ctx.stored, ctx })
+  const toast = ToastFrontend.init({ stored: input.ctx.stored, ctx })
   const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire }, stored: input.ctx.stored })
   const auth = AuthFrontend.init({ stored: input.ctx.stored, ctx })
   const space = SpacesFrontend.init({ ctx, stored: input.ctx.stored })
   const profile = ProfileFrontend.init({ ctx: { ...ctx, parentScreen: null }, stored: input.ctx.stored })
-  const sound = Sound.init({ ctx, stored: input.ctx.stored })
-  const statusBar = StatusBar.init({ stored: input.ctx.stored })
+  const sound = SoundFrontend.init({ ctx, stored: input.ctx.stored })
+  const statusBar = StatusBarFrontend.init({ stored: input.ctx.stored })
+  const focus = FocusFrontend.init()
+  const copyToClipboard = CopyToClipboardFrontend.init()
+  const time = TimeFrontend.init()
 
   const initialModel: ModelFrontend = {
+    time: time.model,
+    focus: focus.model,
     statusBar: statusBar.model,
     currentScreen: screen.model,
     toast: toast.model,
     wire: wire.model,
     sound: sound.model,
-    platform: platform.model,
+    visibility: visibility.model,
     spaces: space.model,
     auth: auth.model,
     profile: profile.model,
     lang: lang.model,
+    screenSize: screenSize.model,
+    copyToClipboard: copyToClipboard.model,
   }
 
   const initialEff = Eff.batch<MsgFrontend>([screen.eff, Eff.tag('auth', auth.eff), Eff.tag('lang', lang.eff)])
@@ -284,7 +300,7 @@ const updateChild = (input: {
     msgCmd: input.msgCmd?.t === 'auth' ? input.msgCmd : null,
   })
 
-  const screen = CurrentScreen.update({
+  const screen = CurrentScreenFrontend.update({
     model: input.model.currentScreen,
     msg: input.msg?.t === 'current-screen' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'current-screen' ? input.msgCmd : null,
@@ -299,26 +315,25 @@ const updateChild = (input: {
     transport: input.ctx.transport,
   })
 
-  const sound = Sound.update({
+  const sound = SoundFrontend.update({
     model: input.model.sound,
     msg: input.msg?.t === 'sound' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'sound' ? input.msgCmd : null,
     ctx: frontendCtx,
   })
 
-  const platform = Platform.update({
-    model: input.model.platform,
-    msg: input.msg?.t === 'platform' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'platform' ? input.msgCmd : null,
+  const visibility = VisibilityFrontend.update({
+    model: input.model.visibility,
+    msg: input.msg?.t === 'visibility' ? input.msg.c : null,
   })
 
-  const statusBar = StatusBar.update({
+  const statusBar = StatusBarFrontend.update({
     model: input.model.statusBar,
     msg: input.msg?.t === 'status-bar' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'status-bar' ? input.msgCmd : null,
   })
 
-  const toast = Toast.update({
+  const toast = ToastFrontend.update({
     model: input.model.toast,
     msg: input.msg?.t === 'toast' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'toast' ? input.msgCmd : null,
@@ -334,10 +349,35 @@ const updateChild = (input: {
     ctx: frontendCtx,
   })
 
+  const screenSize = ScreenSizeFrontend.update({
+    model: input.model.screenSize,
+    msg: input.msg?.t === 'screen-size' ? input.msg.c : null,
+  })
+
+  const copyToClipboard = CopyToClipboardFrontend.update({
+    model: input.model.copyToClipboard,
+    msg: input.msg?.t === 'copy-to-clipboard' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'copy-to-clipboard' ? input.msgCmd : null,
+  })
+
+  const focus = FocusFrontend.update({
+    model: input.model.focus,
+    msg: input.msg?.t === 'focus' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'focus' ? input.msgCmd : null,
+  })
+
+  const time = TimeFrontend.update({
+    model: input.model.time,
+    msg: input.msg?.t === 'time' ? input.msg.c : null,
+    msgCmd: input.msgCmd?.t === 'time' ? input.msgCmd : null,
+  })
+
   return {
     model: {
+      time: time.model,
+      focus: focus.model,
       auth: auth.model,
-      platform: platform.model,
+      visibility: visibility.model,
       profile: profile.model,
       currentScreen: screen.model,
       sound: sound.model,
@@ -346,10 +386,12 @@ const updateChild = (input: {
       toast: toast.model,
       wire: wire.model,
       lang: lang.model,
+      screenSize: screenSize.model,
+      copyToClipboard: copyToClipboard.model,
     },
     eff: Eff.batch<MsgFrontend>([
       Eff.tag('auth', auth.eff),
-      Eff.tag('platform', platform.eff),
+      Eff.tag('visibility', visibility.eff),
       Eff.tag('profile', profile.eff),
       Eff.tag('current-screen', screen.eff),
       Eff.tag('sound', sound.eff),
@@ -357,6 +399,10 @@ const updateChild = (input: {
       Eff.tag('toast', toast.eff),
       Eff.tag('wire', wire.eff),
       Eff.tag('lang', lang.eff),
+      Eff.tag('copy-to-clipboard', copyToClipboard.eff),
+      Eff.tag('focus', focus.eff),
+      Eff.tag('time', time.eff),
+      time.parentEff,
     ]),
     msgEvt: Msg.batch<AppFrontendEvt>(
       auth.msgEvt,
@@ -386,11 +432,15 @@ export const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend })
 
   return Sub.batch<MsgFrontend>([
     Sub.tag('→', Sub.flat(input.ctx.transport.fromBackend)),
-    Sub.tag('platform', Platform.subscriptions),
-    Sub.tag('current-screen', CurrentScreen.subscriptions),
+    Sub.tag('visibility', VisibilityFrontend.subscriptions),
+    Sub.tag('focus', FocusFrontend.subscriptions),
+    Sub.tag('copy-to-clipboard', CopyToClipboardFrontend.subscriptions),
+    Sub.tag('time', TimeFrontend.subscriptions),
+    Sub.tag('screen-size', ScreenSizeFrontend.subscriptions),
+    Sub.tag('current-screen', CurrentScreenFrontend.subscriptions),
     Sub.tag('wire', WireFrontend.subscriptions({ transport: input.ctx.transport })),
     Sub.tag('lang', LangFrontend.subscriptions({ ctx, model: input.model.lang })),
-    Sub.tag('toast', Toast.subscriptions({ ctx, model: input.model.toast })),
+    Sub.tag('toast', ToastFrontend.subscriptions({ ctx, model: input.model.toast })),
     Sub.tag('auth', AuthFrontend.subscriptions({ ctx, model: input.model.auth })),
     Sub.tag('spaces', SpacesFrontend.subscriptions({ ctx, model: input.model.spaces })),
   ])
@@ -415,7 +465,11 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
 
       <DrawerPortalExit />
 
-      <Toast.View ctx={frontendCtx} model={input.model.toast} dispatch={(c) => input.dispatch({ t: 'toast', c })} />
+      <ToastFrontend.View
+        ctx={frontendCtx}
+        model={input.model.toast}
+        dispatch={(c) => input.dispatch({ t: 'toast', c })}
+      />
     </ViewAppRoot>
   )
 }

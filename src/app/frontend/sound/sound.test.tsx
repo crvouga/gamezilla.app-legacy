@@ -3,7 +3,7 @@ import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { APP_SOUND, SoundCmd, playSound } from '../../@/frontend/cmd'
 import { FixtureAppFrontend } from '../../@/frontend/fixture'
-import * as Sound from './index'
+import * as Sound from './sound'
 
 type Input =
   | {

@@ -2,8 +2,9 @@ import { cn, IconLanguage } from '~/@/ui'
 import * as LangFrontend from '~/app/lang/frontend'
 import { type ModelFrontend, type MsgFrontend } from '~/app/types'
 import * as WireFrontend from '~/app/wire/frontend'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
-import { Sound, StatusBar } from './index'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '../../@/frontend/ctx'
+import { StatusBarFrontend } from '../status-bar/index'
+import { SoundFrontend } from '../sound'
 
 export const ViewAppStatusBar = (input: {
   ctx: AppFrontendCtx | AnonymousFrontendCtx
@@ -12,7 +13,7 @@ export const ViewAppStatusBar = (input: {
 }) => {
   return (
     <div className={cn(input.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed right-0 top-0 z-10 w-fit')}>
-      <StatusBar.View
+      <StatusBarFrontend.View
         ctx={input.ctx}
         model={input.model.statusBar}
         dispatch={(c) => input.dispatch({ t: 'status-bar', c })}
@@ -32,7 +33,7 @@ export const ViewAppStatusBar = (input: {
               >
                 <WireFrontend.ViewDot ctx={input.ctx} model={input.model.wire} className={iconSize} />
                 <IconLanguage className={iconSize} />
-                <Sound.ViewIcon model={input.model.sound} className={iconSize} />
+                <SoundFrontend.ViewIcon model={input.model.sound} className={iconSize} />
                 {/* <IconGear className={iconSize} /> */}
               </button>
             )
@@ -51,7 +52,7 @@ export const ViewAppStatusBar = (input: {
                 model={input.model.lang}
               />
 
-              <Sound.ViewSoundListItem
+              <SoundFrontend.ViewSoundListItem
                 ctx={input.ctx}
                 model={input.model.sound}
                 dispatch={(c) => input.dispatch({ t: 'sound', c })}

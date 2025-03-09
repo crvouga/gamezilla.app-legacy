@@ -23,7 +23,9 @@ export type AppFrontendCmd<T extends FrontendCmdTypes> =
   | ToastCmd
   | ScreenCmd
   | SoundCmd
-  | PlatformCmd<T['MsgFrontend']>
+  | FocusCmd
+  | TimeCmd<T['MsgFrontend']>
+  | CopyToClipboardCmd
   | ProfileCmd
   | StatusBarCmd
   | AuthCmd
@@ -130,14 +132,75 @@ export const didOpenProfile = <T>(
 //
 //
 //
+//
 
-export type PlatformCmd<Msg> = {
-  t: 'platform'
+export type CopyToClipboardCmd = {
+  t: 'copy-to-clipboard'
+  c: {
+    t: 'copy-to-clipboard'
+    text: string
+  }
+}
+
+export const copyToClipboard = <T extends FrontendCmdTypes>(text: string): AppFrontendCmd<T> => {
+  return {
+    t: 'copy-to-clipboard',
+    c: {
+      t: 'copy-to-clipboard',
+      text,
+    },
+  }
+}
+
+export const didCopyToClipboard = <TCmd>(
+  {
+    msgCmd,
+  }: {
+    msgCmd?: (CopyToClipboardCmd | TCmd)[] | null
+  },
+  isValidText?: (text: string) => boolean,
+): boolean => {
+  return (
+    msgCmd?.some(
+      (cmd) =>
+        typeof cmd === 'object' &&
+        cmd &&
+        't' in cmd &&
+        cmd.t === 'copy-to-clipboard' &&
+        cmd.c.t === 'copy-to-clipboard' &&
+        (typeof isValidText === 'function' ? isValidText(cmd.c.text) : true),
+    ) ?? false
+  )
+}
+
+//
+//
+//
+//
+//
+//
+
+export type FocusCmd = {
+  t: 'focus'
+  c: {
+    t: 'focus'
+    viewId: string
+  }
+}
+
+export const focusView = <T extends FrontendCmdTypes>(viewId: string): AppFrontendCmd<T> => {
+  return { t: 'focus', c: { t: 'focus', viewId: viewId } }
+}
+
+//
+//
+//
+//
+//
+
+export type TimeCmd<Msg> = {
+  t: 'time'
   c:
-    | {
-        t: 'focus'
-        viewId: string
-      }
     | {
         t: 'start-timeout'
         timeoutId: string | number
@@ -148,14 +211,6 @@ export type PlatformCmd<Msg> = {
         t: 'cancel-timeout'
         timeoutId: string | number
       }
-    | {
-        t: 'copy-to-clipboard'
-        text: string
-      }
-}
-
-export const focusView = <T extends FrontendCmdTypes>(viewId: string): AppFrontendCmd<T> => {
-  return { t: 'platform', c: { t: 'focus', viewId: viewId } }
 }
 
 export const startTimeout = <T extends FrontendCmdTypes>(
@@ -164,7 +219,7 @@ export const startTimeout = <T extends FrontendCmdTypes>(
   msg: T['MsgFrontend'],
 ): AppFrontendCmd<T> => {
   return {
-    t: 'platform',
+    t: 'time',
     c: {
       t: 'start-timeout',
       timeoutId,
@@ -176,43 +231,12 @@ export const startTimeout = <T extends FrontendCmdTypes>(
 
 export const cancelTimeout = <T extends FrontendCmdTypes>(timeoutId: string | number): AppFrontendCmd<T> => {
   return {
-    t: 'platform',
+    t: 'time',
     c: {
       t: 'cancel-timeout',
       timeoutId,
     },
   }
-}
-
-export const copyToClipboard = <T extends FrontendCmdTypes>(text: string): AppFrontendCmd<T> => {
-  return {
-    t: 'platform',
-    c: {
-      t: 'copy-to-clipboard',
-      text,
-    },
-  }
-}
-
-export const didCopyToClipboard = <T extends FrontendCmdTypes, TCmd>(
-  {
-    msgCmd,
-  }: {
-    msgCmd?: (PlatformCmd<T['MsgFrontend']> | TCmd)[] | null
-  },
-  isValidText?: (text: string) => boolean,
-): boolean => {
-  return (
-    msgCmd?.some(
-      (cmd) =>
-        typeof cmd === 'object' &&
-        cmd &&
-        't' in cmd &&
-        cmd.t === 'platform' &&
-        cmd.c.t === 'copy-to-clipboard' &&
-        (typeof isValidText === 'function' ? isValidText(cmd.c.text) : true),
-    ) ?? false
-  )
 }
 
 //
@@ -728,7 +752,7 @@ const tagOne = <Tag extends string, T extends FrontendCmdTypes>(
       }
     }
 
-    case 'platform': {
+    case 'time': {
       switch (msgCmd.c.t) {
         case 'start-timeout': {
           return {
@@ -807,7 +831,7 @@ const map = <A extends FrontendCmdTypes, B extends FrontendCmdTypes>(
         }
       }
 
-      case 'platform': {
+      case 'time': {
         switch (msgCmd.c.t) {
           case 'start-timeout': {
             return {

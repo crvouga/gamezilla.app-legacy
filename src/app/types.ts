@@ -10,13 +10,21 @@ import { ClientId } from './@/data/client-id'
 import { SessionId } from './@/data/session-id'
 import { UserId } from './@/data/user-id'
 import { AuthTypes } from './auth'
-import type { CurrentScreen, Platform, Sound, StatusBar, Toast } from './frontend/index'
 import { LangTypes } from './lang'
 import { ProfileTypes } from './profile'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
+import { VisibilityFrontend } from './frontend/visibility'
 import { IBackendTransport } from './wire/transport/backend'
 import { IFrontendTransport } from './wire/transport/frontend'
+import { ScreenSizeFrontend } from './frontend/screen-size'
+import { CurrentScreenFrontend } from './frontend/current-screen'
+import { ToastFrontend } from './frontend/toast'
+import { SoundFrontend } from './frontend/sound'
+import { StatusBarFrontend } from './frontend/status-bar'
+import { CopyToClipboardFrontend } from './frontend/copy-to-clipboard'
+import { FocusFrontend } from './frontend/focus'
+import { TimeFrontend } from './frontend/time'
 
 //
 //
@@ -32,11 +40,15 @@ export type ModelFrontend = {
   profile: ProfileTypes.ModelFrontend
   wire: WireTypes.ModelFrontend
   lang: LangTypes.ModelFrontend
-  currentScreen: CurrentScreen.Model
-  toast: Toast.Model
-  sound: Sound.Model
-  platform: Platform.Model
-  statusBar: StatusBar.Model
+  currentScreen: CurrentScreenFrontend.Model
+  toast: ToastFrontend.Model
+  sound: SoundFrontend.Model
+  visibility: VisibilityFrontend.Model
+  screenSize: ScreenSizeFrontend.Model
+  statusBar: StatusBarFrontend.Model
+  copyToClipboard: CopyToClipboardFrontend.Model
+  focus: FocusFrontend.Model
+  time: TimeFrontend.Model
 }
 
 //
@@ -57,11 +69,15 @@ export type MsgBackend =
 
 export type MsgFrontend =
   | { t: '→'; c: MsgToFrontend }
-  | { t: 'current-screen'; c: CurrentScreen.Msg }
-  | { t: 'toast'; c: Toast.Msg }
-  | { t: 'sound'; c: Sound.Msg }
-  | { t: 'platform'; c: Platform.Msg }
-  | { t: 'status-bar'; c: StatusBar.Msg }
+  | { t: 'current-screen'; c: CurrentScreenFrontend.Msg }
+  | { t: 'toast'; c: ToastFrontend.Msg }
+  | { t: 'sound'; c: SoundFrontend.Msg }
+  | { t: 'visibility'; c: VisibilityFrontend.Msg }
+  | { t: 'screen-size'; c: ScreenSizeFrontend.Msg }
+  | { t: 'status-bar'; c: StatusBarFrontend.Msg }
+  | { t: 'focus'; c: FocusFrontend.Msg }
+  | { t: 'time'; c: TimeFrontend.Msg }
+  | { t: 'copy-to-clipboard'; c: CopyToClipboardFrontend.Msg }
   | { t: 'wire'; c: WireTypes.MsgFrontend }
   | { t: 'spaces'; c: SpacesTypes.MsgFrontend }
   | { t: 'auth'; c: AuthTypes.MsgFrontend }

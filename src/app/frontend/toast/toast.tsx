@@ -6,8 +6,8 @@ import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconXMark, Show, Transition, cn } from '~/@/ui'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { APP_SOUND, SoundCmd, ToastCmd, playSound } from '../@/frontend/cmd'
-import { ScreenSize } from '../@/ui/screen/screen-size'
+import { ScreenSize } from '~/app/@/ui/screen/screen-size'
+import { APP_SOUND, SoundCmd, ToastCmd, playSound } from '../../@/frontend/cmd'
 
 type Ctx = {
   now: Posix
