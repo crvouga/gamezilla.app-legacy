@@ -48,7 +48,7 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
-    "types": ["bun-types", "vite/client", "preact", "react"],
+    "types": ["bun-types", "vite/client", "preact", "react", "vite-plugin-pwa/client"],
     "jsx": "preserve",
     // "jsxImportSource": "vue",
     "allowJs": false,

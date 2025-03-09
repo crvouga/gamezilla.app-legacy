@@ -26,6 +26,7 @@ import { TimeFrontend } from '../frontend/time'
 import { ToastFrontend } from '../frontend/toast'
 import { VisibilityFrontend } from '../frontend/visibility'
 import { type ModelFrontend, type MsgFrontend, type MsgToBackend, type MsgToFrontend } from './types'
+import './update-prompt/update-prompt'
 
 export const init = (input: {
   ctx: AnonymousFrontendCtx
