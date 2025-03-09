@@ -2,8 +2,19 @@ import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
-import { APP_SOUND, AppFrontendCmd, preloadSound } from '../@/frontend/cmd'
-import { AppFrontendCtx } from '../@/frontend/ctx'
+import {
+  APP_SOUND,
+  AppFrontendCmd,
+  CopyToClipboardCmd,
+  FocusCmd,
+  preloadSound,
+  ScreenCmd,
+  SoundCmd,
+  StatusBarCmd,
+  TimeCmd,
+  ToastCmd,
+} from '../@/frontend/cmd'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { AppFrontendEvt } from '../@/frontend/evt'
 import { CopyToClipboardFrontend } from '../frontend/copy-to-clipboard'
 import { CurrentScreenFrontend } from '../frontend/current-screen'
@@ -17,7 +28,7 @@ import { VisibilityFrontend } from '../frontend/visibility'
 import { type ModelFrontend, type MsgFrontend, type MsgToBackend, type MsgToFrontend } from './types'
 
 export const init = (input: {
-  ctx: AppFrontendCtx
+  ctx: AnonymousFrontendCtx
   stored: Record<string, unknown>
   location: Browser.Location
 }): {
@@ -50,12 +61,7 @@ export const init = (input: {
     copyToClipboard: copyToClipboard.model,
   }
 
-  const initialEff = Eff.batch<MsgFrontend>([
-    //
-    // Eff.tag('screen', screen.eff),
-    screen.eff,
-    Eff.tag('toast', toast.eff),
-  ])
+  const initialEff = Eff.batch<MsgFrontend>([screen.eff, Eff.tag('toast', toast.eff)])
 
   const initialCmd = Msg.batch<AppFrontendCmd<{ MsgToBackend: MsgToBackend; MsgFrontend: MsgFrontend }>>(
     preloadSound(Object.values(APP_SOUND)),
@@ -68,16 +74,22 @@ export const init = (input: {
   }
 }
 
-export const update = (input: {
-  ctx: AppFrontendCtx
+export type CmdIn<TParentMsg> =
+  | ToastCmd
+  | ScreenCmd
+  | SoundCmd
+  | FocusCmd
+  | TimeCmd<TParentMsg>
+  | CopyToClipboardCmd
+  | StatusBarCmd
+
+export const update = <TParentMsg,>(input: {
+  ctx: AppFrontendCtx | AnonymousFrontendCtx
   model: ModelFrontend
   msg?: MsgFrontend
   msgBackend?: MsgToFrontend
   msgEvt?: AppFrontendEvt
-  msgCmd?: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>
+  msgCmd?: CmdIn<TParentMsg>
 }): {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
@@ -161,7 +173,7 @@ export const update = (input: {
       Eff.tag('copy-to-clipboard', copyToClipboard.eff),
       Eff.tag('focus', focus.eff),
       Eff.tag('time', time.eff),
-      time.parentEff,
+      //   time.parentEff,
     ]),
     msgEvt: Msg.batch<AppFrontendEvt>(screen.msgEvt, sound.msgEvt, toast.msgEvt),
     msgCmd: Msg.batch<AppFrontendCmd<{ MsgToBackend: MsgToBackend; MsgFrontend: MsgFrontend }>>(
@@ -173,7 +185,10 @@ export const update = (input: {
   }
 }
 
-export const subscriptions = (input: { ctx: AppFrontendCtx; model: ModelFrontend }): Sub<MsgFrontend> => {
+export const subscriptions = (input: {
+  ctx: AppFrontendCtx | AnonymousFrontendCtx
+  model: ModelFrontend
+}): Sub<MsgFrontend> => {
   return Sub.batch<MsgFrontend>([
     Sub.tag('visibility', VisibilityFrontend.subscriptions),
     Sub.tag('focus', FocusFrontend.subscriptions),

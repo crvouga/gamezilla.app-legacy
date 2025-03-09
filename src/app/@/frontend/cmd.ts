@@ -20,15 +20,15 @@ export type FrontendCmdTypes = {
 
 export type AppFrontendCmd<T extends FrontendCmdTypes> =
   | WireCmd<T>
+  | ProfileCmd
+  | AuthCmd
   | ToastCmd
   | ScreenCmd
   | SoundCmd
   | FocusCmd
   | TimeCmd<T['MsgFrontend']>
   | CopyToClipboardCmd
-  | ProfileCmd
   | StatusBarCmd
-  | AuthCmd
 
 //
 //
@@ -38,6 +38,7 @@ export type AppFrontendCmd<T extends FrontendCmdTypes> =
 //
 
 export type AuthCmd = {
+  n: 'auth'
   t: 'auth'
   c: {
     t: 'logout'
@@ -46,6 +47,7 @@ export type AuthCmd = {
 
 export const logout = <T extends FrontendCmdTypes>(): AppFrontendCmd<T> => {
   return {
+    n: 'auth',
     t: 'auth',
     c: {
       t: 'logout',
@@ -59,6 +61,7 @@ export const logout = <T extends FrontendCmdTypes>(): AppFrontendCmd<T> => {
 //
 
 export type StatusBarCmd = {
+  n: 'frontend'
   t: 'status-bar'
   c: {
     t: 'close'
@@ -67,6 +70,7 @@ export type StatusBarCmd = {
 
 export const closeStatusBar = <T extends FrontendCmdTypes>(): AppFrontendCmd<T> => {
   return {
+    n: 'frontend',
     t: 'status-bar',
     c: {
       t: 'close',
@@ -82,6 +86,7 @@ export const closeStatusBar = <T extends FrontendCmdTypes>(): AppFrontendCmd<T> 
 
 export type ProfileCmd =
   | {
+      n: 'profile'
       t: 'profile'
       c: {
         t: 'add-profiles'
@@ -91,6 +96,7 @@ export type ProfileCmd =
       }
     }
   | {
+      n: 'profile'
       t: 'profile'
       c: {
         t: 'open-profile'
@@ -99,11 +105,11 @@ export type ProfileCmd =
     }
 
 export const addProfiles = <T extends FrontendCmdTypes>(profiles: { [userId: UserId]: Profile }): AppFrontendCmd<T> => {
-  return { t: 'profile', c: { t: 'add-profiles', profiles } }
+  return { n: 'profile', t: 'profile', c: { t: 'add-profiles', profiles } }
 }
 
 export const openProfile = <T extends FrontendCmdTypes>(userId: UserId): AppFrontendCmd<T> => {
-  return { t: 'profile', c: { t: 'open-profile', userId } }
+  return { n: 'profile', t: 'profile', c: { t: 'open-profile', userId } }
 }
 
 export const didOpenProfile = <T>(
@@ -135,6 +141,7 @@ export const didOpenProfile = <T>(
 //
 
 export type CopyToClipboardCmd = {
+  n: 'frontend'
   t: 'copy-to-clipboard'
   c: {
     t: 'copy-to-clipboard'
@@ -144,6 +151,7 @@ export type CopyToClipboardCmd = {
 
 export const copyToClipboard = <T extends FrontendCmdTypes>(text: string): AppFrontendCmd<T> => {
   return {
+    n: 'frontend',
     t: 'copy-to-clipboard',
     c: {
       t: 'copy-to-clipboard',
@@ -181,6 +189,7 @@ export const didCopyToClipboard = <TCmd>(
 //
 
 export type FocusCmd = {
+  n: 'frontend'
   t: 'focus'
   c: {
     t: 'focus'
@@ -189,7 +198,14 @@ export type FocusCmd = {
 }
 
 export const focusView = <T extends FrontendCmdTypes>(viewId: string): AppFrontendCmd<T> => {
-  return { t: 'focus', c: { t: 'focus', viewId: viewId } }
+  return {
+    n: 'frontend',
+    t: 'focus',
+    c: {
+      t: 'focus',
+      viewId: viewId,
+    },
+  }
 }
 
 //
@@ -199,6 +215,7 @@ export const focusView = <T extends FrontendCmdTypes>(viewId: string): AppFronte
 //
 
 export type TimeCmd<Msg> = {
+  n: 'frontend'
   t: 'time'
   c:
     | {
@@ -219,6 +236,7 @@ export const startTimeout = <T extends FrontendCmdTypes>(
   msg: T['MsgFrontend'],
 ): AppFrontendCmd<T> => {
   return {
+    n: 'frontend',
     t: 'time',
     c: {
       t: 'start-timeout',
@@ -231,6 +249,7 @@ export const startTimeout = <T extends FrontendCmdTypes>(
 
 export const cancelTimeout = <T extends FrontendCmdTypes>(timeoutId: string | number): AppFrontendCmd<T> => {
   return {
+    n: 'frontend',
     t: 'time',
     c: {
       t: 'cancel-timeout',
@@ -246,6 +265,7 @@ export const cancelTimeout = <T extends FrontendCmdTypes>(timeoutId: string | nu
 //
 
 export type WireCmd<T extends FrontendCmdTypes> = {
+  n: 'wire'
   t: 'wire'
   c: {
     t: 'send-to-backend'
@@ -258,6 +278,7 @@ export type WireCmd<T extends FrontendCmdTypes> = {
  */
 export const sendToBackend = <T extends FrontendCmdTypes>(msg: T['MsgToBackend']): AppFrontendCmd<T> => {
   return {
+    n: 'wire',
     t: 'wire',
     c: {
       t: 'send-to-backend',
@@ -296,6 +317,7 @@ export const didSendToBackend = <T extends FrontendCmdTypes, TCmd>(
 //
 
 export type ToastCmd = {
+  n: 'frontend'
   t: 'toast'
   c: {
     t: 'enqueue'
@@ -312,6 +334,7 @@ export const showToast = <T extends FrontendCmdTypes>(
   duration?: TimeSpan,
 ): AppFrontendCmd<T> => {
   return {
+    n: 'frontend',
     t: 'toast',
     c: {
       t: 'enqueue',
@@ -349,6 +372,7 @@ export const didShowToast = <T>(
 export const showOkSm = <T extends FrontendCmdTypes>(text: TranslatedText): AppFrontendCmd<T>[] => {
   return [
     {
+      n: 'frontend',
       t: 'toast',
       c: {
         t: 'enqueue',
@@ -356,6 +380,7 @@ export const showOkSm = <T extends FrontendCmdTypes>(text: TranslatedText): AppF
       },
     },
     {
+      n: 'frontend',
       t: 'sound',
       c: {
         t: 'play',
@@ -394,6 +419,7 @@ export const didShowOkSm = <TCmd>({ msgCmd }: { msgCmd?: (ToastCmd | SoundCmd | 
 export const showWarningSm = <T extends FrontendCmdTypes>(text: TranslatedText): AppFrontendCmd<T>[] => {
   return [
     {
+      n: 'frontend',
       t: 'toast',
       c: {
         t: 'enqueue',
@@ -402,6 +428,7 @@ export const showWarningSm = <T extends FrontendCmdTypes>(text: TranslatedText):
       },
     },
     {
+      n: 'frontend',
       t: 'sound',
       c: {
         t: 'play',
@@ -437,6 +464,7 @@ export const showErrSm = <T extends FrontendCmdTypes>(
 ): AppFrontendCmd<T>[] => {
   return [
     {
+      n: 'frontend',
       t: 'toast',
       c: {
         t: 'enqueue',
@@ -447,6 +475,7 @@ export const showErrSm = <T extends FrontendCmdTypes>(
       },
     },
     {
+      n: 'frontend',
       t: 'sound',
       c: {
         t: 'play',
@@ -498,6 +527,7 @@ export const didShowErrorSm = <TCmd>(
 //
 
 export type SoundCmd = {
+  n: 'frontend'
   t: 'sound'
   c:
     | {
@@ -539,6 +569,7 @@ export const playSound = (
   },
 ): SoundCmd => {
   return {
+    n: 'frontend',
     t: 'sound',
     c: {
       t: 'play',
@@ -583,6 +614,7 @@ export const countPlaySoundCmd = <T>(
 
 export const preloadSound = <T extends FrontendCmdTypes>(src: string[]): AppFrontendCmd<T> => {
   return {
+    n: 'frontend',
     t: 'sound',
     c: {
       t: 'preload',
@@ -601,6 +633,7 @@ export const preloadSound = <T extends FrontendCmdTypes>(src: string[]): AppFron
 //
 
 export type ScreenCmd = {
+  n: 'frontend'
   t: 'current-screen'
   c:
     | {
@@ -623,6 +656,7 @@ export type ScreenCmd = {
 
 export const pushScreen = <T extends FrontendCmdTypes>(screen: Screen, playSound?: boolean): AppFrontendCmd<T> => {
   return {
+    n: 'frontend',
     t: 'current-screen',
     c: {
       t: 'push',
@@ -653,6 +687,7 @@ export const didPushScreen = <T>(
 
 export const replaceScreen = <T extends FrontendCmdTypes>(screen: Screen, playSound?: boolean): AppFrontendCmd<T> => {
   return {
+    n: 'frontend',
     t: 'current-screen',
     c: {
       t: 'replace',
@@ -685,6 +720,7 @@ export const didReplaceScreen = <T extends FrontendCmdTypes>(
 
 export const back = <T extends FrontendCmdTypes>(reason?: string): AppFrontendCmd<T> => {
   return {
+    n: 'frontend',
     t: 'current-screen',
     c: {
       t: 'back',

@@ -16,7 +16,7 @@ import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { setupNewPowerSyncClient } from '~/service-powersync/frontend/database'
 import { ILogger, Logger } from '../@/logger'
-import { APP_SOUND, AppFrontendCmd, preloadSound } from './@/frontend/cmd'
+import { AppFrontendCmd } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
 import { AppFrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
@@ -25,26 +25,12 @@ import { SplashScreen } from './@/ui/logo/logo-block'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import * as AuthFrontend from './auth/frontend'
 import { ViewAppStatusBar } from './frontend/app-status-bar/app-status-bar'
-import { CopyToClipboardFrontend } from './frontend/copy-to-clipboard'
-import { CurrentScreenFrontend } from './frontend/current-screen'
-import { FocusFrontend } from './frontend/focus'
-import { ScreenSizeFrontend } from './frontend/screen-size'
-import { SoundFrontend } from './frontend/sound'
-import { StatusBarFrontend } from './frontend/status-bar/index'
-import { TimeFrontend } from './frontend/time'
+import * as FrontendFrontend from './frontend/frontend'
 import { ToastFrontend } from './frontend/toast'
-import { VisibilityFrontend } from './frontend/visibility'
 import * as LangFrontend from './lang/frontend'
 import * as ProfileFrontend from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
-import {
-  rpcContract,
-  type FrontendCtx,
-  type ModelFrontend,
-  type MsgFrontend,
-  type MsgToBackend,
-  type MsgToFrontend,
-} from './types'
+import { FrontendCtx, ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend, rpcContract } from './types'
 import * as WireFrontend from './wire/frontend'
 import { FrontendTransport } from './wire/transport/frontend'
 
@@ -71,8 +57,6 @@ export const initCtx = async (): Promise<FrontendCtx> => {
   })
 
   const rpc = RPC.initClient(httpClient, rpcContract)
-
-  // const dbConnSql = dbConnSqlNoop
 
   const dbConnSql = await DbConnSql({
     t: 'powersync-client',
@@ -105,9 +89,9 @@ const toFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx =
     t: Translator(input.model.lang.lang),
     profiles: input.model.profile.profiles,
     now: input.ctx.now,
-    documentVisibilityState: input.model.visibility.documentVisibilityState,
-    currentScreen: input.model.currentScreen.currentScreen,
-    screenSize: input.model.screenSize.screenSize,
+    documentVisibilityState: input.model.frontend.visibility.documentVisibilityState,
+    currentScreen: input.model.frontend.currentScreen.currentScreen,
+    screenSize: input.model.frontend.screenSize.screenSize,
     parentScreen: null,
   }
   switch (input.model.auth.currentUser.t) {
@@ -137,57 +121,57 @@ const toTransportConfig = (input: {
 }
 
 export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
-  const screen = CurrentScreenFrontend.init({ location: input.ctx.location })
-  const visibility = VisibilityFrontend.init({ stored: input.ctx.stored })
-  const screenSize = ScreenSizeFrontend.init()
+  const frontend = FrontendFrontend.init({
+    ctx: {
+      ...input.ctx,
+      currentScreen: { t: 'login', n: 'auth-login' },
+      t: Translator(input.ctx.navigatorLanguage),
+      documentVisibilityState: 'visible',
+      profiles: {},
+      screenSize: 'mobile',
+      parentScreen: null,
+    },
+    location: input.ctx.location,
+    stored: input.ctx.stored,
+  })
 
   const ctx: AnonymousFrontendCtx = {
     ...input.ctx,
-    currentScreen: screen.model.currentScreen,
+    currentScreen: frontend.model.currentScreen.currentScreen,
     t: Translator(input.ctx.navigatorLanguage),
-    documentVisibilityState: visibility.model.documentVisibilityState,
+    documentVisibilityState: frontend.model.visibility.documentVisibilityState,
     profiles: {},
-    screenSize: screenSize.model.screenSize,
+    screenSize: frontend.model.screenSize.screenSize,
     parentScreen: null,
   }
 
   const lang = LangFrontend.init({ ctx, stored: input.ctx.stored })
-  const toast = ToastFrontend.init({ stored: input.ctx.stored, ctx })
   const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire }, stored: input.ctx.stored })
   const auth = AuthFrontend.init({ stored: input.ctx.stored, ctx })
   const space = SpacesFrontend.init({ ctx, stored: input.ctx.stored })
   const profile = ProfileFrontend.init({ ctx: { ...ctx, parentScreen: null }, stored: input.ctx.stored })
-  const sound = SoundFrontend.init({ ctx, stored: input.ctx.stored })
-  const statusBar = StatusBarFrontend.init({ stored: input.ctx.stored })
-  const focus = FocusFrontend.init()
-  const copyToClipboard = CopyToClipboardFrontend.init()
-  const time = TimeFrontend.init()
 
   const initialModel: ModelFrontend = {
-    time: time.model,
-    focus: focus.model,
-    statusBar: statusBar.model,
-    currentScreen: screen.model,
-    toast: toast.model,
-    wire: wire.model,
-    sound: sound.model,
-    visibility: visibility.model,
+    frontend: frontend.model,
     spaces: space.model,
+    wire: wire.model,
     auth: auth.model,
     profile: profile.model,
     lang: lang.model,
-    screenSize: screenSize.model,
-    copyToClipboard: copyToClipboard.model,
   }
 
-  const initialEff = Eff.batch<MsgFrontend>([screen.eff, Eff.tag('auth', auth.eff), Eff.tag('lang', lang.eff)])
+  const initialEff = Eff.batch<MsgFrontend>([
+    Eff.tag('frontend', frontend.eff),
+    Eff.tag('auth', auth.eff),
+    Eff.tag('lang', lang.eff),
+  ])
 
   const initialCmd = Msg.batch<AppFrontendCmd<{ MsgToBackend: MsgToBackend; MsgFrontend: MsgFrontend }>>(
     AppFrontendCmd.tag('spaces', space.msgCmd),
     AppFrontendCmd.tag('profile', profile.msgCmd),
     AppFrontendCmd.tag('auth', auth.msgCmd),
     AppFrontendCmd.tag('lang', lang.msgCmd),
-    preloadSound(Object.values(APP_SOUND)),
+    AppFrontendCmd.tag('frontend', frontend.msgCmd),
   )
 
   const updated = updateLoop(input.ctx, {
@@ -300,12 +284,6 @@ const updateChild = (input: {
     msgCmd: input.msgCmd?.t === 'auth' ? input.msgCmd : null,
   })
 
-  const screen = CurrentScreenFrontend.update({
-    model: input.model.currentScreen,
-    msg: input.msg?.t === 'current-screen' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'current-screen' ? input.msgCmd : null,
-  })
-
   const wire = WireFrontend.update({
     ctx: frontendCtx,
     model: input.model.wire,
@@ -315,114 +293,55 @@ const updateChild = (input: {
     transport: input.ctx.transport,
   })
 
-  const sound = SoundFrontend.update({
-    model: input.model.sound,
-    msg: input.msg?.t === 'sound' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'sound' ? input.msgCmd : null,
-    ctx: frontendCtx,
-  })
-
-  const visibility = VisibilityFrontend.update({
-    model: input.model.visibility,
-    msg: input.msg?.t === 'visibility' ? input.msg.c : null,
-  })
-
-  const statusBar = StatusBarFrontend.update({
-    model: input.model.statusBar,
-    msg: input.msg?.t === 'status-bar' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'status-bar' ? input.msgCmd : null,
-  })
-
-  const toast = ToastFrontend.update({
-    model: input.model.toast,
-    msg: input.msg?.t === 'toast' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'toast' ? input.msgCmd : null,
-    ctx: frontendCtx,
-  })
-
   const lang = LangFrontend.update({
+    ctx: frontendCtx,
     model: input.model.lang,
     msg: input.msg?.t === 'lang' ? input.msg.c : null,
     msgCmd: null,
     msgBackend: input.msgBackend?.t === 'lang' ? input.msgBackend.c : null,
     msgEvt: input.msgEvt,
+  })
+
+  const frontend = FrontendFrontend.update({
     ctx: frontendCtx,
-  })
-
-  const screenSize = ScreenSizeFrontend.update({
-    model: input.model.screenSize,
-    msg: input.msg?.t === 'screen-size' ? input.msg.c : null,
-  })
-
-  const copyToClipboard = CopyToClipboardFrontend.update({
-    model: input.model.copyToClipboard,
-    msg: input.msg?.t === 'copy-to-clipboard' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'copy-to-clipboard' ? input.msgCmd : null,
-  })
-
-  const focus = FocusFrontend.update({
-    model: input.model.focus,
-    msg: input.msg?.t === 'focus' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'focus' ? input.msgCmd : null,
-  })
-
-  const time = TimeFrontend.update({
-    model: input.model.time,
-    msg: input.msg?.t === 'time' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'time' ? input.msgCmd : null,
+    model: input.model.frontend,
+    msg: input.msg?.t === 'frontend' ? input.msg.c : undefined,
+    msgBackend: input.msgBackend?.t === 'frontend' ? input.msgBackend.c : undefined,
+    msgEvt: input.msgEvt,
+    msgCmd: input.msgCmd?.n === 'frontend' ? input.msgCmd : undefined,
   })
 
   return {
     model: {
-      time: time.model,
-      focus: focus.model,
+      frontend: frontend.model,
       auth: auth.model,
-      visibility: visibility.model,
       profile: profile.model,
-      currentScreen: screen.model,
-      sound: sound.model,
       spaces: space.model,
-      statusBar: statusBar.model,
-      toast: toast.model,
       wire: wire.model,
       lang: lang.model,
-      screenSize: screenSize.model,
-      copyToClipboard: copyToClipboard.model,
     },
     eff: Eff.batch<MsgFrontend>([
       Eff.tag('auth', auth.eff),
-      Eff.tag('visibility', visibility.eff),
       Eff.tag('profile', profile.eff),
-      Eff.tag('current-screen', screen.eff),
-      Eff.tag('sound', sound.eff),
       Eff.tag('spaces', space.eff),
-      Eff.tag('toast', toast.eff),
       Eff.tag('wire', wire.eff),
       Eff.tag('lang', lang.eff),
-      Eff.tag('copy-to-clipboard', copyToClipboard.eff),
-      Eff.tag('focus', focus.eff),
-      Eff.tag('time', time.eff),
-      time.parentEff,
+      Eff.tag('frontend', frontend.eff),
     ]),
     msgEvt: Msg.batch<AppFrontendEvt>(
       auth.msgEvt,
       profile.msgEvt,
-      screen.msgEvt,
-      sound.msgEvt,
       space.msgEvt,
-      toast.msgEvt,
       wire.msgEvt,
       lang.msgEvt,
+      frontend.msgEvt,
     ),
     msgCmd: Msg.batch<AppFrontendCmd<{ MsgToBackend: MsgToBackend; MsgFrontend: MsgFrontend }>>(
       AppFrontendCmd.tag('auth', auth.msgCmd),
       AppFrontendCmd.tag('profile', profile.msgCmd),
       AppFrontendCmd.tag('spaces', space.msgCmd),
       AppFrontendCmd.tag('lang', lang.msgCmd),
-      statusBar.msgCmd,
-      screen.msgCmd,
-      sound.msgCmd,
-      toast.msgCmd,
+      AppFrontendCmd.tag('frontend', frontend.msgCmd),
     ),
   }
 }
@@ -432,15 +351,9 @@ export const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend })
 
   return Sub.batch<MsgFrontend>([
     Sub.tag('→', Sub.flat(input.ctx.transport.fromBackend)),
-    Sub.tag('visibility', VisibilityFrontend.subscriptions),
-    Sub.tag('focus', FocusFrontend.subscriptions),
-    Sub.tag('copy-to-clipboard', CopyToClipboardFrontend.subscriptions),
-    Sub.tag('time', TimeFrontend.subscriptions),
-    Sub.tag('screen-size', ScreenSizeFrontend.subscriptions),
-    Sub.tag('current-screen', CurrentScreenFrontend.subscriptions),
+    Sub.tag('frontend', FrontendFrontend.subscriptions({ ctx, model: input.model.frontend })),
     Sub.tag('wire', WireFrontend.subscriptions({ transport: input.ctx.transport })),
     Sub.tag('lang', LangFrontend.subscriptions({ ctx, model: input.model.lang })),
-    Sub.tag('toast', ToastFrontend.subscriptions({ ctx, model: input.model.toast })),
     Sub.tag('auth', AuthFrontend.subscriptions({ ctx, model: input.model.auth })),
     Sub.tag('spaces', SpacesFrontend.subscriptions({ ctx, model: input.model.spaces })),
   ])
@@ -467,8 +380,8 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
 
       <ToastFrontend.View
         ctx={frontendCtx}
-        model={input.model.toast}
-        dispatch={(c) => input.dispatch({ t: 'toast', c })}
+        model={input.model.frontend.toast}
+        dispatch={(c) => input.dispatch({ t: 'frontend', c: { t: 'toast', c } })}
       />
     </ViewAppRoot>
   )
@@ -479,7 +392,7 @@ const ViewScreen = (input: {
   model: ModelFrontend
   dispatch: (m: MsgFrontend) => void
 }) => {
-  switch (input.model.currentScreen.currentScreen.n) {
+  switch (input.model.frontend.currentScreen.currentScreen.n) {
     case 'lang':
       return (
         <LangFrontend.View
@@ -520,7 +433,10 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
         <IntersectionObserverEmitter
           id='app-intersection-observer'
           onVisible={() =>
-            input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth-login' } } })
+            input.dispatch({
+              t: 'frontend',
+              c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth-login' } } },
+            })
           }
         />
       )
@@ -553,7 +469,10 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
         <IntersectionObserverEmitter
           id='app-intersection-observer'
           onVisible={() =>
-            input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: { n: 'spaces', t: 'space-list' } } })
+            input.dispatch({
+              t: 'frontend',
+              c: { t: 'current-screen', c: { t: 'clicked-link', screen: { n: 'spaces', t: 'space-list' } } },
+            })
           }
         />
       )
@@ -570,7 +489,8 @@ const toScreenLayoutProps = (input: {
 
   const screenSpace: Screen = { n: 'spaces', t: 'space-list' }
   const screenProfile: Screen = { n: 'profile', t: 'profile', userId: ctx.currentUser.userId }
-  const pushSpaceList = () => input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } })
+  const pushSpaceList = () =>
+    input.dispatch({ t: 'frontend', c: { t: 'current-screen', c: { t: 'clicked-link', screen: screenSpace } } })
   return {
     id: 'app-screen-layout',
     parentScreen: null,
@@ -592,16 +512,19 @@ const toScreenLayoutProps = (input: {
           {
             label: ctx.t('spaces.spaces'),
             icon: (input) => <IconGamepad {...input} />,
-            color: input.model.currentScreen.currentScreen.n === 'spaces' ? 'selected' : 'inherit',
+            color: input.model.frontend.currentScreen.currentScreen.n === 'spaces' ? 'selected' : 'inherit',
             onClick: pushSpaceList,
             key: ctx.t('spaces.spaces'),
           },
           {
             label: ctx.t('profile.profile'),
             icon: (input) => <IconUserCircle {...input} />,
-            color: input.model.currentScreen.currentScreen.n === 'profile' ? 'selected' : 'inherit',
+            color: input.model.frontend.currentScreen.currentScreen.n === 'profile' ? 'selected' : 'inherit',
             onClick() {
-              input.dispatch({ t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } })
+              input.dispatch({
+                t: 'frontend',
+                c: { t: 'current-screen', c: { t: 'clicked-link', screen: screenProfile } },
+              })
             },
             key: ctx.t('profile.profile'),
           },

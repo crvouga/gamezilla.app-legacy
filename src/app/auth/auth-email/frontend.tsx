@@ -128,6 +128,7 @@ export const update = ({
       model: model,
       msgCmd: [
         {
+          n: 'frontend',
           t: 'current-screen',
           c: {
             t: 'back',

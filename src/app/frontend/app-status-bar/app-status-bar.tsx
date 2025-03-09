@@ -15,8 +15,8 @@ export const ViewAppStatusBar = (input: {
     <div className={cn(input.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed right-0 top-0 z-10 w-fit')}>
       <StatusBarFrontend.View
         ctx={input.ctx}
-        model={input.model.statusBar}
-        dispatch={(c) => input.dispatch({ t: 'status-bar', c })}
+        model={input.model.frontend.statusBar}
+        dispatch={(c) => input.dispatch({ t: 'frontend', c: { t: 'status-bar', c } })}
         slots={{
           topBar: (props) => {
             const iconSize = input.ctx.screenSize === 'mobile' ? 'size-3' : 'size-4'
@@ -33,7 +33,7 @@ export const ViewAppStatusBar = (input: {
               >
                 <WireFrontend.ViewDot ctx={input.ctx} model={input.model.wire} className={iconSize} />
                 <IconLanguage className={iconSize} />
-                <SoundFrontend.ViewIcon model={input.model.sound} className={iconSize} />
+                <SoundFrontend.ViewIcon model={input.model.frontend.sound} className={iconSize} />
                 {/* <IconGear className={iconSize} /> */}
               </button>
             )
@@ -54,8 +54,8 @@ export const ViewAppStatusBar = (input: {
 
               <SoundFrontend.ViewSoundListItem
                 ctx={input.ctx}
-                model={input.model.sound}
-                dispatch={(c) => input.dispatch({ t: 'sound', c })}
+                model={input.model.frontend.sound}
+                dispatch={(c) => input.dispatch({ t: 'frontend', c: { t: 'sound', c } })}
               />
             </>
           ),
