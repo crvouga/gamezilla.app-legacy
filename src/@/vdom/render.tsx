@@ -13,7 +13,7 @@ export const Renderer = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<R
       const Inferno = await import('inferno')
       // @ts-expect-error We're using react types of vdom
       createPortal = Inferno.createPortal
-      return function render(vDom) {
+      return (vDom) => {
         Inferno.render(vDom, root)
       }
     }
@@ -22,7 +22,7 @@ export const Renderer = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<R
       const [Preact, PreactCompat] = await Promise.all([import('preact'), import('preact/compat')])
       // @ts-expect-error We're using react types of vdom
       createPortal = PreactCompat.createPortal
-      return function render(vDom) {
+      return (vDom) => {
         Preact.render(vDom, root)
       }
     }
@@ -36,7 +36,7 @@ export const Renderer = async (vDomImpl: VDomImpl, root: HTMLElement): Promise<R
       ])
       const reactRoot = ReactDOMClient.createRoot(root)
       createPortal = ReactDOM.createPortal
-      return function render(vDom) {
+      return (vDom) => {
         reactRoot.render(<React.StrictMode>{vDom}</React.StrictMode>)
       }
     }
