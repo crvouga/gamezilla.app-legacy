@@ -94,10 +94,9 @@ const ViewSlideHeading = (input: { slideIndex: number; puzzleIds: PuzzleId[] }) 
 
   if (!hasPuzzles) return null
 
-  const slideTitle = `${startPosition} - ${endPositionPuzzle}`
   return (
     <Typography
-      text={TranslatedText.of(slideTitle)}
+      text={TranslatedText.of(`${startPosition} - ${endPositionPuzzle}`)}
       className='flex w-full items-center justify-start p-1 text-2xl'
       role='heading'
     />
@@ -113,26 +112,53 @@ const ViewGrid = (input: {
 
   return (
     <div role='grid' className='grid aspect-square w-full grid-cols-5 grid-rows-6'>
-      {range2d({ x: COLUMN_COUNT, y: ROW_COUNT }).map(({ x, y }) => {
-        const index = toIndex({ x, y }) + indexOffset
-        const puzzleId = input.puzzleIds[index] ?? null
-        const empty = index >= input.puzzleIds.length
-        return (
-          <div
-            key={`${input.slideIndex}-${y}-${x}`}
-            role='gridcell'
-            className='flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16'
-          >
-            {input.renderCell({ x, y, puzzleId, empty, index })}
-          </div>
-        )
+      {range2d({ x: COLUMN_COUNT, y: ROW_COUNT }).map(({ x, y }) => (
+        <ViewGridCell
+          key={`${x}-${y}`}
+          x={x}
+          y={y}
+          indexOffset={indexOffset}
+          puzzleIds={input.puzzleIds}
+          renderCell={input.renderCell}
+        />
+      ))}
+    </div>
+  )
+}
+
+const ViewGridCell = (input: {
+  x: number
+  y: number
+  indexOffset: number
+  puzzleIds: PuzzleId[]
+  renderCell: (input: { x: number; y: number; index: number; puzzleId: PuzzleId | null; empty: boolean }) => VDom
+}) => {
+  const index = toIndex(input) + input.indexOffset
+  const puzzleId = input.puzzleIds[index] ?? null
+  const empty = index >= input.puzzleIds.length
+
+  return (
+    <div
+      role='gridcell'
+      className='flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16'
+    >
+      {input.renderCell({
+        x: input.x,
+        y: input.y,
+        puzzleId,
+        empty,
+        index,
       })}
     </div>
   )
 }
 
 const range2d = (input: { x: number; y: number }): { x: number; y: number }[] => {
-  return Array.from({ length: input.y }).flatMap((_, y) => Array.from({ length: input.x }).map((_, x) => ({ x, y })))
+  return range(input.y).flatMap((y) => range(input.x).map((x) => ({ x, y })))
+}
+
+const range = (length: number): number[] => {
+  return Array.from({ length }, (_, i) => i)
 }
 
 const ViewAddCell = (input: { onClick?: () => void }) => {
