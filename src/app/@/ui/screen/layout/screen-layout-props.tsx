@@ -1,8 +1,9 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
+import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { VDom } from '~/@/vdom/vdom'
-import { ScreenSize } from '../screen-size'
 import { ScreenActionBarProps } from '../action-bar/screen-action-bar-props'
+import { ScreenSize } from '../screen-size'
 
 export type ScreenLayoutActionBarProps = Partial<ScreenActionBarProps> & {
   variant: ScreenActionBarProps['variant']
@@ -29,7 +30,7 @@ export type PostActionProps = {
 
 export type NavBarBackProps = {
   onClick?: () => void
-  renderSurface?: (input: { reference: VDom }) => VDom
+  renderSurface?: (input: { dropDown: DropDownConfig }) => VDom
 }
 
 export type NavBarProps = {

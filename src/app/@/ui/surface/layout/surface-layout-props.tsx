@@ -1,16 +1,9 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { DropDownAlignment } from '~/@/ui/drop-down/drop-down-alignment'
-import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'
+import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '../../screen/screen-size'
-
-export type SurfaceLayoutDropDownProps = {
-  position?: DropDownPosition
-  alignment?: DropDownAlignment
-  reference?: VDom
-}
 
 export type SurfaceLayoutProps = {
   id: string
@@ -27,7 +20,7 @@ export type SurfaceLayoutProps = {
   drawer?: {
     position?: DrawerPosition
   }
-  dropDown?: SurfaceLayoutDropDownProps
+  dropDown?: DropDownConfig
   body?: {
     render?: () => VDom
   }

@@ -179,15 +179,8 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
     navBar: {
       back: {
         onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
-        renderSurface: ({ reference }) => (
-          <SaveChangesFrontend.ViewSurface
-            {...input}
-            dropDown={{
-              reference,
-              alignment: 'starting',
-              position: 'bottom',
-            }}
-          />
+        renderSurface: ({ dropDown }) => (
+          <SaveChangesFrontend.ViewUnsavedChangesSurface {...input} dropDown={dropDown} />
         ),
       },
       title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),

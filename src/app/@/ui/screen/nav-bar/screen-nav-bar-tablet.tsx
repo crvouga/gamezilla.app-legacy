@@ -1,5 +1,6 @@
 import type { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
+import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
@@ -13,24 +14,28 @@ export const ScreenNavBarTablet = (input: {
   }
   back?: {
     onClick?: () => void
-    renderSurface?: (input: { reference: VDom }) => VDom
+    renderSurface?: (input: { dropDown: DropDownConfig }) => VDom
   } | null
   renderEnd?: () => VDom
 }) => {
-  const renderSurface = input.back?.renderSurface ?? (({ reference }: { reference: VDom }) => reference)
+  const renderSurface = input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference)
   return (
     <ScreenNavBarTabletRoot>
       {input.back &&
         renderSurface({
-          reference: (
-            <IconButton
-              onClick={input.back.onClick}
-              className='-ml-2'
-              size='lg'
-              label={input.ctx.t('app.exit')}
-              renderIcon={(inputIcon) => <IconArrowLeft {...inputIcon} />}
-            />
-          ),
+          dropDown: {
+            alignment: 'starting',
+            position: 'bottom',
+            reference: (
+              <IconButton
+                onClick={input.back.onClick}
+                className='-ml-2'
+                size='lg'
+                label={input.ctx.t('app.exit')}
+                renderIcon={(inputIcon) => <IconArrowLeft {...inputIcon} />}
+              />
+            ),
+          },
         })}
 
       <div className='flex flex-1 flex-col truncate'>

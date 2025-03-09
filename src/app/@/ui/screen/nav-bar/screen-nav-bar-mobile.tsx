@@ -1,5 +1,6 @@
 import type { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
+import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton, IconButtonEmpty } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
@@ -13,25 +14,29 @@ export const ScreenNavBarMobile = (input: {
   }
   back?: {
     onClick?: () => void
-    renderSurface?: (input: { reference: VDom }) => VDom
+    renderSurface?: (input: { dropDown: DropDownConfig }) => VDom
   } | null
 }) => {
   if (!input.title && !input.subtitle && !input.back) return null
 
-  const renderSurface = input.back?.renderSurface ?? (({ reference }: { reference: VDom }) => reference)
+  const renderSurface = input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference)
   const shouldRenderBack = input.back && typeof input.back.onClick === 'function'
   return (
     <div className='flex h-16 w-full shrink-0 items-center truncate px-6 text-center'>
       {shouldRenderBack &&
         renderSurface({
-          reference: (
-            <IconButton
-              onClick={input.back?.onClick}
-              className='-ml-2'
-              label={input.ctx.t('app.exit')}
-              renderIcon={(inputIcon) => <IconArrowLeft {...inputIcon} />}
-            />
-          ),
+          dropDown: {
+            alignment: 'starting',
+            position: 'bottom',
+            reference: (
+              <IconButton
+                onClick={input.back?.onClick}
+                className='-ml-2'
+                label={input.ctx.t('app.exit')}
+                renderIcon={(inputIcon) => <IconArrowLeft {...inputIcon} />}
+              />
+            ),
+          },
         })}
 
       <div className='flex flex-1 flex-col truncate'>

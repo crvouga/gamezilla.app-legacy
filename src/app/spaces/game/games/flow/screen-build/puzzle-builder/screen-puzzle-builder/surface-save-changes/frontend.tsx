@@ -1,9 +1,9 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Loading, Result, isOk } from '~/@/result'
 import { IconFloppyDisk } from '~/@/ui'
+import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { APP_SOUND, playSound, showErrSm, showOkSm } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
-import { SurfaceLayoutDropDownProps } from '~/app/@/ui/surface/layout/surface-layout-props'
 import { SurfaceUnsavedChanges } from '~/app/@/ui/surface/unsaved-changes/surface-unsaved-changes'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { ModeEdit } from '../../../../@/mode-edit'
@@ -230,7 +230,7 @@ const updateDbSavedPuzzle: FrontendModule['update'] = (input) => {
 //
 //
 
-const ViewSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDown?: SurfaceLayoutDropDownProps }) => {
+const ViewUnsavedChangesSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDown: DropDownConfig }) => {
   return (
     <SurfaceUnsavedChanges
       dropDown={input.dropDown}
@@ -238,11 +238,7 @@ const ViewSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDown?:
       title={input.ctx.t('app.save-changes?')}
       body={input.ctx.t('unsaved-changes.unsaved-changes-warning')}
       open={input.model.puzzleBuilderOpened === 'unsaved-changes'}
-      onClose={() =>
-        input.dispatch({
-          t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit',
-        })
-      }
+      onClose={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit' })}
       saveText={input.ctx.t('app.save')}
       onSave={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit' })}
       saveLoading={input.model.puzzleSaveChangesRequest?.t === 'loading'}
@@ -268,7 +264,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
 }
 
 export const SaveChangesFrontend = {
-  ViewSurface,
+  ViewUnsavedChangesSurface,
   viewActions,
   update,
 }

@@ -1,11 +1,11 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Button, Typography } from '~/@/ui'
+import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { Frag } from '~/@/ui/frag'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { ScreenSize } from '../../screen/screen-size'
 import { SurfaceLayout } from '../layout/surface-layout'
-import { SurfaceLayoutDropDownProps } from '../layout/surface-layout-props'
 
 export type SurfaceUnsavedChangesProps = {
   ctx: {
@@ -15,7 +15,7 @@ export type SurfaceUnsavedChangesProps = {
   title: TranslatedText
   body: TranslatedText
   open: boolean
-  dropDown?: SurfaceLayoutDropDownProps
+  dropDown?: DropDownConfig
   onClose: () => void
   //
   saveText: TranslatedText
