@@ -83,7 +83,7 @@ const View: FrontendModule['View'] = (input) => {
       renderBody={() => (
         <PackPuzzleGridUI.View
           id='pack-puzzle-grid'
-          slideIndex={screen.slideIndex}
+          currentSlideIndex={screen.slideIndex}
           onSlideIndexChanged={(slideIndex) =>
             input.dispatch({
               t: 'got-msg-space',

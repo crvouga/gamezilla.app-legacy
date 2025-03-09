@@ -41,7 +41,7 @@ const View: FrontendModule['View'] = (input) => {
       renderBody={() => (
         <PackPuzzleGridUI.View
           id={packBuilder.pack.id}
-          slideIndex={ScreenPackBuildSpace.toSlideIndex(packBuilder)}
+          currentSlideIndex={ScreenPackBuildSpace.toSlideIndex(packBuilder)}
           puzzleIds={packBuilder.pack.puzzleIds}
           onSlideIndexChanged={(newSlideIndex) => {
             input.dispatch({

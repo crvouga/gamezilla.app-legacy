@@ -10,7 +10,7 @@ const PER_SLIDE_ITEM_COUNT = COLUMN_COUNT * ROW_COUNT
 
 const View = (input: {
   id?: string
-  slideIndex?: number
+  currentSlideIndex?: number
   onSlideIndexChanged?: (slideIndex: number) => void
   puzzleIds?: PuzzleId[]
   onClickPuzzleCell?: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
@@ -19,62 +19,67 @@ const View = (input: {
     onClick?: () => void
   }
 }) => {
-  const slides: VDom[] = []
   const puzzleIds = input.puzzleIds ?? []
   const cellCount = (puzzleIds.length ?? 0) + (input.addCell?.include ? 1 : 0)
-
   const slideCount = Math.ceil(cellCount / (COLUMN_COUNT * ROW_COUNT))
-
-  for (let slideIndex = 0; slideIndex < slideCount; slideIndex++) {
-    slides.push(
-      <Swiper.Slide key={slideIndex} className='flex h-full w-3/4 flex-col items-center justify-center'>
-        <div className='flex w-fit flex-col items-center justify-center gap-1'>
-          <ViewSlideHeading slideIndex={slideIndex} puzzleIds={puzzleIds} />
-
-          <ViewPackPuzzleGridSlide
-            key={slideIndex}
-            slideIndex={slideIndex}
-            puzzleIds={input.puzzleIds ?? []}
-            renderCell={(inputCell) => {
-              if (inputCell.index === puzzleIds.length && input.addCell?.include) {
-                return <ViewAddCell onClick={input.addCell?.onClick} />
-              }
-
-              const { puzzleId } = inputCell
-
-              if (!puzzleId) {
-                return <ViewEmptyCell />
-              }
-
-              return (
-                <ViewPuzzleCell
-                  onClick={() => input.onClickPuzzleCell?.({ puzzleId, puzzleIndex: inputCell.index })}
-                  index={inputCell.index}
-                />
-              )
-            }}
-          />
-        </div>
-      </Swiper.Slide>,
-    )
-  }
 
   return (
     <div className='flex h-full w-full flex-col gap-4 py-6'>
       <Swiper.Container
-        onSlideIndexChanged={(slideIndex) => {
-          input.onSlideIndexChanged?.(slideIndex)
-        }}
+        onSlideIndexChanged={(newSlideIndex) => input.onSlideIndexChanged?.(newSlideIndex)}
         id={input.id ?? 'pack-puzzle-grid-swiper-container'}
-        slideIndex={input.slideIndex ?? 0}
+        slideIndex={input.currentSlideIndex ?? 0}
         className='flex h-full w-full items-center justify-center'
       >
-        {slides}
+        {Array.from({ length: slideCount }).map((_, slideIndex) => (
+          <Swiper.Slide key={slideIndex} className='flex h-full w-3/4 flex-col items-center justify-center'>
+            <ViewSlideContent
+              puzzleIds={puzzleIds}
+              slideIndex={slideIndex}
+              onClickPuzzleCell={input.onClickPuzzleCell}
+              addCell={input.addCell}
+            />
+          </Swiper.Slide>
+        ))}
       </Swiper.Container>
-      <PaginationDots
-        count={slideCount}
-        activeIndex={input.slideIndex ?? 0}
-        // onClick={input.onSlideIndexChanged}
+
+      <PaginationDots count={slideCount} activeIndex={input.currentSlideIndex ?? 0} />
+    </div>
+  )
+}
+
+const ViewSlideContent = (input: {
+  slideIndex: number
+  puzzleIds: PuzzleId[]
+  addCell?: {
+    include: boolean
+    onClick?: () => void
+  }
+  onClickPuzzleCell?: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
+}) => {
+  return (
+    <div className='flex w-fit flex-col items-center justify-center gap-1'>
+      <ViewSlideHeading slideIndex={input.slideIndex} puzzleIds={input.puzzleIds} />
+
+      <ViewGrid
+        slideIndex={input.slideIndex}
+        puzzleIds={input.puzzleIds ?? []}
+        renderCell={(inputCell) => {
+          const isAddCell = inputCell.index === input.puzzleIds.length && input.addCell?.include
+
+          if (isAddCell) return <ViewAddCell onClick={input.addCell?.onClick} />
+
+          const { puzzleId } = inputCell
+
+          if (!puzzleId) return <ViewEmptyCell />
+
+          return (
+            <ViewPuzzleCell
+              onClick={() => input.onClickPuzzleCell?.({ puzzleId, puzzleIndex: inputCell.index })}
+              index={inputCell.index}
+            />
+          )
+        }}
       />
     </div>
   )
@@ -99,44 +104,35 @@ const ViewSlideHeading = (input: { slideIndex: number; puzzleIds: PuzzleId[] }) 
   )
 }
 
-const ViewPackPuzzleGridSlide = (input: {
+const ViewGrid = (input: {
   slideIndex: number
   puzzleIds: PuzzleId[]
   renderCell: (input: { x: number; y: number; index: number; puzzleId: PuzzleId | null; empty: boolean }) => VDom
 }) => {
-  const columns: VDom[] = []
   const indexOffset = input.slideIndex * (COLUMN_COUNT * ROW_COUNT)
 
-  for (let y = 0; y < ROW_COUNT; y++) {
-    const row: VDom[] = []
-    for (let x = 0; x < COLUMN_COUNT; x++) {
-      const index = toIndex({ x, y }) + indexOffset
-      const puzzleId = input.puzzleIds[index] ?? null
-      const empty = index >= input.puzzleIds.length
-
-      row.push(
-        <div
-          role='gridcell'
-          key={`${y}-${x}`}
-          className='flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16'
-        >
-          {input.renderCell({ x, y, puzzleId, empty, index })}
-        </div>,
-      )
-    }
-
-    columns.push(
-      <div key={y} className='flex w-full items-center justify-center'>
-        {row}
-      </div>,
-    )
-  }
-
   return (
-    <div role='grid' className='aspect-square w-full'>
-      {columns}
+    <div role='grid' className='grid aspect-square w-full grid-cols-5 grid-rows-6'>
+      {range2d({ x: COLUMN_COUNT, y: ROW_COUNT }).map(({ x, y }) => {
+        const index = toIndex({ x, y }) + indexOffset
+        const puzzleId = input.puzzleIds[index] ?? null
+        const empty = index >= input.puzzleIds.length
+        return (
+          <div
+            key={`${input.slideIndex}-${y}-${x}`}
+            role='gridcell'
+            className='flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16'
+          >
+            {input.renderCell({ x, y, puzzleId, empty, index })}
+          </div>
+        )
+      })}
     </div>
   )
+}
+
+const range2d = (input: { x: number; y: number }): { x: number; y: number }[] => {
+  return Array.from({ length: input.y }).flatMap((_, y) => Array.from({ length: input.x }).map((_, x) => ({ x, y })))
 }
 
 const ViewAddCell = (input: { onClick?: () => void }) => {
