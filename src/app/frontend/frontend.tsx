@@ -99,6 +99,10 @@ export const update = <TParentMsg,>(input: {
     MsgFrontend: MsgFrontend
   }>[]
 } => {
+  if (!input.msg && !input.msgBackend && !input.msgEvt && !input.msgCmd) {
+    return { model: input.model }
+  }
+
   const screen = CurrentScreenFrontend.update({
     model: input.model.currentScreen,
     msg: input.msg?.t === 'current-screen' ? input.msg.c : null,

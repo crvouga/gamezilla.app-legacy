@@ -39,12 +39,13 @@ const init: FrontendModule['init'] = ({ ctx }) => {
 }
 
 const update: FrontendModule['update'] = (input) => {
+  if (!input.msgBackend && !input.msgEvt && !input.msgCmd && !input.msg) {
+    return { model: input.model }
+  }
+
   const updated = updateLoop({
     ...input,
-    ctx: {
-      ...input.ctx,
-      profiles: { ...input.ctx.profiles, ...input.msgBackend?.profiles },
-    },
+    ctx: { ...input.ctx, profiles: { ...input.ctx.profiles, ...input.msgBackend?.profiles } },
   })
 
   return {

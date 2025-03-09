@@ -69,6 +69,10 @@ export const update = <TMsgToFrontend extends Record<string, unknown>, TMsgToBac
     MsgToFrontend: TMsgToFrontend
   }>
 }): Output => {
+  if (!msg && !msgBackend && !msgCmd) {
+    return { model }
+  }
+
   return andThen<ModelFrontend, Output>(
     { model },
     (model) => updateFromMsg({ ctx, msg, model, transport }),

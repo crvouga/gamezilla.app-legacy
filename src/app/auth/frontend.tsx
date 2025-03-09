@@ -50,6 +50,10 @@ export const init: FrontendModule['init'] = (input) => {
 //
 
 export const update: FrontendModule['update'] = (input) => {
+  if (!input.msg && !input.msgBackend && !input.msgEvt && !input.msgCmd) {
+    return { model: input.model }
+  }
+
   return AppFrontendModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),

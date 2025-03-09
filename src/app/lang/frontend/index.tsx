@@ -39,6 +39,8 @@ export const init: FrontendModule['init'] = ({ stored, ctx }) => {
 //
 
 export const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
+  if (!msg) return { model }
+
   switch (msg?.t) {
     case 'translator.loaded': {
       const loadingNew: TranslationLoading = {
