@@ -124,11 +124,13 @@ const View: FrontendModule['View'] = (input) => {
         ctx={input.ctx}
         navBar={{
           title: input.ctx.t('flow.level', puzzleIndex + 1),
-          onBack: () =>
-            input.dispatch({
-              t: 'got-msg-space',
-              c: { userId: input.ctx.currentUser.userId, t: 'user-clicked-exit-play-puzzle-screen' },
-            }),
+          back: {
+            onClick: () =>
+              input.dispatch({
+                t: 'got-msg-space',
+                c: { userId: input.ctx.currentUser.userId, t: 'user-clicked-exit-play-puzzle-screen' },
+              }),
+          },
         }}
         renderBody={() => (
           <div

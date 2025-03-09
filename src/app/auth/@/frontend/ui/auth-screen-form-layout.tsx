@@ -24,7 +24,9 @@ export const AuthScreenFormLayout = (input: {
     <AuthScreenLayout
       ctx={input.ctx}
       navBar={{
-        onBack: input.onBack,
+        back: {
+          onClick: input.onBack,
+        },
         title: input.title,
       }}
       center={false}

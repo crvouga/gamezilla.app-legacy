@@ -148,7 +148,9 @@ export const View = ({
         ctx={ctx}
         navBar={{
           title,
-          onBack: onQuit,
+          back: {
+            onClick: onQuit,
+          },
         }}
         renderCoverArt={renderCoverArt}
         renderBody={() => (

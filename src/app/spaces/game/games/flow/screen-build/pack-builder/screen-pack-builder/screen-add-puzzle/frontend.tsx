@@ -76,14 +76,16 @@ const View: FrontendModule['View'] = (input) => {
       ctx={input.ctx}
       navBar={{
         title: input.ctx.t('flow.add-puzzle'),
-        onBack: () =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
-              userId: input.ctx.currentUser.userId,
-            },
-          }),
+        back: {
+          onClick: () =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
+                userId: input.ctx.currentUser.userId,
+              },
+            }),
+        },
       }}
       patchAction={{
         onSubmit: () => {

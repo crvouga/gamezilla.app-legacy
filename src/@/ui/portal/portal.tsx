@@ -27,7 +27,7 @@ const Entrance = (input: { portalId: string; children: VDom }) => {
   const element = getExit(input.portalId)
   if (!element) return input.children
   return (
-    <div data-portal-entrance data-portal-id={input.portalId}>
+    <div key={input.portalId} data-portal-entrance data-portal-id={input.portalId}>
       {createPortal?.(input.children, element)}
     </div>
   )

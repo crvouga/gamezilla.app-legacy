@@ -64,11 +64,13 @@ const View: FrontendModule['View'] = (input) => {
       id='screen-open-pack'
       navBar={{
         title: input.ctx.t('flow.select-a-pack'),
-        onBack: () =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: { t: 'user-clicked-exit-play-mode-button', userId: input.ctx.currentUser.userId },
-          }),
+        back: {
+          onClick: () =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: { t: 'user-clicked-exit-play-mode-button', userId: input.ctx.currentUser.userId },
+            }),
+        },
       }}
       renderBody={() => (
         <PackLoaderFrontend.ViewList

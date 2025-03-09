@@ -79,7 +79,7 @@ export const View = (props: {
       <ScreenLayoutHostSettingUpGame
         parentScreen={props.ctx.parentScreen}
         ctx={props.ctx}
-        navBar={{ title: props.title, onBack: props.onBack }}
+        navBar={{ title: props.title, back: { onClick: props.onBack } }}
       />
     )
   }
@@ -89,7 +89,7 @@ export const View = (props: {
       id='game-main-menu'
       parentScreen={props.ctx.parentScreen}
       ctx={props.ctx}
-      navBar={{ title: props.title, onBack: props.onBack }}
+      navBar={{ title: props.title, back: { onClick: props.onBack } }}
       renderCoverArt={props.renderCoverArt}
       renderBody={() => (
         <div className='flex w-full flex-col gap-6 px-6'>

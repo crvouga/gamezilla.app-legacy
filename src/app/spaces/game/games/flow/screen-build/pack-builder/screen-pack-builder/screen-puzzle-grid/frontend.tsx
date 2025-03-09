@@ -29,14 +29,16 @@ const View: FrontendModule['View'] = (input) => {
       ctx={input.ctx}
       navBar={{
         title: input.ctx.t('flow-pack-name', packBuilder.pack.name),
-        onBack: () =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-pack-builder.user-clicked-back-button',
-              userId: input.ctx.currentUser.userId,
-            },
-          }),
+        back: {
+          onClick: () =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                t: 'screen-pack-builder.user-clicked-back-button',
+                userId: input.ctx.currentUser.userId,
+              },
+            }),
+        },
       }}
       renderBody={() => (
         <PackPuzzleGridUI.View

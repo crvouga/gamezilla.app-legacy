@@ -153,7 +153,9 @@ const View: SpaceFrontendModule['View'] = (input) => {
               hostUsername: hostProfile.username,
             })
           : null,
-        onBack: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+        back: {
+          onClick: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+        },
       }}
       renderBody={() => (
         <div className='flex w-full flex-col gap-6'>
@@ -174,9 +176,9 @@ const View: SpaceFrontendModule['View'] = (input) => {
                 dropDown={{
                   position: 'bottom',
                   alignment: 'starting',
+                  reference: vDom,
                 }}
                 id='user-preview'
-                dropDownReference={vDom}
                 body={{
                   render: () => (
                     <SectionPersonDetails

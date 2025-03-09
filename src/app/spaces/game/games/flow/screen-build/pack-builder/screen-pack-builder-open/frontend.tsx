@@ -60,11 +60,13 @@ const View: FrontendModule['View'] = (input) => {
       ctx={input.ctx}
       navBar={{
         title: input.ctx.t('flow.pack-builder'),
-        onBack: () =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: { t: 'user-clicked-back-button', userId: input.ctx.currentUser.userId },
-          }),
+        back: {
+          onClick: () =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: { t: 'user-clicked-back-button', userId: input.ctx.currentUser.userId },
+            }),
+        },
       }}
       postAction={PackCreateNewFrontend.viewCreateAction(input)}
       renderBody={() => (

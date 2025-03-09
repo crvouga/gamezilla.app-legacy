@@ -11,20 +11,27 @@ export const ScreenNavBarTablet = (input: {
   ctx: {
     t: Translator
   }
-  onBack?: (() => void) | false | null
+  back?: {
+    onClick?: () => void
+    renderSurface?: (input: { reference: VDom }) => VDom
+  } | null
   renderEnd?: () => VDom
 }) => {
+  const renderSurface = input.back?.renderSurface ?? (({ reference }: { reference: VDom }) => reference)
   return (
     <ScreenNavBarTabletRoot>
-      {input.onBack && (
-        <IconButton
-          onClick={input.onBack}
-          className='-ml-2'
-          size='lg'
-          label={input.ctx.t('app.exit')}
-          renderIcon={(inputIcon) => <IconArrowLeft {...inputIcon} />}
-        />
-      )}
+      {input.back &&
+        renderSurface({
+          reference: (
+            <IconButton
+              onClick={input.back.onClick}
+              className='-ml-2'
+              size='lg'
+              label={input.ctx.t('app.exit')}
+              renderIcon={(inputIcon) => <IconArrowLeft {...inputIcon} />}
+            />
+          ),
+        })}
 
       <div className='flex flex-1 flex-col truncate'>
         {input.title && (
@@ -52,5 +59,5 @@ export const ScreenNavBarTablet = (input: {
 }
 
 export const ScreenNavBarTabletRoot = (input: { children: VDom }) => {
-  return <div className='flex h-24 w-full shrink-0 items-center truncate px-6'>{input.children}</div>
+  return <div className='flex h-24 w-full shrink-0 items-center px-6'>{input.children}</div>
 }

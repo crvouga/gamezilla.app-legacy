@@ -164,7 +164,9 @@ export const View = (input: {
       parentScreen={input.ctx.parentScreen}
       navBar={{
         title: input.ctx.t('auth-email.login-with-email'),
-        onBack: () => input.dispatch({ t: 'clicked-back' }),
+        back: {
+          onClick: () => input.dispatch({ t: 'clicked-back' }),
+        },
       }}
       patchAction={{
         onSubmit: () => input.dispatch({ t: 'clicked-send-login-link' }),

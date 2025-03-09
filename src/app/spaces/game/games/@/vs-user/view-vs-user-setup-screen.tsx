@@ -156,7 +156,9 @@ export const VsUserSetupScreen = ({
         ctx={ctx}
         navBar={{
           title,
-          onBack: onQuit,
+          back: {
+            onClick: onQuit,
+          },
         }}
         renderCoverArt={renderCoverArt}
         renderBody={() => <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />}

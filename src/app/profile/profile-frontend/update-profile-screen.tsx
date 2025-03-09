@@ -17,7 +17,9 @@ export const View = (input: { ctx: FrontendCtx; dispatch: (msg: MsgFrontend) => 
       parentScreen={input.ctx.parentScreen}
       navBar={{
         title: input.ctx.t('profile.edit-profile'),
-        onBack: () => input.dispatch({ t: 'clicked-back-button', from: { t: 'profile-update' } }),
+        back: {
+          onClick: () => input.dispatch({ t: 'clicked-back-button', from: { t: 'profile-update' } }),
+        },
       }}
       renderBody={() => (
         <div className='flex w-full flex-1 flex-col items-center gap-4'>

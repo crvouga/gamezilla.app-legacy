@@ -29,7 +29,9 @@ const View: SpaceFrontendModule['View'] = (input) => {
         ctx={spaceCtx}
         navBar={{
           title: input.ctx.t('spaces.games'),
-          onBack: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+          back: {
+            onClick: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+          },
         }}
       />
     )
@@ -42,7 +44,9 @@ const View: SpaceFrontendModule['View'] = (input) => {
       ctx={input.ctx}
       navBar={{
         title: input.ctx.t('spaces.games'),
-        onBack: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+        back: {
+          onClick: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+        },
       }}
       renderBody={() => <ViewHostGameSelection ctx={spaceCtx} dispatch={input.dispatch} />}
     />

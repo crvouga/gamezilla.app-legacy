@@ -16,13 +16,15 @@ const View = (input: {
       ctx={input.ctx}
       navBar={{
         title: input.ctx.t('profile.update-avatar'),
-        onBack: () =>
-          input.dispatch({
-            t: 'clicked-back-button',
-            from: {
-              t: 'profile-avatar',
-            },
-          }),
+        back: {
+          onClick: () =>
+            input.dispatch({
+              t: 'clicked-back-button',
+              from: {
+                t: 'profile-avatar',
+              },
+            }),
+        },
       }}
       renderBody={() => (
         <div className='flex w-full flex-1 flex-col gap-8 p-4'>

@@ -74,11 +74,13 @@ const View: FrontendModule['View'] = (input) => {
       id='screen-open-puzzle'
       navBar={{
         title: input.ctx.t('flow-pack-name', pack.name),
-        onBack: () =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: { t: 'user-clicked-exit-screen-open-pack', userId: input.ctx.currentUser.userId },
-          }),
+        back: {
+          onClick: () =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: { t: 'user-clicked-exit-screen-open-pack', userId: input.ctx.currentUser.userId },
+            }),
+        },
       }}
       renderBody={() => (
         <PackPuzzleGridUI.View

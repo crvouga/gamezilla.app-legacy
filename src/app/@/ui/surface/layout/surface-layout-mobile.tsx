@@ -5,7 +5,7 @@ import { SurfaceLayoutProps } from './surface-layout-props'
 export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
   return (
     <>
-      {props.dropDownReference}
+      {props.dropDown?.reference}
       <Drawer
         id='surface-layout'
         onClose={props.onClose ?? (() => {})}

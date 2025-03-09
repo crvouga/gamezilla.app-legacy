@@ -491,13 +491,13 @@ export const View = (input: {
                 <SurfaceLayout
                   id='dimensions'
                   ctx={input.ctx}
-                  dropDownReference={reference}
                   ariaLabel={input.ctx.t('app.dimensions')}
                   open={input.model.opened?.t === 'dimensions'}
                   onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
                   dropDown={{
                     position: 'start',
                     alignment: 'ending',
+                    reference,
                   }}
                   header={{
                     render: () => (

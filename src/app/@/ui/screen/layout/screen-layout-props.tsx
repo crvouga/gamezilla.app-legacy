@@ -27,10 +27,15 @@ export type PostActionProps = {
   submitDisabled: boolean
 }
 
+export type NavBarBackProps = {
+  onClick?: () => void
+  renderSurface?: (input: { reference: VDom }) => VDom
+}
+
 export type NavBarProps = {
   title?: TranslatedText | null
   subtitle?: TranslatedText | null
-  onBack?: () => void
+  back?: NavBarBackProps | null
 }
 
 export type ParentScreenProps = Omit<ScreenLayoutProps, 'ctx' | 'renderBody'>

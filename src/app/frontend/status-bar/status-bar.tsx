@@ -68,7 +68,9 @@ export const View = (props: {
       drawer={{
         position: 'top',
       }}
-      dropDownReference={props.slots.topBar({ onClick: () => props.dispatch({ t: 'clicked-status-bar' }) })}
+      dropDown={{
+        reference: props.slots.topBar({ onClick: () => props.dispatch({ t: 'clicked-status-bar' }) }),
+      }}
       id='status-bar-drawer'
       open={props.model.isOpen}
       onClose={() => props.dispatch({ t: 'closed-status-bar-drawer' })}

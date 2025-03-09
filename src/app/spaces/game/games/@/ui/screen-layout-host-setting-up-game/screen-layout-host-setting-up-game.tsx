@@ -11,7 +11,9 @@ export const ScreenLayoutHostSettingUpGame = (input: {
   navBar?: {
     title: TranslatedText
     subtitle?: TranslatedText | null
-    onBack?: () => void
+    back?: {
+      onClick?: () => void
+    }
   }
   ctx: {
     t: Translator

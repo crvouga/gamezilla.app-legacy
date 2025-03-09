@@ -1,10 +1,11 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Button, Typography } from '~/@/ui'
+import { Frag } from '~/@/ui/frag'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
-import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '../../screen/screen-size'
 import { SurfaceLayout } from '../layout/surface-layout'
+import { SurfaceLayoutDropDownProps } from '../layout/surface-layout-props'
 
 export type SurfaceUnsavedChangesProps = {
   ctx: {
@@ -14,7 +15,7 @@ export type SurfaceUnsavedChangesProps = {
   title: TranslatedText
   body: TranslatedText
   open: boolean
-  dropDownReference?: VDom
+  dropDown?: SurfaceLayoutDropDownProps
   onClose: () => void
   //
   saveText: TranslatedText
@@ -36,7 +37,7 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
       ariaLabel={input.title}
       onClose={input.onClose}
       open={input.open}
-      dropDownReference={input.dropDownReference}
+      dropDown={input.dropDown}
       drawer={{
         position: 'bottom',
       }}
@@ -45,7 +46,7 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
       }}
       body={{
         render: () => (
-          <>
+          <Frag>
             <Typography className='text-secondary p-4 px-6' variant='body' text={input.body} />
             <div className='flex w-full flex-col gap-4 p-4 px-6 pb-6'>
               <Button
@@ -60,7 +61,7 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
               <div className='w-full' />
               <Button className='w-full' text={input.cancelText} onClick={input.onCancel} />
             </div>
-          </>
+          </Frag>
         ),
       }}
     />

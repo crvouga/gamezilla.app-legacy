@@ -266,7 +266,9 @@ const ViewSurface = (
         submitLoading: isLoading(input.model.puzzleEditNameRequest),
         submitDisabled: input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name,
       }}
-      dropDownReference={input.reference}
+      dropDown={{
+        reference: input.reference,
+      }}
       body={{
         render: () => (
           <SurfaceBody>

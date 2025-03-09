@@ -3,6 +3,7 @@ import type { Translator } from '~/@/l18n/generated'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton, IconButtonEmpty } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
+import { VDom } from '~/@/vdom/vdom'
 
 export const ScreenNavBarMobile = (input: {
   title?: TranslatedText | null
@@ -10,20 +11,28 @@ export const ScreenNavBarMobile = (input: {
   ctx: {
     t: Translator
   }
-  onBack?: (() => void) | false | null
+  back?: {
+    onClick?: () => void
+    renderSurface?: (input: { reference: VDom }) => VDom
+  } | null
 }) => {
-  if (!input.title && !input.subtitle && !input.onBack) return null
+  if (!input.title && !input.subtitle && !input.back) return null
 
+  const renderSurface = input.back?.renderSurface ?? (({ reference }: { reference: VDom }) => reference)
+  const shouldRenderBack = input.back && typeof input.back.onClick === 'function'
   return (
     <div className='flex h-16 w-full shrink-0 items-center truncate px-6 text-center'>
-      {typeof input.onBack === 'function' && (
-        <IconButton
-          onClick={input.onBack}
-          className='-ml-2'
-          label={input.ctx.t('app.exit')}
-          renderIcon={(inputIcon) => <IconArrowLeft {...inputIcon} />}
-        />
-      )}
+      {shouldRenderBack &&
+        renderSurface({
+          reference: (
+            <IconButton
+              onClick={input.back?.onClick}
+              className='-ml-2'
+              label={input.ctx.t('app.exit')}
+              renderIcon={(inputIcon) => <IconArrowLeft {...inputIcon} />}
+            />
+          ),
+        })}
 
       <div className='flex flex-1 flex-col truncate'>
         {typeof input.title === 'string' && (
@@ -46,7 +55,7 @@ export const ScreenNavBarMobile = (input: {
         )}
       </div>
 
-      {typeof input.onBack === 'function' && <IconButtonEmpty />}
+      {shouldRenderBack && <IconButtonEmpty />}
     </div>
   )
 }

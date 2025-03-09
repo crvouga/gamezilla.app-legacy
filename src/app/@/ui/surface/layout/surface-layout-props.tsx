@@ -6,6 +6,12 @@ import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '../../screen/screen-size'
 
+export type SurfaceLayoutDropDownProps = {
+  position?: DropDownPosition
+  alignment?: DropDownAlignment
+  reference?: VDom
+}
+
 export type SurfaceLayoutProps = {
   id: string
   ctx: {
@@ -15,17 +21,13 @@ export type SurfaceLayoutProps = {
   ariaLabel: TranslatedText
   open: boolean
   onClose: () => void
-  dropDownReference?: VDom
   header?: {
     render?: () => VDom
   }
   drawer?: {
     position?: DrawerPosition
   }
-  dropDown?: {
-    position?: DropDownPosition
-    alignment?: DropDownAlignment
-  }
+  dropDown?: SurfaceLayoutDropDownProps
   body?: {
     render?: () => VDom
   }

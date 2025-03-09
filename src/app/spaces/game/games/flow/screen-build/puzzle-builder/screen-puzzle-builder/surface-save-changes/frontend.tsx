@@ -1,9 +1,9 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Loading, Result, isOk } from '~/@/result'
 import { IconFloppyDisk } from '~/@/ui'
-import { VDom } from '~/@/vdom/vdom'
-import { APP_SOUND, playSound, showOkSm, showErrSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, showErrSm, showOkSm } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
+import { SurfaceLayoutDropDownProps } from '~/app/@/ui/surface/layout/surface-layout-props'
 import { SurfaceUnsavedChanges } from '~/app/@/ui/surface/unsaved-changes/surface-unsaved-changes'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { ModeEdit } from '../../../../@/mode-edit'
@@ -230,10 +230,10 @@ const updateDbSavedPuzzle: FrontendModule['update'] = (input) => {
 //
 //
 
-const ViewSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDownReference?: VDom }) => {
+const ViewSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDown?: SurfaceLayoutDropDownProps }) => {
   return (
     <SurfaceUnsavedChanges
-      dropDownReference={input.dropDownReference}
+      dropDown={input.dropDown}
       ctx={input.ctx}
       title={input.ctx.t('app.save-changes?')}
       body={input.ctx.t('unsaved-changes.unsaved-changes-warning')}
@@ -262,12 +262,13 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       label: input.ctx.t('app.save'),
       onClick: () => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-save-button' }),
       loading: input.model.puzzleSaveChangesRequest?.t === 'loading',
-      renderSurface: ({ reference }) => <ViewSurface {...input} dropDownReference={reference} />,
+      // renderSurface: ({ reference }) => <ViewSurface {...input} dropDownReference={reference} />,
     },
   ]
 }
 
 export const SaveChangesFrontend = {
+  ViewSurface,
   viewActions,
   update,
 }

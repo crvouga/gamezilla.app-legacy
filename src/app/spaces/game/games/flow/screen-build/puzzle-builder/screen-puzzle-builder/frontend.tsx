@@ -176,6 +176,22 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
   return {
     id: 'puzzle-builder-screen',
     parentScreen: input.ctx.parentScreen,
+    navBar: {
+      back: {
+        onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
+        renderSurface: ({ reference }) => (
+          <SaveChangesFrontend.ViewSurface
+            {...input}
+            dropDown={{
+              reference,
+              alignment: 'starting',
+              position: 'bottom',
+            }}
+          />
+        ),
+      },
+      title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
+    },
     actionBar: {
       id: 'puzzle-builder-actions',
       variant: {
@@ -252,13 +268,7 @@ const ViewModeEdit: BuilderTypes.FrontendModule['View'] = (input) => {
       {...input}
       model={puzzleBuilder.modeEdit}
       dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
-      screenLayout={{
-        parentScreen: input.ctx.parentScreen,
-        navBar: {
-          onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
-          title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
-        },
-      }}
+      screenLayout={{ parentScreen: input.ctx.parentScreen }}
     />
   )
 }
@@ -273,10 +283,6 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
       parentScreen={input.ctx.parentScreen}
       id='puzzle-builder-screen-mode-play'
       ctx={input.ctx}
-      navBar={{
-        onBack: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
-        title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
-      }}
       renderBody={() => (
         <BoardLayout>
           <div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>

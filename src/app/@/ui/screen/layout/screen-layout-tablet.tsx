@@ -20,7 +20,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
     >
       <ActionBars position='start' input={input} />
 
-      <div className='flex max-w-3xl flex-[4] shrink-0 flex-col overflow-hidden border-x'>
+      <div className='flex max-w-3xl flex-[4] shrink-0 flex-col border-x'>
         {renderNavBars(input.ctx, input)}
 
         <div className='flex w-full flex-1 flex-col overflow-hidden'>
@@ -88,7 +88,7 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
       <ScreenNavBarTablet
         key={screen.id}
         ctx={ctx}
-        onBack={screen.navBar.onBack}
+        back={screen.navBar.back}
         title={screen.navBar.title}
         subtitle={screen.navBar.subtitle}
         renderEnd={() =>

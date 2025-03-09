@@ -16,14 +16,16 @@ export const Chip = (input: ChipProps) => {
     <Tag
       tagName={typeof input.onClick === 'function' ? 'button' : 'div'}
       className={cn(
-        'flex items-center gap-1 border border-white/30 font-semibold',
+        'flex items-center gap-1 truncate border border-white/30 font-semibold',
         toSizeClass(input),
         toButtonClass(input),
       )}
       onClick={input.onClick}
     >
-      {input.renderStartIcon?.({ className: toIconSizeClass(input) })}
-      {input.label}
+      {input.renderStartIcon?.({
+        className: cn(toIconSizeClass(input), 'shrink-0'),
+      })}
+      <span className='truncate'>{input.label}</span>
     </Tag>
   )
 }

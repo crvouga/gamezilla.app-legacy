@@ -76,7 +76,7 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
       <ScreenNavBarMobile
         key={screen.id}
         ctx={ctx}
-        onBack={screen.navBar.onBack}
+        back={screen.navBar.back}
         title={screen.navBar.title}
         subtitle={screen.navBar.subtitle}
       />,

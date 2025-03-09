@@ -118,34 +118,34 @@ const ViewSurfaces = (
       dropDown={{
         position: DROPDOWN_POSITION,
         alignment: DROPDOWN_ALIGNMENT,
+        reference: (
+          <SurfaceLayout
+            drawer={{
+              position: DRAWER_POSITION,
+            }}
+            dropDown={{
+              position: DROPDOWN_POSITION,
+              alignment: DROPDOWN_ALIGNMENT,
+              reference: input.reference,
+            }}
+            id='users'
+            ctx={input.ctx}
+            ariaLabel={input.ctx.t('app.people')}
+            open={input.model.opened === 'people.people-surface'}
+            onClose={() => input.dispatch({ t: 'people-action.closed-surface' })}
+            body={{
+              render: () => (
+                <SectionPeopleList
+                  ctx={spaceCtx}
+                  onClickItem={(userId) => input.dispatch({ t: 'people-action.clicked-person-list-item', userId })}
+                />
+              ),
+            }}
+          />
+        ),
       }}
       ariaLabel={input.ctx.t('spaces.see-profile')}
       id='user-preview'
-      dropDownReference={
-        <SurfaceLayout
-          drawer={{
-            position: DRAWER_POSITION,
-          }}
-          dropDown={{
-            position: DROPDOWN_POSITION,
-            alignment: DROPDOWN_ALIGNMENT,
-          }}
-          id='users'
-          dropDownReference={input.reference}
-          ctx={input.ctx}
-          ariaLabel={input.ctx.t('app.people')}
-          open={input.model.opened === 'people.people-surface'}
-          onClose={() => input.dispatch({ t: 'people-action.closed-surface' })}
-          body={{
-            render: () => (
-              <SectionPeopleList
-                ctx={spaceCtx}
-                onClickItem={(userId) => input.dispatch({ t: 'people-action.clicked-person-list-item', userId })}
-              />
-            ),
-          }}
-        />
-      }
       open={input.model.opened === 'people.person-preview-surface'}
       onClose={() => input.dispatch({ t: 'people-action.closed-surface' })}
       body={{

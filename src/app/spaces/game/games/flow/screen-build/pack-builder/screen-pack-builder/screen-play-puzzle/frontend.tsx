@@ -96,14 +96,16 @@ const View: FrontendModule['View'] = (input) => {
       navBar={{
         title: input.ctx.t('flow.level', screen.puzzleIndex + 1),
         subtitle: screen.puzzleResult.t === 'got' ? input.ctx.t('flow-puzzle-name', screen.puzzleResult.c.name) : null,
-        onBack: () =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
-              userId: input.ctx.currentUser.userId,
-            },
-          }),
+        back: {
+          onClick: () =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: {
+                t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
+                userId: input.ctx.currentUser.userId,
+              },
+            }),
+        },
       }}
       renderBody={() =>
         screen.puzzleResult.t === 'got' && screen.play ? (

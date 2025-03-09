@@ -179,10 +179,12 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
       parentScreen={input.ctx.parentScreen}
       navBar={{
         title: input.ctx.t('lang.choose-language'),
-        onBack: () =>
-          input.dispatch({
-            t: 'choose-lang.clicked-done',
-          }),
+        back: {
+          onClick: () =>
+            input.dispatch({
+              t: 'choose-lang.clicked-done',
+            }),
+        },
       }}
       renderBody={() => (
         <div className='flex flex-1 flex-col overflow-y-scroll'>

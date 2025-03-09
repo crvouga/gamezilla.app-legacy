@@ -30,9 +30,9 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
       {firstActions.map((action) => {
         if (!action) return null
 
-        const button = <ScreenActionButton {...action} size={input.size} key={action.key} />
+        const button = <ScreenActionButton {...action} size={input.size} />
 
-        if (!action.renderSurface) return button
+        if (!action.renderSurface) return <Frag key={action.key}>{button}</Frag>
 
         return <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
       })}
@@ -48,15 +48,17 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
           body={{
             render: () => <SurfaceMoreContent actions={lastActions} />,
           }}
-          dropDownReference={
-            <ScreenActionButton
-              key={input.ctx.t('app.more')}
-              icon={(input) => <IconEllipsisVertical {...input} />}
-              label={input.ctx.t('app.more')}
-              size={input.size}
-              onClick={input.limit?.onToggle ?? (() => {})}
-            />
-          }
+          dropDown={{
+            reference: (
+              <ScreenActionButton
+                key={input.ctx.t('app.more')}
+                icon={(input) => <IconEllipsisVertical {...input} />}
+                label={input.ctx.t('app.more')}
+                size={input.size}
+                onClick={input.limit?.onToggle ?? (() => {})}
+              />
+            ),
+          }}
         />
       )}
     </div>
@@ -81,7 +83,10 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
         if (!action.renderSurface) return listItemButton
         return (
           <Frag key={action.key}>
-            {action.renderSurface({ reference: listItemButton, screenActionLocation: 'more-drawer' })}
+            {action.renderSurface({
+              reference: listItemButton,
+              screenActionLocation: 'more-drawer',
+            })}
           </Frag>
         )
       })}
