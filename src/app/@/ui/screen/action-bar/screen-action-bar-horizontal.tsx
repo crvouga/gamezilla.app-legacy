@@ -22,63 +22,70 @@ export const HorizontalActionBar = (input: ScreenActionBarProps) => {
 const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) => {
   const size = input.size ?? 'md'
   const limit = input.limit?.max ?? DEFAULT_LIMIT
-  const [firstActions, lastActions] = [input.actions.slice(0, limit), input.actions.slice(limit)]
-
+  const firstActions = input.actions.slice(0, limit)
+  const lastActions = input.actions.slice(limit)
+  const hasLastActions = lastActions.some((button) => button !== null)
   return (
     <div className={cn('flex w-full shrink-0 items-center', toHeightClass(size))} role='toolbar'>
       {firstActions.map((action) => {
         if (!action) return null
+
         const button = <ScreenActionButton {...action} size={input.size} key={action.key} />
+
         if (!action.renderSurface) return button
+
         return <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
       })}
 
-      {lastActions.some((button) => button !== null) && (
-        <Frag key={input.ctx.t('app.more')}>
-          <ScreenActionButton
-            key={input.ctx.t('app.more')}
-            icon={(input) => <IconEllipsisVertical {...input} />}
-            label={input.ctx.t('app.more')}
-            size={input.size}
-            onClick={input.limit?.onToggle ?? (() => {})}
-          />
-          <SurfaceLayout
-            ctx={input.ctx}
-            id={input.id}
-            ariaLabel={input.ctx.t('app.more')}
-            onClose={input.limit?.onToggle ?? (() => {})}
-            open={input.limit?.open ?? false}
-            body={{
-              render: () => {
-                return (
-                  <Frag>
-                    {lastActions.map((action) => {
-                      if (!action) return null
-                      if (action.hidden) return null
-                      const listItemButton = (
-                        <ListItemButton
-                          key={action.key}
-                          icon={action.icon}
-                          label={action.label}
-                          onClick={action.onClick}
-                          color={action.color}
-                        />
-                      )
-                      if (!action.renderSurface) return listItemButton
-                      return (
-                        <Frag key={action.key}>
-                          {action.renderSurface({ reference: listItemButton, screenActionLocation: 'more-drawer' })}
-                        </Frag>
-                      )
-                    })}
-                  </Frag>
-                )
-              },
-            }}
-          />
-        </Frag>
+      {hasLastActions && (
+        <SurfaceLayout
+          ctx={input.ctx}
+          id={input.id}
+          key={input.id}
+          ariaLabel={input.ctx.t('app.more')}
+          onClose={input.limit?.onToggle ?? (() => {})}
+          open={input.limit?.open ?? false}
+          body={{
+            render: () => <SurfaceMoreContent actions={lastActions} />,
+          }}
+          dropDownReference={
+            <ScreenActionButton
+              key={input.ctx.t('app.more')}
+              icon={(input) => <IconEllipsisVertical {...input} />}
+              label={input.ctx.t('app.more')}
+              size={input.size}
+              onClick={input.limit?.onToggle ?? (() => {})}
+            />
+          }
+        />
       )}
     </div>
+  )
+}
+
+const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
+  return (
+    <Frag>
+      {input.actions.map((action) => {
+        if (!action) return null
+        if (action.hidden) return null
+        const listItemButton = (
+          <ListItemButton
+            key={action.key}
+            icon={action.icon}
+            label={action.label}
+            onClick={action.onClick}
+            color={action.color}
+          />
+        )
+        if (!action.renderSurface) return listItemButton
+        return (
+          <Frag key={action.key}>
+            {action.renderSurface({ reference: listItemButton, screenActionLocation: 'more-drawer' })}
+          </Frag>
+        )
+      })}
+    </Frag>
   )
 }
 
@@ -90,24 +97,28 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
       <div className='flex items-center'>
         {input.start.map((action) => {
           if (!action) return null
+
           const button = <ScreenActionButton {...action} size={input.size} key={action.key} className='min-w-20' />
-          if (action.renderSurface)
-            return (
-              <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
-            )
-          return button
+
+          if (!action.renderSurface) return button
+
+          return (
+            <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
+          )
         })}
       </div>
 
       <div className='flex items-center'>
         {input.end.map((action) => {
           if (!action) return null
+
           const button = <ScreenActionButton {...action} size={input.size} key={action.key} className='min-w-20' />
-          if (action.renderSurface)
-            return (
-              <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
-            )
-          return button
+
+          if (!action.renderSurface) return button
+
+          return (
+            <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
+          )
         })}
       </div>
     </div>

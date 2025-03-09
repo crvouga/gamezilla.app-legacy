@@ -57,12 +57,12 @@ const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
     <div className='flex w-full shrink-0 flex-col gap-2'>
       {input.actions.map((action) => {
         if (!action) return null
+
         const button = <ScreenActionButton {...action} size={SIZE} key={action.key} />
-        if (action.renderSurface)
-          return (
-            <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
-          )
-        return button
+
+        if (!action.renderSurface) return button
+
+        return <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
       })}
     </div>
   )
