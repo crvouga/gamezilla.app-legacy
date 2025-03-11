@@ -73,7 +73,7 @@ export const viewButtonAction = ({
   if (ctx.currentUserRole !== 'super') return null
 
   return {
-    key: ctx.t('app.copy'),
+    id: ctx.t('app.copy'),
     icon: (input) => <IconCopy {...input} />,
     label: ctx.t('app.copy'),
     onClick: () =>

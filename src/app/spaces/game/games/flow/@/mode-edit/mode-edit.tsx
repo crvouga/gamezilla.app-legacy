@@ -462,28 +462,28 @@ export const View = (input: {
           t: 'uniform',
           actions: [
             {
-              key: input.ctx.t('app.undo'),
+              id: input.ctx.t('app.undo'),
               icon: (input) => <IconArrowRotateLeft {...input} />,
               label: input.ctx.t('app.undo'),
               onClick: () => input.dispatch({ t: 'clicked-undo' }),
               disabled: !History.canUndo(input.model.form),
             },
             {
-              key: input.ctx.t('app.redo'),
+              id: input.ctx.t('app.redo'),
               icon: (input) => <IconArrowRotateRight {...input} />,
               label: input.ctx.t('app.redo'),
               disabled: !History.canRedo(input.model.form),
               onClick: () => input.dispatch({ t: 'clicked-redo' }),
             },
             {
-              key: input.ctx.t('app.clear'),
+              id: input.ctx.t('app.clear'),
               icon: (input) => <IconXMark {...input} />,
               label: input.ctx.t('app.clear'),
               disabled: !canClear(input.model),
               onClick: () => input.dispatch({ t: 'clicked-clear' }),
             },
             {
-              key: input.ctx.t('app.dimensions'),
+              id: input.ctx.t('app.dimensions'),
               icon: (input) => <IconExpand {...input} />,
               label: input.ctx.t('app.dimensions'),
               onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),

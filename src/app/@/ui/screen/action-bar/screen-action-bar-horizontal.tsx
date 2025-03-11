@@ -32,9 +32,9 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
 
         const button = <ScreenActionButton {...action} size={input.size} />
 
-        if (!action.renderSurface) return <Frag key={action.key}>{button}</Frag>
+        if (!action.renderSurface) return <Frag key={action.id}>{button}</Frag>
 
-        return <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
+        return <Frag key={action.id}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
       })}
 
       {hasLastActions && (
@@ -51,7 +51,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
           dropDown={{
             reference: (
               <ScreenActionButton
-                key={input.ctx.t('app.more')}
+                id={input.ctx.t('app.more')}
                 icon={(input) => <IconEllipsisVertical {...input} />}
                 label={input.ctx.t('app.more')}
                 size={input.size}
@@ -73,7 +73,7 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
         if (action.hidden) return null
         const listItemButton = (
           <ListItemButton
-            key={action.key}
+            key={action.id}
             icon={action.icon}
             label={action.label}
             onClick={action.onClick}
@@ -82,7 +82,7 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
         )
         if (!action.renderSurface) return listItemButton
         return (
-          <Frag key={action.key}>
+          <Frag key={action.id}>
             {action.renderSurface({
               reference: listItemButton,
               screenActionLocation: 'more-drawer',
@@ -96,20 +96,17 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
 
 const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpaceBetween) => {
   const size = input.size ?? 'md'
-
   return (
     <div className={cn('flex w-full shrink-0 items-center justify-between', toHeightClass(size))} role='toolbar'>
       <div className='flex items-center'>
         {input.start.map((action) => {
           if (!action) return null
 
-          const button = <ScreenActionButton {...action} size={input.size} key={action.key} className='min-w-20' />
+          const button = <ScreenActionButton {...action} size={input.size} className='min-w-20' />
 
-          if (!action.renderSurface) return button
+          if (!action.renderSurface) return <Frag key={action.id}>{button}</Frag>
 
-          return (
-            <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
-          )
+          return <Frag key={action.id}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
         })}
       </div>
 
@@ -117,13 +114,11 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
         {input.end.map((action) => {
           if (!action) return null
 
-          const button = <ScreenActionButton {...action} size={input.size} key={action.key} className='min-w-20' />
+          const button = <ScreenActionButton {...action} size={input.size} className='min-w-20' />
 
-          if (!action.renderSurface) return button
+          if (!action.renderSurface) return <Frag key={action.id}>{button}</Frag>
 
-          return (
-            <Frag key={action.key}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
-          )
+          return <Frag key={action.id}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
         })}
       </div>
     </div>

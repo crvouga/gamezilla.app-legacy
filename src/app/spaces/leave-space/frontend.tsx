@@ -85,7 +85,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
   const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
   if (!spaceId) return null
   return {
-    key: input.ctx.t('spaces.leave'),
+    id: input.ctx.t('spaces.leave'),
     icon: (inputIcon) => <IconArrowLeftOnRect {...inputIcon} />,
     label: input.ctx.t('spaces.leave'),
     onClick: () => input.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId }),

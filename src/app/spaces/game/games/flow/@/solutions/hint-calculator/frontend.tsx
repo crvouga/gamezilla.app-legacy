@@ -106,7 +106,7 @@ const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[
   if (hasSolution) return []
   return [
     {
-      key: input.ctx.t('game.hint'),
+      id: input.ctx.t('game.hint'),
       icon: (input) => <IconLightbulb {...input} />,
       label: input.ctx.t('game.hint'),
       onClick: () => input.dispatch({ t: 'dialog.clicked-open' }),

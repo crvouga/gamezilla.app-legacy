@@ -13,14 +13,14 @@ type PrebuiltActionInput = Partial<ScreenAction> & {
 
 const exit = (input: PrebuiltActionInput): ScreenAction => ({
   ...input,
-  key: input.ctx.t('prebuilt-actions.exit'),
+  id: input.ctx.t('prebuilt-actions.exit'),
   icon: (input) => <IconArrowLeftOnRect {...input} />,
   label: input.ctx.t('prebuilt-actions.exit'),
 })
 
 const next = (input: PrebuiltActionInput): ScreenAction => ({
   ...input,
-  key: input.ctx.t('prebuilt-actions.next'),
+  id: input.ctx.t('prebuilt-actions.next'),
   // icon: (input) => <IconChevronRight {...input} />,
   icon: (input) => <IconArrowCircle {...input} />,
   label: input.ctx.t('prebuilt-actions.next'),
@@ -28,14 +28,14 @@ const next = (input: PrebuiltActionInput): ScreenAction => ({
 
 const reset = (input: PrebuiltActionInput): ScreenAction => ({
   ...input,
-  key: input.ctx.t('prebuilt-actions.reset'),
+  id: input.ctx.t('prebuilt-actions.reset'),
   icon: (input) => <IconArrowRotateLeft {...input} />,
   label: input.ctx.t('prebuilt-actions.reset'),
 })
 
 const prev = (input: PrebuiltActionInput): ScreenAction => ({
   ...input,
-  key: input.ctx.t('prebuilt-actions.prev'),
+  id: input.ctx.t('prebuilt-actions.prev'),
   icon: (input) => <IconChevronLeft {...input} />,
   label: input.ctx.t('prebuilt-actions.prev'),
 })

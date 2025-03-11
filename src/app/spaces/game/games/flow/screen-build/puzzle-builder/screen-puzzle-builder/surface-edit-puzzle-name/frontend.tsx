@@ -220,7 +220,7 @@ const updateDraftNameInput: FrontendModule['update'] = ({ model, msg }) => {
 const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
   return [
     {
-      key: input.ctx.t('app.edit-name'),
+      id: input.ctx.t('app.edit-name'),
       icon: (input) => <IconPen {...input} />,
       label: input.ctx.t('app.edit-name'),
       onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
