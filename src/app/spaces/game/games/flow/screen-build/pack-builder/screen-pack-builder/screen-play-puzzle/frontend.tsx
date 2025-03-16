@@ -1,10 +1,14 @@
+import { Sub } from '~/@/sub'
 import { IconChevronLeft, IconChevronRight, IconDeleteForever } from '~/@/ui'
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { ModePlay } from '../../../../@/mode-play'
 import { ModePlayFrontend } from '../../../../@/mode-play/frontend'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
+import { SolutionsLoaderFrontend } from '../../../../@/solutions/solutions-loader/frontend'
+import { ScreenPackBuildSpace } from '../space/space'
 import type { FrontendModule } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
@@ -65,7 +69,60 @@ const update: FrontendModule['update'] = (input) => {
 
 const View: FrontendModule['View'] = (input) => {
   const screen = input.modelSpace.screen
+
   if (screen.t !== 'screen-puzzle') return null
+
+  const parentScreen = toParentScreenProps(input)
+
+  if (!parentScreen) return null
+
+  const { puzzleResult, play } = screen
+
+  if (puzzleResult.t === 'got' && play) {
+    return (
+      <ScreenLayout
+        parentScreen={parentScreen}
+        id='mode-play'
+        ctx={input.ctx}
+        renderBody={() => (
+          <ModePlayFrontend.View
+            dispatch={(c) =>
+              input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
+            }
+            flow={puzzleResult.c.flow}
+            model={play}
+            showSolvedAnimation
+          />
+        )}
+        actionBar={{
+          variant: {
+            t: 'uniform',
+            actions: ModePlayFrontend.viewActions({
+              ctx: { ...input.ctx, flow: puzzleResult.c.flow },
+              model: play,
+              dispatchHintCalculator: (c) => input.dispatch({ t: 'got-hint-calculator-msg', c }),
+              dispatch: (c) =>
+                input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } }),
+            }),
+          },
+        }}
+      />
+    )
+  }
+
+  return (
+    <ScreenLayout
+      parentScreen={parentScreen}
+      id='screen-puzzle'
+      ctx={input.ctx}
+      renderBody={() => <PuzzleResult.ViewNotFound ctx={input.ctx} />}
+    />
+  )
+}
+
+const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): ParentScreenProps | null => {
+  const screen = input.modelSpace.screen
+  if (screen.t !== 'screen-puzzle') return input.ctx.parentScreen
 
   const pack = input.modelSpace.pack
 
@@ -88,109 +145,96 @@ const View: FrontendModule['View'] = (input) => {
     })
   }
 
-  return (
-    <ScreenLayout
-      parentScreen={input.ctx.parentScreen}
-      id='screen-puzzle'
-      ctx={input.ctx}
-      navBar={{
-        title: input.ctx.t('flow.level', screen.puzzleIndex + 1),
-        subtitle: screen.puzzleResult.t === 'got' ? input.ctx.t('flow-puzzle-name', screen.puzzleResult.c.name) : null,
-        back: {
-          onClick: () =>
+  return {
+    parentScreen: input.ctx.parentScreen,
+    id: 'screen-puzzle',
+    navBar: {
+      title: input.ctx.t('flow.level', screen.puzzleIndex + 1),
+      subtitle: screen.puzzleResult.t === 'got' ? input.ctx.t('flow-puzzle-name', screen.puzzleResult.c.name) : null,
+      back: {
+        onClick: () =>
+          input.dispatch({
+            t: 'got-msg-space',
+            c: {
+              t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
+              userId: input.ctx.currentUser.userId,
+            },
+          }),
+      },
+    },
+    actionBar: {
+      id: 'screen-puzzle-buttons',
+      variant: {
+        limit: {
+          max: 3,
+          open: input.modelSpace.opened === 'more',
+          onToggle: () =>
             input.dispatch({
               t: 'got-msg-space',
               c: {
-                t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
+                t:
+                  input.modelSpace.opened === 'more'
+                    ? 'screen-pack-builder.puzzle-screen.user-closed-more-drawer'
+                    : 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
                 userId: input.ctx.currentUser.userId,
               },
             }),
         },
-      }}
-      renderBody={() =>
-        screen.puzzleResult.t === 'got' && screen.play ? (
-          <ModePlayFrontend.View
-            dispatch={(c) =>
-              input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
-            }
-            flow={screen.puzzleResult.c.flow}
-            model={screen.play}
-            showSolvedAnimation
-          />
-        ) : (
-          <PuzzleResult.ViewNotFound
-            ctx={input.ctx}
-            // onNextPuzzle={onNextPuzzle}
-          />
-        )
-      }
-      actionBar={{
-        id: 'screen-puzzle-buttons',
-
-        variant: {
-          limit: {
-            max: 2,
-            open: input.modelSpace.opened === 'more',
-            onToggle: () =>
+        t: 'uniform',
+        actions: [
+          {
+            id: input.ctx.t('app.prev'),
+            icon: (input) => <IconChevronLeft {...input} />,
+            label: input.ctx.t('app.prev'),
+            disabled: !canGoPrevious,
+            onClick: () => {
               input.dispatch({
                 t: 'got-msg-space',
                 c: {
-                  t:
-                    input.modelSpace.opened === 'more'
-                      ? 'screen-pack-builder.puzzle-screen.user-closed-more-drawer'
-                      : 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button',
+                  t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
                   userId: input.ctx.currentUser.userId,
+                  previousPuzzleResult: previousPuzzle ? { t: 'got', c: previousPuzzle } : { t: 'not-found' },
+                },
+              })
+            },
+          },
+          {
+            id: input.ctx.t('app.next'),
+            icon: (input) => <IconChevronRight {...input} />,
+            label: input.ctx.t('app.next'),
+            disabled: !canGoNext,
+            onClick: onNextPuzzle,
+          },
+          {
+            id: input.ctx.t('app.remove'),
+            icon: (input) => <IconDeleteForever {...input} />,
+            label: input.ctx.t('app.remove'),
+            color: 'danger',
+            onClick: () =>
+              input.dispatch({
+                t: 'got-msg-space',
+                c: {
+                  t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
+                  userId: input.ctx.currentUser.userId,
+                  puzzleIndex: screen.puzzleIndex,
                 },
               }),
           },
-          t: 'uniform',
-          actions: [
-            {
-              id: input.ctx.t('app.prev'),
-              icon: (input) => <IconChevronLeft {...input} />,
-              label: input.ctx.t('app.prev'),
-              disabled: !canGoPrevious,
-              onClick: () => {
-                input.dispatch({
-                  t: 'got-msg-space',
-                  c: {
-                    t: 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button',
-                    userId: input.ctx.currentUser.userId,
-                    previousPuzzleResult: previousPuzzle ? { t: 'got', c: previousPuzzle } : { t: 'not-found' },
-                  },
-                })
-              },
-            },
-            {
-              id: input.ctx.t('app.next'),
-              icon: (input) => <IconChevronRight {...input} />,
-              label: input.ctx.t('app.next'),
-              disabled: !canGoNext,
-              onClick: onNextPuzzle,
-            },
-            {
-              id: input.ctx.t('app.remove'),
-              icon: (input) => <IconDeleteForever {...input} />,
-              label: input.ctx.t('app.remove'),
-              color: 'danger',
-              onClick: () =>
-                input.dispatch({
-                  t: 'got-msg-space',
-                  c: {
-                    t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
-                    userId: input.ctx.currentUser.userId,
-                    puzzleIndex: screen.puzzleIndex,
-                  },
-                }),
-            },
-          ],
-        },
-      }}
-    />
-  )
+        ],
+      },
+    },
+  }
 }
 
-export const ScreenPuzzlePlay: Pick<FrontendModule, 'update' | 'View'> = {
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  const solutionHash = ScreenPackBuildSpace.toOpenPuzzleSolutionHash(input.modelSpace)
+  if (!solutionHash) return Sub.None
+
+  return SolutionsLoaderFrontend.watch(input.ctx, solutionHash, (c) => ({ t: 'got-solution-loader-msg', c }))
+}
+
+export const ScreenPuzzlePlay = {
+  subscriptions,
   update,
   View,
 }

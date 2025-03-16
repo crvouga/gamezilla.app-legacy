@@ -4,6 +4,8 @@ import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PackLoaderFrontend } from '../../../@/pack/pack-loader/frontend'
 import { PuzzleLoaderFrontend } from '../../../@/puzzle/puzzle-loader/frontend'
+import { HintCalculatorFrontend } from '../../../@/solutions/hint-calculator/frontend'
+import { SolutionsLoaderFrontend } from '../../../@/solutions/solutions-loader/frontend'
 import { ScreenAddPuzzle } from './screen-add-puzzle/frontend'
 import { ScreenPuzzlePlay } from './screen-play-puzzle/frontend'
 import { ScreenPuzzleGrid } from './screen-puzzle-grid/frontend'
@@ -24,7 +26,7 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return Sub.batch([ScreenAddPuzzle.subscriptions(input)])
+  return Sub.batch([ScreenAddPuzzle.subscriptions(input), ScreenPuzzlePlay.subscriptions(input)])
 }
 
 const View: FrontendModule['View'] = (input) => {
@@ -68,6 +70,12 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     }
     case 'got-puzzle-loader-msg': {
       return { model: input.model, msgCmd: [PuzzleLoaderFrontend.gotMsg(input.msg.c)] }
+    }
+    case 'got-hint-calculator-msg': {
+      return { model: input.model, msgCmd: [HintCalculatorFrontend.gotMsg(input.msg.c)] }
+    }
+    case 'got-solution-loader-msg': {
+      return { model: input.model, msgCmd: [SolutionsLoaderFrontend.gotMsg(input.msg.c)] }
     }
     default: {
       return {

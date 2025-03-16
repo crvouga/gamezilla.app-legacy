@@ -130,7 +130,6 @@ const animateCheckmark = (input: { duration: TimeSpan }) => async (node: HTMLEle
 }
 
 export const ModePlayFrontend = {
-  ...UseHintFrontend,
   View,
   viewActions,
 }

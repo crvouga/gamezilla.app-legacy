@@ -12,6 +12,7 @@ import { ProfileListItem } from '../../../@/ui/list-item-profile'
 import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { ModePlay } from '../../@/mode-play'
 import { ModePlayFrontend } from '../../@/mode-play/frontend'
+import { UseHintFrontend } from '../../@/mode-play/use-hint/frontend'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { FrontendModule } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
@@ -188,7 +189,7 @@ const View: FrontendModule['View'] = (input) => {
               }),
 
               ...(puzzle.t === 'got' && !isSolved
-                ? ModePlayFrontend.viewAction({
+                ? UseHintFrontend.viewAction({
                     model:
                       modePlay ??
                       ModePlay.init({

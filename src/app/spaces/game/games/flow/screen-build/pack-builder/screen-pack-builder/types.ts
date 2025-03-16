@@ -14,6 +14,8 @@ import { Pack } from '../../../@/pack/pack'
 import { PackLoaderTypes } from '../../../@/pack/pack-loader'
 import { PuzzleLoaderTypes } from '../../../@/puzzle/puzzle-loader'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
+import { HintCalculatorTypes } from '../../../@/solutions/hint-calculator'
+import { SolutionsLoaderTypes } from '../../../@/solutions/solutions-loader'
 import { FlowSpaceCtx } from '../../../@/space/ctx'
 import { ScreenAddPuzzleTypes } from './screen-add-puzzle'
 import { EditPackNameTypes } from './surface-edit-pack-name'
@@ -37,6 +39,8 @@ export type MsgFrontend =
   | { t: 'got-msg-space'; c: MsgSpace }
   | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgFrontend }
   | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgFrontend }
+  | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgFrontend }
+  | { t: 'got-solution-loader-msg'; c: SolutionsLoaderTypes.MsgFrontend }
 
 export type MsgBackend = { t: 'noop' }
 
@@ -50,6 +54,15 @@ export type MsgToFrontend = { t: 'noop' }
 //
 //
 
+const ScreenPuzzle = p.obj({
+  t: p.l('screen-puzzle'),
+  puzzleIndex: p.num,
+  puzzleResult: PuzzleResult,
+  play: p.maybe(ModePlay.Model),
+})
+
+export type ScreenPuzzle = p.Infer<typeof ScreenPuzzle>
+
 export const Screen = p.or(
   p.obj({
     t: p.l('screen-add-puzzle'),
@@ -57,15 +70,10 @@ export const Screen = p.or(
   p.obj({
     t: p.l('screen-puzzle-grid'),
   }),
-  p.obj({
-    t: p.l('screen-puzzle'),
-    puzzleIndex: p.num,
-    puzzleResult: PuzzleResult,
-    play: p.maybe(ModePlay.Model),
-  }),
+  ScreenPuzzle,
 )
 
-type Screen = p.Infer<typeof Screen>
+export type Screen = p.Infer<typeof Screen>
 
 export const ModelSpace = p.and(
   ScreenAddPuzzleTypes.ModelSpace,
