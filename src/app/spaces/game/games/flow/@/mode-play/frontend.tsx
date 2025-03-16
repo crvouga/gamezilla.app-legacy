@@ -66,7 +66,7 @@ const viewResetAction = (input: {
   ]
 }
 
-const viewScreenActions = (input: {
+const viewActions = (input: {
   model: Model
   dispatch: (m: Msg) => void
   dispatchHintCalculator: (m: HintCalculatorTypes.MsgFrontend) => void
@@ -79,7 +79,7 @@ const viewScreenActions = (input: {
       dispatch: input.dispatchHintCalculator,
       model: input.ctx.HintCalculator,
     }),
-    ...UseHintFrontend.viewUseHintAction({
+    ...UseHintFrontend.viewAction({
       ctx: input.ctx,
       dispatch: input.dispatch,
       model: input.model,
@@ -132,5 +132,5 @@ const animateCheckmark = (input: { duration: TimeSpan }) => async (node: HTMLEle
 export const ModePlayFrontend = {
   ...UseHintFrontend,
   View,
-  viewScreenActions,
+  viewActions,
 }

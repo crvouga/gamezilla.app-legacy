@@ -1,6 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Ok, RemoteResult, isLoading } from '~/@/result'
-import { Frag } from '~/@/ui/frag'
+import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconDeleteForever } from '~/@/ui/icon/icon-delete-forever'
 import { APP_SOUND, playSound, showOkSm } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
@@ -101,7 +101,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   }
 }
 
-const ViewSurface: FrontendModule['View'] = (input) => {
+const ViewSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDown: DropDownConfig }) => {
   return (
     <SurfaceConfirmation
       ctx={input.ctx}
@@ -110,6 +110,7 @@ const ViewSurface: FrontendModule['View'] = (input) => {
       open={input.model.puzzleBuilderOpened === 'delete-forever' || isLoading(input.model.puzzleDeleteForeverRequest)}
       onClose={() => input.dispatch({ t: 'delete-forever.user-closed-drawer' })}
       variant='danger'
+      dropDown={input.dropDown}
       position='bottom'
       title={input.ctx.t('flow.delete-puzzle-forever?')}
       body={input.ctx.t('app.this-action-cannot-be-undone')}
@@ -131,12 +132,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       label: input.ctx.t('app.delete'),
       color: 'danger',
       onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
-      renderSurface: ({ reference }) => (
-        <Frag>
-          {reference}
-          <ViewSurface {...input} />
-        </Frag>
-      ),
+      renderSurface: ({ dropDown }) => <ViewSurface {...input} dropDown={dropDown} />,
     },
   ]
 }

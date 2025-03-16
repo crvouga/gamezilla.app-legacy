@@ -60,9 +60,16 @@ const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
 
         const button = <ScreenActionButton {...action} size={SIZE} />
 
-        if (!action.renderSurface) return button
+        if (!action.renderSurface) return <Frag key={action.id}>{button}</Frag>
 
-        return <Frag key={action.id}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
+        return (
+          <Frag key={action.id}>
+            {action.renderSurface({
+              dropDown: { reference: button },
+              screenActionLocation: 'bar',
+            })}
+          </Frag>
+        )
       })}
     </div>
   )

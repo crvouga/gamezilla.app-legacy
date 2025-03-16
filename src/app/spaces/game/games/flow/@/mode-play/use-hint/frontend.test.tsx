@@ -14,7 +14,7 @@ describe(import.meta.file, () => {
         ['A', 'B'],
       ]),
     })
-    const viewed = UseHintFrontend.viewUseHintAction({
+    const viewed = UseHintFrontend.viewAction({
       ctx: f.ctx,
       dispatch: () => {},
       model: f.init,

@@ -188,7 +188,7 @@ const View: FrontendModule['View'] = (input) => {
               }),
 
               ...(puzzle.t === 'got' && !isSolved
-                ? ModePlayFrontend.viewUseHintAction({
+                ? ModePlayFrontend.viewAction({
                     model:
                       modePlay ??
                       ModePlay.init({

@@ -2,6 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '../screen-size'
+import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 
 export type ScreenActionLocation = 'bar' | 'more-drawer'
 
@@ -21,7 +22,7 @@ export type ScreenAction = {
   hidden?: boolean
   badge?: number
   size?: 'sm' | 'md'
-  renderSurface?: (props: { reference: VDom; screenActionLocation: ScreenActionLocation }) => VDom
+  renderSurface?: (props: { dropDown: DropDownConfig; screenActionLocation: ScreenActionLocation }) => VDom
 }
 
 export type ScreenActionsUniform = {

@@ -1,8 +1,8 @@
 import { IconUserGroup } from '~/@/ui'
 import { DropDownAlignment } from '~/@/ui/drop-down/drop-down-alignment'
+import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'
 import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
-import { VDom } from '~/@/vdom/vdom'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, openProfile, playSound } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
@@ -94,7 +94,7 @@ const DROPDOWN_ALIGNMENT: DropDownAlignment = 'starting'
 
 const ViewSurfaces = (
   input: Parameters<SpaceFrontendModule['View']>[0] & {
-    reference: VDom
+    dropDown: DropDownConfig
   },
 ) => {
   if (!input.ctx.space) return null
@@ -124,9 +124,9 @@ const ViewSurfaces = (
               position: DRAWER_POSITION,
             }}
             dropDown={{
+              ...input.dropDown,
               position: DROPDOWN_POSITION,
               alignment: DROPDOWN_ALIGNMENT,
-              reference: input.reference,
             }}
             id='users'
             ctx={input.ctx}
@@ -173,7 +173,7 @@ const view = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction |
     label: input.ctx.t('spaces.people-count', peopleCount),
     onClick: () => input.dispatch({ t: 'people-action.clicked-people-action' }),
     badge: peopleCount > 1 ? peopleCount : undefined,
-    renderSurface: ({ reference }) => <ViewSurfaces {...input} reference={reference} />,
+    renderSurface: ({ dropDown }) => <ViewSurfaces {...input} dropDown={dropDown} />,
   }
 }
 

@@ -487,7 +487,7 @@ export const View = (input: {
               icon: (input) => <IconExpand {...input} />,
               label: input.ctx.t('app.dimensions'),
               onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
-              renderSurface: ({ reference }) => (
+              renderSurface: ({ dropDown }) => (
                 <SurfaceLayout
                   id='dimensions'
                   ctx={input.ctx}
@@ -495,9 +495,9 @@ export const View = (input: {
                   open={input.model.opened?.t === 'dimensions'}
                   onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
                   dropDown={{
+                    ...dropDown,
                     position: 'start',
                     alignment: 'ending',
-                    reference,
                   }}
                   header={{
                     render: () => (

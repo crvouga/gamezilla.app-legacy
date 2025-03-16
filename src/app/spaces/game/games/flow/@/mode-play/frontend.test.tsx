@@ -33,7 +33,7 @@ const Fixture = async () => {
 describe('ModePlayFrontend', () => {
   test('screen actions show find solutions when no solutions are loaded', async () => {
     const f = await Fixture()
-    const screenActions = ModePlayFrontend.viewScreenActions({
+    const screenActions = ModePlayFrontend.viewActions({
       ctx: f.ctx,
       model: f.init,
       dispatch: () => {},
@@ -48,7 +48,7 @@ describe('ModePlayFrontend', () => {
       ...f.ctx,
       solutions: await Solutions.find({ logger: f.ctx.logger, models: [f.flow] }),
     }
-    const screenActions = ModePlayFrontend.viewScreenActions({
+    const screenActions = ModePlayFrontend.viewActions({
       ctx: ctxWithSolutions,
       model: f.init,
       dispatch: () => {},

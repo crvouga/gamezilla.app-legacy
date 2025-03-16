@@ -11,7 +11,7 @@ const isUseHintScreenAction = (action: ScreenAction): boolean => {
   return action.testId === TEST_ID
 }
 
-const viewUseHintAction = (input: {
+const viewAction = (input: {
   model: Model
   dispatch: (msg: Msg) => void
   ctx: ModePlayFrontendCtx
@@ -40,5 +40,5 @@ const viewUseHintAction = (input: {
 
 export const UseHintFrontend = {
   isUseHintScreenAction,
-  viewUseHintAction,
+  viewAction,
 }

@@ -111,12 +111,12 @@ const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[
       label: input.ctx.t('game.hint'),
       onClick: () => input.dispatch({ t: 'dialog.clicked-open' }),
       testId: TEST_ID,
-      renderSurface: ({ reference }) => (
+      renderSurface: ({ dropDown }) => (
         <SurfaceConfirmation
           title={input.ctx.t('flow.no-hints-available')}
           body={input.ctx.t('flow.no-hints-available-body')}
           ctx={input.ctx}
-          dropDownReference={reference}
+          dropDown={dropDown}
           id={TEST_ID}
           ariaLabel={input.ctx.t('flow.no-hints-available')}
           onClose={() => input.dispatch({ t: 'dialog.clicked-close' })}

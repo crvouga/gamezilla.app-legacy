@@ -2,11 +2,11 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Err, isErr, isLoading, isOk, Loading } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { IconPen, TextField } from '~/@/ui'
+import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { SurfaceBody } from '~/@/ui/surface/surface-body'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
-import { VDom } from '~/@/vdom/vdom'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, playSound, showOkSm, showErrSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND, playSound, showErrSm, showOkSm } from '~/app/@/frontend/cmd'
 import { ScreenAction, ScreenActionLocation } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -224,8 +224,8 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       icon: (input) => <IconPen {...input} />,
       label: input.ctx.t('app.edit-name'),
       onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
-      renderSurface: ({ reference, screenActionLocation }) => (
-        <ViewSurface {...input} ctx={input.ctx} reference={reference} screenActionLocation={screenActionLocation} />
+      renderSurface: ({ dropDown, screenActionLocation }) => (
+        <ViewSurface {...input} ctx={input.ctx} dropDown={dropDown} screenActionLocation={screenActionLocation} />
       ),
     },
   ]
@@ -233,7 +233,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
 
 const ViewSurface = (
   input: Parameters<FrontendModule['View']>[0] & {
-    reference: VDom
+    dropDown: DropDownConfig
     screenActionLocation: ScreenActionLocation
   },
 ) => {
@@ -266,9 +266,7 @@ const ViewSurface = (
         submitLoading: isLoading(input.model.puzzleEditNameRequest),
         submitDisabled: input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name,
       }}
-      dropDown={{
-        reference: input.reference,
-      }}
+      dropDown={input.dropDown}
       body={{
         render: () => (
           <SurfaceBody>

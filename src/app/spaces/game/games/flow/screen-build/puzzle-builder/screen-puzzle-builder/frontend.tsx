@@ -290,14 +290,12 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
       actionBar={{
         variant: {
           t: 'uniform',
-          actions: [
-            ...ModePlayFrontend.viewScreenActions({
-              ctx: ModePlay.initCtx({ ...input.ctx, flow }),
-              dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
-              model: puzzleBuilder.modePlay,
-              dispatchHintCalculator: (m) => input.dispatch({ t: 'got-hint-calculator-msg', c: m }),
-            }),
-          ],
+          actions: ModePlayFrontend.viewActions({
+            ctx: ModePlay.initCtx({ ...input.ctx, flow }),
+            dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
+            model: puzzleBuilder.modePlay,
+            dispatchHintCalculator: (m) => input.dispatch({ t: 'got-hint-calculator-msg', c: m }),
+          }),
         },
       }}
     />

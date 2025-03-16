@@ -34,7 +34,16 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
 
         if (!action.renderSurface) return <Frag key={action.id}>{button}</Frag>
 
-        return <Frag key={action.id}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
+        return (
+          <Frag key={action.id}>
+            {action.renderSurface({
+              dropDown: {
+                reference: button,
+              },
+              screenActionLocation: 'bar',
+            })}
+          </Frag>
+        )
       })}
 
       {hasLastActions && (
@@ -84,7 +93,9 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
         return (
           <Frag key={action.id}>
             {action.renderSurface({
-              reference: listItemButton,
+              dropDown: {
+                reference: listItemButton,
+              },
               screenActionLocation: 'more-drawer',
             })}
           </Frag>
@@ -106,7 +117,16 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
 
           if (!action.renderSurface) return <Frag key={action.id}>{button}</Frag>
 
-          return <Frag key={action.id}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
+          return (
+            <Frag key={action.id}>
+              {action.renderSurface({
+                dropDown: {
+                  reference: button,
+                },
+                screenActionLocation: 'bar',
+              })}
+            </Frag>
+          )
         })}
       </div>
 
@@ -118,7 +138,16 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
 
           if (!action.renderSurface) return <Frag key={action.id}>{button}</Frag>
 
-          return <Frag key={action.id}>{action.renderSurface({ reference: button, screenActionLocation: 'bar' })}</Frag>
+          return (
+            <Frag key={action.id}>
+              {action.renderSurface({
+                dropDown: {
+                  reference: button,
+                },
+                screenActionLocation: 'bar',
+              })}
+            </Frag>
+          )
         })}
       </div>
     </div>

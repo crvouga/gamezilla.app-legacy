@@ -1,10 +1,10 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { DrawerInput } from '~/@/ui'
+import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 import { SurfaceBodyText } from '~/@/ui/surface/surface-body-text'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
-import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 
@@ -18,7 +18,7 @@ type PropsBase = {
   }
   title: TranslatedText
   body: TranslatedText
-  dropDownReference?: VDom
+  dropDown?: DropDownConfig
   variant?: 'danger'
   //
   onClose: () => void
