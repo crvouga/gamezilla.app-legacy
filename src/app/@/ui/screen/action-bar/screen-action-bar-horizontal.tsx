@@ -1,4 +1,7 @@
 import { IconEllipsisVertical, ListItemButton, Spinner, Typography, cn } from '~/@/ui'
+import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
+import { Frag } from '~/@/ui/frag'
+import { VDom } from '~/@/vdom/vdom'
 import { SurfaceLayout } from '../../surface/layout/surface-layout'
 import {
   ScreenAction,
@@ -6,7 +9,6 @@ import {
   ScreenActionsSpaceBetween,
   ScreenActionsUniform,
 } from './screen-action-bar-props'
-import { Frag } from '~/@/ui/frag'
 
 const DEFAULT_LIMIT = Infinity
 
@@ -16,6 +18,14 @@ export const HorizontalActionBar = (input: ScreenActionBarProps) => {
       return <HorizontalUniform {...input} {...input.variant} />
     case 'space-between':
       return <HorizontalSpaceBetween {...input} {...input.variant} />
+  }
+}
+
+const toDropDownConfig = (reference: VDom): DropDownConfig => {
+  return {
+    reference,
+    alignment: 'starting',
+    position: 'bottom',
   }
 }
 
@@ -37,9 +47,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
         return (
           <Frag key={action.id}>
             {action.renderSurface({
-              dropDown: {
-                reference: button,
-              },
+              dropDown: toDropDownConfig(button),
               screenActionLocation: 'bar',
             })}
           </Frag>
@@ -93,9 +101,7 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
         return (
           <Frag key={action.id}>
             {action.renderSurface({
-              dropDown: {
-                reference: listItemButton,
-              },
+              dropDown: toDropDownConfig(listItemButton),
               screenActionLocation: 'more-drawer',
             })}
           </Frag>
@@ -120,9 +126,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
           return (
             <Frag key={action.id}>
               {action.renderSurface({
-                dropDown: {
-                  reference: button,
-                },
+                dropDown: toDropDownConfig(button),
                 screenActionLocation: 'bar',
               })}
             </Frag>
@@ -141,9 +145,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
           return (
             <Frag key={action.id}>
               {action.renderSurface({
-                dropDown: {
-                  reference: button,
-                },
+                dropDown: toDropDownConfig(button),
                 screenActionLocation: 'bar',
               })}
             </Frag>

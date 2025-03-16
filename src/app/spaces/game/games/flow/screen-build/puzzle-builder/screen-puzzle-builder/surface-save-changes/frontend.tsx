@@ -258,13 +258,12 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       label: input.ctx.t('app.save'),
       onClick: () => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-save-button' }),
       loading: input.model.puzzleSaveChangesRequest?.t === 'loading',
-      // renderSurface: ({ reference }) => <ViewSurface {...input} dropDownReference={reference} />,
     },
   ]
 }
 
 export const SaveChangesFrontend = {
-  ViewUnsavedChangesSurface,
   viewActions,
+  ViewUnsavedChangesSurface,
   update,
 }

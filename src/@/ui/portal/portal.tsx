@@ -23,9 +23,9 @@ const getExit = (portalId: string): HTMLElement | null => {
   return (querySelector(toExitQuerySelector(portalId)) ?? null) as HTMLElement | null
 }
 
-const Entrance = (input: { portalId: string; children: VDom }) => {
+const Entrance = (input: { portalId: string; children: VDom; noPortal?: boolean }) => {
   const element = getExit(input.portalId)
-  if (!element) return input.children
+  if (!element || input.noPortal) return input.children
   return (
     <div key={input.portalId} data-portal-entrance data-portal-id={input.portalId}>
       {createPortal?.(input.children, element)}
