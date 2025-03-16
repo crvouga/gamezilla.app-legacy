@@ -151,10 +151,18 @@ export type Problem = { type: 'ElementNotFound' }
 
 export type FocusResult = Result<Problem, null>
 
+const ensureCleanNonNegativeNumber = (value: number | undefined): number => {
+  if (value === undefined) return 0
+  if (isNaN(value)) return 0
+  if (value < 0) return 0
+  if (value === Infinity) return 0
+  return value
+}
+
 export const focus =
   (htmlId: string, timeout?: number): IO<FocusResult> =>
   async () => {
-    await new Promise((resolve) => setTimeout(resolve, timeout))
+    await new Promise((resolve) => setTimeout(resolve, ensureCleanNonNegativeNumber(timeout)))
 
     const element = document.getElementById(htmlId)
 

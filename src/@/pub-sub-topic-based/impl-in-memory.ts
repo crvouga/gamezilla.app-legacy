@@ -17,21 +17,21 @@ export const PubSubTopicBased = (config: Config): IPubSubTopicBased => {
       for (const sub of subs) {
         sub(msg)
       }
-      await new Promise((resolve) => setTimeout(resolve, 0))
+      await new Promise((resolve) => setTimeout(resolve, 1))
     },
     async sub(topic, callback) {
       const subs = config.subscribersByTopic.get(topic) ?? new Set()
       config.subscribersByTopic.set(topic, subs)
       subs.add(callback)
-      await new Promise((resolve) => setTimeout(resolve, 0))
+      await new Promise((resolve) => setTimeout(resolve, 1))
       return async () => {
         subs.delete(callback)
-        await new Promise((resolve) => setTimeout(resolve, 0))
+        await new Promise((resolve) => setTimeout(resolve, 1))
       }
     },
     async unsub(topic) {
       config.subscribersByTopic.delete(topic)
-      await new Promise((resolve) => setTimeout(resolve, 0))
+      await new Promise((resolve) => setTimeout(resolve, 1))
     },
   }
 }
