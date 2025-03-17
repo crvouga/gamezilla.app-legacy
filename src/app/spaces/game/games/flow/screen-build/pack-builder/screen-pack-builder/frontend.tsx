@@ -2,10 +2,6 @@ import { Sub } from '~/@/sub'
 import { Button, IconArrowLeftOnRect } from '~/@/ui'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { PackLoaderFrontend } from '../../../@/pack/pack-loader/frontend'
-import { PuzzleLoaderFrontend } from '../../../@/puzzle/puzzle-loader/frontend'
-import { HintCalculatorFrontend } from '../../../@/solutions/hint-calculator/frontend'
-import { SolutionsLoaderFrontend } from '../../../@/solutions/solutions-loader/frontend'
 import { ScreenAddPuzzle } from './screen-add-puzzle/frontend'
 import { ScreenPuzzlePlay } from './screen-play-puzzle/frontend'
 import { ScreenPuzzleGrid } from './screen-puzzle-grid/frontend'
@@ -65,17 +61,8 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'got-msg-space': {
       return { model: input.model, msgSpace: [input.msg.c] }
     }
-    case 'got-pack-loader-msg': {
-      return { model: input.model, msgCmd: [PackLoaderFrontend.gotMsg(input.msg.c)] }
-    }
-    case 'got-puzzle-loader-msg': {
-      return { model: input.model, msgCmd: [PuzzleLoaderFrontend.gotMsg(input.msg.c)] }
-    }
-    case 'got-hint-calculator-msg': {
-      return { model: input.model, msgCmd: [HintCalculatorFrontend.gotMsg(input.msg.c)] }
-    }
-    case 'got-solution-loader-msg': {
-      return { model: input.model, msgCmd: [SolutionsLoaderFrontend.gotMsg(input.msg.c)] }
+    case 'got-msg-cmd': {
+      return { model: input.model, msgCmd: [input.msg.c] }
     }
     default: {
       return {

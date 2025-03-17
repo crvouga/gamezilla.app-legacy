@@ -63,7 +63,10 @@ const toQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): Puzzl
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return PuzzleLoaderFrontend.watch(input.ctx, toQuery(input), (c) => ({ t: 'got-puzzle-loader-msg', c }))
+  return PuzzleLoaderFrontend.watch(input.ctx, toQuery(input), (c) => ({
+    t: 'got-msg-cmd',
+    c: PuzzleLoaderFrontend.gotMsg(c),
+  }))
 }
 
 const View: FrontendModule['View'] = (input) => {

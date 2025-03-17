@@ -48,7 +48,10 @@ const toQuery = (input: { currentUserId: UserId; offset: number }) => {
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   const query = toQuery({ currentUserId: input.ctx.currentUser.userId, offset: 0 })
-  return PackLoaderFrontend.watch(input.ctx, query, (c) => ({ t: 'got-pack-loader-msg', c }))
+  return PackLoaderFrontend.watch(input.ctx, query, (c) => ({
+    t: 'got-msg-cmd',
+    c: PackLoaderFrontend.gotMsg(c),
+  }))
 }
 
 const View: FrontendModule['View'] = (input) => {

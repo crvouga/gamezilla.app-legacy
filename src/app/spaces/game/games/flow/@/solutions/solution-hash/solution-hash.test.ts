@@ -56,4 +56,15 @@ describe(import.meta.file, () => {
     const hashB = SolutionHash.init(modelB)
     expect(hashA).not.toEqual(hashB)
   })
+
+  it.only('should not crash when missing intermediate terminal groups', () => {
+    const model = VariantGridShorthand.toGrid([
+      ['A', ' ', 'C', ' '],
+      [' ', ' ', ' ', ' '],
+      ['A', ' ', 'C', ' '],
+      ['E', ' ', ' ', 'E'],
+    ])
+    const hash = SolutionHash.init(model)
+    expect(hash).toBeDefined()
+  })
 })

@@ -3,7 +3,6 @@ import { UserId } from '~/app/@/data/user-id'
 import { ModeEdit } from '../../../@/mode-edit'
 import { ModePlay } from '../../../@/mode-play'
 import { Puzzle } from '../../../@/puzzle/puzzle'
-import { SolutionsLoaderTypes } from '../../../@/solutions/solutions-loader'
 import { DeleteForeverTypes } from './surface-delete-forever'
 import { EditPuzzleNameTypes } from './surface-edit-puzzle-name'
 import { SaveChangesTypes } from './surface-save-changes'
@@ -33,7 +32,6 @@ export type MsgFrontend =
   | { t: 'screen-puzzle-builder.user-clicked-exit-button' }
   | { t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }
   | { t: 'screen-puzzle-builder.user-clicked-play-mode-button' }
-  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgFrontend }
 
 export type MsgToFrontend =
   | SaveChangesTypes.MsgToFrontend

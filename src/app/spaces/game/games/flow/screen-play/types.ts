@@ -11,8 +11,6 @@ import { FlowFrontendCmd } from '../@/frontend/cmd'
 import type { FlowFrontendCtx } from '../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../@/frontend/evt'
 import { Pack } from '../@/pack/pack'
-import { PackLoaderTypes } from '../@/pack/pack-loader'
-import { PuzzleLoaderTypes } from '../@/puzzle/puzzle-loader'
 import { PuzzleResult } from '../@/puzzle/puzzle-result'
 import { FlowSpaceCtx } from '../@/space/ctx'
 import { FlowSpaceEvt } from '../@/space/event'
@@ -23,8 +21,13 @@ export type ModelFrontend = null
 export type MsgFrontend =
   | GameMainMenu.Msg
   | { t: 'got-msg-space'; c: MsgSpace }
-  | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgFrontend }
-  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgFrontend }
+  | {
+      t: 'got-msg-cmd'
+      c: FlowFrontendCmd<{
+        MsgToBackend: MsgToBackend
+        MsgFrontend: MsgFrontend
+      }>
+    }
 
 export type MsgBackend = { t: 'noop' }
 

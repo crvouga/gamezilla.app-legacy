@@ -7,6 +7,7 @@ import { ModePlay } from '../../../../@/mode-play'
 import { ModePlayFrontend } from '../../../../@/mode-play/frontend'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
+import { HintCalculatorFrontend } from '../../../../@/solutions/hint-calculator/frontend'
 import { SolutionsLoaderFrontend } from '../../../../@/solutions/solutions-loader/frontend'
 import { ScreenPackBuildSpace } from '../space/space'
 import type { FrontendModule } from '../types'
@@ -100,7 +101,11 @@ const View: FrontendModule['View'] = (input) => {
             actions: ModePlayFrontend.viewActions({
               ctx: { ...input.ctx, flow: puzzleResult.c.flow },
               model: play,
-              dispatchHintCalculator: (c) => input.dispatch({ t: 'got-hint-calculator-msg', c }),
+              dispatchHintCalculator: (c) =>
+                input.dispatch({
+                  t: 'got-msg-cmd',
+                  c: HintCalculatorFrontend.gotMsg(c),
+                }),
               dispatch: (c) =>
                 input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } }),
             }),
@@ -230,7 +235,10 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   const solutionHash = ScreenPackBuildSpace.toOpenPuzzleSolutionHash(input.modelSpace)
   if (!solutionHash) return Sub.None
 
-  return SolutionsLoaderFrontend.watch(input.ctx, solutionHash, (c) => ({ t: 'got-solution-loader-msg', c }))
+  return SolutionsLoaderFrontend.watch(input.ctx, solutionHash, (c) => ({
+    t: 'got-msg-cmd',
+    c: SolutionsLoaderFrontend.gotMsg(c),
+  }))
 }
 
 export const ScreenPuzzlePlay = {

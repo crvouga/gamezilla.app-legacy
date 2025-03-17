@@ -1,3 +1,4 @@
+import { Sub } from '~/@/sub'
 import { IconGamepad } from '~/@/ui'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -43,7 +44,9 @@ const toQuery = (input: { modelSpace: ModelSpace }): PuzzleQuery | null => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return PuzzleLoaderFrontend.watch(input.ctx, toQuery(input), (c) => ({ t: 'got-puzzle-loader-msg', c }))
+  const query = toQuery(input)
+  if (!query) return Sub.None
+  return PuzzleLoaderFrontend.watch(input.ctx, query, (c) => ({ t: 'got-msg-cmd', c: PuzzleLoaderFrontend.gotMsg(c) }))
 }
 
 const View: FrontendModule['View'] = (input) => {

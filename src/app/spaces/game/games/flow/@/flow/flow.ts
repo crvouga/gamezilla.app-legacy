@@ -255,7 +255,7 @@ export const deriveNodeHash = (nodes: Model['nodes']): string | number => {
 }
 
 export const deriveTerminalHash = (terminals: Model['terminalsByGroupId']): string | number => {
-  const values = Object.values(terminals)
+  const values = Object.values(terminals).filter(Boolean)
   const sorted = values.sort(descend((t) => GroupId.toOrder(t.groupId)))
   const hashes = sorted.map((terminal) => Terminal.deriveHash(terminal))
   const hash = hashes.join('_')

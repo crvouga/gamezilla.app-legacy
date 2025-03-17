@@ -2,6 +2,8 @@ import { describe, expect, test } from 'bun:test'
 import { pipe } from '~/@/function/pipe'
 import { Flow } from '.'
 import { VariantGrid, VariantGridShorthand } from '../variant/grid'
+import { Model } from './flow'
+import { NodeId } from './node-id'
 
 describe(import.meta.file, () => {
   test('isConnectedWithPipes with connected terminals', () => {
@@ -173,5 +175,23 @@ describe(import.meta.file, () => {
     )
 
     expect(expected).toEqual(actual)
+  })
+
+  test.only('deriveTerminalHash should not crash when having undefined values passed to it', () => {
+    const terminals: Model['terminalsByGroupId'] = {
+      A: {
+        endId: NodeId.init('0'),
+        groupId: 'A',
+        startId: NodeId.init('1'),
+      },
+      B: undefined,
+      C: {
+        endId: NodeId.init('2'),
+        groupId: 'C',
+        startId: NodeId.init('3'),
+      },
+    }
+    const hash = Flow.deriveTerminalHash(terminals)
+    expect(hash).toBeDefined()
   })
 })

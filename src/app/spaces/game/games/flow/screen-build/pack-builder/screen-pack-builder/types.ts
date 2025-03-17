@@ -11,11 +11,7 @@ import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../../../@/frontend/evt'
 import { ModePlay } from '../../../@/mode-play'
 import { Pack } from '../../../@/pack/pack'
-import { PackLoaderTypes } from '../../../@/pack/pack-loader'
-import { PuzzleLoaderTypes } from '../../../@/puzzle/puzzle-loader'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
-import { HintCalculatorTypes } from '../../../@/solutions/hint-calculator'
-import { SolutionsLoaderTypes } from '../../../@/solutions/solutions-loader'
 import { FlowSpaceCtx } from '../../../@/space/ctx'
 import { ScreenAddPuzzleTypes } from './screen-add-puzzle'
 import { EditPackNameTypes } from './surface-edit-pack-name'
@@ -37,10 +33,13 @@ export const initFrontend: ModelFrontend = {}
 
 export type MsgFrontend =
   | { t: 'got-msg-space'; c: MsgSpace }
-  | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgFrontend }
-  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgFrontend }
-  | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgFrontend }
-  | { t: 'got-solution-loader-msg'; c: SolutionsLoaderTypes.MsgFrontend }
+  | {
+      t: 'got-msg-cmd'
+      c: FlowFrontendCmd<{
+        MsgToBackend: MsgToBackend
+        MsgFrontend: MsgFrontend
+      }>
+    }
 
 export type MsgBackend = { t: 'noop' }
 

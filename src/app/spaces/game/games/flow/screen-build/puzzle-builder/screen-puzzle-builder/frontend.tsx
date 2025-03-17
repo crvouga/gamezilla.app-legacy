@@ -12,6 +12,7 @@ import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { ModeEdit } from '../../../@/mode-edit'
 import { ModePlay } from '../../../@/mode-play'
 import { ModePlayFrontend } from '../../../@/mode-play/frontend'
+import { HintCalculatorFrontend } from '../../../@/solutions/hint-calculator/frontend'
 import { SolutionHash } from '../../../@/solutions/solution-hash/solution-hash'
 import { SolutionsLoaderFrontend } from '../../../@/solutions/solutions-loader/frontend'
 import { BoardLayout } from '../../../@/ui/board-layout'
@@ -21,7 +22,6 @@ import { ScreenPuzzleBuilderSpace } from './space'
 import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './surface-save-changes/frontend'
-import { MsgFrontend } from './types'
 
 //
 //
@@ -40,7 +40,6 @@ const update: BuilderTypes.FrontendModule['update'] = (input) => {
     (model) => updateFromMsgSpace({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateSolutionsLoader({ ...input, model }),
   )
 }
 
@@ -294,7 +293,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
             ctx: ModePlay.initCtx({ ...input.ctx, flow }),
             dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
             model: puzzleBuilder.modePlay,
-            dispatchHintCalculator: (m) => input.dispatch({ t: 'got-hint-calculator-msg', c: m }),
+            dispatchHintCalculator: (m) => input.dispatch({ t: 'got-msg-cmd', c: HintCalculatorFrontend.gotMsg(m) }),
           }),
         },
       }}
@@ -361,15 +360,6 @@ const updateMoreDrawer: BuilderTypes.FrontendModule['update'] = (input) => {
 //
 //
 
-const updateSolutionsLoader: BuilderTypes.FrontendModule['update'] = (input) => {
-  switch (input.msg?.t) {
-    case 'got-solutions-loader-msg': {
-      return { model: input.model, msgCmd: [SolutionsLoaderFrontend.gotMsg(input.msg.c)] }
-    }
-  }
-  return { model: input.model }
-}
-
 const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (input) => {
   if (!input.modelSpace.screenPuzzleBuilder) return Sub.None
 
@@ -380,7 +370,7 @@ const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (input) => {
   const sub = SolutionsLoaderFrontend.watch(
     input.ctx,
     solutionsHash,
-    (msg): MsgFrontend => ({ t: 'got-solutions-loader-msg', c: msg }),
+    (msg): BuilderTypes.MsgFrontend => ({ t: 'got-msg-cmd', c: SolutionsLoaderFrontend.gotMsg(msg) }),
   )
 
   return sub

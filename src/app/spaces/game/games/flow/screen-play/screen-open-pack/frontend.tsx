@@ -1,11 +1,11 @@
+import { IconGamepad } from '~/@/ui'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutHostSettingUpGame } from '../../../@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
-import { PackLoaderFrontend } from '../../@/pack/pack-loader/frontend'
 import { PacksDbQuery } from '../../@/pack/pack-db/query'
+import { PackLoaderFrontend } from '../../@/pack/pack-loader/frontend'
 import type { FrontendModule } from '../types'
-import { IconGamepad } from '~/@/ui'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -40,7 +40,10 @@ const toQuery = (_input: { ctx: { currentUserId: UserId } }): PacksDbQuery => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return PackLoaderFrontend.watch(input.ctx, toQuery(input), (c) => ({ t: 'got-pack-loader-msg', c }))
+  return PackLoaderFrontend.watch(input.ctx, toQuery(input), (c) => ({
+    t: 'got-msg-cmd',
+    c: PackLoaderFrontend.gotMsg(c),
+  }))
 }
 
 const View: FrontendModule['View'] = (input) => {
