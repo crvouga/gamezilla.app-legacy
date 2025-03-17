@@ -81,6 +81,7 @@ const ScreenActionButton = (input: ScreenAction) => {
   if (input.hidden) return null
   return (
     <button
+      data-testid={input.testId}
       type='button'
       role='button'
       disabled={isDisabled}

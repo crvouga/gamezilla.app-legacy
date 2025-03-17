@@ -164,6 +164,7 @@ const ScreenActionButton = (input: ScreenAction & { className?: string }) => {
     <button
       type='button'
       role='button'
+      data-testid={input.testId}
       disabled={isDisabled}
       key={input.label}
       name={input.label}

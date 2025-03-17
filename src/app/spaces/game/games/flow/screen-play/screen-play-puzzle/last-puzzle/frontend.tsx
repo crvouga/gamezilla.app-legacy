@@ -69,11 +69,7 @@ const ViewDialog = (input: {
   )
 }
 
-const TEST_ID = 'last-puzzle-select-next-pack'
-
-const isActionExit = (action: ScreenAction): boolean => {
-  return action.testId === TEST_ID
-}
+const TEST_ID_LAST_PUZZLE_SELECT_NEXT_ID = 'last-puzzle-select-next-pack'
 
 const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
   if (input.modelSpace.screen.t !== 'screen-play-puzzle') return []
@@ -92,8 +88,8 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
           c: { t: 'user-clicked-select-next-pack', userId: input.ctx.currentUser.userId },
         })
       },
-      testId: TEST_ID,
-      id: TEST_ID,
+      testId: TEST_ID_LAST_PUZZLE_SELECT_NEXT_ID,
+      id: TEST_ID_LAST_PUZZLE_SELECT_NEXT_ID,
     }),
   ]
 }
@@ -101,6 +97,6 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
 export const LastPuzzleFrontend = {
   ViewDialog,
   viewActions,
-  isActionExit,
+  TEST_ID_LAST_PUZZLE_SELECT_NEXT_ID,
   update,
 }

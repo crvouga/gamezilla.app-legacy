@@ -77,36 +77,24 @@ describe.only('LastPuzzleFrontend', () => {
   it('should render exit screen action when last puzzle is completed', async () => {
     const f = await Fixture()
     const output = f.update(f.init, f.msgsCompleteLastPuzzle)
-    const actions = LastPuzzleFrontend.viewActions({
-      model: output.model,
-      dispatch: () => {},
-      ctx: f.ctx,
-      modelSpace: output.modelSpace,
-    })
-    expect(actions.some(LastPuzzleFrontend.isActionExit)).toBe(true)
+    const r = f.render(output)
+    const got = r.getByTestId(LastPuzzleFrontend.TEST_ID_LAST_PUZZLE_SELECT_NEXT_ID)[0]
+    expect(got).toBeTruthy()
   })
 
   it('should NOT render exit screen action when last puzzle is completed', async () => {
     const f = await Fixture()
     const output = f.update(f.init, f.msgsGoToLastPuzzle)
-    const actions = LastPuzzleFrontend.viewActions({
-      model: output.model,
-      dispatch: () => {},
-      ctx: f.ctx,
-      modelSpace: output.modelSpace,
-    })
-    expect(actions.some(LastPuzzleFrontend.isActionExit)).toBe(false)
+    const r = f.render(output)
+    const got = r.getByTestId(LastPuzzleFrontend.TEST_ID_LAST_PUZZLE_SELECT_NEXT_ID)[0]
+    expect(got).toBeFalsy()
   })
 
   it('should NOT render if not last puzzle', async () => {
     const f = await Fixture()
     const output = f.update(f.init, f.msgsCompletePuzzle)
-    const actions = LastPuzzleFrontend.viewActions({
-      model: output.model,
-      dispatch: () => {},
-      ctx: f.ctx,
-      modelSpace: output.modelSpace,
-    })
-    expect(actions.some(LastPuzzleFrontend.isActionExit)).toBe(false)
+    const r = f.render(output)
+    const got = r.getByTestId(LastPuzzleFrontend.TEST_ID_LAST_PUZZLE_SELECT_NEXT_ID)[0]
+    expect(got).toBeFalsy()
   })
 })
