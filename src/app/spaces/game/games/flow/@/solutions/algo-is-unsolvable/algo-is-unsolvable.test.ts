@@ -12,10 +12,10 @@ describe(import.meta.file, () => {
     expect(AlgoIsUnsolvable.isUnsolvable(grid)).toBe(false)
   })
 
-  test.todo('unsolvable 3x3 puzzle', () => {
+  test('unsolvable 3x3 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', 'B', 'A'],
-      [' ', ' ', ' '],
+      ['a', 'a', 'a'],
       ['C', 'B', 'C'],
     ])
     expect(AlgoIsUnsolvable.isUnsolvable(grid)).toBe(true)

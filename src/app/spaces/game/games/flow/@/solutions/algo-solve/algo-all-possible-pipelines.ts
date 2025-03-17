@@ -4,45 +4,46 @@ import { GroupId } from '../../flow/group-id'
 import { NodeId } from '../../flow/node-id'
 import { Variant } from '../../variant'
 
-const MAX_ITERATIONS = 5000
+const MAX_ITERATIONS = 10_000
 
-export const toAllPossiblePipelines = function* (
-  model: Variant.Model,
-  groupId: GroupId,
-  startId: NodeId,
-  endId: NodeId,
-): Iterable<Flow.Edge[]> {
-  type HeapItem = {
-    path: Flow.Edge[]
-    currentNode: NodeId
-    visited: Set<NodeId>
-    cost: number
-    heuristic: number
-  }
+type HeapItem = {
+  path: Flow.Edge[]
+  currentNode: NodeId
+  visited: Set<NodeId>
+  cost: number
+  heuristic: number
+}
 
+export const toAllPossiblePipelines = function* (input: {
+  model: Variant.Model
+  groupId: GroupId
+  startId: NodeId
+  endId: NodeId
+}): Iterable<Flow.Edge[]> {
   const minHeap = new MinHeap<HeapItem>((a, b) => a.heuristic - b.heuristic)
   const visitedPaths = new Set<string>()
   let iterations = 0
 
   minHeap.insert({
     path: [],
-    currentNode: startId,
-    visited: new Set([startId]),
+    currentNode: input.startId,
+    visited: new Set([input.startId]),
     cost: 0,
-    heuristic: Variant.distance(model, startId, endId),
+    heuristic: Variant.distance(input.model, input.startId, input.endId),
   })
 
-  while (!minHeap.isEmpty() && iterations < MAX_ITERATIONS) {
+  while (true) {
+    if (iterations >= MAX_ITERATIONS) break
+
     iterations++
+
     const min = minHeap.extractMin()
 
-    if (!min) {
-      break
-    }
+    if (!min) break
 
     const { path, currentNode, visited, cost } = min
 
-    if (currentNode === endId) {
+    if (currentNode === input.endId) {
       const normalizedPath = normalizePath(path)
       if (!visitedPaths.has(normalizedPath)) {
         visitedPaths.add(normalizedPath)
@@ -51,21 +52,17 @@ export const toAllPossiblePipelines = function* (
       continue
     }
 
-    for (const edgeOut of Flow.yieldEdgesOut(model, currentNode)) {
-      const targetGroupId = Flow.toGroupId(model, edgeOut.targetId)
+    for (const edgeOut of Flow.yieldEdgesOut(input.model, currentNode)) {
+      const targetGroupId = Flow.toGroupId(input.model, edgeOut.targetId)
 
-      if (targetGroupId && targetGroupId !== groupId) {
-        continue
-      }
+      if (targetGroupId && targetGroupId !== input.groupId) continue
 
-      if (visited.has(edgeOut.targetId)) {
-        continue
-      }
+      if (visited.has(edgeOut.targetId)) continue
 
       const newPath = [...path, edgeOut]
       const newVisited = new Set(visited).add(edgeOut.targetId)
       const newCost = cost + 1
-      const heuristic = toHeuristic(model, edgeOut.targetId, endId, newPath)
+      const heuristic = toHeuristic(input.model, edgeOut.targetId, input.endId, newPath)
 
       minHeap.insert({
         path: newPath,
@@ -101,7 +98,7 @@ const countTurns = (model: Variant.Model, path: Flow.Edge[]): number => {
 const toHeuristic = (model: Variant.Model, currentNode: NodeId, endNode: NodeId, path: Flow.Edge[]): number => {
   const distanceHeuristic = Variant.distance(model, currentNode, endNode)
   const turnsHeuristic = countTurns(model, path)
-  return distanceHeuristic + turnsHeuristic * 1.5
+  return distanceHeuristic + turnsHeuristic
 }
 
 const normalizePath = (path: Flow.Edge[]): string => {

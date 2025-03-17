@@ -4,6 +4,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { IconCheckmark } from '~/@/ui'
 import { Transition } from '~/@/ui/transition/transition'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
+import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { Flow } from '../flow'
 import { FlowFrontendCmdInternal } from '../frontend/cmd'
@@ -12,10 +13,9 @@ import { SolutionHash } from '../solutions/solution-hash/solution-hash'
 import { SolutionsLoaderFrontend } from '../solutions/solutions-loader/frontend'
 import { Variant, VariantBoard } from '../variant'
 import { ModePlayFrontendCtx } from './frontend/ctx'
-import { Model, Msg, toFlow, toStatus } from './mode-play'
+import { Model, Msg, toFlow } from './mode-play'
 import { UseHint } from './use-hint'
 import { UseHintFrontend } from './use-hint/frontend'
-import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 
 const View = (input: {
   flow: Variant.Model
@@ -76,8 +76,6 @@ const viewActions = (input: {
   dispatchCmd: (m: FlowFrontendCmdInternal) => void
   ctx: ModePlayFrontendCtx
 }): ScreenAction[] => {
-  const status = toStatus({ flow: input.ctx.flow, model: input.model })
-  const isSolved = status === 'solved'
   return [
     ...HintCalculatorFrontend.viewActions({
       ctx: input.ctx,
@@ -88,7 +86,6 @@ const viewActions = (input: {
       ctx: input.ctx,
       dispatch: input.dispatch,
       model: input.model,
-      hidden: isSolved,
     }),
     ...viewResetAction({
       ctx: input.ctx,

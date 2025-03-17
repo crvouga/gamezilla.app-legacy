@@ -4,7 +4,7 @@ import { NodeId } from '../../flow/node-id'
 import { TerminalFull } from '../../flow/terminal-full'
 import { Variant } from '../../variant'
 
-export const isImpossibleForTerminalsToConnect = (model: Variant.Model, terminals: TerminalFull[]): boolean => {
+export const isImpossibleForAnyTerminalToConnect = (model: Variant.Model, terminals: TerminalFull[]): boolean => {
   for (const terminal of terminals) {
     const minPathLength = Variant.distance(model, terminal.startId, terminal.endId)
     const availableSpaces = countAvailableSpaces(model, terminal.groupId)

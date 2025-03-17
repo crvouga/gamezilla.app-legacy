@@ -15,10 +15,11 @@ const viewAction = (input: {
   ctx: ModePlayFrontendCtx
 }): ScreenAction[] => {
   if (!input.ctx.flow) return []
-  const hash = SolutionHash.init(input.ctx.flow)
+  const flow = toFlow(input.model, input.ctx.flow)
+  const hash = SolutionHash.init(flow)
   const hasSolution = Solutions.selectOne(input.ctx.solutions, hash) !== null
   if (!hasSolution) return []
-  const isSolved = AlgoIsSolved.isSolved(input.ctx.flow)
+  const isSolved = AlgoIsSolved.isSolved(flow)
   if (isSolved) return []
   return [
     {

@@ -2,6 +2,8 @@ import { Flow } from '../../flow'
 import { Variant } from '../../variant'
 import { NodeId } from '../../flow/node-id'
 import { Terminal } from '../../flow/terminal'
+import { GroupId } from '../../flow/group-id'
+import { TerminalFull } from '../../flow/terminal-full'
 
 const isSplittingTerminal = (model: Variant.Model, terminal: Terminal): boolean => {
   if (!terminal.endId) {
@@ -67,28 +69,30 @@ const isUnsolvableDueToSplittingTerminal = (model: Variant.Model): boolean => {
 /**
  * Returns true when a terminal
  */
-export const hasSmotheredTerminal = (model: Variant.Model): boolean => {
-  const terminals = Flow.toTerminals(model)
-  for (const terminal of terminals) {
-    if (isSmotheredTerminal(model, terminal)) {
-      return true
-    }
-  }
-  return false
+const hasSmotheredTerminal = (model: Variant.Model): boolean => {
+  return Array.from(Flow.yieldFullTerminals(model)).some((terminal) => isSmotheredTerminal(model, terminal))
 }
 
-const isSmotheredTerminal = (model: Variant.Model, terminal: Terminal): boolean => {
-  const terminals = Flow.toTerminals(model)
-  for (const otherTerminal of terminals) {
-    if (otherTerminal.groupId === terminal.groupId) {
-      continue
-    }
-  }
-  return false
+const isSmotheredTerminal = (model: Variant.Model, terminal: TerminalFull): boolean => {
+  return (
+    isSmotheredTerminalNode(model, terminal.groupId, terminal.startId) ||
+    isSmotheredTerminalNode(model, terminal.groupId, terminal.endId)
+  )
+}
+
+const isSmotheredTerminalNode = (model: Variant.Model, groupId: GroupId, nodeId: NodeId): boolean => {
+  return Array.from(Flow.yieldAdjacentNodes(model, nodeId)).every((adjacentNodeId) => {
+    const adjacentNodeGroup = Flow.toGroupId(model, adjacentNodeId)
+    return adjacentNodeGroup !== groupId && adjacentNodeGroup !== null
+  })
 }
 
 export const isUnsolvable = (model: Variant.Model): boolean => {
   if (isUnsolvableDueToSplittingTerminal(model)) {
+    return true
+  }
+
+  if (hasSmotheredTerminal(model)) {
     return true
   }
 

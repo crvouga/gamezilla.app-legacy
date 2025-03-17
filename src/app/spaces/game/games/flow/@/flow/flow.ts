@@ -345,6 +345,12 @@ export const yieldNodes = function* (model: Model): Generator<Node> {
   }
 }
 
+export const yieldAdjacentNodes = function* (model: Model, nodeId: NodeId): Generator<NodeId> {
+  for (const edge of yieldEdgesOut(model, nodeId)) {
+    yield edge.targetId
+  }
+}
+
 /**
  *
  */

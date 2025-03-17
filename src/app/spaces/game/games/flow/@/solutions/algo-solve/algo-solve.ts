@@ -5,7 +5,7 @@ import { TerminalFull } from '../../flow/terminal-full'
 import { Variant } from '../../variant'
 import { AlgoIsSolved } from '../algo-is-solved/algo-is-solved'
 import { toAllPossiblePipelines } from './algo-all-possible-pipelines'
-import { isImpossibleForTerminalsToConnect } from './algo-is-impossible-for-terminals-to-connect'
+import { isImpossibleForAnyTerminalToConnect } from './algo-is-impossible-for-terminals-to-connect'
 
 export const solve = (model: Variant.Model): Variant.Model | null => {
   for (const solution of solutions(model)) {
@@ -24,7 +24,7 @@ export const solutions = function* (model: Variant.Model): Iterable<Variant.Mode
 }
 
 const solveStep = function* (model: Variant.Model, disconnectedTerminals: TerminalFull[]): Iterable<Variant.Model> {
-  if (isImpossibleForTerminalsToConnect(model, disconnectedTerminals)) {
+  if (isImpossibleForAnyTerminalToConnect(model, disconnectedTerminals)) {
     return
   }
 
@@ -37,7 +37,12 @@ const solveStep = function* (model: Variant.Model, disconnectedTerminals: Termin
 
   if (!terminal) return
 
-  const allPossiblePipelines = toAllPossiblePipelines(model, terminal.groupId, terminal.startId, terminal.endId)
+  const allPossiblePipelines = toAllPossiblePipelines({
+    model,
+    groupId: terminal.groupId,
+    startId: terminal.startId,
+    endId: terminal.endId,
+  })
 
   for (const possiblePipeline of allPossiblePipelines) {
     const drew = drawPipeline(model, terminal, possiblePipeline)

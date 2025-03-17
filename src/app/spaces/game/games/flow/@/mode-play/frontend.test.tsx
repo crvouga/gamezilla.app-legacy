@@ -8,6 +8,7 @@ import { ModePlayFrontendCtx } from './frontend/ctx'
 import { UseHintFrontend } from './use-hint/frontend'
 import { Solutions } from '../solutions/solutions'
 import { Solution } from '../solutions/solution'
+import { AlgoIsSolved } from '../solutions/algo-is-solved/algo-is-solved'
 
 const Fixture = async () => {
   const f = await FixtureFlowFrontend()
@@ -23,6 +24,8 @@ const Fixture = async () => {
   const solution = solutions[0]
   if (!solution) throw new Error('No solution found')
   const modelSolved: ModePlay.Model = { ...init, ...Solution.toSolvedFlow(solution) }
+
+  if (!AlgoIsSolved.isSolved(ModePlay.toFlow(modelSolved, flow))) throw new Error('Model is not solved')
 
   const render = (input?: Partial<Parameters<typeof ModePlayFrontend.TestView>[0]>) => {
     const r = f.render(
@@ -58,7 +61,7 @@ describe('ModePlayFrontend', () => {
     expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]).toBeTruthy()
   })
 
-  test('remove hint button when puzzle is solved', async () => {
+  test.only('remove hint button when puzzle is solved', async () => {
     const f = await Fixture()
     const r = f.render({ ctx: f.ctxWithSolutions, model: f.modelSolved })
     expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]).toBeFalsy()

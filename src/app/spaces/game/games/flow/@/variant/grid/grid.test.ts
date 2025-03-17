@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { eq } from '~/@/equals/equals'
-import { VariantGrid, VariantGridDimensions } from '.'
+import { VariantGrid, VariantGridDimensions, VariantGridShorthand } from '.'
 import { Flow } from '../../flow'
 
 describe(import.meta.file, () => {
@@ -91,5 +91,20 @@ describe(import.meta.file, () => {
     }
     const actual = Flow.toReversedPipesBySourceId(grid)
     expect(eq(actual, expected)).toBe(true)
+  })
+
+  test('distance', () => {
+    const grid = VariantGridShorthand.toGrid([
+      [' ', ' ', ' '],
+      [' ', ' ', ' '],
+      [' ', ' ', ' '],
+    ])
+    const EXPECTED = 4
+    const actual = VariantGrid.distance(
+      grid,
+      VariantGrid.toNodeId({ x: 0, y: 0 }),
+      VariantGrid.toNodeId({ x: 2, y: 2 }),
+    )
+    expect(actual).toBe(EXPECTED)
   })
 })
