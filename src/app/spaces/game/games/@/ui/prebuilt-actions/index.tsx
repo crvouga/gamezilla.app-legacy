@@ -1,5 +1,5 @@
 import type { Translator } from '~/@/l18n/generated'
-import { IconArrowCircle, IconArrowLeftOnRect, IconArrowRotateLeft, IconChevronLeft } from '~/@/ui'
+import { IconArrowRightCircle, IconArrowLeftOnRect, IconArrowRotateLeft, IconChevronLeft } from '~/@/ui'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 
 type PrebuiltActionInput = Partial<ScreenAction> & {
@@ -19,11 +19,11 @@ const exit = (input: PrebuiltActionInput): ScreenAction => ({
 })
 
 const next = (input: PrebuiltActionInput): ScreenAction => ({
-  ...input,
   id: input.ctx.t('prebuilt-actions.next'),
   // icon: (input) => <IconChevronRight {...input} />,
-  icon: (input) => <IconArrowCircle {...input} />,
+  icon: (input) => <IconArrowRightCircle {...input} />,
   label: input.ctx.t('prebuilt-actions.next'),
+  ...input,
 })
 
 const reset = (input: PrebuiltActionInput): ScreenAction => ({

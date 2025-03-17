@@ -3,7 +3,7 @@ import { Translator } from '~/@/l18n/generated'
 import { isErr } from '~/@/result'
 import {
   Avatar,
-  IconArrowCircle,
+  IconArrowRightCircle,
   IconArrowLeftOnRect,
   IconArrowRight,
   IconArrowRotateLeft,
@@ -433,7 +433,7 @@ export const BottomBarActions = ({
 
   const next: ScreenAction = {
     id: ctx.t('app.next'),
-    icon: (input) => <IconArrowCircle {...input} />,
+    icon: (input) => <IconArrowRightCircle {...input} />,
     label: ctx.t('app.next'),
     color: 'success',
     onClick: () => dispatch({ t: 'next' }),

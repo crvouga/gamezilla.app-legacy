@@ -1,5 +1,5 @@
 import { TimeSpan } from '~/@/time/time-span'
-import { Button, Dialog, IconChevronRight, Typography } from '~/@/ui'
+import { Button, Dialog, Typography } from '~/@/ui'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { SurfaceActions } from '~/@/ui/surface/surface-actions'
 import { SurfaceBody } from '~/@/ui/surface/surface-body'
@@ -7,6 +7,7 @@ import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { type AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
+import { PrebuiltActions } from '../../../../@/ui/prebuilt-actions'
 import type { FrontendModule, MsgFrontend } from '../../types'
 import { ScreenPlayPuzzleSpace } from '../space'
 
@@ -81,9 +82,10 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
   const isLastPuzzle = ScreenPlayPuzzleSpace.isLastPuzzle(input.modelSpace.screen)
   if (!isLastPuzzle) return []
   return [
-    {
-      icon: (input) => <IconChevronRight {...input} />,
-      label: input.ctx.t('flow.select-next-pack'),
+    PrebuiltActions.next({
+      ctx: input.ctx,
+      label: input.ctx.t('flow.next-pack'),
+      color: 'success',
       onClick: () => {
         input.dispatch({
           t: 'got-msg-space',
@@ -92,7 +94,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       },
       testId: TEST_ID,
       id: TEST_ID,
-    },
+    }),
   ]
 }
 
