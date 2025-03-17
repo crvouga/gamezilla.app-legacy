@@ -9,6 +9,7 @@ import { Solution } from '../../solutions/solution'
 import { SolutionHash } from '../../solutions/solution-hash/solution-hash'
 import { Solutions } from '../../solutions/solutions'
 import type { Variant } from '../../variant'
+import { TerminalFull } from '../../flow/terminal-full'
 
 export type Ctx = {
   flow: Variant.Model
@@ -119,11 +120,17 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
 
 export const toNextHintGroupId = (model: Flow.Model): GroupId | null => {
   for (const groupId of GroupId.ORDER) {
-    if (!Flow.isTerminalConnectedWithPipes(model, groupId)) {
+    if (hasFullTerminalForGroupId(model, groupId) && !Flow.isTerminalConnectedWithPipes(model, groupId)) {
       return groupId
     }
   }
   return null
+}
+
+const hasFullTerminalForGroupId = (model: Flow.Model, groupId: GroupId): boolean => {
+  const terminal = model.terminalsByGroupId[groupId]
+  if (!terminal) return false
+  return TerminalFull.is(terminal)
 }
 
 export const toShowingHintGroupIds = (model: Model): GroupId[] => {

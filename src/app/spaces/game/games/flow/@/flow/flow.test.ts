@@ -177,7 +177,7 @@ describe(import.meta.file, () => {
     expect(expected).toEqual(actual)
   })
 
-  test.only('deriveTerminalHash should not crash when having undefined values passed to it', () => {
+  test('deriveTerminalHash should not crash when having undefined values passed to it', () => {
     const terminals: Model['terminalsByGroupId'] = {
       A: {
         endId: NodeId.init('0'),

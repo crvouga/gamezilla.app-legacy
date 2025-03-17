@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .bg-surface {
   @apply bg-black;
 }
@@ -28,11 +27,11 @@
 }
 
 .clickable-transparent {
-  @apply clickable [@media(hover:hover)]:enabled:hover:bg-neutral-700/50
+  @apply clickable [@media(hover:hover)]:enabled:hover:bg-neutral-700/50;
 }
 
 .clickable-paper {
-  @apply bg-paper clickable [@media(hover:hover)]:enabled:hover:bg-neutral-800
+  @apply bg-paper clickable [@media(hover:hover)]:enabled:hover:bg-neutral-800;
 }
 
 /*

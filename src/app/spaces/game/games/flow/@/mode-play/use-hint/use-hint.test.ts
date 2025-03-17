@@ -301,4 +301,23 @@ describe(import.meta.file, () => {
 
     expect(expected).toEqual(actual)
   })
+
+  it('should work when missing intermediate terminal groups', async () => {
+    const f = await Fixture({
+      ctxFlow: VariantGridShorthand.toGrid([
+        ['A', ' ', 'C'],
+        [' ', ' ', ' '],
+        ['A', ' ', 'C'],
+      ]),
+    })
+
+    const solutions = await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop })
+
+    const output = f.update(f.init, [
+      { msg: { t: 'user-clicked-use-hint', solutions } },
+      { msg: { t: 'user-clicked-use-hint', solutions } },
+    ])
+
+    expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
+  })
 })

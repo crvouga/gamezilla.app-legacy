@@ -57,7 +57,7 @@ describe(import.meta.file, () => {
     expect(hashA).not.toEqual(hashB)
   })
 
-  it.only('should not crash when missing intermediate terminal groups', () => {
+  it('should not crash when missing intermediate terminal groups', () => {
     const model = VariantGridShorthand.toGrid([
       ['A', ' ', 'C', ' '],
       [' ', ' ', ' ', ' '],
