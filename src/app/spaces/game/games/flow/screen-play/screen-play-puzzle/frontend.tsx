@@ -13,9 +13,7 @@ import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { ModePlay } from '../../@/mode-play'
 import { ModePlayFrontend } from '../../@/mode-play/frontend'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
-import { HintCalculatorFrontend } from '../../@/solutions/hint-calculator/frontend'
-import { SolutionsLoaderFrontend } from '../../@/solutions/solutions-loader/frontend'
-import type { FrontendModule, MsgFrontend } from '../types'
+import type { FrontendModule } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
 import { LastPuzzleFrontend } from './dialog-last-puzzle/frontend'
 import { ScreenPlayPuzzleSpace } from './space'
@@ -78,13 +76,14 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   if (input.modelSpace.screen.t !== 'screen-play-puzzle') return Sub.None
-  const hash = ScreenPlayPuzzleSpace.toOpenPuzzleSolutionHash(input.modelSpace.screen)
-  if (!hash) return Sub.None
-  return SolutionsLoaderFrontend.watch(
-    input.ctx,
-    hash,
-    (c): MsgFrontend => ({ t: 'got-msg-cmd', c: SolutionsLoaderFrontend.gotMsg(c) }),
-  )
+  if (input.modelSpace.screen.puzzleResult.t !== 'got') return Sub.None
+  const flow = input.modelSpace.screen.puzzleResult.c.flow
+  const play = input.modelSpace.screen.modePlay
+  if (!play) return Sub.None
+  return ModePlayFrontend.subscriptions({ model: play, ctx: { ...input.ctx, flow } }, (c) => ({
+    t: 'got-msg-cmd',
+    c,
+  }))
 }
 
 const CHECKMARK_DURATION = TimeSpan.seconds(1 / 2)
@@ -201,8 +200,7 @@ const View: FrontendModule['View'] = (input) => {
                         ctx: ModePlay.initCtx({ flow: puzzle.c.flow, solutions: input.ctx.solutions }),
                       }),
                     ctx: ModePlay.initCtx({ ...input.ctx, flow: puzzle.c.flow, solutions: input.ctx.solutions }),
-                    dispatchHintCalculator: (c) =>
-                      input.dispatch({ t: 'got-msg-cmd', c: HintCalculatorFrontend.gotMsg(c) }),
+                    dispatchCmd: (c) => input.dispatch({ t: 'got-msg-cmd', c }),
                     dispatch: (c) =>
                       input.dispatch({
                         t: 'got-msg-space',

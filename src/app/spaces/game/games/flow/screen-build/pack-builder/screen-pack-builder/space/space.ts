@@ -1,7 +1,6 @@
 import { ModePlay } from '../../../../@/mode-play'
 import { Pack } from '../../../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../../../@/pack/pack-puzzle-grid-ui'
-import { SolutionHash } from '../../../../@/solutions/solution-hash/solution-hash'
 import { ScreenAddPuzzleSpace } from '../screen-add-puzzle/space'
 import { EditPackNameSpace } from '../surface-edit-pack-name/space'
 import type { ModelSpace, UpdateSpace } from '../types'
@@ -317,27 +316,8 @@ const toSlideIndex = (modelSpace?: ModelSpace | null | undefined): number => {
   return modelSpace?.slideIndex ?? 0
 }
 
-const toOpenPuzzleSolutionHash = (modelSpace?: ModelSpace | null | undefined): SolutionHash | null => {
-  if (!modelSpace) {
-    return null
-  }
-
-  if (modelSpace.screen.t !== 'screen-puzzle') {
-    return null
-  }
-
-  if (modelSpace.screen.puzzleResult.t !== 'got') {
-    return null
-  }
-
-  const solutionHash = SolutionHash.init(modelSpace.screen.puzzleResult.c.flow)
-
-  return solutionHash
-}
-
 export const ScreenPackBuildSpace = {
   toSlideIndex,
   initSpace,
-  toOpenPuzzleSolutionHash,
   updateSpace,
 }

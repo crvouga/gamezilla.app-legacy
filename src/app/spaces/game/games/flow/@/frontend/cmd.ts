@@ -6,7 +6,7 @@ import { HintCalculatorTypes } from '../solutions/hint-calculator'
 import { SolutionsLoaderTypes } from '../solutions/solutions-loader'
 import { FlowFrontendCmdRoot } from './cmd-root'
 
-type FlowFrontendCmdInternal =
+export type FlowFrontendCmdInternal =
   | PackLoaderTypes.MsgInCmdFrontend
   | PuzzleLoaderTypes.MsgInCmdFrontend
   | SolutionsLoaderTypes.MsgInCmdFrontend

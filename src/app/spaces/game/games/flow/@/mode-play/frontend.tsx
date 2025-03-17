@@ -1,12 +1,15 @@
 import { Translator } from '~/@/l18n/generated'
+import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconCheckmark } from '~/@/ui'
 import { Transition } from '~/@/ui/transition/transition'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { Flow } from '../flow'
-import { HintCalculatorTypes } from '../solutions/hint-calculator'
+import { FlowFrontendCmdInternal } from '../frontend/cmd'
 import { HintCalculatorFrontend } from '../solutions/hint-calculator/frontend'
+import { SolutionHash } from '../solutions/solution-hash/solution-hash'
+import { SolutionsLoaderFrontend } from '../solutions/solutions-loader/frontend'
 import { Variant, VariantBoard } from '../variant'
 import { ModePlayFrontendCtx } from './frontend/ctx'
 import { Model, Msg, toFlow, toStatus } from './mode-play'
@@ -69,14 +72,14 @@ const viewResetAction = (input: {
 const viewActions = (input: {
   model: Model
   dispatch: (m: Msg) => void
-  dispatchHintCalculator: (m: HintCalculatorTypes.MsgFrontend) => void
+  dispatchCmd: (m: FlowFrontendCmdInternal) => void
   ctx: ModePlayFrontendCtx
 }): ScreenAction[] => {
   const status = toStatus({ flow: input.ctx.flow, model: input.model })
   return [
     ...HintCalculatorFrontend.viewAction({
       ctx: input.ctx,
-      dispatch: input.dispatchHintCalculator,
+      dispatch: (c) => input.dispatchCmd(HintCalculatorFrontend.gotMsg(c)),
       model: input.ctx.HintCalculator,
     }),
     ...UseHintFrontend.viewAction({
@@ -129,7 +132,20 @@ const animateCheckmark = (input: { duration: TimeSpan }) => async (node: HTMLEle
   node.style.transform = 'scale(0.8)'
 }
 
+const subscriptions = <TMsg,>(
+  input: { model: Model; ctx: ModePlayFrontendCtx },
+  map: (c: FlowFrontendCmdInternal) => TMsg,
+): Sub<TMsg> => {
+  const solutionHash = SolutionHash.init(input.ctx.flow)
+  if (!solutionHash) return Sub.None
+  return Sub.map(
+    SolutionsLoaderFrontend.watch(input.ctx, solutionHash, (c) => SolutionsLoaderFrontend.gotMsg(c)),
+    map,
+  )
+}
+
 export const ModePlayFrontend = {
   View,
   viewActions,
+  subscriptions,
 }

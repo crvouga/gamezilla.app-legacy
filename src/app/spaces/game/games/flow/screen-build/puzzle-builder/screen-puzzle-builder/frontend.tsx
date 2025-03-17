@@ -12,9 +12,6 @@ import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { ModeEdit } from '../../../@/mode-edit'
 import { ModePlay } from '../../../@/mode-play'
 import { ModePlayFrontend } from '../../../@/mode-play/frontend'
-import { HintCalculatorFrontend } from '../../../@/solutions/hint-calculator/frontend'
-import { SolutionHash } from '../../../@/solutions/solution-hash/solution-hash'
-import { SolutionsLoaderFrontend } from '../../../@/solutions/solutions-loader/frontend'
 import { BoardLayout } from '../../../@/ui/board-layout'
 import { VariantBoard } from '../../../@/variant'
 import * as BuilderTypes from '../../types'
@@ -293,7 +290,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
             ctx: ModePlay.initCtx({ ...input.ctx, flow }),
             dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
             model: puzzleBuilder.modePlay,
-            dispatchHintCalculator: (m) => input.dispatch({ t: 'got-msg-cmd', c: HintCalculatorFrontend.gotMsg(m) }),
+            dispatchCmd: (c) => input.dispatch({ t: 'got-msg-cmd', c }),
           }),
         },
       }}
@@ -364,16 +361,12 @@ const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (input) => {
   if (!input.modelSpace.screenPuzzleBuilder) return Sub.None
 
   const flow = ScreenPuzzleBuilderSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
-
-  const solutionsHash = SolutionHash.init(flow)
-
-  const sub = SolutionsLoaderFrontend.watch(
-    input.ctx,
-    solutionsHash,
-    (msg): BuilderTypes.MsgFrontend => ({ t: 'got-msg-cmd', c: SolutionsLoaderFrontend.gotMsg(msg) }),
-  )
-
-  return sub
+  const play = input.modelSpace.screenPuzzleBuilder.modePlay
+  if (!play) return Sub.None
+  return ModePlayFrontend.subscriptions({ model: play, ctx: { ...input.ctx, flow } }, (c) => ({
+    t: 'got-msg-cmd',
+    c,
+  }))
 }
 
 //

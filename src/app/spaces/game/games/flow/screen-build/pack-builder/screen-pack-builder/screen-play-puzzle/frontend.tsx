@@ -7,10 +7,7 @@ import { ModePlay } from '../../../../@/mode-play'
 import { ModePlayFrontend } from '../../../../@/mode-play/frontend'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
-import { HintCalculatorFrontend } from '../../../../@/solutions/hint-calculator/frontend'
-import { SolutionsLoaderFrontend } from '../../../../@/solutions/solutions-loader/frontend'
-import { ScreenPackBuildSpace } from '../space/space'
-import type { FrontendModule } from '../types'
+import type { FrontendModule, MsgFrontend } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -101,11 +98,7 @@ const View: FrontendModule['View'] = (input) => {
             actions: ModePlayFrontend.viewActions({
               ctx: { ...input.ctx, flow: puzzleResult.c.flow },
               model: play,
-              dispatchHintCalculator: (c) =>
-                input.dispatch({
-                  t: 'got-msg-cmd',
-                  c: HintCalculatorFrontend.gotMsg(c),
-                }),
+              dispatchCmd: (c) => input.dispatch({ t: 'got-msg-cmd', c }),
               dispatch: (c) =>
                 input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } }),
             }),
@@ -232,13 +225,18 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  const solutionHash = ScreenPackBuildSpace.toOpenPuzzleSolutionHash(input.modelSpace)
-  if (!solutionHash) return Sub.None
-
-  return SolutionsLoaderFrontend.watch(input.ctx, solutionHash, (c) => ({
-    t: 'got-msg-cmd',
-    c: SolutionsLoaderFrontend.gotMsg(c),
-  }))
+  if (input.modelSpace.screen.t !== 'screen-puzzle') return Sub.None
+  if (input.modelSpace.screen.puzzleResult.t !== 'got') return Sub.None
+  const flow = input.modelSpace.screen.puzzleResult.c.flow
+  const play = input.modelSpace.screen.play
+  if (!play) return Sub.None
+  return ModePlayFrontend.subscriptions(
+    { model: play, ctx: { ...input.ctx, flow } },
+    (c): MsgFrontend => ({
+      t: 'got-msg-cmd',
+      c: c,
+    }),
+  )
 }
 
 export const ScreenPuzzlePlay = {

@@ -37,7 +37,7 @@ describe('ModePlayFrontend', () => {
       ctx: f.ctx,
       model: f.init,
       dispatch: () => {},
-      dispatchHintCalculator: () => {},
+      dispatchCmd: () => {},
     })
     expect(screenActions.some(HintCalculatorFrontend.isFindSolutionsScreenAction)).toBe(true)
     expect(screenActions.some(UseHintFrontend.isUseHintScreenAction)).toBe(false)
@@ -52,7 +52,7 @@ describe('ModePlayFrontend', () => {
       ctx: ctxWithSolutions,
       model: f.init,
       dispatch: () => {},
-      dispatchHintCalculator: () => {},
+      dispatchCmd: () => {},
     })
     expect(screenActions.some(HintCalculatorFrontend.isFindSolutionsScreenAction)).toBe(false)
     expect(screenActions.some(UseHintFrontend.isUseHintScreenAction)).toBe(true)

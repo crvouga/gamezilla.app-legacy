@@ -6,7 +6,7 @@ import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { GameBackendModule } from '../../../../@/architecture/game-backend-v2'
 import { GameFrontendModule } from '../../../../@/architecture/game-frontend-v2'
 import { FlowBackendCtx } from '../../../@/backend/ctx'
-import { FlowFrontendCmd } from '../../../@/frontend/cmd'
+import { FlowFrontendCmd, FlowFrontendCmdInternal } from '../../../@/frontend/cmd'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { FlowFrontendEvtIn } from '../../../@/frontend/evt'
 import { ModePlay } from '../../../@/mode-play'
@@ -35,10 +35,7 @@ export type MsgFrontend =
   | { t: 'got-msg-space'; c: MsgSpace }
   | {
       t: 'got-msg-cmd'
-      c: FlowFrontendCmd<{
-        MsgToBackend: MsgToBackend
-        MsgFrontend: MsgFrontend
-      }>
+      c: FlowFrontendCmdInternal
     }
 
 export type MsgBackend = { t: 'noop' }
