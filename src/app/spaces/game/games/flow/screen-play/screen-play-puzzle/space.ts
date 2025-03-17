@@ -2,6 +2,7 @@ import { ModePlay } from '../../@/mode-play'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
+import { SolutionHash } from '../../@/solutions/solution-hash/solution-hash'
 import { FlowSpaceCtx } from '../../@/space/ctx'
 import type { MsgSpace, SpaceModule } from '../types'
 import * as CopyPuzzleSpace from './button-copy-puzzle/space'
@@ -245,9 +246,16 @@ const toStatus = (modelSpace: ModelSpace) => {
   })
 }
 
+const toOpenPuzzleSolutionHash = (modelSpace: ModelSpace): SolutionHash | null => {
+  if (modelSpace.puzzleResult.t === 'not-found') return null
+  const hash = SolutionHash.init(modelSpace.puzzleResult.c.flow)
+  return hash
+}
+
 export const ScreenPlayPuzzleSpace = {
   updateSpace,
   initSpace,
   updateScreen,
   toStatus,
+  toOpenPuzzleSolutionHash,
 }

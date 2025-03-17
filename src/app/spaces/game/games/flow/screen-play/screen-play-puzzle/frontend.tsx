@@ -12,9 +12,10 @@ import { ProfileListItem } from '../../../@/ui/list-item-profile'
 import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { ModePlay } from '../../@/mode-play'
 import { ModePlayFrontend } from '../../@/mode-play/frontend'
-import { UseHintFrontend } from '../../@/mode-play/use-hint/frontend'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
-import type { FrontendModule } from '../types'
+import { HintCalculatorFrontend } from '../../@/solutions/hint-calculator/frontend'
+import { SolutionsLoaderFrontend } from '../../@/solutions/solutions-loader/frontend'
+import type { FrontendModule, MsgFrontend } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
 import { LastPuzzleFrontend } from './dialog-last-puzzle/frontend'
 import { ScreenPlayPuzzleSpace } from './space'
@@ -75,8 +76,15 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const subscriptions: FrontendModule['subscriptions'] = (_input) => {
-  return Sub.None
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  if (input.modelSpace.screen.t !== 'screen-play-puzzle') return Sub.None
+  const hash = ScreenPlayPuzzleSpace.toOpenPuzzleSolutionHash(input.modelSpace.screen)
+  if (!hash) return Sub.None
+  return SolutionsLoaderFrontend.watch(
+    input.ctx,
+    hash,
+    (c): MsgFrontend => ({ t: 'got-msg-cmd', c: SolutionsLoaderFrontend.gotMsg(c) }),
+  )
 }
 
 const CHECKMARK_DURATION = TimeSpan.seconds(1 / 2)
@@ -155,10 +163,7 @@ const View: FrontendModule['View'] = (input) => {
                 showSolvedAnimation
               />
             ) : (
-              <PuzzleResult.ViewNotFound
-                ctx={input.ctx}
-                // onNextPuzzle={onNextPuzzle}
-              />
+              <PuzzleResult.ViewNotFound ctx={input.ctx} />
             )}
           </div>
         )}
@@ -187,16 +192,17 @@ const View: FrontendModule['View'] = (input) => {
                 color: 'success',
                 onClick: onNextPuzzle,
               }),
-
+              puzzle.t === 'not-found' ? null : CopyPuzzleFrontend.viewButtonAction(input),
               ...(puzzle.t === 'got' && !isSolved
-                ? UseHintFrontend.viewAction({
+                ? ModePlayFrontend.viewActions({
                     model:
                       modePlay ??
                       ModePlay.init({
                         ctx: ModePlay.initCtx({ flow: puzzle.c.flow, solutions: input.ctx.solutions }),
                       }),
                     ctx: ModePlay.initCtx({ ...input.ctx, flow: puzzle.c.flow, solutions: input.ctx.solutions }),
-                    disabled: false,
+                    dispatchHintCalculator: (c) =>
+                      input.dispatch({ t: 'got-msg-cmd', c: HintCalculatorFrontend.gotMsg(c) }),
                     dispatch: (c) =>
                       input.dispatch({
                         t: 'got-msg-space',
@@ -204,18 +210,6 @@ const View: FrontendModule['View'] = (input) => {
                       }),
                   })
                 : []),
-
-              PrebuiltActions.reset({
-                ...input,
-                hidden: puzzle.t === 'not-found',
-                onClick: () =>
-                  input.dispatch({
-                    t: 'got-msg-space',
-                    c: { t: 'user-clicked-reset-puzzle', userId: input.ctx.currentUser.userId },
-                  }),
-              }),
-
-              puzzle.t === 'not-found' ? null : CopyPuzzleFrontend.viewButtonAction(input),
             ],
           },
         }}
