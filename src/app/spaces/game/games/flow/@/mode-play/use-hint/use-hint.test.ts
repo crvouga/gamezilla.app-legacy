@@ -302,7 +302,7 @@ describe(import.meta.file, () => {
     expect(expected).toEqual(actual)
   })
 
-  it('should work when missing intermediate terminal groups', async () => {
+  it('should work when terminal groups have gaps in sequence', async () => {
     const f = await Fixture({
       ctxFlow: VariantGridShorthand.toGrid([
         ['A', ' ', 'C'],
