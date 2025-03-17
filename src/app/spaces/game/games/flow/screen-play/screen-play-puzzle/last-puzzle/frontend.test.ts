@@ -12,7 +12,7 @@ const Fixture = async () => {
   }
 }
 
-describe.only('LastPuzzleFrontend', () => {
+describe('LastPuzzleFrontend', () => {
   it('should render select next pack button in completion dialog after completing last puzzle', async () => {
     const f = await Fixture()
     const before = f.render(f.init)

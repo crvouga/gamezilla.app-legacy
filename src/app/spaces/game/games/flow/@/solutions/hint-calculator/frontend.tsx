@@ -16,6 +16,7 @@ import {
   type MsgFrontend,
   type MsgInCmdFrontend,
 } from './types'
+import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.t) {
@@ -92,13 +93,9 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const TEST_ID = 'hint-calculator'
+const TEST_ID_HINT_CALCULATOR_ACTION = 'hint-calculator'
 
-const isFindSolutionsScreenAction = (action: ScreenAction): boolean => {
-  return action.testId === TEST_ID
-}
-
-const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
+const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
   const { flow } = input.ctx
   if (!flow) return []
   const hash = SolutionHash.init(flow)
@@ -110,14 +107,14 @@ const viewAction = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[
       icon: (input) => <IconLightbulb {...input} />,
       label: input.ctx.t('game.hint'),
       onClick: () => input.dispatch({ t: 'dialog.clicked-open' }),
-      testId: TEST_ID,
+      testId: TEST_ID_HINT_CALCULATOR_ACTION,
       renderSurface: ({ dropDown }) => (
         <SurfaceConfirmation
           title={input.ctx.t('flow.no-hints-available')}
           body={input.ctx.t('flow.no-hints-available-body')}
           ctx={input.ctx}
           dropDown={dropDown}
-          id={TEST_ID}
+          id={TEST_ID_HINT_CALCULATOR_ACTION}
           ariaLabel={input.ctx.t('flow.no-hints-available')}
           onClose={() => input.dispatch({ t: 'dialog.clicked-close' })}
           open={input.model.open === 'find-solutions-confirmation'}
@@ -147,11 +144,24 @@ const isLoading = (model: ModelFrontend, hash: SolutionHash): boolean => {
   return model.requests[hash]?.result.t === 'loading'
 }
 
+const TestView: FrontendModule['View'] = (input) => {
+  return (
+    <ScreenLayout
+      {...input}
+      id='hint-calculator'
+      parentScreen={null}
+      actionBar={{ variant: { t: 'uniform', actions: viewActions(input) } }}
+      renderBody={() => null}
+    />
+  )
+}
+
 export const HintCalculatorFrontend = {
   init: initFrontend,
   isLoading,
   update,
-  viewAction,
+  viewActions,
+  TestView,
+  TEST_ID_HINT_CALCULATOR_ACTION,
   gotMsg,
-  isFindSolutionsScreenAction,
 }

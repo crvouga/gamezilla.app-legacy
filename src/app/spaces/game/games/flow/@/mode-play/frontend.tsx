@@ -15,6 +15,7 @@ import { ModePlayFrontendCtx } from './frontend/ctx'
 import { Model, Msg, toFlow, toStatus } from './mode-play'
 import { UseHint } from './use-hint'
 import { UseHintFrontend } from './use-hint/frontend'
+import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 
 const View = (input: {
   flow: Variant.Model
@@ -78,7 +79,7 @@ const viewActions = (input: {
   const status = toStatus({ flow: input.ctx.flow, model: input.model })
   const isSolved = status === 'solved'
   return [
-    ...HintCalculatorFrontend.viewAction({
+    ...HintCalculatorFrontend.viewActions({
       ctx: input.ctx,
       dispatch: (c) => input.dispatchCmd(HintCalculatorFrontend.gotMsg(c)),
       model: input.ctx.HintCalculator,
@@ -145,8 +146,26 @@ const subscriptions = <TMsg,>(
   )
 }
 
+const TestView = (input: {
+  model: Model
+  dispatch: (m: Msg) => void
+  dispatchCmd: (m: FlowFrontendCmdInternal) => void
+  ctx: ModePlayFrontendCtx
+}) => {
+  return (
+    <ScreenLayout
+      {...input}
+      id='hint-calculator'
+      parentScreen={null}
+      actionBar={{ variant: { t: 'uniform', actions: viewActions(input) } }}
+      renderBody={() => null}
+    />
+  )
+}
+
 export const ModePlayFrontend = {
   View,
   viewActions,
   subscriptions,
+  TestView,
 }

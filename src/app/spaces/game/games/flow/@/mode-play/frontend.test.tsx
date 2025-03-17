@@ -24,8 +24,16 @@ const Fixture = async () => {
   if (!solution) throw new Error('No solution found')
   const modelSolved: ModePlay.Model = { ...init, ...Solution.toSolvedFlow(solution) }
 
+  const render = (input?: Partial<Parameters<typeof ModePlayFrontend.TestView>[0]>) => {
+    const r = f.render(
+      <ModePlayFrontend.TestView dispatch={() => {}} dispatchCmd={() => {}} ctx={ctx} model={init} {...input} />,
+    )
+    return r
+  }
+
   return {
     ...f,
+    render,
     ctx,
     ctxWithSolutions,
     flow,
@@ -35,38 +43,24 @@ const Fixture = async () => {
   }
 }
 
-describe.only('ModePlayFrontend', () => {
+describe('ModePlayFrontend', () => {
   test('screen actions show find solutions when no solutions are loaded', async () => {
     const f = await Fixture()
-    const screenActions = ModePlayFrontend.viewActions({
-      ctx: f.ctx,
-      model: f.init,
-      dispatch: () => {},
-      dispatchCmd: () => {},
-    })
-    expect(screenActions.some(HintCalculatorFrontend.isFindSolutionsScreenAction)).toBe(true)
-    expect(screenActions.some(UseHintFrontend.isAction)).toBe(false)
+    const r = f.render()
+    expect(r.getByTestId(HintCalculatorFrontend.TEST_ID_HINT_CALCULATOR_ACTION)[0]).toBeTruthy()
+    expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]).toBeFalsy()
   })
+
   test('screen actions show use hint when solutions are loaded', async () => {
     const f = await Fixture()
-    const screenActions = ModePlayFrontend.viewActions({
-      ctx: f.ctxWithSolutions,
-      model: f.init,
-      dispatch: () => {},
-      dispatchCmd: () => {},
-    })
-    expect(screenActions.some(HintCalculatorFrontend.isFindSolutionsScreenAction)).toBe(false)
-    expect(screenActions.some(UseHintFrontend.isAction)).toBe(true)
+    const r = f.render({ ctx: f.ctxWithSolutions })
+    expect(r.getByTestId(HintCalculatorFrontend.TEST_ID_HINT_CALCULATOR_ACTION)[0]).toBeFalsy()
+    expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]).toBeTruthy()
   })
 
   test('remove hint button when puzzle is solved', async () => {
     const f = await Fixture()
-    const screenActions = ModePlayFrontend.viewActions({
-      ctx: f.ctxWithSolutions,
-      model: f.modelSolved,
-      dispatch: () => {},
-      dispatchCmd: () => {},
-    })
-    expect(screenActions.some(UseHintFrontend.isAction)).toBe(false)
+    const r = f.render({ ctx: f.ctxWithSolutions, model: f.modelSolved })
+    expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]).toBeFalsy()
   })
 })

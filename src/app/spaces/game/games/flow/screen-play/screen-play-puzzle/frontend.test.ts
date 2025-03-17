@@ -12,7 +12,7 @@ const Fixture = async () => {
   }
 }
 
-describe.only('ScreenPlayPuzzleFrontend', () => {
+describe('ScreenPlayPuzzleFrontend', () => {
   it('should render puzzle screen after opening puzzle from pack', async () => {
     const f = await Fixture()
     const r = f.render(f.init)

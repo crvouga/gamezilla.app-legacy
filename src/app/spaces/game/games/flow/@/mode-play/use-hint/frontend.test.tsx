@@ -5,7 +5,7 @@ import { UseHintFrontend } from './frontend'
 
 const Fixture = FixtureModePlayUseHint
 
-describe(import.meta.file, () => {
+describe('UseHintFrontend', () => {
   it('should disable hint button if puzzle is solved', async () => {
     const f = await Fixture({
       ctxFlow: VariantGridShorthand.toGrid([

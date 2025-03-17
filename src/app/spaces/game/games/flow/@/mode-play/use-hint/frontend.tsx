@@ -5,11 +5,7 @@ import { Solutions } from '../../solutions/solutions'
 import { ModePlayFrontendCtx } from '../frontend/ctx'
 import { Model, Msg, toFlow } from './use-hint'
 
-const TEST_ID = 'use-hint'
-
-const isAction = (action: ScreenAction): boolean => {
-  return action.testId === TEST_ID
-}
+const TEST_ID_USE_HINT_ACTION = 'use-hint'
 
 const viewAction = (input: {
   model: Model
@@ -35,12 +31,12 @@ const viewAction = (input: {
         input.dispatch({ t: 'user-clicked-use-hint', solutions })
       },
       disabled: input.disabled,
-      testId: TEST_ID,
+      testId: TEST_ID_USE_HINT_ACTION,
     },
   ]
 }
 
 export const UseHintFrontend = {
-  isAction,
+  TEST_ID_USE_HINT_ACTION,
   viewAction,
 }
