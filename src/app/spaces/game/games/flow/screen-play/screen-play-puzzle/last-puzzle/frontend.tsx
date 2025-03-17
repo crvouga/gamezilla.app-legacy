@@ -27,7 +27,12 @@ const update: FrontendModule['update'] = (input) => {
   }
 }
 
-const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgFrontend) => void; ctx: AppFrontendCtx }) => {
+const ViewDialog = (input: {
+  open: boolean
+  delay: TimeSpan
+  dispatch: (m: MsgFrontend) => void
+  ctx: AppFrontendCtx
+}) => {
   const onClose = () => {
     input.dispatch({
       t: 'got-msg-space',
@@ -62,6 +67,6 @@ const View = (input: { open: boolean; delay: TimeSpan; dispatch: (m: MsgFrontend
 }
 
 export const LastPuzzleFrontend = {
-  View,
+  ViewDialog,
   update,
 }

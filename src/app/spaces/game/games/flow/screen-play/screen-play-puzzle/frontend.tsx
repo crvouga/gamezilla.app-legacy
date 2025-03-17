@@ -15,7 +15,7 @@ import { ModePlayFrontend } from '../../@/mode-play/frontend'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { FrontendModule } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
-import { LastPuzzleFrontend } from './dialog-last-puzzle/frontend'
+import { LastPuzzleFrontend } from './last-puzzle/frontend'
 import { ScreenPlayPuzzleSpace } from './space'
 
 const update: FrontendModule['update'] = (input) => {
@@ -290,7 +290,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
   }
 
   return isLastPuzzle ? (
-    <LastPuzzleFrontend.View
+    <LastPuzzleFrontend.ViewDialog
       delay={CHECKMARK_DURATION}
       open={isSolvedPuzzleDialogOpen}
       ctx={input.ctx}

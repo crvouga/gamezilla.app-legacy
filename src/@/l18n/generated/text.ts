@@ -29,7 +29,7 @@ import type { Text as Text26 } from '../../../app/spaces/game/games/flow/screen-
 import type { Text as Text27 } from '../../../app/spaces/game/games/flow/screen-build/puzzle-builder/screen-puzzle-builder/surface-edit-puzzle-name/$l18n'
 import type { Text as Text28 } from '../../../app/spaces/game/games/flow/screen-build/screen-main-menu/$l18n'
 import type { Text as Text29 } from '../../../app/spaces/game/games/flow/screen-build/$l18n'
-import type { Text as Text30 } from '../../../app/spaces/game/games/flow/screen-play/screen-play-puzzle/dialog-last-puzzle/$l18n'
+import type { Text as Text30 } from '../../../app/spaces/game/games/flow/screen-play/screen-play-puzzle/last-puzzle/$l18n'
 import type { Text as Text31 } from '../../../app/spaces/game/games/flow/screen-play/screen-play-puzzle/button-copy-puzzle/$l18n'
 import type { Text as Text32 } from '../../../app/spaces/game/games/flow/screen-play/screen-open-pack/$l18n'
 import type { Text as Text33 } from '../../../app/spaces/game/games/flow/@/copy-to-clipboard/$l18n'

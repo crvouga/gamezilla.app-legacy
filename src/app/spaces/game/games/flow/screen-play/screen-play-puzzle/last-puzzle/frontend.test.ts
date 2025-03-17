@@ -67,12 +67,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const initial = f.update(f.init, f.completeLastPuzzleMsgs)
     const output = f.update(initial, [
-      {
-        msgSpace: withEventMeta({
-          t: 'user-clicked-select-next-pack',
-          userId: f.hostId,
-        }),
-      },
+      { msgSpace: withEventMeta({ t: 'user-clicked-select-next-pack', userId: f.hostId }) },
     ])
     expect(didPlaySound(output)).toBe(true)
   })

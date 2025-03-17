@@ -5,7 +5,7 @@ import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { FlowSpaceCtx } from '../../@/space/ctx'
 import type { MsgSpace, SpaceModule } from '../types'
 import * as CopyPuzzleSpace from './button-copy-puzzle/space'
-import { LastPuzzleSpace } from './dialog-last-puzzle/space'
+import { LastPuzzleSpace } from './last-puzzle/space'
 import type { ModelSpace, MsgSpaceEvt } from './types'
 
 const updatePuzzleScreen: SpaceModule['updateSpace'] = (input) => {
