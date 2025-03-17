@@ -7,7 +7,7 @@ import { Model, Msg, toFlow } from './use-hint'
 
 const TEST_ID = 'use-hint'
 
-const isUseHintScreenAction = (action: ScreenAction): boolean => {
+const isAction = (action: ScreenAction): boolean => {
   return action.testId === TEST_ID
 }
 
@@ -15,12 +15,14 @@ const viewAction = (input: {
   model: Model
   dispatch: (msg: Msg) => void
   ctx: ModePlayFrontendCtx
-  disabled: boolean
+  disabled?: boolean
+  hidden?: boolean
 }): ScreenAction[] => {
   if (!input.ctx.flow) return []
   const hash = SolutionHash.init(input.ctx.flow)
   const hasSolution = Solutions.selectOne(input.ctx.solutions, hash) !== null
   if (!hasSolution) return []
+  if (input.hidden) return []
   return [
     {
       id: input.ctx.t('game.hint'),
@@ -39,6 +41,6 @@ const viewAction = (input: {
 }
 
 export const UseHintFrontend = {
-  isUseHintScreenAction,
+  isAction,
   viewAction,
 }

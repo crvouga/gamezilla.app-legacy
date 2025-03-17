@@ -24,8 +24,17 @@ const fromFlow = (model: Flow.Model): Solution => {
   }
 }
 
+const toSolvedFlow = (solution: Solution): Flow.Model => {
+  return {
+    ...solution,
+    pipesBySourceId: solution.pipesBySourceId,
+    terminalsByGroupId: solution.terminalsByGroupId,
+  }
+}
+
 export const Solution = {
   ...parser,
   toPipelineByGroupId,
   fromFlow,
+  toSolvedFlow,
 }

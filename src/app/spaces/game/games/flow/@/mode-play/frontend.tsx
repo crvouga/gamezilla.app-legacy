@@ -76,6 +76,7 @@ const viewActions = (input: {
   ctx: ModePlayFrontendCtx
 }): ScreenAction[] => {
   const status = toStatus({ flow: input.ctx.flow, model: input.model })
+  const isSolved = status === 'solved'
   return [
     ...HintCalculatorFrontend.viewAction({
       ctx: input.ctx,
@@ -86,7 +87,7 @@ const viewActions = (input: {
       ctx: input.ctx,
       dispatch: input.dispatch,
       model: input.model,
-      disabled: status === 'solved',
+      hidden: isSolved,
     }),
     ...viewResetAction({
       ctx: input.ctx,

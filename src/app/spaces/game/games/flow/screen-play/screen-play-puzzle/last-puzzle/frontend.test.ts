@@ -2,15 +2,17 @@ import { describe, expect, it } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { didPlaySound } from '~/app/@/frontend/cmd'
 import { FixtureScreenPlayPuzzleFrontend } from '../@/fixture/frontend'
+import { LastPuzzleFrontend } from './frontend'
 
 const Fixture = async () => {
   const f = await FixtureScreenPlayPuzzleFrontend()
+
   return {
     ...f,
   }
 }
 
-describe(import.meta.file, () => {
+describe.only('LastPuzzleFrontend', () => {
   it('should render select next pack button in completion dialog after completing last puzzle', async () => {
     const f = await Fixture()
     const before = f.render(f.init)
@@ -70,5 +72,41 @@ describe(import.meta.file, () => {
       { msgSpace: withEventMeta({ t: 'user-clicked-select-next-pack', userId: f.hostId }) },
     ])
     expect(didPlaySound(output)).toBe(true)
+  })
+
+  it('should render exit screen action when last puzzle is completed', async () => {
+    const f = await Fixture()
+    const output = f.update(f.init, f.msgsCompleteLastPuzzle)
+    const actions = LastPuzzleFrontend.viewActions({
+      model: output.model,
+      dispatch: () => {},
+      ctx: f.ctx,
+      modelSpace: output.modelSpace,
+    })
+    expect(actions.some(LastPuzzleFrontend.isActionExit)).toBe(true)
+  })
+
+  it('should NOT render exit screen action when last puzzle is completed', async () => {
+    const f = await Fixture()
+    const output = f.update(f.init, f.msgsGoToLastPuzzle)
+    const actions = LastPuzzleFrontend.viewActions({
+      model: output.model,
+      dispatch: () => {},
+      ctx: f.ctx,
+      modelSpace: output.modelSpace,
+    })
+    expect(actions.some(LastPuzzleFrontend.isActionExit)).toBe(false)
+  })
+
+  it('should NOT render if not last puzzle', async () => {
+    const f = await Fixture()
+    const output = f.update(f.init, f.msgsCompletePuzzle)
+    const actions = LastPuzzleFrontend.viewActions({
+      model: output.model,
+      dispatch: () => {},
+      ctx: f.ctx,
+      modelSpace: output.modelSpace,
+    })
+    expect(actions.some(LastPuzzleFrontend.isActionExit)).toBe(false)
   })
 })

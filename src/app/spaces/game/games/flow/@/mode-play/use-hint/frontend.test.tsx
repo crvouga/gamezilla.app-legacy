@@ -18,6 +18,7 @@ describe(import.meta.file, () => {
       ctx: f.ctx,
       dispatch: () => {},
       model: f.init,
+      hidden: false,
       disabled: true,
     })
     expect(viewed[0]?.disabled ?? true).toBe(true)

@@ -182,6 +182,8 @@ const ViewHosting: FrontendModule['View'] = (input) => {
               }),
           },
           actions: [
+            ...LastPuzzleFrontend.viewActions(input),
+
             PrebuiltActions.next({
               ...input,
               hidden: (!isSolved && puzzle.t === 'got') || ScreenPlayPuzzleSpace.isLastPuzzle(input.modelSpace.screen),
@@ -265,8 +267,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
   const nextPuzzleId = input.modelSpace.screen.pack.puzzleIds[nextPuzzleIndex]
   const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
 
-  const isLastPuzzle = input.modelSpace.screen.puzzleIndex >= input.modelSpace.screen.pack.puzzleIds.length - 1
-
+  const isLastPuzzle = ScreenPlayPuzzleSpace.isLastPuzzle(input.modelSpace.screen)
   const isSolvedPuzzleDialogOpen = isSolved && input.modelSpace.screen.opened === 'puzzle-complete'
 
   const onClose = () => {

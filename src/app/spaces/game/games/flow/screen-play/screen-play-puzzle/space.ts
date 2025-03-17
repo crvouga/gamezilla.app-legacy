@@ -230,6 +230,11 @@ const toStatus = (modelSpace: ModelSpace) => {
   })
 }
 
+const isSolved = (modelSpace: ModelSpace) => {
+  const status = toStatus(modelSpace)
+  return status === 'solved'
+}
+
 const isLastPuzzle = (modelSpace: ModelSpace) => {
   return modelSpace.puzzleIndex >= modelSpace.pack.puzzleIds.length - 1
 }
@@ -239,5 +244,6 @@ export const ScreenPlayPuzzleSpace = {
   initSpace,
   updateScreen,
   toStatus,
+  isSolved,
   isLastPuzzle,
 }
