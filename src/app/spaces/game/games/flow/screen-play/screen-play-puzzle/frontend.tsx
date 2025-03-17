@@ -190,14 +190,10 @@ const View: FrontendModule['View'] = (input) => {
 
               ...(puzzle.t === 'got' ? [CopyPuzzleFrontend.viewButtonAction(input)] : []),
 
-              ...(puzzle.t === 'got'
+              ...(puzzle.t === 'got' && modePlay
                 ? ModePlayFrontend.viewActions({
-                    model:
-                      modePlay ??
-                      ModePlay.init({
-                        ctx: ModePlay.initCtx({ flow: puzzle.c.flow, solutions: input.ctx.solutions }),
-                      }),
-                    ctx: ModePlay.initCtx({ ...input.ctx, flow: puzzle.c.flow, solutions: input.ctx.solutions }),
+                    model: modePlay,
+                    ctx: ModePlay.initCtx({ ...input.ctx, flow: puzzle.c.flow }),
                     dispatchCmd: (c) => input.dispatch({ t: 'got-msg-cmd', c }),
                     dispatch: (c) =>
                       input.dispatch({
