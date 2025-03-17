@@ -1,5 +1,7 @@
 import { IconLightbulb } from '~/@/ui'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
+import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { AlgoIsSolved } from '../../solutions/algo-is-solved/algo-is-solved'
 import { SolutionHash } from '../../solutions/solution-hash/solution-hash'
 import { Solutions } from '../../solutions/solutions'
 import { ModePlayFrontendCtx } from '../frontend/ctx'
@@ -11,14 +13,13 @@ const viewAction = (input: {
   model: Model
   dispatch: (msg: Msg) => void
   ctx: ModePlayFrontendCtx
-  disabled?: boolean
-  hidden?: boolean
 }): ScreenAction[] => {
   if (!input.ctx.flow) return []
   const hash = SolutionHash.init(input.ctx.flow)
   const hasSolution = Solutions.selectOne(input.ctx.solutions, hash) !== null
   if (!hasSolution) return []
-  if (input.hidden) return []
+  const isSolved = AlgoIsSolved.isSolved(input.ctx.flow)
+  if (isSolved) return []
   return [
     {
       id: input.ctx.t('game.hint'),
@@ -30,13 +31,30 @@ const viewAction = (input: {
         const solutions = Solutions.limit(input.ctx.solutions, hash)
         input.dispatch({ t: 'user-clicked-use-hint', solutions })
       },
-      disabled: input.disabled,
       testId: TEST_ID_USE_HINT_ACTION,
     },
   ]
 }
 
+const TestView = (input: { model: Model; dispatch: (msg: Msg) => void; ctx: ModePlayFrontendCtx }) => {
+  return (
+    <ScreenLayout
+      {...input}
+      parentScreen={null}
+      id='use-hint'
+      renderBody={() => null}
+      actionBar={{
+        variant: {
+          t: 'uniform',
+          actions: viewAction(input),
+        },
+      }}
+    />
+  )
+}
+
 export const UseHintFrontend = {
   TEST_ID_USE_HINT_ACTION,
   viewAction,
+  TestView,
 }
