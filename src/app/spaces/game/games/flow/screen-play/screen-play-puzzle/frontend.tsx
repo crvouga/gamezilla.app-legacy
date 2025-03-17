@@ -187,8 +187,10 @@ const View: FrontendModule['View'] = (input) => {
                 color: 'success',
                 onClick: onNextPuzzle,
               }),
-              puzzle.t === 'not-found' ? null : CopyPuzzleFrontend.viewButtonAction(input),
-              ...(puzzle.t === 'got' && !isSolved
+
+              ...(puzzle.t === 'got' ? [CopyPuzzleFrontend.viewButtonAction(input)] : []),
+
+              ...(puzzle.t === 'got'
                 ? ModePlayFrontend.viewActions({
                     model:
                       modePlay ??
