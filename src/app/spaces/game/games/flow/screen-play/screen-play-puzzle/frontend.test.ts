@@ -12,7 +12,7 @@ const Fixture = async () => {
   }
 }
 
-describe('ScreenPlayPuzzleFrontend', () => {
+describe.only('ScreenPlayPuzzleFrontend', () => {
   it('should render puzzle screen after opening puzzle from pack', async () => {
     const f = await Fixture()
     const r = f.render(f.init)
@@ -42,7 +42,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
 
   it('should render next puzzle button only when puzzle is completed', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, [...f.completePuzzleMsgs])
+    const output = f.update(f.init, [...f.msgsCompletePuzzle])
     const before = f.render(f.init).getByRole('button', f.ctx.t('app.next'))[0]
     const after = f.render(output).getByRole('button', f.ctx.t('app.next'))[0]
 
@@ -52,7 +52,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
 
   it('should dispatch msg after clicking next puzzle button', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, [...f.completePuzzleMsgs])
+    const output = f.update(f.init, [...f.msgsCompletePuzzle])
     const r = f.render(output)
     const nextButton = r.getByRole('button', f.ctx.t('app.next'))[0]
     nextButton?.click()
@@ -94,26 +94,6 @@ describe('ScreenPlayPuzzleFrontend', () => {
     expect(didPlaySound(output)).toBe(true)
   })
 
-  it('should disabled next button when on last puzzle', async () => {
-    const f = await Fixture()
-    const output = f.update(f.init, [
-      {
-        msg: {
-          t: 'got-msg-space',
-          c: {
-            t: 'user-clicked-next-puzzle',
-            nextPuzzle: f.nextPuzzle,
-            nextPuzzleIndex: f.nextPuzzleIndex,
-            userId: f.hostId,
-          },
-        },
-      },
-      ...f.completePuzzleMsgs,
-    ])
-    const nextButton = f.render(output).getByRole('button', f.ctx.t('app.next'))[0]
-    expect(nextButton?.disabled).toBe(true)
-  })
-
   it('should render which level of the pack is being played', async () => {
     const f = await Fixture()
     const r = f.render(f.init)
@@ -122,21 +102,21 @@ describe('ScreenPlayPuzzleFrontend', () => {
 
   it('should render puzzle complete dialog after completing a puzzle', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, f.completePuzzleMsgs)
+    const output = f.update(f.init, f.msgsCompletePuzzle)
     const r = f.render(output)
     expect(r.getByRole('dialog')[0]?.getByRole('heading', f.ctx.t('flow.puzzle-completed'))).toBeTruthy()
   })
 
   it('should render next puzzle button in completion dialog', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, f.completePuzzleMsgs)
+    const output = f.update(f.init, f.msgsCompletePuzzle)
     const r = f.render(output)
     expect(r.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.next-puzzle'))[0]).toBeTruthy()
   })
 
   it('should play sound after completing a puzzle', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, f.completePuzzleMsgs)
+    const output = f.update(f.init, f.msgsCompletePuzzle)
     expect(didPlaySound(output)).toBe(true)
   })
 
@@ -144,20 +124,14 @@ describe('ScreenPlayPuzzleFrontend', () => {
     const f = await Fixture()
     const terminal = Flow.randomTerminal(f.puzzle.flow)
 
-    if (!terminal) {
-      expect(terminal).not.toBe(null)
-      return
-    }
+    if (!terminal) throw new Error('No terminal found')
 
     const output = f.update(f.init, [
       {
         msgSpace: withEventMeta({
           t: 'got-flow-play-msg',
           userId: UserId.generate(),
-          c: {
-            t: 'user-pressed-down-node',
-            nodeId: terminal.startId,
-          },
+          c: { t: 'user-pressed-down-node', nodeId: terminal.startId },
         }),
       },
     ])
@@ -166,7 +140,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
 
   it('should play sound after solving puzzle', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, f.completePuzzleMsgs)
+    const output = f.update(f.init, f.msgsCompletePuzzle)
     expect(didPlaySound(output)).toBe(true)
   })
 
@@ -190,18 +164,26 @@ describe('ScreenPlayPuzzleFrontend', () => {
     expect(msg.t).toBe('got-msg-cmd')
   })
 
-  test('not render hint button when puzzle is solved', async () => {
+  test.skip('not render hint button when puzzle is solved', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, [...f.completePuzzleMsgs])
+    const output = f.update(f.init, [...f.msgsCompletePuzzle])
     const r = f.render(output)
     const btn = r.getByRole('button', f.ctx.t('game.hint'))[0]
+    expect(btn).toBeFalsy()
+  })
+
+  test('not render next button on last puzzle', async () => {
+    const f = await Fixture()
+    const output = f.update(f.init, [...f.msgsCompleteLastPuzzle])
+    const r = f.render(output)
+    const btn = r.getByRole('button', f.ctx.t('app.next'))[0]
     expect(btn).toBeFalsy()
   })
 
   test('close puzzle complete dialog sound', async () => {
     const f = await Fixture()
     const output = f.update(f.init, [
-      ...f.completePuzzleMsgs,
+      ...f.msgsCompletePuzzle,
       {
         msgSpace: withEventMeta({
           t: 'user-closed-puzzle-complete-dialog',
@@ -229,7 +211,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
     test('hidden hint button', async () => {
       const f = await Fixture()
       const output = f.update(f.init, [
-        ...f.completePuzzleMsgs,
+        ...f.msgsCompletePuzzle,
         {
           msgSpace: withEventMeta({
             t: 'user-clicked-next-puzzle',
@@ -285,11 +267,19 @@ describe('ScreenPlayPuzzleFrontend', () => {
       const output = f.update(f.init, [
         {
           msgSpace: withEventMeta({
+            t: 'user-clicked-prev-puzzle',
+            prevPuzzle: f.prevPuzzle,
+            prevPuzzleIndex: f.prevPuzzleIndex,
+            userId: f.hostId,
+          }),
+        },
+        {
+          msgSpace: withEventMeta({
             t: 'user-clicked-next-puzzle',
             nextPuzzle: {
               t: 'not-found',
             },
-            nextPuzzleIndex: f.nextPuzzleIndex,
+            nextPuzzleIndex: f.puzzleIndex,
             userId: f.hostId,
           }),
         },

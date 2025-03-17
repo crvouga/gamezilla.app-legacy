@@ -85,6 +85,12 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 const CHECKMARK_DURATION = TimeSpan.seconds(1 / 2)
 
 const View: FrontendModule['View'] = (input) => {
+  const isSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
+  if (isSpectating) return <ViewSpectating {...input} />
+  return <ViewHosting {...input} />
+}
+
+const ViewHosting: FrontendModule['View'] = (input) => {
   if (input.modelSpace.screen.t !== 'screen-play-puzzle') return null
 
   const puzzle = input.modelSpace.screen.puzzleResult
@@ -96,10 +102,6 @@ const View: FrontendModule['View'] = (input) => {
   const nextPuzzleIndex = puzzleIndex + 1
   const nextPuzzleId = input.modelSpace.screen.pack.puzzleIds[nextPuzzleIndex]
   const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
-
-  const isSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
-
-  if (isSpectating) return <ViewSpectating {...input} />
 
   const onNextPuzzle = () => {
     input.dispatch({
@@ -121,93 +123,90 @@ const View: FrontendModule['View'] = (input) => {
   }
 
   return (
-    <>
-      <ScreenLayout
-        parentScreen={input.ctx.parentScreen}
-        id='screen-play-puzzle'
-        ctx={input.ctx}
-        navBar={{
-          title: input.ctx.t('flow.level', puzzleIndex + 1),
-          back: {
-            onClick: () =>
-              input.dispatch({
-                t: 'got-msg-space',
-                c: { userId: input.ctx.currentUser.userId, t: 'user-clicked-exit-play-puzzle-screen' },
-              }),
-          },
-        }}
-        renderBody={() => (
-          <div
-            className='flex w-full flex-1 items-center justify-center'
-            data-puzzle-id={puzzle.t === 'got' ? puzzle.c.id : null}
-          >
-            {puzzle.t === 'got' ? (
-              <ModePlayFrontend.View
-                key={puzzle.c.id}
-                flow={puzzle.c.flow}
-                model={
-                  modePlay ??
-                  ModePlay.init({ ctx: ModePlay.initCtx({ flow: puzzle.c.flow, solutions: input.ctx.solutions }) })
-                }
-                dispatch={(c) =>
-                  input.dispatch({
-                    t: 'got-msg-space',
-                    c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUser.userId },
-                  })
-                }
-                showSolvedAnimation
-              />
-            ) : (
-              <PuzzleResult.ViewNotFound ctx={input.ctx} />
-            )}
-          </div>
-        )}
-        actionBar={{
-          id: 'screen-play-puzzle-bottom-bar',
-
-          variant: {
-            t: 'uniform',
-            limit: {
-              max: 3,
-              open: input.modelSpace.screen.opened === 'action-drawer',
-              onToggle: () =>
+    <ScreenLayout
+      parentScreen={input.ctx.parentScreen}
+      id='screen-play-puzzle'
+      ctx={input.ctx}
+      navBar={{
+        title: input.ctx.t('flow.level', puzzleIndex + 1),
+        back: {
+          onClick: () =>
+            input.dispatch({
+              t: 'got-msg-space',
+              c: { userId: input.ctx.currentUser.userId, t: 'user-clicked-exit-play-puzzle-screen' },
+            }),
+        },
+      }}
+      renderBody={() => (
+        <div
+          className='flex w-full flex-1 items-center justify-center'
+          data-puzzle-id={puzzle.t === 'got' ? puzzle.c.id : null}
+        >
+          {puzzle.t === 'got' ? (
+            <ModePlayFrontend.View
+              key={puzzle.c.id}
+              flow={puzzle.c.flow}
+              model={
+                modePlay ??
+                ModePlay.init({ ctx: ModePlay.initCtx({ flow: puzzle.c.flow, solutions: input.ctx.solutions }) })
+              }
+              dispatch={(c) =>
                 input.dispatch({
                   t: 'got-msg-space',
-                  c: {
-                    userId: input.ctx.currentUser.userId,
-                    t: 'user-toggled-action-buttons-drawer',
-                  },
-                }),
-            },
-            actions: [
-              PrebuiltActions.next({
-                ...input,
-                disabled: puzzleIndex >= input.modelSpace.screen.pack.puzzleIds.length - 1,
-                hidden: !isSolved && puzzle.t !== 'not-found',
-                color: 'success',
-                onClick: onNextPuzzle,
+                  c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUser.userId },
+                })
+              }
+              showSolvedAnimation
+            />
+          ) : (
+            <PuzzleResult.ViewNotFound ctx={input.ctx} />
+          )}
+          <ViewSolvedModal {...input} />
+        </div>
+      )}
+      actionBar={{
+        id: 'screen-play-puzzle-bottom-bar',
+
+        variant: {
+          t: 'uniform',
+          limit: {
+            max: 3,
+            open: input.modelSpace.screen.opened === 'action-drawer',
+            onToggle: () =>
+              input.dispatch({
+                t: 'got-msg-space',
+                c: {
+                  userId: input.ctx.currentUser.userId,
+                  t: 'user-toggled-action-buttons-drawer',
+                },
               }),
-
-              ...(puzzle.t === 'got' ? [CopyPuzzleFrontend.viewButtonAction(input)] : []),
-
-              ...(puzzle.t === 'got' && modePlay
-                ? ModePlayFrontend.viewActions({
-                    model: modePlay,
-                    ctx: ModePlay.initCtx({ ...input.ctx, flow: puzzle.c.flow }),
-                    dispatchCmd: (c) => input.dispatch({ t: 'got-msg-cmd', c }),
-                    dispatch: (c) =>
-                      input.dispatch({
-                        t: 'got-msg-space',
-                        c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUser.userId },
-                      }),
-                  })
-                : []),
-            ],
           },
-        }}
-      />
-      <ViewSolvedModal {...input} />
-    </>
+          actions: [
+            PrebuiltActions.next({
+              ...input,
+              hidden: (!isSolved && puzzle.t === 'got') || ScreenPlayPuzzleSpace.isLastPuzzle(input.modelSpace.screen),
+              color: 'success',
+              onClick: onNextPuzzle,
+            }),
+
+            ...(puzzle.t === 'got' ? [CopyPuzzleFrontend.viewButtonAction(input)] : []),
+
+            ...(puzzle.t === 'got' && modePlay
+              ? ModePlayFrontend.viewActions({
+                  model: modePlay,
+                  ctx: ModePlay.initCtx({ ...input.ctx, flow: puzzle.c.flow }),
+                  dispatchCmd: (c) => input.dispatch({ t: 'got-msg-cmd', c }),
+                  dispatch: (c) =>
+                    input.dispatch({
+                      t: 'got-msg-space',
+                      c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUser.userId },
+                    }),
+                })
+              : []),
+          ],
+        },
+      }}
+    />
   )
 }
 
@@ -247,10 +246,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
                 showSolvedAnimation
               />
             ) : (
-              <PuzzleResult.ViewNotFound
-                ctx={input.ctx}
-                // onNextPuzzle={null}
-              />
+              <PuzzleResult.ViewNotFound ctx={input.ctx} />
             )}
           </div>
         </LayoutGame>
@@ -260,13 +256,11 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
 }
 
 const ViewSolvedModal: FrontendModule['View'] = (input) => {
-  if (input.modelSpace.screen.t !== 'screen-play-puzzle') {
-    return null
-  }
+  if (input.modelSpace.screen.t !== 'screen-play-puzzle') return null
+
   const isSolved = ScreenPlayPuzzleSpace.toStatus(input.modelSpace.screen) === 'solved'
   const puzzleIndex = input.modelSpace.screen.puzzleIndex
 
-  //
   const nextPuzzleIndex = puzzleIndex + 1
   const nextPuzzleId = input.modelSpace.screen.pack.puzzleIds[nextPuzzleIndex]
   const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
@@ -285,14 +279,18 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
     })
   }
 
-  return isLastPuzzle ? (
-    <LastPuzzleFrontend.ViewDialog
-      delay={CHECKMARK_DURATION}
-      open={isSolvedPuzzleDialogOpen}
-      ctx={input.ctx}
-      dispatch={(c) => input.dispatch(c)}
-    />
-  ) : (
+  if (isLastPuzzle) {
+    return (
+      <LastPuzzleFrontend.ViewDialog
+        delay={CHECKMARK_DURATION}
+        open={isSolvedPuzzleDialogOpen}
+        ctx={input.ctx}
+        dispatch={(c) => input.dispatch(c)}
+      />
+    )
+  }
+
+  return (
     <Dialog delay={CHECKMARK_DURATION} open={isSolvedPuzzleDialogOpen} onClose={onClose}>
       <DialogSurface>
         <SurfaceHeader ctx={input.ctx} title={input.ctx.t('flow.puzzle-completed')} onClose={onClose} />

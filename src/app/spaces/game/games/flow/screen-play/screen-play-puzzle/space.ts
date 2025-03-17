@@ -230,9 +230,14 @@ const toStatus = (modelSpace: ModelSpace) => {
   })
 }
 
+const isLastPuzzle = (modelSpace: ModelSpace) => {
+  return modelSpace.puzzleIndex >= modelSpace.pack.puzzleIds.length - 1
+}
+
 export const ScreenPlayPuzzleSpace = {
   updateSpace,
   initSpace,
   updateScreen,
   toStatus,
+  isLastPuzzle,
 }

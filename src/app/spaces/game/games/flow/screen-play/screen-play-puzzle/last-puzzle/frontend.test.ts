@@ -14,7 +14,7 @@ describe(import.meta.file, () => {
   it('should render select next pack button in completion dialog after completing last puzzle', async () => {
     const f = await Fixture()
     const before = f.render(f.init)
-    const output = f.update(f.init, f.completeLastPuzzleMsgs)
+    const output = f.update(f.init, f.msgsCompleteLastPuzzle)
     const after = f.render(output)
     expect(before.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.select-next-pack'))[0]).toBeFalsy()
     expect(after.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.select-next-pack'))[0]).toBeTruthy()
@@ -22,7 +22,7 @@ describe(import.meta.file, () => {
 
   it('should dispatch a msg after clicking select next pack button', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, f.completeLastPuzzleMsgs)
+    const output = f.update(f.init, f.msgsCompleteLastPuzzle)
     const rendered = f.render(output)
     const button = rendered.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.select-next-pack'))[0]
     button?.click()
@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
 
   it('should output select next pack event', async () => {
     const f = await Fixture()
-    const initial = f.update(f.init, f.completeLastPuzzleMsgs)
+    const initial = f.update(f.init, f.msgsCompleteLastPuzzle)
     const output = f.update(initial, [
       { msg: { t: 'got-msg-space', c: { t: 'user-clicked-select-next-pack', userId: f.hostId } } },
     ])
@@ -41,14 +41,14 @@ describe(import.meta.file, () => {
 
   it('should render congrats message after completing last puzzle', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, f.completeLastPuzzleMsgs)
+    const output = f.update(f.init, f.msgsCompleteLastPuzzle)
 
     expect(f.render(output).getByRole('dialog')[0]?.getByRole('heading', f.ctx.t('app.congratulations'))).toBeTruthy()
   })
 
   it('should dispatch correct msg after clicking select next pack button', async () => {
     const f = await Fixture()
-    const output = f.update(f.init, f.completeLastPuzzleMsgs)
+    const output = f.update(f.init, f.msgsCompleteLastPuzzle)
     const r = f.render(output)
     const button = r.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.select-next-pack'))[0]
     button?.click()
@@ -65,7 +65,7 @@ describe(import.meta.file, () => {
 
   it('should play sound after clicking select next pack button', async () => {
     const f = await Fixture()
-    const initial = f.update(f.init, f.completeLastPuzzleMsgs)
+    const initial = f.update(f.init, f.msgsCompleteLastPuzzle)
     const output = f.update(initial, [
       { msgSpace: withEventMeta({ t: 'user-clicked-select-next-pack', userId: f.hostId }) },
     ])

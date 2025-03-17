@@ -78,8 +78,8 @@ export const FixtureScreenPlayPuzzleFrontend = async () => {
   const lastPuzzle = nextPuzzle
   const lastPuzzleIndex = 2
 
-  const completePuzzleMsgs = toCompletePuzzleMsgs(puzzle)
-  const completeLastPuzzleMsgs: FixtureUpdateInput[] = [
+  const msgsCompletePuzzle = toCompletePuzzleMsgs(puzzle)
+  const msgsGoToLastPuzzle: FixtureUpdateInput[] = [
     {
       msgSpace: withEventMeta({
         t: 'user-clicked-next-puzzle',
@@ -91,14 +91,15 @@ export const FixtureScreenPlayPuzzleFrontend = async () => {
         },
       }),
     },
-    ...toCompletePuzzleMsgs(lastPuzzle),
   ]
+  const msgsCompleteLastPuzzle: FixtureUpdateInput[] = [...msgsGoToLastPuzzle, ...toCompletePuzzleMsgs(lastPuzzle)]
 
   return {
     ...f,
     ctx,
-    completeLastPuzzleMsgs,
-    completePuzzleMsgs,
+    msgsGoToLastPuzzle,
+    msgsCompleteLastPuzzle,
+    msgsCompletePuzzle,
     init,
     pack,
     puzzle,
