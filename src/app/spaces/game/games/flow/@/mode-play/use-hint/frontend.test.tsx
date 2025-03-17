@@ -31,7 +31,15 @@ describe('UseHintFrontend', () => {
         ['A', 'B'],
       ]),
     })
-    const r = f.render()
+    const r = f.render({
+      model: {
+        ...f.init,
+        pipesBySourceId: f.ctx.flow.pipesBySourceId,
+        terminalsByGroupId: f.ctx.flow.terminalsByGroupId,
+      },
+      dispatch: () => {},
+      ctx: f.ctx,
+    })
     const btn = r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]
     expect(btn).not.toBeDefined()
   })

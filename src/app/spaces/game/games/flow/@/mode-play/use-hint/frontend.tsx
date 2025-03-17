@@ -21,6 +21,7 @@ const viewAction = (input: {
   if (!hasSolution) return []
   const isSolved = AlgoIsSolved.isSolved(flow)
   if (isSolved) return []
+
   return [
     {
       id: input.ctx.t('game.hint'),
