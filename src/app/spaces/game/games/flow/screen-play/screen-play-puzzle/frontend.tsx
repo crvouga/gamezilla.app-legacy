@@ -33,10 +33,6 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
       return { model: input.model }
     }
 
-    case 'user-clicked-reset-puzzle': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navTransitionLeft)] }
-    }
-
     case 'user-clicked-exit-play-puzzle-screen': {
       return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
     }

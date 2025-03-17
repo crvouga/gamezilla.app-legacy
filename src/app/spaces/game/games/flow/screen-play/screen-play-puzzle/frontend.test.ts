@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didPlaySound } from '~/app/@/frontend/cmd'
 import { UserId } from '~/app/@/data/user-id'
+import { didPlaySound } from '~/app/@/frontend/cmd'
 import { Flow } from '../../@/flow'
 import { FixtureScreenPlayPuzzleFrontend } from './@/fixture/frontend'
 
@@ -12,7 +12,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('ScreenPlayPuzzleFrontend', () => {
   it('should render puzzle screen after opening puzzle from pack', async () => {
     const f = await Fixture()
     const r = f.render(f.init)
@@ -175,43 +175,19 @@ describe(import.meta.file, () => {
     expect(f.render(f.init).getByRole('button', f.ctx.t('app.reset'))).toBeTruthy()
   })
 
-  test('reset button msg dispatch', async () => {
-    const f = await Fixture()
-    const r = f.render(f.init)
-    const btn = r.getByRole('button', f.ctx.t('app.reset'))[0]
-    btn?.click()
-    const msg = await r.msgs.once()
-    expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-reset-puzzle', userId: f.hostId } })
-  })
-
-  test('reset button sound', async () => {
-    const f = await Fixture()
-    const output = f.update(f.init, [
-      {
-        msgSpace: withEventMeta({
-          t: 'user-clicked-reset-puzzle',
-          userId: f.hostId,
-        }),
-      },
-    ])
-    expect(didPlaySound(output)).toBe(true)
-  })
-
   test('hint button render', async () => {
     const f = await Fixture()
     expect(f.render(f.init).getByRole('button', f.ctx.t('game.hint'))).toBeTruthy()
   })
 
-  test.skip('hint button click', async () => {
+  test('hint button click', async () => {
     const f = await Fixture()
     const r = f.render(f.init)
     const btn = r.getByRole('button', f.ctx.t('game.hint'))[0]
     expect(btn).toBeTruthy()
     btn?.click()
     const msg = await r.msgs.once()
-    expect(msg.t).toBe('got-msg-space')
-    if (msg.t !== 'got-msg-space') return
-    expect(msg.c.t).toBe('got-flow-play-msg')
+    expect(msg.t).toBe('got-msg-cmd')
   })
 
   test('not render hint button when puzzle is solved', async () => {

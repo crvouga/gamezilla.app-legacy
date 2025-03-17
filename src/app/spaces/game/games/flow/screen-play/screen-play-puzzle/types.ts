@@ -41,10 +41,6 @@ export const MsgSpace = p.or(
     userId: UserId,
   }),
   p.obj({
-    t: p.l('user-clicked-reset-puzzle'),
-    userId: UserId,
-  }),
-  p.obj({
     t: p.l('user-toggled-action-buttons-drawer'),
     userId: UserId,
   }),

@@ -234,7 +234,10 @@ describe(import.meta.file, () => {
     const before = f.update(f.init, [
       ...f.solvePuzzleMsgs,
       {
-        t: 'user-clicked-reset-puzzle',
+        t: 'got-flow-play-msg',
+        c: {
+          t: 'user-clicked-reset',
+        },
         userId: f.hostId,
       },
     ])

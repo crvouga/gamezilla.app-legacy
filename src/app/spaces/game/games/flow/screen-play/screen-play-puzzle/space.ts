@@ -149,21 +149,6 @@ const updateScreen = (input: {
       }
     }
 
-    case 'user-clicked-reset-puzzle': {
-      if (input.modelSpace.puzzleResult.t === 'not-found') {
-        return input.modelSpace
-      }
-      return {
-        ...input.modelSpace,
-        modePlay: ModePlay.init({
-          ctx: ModePlay.initCtx({
-            flow: input.modelSpace.puzzleResult.c.flow,
-            solutions: {},
-          }),
-        }),
-      }
-    }
-
     case 'user-toggled-action-buttons-drawer': {
       return {
         ...input.modelSpace,
