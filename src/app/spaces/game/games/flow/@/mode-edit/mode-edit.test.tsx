@@ -1,8 +1,8 @@
 import { describe, expect, it, test } from 'bun:test'
 import { ModeEdit } from '.'
+import { Flow } from '../flow'
 import { Variant, VariantDimensions } from '../variant'
 import { VariantGridShorthand } from '../variant/grid'
-import { Flow } from '../flow'
 
 type Output = ReturnType<typeof ModeEdit.update>
 
