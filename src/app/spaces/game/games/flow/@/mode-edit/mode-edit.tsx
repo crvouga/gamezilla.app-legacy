@@ -1,19 +1,11 @@
 import { eq } from '~/@/equals/equals'
 import { History } from '~/@/history'
 import { p } from '~/@/parser'
-import { IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark, Typography } from '~/@/ui'
-import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/screen-layout-props'
-import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { Flow } from '../flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
-import { BoardLayout } from '../ui/board-layout'
-import { Color } from '../ui/color'
-import { Variant, VariantBoard, VariantDimensions } from '../variant'
+import { Variant, VariantDimensions } from '../variant'
 
 //
 //
@@ -51,6 +43,7 @@ export type Opened = p.Infer<typeof Opened>
 export const Model = p.obj({
   form: History.parser(Form),
   opened: p.maybe(Opened),
+  hoveredNodeId: p.maybe(NodeId),
 })
 export type Model = p.Infer<typeof Model>
 
@@ -66,6 +59,7 @@ export const init = (input: { flow: Variant.Model }): Model => {
   return {
     form: History.init(form),
     opened: null,
+    hoveredNodeId: null,
   }
 }
 
@@ -94,6 +88,7 @@ export const Msg = p.or(
   p.obj({ t: p.l('dragged-over'), nodeId: NodeId }),
   p.obj({ t: p.l('pressed-up-node'), nodeId: NodeId }),
   p.obj({ t: p.l('pressed-down-node'), nodeId: NodeId }),
+  p.obj({ t: p.l('hovered-over-node'), nodeId: NodeId }),
   p.obj({ t: p.l('clicked-clear') }),
   p.obj({ t: p.l('clicked-undo') }),
   p.obj({ t: p.l('clicked-redo') }),
@@ -125,6 +120,10 @@ export const update = (input: {
 
     case 'pressed-up-node': {
       return { model: input.model }
+    }
+
+    case 'hovered-over-node': {
+      return { model: { ...input.model, hoveredNodeId: input.msg.nodeId } }
     }
 
     case 'clicked-clear': {
@@ -289,14 +288,18 @@ export const update = (input: {
   }
 }
 
-const canSubmitDimensionsForm = (model: Model): boolean => {
+export const canSubmitDimensionsForm = (model: Model): boolean => {
   const present = History.present(model.form)
   const opened = model.opened
   if (opened?.t !== 'dimensions') return false
   return !eq(opened.draftDimensions, present.dimensions)
 }
 
-export const updateDraftTerminalsOnPressedDownNode = (
+export const hasGhostTerminal = (model: Model, nodeId: NodeId): boolean => {
+  return model.hoveredNodeId === nodeId
+}
+
+const updateDraftTerminalsOnPressedDownNode = (
   draftTerminals: DraftTerminals,
   currentPlacingGroupId: GroupId,
   pressedNodeId: NodeId,
@@ -423,135 +426,4 @@ export const toFlow = (model: Model): Variant.Model => {
     dimensions,
     terminalsByGroupId: form.terminalsByGroupId,
   })
-}
-
-//
-//
-//
-// View
-//
-//
-//
-
-export const View = (input: {
-  ctx: AppFrontendCtx
-  model: Model
-  dispatch: (m: Msg) => void
-  screenLayout: Partial<ScreenLayoutProps>
-}) => {
-  return (
-    <ScreenLayout
-      {...input.screenLayout}
-      parentScreen={input.ctx.parentScreen}
-      id='mode-edit-screen'
-      ctx={input.ctx}
-      renderBody={() => (
-        <BoardLayout>
-          <ViewStatus {...input} />
-
-          <VariantBoard.View
-            model={toFlow(input.model)}
-            onDraggedOver={(nodeId) => input.dispatch({ t: 'dragged-over', nodeId })}
-            onPressDown={(nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId })}
-            onPressUp={(nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId })}
-          />
-        </BoardLayout>
-      )}
-      actionBar={{
-        variant: {
-          t: 'uniform',
-          actions: [
-            {
-              id: input.ctx.t('app.undo'),
-              icon: (input) => <IconArrowRotateLeft {...input} />,
-              label: input.ctx.t('app.undo'),
-              onClick: () => input.dispatch({ t: 'clicked-undo' }),
-              disabled: !History.canUndo(input.model.form),
-            },
-            {
-              id: input.ctx.t('app.redo'),
-              icon: (input) => <IconArrowRotateRight {...input} />,
-              label: input.ctx.t('app.redo'),
-              disabled: !History.canRedo(input.model.form),
-              onClick: () => input.dispatch({ t: 'clicked-redo' }),
-            },
-            {
-              id: input.ctx.t('app.clear'),
-              icon: (input) => <IconXMark {...input} />,
-              label: input.ctx.t('app.clear'),
-              disabled: !canClear(input.model),
-              onClick: () => input.dispatch({ t: 'clicked-clear' }),
-            },
-            {
-              id: input.ctx.t('app.dimensions'),
-              icon: (input) => <IconExpand {...input} />,
-              label: input.ctx.t('app.dimensions'),
-              onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
-              renderSurface: ({ dropDown }) => (
-                <SurfaceLayout
-                  id='dimensions'
-                  ctx={input.ctx}
-                  ariaLabel={input.ctx.t('app.dimensions')}
-                  open={input.model.opened?.t === 'dimensions'}
-                  onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
-                  dropDown={{
-                    ...dropDown,
-                    position: 'start',
-                    alignment: 'ending',
-                  }}
-                  header={{
-                    render: () => (
-                      <SurfaceHeader
-                        ctx={input.ctx}
-                        title={input.ctx.t('app.dimensions')}
-                        onClose={() => input.dispatch({ t: 'dimensions-form.closed' })}
-                      />
-                    ),
-                  }}
-                  form={{
-                    onSubmit: () => input.dispatch({ t: 'dimensions-form.clicked-save' }),
-                    onCancel: () => input.dispatch({ t: 'dimensions-form.clicked-cancel' }),
-                    cancelDisabled: false,
-                    cancelText: input.ctx.t('app.cancel'),
-                    submitText: input.ctx.t('app.apply'),
-                    submitLoading: false,
-                    submitDisabled: !canSubmitDimensionsForm(input.model),
-                  }}
-                  body={{
-                    render: () =>
-                      input.model.opened?.draftDimensions && (
-                        <VariantDimensions.ViewForm
-                          ctx={input.ctx}
-                          form={input.model.opened?.draftDimensions}
-                          onInput={(dimensions) => input.dispatch({ t: 'dimensions-form.inputted', dimensions })}
-                        />
-                      ),
-                  }}
-                />
-              ),
-            },
-          ],
-        },
-      }}
-    />
-  )
-}
-
-const ViewStatus: typeof View = (input) => {
-  const position = toCurrentPlacingTerminalPosition(input.model) === 'start' ? 'first' : 'last'
-  return (
-    <div className='flex w-full items-center justify-center gap-1 p-2'>
-      <Typography variant='body' text={input.ctx.t('flow.placing', { position })} />
-      <ViewTerminal groupId={toCurrentPlacingGroupId(input.model)} className='size-6' />
-    </div>
-  )
-}
-
-const ViewTerminal = ({ groupId, className }: { className: string; groupId: GroupId }) => {
-  const color = Color.groupIdToHex(groupId)
-  return (
-    <svg className={className} viewBox='-1 -1 2 2'>
-      <circle cx='0' cy='0' r='0.8' fill={color} />
-    </svg>
-  )
 }

@@ -19,6 +19,7 @@ import { ScreenPuzzleBuilderSpace } from './space'
 import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './surface-save-changes/frontend'
+import { ModeEditFrontend } from '../../../@/mode-edit/frontend'
 
 //
 //
@@ -253,7 +254,7 @@ const ViewModeEdit: BuilderTypes.FrontendModule['View'] = (input) => {
   if (!puzzleBuilder) return null
 
   return (
-    <ModeEdit.View
+    <ModeEditFrontend.View
       {...input}
       model={puzzleBuilder.modeEdit}
       dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}

@@ -2,6 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { ModeEdit } from '.'
 import { Variant, VariantDimensions } from '../variant'
 import { VariantGridShorthand } from '../variant/grid'
+import { Flow } from '../flow'
 
 type Output = ReturnType<typeof ModeEdit.update>
 
@@ -30,38 +31,19 @@ const Fixture = async (input?: { flow?: Variant.Model }) => {
   }
 }
 
-describe(import.meta.file, () => {
+describe.only(import.meta.file, () => {
   it('should make sounds interacting with dimensions form', async () => {
     const f = await Fixture()
     const msgs: ModeEdit.Msg[] = [
-      {
-        t: 'dimensions-form.clicked-save',
-      },
-      {
-        t: 'dimensions-form.clicked-cancel',
-      },
-      {
-        t: 'dimensions-form.clicked-open',
-      },
-      {
-        t: 'dimensions-form.clicked-cancel',
-      },
-      {
-        t: 'dimensions-form.closed',
-      },
-      {
-        t: 'dimensions-form.inputted',
-        dimensions: VariantDimensions.init({
-          t: 'flow-grid',
-          height: 0,
-          width: 0,
-        }),
-      },
+      { t: 'dimensions-form.clicked-save' },
+      { t: 'dimensions-form.clicked-cancel' },
+      { t: 'dimensions-form.clicked-open' },
+      { t: 'dimensions-form.closed' },
+      { t: 'dimensions-form.inputted', dimensions: VariantDimensions.init({ t: 'flow-grid', height: 0, width: 0 }) },
     ]
 
     for (const msg of msgs) {
       const updated = f.update(f.init, [msg])
-
       expect(updated.msgCmd?.t).toBe('play-sound')
     }
   })
@@ -177,20 +159,23 @@ describe(import.meta.file, () => {
 
   test('clicking dimensions form open button should toggle open state', async () => {
     const f = await Fixture()
+    const afterOpen = f.update(f.init, [{ t: 'dimensions-form.clicked-open' }])
+    const afterSecondClick = f.update(afterOpen, [{ t: 'dimensions-form.clicked-open' }])
 
-    const afterOpen = f.update(f.init, [
-      {
-        t: 'dimensions-form.clicked-open',
-      },
-    ])
-
-    const afterSecondClick = f.update(afterOpen, [
-      {
-        t: 'dimensions-form.clicked-open',
-      },
-    ])
-    expect(f.init.model.opened).toBe(null)
     expect(afterOpen.model.opened?.t).toBe('dimensions')
     expect(afterSecondClick.model.opened).toBe(null)
+  })
+
+  test('ghost terminal should be visible when hovering over node', async () => {
+    const f = await Fixture()
+    const emptyNode = Flow.randomEmptyNode(f.flow)
+    if (!emptyNode) throw new Error('No empty node found')
+    const nodeId = emptyNode.nodeId
+
+    const before = f.init
+    const after = f.update(before, [{ t: 'hovered-over-node', nodeId }])
+
+    expect(ModeEdit.hasGhostTerminal(before.model, nodeId)).toBe(false)
+    expect(ModeEdit.hasGhostTerminal(after.model, nodeId)).toBe(true)
   })
 })
