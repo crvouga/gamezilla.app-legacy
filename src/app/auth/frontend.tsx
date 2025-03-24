@@ -1,6 +1,6 @@
 import { Eff } from '~/@/eff'
 import { Msg } from '~/@/msg/msg'
-import { NotAsked } from '~/@/result'
+import { Loading, NotAsked } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { Button, IconEnvelope, IconMobilePhone, Typography } from '~/@/ui'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
@@ -27,9 +27,7 @@ export const init: FrontendModule['init'] = (input) => {
   return {
     model: {
       ...ContinueAsGuestFrontend.initModel,
-      currentUser: {
-        t: 'loading',
-      },
+      currentUser: Loading,
       loginWithGoogle: NotAsked,
       logout: NotAsked,
       sms: sms.model,

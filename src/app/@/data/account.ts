@@ -1,13 +1,16 @@
+import { p } from '~/@/parser'
+import { PhoneNumber } from '~/@/phone-number'
 import { Posix } from '~/@/time/posix'
 import { UserId } from './user-id'
-import { PhoneNumber } from '~/@/phone-number'
 
-export type UserAccount = {
-  userId: UserId
-  createdAt: Posix
-  phoneNumber: PhoneNumber | null
-  role: 'guest' | 'normal' | 'super'
-}
+const parser = p.obj({
+  userId: UserId,
+  createdAt: Posix,
+  phoneNumber: p.maybe(PhoneNumber),
+  role: p.enumeration(['guest', 'normal', 'super'] as const),
+})
+
+export type UserAccount = p.Infer<typeof parser>
 
 const random = (input?: {
   userId?: UserId
@@ -33,6 +36,7 @@ const randomNormal = (input?: { userId?: UserId; createdAt?: Posix; phoneNumber?
 }
 
 export const UserAccount = {
+  ...parser,
   random,
   randomNormal,
 }
