@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: electric
-  namespace: flow-game
+  namespace: gamezilla-app
 spec:
   replicas: 2
   selector:
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: electric
-          image: your-registry/flow-game-electric:latest
+          image: your-registry/gamezilla-app-electric:latest
           ports:
             - containerPort: 5133
           resources:
@@ -30,7 +30,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: electric-service
-  namespace: flow-game
+  namespace: gamezilla-app
 spec:
   selector:
     app: electric
