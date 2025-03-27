@@ -1,10 +1,13 @@
 import { pipe } from '~/@/function/pipe'
-import { isErr, Loading, mapOk } from '~/@/result'
+import { isErr, Loading, mapErr, mapOk } from '~/@/result'
+import { TimeSpan } from '~/@/time/time-span'
 import { IconLightbulb } from '~/@/ui'
 import { APP_SOUND, playSound, showErrSm, showOkSm, showWarningSm } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
+import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import { AlgoSolveAsync } from '../algo-solve-async'
+import { problemToString } from '../algo-solve-async/algo-solve-async'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
 import {
@@ -16,7 +19,6 @@ import {
   type MsgFrontend,
   type MsgInCmdFrontend,
 } from './types'
-import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.t) {
@@ -62,11 +64,16 @@ const update: FrontendModule['update'] = (input) => {
         },
         msgCmd: [playSound(APP_SOUND.tap)],
         async eff(dispatch) {
-          const solved = await AlgoSolveAsync.solveInProcess({ model: flow, logger: input.ctx.logger })
+          const solved = await AlgoSolveAsync.solveInProcess({
+            model: flow,
+            logger: input.ctx.logger,
+            maxDuration: TimeSpan.seconds(10),
+          })
           const found: FoundSolutionResult = pipe(
             solved,
             (s) => mapOk(s, (solution) => Solutions.of(solution ? [solution] : [])),
             (s) => mapOk(s, (solutions) => ({ solutions })),
+            (s) => mapErr(s, problemToString),
           )
           dispatch({ t: 'found-solution', flow, found })
         },

@@ -2,6 +2,7 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { ILogger } from '~/@/logger'
 import { p } from '~/@/parser'
 import { unwrapOr } from '~/@/result'
+import { TimeSpan } from '~/@/time/time-span'
 import { Variant } from '../variant'
 import { AlgoIsSolved } from './algo-is-solved/algo-is-solved'
 import { AlgoSolveAsync } from './algo-solve-async'
@@ -14,8 +15,10 @@ export type Solutions = p.Infer<typeof parser>
 
 const init: Solutions = []
 
+const MAX_DURATION = TimeSpan.seconds(10)
+
 const findOne = async (input: { model: Variant.Model; logger: ILogger }): Promise<Solutions> => {
-  const found = unwrapOr(await AlgoSolveAsync.solve(input), null)
+  const found = unwrapOr(await AlgoSolveAsync.solve({ ...input, maxDuration: MAX_DURATION }), null)
   if (!found) {
     return init
   }

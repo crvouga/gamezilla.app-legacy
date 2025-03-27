@@ -85,7 +85,10 @@ export const isOk = <TError, TValue>(result: ResultInternal<TError, TValue>): re
   return result.t === 'ok'
 }
 
-const mapErr = <A, B, TValue>(result: ResultInternal<A, TValue>, mapper: (a: A) => B): ResultInternal<B, TValue> => {
+export const mapErr = <A, B, TValue>(
+  result: ResultInternal<A, TValue>,
+  mapper: (a: A) => B,
+): ResultInternal<B, TValue> => {
   switch (result.t) {
     case 'err':
       return Err(mapper(result.error))

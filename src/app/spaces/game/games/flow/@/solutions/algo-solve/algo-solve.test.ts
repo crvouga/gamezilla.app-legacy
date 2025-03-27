@@ -588,6 +588,20 @@ describe('AlgoSolve', () => {
     const actual = AlgoSolve.solve(grid)
     expect(actual).not.toBe(null)
   })
+  test('8x8 simple with two colors', () => {
+    const grid = VariantGridShorthand.toGrid([
+      ['A', ' ', ' ', ' ', ' ', ' ', ' ', 'A'],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      ['C', ' ', ' ', ' ', ' ', ' ', ' ', 'C'],
+      ['B', ' ', ' ', ' ', ' ', ' ', ' ', 'B'],
+    ])
+    const actual = AlgoSolve.solve(grid)
+    expect(actual).not.toEqual(null)
+  })
 })
 
 const some = <T>(iterable: Iterable<T>, predicate: (value: T) => boolean) => {

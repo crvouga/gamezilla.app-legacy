@@ -3,8 +3,42 @@ import { Err, Ok, Result } from '~/@/result'
 import type { Variant } from '../../variant'
 import { AlgoSolve } from '../algo-solve'
 import { MsgToMaster, type MsgToWorker } from './types'
+import { TimeSpan } from '~/@/time/time-span'
 
-type SolveAsync = (input: { model: Variant.Model; logger: ILogger }) => Promise<Result<string, Variant.Model | null>>
+export type Problem =
+  | {
+      t: 'unknown'
+      error: string
+    }
+  | {
+      t: 'aborted'
+    }
+  | {
+      t: 'timed-out'
+    }
+  | {
+      t: 'failed-to-load-worker'
+      error: string
+    }
+
+export const problemToString = (problem: Problem): string => {
+  switch (problem.t) {
+    case 'unknown':
+      return problem.error
+    case 'aborted':
+      return 'Aborted'
+    case 'timed-out':
+      return 'Timed out'
+    case 'failed-to-load-worker':
+      return problem.error
+  }
+}
+
+type SolveAsync = (input: {
+  model: Variant.Model
+  logger: ILogger
+  maxDuration: TimeSpan
+}) => Promise<Result<Problem, Variant.Model | null>>
 
 export const solve: SolveAsync = async (input) => {
   return solveWorker(input)
@@ -23,7 +57,10 @@ export const solveWorker: SolveAsync = async (input) => {
     url = new URL('algo-solve-async-worker.ts', import.meta.url).href
   } catch (e) {
     console.error(e)
-    return Err('Failed to load worker')
+    return Err({
+      t: 'failed-to-load-worker',
+      error: e instanceof Error ? e.message : 'Unknown error',
+    })
   }
 
   const worker = new Worker(url)
@@ -64,16 +101,21 @@ export const solveWorker: SolveAsync = async (input) => {
     solutionPromise,
     errorPromise.then((err) => err).catch(() => ''),
     new Promise<null>((resolve) => {
-      setTimeout(() => resolve(null), 1000 * 60 * 2)
+      setTimeout(() => resolve(null), TimeSpan.toMilliseconds(input.maxDuration))
     }),
   ])
 
   if (typeof result === 'string') {
-    return Err(result)
+    return Err({
+      t: 'unknown',
+      error: result,
+    })
   }
 
   if (result === null) {
-    return Err('Timed out. Worker took too long to respond')
+    return Err({
+      t: 'timed-out',
+    })
   }
 
   input.logger.info(`Solution: ${result ? 'found' : 'not found'}`)

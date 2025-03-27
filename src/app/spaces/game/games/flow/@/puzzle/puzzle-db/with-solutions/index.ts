@@ -1,7 +1,8 @@
+import { ILogger } from '~/@/logger'
 import { Ok, isErr, unwrapOr } from '~/@/result'
+import { TimeSpan } from '~/@/time/time-span'
 import { AlgoSolveAsync } from '../../../solutions/algo-solve-async'
 import type { IPuzzleDb } from '../interface'
-import { ILogger } from '~/@/logger'
 
 export const SKIP_QUERIES = true
 
@@ -25,7 +26,14 @@ export const WithSolutions = (config: Config): IPuzzleDb => {
       const promises = listed.value.puzzles.items.map(async (puzzle) => {
         if (puzzle.solutions.length > 0) return puzzle
 
-        const solution = unwrapOr(await AlgoSolveAsync.solve({ model: puzzle.flow, logger: config.logger }), null)
+        const solution = unwrapOr(
+          await AlgoSolveAsync.solve({
+            model: puzzle.flow,
+            logger: config.logger,
+            maxDuration: TimeSpan.seconds(10),
+          }),
+          null,
+        )
 
         if (!solution) return puzzle
 
@@ -57,7 +65,14 @@ export const WithSolutions = (config: Config): IPuzzleDb => {
 
       if (got.value.solutions.length > 0) return got
 
-      const solution = unwrapOr(await AlgoSolveAsync.solve({ model: got.value.flow, logger: config.logger }), null)
+      const solution = unwrapOr(
+        await AlgoSolveAsync.solve({
+          model: got.value.flow,
+          logger: config.logger,
+          maxDuration: TimeSpan.seconds(10),
+        }),
+        null,
+      )
 
       if (!solution) return got
 
@@ -69,7 +84,14 @@ export const WithSolutions = (config: Config): IPuzzleDb => {
       return Ok(withSolution)
     },
     async put(puzzle) {
-      const solution = unwrapOr(await AlgoSolveAsync.solve({ model: puzzle.flow, logger: config.logger }), null)
+      const solution = unwrapOr(
+        await AlgoSolveAsync.solve({
+          model: puzzle.flow,
+          logger: config.logger,
+          maxDuration: TimeSpan.seconds(10),
+        }),
+        null,
+      )
       const withSolution: typeof puzzle = {
         ...puzzle,
         solutions: solution ? [solution] : [],

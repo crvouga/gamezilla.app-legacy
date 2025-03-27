@@ -4,6 +4,7 @@ import { unwrap } from '~/@/result'
 import { Flow } from '../../flow'
 import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoSolveAsync from './algo-solve-async'
+import { TimeSpan } from '~/@/time/time-span'
 
 describe('AlgoSolveAsync', () => {
   test('solve flow', async () => {
@@ -13,7 +14,13 @@ describe('AlgoSolveAsync', () => {
       ['A', 'B', 'C'],
     ])
 
-    const solution = unwrap(await AlgoSolveAsync.solve({ model: flow, logger: loggerNoop }))
+    const solution = unwrap(
+      await AlgoSolveAsync.solve({
+        model: flow,
+        logger: loggerNoop,
+        maxDuration: TimeSpan.seconds(10),
+      }),
+    )
 
     const expected = VariantGridShorthand.toGrid([
       ['A', 'B', 'C'],
@@ -25,5 +32,13 @@ describe('AlgoSolveAsync', () => {
     if (solution) {
       expect(Flow.isSame(solution, expected)).toBe(true)
     }
+  })
+
+  test('abort', async () => {
+    VariantGridShorthand.toGrid([
+      ['A', 'B', 'C'],
+      [' ', ' ', ' '],
+      ['A', 'B', 'C'],
+    ])
   })
 })
