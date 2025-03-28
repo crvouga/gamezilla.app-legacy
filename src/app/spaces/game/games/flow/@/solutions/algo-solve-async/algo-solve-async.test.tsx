@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { loggerNoop } from '~/@/logger/impl-noop'
-import { unwrap } from '~/@/result'
+import { isErr, unwrap } from '~/@/result'
 import { Flow } from '../../flow'
 import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoSolveAsync from './algo-solve-async'
@@ -35,10 +35,28 @@ describe('AlgoSolveAsync', () => {
   })
 
   test('abort', async () => {
-    VariantGridShorthand.toGrid([
-      ['A', 'B', 'C'],
-      [' ', ' ', ' '],
-      ['A', 'B', 'C'],
+    const flow = VariantGridShorthand.toGrid([
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+      ['I', ' ', ' ', ' ', ' ', ' ', ' ', 'J'],
+      ['K', ' ', 'L', 'M', 'N', 'O', ' ', 'P'],
+      ['Q', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ])
+
+    const abortController = new AbortController()
+    const abortSignal = abortController.signal
+
+    const result = await AlgoSolveAsync.solve({
+      model: flow,
+      logger: loggerNoop,
+      maxDuration: TimeSpan.seconds(10),
+      abortSignal,
+    })
+
+    expect(result.t).toBe('err')
+    if (isErr(result)) expect(result.error.t).toBe('aborted')
   })
 })

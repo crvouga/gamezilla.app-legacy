@@ -5,7 +5,7 @@ import { AlgoSolve } from '../algo-solve'
 import { MsgToMaster, type MsgToWorker } from './types'
 import { TimeSpan } from '~/@/time/time-span'
 
-export type Problem =
+export type SolveAsyncProblem =
   | {
       t: 'unknown'
       error: string
@@ -21,7 +21,7 @@ export type Problem =
       error: string
     }
 
-export const problemToString = (problem: Problem): string => {
+export const problemToString = (problem: SolveAsyncProblem): string => {
   switch (problem.t) {
     case 'unknown':
       return problem.error
@@ -34,11 +34,14 @@ export const problemToString = (problem: Problem): string => {
   }
 }
 
-type SolveAsync = (input: {
+export type SolveAsyncInput = {
   model: Variant.Model
   logger: ILogger
   maxDuration: TimeSpan
-}) => Promise<Result<Problem, Variant.Model | null>>
+  abortSignal?: AbortSignal
+}
+
+type SolveAsync = (input: SolveAsyncInput) => Promise<Result<SolveAsyncProblem, Variant.Model | null>>
 
 export const solve: SolveAsync = async (input) => {
   return solveWorker(input)
