@@ -100,7 +100,7 @@ CREATE TABLE public.game_chess_puzzle_profile (
 
 CREATE TABLE public.game_flow_pack (
     id text NOT NULL,
-    flow_pack_name text NOT NULL,
+    name text NOT NULL,
     created_at_posix bigint NOT NULL,
     created_by_user_id text NOT NULL,
     last_updated_at_posix bigint NOT NULL,
@@ -138,7 +138,7 @@ CREATE TABLE public.game_flow_puzzle (
     created_by_user_id text NOT NULL,
     last_updated_at_posix bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
     last_updated_by_user_id text NOT NULL,
-    deleted_at bigint,
+    deleted_at_posix bigint,
     deleted_by_user_id text,
     solutions jsonb DEFAULT '[]'::jsonb NOT NULL
 );
@@ -473,4 +473,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250110223606'),
     ('20250116191615'),
     ('20250117215818'),
-    ('20250411211833');
+    ('20250411211833'),
+    ('20250411212530');

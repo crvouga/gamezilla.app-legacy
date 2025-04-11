@@ -23,7 +23,7 @@ export type Config = {
 
 const Row = p.obj({
   id: PackId,
-  flow_pack_name: PackName,
+  name: PackName,
   created_at_posix: p.or(p.num, p.str),
   created_by_user_id: UserId,
   last_updated_at_posix: p.or(p.num, p.str),
@@ -56,7 +56,7 @@ const rowToPack = (row: Row, items: RowItem[]): Pack | null => {
     id: row.id,
     lastUpdatedAt: Posix.init(row.last_updated_at_posix),
     lastUpdatedBy: row.last_updated_by_user_id,
-    name: row.flow_pack_name,
+    name: row.name,
     puzzleIds: items
       .sort(
         ascend(
@@ -312,7 +312,7 @@ export const PackDb = (config: Config): IPackDb => {
           UPDATE
             game_flow_pack
           SET
-            flow_pack_name = :flow_pack_name,
+            name = :name,
             last_updated_at_posix = :last_updated_at_posix,
             last_updated_by_user_id = :last_updated_by_user_id
           WHERE
@@ -320,7 +320,7 @@ export const PackDb = (config: Config): IPackDb => {
           `,
           vars: {
             id: input.id,
-            flow_pack_name: input.name,
+            name: input.name,
             last_updated_at_posix: input.lastUpdatedAt,
             last_updated_by_user_id: input.lastUpdatedBy,
           },
@@ -333,7 +333,7 @@ export const PackDb = (config: Config): IPackDb => {
         sql: `
 				INSERT INTO game_flow_pack (
 					id,
-					flow_pack_name,
+					name,
 					created_at_posix,
 					created_by_user_id,
 					last_updated_at_posix,
@@ -342,7 +342,7 @@ export const PackDb = (config: Config): IPackDb => {
 					deleted_by_user_id
 				) VALUES (
 					:id,
-					:flow_pack_name,
+					:name,
 					:created_at_posix,
 					:created_by_user_id,
 					:last_updated_at_posix,
@@ -352,7 +352,7 @@ export const PackDb = (config: Config): IPackDb => {
 				)`,
         vars: {
           id: input.id,
-          flow_pack_name: input.name,
+          name: input.name,
           created_at_posix: input.createdAt,
           created_by_user_id: input.createdBy,
           last_updated_at_posix: input.lastUpdatedAt,

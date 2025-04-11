@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS game_flow_puzzle (
     created_by_user_id TEXT NOT NULL,
     last_updated_at_posix INTEGER NOT NULL,
     last_updated_by_user_id TEXT NOT NULL,
-    deleted_at INTEGER,
+    deleted_at_posix INTEGER,
     deleted_by_user_id TEXT,
     solutions TEXT NOT NULL
 );

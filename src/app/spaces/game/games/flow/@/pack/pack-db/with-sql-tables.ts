@@ -12,7 +12,7 @@ const queries: string[] = [
   `
   CREATE TABLE IF NOT EXISTS game_flow_pack (
       id TEXT NOT NULL,
-      flow_pack_name TEXT NOT NULL,
+      name TEXT NOT NULL,
       created_at_posix INT NOT NULL,
       created_by_user_id TEXT NOT NULL,
       last_updated_at_posix INT NOT NULL,

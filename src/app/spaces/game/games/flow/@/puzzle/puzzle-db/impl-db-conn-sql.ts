@@ -36,7 +36,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           game_flow_puzzle
         WHERE
           id = :id
-          AND deleted_at IS NULL
+          AND deleted_at_posix IS NULL
         LIMIT 1
         `,
         vars: {
@@ -149,7 +149,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         UPDATE
           game_flow_puzzle
         SET
-          deleted_at = :deletedAt,
+          deleted_at_posix = :deletedAt,
           deleted_by_user_id = :deletedBy
         WHERE
           id = :id
@@ -285,7 +285,7 @@ const toQuerySql = (input: { where: WhereClause; order?: OrderClause; pagination
 
 const toSqlWhere = (input: { where: WhereClause }) => {
   const variables: Sql.Vars = {}
-  const where: string[] = ['deleted_at IS NULL']
+  const where: string[] = ['deleted_at_posix IS NULL']
 
   if (input.where.createdBy?.equals) {
     where.push('created_by_user_id = :createdBy')

@@ -9,14 +9,14 @@ const game_flow_puzzle = new Table(
     created_by_user_id: column.text,
     last_updated_at_posix: column.integer,
     last_updated_by_user_id: column.text,
-    deleted_at: column.integer,
+    deleted_at_posix: column.integer,
     deleted_by_user_id: column.text,
     solutions: column.text,
   },
   {
     indexes: {
-      idx_game_flow_puzzle_created_by_last_updated: ['created_by_user_id', 'deleted_at', 'last_updated_at_posix'],
-      idx_game_flow_puzzle_created_by_created_at: ['created_by_user_id', 'deleted_at', 'created_at_posix'],
+      idx_game_flow_puzzle_created_by_last_updated: ['created_by_user_id', 'deleted_at_posix', 'last_updated_at_posix'],
+      idx_game_flow_puzzle_created_by_created_at: ['created_by_user_id', 'deleted_at_posix', 'created_at_posix'],
     },
   },
 )
@@ -25,7 +25,7 @@ export type GameFlowPuzzle = AppSchema['game_flow_puzzle']
 const game_flow_pack = new Table(
   {
     id: column.text,
-    flow_pack_name: column.text,
+    name: column.text,
     created_at_posix: column.integer,
     created_by_user_id: column.text,
     last_updated_at_posix: column.integer,
@@ -35,8 +35,8 @@ const game_flow_pack = new Table(
   },
   {
     indexes: {
-      idx_game_flow_pack_created_by_last_updated: ['created_by_user_id', 'deleted_at', 'last_updated_at_posix'],
-      idx_game_flow_pack_created_by_created_at: ['created_by_user_id', 'deleted_at', 'created_at_posix'],
+      idx_game_flow_pack_created_by_last_updated: ['created_by_user_id', 'deleted_at_posix', 'last_updated_at_posix'],
+      idx_game_flow_pack_created_by_created_at: ['created_by_user_id', 'deleted_at_posix', 'created_at_posix'],
     },
   },
 )
@@ -68,12 +68,7 @@ const game_flow_solutions = new Table(
     created_at_posix: column.integer,
     last_updated_at_posix: column.integer,
   },
-  {
-    indexes: {
-      idx_game_flow_solutions_created_by_last_updated: ['created_by_user_id', 'deleted_at', 'last_updated_at_posix'],
-      idx_game_flow_solutions_created_by_created_at: ['created_by_user_id', 'deleted_at', 'created_at_posix'],
-    },
-  },
+  {},
 )
 export type GameFlowSolutions = AppSchema['game_flow_solutions']
 
