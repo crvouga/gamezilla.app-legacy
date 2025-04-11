@@ -9,7 +9,7 @@ import { PuzzleName } from '../../puzzle-name'
 
 const parser = p.obj({
   id: p.str,
-  flow_puzzle_name: p.str,
+  name: p.str,
   flow: p.or(p.str, p.json),
   created_at_posix: p.or(p.num, p.str),
   created_by_user_id: p.str,
@@ -25,7 +25,7 @@ const ensureNumber = (x: string | number): number => {
 
 const rowToPuzzle = (row: Row): Puzzle | null => {
   const puzzleId = PuzzleId.is(row.id) ? row.id : null
-  const puzzleName = PuzzleName.is(row.flow_puzzle_name) ? row.flow_puzzle_name : null
+  const puzzleName = PuzzleName.is(row.name) ? row.name : null
 
   const rowFlow = typeof row.flow === 'string' ? JSON.parse(row.flow) : row.flow
   const parsedFlow = Variant.Model.parse(rowFlow)

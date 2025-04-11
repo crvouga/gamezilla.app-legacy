@@ -25,9 +25,9 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         sql: `
         SELECT
           id,
-          flow_puzzle_name,
+          name,
           flow,
-          flow_solutions,
+          solutions,
           created_at_posix,
           created_by_user_id,
           last_updated_at_posix,
@@ -74,11 +74,11 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           sql: `
           UPDATE game_flow_puzzle
           SET
-            flow_puzzle_name = :name,
+            name = :name,
             flow = :flow,
             last_updated_at_posix = :lastUpdatedAt,
             last_updated_by_user_id = :lastUpdatedBy,
-            flow_solutions = :solutions
+            solutions = :solutions
           WHERE
             id = :id
           `,
@@ -104,13 +104,13 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         sql: `
           INSERT INTO game_flow_puzzle (
             id,
-            flow_puzzle_name,
+            name,
             flow,
             created_at_posix,
             created_by_user_id,
             last_updated_at_posix,
             last_updated_by_user_id,
-            flow_solutions
+            solutions
           )
           VALUES (
             :id,
@@ -260,9 +260,9 @@ const toQuerySql = (input: { where: WhereClause; order?: OrderClause; pagination
   const str = `
     SELECT
       id,
-      flow_puzzle_name,
+      name,
       flow,
-      flow_solutions,
+      solutions,
       created_at_posix,
       created_by_user_id,
       last_updated_at_posix,

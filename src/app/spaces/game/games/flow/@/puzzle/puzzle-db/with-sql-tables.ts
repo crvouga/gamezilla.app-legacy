@@ -11,7 +11,7 @@ export type Config = {
 const query = `
 CREATE TABLE IF NOT EXISTS game_flow_puzzle (
     id TEXT NOT NULL,
-    flow_puzzle_name TEXT NOT NULL,
+    name TEXT NOT NULL,
     flow TEXT NOT NULL,
     created_at_posix INTEGER NOT NULL,
     created_by_user_id TEXT NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS game_flow_puzzle (
     last_updated_by_user_id TEXT NOT NULL,
     deleted_at INTEGER,
     deleted_by_user_id TEXT,
-    flow_solutions TEXT NOT NULL
+    solutions TEXT NOT NULL
 );
 `
 export const PuzzleDb = (config: Config): IPuzzleDb => {
