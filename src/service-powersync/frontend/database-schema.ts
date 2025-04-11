@@ -3,7 +3,7 @@ import { column, Schema, Table } from '@powersync/web'
 const game_flow_puzzle = new Table(
   {
     id: column.text,
-    flow_puzzle_name: column.text,
+    name: column.text,
     flow: column.text,
     created_at_posix: column.integer,
     created_by_user_id: column.text,
@@ -11,7 +11,7 @@ const game_flow_puzzle = new Table(
     last_updated_by_user_id: column.text,
     deleted_at: column.integer,
     deleted_by_user_id: column.text,
-    flow_solutions: column.text,
+    solutions: column.text,
   },
   {
     indexes: {
