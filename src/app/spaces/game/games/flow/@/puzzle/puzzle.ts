@@ -49,8 +49,7 @@ const random = async (input?: { flow?: FlowVariant.Model; createdBy?: UserId; cr
       ['A', ' '],
       [' ', 'A'],
     ])
-  // const solutions = AlgoSolve.solutions(flow)
-  // const solution = next(solutions)
+
   return {
     createdAt,
     createdBy,
@@ -60,9 +59,8 @@ const random = async (input?: { flow?: FlowVariant.Model; createdBy?: UserId; cr
     lastUpdatedAt: Posix.now(),
     lastUpdatedBy: createdBy,
     id: PuzzleId.generate(),
-    solutions: [],
-    // solutions: solution ? [solution] : [],
     flow,
+    solutions: [],
   }
 }
 

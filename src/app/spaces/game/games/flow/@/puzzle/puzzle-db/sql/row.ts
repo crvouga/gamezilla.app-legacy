@@ -2,7 +2,6 @@ import { p } from '~/@/parser'
 import { Result } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data/user-id'
-import { Flow } from '../../../flow'
 import { Variant } from '../../../variant'
 import type { Puzzle } from '../../puzzle'
 import { PuzzleId } from '../../puzzle-id'
@@ -12,7 +11,6 @@ const parser = p.obj({
   id: p.str,
   flow_puzzle_name: p.str,
   flow: p.or(p.str, p.json),
-  flow_solutions: p.or(p.str, p.json),
   created_at_posix: p.or(p.num, p.str),
   created_by_user_id: p.str,
   last_updated_at_posix: p.or(p.num, p.str),
@@ -38,19 +36,16 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
   const lastUpdatedAt = Posix.init(ensureNumber(row.last_updated_at_posix))
   const lastUpdatedBy = UserId.is(row.last_updated_by_user_id) ? row.last_updated_by_user_id : null
 
-  const parsedFlowSolutions = p.arr(p.or(Variant.Model, Flow.Model)).parse(row.flow_solutions)
-  const solutions = Result.unwrapOr(parsedFlowSolutions, [])
-
   if (puzzleId && puzzleName && flow && createdAt && createdBy && lastUpdatedAt && lastUpdatedBy) {
     return {
       id: puzzleId,
       name: puzzleName,
       flow: flow,
+      solutions: [],
       createdAt,
       createdBy,
       lastUpdatedAt,
       lastUpdatedBy,
-      solutions,
     }
   }
   console.error(
