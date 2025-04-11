@@ -54,6 +54,13 @@ export const solveInProcess: SolveAsync = async (input) => {
 export const solveWorker: SolveAsync = async (input) => {
   input.logger.info('Solving puzzle with worker')
 
+  // Check if already aborted
+  if (input.abortSignal?.aborted) {
+    return Err({
+      t: 'aborted',
+    })
+  }
+
   let url
 
   try {
@@ -89,6 +96,14 @@ export const solveWorker: SolveAsync = async (input) => {
     }
   })
 
+  const abortPromise = new Promise<'aborted'>((resolve) => {
+    if (input.abortSignal) {
+      input.abortSignal.addEventListener('abort', () => {
+        resolve('aborted')
+      })
+    }
+  })
+
   const toWorker: MsgToWorker = {
     t: 'find-solution',
     model: input.model,
@@ -102,13 +117,23 @@ export const solveWorker: SolveAsync = async (input) => {
 
   const result = await Promise.race([
     solutionPromise,
-    errorPromise.then((err) => err).catch(() => ''),
+    errorPromise.then((err) => err).catch(() => 'error' as const),
     new Promise<null>((resolve) => {
       setTimeout(() => resolve(null), TimeSpan.toMilliseconds(input.maxDuration))
     }),
+    abortPromise,
   ])
 
+  if (result === 'aborted') {
+    input.logger.info('Solving aborted')
+    worker.terminate()
+    return Err({
+      t: 'aborted',
+    })
+  }
+
   if (typeof result === 'string') {
+    worker.terminate()
     return Err({
       t: 'unknown',
       error: result,
@@ -116,6 +141,7 @@ export const solveWorker: SolveAsync = async (input) => {
   }
 
   if (result === null) {
+    worker.terminate()
     return Err({
       t: 'timed-out',
     })

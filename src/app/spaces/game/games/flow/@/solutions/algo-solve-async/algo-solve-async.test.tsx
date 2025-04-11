@@ -47,14 +47,17 @@ describe('AlgoSolveAsync', () => {
     ])
 
     const abortController = new AbortController()
-    const abortSignal = abortController.signal
 
-    const result = await AlgoSolveAsync.solve({
+    const solvePromise = AlgoSolveAsync.solve({
       model: flow,
       logger: loggerNoop,
       maxDuration: TimeSpan.seconds(10),
-      abortSignal,
+      abortSignal: abortController.signal,
     })
+
+    abortController.abort()
+
+    const result = await solvePromise
 
     expect(result.t).toBe('err')
     if (isErr(result)) expect(result.error.t).toBe('aborted')

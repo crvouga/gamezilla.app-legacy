@@ -1,6 +1,7 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -417,13 +418,6 @@ CREATE INDEX idx_user_session_session_id_created_at ON public.user_session USING
 --
 
 CREATE INDEX idx_username ON public.user_profile USING btree (username);
-
-
---
--- Name: electric_publication_default; Type: PUBLICATION; Schema: -; Owner: -
---
-
-CREATE PUBLICATION electric_publication_default WITH (publish = 'insert, update, delete, truncate');
 
 
 --
