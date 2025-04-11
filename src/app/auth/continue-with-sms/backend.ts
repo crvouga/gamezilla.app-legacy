@@ -222,7 +222,7 @@ const subscriptions: BackendModule['subscriptions'] = async () => {
 //
 //
 
-export const AuthSMSBackend = {
+export const ContinueWithSmsBackend = {
   initDeps,
   update,
   subscriptions,

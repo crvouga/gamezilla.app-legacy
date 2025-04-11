@@ -5,15 +5,15 @@ import { Err, Ok } from '~/@/result'
 import type { Screen } from '~/@/screen/generated/screens'
 import { didPushScreen } from '~/app/@/frontend/cmd'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
-import type { AuthSMSTypes } from '.'
-import { AuthSMSFrontend } from './frontend'
+import type { ContinueWithSmsTypes } from '.'
+import { ContinueWithSmsFrontend } from './frontend'
 
 type Msg =
   | {
-      msg: AuthSMSTypes.MsgFrontend
+      msg: ContinueWithSmsTypes.MsgFrontend
     }
   | {
-      msgBackend: AuthSMSTypes.MsgToFrontend
+      msgBackend: ContinueWithSmsTypes.MsgToFrontend
     }
 
 const Fixture = async (input?: { currentScreen?: Screen }) => {
@@ -24,11 +24,11 @@ const Fixture = async (input?: { currentScreen?: Screen }) => {
     },
   })
 
-  const updates = (init: AuthSMSTypes.ModelFrontend, msgs: Msg[]) => {
-    const updates: ReturnType<typeof AuthSMSFrontend.update>[] = []
+  const updates = (init: ContinueWithSmsTypes.ModelFrontend, msgs: Msg[]) => {
+    const updates: ReturnType<typeof ContinueWithSmsFrontend.update>[] = []
     let model = init
     for (const msg of msgs) {
-      const updated = AuthSMSFrontend.update({
+      const updated = ContinueWithSmsFrontend.update({
         ctx: f.ctx,
         model,
         ...msg,
@@ -39,18 +39,18 @@ const Fixture = async (input?: { currentScreen?: Screen }) => {
     return updates
   }
 
-  const update = (init: AuthSMSTypes.ModelFrontend, msgs: Msg[]) => {
+  const update = (init: ContinueWithSmsTypes.ModelFrontend, msgs: Msg[]) => {
     const updates_ = updates(init, msgs)
     return updates_[updates_.length - 1]
   }
 
-  const init = AuthSMSFrontend.init({
+  const init = ContinueWithSmsFrontend.init({
     ctx: f.ctx,
     stored: null,
   }).model
 
-  const render = (model: AuthSMSTypes.ModelFrontend = init) => {
-    const vDom = <AuthSMSFrontend.View ctx={f.ctx} dispatch={() => {}} model={model} />
+  const render = (model: ContinueWithSmsTypes.ModelFrontend = init) => {
+    const vDom = <ContinueWithSmsFrontend.View ctx={f.ctx} dispatch={() => {}} model={model} />
     const node = f.render(vDom)
     return node
   }

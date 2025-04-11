@@ -4,7 +4,7 @@ import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserAccountDb } from './@/backend/user-account-db'
 import { UserSessionDb } from './@/backend/user-session-db'
-import { AuthSMSBackend } from './auth-sms/backend'
+import { ContinueWithSmsBackend } from './continue-with-sms/backend'
 import type { BackendCtx, MsgToFrontend, BackendModule } from './types'
 import { ContinueAsGuestBackend } from './continue-as-guest/backend'
 import { GuestSessionMappingDb } from './@/backend/guest-session-mapping-db'
@@ -75,9 +75,9 @@ export const getUserIdFromSessionId = async (ctx: BackendCtx, sessionId?: Sessio
 }
 
 const updateChild: BackendModule['update'] = async (input) => {
-  const sms = await AuthSMSBackend.update({
+  const sms = await ContinueWithSmsBackend.update({
     ...input,
-    deps: await AuthSMSBackend.initDeps(input),
+    deps: await ContinueWithSmsBackend.initDeps(input),
     msgFrontend:
       input.msgFrontend?.t === 'sms'
         ? {
@@ -187,9 +187,9 @@ export const subscriptions: BackendModule['subscriptions'] = async (input) => {
   return Sub.batch([
     Sub.tag(
       'sms',
-      await AuthSMSBackend.subscriptions({
+      await ContinueWithSmsBackend.subscriptions({
         ...input,
-        deps: await AuthSMSBackend.initDeps(input),
+        deps: await ContinueWithSmsBackend.initDeps(input),
       }),
     ),
   ])

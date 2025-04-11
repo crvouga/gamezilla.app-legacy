@@ -7,18 +7,18 @@ import type { ClientId } from '~/app/@/data/client-id'
 import type { SessionId } from '~/app/@/data/session-id'
 import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 import { FixtureAppBackend, randomFrontend } from '~/app/@/backend/fixture'
-import type { AuthSMSTypes } from '.'
+import type { ContinueWithSmsTypes } from '.'
 import { UserAccountDb } from '../@/backend/user-account-db'
-import { AuthSMSBackend } from './backend'
+import { ContinueWithSmsBackend } from './backend'
 import { VerifySMS } from './verify-sms/impl/impl'
 import type { IVerifySMS } from './verify-sms/interface'
 
 type InputMsg =
   | {
-      msg: AuthSMSTypes.MsgBackend
+      msg: ContinueWithSmsTypes.MsgBackend
     }
   | {
-      msgFrontend: AuthSMSTypes.MsgToBackend & {
+      msgFrontend: ContinueWithSmsTypes.MsgToBackend & {
         clientId: ClientId
         sessionId: SessionId
       }
@@ -26,14 +26,14 @@ type InputMsg =
 
 const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
   const f = await FixtureAppBackend()
-  const deps: Awaited<ReturnType<typeof AuthSMSBackend.initDeps>> = {
+  const deps: Awaited<ReturnType<typeof ContinueWithSmsBackend.initDeps>> = {
     AccountDb: UserAccountDb({ t: 'in-memory', delay: async () => {} }),
     VerifySMS: input?.VerifySMS ?? VerifySMS({ t: 'fake-always-ok', logger: Logger({ t: 'noop' }) }),
   }
 
   const updates = function* (msgs: InputMsg[]) {
     for (const msg of msgs) {
-      yield AuthSMSBackend.update({
+      yield ContinueWithSmsBackend.update({
         ctx: f.ctx,
         deps,
         ...msg,

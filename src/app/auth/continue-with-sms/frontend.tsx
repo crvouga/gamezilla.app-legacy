@@ -548,7 +548,7 @@ const ViewVerifyCode: Module['View'] = (input) => {
   )
 }
 
-export const AuthSMSFrontend = {
+export const ContinueWithSmsFrontend = {
   init,
   update,
   subscriptions,

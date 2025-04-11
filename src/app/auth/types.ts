@@ -12,7 +12,7 @@ import { BackendEvt } from '../@/backend/evt'
 import { IGuestSessionMappingDb } from './@/backend/guest-session-mapping-db'
 import type { IUserAccountDb } from './@/backend/user-account-db'
 import type { IUserSessionDb } from './@/backend/user-session-db'
-import type * as AuthSMS from './auth-sms/types'
+import type * as AuthSMS from './continue-with-sms/types'
 import type { ContinueAsGuest } from './continue-as-guest'
 import type { Logout } from './logout'
 

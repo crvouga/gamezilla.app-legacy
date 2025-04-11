@@ -8,7 +8,7 @@ import { APP_SOUND, AppFrontendCmd, playSound, pushScreen, replaceScreen, showTo
 import { BaseFrontendCtx } from '../@/frontend/ctx'
 import { AuthScreenHeaderCta } from './@/frontend/ui/auth-screen-header-cta'
 import { AuthScreenLayout } from './@/frontend/ui/auth-screen-layout'
-import { AuthSMSFrontend } from './auth-sms/frontend'
+import { ContinueWithSmsFrontend } from './continue-with-sms/frontend'
 import { ContinueAsGuestFrontend } from './continue-as-guest/frontend'
 import { LogoutFrontend } from './logout/frontend'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
@@ -22,7 +22,7 @@ import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 //
 
 export const init: FrontendModule['init'] = (input) => {
-  const sms = AuthSMSFrontend.init(input)
+  const sms = ContinueWithSmsFrontend.init(input)
 
   return {
     model: {
@@ -64,7 +64,7 @@ export const update: FrontendModule['update'] = (input) => {
 }
 
 const updateChild: FrontendModule['update'] = (input) => {
-  const updated = AuthSMSFrontend.update({
+  const updated = ContinueWithSmsFrontend.update({
     ctx: input.ctx,
     model: input.model.sms,
     msgCmd: null,
@@ -224,7 +224,7 @@ const updateRedirect: FrontendModule['update'] = (input) => {
 //
 
 export const subscriptions: FrontendModule['subscriptions'] = ({ model, ctx }) => {
-  return Sub.tag('sms', AuthSMSFrontend.subscriptions({ model: model.sms, ctx }))
+  return Sub.tag('sms', ContinueWithSmsFrontend.subscriptions({ model: model.sms, ctx }))
 }
 
 //
@@ -245,7 +245,7 @@ export const View: FrontendModule['View'] = (input) => {
         case 'login-sms-request':
         case 'login-sms-verify': {
           return (
-            <AuthSMSFrontend.View
+            <ContinueWithSmsFrontend.View
               ctx={input.ctx}
               dispatch={(c) => input.dispatch({ t: 'sms', c })}
               model={input.model.sms}
