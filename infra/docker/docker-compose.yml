@@ -6,9 +6,9 @@ services:
       context: ../../
       dockerfile: ./infra/docker/frontend/Dockerfile
       args:
-        - VITE_BACKEND_URL=http://localhost:${PORT}
-        - VITE_POWERSYNC_URL=http://localhost:8080
-        - VITE_ELECTRIC_URL=http://localhost:3000
+        - VITE_BACKEND_URL=${VITE_BACKEND_URL:-http://localhost:${PORT:-3001}}
+        - VITE_POWERSYNC_URL=${VITE_POWERSYNC_URL:-http://localhost:8080}
+        - VITE_ELECTRIC_URL=${VITE_ELECTRIC_URL:-http://localhost:3000}
     ports:
       - '80:80'
     restart: always
