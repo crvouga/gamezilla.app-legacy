@@ -1,0 +1,13 @@
+FROM electricsql/electric:latest
+
+ARG DATABASE_URL
+
+# https://electric-sql.com/docs/api/config#database-url
+ENV DATABASE_URL=${DATABASE_URL}
+
+# Set ELECTRIC_INSECURE=true for development environments
+# In production, you should set ELECTRIC_SECRET instead
+ENV ELECTRIC_INSECURE=true
+
+# https://electric-sql.com/docs/api/config#electric-port
+EXPOSE 3000

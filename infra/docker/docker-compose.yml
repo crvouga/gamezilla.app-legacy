@@ -1,0 +1,136 @@
+name: gamezilla-app
+
+services:
+  frontend:
+    build:
+      context: ../../
+      dockerfile: ./infra/docker/frontend/Dockerfile
+      args:
+        - VITE_BACKEND_URL=http://localhost:${PORT}
+        - VITE_POWERSYNC_URL=http://localhost:8080
+        - VITE_ELECTRIC_URL=http://localhost:3000
+    ports:
+      - '80:80'
+    restart: always
+
+  backend:
+    build:
+      context: ../../
+      dockerfile: ./infra/docker/backend/Dockerfile
+    ports:
+      - '${PORT:-3001}:${PORT:-3001}'
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+      - PORT=${PORT:-3001}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_MESSAGING_SERVICE_SID=${TWILIO_MESSAGING_SERVICE_SID}
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  powersync:
+    build:
+      context: ../../
+      dockerfile: ./infra/docker/powersync/Dockerfile
+      args:
+        - PS_POSTGRES_STORAGE_DATABASE_URL=postgresql://powersync_storage_postgres:powersync_storage_postgres@powersync_storage_postgres:5432/powersync_storage_postgres?sslmode=disable
+        - PS_POSTGRES_REPLICATION_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
+        - PS_JWKS_URI=${PS_JWKS_URI:-http://backend:${PORT:-3001}/jwks}
+    ports:
+      - '8080:8080'
+    restart: always
+    environment:
+      - PS_POSTGRES_STORAGE_DATABASE_URL=postgresql://powersync_storage_postgres:powersync_storage_postgres@powersync_storage_postgres:5432/powersync_storage_postgres?sslmode=disable
+    depends_on:
+      powersync_storage_postgres:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - powersync
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../src/service-powersync/postgres/postgres.conf:/etc/postgresql/postgresql.conf
+      - ../../src/service-powersync/postgres/replication-setup.sql:/docker-entrypoint-initdb.d/replication-setup.sql
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U postgres && psql -U postgres -d postgres -c "SELECT 1 FROM pg_publication WHERE pubname = ''powersync''" | grep -q 1 || psql -U postgres -d postgres -c "CREATE PUBLICATION powersync FOR ALL TABLES;"',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  powersync_storage_postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: powersync_storage_postgres
+      POSTGRES_PASSWORD: powersync_storage_postgres
+      POSTGRES_DB: powersync_storage_postgres
+    ports:
+      - '5433:5432'
+    volumes:
+      - powersync_storage_postgres_data:/var/lib/postgresql/data
+      - ../../src/service-powersync/postgres/storage-setup.sql:/docker-entrypoint-initdb.d/storage-setup.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U powersync_storage_postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      default:
+        aliases:
+          - powersync_storage_postgres
+
+  electric:
+    build:
+      context: ../../
+      dockerfile: ./infra/docker/electric/Dockerfile
+      args:
+        - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
+      ELECTRIC_INSECURE: 'true'
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  powersync_storage_postgres_data:
+  redis_data:

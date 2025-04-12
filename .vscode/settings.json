@@ -1,6 +1,7 @@
 {
   "cSpell.words": [
     "biomejs",
+    "bunx",
     "checkmark",
     "chessboardjs",
     "cloc",
@@ -20,6 +21,7 @@
     "healthcheck",
     "heapify",
     "indexeddb",
+    "initdb",
     "isready",
     "journeyapps",
     "Lamport",
