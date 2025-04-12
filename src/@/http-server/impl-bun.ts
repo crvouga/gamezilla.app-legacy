@@ -48,14 +48,14 @@ export const HttpServerBun = <T>(config: Config) => {
         websocket: webSocketHandler,
       })
 
+      logger.info(`Listening on port ${port}`)
+
       events.pub({
         t: 'web-backend/started',
         ipAddress: getIpAddress(),
         port,
         startedAt: Posix.now(),
       })
-
-      logger.info(`Listening on port ${port}`)
     },
     registerRespond(handler) {
       handlers.push(handler)

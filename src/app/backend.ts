@@ -337,7 +337,7 @@ const updateChild = async (input: {
 const subscriptions = async (input: { ctx: BackendCtx }): Promise<Sub<MsgBackend>> => {
   return Sub.batch([
     Sub.tag('spaces', await SpacesBackend.subscriptions({ ctx: input.ctx.space, deps: null })),
-    Sub.tag('wire', WireBackend.subscriptions({ ctx: input.ctx.wire })),
+    Sub.tag('wire', await WireBackend.subscriptions({ ctx: input.ctx.wire })),
     Sub.flat(
       Sub.map(input.ctx.transport.fromFrontend, ({ sessionId, clientId, msgs }) =>
         msgs.map((c): MsgBackend => ({ t: '→', sessionId, clientId, c })),

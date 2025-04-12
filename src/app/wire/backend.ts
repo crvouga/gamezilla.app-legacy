@@ -1,7 +1,7 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { unwrapOr } from '~/@/result'
 import { RPC } from '~/@/rpc'
-import type { Sub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import type { ClientId } from '~/app/@/data/client-id'
 import { Logger } from '../../@/logger'
 import { AppBackendModule } from '../@/architecture/app-backend'
@@ -243,10 +243,16 @@ const updateFromCmd = async <TMsgToFrontend, TMsgToBackend>(
   }
 }
 
-export const subscriptions = <TMsgToBackend, TMsgToFrontend>(input: {
+export const subscriptions = async <TMsgToBackend, TMsgToFrontend>(input: {
   ctx: BackendCtx<TMsgToFrontend, TMsgToBackend>
-}): Sub<MsgBackend> => {
-  return input.ctx.transport.wire
+}): Promise<Sub<MsgBackend>> => {
+  return Sub.batch<MsgBackend>([
+    input.ctx.transport.wire,
+    Sub.tag(
+      'got-backend-instance-msg',
+      await BackendInstanceBackend.subscriptions({ ctx: input.ctx.backendInstance, deps: {} }),
+    ),
+  ])
 }
 
 export const rpc = <TMsgToFrontend, TMsgToBackend>(input: { ctx: BackendCtx<TMsgToFrontend, TMsgToBackend> }) => {
