@@ -39,11 +39,7 @@ export const AuthScreenFormLayout = (input: {
           input.onSubmit()
         }}
       >
-        <div className='flex w-full flex-col gap-6'>
-          {input.renderInputs()}
-
-          {input.error && <AlertError text={input.error} />}
-        </div>
+        <div className='flex w-full flex-col gap-6'>{input.renderInputs()}</div>
 
         <Button
           color='primary'
@@ -55,6 +51,8 @@ export const AuthScreenFormLayout = (input: {
           loading={input.submitLoading}
           disabled={input.submitDisabled}
         />
+
+        {input.error && <AlertError text={input.error} />}
       </form>
     </AuthScreenLayout>
   )

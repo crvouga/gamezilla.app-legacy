@@ -4,12 +4,9 @@ import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Logger } from '~/@/logger'
 import { SMSFake } from '~/@/sms/impl-fake'
 import { Translator } from '~/app/@/frontend/translator'
-import { VerificationAttemptDb } from '../../../in-house/verification-attempt'
-import {
-  type IVerificationCodeGenerator,
-  VerificationCodeGenerator,
-} from '../../../in-house/verification-code-generator'
-import { type IVerificationDb, VerificationDb } from '../../../in-house/verification/verification-db'
+import { VerificationAttemptDb } from '../verification-attempt'
+import { type IVerificationCodeGenerator, VerificationCodeGenerator } from '../verification-code-generator'
+import { type IVerificationDb, VerificationDb } from '../verification/verification-db'
 import { VerifySMS } from '../impl'
 import { Config } from '../shared'
 import { TimeSpan } from '~/@/time/time-span'

@@ -5,10 +5,8 @@ import { TimeSpan } from '~/@/time/time-span'
 import { IconMobilePhone, Select, TextField, Typography } from '~/@/ui'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND, focusView, playSound, pushScreen, replaceScreen, showToast } from '~/app/@/frontend/cmd'
-import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
-import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
 import { AuthScreenFormLayout } from '../@/frontend/ui/auth-screen-form-layout'
-import { FrontendModule, ModelFrontend } from './types'
+import { FrontendModule, ModelFrontend, toSendErrorMessage, toVerifyErrorMessage } from './types'
 
 //
 //
@@ -25,7 +23,7 @@ const init: ModelFrontend = {
   countryCodeInput: Iso3166Alpha2Code.of('US'),
   phoneNumberError: null,
   sentCodeAt: null,
-  sendCode: NotAsked,
+  sent: NotAsked,
   verifiedCodeAt: null,
   verified: RemoteResult.NotAsked,
 }
@@ -86,23 +84,13 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       if (input.ctx.currentScreen.t === 'login-sms-verify') {
         return {
           model: input.model,
-          msgCmd: [
-            replaceScreen({
-              n: 'auth-login',
-              t: 'login-sms-request',
-            }),
-          ],
+          msgCmd: [replaceScreen({ n: 'auth-login', t: 'login-sms-request' })],
         }
       }
 
       return {
         model: input.model,
-        msgCmd: [
-          replaceScreen({
-            n: 'auth-login',
-            t: 'login',
-          }),
-        ],
+        msgCmd: [replaceScreen({ n: 'auth-login', t: 'login' })],
       }
     }
 
@@ -110,7 +98,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          inputtedPhoneNumber: input.msg.phoneNumber,
+          inputtedPhoneNumber: input.msg.phone,
           phoneNumberError: null,
         },
       }
@@ -151,11 +139,12 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          sendCode: RemoteResult.Loading,
+          sent: RemoteResult.Loading,
           sentCodeAt: input.ctx.now,
         },
         msgCmd: [playSound(APP_SOUND.tap)],
         async eff(dispatch) {
+          debugger
           const sent = await input.ctx.rpc.sendCode({
             phoneNumber: phoneNumber.value,
             preferredLanguage: input.ctx.navigatorLanguage,
@@ -169,7 +158,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          inputtedCode: input.msg.inputtedCode,
+          inputtedCode: input.msg.code,
           inputtedCodeError: null,
         },
       }
@@ -196,7 +185,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         }
       }
 
-      const phoneNumber = input.msg.phoneNumber
+      const phoneNumber = input.msg.phone
 
       return {
         model: {
@@ -230,14 +219,14 @@ const updateFromBackend: FrontendModule['update'] = (input) => {
       const { sent } = input.msg
       if (isErr(sent)) {
         return {
-          model: { ...input.model, sendCode: sent },
+          model: { ...input.model, sent },
           msgCmd: [playSound(APP_SOUND.alertErrorMd)],
         }
       }
 
       if (isErr(sent.value)) {
         return {
-          model: { ...input.model, sendCode: input.msg.sent },
+          model: { ...input.model, sent },
           msgCmd: [playSound(APP_SOUND.alertErrorMd)],
         }
       }
@@ -246,7 +235,7 @@ const updateFromBackend: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          sendCode: sent,
+          sent,
           verified: NotAsked,
           inputtedCode: '',
         },
@@ -320,13 +309,9 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
       title={input.ctx.t('auth-sms.send-code')}
       onBack={() => input.dispatch({ t: 'clicked-back-button' })}
       submitText={input.ctx.t('auth-sms.send-code')}
-      submitLoading={input.model.sendCode.t === 'loading'}
+      submitLoading={input.model.sent.t === 'loading'}
       submitDisabled={false}
-      error={
-        isErr(input.model.sendCode)
-          ? SendCodeProblem.toString({ problem: input.model.sendCode.error, t: input.ctx.t })
-          : null
-      }
+      error={toSendErrorMessage(input)}
       onSubmit={() => input.dispatch({ t: 'user-clicked-send-code-button' })}
       renderInputs={() => (
         <>
@@ -348,7 +333,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
             error={typeof input.model.phoneNumberError === 'string'}
             value={input.model.inputtedPhoneNumber}
             helperText={input.model.phoneNumberError}
-            onChange={(value) => input.dispatch({ t: 'inputted-phone-number', phoneNumber: value })}
+            onChange={(value) => input.dispatch({ t: 'inputted-phone-number', phone: value })}
             onClear={() => input.dispatch({ t: 'clicked-phone-number-clear' })}
           />
         </>
@@ -370,16 +355,12 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
       submitText={input.ctx.t('auth-sms.verify-code')}
       submitLoading={input.model.verified.t === 'loading' || input.model.verified.t === 'ok'}
       submitDisabled={false}
-      error={
-        isErr(input.model.verified)
-          ? VerifyCodeProblem.toString({ problem: input.model.verified.error, t: input.ctx.t })
-          : null
-      }
+      error={toVerifyErrorMessage(input)}
       onSubmit={() =>
         input.dispatch({
           t: 'user-clicked-verify-code-button',
-          phoneNumber,
-          inputtedCode: input.model.inputtedCode,
+          phone: phoneNumber,
+          code: input.model.inputtedCode,
         })
       }
       renderInputs={() => (
@@ -399,7 +380,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
             autoFocus
             type='tel'
             value={input.model.inputtedCode}
-            onChange={(value) => input.dispatch({ t: 'inputted-code', inputtedCode: value })}
+            onChange={(value) => input.dispatch({ t: 'inputted-code', code: value })}
             onClear={() => input.dispatch({ t: 'clicked-code-clear' })}
           />
         </>

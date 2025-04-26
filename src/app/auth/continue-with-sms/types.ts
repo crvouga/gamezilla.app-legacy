@@ -1,8 +1,10 @@
 import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { TranslatedText } from '~/@/l18n'
+import { Translator } from '~/@/l18n/generated'
 import { PhoneNumber } from '~/@/phone-number'
 import { Remote, Result } from '~/@/result'
 import { RPC } from '~/@/rpc'
+import { RPCError } from '~/@/rpc/rpc-error'
 import { Posix } from '~/@/time/posix'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
@@ -14,6 +16,12 @@ import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { IUserAccountDb } from '../@/backend/user-account-db'
 import { IVerifySMS, SendCodeInput, SendCodeOutput, VerifyCodeInput, VerifyCodeOutput } from '../@/backend/verify-sms'
+import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
+import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
+
+export type Sent = Result<RPCError, SendCodeOutput>
+
+export type Verified = Result<RPCError, VerifyCodeOutput>
 
 export type ModelFrontend = {
   //
@@ -25,33 +33,62 @@ export type ModelFrontend = {
   inputtedCodeError: TranslatedText | null
   //
   sentCodeAt: Posix | null
-  sendCode: Remote | SendCodeOutput
+  sent: Remote | Sent
   //
   verifiedCodeAt: Posix | null
-  verified: Remote | VerifyCodeOutput
+  verified: Remote | Verified
+}
+
+export const toSendErrorMessage = (input: { model: ModelFrontend; ctx: { t: Translator } }): TranslatedText | null => {
+  const send = input.model.sent
+
+  if (send.t === 'loading' || send.t === 'not-asked') {
+    return null
+  }
+
+  if (send.t === 'err') {
+    return input.ctx.t('app.something-went-wrong')
+  }
+
+  if (send.value.t === 'err') {
+    return SendCodeProblem.toString({ problem: send.value.error, t: input.ctx.t })
+  }
+
+  return null
+}
+
+export const toVerifyErrorMessage = (input: {
+  model: ModelFrontend
+  ctx: { t: Translator }
+}): TranslatedText | null => {
+  const verified = input.model.verified
+
+  if (verified.t === 'loading' || verified.t === 'not-asked') {
+    return null
+  }
+
+  if (verified.t === 'err') {
+    return input.ctx.t('app.something-went-wrong')
+  }
+
+  if (verified.value.t === 'err') {
+    return VerifyCodeProblem.toString({ problem: verified.value.error, t: input.ctx.t })
+  }
+
+  return null
 }
 
 export type MsgFrontend =
   | { t: 'clicked-back-button' }
-  | { t: 'inputted-phone-number'; phoneNumber: string }
+  | { t: 'inputted-phone-number'; phone: string }
   | { t: 'inputted-country-code'; countryCode: Iso3166Alpha2Code }
   | { t: 'clicked-phone-number-clear' }
   | { t: 'user-clicked-send-code-button' }
-  | { t: 'inputted-code'; inputtedCode: string }
+  | { t: 'inputted-code'; code: string }
   | { t: 'clicked-code-clear' }
-  | {
-      t: 'user-clicked-verify-code-button'
-      phoneNumber: PhoneNumber
-      inputtedCode: string
-    }
-  | {
-      t: 'sent-code'
-      sent: Result<string, SendCodeOutput>
-    }
-  | {
-      t: 'verified-code'
-      verified: Result<string, VerifyCodeOutput>
-    }
+  | { t: 'user-clicked-verify-code-button'; phone: PhoneNumber; code: string }
+  | { t: 'sent-code'; sent: Sent }
+  | { t: 'verified-code'; verified: Verified }
 
 export type MsgBackend = { t: 'noop' }
 

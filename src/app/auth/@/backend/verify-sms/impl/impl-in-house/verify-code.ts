@@ -1,6 +1,6 @@
 import { Err, Ok, isErr } from '~/@/result'
-import type { Verification } from '../../in-house/verification'
-import { VerificationAttemptId, type VerificationAttempt } from '../../in-house/verification-attempt'
+import type { Verification } from './verification'
+import { VerificationAttemptId, type VerificationAttempt } from './verification-attempt'
 import type { IVerifySMS } from '../../interface'
 import type { Config } from './shared'
 import { PhoneNumber } from '~/@/phone-number'

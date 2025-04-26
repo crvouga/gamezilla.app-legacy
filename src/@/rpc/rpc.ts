@@ -1,7 +1,8 @@
-import { Err, isErr, Ok, Result } from '~/@/result'
 import { IHttpClient } from '~/@/http-client'
 import { IHttpServer } from '~/@/http-server'
 import { p } from '~/@/parser'
+import { Err, isErr, Ok, Result } from '~/@/result'
+import { RPCError } from './rpc-error'
 
 type Base = Contract<Record<string, Endpoint<any, any> | Contract<any>>>
 
@@ -14,7 +15,7 @@ export type Contract<TEndpoints extends Record<string, Endpoint<any, any> | Cont
 
 export type Client<T extends Base> = {
   [K in keyof T]: T[K] extends Endpoint<unknown, unknown>
-    ? (input: p.Infer<T[K]['input']>) => Promise<Result<string, p.Infer<T[K]['output']>>>
+    ? (input: p.Infer<T[K]['input']>) => Promise<Result<RPCError, p.Infer<T[K]['output']>>>
     : T[K] extends Contract<any>
       ? Client<T[K]>
       : never

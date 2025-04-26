@@ -1,6 +1,6 @@
 import { Err, Ok, isErr } from '~/@/result'
 import type { IVerifySMS } from '../../interface'
-import { VerificationId, type Verification } from '../../in-house/verification'
+import { VerificationId, type Verification } from './verification'
 import { Config } from './shared'
 import { TimeSpan } from '~/@/time/time-span'
 import { Posix } from '~/@/time/posix'

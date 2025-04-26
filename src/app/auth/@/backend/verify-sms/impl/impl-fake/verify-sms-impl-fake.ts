@@ -1,6 +1,6 @@
 import { Err, Ok } from '~/@/result'
 import type { ILogger } from '~/@/logger'
-import { VerificationId } from '../../in-house/verification'
+import { VerificationId } from '../impl-in-house/verification'
 import type { IVerifySMS } from '../../interface'
 import { PhoneNumber } from '~/@/phone-number'
 

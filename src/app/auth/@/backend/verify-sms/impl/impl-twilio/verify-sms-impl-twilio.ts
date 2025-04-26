@@ -74,7 +74,9 @@ export const VerifySMS = (config: Config): IVerifySMS => {
         }
 
         logger.info(`Sent code to ${to} successfully: ${JSON.stringify(json)}`)
-        return Ok(null)
+        return Ok({
+          phoneNumber: input.phoneNumber,
+        })
       } catch (error) {
         logger.error(`Errored while sending code: ${error}`)
 
@@ -155,7 +157,9 @@ export const VerifySMS = (config: Config): IVerifySMS => {
         logger.info(`Verified code for ${to} successfully: ${valid}`)
 
         if (valid) {
-          return Ok(null)
+          return Ok({
+            phoneNumber: input.phoneNumber,
+          })
         }
 
         return Err({
