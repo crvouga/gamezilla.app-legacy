@@ -14,7 +14,7 @@ export const PubSubTopicBased = (config: Config): IPubSubTopicBased => {
   return {
     async pub(topic, msg) {
       await config.dbConnSql.notify(topic, msg)
-      await new Promise((resolve) => setTimeout(resolve, 1))
+      await new Promise((resolve) => setTimeout(resolve, 0))
       config.logger.debug(`pub: topic=${topic} msg=${JSON.stringify(msg).slice(0, 1000)}`)
     },
     async sub(topic, callback) {
