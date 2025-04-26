@@ -1,4 +1,4 @@
-import type { IVerificationCodeGenerator } from './verification-code-generator'
+import type { IVerificationCodeGenerator } from './interface'
 
 export const CodeGeneratorFake = ({ code }: { code: string }): IVerificationCodeGenerator => {
   return {

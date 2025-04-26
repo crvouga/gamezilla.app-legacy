@@ -11,11 +11,11 @@ export type Config = {
 
 export const VerifySMS = (_config: Config): IVerifySMS => {
   return {
-    async sendCode() {
-      return Ok(null)
+    async sendCode(input) {
+      return Ok({ phoneNumber: input.phoneNumber })
     },
-    async verifyCode() {
-      return Ok(null)
+    async verifyCode(input) {
+      return Ok({ phoneNumber: input.phoneNumber })
     },
   }
 }

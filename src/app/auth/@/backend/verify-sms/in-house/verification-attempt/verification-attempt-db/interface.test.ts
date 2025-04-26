@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { VerificationAttempt } from '../verification-attempt'
-import { VerificationAttemptDb } from './verification-attempt-db-impl'
+import { VerificationAttemptDb } from './impl'
 import { unwrap } from '~/@/result'
 import { VerificationId } from '../../verification/verification-id'
 

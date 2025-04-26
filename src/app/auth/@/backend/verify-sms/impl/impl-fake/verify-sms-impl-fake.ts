@@ -29,7 +29,9 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
 
       deps.logger?.info(`[verify-sms] [test] fake sent code to ${phoneNumberStr}. code: ${DEFAULT_CODE}`)
 
-      return Ok(null)
+      return Ok({
+        phoneNumber: input.phoneNumber,
+      })
     },
     async verifyCode(input) {
       await deps.delay?.()
@@ -42,7 +44,9 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
 
       const code = deps.code ?? DEFAULT_CODE
       if (code === DEFAULT_CODE) {
-        return Ok(null)
+        return Ok({
+          phoneNumber: input.phoneNumber,
+        })
       }
 
       return Err({

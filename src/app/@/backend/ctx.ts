@@ -7,6 +7,7 @@ import type { IRuntime } from '~/@/runtime'
 import type { ISMS } from '~/@/sms'
 import type { Posix } from '~/@/time/posix'
 import type { TimeSpan } from '~/@/time/time-span'
+import { Env } from '../data/env'
 import type { BackendInstanceId } from './backend-instance/backend-instance-id'
 import type { IProfileCache } from './profile-cache'
 
@@ -16,7 +17,7 @@ export type AppBackendCtx = {
   now: Posix
   logger: ILogger
   sms: ISMS
-  env: 'prod' | 'test' | 'dev'
+  env: Env
   sleep: (time: TimeSpan) => Promise<unknown>
   pubSub: IPubSubTopicBased
   profileCache: IProfileCache

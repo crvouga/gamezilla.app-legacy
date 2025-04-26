@@ -1,5 +1,5 @@
 import { Ok } from '~/@/result'
-import type { IVerificationAttemptDb } from './verification-attempt-db'
+import type { IVerificationAttemptDb } from './interface'
 import { VerificationAttemptId } from '../verification-attempt-id'
 import { VerificationAttempt } from '../verification-attempt'
 

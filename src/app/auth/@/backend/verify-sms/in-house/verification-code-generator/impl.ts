@@ -1,6 +1,6 @@
-import type { IVerificationCodeGenerator } from './verification-code-generator'
-import { CodeGeneratorFake as VerificationCodeGeneratorFake } from './verification-code-generator-impl-fake'
-import { VerificationCodeGeneratorReal } from './verification-code-generator-impl-real'
+import type { IVerificationCodeGenerator } from './interface'
+import { CodeGeneratorFake as VerificationCodeGeneratorFake } from './impl-static'
+import { VerificationCodeGeneratorReal } from './impl-sql'
 
 export type Impl =
   | {

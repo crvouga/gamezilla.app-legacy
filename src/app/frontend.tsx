@@ -81,9 +81,9 @@ export const updateCtx = (ctx: FrontendCtx): FrontendCtx => {
   return ctx
 }
 
-type Ctx = AppFrontendCtx | AnonymousFrontendCtx
+export type Ctx = (AppFrontendCtx | AnonymousFrontendCtx) & FrontendCtx
 
-const toFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx => {
+const toAppFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx => {
   const anonymousCtx: AnonymousFrontendCtx = {
     ...input.ctx,
     t: Translator(input.model.lang.lang),
@@ -96,14 +96,21 @@ const toFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx =
   }
   switch (input.model.auth.currentUser.t) {
     case 'logged-in':
-      return {
+      const appCtx: AppFrontendCtx = {
         ...anonymousCtx,
         currentUser: input.model.auth.currentUser.account,
         currentUserRole: input.model.auth.currentUser.account.role,
         currentUserId: input.model.auth.currentUser.account.userId,
       }
+      return {
+        ...appCtx,
+        ...input.ctx,
+      }
     default:
-      return anonymousCtx
+      return {
+        ...anonymousCtx,
+        ...input.ctx,
+      }
   }
 }
 
@@ -147,7 +154,7 @@ export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?:
 
   const lang = LangFrontend.init({ ctx, stored: input.ctx.stored })
   const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire }, stored: input.ctx.stored })
-  const auth = AuthFrontend.init({ stored: input.ctx.stored, ctx })
+  const auth = AuthFrontend.init({ stored: input.ctx.stored, ctx: { ...ctx, rpc: input.ctx.rpc.auth } })
   const space = SpacesFrontend.init({ ctx, stored: input.ctx.stored })
   const profile = ProfileFrontend.init({ ctx: { ...ctx, parentScreen: null }, stored: input.ctx.stored })
 
@@ -255,7 +262,7 @@ const updateChild = (input: {
     MsgFrontend: MsgFrontend
   }>
 }): Output => {
-  const frontendCtx = toFrontendCtx(input)
+  const frontendCtx = toAppFrontendCtx(input)
 
   const space = SpacesFrontend.update({
     ctx: frontendCtx,
@@ -276,7 +283,7 @@ const updateChild = (input: {
   })
 
   const auth = AuthFrontend.update({
-    ctx: frontendCtx,
+    ctx: { ...frontendCtx, rpc: input.ctx.rpc.auth },
     model: input.model.auth,
     msg: input.msg?.t === 'auth' ? input.msg.c : null,
     msgBackend: input.msgBackend?.t === 'auth' ? input.msgBackend.c : null,
@@ -347,20 +354,20 @@ const updateChild = (input: {
 }
 
 export const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend }): Sub<MsgFrontend> => {
-  const ctx = toFrontendCtx(input)
+  const ctx = toAppFrontendCtx(input)
 
   return Sub.batch<MsgFrontend>([
     Sub.tag('→', Sub.flat(input.ctx.transport.fromBackend)),
     Sub.tag('frontend', FrontendFrontend.subscriptions({ ctx, model: input.model.frontend })),
     Sub.tag('wire', WireFrontend.subscriptions({ transport: input.ctx.transport })),
     Sub.tag('lang', LangFrontend.subscriptions({ ctx, model: input.model.lang })),
-    Sub.tag('auth', AuthFrontend.subscriptions({ ctx, model: input.model.auth })),
+    Sub.tag('auth', AuthFrontend.subscriptions({ ctx: { ...ctx, rpc: input.ctx.rpc.auth }, model: input.model.auth })),
     Sub.tag('spaces', SpacesFrontend.subscriptions({ ctx, model: input.model.spaces })),
   ])
 }
 
 export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
-  const frontendCtx = toFrontendCtx(input)
+  const frontendCtx = toAppFrontendCtx(input)
 
   return (
     <ViewAppRoot>
@@ -387,11 +394,7 @@ export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: 
   )
 }
 
-const ViewScreen = (input: {
-  ctx: AppFrontendCtx | AnonymousFrontendCtx
-  model: ModelFrontend
-  dispatch: (m: MsgFrontend) => void
-}) => {
+const ViewScreen = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {
   switch (input.model.frontend.currentScreen.currentScreen.n) {
     case 'lang':
       return (
@@ -422,7 +425,7 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
       return (
         <AuthFrontend.View
           model={input.model.auth}
-          ctx={input.ctx}
+          ctx={{ ...input.ctx, rpc: input.ctx.rpc.auth }}
           dispatch={(c) => input.dispatch({ t: 'auth', c })}
         />
       )

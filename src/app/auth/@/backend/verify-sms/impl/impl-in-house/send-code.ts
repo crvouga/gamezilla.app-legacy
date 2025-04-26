@@ -28,16 +28,11 @@ export const SendCode =
     })
 
     if (isErr(lastDayVerifications)) {
-      return Err({
-        t: 'database-error',
-        error: lastDayVerifications.error,
-      })
+      return newDatabaseError(lastDayVerifications.error)
     }
 
     if (lastDayVerifications.value.items.length >= deps.sendCodeDailyLimit) {
-      return Err({
-        t: 'daily-limit-reached',
-      })
+      return Err({ t: 'daily-limit-reached' })
     }
 
     const lastHourVerifications = await deps.verificationDb.find({
@@ -58,10 +53,7 @@ export const SendCode =
     })
 
     if (isErr(lastHourVerifications)) {
-      return Err({
-        t: 'database-error',
-        error: lastHourVerifications.error,
-      })
+      return newDatabaseError(lastHourVerifications.error)
     }
 
     if (lastHourVerifications.value.items.length >= deps.sendCodeHourlyLimit) {
@@ -91,19 +83,13 @@ export const SendCode =
     const upserted = await deps.verificationDb.put(verificationNew)
 
     if (isErr(upserted)) {
-      return Err({
-        t: 'database-error',
-        error: upserted.error,
-      })
+      return newDatabaseError(upserted.error)
     }
 
     const put = await deps.verificationDb.put(verificationNew)
 
     if (isErr(put)) {
-      return Err({
-        t: 'database-error',
-        error: put.error,
-      })
+      return newDatabaseError(put.error)
     }
 
     const sent = await deps.sms.sendMessage({
@@ -112,11 +98,14 @@ export const SendCode =
     })
 
     if (isErr(sent)) {
-      return Err({
-        t: 'database-error',
-        error: sent.error,
-      })
+      return newDatabaseError(sent.error)
     }
 
-    return Ok(null)
+    return Ok({
+      phoneNumber: input.phoneNumber,
+    })
   }
+
+const newDatabaseError = (error: string): Err<{ t: 'database-error'; error: string }> => {
+  return Err({ t: 'database-error', error })
+}

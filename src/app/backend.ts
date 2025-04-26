@@ -349,6 +349,7 @@ const subscriptions = async (input: { ctx: BackendCtx }): Promise<Sub<MsgBackend
 const rpc = (input: { ctx: BackendCtx }) => {
   return RPC.initServer(rpcContract, {
     wire: WireBackend.rpc({ ctx: input.ctx.wire }),
+    auth: AuthBackend.rpc({ ctx: input.ctx.auth }),
   })
 }
 

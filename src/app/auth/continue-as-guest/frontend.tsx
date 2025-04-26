@@ -1,11 +1,11 @@
 import { isRequesting, isResponseOk, RequestResponse } from '~/@/request-response/request-response'
 import { isErr, NotAsked } from '~/@/result'
-import { APP_SOUND, playSound, sendToBackend, showErrSm } from '~/app/@/frontend/cmd'
 import { Button, IconUserCircle } from '~/@/ui'
+import { APP_SOUND, playSound, sendToBackend, showErrSm } from '~/app/@/frontend/cmd'
 import type { FrontendModule } from '../types'
 import type { ModelFrontend } from './types'
 
-const initModel: ModelFrontend = {
+const init: ModelFrontend = {
   guestRequest: NotAsked,
 }
 
@@ -69,7 +69,7 @@ const ViewButton: FrontendModule['View'] = (input) => {
 }
 
 export const ContinueAsGuestFrontend = {
-  initModel,
+  init,
   update,
   ViewButton,
 }

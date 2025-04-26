@@ -1,19 +1,20 @@
 import type { RemoteResult } from '~/@/result'
+import { RPC } from '~/@/rpc'
 import { TimeSpan } from '~/@/time/time-span'
-import type { AppFrontendModule } from '../@/architecture/app-frontend'
 import type { AppBackendModule } from '../@/architecture/app-backend'
-import type { AppFrontendCmd, AuthCmd } from '../@/frontend/cmd'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
-import { AppFrontendEvt } from '../@/frontend/evt'
-import type { UserAccount } from '../@/data/account'
+import type { AppFrontendModule } from '../@/architecture/app-frontend'
 import { BackendCmd } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendEvt } from '../@/backend/evt'
+import type { UserAccount } from '../@/data/account'
+import type { AppFrontendCmd, AuthCmd } from '../@/frontend/cmd'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
+import { AppFrontendEvt } from '../@/frontend/evt'
 import { IGuestSessionMappingDb } from './@/backend/guest-session-mapping-db'
 import type { IUserAccountDb } from './@/backend/user-account-db'
 import type { IUserSessionDb } from './@/backend/user-session-db'
-import type * as AuthSMS from './continue-with-sms/types'
 import type { ContinueAsGuest } from './continue-as-guest'
+import * as AuthSMS from './continue-with-sms/types'
 import type { Logout } from './logout'
 
 //
@@ -39,12 +40,13 @@ type BaseModelFrontend = {
 
 export type ModelFrontend = BaseModelFrontend & ContinueAsGuest.ModelFrontend & Logout.ModelFrontend
 
-export type BackendCtx = AppBackendCtx & {
-  userAccountDb: IUserAccountDb
-  userSessionDb: IUserSessionDb
-  guestSessionMappingDb: IGuestSessionMappingDb
-  sleep: (timeSpan: TimeSpan) => Promise<unknown>
-}
+export type BackendCtx = AppBackendCtx &
+  AuthSMS.BackendCtx & {
+    userAccountDb: IUserAccountDb
+    userSessionDb: IUserSessionDb
+    guestSessionMappingDb: IGuestSessionMappingDb
+    sleep: (timeSpan: TimeSpan) => Promise<unknown>
+  }
 
 //
 //
@@ -59,13 +61,7 @@ export type MsgFrontend =
   | { t: 'user-clicked-login-with-email' }
   | { t: 'sms'; c: AuthSMS.MsgFrontend }
 
-export type MsgBackend =
-  | ContinueAsGuest.MsgBackend
-  | Logout.MsgFrontend
-  | {
-      t: 'sms'
-      c: AuthSMS.MsgBackend
-    }
+export type MsgBackend = ContinueAsGuest.MsgBackend | Logout.MsgFrontend | { t: 'sms'; c: AuthSMS.MsgBackend }
 
 export type MsgToBackend =
   | ContinueAsGuest.MsgToBackend
@@ -84,12 +80,16 @@ export type MsgToFrontend =
   | { t: 'client-unauthenticated'; sessionId?: never }
   | { t: 'sms'; c: AuthSMS.MsgToFrontend }
 
+export type FrontendCtx = (AnonymousFrontendCtx | AppFrontendCtx) & {
+  rpc: RPC.Client<typeof rpcContract>
+}
+
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  Ctx: AnonymousFrontendCtx | AppFrontendCtx
+  Ctx: FrontendCtx
   MsgCmdIn: AuthCmd
   MsgEvtIn: AppFrontendEvt
   MsgCmdOut: AppFrontendCmd<{
@@ -111,3 +111,7 @@ export type BackendModule = AppBackendModule<{
   MsgToBackend: MsgToBackend
   Deps: null
 }>
+
+export const rpcContract = RPC.initContract({
+  sms: AuthSMS.rpcContract,
+})

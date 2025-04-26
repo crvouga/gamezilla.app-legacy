@@ -94,6 +94,7 @@ export type MsgToBackendMeta = {
 
 export const rpcContract = RPC.initContract({
   wire: WireTypes.rpcContract,
+  auth: AuthTypes.rpcContract,
 })
 
 //

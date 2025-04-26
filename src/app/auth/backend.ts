@@ -1,17 +1,18 @@
 import { isErr, isOk } from '~/@/result'
+import { RPC } from '~/@/rpc'
+import { Sub } from '~/@/sub'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { SessionId } from '~/app/@/data/session-id'
 import type { UserId } from '~/app/@/data/user-id'
+import { sendToFrontend } from '../@/backend/cmd'
+import { AppBackendCtx } from '../@/backend/ctx'
+import { GuestSessionMappingDb } from './@/backend/guest-session-mapping-db'
 import { UserAccountDb } from './@/backend/user-account-db'
 import { UserSessionDb } from './@/backend/user-session-db'
-import { ContinueWithSmsBackend } from './continue-with-sms/backend'
-import type { BackendCtx, MsgToFrontend, BackendModule } from './types'
 import { ContinueAsGuestBackend } from './continue-as-guest/backend'
-import { GuestSessionMappingDb } from './@/backend/guest-session-mapping-db'
+import { ContinueWithSmsBackend } from './continue-with-sms/backend'
 import { LogoutBackend } from './logout/backend'
-import { Sub } from '~/@/sub'
-import { AppBackendCtx } from '../@/backend/ctx'
-import { sendToFrontend, BackendCmd } from '../@/backend/cmd'
+import { rpcContract, type BackendCtx, type BackendModule, type MsgToFrontend } from './types'
 
 //
 //
@@ -20,8 +21,10 @@ import { sendToFrontend, BackendCmd } from '../@/backend/cmd'
 //
 
 export const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
+  const authSMS = await ContinueWithSmsBackend.initCtx({ ctx: input.ctx })
   return {
     ...input.ctx,
+    ...authSMS,
     userAccountDb: UserAccountDb({
       t: 'postgres',
       dbConnSql: input.ctx.dbConnSql,
@@ -52,7 +55,6 @@ export const update: BackendModule['update'] = async (input) => {
   return AppBackendModule.andThen(
     {},
     () => updateFromEvent(input),
-    () => updateChild(input),
     () => LogoutBackend.update(input),
     () => ContinueAsGuestBackend.update(input),
   )
@@ -72,26 +74,6 @@ export const getUserIdFromSessionId = async (ctx: BackendCtx, sessionId?: Sessio
   const userId = found.value
 
   return userId
-}
-
-const updateChild: BackendModule['update'] = async (input) => {
-  const sms = await ContinueWithSmsBackend.update({
-    ...input,
-    deps: await ContinueWithSmsBackend.initDeps(input),
-    msgFrontend:
-      input.msgFrontend?.t === 'sms'
-        ? {
-            ...input.msgFrontend,
-            ...input.msgFrontend.c,
-          }
-        : null,
-    msg: input.msg?.t === 'sms' ? input.msg.c : null,
-  })
-
-  return {
-    msgCmd: BackendCmd.tag('sms', sms.msgCmd),
-    msgEvt: sms.msgEvt,
-  }
 }
 
 const updateFromEvent: typeof update = async (input) => {
@@ -183,14 +165,12 @@ const updateFromEvent: typeof update = async (input) => {
 //
 //
 
-export const subscriptions: BackendModule['subscriptions'] = async (input) => {
-  return Sub.batch([
-    Sub.tag(
-      'sms',
-      await ContinueWithSmsBackend.subscriptions({
-        ...input,
-        deps: await ContinueWithSmsBackend.initDeps(input),
-      }),
-    ),
-  ])
+export const subscriptions: BackendModule['subscriptions'] = async (_) => {
+  return Sub.None
+}
+
+export const rpc = (input: { ctx: BackendCtx }) => {
+  return RPC.initServer(rpcContract, {
+    sms: ContinueWithSmsBackend.rpc({ ctx: input.ctx }),
+  })
 }

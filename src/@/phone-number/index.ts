@@ -16,15 +16,15 @@ type Problem = 'invalid_phone_number'
 const fromStringDeriveCountry = (phoneNumber: string): Result<Problem, PhoneNumber> => {
   let countryCode: Iso3166Alpha2Code | undefined
 
-  for (const countryCodeCandiate of Iso3166Alpha2Code.all) {
+  for (const countryCodeCandidate of Iso3166Alpha2Code.all) {
     const result = phone(phoneNumber, {
-      country: countryCodeCandiate,
+      country: countryCodeCandidate,
     })
 
     if (!result.isValid) {
       continue
     }
-    countryCode = countryCodeCandiate
+    countryCode = countryCodeCandidate
   }
 
   const result = phone(phoneNumber, {

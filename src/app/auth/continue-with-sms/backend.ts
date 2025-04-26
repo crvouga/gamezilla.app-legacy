@@ -1,121 +1,88 @@
-import { Hashing } from '~/@/hashing'
-import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
-import { Task } from '~/@/promise/task'
-import { Err, Ok, isErr } from '~/@/result'
-import { SMS } from '~/@/sms'
-import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
-import { TimeSpan } from '~/@/time/time-span'
-import { AppBackendModule } from '~/app/@/architecture/app-backend'
-import { Translator } from '~/app/@/frontend/translator'
+import { Err, Ok, Result, isErr } from '~/@/result'
+import { RPC } from '~/@/rpc'
+import { AppBackendCtx } from '~/app/@/backend/ctx'
 import type { UserAccount } from '~/app/@/data/account'
 import { UserId } from '~/app/@/data/user-id'
-import { sendToFrontend } from '~/app/@/backend/cmd'
-import type { IUserAccountDb } from '../@/backend/user-account-db'
+import { Translator } from '~/app/@/frontend/translator'
 import { UserAccountDb } from '../@/backend/user-account-db/impl'
-import type { BackendModule } from './types'
-import { VerifySMS } from './verify-sms/impl/impl'
-import { verifyCodeProblemToString, type IVerifySMS, type VerifyCodeProblem } from './verify-sms/interface'
-import { VerificationAttemptDb } from './verify-sms/in-house/verification-attempt'
-import { VerificationCodeGenerator } from './verify-sms/in-house/verification-code-generator'
-import { VerificationDb } from './verify-sms/in-house/verification/verification-db'
+import { BackendCtx, rpcContract } from './types'
+import { SendCodeInput, SendCodeOutput, VerifyCodeInput } from '../@/backend/verify-sms'
+import { VerifySMSFactory } from '../@/backend/verify-sms/impl/factory'
+import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
+import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
 
-//
-//
-//
-//
-//
-//
-
-const initDeps: BackendModule['initDeps'] = async ({ ctx }) => {
-  const logger = Logger.prefix('auth-sms', ctx.logger)
-  const accountDb = UserAccountDb({ t: 'postgres', dbConnSql: ctx.dbConnSql })
-  const verificationDb = VerificationDb({ t: 'postgres', dbConnSql: ctx.dbConnSql })
-  const verificationAttemptDb = VerificationAttemptDb({ t: 'postgres', dbConnSql: ctx.dbConnSql })
-  const hashing = Hashing({ t: 'bun' })
-  const verificationCodeGenerator = VerificationCodeGenerator({ t: 'fake', code: '123' })
-  const sms = SMS({ t: 'fake', logger })
-  const verifySMSInHouse = VerifySMS({
-    t: 'in-house',
-    logger: ctx.logger,
-    hashing,
-    now: Posix.now,
-    sendCodeDailyLimit: 1000,
-    sendCodeHourlyLimit: 100,
-    verificationAttemptDb,
-    verificationDb,
-    verifyCodeExpiresIn: TimeSpan.minutes(5),
-    verifyCodeMaxAttempts: 3,
-    sms,
-    Translator,
-    verificationCodeGenerator,
+const initCtx = (input: { ctx: AppBackendCtx }): BackendCtx => {
+  const accountDb = UserAccountDb({ t: 'postgres', dbConnSql: input.ctx.dbConnSql })
+  const verifySMS = VerifySMSFactory.createForEnvironment({
+    logger: input.ctx.logger,
+    env: input.ctx.env,
+    dbConnSql: input.ctx.dbConnSql,
   })
-  const verifySMSTwilio = VerifySMS({ t: 'twilio', logger })
-  const verifySMS = ctx.env === 'prod' ? verifySMSTwilio : verifySMSInHouse
+
   return {
-    AccountDb: accountDb,
-    VerifySMS: verifySMS,
+    ...input.ctx,
+    accountDb: accountDb,
+    verifySMS: verifySMS,
   }
 }
 
-//
-//
-//
-//
-//
-//
-//
+const handleSendCode = async (
+  input: SendCodeInput & {
+    ctx: BackendCtx
+  },
+): Promise<SendCodeOutput> => {
+  input.ctx.logger.info(`Sending code to ${PhoneNumber.toString(input.phoneNumber)}`)
+  const sent = await input.ctx.verifySMS.sendCode({
+    phoneNumber: input.phoneNumber,
+    preferredLanguage: input.preferredLanguage,
+  })
 
-const update: BackendModule['update'] = async (input) => {
-  return AppBackendModule.andThen(
-    {},
-    () => updateSendCode(input),
-    () => updateVerifyCode(input),
-  )
-}
-
-const updateSendCode: BackendModule['update'] = async ({ msgFrontend, deps }) => {
-  switch (msgFrontend?.t) {
-    case 'user-clicked-send-code-button': {
-      const sent = await deps.VerifySMS.sendCode(msgFrontend)
-      return {
-        msgCmd: [
-          sendToFrontend([msgFrontend.clientId], {
-            t: 'sent-code',
-            phoneNumber: msgFrontend.phoneNumber,
-            sent,
-          }),
-        ],
-      }
-    }
-    default: {
-      return {}
-    }
+  if (isErr(sent)) {
+    input.ctx.logger.error(
+      `Failed to send code. ${SendCodeProblem.toString({
+        problem: sent.error,
+        t: Translator('en'),
+      })}`,
+    )
+  } else {
+    input.ctx.logger.info(`Successfully sent code to ${PhoneNumber.toString(input.phoneNumber)}`)
   }
+
+  return sent
 }
 
-const handleVerifyCode = async (input: {
-  now: Posix
-  phoneNumber: PhoneNumber
-  inputtedCode: string
-  AccountDb: IUserAccountDb
-  VerifySMS: IVerifySMS
-}): Task<VerifyCodeProblem, UserAccount> => {
-  const verified = await input.VerifySMS.verifyCode({
-    code: input.inputtedCode,
+const handleVerifyCode = async (
+  input: VerifyCodeInput & {
+    ctx: BackendCtx
+  },
+): Promise<Result<VerifyCodeProblem, UserAccount>> => {
+  input.ctx.logger.info(`Verifying code for phone number ${PhoneNumber.toString(input.phoneNumber)}`)
+
+  const verified = await input.ctx.verifySMS.verifyCode({
+    code: input.code,
     phoneNumber: input.phoneNumber,
   })
 
   if (isErr(verified)) {
+    input.ctx.logger.error(
+      `Code verification failed: ${VerifyCodeProblem.toString({
+        problem: verified.error,
+        t: Translator('en'),
+      })}`,
+    )
     return verified
   }
 
-  const found = await input.AccountDb.findOneByPhoneNumber({
+  input.ctx.logger.info(`Code verification successful for ${PhoneNumber.toString(input.phoneNumber)}`)
+
+  input.ctx.logger.info(`Looking up user account for ${PhoneNumber.toString(input.phoneNumber)}`)
+  const found = await input.ctx.accountDb.findOneByPhoneNumber({
     phoneNumber: input.phoneNumber,
   })
 
   if (isErr(found)) {
+    input.ctx.logger.error(`Database error while looking up user: ${found.error}`)
     return Err({
       t: 'database-error',
       error: found.error,
@@ -125,105 +92,56 @@ const handleVerifyCode = async (input: {
   const accountFound = found.value
 
   if (accountFound) {
+    input.ctx.logger.info(`Found existing account for ${PhoneNumber.toString(input.phoneNumber)}`)
     return Ok(accountFound)
   }
 
+  input.ctx.logger.info(`Creating new account for ${PhoneNumber.toString(input.phoneNumber)}`)
   const accountNew: UserAccount = {
-    createdAt: input.now,
+    createdAt: input.ctx.now,
     phoneNumber: input.phoneNumber,
     role: 'normal',
     userId: UserId.generate(),
   }
 
-  const inserted = await input.AccountDb.insert({
+  const inserted = await input.ctx.accountDb.insert({
     account: accountNew,
   })
 
   if (isErr(inserted)) {
+    input.ctx.logger.error(`Failed to insert new account: ${inserted.error}`)
     return Err({
       t: 'database-error',
       error: inserted.error,
     })
   }
 
+  input.ctx.logger.info(`Successfully created new account for ${PhoneNumber.toString(input.phoneNumber)}`)
   return Ok(accountNew)
 }
 
-const updateVerifyCode: BackendModule['update'] = async ({ msgFrontend, deps, ctx }) => {
-  switch (msgFrontend?.t) {
-    case 'user-clicked-verify-code-button': {
-      ctx.logger.info(`Verifying code for ${PhoneNumber.toString(msgFrontend.phoneNumber)}`)
-      const verified = await handleVerifyCode({
-        AccountDb: deps.AccountDb,
-        VerifySMS: deps.VerifySMS,
-        now: ctx.now,
-        phoneNumber: msgFrontend.phoneNumber,
-        inputtedCode: msgFrontend.inputtedCode,
+const rpc = (config: { ctx: BackendCtx }) => {
+  return RPC.initServer(rpcContract, {
+    sendCode: async (input) => {
+      const sent = await handleSendCode({
+        phoneNumber: input.phoneNumber,
+        preferredLanguage: input.preferredLanguage,
+        ctx: config.ctx,
       })
-      ctx.logger.info(`Verified code for ${PhoneNumber.toString(msgFrontend.phoneNumber)}`)
-
-      if (isErr(verified)) {
-        ctx.logger.error(
-          `Failed to verify code. ${verifyCodeProblemToString({
-            problem: verified.error,
-            t: Translator('en'),
-          })}`,
-        )
-        return {
-          msgCmd: [
-            sendToFrontend(msgFrontend, {
-              t: 'verified-code',
-              verified,
-            }),
-          ],
-        }
-      }
-
-      return {
-        msgCmd: [
-          sendToFrontend(msgFrontend, {
-            t: 'verified-code',
-            verified,
-          }),
-        ],
-        msgEvt: [
-          {
-            ...msgFrontend,
-            t: 'auth-evt.client-authenticated',
-            user: verified.value,
-            loggedIn: true,
-          },
-        ],
-      }
-    }
-
-    default: {
-      return {}
-    }
-  }
+      return sent
+    },
+    verifyCode: async (input) => {
+      const verified = await handleVerifyCode({
+        phoneNumber: input.phoneNumber,
+        code: input.code,
+        ctx: config.ctx,
+      })
+      return verified
+    },
+  })
 }
-
-//
-//
-//
-//
-//
-//
-
-const subscriptions: BackendModule['subscriptions'] = async () => {
-  return Sub.None
-}
-
-//
-//
-//
-//
-//
-//
-//
 
 export const ContinueWithSmsBackend = {
-  initDeps,
-  update,
-  subscriptions,
+  initCtx,
+  rpc,
 }

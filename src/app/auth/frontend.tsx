@@ -1,5 +1,4 @@
 import { Eff } from '~/@/eff'
-import { Msg } from '~/@/msg/msg'
 import { Loading, NotAsked } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { Button, IconEnvelope, IconMobilePhone, Typography } from '~/@/ui'
@@ -8,8 +7,8 @@ import { APP_SOUND, AppFrontendCmd, playSound, pushScreen, replaceScreen, showTo
 import { BaseFrontendCtx } from '../@/frontend/ctx'
 import { AuthScreenHeaderCta } from './@/frontend/ui/auth-screen-header-cta'
 import { AuthScreenLayout } from './@/frontend/ui/auth-screen-layout'
-import { ContinueWithSmsFrontend } from './continue-with-sms/frontend'
 import { ContinueAsGuestFrontend } from './continue-as-guest/frontend'
+import { ContinueWithSmsFrontend } from './continue-with-sms/frontend'
 import { LogoutFrontend } from './logout/frontend'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 
@@ -21,21 +20,16 @@ import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 //
 //
 
-export const init: FrontendModule['init'] = (input) => {
-  const sms = ContinueWithSmsFrontend.init(input)
-
+export const init: FrontendModule['init'] = () => {
   return {
     model: {
-      ...ContinueAsGuestFrontend.initModel,
+      ...ContinueAsGuestFrontend.init,
       currentUser: Loading,
       loginWithGoogle: NotAsked,
       logout: NotAsked,
-      sms: sms.model,
       opened: null,
+      sms: ContinueWithSmsFrontend.init,
     },
-    eff: Eff.batch(Eff.tag('sms', sms.eff)),
-    msgEvt: Msg.batch(sms.msgEvt),
-    msgCmd: Msg.batch(AppFrontendCmd.tag('sms', sms.msgCmd)),
   }
 }
 
@@ -65,7 +59,7 @@ export const update: FrontendModule['update'] = (input) => {
 
 const updateChild: FrontendModule['update'] = (input) => {
   const updated = ContinueWithSmsFrontend.update({
-    ctx: input.ctx,
+    ctx: { ...input.ctx, rpc: input.ctx.rpc.sms },
     model: input.model.sms,
     msgCmd: null,
     msgEvt: input.msgEvt,
@@ -223,8 +217,8 @@ const updateRedirect: FrontendModule['update'] = (input) => {
 //
 //
 
-export const subscriptions: FrontendModule['subscriptions'] = ({ model, ctx }) => {
-  return Sub.tag('sms', ContinueWithSmsFrontend.subscriptions({ model: model.sms, ctx }))
+export const subscriptions: FrontendModule['subscriptions'] = () => {
+  return Sub.None
 }
 
 //
@@ -246,7 +240,7 @@ export const View: FrontendModule['View'] = (input) => {
         case 'login-sms-verify': {
           return (
             <ContinueWithSmsFrontend.View
-              ctx={input.ctx}
+              ctx={{ ...input.ctx, rpc: input.ctx.rpc.sms }}
               dispatch={(c) => input.dispatch({ t: 'sms', c })}
               model={input.model.sms}
             />

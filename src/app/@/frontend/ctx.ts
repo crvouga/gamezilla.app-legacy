@@ -29,6 +29,8 @@ export type BaseFrontendCtx = {
   profiles: { [userId: UserId]: Profile }
   documentVisibilityState: DocumentVisibilityState
   currentUser?: UserAccount | null
+  currentUserId?: UserId | null
+  currentUserRole?: UserRole | null
 }
 
 export type AnonymousFrontendCtx = BaseFrontendCtx
