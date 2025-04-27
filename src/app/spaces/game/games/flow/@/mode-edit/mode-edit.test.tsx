@@ -31,7 +31,7 @@ const Fixture = async (input?: { flow?: Variant.Model }) => {
   }
 }
 
-describe.only(import.meta.file, () => {
+describe(import.meta.file, () => {
   it('should make sounds interacting with dimensions form', async () => {
     const f = await Fixture()
     const msgs: ModeEdit.Msg[] = [

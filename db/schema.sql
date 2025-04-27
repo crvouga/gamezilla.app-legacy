@@ -192,10 +192,13 @@ CREATE TABLE public.user_account (
 --
 
 CREATE TABLE public.user_guest_session_mapping (
-    id text NOT NULL,
+    guest_user_id text NOT NULL,
     session_id text NOT NULL,
-    created_at_posix bigint NOT NULL
+    created_at_posix bigint NOT NULL,
+    id text NOT NULL
 );
+
+ALTER TABLE ONLY public.user_guest_session_mapping REPLICA IDENTITY FULL;
 
 
 --
@@ -320,6 +323,14 @@ ALTER TABLE ONLY public.user_account
 
 
 --
+-- Name: user_guest_session_mapping user_guest_session_mapping_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_guest_session_mapping
+    ADD CONSTRAINT user_guest_session_mapping_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: user_profile user_profile_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -396,7 +407,7 @@ CREATE INDEX idx_user_guest_session_mapping_session_id ON public.user_guest_sess
 -- Name: idx_user_guest_session_mapping_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_user_guest_session_mapping_user_id ON public.user_guest_session_mapping USING btree (id);
+CREATE INDEX idx_user_guest_session_mapping_user_id ON public.user_guest_session_mapping USING btree (guest_user_id);
 
 
 --
@@ -468,4 +479,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250117215818'),
     ('20250411211833'),
     ('20250411212530'),
-    ('20250427020149');
+    ('20250427020149'),
+    ('20250427030012');

@@ -5,9 +5,11 @@ import { UserId } from '~/app/@/data/user-id'
 import { p } from '~/@/parser'
 import { IDbConnSql } from '~/@/db-conn-sql'
 import { Posix } from '~/@/time/posix'
+import { Uuid } from '~/@/uuid/uuid'
 
 export const Row = p.obj({
-  id: UserId,
+  id: p.str,
+  guest_user_id: UserId,
   session_id: SessionId,
   created_at_posix: p.or(p.str, p.num),
 })
@@ -21,7 +23,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
   return {
     async findUserIdBySessionId(sessionId) {
       const query = `
-				SELECT id
+				SELECT guest_user_id
 				FROM user_guest_session_mapping
 				WHERE session_id = :session_id
 				ORDER BY created_at_posix DESC
@@ -31,7 +33,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
       }
       const queried = await config.dbConnSql.query({
         parser: p.obj({
-          id: UserId,
+          guest_user_id: UserId,
         }),
         sql: query,
         vars: vars,
@@ -41,17 +43,18 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
         return queried
       }
 
-      const userId = queried.value[0]?.id ?? null
+      const userId = queried.value[0]?.guest_user_id ?? null
 
       return Ok(userId)
     },
     async insert(input) {
       const query = `
-				INSERT INTO user_guest_session_mapping (id, session_id, created_at_posix)
-				VALUES (:id, :session_id, :created_at_posix)
+				INSERT INTO user_guest_session_mapping (id, guest_user_id, session_id, created_at_posix)
+        VALUES (:id, :guest_user_id, :session_id, :created_at_posix)
 			`
       const vars = {
-        id: input.guestUserId,
+        id: Uuid.generate(),
+        guest_user_id: input.guestUserId,
         session_id: input.sessionId,
         created_at_posix: Posix.now(),
       }
