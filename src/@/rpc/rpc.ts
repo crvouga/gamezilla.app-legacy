@@ -8,7 +8,6 @@ import { ClientSessionIdHttp } from '../wire/client-session-id-http'
 import { SessionId } from '../wire/session-id'
 import { SessionIdHttp } from '../wire/session-id-http'
 import { RPCError } from './rpc-error'
-import { ClientSessionIdStorage } from '../wire/client-session-id-storage'
 
 type Base = Contract<Record<string, Endpoint<any, any> | Contract<any>>>
 
@@ -46,6 +45,7 @@ export const initContract = <TEndpoints extends Record<string, Endpoint<any, any
 
 export const initClient = <T extends Base>(config: {
   backendUrl: string
+  clientSessionId: ClientSessionId
   httpClient: IHttpClient
   contract: T
 }): Client<T> => {
@@ -64,11 +64,10 @@ export const initClient = <T extends Base>(config: {
             if (isErr(parsedInput)) {
               return Err(parsedInput.error)
             }
-            const clientSessionId = ClientSessionIdStorage().get()
 
             const url = ClientSessionIdHttp.addToUrl(
               new URL(`/rpc/${[...path, endpoint].join('/')}`, config.backendUrl),
-              clientSessionId,
+              config.clientSessionId,
             )
 
             const request = new Request(url, {

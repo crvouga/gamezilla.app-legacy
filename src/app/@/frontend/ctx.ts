@@ -4,6 +4,7 @@ import { Translator } from '~/@/l18n/generated'
 import { ILogger } from '~/@/logger'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserAccount } from '../data/account'
 import { UserId } from '../data/user-id'
 import { UserRole } from '../data/user-role'
@@ -28,6 +29,7 @@ export type BaseFrontendCtx = {
   now: Posix
   profiles: { [userId: UserId]: Profile }
   documentVisibilityState: DocumentVisibilityState
+  clientSessionId: ClientSessionId
   currentUser?: UserAccount | null
   currentUserId?: UserId | null
   currentUserRole?: UserRole | null

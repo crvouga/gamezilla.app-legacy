@@ -33,6 +33,8 @@ import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtx, ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend, rpcContract as contract } from './types'
 import * as WireFrontend from './wire/frontend'
 import { FrontendTransport } from './wire/transport/frontend'
+import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 
 export const initCtx = async (): Promise<FrontendCtx> => {
   const logger = Logger({
@@ -43,8 +45,11 @@ export const initCtx = async (): Promise<FrontendCtx> => {
     throw new Error('VITE_BACKEND_URL is undefined')
   }
 
+  const clientSessionId = ClientSessionIdStorage().get()
+
   const transport = await FrontendTransport<MsgToBackend, MsgToFrontend>(
     toTransportConfig({
+      clientSessionId,
       httpServerImpl: CONFIG_SHARED.HTTP_SERVER_IMPL,
       backendUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
       logger,
@@ -59,6 +64,7 @@ export const initCtx = async (): Promise<FrontendCtx> => {
     httpClient,
     contract,
     backendUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
+    clientSessionId,
   })
 
   const dbConnSql = await DbConnSql({
@@ -68,6 +74,7 @@ export const initCtx = async (): Promise<FrontendCtx> => {
   })
 
   return {
+    clientSessionId,
     dbConnSql,
     logger,
     rpc,
@@ -89,6 +96,7 @@ export type Ctx = (AppFrontendCtx | AnonymousFrontendCtx) & FrontendCtx
 const toAppFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx => {
   const anonymousCtx: AnonymousFrontendCtx = {
     ...input.ctx,
+
     t: Translator(input.model.lang.lang),
     profiles: input.model.profile.profiles,
     now: input.ctx.now,
@@ -118,6 +126,7 @@ const toAppFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ct
 }
 
 const toTransportConfig = (input: {
+  clientSessionId: ClientSessionId
   httpServerImpl: HttpServerImpl
   backendUrl: string
   logger: ILogger

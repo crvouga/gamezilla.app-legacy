@@ -5,6 +5,7 @@ import { p } from '~/@/parser'
 import * as RPC from './rpc'
 import { describe, expect, test } from 'bun:test'
 import { isErr, Ok } from '../result'
+import { ClientSessionId } from '../wire/client-session-id'
 
 const childRpcContract = RPC.initContract({
   baz: {
@@ -86,6 +87,7 @@ const Fixture = async () => {
     httpClient,
     contract,
     backendUrl: serverUrl,
+    clientSessionId: ClientSessionId.generate(),
   })
 
   await httpServer.start(port)

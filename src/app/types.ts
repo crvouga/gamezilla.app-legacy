@@ -122,6 +122,7 @@ export type FrontendCtx = {
   now: Posix
   rpc: RPC.Client<typeof rpcContract>
   location: Browser.Location
+  clientSessionId: ClientSessionId
   navigatorLanguage: LanguageCodeISO_639_1
   transport: IFrontendTransport<{
     MsgToBackend: MsgToBackend

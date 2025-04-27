@@ -1,6 +1,5 @@
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
-import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { WEB_SOCKET_ENDPOINT } from '../shared'
 import { type MsgBackendToMsgFrontend, type MsgFrontendToMsgBackend } from '../types'
 import {
@@ -16,6 +15,7 @@ const MAX_RECONNECT_ATTEMPTS = 6
 export type Config = {
   t: 'standard-web-sockets'
   backendUrl: string
+  clientSessionId: ClientSessionId
 }
 
 export const FrontendTransport = <MsgToBackend, MsgToFrontend>(
@@ -24,11 +24,9 @@ export const FrontendTransport = <MsgToBackend, MsgToFrontend>(
   MsgToBackend: MsgToBackend
   MsgToFrontend: MsgToFrontend
 }> => {
-  const clientSessionId = ClientSessionIdStorage().get()
-
   const backendUrl = changeToWebsocketProtocol({
     baseBackendUrl: config.backendUrl,
-    clientSessionId: clientSessionId,
+    clientSessionId: config.clientSessionId,
   })
 
   const transport = initFrontendTransport<MsgToBackend, MsgToFrontend>()
