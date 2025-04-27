@@ -7,7 +7,7 @@ import { type MoveInput, uciMoveToMoveInput } from '../../@/chess'
 import { EloRating } from '../elo-rating'
 import { type Puzzle, type PuzzleInteraction, type PuzzleProfile, initQuery } from '../puzzle.types'
 import { splitEvery } from '../utils'
-import { Uuid } from '~/@/uuid/uuid'
+import { Uuid } from '~/@/id/uuid'
 
 //
 //

@@ -5,7 +5,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { p } from '~/@/parser'
 import { IDbConnSql } from '~/@/db-conn-sql'
 import { Posix } from '~/@/time/posix'
-import { Uuid } from '~/@/uuid/uuid'
+import { Uuid } from '~/@/id/uuid'
 
 export const Row = p.obj({
   id: p.str,

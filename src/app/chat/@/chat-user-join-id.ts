@@ -1,4 +1,4 @@
-import { Uuid } from '~/@/uuid/uuid'
+import { Uuid } from '~/@/id/uuid'
 import type { Brand } from '~/@/brand/brand'
 
 export type ChatUserJoinId = Brand<string, 'ChatUserJoinId'>

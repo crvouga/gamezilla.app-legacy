@@ -1,4 +1,4 @@
-import { Uuid } from '~/@/uuid/uuid'
+import { Uuid } from '~/@/id/uuid'
 import { p } from '~/@/parser'
 
 const parser = p.brand(p.str, 'BackendInstanceId')

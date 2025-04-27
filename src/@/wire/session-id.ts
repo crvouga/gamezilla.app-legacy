@@ -1,6 +1,7 @@
 import type { Brand } from '~/@/brand/brand'
 import { Result } from '~/@/result'
 import { p } from '~/@/parser'
+import { ShortId } from '../id/short-id'
 
 export type SessionId = Brand<string, 'SessionId'>
 
@@ -23,24 +24,8 @@ export const decode = (id: string): Result<Problem, SessionId> => {
   return Result.Err('invalid-session-id')
 }
 
-const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-
-const randomCharacter = (word: string): string => {
-  return word[Math.floor(Math.random() * word.length)] ?? 'a'
-}
-
-const generateId = (length: number): string => {
-  let runningId = ''
-
-  for (let i = 0; i < length; i++) {
-    runningId = `${runningId}${randomCharacter(characters)}`
-  }
-
-  return runningId
-}
-
 export const generate = (): SessionId => {
-  const id = generateId(8)
+  const id = ShortId.generate(8)
   const sessionId = `${namespace}${separator}${id}`
 
   if (is(sessionId)) {

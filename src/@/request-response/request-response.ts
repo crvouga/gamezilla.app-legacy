@@ -3,7 +3,7 @@ import { Sub } from '../sub'
 import { Posix } from '../time/posix'
 import { Time } from '../time/time'
 import { TimeSpan } from '../time/time-span'
-import { Uuid } from '../uuid/uuid'
+import { Uuid } from '../id/uuid'
 
 //
 //

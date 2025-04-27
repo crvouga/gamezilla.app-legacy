@@ -1,6 +1,6 @@
 import { Result } from '~/@/result'
 import type { Brand } from '~/@/brand/brand'
-import { Uuid } from '~/@/uuid/uuid'
+import { Uuid } from '~/@/id/uuid'
 
 export type PartyId = Brand<string, 'PartyId'>
 

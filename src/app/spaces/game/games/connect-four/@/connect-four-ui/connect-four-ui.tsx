@@ -1,4 +1,4 @@
-import { Uuid } from '~/@/uuid/uuid'
+import { Uuid } from '~/@/id/uuid'
 import type { PlayerType } from '../connect-four'
 import { gameTheme } from './shared'
 

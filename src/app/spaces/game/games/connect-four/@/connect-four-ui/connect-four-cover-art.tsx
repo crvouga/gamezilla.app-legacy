@@ -1,4 +1,4 @@
-import { Uuid } from '~/@/uuid/uuid'
+import { Uuid } from '~/@/id/uuid'
 import { COLUMN_COUNT, MAX_COLUMN_HEIGHT } from '../connect-four'
 import { gameTheme } from './shared'
 
