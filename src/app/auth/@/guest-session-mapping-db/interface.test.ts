@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'bun:test'
-import { GuestSessionMappingDb } from './impl'
-import { SessionId } from '~/@/wire/session-id'
-import { UserId } from '~/app/@/data/user-id'
 import { unwrap } from '~/@/result'
+import { SessionId } from '~/@/wire/session-id'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
+import { UserId } from '~/app/@/data/user-id'
+import { GuestSessionMappingDb } from './impl'
 
 const Fixture = async () => {
   const f = await FixtureAppBackend()
   switch (f.t) {
     case 'integration': {
       const guestSessionMappingDb = GuestSessionMappingDb({
-        t: 'postgres',
+        t: 'sql',
         dbConnSql: f.dbConnPostgres,
       })
 

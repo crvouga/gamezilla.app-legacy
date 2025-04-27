@@ -48,28 +48,28 @@ const Fixture = async (config: Config) => {
 
 const Fixtures = async () => {
   const f = await FixtureAppBackend()
-  const configs: Config[] = [
-    {
-      t: 'in-memory',
-      simulateLatency: async () => {},
-    },
-  ]
+  const configs: Config[] = []
+
+  configs.push({ t: 'in-memory', simulateLatency: async () => {} })
+
+  configs.push({
+    t: 'with-sql-tables',
+    dbConnSql: f.dbConnSqlite,
+    userSessionDb: await UserSessionDb({ t: 'sql', dbConnSql: f.dbConnSqlite, logger: Logger({ t: 'noop' }) }),
+  })
 
   if (f.t === 'integration') {
-    configs.push({
-      t: 'postgres',
-      dbConnSql: f.dbConnPostgres,
-      logger: Logger({ t: 'noop' }),
-    })
+    configs.push({ t: 'sql', dbConnSql: f.dbConnPostgres, logger: Logger({ t: 'noop' }) })
 
     configs.push({
-      t: 'postgres-with-cache',
+      t: 'sql-with-cache',
       keyValueDb: f.keyValueDbHashMap,
       dbConnSql: f.dbConnPostgres,
       pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() }),
       logger: Logger({ t: 'noop' }),
     })
   }
+
   return Promise.all(configs.map(Fixture))
 }
 
@@ -84,7 +84,7 @@ describe(import.meta.file, () => {
       const inserted = await f.userSessionDb.insert(session)
       const after = await f.userSessionDb.findUserIdBySessionId(session.sessionId)
       expect(unwrap(before)).toBe(null)
-      expect(inserted.t).toBe('ok')
+      expect(unwrap(inserted)).toBe(null)
       expect(unwrap(after)).toBe(session.userId)
     }
   })

@@ -217,9 +217,9 @@ CREATE TABLE public.user_profile (
 CREATE TABLE public.user_session (
     id text NOT NULL,
     user_id text NOT NULL,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    ended_at timestamp with time zone,
-    session_id text
+    session_id text,
+    created_at_posix bigint NOT NULL,
+    ended_at_posix bigint
 );
 
 
@@ -400,24 +400,17 @@ CREATE INDEX idx_user_guest_session_mapping_user_id ON public.user_guest_session
 
 
 --
--- Name: idx_user_session_created_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_user_session_created_at ON public.user_session USING btree (created_at);
-
-
---
--- Name: idx_user_session_session_id_created_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_user_session_session_id_created_at ON public.user_session USING btree (id, created_at);
-
-
---
 -- Name: idx_username; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_username ON public.user_profile USING btree (username);
+
+
+--
+-- Name: electric_publication_default; Type: PUBLICATION; Schema: -; Owner: -
+--
+
+CREATE PUBLICATION electric_publication_default WITH (publish = 'insert, update, delete, truncate');
 
 
 --
@@ -474,4 +467,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250116191615'),
     ('20250117215818'),
     ('20250411211833'),
-    ('20250411212530');
+    ('20250411212530'),
+    ('20250427020149');

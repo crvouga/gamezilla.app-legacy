@@ -13,7 +13,7 @@ export const Row = p.obj({
 })
 
 export type Config = {
-  t: 'postgres'
+  t: 'sql'
   dbConnSql: IDbConnSql
 }
 

@@ -1,9 +1,10 @@
 import * as ImplInMemory from './impl-in-memory'
-import * as ImplPostgres from './impl-postgres'
-import * as ImplPostgresWithCache from './impl-postgres-with-cache'
+import * as ImplSql from './impl-sql'
+import * as ImplSqlWithCache from './impl-sql-with-cache'
+import * as ImplWithSqlTables from './impl-with-sql-tables'
 import type { IUserSessionDb } from './interface'
 
-export type Config = ImplInMemory.Config | ImplPostgres.Config | ImplPostgresWithCache.Config
+export type Config = ImplInMemory.Config | ImplSql.Config | ImplSqlWithCache.Config | ImplWithSqlTables.Config
 
 export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => {
   switch (config.t) {
@@ -11,12 +12,16 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
       return ImplInMemory.UserSessionDb(config)
     }
 
-    case 'postgres': {
-      return ImplPostgres.UserSessionDb(config)
+    case 'sql': {
+      return ImplSql.UserSessionDb(config)
     }
 
-    case 'postgres-with-cache': {
-      return ImplPostgresWithCache.UserSessionDb(config)
+    case 'sql-with-cache': {
+      return ImplSqlWithCache.UserSessionDb(config)
+    }
+
+    case 'with-sql-tables': {
+      return ImplWithSqlTables.UserSessionDb(config)
     }
   }
 }

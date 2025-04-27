@@ -5,12 +5,12 @@ import { LRUCache } from '~/@/least-recently-used-cache'
 import { ILogger } from '~/@/logger'
 import { PubSub } from '~/@/pub-sub'
 import { IPubSubTopicBased } from '~/@/pub-sub-topic-based'
-import * as ImplPostgres from './impl-postgres'
+import * as ImplSql from './impl-sql'
 import { WithCache } from './impl-with-cache'
 import type { IUserSessionDb } from './interface'
 
 export type Config = {
-  t: 'postgres-with-cache'
+  t: 'sql-with-cache'
   keyValueDb: IKeyValueDb
   dbConnSql: IDbConnSql
   pubSubTopicBased: IPubSubTopicBased
@@ -49,8 +49,8 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
       }),
   )
 
-  const userSessionDb = ImplPostgres.UserSessionDb({
-    t: 'postgres',
+  const userSessionDb = ImplSql.UserSessionDb({
+    t: 'sql',
     dbConnSql: config.dbConnSql,
     logger: config.logger,
   })

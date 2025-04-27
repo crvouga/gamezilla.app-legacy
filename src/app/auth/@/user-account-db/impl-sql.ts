@@ -34,7 +34,7 @@ const toAccount = ({ userAccount }: { userAccount: UserAccountRow }): Result<str
 }
 
 export type Config = {
-  t: 'postgres'
+  t: 'sql'
   dbConnSql: IDbConnSql
 }
 

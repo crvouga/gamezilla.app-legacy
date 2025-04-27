@@ -1,8 +1,8 @@
 import * as ImplHashMap from './impl-hash-map'
-import * as ImplPostgres from './impl-postgres'
+import * as ImplSql from './impl-sql'
 import { IGuestSessionMappingDb } from './interface'
 
-export type Config = ImplHashMap.Config | ImplPostgres.Config
+export type Config = ImplHashMap.Config | ImplSql.Config
 
 export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb => {
   switch (config.t) {
@@ -10,8 +10,8 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
       return ImplHashMap.GuestSessionMappingDb(config)
     }
 
-    case 'postgres': {
-      return ImplPostgres.GuestSessionMappingDb(config)
+    case 'sql': {
+      return ImplSql.GuestSessionMappingDb(config)
     }
   }
 }

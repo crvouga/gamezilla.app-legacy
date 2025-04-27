@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
-import { UserAccountRow } from './impl-postgres'
+import { UserAccountRow } from './impl-sql'
 
 describe(import.meta.file, () => {
   it('should parse correctly', async () => {

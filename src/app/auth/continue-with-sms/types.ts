@@ -6,7 +6,6 @@ import { PhoneNumber } from '~/@/phone-number'
 import { Remote, Result } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { RPCError } from '~/@/rpc/rpc-error'
-import { Posix } from '~/@/time/posix'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { BackendCmd } from '~/app/@/backend/cmd'
@@ -29,18 +28,12 @@ export type VerifyCodeOutput = p.Infer<typeof VerifyCodeOutput>
 export type Verified = Result<RPCError, VerifyCodeOutput>
 
 export type ModelFrontend = {
-  //
-  inputtedPhoneNumber: string
-  phoneNumberError: TranslatedText | null
-  countryCodeInput: Iso3166Alpha2Code
-  //
-  inputtedCode: string
-  inputtedCodeError: TranslatedText | null
-  //
-  sentCodeAt: Posix | null
+  phone: string
+  phoneError: TranslatedText | null
+  countryCode: Iso3166Alpha2Code
+  code: string
+  codeError: TranslatedText | null
   sent: Remote | Sent
-  //
-  verifiedCodeAt: Posix | null
   verified: Remote | Verified
 }
 

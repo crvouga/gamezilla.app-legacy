@@ -26,18 +26,18 @@ export const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx
     ...input.ctx,
     ...authSMS,
     userAccountDb: UserAccountDb({
-      t: 'postgres',
+      t: 'sql',
       dbConnSql: input.ctx.dbConnSql,
     }),
     userSessionDb: await UserSessionDb({
-      t: 'postgres-with-cache',
+      t: 'sql-with-cache',
       dbConnSql: input.ctx.dbConnSql,
       keyValueDb: input.ctx.keyValueDb,
       logger: input.ctx.logger,
       pubSubTopicBased: input.ctx.pubSub,
     }),
     guestSessionMappingDb: GuestSessionMappingDb({
-      t: 'postgres',
+      t: 'sql',
       dbConnSql: input.ctx.dbConnSql,
     }),
   }
