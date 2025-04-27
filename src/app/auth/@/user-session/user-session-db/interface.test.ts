@@ -1,41 +1,23 @@
 import { describe, expect, it } from 'bun:test'
-import { unwrap } from '~/@/result'
-import { SessionId } from '~/@/wire/session-id'
-import { UserId } from '~/app/@/data/user-id'
 import { Logger } from '~/@/logger'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
+import { unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
+import { UserId } from '~/app/@/data/user-id'
+import { UserSession } from '../user-session'
 import { Config, UserSessionDb } from './impl'
 
 const Fixture = async (config: Config) => {
   const userSessionDb = await UserSessionDb(config)
   const userId = UserId.generate()
-  const sessions = [
-    {
-      sessionId: SessionId.generate(),
-      userId,
-    },
-    {
-      sessionId: SessionId.generate(),
-      userId,
-    },
-    {
-      sessionId: SessionId.generate(),
-      userId,
-    },
-    {
-      sessionId: SessionId.generate(),
-      userId: UserId.generate(),
-    },
-    {
-      sessionId: SessionId.generate(),
-      userId: UserId.generate(),
-    },
-    {
-      sessionId: SessionId.generate(),
-      userId: UserId.generate(),
-    },
-  ] as const
+  const sessions: [UserSession, ...UserSession[]] = [
+    UserSession.random({ userId }),
+    UserSession.random({ userId }),
+    UserSession.random({ userId }),
+    UserSession.random(),
+    UserSession.random(),
+    UserSession.random(),
+  ]
   for (const session of sessions) {
     await userSessionDb.insert(session)
   }
@@ -73,19 +55,16 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe(import.meta.file, () => {
+describe.only(import.meta.file, () => {
   it('should insert correctly', async () => {
     for (const f of await Fixtures()) {
-      const session = {
-        sessionId: SessionId.generate(),
-        userId: UserId.generate(),
-      }
-      const before = await f.userSessionDb.findUserIdBySessionId(session.sessionId)
-      const inserted = await f.userSessionDb.insert(session)
-      const after = await f.userSessionDb.findUserIdBySessionId(session.sessionId)
+      const userSession = UserSession.random()
+      const before = await f.userSessionDb.findUserIdBySessionId(userSession.sessionId)
+      const inserted = await f.userSessionDb.insert(userSession)
+      const after = await f.userSessionDb.findUserIdBySessionId(userSession.sessionId)
       expect(unwrap(before)).toBe(null)
       expect(unwrap(inserted)).toBe(null)
-      expect(unwrap(after)).toBe(session.userId)
+      expect(unwrap(after)).toBe(userSession.userId)
     }
   })
 

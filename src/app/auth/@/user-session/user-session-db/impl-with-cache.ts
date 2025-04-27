@@ -19,13 +19,13 @@ export type Config = {
 export const WithCache = ({ userSessionDb, keyValueDb }: Config): IUserSessionDb => {
   const userIdBySessionId = KeyValueDb.withNamespace<SessionId, UserId>({
     keyValueDb,
-    namespace: ['auth-session', 'user-id-by-session-id'],
+    namespace: ['auth', 'user-session', 'user-id-by-session-id'],
     parser: UserId,
   })
 
   const sessionIdsByUserId = KeyValueDb.withNamespace<UserId, SessionId[]>({
     keyValueDb,
-    namespace: ['auth-session', 'session-ids-by-user-id'],
+    namespace: ['auth', 'user-session', 'session-ids-by-user-id'],
     parser: p.arr(SessionId),
   })
 
@@ -62,17 +62,14 @@ export const WithCache = ({ userSessionDb, keyValueDb }: Config): IUserSessionDb
       return queried
     },
 
-    async insert({ sessionId, userId }) {
-      const queried = await userSessionDb.insert({
-        sessionId,
-        userId,
-      })
+    async insert(userSession) {
+      const queried = await userSessionDb.insert(userSession)
 
       if (isOk(queried)) {
-        await userIdBySessionId.set(sessionId, userId)
-        const cachedSessionIds = Result.unwrapOr(await sessionIdsByUserId.get(userId), [])
+        await userIdBySessionId.set(userSession.sessionId, userSession.userId)
+        const cachedSessionIds = Result.unwrapOr(await sessionIdsByUserId.get(userSession.userId), [])
         if (cachedSessionIds) {
-          await sessionIdsByUserId.set(userId, [...cachedSessionIds, sessionId])
+          await sessionIdsByUserId.set(userSession.userId, [...cachedSessionIds, userSession.sessionId])
         }
       }
 
@@ -108,6 +105,10 @@ export const WithCache = ({ userSessionDb, keyValueDb }: Config): IUserSessionDb
       }
 
       return queried
+    },
+
+    async query(input) {
+      return userSessionDb.query(input)
     },
   }
 }

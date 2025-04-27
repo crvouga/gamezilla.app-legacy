@@ -11,6 +11,9 @@ import { ContinueAsGuestBackend } from './continue-as-guest/backend'
 import { ContinueWithSmsBackend } from './continue-with-sms/backend'
 import { LogoutBackend } from './logout/backend'
 import { rpcContract, type BackendModule, type MsgToFrontend } from './types'
+import { UserSession } from './@/user-session/user-session'
+import { UserSessionId } from './@/user-session/user-session-id'
+import { Posix } from '~/@/time/posix'
 
 //
 //
@@ -115,10 +118,15 @@ const updateFromEvent: typeof update = async (input) => {
         }
       }
 
-      const inserted = await input.ctx.userSessionDb.insert({
+      const userSessionNew: UserSession = {
+        userSessionId: UserSessionId.generate(),
         sessionId: input.msgEvt.sessionId,
         userId: input.msgEvt.user.userId,
-      })
+        createdAt: Posix.now(),
+        endedAt: null,
+      }
+
+      const inserted = await input.ctx.userSessionDb.insert(userSessionNew)
 
       if (isErr(inserted)) {
         return {}

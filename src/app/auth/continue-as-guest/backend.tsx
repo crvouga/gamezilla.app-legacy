@@ -7,7 +7,8 @@ import type { UserAccount } from '~/app/@/data/account'
 import { UserId } from '~/app/@/data/user-id'
 import { BackendCtx } from '../@/backend/ctx'
 import type { BackendModule } from '../types'
-
+import { UserSession } from '../@/user-session/user-session'
+import { UserSessionId } from '../@/user-session/user-session-id'
 const update: BackendModule['update'] = async ({ msgFrontend, ctx }) => {
   switch (msgFrontend?.t) {
     case 'guest.clicked-continue-as-guest-button': {
@@ -99,10 +100,15 @@ const continueAsGuest = async ({
     return insertedAccount
   }
 
-  const insertedSession = await ctx.userSessionDb.insert({
-    userId: guestAccount.userId,
+  const userSessionNew: UserSession = {
+    userSessionId: UserSessionId.generate(),
     sessionId,
-  })
+    userId: guestAccount.userId,
+    createdAt: Posix.now(),
+    endedAt: null,
+  }
+
+  const insertedSession = await ctx.userSessionDb.insert(userSessionNew)
 
   if (isErr(insertedSession)) {
     return insertedSession

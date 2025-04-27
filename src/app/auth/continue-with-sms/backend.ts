@@ -10,6 +10,9 @@ import { SendCodeInput, SendCodeOutput, VerifyCodeInput } from '../@/backend/ver
 import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
 import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
 import { rpcContract, VerifyCodeOutput } from './types'
+import { UserSession } from '../@/user-session/user-session'
+import { UserSessionId } from '../@/user-session/user-session-id'
+import { Posix } from '~/@/time/posix'
 
 const rpc = (config: { ctx: BackendCtx }) => {
   return RPC.initServer(rpcContract, {
@@ -119,10 +122,15 @@ const handleVerifyCode = async (
 
   input.ctx.logger.info(`Successfully created new account for ${PhoneNumber.toString(input.phoneNumber)}`)
 
-  const insertedSession = await input.ctx.userSessionDb.insert({
+  const userSessionNew: UserSession = {
+    userSessionId: UserSessionId.generate(),
     sessionId: input.sessionId,
     userId: account.userId,
-  })
+    createdAt: Posix.now(),
+    endedAt: null,
+  }
+
+  const insertedSession = await input.ctx.userSessionDb.insert(userSessionNew)
 
   if (isErr(insertedSession)) {
     input.ctx.logger.error(`Failed to insert new session: ${insertedSession.error}`)
