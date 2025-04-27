@@ -220,7 +220,7 @@ CREATE TABLE public.user_profile (
 CREATE TABLE public.user_session (
     id text NOT NULL,
     user_id text NOT NULL,
-    session_id text,
+    session_id text NOT NULL,
     created_at_posix bigint NOT NULL,
     ended_at_posix bigint
 );
@@ -480,4 +480,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250411211833'),
     ('20250411212530'),
     ('20250427020149'),
-    ('20250427030012');
+    ('20250427030012'),
+    ('20250427210536');
