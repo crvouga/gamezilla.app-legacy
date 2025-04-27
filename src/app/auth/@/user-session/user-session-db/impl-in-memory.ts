@@ -18,7 +18,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       await config.simulateLatency()
       const hits: SessionId[] = Array.from(userSessions.values())
         .filter((userSession) => userSession.userId === userId)
-        .map((userSession) => userSession.sessionId)
+        .flatMap((userSession) => (userSession.sessionId ? [userSession.sessionId] : []))
       return Ok(hits)
     },
     async findUserIdBySessionId(sessionId: SessionId) {

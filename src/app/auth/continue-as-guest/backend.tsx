@@ -9,6 +9,8 @@ import { BackendCtx } from '../@/backend/ctx'
 import type { BackendModule } from '../types'
 import { UserSession } from '../@/user-session/user-session'
 import { UserSessionId } from '../@/user-session/user-session-id'
+import { ClientSessionId } from '~/@/wire/client-session-id'
+
 const update: BackendModule['update'] = async ({ msgFrontend, ctx }) => {
   switch (msgFrontend?.t) {
     case 'guest.clicked-continue-as-guest-button': {
@@ -16,6 +18,7 @@ const update: BackendModule['update'] = async ({ msgFrontend, ctx }) => {
         ctx,
         now: ctx.now,
         sessionId: msgFrontend.sessionId,
+        clientSessionId: msgFrontend.clientSessionId,
       })
 
       if (isErr(result)) {
@@ -43,6 +46,7 @@ const update: BackendModule['update'] = async ({ msgFrontend, ctx }) => {
             user: result.value,
             sessionId: msgFrontend.sessionId,
             loggedIn: true,
+            clientSessionId: msgFrontend.clientSessionId,
           },
         ],
       }
@@ -58,8 +62,10 @@ const continueAsGuest = async ({
   ctx,
   now,
   sessionId,
+  clientSessionId,
 }: {
   ctx: BackendCtx
+  clientSessionId: ClientSessionId
   sessionId: SessionId
   now: Posix
 }): Task<string, UserAccount> => {
@@ -103,6 +109,7 @@ const continueAsGuest = async ({
   const userSessionNew: UserSession = {
     userSessionId: UserSessionId.generate(),
     sessionId,
+    clientSessionId,
     userId: guestAccount.userId,
     createdAt: Posix.now(),
     endedAt: null,

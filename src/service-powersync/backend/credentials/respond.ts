@@ -2,14 +2,14 @@ import { pipe } from '~/@/function/pipe'
 import { allowCORS } from '~/@/http-server/cors'
 import * as SignJWT from '~/@/json-crypto/sign-jwt'
 import { isErr } from '~/@/result/result'
-import { SessionIdCookie } from '~/@/wire/session-id-cookie'
+import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Ctx } from '../ctx'
 import { getKeys } from '../keys/keys'
 
 const respondMain = async (input: { request: Request; ctx: Ctx }) => {
   const keys = await getKeys()
   const powerSyncKey = keys.privateKey
-  const maybeSessionId = SessionIdCookie.fromRequest(input.request)
+  const maybeSessionId = SessionIdHttp.fromRequest(input.request)
 
   if (!maybeSessionId) {
     return new Response('No session ID found in the request', { status: 401 })

@@ -32,12 +32,12 @@ const fromRequest = (request: Request): SessionId | null => {
 
   const cookies = cookie?.join(';') ?? ''
 
-  const maybeSessionId = SessionIdCookie.fromCookies({ cookies })
+  const maybeSessionId = SessionIdHttp.fromCookies({ cookies })
 
   return maybeSessionId
 }
 
-export const SessionIdCookie = {
+export const SessionIdHttp = {
   fromCookies,
   toSetCookieHeaderValue,
   fromRequest,

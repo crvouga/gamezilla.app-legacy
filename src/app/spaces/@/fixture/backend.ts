@@ -1,19 +1,20 @@
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
+import { TimeSpan } from '~/@/time/time-span'
 import { ClientId } from '~/@/wire/client-id'
-import { Profile } from '~/app/@/data/profile'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
+import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { FixtureAppBackend } from '~/app/@/backend/fixture'
+import { SpacesBackend } from '../../backend'
 import { SpacesCoreAsync } from '../../core/core-async'
 import { Space } from '../../core/space'
 import { GamesBackend } from '../../game/games/backend'
-import { SpacesBackend } from '../../backend'
 import { BackendCtx } from '../../types'
 import { SpaceBackendCtx } from '../backend/ctx'
-import { TimeSpan } from '~/@/time/time-span'
 
 export const FixtureSpaceBackend = async () => {
   const f = await FixtureAppBackend()
@@ -113,6 +114,7 @@ export const randomAuthenticatedFrontend = (): AuthenticatedFrontend => {
     clientId: ClientId.generate(),
     sessionId: SessionId.generate(),
     userId: UserId.generate(),
+    clientSessionId: ClientSessionId.generate(),
   }
 }
 
@@ -120,4 +122,5 @@ export type AuthenticatedFrontend = {
   clientId: ClientId
   sessionId: SessionId
   userId: UserId
+  clientSessionId: ClientSessionId
 }

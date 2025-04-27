@@ -7,6 +7,8 @@ import { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import { Config, UserSessionDb } from './impl'
 import { SessionId } from '~/@/wire/session-id'
+import { Posix } from '~/@/time/posix'
+import { TimeSpan } from '~/@/time/time-span'
 
 const Fixture = async (config: Config) => {
   const userSessionDb = await UserSessionDb(config)
@@ -60,6 +62,8 @@ describe.only(import.meta.file, () => {
   it('should insert correctly', async () => {
     for (const f of await Fixtures()) {
       const userSession = UserSession.random()
+      if (!userSession.sessionId) throw new Error('test setup failed')
+
       const before = await f.userSessionDb.findUserIdBySessionId(userSession.sessionId)
       const inserted = await f.userSessionDb.insert(userSession)
       const after = await f.userSessionDb.findUserIdBySessionId(userSession.sessionId)
@@ -74,7 +78,7 @@ describe.only(import.meta.file, () => {
       const userId = UserId.generate()
       const sessionIds = await f.userSessionDb.findSessionIdsByUserId(userId)
       expect(sessionIds.t).toBe('ok')
-      const expected = f.sessions.filter((s) => s.userId === userId).map((s) => s.sessionId)
+      const expected = f.sessions.filter((s) => s.userId === userId).flatMap((s) => (s.sessionId ? [s.sessionId] : []))
       expect(unwrap(sessionIds)).toEqual(expected)
     }
   })
@@ -86,7 +90,9 @@ describe.only(import.meta.file, () => {
       await f.userSessionDb.zapByUserId(userId)
       const after = await f.userSessionDb.findSessionIdsByUserId(userId)
 
-      expect(unwrap(before)).toEqual(f.sessions.filter((s) => s.userId === userId).map((s) => s.sessionId))
+      expect(unwrap(before)).toEqual(
+        f.sessions.filter((s) => s.userId === userId).flatMap((s) => (s.sessionId ? [s.sessionId] : [])),
+      )
       expect(after.t).toBe('ok')
       expect(unwrap(after)).toEqual([])
     }
@@ -95,12 +101,14 @@ describe.only(import.meta.file, () => {
   it('should be able to zap by session id', async () => {
     for (const f of await Fixtures()) {
       const userId = UserId.generate()
-      await f.userSessionDb.zapBySessionId(f.sessions[0].sessionId)
+      const sessionId = f.sessions[0].sessionId
+      if (!sessionId) throw new Error('test setup failed')
+      await f.userSessionDb.zapBySessionId(sessionId)
       const sessionIds = await f.userSessionDb.findSessionIdsByUserId(userId)
       expect(sessionIds.t).toBe('ok')
       const expected = f.sessions
         .filter((s) => s.userId === userId && s.sessionId !== f.sessions[0].sessionId)
-        .map((s) => s.sessionId)
+        .flatMap((s) => (s.sessionId ? [s.sessionId] : []))
       expect(unwrap(sessionIds)).toEqual(expected)
     }
   })
@@ -125,7 +133,10 @@ describe.only(import.meta.file, () => {
 
       const expected: UserSession[] = []
       for (let i = 0; i < 10; i++) {
-        const session = UserSession.random({ userId })
+        const session = UserSession.random({
+          userId,
+          createdAt: Posix.future(Posix.now(), TimeSpan.seconds(i)),
+        })
         await f.userSessionDb.insert(session)
         expected.push(session)
         await f.userSessionDb.insert(UserSession.random())
@@ -184,7 +195,10 @@ describe.only(import.meta.file, () => {
 
       const expected: UserSession[] = []
       for (let i = 0; i < 10; i++) {
-        const session = UserSession.random({ sessionId })
+        const session = UserSession.random({
+          sessionId,
+          createdAt: Posix.future(Posix.now(), TimeSpan.seconds(i)),
+        })
         await f.userSessionDb.insert(session)
         expected.push(session)
         await f.userSessionDb.insert(UserSession.random())

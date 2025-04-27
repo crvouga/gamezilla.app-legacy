@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { unwrap } from '~/@/result'
-import { ClientId } from '~/@/wire/client-id'
-import { SessionId } from '~/@/wire/session-id'
+import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { didSendMsgToFrontend } from '~/app/@/backend/cmd'
 import { FixtureSpaceBackend } from '../@/fixture/backend'
 import { Space } from '../core/space'
 
@@ -23,9 +21,8 @@ describe(import.meta.file, () => {
     await f.update([
       {
         msgFrontend: {
+          ...f.frontendA,
           t: 'sync.got-msg-space',
-          clientId: ClientId.generate(),
-          sessionId: SessionId.generate(),
           c: withEventMeta({
             t: 'user-started-space',
             spaceId,
@@ -48,9 +45,8 @@ describe(import.meta.file, () => {
     const output = await f.update([
       {
         msgFrontend: {
+          ...f.frontendA,
           t: 'sync.got-msg-space',
-          clientId: ClientId.generate(),
-          sessionId: SessionId.generate(),
           c: withEventMeta({
             t: 'user-started-space',
             spaceId,

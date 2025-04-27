@@ -1,10 +1,11 @@
 import { describe, expect, test } from 'bun:test'
 import { pipe } from '~/@/function/pipe'
 import { Ok } from '~/@/result'
-import { UserAccount } from '../@/data/account'
+import { ClientSessionId } from '~/@/wire/client-session-id'
+import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { ClientId } from '../../@/wire/client-id'
 import { SessionId } from '../../@/wire/session-id'
-import { FixtureAppBackend } from '~/app/@/backend/fixture'
+import { UserAccount } from '../@/data/account'
 import * as WireBackend from './backend'
 import { initBackendTransport, ToFrontendPayload } from './transport/backend'
 import { WireSession } from './wire-session'
@@ -48,8 +49,9 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
+    const clientSessionId = ClientSessionId.generate()
     const before = await f.ctx.wireSessionDb.findBySessionIds([sessionId])
-    await f.update({}, [{ msg: { t: 'frontend-connected', clientId, sessionId } }])
+    await f.update({}, [{ msg: { t: 'frontend-connected', clientId, sessionId, clientSessionId } }])
     const after = await f.ctx.wireSessionDb.findBySessionIds([sessionId])
     const expected: WireSession = pipe(WireSession.init(sessionId), (x) => WireSession.addClientId(x, clientId))
     expect(before).toEqual(Ok([]))
@@ -61,12 +63,12 @@ describe(import.meta.file, () => {
     const user = UserAccount.random()
     const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
-
+    const clientSessionId = ClientSessionId.generate()
     const before = await f.ctx.wireSessionDb.findByUserIds([user.userId])
 
     await f.update({}, [
-      { msg: { t: 'frontend-connected', clientId, sessionId } },
-      { msgEvt: { t: 'auth-evt.client-authenticated', user, clientId, sessionId } },
+      { msg: { t: 'frontend-connected', clientId, sessionId, clientSessionId } },
+      { msgEvt: { t: 'auth-evt.client-authenticated', user, clientId, sessionId, clientSessionId } },
     ])
 
     const after = await f.ctx.wireSessionDb.findByUserIds([user.userId])
@@ -85,6 +87,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
+    const clientSessionId = ClientSessionId.generate()
     const msg = {
       t: 'ping',
     }
@@ -95,7 +98,7 @@ describe(import.meta.file, () => {
     })
 
     await f.update({}, [
-      { msg: { t: 'frontend-connected', clientId, sessionId } },
+      { msg: { t: 'frontend-connected', clientId, sessionId, clientSessionId } },
       { msgCmd: { t: 'wire', c: { t: 'send-to-frontend', clientIds: [clientId], msg } } },
     ])
 
@@ -109,6 +112,7 @@ describe(import.meta.file, () => {
     const user = UserAccount.random()
     const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
+    const clientSessionId = ClientSessionId.generate()
     const msg = {
       t: 'ping',
     }
@@ -119,8 +123,8 @@ describe(import.meta.file, () => {
     })
 
     await f.update({}, [
-      { msg: { t: 'frontend-connected', clientId, sessionId } },
-      { msgEvt: { t: 'auth-evt.client-authenticated', clientId, sessionId, user } },
+      { msg: { t: 'frontend-connected', clientId, sessionId, clientSessionId } },
+      { msgEvt: { t: 'auth-evt.client-authenticated', clientId, sessionId, user, clientSessionId } },
       { msgCmd: { t: 'wire', c: { t: 'send-to-user', userIds: [user.userId], msg } } },
     ])
 

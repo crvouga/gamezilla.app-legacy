@@ -65,7 +65,7 @@ export const WithCache = ({ userSessionDb, keyValueDb }: Config): IUserSessionDb
     async insert(userSession) {
       const queried = await userSessionDb.insert(userSession)
 
-      if (isOk(queried)) {
+      if (isOk(queried) && userSession.sessionId) {
         await userIdBySessionId.set(userSession.sessionId, userSession.userId)
         const cachedSessionIds = Result.unwrapOr(await sessionIdsByUserId.get(userSession.userId), [])
         if (cachedSessionIds) {

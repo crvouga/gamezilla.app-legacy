@@ -13,6 +13,7 @@ import { rpcContract, VerifyCodeOutput } from './types'
 import { UserSession } from '../@/user-session/user-session'
 import { UserSessionId } from '../@/user-session/user-session-id'
 import { Posix } from '~/@/time/posix'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 
 const rpc = (config: { ctx: BackendCtx }) => {
   return RPC.initServer(rpcContract, {
@@ -30,6 +31,7 @@ const rpc = (config: { ctx: BackendCtx }) => {
         phoneNumber: input.phoneNumber,
         code: input.code,
         ctx: config.ctx,
+        clientSessionId: reqCtx.clientSessionId,
       })
 
       return verified
@@ -66,6 +68,7 @@ const handleVerifyCode = async (
   input: VerifyCodeInput & {
     sessionId: SessionId
     ctx: BackendCtx
+    clientSessionId: ClientSessionId
   },
 ): Promise<VerifyCodeOutput> => {
   input.ctx.logger.info(`Verifying code for phone number ${PhoneNumber.toString(input.phoneNumber)}`)
@@ -125,6 +128,7 @@ const handleVerifyCode = async (
   const userSessionNew: UserSession = {
     userSessionId: UserSessionId.generate(),
     sessionId: input.sessionId,
+    clientSessionId: input.clientSessionId,
     userId: account.userId,
     createdAt: Posix.now(),
     endedAt: null,

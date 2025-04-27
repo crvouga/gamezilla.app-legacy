@@ -1,18 +1,21 @@
 import type { Server, ServerWebSocket } from 'bun'
 import { IDbConnSql } from '~/@/db-conn-sql'
+import type { HttpServerBun } from '~/@/http-server/impl-bun'
 import { ILogger, Logger } from '~/@/logger'
 import { IPubSubTopicBased } from '~/@/pub-sub-topic-based'
-import type { HttpServerBun } from '~/@/http-server/impl-bun'
 import { ClientId } from '~/@/wire/client-id'
+import { ClientSessionId } from '~/@/wire/client-session-id'
+import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
-import { SessionIdCookie } from '../../../../@/wire/session-id-cookie'
+import { SessionIdHttp } from '../../../../@/wire/session-id-http'
 import { WEB_SOCKET_ENDPOINT } from '../shared'
-import { type MsgFrontendToMsgBackend, type MsgBackendToMsgFrontend } from '../types'
+import { type MsgBackendToMsgFrontend, type MsgFrontendToMsgBackend } from '../types'
 import { initBackendTransport, type IBackendTransport } from './interface'
 
 type BackendWebSocketData = {
   clientId: ClientId
   sessionId: SessionId
+  clientSessionId: ClientSessionId
 }
 
 export type Config = {
@@ -86,6 +89,7 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
         t: 'frontend-connected',
         clientId: ws.data.clientId,
         sessionId: ws.data.sessionId,
+        clientSessionId: ws.data.clientSessionId,
       })
     },
     async close(ws: ServerWebSocket<BackendWebSocketData>, _code, _message) {
@@ -105,6 +109,7 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
       transport.fromFrontend.pub({
         clientId: ws.data.clientId,
         sessionId: ws.data.sessionId,
+        clientSessionId: ws.data.clientSessionId,
         msgs: msg,
       })
     },
@@ -116,15 +121,18 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
 
     switch (url.pathname) {
       case WEB_SOCKET_ENDPOINT: {
-        const maybeSessionId = SessionIdCookie.fromRequest(request)
-
+        const maybeSessionId = SessionIdHttp.fromRequest(request)
         const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
+
+        const maybeClientSessionId = ClientSessionIdHttp.fromRequest(request)
+        const clientSessionId = maybeClientSessionId ?? ClientSessionId.generate()
 
         const clientId = ClientId.generate()
 
         const data: BackendWebSocketData = {
           clientId,
           sessionId,
+          clientSessionId,
         }
 
         const headers = new Headers()
@@ -132,7 +140,7 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
         if (!maybeSessionId) {
           headers.append(
             'Set-Cookie',
-            SessionIdCookie.toSetCookieHeaderValue({
+            SessionIdHttp.toSetCookieHeaderValue({
               sessionId,
               isProd: config.isProd,
             }),

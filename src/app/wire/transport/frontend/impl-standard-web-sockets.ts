@@ -1,5 +1,8 @@
+import { ClientSessionId } from '~/@/wire/client-session-id'
+import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
+import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { WEB_SOCKET_ENDPOINT } from '../shared'
-import { type MsgFrontendToMsgBackend, type MsgBackendToMsgFrontend } from '../types'
+import { type MsgBackendToMsgFrontend, type MsgFrontendToMsgBackend } from '../types'
 import {
   initFrontendTransport,
   type FrontendTransportCommand,
@@ -21,7 +24,12 @@ export const FrontendTransport = <MsgToBackend, MsgToFrontend>(
   MsgToBackend: MsgToBackend
   MsgToFrontend: MsgToFrontend
 }> => {
-  const backendUrl = changeToWebsocketProtocol(config.backendUrl.toString())
+  const clientSessionId = ClientSessionIdStorage().get()
+
+  const backendUrl = changeToWebsocketProtocol({
+    baseBackendUrl: config.backendUrl,
+    clientSessionId: clientSessionId,
+  })
 
   const transport = initFrontendTransport<MsgToBackend, MsgToFrontend>()
 
@@ -201,9 +209,9 @@ export const update = <MsgToBackend>(input: {
   }
 }
 
-const changeToWebsocketProtocol = (baseBackendUrl: string) => {
+const changeToWebsocketProtocol = (input: { baseBackendUrl: string; clientSessionId: ClientSessionId }) => {
   try {
-    const baseBackendUrlObj = new URL(baseBackendUrl)
+    const baseBackendUrlObj = ClientSessionIdHttp.addToUrl(new URL(input.baseBackendUrl), input.clientSessionId)
 
     if (typeof window === 'undefined') {
       return baseBackendUrlObj.toString()
@@ -221,7 +229,14 @@ const changeToWebsocketProtocol = (baseBackendUrl: string) => {
 
     return baseBackendUrlObj.toString()
   } catch (e) {
-    console.error('Failed to parse baseBackendUrl', baseBackendUrl, 'falling back to', WEB_SOCKET_ENDPOINT)
+    console.error(
+      'Failed to parse baseBackendUrl',
+      input.baseBackendUrl,
+      'falling back to',
+      WEB_SOCKET_ENDPOINT,
+      'with clientSessionId',
+      input.clientSessionId,
+    )
     return WEB_SOCKET_ENDPOINT
   }
 }

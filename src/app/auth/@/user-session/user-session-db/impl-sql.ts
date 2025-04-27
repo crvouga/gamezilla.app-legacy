@@ -4,6 +4,7 @@ import { p } from '~/@/parser'
 import { Result, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Posix } from '~/@/time/posix'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
@@ -12,7 +13,8 @@ import type { IUserSessionDb } from './interface'
 
 export const Row = p.obj({
   id: UserSessionId,
-  session_id: SessionId,
+  session_id: p.maybe(SessionId),
+  client_session_id: ClientSessionId,
   user_id: UserId,
   created_at_posix: p.or(p.str, p.num),
   ended_at_posix: p.maybe(p.or(p.str, p.num)),
@@ -22,19 +24,12 @@ export type Row = p.Infer<typeof Row>
 
 const rowToUserSession = (row: Row): UserSession => ({
   userSessionId: row.id,
-  sessionId: row.session_id,
+  sessionId: row.session_id ?? null,
   userId: row.user_id,
   createdAt: Posix.init(row.created_at_posix),
   endedAt: row.ended_at_posix ? Posix.init(row.ended_at_posix) : null,
+  clientSessionId: row.client_session_id,
 })
-
-// const userSessionToRow = (userSession: UserSession): Row => ({
-//   id: userSession.userSessionId,
-//   session_id: userSession.sessionId,
-//   user_id: userSession.userId,
-//   created_at_posix: userSession.createdAt,
-//   ended_at_posix: userSession.endedAt,
-// })
 
 export type Config = {
   t: 'sql'
@@ -56,7 +51,7 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
         },
       })
 
-      return Result.mapOk(queried, (rows) => rows.map((row) => row.session_id))
+      return Result.mapOk(queried, (rows) => rows.flatMap((row) => (row.session_id ? [row.session_id] : [])))
     },
 
     async findUserIdBySessionId(sessionId: SessionId) {
@@ -76,14 +71,29 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
 
     async insert(userSession) {
       logger.debug(
-        `insert: userSession=${userSession.userSessionId} sessionId=${userSession.sessionId} userId=${userSession.userId}`,
+        `insert: userSession=${userSession.userSessionId} sessionId=${userSession.sessionId} clientSessionId=${userSession.clientSessionId} userId=${userSession.userId}`,
       )
       const queried = await dbConnSql.query({
         parser: Row,
-        sql: 'INSERT INTO user_session (id, session_id, user_id, created_at_posix) VALUES (:id, :session_id, :user_id, :created_at_posix)',
+        sql: `
+          INSERT INTO user_session (
+            id,
+            session_id,
+            client_session_id,
+            user_id,
+            created_at_posix
+          ) VALUES (
+            :id,
+            :session_id,
+            :client_session_id,
+            :user_id,
+            :created_at_posix
+          )
+        `,
         vars: {
           id: userSession.userSessionId,
           session_id: userSession.sessionId,
+          client_session_id: userSession.clientSessionId,
           user_id: userSession.userId,
           created_at_posix: userSession.createdAt,
         },

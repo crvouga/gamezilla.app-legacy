@@ -17,6 +17,7 @@ import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
 import { IBackendTransport } from './wire/transport/backend'
 import { IFrontendTransport } from './wire/transport/frontend'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 
 //
 //
@@ -83,6 +84,7 @@ export type MsgToFrontend =
 export type MsgToBackendMeta = {
   sessionId: SessionId
   clientId: ClientId
+  clientSessionId: ClientSessionId
   userId?: UserId | null
 }
 

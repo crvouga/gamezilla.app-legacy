@@ -43,24 +43,21 @@ export const update: BackendModule['update'] = async (input) => {
 }
 
 export const getUserIdFromSessionId = async (ctx: BackendCtx, sessionId?: SessionId | null): Promise<UserId | null> => {
-  if (!sessionId) {
-    return null
-  }
+  if (!sessionId) return null
 
   const found = await ctx.userSessionDbCached.findUserIdBySessionId(sessionId)
 
   if (isErr(found)) {
+    console.error(found.error)
     return null
   }
 
-  const userId = found.value
-
-  return userId
+  return found.value
 }
 
 const updateFromEvent: typeof update = async (input) => {
   switch (input.msgEvt?.t) {
-    case 'wire-evt.frontend-connected': {
+    case 'wire-evt.client-connected': {
       const foundUserId = await input.ctx.userSessionDbCached.findUserIdBySessionId(input.msgEvt.sessionId)
 
       const userId = isOk(foundUserId) ? foundUserId.value : null
@@ -88,6 +85,7 @@ const updateFromEvent: typeof update = async (input) => {
           {
             clientId: input.msgEvt.clientId,
             sessionId: input.msgEvt.sessionId,
+            clientSessionId: input.msgEvt.clientSessionId,
             user: account,
             t: 'auth-evt.client-authenticated',
           },
@@ -121,6 +119,7 @@ const updateFromEvent: typeof update = async (input) => {
       const userSessionNew: UserSession = {
         userSessionId: UserSessionId.generate(),
         sessionId: input.msgEvt.sessionId,
+        clientSessionId: input.msgEvt.clientSessionId,
         userId: input.msgEvt.user.userId,
         createdAt: Posix.now(),
         endedAt: null,

@@ -113,9 +113,10 @@ const updateFromMsg: typeof update = async (input) => {
       return {
         msgEvt: [
           {
-            t: 'wire-evt.frontend-connected',
+            t: 'wire-evt.client-connected',
             clientId: input.msg.clientId,
             sessionId: input.msg.sessionId,
+            clientSessionId: input.msg.clientSessionId,
           },
         ],
       }
@@ -125,7 +126,7 @@ const updateFromMsg: typeof update = async (input) => {
       return {
         msgEvt: [
           {
-            t: 'wire-evt.frontend-disconnected',
+            t: 'wire-evt.client-disconnected',
             clientId: input.msg.clientId,
             sessionId: input.msg.sessionId,
           },

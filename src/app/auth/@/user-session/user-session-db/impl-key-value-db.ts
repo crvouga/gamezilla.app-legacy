@@ -7,10 +7,12 @@ import { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import { UserSessionId } from '../user-session-id'
 import type { IUserSessionDb } from './interface'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 
 const Row = p.obj({
   user_session_id: UserSessionId,
-  session_id: SessionId,
+  session_id: p.maybe(SessionId),
+  client_session_id: ClientSessionId,
   user_id: UserId,
   created_at_posix: Posix,
   ended_at_posix: p.maybe(Posix),
@@ -20,15 +22,17 @@ export type Row = p.Infer<typeof Row>
 
 const rowToUserSession = (row: Row): UserSession => ({
   userSessionId: row.user_session_id,
-  sessionId: row.session_id,
+  sessionId: row.session_id ?? null,
   userId: row.user_id,
   createdAt: row.created_at_posix,
   endedAt: row.ended_at_posix ?? null,
+  clientSessionId: row.client_session_id,
 })
 
 const userSessionToRow = (userSession: UserSession): Row => ({
   user_session_id: userSession.userSessionId,
   session_id: userSession.sessionId,
+  client_session_id: userSession.clientSessionId,
   user_id: userSession.userId,
   created_at_posix: userSession.createdAt,
   ended_at_posix: userSession.endedAt,
@@ -62,7 +66,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
     async findSessionIdsByUserId(userId: UserId) {
       const all = await getAll()
       const got = all.filter((row) => row.user_id === userId)
-      return Ok(got.map((row) => row.session_id))
+      return Ok(got.flatMap((row) => (row.session_id ? [row.session_id] : [])))
     },
 
     async findUserIdBySessionId(sessionId: SessionId) {

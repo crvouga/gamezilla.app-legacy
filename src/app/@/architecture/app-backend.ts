@@ -1,6 +1,7 @@
 import { Msg } from '~/@/msg/msg'
 import { type Sub } from '~/@/sub'
 import type { ClientId } from '~/@/wire/client-id'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import type { SessionId } from '~/@/wire/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 
@@ -75,6 +76,7 @@ export type Input<T extends AppBackendModuleTypes> = {
     | (T['MsgToBackend'] & {
         clientId: ClientId
         sessionId: SessionId
+        clientSessionId: ClientSessionId
         userId?: UserId | null
       })
     | null

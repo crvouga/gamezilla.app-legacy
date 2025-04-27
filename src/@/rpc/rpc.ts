@@ -3,9 +3,12 @@ import { IHttpServer } from '~/@/http-server'
 import { p } from '~/@/parser'
 import { Err, isErr, Ok, Result } from '~/@/result'
 import { allowCORS } from '../http-server/cors'
+import { ClientSessionId } from '../wire/client-session-id'
+import { ClientSessionIdHttp } from '../wire/client-session-id-http'
 import { SessionId } from '../wire/session-id'
-import { SessionIdCookie } from '../wire/session-id-cookie'
+import { SessionIdHttp } from '../wire/session-id-http'
 import { RPCError } from './rpc-error'
+import { ClientSessionIdStorage } from '../wire/client-session-id-storage'
 
 type Base = Contract<Record<string, Endpoint<any, any> | Contract<any>>>
 
@@ -16,6 +19,7 @@ export type Endpoint<TInput, TOutput> = {
 
 export type ReqCtx = {
   sessionId: SessionId
+  clientSessionId: ClientSessionId
 }
 
 export type Contract<TEndpoints extends Record<string, Endpoint<any, any> | Contract<any>>> = TEndpoints
@@ -60,8 +64,12 @@ export const initClient = <T extends Base>(config: {
             if (isErr(parsedInput)) {
               return Err(parsedInput.error)
             }
+            const clientSessionId = ClientSessionIdStorage().get()
 
-            const url = new URL(`/rpc/${[...path, endpoint].join('/')}`, config.backendUrl)
+            const url = ClientSessionIdHttp.addToUrl(
+              new URL(`/rpc/${[...path, endpoint].join('/')}`, config.backendUrl),
+              clientSessionId,
+            )
 
             const request = new Request(url, {
               method: 'POST',
@@ -108,6 +116,7 @@ export const registerRespond = <T extends Base>(registerInput: {
     path: string[]
     request: Request
     sessionId: SessionId
+    clientSessionId: ClientSessionId
   }) => {
     const endpointName = requestInput.path[0]
     if (!endpointName) {
@@ -132,7 +141,10 @@ export const registerRespond = <T extends Base>(registerInput: {
           })
         }
 
-        const outputData = await handler(parsedInput.value, { sessionId: requestInput.sessionId })
+        const outputData = await handler(parsedInput.value, {
+          sessionId: requestInput.sessionId,
+          clientSessionId: requestInput.clientSessionId,
+        })
         const parsedOutput = endpointConfig.output.parse(outputData)
 
         if (isErr(parsedOutput)) {
@@ -157,6 +169,7 @@ export const registerRespond = <T extends Base>(registerInput: {
       path: requestInput.path.slice(1),
       request: requestInput.request,
       sessionId: requestInput.sessionId,
+      clientSessionId: requestInput.clientSessionId,
     })
   }
 
@@ -165,8 +178,11 @@ export const registerRespond = <T extends Base>(registerInput: {
       const url = new URL(request.url)
       const path = url.pathname.replace('/rpc/', '').split('/')
 
-      const maybeSessionId = SessionIdCookie.fromRequest(request)
+      const maybeSessionId = SessionIdHttp.fromRequest(request)
       const sessionId = maybeSessionId ?? SessionId.generate()
+
+      const maybeClientSessionId = ClientSessionIdHttp.fromRequest(request)
+      const clientSessionId = maybeClientSessionId ?? ClientSessionId.generate()
 
       const response = await handleRequest({
         contract: registerInput.contract,
@@ -174,6 +190,7 @@ export const registerRespond = <T extends Base>(registerInput: {
         path,
         request,
         sessionId,
+        clientSessionId,
       })
 
       if (!response) return null
@@ -181,7 +198,7 @@ export const registerRespond = <T extends Base>(registerInput: {
       const responseWithCORS = allowCORS({ request, response })
 
       if (!maybeSessionId) {
-        responseWithCORS.headers.set('Set-Cookie', SessionIdCookie.toSetCookieHeaderValue({ sessionId, isProd: true }))
+        responseWithCORS.headers.set('Set-Cookie', SessionIdHttp.toSetCookieHeaderValue({ sessionId, isProd: true }))
       }
 
       return responseWithCORS

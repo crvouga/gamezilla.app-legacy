@@ -1,11 +1,13 @@
 import { PubSub } from '~/@/sub'
 import type { ClientId } from '~/@/wire/client-id'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import type { SessionId } from '~/@/wire/session-id'
 
 export type BackendTransportMsg =
   | {
       t: 'frontend-connected'
       clientId: ClientId
+      clientSessionId: ClientSessionId
       sessionId: SessionId
     }
   | {
@@ -35,6 +37,7 @@ export type ToFrontendPayload<TMsgToFrontend> = {
 export type ToBackendPayload<TMsgToBackend> = {
   msgs: TMsgToBackend[]
   clientId: ClientId
+  clientSessionId: ClientSessionId
   sessionId: SessionId
 }
 
