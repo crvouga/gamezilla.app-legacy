@@ -36,11 +36,11 @@ export const UserAccountDb = (config: Config): IUserAccountDb => {
 
     async insert(input) {
       await config.delay()
-      const existing = accounts.get(input.account.userId)
+      const existing = accounts.get(input.userId)
       if (existing) {
         return Err('Can not insert account that already exists.')
       }
-      accounts.set(input.account.userId, input.account)
+      accounts.set(input.userId, input)
       return Ok(null)
     },
   }

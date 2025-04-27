@@ -1,17 +1,20 @@
+import { p } from '~/@/parser'
 import { Posix } from '~/@/time/posix'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { UserSessionId } from './user-session-id'
-import { ClientSessionId } from '~/@/wire/client-session-id'
 
-export type UserSession = {
-  userSessionId: UserSessionId
-  sessionId: SessionId | null
-  clientSessionId: ClientSessionId
-  userId: UserId
-  createdAt: Posix
-  endedAt: Posix | null
-}
+const parser = p.obj({
+  userSessionId: UserSessionId,
+  sessionId: p.maybe(SessionId),
+  clientSessionId: ClientSessionId,
+  userId: UserId,
+  createdAt: Posix,
+  endedAt: p.maybe(Posix),
+})
+
+export type UserSession = p.Infer<typeof parser>
 
 const random = (overrides?: Partial<UserSession>): UserSession => {
   return {
@@ -26,5 +29,6 @@ const random = (overrides?: Partial<UserSession>): UserSession => {
 }
 
 export const UserSession = {
+  ...parser,
   random,
 }

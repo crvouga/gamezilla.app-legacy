@@ -2,6 +2,7 @@ import { NotAsked, Ok } from '~/@/result'
 import { APP_SOUND, playSound, sendToBackend, showToast } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
+import { toCurrentUserId } from '../current-user/frontend'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from '../types'
 
 //
@@ -18,9 +19,9 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          currentUser: {
-            t: 'logged-out',
-          },
+        },
+        async eff(_dispatch) {
+          await input.ctx.userSessionDb.zapByClientSessionId(input.ctx.clientSessionId)
         },
         msgCmd: [
           sendToBackend({ t: 'user-clicked-confirm-logout-button' }),
@@ -37,7 +38,10 @@ const update: FrontendModule['update'] = (input) => {
 
     case 'logout-drawer-closed':
     case 'logout-drawer-clicked-cancel': {
-      const currentUserId = input.model.currentUser.t === 'logged-in' ? input.model.currentUser.account.userId : null
+      const currentUserId = toCurrentUserId({
+        model: input.model.currentUser,
+        ctx: input.ctx,
+      })
 
       if (!currentUserId) {
         return {

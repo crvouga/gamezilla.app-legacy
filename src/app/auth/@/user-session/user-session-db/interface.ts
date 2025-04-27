@@ -5,6 +5,7 @@ import { Paginated } from '~/app/@/data/pagination'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import { UserSessionDbQuery } from './query'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 
 export type IUserSessionDb = {
   findSessionIdsByUserId: (userId: UserId) => Promise<Result<string, SessionId[]>>
@@ -20,4 +21,6 @@ export type IUserSessionDb = {
   zapByUserId: (userId: UserId) => Promise<Result<string, null>>
 
   zapBySessionId: (sessionId: SessionId) => Promise<Result<string, null>>
+
+  zapByClientSessionId: (clientSessionId: ClientSessionId) => Promise<Result<string, null>>
 }

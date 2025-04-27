@@ -114,6 +114,22 @@ describe.only(import.meta.file, () => {
     }
   })
 
+  it('should be able to zap by client session id', async () => {
+    for (const f of await Fixtures()) {
+      const userId = UserId.generate()
+      const clientSessionId = ClientSessionId.generate()
+      const sessionId = f.sessions[0].sessionId
+      if (!sessionId) throw new Error('test setup failed')
+      await f.userSessionDb.zapByClientSessionId(clientSessionId)
+      const sessionIds = await f.userSessionDb.findSessionIdsByUserId(userId)
+      expect(sessionIds.t).toBe('ok')
+      const expected = f.sessions
+        .filter((s) => s.userId === userId && s.sessionId !== f.sessions[0].sessionId)
+        .flatMap((s) => (s.sessionId ? [s.sessionId] : []))
+      expect(unwrap(sessionIds)).toEqual(expected)
+    }
+  })
+
   test('query equals userId', async () => {
     for (const f of await Fixtures()) {
       const userId = UserId.generate()

@@ -35,6 +35,7 @@ import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtx, ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend, rpcContract as contract } from './types'
 import * as WireFrontend from './wire/frontend'
 import { FrontendTransport } from './wire/transport/frontend'
+import { toCurrentUserState } from './auth/current-user/frontend'
 
 const initCtx = async (): Promise<FrontendCtx> => {
   const logger = Logger({
@@ -121,13 +122,17 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx => {
     screenSize: input.model.frontend.screenSize.screenSize,
     parentScreen: null,
   }
-  switch (input.model.auth.currentUser.t) {
+  const currentUser = toCurrentUserState({
+    model: input.model.auth.currentUser,
+    ctx: input.ctx,
+  })
+  switch (currentUser.t) {
     case 'logged-in':
       const appCtx: AppFrontendCtx = {
         ...anonymousCtx,
-        currentUser: input.model.auth.currentUser.account,
-        currentUserRole: input.model.auth.currentUser.account.role,
-        currentUserId: input.model.auth.currentUser.account.userId,
+        currentUser: currentUser.userAccount,
+        currentUserRole: currentUser.userAccount.role,
+        currentUserId: currentUser.userAccount.userId,
       }
       return {
         ...input.ctx,
@@ -427,15 +432,17 @@ const ViewScreen = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (m: MsgFr
         />
       )
     default: {
-      switch (input.model.auth.currentUser.t) {
+      const currentUser = toCurrentUserState({
+        model: input.model.auth.currentUser,
+        ctx: input.ctx,
+      })
+      switch (currentUser.t) {
         case 'loading':
           return <SplashScreen />
-
-        case 'logged-in':
-          return <ViewScreenLoggedIn model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
-
         case 'logged-out':
           return <ViewScreenLoggedOut model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
+        case 'logged-in':
+          return <ViewScreenLoggedIn model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
       }
     }
   }

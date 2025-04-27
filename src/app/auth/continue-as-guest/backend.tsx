@@ -96,11 +96,7 @@ const continueAsGuest = async ({
     sessionId: sessionId,
   })
 
-  const insertedAccount = existingGuestAccount
-    ? Ok(null)
-    : await ctx.userAccountDb.insert({
-        account: guestAccount,
-      })
+  const insertedAccount = existingGuestAccount ? Ok(null) : await ctx.userAccountDb.insert(guestAccount)
 
   if (isErr(insertedAccount)) {
     return insertedAccount

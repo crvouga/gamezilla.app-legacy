@@ -1,26 +1,28 @@
 import { p } from '~/@/parser'
 import { RemoteResult } from '~/@/result'
-import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { RPC } from '~/@/rpc'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserAccount } from '~/app/@/data/account'
 import { UserId } from '~/app/@/data/user-id'
+import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { UserSession } from '../@/user-session/user-session'
+import { UserSessionId } from '../@/user-session/user-session-id'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 
 export type ModelFrontend = {
-  currentUser_currentUser: RemoteResult<string, UserAccount>
-  currentUser_currentUserId: UserId | null
-  currentUser_userSessions: UserSession[]
+  status: RemoteResult<string, null>
+  userSessions: {
+    [userSessionId: UserSessionId]: UserSession
+  }
+  userAccounts: {
+    [userId: UserId]: UserAccount
+  }
 }
 
 export type MsgFrontend =
   | {
-      t: 'got-current-user-id'
-      currentUserId: UserId
-    }
-  | {
-      t: 'got-current-user-account'
-      currentUserAccount: UserAccount | null
+      t: 'got-user-accounts'
+      userAccounts: UserAccount[]
     }
   | {
       t: 'got-user-sessions'
@@ -42,4 +44,8 @@ export type FrontendModule = AppFrontendModule<{
   }
   Model: ModelFrontend
   Msg: MsgFrontend
+  MsgCmdOut: AppFrontendCmd<{
+    MsgFrontend: never
+    MsgToBackend: never
+  }>
 }>

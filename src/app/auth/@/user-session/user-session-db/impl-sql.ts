@@ -160,6 +160,19 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
       })
     },
 
+    async zapByClientSessionId(clientSessionId) {
+      logger.debug(`zapByClientSessionId: clientSessionId=${clientSessionId}`)
+      const queried = await dbConnSql.query({
+        parser: Row,
+        sql: 'UPDATE user_session SET ended_at_posix = :ended_at_posix WHERE client_session_id = :client_session_id',
+        vars: {
+          ended_at_posix: Date.now(),
+          client_session_id: clientSessionId,
+        },
+      })
+      return Result.mapOk(queried, () => null)
+    },
+
     sub(input) {
       const { sql, vars } = queryToSql(input)
       return Sub.map(dbConnSql.sub({ parser: Row, sql, vars }), (rows) => rows.map(rowToUserSession))

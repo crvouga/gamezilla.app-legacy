@@ -169,15 +169,14 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         }
       }
 
+      const { userSession, userAccount } = verified.value.value
+
       return {
         model: modelNew,
-        msgEvt: [
-          {
-            t: 'auth-evt.authenticated',
-            loggedIn: true,
-            account: verified.value.value,
-          },
-        ],
+        async eff(_dispatch) {
+          await input.ctx.userSessionDb.insert(userSession)
+          await input.ctx.userAccountDb.insert(userAccount)
+        },
       }
     }
 

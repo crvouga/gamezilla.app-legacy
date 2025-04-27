@@ -37,14 +37,12 @@ describe(import.meta.file, () => {
   it('should be able to insert accounts', async () => {
     for (const f of await Fixtures()) {
       const inserted = await f.userAccountDb.insert({
-        account: {
-          userId: UserId.generate(),
-          role: 'guest',
-          createdAt: Posix.now({
-            precision: 'seconds',
-          }),
-          phoneNumber: null,
-        },
+        userId: UserId.generate(),
+        role: 'guest',
+        createdAt: Posix.now({
+          precision: 'seconds',
+        }),
+        phoneNumber: null,
       })
       expect(unwrap(inserted)).toBe(null)
     }
@@ -60,9 +58,7 @@ describe(import.meta.file, () => {
         }),
         phoneNumber: null,
       }
-      await f.userAccountDb.insert({
-        account,
-      })
+      await f.userAccountDb.insert(account)
       const found = await f.userAccountDb.findOneByUserId({
         userId: account.userId,
       })
@@ -82,9 +78,7 @@ describe(import.meta.file, () => {
           precision: 'seconds',
         }),
       }
-      const insert = await f.userAccountDb.insert({
-        account,
-      })
+      const insert = await f.userAccountDb.insert(account)
       expect(insert.t).toBe('ok')
       const found = await f.userAccountDb.findOneByPhoneNumber({
         phoneNumber,
@@ -103,12 +97,8 @@ describe(import.meta.file, () => {
         }),
         phoneNumber: null,
       }
-      const insertBefore = await f.userAccountDb.insert({
-        account,
-      })
-      const insert = await f.userAccountDb.insert({
-        account,
-      })
+      const insertBefore = await f.userAccountDb.insert(account)
+      const insert = await f.userAccountDb.insert(account)
       expect(unwrap(insertBefore)).toBe(null)
       expect(insert).not.toEqual(Ok(null))
     }
@@ -143,12 +133,8 @@ describe(import.meta.file, () => {
         }),
         phoneNumber: null,
       }
-      await f.userAccountDb.insert({
-        account,
-      })
-      const insert = await f.userAccountDb.insert({
-        account,
-      })
+      await f.userAccountDb.insert(account)
+      const insert = await f.userAccountDb.insert(account)
       expect(insert.t).toBe('err')
     }
   })

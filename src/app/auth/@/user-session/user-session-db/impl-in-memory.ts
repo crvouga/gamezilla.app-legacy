@@ -76,6 +76,16 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
         offset: input.pagination.offset,
       })
     },
+    async zapByClientSessionId(clientSessionId) {
+      await config.simulateLatency()
+      const hits = Array.from(userSessions.values()).filter(
+        (userSession) => userSession.clientSessionId === clientSessionId,
+      )
+      for (const hit of hits) {
+        userSessions.delete(hit.userSessionId)
+      }
+      return Ok(null)
+    },
     sub(_input) {
       return Sub.None
     },

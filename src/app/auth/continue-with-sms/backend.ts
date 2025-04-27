@@ -116,7 +116,7 @@ const handleVerifyCode = async (
 
   const account: UserAccount = found.value ?? accountNew
 
-  const inserted = found.value ? Ok(null) : await input.ctx.userAccountDb.insert({ account })
+  const inserted = found.value ? Ok(null) : await input.ctx.userAccountDb.insert(account)
 
   if (isErr(inserted)) {
     input.ctx.logger.error(`Failed to insert new account: ${inserted.error}`)
@@ -141,7 +141,7 @@ const handleVerifyCode = async (
     return Err({ t: 'database-error', error: insertedSession.error })
   }
 
-  return Ok(account)
+  return Ok({ userAccount: account, userSession: userSessionNew })
 }
 
 export const ContinueWithSmsBackend = {

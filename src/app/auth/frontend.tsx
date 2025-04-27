@@ -1,10 +1,10 @@
 import { Eff } from '~/@/eff'
-import { Loading, NotAsked } from '~/@/result'
+import { NotAsked } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Button, IconEnvelope, IconMobilePhone, Typography } from '~/@/ui'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { APP_SOUND, AppFrontendCmd, playSound, pushScreen, replaceScreen, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND, AppFrontendCmd, playSound, pushScreen } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { AuthFrontendCtx } from './@/frontend/ctx'
 import { AuthScreenHeaderCta } from './@/frontend/ui/auth-screen-header-cta'
@@ -36,12 +36,11 @@ const initCtx = async (input: {
 const init: FrontendModule['init'] = () => {
   return {
     model: {
-      ...CurrentUserFrontend.init,
       ...ContinueAsGuestFrontend.init,
-      currentUser: Loading,
       loginWithGoogle: NotAsked,
       logout: NotAsked,
       opened: null,
+      currentUser: CurrentUserFrontend.init,
       sms: ContinueWithSmsFrontend.init,
     },
   }
@@ -63,15 +62,31 @@ const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromBackend({ ...input, model }),
-    (model) => updateFromEvent({ ...input, model }),
-    (model) => updateChild({ ...input, model }),
+    (model) => updateSMS({ ...input, model }),
+    (model) => updateCurrentUser({ ...input, model }),
     (model) => ContinueAsGuestFrontend.update({ ...input, model }),
     (model) => LogoutFrontend.update({ ...input, model }),
   )
 }
 
-const updateChild: FrontendModule['update'] = (input) => {
+const updateCurrentUser: FrontendModule['update'] = (input) => {
+  const updated = CurrentUserFrontend.update({
+    ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.currentUser },
+    model: input.model.currentUser,
+    msgCmd: null,
+    msgEvt: null,
+    msgBackend: null,
+    msg: input.msg?.t === 'current-user' ? input.msg.c : null,
+  })
+  return {
+    model: { ...input.model, currentUser: updated.model },
+    msgCmd: updated.msgCmd,
+    eff: Eff.tag('current-user', updated.eff),
+    msgEvt: [],
+  }
+}
+
+const updateSMS: FrontendModule['update'] = (input) => {
   const updated = ContinueWithSmsFrontend.update({
     ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.sms },
     model: input.model.sms,
@@ -127,104 +142,6 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
   }
 }
 
-const updateFromBackend: FrontendModule['update'] = (input) => {
-  switch (input.msgBackend?.t) {
-    case 'client-unauthenticated': {
-      return {
-        model: {
-          ...input.model,
-          currentUser: {
-            t: 'logged-out',
-          },
-        },
-        msgEvt: [
-          {
-            t: 'auth-evt.unauthenticated',
-          },
-        ],
-      }
-    }
-
-    case 'client-authenticated': {
-      return {
-        model: {
-          ...input.model,
-          currentUser: {
-            t: 'logged-in',
-            account: input.msgBackend.account,
-          },
-        },
-        msgEvt: [
-          {
-            ...input.msgBackend,
-            account: input.msgBackend.account,
-            t: 'auth-evt.authenticated',
-          },
-        ],
-      }
-    }
-
-    default: {
-      return {
-        model: input.model,
-      }
-    }
-  }
-}
-
-const updateFromEvent: FrontendModule['update'] = (input) => {
-  return updateRedirect(input)
-}
-
-const updateRedirect: FrontendModule['update'] = (input) => {
-  if (!input.msgEvt) {
-    return { model: input.model }
-  }
-
-  switch (input.msgEvt.t) {
-    case 'auth-evt.authenticated': {
-      if (!input.msgEvt.loggedIn) {
-        return {
-          model: input.model,
-        }
-      }
-
-      return {
-        model: input.model,
-        msgCmd: [
-          replaceScreen({ n: 'spaces', t: 'space-list' }, false),
-          playSound(APP_SOUND.celebration),
-          input.msgEvt.account.role === 'guest'
-            ? showToast(input.ctx.t('auth.logged-in-as-guest'))
-            : showToast(input.ctx.t('auth.logged-in')),
-        ],
-      }
-    }
-
-    case 'screen-evt.screen-changed': {
-      if (input.model.currentUser.t === 'logged-in' && input.ctx.currentScreen.n === 'auth-login') {
-        return {
-          model: input.model,
-          msgCmd: [
-            replaceScreen({ n: 'spaces', t: 'space-list' }),
-            showToast(input.ctx.t('auth.current-user-logged-in')),
-          ],
-        }
-      }
-
-      return {
-        model: input.model,
-      }
-    }
-
-    default: {
-      return {
-        model: input.model,
-      }
-    }
-  }
-}
-
 //
 //
 //
@@ -233,7 +150,14 @@ const updateRedirect: FrontendModule['update'] = (input) => {
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch<MsgFrontend>([
-    CurrentUserFrontend.subscriptions({ ...input, ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.currentUser } }),
+    Sub.tag(
+      'current-user',
+      CurrentUserFrontend.subscriptions({
+        ...input,
+        ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.currentUser },
+        model: input.model.currentUser,
+      }),
+    ),
   ])
 }
 

@@ -10,7 +10,7 @@ import { AppFrontendEvt } from '../@/frontend/evt'
 import { BackendCtx } from './@/backend/ctx'
 import { AuthFrontendCtx } from './@/frontend/ctx'
 import type { ContinueAsGuest } from './continue-as-guest'
-import * as AuthSMS from './continue-with-sms/types'
+import { ContinueWithSmsTypes } from './continue-with-sms'
 import { CurrentUserTypes } from './current-user'
 import type { Logout } from './logout'
 
@@ -27,20 +27,11 @@ type BaseModelFrontend = {
   loginWithGoogle: RemoteResult<string, null>
   logout: RemoteResult<string, null>
   opened: 'logged-out' | null
-  currentUser:
-    | { t: 'loading' }
-    | { t: 'logged-out' }
-    | {
-        t: 'logged-in'
-        account: UserAccount
-      }
-  sms: AuthSMS.ModelFrontend
+  sms: ContinueWithSmsTypes.ModelFrontend
+  currentUser: CurrentUserTypes.ModelFrontend
 }
 
-export type ModelFrontend = BaseModelFrontend &
-  ContinueAsGuest.ModelFrontend &
-  Logout.ModelFrontend &
-  CurrentUserTypes.ModelFrontend
+export type ModelFrontend = BaseModelFrontend & ContinueAsGuest.ModelFrontend & Logout.ModelFrontend
 
 //
 //
@@ -51,18 +42,21 @@ export type ModelFrontend = BaseModelFrontend &
 export type MsgFrontend =
   | ContinueAsGuest.MsgFrontend
   | Logout.MsgFrontend
-  | CurrentUserTypes.MsgFrontend
   | { t: 'user-clicked-login-with-phone' }
   | { t: 'user-clicked-login-with-email' }
-  | { t: 'sms'; c: AuthSMS.MsgFrontend }
+  | { t: 'sms'; c: ContinueWithSmsTypes.MsgFrontend }
+  | { t: 'current-user'; c: CurrentUserTypes.MsgFrontend }
 
-export type MsgBackend = ContinueAsGuest.MsgBackend | Logout.MsgFrontend | { t: 'sms'; c: AuthSMS.MsgBackend }
+export type MsgBackend =
+  | ContinueAsGuest.MsgBackend
+  | Logout.MsgFrontend
+  | { t: 'sms'; c: ContinueWithSmsTypes.MsgBackend }
 
 export type MsgToBackend =
   | ContinueAsGuest.MsgToBackend
   | Logout.MsgToBackend
   | { t: 'frontend-checked-auth' }
-  | { t: 'sms'; c: AuthSMS.MsgToBackend }
+  | { t: 'sms'; c: ContinueWithSmsTypes.MsgToBackend }
 
 export type MsgToFrontend =
   | ContinueAsGuest.MsgToFrontend
@@ -73,7 +67,7 @@ export type MsgToFrontend =
       loggedIn: boolean
     }
   | { t: 'client-unauthenticated'; sessionId?: never }
-  | { t: 'sms'; c: AuthSMS.MsgToFrontend }
+  | { t: 'sms'; c: ContinueWithSmsTypes.MsgToFrontend }
 
 export type FrontendCtx = AuthFrontendCtx & {
   rpc: {
@@ -110,6 +104,6 @@ export type BackendModule = AppBackendModule<{
 }>
 
 export const rpcContract = RPC.initContract({
-  sms: AuthSMS.rpcContract,
+  sms: ContinueWithSmsTypes.rpcContract,
   currentUser: CurrentUserTypes.rpcContract,
 })

@@ -107,6 +107,12 @@ export const WithCache = ({ userSessionDb, keyValueDb }: Config): IUserSessionDb
       return queried
     },
 
+    async zapByClientSessionId(clientSessionId) {
+      const queried = await userSessionDb.zapByClientSessionId(clientSessionId)
+
+      return queried
+    },
+
     async query(input) {
       return userSessionDb.query(input)
     },

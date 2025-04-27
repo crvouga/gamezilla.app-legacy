@@ -117,10 +117,10 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
     },
     async insert(input) {
       const row = {
-        created_at_posix: input.account.createdAt,
-        id: input.account.userId,
-        user_role: input.account.role,
-        phone_number: input.account.phoneNumber ? PhoneNumber.toString(input.account.phoneNumber) : null,
+        created_at_posix: input.createdAt,
+        id: input.userId,
+        user_role: input.role,
+        phone_number: input.phoneNumber ? PhoneNumber.toString(input.phoneNumber) : null,
       }
       const inserted = await dbConnSql.query({
         parser: p.unknown,

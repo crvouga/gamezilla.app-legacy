@@ -12,16 +12,20 @@ import { BackendCmd } from '~/app/@/backend/cmd'
 import { BackendEvt } from '~/app/@/backend/evt'
 import { UserAccount } from '~/app/@/data/account'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { BackendCtx } from '../@/backend/ctx'
 import { SendCodeInput, SendCodeOutput, VerifyCodeInput } from '../@/backend/verify-sms'
 import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
 import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
+import { AuthFrontendCtx } from '../@/frontend/ctx'
+import { UserSession } from '../@/user-session/user-session'
 
 export type Sent = Result<RPCError, SendCodeOutput>
 
-const VerifyCodeOutput = Result.parser(VerifyCodeProblem.parser, UserAccount)
+const VerifyCodeOutput = Result.parser(
+  VerifyCodeProblem.parser,
+  p.obj({ userAccount: UserAccount, userSession: UserSession }),
+)
 export type VerifyCodeOutput = p.Infer<typeof VerifyCodeOutput>
 export type Verified = Result<RPCError, VerifyCodeOutput>
 
@@ -97,7 +101,7 @@ export type FrontendModule = AppFrontendModule<{
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  Ctx: AppFrontendCtxBase & {
+  Ctx: AuthFrontendCtx & {
     rpc: RPC.Client<typeof rpcContract>
   }
   MsgCmdIn: null

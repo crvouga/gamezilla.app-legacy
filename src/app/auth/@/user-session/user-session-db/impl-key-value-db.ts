@@ -125,6 +125,19 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       }
       return db.query(input)
     },
+    async zapByClientSessionId(clientSessionId) {
+      const all = await getAll()
+      const filtered = all.filter((row) => row.client_session_id !== clientSessionId)
+      await allIds.set(
+        ALL_IDS,
+        filtered.map((row) => row.user_session_id),
+      )
+      for (const row of all) {
+        await userSessions.zap(row.user_session_id)
+      }
+      return Ok(null)
+    },
+
     sub(_input) {
       return Sub.None
     },
