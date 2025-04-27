@@ -121,14 +121,14 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
       const whereClauses: string[] = []
       const vars: Sql.Vars = {}
 
-      if (input.where.userId?.equals) {
+      if (input.whereAnd.userId?.equals) {
         whereClauses.push('user_id = :user_id')
-        vars.user_id = input.where.userId.equals
+        vars.user_id = input.whereAnd.userId.equals
       }
 
-      if (input.where.sessionId?.equals) {
+      if (input.whereAnd.sessionId?.equals) {
         whereClauses.push('session_id = :session_id')
-        vars.session_id = input.where.sessionId.equals
+        vars.session_id = input.whereAnd.sessionId.equals
       }
 
       vars.offset = input.pagination.offset
@@ -136,7 +136,9 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
 
       const whereStr = whereClauses.join(' AND ')
 
-      const sql = `SELECT * FROM user_session WHERE ${whereStr} ORDER BY created_at_posix DESC LIMIT :limit OFFSET :offset`
+      const orderStr = input.order.createdAt ? `ORDER BY created_at_posix ${input.order.createdAt.toUpperCase()}` : ''
+
+      const sql = `SELECT * FROM user_session WHERE ${whereStr} ${orderStr} LIMIT :limit OFFSET :offset`
       const sqlCount = `SELECT COUNT(*) AS total FROM user_session WHERE ${whereStr}`
 
       const queried = await dbConnSql.query({
@@ -147,14 +149,23 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
 
       const queriedCount = await dbConnSql.query({
         parser: p.obj({
-          total: p.num,
+          total: p.or(p.num, p.str),
         }),
         sql: sqlCount,
         vars,
       })
 
       const total = unwrapOr(
-        Result.mapOk(queriedCount, (rows) => rows[0]?.total ?? 0),
+        Result.mapOk(queriedCount, (rows) => {
+          const total = rows[0]?.total
+          if (typeof total === 'number') {
+            return total
+          }
+          if (typeof total === 'string') {
+            return parseInt(total)
+          }
+          return 0
+        }),
         0,
       )
 

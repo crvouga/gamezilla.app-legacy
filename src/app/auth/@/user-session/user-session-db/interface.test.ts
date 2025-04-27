@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { Logger } from '~/@/logger'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { unwrap } from '~/@/result'
@@ -6,6 +6,7 @@ import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import { Config, UserSessionDb } from './impl'
+import { SessionId } from '~/@/wire/session-id'
 
 const Fixture = async (config: Config) => {
   const userSessionDb = await UserSessionDb(config)
@@ -101,6 +102,124 @@ describe.only(import.meta.file, () => {
         .filter((s) => s.userId === userId && s.sessionId !== f.sessions[0].sessionId)
         .map((s) => s.sessionId)
       expect(unwrap(sessionIds)).toEqual(expected)
+    }
+  })
+
+  test('query equals userId', async () => {
+    for (const f of await Fixtures()) {
+      const userId = UserId.generate()
+      const before = await f.userSessionDb.query({
+        whereAnd: {
+          userId: {
+            equals: userId,
+          },
+        },
+        pagination: {
+          limit: 100,
+          offset: 0,
+        },
+        order: {
+          createdAt: 'asc',
+        },
+      })
+
+      const expected: UserSession[] = []
+      for (let i = 0; i < 10; i++) {
+        const session = UserSession.random({ userId })
+        await f.userSessionDb.insert(session)
+        expected.push(session)
+        await f.userSessionDb.insert(UserSession.random())
+      }
+
+      expected.sort((a, b) => a.createdAt - b.createdAt)
+
+      const after = await f.userSessionDb.query({
+        whereAnd: {
+          userId: {
+            equals: userId,
+          },
+        },
+        pagination: {
+          limit: 100,
+          offset: 0,
+        },
+        order: {
+          createdAt: 'asc',
+        },
+      })
+
+      expect(unwrap(before)).toEqual({
+        items: [],
+        total: 0,
+        limit: 100,
+        offset: 0,
+      })
+
+      expect(unwrap(after)).toEqual({
+        items: expected,
+        total: expected.length,
+        limit: 100,
+        offset: 0,
+      })
+    }
+  })
+
+  test('query equals sessionId', async () => {
+    for (const f of await Fixtures()) {
+      const sessionId = SessionId.generate()
+      const before = await f.userSessionDb.query({
+        whereAnd: {
+          sessionId: {
+            equals: sessionId,
+          },
+        },
+        pagination: {
+          limit: 100,
+          offset: 0,
+        },
+        order: {
+          createdAt: 'asc',
+        },
+      })
+
+      const expected: UserSession[] = []
+      for (let i = 0; i < 10; i++) {
+        const session = UserSession.random({ sessionId })
+        await f.userSessionDb.insert(session)
+        expected.push(session)
+        await f.userSessionDb.insert(UserSession.random())
+      }
+
+      expected.sort((a, b) => a.createdAt - b.createdAt)
+
+      const after = await f.userSessionDb.query({
+        whereAnd: {
+          sessionId: {
+            equals: sessionId,
+          },
+        },
+        pagination: {
+          limit: 100,
+          offset: 0,
+        },
+        order: {
+          createdAt: 'asc',
+        },
+      })
+
+      expect(unwrap(before)).toEqual({
+        items: [],
+        total: 0,
+        limit: 100,
+        offset: 0,
+      })
+
+      expect(unwrap(after)).toEqual({
+        items: expected,
+        total: expected.length,
+        limit: 100,
+        offset: 0,
+      })
     }
   })
 })

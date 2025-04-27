@@ -52,12 +52,18 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       const hits: UserSession[] = []
       for (const userSession of userSessions.values()) {
         if (
-          (input.where.userId ? input.where.userId.equals === userSession.userId : true) &&
-          (input.where.sessionId ? input.where.sessionId.equals === userSession.sessionId : true)
+          (input.whereAnd.userId ? input.whereAnd.userId.equals === userSession.userId : true) &&
+          (input.whereAnd.sessionId ? input.whereAnd.sessionId.equals === userSession.sessionId : true)
         ) {
           hits.push(userSession)
         }
       }
+      hits.sort((a, b) => {
+        if (input.order.createdAt === 'asc') {
+          return a.createdAt - b.createdAt
+        }
+        return b.createdAt - a.createdAt
+      })
       const sliced = hits.slice(input.pagination.offset, input.pagination.offset + input.pagination.limit)
       return Ok({
         items: sliced,

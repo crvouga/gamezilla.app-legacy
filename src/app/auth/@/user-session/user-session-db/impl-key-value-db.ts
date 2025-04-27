@@ -112,9 +112,15 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       const all = await getAll()
       const filtered = all.filter(
         (row) =>
-          (input.where.userId ? input.where.userId.equals === row.user_id : true) &&
-          (input.where.sessionId ? input.where.sessionId.equals === row.session_id : true),
+          (input.whereAnd.userId ? input.whereAnd.userId.equals === row.user_id : true) &&
+          (input.whereAnd.sessionId ? input.whereAnd.sessionId.equals === row.session_id : true),
       )
+      filtered.sort((a, b) => {
+        if (input.order.createdAt === 'asc') {
+          return a.created_at_posix - b.created_at_posix
+        }
+        return b.created_at_posix - a.created_at_posix
+      })
       const sliced = filtered.slice(input.pagination.offset, input.pagination.offset + input.pagination.limit)
       return Ok({
         items: sliced.map(rowToUserSession),
