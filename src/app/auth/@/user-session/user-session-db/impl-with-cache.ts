@@ -1,8 +1,8 @@
-import { Result, isOk } from '~/@/result'
+import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import { p } from '~/@/parser'
+import { Result, isOk } from '~/@/result'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
-import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { IUserSessionDb } from './interface'
 
 //
@@ -109,6 +109,10 @@ export const WithCache = ({ userSessionDb, keyValueDb }: Config): IUserSessionDb
 
     async query(input) {
       return userSessionDb.query(input)
+    },
+
+    sub(input) {
+      return userSessionDb.sub(input)
     },
   }
 }

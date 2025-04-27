@@ -1,13 +1,15 @@
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import { p } from '~/@/parser'
 import { Ok, unwrapOr } from '~/@/result'
+import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import { UserSessionId } from '../user-session-id'
+import * as ImplInMemory from './impl-in-memory'
 import type { IUserSessionDb } from './interface'
-import { ClientSessionId } from '~/@/wire/client-session-id'
 
 const Row = p.obj({
   user_session_id: UserSessionId,
@@ -114,24 +116,17 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
 
     async query(input) {
       const all = await getAll()
-      const filtered = all.filter(
-        (row) =>
-          (input.whereAnd.userId ? input.whereAnd.userId.equals === row.user_id : true) &&
-          (input.whereAnd.sessionId ? input.whereAnd.sessionId.equals === row.session_id : true),
-      )
-      filtered.sort((a, b) => {
-        if (input.order.createdAt === 'asc') {
-          return a.created_at_posix - b.created_at_posix
-        }
-        return b.created_at_posix - a.created_at_posix
+      const db = ImplInMemory.UserSessionDb({
+        t: 'in-memory',
+        simulateLatency: () => Promise.resolve(),
       })
-      const sliced = filtered.slice(input.pagination.offset, input.pagination.offset + input.pagination.limit)
-      return Ok({
-        items: sliced.map(rowToUserSession),
-        total: filtered.length,
-        limit: input.pagination.limit,
-        offset: input.pagination.offset,
-      })
+      for (const row of all) {
+        await db.insert(rowToUserSession(row))
+      }
+      return db.query(input)
+    },
+    sub(_input) {
+      return Sub.None
     },
   }
 }

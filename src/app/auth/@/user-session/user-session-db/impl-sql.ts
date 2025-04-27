@@ -3,6 +3,7 @@ import { ILogger, Logger } from '~/@/logger'
 import { p } from '~/@/parser'
 import { Result, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
+import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
@@ -10,6 +11,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import { UserSessionId } from '../user-session-id'
 import type { IUserSessionDb } from './interface'
+import { UserSessionDbQuery } from './query'
 
 export const Row = p.obj({
   id: UserSessionId,
@@ -128,42 +130,11 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
     },
 
     async query(input) {
-      const whereClauses: string[] = []
-      const vars: Sql.Vars = {}
+      const { sql, sqlCount, vars } = queryToSql(input)
 
-      if (input.whereAnd.userId?.equals) {
-        whereClauses.push('user_id = :user_id')
-        vars.user_id = input.whereAnd.userId.equals
-      }
+      const queried = await dbConnSql.query({ parser: Row, sql, vars })
 
-      if (input.whereAnd.sessionId?.equals) {
-        whereClauses.push('session_id = :session_id')
-        vars.session_id = input.whereAnd.sessionId.equals
-      }
-
-      vars.offset = input.pagination.offset
-      vars.limit = input.pagination.limit
-
-      const whereStr = whereClauses.join(' AND ')
-
-      const orderStr = input.order.createdAt ? `ORDER BY created_at_posix ${input.order.createdAt.toUpperCase()}` : ''
-
-      const sql = `SELECT * FROM user_session WHERE ${whereStr} ${orderStr} LIMIT :limit OFFSET :offset`
-      const sqlCount = `SELECT COUNT(*) AS total FROM user_session WHERE ${whereStr}`
-
-      const queried = await dbConnSql.query({
-        parser: Row,
-        sql,
-        vars,
-      })
-
-      const queriedCount = await dbConnSql.query({
-        parser: p.obj({
-          total: p.or(p.num, p.str),
-        }),
-        sql: sqlCount,
-        vars,
-      })
+      const queriedCount = await dbConnSql.query({ parser: p.obj({ total: p.or(p.num, p.str) }), sql: sqlCount, vars })
 
       const total = unwrapOr(
         Result.mapOk(queriedCount, (rows) => {
@@ -188,5 +159,48 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
         }
       })
     },
+
+    sub(input) {
+      const { sql, vars } = queryToSql(input)
+      return Sub.map(dbConnSql.sub({ parser: Row, sql, vars }), (rows) => rows.map(rowToUserSession))
+    },
+  }
+}
+
+const queryToSql = (query: UserSessionDbQuery) => {
+  const whereClauses: string[] = []
+  const vars: Sql.Vars = {}
+
+  whereClauses.push('ended_at_posix IS NULL')
+
+  if (query.whereAnd.userId?.equals) {
+    whereClauses.push('user_id = :user_id')
+    vars.user_id = query.whereAnd.userId.equals
+  }
+
+  if (query.whereAnd.sessionId?.equals) {
+    whereClauses.push('session_id = :session_id')
+    vars.session_id = query.whereAnd.sessionId.equals
+  }
+
+  if (query.whereAnd.clientSessionId?.equals) {
+    whereClauses.push('client_session_id = :client_session_id')
+    vars.client_session_id = query.whereAnd.clientSessionId.equals
+  }
+
+  vars.offset = query.pagination.offset
+  vars.limit = query.pagination.limit
+
+  const whereStr = whereClauses.join(' AND ')
+
+  const orderStr = query.order.createdAt ? `ORDER BY created_at_posix ${query.order.createdAt.toUpperCase()}` : ''
+
+  const sql = `SELECT * FROM user_session WHERE ${whereStr} ${orderStr} LIMIT :limit OFFSET :offset`
+  const sqlCount = `SELECT COUNT(*) AS total FROM user_session WHERE ${whereStr}`
+
+  return {
+    sql,
+    sqlCount,
+    vars,
   }
 }

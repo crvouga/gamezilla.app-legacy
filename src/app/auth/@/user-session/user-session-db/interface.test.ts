@@ -9,6 +9,7 @@ import { Config, UserSessionDb } from './impl'
 import { SessionId } from '~/@/wire/session-id'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 
 const Fixture = async (config: Config) => {
   const userSessionDb = await UserSessionDb(config)
@@ -210,6 +211,68 @@ describe.only(import.meta.file, () => {
         whereAnd: {
           sessionId: {
             equals: sessionId,
+          },
+        },
+        pagination: {
+          limit: 100,
+          offset: 0,
+        },
+        order: {
+          createdAt: 'asc',
+        },
+      })
+
+      expect(unwrap(before)).toEqual({
+        items: [],
+        total: 0,
+        limit: 100,
+        offset: 0,
+      })
+
+      expect(unwrap(after)).toEqual({
+        items: expected,
+        total: expected.length,
+        limit: 100,
+        offset: 0,
+      })
+    }
+  })
+
+  test('query equals clientSessionId', async () => {
+    for (const f of await Fixtures()) {
+      const clientSessionId = ClientSessionId.generate()
+      const before = await f.userSessionDb.query({
+        whereAnd: {
+          clientSessionId: {
+            equals: clientSessionId,
+          },
+        },
+        pagination: {
+          limit: 100,
+          offset: 0,
+        },
+        order: {
+          createdAt: 'asc',
+        },
+      })
+
+      const expected: UserSession[] = []
+      for (let i = 0; i < 10; i++) {
+        const session = UserSession.random({
+          clientSessionId,
+          createdAt: Posix.future(Posix.now(), TimeSpan.seconds(i)),
+        })
+        await f.userSessionDb.insert(session)
+        expected.push(session)
+        await f.userSessionDb.insert(UserSession.random())
+      }
+
+      expected.sort((a, b) => a.createdAt - b.createdAt)
+
+      const after = await f.userSessionDb.query({
+        whereAnd: {
+          clientSessionId: {
+            equals: clientSessionId,
           },
         },
         pagination: {

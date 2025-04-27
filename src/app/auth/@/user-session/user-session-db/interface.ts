@@ -1,4 +1,5 @@
 import type { Result } from '~/@/result'
+import { Sub } from '~/@/sub'
 import type { SessionId } from '~/@/wire/session-id'
 import { Paginated } from '~/app/@/data/pagination'
 import type { UserId } from '~/app/@/data/user-id'
@@ -11,6 +12,8 @@ export type IUserSessionDb = {
   findUserIdBySessionId: (sessionId: SessionId) => Promise<Result<string, UserId | null>>
 
   query: (input: UserSessionDbQuery) => Promise<Result<string, Paginated<UserSession>>>
+
+  sub: (input: UserSessionDbQuery) => Sub<UserSession[]>
 
   insert: (input: UserSession) => Promise<Result<string, null>>
 

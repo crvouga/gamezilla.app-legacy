@@ -4,6 +4,7 @@ import type { SessionId } from '~/@/wire/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import type { IUserSessionDb } from './interface'
+import { Sub } from '~/@/sub'
 
 const userSessions = new Map<string, UserSession>()
 
@@ -53,7 +54,10 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       for (const userSession of userSessions.values()) {
         if (
           (input.whereAnd.userId ? input.whereAnd.userId.equals === userSession.userId : true) &&
-          (input.whereAnd.sessionId ? input.whereAnd.sessionId.equals === userSession.sessionId : true)
+          (input.whereAnd.sessionId ? input.whereAnd.sessionId.equals === userSession.sessionId : true) &&
+          (input.whereAnd.clientSessionId
+            ? input.whereAnd.clientSessionId.equals === userSession.clientSessionId
+            : true)
         ) {
           hits.push(userSession)
         }
@@ -71,6 +75,9 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
         limit: input.pagination.limit,
         offset: input.pagination.offset,
       })
+    },
+    sub(_input) {
+      return Sub.None
     },
   }
 }
