@@ -12,7 +12,7 @@ import { BackendCmd } from '~/app/@/backend/cmd'
 import { BackendEvt } from '~/app/@/backend/evt'
 import { UserAccount } from '~/app/@/data/account'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { BackendCtx } from '../@/backend/ctx'
 import { SendCodeInput, SendCodeOutput, VerifyCodeInput } from '../@/backend/verify-sms'
@@ -97,7 +97,7 @@ export type FrontendModule = AppFrontendModule<{
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  Ctx: BaseFrontendCtx & {
+  Ctx: AppFrontendCtxBase & {
     rpc: RPC.Client<typeof rpcContract>
   }
   MsgCmdIn: null

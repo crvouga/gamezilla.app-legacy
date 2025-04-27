@@ -6,11 +6,12 @@ import { BackendCmd } from '../@/backend/cmd'
 import { BackendEvt } from '../@/backend/evt'
 import type { UserAccount } from '../@/data/account'
 import type { AppFrontendCmd, AuthCmd } from '../@/frontend/cmd'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { AppFrontendEvt } from '../@/frontend/evt'
 import { BackendCtx } from './@/backend/ctx'
+import { AuthFrontendCtx } from './@/frontend/ctx'
 import type { ContinueAsGuest } from './continue-as-guest'
 import * as AuthSMS from './continue-with-sms/types'
+import { CurrentUserTypes } from './current-user'
 import type { Logout } from './logout'
 
 export type { BackendCtx }
@@ -36,7 +37,10 @@ type BaseModelFrontend = {
   sms: AuthSMS.ModelFrontend
 }
 
-export type ModelFrontend = BaseModelFrontend & ContinueAsGuest.ModelFrontend & Logout.ModelFrontend
+export type ModelFrontend = BaseModelFrontend &
+  ContinueAsGuest.ModelFrontend &
+  Logout.ModelFrontend &
+  CurrentUserTypes.ModelFrontend
 
 //
 //
@@ -47,6 +51,7 @@ export type ModelFrontend = BaseModelFrontend & ContinueAsGuest.ModelFrontend & 
 export type MsgFrontend =
   | ContinueAsGuest.MsgFrontend
   | Logout.MsgFrontend
+  | CurrentUserTypes.MsgFrontend
   | { t: 'user-clicked-login-with-phone' }
   | { t: 'user-clicked-login-with-email' }
   | { t: 'sms'; c: AuthSMS.MsgFrontend }
@@ -70,8 +75,10 @@ export type MsgToFrontend =
   | { t: 'client-unauthenticated'; sessionId?: never }
   | { t: 'sms'; c: AuthSMS.MsgToFrontend }
 
-export type FrontendCtx = (AnonymousFrontendCtx | AppFrontendCtx) & {
-  rpc: RPC.Client<typeof rpcContract>
+export type FrontendCtx = AuthFrontendCtx & {
+  rpc: {
+    auth: RPC.Client<typeof rpcContract>
+  }
 }
 
 export type FrontendModule = AppFrontendModule<{
@@ -104,4 +111,5 @@ export type BackendModule = AppBackendModule<{
 
 export const rpcContract = RPC.initContract({
   sms: AuthSMS.rpcContract,
+  currentUser: CurrentUserTypes.rpcContract,
 })

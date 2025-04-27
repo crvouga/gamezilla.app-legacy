@@ -1,6 +1,6 @@
 import { Program } from '~/@/program/program'
 import { Renderer } from '~/@/vdom/render'
-import * as AppFrontend from '~/app/frontend'
+import { AppFrontend } from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { DebuggerReduxDevTools } from './@/program/debugger'
 import { DebuggerConsole } from './@/program/debugger/debugger-console'

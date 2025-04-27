@@ -1,16 +1,16 @@
-import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { GuestSessionMappingDb } from '../guest-session-mapping/guest-session-mapping-db'
 import { IGuestSessionMappingDb } from '../guest-session-mapping/guest-session-mapping-db/interface'
 import { IUserAccountDb, UserAccountDb } from '../user-account/user-account-db'
 import { IUserSessionDb, UserSessionDb } from '../user-session/user-session-db'
 
-export type FrontendCtx = BaseFrontendCtx & {
+export type AuthFrontendCtx = AppFrontendCtxBase & {
   guestSessionMappingDb: IGuestSessionMappingDb
   userSessionDb: IUserSessionDb
   userAccountDb: IUserAccountDb
 }
 
-const init = async (input: { ctx: BaseFrontendCtx }): Promise<FrontendCtx> => {
+const init = async (input: { ctx: AppFrontendCtxBase }): Promise<AuthFrontendCtx> => {
   return {
     ...input.ctx,
     guestSessionMappingDb: GuestSessionMappingDb({
@@ -29,6 +29,6 @@ const init = async (input: { ctx: BaseFrontendCtx }): Promise<FrontendCtx> => {
   }
 }
 
-export const FrontendCtx = {
+export const AuthFrontendCtx = {
   init,
 }

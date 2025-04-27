@@ -1,14 +1,11 @@
-import { Browser } from '~/@/browser'
-import { IDbConnSql } from '~/@/db-conn-sql'
 import { IHttpServer } from '~/@/http-server'
-import { LanguageCodeISO_639_1 } from '~/@/l18n'
-import { ILogger } from '~/@/logger'
 import { RPC } from '~/@/rpc'
-import { Posix } from '~/@/time/posix'
-import { AppBackendCtx } from './@/backend/ctx'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientId } from '../@/wire/client-id'
 import { SessionId } from '../@/wire/session-id'
+import { AppBackendCtx } from './@/backend/ctx'
 import { UserId } from './@/data/user-id'
+import { AppFrontendCtxBase } from './@/frontend/ctx'
 import { AuthTypes } from './auth'
 import * as FrontendTypes from './frontend/types'
 import { LangTypes } from './lang'
@@ -17,7 +14,6 @@ import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
 import { IBackendTransport } from './wire/transport/backend'
 import { IFrontendTransport } from './wire/transport/frontend'
-import { ClientSessionId } from '~/@/wire/client-session-id'
 
 //
 //
@@ -116,20 +112,14 @@ export type BackendCtx = AppBackendCtx & {
   httpServer: IHttpServer
 }
 
-export type FrontendCtx = {
-  dbConnSql: IDbConnSql
-  logger: ILogger
-  now: Posix
-  rpc: RPC.Client<typeof rpcContract>
-  location: Browser.Location
-  clientSessionId: ClientSessionId
-  navigatorLanguage: LanguageCodeISO_639_1
-  transport: IFrontendTransport<{
-    MsgToBackend: MsgToBackend
-    MsgToFrontend: MsgToFrontend
-  }>
-  stored: Record<string, unknown>
-}
+export type FrontendCtx = AppFrontendCtxBase &
+  AuthTypes.FrontendCtx & {
+    rpc: RPC.Client<typeof rpcContract>
+    transport: IFrontendTransport<{
+      MsgToBackend: MsgToBackend
+      MsgToFrontend: MsgToFrontend
+    }>
+  }
 
 //
 //

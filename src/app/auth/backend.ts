@@ -1,19 +1,20 @@
 import { isErr, isOk } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
+import { Posix } from '~/@/time/posix'
 import type { SessionId } from '~/@/wire/session-id'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { UserId } from '~/app/@/data/user-id'
 import { sendToFrontend } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendCtx } from './@/backend/ctx'
-import { ContinueAsGuestBackend } from './continue-as-guest/backend'
-import { ContinueWithSmsBackend } from './continue-with-sms/backend'
-import { LogoutBackend } from './logout/backend'
-import { rpcContract, type BackendModule, type MsgToFrontend } from './types'
 import { UserSession } from './@/user-session/user-session'
 import { UserSessionId } from './@/user-session/user-session-id'
-import { Posix } from '~/@/time/posix'
+import { ContinueAsGuestBackend } from './continue-as-guest/backend'
+import { ContinueWithSmsBackend } from './continue-with-sms/backend'
+import { CurrentUserBackend } from './current-user/backend'
+import { LogoutBackend } from './logout/backend'
+import { rpcContract, type BackendModule, type MsgToFrontend } from './types'
 
 //
 //
@@ -158,5 +159,6 @@ export const subscriptions: BackendModule['subscriptions'] = async (_) => {
 export const rpc = (input: { ctx: BackendCtx }) => {
   return RPC.initServer(rpcContract, {
     sms: ContinueWithSmsBackend.rpc({ ctx: input.ctx }),
+    currentUser: CurrentUserBackend.rpc({ ctx: input.ctx }),
   })
 }

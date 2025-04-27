@@ -12,18 +12,20 @@ import { Posix } from '~/@/time/posix'
 import { IconGamepad, IconUserCircle } from '~/@/ui'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
+import { ClientSessionId } from '~/@/wire/client-session-id'
+import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { setupNewPowerSyncClient } from '~/service-powersync/frontend/database'
 import { ILogger, Logger } from '../@/logger'
 import { AppFrontendCmd } from './@/frontend/cmd'
-import { AnonymousFrontendCtx, AppFrontendCtx, BaseFrontendCtx, isAppFrontendCtx } from './@/frontend/ctx'
+import { AnonymousFrontendCtx, AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { AppFrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
 import { ViewAppRoot } from './@/ui/app-root/app-root'
 import { SplashScreen } from './@/ui/logo/logo-block'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
-import * as AuthFrontend from './auth/frontend'
+import { AuthFrontend } from './auth/frontend'
 import { ViewAppStatusBar } from './frontend/app-status-bar/app-status-bar'
 import * as FrontendFrontend from './frontend/frontend'
 import { ToastFrontend } from './frontend/toast'
@@ -33,10 +35,8 @@ import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtx, ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend, rpcContract as contract } from './types'
 import * as WireFrontend from './wire/frontend'
 import { FrontendTransport } from './wire/transport/frontend'
-import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
-import { ClientSessionId } from '~/@/wire/client-session-id'
 
-export const initCtx = async (): Promise<FrontendCtx> => {
+const initCtx = async (): Promise<FrontendCtx> => {
   const logger = Logger({
     t: 'console',
   })
@@ -73,30 +73,46 @@ export const initCtx = async (): Promise<FrontendCtx> => {
     logger,
   })
 
-  return {
+  const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
+
+  const ctx: AppFrontendCtxBase = {
+    location: Browser.location(),
     clientSessionId,
     dbConnSql,
     logger,
-    rpc,
-    stored: {},
-    transport,
     now: Posix.now(),
-    location: Browser.location(),
-    navigatorLanguage: LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en',
+    navigatorLanguage,
+    currentScreen: { t: 'login', n: 'auth-login' },
+    t: Translator(navigatorLanguage),
+    documentVisibilityState: 'visible',
+    profiles: {},
+    screenSize: 'mobile',
+    parentScreen: null,
+    currentUser: null,
+    currentUserId: null,
+    currentUserRole: null,
+  }
+
+  const auth = await AuthFrontend.initCtx({ ctx: { ...ctx, rpc } })
+
+  return {
+    ...auth,
+    ...ctx,
+    transport,
+    rpc,
   }
 }
 
-export const updateCtx = (ctx: FrontendCtx): FrontendCtx => {
+const updateCtx = (ctx: FrontendCtx): FrontendCtx => {
   ctx.now = Posix.now()
   return ctx
 }
 
-export type Ctx = (AppFrontendCtx | AnonymousFrontendCtx) & FrontendCtx
+type Ctx = (AppFrontendCtx | AnonymousFrontendCtx) & FrontendCtx
 
-const toAppFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx => {
+const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx => {
   const anonymousCtx: AnonymousFrontendCtx = {
     ...input.ctx,
-
     t: Translator(input.model.lang.lang),
     profiles: input.model.profile.profiles,
     now: input.ctx.now,
@@ -114,13 +130,13 @@ const toAppFrontendCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ct
         currentUserId: input.model.auth.currentUser.account.userId,
       }
       return {
-        ...appCtx,
         ...input.ctx,
+        ...appCtx,
       }
     default:
       return {
-        ...anonymousCtx,
         ...input.ctx,
+        ...anonymousCtx,
       }
   }
 }
@@ -139,36 +155,25 @@ const toTransportConfig = (input: {
   }
 }
 
-export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
+const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
   const frontend = FrontendFrontend.init({
-    ctx: {
-      ...input.ctx,
-      currentScreen: { t: 'login', n: 'auth-login' },
-      t: Translator(input.ctx.navigatorLanguage),
-      documentVisibilityState: 'visible',
-      profiles: {},
-      screenSize: 'mobile',
-      parentScreen: null,
-    },
+    ctx: input.ctx,
     location: input.ctx.location,
-    stored: input.ctx.stored,
+    stored: {},
   })
 
   const ctx: AnonymousFrontendCtx = {
     ...input.ctx,
     currentScreen: frontend.model.currentScreen.currentScreen,
-    t: Translator(input.ctx.navigatorLanguage),
     documentVisibilityState: frontend.model.visibility.documentVisibilityState,
-    profiles: {},
     screenSize: frontend.model.screenSize.screenSize,
-    parentScreen: null,
   }
 
-  const lang = LangFrontend.init({ ctx, stored: input.ctx.stored })
-  const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire }, stored: input.ctx.stored })
-  const auth = AuthFrontend.init({ stored: input.ctx.stored, ctx: { ...ctx, rpc: input.ctx.rpc.auth } })
-  const space = SpacesFrontend.init({ ctx, stored: input.ctx.stored })
-  const profile = ProfileFrontend.init({ ctx: { ...ctx, parentScreen: null }, stored: input.ctx.stored })
+  const lang = LangFrontend.init({ ctx })
+  const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire }, stored: {} })
+  const auth = AuthFrontend.init({ ctx: input.ctx })
+  const space = SpacesFrontend.init({ ctx })
+  const profile = ProfileFrontend.init({ ctx })
 
   const initialModel: ModelFrontend = {
     frontend: frontend.model,
@@ -203,7 +208,7 @@ export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?:
   return updated
 }
 
-export const update = (input: {
+const update = (input: {
   ctx: FrontendCtx
   msg: MsgFrontend
   model: ModelFrontend
@@ -212,15 +217,14 @@ export const update = (input: {
   eff?: Eff<MsgFrontend>
 } => {
   const msgBackend = input.msg.t === '→' ? input.msg.c : undefined
-
+  const frontendCtx = toCtx(input)
   const updatedChild = updateChild({
-    ctx: input.ctx,
+    ctx: frontendCtx,
     model: input.model,
     msg: input.msg,
     msgBackend: msgBackend,
   })
-
-  const updated = updateLoop(input.ctx, updatedChild)
+  const updated = updateLoop(frontendCtx, updatedChild)
 
   return updated
 }
@@ -236,11 +240,16 @@ type Output = {
 }
 
 const updateLoop = (ctx: FrontendCtx, acc: Output): Output => {
+  const frontendCtx = toCtx({
+    ctx,
+    model: acc.model,
+  })
   const [msgCmd, ...msgCmdRest] = acc.msgCmd
 
   if (msgCmd) {
-    const updatedCmd = updateChild({ ctx, model: acc.model, msgCmd })
-    return updateLoop(ctx, {
+    const updatedCmd = updateChild({ ctx: frontendCtx, model: acc.model, msgCmd })
+
+    return updateLoop(frontendCtx, {
       model: updatedCmd.model,
       msgCmd: Msg.batch(msgCmdRest, updatedCmd.msgCmd),
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
@@ -251,8 +260,9 @@ const updateLoop = (ctx: FrontendCtx, acc: Output): Output => {
   const [msgEvt, ...msgEvtRest] = acc.msgEvt
 
   if (msgEvt) {
-    const updatedEvt = updateChild({ ctx, model: acc.model, msgEvt })
-    return updateLoop(ctx, {
+    const updatedEvt = updateChild({ ctx: frontendCtx, model: acc.model, msgEvt })
+
+    return updateLoop(frontendCtx, {
       model: updatedEvt.model,
       msgCmd: Msg.batch(msgCmdRest, updatedEvt.msgCmd),
       eff: Eff.batch([acc.eff, updatedEvt.eff]),
@@ -274,7 +284,7 @@ const updateChild = (input: {
     MsgFrontend: MsgFrontend
   }>
 }): Output => {
-  const frontendCtx = toAppFrontendCtx(input)
+  const frontendCtx = toCtx(input)
 
   const space = SpacesFrontend.update({
     ctx: frontendCtx,
@@ -295,7 +305,7 @@ const updateChild = (input: {
   })
 
   const auth = AuthFrontend.update({
-    ctx: { ...frontendCtx, rpc: input.ctx.rpc.auth },
+    ctx: frontendCtx,
     model: input.model.auth,
     msg: input.msg?.t === 'auth' ? input.msg.c : null,
     msgBackend: input.msgBackend?.t === 'auth' ? input.msgBackend.c : null,
@@ -365,21 +375,21 @@ const updateChild = (input: {
   }
 }
 
-export const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend }): Sub<MsgFrontend> => {
-  const ctx = toAppFrontendCtx(input)
+const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend }): Sub<MsgFrontend> => {
+  const ctx = toCtx(input)
 
   return Sub.batch<MsgFrontend>([
     Sub.tag('→', Sub.flat(input.ctx.transport.fromBackend)),
     Sub.tag('frontend', FrontendFrontend.subscriptions({ ctx, model: input.model.frontend })),
     Sub.tag('wire', WireFrontend.subscriptions({ transport: input.ctx.transport })),
     Sub.tag('lang', LangFrontend.subscriptions({ ctx, model: input.model.lang })),
-    Sub.tag('auth', AuthFrontend.subscriptions({ ctx: { ...ctx, rpc: input.ctx.rpc.auth }, model: input.model.auth })),
+    Sub.tag('auth', AuthFrontend.subscriptions({ ctx, model: input.model.auth })),
     Sub.tag('spaces', SpacesFrontend.subscriptions({ ctx, model: input.model.spaces })),
   ])
 }
 
-export const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
-  const frontendCtx = toAppFrontendCtx(input)
+const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
+  const frontendCtx = toCtx(input)
 
   return (
     <ViewAppRoot>
@@ -437,7 +447,7 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
       return (
         <AuthFrontend.View
           model={input.model.auth}
-          ctx={{ ...input.ctx, rpc: input.ctx.rpc.auth }}
+          ctx={input.ctx}
           dispatch={(c) => input.dispatch({ t: 'auth', c })}
         />
       )
@@ -495,7 +505,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
 }
 
 const toScreenLayoutProps = (input: {
-  ctx: AppFrontendCtx | BaseFrontendCtx
+  ctx: AppFrontendCtx | AppFrontendCtxBase
   model: ModelFrontend
   dispatch: (m: MsgFrontend) => void
 }): ParentScreenProps | null => {
@@ -547,4 +557,13 @@ const toScreenLayoutProps = (input: {
       },
     },
   }
+}
+
+export const AppFrontend = {
+  initCtx,
+  updateCtx,
+  init,
+  update,
+  subscriptions,
+  View,
 }

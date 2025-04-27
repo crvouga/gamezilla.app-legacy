@@ -4,7 +4,7 @@ import { Err, Ok, type Result } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND, SoundCmd, playSound } from '~/app/@/frontend/cmd'
-import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { IconVolumeHigh, IconVolumeXMark, ListItemButton, ToggleButton } from '~/@/ui'
 
@@ -17,7 +17,7 @@ import { IconVolumeHigh, IconVolumeXMark, ListItemButton, ToggleButton } from '~
 //
 
 type Module = AppFrontendModule<{
-  Ctx: BaseFrontendCtx
+  Ctx: AppFrontendCtxBase
   MsgCmdIn: SoundCmd
   MsgEvtIn: AppFrontendEvt
   Model: Model

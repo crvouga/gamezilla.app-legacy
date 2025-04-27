@@ -1,7 +1,7 @@
 import { Avatar, cn, Typography } from '~/@/ui'
 import { DynamicElement } from '~/@/ui/dynamic-element'
 import { Profile } from '~/app/@/data/profile'
-import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
 import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
 import { ViewHostChip } from '../../@/ui/host-chip'
@@ -11,7 +11,7 @@ import { SPACE_CARD_GRADIENT_CLASS_NAME } from './space-card-gradient'
 
 const MAX_AVATAR_COUNT = 3
 
-export const ViewSpaceCard = (input: { ctx: BaseFrontendCtx; state: SpaceState.Started; onClick?: () => void }) => {
+export const ViewSpaceCard = (input: { ctx: AppFrontendCtxBase; state: SpaceState.Started; onClick?: () => void }) => {
   const host = input.ctx.profiles[input.state.hostId]
   const users = Object.values(input.state.users).flatMap((userId): Profile[] => {
     const profile = input.ctx.profiles[userId]
@@ -50,7 +50,7 @@ const ViewRoot = (input: { onClick?: () => void; children: React.ReactNode }) =>
   )
 }
 
-const ViewLiveIndicator = (input: { ctx: BaseFrontendCtx }) => {
+const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {
   return (
     <div className='flex items-center justify-start gap-2'>
       <Typography
@@ -62,7 +62,7 @@ const ViewLiveIndicator = (input: { ctx: BaseFrontendCtx }) => {
   )
 }
 
-const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: BaseFrontendCtx }) => {
+const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendCtxBase }) => {
   if (!input.gameName) return null
 
   return (
@@ -75,7 +75,7 @@ const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: BaseFrontend
   )
 }
 
-const ViewSpaceCardHost = (input: { host?: Profile | null; ctx: BaseFrontendCtx }) => {
+const ViewSpaceCardHost = (input: { host?: Profile | null; ctx: AppFrontendCtxBase }) => {
   return (
     <div className='flex max-w-full items-center justify-start gap-2 overflow-x-hidden'>
       <Avatar src={input.host?.avatarUrl} alt='avatar' className='size-12' />
@@ -95,7 +95,7 @@ const ViewSpaceCardHost = (input: { host?: Profile | null; ctx: BaseFrontendCtx 
   )
 }
 
-const ViewSpaceCardUsers = (input: { users: Profile[]; ctx: BaseFrontendCtx }) => {
+const ViewSpaceCardUsers = (input: { users: Profile[]; ctx: AppFrontendCtxBase }) => {
   if (input.users.length <= 1) return null
 
   return (

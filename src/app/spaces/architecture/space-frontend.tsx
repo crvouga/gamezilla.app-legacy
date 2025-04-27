@@ -3,14 +3,14 @@ import { WithEventId } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
-import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import type { SpaceFrontendCmd } from '../@/frontend/cmd'
 import { SpaceFrontendEvt } from '../@/frontend/evt'
 import type { Space } from '../@/space/space'
 import { MsgSpace } from '../core/space-msg/space-msg'
 import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from '../types'
 
-export type SpaceFrontendCtx = BaseFrontendCtx & {
+export type SpaceFrontendCtx = AppFrontendCtxBase & {
   space?: Space
 }
 

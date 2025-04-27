@@ -1,3 +1,4 @@
+import { Browser } from '~/@/browser'
 import { IDbConnSql } from '~/@/db-conn-sql'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
@@ -18,7 +19,7 @@ type Profile = {
   avatarUrl: string
 }
 
-export type BaseFrontendCtx = {
+export type AppFrontendCtxBase = {
   parentScreen: ParentScreenProps | null
   screenSize: ScreenSize
   dbConnSql: IDbConnSql
@@ -33,20 +34,21 @@ export type BaseFrontendCtx = {
   currentUser?: UserAccount | null
   currentUserId?: UserId | null
   currentUserRole?: UserRole | null
+  location: Browser.Location
 }
 
-export type AnonymousFrontendCtx = BaseFrontendCtx
+export type AnonymousFrontendCtx = AppFrontendCtxBase
 
-export const isAnonymous = (ctx: BaseFrontendCtx): ctx is AnonymousFrontendCtx => {
+export const isAnonymous = (ctx: AppFrontendCtxBase): ctx is AnonymousFrontendCtx => {
   return ctx.currentUser === null
 }
 
-export type AppFrontendCtx = BaseFrontendCtx & {
+export type AppFrontendCtx = AppFrontendCtxBase & {
   currentUser: UserAccount
   currentUserId: UserId
   currentUserRole: UserRole
 }
 
-export const isAppFrontendCtx = (ctx: BaseFrontendCtx): ctx is AppFrontendCtx => {
+export const isAppFrontendCtx = (ctx: AppFrontendCtxBase): ctx is AppFrontendCtx => {
   return ctx.currentUser !== null
 }

@@ -1,16 +1,19 @@
 import { Eff } from '~/@/eff'
 import { Loading, NotAsked } from '~/@/result'
+import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Button, IconEnvelope, IconMobilePhone, Typography } from '~/@/ui'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND, AppFrontendCmd, playSound, pushScreen, replaceScreen, showToast } from '~/app/@/frontend/cmd'
-import { BaseFrontendCtx } from '../@/frontend/ctx'
+import { AppFrontendCtxBase } from '../@/frontend/ctx'
+import { AuthFrontendCtx } from './@/frontend/ctx'
 import { AuthScreenHeaderCta } from './@/frontend/ui/auth-screen-header-cta'
 import { AuthScreenLayout } from './@/frontend/ui/auth-screen-layout'
 import { ContinueAsGuestFrontend } from './continue-as-guest/frontend'
 import { ContinueWithSmsFrontend } from './continue-with-sms/frontend'
+import { CurrentUserFrontend } from './current-user/frontend'
 import { LogoutFrontend } from './logout/frontend'
-import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
+import type { FrontendCtx, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
 
 //
 //
@@ -20,9 +23,20 @@ import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 //
 //
 
-export const init: FrontendModule['init'] = () => {
+const initCtx = async (input: {
+  ctx: AppFrontendCtxBase & { rpc: { auth: RPC.Client<typeof rpcContract> } }
+}): Promise<FrontendCtx> => {
+  const authCtx = await AuthFrontendCtx.init({ ctx: input.ctx })
+  return {
+    ...input.ctx,
+    ...authCtx,
+  }
+}
+
+const init: FrontendModule['init'] = () => {
   return {
     model: {
+      ...CurrentUserFrontend.init,
       ...ContinueAsGuestFrontend.init,
       currentUser: Loading,
       loginWithGoogle: NotAsked,
@@ -41,7 +55,7 @@ export const init: FrontendModule['init'] = () => {
 //
 //
 
-export const update: FrontendModule['update'] = (input) => {
+const update: FrontendModule['update'] = (input) => {
   if (!input.msg && !input.msgBackend && !input.msgEvt && !input.msgCmd) {
     return { model: input.model }
   }
@@ -59,7 +73,7 @@ export const update: FrontendModule['update'] = (input) => {
 
 const updateChild: FrontendModule['update'] = (input) => {
   const updated = ContinueWithSmsFrontend.update({
-    ctx: { ...input.ctx, rpc: input.ctx.rpc.sms },
+    ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.sms },
     model: input.model.sms,
     msgCmd: null,
     msgEvt: input.msgEvt,
@@ -217,8 +231,10 @@ const updateRedirect: FrontendModule['update'] = (input) => {
 //
 //
 
-export const subscriptions: FrontendModule['subscriptions'] = () => {
-  return Sub.None
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  return Sub.batch<MsgFrontend>([
+    CurrentUserFrontend.subscriptions({ ...input, ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.currentUser } }),
+  ])
 }
 
 //
@@ -229,7 +245,7 @@ export const subscriptions: FrontendModule['subscriptions'] = () => {
 //
 //
 
-export const View: FrontendModule['View'] = (input) => {
+const View: FrontendModule['View'] = (input) => {
   switch (input.ctx.currentScreen.n) {
     case 'auth-login': {
       switch (input.ctx.currentScreen.t) {
@@ -240,7 +256,7 @@ export const View: FrontendModule['View'] = (input) => {
         case 'login-sms-verify': {
           return (
             <ContinueWithSmsFrontend.View
-              ctx={{ ...input.ctx, rpc: input.ctx.rpc.sms }}
+              ctx={{ ...input.ctx, rpc: input.ctx.rpc.auth.sms }}
               dispatch={(c) => input.dispatch({ t: 'sms', c })}
               model={input.model.sms}
             />
@@ -296,10 +312,15 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
   )
 }
 
-export const ViewModals = (input: {
-  ctx: BaseFrontendCtx
-  model: ModelFrontend
-  dispatch: (msg: MsgFrontend) => void
-}) => {
+const ViewModals = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   return <LogoutFrontend.View {...input} />
+}
+
+export const AuthFrontend = {
+  init,
+  update,
+  subscriptions,
+  View,
+  ViewModals,
+  initCtx,
 }

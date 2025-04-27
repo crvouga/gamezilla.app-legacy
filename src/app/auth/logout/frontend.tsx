@@ -1,6 +1,6 @@
 import { NotAsked, Ok } from '~/@/result'
 import { APP_SOUND, playSound, sendToBackend, showToast } from '~/app/@/frontend/cmd'
-import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from '../types'
 
@@ -96,7 +96,7 @@ const View = ({
   dispatch,
   ctx,
 }: {
-  ctx: BaseFrontendCtx
+  ctx: AppFrontendCtxBase
   model: ModelFrontend
   dispatch: (msg: MsgFrontend) => void
 }) => {

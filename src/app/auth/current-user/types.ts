@@ -1,14 +1,16 @@
 import { p } from '~/@/parser'
 import { RemoteResult } from '~/@/result'
-import { FrontendCtx } from '../@/frontend/ctx'
+import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { RPC } from '~/@/rpc'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserAccount } from '~/app/@/data/account'
 import { UserId } from '~/app/@/data/user-id'
+import { UserSession } from '../@/user-session/user-session'
 
 export type ModelFrontend = {
-  currentUser: RemoteResult<string, UserAccount>
-  currentUserId: UserId | null
+  currentUser_currentUser: RemoteResult<string, UserAccount>
+  currentUser_currentUserId: UserId | null
+  currentUser_userSessions: UserSession[]
 }
 
 export type MsgFrontend =
@@ -19,6 +21,10 @@ export type MsgFrontend =
   | {
       t: 'got-current-user-account'
       currentUserAccount: UserAccount | null
+    }
+  | {
+      t: 'got-user-sessions'
+      userSessions: UserSession[]
     }
 
 export const rpcContract = RPC.initContract({
@@ -31,8 +37,8 @@ export const rpcContract = RPC.initContract({
 })
 
 export type FrontendModule = AppFrontendModule<{
-  Ctx: FrontendCtx & {
-    rpcClient: RPC.Client<typeof rpcContract>
+  Ctx: AuthFrontendCtx & {
+    rpc: RPC.Client<typeof rpcContract>
   }
   Model: ModelFrontend
   Msg: MsgFrontend
