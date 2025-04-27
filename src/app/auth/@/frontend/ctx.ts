@@ -1,7 +1,7 @@
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
 import { GuestSessionMappingDb } from '../guest-session-mapping/guest-session-mapping-db'
 import { IGuestSessionMappingDb } from '../guest-session-mapping/guest-session-mapping-db/interface'
-import { IUserAccountDb, UserAccountDb } from '../user-account-db'
+import { IUserAccountDb, UserAccountDb } from '../user-account/user-account-db'
 import { IUserSessionDb, UserSessionDb } from '../user-session/user-session-db'
 
 export type FrontendCtx = BaseFrontendCtx & {

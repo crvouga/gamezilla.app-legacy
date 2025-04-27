@@ -72,10 +72,53 @@ const game_flow_solutions = new Table(
 )
 export type GameFlowSolutions = AppSchema['game_flow_solutions']
 
+const user_account = new Table(
+  {
+    id: column.text,
+    created_at_posix: column.integer,
+    user_role: column.text,
+    phone_number: column.text,
+  },
+  {},
+)
+export type UserAccount = AppSchema['user_account']
+
+const user_session = new Table(
+  {
+    id: column.text,
+    user_id: column.text,
+    session_id: column.text,
+    created_at_posix: column.integer,
+    ended_at_posix: column.integer,
+    client_session_id: column.text,
+  },
+  {},
+)
+export type UserSession = AppSchema['user_session']
+
+const user_guest_session_mapping = new Table(
+  {
+    id: column.text,
+    guest_user_id: column.text,
+    session_id: column.text,
+    created_at_posix: column.integer,
+  },
+  {
+    indexes: {
+      idx_user_guest_session_mapping_session_id: ['session_id'],
+      idx_user_guest_session_mapping_user_id: ['guest_user_id'],
+    },
+  },
+)
+export type UserGuestSessionMapping = AppSchema['user_guest_session_mapping']
+
 export const AppSchema = new Schema({
   game_flow_puzzle,
   game_flow_pack,
   game_flow_pack_item,
   game_flow_solutions,
+  user_account,
+  user_session,
+  user_guest_session_mapping,
 })
 export type AppSchema = (typeof AppSchema)['types']

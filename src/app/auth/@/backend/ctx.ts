@@ -1,6 +1,6 @@
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { GuestSessionMappingDb, IGuestSessionMappingDb } from '../guest-session-mapping/guest-session-mapping-db'
-import { IUserAccountDb, UserAccountDb } from '../user-account-db'
+import { IUserAccountDb, UserAccountDb } from '../user-account/user-account-db'
 import { IUserSessionDb, UserSessionDb } from '../user-session/user-session-db'
 import { IVerifySMS } from './verify-sms'
 import { VerifySMSFactory } from './verify-sms/impl/factory'
