@@ -1,4 +1,4 @@
-import { IUserSessionDb } from '~/app/auth/@/backend/user-session-db'
+import { IUserSessionDb } from '~/app/auth/@/user-session-db'
 
 export type Ctx = {
   userSessionDb: IUserSessionDb

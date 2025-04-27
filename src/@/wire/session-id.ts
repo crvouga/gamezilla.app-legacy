@@ -13,14 +13,14 @@ const is = (id: unknown): id is SessionId => {
 
 const parser = p.custom(is, 'Invalid session id')
 
-type Problem = 'invalid_session_id'
+type Problem = 'invalid-session-id'
 
 export const decode = (id: string): Result<Problem, SessionId> => {
   if (is(id)) {
     return Result.Ok(id)
   }
 
-  return Result.Err('invalid_session_id')
+  return Result.Err('invalid-session-id')
 }
 
 const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'

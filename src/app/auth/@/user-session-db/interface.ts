@@ -1,5 +1,5 @@
 import type { Result } from '~/@/result'
-import type { SessionId } from '~/app/@/data/session-id'
+import type { SessionId } from '~/@/wire/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 
 export type IUserSessionDb = {

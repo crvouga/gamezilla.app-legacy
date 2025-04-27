@@ -1,6 +1,6 @@
 import { Ok } from '~/@/result'
 import { IGuestSessionMappingDb } from './interface'
-import { SessionId } from '~/app/@/data/session-id'
+import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 
 export type Config = {

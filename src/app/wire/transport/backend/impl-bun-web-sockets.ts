@@ -3,9 +3,9 @@ import { IDbConnSql } from '~/@/db-conn-sql'
 import { ILogger, Logger } from '~/@/logger'
 import { IPubSubTopicBased } from '~/@/pub-sub-topic-based'
 import type { HttpServerBun } from '~/@/http-server/impl-bun'
-import { ClientId } from '~/app/@/data/client-id'
-import { SessionId } from '~/app/@/data/session-id'
-import { SessionIdCookie } from '../session-id-cookie'
+import { ClientId } from '~/@/wire/client-id'
+import { SessionId } from '~/@/wire/session-id'
+import { SessionIdCookie } from '../../../../@/wire/session-id-cookie'
 import { WEB_SOCKET_ENDPOINT } from '../shared'
 import { type MsgFrontendToMsgBackend, type MsgBackendToMsgFrontend } from '../types'
 import { initBackendTransport, type IBackendTransport } from './interface'
@@ -48,13 +48,13 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
 
   const clients = new Map<ClientId, ServerWebSocket<BackendWebSocketData>>()
   const unlistens = new Map<ClientId, () => void>()
-  const frontendsBySessionId = new Map<SessionId, Set<ClientId>>()
+  const clientsBySessionId = new Map<SessionId, Set<ClientId>>()
 
   const addFrontend = async (ws: ServerWebSocket<BackendWebSocketData>) => {
     clients.set(ws.data.clientId, ws)
-    const clientIds = frontendsBySessionId.get(ws.data.sessionId) ?? new Set<ClientId>()
+    const clientIds = clientsBySessionId.get(ws.data.sessionId) ?? new Set<ClientId>()
     clientIds.add(ws.data.clientId)
-    frontendsBySessionId.set(ws.data.sessionId, clientIds)
+    clientsBySessionId.set(ws.data.sessionId, clientIds)
     unlistens.set(
       ws.data.clientId,
       await config.pubSubTopicBased.sub(ws.data.clientId, (msg) => {
@@ -66,7 +66,7 @@ export const BackendTransport = async <MsgToBackend, MsgToFrontend>(
 
   const removeFrontend = async (ws: ServerWebSocket<BackendWebSocketData>) => {
     clients.delete(ws.data.clientId)
-    frontendsBySessionId.get(ws.data.sessionId)?.delete(ws.data.clientId)
+    clientsBySessionId.get(ws.data.sessionId)?.delete(ws.data.clientId)
     unlistens.get(ws.data.clientId)?.()
   }
 

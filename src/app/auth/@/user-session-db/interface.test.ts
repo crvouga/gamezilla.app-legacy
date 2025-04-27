@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { unwrap } from '~/@/result'
-import { SessionId } from '~/app/@/data/session-id'
+import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Logger } from '~/@/logger'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'

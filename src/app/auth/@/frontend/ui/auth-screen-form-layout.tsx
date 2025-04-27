@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { AlertError, Button } from '~/@/ui'
+import { Button } from '~/@/ui'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { AuthScreenHeader } from './auth-screen-header'
@@ -17,7 +17,6 @@ export const AuthScreenFormLayout = (input: {
   submitText: TranslatedText
   submitLoading: boolean
   submitDisabled: boolean
-  error: TranslatedText | null
   onSubmit: () => void
 }) => {
   return (
@@ -51,8 +50,6 @@ export const AuthScreenFormLayout = (input: {
           loading={input.submitLoading}
           disabled={input.submitDisabled}
         />
-
-        {input.error && <AlertError text={input.error} />}
       </form>
     </AuthScreenLayout>
   )

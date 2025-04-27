@@ -1,6 +1,6 @@
-import { SessionId } from '~/app/@/data/session-id'
+import { SessionId } from '~/@/wire/session-id'
 
-const SESSION_ID_COOKIE_NAME = 'gamezilla-app-session-id'
+const SESSION_ID_COOKIE_NAME = 'session-id'
 const MAX_AGE = 31536000
 
 const fromCookies = (input: { cookies: string }): SessionId | null => {

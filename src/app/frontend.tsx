@@ -30,7 +30,7 @@ import { ToastFrontend } from './frontend/toast'
 import * as LangFrontend from './lang/frontend'
 import * as ProfileFrontend from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
-import { FrontendCtx, ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend, rpcContract } from './types'
+import { FrontendCtx, ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend, rpcContract as contract } from './types'
 import * as WireFrontend from './wire/frontend'
 import { FrontendTransport } from './wire/transport/frontend'
 
@@ -53,10 +53,13 @@ export const initCtx = async (): Promise<FrontendCtx> => {
 
   const httpClient = HttpClient({
     t: 'fetch',
-    fetch: fetch as Fetch,
   })
 
-  const rpc = RPC.initClient(httpClient, rpcContract)
+  const rpc = RPC.initClient({
+    httpClient,
+    contract,
+    backendUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
+  })
 
   const dbConnSql = await DbConnSql({
     t: 'powersync-client',

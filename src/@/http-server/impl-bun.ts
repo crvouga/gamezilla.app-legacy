@@ -14,7 +14,7 @@ export const HttpServerBun = <T>(config: Config) => {
   const logger = Logger.prefix('bun', config.logger)
   const handlers: Respond[] = []
   let webSocketHandler: WebSocketHandler<T>
-  let backend: Server
+  let httpServer: Server
 
   const events: PubSub<HttpServerEvent> = PubSub.create()
 
@@ -22,14 +22,15 @@ export const HttpServerBun = <T>(config: Config) => {
 
   const base: IHttpServer = {
     events,
+
     async start(port) {
-      backend = Bun.serve({
+      httpServer = Bun.serve({
         port: port,
         static: staticResponses,
         async fetch(req) {
           try {
             for (const handler of handlers) {
-              const response = await handler(req, backend)
+              const response = await handler(req, httpServer)
               if (response) {
                 return response
               }
@@ -57,6 +58,9 @@ export const HttpServerBun = <T>(config: Config) => {
         startedAt: Posix.now(),
       })
     },
+    async stop() {
+      await httpServer.stop()
+    },
     registerRespond(handler) {
       handlers.push(handler)
     },
@@ -71,7 +75,7 @@ export const HttpServerBun = <T>(config: Config) => {
       webSocketHandler = handler
     },
     _publish(topic: string, data: string) {
-      backend.publish(topic, data)
+      httpServer.publish(topic, data)
     },
     t: 'bun',
   } as const

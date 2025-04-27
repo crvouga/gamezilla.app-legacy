@@ -1,6 +1,6 @@
 import { Ok, isErr } from '~/@/result'
 import { IGuestSessionMappingDb } from './interface'
-import { SessionId } from '~/app/@/data/session-id'
+import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { p } from '~/@/parser'
 import { IDbConnSql } from '~/@/db-conn-sql'

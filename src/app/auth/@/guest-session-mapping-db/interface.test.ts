@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { GuestSessionMappingDb } from './impl'
-import { SessionId } from '~/app/@/data/session-id'
+import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'

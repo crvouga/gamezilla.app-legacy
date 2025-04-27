@@ -1,7 +1,8 @@
 import { pipe } from '~/@/function/pipe'
+import { allowCORS } from '~/@/http-server/cors'
 import * as SignJWT from '~/@/json-crypto/sign-jwt'
 import { isErr } from '~/@/result/result'
-import { SessionIdCookie } from '~/app/wire/transport/session-id-cookie'
+import { SessionIdCookie } from '~/@/wire/session-id-cookie'
 import { Ctx } from '../ctx'
 import { getKeys } from '../keys/keys'
 
@@ -67,30 +68,6 @@ const respondMain = async (input: { request: Request; ctx: Ctx }) => {
 const respond = async (input: { request: Request; ctx: Ctx }) => {
   const response = await respondMain(input)
   return allowCORS({ request: input.request, response })
-}
-
-const allowCORS = (input: { request: Request; response: Response }) => {
-  const origin = input.request.headers.get('Origin')
-
-  if (!origin) {
-    return input.response
-  }
-
-  input.response.headers.set('Access-Control-Allow-Origin', origin)
-  input.response.headers.set('Access-Control-Allow-Credentials', 'true')
-  input.response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-  input.response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-
-  if (input.request.method !== 'OPTIONS') {
-    return input.response
-  }
-
-  input.response.headers.set('Access-Control-Max-Age', '3600')
-  return new Response(input.response.body, {
-    status: 204,
-    headers: input.response.headers,
-    statusText: 'No Content',
-  })
 }
 
 export const PowerSyncCredentials = {

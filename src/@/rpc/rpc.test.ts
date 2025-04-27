@@ -3,6 +3,8 @@ import { HttpServer } from '~/@/http-server'
 import { Logger } from '~/@/logger'
 import { p } from '~/@/parser'
 import * as RPC from './rpc'
+import { describe, expect, test } from 'bun:test'
+import { isErr, Ok } from '../result'
 
 const childRpcContract = RPC.initContract({
   baz: {
@@ -64,19 +66,70 @@ const server = RPC.initServer(contract, {
 //
 //
 
-const httpServer = HttpServer({ t: 'bun', logger: Logger({ t: 'noop' }) })
-const httpClient = HttpClient({ t: 'fetch', fetch: fetch as Fetch })
+const Fixture = async () => {
+  const port = 1234
+  const httpServer = HttpServer({
+    t: 'bun',
+    logger: Logger({ t: 'noop' }),
+  })
+  const httpClient = HttpClient({
+    t: 'fetch',
+  })
+  const serverUrl = `http://localhost:${port}`
+  RPC.registerRespond({
+    httpServer,
+    contract,
+    implementation: server,
+  })
 
-RPC.registerRespond({
-  httpServer,
-  contract,
-  implementation: server,
-})
+  const client = RPC.initClient({
+    httpClient,
+    contract,
+    backendUrl: serverUrl,
+  })
 
-const client = RPC.initClient(httpClient, contract)
+  await httpServer.start(port)
 
-export const example = async () => {
-  await client.foo({ name: 'Alice', age: 30 })
-  await client.bar({ name: 'Bob' })
-  await client.child.baz({ name: 'Charlie' })
+  return {
+    httpServer,
+    httpClient,
+    serverUrl,
+    client,
+    [Symbol.dispose]: async () => {
+      await httpServer.stop()
+    },
+  }
 }
+
+describe('RPC', () => {
+  test('should work', async () => {
+    using f = await Fixture()
+    const result = await f.client.foo({ name: 'Alice', age: 30 })
+    expect(result).toEqual(Ok({ message: 'Hello, Alice' }))
+  })
+
+  test('should work nested', async () => {
+    using f = await Fixture()
+    const result = await f.client.child.baz({ name: 'Charlie' })
+    expect(result).toEqual(Ok({ message: 'Yo, Charlie' }))
+  })
+
+  test('should handle validation errors', async () => {
+    using f = await Fixture()
+    const result = await f.client.foo({ name: 'Alice', age: 'invalid' as any })
+    expect(isErr(result)).toBe(true)
+  })
+
+  test('should handle nested validation errors', async () => {
+    using f = await Fixture()
+    const result = await f.client.child.baz({ name: 123 as any })
+    expect(isErr(result)).toBe(true)
+  })
+
+  test('should handle non-existent endpoints', async () => {
+    using f = await Fixture()
+    // @ts-expect-error Testing runtime behavior with invalid endpoint
+    const result = await f.client.nonExistent?.({ data: 'test' })
+    expect(result).toBeUndefined()
+  })
+})

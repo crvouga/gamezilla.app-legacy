@@ -63,7 +63,12 @@ export const TextField = (input: {
             type='button'
             onClick={(e) => {
               e.preventDefault()
-              document.getElementById(input.id)?.focus()
+              const self = document.getElementById(input.id)
+              if (self instanceof HTMLInputElement) {
+                self.focus()
+                self.value = ''
+              }
+
               input.onClear?.()
             }}
           >

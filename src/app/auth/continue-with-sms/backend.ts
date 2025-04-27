@@ -1,19 +1,29 @@
 import { PhoneNumber } from '~/@/phone-number'
-import { Err, Ok, Result, isErr } from '~/@/result'
+import { Err, isErr, Ok } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import type { UserAccount } from '~/app/@/data/account'
+import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Translator } from '~/app/@/frontend/translator'
-import { UserAccountDb } from '../@/backend/user-account-db/impl'
-import { BackendCtx, rpcContract } from './types'
 import { SendCodeInput, SendCodeOutput, VerifyCodeInput } from '../@/backend/verify-sms'
 import { VerifySMSFactory } from '../@/backend/verify-sms/impl/factory'
 import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
 import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
+import { UserAccountDb } from '../@/user-account-db/impl'
+import { UserSessionDb } from '../@/user-session-db/impl-postgres'
+import { BackendCtx, rpcContract, VerifyCodeOutput } from './types'
 
 const initCtx = (input: { ctx: AppBackendCtx }): BackendCtx => {
-  const accountDb = UserAccountDb({ t: 'postgres', dbConnSql: input.ctx.dbConnSql })
+  const userAccountDb = UserAccountDb({
+    t: 'postgres',
+    dbConnSql: input.ctx.dbConnSql,
+  })
+  const userSessionDb = UserSessionDb({
+    t: 'postgres',
+    dbConnSql: input.ctx.dbConnSql,
+    logger: input.ctx.logger,
+  })
   const verifySMS = VerifySMSFactory.createForEnvironment({
     logger: input.ctx.logger,
     env: input.ctx.env,
@@ -22,9 +32,33 @@ const initCtx = (input: { ctx: AppBackendCtx }): BackendCtx => {
 
   return {
     ...input.ctx,
-    accountDb: accountDb,
-    verifySMS: verifySMS,
+    userAccountDb,
+    userSessionDb,
+    verifySMS,
   }
+}
+
+const rpc = (config: { ctx: BackendCtx }) => {
+  return RPC.initServer(rpcContract, {
+    async sendCode(input) {
+      const sent = await handleSendCode({
+        phoneNumber: input.phoneNumber,
+        preferredLanguage: input.preferredLanguage,
+        ctx: config.ctx,
+      })
+      return sent
+    },
+    async verifyCode(input, reqCtx) {
+      const verified = await handleVerifyCode({
+        sessionId: reqCtx.sessionId,
+        phoneNumber: input.phoneNumber,
+        code: input.code,
+        ctx: config.ctx,
+      })
+
+      return verified
+    },
+  })
 }
 
 const handleSendCode = async (
@@ -54,9 +88,10 @@ const handleSendCode = async (
 
 const handleVerifyCode = async (
   input: VerifyCodeInput & {
+    sessionId: SessionId
     ctx: BackendCtx
   },
-): Promise<Result<VerifyCodeProblem, UserAccount>> => {
+): Promise<VerifyCodeOutput> => {
   input.ctx.logger.info(`Verifying code for phone number ${PhoneNumber.toString(input.phoneNumber)}`)
 
   const verified = await input.ctx.verifySMS.verifyCode({
@@ -77,7 +112,7 @@ const handleVerifyCode = async (
   input.ctx.logger.info(`Code verification successful for ${PhoneNumber.toString(input.phoneNumber)}`)
 
   input.ctx.logger.info(`Looking up user account for ${PhoneNumber.toString(input.phoneNumber)}`)
-  const found = await input.ctx.accountDb.findOneByPhoneNumber({
+  const found = await input.ctx.userAccountDb.findOneByPhoneNumber({
     phoneNumber: input.phoneNumber,
   })
 
@@ -89,14 +124,10 @@ const handleVerifyCode = async (
     })
   }
 
-  const accountFound = found.value
-
-  if (accountFound) {
-    input.ctx.logger.info(`Found existing account for ${PhoneNumber.toString(input.phoneNumber)}`)
-    return Ok(accountFound)
+  if (!found.value) {
+    input.ctx.logger.info(`No existing account found for ${PhoneNumber.toString(input.phoneNumber)}`)
   }
 
-  input.ctx.logger.info(`Creating new account for ${PhoneNumber.toString(input.phoneNumber)}`)
   const accountNew: UserAccount = {
     createdAt: input.ctx.now,
     phoneNumber: input.phoneNumber,
@@ -104,41 +135,28 @@ const handleVerifyCode = async (
     userId: UserId.generate(),
   }
 
-  const inserted = await input.ctx.accountDb.insert({
-    account: accountNew,
-  })
+  const account: UserAccount = found.value ?? accountNew
+
+  const inserted = found.value ? Ok(null) : await input.ctx.userAccountDb.insert({ account })
 
   if (isErr(inserted)) {
     input.ctx.logger.error(`Failed to insert new account: ${inserted.error}`)
-    return Err({
-      t: 'database-error',
-      error: inserted.error,
-    })
+    return Err({ t: 'database-error', error: inserted.error })
   }
 
   input.ctx.logger.info(`Successfully created new account for ${PhoneNumber.toString(input.phoneNumber)}`)
-  return Ok(accountNew)
-}
 
-const rpc = (config: { ctx: BackendCtx }) => {
-  return RPC.initServer(rpcContract, {
-    sendCode: async (input) => {
-      const sent = await handleSendCode({
-        phoneNumber: input.phoneNumber,
-        preferredLanguage: input.preferredLanguage,
-        ctx: config.ctx,
-      })
-      return sent
-    },
-    verifyCode: async (input) => {
-      const verified = await handleVerifyCode({
-        phoneNumber: input.phoneNumber,
-        code: input.code,
-        ctx: config.ctx,
-      })
-      return verified
-    },
+  const insertedSession = await input.ctx.userSessionDb.insert({
+    sessionId: input.sessionId,
+    userId: account.userId,
   })
+
+  if (isErr(insertedSession)) {
+    input.ctx.logger.error(`Failed to insert new session: ${insertedSession.error}`)
+    return Err({ t: 'database-error', error: insertedSession.error })
+  }
+
+  return Ok(account)
 }
 
 export const ContinueWithSmsBackend = {

@@ -1,6 +1,6 @@
 import { Result } from '~/@/result'
 import { p } from '~/@/parser'
-import { SessionId } from '~/app/@/data/session-id'
+import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { IUserSessionDb } from './interface'
@@ -14,8 +14,8 @@ import { Uuid } from '~/@/uuid/uuid'
 //
 
 export const Row = p.obj({
-  session_id: p.custom(SessionId.is, 'Invalid session id'),
-  user_id: p.custom(UserId.is, 'Invalid user id'),
+  session_id: SessionId,
+  user_id: UserId,
 })
 
 export type Row = p.Infer<typeof Row>

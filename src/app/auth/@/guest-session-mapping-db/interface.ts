@@ -1,5 +1,5 @@
 import { Task } from '~/@/promise/task'
-import { SessionId } from '~/app/@/data/session-id'
+import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 
 export type IGuestSessionMappingDb = {

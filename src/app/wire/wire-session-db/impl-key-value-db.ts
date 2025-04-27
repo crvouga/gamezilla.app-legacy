@@ -2,7 +2,7 @@ import { KeyValueDb, IKeyValueDb } from '~/@/key-value-db'
 import { ILogger } from '~/@/logger'
 import { p } from '~/@/parser'
 import { isErr, unwrapOr } from '~/@/result'
-import { SessionId } from '~/app/@/data/session-id'
+import { SessionId } from '~/@/wire/session-id'
 import { WireSession } from '../wire-session'
 import type { IWireSessionDb } from './interface'
 

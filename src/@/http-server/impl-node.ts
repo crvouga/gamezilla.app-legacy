@@ -68,6 +68,9 @@ export const HttpServerNode = (
     registerRespond,
     registerStatic,
     t: 'node',
+    async stop() {
+      await new Promise((resolve) => httpServer.close(resolve))
+    },
   }
 }
 

@@ -4,7 +4,7 @@ import { NotAsked, RemoteResult, isErr } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconMobilePhone, Select, TextField, Typography } from '~/@/ui'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { APP_SOUND, focusView, playSound, pushScreen, replaceScreen, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND, focusView, playSound, pushScreen, replaceScreen, showErrSm, showToast } from '~/app/@/frontend/cmd'
 import { AuthScreenFormLayout } from '../@/frontend/ui/auth-screen-form-layout'
 import { FrontendModule, ModelFrontend, toSendErrorMessage, toVerifyErrorMessage } from './types'
 
@@ -49,33 +49,7 @@ const PHONE_NUMBER_INPUT_VIEW_ID = 'phoneNumberInput'
 //
 
 const update: FrontendModule['update'] = (input) => {
-  return AppFrontendModule.andThen(
-    { model: input.model },
-    (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromBackend({ ...input, model }),
-    (model) => updateAutoFocus({ ...input, model }),
-  )
-}
-
-const updateAutoFocus: FrontendModule['update'] = (input) => {
-  switch (input.msgEvt?.t) {
-    case 'screen-evt.screen-changed': {
-      switch (input.msgEvt.screen.t) {
-        case 'login-sms-request': {
-          return { model: input.model, msgCmd: [focusView(PHONE_NUMBER_INPUT_VIEW_ID)] }
-        }
-
-        case 'login-sms-verify': {
-          return { model: input.model, msgCmd: [focusView(CODE_INPUT_VIEW_ID)] }
-        }
-
-        default: {
-          return { model: input.model }
-        }
-      }
-    }
-  }
-  return { model: input.model }
+  return AppFrontendModule.andThen({ model: input.model }, (model) => updateFromMsg({ ...input, model }))
 }
 
 const updateFromMsg: FrontendModule['update'] = (input) => {
@@ -144,13 +118,51 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         },
         msgCmd: [playSound(APP_SOUND.tap)],
         async eff(dispatch) {
-          debugger
           const sent = await input.ctx.rpc.sendCode({
             phoneNumber: phoneNumber.value,
             preferredLanguage: input.ctx.navigatorLanguage,
           })
           dispatch({ t: 'sent-code', sent })
         },
+      }
+    }
+
+    case 'sent-code': {
+      const { sent } = input.msg
+
+      const modelNew: ModelFrontend = { ...input.model, sent }
+
+      const error = toSendErrorMessage({ model: modelNew, ctx: input.ctx }) ?? input.ctx.t('app.something-went-wrong')
+
+      if (isErr(sent)) {
+        return {
+          model: modelNew,
+          msgCmd: showErrSm(error, sent.error.error),
+        }
+      }
+
+      if (isErr(sent.value)) {
+        return {
+          model: modelNew,
+          msgCmd: showErrSm(error),
+        }
+      }
+
+      const phoneNumber = sent.value.value.phoneNumber
+
+      return {
+        model: {
+          ...input.model,
+          sent,
+          verified: NotAsked,
+          inputtedCode: '',
+        },
+        msgCmd: [
+          pushScreen({ n: 'auth-login', t: 'login-sms-verify', phoneNumber }),
+          showToast(input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(phoneNumber)), 'info', TimeSpan.seconds(4)),
+          focusView(CODE_INPUT_VIEW_ID),
+          playSound(APP_SOUND.navForwardMin),
+        ],
       }
     }
 
@@ -203,63 +215,27 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       }
     }
 
-    default: {
-      return {
-        model: input.model,
-      }
-    }
-  }
-}
-
-const updateFromBackend: FrontendModule['update'] = (input) => {
-  if (!input.msg) return { model: input.model }
-
-  switch (input.msg.t) {
-    case 'sent-code': {
-      const { sent } = input.msg
-      if (isErr(sent)) {
-        return {
-          model: { ...input.model, sent },
-          msgCmd: [playSound(APP_SOUND.alertErrorMd)],
-        }
-      }
-
-      if (isErr(sent.value)) {
-        return {
-          model: { ...input.model, sent },
-          msgCmd: [playSound(APP_SOUND.alertErrorMd)],
-        }
-      }
-      const phoneNumber = sent.value.value.phoneNumber
-
-      return {
-        model: {
-          ...input.model,
-          sent,
-          verified: NotAsked,
-          inputtedCode: '',
-        },
-        msgCmd: [
-          pushScreen({ n: 'auth-login', t: 'login-sms-verify', phoneNumber }),
-          showToast(input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(phoneNumber)), 'info', TimeSpan.seconds(4)),
-          focusView(CODE_INPUT_VIEW_ID),
-          playSound(APP_SOUND.navForwardMin),
-        ],
-      }
-    }
-
     case 'verified-code': {
       const { verified } = input.msg
+      const modelNew: ModelFrontend = { ...input.model, verified }
+      const error = toVerifyErrorMessage({ model: modelNew, ctx: input.ctx }) ?? input.ctx.t('app.something-went-wrong')
 
-      if (isErr(verified)) {
+      if (isErr(verified) || isErr(verified.value)) {
         return {
-          model: { ...input.model, verified },
-          msgCmd: [playSound(APP_SOUND.alertErrorMd)],
+          model: modelNew,
+          msgCmd: showErrSm(error),
         }
       }
 
       return {
-        model: { ...input.model, verified },
+        model: modelNew,
+        msgEvt: [
+          {
+            t: 'auth-evt.authenticated',
+            loggedIn: true,
+            account: verified.value.value,
+          },
+        ],
       }
     }
 
@@ -311,7 +287,6 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
       submitText={input.ctx.t('auth-sms.send-code')}
       submitLoading={input.model.sent.t === 'loading'}
       submitDisabled={false}
-      error={toSendErrorMessage(input)}
       onSubmit={() => input.dispatch({ t: 'user-clicked-send-code-button' })}
       renderInputs={() => (
         <>
@@ -353,9 +328,8 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
       title={input.ctx.t('auth-sms.verify-code')}
       onBack={() => input.dispatch({ t: 'clicked-back-button' })}
       submitText={input.ctx.t('auth-sms.verify-code')}
-      submitLoading={input.model.verified.t === 'loading' || input.model.verified.t === 'ok'}
+      submitLoading={input.model.verified.t === 'loading'}
       submitDisabled={false}
-      error={toVerifyErrorMessage(input)}
       onSubmit={() =>
         input.dispatch({
           t: 'user-clicked-verify-code-button',

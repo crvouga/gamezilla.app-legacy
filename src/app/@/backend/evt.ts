@@ -1,5 +1,5 @@
-import type { ClientId } from '~/app/@/data/client-id'
-import type { SessionId } from '~/app/@/data/session-id'
+import type { ClientId } from '~/@/wire/client-id'
+import type { SessionId } from '~/@/wire/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 import type { UserAccount } from '../data/account'
 import { PhoneNumber } from '~/@/phone-number'

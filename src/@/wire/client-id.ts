@@ -9,14 +9,14 @@ const is = (id: unknown): id is ClientId => {
   return typeof id === 'string'
 }
 
-type Problem = 'invalid_frontend_id'
+type Problem = 'invalid-client-id'
 
 const decode = (id: string): Result<Problem, ClientId> => {
   if (is(id)) {
     return Result.Ok(id)
   }
 
-  return Result.Err('invalid_frontend_id')
+  return Result.Err('invalid-client-id')
 }
 
 const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'

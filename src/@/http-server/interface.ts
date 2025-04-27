@@ -19,6 +19,7 @@ export type HttpServerEvent =
 
 export type IHttpServer = {
   start: (port: number) => Promise<void>
+  stop: () => Promise<void>
   registerRespond: (handler: Respond) => void
   registerStatic: (path: string, response: Response) => void
   events: Sub<HttpServerEvent>
