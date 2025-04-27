@@ -9,17 +9,15 @@ import { RPCError } from '~/@/rpc/rpc-error'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { BackendCmd } from '~/app/@/backend/cmd'
-import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
 import { UserAccount } from '~/app/@/data/account'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { BaseFrontendCtx } from '~/app/@/frontend/ctx'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
-import { IVerifySMS, SendCodeInput, SendCodeOutput, VerifyCodeInput } from '../@/backend/verify-sms'
+import { BackendCtx } from '../@/backend/ctx'
+import { SendCodeInput, SendCodeOutput, VerifyCodeInput } from '../@/backend/verify-sms'
 import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
 import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
-import { IUserAccountDb } from '../@/user-account-db'
-import { IUserSessionDb } from '../@/user-session-db'
 
 export type Sent = Result<RPCError, SendCodeOutput>
 
@@ -93,12 +91,6 @@ export type MsgBackend = { t: 'noop' }
 export type MsgToBackend = { t: 'noop' }
 
 export type MsgToFrontend = { t: 'noop' }
-
-export type BackendCtx = AppBackendCtx & {
-  userAccountDb: IUserAccountDb
-  userSessionDb: IUserSessionDb
-  verifySMS: IVerifySMS
-}
 
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend

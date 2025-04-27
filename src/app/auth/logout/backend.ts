@@ -9,7 +9,7 @@ const update: BackendModule['update'] = async (input) => {
 const updateFromFrontend: BackendModule['update'] = async (input) => {
   switch (input.msgFrontend?.t) {
     case 'user-clicked-confirm-logout-button': {
-      const zapped = await input.ctx.userSessionDb.zapBySessionId(input.msgFrontend.sessionId)
+      const zapped = await input.ctx.userSessionDbCached.zapBySessionId(input.msgFrontend.sessionId)
 
       if (isErr(zapped)) {
         return {}

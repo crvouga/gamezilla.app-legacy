@@ -1,18 +1,16 @@
 import { isErr, isOk } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
-import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { SessionId } from '~/@/wire/session-id'
+import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { UserId } from '~/app/@/data/user-id'
 import { sendToFrontend } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
-import { GuestSessionMappingDb } from './@/guest-session-mapping-db'
-import { UserAccountDb } from './@/user-account-db'
-import { UserSessionDb } from './@/user-session-db'
+import { BackendCtx } from './@/backend/ctx'
 import { ContinueAsGuestBackend } from './continue-as-guest/backend'
 import { ContinueWithSmsBackend } from './continue-with-sms/backend'
 import { LogoutBackend } from './logout/backend'
-import { rpcContract, type BackendCtx, type BackendModule, type MsgToFrontend } from './types'
+import { rpcContract, type BackendModule, type MsgToFrontend } from './types'
 
 //
 //
@@ -21,26 +19,7 @@ import { rpcContract, type BackendCtx, type BackendModule, type MsgToFrontend } 
 //
 
 export const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
-  const authSMS = await ContinueWithSmsBackend.initCtx({ ctx: input.ctx })
-  return {
-    ...input.ctx,
-    ...authSMS,
-    userAccountDb: UserAccountDb({
-      t: 'sql',
-      dbConnSql: input.ctx.dbConnSql,
-    }),
-    userSessionDb: await UserSessionDb({
-      t: 'sql-with-cache',
-      dbConnSql: input.ctx.dbConnSql,
-      keyValueDb: input.ctx.keyValueDb,
-      logger: input.ctx.logger,
-      pubSubTopicBased: input.ctx.pubSub,
-    }),
-    guestSessionMappingDb: GuestSessionMappingDb({
-      t: 'sql',
-      dbConnSql: input.ctx.dbConnSql,
-    }),
-  }
+  return BackendCtx.init(input)
 }
 
 //
@@ -65,7 +44,7 @@ export const getUserIdFromSessionId = async (ctx: BackendCtx, sessionId?: Sessio
     return null
   }
 
-  const found = await ctx.userSessionDb.findUserIdBySessionId(sessionId)
+  const found = await ctx.userSessionDbCached.findUserIdBySessionId(sessionId)
 
   if (isErr(found)) {
     return null
@@ -79,7 +58,7 @@ export const getUserIdFromSessionId = async (ctx: BackendCtx, sessionId?: Sessio
 const updateFromEvent: typeof update = async (input) => {
   switch (input.msgEvt?.t) {
     case 'wire-evt.frontend-connected': {
-      const foundUserId = await input.ctx.userSessionDb.findUserIdBySessionId(input.msgEvt.sessionId)
+      const foundUserId = await input.ctx.userSessionDbCached.findUserIdBySessionId(input.msgEvt.sessionId)
 
       const userId = isOk(foundUserId) ? foundUserId.value : null
 

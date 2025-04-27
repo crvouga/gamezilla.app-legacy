@@ -1,21 +1,19 @@
 import type { RemoteResult } from '~/@/result'
 import { RPC } from '~/@/rpc'
-import { TimeSpan } from '~/@/time/time-span'
 import type { AppBackendModule } from '../@/architecture/app-backend'
 import type { AppFrontendModule } from '../@/architecture/app-frontend'
 import { BackendCmd } from '../@/backend/cmd'
-import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendEvt } from '../@/backend/evt'
 import type { UserAccount } from '../@/data/account'
 import type { AppFrontendCmd, AuthCmd } from '../@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { AppFrontendEvt } from '../@/frontend/evt'
-import { IGuestSessionMappingDb } from './@/guest-session-mapping-db'
-import type { IUserAccountDb } from './@/user-account-db'
-import type { IUserSessionDb } from './@/user-session-db'
+import { BackendCtx } from './@/backend/ctx'
 import type { ContinueAsGuest } from './continue-as-guest'
 import * as AuthSMS from './continue-with-sms/types'
 import type { Logout } from './logout'
+
+export type { BackendCtx }
 
 //
 //
@@ -39,14 +37,6 @@ type BaseModelFrontend = {
 }
 
 export type ModelFrontend = BaseModelFrontend & ContinueAsGuest.ModelFrontend & Logout.ModelFrontend
-
-export type BackendCtx = AppBackendCtx &
-  AuthSMS.BackendCtx & {
-    userAccountDb: IUserAccountDb
-    userSessionDb: IUserSessionDb
-    guestSessionMappingDb: IGuestSessionMappingDb
-    sleep: (timeSpan: TimeSpan) => Promise<unknown>
-  }
 
 //
 //

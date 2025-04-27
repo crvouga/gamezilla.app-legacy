@@ -7,17 +7,9 @@ export type ModelFrontend = {
   currentUser: RemoteResult<string, UserAccount>
 }
 
-export type MsgFrontend = { t: 'noop' }
-
-export type MsgBackend = { t: 'noop' }
-
-export type MsgToBackend = { t: 'noop' }
-
-export type MsgToFrontend = { t: 'noop' }
-
 export const rpcContract = RPC.initContract({
   getCurrentUser: {
     input: p.obj({}),
-    output: p.obj({ currentUser: UserAccount }),
+    output: p.obj({ currentUser: p.maybe(UserAccount) }),
   },
 })

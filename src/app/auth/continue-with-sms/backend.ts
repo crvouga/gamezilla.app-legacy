@@ -2,43 +2,14 @@ import { PhoneNumber } from '~/@/phone-number'
 import { Err, isErr, Ok } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { SessionId } from '~/@/wire/session-id'
-import { AppBackendCtx } from '~/app/@/backend/ctx'
 import type { UserAccount } from '~/app/@/data/account'
 import { UserId } from '~/app/@/data/user-id'
 import { Translator } from '~/app/@/frontend/translator'
+import { BackendCtx } from '../@/backend/ctx'
 import { SendCodeInput, SendCodeOutput, VerifyCodeInput } from '../@/backend/verify-sms'
-import { VerifySMSFactory } from '../@/backend/verify-sms/impl/factory'
 import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
 import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
-import { UserAccountDb } from '../@/user-account-db/impl'
-import { UserSessionDb } from '../@/user-session-db/impl-sql'
-import { BackendCtx, rpcContract, VerifyCodeOutput } from './types'
-
-const initCtx = (input: { ctx: AppBackendCtx }): BackendCtx => {
-  const userAccountDb = UserAccountDb({
-    t: 'sql',
-    dbConnSql: input.ctx.dbConnSql,
-  })
-
-  const userSessionDb = UserSessionDb({
-    t: 'sql',
-    dbConnSql: input.ctx.dbConnSql,
-    logger: input.ctx.logger,
-  })
-
-  const verifySMS = VerifySMSFactory.createForEnvironment({
-    logger: input.ctx.logger,
-    env: input.ctx.env,
-    dbConnSql: input.ctx.dbConnSql,
-  })
-
-  return {
-    ...input.ctx,
-    userAccountDb,
-    userSessionDb,
-    verifySMS,
-  }
-}
+import { rpcContract, VerifyCodeOutput } from './types'
 
 const rpc = (config: { ctx: BackendCtx }) => {
   return RPC.initServer(rpcContract, {
@@ -162,6 +133,5 @@ const handleVerifyCode = async (
 }
 
 export const ContinueWithSmsBackend = {
-  initCtx,
   rpc,
 }
