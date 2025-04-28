@@ -1,0 +1,216 @@
+import type { IDbConnSql } from '~/@/db-conn-sql'
+import { ILogger } from '~/@/logger'
+import { p } from '~/@/parser'
+import { Ok, Result, isErr, unwrapOr } from '~/@/result'
+import { Sql } from '~/@/sql'
+import { Sub } from '~/@/sub'
+import { Posix } from '~/@/time/posix'
+import { ProfileAvatar } from '~/app/@/data/profile-avatar'
+import { UserId } from '~/app/@/data/user-id'
+import { Username } from '~/app/@/data/username'
+import { ProfileCore } from '../user-profile-core'
+import { UserProfileId } from '../user-profile-id'
+import type { IProfileDb } from './interface'
+import { ProfileDbQuery } from './query'
+
+const ProfileRow = p.obj({
+  id: UserProfileId,
+  user_id: UserId,
+  username: Username,
+  avatar_seed: p.maybe(p.str),
+  avatar_style: p.maybe(p.str),
+  created_at_posix: p.or(p.num, p.str),
+  updated_at_posix: p.or(p.num, p.str),
+})
+
+type ProfileRow = p.Infer<typeof ProfileRow>
+
+const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
+  const avatarSeed = row.avatar_seed ? ProfileAvatar.toSeed(row.avatar_seed) : ProfileAvatar.toSeed(row.username)
+
+  const avatarStyle = row.avatar_style
+    ? ProfileAvatar.toStyle(row.avatar_style)
+    : ProfileAvatar.STYLES['big-ears-neutral']
+
+  const profile: ProfileCore = {
+    id: row.id,
+    userId: row.user_id,
+    username: row.username,
+    avatarSeed: avatarSeed,
+    avatarStyle: avatarStyle,
+    createdAt: Posix.init(row.created_at_posix),
+    updatedAt: Posix.init(row.updated_at_posix),
+  }
+
+  return Ok(profile)
+}
+
+export type Config = {
+  t: 'sql'
+  dbConnSql: IDbConnSql
+  logger: ILogger
+}
+
+export const ProfileDb = (config: Config): IProfileDb => {
+  return {
+    async findByUserId(userId) {
+      const sql = `
+        SELECT
+          id,
+          user_id,
+          username,
+          avatar_seed,
+          avatar_style,
+          created_at_posix,
+          updated_at_posix
+        FROM
+          user_profile
+        WHERE
+          user_id = :user_id
+      `
+
+      const queried = await config.dbConnSql.query({
+        parser: ProfileRow,
+        sql: sql,
+        vars: {
+          user_id: userId,
+        },
+      })
+
+      if (isErr(queried)) return queried
+
+      const parsed = Result.combine(queried.value.map(fromProfileRow))
+
+      if (isErr(parsed)) return parsed
+
+      return Ok(parsed.value)
+    },
+
+    async put(profile) {
+      const rowNew: ProfileRow = {
+        id: profile.id,
+        user_id: profile.userId,
+        username: profile.username,
+        avatar_seed: profile.avatarSeed,
+        avatar_style: profile.avatarStyle,
+        created_at_posix: profile.createdAt,
+        updated_at_posix: profile.updatedAt,
+      }
+
+      const upserted = await config.dbConnSql.query({
+        parser: ProfileRow,
+        sql: `
+        INSERT INTO user_profile (
+          id,
+          user_id,
+          username,
+          avatar_seed,
+          avatar_style,
+          created_at_posix,
+          updated_at_posix
+        )
+        VALUES (
+          :id,
+          :user_id,
+          :username,
+          :avatar_seed,
+          :avatar_style,
+          :created_at_posix,
+          :updated_at_posix
+        )
+        ON CONFLICT (id) DO UPDATE SET
+          user_id = EXCLUDED.user_id,
+          username = EXCLUDED.username,
+          avatar_seed = EXCLUDED.avatar_seed,
+          avatar_style = EXCLUDED.avatar_style,
+          created_at_posix = EXCLUDED.created_at_posix,
+          updated_at_posix = EXCLUDED.updated_at_posix
+        `,
+        vars: rowNew,
+      })
+
+      if (isErr(upserted)) return upserted
+
+      return Ok(null)
+    },
+
+    async query(query) {
+      const { sql, sqlTotal, vars } = queryToSql(query)
+      const queried = await config.dbConnSql.query({
+        parser: ProfileRow,
+        sql: sql,
+        vars: vars,
+      })
+      const queriedTotal = await config.dbConnSql.query({
+        parser: p.obj({ total: p.or(p.num, p.str) }),
+        sql: sqlTotal,
+        vars: vars,
+      })
+
+      if (isErr(queried)) return queried
+      if (isErr(queriedTotal)) return queriedTotal
+
+      const parsed = Result.combine(queried.value.map(fromProfileRow))
+      if (isErr(parsed)) return parsed
+
+      const total = Number(queriedTotal.value[0]?.total ?? 0)
+
+      return Ok({
+        items: parsed.value,
+        limit: query.pagination.limit,
+        offset: query.pagination.offset,
+        total: total,
+      })
+    },
+    sub(query) {
+      const { sql, vars } = queryToSql(query)
+      return Sub.map(config.dbConnSql.sub({ parser: ProfileRow, sql: sql, vars: vars }), (rows) =>
+        unwrapOr(Result.combine(rows.map(fromProfileRow)), []),
+      )
+    },
+  }
+}
+
+const queryToSql = (query: ProfileDbQuery) => {
+  const whereClauses = []
+  const vars: Sql.Vars = {}
+
+  if (query.whereAnd?.userId?.equals) {
+    whereClauses.push('user_id = :user_id')
+    vars.user_id = query.whereAnd.userId.equals
+  }
+
+  vars.limit = query.pagination.limit
+  vars.offset = query.pagination.offset
+
+  const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : ''
+
+  const sql = `
+        SELECT
+          id,
+          user_id,
+          username,
+          avatar_seed,
+          avatar_style,
+          created_at_posix,
+          updated_at_posix
+        FROM
+          user_profile
+        ${whereClause}
+        ORDER BY created_at_posix ${query.order.createdAt.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
+        LIMIT :limit
+        OFFSET :offset
+      `
+
+  const sqlTotal = `
+    SELECT COUNT(*) AS total
+    FROM user_profile
+    ${whereClause}
+  `
+
+  return {
+    sql,
+    sqlTotal,
+    vars,
+  }
+}

@@ -1,13 +1,16 @@
 import { Err, Ok, Result, isErr } from '~/@/result'
+import { Posix } from '~/@/time/posix'
 import { AppBackendModule } from '../@/architecture/app-backend'
+import { sendToFrontend } from '../@/backend/cmd'
+import { AppBackendCtx } from '../@/backend/ctx'
 import { Profile } from '../@/data/profile'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { Username } from '../@/data/username'
-import { sendToFrontend } from '../@/backend/cmd'
-import { AppBackendCtx } from '../@/backend/ctx'
-import { type IProfileDb, ProfileDb } from './profile-db'
-import { type ProfileCore, type Req, BackendCtx, BackendModule, profileCoreToProfile } from './types'
+import { ProfileCore } from './@/user-profile/user-profile-core'
+import { type IProfileDb, ProfileDb } from './@/user-profile/user-profile-db'
+import { type Req, BackendCtx, BackendModule, profileCoreToProfile } from './types'
+import { UserProfileId } from './@/user-profile/user-profile-id'
 
 //
 //
@@ -54,7 +57,7 @@ const updateFromFrontend: BackendModule['update'] = async ({ msgFrontend, ctx })
     default: {
       const userId = msgFrontend.userId
       if (!userId) return {}
-      const profileDb = ProfileDb({ t: 'db-conn-sql', dbConnSql: ctx.dbConnSql, logger: ctx.logger })
+      const profileDb = ProfileDb({ t: 'sql', dbConnSql: ctx.dbConnSql, logger: ctx.logger })
 
       const result = await handler({
         profileDb,
@@ -82,7 +85,7 @@ const updateFromEvent: BackendModule['update'] = async ({ msgEvt, ctx }) => {
 
   switch (msgEvt.t) {
     case 'auth-evt.client-authenticated': {
-      const profileDb = ProfileDb({ t: 'db-conn-sql', dbConnSql: ctx.dbConnSql, logger: ctx.logger })
+      const profileDb = ProfileDb({ t: 'sql', dbConnSql: ctx.dbConnSql, logger: ctx.logger })
       const result = await findElseInsertNew({
         profileDb,
         userId: msgEvt.user.userId,
@@ -145,10 +148,13 @@ const findElseInsertNew = async ({ profileDb, userId }: { profileDb: IProfileDb;
   const randomSeed = ProfileAvatar.randomSeed()
   const randomUsername = await Username.generate('.')
   const profileNew: ProfileCore = {
+    id: UserProfileId.generate(),
     userId,
     username: randomUsername,
     avatarSeed: randomSeed,
     avatarStyle: 'thumbs',
+    createdAt: Posix.now(),
+    updatedAt: Posix.now(),
   }
 
   const inserted = await profileDb.put(profileNew)

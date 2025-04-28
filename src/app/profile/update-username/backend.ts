@@ -1,5 +1,5 @@
 import { BackendCmd } from '~/app/@/backend/cmd'
-import { IProfileDb } from '../profile-db/interface'
+import { IProfileDb } from '../@/user-profile/user-profile-db/interface'
 import { MsgBackend, MsgToFrontend, MsgToBackend } from './types'
 
 export const update = async (input: {

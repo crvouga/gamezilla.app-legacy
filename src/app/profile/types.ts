@@ -1,18 +1,18 @@
 import type { RemoteResult, Result } from '~/@/result'
+import { ClientId } from '../../@/wire/client-id'
 import { AppBackendModule } from '../@/architecture/app-backend'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { BackendCmd } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendEvt } from '../@/backend/evt'
-import { ClientId } from '../../@/wire/client-id'
 import { Profile } from '../@/data/profile'
 import { ProfileAvatar, ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
-import { Username } from '../@/data/username'
 import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { AppFrontendEvt } from '../@/frontend/evt'
 import * as UpdateUsernameTypes from './update-username/types'
+import { ProfileCore } from './@/user-profile/user-profile-core'
 
 //
 //
@@ -21,13 +21,6 @@ import * as UpdateUsernameTypes from './update-username/types'
 //
 //
 //
-
-export type ProfileCore = {
-  userId: UserId
-  username: Username
-  avatarSeed: ProfileAvatarSeed | null
-  avatarStyle: ProfileAvatarStyle | null
-}
 
 export const profileCoreToProfile = (profile: ProfileCore): Profile => {
   return {

@@ -1,10 +1,14 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { Logger } from '~/@/logger'
-import { Ok } from '~/@/result'
+import { Ok, unwrap } from '~/@/result'
+import { Posix } from '~/@/time/posix'
+import { TimeSpan } from '~/@/time/time-span'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import { ProfileCore } from '../@/profile-core'
-import { Config, ProfileDb } from './impl'
+import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
+import { ProfileCore } from '../user-profile-core'
+import { Config, ProfileDb } from './impl'
+import { ProfileDbQuery } from './query'
 
 const Fixture = (config: Config) => {
   const profileDb = ProfileDb(config)
@@ -22,9 +26,16 @@ const Fixtures = async () => {
     logger: Logger({ t: 'noop' }),
   })
 
+  configs.push({
+    t: 'with-sql-tables',
+    dbConnSql: f.dbConnSqlite,
+    profileDb: ProfileDb({ t: 'sql', dbConnSql: f.dbConnSqlite, logger: Logger({ t: 'console' }) }),
+  })
+
   if (f.t === 'integration') {
     configs.push({
-      t: 'db-conn-sql',
+      t: 'sql',
+      // dbConnSql: f.dbConnPostgres,
       dbConnSql: f.dbConnPostgres,
       logger: Logger({ t: 'console' }),
     })
@@ -61,6 +72,60 @@ describe('ProfileDb', () => {
 
       const fetchedProfileAfterUpdate = await f.profileDb.findByUserId(updatedProfile.userId)
       expect(fetchedProfileAfterUpdate).toEqual(Ok([updatedProfile]))
+    }
+  })
+
+  test.only('query by user id', async () => {
+    for (const f of await Fixtures()) {
+      const userId = UserId.generate()
+
+      const query: ProfileDbQuery = {
+        whereAnd: {
+          userId: { equals: userId },
+        },
+        order: {
+          createdAt: 'asc',
+        },
+        pagination: {
+          limit: 100,
+          offset: 0,
+        },
+      }
+
+      const before = await f.profileDb.query(query)
+
+      const expected: ProfileCore[] = []
+      for (let i = 0; i < 10; i++) {
+        const profile = await ProfileCore.random({
+          userId,
+          createdAt: Posix.future(Posix.now(), TimeSpan.seconds(i)),
+        })
+        unwrap(await f.profileDb.put(profile))
+        expected.push(profile)
+      }
+
+      for (let i = 0; i < 10; i++) {
+        unwrap(await f.profileDb.put(await ProfileCore.random()))
+      }
+
+      const after = await f.profileDb.query(query)
+
+      expect(before).toEqual(
+        Ok({
+          items: [],
+          limit: 100,
+          offset: 0,
+          total: 0,
+        }),
+      )
+      expect(after).toEqual(
+        Ok({
+          items: expected,
+          limit: 100,
+          offset: 0,
+          total: 10,
+        }),
+      )
     }
   })
 })

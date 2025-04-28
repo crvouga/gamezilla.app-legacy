@@ -1,4 +1,4 @@
-import { ProfileCore } from '../types'
+import { ProfileCore } from '../@/user-profile/user-profile-core'
 
 export type ModelFrontend = {}
 
