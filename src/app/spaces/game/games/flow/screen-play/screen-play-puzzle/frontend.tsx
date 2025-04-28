@@ -231,7 +231,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
         <LayoutGame isSpectating ctx={input.ctx}>
           <ProfileListItem
             ctx={input.ctx}
-            profile={input.ctx.profiles[input.ctx.space.hostId]}
+            profile={input.ctx.profilesByUserId[input.ctx.space.hostId]}
             subtitle={input.ctx.t('game.player')}
           />
           <div className='flex flex-1 items-center justify-center'>

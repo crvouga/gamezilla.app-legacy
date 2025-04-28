@@ -8,7 +8,7 @@ const init: FrontendModule['init'] = (input) => {
   return {
     model: {
       'profile.update-username.username': input.ctx.currentUser?.userId
-        ? (input.ctx.profiles[input.ctx.currentUser.userId]?.username ?? '')
+        ? (input.ctx.profilesByUserId[input.ctx.currentUser?.userId]?.username ?? '')
         : '',
     },
   }

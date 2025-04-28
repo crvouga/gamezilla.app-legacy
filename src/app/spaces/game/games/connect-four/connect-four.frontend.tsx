@@ -295,7 +295,7 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
     case 'user-changed-mode': {
       switch (msgSpace.mode) {
         case 'none': {
-          const profile = ctx.profiles[ctx.currentUser.userId]
+          const profile = ctx.profilesByUserId[ctx.currentUser.userId]
 
           if (!profile) {
             return <FeedItem.Info text={'Exited game to main menu'} />
@@ -305,7 +305,7 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
         }
 
         default: {
-          const profile = ctx.profiles[ctx.currentUser.userId]
+          const profile = ctx.profilesByUserId[ctx.currentUser.userId]
 
           if (!profile) {
             return <FeedItem.Info text={'Changed game mode'} />

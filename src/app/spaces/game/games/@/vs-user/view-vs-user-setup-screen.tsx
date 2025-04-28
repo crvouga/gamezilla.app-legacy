@@ -5,6 +5,7 @@ import { Avatar, Button, IconQuestionMark, Typography } from '~/@/ui'
 import { ScreenLayoutGameCoverArt } from '../ui/screen-layout-game-cover-art'
 import { TranslatedText } from '~/@/l18n'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
+import { Profile } from '~/app/@/data/profile'
 
 type IconProps = { className: string }
 
@@ -99,7 +100,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
       onClick={player.userId === ctx.currentUser.userId ? player.onStopPlaying : player.onStartPlaying}
     >
       {player.userId ? (
-        <Avatar className='h-14 w-14' src={ctx.profiles[player.userId]?.avatarUrl} alt='' />
+        <Avatar className='h-14 w-14' src={Profile.toAvatarUrl(ctx.profilesByUserId[player.userId])} alt='' />
       ) : (
         <div role='button' className='bg-paper grid h-14 w-14 place-items-center overflow-hidden rounded-full'>
           <IconQuestionMark className='text-secondary h-10 w-10' />
@@ -117,7 +118,7 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPr
   return (
     <div className='text-secondary col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm'>
       <p className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center'>
-        {player.userId ? (ctx.profiles[player.userId]?.username ?? '...') : '?'}
+        {player.userId ? (ctx.profilesByUserId[player.userId]?.username ?? '...') : '?'}
       </p>
 
       <Typography

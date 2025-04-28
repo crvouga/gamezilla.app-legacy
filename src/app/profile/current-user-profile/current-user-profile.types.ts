@@ -1,4 +1,4 @@
-import { ProfileCore } from '../@/user-profile/user-profile-core'
+import { Profile } from '~/app/@/data/profile'
 
 export type ModelFrontend = {}
 
@@ -18,5 +18,5 @@ export type MsgToBackend = {
 
 export type MsgToFrontend = {
   t: 'profile.current-user-profile.profile'
-  profile: ProfileCore
+  profile: Profile
 }

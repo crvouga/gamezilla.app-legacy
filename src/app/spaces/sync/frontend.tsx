@@ -30,17 +30,20 @@ const sendMsgSpaceToBackend: SpaceFrontendModule['update'] = ({ ctx, model, msgS
 
   if (!spaceEventWithMeta) return { model }
 
-  const profile = 'userId' in spaceEventWithMeta ? ctx.profiles[spaceEventWithMeta.userId] : null
+  const profile = 'userId' in spaceEventWithMeta ? ctx.profilesByUserId[spaceEventWithMeta.userId] : null
 
   const profiles = profile ? { [profile.userId]: profile } : {}
 
-  return { model, msgCmd: [sendToBackend({ t: 'sync.got-msg-space', c: spaceEventWithMeta, profiles })] }
+  return {
+    model,
+    msgCmd: [sendToBackend({ t: 'sync.got-msg-space', c: spaceEventWithMeta, profilesByUserId: profiles })],
+  }
 }
 
 const updateProfiles: SpaceFrontendModule['update'] = ({ model, msgBackend }) => {
-  if (!msgBackend?.profiles) return { model }
+  if (!msgBackend?.profilesByUserId) return { model }
 
-  return { model, msgCmd: [addProfiles(msgBackend.profiles)] }
+  return { model, msgCmd: [addProfiles(Object.values(msgBackend.profilesByUserId))] }
 }
 
 const updateSpace: SpaceFrontendModule['update'] = (input) => {
@@ -50,7 +53,7 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
 
       if (!currentUserId) return { model: input.model }
 
-      const currentUserProfile = currentUserId ? input.ctx.profiles[currentUserId] : null
+      const currentUserProfile = currentUserId ? input.ctx.profilesByUserId[currentUserId] : null
 
       const currentUserSpace = SpacesCore.toSpaceByUserId({
         model: input.model.spaces,
@@ -67,7 +70,7 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
           sendToBackend({
             t: 'sync.sync',
             space,
-            profiles: currentUserProfile ? { [currentUserId]: currentUserProfile } : {},
+            profilesByUserId: currentUserProfile ? { [currentUserId]: currentUserProfile } : {},
             causedBy: { msgEvt: input.msgEvt },
           }),
         ],

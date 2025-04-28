@@ -316,7 +316,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
           <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll'>
             <ProfileListItem
               ctx={input.ctx}
-              profile={input.ctx.profiles[input.ctx.space.hostId]}
+              profile={input.ctx.profilesByUserId[input.ctx.space.hostId]}
               subtitle={input.ctx.t('app.editor')}
             />
             <VariantBoard.View disabled model={puzzleBuilder.puzzle.flow} />

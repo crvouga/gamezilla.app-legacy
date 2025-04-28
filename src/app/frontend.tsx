@@ -18,6 +18,7 @@ import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { setupNewPowerSyncClient } from '~/service-powersync/frontend/database'
 import { ILogger, Logger } from '../@/logger'
+import { Profile } from './@/data/profile'
 import { AppFrontendCmd } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { AppFrontendEvt } from './@/frontend/evt'
@@ -25,6 +26,7 @@ import { Translator } from './@/frontend/translator'
 import { ViewAppRoot } from './@/ui/app-root/app-root'
 import { SplashScreen } from './@/ui/logo/logo-block'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
+import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
 import { ViewAppStatusBar } from './frontend/app-status-bar/app-status-bar'
 import * as FrontendFrontend from './frontend/frontend'
@@ -35,7 +37,6 @@ import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtx, ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend, rpcContract as contract } from './types'
 import * as WireFrontend from './wire/frontend'
 import { FrontendTransport } from './wire/transport/frontend'
-import { toCurrentUserState } from './auth/current-user/frontend'
 
 const initCtx = async (): Promise<FrontendCtx> => {
   const logger = Logger({
@@ -86,7 +87,7 @@ const initCtx = async (): Promise<FrontendCtx> => {
     currentScreen: { t: 'login', n: 'auth-login' },
     t: Translator(navigatorLanguage),
     documentVisibilityState: 'visible',
-    profiles: {},
+    profilesByUserId: {},
     screenSize: 'mobile',
     parentScreen: null,
     currentUser: null,
@@ -112,10 +113,12 @@ const updateCtx = (ctx: FrontendCtx): FrontendCtx => {
 type Ctx = (AppFrontendCtx | AnonymousFrontendCtx) & FrontendCtx
 
 const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx => {
+  const profiles: Profile[] = Object.values(input.model.profile.profiles)
+
   const anonymousCtx: AnonymousFrontendCtx = {
     ...input.ctx,
     t: Translator(input.model.lang.lang),
-    profiles: input.model.profile.profiles,
+    profilesByUserId: Profile.indexByUserId(profiles),
     now: input.ctx.now,
     documentVisibilityState: input.model.frontend.visibility.documentVisibilityState,
     currentScreen: input.model.frontend.currentScreen.currentScreen,

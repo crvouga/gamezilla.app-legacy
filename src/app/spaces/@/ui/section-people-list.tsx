@@ -52,7 +52,7 @@ const PersonListItem = (input: {
       onClick={input.onClick}
       className='clickable flex w-full items-center gap-2 p-2 px-6'
     >
-      <Avatar className='size-12' src={input.profile.avatarUrl} />
+      <Avatar className='size-12' src={Profile.toAvatarUrl(input.profile)} />
       <p>{input.profile.username}</p>
       {input.profile.userId === input.ctx.space.hostId && <ViewHostChip ctx={input.ctx} />}
       {input.profile.userId === input.ctx.currentUser.userId && <ViewYouChip ctx={input.ctx} />}

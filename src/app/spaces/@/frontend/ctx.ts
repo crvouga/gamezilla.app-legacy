@@ -11,7 +11,7 @@ const toProfiles = (ctx: SpaceFrontendCtx) => {
     if (!UserId.is(userId)) {
       continue
     }
-    const profile = ctx.profiles[userId]
+    const profile = ctx.profilesByUserId[userId]
     if (!profile) {
       continue
     }
@@ -21,7 +21,7 @@ const toProfiles = (ctx: SpaceFrontendCtx) => {
 }
 
 const toHostTitle = (ctx: SpaceFrontendCtx) => {
-  const host = ctx.profiles[ctx.space.hostId]
+  const host = ctx.profilesByUserId[ctx.space.hostId]
   if (!host) {
     return null
   }

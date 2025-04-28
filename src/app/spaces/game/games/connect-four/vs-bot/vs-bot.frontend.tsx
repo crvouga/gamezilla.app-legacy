@@ -511,7 +511,8 @@ const toVsBotStatus = (status: ConnectFour.Status): VsBotGame.Status => {
 }
 
 const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
-  const username = 'userId' in input.msgSpace ? (input.ctx.profiles[input.msgSpace.userId]?.username ?? null) : null
+  const username =
+    'userId' in input.msgSpace ? (input.ctx.profilesByUserId[input.msgSpace.userId]?.username ?? null) : null
 
   switch (input.msgSpace.t) {
     case 'bot-dropped-disc': {

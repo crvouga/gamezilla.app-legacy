@@ -1,5 +1,6 @@
 import { Avatar, Button, IconArrowLeftOnRect, IconUserPen, SpinnerBlock, Typography } from '~/@/ui'
 import { Gutter } from '~/@/ui/gutter'
+import { Profile } from '~/app/@/data/profile'
 import type { UserId } from '~/app/@/data/user-id'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
@@ -21,12 +22,12 @@ const View = (input: {
 }
 
 const ViewBody: typeof View = (input) => {
-  const profile = input.model.profiles[input.userId]
+  const profile = Object.values(input.model.profiles).find((p) => p.userId === input.userId)
   if (!profile) return <SpinnerBlock />
   const isCurrentUserProfile = profile.userId === input.ctx.currentUser?.userId
   return (
     <div className='flex w-full flex-col items-center gap-4 p-6'>
-      <Avatar className='size-28' src={profile.avatarUrl} alt='profile avatar' />
+      <Avatar className='size-28' src={Profile.toAvatarUrl(profile)} alt='profile avatar' />
       <Typography variant='title' text={input.ctx.t('username', profile.username)} />
       {isCurrentUserProfile && (
         <div className='flex w-full items-center justify-center gap-6 pt-4'>

@@ -6,13 +6,13 @@ import { BackendCmd } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendEvt } from '../@/backend/evt'
 import { Profile } from '../@/data/profile'
-import { ProfileAvatar, ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
+import { ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { AppFrontendEvt } from '../@/frontend/evt'
+import { UserProfileId } from './@/user-profile/user-profile-id'
 import * as UpdateUsernameTypes from './update-username/types'
-import { ProfileCore } from './@/user-profile/user-profile-core'
 
 //
 //
@@ -22,21 +22,10 @@ import { ProfileCore } from './@/user-profile/user-profile-core'
 //
 //
 
-export const profileCoreToProfile = (profile: ProfileCore): Profile => {
-  return {
-    avatarUrl: ProfileAvatar.toUrl({
-      seed: profile.avatarSeed ?? profile.username,
-      style: profile.avatarStyle ?? ProfileAvatar.STYLES['big-ears-neutral'],
-    }),
-    userId: profile.userId,
-    username: profile.username,
-  }
-}
-
 export type ModelFrontend = {
   updateUsername: UpdateUsernameTypes.ModelFrontend
   profiles: {
-    [userId: UserId]: Profile
+    [userProfileId: UserProfileId]: Profile
   }
   requests: {
     [key in Req['t']]?: RemoteResult<string, null>

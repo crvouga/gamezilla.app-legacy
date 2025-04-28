@@ -12,9 +12,9 @@ import { SPACE_CARD_GRADIENT_CLASS_NAME } from './space-card-gradient'
 const MAX_AVATAR_COUNT = 3
 
 export const ViewSpaceCard = (input: { ctx: AppFrontendCtxBase; state: SpaceState.Started; onClick?: () => void }) => {
-  const host = input.ctx.profiles[input.state.hostId]
+  const host = input.ctx.profilesByUserId[input.state.hostId]
   const users = Object.values(input.state.users).flatMap((userId): Profile[] => {
-    const profile = input.ctx.profiles[userId]
+    const profile = input.ctx.profilesByUserId[userId]
     if (!profile) return []
     return [profile]
   })
@@ -78,7 +78,7 @@ const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendC
 const ViewSpaceCardHost = (input: { host?: Profile | null; ctx: AppFrontendCtxBase }) => {
   return (
     <div className='flex max-w-full items-center justify-start gap-2 overflow-x-hidden'>
-      <Avatar src={input.host?.avatarUrl} alt='avatar' className='size-12' />
+      <Avatar src={Profile.toAvatarUrl(input.host)} alt='avatar' className='size-12' />
 
       <div className='flex flex-1 items-center justify-start gap-2 overflow-x-hidden'>
         {input.host && (
@@ -104,7 +104,7 @@ const ViewSpaceCardUsers = (input: { users: Profile[]; ctx: AppFrontendCtxBase }
         {input.users.slice(0, MAX_AVATAR_COUNT).map((user, index) => (
           <Avatar
             key={user.username}
-            src={user.avatarUrl}
+            src={Profile.toAvatarUrl(user)}
             alt='avatar'
             className={cn('h-8 w-8', index !== 0 && '-ml-2')}
           />

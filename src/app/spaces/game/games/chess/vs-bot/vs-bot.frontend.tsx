@@ -23,6 +23,7 @@ import {
   isBotTurn,
   updateSpace,
 } from './vs-bot.types'
+import { Profile } from '~/app/@/data/profile'
 
 //
 //
@@ -401,9 +402,9 @@ export const View = ({
 
   const userSlot = (
     <div className='flex w-full items-center gap-3 p-3'>
-      <Avatar className='h-10 w-10' src={ctx.profiles[model.spaceModel.userId]?.avatarUrl} />
+      <Avatar className='h-10 w-10' src={Profile.toAvatarUrl(ctx.profilesByUserId[model.spaceModel.userId])} />
 
-      <p className='flex-1 text-lg'>{ctx.profiles[model.spaceModel.userId]?.username}</p>
+      <p className='flex-1 text-lg'>{ctx.profilesByUserId[model.spaceModel.userId]?.username}</p>
     </div>
   )
 

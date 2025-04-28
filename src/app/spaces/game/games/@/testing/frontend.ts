@@ -1,8 +1,7 @@
 import { Posix } from '~/@/time/posix'
-import { ProfileAvatar } from '~/app/@/data/profile-avatar'
+import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { Username } from '~/app/@/data/username'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 
@@ -23,15 +22,10 @@ export async function testSpaceFrontendCtx(): Promise<SpaceFrontendCtx> {
     currentUserRole: 'normal',
     documentVisibilityState: 'visible',
     now: Posix.now(),
-    profiles: {
-      [currentUserId]: {
-        avatarUrl: ProfileAvatar.toUrl({
-          seed: ProfileAvatar.randomSeed(),
-          style: 'fun-emoji',
-        }),
+    profilesByUserId: {
+      [currentUserId]: await Profile.random({
         userId: currentUserId,
-        username: await Username.generate(),
-      },
+      }),
     },
     space: {
       hostId: currentUserId,

@@ -59,12 +59,12 @@ const ViewFeedItem = ({
     }
 
     case 'user-ended-space': {
-      const profile = ctx.profiles[msgEvt.userId]
+      const profile = ctx.profilesByUserId[msgEvt.userId]
       return <FeedItem.Info text={`${profile?.username ?? 'Someone'} ended the space`} />
     }
 
     case 'user-inputted-game': {
-      const profile = ctx.profiles[msgEvt.userId]
+      const profile = ctx.profilesByUserId[msgEvt.userId]
       if (!msgEvt.game) {
         return <FeedItem.Info text={`${profile?.username ?? 'Someone'} quit the game`} />
       }
@@ -72,17 +72,17 @@ const ViewFeedItem = ({
     }
 
     case 'user-joined-space': {
-      const profile = ctx.profiles[msgEvt.userId]
+      const profile = ctx.profilesByUserId[msgEvt.userId]
       return <FeedItem.Info text={`${profile?.username ?? 'Someone'} joined the space`} />
     }
 
     case 'user-left-space': {
-      const profile = ctx.profiles[msgEvt.userId]
+      const profile = ctx.profilesByUserId[msgEvt.userId]
       return <FeedItem.Info text={`${profile?.username ?? 'Someone'} left the space`} />
     }
 
     case 'user-started-space': {
-      const profile = ctx.profiles[msgEvt.userId]
+      const profile = ctx.profilesByUserId[msgEvt.userId]
       return <FeedItem.Info text={`${profile?.username ?? 'Someone'} started the space`} />
     }
 

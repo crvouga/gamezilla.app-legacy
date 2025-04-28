@@ -8,7 +8,8 @@ import { Posix } from '~/@/time/posix'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
-import { ProfileCore } from '../user-profile-core'
+
+import { Profile } from '~/app/@/data/profile'
 import { UserProfileId } from '../user-profile-id'
 import type { IProfileDb } from './interface'
 import { ProfileDbQuery } from './query'
@@ -25,14 +26,14 @@ const ProfileRow = p.obj({
 
 type ProfileRow = p.Infer<typeof ProfileRow>
 
-const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
+const fromProfileRow = (row: ProfileRow): Result<string, Profile> => {
   const avatarSeed = row.avatar_seed ? ProfileAvatar.toSeed(row.avatar_seed) : ProfileAvatar.toSeed(row.username)
 
   const avatarStyle = row.avatar_style
     ? ProfileAvatar.toStyle(row.avatar_style)
     : ProfileAvatar.STYLES['big-ears-neutral']
 
-  const profile: ProfileCore = {
+  const profile: Profile = {
     id: row.id,
     userId: row.user_id,
     username: row.username,

@@ -7,17 +7,11 @@ import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserAccount } from '../data/account'
+import { Profile } from '../data/profile'
 import { UserId } from '../data/user-id'
 import { UserRole } from '../data/user-role'
-import { Username } from '../data/username'
 import { ParentScreenProps } from '../ui/screen/layout/screen-layout-props'
 import { ScreenSize } from '../ui/screen/screen-size'
-
-type Profile = {
-  userId: UserId
-  username: Username
-  avatarUrl: string
-}
 
 export type AppFrontendCtxBase = {
   parentScreen: ParentScreenProps | null
@@ -28,7 +22,9 @@ export type AppFrontendCtxBase = {
   navigatorLanguage: LanguageCodeISO_639_1
   currentScreen: Screen
   now: Posix
-  profiles: { [userId: UserId]: Profile }
+  profilesByUserId: {
+    [userId: UserId]: Profile
+  }
   documentVisibilityState: DocumentVisibilityState
   clientSessionId: ClientSessionId
   currentUser?: UserAccount | null

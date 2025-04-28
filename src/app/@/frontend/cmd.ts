@@ -90,9 +90,7 @@ export type ProfileCmd =
       t: 'profile'
       c: {
         t: 'add-profiles'
-        profiles: {
-          [userId: UserId]: Profile
-        }
+        profiles: Profile[]
       }
     }
   | {
@@ -104,7 +102,7 @@ export type ProfileCmd =
       }
     }
 
-export const addProfiles = <T extends FrontendCmdTypes>(profiles: { [userId: UserId]: Profile }): AppFrontendCmd<T> => {
+export const addProfiles = <T extends FrontendCmdTypes>(profiles: Profile[]): AppFrontendCmd<T> => {
   return { n: 'profile', t: 'profile', c: { t: 'add-profiles', profiles } }
 }
 

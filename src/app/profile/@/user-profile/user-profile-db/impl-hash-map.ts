@@ -1,7 +1,8 @@
 import { ILogger } from '~/@/logger'
 import { Ok } from '~/@/result'
 import { Sub } from '~/@/sub'
-import type { ProfileCore } from '../../../@/user-profile/user-profile-core'
+
+import { Profile } from '~/app/@/data/profile'
 import { UserProfileId } from '../user-profile-id'
 import type { IProfileDb } from './interface'
 
@@ -11,10 +12,10 @@ export type Config = {
 }
 
 export const ProfileDb = (_config: Config): IProfileDb => {
-  const profiles = new Map<UserProfileId, ProfileCore>()
+  const profiles = new Map<UserProfileId, Profile>()
   return {
     async findByUserId(userId) {
-      const output: ProfileCore[] = Array.from(profiles.values()).filter((profile) => profile.userId === userId)
+      const output: Profile[] = Array.from(profiles.values()).filter((profile) => profile.userId === userId)
 
       return Ok(output)
     },

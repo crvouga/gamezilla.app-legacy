@@ -11,8 +11,8 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { SpacesFrontend } from '../../frontend'
 import { Space } from '../../core/space'
+import { SpacesFrontend } from '../../frontend'
 import type * as SpacesTypes from '../../types'
 
 export const SpaceFrontendFixture = async () => {
@@ -106,6 +106,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     },
   )
 
+  const currentUserProfile = await Profile.random({ userId: currentUser.userId })
   const ctx: SpaceFrontendCtx = {
     ...f.ctx,
     parentScreen: null,
@@ -117,12 +118,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     currentUserRole: 'normal',
     documentVisibilityState: 'visible',
     now: Posix.now(),
-    profiles: {
-      [currentUser.userId]: { ...(await Profile.random()), userId: currentUser.userId },
-      [userA.userId]: userA,
-      [userB.userId]: userB,
-      [userC.userId]: userC,
-    },
+    profilesByUserId: Profile.indexByUserId([currentUserProfile, userA, userB, userC]),
     space,
     currentUser,
   }
@@ -165,7 +161,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
 export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
     msgBackend: {
-      profiles: {},
+      profilesByUserId: {},
       causedBy: {},
       t: 'sync.got-msg-space',
       c: withEventMetaAt(happenedAt, {
@@ -180,7 +176,7 @@ export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: Sp
 export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
     msgBackend: {
-      profiles: {},
+      profilesByUserId: {},
       causedBy: {},
       t: 'sync.got-msg-space',
       c: withEventMetaAt(happenedAt, {
@@ -195,7 +191,7 @@ export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: Space
 export const userJoinedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
     msgBackend: {
-      profiles: {},
+      profilesByUserId: {},
       causedBy: {},
       t: 'sync.got-msg-space',
       c: withEventMetaAt(happenedAt, {

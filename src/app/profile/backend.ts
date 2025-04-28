@@ -7,9 +7,8 @@ import { Profile } from '../@/data/profile'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { Username } from '../@/data/username'
-import { ProfileCore } from './@/user-profile/user-profile-core'
 import { type IProfileDb, ProfileDb } from './@/user-profile/user-profile-db'
-import { type Req, BackendCtx, BackendModule, profileCoreToProfile } from './types'
+import { type Req, BackendCtx, BackendModule } from './types'
 import { UserProfileId } from './@/user-profile/user-profile-id'
 
 //
@@ -94,7 +93,7 @@ const updateFromEvent: BackendModule['update'] = async ({ msgEvt, ctx }) => {
         msgCmd: [
           sendToFrontend([msgEvt.clientId], {
             t: 'current-user-profile',
-            result: Result.mapOk(result, profileCoreToProfile),
+            result: result,
             causedBy: { msgEvt },
             loggedIn: msgEvt.loggedIn,
           }),
@@ -119,7 +118,7 @@ const handler = async ({
   switch (msg.t) {
     case 'find-one': {
       const found = await profileDb.findByUserId(msg.userId)
-      return Result.mapOk(found, (profiles) => profiles.map(profileCoreToProfile))
+      return found
     }
 
     case 'change-username': {
@@ -147,7 +146,7 @@ const findElseInsertNew = async ({ profileDb, userId }: { profileDb: IProfileDb;
 
   const randomSeed = ProfileAvatar.randomSeed()
   const randomUsername = await Username.generate('.')
-  const profileNew: ProfileCore = {
+  const profileNew: Profile = {
     id: UserProfileId.generate(),
     userId,
     username: randomUsername,

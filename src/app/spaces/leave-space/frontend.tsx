@@ -24,7 +24,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: ms
       if (msgSpace.spaceId !== currentUserSpaceId) return { model }
 
       if (msgSpace.userId !== ctx.currentUser?.userId) {
-        const username = ctx.profiles[msgSpace.userId]?.username
+        const username = ctx.profilesByUserId[msgSpace.userId]?.username
         return {
           model,
           msgCmd: [

@@ -12,3 +12,13 @@ export type ProfileDbQuery = {
     createdAt: 'asc' | 'desc'
   }
 }
+
+const toKey = (query: ProfileDbQuery) => {
+  return [query.whereAnd?.userId?.equals, query.pagination.limit, query.pagination.offset, query.order.createdAt]
+    .filter(Boolean)
+    .join('|')
+}
+
+export const ProfileDbQuery = {
+  toKey,
+}

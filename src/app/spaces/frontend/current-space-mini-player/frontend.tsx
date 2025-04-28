@@ -6,6 +6,7 @@ import { SpacesCore } from '../../core/core'
 import { GameCoverArt } from '../../game/games/cover-art'
 import { SPACE_CARD_GRADIENT_CLASS_NAME } from '../../list-spaces/space-card/space-card-gradient'
 import type { ModelFrontend, MsgFrontend } from '../../types'
+import { Profile } from '~/app/@/data/profile'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
@@ -32,7 +33,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
 
   if (!space) return null
 
-  const hostProfile = input.ctx.profiles[space.hostId]
+  const hostProfile = input.ctx.profilesByUserId[space.hostId]
 
   const userCount = Object.values(space.users).length
   const isCurrentUserHost = input.ctx.currentUser.userId === space.hostId
@@ -51,7 +52,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
       >
         <div className='p-2'>
           {!space.game ? (
-            <Avatar src={hostProfile?.avatarUrl} alt='Host Avatar' className='size-14' />
+            <Avatar src={hostProfile ? Profile.toAvatarUrl(hostProfile) : ''} alt='Host Avatar' className='size-14' />
           ) : (
             <div className='size-14 overflow-hidden rounded border'>
               <GameCoverArt gameName={space.game.t} />

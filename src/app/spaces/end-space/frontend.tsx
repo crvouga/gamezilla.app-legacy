@@ -76,8 +76,9 @@ const updateShowToast: SpaceFrontendModule['update'] = (input) => {
   if (input.msgSpace?.userId === input.ctx.currentUser?.userId) {
     return { model: input.model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-current-user'))] }
   }
+  const { userId } = input.msgSpace
 
-  const profile = input.ctx.profiles[input.msgSpace.userId]
+  const profile = input.ctx.profilesByUserId[userId]
 
   if (!profile) {
     return { model: input.model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-host'))] }

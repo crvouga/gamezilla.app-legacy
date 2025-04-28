@@ -45,7 +45,6 @@ describe(import.meta.file, () => {
       },
       {
         msgBackend: {
-          profiles: { [otherUser.userId]: otherUser },
           t: 'sync.got-msg-space',
           c: withEventMeta({ t: 'user-joined-space', spaceId: f.spaceId, userId: otherUser.userId }),
         },

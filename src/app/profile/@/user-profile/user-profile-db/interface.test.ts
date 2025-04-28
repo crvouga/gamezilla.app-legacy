@@ -4,9 +4,9 @@ import { Ok, unwrap } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
+import { Profile } from '~/app/@/data/profile'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
-import { ProfileCore } from '../user-profile-core'
 import { Config, ProfileDb } from './impl'
 import { ProfileDbQuery } from './query'
 
@@ -47,7 +47,7 @@ const Fixtures = async () => {
 describe('ProfileDb', () => {
   it('should work', async () => {
     for (const f of await Fixtures()) {
-      const profile = await ProfileCore.random()
+      const profile = await Profile.random()
       const before = await f.profileDb.findByUserId(profile.userId)
       const put = await f.profileDb.put(profile)
       const after = await f.profileDb.findByUserId(profile.userId)
@@ -59,7 +59,7 @@ describe('ProfileDb', () => {
 
   it('should upsert a profile', async () => {
     for (const f of await Fixtures()) {
-      const profile = await ProfileCore.random()
+      const profile = await Profile.random()
       const upsertResult = await f.profileDb.put(profile)
       expect(upsertResult).toEqual(Ok(null))
 
@@ -94,9 +94,9 @@ describe('ProfileDb', () => {
 
       const before = await f.profileDb.query(query)
 
-      const expected: ProfileCore[] = []
+      const expected: Profile[] = []
       for (let i = 0; i < 10; i++) {
-        const profile = await ProfileCore.random({
+        const profile = await Profile.random({
           userId,
           createdAt: Posix.future(Posix.now(), TimeSpan.seconds(i)),
         })
@@ -105,7 +105,7 @@ describe('ProfileDb', () => {
       }
 
       for (let i = 0; i < 10; i++) {
-        unwrap(await f.profileDb.put(await ProfileCore.random()))
+        unwrap(await f.profileDb.put(await Profile.random()))
       }
 
       const after = await f.profileDb.query(query)

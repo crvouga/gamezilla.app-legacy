@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import type { Profile } from '~/app/@/data/profile'
+import { Profile } from '~/app/@/data/profile'
 import { Avatar, Typography } from '~/@/ui'
 
 export const ProfileListItem = ({
@@ -16,7 +16,7 @@ export const ProfileListItem = ({
 }) => {
   return (
     <div className='flex w-full items-center gap-2 p-2'>
-      <Avatar className='size-12' src={profile?.avatarUrl} />
+      <Avatar className='size-12' src={profile ? Profile.toAvatarUrl(profile) : ''} />
       <div className='flex flex-1 flex-col gap-0.5'>
         {profile && <Typography variant='body' text={ctx.t('username', profile.username)} />}
 

@@ -108,7 +108,9 @@ const ViewSurfaces = (
     currentUser: input.ctx.currentUser,
   }
 
-  const modalProfile = input.model.openedPreviewUserId ? input.ctx.profiles[input.model.openedPreviewUserId] : null
+  const modalProfile = input.model.openedPreviewUserId
+    ? input.ctx.profilesByUserId[input.model.openedPreviewUserId]
+    : null
   return (
     <SurfaceLayout
       ctx={input.ctx}

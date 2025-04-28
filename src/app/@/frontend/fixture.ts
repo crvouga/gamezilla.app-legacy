@@ -30,7 +30,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     documentVisibilityState: 'visible',
     navigatorLanguage: 'en',
     now: Posix.now(),
-    profiles: {},
+    profilesByUserId: {},
     screenSize: 'mobile',
     t: Translator('en'),
     currentUser: {

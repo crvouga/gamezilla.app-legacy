@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'bun:test'
 import { eq } from '~/@/equals/equals'
 import { withEventMetaAt } from '~/@/event-sourced/event'
-import { addProfiles } from '~/app/@/frontend/cmd'
 import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { Username } from '~/app/@/data/username'
+import { addProfiles } from '~/app/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { makeSpace } from '../@/fixture/shared'
 import { SpacesCore } from '../core/core'
@@ -26,11 +25,7 @@ describe(import.meta.file, () => {
   it('should record profiles when received from backend', async () => {
     const f = await Fixture()
 
-    const someProfile: Profile = {
-      userId: UserId.generate(),
-      avatarUrl: 'some url',
-      username: await Username.generate(),
-    }
+    const someProfile = await Profile.random()
 
     const someProfiles: {
       [userId: UserId]: Profile
@@ -43,11 +38,13 @@ describe(import.meta.file, () => {
         msgBackend: {
           t: 'list-spaces.listed',
           spaces: [],
-          profiles: someProfiles,
+          profilesByUserId: someProfiles,
         },
       },
     ])
-    expect(hasExactlyOne(output.msgCmd ?? [], (msgCmd) => eq(msgCmd, addProfiles(someProfiles)))).toBe(true)
+    expect(hasExactlyOne(output.msgCmd ?? [], (msgCmd) => eq(msgCmd, addProfiles(Object.values(someProfiles))))).toBe(
+      true,
+    )
   })
 
   it('should merge space received from backend', async () => {
@@ -163,7 +160,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       {
         msgBackend: {
-          profiles: {},
+          profilesByUserId: {},
           causedBy: {},
           t: 'sync.got-msg-space',
           c: withEventMetaAt(0, {

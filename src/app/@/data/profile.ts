@@ -1,36 +1,55 @@
 import { p } from '~/@/parser'
-import { UserId } from './user-id'
-import { Username } from './username'
-import { ProfileAvatar } from './profile-avatar'
+import { Posix } from '~/@/time/posix'
+import { ProfileAvatar } from '~/app/@/data/profile-avatar'
+import { UserId } from '~/app/@/data/user-id'
+import { Username } from '~/app/@/data/username'
+import { UserProfileId } from '~/app/profile/@/user-profile/user-profile-id'
 
 const parser = p.obj({
-  userId: p.custom(UserId.is, 'Invalid user id'),
-  avatarUrl: p.str,
-  username: p.custom(Username.is, 'Invalid username'),
+  id: UserProfileId,
+  userId: UserId,
+  username: Username,
+  avatarSeed: p.maybe(p.str),
+  avatarStyle: p.maybe(p.str),
+  createdAt: Posix,
+  updatedAt: Posix,
 })
+
 export type Profile = p.Infer<typeof parser>
 
-const random = async (): Promise<Profile> => {
+const random = async (overrides?: Partial<Profile>): Promise<Profile> => {
   return {
+    id: UserProfileId.generate(),
     userId: UserId.generate(),
-    avatarUrl: ProfileAvatar.toUrl({
-      seed: ProfileAvatar.toSeed('random avatar seed'),
-      style: 'adventurer',
-    }),
     username: await Username.generate(),
+    avatarSeed: ProfileAvatar.randomSeed(),
+    avatarStyle: ProfileAvatar.randomStyle(),
+    createdAt: Posix.now(),
+    updatedAt: Posix.now(),
+    ...overrides,
   }
 }
 
-const indexByUserId = (profiles: Profile[]): { [userId: UserId]: Profile } => {
-  const result: { [userId: UserId]: Profile } = {}
-  for (const profile of profiles) {
-    result[profile.userId] = profile
+const toAvatarUrl = (profile?: Profile | null | undefined): string => {
+  if (!profile) {
+    return ''
   }
-  return result
+  return ProfileAvatar.toUrl({
+    seed: profile.avatarSeed ?? '',
+    style: 'thumbs',
+  })
+}
+
+const indexByUserId = (profiles: Profile[]): { [userId: UserId]: Profile } => {
+  return profiles.reduce<{ [userId: UserId]: Profile }>((acc, profile) => {
+    acc[profile.userId] = profile
+    return acc
+  }, {})
 }
 
 export const Profile = {
   ...parser,
   random,
+  toAvatarUrl,
   indexByUserId,
 }

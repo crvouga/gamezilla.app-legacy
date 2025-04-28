@@ -2,6 +2,7 @@ import { EventSourced } from '~/@/event-sourced'
 import { unwrapOr } from '~/@/result'
 import { broadcast, sendToFrontend, sendToUser } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
+import { Profile } from '~/app/@/data/profile'
 import { SpaceBackendModule } from '../architecture/space-backend'
 import { Space } from '../core/space'
 import { SpaceState } from '../core/space-state'
@@ -19,7 +20,7 @@ const update: SpaceBackendModule['update'] = async (input) => {
 }
 
 const updateProfileCache: SpaceBackendModule['update'] = async (input) => {
-  await input.ctx.profileCache.add(input.msgFrontend?.profiles ?? {})
+  await input.ctx.profileCache.add(Object.values(input.msgFrontend?.profilesByUserId ?? {}))
   return {}
 }
 
@@ -50,7 +51,7 @@ const updateFromFrontend: SpaceBackendModule['update'] = async (input) => {
             t: 'sync.synced',
             causedBy: { msgFrontend: input.msgFrontend },
             space: starting,
-            profiles: profiles,
+            profilesByUserId: profiles,
           }),
         ],
       }
@@ -72,11 +73,11 @@ const getAssociatedProfiles = async (ctx: AppBackendCtx, spaces: Space.Model[]) 
     }
   })
 
-  const got = await ctx.profileCache.get(userIds)
+  const got = await ctx.profileCache.getByUserId(userIds)
 
-  const profiles = unwrapOr(got, {})
+  const profiles = unwrapOr(got, [])
 
-  return profiles
+  return Profile.indexByUserId(profiles)
 }
 
 const updateCurrentUserSpace: SpaceBackendModule['update'] = async (input) => {
@@ -97,7 +98,7 @@ const updateCurrentUserSpace: SpaceBackendModule['update'] = async (input) => {
           sendToFrontend<MsgToFrontend>([input.msgEvt.clientId], {
             t: 'sync.synced',
             space: started,
-            profiles,
+            profilesByUserId: profiles,
             currentUser: input.msgEvt.user,
             causedBy: {
               msgEvt: input.msgEvt,
@@ -131,14 +132,14 @@ const sendMsgSpaceToFrontend: SpaceBackendModule['update'] = async (input) => {
   const spaceState = Space.toSpaceStarted(space)
 
   const profiles = unwrapOr(
-    await input.ctx.profileCache.get('userId' in eventWithMeta ? [eventWithMeta.userId] : []),
-    {},
+    await input.ctx.profileCache.getByUserId('userId' in eventWithMeta ? [eventWithMeta.userId] : []),
+    [],
   )
 
   const toFrontend: MsgToFrontend = {
     t: 'sync.got-msg-space',
     c: eventWithMeta,
-    profiles,
+    profilesByUserId: Profile.indexByUserId(profiles),
   }
 
   if (spaceState && eventWithMeta.t === 'game') {

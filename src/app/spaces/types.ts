@@ -81,7 +81,7 @@ export type MsgFrontend =
   | CurrentSpaceMiniPlayerTypes.MsgFrontend
 
 type MsgToFrontendBase = {
-  profiles?: { [userId: UserId]: Profile }
+  profilesByUserId?: { [userId: UserId]: Profile }
   causedBy?: unknown
 }
 
@@ -89,7 +89,7 @@ export type MsgToFrontend = MsgToFrontendBase &
   (ListSpacesTypes.MsgToFrontend | GameTypes.MsgToFrontend | SyncTypes.MsgToFrontend)
 
 type MsgToBackendBase = {
-  profiles?: { [userId: UserId]: Profile }
+  profilesByUserId?: { [userId: UserId]: Profile }
   causedBy?: unknown
 }
 

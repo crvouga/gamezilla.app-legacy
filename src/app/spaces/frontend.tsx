@@ -45,7 +45,7 @@ const update: FrontendModule['update'] = (input) => {
 
   const updated = updateLoop({
     ...input,
-    ctx: { ...input.ctx, profiles: { ...input.ctx.profiles, ...input.msgBackend?.profiles } },
+    ctx: { ...input.ctx, profilesByUserId: { ...input.ctx.profilesByUserId, ...input.msgBackend?.profilesByUserId } },
   })
 
   return {

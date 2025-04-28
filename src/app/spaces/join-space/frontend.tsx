@@ -92,7 +92,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
       if (input.msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
 
       if (input.msgSpace.userId !== input.ctx.currentUser?.userId) {
-        const username = input.ctx.profiles[input.msgSpace.userId]?.username ?? null
+        const username = input.ctx.profilesByUserId[input.msgSpace.userId]?.username ?? null
         return {
           model: input.model,
           msgCmd: [
@@ -133,7 +133,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     currentUserRole: currentUser.role,
     currentUser,
   }
-  const hostProfile = input.ctx.profiles[spaceState.hostId]
+  const hostProfile = input.ctx.profilesByUserId[spaceState.hostId]
 
   return (
     <ScreenLayout
