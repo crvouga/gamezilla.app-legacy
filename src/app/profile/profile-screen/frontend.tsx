@@ -22,13 +22,14 @@ const View = (input: {
 }
 
 const ViewBody: typeof View = (input) => {
-  const profile = Object.values(input.model.profiles).find((p) => p.userId === input.userId)
-  if (!profile) return <SpinnerBlock />
-  const isCurrentUserProfile = profile.userId === input.ctx.currentUser?.userId
+  const profile = input.ctx.profilesByUserId[input.userId]
+  const isCurrentUserProfile = input.userId === input.ctx.currentUser?.userId
+  if (!profile && !isCurrentUserProfile) return <SpinnerBlock />
+
   return (
     <div className='flex w-full flex-col items-center gap-4 p-6'>
       <Avatar className='size-28' src={Profile.toAvatarUrl(profile)} alt='profile avatar' />
-      <Typography variant='title' text={input.ctx.t('username', profile.username)} />
+      {profile?.username && <Typography variant='title' text={input.ctx.t('username', profile?.username)} />}
       {isCurrentUserProfile && (
         <div className='flex w-full items-center justify-center gap-6 pt-4'>
           <Button
