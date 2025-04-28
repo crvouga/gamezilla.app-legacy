@@ -13,7 +13,8 @@ const queries: string[] = [
   CREATE TABLE user_guest_session_mapping (
     id text NOT NULL PRIMARY KEY,
     guest_user_id text NOT NULL,
-    session_id text NOT NULL,
+    session_id text,
+    client_session_id text NOT NULL,
     created_at_posix bigint NOT NULL
   );
   `,

@@ -1,53 +1,46 @@
-import { isRequesting, isResponseOk, RequestResponse } from '~/@/request-response/request-response'
-import { isErr, NotAsked } from '~/@/result'
+import { isErr, Loading, NotAsked, Ok, Result, unwrapOr } from '~/@/result'
+import { Posix } from '~/@/time/posix'
 import { Button, IconUserCircle } from '~/@/ui'
-import { APP_SOUND, playSound, sendToBackend, showErrSm } from '~/app/@/frontend/cmd'
-import type { FrontendModule } from '../types'
-import type { ModelFrontend } from './types'
+import { ClientSessionId } from '~/@/wire/client-session-id'
+import { UserAccount } from '~/app/@/data/account'
+import { UserId } from '~/app/@/data/user-id'
+import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { AuthFrontendCtx } from '../@/frontend/ctx'
+import { GuestSessionMapping } from '../@/guest-session-mapping/guest-session-mapping'
+import { GuestSessionMappingId } from '../@/guest-session-mapping/guest-session-mapping-id'
+import { UserSession } from '../@/user-session/user-session'
+import { UserSessionId } from '../@/user-session/user-session-id'
+import type { FrontendModule, ModelFrontend } from './types'
 
 const init: ModelFrontend = {
-  guestRequest: NotAsked,
+  request: NotAsked,
 }
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
-    case 'guest.clicked-continue-as-guest-button': {
+    case 'clicked-continue-as-guest-button': {
       return {
         model: {
           ...input.model,
-          guestRequest: RequestResponse.startedRequest(input.ctx.now),
+          request: Loading,
         },
-        msgCmd: [
-          playSound(APP_SOUND.tap),
-          sendToBackend({
-            t: 'guest.clicked-continue-as-guest-button',
-          }),
-        ],
-      }
-    }
-  }
-
-  switch (input.msgEvt?.t) {
-    case 'auth-evt.authenticated': {
-      return {
-        model: {
-          ...input.model,
-          guestRequest: {
-            t: 'not-asked',
-          },
+        msgCmd: [playSound(APP_SOUND.tap)],
+        async eff(dispatch) {
+          const result = await continueAsGuest({
+            ctx: input.ctx,
+            clientSessionId: input.ctx.clientSessionId,
+            now: input.ctx.now,
+          })
+          dispatch({ t: 'continue-as-guest-result', result })
         },
       }
     }
-  }
-
-  switch (input.msgBackend?.t) {
-    case 'guest.continue-as-guest-result': {
+    case 'continue-as-guest-result': {
       return {
         model: {
           ...input.model,
-          guestRequest: RequestResponse.response(input.model.guestRequest, input.ctx.now, input.msgBackend.result),
+          request: input.msg.result,
         },
-        msgCmd: isErr(input.msgBackend.result) ? showErrSm(input.ctx.t('auth.continue-as-guest.errored')) : [],
       }
     }
   }
@@ -57,13 +50,66 @@ const update: FrontendModule['update'] = (input) => {
   }
 }
 
+const continueAsGuest = async (input: {
+  ctx: AuthFrontendCtx
+  clientSessionId: ClientSessionId
+  now: Posix
+}): Promise<Result<string, UserAccount>> => {
+  const existingGuestUserId = await input.ctx.guestSessionMappingDb.findUserIdByClientSessionId(input.clientSessionId)
+
+  if (isErr(existingGuestUserId)) return existingGuestUserId
+
+  const existingGuestAccount = unwrapOr(
+    await input.ctx.userAccountDb.findOneByUserId({ userId: existingGuestUserId.value }),
+    null,
+  )
+
+  const newGuestAccount: UserAccount = {
+    role: 'guest',
+    userId: UserId.generate(),
+    createdAt: input.now,
+    phoneNumber: null,
+  }
+
+  const guestAccount: UserAccount = existingGuestAccount ?? newGuestAccount
+
+  const guestSessionMappingNew: GuestSessionMapping = {
+    id: GuestSessionMappingId.generate(),
+    clientSessionId: input.clientSessionId,
+    guestUserId: guestAccount.userId,
+    sessionId: null,
+  }
+
+  const inserted = await input.ctx.guestSessionMappingDb.insert(guestSessionMappingNew)
+
+  if (isErr(inserted)) return inserted
+
+  const insertedAccount = existingGuestAccount ? Ok(null) : await input.ctx.userAccountDb.insert(guestAccount)
+
+  if (isErr(insertedAccount)) return insertedAccount
+
+  const userSessionNew: UserSession = {
+    userSessionId: UserSessionId.generate(),
+    sessionId: null,
+    clientSessionId: input.clientSessionId,
+    userId: guestAccount.userId,
+    createdAt: input.now,
+    endedAt: null,
+  }
+
+  const insertedSession = await input.ctx.userSessionDb.insert(userSessionNew)
+
+  if (isErr(insertedSession)) return insertedSession
+
+  return Ok(guestAccount)
+}
+
 const ViewButton: FrontendModule['View'] = (input) => {
   return (
     <Button
-      onClick={() => input.dispatch({ t: 'guest.clicked-continue-as-guest-button' })}
+      onClick={() => input.dispatch({ t: 'clicked-continue-as-guest-button' })}
       renderIconStart={(iconInput) => <IconUserCircle {...iconInput} />}
       text={input.ctx.t('auth.continue-as-guest')}
-      loading={isRequesting(input.model.guestRequest) || isResponseOk(input.model.guestRequest)}
     />
   )
 }

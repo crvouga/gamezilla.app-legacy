@@ -29,6 +29,8 @@ export type MsgFrontend =
       userSessions: UserSession[]
     }
 
+export type MsgToBackend = { t: 'noop' }
+
 export const rpcContract = RPC.initContract({
   getCurrentUser: {
     input: p.obj({}),
@@ -45,7 +47,7 @@ export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend
   Msg: MsgFrontend
   MsgCmdOut: AppFrontendCmd<{
-    MsgFrontend: never
-    MsgToBackend: never
+    MsgFrontend: MsgFrontend
+    MsgToBackend: MsgToBackend
   }>
 }>

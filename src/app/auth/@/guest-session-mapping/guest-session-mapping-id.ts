@@ -1,0 +1,32 @@
+import { Uuid } from '~/@/id/uuid'
+import type { Brand } from '~/@/brand/brand'
+import { p } from '~/@/parser'
+
+export type GuestSessionMappingId = Brand<string, 'GuestSessionMappingId'>
+
+const is = (guestSessionMappingId: unknown): guestSessionMappingId is GuestSessionMappingId => {
+  return typeof guestSessionMappingId === 'string'
+}
+
+const parser = p.custom(is, 'Invalid guest session mapping id')
+
+const namespace = 'guest-session-mapping'
+const separator = ':'
+
+const generate = () => {
+  const id = Uuid.generate()
+  const randomIntegers = Math.floor(Math.random() * 1000)
+  const guestSessionMappingId = `${namespace}${separator}${id}${randomIntegers}`
+
+  if (is(guestSessionMappingId)) {
+    return guestSessionMappingId
+  }
+
+  throw new Error('impossible condition. generated invalid user session id.')
+}
+
+export const GuestSessionMappingId = {
+  ...parser,
+  generate,
+  is,
+}

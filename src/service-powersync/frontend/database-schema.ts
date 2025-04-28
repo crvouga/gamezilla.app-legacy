@@ -100,6 +100,7 @@ const user_guest_session_mapping = new Table(
   {
     id: column.text,
     guest_user_id: column.text,
+    client_session_id: column.text,
     session_id: column.text,
     created_at_posix: column.integer,
   },

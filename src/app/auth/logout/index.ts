@@ -1,1 +1,1 @@
-export * as Logout from './types'
+export * as LogoutTypes from './types'

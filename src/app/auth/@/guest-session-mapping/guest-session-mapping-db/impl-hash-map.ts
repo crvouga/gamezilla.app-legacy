@@ -1,24 +1,36 @@
 import { Ok } from '~/@/result'
+import { GuestSessionMapping } from '../guest-session-mapping'
+import { GuestSessionMappingId } from '../guest-session-mapping-id'
 import { IGuestSessionMappingDb } from './interface'
-import { SessionId } from '~/@/wire/session-id'
-import { UserId } from '~/app/@/data/user-id'
 
 export type Config = {
   t: 'hash-map'
 }
 
 export const GuestSessionMappingDb = (_config: Config): IGuestSessionMappingDb => {
-  const userIdBySessionId = new Map<SessionId, UserId>()
-  const sessionIdByUserId = new Map<UserId, SessionId>()
+  const guestSessionMappings = new Map<GuestSessionMappingId, GuestSessionMapping>()
   return {
     async findUserIdBySessionId(sessionId) {
-      const userId = userIdBySessionId.get(sessionId)
-      return Ok(userId ?? null)
+      const hits: GuestSessionMapping[] = []
+      for (const [_id, guestSessionMapping] of guestSessionMappings.entries()) {
+        if (guestSessionMapping.sessionId === sessionId) {
+          hits.push(guestSessionMapping)
+        }
+      }
+      return Ok(hits.map((hit) => hit.guestUserId)[0] ?? null)
     },
     async insert(input) {
-      userIdBySessionId.set(input.sessionId, input.guestUserId)
-      sessionIdByUserId.set(input.guestUserId, input.sessionId)
+      guestSessionMappings.set(input.id, input)
       return Ok(null)
+    },
+    async findUserIdByClientSessionId(clientSessionId) {
+      const hits: GuestSessionMapping[] = []
+      for (const [_id, guestSessionMapping] of guestSessionMappings.entries()) {
+        if (guestSessionMapping.clientSessionId === clientSessionId) {
+          hits.push(guestSessionMapping)
+        }
+      }
+      return Ok(hits.map((hit) => hit.guestUserId)[0] ?? null)
     },
   }
 }

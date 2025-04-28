@@ -1,11 +1,10 @@
+import { IDbConnSql } from '~/@/db-conn-sql'
+import { p } from '~/@/parser'
 import { Ok, isErr } from '~/@/result'
-import { IGuestSessionMappingDb } from './interface'
+import { Posix } from '~/@/time/posix'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
-import { p } from '~/@/parser'
-import { IDbConnSql } from '~/@/db-conn-sql'
-import { Posix } from '~/@/time/posix'
-import { Uuid } from '~/@/id/uuid'
+import { IGuestSessionMappingDb } from './interface'
 
 export const Row = p.obj({
   id: p.str,
@@ -47,14 +46,38 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
 
       return Ok(userId)
     },
-    async insert(input) {
+    async findUserIdByClientSessionId(clientSessionId) {
       const query = `
-				INSERT INTO user_guest_session_mapping (id, guest_user_id, session_id, created_at_posix)
-        VALUES (:id, :guest_user_id, :session_id, :created_at_posix)
+				SELECT guest_user_id
+				FROM user_guest_session_mapping
+				WHERE client_session_id = :client_session_id
 			`
       const vars = {
-        id: Uuid.generate(),
+        client_session_id: clientSessionId,
+      }
+      const queried = await config.dbConnSql.query({
+        parser: p.obj({
+          guest_user_id: UserId,
+        }),
+        sql: query,
+        vars: vars,
+      })
+      if (isErr(queried)) {
+        return queried
+      }
+      const userId = queried.value[0]?.guest_user_id ?? null
+      return Ok(userId)
+    },
+
+    async insert(input) {
+      const query = `
+				INSERT INTO user_guest_session_mapping (id, guest_user_id, client_session_id, session_id, created_at_posix)
+        VALUES (:id, :guest_user_id, :client_session_id, :session_id, :created_at_posix)
+			`
+      const vars = {
+        id: input.id,
         guest_user_id: input.guestUserId,
+        client_session_id: input.clientSessionId,
         session_id: input.sessionId,
         created_at_posix: Posix.now(),
       }

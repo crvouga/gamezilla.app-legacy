@@ -1,10 +1,8 @@
-import type { RemoteResult } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import type { AppBackendModule } from '../@/architecture/app-backend'
 import type { AppFrontendModule } from '../@/architecture/app-frontend'
 import { BackendCmd } from '../@/backend/cmd'
 import { BackendEvt } from '../@/backend/evt'
-import type { UserAccount } from '../@/data/account'
 import type { AppFrontendCmd, AuthCmd } from '../@/frontend/cmd'
 import { AppFrontendEvt } from '../@/frontend/evt'
 import { BackendCtx } from './@/backend/ctx'
@@ -12,7 +10,7 @@ import { AuthFrontendCtx } from './@/frontend/ctx'
 import type { ContinueAsGuest } from './continue-as-guest'
 import { ContinueWithSmsTypes } from './continue-with-sms'
 import { CurrentUserTypes } from './current-user'
-import type { Logout } from './logout'
+import type { LogoutTypes } from './logout'
 
 export type { BackendCtx }
 
@@ -23,15 +21,12 @@ export type { BackendCtx }
 //
 //
 
-type BaseModelFrontend = {
-  loginWithGoogle: RemoteResult<string, null>
-  logout: RemoteResult<string, null>
-  opened: 'logged-out' | null
-  sms: ContinueWithSmsTypes.ModelFrontend
+export type ModelFrontend = {
+  logout: LogoutTypes.ModelFrontend
+  continueWithSms: ContinueWithSmsTypes.ModelFrontend
+  continueAsGuest: ContinueAsGuest.ModelFrontend
   currentUser: CurrentUserTypes.ModelFrontend
 }
-
-export type ModelFrontend = BaseModelFrontend & ContinueAsGuest.ModelFrontend & Logout.ModelFrontend
 
 //
 //
@@ -40,34 +35,21 @@ export type ModelFrontend = BaseModelFrontend & ContinueAsGuest.ModelFrontend & 
 //
 
 export type MsgFrontend =
-  | ContinueAsGuest.MsgFrontend
-  | Logout.MsgFrontend
   | { t: 'user-clicked-login-with-phone' }
-  | { t: 'user-clicked-login-with-email' }
-  | { t: 'sms'; c: ContinueWithSmsTypes.MsgFrontend }
-  | { t: 'current-user'; c: CurrentUserTypes.MsgFrontend }
+  | { t: 'got-continue-as-guest-msg'; c: ContinueAsGuest.MsgFrontend }
+  | { t: 'got-continue-with-sms-msg'; c: ContinueWithSmsTypes.MsgFrontend }
+  | { t: 'got-logout-msg'; c: LogoutTypes.MsgFrontend }
+  | { t: 'got-current-user-msg'; c: CurrentUserTypes.MsgFrontend }
 
-export type MsgBackend =
-  | ContinueAsGuest.MsgBackend
-  | Logout.MsgFrontend
-  | { t: 'sms'; c: ContinueWithSmsTypes.MsgBackend }
+export type MsgBackend = { t: 'noop' }
 
 export type MsgToBackend =
-  | ContinueAsGuest.MsgToBackend
-  | Logout.MsgToBackend
-  | { t: 'frontend-checked-auth' }
-  | { t: 'sms'; c: ContinueWithSmsTypes.MsgToBackend }
+  | { t: 'got-logout-msg'; c: LogoutTypes.MsgToBackend }
+  | { t: 'got-current-user-msg'; c: CurrentUserTypes.MsgToBackend }
+  | { t: 'got-continue-as-guest-msg'; c: ContinueAsGuest.MsgToBackend }
+  | { t: 'got-continue-with-sms-msg'; c: ContinueWithSmsTypes.MsgToBackend }
 
-export type MsgToFrontend =
-  | ContinueAsGuest.MsgToFrontend
-  | Logout.MsgToFrontend
-  | {
-      t: 'client-authenticated'
-      account: UserAccount
-      loggedIn: boolean
-    }
-  | { t: 'client-unauthenticated'; sessionId?: never }
-  | { t: 'sms'; c: ContinueWithSmsTypes.MsgToFrontend }
+export type MsgToFrontend = { t: 'noop' }
 
 export type FrontendCtx = AuthFrontendCtx & {
   rpc: {

@@ -1,17 +1,13 @@
-import { NotAsked, Ok } from '~/@/result'
-import { APP_SOUND, playSound, sendToBackend, showToast } from '~/app/@/frontend/cmd'
+import { NotAsked } from '~/@/result'
+import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
-import { toCurrentUserId } from '../current-user/frontend'
-import type { FrontendModule, ModelFrontend, MsgFrontend } from '../types'
+import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 
-//
-//
-//
-//
-//
-//
-//
+const init: ModelFrontend = {
+  opened: null,
+  request: NotAsked,
+}
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
@@ -19,40 +15,20 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
+          opened: null,
         },
         async eff(_dispatch) {
           await input.ctx.userSessionDb.zapByClientSessionId(input.ctx.clientSessionId)
         },
-        msgCmd: [
-          sendToBackend({ t: 'user-clicked-confirm-logout-button' }),
-          showToast(input.ctx.t('auth.current-user-logged-out')),
-          playSound(APP_SOUND.navBackwardMin),
-        ],
-        msgEvt: [
-          {
-            t: 'auth-evt.unauthenticated',
-          },
-        ],
+        msgCmd: [showToast(input.ctx.t('auth.current-user-logged-out')), playSound(APP_SOUND.navBackwardMin)],
       }
     }
 
     case 'logout-drawer-closed':
     case 'logout-drawer-clicked-cancel': {
-      const currentUserId = toCurrentUserId({
-        model: input.model.currentUser,
-        ctx: input.ctx,
-      })
-
-      if (!currentUserId) {
-        return {
-          model: input.model,
-        }
-      }
-
       return {
         model: {
           ...input.model,
-          logout: NotAsked,
           opened: null,
         },
         msgCmd: [playSound(APP_SOUND.tap)],
@@ -68,18 +44,6 @@ const update: FrontendModule['update'] = (input) => {
           opened: 'logged-out',
         },
         msgCmd: [playSound(APP_SOUND.alertErrorSm)],
-      }
-    }
-  }
-
-  switch (input.msgEvt?.t) {
-    case 'auth-evt.unauthenticated': {
-      return {
-        model: {
-          ...input.model,
-          logout: Ok(null),
-          opened: null,
-        },
       }
     }
   }
@@ -114,28 +78,16 @@ const View = ({
       confirmText={ctx.t('auth.logout')}
       cancelText={ctx.t('app.cancel')}
       id='logout'
-      confirmLoading={model.logout.t === 'loading'}
       position='bottom'
-      onClose={() =>
-        dispatch({
-          t: 'logout-drawer-closed',
-        })
-      }
-      onCancel={() =>
-        dispatch({
-          t: 'logout-drawer-clicked-cancel',
-        })
-      }
-      onConfirm={() =>
-        dispatch({
-          t: 'logout-drawer-clicked-confirm',
-        })
-      }
+      onClose={() => dispatch({ t: 'logout-drawer-closed' })}
+      onCancel={() => dispatch({ t: 'logout-drawer-clicked-cancel' })}
+      onConfirm={() => dispatch({ t: 'logout-drawer-clicked-confirm' })}
     />
   )
 }
 
 export const LogoutFrontend = {
+  init,
   View,
   update,
 }

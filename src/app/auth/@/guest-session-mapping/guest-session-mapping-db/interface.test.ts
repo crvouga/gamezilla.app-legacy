@@ -3,6 +3,7 @@ import { unwrap } from '~/@/result'
 import { SessionId } from '~/@/wire/session-id'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserId } from '~/app/@/data/user-id'
+import { GuestSessionMapping } from '../guest-session-mapping'
 import { Config, GuestSessionMappingDb } from './impl'
 
 const Fixture = async (config: Config) => {
@@ -36,23 +37,21 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe(import.meta.file, () => {
+describe.only(import.meta.file, () => {
   it('should insert correctly', async () => {
     for (const f of await Fixtures()) {
-      const sessionId = SessionId.generate()
-      const guestUserId = UserId.generate()
+      const guestSessionMapping = GuestSessionMapping.random()
 
-      const before = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(sessionId))
+      if (!guestSessionMapping.sessionId) throw new Error('sessionId is null')
 
-      await f.guestSessionMappingDb.insert({
-        guestUserId,
-        sessionId,
-      })
+      const before = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(guestSessionMapping.sessionId))
 
-      const after = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(sessionId))
+      unwrap(await f.guestSessionMappingDb.insert(guestSessionMapping))
+
+      const after = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(guestSessionMapping.sessionId))
 
       expect(before).toBeNull()
-      expect(after).toBe(guestUserId)
+      expect(after).toBe(guestSessionMapping.guestUserId)
     }
   })
 
@@ -63,18 +62,24 @@ describe(import.meta.file, () => {
       const sessionIdC = SessionId.generate()
       const guestUserId = UserId.generate()
 
-      await f.guestSessionMappingDb.insert({
-        guestUserId,
-        sessionId: sessionIdA,
-      })
-      await f.guestSessionMappingDb.insert({
-        guestUserId,
-        sessionId: sessionIdB,
-      })
-      await f.guestSessionMappingDb.insert({
-        guestUserId,
-        sessionId: sessionIdC,
-      })
+      await f.guestSessionMappingDb.insert(
+        GuestSessionMapping.random({
+          guestUserId,
+          sessionId: sessionIdA,
+        }),
+      )
+      await f.guestSessionMappingDb.insert(
+        GuestSessionMapping.random({
+          guestUserId,
+          sessionId: sessionIdB,
+        }),
+      )
+      await f.guestSessionMappingDb.insert(
+        GuestSessionMapping.random({
+          guestUserId,
+          sessionId: sessionIdC,
+        }),
+      )
 
       const userIdA = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(sessionIdA))
       const userIdB = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(sessionIdB))

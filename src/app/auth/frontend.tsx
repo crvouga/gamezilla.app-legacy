@@ -1,8 +1,7 @@
 import { Eff } from '~/@/eff'
-import { NotAsked } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
-import { Button, IconEnvelope, IconMobilePhone, Typography } from '~/@/ui'
+import { Button, IconMobilePhone, Typography } from '~/@/ui'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND, AppFrontendCmd, playSound, pushScreen } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
@@ -34,15 +33,14 @@ const initCtx = async (input: {
 }
 
 const init: FrontendModule['init'] = () => {
+  const model: ModelFrontend = {
+    logout: LogoutFrontend.init,
+    currentUser: CurrentUserFrontend.init,
+    continueWithSms: ContinueWithSmsFrontend.init,
+    continueAsGuest: ContinueAsGuestFrontend.init,
+  }
   return {
-    model: {
-      ...ContinueAsGuestFrontend.init,
-      loginWithGoogle: NotAsked,
-      logout: NotAsked,
-      opened: null,
-      currentUser: CurrentUserFrontend.init,
-      sms: ContinueWithSmsFrontend.init,
-    },
+    model,
   }
 }
 
@@ -64,9 +62,37 @@ const update: FrontendModule['update'] = (input) => {
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateSMS({ ...input, model }),
     (model) => updateCurrentUser({ ...input, model }),
-    (model) => ContinueAsGuestFrontend.update({ ...input, model }),
-    (model) => LogoutFrontend.update({ ...input, model }),
+    (model) => updateContinueAsGuest({ ...input, model }),
+    (model) => updateLogout({ ...input, model }),
   )
+}
+
+const updateContinueAsGuest: FrontendModule['update'] = (input) => {
+  const updated = ContinueAsGuestFrontend.update({
+    ...input,
+    model: input.model.continueAsGuest,
+    msg: input.msg?.t === 'got-continue-as-guest-msg' ? input.msg.c : null,
+  })
+  return {
+    model: { ...input.model, continueAsGuest: updated.model },
+    msgCmd: AppFrontendCmd.tag('got-continue-as-guest-msg', updated.msgCmd),
+    eff: Eff.tag('got-continue-as-guest-msg', updated.eff),
+    msgEvt: [],
+  }
+}
+
+const updateLogout: FrontendModule['update'] = (input) => {
+  const updated = LogoutFrontend.update({
+    ...input,
+    model: input.model.logout,
+    msg: input.msg?.t === 'got-logout-msg' ? input.msg.c : null,
+  })
+  return {
+    model: { ...input.model, logout: updated.model },
+    msgCmd: AppFrontendCmd.tag('got-logout-msg', updated.msgCmd),
+    eff: Eff.tag('got-logout-msg', updated.eff),
+    msgEvt: [],
+  }
 }
 
 const updateCurrentUser: FrontendModule['update'] = (input) => {
@@ -76,12 +102,12 @@ const updateCurrentUser: FrontendModule['update'] = (input) => {
     msgCmd: null,
     msgEvt: null,
     msgBackend: null,
-    msg: input.msg?.t === 'current-user' ? input.msg.c : null,
+    msg: input.msg?.t === 'got-current-user-msg' ? input.msg.c : null,
   })
   return {
     model: { ...input.model, currentUser: updated.model },
-    msgCmd: updated.msgCmd,
-    eff: Eff.tag('current-user', updated.eff),
+    msgCmd: AppFrontendCmd.tag('got-current-user-msg', updated.msgCmd),
+    eff: Eff.tag('got-current-user-msg', updated.eff),
     msgEvt: [],
   }
 }
@@ -89,20 +115,17 @@ const updateCurrentUser: FrontendModule['update'] = (input) => {
 const updateSMS: FrontendModule['update'] = (input) => {
   const updated = ContinueWithSmsFrontend.update({
     ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.sms },
-    model: input.model.sms,
+    model: input.model.continueWithSms,
     msgCmd: null,
     msgEvt: input.msgEvt,
-    msgBackend: input.msgBackend?.t === 'sms' ? input.msgBackend.c : null,
-    msg: input.msg?.t === 'sms' ? input.msg.c : null,
+    msgBackend: null,
+    msg: input.msg?.t === 'got-continue-with-sms-msg' ? input.msg.c : null,
   })
 
   return {
-    model: {
-      ...input.model,
-      sms: updated.model,
-    },
-    msgCmd: AppFrontendCmd.tag('sms', updated.msgCmd),
-    eff: Eff.tag('sms', updated.eff),
+    model: { ...input.model, continueWithSms: updated.model },
+    msgCmd: AppFrontendCmd.tag('got-continue-with-sms-msg', updated.msgCmd),
+    eff: Eff.tag('got-continue-with-sms-msg', updated.eff),
     msgEvt: updated.msgEvt,
   }
 }
@@ -112,25 +135,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'user-clicked-login-with-phone': {
       return {
         model: input.model,
-        msgCmd: [
-          pushScreen({
-            n: 'auth-login',
-            t: 'login-sms-request',
-          }),
-          playSound(APP_SOUND.navForwardMin),
-        ],
-      }
-    }
-    case 'user-clicked-login-with-email': {
-      return {
-        model: input.model,
-        msgCmd: [
-          pushScreen({
-            n: 'auth-login',
-            t: 'login-email-send-link',
-          }),
-          playSound(APP_SOUND.navForwardMin),
-        ],
+        msgCmd: [pushScreen({ n: 'auth-login', t: 'login-sms-request' }), playSound(APP_SOUND.navForwardMin)],
       }
     }
 
@@ -151,7 +156,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch<MsgFrontend>([
     Sub.tag(
-      'current-user',
+      'got-current-user-msg',
       CurrentUserFrontend.subscriptions({
         ...input,
         ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.currentUser },
@@ -181,8 +186,8 @@ const View: FrontendModule['View'] = (input) => {
           return (
             <ContinueWithSmsFrontend.View
               ctx={{ ...input.ctx, rpc: input.ctx.rpc.auth.sms }}
-              dispatch={(c) => input.dispatch({ t: 'sms', c })}
-              model={input.model.sms}
+              dispatch={(c) => input.dispatch({ t: 'got-continue-with-sms-msg', c })}
+              model={input.model.continueWithSms}
             />
           )
         }
@@ -211,17 +216,6 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
           text={input.ctx.t('auth.continue-with-phone')}
         />
 
-        {false && (
-          <Button
-            onClick={() => input.dispatch({ t: 'user-clicked-login-with-email' })}
-            color='default'
-            size='lg'
-            className='w-full'
-            renderIconStart={(iconInput) => <IconEnvelope {...iconInput} />}
-            text={input.ctx.t('auth.continue-with-email')}
-          />
-        )}
-
         <div className='flex w-full items-center justify-center py-1'>
           <Typography
             variant='body'
@@ -230,14 +224,24 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
           />
         </div>
 
-        <ContinueAsGuestFrontend.ViewButton {...input} />
+        <ContinueAsGuestFrontend.ViewButton
+          ctx={input.ctx}
+          dispatch={(c) => input.dispatch({ t: 'got-continue-as-guest-msg', c })}
+          model={input.model.continueAsGuest}
+        />
       </div>
     </AuthScreenLayout>
   )
 }
 
 const ViewModals = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
-  return <LogoutFrontend.View {...input} />
+  return (
+    <LogoutFrontend.View
+      ctx={input.ctx}
+      dispatch={(c) => input.dispatch({ t: 'got-logout-msg', c })}
+      model={input.model.logout}
+    />
+  )
 }
 
 export const AuthFrontend = {

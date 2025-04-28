@@ -1,20 +1,25 @@
-import { RequestResponse } from '~/@/request-response/request-response'
-import type { Result } from '~/@/result'
-import type { UserId } from '~/app/@/data/user-id'
+import { RemoteResult, Result } from '~/@/result'
+import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { UserAccount } from '~/app/@/data/account'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
+import { AuthFrontendCtx } from '../@/frontend/ctx'
 
 export type ModelFrontend = {
-  guestRequest: RequestResponse<string, UserId>
+  request: RemoteResult<string, UserAccount>
 }
 
-export type ModelBackend = null
+export type MsgFrontend =
+  | { t: 'clicked-continue-as-guest-button' }
+  | { t: 'continue-as-guest-result'; result: Result<string, UserAccount> }
 
-export type MsgFrontend = { t: 'guest.clicked-continue-as-guest-button' }
+export type MsgToBackend = { t: 'noop' }
 
-export type MsgBackend = { t: null }
-
-export type MsgToBackend = { t: 'guest.clicked-continue-as-guest-button' }
-
-export type MsgToFrontend = {
-  t: 'guest.continue-as-guest-result'
-  result: Result<string, UserId>
-}
+export type FrontendModule = AppFrontendModule<{
+  Model: ModelFrontend
+  Msg: MsgFrontend
+  Ctx: AuthFrontendCtx
+  MsgCmdOut: AppFrontendCmd<{
+    MsgFrontend: MsgFrontend
+    MsgToBackend: MsgToBackend
+  }>
+}>
