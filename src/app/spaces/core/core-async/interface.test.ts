@@ -3,6 +3,7 @@ import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { EventSourced } from '~/@/event-sourced'
 import { EventMeta, withEventId } from '~/@/event-sourced/event'
 import { p } from '~/@/parser'
+import { sleep } from '~/@/promise/sleep'
 import { Ok, unwrap } from '~/@/result'
 import { Stream } from '~/@/stream/impl'
 import { PubSub } from '~/@/sub'
@@ -188,7 +189,7 @@ describe(import.meta.file, () => {
       const before = await f.spacesCore.get(f.spaceId)
       const invalid = toInvalidSpaceModel(f.space)
       await f._dangerouslyOverrideModel.pub(invalid)
-      await new Promise((resolve) => setTimeout(resolve, 100))
+      await sleep(TimeSpan.milliseconds(100))
       const after = await f.spacesCore.get(f.spaceId)
       expect(before).toEqual(Ok(f.space))
       expect(after).not.toEqual(Ok(f.space))

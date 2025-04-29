@@ -9,7 +9,7 @@ export type TimeSpan = {
 const milliseconds = (durationMilliseconds: number): TimeSpan => {
   return {
     type: 'TimeSpan',
-    _durationMilliseconds: durationMilliseconds,
+    _durationMilliseconds: ensureCleanNonNegativeNumber(durationMilliseconds),
   }
 }
 
@@ -206,4 +206,12 @@ export const TimeSpan = {
   //
   encode,
   decode,
+}
+
+const ensureCleanNonNegativeNumber = (value: number | undefined): number => {
+  if (value === undefined) return 0
+  if (isNaN(value)) return 0
+  if (value < 0) return 0
+  if (value === Infinity) return 0
+  return value
 }

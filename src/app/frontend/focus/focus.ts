@@ -1,6 +1,8 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import type { FocusCmd } from '../../@/frontend/cmd'
+import { TimeSpan } from '~/@/time/time-span'
+import { sleep } from '~/@/promise/sleep'
 
 export type Model = {
   t: 'noop'
@@ -76,7 +78,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
             for (let i = 0; i < 10; i++) {
               element.focus()
 
-              await new Promise((resolve) => resolve(null))
+              await sleep(TimeSpan.milliseconds(0))
 
               if (focused) {
                 break

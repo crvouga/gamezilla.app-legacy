@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'bun:test'
 import { PubSub, Sub } from '../sub'
 import { Program, ProgramCrashReport } from './program'
+import { TimeSpan } from '../time/time-span'
+import { sleep } from '../promise/sleep'
 
 type Model = { counter: { count: number } }
 type Msg = { t: 'inc' } | { t: 'dec' } | { t: 'set-model'; c: Model }
@@ -61,7 +63,9 @@ describe(import.meta.file, () => {
       crashReport = m
     })
     await f.program.dispatch({ t: 'inc' })
-    await new Promise((resolve) => setTimeout(resolve, 100))
+
+    await sleep(TimeSpan.milliseconds(100))
+
     expect(crashReport).toBeTruthy()
   })
 })

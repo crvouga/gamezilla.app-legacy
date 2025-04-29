@@ -24,16 +24,8 @@ const chain =
     return await taskB()
   }
 
-const timeout =
-  <T>(milliseconds: number, value: T): IO<T> =>
-  async () => {
-    await new Promise((resolve) => setTimeout(resolve, milliseconds))
-    return value
-  }
-
 export const IO = {
   map,
   chain,
-  timeout,
   of,
 }

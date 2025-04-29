@@ -1,12 +1,14 @@
 import { describe, expect, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { PubSub } from '~/@/sub'
+import { TimeSpan } from '~/@/time/time-span'
 import { didPlaySound } from '~/app/@/frontend/cmd'
 import { PuzzleQuery } from '../../../../@/puzzle/puzzle-db/query'
 import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
 import { MsgFrontend } from '../types'
 import { ScreenAddPuzzle } from './frontend'
 import { ScreenAddPuzzleSpace } from './space'
+import { sleep } from '~/@/promise/sleep'
 
 const Fixture = async () => {
   const f = await FixturePackBuilderFrontend()
@@ -98,7 +100,7 @@ describe(import.meta.file, () => {
     const checkbox = r.query("[role='checkbox']")[0]
     expect(checkbox).toBeTruthy()
     await checkbox?.click()
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    await sleep(TimeSpan.milliseconds(100))
     expect(msgs.length).toBe(1)
     expect(msgs[0]?.t).toBe('got-msg-space')
     expect(msgs[0]?.c?.t).toBe('screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox')

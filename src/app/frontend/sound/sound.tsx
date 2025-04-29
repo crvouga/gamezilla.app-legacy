@@ -7,6 +7,7 @@ import { APP_SOUND, SoundCmd, playSound } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { IconVolumeHigh, IconVolumeXMark, ListItemButton, ToggleButton } from '~/@/ui'
+import { sleep } from '~/@/promise/sleep'
 
 //
 //
@@ -168,7 +169,7 @@ export const updateFromCmd: Module['update'] = (input) => {
         async eff(dispatch) {
           const { delay } = soundCmd
           if (delay) {
-            await new Promise((r) => setTimeout(r, TimeSpan.toMilliseconds(delay)))
+            await sleep(delay)
           }
           const played = await playSoundEffect(soundCmd.src, soundCmd.volume ?? UnitInterval.init(1))
           dispatch({ t: 'played-sound', src: soundCmd.src, result: played })

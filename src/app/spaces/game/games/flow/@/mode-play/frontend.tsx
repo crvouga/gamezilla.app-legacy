@@ -16,6 +16,7 @@ import { ModePlayFrontendCtx } from './frontend/ctx'
 import { Model, Msg, toFlow } from './mode-play'
 import { UseHint } from './use-hint'
 import { UseHintFrontend } from './use-hint/frontend'
+import { sleep } from '~/@/promise/sleep'
 
 const View = (input: {
   flow: Variant.Model
@@ -123,10 +124,10 @@ const animateCheckmark = (input: { duration: TimeSpan }) => async (node: HTMLEle
   node.style.transition = 'all 0.3s ease-in-out'
   node.style.opacity = '0'
   node.style.transform = 'scale(0.8)'
-  await new Promise((r) => setTimeout(r, 50))
+  await sleep(TimeSpan.milliseconds(50))
   node.style.opacity = '1'
   node.style.transform = 'scale(1)'
-  await new Promise((r) => setTimeout(r, TimeSpan.toMilliseconds(input.duration)))
+  await sleep(input.duration)
   node.style.opacity = '0'
   node.style.transform = 'scale(0.8)'
 }

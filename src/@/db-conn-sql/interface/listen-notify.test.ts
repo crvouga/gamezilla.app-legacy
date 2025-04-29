@@ -1,10 +1,12 @@
 import { describe, expect, test } from 'bun:test'
 import 'fake-indexeddb/auto'
+import { sleep } from '~/@/promise/sleep'
+import { TimeSpan } from '~/@/time/time-span'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
+import { DbConnSqlNotification } from '.'
 import { Logger } from '../../logger'
 import { Config, DbConnSql } from '../backend/impl'
-import { DbConnSqlNotification } from '.'
 
 const Fixture = async (config: Config) => {
   const dbConnSql = await DbConnSql(config)
@@ -60,7 +62,7 @@ describe('db-conn-sql', () => {
         notifications.push(n)
       })
       await f.dbConnSql.notify(channel, 'bar')
-      await new Promise((r) => setTimeout(r, 1))
+      await sleep(TimeSpan.milliseconds(100))
       expect(notifications).toEqual([{ channel, payload: 'bar' }])
       await unlisten()
     }

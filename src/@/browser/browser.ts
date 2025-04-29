@@ -1,7 +1,9 @@
 import type { Eff } from '../eff'
 import type { IO } from '../io'
+import { sleep } from '../promise/sleep'
 import { Result } from '../result'
 import { PubSub, Sub } from '../sub'
+import { TimeSpan } from '../time/time-span'
 
 //
 //
@@ -151,18 +153,10 @@ export type Problem = { type: 'ElementNotFound' }
 
 export type FocusResult = Result<Problem, null>
 
-const ensureCleanNonNegativeNumber = (value: number | undefined): number => {
-  if (value === undefined) return 0
-  if (isNaN(value)) return 0
-  if (value < 0) return 0
-  if (value === Infinity) return 0
-  return value
-}
-
 export const focus =
   (htmlId: string, timeout?: number): IO<FocusResult> =>
   async () => {
-    await new Promise((resolve) => setTimeout(resolve, ensureCleanNonNegativeNumber(timeout)))
+    await sleep(TimeSpan.milliseconds(timeout ?? 0))
 
     const element = document.getElementById(htmlId)
 
@@ -181,7 +175,7 @@ export type ScrollResult = Result<Problem, null>
 export const scrollIntoView =
   (htmlId: string): IO<ScrollResult> =>
   async () => {
-    await new Promise((resolve) => setTimeout(resolve, 0))
+    await sleep(TimeSpan.milliseconds(0))
 
     const element = document.getElementById(htmlId)
 

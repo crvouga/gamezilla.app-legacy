@@ -1,5 +1,7 @@
 import { IDbConnSql } from '../db-conn-sql'
 import { ILogger } from '../logger'
+import { sleep } from '../promise/sleep'
+import { TimeSpan } from '../time/time-span'
 import { IPubSubTopicBased } from './interface'
 
 export type Config = {
@@ -14,7 +16,7 @@ export const PubSubTopicBased = (config: Config): IPubSubTopicBased => {
   return {
     async pub(topic, msg) {
       await config.dbConnSql.notify(topic, msg)
-      await new Promise((resolve) => setTimeout(resolve, 0))
+      await sleep(TimeSpan.milliseconds(0))
       config.logger.debug(`pub: topic=${topic} msg=${JSON.stringify(msg).slice(0, 1000)}`)
     },
     async sub(topic, callback) {

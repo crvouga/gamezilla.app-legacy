@@ -1,4 +1,6 @@
 import { VDom } from '~/@/vdom/vdom'
+import { sleep } from '../promise/sleep'
+import { TimeSpan } from '../time/time-span'
 import { Transition } from './transition'
 
 export const Badge = (input: { badgeContent: VDom; children: VDom; id: string }) => {
@@ -20,7 +22,7 @@ const onEnterGrow = async (node: HTMLElement) => {
   node.style.transition = 'all 0.3s ease-in-out'
   node.style.transform = 'scale(0.7)'
   node.style.opacity = '0'
-  await new Promise((resolve) => setTimeout(resolve, 300))
+  await sleep(TimeSpan.milliseconds(300))
   node.style.transform = 'scale(1)'
   node.style.opacity = '1'
 }
@@ -29,7 +31,7 @@ const onExitShrink = async (node: HTMLElement) => {
   node.style.transition = 'all 0.3s ease-in-out'
   node.style.transform = 'scale(1)'
   node.style.opacity = '1'
-  await new Promise((resolve) => setTimeout(resolve, 300))
+  await sleep(TimeSpan.milliseconds(300))
   node.style.transform = 'scale(0.7)'
   node.style.opacity = '0'
 }

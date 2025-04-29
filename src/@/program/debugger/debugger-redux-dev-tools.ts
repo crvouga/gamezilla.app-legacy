@@ -13,6 +13,8 @@ import { Json } from '../../json/json'
 import { ProgramDebugger } from '../program'
 import type { Debug, Debugger, DebuggerDeps, Global, MsgWithDebug } from './debugger'
 import { IO } from '../../io'
+import { TimeSpan } from '~/@/time/time-span'
+import { sleep } from '~/@/promise/sleep'
 
 type Unsubscribe = () => void
 
@@ -503,8 +505,9 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (initialModel, setMo
         } catch (error) {
           console.error('Error sending data:', error)
         }
-        // Wait for 500ms before sending the next item
-        await new Promise((resolve) => setTimeout(resolve, 10))
+        
+        await sleep(TimeSpan.milliseconds(10))
+      }
       }
     }
     isProcessing = false

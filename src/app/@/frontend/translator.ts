@@ -1,6 +1,8 @@
 import { PubSub } from '~/@/sub'
 import type { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { loadTranslator, type Translator } from '~/@/l18n/generated'
+import { sleep } from '~/@/promise/sleep'
+import { TimeSpan } from '~/@/time/time-span'
 
 const state: {
   lastLoaded: LanguageCodeISO_639_1 | null
@@ -57,7 +59,7 @@ export function Translator(languageCode: LanguageCodeISO_639_1): Translator {
 
   Promise.all([
     loadTranslator(languageCode),
-    state.lastLoaded ? new Promise((r) => setTimeout(r, 0)) : Promise.resolve(),
+    state.lastLoaded ? sleep(TimeSpan.milliseconds(0)) : Promise.resolve(),
   ]).then(([loaded]) => {
     state.translators[languageCode] = {
       t: loaded,

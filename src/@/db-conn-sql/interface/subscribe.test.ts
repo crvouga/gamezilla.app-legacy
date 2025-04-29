@@ -1,5 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import 'fake-indexeddb/auto'
+import { sleep } from '~/@/promise/sleep'
+import { TimeSpan } from '~/@/time/time-span'
 import { Logger } from '../../logger'
 import { p } from '../../parser'
 import { Config, DbConnSql } from '../backend/impl'
@@ -79,7 +81,7 @@ describe.skip('db-conn-sql subscribe', () => {
         sql: `INSERT INTO foo DEFAULT VALUES`,
         vars: {},
       })
-      await new Promise((r) => setTimeout(r, 100))
+      await sleep(TimeSpan.milliseconds(100))
       expect(got).toEqual([{ id: 1 }])
       unsub()
     }
