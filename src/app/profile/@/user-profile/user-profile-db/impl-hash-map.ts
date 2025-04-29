@@ -2,9 +2,9 @@ import { ILogger } from '~/@/logger'
 import { Ok } from '~/@/result'
 import { Sub } from '~/@/sub'
 
-import { Profile } from '~/app/@/data/profile'
-import type { IProfileDb } from './interface'
 import { UserId } from '~/app/@/data/user-id'
+import { UserProfile } from '~/app/@/data/user-profile'
+import type { IProfileDb } from './interface'
 
 export type Config = {
   t: 'hash-map'
@@ -12,10 +12,10 @@ export type Config = {
 }
 
 export const ProfileDb = (_config: Config): IProfileDb => {
-  const profiles = new Map<UserId, Profile>()
+  const profiles = new Map<UserId, UserProfile>()
   return {
-    async findByUserId(userId) {
-      const output: Profile[] = Array.from(profiles.values()).filter((profile) => profile.id === userId)
+    async findByUserIds(userIds) {
+      const output: UserProfile[] = Array.from(profiles.values()).filter((profile) => userIds.includes(profile.id))
 
       return Ok(output)
     },

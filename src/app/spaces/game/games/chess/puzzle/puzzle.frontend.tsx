@@ -36,7 +36,7 @@ import {
   toPlayerColor,
   updateSpace,
 } from './puzzle.types'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 
 //
 //
@@ -253,7 +253,7 @@ export const View = ({
       {/* top heads up */}
       <div className='flex w-full flex-1 flex-col items-center justify-center'>
         <div className='flex w-full items-center gap-2 px-3 py-2'>
-          <Avatar src={Profile.toAvatarUrl(ctx.profilesByUserId[ctx.space.hostId])} className='h-10 w-10' alt='' />
+          <Avatar src={UserProfile.toAvatarUrl(ctx.profilesByUserId[ctx.space.hostId])} className='h-10 w-10' alt='' />
 
           <div className='flex flex-1 flex-col justify-center'>
             <p className='-mb-1/2 text-secondary text-xs'>Rating</p>

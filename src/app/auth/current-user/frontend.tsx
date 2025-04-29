@@ -1,7 +1,7 @@
 import { NotAsked, Ok } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { UserAccount } from '~/app/@/data/account'
+import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound, replaceScreen, showToast } from '~/app/@/frontend/cmd'
 import { AuthFrontendCtx } from '../@/frontend/ctx'

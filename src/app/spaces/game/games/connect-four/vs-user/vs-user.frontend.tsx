@@ -32,7 +32,7 @@ import {
   type StateGameOver,
   toPlayerType,
 } from './vs-user.types'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 
 //
 //
@@ -424,7 +424,7 @@ const ViewGameOverMessage = ({
             <Avatar
               className='size-12'
               alt=''
-              src={Profile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]])}
+              src={UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]])}
             />
           </div>
           <p>Winner</p>
@@ -448,7 +448,10 @@ const ViewGameOverMessage = ({
         <div className='flex w-full flex-col items-center justify-center gap-2'>
           <div className='flex w-full items-center justify-center gap-2'>
             <PlayerIcon playerType={winner} className='size-20' />
-            <Avatar className='size-20' src={Profile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]])} />
+            <Avatar
+              className='size-20'
+              src={UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]])}
+            />
           </div>
           <p>Winner</p>
         </div>
@@ -502,7 +505,7 @@ const PlayerSlot = ({
       <Avatar
         className='h-8 w-8'
         alt=''
-        src={Profile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[playerType]])}
+        src={UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[playerType]])}
       />
       <p className='text-secondary'>{ctx.profilesByUserId[modelSpace.players[playerType]]?.username ?? '...'}</p>
     </div>

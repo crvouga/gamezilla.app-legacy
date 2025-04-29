@@ -3,7 +3,7 @@ import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { BackendCmd } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -81,7 +81,7 @@ export type MsgFrontend =
   | CurrentSpaceMiniPlayerTypes.MsgFrontend
 
 type MsgToFrontendBase = {
-  profilesByUserId?: { [userId: UserId]: Profile }
+  profilesByUserId?: { [userId: UserId]: UserProfile }
   causedBy?: unknown
 }
 
@@ -89,7 +89,7 @@ export type MsgToFrontend = MsgToFrontendBase &
   (ListSpacesTypes.MsgToFrontend | GameTypes.MsgToFrontend | SyncTypes.MsgToFrontend)
 
 type MsgToBackendBase = {
-  profilesByUserId?: { [userId: UserId]: Profile }
+  profilesByUserId?: { [userId: UserId]: UserProfile }
   causedBy?: unknown
 }
 

@@ -1,6 +1,6 @@
 import type { Screen } from '~/@/screen/generated/screens'
-import type { UserAccount } from '../data/account'
-import { Profile } from '../data/profile'
+import type { UserAccount } from '../data/user-account'
+import { UserProfile } from '../data/user-profile'
 
 export type AppFrontendEvt =
   | {
@@ -24,7 +24,7 @@ export type AppFrontendEvt =
     }
   | {
       t: 'profile-evt.current-user-profile'
-      profile: Profile
+      profile: UserProfile
     }
 
 export const screenChanged = (screen: Screen): AppFrontendEvt => {

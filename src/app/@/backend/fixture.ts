@@ -11,13 +11,13 @@ import { Runtime } from '~/@/runtime'
 import { SMS } from '~/@/sms'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
+import { ProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { ClientId } from '../../../@/wire/client-id'
 import { SessionId } from '../../../@/wire/session-id'
 import { BackendInstanceId } from './backend-instance/backend-instance-id'
 import type { AppBackendCtx } from './ctx'
-import { ProfileCache } from './profile-cache'
 // import { newPowerSyncClient } from '~/service-powersync/frontend/database'
 
 export type IFixtureAppBackendUnit = {
@@ -48,8 +48,6 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const pubSub = await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() })
 
-  const profileCache = await ProfileCache({ t: 'key-value-db', keyValueDb: await KeyValueDb({ t: 'in-memory' }) })
-
   const runtime = Runtime({ t: 'process', logger, shutoffFGracePeriod: TimeSpan.seconds(0) })
 
   const httpServer = HttpServer({ t: 'bun', logger })
@@ -57,6 +55,12 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const keyValueDbHashMap = await KeyValueDb({ t: 'hash-map' })
 
   const dbConnSqlite = await DbConnSql({ t: 'bun-sqlite', fileSystem: { t: 'in-memory' }, logger })
+
+  const profileDb = ProfileDb({
+    t: 'sql',
+    dbConnSql: dbConnSqlite,
+    logger,
+  })
 
   const now = Posix.now()
 
@@ -73,7 +77,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     sms,
     sleep,
     pubSub,
-    profileCache,
+    profileDb,
     runtime,
     httpServer,
     backendInstanceId,

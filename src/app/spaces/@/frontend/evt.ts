@@ -1,5 +1,5 @@
 import type { AppFrontendEvt } from '~/app/@/frontend/evt'
-import { UserAccount } from '~/app/@/data/account'
+import { UserAccount } from '~/app/@/data/user-account'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 

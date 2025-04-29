@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Avatar, Button, IconChevronRight, Typography } from '~/@/ui'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 
 export const View = (input: { ctx: FrontendCtx; dispatch: (msg: MsgFrontend) => void; model: ModelFrontend }) => {
   if (!input.ctx.currentUser?.userId) return null
@@ -26,7 +26,7 @@ export const View = (input: { ctx: FrontendCtx; dispatch: (msg: MsgFrontend) => 
         <div className='flex w-full flex-1 flex-col items-center gap-4'>
           <div className='flex w-full flex-col items-center justify-center gap-2'>
             <Avatar
-              src={Profile.toAvatarUrl(profile)}
+              src={UserProfile.toAvatarUrl(profile)}
               className='size-16'
               //   alt={input.ctx.t('avatar-title')}
               onClick={() => input.dispatch({ t: 'clicked-avatar' })}

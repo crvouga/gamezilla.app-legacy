@@ -7,7 +7,7 @@ import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ScreenLayoutGameCoverArt } from '../../ui/screen-layout-game-cover-art'
 import type { PlayerType, VsBotInput } from '../vs-bot'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 
 //
 //
@@ -265,7 +265,7 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
           className: 'h-14 w-14',
         })
       ) : player.userId ? (
-        <Avatar className='h-14 w-14' src={Profile.toAvatarUrl(ctx.profilesByUserId[player.userId])} />
+        <Avatar className='h-14 w-14' src={UserProfile.toAvatarUrl(ctx.profilesByUserId[player.userId])} />
       ) : (
         <div role='button' className='bg-paper grid h-14 w-14 place-items-center overflow-hidden rounded-full'>
           <IconQuestionMark className='text-secondary h-10 w-10' />

@@ -1,6 +1,6 @@
 import { Avatar, Button, IconArrowLeftOnRect, IconUserPen, SpinnerBlock, Typography } from '~/@/ui'
 import { Gutter } from '~/@/ui/gutter'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 import type { UserId } from '~/app/@/data/user-id'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
@@ -28,7 +28,7 @@ const ViewBody: typeof View = (input) => {
 
   return (
     <div className='flex w-full flex-col items-center gap-4 p-6'>
-      <Avatar className='size-28' src={Profile.toAvatarUrl(profile)} alt='profile avatar' />
+      <Avatar className='size-28' src={UserProfile.toAvatarUrl(profile)} alt='profile avatar' />
       {profile?.username && <Typography variant='title' text={input.ctx.t('username', profile?.username)} />}
       {isCurrentUserProfile && (
         <div className='flex w-full items-center justify-center gap-6 pt-4'>

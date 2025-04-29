@@ -13,9 +13,9 @@ const parser = p.obj({
   updatedAt: Posix,
 })
 
-export type Profile = p.Infer<typeof parser>
+export type UserProfile = p.Infer<typeof parser>
 
-const random = async (overrides?: Partial<Profile>): Promise<Profile> => {
+const random = async (overrides?: Partial<UserProfile>): Promise<UserProfile> => {
   return {
     id: UserId.generate(),
     username: await Username.generate(),
@@ -27,7 +27,7 @@ const random = async (overrides?: Partial<Profile>): Promise<Profile> => {
   }
 }
 
-const toAvatarUrl = (profile?: Profile | null | undefined): string => {
+const toAvatarUrl = (profile?: UserProfile | null | undefined): string => {
   if (!profile) {
     return ''
   }
@@ -37,14 +37,14 @@ const toAvatarUrl = (profile?: Profile | null | undefined): string => {
   })
 }
 
-const indexByUserId = (profiles: Profile[]): { [userId: UserId]: Profile } => {
-  return profiles.reduce<{ [userId: UserId]: Profile }>((acc, profile) => {
+const indexByUserId = (profiles: UserProfile[]): { [userId: UserId]: UserProfile } => {
+  return profiles.reduce<{ [userId: UserId]: UserProfile }>((acc, profile) => {
     acc[profile.id] = profile
     return acc
   }, {})
 }
 
-export const Profile = {
+export const UserProfile = {
   ...parser,
   random,
   toAvatarUrl,

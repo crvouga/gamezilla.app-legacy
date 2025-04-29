@@ -1,5 +1,5 @@
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
@@ -23,7 +23,7 @@ export const initFrontend: ModelFrontend = {
 export type MsgFrontend = {
   t: 'got-profile-db-profiles'
   query: ProfileDbQuery
-  profiles: Profile[]
+  profiles: UserProfile[]
 }
 
 export type MsgBackend = { t: 'noop' }

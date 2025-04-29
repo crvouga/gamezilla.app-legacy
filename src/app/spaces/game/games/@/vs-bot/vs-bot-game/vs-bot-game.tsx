@@ -3,7 +3,7 @@ import { IconRobot, Avatar, Transition, cn, Typography } from '~/@/ui'
 import type { PlayerType, VsBotInput } from '../vs-bot'
 import type { VDom } from '~/@/vdom/vdom'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 
 //
 //
@@ -248,7 +248,7 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
 const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { winner: PlayerType }) => {
   const humanSlot = (
     <>
-      <Avatar className='size-16' src={Profile.toAvatarUrl(ctx.profilesByUserId[human.userId])} />
+      <Avatar className='size-16' src={UserProfile.toAvatarUrl(ctx.profilesByUserId[human.userId])} />
     </>
   )
 
@@ -306,7 +306,7 @@ const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { win
 const Draw = (input: Input) => {
   const humanSlot = (
     <>
-      <Avatar src={Profile.toAvatarUrl(input.ctx.profilesByUserId[input.ctx.currentUser.userId])} />
+      <Avatar src={UserProfile.toAvatarUrl(input.ctx.profilesByUserId[input.ctx.currentUser.userId])} />
     </>
   )
 
@@ -349,7 +349,7 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
   const profile = ctx.profilesByUserId[human.userId]
   const humanSlot = (
     <>
-      <Avatar className='size-6' src={Profile.toAvatarUrl(profile)} />
+      <Avatar className='size-6' src={UserProfile.toAvatarUrl(profile)} />
       {profile && <Typography className='truncate' variant='body' text={ctx.t('username', profile.username)} />}
     </>
   )

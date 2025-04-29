@@ -2,7 +2,7 @@ import { EventSourced } from '~/@/event-sourced'
 import { unwrapOr } from '~/@/result'
 import { broadcast, sendToFrontend, sendToUser } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { SpaceBackendModule } from '../architecture/space-backend'
 import { Space } from '../core/space'
 import { SpaceState } from '../core/space-state'
@@ -13,15 +13,9 @@ const update: SpaceBackendModule['update'] = async (input) => {
     {},
     () => updateFromFrontend(input),
     () => updateCurrentUserSpace(input),
-    () => updateProfileCache(input),
     () => sendMsgSpaceToFrontend(input),
     () => outputMsgSpacesFromBackend(input),
   )
-}
-
-const updateProfileCache: SpaceBackendModule['update'] = async (input) => {
-  await input.ctx.profileCache.add(Object.values(input.msgFrontend?.profilesByUserId ?? {}))
-  return {}
 }
 
 const updateFromFrontend: SpaceBackendModule['update'] = async (input) => {
@@ -73,11 +67,11 @@ const getAssociatedProfiles = async (ctx: AppBackendCtx, spaces: Space.Model[]) 
     }
   })
 
-  const got = await ctx.profileCache.getByUserId(userIds)
+  const got = await ctx.profileDb.findByUserIds(userIds)
 
   const profiles = unwrapOr(got, [])
 
-  return Profile.indexByUserId(profiles)
+  return UserProfile.indexByUserId(profiles)
 }
 
 const updateCurrentUserSpace: SpaceBackendModule['update'] = async (input) => {
@@ -132,14 +126,14 @@ const sendMsgSpaceToFrontend: SpaceBackendModule['update'] = async (input) => {
   const spaceState = Space.toSpaceStarted(space)
 
   const profiles = unwrapOr(
-    await input.ctx.profileCache.getByUserId('userId' in eventWithMeta ? [eventWithMeta.userId] : []),
+    await input.ctx.profileDb.findByUserIds('userId' in eventWithMeta ? [eventWithMeta.userId] : []),
     [],
   )
 
   const toFrontend: MsgToFrontend = {
     t: 'sync.got-msg-space',
     c: eventWithMeta,
-    profilesByUserId: Profile.indexByUserId(profiles),
+    profilesByUserId: UserProfile.indexByUserId(profiles),
   }
 
   if (spaceState && eventWithMeta.t === 'game') {

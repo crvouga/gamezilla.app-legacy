@@ -3,7 +3,7 @@ import { TranslatedText } from '~/@/l18n'
 import { UnitInterval } from '~/@/range/unit-interval'
 import type { Screen } from '~/@/screen/generated/screens'
 import { TimeSpan } from '~/@/time/time-span'
-import type { Profile } from '../data/profile'
+import type { UserProfile } from '../data/user-profile'
 import type { UserId } from '../data/user-id'
 
 //
@@ -90,7 +90,7 @@ export type ProfileCmd =
       t: 'profile'
       c: {
         t: 'add-profiles'
-        profiles: Profile[]
+        profiles: UserProfile[]
       }
     }
   | {
@@ -102,7 +102,7 @@ export type ProfileCmd =
       }
     }
 
-export const addProfiles = <T extends FrontendCmdTypes>(profiles: Profile[]): AppFrontendCmd<T> => {
+export const addProfiles = <T extends FrontendCmdTypes>(profiles: UserProfile[]): AppFrontendCmd<T> => {
   return { n: 'profile', t: 'profile', c: { t: 'add-profiles', profiles } }
 }
 

@@ -1,7 +1,7 @@
 import { Avatar } from '~/@/ui'
 import { Frag } from '~/@/ui/frag'
 import { VDom } from '~/@/vdom/vdom'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 import type { UserId } from '~/app/@/data/user-id'
 import { SectionTitle } from '~/app/@/ui/section/section-title'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -11,7 +11,7 @@ import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
 export const SectionPeopleList = (input: {
   ctx: SpaceFrontendCtx
   onClickItem: (userId: UserId) => void
-  renderItem?: (profile: Profile, vDom: VDom) => VDom
+  renderItem?: (profile: UserProfile, vDom: VDom) => VDom
   title?: string
 }) => {
   const profiles = SpaceFrontendCtx.toProfiles(input.ctx)
@@ -52,7 +52,7 @@ const PersonListItem = (input: {
       onClick={input.onClick}
       className='clickable flex w-full items-center gap-2 p-2 px-6'
     >
-      <Avatar className='size-12' src={Profile.toAvatarUrl(input.profile)} />
+      <Avatar className='size-12' src={UserProfile.toAvatarUrl(input.profile)} />
       <p>{input.profile.username}</p>
       {input.profile.id === input.ctx.space.hostId && <ViewHostChip ctx={input.ctx} />}
       {input.profile.id === input.ctx.currentUser.userId && <ViewYouChip ctx={input.ctx} />}

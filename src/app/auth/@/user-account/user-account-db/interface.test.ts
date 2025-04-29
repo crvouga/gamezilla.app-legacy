@@ -3,7 +3,7 @@ import { PhoneNumber } from '~/@/phone-number'
 import { Ok, Result, unwrap } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import type { UserAccount } from '~/app/@/data/account'
+import type { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { Impl, UserAccountDb } from './impl'
 

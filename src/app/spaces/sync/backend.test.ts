@@ -3,7 +3,7 @@ import { withEventMetaAt } from '~/@/event-sourced/event'
 import { SpaceId } from '~/app/@/data/space-id'
 import { didBroadcast, didSendMsgToFrontend } from '~/app/@/backend/cmd'
 import { FixtureSpaceBackend } from '../@/fixture/backend'
-import { UserAccount } from '~/app/@/data/account'
+import { UserAccount } from '~/app/@/data/user-account'
 import { makeSpace } from '../@/fixture/shared'
 
 const Fixture = async () => {

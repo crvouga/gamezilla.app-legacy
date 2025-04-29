@@ -12,7 +12,7 @@ import {
   toOpposite,
   toStatus,
 } from '../@/tic-tic-toe/tic-tac-toe'
-import { UserAccount } from '~/app/@/data/account'
+import { UserAccount } from '~/app/@/data/user-account'
 
 //
 //

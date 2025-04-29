@@ -1,5 +1,5 @@
 import { WithEventMeta } from '~/@/event-sourced/event'
-import { UserAccount } from '~/app/@/data/account'
+import { UserAccount } from '~/app/@/data/user-account'
 import { Space } from '../core/space'
 import { MsgSpace } from '../core/space-msg/space-msg'
 

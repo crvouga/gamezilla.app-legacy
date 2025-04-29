@@ -18,7 +18,7 @@ import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { setupNewPowerSyncClient } from '~/service-powersync/frontend/database'
 import { ILogger, Logger } from '../@/logger'
-import { Profile } from './@/data/profile'
+import { UserProfile } from './@/data/user-profile'
 import { AppFrontendCmd } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { AppFrontendEvt } from './@/frontend/evt'
@@ -113,12 +113,12 @@ const updateCtx = (ctx: FrontendCtx): FrontendCtx => {
 type Ctx = (AppFrontendCtx | AnonymousFrontendCtx) & FrontendCtx
 
 const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx => {
-  const profiles: Profile[] = Object.values(input.model.profile.profilesByUserId)
+  const profiles: UserProfile[] = Object.values(input.model.profile.profilesByUserId)
 
   const anonymousCtx: AnonymousFrontendCtx = {
     ...input.ctx,
     t: Translator(input.model.lang.lang),
-    profilesByUserId: Profile.indexByUserId(profiles),
+    profilesByUserId: UserProfile.indexByUserId(profiles),
     now: input.ctx.now,
     documentVisibilityState: input.model.frontend.visibility.documentVisibilityState,
     currentScreen: input.model.frontend.currentScreen.currentScreen,

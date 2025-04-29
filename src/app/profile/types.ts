@@ -5,7 +5,7 @@ import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { BackendCmd } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendEvt } from '../@/backend/evt'
-import { Profile } from '../@/data/profile'
+import { UserProfile } from '../@/data/user-profile'
 import { ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
@@ -24,7 +24,7 @@ import * as UpdateUsernameTypes from './update-username/types'
 export type ModelFrontend = {
   updateUsername: UpdateUsernameTypes.ModelFrontend
   profilesByUserId: {
-    [userId: UserId]: Profile
+    [userId: UserId]: UserProfile
   }
   requests: {
     [key in Req['t']]?: RemoteResult<string, null>
@@ -73,7 +73,7 @@ export type MsgToFrontend =
   | { t: 'got-update-username-msg'; c: UpdateUsernameTypes.MsgToFrontend }
   | {
       t: 'current-user-profile'
-      result: Result<string, Profile>
+      result: Result<string, UserProfile>
       causedBy: unknown
       loggedIn?: boolean
     }
@@ -87,7 +87,7 @@ export type Req =
   | { t: 'search'; query: string }
   | { t: 'delete-forever'; query: string }
 
-export type Res = Req & { result: Result<string, Profile[]> }
+export type Res = Req & { result: Result<string, UserProfile[]> }
 
 export type BackendCtx = AppBackendCtx
 

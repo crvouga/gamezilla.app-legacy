@@ -5,10 +5,10 @@ import { pipe } from '~/@/function/pipe'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
-import { UserAccount } from '~/app/@/data/account'
-import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
+import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Space } from '../../core/space'
@@ -65,9 +65,9 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     phoneNumber: PhoneNumber.random(),
     role: 'normal',
   }
-  const userA = await Profile.random()
-  const userB = await Profile.random()
-  const userC = await Profile.random()
+  const userA = await UserProfile.random()
+  const userB = await UserProfile.random()
+  const userC = await UserProfile.random()
 
   const spaceId = SpaceId.generate()
 
@@ -106,7 +106,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     },
   )
 
-  const currentUserProfile = await Profile.random({ id: currentUser.userId })
+  const currentUserProfile = await UserProfile.random({ id: currentUser.userId })
   const ctx: SpaceFrontendCtx = {
     ...f.ctx,
     parentScreen: null,
@@ -118,7 +118,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     currentUserRole: 'normal',
     documentVisibilityState: 'visible',
     now: Posix.now(),
-    profilesByUserId: Profile.indexByUserId([currentUserProfile, userA, userB, userC]),
+    profilesByUserId: UserProfile.indexByUserId([currentUserProfile, userA, userB, userC]),
     space,
     currentUser,
   }

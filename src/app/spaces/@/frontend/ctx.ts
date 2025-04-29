@@ -1,4 +1,4 @@
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { SpaceCtx } from '../space/ctx'
@@ -6,7 +6,7 @@ import { SpaceCtx } from '../space/ctx'
 export type SpaceFrontendCtx = AppFrontendCtx & SpaceCtx
 
 const toProfiles = (ctx: SpaceFrontendCtx) => {
-  const profiles: Profile[] = []
+  const profiles: UserProfile[] = []
   for (const userId in ctx.space.users) {
     if (!UserId.is(userId)) {
       continue

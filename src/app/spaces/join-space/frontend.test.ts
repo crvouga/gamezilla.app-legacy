@@ -1,11 +1,11 @@
-import { withEventMeta } from '~/@/event-sourced/event'
 import { describe, expect, it, test } from 'bun:test'
+import { withEventMeta } from '~/@/event-sourced/event'
+import { SpaceId } from '~/app/@/data/space-id'
+import { UserId } from '~/app/@/data/user-id'
+import { UserProfile } from '~/app/@/data/user-profile'
+import { didPlaySound, didPushScreen, didShowErrorSm, didShowToast } from '~/app/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { SpacesCore } from '../core/core'
-import { SpaceId } from '~/app/@/data/space-id'
-import { Profile } from '~/app/@/data/profile'
-import { didShowToast, didShowErrorSm, didPlaySound, didPushScreen } from '~/app/@/frontend/cmd'
-import { UserId } from '~/app/@/data/user-id'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -35,7 +35,7 @@ describe(import.meta.file, () => {
 
   test('show toast after other user joining', async () => {
     const f = await Fixture()
-    const otherUser = await Profile.random()
+    const otherUser = await UserProfile.random()
     const output = f.update(f.initial, [
       {
         msgBackend: {

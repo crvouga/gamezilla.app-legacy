@@ -1,11 +1,11 @@
-import { Err, Ok, Result, isErr } from '~/@/result'
+import { Err, Ok, Result, isErr, mapOk } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { AppBackendModule } from '../@/architecture/app-backend'
 import { sendToFrontend } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
-import { Profile } from '../@/data/profile'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
+import { UserProfile } from '../@/data/user-profile'
 import { Username } from '../@/data/username'
 import { type IProfileDb, ProfileDb } from './@/user-profile/user-profile-db'
 import { type Req, BackendCtx, BackendModule } from './types'
@@ -113,11 +113,11 @@ const handler = async ({
   profileDb: IProfileDb
   msg: Req
   ctx: { currentUserId: UserId }
-}): Promise<Result<string, Profile[]>> => {
+}): Promise<Result<string, UserProfile[]>> => {
   switch (msg.t) {
     case 'find-one': {
-      const found = await profileDb.findByUserId(msg.userId)
-      return found
+      const found = await profileDb.findByUserIds([msg.userId])
+      return mapOk(found, (profiles) => profiles)
     }
 
     case 'change-username': {
@@ -135,7 +135,7 @@ const handler = async ({
 }
 
 const findElseInsertNew = async ({ profileDb, userId }: { profileDb: IProfileDb; userId: UserId }) => {
-  const found = await profileDb.findByUserId(userId)
+  const found = await profileDb.findByUserIds([userId])
 
   if (isErr(found)) return found
 
@@ -145,7 +145,7 @@ const findElseInsertNew = async ({ profileDb, userId }: { profileDb: IProfileDb;
 
   const randomSeed = ProfileAvatar.randomSeed()
   const randomUsername = await Username.generate('.')
-  const profileNew: Profile = {
+  const profileNew: UserProfile = {
     id: userId,
     username: randomUsername,
     avatarSeed: randomSeed,

@@ -1,6 +1,6 @@
-import { KeyValueDb } from '~/@/key-value-db'
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
 import { HttpServer } from '~/@/http-server'
+import { KeyValueDb } from '~/@/key-value-db'
 import { Logger } from '~/@/logger'
 import { ILogger } from '~/@/logger/interface'
 import { Msg } from '~/@/msg/msg'
@@ -18,9 +18,9 @@ import { BackendInstanceId } from './@/backend/backend-instance/backend-instance
 import { BackendCmd } from './@/backend/cmd'
 import { AppBackendCtx } from './@/backend/ctx'
 import { BackendEvt } from './@/backend/evt'
-import { ProfileCache } from './@/backend/profile-cache'
 import * as AuthBackend from './auth/backend'
 import * as LangBackend from './lang/backend'
+import { ProfileDb } from './profile/@/user-profile/user-profile-db'
 import * as ProfileBackend from './profile/backend'
 import { SpacesBackend } from './spaces/backend'
 import {
@@ -96,11 +96,10 @@ const initCtx = async (): Promise<BackendCtx> => {
         },
   )
 
-  const profileCache = await ProfileCache({
-    t: 'cached-key-value-db',
-    keyValueDb,
+  const profileDb = ProfileDb({
+    t: 'sql',
+    dbConnSql,
     logger,
-    runtime,
   })
 
   const env = CONFIG_SHARED.IS_PROD ? 'prod' : 'dev'
@@ -119,7 +118,7 @@ const initCtx = async (): Promise<BackendCtx> => {
     backendInstanceId,
     sleep,
     pubSub,
-    profileCache,
+    profileDb,
     httpServer,
     runtime,
   }

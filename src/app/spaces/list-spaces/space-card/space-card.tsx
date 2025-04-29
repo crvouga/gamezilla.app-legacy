@@ -1,6 +1,6 @@
 import { Avatar, cn, Typography } from '~/@/ui'
 import { DynamicElement } from '~/@/ui/dynamic-element'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
 import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
@@ -13,7 +13,7 @@ const MAX_AVATAR_COUNT = 3
 
 export const ViewSpaceCard = (input: { ctx: AppFrontendCtxBase; state: SpaceState.Started; onClick?: () => void }) => {
   const host = input.ctx.profilesByUserId[input.state.hostId]
-  const users = Object.values(input.state.users).flatMap((userId): Profile[] => {
+  const users = Object.values(input.state.users).flatMap((userId): UserProfile[] => {
     const profile = input.ctx.profilesByUserId[userId]
     if (!profile) return []
     return [profile]
@@ -75,10 +75,10 @@ const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendC
   )
 }
 
-const ViewSpaceCardHost = (input: { host?: Profile | null; ctx: AppFrontendCtxBase }) => {
+const ViewSpaceCardHost = (input: { host?: UserProfile | null; ctx: AppFrontendCtxBase }) => {
   return (
     <div className='flex max-w-full items-center justify-start gap-2 overflow-x-hidden'>
-      <Avatar src={Profile.toAvatarUrl(input.host)} alt='avatar' className='size-12' />
+      <Avatar src={UserProfile.toAvatarUrl(input.host)} alt='avatar' className='size-12' />
 
       <div className='flex flex-1 items-center justify-start gap-2 overflow-x-hidden'>
         {input.host && (
@@ -95,7 +95,7 @@ const ViewSpaceCardHost = (input: { host?: Profile | null; ctx: AppFrontendCtxBa
   )
 }
 
-const ViewSpaceCardUsers = (input: { users: Profile[]; ctx: AppFrontendCtxBase }) => {
+const ViewSpaceCardUsers = (input: { users: UserProfile[]; ctx: AppFrontendCtxBase }) => {
   if (input.users.length <= 1) return null
 
   return (
@@ -104,7 +104,7 @@ const ViewSpaceCardUsers = (input: { users: Profile[]; ctx: AppFrontendCtxBase }
         {input.users.slice(0, MAX_AVATAR_COUNT).map((user, index) => (
           <Avatar
             key={user.username}
-            src={Profile.toAvatarUrl(user)}
+            src={UserProfile.toAvatarUrl(user)}
             alt='avatar'
             className={cn('h-8 w-8', index !== 0 && '-ml-2')}
           />

@@ -5,9 +5,9 @@ import { Ok, Result, isErr, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
-import { Profile } from '~/app/@/data/profile'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { Username } from '~/app/@/data/username'
 import type { IProfileDb } from './interface'
 import { ProfileDbQuery } from './query'
@@ -23,14 +23,14 @@ const ProfileRow = p.obj({
 
 type ProfileRow = p.Infer<typeof ProfileRow>
 
-const fromProfileRow = (row: ProfileRow): Result<string, Profile> => {
+const fromProfileRow = (row: ProfileRow): Result<string, UserProfile> => {
   const avatarSeed = row.avatar_seed ? ProfileAvatar.toSeed(row.avatar_seed) : ProfileAvatar.toSeed(row.username)
 
   const avatarStyle = row.avatar_style
     ? ProfileAvatar.toStyle(row.avatar_style)
     : ProfileAvatar.STYLES['big-ears-neutral']
 
-  const profile: Profile = {
+  const profile: UserProfile = {
     id: row.id,
     username: row.username,
     avatarSeed: avatarSeed,
@@ -50,7 +50,7 @@ export type Config = {
 
 export const ProfileDb = (config: Config): IProfileDb => {
   return {
-    async findByUserId(userId) {
+    async findByUserIds(userIds) {
       const sql = `
         SELECT
           id,
@@ -62,14 +62,14 @@ export const ProfileDb = (config: Config): IProfileDb => {
         FROM
           user_profile
         WHERE
-          id = :id
+          id IN (:id_commas)
       `
 
       const queried = await config.dbConnSql.query({
         parser: ProfileRow,
         sql: sql,
         vars: {
-          id: userId,
+          id_commas: Sql.commas(userIds),
         },
       })
 

@@ -1,5 +1,5 @@
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '../../data/user-profile'
 import type { IProfileCache } from './interface'
 
 export type Config = {
@@ -11,7 +11,7 @@ export const ProfileCache = (config: Config): IProfileCache => {
   const profilesKv = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['profile-cache', 'profiles'],
-    parser: Profile,
+    parser: UserProfile,
   })
   return {
     async add(profiles) {

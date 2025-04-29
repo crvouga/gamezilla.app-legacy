@@ -6,7 +6,6 @@ import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import { Profile } from '~/app/@/data/profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { SpacesBackend } from '../../backend'
@@ -15,15 +14,16 @@ import { Space } from '../../core/space'
 import { GamesBackend } from '../../game/games/backend'
 import { BackendCtx } from '../../types'
 import { SpaceBackendCtx } from '../backend/ctx'
+import { UserProfile } from '~/app/@/data/user-profile'
 
 export const FixtureSpaceBackend = async () => {
   const f = await FixtureAppBackend()
 
   const frontendA = randomAuthenticatedFrontend()
   const frontendB = randomAuthenticatedFrontend()
-  const userA = await Profile.random()
-  const userB = await Profile.random()
-  const userC = await Profile.random()
+  const userA = await UserProfile.random()
+  const userB = await UserProfile.random()
+  const userC = await UserProfile.random()
 
   const spaceId = SpaceId.generate()
 

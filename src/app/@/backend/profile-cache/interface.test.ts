@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { unwrapOr } from '~/@/result'
-import { Profile } from '~/app/@/data/profile'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { ProfileCache } from './impl'
 
 const Fixture = async () => {
@@ -16,7 +16,7 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
   test('add and get', async () => {
     const f = await Fixture()
-    const profiles = [await Profile.random(), await Profile.random(), await Profile.random()]
+    const profiles = [await UserProfile.random(), await UserProfile.random(), await UserProfile.random()]
     const userIds = Object.values(profiles).map((p) => p.id)
 
     const before = unwrapOr(await f.profileCache.getByUserId(userIds), null)
@@ -30,7 +30,7 @@ describe(import.meta.file, () => {
 
   test('get missing', async () => {
     const f = await Fixture()
-    const profiles = [await Profile.random(), await Profile.random(), await Profile.random()]
+    const profiles = [await UserProfile.random(), await UserProfile.random(), await UserProfile.random()]
     const userIds = Object.values(profiles).map((p) => p.id)
 
     const got = unwrapOr(await f.profileCache.getByUserId(userIds), null)

@@ -1,5 +1,5 @@
 import { Err, Ok, type Result } from '~/@/result'
-import { UserAccount } from '~/app/@/data/account'
+import { UserAccount } from '~/app/@/data/user-account'
 import type { UserId } from '~/app/@/data/user-id'
 import {
   type Board,

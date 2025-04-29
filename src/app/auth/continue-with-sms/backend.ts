@@ -1,19 +1,22 @@
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, isErr, Ok } from '~/@/result'
 import { RPC } from '~/@/rpc'
+import { Posix } from '~/@/time/posix'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
-import type { UserAccount } from '~/app/@/data/account'
+import { ProfileAvatar } from '~/app/@/data/profile-avatar'
+import type { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
+import { UserProfile } from '~/app/@/data/user-profile'
+import { Username } from '~/app/@/data/username'
 import { Translator } from '~/app/@/frontend/translator'
 import { BackendCtx } from '../@/backend/ctx'
 import { SendCodeInput, SendCodeOutput, VerifyCodeInput } from '../@/backend/verify-sms'
 import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
 import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
-import { rpcContract, VerifyCodeOutput } from './types'
 import { UserSession } from '../@/user-session/user-session'
 import { UserSessionId } from '../@/user-session/user-session-id'
-import { Posix } from '~/@/time/posix'
-import { ClientSessionId } from '~/@/wire/client-session-id'
+import { rpcContract, VerifyCodeOutput } from './types'
 
 const rpc = (config: { ctx: BackendCtx }) => {
   return RPC.initServer(rpcContract, {
@@ -91,19 +94,19 @@ const handleVerifyCode = async (
   input.ctx.logger.info(`Code verification successful for ${PhoneNumber.toString(input.phoneNumber)}`)
 
   input.ctx.logger.info(`Looking up user account for ${PhoneNumber.toString(input.phoneNumber)}`)
-  const found = await input.ctx.userAccountDb.findOneByPhoneNumber({
+  const foundAccount = await input.ctx.userAccountDb.findOneByPhoneNumber({
     phoneNumber: input.phoneNumber,
   })
 
-  if (isErr(found)) {
-    input.ctx.logger.error(`Database error while looking up user: ${found.error}`)
+  if (isErr(foundAccount)) {
+    input.ctx.logger.error(`Database error while looking up user: ${foundAccount.error}`)
     return Err({
       t: 'database-error',
-      error: found.error,
+      error: foundAccount.error,
     })
   }
 
-  if (!found.value) {
+  if (!foundAccount.value) {
     input.ctx.logger.info(`No existing account found for ${PhoneNumber.toString(input.phoneNumber)}`)
   }
 
@@ -114,16 +117,43 @@ const handleVerifyCode = async (
     userId: UserId.generate(),
   }
 
-  const account: UserAccount = found.value ?? accountNew
+  const account: UserAccount = foundAccount.value ?? accountNew
 
-  const inserted = found.value ? Ok(null) : await input.ctx.userAccountDb.insert(account)
+  const insertedAccount = foundAccount.value ? Ok(null) : await input.ctx.userAccountDb.insert(account)
 
-  if (isErr(inserted)) {
-    input.ctx.logger.error(`Failed to insert new account: ${inserted.error}`)
-    return Err({ t: 'database-error', error: inserted.error })
+  if (isErr(insertedAccount)) {
+    input.ctx.logger.error(`Failed to insert new account: ${insertedAccount.error}`)
+    return Err({ t: 'database-error', error: insertedAccount.error })
   }
 
   input.ctx.logger.info(`Successfully created new account for ${PhoneNumber.toString(input.phoneNumber)}`)
+
+  const foundProfile = await input.ctx.profileDb.findByUserIds([account.userId])
+
+  if (isErr(foundProfile)) {
+    input.ctx.logger.error(`Failed to find profile: ${foundProfile.error}`)
+    return Err({ t: 'database-error', error: foundProfile.error })
+  }
+
+  const profileNew: UserProfile = {
+    id: account.userId,
+    username: await Username.generate(),
+    avatarSeed: ProfileAvatar.randomSeed(),
+    avatarStyle: ProfileAvatar.randomStyle(),
+    createdAt: input.ctx.now,
+    updatedAt: input.ctx.now,
+  }
+
+  const profile: UserProfile = foundProfile.value[0] ?? profileNew
+
+  const insertedProfile = foundProfile.value ? Ok(null) : await input.ctx.profileDb.put(profile)
+
+  if (isErr(insertedProfile)) {
+    input.ctx.logger.error(`Failed to insert new profile: ${insertedProfile.error}`)
+    return Err({ t: 'database-error', error: insertedProfile.error })
+  }
+
+  input.ctx.logger.info(`Successfully created new profile for ${PhoneNumber.toString(input.phoneNumber)}`)
 
   const userSessionNew: UserSession = {
     userSessionId: UserSessionId.generate(),

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { eq } from '~/@/equals/equals'
 import { withEventMetaAt } from '~/@/event-sourced/event'
-import { Profile } from '~/app/@/data/profile'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { addProfiles } from '~/app/@/frontend/cmd'
@@ -25,10 +25,10 @@ describe(import.meta.file, () => {
   it('should record profiles when received from backend', async () => {
     const f = await Fixture()
 
-    const someProfile = await Profile.random()
+    const someProfile = await UserProfile.random()
 
     const someProfiles: {
-      [userId: UserId]: Profile
+      [userId: UserId]: UserProfile
     } = {
       [someProfile.id]: someProfile,
     }

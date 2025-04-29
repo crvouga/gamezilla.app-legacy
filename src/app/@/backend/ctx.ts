@@ -7,9 +7,9 @@ import type { IRuntime } from '~/@/runtime'
 import type { ISMS } from '~/@/sms'
 import type { Posix } from '~/@/time/posix'
 import type { TimeSpan } from '~/@/time/time-span'
+import { IProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
 import { Env } from '../data/env'
 import type { BackendInstanceId } from './backend-instance/backend-instance-id'
-import type { IProfileCache } from './profile-cache'
 
 export type AppBackendCtx = {
   dbConnSql: IDbConnSql
@@ -20,7 +20,7 @@ export type AppBackendCtx = {
   env: Env
   sleep: (time: TimeSpan) => Promise<unknown>
   pubSub: IPubSubTopicBased
-  profileCache: IProfileCache
+  profileDb: IProfileDb
   backendInstanceId: BackendInstanceId
   httpServer: IHttpServer
   runtime: IRuntime

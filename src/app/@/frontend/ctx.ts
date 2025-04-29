@@ -6,8 +6,8 @@ import { ILogger } from '~/@/logger'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { UserAccount } from '../data/account'
-import { Profile } from '../data/profile'
+import { UserAccount } from '../data/user-account'
+import { UserProfile } from '../data/user-profile'
 import { UserId } from '../data/user-id'
 import { UserRole } from '../data/user-role'
 import { ParentScreenProps } from '../ui/screen/layout/screen-layout-props'
@@ -23,7 +23,7 @@ export type AppFrontendCtxBase = {
   currentScreen: Screen
   now: Posix
   profilesByUserId: {
-    [userId: UserId]: Profile
+    [userId: UserId]: UserProfile
   }
   documentVisibilityState: DocumentVisibilityState
   clientSessionId: ClientSessionId
