@@ -32,7 +32,7 @@ const sendMsgSpaceToBackend: SpaceFrontendModule['update'] = ({ ctx, model, msgS
 
   const profile = 'userId' in spaceEventWithMeta ? ctx.profilesByUserId[spaceEventWithMeta.userId] : null
 
-  const profiles = profile ? { [profile.userId]: profile } : {}
+  const profiles = profile ? { [profile.id]: profile } : {}
 
   return {
     model,

@@ -20,7 +20,7 @@
     "db": "psql postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable",
     "db:down": "bun x dbmate -e DATABASE_URL down",
     "db:dump": "bun x dbmate dump",
-    "db:new": "'bun x dbmate new",
+    "db:new": "bun x dbmate new",
     "db:up": "bun x dbmate -e DATABASE_URL up",
     "dir:reset": "rm -rf .env && [ -f .env.local ] && cp .env.local .env && bun install || true",
     "dir:reset:hard": "rm -rf dist node_modules bun.lock && bun dir:reset",

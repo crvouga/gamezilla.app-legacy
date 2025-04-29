@@ -195,7 +195,8 @@ CREATE TABLE public.user_guest_session_mapping (
     guest_user_id text NOT NULL,
     session_id text NOT NULL,
     created_at_posix bigint NOT NULL,
-    id text NOT NULL
+    id text NOT NULL,
+    client_session_id text NOT NULL
 );
 
 ALTER TABLE ONLY public.user_guest_session_mapping REPLICA IDENTITY FULL;
@@ -209,7 +210,10 @@ CREATE TABLE public.user_profile (
     id text NOT NULL,
     username text NOT NULL,
     avatar_seed text,
-    avatar_style text
+    avatar_style text,
+    user_id text NOT NULL,
+    created_at_posix bigint NOT NULL,
+    updated_at_posix bigint NOT NULL
 );
 
 
@@ -483,4 +487,6 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250427020149'),
     ('20250427030012'),
     ('20250427210536'),
-    ('20250427212455');
+    ('20250427212455'),
+    ('20250427220854'),
+    ('20250428003412');

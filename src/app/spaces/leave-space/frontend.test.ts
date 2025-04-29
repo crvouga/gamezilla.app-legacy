@@ -19,7 +19,7 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
 
     const output = f.update(f.initial, [
-      userStartedSpace(0, f.userA.userId, spaceId),
+      userStartedSpace(0, f.userA.id, spaceId),
       userJoinedSpace(1, f.ctx.currentUser.userId, spaceId),
       {
         msg: {

@@ -24,14 +24,14 @@ export const SectionPeopleList = (input: {
 
       <div className='flex w-full flex-col'>
         {profiles.map((profile) => (
-          <Frag key={profile.userId}>
+          <Frag key={profile.id}>
             {renderItem(
               profile,
               <PersonListItem
-                key={profile.userId}
+                key={profile.id}
                 profile={profile}
                 ctx={input.ctx}
-                onClick={() => input.onClickItem(profile.userId)}
+                onClick={() => input.onClickItem(profile.id)}
               />,
             )}
           </Frag>
@@ -48,14 +48,14 @@ const PersonListItem = (input: {
 }) => {
   return (
     <button
-      key={input.profile.userId}
+      key={input.profile.id}
       onClick={input.onClick}
       className='clickable flex w-full items-center gap-2 p-2 px-6'
     >
       <Avatar className='size-12' src={Profile.toAvatarUrl(input.profile)} />
       <p>{input.profile.username}</p>
-      {input.profile.userId === input.ctx.space.hostId && <ViewHostChip ctx={input.ctx} />}
-      {input.profile.userId === input.ctx.currentUser.userId && <ViewYouChip ctx={input.ctx} />}
+      {input.profile.id === input.ctx.space.hostId && <ViewHostChip ctx={input.ctx} />}
+      {input.profile.id === input.ctx.currentUser.userId && <ViewYouChip ctx={input.ctx} />}
     </button>
   )
 }

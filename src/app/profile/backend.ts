@@ -9,7 +9,6 @@ import { UserId } from '../@/data/user-id'
 import { Username } from '../@/data/username'
 import { type IProfileDb, ProfileDb } from './@/user-profile/user-profile-db'
 import { type Req, BackendCtx, BackendModule } from './types'
-import { UserProfileId } from './@/user-profile/user-profile-id'
 
 //
 //
@@ -147,8 +146,7 @@ const findElseInsertNew = async ({ profileDb, userId }: { profileDb: IProfileDb;
   const randomSeed = ProfileAvatar.randomSeed()
   const randomUsername = await Username.generate('.')
   const profileNew: Profile = {
-    id: UserProfileId.generate(),
-    userId,
+    id: userId,
     username: randomUsername,
     avatarSeed: randomSeed,
     avatarStyle: 'thumbs',

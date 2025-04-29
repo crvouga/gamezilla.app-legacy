@@ -33,19 +33,19 @@ export const FixtureSpaceBackend = async () => {
       EventSourced.appendEvent(
         Space.config,
         model,
-        withEventId({ t: 'user-started-space', spaceId, userId: userA.userId } as const),
+        withEventId({ t: 'user-started-space', spaceId, userId: userA.id } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
         Space.config,
         model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const),
+        withEventId({ t: 'user-joined-space', spaceId, userId: userB.id } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
         Space.config,
         model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const),
+        withEventId({ t: 'user-joined-space', spaceId, userId: userC.id } as const),
       ),
   )
 

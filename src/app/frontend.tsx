@@ -113,7 +113,7 @@ const updateCtx = (ctx: FrontendCtx): FrontendCtx => {
 type Ctx = (AppFrontendCtx | AnonymousFrontendCtx) & FrontendCtx
 
 const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx => {
-  const profiles: Profile[] = Object.values(input.model.profile.profiles)
+  const profiles: Profile[] = Object.values(input.model.profile.profilesByUserId)
 
   const anonymousCtx: AnonymousFrontendCtx = {
     ...input.ctx,

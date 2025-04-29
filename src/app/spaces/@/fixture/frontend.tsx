@@ -83,19 +83,19 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
       EventSourced.appendEvent(
         Space.config,
         model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userA.userId } as const),
+        withEventId({ t: 'user-joined-space', spaceId, userId: userA.id } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
         Space.config,
         model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const),
+        withEventId({ t: 'user-joined-space', spaceId, userId: userB.id } as const),
       ),
     (model) =>
       EventSourced.appendEvent(
         Space.config,
         model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const),
+        withEventId({ t: 'user-joined-space', spaceId, userId: userC.id } as const),
       ),
     (model) => Space.toSpaceStarted(model),
     (space) => {
@@ -106,7 +106,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     },
   )
 
-  const currentUserProfile = await Profile.random({ userId: currentUser.userId })
+  const currentUserProfile = await Profile.random({ id: currentUser.userId })
   const ctx: SpaceFrontendCtx = {
     ...f.ctx,
     parentScreen: null,

@@ -30,7 +30,7 @@ describe(import.meta.file, () => {
     const someProfiles: {
       [userId: UserId]: Profile
     } = {
-      [someProfile.userId]: someProfile,
+      [someProfile.id]: someProfile,
     }
 
     const output = f.update(f.initial, [

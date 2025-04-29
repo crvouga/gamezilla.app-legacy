@@ -5,18 +5,15 @@ import { Ok, Result, isErr, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
+import { Profile } from '~/app/@/data/profile'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
-
-import { Profile } from '~/app/@/data/profile'
-import { UserProfileId } from '../user-profile-id'
 import type { IProfileDb } from './interface'
 import { ProfileDbQuery } from './query'
 
 const ProfileRow = p.obj({
-  id: UserProfileId,
-  user_id: UserId,
+  id: UserId,
   username: Username,
   avatar_seed: p.maybe(p.str),
   avatar_style: p.maybe(p.str),
@@ -35,7 +32,6 @@ const fromProfileRow = (row: ProfileRow): Result<string, Profile> => {
 
   const profile: Profile = {
     id: row.id,
-    userId: row.user_id,
     username: row.username,
     avatarSeed: avatarSeed,
     avatarStyle: avatarStyle,
@@ -58,7 +54,6 @@ export const ProfileDb = (config: Config): IProfileDb => {
       const sql = `
         SELECT
           id,
-          user_id,
           username,
           avatar_seed,
           avatar_style,
@@ -67,14 +62,14 @@ export const ProfileDb = (config: Config): IProfileDb => {
         FROM
           user_profile
         WHERE
-          user_id = :user_id
+          id = :id
       `
 
       const queried = await config.dbConnSql.query({
         parser: ProfileRow,
         sql: sql,
         vars: {
-          user_id: userId,
+          id: userId,
         },
       })
 
@@ -90,7 +85,6 @@ export const ProfileDb = (config: Config): IProfileDb => {
     async put(profile) {
       const rowNew: ProfileRow = {
         id: profile.id,
-        user_id: profile.userId,
         username: profile.username,
         avatar_seed: profile.avatarSeed,
         avatar_style: profile.avatarStyle,
@@ -103,7 +97,6 @@ export const ProfileDb = (config: Config): IProfileDb => {
         sql: `
         INSERT INTO user_profile (
           id,
-          user_id,
           username,
           avatar_seed,
           avatar_style,
@@ -111,8 +104,7 @@ export const ProfileDb = (config: Config): IProfileDb => {
           updated_at_posix
         )
         VALUES (
-          :id,
-          :user_id,
+          :id,          
           :username,
           :avatar_seed,
           :avatar_style,
@@ -120,7 +112,6 @@ export const ProfileDb = (config: Config): IProfileDb => {
           :updated_at_posix
         )
         ON CONFLICT (id) DO UPDATE SET
-          user_id = EXCLUDED.user_id,
           username = EXCLUDED.username,
           avatar_seed = EXCLUDED.avatar_seed,
           avatar_style = EXCLUDED.avatar_style,
@@ -177,8 +168,8 @@ const queryToSql = (query: ProfileDbQuery) => {
   const vars: Sql.Vars = {}
 
   if (query.whereAnd?.userId?.equals) {
-    whereClauses.push('user_id = :user_id')
-    vars.user_id = query.whereAnd.userId.equals
+    whereClauses.push('id = :id')
+    vars.id = query.whereAnd.userId.equals
   }
 
   vars.limit = query.pagination.limit
@@ -189,7 +180,6 @@ const queryToSql = (query: ProfileDbQuery) => {
   const sql = `
         SELECT
           id,
-          user_id,
           username,
           avatar_seed,
           avatar_style,

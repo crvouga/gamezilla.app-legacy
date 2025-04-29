@@ -5,9 +5,9 @@ import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { AppFrontendCmd, back, logout, pushScreen, replaceScreen, sendToBackend } from '../@/frontend/cmd'
-import { ProfileScreen } from './profile-screen/frontend'
 import { UpdateAvatarScreen } from './profile-frontend/update-avatar-screen'
 import { UpdateProfileScreen } from './profile-frontend/update-profile-screen'
+import { ProfileScreen } from './profile-screen/frontend'
 import type { FrontendModule, ModelFrontend } from './types'
 import { UpdateUsernameFrontend } from './update-username/frontend'
 
@@ -22,7 +22,7 @@ import { UpdateUsernameFrontend } from './update-username/frontend'
 export const init: FrontendModule['init'] = ({ ctx }) => {
   const updateUsername = UpdateUsernameFrontend.init({ ctx })
   const initialModel: ModelFrontend = {
-    profiles: {},
+    profilesByUserId: {},
     requests: {},
     draft: {},
     updateUsername: updateUsername.model,
@@ -85,8 +85,8 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...model,
-          profiles: {
-            ...model.profiles,
+          profilesByUserId: {
+            ...model.profilesByUserId,
             ...msgCmd.c.profiles,
           },
         },
@@ -151,9 +151,9 @@ const updateFromBackend: FrontendModule['update'] = (input) => {
 
       const modelNew: ModelFrontend = {
         ...model,
-        profiles: {
-          ...model.profiles,
-          [profile.userId]: profile,
+        profilesByUserId: {
+          ...model.profilesByUserId,
+          [profile.id]: profile,
         },
       }
 
@@ -185,16 +185,16 @@ const updateFromBackend: FrontendModule['update'] = (input) => {
         }
       }
 
-      const profilesNew = msgBackend.result.value.reduce<ModelFrontend['profiles']>((acc, profile) => {
+      const profilesNew = msgBackend.result.value.reduce<ModelFrontend['profilesByUserId']>((acc, profile) => {
         return {
           ...acc,
-          [profile.userId]: profile,
+          [profile.id]: profile,
         }
-      }, model.profiles)
+      }, model.profilesByUserId)
 
       const modelNew: ModelFrontend = {
         ...model,
-        profiles: profilesNew,
+        profilesByUserId: profilesNew,
       }
 
       return {

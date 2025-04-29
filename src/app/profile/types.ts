@@ -11,7 +11,6 @@ import { UserId } from '../@/data/user-id'
 import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { AppFrontendEvt } from '../@/frontend/evt'
-import { UserProfileId } from './@/user-profile/user-profile-id'
 import * as UpdateUsernameTypes from './update-username/types'
 
 //
@@ -24,8 +23,8 @@ import * as UpdateUsernameTypes from './update-username/types'
 
 export type ModelFrontend = {
   updateUsername: UpdateUsernameTypes.ModelFrontend
-  profiles: {
-    [userProfileId: UserProfileId]: Profile
+  profilesByUserId: {
+    [userId: UserId]: Profile
   }
   requests: {
     [key in Req['t']]?: RemoteResult<string, null>

@@ -3,11 +3,9 @@ import { Posix } from '~/@/time/posix'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
-import { UserProfileId } from '~/app/profile/@/user-profile/user-profile-id'
 
 const parser = p.obj({
-  id: UserProfileId,
-  userId: UserId,
+  id: UserId,
   username: Username,
   avatarSeed: p.maybe(p.str),
   avatarStyle: p.maybe(p.str),
@@ -19,8 +17,7 @@ export type Profile = p.Infer<typeof parser>
 
 const random = async (overrides?: Partial<Profile>): Promise<Profile> => {
   return {
-    id: UserProfileId.generate(),
-    userId: UserId.generate(),
+    id: UserId.generate(),
     username: await Username.generate(),
     avatarSeed: ProfileAvatar.randomSeed(),
     avatarStyle: ProfileAvatar.randomStyle(),
@@ -42,7 +39,7 @@ const toAvatarUrl = (profile?: Profile | null | undefined): string => {
 
 const indexByUserId = (profiles: Profile[]): { [userId: UserId]: Profile } => {
   return profiles.reduce<{ [userId: UserId]: Profile }>((acc, profile) => {
-    acc[profile.userId] = profile
+    acc[profile.id] = profile
     return acc
   }, {})
 }

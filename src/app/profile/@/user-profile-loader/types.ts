@@ -1,14 +1,14 @@
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { Profile } from '~/app/@/data/profile'
+import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { ProfileFrontendCtx } from '../frontend/ctx'
 import { ProfileDbQuery } from '../user-profile/user-profile-db/query'
-import { UserProfileId } from '../user-profile/user-profile-id'
 
 export type ModelFrontend = {
   results: {
-    [queryKey: string]: UserProfileId[]
+    [queryKey: string]: UserId[]
   }
   queries: {
     [name: string]: ProfileDbQuery

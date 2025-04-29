@@ -48,9 +48,9 @@ describe('ProfileDb', () => {
   it('should work', async () => {
     for (const f of await Fixtures()) {
       const profile = await Profile.random()
-      const before = await f.profileDb.findByUserId(profile.userId)
+      const before = await f.profileDb.findByUserId(profile.id)
       const put = await f.profileDb.put(profile)
-      const after = await f.profileDb.findByUserId(profile.userId)
+      const after = await f.profileDb.findByUserId(profile.id)
       expect(before).toEqual(Ok([]))
       expect(put).toEqual(Ok(null))
       expect(after).toEqual(Ok([profile]))
@@ -63,19 +63,19 @@ describe('ProfileDb', () => {
       const upsertResult = await f.profileDb.put(profile)
       expect(upsertResult).toEqual(Ok(null))
 
-      const fetchedProfileAfterInsert = await f.profileDb.findByUserId(profile.userId)
+      const fetchedProfileAfterInsert = await f.profileDb.findByUserId(profile.id)
       expect(fetchedProfileAfterInsert).toEqual(Ok([profile]))
 
       const updatedProfile = { ...profile, username: await Username.generate() }
       const upsertResultUpdate = await f.profileDb.put(updatedProfile)
       expect(upsertResultUpdate).toEqual(Ok(null))
 
-      const fetchedProfileAfterUpdate = await f.profileDb.findByUserId(updatedProfile.userId)
+      const fetchedProfileAfterUpdate = await f.profileDb.findByUserId(updatedProfile.id)
       expect(fetchedProfileAfterUpdate).toEqual(Ok([updatedProfile]))
     }
   })
 
-  test.only('query by user id', async () => {
+  test('query by user id', async () => {
     for (const f of await Fixtures()) {
       const userId = UserId.generate()
 
@@ -94,15 +94,11 @@ describe('ProfileDb', () => {
 
       const before = await f.profileDb.query(query)
 
-      const expected: Profile[] = []
-      for (let i = 0; i < 10; i++) {
-        const profile = await Profile.random({
-          userId,
-          createdAt: Posix.future(Posix.now(), TimeSpan.seconds(i)),
-        })
-        unwrap(await f.profileDb.put(profile))
-        expected.push(profile)
-      }
+      const expected = await Profile.random({
+        id: userId,
+        createdAt: Posix.future(Posix.now(), TimeSpan.seconds(0)),
+      })
+      unwrap(await f.profileDb.put(expected))
 
       for (let i = 0; i < 10; i++) {
         unwrap(await f.profileDb.put(await Profile.random()))
@@ -120,10 +116,10 @@ describe('ProfileDb', () => {
       )
       expect(after).toEqual(
         Ok({
-          items: expected,
+          items: [expected],
           limit: 100,
           offset: 0,
-          total: 10,
+          total: 1,
         }),
       )
     }

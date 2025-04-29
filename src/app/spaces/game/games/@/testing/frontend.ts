@@ -24,7 +24,7 @@ export async function testSpaceFrontendCtx(): Promise<SpaceFrontendCtx> {
     now: Posix.now(),
     profilesByUserId: {
       [currentUserId]: await Profile.random({
-        userId: currentUserId,
+        id: currentUserId,
       }),
     },
     space: {

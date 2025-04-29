@@ -19,8 +19,8 @@ export const SectionPersonDetails = (input: {
         <Avatar src={input.profile ? Profile.toAvatarUrl(input.profile) : ''} className='size-24' />
         {input.profile && <Typography variant='title' text={input.ctx.t('username', input.profile?.username)} />}
         <div className='flex items-center gap-2'>
-          {input.ctx.space.hostId === input.profile?.userId && <ViewHostChip ctx={input.ctx} />}
-          {input.ctx.currentUser.userId === input.profile?.userId && <ViewYouChip ctx={input.ctx} />}
+          {input.ctx.space.hostId === input.profile?.id && <ViewHostChip ctx={input.ctx} />}
+          {input.ctx.currentUser.userId === input.profile?.id && <ViewYouChip ctx={input.ctx} />}
         </div>
       </button>
 

@@ -3,8 +3,8 @@ import { Ok } from '~/@/result'
 import { Sub } from '~/@/sub'
 
 import { Profile } from '~/app/@/data/profile'
-import { UserProfileId } from '../user-profile-id'
 import type { IProfileDb } from './interface'
+import { UserId } from '~/app/@/data/user-id'
 
 export type Config = {
   t: 'hash-map'
@@ -12,10 +12,10 @@ export type Config = {
 }
 
 export const ProfileDb = (_config: Config): IProfileDb => {
-  const profiles = new Map<UserProfileId, Profile>()
+  const profiles = new Map<UserId, Profile>()
   return {
     async findByUserId(userId) {
-      const output: Profile[] = Array.from(profiles.values()).filter((profile) => profile.userId === userId)
+      const output: Profile[] = Array.from(profiles.values()).filter((profile) => profile.id === userId)
 
       return Ok(output)
     },
@@ -25,7 +25,7 @@ export const ProfileDb = (_config: Config): IProfileDb => {
     },
     async query(query) {
       const hits = Array.from(profiles.values()).filter((profile) =>
-        query.whereAnd?.userId?.equals ? query.whereAnd?.userId?.equals === profile.userId : true,
+        query.whereAnd?.userId?.equals ? query.whereAnd?.userId?.equals === profile.id : true,
       )
       const ordered = hits.sort((a, b) => {
         if (query.order.createdAt === 'asc') {

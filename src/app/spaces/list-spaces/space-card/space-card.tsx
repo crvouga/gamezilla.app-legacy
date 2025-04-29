@@ -90,7 +90,7 @@ const ViewSpaceCardHost = (input: { host?: Profile | null; ctx: AppFrontendCtxBa
         )}
         <ViewHostChip ctx={input.ctx} />
       </div>
-      {input.ctx.currentUser?.userId === input.host?.userId && <ViewYouChip ctx={input.ctx} />}
+      {input.ctx.currentUser?.userId === input.host?.id && <ViewYouChip ctx={input.ctx} />}
     </div>
   )
 }

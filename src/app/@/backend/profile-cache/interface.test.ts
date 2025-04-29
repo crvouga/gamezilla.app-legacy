@@ -17,7 +17,7 @@ describe(import.meta.file, () => {
   test('add and get', async () => {
     const f = await Fixture()
     const profiles = [await Profile.random(), await Profile.random(), await Profile.random()]
-    const userIds = Object.values(profiles).map((p) => p.userId)
+    const userIds = Object.values(profiles).map((p) => p.id)
 
     const before = unwrapOr(await f.profileCache.getByUserId(userIds), null)
     const added = unwrapOr(await f.profileCache.add(profiles), null)
@@ -31,7 +31,7 @@ describe(import.meta.file, () => {
   test('get missing', async () => {
     const f = await Fixture()
     const profiles = [await Profile.random(), await Profile.random(), await Profile.random()]
-    const userIds = Object.values(profiles).map((p) => p.userId)
+    const userIds = Object.values(profiles).map((p) => p.id)
 
     const got = unwrapOr(await f.profileCache.getByUserId(userIds), null)
     expect(got).toEqual([])
