@@ -22,6 +22,7 @@ export type SendCodeOutput = p.Infer<typeof SendCodeOutput>
 export const VerifyCodeInput = p.obj({
   phoneNumber: PhoneNumber,
   code: p.str,
+  preferredLanguage: LanguageCodeISO_639_1.parser,
 })
 export type VerifyCodeInput = p.Infer<typeof VerifyCodeInput>
 

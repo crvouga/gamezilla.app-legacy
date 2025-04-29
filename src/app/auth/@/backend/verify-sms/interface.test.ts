@@ -50,6 +50,7 @@ describe(import.meta.file, () => {
       const result = await f.verifySMS.verifyCode({
         phoneNumber,
         code: '42',
+        preferredLanguage: 'en',
       })
       expect(result.t).toBe('err')
       isErr(result) && expect(result.error.t).toBe('code-incorrect')

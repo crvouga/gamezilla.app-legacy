@@ -151,6 +151,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
           const verified = await input.ctx.rpc.verifyCode({
             phoneNumber,
             code: input.model.code,
+            preferredLanguage: input.ctx.navigatorLanguage,
           })
           dispatch({ t: 'verified-code', verified })
         },
@@ -174,8 +175,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return {
         model: modelNew,
         async eff(_dispatch) {
-          await input.ctx.userSessionDb.insert(userSession)
-          await input.ctx.userAccountDb.insert(userAccount)
+          await Promise.all([input.ctx.userSessionDb.insert(userSession), input.ctx.userAccountDb.insert(userAccount)])
         },
       }
     }

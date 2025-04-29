@@ -21,18 +21,13 @@ import { rpcContract, VerifyCodeOutput } from './types'
 const rpc = (config: { ctx: BackendCtx }) => {
   return RPC.initServer(rpcContract, {
     async sendCode(input) {
-      const sent = await handleSendCode({
-        phoneNumber: input.phoneNumber,
-        preferredLanguage: input.preferredLanguage,
-        ctx: config.ctx,
-      })
+      const sent = await handleSendCode({ ...input, ctx: config.ctx })
       return sent
     },
     async verifyCode(input, reqCtx) {
       const verified = await handleVerifyCode({
+        ...input,
         sessionId: reqCtx.sessionId,
-        phoneNumber: input.phoneNumber,
-        code: input.code,
         ctx: config.ctx,
         clientSessionId: reqCtx.clientSessionId,
       })
@@ -76,10 +71,7 @@ const handleVerifyCode = async (
 ): Promise<VerifyCodeOutput> => {
   input.ctx.logger.info(`Verifying code for phone number ${PhoneNumber.toString(input.phoneNumber)}`)
 
-  const verified = await input.ctx.verifySMS.verifyCode({
-    code: input.code,
-    phoneNumber: input.phoneNumber,
-  })
+  const verified = await input.ctx.verifySMS.verifyCode(input)
 
   if (isErr(verified)) {
     input.ctx.logger.error(

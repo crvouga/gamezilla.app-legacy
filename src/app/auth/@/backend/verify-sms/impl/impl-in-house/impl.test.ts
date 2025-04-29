@@ -20,6 +20,7 @@ describe(import.meta.file, () => {
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
       code: f.CODE,
+      preferredLanguage: 'en',
     })
 
     expect(isOk(sent)).toBe(true)
@@ -70,6 +71,7 @@ describe(import.meta.file, () => {
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
       code: f.WRONG_CODE,
+      preferredLanguage: 'en',
     })
 
     expect(isErr(verified) && verified.error.t === 'code-incorrect').toBe(true)
@@ -85,10 +87,12 @@ describe(import.meta.file, () => {
     await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
       code: f.WRONG_CODE,
+      preferredLanguage: 'en',
     })
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
       code: f.WRONG_CODE,
+      preferredLanguage: 'en',
     })
     expect(isErr(verified) && verified.error.t === 'verification-expired-too-many-failed-attempts').toBe(true)
   })
@@ -101,6 +105,7 @@ describe(import.meta.file, () => {
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: PhoneNumber.random(),
       code: f.CODE,
+      preferredLanguage: 'en',
     })
 
     expect(isErr(verified) && verified.error.t === 'verification-not-found').toBe(true)
@@ -123,6 +128,7 @@ describe(import.meta.file, () => {
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
       code: f.CODE,
+      preferredLanguage: 'en',
     })
 
     expect(isErr(verified) && verified.error.t === 'verification-expired').toBe(true)
@@ -148,6 +154,7 @@ describe(import.meta.file, () => {
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
       code: f.CODE,
+      preferredLanguage: 'en',
     })
 
     expect(isErr(verified)).toBe(true)
@@ -181,6 +188,7 @@ describe(import.meta.file, () => {
     const verifiedA = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
       code: CODE_A,
+      preferredLanguage: 'en',
     })
 
     now = Posix.future(now, TimeSpan.seconds(1))
@@ -188,6 +196,7 @@ describe(import.meta.file, () => {
     const verifiedB = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
       code: CODE_B,
+      preferredLanguage: 'en',
     })
 
     expect(isErr(verifiedA)).toBe(true)
@@ -329,10 +338,12 @@ describe(import.meta.file, () => {
     const firstVerification = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
       code: f.CODE,
+      preferredLanguage: 'en',
     })
     const secondVerification = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
       code: f.CODE,
+      preferredLanguage: 'en',
     })
     expect(firstVerification.t).toBe('ok')
     expect(secondVerification.t).toBe('err')
@@ -353,6 +364,7 @@ describe(import.meta.file, () => {
     const verification = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
       code,
+      preferredLanguage: 'en',
     })
 
     const found = await f.verificationDb.find({
@@ -384,6 +396,7 @@ describe(import.meta.file, () => {
     const verification = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
       code: '123',
+      preferredLanguage: 'en',
     })
 
     expect(verification.t).toBe('err')
