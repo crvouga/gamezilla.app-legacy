@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { eq } from '~/@/equals/equals'
 import { PhoneNumber } from '~/@/phone-number'
-import { Ok } from '~/@/result'
+import { Err, Ok } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import type { Screen } from '~/@/screen/generated/screens'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -84,24 +84,13 @@ const Fixture = async (input?: { currentScreen?: Screen }) => {
   }
 }
 
-describe.todo('ContinueWithSmsFrontend', () => {
+describe('ContinueWithSmsFrontend', () => {
   it('should navigate to verify code screen after code is sent', async () => {
     const f = await Fixture()
 
     const phoneNumber = PhoneNumber.random()
 
-    const output = f.update(f.init, [
-      {
-        msg: {
-          t: 'sent-code',
-          sent: Ok(
-            Ok({
-              phoneNumber,
-            }),
-          ),
-        },
-      },
-    ])
+    const output = f.update(f.init, [{ msg: { t: 'sent-code', sent: Ok(Ok({ phoneNumber })) } }])
 
     expect(
       didPushScreen(
@@ -111,61 +100,30 @@ describe.todo('ContinueWithSmsFrontend', () => {
     ).toBe(true)
   })
 
-  //   it('should render error message when send code errors', async () => {
-  //     const f = await Fixture()
-  //     const output = f.update(f.init, [
-  //       {
-  //         msgBackend: {
-  //           t: 'sent-code',
-  //           phoneNumber: PhoneNumber.random(),
-  //           sent: Err({
-  //             t: 'hourly-limit-reached',
-  //           }),
-  //         },
-  //       },
-  //     ])
-  //     const r = f.render(output?.model)
-  //     const alertError = r.getByRole('alert', f.ctx.t('verify-sms-problem.send-code-hourly-limit-reached'))
-  //     expect(alertError).toBeTruthy()
-  //   })
+  it('should render error message when send code errors', async () => {
+    const f = await Fixture()
+    const output = f.update(f.init, [{ msg: { t: 'sent-code', sent: Ok(Err({ t: 'hourly-limit-reached' })) } }])
+    const r = f.render(output?.model)
+    const alertError = r.getByRole('alert', f.ctx.t('verify-sms-problem.send-code-hourly-limit-reached'))
+    expect(alertError).toBeTruthy()
+  })
 
-  //   it('should render error message when verify code errors', async () => {
-  //     const phoneNumber = PhoneNumber.random()
+  it('should render error message when verify code errors', async () => {
+    const phoneNumber = PhoneNumber.random()
+    const f = await Fixture({ currentScreen: { n: 'auth-login', t: 'login-sms-verify', phoneNumber } })
+    const output = f.update(f.init, [
+      { msg: { t: 'verified-code', verified: Ok(Err({ t: 'verification-already-verified' })) } },
+    ])
+    const r = f.render(output?.model)
+    const alertError = r.getByRole('alert', f.ctx.t('verify-sms-problem.verification-already-verified'))
+    expect(alertError).toBeTruthy()
+  })
 
-  //     const f = await Fixture({
-  //       currentScreen: {
-  //         n: 'auth-login',
-  //         t: 'login-sms-verify',
-  //         phoneNumber,
-  //       },
-  //     })
-  //     const output = f.update(f.init, [
-  //       {
-  //         msgBackend: {
-  //           t: 'verified-code',
-  //           verified: Err({
-  //             t: 'verification-already-verified',
-  //           }),
-  //         },
-  //       },
-  //     ])
-  //     const r = f.render(output?.model)
-  //     const alertError = r.getByRole('alert', f.ctx.t('verify-sms-problem.verification-already-verified'))
-  //     expect(alertError).toBeTruthy()
-  //   })
-
-  //   it('should render code sent to phone number message', async () => {
-  //     const phoneNumber = PhoneNumber.random()
-
-  //     const f = await Fixture({
-  //       currentScreen: {
-  //         n: 'auth-login',
-  //         t: 'login-sms-verify',
-  //         phoneNumber,
-  //       },
-  //     })
-  //     const r = f.render(f.init)
-  //     const p = r.getByRole('status', f.ctx.t('auth-sms.enter-code-sent-to', PhoneNumber.format(phoneNumber)))
-  //     expect(p).toBeTruthy()
-  //   })
+  it('should render code sent to phone number message', async () => {
+    const phoneNumber = PhoneNumber.random()
+    const f = await Fixture({ currentScreen: { n: 'auth-login', t: 'login-sms-verify', phoneNumber } })
+    const r = f.render(f.init)
+    const p = r.getByRole('status', f.ctx.t('auth-sms.enter-code-sent-to', PhoneNumber.format(phoneNumber)))
+    expect(p).toBeTruthy()
+  })
 })
