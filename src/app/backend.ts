@@ -118,7 +118,7 @@ const initCtx = async (): Promise<BackendCtx> => {
     backendInstanceId,
     sleep,
     pubSub,
-    profileDb,
+    userProfileDb: profileDb,
     httpServer,
     runtime,
   }

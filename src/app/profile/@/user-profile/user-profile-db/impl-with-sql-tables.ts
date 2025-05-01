@@ -1,11 +1,11 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
 import { p } from '~/@/parser'
-import { IProfileDb } from './interface'
+import { IUserProfileDb } from './interface'
 
 export type Config = {
   t: 'with-sql-tables'
   dbConnSql: IDbConnSql
-  profileDb: IProfileDb
+  profileDb: IUserProfileDb
 }
 
 const queries: string[] = [
@@ -21,7 +21,7 @@ const queries: string[] = [
   `,
 ]
 
-export const ProfileDb = (config: Config): IProfileDb => {
+export const ProfileDb = (config: Config): IUserProfileDb => {
   for (const query of queries) {
     config.dbConnSql
       .query({

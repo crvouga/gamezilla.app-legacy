@@ -4,14 +4,14 @@ import { Sub } from '~/@/sub'
 
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
-import type { IProfileDb } from './interface'
+import type { IUserProfileDb } from './interface'
 
 export type Config = {
   t: 'hash-map'
   logger: ILogger
 }
 
-export const ProfileDb = (_config: Config): IProfileDb => {
+export const ProfileDb = (_config: Config): IUserProfileDb => {
   const profiles = new Map<UserId, UserProfile>()
   return {
     async findByUserIds(userIds) {

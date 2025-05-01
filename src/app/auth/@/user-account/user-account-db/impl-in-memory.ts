@@ -6,19 +6,19 @@ import { PhoneNumber } from '~/@/phone-number'
 
 export type Config = {
   t: 'in-memory'
-  delay: () => Promise<void>
+  simulateLatency: () => Promise<void>
 }
 
 export const UserAccountDb = (config: Config): IUserAccountDb => {
   const accounts = new Map<UserId, UserAccount>()
   return {
     async findOneByUserId(input) {
-      await config.delay()
+      await config.simulateLatency()
       return Ok(input.userId ? (accounts.get(input.userId) ?? null) : null)
     },
 
     async findOneByPhoneNumber(input) {
-      await config.delay()
+      await config.simulateLatency()
       for (const account of accounts.values()) {
         if (!account.phoneNumber) continue
 
@@ -35,7 +35,7 @@ export const UserAccountDb = (config: Config): IUserAccountDb => {
     },
 
     async insert(input) {
-      await config.delay()
+      await config.simulateLatency()
       const existing = accounts.get(input.userId)
       if (existing) {
         return Err('Can not insert account that already exists.')

@@ -57,8 +57,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const dbConnSqlite = await DbConnSql({ t: 'bun-sqlite', fileSystem: { t: 'in-memory' }, logger })
 
   const profileDb = ProfileDb({
-    t: 'sql',
-    dbConnSql: dbConnSqlite,
+    t: 'hash-map',
     logger,
   })
 
@@ -77,7 +76,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     sms,
     sleep,
     pubSub,
-    profileDb,
+    userProfileDb: profileDb,
     runtime,
     httpServer,
     backendInstanceId,

@@ -7,7 +7,7 @@ import { ProfileAvatar } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
 import { UserProfile } from '../@/data/user-profile'
 import { Username } from '../@/data/username'
-import { type IProfileDb, ProfileDb } from './@/user-profile/user-profile-db'
+import { type IUserProfileDb, ProfileDb } from './@/user-profile/user-profile-db'
 import { type Req, BackendCtx, BackendModule } from './types'
 
 //
@@ -110,7 +110,7 @@ const handler = async ({
   profileDb,
   msg,
 }: {
-  profileDb: IProfileDb
+  profileDb: IUserProfileDb
   msg: Req
   ctx: { currentUserId: UserId }
 }): Promise<Result<string, UserProfile[]>> => {
@@ -134,7 +134,7 @@ const handler = async ({
   }
 }
 
-const findElseInsertNew = async ({ profileDb, userId }: { profileDb: IProfileDb; userId: UserId }) => {
+const findElseInsertNew = async ({ profileDb, userId }: { profileDb: IUserProfileDb; userId: UserId }) => {
   const found = await profileDb.findByUserIds([userId])
 
   if (isErr(found)) return found

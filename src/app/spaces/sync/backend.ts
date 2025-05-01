@@ -67,7 +67,7 @@ const getAssociatedProfiles = async (ctx: AppBackendCtx, spaces: Space.Model[]) 
     }
   })
 
-  const got = await ctx.profileDb.findByUserIds(userIds)
+  const got = await ctx.userProfileDb.findByUserIds(userIds)
 
   const profiles = unwrapOr(got, [])
 
@@ -126,7 +126,7 @@ const sendMsgSpaceToFrontend: SpaceBackendModule['update'] = async (input) => {
   const spaceState = Space.toSpaceStarted(space)
 
   const profiles = unwrapOr(
-    await input.ctx.profileDb.findByUserIds('userId' in eventWithMeta ? [eventWithMeta.userId] : []),
+    await input.ctx.userProfileDb.findByUserIds('userId' in eventWithMeta ? [eventWithMeta.userId] : []),
     [],
   )
 

@@ -21,11 +21,11 @@ import { rpcContract, VerifyCodeOutput } from './types'
 const rpc = (config: { ctx: BackendCtx }) => {
   return RPC.initServer(rpcContract, {
     async sendCode(input) {
-      const sent = await handleSendCode({ ...input, ctx: config.ctx })
+      const sent = await sendCode({ ...input, ctx: config.ctx })
       return sent
     },
     async verifyCode(input, reqCtx) {
-      const verified = await handleVerifyCode({
+      const verified = await verifyCode({
         ...input,
         sessionId: reqCtx.sessionId,
         ctx: config.ctx,
@@ -37,7 +37,7 @@ const rpc = (config: { ctx: BackendCtx }) => {
   })
 }
 
-const handleSendCode = async (
+const sendCode = async (
   input: SendCodeInput & {
     ctx: BackendCtx
   },
@@ -62,7 +62,7 @@ const handleSendCode = async (
   return sent
 }
 
-const handleVerifyCode = async (
+const verifyCode = async (
   input: VerifyCodeInput & {
     sessionId: SessionId
     ctx: BackendCtx
@@ -120,12 +120,14 @@ const handleVerifyCode = async (
 
   input.ctx.logger.info(`Successfully created new account for ${PhoneNumber.toString(input.phoneNumber)}`)
 
-  const foundProfile = await input.ctx.profileDb.findByUserIds([account.userId])
+  const foundProfiles = await input.ctx.userProfileDb.findByUserIds([account.userId])
 
-  if (isErr(foundProfile)) {
-    input.ctx.logger.error(`Failed to find profile: ${foundProfile.error}`)
-    return Err({ t: 'database-error', error: foundProfile.error })
+  if (isErr(foundProfiles)) {
+    input.ctx.logger.error(`Failed to find profile: ${foundProfiles.error}`)
+    return Err({ t: 'database-error', error: foundProfiles.error })
   }
+
+  const profileFound = foundProfiles.value[0] ?? null
 
   const profileNew: UserProfile = {
     id: account.userId,
@@ -136,9 +138,9 @@ const handleVerifyCode = async (
     updatedAt: input.ctx.now,
   }
 
-  const profile: UserProfile = foundProfile.value[0] ?? profileNew
+  const profile: UserProfile = profileFound ?? profileNew
 
-  const insertedProfile = foundProfile.value ? Ok(null) : await input.ctx.profileDb.put(profile)
+  const insertedProfile = profileFound ? Ok(null) : await input.ctx.userProfileDb.put(profile)
 
   if (isErr(insertedProfile)) {
     input.ctx.logger.error(`Failed to insert new profile: ${insertedProfile.error}`)
@@ -168,4 +170,6 @@ const handleVerifyCode = async (
 
 export const ContinueWithSmsBackend = {
   rpc,
+  sendCode,
+  verifyCode,
 }

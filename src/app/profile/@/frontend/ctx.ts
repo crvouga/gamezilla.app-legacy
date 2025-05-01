@@ -1,6 +1,6 @@
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { IProfileDb } from '../user-profile/user-profile-db'
+import { IUserProfileDb } from '../user-profile/user-profile-db'
 
 export type ProfileFrontendCtx = AppFrontendCtxBase & {
-  profileDb: IProfileDb
+  profileDb: IUserProfileDb
 }

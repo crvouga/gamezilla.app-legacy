@@ -9,7 +9,7 @@ import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { Username } from '~/app/@/data/username'
-import type { IProfileDb } from './interface'
+import type { IUserProfileDb } from './interface'
 import { ProfileDbQuery } from './query'
 
 const ProfileRow = p.obj({
@@ -48,7 +48,7 @@ export type Config = {
   logger: ILogger
 }
 
-export const ProfileDb = (config: Config): IProfileDb => {
+export const ProfileDb = (config: Config): IUserProfileDb => {
   return {
     async findByUserIds(userIds) {
       const sql = `

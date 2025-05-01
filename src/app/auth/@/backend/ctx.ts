@@ -8,7 +8,6 @@ import { VerifySMSFactory } from './verify-sms/impl/factory'
 export type BackendCtx = AppBackendCtx & {
   userAccountDb: IUserAccountDb
   userSessionDb: IUserSessionDb
-  userSessionDbCached: IUserSessionDb
   verifySMS: IVerifySMS
   guestSessionMappingDb: IGuestSessionMappingDb
 }
@@ -20,12 +19,6 @@ const init = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
   })
 
   const userSessionDb = await UserSessionDb({
-    t: 'sql',
-    dbConnSql: input.ctx.dbConnSql,
-    logger: input.ctx.logger,
-  })
-
-  const userSessionDbCached = await UserSessionDb({
     t: 'sql-with-cache',
     dbConnSql: input.ctx.dbConnSql,
     keyValueDb: input.ctx.keyValueDb,
@@ -49,11 +42,39 @@ const init = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
     guestSessionMappingDb,
     userAccountDb,
     userSessionDb,
-    userSessionDbCached,
+    verifySMS,
+  }
+}
+
+const initUnitTest = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
+  const userAccountDb = UserAccountDb({
+    t: 'in-memory',
+    async simulateLatency() {},
+  })
+
+  const userSessionDb = await UserSessionDb({
+    t: 'in-memory',
+    async simulateLatency() {},
+  })
+
+  const verifySMS = VerifySMSFactory.createInHouseUnitTest({
+    logger: input.ctx.logger,
+  })
+
+  const guestSessionMappingDb = GuestSessionMappingDb({
+    t: 'hash-map',
+  })
+
+  return {
+    ...input.ctx,
+    guestSessionMappingDb,
+    userAccountDb,
+    userSessionDb,
     verifySMS,
   }
 }
 
 export const BackendCtx = {
   init,
+  initUnitTest,
 }

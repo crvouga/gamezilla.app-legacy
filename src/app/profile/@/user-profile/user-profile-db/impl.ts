@@ -1,11 +1,11 @@
 import * as ImplSql from './impl-sql'
 import * as ImplHashMap from './impl-hash-map'
 import * as ImplWithSqlTables from './impl-with-sql-tables'
-import type { IProfileDb } from './interface'
+import type { IUserProfileDb } from './interface'
 
 export type Config = ImplHashMap.Config | ImplSql.Config | ImplWithSqlTables.Config
 
-export const ProfileDb = (config: Config): IProfileDb => {
+export const ProfileDb = (config: Config): IUserProfileDb => {
   switch (config.t) {
     case 'hash-map':
       return ImplHashMap.ProfileDb(config)

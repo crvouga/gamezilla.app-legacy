@@ -20,7 +20,7 @@ const update: SpaceBackendModule['update'] = async (input) => {
       const spaces = unwrapOr(listed, Paginated.init())
       const started = spaces.items.map(EventSourced.startFromLatestSnapshot)
       const userIds = spaces.items.flatMap(Space.toUserIds)
-      const profiles = unwrapOr(await input.ctx.profileDb.findByUserIds(userIds), [])
+      const profiles = unwrapOr(await input.ctx.userProfileDb.findByUserIds(userIds), [])
 
       return {
         msgCmd: [

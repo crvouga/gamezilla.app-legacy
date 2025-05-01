@@ -20,7 +20,7 @@ export const update: BackendModule['update'] = async (_input) => {
 export const getUserIdFromSessionId = async (ctx: BackendCtx, sessionId?: SessionId | null): Promise<UserId | null> => {
   if (!sessionId) return null
 
-  const found = await ctx.userSessionDbCached.findUserIdBySessionId(sessionId)
+  const found = await ctx.userSessionDb.findUserIdBySessionId(sessionId)
 
   if (isErr(found)) {
     console.error(found.error)

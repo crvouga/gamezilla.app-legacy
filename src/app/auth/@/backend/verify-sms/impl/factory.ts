@@ -44,6 +44,33 @@ export const VerifySMSFactory = {
   },
 
   /**
+   * Creates an in-house implementation of VerifySMS
+   */
+  createInHouseUnitTest: (config: { logger: ILogger }): IVerifySMS => {
+    const logger = Logger.prefix('verify-sms', config.logger)
+    const hashing = Hashing({ t: 'bun' })
+    const sms = SMS({ t: 'fake', logger })
+    const verificationCodeGenerator = VerificationCodeGenerator({ t: 'fake', code: '123' })
+    const verificationAttemptDb = VerificationAttemptDb({ t: 'hash-map' })
+    const verificationDb = VerificationDb({ t: 'hash-map' })
+    return VerifySMS({
+      t: 'in-house',
+      logger,
+      hashing,
+      now: Posix.now,
+      sendCodeDailyLimit: 1000,
+      sendCodeHourlyLimit: 100,
+      verificationAttemptDb,
+      verificationDb,
+      verifyCodeExpiresIn: TimeSpan.minutes(5),
+      verifyCodeMaxAttempts: 3,
+      sms,
+      Translator,
+      verificationCodeGenerator,
+    })
+  },
+
+  /**
    * Creates a Twilio implementation of VerifySMS
    */
   createTwilio: (config: { logger: ILogger }): IVerifySMS => {
