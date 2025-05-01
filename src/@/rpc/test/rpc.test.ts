@@ -4,33 +4,46 @@ import { HttpServer } from '~/@/http-server'
 import { Logger } from '~/@/logger'
 import { isErr, Ok } from '~/@/result'
 import { ClientSessionId } from '~/@/wire/client-session-id'
+import { SessionId } from '~/@/wire/session-id'
 import * as RPC from '../rpc'
 import { contract, server } from './test-contract'
-import { SessionId } from '~/@/wire/session-id'
 
 type Fixture = {
   client: RPC.Client<typeof contract>
   [Symbol.dispose]: () => Promise<void>
 }
 
-const FixtureHttp = async (): Promise<Fixture> => {
+export const FixtureHttp = async (): Promise<Fixture> => {
   const port = 1234
-  const httpServer = HttpServer({ t: 'bun', logger: Logger({ t: 'noop' }) })
-  const httpClient = HttpClient({ t: 'fetch' })
+
+  const httpServer = HttpServer({
+    t: 'bun',
+    logger: Logger({ t: 'noop' }),
+  })
+
+  const clientSessionId = ClientSessionId.generate()
+
   const serverUrl = `http://localhost:${port}`
+
+  const httpClient = HttpClient({
+    t: 'fetch',
+    defaultHeaders: {
+      Origin: serverUrl,
+    },
+  })
 
   RPC.registerRespond({
     httpServer,
-    contract: contract,
-    implementation: server,
+    contract,
+    server,
   })
 
   const client = RPC.initClient({
     t: 'http',
     httpClient,
-    contract: contract,
-    backendUrl: serverUrl,
-    clientSessionId: ClientSessionId.generate(),
+    contract,
+    serverUrl,
+    clientSessionId,
   })
 
   await httpServer.start(port)

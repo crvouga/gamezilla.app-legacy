@@ -66,7 +66,7 @@ const initCtx = async (): Promise<FrontendCtx> => {
     t: 'http',
     httpClient,
     contract,
-    backendUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
+    serverUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
     clientSessionId,
   })
 

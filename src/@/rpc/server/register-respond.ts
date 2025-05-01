@@ -11,7 +11,7 @@ import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 export const registerRespond = <T extends Base>(registerInput: {
   httpServer: IHttpServer
   contract: T
-  implementation: Server<T>
+  server: Server<T>
 }) => {
   const handleRequest = async (requestInput: {
     contract: Contract<any>
@@ -89,7 +89,7 @@ export const registerRespond = <T extends Base>(registerInput: {
 
       const response = await handleRequest({
         contract: registerInput.contract,
-        handlers: registerInput.implementation,
+        handlers: registerInput.server,
         path,
         request,
         sessionId,

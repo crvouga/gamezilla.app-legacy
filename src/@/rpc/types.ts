@@ -41,7 +41,7 @@ export const initContract = <TEndpoints extends Record<string, Endpoint<any, any
 
 export type ClientConfigHttp<T extends Base> = {
   t: 'http'
-  backendUrl: string
+  serverUrl: string
   clientSessionId: ClientSessionId
   httpClient: IHttpClient
   contract: T

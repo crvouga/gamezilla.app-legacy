@@ -20,7 +20,7 @@ export const initClientHttp = <T extends Base>(config: ClientConfigHttp<T>): Cli
             }
 
             const url = ClientSessionIdHttp.addToUrl(
-              new URL(`/rpc/${[...path, endpoint].join('/')}`, config.backendUrl),
+              new URL(`/rpc/${[...path, endpoint].join('/')}`, config.serverUrl),
               config.clientSessionId,
             )
 

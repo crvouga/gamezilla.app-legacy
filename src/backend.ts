@@ -22,7 +22,7 @@ const main = async () => {
   RPC.registerRespond({
     httpServer: ctx.httpServer,
     contract: AppTypes.rpcContract,
-    implementation: AppBackend.rpc({ ctx }),
+    server: AppBackend.rpc({ ctx }),
   })
 
   PowerSyncBackendApp.registerRespond({
