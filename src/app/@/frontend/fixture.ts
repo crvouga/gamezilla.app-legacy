@@ -9,6 +9,7 @@ import { CONFIG_FRONTEND } from '~/config/frontend'
 import { UserId } from '../data/user-id'
 import type { AppFrontendCtx } from './ctx'
 import { Translator } from './translator'
+import { HttpClient } from '~/@/http-client'
 
 export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => {
   const currentUserId = UserId.generate()
@@ -39,6 +40,9 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
       phoneNumber: PhoneNumber.random(),
       role: 'normal',
     },
+    httpClient: HttpClient({
+      t: 'fetch',
+    }),
   }
 
   const render = await TestRender(CONFIG_FRONTEND.VDOM_IMPL_TEST)

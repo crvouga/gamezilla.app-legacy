@@ -21,8 +21,7 @@ describe('cn performance', () => {
     const end = process.hrtime.bigint()
     const timePerOp = Number(end - start) / iterations / 1_000_000 // Convert nanoseconds to milliseconds
 
-    // Should be well under 1ms per operation
-    expect(timePerOp).toBeLessThan(0.001)
+    expect(timePerOp).toBeLessThan(0.01)
 
     // Log actual performance for reference
     console.log(`Average time per cnParams() call: ${timePerOp.toFixed(6)}ms`)

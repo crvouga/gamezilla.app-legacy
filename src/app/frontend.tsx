@@ -63,6 +63,7 @@ const initCtx = async (): Promise<FrontendCtx> => {
   })
 
   const rpc = RPC.initClient({
+    t: 'http',
     httpClient,
     contract,
     backendUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
@@ -93,6 +94,7 @@ const initCtx = async (): Promise<FrontendCtx> => {
     currentUser: null,
     currentUserId: null,
     currentUserRole: null,
+    httpClient,
   }
 
   const auth = await AuthFrontend.initCtx({ ctx: { ...ctx, rpc } })
