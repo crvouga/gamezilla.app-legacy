@@ -28,16 +28,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const pack = await Pack.random()
     const updated = f.update(f.initial, [
-      {
-        msg: {
-          t: 'got-msg-space',
-          c: {
-            t: 'user-clicked-open-pack-puzzle-grid-item',
-            pack,
-            userId: f.hostId,
-          },
-        },
-      },
+      { msg: { t: 'got-msg-space', c: { t: 'user-clicked-open-pack-puzzle-grid-item', pack, userId: f.hostId } } },
     ])
     const r = f.render(updated)
     expect(r.getByRole('heading', pack.name)).toBeTruthy()
