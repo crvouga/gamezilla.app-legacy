@@ -25,7 +25,7 @@ import { AnonymousFrontendCtx, AppFrontendCtx, AppFrontendCtxBase, isAppFrontend
 import { AppFrontendEvt } from './@/frontend/evt'
 import { Translator } from './@/frontend/translator'
 import { ViewAppRoot } from './@/ui/app-root/app-root'
-import { SplashScreen } from './@/ui/logo/logo-block'
+import { SplashScreen } from './@/ui/logo/splash-screen'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'

@@ -19,36 +19,25 @@
     <link rel="mask-icon" href="./mask-icon.png" color="#000000" />
     <meta name="theme-color" content="#000000" />
     <style>
-      body {
-        background-color: black;
-        color: white;
-        overflow: hidden;
-        position: fixed;
-        width: 100dvw;
-        height: 100dvh;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: none;
+      @import 'tailwindcss';
+      @layer base {
+        *,
+        ::after,
+        ::before,
+        ::backdrop,
+        ::file-selector-button {
+          border-color: var(--color-neutral-600, currentColor);
+        }
       }
-      #splash-screen {
-        position: fixed;
-        transform: translate(-50%, -50%);
-        top: 50%;
-        left: 50%;
-        font-size: 68px;
-        box-sizing: border-box;
-        background-color: black;
-        width: 100dvw;
-        height: 100dvh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      * {
+        touch-action: manipulation;
       }
     </style>
   </head>
 
-  <body>
+  <body class="bg-black">
     <div id="root">
-      <div id="splash-screen">🦕</div>
+      <div class="fixed inset-0 grid place-items-center text-7xl">🦕</div>
     </div>
     <script type="module" src="./src/frontend.tsx"></script>
   </body>

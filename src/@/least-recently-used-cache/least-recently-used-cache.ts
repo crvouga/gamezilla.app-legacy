@@ -5,6 +5,7 @@
 // module-private names and types
 type Perf = { now: () => number }
 const perf: Perf =
+  // @ts-ignore
   typeof performance === 'object' && performance && typeof performance.now === 'function' ? performance : Date
 
 const warned = new Set<string>()

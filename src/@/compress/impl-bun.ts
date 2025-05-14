@@ -10,7 +10,10 @@ export const Compress = (_config: Config): ICompress => {
       return Bun.gzipSync(data)
     },
     async gzipReadableStream(stream) {
-      const buf = await Bun.readableStreamToArrayBuffer(stream)
+      const buf = await Bun.readableStreamToArrayBuffer(
+        // @ts-ignore
+        stream,
+      )
       const compressed = Bun.gzipSync(buf)
       return compressed
     },
