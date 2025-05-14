@@ -109,13 +109,13 @@ const toColorClass = (input: ButtonInput): string => {
     case 'text-danger':
       return 'font-bold text-red-500'
     case 'outlined-default':
-      return 'text-secondary border-2 text-inherit'
+      return 'text-neutral-300 border-2 text-inherit'
     case 'soft-primary':
       return 'bg-blue-500/20 text-blue-200'
     case 'soft-danger':
       return 'bg-red-500/20 text-red-200'
     case 'soft-default':
-      return 'bg-secondary/20 text-secondary'
+      return 'bg-neutral-300/20 text-neutral-300'
     case 'text-primary':
       return 'text-blue-500'
     case 'outlined-danger':
@@ -123,6 +123,6 @@ const toColorClass = (input: ButtonInput): string => {
     case 'outlined-primary':
       return 'border-2 border-blue-500/50 text-blue-500'
     case 'text-default':
-      return 'text-secondary'
+      return 'text-neutral-300'
   }
 }

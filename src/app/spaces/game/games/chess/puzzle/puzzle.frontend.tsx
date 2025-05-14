@@ -1,18 +1,22 @@
 import { Eff } from '~/@/eff'
+import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { isErr } from '~/@/result'
 import {
   Avatar,
-  IconArrowRightCircle,
   IconArrowLeftOnRect,
   IconArrowRight,
+  IconArrowRightCircle,
   IconArrowRotateLeft,
   IconCheckmarkCircle,
   IconLightbulb,
   IconXMark,
   Spinner,
+  Typography,
   cn,
 } from '~/@/ui'
+import { Paper } from '~/@/ui/paper'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { APP_SOUND, AppFrontendCmd, playSound, sendToBackend } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -36,7 +40,6 @@ import {
   toPlayerColor,
   updateSpace,
 } from './puzzle.types'
-import { UserProfile } from '~/app/@/data/user-profile'
 
 //
 //
@@ -256,7 +259,12 @@ export const View = ({
           <Avatar src={UserProfile.toAvatarUrl(ctx.profilesByUserId[ctx.space.hostId])} className='h-10 w-10' alt='' />
 
           <div className='flex flex-1 flex-col justify-center'>
-            <p className='-mb-1/2 text-secondary text-xs'>Rating</p>
+            <Typography
+              text={TranslatedText.of('Rating')}
+              variant='label'
+              color='text-secondary'
+              className='-mb-1/2 text-xs'
+            />
             <div className='flex items-center gap-1'>
               <p className='text-xl font-semibold'>{model.profile?.eloRating ?? '...'}</p>
 
@@ -275,13 +283,15 @@ export const View = ({
 
           <div className='flex items-center justify-end gap-2'>
             <TickingClock sec={durationMs ? Math.floor(durationMs / 1_000) : 0} />
-            <p className='text-secondary font-mono text-lg font-bold'>
-              {durationMs ? formatDuration(durationMs) : '-:--'}
-            </p>
+            <Typography
+              text={TranslatedText.of(durationMs ? formatDuration(durationMs) : '-:--')}
+              color='text-secondary'
+              className='font-mono text-lg font-bold'
+            />
           </div>
         </div>
 
-        <div className='bg-paper relative flex aspect-square w-full items-center justify-end overflow-hidden'>
+        <Paper className='relative flex aspect-square w-full items-center justify-end overflow-hidden'>
           <Chessboard
             id='puzzle-chess-board'
             orientation={model.t === 'loading' ? undefined : toPlayerColor(model.puzzle)}
@@ -325,18 +335,24 @@ export const View = ({
               <Spinner />
             </div>
           )}
-        </div>
+        </Paper>
         <div className='grid w-full grid-cols-2 px-2 py-1'>
           <div className='flex items-center justify-start gap-1 text-xs'>
-            <p className='text-secondary'>Puzzle Rating</p>
+            <Typography text={TranslatedText.of('Puzzle Rating')} color='text-secondary' />
             <p>{model.t === 'loading' ? '...' : model.puzzle.rating}</p>
           </div>
 
           <div className='flex flex-1 items-center justify-end gap-1 text-right text-xs'>
-            <p className='text-secondary'>Moved</p>
-            <p className='text-inherit'>{model.t === 'loading' ? '0' : (model.moves?.length ?? '0')}</p>
-            <p className='text-secondary'>out of</p>
-            <p className='text-inherit'>{model.t === 'loading' ? '0' : (model.puzzle?.moves?.length ?? '0')}</p>
+            <Typography text={TranslatedText.of('Moved')} color='text-secondary' />
+            <Typography
+              text={TranslatedText.of(model.t === 'loading' ? '0' : (model.moves?.length ?? '0').toString())}
+              color='inherit'
+            />
+            <Typography text={TranslatedText.of('out of')} color='text-secondary' />
+            <Typography
+              text={TranslatedText.of(model.t === 'loading' ? '0' : (model.puzzle?.moves?.length ?? '0').toString())}
+              color='inherit'
+            />
           </div>
         </div>
       </div>
@@ -511,10 +527,10 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
 
   if (input.model.t === 'solved-with-hint') {
     return (
-      <div className='bg-paper flex w-full items-center justify-center gap-2 p-2 text-white'>
+      <Paper className='flex w-full items-center justify-center gap-2 p-2 text-white'>
         <IconCheckmarkCircle className='size-6' />
         <p className='text-xl'>Solved with hint</p>
-      </div>
+      </Paper>
     )
   }
 

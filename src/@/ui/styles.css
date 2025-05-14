@@ -2,26 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.bg-surface {
-  @apply bg-black;
-}
-
-.border-surface {
-  @apply border-neutral-700;
-}
-
-.bg-paper {
-  @apply bg-white/10;
-}
-
-.border-paper {
-  @apply border-white/15;
-}
-
-.text-secondary {
-  @apply text-neutral-300;
-}
-
 /*
 
 Remove arrows from number input

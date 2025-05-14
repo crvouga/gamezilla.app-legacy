@@ -1,6 +1,7 @@
 import { AriaRole } from '../vdom/aria-role'
 import { VDom } from '../vdom/vdom'
 import { cn } from './cn'
+import { PAPER_CLASS_NAME } from './paper'
 
 export type ClickableEvent = {
   stopPropagation: () => void
@@ -51,7 +52,7 @@ export const ClickablePaper = (input: ClickableProps) => {
   return (
     <Clickable
       {...input}
-      className={cn('bg-paper [@media(hover:hover)]:enabled:hover:bg-neutral-800', input.className)}
+      className={cn(PAPER_CLASS_NAME, '[@media(hover:hover)]:enabled:hover:bg-neutral-800', input.className)}
     >
       {input.children}
     </Clickable>

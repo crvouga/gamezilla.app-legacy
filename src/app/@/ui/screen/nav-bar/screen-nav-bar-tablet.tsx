@@ -50,7 +50,8 @@ export const ScreenNavBarTablet = (input: {
         )}
         {input.subtitle && (
           <Typography
-            className='text-secondary truncate px-2'
+            className='truncate px-2'
+            color='text-secondary'
             sizeClassName='text-xl'
             role='heading'
             variant='subtitle'

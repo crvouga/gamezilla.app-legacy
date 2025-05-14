@@ -6,6 +6,7 @@ import { ScreenLayoutGameCoverArt } from '../ui/screen-layout-game-cover-art'
 import { TranslatedText } from '~/@/l18n'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { UserProfile } from '~/app/@/data/user-profile'
+import { ClickablePaper } from '~/@/ui/clickable'
 
 type IconProps = { className: string }
 
@@ -102,9 +103,13 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
       {player.userId ? (
         <Avatar className='h-14 w-14' src={UserProfile.toAvatarUrl(ctx.profilesByUserId[player.userId])} alt='' />
       ) : (
-        <div role='button' className='bg-paper grid h-14 w-14 place-items-center overflow-hidden rounded-full'>
+        <ClickablePaper
+          role='button'
+          className='grid h-14 w-14 place-items-center overflow-hidden rounded-full'
+          onClick={player.onStartPlaying}
+        >
           <IconQuestionMark className='text-secondary h-10 w-10' />
-        </div>
+        </ClickablePaper>
       )}
 
       {player.renderIcon({
@@ -116,12 +121,16 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
 
 const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
   return (
-    <div className='text-secondary col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm'>
-      <p className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center'>
-        {player.userId ? (ctx.profilesByUserId[player.userId]?.username ?? '...') : '?'}
-      </p>
+    <div className='col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm'>
+      <Typography
+        className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center'
+        text={TranslatedText.of(player.userId ? (ctx.profilesByUserId[player.userId]?.username ?? '...') : '?')}
+        variant='body'
+        color='text-secondary'
+      />
 
       <Typography
+        color='text-secondary'
         className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center'
         text={player.label}
         variant='body'

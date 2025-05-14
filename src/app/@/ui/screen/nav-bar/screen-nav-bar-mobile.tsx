@@ -52,7 +52,8 @@ export const ScreenNavBarMobile = (input: {
 
         {typeof input.subtitle === 'string' && (
           <Typography
-            className='text-secondary truncate px-2 text-xs'
+            className='truncate px-2 text-xs'
+            color='text-secondary'
             role='heading'
             variant='subtitle'
             text={input.subtitle}

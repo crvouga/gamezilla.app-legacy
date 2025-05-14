@@ -8,6 +8,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCmd, sendToBackend } from '../@/frontend/cmd'
 import { AppFrontendEvt } from '../@/frontend/evt'
 import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from './search.types'
+import { Paper } from '~/@/ui/paper'
 
 //
 //
@@ -135,7 +136,7 @@ export const View = ({
       <div className='flex h-full w-full flex-col'>
         {/* input */}
         <div className='w-full p-4'>
-          <div className='bg-paper flex w-full items-center gap-2 rounded-full px-4 py-2'>
+          <Paper className='flex w-full items-center gap-2 rounded-full px-4 py-2'>
             <IconMagnifyingGlass className='size-6' />
             <input
               id={searchInputId}
@@ -159,7 +160,7 @@ export const View = ({
             >
               <IconXMark className='size-6' />
             </button>
-          </div>
+          </Paper>
         </div>
         {/* results */}
         <ul>

@@ -8,6 +8,7 @@ import { IconXMark, Show, Transition, cn } from '~/@/ui'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { APP_SOUND, SoundCmd, ToastCmd, playSound } from '../../@/frontend/cmd'
+import { PAPER_CLASS_NAME } from '~/@/ui/paper'
 
 type Ctx = {
   now: Posix
@@ -177,7 +178,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
         <div
           className={cn(
             'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
-            input.toast.variant === 'info' && 'bg-paper',
+            input.toast.variant === 'info' && PAPER_CLASS_NAME,
             input.toast.variant === 'error' && 'border-red-400 bg-red-500',
           )}
           key={input.toast.toastId}

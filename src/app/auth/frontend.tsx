@@ -219,7 +219,8 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
         <div className='flex w-full items-center justify-center py-1'>
           <Typography
             variant='body'
-            className='text-secondary text-base font-bold uppercase'
+            className='text-base font-bold uppercase'
+            color='text-secondary'
             text={input.ctx.t('auth.or')}
           />
         </div>

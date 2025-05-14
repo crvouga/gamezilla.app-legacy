@@ -1,6 +1,7 @@
+import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
-import { TranslatedText } from '~/@/l18n'
+import { PAPER_CLASS_NAME } from './paper'
 
 export const Select = <T,>({
   onChange,
@@ -34,7 +35,8 @@ export const Select = <T,>({
       <select
         id={id}
         className={cn(
-          'bg-paper flex appearance-none items-center rounded-md border p-3 py-4 text-xl outline-none',
+          PAPER_CLASS_NAME,
+          'flex appearance-none items-center rounded-md border p-3 py-4 text-xl outline-none',
           error && 'border border-red-500 text-red-500',
           !error && 'ring-blue-600 focus:ring-2',
         )}

@@ -8,6 +8,7 @@ import {
   IconFlag,
   IconSpinner,
   IconXMark,
+  Typography,
 } from '~/@/ui'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -32,6 +33,7 @@ import {
   type StateGameOver,
   toPlayerType,
 } from './vs-user.types'
+import { TranslatedText } from '~/@/l18n'
 import { UserProfile } from '~/app/@/data/user-profile'
 
 //
@@ -466,7 +468,13 @@ const ViewGameOverMessage = ({
 
 const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: StateGame | StateGameOver }) => {
   if (modelSpace.type === 'game-over') {
-    return <p className='text-secondary flex items-center justify-center'>Game Over</p>
+    return (
+      <Typography
+        text={TranslatedText.of('Game Over')}
+        color='text-secondary'
+        className='flex items-center justify-center'
+      />
+    )
   }
 
   const turn = toTurn(modelSpace.columns)
@@ -475,10 +483,10 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
 
   if (currentUserPlayerType !== turn) {
     return (
-      <p className='text-secondary flex items-center justify-center gap-2 text-center'>
+      <div className='flex items-center justify-center gap-2 text-center'>
         <PlayerIcon className='h-4 w-4' playerType={turn} />
-        Turn
-      </p>
+        <Typography text={TranslatedText.of('Turn')} color='text-secondary' />
+      </div>
     )
   }
 
@@ -507,7 +515,10 @@ const PlayerSlot = ({
         alt=''
         src={UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[playerType]])}
       />
-      <p className='text-secondary'>{ctx.profilesByUserId[modelSpace.players[playerType]]?.username ?? '...'}</p>
+      <Typography
+        text={TranslatedText.of(ctx.profilesByUserId[modelSpace.players[playerType]]?.username ?? '...')}
+        color='text-secondary'
+      />
     </div>
   )
 }

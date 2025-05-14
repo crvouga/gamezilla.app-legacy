@@ -3,11 +3,12 @@ import { Avatar, Button, IconQuestionMark, Typography } from '~/@/ui'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ScreenLayoutGameCoverArt } from '../../ui/screen-layout-game-cover-art'
 import type { PlayerType, VsBotInput } from '../vs-bot'
-import { UserProfile } from '~/app/@/data/user-profile'
+import { ClickablePaper } from '~/@/ui/clickable'
 
 //
 //
@@ -267,9 +268,13 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
       ) : player.userId ? (
         <Avatar className='h-14 w-14' src={UserProfile.toAvatarUrl(ctx.profilesByUserId[player.userId])} />
       ) : (
-        <div role='button' className='bg-paper grid h-14 w-14 place-items-center overflow-hidden rounded-full'>
+        <ClickablePaper
+          role='button'
+          className='grid h-14 w-14 place-items-center overflow-hidden rounded-full'
+          onClick={player.onStartPlaying}
+        >
           <IconQuestionMark className='text-secondary h-10 w-10' />
-        </div>
+        </ClickablePaper>
       )}
       {player.renderIcon({
         className: 'w-14 h-14',
@@ -284,10 +289,11 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPr
     <div className='col-span-3 grid grid-cols-2 place-items-center'>
       <Typography
         variant='label'
-        className='text-secondary w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm'
+        color='text-secondary'
+        className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm'
         text={player.t === 'bot' ? player.botLabel : profile ? ctx.t('username', profile.username) : ctx.t('?')}
       />
-      <Typography variant='label' className='text-secondary text-center text-sm' text={player.playerLabel} />
+      <Typography color='text-secondary' variant='label' className='text-center text-sm' text={player.playerLabel} />
     </div>
   )
 }

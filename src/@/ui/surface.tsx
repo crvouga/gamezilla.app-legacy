@@ -1,0 +1,12 @@
+import { cn } from '~/@/ui/cn'
+import { VDom } from '../vdom/vdom'
+
+export const SURFACE_CLASS_NAME = 'bg-black border-neutral-700'
+
+export const Surface = (input: { children?: VDom; className?: string; role?: string }) => {
+  return (
+    <div className={cn(SURFACE_CLASS_NAME, input.className)} role={input.role}>
+      {input.children}
+    </div>
+  )
+}

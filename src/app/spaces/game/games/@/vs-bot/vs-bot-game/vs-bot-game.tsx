@@ -4,6 +4,7 @@ import type { PlayerType, VsBotInput } from '../vs-bot'
 import type { VDom } from '~/@/vdom/vdom'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { UserProfile } from '~/app/@/data/user-profile'
+import { TranslatedText } from '~/@/l18n/translations'
 
 //
 //
@@ -113,10 +114,7 @@ export const ViewStatusBar = (input: VsBotInput & { status: Status }) => {
       })}
       className='relative h-8 w-full'
     >
-      <div
-        key={statusToKey(input.status)}
-        className='text-secondary absolute inset-0 flex items-center justify-center gap-1'
-      >
+      <div key={statusToKey(input.status)} className='absolute inset-0 flex items-center justify-center gap-1'>
         <ViewStatusBarContent {...input} />
       </div>
     </Transition>
@@ -165,7 +163,7 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
               {input.playerOne.renderIcon({
                 className: 'h-5 w-5',
               })}
-              <p>Turn</p>
+              <Typography text={TranslatedText.of('Turn')} color='text-secondary' />
             </>
           )
         }
@@ -176,7 +174,7 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
               {input.playerTwo.renderIcon({
                 className: 'h-5 w-5',
               })}
-              <p>Turn</p>
+              <Typography text={TranslatedText.of('Turn')} color='text-secondary' />
             </>
           )
         }
@@ -184,7 +182,7 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
     }
 
     default: {
-      return <p>Game Over</p>
+      return <Typography text={TranslatedText.of('Game Over')} color='text-secondary' />
     }
   }
 }

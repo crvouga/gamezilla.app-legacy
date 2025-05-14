@@ -2,6 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
 import { IconXMark } from './icon'
+import { PAPER_CLASS_NAME } from './paper'
 
 export const TextField = (input: {
   startIcon?: VDom
@@ -26,7 +27,8 @@ export const TextField = (input: {
 
       <div
         className={cn(
-          'bg-paper flex h-fit w-full flex-row overflow-hidden rounded-md border-2',
+          PAPER_CLASS_NAME,
+          'flex h-fit w-full flex-row overflow-hidden rounded-md border-2',
           input.error && 'border-2 border-red-500 text-red-500',
           !input.error && 'ring-blue-600 focus-within:ring-2',
         )}

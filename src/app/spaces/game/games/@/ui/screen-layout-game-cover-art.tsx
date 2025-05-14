@@ -1,4 +1,5 @@
-import { cn } from '~/@/ui'
+import { cn, TEXT_SECONDARY_CLASS_NAME } from '~/@/ui'
+import { Paper } from '~/@/ui/paper'
 import type { VDom } from '~/@/vdom/vdom'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/screen-layout-props'
@@ -24,9 +25,10 @@ export const ScreenLayoutGameCoverArt = (
 
 const renderDefaultCoverArt = (input: { className: string }) => {
   return (
-    <div
+    <Paper
       className={cn(
-        'text-secondary bg-paper flex items-center justify-center overflow-hidden rounded-lg p-4',
+        TEXT_SECONDARY_CLASS_NAME,
+        'flex items-center justify-center overflow-hidden rounded-lg p-4',
         input.className,
       )}
     >
@@ -39,6 +41,6 @@ const renderDefaultCoverArt = (input: { className: string }) => {
       >
         <path d='M192 64C86 64 0 150 0 256S86 448 192 448H448c106 0 192-86 192-192s-86-192-192-192H192zM496 168a40 40 0 1 1 0 80 40 40 0 1 1 0-80zM392 304a40 40 0 1 1 80 0 40 40 0 1 1 -80 0zM168 200c0-13.3 10.7-24 24-24s24 10.7 24 24v32h32c13.3 0 24 10.7 24 24s-10.7 24-24 24H216v32c0 13.3-10.7 24-24 24s-24-10.7-24-24V280H136c-13.3 0-24-10.7-24-24s10.7-24 24-24h32V200z' />
       </svg>
-    </div>
+    </Paper>
   )
 }

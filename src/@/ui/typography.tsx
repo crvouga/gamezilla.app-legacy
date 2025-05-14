@@ -14,8 +14,10 @@ const sizeClassNames: { [variant in TypographyVariant]: string } = {
 
 export type TypographyColor = 'inherit' | 'text-primary' | 'text-secondary'
 
+export const TEXT_SECONDARY_CLASS_NAME = 'text-neutral-300'
+
 const colorClassNames: { [color in TypographyColor]: string } = {
-  'text-secondary': 'text-secondary',
+  'text-secondary': TEXT_SECONDARY_CLASS_NAME,
   'text-primary': 'text-white',
   inherit: 'text-inherit',
 }

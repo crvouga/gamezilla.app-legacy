@@ -4,6 +4,7 @@ import { Portal } from '../portal'
 import { DRAWER_PORTAL_ID } from './drawer-portal-exit'
 import type { DrawerInput } from './drawer-shared'
 import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
+import { Surface } from '../surface'
 
 export const DrawerComponent = (props: DrawerInput) => {
   return (
@@ -28,9 +29,9 @@ export const DrawerComponent = (props: DrawerInput) => {
           }}
         />
 
-        <div
+        <Surface
           className={cn(
-            'bg-surface h-fit w-full border transition-transform duration-200',
+            'h-fit w-full border transition-transform duration-200',
             props.position === 'bottom'
               ? `rounded-t-2xl ${props.open ? 'translate-y-0' : 'translate-y-full'}`
               : `rounded-b-2xl ${props.open ? 'translate-y-0' : '-translate-y-full'}`,
@@ -39,7 +40,7 @@ export const DrawerComponent = (props: DrawerInput) => {
           {props.position === 'top' && <Gutter variant='drawer' />}
           {props.children}
           {props.position === 'bottom' && <Gutter variant='drawer' />}
-        </div>
+        </Surface>
       </div>
     </Portal.Entrance>
   )

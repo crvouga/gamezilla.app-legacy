@@ -1,7 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
 import { IconPlus, Swiper, Typography } from '~/@/ui'
-import { Clickable } from '~/@/ui/clickable'
+import { Clickable, ClickablePaper } from '~/@/ui/clickable'
 import { PaginationDots } from '~/@/ui/pagination-dots'
+import { Paper } from '~/@/ui/paper'
 import type { VDom } from '~/@/vdom/vdom'
 import type { PuzzleId } from '../../puzzle/puzzle-id'
 
@@ -164,23 +165,23 @@ const range = (length: number): number[] => {
 
 const ViewAddCell = (input: { onClick?: () => void }) => {
   return (
-    <Clickable
+    <ClickablePaper
       onClick={input.onClick}
-      className='bg-paper flex h-full w-full items-center justify-center overflow-hidden rounded border-2'
+      className='flex h-full w-full items-center justify-center overflow-hidden rounded border-2'
     >
       <IconPlus className='h-8 w-8' />
-    </Clickable>
+    </ClickablePaper>
   )
 }
 
 const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number }) => {
   return (
-    <Clickable
+    <ClickablePaper
       onClick={onClick}
-      className='bg-paper flex h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal'
+      className='flex h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal'
     >
       {index + 1}
-    </Clickable>
+    </ClickablePaper>
   )
 }
 
@@ -190,7 +191,7 @@ const ViewEmptyCell = () => {
 
 export const _ViewLoadingCell = () => {
   return (
-    <div className='bg-paper flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded opacity-70' />
+    <Paper className='flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded opacity-70' />
   )
 }
 

@@ -47,7 +47,7 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
       body={{
         render: () => (
           <Frag>
-            <Typography className='text-secondary p-4 px-6' variant='body' text={input.body} />
+            <Typography color='text-secondary' className='p-4 px-6' variant='body' text={input.body} />
             <div className='flex w-full flex-col gap-4 p-4 px-6 pb-6'>
               <Button
                 className='w-full'
