@@ -14,7 +14,7 @@ export const Dialog = (input: { children: VDom; open: boolean; onClose: () => vo
       // @ts-expect-error I don't know how to fix this type error
       style={style}
       className={cn(
-        'fixed left-0 top-0 z-50 grid h-full w-full place-items-center bg-black/50 transition-opacity duration-300 ease-in-out',
+        'fixed top-0 left-0 z-50 grid h-full w-full place-items-center bg-black/50 transition-opacity duration-300 ease-in-out',
         input.open ? 'opacity-100' : 'pointer-events-none opacity-0',
       )}
       onClick={(e) => {

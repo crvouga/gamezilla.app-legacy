@@ -329,7 +329,7 @@ export const View = ({
             }}
           />
           {model.t === 'loading' && (
-            <div className='absolute left-0 top-0 z-20 grid h-full w-full place-items-center bg-black/50'>
+            <div className='absolute top-0 left-0 z-20 grid h-full w-full place-items-center bg-black/50'>
               <Spinner />
             </div>
           )}

@@ -30,7 +30,7 @@ export const TextField = (input: {
           PAPER_CLASS_NAME,
           'flex h-fit w-full flex-row overflow-hidden rounded-md border-2',
           input.error && 'border-2 border-red-500 text-red-500',
-          !input.error && 'ring-blue-600 focus-within:ring-2',
+          !input.error && 'ring-blue-500 focus-within:ring-2',
         )}
       >
         <input
@@ -60,7 +60,7 @@ export const TextField = (input: {
         />
         {input.onClear && input.value && input.value?.toString().length > 0 && (
           <button
-            className='rounded-md px-3 outline-none ring-blue-600 focus:ring-2'
+            className='rounded-md px-3 ring-blue-500 outline-none focus:ring-2'
             aria-label='Clear input'
             type='button'
             onClick={(e) => {

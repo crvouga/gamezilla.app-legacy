@@ -395,7 +395,7 @@ export const Chessboard = (input: Chessboardinput) => {
         e.preventDefault()
         e.stopPropagation()
       }}
-      className='touch-none select-none overflow-visible'
+      className='touch-none overflow-visible select-none'
       preserveAspectRatio='xMinYMin meet'
       onMouseLeave={onDragCancel(input)}
       onTouchCancel={onDragCancel(input)}

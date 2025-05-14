@@ -293,7 +293,7 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPr
       <Typography
         variant='label'
         color='text-secondary'
-        className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm'
+        className='w-full overflow-hidden text-center text-sm text-ellipsis whitespace-nowrap'
         text={player.t === 'bot' ? player.botLabel : profile ? ctx.t('username', profile.username) : ctx.t('?')}
       />
       <Typography color='text-secondary' variant='label' className='text-center text-sm' text={player.playerLabel} />

@@ -1,13 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-/*
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-neutral-600, currentColor);
+  }
+}
 
-Remove arrows from number input
-https://stackoverflow.com/questions/26024771/styling-an-input-type-number
-
-*/
+/* Remove arrows from number input https://stackoverflow.com/questions/26024771/styling-an-input-type-number */
 input[type='number'] {
   -moz-appearance: textfield;
   appearance: textfield;
@@ -20,13 +23,7 @@ input[type='number']::-webkit-outer-spin-button {
   margin: 0;
 }
 
-/*
-
-Remove autofill background color
-
-*/
-
-/* https://stackoverflow.com/questions/2781549/removing-input-background-colour-for-chrome-autocomplete */
+/* Remove autofill background color https://stackoverflow.com/questions/2781549/removing-input-background-colour-for-chrome-autocomplete */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -35,48 +32,32 @@ input:-webkit-autofill:active {
     background-color 600000s 0s,
     color 600000s 0s;
 }
-
 input[data-autocompleted] {
   background-color: transparent !important;
 }
 
-/*
-
-Scrollbar
-
-*/
+/* Dark scrollbar */
 
 ::-webkit-scrollbar {
   width: 0px;
   background: #000;
 }
-
 ::-webkit-scrollbar-track {
   background: #000;
 }
-
 ::-webkit-scrollbar-thumb {
   background: #000;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
-
 * {
   scrollbar-color: #212121 #000;
   scrollbar-width: none;
   scrollbar-gutter: stable both-edges;
 }
 
-/*
-Prevent double tap to zoom on mobile
-https://stackoverflow.com/questions/13591640/prevent-double-tap-to-zoom-on-mobile-safari
-*/
-button,
-a,
-input,
-textarea,
-select {
+/* Prevent double tap to zoom on mobile https://stackoverflow.com/questions/13591640/prevent-double-tap-to-zoom-on-mobile-safari */
+* {
   touch-action: manipulation;
 }

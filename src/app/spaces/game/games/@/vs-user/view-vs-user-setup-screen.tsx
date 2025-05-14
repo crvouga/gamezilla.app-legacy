@@ -125,7 +125,7 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPr
   return (
     <div className='col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm'>
       <Typography
-        className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center'
+        className='w-full overflow-hidden text-center text-ellipsis whitespace-nowrap'
         text={TranslatedText.of(player.userId ? (ctx.profilesByUserId[player.userId]?.username ?? '...') : '?')}
         variant='body'
         color='text-secondary'
@@ -133,7 +133,7 @@ const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPr
 
       <Typography
         color='text-secondary'
-        className='w-full overflow-hidden text-ellipsis whitespace-nowrap text-center'
+        className='w-full overflow-hidden text-center text-ellipsis whitespace-nowrap'
         text={player.label}
         variant='body'
       />

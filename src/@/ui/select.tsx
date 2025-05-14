@@ -38,7 +38,7 @@ export const Select = <T,>({
           PAPER_CLASS_NAME,
           'flex appearance-none items-center rounded-md border p-3 py-4 text-xl outline-none',
           error && 'border border-red-500 text-red-500',
-          !error && 'ring-blue-600 focus:ring-2',
+          !error && 'ring-blue-500 focus:ring-2',
         )}
         aria-labelledby={labelId}
         value={value ? toKey(value) : undefined}

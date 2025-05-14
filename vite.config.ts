@@ -6,6 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import inferno from 'vite-plugin-inferno'
 import wasm from 'vite-plugin-wasm'
 import tsconfigPaths from 'vite-tsconfig-paths'
+import tailwindcss from '@tailwindcss/vite'
 import { CONFIG_FRONTEND } from './src/config/frontend'
 
 const vDomPlugin = (): PluginOption => {
@@ -30,6 +31,7 @@ const IS_PROD = process.env.NODE_ENV === 'production'
 export default defineConfig({
   plugins: [
     //
+    tailwindcss(),
     tsconfigPaths(),
     vDomPlugin(),
     wasm(),

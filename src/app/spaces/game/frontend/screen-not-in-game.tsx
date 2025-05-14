@@ -76,7 +76,7 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
       </button>
 
       <Typography
-        className='mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold'
+        className='mt-2 w-full overflow-hidden text-center text-sm font-semibold text-ellipsis whitespace-nowrap'
         variant='label'
         sizeClassName='text-base'
         text={input.ctx.t(input.gameName)}

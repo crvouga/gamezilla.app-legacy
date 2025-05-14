@@ -13,7 +13,7 @@ export const ViewAppStatusBar = (input: {
   dispatch: (c: MsgFrontend) => void
 }) => {
   return (
-    <div className={cn(input.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed right-0 top-0 z-10 w-fit')}>
+    <div className={cn(input.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed top-0 right-0 z-10 w-fit')}>
       <StatusBarFrontend.View
         ctx={input.ctx}
         model={input.model.frontend.statusBar}

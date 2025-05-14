@@ -27,7 +27,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
         <div className='flex w-full flex-1 flex-col overflow-hidden'>
           {input.renderBody()}
           {(input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) && (
-            <div className='absolute bottom-8 right-8 bg-black'>{renderMiniPlayers(input)}</div>
+            <div className='absolute right-8 bottom-8 bg-black'>{renderMiniPlayers(input)}</div>
           )}
         </div>
       </div>

@@ -7,7 +7,7 @@ import { Typography } from '~/@/ui/typography'
 
 export const SurfaceHeader = (input: { ctx: { t: Translator }; title: TranslatedText | null; onClose: () => void }) => {
   return (
-    <div className='flex w-full items-center justify-center px-6 pb-0 pt-4'>
+    <div className='flex w-full items-center justify-center px-6 pt-4 pb-0'>
       <div className='flex-1'>
         {input.title && <Typography text={input.title} variant='title' sizeClassName='text-2xl' />}
       </div>
