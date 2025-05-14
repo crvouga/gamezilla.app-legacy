@@ -1,5 +1,5 @@
+import { Clickable } from '../clickable'
 import { cn } from '../cn'
-import { DynamicElement } from '../dynamic-element'
 
 export const PAGINATION_DOTS_TEST_ID = 'pagination-dots'
 
@@ -17,22 +17,33 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
     >
       {Array.from({ length: input.count }, (_, i) => {
         const element = input.onClick ? 'button' : 'div'
-        return (
-          <DynamicElement
-            key={i}
-            element={element}
-            className={cn(
-              'size-2 rounded-full',
-              i === input.activeIndex ? 'bg-white' : 'bg-neutral-500',
-              input.onClick && 'clickable',
-            )}
-            role='tab'
-            onClick={input.onClick ? () => input.onClick?.(i) : undefined}
-            data-pagination-dot-index={i}
-            aria-selected={i === input.activeIndex}
-            aria-label={`Page ${i + 1}`}
-          />
-        )
+        switch (element) {
+          case 'button': {
+            return (
+              <Clickable
+                key={i}
+                className={cn('size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500')}
+                role='tab'
+                onClick={input.onClick ? () => input.onClick?.(i) : undefined}
+                data-pagination-dot-index={i}
+                aria-selected={i === input.activeIndex}
+                aria-label={`Page ${i + 1}`}
+              />
+            )
+          }
+          default: {
+            return (
+              <div
+                key={i}
+                className={cn('size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500')}
+                role='tab'
+                data-pagination-dot-index={i}
+                aria-selected={i === input.activeIndex}
+                aria-label={`Page ${i + 1}`}
+              />
+            )
+          }
+        }
       })}
     </div>
   )

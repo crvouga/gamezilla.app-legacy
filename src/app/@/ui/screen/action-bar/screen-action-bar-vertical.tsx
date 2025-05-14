@@ -3,6 +3,7 @@ import { VDom } from '~/@/vdom/vdom'
 import { ScreenNavBarTabletRoot } from '../nav-bar/screen-nav-bar-tablet'
 import { ScreenAction, ScreenActionBarProps } from './screen-action-bar-props'
 import { Frag } from '~/@/ui/frag'
+import { ClickableTransparent } from '~/@/ui/clickable'
 
 const SIZE = 'md' as 'md' | 'sm'
 
@@ -80,9 +81,8 @@ const ScreenActionButton = (input: ScreenAction) => {
   const size = input.size ?? 'md'
   if (input.hidden) return null
   return (
-    <button
+    <ClickableTransparent
       data-testid={input.testId}
-      type='button'
       role='button'
       disabled={isDisabled}
       key={input.label}
@@ -92,7 +92,7 @@ const ScreenActionButton = (input: ScreenAction) => {
       aria-hidden={input.hidden ? 'true' : 'false'}
       onClick={input.onClick}
       className={cn(
-        'clickable-transparent relative flex w-full min-w-32 flex-col items-center rounded-lg p-4 xl:flex-row',
+        'relative flex w-full min-w-32 flex-col items-center rounded-lg p-4 xl:flex-row',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
         input.classNames?.button,
@@ -117,7 +117,7 @@ const ScreenActionButton = (input: ScreenAction) => {
           <Spinner className={toIconSizeClasses(size)} />
         </div>
       )}
-    </button>
+    </ClickableTransparent>
   )
 }
 

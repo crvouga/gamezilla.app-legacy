@@ -12,6 +12,7 @@ import type { Pack } from '../pack'
 import { PacksDbQuery } from '../pack-db/query'
 import { PackId } from '../pack-id'
 import { ModelFrontend, MsgFrontend, MsgInCmdFrontend, initFrontend, type FrontendModule } from './types'
+import { ClickableTransparent } from '~/@/ui/clickable'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
@@ -88,9 +89,8 @@ const ViewList = (input: {
 
 const ViewPackListItem = (input: { ctx: { now: Posix; t: Translator }; pack: Pack; onClick: () => void }) => {
   return (
-    <button
-      type='button'
-      className='clickable-transparent flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left'
+    <ClickableTransparent
+      className='flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left'
       onClick={input.onClick}
     >
       {false && <IconBox className='h-9 w-9 shrink-0' />}
@@ -104,7 +104,7 @@ const ViewPackListItem = (input: { ctx: { now: Posix; t: Translator }; pack: Pac
         color='text-secondary'
         className='text-xs'
       />
-    </button>
+    </ClickableTransparent>
   )
 }
 

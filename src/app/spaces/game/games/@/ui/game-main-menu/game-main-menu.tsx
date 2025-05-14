@@ -14,6 +14,7 @@ import {
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ScreenLayoutGameCoverArt } from '../screen-layout-game-cover-art'
 import { ScreenLayoutHostSettingUpGame } from '../screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
+import { ClickablePaper } from '~/@/ui/clickable'
 
 export const Msg = p.or(
   p.obj({ t: p.l('game-main-menu.clicked-open-user-details-button'), userId: UserId }),
@@ -104,13 +105,13 @@ export const View = (props: {
 
 const ViewMainMenuButton = (props: MainMenuButton) => {
   return (
-    <button className='clickable-paper flex w-full items-center gap-4 rounded p-6' onClick={props.onClick}>
+    <ClickablePaper className='flex w-full items-center gap-4 rounded p-6' onClick={props.onClick}>
       {props.renderIcon({ className: 'aspect-square size-12' })}
       <div className='flex flex-1 flex-col gap-1 text-left'>
         <Typography variant='title' text={props.title} className='font-bold' />
         {props.description && <Typography variant='label' text={props.description} className='text-secondary' />}
       </div>
-    </button>
+    </ClickablePaper>
   )
 }
 

@@ -22,18 +22,6 @@
   @apply text-neutral-300;
 }
 
-.clickable {
-  @apply enabled:cursor-pointer enabled:active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50;
-}
-
-.clickable-transparent {
-  @apply clickable [@media(hover:hover)]:enabled:hover:bg-neutral-700/50;
-}
-
-.clickable-paper {
-  @apply bg-paper clickable [@media(hover:hover)]:enabled:hover:bg-neutral-800;
-}
-
 /*
 
 Remove arrows from number input

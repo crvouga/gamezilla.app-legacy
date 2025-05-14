@@ -5,6 +5,7 @@ import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { EmptyState, IconPuzzlePiece, SpinnerBlock, Typography } from '~/@/ui'
 import { Checkbox, CheckboxState } from '~/@/ui/checkbox/checkbox'
+import { Clickable, ClickableTransparent } from '~/@/ui/clickable'
 import { Gutter } from '~/@/ui/gutter'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
@@ -95,9 +96,8 @@ const ViewList = (input: {
       <QueryForm.View ctx={input.ctx} query={input.query} onChange={input.onQueryChanged} />
 
       {input.selectable && (
-        <button
-          className='clickable flex w-fit items-center gap-4 px-4 py-2'
-          type='button'
+        <Clickable
+          className='flex w-fit items-center gap-4 px-4 py-2'
           onClick={() => input.onHeaderCheckboxClick?.(puzzleIds)}
         >
           <Checkbox state={toTopLevelCheckboxState({ totalCount, selectedCount })} />
@@ -110,7 +110,7 @@ const ViewList = (input: {
               selectedCount: input.selected?.length ?? 0,
             })}
           />
-        </button>
+        </Clickable>
       )}
 
       <div className='relative flex w-full flex-1 flex-col items-center overflow-y-scroll'>
@@ -157,10 +157,9 @@ const ViewListItem = (input: {
   selected: boolean
 }) => {
   return (
-    <button
+    <ClickableTransparent
       key={input.puzzle.id}
-      type='button'
-      className='clickable-transparent box-border flex w-full items-center text-left'
+      className='box-border flex w-full items-center text-left'
       onClick={input.onClick}
     >
       {input.selectable && (
@@ -188,7 +187,7 @@ const ViewListItem = (input: {
           className='truncate text-xs'
         />
       </div>
-    </button>
+    </ClickableTransparent>
   )
 }
 

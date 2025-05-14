@@ -1,5 +1,5 @@
 import { Avatar, cn, Typography } from '~/@/ui'
-import { DynamicElement } from '~/@/ui/dynamic-element'
+import { Clickable } from '~/@/ui/clickable'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
@@ -33,21 +33,18 @@ export const ViewSpaceCard = (input: { ctx: AppFrontendCtxBase; state: SpaceStat
 }
 
 const ViewRoot = (input: { onClick?: () => void; children: React.ReactNode }) => {
-  return (
-    <DynamicElement
-      element={typeof input.onClick === 'function' ? 'button' : 'div'}
-      type={typeof input.onClick === 'function' ? 'button' : undefined}
-      onClick={input.onClick}
-      disabled={!input.onClick}
-      className={cn(
-        SPACE_CARD_GRADIENT_CLASS_NAME,
-        'flex w-full shrink-0 flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr p-4',
-        input.onClick && 'clickable',
-      )}
-    >
-      {input.children}
-    </DynamicElement>
+  const className = cn(
+    SPACE_CARD_GRADIENT_CLASS_NAME,
+    'flex w-full shrink-0 flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr p-4',
   )
+  if (typeof input.onClick === 'function') {
+    return (
+      <Clickable onClick={input.onClick} disabled={!input.onClick} className={className}>
+        {input.children}
+      </Clickable>
+    )
+  }
+  return <div className={className}>{input.children}</div>
 }
 
 const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {

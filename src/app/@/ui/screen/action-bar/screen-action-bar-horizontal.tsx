@@ -9,6 +9,7 @@ import {
   ScreenActionsSpaceBetween,
   ScreenActionsUniform,
 } from './screen-action-bar-props'
+import { ClickableTransparent } from '~/@/ui/clickable'
 
 const DEFAULT_LIMIT = Infinity
 
@@ -161,8 +162,7 @@ const ScreenActionButton = (input: ScreenAction & { className?: string }) => {
   const size = input.size ?? 'md'
   if (input.hidden) return null
   return (
-    <button
-      type='button'
+    <ClickableTransparent
       role='button'
       data-testid={input.testId}
       disabled={isDisabled}
@@ -174,7 +174,7 @@ const ScreenActionButton = (input: ScreenAction & { className?: string }) => {
       onClick={input.onClick}
       className={cn(
         'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 font-normal',
-        'clickable-transparent disabled:cursor-not-allowed disabled:opacity-50',
+        'disabled:cursor-not-allowed disabled:opacity-50',
         toColorClasses(input),
         input.hidden ? 'hidden' : '',
         input.classNames?.button,
@@ -197,7 +197,7 @@ const ScreenActionButton = (input: ScreenAction & { className?: string }) => {
           <Spinner className={toIconSizeClasses(size)} />
         </div>
       )}
-    </button>
+    </ClickableTransparent>
   )
 }
 

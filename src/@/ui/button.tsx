@@ -1,7 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
-import { Spinner } from './spinner'
+import { Clickable } from './clickable'
 import { cn } from './cn'
+import { Spinner } from './spinner'
 
 export type ButtonVariant = 'contained' | 'outlined' | 'text' | 'soft'
 
@@ -32,12 +33,12 @@ export type ButtonInput = {
 
 export const Button = (input: ButtonInput) => {
   return (
-    <button
+    <Clickable
       disabled={input.disabled || input.loading}
       type={input.type ?? 'button'}
       className={cn(
         input.className,
-        'clickable relative flex shrink-0 select-none appearance-none flex-nowrap items-center justify-center overflow-hidden truncate rounded font-semibold',
+        'relative flex shrink-0 select-none appearance-none flex-nowrap items-center justify-center overflow-hidden truncate rounded font-semibold',
         toColorClass(input),
         toSizeClass(input),
         input.rounded && 'rounded-3xl shadow-2xl',
@@ -66,7 +67,7 @@ export const Button = (input: ButtonInput) => {
           <Spinner className='size-8' />
         </div>
       )}
-    </button>
+    </Clickable>
   )
 }
 

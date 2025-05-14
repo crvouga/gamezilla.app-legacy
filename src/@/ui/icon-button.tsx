@@ -1,24 +1,24 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
+import { ClickableTransparent } from './clickable'
 
 type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
 export const IconButton = (input: {
-  onClick?: (event: { currentTarget: HTMLButtonElement }) => void
+  onClick?: (event: { currentTarget?: HTMLButtonElement | null }) => void
   label: TranslatedText
   renderIcon: (input: { className: string }) => VDom
   className?: string
   size?: IconButtonSize
 }) => {
   return (
-    <button
+    <ClickableTransparent
       className={cn(
-        'clickable-transparent display flex items-center justify-center overflow-hidden rounded-full',
+        'display flex items-center justify-center overflow-hidden rounded-full',
         toSizeClassName(input.size ?? 'md'),
         input.className,
       )}
-      type='button'
       onClick={input.onClick}
       aria-label={input.label}
       title={input.label}
@@ -26,7 +26,7 @@ export const IconButton = (input: {
       {input.renderIcon({
         className: 'w-full h-full cursor-pointer',
       })}
-    </button>
+    </ClickableTransparent>
   )
 }
 

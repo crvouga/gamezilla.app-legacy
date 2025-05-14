@@ -1,8 +1,9 @@
 import { Avatar } from '~/@/ui'
+import { Clickable } from '~/@/ui/clickable'
 import { Frag } from '~/@/ui/frag'
 import { VDom } from '~/@/vdom/vdom'
-import { UserProfile } from '~/app/@/data/user-profile'
 import type { UserId } from '~/app/@/data/user-id'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { SectionTitle } from '~/app/@/ui/section/section-title'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ViewHostChip } from '~/app/spaces/@/ui/host-chip'
@@ -47,15 +48,11 @@ const PersonListItem = (input: {
   onClick: () => void
 }) => {
   return (
-    <button
-      key={input.profile.id}
-      onClick={input.onClick}
-      className='clickable flex w-full items-center gap-2 p-2 px-6'
-    >
+    <Clickable key={input.profile.id} onClick={input.onClick} className='flex w-full items-center gap-2 p-2 px-6'>
       <Avatar className='size-12' src={UserProfile.toAvatarUrl(input.profile)} />
       <p>{input.profile.username}</p>
       {input.profile.id === input.ctx.space.hostId && <ViewHostChip ctx={input.ctx} />}
       {input.profile.id === input.ctx.currentUser.userId && <ViewYouChip ctx={input.ctx} />}
-    </button>
+    </Clickable>
   )
 }

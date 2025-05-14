@@ -1,7 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
-import type { VDom } from '~/@/vdom/vdom'
 import { IconPlus, Swiper, Typography } from '~/@/ui'
+import { Clickable } from '~/@/ui/clickable'
 import { PaginationDots } from '~/@/ui/pagination-dots'
+import type { VDom } from '~/@/vdom/vdom'
 import type { PuzzleId } from '../../puzzle/puzzle-id'
 
 const COLUMN_COUNT = 5
@@ -163,23 +164,23 @@ const range = (length: number): number[] => {
 
 const ViewAddCell = (input: { onClick?: () => void }) => {
   return (
-    <button
+    <Clickable
       onClick={input.onClick}
-      className='bg-paper clickable flex h-full w-full items-center justify-center overflow-hidden rounded border-2'
+      className='bg-paper flex h-full w-full items-center justify-center overflow-hidden rounded border-2'
     >
       <IconPlus className='h-8 w-8' />
-    </button>
+    </Clickable>
   )
 }
 
 const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number }) => {
   return (
-    <button
+    <Clickable
       onClick={onClick}
-      className='bg-paper clickable flex h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal'
+      className='bg-paper flex h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal'
     >
       {index + 1}
-    </button>
+    </Clickable>
   )
 }
 
@@ -195,12 +196,12 @@ export const _ViewLoadingCell = () => {
 
 export const _ViewErrorCell = ({ onClick, index }: { onClick: () => void; index: number }) => {
   return (
-    <button
+    <Clickable
       onClick={onClick}
-      className='clickable flex h-full w-full items-center justify-center overflow-hidden rounded bg-orange-500/50 text-xl font-bold'
+      className='flex h-full w-full items-center justify-center overflow-hidden rounded bg-orange-500/50 text-xl font-bold'
     >
       {index + 1}
-    </button>
+    </Clickable>
   )
 }
 

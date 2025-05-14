@@ -1,5 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { VDom } from '~/@/vdom/vdom'
+import { Clickable } from '../clickable'
 import { cn } from '../cn'
 
 export type ChipSize = 'sm' | 'lg'
@@ -15,11 +16,7 @@ export const Chip = (input: ChipProps) => {
   return (
     <Tag
       tagName={typeof input.onClick === 'function' ? 'button' : 'div'}
-      className={cn(
-        'flex items-center gap-1 truncate border border-white/30 font-semibold',
-        toSizeClass(input),
-        toButtonClass(input),
-      )}
+      className={cn('flex items-center gap-1 truncate border border-white/30 font-semibold', toSizeClass(input))}
       onClick={input.onClick}
     >
       {input.renderStartIcon?.({
@@ -36,13 +33,13 @@ const Tag = ({
   ...input
 }: {
   children: VDom
-  tagName: string
+  tagName: 'div' | 'button'
   onClick?: () => void
   className?: string
 }) => {
   switch (tagName) {
     case 'button':
-      return <button {...input}>{children}</button>
+      return <Clickable {...input}>{children}</Clickable>
     default:
       return <div {...input}>{children}</div>
   }
@@ -64,11 +61,4 @@ const toIconSizeClass = (input: ChipProps): string => {
     case 'lg':
       return 'size-5'
   }
-}
-
-const toButtonClass = (input: ChipProps): string | null => {
-  if (typeof input.onClick === 'function') {
-    return 'clickable'
-  }
-  return null
 }

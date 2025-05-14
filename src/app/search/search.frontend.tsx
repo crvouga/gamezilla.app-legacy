@@ -2,11 +2,12 @@ import { matchSort } from '~/@/array/match-sort'
 import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
-import type { VDom } from '~/@/vdom/vdom'
 import { IconMagnifyingGlass, IconXMark } from '~/@/ui'
+import { ClickableTransparent } from '~/@/ui/clickable'
+import type { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCmd, sendToBackend } from '../@/frontend/cmd'
 import { AppFrontendEvt } from '../@/frontend/evt'
-import type { ModelFrontend, MsgFrontend, MsgToFrontend, MsgToBackend } from './search.types'
+import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from './search.types'
 
 //
 //
@@ -164,9 +165,8 @@ export const View = ({
         <ul>
           {results.map((result) => (
             <li key={result.userId}>
-              <button
-                type='button'
-                className='clickable-transparent flex w-full items-center gap-4 p-4'
+              <ClickableTransparent
+                className='flex w-full items-center gap-4 p-4'
                 onClick={() =>
                   dispatch({
                     t: 'clicked-result',
@@ -175,7 +175,7 @@ export const View = ({
                 }
               >
                 {result.username}
-              </button>
+              </ClickableTransparent>
             </li>
           ))}
         </ul>

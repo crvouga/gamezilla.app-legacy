@@ -1,8 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
+import { ClickableTransparent } from './clickable'
 import { cn } from './cn'
 import { preventConsoleErrorWhenClosingDrawer } from './surface-drawer/drawer-shared'
-import { DynamicElement } from './dynamic-element'
 
 type Input = {
   className?: string
@@ -15,30 +15,51 @@ type Input = {
 
 export const ListItemButton = (input: Input) => {
   const element = input.onClick ? 'button' : 'div'
-  return (
-    <DynamicElement
-      element={element}
-      type={element === 'button' ? 'button' : undefined}
-      role={element === 'button' ? 'button' : undefined}
-      onClick={(event) => {
-        preventConsoleErrorWhenClosingDrawer(event)
-        input.onClick?.()
-      }}
-      aria-label={input.label}
-      name={input.label}
-      className={cn(input.className, BASE_CLASS, toColorClass(input))}
-    >
-      <div className='flex flex-1 items-center gap-3 truncate'>
-        {input.icon({ className: 'size-6' })}
+  switch (element) {
+    case 'button': {
+      return (
+        <ClickableTransparent
+          role='button'
+          onClick={(event) => {
+            preventConsoleErrorWhenClosingDrawer(event)
+            input.onClick?.()
+          }}
+          aria-label={input.label}
+          name={input.label}
+          className={cn(input.className, BASE_CLASS, toColorClass(input))}
+        >
+          <div className='flex flex-1 items-center gap-3 truncate'>
+            {input.icon({ className: 'size-6' })}
 
-        {input.label}
-      </div>
-      {input.end && <div className='shrink-0'>{input.end()}</div>}
-    </DynamicElement>
-  )
+            {input.label}
+          </div>
+          {input.end && <div className='shrink-0'>{input.end()}</div>}
+        </ClickableTransparent>
+      )
+    }
+    default: {
+      return (
+        <div
+          onClick={(event) => {
+            preventConsoleErrorWhenClosingDrawer(event)
+            input.onClick?.()
+          }}
+          aria-label={input.label}
+          className={cn(input.className, BASE_CLASS, toColorClass(input))}
+        >
+          <div className='flex flex-1 items-center gap-3 truncate'>
+            {input.icon({ className: 'size-6' })}
+
+            {input.label}
+          </div>
+          {input.end && <div className='shrink-0'>{input.end()}</div>}
+        </div>
+      )
+    }
+  }
 }
 
-const BASE_CLASS = 'clickable-transparent flex w-full shrink-0 items-center truncate p-4 text-lg font-bold'
+const BASE_CLASS = 'flex w-full shrink-0 items-center truncate p-4 text-lg font-bold'
 
 type Color = 'default' | 'danger' | 'warning' | 'success' | 'inherit' | 'selected'
 
