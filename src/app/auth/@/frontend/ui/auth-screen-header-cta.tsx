@@ -1,5 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
-import { Typography } from '~/@/ui'
+import { Typography } from '~/@/ui/typography'
 
 export const AuthScreenHeaderCta = (input: {
   ctx: {

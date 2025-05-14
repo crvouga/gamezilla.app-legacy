@@ -1,15 +1,13 @@
 import { Sub } from '~/@/sub'
-import {
-  Avatar,
-  Button,
-  IconArrowLeftOnRect,
-  IconArrowRotateLeft,
-  IconCheckmarkCircle,
-  IconFlag,
-  IconSpinner,
-  IconXMark,
-  Typography,
-} from '~/@/ui'
+import { Avatar } from '~/@/ui/avatar'
+import { Button } from '~/@/ui/button'
+import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
+import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
+import { IconCheckmarkCircle } from '~/@/ui/icon/icon-checkmark-circle'
+import { IconFlag } from '~/@/ui/icon/icon-flag'
+import { IconSpinner } from '~/@/ui/icon/icon-spinner'
+import { IconXMark } from '~/@/ui/icon/icon-x-mark'
+import { Typography } from '~/@/ui/typography'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'

@@ -1,3 +1,4 @@
+import { AriaRole } from '~/@/vdom/aria-role'
 import { Clickable } from '../clickable'
 import { cn } from '../cn'
 
@@ -16,34 +17,17 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
       data-testid={PAGINATION_DOTS_TEST_ID}
     >
       {Array.from({ length: input.count }, (_, i) => {
-        const element = input.onClick ? 'button' : 'div'
-        switch (element) {
-          case 'button': {
-            return (
-              <Clickable
-                key={i}
-                className={cn('size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500')}
-                role='tab'
-                onClick={input.onClick ? () => input.onClick?.(i) : undefined}
-                data-pagination-dot-index={i}
-                aria-selected={i === input.activeIndex}
-                aria-label={`Page ${i + 1}`}
-              />
-            )
-          }
-          default: {
-            return (
-              <div
-                key={i}
-                className={cn('size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500')}
-                role='tab'
-                data-pagination-dot-index={i}
-                aria-selected={i === input.activeIndex}
-                aria-label={`Page ${i + 1}`}
-              />
-            )
-          }
+        const baseProps = {
+          className: cn('size-2 rounded-full', i === input.activeIndex ? 'bg-white' : 'bg-neutral-500'),
+          role: AriaRole.of('tab'),
+          'data-pagination-dot-index': i,
+          'aria-selected': i === input.activeIndex,
+          'aria-label': `Page ${i + 1}`,
         }
+        if (input.onClick) {
+          return <Clickable key={i} {...baseProps} onClick={() => input.onClick?.(i)} />
+        }
+        return <div key={i} {...baseProps} onClick={() => input.onClick?.(i)} />
       })}
     </div>
   )

@@ -1,5 +1,5 @@
 import { UserId } from '~/app/@/data/user-id'
-import { IconUserCircle } from '~/@/ui'
+import { IconUserCircle } from '~/@/ui/icon/icon-user-circle'
 import { Chip } from '~/@/ui/chip'
 import { IconArrowDownShortWide } from '~/@/ui/icon/icon-arrow-down-short-wide'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'

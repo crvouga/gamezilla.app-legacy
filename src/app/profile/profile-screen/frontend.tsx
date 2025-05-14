@@ -1,10 +1,14 @@
 import { TranslatedText } from '~/@/l18n'
-import { Avatar, Button, IconArrowLeftOnRect, IconUserPen, Typography } from '~/@/ui'
 import { Gutter } from '~/@/ui/gutter'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
+import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
+import { Button } from '~/@/ui/button'
+import { Avatar } from '~/@/ui/avatar'
+import { Typography } from '~/@/ui/typography'
+import { IconUserPen } from '~/@/ui/icon/icon-user-pen'
 
 const View = (input: {
   ctx: FrontendCtx

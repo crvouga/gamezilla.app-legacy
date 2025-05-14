@@ -1,4 +1,4 @@
-import { IconUserGroup } from '~/@/ui'
+import { IconUserGroup } from '~/@/ui/icon/icon-user-group'
 import { DropDownAlignment } from '~/@/ui/drop-down/drop-down-alignment'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'

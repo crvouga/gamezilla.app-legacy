@@ -2,19 +2,17 @@ import { Eff } from '~/@/eff'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { isErr } from '~/@/result'
-import {
-  Avatar,
-  IconArrowLeftOnRect,
-  IconArrowRight,
-  IconArrowRightCircle,
-  IconArrowRotateLeft,
-  IconCheckmarkCircle,
-  IconLightbulb,
-  IconXMark,
-  Spinner,
-  Typography,
-  cn,
-} from '~/@/ui'
+import { Avatar } from '~/@/ui/avatar'
+import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
+import { IconArrowRight } from '~/@/ui/icon/icon-arrow-right'
+import { IconArrowRightCircle } from '~/@/ui/icon/icon-arrow-circle'
+import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
+import { IconCheckmarkCircle } from '~/@/ui/icon/icon-checkmark-circle'
+import { IconLightbulb } from '~/@/ui/icon/icon-lightbulb'
+import { IconXMark } from '~/@/ui/icon/icon-x-mark'
+import { Spinner } from '~/@/ui/spinner'
+import { Typography } from '~/@/ui/typography'
+import { cn } from '~/@/ui/cn'
 import { Paper } from '~/@/ui/paper'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { APP_SOUND, AppFrontendCmd, playSound, sendToBackend } from '~/app/@/frontend/cmd'

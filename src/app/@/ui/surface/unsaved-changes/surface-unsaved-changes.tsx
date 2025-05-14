@@ -1,9 +1,10 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { Button, Typography } from '~/@/ui'
+import { Button } from '~/@/ui/button'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { Frag } from '~/@/ui/frag'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
+import { Typography } from '~/@/ui/typography'
 import { ScreenSize } from '../../screen/screen-size'
 import { SurfaceLayout } from '../layout/surface-layout'
 

@@ -4,11 +4,14 @@ import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
-import { IconXMark, Show, Transition, cn } from '~/@/ui'
+import { cn } from '~/@/ui/cn'
+import { IconXMark } from '~/@/ui/icon/icon-x-mark'
+import { PAPER_CLASS_NAME } from '~/@/ui/paper'
+import { Show } from '~/@/ui/show'
+import { Transition } from '~/@/ui/transition'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { APP_SOUND, SoundCmd, ToastCmd, playSound } from '../../@/frontend/cmd'
-import { PAPER_CLASS_NAME } from '~/@/ui/paper'
 
 type Ctx = {
   now: Posix

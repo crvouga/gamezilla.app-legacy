@@ -1,4 +1,4 @@
-import { cn } from '~/@/ui'
+import { cn } from '~/@/ui/cn'
 import { COLUMN_COUNT, type Columns, MAX_COLUMN_HEIGHT, type Pos2d, isColumnIndex, winToId } from '../../connect-four'
 import { gameTheme } from '../shared'
 import type { Model, ViewColumnsinput } from './shared'

@@ -1,6 +1,7 @@
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { Avatar, TextField } from '~/@/ui'
+import { Avatar } from '~/@/ui/avatar'
+import { TextField } from '~/@/ui/text-field'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { ModelFrontend, MsgFrontend } from '../types'
 

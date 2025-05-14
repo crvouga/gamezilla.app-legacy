@@ -1,7 +1,7 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { isErr, RemoteResult, Result } from '~/@/result'
 import { Posix } from '~/@/time/posix'
-import { IconPlus } from '~/@/ui'
+import { IconPlus } from '~/@/ui/icon/icon-plus'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND, playSound, showOkSm, showErrSm } from '~/app/@/frontend/cmd'
 import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'

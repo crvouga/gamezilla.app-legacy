@@ -1,5 +1,5 @@
 import { RequestResponse } from '~/@/request-response/request-response'
-import { TextField } from '~/@/ui'
+import { TextField } from '~/@/ui/text-field'
 import { pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { FrontendModule } from './types'

@@ -1,5 +1,6 @@
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { cn, IconCrown } from '~/@/ui'
+import { cn } from '~/@/ui/cn'
+import { IconCrown } from '~/@/ui/icon/icon-crown'
 import { Chip } from '~/@/ui/chip'
 
 export const ViewHostChip = (input: { ctx: AppFrontendCtxBase }) => {

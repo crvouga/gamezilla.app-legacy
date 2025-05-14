@@ -1,6 +1,7 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
-import { IconPen, IconPlay } from '~/@/ui'
+import { IconPen } from '~/@/ui/icon/icon-pen'
+import { IconPlay } from '~/@/ui/icon/icon-play'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'

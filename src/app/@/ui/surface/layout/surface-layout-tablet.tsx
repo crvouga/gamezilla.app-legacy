@@ -1,4 +1,4 @@
-import { Dialog } from '~/@/ui'
+import { Dialog } from '~/@/ui/surface-dialog/dialog'
 import { DropDown } from '~/@/ui/drop-down/drop-down'
 import { DropDownSurface } from '~/@/ui/drop-down/drop-down-surface'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'

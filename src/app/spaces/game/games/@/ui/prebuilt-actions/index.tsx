@@ -1,5 +1,8 @@
 import type { Translator } from '~/@/l18n/generated'
-import { IconArrowRightCircle, IconArrowLeftOnRect, IconArrowRotateLeft, IconChevronLeft } from '~/@/ui'
+import { IconArrowRightCircle } from '~/@/ui/icon/icon-arrow-circle'
+import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
+import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
+import { IconChevronLeft } from '~/@/ui/icon/icon-chevron-left'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 
 type PrebuiltActionInput = Partial<ScreenAction> & {

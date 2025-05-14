@@ -1,6 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Translator } from '~/@/l18n/generated'
-import { Typography } from '~/@/ui'
+import { Typography } from '~/@/ui/typography'
 import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
 import { APP_SOUND, playSound, pushScreen, showErrSm, showToast } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'

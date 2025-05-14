@@ -23,6 +23,7 @@ export type ClickableProps = {
 export const Clickable = (input: ClickableProps) => {
   return (
     <button
+      {...input}
       type={input.type ?? 'button'}
       onClick={input.onClick}
       disabled={input.disabled}

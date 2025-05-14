@@ -1,6 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Loading, Result, isOk } from '~/@/result'
-import { IconFloppyDisk } from '~/@/ui'
+import { IconFloppyDisk } from '~/@/ui/icon/icon-floppy-disk'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { APP_SOUND, playSound, showErrSm, showOkSm } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'

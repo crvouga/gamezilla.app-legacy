@@ -1,6 +1,6 @@
 import { RequestResponse, startedRequest } from '~/@/request-response/request-response'
 import { Ok } from '~/@/result'
-import { IconGamepad } from '~/@/ui'
+import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
 import { EmptyState } from '~/@/ui/empty-state'
 import { Gutter } from '~/@/ui/gutter'
 import type { SpaceId } from '~/app/@/data/space-id'

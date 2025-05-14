@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { Typography } from '~/@/ui'
+import { Typography } from '~/@/ui/typography'
 import type { VDom } from '~/@/vdom/vdom'
 import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'

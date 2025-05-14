@@ -1,5 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
-import { cn } from '~/@/ui'
+import { cn } from '~/@/ui/cn'
 import { VDom } from '~/@/vdom/vdom'
 import { NavBarProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'

@@ -4,6 +4,7 @@ import { AppFrontend } from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { DebuggerReduxDevTools } from './@/program/debugger'
 import { DebuggerConsole } from './@/program/debugger/debugger-console'
+import './app/@/ui/styles.css'
 import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {

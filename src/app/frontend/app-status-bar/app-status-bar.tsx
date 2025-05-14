@@ -1,4 +1,5 @@
-import { cn, IconLanguage } from '~/@/ui'
+import { IconLanguage } from '~/@/ui/icon/icon-language'
+import { cn } from '~/@/ui/cn'
 import * as LangFrontend from '~/app/lang/frontend'
 import { type ModelFrontend, type MsgFrontend } from '~/app/types'
 import * as WireFrontend from '~/app/wire/frontend'

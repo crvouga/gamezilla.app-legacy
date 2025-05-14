@@ -1,4 +1,4 @@
-import { cn } from '~/@/ui'
+import { cn } from '~/@/ui/cn'
 import { Canvas } from '~/@/ui/canvas'
 import { NodeId } from '../../../flow/node-id'
 import { BoardInput } from '../../../ui/board'

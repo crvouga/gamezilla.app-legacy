@@ -4,7 +4,6 @@ import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
-import { IconBox, SpinnerBlock, Typography } from '~/@/ui'
 import { EmptyState } from '~/@/ui/empty-state'
 import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
@@ -13,6 +12,9 @@ import { PacksDbQuery } from '../pack-db/query'
 import { PackId } from '../pack-id'
 import { ModelFrontend, MsgFrontend, MsgInCmdFrontend, initFrontend, type FrontendModule } from './types'
 import { ClickableTransparent } from '~/@/ui/clickable'
+import { IconBox } from '~/@/ui/icon'
+import { SpinnerBlock } from '~/@/ui/spinner'
+import { Typography } from '~/@/ui/typography'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {

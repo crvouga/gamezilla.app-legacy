@@ -1,4 +1,4 @@
-import { Drawer } from '~/@/ui'
+import { Drawer } from '~/@/ui/surface-drawer/drawer'
 import { SurfaceContent } from './surface-content'
 import { SurfaceLayoutProps } from './surface-layout-props'
 

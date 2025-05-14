@@ -1,4 +1,4 @@
-import { Typography } from '~/@/ui'
+import { Typography } from '~/@/ui/typography'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendModule } from '../../architecture/space-frontend'
 import { SpaceFrontendCtx } from '../../@/frontend/ctx'

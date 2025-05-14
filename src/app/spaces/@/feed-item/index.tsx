@@ -1,5 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
-import { Typography } from '~/@/ui'
+import { Typography } from '~/@/ui/typography'
 
 const Info = (input: { text: string }) => {
   return (

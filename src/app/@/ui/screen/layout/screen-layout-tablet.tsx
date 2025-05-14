@@ -1,4 +1,5 @@
-import { Button, cn } from '~/@/ui'
+import { Button } from '~/@/ui/button'
+import { cn } from '~/@/ui/cn'
 import { DynamicElement } from '~/@/ui/dynamic-element'
 import { VDom } from '~/@/vdom/vdom'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'

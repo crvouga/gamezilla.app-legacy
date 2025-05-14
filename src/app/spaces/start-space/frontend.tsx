@@ -1,5 +1,5 @@
 import { withEventId } from '~/@/event-sourced/event'
-import { IconPlus } from '~/@/ui'
+import { IconPlus } from '~/@/ui/icon/icon-plus'
 import { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
 import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'

@@ -1,7 +1,7 @@
 import { pipe } from '~/@/function/pipe'
 import { isErr, Loading, mapErr, mapOk } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
-import { IconLightbulb } from '~/@/ui'
+import { IconLightbulb } from '~/@/ui/icon/icon-lightbulb'
 import { APP_SOUND, playSound, showErrSm, showOkSm, showWarningSm } from '~/app/@/frontend/cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'

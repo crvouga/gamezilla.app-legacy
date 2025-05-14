@@ -1,4 +1,6 @@
-import { Avatar, Button, Typography } from '~/@/ui'
+import { Avatar } from '~/@/ui/avatar'
+import { Button } from '~/@/ui/button'
+import { Typography } from '~/@/ui/typography'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ViewHostChip } from '~/app/spaces/@/ui/host-chip'

@@ -211,10 +211,11 @@ CREATE TABLE public.user_profile (
     username text NOT NULL,
     avatar_seed text,
     avatar_style text,
-    user_id text NOT NULL,
     created_at_posix bigint NOT NULL,
     updated_at_posix bigint NOT NULL
 );
+
+ALTER TABLE ONLY public.user_profile REPLICA IDENTITY FULL;
 
 
 --
@@ -423,13 +424,6 @@ CREATE INDEX idx_username ON public.user_profile USING btree (username);
 
 
 --
--- Name: electric_publication_default; Type: PUBLICATION; Schema: -; Owner: -
---
-
-CREATE PUBLICATION electric_publication_default WITH (publish = 'insert, update, delete, truncate');
-
-
---
 -- Name: powersync; Type: PUBLICATION; Schema: -; Owner: -
 --
 
@@ -489,4 +483,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250427210536'),
     ('20250427212455'),
     ('20250427220854'),
-    ('20250428003412');
+    ('20250428003412'),
+    ('20250429010045');

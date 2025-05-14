@@ -1,12 +1,14 @@
+import { TranslatedText } from '~/@/l18n'
+import { Avatar } from '~/@/ui/avatar'
+import { Button } from '~/@/ui/button'
+import { ClickablePaper } from '~/@/ui/clickable'
+import { IconQuestionMark } from '~/@/ui/icon/icon-question-mark'
+import { Typography } from '~/@/ui/typography'
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
-import { Avatar, Button, IconQuestionMark, Typography } from '~/@/ui'
-
-import { ScreenLayoutGameCoverArt } from '../ui/screen-layout-game-cover-art'
-import { TranslatedText } from '~/@/l18n'
-import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { UserProfile } from '~/app/@/data/user-profile'
-import { ClickablePaper } from '~/@/ui/clickable'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
+import { ScreenLayoutGameCoverArt } from '../ui/screen-layout-game-cover-art'
 
 type IconProps = { className: string }
 

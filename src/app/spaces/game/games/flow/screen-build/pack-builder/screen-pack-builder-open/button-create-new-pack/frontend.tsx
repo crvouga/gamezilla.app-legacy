@@ -1,6 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Loading, Ok } from '~/@/result'
-import { IconPlus } from '~/@/ui'
+import { IconPlus } from '~/@/ui/icon/icon-plus'
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { Pack } from '../../../../@/pack/pack'

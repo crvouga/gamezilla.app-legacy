@@ -1,5 +1,6 @@
-import { cn, TEXT_SECONDARY_CLASS_NAME } from '~/@/ui'
+import { cn } from '~/@/ui/cn'
 import { Paper } from '~/@/ui/paper'
+import { TEXT_SECONDARY_CLASS_NAME } from '~/@/ui/typography'
 import type { VDom } from '~/@/vdom/vdom'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/screen-layout-props'

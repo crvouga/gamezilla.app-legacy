@@ -1,7 +1,7 @@
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
-import { IconCheckmark } from '~/@/ui'
+import { IconCheckmark } from '~/@/ui/icon/icon-checkmark'
 import { Transition } from '~/@/ui/transition/transition'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'

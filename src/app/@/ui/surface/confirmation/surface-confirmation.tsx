@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { DrawerInput } from '~/@/ui'
+import { DrawerInput } from '~/@/ui/surface-drawer'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 import { SurfaceBodyText } from '~/@/ui/surface/surface-body-text'

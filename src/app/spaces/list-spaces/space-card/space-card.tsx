@@ -1,4 +1,6 @@
-import { Avatar, cn, Typography } from '~/@/ui'
+import { Avatar } from '~/@/ui/avatar'
+import { cn } from '~/@/ui/cn'
+import { Typography } from '~/@/ui/typography'
 import { Clickable } from '~/@/ui/clickable'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'

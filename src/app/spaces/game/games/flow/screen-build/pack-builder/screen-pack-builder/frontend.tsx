@@ -1,5 +1,6 @@
 import { Sub } from '~/@/sub'
-import { Button, IconArrowLeftOnRect } from '~/@/ui'
+import { Button } from '~/@/ui/button'
+import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { ScreenAddPuzzle } from './screen-add-puzzle/frontend'

@@ -1,6 +1,7 @@
 import { isErr, Loading, NotAsked, Ok, Result, unwrapOr } from '~/@/result'
 import { Posix } from '~/@/time/posix'
-import { Button, IconUserCircle } from '~/@/ui'
+import { Button } from '~/@/ui/button'
+import { IconUserCircle } from '~/@/ui/icon/icon-user-circle'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'

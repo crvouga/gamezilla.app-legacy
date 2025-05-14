@@ -1,6 +1,7 @@
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
-import { Button, Dialog } from '~/@/ui'
+import { Button } from '~/@/ui/button'
+import { Dialog } from '~/@/ui/surface-dialog/dialog'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { SurfaceActions } from '~/@/ui/surface/surface-actions'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'

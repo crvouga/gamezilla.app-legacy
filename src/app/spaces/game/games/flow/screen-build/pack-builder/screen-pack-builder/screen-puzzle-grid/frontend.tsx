@@ -1,4 +1,4 @@
-import { IconPen } from '~/@/ui'
+import { IconPen } from '~/@/ui/icon/icon-pen'
 import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { PackPuzzleGridUI } from '../../../../@/pack/pack-puzzle-grid-ui'

@@ -1,4 +1,4 @@
-import { Avatar } from '~/@/ui'
+import { Avatar } from '~/@/ui/avatar'
 import { Clickable } from '~/@/ui/clickable'
 import { Frag } from '~/@/ui/frag'
 import { VDom } from '~/@/vdom/vdom'

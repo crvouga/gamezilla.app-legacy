@@ -1,5 +1,7 @@
 import { Sub } from '~/@/sub'
-import { IconChevronLeft, IconChevronRight, IconDeleteForever } from '~/@/ui'
+import { IconChevronLeft } from '~/@/ui/icon/icon-chevron-left'
+import { IconChevronRight } from '~/@/ui/icon/icon-chevron-right'
+import { IconDeleteForever } from '~/@/ui/icon/icon-delete-forever'
 import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'

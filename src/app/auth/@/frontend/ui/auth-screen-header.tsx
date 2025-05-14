@@ -1,6 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { IconArrowLeft, IconButton, Typography } from '~/@/ui'
+import { IconArrowLeft } from '~/@/ui/icon/icon-arrow-left'
+import { IconButton } from '~/@/ui/icon-button'
+import { Typography } from '~/@/ui/typography'
 
 export const AuthScreenHeader = (input: {
   ctx: {
