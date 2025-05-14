@@ -53,10 +53,10 @@ export const TextField = (input: {
             e.preventDefault()
             input.onChange(e.currentTarget.value)
           }}
-          className='flex flex-1 appearance-none items-center gap-2 bg-transparent p-3 py-4 text-xl outline-none'
-          style={{
-            background: 'transparent !important',
-          }}
+          className={cn(
+            'flex flex-1 appearance-none items-center gap-2 bg-transparent p-3 py-4 text-xl outline-none',
+            '[&:-webkit-autofill]:!bg-transparent [&:-webkit-autofill]:!text-white [&:-webkit-autofill]:!shadow-[0_0_0_1000px_#000000_inset] [&:-webkit-autofill]:![-webkit-text-fill-color:white]',
+          )}
         />
         {input.onClear && input.value && input.value?.toString().length > 0 && (
           <button
