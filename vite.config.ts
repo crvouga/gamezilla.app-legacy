@@ -2,7 +2,7 @@ import preact from '@preact/preset-vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig, PluginOption } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
-// @ts-expect-error
+// @ts-expect-error library missing types
 import inferno from 'vite-plugin-inferno'
 import wasm from 'vite-plugin-wasm'
 import tsconfigPaths from 'vite-tsconfig-paths'
@@ -29,14 +29,7 @@ const IS_PROD = process.env.NODE_ENV === 'production'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    //
-    tailwindcss(),
-    tsconfigPaths(),
-    vDomPlugin(),
-    wasm(),
-    VitePWA(),
-  ],
+  plugins: [tailwindcss(), tsconfigPaths(), vDomPlugin(), wasm(), VitePWA()],
   optimizeDeps: {
     // https://pglite.dev/docs/bundler-support
     exclude: [
