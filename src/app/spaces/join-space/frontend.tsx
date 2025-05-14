@@ -210,7 +210,7 @@ const SectionGame = (props: {
       <SectionTitle text={props.ctx.t('spaces.game')} />
 
       <div className='flex w-fit flex-row items-center gap-4 px-6'>
-        <GameCoverArt className='aspect-square size-20 overflow-hidden rounded border' gameName={props.gameName} />
+        <GameCoverArt rounded className='size-20' gameName={props.gameName} />
 
         <Typography variant='label' sizeClassName='text-lg' text={props.ctx.t(props.gameName)} />
       </div>

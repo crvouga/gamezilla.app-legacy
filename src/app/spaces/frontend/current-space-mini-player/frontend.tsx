@@ -62,9 +62,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
               className='size-14'
             />
           ) : (
-            <div className='size-14 overflow-hidden rounded border'>
-              <GameCoverArt gameName={space.game.t} />
-            </div>
+            <GameCoverArt rounded className='size-14' gameName={space.game.t} />
           )}
         </div>
 

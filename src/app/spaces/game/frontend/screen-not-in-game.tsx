@@ -7,6 +7,7 @@ import { GameName } from '../games/@/game-name'
 import { ScreenLayoutHostSettingUpGame } from '../games/@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { GameCoverArt } from '../games/cover-art'
 import { gameNameList } from '../games/types'
+import { Clickable } from '~/@/ui/clickable'
 
 const View: SpaceFrontendModule['View'] = (input) => {
   if (!input.ctx.space) return null
@@ -66,14 +67,13 @@ const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: M
 const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
   return (
     <div>
-      <button
+      <Clickable
         type='button'
         aria-label={input.gameName}
         onClick={() => input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName })}
-        className='flex aspect-square overflow-hidden rounded-lg border'
       >
-        <GameCoverArt gameName={input.gameName} />
-      </button>
+        <GameCoverArt rounded gameName={input.gameName} />
+      </Clickable>
 
       <Typography
         className='mt-2 w-full overflow-hidden text-center text-sm font-semibold text-ellipsis whitespace-nowrap'

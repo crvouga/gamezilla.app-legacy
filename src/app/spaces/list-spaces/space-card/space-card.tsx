@@ -54,7 +54,7 @@ const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {
     <div className='flex items-center justify-start gap-2'>
       <Typography
         variant='label'
-        className='block flex-1 text-left text-lg font-bold uppercase text-white'
+        className='block flex-1 text-left text-lg font-bold text-white uppercase'
         text={input.ctx.t('space-card.live')}
       />
     </div>
@@ -66,9 +66,7 @@ const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendC
 
   return (
     <div className='flex items-center justify-start gap-2'>
-      <div className='size-12 overflow-hidden rounded border-2 border-white/40'>
-        <GameCoverArt gameName={input.gameName} />
-      </div>
+      <GameCoverArt rounded className='size-12' gameName={input.gameName} />
       <Typography variant='title' className='truncate text-lg font-normal' text={input.ctx.t(input.gameName)} />
     </div>
   )
