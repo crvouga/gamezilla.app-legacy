@@ -28,7 +28,7 @@ const main = async () => {
 
   await ctx.transport.start()
 
-  console.log({ ...CONFIG_SHARED, ...CONFIG_FRONTEND })
+  console.table({ ...CONFIG_SHARED, ...CONFIG_FRONTEND })
 }
 
 main()

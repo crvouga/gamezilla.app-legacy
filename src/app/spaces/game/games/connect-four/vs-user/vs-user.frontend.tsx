@@ -1,3 +1,4 @@
+import { TranslatedText } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
@@ -7,11 +8,13 @@ import { IconCheckmarkCircle } from '~/@/ui/icon/icon-checkmark-circle'
 import { IconFlag } from '~/@/ui/icon/icon-flag'
 import { IconSpinner } from '~/@/ui/icon/icon-spinner'
 import { IconXMark } from '~/@/ui/icon/icon-x-mark'
+import { Paper } from '~/@/ui/paper'
 import { Typography } from '~/@/ui/typography'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -31,8 +34,6 @@ import {
   type StateGameOver,
   toPlayerType,
 } from './vs-user.types'
-import { TranslatedText } from '~/@/l18n'
-import { UserProfile } from '~/app/@/data/user-profile'
 
 //
 //
@@ -263,7 +264,7 @@ const View: Module['View'] = (input) => {
                   disabled={toTurn(modelSpace.columns) !== currentUserPlayerType || modelSpace.type === 'game-over'}
                 />
                 {input.modelSpace.type === 'game-over' && (
-                  <div className='absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50'>
+                  <div className='absolute top-0 left-0 flex h-full w-full items-center justify-center bg-black/50'>
                     <ViewGameOverMessage dispatch={input.dispatch} ctx={input.ctx} modelSpace={input.modelSpace} />
                   </div>
                 )}
@@ -506,7 +507,7 @@ const PlayerSlot = ({
   ctx: SpaceFrontendCtx
 }) => {
   return (
-    <div className='flex flex-1 items-center gap-2 overflow-hidden rounded border p-2'>
+    <Paper className='flex flex-1 items-center gap-2 overflow-hidden rounded p-2'>
       <PlayerIcon className='h-8 w-8' playerType={playerType} />
       <Avatar
         className='h-8 w-8'
@@ -517,7 +518,7 @@ const PlayerSlot = ({
         text={TranslatedText.of(ctx.profilesByUserId[modelSpace.players[playerType]]?.username ?? '...')}
         color='text-secondary'
       />
-    </div>
+    </Paper>
   )
 }
 

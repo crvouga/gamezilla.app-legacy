@@ -31,7 +31,7 @@ export const DrawerComponent = (props: DrawerInput) => {
 
         <Surface
           className={cn(
-            'h-fit w-full border transition-transform duration-200',
+            'h-fit w-full transition-transform duration-200',
             props.position === 'bottom'
               ? `rounded-t-2xl ${props.open ? 'translate-y-0' : 'translate-y-full'}`
               : `rounded-b-2xl ${props.open ? 'translate-y-0' : '-translate-y-full'}`,

@@ -6,7 +6,7 @@ export const DropDownSurface = (input: { children: VDom }) => {
   return (
     <Surface
       className={cn(
-        'relative z-50 flex w-screen max-w-[400px] flex-col rounded-lg border shadow-2xl drop-shadow-2xl',
+        'relative z-50 flex w-screen max-w-[400px] flex-col rounded-lg shadow-2xl drop-shadow-2xl',
         'opacity-100 transition-opacity duration-300 ease-in-out',
       )}
     >

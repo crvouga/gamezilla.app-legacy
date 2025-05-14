@@ -32,7 +32,7 @@ export const Clickable = (input: ClickableProps) => {
       tabIndex={input.tabIndex}
       title={input.title}
       className={cn(
-        'enabled:cursor-pointer enabled:active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50',
+        'touch-manipulation enabled:cursor-pointer enabled:active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50',
         input.className,
       )}
     >

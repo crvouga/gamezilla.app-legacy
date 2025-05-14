@@ -1,5 +1,6 @@
 import type { UserId } from '~/app/@/data/user-id'
 import { IconRobot } from '~/@/ui/icon/icon-robot'
+import { Paper } from '~/@/ui/paper'
 import { Avatar } from '~/@/ui/avatar'
 import { Transition } from '~/@/ui/transition'
 import { cn } from '~/@/ui/cn'
@@ -392,14 +393,14 @@ export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn
 
 const Slot = ({ active, children }: { active: boolean; children: VDom }) => {
   return (
-    <div
+    <Paper
       className={cn(
-        'flex max-w-full flex-1 items-center gap-2 rounded-md border bg-black p-2 text-sm transition-colors duration-200 ease-in-out',
+        'flex max-w-full flex-1 items-center gap-2 rounded-md bg-black p-2 text-sm transition-colors duration-200 ease-in-out',
         active && 'border-b-blue-500',
       )}
     >
       {children}
-    </div>
+    </Paper>
   )
 }
 

@@ -44,7 +44,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
   return (
     <div
       className={cn(
-        'flex w-full flex-row items-center justify-center overflow-hidden rounded-lg border text-inherit',
+        'flex w-full flex-row items-center justify-center overflow-hidden rounded-lg text-inherit',
         SPACE_CARD_GRADIENT_CLASS_NAME,
         'rounded-lg',
       )}
