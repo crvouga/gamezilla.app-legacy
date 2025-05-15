@@ -20,6 +20,38 @@
     <meta name="theme-color" content="#000000" />
     <style>
       @import 'tailwindcss';
+
+      @layer base {
+        *,
+        ::after,
+        ::before,
+        ::backdrop,
+        ::file-selector-button {
+          border-color: var(--color-neutral-600, currentColor);
+        }
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: black;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: #555;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #777;
+      }
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: #555 black;
+      }
     </style>
   </head>
 
