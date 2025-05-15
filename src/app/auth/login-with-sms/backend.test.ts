@@ -4,7 +4,7 @@ import { isErr, Ok, unwrap } from '~/@/result'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { FixtureAuthBackend } from '../@/backend/fixture'
-import { ContinueWithSmsBackend } from './backend'
+import { LoginWithSMSBackend } from './backend'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserProfile } from '~/app/@/data/user-profile'
 
@@ -18,11 +18,11 @@ const Fixture = async () => {
   }
 }
 
-describe('ContinueWithSmsBackend', () => {
+describe('LoginWithSMSBackend', () => {
   it('should send code successfully', async () => {
     const f = await Fixture()
     const phoneNumber = PhoneNumber.random()
-    const result = await ContinueWithSmsBackend.sendCode({ ...f, phoneNumber })
+    const result = await LoginWithSMSBackend.sendCode({ ...f, phoneNumber })
     expect(result).toEqual(Ok({ phoneNumber }))
   })
 
@@ -30,11 +30,11 @@ describe('ContinueWithSmsBackend', () => {
     const f = await Fixture()
     const phoneNumber = PhoneNumber.random()
 
-    const sent = await ContinueWithSmsBackend.sendCode({ ...f, phoneNumber })
+    const sent = await LoginWithSMSBackend.sendCode({ ...f, phoneNumber })
     if (isErr(sent)) throw new Error('Failed to send code')
 
     const before = unwrap(await f.ctx.userAccountDb.findOneByPhoneNumber({ phoneNumber }))
-    const result = unwrap(await ContinueWithSmsBackend.verifyCode({ ...f, phoneNumber, code: '123' }))
+    const result = unwrap(await LoginWithSMSBackend.verifyCode({ ...f, phoneNumber, code: '123' }))
     const userAccount = unwrap(await f.ctx.userAccountDb.findOneByPhoneNumber({ phoneNumber }))
 
     if (!userAccount) throw new Error('No account found')
@@ -56,9 +56,9 @@ describe('ContinueWithSmsBackend', () => {
     const f = await Fixture()
     const userAccount = UserAccount.randomNormal()
     unwrap(await f.ctx.userAccountDb.insert(userAccount))
-    unwrap(await ContinueWithSmsBackend.sendCode({ ...f, phoneNumber: userAccount.phoneNumber }))
+    unwrap(await LoginWithSMSBackend.sendCode({ ...f, phoneNumber: userAccount.phoneNumber }))
     const result = unwrap(
-      await ContinueWithSmsBackend.verifyCode({
+      await LoginWithSMSBackend.verifyCode({
         ...f,
         phoneNumber: userAccount.phoneNumber,
         code: '123',
@@ -75,9 +75,9 @@ describe('ContinueWithSmsBackend', () => {
     unwrap(await f.ctx.userAccountDb.insert(userAccount))
     const userProfile = await UserProfile.random()
     unwrap(await f.ctx.userProfileDb.put(userProfile))
-    unwrap(await ContinueWithSmsBackend.sendCode({ ...f, phoneNumber: userAccount.phoneNumber }))
+    unwrap(await LoginWithSMSBackend.sendCode({ ...f, phoneNumber: userAccount.phoneNumber }))
     unwrap(
-      await ContinueWithSmsBackend.verifyCode({
+      await LoginWithSMSBackend.verifyCode({
         ...f,
         phoneNumber: userAccount.phoneNumber,
         code: '123',

@@ -5,7 +5,7 @@ import type { SessionId } from '~/@/wire/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendCtx } from './@/backend/ctx'
-import { ContinueWithSmsBackend } from './continue-with-sms/backend'
+import { LoginWithSMSBackend } from './login-with-sms/backend'
 import { CurrentUserBackend } from './current-user/backend'
 import { rpcContract, type BackendModule } from './types'
 
@@ -36,7 +36,7 @@ export const subscriptions: BackendModule['subscriptions'] = async (_) => {
 
 export const rpc = (input: { ctx: BackendCtx }) => {
   return RPC.initServer(rpcContract, {
-    sms: ContinueWithSmsBackend.rpc({ ctx: input.ctx }),
+    sms: LoginWithSMSBackend.rpc({ ctx: input.ctx }),
     currentUser: CurrentUserBackend.rpc({ ctx: input.ctx }),
   })
 }

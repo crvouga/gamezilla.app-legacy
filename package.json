@@ -22,7 +22,7 @@
     "db:dump": "bun x dbmate dump",
     "db:new": "bun x dbmate new",
     "db:up": "bun x dbmate -e DATABASE_URL up",
-    "dir:reset": "rm -rf .env && [ -f .env.local ] && cp .env.local .env && bun install || true",
+    "dir:reset": "rm -rf .env && [ -f .env.example ] && cp .env.example .env && bun install || true",
     "dir:reset:hard": "rm -rf dist node_modules bun.lock && bun dir:reset",
     "docker:down": "docker compose --env-file .env -f ./infra/docker/docker-compose.yml down",
     "docker:rebuild": "docker compose --env-file .env -f ./infra/docker/docker-compose.yml build --no-cache",

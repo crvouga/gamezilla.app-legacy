@@ -6,9 +6,9 @@ import { RPC } from '~/@/rpc'
 import type { Screen } from '~/@/screen/generated/screens'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { didPushScreen } from '~/app/@/frontend/cmd'
-import type { ContinueWithSmsTypes } from '.'
+import type { LoginWithSMSTypes } from '.'
 import { FixtureAuthFrontend } from '../@/frontend/fixture'
-import { ContinueWithSmsFrontend } from './frontend'
+import { LoginWithSMSFrontend } from './frontend'
 import { rpcContract } from './types'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserSession } from '../@/user-session/user-session'
@@ -16,10 +16,10 @@ import { SessionId } from '~/@/wire/session-id'
 
 type Msg =
   | {
-      msg: ContinueWithSmsTypes.MsgFrontend
+      msg: LoginWithSMSTypes.MsgFrontend
     }
   | {
-      msgBackend: ContinueWithSmsTypes.MsgToFrontend
+      msgBackend: LoginWithSMSTypes.MsgToFrontend
     }
 
 const Fixture = async (input?: { currentScreen?: Screen }) => {
@@ -48,11 +48,11 @@ const Fixture = async (input?: { currentScreen?: Screen }) => {
 
   const ctx = { ...f.ctx, rpc: rpcClient }
 
-  const updates = (init: ContinueWithSmsTypes.ModelFrontend, msgs: Msg[]) => {
-    const updates: ReturnType<typeof ContinueWithSmsFrontend.update>[] = []
+  const updates = (init: LoginWithSMSTypes.ModelFrontend, msgs: Msg[]) => {
+    const updates: ReturnType<typeof LoginWithSMSFrontend.update>[] = []
     let model = init
     for (const msg of msgs) {
-      const updated = ContinueWithSmsFrontend.update({
+      const updated = LoginWithSMSFrontend.update({
         ctx,
         model,
         ...msg,
@@ -63,15 +63,15 @@ const Fixture = async (input?: { currentScreen?: Screen }) => {
     return updates
   }
 
-  const update = (init: ContinueWithSmsTypes.ModelFrontend, msgs: Msg[]) => {
+  const update = (init: LoginWithSMSTypes.ModelFrontend, msgs: Msg[]) => {
     const updates_ = updates(init, msgs)
     return updates_[updates_.length - 1]
   }
 
-  const init = ContinueWithSmsFrontend.init
+  const init = LoginWithSMSFrontend.init
 
-  const render = (model: ContinueWithSmsTypes.ModelFrontend = init) => {
-    const vDom = <ContinueWithSmsFrontend.View ctx={ctx} dispatch={() => {}} model={model} />
+  const render = (model: LoginWithSMSTypes.ModelFrontend = init) => {
+    const vDom = <LoginWithSMSFrontend.View ctx={ctx} dispatch={() => {}} model={model} />
     const node = f.render(vDom)
     return node
   }
@@ -84,7 +84,7 @@ const Fixture = async (input?: { currentScreen?: Screen }) => {
   }
 }
 
-describe('ContinueWithSmsFrontend', () => {
+describe('LoginWithSMSFrontend', () => {
   it('should navigate to verify code screen after code is sent', async () => {
     const f = await Fixture()
 

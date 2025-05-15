@@ -168,7 +168,7 @@ const verifyCode = async (
   return Ok({ userAccount: account, userSession: userSessionNew })
 }
 
-export const ContinueWithSmsBackend = {
+export const LoginWithSMSBackend = {
   rpc,
   sendCode,
   verifyCode,

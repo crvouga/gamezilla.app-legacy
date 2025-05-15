@@ -295,7 +295,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
   )
 }
 
-export const ContinueWithSmsFrontend = {
+export const LoginWithSMSFrontend = {
   init,
   update,
   View,

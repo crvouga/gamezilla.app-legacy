@@ -7,8 +7,8 @@ import type { AppFrontendCmd, AuthCmd } from '../@/frontend/cmd'
 import { AppFrontendEvt } from '../@/frontend/evt'
 import { BackendCtx } from './@/backend/ctx'
 import { AuthFrontendCtx } from './@/frontend/ctx'
-import type { ContinueAsGuest } from './continue-as-guest'
-import { ContinueWithSmsTypes } from './continue-with-sms'
+import type { ContinueAsGuest } from './login-as-guest'
+import { LoginWithSMSTypes } from './login-with-sms'
 import { CurrentUserTypes } from './current-user'
 import type { LogoutTypes } from './logout'
 
@@ -23,7 +23,7 @@ export type { BackendCtx }
 
 export type ModelFrontend = {
   logout: LogoutTypes.ModelFrontend
-  continueWithSms: ContinueWithSmsTypes.ModelFrontend
+  continueWithSms: LoginWithSMSTypes.ModelFrontend
   continueAsGuest: ContinueAsGuest.ModelFrontend
   currentUser: CurrentUserTypes.ModelFrontend
 }
@@ -36,8 +36,8 @@ export type ModelFrontend = {
 
 export type MsgFrontend =
   | { t: 'user-clicked-login-with-phone' }
-  | { t: 'got-continue-as-guest-msg'; c: ContinueAsGuest.MsgFrontend }
-  | { t: 'got-continue-with-sms-msg'; c: ContinueWithSmsTypes.MsgFrontend }
+  | { t: 'got-login-as-guest-msg'; c: ContinueAsGuest.MsgFrontend }
+  | { t: 'got-login-with-sms-msg'; c: LoginWithSMSTypes.MsgFrontend }
   | { t: 'got-logout-msg'; c: LogoutTypes.MsgFrontend }
   | { t: 'got-current-user-msg'; c: CurrentUserTypes.MsgFrontend }
 
@@ -46,8 +46,8 @@ export type MsgBackend = { t: 'noop' }
 export type MsgToBackend =
   | { t: 'got-logout-msg'; c: LogoutTypes.MsgToBackend }
   | { t: 'got-current-user-msg'; c: CurrentUserTypes.MsgToBackend }
-  | { t: 'got-continue-as-guest-msg'; c: ContinueAsGuest.MsgToBackend }
-  | { t: 'got-continue-with-sms-msg'; c: ContinueWithSmsTypes.MsgToBackend }
+  | { t: 'got-login-as-guest-msg'; c: ContinueAsGuest.MsgToBackend }
+  | { t: 'got-login-with-sms-msg'; c: LoginWithSMSTypes.MsgToBackend }
 
 export type MsgToFrontend = { t: 'noop' }
 
@@ -86,6 +86,6 @@ export type BackendModule = AppBackendModule<{
 }>
 
 export const rpcContract = RPC.initContract({
-  sms: ContinueWithSmsTypes.rpcContract,
+  sms: LoginWithSMSTypes.rpcContract,
   currentUser: CurrentUserTypes.rpcContract,
 })
