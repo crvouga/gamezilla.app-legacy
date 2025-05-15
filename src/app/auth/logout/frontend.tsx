@@ -51,14 +51,6 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-//
-//
-//
-//
-//
-//
-//
-
 const View = ({
   model,
   dispatch,
