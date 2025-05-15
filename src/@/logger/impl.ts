@@ -1,6 +1,6 @@
-import type { ILogger } from './interface'
 import { LoggerConsole } from './impl-console'
 import { loggerNoop } from './impl-noop'
+import type { ILogger } from './interface'
 
 export type Impl =
   | {
@@ -13,7 +13,10 @@ export type Impl =
 export const Logger = (impl: Impl): ILogger => {
   switch (impl.t) {
     case 'console': {
-      return LoggerConsole()
+      return LoggerConsole({
+        t: 'console',
+        newLinePerMsg: true,
+      })
     }
 
     case 'noop': {
@@ -25,23 +28,23 @@ export const Logger = (impl: Impl): ILogger => {
 const prefix = (prefix: string, logger: ILogger): ILogger => {
   return {
     noop() {},
-    debug(msg) {
-      logger.debug(`[${prefix}] ${msg}`)
+    debug(...msg) {
+      logger.debug(`[${prefix}]`, ...msg)
     },
-    error(msg) {
-      logger.error(`[${prefix}] ${msg}`)
+    error(...msg) {
+      logger.error(`[${prefix}]`, ...msg)
     },
-    fatal(msg) {
-      logger.fatal(`[${prefix}] ${msg}`)
+    fatal(...msg) {
+      logger.fatal(`[${prefix}]`, ...msg)
     },
-    info(msg) {
-      logger.info(`[${prefix}] ${msg}`)
+    info(...msg) {
+      logger.info(`[${prefix}]`, ...msg)
     },
-    trace(msg) {
-      logger.trace(`[${prefix}] ${msg}`)
+    trace(...msg) {
+      logger.trace(`[${prefix}]`, ...msg)
     },
-    warn(msg) {
-      logger.warn(`[${prefix}] ${msg}`)
+    warn(...msg) {
+      logger.warn(`[${prefix}]`, ...msg)
     },
   }
 }

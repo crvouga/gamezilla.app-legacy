@@ -43,13 +43,8 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
         const durationMs = Number(end - start) / 1e6
         const durationFormatted = `${durationMs.toFixed(2)}ms`
-        logger.debug(
-          `duration=${durationFormatted}\nsql=\n${cleanSql(rawSql)}\nvariables=${JSON.stringify(
-            variables,
-            null,
-            4,
-          ).slice(0, 500)}`,
-        )
+
+        logger.debug({ duration: durationFormatted, sql: cleanSql(rawSql), variables: variables })
 
         const output: p.Infer<typeof parser>[] = []
 
@@ -73,7 +68,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
         return Ok(output)
       } catch (error) {
-        logger.error(`${error} sql=${sql}`)
+        logger.error({ error: error, sql: sql, variables: variables })
         return Err(`${error} sql=${sql}`)
       }
     },
