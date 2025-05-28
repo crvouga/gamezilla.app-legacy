@@ -12,7 +12,7 @@ export type Client<T extends Contract<any>> = {
   [K in keyof T]: T[K] extends Topic<unknown, unknown>
     ? {
         publish: (params: s.Infer<T[K]['params']>, msg: s.Infer<T[K]['msg']>) => void
-        sub: (params: s.Infer<T[K]['params']>) => Sub<s.Infer<T[K]['msg']>>
+        subscribe: (params: s.Infer<T[K]['params']>) => Sub<s.Infer<T[K]['msg']>>
       }
     : T[K] extends Contract<any>
       ? Client<T[K]>

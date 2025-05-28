@@ -38,6 +38,9 @@ const sendMsgSpaceToBackend: SpaceFrontendModule['update'] = ({ ctx, model, msgS
 
   return {
     model,
+    // eff() {
+    //   input.ctx.wirePubSub.msgSpace.publish({ spaceId: msgSpace.spaceId }, spaceEventWithMeta)
+    // },
     msgCmd: [sendToBackend({ t: 'sync.got-msg-space', c: spaceEventWithMeta, profilesByUserId: profiles })],
   }
 }
@@ -67,6 +70,7 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
 
     return {
       model: input.model,
+
       msgCmd: [
         sendToBackend({
           t: 'sync.sync',

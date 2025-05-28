@@ -1,3 +1,5 @@
+import { s } from '~/@/schema'
+import { WirePubSub } from '~/@/wire-pub-sub'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { BackendCmd } from '~/app/@/backend/cmd'
@@ -8,8 +10,10 @@ import { UserProfile } from '~/app/@/data/user-profile'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
+import { SpaceId } from '../@/data/space-id'
 import { SpacesCore } from './core/core'
 import { ISpacesCoreAsync } from './core/core-async/interface'
+import { MsgSpace } from './core/space-msg/space-msg'
 import { EndSpaceTypes } from './end-space'
 import { CurrentSpaceMiniPlayerTypes } from './frontend/current-space-mini-player'
 import { ExitSpaceActionTypes } from './frontend/exit-space-action'
@@ -94,6 +98,15 @@ type MsgToBackendBase = {
 
 export type MsgToBackend = MsgToBackendBase &
   (ListSpacesTypes.MsgToBackend | GameTypes.MsgToBackend | SyncTypes.MsgToBackend)
+
+export const pubSubContract = WirePubSub.initContract({
+  msgSpace: {
+    params: s.obj({
+      spaceId: SpaceId,
+    }),
+    msg: MsgSpace,
+  },
+})
 
 //
 //
