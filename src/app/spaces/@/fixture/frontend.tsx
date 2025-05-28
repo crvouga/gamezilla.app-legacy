@@ -14,6 +14,7 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Space } from '../../core/space'
 import { SpacesFrontend } from '../../frontend'
 import type * as SpacesTypes from '../../types'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 
 export const SpaceFrontendFixture = async () => {
   const f = await FixtureAppFrontend()
@@ -126,16 +127,24 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
   const updates = (initial: Output, inputs: FixtureInput[]): NonEmpty<Output> => {
     const outputs: NonEmpty<Output> = [initial]
     for (const input of inputs) {
-      outputs.push(SpacesFrontend.update({ ...input, ctx: input.ctx ?? ctx, model: NonEmpty.last(outputs).model }))
-      // for (const msgOut of NonEmpty.last(outputs).msgOut ?? []) {
-      //   outputs.push(
-      //     SpacesFrontend.update({
-      //       ctx: input.ctx ?? ctx,
-      //       model: NonEmpty.last(outputs).model,
-      //       msgIn: msgOut,
-      //     }),
-      //   )
-      // }
+      let output = SpacesFrontend.update({ ...input, ctx: input.ctx ?? ctx, model: NonEmpty.last(outputs).model })
+      const msgOuts: unknown[] = []
+      const msgCmds: AppFrontendCmd<SpacesTypes.MsgToBackend>[] = output.msgCmd ?? []
+      for (const msgOut of output.msgOut ?? []) {
+        msgOuts.push(msgOut)
+        output = SpacesFrontend.update({
+          ctx: input.ctx ?? ctx,
+          model: output.model,
+          msgIn: msgOut,
+        })
+        msgCmds.push(...(output.msgCmd ?? []))
+      }
+
+      outputs.push({
+        ...output,
+        msgOut: msgOuts,
+        msgCmd: msgCmds,
+      })
     }
     return outputs
   }

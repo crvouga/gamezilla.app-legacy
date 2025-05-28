@@ -21,7 +21,7 @@ const Fixture = async (input?: { currentScreen?: Screen }) => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('list spaces frontend', () => {
   it('should request spaces on init if on space list screen', async () => {
     const f = await Fixture({
       currentScreen: {

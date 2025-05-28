@@ -123,18 +123,11 @@ describe(import.meta.file, () => {
       {
         msgBackend: {
           t: 'sync.got-msg-space',
-          c: withEventMetaAt(0, {
-            t: 'user-started-space',
-            spaceId,
-            userId: UserId.generate(),
-          }),
+          c: withEventMetaAt(0, { t: 'user-started-space', spaceId, userId: UserId.generate() }),
         },
       },
       {
-        msg: {
-          t: 'join-space.submitted-join-space-form',
-          spaceId,
-        },
+        msg: { t: 'join-space.submitted-join-space-form', spaceId },
       },
     ])
 
