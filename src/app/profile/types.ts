@@ -1,4 +1,3 @@
-import { ClientId } from '../../@/wire/client-id'
 import { AppBackendModule } from '../@/architecture/app-backend'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { BackendCmd } from '../@/backend/cmd'
@@ -26,13 +25,11 @@ export type MsgFrontend =
   | { t: 'got-update-username-screen-msg'; c: ScreenUpdateUsernameTypes.MsgFrontend }
   | { t: 'got-profile-screen-msg'; c: ScreenProfileTypes.MsgFrontend }
 
-export type MsgBackend =
-  | { t: 'got-update-username-screen-msg'; c: ScreenUpdateUsernameTypes.MsgBackend }
-  | { t: 'handled'; clientId: ClientId; msg: MsgToFrontend }
+export type MsgBackend = { t: 'noop' }
 
 export type MsgToFrontend = { t: 'noop' }
 
-export type MsgToBackend = { t: 'noop' }
+export type MsgToBackend = { t: 'got-profile-screen-msg'; c: ScreenProfileTypes.MsgToBackend }
 
 export type BackendModule = AppBackendModule<{
   Ctx: AppBackendCtx

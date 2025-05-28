@@ -3,6 +3,7 @@ import { Sub } from '~/@/sub'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppFrontendCmd, pushScreen } from '../@/frontend/cmd'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
+import { ProfileFrontendCmd } from './@/frontend/cmd'
 import { ProfileFrontendCtx } from './@/frontend/ctx'
 import { ProfileDb } from './@/user-profile/user-profile-db'
 import { ScreenProfileFrontend } from './screen-profile/frontend'
@@ -10,7 +11,6 @@ import { ScreenUpdateUsernameFrontend } from './screen-update-username/frontend'
 import { UpdateAvatarScreen } from './screen-update/update-avatar-screen'
 import { UpdateProfileScreen } from './screen-update/update-profile-screen'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgToBackend } from './types'
-import { ProfileFrontendCmd } from './@/frontend/cmd'
 
 const initCtx = (input: { ctx: AppFrontendCtxBase }): ProfileFrontendCtx => {
   return {
@@ -53,7 +53,7 @@ const updateLoop = (
   acc: ReturnType<FrontendModule['update']>,
 ): ReturnType<FrontendModule['update']> => {
   // const currentCmds = acc.msgCmd || []
-  // const [cmd, ...restCmd] = ProfileFrontendCmd.toProfileFrontendCmdBase(currentCmds)
+  // const [cmd, ...restCmd] = ProfileFrontendCmd.toProfileFrontendCmdInternal(currentCmds)
 
   // if (cmd) {
   //   // const updated = updateChild({ ctx: input.ctx, model: acc.model, msgCmd: cmd })
@@ -108,29 +108,16 @@ const updateFromMsg: FrontendModule['update'] = (
         msg: input.msg.c,
         model: input.model.screenProfile,
       })
-      const msgCmd: ProfileFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>[] =
-        ProfileFrontendCmd.tag('got-profile-screen-msg', updated.msgCmd)
+
       return {
         model: { ...input.model, screenProfile: updated.model },
         eff: Eff.tag('got-profile-screen-msg', updated.eff),
-        msgCmd,
+        msgCmd: ProfileFrontendCmd.tag('got-profile-screen-msg', updated.msgCmd),
       }
     }
     default: {
       return { model: input.model }
     }
-    // case 'got-update-username-screen-msg': {
-    //   const updated = ScreenUpdateUsernameFrontend.update({
-    //     ctx: input.ctx,
-    //     msg: input.msg.c,
-    //     model: input.model.screenProfile,
-    //   })
-    //   return {
-    //     model: { ...input.model, screenUpdateUsername: updated.model },
-    //     eff: Eff.tag('got-update-username-screen-msg', updated.eff),
-    //     msgCmd: ProfileFrontendCmd.tag('got-update-username-screen-msg', updated.msgCmd),
-    //   }
-    // }
   }
 }
 

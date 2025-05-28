@@ -15,8 +15,8 @@ import { PackLoaderTypes } from './@/pack/pack-loader'
 import type { Puzzle } from './@/puzzle/puzzle'
 import type { PuzzleId } from './@/puzzle/puzzle-id'
 import { PuzzleLoaderTypes } from './@/puzzle/puzzle-loader'
-import { Solutions } from './@/solutions/solutions'
 import { HintCalculatorTypes } from './@/solutions/hint-calculator'
+import { Solutions } from './@/solutions/solutions'
 import { SolutionsLoaderTypes } from './@/solutions/solutions-loader'
 import { BuildTypes } from './screen-build'
 import { PlayTypes } from './screen-play'
@@ -31,9 +31,10 @@ export type ModelFrontend = {
   puzzles: { [puzzleId: PuzzleId]: Puzzle }
   packs: { [packId: PackId]: Pack }
   solutions: Solutions
+  //
   puzzleLoader: PuzzleLoaderTypes.ModelFrontend
   packLoader: PackLoaderTypes.ModelFrontend
-  HintCalculator: HintCalculatorTypes.ModelFrontend
+  hintCalculator: HintCalculatorTypes.ModelFrontend
   solutionsLoader: SolutionsLoaderTypes.ModelFrontend
   screenBuild: BuildTypes.ModelFrontend
   screenPlay: PlayTypes.ModelFrontend

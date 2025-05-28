@@ -12,27 +12,25 @@ export type ProfileFrontendCmd<T extends FrontendCmdTypes> = ProfileFrontendCmdI
 const toAppFrontendCmd = <T extends FrontendCmdTypes>(
   cmd: ProfileFrontendCmd<T> | null | undefined,
 ): AppFrontendCmd<T>[] => {
-  switch (cmd?.t) {
-    case 'profile-cmd.got-profile-loader-cmd': {
-      return []
-    }
-    default: {
-      return cmd ? [cmd] : []
-    }
+  if (!cmd) return []
+
+  if (isProfileFrontendCmdInternal(cmd)) {
+    return []
   }
+
+  return [cmd]
 }
 
-const toProfileFrontendCmdBase = <T extends FrontendCmdTypes>(
+const toProfileFrontendCmdInternal = <T extends FrontendCmdTypes>(
   cmd: ProfileFrontendCmd<T> | null | undefined,
 ): ProfileFrontendCmdInternal[] => {
-  switch (cmd?.t) {
-    case 'profile-cmd.got-profile-loader-cmd': {
-      return [cmd]
-    }
-    default: {
-      return []
-    }
+  if (!cmd) return []
+
+  if (isProfileFrontendCmdInternal(cmd)) {
+    return [cmd]
   }
+
+  return []
 }
 
 const tag = <T extends FrontendCmdTypes, Tag extends string>(
@@ -60,5 +58,5 @@ const tag = <T extends FrontendCmdTypes, Tag extends string>(
 export const ProfileFrontendCmd = {
   toAppFrontendCmd,
   tag,
-  toProfileFrontendCmdBase,
+  toProfileFrontendCmdInternal,
 }

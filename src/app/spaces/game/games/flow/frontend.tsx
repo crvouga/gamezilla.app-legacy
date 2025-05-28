@@ -34,7 +34,7 @@ const init: FrontendModule['init'] = {
   screenPlay: ScreenPlayFrontend.init,
   puzzleLoader: PuzzleLoaderTypes.initFrontend,
   packLoader: PackLoaderTypes.initFrontend,
-  HintCalculator: HintCalculatorTypes.initFrontend,
+  hintCalculator: HintCalculatorTypes.initFrontend,
   solutionsLoader: SolutionsLoaderTypes.initFrontend,
   solutions: Solutions.init,
   puzzles: {},
@@ -58,7 +58,7 @@ const toFlowFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): Flow
     puzzleLoader: input.model.puzzleLoader,
     packLoader: input.model.packLoader,
     solutions: input.model.solutions,
-    HintCalculator: input.model.HintCalculator,
+    HintCalculator: input.model.hintCalculator,
     solutionsLoader: input.model.solutionsLoader,
   }
 }
@@ -171,14 +171,14 @@ const updateHintCalculator: FrontendModule['update'] = (input) => {
 
   const updated = HintCalculatorFrontend.update({
     ctx,
-    model: input.model.HintCalculator,
+    model: input.model.hintCalculator,
     msg: input.msg?.t === 'got-hint-calculator-msg' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'flow-cmd.got-hint-calculator-cmd' ? input.msgCmd : null,
     msgEvt: input.msgEvt,
   })
 
   return {
-    model: { ...input.model, HintCalculator: updated.model },
+    model: { ...input.model, hintCalculator: updated.model },
     eff: Eff.tag('got-hint-calculator-msg', updated.eff),
     msgCmd: FlowFrontendCmd.tag('got-hint-calculator-msg', updated.msgCmd),
     msgEvt: [],
