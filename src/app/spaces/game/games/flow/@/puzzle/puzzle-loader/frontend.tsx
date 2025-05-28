@@ -24,7 +24,7 @@ const update: FrontendModule['update'] = (input) => {
   if (GotPuzzleLoaderMsg.is(input.msgIn)) {
     return update({
       ...input,
-      msgCmd: null,
+      msgIn: null,
       msg: input.msgIn.c.msg,
     })
   }
