@@ -110,6 +110,7 @@ const updateFromMsg: FrontendModule['update'] = (input): ReturnType<FrontendModu
       return {
         model: { ...input.model, screenProfile: updated.model },
         eff: Eff.tag('got-profile-screen-msg', updated.eff),
+        msgOut: updated.msgOut,
         msgCmd: taggedCmds ? taggedCmds.flatMap((c) => ProfileFrontendCmd.toAppFrontendCmd(c)) : undefined,
       }
     }

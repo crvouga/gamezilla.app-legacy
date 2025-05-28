@@ -7,7 +7,8 @@ import { Select } from '~/@/ui/select'
 import { TextField } from '~/@/ui/text-field'
 import { Typography } from '~/@/ui/typography'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { APP_SOUND, focusView, playSound, pushScreen, replaceScreen, showErrSm, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND, focusView, playSound, replaceScreen, showErrSm, showToast } from '~/app/@/frontend/cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { AuthScreenFormLayout } from '../@/frontend/ui/auth-screen-form-layout'
 import { FrontendModule, ModelFrontend, toSendErrorMessage, toVerifyErrorMessage } from './types'
 
@@ -114,8 +115,9 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
           verified: NotAsked,
           code: '',
         },
+        msgOut: [PushScreenCmd.init({ n: 'auth-login', t: 'login-sms-verify', phoneNumber })],
         msgCmd: [
-          pushScreen({ n: 'auth-login', t: 'login-sms-verify', phoneNumber }),
+          // pushScreen({ n: 'auth-login', t: 'login-sms-verify', phoneNumber }),
           showToast(input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(phoneNumber)), 'info', TimeSpan.seconds(4)),
           focusView(CODE_INPUT_VIEW_ID),
           playSound(APP_SOUND.navForwardMin),

@@ -3,8 +3,8 @@ import { TranslatedText } from '~/@/l18n'
 import { UnitInterval } from '~/@/range/unit-interval'
 import type { Screen } from '~/@/screen/generated/screens'
 import { TimeSpan } from '~/@/time/time-span'
-import type { UserProfile } from '../data/user-profile'
 import type { UserId } from '../data/user-id'
+import type { UserProfile } from '../data/user-profile'
 
 //
 //
@@ -21,7 +21,6 @@ export type FrontendCmdTypes = {
 export type AppFrontendCmd<T extends FrontendCmdTypes> =
   | WireCmd<T>
   | ProfileCmd
-  | AuthCmd
   | ToastCmd
   | ScreenCmd
   | SoundCmd
@@ -29,31 +28,6 @@ export type AppFrontendCmd<T extends FrontendCmdTypes> =
   | TimeCmd<T['MsgFrontend']>
   | CopyToClipboardCmd
   | StatusBarCmd
-
-//
-//
-//
-//
-//
-//
-
-export type AuthCmd = {
-  n: 'auth'
-  t: 'auth'
-  c: {
-    t: 'logout'
-  }
-}
-
-export const logout = <T extends FrontendCmdTypes>(): AppFrontendCmd<T> => {
-  return {
-    n: 'auth',
-    t: 'auth',
-    c: {
-      t: 'logout',
-    },
-  }
-}
 
 //
 //

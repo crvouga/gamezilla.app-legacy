@@ -91,6 +91,7 @@ export const update = <TParentMsg,>(input: {
   msgBackend?: MsgToFrontend
   msgEvt?: AppFrontendEvt
   msgCmd?: CmdIn<TParentMsg>
+  msgIn?: unknown
 }): {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
@@ -100,14 +101,11 @@ export const update = <TParentMsg,>(input: {
     MsgFrontend: MsgFrontend
   }>[]
 } => {
-  if (!input.msg && !input.msgBackend && !input.msgEvt && !input.msgCmd) {
-    return { model: input.model }
-  }
-
   const screen = CurrentScreenFrontend.update({
     model: input.model.currentScreen,
     msg: input.msg?.t === 'current-screen' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'current-screen' ? input.msgCmd : null,
+    msgIn: input.msgIn,
   })
 
   const sound = SoundFrontend.update({

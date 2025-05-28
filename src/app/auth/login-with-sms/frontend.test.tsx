@@ -5,14 +5,14 @@ import { Err, Ok } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import type { Screen } from '~/@/screen/generated/screens'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { didPushScreen } from '~/app/@/frontend/cmd'
+import { SessionId } from '~/@/wire/session-id'
+import { UserAccount } from '~/app/@/data/user-account'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import type { LoginWithSMSTypes } from '.'
 import { FixtureAuthFrontend } from '../@/frontend/fixture'
+import { UserSession } from '../@/user-session/user-session'
 import { LoginWithSMSFrontend } from './frontend'
 import { rpcContract } from './types'
-import { UserAccount } from '~/app/@/data/user-account'
-import { UserSession } from '../@/user-session/user-session'
-import { SessionId } from '~/@/wire/session-id'
 
 type Msg =
   | {
@@ -93,7 +93,7 @@ describe('LoginWithSMSFrontend', () => {
     const output = f.update(f.init, [{ msg: { t: 'sent-code', sent: Ok(Ok({ phoneNumber })) } }])
 
     expect(
-      didPushScreen(
+      PushScreenCmd.did(
         output,
         (msg) => msg.n === 'auth-login' && msg.t === 'login-sms-verify' && eq(msg.phoneNumber, phoneNumber),
       ),

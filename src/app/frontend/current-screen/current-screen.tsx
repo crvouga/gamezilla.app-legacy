@@ -4,6 +4,7 @@ import type { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
 import { APP_SOUND, playSound, type ScreenCmd, type SoundCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendEvt } from '../../@/frontend/evt'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 
 //
 //
@@ -77,6 +78,7 @@ export type Msg =
 export const update = (input: {
   msgCmd?: ScreenCmd | null
   msg?: Msg | null
+  msgIn?: unknown
   model: Model
 }): {
   model: Model
@@ -84,6 +86,16 @@ export const update = (input: {
   msgEvt?: AppFrontendEvt[]
   msgCmd?: SoundCmd[]
 } => {
+  if (PushScreenCmd.is(input.msgIn)) {
+    return {
+      model: {
+        currentScreen: input.msgIn.screen,
+      },
+      eff: Browser.pushQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(input.msgIn.screen)),
+      msgCmd: input.msgIn.playSound ? [playSound(APP_SOUND.navForwardMin)] : [],
+    }
+  }
+
   if (input.msg) {
     return updateFromMsg(input)
   }

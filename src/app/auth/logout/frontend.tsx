@@ -3,6 +3,7 @@ import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
+import { LogoutCmd } from '~/app/@/frontend/logout-cmd'
 
 const init: ModelFrontend = {
   opened: null,
@@ -36,15 +37,13 @@ const update: FrontendModule['update'] = (input) => {
     }
   }
 
-  switch (input.msgCmd?.c.t) {
-    case 'logout': {
-      return {
-        model: {
-          ...input.model,
-          opened: 'logged-out',
-        },
-        msgCmd: [playSound(APP_SOUND.alertErrorSm)],
-      }
+  if (LogoutCmd.is(input.msgIn)) {
+    return {
+      model: {
+        ...input.model,
+        opened: 'logged-out',
+      },
+      msgCmd: [playSound(APP_SOUND.alertErrorSm)],
     }
   }
 

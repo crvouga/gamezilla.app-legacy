@@ -1,6 +1,6 @@
 import { RemoteResult } from '~/@/result'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { AppFrontendCmd, AuthCmd } from '~/app/@/frontend/cmd'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 
 export type ModelFrontend = {
@@ -24,5 +24,4 @@ export type FrontendModule = AppFrontendModule<{
     MsgFrontend: MsgFrontend
     MsgToBackend: never
   }>
-  MsgCmdIn: AuthCmd
 }>

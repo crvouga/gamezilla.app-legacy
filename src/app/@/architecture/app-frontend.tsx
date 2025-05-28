@@ -23,6 +23,14 @@ export type AppFrontendModuleTypes = {
    */
   Msg?: unknown
   /**
+   * `MsgIn` is a message from other modules. Usually verbs
+   */
+  MsgIn?: unknown
+  /**
+   * `MsgOut` is a message to send to other modules. Usually past tense verbs
+   */
+  MsgOut?: unknown
+  /**
    * `MsgToFrontend` is a message to send to the frontend component of the module
    */
   MsgToFrontend?: unknown
@@ -87,6 +95,10 @@ export type Input<T extends AppFrontendModuleTypes> = {
    */
   msg?: T['Msg'] | null
   /**
+   * `msgIn` is a message from another module. Like `user-logged-out`, `screen-changed`
+   */
+  msgIn?: T['MsgIn'] | null
+  /**
    * `msgBackend` is a message sent from the backend
    */
   msgBackend?: T['MsgToFrontend'] | null
@@ -123,6 +135,10 @@ export type Output<T extends AppFrontendModuleTypes> = {
    * `msgEvt` is a message to notify other modules
    */
   msgEvt?: T['MsgEvtOut'][]
+  /**
+   * `msgOut` is a message to send to the parent module
+   */
+  msgOut?: T['MsgOut'][]
 }
 
 /**
@@ -170,6 +186,7 @@ const andThen = <T extends AppFrontendModuleTypes>(
       eff: Eff.batch(acc.eff, updated.eff),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
+      msgOut: Msg.batch(acc.msgOut, updated.msgOut),
     }
   }
   return acc

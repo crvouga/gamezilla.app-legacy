@@ -8,7 +8,8 @@ import { IconUserPen } from '~/@/ui/icon/icon-user-pen'
 import { Typography } from '~/@/ui/typography'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
-import { back, logout, pushScreen } from '~/app/@/frontend/cmd'
+import { back, pushScreen } from '~/app/@/frontend/cmd'
+import { LogoutCmd } from '~/app/@/frontend/logout-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ProfileFrontendCtx } from '../@/frontend/ctx'
 import { ProfileLoaderFrontend } from '../@/user-profile-loader/frontend'
@@ -32,16 +33,16 @@ const update: FrontendModule['update'] = (input) => {
   if (!input.msg) return { model: input.model }
   switch (input.msg.t) {
     case 'clicked-back-button': {
-      return { model: input.model, msgCmd: [back()] }
+      return { model: input.model, msgOut: [back()] }
     }
     case 'clicked-edit-profile-button': {
-      return { model: input.model, msgCmd: [pushScreen({ t: 'profile-edit', n: 'profile' })] }
+      return { model: input.model, msgOut: [pushScreen({ t: 'profile-edit', n: 'profile' })] }
     }
     case 'clicked-logout-button': {
-      return { model: input.model, msgCmd: [logout()] }
+      return { model: input.model, msgOut: [LogoutCmd.init()] }
     }
     case 'got-msg-cmd': {
-      return { model: input.model, msgCmd: [input.msg.c] }
+      return { model: input.model, msgOut: [input.msg.c] }
     }
   }
 }

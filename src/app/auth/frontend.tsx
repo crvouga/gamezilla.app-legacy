@@ -10,9 +10,9 @@ import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { AuthFrontendCtx } from './@/frontend/ctx'
 import { AuthScreenHeaderCta } from './@/frontend/ui/auth-screen-header-cta'
 import { AuthScreenLayout } from './@/frontend/ui/auth-screen-layout'
+import { CurrentUserFrontend } from './current-user/frontend'
 import { ContinueAsGuestFrontend } from './login-as-guest/frontend'
 import { LoginWithSMSFrontend } from './login-with-sms/frontend'
-import { CurrentUserFrontend } from './current-user/frontend'
 import { LogoutFrontend } from './logout/frontend'
 import type { FrontendCtx, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
 
@@ -55,10 +55,6 @@ const init: FrontendModule['init'] = () => {
 //
 
 const update: FrontendModule['update'] = (input) => {
-  if (!input.msg && !input.msgBackend && !input.msgEvt && !input.msgCmd) {
-    return { model: input.model }
-  }
-
   return AppFrontendModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
@@ -129,6 +125,7 @@ const updateSMS: FrontendModule['update'] = (input) => {
     msgCmd: AppFrontendCmd.tag('got-login-with-sms-msg', updated.msgCmd),
     eff: Eff.tag('got-login-with-sms-msg', updated.eff),
     msgEvt: updated.msgEvt,
+    msgOut: updated.msgOut,
   }
 }
 
