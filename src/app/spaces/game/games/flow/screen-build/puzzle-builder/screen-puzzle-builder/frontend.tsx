@@ -293,7 +293,9 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
             ctx: ModePlay.initCtx({ ...input.ctx, flow }),
             dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
             model: puzzleBuilder.modePlay,
-            dispatchCmd: (c) => input.dispatch({ t: 'got-msg-out', c }),
+            dispatchCmd: (c) => {
+              input.dispatch({ t: 'got-msg-out', c })
+            },
           }),
         },
       }}
