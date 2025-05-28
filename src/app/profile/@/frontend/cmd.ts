@@ -3,8 +3,10 @@ import { ProfileLoaderTypes } from '../user-profile-loader'
 
 export type ProfileFrontendCmdInternal = ProfileLoaderTypes.MsgInCmdFrontend
 
-export const isProfileFrontendCmdInternal = (cmd: ProfileFrontendCmd<any>): cmd is ProfileFrontendCmdInternal => {
-  return cmd.t === 'profile-cmd.got-profile-loader-cmd'
+export const isProfileFrontendCmdInternal = <T extends FrontendCmdTypes>(
+  cmd: ProfileFrontendCmd<T>,
+): cmd is ProfileFrontendCmdInternal => {
+  return cmd.n === 'profile-cmd'
 }
 
 export type ProfileFrontendCmd<T extends FrontendCmdTypes> = ProfileFrontendCmdInternal | AppFrontendCmd<T>
@@ -54,7 +56,6 @@ const tag = <T extends FrontendCmdTypes, Tag extends string>(
     },
   )
 }
-
 export const ProfileFrontendCmd = {
   toAppFrontendCmd,
   tag,

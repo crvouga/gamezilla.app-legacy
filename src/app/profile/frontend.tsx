@@ -95,11 +95,7 @@ const updateFromCmd: FrontendModule['update'] = (input): ReturnType<FrontendModu
   }
 }
 
-const updateFromMsg: FrontendModule['update'] = (
-  input,
-): ReturnType<FrontendModule['update']> & {
-  msgCmd?: ProfileFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>[]
-} => {
+const updateFromMsg: FrontendModule['update'] = (input): ReturnType<FrontendModule['update']> => {
   if (!input.msg) return { model: input.model }
   switch (input.msg.t) {
     case 'got-profile-screen-msg': {
@@ -109,10 +105,12 @@ const updateFromMsg: FrontendModule['update'] = (
         model: input.model.screenProfile,
       })
 
+      const taggedCmds = ProfileFrontendCmd.tag('got-profile-screen-msg', updated.msgCmd)
+
       return {
         model: { ...input.model, screenProfile: updated.model },
         eff: Eff.tag('got-profile-screen-msg', updated.eff),
-        msgCmd: ProfileFrontendCmd.tag('got-profile-screen-msg', updated.msgCmd),
+        msgCmd: taggedCmds ? taggedCmds.flatMap((c) => ProfileFrontendCmd.toAppFrontendCmd(c)) : undefined,
       }
     }
     default: {
