@@ -1,11 +1,11 @@
 import { pipe } from '~/@/function/pipe'
 import { MinHeap } from '~/@/min-heap/min-heap'
 import { Flow } from '../../flow'
-import { Variant } from '../../variant'
 import { EdgeId } from '../../flow/edge-id'
 import { GroupId } from '../../flow/group-id'
 import { NodeId } from '../../flow/node-id'
 import { Terminal } from '../../flow/terminal'
+import { Variant } from '../../variant'
 
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.

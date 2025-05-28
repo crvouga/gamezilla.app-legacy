@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'bun:test'
+import { loggerNoop } from '~/@/logger/impl-noop'
+import { Solutions } from '../../solutions/solutions'
 import { VariantGridShorthand } from '../../variant/grid'
 import { FixtureModePlayUseHint } from './fixture'
 import { UseHintFrontend } from './frontend'
-import { Solutions } from '../../solutions/solutions'
-import { loggerNoop } from '~/@/logger/impl-noop'
 
 const Fixture = async (params?: Parameters<typeof FixtureModePlayUseHint>[0]) => {
   const f = await FixtureModePlayUseHint(params)

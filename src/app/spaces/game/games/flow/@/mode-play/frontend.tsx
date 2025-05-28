@@ -6,17 +6,18 @@ import { IconCheckmark } from '~/@/ui/icon/icon-checkmark'
 import { Transition } from '~/@/ui/transition/transition'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { Flow } from '../flow'
 import { HintCalculatorFrontend } from '../solutions/hint-calculator/frontend'
 import { GotHintCalculatorMsg } from '../solutions/hint-calculator/got-hint-calculator-msg'
 import { SolutionHash } from '../solutions/solution-hash/solution-hash'
 import { SolutionsLoaderFrontend } from '../solutions/solutions-loader/frontend'
+import { GotSolutionsLoaderMsg } from '../solutions/solutions-loader/got-solutions-loader-msg'
 import { Variant, VariantBoard } from '../variant'
 import { ModePlayFrontendCtx } from './frontend/ctx'
 import { Model, Msg, toFlow } from './mode-play'
 import { UseHint } from './use-hint'
 import { UseHintFrontend } from './use-hint/frontend'
+import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 
 const View = (input: {
   flow: Variant.Model
@@ -139,7 +140,7 @@ const subscriptions = <TMsg,>(
   const solutionHash = SolutionHash.init(input.ctx.flow)
   if (!solutionHash) return Sub.None
   return Sub.map(
-    SolutionsLoaderFrontend.watch(input.ctx, solutionHash, (c) => SolutionsLoaderFrontend.gotMsg(c)),
+    SolutionsLoaderFrontend.watch(input.ctx, solutionHash, (c) => GotSolutionsLoaderMsg.init(c)),
     map,
   )
 }

@@ -6,6 +6,7 @@ import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { SurfaceActions } from '~/@/ui/surface/surface-actions'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../@/ui/game-layout'
@@ -18,7 +19,6 @@ import type { FrontendModule } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
 import { LastPuzzleFrontend } from './last-puzzle/frontend'
 import { ScreenPlayPuzzleSpace } from './space'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(

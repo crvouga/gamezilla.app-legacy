@@ -1,14 +1,14 @@
 import { describe, expect, test } from 'bun:test'
 import { ModePlay } from '.'
-import { FixtureFlowFrontend } from '../frontend/fixture'
+import { AlgoIsSolved } from '../solutions/algo-is-solved/algo-is-solved'
 import { HintCalculatorFrontend } from '../solutions/hint-calculator/frontend'
+import { Solution } from '../solutions/solution'
+import { Solutions } from '../solutions/solutions'
 import { VariantGridShorthand } from '../variant/grid'
 import { ModePlayFrontend } from './frontend'
 import { ModePlayFrontendCtx } from './frontend/ctx'
 import { UseHintFrontend } from './use-hint/frontend'
-import { Solutions } from '../solutions/solutions'
-import { Solution } from '../solutions/solution'
-import { AlgoIsSolved } from '../solutions/algo-is-solved/algo-is-solved'
+import { FixtureFlowFrontend } from '../frontend/fixture'
 
 const Fixture = async () => {
   const f = await FixtureFlowFrontend()

@@ -7,6 +7,7 @@ import { PuzzleQuery } from '../../../../@/puzzle/puzzle-db/query'
 import { PuzzleLoaderFrontend } from '../../../../@/puzzle/puzzle-loader/frontend'
 import { ScreenPackBuildSpace } from '../space/space'
 import type { FrontendModule, ModelSpace } from '../types'
+import { GotPuzzleLoaderMsg } from '../../../../@/puzzle/puzzle-loader/got-puzzle-loader-msg'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -67,7 +68,7 @@ const toQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): Puzzl
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return PuzzleLoaderFrontend.watch(input.ctx, toQuery(input), (c) => ({
     t: 'got-msg-out',
-    c: PuzzleLoaderFrontend.gotMsg(c),
+    c: GotPuzzleLoaderMsg.init(c),
   }))
 }
 

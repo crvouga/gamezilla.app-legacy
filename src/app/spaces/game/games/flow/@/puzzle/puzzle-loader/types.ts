@@ -1,9 +1,10 @@
+import { p } from '~/@/parser'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { FlowBackendCtx } from '../../backend/ctx'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
-import type { Puzzle } from '../puzzle'
+import { Puzzle } from '../puzzle'
 import { PuzzleQuery } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 
@@ -23,27 +24,19 @@ export const initFrontend: ModelFrontend = {
 
 export type ModelBackend = null
 
-export type MsgFrontend = {
-  t: 'got-puzzle-db-puzzles'
-  query: PuzzleQuery
-  puzzles: Puzzle[]
-}
+export const MsgFrontend = p.obj({
+  t: p.l('got-puzzle-db-puzzles'),
+  query: PuzzleQuery,
+  puzzles: p.arr(Puzzle),
+})
+
+export type MsgFrontend = p.Infer<typeof MsgFrontend>
 
 export type MsgBackend = { t: 'noop' }
 
 export type MsgToBackend = { t: 'noop' }
 
-export type MsgToFrontend = {
-  t: 'noop'
-}
-
-export type MsgInCmdFrontend = {
-  t: 'flow-cmd.got-puzzle-loader-cmd'
-  c: {
-    t: 'got-msg'
-    msg: MsgFrontend
-  }
-}
+export type MsgToFrontend = { t: 'noop' }
 
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend
@@ -51,7 +44,7 @@ export type FrontendModule = AppFrontendModule<{
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   Ctx: FlowFrontendCtxBase
-  MsgCmdIn: MsgInCmdFrontend
+
   ViewSlot: { fab: null }
   ViewEmit: { clickedPuzzleItem: Puzzle }
 }>

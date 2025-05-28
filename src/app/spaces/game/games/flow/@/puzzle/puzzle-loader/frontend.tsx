@@ -3,32 +3,30 @@ import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
+import { Checkbox, CheckboxState } from '~/@/ui/checkbox/checkbox'
+import { Clickable, ClickableTransparent } from '~/@/ui/clickable'
 import { EmptyState } from '~/@/ui/empty-state'
+import { Gutter } from '~/@/ui/gutter'
 import { IconPuzzlePiece } from '~/@/ui/icon/icon-puzzle-piece'
 import { SpinnerBlock } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
-import { Checkbox, CheckboxState } from '~/@/ui/checkbox/checkbox'
-import { Clickable, ClickableTransparent } from '~/@/ui/clickable'
-import { Gutter } from '~/@/ui/gutter'
-
+import { AddPuzzlesCmd } from '../../frontend/add-puzzles-cmd'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { VariantBoard } from '../../variant'
 import { Puzzle } from '../puzzle'
 import { PuzzleQuery } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './query-form'
-import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
-import { AddPuzzlesCmd } from '../../frontend/add-puzzles-cmd'
+import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
+import { GotPuzzleLoaderMsg } from './got-puzzle-loader-msg'
 
 const update: FrontendModule['update'] = (input) => {
-  switch (input.msgCmd?.c.t) {
-    case 'got-msg': {
-      return update({
-        ...input,
-        msgCmd: null,
-        msg: input.msgCmd.c.msg,
-      })
-    }
+  if (GotPuzzleLoaderMsg.is(input.msgIn)) {
+    return update({
+      ...input,
+      msgCmd: null,
+      msg: input.msgIn.c.msg,
+    })
   }
 
   switch (input.msg?.t) {
@@ -52,16 +50,6 @@ const update: FrontendModule['update'] = (input) => {
   }
 
   return { model: input.model }
-}
-
-const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
-  return {
-    t: 'flow-cmd.got-puzzle-loader-cmd',
-    c: {
-      t: 'got-msg',
-      msg,
-    },
-  }
 }
 
 const watch = <TMsg,>(
@@ -221,6 +209,5 @@ const toListItemSecondaryText = (input: {
 export const PuzzleLoaderFrontend = {
   update,
   watch,
-  gotMsg,
   ViewList,
 }

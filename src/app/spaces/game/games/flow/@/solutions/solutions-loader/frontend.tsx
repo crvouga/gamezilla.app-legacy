@@ -1,14 +1,13 @@
 import { Sub } from '~/@/sub'
+import { AddSolutionsCmd } from '../../frontend/add-solutions-cmd'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { SolutionHash } from '../solution-hash/solution-hash'
-import type { FrontendModule, MsgFrontend, MsgInCmdFrontend } from './types'
-import { AddSolutionsCmd } from '../../frontend/add-solutions-cmd'
+import { GotSolutionsLoaderMsg } from './got-solutions-loader-msg'
+import type { FrontendModule, MsgFrontend } from './types'
 
 const update: FrontendModule['update'] = (input) => {
-  switch (input.msgCmd?.c.t) {
-    case 'got-msg': {
-      return update({ ...input, msgCmd: null, msg: input.msgCmd.c.msg })
-    }
+  if (GotSolutionsLoaderMsg.is(input.msgIn)) {
+    return update({ ...input, msgIn: null, msg: input.msgIn.c.msg })
   }
 
   switch (input.msg?.t) {
@@ -21,10 +20,6 @@ const update: FrontendModule['update'] = (input) => {
   }
 
   return { model: input.model }
-}
-
-const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
-  return { t: 'flow-cmd.got-solutions-loader-cmd', c: { t: 'got-msg', msg } }
 }
 
 const watch = <TMsg,>(
@@ -40,5 +35,4 @@ const watch = <TMsg,>(
 export const SolutionsLoaderFrontend = {
   update,
   watch,
-  gotMsg,
 }

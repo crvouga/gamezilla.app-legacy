@@ -7,6 +7,7 @@ import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/query'
 import { PuzzleLoaderFrontend } from '../../../@/puzzle/puzzle-loader/frontend'
 import type { FrontendModule, ModelSpace } from '../../types'
 import { CreateNewPuzzleFrontend } from './button-create-new-puzzle/frontend'
+import { GotPuzzleLoaderMsg } from '../../../@/puzzle/puzzle-loader/got-puzzle-loader-msg'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -52,7 +53,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   const query = toPuzzleQuery(input)
   return PuzzleLoaderFrontend.watch(input.ctx, query, (c) => ({
     t: 'got-msg-out',
-    c: PuzzleLoaderFrontend.gotMsg(c),
+    c: GotPuzzleLoaderMsg.init(c),
   }))
 }
 

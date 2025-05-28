@@ -8,6 +8,7 @@ import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { PuzzleQuery } from '../../@/puzzle/puzzle-db/query'
 import { PuzzleLoaderFrontend } from '../../@/puzzle/puzzle-loader/frontend'
 import type { FrontendModule, ModelSpace } from '../types'
+import { GotPuzzleLoaderMsg } from '../../@/puzzle/puzzle-loader/got-puzzle-loader-msg'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -47,7 +48,7 @@ const toQuery = (input: { modelSpace: ModelSpace }): PuzzleQuery | null => {
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   const query = toQuery(input)
   if (!query) return Sub.None
-  return PuzzleLoaderFrontend.watch(input.ctx, query, (c) => ({ t: 'got-msg-out', c: PuzzleLoaderFrontend.gotMsg(c) }))
+  return PuzzleLoaderFrontend.watch(input.ctx, query, (c) => ({ t: 'got-msg-out', c: GotPuzzleLoaderMsg.init(c) }))
 }
 
 const View: FrontendModule['View'] = (input) => {
