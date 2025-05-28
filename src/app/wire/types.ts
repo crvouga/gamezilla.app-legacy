@@ -1,4 +1,4 @@
-import { RPC } from '~/@/rpc'
+import { RPC } from '~/@/wire-rpc'
 import { Posix } from '~/@/time/posix'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { AppBackendCtx } from '../@/backend/ctx'

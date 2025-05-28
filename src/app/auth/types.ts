@@ -1,4 +1,4 @@
-import { RPC } from '~/@/rpc'
+import { RPC } from '~/@/wire-rpc'
 import type { AppBackendModule } from '../@/architecture/app-backend'
 import type { AppFrontendModule } from '../@/architecture/app-frontend'
 import { BackendCmd } from '../@/backend/cmd'

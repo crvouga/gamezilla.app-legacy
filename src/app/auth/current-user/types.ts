@@ -1,6 +1,6 @@
 import { p } from '~/@/parser'
 import { RemoteResult } from '~/@/result'
-import { RPC } from '~/@/rpc'
+import { RPC } from '~/@/wire-rpc'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'

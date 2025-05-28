@@ -1,5 +1,5 @@
 import { isErr } from '~/@/result'
-import { RPC } from '~/@/rpc'
+import { RPC } from '~/@/wire-rpc'
 import { Sub } from '~/@/sub'
 import type { SessionId } from '~/@/wire/session-id'
 import type { UserId } from '~/app/@/data/user-id'

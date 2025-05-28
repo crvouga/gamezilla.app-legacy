@@ -1,6 +1,6 @@
 import { HttpServerEvent } from '~/@/http-server'
 import { p } from '~/@/parser'
-import { RPC } from '~/@/rpc'
+import { RPC } from '~/@/wire-rpc'
 import { RuntimeEvent } from '~/@/runtime'
 import { Posix } from '~/@/time/posix'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'

@@ -1,6 +1,6 @@
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, isErr, Ok } from '~/@/result'
-import { RPC } from '~/@/rpc'
+import { RPC } from '~/@/wire-rpc'
 import { Posix } from '~/@/time/posix'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'

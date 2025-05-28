@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import { RPC } from '~/@/rpc'
+import { RPC } from '~/@/wire-rpc'
 import { Sub } from '~/@/sub'
 import { Button } from '~/@/ui/button'
 import { IconMobilePhone } from '~/@/ui/icon/icon-mobile-phone'

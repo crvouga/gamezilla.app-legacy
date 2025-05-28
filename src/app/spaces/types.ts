@@ -138,10 +138,6 @@ const pubSubContract = initContract({
   },
 })
 const pubSubClient = initClient(pubSubContract)
-pubSubClient.sub('msgSpace', { params: { id: '123' } }).subscribe(console.log)
+pubSubClient.msgSpace.sub({ spaceId: '123' }).subscribe(console.log)
 
  */
-
-// export const pubSubContract = PubSub.initContract({
-//   msgSpace: MsgSpace,
-// })
