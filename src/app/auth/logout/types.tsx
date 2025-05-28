@@ -1,6 +1,5 @@
 import { RemoteResult } from '~/@/result'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 
 export type ModelFrontend = {
@@ -20,8 +19,4 @@ export type FrontendModule = AppFrontendModule<{
   Msg: MsgFrontend
   MsgToBackend: MsgToBackend
   Ctx: AuthFrontendCtx
-  MsgCmdOut: AppFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: never
-  }>
 }>

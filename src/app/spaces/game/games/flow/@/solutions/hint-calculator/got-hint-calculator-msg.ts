@@ -1,5 +1,4 @@
 import { p } from '~/@/parser'
-import { isOk } from '~/@/result'
 import { MsgFrontend } from './types'
 
 const parser = p.obj({
@@ -13,7 +12,7 @@ const parser = p.obj({
 export type GotHintCalculatorMsg = p.Infer<typeof parser>
 
 const is = (input: unknown): input is GotHintCalculatorMsg => {
-  return isOk(parser.parse(input))
+  return typeof input === 'object' && input !== null && 't' in input && input.t === 'got-hint-calculator-msg'
 }
 
 const init = (msg: MsgFrontend): GotHintCalculatorMsg => {

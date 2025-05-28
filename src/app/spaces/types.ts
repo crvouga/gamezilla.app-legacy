@@ -110,10 +110,7 @@ export type FrontendModule = AppFrontendModule<{
   MsgEvtIn: AppFrontendEvt
   Model: ModelFrontend
   Msg: MsgFrontend
-  MsgCmdOut: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>
+  MsgCmdOut: AppFrontendCmd<MsgToBackend>
   MsgEvtOut: AppFrontendEvt
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
@@ -130,3 +127,7 @@ export type BackendModule = AppBackendModule<{
   MsgToBackend: MsgToBackend
   Deps: null
 }>
+
+// export const pubSubContract = PubSub.initContract({
+//   msgSpace: MsgSpace,
+// })

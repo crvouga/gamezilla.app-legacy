@@ -5,7 +5,6 @@ import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd'
 import { AddProfilesCmd } from '../@/frontend/add-profiles-cmd'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PushScreenCmd } from '../@/frontend/push-screen-cmd'
-import { ProfileFrontendCmd } from './@/frontend/cmd'
 import { ProfileFrontendCtx } from './@/frontend/ctx'
 import { ProfileDb } from './@/user-profile/user-profile-db'
 import { ScreenProfileFrontend } from './screen-profile/frontend'
@@ -65,27 +64,17 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
 }
 
 const updateFromMsg: FrontendModule['update'] = (input): ReturnType<FrontendModule['update']> => {
-  if (!input.msg) return { model: input.model }
-  switch (input.msg.t) {
-    case 'got-profile-screen-msg': {
-      const updated = ScreenProfileFrontend.update({
-        ctx: input.ctx,
-        msg: input.msg.c,
-        model: input.model.screenProfile,
-      })
+  const updated = ScreenProfileFrontend.update({
+    ctx: input.ctx,
+    msg: input.msg?.t === 'got-profile-screen-msg' ? input.msg.c : null,
+    model: input.model.screenProfile,
+    msgIn: input.msgIn,
+  })
 
-      const taggedCmds = ProfileFrontendCmd.tag('got-profile-screen-msg', updated.msgCmd)
-
-      return {
-        model: { ...input.model, screenProfile: updated.model },
-        eff: Eff.tag('got-profile-screen-msg', updated.eff),
-        msgOut: updated.msgOut,
-        msgCmd: taggedCmds ? taggedCmds.flatMap((c) => ProfileFrontendCmd.toAppFrontendCmd(c)) : undefined,
-      }
-    }
-    default: {
-      return { model: input.model }
-    }
+  return {
+    model: { ...input.model, screenProfile: updated.model },
+    eff: Eff.tag('got-profile-screen-msg', updated.eff),
+    msgOut: updated.msgOut,
   }
 }
 

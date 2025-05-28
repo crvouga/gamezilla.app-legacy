@@ -22,7 +22,6 @@ import { ILogger, Logger } from '../@/logger'
 import { UserProfile } from './@/data/user-profile'
 import { APP_SOUND, AppFrontendCmd } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
-import { AppFrontendEvt } from './@/frontend/evt'
 import { PreloadSoundsCmd } from './@/frontend/preload-sounds-cmd'
 import { Translator } from './@/frontend/translator'
 import { ViewAppRoot } from './@/ui/app-root/app-root'
@@ -203,10 +202,9 @@ const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<Ms
     Eff.tag('lang', lang.eff),
   ])
 
-  const initialCmd = Msg.batch<AppFrontendCmd<{ MsgToBackend: MsgToBackend; MsgFrontend: MsgFrontend }>>(
+  const initialCmd = Msg.batch<AppFrontendCmd<MsgToBackend>>(
+    //
     AppFrontendCmd.tag('spaces', space.msgCmd),
-    AppFrontendCmd.tag('auth', auth.msgCmd),
-    AppFrontendCmd.tag('lang', lang.msgCmd),
   )
 
   const initialMsgOut = Msg.batch(PreloadSoundsCmd.init(Object.values(APP_SOUND)))
@@ -216,7 +214,6 @@ const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<Ms
     eff: initialEff,
     msgCmd: initialCmd,
     msgOut: initialMsgOut,
-    msgEvt: [],
   })
 
   return updated
@@ -246,12 +243,8 @@ const update = (input: {
 type Output = {
   model: ModelFrontend
   eff: Eff<MsgFrontend>
-  msgEvt: AppFrontendEvt[]
   msgOut: unknown[]
-  msgCmd: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>[]
+  msgCmd: AppFrontendCmd<MsgToBackend>[]
 }
 
 const updateLoop = (ctx: FrontendCtx, acc: Output): Output => {
@@ -268,22 +261,7 @@ const updateLoop = (ctx: FrontendCtx, acc: Output): Output => {
       model: updatedCmd.model,
       msgCmd: Msg.batch(msgCmdRest, updatedCmd.msgCmd),
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
-      msgEvt: Msg.batch(acc.msgEvt, updatedCmd.msgEvt),
       msgOut: Msg.batch(acc.msgOut, updatedCmd.msgOut),
-    })
-  }
-
-  const [msgEvt, ...msgEvtRest] = acc.msgEvt
-
-  if (msgEvt) {
-    const updatedEvt = updateChild({ ctx: frontendCtx, model: acc.model, msgEvt })
-
-    return updateLoop(frontendCtx, {
-      model: updatedEvt.model,
-      msgCmd: Msg.batch(msgCmdRest, updatedEvt.msgCmd),
-      eff: Eff.batch([acc.eff, updatedEvt.eff]),
-      msgEvt: Msg.batch(msgEvtRest, updatedEvt.msgEvt),
-      msgOut: Msg.batch(acc.msgOut, updatedEvt.msgOut),
     })
   }
 
@@ -300,7 +278,6 @@ const updateLoop = (ctx: FrontendCtx, acc: Output): Output => {
       model: updatedOut.model,
       msgCmd: Msg.batch(msgCmdRest, updatedOut.msgCmd),
       eff: Eff.batch([acc.eff, updatedOut.eff]),
-      msgEvt: Msg.batch(msgEvtRest, updatedOut.msgEvt),
       msgOut: Msg.batch(msgOutRest, updatedOut.msgOut),
     })
   }
@@ -313,12 +290,8 @@ const updateChild = (input: {
   model: ModelFrontend
   msg?: MsgFrontend
   msgBackend?: MsgToFrontend
-  msgEvt?: AppFrontendEvt
   msgIn?: unknown
-  msgCmd?: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>
+  msgCmd?: AppFrontendCmd<MsgToBackend>
 }): Output => {
   const frontendCtx = toCtx(input)
 
@@ -351,7 +324,7 @@ const updateChild = (input: {
     model: input.model.wire,
     msg: input.msg?.t === 'wire' ? input.msg.c : null,
     msgBackend: input.msgBackend?.t === 'wire' ? input.msgBackend.c : null,
-    msgCmd: input.msgCmd?.t === 'wire' ? input.msgCmd : null,
+    msgCmd: input.msgCmd?.n === 'wire' ? input.msgCmd : null,
     transport: input.ctx.transport,
   })
 
@@ -359,7 +332,6 @@ const updateChild = (input: {
     ctx: frontendCtx,
     model: input.model.lang,
     msg: input.msg?.t === 'lang' ? input.msg.c : null,
-    msgCmd: null,
     msgBackend: input.msgBackend?.t === 'lang' ? input.msgBackend.c : null,
     msgIn: input.msgIn,
   })
@@ -369,8 +341,6 @@ const updateChild = (input: {
     model: input.model.frontend,
     msg: input.msg?.t === 'frontend' ? input.msg.c : undefined,
     msgBackend: input.msgBackend?.t === 'frontend' ? input.msgBackend.c : undefined,
-    msgEvt: input.msgEvt,
-    msgCmd: input.msgCmd?.n === 'frontend' ? input.msgCmd : undefined,
     msgIn: input.msgIn,
   })
 
@@ -391,14 +361,8 @@ const updateChild = (input: {
       Eff.tag('lang', lang.eff),
       Eff.tag('frontend', frontend.eff),
     ]),
-    msgOut: Msg.batch(auth.msgOut, profile.msgOut, space.msgOut, lang.msgOut),
-    msgEvt: Msg.batch<AppFrontendEvt>(auth.msgEvt, space.msgEvt, wire.msgEvt, lang.msgEvt, frontend.msgEvt),
-    msgCmd: Msg.batch<AppFrontendCmd<{ MsgToBackend: MsgToBackend; MsgFrontend: MsgFrontend }>>(
-      AppFrontendCmd.tag('auth', auth.msgCmd),
-      AppFrontendCmd.tag('spaces', space.msgCmd),
-      AppFrontendCmd.tag('lang', lang.msgCmd),
-      AppFrontendCmd.tag('frontend', frontend.msgCmd),
-    ),
+    msgOut: Msg.batch(auth.msgOut, profile.msgOut, space.msgOut, lang.msgOut, frontend.msgOut),
+    msgCmd: Msg.batch<AppFrontendCmd<MsgToBackend>>(AppFrontendCmd.tag('spaces', space.msgCmd)),
   }
 }
 

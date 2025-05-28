@@ -25,10 +25,7 @@ export type Input = {
 export type Output = {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgCmd?: AppFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: MsgToBackend
-  }>[]
+  msgCmd?: AppFrontendCmd<MsgToBackend>[]
   msgSpace?: WithEventId<MsgSpace>[]
   msgOut?: unknown[]
 }

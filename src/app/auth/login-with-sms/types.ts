@@ -8,8 +8,6 @@ import { RPC } from '~/@/rpc'
 import { RPCError } from '~/@/rpc/error'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserAccount } from '~/app/@/data/user-account'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { SendCodeInput, SendCodeOutput, VerifyCodeInput } from '../@/backend/verify-sms'
 import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
 import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
@@ -100,13 +98,6 @@ export type FrontendModule = AppFrontendModule<{
   Ctx: AuthFrontendCtx & {
     rpc: RPC.Client<typeof rpcContract>
   }
-  MsgCmdIn: null
-  MsgEvtIn: AppFrontendEvt
-  MsgCmdOut: AppFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: MsgToBackend
-  }>
-  MsgEvtOut: AppFrontendEvt
 }>
 
 export const rpcContract = RPC.initContract({

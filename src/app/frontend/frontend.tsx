@@ -1,9 +1,8 @@
 import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { APP_SOUND, AppFrontendCmd, TimeCmd } from '../@/frontend/cmd'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
-import { AppFrontendEvt } from '../@/frontend/evt'
+import { APP_SOUND } from '../@/frontend/cmd'
+import { AnonymousFrontendCtx, AppFrontendCtx, AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PreloadSoundsCmd } from '../@/frontend/preload-sounds-cmd'
 import { CopyToClipboardFrontend } from '../frontend/copy-to-clipboard'
 import { CurrentScreenFrontend } from '../frontend/current-screen'
@@ -11,10 +10,9 @@ import { FocusFrontend } from '../frontend/focus'
 import { ScreenSizeFrontend } from '../frontend/screen-size'
 import { SoundFrontend } from '../frontend/sound'
 import { StatusBarFrontend } from '../frontend/status-bar/index'
-import { TimeFrontend } from '../frontend/time'
 import { ToastFrontend } from '../frontend/toast'
 import { VisibilityFrontend } from '../frontend/visibility'
-import { type ModelFrontend, type MsgFrontend, type MsgToBackend, type MsgToFrontend } from './types'
+import { type ModelFrontend, type MsgFrontend, type MsgToFrontend } from './types'
 import './update-prompt/update-prompt'
 
 export const init = (input: {
@@ -34,10 +32,8 @@ export const init = (input: {
   const statusBar = StatusBarFrontend.init({ stored: input.stored })
   const focus = FocusFrontend.init()
   const copyToClipboard = CopyToClipboardFrontend.init()
-  const time = TimeFrontend.init()
 
   const initialModel: ModelFrontend = {
-    time: time.model,
     focus: focus.model,
     statusBar: statusBar.model,
     currentScreen: screen.model,
@@ -57,24 +53,16 @@ export const init = (input: {
   }
 }
 
-export type CmdIn<TParentMsg> = TimeCmd<TParentMsg>
-
-export const update = <TParentMsg,>(input: {
-  ctx: AppFrontendCtx | AnonymousFrontendCtx
+export const update = (input: {
+  ctx: AppFrontendCtxBase
   model: ModelFrontend
   msg?: MsgFrontend
   msgBackend?: MsgToFrontend
-  msgEvt?: AppFrontendEvt
-  msgCmd?: CmdIn<TParentMsg>
   msgIn?: unknown
 }): {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgEvt?: AppFrontendEvt[]
-  msgCmd?: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>[]
+  msgOut?: unknown[]
 } => {
   const screen = CurrentScreenFrontend.update({
     model: input.model.currentScreen,
@@ -122,14 +110,8 @@ export const update = <TParentMsg,>(input: {
     msg: input.msg?.t === 'focus' ? input.msg.c : null,
   })
 
-  const time = TimeFrontend.update({
-    model: input.model.time,
-    msg: input.msg?.t === 'time' ? input.msg.c : null,
-  })
-
   return {
     model: {
-      time: time.model,
       focus: focus.model,
       visibility: visibility.model,
       currentScreen: screen.model,
@@ -146,8 +128,6 @@ export const update = <TParentMsg,>(input: {
       Eff.tag('toast', toast.eff),
       Eff.tag('copy-to-clipboard', copyToClipboard.eff),
       Eff.tag('focus', focus.eff),
-      Eff.tag('time', time.eff),
-      //   time.parentEff,
     ]),
   }
 }
@@ -160,7 +140,6 @@ export const subscriptions = (input: {
     Sub.tag('visibility', VisibilityFrontend.subscriptions),
     Sub.tag('focus', FocusFrontend.subscriptions),
     Sub.tag('copy-to-clipboard', CopyToClipboardFrontend.subscriptions),
-    Sub.tag('time', TimeFrontend.subscriptions),
     Sub.tag('screen-size', ScreenSizeFrontend.subscriptions),
     Sub.tag('current-screen', CurrentScreenFrontend.subscriptions),
     Sub.tag('toast', ToastFrontend.subscriptions({ ctx: input.ctx, model: input.model.toast })),

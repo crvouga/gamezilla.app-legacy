@@ -128,10 +128,6 @@ export type Output<T extends AppFrontendModuleTypes> = {
    */
   msgCmd?: T['MsgCmdOut'][]
   /**
-   * `msgEvt` is a message to notify other modules
-   */
-  msgEvt?: T['MsgEvtOut'][]
-  /**
    * `msgOut` is a message to send to the parent module
    */
   msgOut?: T['MsgOut'][]
@@ -181,7 +177,6 @@ const andThen = <T extends AppFrontendModuleTypes>(
       },
       eff: Eff.batch(acc.eff, updated.eff),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
       msgOut: Msg.batch(acc.msgOut, updated.msgOut),
     }
   }

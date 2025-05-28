@@ -11,7 +11,6 @@ import { IconXMark } from '~/@/ui/icon/icon-x-mark'
 import { Paper } from '~/@/ui/paper'
 import { Typography } from '~/@/ui/typography'
 import { UserProfile } from '~/app/@/data/user-profile'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
@@ -50,12 +49,6 @@ type Module = GameFrontendModule<{
   ModelSpace: ModelSpace
   MsgSpace: MsgSpace
   Ctx: SpaceFrontendCtx & { onQuit: () => void }
-  MsgCmdIn: null
-  MsgCmdOut: AppFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: MsgToBackend
-  }>
-  MsgEvtOut: null
 }>
 
 //

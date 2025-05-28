@@ -2,14 +2,12 @@ import { matchSort } from '~/@/array/match-sort'
 import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
+import { ClickableTransparent } from '~/@/ui/clickable'
 import { IconMagnifyingGlass } from '~/@/ui/icon/icon-magnifying-glass'
 import { IconXMark } from '~/@/ui/icon/icon-x-mark'
-import { ClickableTransparent } from '~/@/ui/clickable'
-import type { VDom } from '~/@/vdom/vdom'
-import { AppFrontendCmd, sendToBackend } from '../@/frontend/cmd'
-import { AppFrontendEvt } from '../@/frontend/evt'
-import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from './search.types'
 import { Paper } from '~/@/ui/paper'
+import type { VDom } from '~/@/vdom/vdom'
+import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './search.types'
 
 //
 //
@@ -61,11 +59,6 @@ export const update = ({
 }): {
   model: ModelFrontend
   eff?: Eff<Msg>
-  msgEvt?: AppFrontendEvt[]
-  msgCmd?: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>[]
 } => {
   if (msg.t === 'focus-done') {
     return { model }
@@ -100,7 +93,7 @@ export const update = ({
     return { model }
   }
 
-  return { model, msgCmd: [sendToBackend(msg)] }
+  return { model }
 }
 
 export const updateFromBackend = ({

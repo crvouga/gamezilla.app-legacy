@@ -1,14 +1,12 @@
 import type { LanguageCodeISO_639_1 } from '~/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
 import { Posix } from '~/@/time/posix'
-import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { AppBackendModule } from '../@/architecture/app-backend'
-import { AppFrontendCmd } from '../@/frontend/cmd'
-import { AnonymousFrontendCtx } from '../@/frontend/ctx'
-import { AppFrontendEvt } from '../@/frontend/evt'
-import type { TranslatorMsg } from '../@/frontend/translator'
+import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { BackendCmd } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendEvt } from '../@/backend/evt'
+import { AnonymousFrontendCtx } from '../@/frontend/ctx'
+import type { TranslatorMsg } from '../@/frontend/translator'
 
 export type TranslationLoading = {
   startedAt: Posix
@@ -56,11 +54,4 @@ export type FrontendModule = AppFrontendModule<{
   MsgToBackend: MsgToBackend
   MsgToFrontend: MsgToFrontend
   Msg: MsgFrontend
-  MsgCmdIn: null
-  MsgEvtIn: AppFrontendEvt
-  MsgCmdOut: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>
-  MsgEvtOut: null
 }>

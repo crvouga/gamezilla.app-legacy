@@ -1,8 +1,6 @@
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { UserProfile } from '~/app/@/data/user-profile'
 import { UserId } from '~/app/@/data/user-id'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import { AppFrontendEvt } from '~/app/@/frontend/evt'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { ProfileFrontendCtx } from '../frontend/ctx'
 import { ProfileDbQuery } from '../user-profile/user-profile-db/query'
 
@@ -47,8 +45,4 @@ export type FrontendModule = AppFrontendModule<{
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   Ctx: ProfileFrontendCtx
-  MsgEvtIn: AppFrontendEvt
-  MsgCmdOut: AppFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>
-  MsgCmdIn: MsgInCmdFrontend
-  MsgEvtOut: null
 }>

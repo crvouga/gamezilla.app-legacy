@@ -42,10 +42,7 @@ type Module = GameFrontendModule<{
   ModelSpace: ModelSpace
   MsgSpace: MsgSpace
   Ctx: SpaceFrontendCtx
-  MsgCmdOut: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>
+  MsgCmdOut: AppFrontendCmd<MsgToBackend>
   MsgCmdIn: null
   MsgEvtOut: null
 }>

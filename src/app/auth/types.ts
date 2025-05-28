@@ -64,10 +64,7 @@ export type FrontendModule = AppFrontendModule<{
   MsgToBackend: MsgToBackend
   Ctx: FrontendCtx
   MsgEvtIn: AppFrontendEvt
-  MsgCmdOut: AppFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: MsgToBackend
-  }>
+  MsgCmdOut: AppFrontendCmd<MsgToBackend>
   MsgEvtOut: AppFrontendEvt
 }>
 

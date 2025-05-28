@@ -7,7 +7,8 @@ import { Avatar } from '~/@/ui/avatar'
 import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
 import { IconRobot } from '~/@/ui/icon/icon-robot'
 import { Spinner } from '~/@/ui/spinner'
-import { AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
+import { UserProfile } from '~/app/@/data/user-profile'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
@@ -26,7 +27,6 @@ import {
   isBotTurn,
   updateSpace,
 } from './vs-bot.types'
-import { UserProfile } from '~/app/@/data/user-profile'
 
 //
 //
@@ -63,10 +63,7 @@ export const update = ({
 }): {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgCmd?: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>[]
+  msgCmd?: AppFrontendCmd<MsgToBackend>[]
 } => {
   const model: ModelFrontend = {
     ...modelPrev,
@@ -130,7 +127,6 @@ export const update = ({
       if (handled.t === 'err') {
         return {
           model,
-          msgCmd: [sendToBackend(msg)],
         }
       }
 
@@ -143,7 +139,6 @@ export const update = ({
 
       return {
         model: modelNew,
-        msgCmd: [sendToBackend(msg)],
       }
     }
   }

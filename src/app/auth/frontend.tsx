@@ -5,7 +5,7 @@ import { Button } from '~/@/ui/button'
 import { IconMobilePhone } from '~/@/ui/icon/icon-mobile-phone'
 import { Typography } from '~/@/ui/typography'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { APP_SOUND, AppFrontendCmd } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PlaySoundCmd } from '../@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '../@/frontend/push-screen-cmd'
@@ -75,9 +75,8 @@ const updateContinueAsGuest: FrontendModule['update'] = (input) => {
   })
   return {
     model: { ...input.model, continueAsGuest: updated.model },
-    msgCmd: AppFrontendCmd.tag('got-login-as-guest-msg', updated.msgCmd),
     eff: Eff.tag('got-login-as-guest-msg', updated.eff),
-    msgEvt: [],
+    msgOut: updated.msgOut,
   }
 }
 
@@ -89,9 +88,8 @@ const updateLogout: FrontendModule['update'] = (input) => {
   })
   return {
     model: { ...input.model, logout: updated.model },
-    msgCmd: AppFrontendCmd.tag('got-logout-msg', updated.msgCmd),
     eff: Eff.tag('got-logout-msg', updated.eff),
-    msgEvt: [],
+    msgOut: updated.msgOut,
   }
 }
 
@@ -104,9 +102,8 @@ const updateCurrentUser: FrontendModule['update'] = (input) => {
   })
   return {
     model: { ...input.model, currentUser: updated.model },
-    msgCmd: AppFrontendCmd.tag('got-current-user-msg', updated.msgCmd),
     eff: Eff.tag('got-current-user-msg', updated.eff),
-    msgEvt: [],
+    msgOut: updated.msgOut,
   }
 }
 
@@ -120,9 +117,7 @@ const updateSMS: FrontendModule['update'] = (input) => {
 
   return {
     model: { ...input.model, continueWithSms: updated.model },
-    msgCmd: AppFrontendCmd.tag('got-login-with-sms-msg', updated.msgCmd),
     eff: Eff.tag('got-login-with-sms-msg', updated.eff),
-    msgEvt: updated.msgEvt,
     msgOut: updated.msgOut,
   }
 }

@@ -61,10 +61,7 @@ export const update = <TMsgToFrontend extends Record<string, unknown>, TMsgToBac
   }
   msg?: MsgFrontend | null
   msgBackend?: MsgToFrontend | null
-  msgCmd?: AppFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: TMsgToBackend
-  }> | null
+  msgCmd?: AppFrontendCmd<TMsgToBackend> | null
   model: ModelFrontend
   transport: IFrontendTransport<{
     MsgToBackend: TMsgToBackend

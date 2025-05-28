@@ -65,7 +65,6 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return { model: input.model, msgSpace: [input.msg.c] }
     }
     case 'got-msg-out': {
-      debugger
       return { model: input.model, msgOut: [input.msg.c] }
     }
     default: {

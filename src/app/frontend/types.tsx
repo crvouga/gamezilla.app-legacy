@@ -4,7 +4,6 @@ import { FocusFrontend } from './focus'
 import { ScreenSizeFrontend } from './screen-size'
 import { SoundFrontend } from './sound'
 import { StatusBarFrontend } from './status-bar'
-import { TimeFrontend } from './time'
 import { ToastFrontend } from './toast'
 import { VisibilityFrontend } from './visibility'
 
@@ -25,7 +24,6 @@ export type ModelFrontend = {
   statusBar: StatusBarFrontend.Model
   copyToClipboard: CopyToClipboardFrontend.Model
   focus: FocusFrontend.Model
-  time: TimeFrontend.Model
 }
 
 export type MsgBackend = { t: 'noop' }
@@ -38,7 +36,6 @@ export type MsgFrontend =
   | { t: 'screen-size'; c: ScreenSizeFrontend.Msg }
   | { t: 'status-bar'; c: StatusBarFrontend.Msg }
   | { t: 'focus'; c: FocusFrontend.Msg }
-  | { t: 'time'; c: TimeFrontend.Msg }
   | { t: 'copy-to-clipboard'; c: CopyToClipboardFrontend.Msg }
 
 export type MsgToBackend = { t: 'noop' }

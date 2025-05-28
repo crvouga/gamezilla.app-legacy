@@ -58,12 +58,8 @@ export const update = ({
   model: Model
 }): {
   model: Model
-
   eff?: Eff<Msg>
-  msgCmd?: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>[]
+  msgCmd?: AppFrontendCmd<MsgToBackend>[]
 } => {
   if (msg.t === 'vs-bot-setup') {
     const updated = VsBotSetup.update(model.vsBotSetup, msg.c)

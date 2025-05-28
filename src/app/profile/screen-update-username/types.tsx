@@ -4,9 +4,7 @@ import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { Username } from '~/app/@/data/username'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { AppFrontendEvt } from '~/app/@/frontend/evt'
 
 export type ModelFrontend = {
   'profile.update-username.username'?: string
@@ -48,12 +46,6 @@ export type FrontendModule = AppFrontendModule<{
   Msg: MsgFrontend
   MsgToBackend: MsgToBackend
   MsgToFrontend: MsgToFrontend
-  MsgEvtIn: AppFrontendEvt
-  MsgEvtOut: AppFrontendEvt
-  MsgCmdOut: AppFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: MsgToBackend
-  }>
 }>
 
 export type BackendModule = AppBackendModule<{

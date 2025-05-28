@@ -1,18 +1,16 @@
+import { HttpServerEvent } from '~/@/http-server'
 import { p } from '~/@/parser'
 import { RPC } from '~/@/rpc'
 import { RuntimeEvent } from '~/@/runtime'
 import { Posix } from '~/@/time/posix'
-import { HttpServerEvent } from '~/@/http-server'
-import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { AppFrontendEvt } from '~/app/@/frontend/evt'
+import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { BackendInstance } from '~/app/@/backend/backend-instance/backend-instance'
+import { IBackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
 import { BackendCmd } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
-import { BackendInstance } from '~/app/@/backend/backend-instance/backend-instance'
-import { IBackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 
 export type ModelFrontend = { t: 'noop' }
 
@@ -50,12 +48,7 @@ export type FrontendModule = AppFrontendModule<{
   MsgToBackend: MsgToBackend
   MsgToFrontend: MsgToFrontend
   Msg: MsgBackend
-  MsgEvtIn: AppFrontendEvt
   MsgEvtOut: null
-  MsgCmdOut: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>
 }>
 
 export const rpcContract = RPC.initContract({

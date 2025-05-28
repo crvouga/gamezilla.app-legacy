@@ -67,10 +67,6 @@ export const update = (input: {
 }): {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgCmd?: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>[]
 } => {
   return GameFrontendModule.andThen(
     input,
@@ -127,10 +123,7 @@ export const updateMain = ({
 }): {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgCmd?: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>[]
+  msgCmd?: AppFrontendCmd<MsgToBackend>[]
 } => {
   const updated = updateSpace({ msg, model, ctx })
 
@@ -153,10 +146,6 @@ export const updateFromBackend = (input: {
 }): {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgCmd?: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>[]
 } => {
   return updateFromBackendMain(input)
 }
@@ -170,10 +159,6 @@ export const updateFromBackendMain: typeof updateFromBackend = ({
   model: ModelFrontend
 }): {
   model: ModelFrontend
-  msgCmd?: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>[]
 } => {
   switch (msg.t) {
     case 'clock-tick': {

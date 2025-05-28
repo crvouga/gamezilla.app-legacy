@@ -7,7 +7,6 @@ import { UserId } from '~/app/@/data/user-id'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { UserSession } from '../@/user-session/user-session'
 import { UserSessionId } from '../@/user-session/user-session-id'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 
 export type ModelFrontend = {
   status: RemoteResult<string, null>
@@ -46,8 +45,4 @@ export type FrontendModule = AppFrontendModule<{
   }
   Model: ModelFrontend
   Msg: MsgFrontend
-  MsgCmdOut: AppFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: MsgToBackend
-  }>
 }>

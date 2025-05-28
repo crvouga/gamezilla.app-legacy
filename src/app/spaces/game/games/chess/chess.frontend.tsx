@@ -29,10 +29,7 @@ type Frontend = GameFrontend<{
   FrontendCtx: SpaceFrontendCtx
   MsgSpace: MsgSpace
   ModelSpace: ModelSpace
-  FrontendCmd: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>
+  FrontendCmd: AppFrontendCmd<MsgToBackend>
 }>
 
 //
@@ -156,7 +153,7 @@ export const update: Frontend['update'] = (input) => {
                 },
               },
               eff: Eff.tag('puzzle', updated?.eff ?? Eff.None),
-              msgCmd: AppFrontendCmd.tag('puzzle', updated.msgCmd),
+              // msgCmd: AppFrontendCmd.tag('puzzle', updated.msgCmd),
             }
           }
           return {
@@ -296,7 +293,7 @@ export const update: Frontend['update'] = (input) => {
               },
             },
             eff: Eff.tag('puzzle', updated?.eff ?? Eff.None),
-            msgCmd: AppFrontendCmd.tag('puzzle', updated.msgCmd),
+            // msgCmd: AppFrontendCmd.tag('puzzle', updated.msgCmd),
           }
         }
       }

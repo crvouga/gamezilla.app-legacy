@@ -39,10 +39,7 @@ export const update = (
   model: ModelFrontend,
 ): {
   model: ModelFrontend
-  msgCmd?: AppFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>[]
+  msgCmd?: AppFrontendCmd<MsgToBackend>[]
 } => {
   switch (msg[0]) {
     //
