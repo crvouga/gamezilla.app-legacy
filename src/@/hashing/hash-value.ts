@@ -1,8 +1,8 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-const parser = p.brand(p.str, 'HashValue')
+const parser = s.brand(s.str, 'HashValue')
 
-export type HashValue = p.Infer<typeof parser>
+export type HashValue = s.Infer<typeof parser>
 
 const fromString = (value: string): HashValue => {
   return value as HashValue

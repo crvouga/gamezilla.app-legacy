@@ -1,18 +1,18 @@
 import { Posix } from '~/@/time/posix'
 import { BackendInstanceId } from './backend-instance-id'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { TimeSpan } from '~/@/time/time-span'
 
-const parser = p.obj({
+const parser = s.obj({
   backendInstanceId: BackendInstanceId,
   startedAt: Posix,
-  stoppedAt: p.maybe(Posix),
+  stoppedAt: s.maybe(Posix),
   lastHeartbeatAt: Posix,
-  ipAddress: p.maybe(p.str),
-  port: p.maybe(p.num),
+  ipAddress: s.maybe(s.str),
+  port: s.maybe(s.num),
 })
 
-export type BackendInstance = p.Infer<typeof parser>
+export type BackendInstance = s.Infer<typeof parser>
 
 const HEARTBEAT = TimeSpan.minutes(1)
 

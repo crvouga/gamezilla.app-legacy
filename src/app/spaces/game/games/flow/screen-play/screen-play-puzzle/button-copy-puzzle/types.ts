@@ -1,10 +1,10 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-export const MsgSpace = p.or(
-  p.obj({
-    t: p.l('user-clicked-copy-to-clipboard'),
+export const MsgSpace = s.or(
+  s.obj({
+    t: s.l('user-clicked-copy-to-clipboard'),
   }),
-  p.obj({
-    t: p.l('copied-to-clipboard'),
+  s.obj({
+    t: s.l('copied-to-clipboard'),
   }),
 )

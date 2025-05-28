@@ -1,14 +1,14 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('focus'),
-    viewId: p.str,
+export const parser = s.or(
+  s.obj({
+    t: s.l('focus'),
+    viewId: s.str,
   }),
 )
 
-export type FocusViewCmd = p.Infer<typeof parser>
+export type FocusViewCmd = s.Infer<typeof parser>
 
 export const init = (viewId: string): FocusViewCmd => {
   return {

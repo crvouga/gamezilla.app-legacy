@@ -1,9 +1,9 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Sub } from '~/@/sub'
 
 export type Topic<TParams, TMsg> = {
-  params: p.Parser<TParams>
-  msg: p.Parser<TMsg>
+  params: s.Parser<TParams>
+  msg: s.Parser<TMsg>
 }
 
 export type Contract<TTopics extends Record<string, Topic<any, any> | Contract<any>>> = TTopics
@@ -11,8 +11,8 @@ export type Contract<TTopics extends Record<string, Topic<any, any> | Contract<a
 export type Client<T extends Contract<any>> = {
   [K in keyof T]: T[K] extends Topic<unknown, unknown>
     ? {
-        publish: (params: p.Infer<T[K]['params']>, msg: p.Infer<T[K]['msg']>) => void
-        sub: (params: p.Infer<T[K]['params']>) => Sub<p.Infer<T[K]['msg']>>
+        publish: (params: s.Infer<T[K]['params']>, msg: s.Infer<T[K]['msg']>) => void
+        sub: (params: s.Infer<T[K]['params']>) => Sub<s.Infer<T[K]['msg']>>
       }
     : T[K] extends Contract<any>
       ? Client<T[K]>

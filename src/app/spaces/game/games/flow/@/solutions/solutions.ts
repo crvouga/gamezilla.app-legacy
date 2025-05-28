@@ -1,6 +1,6 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { ILogger } from '~/@/logger'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { unwrapOr } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import { Variant } from '../variant'
@@ -9,9 +9,9 @@ import { AlgoSolveAsync } from './algo-solve-async'
 import { Solution } from './solution'
 import { SolutionHash } from './solution-hash/solution-hash'
 
-const parser = p.arr(Solution)
+const parser = s.arr(Solution)
 
-export type Solutions = p.Infer<typeof parser>
+export type Solutions = s.Infer<typeof parser>
 
 const init: Solutions = []
 

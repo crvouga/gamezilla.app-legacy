@@ -1,13 +1,13 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import * as RPC from '../rpc'
 
 export const childRpcContract = RPC.initContract({
   baz: {
-    input: p.obj({
-      name: p.str,
+    input: s.obj({
+      name: s.str,
     }),
-    output: p.obj({
-      message: p.str,
+    output: s.obj({
+      message: s.str,
     }),
   },
 })
@@ -23,20 +23,20 @@ export const childRpcBackend = RPC.initServer(childRpcContract, {
 export const contract = RPC.initContract({
   child: childRpcContract,
   foo: {
-    input: p.obj({
-      name: p.str,
-      age: p.num,
+    input: s.obj({
+      name: s.str,
+      age: s.num,
     }),
-    output: p.obj({
-      message: p.str,
+    output: s.obj({
+      message: s.str,
     }),
   },
   bar: {
-    input: p.obj({
-      name: p.str,
+    input: s.obj({
+      name: s.str,
     }),
-    output: p.obj({
-      message: p.str,
+    output: s.obj({
+      message: s.str,
     }),
   },
 })

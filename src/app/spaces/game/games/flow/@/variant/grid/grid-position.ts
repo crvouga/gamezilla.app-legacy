@@ -1,11 +1,11 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-export const parser = p.obj({
-  x: p.num,
-  y: p.num,
+export const parser = s.obj({
+  x: s.num,
+  y: s.num,
 })
 
-export type Position = p.Infer<typeof parser>
+export type Position = s.Infer<typeof parser>
 
 const distance = (a: Position, b: Position) => {
   return (b.x - a.x) ** 2 + (b.y - a.y) ** 2

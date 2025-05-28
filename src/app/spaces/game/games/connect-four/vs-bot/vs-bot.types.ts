@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { EventId, type WithEventId } from '~/@/event-sourced/event'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
@@ -14,10 +14,10 @@ import { BotLevel } from './bot-level'
 //
 //
 
-export const ModelBackend = p.obj({
-  botStartedFindingMoveAt: p.maybe(Posix),
+export const ModelBackend = s.obj({
+  botStartedFindingMoveAt: s.maybe(Posix),
 })
-export type ModelBackend = p.Infer<typeof ModelBackend>
+export type ModelBackend = s.Infer<typeof ModelBackend>
 
 export const isBotMoving = (now: Posix, model: ModelBackend) => {
   if (!model.botStartedFindingMoveAt) {
@@ -53,67 +53,67 @@ export type MsgToFrontend = { t: null }
 
 export type MsgToBackend = { t: null }
 
-export const MsgSpace = p.or(
-  p.obj({
-    t: p.l('user-dropped-disc'),
+export const MsgSpace = s.or(
+  s.obj({
+    t: s.l('user-dropped-disc'),
     columnIndex: ConnectFour.ColumnIndex,
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-left'),
+  s.obj({
+    t: s.l('user-left'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('bot-dropped-disc'),
+  s.obj({
+    t: s.l('bot-dropped-disc'),
     columnIndex: ConnectFour.ColumnIndex,
   }),
-  p.obj({
-    t: p.l('user-started-playing'),
+  s.obj({
+    t: s.l('user-started-playing'),
     userId: UserId,
     playerType: ConnectFour.PlayerType,
   }),
-  p.obj({
-    t: p.l('user-stopped-playing'),
+  s.obj({
+    t: s.l('user-stopped-playing'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-started-game'),
+  s.obj({
+    t: s.l('user-started-game'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-stopped-game'),
+  s.obj({
+    t: s.l('user-stopped-game'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-swapped-sides'),
+  s.obj({
+    t: s.l('user-swapped-sides'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-changed-bot-level'),
+  s.obj({
+    t: s.l('user-changed-bot-level'),
     botLevel: BotLevel,
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('time-passed'),
+  s.obj({
+    t: s.l('time-passed'),
     now: Posix,
   }),
-  p.obj({
-    t: p.l('user-restarted-game'),
+  s.obj({
+    t: s.l('user-restarted-game'),
     userId: UserId,
   }),
 )
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>
 
-const EventErr = p.or(
-  p.obj({
-    t: p.l('not-playing'),
+const EventErr = s.or(
+  s.obj({
+    t: s.l('not-playing'),
   }),
-  p.obj({
-    t: p.l('move'),
+  s.obj({
+    t: s.l('move'),
     c: ConnectFour.MoveProblem,
   }),
 )
-type EventErr = p.Infer<typeof EventErr>
+type EventErr = s.Infer<typeof EventErr>
 
 export const msgSpaceErrorToString = ({ error }: { error: EventErr }): string => {
   switch (error.t) {
@@ -126,38 +126,38 @@ export const msgSpaceErrorToString = ({ error }: { error: EventErr }): string =>
   }
 }
 
-export const StateSetup = p.obj({
-  type: p.l('setup'),
+export const StateSetup = s.obj({
+  type: s.l('setup'),
   userPlayerType: ConnectFour.PlayerType,
   botLevel: BotLevel,
-  playingUserId: p.maybe(UserId),
+  playingUserId: s.maybe(UserId),
 })
 
-export type StateSetup = p.Infer<typeof StateSetup>
+export type StateSetup = s.Infer<typeof StateSetup>
 
-export const StateGame = p.obj({
-  type: p.l('game'),
+export const StateGame = s.obj({
+  type: s.l('game'),
   userPlayerType: ConnectFour.PlayerType,
   botLevel: BotLevel,
   playingUserId: UserId,
   columns: ConnectFour.Columns,
 })
-export type StateGame = p.Infer<typeof StateGame>
+export type StateGame = s.Infer<typeof StateGame>
 
-const BaseModelSpace = p.obj({
-  errors: p.dict(
+const BaseModelSpace = s.obj({
+  errors: s.dict(
     EventId,
-    p.and(
+    s.and(
       MsgSpace,
-      p.obj({
+      s.obj({
         error: EventErr,
       }),
     ),
   ),
 })
 
-export const ModelSpace = p.and(BaseModelSpace, p.or(StateSetup, StateGame))
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export const ModelSpace = s.and(BaseModelSpace, s.or(StateSetup, StateGame))
+export type ModelSpace = s.Infer<typeof ModelSpace>
 
 export const initSpace = (input: SpaceCtx): ModelSpace => {
   return {

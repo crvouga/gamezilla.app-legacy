@@ -1,15 +1,15 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Translator } from '~/@/l18n/generated'
 import { IconXMark } from '~/@/ui/icon/icon-x-mark'
 import { Slider } from '~/@/ui/slider'
 
-export const Model = p.obj({
-  t: p.l('flow-grid'),
-  width: p.num,
-  height: p.num,
+export const Model = s.obj({
+  t: s.l('flow-grid'),
+  width: s.num,
+  height: s.num,
 })
 
-export type Model = p.Infer<typeof Model>
+export type Model = s.Infer<typeof Model>
 
 export const init = (model: { width: number; height: number }): Model => {
   return {

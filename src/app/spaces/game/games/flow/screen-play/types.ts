@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
@@ -24,56 +24,56 @@ export type MsgToBackend = { t: 'noop' }
 
 export type MsgToFrontend = { t: 'noop' }
 
-export const MsgSpace = p.or(
-  p.obj({
-    t: p.l('user-clicked-exit-play-mode-button'),
+export const MsgSpace = s.or(
+  s.obj({
+    t: s.l('user-clicked-exit-play-mode-button'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-clicked-select-pack-back-button'),
+  s.obj({
+    t: s.l('user-clicked-select-pack-back-button'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-clicked-open-pack-puzzle-grid-item'),
+  s.obj({
+    t: s.l('user-clicked-open-pack-puzzle-grid-item'),
     pack: Pack,
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-clicked-exit-screen-open-pack'),
+  s.obj({
+    t: s.l('user-clicked-exit-screen-open-pack'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-clicked-open-screen-play-puzzle'),
+  s.obj({
+    t: s.l('user-clicked-open-screen-play-puzzle'),
     puzzle: PuzzleResult,
-    puzzleIndex: p.num,
+    puzzleIndex: s.num,
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-changed-slides'),
-    slideIndex: p.num,
+  s.obj({
+    t: s.l('user-changed-slides'),
+    slideIndex: s.num,
     userId: UserId,
   }),
   ScreenPuzzleTypes.MsgSpace,
 )
 
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>
 
-const Screen = p.or(
-  p.obj({
-    t: p.l('screen-select-pack'),
+const Screen = s.or(
+  s.obj({
+    t: s.l('screen-select-pack'),
   }),
-  p.obj({
-    t: p.l('screen-select-puzzle'),
+  s.obj({
+    t: s.l('screen-select-puzzle'),
     pack: Pack,
-    slideIndex: p.num,
+    slideIndex: s.num,
   }),
   ScreenPuzzleTypes.ModelSpace,
 )
 
-export const ModelSpace = p.obj({
+export const ModelSpace = s.obj({
   screen: Screen,
 })
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export type ModelSpace = s.Infer<typeof ModelSpace>
 
 //
 //

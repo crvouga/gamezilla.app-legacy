@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Ok, Result } from '~/@/result'
 import { Runtime } from '~/@/runtime'
 import { CONFIG_BACKEND } from '~/config/backend'
@@ -145,9 +145,9 @@ const Fixtures = async (): Promise<Fixture[]> => {
   return fixtures
 }
 
-const Item = p.obj({ id: p.str })
+const Item = s.obj({ id: s.str })
 
-type Item = p.Infer<typeof Item>
+type Item = s.Infer<typeof Item>
 
 const randomItem = (): Item => {
   return {

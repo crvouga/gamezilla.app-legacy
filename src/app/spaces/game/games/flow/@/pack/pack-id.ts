@@ -1,9 +1,9 @@
 import { Uuid } from '~/@/id/uuid'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-const parser = p.brand(p.str, 'PackId')
+const parser = s.brand(s.str, 'PackId')
 
-export type PackId = p.Infer<typeof parser>
+export type PackId = s.Infer<typeof parser>
 
 const generate = () => {
   return `game-flow-pack:${Uuid.generate()}` as PackId

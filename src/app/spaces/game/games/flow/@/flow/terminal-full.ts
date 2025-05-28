@@ -1,15 +1,15 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { GroupId } from './group-id'
 import { NodeId } from './node-id'
 import { Terminal } from './terminal'
 
-const parser = p.obj({
+const parser = s.obj({
   groupId: GroupId,
   startId: NodeId,
   endId: NodeId,
 })
 
-export type TerminalFull = p.Infer<typeof parser>
+export type TerminalFull = s.Infer<typeof parser>
 
 const is = (terminal: Terminal): terminal is TerminalFull => {
   return Boolean(terminal.endId)

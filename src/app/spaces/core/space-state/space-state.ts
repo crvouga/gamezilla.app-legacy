@@ -1,5 +1,5 @@
 import { EventId, WithEventMeta } from '~/@/event-sourced/event'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import type { UserId } from '~/app/@/data/user-id'
 import { Space } from '~/app/spaces/@/space/space'
 import * as GameSpace from '../../game/games/space'
@@ -12,36 +12,36 @@ import { MsgSpace } from '../space-msg/space-msg'
 //
 //
 
-export const Initial = p.obj({
-  type: p.l('initial'),
+export const Initial = s.obj({
+  type: s.l('initial'),
 })
-export type Initial = p.Infer<typeof Initial>
+export type Initial = s.Infer<typeof Initial>
 
-export const Started = p.and(
+export const Started = s.and(
   Space,
-  p.obj({
-    type: p.l('started'),
-    game: p.maybe(Game.ModelSpace),
+  s.obj({
+    type: s.l('started'),
+    game: s.maybe(Game.ModelSpace),
     latestEventId: EventId,
   }),
 )
-export type Started = p.Infer<typeof Started>
+export type Started = s.Infer<typeof Started>
 
-export const Ended = p.and(
+export const Ended = s.and(
   Space,
-  p.obj({
-    type: p.l('ended'),
+  s.obj({
+    type: s.l('ended'),
     latestEventId: EventId,
   }),
 )
-export type Ended = p.Infer<typeof Ended>
+export type Ended = s.Infer<typeof Ended>
 
-const StateBase = p.obj({
-  latestEventId: p.maybe(EventId),
+const StateBase = s.obj({
+  latestEventId: s.maybe(EventId),
 })
 
-export const State = p.and(StateBase, p.or(Initial, Started, Ended))
-export type State = p.Infer<typeof State>
+export const State = s.and(StateBase, s.or(Initial, Started, Ended))
+export type State = s.Infer<typeof State>
 
 export const init: State = {
   type: 'initial',

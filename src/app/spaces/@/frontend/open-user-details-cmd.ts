@@ -1,15 +1,15 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import type { UserId } from '~/app/@/data/user-id'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('space-cmd.open-user-details'),
-    userId: p.custom((input): input is UserId => typeof input === 'string', 'invalid user id'),
+export const parser = s.or(
+  s.obj({
+    t: s.l('space-cmd.open-user-details'),
+    userId: s.custom((input): input is UserId => typeof input === 'string', 'invalid user id'),
   }),
 )
 
-export type OpenUserDetailsCmd = p.Infer<typeof parser>
+export type OpenUserDetailsCmd = s.Infer<typeof parser>
 
 export const init = (userId: UserId): OpenUserDetailsCmd => {
   return {

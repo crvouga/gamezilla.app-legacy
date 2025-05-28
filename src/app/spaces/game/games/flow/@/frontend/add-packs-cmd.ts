@@ -1,17 +1,17 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { Pack } from '../pack/pack'
 import { PackId } from '../pack/pack-id'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('add-packs'),
-    packs: p.dict(PackId, Pack),
-    causedBy: p.any,
+export const parser = s.or(
+  s.obj({
+    t: s.l('add-packs'),
+    packs: s.dict(PackId, Pack),
+    causedBy: s.any,
   }),
 )
 
-export type AddPacksCmd = p.Infer<typeof parser>
+export type AddPacksCmd = s.Infer<typeof parser>
 
 export const init = (packs: { [packId: PackId]: Pack }, causedBy: unknown): AddPacksCmd => {
   return {

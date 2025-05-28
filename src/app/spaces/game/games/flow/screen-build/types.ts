@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
@@ -82,50 +82,50 @@ export type MsgToFrontend =
 //
 //
 
-export const MsgSpace = p.or(
+export const MsgSpace = s.or(
   ScreenMainMenu.MsgSpace,
   ScreenPuzzleBuilderTypes.MsgSpace,
   ScreenPuzzleBuilderOpenTypes.MsgSpace,
   ScreenPackBuilderOpenTypes.MsgSpace,
-  p.obj({
-    t: p.l('got-screen-pack-builder-msg'),
+  s.obj({
+    t: s.l('got-screen-pack-builder-msg'),
     c: ScreenPackBuilderTypes.MsgSpace,
   }),
-  p.obj({
-    t: p.l('user-clicked-back-button'),
+  s.obj({
+    t: s.l('user-clicked-back-button'),
     userId: UserId,
   }),
 )
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>
 
-export const Screen = p.or(
-  p.obj({
-    t: p.l('screen-main-menu'),
+export const Screen = s.or(
+  s.obj({
+    t: s.l('screen-main-menu'),
   }),
-  p.obj({
-    t: p.l('screen-puzzle-builder-open'),
+  s.obj({
+    t: s.l('screen-puzzle-builder-open'),
   }),
-  p.obj({
-    t: p.l('screen-pack-builder-open'),
+  s.obj({
+    t: s.l('screen-pack-builder-open'),
   }),
-  p.obj({
-    t: p.l('screen-puzzle-builder'),
+  s.obj({
+    t: s.l('screen-puzzle-builder'),
   }),
-  p.obj({
-    t: p.l('screen-pack-builder'),
+  s.obj({
+    t: s.l('screen-pack-builder'),
   }),
 )
-export type Screen = p.Infer<typeof Screen>
+export type Screen = s.Infer<typeof Screen>
 
-export const ModelSpace = p.obj({
+export const ModelSpace = s.obj({
   screen: Screen,
-  screenPuzzleBuilder: p.maybe(ScreenPuzzleBuilderTypes.ModelSpace),
-  screenPuzzleBuilderOpen: p.maybe(ScreenPuzzleBuilderOpenTypes.ModelSpace),
-  screenPackBuilder: p.maybe(ScreenPackBuilderTypes.ModelSpace),
-  screenPackBuilderOpen: p.maybe(ScreenPackBuilderOpenTypes.ModelSpace),
+  screenPuzzleBuilder: s.maybe(ScreenPuzzleBuilderTypes.ModelSpace),
+  screenPuzzleBuilderOpen: s.maybe(ScreenPuzzleBuilderOpenTypes.ModelSpace),
+  screenPackBuilder: s.maybe(ScreenPackBuilderTypes.ModelSpace),
+  screenPackBuilderOpen: s.maybe(ScreenPackBuilderOpenTypes.ModelSpace),
 })
 
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export type ModelSpace = s.Infer<typeof ModelSpace>
 
 export type UpdateSpace = (input: {
   ctx: FlowSpaceCtx

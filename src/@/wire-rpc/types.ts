@@ -1,5 +1,5 @@
 import { IHttpClient } from '~/@/http-client'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Result } from '~/@/result'
 import { ClientSessionId } from '../wire/client-session-id'
 import { SessionId } from '../wire/session-id'
@@ -8,8 +8,8 @@ import { RPCError } from './error'
 export type Base = Contract<Record<string, Endpoint<any, any> | Contract<any>>>
 
 export type Endpoint<TInput, TOutput> = {
-  input: p.Parser<TInput>
-  output: p.Parser<TOutput>
+  input: s.Parser<TInput>
+  output: s.Parser<TOutput>
 }
 
 export type ReqCtx = {
@@ -21,7 +21,7 @@ export type Contract<TEndpoints extends Record<string, Endpoint<any, any> | Cont
 
 export type Client<T extends Base> = {
   [K in keyof T]: T[K] extends Endpoint<unknown, unknown>
-    ? (input: p.Infer<T[K]['input']>) => Promise<Result<RPCError, p.Infer<T[K]['output']>>>
+    ? (input: s.Infer<T[K]['input']>) => Promise<Result<RPCError, s.Infer<T[K]['output']>>>
     : T[K] extends Contract<any>
       ? Client<T[K]>
       : never
@@ -29,7 +29,7 @@ export type Client<T extends Base> = {
 
 export type Server<T extends Base> = {
   [K in keyof T]: T[K] extends Endpoint<unknown, unknown>
-    ? (input: p.Infer<T[K]['input']>, reqCtx: ReqCtx) => Promise<p.Infer<T[K]['output']>>
+    ? (input: s.Infer<T[K]['input']>, reqCtx: ReqCtx) => Promise<s.Infer<T[K]['output']>>
     : T[K] extends Contract<any>
       ? Server<T[K]>
       : never

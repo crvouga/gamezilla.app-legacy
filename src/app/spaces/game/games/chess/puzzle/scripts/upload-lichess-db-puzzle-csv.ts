@@ -1,5 +1,5 @@
 import { Result } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { PuzzleDb, type PuzzleRow } from '../puzzle-db/puzzle-db-impl'
 
@@ -11,20 +11,20 @@ import { PuzzleDb, type PuzzleRow } from '../puzzle-db/puzzle-db-impl'
 //
 //
 
-const LichessRow = p.obj({
-  PuzzleId: p.str,
-  FEN: p.str,
-  Moves: p.str,
-  Rating: p.str,
-  RatingDeviation: p.str,
-  Popularity: p.str,
-  NbPlays: p.str,
-  Themes: p.str,
-  GameUrl: p.str,
-  OpeningTags: p.str,
+const LichessRow = s.obj({
+  PuzzleId: s.str,
+  FEN: s.str,
+  Moves: s.str,
+  Rating: s.str,
+  RatingDeviation: s.str,
+  Popularity: s.str,
+  NbPlays: s.str,
+  Themes: s.str,
+  GameUrl: s.str,
+  OpeningTags: s.str,
 })
 
-export type LichessRow = p.Infer<typeof LichessRow>
+export type LichessRow = s.Infer<typeof LichessRow>
 
 export const toLichessRow = (x: unknown): LichessRow | null => {
   return Result.unwrapOr(LichessRow.parse(x), null)

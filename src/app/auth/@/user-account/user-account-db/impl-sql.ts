@@ -1,5 +1,5 @@
 import type { IDbConnSql } from '~/@/db-conn-sql'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, Ok, Result, isErr } from '~/@/result'
 import { Posix } from '~/@/time/posix'
@@ -8,13 +8,13 @@ import { UserId } from '~/app/@/data/user-id'
 import { UserRole } from '~/app/@/data/user-role'
 import type { IUserAccountDb } from './interface'
 
-export const UserAccountRow = p.obj({
-  id: p.str,
-  created_at_posix: p.or(p.str, p.num),
+export const UserAccountRow = s.obj({
+  id: s.str,
+  created_at_posix: s.or(s.str, s.num),
   user_role: UserRole,
-  phone_number: p.maybe(p.str),
+  phone_number: s.maybe(s.str),
 })
-export type UserAccountRow = p.Infer<typeof UserAccountRow>
+export type UserAccountRow = s.Infer<typeof UserAccountRow>
 
 const toAccount = ({ userAccount }: { userAccount: UserAccountRow }): Result<string, UserAccount> => {
   const userId = Result.unwrapOr(UserId.parse(userAccount.id), null)
@@ -123,7 +123,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
         phone_number: input.phoneNumber ? PhoneNumber.toString(input.phoneNumber) : null,
       }
       const inserted = await dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `
         INSERT INTO user_account (
 					phone_number,

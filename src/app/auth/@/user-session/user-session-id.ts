@@ -1,6 +1,6 @@
 import { Uuid } from '~/@/id/uuid'
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 export type UserSessionId = Brand<string, 'UserSessionId'>
 
@@ -8,7 +8,7 @@ const is = (userSessionId: unknown): userSessionId is UserSessionId => {
   return typeof userSessionId === 'string'
 }
 
-const parser = p.custom(is, 'Invalid user session id')
+const parser = s.custom(is, 'Invalid user session id')
 
 const namespace = 'user-session'
 const separator = ':'

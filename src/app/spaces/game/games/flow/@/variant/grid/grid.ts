@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Flow } from '../../flow'
 import { EdgeId } from '../../flow/edge-id'
 import { GroupId } from '../../flow/group-id'
@@ -15,15 +15,15 @@ import { Position } from './grid-position'
 //
 //
 
-export const Model = p.and(
+export const Model = s.and(
   Flow.Model,
   VariantGridDimensions.Model,
-  p.obj({
-    t: p.l('flow-grid'),
-    positions: p.dict(NodeId, Position.parser),
+  s.obj({
+    t: s.l('flow-grid'),
+    positions: s.dict(NodeId, Position.parser),
   }),
 )
-export type Model = p.Infer<typeof Model>
+export type Model = s.Infer<typeof Model>
 
 const initNodeId = (x: number, y: number): NodeId => {
   return NodeId.init(`${x},${y}`)

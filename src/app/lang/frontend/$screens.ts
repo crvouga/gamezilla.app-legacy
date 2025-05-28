@@ -1,11 +1,11 @@
 import { Result } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-const Screen = p.obj({
-  n: p.l('lang'),
-  t: p.l('choose-lang'),
+const Screen = s.obj({
+  n: s.l('lang'),
+  t: s.l('choose-lang'),
 })
 
-export type Screen = p.Infer<typeof Screen>
+export type Screen = s.Infer<typeof Screen>
 
 export const toScreen = (x: unknown): Screen | null => Result.unwrapOr(Screen.parse(x), null)

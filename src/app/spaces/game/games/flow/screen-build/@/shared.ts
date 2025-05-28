@@ -1,17 +1,17 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 
-export const MsgSpace = p.or(
-  p.obj({
-    t: p.l('create-new-pack.user-created-pack'),
+export const MsgSpace = s.or(
+  s.obj({
+    t: s.l('create-new-pack.user-created-pack'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-exited-pack-builder'),
+  s.obj({
+    t: s.l('user-exited-pack-builder'),
   }),
-  p.obj({
-    t: p.l('user-exited-puzzle-builder'),
+  s.obj({
+    t: s.l('user-exited-puzzle-builder'),
   }),
 )
 
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>

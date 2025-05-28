@@ -1,36 +1,36 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { RemoteResult } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 
-export const EditPackNameValidationError = p.obj({
-  t: p.l('name-cannot-be-empty'),
+export const EditPackNameValidationError = s.obj({
+  t: s.l('name-cannot-be-empty'),
 })
-export type EditPackNameValidationError = p.Infer<typeof EditPackNameValidationError>
+export type EditPackNameValidationError = s.Infer<typeof EditPackNameValidationError>
 
-export const ModelSpace = p.obj({
-  editPackName_draft: p.str,
-  editPackName_result: RemoteResult.parser(p.str, p.unknown),
-  editPackName_validationError: p.or(EditPackNameValidationError, p.l(null)),
+export const ModelSpace = s.obj({
+  editPackName_draft: s.str,
+  editPackName_result: RemoteResult.parser(s.str, s.unknown),
+  editPackName_validationError: s.or(EditPackNameValidationError, s.l(null)),
 })
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export type ModelSpace = s.Infer<typeof ModelSpace>
 
-export const MsgSpace = p.or(
-  p.obj({
-    t: p.l('edit-pack-name.user-inputted-draft-name'),
+export const MsgSpace = s.or(
+  s.obj({
+    t: s.l('edit-pack-name.user-inputted-draft-name'),
     userId: UserId,
-    packNameDraft: p.str,
+    packNameDraft: s.str,
   }),
-  p.obj({
-    t: p.l('edit-pack-name.user-submitted-form'),
-    userId: UserId,
-  }),
-  p.obj({
-    t: p.l('edit-pack-name.user-closed-drawer'),
+  s.obj({
+    t: s.l('edit-pack-name.user-submitted-form'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('edit-pack-name.user-clicked-open-drawer-button'),
+  s.obj({
+    t: s.l('edit-pack-name.user-closed-drawer'),
+    userId: UserId,
+  }),
+  s.obj({
+    t: s.l('edit-pack-name.user-clicked-open-drawer-button'),
     userId: UserId,
   }),
 )
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>

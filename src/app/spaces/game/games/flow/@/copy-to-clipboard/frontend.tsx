@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { IconCopy } from '~/@/ui/icon/icon-copy'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd'
@@ -9,15 +9,15 @@ import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-pro
 import { Variant } from '../variant'
 import { VariantGridShorthand } from '../variant/grid'
 
-export const MsgFrontend = p.or(
-  p.obj({
-    t: p.l('user-clicked-copy-to-clipboard'),
+export const MsgFrontend = s.or(
+  s.obj({
+    t: s.l('user-clicked-copy-to-clipboard'),
   }),
-  p.obj({
-    t: p.l('copied-to-clipboard'),
+  s.obj({
+    t: s.l('copied-to-clipboard'),
   }),
 )
-export type MsgFrontend = p.Infer<typeof MsgFrontend>
+export type MsgFrontend = s.Infer<typeof MsgFrontend>
 
 const update = <TModel,>(input: {
   msg: MsgFrontend | { t: string & {} }

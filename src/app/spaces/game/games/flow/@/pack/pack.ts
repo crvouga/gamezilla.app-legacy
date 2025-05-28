@@ -1,23 +1,23 @@
 import { unwrap } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data/user-id'
 import { PuzzleId } from '../puzzle/puzzle-id'
 import { PackId } from './pack-id'
 import { PackName } from './pack-name'
 
-const parser = p.obj({
+const parser = s.obj({
   id: PackId,
   createdBy: UserId,
   createdAt: Posix,
   lastUpdatedBy: UserId,
   lastUpdatedAt: Posix,
   name: PackName,
-  puzzleIds: p.arr(PuzzleId),
-  isOfficial: p.maybe(p.bool),
+  puzzleIds: s.arr(PuzzleId),
+  isOfficial: s.maybe(s.bool),
 })
 
-export type Pack = p.Infer<typeof parser>
+export type Pack = s.Infer<typeof parser>
 
 const create = async (input: {
   count?: number

@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../../../@/pack/pack'
 import { CreateNewPackTypes } from './button-create-new-pack'
@@ -11,15 +11,15 @@ export const initFrontend: ModelFrontend = {
 
 export type MsgFrontend = CreateNewPackTypes.MsgFrontend
 
-export const MsgSpace = p.or(
+export const MsgSpace = s.or(
   CreateNewPackTypes.MsgSpace,
-  p.obj({
-    t: p.l('screen-pack-builder-open.user-clicked-pack-item'),
+  s.obj({
+    t: s.l('screen-pack-builder-open.user-clicked-pack-item'),
     pack: Pack,
     userId: UserId,
   }),
 )
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>
 
 export type MsgBackend = CreateNewPackTypes.MsgBackend
 
@@ -27,5 +27,5 @@ export type MsgToBackend = CreateNewPackTypes.MsgToBackend
 
 export type MsgToFrontend = CreateNewPackTypes.MsgToFrontend
 
-export const ModelSpace = p.and(p.obj({}), CreateNewPackTypes.ModelSpace)
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export const ModelSpace = s.and(s.obj({}), CreateNewPackTypes.ModelSpace)
+export type ModelSpace = s.Infer<typeof ModelSpace>

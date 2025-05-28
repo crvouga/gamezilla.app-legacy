@@ -1,4 +1,4 @@
-import type { p } from '~/@/schema'
+import type { s } from '~/@/schema'
 import type { Result } from '~/@/result'
 import type { Sql } from '~/@/sql'
 import { Sub } from '../../sub'
@@ -9,7 +9,7 @@ export type DbConnSqlNotification = {
 }
 
 export type DbConnSqlQueryInput<TRow> = {
-  parser: p.Parser<TRow>
+  parser: s.Parser<TRow>
   sql: string
   vars: Sql.Vars
 }

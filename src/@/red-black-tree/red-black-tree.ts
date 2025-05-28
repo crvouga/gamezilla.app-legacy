@@ -1,15 +1,15 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-export const Color = p.enumeration(['red', 'black'])
-export type Color = p.Infer<typeof Color>
+export const Color = s.enumeration(['red', 'black'])
+export type Color = s.Infer<typeof Color>
 
-export const RedBlackTree = <TK, TV>(K: p.Parser<TK>, V: p.Parser<TV>) => {
-  return p.or(
-    p.obj({
-      t: p.l('empty'),
+export const RedBlackTree = <TK, TV>(K: s.Parser<TK>, V: s.Parser<TV>) => {
+  return s.or(
+    s.obj({
+      t: s.l('empty'),
     }),
-    p.obj({
-      t: p.l('node'),
+    s.obj({
+      t: s.l('node'),
       color: Color,
       key: K,
       value: V,
@@ -19,4 +19,4 @@ export const RedBlackTree = <TK, TV>(K: p.Parser<TK>, V: p.Parser<TV>) => {
   )
 }
 
-export type RedBlackTree<TK, TV> = p.Infer<ReturnType<typeof RedBlackTree<TK, TV>>>
+export type RedBlackTree<TK, TV> = s.Infer<ReturnType<typeof RedBlackTree<TK, TV>>>

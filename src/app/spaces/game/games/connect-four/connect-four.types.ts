@@ -3,7 +3,7 @@ import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { UserId } from '~/app/@/data/user-id'
 import * as VsBot from './vs-bot/vs-bot.types'
 import * as VsUser from './vs-user/vs-user.types'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 
 //
@@ -19,21 +19,21 @@ export type ModelFrontend =
   | { t: 'vs-user'; c: VsUser.ModelFrontend }
   | { t: null }
 
-export const ModelBackend = p.or(
-  p.obj({
-    t: p.l('vs-bot'),
+export const ModelBackend = s.or(
+  s.obj({
+    t: s.l('vs-bot'),
     c: VsBot.ModelBackend,
   }),
-  p.obj({
-    t: p.l('vs-user'),
+  s.obj({
+    t: s.l('vs-user'),
     c: VsUser.ModelBackend,
   }),
-  p.obj({
-    t: p.l(null),
+  s.obj({
+    t: s.l(null),
   }),
 )
 
-export type ModelBackend = p.Infer<typeof ModelBackend>
+export type ModelBackend = s.Infer<typeof ModelBackend>
 
 export type Mode = 'none' | 'vs-user' | 'vs-bot'
 
@@ -63,37 +63,37 @@ export type MsgToBackend = { t: 'vs-user'; c: VsUser.MsgToBackend } | { t: 'vs-b
 //
 //
 
-export const MsgSpace = p.or(
-  p.obj({
-    t: p.l('user-changed-mode'),
-    mode: p.enumeration(['none', 'vs-user', 'vs-bot'] as const),
+export const MsgSpace = s.or(
+  s.obj({
+    t: s.l('user-changed-mode'),
+    mode: s.enumeration(['none', 'vs-user', 'vs-bot'] as const),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('vs-bot'),
+  s.obj({
+    t: s.l('vs-bot'),
     c: VsBot.MsgSpace,
   }),
-  p.obj({
-    t: p.l('vs-user'),
+  s.obj({
+    t: s.l('vs-user'),
     c: VsUser.MsgSpace,
   }),
 )
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>
 
-export const ModelSpace = p.or(
-  p.obj({
-    t: p.l('none'),
+export const ModelSpace = s.or(
+  s.obj({
+    t: s.l('none'),
   }),
-  p.obj({
-    t: p.l('vs-user'),
+  s.obj({
+    t: s.l('vs-user'),
     c: VsUser.ModelSpace,
   }),
-  p.obj({
-    t: p.l('vs-bot'),
+  s.obj({
+    t: s.l('vs-bot'),
     c: VsBot.ModelSpace,
   }),
 )
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export type ModelSpace = s.Infer<typeof ModelSpace>
 
 export const initSpace = (): ModelSpace => {
   return {

@@ -1,5 +1,5 @@
 import { describe, expect, mock, test } from 'bun:test'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Logger } from '../logger'
@@ -13,12 +13,12 @@ const Fixture = async (config: Config) => {
   }
 }
 
-const MyEvent = p.obj({
-  id: p.str,
-  value: p.str,
+const MyEvent = s.obj({
+  id: s.str,
+  value: s.str,
 })
 
-type MyEvent = p.Infer<typeof MyEvent>
+type MyEvent = s.Infer<typeof MyEvent>
 
 const randomMyEvent = (): MyEvent => ({
   id: Math.random().toString(),

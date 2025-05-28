@@ -1,19 +1,19 @@
 import { TranslatedText } from '~/@/l18n'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('enqueue'),
-    text: p.custom((input): input is TranslatedText => typeof input === 'string', 'invalid text'),
-    toastVariant: p.maybe(p.or(p.l('error'), p.l('info'))),
-    duration: p.maybe(TimeSpan.parser),
-    errorMsg: p.maybe(p.str),
+export const parser = s.or(
+  s.obj({
+    t: s.l('enqueue'),
+    text: s.custom((input): input is TranslatedText => typeof input === 'string', 'invalid text'),
+    toastVariant: s.maybe(s.or(s.l('error'), s.l('info'))),
+    duration: s.maybe(TimeSpan.parser),
+    errorMsg: s.maybe(s.str),
   }),
 )
 
-export type ShowToastCmd = p.Infer<typeof parser>
+export type ShowToastCmd = s.Infer<typeof parser>
 
 export const init = (
   text: TranslatedText,

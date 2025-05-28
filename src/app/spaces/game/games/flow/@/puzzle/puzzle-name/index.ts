@@ -1,6 +1,6 @@
 import { getWords } from '~/app/@/data/words'
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 export type PuzzleName = Brand<string, 'PuzzleName'>
 
@@ -14,7 +14,7 @@ const generate = async (input: { count?: number }) => {
 
 const is = (x: unknown): x is PuzzleName => typeof x === 'string'
 
-const parser = p.custom(is, 'Invalid flow puzzle name')
+const parser = s.custom(is, 'Invalid flow puzzle name')
 
 export const PuzzleName = {
   ...parser,

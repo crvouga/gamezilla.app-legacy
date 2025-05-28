@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import type { GameSpaceModule } from '~/app/spaces/game/games/@/architecture/game-space'
@@ -9,71 +9,71 @@ import { PackId } from '../../@/pack/pack-id'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import { CopyPuzzleTypes } from './button-copy-puzzle'
 
-export const MsgSpace = p.or(
+export const MsgSpace = s.or(
   CopyPuzzleTypes.MsgSpace,
-  p.obj({
-    t: p.l('got-flow-play-msg'),
+  s.obj({
+    t: s.l('got-flow-play-msg'),
     c: ModePlay.Msg,
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-clicked-exit-play-puzzle-screen'),
+  s.obj({
+    t: s.l('user-clicked-exit-play-puzzle-screen'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-clicked-next-puzzle'),
+  s.obj({
+    t: s.l('user-clicked-next-puzzle'),
     nextPuzzle: PuzzleResult,
-    nextPuzzleIndex: p.num,
+    nextPuzzleIndex: s.num,
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-clicked-prev-puzzle'),
+  s.obj({
+    t: s.l('user-clicked-prev-puzzle'),
     prevPuzzle: PuzzleResult,
-    prevPuzzleIndex: p.num,
+    prevPuzzleIndex: s.num,
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-closed-puzzle-complete-dialog'),
+  s.obj({
+    t: s.l('user-closed-puzzle-complete-dialog'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-clicked-select-next-pack'),
+  s.obj({
+    t: s.l('user-clicked-select-next-pack'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-toggled-action-buttons-drawer'),
+  s.obj({
+    t: s.l('user-toggled-action-buttons-drawer'),
     userId: UserId,
   }),
 )
 
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>
 
-export const MsgSpaceEvt = p.or(
-  p.obj({
-    t: p.l('user-completed-puzzle'),
+export const MsgSpaceEvt = s.or(
+  s.obj({
+    t: s.l('user-completed-puzzle'),
     userId: UserId,
     packId: PackId,
-    puzzleIndex: p.num,
+    puzzleIndex: s.num,
   }),
-  p.obj({
-    t: p.l('user-used-hint'),
+  s.obj({
+    t: s.l('user-used-hint'),
     userId: UserId,
     groupId: GroupId,
   }),
 )
-export type MsgSpaceEvt = p.Infer<typeof MsgSpaceEvt>
+export type MsgSpaceEvt = s.Infer<typeof MsgSpaceEvt>
 
-export const ModelSpace = p.obj({
-  t: p.l('screen-play-puzzle'),
+export const ModelSpace = s.obj({
+  t: s.l('screen-play-puzzle'),
   pack: Pack,
   puzzleResult: PuzzleResult,
-  modePlay: p.or(ModePlay.Model, p.l(null)),
-  puzzleIndex: p.num,
-  opened: p.or(p.l('puzzle-complete'), p.l('action-drawer'), p.l(null)),
-  hints: p.partialDict(GroupId, GroupId),
+  modePlay: s.or(ModePlay.Model, s.l(null)),
+  puzzleIndex: s.num,
+  opened: s.or(s.l('puzzle-complete'), s.l('action-drawer'), s.l(null)),
+  hints: s.partialDict(GroupId, GroupId),
 })
 
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export type ModelSpace = s.Infer<typeof ModelSpace>
 
 export type SpaceModule = GameSpaceModule<{
   Ctx: SpaceCtx

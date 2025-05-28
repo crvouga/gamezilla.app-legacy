@@ -1,11 +1,11 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-const parser = p.obj({
-  t: p.l('logout-cmd'),
+const parser = s.obj({
+  t: s.l('logout-cmd'),
 })
 
-export type LogoutCmd = p.Infer<typeof parser>
+export type LogoutCmd = s.Infer<typeof parser>
 
 const init = (): LogoutCmd => {
   return {

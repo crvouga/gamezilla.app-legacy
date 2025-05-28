@@ -1,13 +1,13 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserProfile } from '../data/user-profile'
 import { isOk } from '~/@/result'
 
-const parser = p.obj({
-  t: p.l('add-profiles'),
-  profiles: p.arr(UserProfile),
+const parser = s.obj({
+  t: s.l('add-profiles'),
+  profiles: s.arr(UserProfile),
 })
 
-export type AddProfilesCmd = p.Infer<typeof parser>
+export type AddProfilesCmd = s.Infer<typeof parser>
 
 const init = (profiles: UserProfile[]): AddProfilesCmd => {
   return {

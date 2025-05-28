@@ -1,33 +1,33 @@
 import type { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-const parser = p.or(
-  p.obj({
-    t: p.l('code-incorrect'),
+const parser = s.or(
+  s.obj({
+    t: s.l('code-incorrect'),
   }),
-  p.obj({
-    t: p.l('verification-expired'),
+  s.obj({
+    t: s.l('verification-expired'),
   }),
-  p.obj({
-    t: p.l('verification-expired-too-many-failed-attempts'),
+  s.obj({
+    t: s.l('verification-expired-too-many-failed-attempts'),
   }),
-  p.obj({
-    t: p.l('verification-expired-not-latest-verification'),
+  s.obj({
+    t: s.l('verification-expired-not-latest-verification'),
   }),
-  p.obj({
-    t: p.l('verification-not-found'),
+  s.obj({
+    t: s.l('verification-not-found'),
   }),
-  p.obj({
-    t: p.l('verification-already-verified'),
+  s.obj({
+    t: s.l('verification-already-verified'),
   }),
-  p.obj({
-    t: p.l('database-error'),
-    error: p.str,
+  s.obj({
+    t: s.l('database-error'),
+    error: s.str,
   }),
 )
 
-export type VerifyCodeProblem = p.Infer<typeof parser>
+export type VerifyCodeProblem = s.Infer<typeof parser>
 
 const toString = ({ problem, t }: { problem: VerifyCodeProblem; t: Translator }): TranslatedText => {
   switch (problem.t) {

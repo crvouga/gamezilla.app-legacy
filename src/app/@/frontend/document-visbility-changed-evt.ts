@@ -1,14 +1,14 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('document-visibility-changed'),
-    state: p.or(p.l('visible'), p.l('hidden')),
+export const parser = s.or(
+  s.obj({
+    t: s.l('document-visibility-changed'),
+    state: s.or(s.l('visible'), s.l('hidden')),
   }),
 )
 
-export type DocumentVisibilityChangedEvt = p.Infer<typeof parser>
+export type DocumentVisibilityChangedEvt = s.Infer<typeof parser>
 
 export const init = (state: 'visible' | 'hidden'): DocumentVisibilityChangedEvt => {
   return {

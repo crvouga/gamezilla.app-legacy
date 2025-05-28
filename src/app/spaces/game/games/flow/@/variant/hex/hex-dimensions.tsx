@@ -1,10 +1,10 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-export const Model = p.obj({
-  t: p.l('flow-hex'),
-  width: p.num,
-  height: p.num,
-  side: p.num,
+export const Model = s.obj({
+  t: s.l('flow-hex'),
+  width: s.num,
+  height: s.num,
+  side: s.num,
 })
 
 export type Model = {

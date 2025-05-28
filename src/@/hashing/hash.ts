@@ -1,9 +1,9 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { HashValue } from './hash-value'
 import { HashingAlgo } from './hashing-algo'
 
-export const Hash = p.obj({
+export const Hash = s.obj({
   value: HashValue,
   algo: HashingAlgo,
 })
-export type Hash = p.Infer<typeof Hash>
+export type Hash = s.Infer<typeof Hash>

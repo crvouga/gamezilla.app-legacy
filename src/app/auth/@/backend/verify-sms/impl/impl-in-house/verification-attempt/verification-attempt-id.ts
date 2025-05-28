@@ -1,13 +1,13 @@
 import { Uuid } from '~/@/id/uuid'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-const parser = p.brand(p.str, 'VerificationAttemptId')
+const parser = s.brand(s.str, 'VerificationAttemptId')
 
-export type VerificationAttemptId = p.Infer<typeof parser>
+export type VerificationAttemptId = s.Infer<typeof parser>
 
 const generate = (): VerificationAttemptId => {
   const id = `auth-sms-verification-attempt:${Uuid.generate()}`
-  if (p.is(parser)(id)) {
+  if (s.is(parser)(id)) {
     return id
   }
   throw new Error('Failed to generate VerificationAttemptId')

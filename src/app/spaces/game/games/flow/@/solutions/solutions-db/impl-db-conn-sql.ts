@@ -1,6 +1,6 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
 import { Json } from '~/@/json/json'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Err, isErr, Ok, Result, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
@@ -13,14 +13,14 @@ export type Config = {
   dbConnSql: IDbConnSql
 }
 
-const Row = p.obj({
-  id: p.str,
-  solutions: p.or(p.str, p.json),
-  created_at_posix: p.maybe(p.or(Posix, p.str)),
-  last_updated_at_posix: p.maybe(p.or(Posix, p.str)),
+const Row = s.obj({
+  id: s.str,
+  solutions: s.or(s.str, s.json),
+  created_at_posix: s.maybe(s.or(Posix, s.str)),
+  last_updated_at_posix: s.maybe(s.or(Posix, s.str)),
 })
 
-export type Row = p.Infer<typeof Row>
+export type Row = s.Infer<typeof Row>
 
 const rowToSolutions = (row: Row): Result<string, Solutions> => {
   const json = unwrapOr(typeof row.solutions === 'string' ? Json.parse(row.solutions) : Ok(row.solutions), [])
@@ -74,7 +74,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
         if (got.value.length > 0) {
           // Update existing record
           const updateResult = await config.dbConnSql.query({
-            parser: p.num,
+            parser: s.num,
             sql: `
             UPDATE game_flow_solutions
             SET
@@ -96,7 +96,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
         } else {
           // Insert new record
           const insertResult = await config.dbConnSql.query({
-            parser: p.unknown,
+            parser: s.unknown,
             sql: `
             INSERT INTO game_flow_solutions (
               id,
@@ -130,7 +130,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
 
     async zap(hash) {
       const result = await config.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `DELETE FROM game_flow_solutions WHERE id = :id`,
         vars: { id: hash },
       })

@@ -1,17 +1,17 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { GroupId } from './group-id'
 import { NodeId } from './node-id'
 
-const parser = p.obj({
+const parser = s.obj({
   groupId: GroupId,
   startId: NodeId,
-  endId: p.maybe(NodeId),
+  endId: s.maybe(NodeId),
 })
 /**
  * A terminal represents the start and end nodes for a group.
  * These are the two circles the user is trying to connect
  */
-export type Terminal = p.Infer<typeof parser>
+export type Terminal = s.Infer<typeof parser>
 
 const isSame = (a: Terminal, b: Terminal): boolean => {
   const startA = a.startId ?? null

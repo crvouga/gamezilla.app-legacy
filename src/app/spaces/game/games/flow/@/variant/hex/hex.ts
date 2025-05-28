@@ -1,25 +1,25 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Flow } from '../../flow'
 import * as VariantHexDimensions from './hex-dimensions'
 import { NodeId } from '../../flow/node-id'
 
-export const HexPosition = p.obj({
-  x: p.num,
-  y: p.num,
-  z: p.num,
+export const HexPosition = s.obj({
+  x: s.num,
+  y: s.num,
+  z: s.num,
 })
-export type HexPosition = p.Infer<typeof HexPosition>
+export type HexPosition = s.Infer<typeof HexPosition>
 
-export const Model = p.and(
+export const Model = s.and(
   Flow.Model,
   VariantHexDimensions.Model,
-  p.obj({
-    t: p.l('flow-hex'),
-    VariantHex: p.l(true),
-    positions: p.dict(NodeId, HexPosition),
+  s.obj({
+    t: s.l('flow-hex'),
+    VariantHex: s.l(true),
+    positions: s.dict(NodeId, HexPosition),
   }),
 )
-export type Model = p.Infer<typeof Model>
+export type Model = s.Infer<typeof Model>
 
 export const init = (input: {
   dimensions: VariantHexDimensions.Model

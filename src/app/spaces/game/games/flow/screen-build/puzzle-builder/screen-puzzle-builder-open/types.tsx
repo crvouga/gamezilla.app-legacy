@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/query'
@@ -23,23 +23,23 @@ export type MsgToBackend = CreateNewPuzzleTypes.MsgToBackend
 
 export type MsgToFrontend = CreateNewPuzzleTypes.MsgToFrontend
 
-export const ModelSpace = p.obj({
+export const ModelSpace = s.obj({
   query: PuzzleQuery,
 })
 
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export type ModelSpace = s.Infer<typeof ModelSpace>
 
-export const MsgSpace = p.or(
+export const MsgSpace = s.or(
   CreateNewPuzzleTypes.MsgSpace,
-  p.obj({
-    t: p.l('screen-puzzle-builder-open.clicked-puzzle-db-query-item'),
+  s.obj({
+    t: s.l('screen-puzzle-builder-open.clicked-puzzle-db-query-item'),
     puzzle: Puzzle,
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('screen-puzzle-builder-open.puzzle-db-query-query-changed'),
+  s.obj({
+    t: s.l('screen-puzzle-builder-open.puzzle-db-query-query-changed'),
     query: PuzzleQuery,
     userId: UserId,
   }),
 )
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>

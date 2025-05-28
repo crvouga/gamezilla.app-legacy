@@ -1,6 +1,6 @@
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { ILogger } from '~/@/logger'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Ok, Result, isErr, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
@@ -12,16 +12,16 @@ import { Username } from '~/app/@/data/username'
 import type { IUserProfileDb } from './interface'
 import { ProfileDbQuery } from './query'
 
-const ProfileRow = p.obj({
+const ProfileRow = s.obj({
   id: UserId,
   username: Username,
-  avatar_seed: p.maybe(p.str),
-  avatar_style: p.maybe(p.str),
-  created_at_posix: p.or(p.num, p.str),
-  updated_at_posix: p.or(p.num, p.str),
+  avatar_seed: s.maybe(s.str),
+  avatar_style: s.maybe(s.str),
+  created_at_posix: s.or(s.num, s.str),
+  updated_at_posix: s.or(s.num, s.str),
 })
 
-type ProfileRow = p.Infer<typeof ProfileRow>
+type ProfileRow = s.Infer<typeof ProfileRow>
 
 const fromProfileRow = (row: ProfileRow): Result<string, UserProfile> => {
   const avatarSeed = row.avatar_seed ? ProfileAvatar.toSeed(row.avatar_seed) : ProfileAvatar.toSeed(row.username)
@@ -134,7 +134,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
         vars: vars,
       })
       const queriedTotal = await config.dbConnSql.query({
-        parser: p.obj({ total: p.or(p.num, p.str) }),
+        parser: s.obj({ total: s.or(s.num, s.str) }),
         sql: sqlTotal,
         vars: vars,
       })

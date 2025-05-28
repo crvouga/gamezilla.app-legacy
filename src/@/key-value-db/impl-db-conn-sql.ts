@@ -1,5 +1,5 @@
 import { Err, Ok, Result, isErr } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import type { IDbConnSql } from '../db-conn-sql'
 import type { ILogger } from '../logger/interface'
 import { withDuration } from '../time/with-duration'
@@ -7,9 +7,9 @@ import type { IKeyValueDb } from './interface'
 import { Logger } from '../logger'
 import { TimeSpan } from '../time/time-span'
 
-const Row = p.obj({
-  id: p.str,
-  value: p.str,
+const Row = s.obj({
+  id: s.str,
+  value: s.str,
 })
 
 export type Config = {
@@ -91,7 +91,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
         const rowMap = new Map(queried.value.map((row) => [row.id, row]))
 
-        const rows: p.Infer<typeof parser>[] = []
+        const rows: s.Infer<typeof parser>[] = []
 
         for (const key of keys) {
           const row = rowMap.get(key)

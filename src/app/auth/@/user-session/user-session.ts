@@ -1,20 +1,20 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Posix } from '~/@/time/posix'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { UserSessionId } from './user-session-id'
 
-const parser = p.obj({
+const parser = s.obj({
   userSessionId: UserSessionId,
-  sessionId: p.maybe(SessionId),
+  sessionId: s.maybe(SessionId),
   clientSessionId: ClientSessionId,
   userId: UserId,
   createdAt: Posix,
-  endedAt: p.maybe(Posix),
+  endedAt: s.maybe(Posix),
 })
 
-export type UserSession = p.Infer<typeof parser>
+export type UserSession = s.Infer<typeof parser>
 
 const random = (overrides?: Partial<UserSession>): UserSession => {
   return {

@@ -1,6 +1,6 @@
 import { Logger } from '~/@/logger'
 import type { ILogger } from '~/@/logger/interface'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Sleep } from '~/@/promise/sleep'
 import { Err, Ok, isErr } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
@@ -68,7 +68,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
         logger.debug(`duration=${TimeSpan.toMilliseconds(duration)}ms getMany: keys=${keys.join(', ')}`)
 
-        const rows: p.Infer<typeof parser>[] = []
+        const rows: s.Infer<typeof parser>[] = []
 
         for (const row of queried) {
           if (!row) {

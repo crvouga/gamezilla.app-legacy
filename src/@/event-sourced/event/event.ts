@@ -1,13 +1,13 @@
 import { LamportTimestamp } from '~/@/lamport-clock/lamport-timestamp'
 import { EventId } from './event-id'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-export const EventMeta = p.obj({
+export const EventMeta = s.obj({
   happenedAt: LamportTimestamp,
   eventId: EventId,
 })
 
-export type EventMeta = p.Infer<typeof EventMeta>
+export type EventMeta = s.Infer<typeof EventMeta>
 
 export type WithEventId<T> = T & {
   eventId: EventId
@@ -16,8 +16,8 @@ export type WithEventId<T> = T & {
 
 export type WithEventMeta<T> = T & EventMeta
 
-export const WithEventMeta = <T>(parser: p.Parser<T>) => {
-  return p.and(parser, EventMeta)
+export const WithEventMeta = <T>(parser: s.Parser<T>) => {
+  return s.and(parser, EventMeta)
 }
 
 export const withEventMeta = <T>(event: T): WithEventMeta<T> => {

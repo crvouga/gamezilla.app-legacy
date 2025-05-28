@@ -1,16 +1,16 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { Solutions } from '../solutions/solutions'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('add-solutions'),
+export const parser = s.or(
+  s.obj({
+    t: s.l('add-solutions'),
     solutions: Solutions,
-    causedBy: p.any,
+    causedBy: s.any,
   }),
 )
 
-export type AddSolutionsCmd = p.Infer<typeof parser>
+export type AddSolutionsCmd = s.Infer<typeof parser>
 
 export const init = (solutions: Solutions, causedBy: unknown): AddSolutionsCmd => {
   return {

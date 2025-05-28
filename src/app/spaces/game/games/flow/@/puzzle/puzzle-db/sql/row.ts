@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Result } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data/user-id'
@@ -7,17 +7,17 @@ import type { Puzzle } from '../../puzzle'
 import { PuzzleId } from '../../puzzle-id'
 import { PuzzleName } from '../../puzzle-name'
 
-const parser = p.obj({
-  id: p.str,
-  name: p.str,
-  flow: p.or(p.str, p.json),
-  created_at_posix: p.or(p.num, p.str),
-  created_by_user_id: p.str,
-  last_updated_at_posix: p.or(p.num, p.str),
-  last_updated_by_user_id: p.str,
+const parser = s.obj({
+  id: s.str,
+  name: s.str,
+  flow: s.or(s.str, s.json),
+  created_at_posix: s.or(s.num, s.str),
+  created_by_user_id: s.str,
+  last_updated_at_posix: s.or(s.num, s.str),
+  last_updated_by_user_id: s.str,
 })
 
-export type Row = p.Infer<typeof parser>
+export type Row = s.Infer<typeof parser>
 
 const ensureNumber = (x: string | number): number => {
   return typeof x === 'string' ? Number.parseFloat(x) : x

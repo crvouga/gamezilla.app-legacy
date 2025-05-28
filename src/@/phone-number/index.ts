@@ -1,15 +1,15 @@
 import { Iso3166Alpha2Code } from '../country/iso-3166-alpha-2-code'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Result } from '../result'
 import { phone } from './phone'
 
-const parser = p.obj({
+const parser = s.obj({
   _country: Iso3166Alpha2Code,
-  _validPhoneNumber: p.str,
-  _opaque: p.l('PhoneNumber'),
+  _validPhoneNumber: s.str,
+  _opaque: s.l('PhoneNumber'),
 })
 
-export type PhoneNumber = p.Infer<typeof parser>
+export type PhoneNumber = s.Infer<typeof parser>
 
 type Problem = 'invalid_phone_number'
 

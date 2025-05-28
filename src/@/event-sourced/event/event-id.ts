@@ -1,6 +1,6 @@
 import { Err, Ok, type Result } from '~/@/result'
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 export type EventId = Brand<string, 'EventId'>
 
@@ -12,7 +12,7 @@ const is = (id: unknown): id is EventId => {
   return typeof id === 'string'
 }
 
-const parser = p.custom(is, 'Invalid event id')
+const parser = s.custom(is, 'Invalid event id')
 
 type Problem = 'invalid_id'
 

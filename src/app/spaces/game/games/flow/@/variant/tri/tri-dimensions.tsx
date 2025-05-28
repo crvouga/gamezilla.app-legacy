@@ -1,11 +1,11 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-export const Model = p.obj({
-  t: p.l('flow-tri'),
-  side: p.num,
+export const Model = s.obj({
+  t: s.l('flow-tri'),
+  side: s.num,
 })
 
-export type Model = p.Infer<typeof Model>
+export type Model = s.Infer<typeof Model>
 
 export const init = (input: { side: number }): Model => {
   return {

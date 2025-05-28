@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import { ModeEdit } from '../../../@/mode-edit'
 import { ModePlay } from '../../../@/mode-play'
@@ -50,42 +50,42 @@ export type MsgToBackend =
 //
 //
 
-const Mode = p.or(p.obj({ t: p.l('play') }), p.obj({ t: p.l('edit') }))
-type Mode = p.Infer<typeof Mode>
+const Mode = s.or(s.obj({ t: s.l('play') }), s.obj({ t: s.l('edit') }))
+type Mode = s.Infer<typeof Mode>
 
-export const ModelSpace = p.obj({
-  t: p.l('puzzle-builder'),
+export const ModelSpace = s.obj({
+  t: s.l('puzzle-builder'),
   puzzle: Puzzle,
   mode: Mode,
   modePlay: ModePlay.Model,
   modeEdit: ModeEdit.Model,
 })
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export type ModelSpace = s.Infer<typeof ModelSpace>
 
-export const MsgSpace = p.or(
+export const MsgSpace = s.or(
   SaveChangesTypes.MsgSpace,
   DeleteForeverTypes.MsgSpace,
   EditPuzzleNameTypes.MsgSpace,
-  p.obj({
-    t: p.l('screen-puzzle-builder.got-play-msg'),
+  s.obj({
+    t: s.l('screen-puzzle-builder.got-play-msg'),
     c: ModePlay.Msg,
   }),
-  p.obj({
-    t: p.l('screen-puzzle-builder.got-edit-msg'),
+  s.obj({
+    t: s.l('screen-puzzle-builder.got-edit-msg'),
     c: ModeEdit.Msg,
   }),
-  p.obj({
-    t: p.l('screen-puzzle-builder.user-clicked-edit-mode-button'),
+  s.obj({
+    t: s.l('screen-puzzle-builder.user-clicked-edit-mode-button'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('screen-puzzle-builder.user-clicked-play-mode-button'),
+  s.obj({
+    t: s.l('screen-puzzle-builder.user-clicked-play-mode-button'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('screen-puzzle-builder.user-clicked-exit-button'),
+  s.obj({
+    t: s.l('screen-puzzle-builder.user-clicked-exit-button'),
     userId: UserId,
   }),
 )
 
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>

@@ -1,5 +1,5 @@
 import { HttpServerEvent } from '~/@/http-server'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { RPC } from '~/@/wire-rpc'
 import { RuntimeEvent } from '~/@/runtime'
 import { Posix } from '~/@/time/posix'
@@ -53,9 +53,9 @@ export type FrontendModule = AppFrontendModule<{
 
 export const rpcContract = RPC.initContract({
   listAlive: {
-    input: p.obj({}),
-    output: p.obj({
-      backendInstances: p.arr(BackendInstance),
+    input: s.obj({}),
+    output: s.obj({
+      backendInstances: s.arr(BackendInstance),
     }),
   },
 })

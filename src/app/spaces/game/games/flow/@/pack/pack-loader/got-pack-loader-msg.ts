@@ -1,16 +1,16 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { MsgFrontend } from './types'
 
-const parser = p.obj({
-  t: p.l('got-pack-loader-cmd'),
-  c: p.obj({
-    t: p.l('got-msg'),
+const parser = s.obj({
+  t: s.l('got-pack-loader-cmd'),
+  c: s.obj({
+    t: s.l('got-msg'),
     msg: MsgFrontend,
   }),
 })
 
-export type GotPackLoaderMsg = p.Infer<typeof parser>
+export type GotPackLoaderMsg = s.Infer<typeof parser>
 
 const is = (input: unknown): input is GotPackLoaderMsg => {
   return isOk(parser.parse(input))

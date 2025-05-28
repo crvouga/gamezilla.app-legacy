@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { EventSourced } from '~/@/event-sourced'
 import { EventMeta, withEventId } from '~/@/event-sourced/event'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { sleep } from '~/@/promise/sleep'
 import { Ok, unwrap } from '~/@/result'
 import { Stream } from '~/@/stream/impl'
@@ -75,7 +75,7 @@ const Fixtures = async () => {
       t: 'stream',
       keyValueDb: f.keyValueDbHashMap,
       logger: f.logger,
-      stream: await Stream({ t: 'in-memory', parser: p.and(MsgSpace, EventMeta) }),
+      stream: await Stream({ t: 'in-memory', parser: s.and(MsgSpace, EventMeta) }),
       runtime: f.runtime,
       namespace: uniqueNamespace(),
     })

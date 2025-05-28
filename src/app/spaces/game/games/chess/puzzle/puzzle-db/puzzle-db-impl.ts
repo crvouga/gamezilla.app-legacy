@@ -1,6 +1,6 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Err, Ok, Result } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { UserId } from '~/app/@/data/user-id'
 import { type MoveInput, uciMoveToMoveInput } from '../../@/chess'
@@ -17,48 +17,48 @@ import { Uuid } from '~/@/id/uuid'
 //
 //
 
-export const Int = p.or(p.str, p.num)
+export const Int = s.or(s.str, s.num)
 
-export const PuzzleRow = p.obj({
-  puzzle_id: p.str,
+export const PuzzleRow = s.obj({
+  puzzle_id: s.str,
   rating: Int,
   rating_deviation: Int,
-  opening_tags: p.str,
-  fen: p.str,
-  moves: p.str,
+  opening_tags: s.str,
+  fen: s.str,
+  moves: s.str,
   popularity: Int,
   number_of_plays: Int,
-  themes: p.str,
-  game_url: p.str,
+  themes: s.str,
+  game_url: s.str,
 })
 
-export type PuzzleRow = p.Infer<typeof PuzzleRow>
+export type PuzzleRow = s.Infer<typeof PuzzleRow>
 
-export const PuzzleInteractionRow = p.obj({
-  id: p.str,
-  puzzle_id: p.str,
-  user_id: p.str,
-  type: p.enumeration(['started', 'solved', 'incorrect', 'solved-with-hint'] as const),
+export const PuzzleInteractionRow = s.obj({
+  id: s.str,
+  puzzle_id: s.str,
+  user_id: s.str,
+  type: s.enumeration(['started', 'solved', 'incorrect', 'solved-with-hint'] as const),
 })
 
-export type PuzzleInteractionRow = p.Infer<typeof PuzzleInteractionRow>
+export type PuzzleInteractionRow = s.Infer<typeof PuzzleInteractionRow>
 
-const PuzzleQueryJSON = p.obj({
-  ratingRange: p.obj({
-    lower: p.num,
-    upper: p.num,
+const PuzzleQueryJSON = s.obj({
+  ratingRange: s.obj({
+    lower: s.num,
+    upper: s.num,
   }),
 })
-type PuzzleQueryJSON = p.Infer<typeof PuzzleQueryJSON>
+type PuzzleQueryJSON = s.Infer<typeof PuzzleQueryJSON>
 
-export const PuzzleProfileRow = p.obj({
-  id: p.str,
-  user_id: p.str,
+export const PuzzleProfileRow = s.obj({
+  id: s.str,
+  user_id: s.str,
   elo_rating: Int,
   puzzle_query: PuzzleQueryJSON,
 })
 
-export type PuzzleProfileRow = p.Infer<typeof PuzzleProfileRow>
+export type PuzzleProfileRow = s.Infer<typeof PuzzleProfileRow>
 
 //
 //
@@ -303,7 +303,7 @@ export const profilesInsert = async (dbConn: IDbConnSql, profile: PuzzleProfile)
   const puzzleProfileId = Uuid.generate()
 
   const mutated = await dbConn.query({
-    parser: p.unknown,
+    parser: s.unknown,
     sql: `
         INSERT INTO game_chess_puzzle_profile (
           id,
@@ -356,7 +356,7 @@ export const profilesFindElseInsert = async (
 
 const profilesUpdate = async (dbConn: IDbConnSql, profile: PuzzleProfile): Promise<Result<string, null>> => {
   const mutated = await dbConn.query({
-    parser: p.unknown,
+    parser: s.unknown,
     sql: `
       UPDATE game_chess_puzzle_profile
       SET

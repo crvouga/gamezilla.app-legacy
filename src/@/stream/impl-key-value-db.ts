@@ -1,5 +1,5 @@
 import { Err, Ok, unwrapOr } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Parser } from '~/@/schema/schema'
 import { KeyValueDb, IKeyValueDb } from '../key-value-db'
 import { EventId } from './event-id'
@@ -15,12 +15,12 @@ export const Stream = <T>(config: Config<T>): IStream<T> => {
   const eventIdsByStreamId = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['stream', 'event-ids-by-stream-id'],
-    parser: p.arr(EventId.parser),
+    parser: s.arr(EventId.parser),
   })
   const eventsById = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['stream', 'events-by-id'],
-    parser: p.arr(config.parser),
+    parser: s.arr(config.parser),
   })
   return {
     async append(streamId, eventId, event) {

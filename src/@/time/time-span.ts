@@ -1,13 +1,13 @@
 import { TranslatedText } from '../l18n'
 import { Translator } from '../l18n/generated'
-import { p } from '../schema'
+import { s } from '../schema'
 
-const parser = p.obj({
-  type: p.l('TimeSpan'),
-  _durationMilliseconds: p.num,
+const parser = s.obj({
+  type: s.l('TimeSpan'),
+  _durationMilliseconds: s.num,
 })
 
-export type TimeSpan = p.Infer<typeof parser>
+export type TimeSpan = s.Infer<typeof parser>
 
 const milliseconds = (durationMilliseconds: number): TimeSpan => {
   return {

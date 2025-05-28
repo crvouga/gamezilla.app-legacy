@@ -1,7 +1,7 @@
 import { Err, Ok, type Result } from '~/@/result'
 import type { Brand } from '~/@/brand/brand'
 import { getWords } from '../words'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 export type Username = Brand<string, 'Username'>
 
@@ -9,7 +9,7 @@ const is = (username: unknown): username is Username => {
   return typeof username === 'string' && username.length > 0 && username.length <= 100
 }
 
-const parser = p.custom(is, 'Invalid username')
+const parser = s.custom(is, 'Invalid username')
 
 type Problem = 'invalid_username'
 

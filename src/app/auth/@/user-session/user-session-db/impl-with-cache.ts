@@ -1,5 +1,5 @@
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Result, isOk } from '~/@/result'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
@@ -26,7 +26,7 @@ export const WithCache = ({ userSessionDb, keyValueDb }: Config): IUserSessionDb
   const sessionIdsByUserId = KeyValueDb.withNamespace<UserId, SessionId[]>({
     keyValueDb,
     namespace: ['auth', 'user-session', 'session-ids-by-user-id'],
-    parser: p.arr(SessionId),
+    parser: s.arr(SessionId),
   })
 
   return {

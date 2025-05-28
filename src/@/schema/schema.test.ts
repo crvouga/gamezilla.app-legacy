@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { p } from './index'
+import { s } from './index'
 import { Ok } from '../result'
 
 describe(import.meta.file, () => {
@@ -26,7 +26,7 @@ describe(import.meta.file, () => {
     ]
 
     for (const json of validJson) {
-      expect(p.json.parse(json)).toEqual(Ok(json) as any)
+      expect(s.json.parse(json)).toEqual(Ok(json) as any)
     }
   })
 })

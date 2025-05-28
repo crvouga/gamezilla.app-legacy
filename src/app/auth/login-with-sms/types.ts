@@ -1,7 +1,7 @@
 import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 import { Remote, Result } from '~/@/result'
 import { RPC } from '~/@/wire-rpc'
@@ -18,9 +18,9 @@ export type Sent = Result<RPCError, SendCodeOutput>
 
 const VerifyCodeOutput = Result.parser(
   VerifyCodeProblem.parser,
-  p.obj({ userAccount: UserAccount, userSession: UserSession }),
+  s.obj({ userAccount: UserAccount, userSession: UserSession }),
 )
-export type VerifyCodeOutput = p.Infer<typeof VerifyCodeOutput>
+export type VerifyCodeOutput = s.Infer<typeof VerifyCodeOutput>
 export type Verified = Result<RPCError, VerifyCodeOutput>
 
 export type ModelFrontend = {

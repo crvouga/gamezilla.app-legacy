@@ -1,14 +1,14 @@
 import { EventSourced, EventSourcedConfig } from '~/@/event-sourced'
 import { EventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { MsgSpace } from '../space-msg/space-msg'
 import { SpaceState } from '../space-state'
 
 export const Model = EventSourced.parser(MsgSpace, SpaceState.State)
-export type Model = p.Infer<typeof Model>
+export type Model = s.Infer<typeof Model>
 
 export const init: Model = EventSourced.init(SpaceState.init)
 

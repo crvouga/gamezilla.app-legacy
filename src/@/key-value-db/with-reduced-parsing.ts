@@ -1,5 +1,5 @@
 import { isErr } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import type { IKeyValueDb } from './interface'
 import { ILogger, Logger } from '../logger'
 
@@ -15,9 +15,9 @@ export const withReducedParsing = ({ keyValueDb, verifiedKeys, ...config }: Conf
   return {
     ...keyValueDb,
 
-    async get<TValue>(key: string, parser: p.Parser<TValue>) {
+    async get<TValue>(key: string, parser: s.Parser<TValue>) {
       if (verifiedKeys.has(key)) {
-        return keyValueDb.get(key, p.noop<TValue>())
+        return keyValueDb.get(key, s.noop<TValue>())
       }
 
       const got = await keyValueDb.get(key, parser)
@@ -33,11 +33,11 @@ export const withReducedParsing = ({ keyValueDb, verifiedKeys, ...config }: Conf
       return got
     },
 
-    async getMany<TValue>(keys: string[], parser: p.Parser<TValue>) {
+    async getMany<TValue>(keys: string[], parser: s.Parser<TValue>) {
       const key = keys.join(',')
 
       if (verifiedKeys.has(key)) {
-        return keyValueDb.getMany(keys, p.noop<TValue>())
+        return keyValueDb.getMany(keys, s.noop<TValue>())
       }
 
       const got = await keyValueDb.getMany(keys, parser)

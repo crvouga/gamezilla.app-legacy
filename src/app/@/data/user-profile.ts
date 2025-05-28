@@ -1,19 +1,19 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Posix } from '~/@/time/posix'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
 
-const parser = p.obj({
+const parser = s.obj({
   id: UserId,
   username: Username,
-  avatarSeed: p.maybe(p.str),
-  avatarStyle: p.maybe(p.str),
+  avatarSeed: s.maybe(s.str),
+  avatarStyle: s.maybe(s.str),
   createdAt: Posix,
   updatedAt: Posix,
 })
 
-export type UserProfile = p.Infer<typeof parser>
+export type UserProfile = s.Infer<typeof parser>
 
 const random = async (overrides?: Partial<UserProfile>): Promise<UserProfile> => {
   return {

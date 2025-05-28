@@ -1,6 +1,6 @@
 import { Result } from '~/@/result'
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 export type SpaceId = Brand<string, 'SpaceId'>
 
@@ -11,7 +11,7 @@ const is = (id: unknown): id is SpaceId => {
   // todo: better validation
   return typeof id === 'string'
 }
-const parser = p.custom(is, 'Invalid space id')
+const parser = s.custom(is, 'Invalid space id')
 
 type Problem = 'invalid_id'
 

@@ -3,7 +3,7 @@ import 'fake-indexeddb/auto'
 import { sleep } from '~/@/promise/sleep'
 import { TimeSpan } from '~/@/time/time-span'
 import { Logger } from '../../logger'
-import { p } from '../../schema'
+import { s } from '../../schema'
 import { Config, DbConnSql } from '../backend/impl'
 
 const Fixture = async (config: Config) => {
@@ -54,16 +54,16 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-const Row = p.obj({ id: p.num })
+const Row = s.obj({ id: s.num })
 
-type Row = p.Infer<typeof Row>
+type Row = s.Infer<typeof Row>
 
 describe.skip('db-conn-sql subscribe', () => {
   test('subscribe', async () => {
     for (const f of await Fixtures()) {
-      await f.dbConnSql.query({ parser: p.unknown, sql: `DROP TABLE foo`, vars: {} }).catch(() => {})
+      await f.dbConnSql.query({ parser: s.unknown, sql: `DROP TABLE foo`, vars: {} }).catch(() => {})
       await f.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `CREATE TABLE foo (id SERIAL PRIMARY KEY)`,
         vars: {},
       })
@@ -77,7 +77,7 @@ describe.skip('db-conn-sql subscribe', () => {
         got = rows
       })
       await f.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `INSERT INTO foo DEFAULT VALUES`,
         vars: {},
       })

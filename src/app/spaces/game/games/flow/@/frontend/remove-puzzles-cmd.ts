@@ -1,16 +1,16 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { PuzzleId } from '../puzzle/puzzle-id'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('flow-cmd.remove-puzzles'),
-    puzzles: p.dict(PuzzleId, PuzzleId),
-    causedBy: p.any,
+export const parser = s.or(
+  s.obj({
+    t: s.l('flow-cmd.remove-puzzles'),
+    puzzles: s.dict(PuzzleId, PuzzleId),
+    causedBy: s.any,
   }),
 )
 
-export type RemovePuzzlesCmd = p.Infer<typeof parser>
+export type RemovePuzzlesCmd = s.Infer<typeof parser>
 
 export const init = (puzzles: { [puzzleId: PuzzleId]: PuzzleId }, causedBy: unknown): RemovePuzzlesCmd => {
   return {

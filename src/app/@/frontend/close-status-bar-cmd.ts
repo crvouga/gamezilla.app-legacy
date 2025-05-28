@@ -1,16 +1,16 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('status-bar'),
-    c: p.obj({
-      t: p.l('close'),
+export const parser = s.or(
+  s.obj({
+    t: s.l('status-bar'),
+    c: s.obj({
+      t: s.l('close'),
     }),
   }),
 )
 
-export type CloseStatusBarCmd = p.Infer<typeof parser>
+export type CloseStatusBarCmd = s.Infer<typeof parser>
 
 export const init = (): CloseStatusBarCmd => {
   return {

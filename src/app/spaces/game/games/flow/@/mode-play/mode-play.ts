@@ -1,6 +1,6 @@
 import { pipe } from '~/@/function/pipe'
 import { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
@@ -34,29 +34,29 @@ export const initCtx = <TCtx>(input: { flow: Variant.Model } & TCtx): Ctx & TCtx
   }
 }
 
-const Idle = p.obj({ t: p.l('idle') })
-type Idle = p.Infer<typeof Idle>
+const Idle = s.obj({ t: s.l('idle') })
+type Idle = s.Infer<typeof Idle>
 
-const Dragging = p.obj({
-  t: p.l('dragging'),
+const Dragging = s.obj({
+  t: s.l('dragging'),
   activeGroupId: GroupId,
-  autocompleteEdge: p.maybe(Flow.Edge),
+  autocompleteEdge: s.maybe(Flow.Edge),
 })
-type Dragging = p.Infer<typeof Dragging>
+type Dragging = s.Infer<typeof Dragging>
 
-const Status = p.or(Idle, Dragging)
-type Status = p.Infer<typeof Status>
+const Status = s.or(Idle, Dragging)
+type Status = s.Infer<typeof Status>
 
-export const Model = p.and(
+export const Model = s.and(
   UseHint.Model,
-  p.obj({
-    pipesBySourceId: p.dict(NodeId, Flow.Pipe),
-    terminalsByGroupId: p.partialDict(GroupId, Terminal),
+  s.obj({
+    pipesBySourceId: s.dict(NodeId, Flow.Pipe),
+    terminalsByGroupId: s.partialDict(GroupId, Terminal),
     status: Status,
-    showCheckmarkAnimation: p.bool,
+    showCheckmarkAnimation: s.bool,
   }),
 )
-export type Model = p.Infer<typeof Model>
+export type Model = s.Infer<typeof Model>
 
 export const init = (input: { ctx: Ctx }): Model => {
   return {
@@ -219,29 +219,29 @@ const first = <T>(iterable: Iterable<T>): T | null => {
 //
 //
 
-export const Msg = p.or(
+export const Msg = s.or(
   UseHint.Msg,
-  p.obj({
-    t: p.l('user-clicked-reset'),
+  s.obj({
+    t: s.l('user-clicked-reset'),
   }),
-  p.obj({
-    t: p.l('user-pressed-down-node'),
+  s.obj({
+    t: s.l('user-pressed-down-node'),
     nodeId: NodeId,
   }),
-  p.obj({
-    t: p.l('user-pressed-up-node'),
+  s.obj({
+    t: s.l('user-pressed-up-node'),
     nodeId: NodeId,
   }),
-  p.obj({
-    t: p.l('user-dragged-over-node'),
+  s.obj({
+    t: s.l('user-dragged-over-node'),
     nodeId: NodeId,
   }),
-  p.obj({
-    t: p.l('user-dragging-left'),
+  s.obj({
+    t: s.l('user-dragging-left'),
   }),
 )
 
-export type Msg = p.Infer<typeof Msg>
+export type Msg = s.Infer<typeof Msg>
 
 export type Event =
   | UseHint.Event

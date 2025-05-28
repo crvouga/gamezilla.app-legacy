@@ -1,45 +1,45 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 
-export const MsgSpace = p.or(
-  p.obj({
-    t: p.l('user-clicked-start-game'),
+export const MsgSpace = s.or(
+  s.obj({
+    t: s.l('user-clicked-start-game'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-added-bot-player'),
+  s.obj({
+    t: s.l('user-added-bot-player'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-removed-bot-player'),
+  s.obj({
+    t: s.l('user-removed-bot-player'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-started-playing'),
+  s.obj({
+    t: s.l('user-started-playing'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-stopped-playing'),
+  s.obj({
+    t: s.l('user-stopped-playing'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-removed-user-player'),
+  s.obj({
+    t: s.l('user-removed-user-player'),
     userId: UserId,
   }),
 )
 
-const Player = p.or(
-  p.obj({
-    t: p.l('user'),
+const Player = s.or(
+  s.obj({
+    t: s.l('user'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('bot'),
+  s.obj({
+    t: s.l('bot'),
   }),
 )
 
-export const ModelSpace = p.obj({
-  players: p.arr(Player),
+export const ModelSpace = s.obj({
+  players: s.arr(Player),
 })
 
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export type ModelSpace = s.Infer<typeof ModelSpace>

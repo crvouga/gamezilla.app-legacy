@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { ClickablePaper } from '~/@/ui/clickable'
 import { IconRobot } from '~/@/ui/icon/icon-robot'
@@ -14,11 +14,11 @@ import { OpenUserDetailsCmd } from '~/app/spaces/@/frontend/open-user-details-cm
 import { ScreenLayoutGameCoverArt } from '../screen-layout-game-cover-art'
 import { ScreenLayoutHostSettingUpGame } from '../screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 
-export const Msg = p.or(
-  p.obj({ t: p.l('game-main-menu.clicked-open-user-details-button'), userId: UserId }),
-  p.obj({ t: p.l('game-main-menu.clicked-exit-game-button') }),
+export const Msg = s.or(
+  s.obj({ t: s.l('game-main-menu.clicked-open-user-details-button'), userId: UserId }),
+  s.obj({ t: s.l('game-main-menu.clicked-exit-game-button') }),
 )
-export type Msg = p.Infer<typeof Msg>
+export type Msg = s.Infer<typeof Msg>
 
 const isMsg = (m: unknown): m is Msg => isOk(Msg.parse(m))
 

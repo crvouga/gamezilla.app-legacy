@@ -1,18 +1,18 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import * as Variant from '../../variant/variant'
 
-export const MsgToWorker = p.or(
-  p.obj({
-    t: p.l('find-solution'),
+export const MsgToWorker = s.or(
+  s.obj({
+    t: s.l('find-solution'),
     model: Variant.Model,
   }),
 )
-export type MsgToWorker = p.Infer<typeof MsgToWorker>
+export type MsgToWorker = s.Infer<typeof MsgToWorker>
 
-export const MsgToMaster = p.or(
-  p.obj({
-    t: p.l('found-solution'),
-    model: p.maybe(Variant.Model),
+export const MsgToMaster = s.or(
+  s.obj({
+    t: s.l('found-solution'),
+    model: s.maybe(Variant.Model),
   }),
 )
-export type MsgToMaster = p.Infer<typeof MsgToMaster>
+export type MsgToMaster = s.Infer<typeof MsgToMaster>

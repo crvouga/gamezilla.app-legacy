@@ -1,18 +1,18 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UnitInterval } from '~/@/range/unit-interval'
 import { isOk } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('play-sound'),
-    src: p.str,
-    volume: p.maybe(UnitInterval.parser),
-    delay: p.maybe(TimeSpan.parser),
+export const parser = s.or(
+  s.obj({
+    t: s.l('play-sound'),
+    src: s.str,
+    volume: s.maybe(UnitInterval.parser),
+    delay: s.maybe(TimeSpan.parser),
   }),
 )
 
-export type PlaySoundCmd = p.Infer<typeof parser>
+export type PlaySoundCmd = s.Infer<typeof parser>
 
 export const init = (
   src: string,

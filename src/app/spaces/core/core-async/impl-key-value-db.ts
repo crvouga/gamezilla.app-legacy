@@ -3,7 +3,7 @@ import { EventSourced } from '~/@/event-sourced'
 import { pipe } from '~/@/function/pipe'
 import { LRUCache } from '~/@/least-recently-used-cache'
 import { ILogger, Logger } from '~/@/logger'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Err, Ok, Result, isErr, unwrapOr } from '~/@/result'
 import { IRuntime } from '~/@/runtime'
 import { TimeSpan } from '~/@/time/time-span'
@@ -53,7 +53,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
   const indexSpaceIds = KeyValueDb.withNamespace<string, SpaceId[]>({
     keyValueDb,
     namespace: [...config.namespace, 'spaces', 'space-ids'],
-    parser: p.arr(SpaceId),
+    parser: s.arr(SpaceId),
   })
   const INDEX_SPACE_IDS_KEY_ALL = 'all'
 

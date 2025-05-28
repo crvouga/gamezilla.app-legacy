@@ -1,28 +1,28 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-export const HashingAlgo = p.or(
-  p.obj({
-    t: p.l('sha256'),
+export const HashingAlgo = s.or(
+  s.obj({
+    t: s.l('sha256'),
   }),
-  p.obj({
-    t: p.l('bcrypt'),
-    cost: p.num,
+  s.obj({
+    t: s.l('bcrypt'),
+    cost: s.num,
   }),
-  p.obj({
-    t: p.l('argon2id'),
-    memoryCost: p.num,
-    timeCost: p.num,
+  s.obj({
+    t: s.l('argon2id'),
+    memoryCost: s.num,
+    timeCost: s.num,
   }),
-  p.obj({
-    t: p.l('argon2i'),
-    memoryCost: p.num,
-    timeCost: p.num,
+  s.obj({
+    t: s.l('argon2i'),
+    memoryCost: s.num,
+    timeCost: s.num,
   }),
-  p.obj({
-    t: p.l('argon2d'),
-    memoryCost: p.num,
-    timeCost: p.num,
+  s.obj({
+    t: s.l('argon2d'),
+    memoryCost: s.num,
+    timeCost: s.num,
   }),
 )
 
-export type HashingAlgo = p.Infer<typeof HashingAlgo>
+export type HashingAlgo = s.Infer<typeof HashingAlgo>

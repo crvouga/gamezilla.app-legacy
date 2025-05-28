@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../flow'
@@ -7,7 +7,7 @@ import * as FlowVariant from '../variant/variant'
 import { PuzzleId } from './puzzle-id'
 import { PuzzleName } from './puzzle-name'
 
-const parser = p.obj({
+const parser = s.obj({
   id: PuzzleId,
   name: PuzzleName,
   createdAt: Posix,
@@ -15,10 +15,10 @@ const parser = p.obj({
   lastUpdatedAt: Posix,
   lastUpdatedBy: UserId,
   flow: FlowVariant.Model,
-  solutions: p.arr(Flow.Model),
+  solutions: s.arr(Flow.Model),
 })
 
-export type Puzzle = p.Infer<typeof parser>
+export type Puzzle = s.Infer<typeof parser>
 
 const create = async (input: {
   count?: number

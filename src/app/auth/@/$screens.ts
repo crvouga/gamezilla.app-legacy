@@ -1,27 +1,27 @@
 import { Result } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 
-const Screen = p.or(
-  p.obj({
-    n: p.l('auth-login'),
-    t: p.l('login'),
+const Screen = s.or(
+  s.obj({
+    n: s.l('auth-login'),
+    t: s.l('login'),
   }),
-  p.obj({
-    n: p.l('auth-login'),
-    t: p.l('login-sms-request'),
+  s.obj({
+    n: s.l('auth-login'),
+    t: s.l('login-sms-request'),
   }),
-  p.obj({
-    n: p.l('auth-login'),
-    t: p.l('login-sms-verify'),
+  s.obj({
+    n: s.l('auth-login'),
+    t: s.l('login-sms-verify'),
     phoneNumber: PhoneNumber,
   }),
-  p.obj({
-    n: p.l('auth-login'),
-    t: p.l('login-email-send-link'),
+  s.obj({
+    n: s.l('auth-login'),
+    t: s.l('login-email-send-link'),
   }),
 )
 
-export type Screen = p.Infer<typeof Screen>
+export type Screen = s.Infer<typeof Screen>
 
 export const toScreen = (x: unknown): Screen | null => Result.unwrapOr(Screen.parse(x), null)

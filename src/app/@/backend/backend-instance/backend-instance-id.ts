@@ -1,9 +1,9 @@
 import { Uuid } from '~/@/id/uuid'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-const parser = p.brand(p.str, 'BackendInstanceId')
+const parser = s.brand(s.str, 'BackendInstanceId')
 
-export type BackendInstanceId = p.Infer<typeof parser>
+export type BackendInstanceId = s.Infer<typeof parser>
 
 const is = (backendInstanceId: unknown): backendInstanceId is BackendInstanceId => {
   return typeof backendInstanceId === 'string'

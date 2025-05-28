@@ -1,7 +1,7 @@
 import { ascend } from '~/@/array/sorting'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { ILogger, Logger } from '~/@/logger'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isErr, isOk, Result, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
@@ -21,32 +21,32 @@ export type Config = {
   logger: ILogger
 }
 
-const Row = p.obj({
+const Row = s.obj({
   id: PackId,
   name: PackName,
-  created_at_posix: p.or(p.num, p.str),
+  created_at_posix: s.or(s.num, s.str),
   created_by_user_id: UserId,
-  last_updated_at_posix: p.or(p.num, p.str),
+  last_updated_at_posix: s.or(s.num, s.str),
   last_updated_by_user_id: UserId,
-  deleted_at_posix: p.maybe(p.or(p.num, p.str)),
-  deleted_by_user_id: p.maybe(UserId),
-  is_official: p.maybe(p.bool),
+  deleted_at_posix: s.maybe(s.or(s.num, s.str)),
+  deleted_by_user_id: s.maybe(UserId),
+  is_official: s.maybe(s.bool),
 })
 
-type Row = p.Infer<typeof Row>
+type Row = s.Infer<typeof Row>
 
-const RowItem = p.obj({
-  id: p.str,
-  pack_id: p.str,
-  puzzle_id: p.str,
-  position: p.or(p.num, p.str),
-  created_at_posix: p.or(p.num, p.str),
-  created_by_user_id: p.str,
-  deleted_at_posix: p.maybe(p.or(p.num, p.str)),
-  deleted_by_user_id: p.maybe(p.str),
+const RowItem = s.obj({
+  id: s.str,
+  pack_id: s.str,
+  puzzle_id: s.str,
+  position: s.or(s.num, s.str),
+  created_at_posix: s.or(s.num, s.str),
+  created_by_user_id: s.str,
+  deleted_at_posix: s.maybe(s.or(s.num, s.str)),
+  deleted_by_user_id: s.maybe(s.str),
 })
 
-type RowItem = p.Infer<typeof RowItem>
+type RowItem = s.Infer<typeof RowItem>
 
 const rowToPack = (row: Row, items: RowItem[]): Pack | null => {
   return {
@@ -152,7 +152,7 @@ export const PackDb = (config: Config): IPackDb => {
       const where = toSqlWhere(input.where)
       const vars = where.vars
       const sql = `SELECT COUNT(*) AS count FROM game_flow_pack ${where.str}`
-      const queried = await config.dbConnSql.query({ parser: p.obj({ count: p.maybe(p.or(p.num, p.str)) }), sql, vars })
+      const queried = await config.dbConnSql.query({ parser: s.obj({ count: s.maybe(s.or(s.num, s.str)) }), sql, vars })
       return Result.mapOk(queried, (rows) => ensureNumber(rows[0]?.count))
     },
 
@@ -181,7 +181,7 @@ export const PackDb = (config: Config): IPackDb => {
         ${sqlPagination.str};
 			`
       const packsSub = config.dbConnSql.sub({
-        parser: p.and(Row, p.obj({ puzzle_ids_csv: p.maybe(p.str) })),
+        parser: s.and(Row, s.obj({ puzzle_ids_csv: s.maybe(s.str) })),
         sql,
         vars,
       })
@@ -258,7 +258,7 @@ export const PackDb = (config: Config): IPackDb => {
       }
 
       const deleted = await config.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: 'DELETE FROM game_flow_pack_item WHERE pack_id = :pack_id',
         vars: {
           pack_id: input.id,
@@ -295,7 +295,7 @@ export const PackDb = (config: Config): IPackDb => {
       `
 
         const insertedItems = await config.dbConnSql.query({
-          parser: p.unknown,
+          parser: s.unknown,
           sql: sqlItems,
           vars: {},
         })
@@ -307,7 +307,7 @@ export const PackDb = (config: Config): IPackDb => {
 
       if (got.value) {
         const queried = await config.dbConnSql.query({
-          parser: p.unknown,
+          parser: s.unknown,
           sql: `
           UPDATE
             game_flow_pack
@@ -329,7 +329,7 @@ export const PackDb = (config: Config): IPackDb => {
       }
 
       const queried = await config.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `
 				INSERT INTO game_flow_pack (
 					id,
@@ -367,7 +367,7 @@ export const PackDb = (config: Config): IPackDb => {
 
     async zap(input) {
       const queried = await config.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `
           UPDATE game_flow_pack 
           SET 

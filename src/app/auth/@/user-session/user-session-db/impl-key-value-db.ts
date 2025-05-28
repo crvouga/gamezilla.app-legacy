@@ -1,5 +1,5 @@
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Ok, unwrapOr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
@@ -11,16 +11,16 @@ import { UserSessionId } from '../user-session-id'
 import * as ImplInMemory from './impl-in-memory'
 import type { IUserSessionDb } from './interface'
 
-const Row = p.obj({
+const Row = s.obj({
   user_session_id: UserSessionId,
-  session_id: p.maybe(SessionId),
+  session_id: s.maybe(SessionId),
   client_session_id: ClientSessionId,
   user_id: UserId,
   created_at_posix: Posix,
-  ended_at_posix: p.maybe(Posix),
+  ended_at_posix: s.maybe(Posix),
 })
 
-export type Row = p.Infer<typeof Row>
+export type Row = s.Infer<typeof Row>
 
 const rowToUserSession = (row: Row): UserSession => ({
   userSessionId: row.user_session_id,
@@ -55,7 +55,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
   const allIds = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['user-session', ALL_IDS],
-    parser: p.arr(p.str),
+    parser: s.arr(s.str),
   })
 
   const getAll = async (): Promise<Row[]> => {

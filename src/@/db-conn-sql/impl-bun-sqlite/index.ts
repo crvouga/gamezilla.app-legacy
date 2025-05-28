@@ -1,5 +1,5 @@
 import { Err, Ok } from '~/@/result'
-import type { p } from '~/@/schema'
+import type { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
@@ -52,7 +52,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
           )}`,
         )
 
-        const output: p.Infer<typeof input.parser>[] = []
+        const output: s.Infer<typeof input.parser>[] = []
 
         for (const row of rows) {
           const parsed = input.parser.parse(row)

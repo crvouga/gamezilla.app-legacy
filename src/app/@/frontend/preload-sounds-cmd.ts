@@ -1,14 +1,14 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('preload-sounds'),
-    srcs: p.arr(p.str),
+export const parser = s.or(
+  s.obj({
+    t: s.l('preload-sounds'),
+    srcs: s.arr(s.str),
   }),
 )
 
-export type PreloadSoundsCmd = p.Infer<typeof parser>
+export type PreloadSoundsCmd = s.Infer<typeof parser>
 
 export const init = (srcs: string[]): PreloadSoundsCmd => {
   return {

@@ -5,7 +5,7 @@ import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { FlowBackendCtx } from '../../backend/ctx'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { Solutions } from '../solutions'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 export type ModelFrontend = {}
 
@@ -13,12 +13,12 @@ export const initFrontend: ModelFrontend = {}
 
 export type ModelBackend = null
 
-export const MsgFrontend = p.obj({
-  t: p.l('got-solutions-db-solutions'),
+export const MsgFrontend = s.obj({
+  t: s.l('got-solutions-db-solutions'),
   solutions: Solutions,
 })
 
-export type MsgFrontend = p.Infer<typeof MsgFrontend>
+export type MsgFrontend = s.Infer<typeof MsgFrontend>
 
 export type MsgBackend = { t: 'noop' }
 

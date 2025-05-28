@@ -3,7 +3,7 @@ import { eq } from '~/@/equals/equals'
 import { memoize } from '~/@/function/memoize'
 import { pipe } from '~/@/function/pipe'
 import { djb2Hash } from '~/@/hash/djb2'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { EdgeId } from './edge-id'
 import { GroupId } from './group-id'
 import { NodeId } from './node-id'
@@ -13,34 +13,34 @@ import { TerminalFull } from './terminal-full'
 /**
  * Represents a connection between two nodes.
  */
-export const Edge = p.obj({
+export const Edge = s.obj({
   sourceId: NodeId,
   targetId: NodeId,
 })
-export type Edge = p.Infer<typeof Edge>
+export type Edge = s.Infer<typeof Edge>
 
 /**
  * A `Pipe` associates an edge with a group.
  * These are the lines the user draws in the puzzle.
  */
-export const Pipe = p.obj({
+export const Pipe = s.obj({
   groupId: GroupId,
   edgeId: EdgeId,
 })
-export type Pipe = p.Infer<typeof Pipe>
+export type Pipe = s.Infer<typeof Pipe>
 
-export const PipeJoined = p.and(
+export const PipeJoined = s.and(
   Pipe,
-  p.obj({
+  s.obj({
     edge: Edge,
   }),
 )
-export type PipeJoined = p.Infer<typeof PipeJoined>
+export type PipeJoined = s.Infer<typeof PipeJoined>
 
-export const Node = p.obj({
+export const Node = s.obj({
   nodeId: NodeId,
 })
-export type Node = p.Infer<typeof Node>
+export type Node = s.Infer<typeof Node>
 
 export const toNodes = (model: Model): { [nodeId: NodeId]: Node } => {
   return model.nodes
@@ -55,48 +55,48 @@ export const toNodes = (model: Model): { [nodeId: NodeId]: Node } => {
  * The puzzle is a directed graph
  */
 
-export const Model = p.obj({
-  Flow: p.l(true),
+export const Model = s.obj({
+  Flow: s.l(true),
 
   /**
    * The set of all valid nodes in the puzzle.
    */
-  nodes: p.dict(NodeId, Node),
+  nodes: s.dict(NodeId, Node),
 
   /**
    * The set of all valid connections between nodes.
    */
-  edges: p.dict(EdgeId, Edge),
+  edges: s.dict(EdgeId, Edge),
 
   /**
    * Represents the start and end nodes for each pipeline.
    */
-  terminalsByGroupId: p.partialDict(GroupId, Terminal),
+  terminalsByGroupId: s.partialDict(GroupId, Terminal),
 
   /**
    * Represents the pipes that are connected to each node.
    * We index each pipe with pipe's source node
    * so that it's impossible for a node to be associated with more than one group
    */
-  pipesBySourceId: p.dict(NodeId, Pipe),
+  pipesBySourceId: s.dict(NodeId, Pipe),
 
   /**
    * A hash of the terminals in the puzzle. Used for memoization.
    */
-  terminalHash: p.maybe(p.or(p.str, p.num)),
+  terminalHash: s.maybe(s.or(s.str, s.num)),
 
   /**
    * A hash of the edges in the puzzle. Used for memoization.
    */
-  edgeHash: p.maybe(p.or(p.str, p.num)),
+  edgeHash: s.maybe(s.or(s.str, s.num)),
 
   /**
    * A hash of the nodes in the puzzle. Used for memoization.
    */
-  nodeHash: p.maybe(p.or(p.str, p.num)),
+  nodeHash: s.maybe(s.or(s.str, s.num)),
 })
 
-export type Model = p.Infer<typeof Model>
+export type Model = s.Infer<typeof Model>
 
 /**
  *

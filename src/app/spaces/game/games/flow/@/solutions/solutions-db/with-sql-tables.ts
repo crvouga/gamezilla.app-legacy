@@ -1,5 +1,5 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { ISolutionsDb } from './interface'
 
 export type Config = {
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS game_flow_solutions (
 export const SolutionsDb = (config: Config): ISolutionsDb => {
   config.dbConnSql
     .query({
-      parser: p.unknown,
+      parser: s.unknown,
       sql: query,
       vars: {},
     })

@@ -1,13 +1,13 @@
 // https://en.wikipedia.org/wiki/Lamport_timestamp
 
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { LamportTimestamp } from './lamport-timestamp'
 
-const parser = p.obj({
+const parser = s.obj({
   _currentTime: LamportTimestamp,
 })
 
-export type LamportClock = p.Infer<typeof parser>
+export type LamportClock = s.Infer<typeof parser>
 
 const init: LamportClock = {
   _currentTime: LamportTimestamp.fromNumber(0),

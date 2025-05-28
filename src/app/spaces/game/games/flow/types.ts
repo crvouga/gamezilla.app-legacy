@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
@@ -38,8 +38,8 @@ export type ModelFrontend = {
   screenPlay: PlayTypes.ModelFrontend
 }
 
-export const ModelBackend = p.obj({ t: p.l('noop') })
-export type ModelBackend = p.Infer<typeof ModelBackend>
+export const ModelBackend = s.obj({ t: s.l('noop') })
+export type ModelBackend = s.Infer<typeof ModelBackend>
 
 //
 //
@@ -82,8 +82,8 @@ export type MsgToFrontend =
   | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgToFrontend }
 
 const MODE = ['build', 'play'] as const
-export const Mode = p.enumeration(MODE)
-export type Mode = p.Infer<typeof Mode>
+export const Mode = s.enumeration(MODE)
+export type Mode = s.Infer<typeof Mode>
 
 //
 //
@@ -93,29 +93,29 @@ export type Mode = p.Infer<typeof Mode>
 //
 //
 
-export const MsgSpace = p.or(
-  p.obj({
-    t: p.l('user-changed-mode'),
-    mode: p.or(Mode, p.l('none')),
+export const MsgSpace = s.or(
+  s.obj({
+    t: s.l('user-changed-mode'),
+    mode: s.or(Mode, s.l('none')),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('got-screen-play-msg'),
+  s.obj({
+    t: s.l('got-screen-play-msg'),
     c: PlayTypes.MsgSpace,
   }),
-  p.obj({
-    t: p.l('got-screen-build-msg'),
+  s.obj({
+    t: s.l('got-screen-build-msg'),
     c: BuildTypes.MsgSpace,
   }),
 )
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>
 
-export const ModelSpace = p.obj({
-  mode: p.or(Mode, p.l('none')),
+export const ModelSpace = s.obj({
+  mode: s.or(Mode, s.l('none')),
   screenPlay: PlayTypes.ModelSpace,
   screenBuild: BuildTypes.ModelSpace,
 })
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export type ModelSpace = s.Infer<typeof ModelSpace>
 
 //
 //

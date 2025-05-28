@@ -1,7 +1,7 @@
 import { isSubset } from '~/@/array/is-subset'
 import { unique } from '~/@/array/unique'
 import { Err, Ok, type Result } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { eq } from '~/@/equals/equals'
 
 //
@@ -25,9 +25,9 @@ export type Pos2d = { x: number; y: number }
 
 export const ALL_PLAYER_TYPES = ['player-one', 'player-two'] as const
 
-export const PlayerType = p.enumeration(ALL_PLAYER_TYPES)
+export const PlayerType = s.enumeration(ALL_PLAYER_TYPES)
 
-export type PlayerType = p.Infer<typeof PlayerType>
+export type PlayerType = s.Infer<typeof PlayerType>
 
 export const playerTypes: { [playerType in PlayerType]: PlayerType } = {
   'player-one': 'player-one',
@@ -46,11 +46,11 @@ export const playerTypeToColor: { [key in PlayerType]: Color } = {
   'player-two': 'Yellow',
 }
 
-export const Column = p.arr(PlayerType)
-export type Column = p.Infer<typeof Column>
+export const Column = s.arr(PlayerType)
+export type Column = s.Infer<typeof Column>
 
-export const Columns = p.arr(Column)
-export type Columns = p.Infer<typeof Columns>
+export const Columns = s.arr(Column)
+export type Columns = s.Infer<typeof Columns>
 
 export const MAX_COLUMN_HEIGHT = 6
 
@@ -59,8 +59,8 @@ export const EMPTY_COLUMNS: Columns = [[], [], [], [], [], [], []]
 export const COLUMN_COUNT = EMPTY_COLUMNS.length
 
 export const ALL_COLUMN_INDEXES = [0, 1, 2, 3, 4, 5, 6] as const
-export const ColumnIndex = p.enumeration(ALL_COLUMN_INDEXES)
-export type ColumnIndex = p.Infer<typeof ColumnIndex>
+export const ColumnIndex = s.enumeration(ALL_COLUMN_INDEXES)
+export type ColumnIndex = s.Infer<typeof ColumnIndex>
 
 export const ALL_POSITIONS: Pos2d[] = []
 for (let x = 0; x < COLUMN_COUNT; x++) {
@@ -88,8 +88,8 @@ export const ALL_MOVE_PROBLEMS = [
   'column-is-full',
   'out-of-bounds',
 ] as const
-export const MoveProblem = p.enumeration(ALL_MOVE_PROBLEMS)
-export type MoveProblem = p.Infer<typeof MoveProblem>
+export const MoveProblem = s.enumeration(ALL_MOVE_PROBLEMS)
+export type MoveProblem = s.Infer<typeof MoveProblem>
 
 export const moveProblemToString = (problem: MoveProblem): string => {
   switch (problem) {

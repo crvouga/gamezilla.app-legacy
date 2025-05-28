@@ -1,17 +1,17 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { pipe } from '~/@/function/pipe'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { ClientId } from '../../@/wire/client-id'
 import { SessionId } from '../../@/wire/session-id'
 import { UserId } from '../@/data/user-id'
 
-const parser = p.obj({
+const parser = s.obj({
   clientIds: CappedOrderedDict.parser(ClientId, ClientId),
   sessionId: SessionId,
-  userId: p.maybe(UserId),
+  userId: s.maybe(UserId),
 })
 
-export type WireSession = p.Infer<typeof parser>
+export type WireSession = s.Infer<typeof parser>
 
 const init = (sessionId: SessionId): WireSession => {
   return {

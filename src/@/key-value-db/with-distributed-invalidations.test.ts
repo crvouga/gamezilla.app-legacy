@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { Ok } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Logger } from '../logger'
 import { PubSubTopicBased } from '../pub-sub-topic-based'
 import { KeyValueDb } from './impl'
@@ -8,12 +8,12 @@ import { withNamespace } from './with-namespace'
 import { PubSub } from '../pub-sub'
 import { PubSubTopicBasedMap } from '../pub-sub-topic-based/impl-in-memory'
 
-const MyEvent = p.obj({
-  id: p.str,
-  value: p.str,
+const MyEvent = s.obj({
+  id: s.str,
+  value: s.str,
 })
 
-type MyEvent = p.Infer<typeof MyEvent>
+type MyEvent = s.Infer<typeof MyEvent>
 
 let runningEventId = 0
 const randomMyEvent = (): MyEvent => ({

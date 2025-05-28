@@ -1,10 +1,10 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 const ORDER = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'] as const
 
-const parser = p.enumeration(ORDER)
+const parser = s.enumeration(ORDER)
 
-export type GroupId = p.Infer<typeof parser>
+export type GroupId = s.Infer<typeof parser>
 
 const is = (groupId: unknown): groupId is GroupId => {
   return parser.parse(groupId).t === 'ok'

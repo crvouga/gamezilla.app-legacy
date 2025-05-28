@@ -1,5 +1,5 @@
 import { Ok, Result, isErr } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Hash } from '~/@/hashing'
 import { Sql } from '~/@/sql'
 import { IDbConnSql } from '~/@/db-conn-sql'
@@ -9,15 +9,15 @@ import type { IVerificationDb, OrderClause, WhereClause } from './interface'
 import { Posix } from '~/@/time/posix'
 import { PhoneNumber } from '~/@/phone-number'
 
-export const Row = p.obj({
+export const Row = s.obj({
   id: VerificationId,
-  code_hash: p.maybe(p.json),
-  phone_number: p.str,
-  created_at_posix: p.str,
-  expires_at_posix: p.str,
-  verified_at_posix: p.maybe(p.str),
+  code_hash: s.maybe(s.json),
+  phone_number: s.str,
+  created_at_posix: s.str,
+  expires_at_posix: s.str,
+  verified_at_posix: s.maybe(s.str),
 })
-type Row = p.Infer<typeof Row>
+type Row = s.Infer<typeof Row>
 
 export type Config = {
   t: 'postgres'
@@ -56,8 +56,8 @@ export const VerificationDb = (config: Config): IVerificationDb => {
 				${where.str}
 			`
       const queriedCount = await config.dbConnSql.query({
-        parser: p.obj({
-          count: p.str,
+        parser: s.obj({
+          count: s.str,
         }),
         sql: queryCount,
         vars: vars,
@@ -111,7 +111,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
         verified_at_posix: verification.verifiedAtPosix,
       }
       const queried = await config.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: query,
         vars: vars,
       })
@@ -124,7 +124,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
         id: verificationId,
       }
       const queried = await config.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: query,
         vars: vars,
       })

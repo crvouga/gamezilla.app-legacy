@@ -1,5 +1,5 @@
 import postgres from 'postgres'
-import type { p } from '~/@/schema'
+import type { s } from '~/@/schema'
 import { Err, Ok } from '~/@/result'
 import { SecretString } from '~/@/secrets/secret-string'
 import { Sql } from '~/@/sql'
@@ -46,7 +46,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
         logger.debug({ duration: durationFormatted, sql: cleanSql(rawSql), variables: variables })
 
-        const output: p.Infer<typeof parser>[] = []
+        const output: s.Infer<typeof parser>[] = []
 
         for (const row of rows) {
           const parsed = parser.parse(row)

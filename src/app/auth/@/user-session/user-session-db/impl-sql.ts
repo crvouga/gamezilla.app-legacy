@@ -1,6 +1,6 @@
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { ILogger, Logger } from '~/@/logger'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Result, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
@@ -13,16 +13,16 @@ import { UserSessionId } from '../user-session-id'
 import type { IUserSessionDb } from './interface'
 import { UserSessionDbQuery } from './query'
 
-export const Row = p.obj({
+export const Row = s.obj({
   id: UserSessionId,
-  session_id: p.maybe(SessionId),
+  session_id: s.maybe(SessionId),
   client_session_id: ClientSessionId,
   user_id: UserId,
-  created_at_posix: p.or(p.str, p.num),
-  ended_at_posix: p.maybe(p.or(p.str, p.num)),
+  created_at_posix: s.or(s.str, s.num),
+  ended_at_posix: s.maybe(s.or(s.str, s.num)),
 })
 
-export type Row = p.Infer<typeof Row>
+export type Row = s.Infer<typeof Row>
 
 const rowToUserSession = (row: Row): UserSession => ({
   userSessionId: row.id,
@@ -134,7 +134,7 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
 
       const queried = await dbConnSql.query({ parser: Row, sql, vars })
 
-      const queriedCount = await dbConnSql.query({ parser: p.obj({ total: p.or(p.num, p.str) }), sql: sqlCount, vars })
+      const queriedCount = await dbConnSql.query({ parser: s.obj({ total: s.or(s.num, s.str) }), sql: sqlCount, vars })
 
       const total = unwrapOr(
         Result.mapOk(queriedCount, (rows) => {

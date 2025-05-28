@@ -1,5 +1,5 @@
 import { isErr, Ok, unwrapOr } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { KeyValueDb, IKeyValueDb } from '../../../../../@/key-value-db'
 import { BackendInstance } from '../backend-instance'
 import { BackendInstanceId } from '../backend-instance-id'
@@ -22,7 +22,7 @@ export const BackendInstanceDb = (config: Config): IBackendInstanceDb => {
   const indexAllIds = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['backend-instance-ids'],
-    parser: p.arr(BackendInstanceId),
+    parser: s.arr(BackendInstanceId),
   })
   const list: IBackendInstanceDb['list'] = async () => {
     const got = await indexAllIds.get(ALL_IDS_KEY)

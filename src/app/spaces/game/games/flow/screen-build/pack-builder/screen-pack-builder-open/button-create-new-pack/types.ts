@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { NotAsked, type RemoteResult, Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../../../../@/pack/pack'
@@ -51,12 +51,12 @@ export type MsgToFrontend = {
 //
 //
 
-export const MsgSpace = p.obj({
-  t: p.l('create-new-pack.user-created-pack'),
-  created: Result.parser(p.str, Pack),
+export const MsgSpace = s.obj({
+  t: s.l('create-new-pack.user-created-pack'),
+  created: Result.parser(s.str, Pack),
   userId: UserId,
 })
 
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>
 
-export const ModelSpace = p.obj({})
+export const ModelSpace = s.obj({})

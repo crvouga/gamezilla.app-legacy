@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { NotAsked, Result, type RemoteResult } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 import { PuzzleId } from '../../../../@/puzzle/puzzle-id'
@@ -29,10 +29,10 @@ export type MsgToFrontend = { t: 'noop' }
 
 export type MsgBackend = { t: 'noop' }
 
-export const MsgSpace = p.obj({
-  t: p.l('user-deleted-puzzle'),
-  deleted: Result.parser(p.str, p.l(null)),
+export const MsgSpace = s.obj({
+  t: s.l('user-deleted-puzzle'),
+  deleted: Result.parser(s.str, s.l(null)),
   deletedByUserId: UserId,
-  puzzleId: p.maybe(PuzzleId),
+  puzzleId: s.maybe(PuzzleId),
 })
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>

@@ -1,5 +1,5 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { IUserProfileDb } from './interface'
 
 export type Config = {
@@ -25,7 +25,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
   for (const query of queries) {
     config.dbConnSql
       .query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: query,
         vars: {},
       })

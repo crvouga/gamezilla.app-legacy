@@ -3,15 +3,15 @@
 //
 //
 
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import { GameMainMenu } from '../../../@/ui/game-main-menu'
 
 export const OPTION = ['puzzle-builder', 'pack-builder'] as const
 
-export const Option = p.enumeration(OPTION)
+export const Option = s.enumeration(OPTION)
 
-export type Option = p.Infer<typeof Option>
+export type Option = s.Infer<typeof Option>
 
 //
 //
@@ -20,15 +20,15 @@ export type Option = p.Infer<typeof Option>
 
 export type MsgFrontend = GameMainMenu.Msg
 
-export const MsgSpace = p.or(
-  p.obj({
-    t: p.l('screen-main-menu.user-clicked-back-button'),
+export const MsgSpace = s.or(
+  s.obj({
+    t: s.l('screen-main-menu.user-clicked-back-button'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('flow.build.screen-main-menu.user-clicked-option'),
+  s.obj({
+    t: s.l('flow.build.screen-main-menu.user-clicked-option'),
     userId: UserId,
     option: Option,
   }),
 )
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>

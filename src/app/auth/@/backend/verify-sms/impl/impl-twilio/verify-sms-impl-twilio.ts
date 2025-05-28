@@ -1,5 +1,5 @@
 import { Logger, type ILogger } from '~/@/logger'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, Ok, isErr } from '~/@/result'
 import type { IVerifySMS } from '../../interface'
@@ -118,14 +118,14 @@ export const VerifySMS = (config: Config): IVerifySMS => {
 
         const data = await response.json()
 
-        const parsed = p
+        const parsed = s
           .or(
-            p.obj({
-              valid: p.bool,
+            s.obj({
+              valid: s.bool,
             }),
-            p.obj({
-              status: p.l(400),
-              code: p.num,
+            s.obj({
+              status: s.l(400),
+              code: s.num,
             }),
           )
           .parse(data)

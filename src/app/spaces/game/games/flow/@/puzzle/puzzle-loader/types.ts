@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
@@ -24,13 +24,13 @@ export const initFrontend: ModelFrontend = {
 
 export type ModelBackend = null
 
-export const MsgFrontend = p.obj({
-  t: p.l('got-puzzle-db-puzzles'),
+export const MsgFrontend = s.obj({
+  t: s.l('got-puzzle-db-puzzles'),
   query: PuzzleQuery,
-  puzzles: p.arr(Puzzle),
+  puzzles: s.arr(Puzzle),
 })
 
-export type MsgFrontend = p.Infer<typeof MsgFrontend>
+export type MsgFrontend = s.Infer<typeof MsgFrontend>
 
 export type MsgBackend = { t: 'noop' }
 

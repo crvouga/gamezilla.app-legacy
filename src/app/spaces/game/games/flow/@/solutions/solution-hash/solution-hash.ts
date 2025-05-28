@@ -1,14 +1,14 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { Flow } from '../../flow'
 
-const parser = p.brand(p.str, 'SolutionHash')
+const parser = s.brand(s.str, 'SolutionHash')
 
 /**
  * This represents a hash of a flow where its unique on the flow's terminals
  * and edges.
  */
-export type SolutionHash = p.Infer<typeof parser>
+export type SolutionHash = s.Infer<typeof parser>
 
 const init = (model: Flow.Model): SolutionHash => {
   const terminalHash = model.terminalHash ?? Flow.deriveTerminalHash(model.terminalsByGroupId)

@@ -1,10 +1,10 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 export const GAME_NAME = ['connect-four', 'flow', 'tic-tac-toe', 'gomoku', 'chess'] as const
 
-export const GameName = p.enumeration(GAME_NAME)
+export const GameName = s.enumeration(GAME_NAME)
 
-export type GameName = p.Infer<typeof GameName>
+export type GameName = s.Infer<typeof GameName>
 
 export const gameNames: { [gameName in GameName]: GameName } = {
   'connect-four': 'connect-four',

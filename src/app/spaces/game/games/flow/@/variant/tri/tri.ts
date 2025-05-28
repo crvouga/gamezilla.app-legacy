@@ -1,17 +1,17 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Flow } from '../../flow'
 import * as VariantTriDimensions from './tri-dimensions'
 import { NodeId } from '../../flow/node-id'
 
-export const Model = p.and(
+export const Model = s.and(
   Flow.Model,
   VariantTriDimensions.Model,
-  p.obj({
-    t: p.l('flow-tri'),
-    VariantTri: p.l(true),
+  s.obj({
+    t: s.l('flow-tri'),
+    VariantTri: s.l(true),
   }),
 )
-export type Model = p.Infer<typeof Model>
+export type Model = s.Infer<typeof Model>
 
 export const init = (input: {
   dimensions: VariantTriDimensions.Model

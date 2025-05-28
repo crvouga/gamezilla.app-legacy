@@ -1,6 +1,6 @@
 import { Uuid } from '~/@/id/uuid'
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 export type GuestSessionMappingId = Brand<string, 'GuestSessionMappingId'>
 
@@ -8,7 +8,7 @@ const is = (guestSessionMappingId: unknown): guestSessionMappingId is GuestSessi
   return typeof guestSessionMappingId === 'string'
 }
 
-const parser = p.custom(is, 'Invalid guest session mapping id')
+const parser = s.custom(is, 'Invalid guest session mapping id')
 
 const namespace = 'guest-session-mapping'
 const separator = ':'

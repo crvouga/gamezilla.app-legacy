@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 /**
  * `History` is a data structure that allows you to keep track of the state of
@@ -89,11 +89,11 @@ const canUndo = <T>(history: History<T>): boolean => {
   return history._past.length > 0
 }
 
-const parser = <T>(value: p.Parser<T>): p.Parser<History<T>> => {
-  return p.obj({
-    _past: p.arr(value),
+const parser = <T>(value: s.Parser<T>): s.Parser<History<T>> => {
+  return s.obj({
+    _past: s.arr(value),
     _present: value,
-    _future: p.arr(value),
+    _future: s.arr(value),
   })
 }
 

@@ -1,4 +1,4 @@
-import { p } from '../schema'
+import { s } from '../schema'
 
 export type Query<T, TWhereOperator = WhereOperator> = {
   limit: number
@@ -41,12 +41,12 @@ export type WhereOperator =
 
 export type WhereValue<T> = T[keyof T] | T[keyof T][]
 
-export const Pagination = p.obj({
-  limit: p.num,
-  offset: p.num,
+export const Pagination = s.obj({
+  limit: s.num,
+  offset: s.num,
 })
 
-export type Pagination = p.Infer<typeof Pagination>
+export type Pagination = s.Infer<typeof Pagination>
 
 export type PaginationResult = Pagination & {
   total: number

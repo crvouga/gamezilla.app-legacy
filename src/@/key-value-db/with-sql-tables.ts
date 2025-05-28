@@ -1,5 +1,5 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { IKeyValueDb } from './interface'
 import { ILogger } from '../logger/interface'
 
@@ -23,7 +23,7 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
   for (const query of queries) {
     config.dbConnSql
       .query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: query,
         vars: {},
       })

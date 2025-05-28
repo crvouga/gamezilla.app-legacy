@@ -1,6 +1,6 @@
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import type { ILogger } from '~/@/logger'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Pagination } from '~/@/query/query'
 import { Ok, Result, isErr } from '~/@/result'
 import { Sql } from '~/@/sql'
@@ -70,7 +70,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       if (got.value) {
         // First try to update existing record
         const updateResult = await config.dbConnSql.query({
-          parser: p.num,
+          parser: s.num,
           sql: `
           UPDATE game_flow_puzzle
           SET
@@ -100,7 +100,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       }
 
       const insertResult = await config.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `
           INSERT INTO game_flow_puzzle (
             id,
@@ -144,7 +144,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
 
     async zap(input) {
       const queried = await config.dbConnSql.query({
-        parser: p.num,
+        parser: s.num,
         sql: `
         UPDATE
           game_flow_puzzle
@@ -167,8 +167,8 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       const where = toSqlWhere(input)
 
       const queried = await config.dbConnSql.query({
-        parser: p.obj({
-          count: p.maybe(p.or(p.str, p.num)),
+        parser: s.obj({
+          count: s.maybe(s.or(s.str, s.num)),
         }),
         sql: `
         SELECT
@@ -196,8 +196,8 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       }
 
       const queriedCount = await config.dbConnSql.query({
-        parser: p.obj({
-          count: p.maybe(p.or(p.str, p.num)),
+        parser: s.obj({
+          count: s.maybe(s.or(s.str, s.num)),
         }),
         sql: `
         SELECT

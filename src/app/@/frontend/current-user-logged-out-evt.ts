@@ -1,14 +1,14 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('current-user-logged-out'),
-    text: p.str,
+export const parser = s.or(
+  s.obj({
+    t: s.l('current-user-logged-out'),
+    text: s.str,
   }),
 )
 
-export type CurrentUserLoggedOutEvt = p.Infer<typeof parser>
+export type CurrentUserLoggedOutEvt = s.Infer<typeof parser>
 
 export const init = (text: string): CurrentUserLoggedOutEvt => {
   return {

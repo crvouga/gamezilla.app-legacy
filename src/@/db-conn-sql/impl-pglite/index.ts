@@ -3,7 +3,7 @@ import type { SyncShapeToTableOptions, SyncShapeToTableResult } from '@electric-
 import { electricSync } from '@electric-sql/pglite-sync'
 import type { LiveNamespace } from '@electric-sql/pglite/live'
 import { live } from '@electric-sql/pglite/live'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { PubSub, Sub } from '~/@/sub'
@@ -54,7 +54,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     logger.debug(`subscribing to sql=${sql}`)
 
     const query = await pg.live.query(sql, [], (res: unknown) => {
-      const parsed = p.obj({ rows: p.arr(input.parser) }).parse(res)
+      const parsed = s.obj({ rows: s.arr(input.parser) }).parse(res)
       switch (parsed.t) {
         case 'err': {
           logger.error(`Failed to parse row\nerror=${JSON.stringify(parsed.error, null, 4)}`)
@@ -188,7 +188,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
           ).slice(0, 500)}`,
         )
 
-        const output: p.Infer<typeof input.parser>[] = []
+        const output: s.Infer<typeof input.parser>[] = []
 
         for (const row of results.rows) {
           const parsed = input.parser.parse(row)

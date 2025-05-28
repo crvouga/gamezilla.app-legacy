@@ -1,4 +1,4 @@
-import { p } from '../schema'
+import { s } from '../schema'
 
 export type CappedOrderedDict<TKey extends string | number, TValue> = {
   _valuesByKey: {
@@ -103,13 +103,13 @@ const valuesNewestFirst = <TKey extends string | number, TValue>(model: CappedOr
 }
 
 const parser = <TKey extends string | number, TValue>(
-  key: p.Parser<TKey>,
-  val: p.Parser<TValue>,
-): p.Parser<CappedOrderedDict<TKey, TValue>> => {
-  return p.obj({
-    _valuesByKey: p.dict(key, val),
-    _orderNewestFirst: p.arr(key),
-    _maxSize: p.num,
+  key: s.Parser<TKey>,
+  val: s.Parser<TValue>,
+): s.Parser<CappedOrderedDict<TKey, TValue>> => {
+  return s.obj({
+    _valuesByKey: s.dict(key, val),
+    _orderNewestFirst: s.arr(key),
+    _maxSize: s.num,
   })
 }
 

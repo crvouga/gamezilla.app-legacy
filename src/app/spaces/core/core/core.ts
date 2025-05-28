@@ -1,6 +1,6 @@
 import { EventSourced } from '~/@/event-sourced'
 import { EventId, WithEventId } from '~/@/event-sourced/event'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Space } from '../space'
@@ -14,18 +14,18 @@ import { SpaceState } from '../space-state'
 //
 //
 
-export const SpaceError = p.obj({
-  t: p.l('user-already-in-a-space'),
+export const SpaceError = s.obj({
+  t: s.l('user-already-in-a-space'),
   userId: UserId,
 })
-export type SpaceError = p.Infer<typeof SpaceError>
+export type SpaceError = s.Infer<typeof SpaceError>
 
-export const Model = p.obj({
-  spaces: p.dict(SpaceId, Space.Model),
-  indexSpaceIdByUserId: p.dict(UserId, SpaceId),
-  errors: p.dict(EventId, SpaceError),
+export const Model = s.obj({
+  spaces: s.dict(SpaceId, Space.Model),
+  indexSpaceIdByUserId: s.dict(UserId, SpaceId),
+  errors: s.dict(EventId, SpaceError),
 })
-export type Model = p.Infer<typeof Model>
+export type Model = s.Infer<typeof Model>
 
 export const init: Model = {
   spaces: {},

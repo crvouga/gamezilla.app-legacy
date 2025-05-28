@@ -1,5 +1,5 @@
 import { IKeyValueDb, KeyValueDb } from '~/@/key-value-db'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isErr, Ok } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { Solution } from '../solution'
@@ -15,7 +15,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
   const solutionsByHash = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['game', 'flow', 'solutions-by-hash'],
-    parser: p.arr(Solution),
+    parser: s.arr(Solution),
   })
   return {
     async get(hash) {

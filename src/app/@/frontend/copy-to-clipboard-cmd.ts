@@ -1,14 +1,14 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('copy-to-clipboard'),
-    text: p.str,
+export const parser = s.or(
+  s.obj({
+    t: s.l('copy-to-clipboard'),
+    text: s.str,
   }),
 )
 
-export type CopyToClipboardCmd = p.Infer<typeof parser>
+export type CopyToClipboardCmd = s.Infer<typeof parser>
 
 export const init = (text: string): CopyToClipboardCmd => {
   return {

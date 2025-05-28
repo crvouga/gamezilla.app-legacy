@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import type { Flow } from '../flow'
 import { NodeId } from '../flow/node-id'
 import { VariantGrid } from './grid'
@@ -7,8 +7,8 @@ import { VariantTri } from './tri'
 import type * as VariantDimensions from './variant-dimensions'
 import { Terminal } from '../flow/terminal'
 
-export const Model = p.or(VariantGrid.Model, VariantHex.Model, VariantTri.Model)
-export type Model = p.Infer<typeof Model>
+export const Model = s.or(VariantGrid.Model, VariantHex.Model, VariantTri.Model)
+export type Model = s.Infer<typeof Model>
 
 export const isGrid = (flow: Model): flow is VariantGrid.Model => {
   return flow.t === 'flow-grid'

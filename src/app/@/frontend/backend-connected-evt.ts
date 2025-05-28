@@ -1,13 +1,13 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('backend-evt.connected'),
+export const parser = s.or(
+  s.obj({
+    t: s.l('backend-evt.connected'),
   }),
 )
 
-export type BackendConnectedEvt = p.Infer<typeof parser>
+export type BackendConnectedEvt = s.Infer<typeof parser>
 
 export const init = (): BackendConnectedEvt => {
   return {

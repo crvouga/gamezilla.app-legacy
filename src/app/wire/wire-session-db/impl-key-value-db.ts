@@ -1,6 +1,6 @@
 import { KeyValueDb, IKeyValueDb } from '~/@/key-value-db'
 import { ILogger } from '~/@/logger'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isErr, unwrapOr } from '~/@/result'
 import { SessionId } from '~/@/wire/session-id'
 import { WireSession } from '../wire-session'
@@ -22,7 +22,7 @@ export const WireSessionDb = (config: Config): IWireSessionDb => {
   const indexSessionIdsByUserId = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['wire-session-db', 'index-session-ids-by-user-id'],
-    parser: p.arr(SessionId),
+    parser: s.arr(SessionId),
   })
 
   return {

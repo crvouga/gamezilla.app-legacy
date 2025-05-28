@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import type { IDbConnSql } from '../db-conn-sql'
 import type { ILogger } from '../logger/interface'
 import { IPubSub } from './interface'
@@ -19,7 +19,7 @@ export const PubSub = (config: Config): IPubSub => {
   const SEPARATOR = '___'
 
   config.dbConnSql.query({
-    parser: p.unknown,
+    parser: s.unknown,
     sql: `LISTEN ${config.channel}`,
     vars: {},
   })
@@ -51,7 +51,7 @@ export const PubSub = (config: Config): IPubSub => {
   return {
     async pub(msg) {
       config.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `NOTIFY ${config.channel}, '${instanceId}${SEPARATOR}${msg}'`,
         vars: {},
       })

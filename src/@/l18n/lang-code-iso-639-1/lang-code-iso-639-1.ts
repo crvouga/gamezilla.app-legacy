@@ -1,10 +1,10 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 const ALL = ['en', 'es', 'fr', 'de', 'it', 'ja', 'ko', 'pt', 'ru', 'zh', 'hi', 'ar'] as const
 
 export type LanguageCodeISO_639_1 = (typeof ALL)[number]
 
-const parser = p.enumeration(ALL)
+const parser = s.enumeration(ALL)
 
 const is = (code: unknown): code is LanguageCodeISO_639_1 =>
   typeof code === 'string' && ALL.includes(code as LanguageCodeISO_639_1)

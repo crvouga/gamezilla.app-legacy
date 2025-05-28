@@ -1,37 +1,37 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Pagination } from '~/@/query/query'
 import { UserId } from '~/app/@/data/user-id'
 import { PuzzleId } from '../puzzle-id'
 
-export const WhereClause = p.partialObj({
-  createdBy: p.maybe(
-    p.obj({
+export const WhereClause = s.partialObj({
+  createdBy: s.maybe(
+    s.obj({
       equals: UserId,
     }),
   ),
-  puzzleId: p.maybe(
-    p.obj({
-      in: p.arr(PuzzleId),
+  puzzleId: s.maybe(
+    s.obj({
+      in: s.arr(PuzzleId),
     }),
   ),
 })
 
-export type WhereClause = p.Infer<typeof WhereClause>
+export type WhereClause = s.Infer<typeof WhereClause>
 
-export const OrderClause = p.partialObj({
-  createdAt: p.enumeration(['asc', 'desc']),
-  lastUpdatedAt: p.enumeration(['asc', 'desc']),
+export const OrderClause = s.partialObj({
+  createdAt: s.enumeration(['asc', 'desc']),
+  lastUpdatedAt: s.enumeration(['asc', 'desc']),
 })
 
-export type OrderClause = p.Infer<typeof OrderClause>
+export type OrderClause = s.Infer<typeof OrderClause>
 
-const parser = p.obj({
+const parser = s.obj({
   pagination: Pagination,
   where: WhereClause,
   order: OrderClause,
 })
 
-export type PuzzleQuery = p.Infer<typeof parser>
+export type PuzzleQuery = s.Infer<typeof parser>
 
 const toKey = (input: PuzzleQuery): string => {
   return [

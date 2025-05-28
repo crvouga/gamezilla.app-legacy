@@ -1,6 +1,6 @@
 import { Uuid } from '~/@/id/uuid'
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 export type PuzzleId = Brand<string, 'PuzzleId'>
 
@@ -11,7 +11,7 @@ const is = (maybePuzzleId: unknown): maybePuzzleId is PuzzleId => {
   return typeof maybePuzzleId === 'string' && maybePuzzleId.trim().length > 0
 }
 
-const parser = p.custom(is, 'Invalid flow puzzle id')
+const parser = s.custom(is, 'Invalid flow puzzle id')
 
 const generate = () => {
   const id = Uuid.generate()

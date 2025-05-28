@@ -1,9 +1,9 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { NodeId } from './node-id'
 
-const parser = p.brand(p.str, 'EdgeId')
+const parser = s.brand(s.str, 'EdgeId')
 
-export type EdgeId = p.Infer<typeof parser>
+export type EdgeId = s.Infer<typeof parser>
 
 const EDGE_ID_SEPARATOR = '->'
 

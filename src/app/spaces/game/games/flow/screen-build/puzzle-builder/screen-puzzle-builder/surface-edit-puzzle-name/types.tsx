@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { NotAsked, type RemoteResult, Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 import { ScreenActionLocation } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
@@ -54,11 +54,11 @@ export type MsgToFrontend = {
   t: 'noop'
 }
 
-export const MsgSpace = p.obj({
-  t: p.l('user-edited-puzzle-name'),
-  edited: Result.parser(p.str, p.l(null)),
+export const MsgSpace = s.obj({
+  t: s.l('user-edited-puzzle-name'),
+  edited: Result.parser(s.str, s.l(null)),
   puzzleId: PuzzleId,
-  newName: p.str,
+  newName: s.str,
   userId: UserId,
 })
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>

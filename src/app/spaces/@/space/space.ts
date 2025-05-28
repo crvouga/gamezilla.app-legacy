@@ -1,15 +1,15 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceId } from '~/app/@/data/space-id'
 
-const parser = p.obj({
-  visibility: p.enumeration(['public', 'private']),
+const parser = s.obj({
+  visibility: s.enumeration(['public', 'private']),
   spaceId: SpaceId,
   hostId: UserId,
-  users: p.dict(UserId, UserId),
+  users: s.dict(UserId, UserId),
 })
 
-export type Space = p.Infer<typeof parser>
+export type Space = s.Infer<typeof parser>
 
 const random = (): Space => {
   return {

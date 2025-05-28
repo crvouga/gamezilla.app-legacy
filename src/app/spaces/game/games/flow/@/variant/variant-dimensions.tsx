@@ -1,12 +1,12 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { VariantGridDimensions } from './grid'
 import { VariantHexDimensions } from './hex'
 import { VariantTriDimensions } from './tri'
 import { Translator } from '~/@/l18n/generated'
 
-export const Model = p.or(VariantGridDimensions.Model, VariantHexDimensions.Model, VariantTriDimensions.Model)
+export const Model = s.or(VariantGridDimensions.Model, VariantHexDimensions.Model, VariantTriDimensions.Model)
 
-export type Model = p.Infer<typeof Model>
+export type Model = s.Infer<typeof Model>
 
 export const init = (model: Model): Model => {
   switch (model.t) {

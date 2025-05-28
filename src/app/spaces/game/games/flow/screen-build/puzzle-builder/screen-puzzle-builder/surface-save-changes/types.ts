@@ -1,5 +1,5 @@
 import { type RemoteResult, Result } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 
@@ -41,9 +41,9 @@ export type MsgToBackend = { t: 'noop' }
 
 export type MsgToFrontend = { t: 'noop' }
 
-export const MsgSpace = p.obj({
-  t: p.l('screen-puzzle-builder.saved-puzzle'),
-  saved: Result.parser(p.str, Puzzle),
+export const MsgSpace = s.obj({
+  t: s.l('screen-puzzle-builder.saved-puzzle'),
+  saved: Result.parser(s.str, Puzzle),
   userId: UserId,
 })
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>

@@ -1,7 +1,7 @@
 import { assert } from '~/@/assert'
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { eq } from '~/@/equals/equals'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { LamportClock, LamportTimestamp } from '~/@/lamport-clock'
 import { EventId, EventMeta, type WithEventId, type WithEventMeta } from './event'
 import { ascend } from '../array/sorting'
@@ -19,12 +19,12 @@ export type EventSourcedConfig<TEvent, TState> = {
 }
 
 const parser = <TEvent, TState>(
-  eventParser: p.Parser<TEvent>,
-  stateParser: p.Parser<TState>,
-): p.Parser<EventSourced<TEvent, TState>> => {
-  return p.obj({
-    events: p.arr(p.and(EventMeta, eventParser)),
-    eventIds: p.dict(EventId, EventId),
+  eventParser: s.Parser<TEvent>,
+  stateParser: s.Parser<TState>,
+): s.Parser<EventSourced<TEvent, TState>> => {
+  return s.obj({
+    events: s.arr(s.and(EventMeta, eventParser)),
+    eventIds: s.dict(EventId, EventId),
     clock: LamportClock,
     snapshots: CappedOrderedDict.parser(EventId, stateParser),
     initial: stateParser,

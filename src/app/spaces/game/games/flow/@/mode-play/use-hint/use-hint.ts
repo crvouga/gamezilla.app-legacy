@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Flow } from '../../flow'
 import { GroupId } from '../../flow/group-id'
 import { NodeId } from '../../flow/node-id'
@@ -19,20 +19,20 @@ export const initCtx = (input: Ctx): Ctx => {
   return input
 }
 
-export const Model = p.obj({
-  pipesBySourceId: p.dict(NodeId, Flow.Pipe),
-  terminalsByGroupId: p.partialDict(GroupId, Terminal),
-  usedHints: p.partialDict(GroupId, GroupId),
+export const Model = s.obj({
+  pipesBySourceId: s.dict(NodeId, Flow.Pipe),
+  terminalsByGroupId: s.partialDict(GroupId, Terminal),
+  usedHints: s.partialDict(GroupId, GroupId),
 })
-export type Model = p.Infer<typeof Model>
+export type Model = s.Infer<typeof Model>
 
-export const Msg = p.or(
-  p.obj({
-    t: p.l('user-clicked-use-hint'),
+export const Msg = s.or(
+  s.obj({
+    t: s.l('user-clicked-use-hint'),
     solutions: Solutions,
   }),
 )
-export type Msg = p.Infer<typeof Msg>
+export type Msg = s.Infer<typeof Msg>
 
 export const init = (input: { ctx: Ctx }): Model => {
   return {

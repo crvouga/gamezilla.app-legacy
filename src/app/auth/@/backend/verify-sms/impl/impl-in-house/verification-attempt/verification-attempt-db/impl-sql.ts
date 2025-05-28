@@ -1,5 +1,5 @@
 import { Result, isErr } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { VerificationId } from '../../verification/verification-id'
@@ -9,13 +9,13 @@ import type { VerificationAttempt } from '../verification-attempt'
 import { Hash } from '~/@/hashing'
 import { Posix } from '~/@/time/posix'
 
-export const Row = p.obj({
+export const Row = s.obj({
   id: VerificationAttemptId,
   verification_id: VerificationId,
-  inputted_code_hash: p.json,
-  created_at_posix: p.or(p.str, p.num),
+  inputted_code_hash: s.json,
+  created_at_posix: s.or(s.str, s.num),
 })
-type Row = p.Infer<typeof Row>
+type Row = s.Infer<typeof Row>
 
 export const VerificationAttemptDbPostgres = (deps: { dbConnSql: IDbConnSql }): IVerificationAttemptDb => {
   deps
@@ -41,7 +41,7 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
         created_at_posix: input.createdAt,
       }
       const queried = await deps.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: query,
         vars: vars,
       })

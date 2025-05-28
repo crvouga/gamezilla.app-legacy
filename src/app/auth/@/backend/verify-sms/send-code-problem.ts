@@ -1,24 +1,24 @@
 import type { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-const parser = p.or(
-  p.obj({
-    t: p.l('database-error'),
-    error: p.str,
+const parser = s.or(
+  s.obj({
+    t: s.l('database-error'),
+    error: s.str,
   }),
-  p.obj({
-    t: p.l('hourly-limit-reached'),
+  s.obj({
+    t: s.l('hourly-limit-reached'),
   }),
-  p.obj({
-    t: p.l('daily-limit-reached'),
+  s.obj({
+    t: s.l('daily-limit-reached'),
   }),
-  p.obj({
-    t: p.l('limit-reached'),
+  s.obj({
+    t: s.l('limit-reached'),
   }),
 )
 
-export type SendCodeProblem = p.Infer<typeof parser>
+export type SendCodeProblem = s.Infer<typeof parser>
 
 const toString = ({ problem, t }: { problem: SendCodeProblem; t: Translator }): TranslatedText => {
   switch (problem.t) {

@@ -1,15 +1,15 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { MsgFrontend } from './types'
 
-const parser = p.obj({
-  t: p.l('got-hint-calculator-msg'),
-  c: p.obj({
-    t: p.l('got-msg'),
+const parser = s.obj({
+  t: s.l('got-hint-calculator-msg'),
+  c: s.obj({
+    t: s.l('got-msg'),
     msg: MsgFrontend,
   }),
 })
 
-export type GotHintCalculatorMsg = p.Infer<typeof parser>
+export type GotHintCalculatorMsg = s.Infer<typeof parser>
 
 const is = (input: unknown): input is GotHintCalculatorMsg => {
   return typeof input === 'object' && input !== null && 't' in input && input.t === 'got-hint-calculator-msg'

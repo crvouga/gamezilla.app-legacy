@@ -1,10 +1,10 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
 export const ALL_BOT_LEVELS = ['Easy', 'Medium', 'Hard'] as const
 
-export const BotLevel = p.enumeration(ALL_BOT_LEVELS)
+export const BotLevel = s.enumeration(ALL_BOT_LEVELS)
 
-export type BotLevel = p.Infer<typeof BotLevel>
+export type BotLevel = s.Infer<typeof BotLevel>
 
 export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
   Easy: 'Easy',

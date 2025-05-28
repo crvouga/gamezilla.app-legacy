@@ -1,5 +1,5 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { IGuestSessionMappingDb } from './interface'
 
 export type Config = {
@@ -24,7 +24,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
   for (const query of queries) {
     config.dbConnSql
       .query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: query,
         vars: {},
       })

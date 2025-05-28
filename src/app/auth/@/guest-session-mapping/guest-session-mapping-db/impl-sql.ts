@@ -1,16 +1,16 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Ok, isErr } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { IGuestSessionMappingDb } from './interface'
 
-export const Row = p.obj({
-  id: p.str,
+export const Row = s.obj({
+  id: s.str,
   guest_user_id: UserId,
   session_id: SessionId,
-  created_at_posix: p.or(p.str, p.num),
+  created_at_posix: s.or(s.str, s.num),
 })
 
 export type Config = {
@@ -31,7 +31,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
         session_id: sessionId,
       }
       const queried = await config.dbConnSql.query({
-        parser: p.obj({
+        parser: s.obj({
           guest_user_id: UserId,
         }),
         sql: query,
@@ -56,7 +56,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
         client_session_id: clientSessionId,
       }
       const queried = await config.dbConnSql.query({
-        parser: p.obj({
+        parser: s.obj({
           guest_user_id: UserId,
         }),
         sql: query,
@@ -82,7 +82,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
         created_at_posix: Posix.now(),
       }
       const inserted = await config.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: query,
         vars: vars,
       })

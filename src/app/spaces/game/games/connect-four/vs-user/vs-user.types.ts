@@ -1,7 +1,7 @@
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { UserId } from '~/app/@/data/user-id'
 import { Posix } from '~/@/time/posix'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import {
   type ColumnIndex,
   Columns,
@@ -26,8 +26,8 @@ export type ModelFrontend = {
   ghostIndex: ColumnIndex | null
 }
 
-export const ModelBackend = p.l(null)
-export type ModelBackend = p.Infer<typeof ModelBackend>
+export const ModelBackend = s.l(null)
+export type ModelBackend = s.Infer<typeof ModelBackend>
 
 //
 //
@@ -55,117 +55,117 @@ export type MsgToFrontend = { t: null }
 //
 //
 
-const MoveTimeLimit = p.enumeration([5, 7, 9])
+const MoveTimeLimit = s.enumeration([5, 7, 9])
 
-const RematchResponse = p.enumeration(['Accept', 'Decline'])
+const RematchResponse = s.enumeration(['Accept', 'Decline'])
 
-export const MsgSpace = p.or(
-  p.obj({
-    t: p.l('user-stopped-playing'),
+export const MsgSpace = s.or(
+  s.obj({
+    t: s.l('user-stopped-playing'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-started-playing'),
+  s.obj({
+    t: s.l('user-started-playing'),
     userId: UserId,
     playerType: PlayerType,
   }),
-  p.obj({
-    t: p.l('user-inputted-move-time-limit'),
+  s.obj({
+    t: s.l('user-inputted-move-time-limit'),
     userId: UserId,
     moveTimeLimit: MoveTimeLimit,
   }),
-  p.obj({
-    t: p.l('user-dropped-disc'),
-    columnIndex: p.num,
+  s.obj({
+    t: s.l('user-dropped-disc'),
+    columnIndex: s.num,
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-started-game'),
+  s.obj({
+    t: s.l('user-started-game'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-stopped-game'),
+  s.obj({
+    t: s.l('user-stopped-game'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-requested-rematch'),
+  s.obj({
+    t: s.l('user-requested-rematch'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-responded-to-rematch-request'),
+  s.obj({
+    t: s.l('user-responded-to-rematch-request'),
     userId: UserId,
     response: RematchResponse,
   }),
-  p.obj({
-    t: p.l('user-cancelled-rematch'),
+  s.obj({
+    t: s.l('user-cancelled-rematch'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('user-resigned'),
+  s.obj({
+    t: s.l('user-resigned'),
     userId: UserId,
   }),
-  p.obj({
-    t: p.l('time-passed'),
+  s.obj({
+    t: s.l('time-passed'),
     currentTime: Posix,
   }),
-  p.obj({
-    t: p.l('user-left'),
+  s.obj({
+    t: s.l('user-left'),
     userId: UserId,
   }),
 )
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>
 
-const GameOver = p.or(
-  p.obj({
-    type: p.l('Draw'),
+const GameOver = s.or(
+  s.obj({
+    type: s.l('Draw'),
   }),
-  p.obj({
-    type: p.l('Winner'),
+  s.obj({
+    type: s.l('Winner'),
     winner: PlayerType,
   }),
-  p.obj({
-    type: p.l('resignation'),
+  s.obj({
+    type: s.l('resignation'),
     resigner: PlayerType,
   }),
 )
-export type GameOver = p.Infer<typeof GameOver>
+export type GameOver = s.Infer<typeof GameOver>
 
-const EventError = p.or(
-  p.obj({
-    t: p.l('not-playing'),
+const EventError = s.or(
+  s.obj({
+    t: s.l('not-playing'),
   }),
-  p.obj({
-    t: p.l('move'),
+  s.obj({
+    t: s.l('move'),
     c: MoveProblem,
   }),
 )
 
-type EventError = p.Infer<typeof EventError>
+type EventError = s.Infer<typeof EventError>
 
-const Rematch = p.or(
-  p.obj({
-    type: p.l('NotAsking'),
+const Rematch = s.or(
+  s.obj({
+    type: s.l('NotAsking'),
   }),
-  p.obj({
-    type: p.l('Asking'),
+  s.obj({
+    type: s.l('Asking'),
     asker: PlayerType,
   }),
 )
-export type Rematch = p.Infer<typeof Rematch>
+export type Rematch = s.Infer<typeof Rematch>
 
-const Errors = p.obj({
-  errors: p.dict(
-    p.str,
-    p.and(
+const Errors = s.obj({
+  errors: s.dict(
+    s.str,
+    s.and(
       MsgSpace,
-      p.obj({
+      s.obj({
         error: EventError,
       }),
     ),
   ),
 })
 
-type Errors = p.Infer<typeof Errors>
+type Errors = s.Infer<typeof Errors>
 
 const addError = (modelSpace: ModelSpace, msgSpace: MsgSpace, error: EventError): ModelSpace => {
   return {
@@ -180,45 +180,45 @@ const addError = (modelSpace: ModelSpace, msgSpace: MsgSpace, error: EventError)
   }
 }
 
-export const StateSetup = p.and(
+export const StateSetup = s.and(
   Errors,
-  p.obj({
-    type: p.l('setup'),
+  s.obj({
+    type: s.l('setup'),
     moveTimeLimit: MoveTimeLimit,
-    players: p.partialDict(PlayerType, p.maybe(UserId)),
+    players: s.partialDict(PlayerType, s.maybe(UserId)),
   }),
 )
-export type StateSetup = p.Infer<typeof StateSetup>
+export type StateSetup = s.Infer<typeof StateSetup>
 
-export const StateGame = p.and(
+export const StateGame = s.and(
   Errors,
-  p.obj({
-    type: p.l('game'),
+  s.obj({
+    type: s.l('game'),
     moveTimeLimit: MoveTimeLimit,
     columns: Columns,
-    gameId: p.num,
+    gameId: s.num,
     lastMoveAt: Posix,
-    players: p.dict(PlayerType, UserId),
+    players: s.dict(PlayerType, UserId),
   }),
 )
-export type StateGame = p.Infer<typeof StateGame>
+export type StateGame = s.Infer<typeof StateGame>
 
-export const StateGameOver = p.and(
+export const StateGameOver = s.and(
   Errors,
-  p.obj({
-    type: p.l('game-over'),
+  s.obj({
+    type: s.l('game-over'),
     moveTimeLimit: MoveTimeLimit,
     columns: Columns,
-    gameId: p.num,
+    gameId: s.num,
     gameOver: GameOver,
     rematch: Rematch,
-    players: p.dict(PlayerType, UserId),
+    players: s.dict(PlayerType, UserId),
   }),
 )
-export type StateGameOver = p.Infer<typeof StateGameOver>
+export type StateGameOver = s.Infer<typeof StateGameOver>
 
-export const ModelSpace = p.or(StateSetup, StateGame, StateGameOver)
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export const ModelSpace = s.or(StateSetup, StateGame, StateGameOver)
+export type ModelSpace = s.Infer<typeof ModelSpace>
 
 export const initSpace = (ctx: SpaceCtx): ModelSpace => {
   return {

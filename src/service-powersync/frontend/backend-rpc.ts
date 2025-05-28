@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Err, isErr, Ok, Result } from '~/@/result'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 
@@ -18,9 +18,9 @@ const getPowerSyncCredentials = async (): Promise<Result<string, { token: string
 
     const responseJson: unknown = await response.json()
 
-    const parsed = p
+    const parsed = s
       .obj({
-        token: p.str,
+        token: s.str,
       })
       .parse(responseJson)
 

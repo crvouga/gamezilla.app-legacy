@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { RemoteResult, Result } from '~/@/result'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
@@ -26,25 +26,25 @@ export const initFrontend: ModelFrontend = {
   requests: {},
 }
 
-export const FoundSolutionResult = Result.parser(p.str, p.obj({ solutions: Solutions }))
-export type FoundSolutionResult = p.Infer<typeof FoundSolutionResult>
+export const FoundSolutionResult = Result.parser(s.str, s.obj({ solutions: Solutions }))
+export type FoundSolutionResult = s.Infer<typeof FoundSolutionResult>
 
-export const MsgFrontend = p.or(
-  p.obj({ t: p.l('clicked-find-solutions'), flow: Variant.Model }),
-  p.obj({ t: p.l('found-solution'), flow: Variant.Model, found: FoundSolutionResult }),
-  p.obj({ t: p.l('dialog.clicked-open') }),
-  p.obj({ t: p.l('dialog.clicked-close') }),
+export const MsgFrontend = s.or(
+  s.obj({ t: s.l('clicked-find-solutions'), flow: Variant.Model }),
+  s.obj({ t: s.l('found-solution'), flow: Variant.Model, found: FoundSolutionResult }),
+  s.obj({ t: s.l('dialog.clicked-open') }),
+  s.obj({ t: s.l('dialog.clicked-close') }),
 )
-export type MsgFrontend = p.Infer<typeof MsgFrontend>
+export type MsgFrontend = s.Infer<typeof MsgFrontend>
 
-export const MsgBackend = p.obj({ t: p.l('noop') })
-export type MsgBackend = p.Infer<typeof MsgBackend>
+export const MsgBackend = s.obj({ t: s.l('noop') })
+export type MsgBackend = s.Infer<typeof MsgBackend>
 
-export const MsgToBackend = p.obj({ t: p.l('noop') })
-export type MsgToBackend = p.Infer<typeof MsgToBackend>
+export const MsgToBackend = s.obj({ t: s.l('noop') })
+export type MsgToBackend = s.Infer<typeof MsgToBackend>
 
-export const MsgToFrontend = p.obj({ t: p.l('noop') })
-export type MsgToFrontend = p.Infer<typeof MsgToFrontend>
+export const MsgToFrontend = s.obj({ t: s.l('noop') })
+export type MsgToFrontend = s.Infer<typeof MsgToFrontend>
 
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend

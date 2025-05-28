@@ -1,5 +1,5 @@
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Result } from '~/@/result'
 import { ShortId } from '../id/short-id'
 
@@ -12,7 +12,7 @@ const is = (id: unknown): id is ClientSessionId => {
   return typeof id === 'string'
 }
 
-const parser = p.custom(is, 'Invalid client session id')
+const parser = s.custom(is, 'Invalid client session id')
 
 type Problem = 'invalid-client-session-id'
 

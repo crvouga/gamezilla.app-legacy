@@ -1,6 +1,6 @@
 import { eq } from '~/@/equals/equals'
 import { History } from '~/@/history'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { Flow } from '../flow'
 import { GroupId } from '../flow/group-id'
@@ -15,37 +15,37 @@ import { Variant, VariantDimensions } from '../variant'
 //
 //
 
-const DraftTerminal = p.obj({
+const DraftTerminal = s.obj({
   groupId: GroupId,
   startId: NodeId,
-  endId: p.maybe(NodeId),
+  endId: s.maybe(NodeId),
 })
-type DraftTerminal = p.Infer<typeof DraftTerminal>
+type DraftTerminal = s.Infer<typeof DraftTerminal>
 
-const DraftTerminals = p.partialDict(GroupId, DraftTerminal)
-type DraftTerminals = p.Infer<typeof DraftTerminals>
+const DraftTerminals = s.partialDict(GroupId, DraftTerminal)
+type DraftTerminals = s.Infer<typeof DraftTerminals>
 
-const Form = p.obj({
+const Form = s.obj({
   terminalsByGroupId: DraftTerminals,
   dimensions: VariantDimensions.Model,
 })
-type Form = p.Infer<typeof Form>
+type Form = s.Infer<typeof Form>
 
-const Opened = p.or(
-  p.obj({
-    t: p.l('dimensions'),
+const Opened = s.or(
+  s.obj({
+    t: s.l('dimensions'),
     draftDimensions: VariantDimensions.Model,
   }),
 )
 
-export type Opened = p.Infer<typeof Opened>
+export type Opened = s.Infer<typeof Opened>
 
-export const Model = p.obj({
+export const Model = s.obj({
   form: History.parser(Form),
-  opened: p.maybe(Opened),
-  hoveredNodeId: p.maybe(NodeId),
+  opened: s.maybe(Opened),
+  hoveredNodeId: s.maybe(NodeId),
 })
-export type Model = p.Infer<typeof Model>
+export type Model = s.Infer<typeof Model>
 
 export const canClear = (model: Model): boolean => {
   return Object.keys(History.present(model.form).terminalsByGroupId).length > 0
@@ -84,21 +84,21 @@ export const isUnsavedChanges = (model: Model, flow: Variant.Model): boolean => 
 //
 //
 //
-export const Msg = p.or(
-  p.obj({ t: p.l('dragged-over'), nodeId: NodeId }),
-  p.obj({ t: p.l('pressed-up-node'), nodeId: NodeId }),
-  p.obj({ t: p.l('pressed-down-node'), nodeId: NodeId }),
-  p.obj({ t: p.l('hovered-over-node'), nodeId: NodeId }),
-  p.obj({ t: p.l('clicked-clear') }),
-  p.obj({ t: p.l('clicked-undo') }),
-  p.obj({ t: p.l('clicked-redo') }),
-  p.obj({ t: p.l('dimensions-form.clicked-open') }),
-  p.obj({ t: p.l('dimensions-form.closed') }),
-  p.obj({ t: p.l('dimensions-form.clicked-cancel') }),
-  p.obj({ t: p.l('dimensions-form.clicked-save') }),
-  p.obj({ t: p.l('dimensions-form.inputted'), dimensions: VariantDimensions.Model }),
+export const Msg = s.or(
+  s.obj({ t: s.l('dragged-over'), nodeId: NodeId }),
+  s.obj({ t: s.l('pressed-up-node'), nodeId: NodeId }),
+  s.obj({ t: s.l('pressed-down-node'), nodeId: NodeId }),
+  s.obj({ t: s.l('hovered-over-node'), nodeId: NodeId }),
+  s.obj({ t: s.l('clicked-clear') }),
+  s.obj({ t: s.l('clicked-undo') }),
+  s.obj({ t: s.l('clicked-redo') }),
+  s.obj({ t: s.l('dimensions-form.clicked-open') }),
+  s.obj({ t: s.l('dimensions-form.closed') }),
+  s.obj({ t: s.l('dimensions-form.clicked-cancel') }),
+  s.obj({ t: s.l('dimensions-form.clicked-save') }),
+  s.obj({ t: s.l('dimensions-form.inputted'), dimensions: VariantDimensions.Model }),
 )
-export type Msg = p.Infer<typeof Msg>
+export type Msg = s.Infer<typeof Msg>
 
 export type Cmd = {
   t: 'play-sound'

@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { Pack } from '../pack'
@@ -24,13 +24,13 @@ export const initFrontend: ModelFrontend = {
   queries: {},
 }
 
-export const MsgFrontend = p.obj({
-  t: p.l('got-pack-db-packs'),
+export const MsgFrontend = s.obj({
+  t: s.l('got-pack-db-packs'),
   query: PacksDbQuery,
-  packs: p.arr(Pack),
+  packs: s.arr(Pack),
 })
 
-export type MsgFrontend = p.Infer<typeof MsgFrontend>
+export type MsgFrontend = s.Infer<typeof MsgFrontend>
 
 export type MsgToFrontend = { t: 'noop' }
 

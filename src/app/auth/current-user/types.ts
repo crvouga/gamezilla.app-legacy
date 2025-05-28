@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { RemoteResult } from '~/@/result'
 import { RPC } from '~/@/wire-rpc'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
@@ -32,9 +32,9 @@ export type MsgToBackend = { t: 'noop' }
 
 export const rpcContract = RPC.initContract({
   getCurrentUser: {
-    input: p.obj({}),
-    output: p.obj({
-      currentUser: p.maybe(UserAccount),
+    input: s.obj({}),
+    output: s.obj({
+      currentUser: s.maybe(UserAccount),
     }),
   },
 })

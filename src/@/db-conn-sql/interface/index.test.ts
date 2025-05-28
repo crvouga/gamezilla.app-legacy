@@ -4,7 +4,7 @@ import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { newPowerSyncClient } from '../../../service-powersync/frontend/database'
 import { Logger } from '../../logger'
-import { p } from '../../schema'
+import { s } from '../../schema'
 import { isErr, isOk } from '../../result'
 import { Config, DbConnSql } from '../backend/impl'
 
@@ -76,7 +76,7 @@ describe('DbConnSql', () => {
   test('querying ok', async () => {
     for (const f of await Fixtures()) {
       const result = await f.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `SELECT 1`,
         vars: {},
       })
@@ -87,7 +87,7 @@ describe('DbConnSql', () => {
   test('querying err', async () => {
     for (const f of await Fixtures()) {
       const result = await f.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `SELECT foo`,
         vars: {},
       })
@@ -98,19 +98,19 @@ describe('DbConnSql', () => {
   test('create, insert, query, drop', async () => {
     for (const f of await Fixtures()) {
       const created = await f.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `CREATE TABLE foo (id SERIAL PRIMARY KEY)`,
         vars: {},
       })
       expect(isOk(created)).toBe(true)
       const inserted = await f.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `INSERT INTO foo(id) VALUES (1)`,
         vars: {},
       })
       expect(isOk(inserted)).toBe(true)
       const queried = await f.dbConnSql.query({
-        parser: p.obj({ id: p.maybe(p.or(p.num, p.str, p.bool)) }),
+        parser: s.obj({ id: s.maybe(s.or(s.num, s.str, s.bool)) }),
         sql: `SELECT id FROM foo`,
         vars: {},
       })
@@ -120,7 +120,7 @@ describe('DbConnSql', () => {
         expect(queried.value).toEqual([{ id: 1 }])
       }
       const dropped = await f.dbConnSql.query({
-        parser: p.unknown,
+        parser: s.unknown,
         sql: `DROP TABLE foo`,
         vars: {},
       })

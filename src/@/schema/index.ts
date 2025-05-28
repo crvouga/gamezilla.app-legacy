@@ -1,1 +1,1 @@
-export * as p from './schema'
+export * as s from './schema'

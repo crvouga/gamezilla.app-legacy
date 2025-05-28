@@ -1,5 +1,5 @@
 import { Err, Ok } from '~/@/result'
-import type { p } from '~/@/schema'
+import type { s } from '~/@/schema'
 import type { IKeyValueDb } from './interface'
 import { ILogger, Logger } from '../logger'
 
@@ -33,7 +33,7 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
       }
     },
 
-    async getMany<TValue>(keys: string[], parser: p.Parser<TValue>) {
+    async getMany<TValue>(keys: string[], parser: s.Parser<TValue>) {
       logger?.debug(`getMany: keys=${keys.join(', ')}`)
       const rows: TValue[] = []
 

@@ -1,8 +1,8 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-const parser = p.brand(p.str, 'EventId')
+const parser = s.brand(s.str, 'EventId')
 
-export type EventId = p.Infer<typeof parser>
+export type EventId = s.Infer<typeof parser>
 
 const SEPARATOR = '-'
 

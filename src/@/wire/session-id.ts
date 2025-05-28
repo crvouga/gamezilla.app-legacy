@@ -1,6 +1,6 @@
 import type { Brand } from '~/@/brand/brand'
 import { Result } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { ShortId } from '../id/short-id'
 
 export type SessionId = Brand<string, 'SessionId'>
@@ -12,7 +12,7 @@ const is = (id: unknown): id is SessionId => {
   return typeof id === 'string' && id.startsWith(`${namespace}${separator}`)
 }
 
-const parser = p.custom(is, 'Invalid session id')
+const parser = s.custom(is, 'Invalid session id')
 
 type Problem = 'invalid-session-id'
 

@@ -1,4 +1,4 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceFrontendCtx } from '../../@/frontend/ctx'
 import { GameBackendModule } from './@/architecture/game-backend-v2'
@@ -18,17 +18,17 @@ import * as Flow from './flow/types'
 
 export type ModelFrontend = { t: 'connect-four'; c: ConnectFour.ModelFrontend } | { t: 'flow'; c: Flow.ModelFrontend }
 
-export const ModelBackend = p.or(
-  p.obj({
-    t: p.l('connect-four'),
+export const ModelBackend = s.or(
+  s.obj({
+    t: s.l('connect-four'),
     c: ConnectFour.ModelBackend,
   }),
-  p.obj({
-    t: p.l('flow'),
+  s.obj({
+    t: s.l('flow'),
     c: Flow.ModelBackend,
   }),
 )
-export type ModelBackend = p.Infer<typeof ModelBackend>
+export type ModelBackend = s.Infer<typeof ModelBackend>
 
 //
 //
@@ -59,29 +59,29 @@ export const gameNameList: GameName[] = [
   'flow',
 ]
 
-export const ModelSpace = p.or(
-  p.obj({
-    t: p.l('connect-four'),
+export const ModelSpace = s.or(
+  s.obj({
+    t: s.l('connect-four'),
     c: ConnectFour.ModelSpace,
   }),
-  p.obj({
-    t: p.l('flow'),
+  s.obj({
+    t: s.l('flow'),
     c: Flow.ModelSpace,
   }),
 )
-export type ModelSpace = p.Infer<typeof ModelSpace>
+export type ModelSpace = s.Infer<typeof ModelSpace>
 
-export const MsgSpace = p.or(
-  p.obj({
-    t: p.l('connect-four'),
+export const MsgSpace = s.or(
+  s.obj({
+    t: s.l('connect-four'),
     c: ConnectFour.MsgSpace,
   }),
-  p.obj({
-    t: p.l('flow'),
+  s.obj({
+    t: s.l('flow'),
     c: Flow.MsgSpace,
   }),
 )
-export type MsgSpace = p.Infer<typeof MsgSpace>
+export type MsgSpace = s.Infer<typeof MsgSpace>
 
 //
 //

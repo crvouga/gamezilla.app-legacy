@@ -1,32 +1,32 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { Pagination } from '~/@/query/query'
 import { UserId } from '~/app/@/data/user-id'
 
-const WhereClause = p.partialObj({
-  createdBy: p.maybe(
-    p.obj({
+const WhereClause = s.partialObj({
+  createdBy: s.maybe(
+    s.obj({
       equals: UserId,
     }),
   ),
-  isOfficial: p.maybe(p.obj({ equals: p.bool })),
+  isOfficial: s.maybe(s.obj({ equals: s.bool })),
 })
 
-export type WhereClause = p.Infer<typeof WhereClause>
+export type WhereClause = s.Infer<typeof WhereClause>
 
-const OrderClause = p.partialObj({
-  createdAt: p.enumeration(['asc', 'desc']),
-  lastUpdatedAt: p.enumeration(['asc', 'desc']),
+const OrderClause = s.partialObj({
+  createdAt: s.enumeration(['asc', 'desc']),
+  lastUpdatedAt: s.enumeration(['asc', 'desc']),
 })
 
-export type OrderClause = p.Infer<typeof OrderClause>
+export type OrderClause = s.Infer<typeof OrderClause>
 
-const parser = p.obj({
+const parser = s.obj({
   pagination: Pagination,
   where: WhereClause,
   order: OrderClause,
 })
 
-export type PacksDbQuery = p.Infer<typeof parser>
+export type PacksDbQuery = s.Infer<typeof parser>
 
 const toKey = (input: PacksDbQuery): string => {
   return [

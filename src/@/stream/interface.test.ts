@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { Ok, unwrapOr } from '~/@/result'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { NonEmpty } from '../array/non-empty'
@@ -16,12 +16,12 @@ const Fixture = async <T>(config: Config<T>) => {
   }
 }
 
-const MyEvent = p.obj({
+const MyEvent = s.obj({
   id: EventId.parser,
-  value: p.str,
+  value: s.str,
 })
 
-type MyEvent = p.Infer<typeof MyEvent>
+type MyEvent = s.Infer<typeof MyEvent>
 
 const randomMyEvent = (prevEvent: MyEvent | null): MyEvent => ({
   id: prevEvent ? EventId.increment(prevEvent.id) : EventId.init(),

@@ -1,16 +1,16 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { Screen, toScreen } from '~/@/screen/generated/screens'
 
-export const parser = p.or(
-  p.obj({
-    t: p.l('push'),
-    screen: p.custom((input): input is Screen => toScreen(input) !== null, 'invalid screen'),
-    playSound: p.maybe(p.bool),
+export const parser = s.or(
+  s.obj({
+    t: s.l('push'),
+    screen: s.custom((input): input is Screen => toScreen(input) !== null, 'invalid screen'),
+    playSound: s.maybe(s.bool),
   }),
 )
 
-export type PushScreenCmd = p.Infer<typeof parser>
+export type PushScreenCmd = s.Infer<typeof parser>
 
 export const init = (screen: Screen, playSound?: boolean): PushScreenCmd => {
   return {

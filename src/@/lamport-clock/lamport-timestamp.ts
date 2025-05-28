@@ -1,11 +1,11 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-const parser = p.obj({
-  _type: p.l('LamportTimestamp'),
-  _value: p.num,
+const parser = s.obj({
+  _type: s.l('LamportTimestamp'),
+  _value: s.num,
 })
 
-export type LamportTimestamp = p.Infer<typeof parser>
+export type LamportTimestamp = s.Infer<typeof parser>
 
 const fromNumber = (value: number): LamportTimestamp => {
   return {

@@ -1,20 +1,20 @@
 import { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconExclamationCircle } from '~/@/ui/icon/icon-exclamation-circle'
 import { Puzzle } from './puzzle'
 
-const parser = p.or(
-  p.obj({
-    t: p.l('got'),
+const parser = s.or(
+  s.obj({
+    t: s.l('got'),
     c: Puzzle,
   }),
-  p.obj({
-    t: p.l('not-found'),
+  s.obj({
+    t: s.l('not-found'),
   }),
 )
 
-export type PuzzleResult = p.Infer<typeof parser>
+export type PuzzleResult = s.Infer<typeof parser>
 
 const ViewNotFound = (input: {
   ctx: { t: Translator }

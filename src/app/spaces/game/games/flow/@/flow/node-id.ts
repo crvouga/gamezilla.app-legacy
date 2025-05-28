@@ -1,8 +1,8 @@
-import { p } from '~/@/schema'
+import { s } from '~/@/schema'
 
-const parser = p.brand(p.str, 'NodeId')
+const parser = s.brand(s.str, 'NodeId')
 
-export type NodeId = p.Infer<typeof parser>
+export type NodeId = s.Infer<typeof parser>
 
 const init = (nodeId: string): NodeId => {
   return nodeId as NodeId
