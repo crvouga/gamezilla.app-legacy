@@ -1,13 +1,13 @@
 import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('backend-evt.connected'),
   }),
 )
 
-export type BackendConnectedEvt = s.Infer<typeof parser>
+export type BackendConnectedEvt = s.Infer<typeof schema>
 
 export const init = (): BackendConnectedEvt => {
   return {
@@ -16,7 +16,7 @@ export const init = (): BackendConnectedEvt => {
 }
 
 const is = (evt: unknown): evt is BackendConnectedEvt => {
-  return isOk(parser.parse(evt))
+  return isOk(schema.parse(evt))
 }
 
 const did = (output?: { msgEvt?: unknown[] | null }): boolean => {

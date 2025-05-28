@@ -15,7 +15,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
   const solutionsByHash = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['game', 'flow', 'solutions-by-hash'],
-    parser: s.arr(Solution),
+    schema: s.arr(Solution),
   })
   return {
     async get(hash) {

@@ -41,7 +41,7 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
         created_at_posix: input.createdAt,
       }
       const queried = await deps.dbConnSql.query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: query,
         vars: vars,
       })
@@ -62,7 +62,7 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: IDbConnSql }): 
 			`
 
       const queried = await deps.dbConnSql.query({
-        parser: Row,
+        schema: Row,
         sql: query,
         vars: where.vars,
       })

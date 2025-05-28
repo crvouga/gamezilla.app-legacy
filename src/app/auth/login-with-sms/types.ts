@@ -16,8 +16,8 @@ import { UserSession } from '../@/user-session/user-session'
 
 export type Sent = Result<RPCError, SendCodeOutput>
 
-const VerifyCodeOutput = Result.parser(
-  VerifyCodeProblem.parser,
+const VerifyCodeOutput = Result.schema(
+  VerifyCodeProblem.schema,
   s.obj({ userAccount: UserAccount, userSession: UserSession }),
 )
 export type VerifyCodeOutput = s.Infer<typeof VerifyCodeOutput>

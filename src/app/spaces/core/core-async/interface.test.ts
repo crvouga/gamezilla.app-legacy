@@ -75,7 +75,7 @@ const Fixtures = async () => {
       t: 'stream',
       keyValueDb: f.keyValueDbHashMap,
       logger: f.logger,
-      stream: await Stream({ t: 'in-memory', parser: s.and(MsgSpace, EventMeta) }),
+      stream: await Stream({ t: 'in-memory', schema: s.and(MsgSpace, EventMeta) }),
       runtime: f.runtime,
       namespace: uniqueNamespace(),
     })

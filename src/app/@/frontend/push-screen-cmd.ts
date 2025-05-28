@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { Screen, toScreen } from '~/@/screen/generated/screens'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('push'),
     screen: s.custom((input): input is Screen => toScreen(input) !== null, 'invalid screen'),
@@ -10,7 +10,7 @@ export const parser = s.or(
   }),
 )
 
-export type PushScreenCmd = s.Infer<typeof parser>
+export type PushScreenCmd = s.Infer<typeof schema>
 
 export const init = (screen: Screen, playSound?: boolean): PushScreenCmd => {
   return {
@@ -21,7 +21,7 @@ export const init = (screen: Screen, playSound?: boolean): PushScreenCmd => {
 }
 
 const is = (cmd: unknown): cmd is PushScreenCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }, predicate?: (s: Screen) => boolean): boolean => {

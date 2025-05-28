@@ -4,7 +4,7 @@ import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
 
-const parser = s.obj({
+const schema = s.obj({
   id: UserId,
   username: Username,
   avatarSeed: s.maybe(s.str),
@@ -13,7 +13,7 @@ const parser = s.obj({
   updatedAt: Posix,
 })
 
-export type UserProfile = s.Infer<typeof parser>
+export type UserProfile = s.Infer<typeof schema>
 
 const random = async (overrides?: Partial<UserProfile>): Promise<UserProfile> => {
   return {
@@ -45,7 +45,7 @@ const indexByUserId = (profiles: UserProfile[]): { [userId: UserId]: UserProfile
 }
 
 export const UserProfile = {
-  ...parser,
+  ...schema,
   random,
   toAvatarUrl,
   indexByUserId,

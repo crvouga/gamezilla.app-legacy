@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 import { GroupId } from './group-id'
 import { NodeId } from './node-id'
 
-const parser = s.obj({
+const schema = s.obj({
   groupId: GroupId,
   startId: NodeId,
   endId: s.maybe(NodeId),
@@ -11,7 +11,7 @@ const parser = s.obj({
  * A terminal represents the start and end nodes for a group.
  * These are the two circles the user is trying to connect
  */
-export type Terminal = s.Infer<typeof parser>
+export type Terminal = s.Infer<typeof schema>
 
 const isSame = (a: Terminal, b: Terminal): boolean => {
   const startA = a.startId ?? null
@@ -40,7 +40,7 @@ const deriveHash = (terminal: Terminal): string => {
 }
 
 export const Terminal = {
-  ...parser,
+  ...schema,
   flip,
   isSame,
   deriveHash,

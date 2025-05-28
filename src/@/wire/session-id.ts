@@ -12,7 +12,7 @@ const is = (id: unknown): id is SessionId => {
   return typeof id === 'string' && id.startsWith(`${namespace}${separator}`)
 }
 
-const parser = s.custom(is, 'Invalid session id')
+const schema = s.custom(is, 'Invalid session id')
 
 type Problem = 'invalid-session-id'
 
@@ -36,7 +36,7 @@ export const generate = (): SessionId => {
 }
 
 export const SessionId = {
-  ...parser,
+  ...schema,
   generate,
   decode,
   is,

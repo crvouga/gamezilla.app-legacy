@@ -7,8 +7,8 @@ import { Screen as Screen3, toScreen as toScreen3 } from '../../../app/profile/$
 export type Screen = Screen0 | Screen1 | Screen2 | Screen3
 
 export const toScreen = (screen: unknown) => {
-  for (const parser of [toScreen0, toScreen1, toScreen2, toScreen3]) {
-    const parsed = parser(screen)
+  for (const schema of [toScreen0, toScreen1, toScreen2, toScreen3]) {
+    const parsed = schema(screen)
     if (parsed !== null) {
       return parsed
     }

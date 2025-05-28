@@ -56,7 +56,7 @@ export type MsgToFrontend = {
 
 export const MsgSpace = s.obj({
   t: s.l('user-edited-puzzle-name'),
-  edited: Result.parser(s.str, s.l(null)),
+  edited: Result.schema(s.str, s.l(null)),
   puzzleId: PuzzleId,
   newName: s.str,
   userId: UserId,

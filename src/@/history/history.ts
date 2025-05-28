@@ -89,7 +89,7 @@ const canUndo = <T>(history: History<T>): boolean => {
   return history._past.length > 0
 }
 
-const parser = <T>(value: s.Parser<T>): s.Parser<History<T>> => {
+const schema = <T>(value: s.Parser<T>): s.Parser<History<T>> => {
   return s.obj({
     _past: s.arr(value),
     _present: value,
@@ -98,7 +98,7 @@ const parser = <T>(value: s.Parser<T>): s.Parser<History<T>> => {
 }
 
 export const History = {
-  parser,
+  schema,
   init,
   push,
   undo,

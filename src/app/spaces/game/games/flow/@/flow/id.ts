@@ -1,9 +1,9 @@
 import { s } from '~/@/schema'
 import * as Flow from './flow'
 
-const parser = s.brand(s.str, 'FlowId')
+const schema = s.brand(s.str, 'FlowId')
 
-export type FlowId = s.Infer<typeof parser>
+export type FlowId = s.Infer<typeof schema>
 
 const DIVIDER = '-'
 
@@ -26,6 +26,6 @@ const derive = (flow: Flow.Model): FlowId => {
 }
 
 export const FlowId = {
-  ...parser,
+  ...schema,
   derive,
 }

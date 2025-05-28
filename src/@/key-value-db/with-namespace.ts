@@ -5,7 +5,7 @@ import { IKeyValueDb } from './interface'
 export const withNamespace = <TKey extends string = string, TValue = unknown>(config: {
   keyValueDb: IKeyValueDb
   namespace: string[]
-  parser: Parser<TValue>
+  schema: Parser<TValue>
 }): {
   get: (key: TKey) => Task<string, TValue | null>
   getMany: (keys: TKey[]) => Task<string, TValue[]>
@@ -16,11 +16,11 @@ export const withNamespace = <TKey extends string = string, TValue = unknown>(co
   const toKey = (key: string) => [...config.namespace, key].join(':')
   return {
     get(key) {
-      return config.keyValueDb.get(toKey(key), config.parser)
+      return config.keyValueDb.get(toKey(key), config.schema)
     },
     getMany(keys) {
       const namespacedKeys = keys.map(toKey)
-      return config.keyValueDb.getMany(namespacedKeys, config.parser)
+      return config.keyValueDb.getMany(namespacedKeys, config.schema)
     },
     set(key, value) {
       return config.keyValueDb.set(toKey(key), value)

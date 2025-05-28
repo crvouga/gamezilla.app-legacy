@@ -3,9 +3,9 @@ import { Flow } from '../flow'
 import { Pipe } from '../flow/flow'
 import { GroupId } from '../flow/group-id'
 
-const parser = Flow.Model
+const schema = Flow.Model
 
-export type Solution = s.Infer<typeof parser>
+export type Solution = s.Infer<typeof schema>
 
 const toPipelineByGroupId = (solution: Solution, groupId: GroupId): Pipe[] => {
   return Object.values(solution.pipesBySourceId).filter((pipe) => pipe.groupId === groupId)
@@ -33,7 +33,7 @@ const toSolvedFlow = (solution: Solution): Flow.Model => {
 }
 
 export const Solution = {
-  ...parser,
+  ...schema,
   toPipelineByGroupId,
   fromFlow,
   toSolvedFlow,

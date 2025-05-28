@@ -2,14 +2,14 @@ import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import type { Screen } from '~/@/screen/generated/screens'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('screen-evt.screen-changed'),
     screen: s.custom((input): input is Screen => typeof input === 'object', 'invalid screen'),
   }),
 )
 
-export type ScreenChangedEvt = s.Infer<typeof parser>
+export type ScreenChangedEvt = s.Infer<typeof schema>
 
 export const init = (screen: Screen): ScreenChangedEvt => {
   return {
@@ -19,7 +19,7 @@ export const init = (screen: Screen): ScreenChangedEvt => {
 }
 
 const is = (evt: unknown): evt is ScreenChangedEvt => {
-  return isOk(parser.parse(evt))
+  return isOk(schema.parse(evt))
 }
 
 const did = (output?: { msgEvt?: unknown[] | null }, screen?: Screen): boolean => {

@@ -1,11 +1,11 @@
 import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-const parser = s.obj({
+const schema = s.obj({
   t: s.l('logout-cmd'),
 })
 
-export type LogoutCmd = s.Infer<typeof parser>
+export type LogoutCmd = s.Infer<typeof schema>
 
 const init = (): LogoutCmd => {
   return {
@@ -14,7 +14,7 @@ const init = (): LogoutCmd => {
 }
 
 const is = (cmd: unknown): cmd is LogoutCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 export const LogoutCmd = {

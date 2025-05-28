@@ -26,7 +26,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
   const SIMULATE_LATENCY = TimeSpan.milliseconds(3)
 
   return {
-    async get(key, parser) {
+    async get(key, schema) {
       await config.simulateLatency(SIMULATE_LATENCY)
       try {
         const [queried, duration] = await withDuration(() => redis.get(key))
@@ -38,7 +38,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
         const json = JSON.parse(queried)
 
-        const parsed = parser.parse(json)
+        const parsed = schema.parse(json)
 
         switch (parsed.t) {
           case 'err': {
@@ -58,7 +58,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
       }
     },
 
-    async getMany(keys, parser) {
+    async getMany(keys, schema) {
       await config.simulateLatency(SIMULATE_LATENCY)
       if (keys.length <= 0) {
         return Ok([])
@@ -68,7 +68,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
         logger.debug(`duration=${TimeSpan.toMilliseconds(duration)}ms getMany: keys=${keys.join(', ')}`)
 
-        const rows: s.Infer<typeof parser>[] = []
+        const rows: s.Infer<typeof schema>[] = []
 
         for (const row of queried) {
           if (!row) {
@@ -77,7 +77,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
           const json = JSON.parse(row)
 
-          const parsed = parser.parse(json)
+          const parsed = schema.parse(json)
 
           if (isErr(parsed)) {
             const errorStr = JSON.stringify(parsed.error, null, 2)

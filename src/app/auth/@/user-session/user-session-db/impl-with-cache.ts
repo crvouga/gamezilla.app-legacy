@@ -20,13 +20,13 @@ export const WithCache = ({ userSessionDb, keyValueDb }: Config): IUserSessionDb
   const userIdBySessionId = KeyValueDb.withNamespace<SessionId, UserId>({
     keyValueDb,
     namespace: ['auth', 'user-session', 'user-id-by-session-id'],
-    parser: UserId,
+    schema: UserId,
   })
 
   const sessionIdsByUserId = KeyValueDb.withNamespace<UserId, SessionId[]>({
     keyValueDb,
     namespace: ['auth', 'user-session', 'session-ids-by-user-id'],
-    parser: s.arr(SessionId),
+    schema: s.arr(SessionId),
   })
 
   return {

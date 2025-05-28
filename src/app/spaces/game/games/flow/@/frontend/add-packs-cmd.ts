@@ -3,7 +3,7 @@ import { isOk } from '~/@/result'
 import { Pack } from '../pack/pack'
 import { PackId } from '../pack/pack-id'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('add-packs'),
     packs: s.dict(PackId, Pack),
@@ -11,7 +11,7 @@ export const parser = s.or(
   }),
 )
 
-export type AddPacksCmd = s.Infer<typeof parser>
+export type AddPacksCmd = s.Infer<typeof schema>
 
 export const init = (packs: { [packId: PackId]: Pack }, causedBy: unknown): AddPacksCmd => {
   return {
@@ -22,7 +22,7 @@ export const init = (packs: { [packId: PackId]: Pack }, causedBy: unknown): AddP
 }
 
 const is = (cmd: unknown): cmd is AddPacksCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }): boolean => {

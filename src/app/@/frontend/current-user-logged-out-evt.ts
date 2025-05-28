@@ -1,14 +1,14 @@
 import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('current-user-logged-out'),
     text: s.str,
   }),
 )
 
-export type CurrentUserLoggedOutEvt = s.Infer<typeof parser>
+export type CurrentUserLoggedOutEvt = s.Infer<typeof schema>
 
 export const init = (text: string): CurrentUserLoggedOutEvt => {
   return {
@@ -18,7 +18,7 @@ export const init = (text: string): CurrentUserLoggedOutEvt => {
 }
 
 const is = (cmd: unknown): cmd is CurrentUserLoggedOutEvt => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }, text?: string): boolean => {

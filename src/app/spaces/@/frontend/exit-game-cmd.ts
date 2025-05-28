@@ -1,13 +1,13 @@
 import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('space-cmd.exit-game'),
   }),
 )
 
-export type ExitGameCmd = s.Infer<typeof parser>
+export type ExitGameCmd = s.Infer<typeof schema>
 
 export const init = (): ExitGameCmd => {
   return {
@@ -16,7 +16,7 @@ export const init = (): ExitGameCmd => {
 }
 
 const is = (cmd: unknown): cmd is ExitGameCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }): boolean => {

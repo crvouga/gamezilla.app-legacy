@@ -8,7 +8,7 @@ const is = (guestSessionMappingId: unknown): guestSessionMappingId is GuestSessi
   return typeof guestSessionMappingId === 'string'
 }
 
-const parser = s.custom(is, 'Invalid guest session mapping id')
+const schema = s.custom(is, 'Invalid guest session mapping id')
 
 const namespace = 'guest-session-mapping'
 const separator = ':'
@@ -26,7 +26,7 @@ const generate = () => {
 }
 
 export const GuestSessionMappingId = {
-  ...parser,
+  ...schema,
   generate,
   is,
 }

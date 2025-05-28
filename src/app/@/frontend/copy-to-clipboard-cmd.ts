@@ -1,14 +1,14 @@
 import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('copy-to-clipboard'),
     text: s.str,
   }),
 )
 
-export type CopyToClipboardCmd = s.Infer<typeof parser>
+export type CopyToClipboardCmd = s.Infer<typeof schema>
 
 export const init = (text: string): CopyToClipboardCmd => {
   return {
@@ -18,7 +18,7 @@ export const init = (text: string): CopyToClipboardCmd => {
 }
 
 const is = (cmd: unknown): cmd is CopyToClipboardCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }, predicate?: (copiedText: string) => boolean): boolean => {

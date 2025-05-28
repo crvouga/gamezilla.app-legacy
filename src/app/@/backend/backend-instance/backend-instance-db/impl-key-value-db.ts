@@ -16,13 +16,13 @@ export const BackendInstanceDb = (config: Config): IBackendInstanceDb => {
   const byId = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['backend-instance-by-id'],
-    parser: BackendInstance,
+    schema: BackendInstance,
   })
   const ALL_IDS_KEY = 'all'
   const indexAllIds = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['backend-instance-ids'],
-    parser: s.arr(BackendInstanceId),
+    schema: s.arr(BackendInstanceId),
   })
   const list: IBackendInstanceDb['list'] = async () => {
     const got = await indexAllIds.get(ALL_IDS_KEY)

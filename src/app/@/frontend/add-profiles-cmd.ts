@@ -2,12 +2,12 @@ import { s } from '~/@/schema'
 import { UserProfile } from '../data/user-profile'
 import { isOk } from '~/@/result'
 
-const parser = s.obj({
+const schema = s.obj({
   t: s.l('add-profiles'),
   profiles: s.arr(UserProfile),
 })
 
-export type AddProfilesCmd = s.Infer<typeof parser>
+export type AddProfilesCmd = s.Infer<typeof schema>
 
 const init = (profiles: UserProfile[]): AddProfilesCmd => {
   return {
@@ -17,7 +17,7 @@ const init = (profiles: UserProfile[]): AddProfilesCmd => {
 }
 
 const is = (cmd: unknown): cmd is AddProfilesCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }, _profiles?: UserProfile[]): boolean => {
@@ -29,7 +29,7 @@ const did = (output?: { msgOut?: unknown[] | null }, _profiles?: UserProfile[]):
   )
 }
 export const AddProfilesCmd = {
-  parser,
+  schema,
   init,
   is,
   did,

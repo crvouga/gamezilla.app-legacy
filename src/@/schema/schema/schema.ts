@@ -15,9 +15,9 @@ const toErrorMessage = (expected: string, actual: string, actualValue: string) =
 }
 
 export const is =
-  <T>(parser: Parser<T>) =>
+  <T>(schema: Parser<T>) =>
   (input: unknown): input is T => {
-    return parser.parse(input).t === 'ok'
+    return schema.parse(input).t === 'ok'
   }
 
 export const noop = <T>(): Parser<T> => {
@@ -38,7 +38,7 @@ const isIndexable = (input: unknown): input is Record<string, unknown> => {
   return typeof input === 'object' && input !== null
 }
 
-export const obj = <T>(parsers: {
+export const obj = <T>(schemas: {
   [K in keyof T]: Parser<T[K]>
 }): Parser<T> => {
   return {
@@ -72,12 +72,12 @@ export const obj = <T>(parsers: {
 
       const result: Partial<T> = {}
       const errors: ParserError[] = []
-      for (const key in parsers) {
-        const parser = parsers[key]
+      for (const key in schemas) {
+        const schema = schemas[key]
 
         const value = input[key]
 
-        const parsed = parser.parse(value)
+        const parsed = schema.parse(value)
 
         if (parsed.t === 'ok') {
           result[key] = parsed.value
@@ -103,7 +103,7 @@ export const obj = <T>(parsers: {
   }
 }
 
-export const partialObj = <T>(parsers: {
+export const partialObj = <T>(schemas: {
   [K in keyof T]: Parser<T[K]>
 }): Parser<Partial<T>> => {
   return {
@@ -121,9 +121,9 @@ export const partialObj = <T>(parsers: {
       const result: Partial<T> = {}
       const errors: ParserError[] = []
 
-      for (const key in parsers) {
+      for (const key in schemas) {
         if (key in objInput) {
-          const parsed = parsers[key].parse(objInput[key])
+          const parsed = schemas[key].parse(objInput[key])
           if (parsed.t === 'ok') {
             result[key] = parsed.value
           } else {
@@ -186,7 +186,7 @@ export const l = <T extends string | number | boolean | null | undefined>(value:
   }
 }
 
-export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
+export const arr = <T>(schema: Parser<T>): Parser<T[]> => {
   return {
     parse(input) {
       if (!Array.isArray(input)) {
@@ -202,7 +202,7 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
       const errors: ParserError[] = []
       for (let i = 0; i < input.length; i++) {
         const value = input[i]
-        const parsed = parser.parse(value)
+        const parsed = schema.parse(value)
         if (parsed.t === 'ok') {
           result.push(parsed.value)
           continue
@@ -226,13 +226,13 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
   }
 }
 
-export const maybe = <T>(parser: Parser<T>): Parser<T | null | undefined> => {
+export const maybe = <T>(schema: Parser<T>): Parser<T | null | undefined> => {
   return {
     parse(input) {
       if (input === null || input === undefined) {
         return Ok(null)
       }
-      return parser.parse(input)
+      return schema.parse(input)
     },
   }
 }
@@ -396,12 +396,12 @@ export const enumeration = <T extends string | number | boolean | null | undefin
 }
 
 export const brand = <T, TBrand extends string | number | boolean | null | undefined>(
-  parser: Parser<T>,
+  schema: Parser<T>,
   _brand: TBrand,
 ): Parser<Brand<T, TBrand>> => {
   return {
     parse(input) {
-      const parsed = parser.parse(input)
+      const parsed = schema.parse(input)
       switch (parsed.t) {
         case 'err':
           return parsed

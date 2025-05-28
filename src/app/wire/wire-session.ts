@@ -5,13 +5,13 @@ import { ClientId } from '../../@/wire/client-id'
 import { SessionId } from '../../@/wire/session-id'
 import { UserId } from '../@/data/user-id'
 
-const parser = s.obj({
-  clientIds: CappedOrderedDict.parser(ClientId, ClientId),
+const schema = s.obj({
+  clientIds: CappedOrderedDict.schema(ClientId, ClientId),
   sessionId: SessionId,
   userId: s.maybe(UserId),
 })
 
-export type WireSession = s.Infer<typeof parser>
+export type WireSession = s.Infer<typeof schema>
 
 const init = (sessionId: SessionId): WireSession => {
   return {
@@ -49,7 +49,7 @@ const random = (): WireSession => {
 }
 
 export const WireSession = {
-  ...parser,
+  ...schema,
   init,
   addClientId,
   addUserId,

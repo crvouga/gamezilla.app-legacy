@@ -3,19 +3,19 @@ import { GroupId } from './group-id'
 import { NodeId } from './node-id'
 import { Terminal } from './terminal'
 
-const parser = s.obj({
+const schema = s.obj({
   groupId: GroupId,
   startId: NodeId,
   endId: NodeId,
 })
 
-export type TerminalFull = s.Infer<typeof parser>
+export type TerminalFull = s.Infer<typeof schema>
 
 const is = (terminal: Terminal): terminal is TerminalFull => {
   return Boolean(terminal.endId)
 }
 
 export const TerminalFull = {
-  ...parser,
+  ...schema,
   is,
 }

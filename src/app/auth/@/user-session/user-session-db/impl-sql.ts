@@ -46,7 +46,7 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
     async findSessionIdsByUserId(userId: UserId) {
       logger.debug(`findSessionIdsByUserId: userId=${userId}`)
       const queried = await dbConnSql.query({
-        parser: Row,
+        schema: Row,
         sql: 'SELECT * FROM user_session WHERE ended_at_posix IS NULL AND user_id = :user_id',
         vars: {
           user_id: userId,
@@ -59,7 +59,7 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
     async findUserIdBySessionId(sessionId: SessionId) {
       logger.debug(`findUserIdBySessionId: sessionId=${sessionId}`)
       const queried = await dbConnSql.query({
-        parser: Row,
+        schema: Row,
         sql: 'SELECT * FROM user_session WHERE ended_at_posix IS NULL AND session_id = :session_id',
         vars: {
           session_id: sessionId,
@@ -76,7 +76,7 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
         `insert: userSession=${userSession.userSessionId} sessionId=${userSession.sessionId} clientSessionId=${userSession.clientSessionId} userId=${userSession.userId}`,
       )
       const queried = await dbConnSql.query({
-        parser: Row,
+        schema: Row,
         sql: `
           INSERT INTO user_session (
             id,
@@ -106,7 +106,7 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
     async zapByUserId(userId) {
       logger.debug(`zapByUserId: userId=${userId}`)
       const queried = await dbConnSql.query({
-        parser: Row,
+        schema: Row,
         sql: 'UPDATE user_session SET ended_at_posix = :ended_at_posix WHERE user_id = :user_id',
         vars: {
           ended_at_posix: Date.now(),
@@ -119,7 +119,7 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
     async zapBySessionId(sessionId) {
       logger.debug(`zapBySessionId: sessionId=${sessionId}`)
       const queried = await dbConnSql.query({
-        parser: Row,
+        schema: Row,
         sql: 'UPDATE user_session SET ended_at_posix = :ended_at_posix WHERE session_id = :session_id',
         vars: {
           ended_at_posix: Date.now(),
@@ -132,9 +132,9 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
     async query(input) {
       const { sql, sqlCount, vars } = queryToSql(input)
 
-      const queried = await dbConnSql.query({ parser: Row, sql, vars })
+      const queried = await dbConnSql.query({ schema: Row, sql, vars })
 
-      const queriedCount = await dbConnSql.query({ parser: s.obj({ total: s.or(s.num, s.str) }), sql: sqlCount, vars })
+      const queriedCount = await dbConnSql.query({ schema: s.obj({ total: s.or(s.num, s.str) }), sql: sqlCount, vars })
 
       const total = unwrapOr(
         Result.mapOk(queriedCount, (rows) => {
@@ -163,7 +163,7 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
     async zapByClientSessionId(clientSessionId) {
       logger.debug(`zapByClientSessionId: clientSessionId=${clientSessionId}`)
       const queried = await dbConnSql.query({
-        parser: Row,
+        schema: Row,
         sql: 'UPDATE user_session SET ended_at_posix = :ended_at_posix WHERE client_session_id = :client_session_id',
         vars: {
           ended_at_posix: Date.now(),
@@ -175,7 +175,7 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
 
     sub(input) {
       const { sql, vars } = queryToSql(input)
-      return Sub.map(dbConnSql.sub({ parser: Row, sql, vars }), (rows) => rows.map(rowToUserSession))
+      return Sub.map(dbConnSql.sub({ schema: Row, sql, vars }), (rows) => rows.map(rowToUserSession))
     },
   }
 }

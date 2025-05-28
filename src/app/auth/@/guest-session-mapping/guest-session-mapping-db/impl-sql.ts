@@ -31,7 +31,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
         session_id: sessionId,
       }
       const queried = await config.dbConnSql.query({
-        parser: s.obj({
+        schema: s.obj({
           guest_user_id: UserId,
         }),
         sql: query,
@@ -56,7 +56,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
         client_session_id: clientSessionId,
       }
       const queried = await config.dbConnSql.query({
-        parser: s.obj({
+        schema: s.obj({
           guest_user_id: UserId,
         }),
         sql: query,
@@ -82,7 +82,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
         created_at_posix: Posix.now(),
       }
       const inserted = await config.dbConnSql.query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: query,
         vars: vars,
       })

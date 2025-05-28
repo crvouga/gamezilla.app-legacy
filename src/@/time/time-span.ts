@@ -2,12 +2,12 @@ import { TranslatedText } from '../l18n'
 import { Translator } from '../l18n/generated'
 import { s } from '../schema'
 
-const parser = s.obj({
+const schema = s.obj({
   type: s.l('TimeSpan'),
   _durationMilliseconds: s.num,
 })
 
-export type TimeSpan = s.Infer<typeof parser>
+export type TimeSpan = s.Infer<typeof schema>
 
 const milliseconds = (durationMilliseconds: number): TimeSpan => {
   return {
@@ -209,7 +209,7 @@ export const TimeSpan = {
   //
   encode,
   decode,
-  parser,
+  schema,
 }
 
 const ensureCleanNonNegativeNumber = (value: number | undefined): number => {

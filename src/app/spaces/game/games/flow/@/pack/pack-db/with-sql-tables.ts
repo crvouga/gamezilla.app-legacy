@@ -38,7 +38,7 @@ export const PackDb = (config: Config): IPackDb => {
   for (const query of queries) {
     config.dbConnSql
       .query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: query,
         vars: {},
       })

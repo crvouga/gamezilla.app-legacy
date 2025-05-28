@@ -30,7 +30,7 @@ export type MsgToFrontend = { t: 'noop' }
 
 export const MsgSpace = s.obj({
   t: s.l('create-new-puzzle.user-created-puzzle'),
-  created: Result.parser(s.str, Puzzle),
+  created: Result.schema(s.str, Puzzle),
   userId: UserId,
 })
 export type MsgSpace = s.Infer<typeof MsgSpace>

@@ -168,7 +168,7 @@ const puzzlesFindForProfile = async (
   `
 
   const found = await dbConn.query({
-    parser: PuzzleRow,
+    schema: PuzzleRow,
     sql: sql,
     vars: {},
   })
@@ -206,7 +206,7 @@ const puzzlesReplace = async ({ dbConn, rows }: { dbConn: IDbConnSql; rows: Puzz
   `
 
   const inserted = await dbConn.query({
-    parser: PuzzleRow,
+    schema: PuzzleRow,
     sql: queryString,
     vars: {},
   })
@@ -219,7 +219,7 @@ const interactionsInsert = async (
   interactions: PuzzleInteraction[],
 ): Promise<Result<string, null>> => {
   const result = await dbConn.query({
-    parser: PuzzleInteractionRow,
+    schema: PuzzleInteractionRow,
     sql: `
         INSERT INTO game_chess_puzzle_interaction (
           puzzle_id,
@@ -249,7 +249,7 @@ const toPuzzleQueryJSON = (query: unknown): PuzzleQueryJSON | null => {
 }
 const profilesFind = async (dbConn: IDbConnSql, userId: UserId): Promise<Result<string, PuzzleProfile | null>> => {
   const found = await dbConn.query({
-    parser: PuzzleProfileRow,
+    schema: PuzzleProfileRow,
     sql: `
       SELECT
         *
@@ -303,7 +303,7 @@ export const profilesInsert = async (dbConn: IDbConnSql, profile: PuzzleProfile)
   const puzzleProfileId = Uuid.generate()
 
   const mutated = await dbConn.query({
-    parser: s.unknown,
+    schema: s.unknown,
     sql: `
         INSERT INTO game_chess_puzzle_profile (
           id,
@@ -356,7 +356,7 @@ export const profilesFindElseInsert = async (
 
 const profilesUpdate = async (dbConn: IDbConnSql, profile: PuzzleProfile): Promise<Result<string, null>> => {
   const mutated = await dbConn.query({
-    parser: s.unknown,
+    schema: s.unknown,
     sql: `
       UPDATE game_chess_puzzle_profile
       SET

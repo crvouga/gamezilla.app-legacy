@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS game_flow_puzzle (
 export const PuzzleDb = (config: Config): IPuzzleDb => {
   config.dbConnSql
     .query({
-      parser: s.unknown,
+      schema: s.unknown,
       sql: query,
       vars: {},
     })

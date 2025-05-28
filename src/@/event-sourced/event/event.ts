@@ -16,8 +16,8 @@ export type WithEventId<T> = T & {
 
 export type WithEventMeta<T> = T & EventMeta
 
-export const WithEventMeta = <T>(parser: s.Parser<T>) => {
-  return s.and(parser, EventMeta)
+export const WithEventMeta = <T>(schema: s.Parser<T>) => {
+  return s.and(schema, EventMeta)
 }
 
 export const withEventMeta = <T>(event: T): WithEventMeta<T> => {

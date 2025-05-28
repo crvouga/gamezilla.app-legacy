@@ -20,13 +20,13 @@ const OrderClause = s.partialObj({
 
 export type OrderClause = s.Infer<typeof OrderClause>
 
-const parser = s.obj({
+const schema = s.obj({
   pagination: Pagination,
   where: WhereClause,
   order: OrderClause,
 })
 
-export type PacksDbQuery = s.Infer<typeof parser>
+export type PacksDbQuery = s.Infer<typeof schema>
 
 const toKey = (input: PacksDbQuery): string => {
   return [
@@ -44,6 +44,6 @@ const toKey = (input: PacksDbQuery): string => {
 }
 
 export const PacksDbQuery = {
-  ...parser,
+  ...schema,
   toKey,
 }

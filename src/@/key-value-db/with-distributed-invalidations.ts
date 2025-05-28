@@ -69,11 +69,11 @@ export const withDistributedInvalidations = async (
   })
   return {
     unsubscribe,
-    get(key, parser) {
-      return config.cache.get(key, parser)
+    get(key, schema) {
+      return config.cache.get(key, schema)
     },
-    getMany(keys, parser) {
-      return config.cache.getMany(keys, parser)
+    getMany(keys, schema) {
+      return config.cache.getMany(keys, schema)
     },
     async set(key, value) {
       await config.pubSub.pub(

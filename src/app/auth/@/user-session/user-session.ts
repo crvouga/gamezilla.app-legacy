@@ -5,7 +5,7 @@ import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { UserSessionId } from './user-session-id'
 
-const parser = s.obj({
+const schema = s.obj({
   userSessionId: UserSessionId,
   sessionId: s.maybe(SessionId),
   clientSessionId: ClientSessionId,
@@ -14,7 +14,7 @@ const parser = s.obj({
   endedAt: s.maybe(Posix),
 })
 
-export type UserSession = s.Infer<typeof parser>
+export type UserSession = s.Infer<typeof schema>
 
 const random = (overrides?: Partial<UserSession>): UserSession => {
   return {
@@ -29,6 +29,6 @@ const random = (overrides?: Partial<UserSession>): UserSession => {
 }
 
 export const UserSession = {
-  ...parser,
+  ...schema,
   random,
 }

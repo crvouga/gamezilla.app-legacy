@@ -4,7 +4,7 @@ const ALL = ['en', 'es', 'fr', 'de', 'it', 'ja', 'ko', 'pt', 'ru', 'zh', 'hi', '
 
 export type LanguageCodeISO_639_1 = (typeof ALL)[number]
 
-const parser = s.enumeration(ALL)
+const schema = s.enumeration(ALL)
 
 const is = (code: unknown): code is LanguageCodeISO_639_1 =>
   typeof code === 'string' && ALL.includes(code as LanguageCodeISO_639_1)
@@ -31,5 +31,5 @@ export const LanguageCodeISO_639_1 = {
   ALL,
   is,
   getLangFromNavigator,
-  parser,
+  schema,
 }

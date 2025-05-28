@@ -2,7 +2,7 @@ import type { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
 import { s } from '~/@/schema'
 
-const parser = s.or(
+const schema = s.or(
   s.obj({
     t: s.l('database-error'),
     error: s.str,
@@ -18,7 +18,7 @@ const parser = s.or(
   }),
 )
 
-export type SendCodeProblem = s.Infer<typeof parser>
+export type SendCodeProblem = s.Infer<typeof schema>
 
 const toString = ({ problem, t }: { problem: SendCodeProblem; t: Translator }): TranslatedText => {
   switch (problem.t) {
@@ -34,6 +34,6 @@ const toString = ({ problem, t }: { problem: SendCodeProblem; t: Translator }): 
 }
 
 export const SendCodeProblem = {
-  parser,
+  schema,
   toString,
 }

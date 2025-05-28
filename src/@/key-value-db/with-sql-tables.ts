@@ -23,7 +23,7 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
   for (const query of queries) {
     config.dbConnSql
       .query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: query,
         vars: {},
       })

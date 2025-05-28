@@ -9,7 +9,7 @@ export type EditPackNameValidationError = s.Infer<typeof EditPackNameValidationE
 
 export const ModelSpace = s.obj({
   editPackName_draft: s.str,
-  editPackName_result: RemoteResult.parser(s.str, s.unknown),
+  editPackName_result: RemoteResult.schema(s.str, s.unknown),
   editPackName_validationError: s.or(EditPackNameValidationError, s.l(null)),
 })
 export type ModelSpace = s.Infer<typeof ModelSpace>

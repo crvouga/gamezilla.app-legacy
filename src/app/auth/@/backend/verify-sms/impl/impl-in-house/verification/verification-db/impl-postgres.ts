@@ -42,7 +42,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
         ...order.vars,
       }
       const queried = await config.dbConnSql.query({
-        parser: Row,
+        schema: Row,
         sql: query,
         vars: vars,
       })
@@ -56,7 +56,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
 				${where.str}
 			`
       const queriedCount = await config.dbConnSql.query({
-        parser: s.obj({
+        schema: s.obj({
           count: s.str,
         }),
         sql: queryCount,
@@ -111,7 +111,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
         verified_at_posix: verification.verifiedAtPosix,
       }
       const queried = await config.dbConnSql.query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: query,
         vars: vars,
       })
@@ -124,7 +124,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
         id: verificationId,
       }
       const queried = await config.dbConnSql.query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: query,
         vars: vars,
       })

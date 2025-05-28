@@ -6,7 +6,7 @@ import { PuzzleId } from '../puzzle/puzzle-id'
 import { PackId } from './pack-id'
 import { PackName } from './pack-name'
 
-const parser = s.obj({
+const schema = s.obj({
   id: PackId,
   createdBy: UserId,
   createdAt: Posix,
@@ -17,7 +17,7 @@ const parser = s.obj({
   isOfficial: s.maybe(s.bool),
 })
 
-export type Pack = s.Infer<typeof parser>
+export type Pack = s.Infer<typeof schema>
 
 const create = async (input: {
   count?: number
@@ -99,7 +99,7 @@ const random = async (input?: { createdBy?: UserId; puzzleIds?: PuzzleId[] }): P
 }
 
 export const Pack = {
-  ...parser,
+  ...schema,
   randomSync,
   create,
   add,

@@ -11,7 +11,7 @@ export const ProfileCache = (config: Config): IProfileCache => {
   const profilesKv = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['profile-cache', 'profiles'],
-    parser: UserProfile,
+    schema: UserProfile,
   })
   return {
     async add(profiles) {

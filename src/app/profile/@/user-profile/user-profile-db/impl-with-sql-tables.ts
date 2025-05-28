@@ -25,7 +25,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
   for (const query of queries) {
     config.dbConnSql
       .query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: query,
         vars: {},
       })

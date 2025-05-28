@@ -7,7 +7,7 @@ import * as FlowVariant from '../variant/variant'
 import { PuzzleId } from './puzzle-id'
 import { PuzzleName } from './puzzle-name'
 
-const parser = s.obj({
+const schema = s.obj({
   id: PuzzleId,
   name: PuzzleName,
   createdAt: Posix,
@@ -18,7 +18,7 @@ const parser = s.obj({
   solutions: s.arr(Flow.Model),
 })
 
-export type Puzzle = s.Infer<typeof parser>
+export type Puzzle = s.Infer<typeof schema>
 
 const create = async (input: {
   count?: number
@@ -65,7 +65,7 @@ const random = async (input?: { flow?: FlowVariant.Model; createdBy?: UserId; cr
 }
 
 export const Puzzle = {
-  ...parser,
+  ...schema,
   create,
   random,
 }

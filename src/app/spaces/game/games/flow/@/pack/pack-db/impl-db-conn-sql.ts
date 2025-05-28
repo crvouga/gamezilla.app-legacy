@@ -128,7 +128,7 @@ export const PackDb = (config: Config): IPackDb => {
   return {
     async get(id) {
       const queried = await config.dbConnSql.query({
-        parser: Row,
+        schema: Row,
         sql: 'SELECT * FROM game_flow_pack WHERE id = :id AND deleted_at_posix IS NULL',
         vars: {
           id: id,
@@ -136,7 +136,7 @@ export const PackDb = (config: Config): IPackDb => {
       })
 
       const queriedItems = await config.dbConnSql.query({
-        parser: RowItem,
+        schema: RowItem,
         sql: 'SELECT * FROM game_flow_pack_item WHERE pack_id = :pack_id AND deleted_at_posix IS NULL',
         vars: {
           pack_id: id,
@@ -152,7 +152,7 @@ export const PackDb = (config: Config): IPackDb => {
       const where = toSqlWhere(input.where)
       const vars = where.vars
       const sql = `SELECT COUNT(*) AS count FROM game_flow_pack ${where.str}`
-      const queried = await config.dbConnSql.query({ parser: s.obj({ count: s.maybe(s.or(s.num, s.str)) }), sql, vars })
+      const queried = await config.dbConnSql.query({ schema: s.obj({ count: s.maybe(s.or(s.num, s.str)) }), sql, vars })
       return Result.mapOk(queried, (rows) => ensureNumber(rows[0]?.count))
     },
 
@@ -181,7 +181,7 @@ export const PackDb = (config: Config): IPackDb => {
         ${sqlPagination.str};
 			`
       const packsSub = config.dbConnSql.sub({
-        parser: s.and(Row, s.obj({ puzzle_ids_csv: s.maybe(s.str) })),
+        schema: s.and(Row, s.obj({ puzzle_ids_csv: s.maybe(s.str) })),
         sql,
         vars,
       })
@@ -213,14 +213,14 @@ export const PackDb = (config: Config): IPackDb => {
 				${sqlPagination.str}
 			`
 
-      const queried = await config.dbConnSql.query({ parser: Row, sql: str, vars })
+      const queried = await config.dbConnSql.query({ schema: Row, sql: str, vars })
 
       const counted = await this.count(input)
 
       const total = Result.unwrapOr(counted, 0)
 
       const queriedItems = await config.dbConnSql.query({
-        parser: RowItem,
+        schema: RowItem,
         sql: `
         SELECT
           *
@@ -258,7 +258,7 @@ export const PackDb = (config: Config): IPackDb => {
       }
 
       const deleted = await config.dbConnSql.query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: 'DELETE FROM game_flow_pack_item WHERE pack_id = :pack_id',
         vars: {
           pack_id: input.id,
@@ -295,7 +295,7 @@ export const PackDb = (config: Config): IPackDb => {
       `
 
         const insertedItems = await config.dbConnSql.query({
-          parser: s.unknown,
+          schema: s.unknown,
           sql: sqlItems,
           vars: {},
         })
@@ -307,7 +307,7 @@ export const PackDb = (config: Config): IPackDb => {
 
       if (got.value) {
         const queried = await config.dbConnSql.query({
-          parser: s.unknown,
+          schema: s.unknown,
           sql: `
           UPDATE
             game_flow_pack
@@ -329,7 +329,7 @@ export const PackDb = (config: Config): IPackDb => {
       }
 
       const queried = await config.dbConnSql.query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: `
 				INSERT INTO game_flow_pack (
 					id,
@@ -367,7 +367,7 @@ export const PackDb = (config: Config): IPackDb => {
 
     async zap(input) {
       const queried = await config.dbConnSql.query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: `
           UPDATE game_flow_pack 
           SET 

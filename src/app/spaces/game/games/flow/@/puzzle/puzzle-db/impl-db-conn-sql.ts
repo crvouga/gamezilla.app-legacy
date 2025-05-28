@@ -21,7 +21,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
   return {
     async get(puzzleId) {
       const queried = await config.dbConnSql.query({
-        parser: Row,
+        schema: Row,
         sql: `
         SELECT
           id,
@@ -70,7 +70,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       if (got.value) {
         // First try to update existing record
         const updateResult = await config.dbConnSql.query({
-          parser: s.num,
+          schema: s.num,
           sql: `
           UPDATE game_flow_puzzle
           SET
@@ -100,7 +100,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       }
 
       const insertResult = await config.dbConnSql.query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: `
           INSERT INTO game_flow_puzzle (
             id,
@@ -144,7 +144,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
 
     async zap(input) {
       const queried = await config.dbConnSql.query({
-        parser: s.num,
+        schema: s.num,
         sql: `
         UPDATE
           game_flow_puzzle
@@ -167,7 +167,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       const where = toSqlWhere(input)
 
       const queried = await config.dbConnSql.query({
-        parser: s.obj({
+        schema: s.obj({
           count: s.maybe(s.or(s.str, s.num)),
         }),
         sql: `
@@ -186,7 +186,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
     async query(input) {
       const sql = toQuerySql(input)
       const queried = await config.dbConnSql.query({
-        parser: Row,
+        schema: Row,
         sql: sql.str,
         vars: sql.variables,
       })
@@ -196,7 +196,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       }
 
       const queriedCount = await config.dbConnSql.query({
-        parser: s.obj({
+        schema: s.obj({
           count: s.maybe(s.or(s.str, s.num)),
         }),
         sql: `
@@ -237,7 +237,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
 
     sub(input: PuzzleQuery) {
       const sql = toQuerySql(input)
-      return Sub.map(config.dbConnSql.sub({ parser: Row, sql: sql.str, vars: sql.variables }), (rows) => {
+      return Sub.map(config.dbConnSql.sub({ schema: Row, sql: sql.str, vars: sql.variables }), (rows) => {
         return rows.flatMap((row) => {
           const puzzle = Row.rowToPuzzle(row)
           return puzzle ? [puzzle] : []

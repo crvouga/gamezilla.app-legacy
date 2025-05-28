@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { PuzzleId } from '../puzzle/puzzle-id'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('flow-cmd.remove-puzzles'),
     puzzles: s.dict(PuzzleId, PuzzleId),
@@ -10,7 +10,7 @@ export const parser = s.or(
   }),
 )
 
-export type RemovePuzzlesCmd = s.Infer<typeof parser>
+export type RemovePuzzlesCmd = s.Infer<typeof schema>
 
 export const init = (puzzles: { [puzzleId: PuzzleId]: PuzzleId }, causedBy: unknown): RemovePuzzlesCmd => {
   return {
@@ -21,7 +21,7 @@ export const init = (puzzles: { [puzzleId: PuzzleId]: PuzzleId }, causedBy: unkn
 }
 
 const is = (cmd: unknown): cmd is RemovePuzzlesCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }): boolean => {

@@ -52,10 +52,10 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
           )}`,
         )
 
-        const output: s.Infer<typeof input.parser>[] = []
+        const output: s.Infer<typeof input.schema>[] = []
 
         for (const row of rows) {
-          const parsed = input.parser.parse(row)
+          const parsed = input.schema.parse(row)
 
           switch (parsed.t) {
             case 'err': {

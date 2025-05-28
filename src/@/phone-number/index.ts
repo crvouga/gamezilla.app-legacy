@@ -3,13 +3,13 @@ import { s } from '~/@/schema'
 import { Result } from '../result'
 import { phone } from './phone'
 
-const parser = s.obj({
+const schema = s.obj({
   _country: Iso3166Alpha2Code,
   _validPhoneNumber: s.str,
   _opaque: s.l('PhoneNumber'),
 })
 
-export type PhoneNumber = s.Infer<typeof parser>
+export type PhoneNumber = s.Infer<typeof schema>
 
 type Problem = 'invalid_phone_number'
 
@@ -170,7 +170,7 @@ const random = (): PhoneNumber => {
 }
 
 export const PhoneNumber = {
-  ...parser,
+  ...schema,
   random,
   is,
   toString,

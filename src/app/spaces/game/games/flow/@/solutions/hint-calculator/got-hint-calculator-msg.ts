@@ -1,7 +1,7 @@
 import { s } from '~/@/schema'
 import { MsgFrontend } from './types'
 
-const parser = s.obj({
+const schema = s.obj({
   t: s.l('got-hint-calculator-msg'),
   c: s.obj({
     t: s.l('got-msg'),
@@ -9,7 +9,7 @@ const parser = s.obj({
   }),
 })
 
-export type GotHintCalculatorMsg = s.Infer<typeof parser>
+export type GotHintCalculatorMsg = s.Infer<typeof schema>
 
 const is = (input: unknown): input is GotHintCalculatorMsg => {
   return typeof input === 'object' && input !== null && 't' in input && input.t === 'got-hint-calculator-msg'
@@ -26,7 +26,7 @@ const init = (msg: MsgFrontend): GotHintCalculatorMsg => {
 }
 
 export const GotHintCalculatorMsg = {
-  parser,
+  schema: schema,
   is,
   init,
 }

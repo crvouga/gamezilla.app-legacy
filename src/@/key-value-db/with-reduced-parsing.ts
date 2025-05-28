@@ -15,12 +15,12 @@ export const withReducedParsing = ({ keyValueDb, verifiedKeys, ...config }: Conf
   return {
     ...keyValueDb,
 
-    async get<TValue>(key: string, parser: s.Parser<TValue>) {
+    async get<TValue>(key: string, schema: s.Parser<TValue>) {
       if (verifiedKeys.has(key)) {
         return keyValueDb.get(key, s.noop<TValue>())
       }
 
-      const got = await keyValueDb.get(key, parser)
+      const got = await keyValueDb.get(key, schema)
 
       if (isErr(got)) {
         return got
@@ -33,14 +33,14 @@ export const withReducedParsing = ({ keyValueDb, verifiedKeys, ...config }: Conf
       return got
     },
 
-    async getMany<TValue>(keys: string[], parser: s.Parser<TValue>) {
+    async getMany<TValue>(keys: string[], schema: s.Parser<TValue>) {
       const key = keys.join(',')
 
       if (verifiedKeys.has(key)) {
         return keyValueDb.getMany(keys, s.noop<TValue>())
       }
 
-      const got = await keyValueDb.getMany(keys, parser)
+      const got = await keyValueDb.getMany(keys, schema)
 
       if (isErr(got)) {
         return got

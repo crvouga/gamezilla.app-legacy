@@ -1,12 +1,12 @@
 import { s } from '../schema'
 
-const parser = s.brand(s.num, 'UnitInterval')
+const schema = s.brand(s.num, 'UnitInterval')
 
 /**
  * Represents a unit interval, a number between 0 and 1
  * https://en.wikipedia.org/wiki/Unit_interval
  */
-export type UnitInterval = s.Infer<typeof parser>
+export type UnitInterval = s.Infer<typeof schema>
 
 const is = (number: unknown): number is UnitInterval => {
   return typeof number === 'number' && number >= 0 && number <= 1
@@ -24,6 +24,6 @@ const init = (number: number): UnitInterval => {
 
 export const UnitInterval = {
   init,
-  parser,
+  schema,
   is,
 }

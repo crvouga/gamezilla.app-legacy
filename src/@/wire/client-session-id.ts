@@ -12,7 +12,7 @@ const is = (id: unknown): id is ClientSessionId => {
   return typeof id === 'string'
 }
 
-const parser = s.custom(is, 'Invalid client session id')
+const schema = s.custom(is, 'Invalid client session id')
 
 type Problem = 'invalid-client-session-id'
 
@@ -36,7 +36,7 @@ export const generate = (): ClientSessionId => {
 }
 
 export const ClientSessionId = {
-  ...parser,
+  ...schema,
   generate,
   decode,
   is,

@@ -1,9 +1,9 @@
 import { s } from '~/@/schema'
 import { getWords } from '~/app/@/data/words'
 
-const parser = s.brand(s.str, 'PackName')
+const schema = s.brand(s.str, 'PackName')
 
-export type PackName = s.Infer<typeof parser>
+export type PackName = s.Infer<typeof schema>
 
 const generate = async () => {
   const { adjectives, nouns } = await getWords()
@@ -17,7 +17,7 @@ const is = (name: unknown): name is PackName => {
 }
 
 export const PackName = {
-  ...parser,
+  ...schema,
   generate,
   is,
 }

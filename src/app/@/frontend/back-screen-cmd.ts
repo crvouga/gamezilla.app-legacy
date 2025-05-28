@@ -1,14 +1,14 @@
 import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('back'),
     playSound: s.maybe(s.bool),
   }),
 )
 
-export type BackScreenCmd = s.Infer<typeof parser>
+export type BackScreenCmd = s.Infer<typeof schema>
 
 export const init = (playSound?: boolean): BackScreenCmd => {
   return {
@@ -19,7 +19,7 @@ export const init = (playSound?: boolean): BackScreenCmd => {
 }
 
 const is = (cmd: unknown): cmd is BackScreenCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }): boolean => {

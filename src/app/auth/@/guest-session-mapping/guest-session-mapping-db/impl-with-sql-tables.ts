@@ -24,7 +24,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
   for (const query of queries) {
     config.dbConnSql
       .query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: query,
         vars: {},
       })

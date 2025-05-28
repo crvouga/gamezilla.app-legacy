@@ -5,7 +5,7 @@ import { IStream } from './interface'
 
 export type Config<T> = {
   t: 'in-memory'
-  parser: Parser<T>
+  schema: Parser<T>
 }
 
 export const Stream = async <T>(config: Config<T>): Promise<IStream<T>> => {
@@ -15,6 +15,6 @@ export const Stream = async <T>(config: Config<T>): Promise<IStream<T>> => {
       t: 'hash-map',
       map: new Map(),
     }),
-    parser: config.parser,
+    schema: config.schema,
   })
 }

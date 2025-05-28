@@ -16,13 +16,13 @@ export const WireSessionDb = (config: Config): IWireSessionDb => {
   const wireSessionBySessionId = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['wire-session-db', 'wire-sessions-by-session-id'],
-    parser: WireSession,
+    schema: WireSession,
   })
 
   const indexSessionIdsByUserId = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['wire-session-db', 'index-session-ids-by-user-id'],
-    parser: s.arr(SessionId),
+    schema: s.arr(SessionId),
   })
 
   return {

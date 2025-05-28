@@ -11,7 +11,7 @@ const is = (id: unknown): id is SpaceId => {
   // todo: better validation
   return typeof id === 'string'
 }
-const parser = s.custom(is, 'Invalid space id')
+const schema = s.custom(is, 'Invalid space id')
 
 type Problem = 'invalid_id'
 
@@ -36,7 +36,7 @@ const generate = (): SpaceId => {
 }
 
 export const SpaceId = {
-  ...parser,
+  ...schema,
   is,
   decode,
   generate,

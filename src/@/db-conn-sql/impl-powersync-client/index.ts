@@ -19,7 +19,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
       const sql = Sql.to(input.sql, input.vars)
       const rows = await config.powerSyncClient.database.getAll?.(sql)
       if (!rows) return Err('No results')
-      const parsedRows = rows.map(input.parser.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : []))
+      const parsedRows = rows.map(input.schema.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : []))
       return Ok(parsedRows)
     } catch (error) {
       return Err(String(error))
@@ -38,7 +38,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     const unsub = config.powerSyncClient.events.sub(async (_event) => {
       const got = await config.powerSyncClient.database.getAll?.(sql)
       const parsedRows = got.flatMap((row) => {
-        const parsed = input.parser.parse(row)
+        const parsed = input.schema.parse(row)
         if (isOk(parsed)) return [parsed.value]
         return []
       })
@@ -52,7 +52,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
         onResult(results) {
           const parsedRows =
             results.rows?._array.flatMap((row) => {
-              const parsed = input.parser.parse(row)
+              const parsed = input.schema.parse(row)
               if (isOk(parsed)) return [parsed.value]
               console.error('failed to parse row', { row, parsed })
               return []
@@ -104,7 +104,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     let lastPublished: TRow[] | null = null
 
     const unsubscribe = subscribe({
-      parser: input.parser,
+      schema: input.schema,
       sql: input.sql,
       vars: input.vars,
       onChange(rows) {

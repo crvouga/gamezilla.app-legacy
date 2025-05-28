@@ -18,7 +18,7 @@ export type EventSourcedConfig<TEvent, TState> = {
   reducer: (state: TState, event: WithEventMeta<TEvent>) => TState
 }
 
-const parser = <TEvent, TState>(
+const schema = <TEvent, TState>(
   eventParser: s.Parser<TEvent>,
   stateParser: s.Parser<TState>,
 ): s.Parser<EventSourced<TEvent, TState>> => {
@@ -26,7 +26,7 @@ const parser = <TEvent, TState>(
     events: s.arr(s.and(EventMeta, eventParser)),
     eventIds: s.dict(EventId, EventId),
     clock: LamportClock,
-    snapshots: CappedOrderedDict.parser(EventId, stateParser),
+    snapshots: CappedOrderedDict.schema(EventId, stateParser),
     initial: stateParser,
   })
 }
@@ -301,7 +301,7 @@ const mergeLeft = <TEvent, TState>(
 }
 
 export const EventSourced = {
-  parser,
+  schema,
   init,
   initFromSnapshot,
   isSameState,

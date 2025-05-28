@@ -7,7 +7,7 @@ import type { Puzzle } from '../../puzzle'
 import { PuzzleId } from '../../puzzle-id'
 import { PuzzleName } from '../../puzzle-name'
 
-const parser = s.obj({
+const schema = s.obj({
   id: s.str,
   name: s.str,
   flow: s.or(s.str, s.json),
@@ -17,7 +17,7 @@ const parser = s.obj({
   last_updated_by_user_id: s.str,
 })
 
-export type Row = s.Infer<typeof parser>
+export type Row = s.Infer<typeof schema>
 
 const ensureNumber = (x: string | number): number => {
   return typeof x === 'string' ? Number.parseFloat(x) : x
@@ -59,6 +59,6 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
 }
 
 export const Row = {
-  ...parser,
+  ...schema,
   rowToPuzzle,
 }

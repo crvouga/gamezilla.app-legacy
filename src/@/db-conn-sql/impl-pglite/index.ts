@@ -54,7 +54,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     logger.debug(`subscribing to sql=${sql}`)
 
     const query = await pg.live.query(sql, [], (res: unknown) => {
-      const parsed = s.obj({ rows: s.arr(input.parser) }).parse(res)
+      const parsed = s.obj({ rows: s.arr(input.schema) }).parse(res)
       switch (parsed.t) {
         case 'err': {
           logger.error(`Failed to parse row\nerror=${JSON.stringify(parsed.error, null, 4)}`)
@@ -69,7 +69,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
     return {
       initialRows: query?.initialResults?.rows?.flatMap((row: unknown) => {
-        const parsed = input.parser.parse(row)
+        const parsed = input.schema.parse(row)
         return isOk(parsed) ? [parsed.value] : []
       }),
       async refresh() {
@@ -109,7 +109,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       let lastPublished: TRow[] | null = null
 
       const subscribed = subscribe({
-        parser: input.parser,
+        schema: input.schema,
         sql: input.sql,
         vars: input.vars,
         onChange: (rows) => {
@@ -188,10 +188,10 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
           ).slice(0, 500)}`,
         )
 
-        const output: s.Infer<typeof input.parser>[] = []
+        const output: s.Infer<typeof input.schema>[] = []
 
         for (const row of results.rows) {
-          const parsed = input.parser.parse(row)
+          const parsed = input.schema.parse(row)
 
           switch (parsed.t) {
             case 'err': {

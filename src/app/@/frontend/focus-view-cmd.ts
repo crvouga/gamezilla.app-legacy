@@ -1,14 +1,14 @@
 import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('focus'),
     viewId: s.str,
   }),
 )
 
-export type FocusViewCmd = s.Infer<typeof parser>
+export type FocusViewCmd = s.Infer<typeof schema>
 
 export const init = (viewId: string): FocusViewCmd => {
   return {
@@ -18,7 +18,7 @@ export const init = (viewId: string): FocusViewCmd => {
 }
 
 const is = (cmd: unknown): cmd is FocusViewCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }, predicate?: (viewId: string) => boolean): boolean => {

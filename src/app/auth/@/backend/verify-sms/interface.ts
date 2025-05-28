@@ -7,12 +7,12 @@ import { VerifyCodeProblem } from './verify-code-problem'
 
 export const SendCodeInput = s.obj({
   phoneNumber: PhoneNumber,
-  preferredLanguage: LanguageCodeISO_639_1.parser,
+  preferredLanguage: LanguageCodeISO_639_1.schema,
 })
 export type SendCodeInput = s.Infer<typeof SendCodeInput>
 
-export const SendCodeOutput = Result.parser(
-  SendCodeProblem.parser,
+export const SendCodeOutput = Result.schema(
+  SendCodeProblem.schema,
   s.obj({
     phoneNumber: PhoneNumber,
   }),
@@ -22,11 +22,11 @@ export type SendCodeOutput = s.Infer<typeof SendCodeOutput>
 export const VerifyCodeInput = s.obj({
   phoneNumber: PhoneNumber,
   code: s.str,
-  preferredLanguage: LanguageCodeISO_639_1.parser,
+  preferredLanguage: LanguageCodeISO_639_1.schema,
 })
 export type VerifyCodeInput = s.Infer<typeof VerifyCodeInput>
 
-export const VerifyCodeOutput = Result.parser(VerifyCodeProblem.parser, s.unknown)
+export const VerifyCodeOutput = Result.schema(VerifyCodeProblem.schema, s.unknown)
 export type VerifyCodeOutput = s.Infer<typeof VerifyCodeOutput>
 
 export type IVerifySMS = {

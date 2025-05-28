@@ -49,13 +49,13 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
   const userSessions = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['user-session'],
-    parser: Row,
+    schema: Row,
   })
   const ALL_IDS = 'all-ids'
   const allIds = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['user-session', ALL_IDS],
-    parser: s.arr(s.str),
+    schema: s.arr(s.str),
   })
 
   const getAll = async (): Promise<Row[]> => {

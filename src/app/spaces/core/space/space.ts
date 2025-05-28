@@ -7,7 +7,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { MsgSpace } from '../space-msg/space-msg'
 import { SpaceState } from '../space-state'
 
-export const Model = EventSourced.parser(MsgSpace, SpaceState.State)
+export const Model = EventSourced.schema(MsgSpace, SpaceState.State)
 export type Model = s.Infer<typeof Model>
 
 export const init: Model = EventSourced.init(SpaceState.init)

@@ -21,11 +21,11 @@ export type Config = {
 export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
   const logger = Logger.prefix('db-conn-sql', config.logger)
   return {
-    async get(key, parser) {
+    async get(key, schema) {
       try {
         const [queried, duration] = await withDuration(() =>
           config.dbConnSql.query({
-            parser: Row,
+            schema: Row,
             sql: 'SELECT id, value FROM key_value WHERE id = :id',
             vars: {
               id: key,
@@ -46,7 +46,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
         const json = JSON.parse(row.value)
 
-        const parsed = parser.parse(json)
+        const parsed = schema.parse(json)
 
         switch (parsed.t) {
           case 'err': {
@@ -68,7 +68,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
       }
     },
 
-    async getMany(keys, parser) {
+    async getMany(keys, schema) {
       if (keys.length <= 0) {
         return Ok([])
       }
@@ -77,7 +77,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
         const [queried, duration] = await withDuration(() =>
           config.dbConnSql.query({
-            parser: Row,
+            schema: Row,
             sql: `SELECT id, value FROM key_value WHERE id IN (${keysStr})`,
             vars: {},
           }),
@@ -91,7 +91,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
         const rowMap = new Map(queried.value.map((row) => [row.id, row]))
 
-        const rows: s.Infer<typeof parser>[] = []
+        const rows: s.Infer<typeof schema>[] = []
 
         for (const key of keys) {
           const row = rowMap.get(key)
@@ -102,7 +102,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
           const json = JSON.parse(row.value)
 
-          const parsed = parser.parse(json)
+          const parsed = schema.parse(json)
 
           if (isErr(parsed)) {
             const errorStr = JSON.stringify(parsed.error, null, 2)
@@ -125,7 +125,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
     async set(key, value) {
       try {
         const queried = await config.dbConnSql.query({
-          parser: Row,
+          schema: Row,
           sql: 'INSERT INTO key_value (id, value) VALUES (:id, :value) ON CONFLICT (id) DO UPDATE SET value = :value',
           vars: {
             id: key,
@@ -153,7 +153,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
         const valuesStr = entries.map(([key, value]) => `('${key}', '${JSON.stringify(value)}')`).join(', ')
 
         const queried = await config.dbConnSql.query({
-          parser: Row,
+          schema: Row,
           sql: `INSERT INTO key_value (id, value) VALUES ${valuesStr} ON CONFLICT (id) DO UPDATE SET value = EXCLUDED.value`,
           vars: {},
         })
@@ -172,7 +172,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
     async zap(key) {
       try {
         const queried = await config.dbConnSql.query({
-          parser: Row,
+          schema: Row,
           sql: 'DELETE FROM key_value WHERE id = :id',
           vars: {
             id: key,

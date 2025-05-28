@@ -41,7 +41,7 @@ const Opened = s.or(
 export type Opened = s.Infer<typeof Opened>
 
 export const Model = s.obj({
-  form: History.parser(Form),
+  form: History.schema(Form),
   opened: s.maybe(Opened),
   hoveredNodeId: s.maybe(NodeId),
 })

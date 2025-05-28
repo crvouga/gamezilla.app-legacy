@@ -1,8 +1,8 @@
 import { s } from '~/@/schema'
 
-const parser = s.brand(s.str, 'EventId')
+const schema = s.brand(s.str, 'EventId')
 
-export type EventId = s.Infer<typeof parser>
+export type EventId = s.Infer<typeof schema>
 
 const SEPARATOR = '-'
 
@@ -39,7 +39,7 @@ const toComparable = (id: EventId): number => {
 }
 
 export const EventId = {
-  parser,
+  schema,
   init,
   increment,
   toComparable,

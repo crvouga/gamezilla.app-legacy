@@ -17,7 +17,7 @@ const Fixture = async <T>(config: Config<T>) => {
 }
 
 const MyEvent = s.obj({
-  id: EventId.parser,
+  id: EventId.schema,
   value: s.str,
 })
 
@@ -39,11 +39,11 @@ const Fixtures = async () => {
         t: 'hash-map',
         map: new Map(),
       }),
-      parser: MyEvent,
+      schema: MyEvent,
     },
     {
       t: 'in-memory',
-      parser: MyEvent,
+      schema: MyEvent,
     },
   ]
 

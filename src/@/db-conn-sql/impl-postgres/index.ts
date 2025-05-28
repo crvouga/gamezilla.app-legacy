@@ -29,7 +29,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     aggregate: {
       StringConcat: (column, separator) => `STRING_AGG(${column}, '${separator}')`,
     },
-    async query({ parser, sql: rawSql, vars: variables }) {
+    async query({ schema, sql: rawSql, vars: variables }) {
       const sql = Sql.to(rawSql, variables)
 
       try {
@@ -46,10 +46,10 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
         logger.debug({ duration: durationFormatted, sql: cleanSql(rawSql), variables: variables })
 
-        const output: s.Infer<typeof parser>[] = []
+        const output: s.Infer<typeof schema>[] = []
 
         for (const row of rows) {
-          const parsed = parser.parse(row)
+          const parsed = schema.parse(row)
 
           switch (parsed.t) {
             case 'err': {

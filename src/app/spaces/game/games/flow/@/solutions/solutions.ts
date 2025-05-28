@@ -9,9 +9,9 @@ import { AlgoSolveAsync } from './algo-solve-async'
 import { Solution } from './solution'
 import { SolutionHash } from './solution-hash/solution-hash'
 
-const parser = s.arr(Solution)
+const schema = s.arr(Solution)
 
-export type Solutions = s.Infer<typeof parser>
+export type Solutions = s.Infer<typeof schema>
 
 const init: Solutions = []
 
@@ -70,7 +70,7 @@ const isEmpty = (solutions: Solutions): boolean => {
 }
 
 export const Solutions = {
-  ...parser,
+  ...schema,
   limit,
   find,
   merge,

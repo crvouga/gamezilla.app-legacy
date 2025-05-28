@@ -1,11 +1,11 @@
 import { s } from '~/@/schema'
 
-const parser = s.obj({
+const schema = s.obj({
   _type: s.l('LamportTimestamp'),
   _value: s.num,
 })
 
-export type LamportTimestamp = s.Infer<typeof parser>
+export type LamportTimestamp = s.Infer<typeof schema>
 
 const fromNumber = (value: number): LamportTimestamp => {
   return {
@@ -47,7 +47,7 @@ const gt = (timestampA: LamportTimestamp, timestampB: LamportTimestamp): boolean
 }
 
 export const LamportTimestamp = {
-  ...parser,
+  ...schema,
   fromNumber,
   toNumber,
   max,

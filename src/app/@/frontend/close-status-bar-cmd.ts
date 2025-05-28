@@ -1,7 +1,7 @@
 import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('status-bar'),
     c: s.obj({
@@ -10,7 +10,7 @@ export const parser = s.or(
   }),
 )
 
-export type CloseStatusBarCmd = s.Infer<typeof parser>
+export type CloseStatusBarCmd = s.Infer<typeof schema>
 
 export const init = (): CloseStatusBarCmd => {
   return {
@@ -22,7 +22,7 @@ export const init = (): CloseStatusBarCmd => {
 }
 
 const is = (cmd: unknown): cmd is CloseStatusBarCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }): boolean => {

@@ -1,19 +1,19 @@
 import { RemoteResultInternal, ResultInternal } from './result'
-import { parser, remoteResultParser } from './result-parser'
+import { schema, remoteResultParser } from './result-schema'
 export * from './result'
 export type { ResultInternal } from './result'
-export * from './result-parser'
+export * from './result-schema'
 
 export type Result<TError, TValue> = ResultInternal<TError, TValue>
 
 export const Result = {
-  parser,
+  schema,
   ...ResultInternal,
 }
 
 export type RemoteResult<TError, TValue> = RemoteResultInternal<TError, TValue>
 
 export const RemoteResult = {
-  parser: remoteResultParser,
+  schema: remoteResultParser,
   ...RemoteResultInternal,
 }

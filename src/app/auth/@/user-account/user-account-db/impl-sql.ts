@@ -46,7 +46,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
       }
 
       const queried = await dbConnSql.query({
-        parser: UserAccountRow,
+        schema: UserAccountRow,
         sql: `
         SELECT
 					id,
@@ -82,7 +82,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
 
     async findOneByPhoneNumber(input) {
       const queried = await dbConnSql.query({
-        parser: UserAccountRow,
+        schema: UserAccountRow,
         sql: `
 				SELECT
 					id,
@@ -123,7 +123,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
         phone_number: input.phoneNumber ? PhoneNumber.toString(input.phoneNumber) : null,
       }
       const inserted = await dbConnSql.query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: `
         INSERT INTO user_account (
 					phone_number,

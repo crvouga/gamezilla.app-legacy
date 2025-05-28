@@ -36,7 +36,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
   const snapshots = KeyValueDb.withNamespace<SpaceId, SpaceState.State>({
     keyValueDb: config.keyValueDb,
     namespace: ['spaces', 'snapshots'],
-    parser: SpaceState.State,
+    schema: SpaceState.State,
   })
 
   const upsert: ISpacesCoreAsync['upsert'] = async (space) => {

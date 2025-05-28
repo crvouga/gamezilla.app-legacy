@@ -14,10 +14,10 @@ const generate = async (input: { count?: number }) => {
 
 const is = (x: unknown): x is PuzzleName => typeof x === 'string'
 
-const parser = s.custom(is, 'Invalid flow puzzle name')
+const schema = s.custom(is, 'Invalid flow puzzle name')
 
 export const PuzzleName = {
-  ...parser,
+  ...schema,
   generate,
   is,
 }

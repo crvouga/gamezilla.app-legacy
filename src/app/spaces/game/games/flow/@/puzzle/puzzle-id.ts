@@ -11,7 +11,7 @@ const is = (maybePuzzleId: unknown): maybePuzzleId is PuzzleId => {
   return typeof maybePuzzleId === 'string' && maybePuzzleId.trim().length > 0
 }
 
-const parser = s.custom(is, 'Invalid flow puzzle id')
+const schema = s.custom(is, 'Invalid flow puzzle id')
 
 const generate = () => {
   const id = Uuid.generate()
@@ -25,7 +25,7 @@ const generate = () => {
 }
 
 export const PuzzleId = {
-  ...parser,
+  ...schema,
   generate,
 
   is,

@@ -12,7 +12,7 @@ const is = (id: unknown): id is EventId => {
   return typeof id === 'string'
 }
 
-const parser = s.custom(is, 'Invalid event id')
+const schema = s.custom(is, 'Invalid event id')
 
 type Problem = 'invalid_id'
 
@@ -29,7 +29,7 @@ const generate = (): EventId => {
 }
 
 export const EventId = {
-  ...parser,
+  ...schema,
   is,
   decode,
   generate,

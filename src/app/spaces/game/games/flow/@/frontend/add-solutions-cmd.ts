@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { Solutions } from '../solutions/solutions'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('add-solutions'),
     solutions: Solutions,
@@ -10,7 +10,7 @@ export const parser = s.or(
   }),
 )
 
-export type AddSolutionsCmd = s.Infer<typeof parser>
+export type AddSolutionsCmd = s.Infer<typeof schema>
 
 export const init = (solutions: Solutions, causedBy: unknown): AddSolutionsCmd => {
   return {
@@ -21,7 +21,7 @@ export const init = (solutions: Solutions, causedBy: unknown): AddSolutionsCmd =
 }
 
 const is = (cmd: unknown): cmd is AddSolutionsCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }): boolean => {

@@ -13,7 +13,7 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
   const logger = config.logger ? Logger.prefix('hash-map', config.logger) : null
   const hashMap = config?.map ?? new Map<string, unknown>()
   return {
-    async get(key, parser) {
+    async get(key, schema) {
       logger?.debug(`get: key=${key}`)
       if (!hashMap.has(key)) {
         return Ok(null)
@@ -21,7 +21,7 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
 
       const got = hashMap.get(key) ?? null
 
-      const parsed = parser.parse(got)
+      const parsed = schema.parse(got)
 
       switch (parsed.t) {
         case 'err': {
@@ -33,7 +33,7 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
       }
     },
 
-    async getMany<TValue>(keys: string[], parser: s.Parser<TValue>) {
+    async getMany<TValue>(keys: string[], schema: s.Parser<TValue>) {
       logger?.debug(`getMany: keys=${keys.join(', ')}`)
       const rows: TValue[] = []
 
@@ -43,7 +43,7 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
         if (!got) {
           continue
         }
-        const parsed = parser.parse(got)
+        const parsed = schema.parse(got)
         if (parsed.t === 'ok') {
           rows.push(parsed.value)
         }

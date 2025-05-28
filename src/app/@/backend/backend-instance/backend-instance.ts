@@ -3,7 +3,7 @@ import { BackendInstanceId } from './backend-instance-id'
 import { s } from '~/@/schema'
 import { TimeSpan } from '~/@/time/time-span'
 
-const parser = s.obj({
+const schema = s.obj({
   backendInstanceId: BackendInstanceId,
   startedAt: Posix,
   stoppedAt: s.maybe(Posix),
@@ -12,7 +12,7 @@ const parser = s.obj({
   port: s.maybe(s.num),
 })
 
-export type BackendInstance = s.Infer<typeof parser>
+export type BackendInstance = s.Infer<typeof schema>
 
 const HEARTBEAT = TimeSpan.minutes(1)
 
@@ -29,7 +29,7 @@ const random = (overrides?: Partial<BackendInstance>): BackendInstance => {
 }
 
 export const BackendInstance = {
-  ...parser,
+  ...schema,
   HEARTBEAT,
   random,
 }

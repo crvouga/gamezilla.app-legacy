@@ -390,13 +390,13 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, 
   y: Parser<Y>,
   z: Parser<Z>,
 ): Parser<A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z>
-export function and(...parsers: Parser<unknown>[]): Parser<unknown> {
+export function and(...schemas: Parser<unknown>[]): Parser<unknown> {
   return {
     parse(input) {
       const errors: ParserError[] = []
 
-      for (let i = 0; i < parsers.length; i++) {
-        const result = parsers[i]!.parse(input)
+      for (let i = 0; i < schemas.length; i++) {
+        const result = schemas[i]!.parse(input)
         switch (result.t) {
           case 'ok': {
             continue

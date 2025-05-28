@@ -8,7 +8,7 @@ const is = (userSessionId: unknown): userSessionId is UserSessionId => {
   return typeof userSessionId === 'string'
 }
 
-const parser = s.custom(is, 'Invalid user session id')
+const schema = s.custom(is, 'Invalid user session id')
 
 const namespace = 'user-session'
 const separator = ':'
@@ -26,7 +26,7 @@ const generate = () => {
 }
 
 export const UserSessionId = {
-  ...parser,
+  ...schema,
   generate,
   is,
 }

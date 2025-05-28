@@ -19,7 +19,7 @@ export const PubSub = (config: Config): IPubSub => {
   const SEPARATOR = '___'
 
   config.dbConnSql.query({
-    parser: s.unknown,
+    schema: s.unknown,
     sql: `LISTEN ${config.channel}`,
     vars: {},
   })
@@ -51,7 +51,7 @@ export const PubSub = (config: Config): IPubSub => {
   return {
     async pub(msg) {
       config.dbConnSql.query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: `NOTIFY ${config.channel}, '${instanceId}${SEPARATOR}${msg}'`,
         vars: {},
       })

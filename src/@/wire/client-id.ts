@@ -1,9 +1,9 @@
 import { Result } from '~/@/result'
 import { s } from '~/@/schema'
 
-const parser = s.brand(s.str, 'ClientId')
+const schema = s.brand(s.str, 'ClientId')
 
-export type ClientId = s.Infer<typeof parser>
+export type ClientId = s.Infer<typeof schema>
 
 const is = (id: unknown): id is ClientId => {
   return typeof id === 'string'
@@ -51,7 +51,7 @@ const generate = (): ClientId => {
 }
 
 export const ClientId = {
-  ...parser,
+  ...schema,
   is,
   decode,
   generate,

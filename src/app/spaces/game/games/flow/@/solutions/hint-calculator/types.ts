@@ -26,7 +26,7 @@ export const initFrontend: ModelFrontend = {
   requests: {},
 }
 
-export const FoundSolutionResult = Result.parser(s.str, s.obj({ solutions: Solutions }))
+export const FoundSolutionResult = Result.schema(s.str, s.obj({ solutions: Solutions }))
 export type FoundSolutionResult = s.Infer<typeof FoundSolutionResult>
 
 export const MsgFrontend = s.or(

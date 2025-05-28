@@ -9,7 +9,7 @@ const is = (username: unknown): username is Username => {
   return typeof username === 'string' && username.length > 0 && username.length <= 100
 }
 
-const parser = s.custom(is, 'Invalid username')
+const schema = s.custom(is, 'Invalid username')
 
 type Problem = 'invalid_username'
 
@@ -59,7 +59,7 @@ const getRandomDigits = (digitCount?: number) => {
 }
 
 export const Username = {
-  ...parser,
+  ...schema,
   is,
   fromString,
   decode,

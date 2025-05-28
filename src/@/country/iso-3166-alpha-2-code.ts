@@ -262,13 +262,13 @@ const ISO_3166_ALPHA_2_MAPPINGS = {
   ZW: 'Zimbabwe',
 } as const
 
-const parser = s.custom((input: unknown): input is keyof typeof ISO_3166_ALPHA_2_MAPPINGS => {
+const schema = s.custom((input: unknown): input is keyof typeof ISO_3166_ALPHA_2_MAPPINGS => {
   return Boolean(
     typeof input === 'string' && ISO_3166_ALPHA_2_MAPPINGS[input as keyof typeof ISO_3166_ALPHA_2_MAPPINGS],
   )
 }, 'Iso3166Alpha2Code')
 
-export type Iso3166Alpha2Code = s.Infer<typeof parser>
+export type Iso3166Alpha2Code = s.Infer<typeof schema>
 
 const all = Object.keys(ISO_3166_ALPHA_2_MAPPINGS) as Iso3166Alpha2Code[]
 
@@ -339,7 +339,7 @@ const getNavigatorCountry = (): Iso3166Alpha2Code | undefined => {
 }
 
 export const Iso3166Alpha2Code = {
-  ...parser,
+  ...schema,
   of,
   toEmoji,
   toName,

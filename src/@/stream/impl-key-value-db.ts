@@ -8,19 +8,19 @@ import { IStream } from './interface'
 export type Config<T> = {
   t: 'key-value-db'
   keyValueDb: IKeyValueDb
-  parser: Parser<T>
+  schema: Parser<T>
 }
 
 export const Stream = <T>(config: Config<T>): IStream<T> => {
   const eventIdsByStreamId = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['stream', 'event-ids-by-stream-id'],
-    parser: s.arr(EventId.parser),
+    schema: s.arr(EventId.schema),
   })
   const eventsById = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['stream', 'events-by-id'],
-    parser: s.arr(config.parser),
+    schema: s.arr(config.schema),
   })
   return {
     async append(streamId, eventId, event) {

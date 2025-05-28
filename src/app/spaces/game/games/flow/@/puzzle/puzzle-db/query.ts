@@ -25,13 +25,13 @@ export const OrderClause = s.partialObj({
 
 export type OrderClause = s.Infer<typeof OrderClause>
 
-const parser = s.obj({
+const schema = s.obj({
   pagination: Pagination,
   where: WhereClause,
   order: OrderClause,
 })
 
-export type PuzzleQuery = s.Infer<typeof parser>
+export type PuzzleQuery = s.Infer<typeof schema>
 
 const toKey = (input: PuzzleQuery): string => {
   return [
@@ -78,7 +78,7 @@ const toOrderField = (input: PuzzleQuery): keyof PuzzleQuery['order'] | null => 
 }
 
 export const PuzzleQuery = {
-  ...parser,
+  ...schema,
   toKey,
   toOrderField,
   random,

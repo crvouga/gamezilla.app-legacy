@@ -102,7 +102,7 @@ const valuesNewestFirst = <TKey extends string | number, TValue>(model: CappedOr
   return values
 }
 
-const parser = <TKey extends string | number, TValue>(
+const schema = <TKey extends string | number, TValue>(
   key: s.Parser<TKey>,
   val: s.Parser<TValue>,
 ): s.Parser<CappedOrderedDict<TKey, TValue>> => {
@@ -120,5 +120,5 @@ export const CappedOrderedDict = {
   get,
   mergeLeft,
   valuesNewestFirst,
-  parser,
+  schema,
 }

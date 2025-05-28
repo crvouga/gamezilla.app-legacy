@@ -8,7 +8,7 @@ const is = (userId: unknown): userId is UserId => {
   return typeof userId === 'string'
 }
 
-const parser = s.custom(is, 'Invalid user id')
+const schema = s.custom(is, 'Invalid user id')
 
 const namespace = 'user'
 const separator = ':'
@@ -26,7 +26,7 @@ const generate = () => {
 }
 
 export const UserId = {
-  ...parser,
+  ...schema,
   generate,
   is,
 }

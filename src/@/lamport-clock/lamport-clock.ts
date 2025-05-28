@@ -3,11 +3,11 @@
 import { s } from '~/@/schema'
 import { LamportTimestamp } from './lamport-timestamp'
 
-const parser = s.obj({
+const schema = s.obj({
   _currentTime: LamportTimestamp,
 })
 
-export type LamportClock = s.Infer<typeof parser>
+export type LamportClock = s.Infer<typeof schema>
 
 const init: LamportClock = {
   _currentTime: LamportTimestamp.fromNumber(0),
@@ -44,7 +44,7 @@ const is = (_x: unknown): _x is LamportClock => {
 }
 
 export const LamportClock = {
-  ...parser,
+  ...schema,
   init,
   is,
   increment,

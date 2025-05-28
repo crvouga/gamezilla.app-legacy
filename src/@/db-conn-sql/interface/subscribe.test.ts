@@ -61,15 +61,15 @@ type Row = s.Infer<typeof Row>
 describe.skip('db-conn-sql subscribe', () => {
   test('subscribe', async () => {
     for (const f of await Fixtures()) {
-      await f.dbConnSql.query({ parser: s.unknown, sql: `DROP TABLE foo`, vars: {} }).catch(() => {})
+      await f.dbConnSql.query({ schema: s.unknown, sql: `DROP TABLE foo`, vars: {} }).catch(() => {})
       await f.dbConnSql.query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: `CREATE TABLE foo (id SERIAL PRIMARY KEY)`,
         vars: {},
       })
       let got: Row[] = []
       const sub = f.dbConnSql.sub({
-        parser: Row,
+        schema: Row,
         sql: `SELECT id FROM foo`,
         vars: {},
       })
@@ -77,7 +77,7 @@ describe.skip('db-conn-sql subscribe', () => {
         got = rows
       })
       await f.dbConnSql.query({
-        parser: s.unknown,
+        schema: s.unknown,
         sql: `INSERT INTO foo DEFAULT VALUES`,
         vars: {},
       })

@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { MsgFrontend } from './types'
 
-const parser = s.obj({
+const schema = s.obj({
   t: s.l('got-puzzle-loader-msg'),
   c: s.obj({
     t: s.l('got-msg'),
@@ -10,10 +10,10 @@ const parser = s.obj({
   }),
 })
 
-export type GotPuzzleLoaderMsg = s.Infer<typeof parser>
+export type GotPuzzleLoaderMsg = s.Infer<typeof schema>
 
 const is = (input: unknown): input is GotPuzzleLoaderMsg => {
-  return isOk(parser.parse(input))
+  return isOk(schema.parse(input))
 }
 
 const init = (msg: MsgFrontend): GotPuzzleLoaderMsg => {
@@ -27,7 +27,7 @@ const init = (msg: MsgFrontend): GotPuzzleLoaderMsg => {
 }
 
 export const GotPuzzleLoaderMsg = {
-  parser,
+  schema: schema,
   is,
   init,
 }

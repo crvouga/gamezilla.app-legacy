@@ -1,14 +1,14 @@
 import { s } from '~/@/schema'
 
-const parser = s.brand(s.str, 'HashValue')
+const schema = s.brand(s.str, 'HashValue')
 
-export type HashValue = s.Infer<typeof parser>
+export type HashValue = s.Infer<typeof schema>
 
 const fromString = (value: string): HashValue => {
   return value as HashValue
 }
 
 export const HashValue = {
-  ...parser,
+  ...schema,
   fromString,
 }

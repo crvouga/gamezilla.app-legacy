@@ -2,12 +2,12 @@ import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { UserId } from '../data/user-id'
 
-const parser = s.obj({
+const schema = s.obj({
   t: s.l('open-profile'),
   userId: UserId,
 })
 
-export type OpenProfileCmd = s.Infer<typeof parser>
+export type OpenProfileCmd = s.Infer<typeof schema>
 
 const init = (userId: UserId): OpenProfileCmd => {
   return {
@@ -17,7 +17,7 @@ const init = (userId: UserId): OpenProfileCmd => {
 }
 
 const is = (cmd: unknown): cmd is OpenProfileCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }, userId?: UserId): boolean => {
@@ -29,7 +29,7 @@ const did = (output?: { msgOut?: unknown[] | null }, userId?: UserId): boolean =
   )
 }
 export const OpenProfileCmd = {
-  parser,
+  schema,
   init,
   is,
   did,

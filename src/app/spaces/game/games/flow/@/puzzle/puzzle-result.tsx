@@ -4,7 +4,7 @@ import { EmptyState } from '~/@/ui/empty-state'
 import { IconExclamationCircle } from '~/@/ui/icon/icon-exclamation-circle'
 import { Puzzle } from './puzzle'
 
-const parser = s.or(
+const schema = s.or(
   s.obj({
     t: s.l('got'),
     c: Puzzle,
@@ -14,7 +14,7 @@ const parser = s.or(
   }),
 )
 
-export type PuzzleResult = s.Infer<typeof parser>
+export type PuzzleResult = s.Infer<typeof schema>
 
 const ViewNotFound = (input: {
   ctx: { t: Translator }
@@ -37,6 +37,6 @@ const ViewNotFound = (input: {
 }
 
 export const PuzzleResult = {
-  ...parser,
+  ...schema,
   ViewNotFound,
 }

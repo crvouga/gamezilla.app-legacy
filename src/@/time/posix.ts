@@ -1,8 +1,8 @@
 import { s } from '~/@/schema'
 import { TimeSpan } from './time-span'
 
-const parser = s.brand(s.num, 'Posix')
-export type Posix = s.Infer<typeof parser>
+const schema = s.brand(s.num, 'Posix')
+export type Posix = s.Infer<typeof schema>
 
 const minPosixTime = new Date('1970-01-01T00:00:00.000Z').getTime()
 const maxPosixTime = new Date('2038-01-19T03:14:07.999Z').getTime()
@@ -91,7 +91,7 @@ const toIsoString = (posix: Posix): string => {
 const zero = init(0)
 
 export const Posix = {
-  ...parser,
+  ...schema,
   zero,
   is,
   init,

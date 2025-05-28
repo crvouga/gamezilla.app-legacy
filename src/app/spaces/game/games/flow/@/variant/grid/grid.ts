@@ -20,7 +20,7 @@ export const Model = s.and(
   VariantGridDimensions.Model,
   s.obj({
     t: s.l('flow-grid'),
-    positions: s.dict(NodeId, Position.parser),
+    positions: s.dict(NodeId, Position.schema),
   }),
 )
 export type Model = s.Infer<typeof Model>

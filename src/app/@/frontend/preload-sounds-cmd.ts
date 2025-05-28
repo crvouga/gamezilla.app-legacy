@@ -1,14 +1,14 @@
 import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 
-export const parser = s.or(
+export const schema = s.or(
   s.obj({
     t: s.l('preload-sounds'),
     srcs: s.arr(s.str),
   }),
 )
 
-export type PreloadSoundsCmd = s.Infer<typeof parser>
+export type PreloadSoundsCmd = s.Infer<typeof schema>
 
 export const init = (srcs: string[]): PreloadSoundsCmd => {
   return {
@@ -18,7 +18,7 @@ export const init = (srcs: string[]): PreloadSoundsCmd => {
 }
 
 const is = (cmd: unknown): cmd is PreloadSoundsCmd => {
-  return isOk(parser.parse(cmd))
+  return isOk(schema.parse(cmd))
 }
 
 const did = (output?: { msgOut?: unknown[] | null }, src?: string): boolean => {

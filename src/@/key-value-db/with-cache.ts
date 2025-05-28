@@ -12,10 +12,10 @@ export type Config = {
 export const withCache = (config: Config): IKeyValueDb => {
   const logger = Logger.prefix('with-cache', config.logger)
   return {
-    async get(key, parser) {
+    async get(key, schema) {
       const start = process.hrtime.bigint()
 
-      const cacheGot = await config.cache.get(key, parser)
+      const cacheGot = await config.cache.get(key, schema)
       const cacheHit = Result.unwrapOr(cacheGot, null)
       if (cacheHit) {
         const end = process.hrtime.bigint()
@@ -24,7 +24,7 @@ export const withCache = (config: Config): IKeyValueDb => {
         return cacheGot
       }
       logger.debug(`source hit get: key=${key}`)
-      const sourceGot = await config.source.get(key, parser)
+      const sourceGot = await config.source.get(key, schema)
       const sourceHit = Result.unwrapOr(sourceGot, null)
       if (sourceHit) {
         await config.cache.set(key, sourceHit)
@@ -34,10 +34,10 @@ export const withCache = (config: Config): IKeyValueDb => {
       logger.debug(`source hit duration=${durationInMicroseconds}µs get: key=${key}`)
       return sourceGot
     },
-    async getMany(keys, parser) {
+    async getMany(keys, schema) {
       const start = process.hrtime.bigint()
 
-      const cacheGot = await config.cache.getMany(keys, parser)
+      const cacheGot = await config.cache.getMany(keys, schema)
       const cacheHit = Result.unwrapOr(cacheGot, null)
       if (cacheHit) {
         const end = process.hrtime.bigint()
@@ -47,7 +47,7 @@ export const withCache = (config: Config): IKeyValueDb => {
         return cacheGot
       }
       logger.debug(`source hit getMany: keys=${keys.join(', ')}`)
-      const sourceGot = await config.source.getMany(keys, parser)
+      const sourceGot = await config.source.getMany(keys, schema)
       const sourceHit = Result.unwrapOr(sourceGot, [])
       if (sourceHit.length > 0) {
         await config.cache.setMany(sourceHit.map((value, i) => [keys[i], value] as [string, unknown]))

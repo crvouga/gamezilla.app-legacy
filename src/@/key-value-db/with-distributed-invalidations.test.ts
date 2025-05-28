@@ -34,7 +34,7 @@ const Fixture = async () => {
     const loggerChild = Logger.prefix(id, logger)
     return withNamespace({
       namespace: ['my-event'],
-      parser: MyEvent,
+      schema: MyEvent,
       keyValueDb: await KeyValueDb({
         t: 'with-cache',
         source: await KeyValueDb({
