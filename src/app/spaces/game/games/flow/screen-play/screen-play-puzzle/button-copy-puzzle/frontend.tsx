@@ -1,8 +1,12 @@
 import { Json } from '~/@/json/json'
 import { isErr } from '~/@/result'
-import { APP_SOUND, copyToClipboard, playSound, showErrSm, showToast } from '~/app/@/frontend/cmd'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { IconCopy } from '~/@/ui/icon/icon-copy'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd'
+import { AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowErrorSmall } from '~/app/@/frontend/show-error-sm'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ModePlay } from '../../../@/mode-play'
 import { VariantGridShorthand } from '../../../@/variant/grid'
@@ -44,16 +48,16 @@ export const update: FrontendModule['update'] = (input) => {
       if (isErr(encoded)) {
         return {
           model: input.model,
-          msgCmd: showErrSm(input.ctx.t('app.something-went-wrong')),
+          msgOut: [...ShowErrorSmall.init(input.ctx.t('app.something-went-wrong'))],
         }
       }
 
       return {
         model: input.model,
-        msgCmd: [
-          playSound(APP_SOUND.refreshFeed),
-          showToast(input.ctx.t('app.copied-to-clipboard')),
-          copyToClipboard(encoded.value),
+        msgOut: [
+          PlaySoundCmd.init(APP_SOUND.refreshFeed),
+          ShowToastCmd.init(input.ctx.t('app.copied-to-clipboard')),
+          CopyToClipboardCmd.init(encoded.value),
         ],
       }
     }

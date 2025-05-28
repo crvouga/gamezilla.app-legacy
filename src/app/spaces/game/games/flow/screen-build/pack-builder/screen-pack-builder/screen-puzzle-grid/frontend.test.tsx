@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
 import { MsgFrontend } from '../types'
@@ -25,7 +25,7 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('play sound opening puzzle', async () => {
@@ -40,7 +40,7 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('render bottom buttons', async () => {
@@ -58,6 +58,6 @@ describe(import.meta.file, () => {
     const r = f.render(<ScreenPuzzleGrid.View {...f} />)
     await r.getByRole('button', f.ctx.t('app.edit-name'))[0]?.click()
     const m = f.renderMsgs[0]
-    expect(m?.c.t).toBe('edit-pack-name.user-clicked-open-drawer-button')
+    expect(m?.t === 'got-msg-space' && m?.c?.t).toBe('edit-pack-name.user-clicked-open-drawer-button')
   })
 })

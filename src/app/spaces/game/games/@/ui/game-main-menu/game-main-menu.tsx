@@ -2,21 +2,17 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { p } from '~/@/parser'
 import { isOk } from '~/@/result'
+import { ClickablePaper } from '~/@/ui/clickable'
 import { IconRobot } from '~/@/ui/icon/icon-robot'
 import { IconUsers } from '~/@/ui/icon/icon-users'
 import { Typography } from '~/@/ui/typography'
 import type { VDom } from '~/@/vdom/vdom'
 import { UserId } from '~/app/@/data/user-id'
-import {
-  type SpaceFrontendCmd,
-  type SpaceFrontendCmdTypes,
-  exitGame,
-  openUserDetails,
-} from '~/app/spaces/@/frontend/cmd'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
+import { ExitGameCmd } from '~/app/spaces/@/frontend/exit-game-cmd'
+import { OpenUserDetailsCmd } from '~/app/spaces/@/frontend/open-user-details-cmd'
 import { ScreenLayoutGameCoverArt } from '../screen-layout-game-cover-art'
 import { ScreenLayoutHostSettingUpGame } from '../screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
-import { ClickablePaper } from '~/@/ui/clickable'
 
 export const Msg = p.or(
   p.obj({ t: p.l('game-main-menu.clicked-open-user-details-button'), userId: UserId }),
@@ -26,7 +22,7 @@ export type Msg = p.Infer<typeof Msg>
 
 const isMsg = (m: unknown): m is Msg => isOk(Msg.parse(m))
 
-export const update = <TModel, TMsg, T extends SpaceFrontendCmdTypes>({
+export const update = <TModel, TMsg>({
   msg,
   model,
 }: {
@@ -34,21 +30,21 @@ export const update = <TModel, TMsg, T extends SpaceFrontendCmdTypes>({
   msg?: Msg | TMsg | null
 }): {
   model: TModel
-  msgCmd: SpaceFrontendCmd<T>[]
+  msgOut: unknown[]
 } => {
-  if (!isMsg(msg)) return { model, msgCmd: [] }
+  if (!isMsg(msg)) return { model, msgOut: [] }
 
   switch (msg.t) {
     case 'game-main-menu.clicked-exit-game-button': {
-      return { model, msgCmd: [exitGame()] }
+      return { model, msgOut: [ExitGameCmd.init()] }
     }
 
     case 'game-main-menu.clicked-open-user-details-button': {
-      return { model, msgCmd: [openUserDetails(msg.userId)] }
+      return { model, msgOut: [OpenUserDetailsCmd.init(msg.userId)] }
     }
 
     default: {
-      return { model, msgCmd: [] }
+      return { model, msgOut: [] }
     }
   }
 }

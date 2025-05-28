@@ -1,13 +1,12 @@
-import { Result } from '~/@/result'
 import { withEventId } from '~/@/event-sourced/event'
-import { SpaceBackendModule } from '../architecture/space-backend'
-import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
+import { Result } from '~/@/result'
+import { Sub } from '~/@/sub'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
+import { SpaceBackendModule } from '../architecture/space-backend'
 import { Space } from '../core/space'
 import { GamesBackend } from '../game/games/backend'
 import type { MsgBackend } from '../types'
 import { GamesBackendCtx } from './types'
-import { Sub } from '~/@/sub'
 
 const initCtx = (input: { ctx: SpaceBackendCtx }): GamesBackendCtx => {
   const gameCtx = GamesBackend.initCtx(input)
@@ -44,12 +43,11 @@ const updateGame: SpaceBackendModule['update'] = async (input) => {
             ...input.msgFrontend.c,
           }
         : null,
-    msgEvt: input.msgEvt,
     msgSpace: input.msgSpace?.t === 'game' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
   })
 
   return {
-    msgCmd: SpaceBackendCmd.map(updated.msgCmd, (c) => ({ t: 'game', c, spaceId })),
+    // msgCmd: SpaceBackendCmd.map(updated.msgCmd, (c) => ({ t: 'game', c, spaceId })),
     msgSpace: updated.msgSpace?.map((e) => withEventId({ ...e, spaceId, t: 'game', c: e })),
   }
 }

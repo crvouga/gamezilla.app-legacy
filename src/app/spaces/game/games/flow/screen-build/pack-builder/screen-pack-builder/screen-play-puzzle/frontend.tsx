@@ -2,7 +2,9 @@ import { Sub } from '~/@/sub'
 import { IconChevronLeft } from '~/@/ui/icon/icon-chevron-left'
 import { IconChevronRight } from '~/@/ui/icon/icon-chevron-right'
 import { IconDeleteForever } from '~/@/ui/icon/icon-delete-forever'
-import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { ModePlay } from '../../../../@/mode-play'
@@ -14,28 +16,28 @@ import type { FrontendModule, MsgFrontend } from '../types'
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'screen-pack-builder.puzzle-screen.user-closed-more-drawer': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.surfaceClosed)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)] }
     }
     case 'screen-pack-builder.puzzle-screen.user-clicked-open-more-drawer-button': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.surfaceOpened)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceOpened)] }
     }
 
     case 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] }
     }
 
     case 'screen-pack-builder.puzzle-screen.user-clicked-previous-puzzle-button': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
 
     case 'screen-pack-builder.puzzle-screen.user-clicked-next-puzzle': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
 
     case 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.puzzle-removed'))],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.refreshFeed), ShowToastCmd.init(input.ctx.t('flow.puzzle-removed'))],
       }
     }
 
@@ -59,7 +61,7 @@ const update: FrontendModule['update'] = (input) => {
 
       return {
         model: input.model,
-        msgCmd: ModePlay.eventsToFrontendCmd(input.ctx, updated.events),
+        msgOut: ModePlay.eventsToFrontendCmd(input.ctx, updated.events),
       }
     }
   }
@@ -100,7 +102,7 @@ const View: FrontendModule['View'] = (input) => {
             actions: ModePlayFrontend.viewActions({
               ctx: { ...input.ctx, flow: puzzleResult.c.flow },
               model: play,
-              dispatchCmd: (c) => input.dispatch({ t: 'got-msg-cmd', c }),
+              dispatchCmd: (c) => input.dispatch({ t: 'got-msg-out', c }),
               dispatch: (c) =>
                 input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } }),
             }),
@@ -235,7 +237,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return ModePlayFrontend.subscriptions(
     { model: play, ctx: { ...input.ctx, flow } },
     (c): MsgFrontend => ({
-      t: 'got-msg-cmd',
+      t: 'got-msg-out',
       c: c,
     }),
   )

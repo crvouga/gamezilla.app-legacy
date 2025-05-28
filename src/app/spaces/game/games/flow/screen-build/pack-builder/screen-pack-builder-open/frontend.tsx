@@ -1,10 +1,12 @@
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PackLoaderFrontend } from '../../../@/pack/pack-loader/frontend'
 import type { FrontendModule } from '../../types'
 import { PackCreateNewFrontend } from './button-create-new-pack/frontend'
+import { GotPackLoaderMsg } from '../../../@/pack/pack-loader/got-pack-loader-msg'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -19,7 +21,7 @@ export const updateMain: FrontendModule['update'] = (input) => {
     case 'screen-pack-builder-open.user-clicked-pack-item': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
       }
     }
   }
@@ -49,8 +51,8 @@ const toQuery = (input: { currentUserId: UserId; offset: number }) => {
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   const query = toQuery({ currentUserId: input.ctx.currentUser.userId, offset: 0 })
   return PackLoaderFrontend.watch(input.ctx, query, (c) => ({
-    t: 'got-msg-cmd',
-    c: PackLoaderFrontend.gotMsg(c),
+    t: 'got-msg-out',
+    c: GotPackLoaderMsg.init(c),
   }))
 }
 

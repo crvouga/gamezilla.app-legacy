@@ -2,7 +2,8 @@ import { pipe } from '~/@/function/pipe'
 import { isErr, Loading, mapErr, mapOk } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconLightbulb } from '~/@/ui/icon/icon-lightbulb'
-import { APP_SOUND, playSound, showErrSm, showOkSm, showWarningSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND, showErrSm, showOkSm, showWarningSm } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
@@ -10,21 +11,12 @@ import { AlgoSolveAsync } from '../algo-solve-async'
 import { problemToString } from '../algo-solve-async/algo-solve-async'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
-import {
-  FindSolutionRequest,
-  FoundSolutionResult,
-  initFrontend,
-  ModelFrontend,
-  type FrontendModule,
-  type MsgFrontend,
-  type MsgInCmdFrontend,
-} from './types'
+import { GotHintCalculatorMsg } from './got-hint-calculator-msg'
+import { FindSolutionRequest, FoundSolutionResult, initFrontend, ModelFrontend, type FrontendModule } from './types'
 
 const update: FrontendModule['update'] = (input) => {
-  switch (input.msgCmd?.t) {
-    case 'flow-cmd.got-hint-calculator-cmd': {
-      return update({ ...input, msgCmd: null, msg: input.msgCmd.c.msg })
-    }
+  if (GotHintCalculatorMsg.is(input.msgIn)) {
+    return update({ ...input, msgCmd: null, msg: input.msgIn.c.msg })
   }
 
   switch (input.msg?.t) {
@@ -33,18 +25,18 @@ const update: FrontendModule['update'] = (input) => {
       if (isOpen) {
         return {
           model: { ...input.model, open: null },
-          msgCmd: [playSound(APP_SOUND.surfaceClosed)],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)],
         }
       }
       return {
         model: { ...input.model, open: 'find-solutions-confirmation' },
-        msgCmd: [playSound(APP_SOUND.surfaceOpened)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceOpened)],
       }
     }
     case 'dialog.clicked-close': {
       return {
         model: { ...input.model, open: null },
-        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)],
       }
     }
     case 'clicked-find-solutions': {
@@ -62,7 +54,7 @@ const update: FrontendModule['update'] = (input) => {
             [hash]: requestNew,
           },
         },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(dispatch) {
           const solved = await AlgoSolveAsync.solveInProcess({
             model: flow,
@@ -137,16 +129,6 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
   ]
 }
 
-const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
-  return {
-    t: 'flow-cmd.got-hint-calculator-cmd',
-    c: {
-      t: 'got-msg',
-      msg,
-    },
-  }
-}
-
 const isLoading = (model: ModelFrontend, hash: SolutionHash): boolean => {
   return model.requests[hash]?.result.t === 'loading'
 }
@@ -170,5 +152,4 @@ export const HintCalculatorFrontend = {
   viewActions,
   TestView,
   TEST_ID_HINT_CALCULATOR_ACTION,
-  gotMsg,
 }

@@ -3,9 +3,12 @@ import { withEventMeta } from '~/@/event-sourced/event'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
-import { didPlaySound, didPushScreen, didShowErrorSm, didShowToast } from '~/app/@/frontend/cmd'
+import { didShowErrorSm } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { SpacesCore } from '../core/core'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -30,7 +33,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didShowToast(output, (toast) => toast.message === f.ctx.t('spaces.current-user-joined-space'))).toBe(true)
+    expect(ShowToastCmd.did(output, (toast) => toast.text === f.ctx.t('spaces.current-user-joined-space'))).toBe(true)
   })
 
   test('show toast after other user joining', async () => {
@@ -58,7 +61,7 @@ describe(import.meta.file, () => {
     ])
 
     expect(
-      didShowToast(output, (toast) => toast.message === f.ctx.t('spaces.other-user-joined-space', otherUser.username)),
+      ShowToastCmd.did(output, (toast) => toast.text === f.ctx.t('spaces.other-user-joined-space', otherUser.username)),
     ).toBe(true)
   })
 
@@ -80,7 +83,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didShowToast(output)).toBe(true)
+    expect(ShowToastCmd.did(output)).toBe(true)
   })
 
   it('should join space when clicking join space button', async () => {
@@ -139,7 +142,7 @@ describe(import.meta.file, () => {
     const someUserId = UserId.generate()
     const output = f.update(f.initial, [{ msg: { t: 'join-space.clicked-person-list-item', userId: someUserId } }])
     expect(output.model.opened).toBe('join-space.person-preview-surface')
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   it('toggles person details surface when clicking the same person list item again', async () => {
@@ -149,7 +152,7 @@ describe(import.meta.file, () => {
     const after = f.update(before, [{ msg: { t: 'join-space.clicked-person-list-item', userId: someUserId } }])
     expect(before.model.opened).toBe('join-space.person-preview-surface')
     expect(after.model.opened).toBe(null)
-    expect(didPlaySound(after)).toBe(true)
+    expect(PlaySoundCmd.did(after)).toBe(true)
   })
 
   it('closes person details surface when closing surface', async () => {
@@ -159,13 +162,13 @@ describe(import.meta.file, () => {
     const after = f.update(before, [{ msg: { t: 'join-space.closed-person-item-surface' } }])
     expect(before.model.opened).toBe('join-space.person-preview-surface')
     expect(after.model.opened).toBe(null)
-    expect(didPlaySound(after)).toBe(true)
+    expect(PlaySoundCmd.did(after)).toBe(true)
   })
 
   it('pushes route to profile page when opening person details', async () => {
     const f = await Fixture()
     const someUserId = UserId.generate()
     const output = f.update(f.initial, [{ msg: { t: 'join-space.opened-person-details', userId: someUserId } }])
-    expect(didPushScreen(output, (m) => m.t === 'profile' && m.userId === someUserId)).toBe(true)
+    expect(PushScreenCmd.did(output, (m) => m.t === 'profile' && m.userId === someUserId)).toBe(true)
   })
 })

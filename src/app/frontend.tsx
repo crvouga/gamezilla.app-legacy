@@ -326,8 +326,6 @@ const updateChild = (input: {
     model: input.model.spaces,
     msg: input.msg?.t === 'spaces' ? input.msg.c : null,
     msgBackend: input.msgBackend?.t === 'spaces' ? input.msgBackend.c : null,
-    msgEvt: input.msgEvt,
-    msgCmd: null,
     msgIn: input.msgIn,
   })
 
@@ -336,7 +334,6 @@ const updateChild = (input: {
     model: input.model.profile,
     msg: input.msg?.t === 'profile' ? input.msg.c : null,
     msgBackend: input.msgBackend?.t === 'profile' ? input.msgBackend.c : null,
-    msgEvt: input.msgEvt,
     msgCmd: input.msgCmd?.t === 'profile' ? input.msgCmd : null,
     msgIn: input.msgIn,
   })
@@ -346,7 +343,6 @@ const updateChild = (input: {
     model: input.model.auth,
     msg: input.msg?.t === 'auth' ? input.msg.c : null,
     msgBackend: input.msgBackend?.t === 'auth' ? input.msgBackend.c : null,
-    msgEvt: input.msgEvt,
     msgIn: input.msgIn,
   })
 
@@ -356,7 +352,6 @@ const updateChild = (input: {
     msg: input.msg?.t === 'wire' ? input.msg.c : null,
     msgBackend: input.msgBackend?.t === 'wire' ? input.msgBackend.c : null,
     msgCmd: input.msgCmd?.t === 'wire' ? input.msgCmd : null,
-    // msgIn: input.msgOut,
     transport: input.ctx.transport,
   })
 
@@ -366,7 +361,6 @@ const updateChild = (input: {
     msg: input.msg?.t === 'lang' ? input.msg.c : null,
     msgCmd: null,
     msgBackend: input.msgBackend?.t === 'lang' ? input.msgBackend.c : null,
-    msgEvt: input.msgEvt,
     msgIn: input.msgIn,
   })
 

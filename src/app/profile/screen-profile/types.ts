@@ -8,7 +8,7 @@ export type MsgFrontend =
   | { t: 'clicked-back-button' }
   | { t: 'clicked-logout-button' }
   | { t: 'clicked-edit-profile-button' }
-  | { t: 'got-msg-cmd'; c: ProfileFrontendCmdInternal }
+  | { t: 'got-msg-out'; c: ProfileFrontendCmdInternal }
 
 export type MsgToBackend = { t: 'noop' }
 

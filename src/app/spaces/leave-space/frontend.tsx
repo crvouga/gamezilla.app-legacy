@@ -1,6 +1,9 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
-import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
@@ -27,21 +30,21 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: ms
         const username = ctx.profilesByUserId[msgSpace.userId]?.username
         return {
           model,
-          msgCmd: [
-            playSound(APP_SOUND.navBackward),
+          msgOut: [
+            PlaySoundCmd.init(APP_SOUND.navBackward),
             username
-              ? showToast(ctx.t('spaces.other-user-left', username))
-              : showToast(ctx.t('spaces.current-user-left')),
+              ? ShowToastCmd.init(ctx.t('spaces.other-user-left', username))
+              : ShowToastCmd.init(ctx.t('spaces.current-user-left')),
           ],
         }
       }
 
       return {
         model,
-        msgCmd: [
-          playSound(APP_SOUND.navBackward),
-          showToast(ctx.t('spaces.current-user-left')),
-          pushScreen({
+        msgOut: [
+          PlaySoundCmd.init(APP_SOUND.navBackward),
+          ShowToastCmd.init(ctx.t('spaces.current-user-left')),
+          PushScreenCmd.init({
             n: 'spaces',
             t: 'space-list',
           }),

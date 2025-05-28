@@ -1,4 +1,5 @@
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
@@ -18,10 +19,10 @@ const update: FrontendModule['update'] = (input) => {
 const updateMain: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'screen-puzzle-builder-open.clicked-puzzle-db-query-item': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)] }
     }
     case 'screen-puzzle-builder-open.puzzle-db-query-query-changed': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
   }
 
@@ -50,7 +51,7 @@ const toPuzzleQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }):
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   const query = toPuzzleQuery(input)
   return PuzzleLoaderFrontend.watch(input.ctx, query, (c) => ({
-    t: 'got-msg-cmd',
+    t: 'got-msg-out',
     c: PuzzleLoaderFrontend.gotMsg(c),
   }))
 }

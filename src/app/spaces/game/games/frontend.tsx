@@ -1,6 +1,5 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.frontend'
 import { FlowFrontend } from './flow/frontend'
@@ -51,8 +50,7 @@ const update: FrontendModule['update'] = (input) => {
         ctx: input.ctx,
         modelSpace: input.modelSpace.c,
         model: input.model?.t === 'connect-four' ? input.model.c : ConnectFour.init,
-        msgCmd: input.msgCmd,
-        msgEvt: input.msgEvt,
+        msgIn: input.msgIn,
         msgBackend: input.msgBackend?.t === 'connect-four' ? input.msgBackend.c : null,
         msgSpace: input.msgSpace?.t === 'connect-four' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
         msg: input.msg?.t === 'connect-four' ? input.msg.c : null,
@@ -61,9 +59,8 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: { t: 'connect-four', c: updated.model },
         eff: Eff.tag('connect-four', updated.eff),
-        msgCmd: SpaceFrontendCmd.tag('connect-four', updated.msgCmd),
         msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'connect-four' })),
-        msgEvt: updated.msgEvt,
+        msgOut: updated.msgOut,
       }
     }
 
@@ -72,8 +69,7 @@ const update: FrontendModule['update'] = (input) => {
         ctx: input.ctx,
         modelSpace: input.modelSpace.c,
         model: input.model?.t === 'flow' ? input.model.c : FlowFrontend.init,
-        msgCmd: null,
-        msgEvt: input.msgEvt,
+        msgIn: input.msgIn,
         msgBackend: input.msgBackend?.t === 'flow' ? input.msgBackend.c : null,
         msgSpace: input.msgSpace?.t === 'flow' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
         msg: input.msg?.t === 'flow' ? input.msg.c : null,
@@ -82,9 +78,8 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: { t: 'flow', c: updated.model },
         eff: Eff.tag('flow', updated.eff),
-        msgCmd: SpaceFrontendCmd.tag('flow', updated.msgCmd),
         msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'flow' })),
-        msgEvt: updated.msgEvt,
+        msgOut: updated.msgOut,
       }
     }
   }

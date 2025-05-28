@@ -1,4 +1,5 @@
 import { EventSourced } from '~/@/event-sourced'
+import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
 import { addProfiles, sendToBackend } from '~/app/@/frontend/cmd'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
@@ -47,34 +48,32 @@ const updateProfiles: SpaceFrontendModule['update'] = ({ model, msgBackend }) =>
 }
 
 const updateSpace: SpaceFrontendModule['update'] = (input) => {
-  switch (input.msgEvt?.t) {
-    case 'wire-evt.backend-connected': {
-      const currentUserId = input.ctx.currentUser?.userId
+  if (BackendConnectedEvt.is(input.msgIn)) {
+    const currentUserId = input.ctx.currentUser?.userId
 
-      if (!currentUserId) return { model: input.model }
+    if (!currentUserId) return { model: input.model }
 
-      const currentUserProfile = currentUserId ? input.ctx.profilesByUserId[currentUserId] : null
+    const currentUserProfile = currentUserId ? input.ctx.profilesByUserId[currentUserId] : null
 
-      const currentUserSpace = SpacesCore.toSpaceByUserId({
-        model: input.model.spaces,
-        userId: currentUserId,
-      })
+    const currentUserSpace = SpacesCore.toSpaceByUserId({
+      model: input.model.spaces,
+      userId: currentUserId,
+    })
 
-      if (!currentUserSpace) return { model: input.model }
+    if (!currentUserSpace) return { model: input.model }
 
-      const space = EventSourced.startFromLatestSnapshot(currentUserSpace)
+    const space = EventSourced.startFromLatestSnapshot(currentUserSpace)
 
-      return {
-        model: input.model,
-        msgCmd: [
-          sendToBackend({
-            t: 'sync.sync',
-            space,
-            profilesByUserId: currentUserProfile ? { [currentUserId]: currentUserProfile } : {},
-            causedBy: { msgEvt: input.msgEvt },
-          }),
-        ],
-      }
+    return {
+      model: input.model,
+      msgCmd: [
+        sendToBackend({
+          t: 'sync.sync',
+          space,
+          profilesByUserId: currentUserProfile ? { [currentUserId]: currentUserProfile } : {},
+          causedBy: { msgIn: input.msgIn },
+        }),
+      ],
     }
   }
 

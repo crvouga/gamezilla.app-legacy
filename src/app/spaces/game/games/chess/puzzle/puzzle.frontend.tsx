@@ -3,19 +3,20 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { isErr } from '~/@/result'
 import { Avatar } from '~/@/ui/avatar'
+import { cn } from '~/@/ui/cn'
+import { IconArrowRightCircle } from '~/@/ui/icon/icon-arrow-circle'
 import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
 import { IconArrowRight } from '~/@/ui/icon/icon-arrow-right'
-import { IconArrowRightCircle } from '~/@/ui/icon/icon-arrow-circle'
 import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
 import { IconCheckmarkCircle } from '~/@/ui/icon/icon-checkmark-circle'
 import { IconLightbulb } from '~/@/ui/icon/icon-lightbulb'
 import { IconXMark } from '~/@/ui/icon/icon-x-mark'
+import { Paper } from '~/@/ui/paper'
 import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
-import { cn } from '~/@/ui/cn'
-import { Paper } from '~/@/ui/paper'
 import { UserProfile } from '~/app/@/data/user-profile'
-import { APP_SOUND, AppFrontendCmd, playSound, sendToBackend } from '~/app/@/frontend/cmd'
+import { APP_SOUND, AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -83,12 +84,12 @@ export const update = (input: {
         if (input.msg.didCapture) {
           return {
             model,
-            msgCmd: [playSound(CHESS_SOUND.captureSound)],
+            msgOut: [PlaySoundCmd.init(CHESS_SOUND.captureSound)],
           }
         }
         return {
           model,
-          msgCmd: [playSound(CHESS_SOUND.moveSound)],
+          msgOut: [PlaySoundCmd.init(CHESS_SOUND.moveSound)],
         }
       }
       return {
@@ -99,13 +100,13 @@ export const update = (input: {
       if (!isIncorrect(input.model) && isIncorrect(model)) {
         return {
           model,
-          msgCmd: [playSound(APP_SOUND.alertErrorMd)],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorMd)],
         }
       }
       if (!isSolved(input.model) && isSolved(model)) {
         return {
           model,
-          msgCmd: [playSound(APP_SOUND.celebration)],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.celebration)],
         }
       }
       return {

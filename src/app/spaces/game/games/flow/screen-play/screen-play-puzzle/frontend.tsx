@@ -5,7 +5,7 @@ import { Dialog } from '~/@/ui/surface-dialog/dialog'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { SurfaceActions } from '~/@/ui/surface/surface-actions'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { LayoutGame } from '../../../@/ui/game-layout'
@@ -18,6 +18,7 @@ import type { FrontendModule } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
 import { LastPuzzleFrontend } from './last-puzzle/frontend'
 import { ScreenPlayPuzzleSpace } from './space'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -35,23 +36,23 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
     }
 
     case 'user-clicked-exit-play-puzzle-screen': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] }
     }
 
     case 'user-clicked-next-puzzle': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)] }
     }
 
     case 'user-clicked-prev-puzzle': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] }
     }
 
     case 'user-closed-puzzle-complete-dialog': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] }
     }
 
     case 'user-toggled-action-buttons-drawer': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
 
     case 'got-flow-play-msg': {
@@ -65,7 +66,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
       const modePlay = input.modelSpace.screen.modePlay ?? ModePlay.init({ ctx: playCtx })
       const output = ModePlay.update({ msg: input.msgSpace.c, model: modePlay, ctx: playCtx })
 
-      return { model: input.model, msgCmd: ModePlay.eventsToFrontendCmd(input.ctx, output.events) }
+      return { model: input.model, msgOut: ModePlay.eventsToFrontendCmd(input.ctx, output.events) }
     }
   }
   return { model: input.model }
@@ -78,7 +79,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   const play = input.modelSpace.screen.modePlay
   if (!play) return Sub.None
   return ModePlayFrontend.subscriptions({ model: play, ctx: { ...input.ctx, flow } }, (c) => ({
-    t: 'got-msg-cmd',
+    t: 'got-msg-out',
     c,
   }))
 }
@@ -198,7 +199,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
               ? ModePlayFrontend.viewActions({
                   model: modePlay,
                   ctx: ModePlay.initCtx({ ...input.ctx, flow: puzzle.c.flow }),
-                  dispatchCmd: (c) => input.dispatch({ t: 'got-msg-cmd', c }),
+                  dispatchCmd: (c) => input.dispatch({ t: 'got-msg-out', c }),
                   dispatch: (c) =>
                     input.dispatch({
                       t: 'got-msg-space',

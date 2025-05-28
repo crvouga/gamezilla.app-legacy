@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { FixturePackBuilderFrontend } from './@/fixture/frontend'
 import { ScreenPackBuilderFrontend } from './frontend'
 
@@ -36,6 +36,6 @@ describe(import.meta.file, () => {
       ...f,
       msgSpace: withEventMeta({ t: 'screen-pack-builder.user-clicked-back-button', userId: f.hostId }),
     })
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.count(output)).toBe(1)
   })
 })

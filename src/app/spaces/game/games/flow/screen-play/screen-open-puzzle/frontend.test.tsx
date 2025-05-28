@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+
 import { Pack } from '../../@/pack/pack'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { FixturePlayFrontend } from '../@/frontend/fixture'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
 const Fixture = async () => {
   const f = await FixturePlayFrontend()
@@ -65,7 +66,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       { msgSpace: withEventMeta({ t: 'user-clicked-exit-screen-open-pack', userId: f.hostId }) },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   it('should open puzzle after clicking grid item', async () => {
@@ -104,6 +105,6 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 })

@@ -3,18 +3,16 @@ import { Msg } from '~/@/msg/msg'
 import { NotAsked } from '~/@/result'
 import { isAppFrontendCtx } from '../@/frontend/ctx'
 import { type Input, type Output, SpaceFrontendModule } from './architecture/space-frontend'
-import { SpaceFrontendCmd } from './@/frontend/cmd'
-import { SpaceFrontendEvt } from './@/frontend/evt'
+import { SpacesCore } from './core/core'
 import { EndSpaceFrontend } from './end-space/frontend'
 import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/frontend'
 import { ExitSpaceAction } from './frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from './frontend/people-action/frontend'
-import { SpaceFrontend } from './space/frontend'
 import { GameFrontend } from './game/frontend'
 import { JoinSpaceFrontend } from './join-space/frontend'
 import { LeaveSpaceFrontend } from './leave-space/frontend'
 import { ListSpacesFrontend } from './list-spaces/frontend'
-import { SpacesCore } from './core/core'
+import { SpaceFrontend } from './space/frontend'
 import { StartSpaceFrontend } from './start-space/frontend'
 import { SyncFrontend } from './sync/frontend'
 import type { FrontendModule, ModelFrontend } from './types'
@@ -34,7 +32,7 @@ const init: FrontendModule['init'] = ({ ctx }) => {
       ...listSpaces.model,
     },
     eff: Eff.batch([listSpaces.eff]),
-    msgCmd: SpaceFrontendCmd.toFrontendCmd(listSpaces.msgCmd),
+    msgCmd: listSpaces.msgCmd,
   }
 }
 
@@ -47,8 +45,7 @@ const update: FrontendModule['update'] = (input) => {
   return {
     model: updated.model,
     eff: updated.eff,
-    msgCmd: SpaceFrontendCmd.toFrontendCmd(updated.msgCmd),
-    msgEvt: SpaceFrontendEvt.toFrontendEvt(updated.msgEvt),
+    msgCmd: updated.msgCmd,
     msgOut: updated.msgOut,
   }
 }
@@ -70,37 +67,6 @@ const updateLoop = (input: Input, initial?: Output): Output => {
       eff: Eff.batch(acc.eff, updated.eff),
       msgSpace: Msg.batch(spaceEvtRest, updated.msgSpace),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-      msgOut: Msg.batch(acc.msgOut, updated.msgOut),
-    })
-  }
-
-  const [evt, ...evtRest] = SpaceFrontendEvt.toSpaceFrontendEvt(acc.msgEvt)
-
-  if (evt) {
-    const updated = updateChild({ ctx: input.ctx, model: acc.model, msgEvt: evt })
-
-    return updateLoop(input, {
-      model: updated.model,
-      eff: Eff.batch(acc.eff, updated.eff),
-      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
-      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgEvt: Msg.batch(evtRest, updated.msgEvt),
-      msgOut: Msg.batch(acc.msgOut, updated.msgOut),
-    })
-  }
-
-  const [cmd, ...cmdRest] = SpaceFrontendCmd.toSpaceFrontendCmd(acc.msgCmd)
-
-  if (cmd) {
-    const updated = updateChild({ ctx: input.ctx, model: acc.model, msgCmd: cmd })
-
-    return updateLoop(input, {
-      model: updated.model,
-      eff: Eff.batch(acc.eff, updated.eff),
-      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
-      msgCmd: Msg.batch(cmdRest, updated.msgCmd),
-      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
       msgOut: Msg.batch(acc.msgOut, updated.msgOut),
     })
   }

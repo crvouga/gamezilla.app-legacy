@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { assertNotNullish } from '~/@/assert'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
 import { ScreenPackBuildSpaceFixture } from '../@/fixture/space'
 import { MsgFrontend } from '../types'
@@ -51,7 +51,7 @@ describe(import.meta.file, () => {
         userId: f.ctx.currentUser.userId,
       }),
     })
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('play sound when clicking previous puzzle button', async () => {
@@ -64,7 +64,7 @@ describe(import.meta.file, () => {
         previousPuzzleResult: { t: 'got', c: f.puzzle },
       }),
     })
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('play sound when clicking next puzzle button', async () => {
@@ -77,7 +77,7 @@ describe(import.meta.file, () => {
         nextPuzzleResult: { t: 'got', c: f.puzzle },
       }),
     })
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('play sound when removing puzzle from pack', async () => {
@@ -90,7 +90,7 @@ describe(import.meta.file, () => {
         puzzleIndex: 0,
       }),
     })
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('play sound when toggling more drawer', async () => {
@@ -102,7 +102,7 @@ describe(import.meta.file, () => {
         userId: f.ctx.currentUser.userId,
       }),
     })
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
   test('previous button is disabled when at edge of pack', async () => {
     const f = await Fixture({ puzzleIndex: 0 })
@@ -124,7 +124,7 @@ describe(import.meta.file, () => {
     const r = f.render(f)
     await r.getByRole('button', f.ctx.t('app.next'))[0]?.click()
     const m = f.renderMsgs[0]
-    expect(m?.c.t).toBe('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle')
+    expect(m?.t === 'got-msg-space' && m?.c?.t).toBe('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle')
   })
 
   test('can go next when at second to last puzzle', async () => {
@@ -133,6 +133,6 @@ describe(import.meta.file, () => {
     const r = f.render(f)
     await r.getByRole('button', f.ctx.t('app.next'))[0]?.click()
     const m = f.renderMsgs[0]
-    expect(m?.c.t).toBe('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle')
+    expect(m?.t === 'got-msg-space' && m?.c?.t).toBe('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle')
   })
 })

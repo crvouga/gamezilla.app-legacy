@@ -1,6 +1,9 @@
 import { describe, expect, test } from 'bun:test'
-import { didPlaySound, didPushScreen, didSendToBackend, didShowToast } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
+import { didSendToBackend } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { SpacesCore } from '../core/core'
 
@@ -15,14 +18,9 @@ describe(import.meta.file, () => {
   test('show toast', async () => {
     const f = await Fixture()
     const started = f.update(f.initial, [
-      {
-        msg: {
-          t: 'start-space.clicked-start-space-button',
-          spaceId: SpaceId.generate(),
-        },
-      },
+      { msg: { t: 'start-space.clicked-start-space-button', spaceId: SpaceId.generate() } },
     ])
-    expect(didShowToast(started)).toBe(true)
+    expect(ShowToastCmd.did(started)).toBe(true)
   })
 
   test('start space', async () => {
@@ -52,7 +50,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didPlaySound(started)).toBe(true)
+    expect(PlaySoundCmd.did(started)).toBe(true)
   })
 
   test('push screen', async () => {
@@ -66,7 +64,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didPushScreen(started)).toBe(true)
+    expect(PushScreenCmd.did(started)).toBe(true)
   })
 
   test('send to backend', async () => {

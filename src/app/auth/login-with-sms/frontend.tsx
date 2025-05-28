@@ -7,8 +7,13 @@ import { Select } from '~/@/ui/select'
 import { TextField } from '~/@/ui/text-field'
 import { Typography } from '~/@/ui/typography'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { APP_SOUND, focusView, playSound, replaceScreen, showErrSm, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { FocusViewCmd } from '~/app/@/frontend/focus-view-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd'
+import { ShowErrorSmall } from '~/app/@/frontend/show-error-sm'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { AuthScreenFormLayout } from '../@/frontend/ui/auth-screen-form-layout'
 import { FrontendModule, ModelFrontend, toSendErrorMessage, toVerifyErrorMessage } from './types'
 
@@ -36,13 +41,13 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       if (input.ctx.currentScreen.t === 'login-sms-verify') {
         return {
           model: input.model,
-          msgCmd: [replaceScreen({ n: 'auth-login', t: 'login-sms-request' })],
+          msgOut: [ReplaceScreenCmd.init({ n: 'auth-login', t: 'login-sms-request' })],
         }
       }
 
       return {
         model: input.model,
-        msgCmd: [replaceScreen({ n: 'auth-login', t: 'login' })],
+        msgOut: [ReplaceScreenCmd.init({ n: 'auth-login', t: 'login' })],
       }
     }
 
@@ -64,7 +69,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       if (isErr(phoneNumber)) {
         return {
           model: { ...input.model, phoneError: input.ctx.t('auth-sms.invalid-phone-number') },
-          msgCmd: [playSound(APP_SOUND.alertErrorSm), focusView(PHONE_NUMBER_INPUT_VIEW_ID)],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm), FocusViewCmd.init(PHONE_NUMBER_INPUT_VIEW_ID)],
         }
       }
 
@@ -74,7 +79,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
           sent: RemoteResult.Loading,
           sentCodeAt: input.ctx.now,
         },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(dispatch) {
           const sent = await input.ctx.rpc.sendCode({
             phoneNumber: phoneNumber.value,
@@ -95,14 +100,14 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       if (isErr(sent)) {
         return {
           model: modelNew,
-          msgCmd: showErrSm(error, sent.error.error),
+          msgOut: ShowErrorSmall.init(error, sent.error.error),
         }
       }
 
       if (isErr(sent.value)) {
         return {
           model: modelNew,
-          msgCmd: showErrSm(error),
+          msgOut: ShowErrorSmall.init(error),
         }
       }
 
@@ -115,12 +120,14 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
           verified: NotAsked,
           code: '',
         },
-        msgOut: [PushScreenCmd.init({ n: 'auth-login', t: 'login-sms-verify', phoneNumber })],
-        msgCmd: [
-          // pushScreen({ n: 'auth-login', t: 'login-sms-verify', phoneNumber }),
-          showToast(input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(phoneNumber)), 'info', TimeSpan.seconds(4)),
-          focusView(CODE_INPUT_VIEW_ID),
-          playSound(APP_SOUND.navForwardMin),
+
+        msgOut: [
+          PushScreenCmd.init({ n: 'auth-login', t: 'login-sms-verify', phoneNumber }),
+          ShowToastCmd.init(input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(phoneNumber)), {
+            duration: TimeSpan.seconds(4),
+          }),
+          FocusViewCmd.init(CODE_INPUT_VIEW_ID),
+          PlaySoundCmd.init(APP_SOUND.navForwardMin),
         ],
       }
     }
@@ -140,7 +147,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
             ...input.model,
             codeError: input.ctx.t('auth-sms.please-enter-code'),
           },
-          msgCmd: [playSound(APP_SOUND.alertErrorSm), focusView(CODE_INPUT_VIEW_ID)],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm), FocusViewCmd.init(CODE_INPUT_VIEW_ID)],
         }
       }
 
@@ -151,7 +158,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
           ...input.model,
           verified: RemoteResult.Loading,
         },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(dispatch) {
           const verified = await input.ctx.rpc.verifyCode({
             phoneNumber,
@@ -171,7 +178,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       if (isErr(verified) || isErr(verified.value)) {
         return {
           model: modelNew,
-          msgCmd: showErrSm(error),
+          msgOut: ShowErrorSmall.init(error),
         }
       }
 

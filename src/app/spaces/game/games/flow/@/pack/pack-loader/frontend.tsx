@@ -4,23 +4,22 @@ import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
+import { ClickableTransparent } from '~/@/ui/clickable'
 import { EmptyState } from '~/@/ui/empty-state'
-import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
+import { IconBox } from '~/@/ui/icon'
+import { SpinnerBlock } from '~/@/ui/spinner'
+import { Typography } from '~/@/ui/typography'
+import { AddPacksCmd } from '../../frontend/add-packs-cmd'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import type { Pack } from '../pack'
 import { PacksDbQuery } from '../pack-db/query'
 import { PackId } from '../pack-id'
-import { ModelFrontend, MsgFrontend, MsgInCmdFrontend, initFrontend, type FrontendModule } from './types'
-import { ClickableTransparent } from '~/@/ui/clickable'
-import { IconBox } from '~/@/ui/icon'
-import { SpinnerBlock } from '~/@/ui/spinner'
-import { Typography } from '~/@/ui/typography'
+import { GotPackLoaderMsg } from './got-pack-loader-msg'
+import { ModelFrontend, MsgFrontend, initFrontend, type FrontendModule } from './types'
 
 const update: FrontendModule['update'] = (input) => {
-  switch (input.msgCmd?.c.t) {
-    case 'got-msg': {
-      return update({ ...input, msgCmd: null, msg: input.msgCmd.c.msg })
-    }
+  if (GotPackLoaderMsg.is(input.msgIn)) {
+    return update({ ...input, msg: input.msgIn.c.msg })
   }
 
   switch (input.msg?.t) {
@@ -34,7 +33,7 @@ const update: FrontendModule['update'] = (input) => {
           },
         },
         msgCmd: [
-          FlowFrontendCmdRoot.addPacks(
+          AddPacksCmd.init(
             input.msg.packs.reduce<{ [k: PackId]: Pack }>((acc, p) => ({ ...acc, [p.id]: p }), {}),
             input.msg,
           ),
@@ -44,16 +43,6 @@ const update: FrontendModule['update'] = (input) => {
   }
 
   return { model: input.model }
-}
-
-const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
-  return {
-    t: 'flow-cmd.got-pack-loader-cmd',
-    c: {
-      t: 'got-msg',
-      msg,
-    },
-  }
 }
 
 const watch = <TMsg,>(ctx: FlowFrontendCtxBase, query: PacksDbQuery, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
@@ -119,7 +108,6 @@ const toListItemSecondaryText = (input: { ctx: { now: Posix; t: Translator }; pa
 
 export const PackLoaderFrontend = {
   watch,
-  gotMsg,
   initFrontend,
   update,
   ViewList,

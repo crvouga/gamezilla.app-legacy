@@ -2,7 +2,8 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { IconPen } from '~/@/ui/icon/icon-pen'
 import { IconPlay } from '~/@/ui/icon/icon-play'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
@@ -11,6 +12,7 @@ import { LayoutGame } from '../../../../@/ui/game-layout'
 import { ProfileListItem } from '../../../../@/ui/list-item-profile'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { ModeEdit } from '../../../@/mode-edit'
+import { ModeEditFrontend } from '../../../@/mode-edit/frontend'
 import { ModePlay } from '../../../@/mode-play'
 import { ModePlayFrontend } from '../../../@/mode-play/frontend'
 import { BoardLayout } from '../../../@/ui/board-layout'
@@ -20,7 +22,6 @@ import { ScreenPuzzleBuilderSpace } from './space'
 import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
 import { EditPuzzleNameFrontend } from './surface-edit-puzzle-name/frontend'
 import { SaveChangesFrontend } from './surface-save-changes/frontend'
-import { ModeEditFrontend } from '../../../@/mode-edit/frontend'
 
 //
 //
@@ -60,7 +61,7 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
         msgSpace: [
           withEventId({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button', userId: ctx.currentUser.userId }),
         ],
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)],
       }
     }
 
@@ -70,21 +71,21 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
         msgSpace: [
           withEventId({ t: 'screen-puzzle-builder.user-clicked-play-mode-button', userId: ctx.currentUser.userId }),
         ],
-        msgCmd: [playSound(APP_SOUND.navForwardMin)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
       }
     }
 
     case 'screen-puzzle-builder.user-clicked-open-more-drawer-button': {
       return {
         model: { ...model, puzzleBuilderOpened: 'more' },
-        msgCmd: [playSound(APP_SOUND.surfaceOpened)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceOpened)],
       }
     }
 
     case 'screen-puzzle-builder.user-closed-more-drawer': {
       return {
         model: { ...model, puzzleBuilderOpened: null },
-        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)],
       }
     }
 
@@ -110,7 +111,7 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
 
       return {
         model: input.model,
-        msgCmd: ModePlay.eventsToFrontendCmd(input.ctx, updated.events),
+        msgOut: ModePlay.eventsToFrontendCmd(input.ctx, updated.events),
       }
     }
     case 'screen-puzzle-builder.got-edit-msg': {
@@ -128,7 +129,7 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
         case 'play-sound': {
           return {
             model: input.model,
-            msgCmd: [playSound(updated.msgCmd.sourceSrc)],
+            msgOut: [PlaySoundCmd.init(updated.msgCmd.sourceSrc)],
           }
         }
 
@@ -292,7 +293,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
             ctx: ModePlay.initCtx({ ...input.ctx, flow }),
             dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
             model: puzzleBuilder.modePlay,
-            dispatchCmd: (c) => input.dispatch({ t: 'got-msg-cmd', c }),
+            dispatchCmd: (c) => input.dispatch({ t: 'got-msg-out', c }),
           }),
         },
       }}
@@ -366,7 +367,7 @@ const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (input) => {
   const play = input.modelSpace.screenPuzzleBuilder.modePlay
   if (!play) return Sub.None
   return ModePlayFrontend.subscriptions({ model: play, ctx: { ...input.ctx, flow } }, (c) => ({
-    t: 'got-msg-cmd',
+    t: 'got-msg-out',
     c,
   }))
 }

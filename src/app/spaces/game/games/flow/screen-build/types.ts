@@ -5,9 +5,7 @@ import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import type { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowBackendCtx } from '../@/backend/ctx'
-import { FlowFrontendCmd } from '../@/frontend/cmd'
 import type { FlowFrontendCtx } from '../@/frontend/ctx'
-import { FlowFrontendEvtIn } from '../@/frontend/evt'
 import { FlowSpaceCtx } from '../@/space/ctx'
 import { FlowSpaceEvt } from '../@/space/event'
 import { ScreenPackBuilderTypes } from './pack-builder/screen-pack-builder'
@@ -56,13 +54,7 @@ export type MsgFrontend =
   | ScreenPackBuilderOpenTypes.MsgFrontend
   | { t: 'got-screen-pack-builder-msg'; c: ScreenPackBuilderTypes.MsgFrontend }
   | { t: 'got-msg-space'; c: MsgSpace }
-  | {
-      t: 'got-msg-cmd'
-      c: FlowFrontendCmd<{
-        MsgToBackend: MsgToBackend
-        MsgFrontend: MsgFrontend
-      }>
-    }
+  | { t: 'got-msg-out'; c: unknown }
 
 export type MsgBackend =
   | ScreenPuzzleBuilderOpenTypes.MsgBackend
@@ -158,12 +150,6 @@ export type FrontendModule = GameFrontendModule<{
   MsgSpace: MsgSpace
   ModelSpace: ModelSpace
   Ctx: FlowFrontendCtx
-  MsgCmdOut: FlowFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>
-  MsgEvtIn: FlowFrontendEvtIn
-  MsgCmdIn: null
 }>
 
 export type BackendModule = GameBackendModule<{

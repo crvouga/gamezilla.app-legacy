@@ -1,8 +1,9 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Loading, Result, isOk } from '~/@/result'
-import { IconFloppyDisk } from '~/@/ui/icon/icon-floppy-disk'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
-import { APP_SOUND, playSound, showErrSm, showOkSm } from '~/app/@/frontend/cmd'
+import { IconFloppyDisk } from '~/@/ui/icon/icon-floppy-disk'
+import { APP_SOUND, showErrSm, showOkSm } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceUnsavedChanges } from '~/app/@/ui/surface/unsaved-changes/surface-unsaved-changes'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -44,7 +45,7 @@ const updateExitBuilder: FrontendModule['update'] = (input) => {
             ...input.model,
             puzzleBuilderOpened: 'unsaved-changes',
           },
-          msgCmd: [playSound(APP_SOUND.alertErrorSm)],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm)],
         }
       }
 
@@ -54,7 +55,7 @@ const updateExitBuilder: FrontendModule['update'] = (input) => {
     case 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit': {
       return {
         model: { ...input.model, puzzleBuilderOpened: null },
-        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)],
       }
     }
 
@@ -134,7 +135,7 @@ const exitBuilderWithSound: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
     { model: input.model },
     (model) => exitBuilder({ ...input, model }),
-    (model) => ({ model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }),
+    (model) => ({ model, msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] }),
   )
 }
 
@@ -172,7 +173,7 @@ const saveChanges: FrontendModule['update'] = (input) => {
       ...input.model,
       puzzleSaveChangesRequest: Loading,
     },
-    msgCmd: [playSound(APP_SOUND.tap)],
+    msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
     async eff(dispatch) {
       const put = await input.ctx.puzzleDb.put(puzzleNew)
       dispatch({

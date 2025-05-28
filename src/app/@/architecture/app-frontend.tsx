@@ -103,10 +103,6 @@ export type Input<T extends AppFrontendModuleTypes> = {
    */
   msgBackend?: T['MsgToFrontend'] | null
   /**
-   * `msgEvt` is an event that happen in another module. Like `user-logged-out`, `screen-changed`
-   */
-  msgEvt?: T['MsgEvtIn'] | null
-  /**
    * `msgCmd` is a command to sent from another module. Like `show-toast`, `logout`
    */
   msgCmd?: T['MsgCmdIn'] | null

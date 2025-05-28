@@ -16,7 +16,6 @@ import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { VsUserSetupScreen } from '~/app/spaces/game/games/@/vs-user'
 import { LayoutGame } from '../../@/ui/game-layout'
@@ -52,7 +51,6 @@ type Module = GameFrontendModule<{
   MsgSpace: MsgSpace
   Ctx: SpaceFrontendCtx & { onQuit: () => void }
   MsgCmdIn: null
-  MsgEvtIn: SpaceFrontendEvt
   MsgCmdOut: AppFrontendCmd<{
     MsgFrontend: MsgFrontend
     MsgToBackend: MsgToBackend

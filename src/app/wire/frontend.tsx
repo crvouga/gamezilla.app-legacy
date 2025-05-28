@@ -1,14 +1,15 @@
 import { Eff } from '~/@/eff'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
+import { cn } from '~/@/ui/cn'
+import { ListItemButton } from '~/@/ui/list-item-button'
 import { andThen } from '~/@/update/and-then'
-import { AppFrontendCmd, showToast } from '../@/frontend/cmd'
+import { AppFrontendCmd } from '../@/frontend/cmd'
 import { AppFrontendEvt } from '../@/frontend/evt'
+import { ShowToastCmd } from '../@/frontend/show-toast-cmd'
 import { BackendInstanceFrontend } from './backend-instance/frontend'
 import type { IFrontendTransport } from './transport/frontend'
 import type { FrontendCtx, ModelFrontend, MsgFrontend, MsgToFrontend } from './types'
-import { ListItemButton } from '~/@/ui/list-item-button'
-import { cn } from '~/@/ui/cn'
 
 //
 //
@@ -175,7 +176,7 @@ const updateFromBackend: typeof update = ({ ctx, model, msgBackend }) => {
     case 'backend-restarted': {
       return {
         model,
-        msgCmd: [showToast(ctx.t('wire.backend-restarted'))],
+        msgOut: [ShowToastCmd.init(ctx.t('wire.backend-restarted'))],
       }
     }
   }

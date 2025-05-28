@@ -1,8 +1,9 @@
 import { describe, expect, it, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+
 import { Pack } from '../../@/pack/pack'
 import { FixturePlayFrontend } from '../@/frontend/fixture'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
 const Fixture = async () => {
   const f = await FixturePlayFrontend()
@@ -46,7 +47,7 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    expect(didPlaySound(updated)).toBe(true)
+    expect(PlaySoundCmd.did(updated)).toBe(true)
   })
 
   it.todo('should render all packs', async () => {})
@@ -63,6 +64,6 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 })

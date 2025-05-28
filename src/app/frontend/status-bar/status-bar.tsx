@@ -1,8 +1,9 @@
 import { Translator as StatusBarFrontend } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
-import { APP_SOUND, AppFrontendCmd, playSound, StatusBarCmd } from '../../@/frontend/cmd'
+import { APP_SOUND, StatusBarCmd } from '../../@/frontend/cmd'
 
 export type Model = {
   isOpen: boolean
@@ -24,15 +25,15 @@ export const update = (input: {
   msgCmd?: StatusBarCmd | null
 }): {
   model: Model
-  msgCmd?: AppFrontendCmd<never>[]
+  msgOut?: unknown[]
 } => {
   switch (input.msg?.t) {
     case 'clicked-status-bar': {
-      return { model: { ...input.model, isOpen: !input.model.isOpen }, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: { ...input.model, isOpen: !input.model.isOpen }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
 
     case 'closed-status-bar-drawer': {
-      return { model: { ...input.model, isOpen: false }, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: { ...input.model, isOpen: false }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
   }
 

@@ -2,7 +2,6 @@ import { Sub } from '~/@/sub'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import type { GameFrontend } from '~/app/spaces/game/games/@/architecture/game-frontend'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/tic-tic-toe/tic-tac-toe-ui'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend, MsgToBackend } from './tic-tac-toe.types'
@@ -21,7 +20,6 @@ type Frontend = GameFrontend<{
     MsgToBackend: MsgToBackend
     MsgFrontend: MsgFrontend
   }>
-  FrontendEvent: SpaceFrontendEvt
 }>
 
 //

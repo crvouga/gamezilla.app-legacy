@@ -61,8 +61,6 @@ const update: BackendModule['update'] = async (input) => {
       const updated = await FlowBackend.update({
         ctx: input.ctx.flow,
         modelSpace: input.modelSpace.c,
-        msgCmd: input.msgCmd,
-        msgEvt: input.msgEvt,
         msgFrontend: input.msgFrontend?.t === 'flow' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
         msgSpace: input.msgSpace?.t === 'flow' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
         msg: input.msg?.t === 'flow' ? input.msg.c : null,
@@ -76,8 +74,6 @@ const update: BackendModule['update'] = async (input) => {
       const updated = await ConnectFourBackend.update({
         ctx: input.ctx,
         modelSpace: input.modelSpace.c,
-        msgCmd: input.msgCmd,
-        msgEvt: input.msgEvt,
         msgFrontend: input.msgFrontend?.t === 'connect-four' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
         msgSpace: input.msgSpace?.t === 'connect-four' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
         msg: input.msg?.t === 'connect-four' ? input.msg.c : null,

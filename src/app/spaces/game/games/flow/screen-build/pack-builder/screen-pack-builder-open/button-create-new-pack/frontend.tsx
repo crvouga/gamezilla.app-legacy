@@ -1,7 +1,9 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Loading, Ok } from '~/@/result'
 import { IconPlus } from '~/@/ui/icon/icon-plus'
-import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { Pack } from '../../../../@/pack/pack'
 import { PackId } from '../../../../@/pack/pack-id'
@@ -16,7 +18,7 @@ const update: FrontendModule['update'] = (input) => {
           ...input.model,
           packCreateNewRequest: Loading,
         },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(dispatch) {
           const userId = input.ctx.currentUser.userId
           const packNew: Pack = {
@@ -42,8 +44,8 @@ const update: FrontendModule['update'] = (input) => {
           ...input.model,
           packCreateNewRequest: Ok(null),
         },
-        msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.pack-created'))],
         msgSpace: [withEventId({ ...input.msg, t: 'create-new-pack.user-created-pack' })],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.refreshFeed), ShowToastCmd.init(input.ctx.t('flow.pack-created'))],
       }
     }
   }

@@ -5,11 +5,11 @@ import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
 import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
 import { IconRightLeft } from '~/@/ui/icon/icon-right-left'
 import type { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, AppFrontendCmd, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND, AppFrontendCmd } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { FeedItem } from '~/app/spaces/@/feed-item'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { IconBotHappy, IconBotLevel1, IconBotLevel4, VsBotGame, VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
 import { LayoutGame } from '../../@/ui/game-layout'
@@ -46,7 +46,6 @@ type Module = GameFrontendModule<{
     MsgToBackend: MsgToBackend
     MsgFrontend: MsgFrontend
   }>
-  MsgEvtIn: SpaceFrontendEvt
   MsgCmdIn: null
   MsgEvtOut: null
 }>
@@ -118,7 +117,7 @@ const watchGameOver =
       case 'Tie': {
         return {
           model,
-          msgCmd: [playSound(APP_SOUND.alertErrorSm)],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm)],
         }
       }
 
@@ -127,7 +126,7 @@ const watchGameOver =
           return {
             model,
             msgCmd: [
-              playSound(APP_SOUND.celebration, {
+              PlaySoundCmd.init(APP_SOUND.celebration, {
                 delay: TimeSpan.seconds(1 / 2),
               }),
             ],
@@ -136,7 +135,7 @@ const watchGameOver =
         return {
           model,
           msgCmd: [
-            playSound(APP_SOUND.alertErrorLg, {
+            PlaySoundCmd.init(APP_SOUND.alertErrorLg, {
               delay: TimeSpan.seconds(1 / 2),
             }),
           ],
@@ -202,14 +201,7 @@ const updateFromMsg =
     }
   }
 
-const updateSound = (
-  currentUserId: UserId,
-  modelSpace: ModelSpace,
-  msgSpace: WithEventId<MsgSpace>,
-): AppFrontendCmd<{
-  MsgToBackend: MsgToBackend
-  MsgFrontend: MsgFrontend
-}>[] => {
+const updateSound = (currentUserId: UserId, modelSpace: ModelSpace, msgSpace: WithEventId<MsgSpace>): unknown[] => {
   switch (modelSpace.type) {
     case 'game': {
       switch (msgSpace.t) {
@@ -217,24 +209,24 @@ const updateSound = (
           const error = modelSpace.errors[msgSpace.eventId]
 
           if (error && msgSpace.userId === currentUserId) {
-            return [playSound(APP_SOUND.alertErrorSm)]
+            return [PlaySoundCmd.init(APP_SOUND.alertErrorSm)]
           }
 
-          return [playSound(APP_SOUND.tap)]
+          return [PlaySoundCmd.init(APP_SOUND.tap)]
         }
 
         case 'bot-dropped-disc': {
-          return [playSound(APP_SOUND.tap)]
+          return [PlaySoundCmd.init(APP_SOUND.tap)]
         }
 
         case 'user-started-game':
         case 'user-swapped-sides':
         case 'user-restarted-game': {
-          return [playSound(APP_SOUND.navForwardMin)]
+          return [PlaySoundCmd.init(APP_SOUND.navForwardMin)]
         }
 
         case 'user-stopped-game': {
-          return [playSound(APP_SOUND.navBackwardMin)]
+          return [PlaySoundCmd.init(APP_SOUND.navBackwardMin)]
         }
 
         default: {
@@ -249,16 +241,16 @@ const updateSound = (
         case 'user-stopped-playing':
         case 'user-swapped-sides':
         case 'user-changed-bot-level': {
-          return [playSound(APP_SOUND.tap)]
+          return [PlaySoundCmd.init(APP_SOUND.tap)]
         }
 
         case 'user-restarted-game':
         case 'user-started-game': {
-          return [playSound(APP_SOUND.navForwardMin)]
+          return [PlaySoundCmd.init(APP_SOUND.navForwardMin)]
         }
 
         case 'user-stopped-game': {
-          return [playSound(APP_SOUND.navBackwardMin)]
+          return [PlaySoundCmd.init(APP_SOUND.navBackwardMin)]
         }
 
         default: {

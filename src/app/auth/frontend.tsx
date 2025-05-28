@@ -5,8 +5,10 @@ import { Button } from '~/@/ui/button'
 import { IconMobilePhone } from '~/@/ui/icon/icon-mobile-phone'
 import { Typography } from '~/@/ui/typography'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { APP_SOUND, AppFrontendCmd, playSound, pushScreen } from '~/app/@/frontend/cmd'
+import { APP_SOUND, AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
+import { PlaySoundCmd } from '../@/frontend/play-sound-cmd'
+import { PushScreenCmd } from '../@/frontend/push-screen-cmd'
 import { AuthFrontendCtx } from './@/frontend/ctx'
 import { AuthScreenHeaderCta } from './@/frontend/ui/auth-screen-header-cta'
 import { AuthScreenLayout } from './@/frontend/ui/auth-screen-layout'
@@ -95,11 +97,9 @@ const updateLogout: FrontendModule['update'] = (input) => {
 
 const updateCurrentUser: FrontendModule['update'] = (input) => {
   const updated = CurrentUserFrontend.update({
+    msgIn: input.msgIn,
     ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.currentUser },
     model: input.model.currentUser,
-    msgCmd: null,
-    msgEvt: null,
-    msgBackend: null,
     msg: input.msg?.t === 'got-current-user-msg' ? input.msg.c : null,
   })
   return {
@@ -114,10 +114,8 @@ const updateSMS: FrontendModule['update'] = (input) => {
   const updated = LoginWithSMSFrontend.update({
     ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.sms },
     model: input.model.continueWithSms,
-    msgCmd: null,
-    msgEvt: input.msgEvt,
-    msgBackend: null,
     msg: input.msg?.t === 'got-login-with-sms-msg' ? input.msg.c : null,
+    msgIn: input.msgIn,
   })
 
   return {
@@ -134,7 +132,10 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'user-clicked-login-with-phone': {
       return {
         model: input.model,
-        msgCmd: [pushScreen({ n: 'auth-login', t: 'login-sms-request' }), playSound(APP_SOUND.navForwardMin)],
+        msgOut: [
+          PushScreenCmd.init({ n: 'auth-login', t: 'login-sms-request' }),
+          PlaySoundCmd.init(APP_SOUND.navForwardMin),
+        ],
       }
     }
 

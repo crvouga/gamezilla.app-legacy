@@ -1,9 +1,10 @@
 import { describe, expect, it, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { UserId } from '~/app/@/data/user-id'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+
 import { Flow } from '../../@/flow'
 import { FixtureScreenPlayPuzzleFrontend } from './@/fixture/frontend'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
 const Fixture = async () => {
   const f = await FixtureScreenPlayPuzzleFrontend()
@@ -29,7 +30,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
     const updated = f.update(f.init, [
       { msgSpace: withEventMeta({ t: 'user-clicked-exit-play-puzzle-screen', userId: f.hostId }) },
     ])
-    expect(didPlaySound(updated)).toBe(true)
+    expect(PlaySoundCmd.did(updated)).toBe(true)
   })
 
   it('should exit to pack after clicking exit puzzle button', async () => {
@@ -91,7 +92,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
         }),
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   it('should render which level of the pack is being played', async () => {
@@ -117,7 +118,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
   it('should play sound after completing a puzzle', async () => {
     const f = await Fixture()
     const output = f.update(f.init, f.msgsCompletePuzzle)
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   it('should play sound pressing down on a terminal', async () => {
@@ -135,13 +136,13 @@ describe('ScreenPlayPuzzleFrontend', () => {
         }),
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   it('should play sound after solving puzzle', async () => {
     const f = await Fixture()
     const output = f.update(f.init, f.msgsCompletePuzzle)
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('reset button render', async () => {
@@ -161,7 +162,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
     expect(btn).toBeTruthy()
     btn?.click()
     const msg = await r.msgs.once()
-    expect(msg.t).toBe('got-msg-cmd')
+    expect(msg.t).toBe('got-msg-out')
   })
 
   test.skip('not render hint button when puzzle is solved', async () => {
@@ -191,7 +192,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
         }),
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('toggle action drawer sound', async () => {
@@ -204,7 +205,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
         }),
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   describe('when puzzle is not found', () => {

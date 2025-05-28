@@ -25,7 +25,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return { model: input.model, msgSpace: [input.msg.c] }
     }
 
-    case 'got-msg-cmd': {
+    case 'got-msg-out': {
       return { model: input.model, msgCmd: [input.msg.c] }
     }
   }

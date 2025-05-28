@@ -6,8 +6,9 @@ import { SurfaceActions } from '~/@/ui/surface/surface-actions'
 import { SurfaceBody } from '~/@/ui/surface/surface-body'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { Typography } from '~/@/ui/typography'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { type AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { PrebuiltActions } from '../../../../@/ui/prebuilt-actions'
 import type { FrontendModule, MsgFrontend } from '../../types'
@@ -23,7 +24,7 @@ const update: FrontendModule['update'] = (input) => {
     case 'user-clicked-select-next-pack': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
       }
     }
   }

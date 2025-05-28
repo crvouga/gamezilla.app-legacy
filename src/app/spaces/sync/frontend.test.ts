@@ -9,6 +9,7 @@ import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { makeSpace } from '../@/fixture/shared'
 import { SpacesCore } from '../core/core'
 import { Space } from '../core/space'
+import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
 
 const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
   return items.filter(predicate).length === 1
@@ -106,9 +107,7 @@ describe(import.meta.file, () => {
         },
       },
       {
-        msgEvt: {
-          t: 'wire-evt.backend-connected',
-        },
+        msgIn: BackendConnectedEvt.init(),
       },
     ])
 

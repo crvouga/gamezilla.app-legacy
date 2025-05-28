@@ -3,14 +3,16 @@ import { cn } from '~/@/ui/cn'
 import { IconButton } from '~/@/ui/icon-button'
 import { IconXMark } from '~/@/ui/icon/icon-x-mark'
 import { Typography } from '~/@/ui/typography'
-import { APP_SOUND, playSound, pushScreen } from '~/app/@/frontend/cmd'
+import { UserProfile } from '~/app/@/data/user-profile'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import type { SpaceFrontendModule } from '../../architecture/space-frontend'
 import { SpacesCore } from '../../core/core'
 import { GameCoverArt } from '../../game/games/cover-art'
 import { SPACE_CARD_GRADIENT_CLASS_NAME } from '../../list-spaces/space-card/space-card-gradient'
 import type { ModelFrontend, MsgFrontend } from '../../types'
-import { UserProfile } from '~/app/@/data/user-profile'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
@@ -21,9 +23,9 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
       return {
         model: input.model,
-        msgCmd: [
-          playSound(APP_SOUND.navForwardMin),
-          pushScreen({ n: 'spaces', t: 'space', spaceId: currentUsersSpaceId }),
+        msgOut: [
+          PlaySoundCmd.init(APP_SOUND.navForwardMin),
+          PushScreenCmd.init({ n: 'spaces', t: 'space', spaceId: currentUsersSpaceId }),
         ],
       }
     }

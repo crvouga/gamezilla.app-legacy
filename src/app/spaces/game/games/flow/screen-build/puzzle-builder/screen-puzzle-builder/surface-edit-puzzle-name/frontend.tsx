@@ -1,24 +1,26 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Err, isErr, isLoading, isOk, Loading } from '~/@/result'
 import { Posix } from '~/@/time/posix'
-import { IconPen } from '~/@/ui/icon/icon-pen'
-import { TextField } from '~/@/ui/text-field'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
+import { IconPen } from '~/@/ui/icon/icon-pen'
 import { SurfaceBody } from '~/@/ui/surface/surface-body'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
+import { TextField } from '~/@/ui/text-field'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, playSound, showErrSm, showOkSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowErrorSmall } from '~/app/@/frontend/show-error-sm'
+import { ShowOkSmall } from '~/app/@/frontend/show-ok-sm'
 import { ScreenAction, ScreenActionLocation } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { FlowFrontendCmd } from '../../../../@/frontend/cmd'
-import { FlowFrontendCmdRoot } from '../../../../@/frontend/cmd-root'
+import { AddPuzzlesCmd } from '../../../../@/frontend/add-puzzles-cmd'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { IPuzzleDb } from '../../../../@/puzzle/puzzle-db'
 import { PuzzleId } from '../../../../@/puzzle/puzzle-id'
 import { PuzzleName } from '../../../../@/puzzle/puzzle-name'
 import type { FrontendModule } from '../../../types'
-import { editNameValidationErrorToString, MsgFrontend, MsgToBackend } from './types'
+import { editNameValidationErrorToString } from './types'
 
 const update: FrontendModule['update'] = (input) => {
   const { model } = input
@@ -39,7 +41,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
           puzzleBuilderOpened: input.msg.screenActionLocation === 'more-drawer' ? 'more' : null,
           puzzleEditNameValidationError: null,
         },
-        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)],
       }
     }
 
@@ -54,7 +56,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
             ...input.model,
             puzzleEditNameValidationError: 'name-cannot-be-empty',
           },
-          msgCmd: [playSound(APP_SOUND.alertErrorSm)],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm)],
         }
       }
 
@@ -64,7 +66,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
           puzzleEditNameRequest: Loading,
           puzzleEditNameValidationError: null,
         },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(dispatch) {
           const result = await patchName({
             puzzleId: puzzleBuilder.puzzle.id,
@@ -85,7 +87,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
           ...input.model,
           puzzleEditNameRequest: input.msg.result,
         },
-        msgCmd: [playSound(APP_SOUND.refreshFeed)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.refreshFeed)],
         msgSpace: [
           withEventId({
             t: 'user-edited-puzzle-name',
@@ -113,22 +115,18 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
         }
       }
 
-      type WireTypes = { MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }
-
-      const msgCmd: FlowFrontendCmd<WireTypes>[] = [
-        FlowFrontendCmdRoot.addPuzzles(puzzlesNew, input),
-        ...(isOk(input.msgSpace.edited)
-          ? showOkSm<WireTypes>(input.ctx.t('flow.saved-name'))
-          : showErrSm<WireTypes>(input.ctx.t('app.something-went-wrong'))),
-      ]
-
       return {
         model: {
           ...input.model,
           puzzleEditNameRequest: input.msgSpace.edited,
           puzzleBuilderOpened: null,
         },
-        msgCmd,
+        msgOut: [
+          AddPuzzlesCmd.init(puzzlesNew, input),
+          isOk(input.msgSpace.edited)
+            ? ShowOkSmall.init(input.ctx.t('flow.saved-name'))
+            : ShowErrorSmall.init(input.ctx.t('app.something-went-wrong')),
+        ],
       }
     }
   }
@@ -173,7 +171,7 @@ const updateDrawer: FrontendModule['update'] = (input) => {
             ...input.model,
             puzzleBuilderOpened: null,
           },
-          msgCmd: [playSound(APP_SOUND.surfaceClosed)],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)],
         }
       }
       return {
@@ -182,14 +180,14 @@ const updateDrawer: FrontendModule['update'] = (input) => {
           puzzleBuilderOpened: 'edit-name',
           puzzleEditNameDraft: input.modelSpace.screenPuzzleBuilder?.puzzle.name ?? '',
         },
-        msgCmd: [playSound(APP_SOUND.surfaceOpened)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceOpened)],
       }
     }
 
     case 'puzzle.edit-name.user-closed-drawer': {
       return {
         model: { ...input.model, puzzleBuilderOpened: null },
-        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)],
       }
     }
 

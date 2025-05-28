@@ -1,7 +1,10 @@
 import { p } from '~/@/parser'
-import { APP_SOUND, AppFrontendCmd, copyToClipboard, playSound, showToast } from '~/app/@/frontend/cmd'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { IconCopy } from '~/@/ui/icon/icon-copy'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd'
+import { AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { Variant } from '../variant'
 import { VariantGridShorthand } from '../variant/grid'
@@ -23,7 +26,7 @@ const update = <TModel,>(input: {
   flow: Variant.Model
 }): {
   model: TModel
-  msgCmd?: AppFrontendCmd<never>[]
+  msgOut?: unknown[]
 } => {
   switch (input.msg?.t) {
     case 'user-clicked-copy-to-clipboard': {
@@ -39,10 +42,10 @@ const update = <TModel,>(input: {
 
       return {
         model: input.model,
-        msgCmd: [
-          playSound(APP_SOUND.refreshFeed),
-          showToast(input.ctx.t('app.copied-to-clipboard')),
-          copyToClipboard(encoded),
+        msgOut: [
+          PlaySoundCmd.init(APP_SOUND.refreshFeed),
+          ShowToastCmd.init(input.ctx.t('app.copied-to-clipboard')),
+          CopyToClipboardCmd.init(encoded),
         ],
       }
     }

@@ -5,8 +5,11 @@ import { IconCheckmarkCircle, IconCheckmarkCircleEmpty } from '~/@/ui/icon/icon-
 import { IconLanguage } from '~/@/ui/icon/icon-language'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Spinner } from '~/@/ui/spinner'
+import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { APP_SOUND, back, closeStatusBar, playSound, pushScreen } from '../../@/frontend/cmd'
+import { APP_SOUND, back } from '../../@/frontend/cmd'
 import { translatorSubscriptions } from '../../@/frontend/translator'
 import type { FrontendModule, TranslationLoading } from '../types'
 
@@ -80,19 +83,19 @@ export const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
       if (ctx.currentScreen.n === 'lang' && ctx.currentScreen.t === 'choose-lang') {
         return {
           model,
-          msgCmd: [playSound(APP_SOUND.navForwardMin), closeStatusBar()],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin), CloseStatusBarCmd.init()],
         }
       }
 
       return {
         model,
-        msgCmd: [
-          playSound(APP_SOUND.navForwardMin),
-          pushScreen({
+        msgOut: [
+          PlaySoundCmd.init(APP_SOUND.navForwardMin),
+          PushScreenCmd.init({
             t: 'choose-lang',
             n: 'lang',
           }),
-          closeStatusBar(),
+          CloseStatusBarCmd.init(),
         ],
       }
     }
@@ -100,7 +103,7 @@ export const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
     case 'choose-lang.clicked-done': {
       return {
         model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin), back()],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin), back()],
       }
     }
 
@@ -110,7 +113,7 @@ export const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
           ...model,
           lang: msg.lang,
         },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         eff: LocalStorage.put(LANG_STORAGE_KEY, msg.lang),
       }
     }

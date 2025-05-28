@@ -1,12 +1,8 @@
 import { p } from '~/@/parser'
-import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
-import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
-import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
-import { GameFrontendModule } from './@/architecture/game-frontend-v2'
+import { SpaceFrontendCtx } from '../../@/frontend/ctx'
 import { GameBackendModule } from './@/architecture/game-backend-v2'
+import { GameFrontendModule } from './@/architecture/game-frontend-v2'
 import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four.types'
 import { FlowBackendCtx } from './flow/@/backend/ctx'
@@ -102,11 +98,6 @@ export type FrontendModule = GameFrontendModule<{
   ModelSpace: ModelSpace
   MsgSpace: MsgSpace
   Ctx: SpaceFrontendCtx
-  MsgEvtIn: SpaceFrontendEvt
-  MsgCmdOut: SpaceFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: MsgToBackend
-  }>
 }>
 
 export type GameBackendCtx = SpaceBackendCtx & {
@@ -121,7 +112,5 @@ export type BackendModule = GameBackendModule<{
   ModelSpace: ModelSpace
   MsgSpace: MsgSpace
   Ctx: GameBackendCtx
-  MsgEvtIn: SpaceBackendEvt
-  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
   Deps: null
 }>

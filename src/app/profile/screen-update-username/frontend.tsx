@@ -48,19 +48,6 @@ const update: FrontendModule['update'] = (input) => {
     }
   }
 
-  switch (input.msgEvt?.t) {
-    case 'profile-evt.current-user-profile': {
-      return init({ ctx: input.ctx })
-    }
-
-    case 'screen-evt.screen-changed': {
-      if (input.msgEvt.screen.t === 'profile-edit-username') {
-        return init({ ctx: input.ctx })
-      }
-      return { model: input.model }
-    }
-  }
-
   return { model: input.model }
 }
 

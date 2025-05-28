@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { FixtureFlowBuilderFrontend } from '../../@/fixture/frontend'
 import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/query'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
 const Fixture = async () => {
   const f = await FixtureFlowBuilderFrontend()
@@ -51,7 +52,7 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('play a sound when query changes', async () => {
@@ -66,6 +67,6 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 })

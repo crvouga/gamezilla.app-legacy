@@ -44,8 +44,13 @@ const did = (output?: { msgOut?: unknown[] | null }, src?: string): boolean => {
   )
 }
 
+const count = (output?: { msgOut?: unknown[] | null }, src?: string): number => {
+  return output?.msgOut?.filter((cmd) => is(cmd) && (src ? cmd.src === src : true)).length ?? 0
+}
+
 export const PlaySoundCmd = {
   is,
   init,
   did,
+  count,
 }

@@ -1,5 +1,5 @@
 // import { describe, expect, test } from 'bun:test'
-// import { didPlaySound, didPushScreen } from '../@/frontend/cmd'
+// import { PlaySoundCmd.did, PushScreenCmd.did } from '../@/frontend/cmd'
 // import { FixtureAuthFrontend } from './@/fixture/frontend'
 // import * as AuthFrontend from './frontend'
 
@@ -19,8 +19,8 @@
 //       model: f.initial.model,
 //       msg: { t: 'user-clicked-login-with-phone' },
 //     })
-//     expect(didPlaySound(output)).toBe(true)
-//     expect(didPushScreen(output, (screen) => screen.n === 'auth-login' && screen.t === 'login-sms-request')).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PushScreenCmd.did(output, (screen) => screen.n === 'auth-login' && screen.t === 'login-sms-request')).toBe(true)
 //   })
 
 //   test('continue with email', async () => {
@@ -30,8 +30,8 @@
 //       model: f.initial.model,
 //       msg: { t: 'user-clicked-login-with-email' },
 //     })
-//     expect(didPlaySound(output)).toBe(true)
-//     expect(didPushScreen(output, (screen) => screen.n === 'auth-login' && screen.t === 'login-email-send-link')).toBe(
+//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PushScreenCmd.did(output, (screen) => screen.n === 'auth-login' && screen.t === 'login-email-send-link')).toBe(
 //       true,
 //     )
 //   })

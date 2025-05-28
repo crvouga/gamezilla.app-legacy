@@ -1,4 +1,6 @@
-import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { FlowFrontendCtx } from '../../../../@/frontend/ctx'
 import { PuzzleQuery } from '../../../../@/puzzle/puzzle-db/query'
@@ -12,7 +14,7 @@ const update: FrontendModule['update'] = (input) => {
       const { msgSpace } = input
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.refreshFeed), showToast(input.ctx.t('flow.puzzle-added'))],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.refreshFeed), ShowToastCmd.init(input.ctx.t('flow.puzzle-added'))],
         async eff(dispatch) {
           const modelSpace = ScreenPackBuildSpace.updateSpace({ ...input, msgSpace })
 
@@ -24,19 +26,19 @@ const update: FrontendModule['update'] = (input) => {
     }
 
     case 'screen-pack-builder.screen-add-puzzle.user-clicked-close': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] }
     }
 
     case 'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
 
     case 'screen-pack-builder.screen-add-puzzle.puzzle-db-query-query-changed': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
 
     case 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
   }
 
@@ -64,7 +66,7 @@ const toQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): Puzzl
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return PuzzleLoaderFrontend.watch(input.ctx, toQuery(input), (c) => ({
-    t: 'got-msg-cmd',
+    t: 'got-msg-out',
     c: PuzzleLoaderFrontend.gotMsg(c),
   }))
 }

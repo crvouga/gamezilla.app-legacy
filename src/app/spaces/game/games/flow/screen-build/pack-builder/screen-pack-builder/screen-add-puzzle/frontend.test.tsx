@@ -1,14 +1,15 @@
 import { describe, expect, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
+import { sleep } from '~/@/promise/sleep'
 import { PubSub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PuzzleQuery } from '../../../../@/puzzle/puzzle-db/query'
 import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
 import { MsgFrontend } from '../types'
 import { ScreenAddPuzzle } from './frontend'
 import { ScreenAddPuzzleSpace } from './space'
-import { sleep } from '~/@/promise/sleep'
 
 const Fixture = async () => {
   const f = await FixturePackBuilderFrontend()
@@ -38,7 +39,7 @@ describe(import.meta.file, () => {
       }),
     })
 
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('submit button should be disabled when no puzzles are selected', async () => {
@@ -75,7 +76,7 @@ describe(import.meta.file, () => {
       }),
     })
 
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('play sound toggling header checkbox', async () => {
@@ -89,7 +90,7 @@ describe(import.meta.file, () => {
       }),
     })
 
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('clicking checkbox', async () => {
@@ -103,6 +104,8 @@ describe(import.meta.file, () => {
     await sleep(TimeSpan.milliseconds(100))
     expect(msgs.length).toBe(1)
     expect(msgs[0]?.t).toBe('got-msg-space')
-    expect(msgs[0]?.c?.t).toBe('screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox')
+    expect(msgs[0]?.t === 'got-msg-space' && msgs[0]?.c?.t).toBe(
+      'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox',
+    )
   })
 })

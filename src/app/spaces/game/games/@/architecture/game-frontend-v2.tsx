@@ -1,8 +1,8 @@
-import { Msg } from '~/@/msg/msg'
-import type { VDom } from '~/@/vdom/vdom'
-import { WithEventId } from '~/@/event-sourced/event'
 import { Eff } from '~/@/eff'
+import { WithEventId } from '~/@/event-sourced/event'
+import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
+import type { VDom } from '~/@/vdom/vdom'
 
 //
 //
@@ -18,10 +18,8 @@ export type GameFrontendModuleTypes = {
   Msg?: Any
   MsgToFrontend?: Any
   MsgToBackend?: Any
-  MsgCmdIn?: Any
-  MsgCmdOut?: Any
-  MsgEvtIn?: Any
-  MsgEvtOut?: Any
+  MsgIn?: unknown
+  MsgOut?: unknown
   MsgSpace?: Any
   ModelSpace?: Any
   ViewSlot?: SlotInputTypes
@@ -55,8 +53,7 @@ export type Input<T extends GameFrontendModuleTypes> = {
   model: T['Model']
   msg?: T['Msg'] | null
   msgBackend?: T['MsgToFrontend'] | null
-  msgEvt?: T['MsgEvtIn'] | null
-  msgCmd?: T['MsgCmdIn'] | null
+  msgIn?: T['MsgIn'] | null
   modelSpace: T['ModelSpace']
   msgSpace?: WithEventId<T['MsgSpace']> | null
 }
@@ -70,9 +67,8 @@ export type Input<T extends GameFrontendModuleTypes> = {
 export type Output<T extends GameFrontendModuleTypes> = {
   model: T['Model']
   eff?: Eff<T['Msg']>
-  msgCmd?: T['MsgCmdOut'][]
-  msgEvt?: T['MsgEvtOut'][]
   msgSpace?: T['MsgSpace'][]
+  msgOut?: unknown[]
 }
 
 export type GameFrontendModule<T extends GameFrontendModuleTypes> = {
@@ -120,8 +116,7 @@ const andThen = <T extends GameFrontendModuleTypes>(
     acc = {
       model: updated.model,
       eff: Eff.batch(acc.eff, updated.eff),
-      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
+      msgOut: Msg.batch(acc.msgOut, updated.msgOut),
       msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
     }
   }
@@ -129,19 +124,13 @@ const andThen = <T extends GameFrontendModuleTypes>(
   return acc
 }
 
-const tagOutput = <
-  TTag extends string,
-  T extends GameFrontendModuleTypes,
-  TTaggedCmd extends GameFrontendModuleTypes['MsgCmdOut'],
->(
+const tagOutput = <TTag extends string, T extends GameFrontendModuleTypes>(
   tag: TTag,
-  tagCmd: (msgCmd: T['MsgCmdOut'][]) => TTaggedCmd[],
   output: Output<T>,
 ): {
   model: { t: TTag; c: T['Model'] }
   eff?: Eff<{ t: TTag; c: T['Msg'] }>
-  msgCmd?: TTaggedCmd[]
-  msgEvt?: T['MsgEvtOut'][]
+  msgOut?: unknown[]
   msgSpace?: { t: TTag; c: T['MsgSpace'] }[]
 } => {
   return {
@@ -149,9 +138,8 @@ const tagOutput = <
       t: tag,
       c: output.model,
     },
-    msgCmd: output.msgCmd ? tagCmd(output.msgCmd) : [],
+    msgOut: output.msgOut,
     eff: Eff.tag(tag, output.eff),
-    msgEvt: output.msgEvt,
     msgSpace: output.msgSpace?.map((c) => ({
       c,
       t: tag,

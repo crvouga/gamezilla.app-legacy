@@ -1,8 +1,10 @@
 import { Sub } from '~/@/sub'
 import { Button } from '~/@/ui/button'
 import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
+import { AddPacksCmd } from '../../../@/frontend/add-packs-cmd'
 import { ScreenAddPuzzle } from './screen-add-puzzle/frontend'
 import { ScreenPuzzlePlay } from './screen-play-puzzle/frontend'
 import { ScreenPuzzleGrid } from './screen-puzzle-grid/frontend'
@@ -62,7 +64,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'got-msg-space': {
       return { model: input.model, msgSpace: [input.msg.c] }
     }
-    case 'got-msg-cmd': {
+    case 'got-msg-out': {
       return { model: input.model, msgCmd: [input.msg.c] }
     }
     default: {
@@ -77,7 +79,7 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
   update(input) {
     switch (input.msgSpace?.t) {
       case 'screen-pack-builder.user-clicked-back-button': {
-        return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
+        return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] }
       }
     }
     return { model: input.model }
@@ -104,18 +106,17 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
 }
 
 const updateRecordPack: FrontendModule['update'] = (input) => {
-  const hasMsg = input.msgSpace || input.msgCmd || input.msgEvt || input.msgBackend || input.msg
+  const hasMsg = input.msgSpace || input.msgIn || input.msgBackend || input.msg
   if (hasMsg && input.modelSpace?.pack) {
     return {
       model: input.model,
-      msgCmd: [
-        {
-          t: 'flow-cmd.add-packs',
-          packs: {
+      msgOut: [
+        AddPacksCmd.init(
+          {
             [input.modelSpace.pack.id]: input.modelSpace.pack,
           },
-          causedBy: input,
-        },
+          input,
+        ),
       ],
     }
   }

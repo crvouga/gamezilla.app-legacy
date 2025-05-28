@@ -1,10 +1,14 @@
 import { RequestResponse, startedRequest } from '~/@/request-response/request-response'
 import { Ok } from '~/@/result'
-import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
 import { EmptyState } from '~/@/ui/empty-state'
 import { Gutter } from '~/@/ui/gutter'
+import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
 import type { SpaceId } from '~/app/@/data/space-id'
-import { APP_SOUND, playSound, pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
+import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
+import { APP_SOUND, sendToBackend } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
@@ -26,26 +30,24 @@ const init: SpaceFrontendModule['init'] = ({ model, ctx }) => {
 }
 
 const update: SpaceFrontendModule['update'] = (input) => {
-  switch (input.msgEvt?.t) {
-    case 'screen-evt.screen-changed': {
-      if (input.msgEvt.screen.t === 'space-list') {
-        return sendListSpacesRequest(input)
-      }
-      return { model: input.model }
-    }
-
-    case 'wire-evt.backend-connected': {
+  if (ScreenChangedEvt.is(input.msgIn)) {
+    if (input.msgIn.screen.t === 'space-list') {
       return sendListSpacesRequest(input)
     }
+    return { model: input.model }
+  }
+
+  if (BackendConnectedEvt.is(input.msgIn)) {
+    return sendListSpacesRequest(input)
   }
 
   switch (input.msg?.t) {
     case 'list-spaces.clicked-space-card': {
       return {
         model: input.model,
-        msgCmd: [
-          pushScreen({ n: 'spaces', t: 'space', spaceId: input.msg.spaceId }),
-          playSound(APP_SOUND.navForwardMin),
+        msgOut: [
+          PushScreenCmd.init({ n: 'spaces', t: 'space', spaceId: input.msg.spaceId }),
+          PlaySoundCmd.init(APP_SOUND.navForwardMin),
         ],
       }
     }

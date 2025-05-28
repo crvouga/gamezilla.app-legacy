@@ -1,9 +1,11 @@
 import { NotAsked } from '~/@/result'
-import { APP_SOUND, playSound, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
+import { LogoutCmd } from '~/app/@/frontend/logout-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
-import { LogoutCmd } from '~/app/@/frontend/logout-cmd'
 
 const init: ModelFrontend = {
   opened: null,
@@ -21,7 +23,10 @@ const update: FrontendModule['update'] = (input) => {
         async eff(_dispatch) {
           await input.ctx.userSessionDb.zapByClientSessionId(input.ctx.clientSessionId)
         },
-        msgCmd: [showToast(input.ctx.t('auth.current-user-logged-out')), playSound(APP_SOUND.navBackwardMin)],
+        msgOut: [
+          ShowToastCmd.init(input.ctx.t('auth.current-user-logged-out')),
+          PlaySoundCmd.init(APP_SOUND.navBackwardMin),
+        ],
       }
     }
 
@@ -32,7 +37,7 @@ const update: FrontendModule['update'] = (input) => {
           ...input.model,
           opened: null,
         },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
       }
     }
   }
@@ -43,7 +48,7 @@ const update: FrontendModule['update'] = (input) => {
         ...input.model,
         opened: 'logged-out',
       },
-      msgCmd: [playSound(APP_SOUND.alertErrorSm)],
+      msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm)],
     }
   }
 

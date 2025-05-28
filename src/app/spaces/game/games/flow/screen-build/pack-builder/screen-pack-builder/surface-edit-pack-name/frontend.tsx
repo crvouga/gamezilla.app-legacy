@@ -1,13 +1,14 @@
-import { TextField } from '~/@/ui/text-field'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { TextField } from '~/@/ui/text-field'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { FrontendModule } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'edit-pack-name.user-clicked-open-drawer-button':
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.surfaceOpened)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceOpened)] }
   }
   return { model: input.model }
 }

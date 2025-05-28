@@ -2,7 +2,8 @@ import { Sub } from '~/@/sub'
 import { IconBox } from '~/@/ui/icon/icon-box'
 import { IconPuzzlePiece } from '~/@/ui/icon/icon-puzzle-piece'
 import { IconScrewdriverWrench } from '~/@/ui/icon/icon-screwdriver-wrench'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../../../@/ui/game-main-menu'
 import type { FrontendModule } from '../types'
@@ -16,14 +17,14 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
     case 'flow.build.screen-main-menu.user-clicked-option': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
       }
     }
 
     case 'screen-main-menu.user-clicked-back-button': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)],
       }
     }
 

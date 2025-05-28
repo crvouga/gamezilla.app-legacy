@@ -8,9 +8,9 @@ import { PackDb } from '../pack/pack-db'
 import { PackLoaderTypes } from '../pack/pack-loader'
 import { PuzzleDb } from '../puzzle/puzzle-db'
 import { PuzzleLoaderTypes } from '../puzzle/puzzle-loader'
+import { HintCalculatorTypes } from '../solutions/hint-calculator'
 import { Solutions } from '../solutions/solutions'
 import { SolutionsDb } from '../solutions/solutions-db/impl'
-import { HintCalculatorTypes } from '../solutions/hint-calculator'
 import { SolutionsLoaderTypes } from '../solutions/solutions-loader'
 import type { FlowFrontendCtx } from './ctx'
 
@@ -62,8 +62,6 @@ export const FixtureFlowFrontend = async () => {
                 : acc,
             FlowSpace.initSpace({ ctx: input.ctx ?? ctx }),
           ),
-        msgCmd: null,
-        msgEvt: null,
       })
       outputs.push(output)
     }

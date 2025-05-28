@@ -6,7 +6,7 @@
 // import { Posix } from '~/@/time/posix'
 // import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 // import { UserId } from '~/app/@/data/user-id'
-// import { didPlaySound, didSendToBackend } from '~/app/@/frontend/cmd'
+// import { PlaySoundCmd.did, didSendToBackend } from '~/app/@/frontend/cmd'
 // import { AnonymousFrontendCtx } from '~/app/@/frontend/ctx'
 // import { Translator } from '~/app/@/frontend/translator'
 // import * as AuthFrontend from '../frontend'
@@ -114,6 +114,6 @@
 //       }),
 //       clickedContinueAsGuestButton,
 //     )
-//     expect(didPlaySound(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toBe(true)
 //   })
 // })

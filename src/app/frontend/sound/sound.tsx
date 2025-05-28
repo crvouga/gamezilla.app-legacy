@@ -7,8 +7,9 @@ import { IconVolumeXMark } from '~/@/ui/icon/icon-volume-x-mark'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { ToggleButton } from '~/@/ui/toggle-button'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { APP_SOUND, SoundCmd, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND, SoundCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
+import { DocumentVisibilityChangedEvt } from '~/app/@/frontend/document-visbility-changed-evt'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
@@ -98,7 +99,7 @@ const updateFromMsg: Module['update'] = (input) => {
       if (input.model.muted) {
         return {
           model: { ...input.model, muted: false },
-          msgCmd: [playSound(APP_SOUND.stateChangeUp)],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.stateChangeUp)],
         }
       }
 
@@ -121,24 +122,16 @@ const updateFromMsg: Module['update'] = (input) => {
 }
 
 const updateFromEvent: Module['update'] = (input) => {
-  if (!input.msgEvt) {
-    return { model: input.model }
-  }
-
-  switch (input.msgEvt.t) {
-    case 'platform-evt.document-visibility-changed': {
-      return {
-        model: {
-          ...input.model,
-          muted: input.msgEvt.state === 'hidden',
-        },
-      }
-    }
-
-    default: {
-      return { model: input.model }
+  if (DocumentVisibilityChangedEvt.is(input.msgIn)) {
+    return {
+      model: {
+        ...input.model,
+        muted: input.msgIn.state === 'hidden',
+      },
     }
   }
+
+  return { model: input.model }
 }
 
 export const updateFromCmd: Module['update'] = (input) => {

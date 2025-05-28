@@ -37,8 +37,7 @@ export const FixturePackBuilderFrontend = async () => {
     const outputNew: UpdateOutput = {
       model: output.model,
       eff: Eff.batch(acc.eff, output.eff),
-      msgCmd: Msg.batch(acc?.msgCmd, output.msgCmd),
-      msgEvt: Msg.batch(acc?.msgEvt, output.msgEvt),
+      msgOut: Msg.batch(acc?.msgOut, output.msgOut),
       msgSpace: Msg.batch(acc?.msgSpace, output.msgSpace),
     }
 

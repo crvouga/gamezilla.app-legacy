@@ -104,7 +104,7 @@ export const update = <TParentMsg,>(input: {
   const screen = CurrentScreenFrontend.update({
     model: input.model.currentScreen,
     msg: input.msg?.t === 'current-screen' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'current-screen' ? input.msgCmd : null,
+
     msgIn: input.msgIn,
   })
 
@@ -132,6 +132,7 @@ export const update = <TParentMsg,>(input: {
     msg: input.msg?.t === 'toast' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'toast' ? input.msgCmd : null,
     ctx: input.ctx,
+    msgIn: input.msgIn,
   })
 
   const screenSize = ScreenSizeFrontend.update({
@@ -181,8 +182,6 @@ export const update = <TParentMsg,>(input: {
     ]),
     msgEvt: Msg.batch<AppFrontendEvt>(screen.msgEvt, sound.msgEvt, toast.msgEvt),
     msgCmd: Msg.batch<AppFrontendCmd<{ MsgToBackend: MsgToBackend; MsgFrontend: MsgFrontend }>>(
-      statusBar.msgCmd,
-      screen.msgCmd,
       sound.msgCmd,
       toast.msgCmd,
     ),

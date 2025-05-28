@@ -10,8 +10,10 @@ import { PAPER_CLASS_NAME } from '~/@/ui/paper'
 import { Show } from '~/@/ui/show'
 import { Transition } from '~/@/ui/transition'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
-import { APP_SOUND, SoundCmd, ToastCmd, playSound } from '../../@/frontend/cmd'
+import { APP_SOUND, SoundCmd, ToastCmd } from '../../@/frontend/cmd'
 
 type Ctx = {
   now: Posix
@@ -76,7 +78,7 @@ const updateFromMsg: Module['update'] = (input) => {
 
   switch (input.msg.t) {
     case 'clicked-dismiss-button': {
-      return { model: { ...input.model, toast: null }, msgCmd: [playSound(APP_SOUND.tap)] }
+      return { model: { ...input.model, toast: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
 
     case 'time-passed': {
@@ -113,6 +115,22 @@ const updateFromMsg: Module['update'] = (input) => {
 }
 
 const updateFromCmd: Module['update'] = (input) => {
+  const { msgIn } = input
+  if (ShowToastCmd.is(msgIn)) {
+    const toastNew: Toast = {
+      toastId: input.model.runningId,
+      text: msgIn.text,
+      duration: msgIn.duration ?? TimeSpan.seconds(2),
+      variant: msgIn.toastVariant ?? 'info',
+      createdAt: input.ctx.now,
+      errorMsg: msgIn.errorMsg ?? null,
+    }
+
+    return {
+      model: { ...input.model, runningId: input.model.runningId + 1, toast: toastNew },
+    }
+  }
+
   if (!input.msgCmd) return { model: input.model }
 
   const toastCmd = input.msgCmd.c

@@ -1,11 +1,13 @@
 import { describe, expect, test } from 'bun:test'
 import { Err, Ok } from '~/@/result'
-import { didPlaySound, didShowErrorSm, didShowOkSm, didShowWarningSm } from '~/app/@/frontend/cmd'
+import { didShowErrorSm, didShowOkSm, didShowWarningSm } from '~/app/@/frontend/cmd'
 import { FixtureFlowFrontend } from '../../frontend/fixture'
 import { VariantGridShorthand } from '../../variant/grid'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
 import { HintCalculatorFrontend } from './frontend'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { GotHintCalculatorMsg } from './got-hint-calculator-msg'
 
 export const Fixture = async () => {
   const f = await FixtureFlowFrontend()
@@ -43,7 +45,7 @@ describe('HintCalculatorFrontend', () => {
     })
     expect(before.model.open).toBe(null)
     expect(after.model.open).toBe('find-solutions-confirmation')
-    expect(didPlaySound(after)).toBe(true)
+    expect(PlaySoundCmd.did(after)).toBe(true)
   })
 
   test('toggle open dialog', async () => {
@@ -76,7 +78,7 @@ describe('HintCalculatorFrontend', () => {
     })
     expect(before.model.open).toBe('find-solutions-confirmation')
     expect(after.model.open).toBeNull()
-    expect(didPlaySound(after)).toBe(true)
+    expect(PlaySoundCmd.did(after)).toBe(true)
   })
 
   test('handle got msg cmd', async () => {
@@ -84,7 +86,7 @@ describe('HintCalculatorFrontend', () => {
     const actual = HintCalculatorFrontend.update({
       ...f,
       model: HintCalculatorFrontend.init,
-      msgCmd: HintCalculatorFrontend.gotMsg({ t: 'dialog.clicked-open' }),
+      msgIn: GotHintCalculatorMsg.init({ t: 'dialog.clicked-open' }),
     })
     const expected = HintCalculatorFrontend.update({
       ...f,
@@ -109,7 +111,7 @@ describe('HintCalculatorFrontend', () => {
       msg: { t: 'clicked-find-solutions', flow: f.flow },
     })
     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(true)
-    expect(didPlaySound(after)).toBe(true)
+    expect(PlaySoundCmd.did(after)).toBe(true)
     expect(after.eff).not.toBeUndefined()
   })
 
@@ -181,6 +183,6 @@ describe('HintCalculatorFrontend', () => {
     })
     expect(before.model.open).toBe('find-solutions-confirmation')
     expect(after.model.open).toBe(null)
-    expect(didPlaySound(after)).toBe(true)
+    expect(PlaySoundCmd.did(after)).toBe(true)
   })
 })

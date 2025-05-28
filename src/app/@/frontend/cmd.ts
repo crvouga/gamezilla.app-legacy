@@ -317,30 +317,6 @@ export const showToast = <T extends FrontendCmdTypes>(
   }
 }
 
-export const didShowToast = <T>(
-  output?: {
-    msgCmd?: (ToastCmd | T)[] | null
-  },
-  predicate?: (toast: { message: TranslatedText }) => boolean,
-): boolean => {
-  return (
-    output?.msgCmd?.some((cmd) => {
-      return (
-        typeof cmd === 'object' &&
-        cmd !== null &&
-        't' in cmd &&
-        cmd.t === 'toast' &&
-        cmd.c.t === 'enqueue' &&
-        (predicate
-          ? predicate({
-              message: cmd.c.text,
-            })
-          : true)
-      )
-    }) ?? false
-  )
-}
-
 export const showOkSm = <T extends FrontendCmdTypes>(text: TranslatedText): AppFrontendCmd<T>[] => {
   return [
     {
@@ -552,17 +528,6 @@ export const playSound = (
   }
 }
 
-export const didPlaySound = <T>(
-  {
-    msgCmd,
-  }: {
-    msgCmd?: (SoundCmd | T)[] | null | null
-  },
-  src?: string,
-): boolean => {
-  return countPlaySoundCmd({ msgCmd }, src) > 0
-}
-
 export const countPlaySoundCmd = <T>(
   {
     msgCmd,
@@ -636,25 +601,6 @@ export const pushScreen = <T extends FrontendCmdTypes>(screen: Screen, playSound
       playSound,
     },
   }
-}
-
-export const didPushScreen = <T>(
-  output?: {
-    msgCmd?: (ScreenCmd | T)[] | null
-  },
-  predicate?: (screen: Screen) => boolean,
-): boolean => {
-  return Boolean(
-    output?.msgCmd?.some((cmd) => {
-      if (typeof cmd === 'object' && cmd && 't' in cmd && cmd.t === 'current-screen' && cmd.c.t === 'push') {
-        if (predicate) {
-          return predicate(cmd.c.screen)
-        }
-        return true
-      }
-      return false
-    }),
-  )
 }
 
 export const replaceScreen = <T extends FrontendCmdTypes>(screen: Screen, playSound?: boolean): AppFrontendCmd<T> => {

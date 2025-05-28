@@ -3,12 +3,11 @@ import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { BackendCmd } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
-import { UserProfile } from '~/app/@/data/user-profile'
 import { UserId } from '~/app/@/data/user-id'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
-import { SpaceFrontendCmd } from './@/frontend/cmd'
 import { SpacesCore } from './core/core'
 import { ISpacesCoreAsync } from './core/core-async/interface'
 import { EndSpaceTypes } from './end-space'
@@ -108,10 +107,6 @@ type SpaceFrontendCtx = AnonymousFrontendCtx | AppFrontendCtx
 
 export type FrontendModule = AppFrontendModule<{
   Ctx: SpaceFrontendCtx
-  MsgCmdIn: SpaceFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>
   MsgEvtIn: AppFrontendEvt
   Model: ModelFrontend
   Msg: MsgFrontend

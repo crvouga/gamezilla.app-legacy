@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+
 import { FixtureScreenPlayPuzzleFrontend } from '../@/fixture/frontend'
 import { LastPuzzleFrontend } from './frontend'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
 const Fixture = async () => {
   const f = await FixtureScreenPlayPuzzleFrontend()
@@ -71,7 +72,7 @@ describe('LastPuzzleFrontend', () => {
     const output = f.update(initial, [
       { msgSpace: withEventMeta({ t: 'user-clicked-select-next-pack', userId: f.hostId }) },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   it('should render exit screen action when last puzzle is completed', async () => {

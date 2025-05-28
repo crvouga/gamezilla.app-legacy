@@ -1,4 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
+import { sleep } from '~/@/promise/sleep'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconCheckmark } from '~/@/ui/icon/icon-checkmark'
@@ -7,8 +8,8 @@ import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-pro
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { Flow } from '../flow'
-import { FlowFrontendCmdInternal } from '../frontend/cmd'
 import { HintCalculatorFrontend } from '../solutions/hint-calculator/frontend'
+import { GotHintCalculatorMsg } from '../solutions/hint-calculator/got-hint-calculator-msg'
 import { SolutionHash } from '../solutions/solution-hash/solution-hash'
 import { SolutionsLoaderFrontend } from '../solutions/solutions-loader/frontend'
 import { Variant, VariantBoard } from '../variant'
@@ -16,7 +17,6 @@ import { ModePlayFrontendCtx } from './frontend/ctx'
 import { Model, Msg, toFlow } from './mode-play'
 import { UseHint } from './use-hint'
 import { UseHintFrontend } from './use-hint/frontend'
-import { sleep } from '~/@/promise/sleep'
 
 const View = (input: {
   flow: Variant.Model
@@ -28,7 +28,7 @@ const View = (input: {
   const flow = toFlow(input.model, input.flow)
 
   return (
-    <div className='relative aspect-square h-full max-h-full w-full touch-none select-none overflow-hidden'>
+    <div className='relative aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none'>
       <VariantBoard.View
         disabled={input.disabled}
         model={flow}
@@ -74,13 +74,13 @@ const viewResetAction = (input: {
 const viewActions = (input: {
   model: Model
   dispatch: (m: Msg) => void
-  dispatchCmd: (m: FlowFrontendCmdInternal) => void
+  dispatchCmd: (m: unknown) => void
   ctx: ModePlayFrontendCtx
 }): ScreenAction[] => {
   return [
     ...HintCalculatorFrontend.viewActions({
       ctx: input.ctx,
-      dispatch: (c) => input.dispatchCmd(HintCalculatorFrontend.gotMsg(c)),
+      dispatch: (c) => input.dispatchCmd(GotHintCalculatorMsg.init(c)),
       model: input.ctx.HintCalculator,
     }),
     ...UseHintFrontend.viewAction({
@@ -134,7 +134,7 @@ const animateCheckmark = (input: { duration: TimeSpan }) => async (node: HTMLEle
 
 const subscriptions = <TMsg,>(
   input: { model: Model; ctx: ModePlayFrontendCtx },
-  map: (c: FlowFrontendCmdInternal) => TMsg,
+  map: (c: unknown) => TMsg,
 ): Sub<TMsg> => {
   const solutionHash = SolutionHash.init(input.ctx.flow)
   if (!solutionHash) return Sub.None
@@ -147,7 +147,7 @@ const subscriptions = <TMsg,>(
 const TestView = (input: {
   model: Model
   dispatch: (m: Msg) => void
-  dispatchCmd: (m: FlowFrontendCmdInternal) => void
+  dispatchCmd: (m: unknown) => void
   ctx: ModePlayFrontendCtx
 }) => {
   return (

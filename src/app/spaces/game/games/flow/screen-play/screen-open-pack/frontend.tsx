@@ -1,19 +1,21 @@
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutHostSettingUpGame } from '../../../@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { PacksDbQuery } from '../../@/pack/pack-db/query'
 import { PackLoaderFrontend } from '../../@/pack/pack-loader/frontend'
+import { GotPackLoaderMsg } from '../../@/pack/pack-loader/got-pack-loader-msg'
 import type { FrontendModule } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-clicked-open-pack-puzzle-grid-item': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)] }
     }
     case 'user-clicked-exit-play-mode-button': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] }
     }
   }
 
@@ -41,8 +43,8 @@ const toQuery = (_input: { ctx: { currentUserId: UserId } }): PacksDbQuery => {
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return PackLoaderFrontend.watch(input.ctx, toQuery(input), (c) => ({
-    t: 'got-msg-cmd',
-    c: PackLoaderFrontend.gotMsg(c),
+    t: 'got-msg-out',
+    c: GotPackLoaderMsg.init(c),
   }))
 }
 

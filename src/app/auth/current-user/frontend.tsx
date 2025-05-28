@@ -3,7 +3,10 @@ import { Sub } from '~/@/sub'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, playSound, replaceScreen, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { UserSession } from '../@/user-session/user-session'
 import { FrontendModule, ModelFrontend, MsgFrontend } from './types'
@@ -88,10 +91,10 @@ const watchForLogin = (
   if (before.t === 'logged-out' && after.t === 'logged-in') {
     return {
       model: input.modelAfter,
-      msgCmd: [
-        replaceScreen({ n: 'spaces', t: 'space-list' }, false),
-        playSound(APP_SOUND.celebration),
-        showToast(input.ctx.t('auth.logged-in')),
+      msgOut: [
+        ReplaceScreenCmd.init({ n: 'spaces', t: 'space-list' }, false),
+        PlaySoundCmd.init(APP_SOUND.celebration),
+        ShowToastCmd.init(input.ctx.t('auth.logged-in')),
       ],
     }
   }

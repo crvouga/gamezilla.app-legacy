@@ -1,8 +1,8 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { FlowFrontendCmd } from '../@/frontend/cmd'
 import { ScreenPackBuilderOpenFrontend } from './pack-builder/screen-pack-builder-open/frontend'
 import { ScreenPackBuilderFrontend } from './pack-builder/screen-pack-builder/frontend'
 import { ScreenPuzzleBuilderOpenFrontend } from './puzzle-builder/screen-puzzle-builder-open/frontend'
@@ -24,9 +24,8 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const updateScreenPackBuilder: FrontendModule['update'] = (input) => {
-  if (!input.modelSpace.screenPackBuilder) {
-    return { model: input.model }
-  }
+  if (!input.modelSpace.screenPackBuilder) return { model: input.model }
+
   const updated = ScreenPackBuilderFrontend.update({
     ...input,
     modelSpace: input.modelSpace.screenPackBuilder,
@@ -34,6 +33,7 @@ const updateScreenPackBuilder: FrontendModule['update'] = (input) => {
     msg: input.msg?.t === 'got-screen-pack-builder-msg' ? input.msg.c : null,
     msgBackend: input.msgBackend?.t === 'got-screen-pack-builder-msg' ? input.msgBackend.c : null,
     msgSpace: input.msgSpace?.t === 'got-screen-pack-builder-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
+    msgIn: input.msgIn,
   })
   return {
     model: {
@@ -41,8 +41,7 @@ const updateScreenPackBuilder: FrontendModule['update'] = (input) => {
       screenPackBuilder: updated,
     },
     eff: Eff.tag('got-screen-pack-builder-msg', updated.eff),
-    msgCmd: FlowFrontendCmd.tag('got-screen-pack-builder-msg', updated.msgCmd),
-    msgEvt: updated.msgEvt,
+    msgOut: updated.msgOut,
     msgSpace: updated.msgSpace?.map((c) => ({ ...c, t: 'got-screen-pack-builder-msg', c })),
   }
 }
@@ -52,7 +51,7 @@ const updateBackButton: FrontendModule['update'] = (input) => {
     case 'user-clicked-back-button': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)],
       }
     }
     default: {
@@ -68,8 +67,8 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'got-msg-space': {
       return { model: input.model, msgSpace: [input.msg.c] }
     }
-    case 'got-msg-cmd': {
-      return { model: input.model, msgCmd: [input.msg.c] }
+    case 'got-msg-out': {
+      return { model: input.model, msgOut: [input.msg.c] }
     }
     default: {
       return { model: input.model }

@@ -3,9 +3,11 @@ import { isErr, RemoteResult, Result } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { IconPlus } from '~/@/ui/icon/icon-plus'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, playSound, showOkSm, showErrSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND, showErrSm } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowOkSmall } from '~/app/@/frontend/show-ok-sm'
 import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
-import { FlowFrontendCmd } from '../../../../@/frontend/cmd'
+import { AddPuzzlesCmd } from '../../../../@/frontend/add-puzzles-cmd'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { IPuzzleDb } from '../../../../@/puzzle/puzzle-db'
 import { Variant, VariantDimensions } from '../../../../@/variant'
@@ -20,7 +22,7 @@ const update: FrontendModule['update'] = (input) => {
           ...input.model,
           puzzleCreateRequest: RemoteResult.Loading,
         },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(dispatch) {
           const result = await createNewPuzzle({
             createdByUserId: input.ctx.currentUser.userId,
@@ -67,26 +69,12 @@ const update: FrontendModule['update'] = (input) => {
 
       const puzzleNew = input.msgSpace.created.value
 
-      const msgCmd: FlowFrontendCmd<{
-        MsgFrontend: MsgFrontend
-        MsgToBackend: MsgToBackend
-      }>[] = [
-        ...showOkSm<{
-          MsgFrontend: MsgFrontend
-          MsgToBackend: MsgToBackend
-        }>(input.ctx.t('flow.puzzle-created')),
-        {
-          t: 'flow-cmd.add-puzzles',
-          puzzles: {
-            [puzzleNew.id]: puzzleNew,
-          },
-          causedBy: input,
-        },
-      ]
-
       return {
         model: input.model,
-        msgCmd,
+        msgOut: [
+          ShowOkSmall.init(input.ctx.t('flow.puzzle-created')),
+          AddPuzzlesCmd.init({ [puzzleNew.id]: puzzleNew }, input),
+        ],
       }
     }
 

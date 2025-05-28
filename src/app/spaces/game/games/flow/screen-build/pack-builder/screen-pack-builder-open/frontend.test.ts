@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { Pack } from '../../../@/pack/pack'
 import { FixtureFlowBuilderFrontend } from '../../@/fixture/frontend'
 
@@ -40,6 +40,6 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.count(output)).toBe(1)
   })
 })

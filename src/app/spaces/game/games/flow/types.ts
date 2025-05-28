@@ -7,8 +7,6 @@ import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-b
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { FlowBackendCtx } from './@/backend/ctx'
-import { FlowFrontendCmd, FlowFrontendCmdLocal } from './@/frontend/cmd'
-import { FlowFrontendEvtIn } from './@/frontend/evt'
 import { Pack } from './@/pack/pack'
 import type { PackId } from './@/pack/pack-id'
 import { PackLoaderTypes } from './@/pack/pack-loader'
@@ -135,13 +133,6 @@ export type FrontendModule = GameFrontendModule<{
   MsgSpace: MsgSpace
   ModelSpace: ModelSpace
   Ctx: SpaceFrontendCtx
-  MsgCmdOut: FlowFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>
-  MsgCmdIn: FlowFrontendCmdLocal
-  MsgEvtIn: FlowFrontendEvtIn
-  MsgEvtOut: FlowFrontendEvtIn
 }>
 
 export type BackendModule = GameBackendModule<{

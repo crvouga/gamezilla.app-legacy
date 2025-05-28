@@ -10,7 +10,7 @@ import { Typography } from '~/@/ui/typography'
 import { Checkbox, CheckboxState } from '~/@/ui/checkbox/checkbox'
 import { Clickable, ClickableTransparent } from '~/@/ui/clickable'
 import { Gutter } from '~/@/ui/gutter'
-import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
+
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { VariantBoard } from '../../variant'
 import { Puzzle } from '../puzzle'
@@ -18,6 +18,7 @@ import { PuzzleQuery } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './query-form'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgInCmdFrontend } from './types'
+import { AddPuzzlesCmd } from '../../frontend/add-puzzles-cmd'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
@@ -40,8 +41,8 @@ const update: FrontendModule['update'] = (input) => {
             [PuzzleQuery.toKey(input.msg.query)]: input.msg.puzzles.map((p) => p.id),
           },
         },
-        msgCmd: [
-          FlowFrontendCmdRoot.addPuzzles(
+        msgOut: [
+          AddPuzzlesCmd.init(
             input.msg.puzzles.reduce<{ [k: PuzzleId]: Puzzle }>((acc, p) => ({ ...acc, [p.id]: p }), {}),
             input.msg,
           ),
@@ -175,7 +176,7 @@ const ViewListItem = (input: {
         <VariantBoard.View disabled model={input.puzzle.flow} />
       </div>
 
-      <div className='flex flex-col gap-1 overflow-hidden truncate px-4'>
+      <div className='flex flex-col gap-1 truncate overflow-hidden px-4'>
         <Typography
           variant='body'
           color='text-primary'

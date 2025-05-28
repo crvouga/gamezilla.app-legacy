@@ -1,13 +1,16 @@
-import { IconUserGroup } from '~/@/ui/icon/icon-user-group'
 import { DropDownAlignment } from '~/@/ui/drop-down/drop-down-alignment'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'
+import { IconUserGroup } from '~/@/ui/icon/icon-user-group'
 import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, openProfile, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND, openProfile } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
+import { OpenUserDetailsCmd } from '../../@/frontend/open-user-details-cmd'
 import { SectionPeopleList } from '../../@/ui/section-people-list'
 import { SectionPersonDetails } from '../../@/ui/section-person-details'
 import { SpaceFrontendModule } from '../../architecture/space-frontend'
@@ -33,7 +36,7 @@ const updateUserPreview: SpaceFrontendModule['update'] = ({ msg, model }) => {
     case 'people-action.clicked-preview-user-link': {
       if (!model.openedPreviewUserId) return { model }
 
-      return { model, msgCmd: [playSound(APP_SOUND.navForwardMin), openProfile(model.openedPreviewUserId)] }
+      return { model, msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin), openProfile(model.openedPreviewUserId)] }
     }
   }
   return { model }
@@ -42,49 +45,50 @@ const updateUserPreview: SpaceFrontendModule['update'] = ({ msg, model }) => {
 const updatePeopleModals: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
     case 'people-action.closed-surface': {
-      return { model: { ...model, opened: null }, msgCmd: [playSound(APP_SOUND.surfaceClosed)] }
+      return { model: { ...model, opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)] }
     }
 
     case 'people-action.clicked-people-action': {
       const isOpen = model.opened === 'people.people-surface'
       if (isOpen) {
-        return { model: { ...model, opened: null }, msgCmd: [playSound(APP_SOUND.surfaceClosed)] }
+        return { model: { ...model, opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)] }
       }
-      return { model: { ...model, opened: 'people.people-surface' }, msgCmd: [playSound(APP_SOUND.surfaceOpened)] }
+      return {
+        model: { ...model, opened: 'people.people-surface' },
+        msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceOpened)],
+      }
     }
 
     case 'people-action.clicked-person-list-item': {
       return {
         model: { ...model, openedPreviewUserId: msg.userId, opened: 'people.person-preview-surface' },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
       }
     }
   }
   return { model }
 }
 
-const updateFromCmd: SpaceFrontendModule['update'] = ({ msgCmd, model }) => {
-  switch (msgCmd?.t) {
-    case 'space-cmd.open-user-details': {
-      return {
-        model: {
-          ...model,
-          openedPreviewUserId: msgCmd.userId,
-          opened: 'people.person-preview-surface',
-        },
-        msgCmd: [playSound(APP_SOUND.tap)],
-      }
+const updateFromCmd: SpaceFrontendModule['update'] = ({ msgIn, model }) => {
+  if (OpenUserDetailsCmd.is(msgIn)) {
+    return {
+      model: {
+        ...model,
+        openedPreviewUserId: msgIn.userId,
+        opened: 'people.person-preview-surface',
+      },
+      msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
     }
   }
+
   return { model }
 }
 
-const updateFromEvent: SpaceFrontendModule['update'] = ({ msgEvt, model }) => {
-  switch (msgEvt?.t) {
-    case 'screen-evt.screen-changed': {
-      return { model: { ...model, opened: null } }
-    }
+const updateFromEvent: SpaceFrontendModule['update'] = ({ msgIn, model }) => {
+  if (ScreenChangedEvt.is(msgIn)) {
+    return { model: { ...model, opened: null } }
   }
+
   return { model }
 }
 

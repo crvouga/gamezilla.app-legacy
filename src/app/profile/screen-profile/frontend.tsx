@@ -41,7 +41,7 @@ const update: FrontendModule['update'] = (input) => {
     case 'clicked-logout-button': {
       return { model: input.model, msgOut: [LogoutCmd.init()] }
     }
-    case 'got-msg-cmd': {
+    case 'got-msg-out': {
       return { model: input.model, msgOut: [input.msg.c] }
     }
   }
@@ -56,7 +56,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
       pagination: { limit: 1, offset: 0 },
       whereAnd: { userId: { equals: userId } },
     },
-    (c) => ({ t: 'got-msg-cmd', c: ProfileLoaderFrontend.gotMsg(c) }),
+    (c) => ({ t: 'got-msg-out', c: ProfileLoaderFrontend.gotMsg(c) }),
   )
 }
 

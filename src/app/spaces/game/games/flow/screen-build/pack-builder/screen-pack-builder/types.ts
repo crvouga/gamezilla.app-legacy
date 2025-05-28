@@ -1,14 +1,10 @@
 import { p } from '~/@/parser'
 import { Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
-import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { GameBackendModule } from '../../../../@/architecture/game-backend-v2'
 import { GameFrontendModule } from '../../../../@/architecture/game-frontend-v2'
 import { FlowBackendCtx } from '../../../@/backend/ctx'
-import { FlowFrontendCmd, FlowFrontendCmdInternal } from '../../../@/frontend/cmd'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
-import { FlowFrontendEvtIn } from '../../../@/frontend/evt'
 import { ModePlay } from '../../../@/mode-play'
 import { Pack } from '../../../@/pack/pack'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
@@ -31,12 +27,7 @@ export const initFrontend: ModelFrontend = {}
 //
 //
 
-export type MsgFrontend =
-  | { t: 'got-msg-space'; c: MsgSpace }
-  | {
-      t: 'got-msg-cmd'
-      c: FlowFrontendCmdInternal
-    }
+export type MsgFrontend = { t: 'got-msg-space'; c: MsgSpace } | { t: 'got-msg-out'; c: unknown }
 
 export type MsgBackend = { t: 'noop' }
 
@@ -162,12 +153,6 @@ export type FrontendModule = GameFrontendModule<{
   MsgSpace: MsgSpace
   ModelSpace: ModelSpace
   Ctx: FlowFrontendCtx
-  MsgCmdOut: FlowFrontendCmd<{
-    MsgToBackend: MsgToBackend
-    MsgFrontend: MsgFrontend
-  }>
-  MsgEvtIn: FlowFrontendEvtIn
-  MsgCmdIn: null
 }>
 
 export type BackendModule = GameBackendModule<{
@@ -176,8 +161,6 @@ export type BackendModule = GameBackendModule<{
   MsgSpace: MsgSpace
   ModelSpace: ModelSpace
   Ctx: FlowBackendCtx
-  MsgEvtIn: SpaceBackendEvt
   Msg: MsgBackend
-  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
   Deps: null
 }>

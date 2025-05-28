@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { AppFrontendEvt } from '~/app/@/frontend/evt'
-import { APP_SOUND, SoundCmd, playSound } from '../../@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { APP_SOUND } from '../../@/frontend/cmd'
 import { FixtureAppFrontend } from '../../@/frontend/fixture'
 import * as Sound from './sound'
 
@@ -12,11 +12,7 @@ type Input =
     }
   | {
       ctx?: AppFrontendCtx
-      msgCmd: SoundCmd
-    }
-  | {
-      ctx?: AppFrontendCtx
-      msgEvt: AppFrontendEvt
+      msgIn: unknown
     }
 
 const Fixture = async () => {
@@ -51,7 +47,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const after = f.update(f.init, [
       {
-        msgCmd: playSound(APP_SOUND.tap),
+        msgIn: PlaySoundCmd.init(APP_SOUND.tap),
       },
     ])
     expect(after.eff).toBeTruthy()

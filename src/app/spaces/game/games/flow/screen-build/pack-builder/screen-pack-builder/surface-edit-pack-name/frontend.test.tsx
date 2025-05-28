@@ -3,7 +3,7 @@ import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
 import { EditPackNameFrontend } from './frontend'
 import { MsgFrontend } from '../types'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
 export const Fixture = async () => {
   const f = await FixturePackBuilderFrontend()
@@ -20,7 +20,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.initial, [
       { msgSpace: withEventMeta({ t: 'edit-pack-name.user-clicked-open-drawer-button', userId: f.hostId }) },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
   test('close drawer', async () => {
     const f = await Fixture()

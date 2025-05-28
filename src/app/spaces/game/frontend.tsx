@@ -2,9 +2,10 @@ import { Eff } from '~/@/eff'
 import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { UserAccount } from '~/app/@/data/user-account'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ExitGameCmd } from '../@/frontend/exit-game-cmd'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { Space } from '../core/space'
@@ -48,27 +49,29 @@ const updateFromMsg: SpaceFrontendModule['update'] = ({ msg, model, ctx }) => {
   }
   return { model }
 }
-const updateFromCmd: SpaceFrontendModule['update'] = ({ msgCmd, model, ctx }) => {
-  switch (msgCmd?.t) {
-    case 'space-cmd.exit-game': {
-      const currentUserId = ctx.currentUser?.userId
-      if (!currentUserId) return { model }
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, currentUserId)
-      if (!currentUserSpaceId) return { model }
+const updateFromCmd: SpaceFrontendModule['update'] = ({ msgIn, model, ctx }) => {
+  if (ExitGameCmd.is(msgIn)) {
+    const currentUserId = ctx.currentUser?.userId
 
-      return {
-        model,
-        msgSpace: [
-          withEventId({
-            t: 'user-inputted-game',
-            game: null,
-            spaceId: currentUserSpaceId,
-            userId: currentUserId,
-          }),
-        ],
-      }
+    if (!currentUserId) return { model }
+
+    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, currentUserId)
+
+    if (!currentUserSpaceId) return { model }
+
+    return {
+      model,
+      msgSpace: [
+        withEventId({
+          t: 'user-inputted-game',
+          game: null,
+          spaceId: currentUserSpaceId,
+          userId: currentUserId,
+        }),
+      ],
     }
   }
+
   return { model }
 }
 
@@ -83,7 +86,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
 
       return {
         model: input.model,
-        msgCmd: [playSound(input.msgSpace.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin)],
+        msgOut: [PlaySoundCmd.init(input.msgSpace.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin)],
       }
     }
   }
@@ -109,7 +112,7 @@ const inputToSpaceId = (currentUser: UserAccount, input: Parameters<SpaceFronten
 }
 
 const updateGame: SpaceFrontendModule['update'] = (input) => {
-  const currentUser = input.ctx.currentUser ?? input.msgEvt?.currentUser ?? null
+  const currentUser = input.ctx.currentUser ?? null
 
   if (!currentUser) return { model: input.model }
 
@@ -137,18 +140,13 @@ const updateGame: SpaceFrontendModule['update'] = (input) => {
     msgSpace: input.msgSpace?.t === 'game' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     modelSpace: spaceState.game,
     msgBackend: input.msgBackend?.t === 'game' ? input.msgBackend.c : null,
-    msgCmd: null,
-    msgEvt: input.msgEvt,
     msg: input.msg?.t === 'game' ? input.msg.c : null,
+    msgIn: input.msgIn,
   })
 
   return {
     model: { ...input.model, games: { ...input.model.games, [spaceId]: gameUpdated.model } },
-    msgCmd: SpaceFrontendCmd.map(
-      gameUpdated.msgCmd,
-      (c) => ({ t: 'game', c, spaceId }),
-      (c) => ({ t: 'game', c, spaceId }),
-    ),
+    msgOut: gameUpdated.msgOut,
     eff: Eff.map(gameUpdated.eff, (c) => ({ t: 'game', c, spaceId })),
     msgSpace: gameUpdated.msgSpace?.map((c) => withEventId<MsgSpace>({ spaceId, t: 'game', c })),
     msgEvt: [],

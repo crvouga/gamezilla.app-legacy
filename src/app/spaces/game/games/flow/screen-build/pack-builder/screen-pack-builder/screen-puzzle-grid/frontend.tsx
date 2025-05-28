@@ -1,5 +1,6 @@
 import { IconPen } from '~/@/ui/icon/icon-pen'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { PackPuzzleGridUI } from '../../../../@/pack/pack-puzzle-grid-ui'
 import { ScreenPackBuildSpace } from '../space/space'
@@ -8,11 +9,11 @@ import type { FrontendModule } from '../types'
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'screen-pack-builder.user-clicked-pack-item': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)] }
     }
 
     case 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button': {
-      return { model: input.model, msgCmd: [playSound(APP_SOUND.navForwardMin)] }
+      return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)] }
     }
   }
   return { model: input.model }

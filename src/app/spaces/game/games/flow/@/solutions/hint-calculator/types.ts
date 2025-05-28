@@ -1,14 +1,10 @@
+import { p } from '~/@/parser'
 import { RemoteResult, Result } from '~/@/result'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
-import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
-import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { FlowBackendCtx } from '../../backend/ctx'
-import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
-import { FlowFrontendEvtIn } from '../../frontend/evt'
 import { Variant } from '../../variant'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
@@ -30,27 +26,25 @@ export const initFrontend: ModelFrontend = {
   requests: {},
 }
 
-export type FoundSolutionResult = Result<string, { solutions: Solutions }>
+export const FoundSolutionResult = Result.parser(p.str, p.obj({ solutions: Solutions }))
+export type FoundSolutionResult = p.Infer<typeof FoundSolutionResult>
 
-export type MsgFrontend =
-  | { t: 'clicked-find-solutions'; flow: Variant.Model }
-  | { t: 'found-solution'; flow: Variant.Model; found: FoundSolutionResult }
-  | { t: 'dialog.clicked-open' }
-  | { t: 'dialog.clicked-close' }
+export const MsgFrontend = p.or(
+  p.obj({ t: p.l('clicked-find-solutions'), flow: Variant.Model }),
+  p.obj({ t: p.l('found-solution'), flow: Variant.Model, found: FoundSolutionResult }),
+  p.obj({ t: p.l('dialog.clicked-open') }),
+  p.obj({ t: p.l('dialog.clicked-close') }),
+)
+export type MsgFrontend = p.Infer<typeof MsgFrontend>
 
-export type MsgBackend = { t: 'noop' }
+export const MsgBackend = p.obj({ t: p.l('noop') })
+export type MsgBackend = p.Infer<typeof MsgBackend>
 
-export type MsgToBackend = { t: 'noop' }
+export const MsgToBackend = p.obj({ t: p.l('noop') })
+export type MsgToBackend = p.Infer<typeof MsgToBackend>
 
-export type MsgToFrontend = { t: 'noop' }
-
-export type MsgInCmdFrontend = {
-  t: 'flow-cmd.got-hint-calculator-cmd'
-  c: {
-    t: 'got-msg'
-    msg: MsgFrontend
-  }
-}
+export const MsgToFrontend = p.obj({ t: p.l('noop') })
+export type MsgToFrontend = p.Infer<typeof MsgToFrontend>
 
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend
@@ -60,10 +54,7 @@ export type FrontendModule = AppFrontendModule<{
   Ctx: FlowFrontendCtxBase & {
     flow?: Variant.Model | null
   }
-  MsgEvtIn: FlowFrontendEvtIn
-  MsgCmdOut: FlowFrontendCmdRoot | SpaceFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>
-  MsgCmdIn: MsgInCmdFrontend
-  MsgEvtOut: SpaceFrontendEvt
+
   ViewSlot: {}
   ViewEmit: {}
 }>
@@ -74,5 +65,4 @@ export type BackendModule = AppBackendModule<{
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   Ctx: FlowBackendCtx
-  MsgEvtIn: SpaceBackendEvt
 }>

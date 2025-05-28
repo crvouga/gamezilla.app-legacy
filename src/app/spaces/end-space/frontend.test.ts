@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { didPlaySound, didPushScreen } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 
 const Fixture = async () => {
@@ -24,7 +25,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didPushScreen(output)).toBe(true)
+    expect(PushScreenCmd.did(output)).toBe(true)
   })
 
   it('should NOT redirect to space list after ending space if NOT on space screen', async () => {
@@ -38,7 +39,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didPushScreen(output)).toBe(false)
+    expect(PushScreenCmd.did(output)).toBe(false)
   })
 
   it('should play sound after ending space', async () => {
@@ -51,6 +52,6 @@ describe(import.meta.file, () => {
         ctx: { ...f.ctx, currentScreen: { n: 'spaces', t: 'space-list' } },
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 })

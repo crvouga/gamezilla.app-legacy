@@ -1,33 +1,33 @@
 import { Eff } from '~/@/eff'
 import { withEventId } from '~/@/event-sourced/event'
-import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
 import { IconScrewdriverWrench } from '~/@/ui/icon/icon-screwdriver-wrench'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
-import { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/cover-art'
-import { FlowFrontendCmd } from './@/frontend/cmd'
+import { AddPacksCmd } from './@/frontend/add-packs-cmd'
+import { AddPuzzlesCmd } from './@/frontend/add-puzzles-cmd'
+import { AddSolutionsCmd } from './@/frontend/add-solutions-cmd'
 import type { FlowFrontendCtx } from './@/frontend/ctx'
-import { FlowFrontendEvt } from './@/frontend/evt'
 import { IPackDb, PackDb } from './@/pack/pack-db'
 import { PackLoaderTypes } from './@/pack/pack-loader'
 import { PackLoaderFrontend } from './@/pack/pack-loader/frontend'
 import { IPuzzleDb, PuzzleDb } from './@/puzzle/puzzle-db'
 import { PuzzleLoaderTypes } from './@/puzzle/puzzle-loader'
 import { PuzzleLoaderFrontend } from './@/puzzle/puzzle-loader/frontend'
+import { HintCalculatorTypes } from './@/solutions/hint-calculator'
+import { HintCalculatorFrontend } from './@/solutions/hint-calculator/frontend'
 import { Solutions } from './@/solutions/solutions'
 import { SolutionsDb } from './@/solutions/solutions-db/impl'
 import { ISolutionsDb } from './@/solutions/solutions-db/interface'
-import { HintCalculatorTypes } from './@/solutions/hint-calculator'
-import { HintCalculatorFrontend } from './@/solutions/hint-calculator/frontend'
 import { SolutionsLoaderTypes } from './@/solutions/solutions-loader'
 import { SolutionsLoaderFrontend } from './@/solutions/solutions-loader/frontend'
 import { ScreenBuildFrontend } from './screen-build/frontend'
 import { ScreenPlayFrontend } from './screen-play/frontend'
-import type { FrontendModule, ModelFrontend, MsgFrontend, MsgToBackend } from './types'
+import type { FrontendModule } from './types'
 
 const init: FrontendModule['init'] = {
   screenBuild: ScreenBuildFrontend.init,
@@ -63,55 +63,7 @@ const toFlowFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): Flow
   }
 }
 
-const update = (
-  input: Parameters<FrontendModule['update']>[0],
-): ReturnType<FrontendModule['update']> & {
-  msgCmd?: SpaceFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>[]
-} => {
-  const acc = updateChild(input)
-  const updated = updateLoop(input, acc)
-  return {
-    ...updated,
-    msgCmd: FlowFrontendCmd.toSpaceFrontendCmd(updated.msgCmd),
-  }
-}
-
-const updateLoop = (
-  input: Parameters<FrontendModule['update']>[0],
-  acc: ReturnType<FrontendModule['update']>,
-): ReturnType<FrontendModule['update']> => {
-  const [evt, ...restEvt] = FlowFrontendEvt.toFlowFrontendEvt(acc.msgEvt)
-
-  if (evt) {
-    const updated = updateChild({ ctx: input.ctx, modelSpace: input.modelSpace, model: acc.model, msgEvt: evt })
-
-    return updateLoop(input, {
-      model: updated.model,
-      msgEvt: Msg.batch(restEvt, updated.msgEvt, FlowFrontendEvt.toSpaceFrontendEvt(acc.msgEvt)),
-      eff: Eff.batch(acc.eff, updated.eff),
-      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
-      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-    })
-  }
-
-  const [cmd, ...restCmd] = FlowFrontendCmd.toFlowFrontendCmd(acc.msgCmd)
-
-  if (cmd) {
-    const updated = updateChild({ ctx: input.ctx, modelSpace: input.modelSpace, model: acc.model, msgCmd: cmd })
-
-    return updateLoop(input, {
-      model: updated.model,
-      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-      eff: Eff.batch(acc.eff, updated.eff),
-      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
-      msgCmd: Msg.batch(restCmd, updated.msgCmd, FlowFrontendCmd.toSpaceFrontendCmd(acc.msgCmd)),
-    })
-  }
-
-  return acc
-}
-
-const updateChild: FrontendModule['update'] = (input) => {
+const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
     { model: input.model },
     (model) => GameMainMenu.update({ ...input, model }),
@@ -133,16 +85,13 @@ const updatePuzzleLoader: FrontendModule['update'] = (input) => {
   const updated = PuzzleLoaderFrontend.update({
     ctx,
     model: input.model.puzzleLoader,
-    msg: null,
-    msgCmd: input.msgCmd?.t === 'flow-cmd.got-puzzle-loader-cmd' ? input.msgCmd : null,
-    msgEvt: input.msgEvt,
+    msgIn: input.msgIn,
   })
 
   return {
     model: { ...input.model, puzzleLoader: updated.model },
     eff: Eff.tag('got-puzzle-loader-msg', updated.eff),
-    msgCmd: FlowFrontendCmd.tag('got-puzzle-loader-msg', updated.msgCmd),
-    msgEvt: [],
+    msgOut: updated.msgOut,
   }
 }
 
@@ -153,16 +102,14 @@ const updatePackLoader: FrontendModule['update'] = (input) => {
     ctx,
     model: input.model.packLoader,
     msg: input.msg?.t === 'got-pack-loader-msg' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'flow-cmd.got-pack-loader-cmd' ? input.msgCmd : null,
-    msgEvt: input.msgEvt,
     msgBackend: input.msgBackend?.t === 'got-pack-loader-msg' ? input.msgBackend.c : null,
+    msgIn: input.msgIn,
   })
 
   return {
     model: { ...input.model, packLoader: updated.model },
     eff: Eff.tag('got-pack-loader-msg', updated.eff),
-    msgCmd: FlowFrontendCmd.tag('got-pack-loader-msg', updated.msgCmd),
-    msgEvt: [],
+    msgOut: updated.msgOut,
   }
 }
 
@@ -173,15 +120,12 @@ const updateHintCalculator: FrontendModule['update'] = (input) => {
     ctx,
     model: input.model.hintCalculator,
     msg: input.msg?.t === 'got-hint-calculator-msg' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'flow-cmd.got-hint-calculator-cmd' ? input.msgCmd : null,
-    msgEvt: input.msgEvt,
   })
 
   return {
     model: { ...input.model, hintCalculator: updated.model },
     eff: Eff.tag('got-hint-calculator-msg', updated.eff),
-    msgCmd: FlowFrontendCmd.tag('got-hint-calculator-msg', updated.msgCmd),
-    msgEvt: [],
+    msgOut: updated.msgOut,
   }
 }
 
@@ -192,15 +136,13 @@ const updateSolutionsLoader: FrontendModule['update'] = (input) => {
     ctx,
     model: input.model.solutionsLoader,
     msg: input.msg?.t === 'got-solutions-loader-msg' ? input.msg.c : null,
-    msgCmd: input.msgCmd?.t === 'flow-cmd.got-solutions-loader-cmd' ? input.msgCmd : null,
-    msgEvt: input.msgEvt,
+    msgIn: input.msgIn,
   })
 
   return {
     model: { ...input.model, solutionsLoader: updated.model },
     eff: Eff.tag('got-solutions-loader-msg', updated.eff),
-    msgCmd: FlowFrontendCmd.tag('got-solutions-loader-msg', updated.msgCmd),
-    msgEvt: [],
+    msgOut: updated.msgOut,
   }
 }
 
@@ -211,8 +153,7 @@ const updateScreenPlay: FrontendModule['update'] = (input) => {
     ctx,
     modelSpace: input.modelSpace.screenPlay,
     model: input.model.screenPlay,
-    msgCmd: null,
-    msgEvt: input.msgEvt,
+    msgIn: input.msgIn,
     msgBackend: input.msgBackend?.t === 'got-screen-play-msg' ? input.msgBackend.c : null,
     msgSpace: input.msgSpace?.t === 'got-screen-play-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     msg: input.msg?.t === 'got-screen-play-msg' ? input.msg.c : null,
@@ -221,8 +162,7 @@ const updateScreenPlay: FrontendModule['update'] = (input) => {
   return {
     model: { ...input.model, screenPlay: updated.model },
     eff: Eff.tag('got-screen-play-msg', updated.eff),
-    msgEvt: [],
-    msgCmd: FlowFrontendCmd.tag('got-screen-play-msg', updated.msgCmd),
+    msgOut: updated.msgOut,
     msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'got-screen-play-msg' })),
   }
 }
@@ -234,8 +174,7 @@ const updateScreenBuild: FrontendModule['update'] = (input) => {
     ctx,
     modelSpace: input.modelSpace.screenBuild,
     model: input.model.screenBuild,
-    msgCmd: null,
-    msgEvt: input.msgEvt,
+    msgIn: input.msgIn,
     msgBackend: input.msgBackend?.t === 'got-screen-build-msg' ? input.msgBackend.c : null,
     msgSpace: input.msgSpace?.t === 'got-screen-build-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     msg: input.msg?.t === 'got-screen-build-msg' ? input.msg.c : null,
@@ -244,9 +183,8 @@ const updateScreenBuild: FrontendModule['update'] = (input) => {
   return {
     model: { ...input.model, screenBuild: updated.model },
     eff: Eff.tag('got-screen-build-msg', updated.eff),
-    msgCmd: FlowFrontendCmd.tag('got-screen-build-msg', updated.msgCmd),
+    msgOut: updated.msgOut,
     msgSpace: updated.msgSpace?.map((c) => ({ ...c, c, t: 'got-screen-build-msg' })),
-    msgEvt: [],
   }
 }
 
@@ -259,7 +197,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
           screenPlay: ScreenPlayFrontend.init,
           screenBuild: ScreenBuildFrontend.init,
         },
-        msgCmd: [playSound(APP_SOUND.navForwardMin)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
         msgShared: [
           {
             t: 'flow-evt.user-changed-mode',
@@ -290,39 +228,26 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 }
 
 const updateFromCmd: FrontendModule['update'] = (input) => {
-  switch (input.msgCmd?.t) {
-    case 'flow-cmd.add-packs': {
-      return {
-        model: { ...input.model, packs: { ...input.model.packs, ...input.msgCmd.packs } },
-      }
-    }
-
-    case 'flow-cmd.add-puzzles': {
-      return {
-        model: { ...input.model, puzzles: { ...input.model.puzzles, ...input.msgCmd.puzzles } },
-      }
-    }
-
-    case 'flow-cmd.add-solutions': {
-      return {
-        model: { ...input.model, solutions: Solutions.merge(input.msgCmd.solutions, input.model.solutions) },
-      }
-    }
-
-    case 'flow-cmd.remove-puzzles': {
-      const puzzlesNew: ModelFrontend['puzzles'] = { ...input.model.puzzles }
-      for (const id of Object.values(input.msgCmd.puzzles)) {
-        delete puzzlesNew[id]
-      }
-      return {
-        model: { ...input.model, puzzles: puzzlesNew },
-      }
-    }
-
-    default: {
-      return { model: input.model }
+  const { msgIn } = input
+  if (AddPacksCmd.is(msgIn)) {
+    return {
+      model: { ...input.model, packs: { ...input.model.packs, ...msgIn.packs } },
     }
   }
+
+  if (AddSolutionsCmd.is(msgIn)) {
+    return {
+      model: { ...input.model, solutions: Solutions.merge(msgIn.solutions, input.model.solutions) },
+    }
+  }
+
+  if (AddPuzzlesCmd.is(msgIn)) {
+    return {
+      model: { ...input.model, puzzles: { ...input.model.puzzles, ...msgIn.puzzles } },
+    }
+  }
+
+  return { model: input.model }
 }
 
 //

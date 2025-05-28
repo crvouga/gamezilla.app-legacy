@@ -1,6 +1,7 @@
 import { Sub } from '~/@/sub'
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutHostSettingUpGame } from '../../../@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
@@ -13,14 +14,14 @@ const update: FrontendModule['update'] = (input) => {
     case 'user-clicked-exit-screen-open-pack': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)],
       }
     }
 
     case 'user-clicked-open-screen-play-puzzle': {
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForwardMin)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
       }
     }
   }
@@ -46,7 +47,7 @@ const toQuery = (input: { modelSpace: ModelSpace }): PuzzleQuery | null => {
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   const query = toQuery(input)
   if (!query) return Sub.None
-  return PuzzleLoaderFrontend.watch(input.ctx, query, (c) => ({ t: 'got-msg-cmd', c: PuzzleLoaderFrontend.gotMsg(c) }))
+  return PuzzleLoaderFrontend.watch(input.ctx, query, (c) => ({ t: 'got-msg-out', c: PuzzleLoaderFrontend.gotMsg(c) }))
 }
 
 const View: FrontendModule['View'] = (input) => {

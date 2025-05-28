@@ -1,7 +1,8 @@
 import { describe, expect, it, test } from 'bun:test'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { FixtureFlowBuilderFrontend } from '../../../@/fixture/frontend'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
 const Fixture = async () => {
   const f = await FixtureFlowBuilderFrontend()
@@ -25,7 +26,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('clicking edit name button should toggle surface open/closed state', async () => {

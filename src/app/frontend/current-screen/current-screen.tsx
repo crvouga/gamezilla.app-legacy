@@ -2,9 +2,11 @@ import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
-import { APP_SOUND, playSound, type ScreenCmd, type SoundCmd } from '~/app/@/frontend/cmd'
-import { AppFrontendEvt } from '../../@/frontend/evt'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd'
+import { AppFrontendEvt } from '../../@/frontend/evt'
 
 //
 //
@@ -76,7 +78,6 @@ export type Msg =
   | { t: 'clicked-back' }
 
 export const update = (input: {
-  msgCmd?: ScreenCmd | null
   msg?: Msg | null
   msgIn?: unknown
   model: Model
@@ -84,7 +85,7 @@ export const update = (input: {
   model: Model
   eff?: Eff<Msg>
   msgEvt?: AppFrontendEvt[]
-  msgCmd?: SoundCmd[]
+  msgOut?: PlaySoundCmd[]
 } => {
   if (PushScreenCmd.is(input.msgIn)) {
     return {
@@ -92,16 +93,24 @@ export const update = (input: {
         currentScreen: input.msgIn.screen,
       },
       eff: Browser.pushQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(input.msgIn.screen)),
-      msgCmd: input.msgIn.playSound ? [playSound(APP_SOUND.navForwardMin)] : [],
+      msgOut: input.msgIn.playSound ? [PlaySoundCmd.init(APP_SOUND.navForwardMin)] : [],
+    }
+  }
+
+  if (ReplaceScreenCmd.is(input.msgIn)) {
+    return {
+      model: {
+        currentScreen: input.msgIn.screen,
+      },
+      eff: Browser.replaceQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(input.msgIn.screen)),
+      msgOut: input.msgIn.playSound ? [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] : [],
     }
   }
 
   if (input.msg) {
     return updateFromMsg(input)
   }
-  if (input.msgCmd) {
-    return updateFromCmd(input)
-  }
+
   return { model: input.model }
 }
 
@@ -123,7 +132,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
           currentScreen: msg.screen,
         },
         eff: Browser.pushQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(msg.screen)),
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
       }
     }
 
@@ -138,44 +147,6 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
             screen: msg.screen,
           },
         ],
-      }
-    }
-  }
-}
-
-const updateFromCmd: typeof update = ({ msgCmd, model }) => {
-  if (!msgCmd) {
-    return { model }
-  }
-
-  const screenCmd = msgCmd.c
-
-  switch (screenCmd.t) {
-    case 'push': {
-      return {
-        model: {
-          currentScreen: screenCmd.screen,
-        },
-        eff: Browser.pushQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(screenCmd.screen)),
-        msgCmd: screenCmd.playSound ? [playSound(APP_SOUND.navForwardMin)] : [],
-      }
-    }
-
-    case 'back': {
-      return {
-        model,
-        eff: Browser.back,
-        msgCmd: screenCmd.playSound ? [playSound(APP_SOUND.navBackwardMin)] : [],
-      }
-    }
-
-    case 'replace': {
-      return {
-        model: {
-          currentScreen: screenCmd.screen,
-        },
-        eff: Browser.replaceQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(screenCmd.screen)),
-        msgCmd: screenCmd.playSound ? [playSound(APP_SOUND.navBackwardMin)] : [],
       }
     }
   }

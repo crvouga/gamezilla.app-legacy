@@ -5,7 +5,8 @@ import { IconUserCircle } from '~/@/ui/icon/icon-user-circle'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { GuestSessionMapping } from '../@/guest-session-mapping/guest-session-mapping'
 import { GuestSessionMappingId } from '../@/guest-session-mapping/guest-session-mapping-id'
@@ -25,7 +26,7 @@ const update: FrontendModule['update'] = (input) => {
           ...input.model,
           request: Loading,
         },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(dispatch) {
           const result = await continueAsGuest({
             ctx: input.ctx,

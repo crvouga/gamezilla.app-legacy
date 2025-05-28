@@ -1,7 +1,9 @@
 import { describe, expect, it, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { didCopyToClipboard, didPlaySound, didShowToast } from '~/app/@/frontend/cmd'
 import { UserRole } from '~/app/@/data/user-role'
+import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { Flow } from '../../../@/flow'
 import { VariantGridShorthand } from '../../../@/variant/grid'
 import { FixtureScreenPlayPuzzleFrontend } from '../@/fixture/frontend'
@@ -43,7 +45,7 @@ describe(import.meta.file, () => {
   test('play sound', async () => {
     const f = await Fixture()
     const output = f.update(f.init, [{ msgSpace: withEventMeta({ t: 'user-clicked-copy-to-clipboard' }) }])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('copy puzzle to clipboard', async () => {
@@ -55,7 +57,7 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    expect(didCopyToClipboard(output)).toBe(true)
+    expect(CopyToClipboardCmd.did(output)).toBe(true)
   })
 
   test('show toast on copy success', async () => {
@@ -67,7 +69,7 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    expect(didShowToast(output)).toBe(true)
+    expect(ShowToastCmd.did(output)).toBe(true)
   })
 
   it('should copy the shorthand json to the clipboard', async () => {
@@ -80,7 +82,7 @@ describe(import.meta.file, () => {
       },
     ])
     expect(
-      didCopyToClipboard(output, (text) => {
+      CopyToClipboardCmd.did(output, (text) => {
         const shorthand = JSON.parse(text)
         const grid = VariantGridShorthand.toGrid(shorthand)
         return Flow.isSame(f.puzzle.flow, grid)

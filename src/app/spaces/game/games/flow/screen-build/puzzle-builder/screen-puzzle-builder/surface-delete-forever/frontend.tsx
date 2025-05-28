@@ -2,13 +2,15 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Ok, RemoteResult, isLoading } from '~/@/result'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconDeleteForever } from '~/@/ui/icon/icon-delete-forever'
-import { APP_SOUND, playSound, showOkSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { FlowFrontendCmdRoot } from '../../../../@/frontend/cmd-root'
+
+import { ShowOkSmall } from '~/app/@/frontend/show-ok-sm'
+import { RemovePuzzlesCmd } from '../../../../@/frontend/remove-puzzles-cmd'
 import type { FrontendModule } from '../../../types'
-import { MsgFrontend, MsgToBackend } from './types'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -23,28 +25,28 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'delete-forever.user-clicked-delete-button': {
       return {
         model: { ...input.model, puzzleBuilderOpened: 'delete-forever' },
-        msgCmd: [playSound(APP_SOUND.alertErrorSm)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.alertErrorSm)],
       }
     }
 
     case 'delete-forever.user-closed-drawer': {
       return {
         model: { ...input.model, puzzleBuilderOpened: null },
-        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)],
       }
     }
 
     case 'delete-forever.user-clicked-cancel-button': {
       return {
         model: { ...input.model, puzzleBuilderOpened: 'more' },
-        msgCmd: [playSound(APP_SOUND.surfaceClosed)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.surfaceClosed)],
       }
     }
 
     case 'delete-forever.user-clicked-confirm-button': {
       return {
         model: { ...input.model, puzzleDeleteForeverRequest: RemoteResult.Loading },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(dispatch) {
           const puzzleId = input.modelSpace.screenPuzzleBuilder?.puzzle.id ?? null
           const deletedByUserId = input.ctx.currentUser.userId
@@ -74,8 +76,6 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
   }
 }
 
-type WireTypes = { MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }
-
 const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-deleted-puzzle': {
@@ -86,11 +86,11 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
           puzzleBuilderOpened: null,
         },
         msgCmd: [
-          FlowFrontendCmdRoot.removePuzzles(
+          RemovePuzzlesCmd.init(
             input.msgSpace.puzzleId ? { [input.msgSpace.puzzleId]: input.msgSpace.puzzleId } : {},
             input,
           ),
-          ...showOkSm<WireTypes>(input.ctx.t('flow.puzzle-deleted')),
+          ...ShowOkSmall.init(input.ctx.t('flow.puzzle-deleted')),
         ],
       }
     }

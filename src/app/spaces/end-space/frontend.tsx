@@ -1,6 +1,9 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
-import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND, showToast } from '~/app/@/frontend/cmd'
+import { CurrentUserLoggedOutEvt } from '~/app/@/frontend/current-user-logged-out-evt'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
@@ -17,22 +20,21 @@ const update: SpaceFrontendModule['update'] = (input) => {
 }
 
 const updateFromAppEvent: SpaceFrontendModule['update'] = (input) => {
-  switch (input.msgEvt?.t) {
-    case 'auth-evt.unauthenticated': {
-      if (!input.ctx.currentUser?.userId) return { model: input.model }
+  if (CurrentUserLoggedOutEvt.is(input.msgIn)) {
+    if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
+    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
 
-      if (!currentUserSpaceId) return { model: input.model }
+    if (!currentUserSpaceId) return { model: input.model }
 
-      return {
-        model: input.model,
-        msgSpace: [
-          withEventId({ t: 'user-ended-space', spaceId: currentUserSpaceId, userId: input.ctx.currentUser.userId }),
-        ],
-      }
+    return {
+      model: input.model,
+      msgSpace: [
+        withEventId({ t: 'user-ended-space', spaceId: currentUserSpaceId, userId: input.ctx.currentUser.userId }),
+      ],
     }
   }
+
   return { model: input.model }
 }
 
@@ -59,15 +61,15 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
 }
 
 const updatePlaySound: SpaceFrontendModule['update'] = (input) => {
-  return { model: input.model, msgCmd: [playSound(APP_SOUND.navBackward)] }
+  return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.navBackward)] }
 }
 
 const updatePushScreen: SpaceFrontendModule['update'] = (input) => {
   if (input.ctx.currentScreen.t === 'space' && input.ctx.currentScreen.spaceId === input.msgSpace?.spaceId) {
-    return { model: input.model, msgCmd: [pushScreen({ n: 'spaces', t: 'space-list' })] }
+    return { model: input.model, msgOut: [PushScreenCmd.init({ n: 'spaces', t: 'space-list' })] }
   }
 
-  return { model: input.model, msgCmd: [] }
+  return { model: input.model, msgOut: [] }
 }
 
 const updateShowToast: SpaceFrontendModule['update'] = (input) => {

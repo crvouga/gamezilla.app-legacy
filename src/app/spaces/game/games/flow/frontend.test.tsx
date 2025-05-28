@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { countPlaySoundCmd } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { FixtureFlowFrontend } from './@/frontend/fixture'
 
 const Fixture = async () => {
@@ -22,7 +22,7 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    expect(countPlaySoundCmd(output)).toEqual(1)
+    expect(PlaySoundCmd.count(output)).toEqual(1)
   })
 
   it('should play a sound when selecting create mode', async () => {
@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    expect(countPlaySoundCmd(output)).toEqual(1)
+    expect(PlaySoundCmd.count(output)).toEqual(1)
   })
 
   it('should not play a sound when selecting no mode', async () => {
@@ -50,6 +50,6 @@ describe(import.meta.file, () => {
         }),
       },
     ])
-    expect(countPlaySoundCmd(output)).toEqual(1)
+    expect(PlaySoundCmd.count(output)).toEqual(1)
   })
 })

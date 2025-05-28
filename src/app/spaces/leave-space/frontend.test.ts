@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'bun:test'
 import { withEventMetaAt } from '~/@/event-sourced/event'
-import { didPlaySound, didPushScreen, didShowToast } from '~/app/@/frontend/cmd'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { FixtureSpacesFrontend, userJoinedSpace, userLeftSpace, userStartedSpace } from '../@/fixture/frontend'
 import { SpacesCore } from '../core/core'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -28,7 +30,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didPushScreen(output, (x) => x.t === 'space-list')).toBe(true)
+    expect(PushScreenCmd.did(output, (x) => x.t === 'space-list')).toBe(true)
   })
 
   it('should only redirect to list screen for the user leaving the space', async () => {
@@ -51,7 +53,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didPushScreen(output)).toBe(false)
+    expect(PushScreenCmd.did(output)).toBe(false)
   })
 
   it('should show some toast after leaving a space', async () => {
@@ -62,7 +64,7 @@ describe(import.meta.file, () => {
       userJoinedSpace(1, f.ctx.currentUser.userId, spaceId),
       userLeftSpace(2, f.ctx.currentUser.userId, spaceId),
     ])
-    expect(didShowToast(output)).toBe(true)
+    expect(ShowToastCmd.did(output)).toBe(true)
   })
 
   it('user is not in space after leaving', async () => {
@@ -95,6 +97,6 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 })

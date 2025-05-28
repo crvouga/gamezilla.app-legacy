@@ -1,8 +1,8 @@
 import { Sub } from '~/@/sub'
-import { FlowFrontendCmdRoot } from '../../frontend/cmd-root'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import type { FrontendModule, MsgFrontend, MsgInCmdFrontend } from './types'
+import { AddSolutionsCmd } from '../../frontend/add-solutions-cmd'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgCmd?.c.t) {
@@ -15,7 +15,7 @@ const update: FrontendModule['update'] = (input) => {
     case 'got-solutions-db-solutions': {
       return {
         model: input.model,
-        msgCmd: [FlowFrontendCmdRoot.addSolutions(input.msg.solutions, input.msg)],
+        msgOut: [AddSolutionsCmd.init(input.msg.solutions, input.msg)],
       }
     }
   }

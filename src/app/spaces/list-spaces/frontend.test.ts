@@ -5,11 +5,13 @@ import { pipe } from '~/@/function/pipe'
 import { isRequesting, isResponseOk } from '~/@/request-response/request-response'
 import type { Screen } from '~/@/screen/generated/screens'
 import { SpaceId } from '~/app/@/data/space-id'
-import { APP_SOUND, didPlaySound, didPushScreen } from '~/app/@/frontend/cmd'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { Space } from '../core/space'
 import { SpacesFrontend } from '../frontend'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
 
 const Fixture = async (input?: { currentScreen?: Screen }) => {
   const f = await FixtureSpacesFrontend(input)
@@ -50,13 +52,10 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgEvt: {
-          t: 'screen-evt.screen-changed',
-          screen: {
-            n: 'spaces',
-            t: 'space-list',
-          },
-        },
+        msgIn: ScreenChangedEvt.init({
+          n: 'spaces',
+          t: 'space-list',
+        }),
       },
     ])
     expect(output.model.listSpacesRequest.t === 'loading').toBe(true)
@@ -66,13 +65,10 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgEvt: {
-          t: 'screen-evt.screen-changed',
-          screen: {
-            n: 'spaces',
-            t: 'space-list',
-          },
-        },
+        msgIn: ScreenChangedEvt.init({
+          n: 'spaces',
+          t: 'space-list',
+        }),
       },
       {
         msgBackend: {
@@ -94,13 +90,10 @@ describe(import.meta.file, () => {
 
     const updated = f.update(f.initial, [
       {
-        msgEvt: {
-          t: 'screen-evt.screen-changed',
-          screen: {
-            n: 'spaces',
-            t: 'space-list',
-          },
-        },
+        msgIn: ScreenChangedEvt.init({
+          n: 'spaces',
+          t: 'space-list',
+        }),
       },
       {
         msgBackend: {
@@ -117,7 +110,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didPushScreen(updated)).toBe(true)
+    expect(PushScreenCmd.did(updated)).toBe(true)
   })
 
   it('should make a nav forward sound when opening a space screen', async () => {
@@ -129,13 +122,10 @@ describe(import.meta.file, () => {
 
     const updated = f.update(f.initial, [
       {
-        msgEvt: {
-          t: 'screen-evt.screen-changed',
-          screen: {
-            n: 'spaces',
-            t: 'space-list',
-          },
-        },
+        msgIn: ScreenChangedEvt.init({
+          n: 'spaces',
+          t: 'space-list',
+        }),
       },
       {
         msgBackend: {
@@ -152,7 +142,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didPlaySound(updated, APP_SOUND.navForwardMin)).toBe(true)
+    expect(PlaySoundCmd.did(updated, APP_SOUND.navForwardMin)).toBe(true)
   })
 
   it('should make a sound when closing room screen', async () => {
@@ -164,13 +154,10 @@ describe(import.meta.file, () => {
 
     const updated = f.update(f.initial, [
       {
-        msgEvt: {
-          t: 'screen-evt.screen-changed',
-          screen: {
-            n: 'spaces',
-            t: 'space-list',
-          },
-        },
+        msgIn: ScreenChangedEvt.init({
+          n: 'spaces',
+          t: 'space-list',
+        }),
       },
       {
         msgBackend: {

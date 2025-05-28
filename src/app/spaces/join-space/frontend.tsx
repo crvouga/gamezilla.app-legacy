@@ -1,8 +1,11 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Translator } from '~/@/l18n/generated'
-import { Typography } from '~/@/ui/typography'
 import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
-import { APP_SOUND, playSound, pushScreen, showErrSm, showToast } from '~/app/@/frontend/cmd'
+import { Typography } from '~/@/ui/typography'
+import { APP_SOUND, showErrSm } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SectionTitle } from '~/app/@/ui/section/section-title'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
@@ -30,12 +33,12 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
       if (isOpen) {
         return {
           model: { ...input.model, opened: null },
-          msgCmd: [playSound(APP_SOUND.tap)],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         }
       }
       return {
         model: { ...input.model, opened: 'join-space.person-preview-surface' },
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
       }
     }
     case 'join-space.submitted-join-space-form': {
@@ -54,7 +57,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
     }
     case 'join-space.closed-person-item-surface': {
       if (input.model.opened === 'join-space.person-preview-surface') {
-        return { model: { ...input.model, opened: null }, msgCmd: [playSound(APP_SOUND.tap)] }
+        return { model: { ...input.model, opened: null }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
       }
       return { model: input.model }
     }
@@ -62,7 +65,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
     case 'join-space.opened-person-details': {
       return {
         model: input.model,
-        msgCmd: [pushScreen({ t: 'profile', n: 'profile', userId: input.msg.userId }, true)],
+        msgOut: [PushScreenCmd.init({ t: 'profile', n: 'profile', userId: input.msg.userId }, true)],
       }
     }
   }
@@ -95,18 +98,21 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
         const username = input.ctx.profilesByUserId[input.msgSpace.userId]?.username ?? null
         return {
           model: input.model,
-          msgCmd: [
-            playSound(APP_SOUND.navForward),
+          msgOut: [
+            PlaySoundCmd.init(APP_SOUND.navForward),
             username
-              ? showToast(input.ctx.t('spaces.other-user-joined-space', username))
-              : showToast(input.ctx.t('spaces.current-user-joined-space')),
+              ? ShowToastCmd.init(input.ctx.t('spaces.other-user-joined-space', username))
+              : ShowToastCmd.init(input.ctx.t('spaces.current-user-joined-space')),
           ],
         }
       }
 
       return {
         model: input.model,
-        msgCmd: [playSound(APP_SOUND.navForward), showToast(input.ctx.t('spaces.current-user-joined-space'))],
+        msgOut: [
+          PlaySoundCmd.init(APP_SOUND.navForward),
+          ShowToastCmd.init(input.ctx.t('spaces.current-user-joined-space')),
+        ],
       }
     }
   }

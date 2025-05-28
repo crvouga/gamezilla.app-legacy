@@ -1,9 +1,11 @@
 import { describe, expect, it, test } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, didOpenProfile, didPlaySound } from '~/app/@/frontend/cmd'
-import { openUserDetails } from '~/app/spaces/@/frontend/cmd'
+import { APP_SOUND, didOpenProfile } from '~/app/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '../../@/fixture/frontend'
+import { OpenUserDetailsCmd } from '../../@/frontend/open-user-details-cmd'
 import { PeopleActionFrontend } from './frontend'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -58,13 +60,10 @@ describe(import.meta.file, () => {
         },
       },
       {
-        msgEvt: {
-          t: 'screen-evt.screen-changed',
-          screen: {
-            n: 'spaces',
-            t: 'space-list',
-          },
-        },
+        msgIn: ScreenChangedEvt.init({
+          n: 'spaces',
+          t: 'space-list',
+        }),
       },
     ])
     expect(output.model.opened === null).toBe(true)
@@ -78,7 +77,7 @@ describe(import.meta.file, () => {
     const output = PeopleActionFrontend.update({
       model: f.initial.model,
       ctx: f.ctx,
-      msgCmd: openUserDetails(someUserId),
+      msgIn: OpenUserDetailsCmd.init(someUserId),
     })
 
     expect(
@@ -151,7 +150,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('play sound close modal', async () => {
@@ -163,7 +162,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('play sound open user details modal', async () => {
@@ -177,7 +176,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   test('should toggle people modal when clicking button', async () => {
@@ -192,8 +191,8 @@ describe(import.meta.file, () => {
     const f = await FixtureSpacesFrontend()
     const openOutput = f.update(f.initial, [{ msg: { t: 'people-action.clicked-people-action' } }])
     const closeOutput = f.update(openOutput, [{ msg: { t: 'people-action.clicked-people-action' } }])
-    expect(didPlaySound(openOutput, APP_SOUND.surfaceOpened)).toBe(true)
-    expect(didPlaySound(closeOutput, APP_SOUND.surfaceClosed)).toBe(true)
+    expect(PlaySoundCmd.did(openOutput, APP_SOUND.surfaceOpened)).toBe(true)
+    expect(PlaySoundCmd.did(closeOutput, APP_SOUND.surfaceClosed)).toBe(true)
   })
 
   test('should play close sound when closing the people surface', async () => {
@@ -203,6 +202,6 @@ describe(import.meta.file, () => {
         msg: { t: 'people-action.closed-surface' },
       },
     ])
-    expect(didPlaySound(output, APP_SOUND.surfaceClosed)).toBe(true)
+    expect(PlaySoundCmd.did(output, APP_SOUND.surfaceClosed)).toBe(true)
   })
 })

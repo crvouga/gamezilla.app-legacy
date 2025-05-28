@@ -1,7 +1,9 @@
 import { pipe } from '~/@/function/pipe'
 import { Translator } from '~/@/l18n/generated'
 import { p } from '~/@/parser'
-import { APP_SOUND, AppFrontendCmd, playSound, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { Flow } from '../flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'
@@ -257,38 +259,32 @@ export type Event =
       t: 'reset'
     }
 
-export const eventsToFrontendCmd = (
-  { t }: { t: Translator },
-  events?: Event[] | null,
-): AppFrontendCmd<{
-  MsgFrontend: never
-  MsgToBackend: never
-}>[] => {
+export const eventsToFrontendCmd = ({ t }: { t: Translator }, events?: Event[] | null): unknown[] => {
   return (
     events?.map((event) => {
       switch (event.t) {
         case 'connected-terminals': {
-          return playSound(APP_SOUND.tap)
+          return [PlaySoundCmd.init(APP_SOUND.tap)]
         }
 
         case 'solved': {
-          return playSound(APP_SOUND.celebration)
+          return [PlaySoundCmd.init(APP_SOUND.celebration)]
         }
 
         case 'started-dragging': {
-          return playSound(APP_SOUND.tap)
+          return [PlaySoundCmd.init(APP_SOUND.tap)]
         }
 
         case 'used-hint': {
-          return playSound(APP_SOUND.navForwardMin)
+          return [PlaySoundCmd.init(APP_SOUND.navForwardMin)]
         }
 
         case 'reset': {
-          return playSound(APP_SOUND.navTransitionLeft)
+          return [PlaySoundCmd.init(APP_SOUND.navTransitionLeft)]
         }
 
         case 'no-hints': {
-          return playSound(APP_SOUND.alertErrorSm), showToast(t('flow-play.no-hints-available'))
+          return [PlaySoundCmd.init(APP_SOUND.alertErrorSm), ShowToastCmd.init(t('flow-play.no-hints-available'))]
         }
       }
     }) ?? []

@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'bun:test'
-import { didPlaySound } from '~/app/@/frontend/cmd'
+
 import { SpaceId } from '~/app/@/data/space-id'
-import { exitGame } from '~/app/spaces/@/frontend/cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { SpacesCore } from '../core/core'
 import { GameName } from './games/@/game-name'
 import { NonEmpty } from '~/@/array/non-empty'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ExitGameCmd } from '../@/frontend/exit-game-cmd'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -33,7 +34,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didPlaySound(output)).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   it('should be able to start game', async () => {
@@ -75,7 +76,7 @@ describe(import.meta.file, () => {
         },
       },
       {
-        msgCmd: exitGame(),
+        msgIn: ExitGameCmd.init(),
       },
     ])
 

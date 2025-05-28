@@ -1,12 +1,11 @@
 import { Eff } from '~/@/eff'
 import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
-import { APP_SOUND, AppFrontendCmd, playSound } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { FeedItem } from '~/app/spaces/@/feed-item'
-import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import type { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
+import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/connect-four-ui/connect-four-cover-art'
 import type {
@@ -14,8 +13,8 @@ import type {
   ModelSpace,
   MsgFrontend,
   MsgSpace,
-  MsgToFrontend,
   MsgToBackend,
+  MsgToFrontend,
 } from './connect-four.types'
 import { VsBot } from './vs-bot/vs-bot.frontend'
 import { VsUser } from './vs-user/vs-user.frontend'
@@ -36,11 +35,6 @@ type Module = GameFrontendModule<{
   ModelSpace: ModelSpace
   MsgSpace: MsgSpace
   Ctx: SpaceFrontendCtx
-  MsgEvtIn: SpaceFrontendEvt
-  MsgCmdOut: SpaceFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: MsgToBackend
-  }>
 }>
 
 //
@@ -111,7 +105,7 @@ const updateFromMsgSpace =
               model: {
                 t: null,
               },
-              msgCmd: [playSound(APP_SOUND.navBackwardMin)],
+              msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)],
             }
           }
 
@@ -121,7 +115,7 @@ const updateFromMsgSpace =
                 t: 'vs-bot',
                 c: VsBot.init,
               },
-              msgCmd: [playSound(APP_SOUND.navForwardMin)],
+              msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
             }
           }
 
@@ -131,7 +125,7 @@ const updateFromMsgSpace =
                 t: 'vs-user',
                 c: VsUser.init,
               },
-              msgCmd: [playSound(APP_SOUND.navForwardMin)],
+              msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
             }
           }
         }
@@ -149,7 +143,7 @@ const updateFromMsgSpace =
 const updateChild =
   (model: ModelFrontend): Module['update'] =>
   (input) => {
-    const { msg, msgEvt, msgSpace, msgBackend, modelSpace } = input
+    const { msgIn, msg, msgSpace, msgBackend, modelSpace } = input
 
     switch (modelSpace.t) {
       case 'none': {
@@ -162,8 +156,7 @@ const updateChild =
         const updated = VsBot.update({
           ctx: input.ctx,
           msg: msg?.t === 'vs-bot' ? msg.c : null,
-          msgEvt: msgEvt,
-          msgCmd: null,
+          msgIn,
           msgSpace: msgSpace?.t === 'vs-bot' ? { ...msgSpace, ...msgSpace.c } : null,
           msgBackend: msgBackend?.t === 'vs-bot' ? msgBackend.c : null,
           model: model.t === 'vs-bot' ? model.c : VsBot.init,
@@ -173,9 +166,8 @@ const updateChild =
         return {
           model: { t: 'vs-bot', c: updated.model },
           eff: Eff.tag('vs-bot', updated.eff),
-          msgCmd: AppFrontendCmd.tag('vs-bot', updated.msgCmd),
           msgSpace: updated.msgSpace?.map((c) => ({ c, t: 'vs-bot' })),
-          msgEvt: updated.msgEvt,
+          msgOut: updated.msgOut,
         }
       }
 
@@ -184,8 +176,7 @@ const updateChild =
           ctx: { ...input.ctx, onQuit: () => {} },
           model: model.t === 'vs-user' ? model.c : VsUser.init,
           msg: msg?.t === 'vs-user' ? msg.c : null,
-          msgCmd: null,
-          msgEvt: msgEvt,
+          msgIn,
           msgSpace: msgSpace?.t === 'vs-user' ? { ...msgSpace, ...msgSpace.c } : null,
           msgBackend: msgBackend?.t === 'vs-user' ? msgBackend.c : null,
           modelSpace: modelSpace.c,
@@ -194,9 +185,7 @@ const updateChild =
         return {
           model: { t: 'vs-user', c: updated.model },
           eff: Eff.tag('vs-user', updated.eff),
-          msgCmd: AppFrontendCmd.tag('vs-user', updated.msgCmd),
           msgSpace: updated.msgSpace?.map((c) => ({ c, t: 'vs-user' })),
-          msgEvt: updated.msgEvt,
         }
       }
     }

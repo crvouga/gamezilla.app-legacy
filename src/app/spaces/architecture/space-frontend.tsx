@@ -3,9 +3,8 @@ import { WithEventId } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import type { SpaceFrontendCmd } from '../@/frontend/cmd'
-import { SpaceFrontendEvt } from '../@/frontend/evt'
 import type { Space } from '../@/space/space'
 import { MsgSpace } from '../core/space-msg/space-msg'
 import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from '../types'
@@ -19,22 +18,17 @@ export type Input = {
   model: ModelFrontend
   msg?: MsgFrontend | null
   msgBackend?: MsgToFrontend | null
-  msgEvt?: SpaceFrontendEvt | null
-  msgCmd?: SpaceFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: MsgToBackend
-  }> | null
+  msgIn?: unknown | null
   msgSpace?: WithEventId<MsgSpace> | null
 }
 
 export type Output = {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgCmd?: SpaceFrontendCmd<{
+  msgCmd?: AppFrontendCmd<{
     MsgFrontend: MsgFrontend
     MsgToBackend: MsgToBackend
   }>[]
-  msgEvt?: SpaceFrontendEvt[]
   msgSpace?: WithEventId<MsgSpace>[]
   msgOut?: unknown[]
 }
@@ -53,7 +47,6 @@ const andThen = (acc: Output, ...updates: ((model: ModelFrontend) => Output)[]):
       model: updated.model,
       eff: Eff.batch(acc.eff, updated.eff),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
       msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
       msgOut: Msg.batch(acc.msgOut, updated.msgOut),
     }

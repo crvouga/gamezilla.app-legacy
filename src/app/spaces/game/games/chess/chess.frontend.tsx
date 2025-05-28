@@ -1,17 +1,16 @@
 import { Eff } from '~/@/eff'
 import { RemoteResult, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { APP_SOUND, AppFrontendCmd, playSound, preloadSound, sendToBackend } from '~/app/@/frontend/cmd'
 import { IconPuzzlePiece } from '~/@/ui/icon/icon-puzzle-piece'
-import type { SpaceFrontendCmd } from '~/app/spaces/@/frontend/cmd'
+import { APP_SOUND, AppFrontendCmd, preloadSound, sendToBackend } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import type { GameFrontend } from '~/app/spaces/game/games/@/architecture/game-frontend'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { SpaceFrontendEvt } from '~/app/spaces/@/frontend/evt'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/chess-ui'
 import { CHESS_SOUND } from './@/chess/chess-sounds'
-import type { ModelFrontend, ModelSpace, MsgFrontend, MsgSpace, MsgToFrontend, MsgToBackend } from './chess.types'
+import type { ModelFrontend, ModelSpace, MsgFrontend, MsgSpace, MsgToBackend, MsgToFrontend } from './chess.types'
 import * as Puzzle from './puzzle/puzzle.frontend'
 import * as VsBot from './vs-bot/vs-bot.frontend'
 import * as VsUser from './vs-user/vs-user.frontend'
@@ -31,11 +30,10 @@ type Frontend = GameFrontend<{
   FrontendCtx: SpaceFrontendCtx
   MsgSpace: MsgSpace
   ModelSpace: ModelSpace
-  FrontendCmd: SpaceFrontendCmd<{
+  FrontendCmd: AppFrontendCmd<{
     MsgToBackend: MsgToBackend
     MsgFrontend: MsgFrontend
   }>
-  FrontendEvent: SpaceFrontendEvt
 }>
 
 //
@@ -215,12 +213,12 @@ export const update: Frontend['update'] = (input) => {
               if (model.mode.t === 'none') {
                 return {
                   model,
-                  msgCmd: [playSound(APP_SOUND.navBackwardMin)],
+                  msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)],
                 }
               }
               return {
                 model,
-                msgCmd: [playSound(APP_SOUND.navForwardMin)],
+                msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
               }
             },
           )

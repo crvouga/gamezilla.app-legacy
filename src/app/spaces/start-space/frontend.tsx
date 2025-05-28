@@ -1,7 +1,10 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { IconPlus } from '~/@/ui/icon/icon-plus'
 import { SpaceId } from '~/app/@/data/space-id'
-import { APP_SOUND, playSound, pushScreen, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { MsgSpace } from '../core/space-msg/space-msg'
@@ -20,10 +23,10 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: ms
       if (msgSpace.userId === ctx.currentUser?.userId) {
         return {
           model,
-          msgCmd: [
-            playSound(APP_SOUND.navForward),
-            pushScreen({ n: 'spaces', t: 'space', spaceId: msgSpace.spaceId }),
-            showToast(ctx.t('spaces.space-started')),
+          msgOut: [
+            PushScreenCmd.init({ n: 'spaces', t: 'space', spaceId: msgSpace.spaceId }),
+            PlaySoundCmd.init(APP_SOUND.navForward),
+            ShowToastCmd.init(ctx.t('spaces.space-started')),
           ],
         }
       }
