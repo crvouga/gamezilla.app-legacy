@@ -19,7 +19,7 @@ import { ModelFrontend, MsgFrontend, initFrontend, type FrontendModule } from '.
 
 const update: FrontendModule['update'] = (input) => {
   if (GotPackLoaderMsg.is(input.msgIn)) {
-    return update({ ...input, msg: input.msgIn.c.msg })
+    return update({ ...input, msgIn: null, msg: input.msgIn.c.msg })
   }
 
   switch (input.msg?.t) {

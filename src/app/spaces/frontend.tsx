@@ -37,16 +37,17 @@ const init: FrontendModule['init'] = ({ ctx }) => {
 }
 
 const update: FrontendModule['update'] = (input) => {
+  const updatedChild = updateChild(input)
   const updated = updateLoop({
     ...input,
-    ctx: { ...input.ctx, profilesByUserId: { ...input.ctx.profilesByUserId, ...input.msgBackend?.profilesByUserId } },
+    model: updatedChild.model,
   })
 
   return {
     model: updated.model,
-    eff: updated.eff,
-    msgCmd: updated.msgCmd,
-    msgOut: updated.msgOut,
+    eff: Eff.batch(updatedChild.eff, updated.eff),
+    msgCmd: Msg.batch(updatedChild.msgCmd, updated.msgCmd),
+    msgOut: Msg.batch(updatedChild.msgOut, updated.msgOut),
   }
 }
 

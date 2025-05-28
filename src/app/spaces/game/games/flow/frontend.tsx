@@ -120,6 +120,7 @@ const updateHintCalculator: FrontendModule['update'] = (input) => {
     ctx,
     model: input.model.hintCalculator,
     msg: input.msg?.t === 'got-hint-calculator-msg' ? input.msg.c : null,
+    msgIn: input.msgIn,
   })
 
   return {

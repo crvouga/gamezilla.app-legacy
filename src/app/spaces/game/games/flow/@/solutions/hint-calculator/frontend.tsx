@@ -19,6 +19,7 @@ import { ShowWarningSmall } from '~/app/@/frontend/show-warning-small'
 
 const update: FrontendModule['update'] = (input) => {
   if (GotHintCalculatorMsg.is(input.msgIn)) {
+    debugger
     return update({ ...input, msgIn: null, msg: input.msgIn.c.msg })
   }
 
