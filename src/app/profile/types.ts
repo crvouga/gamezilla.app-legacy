@@ -7,7 +7,6 @@ import { BackendEvt } from '../@/backend/evt'
 import { UserId } from '../@/data/user-id'
 import { UserProfile } from '../@/data/user-profile'
 import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
-import { AppFrontendEvt } from '../@/frontend/evt'
 import { ProfileBackendCtx } from './@/backend/ctx'
 import { ProfileFrontendCtx } from './@/frontend/ctx'
 import { ScreenProfileTypes } from './screen-profile'
@@ -55,7 +54,5 @@ export type FrontendModule = AppFrontendModule<{
   MsgToBackend: MsgToBackend
   Ctx: ProfileFrontendCtx
   MsgCmdIn: ProfileCmd
-  MsgEvtIn: AppFrontendEvt
   MsgCmdOut: AppFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>
-  MsgEvtOut: AppFrontendEvt
 }>

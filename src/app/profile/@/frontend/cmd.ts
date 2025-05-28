@@ -1,9 +1,13 @@
 import { AppFrontendCmd, FrontendCmdTypes } from '~/app/@/frontend/cmd'
 import { ProfileLoaderTypes } from '../user-profile-loader'
 
-export type ProfileFrontendCmdBase = ProfileLoaderTypes.MsgInCmdFrontend
+export type ProfileFrontendCmdInternal = ProfileLoaderTypes.MsgInCmdFrontend
 
-export type ProfileFrontendCmd<T extends FrontendCmdTypes> = ProfileFrontendCmdBase | AppFrontendCmd<T>
+export const isProfileFrontendCmdInternal = (cmd: ProfileFrontendCmd<any>): cmd is ProfileFrontendCmdInternal => {
+  return cmd.t === 'profile-cmd.got-profile-loader-cmd'
+}
+
+export type ProfileFrontendCmd<T extends FrontendCmdTypes> = ProfileFrontendCmdInternal | AppFrontendCmd<T>
 
 const toAppFrontendCmd = <T extends FrontendCmdTypes>(
   cmd: ProfileFrontendCmd<T> | null | undefined,
@@ -20,7 +24,7 @@ const toAppFrontendCmd = <T extends FrontendCmdTypes>(
 
 const toProfileFrontendCmdBase = <T extends FrontendCmdTypes>(
   cmd: ProfileFrontendCmd<T> | null | undefined,
-): ProfileFrontendCmdBase[] => {
+): ProfileFrontendCmdInternal[] => {
   switch (cmd?.t) {
     case 'profile-cmd.got-profile-loader-cmd': {
       return [cmd]
@@ -31,8 +35,30 @@ const toProfileFrontendCmdBase = <T extends FrontendCmdTypes>(
   }
 }
 
+const tag = <T extends FrontendCmdTypes, Tag extends string>(
+  t: Tag,
+  cmds?: ProfileFrontendCmd<T>[],
+): ProfileFrontendCmd<{
+  MsgFrontend: { t: Tag; c: T['MsgFrontend'] }
+  MsgToBackend: { t: Tag; c: T['MsgToBackend'] }
+}>[] => {
+  return (cmds ?? []).flatMap(
+    (
+      msgCmd,
+    ): ProfileFrontendCmd<{
+      MsgFrontend: { t: Tag; c: T['MsgFrontend'] }
+      MsgToBackend: { t: Tag; c: T['MsgToBackend'] }
+    }>[] => {
+      if (isProfileFrontendCmdInternal(msgCmd)) {
+        return [msgCmd]
+      }
+      return AppFrontendCmd.tag(t, [msgCmd])
+    },
+  )
+}
+
 export const ProfileFrontendCmd = {
-  ...AppFrontendCmd,
   toAppFrontendCmd,
+  tag,
   toProfileFrontendCmdBase,
 }

@@ -33,6 +33,7 @@ export type MsgToBackend = { t: 'noop' }
 export type MsgToFrontend = { t: 'noop' }
 
 export type MsgInCmdFrontend = {
+  n: 'profile-cmd'
   t: 'profile-cmd.got-profile-loader-cmd'
   c: {
     t: 'got-msg'

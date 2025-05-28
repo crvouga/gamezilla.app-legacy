@@ -10,6 +10,7 @@ import { ScreenUpdateUsernameFrontend } from './screen-update-username/frontend'
 import { UpdateAvatarScreen } from './screen-update/update-avatar-screen'
 import { UpdateProfileScreen } from './screen-update/update-profile-screen'
 import type { FrontendModule, ModelFrontend, MsgFrontend, MsgToBackend } from './types'
+import { ProfileFrontendCmd } from './@/frontend/cmd'
 
 const initCtx = (input: { ctx: AppFrontendCtxBase }): ProfileFrontendCtx => {
   return {
@@ -97,7 +98,7 @@ const updateFromCmd: FrontendModule['update'] = (input): ReturnType<FrontendModu
 const updateFromMsg: FrontendModule['update'] = (
   input,
 ): ReturnType<FrontendModule['update']> & {
-  msgCmd?: AppFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>[]
+  msgCmd?: ProfileFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>[]
 } => {
   if (!input.msg) return { model: input.model }
   switch (input.msg.t) {
@@ -107,10 +108,12 @@ const updateFromMsg: FrontendModule['update'] = (
         msg: input.msg.c,
         model: input.model.screenProfile,
       })
+      const msgCmd: ProfileFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>[] =
+        ProfileFrontendCmd.tag('got-profile-screen-msg', updated.msgCmd)
       return {
         model: { ...input.model, screenProfile: updated.model },
         eff: Eff.tag('got-profile-screen-msg', updated.eff),
-        // msgCmd: ProfileFrontendCmd.tag('got-profile-screen-msg', updated.msgCmd),
+        msgCmd,
       }
     }
     default: {

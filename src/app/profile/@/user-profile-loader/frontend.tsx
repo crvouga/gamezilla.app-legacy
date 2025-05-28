@@ -35,6 +35,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   return {
+    n: 'profile-cmd',
     t: 'profile-cmd.got-profile-loader-cmd',
     c: {
       t: 'got-msg',
