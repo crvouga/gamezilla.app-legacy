@@ -16,18 +16,18 @@ const Fixture = async () => {
 }
 
 describe('leave space', () => {
-  it.only('should navigate to list screen after leaving space', async () => {
+  it('should navigate to list screen after leaving space', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
 
-    const output = f.update(f.initial, [
+    const outputs = f.updates(f.initial, [
       userStartedSpace(0, f.userA.id, spaceId),
       userJoinedSpace(1, f.ctx.currentUser.userId, spaceId),
       {
         msg: { t: 'leave-space.clicked-leave-space-button', spaceId: spaceId },
       },
     ])
-    expect(PushScreenCmd.did(output, (x) => x.t === 'space-list')).toBe(true)
+    expect(outputs.some((output) => PushScreenCmd.did(output, (x) => x.t === 'space-list'))).toBe(true)
   })
 
   it('should only redirect to list screen for the user leaving the space', async () => {

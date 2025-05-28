@@ -248,10 +248,7 @@ type Output = {
 }
 
 const updateLoop = (ctx: FrontendCtx, acc: Output): Output => {
-  const frontendCtx = toCtx({
-    ctx,
-    model: acc.model,
-  })
+  const frontendCtx = toCtx({ ctx, model: acc.model })
   const [msgCmd, ...msgCmdRest] = acc.msgCmd
 
   if (msgCmd) {

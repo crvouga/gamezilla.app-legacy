@@ -132,7 +132,6 @@ const ViewCurrentSpaceMiniPlayer = CurrentSpaceMiniPlayer.View
 export const SpacesFrontend = {
   init,
   update,
-  updateLoop,
   subscriptions,
   View,
   ViewCurrentSpaceMiniPlayer,
