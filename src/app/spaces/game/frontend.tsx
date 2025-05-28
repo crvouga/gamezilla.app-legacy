@@ -49,18 +49,19 @@ const updateFromMsg: SpaceFrontendModule['update'] = ({ msg, model, ctx }) => {
   }
   return { model }
 }
-const updateFromCmd: SpaceFrontendModule['update'] = ({ msgIn, model, ctx }) => {
-  if (ExitGameCmd.is(msgIn)) {
-    const currentUserId = ctx.currentUser?.userId
 
-    if (!currentUserId) return { model }
+const updateFromCmd: SpaceFrontendModule['update'] = (input) => {
+  if (ExitGameCmd.is(input.msgIn)) {
+    const currentUserId = input.ctx.currentUser?.userId
 
-    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, currentUserId)
+    if (!currentUserId) return { model: input.model }
 
-    if (!currentUserSpaceId) return { model }
+    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, currentUserId)
+
+    if (!currentUserSpaceId) return { model: input.model }
 
     return {
-      model,
+      model: input.model,
       msgSpace: [
         withEventId({
           t: 'user-inputted-game',
@@ -72,7 +73,7 @@ const updateFromCmd: SpaceFrontendModule['update'] = ({ msgIn, model, ctx }) => 
     }
   }
 
-  return { model }
+  return { model: input.model }
 }
 
 const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {

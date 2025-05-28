@@ -19,7 +19,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('join space', () => {
   test('show toast after current user joining', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
@@ -42,28 +42,33 @@ describe(import.meta.file, () => {
     const otherUser = await UserProfile.random()
     const output = f.update(f.initial, [
       {
-        msgBackend: {
-          t: 'sync.got-msg-space',
-          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.currentUser.userId }),
+        ctx: {
+          ...f.ctx,
           profilesByUserId: {
             [otherUser.id]: otherUser,
           },
         },
-      },
-      {
         msgBackend: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({ t: 'user-joined-space', spaceId: f.spaceId, userId: otherUser.id }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.currentUser.userId }),
+        },
+      },
+      {
+        ctx: {
+          ...f.ctx,
           profilesByUserId: {
             [otherUser.id]: otherUser,
           },
+        },
+        msgBackend: {
+          t: 'sync.got-msg-space',
+          c: withEventMeta({ t: 'user-joined-space', spaceId: f.spaceId, userId: otherUser.id }),
         },
       },
     ])
 
-    expect(
-      ShowToastCmd.did(output, (toast) => toast.text === f.ctx.t('spaces.other-user-joined-space', otherUser.username)),
-    ).toBe(true)
+    const expectedText = f.ctx.t('spaces.other-user-joined-space', otherUser.username)
+    expect(ShowToastCmd.did(output, (toast) => toast.text === expectedText)).toBe(true)
   })
 
   it('should should toast of other user leaving space', async () => {

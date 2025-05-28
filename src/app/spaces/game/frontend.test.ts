@@ -63,21 +63,9 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const outputs = f.updates(f.initial, [
-      {
-        msg: {
-          t: 'start-space.clicked-start-space-button',
-          spaceId,
-        },
-      },
-      {
-        msg: {
-          t: 'game.clicked-game-tile',
-          gameName: 'flow',
-        },
-      },
-      {
-        msgIn: ExitGameCmd.init(),
-      },
+      { msg: { t: 'start-space.clicked-start-space-button', spaceId } },
+      { msg: { t: 'game.clicked-game-tile', gameName: 'flow' } },
+      { msgIn: ExitGameCmd.init() },
     ])
 
     const gameName = SpacesCore.toSpaceStarted(NonEmpty.last(outputs).model.spaces, spaceId)?.game?.t ?? null

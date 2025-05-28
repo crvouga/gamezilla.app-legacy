@@ -86,12 +86,6 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
           ...input.model,
           spaces: merged,
         },
-        msgEvt: [
-          {
-            t: 'space-evt.synced',
-            currentUser: 'currentUser' in input.msgBackend ? input.msgBackend.currentUser : null,
-          },
-        ],
       }
     }
   }

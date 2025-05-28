@@ -15,8 +15,8 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
-  it('should navigate to list screen after leaving space', async () => {
+describe('leave space', () => {
+  it.only('should navigate to list screen after leaving space', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
 
@@ -24,10 +24,7 @@ describe(import.meta.file, () => {
       userStartedSpace(0, f.userA.id, spaceId),
       userJoinedSpace(1, f.ctx.currentUser.userId, spaceId),
       {
-        msg: {
-          t: 'leave-space.clicked-leave-space-button',
-          spaceId: spaceId,
-        },
+        msg: { t: 'leave-space.clicked-leave-space-button', spaceId: spaceId },
       },
     ])
     expect(PushScreenCmd.did(output, (x) => x.t === 'space-list')).toBe(true)

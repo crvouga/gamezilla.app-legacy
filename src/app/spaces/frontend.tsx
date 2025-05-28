@@ -37,23 +37,11 @@ const init: FrontendModule['init'] = ({ ctx }) => {
 }
 
 const update: FrontendModule['update'] = (input) => {
-  const updatedChild = updateChild(input)
-  const updated = updateLoop({
-    ...input,
-    model: updatedChild.model,
-  })
-
-  return {
-    model: updated.model,
-    eff: Eff.batch(updatedChild.eff, updated.eff),
-    msgCmd: Msg.batch(updatedChild.msgCmd, updated.msgCmd),
-    msgOut: Msg.batch(updatedChild.msgOut, updated.msgOut),
-  }
+  const updated = updateLoop(input, updateChild(input))
+  return updated
 }
 
-const updateLoop = (input: Input, initial?: Output): Output => {
-  const acc = initial ?? updateChild(input)
-
+const updateLoop = (input: Input, acc: Output): Output => {
   const [msgSpace, ...msgSpaceRest] = acc.msgSpace ?? []
 
   if (msgSpace) {
