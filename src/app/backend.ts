@@ -21,7 +21,7 @@ import { BackendEvt } from './@/backend/evt'
 import * as AuthBackend from './auth/backend'
 import * as LangBackend from './lang/backend'
 import { ProfileDb } from './profile/@/user-profile/user-profile-db'
-import * as ProfileBackend from './profile/backend'
+import { ProfileBackend } from './profile/backend'
 import { SpacesBackend } from './spaces/backend'
 import {
   BackendCtx,

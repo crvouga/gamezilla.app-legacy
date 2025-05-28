@@ -83,12 +83,7 @@ const updateLoop = (
   const [evt, ...restEvt] = FlowFrontendEvt.toFlowFrontendEvt(acc.msgEvt)
 
   if (evt) {
-    const updated = updateChild({
-      ctx: input.ctx,
-      modelSpace: input.modelSpace,
-      model: acc.model,
-      msgEvt: evt,
-    })
+    const updated = updateChild({ ctx: input.ctx, modelSpace: input.modelSpace, model: acc.model, msgEvt: evt })
 
     return updateLoop(input, {
       model: updated.model,
@@ -102,12 +97,7 @@ const updateLoop = (
   const [cmd, ...restCmd] = FlowFrontendCmd.toFlowFrontendCmd(acc.msgCmd)
 
   if (cmd) {
-    const updated = updateChild({
-      ctx: input.ctx,
-      modelSpace: input.modelSpace,
-      model: acc.model,
-      msgCmd: cmd,
-    })
+    const updated = updateChild({ ctx: input.ctx, modelSpace: input.modelSpace, model: acc.model, msgCmd: cmd })
 
     return updateLoop(input, {
       model: updated.model,
@@ -270,7 +260,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
           screenBuild: ScreenBuildFrontend.init,
         },
         msgCmd: [playSound(APP_SOUND.navForwardMin)],
-        msgEvt: [
+        msgShared: [
           {
             t: 'flow-evt.user-changed-mode',
             mode: input.msgSpace.mode,

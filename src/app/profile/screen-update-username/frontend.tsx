@@ -98,7 +98,7 @@ const View: FrontendModule['View'] = (input) => {
     />
   )
 }
-export const UpdateUsernameFrontend = {
+export const ScreenUpdateUsernameFrontend = {
   init,
   update,
   View,

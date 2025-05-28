@@ -3,9 +3,10 @@ import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { IconChevronRight } from '~/@/ui/icon/icon-chevron-right'
 import { Typography } from '~/@/ui/typography'
-import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import type { FrontendCtx, ModelFrontend, MsgFrontend } from '../types'
 import { UserProfile } from '~/app/@/data/user-profile'
+import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { FrontendCtx } from '../screen-update-username/types'
+import type { ModelFrontend, MsgFrontend } from '../types'
 
 export const View = (input: { ctx: FrontendCtx; dispatch: (msg: MsgFrontend) => void; model: ModelFrontend }) => {
   if (!input.ctx.currentUser?.userId) return null
@@ -22,7 +23,7 @@ export const View = (input: { ctx: FrontendCtx; dispatch: (msg: MsgFrontend) => 
       navBar={{
         title: input.ctx.t('profile.edit-profile'),
         back: {
-          onClick: () => input.dispatch({ t: 'clicked-back-button', from: { t: 'profile-update' } }),
+          // onClick: () => input.dispatch({ t: 'clicked-back-button', from: { t: 'profile-update' } }),
         },
       }}
       renderBody={() => (
@@ -32,20 +33,20 @@ export const View = (input: { ctx: FrontendCtx; dispatch: (msg: MsgFrontend) => 
               src={UserProfile.toAvatarUrl(profile)}
               className='size-16'
               //   alt={input.ctx.t('avatar-title')}
-              onClick={() => input.dispatch({ t: 'clicked-avatar' })}
+              // onClick={() => input.dispatch({ t: 'clicked-avatar' })}
             />
             <Button
               size='sm'
               color='primary'
               variant='text'
               className='block'
-              onClick={() => input.dispatch({ t: 'clicked-change-avatar-button' })}
+              // onClick={() => input.dispatch({ t: 'clicked-change-avatar-button' })}
               text={input.ctx.t('profile.update-avatar')}
             />
           </div>
 
           <ViewField
-            onClick={() => input.dispatch({ t: 'clicked-update-username-button' })}
+            // onClick={() => input.dispatch({ t: 'clicked-update-username-button' })}
             label={input.ctx.t('username.username-label')}
             value={input.ctx.t('username', profile.username)}
           />

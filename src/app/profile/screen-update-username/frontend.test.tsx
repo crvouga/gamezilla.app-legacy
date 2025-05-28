@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
-import { UpdateUsernameFrontend } from './frontend'
+import { ScreenUpdateUsernameFrontend } from './frontend'
 import { ModelFrontend, MsgFrontend } from './types'
 import { PubSub } from '~/@/sub'
 
@@ -10,12 +10,12 @@ const Fixture = async () => {
   const render = (model: ModelFrontend) => {
     const msgs = PubSub.create<MsgFrontend>()
     return {
-      ...f.render(<UpdateUsernameFrontend.View ctx={f.ctx} model={model} dispatch={msgs.pub} />),
+      ...f.render(<ScreenUpdateUsernameFrontend.View ctx={f.ctx} model={model} dispatch={msgs.pub} />),
       msgs,
     }
   }
 
-  const initial = UpdateUsernameFrontend.init({ ...f, stored: {} }).model
+  const initial = ScreenUpdateUsernameFrontend.init({ ...f, stored: {} }).model
 
   return {
     ...f,

@@ -10,6 +10,7 @@ import { AuthTypes } from './auth'
 import * as FrontendTypes from './frontend/types'
 import { LangTypes } from './lang'
 import { ProfileTypes } from './profile'
+import { ProfileBackendCtx } from './profile/@/backend/ctx'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
 import { IBackendTransport } from './wire/transport/backend'
@@ -106,14 +107,15 @@ export type BackendCtx = AppBackendCtx & {
     MsgToBackend: MsgToBackend
   }>
   wire: WireTypes.BackendCtx<MsgToFrontend, MsgToBackend>
-  profile: ProfileTypes.BackendCtx
+  profile: ProfileBackendCtx
   space: SpacesTypes.BackendCtx
   auth: AuthTypes.BackendCtx
   httpServer: IHttpServer
 }
 
 export type FrontendCtx = AppFrontendCtxBase &
-  AuthTypes.FrontendCtx & {
+  AuthTypes.FrontendCtx &
+  ProfileTypes.FrontendCtx & {
     rpc: RPC.Client<typeof rpcContract>
     transport: IFrontendTransport<{
       MsgToBackend: MsgToBackend

@@ -33,7 +33,7 @@ import { ViewAppStatusBar } from './frontend/app-status-bar/app-status-bar'
 import * as FrontendFrontend from './frontend/frontend'
 import { ToastFrontend } from './frontend/toast'
 import * as LangFrontend from './lang/frontend'
-import * as ProfileFrontend from './profile/frontend'
+import { ProfileFrontend } from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtx, ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend, rpcContract as contract } from './types'
 import * as WireFrontend from './wire/frontend'
@@ -99,10 +99,11 @@ const initCtx = async (): Promise<FrontendCtx> => {
   }
 
   const auth = await AuthFrontend.initCtx({ ctx: { ...ctx, rpc } })
-
+  const profile = ProfileFrontend.initCtx({ ctx })
   return {
-    ...auth,
     ...ctx,
+    ...profile,
+    ...auth,
     transport,
     rpc,
   }
@@ -184,7 +185,7 @@ const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<Ms
   const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire }, stored: {} })
   const auth = AuthFrontend.init({ ctx: input.ctx })
   const space = SpacesFrontend.init({ ctx })
-  const profile = ProfileFrontend.init({ ctx })
+  const profile = ProfileFrontend.init({ ctx: input.ctx })
 
   const initialModel: ModelFrontend = {
     frontend: frontend.model,
@@ -396,6 +397,7 @@ const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend }): Sub<M
     Sub.tag('lang', LangFrontend.subscriptions({ ctx, model: input.model.lang })),
     Sub.tag('auth', AuthFrontend.subscriptions({ ctx, model: input.model.auth })),
     Sub.tag('spaces', SpacesFrontend.subscriptions({ ctx, model: input.model.spaces })),
+    Sub.tag('profile', ProfileFrontend.subscriptions({ ctx, model: input.model.profile })),
   ])
 }
 

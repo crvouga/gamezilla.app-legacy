@@ -17,20 +17,20 @@ const main = async () => {
 
   await Program.run({
     initCtx: () => ctx,
-    
+
     updateCtx: AppFrontend.updateCtx,
-    
+
     init: AppFrontend.init,
-    
+
     update: AppFrontend.update,
-    
+
     subscriptions: AppFrontend.subscriptions,
-    
+
     render: (input) => render(<AppFrontend.View {...input} />),
-    
+
     crash: (input) => console.error('program crashed!', input),
 
-    debugger: CONFIG_SHARED.IS_PROD || true ? DebuggerConsole : DebuggerReduxDevTools,
+    debugger: CONFIG_SHARED.IS_PROD ? DebuggerConsole : DebuggerReduxDevTools,
   })
 
   await ctx.transport.start()

@@ -1,98 +1,42 @@
-import type { RemoteResult, Result } from '~/@/result'
 import { ClientId } from '../../@/wire/client-id'
 import { AppBackendModule } from '../@/architecture/app-backend'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { BackendCmd } from '../@/backend/cmd'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendEvt } from '../@/backend/evt'
-import { UserProfile } from '../@/data/user-profile'
-import { ProfileAvatarSeed, ProfileAvatarStyle } from '../@/data/profile-avatar'
 import { UserId } from '../@/data/user-id'
+import { UserProfile } from '../@/data/user-profile'
 import { AppFrontendCmd, ProfileCmd } from '../@/frontend/cmd'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { AppFrontendEvt } from '../@/frontend/evt'
-import * as UpdateUsernameTypes from './update-username/types'
+import { ProfileBackendCtx } from './@/backend/ctx'
+import { ProfileFrontendCtx } from './@/frontend/ctx'
+import { ScreenProfileTypes } from './screen-profile'
+import { ScreenUpdateUsernameTypes } from './screen-update-username'
 
-//
-//
-//
-// Model
-//
-//
-//
+export type BackendCtx = ProfileBackendCtx
+
+export type FrontendCtx = ProfileFrontendCtx
 
 export type ModelFrontend = {
-  updateUsername: UpdateUsernameTypes.ModelFrontend
-  profilesByUserId: {
-    [userId: UserId]: UserProfile
-  }
-  requests: {
-    [key in Req['t']]?: RemoteResult<string, null>
-  }
-  draft?: {
-    username?: string
-    avatarSeed?: ProfileAvatarSeed
-    avatarStyle?: ProfileAvatarStyle
-  }
+  profilesByUserId: { [userId: UserId]: UserProfile }
+  screenProfile: ScreenProfileTypes.ModelFrontend
+  screenUpdateUsername: ScreenUpdateUsernameTypes.ModelFrontend
 }
 
-//
-//
-//
-// Msg
-//
-//
-//
-
 export type MsgFrontend =
-  | Req
-  | { t: 'got-update-username-msg'; c: UpdateUsernameTypes.MsgFrontend }
-  | {
-      t: 'clicked-back-button'
-      from:
-        | { t: 'profile'; userId: UserId }
-        | { t: 'profile-avatar' }
-        | { t: 'profile-update' }
-        | { t: 'profile-update-username' }
-    }
-  | { t: 'inputted-username'; username: string }
-  | { t: 'inputted-avatar-seed'; seed: string }
-  | { t: 'inputted-avatar-style'; style: ProfileAvatarStyle }
-  | { t: 'clicked-generate-random-seed' }
-  | { t: 'clicked-logout-button' }
-  | { t: 'clicked-edit-profile-button' }
-  | { t: 'clicked-change-avatar-button' }
-  | { t: 'clicked-avatar' }
-  | { t: 'clicked-update-username-button' }
+  | { t: 'got-update-username-screen-msg'; c: ScreenUpdateUsernameTypes.MsgFrontend }
+  | { t: 'got-profile-screen-msg'; c: ScreenProfileTypes.MsgFrontend }
 
 export type MsgBackend =
-  | { t: 'got-update-username-msg'; c: UpdateUsernameTypes.MsgBackend }
+  | { t: 'got-update-username-screen-msg'; c: ScreenUpdateUsernameTypes.MsgBackend }
   | { t: 'handled'; clientId: ClientId; msg: MsgToFrontend }
 
-export type MsgToFrontend =
-  | { t: 'got-update-username-msg'; c: UpdateUsernameTypes.MsgToFrontend }
-  | {
-      t: 'current-user-profile'
-      result: Result<string, UserProfile>
-      causedBy: unknown
-      loggedIn?: boolean
-    }
-  | Res
+export type MsgToFrontend = { t: 'noop' }
 
-export type MsgToBackend = Req | { t: 'got-update-username-msg'; c: UpdateUsernameTypes.MsgToBackend }
-
-export type Req =
-  | { t: 'find-one'; userId: UserId }
-  | { t: 'change-username'; username: string }
-  | { t: 'search'; query: string }
-  | { t: 'delete-forever'; query: string }
-
-export type Res = Req & { result: Result<string, UserProfile[]> }
-
-export type BackendCtx = AppBackendCtx
+export type MsgToBackend = { t: 'noop' }
 
 export type BackendModule = AppBackendModule<{
-  Ctx: BackendCtx
+  Ctx: AppBackendCtx
   MsgCmdIn: null
   MsgEvtIn: BackendEvt
   Model: null
@@ -104,19 +48,14 @@ export type BackendModule = AppBackendModule<{
   Deps: null
 }>
 
-export type FrontendCtx = AppFrontendCtx | AnonymousFrontendCtx
-
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend
   Msg: MsgFrontend
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
-  Ctx: FrontendCtx
+  Ctx: ProfileFrontendCtx
   MsgCmdIn: ProfileCmd
   MsgEvtIn: AppFrontendEvt
-  MsgCmdOut: AppFrontendCmd<{
-    MsgFrontend: MsgFrontend
-    MsgToBackend: MsgToBackend
-  }>
+  MsgCmdOut: AppFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>
   MsgEvtOut: AppFrontendEvt
 }>
