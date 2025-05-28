@@ -1,15 +1,14 @@
 import { describe, expect, it } from 'bun:test'
-import { eq } from '~/@/equals/equals'
 import { withEventMetaAt } from '~/@/event-sourced/event'
-import { UserProfile } from '~/app/@/data/user-profile'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { addProfiles } from '~/app/@/frontend/cmd'
+import { UserProfile } from '~/app/@/data/user-profile'
+import { AddProfilesCmd } from '~/app/@/frontend/add-profiles-cmd'
+import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { makeSpace } from '../@/fixture/shared'
 import { SpacesCore } from '../core/core'
 import { Space } from '../core/space'
-import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
 
 const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
   return items.filter(predicate).length === 1
@@ -43,9 +42,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(hasExactlyOne(output.msgCmd ?? [], (msgCmd) => eq(msgCmd, addProfiles(Object.values(someProfiles))))).toBe(
-      true,
-    )
+    expect(AddProfilesCmd.did(output, Object.values(someProfiles))).toBe(true)
   })
 
   it('should merge space received from backend', async () => {

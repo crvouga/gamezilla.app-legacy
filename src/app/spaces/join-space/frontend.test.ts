@@ -3,12 +3,13 @@ import { withEventMeta } from '~/@/event-sourced/event'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
-import { didShowErrorSm } from '~/app/@/frontend/cmd'
+
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { SpacesCore } from '../core/core'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -134,7 +135,7 @@ describe(import.meta.file, () => {
     ])
 
     expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)).toEqual(spaceA)
-    expect(didShowErrorSm(output)).toBe(true)
+    expect(ShowErrorSmall.did(output)).toBe(true)
   })
 
   it('opens person details surface when clicking person list item', async () => {

@@ -1,8 +1,8 @@
 import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
-import type { FocusCmd } from '../../@/frontend/cmd'
-import { TimeSpan } from '~/@/time/time-span'
 import { sleep } from '~/@/promise/sleep'
+import { Sub } from '~/@/sub'
+import { TimeSpan } from '~/@/time/time-span'
+import { FocusViewCmd } from '~/app/@/frontend/focus-view-cmd'
 
 export type Model = {
   t: 'noop'
@@ -21,9 +21,9 @@ export type Msg = { t: 'element-focused'; id: string }
 export const update = ({
   msg,
   model,
-  msgCmd,
+  msgIn,
 }: {
-  msgCmd?: FocusCmd | null
+  msgIn?: unknown | null
   msg?: Msg | null
   model: Model
 }): {
@@ -32,7 +32,7 @@ export const update = ({
 } => {
   if (msg) return updateFromMsg({ msg, model })
 
-  if (msgCmd) return updateFromCmd({ msgCmd, model })
+  if (msgIn) return updateFromCmd({ msgIn, model })
 
   return { model }
 }
@@ -47,54 +47,46 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
   }
 }
 
-const updateFromCmd: typeof update = ({ msgCmd, model }) => {
-  if (!msgCmd) return { model }
+const updateFromCmd: typeof update = ({ msgIn, model }) => {
+  if (FocusViewCmd.is(msgIn)) {
+    return {
+      model,
+      eff: async (dispatch) => {
+        const element = document.getElementById(msgIn.viewId)
 
-  const cmd = msgCmd.c
+        if (!element) {
+          return
+        }
 
-  switch (cmd.t) {
-    case 'focus': {
-      return {
-        model,
-        eff: async (dispatch) => {
-          const element = document.getElementById(cmd.viewId)
+        await new Promise<null>(async (resolve) => {
+          let focused = false
+          const handler = () => {
+            focused = true
+            element.removeEventListener('focus', handler)
+            dispatch({
+              t: 'element-focused',
+              id: msgIn.viewId,
+            })
+          }
+          element.addEventListener('focus', handler)
 
-          if (!element) {
-            return
+          for (let i = 0; i < 10; i++) {
+            element.focus()
+
+            await sleep(TimeSpan.milliseconds(0))
+
+            if (focused) {
+              break
+            }
           }
 
-          await new Promise<null>(async (resolve) => {
-            let focused = false
-            const handler = () => {
-              focused = true
-              element.removeEventListener('focus', handler)
-              dispatch({
-                t: 'element-focused',
-                id: cmd.viewId,
-              })
-            }
-            element.addEventListener('focus', handler)
-
-            for (let i = 0; i < 10; i++) {
-              element.focus()
-
-              await sleep(TimeSpan.milliseconds(0))
-
-              if (focused) {
-                break
-              }
-            }
-
-            resolve(null)
-          })
-        },
-      }
-    }
-
-    default: {
-      return { model }
+          resolve(null)
+        })
+      },
     }
   }
+
+  return { model }
 }
 
 export const subscriptions: Sub<Msg> = Sub.None

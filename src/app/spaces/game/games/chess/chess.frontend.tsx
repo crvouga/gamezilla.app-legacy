@@ -2,14 +2,13 @@ import { Eff } from '~/@/eff'
 import { RemoteResult, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { IconPuzzlePiece } from '~/@/ui/icon/icon-puzzle-piece'
-import { APP_SOUND, AppFrontendCmd, preloadSound, sendToBackend } from '~/app/@/frontend/cmd'
+import { APP_SOUND, AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import type { GameFrontend } from '~/app/spaces/game/games/@/architecture/game-frontend'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/chess-ui'
-import { CHESS_SOUND } from './@/chess/chess-sounds'
 import type { ModelFrontend, ModelSpace, MsgFrontend, MsgSpace, MsgToBackend, MsgToFrontend } from './chess.types'
 import * as Puzzle from './puzzle/puzzle.frontend'
 import * as VsBot from './vs-bot/vs-bot.frontend'
@@ -56,7 +55,7 @@ export const init: Frontend['init'] = ({ model }) => {
       },
       requests: {},
     },
-    msgCmd: [preloadSound(Object.values(CHESS_SOUND))],
+    // msgOut: [PreloadSoundsCmd.init(Object.values(CHESS_SOUND))],
   }
 }
 

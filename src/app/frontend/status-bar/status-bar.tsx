@@ -1,9 +1,10 @@
 import { Translator as StatusBarFrontend } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
+import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
-import { APP_SOUND, StatusBarCmd } from '../../@/frontend/cmd'
+import { APP_SOUND } from '../../@/frontend/cmd'
 
 export type Model = {
   isOpen: boolean
@@ -22,7 +23,7 @@ export type Msg = { t: 'clicked-status-bar' } | { t: 'closed-status-bar-drawer' 
 export const update = (input: {
   model: Model
   msg?: Msg | null
-  msgCmd?: StatusBarCmd | null
+  msgIn?: unknown | null
 }): {
   model: Model
   msgOut?: unknown[]
@@ -37,14 +38,8 @@ export const update = (input: {
     }
   }
 
-  switch (input.msgCmd?.t) {
-    case 'status-bar': {
-      switch (input.msgCmd.c.t) {
-        case 'close': {
-          return { model: { ...input.model, isOpen: false } }
-        }
-      }
-    }
+  if (CloseStatusBarCmd.is(input.msgIn)) {
+    return { model: { ...input.model, isOpen: false } }
   }
 
   return { model: input.model }

@@ -8,8 +8,10 @@ import { IconUserPen } from '~/@/ui/icon/icon-user-pen'
 import { Typography } from '~/@/ui/typography'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
-import { back, pushScreen } from '~/app/@/frontend/cmd'
+
+import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd'
 import { LogoutCmd } from '~/app/@/frontend/logout-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ProfileFrontendCtx } from '../@/frontend/ctx'
 import { ProfileLoaderFrontend } from '../@/user-profile-loader/frontend'
@@ -33,10 +35,10 @@ const update: FrontendModule['update'] = (input) => {
   if (!input.msg) return { model: input.model }
   switch (input.msg.t) {
     case 'clicked-back-button': {
-      return { model: input.model, msgOut: [back()] }
+      return { model: input.model, msgOut: [BackScreenCmd.init()] }
     }
     case 'clicked-edit-profile-button': {
-      return { model: input.model, msgOut: [pushScreen({ t: 'profile-edit', n: 'profile' })] }
+      return { model: input.model, msgOut: [PushScreenCmd.init({ t: 'profile-edit', n: 'profile' })] }
     }
     case 'clicked-logout-button': {
       return { model: input.model, msgOut: [LogoutCmd.init()] }

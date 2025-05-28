@@ -8,7 +8,7 @@ import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-pro
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 
-import { ShowOkSmall } from '~/app/@/frontend/show-ok-sm'
+import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
 import { RemovePuzzlesCmd } from '../../../../@/frontend/remove-puzzles-cmd'
 import type { FrontendModule } from '../../../types'
 

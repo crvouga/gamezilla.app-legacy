@@ -13,7 +13,7 @@ import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
-import { APP_SOUND, SoundCmd, ToastCmd } from '../../@/frontend/cmd'
+import { APP_SOUND } from '../../@/frontend/cmd'
 
 type Ctx = {
   now: Posix
@@ -24,16 +24,7 @@ type Ctx = {
 type Module = AppFrontendModule<{
   Model: Model
   Msg: Msg
-  MsgCmdIn: ToastCmd
   Ctx: Ctx
-  //
-  MsgToFrontend: null
-  MsgToBackend: null
-  //
-  MsgCmdOut: SoundCmd
-  //
-  MsgEvtIn: null
-  MsgEvtOut: null
 }>
 
 export type Model = {
@@ -131,24 +122,7 @@ const updateFromCmd: Module['update'] = (input) => {
     }
   }
 
-  if (!input.msgCmd) return { model: input.model }
-
-  const toastCmd = input.msgCmd.c
-
-  switch (toastCmd.t) {
-    case 'enqueue': {
-      const toastNew: Toast = {
-        toastId: input.model.runningId,
-        text: toastCmd.text,
-        duration: toastCmd.duration ?? TimeSpan.seconds(2),
-        variant: toastCmd.toastVariant ?? 'info',
-        createdAt: input.ctx.now,
-        errorMsg: toastCmd.errorMsg ?? null,
-      }
-
-      return { model: { ...input.model, runningId: input.model.runningId + 1, toast: toastNew } }
-    }
-  }
+  return { model: input.model }
 }
 
 export const subscriptions: Module['subscriptions'] = ({ model }) => {

@@ -1,6 +1,6 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import type { CopyToClipboardCmd } from '../../@/frontend/cmd'
+import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd'
 
 export type Model = {
   t: 'noop'
@@ -19,17 +19,17 @@ export type Msg = { t: 'copied-to-clipboard'; text: string }
 export const update = ({
   msg,
   model,
-  msgCmd,
+  msgIn,
 }: {
-  msgCmd?: CopyToClipboardCmd | null
   msg?: Msg | null
   model: Model
+  msgIn?: unknown
 }): {
   model: Model
   eff?: Eff<Msg>
 } => {
   if (msg) return updateFromMsg({ msg, model })
-  if (msgCmd) return updateFromCmd({ msgCmd, model })
+  if (msgIn) return updateFromCmd({ msgIn, model })
   return { model }
 }
 
@@ -43,30 +43,21 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
   }
 }
 
-const updateFromCmd: typeof update = ({ msgCmd, model }) => {
-  if (!msgCmd) return { model }
-
-  const cmd = msgCmd.c
-
-  switch (cmd.t) {
-    case 'copy-to-clipboard': {
-      return {
-        model,
-        eff: async (dispatch) => {
-          await navigator.clipboard.writeText(cmd.text)
-          dispatch({
-            t: 'copied-to-clipboard',
-            text: cmd.text,
-          })
-        },
-      }
-    }
-    default: {
-      return {
-        model,
-      }
+const updateFromCmd: typeof update = ({ msgIn, model }) => {
+  if (CopyToClipboardCmd.is(msgIn)) {
+    return {
+      model,
+      eff: async (dispatch) => {
+        await navigator.clipboard.writeText(msgIn.text)
+        dispatch({
+          t: 'copied-to-clipboard',
+          text: msgIn.text,
+        })
+      },
     }
   }
+
+  return { model }
 }
 
 export const subscriptions: Sub<Msg> = Sub.None

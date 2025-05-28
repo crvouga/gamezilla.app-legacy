@@ -1,6 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
-import { APP_SOUND, showToast } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { CurrentUserLoggedOutEvt } from '~/app/@/frontend/current-user-logged-out-evt'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
@@ -9,6 +9,7 @@ import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-b
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { MsgSpace } from '../core/space-msg/space-msg'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -76,17 +77,20 @@ const updateShowToast: SpaceFrontendModule['update'] = (input) => {
   if (input.msgSpace?.t !== 'user-ended-space') return { model: input.model }
 
   if (input.msgSpace?.userId === input.ctx.currentUser?.userId) {
-    return { model: input.model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-current-user'))] }
+    return { model: input.model, msgOut: [ShowToastCmd.init(input.ctx.t('spaces.ended-space-current-user'))] }
   }
   const { userId } = input.msgSpace
 
   const profile = input.ctx.profilesByUserId[userId]
 
   if (!profile) {
-    return { model: input.model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-host'))] }
+    return { model: input.model, msgOut: [ShowToastCmd.init(input.ctx.t('spaces.ended-space-host'))] }
   }
 
-  return { model: input.model, msgCmd: [showToast(input.ctx.t('spaces.ended-space-other-user', profile.username))] }
+  return {
+    model: input.model,
+    msgOut: [ShowToastCmd.init(input.ctx.t('spaces.ended-space-other-user', profile.username))],
+  }
 }
 
 const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {

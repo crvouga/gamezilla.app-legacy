@@ -1,20 +1,11 @@
 import { Sub } from '~/@/sub'
-import { addProfiles } from '~/app/@/frontend/cmd'
+
+import { AddProfilesCmd } from '~/app/@/frontend/add-profiles-cmd'
 import { ProfileFrontendCtx } from '../frontend/ctx'
 import { ProfileDbQuery } from '../user-profile/user-profile-db/query'
 import type { FrontendModule, MsgFrontend, MsgInCmdFrontend } from './types'
 
 const update: FrontendModule['update'] = (input) => {
-  switch (input.msgCmd?.c.t) {
-    case 'got-msg': {
-      return update({
-        ...input,
-        msgCmd: null,
-        msg: input.msgCmd.c.msg,
-      })
-    }
-  }
-
   switch (input.msg?.t) {
     case 'got-profile-db-profiles': {
       return {
@@ -25,7 +16,7 @@ const update: FrontendModule['update'] = (input) => {
             [ProfileDbQuery.toKey(input.msg.query)]: input.msg.profiles.map((p) => p.id),
           },
         },
-        msgCmd: [addProfiles(input.msg.profiles)],
+        msgOut: [AddProfilesCmd.init(input.msg.profiles)],
       }
     }
   }

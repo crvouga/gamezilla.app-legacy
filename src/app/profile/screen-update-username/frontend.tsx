@@ -1,6 +1,6 @@
 import { RequestResponse } from '~/@/request-response/request-response'
 import { TextField } from '~/@/ui/text-field'
-import { pushScreen, sendToBackend } from '~/app/@/frontend/cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { FrontendModule } from './types'
 
@@ -19,7 +19,7 @@ const update: FrontendModule['update'] = (input) => {
     case 'profile.update-username.clicked-back': {
       return {
         model: input.model,
-        msgCmd: [pushScreen({ t: 'profile-edit', n: 'profile' })],
+        msgOut: [PushScreenCmd.init({ t: 'profile-edit', n: 'profile' })],
       }
     }
 
@@ -29,12 +29,12 @@ const update: FrontendModule['update'] = (input) => {
           ...input.model,
           'profile-update-username.request': RequestResponse.startedRequest(input.ctx.now),
         },
-        msgCmd: [
-          sendToBackend({
-            t: 'profile.update-username.clicked-save',
-            username: input.model['profile.update-username.username'] ?? '',
-          }),
-        ],
+        // msgCmd: [
+        //   sendToBackend({
+        //     t: 'profile.update-username.clicked-save',
+        //     username: input.model['profile.update-username.username'] ?? '',
+        //   }),
+        // ],
       }
     }
 

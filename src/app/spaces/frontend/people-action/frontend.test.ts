@@ -1,11 +1,12 @@
 import { describe, expect, it, test } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, didOpenProfile } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
 import { FixtureSpacesFrontend } from '../../@/fixture/frontend'
 import { OpenUserDetailsCmd } from '../../@/frontend/open-user-details-cmd'
 import { PeopleActionFrontend } from './frontend'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
-import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -102,7 +103,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(didOpenProfile(output, someUserId)).toBe(true)
+    expect(OpenProfileCmd.did(output, someUserId)).toBe(true)
   })
 
   it('should play sound when clicking preview user link', async () => {
@@ -121,7 +122,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'sound' && msgCmd.c.t === 'play')).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 
   it('should not navigate after clicking preview user link if preview is not open', async () => {
@@ -134,11 +135,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(
-      output.msgCmd?.some(
-        (msgCmd) => msgCmd.t === 'profile' && msgCmd.c.t === 'open-profile' && msgCmd.c.userId === someUserId,
-      ),
-    ).toBe(false)
+    expect(OpenProfileCmd.did(output, someUserId)).toBe(false)
   })
 
   test('play sound open people modal', async () => {

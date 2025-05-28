@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Translator } from '~/@/l18n/generated'
 import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
 import { Typography } from '~/@/ui/typography'
-import { APP_SOUND, showErrSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
@@ -17,6 +17,7 @@ import { SpacesCore } from '../core/core'
 import { MsgSpace } from '../core/space-msg/space-msg'
 import { GameName } from '../game/games/@/game-name'
 import { GameCoverArt } from '../game/games/cover-art'
+import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -82,7 +83,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
           if (error.userId === input.ctx.currentUser?.userId) {
             return {
               model: input.model,
-              msgCmd: showErrSm(input.ctx.t("spaces.you're-already-in-a-space")),
+              msgOut: ShowErrorSmall.init(input.ctx.t("spaces.you're-already-in-a-space")),
             }
           }
 

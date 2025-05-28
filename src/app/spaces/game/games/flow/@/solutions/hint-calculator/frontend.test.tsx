@@ -1,12 +1,15 @@
 import { describe, expect, test } from 'bun:test'
 import { Err, Ok } from '~/@/result'
-import { didShowErrorSm, didShowOkSm, didShowWarningSm } from '~/app/@/frontend/cmd'
+
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
+import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
+import { ShowWarningSmall } from '~/app/@/frontend/show-warning-small'
 import { FixtureFlowFrontend } from '../../frontend/fixture'
 import { VariantGridShorthand } from '../../variant/grid'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
 import { HintCalculatorFrontend } from './frontend'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { GotHintCalculatorMsg } from './got-hint-calculator-msg'
 
 export const Fixture = async () => {
@@ -130,7 +133,7 @@ describe('HintCalculatorFrontend', () => {
     })
     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
-    expect(didShowOkSm(after)).toBe(true)
+    expect(ShowOkSmall.did(after)).toBe(true)
   })
 
   test('found no solutions', async () => {
@@ -148,7 +151,7 @@ describe('HintCalculatorFrontend', () => {
     })
     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
-    expect(didShowWarningSm(after)).toBe(true)
+    expect(ShowWarningSmall.did(after)).toBe(true)
   })
 
   test('found solution err', async () => {
@@ -165,7 +168,7 @@ describe('HintCalculatorFrontend', () => {
     })
     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
-    expect(didShowErrorSm(after)).toBe(true)
+    expect(ShowErrorSmall.did(after)).toBe(true)
   })
 
   test('close surface after finding solutions', async () => {

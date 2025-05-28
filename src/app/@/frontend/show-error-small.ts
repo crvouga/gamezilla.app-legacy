@@ -5,7 +5,7 @@ import { APP_SOUND } from './cmd'
 import { PlaySoundCmd } from './play-sound-cmd'
 import { ShowToastCmd } from './show-toast-cmd'
 
-export const init = (text: TranslatedText, errorMsg?: string, duration?: TimeSpan): unknown[] => {
+const init = (text: TranslatedText, errorMsg?: string, duration?: TimeSpan): unknown[] => {
   return [
     ShowToastCmd.init(text, {
       variant: 'error',
@@ -15,6 +15,12 @@ export const init = (text: TranslatedText, errorMsg?: string, duration?: TimeSpa
     PlaySoundCmd.init(APP_SOUND.alertErrorSm),
   ]
 }
+
+const did = (output?: { msgOut?: unknown[] | null }): boolean => {
+  return ShowToastCmd.did(output) && PlaySoundCmd.did(output)
+}
+
 export const ShowErrorSmall = {
   init,
+  did,
 }

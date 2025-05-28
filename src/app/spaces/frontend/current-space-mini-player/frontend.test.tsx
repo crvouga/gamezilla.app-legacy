@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { SpaceId } from '~/app/@/data/space-id'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { FixtureSpacesFrontend } from '../../@/fixture/frontend'
 import { SpacesCore } from '../../core/core'
 
@@ -30,15 +32,7 @@ describe(import.meta.file, () => {
 
     const currentUsersSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)
 
-    expect(
-      output.msgCmd?.some(
-        (msgCmd) =>
-          msgCmd.t === 'current-screen' &&
-          msgCmd.c.t === 'push' &&
-          msgCmd.c.screen.t === 'space' &&
-          msgCmd.c.screen.spaceId === currentUsersSpaceId,
-      ),
-    ).toBe(true)
+    expect(PushScreenCmd.did(output, (m) => m.t === 'space' && m.spaceId === currentUsersSpaceId)).toBe(true)
   })
 
   it('should play a sound when clicking current space bottom bar', async () => {
@@ -59,6 +53,6 @@ describe(import.meta.file, () => {
       },
     ])
 
-    expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'sound' && msgCmd.c.t === 'play')).toBe(true)
+    expect(PlaySoundCmd.did(output)).toBe(true)
   })
 })

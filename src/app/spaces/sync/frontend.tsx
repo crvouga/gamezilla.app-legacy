@@ -1,8 +1,9 @@
 import { EventSourced } from '~/@/event-sourced'
 import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
-import { addProfiles, sendToBackend } from '~/app/@/frontend/cmd'
+import { sendToBackend } from '~/app/@/frontend/cmd'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
+import { AddProfilesCmd } from '~/app/@/frontend/add-profiles-cmd'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -44,7 +45,7 @@ const sendMsgSpaceToBackend: SpaceFrontendModule['update'] = ({ ctx, model, msgS
 const updateProfiles: SpaceFrontendModule['update'] = ({ model, msgBackend }) => {
   if (!msgBackend?.profilesByUserId) return { model }
 
-  return { model, msgCmd: [addProfiles(Object.values(msgBackend.profilesByUserId))] }
+  return { model, msgOut: [AddProfilesCmd.init(Object.values(msgBackend.profilesByUserId))] }
 }
 
 const updateSpace: SpaceFrontendModule['update'] = (input) => {

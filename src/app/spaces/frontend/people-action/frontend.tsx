@@ -4,7 +4,7 @@ import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'
 import { IconUserGroup } from '~/@/ui/icon/icon-user-group'
 import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, openProfile } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
@@ -14,6 +14,7 @@ import { OpenUserDetailsCmd } from '../../@/frontend/open-user-details-cmd'
 import { SectionPeopleList } from '../../@/ui/section-people-list'
 import { SectionPersonDetails } from '../../@/ui/section-person-details'
 import { SpaceFrontendModule } from '../../architecture/space-frontend'
+import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd'
 
 export type FrontendMsg =
   | { t: 'people-action.closed-surface' }
@@ -36,7 +37,10 @@ const updateUserPreview: SpaceFrontendModule['update'] = ({ msg, model }) => {
     case 'people-action.clicked-preview-user-link': {
       if (!model.openedPreviewUserId) return { model }
 
-      return { model, msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin), openProfile(model.openedPreviewUserId)] }
+      return {
+        model,
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin), OpenProfileCmd.init(model.openedPreviewUserId)],
+      }
     }
   }
   return { model }

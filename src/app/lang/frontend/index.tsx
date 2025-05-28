@@ -9,9 +9,10 @@ import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { APP_SOUND, back } from '../../@/frontend/cmd'
+import { APP_SOUND } from '../../@/frontend/cmd'
 import { translatorSubscriptions } from '../../@/frontend/translator'
 import type { FrontendModule, TranslationLoading } from '../types'
+import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd'
 
 //
 //
@@ -103,7 +104,7 @@ export const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
     case 'choose-lang.clicked-done': {
       return {
         model,
-        msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin), back()],
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin), BackScreenCmd.init()],
       }
     }
 

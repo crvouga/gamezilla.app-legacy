@@ -20,9 +20,10 @@ import { CONFIG_SHARED } from '~/config/shared'
 import { setupNewPowerSyncClient } from '~/service-powersync/frontend/database'
 import { ILogger, Logger } from '../@/logger'
 import { UserProfile } from './@/data/user-profile'
-import { AppFrontendCmd } from './@/frontend/cmd'
+import { APP_SOUND, AppFrontendCmd } from './@/frontend/cmd'
 import { AnonymousFrontendCtx, AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { AppFrontendEvt } from './@/frontend/evt'
+import { PreloadSoundsCmd } from './@/frontend/preload-sounds-cmd'
 import { Translator } from './@/frontend/translator'
 import { ViewAppRoot } from './@/ui/app-root/app-root'
 import { SplashScreen } from './@/ui/logo/splash-screen'
@@ -204,18 +205,18 @@ const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<Ms
 
   const initialCmd = Msg.batch<AppFrontendCmd<{ MsgToBackend: MsgToBackend; MsgFrontend: MsgFrontend }>>(
     AppFrontendCmd.tag('spaces', space.msgCmd),
-    AppFrontendCmd.tag('profile', profile.msgCmd),
     AppFrontendCmd.tag('auth', auth.msgCmd),
     AppFrontendCmd.tag('lang', lang.msgCmd),
-    AppFrontendCmd.tag('frontend', frontend.msgCmd),
   )
+
+  const initialMsgOut = Msg.batch(PreloadSoundsCmd.init(Object.values(APP_SOUND)))
 
   const updated = updateLoop(input.ctx, {
     model: initialModel,
     eff: initialEff,
     msgCmd: initialCmd,
+    msgOut: initialMsgOut,
     msgEvt: [],
-    msgOut: [],
   })
 
   return updated
@@ -334,7 +335,6 @@ const updateChild = (input: {
     model: input.model.profile,
     msg: input.msg?.t === 'profile' ? input.msg.c : null,
     msgBackend: input.msgBackend?.t === 'profile' ? input.msgBackend.c : null,
-    msgCmd: input.msgCmd?.t === 'profile' ? input.msgCmd : null,
     msgIn: input.msgIn,
   })
 
@@ -395,7 +395,6 @@ const updateChild = (input: {
     msgEvt: Msg.batch<AppFrontendEvt>(auth.msgEvt, space.msgEvt, wire.msgEvt, lang.msgEvt, frontend.msgEvt),
     msgCmd: Msg.batch<AppFrontendCmd<{ MsgToBackend: MsgToBackend; MsgFrontend: MsgFrontend }>>(
       AppFrontendCmd.tag('auth', auth.msgCmd),
-      AppFrontendCmd.tag('profile', profile.msgCmd),
       AppFrontendCmd.tag('spaces', space.msgCmd),
       AppFrontendCmd.tag('lang', lang.msgCmd),
       AppFrontendCmd.tag('frontend', frontend.msgCmd),

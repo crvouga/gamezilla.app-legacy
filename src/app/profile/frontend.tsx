@@ -1,8 +1,10 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { AppFrontendCmd, pushScreen } from '../@/frontend/cmd'
+import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd'
+import { AddProfilesCmd } from '../@/frontend/add-profiles-cmd'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
+import { PushScreenCmd } from '../@/frontend/push-screen-cmd'
 import { ProfileFrontendCmd } from './@/frontend/cmd'
 import { ProfileFrontendCtx } from './@/frontend/ctx'
 import { ProfileDb } from './@/user-profile/user-profile-db'
@@ -10,7 +12,7 @@ import { ScreenProfileFrontend } from './screen-profile/frontend'
 import { ScreenUpdateUsernameFrontend } from './screen-update-username/frontend'
 import { UpdateAvatarScreen } from './screen-update/update-avatar-screen'
 import { UpdateProfileScreen } from './screen-update/update-profile-screen'
-import type { FrontendModule, ModelFrontend, MsgFrontend, MsgToBackend } from './types'
+import type { FrontendModule, ModelFrontend } from './types'
 
 const initCtx = (input: { ctx: AppFrontendCtxBase }): ProfileFrontendCtx => {
   return {
@@ -35,41 +37,7 @@ const init: FrontendModule['init'] = ({ ctx }) => {
   return { model }
 }
 
-const update = (
-  input: Parameters<FrontendModule['update']>[0],
-): ReturnType<FrontendModule['update']> & {
-  msgCmd?: AppFrontendCmd<{ MsgFrontend: MsgFrontend; MsgToBackend: MsgToBackend }>[]
-} => {
-  const acc = updateChild(input)
-  const updated = updateLoop(input, acc)
-  return {
-    ...updated,
-    msgCmd: updated.msgCmd,
-  }
-}
-
-const updateLoop = (
-  _input: Parameters<FrontendModule['update']>[0],
-  acc: ReturnType<FrontendModule['update']>,
-): ReturnType<FrontendModule['update']> => {
-  // const currentCmds = acc.msgCmd || []
-  // const [cmd, ...restCmd] = ProfileFrontendCmd.toProfileFrontendCmdInternal(currentCmds)
-
-  // if (cmd) {
-  //   // const updated = updateChild({ ctx: input.ctx, model: acc.model, msgCmd: cmd })
-
-  //   return updateLoop(input, {
-  //     model: updated.model,
-  //     msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
-  //     eff: Eff.batch(acc.eff, updated.eff),
-  //     // msgCmd: Msg.batch(restCmd, updated.msgCmd, acc.msgCmd ? acc.msgCmd.slice(1) : []),
-  //   })
-  // }
-
-  return acc
-}
-
-const updateChild: FrontendModule['update'] = (input): ReturnType<FrontendModule['update']> => {
+const update: FrontendModule['update'] = (input) => {
   return AppFrontendModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
@@ -77,22 +45,23 @@ const updateChild: FrontendModule['update'] = (input): ReturnType<FrontendModule
   )
 }
 
-const updateFromCmd: FrontendModule['update'] = (input): ReturnType<FrontendModule['update']> => {
-  if (!input.msgCmd) return { model: input.model }
+const updateFromCmd: FrontendModule['update'] = (input) => {
+  const { msgIn } = input
 
-  switch (input.msgCmd.c.t) {
-    case 'add-profiles': {
-      return {
-        model: { ...input.model, profilesByUserId: { ...input.model.profilesByUserId, ...input.msgCmd.c.profiles } },
-      }
-    }
-    case 'open-profile': {
-      return {
-        model: input.model,
-        msgCmd: [pushScreen({ t: 'profile', n: 'profile', userId: input.msgCmd.c.userId })],
-      }
+  if (AddProfilesCmd.is(msgIn)) {
+    return {
+      model: { ...input.model, profilesByUserId: { ...input.model.profilesByUserId, ...msgIn.profiles } },
     }
   }
+
+  if (OpenProfileCmd.is(msgIn)) {
+    return {
+      model: input.model,
+      msgOut: [PushScreenCmd.init({ t: 'profile', n: 'profile', userId: msgIn.userId })],
+    }
+  }
+
+  return { model: input.model }
 }
 
 const updateFromMsg: FrontendModule['update'] = (input): ReturnType<FrontendModule['update']> => {

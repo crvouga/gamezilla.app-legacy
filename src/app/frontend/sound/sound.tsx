@@ -7,11 +7,12 @@ import { IconVolumeXMark } from '~/@/ui/icon/icon-volume-x-mark'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { ToggleButton } from '~/@/ui/toggle-button'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { APP_SOUND, SoundCmd } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { DocumentVisibilityChangedEvt } from '~/app/@/frontend/document-visbility-changed-evt'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PreloadSoundsCmd } from '~/app/@/frontend/preload-sounds-cmd'
 
 //
 //
@@ -23,11 +24,9 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
 type Module = AppFrontendModule<{
   Ctx: AppFrontendCtxBase
-  MsgCmdIn: SoundCmd
   MsgEvtIn: AppFrontendEvt
   Model: Model
   Msg: Msg
-  MsgCmdOut: SoundCmd
   MsgEvtOut: never
   MsgToFrontend: never
   MsgToBackend: never
@@ -157,44 +156,17 @@ export const updateFromCmd: Module['update'] = (input) => {
     }
   }
 
-  if (!input.msgCmd) {
-    return { model: input.model }
-  }
-
-  const soundCmd = input.msgCmd.c
-
-  switch (soundCmd.t) {
-    case 'preload': {
-      return {
-        model: input.model,
-        async eff(dispatch) {
-          const preloaded = await preloadSoundsEffect(soundCmd.src)
-          dispatch({ t: 'preloaded-sounds', src: soundCmd.src, result: preloaded })
-        },
-      }
-    }
-    case 'play': {
-      if (input.model.muted) {
-        return { model: input.model }
-      }
-
-      if (input.ctx.documentVisibilityState === 'hidden') {
-        return { model: input.model }
-      }
-
-      return {
-        model: input.model,
-        async eff(dispatch) {
-          const { delay } = soundCmd
-          if (delay) {
-            await sleep(delay)
-          }
-          const played = await playSoundEffect(soundCmd.src, soundCmd.volume ?? UnitInterval.init(1))
-          dispatch({ t: 'played-sound', src: soundCmd.src, result: played })
-        },
-      }
+  if (PreloadSoundsCmd.is(msgIn)) {
+    return {
+      model: input.model,
+      async eff(dispatch) {
+        const preloaded = await preloadSoundsEffect(msgIn.srcs)
+        dispatch({ t: 'preloaded-sounds', src: msgIn.srcs, result: preloaded })
+      },
     }
   }
+
+  return { model: input.model }
 }
 
 export const ViewIcon = (input: { model: Model; className: string }) => {

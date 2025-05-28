@@ -2,7 +2,7 @@ import { pipe } from '~/@/function/pipe'
 import { isErr, Loading, mapErr, mapOk } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconLightbulb } from '~/@/ui/icon/icon-lightbulb'
-import { APP_SOUND, showErrSm, showOkSm, showWarningSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -13,6 +13,9 @@ import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
 import { GotHintCalculatorMsg } from './got-hint-calculator-msg'
 import { FindSolutionRequest, FoundSolutionResult, initFrontend, ModelFrontend, type FrontendModule } from './types'
+import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
+import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
+import { ShowWarningSmall } from '~/app/@/frontend/show-warning-small'
 
 const update: FrontendModule['update'] = (input) => {
   if (GotHintCalculatorMsg.is(input.msgIn)) {
@@ -77,11 +80,11 @@ const update: FrontendModule['update'] = (input) => {
       const requestNew: FindSolutionRequest = { hash, result }
       return {
         model: { ...input.model, requests: { ...input.model.requests, [hash]: requestNew }, open: null },
-        msgCmd: isErr(result)
-          ? showErrSm(input.ctx.t('app.something-went-wrong'), result.error)
+        msgOut: isErr(result)
+          ? ShowErrorSmall.init(input.ctx.t('app.something-went-wrong'), result.error)
           : Solutions.isEmpty(result.value.solutions)
-            ? showWarningSm(input.ctx.t('flow.no-solutions-found'))
-            : showOkSm(input.ctx.t('flow.solutions-found')),
+            ? ShowWarningSmall.init(input.ctx.t('flow.no-solutions-found'))
+            : ShowOkSmall.init(input.ctx.t('flow.solutions-found')),
         async eff() {
           if (isErr(result)) return
           await input.ctx.solutionsDb.put(result.value.solutions)

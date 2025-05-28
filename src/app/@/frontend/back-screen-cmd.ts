@@ -1,0 +1,40 @@
+import { p } from '~/@/parser'
+import { isOk } from '~/@/result'
+
+export const parser = p.or(
+  p.obj({
+    t: p.l('back'),
+    playSound: p.maybe(p.bool),
+  }),
+)
+
+export type BackScreenCmd = p.Infer<typeof parser>
+
+export const init = (playSound?: boolean): BackScreenCmd => {
+  return {
+    t: 'back',
+
+    playSound,
+  }
+}
+
+const is = (cmd: unknown): cmd is BackScreenCmd => {
+  return isOk(parser.parse(cmd))
+}
+
+const did = (output?: { msgOut?: unknown[] | null }): boolean => {
+  return Boolean(
+    output?.msgOut?.some((cmd) => {
+      if (is(cmd)) {
+        return true
+      }
+      return false
+    }),
+  )
+}
+
+export const BackScreenCmd = {
+  is,
+  init,
+  did,
+}

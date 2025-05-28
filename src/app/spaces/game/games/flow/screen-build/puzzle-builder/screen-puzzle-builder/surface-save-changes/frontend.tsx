@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Loading, Result, isOk } from '~/@/result'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconFloppyDisk } from '~/@/ui/icon/icon-floppy-disk'
-import { APP_SOUND, showErrSm, showOkSm } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceUnsavedChanges } from '~/app/@/ui/surface/unsaved-changes/surface-unsaved-changes'
@@ -10,6 +10,8 @@ import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-
 import { ModeEdit } from '../../../../@/mode-edit'
 import type { Puzzle } from '../../../../@/puzzle/puzzle'
 import type { FrontendModule, MsgSpace } from '../../../types'
+import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
+import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 
 //
 //
@@ -118,11 +120,11 @@ const updateSaveChangesRequest: FrontendModule['update'] = (input) => {
           ...input.model,
           puzzleSaveChangesRequest: Result.mapOk(input.msgSpace.saved, () => null),
         },
-        msgCmd:
+        msgOut:
           input.msgSpace.userId === input.ctx.currentUser.userId
             ? isOk(input.msgSpace.saved)
-              ? showOkSm(input.ctx.t('app.saved-changes'))
-              : showErrSm(input.ctx.t('app.something-went-wrong'))
+              ? ShowOkSmall.init(input.ctx.t('app.saved-changes'))
+              : ShowErrorSmall.init(input.ctx.t('app.something-went-wrong'))
             : [],
       }
     }

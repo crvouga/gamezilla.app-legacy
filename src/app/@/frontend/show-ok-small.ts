@@ -14,6 +14,12 @@ export const init = (text: TranslatedText, duration?: TimeSpan): unknown[] => {
     PlaySoundCmd.init(APP_SOUND.refreshFeed),
   ]
 }
+
+const did = (output?: { msgOut?: unknown[] | null }): boolean => {
+  return ShowToastCmd.did(output) && PlaySoundCmd.did(output)
+}
+
 export const ShowOkSmall = {
   init,
+  did,
 }
