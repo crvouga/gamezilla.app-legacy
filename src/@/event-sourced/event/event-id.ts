@@ -1,6 +1,6 @@
 import { Err, Ok, type Result } from '~/@/result'
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 export type EventId = Brand<string, 'EventId'>
 

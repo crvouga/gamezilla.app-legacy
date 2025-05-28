@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'

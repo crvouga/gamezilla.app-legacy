@@ -1,5 +1,5 @@
 import { Iso3166Alpha2Code } from '../country/iso-3166-alpha-2-code'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Result } from '../result'
 import { phone } from './phone'
 

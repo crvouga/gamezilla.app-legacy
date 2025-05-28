@@ -120,7 +120,6 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
           verified: NotAsked,
           code: '',
         },
-
         msgOut: [
           PushScreenCmd.init({ n: 'auth-login', t: 'login-sms-verify', phoneNumber }),
           ShowToastCmd.init(input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(phoneNumber)), {

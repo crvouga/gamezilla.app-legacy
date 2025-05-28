@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Result } from '~/@/result'
 import { SpaceId } from '~/app/@/data/space-id'
 

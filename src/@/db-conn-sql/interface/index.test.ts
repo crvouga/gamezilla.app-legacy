@@ -4,7 +4,7 @@ import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { newPowerSyncClient } from '../../../service-powersync/frontend/database'
 import { Logger } from '../../logger'
-import { p } from '../../parser'
+import { p } from '../../schema'
 import { isErr, isOk } from '../../result'
 import { Config, DbConnSql } from '../backend/impl'
 

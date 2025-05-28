@@ -1,6 +1,6 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { ILogger } from '~/@/logger'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { unwrapOr } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import { Variant } from '../variant'

@@ -1,5 +1,5 @@
 import postgres from 'postgres'
-import type { p } from '~/@/parser'
+import type { p } from '~/@/schema'
 import { Err, Ok } from '~/@/result'
 import { SecretString } from '~/@/secrets/secret-string'
 import { Sql } from '~/@/sql'

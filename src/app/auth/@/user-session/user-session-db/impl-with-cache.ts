@@ -1,5 +1,5 @@
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Result, isOk } from '~/@/result'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'

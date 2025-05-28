@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 // source: https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression
 const regex =

@@ -1,5 +1,5 @@
 import { Result } from '~/@/result'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 const parser = p.brand(p.str, 'ClientId')
 

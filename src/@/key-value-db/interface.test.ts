@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Ok, Result } from '~/@/result'
 import { Runtime } from '~/@/runtime'
 import { CONFIG_BACKEND } from '~/config/backend'

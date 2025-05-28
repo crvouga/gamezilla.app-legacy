@@ -1,5 +1,5 @@
 import { Uuid } from '~/@/id/uuid'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 const parser = p.brand(p.str, 'VerificationAttemptId')
 

@@ -1,6 +1,6 @@
 import { Err, Ok, unwrapOr } from '~/@/result'
-import { p } from '~/@/parser'
-import { Parser } from '~/@/parser/parser'
+import { p } from '~/@/schema'
+import { Parser } from '~/@/schema/schema'
 import { KeyValueDb, IKeyValueDb } from '../key-value-db'
 import { EventId } from './event-id'
 import { IStream } from './interface'

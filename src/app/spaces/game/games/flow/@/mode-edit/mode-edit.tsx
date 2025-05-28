@@ -1,6 +1,6 @@
 import { eq } from '~/@/equals/equals'
 import { History } from '~/@/history'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { Flow } from '../flow'
 import { GroupId } from '../flow/group-id'

@@ -1,6 +1,6 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Err, Ok, Result } from '~/@/result'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { UserId } from '~/app/@/data/user-id'
 import { type MoveInput, uciMoveToMoveInput } from '../../@/chess'

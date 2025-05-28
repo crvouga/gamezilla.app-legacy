@@ -1,6 +1,6 @@
 import { EventSourced } from '~/@/event-sourced'
 import { EventId, WithEventId } from '~/@/event-sourced/event'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Space } from '../space'

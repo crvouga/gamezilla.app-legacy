@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 import { Posix } from '~/@/time/posix'
 import { UserId } from './user-id'

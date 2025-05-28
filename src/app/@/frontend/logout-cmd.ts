@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { isOk } from '~/@/result'
 
 const parser = p.obj({

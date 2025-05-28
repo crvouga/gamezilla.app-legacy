@@ -1,5 +1,5 @@
 import { Result } from '~/@/result'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 
 const Screen = p.or(

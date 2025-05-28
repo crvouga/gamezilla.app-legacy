@@ -1,5 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 

@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import * as RPC from '../rpc'
 
 export const childRpcContract = RPC.initContract({

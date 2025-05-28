@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Flow } from '../../flow'
 import { GroupId } from '../../flow/group-id'
 import { NodeId } from '../../flow/node-id'

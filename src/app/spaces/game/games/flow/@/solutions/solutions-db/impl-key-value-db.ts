@@ -1,5 +1,5 @@
 import { IKeyValueDb, KeyValueDb } from '~/@/key-value-db'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { isErr, Ok } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { Solution } from '../solution'

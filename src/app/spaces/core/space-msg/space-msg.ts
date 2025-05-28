@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { GameName } from '../../game/games/@/game-name'

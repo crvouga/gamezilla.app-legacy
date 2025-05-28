@@ -1,7 +1,7 @@
 import { isSubset } from '~/@/array/is-subset'
 import { unique } from '~/@/array/unique'
 import { Err, Ok, type Result } from '~/@/result'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { eq } from '~/@/equals/equals'
 
 //

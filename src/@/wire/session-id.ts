@@ -1,6 +1,6 @@
 import type { Brand } from '~/@/brand/brand'
 import { Result } from '~/@/result'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { ShortId } from '../id/short-id'
 
 export type SessionId = Brand<string, 'SessionId'>

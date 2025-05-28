@@ -1,6 +1,6 @@
 import { KeyValueDb, IKeyValueDb } from '~/@/key-value-db'
 import { ILogger } from '~/@/logger'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { isErr, unwrapOr } from '~/@/result'
 import { SessionId } from '~/@/wire/session-id'
 import { WireSession } from '../wire-session'

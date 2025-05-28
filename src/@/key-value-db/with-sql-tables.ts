@@ -1,5 +1,5 @@
 import { IDbConnSql } from '~/@/db-conn-sql'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { IKeyValueDb } from './interface'
 import { ILogger } from '../logger/interface'
 

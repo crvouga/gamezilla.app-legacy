@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { IconCopy } from '~/@/ui/icon/icon-copy'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd'

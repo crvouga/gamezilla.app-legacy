@@ -1,7 +1,7 @@
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { UserId } from '~/app/@/data/user-id'
 import { Posix } from '~/@/time/posix'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import {
   type ColumnIndex,
   Columns,

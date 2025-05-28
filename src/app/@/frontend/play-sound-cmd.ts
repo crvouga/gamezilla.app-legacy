@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { UnitInterval } from '~/@/range/unit-interval'
 import { isOk } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'

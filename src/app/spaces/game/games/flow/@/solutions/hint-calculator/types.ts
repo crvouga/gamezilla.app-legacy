@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { RemoteResult, Result } from '~/@/result'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'

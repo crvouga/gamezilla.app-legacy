@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { Puzzle } from '../puzzle/puzzle'
 import { PuzzleId } from '../puzzle/puzzle-id'

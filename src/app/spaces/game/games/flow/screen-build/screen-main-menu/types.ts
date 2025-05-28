@@ -3,7 +3,7 @@
 //
 //
 
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import { GameMainMenu } from '../../../@/ui/game-main-menu'
 

@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import * as Flow from './flow'
 
 const parser = p.brand(p.str, 'FlowId')

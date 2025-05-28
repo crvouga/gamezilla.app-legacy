@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import { ModeEdit } from '../../../@/mode-edit'
 import { ModePlay } from '../../../@/mode-play'

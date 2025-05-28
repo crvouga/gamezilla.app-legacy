@@ -1,5 +1,5 @@
 import { EventId, WithEventMeta } from '~/@/event-sourced/event'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import type { UserId } from '~/app/@/data/user-id'
 import { Space } from '~/app/spaces/@/space/space'
 import * as GameSpace from '../../game/games/space'

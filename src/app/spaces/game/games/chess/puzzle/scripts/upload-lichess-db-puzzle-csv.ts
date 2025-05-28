@@ -1,5 +1,5 @@
 import { Result } from '~/@/result'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { PuzzleDb, type PuzzleRow } from '../puzzle-db/puzzle-db-impl'
 

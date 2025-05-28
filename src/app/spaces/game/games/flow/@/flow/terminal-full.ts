@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { GroupId } from './group-id'
 import { NodeId } from './node-id'
 import { Terminal } from './terminal'

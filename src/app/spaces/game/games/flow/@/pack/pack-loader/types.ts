@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { Pack } from '../pack'

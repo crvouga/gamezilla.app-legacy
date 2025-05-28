@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import * as Variant from '../../variant/variant'
 
 export const MsgToWorker = p.or(

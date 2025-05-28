@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 export const GAME_NAME = ['connect-four', 'flow', 'tic-tac-toe', 'gomoku', 'chess'] as const
 

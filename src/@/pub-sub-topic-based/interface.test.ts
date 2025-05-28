@@ -1,5 +1,5 @@
 import { describe, expect, mock, test } from 'bun:test'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Logger } from '../logger'

@@ -1,7 +1,7 @@
 import { ascend } from '~/@/array/sorting'
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { ILogger, Logger } from '~/@/logger'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { isErr, isOk, Result, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'

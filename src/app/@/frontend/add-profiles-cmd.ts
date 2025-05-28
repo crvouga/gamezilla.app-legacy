@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { UserProfile } from '../data/user-profile'
 import { isOk } from '~/@/result'
 

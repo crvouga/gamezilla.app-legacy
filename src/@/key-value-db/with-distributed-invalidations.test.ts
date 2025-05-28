@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { Ok } from '~/@/result'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Logger } from '../logger'
 import { PubSubTopicBased } from '../pub-sub-topic-based'
 import { KeyValueDb } from './impl'

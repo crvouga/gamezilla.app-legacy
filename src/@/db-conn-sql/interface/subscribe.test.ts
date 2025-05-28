@@ -3,7 +3,7 @@ import 'fake-indexeddb/auto'
 import { sleep } from '~/@/promise/sleep'
 import { TimeSpan } from '~/@/time/time-span'
 import { Logger } from '../../logger'
-import { p } from '../../parser'
+import { p } from '../../schema'
 import { Config, DbConnSql } from '../backend/impl'
 
 const Fixture = async (config: Config) => {

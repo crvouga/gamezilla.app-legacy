@@ -1,4 +1,4 @@
-import { p } from '../parser'
+import { p } from '../schema'
 
 export type CappedOrderedDict<TKey extends string | number, TValue> = {
   _valuesByKey: {

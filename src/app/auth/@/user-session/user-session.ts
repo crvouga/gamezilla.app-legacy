@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Posix } from '~/@/time/posix'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'

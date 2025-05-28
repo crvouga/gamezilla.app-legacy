@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Result } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data/user-id'

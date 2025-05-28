@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 
 export const MsgSpace = p.or(

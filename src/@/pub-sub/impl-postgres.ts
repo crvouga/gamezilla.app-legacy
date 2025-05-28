@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import type { IDbConnSql } from '../db-conn-sql'
 import type { ILogger } from '../logger/interface'
 import { IPubSub } from './interface'

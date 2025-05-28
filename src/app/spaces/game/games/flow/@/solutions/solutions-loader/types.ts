@@ -5,7 +5,7 @@ import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { FlowBackendCtx } from '../../backend/ctx'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { Solutions } from '../solutions'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 export type ModelFrontend = {}
 

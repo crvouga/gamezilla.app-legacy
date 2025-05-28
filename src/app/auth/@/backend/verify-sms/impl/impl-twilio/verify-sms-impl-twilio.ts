@@ -1,5 +1,5 @@
 import { Logger, type ILogger } from '~/@/logger'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, Ok, isErr } from '~/@/result'
 import type { IVerifySMS } from '../../interface'

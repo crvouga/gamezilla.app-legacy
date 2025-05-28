@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Translator } from '~/@/l18n/generated'
 import { IconXMark } from '~/@/ui/icon/icon-x-mark'
 import { Slider } from '~/@/ui/slider'

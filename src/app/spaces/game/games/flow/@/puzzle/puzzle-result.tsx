@@ -1,5 +1,5 @@
 import { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconExclamationCircle } from '~/@/ui/icon/icon-exclamation-circle'
 import { Puzzle } from './puzzle'

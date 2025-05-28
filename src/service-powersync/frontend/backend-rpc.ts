@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Err, isErr, Ok, Result } from '~/@/result'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 

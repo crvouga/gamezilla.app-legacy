@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 export const MsgSpace = p.or(
   p.obj({

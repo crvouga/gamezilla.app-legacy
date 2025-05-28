@@ -1,5 +1,5 @@
 import { Task } from '~/@/promise/task'
-import type { Parser } from '~/@/parser/parser'
+import type { Parser } from '~/@/schema/schema'
 import { IKeyValueDb } from './interface'
 
 export const withNamespace = <TKey extends string = string, TValue = unknown>(config: {

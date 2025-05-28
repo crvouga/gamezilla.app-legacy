@@ -1,5 +1,5 @@
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Result } from '~/@/result'
 import { ShortId } from '../id/short-id'
 

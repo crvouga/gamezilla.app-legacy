@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { NotAsked, type RemoteResult, Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 import { ScreenActionLocation } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'

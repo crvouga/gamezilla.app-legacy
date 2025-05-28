@@ -1,7 +1,7 @@
 import { EventSourced, EventSourcedConfig } from '~/@/event-sourced'
 import { EventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { MsgSpace } from '../space-msg/space-msg'

@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { HashValue } from './hash-value'
 import { HashingAlgo } from './hashing-algo'
 

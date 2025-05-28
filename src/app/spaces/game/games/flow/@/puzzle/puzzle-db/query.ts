@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Pagination } from '~/@/query/query'
 import { UserId } from '~/app/@/data/user-id'
 import { PuzzleId } from '../puzzle-id'

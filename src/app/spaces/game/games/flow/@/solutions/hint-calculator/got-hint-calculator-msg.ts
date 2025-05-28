@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { MsgFrontend } from './types'
 
 const parser = p.obj({

@@ -1,5 +1,5 @@
 import { HttpServerEvent } from '~/@/http-server'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { RPC } from '~/@/wire-rpc'
 import { RuntimeEvent } from '~/@/runtime'
 import { Posix } from '~/@/time/posix'

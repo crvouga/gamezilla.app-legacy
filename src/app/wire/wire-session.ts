@@ -1,6 +1,6 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { pipe } from '~/@/function/pipe'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { ClientId } from '../../@/wire/client-id'
 import { SessionId } from '../../@/wire/session-id'
 import { UserId } from '../@/data/user-id'

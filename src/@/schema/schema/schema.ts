@@ -1,6 +1,6 @@
 import type { Brand } from '../../brand/brand'
 import { Err, Ok } from '../../result/result'
-import type { Parser, ParserError } from './parser-types'
+import type { Parser, ParserError } from './schema-types'
 
 const errorToString = (error: ParserError): string => {
   return `${error.path.join('.')}: ${error.message}`

@@ -1,4 +1,4 @@
-import { p } from '../parser'
+import { p } from '../schema'
 
 const parser = p.brand(p.num, 'UnitInterval')
 

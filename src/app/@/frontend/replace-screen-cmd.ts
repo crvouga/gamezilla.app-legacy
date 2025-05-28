@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { Screen, toScreen } from '~/@/screen/generated/screens'
 

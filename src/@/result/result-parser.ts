@@ -1,6 +1,6 @@
-import { or } from '../parser/parser/parser-or'
-import { Parser } from '../parser/parser/parser-types'
-import { l, obj } from '../parser/parser/parsers'
+import { or } from '../schema/schema/schema-or'
+import { Parser } from '../schema/schema/schema-types'
+import { l, obj } from '../schema/schema/schema'
 import type { Loading, NotAsked, RemoteResultInternal, ResultInternal } from './result'
 
 export const parser = <TError, TValue>(

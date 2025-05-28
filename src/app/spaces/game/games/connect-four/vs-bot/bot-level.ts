@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 export const ALL_BOT_LEVELS = ['Easy', 'Medium', 'Hard'] as const
 

@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 export const Model = p.obj({
   t: p.l('flow-hex'),

@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'

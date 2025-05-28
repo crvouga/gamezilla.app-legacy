@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 export const HashingAlgo = p.or(
   p.obj({

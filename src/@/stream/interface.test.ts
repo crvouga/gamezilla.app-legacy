@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { Ok, unwrapOr } from '~/@/result'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { NonEmpty } from '../array/non-empty'

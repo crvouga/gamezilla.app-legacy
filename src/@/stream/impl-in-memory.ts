@@ -1,4 +1,4 @@
-import { Parser } from '~/@/parser/parser'
+import { Parser } from '~/@/schema/schema'
 import { KeyValueDb } from '../key-value-db'
 import * as ImplKeyValueDb from './impl-key-value-db'
 import { IStream } from './interface'

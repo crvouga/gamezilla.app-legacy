@@ -1,5 +1,5 @@
 import { Err, Ok } from '~/@/result'
-import type { p } from '~/@/parser'
+import type { p } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'

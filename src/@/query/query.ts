@@ -1,4 +1,4 @@
-import { p } from '../parser'
+import { p } from '../schema'
 
 export type Query<T, TWhereOperator = WhereOperator> = {
   limit: number

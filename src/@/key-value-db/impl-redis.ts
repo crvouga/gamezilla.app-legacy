@@ -1,6 +1,6 @@
 import { Logger } from '~/@/logger'
 import type { ILogger } from '~/@/logger/interface'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Sleep } from '~/@/promise/sleep'
 import { Err, Ok, isErr } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'

@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { ClickablePaper } from '~/@/ui/clickable'
 import { IconRobot } from '~/@/ui/icon/icon-robot'

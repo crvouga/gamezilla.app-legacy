@@ -1,4 +1,4 @@
-import type { p } from '~/@/parser'
+import type { p } from '~/@/schema'
 import type { Result } from '~/@/result'
 import type { Sql } from '~/@/sql'
 import { Sub } from '../../sub'

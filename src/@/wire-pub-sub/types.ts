@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Sub } from '~/@/sub'
 
 export type Topic<TParams, TMsg> = {

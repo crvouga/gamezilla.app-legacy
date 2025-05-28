@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 /**
  * `History` is a data structure that allows you to keep track of the state of

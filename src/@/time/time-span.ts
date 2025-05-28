@@ -1,6 +1,6 @@
 import { TranslatedText } from '../l18n'
 import { Translator } from '../l18n/generated'
-import { p } from '../parser'
+import { p } from '../schema'
 
 const parser = p.obj({
   type: p.l('TimeSpan'),

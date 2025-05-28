@@ -6,7 +6,7 @@
 //
 //
 
-import { p } from '../parser'
+import { p } from '../schema'
 
 const ISO_3166_ALPHA_2_MAPPINGS = {
   AD: 'Andorra',

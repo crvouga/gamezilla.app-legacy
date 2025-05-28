@@ -1,5 +1,5 @@
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 import { Result } from '~/@/result'
 import { SendCodeProblem } from './send-code-problem'

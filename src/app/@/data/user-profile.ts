@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Posix } from '~/@/time/posix'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'

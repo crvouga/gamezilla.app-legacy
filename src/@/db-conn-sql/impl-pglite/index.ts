@@ -3,7 +3,7 @@ import type { SyncShapeToTableOptions, SyncShapeToTableResult } from '@electric-
 import { electricSync } from '@electric-sql/pglite-sync'
 import type { LiveNamespace } from '@electric-sql/pglite/live'
 import { live } from '@electric-sql/pglite/live'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { PubSub, Sub } from '~/@/sub'

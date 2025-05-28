@@ -1,7 +1,7 @@
 import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 import { Remote, Result } from '~/@/result'
 import { RPC } from '~/@/wire-rpc'

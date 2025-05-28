@@ -1,5 +1,5 @@
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Ok, unwrapOr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'

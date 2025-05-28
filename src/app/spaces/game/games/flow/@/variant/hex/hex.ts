@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Flow } from '../../flow'
 import * as VariantHexDimensions from './hex-dimensions'
 import { NodeId } from '../../flow/node-id'

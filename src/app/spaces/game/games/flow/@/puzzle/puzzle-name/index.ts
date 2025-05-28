@@ -1,6 +1,6 @@
 import { getWords } from '~/app/@/data/words'
 import type { Brand } from '~/@/brand/brand'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 export type PuzzleName = Brand<string, 'PuzzleName'>
 

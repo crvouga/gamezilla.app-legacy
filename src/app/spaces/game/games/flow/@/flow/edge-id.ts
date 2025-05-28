@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { NodeId } from './node-id'
 
 const parser = p.brand(p.str, 'EdgeId')

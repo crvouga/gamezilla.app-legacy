@@ -1,5 +1,5 @@
 import { IHttpClient } from '~/@/http-client'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Result } from '~/@/result'
 import { ClientSessionId } from '../wire/client-session-id'
 import { SessionId } from '../wire/session-id'

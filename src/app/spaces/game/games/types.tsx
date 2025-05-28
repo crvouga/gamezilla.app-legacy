@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceFrontendCtx } from '../../@/frontend/ctx'
 import { GameBackendModule } from './@/architecture/game-backend-v2'

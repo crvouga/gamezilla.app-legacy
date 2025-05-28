@@ -1,6 +1,6 @@
 import type { IDbConnSql } from '~/@/db-conn-sql'
 import { ILogger } from '~/@/logger'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Ok, Result, isErr, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'

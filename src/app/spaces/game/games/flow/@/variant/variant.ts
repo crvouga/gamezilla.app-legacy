@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import type { Flow } from '../flow'
 import { NodeId } from '../flow/node-id'
 import { VariantGrid } from './grid'

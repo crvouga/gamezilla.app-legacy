@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { VariantGridDimensions } from './grid'
 import { VariantHexDimensions } from './hex'
 import { VariantTriDimensions } from './tri'

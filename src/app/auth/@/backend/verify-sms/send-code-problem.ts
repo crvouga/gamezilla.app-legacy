@@ -1,6 +1,6 @@
 import type { TranslatedText } from '~/@/l18n'
 import type { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 
 const parser = p.or(
   p.obj({

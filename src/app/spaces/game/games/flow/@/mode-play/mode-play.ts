@@ -1,6 +1,6 @@
 import { pipe } from '~/@/function/pipe'
 import { Translator } from '~/@/l18n/generated'
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { APP_SOUND } from '~/app/@/frontend/cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'

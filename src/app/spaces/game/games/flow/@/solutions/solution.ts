@@ -1,4 +1,4 @@
-import { p } from '~/@/parser'
+import { p } from '~/@/schema'
 import { Flow } from '../flow'
 import { Pipe } from '../flow/flow'
 import { GroupId } from '../flow/group-id'
