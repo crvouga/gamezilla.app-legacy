@@ -10,6 +10,7 @@ import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND, SoundCmd, playSound } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { AppFrontendEvt } from '~/app/@/frontend/evt'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
 //
 //
@@ -141,6 +142,28 @@ const updateFromEvent: Module['update'] = (input) => {
 }
 
 export const updateFromCmd: Module['update'] = (input) => {
+  const { msgIn } = input
+
+  if (PlaySoundCmd.is(msgIn)) {
+    if (input.model.muted) {
+      return { model: input.model }
+    }
+
+    if (input.ctx.documentVisibilityState === 'hidden') {
+      return { model: input.model }
+    }
+
+    return {
+      model: input.model,
+      async eff(dispatch) {
+        const { delay } = msgIn
+        if (delay) await sleep(delay)
+        const played = await playSoundEffect(msgIn.src, msgIn.volume ?? UnitInterval.init(1))
+        dispatch({ t: 'played-sound', src: msgIn.src, result: played })
+      },
+    }
+  }
+
   if (!input.msgCmd) {
     return { model: input.model }
   }

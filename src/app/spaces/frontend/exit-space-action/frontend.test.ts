@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import { SpaceId } from '~/app/@/data/space-id'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { FixtureSpacesFrontend } from '../../@/fixture/frontend'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
@@ -17,11 +20,7 @@ describe(import.meta.file, () => {
       { msg: { t: 'start-space.clicked-start-space-button', spaceId } },
       { msg: { t: 'exit-space-action.clicked-exit-space-button' } },
     ])
-
-    const didPush = output.msgCmd?.some(
-      (m) => m.t === 'current-screen' && m.c.t === 'push' && m.c.screen.t === 'space-list',
-    )
-    expect(didPush).toBe(true)
+    expect(PushScreenCmd.did(output, (s) => s.t === 'space-list')).toBe(true)
   })
 
   it('should play a sound after clicking go home button', async () => {
@@ -32,6 +31,6 @@ describe(import.meta.file, () => {
       { msg: { t: 'exit-space-action.clicked-exit-space-button' } },
     ])
 
-    expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'sound' && msgCmd.c.t === 'play')).toBe(true)
+    expect(PlaySoundCmd.did(output, APP_SOUND.navBackwardMin)).toBe(true)
   })
 })

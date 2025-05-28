@@ -39,10 +39,6 @@ const init: FrontendModule['init'] = ({ ctx }) => {
 }
 
 const update: FrontendModule['update'] = (input) => {
-  if (!input.msgBackend && !input.msgEvt && !input.msgCmd && !input.msg) {
-    return { model: input.model }
-  }
-
   const updated = updateLoop({
     ...input,
     ctx: { ...input.ctx, profilesByUserId: { ...input.ctx.profilesByUserId, ...input.msgBackend?.profilesByUserId } },
@@ -53,6 +49,7 @@ const update: FrontendModule['update'] = (input) => {
     eff: updated.eff,
     msgCmd: SpaceFrontendCmd.toFrontendCmd(updated.msgCmd),
     msgEvt: SpaceFrontendEvt.toFrontendEvt(updated.msgEvt),
+    msgOut: updated.msgOut,
   }
 }
 
@@ -74,6 +71,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
       msgSpace: Msg.batch(spaceEvtRest, updated.msgSpace),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
+      msgOut: Msg.batch(acc.msgOut, updated.msgOut),
     })
   }
 
@@ -88,6 +86,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
       msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(evtRest, updated.msgEvt),
+      msgOut: Msg.batch(acc.msgOut, updated.msgOut),
     })
   }
 
@@ -102,6 +101,7 @@ const updateLoop = (input: Input, initial?: Output): Output => {
       msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
       msgCmd: Msg.batch(cmdRest, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
+      msgOut: Msg.batch(acc.msgOut, updated.msgOut),
     })
   }
 

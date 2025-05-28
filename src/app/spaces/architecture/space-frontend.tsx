@@ -36,6 +36,7 @@ export type Output = {
   }>[]
   msgEvt?: SpaceFrontendEvt[]
   msgSpace?: WithEventId<MsgSpace>[]
+  msgOut?: unknown[]
 }
 
 export type SpaceFrontendModule = {
@@ -54,6 +55,7 @@ const andThen = (acc: Output, ...updates: ((model: ModelFrontend) => Output)[]):
       msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
       msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
+      msgOut: Msg.batch(acc.msgOut, updated.msgOut),
     }
   }
   return acc

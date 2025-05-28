@@ -6,6 +6,7 @@ import { isRequesting, isResponseOk } from '~/@/request-response/request-respons
 import type { Screen } from '~/@/screen/generated/screens'
 import { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND, didPlaySound, didPushScreen } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { Space } from '../core/space'
 import { SpacesFrontend } from '../frontend'
@@ -190,7 +191,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    expect(didPlaySound(updated, APP_SOUND.navBackwardMin)).toBe(true)
+    expect(PlaySoundCmd.did(updated, APP_SOUND.navBackwardMin)).toBe(true)
   })
 
   test('listing stale space should not override current state', async () => {

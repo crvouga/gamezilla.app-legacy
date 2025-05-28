@@ -397,7 +397,7 @@ const updateChild = (input: {
       Eff.tag('lang', lang.eff),
       Eff.tag('frontend', frontend.eff),
     ]),
-    msgOut: Msg.batch(auth.msgOut, profile.msgOut),
+    msgOut: Msg.batch(auth.msgOut, profile.msgOut, space.msgOut, lang.msgOut),
     msgEvt: Msg.batch<AppFrontendEvt>(auth.msgEvt, space.msgEvt, wire.msgEvt, lang.msgEvt, frontend.msgEvt),
     msgCmd: Msg.batch<AppFrontendCmd<{ MsgToBackend: MsgToBackend; MsgFrontend: MsgFrontend }>>(
       AppFrontendCmd.tag('auth', auth.msgCmd),

@@ -1,12 +1,17 @@
 import { IconDoorOpen } from '~/@/ui/icon/icon-door-open'
-import { APP_SOUND, playSound, pushScreen } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import type { SpaceFrontendModule } from '../../architecture/space-frontend'
 
 const update: SpaceFrontendModule['update'] = ({ msg, model }) => {
   switch (msg?.t) {
     case 'exit-space-action.clicked-exit-space-button': {
-      return { model, msgCmd: [pushScreen({ n: 'spaces', t: 'space-list' }), playSound(APP_SOUND.navBackwardMin)] }
+      return {
+        model,
+        msgOut: [PushScreenCmd.init({ n: 'spaces', t: 'space-list' }), PlaySoundCmd.init(APP_SOUND.navBackwardMin)],
+      }
     }
   }
   return { model }

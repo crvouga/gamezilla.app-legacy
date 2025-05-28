@@ -1,10 +1,13 @@
 import { TranslatedText } from '../l18n'
 import { Translator } from '../l18n/generated'
+import { p } from '../parser'
 
-export type TimeSpan = {
-  type: 'TimeSpan'
-  _durationMilliseconds: number
-}
+const parser = p.obj({
+  type: p.l('TimeSpan'),
+  _durationMilliseconds: p.num,
+})
+
+export type TimeSpan = p.Infer<typeof parser>
 
 const milliseconds = (durationMilliseconds: number): TimeSpan => {
   return {
@@ -206,6 +209,7 @@ export const TimeSpan = {
   //
   encode,
   decode,
+  parser,
 }
 
 const ensureCleanNonNegativeNumber = (value: number | undefined): number => {

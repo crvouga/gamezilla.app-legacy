@@ -113,6 +113,7 @@ export const update = <TParentMsg,>(input: {
     msg: input.msg?.t === 'sound' ? input.msg.c : null,
     msgCmd: input.msgCmd?.t === 'sound' ? input.msgCmd : null,
     ctx: input.ctx,
+    msgIn: input.msgIn,
   })
 
   const visibility = VisibilityFrontend.update({

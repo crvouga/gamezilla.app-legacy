@@ -1,10 +1,12 @@
-import type { Brand } from '../brand/brand'
+import { p } from '../parser'
+
+const parser = p.brand(p.num, 'UnitInterval')
 
 /**
  * Represents a unit interval, a number between 0 and 1
  * https://en.wikipedia.org/wiki/Unit_interval
  */
-export type UnitInterval = Brand<number, 'UnitInterval'>
+export type UnitInterval = p.Infer<typeof parser>
 
 const is = (number: unknown): number is UnitInterval => {
   return typeof number === 'number' && number >= 0 && number <= 1
@@ -22,5 +24,6 @@ const init = (number: number): UnitInterval => {
 
 export const UnitInterval = {
   init,
+  parser,
   is,
 }
