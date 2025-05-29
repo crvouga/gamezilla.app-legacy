@@ -79,25 +79,40 @@ const Fixture = async () => {
     clientA,
     clientB,
     clientC,
+    [Symbol.dispose]: async () => {
+      await httpServer.stop()
+    },
   }
 }
 
+const sleep = () => new Promise((resolve) => setTimeout(resolve, 5))
+
 describe.only('Topic', () => {
   it('should work', async () => {
-    const f = await Fixture()
+    using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
     const gotC: Msg[] = []
     f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
     f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
     f.clientC.someTopic.subscribe({ id: '123' }).sub((msg) => gotC.push(msg))
-
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await sleep()
     f.clientC.someTopic.publish({ id: '123' }, { name: 'John' })
-
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await sleep()
     expect(gotA).toEqual([{ name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
     expect(gotC).toEqual([{ name: 'John' }])
+  })
+
+  it('should not receive messages after unsubscribing', async () => {
+    using f = await Fixture()
+    const gotA: Msg[] = []
+    const unsub = f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
+    await sleep()
+    unsub()
+    await sleep()
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    await sleep()
+    expect(gotA).toEqual([])
   })
 })
