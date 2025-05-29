@@ -165,4 +165,27 @@ describe.only('Topic', () => {
     expect(gotB).toEqual([{ name: 'Jane' }])
     expect(gotC).toEqual([{ name: 'Bob' }])
   })
+
+  it('should handle unsubscribe correctly', async () => {
+    using f = await Fixture()
+    const gotA: Msg[] = []
+    const gotB: Msg[] = []
+
+    const unsubA = f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
+    await sleep()
+
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    await sleep()
+    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotB).toEqual([{ name: 'John' }])
+
+    unsubA()
+    await sleep()
+
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'Jane' })
+    await sleep()
+    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }])
+  })
 })
