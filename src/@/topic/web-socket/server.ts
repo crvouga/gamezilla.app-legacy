@@ -8,7 +8,7 @@ import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Contract } from '../types'
-import { ToClientMsg, ToServer, toTopicString } from './shared'
+import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
 
 export type BackendWebSocketData = {
   clientId: ClientId
@@ -26,6 +26,74 @@ export const initServer = <T extends Contract<any>>(config: {
 }) => {
   const logger = Logger.prefix('server', config.logger)
   let bunServer: Server
+
+  config.httpServer._setWebSocketHandler({
+    async open(ws: ServerWebSocket<BackendWebSocketData>) {
+      logger.debug(`websocket connection opened clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
+    },
+    async close(ws: ServerWebSocket<BackendWebSocketData>, _code, _message) {
+      logger.debug(`websocket connection closed clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
+    },
+    async message(ws: ServerWebSocket<BackendWebSocketData>, message: string) {
+      logger.debug(`websocket message received clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
+
+      const toServerMsg = ToServerMsg.parse(JSON.parse(message))
+
+      if (isErr(toServerMsg)) {
+        logger.error(`websocket message received clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
+        return
+      }
+
+      switch (toServerMsg.value.t) {
+        case 'subscribe': {
+          const topicString = toTopicString({
+            topicName: toServerMsg.value.topicName,
+            topicParams: toServerMsg.value.topicParams,
+          })
+          ws.subscribe(topicString)
+          const toClientMsg: ToClientMsg = {
+            t: 'subscribed',
+            topicName: toServerMsg.value.topicName,
+            topicParams: toServerMsg.value.topicParams,
+          }
+          ws.send(JSON.stringify(toClientMsg))
+          return
+        }
+        case 'publish': {
+          const topicString = toTopicString({
+            topicName: toServerMsg.value.topicName,
+            topicParams: toServerMsg.value.topicParams,
+          })
+          const toClientMsg: ToClientMsg = {
+            t: 'published',
+            topicName: toServerMsg.value.topicName,
+            topicParams: toServerMsg.value.topicParams,
+            msg: toServerMsg.value.msg,
+          }
+          bunServer.publish(topicString, JSON.stringify(toClientMsg))
+          return
+        }
+        case 'unsubscribe': {
+          const topicString = toTopicString({
+            topicName: toServerMsg.value.topicName,
+            topicParams: toServerMsg.value.topicParams,
+          })
+          ws.unsubscribe(topicString)
+          const toClient: ToClientMsg = {
+            t: 'unsubscribed',
+            topicName: toServerMsg.value.topicName,
+            topicParams: toServerMsg.value.topicParams,
+          }
+          ws.send(JSON.stringify(toClient))
+          return
+        }
+        default: {
+          return
+        }
+      }
+    },
+  })
+
   config.httpServer.registerRespond((request, server) => {
     bunServer = server as Server
     const url = new URL(request.url)
@@ -59,73 +127,5 @@ export const initServer = <T extends Contract<any>>(config: {
     }
 
     return null
-  })
-
-  config.httpServer._setWebSocketHandler({
-    async open(ws: ServerWebSocket<BackendWebSocketData>) {
-      logger.debug(`websocket connection opened clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
-    },
-    async close(ws: ServerWebSocket<BackendWebSocketData>, _code, _message) {
-      logger.debug(`websocket connection closed clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
-    },
-    async message(ws: ServerWebSocket<BackendWebSocketData>, message: unknown) {
-      logger.debug(`websocket message received clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
-
-      const parsed = ToServer.parse(message)
-
-      if (isErr(parsed)) {
-        logger.error(`websocket message received clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
-        return
-      }
-
-      switch (parsed.value.t) {
-        case 'subscribe': {
-          const topicString = toTopicString({
-            topicName: parsed.value.topicName,
-            topicParams: parsed.value.topicParams,
-          })
-          ws.subscribe(topicString)
-          const toClient: ToClientMsg = {
-            t: 'subscribed',
-            topicName: parsed.value.topicName,
-            topicParams: parsed.value.topicParams,
-          }
-          ws.send(JSON.stringify(toClient))
-          return
-        }
-        case 'publish': {
-          const topicString = toTopicString({
-            topicName: parsed.value.topicName,
-            topicParams: parsed.value.topicParams,
-          })
-          bunServer.publish(topicString, parsed.value.msg)
-          const toClient: ToClientMsg = {
-            t: 'published',
-            topicName: parsed.value.topicName,
-            topicParams: parsed.value.topicParams,
-            msg: parsed.value.msg,
-          }
-          ws.send(JSON.stringify(toClient))
-          return
-        }
-        case 'unsubscribe': {
-          const topicString = toTopicString({
-            topicName: parsed.value.topicName,
-            topicParams: parsed.value.topicParams,
-          })
-          ws.unsubscribe(topicString)
-          const toClient: ToClientMsg = {
-            t: 'unsubscribed',
-            topicName: parsed.value.topicName,
-            topicParams: parsed.value.topicParams,
-          }
-          ws.send(JSON.stringify(toClient))
-          return
-        }
-        default: {
-          return
-        }
-      }
-    },
   })
 }

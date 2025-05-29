@@ -1,9 +1,11 @@
-import { Sub } from '~/@/sub'
+import { ILogger, Logger } from '~/@/logger'
+import { isErr } from '~/@/result'
+import { PubSub, Sub } from '~/@/sub'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { Client, Contract } from '../types'
-import { ToServerMsg, toTopicString } from './shared'
-import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
+import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
+import { toWebsocketUrl } from './to-websocket-url'
 
 export type ClientConfigWebSocket<T extends Contract<any>> = {
   t: 'web-sockets'
@@ -12,78 +14,131 @@ export type ClientConfigWebSocket<T extends Contract<any>> = {
   endpoint: string
   clientSessionId: ClientSessionId
   sessionId: SessionId
+  logger: ILogger
 }
 
 export const initClient = <T extends Contract<any>>(clientConfig: ClientConfigWebSocket<T>): Client<T> => {
-  const ws = new WebSocket(
-    changeToWebsocketProtocol({
-      serverUrl: clientConfig.serverUrl,
-      endpoint: clientConfig.endpoint,
-      clientSessionId: clientConfig.clientSessionId,
-    }),
+  const logger = Logger.prefix('client', clientConfig.logger)
+
+  const websocketUrl = toWebsocketUrl({
+    serverUrl: clientConfig.serverUrl,
+    endpoint: clientConfig.endpoint,
+    clientSessionId: clientConfig.clientSessionId,
+  })
+  logger.debug(`connecting to websocket url=${websocketUrl}`)
+
+  const ws = new WebSocket(websocketUrl)
+  const subByTopic = new Map<string, PubSub<unknown>>()
+
+  const ready = new Promise<void>(
+    (resolve) =>
+      (ws.onopen = () => {
+        logger.debug('websocket connection opened')
+        resolve()
+      }),
   )
-  const subscriptions = new Map<string, Sub<unknown>>()
 
   ws.onmessage = (event) => {
-    const msg = event.data
-    console.log('msg', msg)
+    const toClientMsg = ToClientMsg.parse(JSON.parse(event.data))
+
+    logger.debug(`websocket message received type=${toClientMsg.t}`)
+
+    if (isErr(toClientMsg)) {
+      logger.error(`websocket message parse error error=${toClientMsg.error}`)
+      return
+    }
+
+    switch (toClientMsg.value.t) {
+      case 'subscribed': {
+        logger.debug(`topic subscribed topicName=${toClientMsg.value.topicName.join('.')}`)
+        return
+      }
+      case 'unsubscribed': {
+        logger.debug(`topic unsubscribed topicName=${toClientMsg.value.topicName.join('.')}`)
+        return
+      }
+      case 'published': {
+        const topicString = toTopicString({
+          topicName: toClientMsg.value.topicName,
+          topicParams: toClientMsg.value.topicParams,
+        })
+        const existingSub = subByTopic.get(topicString)
+        if (!existingSub) {
+          logger.debug(`no subscribers for topic=${topicString}`)
+          return
+        }
+        const msg = JSON.parse(toClientMsg.value.msg)
+        logger.debug(`publishing message to topic=${topicString}`)
+        existingSub.pub(msg)
+      }
+    }
   }
 
-  const createClientRecursive = (currentContract: Contract<any>, currentPath: string[] = []): any => {
+  const send = async (msg: unknown) => {
+    await ready
+    logger.debug(`sending message type=${(msg as ToServerMsg).t}`)
+    ws.send(JSON.stringify(msg))
+  }
+
+  const createClientRecursive = (currentContract: Contract<any>, runningTopicName: string[] = []): any => {
     const clientProxy: any = {}
 
-    for (const topicName in currentContract) {
-      const topicConfig = currentContract[topicName]
+    for (const topicNamePart in currentContract) {
+      const topicConfig = currentContract[topicNamePart]
 
       if (!topicConfig) continue
 
-      const topicPath: string[] = [...currentPath, topicName]
+      const topicName: string[] = [...runningTopicName, topicNamePart]
 
       if ('params' in topicConfig && 'msg' in topicConfig) {
-        // const topicDefinition = topicConfig as Topic<any, any>
-
-        clientProxy[topicName] = {
-          publish: async (topicParams: unknown, msg: unknown) => {
+        clientProxy[topicNamePart] = {
+          publish: (topicParams: unknown, msg: unknown) => {
             const toServerMsg: ToServerMsg = {
               t: 'publish',
-              topicName: topicPath,
+              topicName,
               topicParams,
               msg: JSON.stringify(msg),
             }
-            ws.send(JSON.stringify(toServerMsg))
+            logger.debug(`publishing to topic=${topicName.join('.')}`)
+            send(toServerMsg)
           },
           subscribe: (topicParams: unknown): Sub<any> => {
             const topicString = toTopicString({
-              topicName: topicPath,
+              topicName,
               topicParams,
             })
 
-            const existingSub = subscriptions.get(topicString)
+            const existingSub = subByTopic.get(topicString)
 
-            if (existingSub) return existingSub
+            if (existingSub) {
+              logger.debug(`reusing existing subscription for topic=${topicString}`)
+              return existingSub
+            }
 
             const toServerMsg: ToServerMsg = {
               t: 'subscribe',
-              topicName: topicPath,
+              topicName: topicName,
               topicParams,
             }
-            ws.send(JSON.stringify(toServerMsg))
+            logger.debug(`subscribing to topic=${topicString}`)
+            send(toServerMsg)
 
-            const subNew = Sub.create()
+            const pubSub = PubSub.create()
 
-            subscriptions.set(topicString, subNew)
+            subByTopic.set(topicString, pubSub)
 
             return {
-              ...subNew,
+              ...pubSub,
               sub(subscriber) {
-                const unsub = subNew.sub(subscriber)
+                const unsub = pubSub.sub(subscriber)
                 return () => {
                   unsub()
                   const toServerMsg: ToServerMsg = {
                     t: 'unsubscribe',
-                    topicName: topicPath,
+                    topicName: topicName,
                     topicParams,
                   }
+                  logger.debug(`unsubscribing from topic=${topicString}`)
                   ws.send(JSON.stringify(toServerMsg))
                 }
               },
@@ -91,47 +146,14 @@ export const initClient = <T extends Contract<any>>(clientConfig: ClientConfigWe
           },
         }
       } else {
-        clientProxy[topicName] = createClientRecursive(topicConfig as Contract<any>, [...currentPath, topicName])
+        clientProxy[topicNamePart] = createClientRecursive(topicConfig as Contract<any>, [
+          ...runningTopicName,
+          topicNamePart,
+        ])
       }
     }
     return clientProxy
   }
 
   return createClientRecursive(clientConfig.contract) as Client<T>
-}
-
-const changeToWebsocketProtocol = (input: {
-  serverUrl: string
-  endpoint: string
-  clientSessionId: ClientSessionId
-}) => {
-  try {
-    const baseBackendUrlObj = ClientSessionIdHttp.addToUrl(new URL(input.serverUrl), input.clientSessionId)
-
-    if (typeof window === 'undefined') {
-      return baseBackendUrlObj.toString()
-    }
-
-    if (baseBackendUrlObj.protocol === 'https:') {
-      baseBackendUrlObj.protocol = 'wss'
-    }
-
-    if (baseBackendUrlObj.protocol === 'http:') {
-      baseBackendUrlObj.protocol = 'ws'
-    }
-
-    baseBackendUrlObj.pathname = input.endpoint
-
-    return baseBackendUrlObj.toString()
-  } catch (e) {
-    console.error(
-      'Failed to parse baseBackendUrl',
-      input.serverUrl,
-      'falling back to',
-      input.endpoint,
-      'with clientSessionId',
-      input.clientSessionId,
-    )
-    return input.endpoint
-  }
 }

@@ -1,7 +1,7 @@
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { s } from '~/@/schema'
 
-export const ToServer = s.or(
+export const ToServerMsg = s.or(
   s.obj({
     t: s.l('subscribe'),
     topicName: s.arr(s.str),
@@ -20,9 +20,9 @@ export const ToServer = s.or(
   }),
 )
 
-export type ToServerMsg = s.Infer<typeof ToServer>
+export type ToServerMsg = s.Infer<typeof ToServerMsg>
 
-export const ToClient = s.or(
+export const ToClientMsg = s.or(
   s.obj({
     t: s.l('subscribed'),
     topicName: s.arr(s.str),
@@ -37,11 +37,11 @@ export const ToClient = s.or(
     t: s.l('published'),
     topicName: s.arr(s.str),
     topicParams: s.unknown,
-    msg: s.unknown,
+    msg: s.str,
   }),
 )
 
-export type ToClientMsg = s.Infer<typeof ToClient>
+export type ToClientMsg = s.Infer<typeof ToClientMsg>
 
 export const initToClient = (msg: ToClientMsg): ToClientMsg => {
   return msg
