@@ -1,1 +1,1 @@
-export * as WirePubSub from './topic'
+export * as Topic from './topic'

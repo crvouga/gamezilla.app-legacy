@@ -1,5 +1,5 @@
 import { s } from '~/@/schema'
-import { WirePubSub } from '~/@/topic'
+import { Topic } from '~/@/topic'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { BackendCmd } from '~/app/@/backend/cmd'
@@ -99,7 +99,7 @@ type MsgToBackendBase = {
 export type MsgToBackend = MsgToBackendBase &
   (ListSpacesTypes.MsgToBackend | GameTypes.MsgToBackend | SyncTypes.MsgToBackend)
 
-export const pubSubContract = WirePubSub.initContract({
+export const pubSubContract = Topic.initContract({
   msgSpace: {
     params: s.obj({
       spaceId: SpaceId,

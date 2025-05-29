@@ -1,48 +1,101 @@
 import { describe, expect, it } from 'bun:test'
-import { WirePubSub } from '.'
+import { Topic } from '.'
+import { HttpServerBun } from '../http-server/impl-bun'
+import { Logger } from '../logger'
 import { s } from '../schema'
+import { ClientSessionId } from '../wire/client-session-id'
+import { SessionId } from '../wire/session-id'
 
 const Msg = s.obj({
   name: s.str,
 })
 type Msg = s.Infer<typeof Msg>
 
-const Fixture = () => {
-  const childContract = WirePubSub.initContract({
-    someTopic: {
-      params: s.obj({
-        id: s.str,
-      }),
-      msg: Msg,
-    },
+const childContract = Topic.initContract({
+  someTopic: {
+    params: s.obj({
+      id: s.str,
+    }),
+    msg: Msg,
+  },
+})
+
+const contract = Topic.initContract({
+  someTopic: {
+    params: s.obj({
+      id: s.str,
+    }),
+    msg: Msg,
+  },
+  child: childContract,
+})
+
+const Fixture = async () => {
+  const port = 1234
+  const logger = Logger({ t: 'console' })
+  const httpServer = HttpServerBun({ t: 'bun', logger })
+  await httpServer.start(port)
+
+  const endpoint = '/topic'
+  const serverUrl = `http://localhost:${port}`
+
+  Topic.initServer({
+    t: 'web-sockets',
+    httpServer,
+    logger,
+    contract,
+    isProd: false,
+    endpoint,
   })
 
-  const contract = WirePubSub.initContract({
-    someTopic: {
-      params: s.obj({
-        id: s.str,
-      }),
-      msg: Msg,
-    },
-    child: childContract,
+  const clientA = Topic.initClient({
+    t: 'web-sockets',
+    clientSessionId: ClientSessionId.generate(),
+    sessionId: SessionId.generate(),
+    contract,
+    serverUrl,
+    endpoint,
   })
-
-  const client = WirePubSub.initClient(contract)
+  const clientB = Topic.initClient({
+    t: 'web-sockets',
+    clientSessionId: ClientSessionId.generate(),
+    sessionId: SessionId.generate(),
+    contract,
+    serverUrl,
+    endpoint,
+  })
+  const clientC = Topic.initClient({
+    t: 'web-sockets',
+    clientSessionId: ClientSessionId.generate(),
+    sessionId: SessionId.generate(),
+    contract,
+    serverUrl,
+    endpoint,
+  })
 
   return {
+    httpServer,
     contract,
-    client,
+    clientA,
+    clientB,
+    clientC,
   }
 }
 
 describe.only('Topic', () => {
   it('should work', async () => {
-    const f = Fixture()
-    const got: Msg[] = []
-    f.client.someTopic.subscribe({ id: '123' }).sub((msg) => {
-      got.push(msg)
-    })
-    await f.client.someTopic.publish({ id: '123' }, { name: 'John' })
-    expect(got).toEqual([{ name: 'John' }])
+    const f = await Fixture()
+    const gotA: Msg[] = []
+    const gotB: Msg[] = []
+    const gotC: Msg[] = []
+    //
+    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
+    f.clientC.someTopic.subscribe({ id: '123' }).sub((msg) => gotC.push(msg))
+    //
+    f.clientC.someTopic.publish({ id: '123' }, { name: 'John' })
+    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotB).toEqual([{ name: 'John' }])
+    expect(gotC).toEqual([{ name: 'John' }])
   })
 })

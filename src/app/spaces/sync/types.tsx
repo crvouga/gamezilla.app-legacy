@@ -1,6 +1,6 @@
 import { WithEventMeta } from '~/@/event-sourced/event'
 import { s } from '~/@/schema'
-import { WirePubSub } from '~/@/topic'
+import { Topic } from '~/@/topic'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { Space } from '../core/space'
@@ -27,7 +27,7 @@ export type MsgToBackend =
       c: WithEventMeta<MsgSpace>
     }
 
-export const pubSubContract = WirePubSub.initContract({
+export const pubSubContract = Topic.initContract({
   msgSpace: {
     params: s.obj({
       spaceId: SpaceId,
