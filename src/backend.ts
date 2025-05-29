@@ -3,7 +3,7 @@ import { AppTypes } from '~/app'
 import { AppBackend } from '~/app/backend'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { HealthCheck } from './@/health-check/health-check'
-import { RPC } from './@/wire-rpc'
+import { RPC } from './@/rpc'
 import { PowerSyncBackendApp } from './service-powersync/backend/respond'
 import { CONFIG_SHARED } from './config/shared'
 

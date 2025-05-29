@@ -1,6 +1,6 @@
 import { WithEventMeta } from '~/@/event-sourced/event'
 import { s } from '~/@/schema'
-import { WirePubSub } from '~/@/wire-pub-sub'
+import { WirePubSub } from '~/@/topic'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { Space } from '../core/space'

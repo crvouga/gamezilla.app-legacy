@@ -1,5 +1,5 @@
 import { IHttpServer } from '~/@/http-server'
-import { RPC } from '~/@/wire-rpc'
+import { RPC } from '~/@/rpc'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientId } from '../@/wire/client-id'
 import { SessionId } from '../@/wire/session-id'

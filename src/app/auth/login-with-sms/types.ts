@@ -4,8 +4,8 @@ import { Translator } from '~/@/l18n/generated'
 import { s } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 import { Remote, Result } from '~/@/result'
-import { RPC } from '~/@/wire-rpc'
-import { RPCError } from '~/@/wire-rpc/error'
+import { RPC } from '~/@/rpc'
+import { WireFunction } from '~/@/rpc/error'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserAccount } from '~/app/@/data/user-account'
 import { SendCodeInput, SendCodeOutput, VerifyCodeInput } from '../@/backend/verify-sms'
@@ -14,14 +14,14 @@ import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { UserSession } from '../@/user-session/user-session'
 
-export type Sent = Result<RPCError, SendCodeOutput>
+export type Sent = Result<WireFunction, SendCodeOutput>
 
 const VerifyCodeOutput = Result.schema(
   VerifyCodeProblem.schema,
   s.obj({ userAccount: UserAccount, userSession: UserSession }),
 )
 export type VerifyCodeOutput = s.Infer<typeof VerifyCodeOutput>
-export type Verified = Result<RPCError, VerifyCodeOutput>
+export type Verified = Result<WireFunction, VerifyCodeOutput>
 
 export type ModelFrontend = {
   phone: string

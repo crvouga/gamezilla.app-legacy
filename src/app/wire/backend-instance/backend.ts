@@ -1,5 +1,5 @@
 import { unwrapOr } from '~/@/result'
-import { RPC } from '~/@/wire-rpc'
+import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'

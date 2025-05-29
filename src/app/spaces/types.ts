@@ -1,5 +1,5 @@
 import { s } from '~/@/schema'
-import { WirePubSub } from '~/@/wire-pub-sub'
+import { WirePubSub } from '~/@/topic'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { BackendCmd } from '~/app/@/backend/cmd'

@@ -1,4 +1,4 @@
-export type RPCError =
+export type WireFunction =
   | {
       t: 'connection-error'
       error: string
@@ -8,7 +8,7 @@ export type RPCError =
       error: string
     }
 
-const toString = (error: RPCError): string => {
+const toString = (error: WireFunction): string => {
   switch (error.t) {
     case 'connection-error':
       return error.error
@@ -17,6 +17,6 @@ const toString = (error: RPCError): string => {
   }
 }
 
-export const RPCError = {
+export const WireFunction = {
   toString,
 }

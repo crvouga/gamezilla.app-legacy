@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 import { RemoteResult } from '~/@/result'
-import { RPC } from '~/@/wire-rpc'
+import { RPC } from '~/@/rpc'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'

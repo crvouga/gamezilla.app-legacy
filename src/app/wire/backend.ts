@@ -1,6 +1,6 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { unwrapOr } from '~/@/result'
-import { RPC } from '~/@/wire-rpc'
+import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import type { ClientId } from '~/@/wire/client-id'
 import { Logger } from '../../@/logger'

@@ -1,4 +1,4 @@
-import { RPC } from '~/@/wire-rpc'
+import { RPC } from '~/@/rpc'
 import { BackendCtx } from '../@/backend/ctx'
 import { rpcContract } from './types'
 
