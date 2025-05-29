@@ -9,6 +9,7 @@ import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
+import { Topic } from '~/@/topic'
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
 import { IconUserCircle } from '~/@/ui/icon/icon-user-circle'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
@@ -35,7 +36,15 @@ import { ToastFrontend } from './frontend/toast'
 import * as LangFrontend from './lang/frontend'
 import { ProfileFrontend } from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
-import { FrontendCtx, ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend, rpcContract as contract } from './types'
+import {
+  FrontendCtx,
+  ModelFrontend,
+  MsgFrontend,
+  MsgToBackend,
+  MsgToFrontend,
+  rpcContract as contract,
+  topicContract,
+} from './types'
 import * as WireFrontend from './wire/frontend'
 import { FrontendTransport } from './wire/transport/frontend'
 
@@ -63,12 +72,21 @@ const initCtx = async (): Promise<FrontendCtx> => {
     t: 'fetch',
   })
 
-  const rpc = RPC.initClient({
+  const rpcClient = RPC.initClient({
     t: 'http',
     httpClient,
     contract,
     serverUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
     clientSessionId,
+  })
+
+  const topicClient = Topic.initClient({
+    t: 'web-sockets',
+    contract: topicContract,
+    serverUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
+    clientSessionId,
+    logger,
+    endpoint: '/topic',
   })
 
   const dbConnSql = await DbConnSql({
@@ -98,14 +116,15 @@ const initCtx = async (): Promise<FrontendCtx> => {
     httpClient,
   }
 
-  const auth = await AuthFrontend.initCtx({ ctx: { ...ctx, rpc } })
+  const auth = await AuthFrontend.initCtx({ ctx: { ...ctx, rpcClient } })
   const profile = ProfileFrontend.initCtx({ ctx })
   return {
     ...ctx,
     ...profile,
     ...auth,
     transport,
-    rpc,
+    rpcClient,
+    topicClient,
   }
 }
 
@@ -182,7 +201,7 @@ const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<Ms
   }
 
   const lang = LangFrontend.init({ ctx })
-  const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire }, stored: {} })
+  const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpcClient.wire }, stored: {} })
   const auth = AuthFrontend.init({ ctx: input.ctx })
   const space = SpacesFrontend.init({ ctx })
   const profile = ProfileFrontend.init({ ctx: input.ctx })

@@ -2,7 +2,6 @@ import { ILogger, Logger } from '~/@/logger'
 import { isErr } from '~/@/result'
 import { PubSub, Sub } from '~/@/sub'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { SessionId } from '~/@/wire/session-id'
 import { Client, Contract } from '../types'
 import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
 import { toWebsocketUrl } from './to-websocket-url'
@@ -13,7 +12,6 @@ export type ClientConfigWebSocket<T extends Contract<any>> = {
   serverUrl: string
   endpoint: string
   clientSessionId: ClientSessionId
-  sessionId: SessionId
   logger: ILogger
 }
 

@@ -27,7 +27,7 @@ import type { FrontendCtx, FrontendModule, ModelFrontend, MsgFrontend, rpcContra
 //
 
 const initCtx = async (input: {
-  ctx: AppFrontendCtxBase & { rpc: { auth: RPC.Client<typeof rpcContract> } }
+  ctx: AppFrontendCtxBase & { rpcClient: { auth: RPC.Client<typeof rpcContract> } }
 }): Promise<FrontendCtx> => {
   const authCtx = await AuthFrontendCtx.init({ ctx: input.ctx })
   return {
@@ -96,7 +96,7 @@ const updateLogout: FrontendModule['update'] = (input) => {
 const updateCurrentUser: FrontendModule['update'] = (input) => {
   const updated = CurrentUserFrontend.update({
     msgIn: input.msgIn,
-    ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.currentUser },
+    ctx: { ...input.ctx, rpc: input.ctx.rpcClient.auth.currentUser },
     model: input.model.currentUser,
     msg: input.msg?.t === 'got-current-user-msg' ? input.msg.c : null,
   })
@@ -109,7 +109,7 @@ const updateCurrentUser: FrontendModule['update'] = (input) => {
 
 const updateSMS: FrontendModule['update'] = (input) => {
   const updated = LoginWithSMSFrontend.update({
-    ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.sms },
+    ctx: { ...input.ctx, rpc: input.ctx.rpcClient.auth.sms },
     model: input.model.continueWithSms,
     msg: input.msg?.t === 'got-login-with-sms-msg' ? input.msg.c : null,
     msgIn: input.msgIn,
@@ -154,7 +154,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
       'got-current-user-msg',
       CurrentUserFrontend.subscriptions({
         ...input,
-        ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.currentUser },
+        ctx: { ...input.ctx, rpc: input.ctx.rpcClient.auth.currentUser },
         model: input.model.currentUser,
       }),
     ),
@@ -180,7 +180,7 @@ const View: FrontendModule['View'] = (input) => {
         case 'login-sms-verify': {
           return (
             <LoginWithSMSFrontend.View
-              ctx={{ ...input.ctx, rpc: input.ctx.rpc.auth.sms }}
+              ctx={{ ...input.ctx, rpc: input.ctx.rpcClient.auth.sms }}
               dispatch={(c) => input.dispatch({ t: 'got-login-with-sms-msg', c })}
               model={input.model.continueWithSms}
             />

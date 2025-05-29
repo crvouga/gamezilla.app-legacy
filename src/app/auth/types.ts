@@ -52,7 +52,7 @@ export type MsgToBackend =
 export type MsgToFrontend = { t: 'noop' }
 
 export type FrontendCtx = AuthFrontendCtx & {
-  rpc: {
+  rpcClient: {
     auth: RPC.Client<typeof rpcContract>
   }
 }

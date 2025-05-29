@@ -141,16 +141,11 @@ export type BackendModule = AppBackendModule<{
   Deps: null
 }>
 
-/*
-const pubSubContract = initContract({
+export const topicContract = Topic.initContract({
   msgSpace: {
-    params: p.obj({
-      spaceId: p.str,
+    params: s.obj({
+      spaceId: SpaceId,
     }),
     msg: MsgSpace,
   },
 })
-const pubSubClient = initClient(pubSubContract)
-pubSubClient.msgSpace.sub({ spaceId: '123' }).subscribe(console.log)
-
- */

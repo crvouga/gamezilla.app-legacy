@@ -1,10 +1,9 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, it } from 'bun:test'
 import { Topic } from '.'
 import { HttpServerBun } from '../http-server/impl-bun'
 import { Logger } from '../logger'
 import { s } from '../schema'
 import { ClientSessionId } from '../wire/client-session-id'
-import { SessionId } from '../wire/session-id'
 
 const Msg = s.obj({
   name: s.str,
@@ -50,7 +49,6 @@ const Fixture = async () => {
   const clientA = Topic.initClient({
     t: 'web-sockets',
     clientSessionId: ClientSessionId.generate(),
-    sessionId: SessionId.generate(),
     contract,
     serverUrl,
     endpoint,
@@ -59,7 +57,6 @@ const Fixture = async () => {
   const clientB = Topic.initClient({
     t: 'web-sockets',
     clientSessionId: ClientSessionId.generate(),
-    sessionId: SessionId.generate(),
     contract,
     serverUrl,
     endpoint,
@@ -68,7 +65,6 @@ const Fixture = async () => {
   const clientC = Topic.initClient({
     t: 'web-sockets',
     clientSessionId: ClientSessionId.generate(),
-    sessionId: SessionId.generate(),
     contract,
     serverUrl,
     endpoint,

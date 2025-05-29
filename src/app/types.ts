@@ -15,6 +15,7 @@ import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
 import { IBackendTransport } from './wire/transport/backend'
 import { IFrontendTransport } from './wire/transport/frontend'
+import { Topic } from '~/@/topic'
 
 //
 //
@@ -96,6 +97,10 @@ export const rpcContract = RPC.initContract({
   auth: AuthTypes.rpcContract,
 })
 
+export const topicContract = Topic.initContract({
+  spaces: SpacesTypes.topicContract,
+})
+
 //
 //
 //
@@ -116,7 +121,8 @@ export type BackendCtx = AppBackendCtx & {
 export type FrontendCtx = AppFrontendCtxBase &
   AuthTypes.FrontendCtx &
   ProfileTypes.FrontendCtx & {
-    rpc: RPC.Client<typeof rpcContract>
+    rpcClient: RPC.Client<typeof rpcContract>
+    topicClient: Topic.Client<typeof topicContract>
     transport: IFrontendTransport<{
       MsgToBackend: MsgToBackend
       MsgToFrontend: MsgToFrontend
