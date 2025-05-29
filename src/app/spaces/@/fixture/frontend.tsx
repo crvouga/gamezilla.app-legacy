@@ -2,19 +2,22 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId, withEventMetaAt } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
+import { loggerNoop } from '~/@/logger/impl-noop'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
+import { Topic } from '~/@/topic'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
+import { AppFrontendCmd } from '~/app/@/frontend/cmd'
+import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Space } from '../../core/space'
 import { SpacesFrontend } from '../../frontend'
-import type * as SpacesTypes from '../../types'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
+import * as SpacesTypes from '../../types'
 
 export const SpaceFrontendFixture = async () => {
   const f = await FixtureAppFrontend()
@@ -29,17 +32,28 @@ export const SpaceFrontendFixture = async () => {
         c: SpacesTypes.MsgToFrontend
       }
 
+  const topic = Topic.initClient({
+    t: 'local',
+    contract: SpacesTypes.topicContract,
+    logger: loggerNoop,
+  })
+
+  const ctx: AppFrontendCtx & { topic: Topic.Client<typeof SpacesTypes.topicContract> } = {
+    ...f.ctx,
+    topic,
+  }
+
   const updates = (initial: SpacesTypes.ModelFrontend, msgs: Msg[]) => {
     const outputs: ReturnType<typeof SpacesFrontend.update>[] = []
     for (const msg of msgs) {
       switch (msg.t) {
         case 'msg': {
-          const output = SpacesFrontend.update({ ctx: f.ctx, model: initial, msg: msg.c })
+          const output = SpacesFrontend.update({ ctx, model: initial, msg: msg.c })
           outputs.push(output)
           break
         }
         case 'msg-backend': {
-          const output = SpacesFrontend.update({ ctx: f.ctx, model: initial, msgBackend: msg.c })
+          const output = SpacesFrontend.update({ ctx, model: initial, msgBackend: msg.c })
           outputs.push(output)
           break
         }
@@ -107,8 +121,14 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     },
   )
 
+  const topic = Topic.initClient({
+    t: 'local',
+    contract: SpacesTypes.topicContract,
+    logger: loggerNoop,
+  })
+
   const currentUserProfile = await UserProfile.random({ id: currentUser.userId })
-  const ctx: SpaceFrontendCtx = {
+  const ctx: SpaceFrontendCtx & { topic: Topic.Client<typeof SpacesTypes.topicContract> } = {
     ...f.ctx,
     parentScreen: null,
     currentScreen: {
@@ -122,12 +142,17 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     profilesByUserId: UserProfile.indexByUserId([currentUserProfile, userA, userB, userC]),
     space,
     currentUser,
+    topic,
   }
 
   const updates = (initial: Output, inputs: FixtureInput[]): NonEmpty<Output> => {
     const outputs: NonEmpty<Output> = [initial]
     for (const input of inputs) {
-      let output = SpacesFrontend.update({ ...input, ctx: input.ctx ?? ctx, model: NonEmpty.last(outputs).model })
+      let output = SpacesFrontend.update({
+        ...input,
+        ctx: input.ctx ?? ctx,
+        model: NonEmpty.last(outputs).model,
+      })
       const msgOuts: unknown[] = []
       const msgCmds: AppFrontendCmd<SpacesTypes.MsgToBackend>[] = output.msgCmd ?? []
       for (const msgOut of output.msgOut ?? []) {

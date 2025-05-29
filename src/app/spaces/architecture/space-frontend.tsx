@@ -7,10 +7,12 @@ import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import type { Space } from '../@/space/space'
 import { MsgSpace } from '../core/space-msg/space-msg'
-import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from '../types'
+import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend, topicContract } from '../types'
+import { Topic } from '~/@/topic'
 
 export type SpaceFrontendCtx = AppFrontendCtxBase & {
   space?: Space
+  topic: Topic.Client<typeof topicContract>
 }
 
 export type Input = {

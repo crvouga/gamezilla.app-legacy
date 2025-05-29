@@ -27,7 +27,7 @@ const Fixture = async (input?: { currentScreen?: Screen }) => {
     currentScreen: input?.currentScreen ?? { n: 'auth-login', t: 'login-sms-request' },
   })
 
-  const rpcClient = RPC.initClient({
+  const rpc = RPC.initClient({
     t: 'local',
     clientSessionId: ClientSessionId.generate(),
     sessionId: SessionId.generate(),
@@ -46,7 +46,10 @@ const Fixture = async (input?: { currentScreen?: Screen }) => {
     },
   })
 
-  const ctx = { ...f.ctx, rpc: rpcClient }
+  const ctx = {
+    ...f.ctx,
+    rpc,
+  }
 
   const updates = (init: LoginWithSMSTypes.ModelFrontend, msgs: Msg[]) => {
     const updates: ReturnType<typeof LoginWithSMSFrontend.update>[] = []

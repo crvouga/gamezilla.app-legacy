@@ -1,5 +1,4 @@
 import type { SpaceId } from '~/app/@/data/space-id'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { SpacesCore } from '../core/core'
@@ -12,8 +11,8 @@ import { LeaveSpaceFrontend } from '../leave-space/frontend'
 import type { ModelFrontend, MsgFrontend } from '../types'
 
 const View = (input: {
-  model: ModelFrontend
-  ctx: AppFrontendCtx
+  model: ModelFrontend, SpaceFrontendCtxModule
+  ctx: SpaceFrontendCtxModule
   dispatch: (m: MsgFrontend) => void
   spaceId: SpaceId
 }) => {
@@ -29,9 +28,9 @@ const View = (input: {
     }
 
     case 'started': {
-      const spaceCtx: SpaceFrontendCtx = {
+      const spaceCtx: SpaceFrontendCtxModule = {
         ...input.ctx,
-        currentUserId: input.ctx.currentUser.userId,
+        currentUserId: input.ctx.currentUser?.userId,
         space: spaceState,
       }
 
@@ -68,7 +67,7 @@ const View = (input: {
   }
 }
 
-const ViewSpaceNotFound = (input: { ctx: AppFrontendCtx; dispatch: (m: MsgFrontend) => void }) => {
+const ViewSpaceNotFound = (input: { ctx: SpaceFrontendCtxModule; dispatch: (m: MsgFrontend) => void }) => {
   return (
     <ScreenTitleButton
       title={input.ctx.t('spaces.space-not-found')}

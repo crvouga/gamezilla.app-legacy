@@ -1,9 +1,9 @@
 import { EventSourced } from '~/@/event-sourced'
+import { AddProfilesCmd } from '~/app/@/frontend/add-profiles-cmd'
 import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
 import { sendToBackend } from '~/app/@/frontend/cmd'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
-import { AddProfilesCmd } from '~/app/@/frontend/add-profiles-cmd'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -25,23 +25,22 @@ const outputMsgSpacesFromBackend: SpaceFrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const sendMsgSpaceToBackend: SpaceFrontendModule['update'] = ({ ctx, model, msgSpace: msgSpace }) => {
-  if (!msgSpace) return { model }
+const sendMsgSpaceToBackend: SpaceFrontendModule['update'] = (input) => {
+  if (!input.msgSpace) return { model: input.model }
 
-  const spaceEventWithMeta = SpacesCore.toEventWithMeta(model.spaces, msgSpace.spaceId, msgSpace.eventId)
+  const spaceEventWithMeta = SpacesCore.toEventWithMeta(
+    input.model.spaces,
+    input.msgSpace.spaceId,
+    input.msgSpace.eventId,
+  )
 
-  if (!spaceEventWithMeta) return { model }
-
-  const profile = 'userId' in spaceEventWithMeta ? ctx.profilesByUserId[spaceEventWithMeta.userId] : null
-
-  const profiles = profile ? { [profile.id]: profile } : {}
+  if (!spaceEventWithMeta) return { model: input.model }
 
   return {
-    model,
-    // eff() {
-    //   input.ctx.wirePubSub.msgSpace.publish({ spaceId: msgSpace.spaceId }, spaceEventWithMeta)
-    // },
-    msgCmd: [sendToBackend({ t: 'sync.got-msg-space', c: spaceEventWithMeta, profilesByUserId: profiles })],
+    model: input.model,
+    eff() {
+      input.ctx.topic.msgSpace.publish(spaceEventWithMeta.spaceId, spaceEventWithMeta)
+    },
   }
 }
 
@@ -70,7 +69,10 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
 
     return {
       model: input.model,
-
+      eff(_dispatch) {
+        input.ctx.topic
+        debugger
+      },
       msgCmd: [
         sendToBackend({
           t: 'sync.sync',

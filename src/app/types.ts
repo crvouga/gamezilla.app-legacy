@@ -121,8 +121,8 @@ export type BackendCtx = AppBackendCtx & {
 export type FrontendCtx = AppFrontendCtxBase &
   AuthTypes.FrontendCtx &
   ProfileTypes.FrontendCtx & {
-    rpcClient: RPC.Client<typeof rpcContract>
-    topicClient: Topic.Client<typeof topicContract>
+    rpc: RPC.Client<typeof rpcContract>
+    topic: Topic.Client<typeof topicContract>
     transport: IFrontendTransport<{
       MsgToBackend: MsgToBackend
       MsgToFrontend: MsgToFrontend

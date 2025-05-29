@@ -116,7 +116,9 @@ export const pubSubContract = Topic.initContract({
 //
 //
 
-type SpaceFrontendCtx = AnonymousFrontendCtx | AppFrontendCtx
+type SpaceFrontendCtx = (AnonymousFrontendCtx | AppFrontendCtx) & {
+  topic: Topic.Client<typeof topicContract>
+}
 
 export type FrontendModule = AppFrontendModule<{
   Ctx: SpaceFrontendCtx
@@ -143,9 +145,7 @@ export type BackendModule = AppBackendModule<{
 
 export const topicContract = Topic.initContract({
   msgSpace: {
-    params: s.obj({
-      spaceId: SpaceId,
-    }),
+    params: SpaceId,
     msg: MsgSpace,
   },
 })

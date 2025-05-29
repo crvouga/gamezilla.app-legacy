@@ -72,7 +72,7 @@ const initCtx = async (): Promise<FrontendCtx> => {
     t: 'fetch',
   })
 
-  const rpcClient = RPC.initClient({
+  const rpc = RPC.initClient({
     t: 'http',
     httpClient,
     contract,
@@ -80,7 +80,7 @@ const initCtx = async (): Promise<FrontendCtx> => {
     clientSessionId,
   })
 
-  const topicClient = Topic.initClient({
+  const topic = Topic.initClient({
     t: 'web-sockets',
     contract: topicContract,
     serverUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
@@ -116,15 +116,15 @@ const initCtx = async (): Promise<FrontendCtx> => {
     httpClient,
   }
 
-  const auth = await AuthFrontend.initCtx({ ctx: { ...ctx, rpcClient } })
+  const auth = await AuthFrontend.initCtx({ ctx: { ...ctx, rpc } })
   const profile = ProfileFrontend.initCtx({ ctx })
   return {
     ...ctx,
     ...profile,
     ...auth,
     transport,
-    rpcClient,
-    topicClient,
+    rpc,
+    topic,
   }
 }
 
@@ -201,9 +201,9 @@ const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<Ms
   }
 
   const lang = LangFrontend.init({ ctx })
-  const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpcClient.wire }, stored: {} })
+  const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire }, stored: {} })
   const auth = AuthFrontend.init({ ctx: input.ctx })
-  const space = SpacesFrontend.init({ ctx })
+  const space = SpacesFrontend.init({ ctx: { ...ctx, topic: input.ctx.topic.spaces } })
   const profile = ProfileFrontend.init({ ctx: input.ctx })
 
   const initialModel: ModelFrontend = {
@@ -312,7 +312,7 @@ const updateChild = (input: {
   const frontendCtx = toCtx(input)
 
   const space = SpacesFrontend.update({
-    ctx: frontendCtx,
+    ctx: { ...frontendCtx, topic: frontendCtx.topic.spaces },
     model: input.model.spaces,
     msg: input.msg?.t === 'spaces' ? input.msg.c : null,
     msgBackend: input.msgBackend?.t === 'spaces' ? input.msgBackend.c : null,
@@ -391,7 +391,10 @@ const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend }): Sub<M
     Sub.tag('wire', WireFrontend.subscriptions({ transport: input.ctx.transport })),
     Sub.tag('lang', LangFrontend.subscriptions({ ctx, model: input.model.lang })),
     Sub.tag('auth', AuthFrontend.subscriptions({ ctx, model: input.model.auth })),
-    Sub.tag('spaces', SpacesFrontend.subscriptions({ ctx, model: input.model.spaces })),
+    Sub.tag(
+      'spaces',
+      SpacesFrontend.subscriptions({ ctx: { ...ctx, topic: input.ctx.topic.spaces }, model: input.model.spaces }),
+    ),
     Sub.tag('profile', ProfileFrontend.subscriptions({ ctx, model: input.model.profile })),
   ])
 }
@@ -494,7 +497,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
         <SpacesFrontend.View
           dispatch={(m) => input.dispatch({ t: 'spaces', c: m })}
           model={input.model.spaces}
-          ctx={{ ...input.ctx, parentScreen: toScreenLayoutProps(input) }}
+          ctx={{ ...input.ctx, parentScreen: toScreenLayoutProps(input), topic: input.ctx.topic.spaces }}
         />
       )
 
