@@ -1,4 +1,4 @@
-import { describe, it } from 'bun:test'
+import { describe, expect, it } from 'bun:test'
 import { Topic } from '.'
 import { HttpServerBun } from '../http-server/impl-bun'
 import { Logger } from '../logger'
@@ -88,16 +88,16 @@ describe.only('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
     const gotC: Msg[] = []
-    //
     f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
     f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
     f.clientC.someTopic.subscribe({ id: '123' }).sub((msg) => gotC.push(msg))
-    //
+
+    await new Promise((resolve) => setTimeout(resolve, 500))
     f.clientC.someTopic.publish({ id: '123' }, { name: 'John' })
 
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    // expect(gotA).toEqual([{ name: 'John' }])
-    // expect(gotB).toEqual([{ name: 'John' }])
-    // expect(gotC).toEqual([{ name: 'John' }])
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotB).toEqual([{ name: 'John' }])
+    expect(gotC).toEqual([{ name: 'John' }])
   })
 })
