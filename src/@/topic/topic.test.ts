@@ -115,4 +115,54 @@ describe.only('Topic', () => {
     await sleep()
     expect(gotA).toEqual([])
   })
+
+  it('should not receive messages for different topic params', async () => {
+    using f = await Fixture()
+    const gotA: Msg[] = []
+    const gotB: Msg[] = []
+    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '456' }).sub((msg) => gotB.push(msg))
+    await sleep()
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    await sleep()
+    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotB).toEqual([])
+  })
+
+  it('should handle multiple messages in sequence', async () => {
+    using f = await Fixture()
+    const gotA: Msg[] = []
+    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
+    await sleep()
+
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'Jane' })
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'Bob' })
+    await sleep()
+
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'Jane' }, { name: 'Bob' }])
+  })
+
+  it('should handle multiple subscribers with different topic params', async () => {
+    using f = await Fixture()
+    const gotA: Msg[] = []
+    const gotB: Msg[] = []
+    const gotC: Msg[] = []
+
+    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '456' }).sub((msg) => gotB.push(msg))
+    f.clientC.someTopic.subscribe({ id: '789' }).sub((msg) => gotC.push(msg))
+
+    await sleep()
+
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    f.clientB.someTopic.publish({ id: '456' }, { name: 'Jane' })
+    f.clientC.someTopic.publish({ id: '789' }, { name: 'Bob' })
+
+    await sleep()
+
+    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotB).toEqual([{ name: 'Jane' }])
+    expect(gotC).toEqual([{ name: 'Bob' }])
+  })
 })
