@@ -4224,7 +4224,6 @@ export const adjectives = [
   'august',
   'extant',
   'exultant',
-  'cancerous',
   'psychedelic',
   'yielding',
   'matched',
