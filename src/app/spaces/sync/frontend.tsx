@@ -1,31 +1,35 @@
 import { EventSourced } from '~/@/event-sourced'
-import { AddProfilesCmd } from '~/app/@/frontend/add-profiles-cmd'
+import { Sub } from '~/@/sub'
 import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
-import { sendToBackend } from '~/app/@/frontend/cmd'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
+import { MsgFrontend } from './types'
+import { isErr } from '~/@/result'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
     { model: input.model },
-    (model) => updateProfiles({ ...input, model }),
-    (model) => updateSpace({ ...input, model }),
-    (model) => sendMsgSpaceToBackend({ ...input, model }),
-    (model) => outputMsgSpacesFromBackend({ ...input, model }),
+    (model) => updateSync({ ...input, model }),
+    (model) => updateSynced({ ...input, model }),
+    (model) => publishMsgSpace({ ...input, model }),
+    (model) => outputMsgSpaces({ ...input, model }),
   )
 }
 
-const outputMsgSpacesFromBackend: SpaceFrontendModule['update'] = (input) => {
-  switch (input.msgBackend?.t) {
+const outputMsgSpaces: SpaceFrontendModule['update'] = (input) => {
+  switch (input.msg?.t) {
     case 'sync.got-msg-space': {
-      return { model: input.model, msgSpace: [input.msgBackend.c] }
+      return {
+        model: input.model,
+        msgSpace: [input.msg.c],
+      }
     }
   }
 
   return { model: input.model }
 }
 
-const sendMsgSpaceToBackend: SpaceFrontendModule['update'] = (input) => {
+const publishMsgSpace: SpaceFrontendModule['update'] = (input) => {
   if (!input.msgSpace) return { model: input.model }
 
   const spaceEventWithMeta = SpacesCore.toEventWithMeta(
@@ -39,24 +43,16 @@ const sendMsgSpaceToBackend: SpaceFrontendModule['update'] = (input) => {
   return {
     model: input.model,
     eff() {
-      input.ctx.topic.msgSpace.publish(spaceEventWithMeta.spaceId, spaceEventWithMeta)
+      input.ctx.topic.sync.msgSpace.publish(spaceEventWithMeta.spaceId, spaceEventWithMeta)
     },
   }
 }
 
-const updateProfiles: SpaceFrontendModule['update'] = ({ model, msgBackend }) => {
-  if (!msgBackend?.profilesByUserId) return { model }
-
-  return { model, msgOut: [AddProfilesCmd.init(Object.values(msgBackend.profilesByUserId))] }
-}
-
-const updateSpace: SpaceFrontendModule['update'] = (input) => {
+const updateSync: SpaceFrontendModule['update'] = (input) => {
   if (BackendConnectedEvt.is(input.msgIn)) {
     const currentUserId = input.ctx.currentUser?.userId
 
     if (!currentUserId) return { model: input.model }
-
-    const currentUserProfile = currentUserId ? input.ctx.profilesByUserId[currentUserId] : null
 
     const currentUserSpace = SpacesCore.toSpaceByUserId({
       model: input.model.spaces,
@@ -69,24 +65,24 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
 
     return {
       model: input.model,
-      eff(_dispatch) {
-        input.ctx.topic
-        debugger
+      async eff(dispatch) {
+        const synced = await input.ctx.rpc.sync.sync({ space })
+        dispatch({ t: 'sync.synced', synced })
       },
-      msgCmd: [
-        sendToBackend({
-          t: 'sync.sync',
-          space,
-          profilesByUserId: currentUserProfile ? { [currentUserId]: currentUserProfile } : {},
-          causedBy: { msgIn: input.msgIn },
-        }),
-      ],
     }
   }
 
-  switch (input.msgBackend?.t) {
+  return { model: input.model }
+}
+
+const updateSynced: SpaceFrontendModule['update'] = (input) => {
+  switch (input.msg?.t) {
     case 'sync.synced': {
-      const merged = SpacesCore.mergeOne(input.model.spaces, input.msgBackend.space)
+      const { synced } = input.msg
+      if (isErr(synced)) return { model: input.model }
+
+      const merged = SpacesCore.mergeOne(input.model.spaces, synced.value.space)
+
       return {
         model: {
           ...input.model,
@@ -99,6 +95,18 @@ const updateSpace: SpaceFrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
+const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
+  const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+
+  if (!currentUserSpaceId) return Sub.None
+
+  return Sub.map(
+    input.ctx.topic.sync.msgSpace.subscribe(currentUserSpaceId),
+    (c): MsgFrontend => ({ t: 'sync.got-msg-space', c }),
+  )
+}
+
 export const SyncFrontend = {
   update,
+  subscriptions,
 }

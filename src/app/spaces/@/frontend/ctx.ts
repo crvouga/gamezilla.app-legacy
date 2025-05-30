@@ -22,9 +22,9 @@ const toProfiles = (ctx: SpaceFrontendCtx) => {
 
 const toHostTitle = (ctx: SpaceFrontendCtx) => {
   const host = ctx.profilesByUserId[ctx.space.hostId]
-  if (!host) {
-    return null
-  }
+
+  if (!host) return null
+
   return `${host.username}'s space`
 }
 

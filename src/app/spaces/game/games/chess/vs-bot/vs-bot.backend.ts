@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
 import { pipe } from '~/@/function/pipe'
-import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
+import { Sub } from '~/@/sub'
+
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { Chess } from '../@/chess'
@@ -11,8 +11,7 @@ import {
   isBotTurn,
   type ModelBackend,
   type MsgBackend,
-  type MsgToFrontend,
-  type MsgToBackend,
+  type MsgToBackend
 } from './vs-bot.types'
 
 //
@@ -46,7 +45,7 @@ export const update = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
+  
 } => {
   if (msg.t === 'bot-moved') {
     const result = botMoved(msg.moved, model)
@@ -55,15 +54,7 @@ export const update = ({
 
     return {
       model: modelNew,
-      msgCmd: [
-        {
-          t: 'send-to-space',
-          msg: {
-            t: 'bot-moved',
-            result,
-          },
-        },
-      ],
+  
     }
   }
 
@@ -77,7 +68,7 @@ export const updateFromFrontend = (input: {
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
+  
 } => {
   const updated = updateFromFrontendMain(input)
 
@@ -130,7 +121,6 @@ export const updateFromEvent = ({
   model: Model
 }): {
   model: Model
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
   eff?: Eff
 } => {
   if (msg.t === 'space-evt.user-left-space') {
@@ -143,15 +133,7 @@ export const updateFromEvent = ({
       }
       return {
         model: modelNew,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: {
-              t: 'player-left',
-              model: modelNew,
-            },
-          },
-        ],
+        
       }
     }
     return { model }

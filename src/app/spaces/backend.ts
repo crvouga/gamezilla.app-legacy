@@ -1,16 +1,14 @@
 import { Msg } from '~/@/msg/msg'
-import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
+import { RPC } from '~/@/rpc'
+import { TimeSpan } from '~/@/time/time-span'
 import { AppBackendCtx } from '../@/backend/ctx'
-import { type Input, type Output, SpaceBackendModule } from './architecture/space-backend'
 import { Space } from './@/space/space'
+import { type Input, type Output, SpaceBackendModule } from './architecture/space-backend'
 import { SpacesCoreAsync } from './core/core-async'
 import { GameBackend } from './game/backend'
-import { JoinSpaceBackend } from './join-space/backend'
-import { ListSpacesBackend } from './list-spaces/backend'
 import { StartSpaceBackend } from './start-space/backend'
 import { SyncBackend } from './sync/backend'
-import type { BackendCtx, BackendModule } from './types'
-import { TimeSpan } from '~/@/time/time-span'
+import { type BackendModule, rpcContract, type SpaceBackendCtxModule } from './types'
 
 //
 //
@@ -20,7 +18,7 @@ import { TimeSpan } from '~/@/time/time-span'
 //
 //
 
-const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
+const initCtx = async (input: { ctx: AppBackendCtx }): Promise<SpaceBackendCtxModule> => {
   return {
     ...input.ctx,
     spacesCore: await SpacesCoreAsync({
@@ -44,11 +42,9 @@ const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
 //
 
 const update: BackendModule['update'] = async (input) => {
-  const updated = await updateLoop(input)
+  await updateLoop(input)
 
-  return {
-    msgCmd: SpaceBackendCmd.toBackendCmd(updated.msgCmd),
-  }
+  return {}
 }
 
 const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> => {
@@ -64,22 +60,6 @@ const updateLoop = async (input: Input, initialAcc?: Output): Promise<Output> =>
 
     return updateLoop(input, {
       msgSpace: Msg.batch(spaceEvtRest, updated.msgSpace),
-      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgEvt: updated.msgEvt,
-    })
-  }
-
-  const [cmd, ...cmdRest] = SpaceBackendCmd.toSpaceBackendCmd(acc.msgCmd)
-
-  if (cmd) {
-    const updated = await updateChild({
-      ctx: input.ctx,
-      msgCmd: cmd,
-    })
-
-    return updateLoop(input, {
-      msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
-      msgCmd: Msg.batch(cmdRest, updated.msgCmd),
       msgEvt: updated.msgEvt,
     })
   }
@@ -91,18 +71,14 @@ const updateChild: SpaceBackendModule['update'] = async (input) => {
   return SpaceBackendModule.andThen(
     {},
     () => updateSpacesFromMsgSpace(input),
-    () => ListSpacesBackend.update(input),
     () => SyncBackend.update(input),
     () => StartSpaceBackend.update(input),
-    () => JoinSpaceBackend.update(input),
     () => GameBackend.update(input),
   )
 }
 
 const updateSpacesFromMsgSpace: SpaceBackendModule['update'] = async (input) => {
-  if (!input.msgSpace) {
-    return {}
-  }
+  if (!input.msgSpace) return {}
 
   await input.ctx.spacesCore.update(input.msgSpace)
 
@@ -121,8 +97,15 @@ const subscriptions: BackendModule['subscriptions'] = async (input) => {
   return GameBackend.subscriptions(input)
 }
 
+const rpc = (input: { ctx: SpaceBackendCtxModule }) => {
+  return RPC.initServer(rpcContract, {
+    sync: SyncBackend.rpc(input),
+  })
+}
+
 export const SpacesBackend = {
   initCtx,
   update,
   subscriptions,
+  rpc,
 }

@@ -12,7 +12,7 @@ import { SpacesBackend } from '../../backend'
 import { SpacesCoreAsync } from '../../core/core-async'
 import { Space } from '../../core/space'
 import { GamesBackend } from '../../game/games/backend'
-import { BackendCtx } from '../../types'
+import { SpaceBackendCtxModule } from '../../types'
 import { SpaceBackendCtx } from '../backend/ctx'
 import { UserProfile } from '~/app/@/data/user-profile'
 
@@ -60,7 +60,7 @@ export const FixtureSpaceBackend = async () => {
     space: spaceState,
   }
 
-  const backendCtx: BackendCtx = {
+  const backendCtx: SpaceBackendCtxModule = {
     ...f.ctx,
     spacesCore: await SpacesCoreAsync({
       t: 'key-value-db',

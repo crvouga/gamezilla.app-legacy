@@ -1,8 +1,7 @@
 import { isErr } from '~/@/result'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
-import { sendToFrontend } from '~/app/@/backend/cmd'
-import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
+import { Sub } from '~/@/sub'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { toOpposite, toTurn, type PlayerType } from '../@/tic-tic-toe/tic-tac-toe'
@@ -24,11 +23,8 @@ import {
   stopPlaying,
   type ModelBackend,
   type MsgBackend,
-  type MsgToFrontend,
   type MsgToBackend,
-  type Res,
 } from './vs-user.types'
-import { Sub } from '~/@/sub'
 
 //
 //
@@ -57,7 +53,6 @@ export const update = (
   model: Model,
 ): {
   model: Model
-  msgCmd: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   switch (msg[0]) {
     case 'RoundCountDown': {
@@ -67,12 +62,6 @@ export const update = (
 
       return {
         model: modelNew,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: ['RoundCountDown_Done', result],
-          },
-        ],
       }
     }
 
@@ -83,12 +72,6 @@ export const update = (
 
       return {
         model: modelNew,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: ['MoveCountDown_Done', result],
-          },
-        ],
       }
     }
   }
@@ -100,7 +83,6 @@ export const updateFromFrontend = (
   model: Model,
 ): {
   model: Model
-  msgCmd: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   switch (msg[0]) {
     case 'InputPlayer': {
@@ -109,7 +91,6 @@ export const updateFromFrontend = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToFrontend([], ['InputPlayer_Done', result])],
         }
       }
 
@@ -117,12 +98,6 @@ export const updateFromFrontend = (
 
       return {
         model: modelNew,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: ['InputPlayer_Done', result],
-          },
-        ],
       }
     }
 
@@ -132,19 +107,12 @@ export const updateFromFrontend = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToFrontend([], ['StopPlaying_Done', result])],
         }
       }
 
       const modelNew = result.value
       return {
         model: modelNew,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: ['StopPlaying_Done', result],
-          },
-        ],
       }
     }
 
@@ -154,19 +122,12 @@ export const updateFromFrontend = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToFrontend([], ['StartGame_Done', result])],
         }
       }
 
       const modelNew = result.value
       return {
         model: modelNew,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: ['StartGame_Done', result],
-          },
-        ],
       }
     }
 
@@ -176,19 +137,12 @@ export const updateFromFrontend = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToFrontend([], ['resign_Done', result])],
         }
       }
 
       const modelNew = result.value
       return {
         model: modelNew,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: ['resign_Done', result],
-          },
-        ],
       }
     }
 
@@ -198,19 +152,12 @@ export const updateFromFrontend = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToFrontend([], ['input-move-done', result])],
         }
       }
 
       const modelNew = result.value
       return {
         model: modelNew,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: ['input-move-done', result],
-          },
-        ],
       }
     }
 
@@ -220,7 +167,6 @@ export const updateFromFrontend = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToFrontend([], ['NewGame_Done', result])],
         }
       }
 
@@ -228,12 +174,6 @@ export const updateFromFrontend = (
 
       return {
         model: modelNew,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: ['NewGame_Done', result],
-          },
-        ],
       }
     }
 
@@ -243,107 +183,68 @@ export const updateFromFrontend = (
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToFrontend([], ['InputBestOutOf_Done', result])],
         }
       }
 
       const modelNew = result.value
       return {
         model: modelNew,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: ['InputBestOutOf_Done', result],
-          },
-        ],
       }
     }
 
     case 'RematchAccept': {
       const result = rematchAccept(msg[1], model)
-      const res: Res = ['RematchAccept_Done', result]
 
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToFrontend([], res)],
         }
       }
 
       return {
         model: result.value,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: res,
-          },
-        ],
       }
     }
 
     case 'RematchAsk': {
       const result = rematchAsk(msg[1], model)
-      const res: Res = ['RematchAsk_Done', result]
 
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToFrontend([], res)],
         }
       }
 
       return {
         model: result.value,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: res,
-          },
-        ],
       }
     }
 
     case 'RematchDecline': {
       const result = rematchDecline(msg[1], model)
-      const res: Res = ['RematchDecline_Done', result]
 
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToFrontend([], res)],
         }
       }
 
       return {
         model: result.value,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: res,
-          },
-        ],
       }
     }
 
     case 'Rematch_Cancel': {
       const result = rematchCancel(msg[1], model)
-      const res: Res = ['Rematch_Cancel_Done', result]
 
       if (isErr(result)) {
         return {
           model,
-          msgCmd: [sendToFrontend([], res)],
         }
       }
 
       return {
         model: result.value,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: res,
-          },
-        ],
       }
     }
   }
@@ -357,7 +258,6 @@ export const updateFromEvent = ({
   model: Model
 }): {
   model: Model
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (msg.t === 'space-evt.user-left-space') {
     const { userId } = msg
@@ -384,12 +284,6 @@ export const updateFromEvent = ({
 
     return {
       model: modelNew,
-      msgCmd: [
-        {
-          t: 'send-to-space',
-          msg: ['player-left', modelNew],
-        },
-      ],
     }
   }
 

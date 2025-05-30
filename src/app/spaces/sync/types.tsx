@@ -1,37 +1,37 @@
 import { WithEventMeta } from '~/@/event-sourced/event'
+import { Result } from '~/@/result'
+import { RPC } from '~/@/rpc'
+import { RPCError } from '~/@/rpc/error'
 import { s } from '~/@/schema'
 import { Topic } from '~/@/topic'
 import { SpaceId } from '~/app/@/data/space-id'
-import { UserAccount } from '~/app/@/data/user-account'
 import { Space } from '../core/space'
 import { MsgSpace } from '../core/space-msg/space-msg'
 
-export type MsgToFrontend =
+export type MsgFrontend =
+  | {
+      t: 'sync.got-msg-space'
+      c: WithEventMeta<MsgSpace>
+    }
   | {
       t: 'sync.synced'
-      space: Space.Model
-      currentUser?: UserAccount | null
-    }
-  | {
-      t: 'sync.got-msg-space'
-      c: WithEventMeta<MsgSpace>
+      synced: Result<RPCError, { space: Space.Model }>
     }
 
-export type MsgToBackend =
-  | {
-      t: 'sync.sync'
-      space: Space.Model
-    }
-  | {
-      t: 'sync.got-msg-space'
-      c: WithEventMeta<MsgSpace>
-    }
-
-export const pubSubContract = Topic.initContract({
+export const topicContract = Topic.initContract({
   msgSpace: {
-    params: s.obj({
-      spaceId: SpaceId,
+    params: SpaceId,
+    msg: WithEventMeta(MsgSpace),
+  },
+})
+
+export const rpcContract = RPC.initContract({
+  sync: {
+    input: s.obj({
+      space: Space.Model,
     }),
-    msg: MsgSpace,
+    output: s.obj({
+      space: Space.Model,
+    }),
   },
 })

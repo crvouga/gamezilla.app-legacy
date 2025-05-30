@@ -16,6 +16,7 @@ import type { FlowFrontendCtx } from './ctx'
 
 export const FixtureFlowFrontend = async () => {
   const f = await FixtureSpacesFrontend()
+  // @ts-ignore
   const ctx: FlowFrontendCtx = {
     ...f.ctx,
     packs: {},

@@ -6,6 +6,7 @@ import { HealthCheck } from './@/health-check/health-check'
 import { RPC } from './@/rpc'
 import { PowerSyncBackendApp } from './service-powersync/backend/respond'
 import { CONFIG_SHARED } from './config/shared'
+import { Topic } from './@/topic'
 
 const main = async () => {
   const ctx = await AppBackend.initCtx()
@@ -23,6 +24,15 @@ const main = async () => {
     httpServer: ctx.httpServer,
     contract: AppTypes.rpcContract,
     server: AppBackend.rpc({ ctx }),
+  })
+
+  Topic.initServer({
+    t: 'web-sockets',
+    contract: AppTypes.topicContract,
+    endpoint: '/topic',
+    httpServer: ctx.httpServer,
+    logger: ctx.logger,
+    isProd: CONFIG_SHARED.IS_PROD,
   })
 
   PowerSyncBackendApp.registerRespond({

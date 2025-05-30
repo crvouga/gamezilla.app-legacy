@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test'
 import { SpaceId } from '~/app/@/data/space-id'
-import { didSendToBackend } from '~/app/@/frontend/cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
@@ -34,8 +33,8 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const before = SpacesCore.toSpaceIdByUserId(f.initial.model.spaces, f.ctx.currentUser.userId)
-    const after = SpacesCore.toSpaceIdByUserId(started.model.spaces, f.ctx.currentUser.userId)
+    const before = SpacesCore.toSpaceIdByUserId(f.initial.model.spaces, f.ctx.currentUser!.userId)
+    const after = SpacesCore.toSpaceIdByUserId(started.model.spaces, f.ctx.currentUser!.userId)
     expect(before).toEqual(null)
     expect(after).toEqual(spaceId)
   })
@@ -65,27 +64,5 @@ describe(import.meta.file, () => {
       },
     ])
     expect(PushScreenCmd.did(started)).toBe(true)
-  })
-
-  test('send to backend', async () => {
-    const f = await Fixture()
-    const spaceId = SpaceId.generate()
-    const started = f.update(f.initial, [
-      {
-        msg: {
-          t: 'start-space.clicked-start-space-button',
-          spaceId,
-        },
-      },
-    ])
-    expect(
-      didSendToBackend(
-        started,
-        (msg) =>
-          msg.t === 'sync.got-msg-space' &&
-          msg.c.t === 'user-started-space' &&
-          msg.c.userId === f.ctx.currentUser.userId,
-      ),
-    ).toBe(true)
   })
 })

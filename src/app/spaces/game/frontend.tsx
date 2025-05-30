@@ -13,6 +13,7 @@ import { MsgSpace } from '../core/space-msg/space-msg'
 import type { MsgFrontend } from '../types'
 import { ScreenNotInGameFrontend } from './frontend/screen-not-in-game'
 import { GamesFrontend } from './games/frontend'
+import { SpaceId } from '~/app/@/data/space-id'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -94,13 +95,12 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const inputToSpaceId = (currentUser: UserAccount, input: Parameters<SpaceFrontendModule['update']>[0]) => {
+const inputToSpaceId = (
+  currentUser: UserAccount,
+  input: Parameters<SpaceFrontendModule['update']>[0],
+): SpaceId | null => {
   if (input.msg && 'spaceId' in input.msg) {
     return input.msg.spaceId
-  }
-
-  if (input.msgBackend && 'spaceId' in input.msgBackend) {
-    return input.msgBackend.spaceId
   }
 
   if (input.msgSpace && 'spaceId' in input.msgSpace) {
@@ -140,7 +140,6 @@ const updateGame: SpaceFrontendModule['update'] = (input) => {
     model: modelGame,
     msgSpace: input.msgSpace?.t === 'game' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     modelSpace: spaceState.game,
-    msgBackend: input.msgBackend?.t === 'game' ? input.msgBackend.c : null,
     msg: input.msg?.t === 'game' ? input.msg.c : null,
     msgIn: input.msgIn,
   })
@@ -211,6 +210,7 @@ const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (inpu
 
 const View: SpaceFrontendModule['View'] = (input) => {
   if (!input.ctx.space) return null
+
   if (!input.ctx.currentUser) return null
 
   const space = SpacesCore.toSpaceStarted(input.model.spaces, input.ctx.space?.spaceId)

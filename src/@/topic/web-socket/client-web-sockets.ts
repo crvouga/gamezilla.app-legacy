@@ -28,13 +28,12 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
   const ws = new WebSocket(websocketUrl)
   const subByTopic = new Map<string, PubSub<unknown>>()
 
-  const ready = new Promise<void>(
-    (resolve) =>
-      (ws.onopen = () => {
-        logger.debug('websocket connection opened')
-        resolve()
-      }),
-  )
+  const ready = new Promise<void>((resolve) => {
+    ws.onopen = () => {
+      logger.debug('websocket connection opened')
+      resolve()
+    }
+  })
 
   ws.onmessage = (event) => {
     const toClientMsg = ToClientMsg.parse(JSON.parse(event.data))

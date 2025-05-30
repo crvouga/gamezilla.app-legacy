@@ -8,10 +8,10 @@ import { PeopleActionFrontend } from '../frontend/people-action/frontend'
 import { GameFrontend } from '../game/frontend'
 import { JoinSpaceFrontend } from '../join-space/frontend'
 import { LeaveSpaceFrontend } from '../leave-space/frontend'
-import type { ModelFrontend, MsgFrontend } from '../types'
+import type { ModelFrontend, MsgFrontend, SpaceFrontendCtxModule } from '../types'
 
 const View = (input: {
-  model: ModelFrontend, SpaceFrontendCtxModule
+  model: ModelFrontend
   ctx: SpaceFrontendCtxModule
   dispatch: (m: MsgFrontend) => void
   spaceId: SpaceId
@@ -28,22 +28,35 @@ const View = (input: {
     }
 
     case 'started': {
-      const spaceCtx: SpaceFrontendCtxModule = {
+      const currentUser = input.ctx.currentUser
+
+      if (!currentUser) return null
+
+      const spaceCtx: SpaceFrontendCtx = {
         ...input.ctx,
-        currentUserId: input.ctx.currentUser?.userId,
+        currentUserId: currentUser.userId,
+        currentUserRole: currentUser.role,
+        currentUser: currentUser,
         space: spaceState,
       }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
+      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, currentUser.userId)
 
       if (currentUserSpaceId !== spaceCtx.space.spaceId) {
-        return <JoinSpaceFrontend.View {...input} ctx={spaceCtx} />
+        return <JoinSpaceFrontend.View {...input} ctx={input.ctx} />
       }
-      const inputNew = { ...input, ctx: spaceCtx }
+
+      const inputNew = {
+        ...input,
+        ctx: spaceCtx,
+      }
+
       const isHost = inputNew.ctx.space.hostId === inputNew.ctx.currentUser.userId
 
-      const spaceCtxFinal: SpaceFrontendCtx = {
+      const spaceCtxFinal: SpaceFrontendCtxModule & SpaceFrontendCtx = {
         ...spaceCtx,
+        topic: input.ctx.topic,
+        rpc: input.ctx.rpc,
         parentScreen: {
           id: 'space-screen',
           parentScreen: null,
@@ -53,14 +66,17 @@ const View = (input: {
             size: 'sm',
             variant: {
               t: 'space-between',
-              start: [ExitSpaceAction.viewAction(inputNew), PeopleActionFrontend.view(inputNew)],
-              end: [isHost ? EndSpaceFrontend.viewAction(inputNew) : LeaveSpaceFrontend.viewAction(inputNew)],
+              start: [ExitSpaceAction.viewAction(input), PeopleActionFrontend.view(input)],
+              end: [isHost ? EndSpaceFrontend.viewAction(input) : LeaveSpaceFrontend.viewAction(input)],
             },
           },
         },
       }
 
-      const inputFinal = { ...inputNew, ctx: spaceCtxFinal }
+      const inputFinal = {
+        ...inputNew,
+        ctx: spaceCtxFinal,
+      }
 
       return <GameFrontend.View {...inputFinal} />
     }

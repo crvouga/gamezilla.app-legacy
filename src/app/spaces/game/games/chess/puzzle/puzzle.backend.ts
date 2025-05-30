@@ -1,11 +1,12 @@
-import { Err, Ok, Result } from '~/@/result'
 import type { IDbConnSql } from '~/@/db-conn-sql'
+import { Eff } from '~/@/eff'
 import { eq } from '~/@/equals/equals'
 import { pipe } from '~/@/function/pipe'
+import { Err, Ok, Result } from '~/@/result'
+import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import type { UserId } from '~/app/@/data/user-id'
-import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import type { ChessMsgSpace } from '../@/chess/chess-shared'
@@ -14,14 +15,11 @@ import { PuzzleDb } from './puzzle-db'
 import {
   type ModelBackend,
   type MsgBackend,
-  type MsgToFrontend,
   type MsgToBackend,
   type PuzzleInteraction,
   initSpace,
-  transitionLoadingToStarted,
+  transitionLoadingToStarted
 } from './puzzle.types'
-import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
 
 //
 //
@@ -104,7 +102,6 @@ export const update = (input: {
 }): {
   model: ModelBackend
   eff?: Eff<MsgBackend>
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   return pipe(updateMain(input))
 }
@@ -113,15 +110,6 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
     case 'clock-tick': {
       return {
         model,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: {
-              t: 'clock-tick',
-              now: ctx.now,
-            },
-          },
-        ],
       }
     }
 
@@ -135,15 +123,6 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
               getPuzzles: msg.result,
             },
           },
-          msgCmd: [
-            {
-              t: 'send-to-space',
-              msg: {
-                t: 'db-got-puzzles',
-                result: msg.result,
-              },
-            },
-          ],
         }
       }
 
@@ -163,15 +142,6 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
             getPuzzles: Ok(null),
           },
         },
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: {
-              t: 'db-got-puzzles',
-              result: Ok(modelNew),
-            },
-          },
-        ],
       }
     }
 
@@ -279,7 +249,6 @@ export const updateFromFrontend = (input: {
 }): {
   model: ModelBackend
   eff?: Eff<MsgBackend>
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   return updateFromFrontendMain({ ...input })
   // andThen((model) =>

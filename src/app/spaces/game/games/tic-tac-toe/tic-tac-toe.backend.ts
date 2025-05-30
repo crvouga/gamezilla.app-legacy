@@ -1,13 +1,11 @@
-import { Ok } from '~/@/result'
-import type { UserId } from '~/app/@/data/user-id'
-import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
-import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
-import type { ModelBackend, MsgBackend, MsgToFrontend, MsgToBackend } from './tic-tac-toe.types'
-import * as VsBot from './vs-bot/vs-bot.backend'
-import * as VsUser from './vs-user/vs-user.backend'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
+import type { UserId } from '~/app/@/data/user-id'
+import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
+import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
+import type { ModelBackend, MsgBackend, MsgToBackend } from './tic-tac-toe.types'
+import * as VsBot from './vs-bot/vs-bot.backend'
+import * as VsUser from './vs-user/vs-user.backend'
 
 //
 //
@@ -40,7 +38,6 @@ export const update = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (msg.t === 'vs-user' && model.t === 'vs-user') {
     const updated = VsUser.update(msg.c, model.c)
@@ -49,7 +46,6 @@ export const update = ({
         t: 'vs-user',
         c: updated.model,
       },
-      msgCmd: SpaceBackendCmd.tag('vs-user', updated.msgCmd),
     }
   }
 
@@ -64,7 +60,6 @@ export const update = ({
         t: 'vs-bot',
         c: updated.model,
       },
-      msgCmd: SpaceBackendCmd.tag('vs-bot', updated.msgCmd),
     }
   }
 
@@ -82,7 +77,6 @@ export const updateFromFrontend = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (msg.t === 'input-mode') {
     const modelNew: ModelBackend = initMode({
@@ -92,16 +86,6 @@ export const updateFromFrontend = ({
 
     return {
       model: modelNew,
-      msgCmd: [
-        {
-          t: 'send-to-space',
-          msg: {
-            t: 'input-mode',
-            mode: msg.mode,
-            result: Ok(modelNew),
-          },
-        },
-      ],
     }
   }
 
@@ -113,7 +97,7 @@ export const updateFromFrontend = ({
         ...model,
         c: updated.model,
       },
-      msgCmd: SpaceBackendCmd.tag('vs-user', updated.msgCmd),
+      
     }
   }
 
@@ -130,7 +114,7 @@ export const updateFromFrontend = ({
         c: updated.model,
       },
       eff: Eff.tag('vs-bot', updated.eff),
-      msgCmd: SpaceBackendCmd.tag('vs-bot', updated.msgCmd),
+      
     }
   }
 
@@ -145,7 +129,7 @@ export const updateFromEvent = ({
   msg: SpaceBackendEvt
 }): {
   model: Model
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
+  
 } => {
   if (model.t === 'none') {
     return { model }
@@ -161,7 +145,7 @@ export const updateFromEvent = ({
         t: 'vs-bot',
         c: updated.model,
       },
-      msgCmd: SpaceBackendCmd.tag('vs-bot', updated.msgCmd),
+      
     }
   }
 
@@ -175,7 +159,7 @@ export const updateFromEvent = ({
         t: 'vs-user',
         c: updated.model,
       },
-      msgCmd: SpaceBackendCmd.tag('vs-user', updated.msgCmd),
+      
     }
   }
 

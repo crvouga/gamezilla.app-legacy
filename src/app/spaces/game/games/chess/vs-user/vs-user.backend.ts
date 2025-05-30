@@ -1,11 +1,10 @@
-import { TimeSpan } from '~/@/time/time-span'
-import { Time } from '~/@/time/time'
-import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
-import * as Board from '../@/chess/chess-space'
-import { initSpace, type ModelBackend, type MsgBackend, type MsgToFrontend, type MsgToBackend } from './vs-user.types'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
+import { Time } from '~/@/time/time'
+import { TimeSpan } from '~/@/time/time-span'
+import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
+import * as Board from '../@/chess/chess-space'
+import { initSpace, type ModelBackend, type MsgBackend, type MsgToBackend } from './vs-user.types'
 
 //
 //
@@ -35,7 +34,7 @@ export const updateFromFrontend = (
 ): {
   model: ModelBackend
   eff?: Eff<MsgBackend>
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
+  
 } => {
   return { model }
 }
@@ -49,7 +48,7 @@ export const updateFromEvent = ({
 }): {
   model: ModelBackend
   eff?: Eff<MsgBackend>
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
+  
 } => {
   if (msg.t === 'space-evt.user-left-space') {
     switch (model.type) {
@@ -70,12 +69,7 @@ export const updateFromEvent = ({
 
         return {
           model: modelNew,
-          msgCmd: [
-            {
-              t: 'send-to-space',
-              msg: ['player-left', modelNew],
-            },
-          ],
+          
         }
       }
 
@@ -103,12 +97,7 @@ export const updateFromEvent = ({
 
         return {
           model: modelNew,
-          msgCmd: [
-            {
-              t: 'send-to-space',
-              msg: ['player-left', modelNew],
-            },
-          ],
+          
         }
       }
     }

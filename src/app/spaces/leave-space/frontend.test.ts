@@ -22,7 +22,7 @@ describe('leave space', () => {
 
     const outputs = f.updates(f.initial, [
       userStartedSpace(0, f.userA.id, spaceId),
-      userJoinedSpace(1, f.ctx.currentUser.userId, spaceId),
+      userJoinedSpace(1, f.ctx.currentUser!.userId, spaceId),
       {
         msg: { t: 'leave-space.clicked-leave-space-button', spaceId: spaceId },
       },
@@ -36,10 +36,10 @@ describe('leave space', () => {
     const userId = UserId.generate()
 
     const output = f.update(f.initial, [
-      userStartedSpace(0, f.ctx.currentUser.userId, spaceId),
+      userStartedSpace(0, f.ctx.currentUser!.userId, spaceId),
       userJoinedSpace(1, userId, spaceId),
       {
-        msgBackend: {
+        msg: {
           t: 'sync.got-msg-space',
           c: withEventMetaAt(2, {
             t: 'user-left-space',
@@ -57,9 +57,9 @@ describe('leave space', () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
-      userStartedSpace(0, f.ctx.currentUser.userId, spaceId),
-      userJoinedSpace(1, f.ctx.currentUser.userId, spaceId),
-      userLeftSpace(2, f.ctx.currentUser.userId, spaceId),
+      userStartedSpace(0, f.ctx.currentUser!.userId, spaceId),
+      userJoinedSpace(1, f.ctx.currentUser!.userId, spaceId),
+      userLeftSpace(2, f.ctx.currentUser!.userId, spaceId),
     ])
     expect(ShowToastCmd.did(output)).toBe(true)
   })
@@ -68,8 +68,8 @@ describe('leave space', () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
-      userStartedSpace(0, f.ctx.currentUser.userId, spaceId),
-      userJoinedSpace(1, f.ctx.currentUser.userId, spaceId),
+      userStartedSpace(0, f.ctx.currentUser!.userId, spaceId),
+      userJoinedSpace(1, f.ctx.currentUser!.userId, spaceId),
       {
         msg: {
           t: 'leave-space.clicked-leave-space-button',
@@ -77,7 +77,7 @@ describe('leave space', () => {
         },
       },
     ])
-    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)
+    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser!.userId)
     expect(currentUserSpaceId).toEqual(null)
   })
 
@@ -85,8 +85,8 @@ describe('leave space', () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
-      userStartedSpace(0, f.ctx.currentUser.userId, spaceId),
-      userJoinedSpace(1, f.ctx.currentUser.userId, spaceId),
+      userStartedSpace(0, f.ctx.currentUser!.userId, spaceId),
+        userJoinedSpace(1, f.ctx.currentUser!.userId, spaceId),
       {
         msg: {
           t: 'leave-space.clicked-leave-space-button',

@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
-import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
+
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import type { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -160,6 +160,6 @@ export type BackendModule = GameBackendModule<{
   Ctx: FlowBackendCtx
   MsgEvtIn: SpaceBackendEvt
   Msg: MsgBackend
-  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
+  MsgCmdOut: null
   Deps: null
 }>

@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
+
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
@@ -22,7 +22,7 @@ type BackendModule = GameBackendModule<{
   MsgSpace: MsgSpace
   Ctx: SpaceBackendCtx
   MsgEvtIn: SpaceBackendEvt
-  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
+  MsgCmdOut: null
 }>
 
 //

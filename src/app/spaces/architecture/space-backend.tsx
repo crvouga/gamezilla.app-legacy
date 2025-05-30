@@ -1,16 +1,15 @@
 import { WithEventId } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
 import { type Sub } from '~/@/sub'
-import type { BackendEvt } from '~/app/@/backend/evt'
 import type { ClientId } from '~/@/wire/client-id'
 import type { SessionId } from '~/@/wire/session-id'
+import type { BackendEvt } from '~/app/@/backend/evt'
 import type { UserId } from '~/app/@/data/user-id'
-import type { SpaceBackendCmd } from '../@/backend/cmd'
 import type { Space } from '../@/space/space'
 import { MsgSpace } from '../core/space-msg/space-msg'
-import type { BackendCtx, MsgBackend, MsgToBackend, MsgToFrontend } from '../types'
+import type { MsgBackend, MsgToBackend, SpaceBackendCtxModule } from '../types'
 
-type Ctx = BackendCtx & {
+type Ctx = SpaceBackendCtxModule & {
   space?: Space
 }
 
@@ -25,14 +24,12 @@ export type Input = {
       })
     | null
   msgEvt?: BackendEvt | null
-  msgCmd?: SpaceBackendCmd<MsgToFrontend> | null
   msgSpace?: WithEventId<MsgSpace> | null
 }
 
 export type MaybePromise<T> = T | Promise<T>
 
 export type Output = {
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
   msgEvt?: unknown[]
   msgSpace?: WithEventId<MsgSpace>[]
 }
@@ -51,7 +48,6 @@ const andThen = async (
   for (const update of updates) {
     const updated = await update()
     acc = {
-      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
       msgSpace: Msg.batch(acc.msgSpace, updated.msgSpace),
     }

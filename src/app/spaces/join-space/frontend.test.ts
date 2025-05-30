@@ -3,7 +3,6 @@ import { withEventMeta } from '~/@/event-sourced/event'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
-
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
@@ -24,7 +23,7 @@ describe('join space', () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgBackend: {
+        msg: {
           t: 'sync.got-msg-space',
           c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.id }),
         },
@@ -48,7 +47,7 @@ describe('join space', () => {
             [otherUser.id]: otherUser,
           },
         },
-        msgBackend: {
+        msg: {
           t: 'sync.got-msg-space',
           c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.currentUser.userId }),
         },
@@ -60,7 +59,7 @@ describe('join space', () => {
             [otherUser.id]: otherUser,
           },
         },
-        msgBackend: {
+        msg: {
           t: 'sync.got-msg-space',
           c: withEventMeta({ t: 'user-joined-space', spaceId: f.spaceId, userId: otherUser.id }),
         },
@@ -76,13 +75,13 @@ describe('join space', () => {
 
     const output = f.update(f.initial, [
       {
-        msgBackend: {
+        msg: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.ctx.currentUser.userId }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.ctx.currentUser!.userId }),
         },
       },
       {
-        msgBackend: {
+        msg: {
           t: 'sync.got-msg-space',
           c: withEventMeta({ t: 'user-joined-space', spaceId: f.spaceId, userId: f.userA.id }),
         },
@@ -96,7 +95,7 @@ describe('join space', () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgBackend: {
+        msg: {
           t: 'sync.got-msg-space',
           c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.id }),
         },
@@ -105,14 +104,14 @@ describe('join space', () => {
         msg: { t: 'join-space.submitted-join-space-form', spaceId: f.spaceId },
       },
     ])
-    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)).toEqual(f.spaceId)
+    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser!.userId)).toEqual(f.spaceId)
   })
 
   it('current user leaving joined space', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
-        msgBackend: {
+        msg: {
           t: 'sync.got-msg-space',
           c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.id }),
         },
@@ -120,7 +119,7 @@ describe('join space', () => {
       { msg: { t: 'join-space.submitted-join-space-form', spaceId: f.spaceId } },
       { msg: { t: 'leave-space.clicked-leave-space-button', spaceId: f.spaceId } },
     ])
-    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)).toEqual(null)
+    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser!.userId)).toEqual(null)
   })
 
   it('preventing joining a space if already in a space', async () => {
@@ -130,7 +129,7 @@ describe('join space', () => {
 
     const output = f.update(f.initial, [
       {
-        msgBackend: {
+        msg: {
           t: 'sync.got-msg-space',
           c: withEventMeta({ t: 'user-started-space', spaceId: spaceA, userId: f.userA.id }),
         },
@@ -139,7 +138,7 @@ describe('join space', () => {
       { msg: { t: 'join-space.submitted-join-space-form', spaceId: spaceB } },
     ])
 
-    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)).toEqual(spaceA)
+    expect(SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser!.userId)).toEqual(spaceA)
     expect(ShowErrorSmall.did(output)).toBe(true)
   })
 

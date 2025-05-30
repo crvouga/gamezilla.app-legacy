@@ -4,17 +4,17 @@ import { withEventId, withEventMetaAt } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { loggerNoop } from '~/@/logger/impl-noop'
 import { PhoneNumber } from '~/@/phone-number'
+import { RPC } from '~/@/rpc'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Posix } from '~/@/time/posix'
 import { Topic } from '~/@/topic'
+import { SessionId } from '~/@/wire/session-id'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
-import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Space } from '../../core/space'
 import { SpacesFrontend } from '../../frontend'
 import * as SpacesTypes from '../../types'
@@ -38,9 +38,26 @@ export const SpaceFrontendFixture = async () => {
     logger: loggerNoop,
   })
 
-  const ctx: AppFrontendCtx & { topic: Topic.Client<typeof SpacesTypes.topicContract> } = {
+  const rpc = RPC.initClient({
+    t: 'local',
+    contract: SpacesTypes.rpcContract,
+    clientSessionId: f.ctx.clientSessionId,
+    sessionId: SessionId.generate(),
+    server: {
+      sync: {
+        async sync(input) {
+          return {
+            space: input.space,
+          }
+        },
+      },
+    },
+  })
+
+  const ctx: SpacesTypes.SpaceFrontendCtxModule = {
     ...f.ctx,
     topic,
+    rpc,
   }
 
   const updates = (initial: SpacesTypes.ModelFrontend, msgs: Msg[]) => {
@@ -49,11 +66,6 @@ export const SpaceFrontendFixture = async () => {
       switch (msg.t) {
         case 'msg': {
           const output = SpacesFrontend.update({ ctx, model: initial, msg: msg.c })
-          outputs.push(output)
-          break
-        }
-        case 'msg-backend': {
-          const output = SpacesFrontend.update({ ctx, model: initial, msgBackend: msg.c })
           outputs.push(output)
           break
         }
@@ -127,8 +139,24 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     logger: loggerNoop,
   })
 
+  const rpc = RPC.initClient({
+    t: 'local',
+    contract: SpacesTypes.rpcContract,
+    clientSessionId: f.ctx.clientSessionId,
+    sessionId: SessionId.generate(),
+    server: {
+      sync: {
+        async sync(input) {
+          return {
+            space: input.space,
+          }
+        },
+      },
+    },
+  })
+
   const currentUserProfile = await UserProfile.random({ id: currentUser.userId })
-  const ctx: SpaceFrontendCtx & { topic: Topic.Client<typeof SpacesTypes.topicContract> } = {
+  const ctx: SpacesTypes.SpaceFrontendCtxModule = {
     ...f.ctx,
     parentScreen: null,
     currentScreen: {
@@ -143,6 +171,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     space,
     currentUser,
     topic,
+    rpc,
   }
 
   const updates = (initial: Output, inputs: FixtureInput[]): NonEmpty<Output> => {
@@ -201,9 +230,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
 
 export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
-    msgBackend: {
-      profilesByUserId: {},
-      causedBy: {},
+    msg: {
       t: 'sync.got-msg-space',
       c: withEventMetaAt(happenedAt, {
         t: 'user-started-space',
@@ -216,9 +243,7 @@ export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: Sp
 
 export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
-    msgBackend: {
-      profilesByUserId: {},
-      causedBy: {},
+    msg: {
       t: 'sync.got-msg-space',
       c: withEventMetaAt(happenedAt, {
         t: 'user-left-space',
@@ -231,9 +256,7 @@ export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: Space
 
 export const userJoinedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
   return {
-    msgBackend: {
-      profilesByUserId: {},
-      causedBy: {},
+    msg: {
       t: 'sync.got-msg-space',
       c: withEventMetaAt(happenedAt, {
         t: 'user-joined-space',

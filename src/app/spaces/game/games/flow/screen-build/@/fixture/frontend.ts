@@ -33,6 +33,7 @@ const toModelSpace = (
 
 export const FixtureFlowBuilderFrontend = async () => {
   const f = await FixtureSpacesFrontend()
+  // @ts-ignore
   const ctx: FlowFrontendCtx = {
     ...f.ctx,
     puzzles: {},

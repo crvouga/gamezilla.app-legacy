@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 import { RemoteResult, Result } from '~/@/result'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
+
 import { FlowBackendCtx } from '../../backend/ctx'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { Variant } from '../../variant'
@@ -61,7 +61,7 @@ export type FrontendModule = AppFrontendModule<{
 
 export type BackendModule = AppBackendModule<{
   Msg: MsgBackend
-  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
+  MsgCmdOut: null
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   Ctx: FlowBackendCtx

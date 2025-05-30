@@ -1,19 +1,10 @@
-import { Err, Ok } from '~/@/result'
+import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
-import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
+import { Sub } from '~/@/sub'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { TicTacToe } from '../@/tic-tic-toe'
-import {
-  initSpaceModel,
-  isBotTurn,
-  type ModelBackend,
-  type MsgBackend,
-  type MsgToFrontend,
-  type MsgToBackend,
-} from './vs-bot.types'
-import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
+import { initSpaceModel, isBotTurn, type ModelBackend, type MsgBackend, type MsgToBackend } from './vs-bot.types'
 
 //
 //
@@ -45,21 +36,11 @@ export const update = ({
   model: Model
 }): {
   model: Model
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (msg.t === 'bot-moved') {
     if (model.type !== 'game') {
       return {
         model,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: {
-              t: 'bot-moved',
-              result: Err('The bot moved not during game mode'),
-            },
-          },
-        ],
       }
     }
 
@@ -75,15 +56,6 @@ export const update = ({
     if (moved.t === 'err') {
       return {
         model,
-        msgCmd: [
-          {
-            t: 'send-to-space',
-            msg: {
-              t: 'bot-moved',
-              result: moved,
-            },
-          },
-        ],
       }
     }
 
@@ -94,15 +66,6 @@ export const update = ({
 
     return {
       model: modelNew,
-      msgCmd: [
-        {
-          t: 'send-to-space',
-          msg: {
-            t: 'bot-moved',
-            result: Ok(modelNew),
-          },
-        },
-      ],
     }
   }
   return { model }
@@ -121,7 +84,6 @@ export const updateFromFrontend = (input: {
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   return pipe(
     input,
@@ -177,7 +139,6 @@ export const updateFromEvent = ({
   model: Model
 }): {
   model: Model
-  msgCmd?: SpaceBackendCmd<MsgToFrontend>[]
 } => {
   if (msg.t === 'space-evt.user-left-space') {
     if (model.player !== msg.userId) {
@@ -195,15 +156,6 @@ export const updateFromEvent = ({
 
     return {
       model: modelNew,
-      msgCmd: [
-        {
-          t: 'send-to-space',
-          msg: {
-            t: 'player-left',
-            result: Ok(modelNew),
-          },
-        },
-      ],
     }
   }
 

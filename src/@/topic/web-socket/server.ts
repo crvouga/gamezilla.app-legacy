@@ -57,6 +57,7 @@ export const initServer = <T extends Contract<any>>(config: {
             topicParams: toServerMsg.value.topicParams,
           }
           ws.send(JSON.stringify(toClientMsg))
+          logger.debug(`websocket message subscribed clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
           return
         }
         case 'publish': {
@@ -71,6 +72,7 @@ export const initServer = <T extends Contract<any>>(config: {
             msg: toServerMsg.value.msg,
           }
           bunServer.publish(topicString, JSON.stringify(toClientMsg))
+          logger.debug(`websocket message published clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
           return
         }
         case 'unsubscribe': {
@@ -85,6 +87,7 @@ export const initServer = <T extends Contract<any>>(config: {
             topicParams: toServerMsg.value.topicParams,
           }
           ws.send(JSON.stringify(toClient))
+          logger.debug(`websocket message unpublished clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
           return
         }
         default: {

@@ -1,11 +1,9 @@
 import { Sub } from '~/@/sub'
-import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
-import { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { GameName } from './@/game-name'
 import { ConnectFourBackend } from './connect-four/connect-four.backend'
 import { FlowBackend } from './flow/backend'
-import type { GameBackendCtx, BackendModule } from './types'
+import type { BackendModule, GameBackendCtx } from './types'
 
 const initCtx = (input: { ctx: SpaceBackendCtx }): GameBackendCtx => {
   return {
@@ -58,7 +56,7 @@ const init = (gameName: GameName): BackendModule['init'] => {
 const update: BackendModule['update'] = async (input) => {
   switch (input.modelSpace.t) {
     case 'flow': {
-      const updated = await FlowBackend.update({
+      await FlowBackend.update({
         ctx: input.ctx.flow,
         modelSpace: input.modelSpace.c,
         msgFrontend: input.msgFrontend?.t === 'flow' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
@@ -67,11 +65,11 @@ const update: BackendModule['update'] = async (input) => {
         deps: null,
       })
 
-      return GameBackendModule.tagOutput('flow', (msgCmd) => SpaceBackendCmd.tag('flow', msgCmd), updated)
+      return {}
     }
 
     case 'connect-four': {
-      const updated = await ConnectFourBackend.update({
+      await ConnectFourBackend.update({
         ctx: input.ctx,
         modelSpace: input.modelSpace.c,
         msgFrontend: input.msgFrontend?.t === 'connect-four' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
@@ -80,11 +78,7 @@ const update: BackendModule['update'] = async (input) => {
         deps: null,
       })
 
-      return GameBackendModule.tagOutput(
-        'connect-four',
-        (msgCmd) => SpaceBackendCmd.tag('connect-four', msgCmd),
-        updated,
-      )
+      return {}
     }
   }
 }

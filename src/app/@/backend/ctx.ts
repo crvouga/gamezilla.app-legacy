@@ -1,5 +1,5 @@
 import type { IDbConnSql } from '~/@/db-conn-sql/interface'
-import type { IHttpServer } from '~/@/http-server'
+import { HttpServerBun } from '~/@/http-server/impl-bun'
 import type { IKeyValueDb } from '~/@/key-value-db'
 import type { ILogger } from '~/@/logger/interface'
 import type { IPubSubTopicBased } from '~/@/pub-sub-topic-based'
@@ -22,6 +22,6 @@ export type AppBackendCtx = {
   pubSub: IPubSubTopicBased
   userProfileDb: IUserProfileDb
   backendInstanceId: BackendInstanceId
-  httpServer: IHttpServer
+  httpServer: HttpServerBun
   runtime: IRuntime
 }

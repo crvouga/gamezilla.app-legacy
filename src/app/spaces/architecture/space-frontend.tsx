@@ -4,19 +4,11 @@ import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import type { Space } from '../@/space/space'
 import { MsgSpace } from '../core/space-msg/space-msg'
-import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend, topicContract } from '../types'
-import { Topic } from '~/@/topic'
-
-export type SpaceFrontendCtx = AppFrontendCtxBase & {
-  space?: Space
-  topic: Topic.Client<typeof topicContract>
-}
+import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend, SpaceFrontendCtxModule } from '../types'
 
 export type Input = {
-  ctx: SpaceFrontendCtx
+  ctx: SpaceFrontendCtxModule
   model: ModelFrontend
   msg?: MsgFrontend | null
   msgBackend?: MsgToFrontend | null
@@ -33,10 +25,10 @@ export type Output = {
 }
 
 export type SpaceFrontendModule = {
-  init: (input: { ctx: SpaceFrontendCtx; model: ModelFrontend }) => Output
+  init: (input: { ctx: SpaceFrontendCtxModule; model: ModelFrontend }) => Output
   update: (input: Input) => Output
-  subscriptions: (input: { ctx: SpaceFrontendCtx; model: ModelFrontend }) => Sub<MsgFrontend>
-  View: (input: { ctx: SpaceFrontendCtx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => VDom
+  subscriptions: (input: { ctx: SpaceFrontendCtxModule; model: ModelFrontend }) => Sub<MsgFrontend>
+  View: (input: { ctx: SpaceFrontendCtxModule; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => VDom
 }
 
 const andThen = (acc: Output, ...updates: ((model: ModelFrontend) => Output)[]): Output => {

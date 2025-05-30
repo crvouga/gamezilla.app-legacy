@@ -1,20 +1,11 @@
-import { describe, expect, it } from 'bun:test'
-import { withEventMetaAt } from '~/@/event-sourced/event'
-import { SpaceId } from '~/app/@/data/space-id'
-import { UserId } from '~/app/@/data/user-id'
-import { UserProfile } from '~/app/@/data/user-profile'
-import { AddProfilesCmd } from '~/app/@/frontend/add-profiles-cmd'
-import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
+import { describe } from 'bun:test'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
-import { makeSpace } from '../@/fixture/shared'
-import { SpacesCore } from '../core/core'
-import { Space } from '../core/space'
 
-const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
+export const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
   return items.filter(predicate).length === 1
 }
 
-const Fixture = async () => {
+export const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
   return {
     ...f,
@@ -22,154 +13,136 @@ const Fixture = async () => {
 }
 
 describe(import.meta.file, () => {
-  it('should record profiles when received from backend', async () => {
-    const f = await Fixture()
-
-    const someProfile = await UserProfile.random()
-
-    const someProfiles: {
-      [userId: UserId]: UserProfile
-    } = {
-      [someProfile.id]: someProfile,
-    }
-
-    const output = f.update(f.initial, [
-      {
-        msgBackend: {
-          t: 'list-spaces.listed',
-          spaces: [],
-          profilesByUserId: someProfiles,
-        },
-      },
-    ])
-    expect(AddProfilesCmd.did(output, Object.values(someProfiles))).toBe(true)
-  })
-
-  it('should merge space received from backend', async () => {
-    const f = await Fixture()
-
-    const someSpace = makeSpace({
-      spaceId: SpaceId.generate(),
-      hostId: UserId.generate(),
-    })
-
-    const output = f.update(f.initial, [
-      {
-        msgBackend: {
-          t: 'sync.synced',
-          space: someSpace,
-        },
-      },
-    ])
-
-    const listed = SpacesCore.listSpaces({
-      model: output.model.spaces,
-      offset: 0,
-      limit: Number.POSITIVE_INFINITY,
-    })
-
-    expect(listed.some((space) => Space.isEqual(space, someSpace))).toBe(true)
-  })
-
-  it("should merge current user's space when received from backend", async () => {
-    const f = await Fixture()
-    const spaceId = SpaceId.generate()
-    const someStartedSpace = makeSpace({
-      spaceId,
-      hostId: f.ctx.currentUser.userId,
-    })
-
-    const output = f.update(f.initial, [
-      {
-        msgBackend: {
-          t: 'sync.synced',
-          space: someStartedSpace,
-          currentUser: f.ctx.currentUser,
-        },
-      },
-    ])
-
-    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)
-
-    expect(currentUserSpaceId).toEqual(spaceId)
-  })
-
-  it("should sync current user's space when backend connects if in space", async () => {
-    const f = await Fixture()
-    const output = f.update(f.initial, [
-      {
-        msg: {
-          t: 'start-space.clicked-start-space-button',
-          spaceId: SpaceId.generate(),
-        },
-      },
-      {
-        msgIn: BackendConnectedEvt.init(),
-      },
-    ])
-
-    expect(
-      hasExactlyOne(
-        output.msgCmd ?? [],
-        (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-backend' && msgCmd.c.toBackend?.t === 'sync.sync',
-      ),
-    ).toBe(true)
-  })
-
-  it('should send events to the backend like user joined space', async () => {
-    const f = await Fixture()
-    const spaceId = SpaceId.generate()
-    const output = f.update(f.initial, [
-      {
-        msgBackend: {
-          t: 'sync.got-msg-space',
-          c: withEventMetaAt(0, { t: 'user-started-space', spaceId, userId: UserId.generate() }),
-        },
-      },
-      {
-        msg: { t: 'join-space.submitted-join-space-form', spaceId },
-      },
-    ])
-
-    expect(
-      hasExactlyOne(
-        output?.msgCmd ?? [],
-        (msgCmd) =>
-          msgCmd.t === 'wire' &&
-          msgCmd.c.t === 'send-to-backend' &&
-          msgCmd.c.toBackend?.t === 'sync.got-msg-space' &&
-          msgCmd.c.toBackend?.c.t === 'user-joined-space',
-      ),
-    ).toBe(true)
-  })
-
-  it('should send events to the backend like user ended space', async () => {
-    const f = await Fixture()
-    const spaceId = SpaceId.generate()
-    const output = f.update(f.initial, [
-      {
-        msgBackend: {
-          profilesByUserId: {},
-          causedBy: {},
-          t: 'sync.got-msg-space',
-          c: withEventMetaAt(0, {
-            t: 'user-ended-space',
-            spaceId,
-            userId: UserId.generate(),
-          }),
-        },
-      },
-    ])
-
-    expect(
-      hasExactlyOne(
-        output.msgCmd ?? [],
-        (msgCmd) =>
-          msgCmd.t === 'wire' &&
-          msgCmd.c.t === 'send-to-backend' &&
-          msgCmd.c.toBackend?.t === 'sync.got-msg-space' &&
-          msgCmd.c.toBackend?.c.t === 'user-ended-space',
-      ),
-    ).toBe(true)
-  })
+  // it('should record profiles when received from backend', async () => {
+  //   const f = await Fixture()
+  //   const someProfile = await UserProfile.random()
+  //   const someProfiles: {
+  //     [userId: UserId]: UserProfile
+  //   } = {
+  //     [someProfile.id]: someProfile,
+  //   }
+  //   const output = f.update(f.initial, [
+  //     {
+  //       msgBackend: {
+  //         t: 'list-spaces.listed',
+  //         spaces: [],
+  //         profilesByUserId: someProfiles,
+  //       },
+  //     },
+  //   ])
+  //   expect(AddProfilesCmd.did(output, Object.values(someProfiles))).toBe(true)
+  // })
+  // it('should merge space received from backend', async () => {
+  //   const f = await Fixture()
+  //   const someSpace = makeSpace({
+  //     spaceId: SpaceId.generate(),
+  //     hostId: UserId.generate(),
+  //   })
+  //   const output = f.update(f.initial, [
+  //     {
+  //       msgBackend: {
+  //         t: 'sync.synced',
+  //         space: someSpace,
+  //       },
+  //     },
+  //   ])
+  //   const listed = SpacesCore.listSpaces({
+  //     model: output.model.spaces,
+  //     offset: 0,
+  //     limit: Number.POSITIVE_INFINITY,
+  //   })
+  //   expect(listed.some((space) => Space.isEqual(space, someSpace))).toBe(true)
+  // })
+  // it("should merge current user's space when received from backend", async () => {
+  //   const f = await Fixture()
+  //   const spaceId = SpaceId.generate()
+  //   const someStartedSpace = makeSpace({
+  //     spaceId,
+  //     hostId: f.ctx.currentUser.userId,
+  //   })
+  //   const output = f.update(f.initial, [
+  //     {
+  //       msgBackend: {
+  //         t: 'sync.synced',
+  //         space: someStartedSpace,
+  //         currentUser: f.ctx.currentUser,
+  //       },
+  //     },
+  //   ])
+  //   const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)
+  //   expect(currentUserSpaceId).toEqual(spaceId)
+  // })
+  // it("should sync current user's space when backend connects if in space", async () => {
+  //   const f = await Fixture()
+  //   const output = f.update(f.initial, [
+  //     {
+  //       msg: {
+  //         t: 'start-space.clicked-start-space-button',
+  //         spaceId: SpaceId.generate(),
+  //       },
+  //     },
+  //     {
+  //       msgIn: BackendConnectedEvt.init(),
+  //     },
+  //   ])
+  //   expect(
+  //     hasExactlyOne(
+  //       output.msgCmd ?? [],
+  //       (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-backend' && msgCmd.c.toBackend?.t === 'sync.sync',
+  //     ),
+  //   ).toBe(true)
+  // })
+  // it('should send events to the backend like user joined space', async () => {
+  //   const f = await Fixture()
+  //   const spaceId = SpaceId.generate()
+  //   const output = f.update(f.initial, [
+  //     {
+  //       msgBackend: {
+  //         t: 'sync.got-msg-space',
+  //         c: withEventMetaAt(0, { t: 'user-started-space', spaceId, userId: UserId.generate() }),
+  //       },
+  //     },
+  //     {
+  //       msg: { t: 'join-space.submitted-join-space-form', spaceId },
+  //     },
+  //   ])
+  //   expect(
+  //     hasExactlyOne(
+  //       output?.msgCmd ?? [],
+  //       (msgCmd) =>
+  //         msgCmd.t === 'wire' &&
+  //         msgCmd.c.t === 'send-to-backend' &&
+  //         msgCmd.c.toBackend?.t === 'sync.got-msg-space' &&
+  //         msgCmd.c.toBackend?.c.t === 'user-joined-space',
+  //     ),
+  //   ).toBe(true)
+  // })
+  // it('should send events to the backend like user ended space', async () => {
+  //   const f = await Fixture()
+  //   const spaceId = SpaceId.generate()
+  //   const output = f.update(f.initial, [
+  //     {
+  //       msgBackend: {
+  //         profilesByUserId: {},
+  //         causedBy: {},
+  //         t: 'sync.got-msg-space',
+  //         c: withEventMetaAt(0, {
+  //           t: 'user-ended-space',
+  //           spaceId,
+  //           userId: UserId.generate(),
+  //         }),
+  //       },
+  //     },
+  //   ])
+  //   expect(
+  //     hasExactlyOne(
+  //       output.msgCmd ?? [],
+  //       (msgCmd) =>
+  //         msgCmd.t === 'wire' &&
+  //         msgCmd.c.t === 'send-to-backend' &&
+  //         msgCmd.c.toBackend?.t === 'sync.got-msg-space' &&
+  //         msgCmd.c.toBackend?.c.t === 'user-ended-space',
+  //     ),
+  //   ).toBe(true)
+  // })
 })

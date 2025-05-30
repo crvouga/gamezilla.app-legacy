@@ -21,7 +21,7 @@ import { WireSessionDb } from './wire-session-db'
 //
 //
 
-export const initCtx = async <TMsgToFrontend, TMsgToBackend>(input: {
+const initCtx = async <TMsgToFrontend, TMsgToBackend>(input: {
   ctx: AppBackendCtx
   transport: IBackendTransport<{
     MsgToFrontend: TMsgToFrontend
@@ -62,9 +62,7 @@ type Output = {
   msgCmd?: BackendCmd<MsgToFrontend>[]
 }
 
-export const update = async <TMsgToFrontend, TMsgToBackend>(
-  input: Input<TMsgToFrontend, TMsgToBackend>,
-): Promise<Output> => {
+const update = async <TMsgToFrontend, TMsgToBackend>(input: Input<TMsgToFrontend, TMsgToBackend>): Promise<Output> => {
   return AppBackendModule.andThen(
     {},
     () => updateFromMsg(input),
@@ -244,7 +242,7 @@ const updateFromCmd = async <TMsgToFrontend, TMsgToBackend>(
   }
 }
 
-export const subscriptions = async <TMsgToBackend, TMsgToFrontend>(input: {
+const subscriptions = async <TMsgToBackend, TMsgToFrontend>(input: {
   ctx: BackendCtx<TMsgToFrontend, TMsgToBackend>
 }): Promise<Sub<MsgBackend>> => {
   return Sub.batch<MsgBackend>([
@@ -256,8 +254,15 @@ export const subscriptions = async <TMsgToBackend, TMsgToFrontend>(input: {
   ])
 }
 
-export const rpc = <TMsgToFrontend, TMsgToBackend>(input: { ctx: BackendCtx<TMsgToFrontend, TMsgToBackend> }) => {
+const rpc = <TMsgToFrontend, TMsgToBackend>(input: { ctx: BackendCtx<TMsgToFrontend, TMsgToBackend> }) => {
   return RPC.initServer(rpcContract, {
     backendInstance: BackendInstanceBackend.rpc({ ctx: input.ctx.backendInstance }),
   })
+}
+
+export const WireBackend = {
+  initCtx,
+  update,
+  subscriptions,
+  rpc,
 }

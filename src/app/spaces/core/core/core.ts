@@ -144,6 +144,17 @@ export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined)
   return spaceState
 }
 
+export const toSpaces = (model: Model): SpaceState.Started[] => {
+  const spaces: SpaceState.Started[] = []
+  for (const spaceId in model.spaces) {
+    const started = toSpaceStarted(model, spaceId as SpaceId)
+    if (started) {
+      spaces.push(started)
+    }
+  }
+  return spaces
+}
+
 export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceState.Started | null => {
   if (!spaceId) return null
 

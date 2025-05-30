@@ -3,7 +3,7 @@ import { s } from '~/@/schema'
 import { Result } from '~/@/result'
 import { ClientSessionId } from '../wire/client-session-id'
 import { SessionId } from '../wire/session-id'
-import { WireFunction } from './error'
+import { RPCError } from './error'
 
 export type Base = Contract<Record<string, Endpoint<any, any> | Contract<any>>>
 
@@ -21,7 +21,7 @@ export type Contract<TEndpoints extends Record<string, Endpoint<any, any> | Cont
 
 export type Client<T extends Base> = {
   [K in keyof T]: T[K] extends Endpoint<unknown, unknown>
-    ? (input: s.Infer<T[K]['input']>) => Promise<Result<WireFunction, s.Infer<T[K]['output']>>>
+    ? (input: s.Infer<T[K]['input']>) => Promise<Result<RPCError, s.Infer<T[K]['output']>>>
     : T[K] extends Contract<any>
       ? Client<T[K]>
       : never

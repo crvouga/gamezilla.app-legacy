@@ -1,5 +1,5 @@
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
-import { HttpServer } from '~/@/http-server'
+import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb } from '~/@/key-value-db'
 import { Logger } from '~/@/logger'
 import { ILogger } from '~/@/logger/interface'
@@ -18,7 +18,7 @@ import { BackendInstanceId } from './@/backend/backend-instance/backend-instance
 import { BackendCmd } from './@/backend/cmd'
 import { AppBackendCtx } from './@/backend/ctx'
 import { BackendEvt } from './@/backend/evt'
-import * as AuthBackend from './auth/backend'
+import { AuthBackend } from './auth/backend'
 import * as LangBackend from './lang/backend'
 import { ProfileDb } from './profile/@/user-profile/user-profile-db'
 import { ProfileBackend } from './profile/backend'
@@ -31,7 +31,7 @@ import {
   type MsgToBackendMeta,
   type MsgToFrontend,
 } from './types'
-import * as WireBackend from './wire/backend'
+import { WireBackend } from './wire/backend'
 import { BackendTransport } from './wire/transport/backend'
 
 //
@@ -73,28 +73,21 @@ const initCtx = async (): Promise<BackendCtx> => {
     logger,
   })
 
-  const httpServer = HttpServer({
+  const httpServer = HttpServerBun({
+    t: 'bun',
     logger,
-    t: CONFIG_SHARED.HTTP_SERVER_IMPL,
   })
 
   const pubSub = await PubSubTopicBased({ t: 'noop' })
 
-  const transport = await BackendTransport<MsgToBackend, MsgToFrontend>(
-    httpServer.t === 'bun'
-      ? {
-          t: 'bun-web-sockets',
-          dbConnSql,
-          httpServer: httpServer,
-          logger,
-          pubSubTopicBased: pubSub,
-          isProd: CONFIG_SHARED.IS_PROD,
-        }
-      : {
-          t: 'noop',
-          logger,
-        },
-  )
+  const transport = await BackendTransport<MsgToBackend, MsgToFrontend>({
+    t: 'bun-web-sockets',
+    dbConnSql,
+    httpServer: httpServer,
+    logger,
+    pubSubTopicBased: pubSub,
+    isProd: CONFIG_SHARED.IS_PROD,
+  })
 
   const profileDb = ProfileDb({
     t: 'sql',
@@ -317,7 +310,6 @@ const updateChild = async (input: {
     msgEvt: Msg.batch<BackendEvt>(
       //
       auth.msgEvt,
-      space.msgEvt,
       wire.msgEvt,
       profile.msgEvt,
       lang.msgEvt,
@@ -349,6 +341,7 @@ const rpc = (input: { ctx: BackendCtx }) => {
   return RPC.initServer(rpcContract, {
     wire: WireBackend.rpc({ ctx: input.ctx.wire }),
     auth: AuthBackend.rpc({ ctx: input.ctx.auth }),
+    spaces: SpacesBackend.rpc({ ctx: input.ctx.space }),
   })
 }
 

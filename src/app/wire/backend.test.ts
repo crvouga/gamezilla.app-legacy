@@ -6,7 +6,7 @@ import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { ClientId } from '../../@/wire/client-id'
 import { SessionId } from '../../@/wire/session-id'
 import { UserAccount } from '../@/data/user-account'
-import * as WireBackend from './backend'
+import { WireBackend } from './backend'
 import { initBackendTransport, ToFrontendPayload } from './transport/backend'
 import { WireSession } from './wire-session'
 

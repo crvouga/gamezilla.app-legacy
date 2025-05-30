@@ -95,6 +95,7 @@ export type MsgToBackendMeta = {
 export const rpcContract = RPC.initContract({
   wire: WireTypes.rpcContract,
   auth: AuthTypes.rpcContract,
+  spaces: SpacesTypes.rpcContract,
 })
 
 export const topicContract = Topic.initContract({
@@ -113,7 +114,7 @@ export type BackendCtx = AppBackendCtx & {
   }>
   wire: WireTypes.BackendCtx<MsgToFrontend, MsgToBackend>
   profile: ProfileBackendCtx
-  space: SpacesTypes.BackendCtx
+  space: SpacesTypes.SpaceBackendCtxModule
   auth: AuthTypes.BackendCtx
   httpServer: IHttpServer
 }

@@ -9,15 +9,15 @@ import { LoginWithSMSBackend } from './login-with-sms/backend'
 import { CurrentUserBackend } from './current-user/backend'
 import { rpcContract, type BackendModule } from './types'
 
-export const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
+const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
   return BackendCtx.init(input)
 }
 
-export const update: BackendModule['update'] = async (_input) => {
+const update: BackendModule['update'] = async (_input) => {
   return {}
 }
 
-export const getUserIdFromSessionId = async (ctx: BackendCtx, sessionId?: SessionId | null): Promise<UserId | null> => {
+const getUserIdFromSessionId = async (ctx: BackendCtx, sessionId?: SessionId | null): Promise<UserId | null> => {
   if (!sessionId) return null
 
   const found = await ctx.userSessionDb.findUserIdBySessionId(sessionId)
@@ -30,13 +30,21 @@ export const getUserIdFromSessionId = async (ctx: BackendCtx, sessionId?: Sessio
   return found.value
 }
 
-export const subscriptions: BackendModule['subscriptions'] = async (_) => {
+const subscriptions: BackendModule['subscriptions'] = async (_) => {
   return Sub.None
 }
 
-export const rpc = (input: { ctx: BackendCtx }) => {
+const rpc = (input: { ctx: BackendCtx }) => {
   return RPC.initServer(rpcContract, {
     sms: LoginWithSMSBackend.rpc({ ctx: input.ctx }),
     currentUser: CurrentUserBackend.rpc({ ctx: input.ctx }),
   })
+}
+
+export const AuthBackend = {
+  initCtx,
+  update,
+  getUserIdFromSessionId,
+  subscriptions,
+  rpc,
 }

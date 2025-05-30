@@ -16,8 +16,9 @@ import { SpaceFrontend } from './space/frontend'
 import { StartSpaceFrontend } from './start-space/frontend'
 import { SyncFrontend } from './sync/frontend'
 import type { FrontendModule, ModelFrontend } from './types'
+import { Sub } from '~/@/sub'
 
-const init: FrontendModule['init'] = ({ ctx }) => {
+const init: FrontendModule['init'] = (_input) => {
   const model: ModelFrontend = {
     spaces: SpacesCore.init,
     games: {},
@@ -25,14 +26,9 @@ const init: FrontendModule['init'] = ({ ctx }) => {
     openedPreviewUserId: null,
     listSpacesRequest: NotAsked,
   }
-  const listSpaces = ListSpacesFrontend.init({ ctx, model })
+
   return {
-    model: {
-      ...model,
-      ...listSpaces.model,
-    },
-    eff: Eff.batch([listSpaces.eff]),
-    msgCmd: listSpaces.msgCmd,
+    model,
   }
 }
 
@@ -93,7 +89,7 @@ const updateSpacesFromMsgSpace: SpaceFrontendModule['update'] = ({ msgSpace, mod
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return GameFrontend.subscriptions(input)
+  return Sub.batch([GameFrontend.subscriptions(input), SyncFrontend.subscriptions(input)])
 }
 
 const View: FrontendModule['View'] = (input) => {

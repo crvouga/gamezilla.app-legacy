@@ -17,7 +17,6 @@ import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { CONFIG_SHARED } from '~/config/shared'
 import { setupNewPowerSyncClient } from '~/service-powersync/frontend/database'
 import { ILogger, Logger } from '../@/logger'
 import { UserProfile } from './@/data/user-profile'
@@ -62,7 +61,7 @@ const initCtx = async (): Promise<FrontendCtx> => {
   const transport = await FrontendTransport<MsgToBackend, MsgToFrontend>(
     toTransportConfig({
       clientSessionId,
-      httpServerImpl: CONFIG_SHARED.HTTP_SERVER_IMPL,
+      httpServerImpl: 'bun',
       backendUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
       logger,
     }),
@@ -203,7 +202,7 @@ const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<Ms
   const lang = LangFrontend.init({ ctx })
   const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire }, stored: {} })
   const auth = AuthFrontend.init({ ctx: input.ctx })
-  const space = SpacesFrontend.init({ ctx: { ...ctx, topic: input.ctx.topic.spaces } })
+  const space = SpacesFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.spaces, topic: input.ctx.topic.spaces } })
   const profile = ProfileFrontend.init({ ctx: input.ctx })
 
   const initialModel: ModelFrontend = {
@@ -312,7 +311,7 @@ const updateChild = (input: {
   const frontendCtx = toCtx(input)
 
   const space = SpacesFrontend.update({
-    ctx: { ...frontendCtx, topic: frontendCtx.topic.spaces },
+    ctx: { ...frontendCtx, topic: frontendCtx.topic.spaces, rpc: frontendCtx.rpc.spaces },
     model: input.model.spaces,
     msg: input.msg?.t === 'spaces' ? input.msg.c : null,
     msgBackend: input.msgBackend?.t === 'spaces' ? input.msgBackend.c : null,
@@ -393,7 +392,10 @@ const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend }): Sub<M
     Sub.tag('auth', AuthFrontend.subscriptions({ ctx, model: input.model.auth })),
     Sub.tag(
       'spaces',
-      SpacesFrontend.subscriptions({ ctx: { ...ctx, topic: input.ctx.topic.spaces }, model: input.model.spaces }),
+      SpacesFrontend.subscriptions({
+        ctx: { ...ctx, topic: input.ctx.topic.spaces, rpc: input.ctx.rpc.spaces },
+        model: input.model.spaces,
+      }),
     ),
     Sub.tag('profile', ProfileFrontend.subscriptions({ ctx, model: input.model.profile })),
   ])
@@ -497,7 +499,12 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
         <SpacesFrontend.View
           dispatch={(m) => input.dispatch({ t: 'spaces', c: m })}
           model={input.model.spaces}
-          ctx={{ ...input.ctx, parentScreen: toScreenLayoutProps(input), topic: input.ctx.topic.spaces }}
+          ctx={{
+            ...input.ctx,
+            parentScreen: toScreenLayoutProps(input),
+            topic: input.ctx.topic.spaces,
+            rpc: input.ctx.rpc.spaces,
+          }}
         />
       )
 

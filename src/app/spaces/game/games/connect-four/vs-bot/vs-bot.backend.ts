@@ -2,7 +2,7 @@ import { isErr } from '~/@/result'
 import { withEventId } from '~/@/event-sourced/event'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
-import type { SpaceBackendCmd } from '~/app/spaces/@/backend/cmd'
+
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
@@ -37,7 +37,7 @@ type Module = GameBackendModule<{
   Deps: null
   MsgCmdIn: null
   MsgEvtIn: SpaceBackendEvt
-  MsgCmdOut: SpaceBackendCmd<MsgToFrontend>
+  MsgCmdOut: null
   MsgEvtOut: null
 }>
 

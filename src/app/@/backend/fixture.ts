@@ -1,7 +1,7 @@
 import { type IDbConnSql } from '~/@/db-conn-sql'
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
 import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
-import { HttpServer } from '~/@/http-server'
+import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { ILogger } from '~/@/logger'
 import { Logger } from '~/@/logger'
@@ -50,7 +50,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const runtime = Runtime({ t: 'process', logger, shutoffFGracePeriod: TimeSpan.seconds(0) })
 
-  const httpServer = HttpServer({ t: 'bun', logger })
+  const httpServer = HttpServerBun({ t: 'bun', logger })
 
   const keyValueDbHashMap = await KeyValueDb({ t: 'hash-map' })
 
