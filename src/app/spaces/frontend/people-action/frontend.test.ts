@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'

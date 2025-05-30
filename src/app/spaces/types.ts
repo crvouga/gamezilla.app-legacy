@@ -1,13 +1,11 @@
+import { RPC } from '~/@/rpc'
 import { Topic } from '~/@/topic'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { BackendCmd } from '~/app/@/backend/cmd'
 import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
 import { UserId } from '~/app/@/data/user-id'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { Space } from './@/space/space'
 import { SpacesCore } from './core/core'
 import { ISpacesCoreAsync } from './core/core-async/interface'
@@ -21,7 +19,6 @@ import { LeaveSpaceTypes } from './leave-space'
 import { ListSpacesTypes } from './list-spaces'
 import { StartSpaceTypes } from './start-space'
 import { SyncTypes } from './sync'
-import { RPC } from '~/@/rpc'
 
 type Opened =
   | null
@@ -57,13 +54,10 @@ export const topicContract = Topic.initContract({
 
 export const rpcContract = RPC.initContract({
   sync: SyncTypes.rpcContract,
+  listSpaces: ListSpacesTypes.rpcContract,
 })
 
-export type MsgBackend = { t: 'noop' }
-
-export type MsgToBackend = { t: 'noop' }
-
-export type MsgToFrontend = { t: 'noop' }
+export type MsgBackend = SyncTypes.MsgBackend
 
 export type SpaceFrontendCtxModule = AppFrontendCtxBase & {
   topic: Topic.Client<typeof topicContract>
@@ -74,24 +68,17 @@ export type SpaceFrontendCtxModule = AppFrontendCtxBase & {
 export type SpaceBackendCtxModule = AppBackendCtx & {
   spacesCore: ISpacesCoreAsync
   games: GameTypes.GamesBackendCtx
+  topic: Topic.Server<typeof topicContract>
 }
 
 export type FrontendModule = AppFrontendModule<{
   Ctx: SpaceFrontendCtxModule
-  MsgEvtIn: AppFrontendEvt
   Model: ModelFrontend
   Msg: MsgFrontend
-  MsgCmdOut: AppFrontendCmd<MsgToBackend>
-  MsgEvtOut: AppFrontendEvt
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
 }>
 
 export type BackendModule = AppBackendModule<{
   Ctx: SpaceBackendCtxModule
   MsgEvtIn: BackendEvt
   Msg: MsgBackend
-  MsgCmdOut: BackendCmd<MsgToFrontend>
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
 }>

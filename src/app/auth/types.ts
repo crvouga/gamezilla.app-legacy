@@ -3,8 +3,6 @@ import type { AppBackendModule } from '../@/architecture/app-backend'
 import type { AppFrontendModule } from '../@/architecture/app-frontend'
 import { BackendCmd } from '../@/backend/cmd'
 import { BackendEvt } from '../@/backend/evt'
-import type { AppFrontendCmd } from '../@/frontend/cmd'
-import { AppFrontendEvt } from '../@/frontend/evt'
 import { BackendCtx } from './@/backend/ctx'
 import { AuthFrontendCtx } from './@/frontend/ctx'
 import { CurrentUserTypes } from './current-user'
@@ -63,9 +61,6 @@ export type FrontendModule = AppFrontendModule<{
   MsgToFrontend: MsgToFrontend
   MsgToBackend: MsgToBackend
   Ctx: FrontendCtx
-  MsgEvtIn: AppFrontendEvt
-  MsgCmdOut: AppFrontendCmd<MsgToBackend>
-  MsgEvtOut: AppFrontendEvt
 }>
 
 export type BackendModule = AppBackendModule<{

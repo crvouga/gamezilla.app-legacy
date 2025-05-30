@@ -18,9 +18,18 @@ export type MsgFrontend =
       synced: Result<RPCError, { space: Space.Model }>
     }
 
+export type MsgBackend = {
+  t: 'sync.got-msg-space'
+  c: WithEventMeta<MsgSpace>
+}
+
 export const topicContract = Topic.initContract({
   msgSpace: {
     params: SpaceId,
+    msg: WithEventMeta(MsgSpace),
+  },
+  msgSpaceAll: {
+    params: s.l(null),
     msg: WithEventMeta(MsgSpace),
   },
 })

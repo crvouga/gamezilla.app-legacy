@@ -2,8 +2,6 @@ import { Eff } from '~/@/eff'
 import type { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import { AppFrontendEvt } from '~/app/@/frontend/evt'
 
 export type GameFrontendTypes = {
   //
@@ -22,18 +20,8 @@ export type GameFrontendTypes = {
 type Output<T extends GameFrontendTypes> = {
   model: T['ModelFrontend']
   eff?: Eff<T['MsgFrontend']>
-  msgCmd?: AppFrontendCmd<T['MsgToBackend']>[]
   msgSpace?: WithEventId<T['MsgSpace']>[]
 }
-
-export type InMsg<T extends GameFrontendTypes> =
-  | ({ variant: 'msg' } & T['MsgFrontend'])
-  | ({ variant: 'to-frontend' } & T['MsgToFrontend'])
-  | ({ variant: 'event' } & AppFrontendEvt)
-
-export type OutMsg<T extends GameFrontendTypes> =
-  | ({ variant: 'msgCmd' } & AppFrontendCmd<T>)
-  | ({ variant: 'game-event' } & WithEventId<T['MsgSpace']>)
 
 export type GameFrontend<T extends GameFrontendTypes> = {
   init: (input: { ctx: T['FrontendCtx']; modelSpace: T['ModelSpace']; model?: T['ModelFrontend'] | null }) => Output<T>
@@ -46,7 +34,6 @@ export type GameFrontend<T extends GameFrontendTypes> = {
     //
     msg?: T['MsgFrontend'] | null
     msgBackend?: T['MsgToFrontend'] | null
-    msgEvt?: AppFrontendEvt | null
     msgSpace?: WithEventMeta<T['MsgSpace']> | null
   }) => Output<T>
 
@@ -87,7 +74,6 @@ const chain = <T extends GameFrontendTypes>(
   initial: Output<T>,
   ...updaters: ((input: T['ModelFrontend']) => Output<T>)[]
 ): Output<T> => {
-  const msgCmd: AppFrontendCmd<T['MsgToBackend']>[] = initial.msgCmd ?? []
   const msgSpaces: T['MsgSpace'][] = initial?.msgSpace ?? []
   const eff: Eff<T['MsgFrontend']>[] = initial.eff ? [initial.eff] : []
 
@@ -110,20 +96,12 @@ const chain = <T extends GameFrontendTypes>(
         msgSpaces.push(updated.msgSpace[j]!)
       }
     }
-    if (updated.msgCmd) {
-      let j = 0
-      const len = updated.msgCmd.length
-      for (j = 0; j < len; ++j) {
-        msgCmd.push(updated.msgCmd[j]!)
-      }
-    }
   }
 
   return {
     model,
     eff: Eff.batch(eff),
     msgSpace: msgSpaces,
-    msgCmd,
   }
 }
 

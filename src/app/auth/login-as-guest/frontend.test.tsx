@@ -6,7 +6,7 @@
 // import { Posix } from '~/@/time/posix'
 // import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 // import { UserId } from '~/app/@/data/user-id'
-// import { PlaySoundCmd.did, didSendToBackend } from '~/app/@/frontend/cmd'
+// import { PlaySoundCmd.did,  } from '~/app/@/frontend/cmd'
 // import { AnonymousFrontendCtx } from '~/app/@/frontend/ctx'
 // import { Translator } from '~/app/@/frontend/translator'
 // import * as AuthFrontend from '../frontend'
@@ -78,8 +78,6 @@
 //       }),
 //       clickedContinueAsGuestButton,
 //     )
-
-//     expect(didSendToBackend(output, (msg) => msg.t === 'guest.clicked-continue-as-guest-button')).toBe(true)
 //   })
 
 //   it('should resolve request as ok when resulted in ok', () => {

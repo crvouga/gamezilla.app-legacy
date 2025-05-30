@@ -1,5 +1,5 @@
 import { NotAsked } from '~/@/result'
-import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { LogoutCmd } from '~/app/@/frontend/logout-cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'

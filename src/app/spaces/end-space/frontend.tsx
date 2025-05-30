@@ -1,6 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
-import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { CurrentUserLoggedOutEvt } from '~/app/@/frontend/current-user-logged-out-evt'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'

@@ -5,7 +5,7 @@ import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
 import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
 import { IconRightLeft } from '~/@/ui/icon/icon-right-left'
 import type { UserId } from '~/app/@/data/user-id'
-import { APP_SOUND, AppFrontendCmd } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { FeedItem } from '~/app/spaces/@/feed-item'
@@ -42,7 +42,7 @@ type Module = GameFrontendModule<{
   ModelSpace: ModelSpace
   MsgSpace: MsgSpace
   Ctx: SpaceFrontendCtx
-  MsgCmdOut: AppFrontendCmd<MsgToBackend>
+
   MsgCmdIn: null
   MsgEvtOut: null
 }>

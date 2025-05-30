@@ -3,7 +3,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { FixtureSpacesFrontend } from '../../@/fixture/frontend'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
-import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()

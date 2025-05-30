@@ -1,10 +1,9 @@
 import { Sub } from '~/@/sub'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
-import type { GameFrontend } from '~/app/spaces/game/games/@/architecture/game-frontend'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
+import type { GameFrontend } from '~/app/spaces/game/games/@/architecture/game-frontend'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/tic-tic-toe/tic-tac-toe-ui'
-import type { ModelFrontend, MsgFrontend, MsgToFrontend, MsgToBackend } from './tic-tac-toe.types'
+import type { ModelFrontend, MsgFrontend, MsgToBackend, MsgToFrontend } from './tic-tac-toe.types'
 import * as VsBot from './vs-bot/vs-bot.frontend'
 import * as VsUser from './vs-user/vs-user.frontend'
 
@@ -16,7 +15,6 @@ type Frontend = GameFrontend<{
   MsgSpace: null
   ModelSpace: null
   FrontendCtx: SpaceFrontendCtx
-  FrontendCmd: AppFrontendCmd<MsgToBackend>
 }>
 
 //

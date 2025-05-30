@@ -51,7 +51,6 @@ const updateLoop = (input: Input, acc: Output): Output => {
       model: updated.model,
       eff: Eff.batch(acc.eff, updated.eff),
       msgSpace: Msg.batch(msgSpaceRest, updated.msgSpace),
-      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgOut: Msg.batch(acc.msgOut, updated.msgOut),
     })
   }

@@ -15,6 +15,8 @@ import { GamesBackend } from '../../game/games/backend'
 import { SpaceBackendCtxModule } from '../../types'
 import { SpaceBackendCtx } from '../backend/ctx'
 import { UserProfile } from '~/app/@/data/user-profile'
+import { Topic } from '~/@/topic'
+import { SpacesTypes } from '../..'
 
 export const FixtureSpaceBackend = async () => {
   const f = await FixtureAppBackend()
@@ -60,6 +62,12 @@ export const FixtureSpaceBackend = async () => {
     space: spaceState,
   }
 
+  const topic = Topic.initClient({
+    t: 'local',
+    contract: SpacesTypes.topicContract,
+    logger: f.ctx.logger,
+  })
+
   const backendCtx: SpaceBackendCtxModule = {
     ...f.ctx,
     spacesCore: await SpacesCoreAsync({
@@ -70,6 +78,7 @@ export const FixtureSpaceBackend = async () => {
       writeThrottle: TimeSpan.milliseconds(0),
       namespace: [],
     }),
+    topic,
     games: await GamesBackend.initCtx({
       ...f.ctx,
       ctx: {
@@ -88,7 +97,6 @@ export const FixtureSpaceBackend = async () => {
       const output = await SpacesBackend.update({
         ...input,
         ctx: input.ctx ?? backendCtx,
-        deps: null,
       })
       outputs.push(output)
     }

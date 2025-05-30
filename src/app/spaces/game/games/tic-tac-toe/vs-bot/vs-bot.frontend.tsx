@@ -4,7 +4,7 @@ import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
 import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
 import { IconRightLeft } from '~/@/ui/icon/icon-right-left'
 import { LoadingBar } from '~/@/ui/loading-bar'
-import { AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
+
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -15,7 +15,7 @@ import {
   type ModelBackend,
   type ModelFrontend,
   type MsgFrontend,
-  type MsgToBackend,
+  
   type MsgToFrontend,
   handle,
   initSpaceModel,
@@ -59,7 +59,7 @@ export const update = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgCmd?: AppFrontendCmd<MsgToBackend>[]
+  
 } => {
   if (msg.t === 'vs-bot-setup') {
     const updated = VsBotSetup.update(model.vsBotSetup, msg.c)
@@ -75,7 +75,7 @@ export const update = ({
   if (handled.t === 'err') {
     return {
       model,
-      msgCmd: [sendToBackend(msg)],
+     
     }
   }
   const merged = mergeWithBackend({
@@ -83,7 +83,7 @@ export const update = ({
     frontend: model,
     backend: handled.value,
   })
-  return { model: merged, msgCmd: [sendToBackend(msg)] }
+  return { model: merged,  }
 }
 
 export const updateFromBackend = ({

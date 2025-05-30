@@ -4,7 +4,7 @@ import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
-import { APP_SOUND } from '../../@/frontend/cmd'
+import { APP_SOUND } from '../../@/frontend/app-sound'
 
 export type Model = {
   isOpen: boolean

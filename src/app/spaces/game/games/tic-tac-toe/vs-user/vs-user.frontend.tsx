@@ -1,15 +1,15 @@
-import { type AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
+
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { VsUserSetupScreen } from '~/app/spaces/game/games/@/vs-user'
 import { toTurn } from '../@/tic-tic-toe/tic-tac-toe'
 import { CoverArt, PlayerTypeIcon } from '../@/tic-tic-toe/tic-tac-toe-ui'
 import * as Round from './vs-user-round'
 import {
-  type ModelFrontend,
   type ModelBackend,
+  type ModelFrontend,
   type MsgFrontend,
+  
   type MsgToFrontend,
-  type MsgToBackend,
   type Res,
   initSpaceModel,
 } from './vs-user.types'
@@ -39,7 +39,7 @@ export const update = (
   model: ModelFrontend,
 ): {
   model: ModelFrontend
-  msgCmd?: AppFrontendCmd<MsgToBackend>[]
+  
 } => {
   switch (msg[0]) {
     //
@@ -87,7 +87,6 @@ export const update = (
     case 'NewGame': {
       return {
         model,
-        msgCmd: [sendToBackend(msg)],
       }
     }
 

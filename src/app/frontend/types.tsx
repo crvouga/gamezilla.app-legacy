@@ -7,14 +7,6 @@ import { StatusBarFrontend } from './status-bar'
 import { ToastFrontend } from './toast'
 import { VisibilityFrontend } from './visibility'
 
-//
-//
-//
-//
-//
-//
-//
-
 export type ModelFrontend = {
   currentScreen: CurrentScreenFrontend.Model
   toast: ToastFrontend.Model
@@ -26,8 +18,6 @@ export type ModelFrontend = {
   focus: FocusFrontend.Model
 }
 
-export type MsgBackend = { t: 'noop' }
-
 export type MsgFrontend =
   | { t: 'current-screen'; c: CurrentScreenFrontend.Msg }
   | { t: 'toast'; c: ToastFrontend.Msg }
@@ -37,7 +27,3 @@ export type MsgFrontend =
   | { t: 'status-bar'; c: StatusBarFrontend.Msg }
   | { t: 'focus'; c: FocusFrontend.Msg }
   | { t: 'copy-to-clipboard'; c: CopyToClipboardFrontend.Msg }
-
-export type MsgToBackend = { t: 'noop' }
-
-export type MsgToFrontend = { t: 'noop' }

@@ -15,7 +15,7 @@ import { Paper } from '~/@/ui/paper'
 import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
 import { UserProfile } from '~/app/@/data/user-profile'
-import { APP_SOUND, AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -27,7 +27,6 @@ import { CHESS_SOUND } from '../@/chess/chess-sounds'
 import {
   type ModelFrontend,
   type MsgFrontend,
-  type MsgToBackend,
   type MsgToFrontend,
   type SpaceModel,
   initSpace,
@@ -123,7 +122,6 @@ export const updateMain = ({
 }): {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgCmd?: AppFrontendCmd<MsgToBackend>[]
 } => {
   const updated = updateSpace({ msg, model, ctx })
 
@@ -134,7 +132,6 @@ export const updateMain = ({
 
   return {
     model: modelNew,
-    msgCmd: [sendToBackend(msg)],
     eff: Eff.None,
   }
 }

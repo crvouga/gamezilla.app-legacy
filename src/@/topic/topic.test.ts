@@ -37,7 +37,7 @@ const Fixture = async () => {
   const endpoint = '/topic'
   const serverUrl = `http://localhost:${port}`
 
-  Topic.initServer({
+  const server = Topic.initServer({
     t: 'web-sockets',
     httpServer,
     logger,
@@ -79,6 +79,7 @@ const Fixture = async () => {
     clientA,
     clientB,
     clientC,
+    server,
     [Symbol.dispose]: async () => {
       await httpServer.stop()
     },
@@ -87,12 +88,15 @@ const Fixture = async () => {
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 5))
 
-describe.only('Topic', () => {
+describe('Topic', () => {
   it('should work', async () => {
     using f = await Fixture()
+    const gotServer: Msg[] = []
     const gotA: Msg[] = []
     const gotB: Msg[] = []
     const gotC: Msg[] = []
+
+    f.server.someTopic.subscribe({ id: '123' }).sub((msg) => gotServer.push(msg))
     f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
     f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
     f.clientC.someTopic.subscribe({ id: '123' }).sub((msg) => gotC.push(msg))

@@ -7,10 +7,9 @@ import { IconVolumeXMark } from '~/@/ui/icon/icon-volume-x-mark'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { ToggleButton } from '~/@/ui/toggle-button'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { DocumentVisibilityChangedEvt } from '~/app/@/frontend/document-visbility-changed-evt'
-import { AppFrontendEvt } from '~/app/@/frontend/evt'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PreloadSoundsCmd } from '~/app/@/frontend/preload-sounds-cmd'
 
@@ -24,7 +23,6 @@ import { PreloadSoundsCmd } from '~/app/@/frontend/preload-sounds-cmd'
 
 type Module = AppFrontendModule<{
   Ctx: AppFrontendCtxBase
-  MsgEvtIn: AppFrontendEvt
   Model: Model
   Msg: Msg
   MsgEvtOut: never

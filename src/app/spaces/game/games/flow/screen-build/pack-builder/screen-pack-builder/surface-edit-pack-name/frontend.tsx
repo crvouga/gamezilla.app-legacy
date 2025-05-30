@@ -1,6 +1,6 @@
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { TextField } from '~/@/ui/text-field'
-import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { FrontendModule } from '../types'

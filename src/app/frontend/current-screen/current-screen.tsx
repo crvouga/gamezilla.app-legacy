@@ -2,11 +2,12 @@ import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
-import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
+import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd'
-import { AppFrontendEvt } from '../../@/frontend/evt'
+import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
 
 //
 //
@@ -84,8 +85,7 @@ export const update = (input: {
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgEvt?: AppFrontendEvt[]
-  msgOut?: PlaySoundCmd[]
+  msgOut?: (PlaySoundCmd | ScreenChangedEvt)[]
 } => {
   if (PushScreenCmd.is(input.msgIn)) {
     return {
@@ -107,6 +107,13 @@ export const update = (input: {
     }
   }
 
+  if (BackScreenCmd.is(input.msgIn)) {
+    return {
+      model: input.model,
+      eff: Browser.back,
+    }
+  }
+
   if (input.msg) {
     return updateFromMsg(input)
   }
@@ -115,9 +122,8 @@ export const update = (input: {
 }
 
 const updateFromMsg: typeof update = ({ msg, model }) => {
-  if (!msg) {
-    return { model }
-  }
+  if (!msg) return { model }
+
   switch (msg.t) {
     case 'clicked-back': {
       return {
@@ -138,15 +144,8 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
 
     case 'screen-changed': {
       return {
-        model: {
-          currentScreen: msg.screen,
-        },
-        msgEvt: [
-          {
-            t: 'screen-evt.screen-changed',
-            screen: msg.screen,
-          },
-        ],
+        model: { currentScreen: msg.screen },
+        msgOut: [ScreenChangedEvt.init(msg.screen)],
       }
     }
   }

@@ -8,7 +8,9 @@ import { SpacesCoreAsync } from './core/core-async'
 import { GameBackend } from './game/backend'
 import { StartSpaceBackend } from './start-space/backend'
 import { SyncBackend } from './sync/backend'
-import { type BackendModule, rpcContract, type SpaceBackendCtxModule } from './types'
+import { type BackendModule, rpcContract, type SpaceBackendCtxModule, topicContract } from './types'
+import { ListSpacesBackend } from './list-spaces/backend'
+import { Topic } from '~/@/topic'
 
 //
 //
@@ -18,9 +20,16 @@ import { type BackendModule, rpcContract, type SpaceBackendCtxModule } from './t
 //
 //
 
-const initCtx = async (input: { ctx: AppBackendCtx }): Promise<SpaceBackendCtxModule> => {
+const initCtx = async (input: {
+  ctx: AppBackendCtx
+  topic: Topic.Client<typeof topicContract>
+}): Promise<SpaceBackendCtxModule> => {
   return {
     ...input.ctx,
+    topic: input.topic,
+    games: GameBackend.initCtx({
+      ctx: { ...input.ctx, space: Space.random() },
+    }),
     spacesCore: await SpacesCoreAsync({
       t: 'key-value-db',
       keyValueDb: input.ctx.keyValueDb,
@@ -29,7 +38,6 @@ const initCtx = async (input: { ctx: AppBackendCtx }): Promise<SpaceBackendCtxMo
       writeThrottle: TimeSpan.seconds(10),
       namespace: [],
     }),
-    games: GameBackend.initCtx({ ctx: { ...input.ctx, space: Space.random() } }),
   }
 }
 
@@ -100,6 +108,7 @@ const subscriptions: BackendModule['subscriptions'] = async (input) => {
 const rpc = (input: { ctx: SpaceBackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
     sync: SyncBackend.rpc(input),
+    listSpaces: ListSpacesBackend.rpc(input),
   })
 }
 

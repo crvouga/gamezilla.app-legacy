@@ -7,7 +7,8 @@ import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
-import { Contract } from '../types'
+import { Client, Contract } from '../types'
+import { initClient } from './client'
 import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
 
 export type BackendWebSocketData = {
@@ -23,9 +24,12 @@ export const initServer = <T extends Contract<any>>(config: {
   logger: ILogger
   isProd: boolean
   endpoint: string
-}) => {
+}): Client<T> => {
   const logger = Logger.prefix('server', config.logger)
+
   let bunServer: Server
+
+  let client: Client<T> | null = null
 
   config.httpServer._setWebSocketHandler({
     async open(ws: ServerWebSocket<BackendWebSocketData>) {
@@ -88,6 +92,7 @@ export const initServer = <T extends Contract<any>>(config: {
           }
           ws.send(JSON.stringify(toClient))
           logger.debug(`websocket message unpublished clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
+
           return
         }
         default: {
@@ -125,10 +130,23 @@ export const initServer = <T extends Contract<any>>(config: {
       logger.debug(
         `${config.endpoint} request received clientId=${clientId} sessionId=${sessionId} headers=${headers.toJSON()}`,
       )
+
       bunServer.upgrade(request, { headers, data })
+
+      client ??= initClient({
+        t: 'web-sockets',
+        clientSessionId: ClientSessionId.generate(),
+        contract: config.contract,
+        serverUrl: request.url,
+        endpoint: config.endpoint,
+        logger,
+      })
+
       return
     }
 
     return null
   })
+
+  return client ?? initClient({ t: 'local', contract: config.contract, logger })
 }

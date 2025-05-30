@@ -33,8 +33,6 @@ const main = async () => {
     debugger: CONFIG_SHARED.IS_PROD ? DebuggerConsole : DebuggerReduxDevTools,
   })
 
-  await ctx.transport.start()
-
   console.table({ ...CONFIG_SHARED, ...CONFIG_FRONTEND })
 }
 

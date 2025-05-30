@@ -2,7 +2,6 @@ import { Browser } from '~/@/browser'
 import { DbConnSql } from '~/@/db-conn-sql/frontend/impl'
 import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
-import { HttpServerImpl } from '~/@/http-server/http-server-impl'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
@@ -14,13 +13,12 @@ import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
 import { IconUserCircle } from '~/@/ui/icon/icon-user-circle'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
-import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { setupNewPowerSyncClient } from '~/service-powersync/frontend/database'
-import { ILogger, Logger } from '../@/logger'
+import { Logger } from '../@/logger'
 import { UserProfile } from './@/data/user-profile'
-import { APP_SOUND, AppFrontendCmd } from './@/frontend/cmd'
+import { APP_SOUND } from './@/frontend/app-sound'
 import { AnonymousFrontendCtx, AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { PreloadSoundsCmd } from './@/frontend/preload-sounds-cmd'
 import { Translator } from './@/frontend/translator'
@@ -35,19 +33,10 @@ import { ToastFrontend } from './frontend/toast'
 import * as LangFrontend from './lang/frontend'
 import { ProfileFrontend } from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
-import {
-  FrontendCtx,
-  ModelFrontend,
-  MsgFrontend,
-  MsgToBackend,
-  MsgToFrontend,
-  rpcContract as contract,
-  topicContract,
-} from './types'
+import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract, topicContract } from './types'
 import * as WireFrontend from './wire/frontend'
-import { FrontendTransport } from './wire/transport/frontend'
 
-const initCtx = async (): Promise<FrontendCtx> => {
+const initCtx = async (): Promise<FrontendCtxModule> => {
   const logger = Logger({
     t: 'console',
   })
@@ -57,15 +46,6 @@ const initCtx = async (): Promise<FrontendCtx> => {
   }
 
   const clientSessionId = ClientSessionIdStorage().get()
-
-  const transport = await FrontendTransport<MsgToBackend, MsgToFrontend>(
-    toTransportConfig({
-      clientSessionId,
-      httpServerImpl: 'bun',
-      backendUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
-      logger,
-    }),
-  )
 
   const httpClient = HttpClient({
     t: 'fetch',
@@ -121,20 +101,19 @@ const initCtx = async (): Promise<FrontendCtx> => {
     ...ctx,
     ...profile,
     ...auth,
-    transport,
     rpc,
     topic,
   }
 }
 
-const updateCtx = (ctx: FrontendCtx): FrontendCtx => {
+const updateCtx = (ctx: FrontendCtxModule): FrontendCtxModule => {
   ctx.now = Posix.now()
   return ctx
 }
 
-type Ctx = (AppFrontendCtx | AnonymousFrontendCtx) & FrontendCtx
+type Ctx = (AppFrontendCtx | AnonymousFrontendCtx) & FrontendCtxModule
 
-const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx => {
+const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Ctx => {
   const profiles: UserProfile[] = Object.values(input.model.profile.profilesByUserId)
 
   const anonymousCtx: AnonymousFrontendCtx = {
@@ -171,21 +150,7 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtx }): Ctx => {
   }
 }
 
-const toTransportConfig = (input: {
-  clientSessionId: ClientSessionId
-  httpServerImpl: HttpServerImpl
-  backendUrl: string
-  logger: ILogger
-}): Parameters<typeof FrontendTransport>[0] => {
-  switch (input.httpServerImpl) {
-    case 'bun':
-      return { ...input, t: 'standard-web-sockets' }
-    case 'node':
-      return { ...input, t: 'noop' }
-  }
-}
-
-const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
+const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
   const frontend = FrontendFrontend.init({
     ctx: input.ctx,
     location: input.ctx.location,
@@ -220,17 +185,11 @@ const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<Ms
     Eff.tag('lang', lang.eff),
   ])
 
-  const initialCmd = Msg.batch<AppFrontendCmd<MsgToBackend>>(
-    //
-    AppFrontendCmd.tag('spaces', space.msgCmd),
-  )
-
   const initialMsgOut = Msg.batch(PreloadSoundsCmd.init(Object.values(APP_SOUND)))
 
   const updated = updateLoop(input.ctx, {
     model: initialModel,
     eff: initialEff,
-    msgCmd: initialCmd,
     msgOut: initialMsgOut,
   })
 
@@ -238,21 +197,15 @@ const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend; eff?: Eff<Ms
 }
 
 const update = (input: {
-  ctx: FrontendCtx
+  ctx: FrontendCtxModule
   msg: MsgFrontend
   model: ModelFrontend
 }): {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
 } => {
-  const msgBackend = input.msg.t === '→' ? input.msg.c : undefined
   const frontendCtx = toCtx(input)
-  const updatedChild = updateChild({
-    ctx: frontendCtx,
-    model: input.model,
-    msg: input.msg,
-    msgBackend: msgBackend,
-  })
+  const updatedChild = updateChild({ ctx: frontendCtx, model: input.model, msg: input.msg })
   const updated = updateLoop(frontendCtx, updatedChild)
 
   return updated
@@ -262,23 +215,10 @@ type Output = {
   model: ModelFrontend
   eff: Eff<MsgFrontend>
   msgOut: unknown[]
-  msgCmd: AppFrontendCmd<MsgToBackend>[]
 }
 
-const updateLoop = (ctx: FrontendCtx, acc: Output): Output => {
+const updateLoop = (ctx: FrontendCtxModule, acc: Output): Output => {
   const frontendCtx = toCtx({ ctx, model: acc.model })
-  const [msgCmd, ...msgCmdRest] = acc.msgCmd
-
-  if (msgCmd) {
-    const updatedCmd = updateChild({ ctx: frontendCtx, model: acc.model, msgCmd })
-
-    return updateLoop(frontendCtx, {
-      model: updatedCmd.model,
-      msgCmd: Msg.batch(msgCmdRest, updatedCmd.msgCmd),
-      eff: Eff.batch([acc.eff, updatedCmd.eff]),
-      msgOut: Msg.batch(acc.msgOut, updatedCmd.msgOut),
-    })
-  }
 
   const [msgOut, ...msgOutRest] = acc.msgOut
 
@@ -291,7 +231,6 @@ const updateLoop = (ctx: FrontendCtx, acc: Output): Output => {
 
     return updateLoop(frontendCtx, {
       model: updatedOut.model,
-      msgCmd: Msg.batch(msgCmdRest, updatedOut.msgCmd),
       eff: Eff.batch([acc.eff, updatedOut.eff]),
       msgOut: Msg.batch(msgOutRest, updatedOut.msgOut),
     })
@@ -301,12 +240,10 @@ const updateLoop = (ctx: FrontendCtx, acc: Output): Output => {
 }
 
 const updateChild = (input: {
-  ctx: FrontendCtx
+  ctx: FrontendCtxModule
   model: ModelFrontend
   msg?: MsgFrontend
-  msgBackend?: MsgToFrontend
   msgIn?: unknown
-  msgCmd?: AppFrontendCmd<MsgToBackend>
 }): Output => {
   const frontendCtx = toCtx(input)
 
@@ -314,7 +251,6 @@ const updateChild = (input: {
     ctx: { ...frontendCtx, topic: frontendCtx.topic.spaces, rpc: frontendCtx.rpc.spaces },
     model: input.model.spaces,
     msg: input.msg?.t === 'spaces' ? input.msg.c : null,
-    msgBackend: input.msgBackend?.t === 'spaces' ? input.msgBackend.c : null,
     msgIn: input.msgIn,
   })
 
@@ -322,7 +258,6 @@ const updateChild = (input: {
     ctx: frontendCtx,
     model: input.model.profile,
     msg: input.msg?.t === 'profile' ? input.msg.c : null,
-    msgBackend: input.msgBackend?.t === 'profile' ? input.msgBackend.c : null,
     msgIn: input.msgIn,
   })
 
@@ -330,7 +265,6 @@ const updateChild = (input: {
     ctx: frontendCtx,
     model: input.model.auth,
     msg: input.msg?.t === 'auth' ? input.msg.c : null,
-    msgBackend: input.msgBackend?.t === 'auth' ? input.msgBackend.c : null,
     msgIn: input.msgIn,
   })
 
@@ -338,16 +272,12 @@ const updateChild = (input: {
     ctx: frontendCtx,
     model: input.model.wire,
     msg: input.msg?.t === 'wire' ? input.msg.c : null,
-    msgBackend: input.msgBackend?.t === 'wire' ? input.msgBackend.c : null,
-    msgCmd: input.msgCmd?.n === 'wire' ? input.msgCmd : null,
-    transport: input.ctx.transport,
   })
 
   const lang = LangFrontend.update({
     ctx: frontendCtx,
     model: input.model.lang,
     msg: input.msg?.t === 'lang' ? input.msg.c : null,
-    msgBackend: input.msgBackend?.t === 'lang' ? input.msgBackend.c : null,
     msgIn: input.msgIn,
   })
 
@@ -355,7 +285,6 @@ const updateChild = (input: {
     ctx: frontendCtx,
     model: input.model.frontend,
     msg: input.msg?.t === 'frontend' ? input.msg.c : undefined,
-    msgBackend: input.msgBackend?.t === 'frontend' ? input.msgBackend.c : undefined,
     msgIn: input.msgIn,
   })
 
@@ -368,6 +297,7 @@ const updateChild = (input: {
       wire: wire.model,
       lang: lang.model,
     },
+    msgOut: Msg.batch(auth.msgOut, profile.msgOut, space.msgOut, lang.msgOut, frontend.msgOut),
     eff: Eff.batch<MsgFrontend>([
       Eff.tag('auth', auth.eff),
       Eff.tag('profile', profile.eff),
@@ -376,18 +306,15 @@ const updateChild = (input: {
       Eff.tag('lang', lang.eff),
       Eff.tag('frontend', frontend.eff),
     ]),
-    msgOut: Msg.batch(auth.msgOut, profile.msgOut, space.msgOut, lang.msgOut, frontend.msgOut),
-    msgCmd: Msg.batch<AppFrontendCmd<MsgToBackend>>(AppFrontendCmd.tag('spaces', space.msgCmd)),
   }
 }
 
-const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend }): Sub<MsgFrontend> => {
+const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }): Sub<MsgFrontend> => {
   const ctx = toCtx(input)
 
   return Sub.batch<MsgFrontend>([
-    Sub.tag('→', Sub.flat(input.ctx.transport.fromBackend)),
     Sub.tag('frontend', FrontendFrontend.subscriptions({ ctx, model: input.model.frontend })),
-    Sub.tag('wire', WireFrontend.subscriptions({ transport: input.ctx.transport })),
+    Sub.tag('wire', WireFrontend.subscriptions({  })),
     Sub.tag('lang', LangFrontend.subscriptions({ ctx, model: input.model.lang })),
     Sub.tag('auth', AuthFrontend.subscriptions({ ctx, model: input.model.auth })),
     Sub.tag(
@@ -401,7 +328,7 @@ const subscriptions = (input: { ctx: FrontendCtx; model: ModelFrontend }): Sub<M
   ])
 }
 
-const View = (input: { ctx: FrontendCtx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
+const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   const frontendCtx = toCtx(input)
 
   return (

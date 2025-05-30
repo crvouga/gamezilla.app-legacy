@@ -1,7 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
-
 import { TimeSpan } from '~/@/time/time-span'
-import { APP_SOUND } from './cmd'
+import { APP_SOUND } from './app-sound'
 import { PlaySoundCmd } from './play-sound-cmd'
 import { ShowToastCmd } from './show-toast-cmd'
 

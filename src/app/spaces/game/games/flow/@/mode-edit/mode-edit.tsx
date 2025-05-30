@@ -1,7 +1,7 @@
 import { eq } from '~/@/equals/equals'
 import { History } from '~/@/history'
 import { s } from '~/@/schema'
-import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { Flow } from '../flow'
 import { GroupId } from '../flow/group-id'
 import { NodeId } from '../flow/node-id'

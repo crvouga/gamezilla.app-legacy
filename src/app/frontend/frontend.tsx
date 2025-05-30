@@ -1,7 +1,8 @@
 import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
+import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
-import { APP_SOUND } from '../@/frontend/cmd'
+import { APP_SOUND } from '../@/frontend/app-sound'
 import { AnonymousFrontendCtx, AppFrontendCtx, AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PreloadSoundsCmd } from '../@/frontend/preload-sounds-cmd'
 import { CopyToClipboardFrontend } from '../frontend/copy-to-clipboard'
@@ -12,7 +13,7 @@ import { SoundFrontend } from '../frontend/sound'
 import { StatusBarFrontend } from '../frontend/status-bar/index'
 import { ToastFrontend } from '../frontend/toast'
 import { VisibilityFrontend } from '../frontend/visibility'
-import { type ModelFrontend, type MsgFrontend, type MsgToFrontend } from './types'
+import { type ModelFrontend, type MsgFrontend } from './types'
 import './update-prompt/update-prompt'
 
 export const init = (input: {
@@ -57,7 +58,6 @@ export const update = (input: {
   ctx: AppFrontendCtxBase
   model: ModelFrontend
   msg?: MsgFrontend
-  msgBackend?: MsgToFrontend
   msgIn?: unknown
 }): {
   model: ModelFrontend
@@ -67,7 +67,6 @@ export const update = (input: {
   const screen = CurrentScreenFrontend.update({
     model: input.model.currentScreen,
     msg: input.msg?.t === 'current-screen' ? input.msg.c : null,
-
     msgIn: input.msgIn,
   })
 
@@ -81,11 +80,13 @@ export const update = (input: {
   const visibility = VisibilityFrontend.update({
     model: input.model.visibility,
     msg: input.msg?.t === 'visibility' ? input.msg.c : null,
+    // msgIn: input.msgIn,
   })
 
   const statusBar = StatusBarFrontend.update({
     model: input.model.statusBar,
     msg: input.msg?.t === 'status-bar' ? input.msg.c : null,
+    msgIn: input.msgIn,
   })
 
   const toast = ToastFrontend.update({
@@ -98,16 +99,19 @@ export const update = (input: {
   const screenSize = ScreenSizeFrontend.update({
     model: input.model.screenSize,
     msg: input.msg?.t === 'screen-size' ? input.msg.c : null,
+    // msgIn: input.msgIn,
   })
 
   const copyToClipboard = CopyToClipboardFrontend.update({
     model: input.model.copyToClipboard,
     msg: input.msg?.t === 'copy-to-clipboard' ? input.msg.c : null,
+    msgIn: input.msgIn,
   })
 
   const focus = FocusFrontend.update({
     model: input.model.focus,
     msg: input.msg?.t === 'focus' ? input.msg.c : null,
+    msgIn: input.msgIn,
   })
 
   return {
@@ -121,6 +125,7 @@ export const update = (input: {
       screenSize: screenSize.model,
       copyToClipboard: copyToClipboard.model,
     },
+    msgOut: Msg.batch(screen.msgOut, statusBar.msgOut, toast.msgOut),
     eff: Eff.batch<MsgFrontend>([
       Eff.tag('visibility', visibility.eff),
       Eff.tag('current-screen', screen.eff),

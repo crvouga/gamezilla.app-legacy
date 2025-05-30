@@ -1,10 +1,10 @@
 import { RPC } from '~/@/rpc'
 import { Posix } from '~/@/time/posix'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { AppBackendCtx } from '../@/backend/ctx'
+import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
 import { BackendInstanceTypes } from './backend-instance'
+import type { BackendTransportMsg } from './transport/backend'
 import type { FrontendTransportEvent } from './transport/frontend'
-import type { IBackendTransport, BackendTransportMsg } from './transport/backend'
 import { IWireSessionDb } from './wire-session-db'
 
 //
@@ -14,12 +14,8 @@ import { IWireSessionDb } from './wire-session-db'
 //
 //
 
-export type BackendCtx<TMsgToFrontend, TMsgToBackend> = AppBackendCtx & {
+export type BackendCtx = AppBackendCtx & {
   wireSessionDb: IWireSessionDb
-  transport: IBackendTransport<{
-    MsgToFrontend: TMsgToFrontend
-    MsgToBackend: TMsgToBackend
-  }>
   backendInstance: BackendInstanceTypes.BackendCtx
 }
 

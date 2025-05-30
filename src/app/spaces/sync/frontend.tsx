@@ -44,6 +44,7 @@ const publishMsgSpace: SpaceFrontendModule['update'] = (input) => {
     model: input.model,
     eff() {
       input.ctx.topic.sync.msgSpace.publish(spaceEventWithMeta.spaceId, spaceEventWithMeta)
+      input.ctx.topic.sync.msgSpaceAll.publish(null, spaceEventWithMeta)
     },
   }
 }

@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
-import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { FeedItem } from '~/app/spaces/@/feed-item'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'

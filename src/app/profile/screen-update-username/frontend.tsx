@@ -29,12 +29,6 @@ const update: FrontendModule['update'] = (input) => {
           ...input.model,
           'profile-update-username.request': RequestResponse.startedRequest(input.ctx.now),
         },
-        // msgCmd: [
-        //   sendToBackend({
-        //     t: 'profile.update-username.clicked-save',
-        //     username: input.model['profile.update-username.username'] ?? '',
-        //   }),
-        // ],
       }
     }
 

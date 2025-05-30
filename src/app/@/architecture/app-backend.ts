@@ -1,66 +1,26 @@
 import { Msg } from '~/@/msg/msg'
 import { type Sub } from '~/@/sub'
-import type { ClientId } from '~/@/wire/client-id'
-import { ClientSessionId } from '~/@/wire/client-session-id'
-import type { SessionId } from '~/@/wire/session-id'
-import type { UserId } from '~/app/@/data/user-id'
-
-//
-//
-//
-//
-//
 
 export type AppBackendModuleTypes = {
   /**
-   * `Deps` is the dependencies of the module
-   */
-  Deps?: any
-  /**
    * `Ctx` is data passed down from parent modules
    */
-  Ctx?: any
+  Ctx?: unknown
   /**
    * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvt
    */
-  Msg?: any
+  Msg?: unknown
   /**
-   * `MsgToFrontend` is a message to send to the frontend component of the module
+   * `MsgIn`
    */
-  MsgToFrontend?: any
+  MsgIn?: unknown
   /**
-   * `MsgToBackend` is a message to send to the frontend component of the module
+   * `MsgOut`
    */
-  MsgToBackend?: any
-  /**
-   * `MsgCmdIn` is a message from other modules. Usually verbs
-   */
-  MsgCmdIn?: any
-  /**
-   * `MsgEvtIn` is a message to notify other modules. Usually past tense verbs
-   */
-  MsgEvtIn?: any
-  /**
-   * `MsgCmdOut` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
-   */
-  MsgCmdOut?: any
-  /**
-   * `MsgEvtOut` is a message that is only produced by this module. Always past tense verbs
-   */
-  MsgEvtOut?: any
+  MsgOut?: unknown
 }
 
-//
-//
-// Input
-//
-//
-
 export type Input<T extends AppBackendModuleTypes> = {
-  /**
-   * `deps` are the dependencies of the module
-   */
-  deps: T['Deps']
   /**
    * `ctx` is data passed down from parent modules
    */
@@ -72,46 +32,17 @@ export type Input<T extends AppBackendModuleTypes> = {
   /**
    *
    */
-  msgFrontend?:
-    | (T['MsgToBackend'] & {
-        clientId: ClientId
-        sessionId: SessionId
-        clientSessionId: ClientSessionId
-        userId?: UserId | null
-      })
-    | null
-  /**
-   *
-   */
-  msgEvt?: T['MsgEvtIn'] | null
-  /**
-   *
-   */
-  msgCmd?: T['MsgCmdIn'] | null
+  msgIn?: T['MsgIn'] | null
 }
 
-//
-//
-// Output
-//
-//
-
 export type Output<T extends AppBackendModuleTypes> = {
-  /**
-   *
-   */
-  msgCmd?: T['MsgCmdOut'][]
-  /**
-   *
-   */
-  msgEvt?: T['MsgEvtOut'][]
+  msgOut?: T['MsgOut'][]
 }
 
 /**
  * `AppBackendModule` represents a backend side app module
  */
 export type AppBackendModule<T extends AppBackendModuleTypes> = {
-  initDeps: (input: { ctx: T['Ctx'] }) => Promise<T['Deps']>
   /**
    * `init` is the initial state of the module
    */
@@ -125,7 +56,7 @@ export type AppBackendModule<T extends AppBackendModuleTypes> = {
   /**
    * `subscriptions` is dispatches msgs specific to the module
    */
-  subscriptions: (input: { ctx: T['Ctx']; deps: T['Deps'] }) => Promise<Sub<T['Msg']>>
+  subscriptions: (input: { ctx: T['Ctx'] }) => Promise<Sub<T['Msg']>>
 }
 
 type MaybePromise<T> = T | Promise<T>
@@ -138,8 +69,7 @@ const andThen = async <T extends AppBackendModuleTypes>(
   for (const update of updates) {
     const updated = await update()
     acc = {
-      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
-      msgEvt: Msg.batch(acc.msgEvt, updated.msgEvt),
+      msgOut: Msg.batch(acc.msgOut, updated.msgOut),
     }
   }
   return acc

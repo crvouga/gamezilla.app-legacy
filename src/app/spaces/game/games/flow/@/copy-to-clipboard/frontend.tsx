@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 import { IconCopy } from '~/@/ui/icon/icon-copy'
-import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'

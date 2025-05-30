@@ -8,7 +8,7 @@ import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
 import { IconRobot } from '~/@/ui/icon/icon-robot'
 import { Spinner } from '~/@/ui/spinner'
 import { UserProfile } from '~/app/@/data/user-profile'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
+
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
@@ -20,7 +20,6 @@ import {
   type ModelBackend,
   type ModelFrontend,
   type MsgFrontend,
-  type MsgToBackend,
   type MsgToFrontend,
   type SpaceModel,
   initSpace,
@@ -63,7 +62,6 @@ export const update = ({
 }): {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
-  msgCmd?: AppFrontendCmd<MsgToBackend>[]
 } => {
   const model: ModelFrontend = {
     ...modelPrev,

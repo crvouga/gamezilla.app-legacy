@@ -1,14 +1,16 @@
 import { EmptyState } from '~/@/ui/empty-state'
 import { Gutter } from '~/@/ui/gutter'
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
-import { APP_SOUND } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { StartSpaceFrontend } from '../start-space/frontend'
 import { ViewSpaceCard } from './space-card/space-card'
+import { unwrapOr } from '~/@/result'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
@@ -20,6 +22,26 @@ const update: SpaceFrontendModule['update'] = (input) => {
           PlaySoundCmd.init(APP_SOUND.navForwardMin),
         ],
       }
+    }
+    case 'list-spaces.list-spaces-response': {
+      return {
+        model: {
+          ...input.model,
+          listSpacesRequest: input.msg.spaces,
+          spaces: unwrapOr(input.msg.spaces, { spaces: [] }).spaces.reduce(SpacesCore.mergeOne, input.model.spaces),
+        },
+      }
+    }
+  }
+
+  if (ScreenChangedEvt.is(input.msgIn)) {
+    return {
+      model: input.model,
+      async eff(dispatch) {
+        const spaces = await input.ctx.rpc.listSpaces.listSpaces({ pagination: { limit: 10, offset: 0 } })
+
+        dispatch({ t: 'list-spaces.list-spaces-response', spaces })
+      },
     }
   }
 

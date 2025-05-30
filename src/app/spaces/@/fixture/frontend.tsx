@@ -13,7 +13,6 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
-import { AppFrontendCmd } from '~/app/@/frontend/cmd'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { Space } from '../../core/space'
 import { SpacesFrontend } from '../../frontend'
@@ -22,15 +21,10 @@ import * as SpacesTypes from '../../types'
 export const SpaceFrontendFixture = async () => {
   const f = await FixtureAppFrontend()
 
-  type Msg =
-    | {
-        t: 'msg'
-        c: SpacesTypes.MsgFrontend
-      }
-    | {
-        t: 'msg-backend'
-        c: SpacesTypes.MsgToFrontend
-      }
+  type Msg = {
+    t: 'msg'
+    c: SpacesTypes.MsgFrontend
+  }
 
   const topic = Topic.initClient({
     t: 'local',
@@ -48,6 +42,13 @@ export const SpaceFrontendFixture = async () => {
         async sync(input) {
           return {
             space: input.space,
+          }
+        },
+      },
+      listSpaces: {
+        async listSpaces(_input) {
+          return {
+            spaces: [],
           }
         },
       },
@@ -152,6 +153,13 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
           }
         },
       },
+      listSpaces: {
+        async listSpaces(_input) {
+          return {
+            spaces: [],
+          }
+        },
+      },
     },
   })
 
@@ -183,7 +191,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
         model: NonEmpty.last(outputs).model,
       })
       const msgOuts: unknown[] = []
-      const msgCmds: AppFrontendCmd<SpacesTypes.MsgToBackend>[] = output.msgCmd ?? []
+
       for (const msgOut of output.msgOut ?? []) {
         msgOuts.push(msgOut)
         output = SpacesFrontend.update({
@@ -191,13 +199,11 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
           model: output.model,
           msgIn: msgOut,
         })
-        msgCmds.push(...(output.msgCmd ?? []))
       }
 
       outputs.push({
         ...output,
         msgOut: msgOuts,
-        msgCmd: msgCmds,
       })
     }
     return outputs

@@ -13,7 +13,7 @@ import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
-import { APP_SOUND } from '../../@/frontend/cmd'
+import { APP_SOUND } from '../../@/frontend/app-sound'
 
 type Ctx = {
   now: Posix

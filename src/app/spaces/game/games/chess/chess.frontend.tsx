@@ -2,7 +2,7 @@ import { Eff } from '~/@/eff'
 import { RemoteResult, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { IconPuzzlePiece } from '~/@/ui/icon/icon-puzzle-piece'
-import { APP_SOUND, AppFrontendCmd, sendToBackend } from '~/app/@/frontend/cmd'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import type { GameFrontend } from '~/app/spaces/game/games/@/architecture/game-frontend'
@@ -29,7 +29,6 @@ type Frontend = GameFrontend<{
   FrontendCtx: SpaceFrontendCtx
   MsgSpace: MsgSpace
   ModelSpace: ModelSpace
-  FrontendCmd: AppFrontendCmd<MsgToBackend>
 }>
 
 //
@@ -86,7 +85,6 @@ export const update: Frontend['update'] = (input) => {
                 [msg.t]: RemoteResult.Loading,
               },
             },
-            msgCmd: [sendToBackend(msg)],
           }
         }
 

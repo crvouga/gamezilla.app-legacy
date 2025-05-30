@@ -1,0 +1,18 @@
+export const APP_SOUND = {
+  tap: './sound/tap.wav',
+  alertErrorLg: './sound/alert-error-lg.wav',
+  alertErrorMd: './sound/alert-error-md.wav',
+  alertErrorSm: './sound/alert-error-sm.wav',
+  celebration: './sound/celebration.wav',
+  celebrationDecorative: './sound/celebration-decorative.wav',
+  navForward: './sound/nav-forward.wav',
+  navBackward: './sound/nav-backward.wav',
+  navForwardMin: './sound/nav-forward-min.wav',
+  navBackwardMin: './sound/nav-backward-min.wav',
+  navTransitionLeft: './sound/nav-transition-left.wav',
+  stateChangeUp: './sound/state-change-up.wav',
+  stateChangeDown: './sound/state-change-down.wav',
+  refreshFeed: './sound/refresh-feed.wav',
+  surfaceOpened: './sound/drawer-opened.wav',
+  surfaceClosed: './sound/drawer-closed.wav',
+}

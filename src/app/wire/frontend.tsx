@@ -3,13 +3,8 @@ import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { cn } from '~/@/ui/cn'
 import { ListItemButton } from '~/@/ui/list-item-button'
-import { andThen } from '~/@/update/and-then'
-import { AppFrontendCmd } from '../@/frontend/cmd'
-import { AppFrontendEvt } from '../@/frontend/evt'
-import { ShowToastCmd } from '../@/frontend/show-toast-cmd'
 import { BackendInstanceFrontend } from './backend-instance/frontend'
-import type { IFrontendTransport } from './transport/frontend'
-import type { FrontendCtx, ModelFrontend, MsgFrontend, MsgToFrontend } from './types'
+import type { FrontendCtx, ModelFrontend, MsgFrontend } from './types'
 
 //
 //
@@ -42,171 +37,20 @@ export const init = (input: { ctx: FrontendCtx; stored: Record<string, unknown> 
 //
 //
 
-type Output = {
-  model: ModelFrontend
-  msgEvt?: AppFrontendEvt[]
-  eff?: Eff<MsgFrontend>
-}
-
-export const update = <TMsgToFrontend extends Record<string, unknown>, TMsgToBackend extends Record<string, unknown>>({
-  msg,
-  msgBackend,
-  msgCmd,
-  model,
-  ctx,
-  transport,
-}: {
+export const update = (input: {
   ctx: {
     t: Translator
   }
   msg?: MsgFrontend | null
-  msgBackend?: MsgToFrontend | null
-  msgCmd?: AppFrontendCmd<TMsgToBackend> | null
   model: ModelFrontend
-  transport: IFrontendTransport<{
-    MsgToBackend: TMsgToBackend
-    MsgToFrontend: TMsgToFrontend
-  }>
-}): Output => {
-  if (!msg && !msgBackend && !msgCmd) {
-    return { model }
-  }
-
-  return andThen<ModelFrontend, Output>(
-    { model },
-    (model) => updateFromMsg({ ctx, msg, model, transport }),
-    (model) => updateFromBackend({ ctx, model, msgBackend, transport }),
-    (model) => updateFromCmd({ ctx, msgCmd, model, transport }),
-  )
-}
-
-const updateFromMsg: typeof update = ({ msg, model, transport }) => {
-  if (!msg) {
-    return { model }
-  }
-
-  switch (msg.t) {
-    case 'got-backend-instance-msg': {
-      return { model }
-    }
-
-    case 'backend-connect-error': {
-      return {
-        model: {
-          ...model,
-          state: {
-            t: 'backend-connect-error',
-            errorCount: model.state.t === 'backend-connect-error' ? model.state.errorCount + 1 : 1,
-          },
-        },
-      }
-    }
-
-    case 'backend-connected': {
-      return {
-        model: {
-          ...model,
-          state: {
-            t: 'backend-connected',
-          },
-        },
-        msgEvt: [
-          {
-            t: 'wire-evt.backend-connected',
-          },
-        ],
-      }
-    }
-
-    case 'backend-disconnected': {
-      return {
-        model: {
-          ...model,
-          state: {
-            t: msg.t,
-          },
-        },
-      }
-    }
-
-    case 'clicked-try-reconnect': {
-      return {
-        model: {
-          ...model,
-          state: {
-            t: 'backend-connecting',
-          },
-        },
-        eff: () => {
-          transport.msgCmd.pub({
-            t: 'try-reconnect',
-          })
-        },
-      }
-    }
-
-    case 'got-bad-msgs': {
-      switch (msg.reason) {
-        case 'codebase-version-mismatch': {
-          return {
-            model,
-          }
-        }
-      }
-    }
-
-    case 'sent-to-backend': {
-      return { model }
-    }
-  }
-}
-
-const updateFromBackend: typeof update = ({ ctx, model, msgBackend }) => {
-  if (!msgBackend) {
-    return { model }
-  }
-
-  switch (msgBackend.t) {
-    case 'got-backend-instance-msg': {
-      return { model }
-    }
-    case 'backend-restarted': {
-      return {
-        model,
-        msgOut: [ShowToastCmd.init(ctx.t('wire.backend-restarted'))],
-      }
-    }
-  }
-}
-
-const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
-  if (!msgCmd) {
-    return { model }
-  }
-
-  const wireCmd = msgCmd.c
-
-  switch (wireCmd.t) {
-    case 'send-to-backend': {
-      return {
-        model,
-        eff(dispatch) {
-          if (wireCmd.toBackend) {
-            transport.toBackend.pub([wireCmd.toBackend])
-            dispatch({
-              t: 'sent-to-backend',
-              toBackend: wireCmd.toBackend,
-            })
-          }
-        },
-      }
-    }
-
-    default: {
-      return {
-        model,
-      }
-    }
+  msgIn?: unknown | null
+}): {
+  model: ModelFrontend
+  msgOut?: unknown[]
+  eff?: Eff<MsgFrontend>
+} => {
+  return {
+    model: input.model,
   }
 }
 
@@ -304,13 +148,6 @@ export const ViewConnectionStatusListItem = (input: {
 //
 //
 
-export const subscriptions = <MsgToBackend, MsgToFrontend>({
-  transport,
-}: {
-  transport: IFrontendTransport<{
-    MsgToBackend: MsgToBackend
-    MsgToFrontend: MsgToFrontend
-  }>
-}): Sub<MsgFrontend> => {
-  return transport.msgEvt
+export const subscriptions = (_: {}): Sub<MsgFrontend> => {
+  return Sub.None
 }

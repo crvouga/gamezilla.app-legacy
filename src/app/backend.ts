@@ -12,27 +12,19 @@ import { SMS } from '~/@/sms'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
+import { Topic } from '~/@/topic'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
+import { AppTypes } from '.'
 import { BackendInstanceId } from './@/backend/backend-instance/backend-instance-id'
-import { BackendCmd } from './@/backend/cmd'
 import { AppBackendCtx } from './@/backend/ctx'
-import { BackendEvt } from './@/backend/evt'
 import { AuthBackend } from './auth/backend'
-import * as LangBackend from './lang/backend'
+import {LangBackend} from './lang/backend'
 import { ProfileDb } from './profile/@/user-profile/user-profile-db'
 import { ProfileBackend } from './profile/backend'
 import { SpacesBackend } from './spaces/backend'
-import {
-  BackendCtx,
-  rpcContract,
-  type MsgBackend,
-  type MsgToBackend,
-  type MsgToBackendMeta,
-  type MsgToFrontend,
-} from './types'
+import { BackendCtxModule, rpcContract, type MsgBackend } from './types'
 import { WireBackend } from './wire/backend'
-import { BackendTransport } from './wire/transport/backend'
 
 //
 //
@@ -42,7 +34,7 @@ import { BackendTransport } from './wire/transport/backend'
 //
 //
 
-const initCtx = async (): Promise<BackendCtx> => {
+const initCtx = async (): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console' })
 
   const runtime = Runtime({
@@ -80,12 +72,12 @@ const initCtx = async (): Promise<BackendCtx> => {
 
   const pubSub = await PubSubTopicBased({ t: 'noop' })
 
-  const transport = await BackendTransport<MsgToBackend, MsgToFrontend>({
-    t: 'bun-web-sockets',
-    dbConnSql,
-    httpServer: httpServer,
+  const topic = Topic.initServer({
+    t: 'web-sockets',
+    contract: AppTypes.topicContract,
+    endpoint: '/topic',
+    httpServer,
     logger,
-    pubSubTopicBased: pubSub,
     isProd: CONFIG_SHARED.IS_PROD,
   })
 
@@ -116,9 +108,9 @@ const initCtx = async (): Promise<BackendCtx> => {
     runtime,
   }
 
-  const wire = await WireBackend.initCtx({ ctx, transport })
+  const wire = await WireBackend.initCtx({ ctx })
   const profile = await ProfileBackend.initCtx({ ctx })
-  const space = await SpacesBackend.initCtx({ ctx })
+  const space = await SpacesBackend.initCtx({ ctx, topic: topic.spaces })
   const auth = await AuthBackend.initCtx({ ctx })
 
   return {
@@ -128,11 +120,12 @@ const initCtx = async (): Promise<BackendCtx> => {
     space,
     profile,
     wire,
-    transport,
+
+    topic,
   }
 }
 
-const updateCtx = (ctx: BackendCtx): BackendCtx => {
+const updateCtx = (ctx: BackendCtxModule): BackendCtxModule => {
   return {
     ...ctx,
     now: Posix.now(),
@@ -147,7 +140,7 @@ const updateCtx = (ctx: BackendCtx): BackendCtx => {
 //
 //
 
-const init = async (_input: { ctx: BackendCtx }): Promise<{}> => {
+const init = async (_input: { ctx: BackendCtxModule }): Promise<{}> => {
   return {}
 }
 
@@ -159,82 +152,43 @@ const init = async (_input: { ctx: BackendCtx }): Promise<{}> => {
 //
 //
 
-const update = async (input: { msg: MsgBackend; ctx: BackendCtx }): Promise<{}> => {
+const update = async (input: { msg: MsgBackend; ctx: BackendCtxModule }): Promise<{}> => {
   logMsg({ msg: input.msg, logger: input.ctx.logger })
 
-  const updated = await updateChild({
-    ctx: input.ctx,
-    msg: input.msg,
-    msgFrontend: input.msg.t === '→' ? { ...input.msg, ...input.msg.c } : null,
-  })
+  const updated = await updateChild({ ctx: input.ctx, msg: input.msg })
 
   await updateLoop(input.ctx, updated)
 
   return {}
 }
 
-const logMsg = ({
-  msg,
-  msgEvt,
-  msgCmd,
-  logger,
-}: {
-  logger: ILogger
-  msg?: MsgBackend | null
-  msgEvt?: BackendEvt | null
-  msgCmd?: BackendCmd<MsgToFrontend> | null
-}) => {
-  const prefix = msg ? '[msg]' : msgEvt ? '[evt]' : '[cmd]'
+const logMsg = ({ msg, msgIn, logger }: { logger: ILogger; msg?: MsgBackend | null; msgIn?: unknown | null }) => {
+  const prefix = msg ? '[msg]' : msgIn ? '[in]' : '[out]'
 
-  const obj = { ...msg, ...msgEvt, ...msgCmd }
-
-  const sentMsgType =
-    msgCmd?.c.t === 'send-to-frontend' || msgCmd?.c.t === 'send-to-user' || msgCmd?.c.t === 'broadcast'
-      ? Msg.toType(msgCmd.c.msg)
-      : null
+  const obj = { ...msg, ...(typeof msgIn === 'object' ? msgIn : null) }
 
   const log = [prefix, Msg.toType(obj)]
-
-  if (sentMsgType) {
-    log.push(`sent ${sentMsgType}`)
-  }
 
   logger.info(log.join(' '))
 }
 
 const updateLoop = async (
-  ctx: BackendCtx,
+  ctx: BackendCtxModule,
   acc: {
-    msgEvt: BackendEvt[]
-    msgCmd: BackendCmd<MsgToFrontend>[]
+    msgOut: unknown[]
   },
 ): Promise<{
-  msgEvt: BackendEvt[]
-  msgCmd: BackendCmd<MsgToFrontend>[]
+  msgOut: unknown[]
 }> => {
-  const [msgCmd, ...msgCmdRest] = acc.msgCmd
+  const [msgOut, ...msgOutRest] = acc.msgOut
 
-  if (msgCmd) {
-    const updatedCmd = await updateChild({ ctx, msgCmd })
+  if (msgOut) {
+    const updatedOut = await updateChild({ ctx, msgIn: msgOut })
 
-    logMsg({ msgCmd, logger: ctx.logger })
-
-    return updateLoop(ctx, {
-      msgCmd: Msg.batch(msgCmdRest, updatedCmd.msgCmd),
-      msgEvt: Msg.batch(acc.msgEvt, updatedCmd.msgEvt),
-    })
-  }
-
-  const [msgEvt, ...msgEvtRest] = acc.msgEvt
-
-  if (msgEvt) {
-    const updatedEvent = await updateChild({ ctx, msgEvt })
-
-    logMsg({ msgEvt, logger: ctx.logger })
+    logMsg({ msgIn: msgOut, logger: ctx.logger })
 
     return updateLoop(ctx, {
-      msgCmd: Msg.batch(msgCmdRest, updatedEvent.msgCmd),
-      msgEvt: Msg.batch(msgEvtRest, updatedEvent.msgEvt),
+      msgOut: Msg.batch(msgOutRest, updatedOut.msgOut),
     })
   }
 
@@ -242,102 +196,53 @@ const updateLoop = async (
 }
 
 const updateChild = async (input: {
-  ctx: BackendCtx
+  ctx: BackendCtxModule
   msg?: MsgBackend | null
-  msgFrontend?: (MsgToBackend & MsgToBackendMeta) | null
-  msgEvt?: BackendEvt | null
-  msgCmd?: BackendCmd<MsgToFrontend> | null
+  msgIn?: unknown | null
 }): Promise<{
-  msgEvt: BackendEvt[]
-  msgCmd: BackendCmd<MsgToFrontend>[]
+  msgOut: unknown[]
 }> => {
-  const userId = await AuthBackend.getUserIdFromSessionId(input.ctx.auth, input.msgFrontend?.sessionId)
-
   const [space, auth, wire, profile, lang] = await Promise.all([
     SpacesBackend.update({
-      deps: null,
       ctx: input.ctx.space,
-      msgCmd: null,
-      msgEvt: input.msgEvt,
-      msgFrontend: input.msgFrontend?.t === 'spaces' ? { ...input.msgFrontend, ...input.msgFrontend.c, userId } : null,
       msg: input.msg?.t === 'spaces' ? input.msg.c : null,
+      msgIn: input.msgIn,
     }),
-
     AuthBackend.update({
-      deps: null,
       ctx: input.ctx.auth,
-      msgCmd: null,
-      msgEvt: input.msgEvt,
-      msgFrontend: input.msgFrontend?.t === 'auth' ? { ...input.msgFrontend, ...input.msgFrontend.c, userId } : null,
       msg: input.msg?.t === 'auth' ? input.msg.c : null,
+      msgIn: input.msgIn,
     }),
-
     WireBackend.update({
       ctx: input.ctx.wire,
-      msgCmd: input.msgCmd?.t === 'wire' ? input.msgCmd : null,
-      msgEvt: input.msgEvt,
-      msgFrontend: input.msgFrontend?.t === 'wire' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
       msg: input.msg?.t === 'wire' ? input.msg.c : null,
+      msgIn: input.msgIn,
     }),
-
     ProfileBackend.update({
-      deps: null,
       ctx: input.ctx.profile,
-      msgCmd: null,
-      msgEvt: input.msgEvt,
-      msgFrontend: input.msgFrontend?.t === 'profile' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
       msg: input.msg?.t === 'profile' ? input.msg.c : null,
+      msgIn: input.msgIn,
     }),
-
     LangBackend.update({
-      deps: null,
       ctx: input.ctx,
-      msgCmd: null,
-      msgEvt: input.msgEvt,
-      msgFrontend: input.msgFrontend?.t === 'lang' ? { ...input.msgFrontend, ...input.msgFrontend.c } : null,
+      msgIn: input.msgIn,
       msg: input.msg?.t === 'lang' ? input.msg.c : null,
     }),
   ])
 
   return {
-    msgCmd: Msg.batch<BackendCmd<MsgToFrontend>>(
-      BackendCmd.tag('spaces', space.msgCmd),
-      BackendCmd.tag('auth', auth.msgCmd),
-      BackendCmd.tag('wire', wire.msgCmd),
-      BackendCmd.tag('profile', profile.msgCmd),
-      BackendCmd.tag('lang', lang.msgCmd),
-    ),
-    msgEvt: Msg.batch<BackendEvt>(
-      //
-      auth.msgEvt,
-      wire.msgEvt,
-      profile.msgEvt,
-      lang.msgEvt,
-    ),
+    msgOut: Msg.batch(space.msgOut, auth.msgOut, wire.msgOut, profile.msgOut, lang.msgOut),
   }
 }
 
-//
-//
-//
-// Subscriptions
-//
-//
-//
-
-const subscriptions = async (input: { ctx: BackendCtx }): Promise<Sub<MsgBackend>> => {
-  return Sub.batch([
-    Sub.tag('spaces', await SpacesBackend.subscriptions({ ctx: input.ctx.space, deps: null })),
+const subscriptions = async (input: { ctx: BackendCtxModule }): Promise<Sub<MsgBackend>> => {
+  return Sub.batch<MsgBackend>([
+    Sub.tag('spaces', await SpacesBackend.subscriptions({ ctx: input.ctx.space })),
     Sub.tag('wire', await WireBackend.subscriptions({ ctx: input.ctx.wire })),
-    Sub.flat(
-      Sub.map(input.ctx.transport.fromFrontend, ({ sessionId, clientId, clientSessionId, msgs }) =>
-        msgs.map((c): MsgBackend => ({ t: '→', sessionId, clientId, clientSessionId, c })),
-      ),
-    ),
   ])
 }
 
-const rpc = (input: { ctx: BackendCtx }) => {
+const rpc = (input: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
     wire: WireBackend.rpc({ ctx: input.ctx.wire }),
     auth: AuthBackend.rpc({ ctx: input.ctx.auth }),

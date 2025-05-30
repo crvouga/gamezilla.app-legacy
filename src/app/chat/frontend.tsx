@@ -3,7 +3,6 @@ import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
 import type { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCtx } from '../@/frontend/ctx'
-import { AppFrontendEvt } from '../@/frontend/evt'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './types'
 
 //
@@ -141,25 +140,6 @@ export const updateFromBackend = ({
   eff?: Eff<Msg>
 } => {
   return { model }
-}
-
-export const updateFromEvent = ({
-  msg,
-  model,
-}: {
-  msg: AppFrontendEvt
-  model: ModelFrontend
-}): {
-  model: ModelFrontend
-  eff?: Eff<Msg>
-} => {
-  switch (msg.t) {
-    default: {
-      return {
-        model,
-      }
-    }
-  }
 }
 
 //

@@ -1,13 +1,10 @@
 import { WithEventId } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
 import { type Sub } from '~/@/sub'
-import type { ClientId } from '~/@/wire/client-id'
-import type { SessionId } from '~/@/wire/session-id'
 import type { BackendEvt } from '~/app/@/backend/evt'
-import type { UserId } from '~/app/@/data/user-id'
 import type { Space } from '../@/space/space'
 import { MsgSpace } from '../core/space-msg/space-msg'
-import type { MsgBackend, MsgToBackend, SpaceBackendCtxModule } from '../types'
+import type { MsgBackend, SpaceBackendCtxModule } from '../types'
 
 type Ctx = SpaceBackendCtxModule & {
   space?: Space
@@ -16,13 +13,6 @@ type Ctx = SpaceBackendCtxModule & {
 export type Input = {
   ctx: Ctx
   msg?: MsgBackend | null
-  msgFrontend?:
-    | (MsgToBackend & {
-        clientId: ClientId
-        sessionId: SessionId
-        userId?: UserId | null
-      })
-    | null
   msgEvt?: BackendEvt | null
   msgSpace?: WithEventId<MsgSpace> | null
 }
