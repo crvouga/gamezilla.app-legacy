@@ -3,14 +3,14 @@ import type { AppBackendModule } from '../@/architecture/app-backend'
 import type { AppFrontendModule } from '../@/architecture/app-frontend'
 import { BackendCmd } from '../@/backend/cmd'
 import { BackendEvt } from '../@/backend/evt'
-import { BackendCtx } from './@/backend/ctx'
+import { AuthBackendCtx } from './@/backend/ctx'
 import { AuthFrontendCtx } from './@/frontend/ctx'
 import { CurrentUserTypes } from './current-user'
 import type { ContinueAsGuest } from './login-as-guest'
 import { LoginWithSMSTypes } from './login-with-sms'
 import type { LogoutTypes } from './logout'
 
-export type { BackendCtx }
+export type { AuthBackendCtx as BackendCtx }
 
 //
 //
@@ -57,7 +57,7 @@ export type FrontendModule = AppFrontendModule<{
 }>
 
 export type BackendModule = AppBackendModule<{
-  Ctx: BackendCtx
+  Ctx: AuthBackendCtx
   MsgCmdIn: null
   MsgEvtIn: BackendEvt
   Model: null

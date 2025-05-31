@@ -1,4 +1,3 @@
-import { ProgramImpure } from '~/@/program/program-impure'
 import { AppTypes } from '~/app'
 import { AppBackend } from '~/app/backend'
 import { CONFIG_BACKEND } from '~/config/backend'
@@ -29,15 +28,6 @@ const main = async () => {
 
   runSaga(myIO, function* () {
     yield fork(AppBackend.saga, ctx)
-  })
-
-  await ProgramImpure.run({
-    initCtx: async () => ctx,
-    updateCtx: AppBackend.updateCtx,
-    init: AppBackend.init,
-    update: AppBackend.update,
-    subscriptions: AppBackend.subscriptions,
-    crash: (input) => console.error('program crashed!', input.error),
   })
 
   RPC.registerRespond({

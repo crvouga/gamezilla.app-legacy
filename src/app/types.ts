@@ -57,7 +57,7 @@ export const topicContract = Topic.initContract({
 export type BackendCtxModule = AppBackendCtxBase & {
   wire: WireTypes.BackendCtxModule
   profile: ProfileBackendCtx
-  space: SpacesTypes.SpaceBackendCtxModule
+  space: SpacesTypes.BackendCtxModule
   auth: AuthTypes.BackendCtx
   httpServer: IHttpServer
   topic: Topic.Client<typeof topicContract>

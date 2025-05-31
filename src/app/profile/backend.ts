@@ -1,8 +1,6 @@
-import { AppBackendModule } from '../@/architecture/app-backend'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { ProfileBackendCtx } from './@/backend/ctx'
 import { ProfileDb } from './@/user-profile/user-profile-db/impl'
-import { BackendModule } from './types'
 
 const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<ProfileBackendCtx> => {
   return {
@@ -15,15 +13,6 @@ const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<ProfileBacken
   }
 }
 
-const update: BackendModule['update'] = async (input) => {
-  return AppBackendModule.andThen({}, () => updateFromMsg(input))
-}
-
-const updateFromMsg: BackendModule['update'] = async (_input) => {
-  return {}
-}
-
 export const ProfileBackend = {
   initCtx,
-  update,
 }

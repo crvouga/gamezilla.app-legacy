@@ -125,6 +125,10 @@ export type ModelSpace = s.Infer<typeof ModelSpace>
 //
 //
 
+export type FrontendCtxModule = SpaceFrontendCtx
+
+export type BackendCtxModule = FlowBackendCtx
+
 export type FrontendModule = GameFrontendModule<{
   Model: ModelFrontend
   Msg: MsgFrontend

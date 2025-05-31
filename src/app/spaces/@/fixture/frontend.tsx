@@ -55,7 +55,7 @@ export const SpaceFrontendFixture = async () => {
     },
   })
 
-  const ctx: SpacesTypes.SpaceFrontendCtxModule = {
+  const ctx: SpacesTypes.FrontendCtxModule = {
     ...f.ctx,
     topic,
     rpc,
@@ -164,7 +164,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
   })
 
   const currentUserProfile = await UserProfile.random({ id: currentUser.userId })
-  const ctx: SpacesTypes.SpaceFrontendCtxModule = {
+  const ctx: SpacesTypes.FrontendCtxModule = {
     ...f.ctx,
     parentScreen: null,
     currentScreen: {

@@ -4,10 +4,10 @@ import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
 import { MsgSpace } from '../core/space-msg/space-msg'
-import type { ModelFrontend, MsgFrontend, SpaceFrontendCtxModule } from '../types'
+import type { ModelFrontend, MsgFrontend, FrontendCtxModule } from '../types'
 
 export type Input = {
-  ctx: SpaceFrontendCtxModule
+  ctx: FrontendCtxModule
   model: ModelFrontend
   msg?: MsgFrontend | null
   msgIn?: unknown | null
@@ -22,10 +22,10 @@ export type Output = {
 }
 
 export type SpaceFrontendModule = {
-  init: (input: { ctx: SpaceFrontendCtxModule; model: ModelFrontend }) => Output
+  init: (input: { ctx: FrontendCtxModule; model: ModelFrontend }) => Output
   update: (input: Input) => Output
-  subscriptions: (input: { ctx: SpaceFrontendCtxModule; model: ModelFrontend }) => Sub<MsgFrontend>
-  View: (input: { ctx: SpaceFrontendCtxModule; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => VDom
+  subscriptions: (input: { ctx: FrontendCtxModule; model: ModelFrontend }) => Sub<MsgFrontend>
+  View: (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => VDom
 }
 
 const andThen = (acc: Output, ...updates: ((model: ModelFrontend) => Output)[]): Output => {

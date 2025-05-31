@@ -1,10 +1,10 @@
 import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Space } from '../core/space'
-import { SpaceBackendCtxModule } from '../types'
+import { BackendCtxModule } from '../types'
 import { rpcContract } from './types'
 
-const rpc = (config: { ctx: SpaceBackendCtxModule }) => {
+const rpc = (config: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
     async listSpaces(_input, _reqCtx) {
       const spaces = await config.ctx.spacesCore.list({

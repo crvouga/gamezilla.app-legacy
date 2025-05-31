@@ -113,9 +113,12 @@ const subscriptions: BackendModule['subscriptions'] = async (input) => {
   }
 }
 
+const saga = function* () {}
+
 export const GamesBackend = {
   init,
   update,
   subscriptions,
   initCtx,
+  saga,
 }

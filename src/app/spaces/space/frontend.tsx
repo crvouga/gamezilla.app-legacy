@@ -8,11 +8,11 @@ import { PeopleActionFrontend } from '../frontend/people-action/frontend'
 import { GameFrontend } from '../game/frontend'
 import { JoinSpaceFrontend } from '../join-space/frontend'
 import { LeaveSpaceFrontend } from '../leave-space/frontend'
-import type { ModelFrontend, MsgFrontend, SpaceFrontendCtxModule } from '../types'
+import type { ModelFrontend, MsgFrontend, FrontendCtxModule } from '../types'
 
 const View = (input: {
   model: ModelFrontend
-  ctx: SpaceFrontendCtxModule
+  ctx: FrontendCtxModule
   dispatch: (m: MsgFrontend) => void
   spaceId: SpaceId
 }) => {
@@ -32,7 +32,7 @@ const View = (input: {
 
       if (!currentUser) return null
 
-      const spaceCtx: SpaceFrontendCtx & SpaceFrontendCtxModule = {
+      const spaceCtx: SpaceFrontendCtx & FrontendCtxModule = {
         ...input.ctx,
         currentUserId: currentUser.userId,
         currentUserRole: currentUser.role,
@@ -52,7 +52,7 @@ const View = (input: {
 
       const isHost = inputNew.ctx.space.hostId === inputNew.ctx.currentUser.userId
 
-      const spaceCtxFinal: SpaceFrontendCtxModule & SpaceFrontendCtx = {
+      const spaceCtxFinal: FrontendCtxModule & SpaceFrontendCtx = {
         ...spaceCtx,
         topic: input.ctx.topic,
         rpc: input.ctx.rpc,
@@ -82,7 +82,7 @@ const View = (input: {
   }
 }
 
-const ViewSpaceNotFound = (input: { ctx: SpaceFrontendCtxModule; dispatch: (m: MsgFrontend) => void }) => {
+const ViewSpaceNotFound = (input: { ctx: FrontendCtxModule; dispatch: (m: MsgFrontend) => void }) => {
   return (
     <ScreenTitleButton
       title={input.ctx.t('spaces.space-not-found')}

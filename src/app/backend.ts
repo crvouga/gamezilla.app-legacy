@@ -3,14 +3,11 @@ import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb } from '~/@/key-value-db'
 import { Logger } from '~/@/logger'
-import { ILogger } from '~/@/logger/interface'
-import { Msg } from '~/@/msg/msg'
 import { sleep } from '~/@/promise/sleep'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
 import { SMS } from '~/@/sms'
-import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
@@ -20,20 +17,11 @@ import { AppTypes } from '.'
 import { BackendInstanceId } from './@/backend/backend-instance/backend-instance-id'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { AuthBackend } from './auth/backend'
-import { LangBackend } from './lang/backend'
 import { ProfileDb } from './profile/@/user-profile/user-profile-db'
 import { ProfileBackend } from './profile/backend'
 import { SpacesBackend } from './spaces/backend'
-import { BackendCtxModule, rpcContract, type MsgBackend } from './types'
+import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
-
-//
-//
-//
-//
-//
-//
-//
 
 const initCtx = async (): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console' })
@@ -78,7 +66,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     contract: AppTypes.topicContract,
     endpoint: '/topic',
     httpServer,
-    logger,
+    logger: Logger({ t: 'noop' }),
     isProd: CONFIG_SHARED.IS_PROD,
   })
 
@@ -125,115 +113,6 @@ const initCtx = async (): Promise<BackendCtxModule> => {
   }
 }
 
-const updateCtx = (ctx: BackendCtxModule): BackendCtxModule => {
-  return {
-    ...ctx,
-    now: Posix.now(),
-  }
-}
-
-//
-//
-//
-//
-//
-//
-//
-
-const init = async (_input: { ctx: BackendCtxModule }): Promise<{}> => {
-  return {}
-}
-
-//
-//
-//
-//
-//
-//
-//
-
-const update = async (input: { msg: MsgBackend; ctx: BackendCtxModule }): Promise<{}> => {
-  logMsg({ msg: input.msg, logger: input.ctx.logger })
-
-  const updated = await updateChild({ ctx: input.ctx, msg: input.msg })
-
-  await updateLoop(input.ctx, updated)
-
-  return {}
-}
-
-const logMsg = ({ msg, msgIn, logger }: { logger: ILogger; msg?: MsgBackend | null; msgIn?: unknown | null }) => {
-  const prefix = msg ? '[msg]' : msgIn ? '[in]' : '[out]'
-
-  const obj = { ...msg, ...(typeof msgIn === 'object' ? msgIn : null) }
-
-  const log = [prefix, Msg.toType(obj)]
-
-  logger.info(log.join(' '))
-}
-
-const updateLoop = async (
-  ctx: BackendCtxModule,
-  acc: {
-    msgOut: unknown[]
-  },
-): Promise<{
-  msgOut: unknown[]
-}> => {
-  const [msgOut, ...msgOutRest] = acc.msgOut
-
-  if (msgOut) {
-    const updatedOut = await updateChild({ ctx, msgIn: msgOut })
-
-    logMsg({ msgIn: msgOut, logger: ctx.logger })
-
-    return updateLoop(ctx, {
-      msgOut: Msg.batch(msgOutRest, updatedOut.msgOut),
-    })
-  }
-
-  return acc
-}
-
-const updateChild = async (input: {
-  ctx: BackendCtxModule
-  msg?: MsgBackend | null
-  msgIn?: unknown | null
-}): Promise<{
-  msgOut: unknown[]
-}> => {
-  const [space, auth, profile, lang] = await Promise.all([
-    SpacesBackend.update({
-      ctx: input.ctx.space,
-      msg: input.msg?.t === 'spaces' ? input.msg.c : null,
-      msgIn: input.msgIn,
-    }),
-    AuthBackend.update({
-      ctx: input.ctx.auth,
-      msg: input.msg?.t === 'auth' ? input.msg.c : null,
-      msgIn: input.msgIn,
-    }),
-    ProfileBackend.update({
-      ctx: input.ctx.profile,
-      msg: input.msg?.t === 'profile' ? input.msg.c : null,
-      msgIn: input.msgIn,
-    }),
-    LangBackend.update({
-      ctx: input.ctx,
-      msgIn: input.msgIn,
-      msg: input.msg?.t === 'lang' ? input.msg.c : null,
-    }),
-  ])
-
-  return {
-    msgOut: Msg.batch(space.msgOut, auth.msgOut, profile.msgOut, lang.msgOut),
-  }
-}
-
-const subscriptions = async (input: { ctx: BackendCtxModule }): Promise<Sub<MsgBackend>> => {
-  return Sub.batch<MsgBackend>([Sub.tag('spaces', await SpacesBackend.subscriptions({ ctx: input.ctx.space }))])
-}
-
 const rpc = (ctx: BackendCtxModule) => {
   return RPC.initServer(rpcContract, {
     wire: WireBackend.rpc(ctx.wire),
@@ -244,14 +123,13 @@ const rpc = (ctx: BackendCtxModule) => {
 
 const saga = function* (ctx: BackendCtxModule) {
   yield fork(WireBackend.saga, ctx.wire)
+  // yield fork(AuthBackend.saga, ctx.auth)
+  yield fork(SpacesBackend.saga, ctx.space)
+  // yield fork(ProfileBackend.saga, ctx.profile)
 }
 
 export const AppBackend = {
   initCtx,
-  updateCtx,
-  init,
-  update,
-  subscriptions,
   rpc,
   saga,
 }

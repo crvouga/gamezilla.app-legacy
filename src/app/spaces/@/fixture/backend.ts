@@ -11,11 +11,10 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { SpacesTypes } from '../..'
-import { SpacesBackend } from '../../backend'
 import { SpacesCoreAsync } from '../../core/core-async'
 import { Space } from '../../core/space'
 import { GamesBackend } from '../../game/games/backend'
-import { SpaceBackendCtxModule } from '../../types'
+import { BackendCtxModule } from '../../types'
 import { SpaceBackendCtx } from '../backend/ctx'
 
 export const FixtureSpaceBackend = async () => {
@@ -68,7 +67,7 @@ export const FixtureSpaceBackend = async () => {
     logger: f.ctx.logger,
   })
 
-  const backendCtx: SpaceBackendCtxModule = {
+  const backendCtx: BackendCtxModule = {
     ...f.ctx,
     spacesCore: await SpacesCoreAsync({
       t: 'key-value-db',
@@ -88,32 +87,12 @@ export const FixtureSpaceBackend = async () => {
     }),
   }
 
-  type Input = Partial<Parameters<typeof SpacesBackend.update>[0]>
-  type Output = Awaited<ReturnType<typeof SpacesBackend.update>>
-
-  const updates = async (inputs: Input[]) => {
-    const outputs: Output[] = []
-    for (const input of inputs) {
-      const output = await SpacesBackend.update({
-        ...input,
-        ctx: input.ctx ?? backendCtx,
-      })
-      outputs.push(output)
-    }
-    return outputs
-  }
-  const update = async (inputs: Input[]): Promise<Output> => {
-    const outputs = await updates(inputs)
-    return outputs[outputs.length - 1] ?? {}
-  }
-
   return {
     ...f,
     ctx,
     backendCtx,
     frontendA,
     frontendB,
-    update,
   }
 }
 

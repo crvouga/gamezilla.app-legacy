@@ -10,7 +10,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { Username } from '~/app/@/data/username'
 import { Translator } from '~/app/@/frontend/translator'
-import { BackendCtx } from '../@/backend/ctx'
+import { AuthBackendCtx } from '../@/backend/ctx'
 import { SendCodeInput, SendCodeOutput, VerifyCodeInput } from '../@/backend/verify-sms'
 import { SendCodeProblem } from '../@/backend/verify-sms/send-code-problem'
 import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
@@ -18,7 +18,7 @@ import { UserSession } from '../@/user-session/user-session'
 import { UserSessionId } from '../@/user-session/user-session-id'
 import { rpcContract, VerifyCodeOutput } from './types'
 
-const rpc = (config: { ctx: BackendCtx }) => {
+const rpc = (config: { ctx: AuthBackendCtx }) => {
   return RPC.initServer(rpcContract, {
     async sendCode(input) {
       const sent = await sendCode({ ...input, ctx: config.ctx })
@@ -39,7 +39,7 @@ const rpc = (config: { ctx: BackendCtx }) => {
 
 const sendCode = async (
   input: SendCodeInput & {
-    ctx: BackendCtx
+    ctx: AuthBackendCtx
   },
 ): Promise<SendCodeOutput> => {
   input.ctx.logger.info(`Sending code to ${PhoneNumber.toString(input.phoneNumber)}`)
@@ -65,7 +65,7 @@ const sendCode = async (
 const verifyCode = async (
   input: VerifyCodeInput & {
     sessionId: SessionId
-    ctx: BackendCtx
+    ctx: AuthBackendCtx
     clientSessionId: ClientSessionId
   },
 ): Promise<VerifyCodeOutput> => {

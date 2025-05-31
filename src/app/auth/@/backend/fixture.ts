@@ -1,9 +1,9 @@
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import { BackendCtx } from './ctx'
+import { AuthBackendCtx } from './ctx'
 
 export const FixtureAuthBackend = async (...params: Parameters<typeof FixtureAppBackend>) => {
   const f = await FixtureAppBackend(...params)
-  const ctx = await BackendCtx.initUnitTest({
+  const ctx = await AuthBackendCtx.initUnitTest({
     ctx: f.ctx,
   })
 

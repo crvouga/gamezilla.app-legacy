@@ -59,26 +59,26 @@ export const rpcContract = RPC.initContract({
 
 export type MsgBackend = SyncTypes.MsgBackend
 
-export type SpaceFrontendCtxModule = AppFrontendCtxBase & {
+export type FrontendCtxModule = AppFrontendCtxBase & {
   topic: Topic.Client<typeof topicContract>
   rpc: RPC.Client<typeof rpcContract>
   space?: Space | null
 }
 
-export type SpaceBackendCtxModule = AppBackendCtxBase & {
+export type BackendCtxModule = AppBackendCtxBase & {
   spacesCore: ISpacesCoreAsync
   games: GameTypes.GamesBackendCtx
   topic: Topic.Client<typeof topicContract>
 }
 
 export type FrontendModule = AppFrontendModule<{
-  Ctx: SpaceFrontendCtxModule
+  Ctx: FrontendCtxModule
   Model: ModelFrontend
   Msg: MsgFrontend
 }>
 
 export type BackendModule = AppBackendModule<{
-  Ctx: SpaceBackendCtxModule
+  Ctx: BackendCtxModule
   MsgEvtIn: BackendEvt
   Msg: MsgBackend
 }>

@@ -65,7 +65,7 @@ const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: Posix) =
   const sub = intervals.get(intervalId)
 
   if (sub) {
-    return Sub.map(sub, () => f(Posix.now()))
+    return Sub.map(PubSub.toSub(sub), () => f(Posix.now()))
   }
 
   const subNew = PubSub.create<Posix>()
@@ -76,17 +76,7 @@ const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: Posix) =
     onTimeout(intervalId, timeSpan)
   }, TimeSpan.toMilliseconds(timeSpan))
 
-  return {
-    ...subNew,
-    sub(subscriber) {
-      const unsub = subNew.sub((msg) => {
-        subscriber(f(msg))
-      })
-      return () => {
-        unsub()
-      }
-    },
-  }
+  return Sub.map(PubSub.toSub(subNew), f)
 }
 
 export const Time = {

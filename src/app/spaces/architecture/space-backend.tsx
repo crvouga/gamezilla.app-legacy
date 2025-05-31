@@ -4,9 +4,9 @@ import { type Sub } from '~/@/sub'
 import type { BackendEvt } from '~/app/@/backend/evt'
 import type { Space } from '../@/space/space'
 import { MsgSpace } from '../core/space-msg/space-msg'
-import type { MsgBackend, SpaceBackendCtxModule } from '../types'
+import type { MsgBackend, BackendCtxModule } from '../types'
 
-type Ctx = SpaceBackendCtxModule & {
+type Ctx = BackendCtxModule & {
   space?: Space
 }
 

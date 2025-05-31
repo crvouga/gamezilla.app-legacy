@@ -5,14 +5,14 @@ import { IUserSessionDb, UserSessionDb } from '../user-session/user-session-db'
 import { IVerifySMS } from './verify-sms'
 import { VerifySMSFactory } from './verify-sms/impl/factory'
 
-export type BackendCtx = AppBackendCtxBase & {
+export type AuthBackendCtx = AppBackendCtxBase & {
   userAccountDb: IUserAccountDb
   userSessionDb: IUserSessionDb
   verifySMS: IVerifySMS
   guestSessionMappingDb: IGuestSessionMappingDb
 }
 
-const init = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtx> => {
+const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> => {
   const userAccountDb = UserAccountDb({
     t: 'sql',
     dbConnSql: input.ctx.dbConnSql,
@@ -46,7 +46,7 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtx> => {
   }
 }
 
-const initUnitTest = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtx> => {
+const initUnitTest = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> => {
   const userAccountDb = UserAccountDb({
     t: 'in-memory',
     async simulateLatency() {},
@@ -74,7 +74,7 @@ const initUnitTest = async (input: { ctx: AppBackendCtxBase }): Promise<BackendC
   }
 }
 
-export const BackendCtx = {
+export const AuthBackendCtx = {
   init,
   initUnitTest,
 }
