@@ -6,9 +6,8 @@ import { Topic } from '~/@/topic'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
+import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-
-import { AppBackendCtx } from '~/app/@/backend/ctx'
 import { PingId } from './ping-id'
 
 export type PingItem = {
@@ -70,8 +69,8 @@ export type FrontendCtxModule = AppFrontendCtxBase & {
   topic: Topic.Client<typeof topicContract>
 }
 
-export type BackendCtxModule = AppBackendCtx & {
-  topic: Topic.Server<typeof topicContract>
+export type BackendCtxModule = AppBackendCtxBase & {
+  topic: Topic.Client<typeof topicContract>
 }
 
 export type FrontendModule = AppFrontendModule<{

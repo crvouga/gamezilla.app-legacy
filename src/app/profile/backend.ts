@@ -1,10 +1,10 @@
 import { AppBackendModule } from '../@/architecture/app-backend'
-import { AppBackendCtx } from '../@/backend/ctx'
+import { AppBackendCtxBase } from '../@/backend/ctx'
 import { ProfileBackendCtx } from './@/backend/ctx'
 import { ProfileDb } from './@/user-profile/user-profile-db/impl'
 import { BackendModule } from './types'
 
-const initCtx = async (input: { ctx: AppBackendCtx }): Promise<ProfileBackendCtx> => {
+const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<ProfileBackendCtx> => {
   return {
     ...input.ctx,
     profileDb: ProfileDb({

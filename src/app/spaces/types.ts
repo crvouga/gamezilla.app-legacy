@@ -2,7 +2,7 @@ import { RPC } from '~/@/rpc'
 import { Topic } from '~/@/topic'
 import type { AppBackendModule } from '~/app/@/architecture/app-backend'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { AppBackendCtx } from '~/app/@/backend/ctx'
+import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { BackendEvt } from '~/app/@/backend/evt'
 import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
@@ -65,10 +65,10 @@ export type SpaceFrontendCtxModule = AppFrontendCtxBase & {
   space?: Space | null
 }
 
-export type SpaceBackendCtxModule = AppBackendCtx & {
+export type SpaceBackendCtxModule = AppBackendCtxBase & {
   spacesCore: ISpacesCoreAsync
   games: GameTypes.GamesBackendCtx
-  topic: Topic.Server<typeof topicContract>
+  topic: Topic.Client<typeof topicContract>
 }
 
 export type FrontendModule = AppFrontendModule<{

@@ -43,6 +43,7 @@ export const ToClientMsgMany = s.or(
     topicName: s.arr(s.str()),
     topicParams: s.unknown,
     msg: s.str(),
+    
   }),
 )
 

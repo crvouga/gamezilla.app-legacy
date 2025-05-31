@@ -1,14 +1,15 @@
-import { Server, ServerWebSocket } from 'bun'
+import { ServerWebSocket } from 'bun'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { ILogger, Logger } from '~/@/logger'
 import { isErr } from '~/@/result'
+import { s } from '~/@/schema'
 import { PubSub, Sub } from '~/@/sub'
 import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
-import { Client, Contract } from '../types'
+import { Client, Contract, MsgMeta } from '../types'
 import { ToClientMsgMany, ToServerMsg, toTopicString } from './shared'
 
 export type BackendWebSocketData = {
@@ -27,17 +28,25 @@ export const initServer = <T extends Contract<any>>(config: {
 }): Client<T> => {
   const logger = Logger.prefix('server', config.logger)
 
-  let bunServer: Server
+  let bunServer: Bun.Server
 
   const subByTopic = new Map<string, PubSub<unknown>>()
 
-  const publish = (topicString: string, msg: ToClientMsgMany) => {
+  const publish = (topicString: string, msg: ToClientMsgMany, ws: ServerWebSocket<BackendWebSocketData> | null) => {
     const encoded = JSON.stringify(msg)
     logger.debug(`websocket message published topic=${topicString}`)
     bunServer.publish(topicString, encoded)
     const existingSub = subByTopic.get(topicString)
     if (existingSub) {
-      const json = JSON.parse(msg.msg)
+      let json = JSON.parse(msg.msg)
+      if (ws) {
+        json = {
+          ...json,
+          clientId: ws.data.clientId,
+          sessionId: ws.data.sessionId,
+          clientSessionId: ws.data.clientSessionId,
+        }
+      }
       existingSub.pub(json)
     }
   }
@@ -77,12 +86,16 @@ export const initServer = <T extends Contract<any>>(config: {
         }
         case 'publish': {
           const topicString = toTopicString(toServerMsg.value.topicName, toServerMsg.value.topicParams)
-          publish(topicString, {
-            t: 'published',
-            topicName: toServerMsg.value.topicName,
-            topicParams: toServerMsg.value.topicParams,
-            msg: toServerMsg.value.msg,
-          })
+          publish(
+            topicString,
+            {
+              t: 'published',
+              topicName: toServerMsg.value.topicName,
+              topicParams: toServerMsg.value.topicParams,
+              msg: toServerMsg.value.msg,
+            },
+            ws,
+          )
           logger.debug(`websocket message published topic=${topicString}`)
           return
         }
@@ -103,7 +116,7 @@ export const initServer = <T extends Contract<any>>(config: {
   })
 
   config.httpServer.registerRespond((request, server) => {
-    bunServer = server as Server
+    bunServer = server as Bun.Server
     const url = new URL(request.url)
 
     if (url.pathname === config.endpoint) {
@@ -151,14 +164,18 @@ export const initServer = <T extends Contract<any>>(config: {
 
       if ('params' in topicConfig && 'msg' in topicConfig) {
         clientProxy[topicNamePart] = {
-          publish: (topicParams: unknown, msg: unknown) => {
+          publish: (topicParams: s.Infer<typeof topicConfig.params>, msg: s.Infer<typeof topicConfig.msg>) => {
             const topicString = toTopicString(topicName, topicParams)
-            publish(topicString, {
-              t: 'published',
-              topicName,
-              topicParams,
-              msg: JSON.stringify(msg),
-            })
+            publish(
+              topicString,
+              {
+                t: 'published',
+                topicName,
+                topicParams,
+                msg: JSON.stringify(msg),
+              },
+              null,
+            )
             const existingSub = subByTopic.get(topicString)
             if (!existingSub) {
               logger.debug(`no subscribers for topic=${topicString}`)
@@ -167,30 +184,35 @@ export const initServer = <T extends Contract<any>>(config: {
             logger.debug(`publishing message to topic=${topicString}`)
             existingSub.pub(msg)
           },
-          subscribe: (topicParams: unknown): Sub<any> => {
+          subscribe: <TMsg>(
+            topicParams: s.Infer<typeof topicConfig.params>,
+            mapper: (msg: s.Infer<typeof topicConfig.msg> & MsgMeta) => TMsg,
+          ): Sub<TMsg> => {
             const topicString = toTopicString(topicName, topicParams)
 
             const existingSub = subByTopic.get(topicString)
 
             if (existingSub) {
               logger.debug(`reusing existing subscription for topic=${topicString}`)
-              return existingSub
+              return existingSub as Sub<TMsg>
             }
 
             logger.debug(`subscribing to topic=${topicString}`)
-            const pubSub = PubSub.create()
-            subByTopic.set(topicString, pubSub)
-
-            return {
-              ...pubSub,
+            const pubSubInitial: PubSub<any> = PubSub.create()
+            const pubSub: PubSub<any> = {
+              ...pubSubInitial,
               sub(subscriber) {
-                const unsub = pubSub.sub(subscriber)
+                const unsub = pubSubInitial.sub((msg) => subscriber(mapper(msg)))
                 return () => {
                   unsub()
                   logger.debug(`unsubscribing from topic=${topicString}`)
                 }
               },
             }
+
+            subByTopic.set(topicString, pubSub)
+
+            return pubSub as Sub<TMsg>
           },
         }
       } else {

@@ -117,12 +117,28 @@ const latest = <TKey extends string | number, TValue>(model: CappedOrderedDict<T
   return model._valuesByKey[model._orderNewestFirst[0]!] ?? null
 }
 
+const set = <TKey extends string | number, TValue>(
+  model: CappedOrderedDict<TKey, TValue>,
+  key: TKey,
+  value: TValue,
+): CappedOrderedDict<TKey, TValue> => {
+  const valuesByKeyNew = { ...model._valuesByKey }
+  valuesByKeyNew[key] = value
+
+  return {
+    _maxSize: model._maxSize,
+    _orderNewestFirst: model._orderNewestFirst,
+    _valuesByKey: valuesByKeyNew,
+  }
+}
+
 export const CappedOrderedDict = {
   add,
   remove,
   init,
   get,
   mergeLeft,
+  set,
   valuesNewestFirst,
   schema,
   latest,

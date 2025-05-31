@@ -11,7 +11,7 @@ import { IUserProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
 import { Env } from '../data/env'
 import type { BackendInstanceId } from './backend-instance/backend-instance-id'
 
-export type AppBackendCtx = {
+export type AppBackendCtxBase = {
   dbConnSql: IDbConnSql
   keyValueDb: IKeyValueDb
   now: Posix

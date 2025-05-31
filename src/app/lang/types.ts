@@ -2,7 +2,7 @@ import type { LanguageCodeISO_639_1 } from '~/@/l18n/lang-code-iso-639-1/lang-co
 import { Posix } from '~/@/time/posix'
 import { AppBackendModule } from '../@/architecture/app-backend'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
-import { AppBackendCtx } from '../@/backend/ctx'
+import { AppBackendCtxBase } from '../@/backend/ctx'
 import { AnonymousFrontendCtx } from '../@/frontend/ctx'
 import type { TranslatorMsg } from '../@/frontend/translator'
 
@@ -30,7 +30,7 @@ export type MsgFrontend =
   | { t: 'choose-lang.clicked-lang'; lang: LanguageCodeISO_639_1 }
 
 export type BackendModule = AppBackendModule<{
-  Ctx: AppBackendCtx
+  Ctx: AppBackendCtxBase
   Msg: MsgBackend
 }>
 

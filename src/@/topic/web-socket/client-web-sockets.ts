@@ -126,7 +126,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
             logger.debug(`publishing to topic=${topicName.join('.')}`)
             send(toServerMsg)
           },
-          subscribe: (topicParams: unknown): Sub<any> => {
+          subscribe: (topicParams: unknown, mapper: (msg: any) => any): Sub<any> => {
             const topicString = toTopicString(topicName, topicParams)
 
             syncSubscriptionsWithServer('subscribe', topicName, topicParams)
@@ -144,7 +144,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
             const subNew: PubSub<any> = {
               ...sub,
               sub(subscriber) {
-                const unsub = sub.sub(subscriber)
+                const unsub = sub.sub((msg) => subscriber(mapper(msg)))
                 return () => {
                   unsub()
                   syncSubscriptionsWithServer('unsubscribe', topicName, topicParams)

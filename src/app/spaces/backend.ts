@@ -4,7 +4,7 @@ import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
-import { AppBackendCtx } from '../@/backend/ctx'
+import { AppBackendCtxBase } from '../@/backend/ctx'
 import { Space } from './@/space/space'
 import { type Input, type Output, SpaceBackendModule } from './architecture/space-backend'
 import { SpacesCoreAsync } from './core/core-async'
@@ -15,7 +15,7 @@ import { SyncBackend } from './sync/backend'
 import { type BackendModule, MsgBackend, rpcContract, type SpaceBackendCtxModule, topicContract } from './types'
 
 const initCtx = async (input: {
-  ctx: AppBackendCtx
+  ctx: AppBackendCtxBase
   topic: Topic.Client<typeof topicContract>
 }): Promise<SpaceBackendCtxModule> => {
   return {

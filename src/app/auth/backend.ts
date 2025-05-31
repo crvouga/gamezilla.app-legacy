@@ -3,13 +3,13 @@ import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import type { SessionId } from '~/@/wire/session-id'
 import type { UserId } from '~/app/@/data/user-id'
-import { AppBackendCtx } from '../@/backend/ctx'
+import { AppBackendCtxBase } from '../@/backend/ctx'
 import { BackendCtx } from './@/backend/ctx'
 import { LoginWithSMSBackend } from './login-with-sms/backend'
 import { CurrentUserBackend } from './current-user/backend'
 import { rpcContract, type BackendModule } from './types'
 
-const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
+const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtx> => {
   return BackendCtx.init(input)
 }
 

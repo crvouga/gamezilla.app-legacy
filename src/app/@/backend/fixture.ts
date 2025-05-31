@@ -17,12 +17,12 @@ import { CONFIG_SHARED } from '~/config/shared'
 import { ClientId } from '../../../@/wire/client-id'
 import { SessionId } from '../../../@/wire/session-id'
 import { BackendInstanceId } from './backend-instance/backend-instance-id'
-import type { AppBackendCtx } from './ctx'
+import type { AppBackendCtxBase } from './ctx'
 // import { newPowerSyncClient } from '~/service-powersync/frontend/database'
 
 export type IFixtureAppBackendUnit = {
   t: 'unit'
-  ctx: AppBackendCtx
+  ctx: AppBackendCtxBase
   runtime: IRuntime
   logger: ILogger
   pubSubTopicBased: IPubSubTopicBased
@@ -67,7 +67,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const backendInstanceId = BackendInstanceId.generate()
 
-  const ctx: AppBackendCtx = {
+  const ctx: AppBackendCtxBase = {
     env: 'test',
     keyValueDb: keyValueDbHashMap,
     dbConnSql: dbConnSqlNoop,

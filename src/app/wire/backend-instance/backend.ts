@@ -3,12 +3,12 @@ import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
-import { AppBackendCtx } from '~/app/@/backend/ctx'
+import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { BackendInstance } from '~/app/@/backend/backend-instance/backend-instance'
 import { BackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
-import { rpcContract, type MsgBackend, type BackendCtx, type BackendModule } from './types'
+import { rpcContract, type MsgBackend, type BackendCtxModule, type BackendModule } from './types'
 
-const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
+const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtxModule> => {
   const backendInstanceDb = BackendInstanceDb({
     t: 'key-value-db',
     keyValueDb: input.ctx.keyValueDb,
@@ -75,7 +75,7 @@ const update: BackendModule['update'] = async (input) => {
   return {}
 }
 
-const updateBackendStopped = async (input: { stoppedAt: Posix; ctx: BackendCtx }) => {
+const updateBackendStopped = async (input: { stoppedAt: Posix; ctx: BackendCtxModule }) => {
   const got = unwrapOr(await input.ctx.backendInstanceDb.get(input.ctx.backendInstanceId), null)
 
   if (!got) {
@@ -104,7 +104,7 @@ const subscriptions: BackendModule['subscriptions'] = async (input) => {
 
 const INTERVAL_ID = 'backend-instance-heartbeat'
 
-const rpc = (input: { ctx: BackendCtx }) => {
+const rpc = (input: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
     async listAlive() {
       const listed = await input.ctx.backendInstanceDb.listAlive({

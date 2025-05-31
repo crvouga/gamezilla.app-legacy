@@ -1,7 +1,7 @@
 import { IHttpServer } from '~/@/http-server'
 import { RPC } from '~/@/rpc'
 import { Topic } from '~/@/topic'
-import { AppBackendCtx } from './@/backend/ctx'
+import { AppBackendCtxBase } from './@/backend/ctx'
 import { AppFrontendCtxBase } from './@/frontend/ctx'
 import { AuthTypes } from './auth'
 import * as FrontendTypes from './frontend/types'
@@ -54,13 +54,13 @@ export const topicContract = Topic.initContract({
   spaces: SpacesTypes.topicContract,
 })
 
-export type BackendCtxModule = AppBackendCtx & {
+export type BackendCtxModule = AppBackendCtxBase & {
   wire: WireTypes.BackendCtxModule
   profile: ProfileBackendCtx
   space: SpacesTypes.SpaceBackendCtxModule
   auth: AuthTypes.BackendCtx
   httpServer: IHttpServer
-  topic: Topic.Server<typeof topicContract>
+  topic: Topic.Client<typeof topicContract>
 }
 
 export type FrontendCtxModule = AppFrontendCtxBase &

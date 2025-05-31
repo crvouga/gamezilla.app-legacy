@@ -17,9 +17,9 @@ import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { AppTypes } from '.'
 import { BackendInstanceId } from './@/backend/backend-instance/backend-instance-id'
-import { AppBackendCtx } from './@/backend/ctx'
+import { AppBackendCtxBase } from './@/backend/ctx'
 import { AuthBackend } from './auth/backend'
-import {LangBackend} from './lang/backend'
+import { LangBackend } from './lang/backend'
 import { ProfileDb } from './profile/@/user-profile/user-profile-db'
 import { ProfileBackend } from './profile/backend'
 import { SpacesBackend } from './spaces/backend'
@@ -93,7 +93,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
 
   const backendInstanceId = BackendInstanceId.generate()
 
-  const ctx: AppBackendCtx = {
+  const ctx: AppBackendCtxBase = {
     env,
     sms,
     dbConnSql,
@@ -108,7 +108,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     runtime,
   }
 
-  const wire = await WireBackend.initCtx({ ctx })
+  const wire = await WireBackend.initCtx({ ctx, topic: topic.wire })
   const profile = await ProfileBackend.initCtx({ ctx })
   const space = await SpacesBackend.initCtx({ ctx, topic: topic.spaces })
   const auth = await AuthBackend.initCtx({ ctx })
@@ -120,7 +120,6 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     space,
     profile,
     wire,
-
     topic,
   }
 }

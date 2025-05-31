@@ -1,4 +1,3 @@
-import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { BackendModule, MsgBackend } from './types'
 
@@ -14,26 +13,24 @@ const update: BackendModule['update'] = async (input) => {
       })
       return {}
     }
+    default: {
+      return {}
+    }
   }
 }
 
 const subscriptions: BackendModule['subscriptions'] = async (input) => {
-  return Sub.batch([await pings(input)])
-}
-
-const pings: BackendModule['subscriptions'] = async (input) => {
-  return input.ctx.topic.pingAll.subscribe(
-    null,
-    (msg, meta): MsgBackend => ({
+  return input.ctx.topic.pingAll.subscribe(null, (msg): MsgBackend => {
+    return {
       t: 'ping',
       pingId: msg.pingId,
       now: Posix.now(),
-      clientSessionId: meta.clientSessionId,
-    }),
-  )
+      clientSessionId: msg.clientSessionId,
+    }
+  })
 }
 
-export const BackendConnectionFrontend = {
+export const BackendConnectionBackend = {
   subscriptions,
   update,
 }

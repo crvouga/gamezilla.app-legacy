@@ -2,7 +2,7 @@ import { RequestResponse } from '~/@/request-response/request-response'
 import { Posix } from '~/@/time/posix'
 import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { AppBackendCtx } from '~/app/@/backend/ctx'
+import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { Username } from '~/app/@/data/username'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 
@@ -49,7 +49,7 @@ export type FrontendModule = AppFrontendModule<{
 }>
 
 export type BackendModule = AppBackendModule<{
-  Ctx: AppBackendCtx
+  Ctx: AppBackendCtxBase
   Msg: MsgBackend
   MsgToFrontend: MsgToFrontend
 }>

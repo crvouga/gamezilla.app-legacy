@@ -7,7 +7,7 @@ import { ListItemButton } from '~/@/ui/list-item-button'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PingId } from './ping-id'
 import { BackendConnectionStatus } from './status'
-import { FrontendModule, initModel, Model, MsgFrontend } from './types'
+import { FrontendModule, initModel, Model, MsgFrontend, PingItem } from './types'
 import { Dot } from './ui'
 
 const init: FrontendModule['init'] = (_input) => {
@@ -38,16 +38,19 @@ const update: FrontendModule['update'] = (input) => {
     }
 
     case 'pong': {
+      const ping = CappedOrderedDict.get(input.model.pings, msg.pingId)
+      if (!ping) {
+        return { model: input.model }
+      }
+      const pingNew: PingItem = {
+        ...ping,
+        pongAt: msg.now,
+      }
+      const pingsNew = CappedOrderedDict.set(input.model.pings, msg.pingId, pingNew)
       return {
         model: {
           ...input.model,
-          pings: {
-            ...input.model.pings,
-            [msg.pingId]: {
-              pingAt: msg.now,
-              pongAt: null,
-            },
-          },
+          pings: pingsNew,
         },
       }
     }
@@ -60,7 +63,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 
 const pings: FrontendModule['subscriptions'] = (input) => {
   return Time.interval(
-    'ping-interval',
+    'pings',
     input.model.pingRate,
     (now): MsgFrontend => ({ t: 'ping', now, pingId: PingId.generate() }),
   )
@@ -81,7 +84,6 @@ const ViewDot = (input: { model: Model; ctx: AppFrontendCtxBase; className: stri
 const ViewListItem = (input: { model: Model; ctx: AppFrontendCtxBase; dispatch: (msg: MsgFrontend) => void }) => {
   return (
     <div>
-      {JSON.stringify(input.model)}
       <ViewListItemInner {...input} />
     </div>
   )

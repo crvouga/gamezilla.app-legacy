@@ -1,7 +1,7 @@
 import { AppBackendModule } from '../@/architecture/app-backend'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { BackendCmd } from '../@/backend/cmd'
-import { AppBackendCtx } from '../@/backend/ctx'
+import { AppBackendCtxBase } from '../@/backend/ctx'
 import { BackendEvt } from '../@/backend/evt'
 import { UserId } from '../@/data/user-id'
 import { UserProfile } from '../@/data/user-profile'
@@ -31,7 +31,7 @@ export type MsgToFrontend = { t: 'noop' }
 export type MsgToBackend = { t: 'got-profile-screen-msg'; c: ScreenProfileTypes.MsgToBackend }
 
 export type BackendModule = AppBackendModule<{
-  Ctx: AppBackendCtx
+  Ctx: AppBackendCtxBase
   MsgCmdIn: null
   MsgEvtIn: BackendEvt
   Model: null
