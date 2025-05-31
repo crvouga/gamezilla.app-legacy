@@ -76,30 +76,27 @@ export const initServer = <T extends Contract<any>>(config: {
 
       switch (toServerMsg.value.t) {
         case 'subscribe': {
-          const topicString = toTopicString({
-            topicName: toServerMsg.value.topicName,
-            topicParams: toServerMsg.value.topicParams,
-          })
-          ws.subscribe(topicString)
-          subscribersByTopic.set(
-            topicString,
-            new Set([...(subscribersByTopic.get(topicString) ?? []), ws.data.clientId]),
+          const topicString = toTopicString(toServerMsg.value.topicName, toServerMsg.value.topicParams)
+          const existingSubscribers = subscribersByTopic.get(topicString)
+          if (existingSubscribers) {
+            existingSubscribers.add(ws.data.clientId)
+          } else {
+            subscribersByTopic.set(topicString, new Set([ws.data.clientId]))
+          }
+          ws.send(
+            JSON.stringify({
+              t: 'subscribed',
+              topicName: toServerMsg.value.topicName,
+              topicParams: toServerMsg.value.topicParams,
+            }),
           )
-          publish(topicString, {
-            t: 'subscribed',
-            topicName: toServerMsg.value.topicName,
-            topicParams: toServerMsg.value.topicParams,
-          })
           logger.debug(
             `websocket message subscribed ${topicString} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`,
           )
           return
         }
         case 'publish': {
-          const topicString = toTopicString({
-            topicName: toServerMsg.value.topicName,
-            topicParams: toServerMsg.value.topicParams,
-          })
+          const topicString = toTopicString(toServerMsg.value.topicName, toServerMsg.value.topicParams)
           publish(topicString, {
             t: 'published',
             topicName: toServerMsg.value.topicName,
@@ -110,15 +107,14 @@ export const initServer = <T extends Contract<any>>(config: {
           return
         }
         case 'unsubscribe': {
-          const topicString = toTopicString({
-            topicName: toServerMsg.value.topicName,
-            topicParams: toServerMsg.value.topicParams,
-          })
-          publish(topicString, {
-            t: 'unsubscribed',
-            topicName: toServerMsg.value.topicName,
-            topicParams: toServerMsg.value.topicParams,
-          })
+          const topicString = toTopicString(toServerMsg.value.topicName, toServerMsg.value.topicParams)
+          ws.send(
+            JSON.stringify({
+              t: 'unsubscribed',
+              topicName: toServerMsg.value.topicName,
+              topicParams: toServerMsg.value.topicParams,
+            }),
+          )
           const existingSubscribers = subscribersByTopic.get(topicString)
           if (existingSubscribers) {
             existingSubscribers.delete(ws.data.clientId)
@@ -186,10 +182,7 @@ export const initServer = <T extends Contract<any>>(config: {
       if ('params' in topicConfig && 'msg' in topicConfig) {
         clientProxy[topicNamePart] = {
           publish: (topicParams: unknown, msg: unknown) => {
-            const topicString = toTopicString({
-              topicName,
-              topicParams,
-            })
+            const topicString = toTopicString(topicName, topicParams)
             publish(topicString, {
               t: 'published',
               topicName,
@@ -205,10 +198,7 @@ export const initServer = <T extends Contract<any>>(config: {
             existingSub.pub(msg)
           },
           subscribe: (topicParams: unknown): Sub<any> => {
-            const topicString = toTopicString({
-              topicName,
-              topicParams,
-            })
+            const topicString = toTopicString(topicName, topicParams)
 
             const existingSub = subByTopic.get(topicString)
 

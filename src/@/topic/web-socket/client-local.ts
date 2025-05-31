@@ -26,10 +26,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
       if ('params' in topicConfig && 'msg' in topicConfig) {
         clientProxy[topicNamePart] = {
           publish: (topicParams: unknown, msg: unknown) => {
-            const topicString = toTopicString({
-              topicName,
-              topicParams,
-            })
+            const topicString = toTopicString(topicName, topicParams)
             const existingSub = subByTopic.get(topicString)
             if (!existingSub) {
               logger.debug(`no subscribers for topic=${topicString}`)
@@ -39,10 +36,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
             existingSub.pub(msg)
           },
           subscribe: (topicParams: unknown): Sub<any> => {
-            const topicString = toTopicString({
-              topicName,
-              topicParams,
-            })
+            const topicString = toTopicString(topicName, topicParams)
 
             const existingSub = subByTopic.get(topicString)
 

@@ -47,6 +47,6 @@ export const initToClient = (msg: ToClientMsg): ToClientMsg => {
   return msg
 }
 
-export const toTopicString = (input: { topicName: string[]; topicParams: unknown }): string => {
-  return [...input.topicName, deterministicJsonStringify(input.topicParams)].join('/')
+export const toTopicString = (topicName: string[], topicParams: unknown): string => {
+  return [...topicName, deterministicJsonStringify(topicParams)].join('/')
 }

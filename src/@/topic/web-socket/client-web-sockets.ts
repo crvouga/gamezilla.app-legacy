@@ -28,14 +28,8 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
   logger.debug(`connecting to websocket url=${websocketUrl}`)
 
   const ws = new WebSocket(websocketUrl)
-  const subByTopic = new Map<
-    string,
-    {
-      topicName: string[]
-      topicParams: unknown
-      sub: PubSub<unknown>
-    }
-  >()
+  const subByTopic = new Map<string, PubSub<unknown>>()
+  const subscribedTopicsOnServer = new Set<string>()
 
   const ready = new Promise<void>((resolve) => {
     ws.onopen = () => {
@@ -56,18 +50,19 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
 
     switch (toClientMsg.value.t) {
       case 'subscribed': {
-        logger.debug(`topic subscribed topicName=${toClientMsg.value.topicName.join('.')}`)
+        const topicString = toTopicString(toClientMsg.value.topicName, toClientMsg.value.topicParams)
+        logger.debug(`topic subscribed topicString=${topicString}`)
+        subscribedTopicsOnServer.add(topicString)
         return
       }
       case 'unsubscribed': {
-        logger.debug(`topic unsubscribed topicName=${toClientMsg.value.topicName.join('.')}`)
+        const topicString = toTopicString(toClientMsg.value.topicName, toClientMsg.value.topicParams)
+        logger.debug(`topic unsubscribed topicString=${topicString}`)
+        subscribedTopicsOnServer.delete(topicString)
         return
       }
       case 'published': {
-        const topicString = toTopicString({
-          topicName: toClientMsg.value.topicName,
-          topicParams: toClientMsg.value.topicParams,
-        })
+        const topicString = toTopicString(toClientMsg.value.topicName, toClientMsg.value.topicParams)
         const existingSub = subByTopic.get(topicString)
         if (!existingSub) {
           logger.debug(`no subscribers for topic=${topicString}`)
@@ -75,51 +70,38 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
         }
         const msg = JSON.parse(toClientMsg.value.msg)
         logger.debug(`publishing message to topic=${topicString}`)
-        existingSub.sub.pub(msg)
+        existingSub.pub(msg)
       }
     }
   }
 
-  const send = async (msg: unknown) => {
+  const send = async (msg: ToServerMsg) => {
     await ready
-    logger.debug(`sending message type=${(msg as ToServerMsg).t}`)
+    logger.debug(`sending message type=${msg.t}`)
     ws.send(JSON.stringify(msg))
   }
 
-  const subscribe = throttleByKey({
-    throttle: TimeSpan.seconds(1),
-    fn: (topicName: string[], topicParams: unknown) => {
-      const toServerMsg: ToServerMsg = {
-        t: 'subscribe',
-        topicName,
-        topicParams,
-      }
-      send(toServerMsg)
-    },
-    keyFn: (topicName, topicParams) => {
-      return toTopicString({
-        topicName,
-        topicParams,
-      })
-    },
-  })
+  const syncSubscriptionsWithServer = throttleByKey({
+    throttle: TimeSpan.seconds(3),
 
-  const unsubscribe = throttleByKey({
-    throttle: TimeSpan.seconds(1),
-    fn: (topicName: string[], topicParams: unknown) => {
-      const toServerMsg: ToServerMsg = {
-        t: 'unsubscribe',
-        topicName,
-        topicParams,
+    keyFn: (_action, topicName, topicParams) => toTopicString(topicName, topicParams),
+
+    fn: (action: 'subscribe' | 'unsubscribe', topicName: string[], topicParams: unknown) => {
+      const isSubscribedOnServer = subscribedTopicsOnServer.has(toTopicString(topicName, topicParams))
+      switch (action) {
+        case 'subscribe': {
+          if (isSubscribedOnServer) return
+          send({ t: 'subscribe', topicName, topicParams })
+          break
+        }
+        case 'unsubscribe': {
+          if (!isSubscribedOnServer) return
+          send({ t: 'unsubscribe', topicName, topicParams })
+          break
+        }
       }
-      send(toServerMsg)
     },
-    keyFn: (topicName, topicParams) => {
-      return toTopicString({
-        topicName,
-        topicParams,
-      })
-    },
+    behavior: 'drop',
   })
 
   const createClientRecursive = (currentContract: Contract<any>, runningTopicName: string[] = []): any => {
@@ -145,39 +127,34 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
             send(toServerMsg)
           },
           subscribe: (topicParams: unknown): Sub<any> => {
-            const topicString = toTopicString({
-              topicName,
-              topicParams,
-            })
+            const topicString = toTopicString(topicName, topicParams)
 
-            const existingSub = subByTopic.get(topicString)
+            syncSubscriptionsWithServer('subscribe', topicName, topicParams)
 
-            if (existingSub) {
+            const existing = subByTopic.get(topicString)
+
+            if (existing) {
               logger.debug(`reusing existing subscription for topic=${topicString}`)
-
-              subscribe(topicName, topicParams)
-
-              return existingSub.sub
+              return existing
             }
 
             logger.debug(`subscribing to topic=${topicString}`)
 
             const sub = PubSub.create()
-
-            subByTopic.set(topicString, { topicName, topicParams, sub })
-
-            subscribe(topicName, topicParams)
-
-            return {
+            const subNew: PubSub<any> = {
               ...sub,
               sub(subscriber) {
                 const unsub = sub.sub(subscriber)
                 return () => {
                   unsub()
-                  unsubscribe(topicName, topicParams)
+                  syncSubscriptionsWithServer('unsubscribe', topicName, topicParams)
                 }
               },
             }
+
+            subByTopic.set(topicString, subNew)
+
+            return subNew
           },
         }
       } else {
