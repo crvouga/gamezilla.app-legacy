@@ -56,10 +56,7 @@ export const FixtureSpaceBackend = async () => {
     throw new Error('Invalid fixture. Space is not started.')
   }
 
-  const ctx: SpaceBackendCtx = {
-    ...f.ctx,
-    space: spaceState,
-  }
+  const ctx: SpaceBackendCtx = { ...f.ctx }
 
   const topic = Topic.initClient({
     t: 'local',
@@ -69,7 +66,7 @@ export const FixtureSpaceBackend = async () => {
 
   const backendCtx: BackendCtxModule = {
     ...f.ctx,
-    spacesCore: await SpacesCoreAsync({
+    spacesCoreA: await SpacesCoreAsync({
       t: 'key-value-db',
       keyValueDb: f.ctx.keyValueDb,
       logger: f.ctx.logger,
@@ -78,13 +75,7 @@ export const FixtureSpaceBackend = async () => {
       namespace: [],
     }),
     topic,
-    games: await GamesBackend.initCtx({
-      ...f.ctx,
-      ctx: {
-        ...f.ctx,
-        space: spaceState,
-      },
-    }),
+    games: GamesBackend.initCtx({ ctx: f.ctx }),
   }
 
   return {

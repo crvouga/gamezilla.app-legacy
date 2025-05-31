@@ -81,6 +81,7 @@ export const updateFromFrontend = ({
   if (msg.t === 'input-mode') {
     const modelNew: ModelBackend = initMode({
       mode: msg.mode,
+      // @ts-ignore
       userId: ctx.space.hostId,
     })
 
@@ -97,7 +98,6 @@ export const updateFromFrontend = ({
         ...model,
         c: updated.model,
       },
-      
     }
   }
 
@@ -114,7 +114,6 @@ export const updateFromFrontend = ({
         c: updated.model,
       },
       eff: Eff.tag('vs-bot', updated.eff),
-      
     }
   }
 
@@ -129,7 +128,6 @@ export const updateFromEvent = ({
   msg: SpaceBackendEvt
 }): {
   model: Model
-  
 } => {
   if (model.t === 'none') {
     return { model }
@@ -145,7 +143,6 @@ export const updateFromEvent = ({
         t: 'vs-bot',
         c: updated.model,
       },
-      
     }
   }
 
@@ -159,7 +156,6 @@ export const updateFromEvent = ({
         t: 'vs-user',
         c: updated.model,
       },
-      
     }
   }
 

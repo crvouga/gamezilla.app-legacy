@@ -25,11 +25,11 @@ const saga = function* (ctx: BackendCtxModule) {
 }
 
 const flowBackendInstanceState = function* (ctx: BackendCtxModule) {
-  const httpServerStarted = ctx.httpServer.events.where((e) => e.t === 'http-server/started').chan()
-  const httpServerStopped = ctx.httpServer.events.where((e) => e.t === 'http-server/stopping').chan()
-  const runtimeStopping = ctx.runtime.events.where((e) => e.t === 'runtime/stopping').chan()
+  const serverStartedChan = ctx.httpServer.events.where((e) => e.t === 'http-server/started').chan()
+  const serverStoppingChan = ctx.httpServer.events.where((e) => e.t === 'http-server/stopping').chan()
+  const runtimeStoppingChan = ctx.runtime.events.where((e) => e.t === 'runtime/stopping').chan()
 
-  const event = yield* take(httpServerStarted)
+  const event = yield* take(serverStartedChan)
 
   ctx.logger.info('server started. recording backend instance started')
 
@@ -48,7 +48,7 @@ const flowBackendInstanceState = function* (ctx: BackendCtxModule) {
 
   const hearbeatTask = yield* fork(flowHeartbeat, ctx)
 
-  yield* race([take(httpServerStopped), take(runtimeStopping)])
+  yield* race([take(serverStoppingChan), take(runtimeStoppingChan)])
 
   yield* cancel(hearbeatTask)
 

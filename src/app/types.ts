@@ -4,20 +4,12 @@ import { Topic } from '~/@/topic'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { AppFrontendCtxBase } from './@/frontend/ctx'
 import { AuthTypes } from './auth'
-import * as FrontendTypes from './frontend/types'
+import { FrontendTypes } from './frontend/index'
 import { LangTypes } from './lang'
 import { ProfileTypes } from './profile'
 import { ProfileBackendCtx } from './profile/@/backend/ctx'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
-
-//
-//
-//
-//
-//
-//
-//
 
 export type ModelFrontend = {
   frontend: FrontendTypes.ModelFrontend
@@ -69,8 +61,3 @@ export type FrontendCtxModule = AppFrontendCtxBase &
     rpc: RPC.Client<typeof rpcContract>
     topic: Topic.Client<typeof topicContract>
   }
-
-//
-//
-//
-//

@@ -1,9 +1,7 @@
-import { Sub } from '~/@/sub'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { FlowBackendCtx } from './@/backend/ctx'
 import { PackDb } from './@/pack/pack-db'
 import { PuzzleDb } from './@/puzzle/puzzle-db'
-import type { BackendModule } from './types'
 
 const initCtx = (input: { ctx: SpaceBackendCtx }): FlowBackendCtx => {
   return {
@@ -13,21 +11,9 @@ const initCtx = (input: { ctx: SpaceBackendCtx }): FlowBackendCtx => {
   }
 }
 
-const init: BackendModule['init'] = {
-  t: 'noop',
-}
-
-const update: BackendModule['update'] = async (_input) => {
-  return {}
-}
-
-const subscriptions: BackendModule['subscriptions'] = async (_input) => {
-  return Sub.None
-}
+const saga = function* (_ctx: FlowBackendCtx) {}
 
 export const FlowBackend = {
-  init,
-  subscriptions,
-  update,
   initCtx,
+  saga,
 }

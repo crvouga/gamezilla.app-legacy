@@ -5,10 +5,10 @@ import { IconChevronRight } from '~/@/ui/icon/icon-chevron-right'
 import { Typography } from '~/@/ui/typography'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { FrontendCtx } from '../screen-update-username/types'
+import { FrontendCtxModule } from '../screen-update-username/types'
 import type { ModelFrontend, MsgFrontend } from '../types'
 
-export const View = (input: { ctx: FrontendCtx; dispatch: (msg: MsgFrontend) => void; model: ModelFrontend }) => {
+export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFrontend) => void; model: ModelFrontend }) => {
   if (!input.ctx.currentUser?.userId) return null
 
   const profile = input.ctx.profilesByUserId[input.ctx.currentUser?.userId]

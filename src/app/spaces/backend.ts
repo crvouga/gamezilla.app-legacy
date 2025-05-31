@@ -3,7 +3,6 @@ import { RPC } from '~/@/rpc'
 import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
 import { AppBackendCtxBase } from '../@/backend/ctx'
-import { Space } from './@/space/space'
 import { SpacesCoreAsync } from './core/core-async'
 import { GameBackend } from './game/backend'
 import { ListSpacesBackend } from './list-spaces/backend'
@@ -18,9 +17,9 @@ const initCtx = async (input: {
     ...input.ctx,
     topic: input.topic,
     games: GameBackend.initCtx({
-      ctx: { ...input.ctx, space: Space.random() },
+      ctx: input.ctx,
     }),
-    spacesCore: await SpacesCoreAsync({
+    spacesCoreA: await SpacesCoreAsync({
       t: 'key-value-db',
       keyValueDb: input.ctx.keyValueDb,
       logger: input.ctx.logger,
@@ -33,6 +32,7 @@ const initCtx = async (input: {
 
 const saga = function* (ctx: BackendCtxModule) {
   yield fork(SyncBackend.saga, ctx)
+  yield fork(GameBackend.saga, ctx.games)
 }
 
 const rpc = (input: { ctx: BackendCtxModule }) => {

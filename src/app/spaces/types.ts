@@ -66,7 +66,7 @@ export type FrontendCtxModule = AppFrontendCtxBase & {
 }
 
 export type BackendCtxModule = AppBackendCtxBase & {
-  spacesCore: ISpacesCoreAsync
+  spacesCoreA: ISpacesCoreAsync
   games: GameTypes.GamesBackendCtx
   topic: Topic.Client<typeof topicContract>
 }

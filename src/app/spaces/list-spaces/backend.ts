@@ -7,7 +7,7 @@ import { rpcContract } from './types'
 const rpc = (config: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
     async listSpaces(_input, _reqCtx) {
-      const spaces = await config.ctx.spacesCore.list({
+      const spaces = await config.ctx.spacesCoreA.list({
         pagination: {
           limit: 10000,
           offset: 0,

@@ -11,8 +11,8 @@ const initCtx = (input: { ctx: SpaceBackendCtx }): GamesBackendCtx => {
   }
 }
 
-const saga = function* () {
-  yield fork(GamesBackend.saga)
+const saga = function* (ctx: GamesBackendCtx) {
+  yield fork(GamesBackend.saga, ctx)
 }
 
 export const GameBackend = {

@@ -18,7 +18,7 @@ import {
   type MsgToBackend,
   type PuzzleInteraction,
   initSpace,
-  transitionLoadingToStarted
+  transitionLoadingToStarted,
 } from './puzzle.types'
 
 //
@@ -45,6 +45,7 @@ export const init = ({
     eff: async (dispatch) => {
       const result = await initialLoad({
         dbConn: ctx.dbConnSql,
+        // @ts-ignore
         userId: ctx.space.hostId,
       })
       dispatch({
@@ -281,6 +282,7 @@ export const watchPutInteraction = ({
   if (model.t === 'started' || model.t === 'solved' || model.t === 'incorrect' || model.t === 'solved-with-hint') {
     const interaction: PuzzleInteraction = {
       puzzleId: model.puzzle.puzzleId,
+      // @ts-ignore
       userId: ctx.space.hostId,
       type: model.t,
     }
