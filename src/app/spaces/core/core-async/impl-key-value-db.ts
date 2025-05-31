@@ -1,11 +1,11 @@
-import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import { EventSourced } from '~/@/event-sourced'
 import { pipe } from '~/@/function/pipe'
+import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import { LRUCache } from '~/@/least-recently-used-cache'
 import { ILogger, Logger } from '~/@/logger'
-import { s } from '~/@/schema'
 import { Err, Ok, Result, isErr, unwrapOr } from '~/@/result'
 import { IRuntime } from '~/@/runtime'
+import { s } from '~/@/schema'
 import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
 import { type UserId } from '~/app/@/data/user-id'
@@ -34,10 +34,10 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
   const throttle = config.writeThrottle
   const keyValueDb = await pipe(
     config.keyValueDb,
-    // async (keyValueDb) =>
-    //   KeyValueDb({ t: 'with-throttled-writes', logger, keyValueDb: await keyValueDb, throttle, runtime }),
-    // async (keyValueDb) => KeyValueDb({ t: 'with-cache', logger, source: await keyValueDb, cache }),
-    // async (keyValueDb) => KeyValueDb({ t: 'with-reduced-parsing', logger, keyValueDb: await keyValueDb, verifiedKeys }),
+    async (keyValueDb) =>
+      KeyValueDb({ t: 'with-throttled-writes', logger, keyValueDb: await keyValueDb, throttle, runtime }),
+    async (keyValueDb) => KeyValueDb({ t: 'with-cache', logger, source: await keyValueDb, cache }),
+    async (keyValueDb) => KeyValueDb({ t: 'with-reduced-parsing', logger, keyValueDb: await keyValueDb, verifiedKeys }),
   )
 
   const spacesBySpaceId = KeyValueDb.withNamespace<SpaceId, Space.Model>({

@@ -10,15 +10,6 @@ const Msg = s.obj({
 })
 type Msg = s.Infer<typeof Msg>
 
-const childContract = Topic.initContract({
-  someTopic: {
-    params: s.obj({
-      id: s.str,
-    }),
-    msg: Msg,
-  },
-})
-
 const contract = Topic.initContract({
   someTopic: {
     params: s.obj({
@@ -26,12 +17,19 @@ const contract = Topic.initContract({
     }),
     msg: Msg,
   },
-  child: childContract,
+  nested: Topic.initContract({
+    someTopic: {
+      params: s.obj({
+        id: s.str,
+      }),
+      msg: Msg,
+    },
+  }),
 })
 
 const Fixture = async () => {
   const port = 1234
-  const logger = Logger({ t: 'console' })
+  const logger = Logger({ t: 'noop' })
   const httpServer = HttpServerBun({ t: 'bun', logger })
 
   const endpoint = '/topic'
@@ -86,7 +84,7 @@ const Fixture = async () => {
   }
 }
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 5))
+const sleep = () => new Promise((resolve) => setTimeout(resolve, 100))
 
 describe('Topic', () => {
   it('should work', async () => {
@@ -170,7 +168,7 @@ describe('Topic', () => {
     expect(gotC).toEqual([{ name: 'Bob' }])
   })
 
-  it.skip('should handle unsubscribe correctly', async () => {
+  it('should handle unsubscribe correctly', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
@@ -191,5 +189,67 @@ describe('Topic', () => {
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }])
+  })
+
+  it('should handle multiple messages on the same topic', async () => {
+    using f = await Fixture()
+    const gotA: Msg[] = []
+    const gotB: Msg[] = []
+
+    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
+    await sleep()
+
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'Jane' })
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'Bob' })
+    await sleep()
+
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'Jane' }, { name: 'Bob' }])
+    expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }, { name: 'Bob' }])
+  })
+
+  it('should handle nested topics correctly', async () => {
+    using f = await Fixture()
+    const gotA: Msg[] = []
+    const gotB: Msg[] = []
+
+    f.clientA.nested.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
+    f.clientB.nested.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
+    await sleep()
+
+    f.clientA.nested.someTopic.publish({ id: '123' }, { name: 'John' })
+    await sleep()
+
+    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotB).toEqual([{ name: 'John' }])
+  })
+
+  it('should handle multiple unsubscribes correctly', async () => {
+    using f = await Fixture()
+    const gotA: Msg[] = []
+    const gotB: Msg[] = []
+    const gotC: Msg[] = []
+
+    const unsubA = f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
+    const unsubB = f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
+    f.clientC.someTopic.subscribe({ id: '123' }).sub((msg) => gotC.push(msg))
+    await sleep()
+
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    await sleep()
+    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotB).toEqual([{ name: 'John' }])
+    expect(gotC).toEqual([{ name: 'John' }])
+
+    unsubA()
+    unsubB()
+    await sleep()
+
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'Jane' })
+    await sleep()
+    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotB).toEqual([{ name: 'John' }])
+    expect(gotC).toEqual([{ name: 'John' }, { name: 'Jane' }])
   })
 })
