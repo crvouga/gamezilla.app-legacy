@@ -219,5 +219,7 @@ export const initServer = <T extends Contract<any>>(config: {
     return clientProxy
   }
 
-  return createClientRecursive(config.contract) as Client<T>
+  const client: Client<T> = createClientRecursive(config.contract) as Client<T>
+
+  return client
 }

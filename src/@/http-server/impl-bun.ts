@@ -59,7 +59,9 @@ export const HttpServerBun = <T>(config: Config) => {
       })
     },
     async stop() {
-      await httpServer.stop()
+      logger.info('Stopping HTTP server')
+      await httpServer.stop(true)
+      logger.info('HTTP server was not running')
     },
     registerRespond(handler) {
       handlers.push(handler)

@@ -29,7 +29,7 @@ const contract = Topic.initContract({
 
 const Fixture = async () => {
   const port = 1234
-  const logger = Logger({ t: 'noop' })
+  const logger = Logger({ t: 'console' })
   const httpServer = HttpServerBun({ t: 'bun', logger })
 
   const endpoint = '/topic'
@@ -72,6 +72,7 @@ const Fixture = async () => {
   await httpServer.start(port)
 
   return {
+    port,
     httpServer,
     contract,
     clientA,
@@ -287,5 +288,30 @@ describe('Topic', () => {
 
     expect(gotA).toEqual([{ name: 'John' }])
     expect(gotB).toEqual([{ name: 'Jane' }])
+  })
+
+  it('should handle reconnection correctly', async () => {
+    using f = await Fixture()
+    const gotA: Msg[] = []
+    const gotB: Msg[] = []
+
+    f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    await sleep()
+
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    await sleep()
+    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotB).toEqual([{ name: 'John' }])
+
+    await f.httpServer.stop()
+    await sleep()
+    await f.httpServer.start(f.port)
+    await sleep()
+
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'Jane' })
+    await sleep()
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'Jane' }])
+    expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }])
   })
 })
