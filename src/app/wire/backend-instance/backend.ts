@@ -1,4 +1,4 @@
-import { call, delay, fork, race, take } from 'typed-redux-saga'
+import { call, cancel, delay, fork, race, take } from 'typed-redux-saga'
 import { isErr, unwrapOr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Posix } from '~/@/time/posix'
@@ -21,7 +21,6 @@ const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtxMod
 }
 
 const saga = function* (ctx: BackendCtxModule) {
-  yield fork(flowHeartbeat, ctx)
   yield fork(flowBackendInstanceState, ctx)
 }
 
@@ -47,7 +46,11 @@ const flowBackendInstanceState = function* (ctx: BackendCtxModule) {
 
   ctx.logger.info('recorded backend instance started')
 
+  const hearbeatTask = yield* fork(flowHeartbeat, ctx)
+
   yield* race([take(httpServerStopped), take(runtimeStopping)])
+
+  yield* cancel(hearbeatTask)
 
   ctx.logger.info(' server stopped. recording backend instance stopped')
 
@@ -68,6 +71,8 @@ const flowHeartbeat = function* (ctx: BackendCtxModule) {
     const got = yield* call(ctx.backendInstanceDb.get, ctx.backendInstanceId)
 
     ctx.logger.info('got', got)
+
+    yield delay(TimeSpan.toMilliseconds(BackendInstance.HEARTBEAT))
 
     if (isErr(got)) continue
 
@@ -93,8 +98,6 @@ const flowHeartbeat = function* (ctx: BackendCtxModule) {
     ctx.logger.info('put.value', put.value)
 
     ctx.logger.info('heartbeat ok')
-
-    yield delay(TimeSpan.toMilliseconds(BackendInstance.HEARTBEAT))
   }
 }
 
