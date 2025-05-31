@@ -54,6 +54,9 @@ const is = (key: unknown): key is Key => {
 export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
   return {
     subscriberCount: () => 0,
+    where: () => {
+      throw new Error('not implemented')
+    },
     chan: () => {
       throw new Error('not implemented')
     },
@@ -80,6 +83,9 @@ export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
 export const keyUps = <T extends {}>(callback: (key: Key) => T): Sub<T> => {
   return {
     subscriberCount: () => 0,
+    where: () => {
+      throw new Error('not implemented')
+    },
     chan: () => {
       throw new Error('not implemented')
     },

@@ -202,7 +202,7 @@ const updateChild = async (input: {
 }): Promise<{
   msgOut: unknown[]
 }> => {
-  const [space, auth, wire, profile, lang] = await Promise.all([
+  const [space, auth, profile, lang] = await Promise.all([
     SpacesBackend.update({
       ctx: input.ctx.space,
       msg: input.msg?.t === 'spaces' ? input.msg.c : null,
@@ -211,11 +211,6 @@ const updateChild = async (input: {
     AuthBackend.update({
       ctx: input.ctx.auth,
       msg: input.msg?.t === 'auth' ? input.msg.c : null,
-      msgIn: input.msgIn,
-    }),
-    WireBackend.update({
-      ctx: input.ctx.wire,
-      msg: input.msg?.t === 'wire' ? input.msg.c : null,
       msgIn: input.msgIn,
     }),
     ProfileBackend.update({
@@ -231,27 +226,24 @@ const updateChild = async (input: {
   ])
 
   return {
-    msgOut: Msg.batch(space.msgOut, auth.msgOut, wire.msgOut, profile.msgOut, lang.msgOut),
+    msgOut: Msg.batch(space.msgOut, auth.msgOut, profile.msgOut, lang.msgOut),
   }
 }
 
 const subscriptions = async (input: { ctx: BackendCtxModule }): Promise<Sub<MsgBackend>> => {
-  return Sub.batch<MsgBackend>([
-    Sub.tag('spaces', await SpacesBackend.subscriptions({ ctx: input.ctx.space })),
-    Sub.tag('wire', await WireBackend.subscriptions({ ctx: input.ctx.wire })),
-  ])
+  return Sub.batch<MsgBackend>([Sub.tag('spaces', await SpacesBackend.subscriptions({ ctx: input.ctx.space }))])
 }
 
-const rpc = (input: { ctx: BackendCtxModule }) => {
+const rpc = (ctx: BackendCtxModule) => {
   return RPC.initServer(rpcContract, {
-    wire: WireBackend.rpc({ ctx: input.ctx.wire }),
-    auth: AuthBackend.rpc({ ctx: input.ctx.auth }),
-    spaces: SpacesBackend.rpc({ ctx: input.ctx.space }),
+    wire: WireBackend.rpc(ctx.wire),
+    auth: AuthBackend.rpc({ ctx: ctx.auth }),
+    spaces: SpacesBackend.rpc({ ctx: ctx.space }),
   })
 }
 
-const saga = function* (input: { ctx: BackendCtxModule }) {
-  yield fork(WireBackend.saga, { ctx: input.ctx.wire })
+const saga = function* (ctx: BackendCtxModule) {
+  yield fork(WireBackend.saga, ctx.wire)
 }
 
 export const AppBackend = {

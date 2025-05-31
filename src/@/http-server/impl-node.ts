@@ -47,7 +47,7 @@ export const HttpServerNode = (
 
   const start = async (port: number) => {
     httpServer.listen(port, () => {
-      events.pub({ t: 'web-backend/started', ipAddress: getIpAddress(), port, startedAt: Posix.now() })
+      events.pub({ t: 'http-server/started', ipAddress: getIpAddress(), port, startedAt: Posix.now() })
       logger.info(`Listening on port ${port}`)
     })
 

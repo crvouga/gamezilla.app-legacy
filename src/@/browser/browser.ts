@@ -133,6 +133,9 @@ export const onIntersections = <T>(htmlId: string, mapper: (entry: IntersectionO
     chan: () => {
       throw new Error('not implemented')
     },
+    where: () => {
+      throw new Error('not implemented')
+    },
     sub(subscriber) {
       const unsub = pubSub.sub((msg) => {
         subscriber(mapper(msg))

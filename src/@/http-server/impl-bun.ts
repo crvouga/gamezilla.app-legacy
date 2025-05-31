@@ -52,7 +52,7 @@ export const HttpServerBun = <T>(config: Config) => {
       logger.info(`Listening on port ${port}`)
 
       events.pub({
-        t: 'web-backend/started',
+        t: 'http-server/started',
         ipAddress: getIpAddress(),
         port,
         startedAt: Posix.now(),

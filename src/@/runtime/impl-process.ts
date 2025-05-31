@@ -18,7 +18,7 @@ export const Runtime = (config: Config): IRuntime => {
 
   const handleShutdown = async () => {
     logger.info('Shutting down...')
-    await events.pub({ t: 'stopping', stoppedAt: Posix.now() })
+    await events.pub({ t: 'runtime/stopping', stoppedAt: Posix.now() })
     logger.info('Waiting for grace period...')
     await sleep(config.shutoffFGracePeriod)
     logger.info('Grace period over. Process exit')

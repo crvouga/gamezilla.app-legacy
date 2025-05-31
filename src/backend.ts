@@ -28,7 +28,7 @@ const main = async () => {
   const ctx = await AppBackend.initCtx()
 
   runSaga(myIO, function* () {
-    yield fork(AppBackend.saga, { ctx })
+    yield fork(AppBackend.saga, ctx)
   })
 
   await ProgramImpure.run({
@@ -43,7 +43,7 @@ const main = async () => {
   RPC.registerRespond({
     httpServer: ctx.httpServer,
     contract: AppTypes.rpcContract,
-    server: AppBackend.rpc({ ctx }),
+    server: AppBackend.rpc(ctx),
   })
 
   PowerSyncBackendApp.registerRespond({

@@ -69,7 +69,7 @@ export const withThrottledWrites = ({ keyValueDb, throttle, runtime, ...config }
 
   runtime.events.sub(async (event) => {
     switch (event.t) {
-      case 'stopping': {
+      case 'runtime/stopping': {
         flush()
         break
       }

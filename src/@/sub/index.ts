@@ -4,6 +4,7 @@ export type Sub<Msg> = {
   sub: (subscriber: (msg: Msg) => Promise<unknown> | unknown) => () => void
   subscriberCount: () => number
   chan: () => TakeableChannel<Msg>
+  where: <B extends Msg>(guard: (msg: Msg) => msg is B) => Sub<B>
 }
 
 export type Pub<Msg> = {
@@ -26,6 +27,7 @@ const create = <Msg>(): PubSub<Msg> => {
   let runningId = 0
   const subscribers = new Map<number, (msg: Msg) => Promise<unknown> | unknown>()
   const queue: Msg[] = []
+
   return {
     chan() {
       // @ts-ignore
@@ -39,6 +41,45 @@ const create = <Msg>(): PubSub<Msg> => {
           unsub()
         }
       })
+    },
+    where<B extends Msg>(guard: (msg: Msg) => msg is B): Sub<B> {
+      const self = this // 'this' is the PubSub<Msg> instance
+      return {
+        subscriberCount: self.subscriberCount, // Or a more accurate count for the filtered sub
+        sub: (subscriberForB: (msg: B) => unknown): (() => void) => {
+          return self.sub((originalMsg: Msg) => {
+            if (guard(originalMsg)) {
+              // After the guard, originalMsg is of type B.
+              // subscriberForB expects a B. This should be correct.
+              subscriberForB(originalMsg)
+            }
+          })
+        },
+        chan: (): TakeableChannel<B> => {
+          // Assuming B can be undefined if Msg can be, mirroring the parent 'chan'
+          // @ts-ignore
+          return eventChannel<B>((emit) => {
+            const unsub = self.sub((originalMsg: Msg) => {
+              if (guard(originalMsg)) {
+                emit(originalMsg) // originalMsg is B, emit expects B
+              }
+            })
+            return unsub
+          })
+        },
+        // The 'where' method for the new Sub<B>
+        where: function <C extends B>(this: Sub<B>, deeperGuard: (msg: B) => msg is C): Sub<C> {
+          // 'self' is the original PubSub<Msg>
+          // We chain the guards: the original guard (Msg => B) and the new deeperGuard (B => C)
+          return self.where((originalMsg: Msg): originalMsg is C => {
+            if (guard(originalMsg)) {
+              // originalMsg is now B (type-wise)
+              return deeperGuard(originalMsg) // originalMsg is B, deeperGuard expects B
+            }
+            return false
+          })
+        },
+      }
     },
     subscriberCount() {
       return subscribers.size
@@ -84,24 +125,26 @@ const next = <A>(sub: Sub<A>) => {
 
 const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
   return {
-    ...sub,
+    subscriberCount: sub.subscriberCount,
     sub: (subscriber) => {
       return sub.sub((a) => {
         subscriber(f(a))
       })
     },
     chan: () => {
-      throw new Error('not implemented')
+      // Proper implementation would map values from sub.chan()
+      throw new Error('chan after map not implemented')
+    },
+    where: <C extends B>(_guard: (msg: B) => msg is C): Sub<C> => {
+      // A full implementation would need to filter based on f(a)
+      throw new Error('where after map not implemented')
     },
   }
 }
 
 const flatMap = <A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> => {
   return {
-    ...sub,
-    chan: () => {
-      throw new Error('not implemented')
-    },
+    subscriberCount: sub.subscriberCount, // This is an approximation
     sub: (subscriber: (msg: B) => void) => {
       const unsubscribeFunctions: Array<() => void> = []
 
@@ -117,17 +160,34 @@ const flatMap = <A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> => {
         unsubscribeFunctions.forEach((unsubscribe) => unsubscribe())
       }
     },
+    chan: () => {
+      throw new Error('chan after flatMap not implemented')
+    },
+    where: <C extends B>(_guard: (msg: B) => msg is C): Sub<C> => {
+      throw new Error('where after flatMap not implemented')
+    },
   }
 }
 
 const batch = <Msg extends {}>(arr: Sub<Msg>[]): Sub<Msg> => {
   return {
-    subscriberCount: () => arr.reduce((acc, sub) => acc + sub.subscriberCount(), 0),
+    subscriberCount: () => arr.reduce((acc, subItem) => acc + subItem.subscriberCount(), 0),
+    sub: (subscriber) => {
+      const unsubscribeList: (() => void)[] = []
+      for (const subItem of arr) {
+        unsubscribeList.push(subItem.sub(subscriber))
+      }
+      return () => {
+        for (const unsubscribe of unsubscribeList) {
+          unsubscribe()
+        }
+      }
+    },
     chan: () => {
       return eventChannel<Msg>((emit) => {
         const unsubscribeList: (() => void)[] = []
-        for (const sub of arr) {
-          const unsubscribe = sub.sub((msg) => emit(msg))
+        for (const subItem of arr) {
+          const unsubscribe = subItem.sub((msg) => emit(msg))
           unsubscribeList.push(unsubscribe)
         }
         return () => {
@@ -137,18 +197,8 @@ const batch = <Msg extends {}>(arr: Sub<Msg>[]): Sub<Msg> => {
         }
       })
     },
-    sub: (subscriber) => {
-      const unsubscribeList: (() => void)[] = []
-
-      for (const sub of arr) {
-        unsubscribeList.push(sub.sub(subscriber))
-      }
-
-      return () => {
-        for (const unsubscribe of unsubscribeList) {
-          unsubscribe()
-        }
-      }
+    where: <C extends Msg>(_guard: (msg: Msg) => msg is C): Sub<C> => {
+      throw new Error('where after batch not implemented')
     },
   }
 }
@@ -157,14 +207,14 @@ const None: Sub<never> = {
   subscriberCount: () => 0,
   sub: () => () => {},
   chan: () => eventChannel<never>((_emit) => () => {}),
+  where: <C extends never>(_guard: (msg: never) => msg is C): Sub<C> => {
+    return None
+  },
 }
 
 const flat = <A>(sub: Sub<A[]>): Sub<A> => {
   return {
-    ...sub,
-    chan: () => {
-      throw new Error('not implemented')
-    },
+    subscriberCount: sub.subscriberCount,
     sub: (subscriber) => {
       return sub.sub((a) => {
         if (a) {
@@ -173,6 +223,12 @@ const flat = <A>(sub: Sub<A[]>): Sub<A> => {
           }
         }
       })
+    },
+    chan: () => {
+      throw new Error('chan after flat not implemented')
+    },
+    where: <C extends A>(_guard: (msg: A) => msg is C): Sub<C> => {
+      throw new Error('where after flat not implemented')
     },
   }
 }

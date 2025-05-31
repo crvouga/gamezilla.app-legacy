@@ -77,10 +77,7 @@ const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: Posix) =
   }, TimeSpan.toMilliseconds(timeSpan))
 
   return {
-    subscriberCount: () => subNew.subscriberCount(),
-    chan() {
-      throw new Error('not implemented')
-    },
+    ...subNew,
     sub(subscriber) {
       const unsub = subNew.sub((msg) => {
         subscriber(f(msg))

@@ -156,6 +156,9 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       })
 
       return {
+        where: () => {
+          throw new Error('not implemented')
+        },
         chan: () => {
           throw new Error('not implemented')
         },

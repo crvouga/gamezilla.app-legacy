@@ -1,12 +1,12 @@
-import { unwrapOr } from '~/@/result'
+import { call, delay, fork, race, take } from 'typed-redux-saga'
+import { isErr, unwrapOr } from '~/@/result'
 import { RPC } from '~/@/rpc'
-import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
-import { Time } from '~/@/time/time'
-import { AppBackendCtxBase } from '~/app/@/backend/ctx'
+import { TimeSpan } from '~/@/time/time-span'
 import { BackendInstance } from '~/app/@/backend/backend-instance/backend-instance'
 import { BackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
-import { rpcContract, type MsgBackend, type BackendCtxModule, type BackendModule } from './types'
+import { AppBackendCtxBase } from '~/app/@/backend/ctx'
+import { rpcContract, type BackendCtxModule } from './types'
 
 const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtxModule> => {
   const backendInstanceDb = BackendInstanceDb({
@@ -20,89 +20,83 @@ const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtxMod
   }
 }
 
-const update: BackendModule['update'] = async (input) => {
-  switch (input.msg?.t) {
-    case 'got-web-backend-event': {
-      switch (input.msg.c.t) {
-        case 'web-backend/started': {
-          const backendInstanceNew: BackendInstance = {
-            ipAddress: input.msg.c.ipAddress,
-            lastHeartbeatAt: input.msg.c.startedAt,
-            port: input.msg.c.port,
-            backendInstanceId: input.ctx.backendInstanceId,
-            startedAt: input.msg.c.startedAt,
-            stoppedAt: null,
-          }
-
-          await input.ctx.backendInstanceDb.put(backendInstanceNew)
-
-          input.ctx.logger.info('recorded backend instance started')
-
-          return {}
-        }
-
-        case 'web-backend/stopping': {
-          return updateBackendStopped({ ctx: input.ctx, stoppedAt: input.msg.c.stoppedAt })
-        }
-      }
-    }
-
-    case 'got-runtime-event': {
-      switch (input.msg.c.t) {
-        case 'stopping': {
-          return updateBackendStopped({ ctx: input.ctx, stoppedAt: input.msg.c.stoppedAt })
-        }
-      }
-    }
-
-    case 'heartbeat': {
-      const got = unwrapOr(await input.ctx.backendInstanceDb.get(input.ctx.backendInstanceId), null)
-
-      if (!got) {
-        return {}
-      }
-
-      const backendInstanceNew: BackendInstance = {
-        ...got,
-        lastHeartbeatAt: input.msg.at,
-      }
-
-      await input.ctx.backendInstanceDb.put(backendInstanceNew)
-
-      return {}
-    }
-  }
-  return {}
+const saga = function* (ctx: BackendCtxModule) {
+  yield fork(flowHeartbeat, ctx)
+  yield fork(flowBackendInstanceState, ctx)
 }
 
-const updateBackendStopped = async (input: { stoppedAt: Posix; ctx: BackendCtxModule }) => {
-  const got = unwrapOr(await input.ctx.backendInstanceDb.get(input.ctx.backendInstanceId), null)
+const flowBackendInstanceState = function* (ctx: BackendCtxModule) {
+  const httpServerStarted = ctx.httpServer.events.where((e) => e.t === 'http-server/started').chan()
+  const httpServerStopped = ctx.httpServer.events.where((e) => e.t === 'http-server/stopping').chan()
+  const runtimeStopping = ctx.runtime.events.where((e) => e.t === 'runtime/stopping').chan()
 
-  if (!got) {
-    return {}
+  const event = yield* take(httpServerStarted)
+
+  ctx.logger.info('server started. recording backend instance started')
+
+  const backendInstanceStarted: BackendInstance = {
+    backendInstanceId: ctx.backendInstanceId,
+    ipAddress: event.ipAddress,
+    lastHeartbeatAt: event.startedAt,
+    port: event.port,
+    startedAt: event.startedAt,
+    stoppedAt: null,
   }
 
-  const backendInstanceNew: BackendInstance = {
-    ...got,
-    stoppedAt: input.stoppedAt,
+  yield* call(ctx.backendInstanceDb.put, backendInstanceStarted)
+
+  ctx.logger.info('recorded backend instance started')
+
+  yield* race([take(httpServerStopped), take(runtimeStopping)])
+
+  ctx.logger.info(' server stopped. recording backend instance stopped')
+
+  const backendInstanceStopped: BackendInstance = {
+    ...backendInstanceStarted,
+    stoppedAt: Posix.now(),
   }
 
-  await input.ctx.backendInstanceDb.put(backendInstanceNew)
+  yield* call(ctx.backendInstanceDb.put, backendInstanceStopped)
 
-  input.ctx.logger.info('recorded backend instance stopped')
-
-  return {}
+  ctx.logger.info('recorded backend instance stopped')
 }
 
-const subscriptions: BackendModule['subscriptions'] = async (input) => {
-  return Sub.batch<MsgBackend>([
-    Sub.tag('got-web-backend-event', input.ctx.httpServer.events),
-    Sub.tag('got-runtime-event', input.ctx.runtime.events),
-    Time.interval(INTERVAL_ID, BackendInstance.HEARTBEAT, (at) => ({ t: 'heartbeat', at })),
-  ])
-}
+const flowHeartbeat = function* (ctx: BackendCtxModule) {
+  while (true) {
+    ctx.logger.info('heartbeat')
 
-const INTERVAL_ID = 'backend-instance-heartbeat'
+    const got = yield* call(ctx.backendInstanceDb.get, ctx.backendInstanceId)
+
+    ctx.logger.info('got', got)
+
+    if (isErr(got)) continue
+
+    ctx.logger.info('got.value', got.value)
+
+    if (!got.value) continue
+
+    ctx.logger.info('got.value', got.value)
+
+    const backendInstanceNew: BackendInstance = {
+      ...got.value,
+      lastHeartbeatAt: Posix.now(),
+    }
+
+    ctx.logger.info('backendInstanceNew', backendInstanceNew)
+
+    const put = yield* call(ctx.backendInstanceDb.put, backendInstanceNew)
+
+    ctx.logger.info('put', put)
+
+    if (isErr(put)) continue
+
+    ctx.logger.info('put.value', put.value)
+
+    ctx.logger.info('heartbeat ok')
+
+    yield delay(TimeSpan.toMilliseconds(BackendInstance.HEARTBEAT))
+  }
+}
 
 const rpc = (input: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
@@ -120,7 +114,6 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
 
 export const BackendInstanceBackend = {
   initCtx,
-  update,
-  subscriptions,
+  saga,
   rpc,
 }

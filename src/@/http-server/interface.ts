@@ -7,13 +7,13 @@ export type Respond = (request: Request, backend: unknown) => MaybePromise<Respo
 
 export type HttpServerEvent =
   | {
-      t: 'web-backend/started'
+      t: 'http-server/started'
       ipAddress: string
       port: number
       startedAt: Posix
     }
   | {
-      t: 'web-backend/stopping'
+      t: 'http-server/stopping'
       stoppedAt: Posix
     }
 
