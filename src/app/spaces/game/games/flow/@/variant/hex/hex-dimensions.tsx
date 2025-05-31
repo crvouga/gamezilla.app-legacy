@@ -2,9 +2,9 @@ import { s } from '~/@/schema'
 
 export const Model = s.obj({
   t: s.l('flow-hex'),
-  width: s.num,
-  height: s.num,
-  side: s.num,
+  width: s.num(),
+  height: s.num(),
+  side: s.num(),
 })
 
 export type Model = {

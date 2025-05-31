@@ -1,8 +1,8 @@
 import { s } from '~/@/schema'
 
 export const schema = s.obj({
-  x: s.num,
-  y: s.num,
+  x: s.num(),
+  y: s.num(),
 })
 
 export type Position = s.Infer<typeof schema>

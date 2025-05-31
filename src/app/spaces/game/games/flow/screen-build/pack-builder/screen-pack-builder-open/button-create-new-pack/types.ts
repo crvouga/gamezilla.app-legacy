@@ -53,7 +53,7 @@ export type MsgToFrontend = {
 
 export const MsgSpace = s.obj({
   t: s.l('create-new-pack.user-created-pack'),
-  created: Result.schema(s.str, Pack),
+  created: Result.schema(s.str(), Pack),
   userId: UserId,
 })
 

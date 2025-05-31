@@ -31,7 +31,7 @@ export type MsgBackend = { t: 'noop' }
 
 export const MsgSpace = s.obj({
   t: s.l('user-deleted-puzzle'),
-  deleted: Result.schema(s.str, s.l(null)),
+  deleted: Result.schema(s.str(), s.l(null)),
   deletedByUserId: UserId,
   puzzleId: s.maybe(PuzzleId),
 })

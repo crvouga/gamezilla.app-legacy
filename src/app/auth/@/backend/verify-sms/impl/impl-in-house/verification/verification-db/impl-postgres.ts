@@ -12,10 +12,10 @@ import { PhoneNumber } from '~/@/phone-number'
 export const Row = s.obj({
   id: VerificationId,
   code_hash: s.maybe(s.json),
-  phone_number: s.str,
-  created_at_posix: s.str,
-  expires_at_posix: s.str,
-  verified_at_posix: s.maybe(s.str),
+  phone_number: s.str(),
+  created_at_posix: s.str(),
+  expires_at_posix: s.str(),
+  verified_at_posix: s.maybe(s.str()),
 })
 type Row = s.Infer<typeof Row>
 
@@ -57,7 +57,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
 			`
       const queriedCount = await config.dbConnSql.query({
         schema: s.obj({
-          count: s.str,
+          count: s.str(),
         }),
         sql: queryCount,
         vars: vars,

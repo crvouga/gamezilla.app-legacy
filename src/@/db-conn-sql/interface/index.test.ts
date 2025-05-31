@@ -110,7 +110,7 @@ describe('DbConnSql', () => {
       })
       expect(isOk(inserted)).toBe(true)
       const queried = await f.dbConnSql.query({
-        schema: s.obj({ id: s.maybe(s.or(s.num, s.str, s.bool)) }),
+        schema: s.obj({ id: s.maybe(s.or(s.num(), s.str(), s.bool)) }),
         sql: `SELECT id FROM foo`,
         vars: {},
       })

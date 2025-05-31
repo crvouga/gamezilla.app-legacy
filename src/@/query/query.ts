@@ -42,8 +42,8 @@ export type WhereOperator =
 export type WhereValue<T> = T[keyof T] | T[keyof T][]
 
 export const Pagination = s.obj({
-  limit: s.num,
-  offset: s.num,
+  limit: s.num(),
+  offset: s.num(),
 })
 
 export type Pagination = s.Infer<typeof Pagination>

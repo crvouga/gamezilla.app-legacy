@@ -8,13 +8,13 @@ import { PuzzleId } from '../../puzzle-id'
 import { PuzzleName } from '../../puzzle-name'
 
 const schema = s.obj({
-  id: s.str,
-  name: s.str,
-  flow: s.or(s.str, s.json),
-  created_at_posix: s.or(s.num, s.str),
-  created_by_user_id: s.str,
-  last_updated_at_posix: s.or(s.num, s.str),
-  last_updated_by_user_id: s.str,
+  id: s.str(),
+  name: s.str(),
+  flow: s.or(s.str(), s.json),
+  created_at_posix: s.or(s.num(), s.str()),
+  created_by_user_id: s.str(),
+  last_updated_at_posix: s.or(s.num(), s.str()),
+  last_updated_by_user_id: s.str(),
 })
 
 export type Row = s.Infer<typeof schema>

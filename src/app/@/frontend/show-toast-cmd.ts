@@ -9,7 +9,7 @@ export const schema = s.or(
     text: s.custom((input): input is TranslatedText => typeof input === 'string', 'invalid text'),
     toastVariant: s.maybe(s.or(s.l('error'), s.l('info'))),
     duration: s.maybe(TimeSpan.schema),
-    errorMsg: s.maybe(s.str),
+    errorMsg: s.maybe(s.str()),
   }),
 )
 

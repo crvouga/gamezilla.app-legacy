@@ -43,7 +43,7 @@ export type MsgToFrontend = { t: 'noop' }
 
 const ScreenPuzzle = s.obj({
   t: s.l('screen-puzzle'),
-  puzzleIndex: s.num,
+  puzzleIndex: s.num(),
   puzzleResult: PuzzleResult,
   play: s.maybe(ModePlay.Model),
 })
@@ -68,7 +68,7 @@ export const ModelSpace = s.and(
   s.obj({
     pack: Pack,
     screen: Screen,
-    slideIndex: s.num,
+    slideIndex: s.num(),
     opened: s.maybe(s.or(s.l('edit-pack-name-drawer'), s.l('more'))),
   }),
 )
@@ -84,7 +84,7 @@ export const MsgSpace = s.or(
   }),
   s.obj({
     t: s.l('screen-pack-builder.saved-pack'),
-    saved: Result.schema(s.str, Pack),
+    saved: Result.schema(s.str(), Pack),
   }),
   s.obj({
     t: s.l('screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button'),
@@ -93,11 +93,11 @@ export const MsgSpace = s.or(
   s.obj({
     t: s.l('screen-pack-builder.user-clicked-pack-item'),
     puzzleResult: PuzzleResult,
-    puzzleIndex: s.num,
+    puzzleIndex: s.num(),
   }),
   s.obj({
     t: s.l('screen-pack-builder.user-changed-slide'),
-    newSlideIndex: s.num,
+    newSlideIndex: s.num(),
     userId: UserId,
   }),
   s.obj({
@@ -128,7 +128,7 @@ export const MsgSpace = s.or(
   }),
   s.obj({
     t: s.l('remove-puzzle-from-pack.user-clicked-remove-from-pack-button'),
-    puzzleIndex: s.num,
+    puzzleIndex: s.num(),
     userId: UserId,
   }),
 )

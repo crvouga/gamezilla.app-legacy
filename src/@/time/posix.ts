@@ -1,7 +1,7 @@
 import { s } from '~/@/schema'
 import { TimeSpan } from './time-span'
 
-const schema = s.brand(s.num, 'Posix')
+const schema = s.brand(s.num(), 'Posix')
 export type Posix = s.Infer<typeof schema>
 
 const minPosixTime = new Date('1970-01-01T00:00:00.000Z').getTime()

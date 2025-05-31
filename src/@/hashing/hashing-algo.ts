@@ -6,22 +6,22 @@ export const HashingAlgo = s.or(
   }),
   s.obj({
     t: s.l('bcrypt'),
-    cost: s.num,
+    cost: s.num(),
   }),
   s.obj({
     t: s.l('argon2id'),
-    memoryCost: s.num,
-    timeCost: s.num,
+    memoryCost: s.num(),
+    timeCost: s.num(),
   }),
   s.obj({
     t: s.l('argon2i'),
-    memoryCost: s.num,
-    timeCost: s.num,
+    memoryCost: s.num(),
+    timeCost: s.num(),
   }),
   s.obj({
     t: s.l('argon2d'),
-    memoryCost: s.num,
-    timeCost: s.num,
+    memoryCost: s.num(),
+    timeCost: s.num(),
   }),
 )
 

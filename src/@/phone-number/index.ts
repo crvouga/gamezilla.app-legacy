@@ -5,7 +5,7 @@ import { phone } from './phone'
 
 const schema = s.obj({
   _country: Iso3166Alpha2Code,
-  _validPhoneNumber: s.str,
+  _validPhoneNumber: s.str(),
   _opaque: s.l('PhoneNumber'),
 })
 

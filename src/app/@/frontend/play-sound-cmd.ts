@@ -6,7 +6,7 @@ import { TimeSpan } from '~/@/time/time-span'
 export const schema = s.or(
   s.obj({
     t: s.l('play-sound'),
-    src: s.str,
+    src: s.str(),
     volume: s.maybe(UnitInterval.schema),
     delay: s.maybe(TimeSpan.schema),
   }),

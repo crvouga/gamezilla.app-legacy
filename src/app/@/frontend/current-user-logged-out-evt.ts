@@ -4,7 +4,7 @@ import { isOk } from '~/@/result'
 export const schema = s.or(
   s.obj({
     t: s.l('current-user-logged-out'),
-    text: s.str,
+    text: s.str(),
   }),
 )
 

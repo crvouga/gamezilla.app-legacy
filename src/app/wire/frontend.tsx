@@ -4,7 +4,7 @@ import { Sub } from '~/@/sub'
 import { cn } from '~/@/ui/cn'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { BackendInstanceFrontend } from './backend-instance/frontend'
-import type { FrontendCtx, ModelFrontend, MsgFrontend } from './types'
+import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from './types'
 
 //
 //
@@ -14,7 +14,7 @@ import type { FrontendCtx, ModelFrontend, MsgFrontend } from './types'
 //
 //
 
-export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend } => {
+export const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend } => {
   const backendInstance = BackendInstanceFrontend.init({
     ctx: { ...input.ctx, rpc: input.ctx.rpc.backendInstance },
   })

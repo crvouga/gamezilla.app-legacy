@@ -4,10 +4,10 @@ import * as RPC from '../rpc'
 export const childRpcContract = RPC.initContract({
   baz: {
     input: s.obj({
-      name: s.str,
+      name: s.str(),
     }),
     output: s.obj({
-      message: s.str,
+      message: s.str(),
     }),
   },
 })
@@ -24,19 +24,19 @@ export const contract = RPC.initContract({
   child: childRpcContract,
   foo: {
     input: s.obj({
-      name: s.str,
-      age: s.num,
+      name: s.str(),
+      age: s.num(),
     }),
     output: s.obj({
-      message: s.str,
+      message: s.str(),
     }),
   },
   bar: {
     input: s.obj({
-      name: s.str,
+      name: s.str(),
     }),
     output: s.obj({
-      message: s.str,
+      message: s.str(),
     }),
   },
 })

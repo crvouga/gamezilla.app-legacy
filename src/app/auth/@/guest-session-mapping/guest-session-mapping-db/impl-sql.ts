@@ -7,10 +7,10 @@ import { UserId } from '~/app/@/data/user-id'
 import { IGuestSessionMappingDb } from './interface'
 
 export const Row = s.obj({
-  id: s.str,
+  id: s.str(),
   guest_user_id: UserId,
   session_id: SessionId,
-  created_at_posix: s.or(s.str, s.num),
+  created_at_posix: s.or(s.str(), s.num()),
 })
 
 export type Config = {

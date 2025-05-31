@@ -8,8 +8,8 @@ import { Logger } from '../logger'
 import { TimeSpan } from '../time/time-span'
 
 const Row = s.obj({
-  id: s.str,
-  value: s.str,
+  id: s.str(),
+  value: s.str(),
 })
 
 export type Config = {

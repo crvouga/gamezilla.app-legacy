@@ -4,7 +4,7 @@ import { s } from '../schema'
 
 const schema = s.obj({
   type: s.l('TimeSpan'),
-  _durationMilliseconds: s.num,
+  _durationMilliseconds: s.num(),
 })
 
 export type TimeSpan = s.Infer<typeof schema>

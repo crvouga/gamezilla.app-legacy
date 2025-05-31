@@ -9,8 +9,8 @@ import { PubSub } from '../pub-sub'
 import { PubSubTopicBasedMap } from '../pub-sub-topic-based/impl-in-memory'
 
 const MyEvent = s.obj({
-  id: s.str,
-  value: s.str,
+  id: s.str(),
+  value: s.str(),
 })
 
 type MyEvent = s.Infer<typeof MyEvent>

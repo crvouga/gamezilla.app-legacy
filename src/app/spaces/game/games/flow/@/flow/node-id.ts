@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 
-const schema = s.brand(s.str, 'NodeId')
+const schema = s.brand(s.str(), 'NodeId')
 
 export type NodeId = s.Infer<typeof schema>
 

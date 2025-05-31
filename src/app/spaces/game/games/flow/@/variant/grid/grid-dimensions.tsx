@@ -5,8 +5,8 @@ import { Slider } from '~/@/ui/slider'
 
 export const Model = s.obj({
   t: s.l('flow-grid'),
-  width: s.num,
-  height: s.num,
+  width: s.num(),
+  height: s.num(),
 })
 
 export type Model = s.Infer<typeof Model>

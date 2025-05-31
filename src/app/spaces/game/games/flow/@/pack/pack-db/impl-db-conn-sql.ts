@@ -24,11 +24,11 @@ export type Config = {
 const Row = s.obj({
   id: PackId,
   name: PackName,
-  created_at_posix: s.or(s.num, s.str),
+  created_at_posix: s.or(s.num(), s.str()),
   created_by_user_id: UserId,
-  last_updated_at_posix: s.or(s.num, s.str),
+  last_updated_at_posix: s.or(s.num(), s.str()),
   last_updated_by_user_id: UserId,
-  deleted_at_posix: s.maybe(s.or(s.num, s.str)),
+  deleted_at_posix: s.maybe(s.or(s.num(), s.str())),
   deleted_by_user_id: s.maybe(UserId),
   is_official: s.maybe(s.bool),
 })
@@ -36,14 +36,14 @@ const Row = s.obj({
 type Row = s.Infer<typeof Row>
 
 const RowItem = s.obj({
-  id: s.str,
-  pack_id: s.str,
-  puzzle_id: s.str,
-  position: s.or(s.num, s.str),
-  created_at_posix: s.or(s.num, s.str),
-  created_by_user_id: s.str,
-  deleted_at_posix: s.maybe(s.or(s.num, s.str)),
-  deleted_by_user_id: s.maybe(s.str),
+  id: s.str(),
+  pack_id: s.str(),
+  puzzle_id: s.str(),
+  position: s.or(s.num(), s.str()),
+  created_at_posix: s.or(s.num(), s.str()),
+  created_by_user_id: s.str(),
+  deleted_at_posix: s.maybe(s.or(s.num(), s.str())),
+  deleted_by_user_id: s.maybe(s.str()),
 })
 
 type RowItem = s.Infer<typeof RowItem>
@@ -152,7 +152,11 @@ export const PackDb = (config: Config): IPackDb => {
       const where = toSqlWhere(input.where)
       const vars = where.vars
       const sql = `SELECT COUNT(*) AS count FROM game_flow_pack ${where.str}`
-      const queried = await config.dbConnSql.query({ schema: s.obj({ count: s.maybe(s.or(s.num, s.str)) }), sql, vars })
+      const queried = await config.dbConnSql.query({
+        schema: s.obj({ count: s.maybe(s.or(s.num(), s.str())) }),
+        sql,
+        vars,
+      })
       return Result.mapOk(queried, (rows) => ensureNumber(rows[0]?.count))
     },
 
@@ -181,7 +185,7 @@ export const PackDb = (config: Config): IPackDb => {
         ${sqlPagination.str};
 			`
       const packsSub = config.dbConnSql.sub({
-        schema: s.and(Row, s.obj({ puzzle_ids_csv: s.maybe(s.str) })),
+        schema: s.and(Row, s.obj({ puzzle_ids_csv: s.maybe(s.str()) })),
         sql,
         vars,
       })

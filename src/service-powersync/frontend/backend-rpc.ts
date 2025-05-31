@@ -20,7 +20,7 @@ const getPowerSyncCredentials = async (): Promise<Result<string, { token: string
 
     const parsed = s
       .obj({
-        token: s.str,
+        token: s.str(),
       })
       .parse(responseJson)
 

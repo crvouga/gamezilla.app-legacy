@@ -18,7 +18,7 @@ const Fixture = async <T>(config: Config<T>) => {
 
 const MyEvent = s.obj({
   id: EventId.schema,
-  value: s.str,
+  value: s.str(),
 })
 
 type MyEvent = s.Infer<typeof MyEvent>

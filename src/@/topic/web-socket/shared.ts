@@ -4,19 +4,19 @@ import { s } from '~/@/schema'
 export const ToServerMsg = s.or(
   s.obj({
     t: s.l('subscribe'),
-    topicName: s.arr(s.str),
+    topicName: s.arr(s.str()),
     topicParams: s.unknown,
   }),
   s.obj({
     t: s.l('unsubscribe'),
-    topicName: s.arr(s.str),
+    topicName: s.arr(s.str()),
     topicParams: s.unknown,
   }),
   s.obj({
     t: s.l('publish'),
-    topicName: s.arr(s.str),
+    topicName: s.arr(s.str()),
     topicParams: s.unknown,
-    msg: s.str,
+    msg: s.str(),
   }),
 )
 
@@ -25,12 +25,12 @@ export type ToServerMsg = s.Infer<typeof ToServerMsg>
 export const ToClientMsgOne = s.or(
   s.obj({
     t: s.l('subscribed'),
-    topicName: s.arr(s.str),
+    topicName: s.arr(s.str()),
     topicParams: s.unknown,
   }),
   s.obj({
     t: s.l('unsubscribed'),
-    topicName: s.arr(s.str),
+    topicName: s.arr(s.str()),
     topicParams: s.unknown,
   }),
 )
@@ -40,9 +40,9 @@ export type ToClientMsgOne = s.Infer<typeof ToClientMsgOne>
 export const ToClientMsgMany = s.or(
   s.obj({
     t: s.l('published'),
-    topicName: s.arr(s.str),
+    topicName: s.arr(s.str()),
     topicParams: s.unknown,
-    msg: s.str,
+    msg: s.str(),
   }),
 )
 

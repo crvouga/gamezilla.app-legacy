@@ -1,7 +1,7 @@
 import { Result } from '~/@/result'
 import { s } from '~/@/schema'
 
-const schema = s.brand(s.str, 'ClientId')
+const schema = s.brand(s.str(), 'ClientId')
 
 export type ClientId = s.Infer<typeof schema>
 

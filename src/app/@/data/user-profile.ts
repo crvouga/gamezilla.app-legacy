@@ -7,8 +7,8 @@ import { Username } from '~/app/@/data/username'
 const schema = s.obj({
   id: UserId,
   username: Username,
-  avatarSeed: s.maybe(s.str),
-  avatarStyle: s.maybe(s.str),
+  avatarSeed: s.maybe(s.str()),
+  avatarStyle: s.maybe(s.str()),
   createdAt: Posix,
   updatedAt: Posix,
 })

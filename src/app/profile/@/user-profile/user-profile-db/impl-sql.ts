@@ -15,10 +15,10 @@ import { ProfileDbQuery } from './query'
 const ProfileRow = s.obj({
   id: UserId,
   username: Username,
-  avatar_seed: s.maybe(s.str),
-  avatar_style: s.maybe(s.str),
-  created_at_posix: s.or(s.num, s.str),
-  updated_at_posix: s.or(s.num, s.str),
+  avatar_seed: s.maybe(s.str()),
+  avatar_style: s.maybe(s.str()),
+  created_at_posix: s.or(s.num(), s.str()),
+  updated_at_posix: s.or(s.num(), s.str()),
 })
 
 type ProfileRow = s.Infer<typeof ProfileRow>
@@ -134,7 +134,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
         vars: vars,
       })
       const queriedTotal = await config.dbConnSql.query({
-        schema: s.obj({ total: s.or(s.num, s.str) }),
+        schema: s.obj({ total: s.or(s.num(), s.str()) }),
         sql: sqlTotal,
         vars: vars,
       })

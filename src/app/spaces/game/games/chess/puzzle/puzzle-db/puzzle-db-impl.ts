@@ -17,27 +17,27 @@ import { Uuid } from '~/@/id/uuid'
 //
 //
 
-export const Int = s.or(s.str, s.num)
+export const Int = s.or(s.str(), s.num())
 
 export const PuzzleRow = s.obj({
-  puzzle_id: s.str,
+  puzzle_id: s.str(),
   rating: Int,
   rating_deviation: Int,
-  opening_tags: s.str,
-  fen: s.str,
-  moves: s.str,
+  opening_tags: s.str(),
+  fen: s.str(),
+  moves: s.str(),
   popularity: Int,
   number_of_plays: Int,
-  themes: s.str,
-  game_url: s.str,
+  themes: s.str(),
+  game_url: s.str(),
 })
 
 export type PuzzleRow = s.Infer<typeof PuzzleRow>
 
 export const PuzzleInteractionRow = s.obj({
-  id: s.str,
-  puzzle_id: s.str,
-  user_id: s.str,
+  id: s.str(),
+  puzzle_id: s.str(),
+  user_id: s.str(),
   type: s.enumeration(['started', 'solved', 'incorrect', 'solved-with-hint'] as const),
 })
 
@@ -45,15 +45,15 @@ export type PuzzleInteractionRow = s.Infer<typeof PuzzleInteractionRow>
 
 const PuzzleQueryJSON = s.obj({
   ratingRange: s.obj({
-    lower: s.num,
-    upper: s.num,
+    lower: s.num(),
+    upper: s.num(),
   }),
 })
 type PuzzleQueryJSON = s.Infer<typeof PuzzleQueryJSON>
 
 export const PuzzleProfileRow = s.obj({
-  id: s.str,
-  user_id: s.str,
+  id: s.str(),
+  user_id: s.str(),
   elo_rating: Int,
   puzzle_query: PuzzleQueryJSON,
 })

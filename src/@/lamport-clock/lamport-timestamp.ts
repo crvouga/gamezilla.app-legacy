@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 
 const schema = s.obj({
   _type: s.l('LamportTimestamp'),
-  _value: s.num,
+  _value: s.num(),
 })
 
 export type LamportTimestamp = s.Infer<typeof schema>

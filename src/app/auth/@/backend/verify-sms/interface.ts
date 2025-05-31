@@ -21,7 +21,7 @@ export type SendCodeOutput = s.Infer<typeof SendCodeOutput>
 
 export const VerifyCodeInput = s.obj({
   phoneNumber: PhoneNumber,
-  code: s.str,
+  code: s.str(),
   preferredLanguage: LanguageCodeISO_639_1.schema,
 })
 export type VerifyCodeInput = s.Infer<typeof VerifyCodeInput>

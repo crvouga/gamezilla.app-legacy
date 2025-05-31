@@ -55,7 +55,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
   const allIds = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['user-session', ALL_IDS],
-    schema: s.arr(s.str),
+    schema: s.arr(s.str()),
   })
 
   const getAll = async (): Promise<Row[]> => {

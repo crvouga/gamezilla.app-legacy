@@ -9,10 +9,10 @@ import { UserRole } from '~/app/@/data/user-role'
 import type { IUserAccountDb } from './interface'
 
 export const UserAccountRow = s.obj({
-  id: s.str,
-  created_at_posix: s.or(s.str, s.num),
+  id: s.str(),
+  created_at_posix: s.or(s.str(), s.num()),
   user_role: UserRole,
-  phone_number: s.maybe(s.str),
+  phone_number: s.maybe(s.str()),
 })
 export type UserAccountRow = s.Infer<typeof UserAccountRow>
 

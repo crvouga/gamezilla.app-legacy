@@ -145,7 +145,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
   return fixtures
 }
 
-const Item = s.obj({ id: s.str })
+const Item = s.obj({ id: s.str() })
 
 type Item = s.Infer<typeof Item>
 

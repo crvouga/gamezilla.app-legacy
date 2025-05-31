@@ -125,7 +125,7 @@ export const VerifySMS = (config: Config): IVerifySMS => {
             }),
             s.obj({
               status: s.l(400),
-              code: s.num,
+              code: s.num(),
             }),
           )
           .parse(data)

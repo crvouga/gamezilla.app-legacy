@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
 import { Flow } from '../../flow'
 
-const schema = s.brand(s.str, 'SolutionHash')
+const schema = s.brand(s.str(), 'SolutionHash')
 
 /**
  * This represents a hash of a flow where its unique on the flow's terminals

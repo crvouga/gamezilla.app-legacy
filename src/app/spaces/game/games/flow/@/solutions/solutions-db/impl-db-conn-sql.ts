@@ -14,10 +14,10 @@ export type Config = {
 }
 
 const Row = s.obj({
-  id: s.str,
-  solutions: s.or(s.str, s.json),
-  created_at_posix: s.maybe(s.or(Posix, s.str)),
-  last_updated_at_posix: s.maybe(s.or(Posix, s.str)),
+  id: s.str(),
+  solutions: s.or(s.str(), s.json),
+  created_at_posix: s.maybe(s.or(Posix, s.str())),
+  last_updated_at_posix: s.maybe(s.or(Posix, s.str())),
 })
 
 export type Row = s.Infer<typeof Row>
@@ -74,7 +74,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
         if (got.value.length > 0) {
           // Update existing record
           const updateResult = await config.dbConnSql.query({
-            schema: s.num,
+            schema: s.num(),
             sql: `
             UPDATE game_flow_solutions
             SET

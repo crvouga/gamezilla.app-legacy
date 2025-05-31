@@ -4,7 +4,7 @@ import { isOk } from '~/@/result'
 export const schema = s.or(
   s.obj({
     t: s.l('preload-sounds'),
-    srcs: s.arr(s.str),
+    srcs: s.arr(s.str()),
   }),
 )
 

@@ -13,7 +13,7 @@ export const Row = s.obj({
   id: VerificationAttemptId,
   verification_id: VerificationId,
   inputted_code_hash: s.json,
-  created_at_posix: s.or(s.str, s.num),
+  created_at_posix: s.or(s.str(), s.num()),
 })
 type Row = s.Infer<typeof Row>
 

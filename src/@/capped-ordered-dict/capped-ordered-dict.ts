@@ -109,7 +109,7 @@ const schema = <TKey extends string | number, TValue>(
   return s.obj({
     _valuesByKey: s.dict(key, val),
     _orderNewestFirst: s.arr(key),
-    _maxSize: s.num,
+    _maxSize: s.num(),
   })
 }
 

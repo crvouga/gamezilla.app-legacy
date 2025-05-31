@@ -1,7 +1,7 @@
 import { s } from '~/@/schema'
 import * as Flow from './flow'
 
-const schema = s.brand(s.str, 'FlowId')
+const schema = s.brand(s.str(), 'FlowId')
 
 export type FlowId = s.Infer<typeof schema>
 

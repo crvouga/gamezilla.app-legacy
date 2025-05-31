@@ -45,12 +45,12 @@ export const MsgSpace = s.or(
   s.obj({
     t: s.l('user-clicked-open-screen-play-puzzle'),
     puzzle: PuzzleResult,
-    puzzleIndex: s.num,
+    puzzleIndex: s.num(),
     userId: UserId,
   }),
   s.obj({
     t: s.l('user-changed-slides'),
-    slideIndex: s.num,
+    slideIndex: s.num(),
     userId: UserId,
   }),
   ScreenPuzzleTypes.MsgSpace,
@@ -65,7 +65,7 @@ const Screen = s.or(
   s.obj({
     t: s.l('screen-select-puzzle'),
     pack: Pack,
-    slideIndex: s.num,
+    slideIndex: s.num(),
   }),
   ScreenPuzzleTypes.ModelSpace,
 )

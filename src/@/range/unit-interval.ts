@@ -1,6 +1,6 @@
 import { s } from '../schema'
 
-const schema = s.brand(s.num, 'UnitInterval')
+const schema = s.brand(s.num(), 'UnitInterval')
 
 /**
  * Represents a unit interval, a number between 0 and 1

@@ -8,8 +8,8 @@ export const EditPackNameValidationError = s.obj({
 export type EditPackNameValidationError = s.Infer<typeof EditPackNameValidationError>
 
 export const ModelSpace = s.obj({
-  editPackName_draft: s.str,
-  editPackName_result: RemoteResult.schema(s.str, s.unknown),
+  editPackName_draft: s.str(),
+  editPackName_result: RemoteResult.schema(s.str(), s.unknown),
   editPackName_validationError: s.or(EditPackNameValidationError, s.l(null)),
 })
 export type ModelSpace = s.Infer<typeof ModelSpace>
@@ -18,7 +18,7 @@ export const MsgSpace = s.or(
   s.obj({
     t: s.l('edit-pack-name.user-inputted-draft-name'),
     userId: UserId,
-    packNameDraft: s.str,
+    packNameDraft: s.str(),
   }),
   s.obj({
     t: s.l('edit-pack-name.user-submitted-form'),

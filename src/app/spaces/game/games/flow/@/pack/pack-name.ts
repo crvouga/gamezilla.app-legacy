@@ -1,7 +1,7 @@
 import { s } from '~/@/schema'
 import { getWords } from '~/app/@/data/words'
 
-const schema = s.brand(s.str, 'PackName')
+const schema = s.brand(s.str(), 'PackName')
 
 export type PackName = s.Infer<typeof schema>
 

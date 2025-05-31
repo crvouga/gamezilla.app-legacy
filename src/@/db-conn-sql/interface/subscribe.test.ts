@@ -54,7 +54,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-const Row = s.obj({ id: s.num })
+const Row = s.obj({ id: s.num() })
 
 type Row = s.Infer<typeof Row>
 

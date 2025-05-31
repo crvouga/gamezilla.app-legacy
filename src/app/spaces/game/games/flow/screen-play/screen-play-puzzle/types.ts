@@ -23,13 +23,13 @@ export const MsgSpace = s.or(
   s.obj({
     t: s.l('user-clicked-next-puzzle'),
     nextPuzzle: PuzzleResult,
-    nextPuzzleIndex: s.num,
+    nextPuzzleIndex: s.num(),
     userId: UserId,
   }),
   s.obj({
     t: s.l('user-clicked-prev-puzzle'),
     prevPuzzle: PuzzleResult,
-    prevPuzzleIndex: s.num,
+    prevPuzzleIndex: s.num(),
     userId: UserId,
   }),
   s.obj({
@@ -53,7 +53,7 @@ export const MsgSpaceEvt = s.or(
     t: s.l('user-completed-puzzle'),
     userId: UserId,
     packId: PackId,
-    puzzleIndex: s.num,
+    puzzleIndex: s.num(),
   }),
   s.obj({
     t: s.l('user-used-hint'),
@@ -68,7 +68,7 @@ export const ModelSpace = s.obj({
   pack: Pack,
   puzzleResult: PuzzleResult,
   modePlay: s.or(ModePlay.Model, s.l(null)),
-  puzzleIndex: s.num,
+  puzzleIndex: s.num(),
   opened: s.or(s.l('puzzle-complete'), s.l('action-drawer'), s.l(null)),
   hints: s.partialDict(GroupId, GroupId),
 })

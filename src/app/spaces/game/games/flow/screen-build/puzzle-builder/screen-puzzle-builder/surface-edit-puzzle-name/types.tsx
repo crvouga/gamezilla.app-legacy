@@ -56,9 +56,9 @@ export type MsgToFrontend = {
 
 export const MsgSpace = s.obj({
   t: s.l('user-edited-puzzle-name'),
-  edited: Result.schema(s.str, s.l(null)),
+  edited: Result.schema(s.str(), s.l(null)),
   puzzleId: PuzzleId,
-  newName: s.str,
+  newName: s.str(),
   userId: UserId,
 })
 export type MsgSpace = s.Infer<typeof MsgSpace>

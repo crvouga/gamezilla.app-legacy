@@ -23,7 +23,7 @@ const schema = s.or(
   }),
   s.obj({
     t: s.l('database-error'),
-    error: s.str,
+    error: s.str(),
   }),
 )
 

@@ -1,11 +1,13 @@
 import { RPC } from '~/@/rpc'
 import { Posix } from '~/@/time/posix'
 import { AppBackendCtx } from '../@/backend/ctx'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '../@/frontend/ctx'
+import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { BackendInstanceTypes } from './backend-instance'
 import type { BackendTransportMsg } from './transport/backend'
 import type { FrontendTransportEvent } from './transport/frontend'
 import { IWireSessionDb } from './wire-session-db'
+import { Topic } from '~/@/topic'
+import { s } from '~/@/schema'
 
 //
 //
@@ -77,6 +79,21 @@ export const rpcContract = RPC.initContract({
   backendInstance: BackendInstanceTypes.rpcContract,
 })
 
-export type FrontendCtx = (AppFrontendCtx | AnonymousFrontendCtx) & {
+export const topic = Topic.initContract({
+  ping: {
+    params: s.l(null),
+    msg: s.obj({
+      id: s.str(),
+    }),
+  },
+  pong: {
+    params: s.l(null),
+    msg: s.obj({
+      id: s.str(),
+    }),
+  },
+})
+
+export type FrontendCtxModule = AppFrontendCtxBase & {
   rpc: RPC.Client<typeof rpcContract>
 }

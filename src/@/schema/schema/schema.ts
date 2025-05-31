@@ -142,32 +142,36 @@ export const partialObj = <T>(schemas: {
   }
 }
 
-export const str: Parser<string> = {
-  parse(input) {
-    if (typeof input !== 'string') {
-      return Err([
-        {
-          message: toErrorMessage('string', typeof input, `${input instanceof Date}, ${JSON.stringify(input)}`),
-          path: [],
-        },
-      ])
-    }
-    return Ok(input)
-  },
+export const str = (): Parser<string> => {
+  return {
+    parse(input) {
+      if (typeof input !== 'string') {
+        return Err([
+          {
+            message: toErrorMessage('string', typeof input, `${input instanceof Date}, ${JSON.stringify(input)}`),
+            path: [],
+          },
+        ])
+      }
+      return Ok(input)
+    },
+  }
 }
 
-export const num: Parser<number> = {
-  parse(input) {
-    if (typeof input !== 'number') {
-      return Err([
+export const num = (): Parser<number> => {
+  return {
+    parse(input) {
+      if (typeof input !== 'number') {
+        return Err([
         {
           message: toErrorMessage('number', typeof input, JSON.stringify(input)),
           path: [],
         },
       ])
     }
-    return Ok(input)
-  },
+      return Ok(input)
+    },
+  }
 }
 
 export const l = <T extends string | number | boolean | null | undefined>(value: T): Parser<T> => {

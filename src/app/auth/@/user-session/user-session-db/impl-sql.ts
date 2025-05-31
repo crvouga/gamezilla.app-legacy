@@ -18,8 +18,8 @@ export const Row = s.obj({
   session_id: s.maybe(SessionId),
   client_session_id: ClientSessionId,
   user_id: UserId,
-  created_at_posix: s.or(s.str, s.num),
-  ended_at_posix: s.maybe(s.or(s.str, s.num)),
+  created_at_posix: s.or(s.str(), s.num()),
+  ended_at_posix: s.maybe(s.or(s.str(), s.num())),
 })
 
 export type Row = s.Infer<typeof Row>
@@ -134,7 +134,11 @@ export const UserSessionDb = ({ dbConnSql, ...config }: Config): IUserSessionDb 
 
       const queried = await dbConnSql.query({ schema: Row, sql, vars })
 
-      const queriedCount = await dbConnSql.query({ schema: s.obj({ total: s.or(s.num, s.str) }), sql: sqlCount, vars })
+      const queriedCount = await dbConnSql.query({
+        schema: s.obj({ total: s.or(s.num(), s.str()) }),
+        sql: sqlCount,
+        vars,
+      })
 
       const total = unwrapOr(
         Result.mapOk(queriedCount, (rows) => {

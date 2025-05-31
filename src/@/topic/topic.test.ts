@@ -6,21 +6,21 @@ import { s } from '../schema'
 import { ClientSessionId } from '../wire/client-session-id'
 
 const Msg = s.obj({
-  name: s.str,
+  name: s.str(),
 })
 type Msg = s.Infer<typeof Msg>
 
 const contract = Topic.initContract({
   someTopic: {
     params: s.obj({
-      id: s.str,
+      id: s.str(),
     }),
     msg: Msg,
   },
   nested: Topic.initContract({
     someTopic: {
       params: s.obj({
-        id: s.str,
+        id: s.str(),
       }),
       msg: Msg,
     },

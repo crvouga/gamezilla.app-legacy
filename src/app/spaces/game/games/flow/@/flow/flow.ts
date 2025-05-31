@@ -83,17 +83,17 @@ export const Model = s.obj({
   /**
    * A hash of the terminals in the puzzle. Used for memoization.
    */
-  terminalHash: s.maybe(s.or(s.str, s.num)),
+  terminalHash: s.maybe(s.or(s.str(), s.num())),
 
   /**
    * A hash of the edges in the puzzle. Used for memoization.
    */
-  edgeHash: s.maybe(s.or(s.str, s.num)),
+  edgeHash: s.maybe(s.or(s.str(), s.num())),
 
   /**
    * A hash of the nodes in the puzzle. Used for memoization.
    */
-  nodeHash: s.maybe(s.or(s.str, s.num)),
+  nodeHash: s.maybe(s.or(s.str(), s.num())),
 })
 
 export type Model = s.Infer<typeof Model>

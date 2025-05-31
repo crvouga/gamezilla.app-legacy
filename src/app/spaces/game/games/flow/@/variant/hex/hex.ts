@@ -4,9 +4,9 @@ import * as VariantHexDimensions from './hex-dimensions'
 import { NodeId } from '../../flow/node-id'
 
 export const HexPosition = s.obj({
-  x: s.num,
-  y: s.num,
-  z: s.num,
+  x: s.num(),
+  y: s.num(),
+  z: s.num(),
 })
 export type HexPosition = s.Infer<typeof HexPosition>
 

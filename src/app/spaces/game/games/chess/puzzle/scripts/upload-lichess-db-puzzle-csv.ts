@@ -12,16 +12,16 @@ import { PuzzleDb, type PuzzleRow } from '../puzzle-db/puzzle-db-impl'
 //
 
 const LichessRow = s.obj({
-  PuzzleId: s.str,
-  FEN: s.str,
-  Moves: s.str,
-  Rating: s.str,
-  RatingDeviation: s.str,
-  Popularity: s.str,
-  NbPlays: s.str,
-  Themes: s.str,
-  GameUrl: s.str,
-  OpeningTags: s.str,
+  PuzzleId: s.str(),
+  FEN: s.str(),
+  Moves: s.str(),
+  Rating: s.str(),
+  RatingDeviation: s.str(),
+  Popularity: s.str(),
+  NbPlays: s.str(),
+  Themes: s.str(),
+  GameUrl: s.str(),
+  OpeningTags: s.str(),
 })
 
 export type LichessRow = s.Infer<typeof LichessRow>

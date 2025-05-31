@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 
-const schema = s.brand(s.str, 'HashValue')
+const schema = s.brand(s.str(), 'HashValue')
 
 export type HashValue = s.Infer<typeof schema>
 

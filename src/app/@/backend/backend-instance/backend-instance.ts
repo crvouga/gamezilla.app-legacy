@@ -8,8 +8,8 @@ const schema = s.obj({
   startedAt: Posix,
   stoppedAt: s.maybe(Posix),
   lastHeartbeatAt: Posix,
-  ipAddress: s.maybe(s.str),
-  port: s.maybe(s.num),
+  ipAddress: s.maybe(s.str()),
+  port: s.maybe(s.num()),
 })
 
 export type BackendInstance = s.Infer<typeof schema>

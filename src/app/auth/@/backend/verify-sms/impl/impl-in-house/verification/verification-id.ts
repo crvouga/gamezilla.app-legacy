@@ -1,7 +1,7 @@
 import { Uuid } from '~/@/id/uuid'
 import { s } from '~/@/schema'
 
-const schema = s.brand(s.str, 'VerificationId')
+const schema = s.brand(s.str(), 'VerificationId')
 
 export type VerificationId = s.Infer<typeof schema>
 

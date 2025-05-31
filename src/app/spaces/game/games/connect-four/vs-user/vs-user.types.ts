@@ -76,7 +76,7 @@ export const MsgSpace = s.or(
   }),
   s.obj({
     t: s.l('user-dropped-disc'),
-    columnIndex: s.num,
+    columnIndex: s.num(),
     userId: UserId,
   }),
   s.obj({
@@ -155,7 +155,7 @@ export type Rematch = s.Infer<typeof Rematch>
 
 const Errors = s.obj({
   errors: s.dict(
-    s.str,
+    s.str(),
     s.and(
       MsgSpace,
       s.obj({
@@ -196,7 +196,7 @@ export const StateGame = s.and(
     type: s.l('game'),
     moveTimeLimit: MoveTimeLimit,
     columns: Columns,
-    gameId: s.num,
+    gameId: s.num(),
     lastMoveAt: Posix,
     players: s.dict(PlayerType, UserId),
   }),
@@ -209,7 +209,7 @@ export const StateGameOver = s.and(
     type: s.l('game-over'),
     moveTimeLimit: MoveTimeLimit,
     columns: Columns,
-    gameId: s.num,
+    gameId: s.num(),
     gameOver: GameOver,
     rematch: Rematch,
     players: s.dict(PlayerType, UserId),

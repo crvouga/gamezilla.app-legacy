@@ -70,7 +70,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       if (got.value) {
         // First try to update existing record
         const updateResult = await config.dbConnSql.query({
-          schema: s.num,
+          schema: s.num(),
           sql: `
           UPDATE game_flow_puzzle
           SET
@@ -144,7 +144,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
 
     async zap(input) {
       const queried = await config.dbConnSql.query({
-        schema: s.num,
+        schema: s.num(),
         sql: `
         UPDATE
           game_flow_puzzle
@@ -168,7 +168,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
 
       const queried = await config.dbConnSql.query({
         schema: s.obj({
-          count: s.maybe(s.or(s.str, s.num)),
+          count: s.maybe(s.or(s.str(), s.num())),
         }),
         sql: `
         SELECT
@@ -197,7 +197,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
 
       const queriedCount = await config.dbConnSql.query({
         schema: s.obj({
-          count: s.maybe(s.or(s.str, s.num)),
+          count: s.maybe(s.or(s.str(), s.num())),
         }),
         sql: `
         SELECT

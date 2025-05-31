@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 
 export const Model = s.obj({
   t: s.l('flow-tri'),
-  side: s.num,
+  side: s.num(),
 })
 
 export type Model = s.Infer<typeof Model>
