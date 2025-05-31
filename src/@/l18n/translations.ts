@@ -11,7 +11,7 @@ export type Translations<TText extends TranslationText> = {
 
 export type TranslatedText = Brand<'TranslatedText', string>
 
-const of = (text: string): TranslatedText => text as TranslatedText
+const of = (text: string | number): TranslatedText => String(text) as TranslatedText
 
 export const TranslatedText = {
   of,
