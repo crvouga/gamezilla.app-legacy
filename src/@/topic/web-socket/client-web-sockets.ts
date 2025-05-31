@@ -1,6 +1,8 @@
 import { ILogger, Logger } from '~/@/logger'
 import { isErr } from '~/@/result'
 import { PubSub, Sub } from '~/@/sub'
+import { throttleByKey } from '~/@/throttle/throttle'
+import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { Client, Contract } from '../types'
 import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
@@ -84,6 +86,42 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
     ws.send(JSON.stringify(msg))
   }
 
+  const subscribe = throttleByKey({
+    throttle: TimeSpan.seconds(1),
+    fn: (topicName: string[], topicParams: unknown) => {
+      const toServerMsg: ToServerMsg = {
+        t: 'subscribe',
+        topicName,
+        topicParams,
+      }
+      send(toServerMsg)
+    },
+    keyFn: (topicName, topicParams) => {
+      return toTopicString({
+        topicName,
+        topicParams,
+      })
+    },
+  })
+
+  const unsubscribe = throttleByKey({
+    throttle: TimeSpan.seconds(1),
+    fn: (topicName: string[], topicParams: unknown) => {
+      const toServerMsg: ToServerMsg = {
+        t: 'unsubscribe',
+        topicName,
+        topicParams,
+      }
+      send(toServerMsg)
+    },
+    keyFn: (topicName, topicParams) => {
+      return toTopicString({
+        topicName,
+        topicParams,
+      })
+    },
+  })
+
   const createClientRecursive = (currentContract: Contract<any>, runningTopicName: string[] = []): any => {
     const clientProxy: any = {}
 
@@ -116,13 +154,8 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
 
             if (existingSub) {
               logger.debug(`reusing existing subscription for topic=${topicString}`)
-              const toServerMsg: ToServerMsg = {
-                t: 'subscribe',
-                topicName,
-                topicParams,
-              }
 
-              send(toServerMsg)
+              subscribe(topicName, topicParams)
 
               return existingSub.sub
             }
@@ -133,13 +166,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
 
             subByTopic.set(topicString, { topicName, topicParams, sub })
 
-            const toServerMsg: ToServerMsg = {
-              t: 'subscribe',
-              topicName,
-              topicParams,
-            }
-
-            send(toServerMsg)
+            subscribe(topicName, topicParams)
 
             return {
               ...sub,
@@ -147,12 +174,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
                 const unsub = sub.sub(subscriber)
                 return () => {
                   unsub()
-                  const toServerMsg: ToServerMsg = {
-                    t: 'unsubscribe',
-                    topicName,
-                    topicParams,
-                  }
-                  send(toServerMsg)
+                  unsubscribe(topicName, topicParams)
                 }
               },
             }
