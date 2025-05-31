@@ -95,6 +95,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     aggregate: {
       StringConcat: (column, separator) => `STRING_AGG(${column}, '${separator}')`,
     },
+
     sub<TRow>(input: DbConnSqlQueryInput<TRow>) {
       const sql = Sql.to(input.sql, input.vars)
       const subscriptionKey = sql
@@ -155,6 +156,9 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       })
 
       return {
+        chan: () => {
+          throw new Error('not implemented')
+        },
         subscriberCount: () => pubSub.subscriberCount(),
         sub(subscriber: (rows: TRow[]) => void) {
           const unsub = pubSub.sub(subscriber)

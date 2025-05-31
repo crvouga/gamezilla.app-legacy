@@ -1,3 +1,4 @@
+import { fork } from 'redux-saga/effects'
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb } from '~/@/key-value-db'
@@ -249,6 +250,10 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
   })
 }
 
+const saga = function* (input: { ctx: BackendCtxModule }) {
+  yield fork(WireBackend.saga, { ctx: input.ctx.wire })
+}
+
 export const AppBackend = {
   initCtx,
   updateCtx,
@@ -256,4 +261,5 @@ export const AppBackend = {
   update,
   subscriptions,
   rpc,
+  saga,
 }

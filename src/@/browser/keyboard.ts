@@ -54,6 +54,9 @@ const is = (key: unknown): key is Key => {
 export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
   return {
     subscriberCount: () => 0,
+    chan: () => {
+      throw new Error('not implemented')
+    },
     sub: (subscriber: (msg: T) => void) => {
       const handler = (msgEvt: KeyboardEvent) => {
         if (msgEvt.repeat) {
@@ -74,9 +77,12 @@ export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
   }
 }
 
-export const keyUps = <T>(callback: (key: Key) => T): Sub<T> => {
+export const keyUps = <T extends {}>(callback: (key: Key) => T): Sub<T> => {
   return {
     subscriberCount: () => 0,
+    chan: () => {
+      throw new Error('not implemented')
+    },
     sub: (subscriber) => {
       const handler = (msgEvt: KeyboardEvent) => {
         if (msgEvt.repeat) {

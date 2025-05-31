@@ -16,9 +16,7 @@ export type MsgFrontend =
   | { t: 'got-backend-instance-msg'; c: BackendInstanceTypes.MsgFrontend }
   | { t: 'got-backend-connection-msg'; c: BackendConnectionTypes.MsgFrontend }
 
-export type MsgBackend =
-  | { t: 'got-backend-instance-msg'; c: BackendInstanceTypes.MsgBackend }
-  | { t: 'got-backend-connection-msg'; c: BackendConnectionTypes.MsgBackend }
+export type MsgBackend = { t: 'got-backend-instance-msg'; c: BackendInstanceTypes.MsgBackend }
 
 export const rpcContract = RPC.initContract({
   backendInstance: BackendInstanceTypes.rpcContract,

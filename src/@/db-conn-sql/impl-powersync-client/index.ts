@@ -132,6 +132,9 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     })
 
     return {
+      chan: () => {
+        throw new Error('not implemented')
+      },
       subscriberCount: () => pubSub.subscriberCount(),
       sub(subscriber: (rows: TRow[]) => void) {
         const unsub = pubSub.sub(subscriber)

@@ -58,13 +58,6 @@ export const topicContract = Topic.initContract({
   },
 })
 
-export type MsgBackend = {
-  t: 'ping'
-  pingId: PingId
-  now: Posix
-  clientSessionId: ClientSessionId
-}
-
 export type FrontendCtxModule = AppFrontendCtxBase & {
   topic: Topic.Client<typeof topicContract>
 }
@@ -81,5 +74,4 @@ export type FrontendModule = AppFrontendModule<{
 
 export type BackendModule = AppBackendModule<{
   Ctx: BackendCtxModule
-  Msg: MsgBackend
 }>

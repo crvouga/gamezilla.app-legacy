@@ -10,7 +10,6 @@ import { type Input, type Output, SpaceBackendModule } from './architecture/spac
 import { SpacesCoreAsync } from './core/core-async'
 import { GameBackend } from './game/backend'
 import { ListSpacesBackend } from './list-spaces/backend'
-import { StartSpaceBackend } from './start-space/backend'
 import { SyncBackend } from './sync/backend'
 import { type BackendModule, MsgBackend, rpcContract, type SpaceBackendCtxModule, topicContract } from './types'
 
@@ -66,7 +65,6 @@ const updateChild: SpaceBackendModule['update'] = async (input) => {
     {},
     () => updateSpacesFromMsgSpace(input),
     () => SyncBackend.update(input),
-    () => StartSpaceBackend.update(input),
     () => GameBackend.update(input),
   )
 }

@@ -1,6 +1,9 @@
+import { eventChannel, TakeableChannel } from 'redux-saga'
+
 export type Sub<Msg> = {
   sub: (subscriber: (msg: Msg) => Promise<unknown> | unknown) => () => void
   subscriberCount: () => number
+  chan: () => TakeableChannel<Msg>
 }
 
 export type Pub<Msg> = {
@@ -24,6 +27,19 @@ const create = <Msg>(): PubSub<Msg> => {
   const subscribers = new Map<number, (msg: Msg) => Promise<unknown> | unknown>()
   const queue: Msg[] = []
   return {
+    chan() {
+      // @ts-ignore
+      return eventChannel<Msg>((emit) => {
+        const unsub = this.sub((msg: Msg) => {
+          if (msg !== undefined) {
+            emit(msg)
+          }
+        })
+        return () => {
+          unsub()
+        }
+      })
+    },
     subscriberCount() {
       return subscribers.size
     },
@@ -68,18 +84,24 @@ const next = <A>(sub: Sub<A>) => {
 
 const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
   return {
-    subscriberCount: () => sub.subscriberCount(),
+    ...sub,
     sub: (subscriber) => {
       return sub.sub((a) => {
         subscriber(f(a))
       })
+    },
+    chan: () => {
+      throw new Error('not implemented')
     },
   }
 }
 
 const flatMap = <A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> => {
   return {
-    subscriberCount: () => sub.subscriberCount(),
+    ...sub,
+    chan: () => {
+      throw new Error('not implemented')
+    },
     sub: (subscriber: (msg: B) => void) => {
       const unsubscribeFunctions: Array<() => void> = []
 
@@ -98,9 +120,23 @@ const flatMap = <A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> => {
   }
 }
 
-const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
+const batch = <Msg extends {}>(arr: Sub<Msg>[]): Sub<Msg> => {
   return {
     subscriberCount: () => arr.reduce((acc, sub) => acc + sub.subscriberCount(), 0),
+    chan: () => {
+      return eventChannel<Msg>((emit) => {
+        const unsubscribeList: (() => void)[] = []
+        for (const sub of arr) {
+          const unsubscribe = sub.sub((msg) => emit(msg))
+          unsubscribeList.push(unsubscribe)
+        }
+        return () => {
+          for (const unsubscribe of unsubscribeList) {
+            unsubscribe()
+          }
+        }
+      })
+    },
     sub: (subscriber) => {
       const unsubscribeList: (() => void)[] = []
 
@@ -120,11 +156,15 @@ const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
 const None: Sub<never> = {
   subscriberCount: () => 0,
   sub: () => () => {},
+  chan: () => eventChannel<never>((_emit) => () => {}),
 }
 
 const flat = <A>(sub: Sub<A[]>): Sub<A> => {
   return {
-    subscriberCount: () => sub.subscriberCount(),
+    ...sub,
+    chan: () => {
+      throw new Error('not implemented')
+    },
     sub: (subscriber) => {
       return sub.sub((a) => {
         if (a) {
@@ -139,7 +179,7 @@ const flat = <A>(sub: Sub<A[]>): Sub<A> => {
 const lastKeyById = new Map<string, string>()
 const deduplicate = <Msg>(id: string, keyFn: (msg: Msg) => string, sub: Sub<Msg>): Sub<Msg> => {
   return {
-    subscriberCount: () => sub.subscriberCount(),
+    ...sub,
     sub: (subscriber) => {
       return sub.sub((msg) => {
         const newKey = keyFn(msg)
@@ -159,7 +199,7 @@ const tag = <Tag extends string, Msg>(t: Tag, sub: Sub<Msg>): Sub<{ t: Tag; c: M
 
 const toSub = <Msg>(pubSub: PubSub<Msg>): Sub<Msg> => {
   return {
-    subscriberCount: () => pubSub.subscriberCount(),
+    ...pubSub,
     sub: (subscriber) => {
       return pubSub.sub(subscriber)
     },
@@ -168,22 +208,22 @@ const toSub = <Msg>(pubSub: PubSub<Msg>): Sub<Msg> => {
 
 const toPub = <Msg>(pubSub: PubSub<Msg>): Pub<Msg> => {
   return {
+    ...pubSub,
     pub(msg) {
       return pubSub.pub(msg)
     },
     once(subscriber) {
       return pubSub.once(subscriber)
     },
-    subscriberCount: () => pubSub.subscriberCount(),
   }
 }
 
-const createSub = <Msg>(): Sub<Msg> => {
+const createSub = <Msg extends {}>(): Sub<Msg> => {
   const pubSub = create<Msg>()
   return toSub(pubSub)
 }
 
-const createPub = <Msg>(): Pub<Msg> => {
+const createPub = <Msg extends {}>(): Pub<Msg> => {
   const pubSub = create<Msg>()
   return toPub(pubSub)
 }

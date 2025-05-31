@@ -1,10 +1,10 @@
 import { EventSourced } from '~/@/event-sourced'
+import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
 import { MsgFrontend } from './types'
-import { isErr } from '~/@/result'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(

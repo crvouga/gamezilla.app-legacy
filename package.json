@@ -44,7 +44,7 @@
     "infra:down": "docker compose --env-file .env -f ./infra/local/docker-compose.yml down",
     "infra:restart": "docker compose --env-file .env -f ./infra/local/docker-compose.yml restart",
     "infra:up": "bun dir:reset && docker compose --env-file .env -f ./infra/local/docker-compose.yml up --build -d",
-    "kp": "bun env && bun x kill-port $PORT && bun x kill-port 8080",
+    "kp": "bun run env && bun x kill-port $PORT && bun x kill-port 8080 && bun x kill-port 5002",
     "powersync:development-token": "cd powersync/test-client && node dist/bin.js generate-token --config path/to/powersync.yaml --sub test-user",
     "powersync:test-client:build": "cd powersync/test-client && tsc -b",
     "powersync:test-client:get": "bun x degit powersync-ja/powersync-service/test-client powersync/test-client",
@@ -80,6 +80,7 @@
     "preact": "^10.19.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "redux-saga": "^1.3.0",
     "swiper": "^11.2.0"
   },
   "devDependencies": {

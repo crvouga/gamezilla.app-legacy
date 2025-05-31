@@ -1,36 +1,20 @@
+import { takeEvery } from 'redux-saga/effects'
 import { Posix } from '~/@/time/posix'
-import { BackendModule, MsgBackend } from './types'
+import { BackendCtxModule } from './types'
 
-const update: BackendModule['update'] = async (input) => {
-  const { msg } = input
+const saga = function* (input: { ctx: BackendCtxModule }) {
+  const pings = input.ctx.topic.pingAll
+    .subscribe(null, (msg) => ({ pingId: msg.pingId, now: Posix.now(), clientSessionId: msg.clientSessionId }) as const)
+    .chan()
 
-  if (!msg) return {}
-
-  switch (msg.t) {
-    case 'ping': {
-      input.ctx.topic.pong.publish(msg.clientSessionId, {
-        pingId: msg.pingId,
-      })
-      return {}
-    }
-    default: {
-      return {}
-    }
-  }
-}
-
-const subscriptions: BackendModule['subscriptions'] = async (input) => {
-  return input.ctx.topic.pingAll.subscribe(null, (msg): MsgBackend => {
-    return {
-      t: 'ping',
-      pingId: msg.pingId,
-      now: Posix.now(),
-      clientSessionId: msg.clientSessionId,
-    }
+  yield takeEvery(pings, function* (ping) {
+    console.log('ping', ping)
+    input.ctx.topic.pong.publish(ping.clientSessionId, {
+      pingId: ping.pingId,
+    })
   })
 }
 
 export const BackendConnectionBackend = {
-  subscriptions,
-  update,
+  saga,
 }

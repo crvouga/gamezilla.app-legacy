@@ -4,11 +4,32 @@ import { AppBackend } from '~/app/backend'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { HealthCheck } from './@/health-check/health-check'
 import { RPC } from './@/rpc'
-import { PowerSyncBackendApp } from './service-powersync/backend/respond'
+import { PubSub } from './@/sub'
 import { CONFIG_SHARED } from './config/shared'
+import { PowerSyncBackendApp } from './service-powersync/backend/respond'
 
+import { runSaga, stdChannel } from 'redux-saga'
+import { fork } from 'redux-saga/effects'
+
+const pubSub = PubSub.create<unknown>()
+const channel = stdChannel<any>()
+pubSub.sub((msg) => channel.put(msg))
+
+const myIO = {
+  channel,
+  dispatch(msg: unknown) {
+    pubSub.pub(msg)
+  },
+  getState() {
+    return {}
+  },
+}
 const main = async () => {
   const ctx = await AppBackend.initCtx()
+
+  runSaga(myIO, function* () {
+    yield fork(AppBackend.saga, { ctx })
+  })
 
   await ProgramImpure.run({
     initCtx: async () => ctx,
