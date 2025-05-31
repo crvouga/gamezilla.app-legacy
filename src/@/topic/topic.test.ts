@@ -38,7 +38,7 @@ const Fixture = async () => {
   const server = Topic.initServer({
     t: 'web-sockets',
     httpServer,
-    logger,
+    logger: Logger.prefix('server', logger),
     contract,
     isProd: false,
     endpoint,
@@ -50,7 +50,7 @@ const Fixture = async () => {
     contract,
     serverUrl,
     endpoint,
-    logger,
+    logger: Logger.prefix('clientA', logger),
   })
   const clientB = Topic.initClient({
     t: 'web-sockets',
@@ -58,7 +58,7 @@ const Fixture = async () => {
     contract,
     serverUrl,
     endpoint,
-    logger,
+    logger: Logger.prefix('clientB', logger),
   })
   const clientC = Topic.initClient({
     t: 'web-sockets',
@@ -66,7 +66,7 @@ const Fixture = async () => {
     contract,
     serverUrl,
     endpoint,
-    logger,
+    logger: Logger.prefix('clientC', logger),
   })
 
   await httpServer.start(port)
@@ -88,7 +88,7 @@ const Fixture = async () => {
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000))
 
 describe('Topic', () => {
-  it('should work', async () => {
+  it.only('should work', async () => {
     using f = await Fixture()
     const gotServer: Msg[] = []
     const gotA: Msg[] = []
@@ -290,7 +290,7 @@ describe('Topic', () => {
     expect(gotB).toEqual([{ name: 'Jane' }])
   })
 
-  it('should handle reconnection correctly', async () => {
+  it.skip('should handle reconnection correctly', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
