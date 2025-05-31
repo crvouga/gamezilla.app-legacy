@@ -32,7 +32,7 @@ const View = (input: {
 
       if (!currentUser) return null
 
-      const spaceCtx: SpaceFrontendCtx = {
+      const spaceCtx: SpaceFrontendCtx & SpaceFrontendCtxModule = {
         ...input.ctx,
         currentUserId: currentUser.userId,
         currentUserRole: currentUser.role,
@@ -42,14 +42,13 @@ const View = (input: {
 
       const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, currentUser.userId)
 
-      if (currentUserSpaceId !== spaceCtx.space.spaceId) {
-        return <JoinSpaceFrontend.View {...input} ctx={input.ctx} />
+      const isNotJoined = currentUserSpaceId !== spaceCtx.space.spaceId
+
+      if (isNotJoined) {
+        return <JoinSpaceFrontend.View {...input} ctx={spaceCtx} />
       }
 
-      const inputNew = {
-        ...input,
-        ctx: spaceCtx,
-      }
+      const inputNew = { ...input, ctx: spaceCtx }
 
       const isHost = inputNew.ctx.space.hostId === inputNew.ctx.currentUser.userId
 

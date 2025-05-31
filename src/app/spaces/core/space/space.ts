@@ -50,6 +50,7 @@ export const toSpaceStarted = (model: Model | null | undefined): SpaceState.Star
   if (!model) {
     return null
   }
+
   const state = EventSourced.toState(config, model)
 
   switch (state.type) {
@@ -60,6 +61,10 @@ export const toSpaceStarted = (model: Model | null | undefined): SpaceState.Star
       return null
     }
   }
+}
+
+export const isStarted = (model: Model | null | undefined): boolean => {
+  return toSpaceStarted(model) !== null
 }
 
 export const toUserIds = (model: Model): UserId[] => {

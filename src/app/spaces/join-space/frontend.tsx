@@ -123,15 +123,15 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
 const View: SpaceFrontendModule['View'] = (input) => {
   const currentUser = input.ctx.currentUser
 
-  if (!currentUser) return null
+  if (!currentUser) return <div>No current user</div>
 
   const space = input.ctx.space
 
-  if (!space) return null
+  if (!space) return <div>No space</div>
 
   const spaceState = SpacesCore.toSpaceStarted(input.model.spaces, space?.spaceId)
 
-  if (!spaceState) return null
+  if (!spaceState) return <div>Space is not started</div>
 
   const spaceCtx: SpaceFrontendCtx = {
     ...input.ctx,

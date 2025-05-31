@@ -8,13 +8,6 @@ import { SpaceBackendCtxModule } from '../types'
 import { MsgBackend, rpcContract } from './types'
 
 const update: SpaceBackendModule['update'] = async (input) => {
-  return SpaceBackendModule.andThen(
-    {},
-    () => outputMsgSpaces(input),
-  )
-}
-
-const outputMsgSpaces: SpaceBackendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'sync.got-msg-space': {
       return {

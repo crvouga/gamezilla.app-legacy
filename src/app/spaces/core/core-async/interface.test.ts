@@ -84,7 +84,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe(import.meta.file, () => {
+describe('Spaces Core Async', () => {
   it('should work', async () => {
     for (const f of await Fixtures()) {
       const spaceId = Space.toSpaceStarted(f.space)?.spaceId ?? null

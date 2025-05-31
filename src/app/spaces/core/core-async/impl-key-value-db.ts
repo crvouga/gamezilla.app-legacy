@@ -23,7 +23,7 @@ export type Config = SpacesCoreConfig & {
 
 export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync> => {
   const { runtime } = config
-  const logger = Logger.prefix('key-value-db', config.logger)
+  const logger = Logger.prefix('spaces-core-async', config.logger)
 
   //
   //
@@ -34,10 +34,10 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
   const throttle = config.writeThrottle
   const keyValueDb = await pipe(
     config.keyValueDb,
-    async (keyValueDb) =>
-      KeyValueDb({ t: 'with-throttled-writes', logger, keyValueDb: await keyValueDb, throttle, runtime }),
-    async (keyValueDb) => KeyValueDb({ t: 'with-cache', logger, source: await keyValueDb, cache }),
-    async (keyValueDb) => KeyValueDb({ t: 'with-reduced-parsing', logger, keyValueDb: await keyValueDb, verifiedKeys }),
+    // async (keyValueDb) =>
+    //   KeyValueDb({ t: 'with-throttled-writes', logger, keyValueDb: await keyValueDb, throttle, runtime }),
+    // async (keyValueDb) => KeyValueDb({ t: 'with-cache', logger, source: await keyValueDb, cache }),
+    // async (keyValueDb) => KeyValueDb({ t: 'with-reduced-parsing', logger, keyValueDb: await keyValueDb, verifiedKeys }),
   )
 
   const spacesBySpaceId = KeyValueDb.withNamespace<SpaceId, Space.Model>({

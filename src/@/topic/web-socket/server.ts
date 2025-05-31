@@ -2,13 +2,13 @@ import { Server, ServerWebSocket } from 'bun'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { ILogger, Logger } from '~/@/logger'
 import { isErr } from '~/@/result'
+import { PubSub, Sub } from '~/@/sub'
 import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Client, Contract } from '../types'
-import { initClient } from './client'
 import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
 
 export type BackendWebSocketData = {
@@ -29,7 +29,17 @@ export const initServer = <T extends Contract<any>>(config: {
 
   let bunServer: Server
 
-  let client: Client<T> | null = null
+  const subByTopic = new Map<string, PubSub<unknown>>()
+
+  const publish = (topicString: string, msg: ToClientMsg) => {
+    const encoded = JSON.stringify(msg)
+    logger.debug(`websocket message published topic=${topicString}`)
+    bunServer.publish(topicString, encoded)
+    const existingSub = subByTopic.get(topicString)
+    if (existingSub) {
+      existingSub.pub(msg)
+    }
+  }
 
   config.httpServer._setWebSocketHandler({
     async open(ws: ServerWebSocket<BackendWebSocketData>) {
@@ -55,13 +65,14 @@ export const initServer = <T extends Contract<any>>(config: {
             topicParams: toServerMsg.value.topicParams,
           })
           ws.subscribe(topicString)
-          const toClientMsg: ToClientMsg = {
+          publish(topicString, {
             t: 'subscribed',
             topicName: toServerMsg.value.topicName,
             topicParams: toServerMsg.value.topicParams,
-          }
-          ws.send(JSON.stringify(toClientMsg))
-          logger.debug(`websocket message subscribed clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
+          })
+          logger.debug(
+            `websocket message subscribed ${topicString} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`,
+          )
           return
         }
         case 'publish': {
@@ -69,14 +80,20 @@ export const initServer = <T extends Contract<any>>(config: {
             topicName: toServerMsg.value.topicName,
             topicParams: toServerMsg.value.topicParams,
           })
-          const toClientMsg: ToClientMsg = {
+          publish(topicString, {
             t: 'published',
             topicName: toServerMsg.value.topicName,
             topicParams: toServerMsg.value.topicParams,
             msg: toServerMsg.value.msg,
-          }
-          bunServer.publish(topicString, JSON.stringify(toClientMsg))
+          })
           logger.debug(`websocket message published clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
+
+          const existingSub = subByTopic.get(topicString)
+          if (existingSub) {
+            const json = JSON.parse(toServerMsg.value.msg)
+            existingSub.pub(json)
+          }
+
           return
         }
         case 'unsubscribe': {
@@ -84,14 +101,15 @@ export const initServer = <T extends Contract<any>>(config: {
             topicName: toServerMsg.value.topicName,
             topicParams: toServerMsg.value.topicParams,
           })
-          ws.unsubscribe(topicString)
-          const toClient: ToClientMsg = {
+          publish(topicString, {
             t: 'unsubscribed',
             topicName: toServerMsg.value.topicName,
             topicParams: toServerMsg.value.topicParams,
-          }
-          ws.send(JSON.stringify(toClient))
-          logger.debug(`websocket message unpublished clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
+          })
+          ws.unsubscribe(topicString)
+          logger.debug(
+            `websocket message unsubscribed ${topicString} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`,
+          )
 
           return
         }
@@ -133,20 +151,81 @@ export const initServer = <T extends Contract<any>>(config: {
 
       bunServer.upgrade(request, { headers, data })
 
-      client ??= initClient({
-        t: 'web-sockets',
-        clientSessionId: ClientSessionId.generate(),
-        contract: config.contract,
-        serverUrl: request.url,
-        endpoint: config.endpoint,
-        logger,
-      })
-
       return
     }
 
     return null
   })
 
-  return client ?? initClient({ t: 'local', contract: config.contract, logger })
+  const createClientRecursive = (currentContract: Contract<any>, runningTopicName: string[] = []): any => {
+    const clientProxy: any = {}
+
+    for (const topicNamePart in currentContract) {
+      const topicConfig = currentContract[topicNamePart]
+
+      if (!topicConfig) continue
+
+      const topicName: string[] = [...runningTopicName, topicNamePart]
+
+      if ('params' in topicConfig && 'msg' in topicConfig) {
+        clientProxy[topicNamePart] = {
+          publish: (topicParams: unknown, msg: unknown) => {
+            const topicString = toTopicString({
+              topicName,
+              topicParams,
+            })
+            publish(topicString, {
+              t: 'published',
+              topicName,
+              topicParams,
+              msg: JSON.stringify(msg),
+            })
+            const existingSub = subByTopic.get(topicString)
+            if (!existingSub) {
+              logger.debug(`no subscribers for topic=${topicString}`)
+              return
+            }
+            logger.debug(`publishing message to topic=${topicString}`)
+            existingSub.pub(msg)
+          },
+          subscribe: (topicParams: unknown): Sub<any> => {
+            const topicString = toTopicString({
+              topicName,
+              topicParams,
+            })
+
+            const existingSub = subByTopic.get(topicString)
+
+            if (existingSub) {
+              logger.debug(`reusing existing subscription for topic=${topicString}`)
+              return existingSub
+            }
+
+            logger.debug(`subscribing to topic=${topicString}`)
+            const pubSub = PubSub.create()
+            subByTopic.set(topicString, pubSub)
+
+            return {
+              ...pubSub,
+              sub(subscriber) {
+                const unsub = pubSub.sub(subscriber)
+                return () => {
+                  unsub()
+                  logger.debug(`unsubscribing from topic=${topicString}`)
+                }
+              },
+            }
+          },
+        }
+      } else {
+        clientProxy[topicNamePart] = createClientRecursive(topicConfig as Contract<any>, [
+          ...runningTopicName,
+          topicNamePart,
+        ])
+      }
+    }
+    return clientProxy
+  }
+
+  return createClientRecursive(config.contract) as Client<T>
 }

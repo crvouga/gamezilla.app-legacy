@@ -1,24 +1,19 @@
 import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
+import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
+import { Topic } from '~/@/topic'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { Space } from './@/space/space'
 import { type Input, type Output, SpaceBackendModule } from './architecture/space-backend'
 import { SpacesCoreAsync } from './core/core-async'
 import { GameBackend } from './game/backend'
+import { ListSpacesBackend } from './list-spaces/backend'
 import { StartSpaceBackend } from './start-space/backend'
 import { SyncBackend } from './sync/backend'
-import { type BackendModule, rpcContract, type SpaceBackendCtxModule, topicContract } from './types'
-import { ListSpacesBackend } from './list-spaces/backend'
-import { Topic } from '~/@/topic'
-
-//
-//
-//
-// Init
-//
-//
-//
+import { type BackendModule, MsgBackend, rpcContract, type SpaceBackendCtxModule, topicContract } from './types'
+import { ShowErrorSmall } from '../@/frontend/show-error-small'
+import { isErr } from '~/@/result'
 
 const initCtx = async (input: {
   ctx: AppBackendCtx
@@ -40,14 +35,6 @@ const initCtx = async (input: {
     }),
   }
 }
-
-//
-//
-//
-// Update
-//
-//
-//
 
 const update: BackendModule['update'] = async (input) => {
   await updateLoop(input)
@@ -88,21 +75,21 @@ const updateChild: SpaceBackendModule['update'] = async (input) => {
 const updateSpacesFromMsgSpace: SpaceBackendModule['update'] = async (input) => {
   if (!input.msgSpace) return {}
 
-  await input.ctx.spacesCore.update(input.msgSpace)
+  const updated = await input.ctx.spacesCore.update(input.msgSpace)
+
+  if (isErr(updated)) {
+    input.ctx.logger.error(updated.error)
+  }
 
   return {}
 }
 
-//
-//
-//
-// Subscriptions
-//
-//
-//
-
 const subscriptions: BackendModule['subscriptions'] = async (input) => {
-  return GameBackend.subscriptions(input)
+  return Sub.batch<MsgBackend>([
+    //
+    await GameBackend.subscriptions(input),
+    await SyncBackend.subscriptions(input),
+  ])
 }
 
 const rpc = (input: { ctx: SpaceBackendCtxModule }) => {
