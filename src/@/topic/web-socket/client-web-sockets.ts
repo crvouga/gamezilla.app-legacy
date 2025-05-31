@@ -101,7 +101,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
         }
       }
     },
-    behavior: 'drop',
+    behavior: 'leading',
   })
 
   const createClientRecursive = (currentContract: Contract<any>, runningTopicName: string[] = []): any => {
