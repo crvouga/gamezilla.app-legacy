@@ -119,10 +119,10 @@ export const initServer = <T extends Contract<any>>(config: {
             topicName: toServerMsg.value.topicName,
             topicParams: toServerMsg.value.topicParams,
           })
-          subscribersByTopic.set(
-            topicString,
-            new Set([...(subscribersByTopic.get(topicString) ?? []), ws.data.clientId]),
-          )
+          const existingSubscribers = subscribersByTopic.get(topicString)
+          if (existingSubscribers) {
+            existingSubscribers.delete(ws.data.clientId)
+          }
           logger.debug(
             `websocket message unsubscribed ${topicString} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`,
           )

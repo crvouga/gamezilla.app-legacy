@@ -106,8 +106,7 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
 }
 
 const updateRecordPack: FrontendModule['update'] = (input) => {
-  const hasMsg = input.msgSpace || input.msgIn || input.msgBackend || input.msg
-  if (hasMsg && input.modelSpace?.pack) {
+  if (!AddPacksCmd.is(input.msgIn) && input.modelSpace?.pack) {
     return {
       model: input.model,
       msgOut: [

@@ -53,24 +53,6 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-// const ViewCreateFab: FrontendModule['View'] = (input) => {
-//   return (
-//     <Button
-//       rounded
-//       text={input.ctx.t('flow.create-pack')}
-//       variant='contained'
-//       color='primary'
-//       loading={input.model.packCreateNewRequest.t === 'loading'}
-//       iconStart={(iconInput) => <IconPlus {...iconInput} />}
-//       onClick={() =>
-//         input.dispatch({
-//           t: 'create-new-pack.clicked-create-button',
-//         })
-//       }
-//     />
-//   )
-// }
-
 const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): PostActionProps => {
   return {
     onSubmit: () =>

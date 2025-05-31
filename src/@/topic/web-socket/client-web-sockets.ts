@@ -130,13 +130,14 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
                 const unsub = pubSub.sub(subscriber)
                 return () => {
                   unsub()
-                  const toServerMsg: ToServerMsg = {
-                    t: 'unsubscribe',
-                    topicName: topicName,
-                    topicParams,
-                  }
+                  // TODO fix
+                  // const toServerMsg: ToServerMsg = {
+                  //   t: 'unsubscribe',
+                  //   topicName: topicName,
+                  //   topicParams,
+                  // }
+                  // ws.send(JSON.stringify(toServerMsg))
                   logger.debug(`unsubscribing from topic=${topicString}`)
-                  ws.send(JSON.stringify(toServerMsg))
                 }
               },
             }

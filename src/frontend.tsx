@@ -30,7 +30,7 @@ const main = async () => {
 
     crash: (input) => console.error('program crashed!', input),
 
-    debugger: CONFIG_SHARED.IS_PROD ? DebuggerConsole : DebuggerReduxDevTools,
+    debugger: CONFIG_SHARED.IS_PROD || true ? DebuggerConsole : DebuggerReduxDevTools,
   })
 
   console.table({ ...CONFIG_SHARED, ...CONFIG_FRONTEND })

@@ -1,4 +1,5 @@
 import { Msg } from '~/@/msg/msg'
+import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
@@ -12,8 +13,6 @@ import { ListSpacesBackend } from './list-spaces/backend'
 import { StartSpaceBackend } from './start-space/backend'
 import { SyncBackend } from './sync/backend'
 import { type BackendModule, MsgBackend, rpcContract, type SpaceBackendCtxModule, topicContract } from './types'
-import { ShowErrorSmall } from '../@/frontend/show-error-small'
-import { isErr } from '~/@/result'
 
 const initCtx = async (input: {
   ctx: AppBackendCtx

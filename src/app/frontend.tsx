@@ -187,11 +187,15 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
 
   const initialMsgOut = Msg.batch(PreloadSoundsCmd.init(Object.values(APP_SOUND)))
 
-  const updated = updateLoop(input.ctx, {
-    model: initialModel,
-    eff: initialEff,
-    msgOut: initialMsgOut,
-  })
+  const updated = updateLoop(
+    input.ctx,
+    {
+      model: initialModel,
+      eff: initialEff,
+      msgOut: initialMsgOut,
+    },
+    0,
+  )
 
   return updated
 }
@@ -206,7 +210,7 @@ const update = (input: {
 } => {
   const frontendCtx = toCtx(input)
   const updatedChild = updateChild({ ctx: frontendCtx, model: input.model, msg: input.msg })
-  const updated = updateLoop(frontendCtx, updatedChild)
+  const updated = updateLoop(frontendCtx, updatedChild, 0)
 
   return updated
 }
@@ -217,23 +221,27 @@ type Output = {
   msgOut: unknown[]
 }
 
-const updateLoop = (ctx: FrontendCtxModule, acc: Output): Output => {
+const updateLoop = (ctx: FrontendCtxModule, acc: Output, depth: number): Output => {
   const frontendCtx = toCtx({ ctx, model: acc.model })
 
   const [msgOut, ...msgOutRest] = acc.msgOut
 
-  if (msgOut) {
-    const updatedOut = updateChild({
-      ctx: frontendCtx,
-      model: acc.model,
-      msgIn: msgOut,
-    })
+  if (depth > 10) {
+    throw new Error('updateLoop depth > 10')
+  }
 
-    return updateLoop(frontendCtx, {
-      model: updatedOut.model,
-      eff: Eff.batch([acc.eff, updatedOut.eff]),
-      msgOut: Msg.batch(msgOutRest, updatedOut.msgOut),
-    })
+  if (msgOut) {
+    const updatedOut = updateChild({ ctx: frontendCtx, model: acc.model, msgIn: msgOut })
+
+    return updateLoop(
+      frontendCtx,
+      {
+        model: updatedOut.model,
+        eff: Eff.batch([acc.eff, updatedOut.eff]),
+        msgOut: Msg.batch(msgOutRest, updatedOut.msgOut),
+      },
+      depth + 1,
+    )
   }
 
   return acc
@@ -314,7 +322,7 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
 
   return Sub.batch<MsgFrontend>([
     Sub.tag('frontend', FrontendFrontend.subscriptions({ ctx, model: input.model.frontend })),
-    Sub.tag('wire', WireFrontend.subscriptions({  })),
+    Sub.tag('wire', WireFrontend.subscriptions({})),
     Sub.tag('lang', LangFrontend.subscriptions({ ctx, model: input.model.lang })),
     Sub.tag('auth', AuthFrontend.subscriptions({ ctx, model: input.model.auth })),
     Sub.tag(
