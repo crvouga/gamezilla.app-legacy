@@ -9,7 +9,7 @@ import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Client, Contract } from '../types'
-import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
+import { ToClientMsgMany, ToServerMsg, toTopicString } from './shared'
 
 export type BackendWebSocketData = {
   clientId: ClientId
@@ -30,39 +30,24 @@ export const initServer = <T extends Contract<any>>(config: {
   let bunServer: Server
 
   const subByTopic = new Map<string, PubSub<unknown>>()
-  const subscribersByTopic = new Map<string, Set<ClientId>>()
-  const clients = new Map<ClientId, ServerWebSocket<BackendWebSocketData>>()
 
-  const publish = (topicString: string, msg: ToClientMsg) => {
+  const publish = (topicString: string, msg: ToClientMsgMany) => {
     const encoded = JSON.stringify(msg)
     logger.debug(`websocket message published topic=${topicString}`)
-    const subscribers = subscribersByTopic.get(topicString)
-    for (const clientId of subscribers ?? []) {
-      const client = clients.get(clientId)
-      if (client) {
-        client.send(encoded)
-      }
-    }
-    switch (msg.t) {
-      case 'published': {
-        const existingSub = subByTopic.get(topicString)
-        if (existingSub) {
-          const json = JSON.parse(msg.msg)
-          existingSub.pub(json)
-        }
-        break
-      }
+    bunServer.publish(topicString, encoded)
+    const existingSub = subByTopic.get(topicString)
+    if (existingSub) {
+      const json = JSON.parse(msg.msg)
+      existingSub.pub(json)
     }
   }
 
   config.httpServer._setWebSocketHandler({
     async open(ws: ServerWebSocket<BackendWebSocketData>) {
       logger.debug(`websocket connection opened clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
-      clients.set(ws.data.clientId, ws)
     },
     async close(ws: ServerWebSocket<BackendWebSocketData>, _code, _message) {
       logger.debug(`websocket connection closed clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
-      clients.delete(ws.data.clientId)
     },
     async message(ws: ServerWebSocket<BackendWebSocketData>, message: string) {
       logger.debug(`websocket message received clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
@@ -77,12 +62,7 @@ export const initServer = <T extends Contract<any>>(config: {
       switch (toServerMsg.value.t) {
         case 'subscribe': {
           const topicString = toTopicString(toServerMsg.value.topicName, toServerMsg.value.topicParams)
-          const existingSubscribers = subscribersByTopic.get(topicString)
-          if (existingSubscribers) {
-            existingSubscribers.add(ws.data.clientId)
-          } else {
-            subscribersByTopic.set(topicString, new Set([ws.data.clientId]))
-          }
+          ws.subscribe(topicString)
           ws.send(
             JSON.stringify({
               t: 'subscribed',
@@ -91,7 +71,7 @@ export const initServer = <T extends Contract<any>>(config: {
             }),
           )
           logger.debug(
-            `websocket message subscribed ${topicString} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`,
+            `websocket message subscribed ${topicString} subscriberCount=${bunServer.subscriberCount(topicString)} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId} `,
           )
           return
         }
@@ -108,19 +88,9 @@ export const initServer = <T extends Contract<any>>(config: {
         }
         case 'unsubscribe': {
           const topicString = toTopicString(toServerMsg.value.topicName, toServerMsg.value.topicParams)
-          ws.send(
-            JSON.stringify({
-              t: 'unsubscribed',
-              topicName: toServerMsg.value.topicName,
-              topicParams: toServerMsg.value.topicParams,
-            }),
-          )
-          const existingSubscribers = subscribersByTopic.get(topicString)
-          if (existingSubscribers) {
-            existingSubscribers.delete(ws.data.clientId)
-          }
+          ws.unsubscribe(topicString)
           logger.debug(
-            `websocket message unsubscribed ${topicString} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`,
+            `websocket message unsubscribed ${topicString} subscriberCount=${bunServer.subscriberCount(topicString)} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId} `,
           )
 
           return

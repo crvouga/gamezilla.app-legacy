@@ -22,7 +22,7 @@ export const ToServerMsg = s.or(
 
 export type ToServerMsg = s.Infer<typeof ToServerMsg>
 
-export const ToClientMsg = s.or(
+export const ToClientMsgOne = s.or(
   s.obj({
     t: s.l('subscribed'),
     topicName: s.arr(s.str),
@@ -33,6 +33,11 @@ export const ToClientMsg = s.or(
     topicName: s.arr(s.str),
     topicParams: s.unknown,
   }),
+)
+
+export type ToClientMsgOne = s.Infer<typeof ToClientMsgOne>
+
+export const ToClientMsgMany = s.or(
   s.obj({
     t: s.l('published'),
     topicName: s.arr(s.str),
@@ -41,11 +46,11 @@ export const ToClientMsg = s.or(
   }),
 )
 
-export type ToClientMsg = s.Infer<typeof ToClientMsg>
+export type ToClientMsgMany = s.Infer<typeof ToClientMsgMany>
 
-export const initToClient = (msg: ToClientMsg): ToClientMsg => {
-  return msg
-}
+export const ToClientMsg = s.or(ToClientMsgOne, ToClientMsgMany)
+
+export type ToClientMsg = s.Infer<typeof ToClientMsg>
 
 export const toTopicString = (topicName: string[], topicParams: unknown): string => {
   return [...topicName, deterministicJsonStringify(topicParams)].join('/')
