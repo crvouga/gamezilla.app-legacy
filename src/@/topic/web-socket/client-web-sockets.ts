@@ -5,7 +5,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { Client, Contract } from '../types'
 import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
-import { toWebsocketUrl } from './to-websocket-url'
+import { toWebSocketUrl } from './to-websocket-url'
 
 export type Config<T extends Contract<any>> = {
   t: 'web-sockets'
@@ -25,7 +25,7 @@ type TopicSubscriptionInfo = {
 export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T> => {
   const logger = Logger.prefix('client', config.logger)
 
-  const websocketUrl = toWebsocketUrl({
+  const websocketUrl = toWebSocketUrl({
     serverUrl: config.serverUrl,
     endpoint: config.endpoint,
     clientSessionId: config.clientSessionId,

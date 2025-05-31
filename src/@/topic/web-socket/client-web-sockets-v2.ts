@@ -1,0 +1,202 @@
+import { delay, race, take, takeEvery } from 'typed-redux-saga'
+import { ILogger } from '~/@/logger'
+import { go } from '~/@/saga/saga'
+import { PubSub, Sub } from '~/@/sub'
+import { throttleByKey } from '~/@/throttle/throttle'
+import { TimeSpan } from '~/@/time/time-span'
+import { ClientSessionId } from '~/@/wire/client-session-id'
+import { Client, Contract } from '../types'
+import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
+import { toWebSocketUrl } from './to-websocket-url'
+
+export type Config<T extends Contract<any>> = {
+  t: 'web-sockets-v2'
+  contract: T
+  serverUrl: string
+  endpoint: string
+  clientSessionId: ClientSessionId
+  logger: ILogger
+}
+
+type TopicSubscriptionInfo = {
+  pubSub: PubSub<unknown>
+  topicName: string[]
+  topicParams: unknown
+}
+
+export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T> => {
+  const msgsToServer = PubSub.create<ToServerMsg>()
+  const topicSubscriptions = new Map<string, TopicSubscriptionInfo>()
+  const topicSubscriptionsServer = new Set<string>()
+
+  function* saga() {
+    while (true) {
+      const webSocketUrl = toWebSocketUrl({
+        serverUrl: config.serverUrl,
+        endpoint: config.endpoint,
+        clientSessionId: config.clientSessionId,
+      })
+
+      const socket = createSocket(webSocketUrl)
+
+      yield take(socket.msgsOpen.chan())
+
+      yield race({
+        close: take(socket.msgsClose.chan()),
+        error: take(socket.msgsError.chan()),
+        toServer: sagaToServer(socket),
+        fromServer: sagaFromServer(socket),
+      })
+
+      yield delay(1000)
+    }
+  }
+
+  function* sagaToServer(socket: Socket) {
+    yield takeEvery(msgsToServer.chan(), function* (toServer) {
+      socket.msgsToServer.pub(toServer)
+    })
+  }
+
+  function* sagaFromServer(socket: Socket) {
+    yield takeEvery(socket.msgsFromServer.chan(), function* (fromServer) {
+      const topicString = toTopicString(fromServer.topicName, fromServer.topicParams)
+      switch (fromServer.t) {
+        case 'subscribed': {
+          topicSubscriptionsServer.add(topicString)
+          return
+        }
+        case 'unsubscribed': {
+          topicSubscriptionsServer.delete(topicString)
+          return
+        }
+        case 'published': {
+          const topicSubscription = topicSubscriptions.get(topicString)
+          if (!topicSubscription) return
+          const msg = JSON.parse(fromServer.msg)
+          topicSubscription.pubSub.pub(msg)
+          return
+        }
+      }
+    })
+  }
+
+  const syncSubscriptionsWithServer = throttleByKey({
+    behavior: 'leading',
+    throttle: TimeSpan.seconds(3),
+    keyFn: (_action, topicName, topicParams) => toTopicString(topicName, topicParams),
+    fn: (action: 'subscribe' | 'unsubscribe', topicName: string[], topicParams: unknown) => {
+      const topicString = toTopicString(topicName, topicParams)
+
+      switch (action) {
+        case 'subscribe': {
+          if (topicSubscriptionsServer.has(topicString)) return
+          msgsToServer.pub({ t: 'subscribe', topicName, topicParams })
+          return
+        }
+        case 'unsubscribe': {
+          if (!topicSubscriptionsServer.has(topicString)) return
+          msgsToServer.pub({ t: 'unsubscribe', topicName, topicParams })
+          return
+        }
+      }
+    },
+  })
+
+  const createClientRecursive = (currentContract: Contract<any>, runningTopicName: string[] = []): any => {
+    const clientProxy: any = {}
+
+    for (const topicNamePart in currentContract) {
+      const topicConfig = currentContract[topicNamePart]
+
+      if (!topicConfig) continue
+
+      const topicName: string[] = [...runningTopicName, topicNamePart]
+
+      if ('params' in topicConfig && 'msg' in topicConfig) {
+        clientProxy[topicNamePart] = {
+          publish: (topicParams: unknown, msg: unknown) => {
+            msgsToServer.pub({
+              t: 'publish',
+              topicName,
+              topicParams,
+              msg: JSON.stringify(msg),
+            })
+          },
+          subscribe: (topicParams: unknown, mapper: (msg: any) => any): Sub<any> => {
+            const topicString = toTopicString(topicName, topicParams)
+            const existing = topicSubscriptions.get(topicString)
+
+            if (existing) return existing.pubSub
+
+            syncSubscriptionsWithServer('subscribe', topicName, topicParams)
+
+            const sub = PubSub.create()
+            const pubSub: PubSub<any> = {
+              ...sub,
+              sub(subscriber) {
+                const unsub = sub.sub((msg) => subscriber(mapper(msg)))
+                return () => {
+                  unsub()
+                  syncSubscriptionsWithServer('unsubscribe', topicName, topicParams)
+                }
+              },
+            }
+            topicSubscriptions.set(topicString, { pubSub, topicName, topicParams })
+            return pubSub
+          },
+        }
+      } else {
+        clientProxy[topicNamePart] = createClientRecursive(topicConfig as Contract<any>, [
+          ...runningTopicName,
+          topicNamePart,
+        ])
+      }
+    }
+    return clientProxy
+  }
+
+  go(saga)
+
+  return createClientRecursive(config.contract) as Client<T>
+}
+
+const createSocket = (url: string) => {
+  const webSocket = new WebSocket(url)
+  const msgsOpen = PubSub.create<{ t: 'opened' }>()
+  const msgsClose = PubSub.create<{ t: 'closed' }>()
+  const msgsError = PubSub.create<{ t: 'error'; error: Event }>()
+  const msgsToServer = PubSub.create<ToServerMsg>()
+  const msgsFromServer = PubSub.create<ToClientMsg>()
+
+  webSocket.onopen = () => {
+    msgsOpen.pub({ t: 'opened' })
+  }
+
+  webSocket.onclose = () => {
+    msgsClose.pub({ t: 'closed' })
+  }
+
+  webSocket.onerror = (error) => {
+    msgsError.pub({ t: 'error', error })
+  }
+
+  webSocket.onmessage = (event) => {
+    const toClientMsg: ToClientMsg = JSON.parse(event.data as string) as ToClientMsg
+    msgsFromServer.pub(toClientMsg)
+  }
+
+  msgsToServer.sub((msg) => {
+    webSocket.send(JSON.stringify(msg))
+  })
+
+  return {
+    msgsOpen,
+    msgsClose,
+    msgsError,
+    msgsToServer,
+    msgsFromServer,
+  }
+}
+
+type Socket = ReturnType<typeof createSocket>

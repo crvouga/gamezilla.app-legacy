@@ -1,7 +1,7 @@
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 
-export const toWebsocketUrl = (input: { serverUrl: string; endpoint: string; clientSessionId: ClientSessionId }) => {
+export const toWebSocketUrl = (input: { serverUrl: string; endpoint: string; clientSessionId: ClientSessionId }) => {
   try {
     const baseBackendUrlObj = ClientSessionIdHttp.addToUrl(new URL(input.serverUrl), input.clientSessionId)
 
