@@ -236,10 +236,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   if (!play) return Sub.None
   return ModePlayFrontend.subscriptions(
     { model: play, ctx: { ...input.ctx, flow } },
-    (c): MsgFrontend => ({
-      t: 'got-msg-out',
-      c: c,
-    }),
+    (c): MsgFrontend => ({ t: 'got-msg-out', c: c }),
   )
 }
 

@@ -1,7 +1,6 @@
 import { ServerWebSocket } from 'bun'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { ILogger, Logger } from '~/@/logger'
-import { isErr } from '~/@/result'
 import { s } from '~/@/schema'
 import { PubSub, Sub } from '~/@/sub'
 import { ClientId } from '~/@/wire/client-id'
@@ -61,22 +60,17 @@ export const initServer = <T extends Contract<any>>(config: {
     async message(ws: ServerWebSocket<BackendWebSocketData>, message: string) {
       logger.debug(`websocket message received clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
 
-      const toServerMsg = ToServerMsg.parse(JSON.parse(message))
+      const toServerMsg: ToServerMsg = JSON.parse(message) as ToServerMsg
 
-      if (isErr(toServerMsg)) {
-        logger.error(`websocket message received clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
-        return
-      }
-
-      switch (toServerMsg.value.t) {
+      switch (toServerMsg.t) {
         case 'subscribe': {
-          const topicString = toTopicString(toServerMsg.value.topicName, toServerMsg.value.topicParams)
+          const topicString = toTopicString(toServerMsg.topicName, toServerMsg.topicParams)
           ws.subscribe(topicString)
           ws.send(
             JSON.stringify({
               t: 'subscribed',
-              topicName: toServerMsg.value.topicName,
-              topicParams: toServerMsg.value.topicParams,
+              topicName: toServerMsg.topicName,
+              topicParams: toServerMsg.topicParams,
             }),
           )
           logger.debug(
@@ -85,14 +79,14 @@ export const initServer = <T extends Contract<any>>(config: {
           return
         }
         case 'publish': {
-          const topicString = toTopicString(toServerMsg.value.topicName, toServerMsg.value.topicParams)
+          const topicString = toTopicString(toServerMsg.topicName, toServerMsg.topicParams)
           publish(
             topicString,
             {
               t: 'published',
-              topicName: toServerMsg.value.topicName,
-              topicParams: toServerMsg.value.topicParams,
-              msg: toServerMsg.value.msg,
+              topicName: toServerMsg.topicName,
+              topicParams: toServerMsg.topicParams,
+              msg: toServerMsg.msg,
             },
             ws,
           )
@@ -100,7 +94,7 @@ export const initServer = <T extends Contract<any>>(config: {
           return
         }
         case 'unsubscribe': {
-          const topicString = toTopicString(toServerMsg.value.topicName, toServerMsg.value.topicParams)
+          const topicString = toTopicString(toServerMsg.topicName, toServerMsg.topicParams)
           ws.unsubscribe(topicString)
           logger.debug(
             `websocket message unsubscribed ${topicString} subscriberCount=${bunServer.subscriberCount(topicString)} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId} `,

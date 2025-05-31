@@ -1,5 +1,4 @@
 import { ILogger, Logger } from '~/@/logger'
-import { isErr } from '~/@/result'
 import { PubSub, Sub } from '~/@/sub'
 import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
@@ -39,36 +38,31 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
   })
 
   ws.onmessage = (event) => {
-    const toClientMsg = ToClientMsg.parse(JSON.parse(event.data))
+    const toClientMsg: ToClientMsg = JSON.parse(event.data) as ToClientMsg
 
     logger.debug(`websocket message received type=${toClientMsg.t}`)
 
-    if (isErr(toClientMsg)) {
-      logger.error(`websocket message parse error error=${toClientMsg.error}`)
-      return
-    }
-
-    switch (toClientMsg.value.t) {
+    switch (toClientMsg.t) {
       case 'subscribed': {
-        const topicString = toTopicString(toClientMsg.value.topicName, toClientMsg.value.topicParams)
+        const topicString = toTopicString(toClientMsg.topicName, toClientMsg.topicParams)
         logger.debug(`topic subscribed topicString=${topicString}`)
         subscribedTopicsOnServer.add(topicString)
         return
       }
       case 'unsubscribed': {
-        const topicString = toTopicString(toClientMsg.value.topicName, toClientMsg.value.topicParams)
+        const topicString = toTopicString(toClientMsg.topicName, toClientMsg.topicParams)
         logger.debug(`topic unsubscribed topicString=${topicString}`)
         subscribedTopicsOnServer.delete(topicString)
         return
       }
       case 'published': {
-        const topicString = toTopicString(toClientMsg.value.topicName, toClientMsg.value.topicParams)
+        const topicString = toTopicString(toClientMsg.topicName, toClientMsg.topicParams)
         const existingSub = subByTopic.get(topicString)
         if (!existingSub) {
           logger.debug(`no subscribers for topic=${topicString}`)
           return
         }
-        const msg = JSON.parse(toClientMsg.value.msg)
+        const msg = JSON.parse(toClientMsg.msg)
         logger.debug(`publishing message to topic=${topicString}`)
         existingSub.pub(msg)
       }

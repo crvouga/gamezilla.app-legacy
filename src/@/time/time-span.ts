@@ -123,6 +123,46 @@ const lte = (left: TimeSpan, right: TimeSpan): boolean => {
   return toMilliseconds(left) <= toMilliseconds(right)
 }
 
+const formatMilliseconds = (timeSpan: TimeSpan): TranslatedText => {
+  return TranslatedText.of(`${toMilliseconds(timeSpan)}ms`)
+}
+
+const formatSeconds = (timeSpan: TimeSpan): TranslatedText => {
+  return TranslatedText.of(`${toSeconds(timeSpan)}s`)
+}
+
+const formatMinutes = (timeSpan: TimeSpan): TranslatedText => {
+  return TranslatedText.of(`${toMinutes(timeSpan)}m`)
+}
+
+const formatHours = (timeSpan: TimeSpan): TranslatedText => {
+  return TranslatedText.of(`${toHours(timeSpan)}h`)
+}
+
+const formatDays = (timeSpan: TimeSpan): TranslatedText => {
+  return TranslatedText.of(`${toDays(timeSpan)}d`)
+}
+
+const format = (timeSpan: TimeSpan): TranslatedText => {
+  const ms = toMilliseconds(timeSpan)
+  if (ms < 1000) {
+    return formatMilliseconds(timeSpan)
+  }
+  const s = toSeconds(timeSpan)
+  if (s < 60) {
+    return formatSeconds(timeSpan)
+  }
+  const m = toMinutes(timeSpan)
+  if (m < 60) {
+    return formatMinutes(timeSpan)
+  }
+  const h = toHours(timeSpan)
+  if (h < 24) {
+    return formatHours(timeSpan)
+  }
+  return formatDays(timeSpan)
+}
+
 /**
  *
  *
@@ -210,6 +250,15 @@ export const TimeSpan = {
   encode,
   decode,
   schema,
+  //
+  //
+  //
+  format,
+  formatMilliseconds,
+  formatSeconds,
+  formatMinutes,
+  formatHours,
+  formatDays,
 }
 
 const ensureCleanNonNegativeNumber = (value: number | undefined): number => {

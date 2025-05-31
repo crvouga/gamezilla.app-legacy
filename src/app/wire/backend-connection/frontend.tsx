@@ -2,16 +2,15 @@ import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
+import { TimeSpan } from '~/@/time/time-span'
 import { Clickable } from '~/@/ui/clickable'
 import { ListItemButton } from '~/@/ui/list-item-button'
+import { Typography } from '~/@/ui/typography'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
+import { BackendConnectionStatus } from './connection-status'
 import { PingId } from './ping-id'
-import { BackendConnectionStatus } from './status'
 import { FrontendModule, initModel, Model, MsgFrontend, PingItem } from './types'
 import { Dot } from './ui'
-import { Typography } from '~/@/ui/typography'
-import { TranslatedText } from '~/@/l18n'
-import { TimeSpan } from '~/@/time/time-span'
 
 const init: FrontendModule['init'] = (_input) => {
   return {
@@ -101,7 +100,7 @@ const ViewListItemInner: typeof ViewListItem = (input) => {
           icon={(inputIcon) => <Dot className={inputIcon.className} colorClassName='bg-green-500' />}
           className='text-green-500'
           label={input.ctx.t('wire.online')}
-          end={() => <Typography text={TranslatedText.of(`${TimeSpan.toMilliseconds(status.ping)}ms`)} />}
+          end={() => <Typography text={TimeSpan.format(status.latestPing)} />}
         />
       )
     }

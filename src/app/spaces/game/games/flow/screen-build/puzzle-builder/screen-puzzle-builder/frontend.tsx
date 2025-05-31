@@ -306,6 +306,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
 const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
   if (!puzzleBuilder) return null
+  const flow = ScreenPuzzleBuilderSpace.toFlow(puzzleBuilder)
 
   return (
     <ScreenLayout
@@ -323,7 +324,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
               profile={input.ctx.profilesByUserId[input.ctx.space.hostId]}
               subtitle={input.ctx.t('app.editor')}
             />
-            <VariantBoard.View disabled model={puzzleBuilder.puzzle.flow} />
+            <VariantBoard.View disabled model={flow} />
           </div>
         </LayoutGame>
       )}
@@ -366,12 +367,12 @@ const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (input) => {
   if (!input.modelSpace.screenPuzzleBuilder) return Sub.None
 
   const flow = ScreenPuzzleBuilderSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
+
   const play = input.modelSpace.screenPuzzleBuilder.modePlay
+
   if (!play) return Sub.None
-  return ModePlayFrontend.subscriptions({ model: play, ctx: { ...input.ctx, flow } }, (c) => ({
-    t: 'got-msg-out',
-    c,
-  }))
+
+  return ModePlayFrontend.subscriptions({ model: play, ctx: { ...input.ctx, flow } }, (c) => ({ t: 'got-msg-out', c }))
 }
 
 //
