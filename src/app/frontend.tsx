@@ -34,7 +34,7 @@ import * as LangFrontend from './lang/frontend'
 import { ProfileFrontend } from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract, topicContract } from './types'
-import * as WireFrontend from './wire/frontend'
+import { WireFrontend } from './wire/frontend'
 
 const initCtx = async (): Promise<FrontendCtxModule> => {
   const logger = Logger({
@@ -164,7 +164,7 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
   }
 
   const lang = LangFrontend.init({ ctx })
-  const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire } })
+  const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire, topic: input.ctx.topic.wire } })
   const auth = AuthFrontend.init({ ctx: input.ctx })
   const space = SpacesFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.spaces, topic: input.ctx.topic.spaces } })
   const profile = ProfileFrontend.init({ ctx: input.ctx })
@@ -276,7 +276,7 @@ const updateChild = (input: {
   })
 
   const wire = WireFrontend.update({
-    ctx: frontendCtx,
+    ctx: { ...frontendCtx, topic: frontendCtx.topic.wire, rpc: frontendCtx.rpc.wire },
     model: input.model.wire,
     msg: input.msg?.t === 'wire' ? input.msg.c : null,
   })
@@ -321,7 +321,13 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
 
   return Sub.batch<MsgFrontend>([
     Sub.tag('frontend', FrontendFrontend.subscriptions({ ctx, model: input.model.frontend })),
-    Sub.tag('wire', WireFrontend.subscriptions({})),
+    Sub.tag(
+      'wire',
+      WireFrontend.subscriptions({
+        ctx: { ...ctx, topic: ctx.topic.wire, rpc: ctx.rpc.wire },
+        model: input.model.wire,
+      }),
+    ),
     Sub.tag('lang', LangFrontend.subscriptions({ ctx, model: input.model.lang })),
     Sub.tag('auth', AuthFrontend.subscriptions({ ctx, model: input.model.auth })),
     Sub.tag('profile', ProfileFrontend.subscriptions({ ctx, model: input.model.profile })),

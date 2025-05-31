@@ -1,7 +1,6 @@
 import { EventSourced } from '~/@/event-sourced'
 import { isErr, unwrapOr } from '~/@/result'
 import { RPC } from '~/@/rpc'
-import { Sub } from '~/@/sub'
 import { SpaceBackendModule } from '../architecture/space-backend'
 import { Space } from '../core/space'
 import { SpaceBackendCtxModule } from '../types'
@@ -20,7 +19,7 @@ const update: SpaceBackendModule['update'] = async (input) => {
 }
 
 const subscriptions: SpaceBackendModule['subscriptions'] = (input) => {
-  return Sub.map(input.ctx.topic.sync.msgSpaceAll.subscribe(null), (c): MsgBackend => ({ t: 'sync.got-msg-space', c }))
+  return input.ctx.topic.sync.msgSpaceAll.subscribe(null, (c): MsgBackend => ({ t: 'sync.got-msg-space', c }))
 }
 
 const rpc = (config: { ctx: SpaceBackendCtxModule }) => {

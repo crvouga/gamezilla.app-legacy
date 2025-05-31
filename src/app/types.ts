@@ -50,11 +50,12 @@ export const rpcContract = RPC.initContract({
 })
 
 export const topicContract = Topic.initContract({
+  wire: WireTypes.topicContract,
   spaces: SpacesTypes.topicContract,
 })
 
 export type BackendCtxModule = AppBackendCtx & {
-  wire: WireTypes.BackendCtx
+  wire: WireTypes.BackendCtxModule
   profile: ProfileBackendCtx
   space: SpacesTypes.SpaceBackendCtxModule
   auth: AuthTypes.BackendCtx

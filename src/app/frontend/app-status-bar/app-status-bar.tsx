@@ -1,10 +1,9 @@
 import { Clickable } from '~/@/ui/clickable'
 import { cn } from '~/@/ui/cn'
-import { IconPowerOff } from '~/@/ui/icon/icon-power-off'
 import { AuthFrontend } from '~/app/auth/frontend'
 import * as LangFrontend from '~/app/lang/frontend'
 import { type ModelFrontend, type MsgFrontend } from '~/app/types'
-import * as WireFrontend from '~/app/wire/frontend'
+import { WireFrontend } from '~/app/wire/frontend'
 import { AppFrontendCtxBase } from '../../@/frontend/ctx'
 import { SoundFrontend } from '../sound'
 import { StatusBarFrontend } from '../status-bar/index'
@@ -35,13 +34,13 @@ export const ViewAppStatusBar = (input: {
               >
                 <WireFrontend.ViewDot ctx={input.ctx} model={input.model.wire} className={iconSize} />
                 <SoundFrontend.ViewIcon model={input.model.frontend.sound} className={iconSize} />
-                <IconPowerOff className={iconSize} />
+                <AuthFrontend.ViewLogoutIcon model={input.model.auth} ctx={input.ctx} className={iconSize} />
               </Clickable>
             )
           },
           surfaceContent: (
             <>
-              <WireFrontend.ViewConnectionStatusListItem
+              <WireFrontend.ViewListItem
                 model={input.model.wire}
                 dispatch={(c) => input.dispatch({ t: 'wire', c })}
                 ctx={input.ctx}

@@ -94,10 +94,10 @@ describe('Topic', () => {
     const gotB: Msg[] = []
     const gotC: Msg[] = []
 
-    f.server.someTopic.subscribe({ id: '123' }).sub((msg) => gotServer.push(msg))
-    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
-    f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
-    f.clientC.someTopic.subscribe({ id: '123' }).sub((msg) => gotC.push(msg))
+    f.server.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotServer.push(msg))
+    f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientC.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
     await sleep()
     f.clientC.someTopic.publish({ id: '123' }, { name: 'John' })
     await sleep()
@@ -109,7 +109,7 @@ describe('Topic', () => {
   it('should not receive messages after unsubscribing', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
-    const unsub = f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
+    const unsub = f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
     unsub()
     await sleep()
@@ -122,8 +122,8 @@ describe('Topic', () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
-    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
-    f.clientB.someTopic.subscribe({ id: '456' }).sub((msg) => gotB.push(msg))
+    f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
     await sleep()
@@ -134,7 +134,7 @@ describe('Topic', () => {
   it('should handle multiple messages in sequence', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
-    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
+    f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
 
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
@@ -151,9 +151,9 @@ describe('Topic', () => {
     const gotB: Msg[] = []
     const gotC: Msg[] = []
 
-    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
-    f.clientB.someTopic.subscribe({ id: '456' }).sub((msg) => gotB.push(msg))
-    f.clientC.someTopic.subscribe({ id: '789' }).sub((msg) => gotC.push(msg))
+    f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientC.someTopic.subscribe({ id: '789' }, (x) => x).sub((msg) => gotC.push(msg))
 
     await sleep()
 
@@ -173,8 +173,8 @@ describe('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
-    const unsubA = f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
-    f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
+    const unsubA = f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
 
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
@@ -196,8 +196,8 @@ describe('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
-    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
-    f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
+    f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
 
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
@@ -214,8 +214,8 @@ describe('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
-    f.clientA.nested.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
-    f.clientB.nested.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
+    f.clientA.nested.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientB.nested.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
 
     f.clientA.nested.someTopic.publish({ id: '123' }, { name: 'John' })
@@ -231,9 +231,9 @@ describe('Topic', () => {
     const gotB: Msg[] = []
     const gotC: Msg[] = []
 
-    const unsubA = f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
-    const unsubB = f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
-    f.clientC.someTopic.subscribe({ id: '123' }).sub((msg) => gotC.push(msg))
+    const unsubA = f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    const unsubB = f.clientB.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientC.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
     await sleep()
 
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
@@ -259,9 +259,9 @@ describe('Topic', () => {
     const gotA2: Msg[] = []
     const gotB: Msg[] = []
 
-    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA1.push(msg))
-    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA2.push(msg))
-    f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
+    f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA1.push(msg))
+    f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA2.push(msg))
+    f.clientB.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
 
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
@@ -277,8 +277,8 @@ describe('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
-    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
-    f.clientB.someTopic.subscribe({ id: '456' }).sub((msg) => gotB.push(msg))
+    f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
 
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })

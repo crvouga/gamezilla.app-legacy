@@ -279,6 +279,19 @@ const ViewCurrentUserListItem = (input: {
   }
 }
 
+export const ViewLogoutIcon = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase; className: string }) => {
+  const currentUser = toCurrentUserState({ model: input.model.currentUser, ctx: input.ctx })
+  switch (currentUser.t) {
+    case 'loading':
+    case 'logged-out': {
+      return null
+    }
+    case 'logged-in': {
+      return <IconPowerOff className={input.className} />
+    }
+  }
+}
+
 const ViewLogoutListItem = (input: {
   model: ModelFrontend
   ctx: AppFrontendCtxBase
@@ -312,5 +325,6 @@ export const AuthFrontend = {
   ViewLogoutListItem,
   ViewModals,
   ViewCurrentUserListItem,
+  ViewLogoutIcon,
   initCtx,
 }

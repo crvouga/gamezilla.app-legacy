@@ -102,8 +102,8 @@ const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
 
   if (!currentUserSpaceId) return Sub.None
 
-  return Sub.map(
-    input.ctx.topic.sync.msgSpace.subscribe(currentUserSpaceId),
+  return input.ctx.topic.sync.msgSpace.subscribe(
+    currentUserSpaceId,
     (c): MsgFrontend => ({ t: 'sync.got-msg-space', c }),
   )
 }

@@ -1,153 +1,101 @@
 import { Eff } from '~/@/eff'
-import { Translator } from '~/@/l18n/generated'
+import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
-import { cn } from '~/@/ui/cn'
-import { ListItemButton } from '~/@/ui/list-item-button'
+import { AppFrontendCtxBase } from '../@/frontend/ctx'
+import { BackendConnectionFrontend } from './backend-connection/frontend'
 import { BackendInstanceFrontend } from './backend-instance/frontend'
-import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from './types'
+import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 
-//
-//
-//
-// Model
-//
-//
-//
-
-export const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend } => {
+const init: FrontendModule['init'] = (input) => {
   const backendInstance = BackendInstanceFrontend.init({
     ctx: { ...input.ctx, rpc: input.ctx.rpc.backendInstance },
   })
+  const backendConnection = BackendConnectionFrontend.init({
+    ctx: { ...input.ctx, topic: input.ctx.topic.backendConnection },
+  })
   return {
     model: {
-      state: {
-        t: 'backend-connecting',
-      },
-      backendTime: null,
       backendInstance: backendInstance.model,
+      backendConnection: backendConnection.model,
     },
   }
 }
 
-//
-//
-//
-//  Update
-//
-//
-//
+const update: FrontendModule['update'] = (input) => {
+  const backendInstance = BackendInstanceFrontend.update({
+    ...input,
+    msg: input.msg?.t === 'got-backend-instance-msg' ? input.msg.c : null,
+    ctx: { ...input.ctx, rpc: input.ctx.rpc.backendInstance },
+    model: input.model.backendInstance,
+  })
 
-export const update = (input: {
-  ctx: {
-    t: Translator
-  }
-  msg?: MsgFrontend | null
-  model: ModelFrontend
-  msgIn?: unknown | null
-}): {
-  model: ModelFrontend
-  msgOut?: unknown[]
-  eff?: Eff<MsgFrontend>
-} => {
+  const backendConnection = BackendConnectionFrontend.update({
+    ...input,
+    msg: input.msg?.t === 'got-backend-connection-msg' ? input.msg.c : null,
+    ctx: { ...input.ctx, topic: input.ctx.topic.backendConnection },
+    model: input.model.backendConnection,
+  })
+
   return {
-    model: input.model,
+    model: {
+      backendInstance: backendInstance.model,
+      backendConnection: backendConnection.model,
+    },
+    eff: Eff.batch<MsgFrontend>(
+      Eff.tag('got-backend-instance-msg', backendInstance.eff),
+      Eff.tag('got-backend-connection-msg', backendConnection.eff),
+    ),
+    msgOut: Msg.batch([backendInstance.msgOut, backendConnection.msgOut]),
   }
 }
 
-//
-//
-//
-// View
-//
-//
-//
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  return Sub.batch<MsgFrontend>([
+    Sub.tag(
+      'got-backend-instance-msg',
+      BackendInstanceFrontend.subscriptions({
+        ctx: { ...input.ctx, rpc: input.ctx.rpc.backendInstance },
+        model: input.model.backendInstance,
+      }),
+    ),
+    Sub.tag(
+      'got-backend-connection-msg',
+      BackendConnectionFrontend.subscriptions({
+        ctx: { ...input.ctx, topic: input.ctx.topic.backendConnection },
+        model: input.model.backendConnection,
+      }),
+    ),
+  ])
+}
 
-const Dot = (input: { className: string; colorClassName: string }) => {
+const ViewDot = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase; className: string }) => {
   return (
-    <div className={cn(input.className, 'aspect-square shrink-0 p-[1px]')}>
-      <div className={cn(input.colorClassName, 'h-full w-full shrink-0 rounded-full')} />
-    </div>
+    <BackendConnectionFrontend.ViewDot
+      model={input.model.backendConnection}
+      ctx={input.ctx}
+      className={input.className}
+    />
   )
 }
 
-export const ViewDot = (input: { model: ModelFrontend; ctx: { t: Translator }; className: string }) => {
-  switch (input.model.state.t) {
-    case 'backend-connected': {
-      return <Dot className={input.className} colorClassName='bg-green-500' />
-    }
-
-    case 'backend-connecting':
-    case 'backend-connect-error': {
-      return <Dot className={input.className} colorClassName='animate-pulse bg-orange-500' />
-    }
-
-    case 'backend-disconnected': {
-      return <Dot className={input.className} colorClassName='bg-red-500' />
-    }
-  }
-}
-
-export const ViewConnectionStatusListItem = (input: {
+const ViewListItem = (input: {
   model: ModelFrontend
-  dispatch: (m: MsgFrontend) => void
-  ctx: {
-    t: Translator
-  }
+  ctx: AppFrontendCtxBase
+  dispatch: (msg: MsgFrontend) => void
 }) => {
-  switch (input.model.state.t) {
-    case 'backend-connected': {
-      return (
-        <ListItemButton
-          icon={(inputIcon) => <Dot className={inputIcon.className} colorClassName='bg-green-500' />}
-          className='text-green-500'
-          label={input.ctx.t('wire.online')}
-        />
-      )
-    }
-
-    case 'backend-connect-error':
-    case 'backend-connecting': {
-      return (
-        <ListItemButton
-          icon={(input) => <Dot className={input.className} colorClassName='bg-orange-500' />}
-          color='warning'
-          label={input.ctx.t('wire.connecting...')}
-        />
-      )
-    }
-
-    case 'backend-disconnected': {
-      return (
-        <ListItemButton
-          icon={(input) => <Dot className={input.className} colorClassName='bg-red-500' />}
-          color='danger'
-          label={input.ctx.t('wire.offline')}
-          end={() => (
-            <button
-              type='button'
-              onClick={() =>
-                input.dispatch({
-                  t: 'clicked-try-reconnect',
-                })
-              }
-              className='font-bold text-red-500'
-            >
-              {input.ctx.t('wire.try-reconnect')}
-            </button>
-          )}
-        />
-      )
-    }
-  }
+  return (
+    <BackendConnectionFrontend.ViewListItem
+      model={input.model.backendConnection}
+      ctx={input.ctx}
+      dispatch={(c) => input.dispatch({ t: 'got-backend-connection-msg', c })}
+    />
+  )
 }
 
-//
-//
-//
-//
-//
-//
-
-export const subscriptions = (_: {}): Sub<MsgFrontend> => {
-  return Sub.None
+export const WireFrontend = {
+  init,
+  update,
+  subscriptions,
+  ViewDot,
+  ViewListItem,
 }

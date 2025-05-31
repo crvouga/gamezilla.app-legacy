@@ -113,6 +113,10 @@ const schema = <TKey extends string | number, TValue>(
   })
 }
 
+const latest = <TKey extends string | number, TValue>(model: CappedOrderedDict<TKey, TValue>): TValue | null => {
+  return model._valuesByKey[model._orderNewestFirst[0]!] ?? null
+}
+
 export const CappedOrderedDict = {
   add,
   remove,
@@ -121,4 +125,5 @@ export const CappedOrderedDict = {
   mergeLeft,
   valuesNewestFirst,
   schema,
+  latest,
 }

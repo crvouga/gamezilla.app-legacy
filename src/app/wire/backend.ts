@@ -1,29 +1,20 @@
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
-import { Logger } from '../../@/logger'
 import { AppBackendCtx } from '../@/backend/ctx'
 import { BackendInstanceBackend } from './backend-instance/backend'
-import { rpcContract, type BackendCtx, type MsgBackend } from './types'
-import { WireSessionDb } from './wire-session-db'
+import { rpcContract, type BackendCtxModule, type MsgBackend } from './types'
 
-const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtx> => {
-  const logger = Logger.prefix('wire', input.ctx.logger)
+const initCtx = async (input: { ctx: AppBackendCtx }): Promise<BackendCtxModule> => {
   return {
     ...input.ctx,
     backendInstance: await BackendInstanceBackend.initCtx({ ctx: input.ctx }),
-    wireSessionDb: await WireSessionDb({
-      t: 'cached-key-value-db',
-      keyValueDb: input.ctx.keyValueDb,
-      pubSubTopicBased: input.ctx.pubSub,
-      logger,
-    }),
   }
 }
 
 const update = async (input: {
   msgIn?: unknown
   msg?: MsgBackend | null
-  ctx: BackendCtx
+  ctx: BackendCtxModule
 }): Promise<{ msgOut?: unknown[] }> => {
   const updated = await BackendInstanceBackend.update({
     ctx: input.ctx.backendInstance,
@@ -36,11 +27,11 @@ const update = async (input: {
   }
 }
 
-const subscriptions = async (_input: { ctx: BackendCtx }): Promise<Sub<MsgBackend>> => {
+const subscriptions = async (_input: { ctx: BackendCtxModule }): Promise<Sub<MsgBackend>> => {
   return Sub.None
 }
 
-const rpc = (input: { ctx: BackendCtx }) => {
+const rpc = (input: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
     backendInstance: BackendInstanceBackend.rpc({ ctx: input.ctx.backendInstance }),
   })
