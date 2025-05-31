@@ -87,8 +87,8 @@ const Fixture = async () => {
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000))
 
-describe('Topic', () => {
-  it.only('should work', async () => {
+describe.only('Topic', () => {
+  it('should work', async () => {
     using f = await Fixture()
     const gotServer: Msg[] = []
     const gotA: Msg[] = []
@@ -290,7 +290,7 @@ describe('Topic', () => {
     expect(gotB).toEqual([{ name: 'Jane' }])
   })
 
-  it.skip('should handle reconnection correctly', async () => {
+  it('should handle reconnection correctly', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
