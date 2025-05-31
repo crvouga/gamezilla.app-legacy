@@ -26,7 +26,14 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
   logger.debug(`connecting to websocket url=${websocketUrl}`)
 
   const ws = new WebSocket(websocketUrl)
-  const subByTopic = new Map<string, PubSub<unknown>>()
+  const subByTopic = new Map<
+    string,
+    {
+      topicName: string[]
+      topicParams: unknown
+      sub: PubSub<unknown>
+    }
+  >()
 
   const ready = new Promise<void>((resolve) => {
     ws.onopen = () => {
@@ -66,7 +73,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
         }
         const msg = JSON.parse(toClientMsg.value.msg)
         logger.debug(`publishing message to topic=${topicString}`)
-        existingSub.pub(msg)
+        existingSub.sub.pub(msg)
       }
     }
   }
@@ -109,35 +116,43 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
 
             if (existingSub) {
               logger.debug(`reusing existing subscription for topic=${topicString}`)
-              return existingSub
+              const toServerMsg: ToServerMsg = {
+                t: 'subscribe',
+                topicName,
+                topicParams,
+              }
+
+              send(toServerMsg)
+
+              return existingSub.sub
             }
+
+            logger.debug(`subscribing to topic=${topicString}`)
+
+            const sub = PubSub.create()
+
+            subByTopic.set(topicString, { topicName, topicParams, sub })
 
             const toServerMsg: ToServerMsg = {
               t: 'subscribe',
-              topicName: topicName,
+              topicName,
               topicParams,
             }
-            logger.debug(`subscribing to topic=${topicString}`)
+
             send(toServerMsg)
 
-            const pubSub = PubSub.create()
-
-            subByTopic.set(topicString, pubSub)
-
             return {
-              ...pubSub,
+              ...sub,
               sub(subscriber) {
-                const unsub = pubSub.sub(subscriber)
+                const unsub = sub.sub(subscriber)
                 return () => {
                   unsub()
-                  // TODO fix
-                  // const toServerMsg: ToServerMsg = {
-                  //   t: 'unsubscribe',
-                  //   topicName: topicName,
-                  //   topicParams,
-                  // }
-                  // ws.send(JSON.stringify(toServerMsg))
-                  logger.debug(`unsubscribing from topic=${topicString}`)
+                  const toServerMsg: ToServerMsg = {
+                    t: 'unsubscribe',
+                    topicName,
+                    topicParams,
+                  }
+                  send(toServerMsg)
                 }
               },
             }

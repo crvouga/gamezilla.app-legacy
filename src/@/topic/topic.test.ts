@@ -84,7 +84,7 @@ const Fixture = async () => {
   }
 }
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 100))
+const sleep = () => new Promise((resolve) => setTimeout(resolve, 20))
 
 describe('Topic', () => {
   it('should work', async () => {
@@ -251,5 +251,41 @@ describe('Topic', () => {
     expect(gotA).toEqual([{ name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
     expect(gotC).toEqual([{ name: 'John' }, { name: 'Jane' }])
+  })
+
+  it('should handle multiple subscriptions to the same topic correctly', async () => {
+    using f = await Fixture()
+    const gotA1: Msg[] = []
+    const gotA2: Msg[] = []
+    const gotB: Msg[] = []
+
+    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA1.push(msg))
+    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA2.push(msg))
+    f.clientB.someTopic.subscribe({ id: '123' }).sub((msg) => gotB.push(msg))
+    await sleep()
+
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    await sleep()
+
+    expect(gotA1).toEqual([{ name: 'John' }])
+    expect(gotA2).toEqual([{ name: 'John' }])
+    expect(gotB).toEqual([{ name: 'John' }])
+  })
+
+  it('should handle different topic parameters correctly', async () => {
+    using f = await Fixture()
+    const gotA: Msg[] = []
+    const gotB: Msg[] = []
+
+    f.clientA.someTopic.subscribe({ id: '123' }).sub((msg) => gotA.push(msg))
+    f.clientB.someTopic.subscribe({ id: '456' }).sub((msg) => gotB.push(msg))
+    await sleep()
+
+    f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    f.clientA.someTopic.publish({ id: '456' }, { name: 'Jane' })
+    await sleep()
+
+    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotB).toEqual([{ name: 'Jane' }])
   })
 })

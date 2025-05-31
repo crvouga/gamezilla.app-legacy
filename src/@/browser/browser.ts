@@ -129,6 +129,7 @@ export const onIntersections = <T>(htmlId: string, mapper: (entry: IntersectionO
   stateByHtmlId.set(htmlId, { entries: pubSub, observer })
 
   return {
+    subscriberCount: () => pubSub.subscriberCount(),
     sub(subscriber) {
       const unsub = pubSub.sub((msg) => {
         subscriber(mapper(msg))

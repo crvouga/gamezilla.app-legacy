@@ -132,6 +132,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     })
 
     return {
+      subscriberCount: () => pubSub.subscriberCount(),
       sub(subscriber: (rows: TRow[]) => void) {
         const unsub = pubSub.sub(subscriber)
         return () => {

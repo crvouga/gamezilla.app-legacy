@@ -48,7 +48,7 @@ const intervals = new Map<string, PubSub<Posix>>()
 const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
   const sub = intervals.get(intervalId)
 
-  if (sub?.isSubbed()) {
+  if (sub && sub.subscriberCount() > 0) {
     sub.pub(Posix.now())
 
     setTimeout(() => {
@@ -77,6 +77,7 @@ const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: Posix) =
   }, TimeSpan.toMilliseconds(timeSpan))
 
   return {
+    subscriberCount: () => subNew.subscriberCount(),
     sub(subscriber) {
       const unsub = subNew.sub((msg) => {
         subscriber(f(msg))

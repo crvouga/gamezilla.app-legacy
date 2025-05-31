@@ -1,11 +1,12 @@
 export type Sub<Msg> = {
   sub: (subscriber: (msg: Msg) => Promise<unknown> | unknown) => () => void
+  subscriberCount: () => number
 }
 
 export type Pub<Msg> = {
   pub: (msg: Msg) => Promise<void>
-  isSubbed: () => boolean
   once: (subscriber?: (msg: Msg) => void) => Promise<Msg>
+  subscriberCount: () => number
 }
 
 export type PubSub<Msg> = Pub<Msg> & Sub<Msg>
@@ -23,8 +24,8 @@ const create = <Msg>(): PubSub<Msg> => {
   const subscribers = new Map<number, (msg: Msg) => Promise<unknown> | unknown>()
   const queue: Msg[] = []
   return {
-    isSubbed() {
-      return subscribers.size > 0
+    subscriberCount() {
+      return subscribers.size
     },
     sub(subscriber) {
       runningId++
@@ -67,6 +68,7 @@ const next = <A>(sub: Sub<A>) => {
 
 const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
   return {
+    subscriberCount: () => sub.subscriberCount(),
     sub: (subscriber) => {
       return sub.sub((a) => {
         subscriber(f(a))
@@ -77,6 +79,7 @@ const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
 
 const flatMap = <A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> => {
   return {
+    subscriberCount: () => sub.subscriberCount(),
     sub: (subscriber: (msg: B) => void) => {
       const unsubscribeFunctions: Array<() => void> = []
 
@@ -97,6 +100,7 @@ const flatMap = <A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> => {
 
 const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
   return {
+    subscriberCount: () => arr.reduce((acc, sub) => acc + sub.subscriberCount(), 0),
     sub: (subscriber) => {
       const unsubscribeList: (() => void)[] = []
 
@@ -114,11 +118,13 @@ const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
 }
 
 const None: Sub<never> = {
+  subscriberCount: () => 0,
   sub: () => () => {},
 }
 
 const flat = <A>(sub: Sub<A[]>): Sub<A> => {
   return {
+    subscriberCount: () => sub.subscriberCount(),
     sub: (subscriber) => {
       return sub.sub((a) => {
         if (a) {
@@ -133,6 +139,7 @@ const flat = <A>(sub: Sub<A[]>): Sub<A> => {
 const lastKeyById = new Map<string, string>()
 const deduplicate = <Msg>(id: string, keyFn: (msg: Msg) => string, sub: Sub<Msg>): Sub<Msg> => {
   return {
+    subscriberCount: () => sub.subscriberCount(),
     sub: (subscriber) => {
       return sub.sub((msg) => {
         const newKey = keyFn(msg)
@@ -152,6 +159,7 @@ const tag = <Tag extends string, Msg>(t: Tag, sub: Sub<Msg>): Sub<{ t: Tag; c: M
 
 const toSub = <Msg>(pubSub: PubSub<Msg>): Sub<Msg> => {
   return {
+    subscriberCount: () => pubSub.subscriberCount(),
     sub: (subscriber) => {
       return pubSub.sub(subscriber)
     },
@@ -166,9 +174,7 @@ const toPub = <Msg>(pubSub: PubSub<Msg>): Pub<Msg> => {
     once(subscriber) {
       return pubSub.once(subscriber)
     },
-    isSubbed() {
-      return pubSub.isSubbed()
-    },
+    subscriberCount: () => pubSub.subscriberCount(),
   }
 }
 

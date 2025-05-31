@@ -155,6 +155,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       })
 
       return {
+        subscriberCount: () => pubSub.subscriberCount(),
         sub(subscriber: (rows: TRow[]) => void) {
           const unsub = pubSub.sub(subscriber)
 
