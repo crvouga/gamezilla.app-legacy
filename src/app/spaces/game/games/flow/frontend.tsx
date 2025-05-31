@@ -102,7 +102,6 @@ const updatePackLoader: FrontendModule['update'] = (input) => {
     ctx,
     model: input.model.packLoader,
     msg: input.msg?.t === 'got-pack-loader-msg' ? input.msg.c : null,
-    msgBackend: input.msgBackend?.t === 'got-pack-loader-msg' ? input.msgBackend.c : null,
     msgIn: input.msgIn,
   })
 

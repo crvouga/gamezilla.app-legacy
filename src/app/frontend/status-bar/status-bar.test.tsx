@@ -8,7 +8,7 @@ type Output = ReturnType<typeof StatusBar.update>
 const Fixture = async () => {
   const f = await FixtureAppFrontend()
 
-  const init = StatusBar.init({ stored: null })
+  const init = StatusBar.init()
 
   const update = (acc: Output, [input, ...inputs]: Input[]) => {
     if (!input) return acc

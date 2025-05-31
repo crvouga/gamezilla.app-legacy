@@ -14,7 +14,7 @@ import type { FrontendCtx, ModelFrontend, MsgFrontend } from './types'
 //
 //
 
-export const init = (input: { ctx: FrontendCtx; stored: Record<string, unknown> | null }): { model: ModelFrontend } => {
+export const init = (input: { ctx: FrontendCtx }): { model: ModelFrontend } => {
   const backendInstance = BackendInstanceFrontend.init({
     ctx: { ...input.ctx, rpc: input.ctx.rpc.backendInstance },
   })

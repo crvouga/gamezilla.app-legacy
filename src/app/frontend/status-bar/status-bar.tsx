@@ -10,7 +10,7 @@ export type Model = {
   isOpen: boolean
 }
 
-export const init = (_input: { stored: Record<string, unknown> | null }): { model: Model } => {
+export const init = (): { model: Model } => {
   return {
     model: {
       isOpen: false,
@@ -65,7 +65,9 @@ export const View = (props: {
         position: 'top',
       }}
       dropDown={{
-        reference: props.slots.topBar({ onClick: () => props.dispatch({ t: 'clicked-status-bar' }) }),
+        reference: props.slots.topBar({
+          onClick: () => props.dispatch({ t: 'clicked-status-bar' }),
+        }),
       }}
       id='status-bar-drawer'
       open={props.model.isOpen}

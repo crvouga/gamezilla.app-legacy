@@ -48,6 +48,7 @@ export const translations: Text = {
   'verify-sms-problem.verification-expired-not-latest-verification':
     '最新の検証ではないため、検証が期限切れになりました',
   'verify-sms-problem.send-code-limit-reached': '制限に達しました。後でもう一度お試しください。',
+  'auth.logged-in-as': 'としてログイン',
   'spaces.see-profile': 'プロフィールを見る',
   'spaces.current-user-left': 'スペースを離れました',
   'spaces.other-user-left': (username) =>

@@ -47,6 +47,7 @@ export const translations: Text = {
   'verify-sms-problem.send-code-daily-limit-reached': '일일 제한에 도달했습니다. 나중에 다시 시도하십시오.',
   'verify-sms-problem.verification-expired-not-latest-verification': '최신 인증이 아니기 때문에 인증이 만료되었습니다',
   'verify-sms-problem.send-code-limit-reached': '제한에 도달했습니다. 나중에 다시 시도하십시오.',
+  'auth.logged-in-as': '으로 로그인됨',
   'spaces.see-profile': '프로필 보기',
   'spaces.current-user-left': '공간을 나갔습니다',
   'spaces.other-user-left': (username) => `${username}\uAC00 \uACF5\uAC04\uC744 \uB098\uAC14\uC2B5\uB2C8\uB2E4`,

@@ -5,6 +5,7 @@ import { IconCheckmarkCircle, IconCheckmarkCircleEmpty } from '~/@/ui/icon/icon-
 import { IconLanguage } from '~/@/ui/icon/icon-language'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Spinner } from '~/@/ui/spinner'
+import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd'
 import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
@@ -12,7 +13,6 @@ import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import { translatorSubscriptions } from '../../@/frontend/translator'
 import type { FrontendModule, TranslationLoading } from '../types'
-import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd'
 
 //
 //
@@ -24,10 +24,8 @@ import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd'
 
 const LANG_STORAGE_KEY = 'lang'
 
-export const init: FrontendModule['init'] = ({ stored, ctx }) => {
-  const storedLang = stored?.[LANG_STORAGE_KEY]
-
-  const initialLang = LanguageCodeISO_639_1.is(storedLang) ? storedLang : ctx.navigatorLanguage
+export const init: FrontendModule['init'] = ({ ctx }) => {
+  const initialLang = LanguageCodeISO_639_1.is(ctx.navigatorLanguage) ? ctx.navigatorLanguage : 'en'
 
   return {
     model: {

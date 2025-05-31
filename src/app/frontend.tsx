@@ -154,7 +154,6 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
   const frontend = FrontendFrontend.init({
     ctx: input.ctx,
     location: input.ctx.location,
-    stored: {},
   })
 
   const ctx: AnonymousFrontendCtx = {
@@ -165,7 +164,7 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
   }
 
   const lang = LangFrontend.init({ ctx })
-  const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire }, stored: {} })
+  const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire } })
   const auth = AuthFrontend.init({ ctx: input.ctx })
   const space = SpacesFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.spaces, topic: input.ctx.topic.spaces } })
   const profile = ProfileFrontend.init({ ctx: input.ctx })
@@ -325,6 +324,7 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
     Sub.tag('wire', WireFrontend.subscriptions({})),
     Sub.tag('lang', LangFrontend.subscriptions({ ctx, model: input.model.lang })),
     Sub.tag('auth', AuthFrontend.subscriptions({ ctx, model: input.model.auth })),
+    Sub.tag('profile', ProfileFrontend.subscriptions({ ctx, model: input.model.profile })),
     Sub.tag(
       'spaces',
       SpacesFrontend.subscriptions({
@@ -332,7 +332,6 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
         model: input.model.spaces,
       }),
     ),
-    Sub.tag('profile', ProfileFrontend.subscriptions({ ctx, model: input.model.profile })),
   ])
 }
 

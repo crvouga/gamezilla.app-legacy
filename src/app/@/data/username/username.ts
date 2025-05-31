@@ -29,6 +29,10 @@ const fromString = (username: string): Username => {
   throw new Error('impossible state. did not create username from string')
 }
 
+const of = (username: string): Username => {
+  return username as Username
+}
+
 const generate = async (separator?: string, digitCount?: number, length?: number): Promise<Username> => {
   const { adjectives, nouns } = await getWords()
 
@@ -64,4 +68,5 @@ export const Username = {
   fromString,
   decode,
   generate,
+  of,
 }

@@ -6,7 +6,7 @@ export type Model = {
   documentVisibilityState: DocumentVisibilityState
 }
 
-export const init = (_input: { stored: Record<string, unknown> | null }): { model: Model } => {
+export const init = (): { model: Model } => {
   return {
     model: {
       documentVisibilityState: typeof window === 'undefined' ? 'visible' : document.visibilityState,

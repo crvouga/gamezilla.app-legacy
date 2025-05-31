@@ -50,6 +50,7 @@ export const translations: Text = {
   'verify-sms-problem.verification-expired-not-latest-verification':
     'सत्यापन समाप्त हो गया क्योंकि यह नवीनतम सत्यापन नहीं है',
   'verify-sms-problem.send-code-limit-reached': 'सीमा पहुंच गई। कृपया बाद में पुन: प्रयास करें।',
+  'auth.logged-in-as': 'के रूप में लॉग इन',
   'spaces.see-profile': 'प्रोफ़ाइल देखें',
   'spaces.current-user-left': 'अंतरिक्ष छोड़ दिया',
   'spaces.other-user-left': (username) =>

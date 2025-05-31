@@ -80,6 +80,7 @@ const updateSynced: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'sync.synced': {
       const { synced } = input.msg
+
       if (isErr(synced)) return { model: input.model }
 
       const merged = SpacesCore.mergeOne(input.model.spaces, synced.value.space)

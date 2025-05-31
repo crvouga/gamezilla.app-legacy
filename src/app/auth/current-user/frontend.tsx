@@ -3,13 +3,16 @@ import { Sub } from '~/@/sub'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { UserSession } from '../@/user-session/user-session'
 import { FrontendModule, ModelFrontend, MsgFrontend } from './types'
+import { Username } from '~/app/@/data/username'
 
 const init: ModelFrontend = {
   status: NotAsked,
@@ -28,9 +31,10 @@ export type CurrentUserState =
       t: 'logged-in'
       userAccount: UserAccount
       userSession: UserSession
+      userProfile: UserProfile
     }
 
-export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AuthFrontendCtx }): CurrentUserState => {
+export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase }): CurrentUserState => {
   if (input.model.status.t === 'not-asked') {
     return { t: 'loading' }
   }
@@ -58,10 +62,20 @@ export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AuthFront
     userId: userSession.userId,
   }
 
+  const userProfile: UserProfile = input.ctx.profilesByUserId[userSession.userId] ?? {
+    id: userSession.userId,
+    username: Username.of(''),
+    avatarSeed: null,
+    avatarStyle: null,
+    createdAt: input.ctx.now,
+    updatedAt: input.ctx.now,
+  }
+
   return {
     t: 'logged-in',
     userSession,
     userAccount,
+    userProfile,
   }
 }
 

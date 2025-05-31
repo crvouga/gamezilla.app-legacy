@@ -49,6 +49,7 @@ export const translations: Text = {
   'verify-sms-problem.send-code-daily-limit-reached': 'تم الوصول إلى الحد اليومي. يرجى المحاولة مرة أخرى في وقت لاحق.',
   'verify-sms-problem.verification-expired-not-latest-verification': 'انتهت صلاحية التحقق لأنها ليست أحدث عملية تحقق',
   'verify-sms-problem.send-code-limit-reached': 'تم الوصول إلى الحد. يرجى المحاولة مرة أخرى في وقت لاحق.',
+  'auth.logged-in-as': 'تم تسجيل الدخول ك',
   'spaces.see-profile': 'مشاهدة الملف الشخصي',
   'spaces.current-user-left': 'ترك الفضاء',
   'spaces.other-user-left': (username) => `${username} \u062A\u0631\u0643 \u0627\u0644\u0641\u0636\u0627\u0621`,

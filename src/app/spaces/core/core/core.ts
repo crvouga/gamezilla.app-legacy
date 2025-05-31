@@ -33,66 +33,6 @@ export const init: Model = {
   errors: {},
 }
 
-export const listSpaces = ({
-  model,
-  limit,
-  offset,
-  whereAnd,
-}: {
-  model: Model
-  limit: number
-  offset: number
-  whereAnd?: {
-    spaceId?: SpaceId
-  }
-  sort?: 'newest' | 'oldest'
-}): Space.Model[] => {
-  if (whereAnd?.spaceId) {
-    const space = model.spaces[whereAnd.spaceId]
-
-    if (!space) return []
-
-    return [space]
-  }
-
-  const spaces: Space.Model[] = []
-
-  let i = -1
-  for (const spaceId in model.spaces) {
-    i += 1
-
-    if (i < offset) continue
-
-    const spaceModel = model.spaces[spaceId as SpaceId]
-
-    if (!spaceModel) {
-      continue
-    }
-
-    const spaceState = EventSourced.toState(Space.config, spaceModel)
-
-    switch (spaceState.type) {
-      case 'ended': {
-        break
-      }
-      case 'initial': {
-        break
-      }
-      case 'started': {
-        const started = EventSourced.startFromLatestSnapshot(spaceModel)
-        spaces.push(started)
-        break
-      }
-    }
-
-    if (spaces.length >= limit) {
-      break
-    }
-  }
-
-  return spaces
-}
-
 export const toSpaceIdByUserId = (model: Model, userId: UserId | null | undefined): SpaceId | null => {
   return userId ? (model.indexSpaceIdByUserId[userId] ?? null) : null
 }

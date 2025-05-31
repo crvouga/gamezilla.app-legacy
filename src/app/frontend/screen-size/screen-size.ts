@@ -11,7 +11,7 @@ export const init = (): { model: Model } => {
 
 export type Msg = { t: 'screen-size-changed'; screenSize: ScreenSize }
 
-export const update = (input: { msg?: Msg | null; model: Model }): { model: Model } => {
+export const update = (input: { msg?: Msg | null; model: Model; msgIn?: unknown }): { model: Model } => {
   if (!input.msg) return { model: input.model }
 
   switch (input.msg.t) {

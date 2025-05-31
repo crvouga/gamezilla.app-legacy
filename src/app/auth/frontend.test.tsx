@@ -17,7 +17,7 @@
 //     const output = AuthFrontend.update({
 //       ctx: f.ctx,
 //       model: f.initial.model,
-//       msg: { t: 'user-clicked-login-with-phone' },
+//       msg: { t: 'clicked-login-with-phone' },
 //     })
 //     expect(PlaySoundCmd.did(output)).toBe(true)
 //     expect(PushScreenCmd.did(output, (screen) => screen.n === 'auth-login' && screen.t === 'login-sms-request')).toBe(true)

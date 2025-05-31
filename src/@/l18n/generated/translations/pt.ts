@@ -48,6 +48,7 @@ export const translations: Text = {
   'verify-sms-problem.verification-expired-not-latest-verification':
     'A verificação expirou porque não é a verificação mais recente',
   'verify-sms-problem.send-code-limit-reached': 'Limite atingido. Por favor, tente novamente mais tarde.',
+  'auth.logged-in-as': 'Logado como',
   'spaces.see-profile': 'Ver perfil',
   'spaces.current-user-left': 'Deixou o espaço',
   'spaces.other-user-left': (username) => `${username} deixou o espa\xE7o`,

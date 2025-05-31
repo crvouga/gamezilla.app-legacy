@@ -33,19 +33,14 @@ export type ModelFrontend = {
 //
 
 export type MsgFrontend =
-  | { t: 'user-clicked-login-with-phone' }
+  | { t: 'clicked-login-with-phone' }
   | { t: 'got-login-as-guest-msg'; c: ContinueAsGuest.MsgFrontend }
   | { t: 'got-login-with-sms-msg'; c: LoginWithSMSTypes.MsgFrontend }
   | { t: 'got-logout-msg'; c: LogoutTypes.MsgFrontend }
   | { t: 'got-current-user-msg'; c: CurrentUserTypes.MsgFrontend }
+  | { t: 'clicked-logout-list-item' }
 
 export type MsgBackend = { t: 'noop' }
-
-export type MsgToBackend =
-  | { t: 'got-logout-msg'; c: LogoutTypes.MsgToBackend }
-  | { t: 'got-current-user-msg'; c: CurrentUserTypes.MsgToBackend }
-  | { t: 'got-login-as-guest-msg'; c: ContinueAsGuest.MsgToBackend }
-  | { t: 'got-login-with-sms-msg'; c: LoginWithSMSTypes.MsgToBackend }
 
 export type MsgToFrontend = { t: 'noop' }
 
@@ -58,8 +53,6 @@ export type FrontendCtx = AuthFrontendCtx & {
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend
   Msg: MsgFrontend
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
   Ctx: FrontendCtx
 }>
 
@@ -71,8 +64,7 @@ export type BackendModule = AppBackendModule<{
   Msg: MsgBackend
   MsgCmdOut: BackendCmd<MsgToFrontend>
   MsgEvtOut: BackendEvt
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
+
   Deps: null
 }>
 

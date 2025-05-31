@@ -15,7 +15,7 @@ const Fixture = async () => {
     }
   }
 
-  const initial = ScreenUpdateUsernameFrontend.init({ ...f, stored: {} }).model
+  const initial = ScreenUpdateUsernameFrontend.init({ ...f }).model
 
   return {
     ...f,

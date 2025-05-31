@@ -3,14 +3,10 @@ import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { Gutter } from '~/@/ui/gutter'
-import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
 import { IconUserPen } from '~/@/ui/icon/icon-user-pen'
 import { Typography } from '~/@/ui/typography'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
-
-import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd'
-import { LogoutCmd } from '~/app/@/frontend/logout-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ProfileFrontendCtx } from '../@/frontend/ctx'
@@ -34,15 +30,6 @@ const init: FrontendModule['init'] = (_) => {
 const update: FrontendModule['update'] = (input) => {
   if (!input.msg) return { model: input.model }
   switch (input.msg.t) {
-    case 'clicked-back-button': {
-      return { model: input.model, msgOut: [BackScreenCmd.init()] }
-    }
-    case 'clicked-edit-profile-button': {
-      return { model: input.model, msgOut: [PushScreenCmd.init({ t: 'profile-edit', n: 'profile' })] }
-    }
-    case 'clicked-logout-button': {
-      return { model: input.model, msgOut: [LogoutCmd.init()] }
-    }
     case 'got-msg-out': {
       return { model: input.model, msgOut: [input.msg.c] }
     }
@@ -89,20 +76,16 @@ const ViewBody: typeof View = (input) => {
         variant='title'
         text={profile ? input.ctx.t('username', profile.username) : TranslatedText.ellipsis}
       />
+
       {isCurrentUserProfile && (
         <div className='flex w-full items-center justify-center gap-6 pt-4'>
           <Button
-            onClick={() => input.dispatch({ t: 'clicked-edit-profile-button' })}
+            onClick={() =>
+              input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) })
+            }
             className='max-w-64 flex-1'
             renderIconStart={(iconInput) => <IconUserPen {...iconInput} />}
             text={input.ctx.t('profile.edit-profile')}
-            size='sm'
-          />
-          <Button
-            onClick={() => input.dispatch({ t: 'clicked-logout-button' })}
-            className='max-w-64 flex-1'
-            renderIconStart={(iconInput) => <IconArrowLeftOnRect {...iconInput} />}
-            text={input.ctx.t('auth.logout')}
             size='sm'
           />
         </div>

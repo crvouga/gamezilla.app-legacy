@@ -1,22 +1,30 @@
 import { Eff } from '~/@/eff'
+import { TranslatedText } from '~/@/l18n'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
+import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
+import { IconUserCircle } from '~/@/ui/icon'
 import { IconMobilePhone } from '~/@/ui/icon/icon-mobile-phone'
+import { IconPowerOff } from '~/@/ui/icon/icon-power-off'
+import { ListItemButton } from '~/@/ui/list-item-button'
 import { Typography } from '~/@/ui/typography'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
+import { UserProfile } from '../@/data/user-profile'
+import { CloseStatusBarCmd } from '../@/frontend/close-status-bar-cmd'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
+import { LogoutCmd } from '../@/frontend/logout-cmd'
 import { PlaySoundCmd } from '../@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '../@/frontend/push-screen-cmd'
 import { AuthFrontendCtx } from './@/frontend/ctx'
 import { AuthScreenHeaderCta } from './@/frontend/ui/auth-screen-header-cta'
 import { AuthScreenLayout } from './@/frontend/ui/auth-screen-layout'
-import { CurrentUserFrontend } from './current-user/frontend'
+import { CurrentUserFrontend, toCurrentUserState } from './current-user/frontend'
 import { ContinueAsGuestFrontend } from './login-as-guest/frontend'
 import { LoginWithSMSFrontend } from './login-with-sms/frontend'
 import { LogoutFrontend } from './logout/frontend'
-import type { FrontendCtx, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
+import { FrontendCtx, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
 
 //
 //
@@ -123,8 +131,12 @@ const updateSMS: FrontendModule['update'] = (input) => {
 }
 
 const updateFromMsg: FrontendModule['update'] = (input) => {
-  switch (input.msg?.t) {
-    case 'user-clicked-login-with-phone': {
+  if (!input.msg) {
+    return { model: input.model }
+  }
+
+  switch (input.msg.t) {
+    case 'clicked-login-with-phone': {
       return {
         model: input.model,
         msgOut: [
@@ -133,11 +145,14 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         ],
       }
     }
-
-    default: {
-      return {
-        model: input.model,
-      }
+    case 'clicked-logout-list-item': {
+      return { model: input.model, msgOut: [LogoutCmd.init(), CloseStatusBarCmd.init()] }
+    }
+    case 'got-login-as-guest-msg':
+    case 'got-login-with-sms-msg':
+    case 'got-logout-msg':
+    case 'got-current-user-msg': {
+      return { model: input.model }
     }
   }
 }
@@ -204,7 +219,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
         <AuthScreenHeaderCta ctx={input.ctx} />
 
         <Button
-          onClick={() => input.dispatch({ t: 'user-clicked-login-with-phone' })}
+          onClick={() => input.dispatch({ t: 'clicked-login-with-phone' })}
           size='lg'
           className='w-full'
           renderIconStart={(iconInput) => <IconMobilePhone {...iconInput} />}
@@ -240,11 +255,62 @@ const ViewModals = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; disp
   )
 }
 
+const ViewCurrentUserListItem = (input: {
+  model: ModelFrontend
+  ctx: AppFrontendCtxBase
+  dispatch: (msg: MsgFrontend) => void
+}) => {
+  const currentUser = toCurrentUserState({ model: input.model.currentUser, ctx: input.ctx })
+  switch (currentUser.t) {
+    case 'loading': {
+      return <ListItemButton icon={(input) => <IconUserCircle {...input} />} label={input.ctx.t('app.add')} />
+    }
+    case 'logged-out': {
+      return <ListItemButton icon={(input) => <IconUserCircle {...input} />} label={input.ctx.t('app.add')} />
+    }
+    case 'logged-in': {
+      return (
+        <ListItemButton
+          icon={(input) => <Avatar src={UserProfile.toAvatarUrl(currentUser.userProfile)} {...input} />}
+          label={TranslatedText.of(`${input.ctx.t('auth.logged-in-as')} ${currentUser.userProfile.username}`)}
+        />
+      )
+    }
+  }
+}
+
+const ViewLogoutListItem = (input: {
+  model: ModelFrontend
+  ctx: AppFrontendCtxBase
+  dispatch: (msg: MsgFrontend) => void
+}) => {
+  const currentUser = toCurrentUserState({ model: input.model.currentUser, ctx: input.ctx })
+
+  switch (currentUser.t) {
+    case 'loading':
+    case 'logged-out': {
+      return null
+    }
+    case 'logged-in': {
+      return (
+        <ListItemButton
+          onClick={() => input.dispatch({ t: 'clicked-logout-list-item' })}
+          icon={(input) => <IconPowerOff {...input} />}
+          label={input.ctx.t('auth.logout')}
+          end={() => <Typography variant='caption' text={TranslatedText.of(currentUser.userProfile.username)} />}
+        />
+      )
+    }
+  }
+}
+
 export const AuthFrontend = {
   init,
   update,
   subscriptions,
   View,
+  ViewLogoutListItem,
   ViewModals,
+  ViewCurrentUserListItem,
   initCtx,
 }

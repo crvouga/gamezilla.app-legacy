@@ -217,7 +217,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     return f.render(<SpacesFrontend.View ctx={ctx} dispatch={() => {}} {...input} />)
   }
 
-  const initial = SpacesFrontend.init({ ctx, stored: null })
+  const initial = SpacesFrontend.init({ ctx })
 
   return {
     ...f,

@@ -113,6 +113,19 @@ const user_guest_session_mapping = new Table(
 )
 export type UserGuestSessionMapping = AppSchema['user_guest_session_mapping']
 
+const user_profile = new Table(
+  {
+    id: column.text,
+    username: column.text,
+    avatar_seed: column.text,
+    avatar_style: column.text,
+    created_at_posix: column.integer,
+    updated_at_posix: column.integer,
+  },
+  {},
+)
+export type UserProfile = AppSchema['user_profile']
+
 export const AppSchema = new Schema({
   game_flow_puzzle,
   game_flow_pack,
@@ -121,5 +134,6 @@ export const AppSchema = new Schema({
   user_account,
   user_session,
   user_guest_session_mapping,
+  user_profile,
 })
 export type AppSchema = (typeof AppSchema)['types']

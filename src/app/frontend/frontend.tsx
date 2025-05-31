@@ -18,7 +18,6 @@ import './update-prompt/update-prompt'
 
 export const init = (input: {
   ctx: AnonymousFrontendCtx
-  stored: Record<string, unknown>
   location: Browser.Location
 }): {
   model: ModelFrontend
@@ -26,11 +25,11 @@ export const init = (input: {
   msgOut?: unknown[]
 } => {
   const screen = CurrentScreenFrontend.init({ location: input.location })
-  const visibility = VisibilityFrontend.init({ stored: input.stored })
+  const visibility = VisibilityFrontend.init()
   const screenSize = ScreenSizeFrontend.init()
-  const toast = ToastFrontend.init({ stored: input.stored, ctx: input.ctx })
-  const sound = SoundFrontend.init({ ctx: input.ctx, stored: input.stored })
-  const statusBar = StatusBarFrontend.init({ stored: input.stored })
+  const toast = ToastFrontend.init({ ctx: input.ctx })
+  const sound = SoundFrontend.init({ ctx: input.ctx })
+  const statusBar = StatusBarFrontend.init()
   const focus = FocusFrontend.init()
   const copyToClipboard = CopyToClipboardFrontend.init()
 
@@ -99,7 +98,7 @@ export const update = (input: {
   const screenSize = ScreenSizeFrontend.update({
     model: input.model.screenSize,
     msg: input.msg?.t === 'screen-size' ? input.msg.c : null,
-    // msgIn: input.msgIn,
+    msgIn: input.msgIn,
   })
 
   const copyToClipboard = CopyToClipboardFrontend.update({

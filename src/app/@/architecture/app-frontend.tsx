@@ -98,14 +98,6 @@ export type Input<T extends AppFrontendModuleTypes> = {
    * `msgIn` is a message from another module. Like `user-logged-out`, `screen-changed`
    */
   msgIn?: T['MsgIn'] | null
-  /**
-   * `msgBackend` is a message sent from the backend
-   */
-  msgBackend?: T['MsgToFrontend'] | null
-  /**
-   * `msgCmd` is a command to sent from another module. Like `show-toast`, `logout`
-   */
-  msgCmd?: T['MsgCmdIn'] | null
 }
 
 //
@@ -140,7 +132,7 @@ export type AppFrontendModule<T extends AppFrontendModuleTypes> = {
   /**
    * `init` is the initial state of the module
    */
-  init: (input: { ctx: T['Ctx']; stored?: Record<string, unknown> | null }) => Output<T>
+  init: (input: { ctx: T['Ctx'] }) => Output<T>
 
   /**
    * `update` handles all the state transitions and business logic of the module

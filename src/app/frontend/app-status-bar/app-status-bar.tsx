@@ -1,14 +1,16 @@
-import { IconLanguage } from '~/@/ui/icon/icon-language'
+import { Clickable } from '~/@/ui/clickable'
 import { cn } from '~/@/ui/cn'
+import { IconPowerOff } from '~/@/ui/icon/icon-power-off'
+import { AuthFrontend } from '~/app/auth/frontend'
 import * as LangFrontend from '~/app/lang/frontend'
 import { type ModelFrontend, type MsgFrontend } from '~/app/types'
 import * as WireFrontend from '~/app/wire/frontend'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '../../@/frontend/ctx'
-import { StatusBarFrontend } from '../status-bar/index'
+import { AppFrontendCtxBase } from '../../@/frontend/ctx'
 import { SoundFrontend } from '../sound'
+import { StatusBarFrontend } from '../status-bar/index'
 
 export const ViewAppStatusBar = (input: {
-  ctx: AppFrontendCtx | AnonymousFrontendCtx
+  ctx: AppFrontendCtxBase
   model: ModelFrontend
   dispatch: (c: MsgFrontend) => void
 }) => {
@@ -22,9 +24,8 @@ export const ViewAppStatusBar = (input: {
           topBar: (props) => {
             const iconSize = input.ctx.screenSize === 'mobile' ? 'size-3' : 'size-4'
             return (
-              <button
+              <Clickable
                 {...props}
-                type='button'
                 className={cn(
                   input.ctx.screenSize === 'mobile'
                     ? 'flex w-full items-center justify-end gap-3 px-3 py-1'
@@ -33,10 +34,9 @@ export const ViewAppStatusBar = (input: {
                 aria-label={input.ctx.t('app.open-settings')}
               >
                 <WireFrontend.ViewDot ctx={input.ctx} model={input.model.wire} className={iconSize} />
-                <IconLanguage className={iconSize} />
                 <SoundFrontend.ViewIcon model={input.model.frontend.sound} className={iconSize} />
-                {/* <IconGear className={iconSize} /> */}
-              </button>
+                <IconPowerOff className={iconSize} />
+              </Clickable>
             )
           },
           surfaceContent: (
@@ -44,6 +44,12 @@ export const ViewAppStatusBar = (input: {
               <WireFrontend.ViewConnectionStatusListItem
                 model={input.model.wire}
                 dispatch={(c) => input.dispatch({ t: 'wire', c })}
+                ctx={input.ctx}
+              />
+
+              <AuthFrontend.ViewLogoutListItem
+                model={input.model.auth}
+                dispatch={(c) => input.dispatch({ t: 'auth', c })}
                 ctx={input.ctx}
               />
 

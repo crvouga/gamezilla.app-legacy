@@ -46,6 +46,7 @@ export const translations: Text = {
   'verify-sms-problem.send-code-daily-limit-reached': '已达到每日限制。请稍后再试。',
   'verify-sms-problem.verification-expired-not-latest-verification': '验证已过期，因为它不是最新的验证',
   'verify-sms-problem.send-code-limit-reached': '已达到限制。请稍后再试。',
+  'auth.logged-in-as': '以身份登录',
   'spaces.see-profile': '查看个人资料',
   'spaces.current-user-left': '离开空间',
   'spaces.other-user-left': (username) => `${username} \u79BB\u5F00\u4E86\u7A7A\u95F4`,

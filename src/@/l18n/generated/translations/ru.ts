@@ -50,6 +50,7 @@ export const translations: Text = {
   'verify-sms-problem.verification-expired-not-latest-verification':
     'Подтверждение истекло, потому что это не последнее подтверждение',
   'verify-sms-problem.send-code-limit-reached': 'Лимит достигнут. Пожалуйста, попробуйте позже.',
+  'auth.logged-in-as': 'Вошел как',
   'spaces.see-profile': 'Посмотреть профиль',
   'spaces.current-user-left': 'Покинул пространство',
   'spaces.other-user-left': (username) =>
