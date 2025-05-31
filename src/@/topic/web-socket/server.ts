@@ -86,14 +86,7 @@ export const initServer = <T extends Contract<any>>(config: {
             topicParams: toServerMsg.value.topicParams,
             msg: toServerMsg.value.msg,
           })
-          logger.debug(`websocket message published clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}`)
-
-          const existingSub = subByTopic.get(topicString)
-          if (existingSub) {
-            const json = JSON.parse(toServerMsg.value.msg)
-            existingSub.pub(json)
-          }
-
+          logger.debug(`websocket message published topic=${topicString}`)
           return
         }
         case 'unsubscribe': {
