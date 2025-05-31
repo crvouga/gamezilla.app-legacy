@@ -16,7 +16,10 @@ const rpc = (input: { ctx: AuthBackendCtx }) => {
   })
 }
 
+const saga = function* (_ctx: AuthBackendCtx) {}
+
 export const AuthBackend = {
   rpc,
   initCtx,
+  saga,
 }

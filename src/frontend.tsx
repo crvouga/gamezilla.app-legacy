@@ -33,7 +33,10 @@ const main = async () => {
     debugger: CONFIG_SHARED.IS_PROD || true ? DebuggerConsole : DebuggerReduxDevTools,
   })
 
-  console.table({ ...CONFIG_SHARED, ...CONFIG_FRONTEND })
+  console.table({
+    ...CONFIG_SHARED,
+    ...CONFIG_FRONTEND,
+  })
 }
 
 main()

@@ -24,7 +24,7 @@ import type { FrontendModule, TranslationLoading } from '../types'
 
 const LANG_STORAGE_KEY = 'lang'
 
-export const init: FrontendModule['init'] = ({ ctx }) => {
+const init: FrontendModule['init'] = ({ ctx }) => {
   const initialLang = LanguageCodeISO_639_1.is(ctx.navigatorLanguage) ? ctx.navigatorLanguage : 'en'
 
   return {
@@ -43,7 +43,7 @@ export const init: FrontendModule['init'] = ({ ctx }) => {
 //
 //
 
-export const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
+const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
   if (!msg) return { model }
 
   switch (msg?.t) {
@@ -133,7 +133,7 @@ export const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
 //
 //
 
-export const subscriptions: FrontendModule['subscriptions'] = () => {
+const subscriptions: FrontendModule['subscriptions'] = () => {
   return translatorSubscriptions
 }
 
@@ -145,7 +145,7 @@ export const subscriptions: FrontendModule['subscriptions'] = () => {
 //
 //
 
-export const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
+const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
   return (
     <ListItemButton
       icon={(input) => <IconLanguage {...input} />}
@@ -160,7 +160,7 @@ export const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch 
   )
 }
 
-export const View: FrontendModule['View'] = (input) => {
+const View: FrontendModule['View'] = (input) => {
   switch (input.ctx.currentScreen.n) {
     case 'lang': {
       switch (input.ctx.currentScreen.t) {
@@ -224,4 +224,12 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
       )}
     />
   )
+}
+
+export const LangFrontend = {
+  init,
+  update,
+  subscriptions,
+  ViewLangListItem,
+  View,
 }

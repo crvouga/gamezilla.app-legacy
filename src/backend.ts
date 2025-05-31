@@ -1,32 +1,25 @@
+import { runSaga, stdChannel } from 'redux-saga'
+import { fork } from 'typed-redux-saga'
 import { AppTypes } from '~/app'
 import { AppBackend } from '~/app/backend'
 import { CONFIG_BACKEND } from '~/config/backend'
-import { HealthCheck } from './@/health-check/health-check'
 import { RPC } from './@/rpc'
-import { PubSub } from './@/sub'
 import { CONFIG_SHARED } from './config/shared'
 import { PowerSyncBackendApp } from './service-powersync/backend/respond'
 
-import { runSaga, stdChannel } from 'redux-saga'
-import { fork } from 'redux-saga/effects'
-
-const pubSub = PubSub.create<unknown>()
-const channel = stdChannel<any>()
-pubSub.sub((msg) => channel.put(msg))
-
-const myIO = {
-  channel,
-  dispatch(msg: unknown) {
-    pubSub.pub(msg)
-  },
-  getState() {
-    return {}
-  },
-}
 const main = async () => {
   const ctx = await AppBackend.initCtx()
 
-  runSaga(myIO, function* () {
+  const io = {
+    channel: stdChannel<any>(),
+    dispatch(msg: unknown) {
+      this.channel.put(msg)
+    },
+    getState() {
+      return {}
+    },
+  }
+  runSaga(io, function* () {
     yield fork(AppBackend.saga, ctx)
   })
 
@@ -41,17 +34,13 @@ const main = async () => {
     ctx: { userSessionDb: ctx.auth.userSessionDb },
   })
 
-  HealthCheck.registerRespond({
-    httpServer: ctx.httpServer,
-  })
-
-  ctx.httpServer.registerRespond((_request) => {
+  ctx.httpServer.registerRespond(() => {
     return new Response('Hello from gamezilla.app backend', { status: 200, headers: { 'Content-Type': 'text/plain' } })
   })
 
   if (!CONFIG_BACKEND.SERVER_PORT) throw new Error('SERVER_PORT is not set')
 
-  await ctx.httpServer.start(CONFIG_BACKEND.SERVER_PORT)
+  ctx.httpServer.start(CONFIG_BACKEND.SERVER_PORT)
 
   ctx.logger.info({ ...CONFIG_SHARED, ...CONFIG_BACKEND })
 }

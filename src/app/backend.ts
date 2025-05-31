@@ -123,9 +123,9 @@ const rpc = (ctx: BackendCtxModule) => {
 
 const saga = function* (ctx: BackendCtxModule) {
   yield fork(WireBackend.saga, ctx.wire)
-  // yield fork(AuthBackend.saga, ctx.auth)
+  yield fork(AuthBackend.saga, ctx.auth)
   yield fork(SpacesBackend.saga, ctx.space)
-  // yield fork(ProfileBackend.saga, ctx.profile)
+  yield fork(ProfileBackend.saga, ctx.profile)
 }
 
 export const AppBackend = {

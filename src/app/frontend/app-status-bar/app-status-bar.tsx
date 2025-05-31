@@ -1,7 +1,7 @@
 import { Clickable } from '~/@/ui/clickable'
 import { cn } from '~/@/ui/cn'
 import { AuthFrontend } from '~/app/auth/frontend'
-import * as LangFrontend from '~/app/lang/frontend'
+import { LangFrontend } from '~/app/lang/frontend'
 import { type ModelFrontend, type MsgFrontend } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
 import { AppFrontendCtxBase } from '../../@/frontend/ctx'

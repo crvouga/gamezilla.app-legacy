@@ -16,7 +16,7 @@ import { VisibilityFrontend } from '../frontend/visibility'
 import { type ModelFrontend, type MsgFrontend } from './types'
 import './update-prompt/update-prompt'
 
-export const init = (input: {
+const init = (input: {
   ctx: AnonymousFrontendCtx
   location: Browser.Location
 }): {
@@ -53,7 +53,7 @@ export const init = (input: {
   }
 }
 
-export const update = (input: {
+const update = (input: {
   ctx: AppFrontendCtxBase
   model: ModelFrontend
   msg?: MsgFrontend
@@ -136,7 +136,7 @@ export const update = (input: {
   }
 }
 
-export const subscriptions = (input: {
+const subscriptions = (input: {
   ctx: AppFrontendCtx | AnonymousFrontendCtx
   model: ModelFrontend
 }): Sub<MsgFrontend> => {
@@ -148,4 +148,10 @@ export const subscriptions = (input: {
     Sub.tag('current-screen', CurrentScreenFrontend.subscriptions),
     Sub.tag('toast', ToastFrontend.subscriptions({ ctx: input.ctx, model: input.model.toast })),
   ])
+}
+
+export const FrontendFrontend = {
+  init,
+  update,
+  subscriptions,
 }
