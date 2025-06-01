@@ -21,7 +21,14 @@ const vDomPlugin = (): PluginOption => {
       return react()
 
     case 'react-with-compiler':
-      return react({ babel: { plugins: [['babel-plugin-react-compiler', {}]] } })
+      return react({
+        babel: {
+          plugins: [
+            ['babel-plugin-react-compiler', {}],
+            ['@babel/plugin-proposal-explicit-resource-management', {}],
+          ],
+        },
+      })
   }
 }
 

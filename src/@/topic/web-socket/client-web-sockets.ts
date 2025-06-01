@@ -28,7 +28,7 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
       const clientNode: ClientNode<T, typeof topicName> = {
         publish: (topicParams: s.Infer<typeof topic.params>, msg: s.Infer<typeof topic.msg>) => {
           const topicString = toTopicString(topicName, topicParams)
-          clientCore.msgsToServer.pub(['pub', topicString, JSON.stringify(msg)])
+          clientCore.msgsToServer.pub(['pub', topicString, msg])
         },
         subscribe: <TMsgOut>(
           topicParams: s.Infer<typeof topic.params>,
@@ -75,13 +75,13 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
   const activeSubscriptions = new Map<string, PubSub<any>>()
   const activeSubscriptionsServer = new Set<string>()
 
-  runSaga({}, saga)
+  runSaga({}, flowMain)
 
-  function* saga() {
+  function* flowMain() {
     while (true) {
       config.logger.info('connecting to server')
 
-      const socket = Socket.create({ url: toWebSocketUrl(config) })
+      using socket = Socket.create({ url: toWebSocketUrl(config) })
 
       config.logger.info('waiting for connection')
 
@@ -96,7 +96,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
       if (opened.open) config.logger.info('connected')
 
       if (!opened.open) {
-        yield* restart(socket)
+        yield* delay(1000)
         continue
       }
 
@@ -108,32 +108,27 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
       const closed = yield* race({
         close: take(Sub.chan(socket.msgsClose)),
         error: take(Sub.chan(socket.msgsError)),
-        toServer: call(flowMsgToServer, socket),
-        fromServer: call(flowMsgFromServer, socket),
+        toServer: call(flowSender, socket),
+        fromServer: call(flowReciever, socket),
       })
 
       if (closed.close) config.logger.warn('connection closed')
       if (closed.error) config.logger.warn('connection error')
 
-      yield* restart(socket)
+      config.logger.info('restarting connection')
+
+      activeSubscriptionsServer.clear()
+
+      yield* delay(1000)
     }
   }
 
-  function* restart(socket: Socket) {
-    config.logger.info('restarting connection')
-
-    activeSubscriptionsServer.clear()
-
-    socket.close()
-
-    yield* delay(1000)
-  }
-
-  function* flowMsgToServer(socket: Socket) {
+  function* flowSender(socket: Socket) {
     const send = (msg: ToServerMsg) => {
       socket.send(JSON.stringify(msg))
     }
-    const sendThrottled = throttleByKey({
+
+    const sendThrottledByTopic = throttleByKey({
       behavior: 'leading',
       keyFn: (msg) => msg[1],
       throttle: TimeSpan.seconds(3),
@@ -146,12 +141,12 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
       switch (toServer[0]) {
         case 'sub': {
           if (activeSubscriptionsServer.has(toServer[1])) return
-          sendThrottled(toServer)
+          sendThrottledByTopic(toServer)
           return
         }
         case 'unsub': {
           if (!activeSubscriptionsServer.has(toServer[1])) return
-          sendThrottled(toServer)
+          sendThrottledByTopic(toServer)
           return
         }
         case 'pub': {
@@ -162,7 +157,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     })
   }
 
-  function* flowMsgFromServer(socket: Socket) {
+  function* flowReciever(socket: Socket) {
     yield takeEvery(Sub.chan(socket.msgsFromServer), function* (fromServer) {
       const fromServerParsed = JSON.parse(fromServer) as ToClientMsg
 

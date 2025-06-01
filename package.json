@@ -85,6 +85,7 @@
     "typed-redux-saga": "^1.5.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-explicit-resource-management": "^7.27.4",
     "@happy-dom/global-registrator": "^17.4.1",
     "@preact/preset-vite": "^2.7.0",
     "@tailwindcss/vite": "^4.1.6",

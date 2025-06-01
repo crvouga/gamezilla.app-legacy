@@ -49,8 +49,10 @@ const create = (config: { url: string }) => {
     msgsClose,
     msgsError,
     msgsFromServer,
-    close,
     send,
+    [Symbol.dispose]: () => {
+      close()
+    },
   }
 }
 

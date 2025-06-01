@@ -31,6 +31,14 @@ export const initServer = <TContract extends ContractBase>(config: {
 
   const subByTopic = new Map<string, PubSub<unknown>>()
 
+  const send = (payload: unknown, ws: ServerWebSocket<BackendWebSocketData>) => {
+    if (!ws) {
+      return
+    }
+    const payloadString = JSON.stringify(payload)
+    ws.send(payloadString)
+  }
+
   const publish = (topicString: string, payload: unknown, ws: ServerWebSocket<BackendWebSocketData> | null) => {
     const payloadString = JSON.stringify(payload)
 
@@ -75,7 +83,7 @@ export const initServer = <TContract extends ContractBase>(config: {
         case 'sub': {
           ws.subscribe(msg[1])
           const toClientMsg: ToClientMsgOne = ['sub', msg[1]]
-          ws.send(JSON.stringify(toClientMsg))
+          send(toClientMsg, ws)
           logger.debug(
             `websocket subscribed ${msg[1]} subscriberCount=${bunServer.subscriberCount(msg[1])} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId} `,
           )
@@ -88,7 +96,7 @@ export const initServer = <TContract extends ContractBase>(config: {
         case 'unsub': {
           ws.unsubscribe(msg[1])
           const toClientMsg: ToClientMsgOne = ['unsub', msg[1]]
-          ws.send(JSON.stringify(toClientMsg))
+          send(toClientMsg, ws)
           logger.debug(
             `websocket unsubscribed ${msg[1]} subscriberCount=${bunServer.subscriberCount(msg[1])} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId} `,
           )
@@ -130,9 +138,7 @@ export const initServer = <TContract extends ContractBase>(config: {
         headers.append('Set-Cookie', SessionIdHttp.toSetCookieHeaderValue({ sessionId, isProd: config.isProd }))
       }
 
-      logger.debug(
-        `${config.endpoint} request received clientId=${clientId} sessionId=${sessionId} headers=${JSON.stringify(Object.fromEntries(headers.entries()))}`,
-      )
+      logger.debug(`${config.endpoint} request received clientId=${clientId} sessionId=${sessionId} `)
 
       bunServer.upgrade(request, { headers, data })
 
@@ -163,7 +169,7 @@ export const initServer = <TContract extends ContractBase>(config: {
     clientProxy[topicName as keyof TContract] = {
       publish: (topicParams: s.Infer<typeof topicDef.params>, messageContent: s.Infer<typeof topicDef.msg>) => {
         const topicString = toTopicString(topicName, topicParams)
-        publish(topicString, JSON.stringify(['pub', topicString, messageContent]), null)
+        publish(topicString, ['pub', topicString, messageContent], null)
       },
       subscribe: <TMsgOut>(
         topicParams: s.Infer<typeof topicDef.params>,
@@ -171,27 +177,23 @@ export const initServer = <TContract extends ContractBase>(config: {
       ): Sub<TMsgOut> => {
         const topicString = toTopicString(topicName, topicParams)
 
-        let rawPubSub = subByTopic.get(topicString) as PubSub<s.Infer<typeof topicDef.msg> & MsgMeta> | undefined
+        const existing = subByTopic.get(topicString)
 
-        if (!rawPubSub) {
-          logger.debug(`Creating new internal PubSub for server-side subscriptions to topic=${topicString}`)
-          rawPubSub = Sub.create<s.Infer<typeof topicDef.msg> & MsgMeta>()
-          subByTopic.set(topicString, rawPubSub as PubSub<unknown>)
-        } else {
-          logger.debug(`Reusing existing internal PubSub for server-side subscriptions to topic=${topicString}`)
-        }
+        if (existing) return existing as PubSub<TMsgOut>
 
-        return {
-          sub: (subscriber: (mappedMsg: TMsgOut) => void): (() => void) => {
-            const unsub = rawPubSub!.sub((msgFromPubSub) => {
-              subscriber(mapper(msgFromPubSub as s.Infer<typeof topicDef.msg> & MsgMeta))
-            })
+        const pubSub = Sub.create<s.Infer<typeof topicDef.msg> & MsgMeta>()
+
+        const pubSubMapped: PubSub<TMsgOut> = {
+          ...pubSub,
+          sub: (subscriber) => {
+            const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
             return () => {
               unsub()
-              logger.debug(`Server-side subscriber unsubscribed from mapped Sub for topic=${topicString}`)
             }
           },
         }
+
+        return pubSubMapped
       },
     }
   }
