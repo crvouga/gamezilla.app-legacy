@@ -26,14 +26,11 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
   const client = Object.entries(config.contract)
     .map(([topicName, topic]) => {
       const clientNode: ClientNode<T, typeof topicName> = {
-        publish: (topicParams: s.Infer<typeof topic.params>, msg: s.Infer<typeof topic.msg>) => {
+        publish: (topicParams, msg) => {
           const topicString = toTopicString(topicName, topicParams)
           clientCore.msgsToServer.pub(['pub', topicString, msg])
         },
-        subscribe: <TMsgOut>(
-          topicParams: s.Infer<typeof topic.params>,
-          mapper: (msgWithMeta: s.Infer<typeof topic.msg> & MsgMeta) => TMsgOut,
-        ): Sub<TMsgOut> => {
+        subscribe: (topicParams, mapper) => {
           const topicString = toTopicString(topicName, topicParams)
 
           clientCore.msgsToServer.pub(['sub', topicString])
@@ -44,7 +41,7 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
 
           const pubSub = Sub.create<s.Infer<typeof topic.msg> & MsgMeta>()
 
-          const pubSubMapped: PubSub<TMsgOut> = {
+          const pubSubMapped: PubSub<any> = {
             ...pubSub,
             sub: (subscriber) => {
               const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
@@ -81,46 +78,49 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     while (true) {
       config.logger.info('connecting to server')
 
-      using socket = Socket.create({ url: toWebSocketUrl(config) })
+      const socket = Socket.create({ url: toWebSocketUrl(config) })
 
-      config.logger.info('waiting for connection')
+      yield* call(flowSocket, socket)
 
-      const opened = yield* race({
-        open: take(Sub.chan(socket.msgsOpen)),
-        error: take(Sub.chan(socket.msgsError)),
-        close: take(Sub.chan(socket.msgsClose)),
-      })
-
-      if (opened.error) config.logger.warn('failed to connect. connection errored')
-      if (opened.close) config.logger.warn('connection closed')
-      if (opened.open) config.logger.info('connected')
-
-      if (!opened.open) {
-        yield* delay(1000)
-        continue
-      }
-
-      for (const topicString of activeSubscriptions.keys()) {
-        msgsToServer.pub(['sub', topicString])
-        config.logger.info('subscribed to topic', topicString)
-      }
-
-      const closed = yield* race({
-        close: take(Sub.chan(socket.msgsClose)),
-        error: take(Sub.chan(socket.msgsError)),
-        toServer: call(flowSender, socket),
-        fromServer: call(flowReciever, socket),
-      })
-
-      if (closed.close) config.logger.warn('connection closed')
-      if (closed.error) config.logger.warn('connection error')
-
-      config.logger.info('restarting connection')
-
-      activeSubscriptionsServer.clear()
+      socket.close()
 
       yield* delay(1000)
     }
+  }
+
+  function* flowSocket(socket: Socket) {
+    config.logger.info('waiting for connection')
+
+    const opened = yield* race({
+      open: take(Sub.chan(socket.msgsOpen)),
+      error: take(Sub.chan(socket.msgsError)),
+      close: take(Sub.chan(socket.msgsClose)),
+    })
+
+    if (opened.error) config.logger.warn('failed to connect. connection errored')
+    if (opened.close) config.logger.warn('connection closed')
+    if (opened.open) config.logger.info('connected')
+
+    if (!opened.open) return
+
+    for (const topicString of activeSubscriptions.keys()) {
+      msgsToServer.pub(['sub', topicString])
+      config.logger.info('subscribed to topic', topicString)
+    }
+
+    const closed = yield* race({
+      close: take(Sub.chan(socket.msgsClose)),
+      error: take(Sub.chan(socket.msgsError)),
+      sender: call(flowSender, socket),
+      reciever: call(flowReciever, socket),
+    })
+
+    if (closed.close) config.logger.warn('connection closed')
+    if (closed.error) config.logger.warn('connection error')
+
+    config.logger.info('restarting connection')
+
+    activeSubscriptionsServer.clear()
   }
 
   function* flowSender(socket: Socket) {

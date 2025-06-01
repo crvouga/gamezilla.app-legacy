@@ -1,10 +1,7 @@
-import { ILogger, Logger } from '~/@/logger'
+import { ILogger } from '~/@/logger'
 import { s } from '~/@/schema'
 import { PubSub, Sub } from '~/@/sub'
-import { ClientId } from '../../wire/client-id'
-import { ClientSessionId } from '../../wire/client-session-id'
-import { SessionId } from '../../wire/session-id'
-import { Client, ContractBase, MsgMeta } from '../types'
+import { Client, ClientNode, ContractBase, MsgMeta } from '../types'
 import { toTopicString } from './shared'
 
 export type Config<TContract extends ContractBase> = {
@@ -14,59 +11,47 @@ export type Config<TContract extends ContractBase> = {
 }
 
 export const initClient = <TContract extends ContractBase>(config: Config<TContract>): Client<TContract> => {
-  const logger = Logger.prefix('client', config.logger)
+  const activeSubscriptions = new Map<string, PubSub<any>>()
 
-  const subByTopic = new Map<string, PubSub<any>>()
+  const client = Object.entries(config.contract)
+    .map(([topicName, topic]) => {
+      const clientNode: ClientNode<TContract, typeof topicName> = {
+        publish: (topicParams, msg) => {
+          const topicString = toTopicString(topicName, topicParams)
+          const pubSub = activeSubscriptions.get(topicString)
+          if (!pubSub) return
+          pubSub.pub(msg)
+        },
+        subscribe: (topicParams, mapper) => {
+          const topicString = toTopicString(topicName, topicParams)
 
-  const clientProxy = {} as Client<TContract>
+          const existing = activeSubscriptions.get(topicString)
 
-  for (const topicNameStr of Object.keys(config.contract)) {
-    const topicKey = topicNameStr as keyof TContract
+          if (existing) return existing
 
-    const topicDef = config.contract[topicKey]
+          const pubSub = Sub.create<s.Infer<typeof topic.msg> & MsgMeta>()
 
-    clientProxy[topicKey] = {
-      publish: (params: s.Infer<(typeof topicDef)['params']>, msg: s.Infer<(typeof topicDef)['msg']>) => {
-        const topicString = toTopicString(topicNameStr, params)
-        const pubsub = subByTopic.get(topicString)
+          const pubSubMapped: PubSub<any> = {
+            ...pubSub,
+            sub: (subscriber) => {
+              const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
+              return () => {
+                unsub()
+              }
+            },
+          }
 
-        if (!pubsub) return
+          activeSubscriptions.set(topicString, pubSubMapped)
 
-        const meta: MsgMeta = {
-          clientSessionId: ClientSessionId.generate(),
-          sessionId: SessionId.generate(),
-          clientId: ClientId.generate(),
-        }
+          return pubSubMapped
+        },
+      }
+      return [topicName, clientNode] as const
+    })
+    .reduce((acc, [topicName, topic]) => {
+      acc[topicName as keyof TContract] = topic
+      return acc
+    }, {} as Client<TContract>)
 
-        const messageWithMeta = {
-          ...(msg as any),
-          ...meta,
-        } as s.Infer<(typeof topicDef)['msg']> & MsgMeta
-
-        pubsub.pub(messageWithMeta)
-      },
-      subscribe: <TMsgOut>(
-        params: s.Infer<(typeof topicDef)['params']>,
-        mapper: (msgWithMeta: s.Infer<(typeof topicDef)['msg']> & MsgMeta) => TMsgOut,
-      ): Sub<TMsgOut> => {
-        const topicString = toTopicString(topicNameStr, params)
-
-        let pubsub = subByTopic.get(topicString) as PubSub<s.Infer<(typeof topicDef)['msg']> & MsgMeta> | undefined
-
-        if (pubsub) {
-          logger.debug(`[local-client] subscribe: reusing existing PubSub for topic=${topicString}`)
-        } else {
-          logger.debug(`[local-client] subscribe: creating new PubSub for topic=${topicString}`)
-
-          pubsub = Sub.create<s.Infer<(typeof topicDef)['msg']> & MsgMeta>()
-
-          subByTopic.set(topicString, pubsub as PubSub<any>)
-        }
-
-        return Sub.map(pubsub, mapper)
-      },
-    }
-  }
-
-  return clientProxy
+  return client
 }

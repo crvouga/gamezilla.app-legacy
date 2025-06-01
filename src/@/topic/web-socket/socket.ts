@@ -50,6 +50,7 @@ const create = (config: { url: string }) => {
     msgsError,
     msgsFromServer,
     send,
+    close,
     [Symbol.dispose]: () => {
       close()
     },
