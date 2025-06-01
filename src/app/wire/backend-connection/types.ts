@@ -48,11 +48,11 @@ export type MsgFrontend =
     }
 
 export const topicContract = Topic.initContract({
-  'wire.backend-connection.ping': {
+  'wire.ping': {
     params: s.l(null),
     msg: PingPongMsg,
   },
-  'wire.backend-connection.pong': {
+  'wire.pong': {
     params: ClientSessionId,
     msg: PingPongMsg,
   },

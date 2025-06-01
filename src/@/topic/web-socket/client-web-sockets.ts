@@ -7,7 +7,7 @@ import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { Client, ClientNode, ContractBase, MsgMeta, Topic } from '../types'
-import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
+import { PUB, SUB, ToClientMsg, ToServerMsg, toTopicString, UNSUB } from './shared'
 import { Socket } from './socket'
 import { toWebSocketUrl } from './to-websocket-url'
 
@@ -28,12 +28,12 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
       const clientNode: ClientNode<T, typeof topicName> = {
         publish: (topicParams, msg) => {
           const topicString = toTopicString(topicName, topicParams)
-          clientCore.msgsToServer.pub(['pub', topicString, msg])
+          clientCore.msgsToServer.pub([PUB, topicString, msg])
         },
         subscribe: (topicParams, mapper) => {
           const topicString = toTopicString(topicName, topicParams)
 
-          clientCore.msgsToServer.pub(['sub', topicString])
+          clientCore.msgsToServer.pub([SUB, topicString])
 
           const existing = clientCore.activeSubscriptions.get(topicString)
 
@@ -46,7 +46,7 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
             sub: (subscriber) => {
               const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
               return () => {
-                clientCore.msgsToServer.pub(['unsub', topicString])
+                clientCore.msgsToServer.pub([UNSUB, topicString])
                 unsub()
               }
             },
@@ -104,7 +104,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     if (!opened.open) return
 
     for (const topicString of activeSubscriptions.keys()) {
-      msgsToServer.pub(['sub', topicString])
+      msgsToServer.pub([SUB, topicString])
       config.logger.info('subscribed to topic', topicString)
     }
 
@@ -136,20 +136,18 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     })
 
     yield takeEvery(Sub.chan(msgsToServer), function* (toServer) {
-      config.logger.info('sending message to server', toServer)
-
       switch (toServer[0]) {
-        case 'sub': {
+        case SUB: {
           if (activeSubscriptionsServer.has(toServer[1])) return
           sendThrottledByTopic(toServer)
           return
         }
-        case 'unsub': {
+        case UNSUB: {
           if (!activeSubscriptionsServer.has(toServer[1])) return
           sendThrottledByTopic(toServer)
           return
         }
-        case 'pub': {
+        case PUB: {
           send(toServer)
           return
         }
@@ -162,15 +160,15 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
       const fromServerParsed = JSON.parse(fromServer) as ToClientMsg
 
       switch (fromServerParsed[0]) {
-        case 'sub': {
+        case SUB: {
           activeSubscriptionsServer.add(fromServerParsed[1])
           return
         }
-        case 'unsub': {
+        case UNSUB: {
           activeSubscriptionsServer.delete(fromServerParsed[1])
           return
         }
-        case 'pub': {
+        case PUB: {
           const activeSubscription = activeSubscriptions.get(fromServerParsed[1])
           if (!activeSubscription) return
           activeSubscription.pub(fromServerParsed[2])

@@ -34,7 +34,7 @@ const toAveragePing = (model: Model): TimeSpan => {
     (acc, ping) => (ping.pongAt ? acc + TimeSpan.toMilliseconds(Posix.diff(ping.pingAt, ping.pongAt)) : acc),
     0,
   )
-  const average = total / pings.length
+  const average = Math.floor(total / pings.length)
   return TimeSpan.milliseconds(average)
 }
 

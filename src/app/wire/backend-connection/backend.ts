@@ -17,7 +17,7 @@ const initCtx = async (input: {
 
 const saga = function* (input: { ctx: BackendCtxModule }) {
   const pings = Sub.chan(
-    input.ctx.topic['wire.backend-connection.ping'].subscribe(null, (msg) => ({
+    input.ctx.topic['wire.ping'].subscribe(null, (msg) => ({
       pingId: msg.pingId,
       now: Posix.now(),
       clientSessionId: msg.clientSessionId,
@@ -25,7 +25,7 @@ const saga = function* (input: { ctx: BackendCtxModule }) {
   )
 
   yield takeEvery(pings, function* (ping) {
-    input.ctx.topic['wire.backend-connection.pong'].publish(ping.clientSessionId, {
+    input.ctx.topic['wire.pong'].publish(ping.clientSessionId, {
       pingId: ping.pingId,
     })
   })
