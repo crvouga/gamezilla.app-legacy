@@ -1,15 +1,10 @@
-import { s } from '~/@/schema'
 import { Sub } from '~/@/sub'
 
-const create = <ToServerMsg, ToClientMsg>(config: {
-  url: string
-  ToServerMsg: s.Schema<ToServerMsg>
-  ToClientMsg: s.Schema<ToClientMsg>
-}) => {
+const create = (config: { url: string }) => {
   const msgsOpen = Sub.create<{ t: 'opened' }>()
   const msgsClose = Sub.create<{ t: 'closed' }>()
   const msgsError = Sub.create<{ t: 'error'; error: Event }>()
-  const msgsFromServer = Sub.create<ToClientMsg>()
+  const msgsFromServer = Sub.create<string>()
 
   const ws = new WebSocket(config.url)
 
@@ -26,8 +21,7 @@ const create = <ToServerMsg, ToClientMsg>(config: {
   }
 
   ws.onmessage = (event) => {
-    const toClientMsg: ToClientMsg = JSON.parse(event.data as string) as ToClientMsg
-    msgsFromServer.pub(toClientMsg)
+    msgsFromServer.pub(event.data)
   }
 
   const close = () => {
@@ -46,8 +40,8 @@ const create = <ToServerMsg, ToClientMsg>(config: {
     ws.onmessage = null
   }
 
-  const send = (toServer: ToServerMsg) => {
-    ws.send(JSON.stringify(toServer))
+  const send = (toServer: string) => {
+    ws.send(toServer)
   }
 
   return {
@@ -60,7 +54,7 @@ const create = <ToServerMsg, ToClientMsg>(config: {
   }
 }
 
-export type Socket<TToServerMsg, TToClientMsg> = ReturnType<typeof create<TToServerMsg, TToClientMsg>>
+export type Socket = ReturnType<typeof create>
 
 export const Socket = {
   create,

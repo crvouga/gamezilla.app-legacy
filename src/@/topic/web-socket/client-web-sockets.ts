@@ -6,7 +6,7 @@ import { PubSub, Sub } from '~/@/sub'
 import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { Client, ContractBase, MsgMeta, Topic } from '../types'
+import { Client, ClientNode, ContractBase, MsgMeta, Topic } from '../types'
 import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
 import { Socket } from './socket'
 import { toWebSocketUrl } from './to-websocket-url'
@@ -25,44 +25,42 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
 
   const client = Object.entries(config.contract)
     .map(([topicName, topic]) => {
-      return [
-        topicName,
-        {
-          publish: (topicParams: s.Infer<typeof topic.params>, msg: s.Infer<typeof topic.msg>) => {
-            const topicString = toTopicString(topicName, topicParams)
-            clientCore.msgsToServer.pub(['pub', topicString, JSON.stringify(msg)])
-          },
-          subscribe: <TMsgOut>(
-            topicParams: s.Infer<typeof topic.params>,
-            mapper: (msgWithMeta: s.Infer<typeof topic.msg> & MsgMeta) => TMsgOut,
-          ): Sub<TMsgOut> => {
-            const topicString = toTopicString(topicName, topicParams)
-
-            clientCore.msgsToServer.pub(['sub', topicString])
-
-            const existing = clientCore.activeSubscriptions.get(topicString)
-
-            if (existing) return existing
-
-            const pubSub = Sub.create<s.Infer<typeof topic.msg> & MsgMeta>()
-
-            const pubSubMapped: PubSub<TMsgOut> = {
-              ...pubSub,
-              sub: (subscriber) => {
-                const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
-                return () => {
-                  clientCore.msgsToServer.pub(['unsub', topicString])
-                  unsub()
-                }
-              },
-            }
-
-            clientCore.activeSubscriptions.set(topicString, pubSubMapped)
-
-            return pubSubMapped
-          },
+      const clientNode: ClientNode<T, typeof topicName> = {
+        publish: (topicParams: s.Infer<typeof topic.params>, msg: s.Infer<typeof topic.msg>) => {
+          const topicString = toTopicString(topicName, topicParams)
+          clientCore.msgsToServer.pub(['pub', topicString, JSON.stringify(msg)])
         },
-      ] as const
+        subscribe: <TMsgOut>(
+          topicParams: s.Infer<typeof topic.params>,
+          mapper: (msgWithMeta: s.Infer<typeof topic.msg> & MsgMeta) => TMsgOut,
+        ): Sub<TMsgOut> => {
+          const topicString = toTopicString(topicName, topicParams)
+
+          clientCore.msgsToServer.pub(['sub', topicString])
+
+          const existing = clientCore.activeSubscriptions.get(topicString)
+
+          if (existing) return existing
+
+          const pubSub = Sub.create<s.Infer<typeof topic.msg> & MsgMeta>()
+
+          const pubSubMapped: PubSub<TMsgOut> = {
+            ...pubSub,
+            sub: (subscriber) => {
+              const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
+              return () => {
+                clientCore.msgsToServer.pub(['unsub', topicString])
+                unsub()
+              }
+            },
+          }
+
+          clientCore.activeSubscriptions.set(topicString, pubSubMapped)
+
+          return pubSubMapped
+        },
+      }
+      return [topicName, clientNode] as const
     })
     .reduce((acc, [topicName, topic]) => {
       acc[topicName as keyof T] = topic
@@ -83,11 +81,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     while (true) {
       config.logger.info('connecting to server')
 
-      const socket = Socket.create<ToServerMsg, ToClientMsg>({
-        url: toWebSocketUrl(config),
-        ToClientMsg: ToClientMsg,
-        ToServerMsg: ToServerMsg,
-      })
+      const socket = Socket.create({ url: toWebSocketUrl(config) })
 
       config.logger.info('waiting for connection')
 
@@ -125,7 +119,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     }
   }
 
-  function* restart(socket: Socket<ToServerMsg, ToClientMsg>) {
+  function* restart(socket: Socket) {
     config.logger.info('restarting connection')
 
     activeSubscriptionsServer.clear()
@@ -135,12 +129,15 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     yield* delay(1000)
   }
 
-  function* flowMsgToServer(socket: Socket<ToServerMsg, ToClientMsg>) {
-    const syncSubscription = throttleByKey({
+  function* flowMsgToServer(socket: Socket) {
+    const send = (msg: ToServerMsg) => {
+      socket.send(JSON.stringify(msg))
+    }
+    const sendThrottled = throttleByKey({
       behavior: 'leading',
-      keyFn: (_type, topicString) => topicString,
+      keyFn: (msg) => msg[1],
       throttle: TimeSpan.seconds(3),
-      fn: (type: 'sub' | 'unsub', topicString: string) => socket.send([type, topicString]),
+      fn: send,
     })
 
     yield takeEvery(Sub.chan(msgsToServer), function* (toServer) {
@@ -149,37 +146,39 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
       switch (toServer[0]) {
         case 'sub': {
           if (activeSubscriptionsServer.has(toServer[1])) return
-          syncSubscription('sub', toServer[1])
+          sendThrottled(toServer)
           return
         }
         case 'unsub': {
           if (!activeSubscriptionsServer.has(toServer[1])) return
-          syncSubscription('unsub', toServer[1])
+          sendThrottled(toServer)
           return
         }
         case 'pub': {
-          socket.send(toServer)
+          send(toServer)
           return
         }
       }
     })
   }
 
-  function* flowMsgFromServer(socket: Socket<ToServerMsg, ToClientMsg>) {
+  function* flowMsgFromServer(socket: Socket) {
     yield takeEvery(Sub.chan(socket.msgsFromServer), function* (fromServer) {
-      switch (fromServer[0]) {
+      const fromServerParsed = JSON.parse(fromServer) as ToClientMsg
+
+      switch (fromServerParsed[0]) {
         case 'sub': {
-          activeSubscriptionsServer.add(fromServer[1])
+          activeSubscriptionsServer.add(fromServerParsed[1])
           return
         }
         case 'unsub': {
-          activeSubscriptionsServer.delete(fromServer[1])
+          activeSubscriptionsServer.delete(fromServerParsed[1])
           return
         }
         case 'pub': {
-          const activeSubscription = activeSubscriptions.get(fromServer[1])
+          const activeSubscription = activeSubscriptions.get(fromServerParsed[1])
           if (!activeSubscription) return
-          activeSubscription.pub(fromServer[2])
+          activeSubscription.pub(fromServerParsed[2])
           return
         }
       }

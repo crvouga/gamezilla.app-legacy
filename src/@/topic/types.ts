@@ -21,14 +21,13 @@ export type MsgMeta = {
   clientId: ClientId
 }
 
+export type ClientNode<T extends ContractBase, K extends keyof T> = {
+  publish: (params: s.Infer<T[K]['params']>, msg: s.Infer<T[K]['msg']>) => void
+  subscribe: <TMsg>(params: s.Infer<T[K]['params']>, mapper: (msg: s.Infer<T[K]['msg']> & MsgMeta) => TMsg) => Sub<TMsg>
+}
+
 export type Client<T extends ContractBase> = {
-  [K in keyof T]: {
-    publish: (params: s.Infer<T[K]['params']>, msg: s.Infer<T[K]['msg']>) => void
-    subscribe: <TMsg>(
-      params: s.Infer<T[K]['params']>,
-      mapper: (msg: s.Infer<T[K]['msg']> & MsgMeta) => TMsg,
-    ) => Sub<TMsg>
-  }
+  [K in keyof T]: ClientNode<T, K>
 }
 
 export const initContract = <TTopics extends Record<string, Topic<any, any>>>(endpoints: TTopics): Contract<TTopics> =>
