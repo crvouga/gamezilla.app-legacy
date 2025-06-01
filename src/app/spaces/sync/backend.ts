@@ -38,7 +38,7 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
 const saga = function* (input: { ctx: BackendCtxModule }) {
   const ctx = input.ctx
 
-  const msgSpaceChan = Sub.chan(ctx.topic['spaces.sync.msg-space-all'].subscribe(null, (c) => c))
+  const msgSpaceChan = Sub.chan(ctx.topic['spaces.sync.msg-space-all'].sub(null, (c) => c))
 
   yield takeEvery(msgSpaceChan, function* (c) {
     const updated = yield* call(ctx.spacesCore.update, c)

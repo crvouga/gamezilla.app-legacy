@@ -52,11 +52,8 @@ const create = <Msg>(): PubSub<Msg> => {
 
 const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
   return {
-    sub: (subscriber) => {
-      return sub.sub((a) => {
-        subscriber(f(a))
-      })
-    },
+    ...sub,
+    sub: (subscriber) => sub.sub((a) => subscriber(f(a))),
   }
 }
 

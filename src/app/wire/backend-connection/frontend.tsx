@@ -21,7 +21,7 @@ const init: FrontendModule['init'] = (input) => {
       pings: CappedOrderedDict.add(model.pings, pingId, { pingId, pingAt: input.ctx.now, pongAt: null }),
     },
     eff: () => {
-      input.ctx.topic['wire.ping'].publish(null, { pingId })
+      input.ctx.topic['wire.ping'].pub(null, { pingId })
     },
   }
 }
@@ -39,7 +39,7 @@ const update: FrontendModule['update'] = (input) => {
           pings: CappedOrderedDict.add(model.pings, msg.pingId, { pingId: msg.pingId, pingAt: msg.now, pongAt: null }),
         },
         eff: () => {
-          input.ctx.topic['wire.ping'].publish(null, { pingId: msg.pingId })
+          input.ctx.topic['wire.ping'].pub(null, { pingId: msg.pingId })
         },
       }
     }
@@ -71,7 +71,7 @@ const pings: FrontendModule['subscriptions'] = (input) => {
 }
 
 const pongs: FrontendModule['subscriptions'] = (input) => {
-  return input.ctx.topic['wire.pong'].subscribe(
+  return input.ctx.topic['wire.pong'].sub(
     input.ctx.clientSessionId,
     (msg): MsgFrontend => ({ t: 'wire.backend-connection.pong', pingId: msg.pingId, now: Posix.now() }),
   )

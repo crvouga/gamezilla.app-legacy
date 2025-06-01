@@ -1,14 +1,13 @@
 import { ServerWebSocket } from 'bun'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { ILogger } from '~/@/logger'
-import { s } from '~/@/schema'
 import { PubSub, Sub } from '~/@/sub'
 import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
-import { Client, ClientNode, ContractBase, MsgMeta } from '../types'
+import { Client, ClientNode, ContractBase } from '../types'
 import { PUB, SUB, ToClientMsg, ToClientMsgMany, ToClientMsgOne, toTopicString, UNSUB } from './shared'
 
 export type BackendWebSocketData = {
@@ -30,29 +29,24 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
   const serverCore = initServerCore(config)
 
   const client = Object.entries(config.contract)
-    .map(([topicName, topic]) => {
+    .map(([topicName, _topic]) => {
       const clientNode: ClientNode<TContract, typeof topicName> = {
-        publish(topicParams, msg) {
+        pub(topicParams, msg) {
           const topicString = toTopicString(topicName, topicParams)
           serverCore.publish(topicString, [PUB, topicString, msg], null)
         },
-        subscribe(topicParams, mapper) {
+        sub(topicParams, mapper) {
           const topicString = toTopicString(topicName, topicParams)
 
           const existing = serverCore.activeSubscriptions.get(topicString)
 
           if (existing) return existing
 
-          const pubSub = Sub.create<s.Infer<typeof topic.msg> & MsgMeta>()
+          const pubSub = Sub.create<any>()
 
           const pubSubMapped: PubSub<any> = {
             ...pubSub,
-            sub: (subscriber) => {
-              const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
-              return () => {
-                unsub()
-              }
-            },
+            sub: (s) => pubSub.sub((m) => s(mapper(m))),
           }
 
           serverCore.activeSubscriptions.set(topicString, pubSubMapped)

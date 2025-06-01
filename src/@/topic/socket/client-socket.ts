@@ -1,11 +1,10 @@
 import { runSaga } from 'redux-saga'
 import { call, delay, fork, race, take, takeEvery } from 'typed-redux-saga'
 import { ILogger } from '~/@/logger'
-import { s } from '~/@/schema'
 import { PubSub, Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { Client, ClientNode, ContractBase, MsgMeta, Topic } from '../types'
+import { Client, ClientNode, ContractBase, Topic } from '../types'
 import { PUB, SUB, ToClientMsg, ToServerMsg, toTopicString, UNSUB } from './shared'
 import { Socket } from './socket'
 import { toWebSocketUrl } from './to-websocket-url'
@@ -26,9 +25,9 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
   const clientCore = initClientCore(config)
 
   const client = Object.entries(config.contract)
-    .map(([topicName, topic]) => {
+    .map(([topicName, _topic]) => {
       const clientNode: ClientNode<T, typeof topicName> = {
-        publish(topicParams, msg) {
+        pub(topicParams, msg) {
           const topicString = toTopicString(topicName, topicParams)
 
           clientCore.msgsToServer.pub([PUB, topicString, msg])
@@ -39,23 +38,18 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
 
           existing.pub(msg)
         },
-        subscribe(topicParams, mapper) {
+        sub(topicParams, mapper) {
           const topicString = toTopicString(topicName, topicParams)
 
           const existing = clientCore.subscriptions.get(topicString)
 
           if (existing) return existing
 
-          const pubSub = Sub.create<s.Infer<typeof topic.msg> & MsgMeta>()
+          const pubSub = Sub.create<any>()
 
           const pubSubMapped: PubSub<any> = {
             ...pubSub,
-            sub: (subscriber) => {
-              const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
-              return () => {
-                unsub()
-              }
-            },
+            sub: (s) => pubSub.sub((m) => s(mapper(m))),
           }
 
           clientCore.subscriptions.set(topicString, pubSubMapped)
