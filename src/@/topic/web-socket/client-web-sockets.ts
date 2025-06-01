@@ -1,4 +1,6 @@
-import { ILogger, Logger } from '~/@/logger'
+import { cancel, delay, fork, race, take, takeEvery } from 'typed-redux-saga'
+import { ILogger } from '~/@/logger'
+import { go } from '~/@/saga/saga'
 import { PubSub, Sub } from '~/@/sub'
 import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
@@ -16,182 +18,98 @@ export type Config<T extends Contract<any>> = {
   logger: ILogger
 }
 
-type TopicSubscriptionInfo = {
+type ActiveSubscription = {
   pubSub: PubSub<unknown>
+  topicString: string
   topicName: string[]
   topicParams: unknown
 }
 
 export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T> => {
-  const logger = Logger.prefix('client', config.logger)
+  const msgsToServer = Sub.create<ToServerMsg>()
+  const activeSubscriptions = new Map<string, ActiveSubscription>()
+  const activeSubscriptionsServer = new Set<string>()
 
-  const websocketUrl = toWebSocketUrl({
-    serverUrl: config.serverUrl,
-    endpoint: config.endpoint,
-    clientSessionId: config.clientSessionId,
-  })
+  go(saga)
 
-  let ws: WebSocket | null = null
-  let resolveCurrentReady: () => void = () => {}
-  let currentReadyPromise: Promise<void> = new Promise<void>((resolve) => {
-    resolveCurrentReady = resolve
-  })
+  function* saga() {
+    while (true) {
+      const webSocketUrl = toWebSocketUrl({
+        serverUrl: config.serverUrl,
+        endpoint: config.endpoint,
+        clientSessionId: config.clientSessionId,
+      })
 
-  const subByTopic = new Map<string, TopicSubscriptionInfo>()
-  const subscribedTopicsOnServer = new Set<string>()
+      const socket = createSocket(webSocketUrl)
 
-  let reconnectAttempts = 0
-  const maxReconnectDelayMs = TimeSpan.toMilliseconds(TimeSpan.seconds(30))
-  const baseReconnectDelayMs = TimeSpan.toMilliseconds(TimeSpan.seconds(1))
+      yield take(Sub.chan(socket.msgsOpen))
 
-  const createNewReadyPromise = () => {
-    currentReadyPromise = new Promise<void>((resolve) => {
-      resolveCurrentReady = resolve
-    })
+      const toServerTask = yield* fork(sagaToServer, socket)
+      const fromServerTask = yield* fork(sagaFromServer, socket)
+
+      yield* race({
+        close: take(Sub.chan(socket.msgsClose)),
+        error: take(Sub.chan(socket.msgsError)),
+      })
+
+      yield cancel(toServerTask)
+      yield cancel(fromServerTask)
+
+      yield delay(1000)
+    }
   }
 
-  const connect = () => {
-    logger.debug(`attempting to connect to websocket url=${websocketUrl}`)
+  function* sagaToServer(socket: Socket) {
+    const chan = Sub.chan(msgsToServer)
 
-    if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
-      logger.debug('WebSocket already open or connecting. Ensuring ready promise is resolved if open.')
-      if (ws.readyState === WebSocket.OPEN) {
-        resolveCurrentReady()
-      }
-      return
+    while (true) {
+      const toServer = yield* take(chan)
+      socket.msgsToServer.pub(toServer)
     }
+  }
 
-    if (ws) {
-      ws.onopen = null
-      ws.onmessage = null
-      ws.onclose = null
-      ws.onerror = null
-      if (ws.readyState !== WebSocket.CLOSED && ws.readyState !== WebSocket.CLOSING) {
-        ws.close()
-      }
-    }
-
-    try {
-      ws = new WebSocket(websocketUrl)
-    } catch (error) {
-      logger.error('Failed to create WebSocket instance:', error)
-      createNewReadyPromise()
-      const delay = Math.min(maxReconnectDelayMs, baseReconnectDelayMs * 2 ** reconnectAttempts)
-      reconnectAttempts++
-      logger.info(
-        `will attempt to reconnect (after create error) in ${delay / 1000} seconds... (attempt ${reconnectAttempts})`,
-      )
-      setTimeout(connect, delay)
-      return
-    }
-
-    ws.onopen = () => {
-      logger.debug('websocket connection opened')
-      resolveCurrentReady()
-      reconnectAttempts = 0
-
-      logger.debug('re-establishing subscriptions post-connection...')
-      for (const { topicName, topicParams } of subByTopic.values()) {
-        const topicString = toTopicString(topicName, topicParams)
-        logger.debug(`re-queueing subscription for ${topicString}`)
-        syncSubscriptionsWithServer('subscribe', topicName, topicParams)
-      }
-    }
-
-    ws.onmessage = (event) => {
-      const toClientMsg: ToClientMsg = JSON.parse(event.data as string) as ToClientMsg
-      logger.debug(`websocket message received type=${toClientMsg.t}`)
-
-      switch (toClientMsg.t) {
+  function* sagaFromServer(socket: Socket) {
+    yield takeEvery(Sub.chan(socket.msgsFromServer), (fromServer) => {
+      switch (fromServer.t) {
         case 'subscribed': {
-          const topicString = toTopicString(toClientMsg.topicName, toClientMsg.topicParams)
-          logger.debug(`topic subscribed confirmed by server: topicString=${topicString}`)
-          subscribedTopicsOnServer.add(topicString)
+          activeSubscriptionsServer.add(fromServer.topicString)
           return
         }
         case 'unsubscribed': {
-          const topicString = toTopicString(toClientMsg.topicName, toClientMsg.topicParams)
-          logger.debug(`topic unsubscribed confirmed by server: topicString=${topicString}`)
-          subscribedTopicsOnServer.delete(topicString)
+          activeSubscriptionsServer.delete(fromServer.topicString)
           return
         }
         case 'published': {
-          const topicString = toTopicString(toClientMsg.topicName, toClientMsg.topicParams)
-          const existingSubEntry = subByTopic.get(topicString)
-          if (!existingSubEntry) {
-            logger.debug(`no local subscribers for incoming message on topic=${topicString}`)
-            return
-          }
-          const msg = JSON.parse(toClientMsg.msg)
-          logger.debug(`publishing message to local subscribers for topic=${topicString}`)
-          existingSubEntry.pubSub.pub(msg)
+          const activeSubscription = activeSubscriptions.get(fromServer.topicString)
+          if (!activeSubscription) return
+          const msg = JSON.parse(fromServer.msg)
+          activeSubscription.pubSub.pub(msg)
+          return
         }
       }
-    }
-
-    ws.onclose = (event) => {
-      logger.warn(`websocket connection closed. code=${event.code}, reason=${event.reason}, wasClean=${event.wasClean}`)
-      ws = null
-      subscribedTopicsOnServer.clear()
-
-      createNewReadyPromise()
-
-      const delay = Math.min(maxReconnectDelayMs, baseReconnectDelayMs * 2 ** reconnectAttempts)
-      reconnectAttempts++
-      logger.info(`will attempt to reconnect in ${delay / 1000} seconds... (attempt ${reconnectAttempts})`)
-      setTimeout(connect, delay)
-    }
-
-    ws.onerror = (errorEvent) => {
-      logger.error('websocket error:', errorEvent)
-      // onclose will be called after onerror, handling reconnection.
-    }
-  }
-
-  connect()
-
-  const send = async (msg: ToServerMsg) => {
-    await currentReadyPromise
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
-      logger.warn(
-        `cannot send message type=${msg.t}, websocket not open. State: ${ws?.readyState ?? null}. Message dropped.`,
-      )
-      return
-    }
-
-    logger.debug(`sending message type=${msg.t} to topic=${toTopicString(msg.topicName, msg.topicParams)}`)
-    ws.send(JSON.stringify(msg))
+    })
   }
 
   const syncSubscriptionsWithServer = throttleByKey({
+    behavior: 'leading',
     throttle: TimeSpan.seconds(3),
-    keyFn: (_action, topicName, topicParams) => toTopicString(topicName, topicParams),
-    fn: (action: 'subscribe' | 'unsubscribe', topicName: string[], topicParams: unknown) => {
-      const topicString = toTopicString(topicName, topicParams)
-      const isSubscribedOnServer = subscribedTopicsOnServer.has(topicString)
-
+    keyFn: (_action, topicString, _topicName, _topicParams) => topicString,
+    fn: (action: 'subscribe' | 'unsubscribe', topicString: string, topicName: string[], topicParams: unknown) => {
       switch (action) {
         case 'subscribe': {
-          if (isSubscribedOnServer) {
-            logger.debug(`already subscribed on server for ${topicString}, not sending subscribe request`)
-            return
-          }
-          logger.debug(`sending 'subscribe' request to server for ${topicString}`)
-          send({ t: 'subscribe', topicName, topicParams })
-          break
+          if (activeSubscriptionsServer.has(topicString)) return
+          console.log('subscribe', topicString)
+          msgsToServer.pub({ t: 'subscribe', topicString, topicName, topicParams })
+          return
         }
         case 'unsubscribe': {
-          if (!isSubscribedOnServer) {
-            logger.debug(`not subscribed on server for ${topicString}, not sending unsubscribe request`)
-            return
-          }
-          logger.debug(`sending 'unsubscribe' request to server for ${topicString}`)
-          send({ t: 'unsubscribe', topicName, topicParams })
-          break
+          if (!activeSubscriptionsServer.has(topicString)) return
+          console.log('unsubscribe', topicString)
+          msgsToServer.pub({ t: 'unsubscribe', topicString, topicName, topicParams })
+          return
         }
       }
     },
-    behavior: 'leading',
   })
 
   const createClientRecursive = (currentContract: Contract<any>, runningTopicName: string[] = []): any => {
@@ -199,47 +117,54 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
 
     for (const topicNamePart in currentContract) {
       const topicConfig = currentContract[topicNamePart]
+
       if (!topicConfig) continue
+
       const topicName: string[] = [...runningTopicName, topicNamePart]
 
       if ('params' in topicConfig && 'msg' in topicConfig) {
         clientProxy[topicNamePart] = {
           publish: (topicParams: unknown, msg: unknown) => {
-            const toServerMsg: ToServerMsg = {
+            msgsToServer.pub({
               t: 'publish',
+              topicString: toTopicString(topicName, topicParams),
               topicName,
               topicParams,
               msg: JSON.stringify(msg),
-            }
-            logger.debug(`queuing publish to topic=${topicName.join('.')}`)
-            send(toServerMsg)
+            })
           },
           subscribe: (topicParams: unknown, mapper: (msg: any) => any): Sub<any> => {
             const topicString = toTopicString(topicName, topicParams)
-            const existingEntry = subByTopic.get(topicString)
 
-            if (existingEntry) {
-              logger.debug(`reusing existing local subscription for topic=${topicString}`)
-              return existingEntry.pubSub
-            }
+            const activeSubscription = activeSubscriptions.get(topicString)
 
-            logger.debug(`creating new local subscription for topic=${topicString}`)
-            syncSubscriptionsWithServer('subscribe', topicName, topicParams)
+            syncSubscriptionsWithServer('subscribe', topicString, topicName, topicParams)
+
+            if (activeSubscription) return activeSubscription.pubSub
 
             const sub = Sub.create()
-            const subNew: PubSub<any> = {
+
+            const pubSub: PubSub<any> = {
               ...sub,
               sub(subscriber) {
                 const unsub = sub.sub((msg) => subscriber(mapper(msg)))
                 return () => {
                   unsub()
-                  logger.debug(`local subscriber unsubscribed from ${topicString}, attempting to sync with server`)
-                  syncSubscriptionsWithServer('unsubscribe', topicName, topicParams)
+                  syncSubscriptionsWithServer('unsubscribe', topicString, topicName, topicParams)
                 }
               },
             }
-            subByTopic.set(topicString, { pubSub: subNew, topicName, topicParams })
-            return subNew
+
+            const activeSubscriptionNew: ActiveSubscription = {
+              pubSub,
+              topicString,
+              topicName,
+              topicParams,
+            }
+
+            activeSubscriptions.set(topicString, activeSubscriptionNew)
+
+            return activeSubscriptionNew.pubSub
           },
         }
       } else {
@@ -254,3 +179,43 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
 
   return createClientRecursive(config.contract) as Client<T>
 }
+
+const createSocket = (url: string) => {
+  const webSocket = new WebSocket(url)
+  const msgsOpen = Sub.create<{ t: 'opened' }>()
+  const msgsClose = Sub.create<{ t: 'closed' }>()
+  const msgsError = Sub.create<{ t: 'error'; error: Event }>()
+  const msgsToServer = Sub.create<ToServerMsg>()
+  const msgsFromServer = Sub.create<ToClientMsg>()
+
+  webSocket.onopen = () => {
+    msgsOpen.pub({ t: 'opened' })
+  }
+
+  webSocket.onclose = () => {
+    msgsClose.pub({ t: 'closed' })
+  }
+
+  webSocket.onerror = (error) => {
+    msgsError.pub({ t: 'error', error })
+  }
+
+  webSocket.onmessage = (event) => {
+    const toClientMsg: ToClientMsg = JSON.parse(event.data as string) as ToClientMsg
+    msgsFromServer.pub(toClientMsg)
+  }
+
+  msgsToServer.sub((msg) => {
+    webSocket.send(JSON.stringify(msg))
+  })
+
+  return {
+    msgsOpen,
+    msgsClose,
+    msgsError,
+    msgsToServer,
+    msgsFromServer,
+  }
+}
+
+type Socket = ReturnType<typeof createSocket>
