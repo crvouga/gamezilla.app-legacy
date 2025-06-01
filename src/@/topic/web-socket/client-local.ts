@@ -27,8 +27,7 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
 
     clientProxy[topicKey] = {
       publish: (params: s.Infer<(typeof topicDef)['params']>, msg: s.Infer<(typeof topicDef)['msg']>) => {
-        const topicPathParts = topicNameStr.split('/')
-        const topicString = toTopicString(topicPathParts, params)
+        const topicString = toTopicString(topicNameStr, params)
         const pubsub = subByTopic.get(topicString)
 
         if (!pubsub) return
@@ -50,8 +49,7 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
         params: s.Infer<(typeof topicDef)['params']>,
         mapper: (msgWithMeta: s.Infer<(typeof topicDef)['msg']> & MsgMeta) => TMsgOut,
       ): Sub<TMsgOut> => {
-        const topicPathParts = topicNameStr.split('/')
-        const topicString = toTopicString(topicPathParts, params)
+        const topicString = toTopicString(topicNameStr, params)
 
         let pubsub = subByTopic.get(topicString) as PubSub<s.Infer<(typeof topicDef)['msg']> & MsgMeta> | undefined
 

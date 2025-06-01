@@ -9,7 +9,7 @@ export type DbConnSqlNotification = {
 }
 
 export type DbConnSqlQueryInput<TRow> = {
-  schema: s.Parser<TRow>
+  schema: s.Schema<TRow>
   sql: string
   vars: Sql.Vars
 }

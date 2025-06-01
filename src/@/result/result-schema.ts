@@ -1,12 +1,12 @@
 import { or } from '../schema/schema/schema-or'
-import { Parser } from '../schema/schema/schema-types'
+import { Schema } from '../schema/schema/schema-types'
 import { l, obj } from '../schema/schema/schema'
 import type { Loading, NotAsked, RemoteResultInternal, ResultInternal } from './result'
 
 export const schema = <TError, TValue>(
-  errParser: Parser<TError>,
-  okParser: Parser<TValue>,
-): Parser<ResultInternal<TError, TValue>> => {
+  errParser: Schema<TError>,
+  okParser: Schema<TValue>,
+): Schema<ResultInternal<TError, TValue>> => {
   return or(
     obj({
       t: l('err'),
@@ -19,7 +19,7 @@ export const schema = <TError, TValue>(
   )
 }
 
-export const remoteResultParser = <E, A>(error: Parser<E>, value: Parser<A>): Parser<RemoteResultInternal<E, A>> => {
+export const remoteResultParser = <E, A>(error: Schema<E>, value: Schema<A>): Schema<RemoteResultInternal<E, A>> => {
   return or(
     obj<NotAsked>({
       t: l('not-asked'),

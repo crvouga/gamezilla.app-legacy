@@ -5,12 +5,12 @@ export type ParserError = {
   path: string[]
 }
 
-export type Parser<T> = {
+export type Schema<T> = {
   parse: (input: unknown) => ResultInternal<ParserError[], T>
 }
 
-export const isParser = <T>(input: unknown): input is Parser<T> => {
+export const isSchema = <T>(input: unknown): input is Schema<T> => {
   return typeof input === 'object' && input !== null && 'parse' in input
 }
 
-export type Infer<TParser> = TParser extends Parser<infer T> ? T : never
+export type Infer<TParser> = TParser extends Schema<infer T> ? T : never

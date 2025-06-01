@@ -5,8 +5,8 @@ import { ClientSessionId } from '../wire/client-session-id'
 import { SessionId } from '../wire/session-id'
 
 export type Topic<TParams, TMsg> = {
-  params: s.Parser<TParams>
-  msg: s.Parser<TMsg>
+  params: s.Schema<TParams>
+  msg: s.Schema<TMsg>
 }
 
 export type ContractBase = {

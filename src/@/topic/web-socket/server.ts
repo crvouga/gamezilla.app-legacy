@@ -150,8 +150,8 @@ export const initServer = <TContract extends ContractBase>(config: {
 
   const clientProxy = {} as Client<TContract>
 
-  for (const topicFullNameStr of Object.keys(config.contract)) {
-    const topicDefCandidate = config.contract[topicFullNameStr as keyof TContract]
+  for (const topicName of Object.keys(config.contract)) {
+    const topicDefCandidate = config.contract[topicName as keyof TContract]
 
     if (
       !topicDefCandidate ||
@@ -159,30 +159,23 @@ export const initServer = <TContract extends ContractBase>(config: {
       !('params' in topicDefCandidate && 'msg' in topicDefCandidate)
     ) {
       logger.debug(
-        `Skipping entry '${topicFullNameStr}' in contract as it does not appear to be a valid Topic definition. (Server-side client proxy setup)`,
+        `Skipping entry '${topicName}' in contract as it does not appear to be a valid Topic definition. (Server-side client proxy setup)`,
       )
       continue
     }
 
     const topicDef = topicDefCandidate as Topic<any, any>
 
-    const topicNameParts = topicFullNameStr.split('/')
-
-    if (topicFullNameStr === '') {
-      logger.warn('Encountered Topic definition with empty full name path during client setup. Skipping.')
-      continue
-    }
-
-    clientProxy[topicFullNameStr as keyof TContract] = {
+    clientProxy[topicName as keyof TContract] = {
       publish: (topicParams: s.Infer<typeof topicDef.params>, messageContent: s.Infer<typeof topicDef.msg>) => {
-        const topicString = toTopicString(topicNameParts, topicParams)
-        publish(topicString, ['pub', topicNameParts, topicParams, JSON.stringify(messageContent)], null)
+        const topicString = toTopicString(topicName, topicParams)
+        publish(topicString, ['pub', topicName, topicParams, JSON.stringify(messageContent)], null)
       },
       subscribe: <TMsgOut>(
         topicParams: s.Infer<typeof topicDef.params>,
         mapper: (msgWithOrWithoutMeta: s.Infer<typeof topicDef.msg> & MsgMeta) => TMsgOut,
       ): Sub<TMsgOut> => {
-        const topicString = toTopicString(topicNameParts, topicParams)
+        const topicString = toTopicString(topicName, topicParams)
 
         let rawPubSub = subByTopic.get(topicString) as PubSub<s.Infer<typeof topicDef.msg> & MsgMeta> | undefined
 

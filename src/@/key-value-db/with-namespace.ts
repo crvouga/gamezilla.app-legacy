@@ -1,11 +1,11 @@
 import { Task } from '~/@/promise/task'
-import type { Parser } from '~/@/schema/schema'
+import type { Schema } from '~/@/schema/schema'
 import { IKeyValueDb } from './interface'
 
 export const withNamespace = <TKey extends string = string, TValue = unknown>(config: {
   keyValueDb: IKeyValueDb
   namespace: string[]
-  schema: Parser<TValue>
+  schema: Schema<TValue>
 }): {
   get: (key: TKey) => Task<string, TValue | null>
   getMany: (keys: TKey[]) => Task<string, TValue[]>

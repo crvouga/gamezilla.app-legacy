@@ -103,9 +103,9 @@ const valuesNewestFirst = <TKey extends string | number, TValue>(model: CappedOr
 }
 
 const schema = <TKey extends string | number, TValue>(
-  key: s.Parser<TKey>,
-  val: s.Parser<TValue>,
-): s.Parser<CappedOrderedDict<TKey, TValue>> => {
+  key: s.Schema<TKey>,
+  val: s.Schema<TValue>,
+): s.Schema<CappedOrderedDict<TKey, TValue>> => {
   return s.obj({
     _valuesByKey: s.dict(key, val),
     _orderNewestFirst: s.arr(key),

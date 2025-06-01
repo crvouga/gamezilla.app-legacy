@@ -33,7 +33,7 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
       }
     },
 
-    async getMany<TValue>(keys: string[], schema: s.Parser<TValue>) {
+    async getMany<TValue>(keys: string[], schema: s.Schema<TValue>) {
       logger?.debug(`getMany: keys=${keys.join(', ')}`)
       const rows: TValue[] = []
 

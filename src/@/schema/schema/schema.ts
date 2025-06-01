@@ -1,6 +1,6 @@
 import type { Brand } from '../../brand/brand'
 import { Err, Ok } from '../../result/result'
-import type { Parser, ParserError } from './schema-types'
+import type { Schema, ParserError } from './schema-types'
 
 const errorToString = (error: ParserError): string => {
   return `${error.path.join('.')}: ${error.message}`
@@ -15,12 +15,12 @@ const toErrorMessage = (expected: string, actual: string, actualValue: string) =
 }
 
 export const is =
-  <T>(schema: Parser<T>) =>
+  <T>(schema: Schema<T>) =>
   (input: unknown): input is T => {
     return schema.parse(input).t === 'ok'
   }
 
-export const noop = <T>(): Parser<T> => {
+export const noop = <T>(): Schema<T> => {
   return {
     parse(input) {
       return Ok(input as T)
@@ -39,8 +39,8 @@ const isIndexable = (input: unknown): input is Record<string, unknown> => {
 }
 
 export const obj = <T>(schemas: {
-  [K in keyof T]: Parser<T[K]>
-}): Parser<T> => {
+  [K in keyof T]: Schema<T[K]>
+}): Schema<T> => {
   return {
     parse(input) {
       if (typeof input !== 'object') {
@@ -104,8 +104,8 @@ export const obj = <T>(schemas: {
 }
 
 export const partialObj = <T>(schemas: {
-  [K in keyof T]: Parser<T[K]>
-}): Parser<Partial<T>> => {
+  [K in keyof T]: Schema<T[K]>
+}): Schema<Partial<T>> => {
   return {
     parse(input) {
       if (typeof input !== 'object' || input === null) {
@@ -142,7 +142,7 @@ export const partialObj = <T>(schemas: {
   }
 }
 
-export const str = (): Parser<string> => {
+export const str = (): Schema<string> => {
   return {
     parse(input) {
       if (typeof input !== 'string') {
@@ -158,7 +158,7 @@ export const str = (): Parser<string> => {
   }
 }
 
-export const num = (): Parser<number> => {
+export const num = (): Schema<number> => {
   return {
     parse(input) {
       if (typeof input !== 'number') {
@@ -174,7 +174,7 @@ export const num = (): Parser<number> => {
   }
 }
 
-export const l = <T extends string | number | boolean | null | undefined>(value: T): Parser<T> => {
+export const l = <T extends string | number | boolean | null | undefined>(value: T): Schema<T> => {
   return {
     parse(input) {
       if (input !== value) {
@@ -190,7 +190,7 @@ export const l = <T extends string | number | boolean | null | undefined>(value:
   }
 }
 
-export const arr = <T>(schema: Parser<T>): Parser<T[]> => {
+export const arr = <T>(schema: Schema<T>): Schema<T[]> => {
   return {
     parse(input) {
       if (!Array.isArray(input)) {
@@ -230,7 +230,7 @@ export const arr = <T>(schema: Parser<T>): Parser<T[]> => {
   }
 }
 
-export const maybe = <T>(schema: Parser<T>): Parser<T | null | undefined> => {
+export const maybe = <T>(schema: Schema<T>): Schema<T | null | undefined> => {
   return {
     parse(input) {
       if (input === null || input === undefined) {
@@ -242,9 +242,9 @@ export const maybe = <T>(schema: Parser<T>): Parser<T | null | undefined> => {
 }
 
 export const dict = <TKey extends string | number, TValue>(
-  key: Parser<TKey>,
-  value: Parser<TValue>,
-): Parser<{ [key in TKey]: TValue }> => {
+  key: Schema<TKey>,
+  value: Schema<TValue>,
+): Schema<{ [key in TKey]: TValue }> => {
   return {
     parse(input) {
       if (!isIndexable(input)) {
@@ -298,9 +298,9 @@ export const dict = <TKey extends string | number, TValue>(
 }
 
 export const partialDict = <TKey extends string | number, TValue>(
-  key: Parser<TKey>,
-  value: Parser<TValue>,
-): Parser<Partial<{ [key in TKey]: TValue }>> => {
+  key: Schema<TKey>,
+  value: Schema<TValue>,
+): Schema<Partial<{ [key in TKey]: TValue }>> => {
   return {
     parse(input) {
       if (!isIndexable(input)) {
@@ -353,7 +353,7 @@ export const partialDict = <TKey extends string | number, TValue>(
   }
 }
 
-export const custom = <T>(predicate: (input: unknown) => input is T, errorMessage: string): Parser<T> => {
+export const custom = <T>(predicate: (input: unknown) => input is T, errorMessage: string): Schema<T> => {
   return {
     parse(input) {
       if (predicate(input)) {
@@ -369,13 +369,13 @@ export const custom = <T>(predicate: (input: unknown) => input is T, errorMessag
   }
 }
 
-export const unknown: Parser<unknown> = {
+export const unknown: Schema<unknown> = {
   parse(input) {
     return Ok(input)
   },
 }
 
-export const any: Parser<any> = {
+export const any: Schema<any> = {
   parse(input) {
     return Ok(input)
   },
@@ -383,7 +383,7 @@ export const any: Parser<any> = {
 
 export const enumeration = <T extends string | number | boolean | null | undefined>(
   values: T[] | readonly T[],
-): Parser<T> => {
+): Schema<T> => {
   return {
     parse(input) {
       if (!values.includes(input as T)) {
@@ -400,9 +400,9 @@ export const enumeration = <T extends string | number | boolean | null | undefin
 }
 
 export const brand = <T, TBrand extends string | number | boolean | null | undefined>(
-  schema: Parser<T>,
+  schema: Schema<T>,
   _brand: TBrand,
-): Parser<Brand<T, TBrand>> => {
+): Schema<Brand<T, TBrand>> => {
   return {
     parse(input) {
       const parsed = schema.parse(input)
@@ -416,7 +416,7 @@ export const brand = <T, TBrand extends string | number | boolean | null | undef
   }
 }
 
-export const regex = (regex: RegExp): Parser<string> => {
+export const regex = (regex: RegExp): Schema<string> => {
   return {
     parse(input) {
       if (typeof input !== 'string') {
@@ -444,7 +444,7 @@ export const regex = (regex: RegExp): Parser<string> => {
 
 export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]
 
-export const json: Parser<Json> = {
+export const json: Schema<Json> = {
   parse(input) {
     try {
       const serialized = JSON.stringify(input)
@@ -468,7 +468,7 @@ export const json: Parser<Json> = {
   },
 }
 
-export const bool: Parser<boolean> = {
+export const bool: Schema<boolean> = {
   parse(input) {
     if (typeof input !== 'boolean') {
       return Err([

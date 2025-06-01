@@ -19,9 +19,9 @@ export type EventSourcedConfig<TEvent, TState> = {
 }
 
 const schema = <TEvent, TState>(
-  eventParser: s.Parser<TEvent>,
-  stateParser: s.Parser<TState>,
-): s.Parser<EventSourced<TEvent, TState>> => {
+  eventParser: s.Schema<TEvent>,
+  stateParser: s.Schema<TState>,
+): s.Schema<EventSourced<TEvent, TState>> => {
   return s.obj({
     events: s.arr(s.and(EventMeta, eventParser)),
     eventIds: s.dict(EventId, EventId),

@@ -8,6 +8,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { Client, ContractBase, MsgMeta, Topic } from '../types'
 import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
+import { Socket } from './socket'
 import { toWebSocketUrl } from './to-websocket-url'
 
 export type Config<T extends ContractBase> = {
@@ -22,12 +23,13 @@ export type Config<T extends ContractBase> = {
 type ActiveSubscription = {
   pubSub: PubSub<any>
   topicString: string
-  topicName: string[]
+  topicName: string
   topicParams: unknown
 }
 
 export const initClient = <T extends Record<string, Topic<any, any>>>(config: Config<T>): Client<T> => {
   const msgsToServer = Sub.create<ToServerMsg>()
+
   const activeSubscriptions = new Map<string, ActiveSubscription>()
   const activeSubscriptionsServer = new Set<string>()
 
@@ -35,8 +37,15 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
 
   function* saga() {
     while (true) {
-      const socketUrl = toWebSocketUrl(config)
-      const socket = createSocket(socketUrl)
+      config.logger.info('connecting to server')
+
+      const socket = Socket.create<ToServerMsg, ToClientMsg>({
+        url: toWebSocketUrl(config),
+        ToClientMsg: ToClientMsg,
+        ToServerMsg: ToServerMsg,
+      })
+
+      config.logger.info('waiting for connection')
 
       const opened = yield* race({
         open: take(Sub.chan(socket.msgsOpen)),
@@ -44,22 +53,18 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
         close: take(Sub.chan(socket.msgsClose)),
       })
 
-      if (opened.error) {
-        config.logger.warn('failed to connect. connection errored')
+      if (opened.error) config.logger.warn('failed to connect. connection errored')
+      if (opened.close) config.logger.warn('connection closed')
+      if (opened.open) config.logger.info('connected')
+
+      if (!opened.open) {
         yield* restart(socket)
         continue
       }
-
-      if (opened.close) {
-        config.logger.warn('connection closed')
-        yield* restart(socket)
-        continue
-      }
-
-      config.logger.info('connected')
 
       for (const activeSubscription of activeSubscriptions.values()) {
         msgsToServer.pub(['sub', activeSubscription.topicName, activeSubscription.topicParams])
+        config.logger.info('subscribed to topic', activeSubscription.topicName)
       }
 
       const closed = yield* race({
@@ -69,52 +74,49 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
         fromServer: call(sagaFromServer, socket),
       })
 
-      if (closed.close) {
-        config.logger.warn('disconnected or connection error')
-        yield* restart(socket)
-        continue
-      }
+      if (closed.close) config.logger.warn('connection closed')
+      if (closed.error) config.logger.warn('connection error')
 
-      if (closed.error) {
-        config.logger.warn('disconnected or connection error')
-        yield* restart(socket)
-        continue
-      }
+      yield* restart(socket)
     }
   }
 
-  function* restart(socket: Socket) {
+  function* restart(socket: Socket<ToServerMsg, ToClientMsg>) {
+    config.logger.info('restarting connection')
+
     activeSubscriptionsServer.clear()
 
-    socket.cmds.pub({ t: 'close' })
+    socket.close()
 
     yield* delay(1000)
   }
 
-  function* sagaToServer(socket: Socket) {
+  function* sagaToServer(socket: Socket<ToServerMsg, ToClientMsg>) {
     yield takeEvery(Sub.chan(msgsToServer), function* (toServer) {
+      config.logger.info('sending message to server', toServer)
+
       switch (toServer[0]) {
         case 'sub': {
           const topicString = toTopicString(toServer[1], toServer[2])
           if (activeSubscriptionsServer.has(topicString)) return
-          socket.msgsToServer.pub(toServer)
+          socket.send(toServer)
           return
         }
         case 'unsub': {
           const topicString = toTopicString(toServer[1], toServer[2])
           if (!activeSubscriptionsServer.has(topicString)) return
-          socket.msgsToServer.pub(toServer)
+          socket.send(toServer)
           return
         }
         case 'pub': {
-          socket.msgsToServer.pub(toServer)
+          socket.send(toServer)
           return
         }
       }
     })
   }
 
-  function* sagaFromServer(socket: Socket) {
+  function* sagaFromServer(socket: Socket<ToServerMsg, ToClientMsg>) {
     yield takeEvery(Sub.chan(socket.msgsFromServer), function* (fromServer) {
       switch (fromServer[0]) {
         case 'sub': {
@@ -140,134 +142,64 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
     })
   }
 
-  const syncSubscriptionsWithServer = throttleByKey({
+  const syncSubscription = throttleByKey({
     behavior: 'leading',
-    throttle: TimeSpan.seconds(3),
-    keyFn: (_action, topicString, _topicName, _topicParams) => topicString,
-    fn: (action: 'subscribe' | 'unsubscribe', _topicString: string, topicName: string[], topicParams: unknown) => {
-      switch (action) {
-        case 'subscribe': {
-          msgsToServer.pub(['sub', topicName, topicParams])
-          return
-        }
-        case 'unsubscribe': {
-          msgsToServer.pub(['unsub', topicName, topicParams])
-          return
-        }
-      }
+    fn: (type: 'sub' | 'unsub', topicName: string, topicParams: unknown) => {
+      msgsToServer.pub([type, topicName, topicParams])
     },
+    keyFn: (type, topicName, topicParams) => {
+      return `${type}${toTopicString(topicName, topicParams)}`
+    },
+    throttle: TimeSpan.seconds(3),
   })
 
-  const clientProxy = {} as Client<T>
-
-  for (const topicFullNameStr of Object.keys(config.contract)) {
-    const topicKey = topicFullNameStr as keyof T
-    const topicDef = config.contract[topicKey] as T[typeof topicKey]
-
-    const topicNameParts = topicFullNameStr.split('/')
-
-    clientProxy[topicKey] = {
-      publish: (topicParams: s.Infer<typeof topicDef.params>, msg: s.Infer<typeof topicDef.msg>) => {
-        msgsToServer.pub(['pub', topicNameParts, topicParams, JSON.stringify(msg)])
-      },
-      subscribe: <TMsgOut>(
-        topicParams: s.Infer<typeof topicDef.params>,
-        mapper: (msgWithMeta: s.Infer<typeof topicDef.msg> & MsgMeta) => TMsgOut,
-      ): Sub<TMsgOut> => {
-        const topicString = toTopicString(topicNameParts, topicParams)
-
-        syncSubscriptionsWithServer('subscribe', topicString, topicNameParts, topicParams)
-
-        const existingActiveSub = activeSubscriptions.get(topicString)
-
-        if (existingActiveSub) return existingActiveSub.pubSub
-
-        const pubSub = Sub.create<s.Infer<typeof topicDef.msg> & MsgMeta>()
-        const pubSubMapped: PubSub<TMsgOut> = {
-          ...pubSub,
-          sub: (subscriber) => {
-            const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
-            return () => {
-              unsub()
-              syncSubscriptionsWithServer('unsubscribe', topicString, topicNameParts, topicParams)
-            }
+  return Object.entries(config.contract)
+    .map(([topicName, topic]) => {
+      return [
+        topicName,
+        {
+          publish: (topicParams: s.Infer<typeof topic.params>, msg: s.Infer<typeof topic.msg>) => {
+            msgsToServer.pub(['pub', topicName, topicParams, JSON.stringify(msg)])
           },
-        }
+          subscribe: <TMsgOut>(
+            topicParams: s.Infer<typeof topic.params>,
+            mapper: (msgWithMeta: s.Infer<typeof topic.msg> & MsgMeta) => TMsgOut,
+          ): Sub<TMsgOut> => {
+            const topicString = toTopicString(topicName, topicParams)
 
-        activeSubscriptions.set(topicString, {
-          pubSub: pubSubMapped,
-          topicString,
-          topicName: topicNameParts,
-          topicParams: topicParams,
-        })
+            syncSubscription('sub', topicName, topicParams)
 
-        return pubSubMapped
-      },
-    }
-  }
+            const existingActiveSub = activeSubscriptions.get(topicString)
 
-  return clientProxy
+            if (existingActiveSub) return existingActiveSub.pubSub
+
+            const pubSub = Sub.create<s.Infer<typeof topic.msg> & MsgMeta>()
+
+            const pubSubMapped: PubSub<TMsgOut> = {
+              ...pubSub,
+              sub: (subscriber) => {
+                const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
+                return () => {
+                  syncSubscription('unsub', topicName, topicParams)
+                  unsub()
+                }
+              },
+            }
+
+            activeSubscriptions.set(topicString, {
+              pubSub: pubSubMapped,
+              topicString,
+              topicName,
+              topicParams,
+            })
+
+            return pubSubMapped
+          },
+        },
+      ] as const
+    })
+    .reduce((acc, [topicName, topic]) => {
+      acc[topicName as keyof T] = topic
+      return acc
+    }, {} as Client<T>)
 }
-
-const createSocket = (url: string) => {
-  const msgsOpen = Sub.create<{ t: 'opened' }>()
-  const msgsClose = Sub.create<{ t: 'closed' }>()
-  const msgsError = Sub.create<{ t: 'error'; error: Event }>()
-  const msgsToServer = Sub.create<ToServerMsg>()
-  const msgsFromServer = Sub.create<ToClientMsg>()
-  const cmds = Sub.create<{ t: 'close' }>()
-  const ws = new WebSocket(url)
-
-  ws.onopen = () => {
-    msgsOpen.pub({ t: 'opened' })
-  }
-
-  ws.onclose = () => {
-    msgsClose.pub({ t: 'closed' })
-  }
-
-  ws.onerror = (error) => {
-    msgsError.pub({ t: 'error', error })
-  }
-
-  ws.onmessage = (event) => {
-    const toClientMsg: ToClientMsg = JSON.parse(event.data as string) as ToClientMsg
-    msgsFromServer.pub(toClientMsg)
-  }
-
-  cmds.sub((cmd) => {
-    switch (cmd.t) {
-      case 'close': {
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.close()
-        }
-
-        if (ws.readyState === WebSocket.CONNECTING) {
-          setTimeout(() => cmds.pub({ t: 'close' }), 1000)
-          return
-        }
-
-        ws.onopen = null
-        ws.onclose = null
-        ws.onerror = null
-        ws.onmessage = null
-        return
-      }
-    }
-  })
-
-  msgsToServer.sub((toServer) => {
-    ws.send(JSON.stringify(toServer))
-  })
-
-  return {
-    msgsOpen,
-    msgsClose,
-    msgsError,
-    msgsToServer,
-    msgsFromServer,
-    cmds,
-  }
-}
-
-type Socket = ReturnType<typeof createSocket>

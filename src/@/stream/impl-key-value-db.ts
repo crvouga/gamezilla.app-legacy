@@ -1,6 +1,6 @@
 import { Err, Ok, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
-import { Parser } from '~/@/schema/schema'
+import { Schema } from '~/@/schema/schema'
 import { KeyValueDb, IKeyValueDb } from '../key-value-db'
 import { EventId } from './event-id'
 import { IStream } from './interface'
@@ -8,7 +8,7 @@ import { IStream } from './interface'
 export type Config<T> = {
   t: 'key-value-db'
   keyValueDb: IKeyValueDb
-  schema: Parser<T>
+  schema: Schema<T>
 }
 
 export const Stream = <T>(config: Config<T>): IStream<T> => {

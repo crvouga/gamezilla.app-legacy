@@ -3,7 +3,7 @@ import { s } from '~/@/schema'
 export const Color = s.enumeration(['red', 'black'])
 export type Color = s.Infer<typeof Color>
 
-export const RedBlackTree = <TK, TV>(K: s.Parser<TK>, V: s.Parser<TV>) => {
+export const RedBlackTree = <TK, TV>(K: s.Schema<TK>, V: s.Schema<TV>) => {
   return s.or(
     s.obj({
       t: s.l('empty'),

@@ -1,7 +1,7 @@
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { s } from '~/@/schema'
 
-const TopicName = s.arr(s.str())
+const TopicName = s.str()
 const TopicParams = s.unknown
 
 export const ToServerMsg = s.or(
@@ -27,6 +27,6 @@ export const ToClientMsg = s.or(ToClientMsgOne, ToClientMsgMany)
 
 export type ToClientMsg = s.Infer<typeof ToClientMsg>
 
-export const toTopicString = (topicName: string[], topicParams: unknown): string => {
-  return [...topicName, deterministicJsonStringify(topicParams)].join('/')
+export const toTopicString = (topicName: string, topicParams: unknown): string => {
+  return [topicName, deterministicJsonStringify(topicParams)].join('/')
 }

@@ -8,8 +8,8 @@ import { RPCError } from './error'
 export type Base = Contract<Record<string, Endpoint<any, any>>>
 
 export type Endpoint<TInput, TOutput> = {
-  input: s.Parser<TInput>
-  output: s.Parser<TOutput>
+  input: s.Schema<TInput>
+  output: s.Schema<TOutput>
 }
 
 export type ReqCtx = {
