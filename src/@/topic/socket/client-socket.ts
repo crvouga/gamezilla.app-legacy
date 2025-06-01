@@ -132,21 +132,31 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
       behavior: 'use-latest',
       keyFn: (msg) => msg[1],
       throttle: TimeSpan.seconds(10),
-      fn: send,
+      fn: (toServer: ToServerMsg) => {
+        switch (toServer[0]) {
+          case SUB: {
+            const isSubbed = activeSubscriptionsServer.has(toServer[1])
+            if (isSubbed) return
+            send(toServer)
+            return
+          }
+          case UNSUB: {
+            const isUnsubbed = !activeSubscriptionsServer.has(toServer[1])
+            if (isUnsubbed) return
+            send(toServer)
+            return
+          }
+        }
+      },
     })
 
     yield takeEvery(Sub.chan(msgsToServer), function* (toServer) {
       switch (toServer[0]) {
         case SUB: {
-          // const isSubbed = activeSubscriptionsServer.has(toServer[1])
-          // if (isSubbed) return
-          activeSubscriptionsServer.add(toServer[1])
           sendThrottledByTopic(toServer)
           return
         }
         case UNSUB: {
-          const isUnsubbed = !activeSubscriptionsServer.has(toServer[1])
-          if (isUnsubbed) return
           sendThrottledByTopic(toServer)
           return
         }

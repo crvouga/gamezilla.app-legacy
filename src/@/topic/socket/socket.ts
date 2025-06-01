@@ -51,9 +51,6 @@ const create = (config: { url: string }) => {
     msgsFromServer,
     send,
     close,
-    [Symbol.dispose]: () => {
-      close()
-    },
   }
 }
 
