@@ -28,7 +28,7 @@
     "docker:rebuild": "docker compose --env-file .env -f ./infra/docker/docker-compose.yml build --no-cache",
     "docker:up": "docker compose --env-file .env -f ./infra/docker/docker-compose.yml up -d",
     "env": "export $(grep -v '^#' .env.test | xargs)",
-    "frontend": "bun --bun vite --host 0.0.0.0",
+    "frontend": "vite",
     "frontend:build": "bun x vite build",
     "frontend:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./src/frontend.tsx",
     "frontend:docker": "docker build --no-cache -f infra/railway/frontend/Dockerfile --build-arg VITE_BACKEND_URL=http://localhost:5002 --build-arg VITE_POWERSYNC_URL=http://localhost:8080 --build-arg VITE_ELECTRIC_URL=http://localhost:3000 -t my-frontend-app .",

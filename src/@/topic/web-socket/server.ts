@@ -9,17 +9,7 @@ import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Client, ContractBase, MsgMeta, Topic } from '../types'
-import {
-  MSG_TYPE_PUB,
-  MSG_TYPE_PUBED,
-  MSG_TYPE_SUB,
-  MSG_TYPE_SUBBED,
-  MSG_TYPE_UNSUB,
-  ToClientMsgMany,
-  ToClientMsgOne,
-  ToServerMsg,
-  toTopicString,
-} from './shared'
+import { ToClientMsgMany, ToClientMsgOne, ToServerMsg, toTopicString } from './shared'
 
 export type BackendWebSocketData = {
   clientId: ClientId
@@ -86,23 +76,23 @@ export const initServer = <TContract extends ContractBase>(config: {
       const toServerMsg: ToServerMsg = JSON.parse(message) as ToServerMsg
 
       switch (toServerMsg[0]) {
-        case MSG_TYPE_SUB: {
+        case 'sub': {
           const topicString = toTopicString(toServerMsg[1], toServerMsg[2])
           ws.subscribe(topicString)
-          const toClientMsg: ToClientMsgOne = [MSG_TYPE_SUBBED, toServerMsg[1], toServerMsg[2]]
+          const toClientMsg: ToClientMsgOne = ['sub', toServerMsg[1], toServerMsg[2]]
           ws.send(JSON.stringify(toClientMsg))
           logger.debug(
             `websocket subscribed ${topicString} subscriberCount=${bunServer.subscriberCount(topicString)} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId} `,
           )
           return
         }
-        case MSG_TYPE_PUB: {
+        case 'pub': {
           const topicString = toTopicString(toServerMsg[1], toServerMsg[2])
-          publish(topicString, [MSG_TYPE_PUBED, toServerMsg[1], toServerMsg[2], toServerMsg[3]], ws)
+          publish(topicString, ['pub', toServerMsg[1], toServerMsg[2], toServerMsg[3]], ws)
 
           return
         }
-        case MSG_TYPE_UNSUB: {
+        case 'unsub': {
           const topicString = toTopicString(toServerMsg[1], toServerMsg[2])
           ws.unsubscribe(topicString)
           logger.debug(
@@ -186,7 +176,7 @@ export const initServer = <TContract extends ContractBase>(config: {
     clientProxy[topicFullNameStr as keyof TContract] = {
       publish: (topicParams: s.Infer<typeof topicDef.params>, messageContent: s.Infer<typeof topicDef.msg>) => {
         const topicString = toTopicString(topicNameParts, topicParams)
-        publish(topicString, [MSG_TYPE_PUBED, topicNameParts, topicParams, JSON.stringify(messageContent)], null)
+        publish(topicString, ['pub', topicNameParts, topicParams, JSON.stringify(messageContent)], null)
       },
       subscribe: <TMsgOut>(
         topicParams: s.Infer<typeof topicDef.params>,

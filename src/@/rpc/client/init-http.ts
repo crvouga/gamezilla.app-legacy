@@ -6,23 +6,21 @@ export const initClientHttp = <T extends Base>(config: ClientConfigHttp<T>): Cli
   const createClient = (contract: Base, path: string[] = []): any => {
     const client: any = {}
 
-    for (const endpoint in contract) {
-      const endpointConfig = contract[endpoint]
+    for (const rpcName in contract) {
+      const endpointConfig = contract[rpcName]
       if (!endpointConfig) continue
 
       if ('input' in endpointConfig && 'output' in endpointConfig) {
         // Leaf endpoint
-        client[endpoint] = async (input: unknown) => {
+        client[rpcName] = async (input: unknown) => {
           try {
             const parsedInput = endpointConfig.input.parse(input)
             if (isErr(parsedInput)) {
               return Err(parsedInput.error)
             }
-
-            const url = ClientSessionIdHttp.addToUrl(
-              new URL(`/rpc/${[...path, endpoint].join('/')}`, config.serverUrl),
-              config.clientSessionId,
-            )
+            const urlBase = new URL(`/rpc`, config.serverUrl)
+            urlBase.searchParams.set('rpc-name', rpcName)
+            const url = ClientSessionIdHttp.addToUrl(urlBase, config.clientSessionId)
 
             const request = new Request(url, {
               method: 'POST',
@@ -45,7 +43,7 @@ export const initClientHttp = <T extends Base>(config: ClientConfigHttp<T>): Cli
         }
       } else {
         // Nested contract
-        client[endpoint] = createClient(endpointConfig as Contract<any>, [...path, endpoint])
+        client[rpcName] = createClient(endpointConfig as Contract<any>, [...path, rpcName])
       }
     }
     return client

@@ -38,12 +38,12 @@ export const SpaceFrontendFixture = async () => {
     clientSessionId: f.ctx.clientSessionId,
     sessionId: SessionId.generate(),
     server: {
-      'spaces/sync/sync': async (input) => {
+      'spaces.sync.sync': async (input) => {
         return {
           space: input.space,
         }
       },
-      'spaces/list-spaces/list-spaces': async (_input) => {
+      'spaces.list-spaces.list': async (_input) => {
         return {
           spaces: [],
         }
@@ -142,12 +142,12 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     clientSessionId: f.ctx.clientSessionId,
     sessionId: SessionId.generate(),
     server: {
-      'spaces/sync/sync': async (input) => {
+      'spaces.sync.sync': async (input) => {
         return {
           space: input.space,
         }
       },
-      'spaces/list-spaces/list-spaces': async (_input) => {
+      'spaces.list-spaces.list': async (_input) => {
         return {
           spaces: [],
         }

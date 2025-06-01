@@ -27,6 +27,20 @@ export const contract = RPC.initContract({
       message: s.str(),
     }),
   },
+  'foo/bar/baz': {
+    input: s.obj({
+      name: s.str(),
+    }),
+    output: s.obj({
+      message: s.str(),
+    }),
+  },
+  'foo.bar.baz': {
+    input: s.obj({
+      name: s.str(),
+    }),
+    output: s.str(),
+  },
 })
 
 export const server = RPC.initServer(contract, {
@@ -44,5 +58,13 @@ export const server = RPC.initServer(contract, {
     return {
       message: `Hello, ${input.name}`,
     }
+  },
+  'foo/bar/baz': async (input, _reqCtx) => {
+    return {
+      message: `Hello, ${input.name}`,
+    }
+  },
+  'foo.bar.baz': async (input, _reqCtx) => {
+    return `Hello, ${input.name}`
   },
 })

@@ -4,30 +4,22 @@ import { s } from '~/@/schema'
 const TopicName = s.arr(s.str())
 const TopicParams = s.unknown
 
-export const MSG_TYPE_SUB = 'sub'
-export const MSG_TYPE_UNSUB = 'unsub'
-export const MSG_TYPE_PUB = 'pub'
-//
-export const MSG_TYPE_SUBBED = 'sub'
-export const MSG_TYPE_UNSUBBED = 'unsub'
-export const MSG_TYPE_PUBED = 'pub'
-
 export const ToServerMsg = s.or(
-  s.tuple(s.l(MSG_TYPE_SUB), TopicName, TopicParams),
-  s.tuple(s.l(MSG_TYPE_UNSUB), TopicName, TopicParams),
-  s.tuple(s.l(MSG_TYPE_PUB), TopicName, TopicParams, s.str()),
+  s.tuple(s.l('sub'), TopicName, TopicParams),
+  s.tuple(s.l('unsub'), TopicName, TopicParams),
+  s.tuple(s.l('pub'), TopicName, TopicParams, s.str()),
 )
 
 export type ToServerMsg = s.Infer<typeof ToServerMsg>
 
 export const ToClientMsgOne = s.or(
-  s.tuple(s.l(MSG_TYPE_SUBBED), TopicName, TopicParams),
-  s.tuple(s.l(MSG_TYPE_UNSUBBED), TopicName, TopicParams),
+  s.tuple(s.l('sub'), TopicName, TopicParams),
+  s.tuple(s.l('unsub'), TopicName, TopicParams),
 )
 
 export type ToClientMsgOne = s.Infer<typeof ToClientMsgOne>
 
-export const ToClientMsgMany = s.or(s.tuple(s.l(MSG_TYPE_PUBED), TopicName, TopicParams, s.str()))
+export const ToClientMsgMany = s.or(s.tuple(s.l('pub'), TopicName, TopicParams, s.str()))
 
 export type ToClientMsgMany = s.Infer<typeof ToClientMsgMany>
 

@@ -9,7 +9,7 @@ import { Sub } from '~/@/sub'
 
 const rpc = (config: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
-    async 'spaces/sync/sync'(input) {
+    async 'spaces.sync.sync'(input) {
       const merged = await config.ctx.spacesCore.merge(input.space)
 
       if (isErr(merged)) {
@@ -36,7 +36,7 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
 }
 
 const saga = function* (ctx: BackendCtxModule) {
-  const msgSpaceChan = Sub.chan(ctx.topic['spaces/sync/msg-space-all'].subscribe(null, (c) => c))
+  const msgSpaceChan = Sub.chan(ctx.topic['spaces.sync.msg-space-all'].subscribe(null, (c) => c))
 
   yield takeEvery(msgSpaceChan, function* (c) {
     ctx.logger.info('syncing msgSpace', c)

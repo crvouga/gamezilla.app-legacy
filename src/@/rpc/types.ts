@@ -17,7 +17,7 @@ export type ReqCtx = {
   clientSessionId: ClientSessionId
 }
 
-export type Contract<TEndpoints extends Record<string, Endpoint<any, any> | Contract<any>>> = TEndpoints
+export type Contract<TEndpoints extends Record<string, Endpoint<any, any>>> = TEndpoints
 
 export type Client<T extends Base> = {
   [K in keyof T]: (input: s.Infer<T[K]['input']>) => Promise<Result<RPCError, s.Infer<T[K]['output']>>>
@@ -27,7 +27,7 @@ export type Server<T extends Base> = {
   [K in keyof T]: (input: s.Infer<T[K]['input']>, reqCtx: ReqCtx) => Promise<s.Infer<T[K]['output']>>
 }
 
-export const initContract = <TEndpoints extends Record<string, Endpoint<any, any> | Contract<any>>>(
+export const initContract = <TEndpoints extends Record<string, Endpoint<any, any>>>(
   endpoints: TEndpoints,
 ): Contract<TEndpoints> => endpoints
 

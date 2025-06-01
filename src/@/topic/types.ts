@@ -31,6 +31,5 @@ export type Client<T extends ContractBase> = {
   }
 }
 
-export const initContract = <TTopics extends Record<string, Topic<any, any> | Contract<any>>>(
-  endpoints: TTopics,
-): Contract<TTopics> => endpoints
+export const initContract = <TTopics extends Record<string, Topic<any, any>>>(endpoints: TTopics): Contract<TTopics> =>
+  endpoints

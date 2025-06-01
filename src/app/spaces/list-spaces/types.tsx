@@ -15,7 +15,7 @@ export type MsgFrontend =
   | { t: 'list-spaces.list-spaces-response'; spaces: Result<RPCError, { spaces: Space.Model[] }> }
 
 export const rpcContract = RPC.initContract({
-  'spaces/list-spaces/list-spaces': {
+  'spaces.list-spaces.list': {
     input: s.obj({
       pagination: Pagination,
     }),

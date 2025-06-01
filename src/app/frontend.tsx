@@ -243,44 +243,44 @@ const updateChild = (input: {
   msg?: MsgFrontend
   msgIn?: unknown
 }): Output => {
-  const frontendCtx = toCtx(input)
+  const ctx = toCtx(input)
 
   const space = SpacesFrontend.update({
-    ctx: frontendCtx,
+    ctx,
     model: input.model.spaces,
     msg: input.msg?.t === 'spaces' ? input.msg.c : null,
     msgIn: input.msgIn,
   })
 
   const profile = ProfileFrontend.update({
-    ctx: frontendCtx,
+    ctx,
     model: input.model.profile,
     msg: input.msg?.t === 'profile' ? input.msg.c : null,
     msgIn: input.msgIn,
   })
 
   const auth = AuthFrontend.update({
-    ctx: frontendCtx,
+    ctx,
     model: input.model.auth,
     msg: input.msg?.t === 'auth' ? input.msg.c : null,
     msgIn: input.msgIn,
   })
 
   const wire = WireFrontend.update({
-    ctx: frontendCtx,
+    ctx,
     model: input.model.wire,
     msg: input.msg?.t === 'wire' ? input.msg.c : null,
   })
 
   const lang = LangFrontend.update({
-    ctx: frontendCtx,
+    ctx,
     model: input.model.lang,
     msg: input.msg?.t === 'lang' ? input.msg.c : null,
     msgIn: input.msgIn,
   })
 
   const frontend = FrontendFrontend.update({
-    ctx: frontendCtx,
+    ctx,
     model: input.model.frontend,
     msg: input.msg?.t === 'frontend' ? input.msg.c : undefined,
     msgIn: input.msgIn,

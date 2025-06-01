@@ -121,4 +121,18 @@ describe('RPC', () => {
       expect(result).toBeUndefined()
     }
   })
+
+  test('nested', async () => {
+    for (using f of await Fixtures()) {
+      const result = await f.client['foo/bar/baz']({ name: 'Alice' })
+      expect(result).toEqual(Ok({ message: 'Hello, Alice' }))
+    }
+  })
+
+  test('nested dot', async () => {
+    for (using f of await Fixtures()) {
+      const result = await f.client['foo.bar.baz']({ name: 'Alice' })
+      expect(result).toEqual(Ok('Hello, Alice'))
+    }
+  })
 })
