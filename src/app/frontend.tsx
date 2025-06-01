@@ -160,7 +160,7 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
   const space = SpacesFrontend.init({ ctx })
   const profile = ProfileFrontend.init({ ctx })
 
-  const initialModel: ModelFrontend = {
+  const model: ModelFrontend = {
     frontend: frontend.model,
     spaces: space.model,
     wire: wire.model,
@@ -169,23 +169,18 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
     lang: lang.model,
   }
 
-  const initialEff = Eff.batch<MsgFrontend>([
+  const eff = Eff.batch<MsgFrontend>([
     Eff.tag('frontend', frontend.eff),
     Eff.tag('auth', auth.eff),
     Eff.tag('lang', lang.eff),
+    Eff.tag('profile', profile.eff),
+    Eff.tag('spaces', space.eff),
+    Eff.tag('wire', wire.eff),
   ])
 
-  const initialMsgOut = Msg.batch(PreloadSoundsCmd.init(Object.values(APP_SOUND)))
+  const msgOut = Msg.batch(PreloadSoundsCmd.init(Object.values(APP_SOUND)))
 
-  const updated = updateLoop(
-    input.ctx,
-    {
-      model: initialModel,
-      eff: initialEff,
-      msgOut: initialMsgOut,
-    },
-    0,
-  )
+  const updated = updateLoop(input.ctx, { model, eff, msgOut })
 
   return updated
 }
@@ -198,40 +193,22 @@ const update = (input: {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
 } => {
-  const frontendCtx = toCtx(input)
-  const updatedChild = updateChild({ ctx: frontendCtx, model: input.model, msg: input.msg })
-  const updated = updateLoop(frontendCtx, updatedChild, 0)
-
+  const updatedChild = updateChild(input)
+  const updated = updateLoop(input.ctx, updatedChild)
   return updated
 }
 
-type Output = {
-  model: ModelFrontend
-  eff: Eff<MsgFrontend>
-  msgOut: unknown[]
-}
-
-const updateLoop = (ctx: FrontendCtxModule, acc: Output, depth: number): Output => {
-  const frontendCtx = toCtx({ ctx, model: acc.model })
-
+const updateLoop = (ctx: FrontendCtxModule, acc: ReturnType<typeof updateChild>): ReturnType<typeof updateChild> => {
   const [msgOut, ...msgOutRest] = acc.msgOut
 
-  if (depth > 10) {
-    throw new Error('updateLoop depth > 10')
-  }
-
   if (msgOut) {
-    const updatedOut = updateChild({ ctx: frontendCtx, model: acc.model, msgIn: msgOut })
+    const updatedOut = updateChild({ ctx, model: acc.model, msgIn: msgOut })
 
-    return updateLoop(
-      frontendCtx,
-      {
-        model: updatedOut.model,
-        eff: Eff.batch([acc.eff, updatedOut.eff]),
-        msgOut: Msg.batch(msgOutRest, updatedOut.msgOut),
-      },
-      depth + 1,
-    )
+    return updateLoop(ctx, {
+      model: updatedOut.model,
+      eff: Eff.batch([acc.eff, updatedOut.eff]),
+      msgOut: Msg.batch(msgOutRest, updatedOut.msgOut),
+    })
   }
 
   return acc
@@ -242,7 +219,11 @@ const updateChild = (input: {
   model: ModelFrontend
   msg?: MsgFrontend
   msgIn?: unknown
-}): Output => {
+}): {
+  model: ModelFrontend
+  eff?: Eff<MsgFrontend>
+  msgOut: unknown[]
+} => {
   const ctx = toCtx(input)
 
   const space = SpacesFrontend.update({
@@ -270,6 +251,7 @@ const updateChild = (input: {
     ctx,
     model: input.model.wire,
     msg: input.msg?.t === 'wire' ? input.msg.c : null,
+    msgIn: input.msgIn,
   })
 
   const lang = LangFrontend.update({
