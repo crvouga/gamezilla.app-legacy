@@ -1,6 +1,6 @@
 import * as http from 'node:http'
 import { Logger, type ILogger } from '~/@/logger'
-import { PubSub } from '../sub'
+import { Sub } from '../sub'
 import { Posix } from '../time/posix'
 import { HttpServerEvent, type Respond, type IHttpServer } from './interface'
 import { getIpAddress } from './ip-address'
@@ -17,7 +17,7 @@ export const HttpServerNode = (
   const logger = Logger.prefix('node', config.logger)
   const httpServer = new http.Server()
   const handlers: Respond[] = []
-  const events: PubSub<HttpServerEvent> = PubSub.create()
+  const events: Sub<HttpServerEvent> = Sub.create()
 
   const staticResponses: Record<`/${string}`, Response> = {}
 

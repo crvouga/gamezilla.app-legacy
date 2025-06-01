@@ -85,7 +85,7 @@ const Fixture = async () => {
   }
 }
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000))
+const sleep = () => new Promise((resolve) => setTimeout(resolve, 100))
 
 describe.only('Topic', () => {
   it('should work', async () => {
@@ -96,8 +96,11 @@ describe.only('Topic', () => {
     const gotC: Msg[] = []
 
     f.server.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotServer.push(msg))
+    await sleep()
     f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    await sleep()
     f.clientB.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    await sleep()
     f.clientC.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
     await sleep()
     f.clientC.someTopic.publish({ id: '123' }, { name: 'John' })
@@ -110,6 +113,7 @@ describe.only('Topic', () => {
   it('should not receive messages after unsubscribing', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
+    await sleep()
     const unsub = f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
     unsub()
@@ -123,7 +127,9 @@ describe.only('Topic', () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
+    await sleep()
     f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    await sleep()
     f.clientB.someTopic.subscribe({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
@@ -135,14 +141,15 @@ describe.only('Topic', () => {
   it('should handle multiple messages in sequence', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
+    await sleep()
     f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
-
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    await sleep()
     f.clientA.someTopic.publish({ id: '123' }, { name: 'Jane' })
+    await sleep()
     f.clientA.someTopic.publish({ id: '123' }, { name: 'Bob' })
     await sleep()
-
     expect(gotA).toEqual([{ name: 'John' }, { name: 'Jane' }, { name: 'Bob' }])
   })
 
@@ -152,16 +159,18 @@ describe.only('Topic', () => {
     const gotB: Msg[] = []
     const gotC: Msg[] = []
 
-    f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
-    f.clientB.someTopic.subscribe({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
-    f.clientC.someTopic.subscribe({ id: '789' }, (x) => x).sub((msg) => gotC.push(msg))
-
     await sleep()
-
+    f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    await sleep()
+    f.clientB.someTopic.subscribe({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
+    await sleep()
+    f.clientC.someTopic.subscribe({ id: '789' }, (x) => x).sub((msg) => gotC.push(msg))
+    await sleep()
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    await sleep()
     f.clientB.someTopic.publish({ id: '456' }, { name: 'Jane' })
+    await sleep()
     f.clientC.someTopic.publish({ id: '789' }, { name: 'Bob' })
-
     await sleep()
 
     expect(gotA).toEqual([{ name: 'John' }])
@@ -174,18 +183,18 @@ describe.only('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
+    await sleep()
     const unsubA = f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    await sleep()
     f.clientB.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
-
+    await sleep()
     unsubA()
     await sleep()
-
     f.clientA.someTopic.publish({ id: '123' }, { name: 'Jane' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }])
@@ -197,12 +206,15 @@ describe.only('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
+    await sleep()
     f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    await sleep()
     f.clientB.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    await sleep()
     f.clientA.someTopic.publish({ id: '123' }, { name: 'Jane' })
+    await sleep()
     f.clientA.someTopic.publish({ id: '123' }, { name: 'Bob' })
     await sleep()
 
@@ -215,10 +227,11 @@ describe.only('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
+    await sleep()
     f.clientA.nested.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    await sleep()
     f.clientB.nested.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-
     f.clientA.nested.someTopic.publish({ id: '123' }, { name: 'John' })
     await sleep()
 
@@ -232,21 +245,23 @@ describe.only('Topic', () => {
     const gotB: Msg[] = []
     const gotC: Msg[] = []
 
+    await sleep()
     const unsubA = f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    await sleep()
     const unsubB = f.clientB.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    await sleep()
     f.clientC.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
     await sleep()
-
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
     expect(gotC).toEqual([{ name: 'John' }])
-
+    await sleep()
     unsubA()
+    await sleep()
     unsubB()
     await sleep()
-
     f.clientA.someTopic.publish({ id: '123' }, { name: 'Jane' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }])
@@ -260,11 +275,13 @@ describe.only('Topic', () => {
     const gotA2: Msg[] = []
     const gotB: Msg[] = []
 
+    await sleep()
     f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA1.push(msg))
+    await sleep()
     f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA2.push(msg))
+    await sleep()
     f.clientB.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
     await sleep()
 
@@ -278,11 +295,13 @@ describe.only('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
+    await sleep()
     f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    await sleep()
     f.clientB.someTopic.subscribe({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
+    await sleep()
     f.clientA.someTopic.publish({ id: '456' }, { name: 'Jane' })
     await sleep()
 
@@ -295,20 +314,20 @@ describe.only('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
+    await sleep()
     f.clientA.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    await sleep()
     f.clientB.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-
     f.clientA.someTopic.publish({ id: '123' }, { name: 'John' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
-
+    await sleep()
     await f.httpServer.stop()
     await sleep()
     await f.httpServer.start(f.port)
     await sleep()
-
     f.clientA.someTopic.publish({ id: '123' }, { name: 'Jane' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }, { name: 'Jane' }])

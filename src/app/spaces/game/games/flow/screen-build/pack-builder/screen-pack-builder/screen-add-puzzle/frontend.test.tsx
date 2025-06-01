@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { sleep } from '~/@/promise/sleep'
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
@@ -13,7 +13,7 @@ import { ScreenAddPuzzleSpace } from './space'
 
 const Fixture = async () => {
   const f = await FixturePackBuilderFrontend()
-  const renderMsg = PubSub.create<MsgFrontend>()
+  const renderMsg = Sub.create<MsgFrontend>()
   const render = (input: { model: typeof f.model; modelSpace: typeof f.modelSpace }) => {
     return f.render(
       <ScreenAddPuzzle.View ctx={f.ctx} dispatch={renderMsg.pub} model={input.model} modelSpace={input.modelSpace} />,

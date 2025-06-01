@@ -369,24 +369,23 @@ const subscriptions: Module['subscriptions'] = (input) => {
 
   switch (modelSpace.t) {
     case 'none': {
-      return Sub.None
+      return Sub.none()
     }
 
     case 'vs-bot': {
-      return Sub.tag(
-        'vs-bot',
+      return Sub.map(
         VsBot.subscriptions({
           ...input,
           model: model?.t === 'vs-bot' ? model.c : VsBot.init,
           modelSpace: modelSpace.c,
           ctx: input.ctx,
         }),
+        (c): MsgFrontend => ({ t: 'vs-bot', c }),
       )
     }
 
     case 'vs-user': {
-      return Sub.tag(
-        'vs-user',
+      return Sub.map(
         VsUser.subscriptions({
           ...input,
           model: model?.t === 'vs-user' ? model.c : VsUser.init,
@@ -396,6 +395,7 @@ const subscriptions: Module['subscriptions'] = (input) => {
             onQuit: () => {},
           },
         }),
+        (c): MsgFrontend => ({ t: 'vs-user', c }),
       )
     }
   }

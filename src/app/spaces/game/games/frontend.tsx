@@ -3,7 +3,7 @@ import { Sub } from '~/@/sub'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.frontend'
 import { FlowFrontend } from './flow/frontend'
-import type { FrontendModule } from './types'
+import type { FrontendModule, MsgFrontend } from './types'
 
 //
 //
@@ -96,24 +96,24 @@ const update: FrontendModule['update'] = (input) => {
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   switch (input.modelSpace.t) {
     case 'connect-four': {
-      return Sub.tag(
-        'connect-four',
+      return Sub.map(
         ConnectFour.subscriptions({
           ctx: input.ctx,
           modelSpace: input.modelSpace.c,
           model: input.model.t === 'connect-four' ? input.model.c : ConnectFour.init,
         }),
+        (c): MsgFrontend => ({ t: 'connect-four', c }),
       )
     }
 
     case 'flow': {
-      return Sub.tag(
-        'flow',
+      return Sub.map(
         FlowFrontend.subscriptions({
           ctx: input.ctx,
           modelSpace: input.modelSpace.c,
           model: input.model.t === 'flow' ? input.model.c : FlowFrontend.init,
         }),
+        (c): MsgFrontend => ({ t: 'flow', c }),
       )
     }
   }

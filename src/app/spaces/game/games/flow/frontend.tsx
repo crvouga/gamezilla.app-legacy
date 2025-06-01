@@ -27,7 +27,7 @@ import { SolutionsLoaderTypes } from './@/solutions/solutions-loader'
 import { SolutionsLoaderFrontend } from './@/solutions/solutions-loader/frontend'
 import { ScreenBuildFrontend } from './screen-build/frontend'
 import { ScreenPlayFrontend } from './screen-play/frontend'
-import type { FrontendModule } from './types'
+import type { FrontendModule, MsgFrontend } from './types'
 
 const init: FrontendModule['init'] = {
   screenBuild: ScreenBuildFrontend.init,
@@ -263,30 +263,30 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   switch (input.modelSpace.mode) {
     case 'build': {
       const ctx = toFlowFrontendCtx(input)
-      return Sub.tag(
-        'got-screen-build-msg',
+      return Sub.map(
         ScreenBuildFrontend.subscriptions({
           ctx,
           modelSpace: input.modelSpace.screenBuild,
           model: input.model.screenBuild,
         }),
+        (c): MsgFrontend => ({ t: 'got-screen-build-msg', c }),
       )
     }
 
     case 'play': {
       const ctx = toFlowFrontendCtx(input)
-      return Sub.tag(
-        'got-screen-play-msg',
+      return Sub.map(
         ScreenPlayFrontend.subscriptions({
           ctx,
           modelSpace: input.modelSpace.screenPlay,
           model: input.model.screenPlay,
         }),
+        (c): MsgFrontend => ({ t: 'got-screen-play-msg', c }),
       )
     }
 
     case 'none': {
-      return Sub.None
+      return Sub.none()
     }
   }
 }

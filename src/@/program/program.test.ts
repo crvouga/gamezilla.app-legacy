@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { PubSub, Sub } from '../sub'
+import { Sub } from '../sub'
 import { Program, ProgramCrashReport } from './program'
 import { TimeSpan } from '../time/time-span'
 import { sleep } from '../promise/sleep'
@@ -9,7 +9,7 @@ type Msg = { t: 'inc' } | { t: 'dec' } | { t: 'set-model'; c: Model }
 type Ctx = {}
 
 const Fixture = async () => {
-  const crashes = PubSub.create<ProgramCrashReport<Model, Msg, Ctx>>()
+  const crashes = Sub.create<ProgramCrashReport<Model, Msg, Ctx>>()
   const program = await Program.run<Model, Msg, Ctx>({
     crash: (crashReport) => {
       crashes.pub(crashReport)
@@ -17,7 +17,7 @@ const Fixture = async () => {
     initCtx: () => ({}),
     updateCtx: (ctx) => ctx,
     init: () => ({ model: { counter: { count: 0 } } }),
-    subscriptions: () => Sub.None,
+    subscriptions: () => Sub.none(),
     update: ({ model, msg }) => {
       switch (msg.t) {
         case 'inc':

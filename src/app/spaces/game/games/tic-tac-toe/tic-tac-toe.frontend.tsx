@@ -53,7 +53,7 @@ export const update: Frontend['update'] = (input) => {
 //
 
 export const subscriptions: Frontend['subscriptions'] = () => {
-  return Sub.None
+  return Sub.none()
 }
 
 //

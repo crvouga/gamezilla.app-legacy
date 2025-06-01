@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { PAGINATION_DOTS_TEST_ID, PaginationDots, toPaginationDotSelector } from '~/@/ui/pagination-dots'
 
@@ -23,10 +23,10 @@ describe('PaginationDots', () => {
 
   test('clicked dots', async () => {
     const f = await Fixture()
-    const clickedIndex = PubSub.create<number>()
+    const clickedIndex = Sub.create<number>()
     const r = f.render(<PaginationDots activeIndex={0} count={3} onClick={clickedIndex.pub} />)
     r.query(toPaginationDotSelector(1))[0]?.click()
-    expect(await clickedIndex.once()).toEqual(1)
+    expect(await Sub.once(clickedIndex)).toEqual(1)
   })
 
   test('should NOT be buttons if no onClick is provided', async () => {

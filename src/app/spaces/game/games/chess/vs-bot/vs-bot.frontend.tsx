@@ -280,7 +280,7 @@ export const mergeWithBackend = ({
 //
 
 export const subscriptions = (_model: ModelFrontend): Sub<MsgFrontend> => {
-  return Sub.None
+  return Sub.none()
 }
 
 //

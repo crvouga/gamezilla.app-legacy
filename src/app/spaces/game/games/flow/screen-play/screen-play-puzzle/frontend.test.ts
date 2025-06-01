@@ -5,6 +5,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { Flow } from '../../@/flow'
 import { FixtureScreenPlayPuzzleFrontend } from './@/fixture/frontend'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { Sub } from '~/@/sub'
 
 const Fixture = async () => {
   const f = await FixtureScreenPlayPuzzleFrontend()
@@ -57,7 +58,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
     const r = f.render(output)
     const nextButton = r.getByRole('button', f.ctx.t('app.next'))[0]
     nextButton?.click()
-    const msg = await r.msgs.once()
+    const msg = await Sub.once(r.msgs)
     expect(msg.t === 'got-msg-space' && msg.c.t === 'user-clicked-next-puzzle').toBe(true)
   })
 
@@ -161,7 +162,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
     const btn = r.getByRole('button', f.ctx.t('game.hint'))[0]
     expect(btn).toBeTruthy()
     btn?.click()
-    const msg = await r.msgs.once()
+    const msg = await Sub.once(r.msgs)
     expect(msg.t).toBe('got-msg-out')
   })
 

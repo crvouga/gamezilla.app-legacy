@@ -1,7 +1,7 @@
 import { Eff } from '../eff'
-import { PubSub, Sub } from '../sub'
+import { Sub } from '../sub'
 
-const searchParams = PubSub.create<URLSearchParams>()
+const searchParams = Sub.create<URLSearchParams>()
 
 if (typeof window !== 'undefined') {
   window.addEventListener('popstate', () => {

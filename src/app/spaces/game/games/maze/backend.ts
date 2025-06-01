@@ -63,5 +63,5 @@ export const subscriptions = (intervalId: string, model: ModelBackend): Sub<Msg>
     return Time.interval(intervalId, TimeSpan.seconds(1 / 2), () => ['tick'])
     // return Sub.None
   }
-  return Sub.None
+  return Sub.none()
 }

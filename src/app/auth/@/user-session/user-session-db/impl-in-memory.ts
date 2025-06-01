@@ -87,7 +87,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       return Ok(null)
     },
     sub(_input) {
-      return Sub.None
+      return Sub.none()
     },
   }
 }

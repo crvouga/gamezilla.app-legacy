@@ -43,7 +43,7 @@ export const ProfileDb = (_config: Config): IUserProfileDb => {
       })
     },
     sub(_query) {
-      return Sub.None
+      return Sub.none()
     },
   }
 }

@@ -165,13 +165,13 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch<MsgFrontend>([
-    Sub.tag(
-      'got-current-user-msg',
+    Sub.map(
       CurrentUserFrontend.subscriptions({
         ...input,
         ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.currentUser },
         model: input.model.currentUser,
       }),
+      (c): MsgFrontend => ({ t: 'got-current-user-msg', c }),
     ),
   ])
 }

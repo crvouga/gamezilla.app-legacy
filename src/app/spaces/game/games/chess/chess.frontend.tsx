@@ -308,7 +308,7 @@ export const update: Frontend['update'] = (input) => {
 //
 
 export const subscriptions: Frontend['subscriptions'] = (_input) => {
-  return Sub.None
+  return Sub.none()
 }
 
 //

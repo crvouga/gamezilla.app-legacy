@@ -123,7 +123,7 @@ export const mergeWithBackend = ({
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.None
+  return Sub.none()
 }
 
 //

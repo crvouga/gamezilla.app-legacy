@@ -6,7 +6,7 @@ import { live } from '@electric-sql/pglite/live'
 import { s } from '~/@/schema'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
-import { PubSub, Sub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
 import { Sleep } from '../../promise/sleep'
@@ -85,7 +85,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
     string,
     {
       unsubscribe: () => void
-      pubSub: PubSub<unknown[]>
+      pubSub: Sub<unknown[]>
       tableName: string
       primaryKey: string[]
     }
@@ -106,7 +106,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
         return activeSubscriptions.get(subscriptionKey)!.pubSub as Sub<TRow[]>
       }
 
-      const pubSub = PubSub.create<TRow[]>()
+      const pubSub = Sub.create<TRow[]>()
       let lastPublished: TRow[] | null = null
 
       const subscribed = subscribe({
@@ -156,13 +156,9 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       })
 
       return {
-        where: () => {
-          throw new Error('not implemented')
+        pub: async (msg: TRow[]) => {
+          pubSub.pub(msg)
         },
-        chan: () => {
-          throw new Error('not implemented')
-        },
-        subscriberCount: () => pubSub.subscriberCount(),
         sub(subscriber: (rows: TRow[]) => void) {
           const unsub = pubSub.sub(subscriber)
 

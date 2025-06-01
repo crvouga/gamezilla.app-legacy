@@ -6,7 +6,7 @@ import { s } from '~/@/schema'
 import { sleep } from '~/@/promise/sleep'
 import { Ok, unwrap } from '~/@/result'
 import { Stream } from '~/@/stream/impl'
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceId } from '~/app/@/data/space-id'
@@ -17,7 +17,7 @@ import { SpaceState } from '../space-state'
 import { Config, SpacesCoreAsync } from './impl'
 
 const Fixture = async (config: Config) => {
-  const _dangerouslyOverrideModel = PubSub.create<Space.Model>()
+  const _dangerouslyOverrideModel = Sub.create<Space.Model>()
   const spacesCore = await SpacesCoreAsync({
     ...config,
     _dangerouslyOverrideModel,

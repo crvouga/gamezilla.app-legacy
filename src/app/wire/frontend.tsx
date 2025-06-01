@@ -51,19 +51,19 @@ const update: FrontendModule['update'] = (input) => {
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch<MsgFrontend>([
-    Sub.tag(
-      'got-backend-instance-msg',
+    Sub.map(
       BackendInstanceFrontend.subscriptions({
         ctx: { ...input.ctx, rpc: input.ctx.rpc.backendInstance },
         model: input.model.backendInstance,
       }),
+      (c): MsgFrontend => ({ t: 'got-backend-instance-msg', c }),
     ),
-    Sub.tag(
-      'got-backend-connection-msg',
+    Sub.map(
       BackendConnectionFrontend.subscriptions({
         ctx: { ...input.ctx, topic: input.ctx.topic.backendConnection },
         model: input.model.backendConnection,
       }),
+      (c): MsgFrontend => ({ t: 'got-backend-connection-msg', c }),
     ),
   ])
 }

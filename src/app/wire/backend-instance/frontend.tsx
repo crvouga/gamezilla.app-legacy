@@ -10,7 +10,7 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = () => {
-  return Sub.None
+  return Sub.none()
 }
 
 const View: FrontendModule['View'] = (_input) => {

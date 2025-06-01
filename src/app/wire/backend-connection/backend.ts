@@ -3,6 +3,7 @@ import { Posix } from '~/@/time/posix'
 import { Topic } from '~/@/topic'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { BackendCtxModule, topicContract } from './types'
+import { Sub } from '~/@/sub'
 
 const initCtx = async (input: {
   ctx: AppBackendCtxBase
@@ -15,9 +16,13 @@ const initCtx = async (input: {
 }
 
 const saga = function* (ctx: BackendCtxModule) {
-  const pings = ctx.topic.pingAll
-    .subscribe(null, (msg) => ({ pingId: msg.pingId, now: Posix.now(), clientSessionId: msg.clientSessionId }))
-    .chan()
+  const pings = Sub.chan(
+    ctx.topic.pingAll.subscribe(null, (msg) => ({
+      pingId: msg.pingId,
+      now: Posix.now(),
+      clientSessionId: msg.clientSessionId,
+    })),
+  )
 
   yield takeEvery(pings, function* (ping) {
     ctx.topic.pong.publish(ping.clientSessionId, {

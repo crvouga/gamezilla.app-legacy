@@ -150,7 +150,10 @@ const keyToDirection = (key: Keyboard.Key): Direction | null => {
 //
 
 export const subscriptions = (_model: Model) => {
-  return Sub.batch<Msg>([Keyboard.keyDowns((key) => ['key-down', key]), Keyboard.keyUps((key) => ['key-up', key])])
+  return Sub.batch<Msg>([
+    Keyboard.keyDowns((key): Msg => ['key-down', key]),
+    Keyboard.keyUps((key): Msg => ['key-up', key]),
+  ])
 }
 
 //
@@ -264,7 +267,7 @@ const ViewJoystick = ({
 }) => {
   return (
     <div>
-      <svg width='100%' viewBox='-1 -1 2 2' className='touch-none select-none overflow-hidden'>
+      <svg width='100%' viewBox='-1 -1 2 2' className='touch-none overflow-hidden select-none'>
         <defs>
           <clipPath id='cut-off-bottom'>
             <circle x='0' y='0' r={1} />

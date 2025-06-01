@@ -1,5 +1,6 @@
 import { LocalStorage } from '~/@/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
+import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
 import { IconCheckmarkCircle, IconCheckmarkCircleEmpty } from '~/@/ui/icon/icon-checkmark-circle'
 import { IconLanguage } from '~/@/ui/icon/icon-language'
@@ -12,7 +13,7 @@ import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import { translatorSubscriptions } from '../../@/frontend/translator'
-import type { FrontendModule, TranslationLoading } from '../types'
+import type { FrontendModule, MsgFrontend, TranslationLoading } from '../types'
 
 //
 //
@@ -133,8 +134,8 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
 //
 //
 
-const subscriptions: FrontendModule['subscriptions'] = () => {
-  return translatorSubscriptions
+const subscriptions: FrontendModule['subscriptions'] = (_input) => {
+  return Sub.map(translatorSubscriptions, (c): MsgFrontend => c)
 }
 
 //

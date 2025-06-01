@@ -213,15 +213,15 @@ export const mergeWithBackend = ({
 export const subscriptions = (ctx: AppFrontendCtx, model: Model): Sub<Msg> => {
   switch (model.t) {
     case 'vs-bot': {
-      return Sub.tag('vs-bot', VsBot.subscriptions(ctx, model.c))
+      return Sub.map(VsBot.subscriptions(ctx, model.c), (c): Msg => ({ t: 'vs-bot', c }))
     }
 
     case 'vs-user': {
-      return Sub.None
+      return Sub.none()
     }
 
     case 'none': {
-      return Sub.None
+      return Sub.none()
     }
   }
 }

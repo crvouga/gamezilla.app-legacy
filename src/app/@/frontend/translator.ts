@@ -1,4 +1,4 @@
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import type { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { loadTranslator, type Translator } from '~/@/l18n/generated'
 import { sleep } from '~/@/promise/sleep'
@@ -31,7 +31,7 @@ export type TranslatorMsg =
       lang: LanguageCodeISO_639_1
     }
 
-export const translatorSubscriptions = PubSub.create<TranslatorMsg>()
+export const translatorSubscriptions = Sub.create<TranslatorMsg>()
 
 function noop(): TranslatedText {
   return '' as TranslatedText

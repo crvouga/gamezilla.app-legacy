@@ -132,7 +132,7 @@ const updateFromMsg =
 //
 
 const subscriptions: Module['subscriptions'] = () => {
-  return Sub.None
+  return Sub.none()
 }
 
 //

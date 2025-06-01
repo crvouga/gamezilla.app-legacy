@@ -11,7 +11,7 @@ import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ProfileFrontendCtx } from '../@/frontend/ctx'
 import { ProfileLoaderFrontend } from '../@/user-profile-loader/frontend'
-import { FrontendModule } from './types'
+import { FrontendModule, MsgFrontend } from './types'
 
 const toUserId = (ctx: ProfileFrontendCtx): UserId | null => {
   const currentScreen = ctx.currentScreen
@@ -37,7 +37,7 @@ const update: FrontendModule['update'] = (input) => {
 }
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   const userId = toUserId(input.ctx)
-  if (!userId) return Sub.None
+  if (!userId) return Sub.none()
   return ProfileLoaderFrontend.watch(
     input.ctx,
     {
@@ -45,7 +45,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
       pagination: { limit: 1, offset: 0 },
       whereAnd: { userId: { equals: userId } },
     },
-    (c) => ({ t: 'got-msg-out', c: ProfileLoaderFrontend.gotMsg(c) }),
+    (c): MsgFrontend => ({ t: 'got-msg-out', c: ProfileLoaderFrontend.gotMsg(c) }),
   )
 }
 

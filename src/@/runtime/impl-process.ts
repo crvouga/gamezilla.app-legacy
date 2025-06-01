@@ -1,5 +1,5 @@
 import { ILogger, Logger } from '~/@/logger'
-import { PubSub } from '../sub'
+import { Sub } from '../sub'
 import { sleep } from '../promise/sleep'
 import { Posix } from '../time/posix'
 import { TimeSpan } from '../time/time-span'
@@ -14,7 +14,7 @@ export type Config = {
 export const Runtime = (config: Config): IRuntime => {
   const logger = Logger.prefix('process', config.logger)
 
-  const events = PubSub.create<RuntimeEvent>()
+  const events = Sub.create<RuntimeEvent>()
 
   const handleShutdown = async () => {
     logger.info('Shutting down...')

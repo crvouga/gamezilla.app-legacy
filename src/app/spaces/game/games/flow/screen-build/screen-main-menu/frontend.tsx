@@ -93,7 +93,7 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (_input) => {
-  return Sub.None
+  return Sub.none()
 }
 
 export const ScreenMainMenuFrontend = {

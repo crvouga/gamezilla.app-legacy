@@ -24,7 +24,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
   return {
     sub() {
-      return Sub.None
+      return Sub.none()
     },
 
     aggregate: {

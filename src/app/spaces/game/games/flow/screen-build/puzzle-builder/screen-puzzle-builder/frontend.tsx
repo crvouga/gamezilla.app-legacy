@@ -364,15 +364,18 @@ const updateMoreDrawer: BuilderTypes.FrontendModule['update'] = (input) => {
 //
 
 const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (input) => {
-  if (!input.modelSpace.screenPuzzleBuilder) return Sub.None
+  if (!input.modelSpace.screenPuzzleBuilder) return Sub.none()
 
   const flow = ScreenPuzzleBuilderSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
 
   const play = input.modelSpace.screenPuzzleBuilder.modePlay
 
-  if (!play) return Sub.None
+  if (!play) return Sub.none()
 
-  return ModePlayFrontend.subscriptions({ model: play, ctx: { ...input.ctx, flow } }, (c) => ({ t: 'got-msg-out', c }))
+  return ModePlayFrontend.subscriptions(
+    { model: play, ctx: { ...input.ctx, flow } },
+    (c): BuilderTypes.MsgFrontend => ({ t: 'got-msg-out', c }),
+  )
 }
 
 //

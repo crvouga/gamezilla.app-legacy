@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { FixtureFlowBuilderFrontend } from '../../@/fixture/frontend'
 import type { MsgFrontend } from '../../types'
@@ -23,7 +23,7 @@ const Fixture = async () => {
     },
   ])
 
-  const renderMsg = PubSub.create<MsgFrontend>()
+  const renderMsg = Sub.create<MsgFrontend>()
   const render = (input: { model: typeof f.model; modelSpace: typeof f.modelSpace }) => {
     return f.render(
       <ScreenPuzzleBuilderFrontend.View

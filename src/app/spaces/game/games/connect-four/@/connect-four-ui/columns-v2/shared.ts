@@ -1,4 +1,4 @@
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
 import type { ColumnIndex, Columns, PlayerType } from '../../connect-four'
 
@@ -15,4 +15,4 @@ export type Columnsinput = {
   gameOverOverlay?: () => VDom | VDom[] | null
 }
 
-export const columnsinputSub = PubSub.create<Columnsinput>()
+export const columnsinputSub = Sub.create<Columnsinput>()

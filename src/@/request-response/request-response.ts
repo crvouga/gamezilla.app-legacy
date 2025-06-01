@@ -119,7 +119,7 @@ const subscriptions = <TError, TValue, TMsg>(
   if (isRequesting(request)) {
     return Time.interval('', TimeSpan.seconds(1), elapsed)
   }
-  return Sub.None
+  return Sub.none()
 }
 
 const isErr = <TError, TValue>(request: RequestResponse<TError, TValue>): request is ResponseErr<TError> => {

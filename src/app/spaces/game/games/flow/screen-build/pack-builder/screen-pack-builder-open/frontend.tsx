@@ -4,9 +4,9 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PackLoaderFrontend } from '../../../@/pack/pack-loader/frontend'
-import type { FrontendModule } from '../../types'
-import { PackCreateNewFrontend } from './button-create-new-pack/frontend'
 import { GotPackLoaderMsg } from '../../../@/pack/pack-loader/got-pack-loader-msg'
+import type { FrontendModule, MsgFrontend } from '../../types'
+import { PackCreateNewFrontend } from './button-create-new-pack/frontend'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -50,10 +50,11 @@ const toQuery = (input: { currentUserId: UserId; offset: number }) => {
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   const query = toQuery({ currentUserId: input.ctx.currentUser.userId, offset: 0 })
-  return PackLoaderFrontend.watch(input.ctx, query, (c) => ({
-    t: 'got-msg-out',
-    c: GotPackLoaderMsg.init(c),
-  }))
+  return PackLoaderFrontend.watch(
+    input.ctx,
+    query,
+    (c): MsgFrontend => ({ t: 'got-msg-out', c: GotPackLoaderMsg.init(c) }),
+  )
 }
 
 const View: FrontendModule['View'] = (input) => {

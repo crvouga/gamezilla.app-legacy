@@ -1,6 +1,6 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import type { WithEventMeta } from '~/@/event-sourced/event'
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { FixtureFlowFrontend } from '../../../@/frontend/fixture'
 import { ScreenPlayFrontend } from '../../frontend'
 import { PlaySpace } from '../../space'
@@ -21,7 +21,7 @@ export const FixturePlayFrontend = async () => {
   }
 
   const render = (output: Output, ctx: typeof f.ctx = f.ctx) => {
-    const msgs = PubSub.create<MsgFrontend>()
+    const msgs = Sub.create<MsgFrontend>()
     const rendered = f.render(
       <ScreenPlayFrontend.View ctx={ctx} dispatch={msgs.pub} model={output.model} modelSpace={output.modelSpace} />,
     )

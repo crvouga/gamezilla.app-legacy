@@ -34,7 +34,6 @@ export const updateFromFrontend = (
 ): {
   model: ModelBackend
   eff?: Eff<MsgBackend>
-  
 } => {
   return { model }
 }
@@ -48,7 +47,6 @@ export const updateFromEvent = ({
 }): {
   model: ModelBackend
   eff?: Eff<MsgBackend>
-  
 } => {
   if (msg.t === 'space-evt.user-left-space') {
     switch (model.type) {
@@ -69,7 +67,6 @@ export const updateFromEvent = ({
 
         return {
           model: modelNew,
-          
         }
       }
 
@@ -97,7 +94,6 @@ export const updateFromEvent = ({
 
         return {
           model: modelNew,
-          
         }
       }
     }
@@ -116,11 +112,11 @@ export const updateFromEvent = ({
 export const subscriptions = (intervalId: string, model: ModelBackend): Sub<MsgBackend> => {
   switch (model.type) {
     case 'setup': {
-      return Sub.None
+      return Sub.none()
     }
 
     case 'game-over': {
-      return Sub.None
+      return Sub.none()
     }
 
     case 'game': {

@@ -33,5 +33,5 @@ export const update: Module['update'] = async (_input) => {
 }
 
 export const subscriptions: Module['subscriptions'] = async (_input) => {
-  return Sub.None
+  return Sub.none()
 }

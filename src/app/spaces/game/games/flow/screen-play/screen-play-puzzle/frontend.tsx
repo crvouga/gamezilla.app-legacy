@@ -15,7 +15,7 @@ import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { ModePlay } from '../../@/mode-play'
 import { ModePlayFrontend } from '../../@/mode-play/frontend'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
-import type { FrontendModule } from '../types'
+import type { FrontendModule, MsgFrontend } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
 import { LastPuzzleFrontend } from './last-puzzle/frontend'
 import { ScreenPlayPuzzleSpace } from './space'
@@ -73,15 +73,15 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  if (input.modelSpace.screen.t !== 'screen-play-puzzle') return Sub.None
-  if (input.modelSpace.screen.puzzleResult.t !== 'got') return Sub.None
+  if (input.modelSpace.screen.t !== 'screen-play-puzzle') return Sub.none()
+  if (input.modelSpace.screen.puzzleResult.t !== 'got') return Sub.none()
   const flow = input.modelSpace.screen.puzzleResult.c.flow
   const play = input.modelSpace.screen.modePlay
-  if (!play) return Sub.None
-  return ModePlayFrontend.subscriptions({ model: play, ctx: { ...input.ctx, flow } }, (c) => ({
-    t: 'got-msg-out',
-    c,
-  }))
+  if (!play) return Sub.none()
+  return ModePlayFrontend.subscriptions(
+    { model: play, ctx: { ...input.ctx, flow } },
+    (c): MsgFrontend => ({ t: 'got-msg-out', c }),
+  )
 }
 
 const CHECKMARK_DURATION = TimeSpan.seconds(1 / 2)

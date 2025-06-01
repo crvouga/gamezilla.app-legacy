@@ -61,5 +61,5 @@ export const update: Backend['update'] = async (_input) => {
 //
 
 export const subscriptions: Backend['subscriptions'] = async (_input) => {
-  return Sub.None
+  return Sub.none()
 }

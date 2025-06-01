@@ -5,6 +5,7 @@ import { Pack } from '../../@/pack/pack'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { FixturePlayFrontend } from '../@/frontend/fixture'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { Sub } from '~/@/sub'
 
 const Fixture = async () => {
   const f = await FixturePlayFrontend()
@@ -41,7 +42,7 @@ describe(import.meta.file, () => {
     const r = f.render(f.initial)
     const exitButton = r.getByRole('button', f.ctx.t('app.exit'))[0]
     exitButton?.click()
-    const msg = await r.msgs.once()
+    const msg = await Sub.once(r.msgs)
     expect(msg).toEqual({ t: 'got-msg-space', c: { userId: f.hostId, t: 'user-clicked-exit-screen-open-pack' } })
   })
 

@@ -42,7 +42,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
       return Ok(null)
     },
     sub(_hash) {
-      return Sub.None
+      return Sub.none()
     },
   }
 }

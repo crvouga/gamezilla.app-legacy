@@ -1,5 +1,5 @@
 import { ILogger } from '~/@/logger'
-import { PubSub } from '../sub'
+import { Sub } from '../sub'
 import { IRuntime, RuntimeEvent } from './interface'
 
 export type Config = {
@@ -8,7 +8,7 @@ export type Config = {
 }
 
 export const Runtime = (_config: Config): IRuntime => {
-  const events = PubSub.create<RuntimeEvent>()
+  const events = Sub.create<RuntimeEvent>()
 
   return {
     events,

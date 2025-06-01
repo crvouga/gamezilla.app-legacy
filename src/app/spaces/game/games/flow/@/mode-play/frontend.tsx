@@ -140,7 +140,7 @@ const subscriptions = <TMsg,>(
   map: (c: unknown) => TMsg,
 ): Sub<TMsg> => {
   const solutionHash = SolutionHash.init(input.ctx.flow)
-  if (!solutionHash) return Sub.None
+  if (!solutionHash) return Sub.none()
   return Sub.map(
     SolutionsLoaderFrontend.watch(input.ctx, solutionHash, (c) => GotSolutionsLoaderMsg.init(c)),
     map,

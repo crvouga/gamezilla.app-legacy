@@ -413,12 +413,10 @@ const TICK_RATE = TimeSpan.milliseconds(500)
 export const subscriptions = (intervalId: string, model: ModelBackend): Sub<MsgBackend> => {
   switch (model.t) {
     case 'started': {
-      return Time.interval(intervalId, TICK_RATE, () => ({
-        t: 'clock-tick',
-      }))
+      return Time.interval(intervalId, TICK_RATE, (): MsgBackend => ({ t: 'clock-tick' }))
     }
     default: {
-      return Sub.None
+      return Sub.none()
     }
   }
 }

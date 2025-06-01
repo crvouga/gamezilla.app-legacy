@@ -121,11 +121,11 @@ export const mergeWithBackend = ({
 export const subscriptions = (_ctx: AppFrontendCtx, model: Model): Sub<Msg> => {
   switch (model.type) {
     case 'game': {
-      return Sub.None
+      return Sub.none()
     }
 
     case 'setup': {
-      return Sub.None
+      return Sub.none()
     }
   }
 }

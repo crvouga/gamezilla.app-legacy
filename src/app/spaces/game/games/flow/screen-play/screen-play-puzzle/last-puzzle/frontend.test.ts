@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 
+import { Sub } from '~/@/sub'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { FixtureScreenPlayPuzzleFrontend } from '../@/fixture/frontend'
 import { LastPuzzleFrontend } from './frontend'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 
 const Fixture = async () => {
   const f = await FixtureScreenPlayPuzzleFrontend()
@@ -29,7 +30,7 @@ describe('LastPuzzleFrontend', () => {
     const rendered = f.render(output)
     const button = rendered.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.select-next-pack'))[0]
     button?.click()
-    const msg = await rendered.msgs.once()
+    const msg = await Sub.once(rendered.msgs)
     expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-select-next-pack', userId: f.hostId } })
   })
 
@@ -56,7 +57,7 @@ describe('LastPuzzleFrontend', () => {
     const button = r.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.select-next-pack'))[0]
     button?.click()
     expect(button).toBeTruthy()
-    const msg = await r.msgs.once()
+    const msg = await Sub.once(r.msgs)
     expect(msg).toEqual({
       t: 'got-msg-space',
       c: {

@@ -91,9 +91,7 @@ const updateFromMsg: Module['update'] = async (input) => {
 
 export const subscriptions: Module['subscriptions'] = async (input) => {
   if (isBotTurn(input.modelSpace)) {
-    return Time.interval('vs-bot', TimeSpan.seconds(1 / 2), () => ({
-      t: 'time-passed',
-    }))
+    return Time.interval('vs-bot', TimeSpan.seconds(1 / 2), (): MsgBackend => ({ t: 'time-passed' }))
   }
-  return Sub.None
+  return Sub.none()
 }

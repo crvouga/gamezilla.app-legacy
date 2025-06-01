@@ -1,6 +1,6 @@
 import { PowerSyncDatabase } from '@powersync/web'
 import Logger from 'js-logger'
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { AppSchema } from './database-schema'
 
 Logger.useDefaults()
@@ -19,7 +19,7 @@ export type PowerSyncDatabaseEvent =
 
 export type IPowerSyncClient = {
   database: PowerSyncDatabase
-  events: PubSub<PowerSyncDatabaseEvent>
+  events: Sub<PowerSyncDatabaseEvent>
 }
 
 export const newPowerSyncClient = async (input?: { test?: boolean }): Promise<IPowerSyncClient> => {
@@ -38,7 +38,7 @@ export const newPowerSyncClient = async (input?: { test?: boolean }): Promise<IP
     },
   })
 
-  const events = PubSub.create<PowerSyncDatabaseEvent>()
+  const events = Sub.create<PowerSyncDatabaseEvent>()
 
   database.init().then(() => {
     console.log('PowerSync initialized')

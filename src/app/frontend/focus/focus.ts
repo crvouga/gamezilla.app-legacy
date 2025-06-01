@@ -89,4 +89,4 @@ const updateFromCmd: typeof update = ({ msgIn, model }) => {
   return { model }
 }
 
-export const subscriptions: Sub<Msg> = Sub.None
+export const subscriptions: Sub<Msg> = Sub.none()

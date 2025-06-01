@@ -12,7 +12,7 @@ export const DbConnSql = (_config: Config): IDbConnSql => {
       StringConcat: (column, separator) => `GROUP_CONCAT(${column}, '${separator}')`,
     },
     sub() {
-      return Sub.None
+      return Sub.none()
     },
     async query() {
       return Ok([])

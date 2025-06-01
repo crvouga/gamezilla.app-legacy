@@ -7,7 +7,7 @@ import { ScreenLayoutHostSettingUpGame } from '../../../@/ui/screen-layout-host-
 import { PacksDbQuery } from '../../@/pack/pack-db/query'
 import { PackLoaderFrontend } from '../../@/pack/pack-loader/frontend'
 import { GotPackLoaderMsg } from '../../@/pack/pack-loader/got-pack-loader-msg'
-import type { FrontendModule } from '../types'
+import type { FrontendModule, MsgFrontend } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -42,10 +42,11 @@ const toQuery = (_input: { ctx: { currentUserId: UserId } }): PacksDbQuery => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return PackLoaderFrontend.watch(input.ctx, toQuery(input), (c) => ({
-    t: 'got-msg-out',
-    c: GotPackLoaderMsg.init(c),
-  }))
+  return PackLoaderFrontend.watch(
+    input.ctx,
+    toQuery(input),
+    (c): MsgFrontend => ({ t: 'got-msg-out', c: GotPackLoaderMsg.init(c) }),
+  )
 }
 
 const View: FrontendModule['View'] = (input) => {

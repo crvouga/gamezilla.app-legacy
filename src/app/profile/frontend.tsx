@@ -11,7 +11,7 @@ import { ScreenProfileFrontend } from './screen-profile/frontend'
 import { ScreenUpdateUsernameFrontend } from './screen-update-username/frontend'
 import { UpdateAvatarScreen } from './screen-update/update-avatar-screen'
 import { UpdateProfileScreen } from './screen-update/update-profile-screen'
-import type { FrontendModule, ModelFrontend } from './types'
+import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 
 const initCtx = (input: { ctx: AppFrontendCtxBase }): ProfileFrontendCtx => {
   return {
@@ -78,14 +78,16 @@ const updateFromMsg: FrontendModule['update'] = (input): ReturnType<FrontendModu
   }
 }
 
-const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return Sub.tag(
-    'got-profile-screen-msg',
+const subscriptions: FrontendModule['subscriptions'] = (input): Sub<MsgFrontend> => {
+  const sub: Sub<MsgFrontend> = Sub.map(
     ScreenProfileFrontend.subscriptions({
       ctx: input.ctx,
       model: input.model,
     }),
+    (c): MsgFrontend => ({ t: 'got-profile-screen-msg', c }),
   )
+
+  return sub
 }
 
 const View: FrontendModule['View'] = (input) => {

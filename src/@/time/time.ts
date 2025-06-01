@@ -1,5 +1,5 @@
 import type { Eff } from '../eff'
-import { PubSub, Sub } from '../sub'
+import { Sub } from '../sub'
 import { Posix } from './posix'
 import { TimeSpan } from './time-span'
 
@@ -43,12 +43,12 @@ const cancelTimeout = (timeoutId: string | number): Eff => {
 //
 //
 
-const intervals = new Map<string, PubSub<Posix>>()
+const intervals = new Map<string, Sub<Posix>>()
 
 const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
   const sub = intervals.get(intervalId)
 
-  if (sub && sub.subscriberCount() > 0) {
+  if (sub) {
     sub.pub(Posix.now())
 
     setTimeout(() => {
@@ -65,10 +65,10 @@ const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: Posix) =
   const sub = intervals.get(intervalId)
 
   if (sub) {
-    return Sub.map(PubSub.toSub(sub), () => f(Posix.now()))
+    return Sub.map(sub, () => f(Posix.now()))
   }
 
-  const subNew = PubSub.create<Posix>()
+  const subNew = Sub.create<Posix>()
 
   intervals.set(intervalId, subNew)
 
@@ -76,7 +76,7 @@ const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: Posix) =
     onTimeout(intervalId, timeSpan)
   }, TimeSpan.toMilliseconds(timeSpan))
 
-  return Sub.map(PubSub.toSub(subNew), f)
+  return Sub.map(subNew, f)
 }
 
 export const Time = {

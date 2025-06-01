@@ -2,13 +2,13 @@ import { describe, expect, test } from 'bun:test'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { ScreenUpdateUsernameFrontend } from './frontend'
 import { ModelFrontend, MsgFrontend } from './types'
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 
 const Fixture = async () => {
   const f = await FixtureAppFrontend()
 
   const render = (model: ModelFrontend) => {
-    const msgs = PubSub.create<MsgFrontend>()
+    const msgs = Sub.create<MsgFrontend>()
     return {
       ...f.render(<ScreenUpdateUsernameFrontend.View ctx={f.ctx} model={model} dispatch={msgs.pub} />),
       msgs,
@@ -41,7 +41,7 @@ describe(import.meta.file, () => {
     const button = r.getByRole('button', f.ctx.t('app.save'))[0]
     expect(button).toBeTruthy()
     button?.click()
-    const msg = await r.msgs.once()
+    const msg = await Sub.once(r.msgs)
     expect(msg.t).toBe('profile.update-username.clicked-save')
   })
 

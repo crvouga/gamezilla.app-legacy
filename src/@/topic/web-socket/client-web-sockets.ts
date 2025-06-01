@@ -1,5 +1,5 @@
 import { ILogger, Logger } from '~/@/logger'
-import { PubSub, Sub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -17,7 +17,7 @@ export type Config<T extends Contract<any>> = {
 }
 
 type TopicSubscriptionInfo = {
-  pubSub: PubSub<unknown>
+  pubSub: Sub<unknown>
   topicName: string[]
   topicParams: unknown
 }
@@ -226,8 +226,8 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
             logger.debug(`creating new local subscription for topic=${topicString}`)
             syncSubscriptionsWithServer('subscribe', topicName, topicParams)
 
-            const sub = PubSub.create()
-            const subNew: PubSub<any> = {
+            const sub = Sub.create()
+            const subNew: Sub<any> = {
               ...sub,
               sub(subscriber) {
                 const unsub = sub.sub((msg) => subscriber(mapper(msg)))

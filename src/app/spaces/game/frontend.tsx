@@ -166,7 +166,7 @@ const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
 }
 
 const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (input) => {
-  if (!input.ctx.currentUser) return Sub.None
+  if (!input.ctx.currentUser) return Sub.none()
 
   const frontendCtx: AppFrontendCtx = {
     ...input.ctx,
@@ -177,7 +177,7 @@ const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (inpu
 
   const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, frontendCtx.currentUser?.userId)
 
-  if (!spaceId) return Sub.None
+  if (!spaceId) return Sub.none()
 
   const spaceModel = input.model.spaces.spaces[spaceId]
 
@@ -185,7 +185,7 @@ const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (inpu
 
   const modelSpace = spaceState?.game
 
-  if (!modelSpace) return Sub.None
+  if (!modelSpace) return Sub.none()
 
   const gameModel = input.model.games[spaceId] ?? GamesFrontend.init(modelSpace.t)
 

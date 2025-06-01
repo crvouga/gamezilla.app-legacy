@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { Checkbox } from './checkbox'
 
@@ -32,26 +32,26 @@ describe(import.meta.file, () => {
 
   test.todo('clicking checkbox triggers onChange', async () => {
     const f = await Fixture()
-    const onChange = PubSub.create<boolean>()
+    const onChange = Sub.create<boolean>()
     const r = f.render(<Checkbox state='unchecked' onChange={onChange.pub} />)
     await r.query('[role="checkbox"]')[0]?.click()
-    expect(await onChange.once()).toBe(true)
+    expect(await Sub.once(onChange)).toBe(true)
 
     const r2 = f.render(<Checkbox state='checked' onChange={onChange.pub} />)
     await r2.query('[role="checkbox"]')[0]?.click()
-    expect(await onChange.once()).toBe(false)
+    expect(await Sub.once(onChange)).toBe(false)
   })
 
   test.todo('pressing enter triggers onChange', async () => {
     const f = await Fixture()
-    const onChange = PubSub.create<boolean>()
+    const onChange = Sub.create<boolean>()
     const r = f.render(<Checkbox state='unchecked' onChange={onChange.pub} />)
     await r.query('[role="checkbox"]')[0]?.keydown('Enter')
-    expect(await onChange.once()).toBe(true)
+    expect(await Sub.once(onChange)).toBe(true)
 
     const r2 = f.render(<Checkbox state='checked' onChange={onChange.pub} />)
     r2.query('[role="checkbox"]')[0]?.keydown('Enter')
-    expect(await onChange.once()).toBe(false)
+    expect(await Sub.once(onChange)).toBe(false)
   })
 
   test('should render as button when onChange provided', async () => {

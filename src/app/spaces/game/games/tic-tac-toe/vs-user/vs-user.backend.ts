@@ -303,11 +303,11 @@ export const updateFromEvent = ({
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model.type) {
     case 'setup': {
-      return Sub.None
+      return Sub.none()
     }
 
     case 'game-over': {
-      return Sub.None
+      return Sub.none()
     }
 
     case 'game': {
@@ -328,7 +328,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
         }
 
         case 'RoundOver': {
-          return Sub.None
+          return Sub.none()
         }
       }
     }

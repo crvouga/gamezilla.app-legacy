@@ -58,7 +58,7 @@ const update: BackendModule['update'] = async (_input) => {
 //
 
 const subscriptions: BackendModule['subscriptions'] = async (_input) => {
-  return Sub.None
+  return Sub.none()
 }
 
 export const ConnectFourBackend = {

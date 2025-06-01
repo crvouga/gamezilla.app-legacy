@@ -3,7 +3,7 @@ import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { PAGINATION_DOTS_TEST_ID, toPaginationDotSelector } from '~/@/ui/pagination-dots'
 import { PackPuzzleGridUI } from '.'
 import { PuzzleId } from '../../puzzle/puzzle-id'
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 
 const Fixture = async () => {
   const f = await FixtureAppFrontend()
@@ -46,7 +46,7 @@ describe(import.meta.file, () => {
   })
 
   it.skip('should change slide when clicking pagination dots', async () => {
-    const slideIndex = PubSub.create<number>()
+    const slideIndex = Sub.create<number>()
     const r = f.render(
       <PackPuzzleGridUI.View
         puzzleIds={Array.from({ length: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT * 2 }, PuzzleId.generate)}
@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
       />,
     )
     r.query(toPaginationDotSelector(1))[0]?.click()
-    expect(await slideIndex.once()).toEqual(1)
+    expect(await Sub.once(slideIndex)).toEqual(1)
   })
 
   test('slide title should show correct end position based on actual puzzle count', async () => {

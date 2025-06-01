@@ -1,5 +1,5 @@
 import { Ok, Result, unwrapOr } from '~/@/result'
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import type { Pack } from '../pack'
 import type { IPackDb } from './interface'
 import { PacksDbQuery } from './query'
@@ -12,7 +12,7 @@ export type Config = {
 
 export const PackDb = (_config: Config): IPackDb => {
   const queries = new Map<string, PacksDbQuery>()
-  const subs = new Map<string, PubSub<Pack[]>>()
+  const subs = new Map<string, Sub<Pack[]>>()
 
   const list: IPackDb['list'] = async (input) => {
     const all = Array.from(db.values())
@@ -51,7 +51,7 @@ export const PackDb = (_config: Config): IPackDb => {
     sub(input) {
       const queryKey = PacksDbQuery.toKey(input)
       queries.set(queryKey, input)
-      const sub = subs.get(queryKey) ?? PubSub.create()
+      const sub = subs.get(queryKey) ?? Sub.create()
       subs.set(queryKey, sub)
       return sub
     },

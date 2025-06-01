@@ -27,7 +27,7 @@ const watch = <TMsg,>(
   solutionHash: SolutionHash | null,
   map: (m: MsgFrontend) => TMsg,
 ): Sub<TMsg> => {
-  if (!solutionHash) return Sub.None
+  if (!solutionHash) return Sub.none()
 
   return Sub.map(ctx.solutionsDb.sub(solutionHash), (solutions) => map({ t: 'got-solutions-db-solutions', solutions }))
 }

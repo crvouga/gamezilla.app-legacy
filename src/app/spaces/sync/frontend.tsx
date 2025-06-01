@@ -4,7 +4,7 @@ import { Sub } from '~/@/sub'
 import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../core/core'
-import { MsgFrontend } from './types'
+import { MsgFrontend } from '../types'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -100,7 +100,7 @@ const updateSynced: SpaceFrontendModule['update'] = (input) => {
 const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
   const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
 
-  if (!currentUserSpaceId) return Sub.None
+  if (!currentUserSpaceId) return Sub.none()
 
   return input.ctx.topic.sync.msgSpace.subscribe(
     currentUserSpaceId,

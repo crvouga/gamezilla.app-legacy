@@ -126,8 +126,8 @@ const updateFromCmd: Module['update'] = (input) => {
 }
 
 export const subscriptions: Module['subscriptions'] = ({ model }) => {
-  if (!model.toast) return Sub.None
-  return Time.interval('toasts', model.toast.duration, () => ({ t: 'time-passed' }))
+  if (!model.toast) return Sub.none()
+  return Time.interval('toasts', model.toast.duration, (): Msg => ({ t: 'time-passed' }))
 }
 
 export const View: Module['View'] = (input) => {

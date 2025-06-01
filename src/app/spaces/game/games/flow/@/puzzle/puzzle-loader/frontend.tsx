@@ -58,7 +58,7 @@ const watch = <TMsg,>(
   map: (m: MsgFrontend) => TMsg,
 ): Sub<TMsg> => {
   if (!query) {
-    return Sub.None
+    return Sub.none()
   }
   return Sub.map(ctx.puzzleDb.sub(query), (puzzles) => map({ t: 'got-puzzle-db-puzzles', query, puzzles }))
 }

@@ -1,4 +1,4 @@
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 
 export type TransitionInput = {
   id: string
@@ -14,4 +14,4 @@ export type TransitionEvent = TransitionInput & {
   type: 'input'
 }
 
-export const transitionSub = PubSub.create<TransitionEvent>()
+export const transitionSub = Sub.create<TransitionEvent>()

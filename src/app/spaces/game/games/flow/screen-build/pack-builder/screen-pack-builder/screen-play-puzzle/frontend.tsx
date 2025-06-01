@@ -229,11 +229,11 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  if (input.modelSpace.screen.t !== 'screen-puzzle') return Sub.None
-  if (input.modelSpace.screen.puzzleResult.t !== 'got') return Sub.None
+  if (input.modelSpace.screen.t !== 'screen-puzzle') return Sub.none()
+  if (input.modelSpace.screen.puzzleResult.t !== 'got') return Sub.none()
   const flow = input.modelSpace.screen.puzzleResult.c.flow
   const play = input.modelSpace.screen.play
-  if (!play) return Sub.None
+  if (!play) return Sub.none()
   return ModePlayFrontend.subscriptions(
     { model: play, ctx: { ...input.ctx, flow } },
     (c): MsgFrontend => ({ t: 'got-msg-out', c: c }),

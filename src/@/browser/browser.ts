@@ -2,7 +2,7 @@ import type { Eff } from '../eff'
 import type { IO } from '../io'
 import { sleep } from '../promise/sleep'
 import { Result } from '../result'
-import { PubSub, Sub } from '../sub'
+import { Sub } from '../sub'
 import { TimeSpan } from '../time/time-span'
 
 //
@@ -18,7 +18,7 @@ export type Location = {
   query: { [key: string]: string }
 }
 
-const locationSub = PubSub.create<Location>()
+const locationSub = Sub.create<Location>()
 const handler = () => {
   locationSub.pub(location())
 }
@@ -94,58 +94,6 @@ export const back: Eff = () => {
     window.history.back()
     window.dispatchEvent(new Event('popstate'))
   }, 0)
-}
-
-type State = {
-  entries: PubSub<IntersectionObserverEntry>
-  observer: IntersectionObserver
-}
-
-const stateByHtmlId = new Map<string, State>()
-
-export const onIntersections = <T>(htmlId: string, mapper: (entry: IntersectionObserverEntry) => T): Sub<T> => {
-  const state = stateByHtmlId.get(htmlId)
-
-  if (state) {
-    return Sub.map(state.entries, mapper)
-  }
-
-  const element = document.getElementById(htmlId)
-
-  if (!element) {
-    return Sub.None
-  }
-
-  const pubSub = PubSub.create<IntersectionObserverEntry>()
-
-  const observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      pubSub.pub(entry)
-    }
-  })
-
-  observer.observe(element)
-
-  stateByHtmlId.set(htmlId, { entries: pubSub, observer })
-
-  return {
-    subscriberCount: () => pubSub.subscriberCount(),
-    chan: () => {
-      throw new Error('not implemented')
-    },
-    where: () => {
-      throw new Error('not implemented')
-    },
-    sub(subscriber) {
-      const unsub = pubSub.sub((msg) => {
-        subscriber(mapper(msg))
-      })
-      return () => {
-        unsub()
-        observer.disconnect()
-      }
-    },
-  }
 }
 
 //
@@ -227,7 +175,7 @@ export const getElementById =
 
 type VisibilityState = 'visible' | 'hidden'
 
-const documentVisibilityState = PubSub.create<VisibilityState>()
+const documentVisibilityState = Sub.create<VisibilityState>()
 
 export const onDocumentVisibilityState = <T>(fn: (state: VisibilityState) => T) => {
   return Sub.map(documentVisibilityState, fn)
@@ -246,7 +194,7 @@ export const getDocumentVisibilityState = (): VisibilityState => {
   return document.visibilityState
 }
 
-const windowWidth = PubSub.create<{ width: number }>()
+const windowWidth = Sub.create<{ width: number }>()
 
 export const onWindowResize = <T>(fn: (input: { width: number }) => T): Sub<T> => {
   return Sub.map(windowWidth, fn)

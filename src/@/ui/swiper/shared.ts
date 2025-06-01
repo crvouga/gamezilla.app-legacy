@@ -1,4 +1,4 @@
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
 
 export type PrivateSwiperInput = {
@@ -13,4 +13,4 @@ export type SwiperInput = PrivateSwiperInput & {
   children?: VDom
 }
 
-export const swiperInput = PubSub.create<SwiperInput>()
+export const swiperInput = Sub.create<SwiperInput>()

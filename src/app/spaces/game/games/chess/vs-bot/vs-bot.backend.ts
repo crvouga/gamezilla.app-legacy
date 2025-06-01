@@ -5,14 +5,7 @@ import { Sub } from '~/@/sub'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { Chess } from '../@/chess'
-import {
-  botMoved,
-  initBackend,
-  isBotTurn,
-  type ModelBackend,
-  type MsgBackend,
-  type MsgToBackend
-} from './vs-bot.types'
+import { botMoved, initBackend, isBotTurn, type ModelBackend, type MsgBackend, type MsgToBackend } from './vs-bot.types'
 
 //
 //
@@ -45,7 +38,6 @@ export const update = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  
 } => {
   if (msg.t === 'bot-moved') {
     const result = botMoved(msg.moved, model)
@@ -54,7 +46,6 @@ export const update = ({
 
     return {
       model: modelNew,
-  
     }
   }
 
@@ -68,7 +59,6 @@ export const updateFromFrontend = (input: {
 }): {
   model: Model
   eff?: Eff<Msg>
-  
 } => {
   const updated = updateFromFrontendMain(input)
 
@@ -133,7 +123,6 @@ export const updateFromEvent = ({
       }
       return {
         model: modelNew,
-        
       }
     }
     return { model }
@@ -151,5 +140,5 @@ export const updateFromEvent = ({
 //
 
 export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
-  return Sub.None
+  return Sub.none()
 }

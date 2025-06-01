@@ -7,6 +7,7 @@ import { BackendInstance } from '~/app/@/backend/backend-instance/backend-instan
 import { BackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { rpcContract, type BackendCtxModule } from './types'
+import { Sub } from '~/@/sub'
 
 const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtxModule> => {
   const backendInstanceDb = BackendInstanceDb({
@@ -25,9 +26,9 @@ const saga = function* (ctx: BackendCtxModule) {
 }
 
 const flowBackendInstanceState = function* (ctx: BackendCtxModule) {
-  const serverStartedChan = ctx.httpServer.events.where((e) => e.t === 'http-server/started').chan()
-  const serverStoppingChan = ctx.httpServer.events.where((e) => e.t === 'http-server/stopping').chan()
-  const runtimeStoppingChan = ctx.runtime.events.where((e) => e.t === 'runtime/stopping').chan()
+  const serverStartedChan = Sub.chan(Sub.where(ctx.httpServer.events, (e) => e.t === 'http-server/started'))
+  const serverStoppingChan = Sub.chan(Sub.where(ctx.httpServer.events, (e) => e.t === 'http-server/stopping'))
+  const runtimeStoppingChan = Sub.chan(Sub.where(ctx.runtime.events, (e) => e.t === 'runtime/stopping'))
 
   const event = yield* take(serverStartedChan)
 

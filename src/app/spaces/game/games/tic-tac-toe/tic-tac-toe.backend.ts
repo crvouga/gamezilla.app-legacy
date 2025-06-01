@@ -202,13 +202,13 @@ const initMode = ({ mode, userId }: { mode: ModelBackend['t']; userId: UserId })
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model.t) {
     case 'vs-bot': {
-      return Sub.tag('vs-bot', VsBot.subscriptions(model.c))
+      return Sub.map(VsBot.subscriptions(model.c), (c): Msg => ({ t: 'vs-bot', c }))
     }
     case 'vs-user': {
-      return Sub.tag('vs-user', VsUser.subscriptions(intervalId, model.c))
+      return Sub.map(VsUser.subscriptions(intervalId, model.c), (c): Msg => ({ t: 'vs-user', c }))
     }
     case 'none': {
-      return Sub.None
+      return Sub.none()
     }
   }
 }

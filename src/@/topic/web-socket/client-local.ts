@@ -1,5 +1,5 @@
 import { ILogger, Logger } from '~/@/logger'
-import { PubSub, Sub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { Client, Contract } from '../types'
 import { toTopicString } from './shared'
 
@@ -11,7 +11,7 @@ export type Config<T extends Contract<any>> = {
 
 export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T> => {
   const logger = Logger.prefix('client', config.logger)
-  const subByTopic = new Map<string, PubSub<unknown>>()
+  const subByTopic = new Map<string, Sub<unknown>>()
 
   const createClientRecursive = (currentContract: Contract<any>, runningTopicName: string[] = []): any => {
     const clientProxy: any = {}
@@ -46,7 +46,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
             }
 
             logger.debug(`subscribing to topic=${topicString}`)
-            const pubSub = PubSub.create()
+            const pubSub = Sub.create()
             subByTopic.set(topicString, pubSub)
 
             return {

@@ -41,7 +41,7 @@ const watch = <TMsg,>(
   map: (m: MsgFrontend) => TMsg,
 ): Sub<TMsg> => {
   if (!query) {
-    return Sub.None
+    return Sub.none()
   }
   return Sub.map(ctx.profileDb.sub(query), (profiles) => map({ t: 'got-profile-db-profiles', query, profiles }))
 }

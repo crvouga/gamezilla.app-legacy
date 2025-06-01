@@ -1,7 +1,7 @@
 import { ILogger, Logger } from '~/@/logger'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
-import { PubSub, Sub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { IPowerSyncClient } from '~/service-powersync/frontend/database'
 import { DbConnSqlQueryInput, IDbConnSql } from '../interface'
 
@@ -75,7 +75,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     string,
     {
       unsubscribe: () => void
-      pubSub: PubSub<unknown[]>
+      pubSub: Sub<unknown[]>
       unsubscribeTimeout?: ReturnType<typeof setTimeout>
     }
   >()
@@ -100,7 +100,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
       return activeSubscription.pubSub as Sub<TRow[]>
     }
 
-    const pubSub = PubSub.create<TRow[]>()
+    const pubSub = Sub.create<TRow[]>()
     let lastPublished: TRow[] | null = null
 
     const unsubscribe = subscribe({
@@ -122,7 +122,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     })
 
     activeSubscriptions.set(subscriptionKey, {
-      pubSub: pubSub as PubSub<unknown[]>,
+      pubSub: pubSub as Sub<unknown[]>,
       unsubscribe() {
         unsubscribe.then((unsub) => {
           unsub()
@@ -132,13 +132,9 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     })
 
     return {
-      chan: () => {
-        throw new Error('not implemented')
+      pub: async (msg: TRow[]) => {
+        pubSub.pub(msg)
       },
-      where: () => {
-        throw new Error('not implemented')
-      },
-      subscriberCount: () => pubSub.subscriberCount(),
       sub(subscriber: (rows: TRow[]) => void) {
         const unsub = pubSub.sub(subscriber)
         return () => {
@@ -156,10 +152,10 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     }
   }
 
-  const channels = new Map<string, PubSub<string>>()
+  const channels = new Map<string, Sub<string>>()
   const notify: IDbConnSql['notify'] = async (channel, payload) => {
     const got = channels.get(channel)
-    const chan = got ?? PubSub.create<string>()
+    const chan = got ?? Sub.create<string>()
     channels.set(channel, chan)
     chan.pub(payload)
     return Ok(null)
@@ -167,7 +163,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
 
   const listen: IDbConnSql['listen'] = async (channel, callback) => {
     const got = channels.get(channel)
-    const chan = got ?? PubSub.create<string>()
+    const chan = got ?? Sub.create<string>()
     channels.set(channel, chan)
     const unsub = chan.sub((payload) => {
       callback({ channel, payload })

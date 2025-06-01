@@ -1,4 +1,4 @@
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 
 export type Props = {
   id: string
@@ -6,4 +6,4 @@ export type Props = {
   onClickOutside?: () => void
 }
 
-export const propsSub = PubSub.create<Props>()
+export const propsSub = Sub.create<Props>()

@@ -2,7 +2,7 @@ import { ServerWebSocket } from 'bun'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { ILogger, Logger } from '~/@/logger'
 import { s } from '~/@/schema'
-import { PubSub, Sub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
@@ -29,7 +29,7 @@ export const initServer = <T extends Contract<any>>(config: {
 
   let bunServer: Bun.Server
 
-  const subByTopic = new Map<string, PubSub<unknown>>()
+  const subByTopic = new Map<string, Sub<unknown>>()
 
   const publish = (topicString: string, msg: ToClientMsgMany, ws: ServerWebSocket<BackendWebSocketData> | null) => {
     const encoded = JSON.stringify(msg)
@@ -192,8 +192,8 @@ export const initServer = <T extends Contract<any>>(config: {
             }
 
             logger.debug(`subscribing to topic=${topicString}`)
-            const pubSubInitial: PubSub<any> = PubSub.create()
-            const pubSub: PubSub<any> = {
+            const pubSubInitial: Sub<any> = Sub.create()
+            const pubSub: Sub<any> = {
               ...pubSubInitial,
               sub(subscriber) {
                 const unsub = pubSubInitial.sub((msg) => subscriber(mapper(msg)))

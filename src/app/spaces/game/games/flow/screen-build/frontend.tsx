@@ -8,7 +8,7 @@ import { ScreenPackBuilderFrontend } from './pack-builder/screen-pack-builder/fr
 import { ScreenPuzzleBuilderOpenFrontend } from './puzzle-builder/screen-puzzle-builder-open/frontend'
 import { ScreenPuzzleBuilderFrontend } from './puzzle-builder/screen-puzzle-builder/frontend'
 import { ScreenMainMenuFrontend } from './screen-main-menu/frontend'
-import { initFrontend, type FrontendModule } from './types'
+import { initFrontend, type FrontendModule, MsgFrontend } from './types'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen(
@@ -130,11 +130,11 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
     }
     case 'screen-pack-builder': {
       if (!input.modelSpace.screenPackBuilder) {
-        return Sub.None
+        return Sub.none()
       }
-      return Sub.tag(
-        'got-screen-pack-builder-msg',
+      return Sub.map(
         ScreenPackBuilderFrontend.subscriptions({ ...input, modelSpace: input.modelSpace.screenPackBuilder }),
+        (c): MsgFrontend => ({ t: 'got-screen-pack-builder-msg', c }),
       )
     }
   }

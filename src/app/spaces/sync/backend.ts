@@ -5,6 +5,7 @@ import { RPC } from '~/@/rpc'
 import { Space } from '../core/space'
 import { BackendCtxModule } from '../types'
 import { rpcContract } from './types'
+import { Sub } from '~/@/sub'
 
 const rpc = (config: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
@@ -35,7 +36,7 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
 }
 
 const saga = function* (ctx: BackendCtxModule) {
-  const msgSpaceChan = ctx.topic.sync.msgSpaceAll.subscribe(null, (c) => c).chan()
+  const msgSpaceChan = Sub.chan(ctx.topic.sync.msgSpaceAll.subscribe(null, (c) => c))
 
   yield takeEvery(msgSpaceChan, function* (c) {
     ctx.logger.info('syncing msgSpace', c)

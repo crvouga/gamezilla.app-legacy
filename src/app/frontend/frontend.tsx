@@ -141,12 +141,15 @@ const subscriptions = (input: {
   model: ModelFrontend
 }): Sub<MsgFrontend> => {
   return Sub.batch<MsgFrontend>([
-    Sub.tag('visibility', VisibilityFrontend.subscriptions),
-    Sub.tag('focus', FocusFrontend.subscriptions),
-    Sub.tag('copy-to-clipboard', CopyToClipboardFrontend.subscriptions),
-    Sub.tag('screen-size', ScreenSizeFrontend.subscriptions),
-    Sub.tag('current-screen', CurrentScreenFrontend.subscriptions),
-    Sub.tag('toast', ToastFrontend.subscriptions({ ctx: input.ctx, model: input.model.toast })),
+    Sub.map(VisibilityFrontend.subscriptions, (c): MsgFrontend => ({ t: 'visibility', c })),
+    Sub.map(FocusFrontend.subscriptions, (c): MsgFrontend => ({ t: 'focus', c })),
+    Sub.map(CopyToClipboardFrontend.subscriptions, (c): MsgFrontend => ({ t: 'copy-to-clipboard', c })),
+    Sub.map(ScreenSizeFrontend.subscriptions, (c): MsgFrontend => ({ t: 'screen-size', c })),
+    Sub.map(CurrentScreenFrontend.subscriptions, (c): MsgFrontend => ({ t: 'current-screen', c })),
+    Sub.map(
+      ToastFrontend.subscriptions({ ctx: input.ctx, model: input.model.toast }),
+      (c): MsgFrontend => ({ t: 'toast', c }),
+    ),
   ])
 }
 

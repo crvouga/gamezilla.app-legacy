@@ -95,7 +95,7 @@ const updateRequest = (response: Response, model: Model): [Model, Eff<Msg>] => {
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model.status) {
     case 'Paused': {
-      return Sub.None
+      return Sub.none()
     }
 
     case 'Playing': {

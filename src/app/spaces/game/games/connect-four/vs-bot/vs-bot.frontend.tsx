@@ -267,7 +267,7 @@ const updateSound = (currentUserId: UserId, modelSpace: ModelSpace, msgSpace: Wi
 //
 
 const subscriptions: Module['subscriptions'] = (): Sub<MsgFrontend> => {
-  return Sub.None
+  return Sub.none()
 }
 
 //

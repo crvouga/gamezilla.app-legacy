@@ -320,23 +320,29 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
   const ctx = toCtx(input)
 
   return Sub.batch<MsgFrontend>([
-    Sub.tag('frontend', FrontendFrontend.subscriptions({ ctx, model: input.model.frontend })),
-    Sub.tag(
-      'wire',
+    Sub.map(
+      FrontendFrontend.subscriptions({ ctx, model: input.model.frontend }),
+      (c): MsgFrontend => ({ t: 'frontend', c }),
+    ),
+    Sub.map(
       WireFrontend.subscriptions({
         ctx: { ...ctx, topic: ctx.topic.wire, rpc: ctx.rpc.wire },
         model: input.model.wire,
       }),
+      (c): MsgFrontend => ({ t: 'wire', c }),
     ),
-    Sub.tag('lang', LangFrontend.subscriptions({ ctx, model: input.model.lang })),
-    Sub.tag('auth', AuthFrontend.subscriptions({ ctx, model: input.model.auth })),
-    Sub.tag('profile', ProfileFrontend.subscriptions({ ctx, model: input.model.profile })),
-    Sub.tag(
-      'spaces',
+    Sub.map(LangFrontend.subscriptions({ ctx, model: input.model.lang }), (c): MsgFrontend => ({ t: 'lang', c })),
+    Sub.map(AuthFrontend.subscriptions({ ctx, model: input.model.auth }), (c): MsgFrontend => ({ t: 'auth', c })),
+    Sub.map(
+      ProfileFrontend.subscriptions({ ctx, model: input.model.profile }),
+      (c): MsgFrontend => ({ t: 'profile', c }),
+    ),
+    Sub.map(
       SpacesFrontend.subscriptions({
         ctx: { ...ctx, topic: input.ctx.topic.spaces, rpc: input.ctx.rpc.spaces },
         model: input.model.spaces,
       }),
+      (c): MsgFrontend => ({ t: 'spaces', c }),
     ),
   ])
 }

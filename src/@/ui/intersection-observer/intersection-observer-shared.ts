@@ -1,4 +1,4 @@
-import { PubSub } from '~/@/sub'
+import { Sub } from '~/@/sub'
 
 export type IntersectionObserverEmitterinput = {
   onVisible?: () => void
@@ -12,4 +12,4 @@ export type IntersectionObserverEmitterEvent = {
   input: IntersectionObserverEmitterinput
 }
 
-export const sub = PubSub.create<IntersectionObserverEmitterEvent>()
+export const sub = Sub.create<IntersectionObserverEmitterEvent>()
