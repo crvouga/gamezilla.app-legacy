@@ -20,18 +20,18 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
         pub(topicParams, msg) {
           const topic = toTopic(topicName, topicParams)
 
-          const existing = subscriptionsByTopic.get(topic)
+          const subscription = subscriptionsByTopic.get(topic)
 
-          if (!existing) return
+          if (!subscription) return
 
-          existing.pub(msg)
+          subscription.pub(msg)
         },
         sub(topicParams, mapper) {
           const topic = toTopic(topicName, topicParams)
 
-          const existing = subscriptionsByTopic.get(topic)
+          const subscription = subscriptionsByTopic.get(topic)
 
-          if (existing) return existing
+          if (subscription) return subscription
 
           const pubSub = Sub.create<any>()
 

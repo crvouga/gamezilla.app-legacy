@@ -45,9 +45,9 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
         sub(topicParams, mapper) {
           const topic = toTopic(topicName, topicParams)
 
-          const existing = clientCore.subscriptionsByTopic.get(topic)
+          const subscription = clientCore.subscriptionsByTopic.get(topic)
 
-          if (existing) return existing.pubSub
+          if (subscription) return subscription.pubSub
 
           const pubSub = Sub.create<any>()
 

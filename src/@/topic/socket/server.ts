@@ -37,7 +37,14 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
       const clientNode: ClientNode<TContract, typeof topicName> = {
         pub(topicParams, msg) {
           const topic = toTopic(topicName, topicParams)
+
           serverCore.publish(topic, [PUB, topicName, topicParams, msg], null)
+
+          const subscription = serverCore.subscriptionsByTopic.get(topic)
+
+          if (!subscription) return
+
+          subscription.pubSub.pub(msg)
         },
         sub(topicParams, mapper) {
           const topic = toTopic(topicName, topicParams)
@@ -87,14 +94,14 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
 
     bunServer.publish(topic, msgString)
 
-    const existingSub = subscriptionsByTopic.get(topic)
+    const subscription = subscriptionsByTopic.get(topic)
 
-    if (!existingSub) return
+    if (!subscription) return
 
     const msgPayload = msg[2]
 
     if (!ws) {
-      existingSub.pubSub.pub(msgPayload)
+      subscription.pubSub.pub(msgPayload)
       return
     }
 
@@ -105,7 +112,7 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
       clientSessionId: ws.data.clientSessionId,
     }
 
-    existingSub.pubSub.pub(msgPayloadWithMeta)
+    subscription.pubSub.pub(msgPayloadWithMeta)
   }
 
   config.httpServer._setWebSocketHandler({
