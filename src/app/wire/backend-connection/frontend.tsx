@@ -34,7 +34,7 @@ const update: FrontendModule['update'] = (input) => {
           }),
         },
         eff: () => {
-          input.ctx.topic['wire.backend-connection.ping-all'].publish(null, { pingId: msg.pingId })
+          input.ctx.topic['wire.backend-connection.ping'].publish(null, { pingId: msg.pingId })
         },
       }
     }

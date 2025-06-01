@@ -1,5 +1,5 @@
 import { runSaga } from 'redux-saga'
-import { delay, fork, race, take, takeEvery } from 'typed-redux-saga'
+import { call, delay, race, take, takeEvery } from 'typed-redux-saga'
 import { ILogger } from '~/@/logger'
 import { s } from '~/@/schema'
 import { PubSub, Sub } from '~/@/sub'
@@ -49,7 +49,7 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
 
         activeSubscriptionsServer.clear()
 
-        socket.close()
+        socket.cmds.pub({ t: 'close' })
 
         yield* delay(1000)
 
@@ -65,15 +65,15 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
       yield* race({
         close: take(Sub.chan(socket.msgsClose)),
         error: take(Sub.chan(socket.msgsError)),
-        toServer: fork(sagaToServer, socket),
-        fromServer: fork(sagaFromServer, socket),
+        toServer: call(sagaToServer, socket),
+        fromServer: call(sagaFromServer, socket),
       })
 
       config.logger.info('Disconnected or connection error.', { socketUrl })
 
       activeSubscriptionsServer.clear()
 
-      socket.close()
+      socket.cmds.pub({ t: 'close' })
 
       yield* delay(1000)
     }
@@ -120,15 +120,12 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
     fn: (action: 'subscribe' | 'unsubscribe', topicString: string, topicName: string[], topicParams: unknown) => {
       switch (action) {
         case 'subscribe': {
+          if (activeSubscriptions.has(topicString)) return
           msgsToServer.pub(['sub', topicName, topicParams])
           return
         }
         case 'unsubscribe': {
-          if (!activeSubscriptionsServer.has(topicString) && activeSubscriptions.has(topicString)) {
-          }
-          if (!activeSubscriptions.has(topicString)) {
-            return
-          }
+          if (!activeSubscriptions.has(topicString)) return
           msgsToServer.pub(['unsub', topicName, topicParams])
           return
         }
@@ -173,14 +170,13 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
             }
           },
         }
-        const newActiveSub: ActiveSubscription = {
+
+        activeSubscriptions.set(topicString, {
           pubSub: pubSubMapped,
           topicString,
           topicName: topicNameParts,
           topicParams: topicParams,
-        }
-
-        activeSubscriptions.set(topicString, newActiveSub)
+        })
 
         return pubSubMapped
       },
@@ -196,43 +192,49 @@ const createSocket = (url: string) => {
   const msgsError = Sub.create<{ t: 'error'; error: Event }>()
   const msgsToServer = Sub.create<ToServerMsg>()
   const msgsFromServer = Sub.create<ToClientMsg>()
-  const webSocket = new WebSocket(url)
+  const cmds = Sub.create<{ t: 'close' }>()
+  const ws = new WebSocket(url)
 
-  webSocket.onopen = () => {
+  ws.onopen = () => {
     msgsOpen.pub({ t: 'opened' })
   }
 
-  webSocket.onclose = () => {
+  ws.onclose = () => {
     msgsClose.pub({ t: 'closed' })
   }
 
-  webSocket.onerror = (error) => {
+  ws.onerror = (error) => {
     msgsError.pub({ t: 'error', error })
   }
 
-  webSocket.onmessage = (event) => {
+  ws.onmessage = (event) => {
     const toClientMsg: ToClientMsg = JSON.parse(event.data as string) as ToClientMsg
     msgsFromServer.pub(toClientMsg)
   }
 
-  const close = () => {
-    if (webSocket.readyState === WebSocket.OPEN) {
-      webSocket.close()
-    }
+  cmds.sub((cmd) => {
+    switch (cmd.t) {
+      case 'close': {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.close()
+        }
 
-    if (webSocket.readyState === WebSocket.CONNECTING) {
-      setTimeout(close, 1000)
-      return
-    }
+        if (ws.readyState === WebSocket.CONNECTING) {
+          setTimeout(() => cmds.pub({ t: 'close' }), 1000)
+          return
+        }
 
-    webSocket.onopen = null
-    webSocket.onclose = null
-    webSocket.onerror = null
-    webSocket.onmessage = null
-  }
+        ws.onopen = null
+        ws.onclose = null
+        ws.onerror = null
+        ws.onmessage = null
+        return
+      }
+    }
+  })
 
   msgsToServer.sub((toServer) => {
-    webSocket.send(JSON.stringify(toServer))
+    ws.send(JSON.stringify(toServer))
   })
 
   return {
@@ -241,7 +243,7 @@ const createSocket = (url: string) => {
     msgsError,
     msgsToServer,
     msgsFromServer,
-    close,
+    cmds,
   }
 }
 
