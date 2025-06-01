@@ -9,6 +9,7 @@ import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PingId } from './ping-id'
+import { PING_RATE } from './ping-rate'
 
 export type PingItem = {
   pingId: PingId
@@ -23,7 +24,7 @@ export type Model = {
 
 export const initModel = (): Model => {
   return {
-    pingRate: TimeSpan.seconds(1),
+    pingRate: PING_RATE,
     pings: CappedOrderedDict.init({ maxSize: 5 }),
   }
 }

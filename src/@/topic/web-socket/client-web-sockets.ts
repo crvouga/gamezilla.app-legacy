@@ -129,7 +129,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     }
 
     const sendThrottledByTopic = throttleByKey({
-      behavior: 'leading',
+      behavior: 'trailing',
       keyFn: (msg) => msg[1],
       throttle: TimeSpan.seconds(3),
       fn: send,

@@ -2,16 +2,16 @@ import { TimeSpan } from '../time/time-span'
 
 export type ThrottleBehavior = 'leading' | 'trailing' | 'drop'
 
-export const throttleByKey = <T extends unknown[]>(config: {
+export const throttleByKey = <TArgs extends unknown[]>(config: {
   throttle: TimeSpan
-  keyFn: (...args: T) => string
-  fn: (...args: T) => void
+  keyFn: (...args: TArgs) => string
+  fn: (...args: TArgs) => void
   behavior: ThrottleBehavior
 }) => {
   const lastCall = new Map<string, number>()
-  const pendingCalls = new Map<string, { args: T; timeout: NodeJS.Timeout }>()
+  const pendingCalls = new Map<string, { args: TArgs; timeout: NodeJS.Timeout }>()
 
-  return (...args: T) => {
+  return (...args: TArgs) => {
     const key = config.keyFn(...args)
     const now = Date.now()
     const last = lastCall.get(key) ?? 0

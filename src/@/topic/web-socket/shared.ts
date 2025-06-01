@@ -5,9 +5,9 @@ const MsgPayload = s.dict(s.str(), s.unknown)
 
 const Topic = s.str()
 
-export const SUB = 's'
-export const UNSUB = 'u'
-export const PUB = 'p'
+export const SUB = 'sub'
+export const UNSUB = 'unsub'
+export const PUB = 'pub'
 
 export const ToServerMsg = s.or(
   s.tuple(s.l(SUB), Topic),
