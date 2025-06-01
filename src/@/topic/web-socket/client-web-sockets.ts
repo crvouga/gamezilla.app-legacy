@@ -20,17 +20,61 @@ export type Config<T extends ContractBase> = {
   logger: ILogger
 }
 
-type ActiveSubscription = {
-  pubSub: PubSub<any>
-  topicString: string
-  topicName: string
-  topicParams: unknown
+export const initClient = <T extends Record<string, Topic<any, any>>>(config: Config<T>): Client<T> => {
+  const clientCore = initClientCore(config)
+
+  const client = Object.entries(config.contract)
+    .map(([topicName, topic]) => {
+      return [
+        topicName,
+        {
+          publish: (topicParams: s.Infer<typeof topic.params>, msg: s.Infer<typeof topic.msg>) => {
+            const topicString = toTopicString(topicName, topicParams)
+            clientCore.publish(topicString, msg)
+          },
+          subscribe: <TMsgOut>(
+            topicParams: s.Infer<typeof topic.params>,
+            mapper: (msgWithMeta: s.Infer<typeof topic.msg> & MsgMeta) => TMsgOut,
+          ): Sub<TMsgOut> => {
+            const topicString = toTopicString(topicName, topicParams)
+
+            clientCore.subscribe(topicString)
+
+            const existing = clientCore.getSub(topicString)
+
+            if (existing) return existing
+
+            const pubSub = Sub.create<s.Infer<typeof topic.msg> & MsgMeta>()
+
+            const pubSubMapped: PubSub<TMsgOut> = {
+              ...pubSub,
+              sub: (subscriber) => {
+                const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
+                return () => {
+                  clientCore.unsubscribe(topicString)
+                  unsub()
+                }
+              },
+            }
+
+            clientCore.putSub(topicString, pubSubMapped)
+
+            return pubSubMapped
+          },
+        },
+      ] as const
+    })
+    .reduce((acc, [topicName, topic]) => {
+      acc[topicName as keyof T] = topic
+      return acc
+    }, {} as Client<T>)
+
+  return client
 }
 
-export const initClient = <T extends Record<string, Topic<any, any>>>(config: Config<T>): Client<T> => {
+const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Config<T>) => {
   const msgsToServer = Sub.create<ToServerMsg>()
-
-  const activeSubscriptions = new Map<string, ActiveSubscription>()
+  const activeSubscriptions = new Map<string, PubSub<any>>()
   const activeSubscriptionsServer = new Set<string>()
 
   runSaga({}, saga)
@@ -62,9 +106,9 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
         continue
       }
 
-      for (const activeSubscription of activeSubscriptions.values()) {
-        msgsToServer.pub(['sub', activeSubscription.topicName, activeSubscription.topicParams])
-        config.logger.info('subscribed to topic', activeSubscription.topicName)
+      for (const topicString of activeSubscriptions.keys()) {
+        msgsToServer.pub(['sub', topicString])
+        config.logger.info('subscribed to topic', topicString)
       }
 
       const closed = yield* race({
@@ -97,14 +141,12 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
 
       switch (toServer[0]) {
         case 'sub': {
-          const topicString = toTopicString(toServer[1], toServer[2])
-          if (activeSubscriptionsServer.has(topicString)) return
+          if (activeSubscriptionsServer.has(toServer[1])) return
           socket.send(toServer)
           return
         }
         case 'unsub': {
-          const topicString = toTopicString(toServer[1], toServer[2])
-          if (!activeSubscriptionsServer.has(topicString)) return
+          if (!activeSubscriptionsServer.has(toServer[1])) return
           socket.send(toServer)
           return
         }
@@ -120,22 +162,17 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
     yield takeEvery(Sub.chan(socket.msgsFromServer), function* (fromServer) {
       switch (fromServer[0]) {
         case 'sub': {
-          const topicString = toTopicString(fromServer[1], fromServer[2])
-          activeSubscriptionsServer.add(topicString)
+          activeSubscriptionsServer.add(fromServer[1])
           return
         }
         case 'unsub': {
-          const topicString = toTopicString(fromServer[1], fromServer[2])
-          activeSubscriptionsServer.delete(topicString)
+          activeSubscriptionsServer.delete(fromServer[1])
           return
         }
         case 'pub': {
-          const topicString = toTopicString(fromServer[1], fromServer[2])
-          const activeSubscription = activeSubscriptions.get(topicString)
+          const activeSubscription = activeSubscriptions.get(fromServer[1])
           if (!activeSubscription) return
-          const msgPayload = JSON.parse(fromServer[3] as string)
-          const combinedMsg = { ...(msgPayload as any) }
-          activeSubscription.pubSub.pub(combinedMsg)
+          activeSubscription.pub(fromServer[2])
           return
         }
       }
@@ -144,62 +181,40 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
 
   const syncSubscription = throttleByKey({
     behavior: 'leading',
-    fn: (type: 'sub' | 'unsub', topicName: string, topicParams: unknown) => {
-      msgsToServer.pub([type, topicName, topicParams])
+    fn: (type: 'sub' | 'unsub', topicString: string) => {
+      msgsToServer.pub([type, topicString])
     },
-    keyFn: (type, topicName, topicParams) => {
-      return `${type}${toTopicString(topicName, topicParams)}`
+    keyFn: (_type, topicString) => {
+      return topicString
     },
     throttle: TimeSpan.seconds(3),
   })
 
-  return Object.entries(config.contract)
-    .map(([topicName, topic]) => {
-      return [
-        topicName,
-        {
-          publish: (topicParams: s.Infer<typeof topic.params>, msg: s.Infer<typeof topic.msg>) => {
-            msgsToServer.pub(['pub', topicName, topicParams, JSON.stringify(msg)])
-          },
-          subscribe: <TMsgOut>(
-            topicParams: s.Infer<typeof topic.params>,
-            mapper: (msgWithMeta: s.Infer<typeof topic.msg> & MsgMeta) => TMsgOut,
-          ): Sub<TMsgOut> => {
-            const topicString = toTopicString(topicName, topicParams)
+  const publish = (topicString: string, msg: unknown) => {
+    msgsToServer.pub(['pub', topicString, JSON.stringify(msg)])
+  }
 
-            syncSubscription('sub', topicName, topicParams)
+  const subscribe = (topicString: string) => {
+    syncSubscription('sub', topicString)
+  }
 
-            const existingActiveSub = activeSubscriptions.get(topicString)
+  const unsubscribe = (topicString: string) => {
+    syncSubscription('unsub', topicString)
+  }
 
-            if (existingActiveSub) return existingActiveSub.pubSub
+  const getSub = (topicString: string) => {
+    return activeSubscriptions.get(topicString)
+  }
 
-            const pubSub = Sub.create<s.Infer<typeof topic.msg> & MsgMeta>()
+  const putSub = (topicString: string, pubSub: PubSub<any>) => {
+    activeSubscriptions.set(topicString, pubSub)
+  }
 
-            const pubSubMapped: PubSub<TMsgOut> = {
-              ...pubSub,
-              sub: (subscriber) => {
-                const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
-                return () => {
-                  syncSubscription('unsub', topicName, topicParams)
-                  unsub()
-                }
-              },
-            }
-
-            activeSubscriptions.set(topicString, {
-              pubSub: pubSubMapped,
-              topicString,
-              topicName,
-              topicParams,
-            })
-
-            return pubSubMapped
-          },
-        },
-      ] as const
-    })
-    .reduce((acc, [topicName, topic]) => {
-      acc[topicName as keyof T] = topic
-      return acc
-    }, {} as Client<T>)
+  return {
+    publish,
+    subscribe,
+    unsubscribe,
+    getSub,
+    putSub,
+  }
 }

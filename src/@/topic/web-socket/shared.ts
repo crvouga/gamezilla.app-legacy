@@ -1,25 +1,19 @@
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { s } from '~/@/schema'
 
-const TopicName = s.str()
-const TopicParams = s.unknown
-
 export const ToServerMsg = s.or(
-  s.tuple(s.l('sub'), TopicName, TopicParams),
-  s.tuple(s.l('unsub'), TopicName, TopicParams),
-  s.tuple(s.l('pub'), TopicName, TopicParams, s.str()),
+  s.tuple(s.l('sub'), s.str()),
+  s.tuple(s.l('unsub'), s.str()),
+  s.tuple(s.l('pub'), s.str(), s.unknown),
 )
 
 export type ToServerMsg = s.Infer<typeof ToServerMsg>
 
-export const ToClientMsgOne = s.or(
-  s.tuple(s.l('sub'), TopicName, TopicParams),
-  s.tuple(s.l('unsub'), TopicName, TopicParams),
-)
+export const ToClientMsgOne = s.or(s.tuple(s.l('sub'), s.str()), s.tuple(s.l('unsub'), s.str()))
 
 export type ToClientMsgOne = s.Infer<typeof ToClientMsgOne>
 
-export const ToClientMsgMany = s.or(s.tuple(s.l('pub'), TopicName, TopicParams, s.str()))
+export const ToClientMsgMany = s.or(s.tuple(s.l('pub'), s.str(), s.unknown))
 
 export type ToClientMsgMany = s.Infer<typeof ToClientMsgMany>
 

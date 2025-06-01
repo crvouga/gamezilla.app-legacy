@@ -23,7 +23,7 @@ export type Model = {
 
 export const initModel = (): Model => {
   return {
-    pingRate: TimeSpan.seconds(5),
+    pingRate: TimeSpan.seconds(1),
     pings: CappedOrderedDict.init({ maxSize: 5 }),
   }
 }

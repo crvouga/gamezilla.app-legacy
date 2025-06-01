@@ -9,7 +9,7 @@ import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Client, ContractBase, MsgMeta, Topic } from '../types'
-import { ToClientMsgMany, ToClientMsgOne, ToServerMsg, toTopicString } from './shared'
+import { ToClientMsg, ToClientMsgOne, toTopicString } from './shared'
 
 export type BackendWebSocketData = {
   clientId: ClientId
@@ -31,34 +31,30 @@ export const initServer = <TContract extends ContractBase>(config: {
 
   const subByTopic = new Map<string, PubSub<unknown>>()
 
-  const publish = (topicString: string, msg: ToClientMsgMany, ws: ServerWebSocket<BackendWebSocketData> | null) => {
-    const encoded = JSON.stringify(msg)
+  const publish = (topicString: string, payload: unknown, ws: ServerWebSocket<BackendWebSocketData> | null) => {
+    const payloadString = JSON.stringify(payload)
 
-    if (ws) {
-      logger.debug(`Forwarding message from clientId=${ws.data.clientId} to topic=${topicString} via Bun.publish`)
-    } else {
-      logger.debug(`Publishing server-initiated message to topic=${topicString} via Bun.publish`)
-    }
-    bunServer.publish(topicString, encoded)
+    bunServer.publish(topicString, payloadString)
 
     const existingSub = subByTopic.get(topicString)
-    if (existingSub) {
-      let jsonPayload = JSON.parse(msg[3])
-      if (ws) {
-        jsonPayload = {
-          ...jsonPayload,
-          clientId: ws.data.clientId,
-          sessionId: ws.data.sessionId,
-          clientSessionId: ws.data.clientSessionId,
-        }
-        logger.debug(
-          `Delivering message from clientId=${ws.data.clientId} to local server subscribers of topic=${topicString}`,
-        )
-      } else {
-        logger.debug(`Delivering server-initiated message to local server subscribers of topic=${topicString}`)
-      }
-      existingSub.pub(jsonPayload)
+
+    if (!existingSub) {
+      return
     }
+
+    if (!ws) {
+      existingSub.pub(payload)
+      return
+    }
+
+    const payloadWithMeta = {
+      ...(payload as any),
+      clientId: ws.data.clientId,
+      sessionId: ws.data.sessionId,
+      clientSessionId: ws.data.clientSessionId,
+    }
+
+    existingSub.pub(payloadWithMeta)
   }
 
   config.httpServer._setWebSocketHandler({
@@ -73,37 +69,35 @@ export const initServer = <TContract extends ContractBase>(config: {
         `websocket message received clientId=${ws.data.clientId} sessionId=${ws.data.sessionId} message=${message}`,
       )
 
-      const toServerMsg: ToServerMsg = JSON.parse(message) as ToServerMsg
+      const msg: ToClientMsg = JSON.parse(message)
 
-      switch (toServerMsg[0]) {
+      switch (msg[0]) {
         case 'sub': {
-          const topicString = toTopicString(toServerMsg[1], toServerMsg[2])
-          ws.subscribe(topicString)
-          const toClientMsg: ToClientMsgOne = ['sub', toServerMsg[1], toServerMsg[2]]
+          ws.subscribe(msg[1])
+          const toClientMsg: ToClientMsgOne = ['sub', msg[1]]
           ws.send(JSON.stringify(toClientMsg))
           logger.debug(
-            `websocket subscribed ${topicString} subscriberCount=${bunServer.subscriberCount(topicString)} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId} `,
+            `websocket subscribed ${msg[1]} subscriberCount=${bunServer.subscriberCount(msg[1])} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId} `,
           )
           return
         }
         case 'pub': {
-          const topicString = toTopicString(toServerMsg[1], toServerMsg[2])
-          publish(topicString, ['pub', toServerMsg[1], toServerMsg[2], toServerMsg[3]], ws)
-
+          publish(msg[1], msg[2], ws)
           return
         }
         case 'unsub': {
-          const topicString = toTopicString(toServerMsg[1], toServerMsg[2])
-          ws.unsubscribe(topicString)
+          ws.unsubscribe(msg[1])
+          const toClientMsg: ToClientMsgOne = ['unsub', msg[1]]
+          ws.send(JSON.stringify(toClientMsg))
           logger.debug(
-            `websocket unsubscribed ${topicString} subscriberCount=${bunServer.subscriberCount(topicString)} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId} `,
+            `websocket unsubscribed ${msg[1]} subscriberCount=${bunServer.subscriberCount(msg[1])} clientId=${ws.data.clientId} sessionId=${ws.data.sessionId} `,
           )
 
           return
         }
         default: {
           logger.warn(
-            `Unhandled message type from clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}: ${toServerMsg[0]}`,
+            `Unhandled message type from clientId=${ws.data.clientId} sessionId=${ws.data.sessionId}: ${msg[0]}`,
           )
           return
         }
@@ -169,7 +163,7 @@ export const initServer = <TContract extends ContractBase>(config: {
     clientProxy[topicName as keyof TContract] = {
       publish: (topicParams: s.Infer<typeof topicDef.params>, messageContent: s.Infer<typeof topicDef.msg>) => {
         const topicString = toTopicString(topicName, topicParams)
-        publish(topicString, ['pub', topicName, topicParams, JSON.stringify(messageContent)], null)
+        publish(topicString, JSON.stringify(['pub', topicString, messageContent]), null)
       },
       subscribe: <TMsgOut>(
         topicParams: s.Infer<typeof topicDef.params>,

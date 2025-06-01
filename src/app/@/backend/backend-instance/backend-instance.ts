@@ -14,7 +14,7 @@ const schema = s.obj({
 
 export type BackendInstance = s.Infer<typeof schema>
 
-const HEARTBEAT = TimeSpan.seconds(5)
+const HEARTBEAT = TimeSpan.seconds(60)
 
 const random = (overrides?: Partial<BackendInstance>): BackendInstance => {
   return {
