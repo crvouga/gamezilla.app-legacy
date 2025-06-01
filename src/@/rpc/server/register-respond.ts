@@ -68,7 +68,7 @@ export const registerRespond = <T extends Base>(registerInput: {
 
     return handleRequest({
       contract: endpointConfig as Contract<any>,
-      handlers: handler as Server<any>,
+      handlers: handler as unknown as Server<any>,
       path: requestInput.path.slice(1),
       request: requestInput.request,
       sessionId: requestInput.sessionId,

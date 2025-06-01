@@ -1,18 +1,28 @@
 import { Eff } from '~/@/eff'
 import { Msg } from '~/@/msg/msg'
+import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
+import { Topic } from '~/@/topic'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { BackendConnectionFrontend } from './backend-connection/frontend'
 import { BackendInstanceFrontend } from './backend-instance/frontend'
-import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
+import type { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
+
+const initCtx = (input: {
+  ctx: AppFrontendCtxBase
+  rpc: RPC.Client<typeof rpcContract>
+  topic: Topic.Client<typeof topicContract>
+}): FrontendCtxModule => {
+  return {
+    ...input.ctx,
+    rpc: input.rpc,
+    topic: input.topic,
+  }
+}
 
 const init: FrontendModule['init'] = (input) => {
-  const backendInstance = BackendInstanceFrontend.init({
-    ctx: { ...input.ctx, rpc: input.ctx.rpc.backendInstance },
-  })
-  const backendConnection = BackendConnectionFrontend.init({
-    ctx: { ...input.ctx, topic: input.ctx.topic.backendConnection },
-  })
+  const backendInstance = BackendInstanceFrontend.init({ ctx: input.ctx })
+  const backendConnection = BackendConnectionFrontend.init({ ctx: input.ctx })
   return {
     model: {
       backendInstance: backendInstance.model,
@@ -25,14 +35,14 @@ const update: FrontendModule['update'] = (input) => {
   const backendInstance = BackendInstanceFrontend.update({
     ...input,
     msg: input.msg?.t === 'got-backend-instance-msg' ? input.msg.c : null,
-    ctx: { ...input.ctx, rpc: input.ctx.rpc.backendInstance },
+    ctx: input.ctx,
     model: input.model.backendInstance,
   })
 
   const backendConnection = BackendConnectionFrontend.update({
     ...input,
     msg: input.msg?.t === 'got-backend-connection-msg' ? input.msg.c : null,
-    ctx: { ...input.ctx, topic: input.ctx.topic.backendConnection },
+    ctx: input.ctx,
     model: input.model.backendConnection,
   })
 
@@ -52,17 +62,11 @@ const update: FrontendModule['update'] = (input) => {
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch<MsgFrontend>([
     Sub.map(
-      BackendInstanceFrontend.subscriptions({
-        ctx: { ...input.ctx, rpc: input.ctx.rpc.backendInstance },
-        model: input.model.backendInstance,
-      }),
+      BackendInstanceFrontend.subscriptions({ ctx: input.ctx, model: input.model.backendInstance }),
       (c): MsgFrontend => ({ t: 'got-backend-instance-msg', c }),
     ),
     Sub.map(
-      BackendConnectionFrontend.subscriptions({
-        ctx: { ...input.ctx, topic: input.ctx.topic.backendConnection },
-        model: input.model.backendConnection,
-      }),
+      BackendConnectionFrontend.subscriptions({ ctx: input.ctx, model: input.model.backendConnection }),
       (c): MsgFrontend => ({ t: 'got-backend-connection-msg', c }),
     ),
   ])
@@ -93,6 +97,7 @@ const ViewListItem = (input: {
 }
 
 export const WireFrontend = {
+  initCtx,
   init,
   update,
   subscriptions,

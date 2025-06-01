@@ -20,11 +20,11 @@ import { rpcContract, VerifyCodeOutput } from './types'
 
 const rpc = (config: { ctx: AuthBackendCtx }) => {
   return RPC.initServer(rpcContract, {
-    async sendCode(input) {
+    'auth/login-with-sms/send-code': async (input) => {
       const sent = await sendCode({ ...input, ctx: config.ctx })
       return sent
     },
-    async verifyCode(input, reqCtx) {
+    'auth/login-with-sms/verify-code': async (input, reqCtx) => {
       const verified = await verifyCode({
         ...input,
         sessionId: reqCtx.sessionId,

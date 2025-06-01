@@ -104,7 +104,7 @@ const flowHeartbeat = function* (ctx: BackendCtxModule) {
 
 const rpc = (input: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
-    async listAlive() {
+    'wire/backend-instance/list-alive': async () => {
       const listed = await input.ctx.backendInstanceDb.listAlive({
         minimalHeartRate: BackendInstance.HEARTBEAT,
       })

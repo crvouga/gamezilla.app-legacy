@@ -3,7 +3,6 @@ import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/g
 import { Sub } from '~/@/sub'
 import type { MsgSpace, ModelSpace, ModelBackend, MsgBackend, MsgToFrontend, MsgToBackend } from './vs-user.types'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 
 //
 //
@@ -21,7 +20,8 @@ type Module = GameBackendModule<{
   Ctx: SpaceBackendCtx
   Deps: null
   MsgCmdIn: null
-  MsgEvtIn: SpaceBackendEvt
+  MsgEvtIn: null
+
   MsgCmdOut: null
   MsgEvtOut: null
 }>

@@ -2,7 +2,6 @@ import { Eff } from '~/@/eff'
 import type { WithEventId, WithEventMeta } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 
 //
 //
@@ -44,7 +43,7 @@ export type GameBackend<T extends GameBackendTypes> = {
     msg?: T['MsgBackend'] | null
     frontendMsg?: T['MsgToBackend'] | null
     msgSpace?: WithEventMeta<T['MsgSpace']> | null
-    msgEvt?: SpaceBackendEvt | null
+    msgEvt?: Record<string, unknown> | null
   }) => Promise<Output<T>>
 
   subscriptions: (input: {

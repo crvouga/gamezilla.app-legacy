@@ -1,7 +1,7 @@
 import { s } from '~/@/schema'
 import * as RPC from '../rpc'
 
-export const childRpcContract = RPC.initContract({
+export const contract = RPC.initContract({
   baz: {
     input: s.obj({
       name: s.str(),
@@ -10,18 +10,6 @@ export const childRpcContract = RPC.initContract({
       message: s.str(),
     }),
   },
-})
-
-export const childRpcBackend = RPC.initServer(childRpcContract, {
-  async baz(input) {
-    return {
-      message: `Yo, ${input.name}`,
-    }
-  },
-})
-
-export const contract = RPC.initContract({
-  child: childRpcContract,
   foo: {
     input: s.obj({
       name: s.str(),
@@ -42,13 +30,17 @@ export const contract = RPC.initContract({
 })
 
 export const server = RPC.initServer(contract, {
-  child: childRpcBackend,
-  async bar(input) {
+  baz: async (input, _reqCtx) => {
+    return {
+      message: `Yo, ${input.name}`,
+    }
+  },
+  bar: async (input, _reqCtx) => {
     return {
       message: `Hi, ${input.name}`,
     }
   },
-  async foo(input) {
+  foo: async (input, _reqCtx) => {
     return {
       message: `Hello, ${input.name}`,
     }

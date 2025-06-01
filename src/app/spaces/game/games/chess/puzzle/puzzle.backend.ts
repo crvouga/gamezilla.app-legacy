@@ -8,7 +8,7 @@ import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import type { UserId } from '~/app/@/data/user-id'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
+
 import type { ChessMsgSpace } from '../@/chess/chess-shared'
 import { EloRating } from './elo-rating'
 import { PuzzleDb } from './puzzle-db'
@@ -392,7 +392,7 @@ export const updateFromGame = ({
 export const updateFromEvent = ({
   model,
 }: {
-  msg: SpaceBackendEvt
+  msg: Record<string, unknown>
   model: ModelBackend
 }): {
   model: ModelBackend

@@ -154,7 +154,6 @@ const updateScreenPlay: FrontendModule['update'] = (input) => {
     modelSpace: input.modelSpace.screenPlay,
     model: input.model.screenPlay,
     msgIn: input.msgIn,
-    msgBackend: input.msgBackend?.t === 'got-screen-play-msg' ? input.msgBackend.c : null,
     msgSpace: input.msgSpace?.t === 'got-screen-play-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     msg: input.msg?.t === 'got-screen-play-msg' ? input.msg.c : null,
   })
@@ -175,7 +174,6 @@ const updateScreenBuild: FrontendModule['update'] = (input) => {
     modelSpace: input.modelSpace.screenBuild,
     model: input.model.screenBuild,
     msgIn: input.msgIn,
-    msgBackend: input.msgBackend?.t === 'got-screen-build-msg' ? input.msgBackend.c : null,
     msgSpace: input.msgSpace?.t === 'got-screen-build-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     msg: input.msg?.t === 'got-screen-build-msg' ? input.msg.c : null,
   })

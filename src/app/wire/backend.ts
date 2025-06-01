@@ -13,13 +13,13 @@ const initCtx = async (input: {
   return {
     ...input.ctx,
     backendInstance: await BackendInstanceBackend.initCtx({ ctx: input.ctx }),
-    backendConnection: await BackendConnectionBackend.initCtx({ ctx: input.ctx, topic: input.topic.backendConnection }),
+    backendConnection: await BackendConnectionBackend.initCtx({ ctx: input.ctx, topic: input.topic }),
   }
 }
 
 const rpc = (ctx: BackendCtxModule) => {
   return RPC.initServer(rpcContract, {
-    backendInstance: BackendInstanceBackend.rpc({ ctx: ctx.backendInstance }),
+    ...BackendInstanceBackend.rpc({ ctx: ctx.backendInstance }),
   })
 }
 

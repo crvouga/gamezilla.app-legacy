@@ -81,7 +81,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(dispatch) {
-          const sent = await input.ctx.rpc.sendCode({
+          const sent = await input.ctx.rpc['auth/login-with-sms/send-code']({
             phoneNumber: phoneNumber.value,
             preferredLanguage: input.ctx.navigatorLanguage,
           })
@@ -159,7 +159,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
         async eff(dispatch) {
-          const verified = await input.ctx.rpc.verifyCode({
+          const verified = await input.ctx.rpc['auth/login-with-sms/verify-code']({
             phoneNumber,
             code: input.model.code,
             preferredLanguage: input.ctx.navigatorLanguage,

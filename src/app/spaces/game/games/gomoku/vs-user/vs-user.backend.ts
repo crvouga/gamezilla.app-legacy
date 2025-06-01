@@ -1,81 +1,81 @@
-import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
-import { initShared, type ModelBackend, type MsgBackend, type MsgToBackend } from './vs-user.types'
-import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
+// import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 
-//
-//
-//
-// model
-//
-//
-//
+// import { initShared, type ModelBackend, type MsgBackend, type MsgToBackend } from './vs-user.types'
+// import { Eff } from '~/@/eff'
+// import { Sub } from '~/@/sub'
 
-export type Model = ModelBackend
+// //
+// //
+// //
+// // model
+// //
+// //
+// //
 
-export const init = initShared
+// export type Model = ModelBackend
 
-//
-//
-//
-// update
-//
-//
-//
+// export const init = initShared
 
-export type Msg = MsgBackend
+// //
+// //
+// //
+// // update
+// //
+// //
+// //
 
-export const update = ({
-  model,
-}: {
-  msg: Msg
-  model: Model
-}): {
-  model: Model
-  eff?: Eff<Msg>
-} => {
-  return { model }
-}
+// export type Msg = MsgBackend
 
-export const updateFromFrontend = ({
-  model,
-}: {
-  ctx: SpaceBackendCtx
-  msg: MsgToBackend
-  model: Model
-}): {
-  model: Model
-  eff?: Eff<Msg>
-} => {
-  return { model }
-}
+// export const update = ({
+//   model,
+// }: {
+//   msg: Msg
+//   model: Model
+// }): {
+//   model: Model
+//   eff?: Eff<Msg>
+// } => {
+//   return { model }
+// }
 
-export const updateFromEvent = ({
-  msg,
-  model,
-}: {
-  msg: SpaceBackendEvt
-  model: Model
-}): {
-  model: Model
-  eff?: Eff<Msg>
-} => {
-  if (msg.t === 'space-evt.user-left-space') {
-    return { model: init(model) }
-  }
+// export const updateFromFrontend = ({
+//   model,
+// }: {
+//   ctx: SpaceBackendCtx
+//   msg: MsgToBackend
+//   model: Model
+// }): {
+//   model: Model
+//   eff?: Eff<Msg>
+// } => {
+//   return { model }
+// }
 
-  return { model }
-}
+// export const updateFromEvent = ({
+//   msg,
+//   model,
+// }: {
+//   msg: Record<string, unknown>
+//   model: Model
+// }): {
+//   model: Model
+//   eff?: Eff<Msg>
+// } => {
+//   if (msg.t === 'space-evt.user-left-space') {
+//     return { model: init(model) }
+//   }
 
-//
-//
-//
-// subscriptions
-//
-//
-//
+//   return { model }
+// }
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.none()
-}
+// //
+// //
+// //
+// // subscriptions
+// //
+// //
+// //
+
+// export const subscriptions = (_model: Model): Sub<Msg> => {
+//   return Sub.none()
+// }

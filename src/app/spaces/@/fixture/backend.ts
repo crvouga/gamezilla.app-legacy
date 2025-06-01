@@ -66,7 +66,7 @@ export const FixtureSpaceBackend = async () => {
 
   const backendCtx: BackendCtxModule = {
     ...f.ctx,
-    spacesCoreA: await SpacesCoreAsync({
+    spacesCore: await SpacesCoreAsync({
       t: 'key-value-db',
       keyValueDb: f.ctx.keyValueDb,
       logger: f.ctx.logger,

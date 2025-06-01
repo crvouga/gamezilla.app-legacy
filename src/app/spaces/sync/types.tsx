@@ -24,18 +24,18 @@ export type MsgBackend = {
 }
 
 export const topicContract = Topic.initContract({
-  msgSpace: {
+  'spaces/sync/msg-space': {
     params: SpaceId,
     msg: WithEventMeta(MsgSpace),
   },
-  msgSpaceAll: {
+  'spaces/sync/msg-space-all': {
     params: s.l(null),
     msg: WithEventMeta(MsgSpace),
   },
 })
 
 export const rpcContract = RPC.initContract({
-  sync: {
+  'spaces/sync/sync': {
     input: s.obj({
       space: Space.Model,
     }),

@@ -38,19 +38,15 @@ export const SpaceFrontendFixture = async () => {
     clientSessionId: f.ctx.clientSessionId,
     sessionId: SessionId.generate(),
     server: {
-      sync: {
-        async sync(input) {
-          return {
-            space: input.space,
-          }
-        },
+      'spaces/sync/sync': async (input) => {
+        return {
+          space: input.space,
+        }
       },
-      listSpaces: {
-        async listSpaces(_input) {
-          return {
-            spaces: [],
-          }
-        },
+      'spaces/list-spaces/list-spaces': async (_input) => {
+        return {
+          spaces: [],
+        }
       },
     },
   })
@@ -146,19 +142,15 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     clientSessionId: f.ctx.clientSessionId,
     sessionId: SessionId.generate(),
     server: {
-      sync: {
-        async sync(input) {
-          return {
-            space: input.space,
-          }
-        },
+      'spaces/sync/sync': async (input) => {
+        return {
+          space: input.space,
+        }
       },
-      listSpaces: {
-        async listSpaces(_input) {
-          return {
-            spaces: [],
-          }
-        },
+      'spaces/list-spaces/list-spaces': async (_input) => {
+        return {
+          spaces: [],
+        }
       },
     },
   })

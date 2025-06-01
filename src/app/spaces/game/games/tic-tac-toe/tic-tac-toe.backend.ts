@@ -1,214 +1,214 @@
-import { Eff } from '~/@/eff'
-import { Sub } from '~/@/sub'
-import type { UserId } from '~/app/@/data/user-id'
-import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
-import type { ModelBackend, MsgBackend, MsgToBackend } from './tic-tac-toe.types'
-import * as VsBot from './vs-bot/vs-bot.backend'
-import * as VsUser from './vs-user/vs-user.backend'
-
+// import { Eff } from '~/@/eff'
+// import { Sub } from '~/@/sub'
+// import type { UserId } from '~/app/@/data/user-id'
+// import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 //
-//
-//
-// Model
-//
-//
-//
+// import type { ModelBackend, MsgBackend, MsgToBackend } from './tic-tac-toe.types'
+// import * as VsBot from './vs-bot/vs-bot.backend'
+// import * as VsUser from './vs-user/vs-user.backend'
 
-export type Model = ModelBackend
+// //
+// //
+// //
+// // Model
+// //
+// //
+// //
 
-export const init: Model = { t: 'none' }
+// export type Model = ModelBackend
 
-//
-//
-//
-// Update
-//
-//
-//
+// export const init: Model = { t: 'none' }
 
-export type Msg = MsgBackend
+// //
+// //
+// //
+// // Update
+// //
+// //
+// //
 
-export const update = ({
-  msg,
-  model,
-}: {
-  msg: Msg
-  model: Model
-}): {
-  model: Model
-  eff?: Eff<Msg>
-} => {
-  if (msg.t === 'vs-user' && model.t === 'vs-user') {
-    const updated = VsUser.update(msg.c, model.c)
-    return {
-      model: {
-        t: 'vs-user',
-        c: updated.model,
-      },
-    }
-  }
+// export type Msg = MsgBackend
 
-  if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
-    const updated = VsBot.update({
-      model: model.c,
-      msg: msg.c,
-    })
+// export const update = ({
+//   msg,
+//   model,
+// }: {
+//   msg: Msg
+//   model: Model
+// }): {
+//   model: Model
+//   eff?: Eff<Msg>
+// } => {
+//   if (msg.t === 'vs-user' && model.t === 'vs-user') {
+//     const updated = VsUser.update(msg.c, model.c)
+//     return {
+//       model: {
+//         t: 'vs-user',
+//         c: updated.model,
+//       },
+//     }
+//   }
 
-    return {
-      model: {
-        t: 'vs-bot',
-        c: updated.model,
-      },
-    }
-  }
+//   if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
+//     const updated = VsBot.update({
+//       model: model.c,
+//       msg: msg.c,
+//     })
 
-  return { model }
-}
+//     return {
+//       model: {
+//         t: 'vs-bot',
+//         c: updated.model,
+//       },
+//     }
+//   }
 
-export const updateFromFrontend = ({
-  msg,
-  model,
-  ctx,
-}: {
-  ctx: SpaceBackendCtx
-  msg: MsgToBackend
-  model: Model
-}): {
-  model: Model
-  eff?: Eff<Msg>
-} => {
-  if (msg.t === 'input-mode') {
-    const modelNew: ModelBackend = initMode({
-      mode: msg.mode,
-      // @ts-ignore
-      userId: ctx.space.hostId,
-    })
+//   return { model }
+// }
 
-    return {
-      model: modelNew,
-    }
-  }
+// export const updateFromFrontend = ({
+//   msg,
+//   model,
+//   ctx,
+// }: {
+//   ctx: SpaceBackendCtx
+//   msg: MsgToBackend
+//   model: Model
+// }): {
+//   model: Model
+//   eff?: Eff<Msg>
+// } => {
+//   if (msg.t === 'input-mode') {
+//     const modelNew: ModelBackend = initMode({
+//       mode: msg.mode,
+//       // @ts-ignore
+//       userId: ctx.space.hostId,
+//     })
 
-  if (msg.t === 'vs-user' && model.t === 'vs-user') {
-    const updated = VsUser.updateFromFrontend(ctx, msg.c, model.c)
+//     return {
+//       model: modelNew,
+//     }
+//   }
 
-    return {
-      model: {
-        ...model,
-        c: updated.model,
-      },
-    }
-  }
+//   if (msg.t === 'vs-user' && model.t === 'vs-user') {
+//     const updated = VsUser.updateFromFrontend(ctx, msg.c, model.c)
 
-  if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
-    const updated = VsBot.updateFromFrontend({
-      msg: msg.c,
-      model: model.c,
-      ctx,
-    })
+//     return {
+//       model: {
+//         ...model,
+//         c: updated.model,
+//       },
+//     }
+//   }
 
-    return {
-      model: {
-        ...model,
-        c: updated.model,
-      },
-      eff: Eff.tag('vs-bot', updated.eff),
-    }
-  }
+//   if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
+//     const updated = VsBot.updateFromFrontend({
+//       msg: msg.c,
+//       model: model.c,
+//       ctx,
+//     })
 
-  return { model }
-}
+//     return {
+//       model: {
+//         ...model,
+//         c: updated.model,
+//       },
+//       eff: Eff.tag('vs-bot', updated.eff),
+//     }
+//   }
 
-export const updateFromEvent = ({
-  msg,
-  model,
-}: {
-  model: Model
-  msg: SpaceBackendEvt
-}): {
-  model: Model
-} => {
-  if (model.t === 'none') {
-    return { model }
-  }
+//   return { model }
+// }
 
-  if (model.t === 'vs-bot') {
-    const updated = VsBot.updateFromEvent({
-      msg,
-      model: model.c,
-    })
-    return {
-      model: {
-        t: 'vs-bot',
-        c: updated.model,
-      },
-    }
-  }
+// export const updateFromEvent = ({
+//   msg,
+//   model,
+// }: {
+//   model: Model
+//   msg: Record<string, unknown>
+// }): {
+//   model: Model
+// } => {
+//   if (model.t === 'none') {
+//     return { model }
+//   }
 
-  if (model.t === 'vs-user') {
-    const updated = VsUser.updateFromEvent({
-      msg,
-      model: model.c,
-    })
-    return {
-      model: {
-        t: 'vs-user',
-        c: updated.model,
-      },
-    }
-  }
+//   if (model.t === 'vs-bot') {
+//     const updated = VsBot.updateFromEvent({
+//       msg,
+//       model: model.c,
+//     })
+//     return {
+//       model: {
+//         t: 'vs-bot',
+//         c: updated.model,
+//       },
+//     }
+//   }
 
-  return { model }
-}
+//   if (model.t === 'vs-user') {
+//     const updated = VsUser.updateFromEvent({
+//       msg,
+//       model: model.c,
+//     })
+//     return {
+//       model: {
+//         t: 'vs-user',
+//         c: updated.model,
+//       },
+//     }
+//   }
 
-const initMode = ({ mode, userId }: { mode: ModelBackend['t']; userId: UserId }): ModelBackend => {
-  switch (mode) {
-    case 'none': {
-      return {
-        t: 'none',
-      }
-    }
+//   return { model }
+// }
 
-    case 'vs-user': {
-      return {
-        t: 'vs-user',
-        c: VsUser.init({
-          X: userId,
-          O: 'none',
-        }),
-      }
-    }
+// const initMode = ({ mode, userId }: { mode: ModelBackend['t']; userId: UserId }): ModelBackend => {
+//   switch (mode) {
+//     case 'none': {
+//       return {
+//         t: 'none',
+//       }
+//     }
 
-    case 'vs-bot': {
-      return {
-        t: 'vs-bot',
-        c: VsBot.init({
-          userId,
-        }),
-      }
-    }
-  }
-}
+//     case 'vs-user': {
+//       return {
+//         t: 'vs-user',
+//         c: VsUser.init({
+//           X: userId,
+//           O: 'none',
+//         }),
+//       }
+//     }
 
-//
-//
-//
-// Subscriptions
-//
-//
-//
+//     case 'vs-bot': {
+//       return {
+//         t: 'vs-bot',
+//         c: VsBot.init({
+//           userId,
+//         }),
+//       }
+//     }
+//   }
+// }
 
-export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
-  switch (model.t) {
-    case 'vs-bot': {
-      return Sub.map(VsBot.subscriptions(model.c), (c): Msg => ({ t: 'vs-bot', c }))
-    }
-    case 'vs-user': {
-      return Sub.map(VsUser.subscriptions(intervalId, model.c), (c): Msg => ({ t: 'vs-user', c }))
-    }
-    case 'none': {
-      return Sub.none()
-    }
-  }
-}
+// //
+// //
+// //
+// // Subscriptions
+// //
+// //
+// //
+
+// export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
+//   switch (model.t) {
+//     case 'vs-bot': {
+//       return Sub.map(VsBot.subscriptions(model.c), (c): Msg => ({ t: 'vs-bot', c }))
+//     }
+//     case 'vs-user': {
+//       return Sub.map(VsUser.subscriptions(intervalId, model.c), (c): Msg => ({ t: 'vs-user', c }))
+//     }
+//     case 'none': {
+//       return Sub.none()
+//     }
+//   }
+// }

@@ -163,12 +163,12 @@ export const num = (): Parser<number> => {
     parse(input) {
       if (typeof input !== 'number') {
         return Err([
-        {
-          message: toErrorMessage('number', typeof input, JSON.stringify(input)),
-          path: [],
-        },
-      ])
-    }
+          {
+            message: toErrorMessage('number', typeof input, JSON.stringify(input)),
+            path: [],
+          },
+        ])
+      }
       return Ok(input)
     },
   }

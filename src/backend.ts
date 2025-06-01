@@ -1,16 +1,16 @@
+import { runSaga } from 'redux-saga'
 import { fork } from 'typed-redux-saga'
 import { AppTypes } from '~/app'
 import { AppBackend } from '~/app/backend'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { RPC } from './@/rpc'
-import { go } from './@/saga/saga'
 import { CONFIG_SHARED } from './config/shared'
 import { PowerSyncBackendApp } from './service-powersync/backend/respond'
 
 const main = async () => {
   const ctx = await AppBackend.initCtx()
 
-  go(function* () {
+  runSaga({}, function* () {
     yield fork(AppBackend.saga, ctx)
   })
 

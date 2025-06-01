@@ -101,11 +101,11 @@ export type FrontendModule = AppFrontendModule<{
 }>
 
 export const rpcContract = RPC.initContract({
-  sendCode: {
+  'auth/login-with-sms/send-code': {
     input: SendCodeInput,
     output: SendCodeOutput,
   },
-  verifyCode: {
+  'auth/login-with-sms/verify-code': {
     input: VerifyCodeInput,
     output: VerifyCodeOutput,
   },

@@ -19,7 +19,7 @@ const initCtx = async (input: {
     games: GameBackend.initCtx({
       ctx: input.ctx,
     }),
-    spacesCoreA: await SpacesCoreAsync({
+    spacesCore: await SpacesCoreAsync({
       t: 'key-value-db',
       keyValueDb: input.ctx.keyValueDb,
       logger: input.ctx.logger,
@@ -37,8 +37,8 @@ const saga = function* (ctx: BackendCtxModule) {
 
 const rpc = (input: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
-    sync: SyncBackend.rpc(input),
-    listSpaces: ListSpacesBackend.rpc(input),
+    ...SyncBackend.rpc(input),
+    ...ListSpacesBackend.rpc(input),
   })
 }
 

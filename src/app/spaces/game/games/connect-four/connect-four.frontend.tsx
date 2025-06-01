@@ -143,7 +143,7 @@ const updateFromMsgSpace =
 const updateChild =
   (model: ModelFrontend): Module['update'] =>
   (input) => {
-    const { msgIn, msg, msgSpace, msgBackend, modelSpace } = input
+    const { msgIn, msg, msgSpace, modelSpace } = input
 
     switch (modelSpace.t) {
       case 'none': {
@@ -158,7 +158,6 @@ const updateChild =
           msg: msg?.t === 'vs-bot' ? msg.c : null,
           msgIn,
           msgSpace: msgSpace?.t === 'vs-bot' ? { ...msgSpace, ...msgSpace.c } : null,
-          msgBackend: msgBackend?.t === 'vs-bot' ? msgBackend.c : null,
           model: model.t === 'vs-bot' ? model.c : VsBot.init,
           modelSpace: modelSpace.c,
         })
@@ -178,7 +177,6 @@ const updateChild =
           msg: msg?.t === 'vs-user' ? msg.c : null,
           msgIn,
           msgSpace: msgSpace?.t === 'vs-user' ? { ...msgSpace, ...msgSpace.c } : null,
-          msgBackend: msgBackend?.t === 'vs-user' ? msgBackend.c : null,
           modelSpace: modelSpace.c,
         })
 

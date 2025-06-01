@@ -17,14 +17,12 @@ const contract = Topic.initContract({
     }),
     msg: Msg,
   },
-  nested: Topic.initContract({
-    someTopic: {
-      params: s.obj({
-        id: s.str(),
-      }),
-      msg: Msg,
-    },
-  }),
+  nestedSomeTopic: {
+    params: s.obj({
+      id: s.str(),
+    }),
+    msg: Msg,
+  },
 })
 
 const Fixture = async () => {
@@ -87,7 +85,7 @@ const Fixture = async () => {
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 100))
 
-describe.only('Topic', () => {
+describe('Topic', () => {
   it('should work', async () => {
     using f = await Fixture()
     const gotServer: Msg[] = []
@@ -228,11 +226,11 @@ describe.only('Topic', () => {
     const gotB: Msg[] = []
 
     await sleep()
-    f.clientA.nested.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientA.nestedSomeTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
-    f.clientB.nested.someTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientB.nestedSomeTopic.subscribe({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.nested.someTopic.publish({ id: '123' }, { name: 'John' })
+    f.clientA.nestedSomeTopic.publish({ id: '123' }, { name: 'John' })
     await sleep()
 
     expect(gotA).toEqual([{ name: 'John' }])

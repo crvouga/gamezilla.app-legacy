@@ -1,7 +1,7 @@
 import { Sub } from '~/@/sub'
 
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
+
 import type { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import type { ModelSpace, ModelBackend, MsgSpace, MsgBackend, MsgToFrontend, MsgToBackend } from './connect-four.types'
 
@@ -21,7 +21,7 @@ type BackendModule = GameBackendModule<{
   ModelSpace: ModelSpace
   MsgSpace: MsgSpace
   Ctx: SpaceBackendCtx
-  MsgEvtIn: SpaceBackendEvt
+
   MsgCmdOut: null
 }>
 

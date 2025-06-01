@@ -1,12 +1,8 @@
 import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
-
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
-import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import type { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import type { GameSpaceModule } from '~/app/spaces/game/games/@/architecture/game-space'
 import { GameMainMenu } from '../../@/ui/game-main-menu'
-import { FlowBackendCtx } from '../@/backend/ctx'
 import type { FlowFrontendCtx } from '../@/frontend/ctx'
 import { Pack } from '../@/pack/pack'
 import { PuzzleResult } from '../@/puzzle/puzzle-result'
@@ -17,12 +13,6 @@ import { ScreenPuzzleTypes } from './screen-play-puzzle'
 export type ModelFrontend = null
 
 export type MsgFrontend = GameMainMenu.Msg | { t: 'got-msg-space'; c: MsgSpace } | { t: 'got-msg-out'; c: unknown }
-
-export type MsgBackend = { t: 'noop' }
-
-export type MsgToBackend = { t: 'noop' }
-
-export type MsgToFrontend = { t: 'noop' }
 
 export const MsgSpace = s.or(
   s.obj({
@@ -85,22 +75,9 @@ export type ModelSpace = s.Infer<typeof ModelSpace>
 export type FrontendModule = GameFrontendModule<{
   Model: ModelFrontend
   Msg: MsgFrontend
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
   MsgSpace: MsgSpace
   ModelSpace: ModelSpace
   Ctx: FlowFrontendCtx
-}>
-
-export type BackendModule = GameBackendModule<{
-  Msg: MsgBackend
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
-  MsgSpace: MsgSpace
-  ModelSpace: ModelSpace
-  Ctx: FlowBackendCtx
-  MsgEvtIn: SpaceBackendEvt
-  MsgCmdOut: null
 }>
 
 export type SpaceModule = GameSpaceModule<{

@@ -1,7 +1,10 @@
 import { Eff } from '~/@/eff'
 import { Msg } from '~/@/msg/msg'
 import { NotAsked } from '~/@/result'
-import { isAppFrontendCtx } from '../@/frontend/ctx'
+import { RPC } from '~/@/rpc'
+import { Sub } from '~/@/sub'
+import { Topic } from '~/@/topic'
+import { AppFrontendCtxBase, isAppFrontendCtx } from '../@/frontend/ctx'
 import { type Input, type Output, SpaceFrontendModule } from './architecture/space-frontend'
 import { SpacesCore } from './core/core'
 import { EndSpaceFrontend } from './end-space/frontend'
@@ -15,8 +18,19 @@ import { ListSpacesFrontend } from './list-spaces/frontend'
 import { SpaceFrontend } from './space/frontend'
 import { StartSpaceFrontend } from './start-space/frontend'
 import { SyncFrontend } from './sync/frontend'
-import type { FrontendModule, ModelFrontend } from './types'
-import { Sub } from '~/@/sub'
+import type { FrontendCtxModule, FrontendModule, ModelFrontend, rpcContract, topicContract } from './types'
+
+const initCtx = (input: {
+  ctx: AppFrontendCtxBase
+  rpc: RPC.Client<typeof rpcContract>
+  topic: Topic.Client<typeof topicContract>
+}): FrontendCtxModule => {
+  return {
+    ...input.ctx,
+    rpc: input.rpc,
+    topic: input.topic,
+  }
+}
 
 const init: FrontendModule['init'] = (_input) => {
   const model: ModelFrontend = {
@@ -133,6 +147,7 @@ const View: FrontendModule['View'] = (input) => {
 const ViewCurrentSpaceMiniPlayer = CurrentSpaceMiniPlayer.View
 
 export const SpacesFrontend = {
+  initCtx,
   init,
   update,
   subscriptions,

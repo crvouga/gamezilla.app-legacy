@@ -24,7 +24,7 @@ import { CurrentUserFrontend, toCurrentUserState } from './current-user/frontend
 import { ContinueAsGuestFrontend } from './login-as-guest/frontend'
 import { LoginWithSMSFrontend } from './login-with-sms/frontend'
 import { LogoutFrontend } from './logout/frontend'
-import { FrontendCtx, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
+import { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
 
 //
 //
@@ -35,12 +35,14 @@ import { FrontendCtx, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } 
 //
 
 const initCtx = async (input: {
-  ctx: AppFrontendCtxBase & { rpc: { auth: RPC.Client<typeof rpcContract> } }
-}): Promise<FrontendCtx> => {
-  const authCtx = await AuthFrontendCtx.init({ ctx: input.ctx })
+  ctx: AppFrontendCtxBase
+  rpc: RPC.Client<typeof rpcContract>
+}): Promise<FrontendCtxModule> => {
+  const ctx = await AuthFrontendCtx.init({ ctx: input.ctx })
   return {
     ...input.ctx,
-    ...authCtx,
+    ...ctx,
+    rpc: input.rpc,
   }
 }
 
@@ -104,7 +106,7 @@ const updateLogout: FrontendModule['update'] = (input) => {
 const updateCurrentUser: FrontendModule['update'] = (input) => {
   const updated = CurrentUserFrontend.update({
     msgIn: input.msgIn,
-    ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.currentUser },
+    ctx: input.ctx,
     model: input.model.currentUser,
     msg: input.msg?.t === 'got-current-user-msg' ? input.msg.c : null,
   })
@@ -117,7 +119,7 @@ const updateCurrentUser: FrontendModule['update'] = (input) => {
 
 const updateSMS: FrontendModule['update'] = (input) => {
   const updated = LoginWithSMSFrontend.update({
-    ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.sms },
+    ctx: input.ctx,
     model: input.model.continueWithSms,
     msg: input.msg?.t === 'got-login-with-sms-msg' ? input.msg.c : null,
     msgIn: input.msgIn,
@@ -166,11 +168,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch<MsgFrontend>([
     Sub.map(
-      CurrentUserFrontend.subscriptions({
-        ...input,
-        ctx: { ...input.ctx, rpc: input.ctx.rpc.auth.currentUser },
-        model: input.model.currentUser,
-      }),
+      CurrentUserFrontend.subscriptions({ ...input, ctx: input.ctx, model: input.model.currentUser }),
       (c): MsgFrontend => ({ t: 'got-current-user-msg', c }),
     ),
   ])
@@ -195,7 +193,7 @@ const View: FrontendModule['View'] = (input) => {
         case 'login-sms-verify': {
           return (
             <LoginWithSMSFrontend.View
-              ctx={{ ...input.ctx, rpc: input.ctx.rpc.auth.sms }}
+              ctx={input.ctx}
               dispatch={(c) => input.dispatch({ t: 'got-login-with-sms-msg', c })}
               model={input.model.continueWithSms}
             />

@@ -51,7 +51,6 @@ const update: FrontendModule['update'] = (input) => {
         modelSpace: input.modelSpace.c,
         model: input.model?.t === 'connect-four' ? input.model.c : ConnectFour.init,
         msgIn: input.msgIn,
-        msgBackend: input.msgBackend?.t === 'connect-four' ? input.msgBackend.c : null,
         msgSpace: input.msgSpace?.t === 'connect-four' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
         msg: input.msg?.t === 'connect-four' ? input.msg.c : null,
       })
@@ -70,7 +69,6 @@ const update: FrontendModule['update'] = (input) => {
         modelSpace: input.modelSpace.c,
         model: input.model?.t === 'flow' ? input.model.c : FlowFrontend.init,
         msgIn: input.msgIn,
-        msgBackend: input.msgBackend?.t === 'flow' ? input.msgBackend.c : null,
         msgSpace: input.msgSpace?.t === 'flow' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
         msg: input.msg?.t === 'flow' ? input.msg.c : null,
       })

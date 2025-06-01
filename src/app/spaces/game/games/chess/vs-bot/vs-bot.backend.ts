@@ -3,7 +3,7 @@ import { pipe } from '~/@/function/pipe'
 import { Sub } from '~/@/sub'
 
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
+
 import { Chess } from '../@/chess'
 import { botMoved, initBackend, isBotTurn, type ModelBackend, type MsgBackend, type MsgToBackend } from './vs-bot.types'
 
@@ -107,7 +107,7 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceBackendEvt
+  msg: Record<string, unknown>
   model: Model
 }): {
   model: Model

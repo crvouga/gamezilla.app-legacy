@@ -20,13 +20,6 @@ export type ModelFrontend = {
   lang: LangTypes.ModelFrontend
 }
 
-export type MsgBackend =
-  | { t: 'wire'; c: WireTypes.MsgBackend }
-  | { t: 'spaces'; c: SpacesTypes.MsgBackend }
-  | { t: 'profile'; c: ProfileTypes.MsgBackend }
-  | { t: 'auth'; c: AuthTypes.MsgBackend }
-  | { t: 'lang'; c: LangTypes.MsgBackend }
-
 export type MsgFrontend =
   | { t: 'wire'; c: WireTypes.MsgFrontend }
   | { t: 'spaces'; c: SpacesTypes.MsgFrontend }
@@ -35,29 +28,24 @@ export type MsgFrontend =
   | { t: 'lang'; c: LangTypes.MsgFrontend }
   | { t: 'frontend'; c: FrontendTypes.MsgFrontend }
 
-export const rpcContract = RPC.initContract({
-  wire: WireTypes.rpcContract,
-  auth: AuthTypes.rpcContract,
-  spaces: SpacesTypes.rpcContract,
-})
+export const rpcContract = RPC.combineContracts([WireTypes.rpcContract, AuthTypes.rpcContract, SpacesTypes.rpcContract])
 
-export const topicContract = Topic.initContract({
-  wire: WireTypes.topicContract,
-  spaces: SpacesTypes.topicContract,
-})
+export const topicContract = Topic.combineContracts([WireTypes.topicContract, SpacesTypes.topicContract])
 
 export type BackendCtxModule = AppBackendCtxBase & {
   wire: WireTypes.BackendCtxModule
   profile: ProfileBackendCtx
-  space: SpacesTypes.BackendCtxModule
-  auth: AuthTypes.BackendCtx
+  spaces: SpacesTypes.BackendCtxModule
+  auth: AuthTypes.BackendCtxModule
   httpServer: IHttpServer
   topic: Topic.Client<typeof topicContract>
 }
 
 export type FrontendCtxModule = AppFrontendCtxBase &
-  AuthTypes.FrontendCtx &
-  ProfileTypes.FrontendCtx & {
+  AuthTypes.FrontendCtxModule &
+  ProfileTypes.FrontendCtxModule &
+  SpacesTypes.FrontendCtxModule &
+  WireTypes.FrontendCtxModule & {
     rpc: RPC.Client<typeof rpcContract>
     topic: Topic.Client<typeof topicContract>
   }

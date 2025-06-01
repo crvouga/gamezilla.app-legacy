@@ -9,7 +9,11 @@ export type Topic<TParams, TMsg> = {
   msg: s.Parser<TMsg>
 }
 
-export type Contract<TTopics extends Record<string, Topic<any, any> | Contract<any>>> = TTopics
+export type ContractBase = {
+  [key: string]: Topic<any, any>
+}
+
+export type Contract<TTopics extends ContractBase> = TTopics
 
 export type MsgMeta = {
   clientSessionId: ClientSessionId
@@ -17,18 +21,14 @@ export type MsgMeta = {
   clientId: ClientId
 }
 
-export type Client<T extends Contract<any>> = {
-  [K in keyof T]: T[K] extends Topic<unknown, unknown>
-    ? {
-        publish: (params: s.Infer<T[K]['params']>, msg: s.Infer<T[K]['msg']>) => void
-        subscribe: <TMsg>(
-          params: s.Infer<T[K]['params']>,
-          mapper: (msg: s.Infer<T[K]['msg']> & MsgMeta) => TMsg,
-        ) => Sub<TMsg>
-      }
-    : T[K] extends Contract<any>
-      ? Client<T[K]>
-      : never
+export type Client<T extends ContractBase> = {
+  [K in keyof T]: {
+    publish: (params: s.Infer<T[K]['params']>, msg: s.Infer<T[K]['msg']>) => void
+    subscribe: <TMsg>(
+      params: s.Infer<T[K]['params']>,
+      mapper: (msg: s.Infer<T[K]['msg']> & MsgMeta) => TMsg,
+    ) => Sub<TMsg>
+  }
 }
 
 export const initContract = <TTopics extends Record<string, Topic<any, any> | Contract<any>>>(

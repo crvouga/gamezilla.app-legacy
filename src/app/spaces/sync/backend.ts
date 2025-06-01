@@ -9,8 +9,8 @@ import { Sub } from '~/@/sub'
 
 const rpc = (config: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
-    async sync(input) {
-      const merged = await config.ctx.spacesCoreA.merge(input.space)
+    async 'spaces/sync/sync'(input) {
+      const merged = await config.ctx.spacesCore.merge(input.space)
 
       if (isErr(merged)) {
         return { space: input.space }
@@ -22,7 +22,7 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
         return { space: input.space }
       }
 
-      const spaceNew = unwrapOr(await config.ctx.spacesCoreA.get(spaceId), null)
+      const spaceNew = unwrapOr(await config.ctx.spacesCore.get(spaceId), null)
 
       if (!spaceNew) {
         return { space: input.space }
@@ -36,12 +36,12 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
 }
 
 const saga = function* (ctx: BackendCtxModule) {
-  const msgSpaceChan = Sub.chan(ctx.topic.sync.msgSpaceAll.subscribe(null, (c) => c))
+  const msgSpaceChan = Sub.chan(ctx.topic['spaces/sync/msg-space-all'].subscribe(null, (c) => c))
 
   yield takeEvery(msgSpaceChan, function* (c) {
     ctx.logger.info('syncing msgSpace', c)
 
-    const updated = yield* call(ctx.spacesCoreA.update, c)
+    const updated = yield* call(ctx.spacesCore.update, c)
 
     if (isErr(updated)) {
       ctx.logger.error(updated.error)

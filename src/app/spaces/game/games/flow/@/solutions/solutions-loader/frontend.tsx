@@ -5,6 +5,12 @@ import { SolutionHash } from '../solution-hash/solution-hash'
 import { GotSolutionsLoaderMsg } from './got-solutions-loader-msg'
 import type { FrontendModule, MsgFrontend } from './types'
 
+const init: FrontendModule['init'] = () => {
+  return {
+    model: {},
+  }
+}
+
 const update: FrontendModule['update'] = (input) => {
   if (GotSolutionsLoaderMsg.is(input.msgIn)) {
     return update({ ...input, msgIn: null, msg: input.msgIn.c.msg })
@@ -35,4 +41,5 @@ const watch = <TMsg,>(
 export const SolutionsLoaderFrontend = {
   update,
   watch,
+  init,
 }

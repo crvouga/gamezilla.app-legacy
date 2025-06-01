@@ -38,13 +38,13 @@ export type ModelBackend = s.Infer<typeof ModelBackend>
 //
 //
 
-export type MsgBackend = { t: 'connect-four'; c: ConnectFour.MsgBackend } | { t: 'flow'; c: Flow.MsgBackend }
+export type MsgBackend = { t: 'connect-four'; c: ConnectFour.MsgBackend }
 
 export type MsgFrontend = { t: 'connect-four'; c: ConnectFour.MsgFrontend } | { t: 'flow'; c: Flow.MsgFrontend }
 
-export type MsgToFrontend = { t: 'connect-four'; c: ConnectFour.MsgToFrontend } | { t: 'flow'; c: Flow.MsgToFrontend }
+export type MsgToFrontend = { t: 'connect-four'; c: ConnectFour.MsgToFrontend }
 
-export type MsgToBackend = { t: 'connect-four'; c: ConnectFour.MsgToBackend } | { t: 'flow'; c: Flow.MsgToBackend }
+export type MsgToBackend = { t: 'connect-four'; c: ConnectFour.MsgToBackend }
 
 //
 //

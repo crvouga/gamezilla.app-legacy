@@ -3,11 +3,11 @@ import type { WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpace } from '~/app/spaces/@/fixture/space'
 import { FlowSpaceCtx } from '../../../@/space/ctx'
 import { PlaySpace } from '../../space'
-import type { ModelSpace, MsgFrontend, MsgSpace, MsgToFrontend } from '../../types'
+import type { ModelSpace, MsgFrontend, MsgSpace } from '../../types'
 
 export type FixtureUpdateInput = {
   msg?: MsgFrontend
-  msgBackend?: MsgToFrontend
+
   msgSpace?: WithEventMeta<MsgSpace>
 }
 

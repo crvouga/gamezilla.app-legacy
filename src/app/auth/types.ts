@@ -1,8 +1,5 @@
 import { RPC } from '~/@/rpc'
-import type { AppBackendModule } from '../@/architecture/app-backend'
 import type { AppFrontendModule } from '../@/architecture/app-frontend'
-import { BackendCmd } from '../@/backend/cmd'
-import { BackendEvt } from '../@/backend/evt'
 import { AuthBackendCtx } from './@/backend/ctx'
 import { AuthFrontendCtx } from './@/frontend/ctx'
 import { CurrentUserTypes } from './current-user'
@@ -10,27 +7,12 @@ import type { ContinueAsGuest } from './login-as-guest'
 import { LoginWithSMSTypes } from './login-with-sms'
 import type { LogoutTypes } from './logout'
 
-export type { AuthBackendCtx as BackendCtx }
-
-//
-//
-//
-//
-//
-//
-
 export type ModelFrontend = {
   logout: LogoutTypes.ModelFrontend
   continueWithSms: LoginWithSMSTypes.ModelFrontend
   continueAsGuest: ContinueAsGuest.ModelFrontend
   currentUser: CurrentUserTypes.ModelFrontend
 }
-
-//
-//
-// Msg
-//
-//
 
 export type MsgFrontend =
   | { t: 'clicked-login-with-phone' }
@@ -40,35 +22,16 @@ export type MsgFrontend =
   | { t: 'got-current-user-msg'; c: CurrentUserTypes.MsgFrontend }
   | { t: 'clicked-logout-list-item' }
 
-export type MsgBackend = { t: 'noop' }
-
-export type MsgToFrontend = { t: 'noop' }
-
-export type FrontendCtx = AuthFrontendCtx & {
-  rpc: {
-    auth: RPC.Client<typeof rpcContract>
-  }
+export type FrontendCtxModule = AuthFrontendCtx & {
+  rpc: RPC.Client<typeof rpcContract>
 }
+
+export type BackendCtxModule = AuthBackendCtx
 
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend
   Msg: MsgFrontend
-  Ctx: FrontendCtx
+  Ctx: FrontendCtxModule
 }>
 
-export type BackendModule = AppBackendModule<{
-  Ctx: AuthBackendCtx
-  MsgCmdIn: null
-  MsgEvtIn: BackendEvt
-  Model: null
-  Msg: MsgBackend
-  MsgCmdOut: BackendCmd<MsgToFrontend>
-  MsgEvtOut: BackendEvt
-
-  Deps: null
-}>
-
-export const rpcContract = RPC.initContract({
-  sms: LoginWithSMSTypes.rpcContract,
-  currentUser: CurrentUserTypes.rpcContract,
-})
+export const rpcContract = RPC.combineContracts([LoginWithSMSTypes.rpcContract, CurrentUserTypes.rpcContract])

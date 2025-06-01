@@ -33,10 +33,10 @@ const Fixture = async (input?: { currentScreen?: Screen }) => {
     sessionId: SessionId.generate(),
     contract: rpcContract,
     server: {
-      async sendCode(input) {
+      'auth/login-with-sms/send-code': async (input) => {
         return Ok(input)
       },
-      async verifyCode(input) {
+      'auth/login-with-sms/verify-code': async (input) => {
         return Ok({
           phoneNumber: input.phoneNumber,
           userAccount: UserAccount.random(),

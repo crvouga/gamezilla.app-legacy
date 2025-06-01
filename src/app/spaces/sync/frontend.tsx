@@ -43,8 +43,8 @@ const publishMsgSpace: SpaceFrontendModule['update'] = (input) => {
   return {
     model: input.model,
     eff() {
-      input.ctx.topic.sync.msgSpace.publish(spaceEventWithMeta.spaceId, spaceEventWithMeta)
-      input.ctx.topic.sync.msgSpaceAll.publish(null, spaceEventWithMeta)
+      input.ctx.topic['spaces/sync/msg-space'].publish(spaceEventWithMeta.spaceId, spaceEventWithMeta)
+      input.ctx.topic['spaces/sync/msg-space-all'].publish(null, spaceEventWithMeta)
     },
   }
 }
@@ -67,7 +67,7 @@ const updateSync: SpaceFrontendModule['update'] = (input) => {
     return {
       model: input.model,
       async eff(dispatch) {
-        const synced = await input.ctx.rpc.sync.sync({ space })
+        const synced = await input.ctx.rpc['spaces/sync/sync']({ space })
         dispatch({ t: 'sync.synced', synced })
       },
     }
@@ -102,7 +102,7 @@ const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
 
   if (!currentUserSpaceId) return Sub.none()
 
-  return input.ctx.topic.sync.msgSpace.subscribe(
+  return input.ctx.topic['spaces/sync/msg-space'].subscribe(
     currentUserSpaceId,
     (c): MsgFrontend => ({ t: 'sync.got-msg-space', c }),
   )

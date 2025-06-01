@@ -6,16 +6,13 @@ import { sleep } from '../promise/sleep'
 
 type Model = { counter: { count: number } }
 type Msg = { t: 'inc' } | { t: 'dec' } | { t: 'set-model'; c: Model }
-type Ctx = {}
 
 const Fixture = async () => {
-  const crashes = Sub.create<ProgramCrashReport<Model, Msg, Ctx>>()
-  const program = await Program.run<Model, Msg, Ctx>({
+  const crashes = Sub.create<ProgramCrashReport<Model, Msg>>()
+  const program = await Program.run<Model, Msg>({
     crash: (crashReport) => {
       crashes.pub(crashReport)
     },
-    initCtx: () => ({}),
-    updateCtx: (ctx) => ctx,
     init: () => ({ model: { counter: { count: 0 } } }),
     subscriptions: () => Sub.none(),
     update: ({ model, msg }) => {
@@ -58,7 +55,7 @@ describe(import.meta.file, () => {
       // @ts-expect-error corrupting model on purpose
       { t: 'set-model', c: { some_invalid_model: true } },
     )
-    let crashReport: ProgramCrashReport<Model, Msg, Ctx> | undefined
+    let crashReport: ProgramCrashReport<Model, Msg> | undefined
     f.crashes.sub((m) => {
       crashReport = m
     })

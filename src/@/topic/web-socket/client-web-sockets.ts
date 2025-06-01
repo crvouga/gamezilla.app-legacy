@@ -1,15 +1,26 @@
-import { cancel, delay, fork, race, take, takeEvery } from 'typed-redux-saga'
+import { runSaga } from 'redux-saga'
+import { delay, fork, race, take, takeEvery } from 'typed-redux-saga'
 import { ILogger } from '~/@/logger'
-import { go } from '~/@/saga/saga'
+import { s } from '~/@/schema'
 import { PubSub, Sub } from '~/@/sub'
 import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { Client, Contract } from '../types'
-import { ToClientMsg, ToServerMsg, toTopicString } from './shared'
+import { Client, ContractBase, MsgMeta, Topic } from '../types'
+import {
+  MSG_TYPE_PUB,
+  MSG_TYPE_PUBED,
+  MSG_TYPE_SUB,
+  MSG_TYPE_SUBBED,
+  MSG_TYPE_UNSUB,
+  MSG_TYPE_UNSUBBED,
+  ToClientMsg,
+  ToServerMsg,
+  toTopicString,
+} from './shared'
 import { toWebSocketUrl } from './to-websocket-url'
 
-export type Config<T extends Contract<any>> = {
+export type Config<T extends ContractBase> = {
   t: 'web-sockets'
   contract: T
   serverUrl: string
@@ -19,18 +30,18 @@ export type Config<T extends Contract<any>> = {
 }
 
 type ActiveSubscription = {
-  pubSub: PubSub<unknown>
+  pubSub: PubSub<any>
   topicString: string
   topicName: string[]
   topicParams: unknown
 }
 
-export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T> => {
+export const initClient = <T extends Record<string, Topic<any, any>>>(config: Config<T>): Client<T> => {
   const msgsToServer = Sub.create<ToServerMsg>()
   const activeSubscriptions = new Map<string, ActiveSubscription>()
   const activeSubscriptionsServer = new Set<string>()
 
-  go(saga)
+  runSaga({}, saga)
 
   function* saga() {
     while (true) {
@@ -40,28 +51,47 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
         clientSessionId: config.clientSessionId,
       })
 
+      yield* delay(1000)
+
       const socket = createSocket(webSocketUrl)
 
-      yield take(Sub.chan(socket.msgsOpen))
+      const raced = yield* race({
+        open: take(Sub.chan(socket.msgsOpen)),
+        error: take(Sub.chan(socket.msgsError)),
+        close: take(Sub.chan(socket.msgsClose)),
+      })
 
-      const toServerTask = yield* fork(sagaToServer, socket)
-      const fromServerTask = yield* fork(sagaFromServer, socket)
+      if (!raced.open) {
+        config.logger.warn('[web-socket-client] Failed to connect or connection closed/errored early.', {
+          webSocketUrl,
+          raced,
+        })
+        socket.close()
+        continue
+      }
+
+      config.logger.info('[web-socket-client] Connected.', { webSocketUrl })
+
+      for (const activeSubscription of activeSubscriptions.values()) {
+        msgsToServer.pub([MSG_TYPE_SUB, activeSubscription.topicName, activeSubscription.topicParams])
+      }
 
       yield* race({
         close: take(Sub.chan(socket.msgsClose)),
         error: take(Sub.chan(socket.msgsError)),
+        toServer: fork(sagaToServer, socket),
+        fromServer: fork(sagaFromServer, socket),
       })
 
-      yield cancel(toServerTask)
-      yield cancel(fromServerTask)
+      config.logger.info('[web-socket-client] Disconnected or connection error.', { webSocketUrl })
+      socket.close()
 
-      yield delay(1000)
+      activeSubscriptionsServer.clear()
     }
   }
 
   function* sagaToServer(socket: Socket) {
     const chan = Sub.chan(msgsToServer)
-
     while (true) {
       const toServer = yield* take(chan)
       socket.msgsToServer.pub(toServer)
@@ -70,20 +100,27 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
 
   function* sagaFromServer(socket: Socket) {
     yield takeEvery(Sub.chan(socket.msgsFromServer), (fromServer) => {
-      switch (fromServer.t) {
-        case 'subscribed': {
-          activeSubscriptionsServer.add(fromServer.topicString)
+      switch (fromServer[0]) {
+        case MSG_TYPE_SUBBED: {
+          const topicString = toTopicString(fromServer[1], fromServer[2])
+          activeSubscriptionsServer.add(topicString)
           return
         }
-        case 'unsubscribed': {
-          activeSubscriptionsServer.delete(fromServer.topicString)
+        case MSG_TYPE_UNSUBBED: {
+          const topicString = toTopicString(fromServer[1], fromServer[2])
+          activeSubscriptionsServer.delete(topicString)
           return
         }
-        case 'published': {
-          const activeSubscription = activeSubscriptions.get(fromServer.topicString)
-          if (!activeSubscription) return
-          const msg = JSON.parse(fromServer.msg)
-          activeSubscription.pubSub.pub(msg)
+        case MSG_TYPE_PUBED: {
+          const topicString = toTopicString(fromServer[1], fromServer[2])
+          const activeSubscription = activeSubscriptions.get(topicString)
+          if (!activeSubscription) {
+            config.logger.warn(`[web-socket-client] Received PUBED for unknown topicString: ${topicString}. Ignoring.`)
+            return
+          }
+          const msgPayload = JSON.parse(fromServer[3] as string)
+          const combinedMsg = { ...(msgPayload as any) }
+          activeSubscription.pubSub.pub(combinedMsg)
           return
         }
       }
@@ -97,87 +134,85 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
     fn: (action: 'subscribe' | 'unsubscribe', topicString: string, topicName: string[], topicParams: unknown) => {
       switch (action) {
         case 'subscribe': {
-          if (activeSubscriptionsServer.has(topicString)) return
-          console.log('subscribe', topicString)
-          msgsToServer.pub({ t: 'subscribe', topicString, topicName, topicParams })
+          msgsToServer.pub([MSG_TYPE_SUB, topicName, topicParams])
           return
         }
         case 'unsubscribe': {
-          if (!activeSubscriptionsServer.has(topicString)) return
-          console.log('unsubscribe', topicString)
-          msgsToServer.pub({ t: 'unsubscribe', topicString, topicName, topicParams })
+          if (!activeSubscriptionsServer.has(topicString) && activeSubscriptions.has(topicString)) {
+          }
+          if (!activeSubscriptions.has(topicString)) {
+            return
+          }
+          msgsToServer.pub([MSG_TYPE_UNSUB, topicName, topicParams])
           return
         }
       }
     },
   })
 
-  const createClientRecursive = (currentContract: Contract<any>, runningTopicName: string[] = []): any => {
-    const clientProxy: any = {}
+  function manageSubscriptionLifecycle<TRawMsg, TMappedMsg>(
+    corePubSub: PubSub<TRawMsg>,
+    mapper: (msg: TRawMsg) => TMappedMsg,
+    onUnsubscribeLogic: () => void,
+  ): Sub<TMappedMsg> {
+    const mappedSourceSub: Sub<TMappedMsg> = Sub.map(corePubSub, mapper)
 
-    for (const topicNamePart in currentContract) {
-      const topicConfig = currentContract[topicNamePart]
+    return {
+      sub: (subscriber: (msg: TMappedMsg) => void): (() => void) => {
+        const originalUnsubscribeFn = mappedSourceSub.sub(subscriber)
 
-      if (!topicConfig) continue
-
-      const topicName: string[] = [...runningTopicName, topicNamePart]
-
-      if ('params' in topicConfig && 'msg' in topicConfig) {
-        clientProxy[topicNamePart] = {
-          publish: (topicParams: unknown, msg: unknown) => {
-            msgsToServer.pub({
-              t: 'publish',
-              topicString: toTopicString(topicName, topicParams),
-              topicName,
-              topicParams,
-              msg: JSON.stringify(msg),
-            })
-          },
-          subscribe: (topicParams: unknown, mapper: (msg: any) => any): Sub<any> => {
-            const topicString = toTopicString(topicName, topicParams)
-
-            const activeSubscription = activeSubscriptions.get(topicString)
-
-            syncSubscriptionsWithServer('subscribe', topicString, topicName, topicParams)
-
-            if (activeSubscription) return activeSubscription.pubSub
-
-            const sub = Sub.create()
-
-            const pubSub: PubSub<any> = {
-              ...sub,
-              sub(subscriber) {
-                const unsub = sub.sub((msg) => subscriber(mapper(msg)))
-                return () => {
-                  unsub()
-                  syncSubscriptionsWithServer('unsubscribe', topicString, topicName, topicParams)
-                }
-              },
-            }
-
-            const activeSubscriptionNew: ActiveSubscription = {
-              pubSub,
-              topicString,
-              topicName,
-              topicParams,
-            }
-
-            activeSubscriptions.set(topicString, activeSubscriptionNew)
-
-            return activeSubscriptionNew.pubSub
-          },
+        return () => {
+          originalUnsubscribeFn()
+          onUnsubscribeLogic()
         }
-      } else {
-        clientProxy[topicNamePart] = createClientRecursive(topicConfig as Contract<any>, [
-          ...runningTopicName,
-          topicNamePart,
-        ])
-      }
+      },
     }
-    return clientProxy
   }
 
-  return createClientRecursive(config.contract) as Client<T>
+  const clientProxy = {} as Client<T>
+
+  for (const topicFullNameStr of Object.keys(config.contract)) {
+    const topicKey = topicFullNameStr as keyof T
+    const topicDef = config.contract[topicKey] as T[typeof topicKey]
+
+    const topicNameParts = topicFullNameStr.split('/')
+
+    clientProxy[topicKey] = {
+      publish: (topicParams: s.Infer<typeof topicDef.params>, msg: s.Infer<typeof topicDef.msg>) => {
+        msgsToServer.pub([MSG_TYPE_PUB, topicNameParts, topicParams, JSON.stringify(msg)])
+      },
+      subscribe: <TMsgOut>(
+        topicParams: s.Infer<typeof topicDef.params>,
+        mapper: (msgWithMeta: s.Infer<typeof topicDef.msg> & MsgMeta) => TMsgOut,
+      ): Sub<TMsgOut> => {
+        const topicString = toTopicString(topicNameParts, topicParams)
+
+        syncSubscriptionsWithServer('subscribe', topicString, topicNameParts, topicParams)
+
+        let corePubSub: PubSub<s.Infer<typeof topicDef.msg> & MsgMeta>
+        const existingActiveSub = activeSubscriptions.get(topicString)
+
+        if (existingActiveSub) {
+          corePubSub = existingActiveSub.pubSub as PubSub<s.Infer<typeof topicDef.msg> & MsgMeta>
+        } else {
+          corePubSub = Sub.create<s.Infer<typeof topicDef.msg> & MsgMeta>()
+          const newActiveSub: ActiveSubscription = {
+            pubSub: corePubSub,
+            topicString,
+            topicName: topicNameParts,
+            topicParams: topicParams,
+          }
+          activeSubscriptions.set(topicString, newActiveSub)
+        }
+
+        return manageSubscriptionLifecycle(corePubSub, mapper, () => {
+          syncSubscriptionsWithServer('unsubscribe', topicString, topicNameParts, topicParams)
+        })
+      },
+    }
+  }
+
+  return clientProxy
 }
 
 const createSocket = (url: string) => {
@@ -205,16 +240,23 @@ const createSocket = (url: string) => {
     msgsFromServer.pub(toClientMsg)
   }
 
-  msgsToServer.sub((msg) => {
-    webSocket.send(JSON.stringify(msg))
-  })
+  const close = () => {
+    if (webSocket.readyState === WebSocket.OPEN || webSocket.readyState === WebSocket.CONNECTING) {
+      webSocket.close()
+    }
 
+    webSocket.onopen = null
+    webSocket.onclose = null
+    webSocket.onerror = null
+    webSocket.onmessage = null
+  }
   return {
     msgsOpen,
     msgsClose,
     msgsError,
     msgsToServer,
     msgsFromServer,
+    close,
   }
 }
 

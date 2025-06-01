@@ -16,8 +16,6 @@ export type GameFrontendModuleTypes = {
   Ctx?: Any
   Model?: Any
   Msg?: Any
-  MsgToFrontend?: Any
-  MsgToBackend?: Any
   MsgIn?: unknown
   MsgOut?: unknown
   MsgSpace?: Any
@@ -52,7 +50,6 @@ export type Input<T extends GameFrontendModuleTypes> = {
   ctx: T['Ctx']
   model: T['Model']
   msg?: T['Msg'] | null
-  msgBackend?: T['MsgToFrontend'] | null
   msgIn?: T['MsgIn'] | null
   modelSpace: T['ModelSpace']
   msgSpace?: WithEventId<T['MsgSpace']> | null

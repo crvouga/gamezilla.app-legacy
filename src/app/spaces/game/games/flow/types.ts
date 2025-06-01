@@ -1,9 +1,6 @@
 import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
-
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { FlowBackendCtx } from './@/backend/ctx'
@@ -57,30 +54,6 @@ export type MsgFrontend =
   | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgFrontend }
   | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgFrontend }
 
-export type MsgBackend =
-  | { t: 'got-screen-build-msg'; c: BuildTypes.MsgBackend }
-  | { t: 'got-screen-play-msg'; c: PlayTypes.MsgBackend }
-  | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgBackend }
-  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgBackend }
-  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgBackend }
-  | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgBackend }
-
-export type MsgToBackend =
-  | { t: 'got-screen-build-msg'; c: BuildTypes.MsgToBackend }
-  | { t: 'got-screen-play-msg'; c: PlayTypes.MsgToBackend }
-  | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgToBackend }
-  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgToBackend }
-  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgToBackend }
-  | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgToBackend }
-
-export type MsgToFrontend =
-  | { t: 'got-screen-build-msg'; c: BuildTypes.MsgToFrontend }
-  | { t: 'got-screen-play-msg'; c: PlayTypes.MsgToFrontend }
-  | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgToFrontend }
-  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgToFrontend }
-  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgToFrontend }
-  | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgToFrontend }
-
 const MODE = ['build', 'play'] as const
 export const Mode = s.enumeration(MODE)
 export type Mode = s.Infer<typeof Mode>
@@ -132,21 +105,7 @@ export type BackendCtxModule = FlowBackendCtx
 export type FrontendModule = GameFrontendModule<{
   Model: ModelFrontend
   Msg: MsgFrontend
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
   MsgSpace: MsgSpace
   ModelSpace: ModelSpace
   Ctx: SpaceFrontendCtx
-}>
-
-export type BackendModule = GameBackendModule<{
-  Model: ModelBackend
-  Msg: MsgBackend
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
-  MsgSpace: MsgSpace
-  ModelSpace: ModelSpace
-  Ctx: FlowBackendCtx
-  MsgEvtIn: SpaceBackendEvt
-  MsgCmdOut: null
 }>

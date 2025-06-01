@@ -41,7 +41,7 @@ export type FrontendModule = AppFrontendModule<{
 }>
 
 export const rpcContract = RPC.initContract({
-  listAlive: {
+  'wire/backend-instance/list-alive': {
     input: s.obj({}),
     output: s.obj({
       backendInstances: s.arr(BackendInstance),

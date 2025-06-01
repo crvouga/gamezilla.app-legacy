@@ -31,7 +31,7 @@ const updateScreenPackBuilder: FrontendModule['update'] = (input) => {
     modelSpace: input.modelSpace.screenPackBuilder,
     model: input.model,
     msg: input.msg?.t === 'got-screen-pack-builder-msg' ? input.msg.c : null,
-    msgBackend: input.msgBackend?.t === 'got-screen-pack-builder-msg' ? input.msgBackend.c : null,
+
     msgSpace: input.msgSpace?.t === 'got-screen-pack-builder-msg' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     msgIn: input.msgIn,
   })

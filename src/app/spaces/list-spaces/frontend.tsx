@@ -38,7 +38,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
     return {
       model: input.model,
       async eff(dispatch) {
-        const spaces = await input.ctx.rpc.listSpaces.listSpaces({ pagination: { limit: 10, offset: 0 } })
+        const spaces = await input.ctx.rpc['spaces/list-spaces/list-spaces']({ pagination: { limit: 10, offset: 0 } })
 
         dispatch({ t: 'list-spaces.list-spaces-response', spaces })
       },

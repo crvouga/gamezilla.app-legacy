@@ -4,7 +4,7 @@ import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
+
 import { GameBackendModule } from '~/app/spaces/game/games/@/architecture/game-backend-v2'
 import * as ConnectFour from '../@/connect-four/connect-four'
 import {
@@ -36,7 +36,7 @@ type Module = GameBackendModule<{
   Ctx: SpaceBackendCtx
   Deps: null
   MsgCmdIn: null
-  MsgEvtIn: SpaceBackendEvt
+
   MsgCmdOut: null
   MsgEvtOut: null
 }>

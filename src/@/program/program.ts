@@ -11,30 +11,25 @@ export type CrashResolution =
       t: 'ignore-crashing-update'
     }
 
-export type ProgramCrashReport<TModel, TMsg, TCtx> = {
+export type ProgramCrashReport<TModel, TMsg> = {
   message: string
   error: unknown
   msg: TMsg
   model: TModel
-  ctx: TCtx
 }
 
-export type Program<TModel, TMsg, TCtx> = {
-  initCtx: () => MaybePromise<TCtx>
+export type Program<TModel, TMsg> = {
+  init: () => MaybePromise<{ model: TModel; eff?: Eff<TMsg> }>
 
-  updateCtx: (ctx: TCtx) => MaybePromise<TCtx>
+  update: (input: { msg: TMsg; model: TModel }) => MaybePromise<{ model: TModel; eff?: Eff<TMsg> }>
 
-  init: (input: { ctx: TCtx }) => MaybePromise<{ model: TModel; eff?: Eff<TMsg> }>
+  subscriptions: (input: { intervalId: string; model: TModel }) => MaybePromise<Sub<TMsg>>
 
-  update: (input: { ctx: TCtx; msg: TMsg; model: TModel }) => MaybePromise<{ model: TModel; eff?: Eff<TMsg> }>
-
-  subscriptions: (input: { intervalId: string; ctx: TCtx; model: TModel }) => MaybePromise<Sub<TMsg>>
-
-  crash: (input: ProgramCrashReport<TModel, TMsg, TCtx>) => MaybePromise<unknown>
+  crash: (input: ProgramCrashReport<TModel, TMsg>) => MaybePromise<unknown>
 
   debugger?: ProgramDebugger
 
-  render?: (input: { model: TModel; ctx: TCtx; dispatch: (msg: TMsg) => void }) => void
+  render?: (input: { model: TModel; dispatch: (msg: TMsg) => void }) => void
 }
 
 function generateProgramId() {
@@ -55,9 +50,8 @@ export type ProgramDebugger = (
   setModel: (model: unknown, msg?: unknown) => MaybePromise<void>,
 ) => MaybePromise<(model: unknown, msg?: unknown) => void>
 
-export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCtx> & {}) {
-  const ctx = await program.initCtx()
-  const init = await program.init({ ctx })
+export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
+  const init = await program.init()
   let model: TModel = init.model
 
   let isUpdating = false
@@ -75,10 +69,7 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
 
       isUpdating = true
 
-      const ctxNew = await program.updateCtx(ctx)
-
       const updated = await program.update({
-        ctx: ctxNew,
         msg,
         model,
       })
@@ -88,11 +79,11 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
       updateDebugger?.(model, msg)
       program.render?.({
         model,
-        ctx: ctxNew,
+
         dispatch,
       })
       updateEff(updated.eff)
-      updateSubscriptions(model, ctxNew)
+      updateSubscriptions(model)
 
       if (queue.length > 0) {
         const msg = queue.shift()
@@ -106,7 +97,7 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
         message: 'Program crashed while dispatching message',
         error,
         msg,
-        ctx,
+
         model,
       })
     }
@@ -122,10 +113,10 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
 
   const intervalId = generateProgramId()
   let cleanUpSubscriptions = () => {}
-  async function updateSubscriptions(model: TModel, ctx: TCtx) {
+  async function updateSubscriptions(model: TModel) {
     const sub = await program.subscriptions({
       intervalId,
-      ctx,
+
       model,
     })
     cleanUpSubscriptions()
@@ -133,21 +124,19 @@ export async function run<TModel, TMsg, TCtx>(program: Program<TModel, TMsg, TCt
   }
 
   const updateDebugger = await program.debugger?.(model, async function debuggerSetModel(modelNew) {
-    const ctxNew = await program.updateCtx(ctx)
-
     model = modelNew as TModel
 
     if (!model) {
       return
     }
 
-    program.render?.({ model, ctx: ctxNew, dispatch })
+    program.render?.({ model, dispatch })
   })
 
   updateDebugger?.(model, '@INIT')
-  program.render?.({ model, ctx, dispatch })
+  program.render?.({ model, dispatch })
   updateEff(init.eff)
-  updateSubscriptions(model, ctx)
+  updateSubscriptions(model)
 
   return {
     getModel() {

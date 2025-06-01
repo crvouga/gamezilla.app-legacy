@@ -34,7 +34,7 @@ const update: FrontendModule['update'] = (input) => {
           }),
         },
         eff: () => {
-          input.ctx.topic.pingAll.publish(null, { pingId: msg.pingId })
+          input.ctx.topic['wire/backend-connection/ping-all'].publish(null, { pingId: msg.pingId })
         },
       }
     }
@@ -72,7 +72,7 @@ const pings: FrontendModule['subscriptions'] = (input) => {
 }
 
 const pongs: FrontendModule['subscriptions'] = (input) => {
-  return input.ctx.topic.pong.subscribe(
+  return input.ctx.topic['wire/backend-connection/pong'].subscribe(
     input.ctx.clientSessionId,
     (msg): MsgFrontend => ({ t: 'pong', pingId: msg.pingId, now: Posix.now() }),
   )

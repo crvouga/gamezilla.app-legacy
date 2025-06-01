@@ -88,21 +88,28 @@ describe('RPC', () => {
 
   test('should work nested', async () => {
     for (using f of await Fixtures()) {
-      const result = await f.client.child.baz({ name: 'Charlie' })
+      const result = await f.client.baz({ name: 'Charlie' })
       expect(result).toEqual(Ok({ message: 'Yo, Charlie' }))
     }
   })
 
   test('should handle validation errors', async () => {
     for (using f of await Fixtures()) {
-      const result = await f.client.foo({ name: 'Alice', age: 'invalid' as any })
+      const result = await f.client.foo({
+        name: 'Alice',
+        // @ts-expect-error Testing runtime behavior with invalid endpoint
+        age: 'invalid',
+      })
       expect(isErr(result)).toBe(true)
     }
   })
 
   test('should handle nested validation errors', async () => {
     for (using f of await Fixtures()) {
-      const result = await f.client.child.baz({ name: 123 as any })
+      const result = await f.client.baz({
+        // @ts-expect-error Testing runtime behavior with invalid endpoint
+        name: 123,
+      })
       expect(isErr(result)).toBe(true)
     }
   })

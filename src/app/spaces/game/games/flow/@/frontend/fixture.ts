@@ -3,7 +3,7 @@ import { withEventMeta, WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 import { FlowFrontend } from '../../frontend'
 import { FlowSpace } from '../../space'
-import { ModelSpace, MsgFrontend, MsgSpace, MsgToFrontend } from '../../types'
+import { ModelSpace, MsgFrontend, MsgSpace } from '../../types'
 import { PackDb } from '../pack/pack-db'
 import { PackLoaderTypes } from '../pack/pack-loader'
 import { PuzzleDb } from '../puzzle/puzzle-db'
@@ -33,7 +33,6 @@ export const FixtureFlowFrontend = async () => {
   type Input = {
     ctx?: FlowFrontendCtx | null
     msg?: MsgFrontend | null
-    msgBackend?: MsgToFrontend | null
     msgSpace?: WithEventMeta<MsgSpace> | null
   }
 
@@ -48,7 +47,6 @@ export const FixtureFlowFrontend = async () => {
         ctx: input.ctx ?? ctx,
         model: lastOutput.model,
         msg: input.msg,
-        msgBackend: input.msgBackend,
         msgSpace: input.msgSpace,
         modelSpace: outputs
           .flatMap((o) => o.msgSpace ?? [])

@@ -31,7 +31,7 @@ export type MsgFrontend =
 export type MsgToBackend = { t: 'noop' }
 
 export const rpcContract = RPC.initContract({
-  getCurrentUser: {
+  'auth/current-user/get-current-user': {
     input: s.obj({}),
     output: s.obj({
       currentUser: s.maybe(UserAccount),

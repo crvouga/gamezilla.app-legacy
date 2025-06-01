@@ -2,7 +2,7 @@ import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
-import { SpaceBackendEvt } from '~/app/spaces/@/backend/evt'
+
 import * as Board from '../@/chess/chess-space'
 import { initSpace, type ModelBackend, type MsgBackend, type MsgToBackend } from './vs-user.types'
 
@@ -42,7 +42,7 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceBackendEvt
+  msg: Record<string, unknown>
   model: ModelBackend
 }): {
   model: ModelBackend

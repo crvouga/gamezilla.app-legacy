@@ -18,13 +18,9 @@ export type MsgFrontend =
 
 export type MsgBackend = { t: 'got-backend-instance-msg'; c: BackendInstanceTypes.MsgBackend }
 
-export const rpcContract = RPC.initContract({
-  backendInstance: BackendInstanceTypes.rpcContract,
-})
+export const rpcContract = RPC.combineContracts([BackendInstanceTypes.rpcContract])
 
-export const topicContract = Topic.initContract({
-  backendConnection: BackendConnectionTypes.topicContract,
-})
+export const topicContract = Topic.combineContracts([BackendConnectionTypes.topicContract])
 
 export type FrontendCtxModule = AppFrontendCtxBase & {
   topic: Topic.Client<typeof topicContract>

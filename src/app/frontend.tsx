@@ -17,9 +17,8 @@ import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { setupNewPowerSyncClient } from '~/service-powersync/frontend/database'
 import { Logger } from '../@/logger'
-import { UserProfile } from './@/data/user-profile'
 import { APP_SOUND } from './@/frontend/app-sound'
-import { AnonymousFrontendCtx, AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
+import { AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { PreloadSoundsCmd } from './@/frontend/preload-sounds-cmd'
 import { Translator } from './@/frontend/translator'
 import { ViewAppRoot } from './@/ui/app-root/app-root'
@@ -95,58 +94,50 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     httpClient,
   }
 
-  const auth = await AuthFrontend.initCtx({ ctx: { ...ctx, rpc } })
+  const auth = await AuthFrontend.initCtx({ ctx, rpc })
   const profile = ProfileFrontend.initCtx({ ctx })
-  return {
+  const spaces = SpacesFrontend.initCtx({ ctx, rpc, topic })
+  const wire = WireFrontend.initCtx({ ctx, rpc, topic })
+
+  const ctxModule: FrontendCtxModule = {
     ...ctx,
-    ...profile,
     ...auth,
+    ...profile,
+    ...spaces,
+    ...wire,
     rpc,
     topic,
   }
+
+  return ctxModule
 }
 
-const updateCtx = (ctx: FrontendCtxModule): FrontendCtxModule => {
-  ctx.now = Posix.now()
-  return ctx
-}
-
-type Ctx = (AppFrontendCtx | AnonymousFrontendCtx) & FrontendCtxModule
-
-const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Ctx => {
-  const profiles: UserProfile[] = Object.values(input.model.profile.profilesByUserId)
-
-  const anonymousCtx: AnonymousFrontendCtx = {
+const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): FrontendCtxModule => {
+  const baseCtx: FrontendCtxModule = {
     ...input.ctx,
+    now: Posix.now(),
     t: Translator(input.model.lang.lang),
-    profilesByUserId: UserProfile.indexByUserId(profiles),
-    now: input.ctx.now,
+    profilesByUserId: input.model.profile.profilesByUserId,
     documentVisibilityState: input.model.frontend.visibility.documentVisibilityState,
     currentScreen: input.model.frontend.currentScreen.currentScreen,
     screenSize: input.model.frontend.screenSize.screenSize,
     parentScreen: null,
   }
+
   const currentUser = toCurrentUserState({
     model: input.model.auth.currentUser,
     ctx: input.ctx,
   })
-  switch (currentUser.t) {
-    case 'logged-in':
-      const appCtx: AppFrontendCtx = {
-        ...anonymousCtx,
-        currentUser: currentUser.userAccount,
-        currentUserRole: currentUser.userAccount.role,
-        currentUserId: currentUser.userAccount.userId,
-      }
-      return {
-        ...input.ctx,
-        ...appCtx,
-      }
-    default:
-      return {
-        ...input.ctx,
-        ...anonymousCtx,
-      }
+
+  if (currentUser.t !== 'logged-in') {
+    return baseCtx
+  }
+
+  return {
+    ...baseCtx,
+    currentUser: currentUser.userAccount,
+    currentUserRole: currentUser.userAccount.role,
+    currentUserId: currentUser.userAccount.userId,
   }
 }
 
@@ -156,7 +147,7 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
     location: input.ctx.location,
   })
 
-  const ctx: AnonymousFrontendCtx = {
+  const ctx: FrontendCtxModule = {
     ...input.ctx,
     currentScreen: frontend.model.currentScreen.currentScreen,
     documentVisibilityState: frontend.model.visibility.documentVisibilityState,
@@ -164,10 +155,10 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
   }
 
   const lang = LangFrontend.init({ ctx })
-  const wire = WireFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.wire, topic: input.ctx.topic.wire } })
-  const auth = AuthFrontend.init({ ctx: input.ctx })
-  const space = SpacesFrontend.init({ ctx: { ...ctx, rpc: input.ctx.rpc.spaces, topic: input.ctx.topic.spaces } })
-  const profile = ProfileFrontend.init({ ctx: input.ctx })
+  const wire = WireFrontend.init({ ctx })
+  const auth = AuthFrontend.init({ ctx })
+  const space = SpacesFrontend.init({ ctx })
+  const profile = ProfileFrontend.init({ ctx })
 
   const initialModel: ModelFrontend = {
     frontend: frontend.model,
@@ -255,7 +246,7 @@ const updateChild = (input: {
   const frontendCtx = toCtx(input)
 
   const space = SpacesFrontend.update({
-    ctx: { ...frontendCtx, topic: frontendCtx.topic.spaces, rpc: frontendCtx.rpc.spaces },
+    ctx: frontendCtx,
     model: input.model.spaces,
     msg: input.msg?.t === 'spaces' ? input.msg.c : null,
     msgIn: input.msgIn,
@@ -276,7 +267,7 @@ const updateChild = (input: {
   })
 
   const wire = WireFrontend.update({
-    ctx: { ...frontendCtx, topic: frontendCtx.topic.wire, rpc: frontendCtx.rpc.wire },
+    ctx: frontendCtx,
     model: input.model.wire,
     msg: input.msg?.t === 'wire' ? input.msg.c : null,
   })
@@ -321,47 +312,17 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
 
   return Sub.batch<MsgFrontend>([
     Sub.map(
-      FrontendFrontend.subscriptions({
-        ctx,
-        model: input.model.frontend,
-      }),
+      FrontendFrontend.subscriptions({ ctx, model: input.model.frontend }),
       (c): MsgFrontend => ({ t: 'frontend', c }),
     ),
+    Sub.map(WireFrontend.subscriptions({ ctx, model: input.model.wire }), (c): MsgFrontend => ({ t: 'wire', c })),
+    Sub.map(LangFrontend.subscriptions({ ctx, model: input.model.lang }), (c): MsgFrontend => ({ t: 'lang', c })),
+    Sub.map(AuthFrontend.subscriptions({ ctx, model: input.model.auth }), (c): MsgFrontend => ({ t: 'auth', c })),
     Sub.map(
-      WireFrontend.subscriptions({
-        ctx: { ...ctx, topic: ctx.topic.wire, rpc: ctx.rpc.wire },
-        model: input.model.wire,
-      }),
-      (c): MsgFrontend => ({ t: 'wire', c }),
-    ),
-    Sub.map(
-      LangFrontend.subscriptions({
-        ctx,
-        model: input.model.lang,
-      }),
-      (c): MsgFrontend => ({ t: 'lang', c }),
-    ),
-    Sub.map(
-      AuthFrontend.subscriptions({
-        ctx,
-        model: input.model.auth,
-      }),
-      (c): MsgFrontend => ({ t: 'auth', c }),
-    ),
-    Sub.map(
-      ProfileFrontend.subscriptions({
-        ctx,
-        model: input.model.profile,
-      }),
+      ProfileFrontend.subscriptions({ ctx, model: input.model.profile }),
       (c): MsgFrontend => ({ t: 'profile', c }),
     ),
-    Sub.map(
-      SpacesFrontend.subscriptions({
-        ctx: { ...ctx, topic: input.ctx.topic.spaces, rpc: input.ctx.rpc.spaces },
-        model: input.model.spaces,
-      }),
-      (c): MsgFrontend => ({ t: 'spaces', c }),
-    ),
+    Sub.map(SpacesFrontend.subscriptions({ ctx, model: input.model.spaces }), (c): MsgFrontend => ({ t: 'spaces', c })),
   ])
 }
 
@@ -393,7 +354,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
   )
 }
 
-const ViewScreen = (input: { ctx: Ctx; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {
+const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {
   switch (input.model.frontend.currentScreen.currentScreen.n) {
     case 'lang':
       return (
@@ -466,8 +427,6 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
           ctx={{
             ...input.ctx,
             parentScreen: toScreenLayoutProps(input),
-            topic: input.ctx.topic.spaces,
-            rpc: input.ctx.rpc.spaces,
           }}
         />
       )
@@ -545,7 +504,6 @@ const toScreenLayoutProps = (input: {
 
 export const AppFrontend = {
   initCtx,
-  updateCtx,
   init,
   update,
   subscriptions,

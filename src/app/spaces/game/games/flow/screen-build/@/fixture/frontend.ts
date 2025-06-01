@@ -13,12 +13,13 @@ import { SolutionsLoaderTypes } from '../../../@/solutions/solutions-loader'
 import { ScreenBuildFrontend } from '../../frontend'
 import { BuildSpace } from '../../space'
 import * as BuilderTypes from '../../types'
+
 export type FixtureUpdateInput = {
   ctx?: FlowFrontendCtx
   msg?: BuilderTypes.MsgFrontend
   msgSpace?: WithEventMeta<BuilderTypes.MsgSpace>
-  msgBackend?: BuilderTypes.MsgToFrontend
 }
+
 export type FixtureUpdateOutput = ReturnType<typeof ScreenBuildFrontend.update> & {
   modelSpace: BuilderTypes.ModelSpace
 }

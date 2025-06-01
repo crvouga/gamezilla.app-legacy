@@ -4,7 +4,7 @@ import { rpcContract } from './types'
 
 const rpc = (_input: { ctx: AuthBackendCtx }) => {
   return RPC.initServer(rpcContract, {
-    async getCurrentUser(_input, _reqCtx) {
+    'auth/current-user/get-current-user': async (_input, _reqCtx) => {
       throw new Error('')
     },
   })

@@ -70,7 +70,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     isProd: CONFIG_SHARED.IS_PROD,
   })
 
-  const profileDb = ProfileDb({
+  const userProfileDb = ProfileDb({
     t: 'sql',
     dbConnSql,
     logger,
@@ -92,21 +92,21 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     backendInstanceId,
     sleep,
     pubSub,
-    userProfileDb: profileDb,
+    userProfileDb,
     httpServer,
     runtime,
   }
 
-  const wire = await WireBackend.initCtx({ ctx, topic: topic.wire })
+  const wire = await WireBackend.initCtx({ ctx, topic })
   const profile = await ProfileBackend.initCtx({ ctx })
-  const space = await SpacesBackend.initCtx({ ctx, topic: topic.spaces })
+  const space = await SpacesBackend.initCtx({ ctx, topic })
   const auth = await AuthBackend.initCtx({ ctx })
 
   return {
     ...ctx,
     httpServer,
     auth,
-    space,
+    spaces: space,
     profile,
     wire,
     topic,
@@ -115,16 +115,16 @@ const initCtx = async (): Promise<BackendCtxModule> => {
 
 const rpc = (ctx: BackendCtxModule) => {
   return RPC.initServer(rpcContract, {
-    wire: WireBackend.rpc(ctx.wire),
-    auth: AuthBackend.rpc({ ctx: ctx.auth }),
-    spaces: SpacesBackend.rpc({ ctx: ctx.space }),
+    ...WireBackend.rpc(ctx.wire),
+    ...AuthBackend.rpc({ ctx: ctx.auth }),
+    ...SpacesBackend.rpc({ ctx: ctx.spaces }),
   })
 }
 
 const saga = function* (ctx: BackendCtxModule) {
   yield fork(WireBackend.saga, ctx.wire)
   yield fork(AuthBackend.saga, ctx.auth)
-  yield fork(SpacesBackend.saga, ctx.space)
+  yield fork(SpacesBackend.saga, ctx.spaces)
   yield fork(ProfileBackend.saga, ctx.profile)
 }
 

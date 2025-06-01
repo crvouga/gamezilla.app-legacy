@@ -5,15 +5,14 @@ import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd'
 import { AddProfilesCmd } from '../@/frontend/add-profiles-cmd'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PushScreenCmd } from '../@/frontend/push-screen-cmd'
-import { ProfileFrontendCtx } from './@/frontend/ctx'
 import { ProfileDb } from './@/user-profile/user-profile-db'
 import { ScreenProfileFrontend } from './screen-profile/frontend'
 import { ScreenUpdateUsernameFrontend } from './screen-update-username/frontend'
 import { UpdateAvatarScreen } from './screen-update/update-avatar-screen'
 import { UpdateProfileScreen } from './screen-update/update-profile-screen'
-import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
+import type { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend } from './types'
 
-const initCtx = (input: { ctx: AppFrontendCtxBase }): ProfileFrontendCtx => {
+const initCtx = (input: { ctx: AppFrontendCtxBase }): FrontendCtxModule => {
   return {
     ...input.ctx,
     profileDb: ProfileDb({

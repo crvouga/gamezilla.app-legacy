@@ -4,11 +4,11 @@ import { Sub } from '~/@/sub'
 import { FixtureFlowFrontend } from '../../../@/frontend/fixture'
 import { ScreenPlayFrontend } from '../../frontend'
 import { PlaySpace } from '../../space'
-import type { ModelSpace, MsgFrontend, MsgSpace, MsgToFrontend } from '../../types'
+import type { ModelSpace, MsgFrontend, MsgSpace } from '../../types'
 
 export type FixtureUpdateInput = {
   msg?: MsgFrontend
-  msgBackend?: MsgToFrontend
+
   msgSpace?: WithEventMeta<MsgSpace>
 }
 

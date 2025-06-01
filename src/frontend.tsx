@@ -16,17 +16,13 @@ const main = async () => {
   const ctx = await AppFrontend.initCtx()
 
   await Program.run({
-    initCtx: () => ctx,
+    init: () => AppFrontend.init({ ctx }),
 
-    updateCtx: AppFrontend.updateCtx,
+    update: (input) => AppFrontend.update({ ...input, ctx }),
 
-    init: AppFrontend.init,
+    subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
 
-    update: AppFrontend.update,
-
-    subscriptions: AppFrontend.subscriptions,
-
-    render: (input) => render(<AppFrontend.View {...input} />),
+    render: (input) => render(<AppFrontend.View {...input} ctx={ctx} />),
 
     crash: (input) => console.error('program crashed!', input),
 
