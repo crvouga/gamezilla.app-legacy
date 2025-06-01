@@ -19,10 +19,7 @@ const once = <A>(sub: Sub<A>) => {
 }
 
 const chan = <Msg extends {} | null>(sub: Sub<Msg>): TakeableChannel<Msg> => {
-  return eventChannel<Msg>((emit) => {
-    const unsubscribe = sub.sub((msg) => emit(msg))
-    return unsubscribe
-  })
+  return eventChannel<Msg>(sub.sub)
 }
 
 const where = <A, B extends A>(sub: Sub<A>, guard: (msg: A) => msg is B): Sub<B> => {
