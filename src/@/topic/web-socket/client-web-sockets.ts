@@ -35,13 +35,8 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
 
   function* saga() {
     while (true) {
-      const webSocketUrl = toWebSocketUrl({
-        serverUrl: config.serverUrl,
-        endpoint: config.endpoint,
-        clientSessionId: config.clientSessionId,
-      })
-
-      const socket = createSocket(webSocketUrl)
+      const socketUrl = toWebSocketUrl(config)
+      const socket = createSocket(socketUrl)
 
       const raced = yield* race({
         open: take(Sub.chan(socket.msgsOpen)),
@@ -50,16 +45,18 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
       })
 
       if (!raced.open) {
-        config.logger.warn('Failed to connect or connection closed/errored early.', {
-          webSocketUrl,
-          raced,
-        })
+        config.logger.warn('Failed to connect or connection closed/errored early.', { socketUrl, raced })
+
+        activeSubscriptionsServer.clear()
+
         socket.close()
+
         yield* delay(1000)
+
         continue
       }
 
-      config.logger.info('Connected.', { webSocketUrl })
+      config.logger.info('Connected.', { socketUrl })
 
       for (const activeSubscription of activeSubscriptions.values()) {
         msgsToServer.pub(['sub', activeSubscription.topicName, activeSubscription.topicParams])
@@ -72,9 +69,12 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
         fromServer: fork(sagaFromServer, socket),
       })
 
-      config.logger.info('Disconnected or connection error.', { webSocketUrl })
-      socket.close()
+      config.logger.info('Disconnected or connection error.', { socketUrl })
+
       activeSubscriptionsServer.clear()
+
+      socket.close()
+
       yield* delay(1000)
     }
   }
@@ -191,12 +191,12 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
 }
 
 const createSocket = (url: string) => {
-  const webSocket = new WebSocket(url)
   const msgsOpen = Sub.create<{ t: 'opened' }>()
   const msgsClose = Sub.create<{ t: 'closed' }>()
   const msgsError = Sub.create<{ t: 'error'; error: Event }>()
   const msgsToServer = Sub.create<ToServerMsg>()
   const msgsFromServer = Sub.create<ToClientMsg>()
+  const webSocket = new WebSocket(url)
 
   webSocket.onopen = () => {
     msgsOpen.pub({ t: 'opened' })
@@ -216,7 +216,15 @@ const createSocket = (url: string) => {
   }
 
   const close = () => {
-    webSocket.close()
+    if (webSocket.readyState === WebSocket.OPEN) {
+      webSocket.close()
+    }
+
+    if (webSocket.readyState === WebSocket.CONNECTING) {
+      setTimeout(close, 1000)
+      return
+    }
+
     webSocket.onopen = null
     webSocket.onclose = null
     webSocket.onerror = null
