@@ -114,8 +114,8 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
       const closed = yield* race({
         close: take(Sub.chan(socket.msgsClose)),
         error: take(Sub.chan(socket.msgsError)),
-        toServer: call(sagaToServer, socket),
-        fromServer: call(sagaFromServer, socket),
+        toServer: call(flowMsgToServer, socket),
+        fromServer: call(flowMsgFromServer, socket),
       })
 
       if (closed.close) config.logger.warn('connection closed')
@@ -135,7 +135,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     yield* delay(1000)
   }
 
-  function* sagaToServer(socket: Socket<ToServerMsg, ToClientMsg>) {
+  function* flowMsgToServer(socket: Socket<ToServerMsg, ToClientMsg>) {
     yield takeEvery(Sub.chan(msgsToServer), function* (toServer) {
       config.logger.info('sending message to server', toServer)
 
@@ -158,7 +158,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     })
   }
 
-  function* sagaFromServer(socket: Socket<ToServerMsg, ToClientMsg>) {
+  function* flowMsgFromServer(socket: Socket<ToServerMsg, ToClientMsg>) {
     yield takeEvery(Sub.chan(socket.msgsFromServer), function* (fromServer) {
       switch (fromServer[0]) {
         case 'sub': {
