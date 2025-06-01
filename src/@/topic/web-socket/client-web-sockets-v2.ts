@@ -1,7 +1,7 @@
 import { cancel, delay, fork, race, take } from 'typed-redux-saga'
 import { ILogger } from '~/@/logger'
 import { go } from '~/@/saga/saga'
-import { Sub } from '~/@/sub'
+import { PubSub, Sub } from '~/@/sub'
 import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -19,7 +19,7 @@ export type Config<T extends Contract<any>> = {
 }
 
 type TopicSubscriptionInfo = {
-  pubSub: Sub<unknown>
+  pubSub: PubSub<unknown>
   topicName: string[]
   topicParams: unknown
 }
@@ -143,7 +143,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
             syncSubscriptionsWithServer('subscribe', topicName, topicParams)
 
             const sub = Sub.create()
-            const pubSub: Sub<any> = {
+            const pubSub: PubSub<any> = {
               ...sub,
               sub(subscriber) {
                 const unsub = sub.sub((msg) => subscriber(mapper(msg)))

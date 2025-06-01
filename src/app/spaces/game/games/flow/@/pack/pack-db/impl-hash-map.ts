@@ -1,5 +1,5 @@
 import { Ok, Result, unwrapOr } from '~/@/result'
-import { Sub } from '~/@/sub'
+import { PubSub, Sub } from '~/@/sub'
 import type { Pack } from '../pack'
 import type { IPackDb } from './interface'
 import { PacksDbQuery } from './query'
@@ -12,7 +12,7 @@ export type Config = {
 
 export const PackDb = (_config: Config): IPackDb => {
   const queries = new Map<string, PacksDbQuery>()
-  const subs = new Map<string, Sub<Pack[]>>()
+  const subs = new Map<string, PubSub<Pack[]>>()
 
   const list: IPackDb['list'] = async (input) => {
     const all = Array.from(db.values())

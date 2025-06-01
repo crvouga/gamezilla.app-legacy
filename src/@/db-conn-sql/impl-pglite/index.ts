@@ -109,7 +109,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       const pubSub = Sub.create<TRow[]>()
       let lastPublished: TRow[] | null = null
 
-      const subscribed = subscribe({
+      subscribe({
         schema: input.schema,
         sql: input.sql,
         vars: input.vars,
@@ -141,19 +141,6 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
         //   },
         // })
       }
-
-      activeSubscriptions.set(subscriptionKey, {
-        // @ts-ignore
-        pubSub: pubSub,
-        unsubscribe: async () => {
-          const sub = await subscribed
-          sub.unsubscribe()
-          activeSubscriptions.delete(subscriptionKey)
-          // syncShape.then((result) => {
-          //   result.unsubscribe()
-          // })
-        },
-      })
 
       return {
         pub: async (msg: TRow[]) => {

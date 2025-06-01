@@ -1,7 +1,7 @@
 import { ILogger, Logger } from '~/@/logger'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
-import { Sub } from '~/@/sub'
+import { PubSub, Sub } from '~/@/sub'
 import { IPowerSyncClient } from '~/service-powersync/frontend/database'
 import { DbConnSqlQueryInput, IDbConnSql } from '../interface'
 
@@ -152,7 +152,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     }
   }
 
-  const channels = new Map<string, Sub<string>>()
+  const channels = new Map<string, PubSub<string>>()
   const notify: IDbConnSql['notify'] = async (channel, payload) => {
     const got = channels.get(channel)
     const chan = got ?? Sub.create<string>()

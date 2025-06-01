@@ -1,8 +1,8 @@
 import type { Server, WebSocketHandler } from 'bun'
 import { Logger, type ILogger } from '~/@/logger'
-import { Sub } from '../sub'
+import { PubSub, Sub } from '../sub'
 import { Posix } from '../time/posix'
-import { HttpServerEvent, type Respond, type IHttpServer } from './interface'
+import { HttpServerEvent, type IHttpServer, type Respond } from './interface'
 import { getIpAddress } from './ip-address'
 
 export type Config = {
@@ -16,7 +16,7 @@ export const HttpServerBun = <T>(config: Config) => {
   let webSocketHandler: WebSocketHandler<T>
   let httpServer: Server
 
-  const events: Sub<HttpServerEvent> = Sub.create()
+  const events: PubSub<HttpServerEvent> = Sub.create()
 
   const staticResponses: Record<`/${string}`, Response> = {}
 

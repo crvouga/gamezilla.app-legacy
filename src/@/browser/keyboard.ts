@@ -1,4 +1,4 @@
-import type { Sub } from '../sub'
+import { Sub } from '../sub'
 
 export type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowRight' | 'ArrowLeft'
 
@@ -52,10 +52,9 @@ const is = (key: unknown): key is Key => {
 }
 
 export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
+  const pubSub = Sub.create<T>()
   return {
-    pub: async (_msg: T) => {
-      throw new Error('not implemented')
-    },
+    ...pubSub,
     sub: (subscriber: (msg: T) => void) => {
       const handler = (msgEvt: KeyboardEvent) => {
         if (msgEvt.repeat) {
@@ -78,9 +77,7 @@ export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
 
 export const keyUps = <T extends {}>(callback: (key: Key) => T): Sub<T> => {
   return {
-    pub: async (_msg: T) => {
-      throw new Error('not implemented')
-    },
+    
     sub: (subscriber) => {
       const handler = (msgEvt: KeyboardEvent) => {
         if (msgEvt.repeat) {

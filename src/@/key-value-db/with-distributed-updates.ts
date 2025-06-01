@@ -1,4 +1,4 @@
-import { type Sub } from '~/@/sub'
+import { PubSub } from '~/@/sub'
 import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
 import { IKeyValueDb } from './interface'
@@ -28,7 +28,7 @@ export type Config = {
   t: 'with-distributed-updates'
   logger: ILogger
   keyValueDb: IKeyValueDb
-  pubSub: Sub<DistributedUpdate>
+  pubSub: PubSub<DistributedUpdate>
 }
 
 export const withDistributedUpdates = (config: Config): IKeyValueDb & { unsubscribe: () => void } => {

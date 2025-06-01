@@ -1,8 +1,8 @@
 import { Contract } from '~/@/rpc/types'
 import { Client } from '../types'
 import * as ClientLocal from './client-local'
-// import * as ClientWebSockets from './client-web-sockets'
-import * as ClientWebSockets from './client-web-sockets-v2'
+import * as ClientWebSockets from './client-web-sockets'
+// import * as ClientWebSockets from './client-web-sockets-v2'
 
 export type Config<T extends Contract<any>> =
   | ClientLocal.Config<T>
