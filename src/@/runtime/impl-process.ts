@@ -1,9 +1,9 @@
 import { ILogger, Logger } from '~/@/logger'
-import { Sub } from '../sub'
-import { sleep } from '../promise/sleep'
-import { Posix } from '../time/posix'
-import { TimeSpan } from '../time/time-span'
-import { IRuntime, RuntimeEvent } from './interface'
+import { sleep } from '~/@/promise/sleep'
+import { IRuntime, RuntimeEvent } from '~/@/runtime/interface'
+import { Sub } from '~/@/sub'
+import { Posix } from '~/@/time/posix'
+import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {
   t: 'process'
@@ -25,8 +25,11 @@ export const Runtime = (config: Config): IRuntime => {
     process.exit(0)
   }
 
-  process.on('SIGINT', handleShutdown)
-  process.on('SIGTERM', handleShutdown)
+  const SHOULD = false
+  if (SHOULD) {
+    process.on('SIGINT', handleShutdown)
+    process.on('SIGTERM', handleShutdown)
+  }
 
   return {
     events,
