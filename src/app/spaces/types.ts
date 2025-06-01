@@ -58,11 +58,11 @@ export type FrontendCtxModule = AppFrontendCtxBase & {
   space?: Space | null
 }
 
-export type BackendCtxModule = AppBackendCtxBase & {
-  spacesCore: ISpacesCoreAsync
-  games: GameTypes.GamesBackendCtx
-  topic: Topic.Client<typeof topicContract>
-}
+export type BackendCtxModule = AppBackendCtxBase &
+  GameTypes.GamesBackendCtxModule & {
+    spacesCore: ISpacesCoreAsync
+    topic: Topic.Client<typeof topicContract>
+  }
 
 export type FrontendModule = AppFrontendModule<{
   Ctx: FrontendCtxModule

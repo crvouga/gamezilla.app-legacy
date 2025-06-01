@@ -9,12 +9,12 @@ const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCt
 
 const rpc = (input: { ctx: AuthBackendCtx }) => {
   return {
-    ...LoginWithSMSBackend.rpc({ ctx: input.ctx }),
-    ...CurrentUserBackend.rpc({ ctx: input.ctx }),
+    ...LoginWithSMSBackend.rpc(input),
+    ...CurrentUserBackend.rpc(input),
   }
 }
 
-const saga = function* (_ctx: AuthBackendCtx) {}
+const saga = function* (_input: { ctx: AuthBackendCtx }) {}
 
 export const AuthBackend = {
   rpc,

@@ -13,7 +13,7 @@ const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<ProfileBacken
   }
 }
 
-const saga = function* (_ctx: ProfileBackendCtx) {}
+const saga = function* (_input: { ctx: ProfileBackendCtx }) {}
 
 export const ProfileBackend = {
   initCtx,

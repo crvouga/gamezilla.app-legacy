@@ -136,25 +136,6 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
     },
   })
 
-  function manageSubscriptionLifecycle<TRawMsg, TMappedMsg>(
-    corePubSub: PubSub<TRawMsg>,
-    mapper: (msg: TRawMsg) => TMappedMsg,
-    onUnsubscribeLogic: () => void,
-  ): Sub<TMappedMsg> {
-    const mappedSourceSub: Sub<TMappedMsg> = Sub.map(corePubSub, mapper)
-
-    return {
-      sub: (subscriber: (msg: TMappedMsg) => void): (() => void) => {
-        const originalUnsubscribeFn = mappedSourceSub.sub(subscriber)
-
-        return () => {
-          originalUnsubscribeFn()
-          onUnsubscribeLogic()
-        }
-      },
-    }
-  }
-
   const clientProxy = {} as Client<T>
 
   for (const topicFullNameStr of Object.keys(config.contract)) {

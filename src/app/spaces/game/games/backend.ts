@@ -1,18 +1,17 @@
 import { fork } from 'typed-redux-saga'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { FlowBackend } from './flow/backend'
-import type { GameBackendCtx } from './types'
+import type { GameBackendCtxModule } from './types'
 
-const initCtx = (input: { ctx: SpaceBackendCtx }): GameBackendCtx => {
+const initCtx = (input: { ctx: SpaceBackendCtx }): GameBackendCtxModule => {
   return {
     ...input.ctx,
-    flow: FlowBackend.initCtx(input),
+    ...FlowBackend.initCtx(input),
   }
 }
 
-const saga = function* (ctx: GameBackendCtx) {
-  yield fork(FlowBackend.saga, ctx.flow)
-  
+const saga = function* (input: { ctx: GameBackendCtxModule }) {
+  yield fork(FlowBackend.saga, input)
 }
 
 export const GamesBackend = {

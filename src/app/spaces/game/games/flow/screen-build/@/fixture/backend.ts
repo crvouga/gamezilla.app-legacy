@@ -12,12 +12,12 @@ const initCtx = async (ctx: SpaceBackendCtx): Promise<FlowBackendCtx> => {
     case 'integration': {
       return {
         ...ctx,
-        packDb: PackDb({
+        flowPackDb: PackDb({
           t: 'db-conn-sql',
           dbConnSql: f.dbConnPostgres,
           logger: Logger({ t: 'noop' }),
         }),
-        puzzleDb: PuzzleDb({
+        flowPuzzleDb: PuzzleDb({
           t: 'db-conn-sql',
           dbConnSql: f.dbConnPostgres,
           logger: Logger({ t: 'noop' }),
@@ -27,8 +27,8 @@ const initCtx = async (ctx: SpaceBackendCtx): Promise<FlowBackendCtx> => {
     case 'unit': {
       return {
         ...ctx,
-        packDb: PackDb({ t: 'hash-map' }),
-        puzzleDb: PuzzleDb({ t: 'hash-map' }),
+        flowPackDb: PackDb({ t: 'hash-map' }),
+        flowPuzzleDb: PuzzleDb({ t: 'hash-map' }),
       }
     }
   }

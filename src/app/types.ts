@@ -1,4 +1,3 @@
-import { IHttpServer } from '~/@/http-server'
 import { RPC } from '~/@/rpc'
 import { Topic } from '~/@/topic'
 import { AppBackendCtxBase } from './@/backend/ctx'
@@ -7,7 +6,6 @@ import { AuthTypes } from './auth'
 import { FrontendTypes } from './frontend/index'
 import { LangTypes } from './lang'
 import { ProfileTypes } from './profile'
-import { ProfileBackendCtx } from './profile/@/backend/ctx'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
 
@@ -32,14 +30,13 @@ export const rpcContract = RPC.combineContracts([WireTypes.rpcContract, AuthType
 
 export const topicContract = Topic.combineContracts([WireTypes.topicContract, SpacesTypes.topicContract])
 
-export type BackendCtxModule = AppBackendCtxBase & {
-  wire: WireTypes.BackendCtxModule
-  profile: ProfileBackendCtx
-  spaces: SpacesTypes.BackendCtxModule
-  auth: AuthTypes.BackendCtxModule
-  httpServer: IHttpServer
-  topic: Topic.Client<typeof topicContract>
-}
+export type BackendCtxModule = AppBackendCtxBase &
+  WireTypes.BackendCtxModule &
+  ProfileTypes.BackendCtxModule &
+  SpacesTypes.BackendCtxModule &
+  AuthTypes.BackendCtxModule & {
+    topic: Topic.Client<typeof topicContract>
+  }
 
 export type FrontendCtxModule = AppFrontendCtxBase &
   AuthTypes.FrontendCtxModule &

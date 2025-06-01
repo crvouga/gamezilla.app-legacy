@@ -66,6 +66,7 @@ export const FixtureSpaceBackend = async () => {
 
   const backendCtx: BackendCtxModule = {
     ...f.ctx,
+    ...GamesBackend.initCtx({ ctx: f.ctx }),
     spacesCore: await SpacesCoreAsync({
       t: 'key-value-db',
       keyValueDb: f.ctx.keyValueDb,
@@ -75,7 +76,6 @@ export const FixtureSpaceBackend = async () => {
       namespace: [],
     }),
     topic,
-    games: GamesBackend.initCtx({ ctx: f.ctx }),
   }
 
   return {

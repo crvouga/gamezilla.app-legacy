@@ -27,10 +27,9 @@ export type FrontendCtxModule = AppFrontendCtxBase & {
   rpc: RPC.Client<typeof rpcContract>
 }
 
-export type BackendCtxModule = AppBackendCtxBase & {
-  backendInstance: BackendInstanceTypes.BackendCtxModule
-  backendConnection: BackendConnectionTypes.BackendCtxModule
-}
+export type BackendCtxModule = AppBackendCtxBase &
+  BackendInstanceTypes.BackendCtxModule &
+  BackendConnectionTypes.BackendCtxModule
 
 export type FrontendModule = AppFrontendModule<{
   Ctx: FrontendCtxModule

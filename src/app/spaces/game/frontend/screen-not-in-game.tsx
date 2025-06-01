@@ -6,7 +6,7 @@ import type { MsgFrontend } from '../../types'
 import { GameName } from '../games/@/game-name'
 import { ScreenLayoutHostSettingUpGame } from '../games/@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { GameCoverArt } from '../games/cover-art'
-import { gameNameList } from '../games/types'
+import { GAME_NAME_LIST } from '../games/types'
 import { Clickable } from '~/@/ui/clickable'
 
 const View: SpaceFrontendModule['View'] = (input) => {
@@ -57,7 +57,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
   return (
     <div className='grid flex-1 grid-cols-3 justify-between gap-8 p-4 md:grid-cols-4 md:gap-12'>
-      {gameNameList.map((gameName) => (
+      {GAME_NAME_LIST.map((gameName) => (
         <GameTile key={gameName} gameName={gameName} ctx={input.ctx} dispatch={input.dispatch} />
       ))}
     </div>

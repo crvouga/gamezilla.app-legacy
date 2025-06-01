@@ -21,11 +21,12 @@ const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtxMod
   }
 }
 
-const saga = function* (ctx: BackendCtxModule) {
-  yield fork(flowBackendInstanceState, ctx)
+const saga = function* (input: { ctx: BackendCtxModule }) {
+  yield fork(flowBackendInstanceState, input)
 }
 
-const flowBackendInstanceState = function* (ctx: BackendCtxModule) {
+const flowBackendInstanceState = function* (input: { ctx: BackendCtxModule }) {
+  const ctx = input.ctx
   const serverStartedChan = Sub.chan(Sub.where(ctx.httpServer.events, (e) => e.t === 'http-server/started'))
   const serverStoppingChan = Sub.chan(Sub.where(ctx.httpServer.events, (e) => e.t === 'http-server/stopping'))
   const runtimeStoppingChan = Sub.chan(Sub.where(ctx.runtime.events, (e) => e.t === 'runtime/stopping'))
@@ -47,7 +48,7 @@ const flowBackendInstanceState = function* (ctx: BackendCtxModule) {
 
   ctx.logger.info('recorded backend instance started')
 
-  const hearbeatTask = yield* fork(flowHeartbeat, ctx)
+  const hearbeatTask = yield* fork(flowHeartbeat, input)
 
   yield* race([take(serverStoppingChan), take(runtimeStoppingChan)])
 
@@ -65,7 +66,8 @@ const flowBackendInstanceState = function* (ctx: BackendCtxModule) {
   ctx.logger.info('recorded backend instance stopped')
 }
 
-const flowHeartbeat = function* (ctx: BackendCtxModule) {
+const flowHeartbeat = function* (input: { ctx: BackendCtxModule }) {
+  const ctx = input.ctx
   while (true) {
     ctx.logger.info('heartbeat')
 

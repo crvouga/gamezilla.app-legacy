@@ -99,33 +99,32 @@ const initCtx = async (): Promise<BackendCtxModule> => {
 
   const wire = await WireBackend.initCtx({ ctx, topic })
   const profile = await ProfileBackend.initCtx({ ctx })
-  const space = await SpacesBackend.initCtx({ ctx, topic })
+  const spaces = await SpacesBackend.initCtx({ ctx, topic })
   const auth = await AuthBackend.initCtx({ ctx })
 
   return {
     ...ctx,
-    httpServer,
-    auth,
-    spaces: space,
-    profile,
-    wire,
+    ...auth,
+    ...spaces,
+    ...profile,
+    ...wire,
     topic,
   }
 }
 
-const rpc = (ctx: BackendCtxModule) => {
+const rpc = (input: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
-    ...WireBackend.rpc(ctx.wire),
-    ...AuthBackend.rpc({ ctx: ctx.auth }),
-    ...SpacesBackend.rpc({ ctx: ctx.spaces }),
+    ...WireBackend.rpc(input),
+    ...AuthBackend.rpc(input),
+    ...SpacesBackend.rpc(input),
   })
 }
 
-const saga = function* (ctx: BackendCtxModule) {
-  yield fork(WireBackend.saga, ctx.wire)
-  yield fork(AuthBackend.saga, ctx.auth)
-  yield fork(SpacesBackend.saga, ctx.spaces)
-  yield fork(ProfileBackend.saga, ctx.profile)
+const saga = function* (input: { ctx: BackendCtxModule }) {
+  yield fork(WireBackend.saga, input)
+  yield fork(AuthBackend.saga, input)
+  yield fork(SpacesBackend.saga, input)
+  yield fork(ProfileBackend.saga, input)
 }
 
 export const AppBackend = {

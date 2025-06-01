@@ -15,10 +15,8 @@ const initCtx = async (input: {
 }): Promise<BackendCtxModule> => {
   return {
     ...input.ctx,
+    ...GameBackend.initCtx(input),
     topic: input.topic,
-    games: GameBackend.initCtx({
-      ctx: input.ctx,
-    }),
     spacesCore: await SpacesCoreAsync({
       t: 'key-value-db',
       keyValueDb: input.ctx.keyValueDb,
@@ -30,9 +28,9 @@ const initCtx = async (input: {
   }
 }
 
-const saga = function* (ctx: BackendCtxModule) {
-  yield fork(SyncBackend.saga, ctx)
-  yield fork(GameBackend.saga, ctx.games)
+const saga = function* (input: { ctx: BackendCtxModule }) {
+  yield fork(SyncBackend.saga, input)
+  yield fork(GameBackend.saga, input)
 }
 
 const rpc = (input: { ctx: BackendCtxModule }) => {

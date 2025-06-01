@@ -12,20 +12,20 @@ const initCtx = async (input: {
 }): Promise<BackendCtxModule> => {
   return {
     ...input.ctx,
-    backendInstance: await BackendInstanceBackend.initCtx({ ctx: input.ctx }),
-    backendConnection: await BackendConnectionBackend.initCtx({ ctx: input.ctx, topic: input.topic }),
+    ...(await BackendInstanceBackend.initCtx(input)),
+    ...(await BackendConnectionBackend.initCtx(input)),
   }
 }
 
-const rpc = (ctx: BackendCtxModule) => {
+const rpc = (input: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
-    ...BackendInstanceBackend.rpc({ ctx: ctx.backendInstance }),
+    ...BackendInstanceBackend.rpc({ ctx: input.ctx }),
   })
 }
 
-const saga = function* (ctx: BackendCtxModule) {
-  yield fork(BackendConnectionBackend.saga, ctx.backendConnection)
-  yield fork(BackendInstanceBackend.saga, ctx.backendInstance)
+const saga = function* (input: { ctx: BackendCtxModule }) {
+  yield fork(BackendConnectionBackend.saga, input)
+  yield fork(BackendInstanceBackend.saga, input)
 }
 
 export const WireBackend = {

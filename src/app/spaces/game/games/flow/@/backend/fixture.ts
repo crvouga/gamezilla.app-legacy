@@ -8,8 +8,8 @@ export const FixtureFlowBackend = async () => {
 
   const ctx: FlowBackendCtx = {
     ...f.ctx,
-    packDb: PackDb({ t: 'hash-map' }),
-    puzzleDb: PuzzleDb({ t: 'hash-map' }),
+    flowPackDb: PackDb({ t: 'hash-map' }),
+    flowPuzzleDb: PuzzleDb({ t: 'hash-map' }),
   }
 
   return {

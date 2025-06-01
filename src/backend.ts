@@ -11,18 +11,18 @@ const main = async () => {
   const ctx = await AppBackend.initCtx()
 
   runSaga({}, function* () {
-    yield fork(AppBackend.saga, ctx)
+    yield fork(AppBackend.saga, { ctx })
   })
 
   RPC.registerRespond({
     httpServer: ctx.httpServer,
     contract: AppTypes.rpcContract,
-    server: AppBackend.rpc(ctx),
+    server: AppBackend.rpc({ ctx }),
   })
 
   PowerSyncBackendApp.registerRespond({
     httpServer: ctx.httpServer,
-    ctx: { userSessionDb: ctx.auth.userSessionDb },
+    ctx: { userSessionDb: ctx.userSessionDb },
   })
 
   ctx.httpServer.registerRespond(() => {
