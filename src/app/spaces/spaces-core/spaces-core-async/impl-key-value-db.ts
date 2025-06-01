@@ -25,10 +25,6 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
   const { runtime } = config
   const logger = Logger.prefix('spaces-core-async', config.logger)
 
-  //
-  //
-  //
-
   const verifiedKeys = new Set<string>()
   const cache = await KeyValueDb({ t: 'hash-map', map: LRUCache({ maxCapacity: 10_000 }) })
   const throttle = config.writeThrottle

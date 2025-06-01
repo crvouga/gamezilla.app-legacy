@@ -7,7 +7,7 @@ import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
 import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
 import { ViewHostChip } from '../../@/ui/host-chip'
-import { SpaceState } from '../../core/space-state'
+import { SpaceState } from '../../spaces-core/space-state'
 import { GameName } from '../../game/games/@/game-name'
 import { SPACE_CARD_GRADIENT_CLASS_NAME } from './space-card-gradient'
 

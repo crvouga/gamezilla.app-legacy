@@ -1,6 +1,6 @@
 import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
-import { Space } from '../core/space'
+import { Space } from '../spaces-core/space'
 import { BackendCtxModule } from '../types'
 import { rpcContract } from './types'
 

@@ -3,7 +3,7 @@ import { WithEventId } from '~/@/event-sourced/event'
 import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
-import { MsgSpace } from '../core/space-msg/space-msg'
+import { MsgSpace } from '../spaces-core/space-msg/space-msg'
 import type { ModelFrontend, MsgFrontend, FrontendCtxModule } from '../types'
 
 export type Input = {

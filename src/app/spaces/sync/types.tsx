@@ -5,8 +5,8 @@ import { RPCError } from '~/@/rpc/error'
 import { s } from '~/@/schema'
 import { Topic } from '~/@/topic'
 import { SpaceId } from '~/app/@/data/space-id'
-import { Space } from '../core/space'
-import { MsgSpace } from '../core/space-msg/space-msg'
+import { Space } from '../spaces-core/space'
+import { MsgSpace } from '../spaces-core/space-msg/space-msg'
 
 export type MsgFrontend =
   | {

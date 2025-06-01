@@ -7,13 +7,6 @@ import { Space } from '../space'
 import { MsgSpace } from '../space-msg/space-msg'
 import { SpaceState } from '../space-state'
 
-//
-//
-//
-//
-//
-//
-
 export const SpaceError = s.obj({
   t: s.l('user-already-in-a-space'),
   userId: UserId,

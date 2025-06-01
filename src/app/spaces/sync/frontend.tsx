@@ -3,7 +3,7 @@ import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
-import { SpacesCore } from '../core/core'
+import { SpacesCore } from '../spaces-core/spaces-core'
 import { MsgFrontend } from '../types'
 
 const update: SpaceFrontendModule['update'] = (input) => {

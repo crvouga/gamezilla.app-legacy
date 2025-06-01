@@ -1,7 +1,7 @@
 import type { SpaceId } from '~/app/@/data/space-id'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { SpacesCore } from '../core/core'
+import { SpacesCore } from '../spaces-core/spaces-core'
 import { EndSpaceFrontend } from '../end-space/frontend'
 import { ExitSpaceAction } from '../frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from '../frontend/people-action/frontend'

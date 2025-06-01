@@ -5,7 +5,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { FixtureSpacesFrontend, userJoinedSpace, userLeftSpace, userStartedSpace } from '../@/fixture/frontend'
-import { SpacesCore } from '../core/core'
+import { SpacesCore } from '../spaces-core/spaces-core'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 
 const Fixture = async () => {
@@ -86,7 +86,7 @@ describe('leave space', () => {
     const spaceId = SpaceId.generate()
     const output = f.update(f.initial, [
       userStartedSpace(0, f.ctx.currentUser!.userId, spaceId),
-        userJoinedSpace(1, f.ctx.currentUser!.userId, spaceId),
+      userJoinedSpace(1, f.ctx.currentUser!.userId, spaceId),
       {
         msg: {
           t: 'leave-space.clicked-leave-space-button',

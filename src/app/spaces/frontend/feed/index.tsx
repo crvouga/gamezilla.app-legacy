@@ -1,9 +1,9 @@
 import { WithEventId } from '~/@/event-sourced/event'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { FeedItem } from '../../@/feed-item'
-import { SpacesCore } from '../../core/core'
-import { MsgSpace } from '../../core/space-msg/space-msg'
-import { SpaceState } from '../../core/space-state'
+import { SpacesCore } from '../../spaces-core/spaces-core'
+import { MsgSpace } from '../../spaces-core/space-msg/space-msg'
+import { SpaceState } from '../../spaces-core/space-state'
 import { GamesFrontend } from '../../game/games/frontend'
 import type { ModelFrontend, MsgFrontend } from '../../types'
 

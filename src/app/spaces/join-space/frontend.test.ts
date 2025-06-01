@@ -6,7 +6,7 @@ import { UserProfile } from '~/app/@/data/user-profile'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
-import { SpacesCore } from '../core/core'
+import { SpacesCore } from '../spaces-core/spaces-core'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 
