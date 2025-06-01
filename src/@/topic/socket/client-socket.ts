@@ -129,21 +129,24 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     }
 
     const sendThrottledByTopic = throttleByKey({
-      behavior: 'leading',
+      behavior: 'use-latest',
       keyFn: (msg) => msg[1],
-      throttle: TimeSpan.seconds(3),
+      throttle: TimeSpan.seconds(10),
       fn: send,
     })
 
     yield takeEvery(Sub.chan(msgsToServer), function* (toServer) {
       switch (toServer[0]) {
         case SUB: {
-          if (activeSubscriptionsServer.has(toServer[1])) return
+          // const isSubbed = activeSubscriptionsServer.has(toServer[1])
+          // if (isSubbed) return
+          activeSubscriptionsServer.add(toServer[1])
           sendThrottledByTopic(toServer)
           return
         }
         case UNSUB: {
-          if (!activeSubscriptionsServer.has(toServer[1])) return
+          const isUnsubbed = !activeSubscriptionsServer.has(toServer[1])
+          if (isUnsubbed) return
           sendThrottledByTopic(toServer)
           return
         }

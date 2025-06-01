@@ -31,7 +31,6 @@ const where = <A, B extends A>(sub: Sub<A>, guard: (msg: A) => msg is B): Sub<B>
 
 const create = <Msg>(): PubSub<Msg> => {
   const subscribers = new Set<(msg: Msg) => Promise<unknown> | unknown>()
-  const queue: Msg[] = []
 
   return {
     subscriberCount() {
@@ -39,21 +38,11 @@ const create = <Msg>(): PubSub<Msg> => {
     },
     sub(subscriber) {
       subscribers.add(subscriber)
-      if (queue.length > 0) {
-        for (const msg of queue) {
-          subscriber(msg)
-        }
-        queue.length = 0
-      }
       return () => {
         subscribers.delete(subscriber)
       }
     },
     async pub(msg: Msg) {
-      if (subscribers.size === 0) {
-        queue.push(msg)
-        return
-      }
       for (const subscriber of subscribers) {
         subscriber(msg)
       }

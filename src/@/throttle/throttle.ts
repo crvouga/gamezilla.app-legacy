@@ -1,6 +1,6 @@
 import { TimeSpan } from '../time/time-span'
 
-export type ThrottleBehavior = 'leading' | 'trailing' | 'drop'
+export type ThrottleBehavior = 'use-latest' | 'use-earliest' | 'drop'
 
 export const throttleByKey = <TArgs extends unknown[]>(config: {
   throttle: TimeSpan
@@ -19,14 +19,14 @@ export const throttleByKey = <TArgs extends unknown[]>(config: {
     const throttleMs = TimeSpan.toMilliseconds(config.throttle)
 
     switch (config.behavior) {
-      case 'leading': {
+      case 'use-latest': {
         if (elapsed >= throttleMs) {
           lastCall.set(key, now)
           config.fn(...args)
         }
         break
       }
-      case 'trailing': {
+      case 'use-earliest': {
         const pending = pendingCalls.get(key)
         if (pending) {
           clearTimeout(pending.timeout)
