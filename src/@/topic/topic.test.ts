@@ -4,6 +4,7 @@ import { HttpServerBun } from '../http-server/impl-bun'
 import { Logger } from '../logger'
 import { s } from '../schema'
 import { ClientSessionId } from '../wire/client-session-id'
+import { TimeSpan } from '../time/time-span'
 
 const Msg = s.obj({
   name: s.str(),
@@ -42,6 +43,9 @@ const Fixture = async () => {
     endpoint,
   })
 
+  const reconnectionRate = TimeSpan.milliseconds(10)
+  const syncSubscriptionRate = TimeSpan.milliseconds(10)
+
   const clientA = Topic.initClient({
     t: 'web-sockets',
     clientSessionId: ClientSessionId.generate(),
@@ -49,6 +53,8 @@ const Fixture = async () => {
     serverUrl,
     endpoint,
     logger: Logger.prefix('clientA', logger),
+    reconnectionRate,
+    syncSubscriptionRate,
   })
   const clientB = Topic.initClient({
     t: 'web-sockets',
@@ -57,6 +63,8 @@ const Fixture = async () => {
     serverUrl,
     endpoint,
     logger: Logger.prefix('clientB', logger),
+    reconnectionRate,
+    syncSubscriptionRate,
   })
   const clientC = Topic.initClient({
     t: 'web-sockets',
@@ -65,6 +73,8 @@ const Fixture = async () => {
     serverUrl,
     endpoint,
     logger: Logger.prefix('clientC', logger),
+    reconnectionRate,
+    syncSubscriptionRate,
   })
 
   await httpServer.start(port)

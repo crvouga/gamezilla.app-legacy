@@ -8,6 +8,7 @@ import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
+import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
 import { IconUserCircle } from '~/@/ui/icon/icon-user-circle'
@@ -65,6 +66,8 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     clientSessionId,
     logger,
     endpoint: '/topic',
+    reconnectionRate: TimeSpan.seconds(3),
+    syncSubscriptionRate: TimeSpan.seconds(3),
   })
 
   const dbConnSql = await DbConnSql({

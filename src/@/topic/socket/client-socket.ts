@@ -3,6 +3,7 @@ import { call, delay, fork, race, take, takeEvery } from 'typed-redux-saga'
 import { ILogger } from '~/@/logger'
 import { s } from '~/@/schema'
 import { PubSub, Sub } from '~/@/sub'
+import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { Client, ClientNode, ContractBase, MsgMeta, Topic } from '../types'
 import { PUB, SUB, ToClientMsg, ToServerMsg, toTopicString, UNSUB } from './shared'
@@ -16,6 +17,9 @@ export type Config<T extends ContractBase> = {
   endpoint: string
   clientSessionId: ClientSessionId
   logger: ILogger
+  //
+  reconnectionRate: TimeSpan
+  syncSubscriptionRate: TimeSpan
 }
 
 export const initClient = <T extends Record<string, Topic<any, any>>>(config: Config<T>): Client<T> => {
@@ -29,7 +33,7 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
 
           clientCore.msgsToServer.pub([PUB, topicString, msg])
 
-          const existing = clientCore.activeSubscriptions.get(topicString)
+          const existing = clientCore.subscriptions.get(topicString)
 
           if (!existing) return
 
@@ -38,7 +42,7 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
         subscribe(topicParams, mapper) {
           const topicString = toTopicString(topicName, topicParams)
 
-          const existing = clientCore.activeSubscriptions.get(topicString)
+          const existing = clientCore.subscriptions.get(topicString)
 
           if (existing) return existing
 
@@ -54,7 +58,7 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
             },
           }
 
-          clientCore.activeSubscriptions.set(topicString, pubSubMapped)
+          clientCore.subscriptions.set(topicString, pubSubMapped)
 
           return pubSubMapped
         },
@@ -71,7 +75,7 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
 
 const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Config<T>) => {
   const msgsToServer = Sub.create<ToServerMsg>()
-  const activeSubscriptions = new Map<string, PubSub<any>>()
+  const subscriptions = new Map<string, PubSub<any>>()
 
   runSaga({}, flowMain)
 
@@ -85,7 +89,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
 
       socket.close()
 
-      yield* delay(1000)
+      yield* delay(TimeSpan.toMilliseconds(config.reconnectionRate))
     }
   }
 
@@ -121,7 +125,6 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     const send = (msg: ToServerMsg) => {
       socket.send(JSON.stringify(msg))
     }
-
     yield* takeEvery(Sub.chan(msgsToServer), function* (toServer) {
       switch (toServer[0]) {
         case PUB: {
@@ -130,30 +133,31 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
         }
       }
     })
+    yield* fork(flowSyncSubscriptions, send)
+  }
 
-    yield* fork(function* () {
-      const activeSubscriptionsServer = new Set<string>()
-      while (true) {
-        for (const [topicString, pubSub] of activeSubscriptions.entries()) {
-          const isSubbedServer = activeSubscriptionsServer.has(topicString)
-          const isSubbedClient = pubSub.subscriberCount() > 0
+  function* flowSyncSubscriptions(send: (msg: ToServerMsg) => void) {
+    const subscriptionsServer = new Set<string>()
+    while (true) {
+      for (const [topicString, pubSub] of subscriptions.entries()) {
+        const isSubbedServer = subscriptionsServer.has(topicString)
+        const isSubbedClient = pubSub.subscriberCount() > 0
 
-          if (isSubbedClient && !isSubbedServer) {
-            send([SUB, topicString])
-            activeSubscriptionsServer.add(topicString)
-            continue
-          }
-
-          if (!isSubbedClient && isSubbedServer) {
-            send([UNSUB, topicString])
-            activeSubscriptionsServer.delete(topicString)
-            continue
-          }
+        if (isSubbedClient && !isSubbedServer) {
+          send([SUB, topicString])
+          subscriptionsServer.add(topicString)
+          continue
         }
 
-        yield* delay(1000)
+        if (!isSubbedClient && isSubbedServer) {
+          send([UNSUB, topicString])
+          subscriptionsServer.delete(topicString)
+          continue
+        }
       }
-    })
+
+      yield* delay(TimeSpan.toMilliseconds(config.syncSubscriptionRate))
+    }
   }
 
   function* flowReciever(socket: Socket) {
@@ -162,7 +166,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
 
       switch (fromServerParsed[0]) {
         case PUB: {
-          const activeSubscription = activeSubscriptions.get(fromServerParsed[1])
+          const activeSubscription = subscriptions.get(fromServerParsed[1])
           if (!activeSubscription) return
           activeSubscription.pub(fromServerParsed[2])
           return
@@ -172,7 +176,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
   }
 
   return {
-    activeSubscriptions,
+    subscriptions,
     msgsToServer,
   }
 }
