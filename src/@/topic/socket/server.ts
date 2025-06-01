@@ -1,6 +1,6 @@
 import { ServerWebSocket } from 'bun'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
-import { ILogger, Logger } from '~/@/logger'
+import { ILogger } from '~/@/logger'
 import { s } from '~/@/schema'
 import { PubSub, Sub } from '~/@/sub'
 import { ClientId } from '~/@/wire/client-id'
@@ -32,11 +32,11 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
   const client = Object.entries(config.contract)
     .map(([topicName, topic]) => {
       const clientNode: ClientNode<TContract, typeof topicName> = {
-        publish: (topicParams, msg) => {
+        publish(topicParams, msg) {
           const topicString = toTopicString(topicName, topicParams)
           serverCore.publish(topicString, [PUB, topicString, msg], null)
         },
-        subscribe: (topicParams, mapper) => {
+        subscribe(topicParams, mapper) {
           const topicString = toTopicString(topicName, topicParams)
 
           const existing = serverCore.activeSubscriptions.get(topicString)
@@ -71,8 +71,6 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
 }
 
 const initServerCore = <TContract extends ContractBase>(config: Config<TContract>) => {
-  const logger = Logger.prefix('server', config.logger)
-
   let bunServer: Bun.Server
   const activeSubscriptions = new Map<string, PubSub<any>>()
 
@@ -109,8 +107,6 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
   }
 
   config.httpServer._setWebSocketHandler({
-    async open(_ws: ServerWebSocket<BackendWebSocketData>) {},
-    async close(_ws: ServerWebSocket<BackendWebSocketData>, _code, _message) {},
     async message(ws: ServerWebSocket<BackendWebSocketData>, message: string) {
       const msg: ToClientMsg = JSON.parse(message)
 
@@ -135,41 +131,34 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
 
   config.httpServer.registerRespond((request, server) => {
     bunServer = server as Bun.Server
+
     const url = new URL(request.url)
 
-    if (url.pathname === config.endpoint) {
-      const maybeSessionId = SessionIdHttp.fromRequest(request)
-      const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
+    if (url.pathname !== config.endpoint) return null
 
-      const maybeClientSessionId = ClientSessionIdHttp.fromRequest(request)
-      const clientSessionId = maybeClientSessionId ?? ClientSessionId.generate()
+    const maybeSessionId = SessionIdHttp.fromRequest(request)
+    const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
 
-      const clientId = ClientId.generate()
+    const maybeClientSessionId = ClientSessionIdHttp.fromRequest(request)
+    const clientSessionId = maybeClientSessionId ?? ClientSessionId.generate()
 
-      const data: BackendWebSocketData = {
-        clientId,
-        sessionId,
-        clientSessionId,
-      }
+    const clientId = ClientId.generate()
 
-      const headers = new Headers()
-
-      if (!maybeSessionId) {
-        headers.append('Set-Cookie', SessionIdHttp.toSetCookieHeaderValue({ sessionId, isProd: config.isProd }))
-      }
-
-      logger.debug(`${config.endpoint} request received clientId=${clientId} sessionId=${sessionId} `)
-
-      const didUpgrade = bunServer.upgrade(request, { headers, data })
-
-      if (!didUpgrade) {
-        return new Response('Failed to upgrade to WebSocket', { status: 500 })
-      }
-
-      return
+    const data: BackendWebSocketData = {
+      clientId,
+      sessionId,
+      clientSessionId,
     }
 
-    return null
+    const headers = new Headers()
+
+    if (!maybeSessionId) {
+      headers.append('Set-Cookie', SessionIdHttp.toSetCookieHeaderValue({ sessionId, isProd: config.isProd }))
+    }
+
+    if (bunServer.upgrade(request, { headers, data })) return
+
+    return new Response('Failed to upgrade to WebSocket', { status: 500 })
   })
 
   return {

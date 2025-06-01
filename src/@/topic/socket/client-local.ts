@@ -16,13 +16,16 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
   const client = Object.entries(config.contract)
     .map(([topicName, topic]) => {
       const clientNode: ClientNode<TContract, typeof topicName> = {
-        publish: (topicParams, msg) => {
+        publish(topicParams, msg) {
           const topicString = toTopicString(topicName, topicParams)
-          const pubSub = activeSubscriptions.get(topicString)
-          if (!pubSub) return
-          pubSub.pub(msg)
+
+          const existing = activeSubscriptions.get(topicString)
+
+          if (!existing) return
+
+          existing.pub(msg)
         },
-        subscribe: (topicParams, mapper) => {
+        subscribe(topicParams, mapper) {
           const topicString = toTopicString(topicName, topicParams)
 
           const existing = activeSubscriptions.get(topicString)

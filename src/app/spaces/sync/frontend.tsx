@@ -4,7 +4,6 @@ import { Sub } from '~/@/sub'
 import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../spaces-core/spaces-core'
-import { MsgFrontend } from '../types'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -102,10 +101,7 @@ const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
 
   if (!currentUserSpaceId) return Sub.none()
 
-  return input.ctx.topic['spaces.sync.msg-space'].subscribe(
-    currentUserSpaceId,
-    (c): MsgFrontend => ({ t: 'sync.got-msg-space', c }),
-  )
+  return input.ctx.topic['spaces.sync.msg-space'].subscribe(currentUserSpaceId, (c) => ({ t: 'sync.got-msg-space', c }))
 }
 
 export const SyncFrontend = {

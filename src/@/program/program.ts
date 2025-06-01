@@ -25,7 +25,7 @@ export type Program<TModel, TMsg> = {
 
   subscriptions: (input: { intervalId: string; model: TModel }) => MaybePromise<Sub<TMsg>>
 
-  crash: (input: ProgramCrashReport<TModel, TMsg>) => MaybePromise<unknown>
+  crash?: (input: ProgramCrashReport<TModel, TMsg>) => MaybePromise<unknown>
 
   debugger?: ProgramDebugger
 
@@ -53,6 +53,11 @@ export type ProgramDebugger = (
 export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
   const init = await program.init()
   let model: TModel = init.model
+
+  const onCrash: (input: ProgramCrashReport<TModel, TMsg>) => MaybePromise<unknown> = (input) => {
+    console.error('program crashed!', input)
+    program.crash?.(input)
+  }
 
   let isUpdating = false
   const queue: TMsg[] = []
@@ -93,11 +98,10 @@ export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
         dispatch(msg)
       }
     } catch (error) {
-      await program.crash({
+      await onCrash({
         message: 'Program crashed while dispatching message',
         error,
         msg,
-
         model,
       })
     }

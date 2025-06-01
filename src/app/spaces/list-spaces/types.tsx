@@ -13,6 +13,7 @@ export type ModelFrontend = {
 export type MsgFrontend =
   | { t: 'list-spaces.clicked-space-card'; spaceId: SpaceId }
   | { t: 'list-spaces.list-spaces-response'; spaces: Result<RPCError, { spaces: Space.Model[] }> }
+  | { t: 'list-spaces.time-passed' }
 
 export const rpcContract = RPC.initContract({
   'spaces.list-spaces.list': {

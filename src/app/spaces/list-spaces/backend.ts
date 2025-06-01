@@ -1,6 +1,5 @@
 import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
-import { Space } from '../spaces-core/space'
 import { BackendCtxModule } from '../types'
 import { rpcContract } from './types'
 
@@ -16,10 +15,8 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
 
       if (isErr(spaces)) return { spaces: [] }
 
-      const startedSpaces = spaces.value.items.filter((space) => Space.isStarted(space))
-
       return {
-        spaces: startedSpaces,
+        spaces: spaces.value.items,
       }
     },
   })

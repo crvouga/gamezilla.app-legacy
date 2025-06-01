@@ -26,11 +26,18 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
   const client = Object.entries(config.contract)
     .map(([topicName, topic]) => {
       const clientNode: ClientNode<T, typeof topicName> = {
-        publish: (topicParams, msg) => {
+        publish(topicParams, msg) {
           const topicString = toTopicString(topicName, topicParams)
+
           clientCore.msgsToServer.pub([PUB, topicString, msg])
+
+          const existing = clientCore.activeSubscriptions.get(topicString)
+
+          if (!existing) return
+
+          existing.pub(msg)
         },
-        subscribe: (topicParams, mapper) => {
+        subscribe(topicParams, mapper) {
           const topicString = toTopicString(topicName, topicParams)
 
           clientCore.msgsToServer.pub([SUB, topicString])
@@ -131,19 +138,23 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     const sendThrottledByTopic = throttleByKey({
       behavior: 'use-latest',
       keyFn: (msg) => msg[1],
-      throttle: TimeSpan.seconds(10),
+      throttle: TimeSpan.seconds(3),
       fn: (toServer: ToServerMsg) => {
         switch (toServer[0]) {
           case SUB: {
-            const isSubbed = activeSubscriptionsServer.has(toServer[1])
-            if (isSubbed) return
-            send(toServer)
+            const isUnsubbed = !activeSubscriptionsServer.has(toServer[1])
+            if (isUnsubbed) {
+              activeSubscriptionsServer.add(toServer[1])
+              send(toServer)
+            }
             return
           }
           case UNSUB: {
-            const isUnsubbed = !activeSubscriptionsServer.has(toServer[1])
-            if (isUnsubbed) return
-            send(toServer)
+            const isSubbed = activeSubscriptionsServer.has(toServer[1])
+            if (isSubbed) {
+              activeSubscriptionsServer.delete(toServer[1])
+              send(toServer)
+            }
             return
           }
         }
@@ -173,14 +184,6 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
       const fromServerParsed = JSON.parse(fromServer) as ToClientMsg
 
       switch (fromServerParsed[0]) {
-        case SUB: {
-          activeSubscriptionsServer.add(fromServerParsed[1])
-          return
-        }
-        case UNSUB: {
-          activeSubscriptionsServer.delete(fromServerParsed[1])
-          return
-        }
         case PUB: {
           const activeSubscription = activeSubscriptions.get(fromServerParsed[1])
           if (!activeSubscription) return

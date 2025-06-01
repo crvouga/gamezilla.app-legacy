@@ -110,7 +110,11 @@ const updateSpacesFromMsgSpace: SpaceFrontendModule['update'] = ({ msgSpace, mod
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  return Sub.batch([GameFrontend.subscriptions(input), SyncFrontend.subscriptions(input)])
+  return Sub.batch([
+    GameFrontend.subscriptions(input),
+    SyncFrontend.subscriptions(input),
+    ListSpacesFrontend.subscriptions(input),
+  ])
 }
 
 const View: FrontendModule['View'] = (input) => {

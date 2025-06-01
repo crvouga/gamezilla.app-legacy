@@ -1,3 +1,6 @@
+import { unwrapOr } from '~/@/result'
+import { Time } from '~/@/time/time'
+import { TimeSpan } from '~/@/time/time-span'
 import { EmptyState } from '~/@/ui/empty-state'
 import { Gutter } from '~/@/ui/gutter'
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
@@ -10,7 +13,6 @@ import type { SpaceFrontendModule } from '../architecture/space-frontend'
 import { SpacesCore } from '../spaces-core/spaces-core'
 import { StartSpaceFrontend } from '../start-space/frontend'
 import { ViewSpaceCard } from './space-card/space-card'
-import { unwrapOr } from '~/@/result'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
@@ -32,13 +34,22 @@ const update: SpaceFrontendModule['update'] = (input) => {
         },
       }
     }
+    case 'list-spaces.time-passed': {
+      return {
+        model: input.model,
+        async eff(dispatch) {
+          const spaces = await input.ctx.rpc['spaces.list-spaces.list']({ pagination: { limit: 100, offset: 0 } })
+          dispatch({ t: 'list-spaces.list-spaces-response', spaces })
+        },
+      }
+    }
   }
 
   if (ScreenChangedEvt.is(input.msgIn)) {
     return {
       model: input.model,
       async eff(dispatch) {
-        const spaces = await input.ctx.rpc['spaces.list-spaces.list']({ pagination: { limit: 10, offset: 0 } })
+        const spaces = await input.ctx.rpc['spaces.list-spaces.list']({ pagination: { limit: 100, offset: 0 } })
         dispatch({ t: 'list-spaces.list-spaces-response', spaces })
       },
     }
@@ -84,7 +95,12 @@ const View: SpaceFrontendModule['View'] = (input) => {
   )
 }
 
+const subscriptions: SpaceFrontendModule['subscriptions'] = (_input) => {
+  return Time.interval('list-spaces-interval', TimeSpan.seconds(3), () => ({ t: 'list-spaces.time-passed' }))
+}
+
 export const ListSpacesFrontend = {
   update,
   View,
+  subscriptions,
 }
