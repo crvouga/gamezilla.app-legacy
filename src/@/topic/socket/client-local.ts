@@ -1,7 +1,7 @@
 import { ILogger } from '~/@/logger'
 import { PubSub, Sub } from '~/@/sub'
 import { Client, ClientNode, ContractBase } from '../types'
-import { toTopicString } from './shared'
+import { toTopic } from './shared'
 
 export type Config<TContract extends ContractBase> = {
   t: 'local'
@@ -10,24 +10,24 @@ export type Config<TContract extends ContractBase> = {
 }
 
 export const initClient = <TContract extends ContractBase>(config: Config<TContract>): Client<TContract> => {
-  const activeSubscriptions = new Map<string, PubSub<any>>()
+  const subscriptionsByTopic = new Map<string, PubSub<any>>()
 
   const client = Object.entries(config.contract)
     .map(([topicName, _topic]) => {
       const clientNode: ClientNode<TContract, typeof topicName> = {
         pub(topicParams, msg) {
-          const topicString = toTopicString(topicName, topicParams)
+          const topic = toTopic(topicName, topicParams)
 
-          const existing = activeSubscriptions.get(topicString)
+          const existing = subscriptionsByTopic.get(topic)
 
           if (!existing) return
 
           existing.pub(msg)
         },
         sub(topicParams, mapper) {
-          const topicString = toTopicString(topicName, topicParams)
+          const topic = toTopic(topicName, topicParams)
 
-          const existing = activeSubscriptions.get(topicString)
+          const existing = subscriptionsByTopic.get(topic)
 
           if (existing) return existing
 
@@ -38,7 +38,7 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
             sub: (s) => pubSub.sub((m) => s(mapper(m))),
           }
 
-          activeSubscriptions.set(topicString, pubSubMapped)
+          subscriptionsByTopic.set(topic, pubSubMapped)
 
           return pubSubMapped
         },

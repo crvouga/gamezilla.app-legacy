@@ -8,7 +8,7 @@ import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Client, ClientNode, ContractBase } from '../types'
-import { PUB, SUB, ToClientMsg, ToClientMsgMany, ToClientMsgOne, toTopicString, UNSUB } from './shared'
+import { PUB, SUB, ToClientMsg, ToClientMsgMany, ToClientMsgOne, toTopic, UNSUB } from './shared'
 
 export type BackendWebSocketData = {
   clientId: ClientId
@@ -32,13 +32,13 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
     .map(([topicName, _topic]) => {
       const clientNode: ClientNode<TContract, typeof topicName> = {
         pub(topicParams, msg) {
-          const topicString = toTopicString(topicName, topicParams)
-          serverCore.publish(topicString, [PUB, topicString, msg], null)
+          const topic = toTopic(topicName, topicParams)
+          serverCore.publish(topic, [PUB, topic, msg], null)
         },
         sub(topicParams, mapper) {
-          const topicString = toTopicString(topicName, topicParams)
+          const topic = toTopic(topicName, topicParams)
 
-          const existing = serverCore.activeSubscriptions.get(topicString)
+          const existing = serverCore.activeSubscriptions.get(topic)
 
           if (existing) return existing
 
@@ -49,7 +49,7 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
             sub: (s) => pubSub.sub((m) => s(mapper(m))),
           }
 
-          serverCore.activeSubscriptions.set(topicString, pubSubMapped)
+          serverCore.activeSubscriptions.set(topic, pubSubMapped)
 
           return pubSubMapped
         },
@@ -66,7 +66,7 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
 
 const initServerCore = <TContract extends ContractBase>(config: Config<TContract>) => {
   let bunServer: Bun.Server
-  const activeSubscriptions = new Map<string, PubSub<any>>()
+  const subscriptionsByTopic = new Map<string, PubSub<any>>()
 
   const send = (ws: ServerWebSocket<BackendWebSocketData>, msg: ToClientMsgOne) => {
     const msgString = JSON.stringify(msg)
@@ -74,12 +74,12 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
     ws.send(msgString)
   }
 
-  const publish = (topicString: string, msg: ToClientMsgMany, ws: ServerWebSocket<BackendWebSocketData> | null) => {
+  const publish = (topic: string, msg: ToClientMsgMany, ws: ServerWebSocket<BackendWebSocketData> | null) => {
     const msgString = JSON.stringify(msg)
 
-    bunServer.publish(topicString, msgString)
+    bunServer.publish(topic, msgString)
 
-    const existingSub = activeSubscriptions.get(topicString)
+    const existingSub = subscriptionsByTopic.get(topic)
 
     if (!existingSub) return
 
@@ -156,7 +156,7 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
   })
 
   return {
-    activeSubscriptions,
+    activeSubscriptions: subscriptionsByTopic,
     publish,
   }
 }

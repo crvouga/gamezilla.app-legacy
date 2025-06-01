@@ -29,6 +29,6 @@ export const ToClientMsg = s.or(ToClientMsgOne, ToClientMsgMany)
 
 export type ToClientMsg = s.Infer<typeof ToClientMsg>
 
-export const toTopicString = (topicName: string, topicParams: unknown): string => {
+export const toTopic = (topicName: string, topicParams: unknown): string => {
   return [topicName, deterministicJsonStringify(topicParams)].join('/')
 }

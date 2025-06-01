@@ -5,7 +5,7 @@ import { PubSub, Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { Client, ClientNode, ContractBase, Topic } from '../types'
-import { PUB, SUB, ToClientMsg, ToServerMsg, toTopicString, UNSUB } from './shared'
+import { PUB, SUB, ToClientMsg, ToServerMsg, toTopic, UNSUB } from './shared'
 import { Socket } from './socket'
 import { toWebSocketUrl } from './to-websocket-url'
 
@@ -28,20 +28,20 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
     .map(([topicName, _topic]) => {
       const clientNode: ClientNode<T, typeof topicName> = {
         pub(topicParams, msg) {
-          const topicString = toTopicString(topicName, topicParams)
+          const topic = toTopic(topicName, topicParams)
 
-          clientCore.msgsToServer.pub([PUB, topicString, msg])
+          clientCore.msgsToServer.pub([PUB, topic, msg])
 
-          const existing = clientCore.subscriptions.get(topicString)
+          const existing = clientCore.subscriptions.get(topic)
 
           if (!existing) return
 
           existing.pub(msg)
         },
         sub(topicParams, mapper) {
-          const topicString = toTopicString(topicName, topicParams)
+          const topic = toTopic(topicName, topicParams)
 
-          const existing = clientCore.subscriptions.get(topicString)
+          const existing = clientCore.subscriptions.get(topic)
 
           if (existing) return existing
 
@@ -52,7 +52,7 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
             sub: (s) => pubSub.sub((m) => s(mapper(m))),
           }
 
-          clientCore.subscriptions.set(topicString, pubSubMapped)
+          clientCore.subscriptions.set(topic, pubSubMapped)
 
           return pubSubMapped
         },
@@ -69,7 +69,7 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
 
 const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Config<T>) => {
   const msgsToServer = Sub.create<ToServerMsg>()
-  const subscriptions = new Map<string, PubSub<any>>()
+  const subscriptionsByTopic = new Map<string, PubSub<any>>()
 
   runSaga({}, flowMain)
 
@@ -133,19 +133,19 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
   function* flowSyncSubscriptions(send: (msg: ToServerMsg) => void) {
     const subscriptionsServer = new Set<string>()
     while (true) {
-      for (const [topicString, pubSub] of subscriptions.entries()) {
-        const isSubbedServer = subscriptionsServer.has(topicString)
+      for (const [topic, pubSub] of subscriptionsByTopic.entries()) {
+        const isSubbedServer = subscriptionsServer.has(topic)
         const isSubbedClient = pubSub.subscriberCount() > 0
 
         if (isSubbedClient && !isSubbedServer) {
-          send([SUB, topicString])
-          subscriptionsServer.add(topicString)
+          send([SUB, topic])
+          subscriptionsServer.add(topic)
           continue
         }
 
         if (!isSubbedClient && isSubbedServer) {
-          send([UNSUB, topicString])
-          subscriptionsServer.delete(topicString)
+          send([UNSUB, topic])
+          subscriptionsServer.delete(topic)
           continue
         }
       }
@@ -160,7 +160,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
 
       switch (fromServerParsed[0]) {
         case PUB: {
-          const activeSubscription = subscriptions.get(fromServerParsed[1])
+          const activeSubscription = subscriptionsByTopic.get(fromServerParsed[1])
           if (!activeSubscription) return
           activeSubscription.pub(fromServerParsed[2])
           return
@@ -170,7 +170,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
   }
 
   return {
-    subscriptions,
+    subscriptions: subscriptionsByTopic,
     msgsToServer,
   }
 }
