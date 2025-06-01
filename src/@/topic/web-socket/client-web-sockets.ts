@@ -30,7 +30,7 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
         {
           publish: (topicParams: s.Infer<typeof topic.params>, msg: s.Infer<typeof topic.msg>) => {
             const topicString = toTopicString(topicName, topicParams)
-            clientCore.publish(topicString, msg)
+            clientCore.msgsToServer.pub(['pub', topicString, JSON.stringify(msg)])
           },
           subscribe: <TMsgOut>(
             topicParams: s.Infer<typeof topic.params>,
@@ -38,9 +38,9 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
           ): Sub<TMsgOut> => {
             const topicString = toTopicString(topicName, topicParams)
 
-            clientCore.subscribe(topicString)
+            clientCore.msgsToServer.pub(['sub', topicString])
 
-            const existing = clientCore.getSub(topicString)
+            const existing = clientCore.activeSubscriptions.get(topicString)
 
             if (existing) return existing
 
@@ -51,13 +51,13 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
               sub: (subscriber) => {
                 const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
                 return () => {
-                  clientCore.unsubscribe(topicString)
+                  clientCore.msgsToServer.pub(['unsub', topicString])
                   unsub()
                 }
               },
             }
 
-            clientCore.putSub(topicString, pubSubMapped)
+            clientCore.activeSubscriptions.set(topicString, pubSubMapped)
 
             return pubSubMapped
           },
@@ -136,18 +136,25 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
   }
 
   function* flowMsgToServer(socket: Socket<ToServerMsg, ToClientMsg>) {
+    const syncSubscription = throttleByKey({
+      behavior: 'leading',
+      keyFn: (_type, topicString) => topicString,
+      throttle: TimeSpan.seconds(3),
+      fn: (type: 'sub' | 'unsub', topicString: string) => socket.send([type, topicString]),
+    })
+
     yield takeEvery(Sub.chan(msgsToServer), function* (toServer) {
       config.logger.info('sending message to server', toServer)
 
       switch (toServer[0]) {
         case 'sub': {
           if (activeSubscriptionsServer.has(toServer[1])) return
-          socket.send(toServer)
+          syncSubscription('sub', toServer[1])
           return
         }
         case 'unsub': {
           if (!activeSubscriptionsServer.has(toServer[1])) return
-          socket.send(toServer)
+          syncSubscription('unsub', toServer[1])
           return
         }
         case 'pub': {
@@ -179,42 +186,8 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
     })
   }
 
-  const syncSubscription = throttleByKey({
-    behavior: 'leading',
-    fn: (type: 'sub' | 'unsub', topicString: string) => {
-      msgsToServer.pub([type, topicString])
-    },
-    keyFn: (_type, topicString) => {
-      return topicString
-    },
-    throttle: TimeSpan.seconds(3),
-  })
-
-  const publish = (topicString: string, msg: unknown) => {
-    msgsToServer.pub(['pub', topicString, JSON.stringify(msg)])
-  }
-
-  const subscribe = (topicString: string) => {
-    syncSubscription('sub', topicString)
-  }
-
-  const unsubscribe = (topicString: string) => {
-    syncSubscription('unsub', topicString)
-  }
-
-  const getSub = (topicString: string) => {
-    return activeSubscriptions.get(topicString)
-  }
-
-  const putSub = (topicString: string, pubSub: PubSub<any>) => {
-    activeSubscriptions.set(topicString, pubSub)
-  }
-
   return {
-    publish,
-    subscribe,
-    unsubscribe,
-    getSub,
-    putSub,
+    msgsToServer,
+    activeSubscriptions,
   }
 }
