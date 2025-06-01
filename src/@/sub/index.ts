@@ -19,7 +19,7 @@ const once = <A>(sub: Sub<A>) => {
 }
 
 const chan = <Msg extends {} | null>(sub: Sub<Msg>): TakeableChannel<Msg> => {
-  return eventChannel<Msg>(sub.sub)
+  return eventChannel<Msg>((emit) => sub.sub(emit))
 }
 
 const where = <A, B extends A>(sub: Sub<A>, guard: (msg: A) => msg is B): Sub<B> => {
@@ -30,8 +30,7 @@ const where = <A, B extends A>(sub: Sub<A>, guard: (msg: A) => msg is B): Sub<B>
 }
 
 const create = <Msg>(): PubSub<Msg> => {
-  let runningId = 0
-  const subscribers = new Map<number, (msg: Msg) => Promise<unknown> | unknown>()
+  const subscribers = new Set<(msg: Msg) => Promise<unknown> | unknown>()
   const queue: Msg[] = []
 
   return {
@@ -39,11 +38,15 @@ const create = <Msg>(): PubSub<Msg> => {
       return subscribers.size
     },
     sub(subscriber) {
-      runningId++
-      const id = runningId
-      subscribers.set(id, subscriber)
+      subscribers.add(subscriber)
+      if (queue.length > 0) {
+        for (const msg of queue) {
+          subscriber(msg)
+        }
+        queue.length = 0
+      }
       return () => {
-        subscribers.delete(id)
+        subscribers.delete(subscriber)
       }
     },
     async pub(msg: Msg) {
@@ -51,9 +54,9 @@ const create = <Msg>(): PubSub<Msg> => {
         queue.push(msg)
         return
       }
-      queue.push(msg)
-      await Promise.all(Array.from(subscribers.values()).flatMap((subscriber) => queue.map((msg) => subscriber(msg))))
-      queue.length = 0
+      for (const subscriber of subscribers) {
+        subscriber(msg)
+      }
     },
   }
 }

@@ -28,6 +28,11 @@ const init: FrontendModule['init'] = (input) => {
       backendInstance: backendInstance.model,
       backendConnection: backendConnection.model,
     },
+    eff: Eff.batch<MsgFrontend>(
+      Eff.tag('got-backend-instance-msg', backendInstance.eff),
+      Eff.tag('got-backend-connection-msg', backendConnection.eff),
+    ),
+    msgOut: Msg.batch([backendInstance.msgOut, backendConnection.msgOut]),
   }
 }
 

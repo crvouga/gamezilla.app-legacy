@@ -2,10 +2,10 @@ import { call, takeEvery } from 'typed-redux-saga'
 import { EventSourced } from '~/@/event-sourced'
 import { isErr, unwrapOr } from '~/@/result'
 import { RPC } from '~/@/rpc'
+import { Sub } from '~/@/sub'
 import { Space } from '../spaces-core/space'
 import { BackendCtxModule } from '../types'
 import { rpcContract } from './types'
-import { Sub } from '~/@/sub'
 
 const rpc = (config: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
@@ -37,11 +37,10 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
 
 const saga = function* (input: { ctx: BackendCtxModule }) {
   const ctx = input.ctx
+
   const msgSpaceChan = Sub.chan(ctx.topic['spaces.sync.msg-space-all'].subscribe(null, (c) => c))
 
   yield takeEvery(msgSpaceChan, function* (c) {
-    ctx.logger.info('syncing msgSpace', c)
-
     const updated = yield* call(ctx.spacesCore.update, c)
 
     if (isErr(updated)) {

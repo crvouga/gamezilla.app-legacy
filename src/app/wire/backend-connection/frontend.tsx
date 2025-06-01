@@ -12,11 +12,20 @@ import { PingId } from './ping-id'
 import { FrontendModule, initModel, Model, MsgFrontend, PingItem } from './types'
 import { Dot } from './ui'
 
-const init: FrontendModule['init'] = (_input) => {
+const init: FrontendModule['init'] = (input) => {
+  const model = initModel()
+  const pingId = PingId.generate()
   return {
-    model: initModel(),
+    model: {
+      ...model,
+      pings: CappedOrderedDict.add(model.pings, pingId, { pingId, pingAt: input.ctx.now, pongAt: null }),
+    },
+    eff: () => {
+      input.ctx.topic['wire.ping'].publish(null, { pingId })
+    },
   }
 }
+
 const update: FrontendModule['update'] = (input) => {
   const { msg, model } = input
 
@@ -27,11 +36,7 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...model,
-          pings: CappedOrderedDict.add(model.pings, msg.pingId, {
-            pingId: msg.pingId,
-            pingAt: msg.now,
-            pongAt: null,
-          }),
+          pings: CappedOrderedDict.add(model.pings, msg.pingId, { pingId: msg.pingId, pingAt: msg.now, pongAt: null }),
         },
         eff: () => {
           input.ctx.topic['wire.ping'].publish(null, { pingId: msg.pingId })

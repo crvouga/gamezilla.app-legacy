@@ -1,4 +1,4 @@
 export * from './types'
-export * from './web-socket/client'
-export * from './web-socket/server'
+export * from './socket/client'
+export * from './socket/server'
 export * from './combine'
