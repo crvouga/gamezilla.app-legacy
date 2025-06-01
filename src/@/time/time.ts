@@ -48,7 +48,7 @@ const intervals = new Map<string, Sub<Posix>>()
 const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
   const sub = intervals.get(intervalId)
 
-  if (sub) {
+  if (sub && Sub.subscriberCount(sub) > 0) {
     sub.pub(Posix.now())
 
     setTimeout(() => {

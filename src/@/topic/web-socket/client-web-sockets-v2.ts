@@ -1,4 +1,4 @@
-import { delay, race, take, takeEvery } from 'typed-redux-saga'
+import { cancel, delay, fork, race, take } from 'typed-redux-saga'
 import { ILogger } from '~/@/logger'
 import { go } from '~/@/saga/saga'
 import { Sub } from '~/@/sub'
@@ -29,13 +29,6 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
   const topicSubscriptions = new Map<string, TopicSubscriptionInfo>()
   const topicSubscriptionsServer = new Set<string>()
 
-  if (typeof window !== 'undefined') {
-    // @ts-ignore
-    window.topicSubscriptionsServer = topicSubscriptionsServer
-    // @ts-ignore
-    window.topicSubscriptions = topicSubscriptions
-  }
-
   function* saga() {
     while (true) {
       const webSocketUrl = toWebSocketUrl({
@@ -56,12 +49,16 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
         })
       }
 
+      const toServerTask = yield* fork(sagaToServer, socket)
+      const fromServerTask = yield* fork(sagaFromServer, socket)
+
       yield* race({
         close: take(Sub.chan(socket.msgsClose)),
         error: take(Sub.chan(socket.msgsError)),
-        toServer: sagaToServer(socket),
-        fromServer: sagaFromServer(socket),
       })
+
+      yield cancel(toServerTask)
+      yield cancel(fromServerTask)
 
       topicSubscriptionsServer.clear()
 
@@ -71,14 +68,16 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
 
   function* sagaToServer(socket: Socket) {
     const chan = Sub.chan(msgsToServer)
-    yield takeEvery(chan, function* (toServer) {
-      console.log('toServer', toServer)
+    while (true) {
+      const toServer = yield* take(chan)
       socket.msgsToServer.pub(toServer)
-    })
+    }
   }
 
   function* sagaFromServer(socket: Socket) {
-    yield takeEvery(Sub.chan(socket.msgsFromServer), function* (fromServer) {
+    const chan = Sub.chan(socket.msgsFromServer)
+    while (true) {
+      const fromServer = yield* take(chan)
       const topicString = toTopicString(fromServer.topicName, fromServer.topicParams)
       switch (fromServer.t) {
         case 'subscribed': {
@@ -97,7 +96,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
           return
         }
       }
-    })
+    }
   }
 
   const syncSubscriptionsWithServer = throttleByKey({
@@ -108,10 +107,12 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
       const topicString = toTopicString(topicName, topicParams)
 
       if (action === 'subscribe' && !topicSubscriptionsServer.has(topicString)) {
+        console.log('subscribe', topicString)
         msgsToServer.pub({ t: 'subscribe', topicName, topicParams })
       }
 
       if (action === 'unsubscribe' && topicSubscriptionsServer.has(topicString)) {
+        console.log('unsubscribe', topicString)
         msgsToServer.pub({ t: 'unsubscribe', topicName, topicParams })
       }
     },
@@ -138,6 +139,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
 
             if (existing) return existing.pubSub
 
+            console.log('subscribe', topicString)
             syncSubscriptionsWithServer('subscribe', topicName, topicParams)
 
             const sub = Sub.create()
@@ -147,6 +149,7 @@ export const initClient = <T extends Contract<any>>(config: Config<T>): Client<T
                 const unsub = sub.sub((msg) => subscriber(mapper(msg)))
                 return () => {
                   unsub()
+                  console.log('unsubscribe', topicString)
                   syncSubscriptionsWithServer('unsubscribe', topicName, topicParams)
                 }
               },

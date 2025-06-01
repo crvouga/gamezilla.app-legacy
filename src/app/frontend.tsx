@@ -321,7 +321,10 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
 
   return Sub.batch<MsgFrontend>([
     Sub.map(
-      FrontendFrontend.subscriptions({ ctx, model: input.model.frontend }),
+      FrontendFrontend.subscriptions({
+        ctx,
+        model: input.model.frontend,
+      }),
       (c): MsgFrontend => ({ t: 'frontend', c }),
     ),
     Sub.map(
@@ -331,10 +334,25 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
       }),
       (c): MsgFrontend => ({ t: 'wire', c }),
     ),
-    Sub.map(LangFrontend.subscriptions({ ctx, model: input.model.lang }), (c): MsgFrontend => ({ t: 'lang', c })),
-    Sub.map(AuthFrontend.subscriptions({ ctx, model: input.model.auth }), (c): MsgFrontend => ({ t: 'auth', c })),
     Sub.map(
-      ProfileFrontend.subscriptions({ ctx, model: input.model.profile }),
+      LangFrontend.subscriptions({
+        ctx,
+        model: input.model.lang,
+      }),
+      (c): MsgFrontend => ({ t: 'lang', c }),
+    ),
+    Sub.map(
+      AuthFrontend.subscriptions({
+        ctx,
+        model: input.model.auth,
+      }),
+      (c): MsgFrontend => ({ t: 'auth', c }),
+    ),
+    Sub.map(
+      ProfileFrontend.subscriptions({
+        ctx,
+        model: input.model.profile,
+      }),
       (c): MsgFrontend => ({ t: 'profile', c }),
     ),
     Sub.map(
