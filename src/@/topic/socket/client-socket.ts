@@ -4,10 +4,12 @@ import { ILogger } from '~/@/logger'
 import { PubSub, Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { Client, ClientNode, ContractBase, Topic } from '../types'
-import { PUB, SUB, ToClientMsg, ToServerMsg, toTopic, UNSUB } from './shared'
+import { Client, ClientNode, ContractBase } from '../types'
+import { PUB, SUB, ToClientMsg, ToServerMsg, UNSUB } from './msgs'
 import { Socket } from './socket'
 import { toWebSocketUrl } from './to-websocket-url'
+import { Topic, TopicName, toTopic } from './topic'
+import { TopicSubscription } from './topic-subscription'
 
 export type Config<T extends ContractBase> = {
   t: 'web-sockets'
@@ -21,29 +23,31 @@ export type Config<T extends ContractBase> = {
   syncSubscriptionRate: TimeSpan
 }
 
-export const initClient = <T extends Record<string, Topic<any, any>>>(config: Config<T>): Client<T> => {
+export const initClient = <TContract extends ContractBase>(config: Config<TContract>): Client<TContract> => {
   const clientCore = initClientCore(config)
 
   const client = Object.entries(config.contract)
-    .map(([topicName, _topic]) => {
-      const clientNode: ClientNode<T, typeof topicName> = {
+    .map(([topicName_, _topic]) => {
+      const topicName = topicName_ as TopicName
+
+      const clientNode: ClientNode<TContract, typeof topicName> = {
         pub(topicParams, msg) {
           const topic = toTopic(topicName, topicParams)
 
-          clientCore.msgsToServer.pub([PUB, topic, msg])
+          clientCore.msgsToServer.pub([PUB, topicName, topicParams, msg])
 
-          const existing = clientCore.subscriptions.get(topic)
+          const subscription = clientCore.subscriptionsByTopic.get(topic)
 
-          if (!existing) return
+          if (!subscription) return
 
-          existing.pub(msg)
+          subscription.pubSub.pub(msg)
         },
         sub(topicParams, mapper) {
           const topic = toTopic(topicName, topicParams)
 
-          const existing = clientCore.subscriptions.get(topic)
+          const existing = clientCore.subscriptionsByTopic.get(topic)
 
-          if (existing) return existing
+          if (existing) return existing.pubSub
 
           const pubSub = Sub.create<any>()
 
@@ -52,7 +56,11 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
             sub: (s) => pubSub.sub((m) => s(mapper(m))),
           }
 
-          clientCore.subscriptions.set(topic, pubSubMapped)
+          clientCore.subscriptionsByTopic.set(topic, {
+            topicName,
+            topicParams,
+            pubSub: pubSubMapped,
+          })
 
           return pubSubMapped
         },
@@ -60,16 +68,16 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
       return [topicName, clientNode] as const
     })
     .reduce((acc, [topicName, topic]) => {
-      acc[topicName as keyof T] = topic
+      acc[topicName as keyof TContract] = topic
       return acc
-    }, {} as Client<T>)
+    }, {} as Client<TContract>)
 
   return client
 }
 
-const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Config<T>) => {
+const initClientCore = <TContract extends ContractBase>(config: Config<TContract>) => {
   const msgsToServer = Sub.create<ToServerMsg>()
-  const subscriptionsByTopic = new Map<string, PubSub<any>>()
+  const subscriptionsByTopic = new Map<Topic, TopicSubscription>()
 
   runSaga({}, flowMain)
 
@@ -131,21 +139,21 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
   }
 
   function* flowSyncSubscriptions(send: (msg: ToServerMsg) => void) {
-    const subscriptionsServer = new Set<string>()
+    const subscribedTopicsServer = new Set<string>()
     while (true) {
-      for (const [topic, pubSub] of subscriptionsByTopic.entries()) {
-        const isSubbedServer = subscriptionsServer.has(topic)
+      for (const [topic, { topicName, topicParams, pubSub }] of subscriptionsByTopic.entries()) {
+        const isSubbedServer = subscribedTopicsServer.has(topic)
         const isSubbedClient = pubSub.subscriberCount() > 0
 
         if (isSubbedClient && !isSubbedServer) {
-          send([SUB, topic])
-          subscriptionsServer.add(topic)
+          send([SUB, topicName, topicParams])
+          subscribedTopicsServer.add(topic)
           continue
         }
 
         if (!isSubbedClient && isSubbedServer) {
-          send([UNSUB, topic])
-          subscriptionsServer.delete(topic)
+          send([UNSUB, topicName, topicParams])
+          subscribedTopicsServer.delete(topic)
           continue
         }
       }
@@ -160,9 +168,10 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
 
       switch (fromServerParsed[0]) {
         case PUB: {
-          const activeSubscription = subscriptionsByTopic.get(fromServerParsed[1])
+          const topic = toTopic(fromServerParsed[1], fromServerParsed[2])
+          const activeSubscription = subscriptionsByTopic.get(topic)
           if (!activeSubscription) return
-          activeSubscription.pub(fromServerParsed[2])
+          activeSubscription.pubSub.pub(fromServerParsed[2])
           return
         }
       }
@@ -170,7 +179,7 @@ const initClientCore = <T extends Record<string, Topic<any, any>>>(config: Confi
   }
 
   return {
-    subscriptions: subscriptionsByTopic,
+    subscriptionsByTopic,
     msgsToServer,
   }
 }
