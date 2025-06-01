@@ -38,57 +38,84 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
       const socketUrl = toWebSocketUrl(config)
       const socket = createSocket(socketUrl)
 
-      const raced = yield* race({
+      const opened = yield* race({
         open: take(Sub.chan(socket.msgsOpen)),
         error: take(Sub.chan(socket.msgsError)),
         close: take(Sub.chan(socket.msgsClose)),
       })
 
-      if (!raced.open) {
-        config.logger.warn('Failed to connect or connection closed/errored early.', { socketUrl, raced })
-
-        activeSubscriptionsServer.clear()
-
-        socket.cmds.pub({ t: 'close' })
-
-        yield* delay(1000)
-
+      if (opened.error) {
+        config.logger.warn('failed to connect. connection errored')
+        yield* restart(socket)
         continue
       }
 
-      config.logger.info('Connected.', { socketUrl })
+      if (opened.close) {
+        config.logger.warn('connection closed')
+        yield* restart(socket)
+        continue
+      }
+
+      config.logger.info('connected')
 
       for (const activeSubscription of activeSubscriptions.values()) {
         msgsToServer.pub(['sub', activeSubscription.topicName, activeSubscription.topicParams])
       }
 
-      yield* race({
+      const closed = yield* race({
         close: take(Sub.chan(socket.msgsClose)),
         error: take(Sub.chan(socket.msgsError)),
         toServer: call(sagaToServer, socket),
         fromServer: call(sagaFromServer, socket),
       })
 
-      config.logger.info('Disconnected or connection error.', { socketUrl })
+      if (closed.close) {
+        config.logger.warn('disconnected or connection error')
+        yield* restart(socket)
+        continue
+      }
 
-      activeSubscriptionsServer.clear()
-
-      socket.cmds.pub({ t: 'close' })
-
-      yield* delay(1000)
+      if (closed.error) {
+        config.logger.warn('disconnected or connection error')
+        yield* restart(socket)
+        continue
+      }
     }
   }
 
+  function* restart(socket: Socket) {
+    activeSubscriptionsServer.clear()
+
+    socket.cmds.pub({ t: 'close' })
+
+    yield* delay(1000)
+  }
+
   function* sagaToServer(socket: Socket) {
-    const chan = Sub.chan(msgsToServer)
-    yield takeEvery(chan, function* (toServer) {
-      socket.msgsToServer.pub(toServer)
+    yield takeEvery(Sub.chan(msgsToServer), function* (toServer) {
+      switch (toServer[0]) {
+        case 'sub': {
+          const topicString = toTopicString(toServer[1], toServer[2])
+          if (activeSubscriptionsServer.has(topicString)) return
+          socket.msgsToServer.pub(toServer)
+          return
+        }
+        case 'unsub': {
+          const topicString = toTopicString(toServer[1], toServer[2])
+          if (!activeSubscriptionsServer.has(topicString)) return
+          socket.msgsToServer.pub(toServer)
+          return
+        }
+        case 'pub': {
+          socket.msgsToServer.pub(toServer)
+          return
+        }
+      }
     })
   }
 
   function* sagaFromServer(socket: Socket) {
-    const chan = Sub.chan(socket.msgsFromServer)
-    yield takeEvery(chan, function* (fromServer) {
+    yield takeEvery(Sub.chan(socket.msgsFromServer), function* (fromServer) {
       switch (fromServer[0]) {
         case 'sub': {
           const topicString = toTopicString(fromServer[1], fromServer[2])
@@ -117,15 +144,13 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
     behavior: 'leading',
     throttle: TimeSpan.seconds(3),
     keyFn: (_action, topicString, _topicName, _topicParams) => topicString,
-    fn: (action: 'subscribe' | 'unsubscribe', topicString: string, topicName: string[], topicParams: unknown) => {
+    fn: (action: 'subscribe' | 'unsubscribe', _topicString: string, topicName: string[], topicParams: unknown) => {
       switch (action) {
         case 'subscribe': {
-          if (activeSubscriptions.has(topicString)) return
           msgsToServer.pub(['sub', topicName, topicParams])
           return
         }
         case 'unsubscribe': {
-          if (!activeSubscriptions.has(topicString)) return
           msgsToServer.pub(['unsub', topicName, topicParams])
           return
         }
@@ -161,9 +186,7 @@ export const initClient = <T extends Record<string, Topic<any, any>>>(config: Co
         const pubSubMapped: PubSub<TMsgOut> = {
           ...pubSub,
           sub: (subscriber) => {
-            const unsub = pubSub.sub((msg) => {
-              subscriber(mapper(msg))
-            })
+            const unsub = pubSub.sub((msg) => subscriber(mapper(msg)))
             return () => {
               unsub()
               syncSubscriptionsWithServer('unsubscribe', topicString, topicNameParts, topicParams)
