@@ -1,4 +1,3 @@
-import { HttpServerEvent } from '~/@/http-server'
 import { RPC } from '~/@/rpc'
 import { RuntimeEvent } from '~/@/runtime'
 import { s } from '~/@/schema'
@@ -15,7 +14,7 @@ export type ModelFrontend = { t: 'noop' }
 export type MsgToFrontend = { t: 'noop' }
 
 export type MsgBackend =
-  | { t: 'got-web-backend-event'; c: HttpServerEvent }
+  | { t: 'got-web-backend-event'; c: unknown }
   | { t: 'got-runtime-event'; c: RuntimeEvent }
   | { t: 'heartbeat'; at: Posix }
 

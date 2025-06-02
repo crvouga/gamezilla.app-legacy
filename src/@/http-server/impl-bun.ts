@@ -1,10 +1,9 @@
 import type { Server, WebSocketHandler } from 'bun'
 import { Logger, type ILogger } from '~/@/logger'
-import { PubSub, Sub } from '../sub'
+import { Sub } from '../sub'
 import { Posix } from '../time/posix'
 import { allowCORS } from './cors'
 import { HttpServerEvent, type IHttpServer, type Respond } from './interface'
-import { getIpAddress } from './ip-address'
 
 export type Config = {
   t: 'bun'
@@ -14,12 +13,9 @@ export type Config = {
 export const HttpServerBun = <T>(config: Config) => {
   const logger = Logger.prefix('bun', config.logger)
   const handlers: Respond[] = []
+  const events = Sub.create<HttpServerEvent>()
   let webSocketHandler: WebSocketHandler<T>
   let httpServer: Server
-
-  const events: PubSub<HttpServerEvent> = Sub.create()
-
-  const staticResponses: Record<`/${string}`, Response> = {}
 
   const respond = async (request: Request) => {
     try {
@@ -45,7 +41,6 @@ export const HttpServerBun = <T>(config: Config) => {
     async start(port) {
       httpServer = Bun.serve({
         port: port,
-        static: staticResponses,
         async fetch(request) {
           const response = await respond(request)
           return allowCORS(request, response)
@@ -54,10 +49,9 @@ export const HttpServerBun = <T>(config: Config) => {
       })
 
       logger.info(`Listening on port ${port}`)
-
       events.pub({
-        t: 'http-server/started',
-        ipAddress: getIpAddress(),
+        t: 'started',
+        ipAddress: '127.0.0.1',
         port,
         startedAt: Posix.now(),
       })
@@ -65,13 +59,12 @@ export const HttpServerBun = <T>(config: Config) => {
     async stop() {
       logger.info('Stopping HTTP server')
       await httpServer.stop(true)
-      logger.info('HTTP server was not running')
+      events.pub({
+        t: 'stopped',
+      })
     },
     registerRespond(handler) {
       handlers.push(handler)
-    },
-    registerStatic(path, response) {
-      staticResponses[`/${path.replace(/^\//, '')}`] = response
     },
   }
   return {

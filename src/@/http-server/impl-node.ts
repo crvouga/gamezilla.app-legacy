@@ -1,9 +1,8 @@
 import * as http from 'node:http'
 import { Logger, type ILogger } from '~/@/logger'
-import { PubSub, Sub } from '../sub'
+import { Sub } from '../sub'
 import { Posix } from '../time/posix'
-import { HttpServerEvent, type Respond, type IHttpServer } from './interface'
-import { getIpAddress } from './ip-address'
+import { HttpServerEvent, type IHttpServer, type Respond } from './interface'
 
 export type Config = {
   t: 'node'
@@ -17,9 +16,7 @@ export const HttpServerNode = (
   const logger = Logger.prefix('node', config.logger)
   const httpServer = new http.Server()
   const handlers: Respond[] = []
-  const events: PubSub<HttpServerEvent> = Sub.create()
-
-  const staticResponses: Record<`/${string}`, Response> = {}
+  const events = Sub.create<HttpServerEvent>()
 
   const respondNode = async (req: http.IncomingMessage, res: http.ServerResponse) => {
     const request = await incomingMessageToFetchRequest(req)
@@ -30,11 +27,6 @@ export const HttpServerNode = (
   }
 
   const respond = async (request: Request): Promise<Response> => {
-    const staticResponse = staticResponses[`/${request.url.replace(/^\//, '')}`]
-    if (staticResponse) {
-      return staticResponse
-    }
-
     for (const handler of handlers) {
       const response = await handler(request, httpServer)
       if (response) {
@@ -47,8 +39,13 @@ export const HttpServerNode = (
 
   const start = async (port: number) => {
     httpServer.listen(port, () => {
-      events.pub({ t: 'http-server/started', ipAddress: getIpAddress(), port, startedAt: Posix.now() })
       logger.info(`Listening on port ${port}`)
+      events.pub({
+        t: 'started',
+        ipAddress: '127.0.0.1',
+        port,
+        startedAt: Posix.now(),
+      })
     })
 
     httpServer.on('request', respondNode)
@@ -58,19 +55,19 @@ export const HttpServerNode = (
     handlers.push(handler)
   }
 
-  const registerStatic = (path: string, response: Response) => {
-    staticResponses[`/${path.replace(/^\//, '')}`] = response
+  const stop = async () => {
+    await new Promise((resolve) => httpServer.close(resolve))
+    events.pub({
+      t: 'stopped',
+    })
   }
 
   return {
-    events,
-    start,
-    registerRespond,
-    registerStatic,
     t: 'node',
-    async stop() {
-      await new Promise((resolve) => httpServer.close(resolve))
-    },
+    start,
+    stop,
+    registerRespond,
+    events,
   }
 }
 

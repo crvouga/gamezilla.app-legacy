@@ -1,7 +1,10 @@
 export const allowCORS = (request: Request, response: Response) => {
   const origin = request.headers.get('Origin')
 
-  const headers = new Headers(response.headers)
+  const headers = new Headers()
+  for (const [key, value] of response.headers.entries()) {
+    headers.set(key, value)
+  }
 
   if (origin) {
     headers.set('Access-Control-Allow-Origin', origin)

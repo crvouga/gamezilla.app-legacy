@@ -1,13 +1,13 @@
 import { call, cancel, delay, fork, race, take } from 'typed-redux-saga'
 import { isErr, unwrapOr } from '~/@/result'
 import { RPC } from '~/@/rpc'
+import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { BackendInstance } from '~/app/@/backend/backend-instance/backend-instance'
 import { BackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { rpcContract, type BackendCtxModule } from './types'
-import { Sub } from '~/@/sub'
 
 const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtxModule> => {
   const backendInstanceDb = BackendInstanceDb({
@@ -27,8 +27,8 @@ const saga = function* (input: { ctx: BackendCtxModule }) {
 
 const flowBackendInstanceState = function* (input: { ctx: BackendCtxModule }) {
   const ctx = input.ctx
-  const serverStartedChan = Sub.chan(Sub.where(ctx.httpServer.events, (e) => e.t === 'http-server/started'))
-  const serverStoppingChan = Sub.chan(Sub.where(ctx.httpServer.events, (e) => e.t === 'http-server/stopping'))
+  const serverStartedChan = Sub.chan(Sub.where(ctx.httpServer.events, (e) => e.t === 'started'))
+  const serverStoppingChan = Sub.chan(Sub.where(ctx.httpServer.events, (e) => e.t === 'stopped'))
   const runtimeStoppingChan = Sub.chan(Sub.where(ctx.runtime.events, (e) => e.t === 'runtime/stopping'))
 
   const event = yield* take(serverStartedChan)
