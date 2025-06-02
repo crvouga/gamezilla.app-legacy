@@ -24,7 +24,7 @@ export type MsgMeta = {
 export type ClientNode<T extends ContractBase, K extends keyof T> = {
   pub: (params: s.Infer<T[K]['params']>, msg: s.Infer<T[K]['msg']>) => void
   sub: <TMsg>(params: s.Infer<T[K]['params']>, mapper: (msg: s.Infer<T[K]['msg']> & MsgMeta) => TMsg) => Sub<TMsg>
-  // subAll: <TMsg>(mapper: (msg: s.Infer<T[K]['msg']> & MsgMeta) => TMsg) => Sub<TMsg>
+  subAll: <TMsg>(mapper: (msg: s.Infer<T[K]['msg']> & MsgMeta) => TMsg) => Sub<TMsg>
 }
 
 export type Client<T extends ContractBase> = {

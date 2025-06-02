@@ -5,10 +5,11 @@ import { PubSub, Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { Client, ClientNode, ContractBase } from '../types'
-import { PUB, SUB, ToClientMsg, ToServerMsg, UNSUB } from './msgs'
+import { PUB, SUB, SUB_ALL, ToClientMsg, ToServerMsg, UNSUB, UNSUB_ALL } from './msgs'
 import { Socket } from './socket'
 import { toWebSocketUrl } from './to-websocket-url'
 import { Topic, TopicName, toTopic } from './topic'
+import { TopicNameSubscription } from './topic-name-subscription'
 import { TopicSubscription } from './topic-subscription'
 
 export type Config<T extends ContractBase> = {
@@ -64,6 +65,25 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
 
           return pubSubMapped
         },
+        subAll(mapper) {
+          const subscription = clientCore.subscriptionsByTopicName.get(topicName)
+
+          if (subscription) return subscription.pubSub
+
+          const pubSub = Sub.create<any>()
+
+          const pubSubMapped: PubSub<any> = {
+            ...pubSub,
+            sub: (s) => pubSub.sub((m) => s(mapper(m))),
+          }
+
+          clientCore.subscriptionsByTopicName.set(topicName, {
+            topicName,
+            pubSub: pubSubMapped,
+          })
+
+          return pubSubMapped
+        },
       }
       return [topicName, clientNode] as const
     })
@@ -78,6 +98,7 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
 const initClientCore = <TContract extends ContractBase>(config: Config<TContract>) => {
   const msgsToServer = Sub.create<ToServerMsg>()
   const subscriptionsByTopic = new Map<Topic, TopicSubscription>()
+  const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
   runSaga({}, flowMain)
 
@@ -135,10 +156,11 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
         }
       }
     })
-    yield* fork(flowSyncSubscriptions, send)
+    yield* fork(flowSyncSubscriptionsTopic, send)
+    yield* fork(flowSyncSubscriptionsTopicName, send)
   }
 
-  function* flowSyncSubscriptions(send: (msg: ToServerMsg) => void) {
+  function* flowSyncSubscriptionsTopic(send: (msg: ToServerMsg) => void) {
     const subscribedTopicsServer = new Set<string>()
     while (true) {
       for (const [topic, { topicName, topicParams, pubSub }] of subscriptionsByTopic.entries()) {
@@ -154,6 +176,30 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
         if (!isSubbedClient && isSubbedServer) {
           send([UNSUB, topicName, topicParams])
           subscribedTopicsServer.delete(topic)
+          continue
+        }
+      }
+
+      yield* delay(TimeSpan.toMilliseconds(config.syncSubscriptionRate))
+    }
+  }
+
+  function* flowSyncSubscriptionsTopicName(send: (msg: ToServerMsg) => void) {
+    const subscribedTopicsServer = new Set<string>()
+    while (true) {
+      for (const [topicName, { pubSub }] of subscriptionsByTopicName.entries()) {
+        const isSubbedServer = subscribedTopicsServer.has(topicName)
+        const isSubbedClient = pubSub.subscriberCount() > 0
+
+        if (isSubbedClient && !isSubbedServer) {
+          send([SUB_ALL, topicName])
+          subscribedTopicsServer.add(topicName)
+          continue
+        }
+
+        if (!isSubbedClient && isSubbedServer) {
+          send([UNSUB_ALL, topicName])
+          subscribedTopicsServer.delete(topicName)
           continue
         }
       }
@@ -180,6 +226,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
 
   return {
     subscriptionsByTopic,
+    subscriptionsByTopicName,
     msgsToServer,
   }
 }

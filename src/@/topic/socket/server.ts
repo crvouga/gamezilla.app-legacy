@@ -8,8 +8,9 @@ import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Client, ClientNode, ContractBase } from '../types'
-import { PUB, SUB, ToClientMsg, ToClientMsgMany, ToClientMsgOne, UNSUB } from './msgs'
+import { PUB, SUB, SUB_ALL, ToClientMsg, ToClientMsgMany, ToClientMsgOne, UNSUB, UNSUB_ALL } from './msgs'
 import { Topic, TopicName, toTopic } from './topic'
+import { TopicNameSubscription } from './topic-name-subscription'
 import { TopicSubscription } from './topic-subscription'
 
 export type BackendWebSocketData = {
@@ -38,7 +39,8 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
         pub(topicParams, msg) {
           const topic = toTopic(topicName, topicParams)
 
-          serverCore.publish(topic, [PUB, topicName, topicParams, msg], null)
+          serverCore.publishTopicName(topicName, [PUB, topicName, topicParams, msg], null)
+          serverCore.publishTopic(topic, [PUB, topicName, topicParams, msg], null)
 
           const subscription = serverCore.subscriptionsByTopic.get(topic)
 
@@ -68,6 +70,26 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
 
           return pubSubMapped
         },
+
+        subAll(mapper) {
+          const subscription = serverCore.subscriptionsByTopicName.get(topicName)
+
+          if (subscription) return subscription.pubSub
+
+          const pubSub = Sub.create<any>()
+
+          const pubSubMapped: PubSub<any> = {
+            ...pubSub,
+            sub: (s) => pubSub.sub((m) => s(mapper(m))),
+          }
+
+          serverCore.subscriptionsByTopicName.set(topicName, {
+            topicName,
+            pubSub: pubSubMapped,
+          })
+
+          return pubSubMapped
+        },
       }
       return [topicName, clientNode] as const
     })
@@ -82,6 +104,7 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
 const initServerCore = <TContract extends ContractBase>(config: Config<TContract>) => {
   let bunServer: Bun.Server
   const subscriptionsByTopic = new Map<string, TopicSubscription>()
+  const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
   const send = (ws: ServerWebSocket<BackendWebSocketData>, msg: ToClientMsgOne) => {
     const msgString = JSON.stringify(msg)
@@ -89,12 +112,42 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
     ws.send(msgString)
   }
 
-  const publish = (topic: Topic, msg: ToClientMsgMany, ws: ServerWebSocket<BackendWebSocketData> | null) => {
+  const publishTopic = (topic: Topic, msg: ToClientMsgMany, ws: ServerWebSocket<BackendWebSocketData> | null) => {
     const msgString = JSON.stringify(msg)
 
     bunServer.publish(topic, msgString)
 
     const subscription = subscriptionsByTopic.get(topic)
+
+    if (!subscription) return
+
+    const msgPayload = msg[3]
+
+    if (!ws) {
+      subscription.pubSub.pub(msgPayload)
+      return
+    }
+
+    const msgPayloadWithMeta = {
+      ...msgPayload,
+      clientId: ws.data.clientId,
+      sessionId: ws.data.sessionId,
+      clientSessionId: ws.data.clientSessionId,
+    }
+
+    subscription.pubSub.pub(msgPayloadWithMeta)
+  }
+
+  const publishTopicName = (
+    topicName: TopicName,
+    msg: ToClientMsgMany,
+    ws: ServerWebSocket<BackendWebSocketData> | null,
+  ) => {
+    const msgString = JSON.stringify(msg)
+
+    bunServer.publish(topicName, msgString)
+
+    const subscription = subscriptionsByTopicName.get(topicName)
 
     if (!subscription) return
 
@@ -132,9 +185,22 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
           send(ws, msg)
           return
         }
+        case SUB_ALL: {
+          const topicName = msg[1]
+          ws.subscribe(topicName)
+          send(ws, msg)
+          return
+        }
+        case UNSUB_ALL: {
+          const topicName = msg[1]
+          ws.unsubscribe(topicName)
+          send(ws, msg)
+          return
+        }
         case PUB: {
           const topic = toTopic(msg[1], msg[2])
-          publish(topic, msg, ws)
+          publishTopic(topic, msg, ws)
+          publishTopicName(msg[1], msg, ws)
           return
         }
       }
@@ -175,6 +241,8 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
 
   return {
     subscriptionsByTopic,
-    publish,
+    subscriptionsByTopicName,
+    publishTopic,
+    publishTopicName,
   }
 }

@@ -2,6 +2,8 @@ import { ILogger } from '~/@/logger'
 import { PubSub, Sub } from '~/@/sub'
 import { Client, ClientNode, ContractBase } from '../types'
 import { Topic, TopicName, toTopic } from './topic'
+import { TopicNameSubscription } from './topic-name-subscription'
+import { TopicSubscription } from './topic-subscription'
 
 export type Config<TContract extends ContractBase> = {
   t: 'local'
@@ -10,7 +12,8 @@ export type Config<TContract extends ContractBase> = {
 }
 
 export const initClient = <TContract extends ContractBase>(config: Config<TContract>): Client<TContract> => {
-  const subscriptionsByTopic = new Map<Topic, PubSub<any>>()
+  const subscriptionsByTopic = new Map<Topic, TopicSubscription>()
+  const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
   const client = Object.entries(config.contract)
     .map(([topicName_, _topic]) => {
@@ -24,14 +27,20 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
 
           if (!subscription) return
 
-          subscription.pub(msg)
+          subscription.pubSub.pub(msg)
+
+          const subscriptionByName = subscriptionsByTopicName.get(topicName)
+
+          if (!subscriptionByName) return
+
+          subscriptionByName.pubSub.pub(msg)
         },
         sub(topicParams, mapper) {
           const topic = toTopic(topicName, topicParams)
 
           const subscription = subscriptionsByTopic.get(topic)
 
-          if (subscription) return subscription
+          if (subscription) return subscription.pubSub
 
           const pubSub = Sub.create<any>()
 
@@ -40,7 +49,30 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
             sub: (s) => pubSub.sub((m) => s(mapper(m))),
           }
 
-          subscriptionsByTopic.set(topic, pubSubMapped)
+          subscriptionsByTopic.set(topic, {
+            pubSub: pubSubMapped,
+            topicName,
+            topicParams,
+          })
+
+          return pubSubMapped
+        },
+        subAll(mapper) {
+          const subscription = subscriptionsByTopicName.get(topicName)
+
+          if (subscription) return subscription.pubSub
+
+          const pubSub = Sub.create<any>()
+
+          const pubSubMapped: PubSub<any> = {
+            ...pubSub,
+            sub: (s) => pubSub.sub((m) => s(mapper(m))),
+          }
+
+          subscriptionsByTopicName.set(topicName, {
+            pubSub: pubSubMapped,
+            topicName,
+          })
 
           return pubSubMapped
         },
