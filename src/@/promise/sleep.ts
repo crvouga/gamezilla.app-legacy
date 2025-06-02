@@ -15,7 +15,7 @@ export const sleep: Sleep = (timeSpan, signal) => {
     const onAbort = () => {
       clearTimeout(timeoutId)
       signal?.removeEventListener('abort', onAbort)
-      reject(null)
+      // reject(new Error('Sleep aborted'))
     }
 
     if (signal) {

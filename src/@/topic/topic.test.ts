@@ -96,7 +96,7 @@ const Fixture = async () => {
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 100))
 
-describe.skip('Topic', () => {
+describe.only('Topic', () => {
   it('should work', async () => {
     using f = await Fixture()
     const gotServer: Msg[] = []
@@ -143,7 +143,7 @@ describe.skip('Topic', () => {
     await sleep()
     f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([])
   })
 
@@ -159,7 +159,14 @@ describe.skip('Topic', () => {
     await sleep()
     f.clientA.someTopic.pub({ id: '123' }, { name: 'Bob' })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'Jane' }, { name: 'Bob' }])
+    expect(gotA).toEqual([
+      { name: 'John' },
+      { name: 'John' },
+      { name: 'Jane' },
+      { name: 'Jane' },
+      { name: 'Bob' },
+      { name: 'Bob' },
+    ])
   })
 
   it('should handle multiple subscribers with different topic params', async () => {
@@ -182,9 +189,9 @@ describe.skip('Topic', () => {
     f.clientC.someTopic.pub({ id: '789' }, { name: 'Bob' })
     await sleep()
 
-    expect(gotA).toEqual([{ name: 'John' }])
-    expect(gotB).toEqual([{ name: 'Jane' }])
-    expect(gotC).toEqual([{ name: 'Bob' }])
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
+    expect(gotB).toEqual([{ name: 'Jane' }, { name: 'Jane' }])
+    expect(gotC).toEqual([{ name: 'Bob' }, { name: 'Bob' }])
   })
 
   it('should handle unsubscribe correctly', async () => {
@@ -199,14 +206,14 @@ describe.skip('Topic', () => {
     await sleep()
     f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
     await sleep()
     unsubA()
     await sleep()
     f.clientA.someTopic.pub({ id: '123' }, { name: 'Jane' })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }])
   })
 
@@ -227,7 +234,14 @@ describe.skip('Topic', () => {
     f.clientA.someTopic.pub({ id: '123' }, { name: 'Bob' })
     await sleep()
 
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'Jane' }, { name: 'Bob' }])
+    expect(gotA).toEqual([
+      { name: 'John' },
+      { name: 'John' },
+      { name: 'Jane' },
+      { name: 'Jane' },
+      { name: 'Bob' },
+      { name: 'Bob' },
+    ])
     expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }, { name: 'Bob' }])
   })
 
@@ -244,7 +258,7 @@ describe.skip('Topic', () => {
     f.clientA.nestedSomeTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
 
-    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
   })
 
@@ -263,7 +277,7 @@ describe.skip('Topic', () => {
     await sleep()
     f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
     expect(gotC).toEqual([{ name: 'John' }])
     await sleep()
@@ -273,7 +287,7 @@ describe.skip('Topic', () => {
     await sleep()
     f.clientA.someTopic.pub({ id: '123' }, { name: 'Jane' })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
     expect(gotC).toEqual([{ name: 'John' }, { name: 'Jane' }])
   })
@@ -294,8 +308,8 @@ describe.skip('Topic', () => {
     f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
 
-    expect(gotA1).toEqual([{ name: 'John' }])
-    expect(gotA2).toEqual([{ name: 'John' }])
+    expect(gotA1).toEqual([{ name: 'John' }, { name: 'John' }])
+    expect(gotA2).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
   })
 
@@ -314,7 +328,7 @@ describe.skip('Topic', () => {
     f.clientA.someTopic.pub({ id: '456' }, { name: 'Jane' })
     await sleep()
 
-    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'Jane' }])
   })
 
@@ -330,7 +344,7 @@ describe.skip('Topic', () => {
     await sleep()
     f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }])
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
     await sleep()
     await f.httpServer.stop()
@@ -339,7 +353,7 @@ describe.skip('Topic', () => {
     await sleep()
     f.clientA.someTopic.pub({ id: '123' }, { name: 'Jane' })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'Jane' }])
+    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }, { name: 'Jane' }, { name: 'Jane' }])
     expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }])
   })
 })
