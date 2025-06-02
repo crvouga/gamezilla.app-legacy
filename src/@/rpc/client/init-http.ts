@@ -22,7 +22,7 @@ export const initClientHttp = <T extends Base>(config: ClientConfigHttp<T>): Cli
               body: JSON.stringify(parsedInput.value),
               credentials: 'include',
             })
-            const response = await fetch(request)
+            const response = await config.httpClient.fetch(request)
             if (!response.ok) {
               return Err(`Request failed with status ${response.status}`)
             }

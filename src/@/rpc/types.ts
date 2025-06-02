@@ -1,5 +1,6 @@
 import { Result } from '~/@/result'
 import { s } from '~/@/schema'
+import { IHttpClient } from '../http-client'
 import { ClientSessionId } from '../wire/client-session-id'
 import { SessionId } from '../wire/session-id'
 import { RPCError } from './error'
@@ -35,6 +36,7 @@ export type ClientConfigHttp<T extends Base> = {
   serverUrl: string
   clientSessionId: ClientSessionId
   contract: T
+  httpClient: IHttpClient
 }
 
 export type ClientConfigLocal<T extends Base> = {

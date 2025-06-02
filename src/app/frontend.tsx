@@ -56,6 +56,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     contract,
     serverUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
     clientSessionId,
+    httpClient,
   })
 
   const topic = Topic.initClient({

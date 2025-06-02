@@ -1,5 +1,5 @@
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
-import { middlewareAllowCORS } from '~/@/http-server/cors'
+import { AllowCORS } from '~/@/http-server/allow-cors'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb } from '~/@/key-value-db'
 import { Logger } from '~/@/logger'
@@ -33,15 +33,10 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     logger,
   })
 
-  const simulateLatency = CONFIG_SHARED.IS_PROD
-    ? async () => {}
-    : async () => sleep(TimeSpan.milliseconds(100 + Math.random() * 100))
-
   const dbConnSql = await DbConnSql({
     t: 'postgres',
     databaseUrl: CONFIG_BACKEND.DATABASE_URL,
     logger,
-    simulateLatency,
   })
 
   const keyValueDb = await KeyValueDb({
@@ -55,14 +50,16 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     logger,
   })
 
+  const pubSub = await PubSubTopicBased({
+    t: 'noop',
+  })
+
   const httpServer = HttpServerBun({
     t: 'bun',
     logger,
   })
 
-  httpServer.registerMiddleware(middlewareAllowCORS)
-
-  const pubSub = await PubSubTopicBased({ t: 'noop' })
+  httpServer.registerMiddleware(AllowCORS.middleware)
 
   const topic = Topic.initServer({
     t: 'web-sockets',

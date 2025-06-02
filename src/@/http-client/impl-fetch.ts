@@ -2,18 +2,17 @@ import { IHttpClient } from './interface'
 
 export type Config = {
   t: 'fetch'
-  defaultHeaders?: Record<string, string>
+  mapHeaders?: (headers: Headers) => Headers
+  credentials?: 'include' | 'omit'
+  baseUrl?: string
 }
 
-export const HttpClient = (_config: Config): IHttpClient => {
+export const HttpClient = (config: Config): IHttpClient => {
   return {
     async fetch(request) {
       const response = await fetch(request, {
-        // credentials: 'include',
-        headers: {
-          ..._config.defaultHeaders,
-          ...request.headers,
-        },
+        credentials: config.credentials,
+        headers: config.mapHeaders?.(request.headers) ?? request.headers,
       })
 
       return response
