@@ -41,7 +41,7 @@ describe(import.meta.file, () => {
     const button = r.getByRole('button', f.ctx.t('app.save'))[0]
     expect(button).toBeTruthy()
     button?.click()
-    const msg = await Sub.once(r.msgs)
+    const msg = await Sub.take(r.msgs)
     expect(msg.t).toBe('profile.update-username.clicked-save')
   })
 

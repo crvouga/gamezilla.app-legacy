@@ -8,6 +8,7 @@ import { Sleep } from '../../promise/sleep'
 import { Sub } from '../../sub'
 import { Database } from 'bun:sqlite'
 import { BunSqliteFileSystem } from './bun-sqlite-file-system'
+import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {
   t: 'bun-sqlite'
@@ -37,7 +38,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       try {
         const start = process.hrtime.bigint()
 
-        await config.simulateLatency?.()
+        await config.simulateLatency?.(TimeSpan.milliseconds(100))
 
         const rows = db.query(sql).all()
 

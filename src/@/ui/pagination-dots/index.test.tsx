@@ -26,7 +26,7 @@ describe('PaginationDots', () => {
     const clickedIndex = Sub.create<number>()
     const r = f.render(<PaginationDots activeIndex={0} count={3} onClick={clickedIndex.pub} />)
     r.query(toPaginationDotSelector(1))[0]?.click()
-    expect(await Sub.once(clickedIndex)).toEqual(1)
+    expect(await Sub.take(clickedIndex)).toEqual(1)
   })
 
   test('should NOT be buttons if no onClick is provided', async () => {

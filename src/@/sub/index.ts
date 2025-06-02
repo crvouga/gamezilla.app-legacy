@@ -9,13 +9,33 @@ export type PubSub<Msg> = Sub<Msg> & {
   subscriberCount: () => number
 }
 
-const once = <A>(sub: Sub<A>) => {
-  return new Promise<A>((resolve) => {
+const take = <A>(sub: Sub<A>, abortSignal?: AbortSignal) => {
+  return new Promise<A>((resolve, reject) => {
     const unsubscribe = sub.sub((a) => {
       resolve(a)
       unsubscribe()
     })
+
+    abortSignal?.addEventListener('abort', () => {
+      unsubscribe()
+      reject(new Error('Subscription aborted'))
+    })
   })
+}
+
+const takeEvery = <A>(abortSignal: AbortSignal, sub: Sub<A>, callback: (a: A) => void) => {
+  const unsub = sub.sub((a) => {
+    callback(a)
+  })
+  abortSignal.addEventListener(
+    'abort',
+    () => {
+      unsub()
+    },
+    {
+      once: true,
+    },
+  )
 }
 
 const chan = <Msg extends {} | null>(sub: Sub<Msg>): TakeableChannel<Msg> => {
@@ -100,10 +120,11 @@ const deduplicate = <Msg>(id: string, keyFn: (msg: Msg) => string, sub: Sub<Msg>
 export const Sub = {
   map,
   batch,
-  once,
+  take,
   deduplicate,
   none,
   where,
   chan,
   create,
+  takeEvery,
 }

@@ -12,6 +12,7 @@ import type { ILogger } from '../../logger/interface'
 import { Sleep } from '../../promise/sleep'
 import type { DbConnSqlQueryInput, IDbConnSql } from '../interface'
 import { PGLiteFileSystem } from './pglite-file-system'
+import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {
   t: 'pglite'
@@ -163,7 +164,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       try {
         const start = process.hrtime.bigint()
 
-        await config.simulateLatency?.()
+        await config.simulateLatency?.(TimeSpan.milliseconds(100))
 
         const results = await pg.query(sql)
 

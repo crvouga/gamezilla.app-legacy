@@ -35,11 +35,11 @@ describe(import.meta.file, () => {
     const onChange = Sub.create<boolean>()
     const r = f.render(<Checkbox state='unchecked' onChange={onChange.pub} />)
     await r.query('[role="checkbox"]')[0]?.click()
-    expect(await Sub.once(onChange)).toBe(true)
+    expect(await Sub.take(onChange)).toBe(true)
 
     const r2 = f.render(<Checkbox state='checked' onChange={onChange.pub} />)
     await r2.query('[role="checkbox"]')[0]?.click()
-    expect(await Sub.once(onChange)).toBe(false)
+    expect(await Sub.take(onChange)).toBe(false)
   })
 
   test.todo('pressing enter triggers onChange', async () => {
@@ -47,11 +47,11 @@ describe(import.meta.file, () => {
     const onChange = Sub.create<boolean>()
     const r = f.render(<Checkbox state='unchecked' onChange={onChange.pub} />)
     await r.query('[role="checkbox"]')[0]?.keydown('Enter')
-    expect(await Sub.once(onChange)).toBe(true)
+    expect(await Sub.take(onChange)).toBe(true)
 
     const r2 = f.render(<Checkbox state='checked' onChange={onChange.pub} />)
     r2.query('[role="checkbox"]')[0]?.keydown('Enter')
-    expect(await Sub.once(onChange)).toBe(false)
+    expect(await Sub.take(onChange)).toBe(false)
   })
 
   test('should render as button when onChange provided', async () => {

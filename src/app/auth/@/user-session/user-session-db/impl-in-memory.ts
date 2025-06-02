@@ -5,7 +5,7 @@ import type { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import type { IUserSessionDb } from './interface'
 import { Sub } from '~/@/sub'
-
+import { TimeSpan } from '~/@/time/time-span'
 const userSessions = new Map<string, UserSession>()
 
 export type Config = {
@@ -16,24 +16,24 @@ export type Config = {
 export const UserSessionDb = (config: Config): IUserSessionDb => {
   return {
     async findSessionIdsByUserId(userId: UserId) {
-      await config.simulateLatency()
+      await config.simulateLatency(TimeSpan.milliseconds(100))
       const hits: SessionId[] = Array.from(userSessions.values())
         .filter((userSession) => userSession.userId === userId)
         .flatMap((userSession) => (userSession.sessionId ? [userSession.sessionId] : []))
       return Ok(hits)
     },
     async findUserIdBySessionId(sessionId: SessionId) {
-      await config.simulateLatency()
+      await config.simulateLatency(TimeSpan.milliseconds(100))
       const hits = Array.from(userSessions.values()).filter((userSession) => userSession.sessionId === sessionId)
       return Ok(hits[0]?.userId ?? null)
     },
     async insert(input) {
-      await config.simulateLatency()
+      await config.simulateLatency(TimeSpan.milliseconds(100))
       userSessions.set(input.userSessionId, input)
       return Ok(null)
     },
     async zapByUserId(userId) {
-      await config.simulateLatency()
+      await config.simulateLatency(TimeSpan.milliseconds(100))
       const hits = Array.from(userSessions.values()).filter((userSession) => userSession.userId === userId)
       for (const hit of hits) {
         userSessions.delete(hit.userSessionId)
@@ -41,7 +41,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       return Ok(null)
     },
     async zapBySessionId(sessionId) {
-      await config.simulateLatency()
+      await config.simulateLatency(TimeSpan.milliseconds(100))
       const hits = Array.from(userSessions.values()).filter((userSession) => userSession.sessionId === sessionId)
       for (const hit of hits) {
         userSessions.delete(hit.userSessionId)
@@ -49,7 +49,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       return Ok(null)
     },
     async query(input) {
-      await config.simulateLatency()
+      await config.simulateLatency(TimeSpan.milliseconds(100))
       const hits: UserSession[] = []
       for (const userSession of userSessions.values()) {
         if (
@@ -77,7 +77,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       })
     },
     async zapByClientSessionId(clientSessionId) {
-      await config.simulateLatency()
+      await config.simulateLatency(TimeSpan.milliseconds(100))
       const hits = Array.from(userSessions.values()).filter(
         (userSession) => userSession.clientSessionId === clientSessionId,
       )

@@ -30,7 +30,7 @@ describe('LastPuzzleFrontend', () => {
     const rendered = f.render(output)
     const button = rendered.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.select-next-pack'))[0]
     button?.click()
-    const msg = await Sub.once(rendered.msgs)
+    const msg = await Sub.take(rendered.msgs)
     expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-select-next-pack', userId: f.hostId } })
   })
 
@@ -57,7 +57,7 @@ describe('LastPuzzleFrontend', () => {
     const button = r.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.select-next-pack'))[0]
     button?.click()
     expect(button).toBeTruthy()
-    const msg = await Sub.once(r.msgs)
+    const msg = await Sub.take(r.msgs)
     expect(msg).toEqual({
       t: 'got-msg-space',
       c: {

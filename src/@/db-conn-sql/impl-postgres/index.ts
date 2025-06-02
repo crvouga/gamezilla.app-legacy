@@ -8,6 +8,7 @@ import type { ILogger } from '../../logger/interface'
 import { Sleep } from '../../promise/sleep'
 import { Sub } from '../../sub'
 import type { IDbConnSql } from '../interface'
+import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {
   t: 'postgres'
@@ -35,7 +36,7 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
       try {
         const start = process.hrtime.bigint()
 
-        await config.simulateLatency?.()
+        await config.simulateLatency?.(TimeSpan.milliseconds(100))
 
         const rows = await postgresClient.unsafe(sql)
 

@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
       />,
     )
     r.query(toPaginationDotSelector(1))[0]?.click()
-    expect(await Sub.once(slideIndex)).toEqual(1)
+    expect(await Sub.take(slideIndex)).toEqual(1)
   })
 
   test('slide title should show correct end position based on actual puzzle count', async () => {

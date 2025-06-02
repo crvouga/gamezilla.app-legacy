@@ -42,7 +42,7 @@ describe(import.meta.file, () => {
     const r = f.render(f.initial)
     const exitButton = r.getByRole('button', f.ctx.t('app.exit'))[0]
     exitButton?.click()
-    const msg = await Sub.once(r.msgs)
+    const msg = await Sub.take(r.msgs)
     expect(msg).toEqual({ t: 'got-msg-space', c: { userId: f.hostId, t: 'user-clicked-exit-screen-open-pack' } })
   })
 
