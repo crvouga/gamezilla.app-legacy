@@ -21,6 +21,25 @@ export const HttpServerBun = <T>(config: Config) => {
 
   const staticResponses: Record<`/${string}`, Response> = {}
 
+  const respond = async (request: Request) => {
+    try {
+      for (const handler of handlers) {
+        const response = await handler(request, httpServer)
+
+        if (response) {
+          return allowCORS(request, response)
+        }
+      }
+
+      return new Response('Not found', { status: 404 })
+    } catch (error) {
+      logger.error(error)
+      return new Response('Internal backend error', {
+        status: 500,
+      })
+    }
+  }
+
   const base: IHttpServer = {
     events,
     async start(port) {
@@ -28,22 +47,8 @@ export const HttpServerBun = <T>(config: Config) => {
         port: port,
         static: staticResponses,
         async fetch(request) {
-          try {
-            for (const handler of handlers) {
-              const response = await handler(request, httpServer)
-
-              if (response) {
-                return allowCORS(request, response)
-              }
-            }
-
-            return new Response('Not found', { status: 404 })
-          } catch (error) {
-            logger.error(error)
-            return new Response('Internal backend error', {
-              status: 500,
-            })
-          }
+          const response = await respond(request)
+          return allowCORS(request, response)
         },
         websocket: webSocketHandler,
       })
