@@ -1,4 +1,4 @@
-import type { SqlDb } from '~/@/sql-db/interface'
+import type { ISqlDb } from '~/@/sql-db/interface'
 import { IHttpServer } from '~/@/http-server'
 import type { IKeyValueDb } from '~/@/key-value-db'
 import type { ILogger } from '~/@/logger/interface'
@@ -12,7 +12,7 @@ import { Env } from '../data/env'
 import type { BackendInstanceId } from './backend-instance/backend-instance-id'
 
 export type AppBackendCtxBase = {
-  dbConnSql: SqlDb
+  dbConnSql: ISqlDb
   keyValueDb: IKeyValueDb
   now: Posix
   logger: ILogger

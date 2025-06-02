@@ -1,5 +1,5 @@
 import { ascend } from '~/@/array/sorting'
-import type { SqlDb } from '~/@/sql-db'
+import type { ISqlDb } from '~/@/sql-db'
 import { ILogger, Logger } from '~/@/logger'
 import { s } from '~/@/schema'
 import { isErr, isOk, Result, unwrapOr } from '~/@/result'
@@ -17,7 +17,7 @@ import type { IPackDb } from './interface'
 
 export type Config = {
   t: 'db-conn-sql'
-  dbConnSql: SqlDb
+  dbConnSql: ISqlDb
   logger: ILogger
 }
 

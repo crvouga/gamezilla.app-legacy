@@ -1,4 +1,4 @@
-import { SqlDb } from '~/@/sql-db'
+import { ISqlDb } from '~/@/sql-db'
 import { s } from '~/@/schema'
 import { Ok, isErr } from '~/@/result'
 import { Posix } from '~/@/time/posix'
@@ -15,7 +15,7 @@ export const Row = s.obj({
 
 export type Config = {
   t: 'sql'
-  dbConnSql: SqlDb
+  dbConnSql: ISqlDb
 }
 
 export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb => {

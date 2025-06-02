@@ -1,6 +1,6 @@
 import { Result } from '~/@/result'
 import { s } from '~/@/schema'
-import type { SqlDb } from '~/@/sql-db'
+import type { ISqlDb } from '~/@/sql-db'
 import { PuzzleDb, type PuzzleRow } from '../puzzle-db/puzzle-db-impl'
 
 //
@@ -39,7 +39,7 @@ export const uploadLichessDbPuzzleCsv = async ({
   lichessDbPuzzleCsvPath,
   batchSize = 10_000,
 }: {
-  dbConn: SqlDb
+  dbConn: ISqlDb
   lichessDbPuzzleCsvPath: string
   batchSize?: number
 }) => {

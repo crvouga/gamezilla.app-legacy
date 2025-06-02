@@ -1,12 +1,12 @@
 import { Ok } from '~/@/result'
-import type { SqlDb } from '../interface'
+import type { ISqlDb } from '../interface'
 import { Sub } from '../../sub'
 
 export type Config = {
   t: 'noop'
 }
 
-export const DbConnSql = (_config: Config): SqlDb => {
+export const DbConnSql = (_config: Config): ISqlDb => {
   return {
     aggregate: {
       StringConcat: (column, separator) => `GROUP_CONCAT(${column}, '${separator}')`,

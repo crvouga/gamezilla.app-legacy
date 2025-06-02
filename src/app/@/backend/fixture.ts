@@ -1,4 +1,4 @@
-import { type SqlDb } from '~/@/sql-db'
+import { type ISqlDb } from '~/@/sql-db'
 import { DbConnSql } from '~/@/sql-db/backend/impl'
 import { dbConnSqlNoop } from '~/@/sql-db/impl'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
@@ -26,13 +26,13 @@ export type IFixtureAppBackendUnit = {
   runtime: IRuntime
   logger: ILogger
   pubSubTopicBased: IPubSubTopicBased
-  dbConnSqlite: SqlDb
+  dbConnSqlite: ISqlDb
   keyValueDbHashMap: IKeyValueDb
 }
 
 export type IFixtureAppBackendIntegration = Omit<IFixtureAppBackendUnit, 't'> & {
   t: 'integration'
-  dbConnPostgres: SqlDb
+  dbConnPostgres: ISqlDb
   // dbConnPowersyncClient: IDbConnSql
   keyValueDbRedis: IKeyValueDb
   keyValueDbPostgres: IKeyValueDb

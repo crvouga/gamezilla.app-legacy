@@ -1,7 +1,7 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Err, Ok, Result } from '~/@/result'
 import { s } from '~/@/schema'
-import type { SqlDb } from '~/@/sql-db'
+import type { ISqlDb } from '~/@/sql-db'
 import { UserId } from '~/app/@/data/user-id'
 import { type MoveInput, uciMoveToMoveInput } from '../../@/chess'
 import { EloRating } from '../elo-rating'
@@ -140,7 +140,7 @@ export const uciMovesToPuzzleMoves = (moves: string[]): Result<string, [MoveInpu
 }
 
 const puzzlesFindForProfile = async (
-  dbConn: SqlDb,
+  dbConn: ISqlDb,
   input: { profile: PuzzleProfile; omit?: string[] },
 ): Promise<Result<string, Puzzle[]>> => {
   const delta = 100
@@ -184,7 +184,7 @@ const puzzlesFindForProfile = async (
   return result
 }
 
-const puzzlesReplace = async ({ dbConn, rows }: { dbConn: SqlDb; rows: PuzzleRow[] }) => {
+const puzzlesReplace = async ({ dbConn, rows }: { dbConn: ISqlDb; rows: PuzzleRow[] }) => {
   const queryString = `
     REPLACE INTO game_chess_puzzle (
       puzzle_id,
@@ -214,7 +214,7 @@ const puzzlesReplace = async ({ dbConn, rows }: { dbConn: SqlDb; rows: PuzzleRow
   return inserted
 }
 
-const interactionsInsert = async (dbConn: SqlDb, interactions: PuzzleInteraction[]): Promise<Result<string, null>> => {
+const interactionsInsert = async (dbConn: ISqlDb, interactions: PuzzleInteraction[]): Promise<Result<string, null>> => {
   const result = await dbConn.query({
     schema: PuzzleInteractionRow,
     sql: `
@@ -244,7 +244,7 @@ const toPuzzleQueryJSON = (query: unknown): PuzzleQueryJSON | null => {
     return null
   }
 }
-const profilesFind = async (dbConn: SqlDb, userId: UserId): Promise<Result<string, PuzzleProfile | null>> => {
+const profilesFind = async (dbConn: ISqlDb, userId: UserId): Promise<Result<string, PuzzleProfile | null>> => {
   const found = await dbConn.query({
     schema: PuzzleProfileRow,
     sql: `
@@ -296,7 +296,7 @@ const profilesFind = async (dbConn: SqlDb, userId: UserId): Promise<Result<strin
   return Ok(profile)
 }
 
-export const profilesInsert = async (dbConn: SqlDb, profile: PuzzleProfile): Promise<Result<string, null>> => {
+export const profilesInsert = async (dbConn: ISqlDb, profile: PuzzleProfile): Promise<Result<string, null>> => {
   const puzzleProfileId = Uuid.generate()
 
   const mutated = await dbConn.query({
@@ -329,7 +329,7 @@ export const profilesInsert = async (dbConn: SqlDb, profile: PuzzleProfile): Pro
 }
 
 export const profilesFindElseInsert = async (
-  dbConn: SqlDb,
+  dbConn: ISqlDb,
   profile: PuzzleProfile,
 ): Promise<Result<string, PuzzleProfile>> => {
   const found = await profilesFind(dbConn, profile.userId)
@@ -351,7 +351,7 @@ export const profilesFindElseInsert = async (
   return Ok(profile)
 }
 
-const profilesUpdate = async (dbConn: SqlDb, profile: PuzzleProfile): Promise<Result<string, null>> => {
+const profilesUpdate = async (dbConn: ISqlDb, profile: PuzzleProfile): Promise<Result<string, null>> => {
   const mutated = await dbConn.query({
     schema: s.unknown,
     sql: `

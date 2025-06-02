@@ -1,4 +1,4 @@
-import type { SqlDb } from '~/@/sql-db'
+import type { ISqlDb } from '~/@/sql-db'
 import { Eff } from '~/@/eff'
 import { eq } from '~/@/equals/equals'
 import { pipe } from '~/@/function/pipe'
@@ -56,7 +56,7 @@ export const init = ({
   }
 }
 
-const initialLoad = async ({ dbConn, userId }: { dbConn: SqlDb; userId: UserId }) => {
+const initialLoad = async ({ dbConn, userId }: { dbConn: ISqlDb; userId: UserId }) => {
   const found = await PuzzleDb.profiles.findElseInsert(dbConn, {
     userId,
     eloRating: EloRating.initialRating,

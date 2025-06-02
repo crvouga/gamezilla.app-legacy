@@ -1,10 +1,10 @@
-import { SqlDb } from '~/@/sql-db'
+import { ISqlDb } from '~/@/sql-db'
 import { s } from '~/@/schema'
 import { IUserSessionDb } from './interface'
 
 export type Config = {
   t: 'with-sql-tables'
-  dbConnSql: SqlDb
+  dbConnSql: ISqlDb
   userSessionDb: IUserSessionDb
 }
 

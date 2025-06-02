@@ -3,7 +3,7 @@ import type { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
-import type { SqlDb } from '../interface'
+import type { ISqlDb } from '../interface'
 import { Sleep } from '../../promise/sleep'
 import { Sub } from '../../sub'
 import { Database } from 'bun:sqlite'
@@ -19,7 +19,7 @@ export type Config = {
 
 let db: Database
 
-export const DbConnSql = async (config: Config): Promise<SqlDb> => {
+export const DbConnSql = async (config: Config): Promise<ISqlDb> => {
   const logger = Logger.prefix('sqlite', config.logger)
   db ??= new Database(BunSqliteFileSystem.toConnectionString(config.fileSystem))
 

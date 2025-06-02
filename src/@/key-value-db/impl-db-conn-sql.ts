@@ -1,6 +1,6 @@
 import { Err, Ok, Result, isErr } from '~/@/result'
 import { s } from '~/@/schema'
-import type { SqlDb } from '../sql-db'
+import type { ISqlDb } from '../sql-db'
 import type { ILogger } from '../logger/interface'
 import { withDuration } from '../time/with-duration'
 import type { IKeyValueDb } from './interface'
@@ -16,7 +16,7 @@ const Row = s.obj({
 
 export type Config = {
   t: 'db-conn-sql'
-  dbConnSql: SqlDb
+  dbConnSql: ISqlDb
   logger: ILogger
 }
 

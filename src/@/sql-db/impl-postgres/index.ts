@@ -7,7 +7,7 @@ import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
 import { Sleep } from '../../promise/sleep'
 import { Sub } from '../../sub'
-import type { SqlDb } from '../interface'
+import type { ISqlDb } from '../interface'
 import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {
@@ -19,7 +19,7 @@ export type Config = {
 
 let postgresClient: postgres.Sql<{}>
 
-export const DbConnSql = async (config: Config): Promise<SqlDb> => {
+export const DbConnSql = async (config: Config): Promise<ISqlDb> => {
   const logger = Logger.prefix('postgres', config.logger)
   postgresClient ??= postgres(config.databaseUrl.dangerouslyReadValue())
 

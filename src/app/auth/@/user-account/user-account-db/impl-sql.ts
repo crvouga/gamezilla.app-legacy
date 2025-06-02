@@ -1,4 +1,4 @@
-import type { SqlDb } from '~/@/sql-db'
+import type { ISqlDb } from '~/@/sql-db'
 import { s } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, Ok, Result, isErr } from '~/@/result'
@@ -35,7 +35,7 @@ const toAccount = ({ userAccount }: { userAccount: UserAccountRow }): Result<str
 
 export type Config = {
   t: 'sql'
-  dbConnSql: SqlDb
+  dbConnSql: ISqlDb
 }
 
 export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {

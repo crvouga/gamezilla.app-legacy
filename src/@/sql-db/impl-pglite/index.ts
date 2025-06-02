@@ -10,7 +10,7 @@ import { Sub } from '~/@/sub'
 import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
 import { Sleep } from '../../promise/sleep'
-import type { DbConnSqlQueryInput, SqlDb } from '../interface'
+import type { DbConnSqlQueryInput, ISqlDb } from '../interface'
 import { PGLiteFileSystem } from './pglite-file-system'
 import { TimeSpan } from '~/@/time/time-span'
 
@@ -30,7 +30,7 @@ let pg: PGlite & {
   live: LiveNamespace
 }
 
-export const DbConnSql = async (config: Config): Promise<SqlDb> => {
+export const DbConnSql = async (config: Config): Promise<ISqlDb> => {
   const logger = Logger.prefix('pglite', config.logger)
   const electric = electricSync()
 

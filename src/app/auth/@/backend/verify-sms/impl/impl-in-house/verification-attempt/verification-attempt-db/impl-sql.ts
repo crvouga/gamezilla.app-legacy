@@ -1,7 +1,7 @@
 import { Result, isErr } from '~/@/result'
 import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
-import type { SqlDb } from '~/@/sql-db'
+import type { ISqlDb } from '~/@/sql-db'
 import { VerificationId } from '../../verification/verification-id'
 import { VerificationAttemptId } from '../verification-attempt-id'
 import type { IVerificationAttemptDb, WhereClause } from './interface'
@@ -17,7 +17,7 @@ export const Row = s.obj({
 })
 type Row = s.Infer<typeof Row>
 
-export const VerificationAttemptDbPostgres = (deps: { dbConnSql: SqlDb }): IVerificationAttemptDb => {
+export const VerificationAttemptDbPostgres = (deps: { dbConnSql: ISqlDb }): IVerificationAttemptDb => {
   deps
   return {
     async insert(input) {

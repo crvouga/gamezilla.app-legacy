@@ -1,4 +1,4 @@
-import { SqlDb } from '~/@/sql-db'
+import { ISqlDb } from '~/@/sql-db'
 import type { IVerificationAttemptDb } from './interface'
 import { VerificationAttemptDbHashMap } from './impl-hash-map'
 import { VerificationAttemptDbPostgres } from './impl-sql'
@@ -9,7 +9,7 @@ export type Impl =
     }
   | {
       t: 'postgres'
-      dbConnSql: SqlDb
+      dbConnSql: ISqlDb
     }
 
 export const VerificationAttemptDb = (impl: Impl): IVerificationAttemptDb => {

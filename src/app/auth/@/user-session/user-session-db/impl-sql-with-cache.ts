@@ -1,6 +1,6 @@
 import { pipe } from '~/@/function/pipe'
 import { KeyValueDb, IKeyValueDb } from '~/@/key-value-db'
-import { SqlDb } from '~/@/sql-db'
+import { ISqlDb } from '~/@/sql-db'
 import { LRUCache } from '~/@/least-recently-used-cache'
 import { ILogger } from '~/@/logger'
 import { PubSub } from '~/@/pub-sub'
@@ -12,7 +12,7 @@ import type { IUserSessionDb } from './interface'
 export type Config = {
   t: 'sql-with-cache'
   keyValueDb: IKeyValueDb
-  dbConnSql: SqlDb
+  dbConnSql: ISqlDb
   pubSubTopicBased: IPubSubTopicBased
   logger: ILogger
 }

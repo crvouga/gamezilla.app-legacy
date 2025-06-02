@@ -1,4 +1,4 @@
-import type { SqlDb } from '~/@/sql-db'
+import type { ISqlDb } from '~/@/sql-db'
 import { ILogger } from '~/@/logger'
 import { s } from '~/@/schema'
 import { Ok, Result, isErr, unwrapOr } from '~/@/result'
@@ -44,7 +44,7 @@ const fromProfileRow = (row: ProfileRow): Result<string, UserProfile> => {
 
 export type Config = {
   t: 'sql'
-  dbConnSql: SqlDb
+  dbConnSql: ISqlDb
   logger: ILogger
 }
 

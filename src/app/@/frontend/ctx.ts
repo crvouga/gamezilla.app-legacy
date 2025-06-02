@@ -1,5 +1,5 @@
 import { Browser } from '~/@/browser'
-import { SqlDb } from '~/@/sql-db'
+import { ISqlDb } from '~/@/sql-db'
 import { IHttpClient } from '~/@/http-client'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
@@ -17,7 +17,7 @@ import { ScreenSize } from '../ui/screen/screen-size'
 export type AppFrontendCtxBase = {
   parentScreen: ParentScreenProps | null
   screenSize: ScreenSize
-  dbConnSql: SqlDb
+  dbConnSql: ISqlDb
   logger: ILogger
   t: Translator
   navigatorLanguage: LanguageCodeISO_639_1
