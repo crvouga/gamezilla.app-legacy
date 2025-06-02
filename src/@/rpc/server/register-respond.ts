@@ -1,12 +1,11 @@
-import { allowCORS } from '~/@/http-server/cors'
-
 import { IHttpServer } from '~/@/http-server'
-import { ClientSessionId } from '~/@/wire/client-session-id'
-import { SessionId } from '~/@/wire/session-id'
-import { Base, Contract, Server } from '../types'
+import { allowCORS } from '~/@/http-server/cors'
 import { isErr } from '~/@/result'
-import { SessionIdHttp } from '~/@/wire/session-id-http'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
+import { SessionId } from '~/@/wire/session-id'
+import { SessionIdHttp } from '~/@/wire/session-id-http'
+import { Base, Contract, Server } from '../types'
 
 export const registerRespond = <T extends Base>(registerInput: {
   httpServer: IHttpServer
@@ -21,55 +20,46 @@ export const registerRespond = <T extends Base>(registerInput: {
     sessionId: SessionId
     clientSessionId: ClientSessionId
   }) => {
-    const endpointConfig = requestInput.contract[requestInput.name]
+    try {
+      const endpointConfig = requestInput.contract[requestInput.name]
 
-    if (!endpointConfig) return null
+      if (!endpointConfig) return null
 
-    const handler = requestInput.handlers[requestInput.name]
+      const handler = requestInput.handlers[requestInput.name]
 
-    if (typeof handler !== 'function') return null
+      if (typeof handler !== 'function') return null
 
-    if ('input' in endpointConfig && 'output' in endpointConfig && typeof handler === 'function') {
-      try {
-        const requestData = await requestInput.request.json()
-        const parsedInput = endpointConfig.input.parse(requestData)
-        if (isErr(parsedInput)) {
-          return new Response(JSON.stringify({ error: parsedInput.error }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-          })
-        }
+      const requestData = await requestInput.request.json()
 
-        const outputData = await handler(parsedInput.value, {
-          sessionId: requestInput.sessionId,
-          clientSessionId: requestInput.clientSessionId,
-        })
-        const parsedOutput = endpointConfig.output.parse(outputData)
+      const parsedInput = endpointConfig.input.parse(requestData)
 
-        if (isErr(parsedOutput)) {
-          return new Response(JSON.stringify({ error: parsedOutput.error }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' },
-          })
-        }
-
-        return new Response(JSON.stringify(parsedOutput.value), {
-          status: 200,
+      if (isErr(parsedInput)) {
+        return new Response(JSON.stringify({ error: parsedInput.error }), {
+          status: 400,
           headers: { 'Content-Type': 'application/json' },
         })
-      } catch (error) {
-        return new Response(JSON.stringify({ error: String(error) }), { status: 400 })
       }
-    }
 
-    return handleRequest({
-      contract: endpointConfig as Contract<any>,
-      handlers: handler as unknown as Server<any>,
-      name: requestInput.name.slice(1),
-      request: requestInput.request,
-      sessionId: requestInput.sessionId,
-      clientSessionId: requestInput.clientSessionId,
-    })
+      const outputData = await handler(parsedInput.value, {
+        sessionId: requestInput.sessionId,
+        clientSessionId: requestInput.clientSessionId,
+      })
+      const parsedOutput = endpointConfig.output.parse(outputData)
+
+      if (isErr(parsedOutput)) {
+        return new Response(JSON.stringify({ error: parsedOutput.error }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+
+      return new Response(JSON.stringify(parsedOutput.value), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    } catch (error) {
+      return new Response(JSON.stringify({ error: String(error) }), { status: 400 })
+    }
   }
 
   registerInput.httpServer.registerRespond(async (request) => {

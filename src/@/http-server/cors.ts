@@ -1,21 +1,19 @@
 export const allowCORS = (input: { request: Request; response: Response }) => {
-  let origin: string = '*'
-  try {
-    origin = new URL(input.request.headers.get('Origin') ?? '').toString()
-  } catch (error) {
-    origin = '*'
-  }
+  const origin = input.request.headers.get('Origin')
+  if (!origin) return input.response
 
   const headers = new Headers(input.response.headers)
-  headers.set('Access-Control-Allow-Origin', origin)
+  headers.set('Access-Control-Allow-Origin', '*')
   headers.set('Access-Control-Allow-Credentials', 'true')
-  headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD, TRACE, CONNECT')
-  headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD')
+  headers.set(
+    'Access-Control-Allow-Headers',
+    input.request.headers.get('Access-Control-Request-Headers') ?? 'Content-Type, Authorization',
+  )
 
   if (input.request.method === 'OPTIONS') {
     headers.set('Access-Control-Max-Age', '3600')
-
-    return new Response(input.response.body, { status: 204, statusText: 'No Content', headers })
+    return new Response(null, { status: 204, headers })
   }
 
   return new Response(input.response.body, {

@@ -20,6 +20,7 @@ export const initClientHttp = <T extends Base>(config: ClientConfigHttp<T>): Cli
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(parsedInput.value),
+              credentials: 'include',
             })
             const response = await fetch(request)
             if (!response.ok) {
