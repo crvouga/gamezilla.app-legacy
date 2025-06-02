@@ -1,3 +1,5 @@
+import { Middleware } from './interface'
+
 export const allowCORS = (request: Request, response: Response): Response => {
   const origin = request.headers.get('Origin')
 
@@ -19,4 +21,12 @@ export const allowCORS = (request: Request, response: Response): Response => {
   }
 
   return new Response(response.body, { status: response.status, headers, statusText: response.statusText })
+}
+
+export const middlewareAllowCORS: Middleware = async (request, next) => {
+  const response = await next(request)
+  if (response) {
+    return allowCORS(request, response)
+  }
+  return response
 }

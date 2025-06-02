@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { HttpServer } from '~/@/http-server'
+import { middlewareAllowCORS } from '~/@/http-server/cors'
 import { Logger } from '~/@/logger'
 import { isErr, Ok } from '~/@/result'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -15,7 +16,10 @@ type Fixture = {
 export const FixtureHttp = async (): Promise<Fixture> => {
   const port = 1234
 
-  const httpServer = HttpServer({ t: 'bun', logger: Logger({ t: 'noop' }) })
+  const logger = Logger({ t: 'console' })
+
+  const httpServer = HttpServer({ t: 'node', logger })
+  httpServer.registerMiddleware(middlewareAllowCORS)
 
   const clientSessionId = ClientSessionId.generate()
 
@@ -54,7 +58,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
   return [await FixtureHttp(), await FixtureLocal()]
 }
 
-describe.skip('RPC', () => {
+describe('RPC', () => {
   test('should work', async () => {
     for (using f of await Fixtures()) {
       const result = await f.client.foo({ name: 'Alice', age: 30 })

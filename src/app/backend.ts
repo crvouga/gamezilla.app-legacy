@@ -1,5 +1,5 @@
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
-import { allowCORS } from '~/@/http-server/cors'
+import { middlewareAllowCORS } from '~/@/http-server/cors'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb } from '~/@/key-value-db'
 import { Logger } from '~/@/logger'
@@ -60,13 +60,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     logger,
   })
 
-  httpServer.registerMiddleware(async (request, next) => {
-    const response = await next(request)
-    if (response) {
-      return allowCORS(request, response)
-    }
-    return response
-  })
+  httpServer.registerMiddleware(middlewareAllowCORS)
 
   const pubSub = await PubSubTopicBased({ t: 'noop' })
 
