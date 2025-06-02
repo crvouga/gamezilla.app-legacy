@@ -1,6 +1,5 @@
-import { runSaga } from 'redux-saga'
-import { call, delay, fork, race, take, takeEvery } from 'typed-redux-saga'
 import { ILogger } from '~/@/logger'
+import { p } from '~/@/promise'
 import { PubSub, Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -100,67 +99,62 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
   const subscriptionsByTopic = new Map<Topic, TopicSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
-  runSaga({}, flowMain)
-
-  function* flowMain() {
+  const process = async (s: AbortSignal) => {
     while (true) {
       config.logger.info('connecting to server')
 
       const socket = Socket.create({ url: toWebSocketUrl(config) })
 
-      yield* call(flowSocket, socket)
+      await processSocket(s, socket)
 
       socket.close()
 
-      yield* delay(TimeSpan.toMilliseconds(config.reconnectionRate))
+      await p.sleep(config.reconnectionRate, s)
     }
   }
 
-  function* flowSocket(socket: Socket) {
+  const processSocket = async (s: AbortSignal, socket: Socket) => {
     config.logger.info('waiting for connection')
 
-    const opened = yield* race({
-      open: take(Sub.chan(socket.msgsOpen)),
-      error: take(Sub.chan(socket.msgsError)),
-      close: take(Sub.chan(socket.msgsClose)),
+    const got = await p.race(s, {
+      opened: (s) => Sub.take(socket.msgsOpen, s),
+      error: (s) => Sub.take(socket.msgsError, s),
+      closed: (s) => Sub.take(socket.msgsClose, s),
     })
 
-    if (opened.error) config.logger.warn('failed to connect. connection errored')
-    if (opened.close) config.logger.warn('connection closed')
-    if (opened.open) config.logger.info('connected')
+    if (got.error) config.logger.warn('failed to connect. connection errored')
+    if (got.closed) config.logger.warn('connection closed')
+    if (got.opened) config.logger.info('connected')
 
-    if (!opened.open) return
+    if (!got.opened) return
 
-    const closed = yield* race({
-      close: take(Sub.chan(socket.msgsClose)),
-      error: take(Sub.chan(socket.msgsError)),
-      sender: call(flowSender, socket),
-      reciever: call(flowReciever, socket),
+    const closed = await p.race(s, {
+      close: (s) => Sub.take(socket.msgsClose, s),
+      error: (s) => Sub.take(socket.msgsError, s),
+      senderReciever: (s) => {
+        processSenderReciever(s, socket)
+        return p.neverResolve
+      },
     })
 
     if (closed.close) config.logger.warn('connection closed')
     if (closed.error) config.logger.warn('connection error')
+    if (closed.senderReciever) config.logger.warn('sender/reciever error')
 
     config.logger.info('restarting connection')
   }
 
-  function* flowSender(socket: Socket) {
+  const processSenderReciever = async (s: AbortSignal, socket: Socket) => {
     const send = (msg: ToServerMsg) => {
       socket.send(JSON.stringify(msg))
     }
-    yield* takeEvery(Sub.chan(msgsToServer), function* (toServer) {
-      switch (toServer[0]) {
-        case PUB: {
-          send(toServer)
-          return
-        }
-      }
-    })
-    yield* fork(flowSyncSubscriptionsTopic, send)
-    yield* fork(flowSyncSubscriptionsTopicName, send)
+    processSender(s, send)
+    processReciever(s, socket)
+    processSyncTopic(s, send)
+    processSyncTopicName(s, send)
   }
 
-  function* flowSyncSubscriptionsTopic(send: (msg: ToServerMsg) => void) {
+  const processSyncTopic = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
     const subscribedTopicsServer = new Set<string>()
     while (true) {
       for (const [topic, { topicName, topicParams, pubSub }] of subscriptionsByTopic.entries()) {
@@ -180,12 +174,13 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
         }
       }
 
-      yield* delay(TimeSpan.toMilliseconds(config.syncSubscriptionRate))
+      await p.sleep(config.syncSubscriptionRate, s)
     }
   }
 
-  function* flowSyncSubscriptionsTopicName(send: (msg: ToServerMsg) => void) {
+  const processSyncTopicName = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
     const subscribedTopicsServer = new Set<string>()
+
     while (true) {
       for (const [topicName, { pubSub }] of subscriptionsByTopicName.entries()) {
         const isSubbedServer = subscribedTopicsServer.has(topicName)
@@ -204,25 +199,40 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
         }
       }
 
-      yield* delay(TimeSpan.toMilliseconds(config.syncSubscriptionRate))
+      await p.sleep(config.syncSubscriptionRate, s)
     }
   }
 
-  function* flowReciever(socket: Socket) {
-    yield takeEvery(Sub.chan(socket.msgsFromServer), function* (fromServer) {
-      const fromServerParsed = JSON.parse(fromServer) as ToClientMsg
-
-      switch (fromServerParsed[0]) {
+  const processSender = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
+    Sub.takeEvery(s, msgsToServer, (toServer) => {
+      switch (toServer[0]) {
         case PUB: {
-          const topic = toTopic(fromServerParsed[1], fromServerParsed[2])
-          const activeSubscription = subscriptionsByTopic.get(topic)
-          if (!activeSubscription) return
-          activeSubscription.pubSub.pub(fromServerParsed[3])
+          send(toServer)
           return
         }
       }
     })
   }
+
+  const processReciever = async (s: AbortSignal, socket: Socket) => {
+    Sub.takeEvery(s, socket.msgsFromServer, (fromServer) => {
+      const fromServerParsed = JSON.parse(fromServer) as ToClientMsg
+
+      switch (fromServerParsed[0]) {
+        case PUB: {
+          const topic = toTopic(fromServerParsed[1], fromServerParsed[2])
+          const subcription = subscriptionsByTopic.get(topic)
+          if (!subcription) return
+
+          subcription.pubSub.pub(fromServerParsed[3])
+          return
+        }
+      }
+    })
+  }
+
+  const abortController = new AbortController()
+  process(abortController.signal)
 
   return {
     subscriptionsByTopic,
