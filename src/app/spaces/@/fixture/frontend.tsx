@@ -17,6 +17,7 @@ import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { Space } from '../../spaces-core/space'
 import { SpacesFrontend } from '../../frontend'
 import * as SpacesTypes from '../../types'
+import { SpaceFrontendCtx } from '../frontend/ctx'
 
 export const SpaceFrontendFixture = async () => {
   const f = await FixtureAppFrontend()
@@ -156,7 +157,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
   })
 
   const currentUserProfile = await UserProfile.random({ id: currentUser.userId })
-  const ctx: SpacesTypes.FrontendCtxModule = {
+  const ctx: SpacesTypes.FrontendCtxModule & SpaceFrontendCtx = {
     ...f.ctx,
     parentScreen: null,
     currentScreen: {

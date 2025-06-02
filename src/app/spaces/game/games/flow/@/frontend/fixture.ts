@@ -16,7 +16,7 @@ import type { FlowFrontendCtx } from './ctx'
 
 export const FixtureFlowFrontend = async () => {
   const f = await FixtureSpacesFrontend()
-  // @ts-ignore
+
   const ctx: FlowFrontendCtx = {
     ...f.ctx,
     packs: {},
@@ -24,7 +24,7 @@ export const FixtureFlowFrontend = async () => {
     solutions: Solutions.init,
     puzzleLoader: PuzzleLoaderTypes.initFrontend,
     packLoader: PackLoaderTypes.initFrontend,
-    HintCalculator: HintCalculatorTypes.initFrontend,
+    hintCalculator: HintCalculatorTypes.initFrontend,
     solutionsLoader: SolutionsLoaderTypes.initFrontend,
     puzzleDb: PuzzleDb({ ...f.ctx, t: 'sql-db' }),
     packDb: PackDb({ ...f.ctx, t: 'sql-db' }),

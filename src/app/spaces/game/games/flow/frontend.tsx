@@ -57,7 +57,7 @@ const toFlowFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): Flow
     puzzleLoader: input.model.puzzleLoader,
     packLoader: input.model.packLoader,
     solutions: input.model.solutions,
-    HintCalculator: input.model.hintCalculator,
+    hintCalculator: input.model.hintCalculator,
     solutionsLoader: input.model.solutionsLoader,
   }
 }

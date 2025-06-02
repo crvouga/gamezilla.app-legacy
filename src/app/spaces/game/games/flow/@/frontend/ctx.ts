@@ -7,6 +7,6 @@ import { FlowFrontendCtxBase } from './ctx-base'
 export type FlowFrontendCtx = FlowFrontendCtxBase & {
   puzzleLoader: PuzzleLoaderTypes.ModelFrontend
   packLoader: PackLoaderTypes.ModelFrontend
-  HintCalculator: HintCalculatorTypes.ModelFrontend
+  hintCalculator: HintCalculatorTypes.ModelFrontend
   solutionsLoader: SolutionsLoaderTypes.ModelFrontend
 }

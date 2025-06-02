@@ -41,7 +41,7 @@ export const FixtureFlowBuilderFrontend = async () => {
     packs: {},
     puzzleLoader: PuzzleLoaderTypes.initFrontend,
     packLoader: PackLoaderTypes.initFrontend,
-    HintCalculator: HintCalculatorTypes.initFrontend,
+    hintCalculator: HintCalculatorTypes.initFrontend,
     solutionsLoader: SolutionsLoaderTypes.initFrontend,
     solutions: Solutions.init,
     puzzleDb: PuzzleDb({ t: 'sql-db', sqlDb: f.ctx.sqlDb, logger: f.ctx.logger }),

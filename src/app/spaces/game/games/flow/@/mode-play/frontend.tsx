@@ -84,7 +84,7 @@ const viewActions = (input: {
       dispatch: (c) => {
         input.dispatchCmd(GotHintCalculatorMsg.init(c))
       },
-      model: input.ctx.HintCalculator,
+      model: input.ctx.hintCalculator,
     }),
     ...UseHintFrontend.viewAction({
       ctx: input.ctx,
