@@ -7,13 +7,7 @@ const is = (id: unknown): id is Uuid => {
 }
 
 const generate = (): Uuid => {
-  const uuid = crypto.randomUUID()
-
-  if (is(uuid)) {
-    return uuid
-  }
-
-  throw new Error('generated invalid uuid')
+  return crypto.randomUUID() as Uuid
 }
 
 export const Uuid = {

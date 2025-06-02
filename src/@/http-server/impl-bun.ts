@@ -21,7 +21,11 @@ export const HttpServerBun = <T>(config: Config) => {
   const base: IHttpServer = {
     events,
     async start(port) {
-      const respond = createRespond({ server, middlewares, responds })
+      const respond = createRespond({
+        getServer: () => server,
+        middlewares,
+        responds,
+      })
 
       server = Bun.serve({
         port: port,

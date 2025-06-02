@@ -1,6 +1,6 @@
 import { Middleware, Respond } from './interface'
 
-export const createRespond = (config: { server: unknown; middlewares: Middleware[]; responds: Respond[] }) => {
+export const createRespond = (config: { getServer: () => unknown; middlewares: Middleware[]; responds: Respond[] }) => {
   const respond = async (request: Request): Promise<Response> => {
     for (const middleware of config.middlewares) {
       const response = await middleware(request, respondMain)
@@ -14,7 +14,7 @@ export const createRespond = (config: { server: unknown; middlewares: Middleware
   const respondMain = async (request: Request): Promise<Response> => {
     try {
       for (const respond of config.responds) {
-        const response = await respond(request, config.server)
+        const response = await respond(request, config.getServer())
 
         if (response) {
           return response
@@ -23,6 +23,7 @@ export const createRespond = (config: { server: unknown; middlewares: Middleware
 
       return new Response('Not found', { status: 404 })
     } catch (error) {
+      console.error(error)
       return new Response('Internal error', { status: 500 })
     }
   }
