@@ -37,7 +37,7 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: modelNew,
         eff: () => {
-          input.ctx.topic['wire.ping'].pub(null, { pingId: msg.pingId })
+          input.ctx.topic.ping.pub(null, { pingId: msg.pingId })
         },
       }
     }
@@ -68,7 +68,7 @@ const pings: FrontendModule['subscriptions'] = (input) => {
 }
 
 const pongs: FrontendModule['subscriptions'] = (input) => {
-  return input.ctx.topic['wire.pong'].sub(
+  return input.ctx.topic.pong.sub(
     input.ctx.clientSessionId,
     (msg): MsgFrontend => ({ t: 'pong', pingId: msg.pingId, now: Posix.now() }),
   )

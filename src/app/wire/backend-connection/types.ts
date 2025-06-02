@@ -35,11 +35,11 @@ export type PingPongMsg = s.Infer<typeof PingPongMsg>
 export type MsgFrontend = { t: 'ping'; pingId: PingId; now: Posix } | { t: 'pong'; pingId: PingId; now: Posix }
 
 export const topicContract = Topic.initContract({
-  'wire.ping': {
+  ping: {
     params: s.l(null),
     msg: PingPongMsg,
   },
-  'wire.pong': {
+  pong: {
     params: ClientSessionId,
     msg: PingPongMsg,
   },
