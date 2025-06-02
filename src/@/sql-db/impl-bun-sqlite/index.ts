@@ -19,7 +19,7 @@ export type Config = {
 
 let db: Database
 
-export const DbConnSql = async (config: Config): Promise<ISqlDb> => {
+export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   const logger = Logger.prefix('sqlite', config.logger)
   db ??= new Database(BunSqliteFileSystem.toConnectionString(config.fileSystem))
 

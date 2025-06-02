@@ -10,7 +10,7 @@ import { Sub } from '~/@/sub'
 import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
 import { Sleep } from '../../promise/sleep'
-import type { DbConnSqlQueryInput, ISqlDb } from '../interface'
+import type { SqlDbQueryInput, ISqlDb } from '../interface'
 import { PGLiteFileSystem } from './pglite-file-system'
 import { TimeSpan } from '~/@/time/time-span'
 
@@ -30,7 +30,7 @@ let pg: PGlite & {
   live: LiveNamespace
 }
 
-export const DbConnSql = async (config: Config): Promise<ISqlDb> => {
+export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   const logger = Logger.prefix('pglite', config.logger)
   const electric = electricSync()
 
@@ -46,7 +46,7 @@ export const DbConnSql = async (config: Config): Promise<ISqlDb> => {
   })
 
   const subscribe = async <TRow>(
-    input: DbConnSqlQueryInput<TRow> & {
+    input: SqlDbQueryInput<TRow> & {
       onChange: (rows: TRow[]) => void
     },
   ) => {
@@ -97,7 +97,7 @@ export const DbConnSql = async (config: Config): Promise<ISqlDb> => {
       StringConcat: (column, separator) => `STRING_AGG(${column}, '${separator}')`,
     },
 
-    sub<TRow>(input: DbConnSqlQueryInput<TRow>) {
+    sub<TRow>(input: SqlDbQueryInput<TRow>) {
       const sql = Sql.to(input.sql, input.vars)
       const subscriptionKey = sql
       logger.debug(`subscriptionKey=${subscriptionKey}`)

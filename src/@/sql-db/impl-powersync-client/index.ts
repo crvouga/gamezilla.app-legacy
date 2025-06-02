@@ -3,7 +3,7 @@ import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { PubSub, Sub } from '~/@/sub'
 import { IPowerSyncClient } from '~/service-powersync/frontend/database'
-import { DbConnSqlQueryInput, ISqlDb } from '../interface'
+import { SqlDbQueryInput, ISqlDb } from '../interface'
 
 export type Config = {
   t: 'powersync-client'
@@ -11,7 +11,7 @@ export type Config = {
   logger: ILogger
 }
 
-export const DbConnSql = (config: Config): ISqlDb => {
+export const SqlDb = (config: Config): ISqlDb => {
   const logger = Logger.prefix('powersync', config.logger)
 
   const query: ISqlDb['query'] = async (input) => {
@@ -27,7 +27,7 @@ export const DbConnSql = (config: Config): ISqlDb => {
   }
 
   const subscribe = async <TRow>(
-    input: DbConnSqlQueryInput<TRow> & {
+    input: SqlDbQueryInput<TRow> & {
       onChange: (rows: TRow[]) => void
     },
   ) => {
@@ -80,7 +80,7 @@ export const DbConnSql = (config: Config): ISqlDb => {
     }
   >()
 
-  const sub: ISqlDb['sub'] = <TRow>(input: DbConnSqlQueryInput<TRow>) => {
+  const sub: ISqlDb['sub'] = <TRow>(input: SqlDbQueryInput<TRow>) => {
     const sql = Sql.to(input.sql, input.vars)
     const subscriptionKey = sql
       .replaceAll(/\s+/g, ' ')

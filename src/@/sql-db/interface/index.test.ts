@@ -6,10 +6,10 @@ import { newPowerSyncClient } from '../../../service-powersync/frontend/database
 import { Logger } from '../../logger'
 import { s } from '../../schema'
 import { isErr, isOk } from '../../result'
-import { Config, DbConnSql } from '../backend/impl'
+import { Config, SqlDb } from '../backend/impl'
 
 const Fixture = async (config: Config) => {
-  const dbConnSql = await DbConnSql(config)
+  const dbConnSql = await SqlDb(config)
   return {
     dbConnSql,
   }
@@ -72,7 +72,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe('DbConnSql', () => {
+describe('SqlDb', () => {
   test('querying ok', async () => {
     for (const f of await Fixtures()) {
       const result = await f.dbConnSql.query({

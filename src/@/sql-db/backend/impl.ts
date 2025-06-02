@@ -12,22 +12,22 @@ export type Config =
   | ImplPowerSync.Config
   | ImplBunSqlite.Config
 
-export const DbConnSql = async (config: Config): Promise<ISqlDb> => {
+export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   switch (config.t) {
     case 'noop': {
-      return ImplNoop.DbConnSql(config)
+      return ImplNoop.SqlDb(config)
     }
     case 'postgres': {
-      return ImplPostgres.DbConnSql(config)
+      return ImplPostgres.SqlDb(config)
     }
     case 'bun-sqlite': {
-      return ImplBunSqlite.DbConnSql(config)
+      return ImplBunSqlite.SqlDb(config)
     }
     case 'pglite': {
-      return ImplPgLite.DbConnSql(config)
+      return ImplPgLite.SqlDb(config)
     }
     case 'powersync-client': {
-      return ImplPowerSync.DbConnSql(config)
+      return ImplPowerSync.SqlDb(config)
     }
   }
 }

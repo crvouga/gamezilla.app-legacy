@@ -6,7 +6,7 @@ export type Config = {
   t: 'noop'
 }
 
-export const DbConnSql = (_config: Config): ISqlDb => {
+export const SqlDb = (_config: Config): ISqlDb => {
   return {
     aggregate: {
       StringConcat: (column, separator) => `GROUP_CONCAT(${column}, '${separator}')`,

@@ -4,10 +4,10 @@ import { sleep } from '~/@/promise/sleep'
 import { TimeSpan } from '~/@/time/time-span'
 import { Logger } from '../../logger'
 import { s } from '../../schema'
-import { Config, DbConnSql } from '../backend/impl'
+import { Config, SqlDb } from '../backend/impl'
 
 const Fixture = async (config: Config) => {
-  const dbConnSql = await DbConnSql(config)
+  const dbConnSql = await SqlDb(config)
   return {
     dbConnSql,
   }

@@ -19,7 +19,7 @@ export type Config = {
 
 let postgresClient: postgres.Sql<{}>
 
-export const DbConnSql = async (config: Config): Promise<ISqlDb> => {
+export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   const logger = Logger.prefix('postgres', config.logger)
   postgresClient ??= postgres(config.databaseUrl.dangerouslyReadValue())
 

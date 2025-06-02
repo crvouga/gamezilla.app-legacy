@@ -1,4 +1,4 @@
-import { DbConnSql } from '~/@/sql-db/backend/impl'
+import { SqlDb } from '~/@/sql-db/backend/impl'
 import { AllowCORS } from '~/@/http-server/allow-cors'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb } from '~/@/key-value-db'
@@ -33,7 +33,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     logger,
   })
 
-  const dbConnSql = await DbConnSql({
+  const dbConnSql = await SqlDb({
     t: 'postgres',
     databaseUrl: CONFIG_BACKEND.DATABASE_URL,
     logger,

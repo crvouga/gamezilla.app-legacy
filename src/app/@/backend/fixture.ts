@@ -1,5 +1,5 @@
 import { type ISqlDb } from '~/@/sql-db'
-import { DbConnSql } from '~/@/sql-db/backend/impl'
+import { SqlDb } from '~/@/sql-db/backend/impl'
 import { dbConnSqlNoop } from '~/@/sql-db/impl'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
@@ -33,7 +33,7 @@ export type IFixtureAppBackendUnit = {
 export type IFixtureAppBackendIntegration = Omit<IFixtureAppBackendUnit, 't'> & {
   t: 'integration'
   dbConnPostgres: ISqlDb
-  // dbConnPowersyncClient: IDbConnSql
+  // dbConnPowersyncClient: ISqlDb
   keyValueDbRedis: IKeyValueDb
   keyValueDbPostgres: IKeyValueDb
   keyValueDbSqlite: IKeyValueDb
@@ -54,7 +54,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const keyValueDbHashMap = await KeyValueDb({ t: 'hash-map' })
 
-  const dbConnSqlite = await DbConnSql({ t: 'bun-sqlite', fileSystem: { t: 'in-memory' }, logger })
+  const dbConnSqlite = await SqlDb({ t: 'bun-sqlite', fileSystem: { t: 'in-memory' }, logger })
 
   const profileDb = ProfileDb({
     t: 'hash-map',
@@ -96,14 +96,14 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     }
   }
 
-  const dbConnPostgres = await DbConnSql({
+  const dbConnPostgres = await SqlDb({
     t: 'postgres',
     databaseUrl: CONFIG_BACKEND.DATABASE_URL,
     logger,
     simulateLatency: async () => {},
   })
 
-  // const dbConnPowersyncClient = await DbConnSql({
+  // const dbConnPowersyncClient = await SqlDb({
   //   t: 'powersync-client',
   //   powerSyncClient: await newPowerSyncClient({ test: true }),
   //   logger,

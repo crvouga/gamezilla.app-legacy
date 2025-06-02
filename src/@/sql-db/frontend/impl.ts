@@ -8,17 +8,17 @@ export type Config =
   // | ImplPgLite.Config
   | ImplPowerSync.Config
 
-export const DbConnSql = async (config: Config): Promise<ISqlDb> => {
+export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   switch (config.t) {
     case 'noop': {
-      return ImplNoop.DbConnSql(config)
+      return ImplNoop.SqlDb(config)
     }
     // case 'pglite': {
     //   const ImplPgLite = await import('../impl-pglite')
-    //   return ImplPgLite.DbConnSql(config)
+    //   return ImplPgLite.SqlDb(config)
     // }
     case 'powersync-client': {
-      return ImplPowerSync.DbConnSql(config)
+      return ImplPowerSync.SqlDb(config)
     }
   }
 }

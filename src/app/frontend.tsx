@@ -1,5 +1,5 @@
 import { Browser } from '~/@/browser'
-import { DbConnSql } from '~/@/sql-db/frontend/impl'
+import { SqlDb } from '~/@/sql-db/frontend/impl'
 import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
@@ -70,7 +70,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     syncSubscriptionRate: TimeSpan.seconds(3),
   })
 
-  const dbConnSql = await DbConnSql({
+  const dbConnSql = await SqlDb({
     t: 'powersync-client',
     powerSyncClient: await setupNewPowerSyncClient(),
     logger,

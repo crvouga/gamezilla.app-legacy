@@ -4,12 +4,12 @@ import { sleep } from '~/@/promise/sleep'
 import { TimeSpan } from '~/@/time/time-span'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
-import { DbConnSqlNotification } from '.'
+import { SqlDbNotification } from '.'
 import { Logger } from '../../logger'
-import { Config, DbConnSql } from '../backend/impl'
+import { Config, SqlDb } from '../backend/impl'
 
 const Fixture = async (config: Config) => {
-  const dbConnSql = await DbConnSql(config)
+  const dbConnSql = await SqlDb(config)
   return {
     dbConnSql,
   }
@@ -57,7 +57,7 @@ describe('db-conn-sql', () => {
   test('listen, notify', async () => {
     for (const f of await Fixtures()) {
       const channel = 'foo'
-      const notifications: DbConnSqlNotification[] = []
+      const notifications: SqlDbNotification[] = []
       const unlisten = await f.dbConnSql.listen(channel, (n) => {
         notifications.push(n)
       })

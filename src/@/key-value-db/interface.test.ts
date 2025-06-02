@@ -10,7 +10,7 @@ import { Uuid } from '../id/uuid'
 import { KeyValueDb } from './impl'
 import { IKeyValueDb } from './interface'
 import { Logger } from '../logger'
-import { DbConnSql } from '../sql-db/backend/impl'
+import { SqlDb } from '../sql-db/backend/impl'
 
 type Fixture = {
   name: string
@@ -96,7 +96,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
     }),
   })
 
-  const dbConnSqlSqlite = await DbConnSql({
+  const dbConnSqlSqlite = await SqlDb({
     t: 'bun-sqlite',
     logger,
     fileSystem: {
@@ -132,7 +132,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
       name: 'postgres',
       keyValueDb: await KeyValueDb({
         t: 'db-conn-sql',
-        dbConnSql: await DbConnSql({
+        dbConnSql: await SqlDb({
           t: 'postgres',
           logger,
           databaseUrl: CONFIG_BACKEND.DATABASE_URL,
