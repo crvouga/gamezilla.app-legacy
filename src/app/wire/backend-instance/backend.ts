@@ -73,32 +73,20 @@ const flowHeartbeat = function* (input: { ctx: BackendCtxModule }) {
 
     const got = yield* call(ctx.backendInstanceDb.get, ctx.backendInstanceId)
 
-    ctx.logger.info('got', got)
-
     yield delay(TimeSpan.toMilliseconds(BackendInstance.HEARTBEAT))
 
     if (isErr(got)) continue
 
-    ctx.logger.info('got.value', got.value)
-
     if (!got.value) continue
-
-    ctx.logger.info('got.value', got.value)
 
     const backendInstanceNew: BackendInstance = {
       ...got.value,
       lastHeartbeatAt: Posix.now(),
     }
 
-    ctx.logger.info('backendInstanceNew', backendInstanceNew)
-
     const put = yield* call(ctx.backendInstanceDb.put, backendInstanceNew)
 
-    ctx.logger.info('put', put)
-
     if (isErr(put)) continue
-
-    ctx.logger.info('put.value', put.value)
 
     ctx.logger.info('heartbeat ok')
   }
