@@ -10,7 +10,7 @@ import { ISolutionsDb } from './interface'
 
 export type Config = {
   t: 'sql-db'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
 }
 
 const Row = s.obj({
@@ -32,7 +32,7 @@ const rowToSolutions = (row: Row): Result<string, Solutions> => {
 export const SolutionsDb = (config: Config): ISolutionsDb => {
   return {
     async get(hash) {
-      const queried = await config.dbConnSql.query({
+      const queried = await config.sqlDb.query({
         schema: Row,
         sql: `
           SELECT
@@ -73,7 +73,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
 
         if (got.value.length > 0) {
           // Update existing record
-          const updateResult = await config.dbConnSql.query({
+          const updateResult = await config.sqlDb.query({
             schema: s.num(),
             sql: `
             UPDATE game_flow_solutions
@@ -95,7 +95,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
           }
         } else {
           // Insert new record
-          const insertResult = await config.dbConnSql.query({
+          const insertResult = await config.sqlDb.query({
             schema: s.unknown,
             sql: `
             INSERT INTO game_flow_solutions (
@@ -129,7 +129,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
     },
 
     async zap(hash) {
-      const result = await config.dbConnSql.query({
+      const result = await config.sqlDb.query({
         schema: s.unknown,
         sql: `DELETE FROM game_flow_solutions WHERE id = :id`,
         vars: { id: hash },
@@ -142,7 +142,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
 
     sub(hash) {
       return Sub.map(
-        config.dbConnSql.sub({
+        config.sqlDb.sub({
           schema: Row,
           sql: `
             SELECT

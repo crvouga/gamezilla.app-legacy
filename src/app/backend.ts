@@ -33,15 +33,15 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     logger,
   })
 
-  const dbConnSql = await SqlDb({
+  const sqlDbPostgres = await SqlDb({
     t: 'postgres',
     databaseUrl: CONFIG_BACKEND.DATABASE_URL,
     logger,
   })
 
-  const keyValueDb = await KeyValueDb({
+  const keyValueDbDurable = await KeyValueDb({
     t: 'sql-db',
-    dbConnSql,
+    sqlDb: sqlDbPostgres,
     logger,
   })
 
@@ -51,7 +51,9 @@ const initCtx = async (): Promise<BackendCtxModule> => {
   })
 
   const pubSub = await PubSubTopicBased({
-    t: 'noop',
+    t: 'postgres',
+    sqlDb: sqlDbPostgres,
+    logger,
   })
 
   const httpServer = HttpServerBun({
@@ -72,7 +74,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
 
   const userProfileDb = ProfileDb({
     t: 'sql',
-    dbConnSql,
+    sqlDb: sqlDbPostgres,
     logger,
   })
 
@@ -85,8 +87,8 @@ const initCtx = async (): Promise<BackendCtxModule> => {
   const ctxBase: AppBackendCtxBase = {
     env,
     sms,
-    dbConnSql,
-    keyValueDb,
+    postgres: sqlDbPostgres,
+    keyValueDbDurable,
     logger,
     now,
     backendInstanceId,

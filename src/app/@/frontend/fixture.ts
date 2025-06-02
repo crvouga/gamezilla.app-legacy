@@ -1,4 +1,4 @@
-import { dbConnSqlNoop } from '~/@/sql-db/impl'
+import { sqlDbNoop } from '~/@/sql-db/impl'
 import { HttpClient } from '~/@/http-client'
 import { loggerNoop } from '~/@/logger/impl-noop'
 import { PhoneNumber } from '~/@/phone-number'
@@ -21,7 +21,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     },
     clientSessionId: ClientSessionId.generate(),
     parentScreen: null,
-    dbConnSql: dbConnSqlNoop,
+    sqlDb: sqlDbNoop,
     logger: loggerNoop,
     currentScreen: input?.currentScreen ?? {
       n: 'auth-login',

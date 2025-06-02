@@ -27,17 +27,17 @@ const Fixtures = async () => {
 
   configs.push({
     t: 'with-sql-tables',
-    dbConnSql: f.dbConnSqlite,
+    sqlDb: f.sqlDbite,
     solutionsDb: SolutionsDb({
       t: 'sql-db',
-      dbConnSql: f.dbConnSqlite,
+      sqlDb: f.sqlDbite,
     }),
   })
 
   if (f.t === 'integration') {
     configs.push({
       t: 'sql-db',
-      dbConnSql: f.dbConnPostgres,
+      sqlDb: f.dbConnPostgres,
     })
   }
 

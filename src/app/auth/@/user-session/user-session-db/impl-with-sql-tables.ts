@@ -4,7 +4,7 @@ import { IUserSessionDb } from './interface'
 
 export type Config = {
   t: 'with-sql-tables'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
   userSessionDb: IUserSessionDb
 }
 
@@ -23,7 +23,7 @@ const queries: string[] = [
 
 export const UserSessionDb = (config: Config): IUserSessionDb => {
   for (const query of queries) {
-    config.dbConnSql
+    config.sqlDb
       .query({
         schema: s.unknown,
         sql: query,

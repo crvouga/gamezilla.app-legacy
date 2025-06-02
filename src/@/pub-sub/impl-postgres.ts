@@ -5,7 +5,7 @@ import { IPubSub } from './interface'
 
 export type Config = {
   t: 'postgres'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
   logger: ILogger
   channel: string
 }
@@ -18,13 +18,13 @@ export const PubSub = (config: Config): IPubSub => {
   const instanceId = Math.random().toString(36).substring(2)
   const SEPARATOR = '___'
 
-  config.dbConnSql.query({
+  config.sqlDb.query({
     schema: s.unknown,
     sql: `LISTEN ${config.channel}`,
     vars: {},
   })
 
-  config.dbConnSql.listen(config.channel, (notification) => {
+  config.sqlDb.listen(config.channel, (notification) => {
     if (notification.payload === undefined) {
       return
     }
@@ -50,7 +50,7 @@ export const PubSub = (config: Config): IPubSub => {
 
   return {
     async pub(msg) {
-      config.dbConnSql.query({
+      config.sqlDb.query({
         schema: s.unknown,
         sql: `NOTIFY ${config.channel}, '${instanceId}${SEPARATOR}${msg}'`,
         vars: {},

@@ -4,7 +4,7 @@ import { IGuestSessionMappingDb } from './interface'
 
 export type Config = {
   t: 'with-sql-tables'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
   guestSessionMappingDb: IGuestSessionMappingDb
 }
 
@@ -22,7 +22,7 @@ const queries: string[] = [
 
 export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb => {
   for (const query of queries) {
-    config.dbConnSql
+    config.sqlDb
       .query({
         schema: s.unknown,
         sql: query,

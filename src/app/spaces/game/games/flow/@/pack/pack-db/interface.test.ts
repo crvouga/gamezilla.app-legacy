@@ -25,10 +25,10 @@ const Fixtures = async () => {
 
   configs.push({
     t: 'with-sql-tables',
-    dbConnSql: f.dbConnSqlite,
+    sqlDb: f.sqlDbite,
     packDb: PackDb({
       t: 'sql-db',
-      dbConnSql: f.dbConnSqlite,
+      sqlDb: f.sqlDbite,
       logger: Logger({ t: 'console' }),
     }),
   })
@@ -36,7 +36,7 @@ const Fixtures = async () => {
   if (f.t === 'integration') {
     configs.push({
       t: 'sql-db',
-      dbConnSql: f.dbConnPostgres,
+      sqlDb: f.dbConnPostgres,
       logger: Logger({ t: 'console' }),
     })
   }

@@ -20,10 +20,10 @@ export const BaseFixtures = async () => {
 
   configs.push({
     t: 'with-sql-tables',
-    dbConnSql: f.dbConnSqlite,
+    sqlDb: f.sqlDbite,
     puzzleDb: PuzzleDb({
       t: 'sql-db',
-      dbConnSql: f.dbConnSqlite,
+      sqlDb: f.sqlDbite,
       logger: Logger({ t: 'noop' }),
     }),
   })
@@ -31,7 +31,7 @@ export const BaseFixtures = async () => {
   if (f.t === 'integration') {
     configs.push({
       t: 'sql-db',
-      dbConnSql: f.dbConnPostgres,
+      sqlDb: f.dbConnPostgres,
       logger: Logger({ t: 'noop' }),
     })
   }

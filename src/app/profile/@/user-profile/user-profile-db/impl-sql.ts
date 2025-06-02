@@ -44,7 +44,7 @@ const fromProfileRow = (row: ProfileRow): Result<string, UserProfile> => {
 
 export type Config = {
   t: 'sql'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
   logger: ILogger
 }
 
@@ -65,7 +65,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
           id IN (:id_commas)
       `
 
-      const queried = await config.dbConnSql.query({
+      const queried = await config.sqlDb.query({
         schema: ProfileRow,
         sql: sql,
         vars: {
@@ -92,7 +92,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
         updated_at_posix: profile.updatedAt,
       }
 
-      const upserted = await config.dbConnSql.query({
+      const upserted = await config.sqlDb.query({
         schema: ProfileRow,
         sql: `
         INSERT INTO user_profile (
@@ -128,12 +128,12 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
 
     async query(query) {
       const { sql, sqlTotal, vars } = queryToSql(query)
-      const queried = await config.dbConnSql.query({
+      const queried = await config.sqlDb.query({
         schema: ProfileRow,
         sql: sql,
         vars: vars,
       })
-      const queriedTotal = await config.dbConnSql.query({
+      const queriedTotal = await config.sqlDb.query({
         schema: s.obj({ total: s.or(s.num(), s.str()) }),
         sql: sqlTotal,
         vars: vars,
@@ -156,7 +156,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
     },
     sub(query) {
       const { sql, vars } = queryToSql(query)
-      return Sub.map(config.dbConnSql.sub({ schema: ProfileRow, sql: sql, vars: vars }), (rows) =>
+      return Sub.map(config.sqlDb.sub({ schema: ProfileRow, sql: sql, vars: vars }), (rows) =>
         unwrapOr(Result.combine(rows.map(fromProfileRow)), []),
       )
     },

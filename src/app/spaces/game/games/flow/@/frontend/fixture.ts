@@ -28,7 +28,7 @@ export const FixtureFlowFrontend = async () => {
     solutionsLoader: SolutionsLoaderTypes.initFrontend,
     puzzleDb: PuzzleDb({ ...f.ctx, t: 'sql-db' }),
     packDb: PackDb({ ...f.ctx, t: 'sql-db' }),
-    solutionsDb: SolutionsDb({ t: 'sql-db', dbConnSql: f.ctx.dbConnSql }),
+    solutionsDb: SolutionsDb({ t: 'sql-db', sqlDb: f.ctx.sqlDb }),
   }
   type Input = {
     ctx?: FlowFrontendCtx | null

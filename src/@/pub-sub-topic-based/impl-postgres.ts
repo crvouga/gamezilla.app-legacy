@@ -6,7 +6,7 @@ import { IPubSubTopicBased } from './interface'
 
 export type Config = {
   t: 'postgres'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
   logger: ILogger
 }
 
@@ -15,12 +15,12 @@ export const PubSubTopicBased = (config: Config): IPubSubTopicBased => {
 
   return {
     async pub(topic, msg) {
-      await config.dbConnSql.notify(topic, msg)
+      await config.sqlDb.notify(topic, msg)
       await sleep(TimeSpan.milliseconds(0))
       config.logger.debug(`pub: topic=${topic} msg=${JSON.stringify(msg).slice(0, 1000)}`)
     },
     async sub(topic, callback) {
-      const unlisten = await config.dbConnSql.listen(topic, (notification) => {
+      const unlisten = await config.sqlDb.listen(topic, (notification) => {
         config.logger.debug(`sub: topic=${topic} notification=${JSON.stringify(notification).slice(0, 1000)}`)
         callback(notification.payload ?? '')
       })

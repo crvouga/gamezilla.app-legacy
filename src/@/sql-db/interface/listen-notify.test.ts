@@ -9,9 +9,9 @@ import { Logger } from '../../logger'
 import { Config, SqlDb } from '../backend/impl'
 
 const Fixture = async (config: Config) => {
-  const dbConnSql = await SqlDb(config)
+  const sqlDb = await SqlDb(config)
   return {
-    dbConnSql,
+    sqlDb,
   }
 }
 
@@ -58,10 +58,10 @@ describe('sql-db', () => {
     for (const f of await Fixtures()) {
       const channel = 'foo'
       const notifications: SqlDbNotification[] = []
-      const unlisten = await f.dbConnSql.listen(channel, (n) => {
+      const unlisten = await f.sqlDb.listen(channel, (n) => {
         notifications.push(n)
       })
-      await f.dbConnSql.notify(channel, 'bar')
+      await f.sqlDb.notify(channel, 'bar')
       await sleep(TimeSpan.milliseconds(100))
       expect(notifications).toEqual([{ channel, payload: 'bar' }])
       await unlisten()

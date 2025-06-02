@@ -1,5 +1,5 @@
 // import { describe, expect, it } from 'bun:test'
-// import { dbConnSqlNoop } from '~/@/sql-db/impl'
+// import { sqlDbNoop } from '~/@/sql-db/impl'
 // import { loggerNoop } from '~/@/logger/impl-noop'
 // import { isRequesting, isResponseErr, isResponseOk } from '~/@/request-response/request-response'
 // import { Err, Ok } from '~/@/result'
@@ -14,7 +14,7 @@
 
 // const ctx: AnonymousFrontendCtx = {
 //   parentScreen: null,
-//   dbConnSql: dbConnSqlNoop,
+//   sqlDb: sqlDbNoop,
 //   logger: loggerNoop,
 //   currentScreen: {
 //     n: 'auth-login',

@@ -4,7 +4,7 @@ import { IUserAccountDb } from './interface'
 
 export type Config = {
   t: 'with-sql-tables'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
   userAccountDb: IUserAccountDb
 }
 
@@ -21,7 +21,7 @@ const queries: string[] = [
 
 export const UserAccountDb = (config: Config): IUserAccountDb => {
   for (const query of queries) {
-    config.dbConnSql
+    config.sqlDb
       .query({
         schema: s.unknown,
         sql: query,

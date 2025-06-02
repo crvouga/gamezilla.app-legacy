@@ -44,7 +44,7 @@ export const init = ({
     },
     eff: async (dispatch) => {
       const result = await initialLoad({
-        dbConn: ctx.dbConnSql,
+        dbConn: ctx.postgres,
         // @ts-ignore
         userId: ctx.space.hostId,
       })
@@ -289,7 +289,7 @@ export const watchPutInteraction = ({
     return {
       model,
       eff: async (dispatch) => {
-        const result = await PuzzleDb.interactions.insert(ctx.dbConnSql, [interaction])
+        const result = await PuzzleDb.interactions.insert(ctx.postgres, [interaction])
         dispatch({
           t: 'db-put-interaction',
           result,
@@ -324,7 +324,7 @@ export const watchGetPuzzles = ({
         },
       },
       eff: async (dispatch) => {
-        const result = await PuzzleDb.puzzles.findForProfile(ctx.dbConnSql, {
+        const result = await PuzzleDb.puzzles.findForProfile(ctx.postgres, {
           profile: model.profile,
           omit: [model.puzzle.puzzleId, ...model.queue.map((x) => x.puzzleId)],
         })
@@ -356,7 +356,7 @@ export const watchPutProfile = ({
     return {
       model,
       eff: async (dispatch) => {
-        const result = await PuzzleDb.profiles.update(ctx.dbConnSql, profile)
+        const result = await PuzzleDb.profiles.update(ctx.postgres, profile)
         dispatch({
           t: 'db-put-profile',
           result,

@@ -12,7 +12,7 @@ import type { IUserSessionDb } from './interface'
 export type Config = {
   t: 'sql-with-cache'
   keyValueDb: IKeyValueDb
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
   pubSubTopicBased: IPubSubTopicBased
   logger: ILogger
 }
@@ -51,7 +51,7 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
 
   const userSessionDb = ImplSql.UserSessionDb({
     t: 'sql',
-    dbConnSql: config.dbConnSql,
+    sqlDb: config.sqlDb,
     logger: config.logger,
   })
 

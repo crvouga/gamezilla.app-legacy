@@ -7,9 +7,9 @@ import { s } from '../../schema'
 import { Config, SqlDb } from '../backend/impl'
 
 const Fixture = async (config: Config) => {
-  const dbConnSql = await SqlDb(config)
+  const sqlDb = await SqlDb(config)
   return {
-    dbConnSql,
+    sqlDb,
   }
 }
 
@@ -61,14 +61,14 @@ type Row = s.Infer<typeof Row>
 describe.skip('sql-db subscribe', () => {
   test('subscribe', async () => {
     for (const f of await Fixtures()) {
-      await f.dbConnSql.query({ schema: s.unknown, sql: `DROP TABLE foo`, vars: {} }).catch(() => {})
-      await f.dbConnSql.query({
+      await f.sqlDb.query({ schema: s.unknown, sql: `DROP TABLE foo`, vars: {} }).catch(() => {})
+      await f.sqlDb.query({
         schema: s.unknown,
         sql: `CREATE TABLE foo (id SERIAL PRIMARY KEY)`,
         vars: {},
       })
       let got: Row[] = []
-      const sub = f.dbConnSql.sub({
+      const sub = f.sqlDb.sub({
         schema: Row,
         sql: `SELECT id FROM foo`,
         vars: {},
@@ -76,7 +76,7 @@ describe.skip('sql-db subscribe', () => {
       const unsub = sub.sub((rows) => {
         got = rows
       })
-      await f.dbConnSql.query({
+      await f.sqlDb.query({
         schema: s.unknown,
         sql: `INSERT INTO foo DEFAULT VALUES`,
         vars: {},

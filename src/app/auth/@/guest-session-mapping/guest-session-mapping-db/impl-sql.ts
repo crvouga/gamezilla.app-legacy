@@ -15,7 +15,7 @@ export const Row = s.obj({
 
 export type Config = {
   t: 'sql'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
 }
 
 export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb => {
@@ -30,7 +30,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
       const vars = {
         session_id: sessionId,
       }
-      const queried = await config.dbConnSql.query({
+      const queried = await config.sqlDb.query({
         schema: s.obj({
           guest_user_id: UserId,
         }),
@@ -55,7 +55,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
       const vars = {
         client_session_id: clientSessionId,
       }
-      const queried = await config.dbConnSql.query({
+      const queried = await config.sqlDb.query({
         schema: s.obj({
           guest_user_id: UserId,
         }),
@@ -81,7 +81,7 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
         session_id: input.sessionId,
         created_at_posix: Posix.now(),
       }
-      const inserted = await config.dbConnSql.query({
+      const inserted = await config.sqlDb.query({
         schema: s.unknown,
         sql: query,
         vars: vars,

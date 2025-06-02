@@ -16,7 +16,7 @@ const Row = s.obj({
 
 export type Config = {
   t: 'sql-db'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
   logger: ILogger
 }
 
@@ -26,7 +26,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
     async get(key, schema) {
       try {
         const [queried, duration] = await withDuration(() =>
-          config.dbConnSql.query({
+          config.sqlDb.query({
             schema: Row,
             sql: 'SELECT id, value FROM key_value WHERE id = :id',
             vars: {
@@ -78,7 +78,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
         const keysStr = keys.map((key) => `'${key}'`).join(', ')
 
         const [queried, duration] = await withDuration(() =>
-          config.dbConnSql.query({
+          config.sqlDb.query({
             schema: Row,
             sql: `SELECT id, value FROM key_value WHERE id IN (${keysStr})`,
             vars: {},
@@ -126,7 +126,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
     async set(key, value) {
       try {
-        const queried = await config.dbConnSql.query({
+        const queried = await config.sqlDb.query({
           schema: Row,
           sql: 'INSERT INTO key_value (id, value) VALUES (:id, :value) ON CONFLICT (id) DO UPDATE SET value = :value',
           vars: {
@@ -154,7 +154,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
       try {
         const valuesStr = entries.map(([key, value]) => `('${key}', '${JSON.stringify(value)}')`).join(', ')
 
-        const queried = await config.dbConnSql.query({
+        const queried = await config.sqlDb.query({
           schema: Row,
           sql: `INSERT INTO key_value (id, value) VALUES ${valuesStr} ON CONFLICT (id) DO UPDATE SET value = EXCLUDED.value`,
           vars: {},
@@ -173,7 +173,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
     async zap(key) {
       try {
-        const queried = await config.dbConnSql.query({
+        const queried = await config.sqlDb.query({
           schema: Row,
           sql: 'DELETE FROM key_value WHERE id = :id',
           vars: {

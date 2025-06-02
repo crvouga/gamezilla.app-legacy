@@ -18,7 +18,7 @@ const initCtx = async (input: {
     topic: input.topic,
     spacesCore: await SpacesCoreAsync({
       t: 'key-value-db',
-      keyValueDb: input.ctx.keyValueDb,
+      keyValueDb: input.ctx.keyValueDbDurable,
       logger: input.ctx.logger,
       runtime: input.ctx.runtime,
       writeThrottle: TimeSpan.seconds(10),

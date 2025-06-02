@@ -18,7 +18,7 @@ const initCtx = (input: { ctx: AppFrontendCtxBase }): FrontendCtxModule => {
     profileDb: ProfileDb({
       t: 'sql',
       logger: input.ctx.logger,
-      dbConnSql: input.ctx.dbConnSql,
+      sqlDb: input.ctx.sqlDb,
     }),
   }
 }

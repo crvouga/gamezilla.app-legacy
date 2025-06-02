@@ -19,13 +19,13 @@ export const VerifySMSFactory = {
   /**
    * Creates an in-house implementation of VerifySMS
    */
-  createInHouse: (config: { logger: ILogger; dbConnSql: ISqlDb }): IVerifySMS => {
+  createInHouse: (config: { logger: ILogger; sqlDb: ISqlDb }): IVerifySMS => {
     const logger = Logger.prefix('verify-sms', config.logger)
     const hashing = Hashing({ t: 'bun' })
     const sms = SMS({ t: 'fake', logger })
     const verificationCodeGenerator = VerificationCodeGenerator({ t: 'fake', code: '123' })
-    const verificationAttemptDb = VerificationAttemptDb({ t: 'postgres', dbConnSql: config.dbConnSql })
-    const verificationDb = VerificationDb({ t: 'postgres', dbConnSql: config.dbConnSql })
+    const verificationAttemptDb = VerificationAttemptDb({ t: 'postgres', sqlDb: config.sqlDb })
+    const verificationDb = VerificationDb({ t: 'postgres', sqlDb: config.sqlDb })
     return VerifySMS({
       t: 'in-house',
       logger,
@@ -81,7 +81,7 @@ export const VerifySMSFactory = {
   /**
    * Creates the appropriate VerifySMS implementation based on environment
    */
-  createForEnvironment: (config: { logger: ILogger; env: Env; dbConnSql: ISqlDb }): IVerifySMS => {
+  createForEnvironment: (config: { logger: ILogger; env: Env; sqlDb: ISqlDb }): IVerifySMS => {
     switch (config.env) {
       case 'prod': {
         return VerifySMSFactory.createTwilio(config)

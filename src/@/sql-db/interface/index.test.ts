@@ -9,9 +9,9 @@ import { isErr, isOk } from '../../result'
 import { Config, SqlDb } from '../backend/impl'
 
 const Fixture = async (config: Config) => {
-  const dbConnSql = await SqlDb(config)
+  const sqlDb = await SqlDb(config)
   return {
-    dbConnSql,
+    sqlDb,
   }
 }
 
@@ -75,7 +75,7 @@ const Fixtures = async () => {
 describe('SqlDb', () => {
   test('querying ok', async () => {
     for (const f of await Fixtures()) {
-      const result = await f.dbConnSql.query({
+      const result = await f.sqlDb.query({
         schema: s.unknown,
         sql: `SELECT 1`,
         vars: {},
@@ -86,7 +86,7 @@ describe('SqlDb', () => {
 
   test('querying err', async () => {
     for (const f of await Fixtures()) {
-      const result = await f.dbConnSql.query({
+      const result = await f.sqlDb.query({
         schema: s.unknown,
         sql: `SELECT foo`,
         vars: {},
@@ -97,19 +97,19 @@ describe('SqlDb', () => {
 
   test('create, insert, query, drop', async () => {
     for (const f of await Fixtures()) {
-      const created = await f.dbConnSql.query({
+      const created = await f.sqlDb.query({
         schema: s.unknown,
         sql: `CREATE TABLE foo (id SERIAL PRIMARY KEY)`,
         vars: {},
       })
       expect(isOk(created)).toBe(true)
-      const inserted = await f.dbConnSql.query({
+      const inserted = await f.sqlDb.query({
         schema: s.unknown,
         sql: `INSERT INTO foo(id) VALUES (1)`,
         vars: {},
       })
       expect(isOk(inserted)).toBe(true)
-      const queried = await f.dbConnSql.query({
+      const queried = await f.sqlDb.query({
         schema: s.obj({ id: s.maybe(s.or(s.num(), s.str(), s.bool)) }),
         sql: `SELECT id FROM foo`,
         vars: {},
@@ -119,7 +119,7 @@ describe('SqlDb', () => {
       if (isOk(queried)) {
         expect(queried.value).toEqual([{ id: 1 }])
       }
-      const dropped = await f.dbConnSql.query({
+      const dropped = await f.sqlDb.query({
         schema: s.unknown,
         sql: `DROP TABLE foo`,
         vars: {},

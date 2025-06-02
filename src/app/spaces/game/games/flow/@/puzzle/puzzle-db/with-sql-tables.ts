@@ -4,7 +4,7 @@ import { IPuzzleDb } from './interface'
 
 export type Config = {
   t: 'with-sql-tables'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
   puzzleDb: IPuzzleDb
 }
 
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS game_flow_puzzle (
 );
 `
 export const PuzzleDb = (config: Config): IPuzzleDb => {
-  config.dbConnSql
+  config.sqlDb
     .query({
       schema: s.unknown,
       sql: query,

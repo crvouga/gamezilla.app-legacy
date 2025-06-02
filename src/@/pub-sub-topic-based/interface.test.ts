@@ -35,7 +35,7 @@ const Fixtures = async () => {
   const configs: Config[] = [{ t: 'in-memory', subscribersByTopic: new Map() }]
 
   if (f.t === 'integration') {
-    configs.push({ t: 'postgres', dbConnSql: f.dbConnPostgres, logger: Logger({ t: 'noop' }) })
+    configs.push({ t: 'postgres', sqlDb: f.dbConnPostgres, logger: Logger({ t: 'noop' }) })
     configs.push({
       t: 'redis',
       redisUrl: CONFIG_BACKEND.REDIS_URL,

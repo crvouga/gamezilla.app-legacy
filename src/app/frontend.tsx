@@ -70,7 +70,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     syncSubscriptionRate: TimeSpan.seconds(3),
   })
 
-  const dbConnSql = await SqlDb({
+  const sqlDb = await SqlDb({
     t: 'powersync-client',
     powerSyncClient: await setupNewPowerSyncClient(),
     logger,
@@ -81,7 +81,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   const ctx: AppFrontendCtxBase = {
     location: Browser.location(),
     clientSessionId,
-    dbConnSql,
+    sqlDb,
     logger,
     now: Posix.now(),
     navigatorLanguage,

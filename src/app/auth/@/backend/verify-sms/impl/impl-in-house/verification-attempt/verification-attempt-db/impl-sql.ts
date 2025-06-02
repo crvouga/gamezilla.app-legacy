@@ -17,7 +17,7 @@ export const Row = s.obj({
 })
 type Row = s.Infer<typeof Row>
 
-export const VerificationAttemptDbPostgres = (deps: { dbConnSql: ISqlDb }): IVerificationAttemptDb => {
+export const VerificationAttemptDbPostgres = (deps: { sqlDb: ISqlDb }): IVerificationAttemptDb => {
   deps
   return {
     async insert(input) {
@@ -40,7 +40,7 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: ISqlDb }): IVer
         inputted_code_hash: Sql.json(input.codeHash),
         created_at_posix: input.createdAt,
       }
-      const queried = await deps.dbConnSql.query({
+      const queried = await deps.sqlDb.query({
         schema: s.unknown,
         sql: query,
         vars: vars,
@@ -61,7 +61,7 @@ export const VerificationAttemptDbPostgres = (deps: { dbConnSql: ISqlDb }): IVer
 				ORDER BY created_at_posix DESC
 			`
 
-      const queried = await deps.dbConnSql.query({
+      const queried = await deps.sqlDb.query({
         schema: Row,
         sql: query,
         vars: where.vars,

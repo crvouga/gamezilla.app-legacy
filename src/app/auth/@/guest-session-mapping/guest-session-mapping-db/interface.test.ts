@@ -21,17 +21,17 @@ const Fixtures = async () => {
 
   configs.push({
     t: 'sql',
-    dbConnSql: f.dbConnSqlite,
+    sqlDb: f.sqlDbite,
   })
 
   configs.push({
     t: 'with-sql-tables',
-    dbConnSql: f.dbConnSqlite,
-    guestSessionMappingDb: GuestSessionMappingDb({ t: 'sql', dbConnSql: f.dbConnSqlite }),
+    sqlDb: f.sqlDbite,
+    guestSessionMappingDb: GuestSessionMappingDb({ t: 'sql', sqlDb: f.sqlDbite }),
   })
 
   if (f.t === 'integration') {
-    configs.push({ t: 'sql', dbConnSql: f.dbConnPostgres })
+    configs.push({ t: 'sql', sqlDb: f.dbConnPostgres })
   }
 
   return Promise.all(configs.map(Fixture))

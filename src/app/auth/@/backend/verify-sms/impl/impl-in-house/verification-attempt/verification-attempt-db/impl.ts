@@ -9,7 +9,7 @@ export type Impl =
     }
   | {
       t: 'postgres'
-      dbConnSql: ISqlDb
+      sqlDb: ISqlDb
     }
 
 export const VerificationAttemptDb = (impl: Impl): IVerificationAttemptDb => {

@@ -17,7 +17,7 @@ import type { IPackDb } from './interface'
 
 export type Config = {
   t: 'sql-db'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
   logger: ILogger
 }
 
@@ -127,7 +127,7 @@ export const PackDb = (config: Config): IPackDb => {
   const logger = Logger.prefix('pack db impl sql', config.logger)
   return {
     async get(id) {
-      const queried = await config.dbConnSql.query({
+      const queried = await config.sqlDb.query({
         schema: Row,
         sql: 'SELECT * FROM game_flow_pack WHERE id = :id AND deleted_at_posix IS NULL',
         vars: {
@@ -135,7 +135,7 @@ export const PackDb = (config: Config): IPackDb => {
         },
       })
 
-      const queriedItems = await config.dbConnSql.query({
+      const queriedItems = await config.sqlDb.query({
         schema: RowItem,
         sql: 'SELECT * FROM game_flow_pack_item WHERE pack_id = :pack_id AND deleted_at_posix IS NULL',
         vars: {
@@ -152,7 +152,7 @@ export const PackDb = (config: Config): IPackDb => {
       const where = toSqlWhere(input.where)
       const vars = where.vars
       const sql = `SELECT COUNT(*) AS count FROM game_flow_pack ${where.str}`
-      const queried = await config.dbConnSql.query({
+      const queried = await config.sqlDb.query({
         schema: s.obj({ count: s.maybe(s.or(s.num(), s.str())) }),
         sql,
         vars,
@@ -173,7 +173,7 @@ export const PackDb = (config: Config): IPackDb => {
       const sql = `
         SELECT
           game_flow_pack.*,
-          ${config.dbConnSql.aggregate.StringConcat('game_flow_pack_item.puzzle_id', ',')} AS puzzle_ids_csv
+          ${config.sqlDb.aggregate.StringConcat('game_flow_pack_item.puzzle_id', ',')} AS puzzle_ids_csv
         FROM
           game_flow_pack
         LEFT JOIN
@@ -184,7 +184,7 @@ export const PackDb = (config: Config): IPackDb => {
         ${sqlOrder.str}
         ${sqlPagination.str};
 			`
-      const packsSub = config.dbConnSql.sub({
+      const packsSub = config.sqlDb.sub({
         schema: s.and(Row, s.obj({ puzzle_ids_csv: s.maybe(s.str()) })),
         sql,
         vars,
@@ -217,13 +217,13 @@ export const PackDb = (config: Config): IPackDb => {
 				${sqlPagination.str}
 			`
 
-      const queried = await config.dbConnSql.query({ schema: Row, sql: str, vars })
+      const queried = await config.sqlDb.query({ schema: Row, sql: str, vars })
 
       const counted = await this.count(input)
 
       const total = Result.unwrapOr(counted, 0)
 
-      const queriedItems = await config.dbConnSql.query({
+      const queriedItems = await config.sqlDb.query({
         schema: RowItem,
         sql: `
         SELECT
@@ -261,7 +261,7 @@ export const PackDb = (config: Config): IPackDb => {
         return got
       }
 
-      const deleted = await config.dbConnSql.query({
+      const deleted = await config.sqlDb.query({
         schema: s.unknown,
         sql: 'DELETE FROM game_flow_pack_item WHERE pack_id = :pack_id',
         vars: {
@@ -298,7 +298,7 @@ export const PackDb = (config: Config): IPackDb => {
           ${sqlItemsEntries.join(',\n')}
       `
 
-        const insertedItems = await config.dbConnSql.query({
+        const insertedItems = await config.sqlDb.query({
           schema: s.unknown,
           sql: sqlItems,
           vars: {},
@@ -310,7 +310,7 @@ export const PackDb = (config: Config): IPackDb => {
       }
 
       if (got.value) {
-        const queried = await config.dbConnSql.query({
+        const queried = await config.sqlDb.query({
           schema: s.unknown,
           sql: `
           UPDATE
@@ -332,7 +332,7 @@ export const PackDb = (config: Config): IPackDb => {
         return Result.mapOk(queried, () => input)
       }
 
-      const queried = await config.dbConnSql.query({
+      const queried = await config.sqlDb.query({
         schema: s.unknown,
         sql: `
 				INSERT INTO game_flow_pack (
@@ -370,7 +370,7 @@ export const PackDb = (config: Config): IPackDb => {
     },
 
     async zap(input) {
-      const queried = await config.dbConnSql.query({
+      const queried = await config.sqlDb.query({
         schema: s.unknown,
         sql: `
           UPDATE game_flow_pack 

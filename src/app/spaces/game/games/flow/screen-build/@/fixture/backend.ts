@@ -14,12 +14,12 @@ const initCtx = async (ctx: SpaceBackendCtx): Promise<FlowBackendCtx> => {
         ...ctx,
         flowPackDb: PackDb({
           t: 'sql-db',
-          dbConnSql: f.dbConnPostgres,
+          sqlDb: f.dbConnPostgres,
           logger: Logger({ t: 'noop' }),
         }),
         flowPuzzleDb: PuzzleDb({
           t: 'sql-db',
-          dbConnSql: f.dbConnPostgres,
+          sqlDb: f.dbConnPostgres,
           logger: Logger({ t: 'noop' }),
         }),
       }

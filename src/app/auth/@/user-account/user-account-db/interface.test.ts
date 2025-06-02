@@ -22,12 +22,12 @@ const Fixtures = async () => {
 
   configs.push({
     t: 'with-sql-tables',
-    dbConnSql: f.dbConnSqlite,
-    userAccountDb: UserAccountDb({ t: 'sql', dbConnSql: f.dbConnSqlite }),
+    sqlDb: f.sqlDbite,
+    userAccountDb: UserAccountDb({ t: 'sql', sqlDb: f.sqlDbite }),
   })
 
   if (f.t === 'integration') {
-    configs.push({ t: 'sql', dbConnSql: f.dbConnPostgres })
+    configs.push({ t: 'sql', sqlDb: f.dbConnPostgres })
   }
 
   return Promise.all(configs.map(Fixture))

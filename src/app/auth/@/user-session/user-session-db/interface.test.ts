@@ -40,17 +40,17 @@ const Fixtures = async () => {
 
   configs.push({
     t: 'with-sql-tables',
-    dbConnSql: f.dbConnSqlite,
-    userSessionDb: await UserSessionDb({ t: 'sql', dbConnSql: f.dbConnSqlite, logger: Logger({ t: 'noop' }) }),
+    sqlDb: f.sqlDbite,
+    userSessionDb: await UserSessionDb({ t: 'sql', sqlDb: f.sqlDbite, logger: Logger({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
-    configs.push({ t: 'sql', dbConnSql: f.dbConnPostgres, logger: Logger({ t: 'noop' }) })
+    configs.push({ t: 'sql', sqlDb: f.dbConnPostgres, logger: Logger({ t: 'noop' }) })
 
     configs.push({
       t: 'sql-with-cache',
       keyValueDb: f.keyValueDbHashMap,
-      dbConnSql: f.dbConnPostgres,
+      sqlDb: f.dbConnPostgres,
       pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() }),
       logger: Logger({ t: 'noop' }),
     })

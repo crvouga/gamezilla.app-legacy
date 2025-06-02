@@ -1,6 +1,6 @@
 import { type ISqlDb } from '~/@/sql-db'
 import { SqlDb } from '~/@/sql-db/backend/impl'
-import { dbConnSqlNoop } from '~/@/sql-db/impl'
+import { sqlDbNoop } from '~/@/sql-db/impl'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { ILogger } from '~/@/logger'
@@ -26,7 +26,7 @@ export type IFixtureAppBackendUnit = {
   runtime: IRuntime
   logger: ILogger
   pubSubTopicBased: IPubSubTopicBased
-  dbConnSqlite: ISqlDb
+  sqlDbite: ISqlDb
   keyValueDbHashMap: IKeyValueDb
 }
 
@@ -54,7 +54,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const keyValueDbHashMap = await KeyValueDb({ t: 'hash-map' })
 
-  const dbConnSqlite = await SqlDb({ t: 'bun-sqlite', fileSystem: { t: 'in-memory' }, logger })
+  const sqlDbite = await SqlDb({ t: 'bun-sqlite', fileSystem: { t: 'in-memory' }, logger })
 
   const profileDb = ProfileDb({
     t: 'hash-map',
@@ -69,8 +69,8 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const ctx: AppBackendCtxBase = {
     env: 'test',
-    keyValueDb: keyValueDbHashMap,
-    dbConnSql: dbConnSqlNoop,
+    keyValueDbDurable: keyValueDbHashMap,
+    postgres: sqlDbNoop,
     logger,
     now,
     sms,
@@ -88,7 +88,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     return {
       t: 'unit',
       ctx,
-      dbConnSqlite,
+      sqlDbite,
       keyValueDbHashMap,
       pubSubTopicBased,
       runtime,
@@ -118,13 +118,13 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const keyValueDbPostgres = await KeyValueDb({
     t: 'sql-db',
-    dbConnSql: dbConnPostgres,
+    sqlDb: dbConnPostgres,
     logger,
   })
 
   const keyValueDbSqlite = await KeyValueDb({
     t: 'sql-db',
-    dbConnSql: dbConnSqlite,
+    sqlDb: sqlDbite,
     logger,
   })
 
@@ -137,7 +137,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   return {
     t: 'integration',
     ctx,
-    dbConnSqlite,
+    sqlDbite,
     dbConnPostgres,
     // dbConnPowersyncClient,
     keyValueDbSqlite,

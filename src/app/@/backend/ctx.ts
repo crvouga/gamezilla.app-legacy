@@ -12,8 +12,8 @@ import { Env } from '../data/env'
 import type { BackendInstanceId } from './backend-instance/backend-instance-id'
 
 export type AppBackendCtxBase = {
-  dbConnSql: ISqlDb
-  keyValueDb: IKeyValueDb
+  postgres: ISqlDb
+  keyValueDbDurable: IKeyValueDb
   now: Posix
   logger: ILogger
   sms: ISMS

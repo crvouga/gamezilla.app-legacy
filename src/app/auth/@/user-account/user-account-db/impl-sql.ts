@@ -35,17 +35,17 @@ const toAccount = ({ userAccount }: { userAccount: UserAccountRow }): Result<str
 
 export type Config = {
   t: 'sql'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
 }
 
-export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
+export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
   return {
     async findOneByUserId(input) {
       if (!UserId.is(input.userId)) {
         return Ok(null)
       }
 
-      const queried = await dbConnSql.query({
+      const queried = await sqlDb.query({
         schema: UserAccountRow,
         sql: `
         SELECT
@@ -81,7 +81,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
     },
 
     async findOneByPhoneNumber(input) {
-      const queried = await dbConnSql.query({
+      const queried = await sqlDb.query({
         schema: UserAccountRow,
         sql: `
 				SELECT
@@ -122,7 +122,7 @@ export const UserAccountDb = ({ dbConnSql }: Config): IUserAccountDb => {
         user_role: input.role,
         phone_number: input.phoneNumber ? PhoneNumber.toString(input.phoneNumber) : null,
       }
-      const inserted = await dbConnSql.query({
+      const inserted = await sqlDb.query({
         schema: s.unknown,
         sql: `
         INSERT INTO user_account (

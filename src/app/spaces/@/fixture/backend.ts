@@ -69,7 +69,7 @@ export const FixtureSpaceBackend = async () => {
     ...GamesBackend.initCtx({ ctx: f.ctx }),
     spacesCore: await SpacesCoreAsync({
       t: 'key-value-db',
-      keyValueDb: f.ctx.keyValueDb,
+      keyValueDb: f.ctx.keyValueDbDurable,
       logger: f.ctx.logger,
       runtime: f.ctx.runtime,
       writeThrottle: TimeSpan.milliseconds(0),

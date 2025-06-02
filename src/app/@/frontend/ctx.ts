@@ -17,7 +17,7 @@ import { ScreenSize } from '../ui/screen/screen-size'
 export type AppFrontendCtxBase = {
   parentScreen: ParentScreenProps | null
   screenSize: ScreenSize
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
   logger: ILogger
   t: Translator
   navigatorLanguage: LanguageCodeISO_639_1

@@ -11,7 +11,7 @@ import { rpcContract, type BackendCtxModule } from './types'
 const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<BackendCtxModule> => {
   const backendInstanceDb = BackendInstanceDb({
     t: 'key-value-db',
-    keyValueDb: input.ctx.keyValueDb,
+    keyValueDb: input.ctx.keyValueDbDurable,
   })
 
   return {

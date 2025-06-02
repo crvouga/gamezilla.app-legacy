@@ -96,7 +96,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
     }),
   })
 
-  const dbConnSqlSqlite = await SqlDb({
+  const sqlDbSqlite = await SqlDb({
     t: 'bun-sqlite',
     logger,
     fileSystem: {
@@ -108,10 +108,10 @@ const Fixtures = async (): Promise<Fixture[]> => {
     name: 'sqlite',
     keyValueDb: await KeyValueDb({
       t: 'with-sql-tables',
-      dbConnSql: dbConnSqlSqlite,
+      sqlDb: sqlDbSqlite,
       keyValueDb: await KeyValueDb({
         t: 'sql-db',
-        dbConnSql: dbConnSqlSqlite,
+        sqlDb: sqlDbSqlite,
         logger,
       }),
     }),
@@ -132,7 +132,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
       name: 'postgres',
       keyValueDb: await KeyValueDb({
         t: 'sql-db',
-        dbConnSql: await SqlDb({
+        sqlDb: await SqlDb({
           t: 'postgres',
           logger,
           databaseUrl: CONFIG_BACKEND.DATABASE_URL,

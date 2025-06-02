@@ -4,7 +4,7 @@ import { ISolutionsDb } from './interface'
 
 export type Config = {
   t: 'with-sql-tables'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
   solutionsDb: ISolutionsDb
 }
 
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS game_flow_solutions (
 );
 `
 export const SolutionsDb = (config: Config): ISolutionsDb => {
-  config.dbConnSql
+  config.sqlDb
     .query({
       schema: s.unknown,
       sql: query,

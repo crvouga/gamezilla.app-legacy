@@ -21,7 +21,7 @@ type Row = s.Infer<typeof Row>
 
 export type Config = {
   t: 'postgres'
-  dbConnSql: ISqlDb
+  sqlDb: ISqlDb
 }
 
 export const VerificationDb = (config: Config): IVerificationDb => {
@@ -41,7 +41,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
         ...pagination.vars,
         ...order.vars,
       }
-      const queried = await config.dbConnSql.query({
+      const queried = await config.sqlDb.query({
         schema: Row,
         sql: query,
         vars: vars,
@@ -55,7 +55,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
 				SELECT COUNT(*) FROM auth_sms_verification
 				${where.str}
 			`
-      const queriedCount = await config.dbConnSql.query({
+      const queriedCount = await config.sqlDb.query({
         schema: s.obj({
           count: s.str(),
         }),
@@ -110,7 +110,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
         code_hash: Sql.json(verification.codeHash),
         verified_at_posix: verification.verifiedAtPosix,
       }
-      const queried = await config.dbConnSql.query({
+      const queried = await config.sqlDb.query({
         schema: s.unknown,
         sql: query,
         vars: vars,
@@ -123,7 +123,7 @@ export const VerificationDb = (config: Config): IVerificationDb => {
       const vars = {
         id: verificationId,
       }
-      const queried = await config.dbConnSql.query({
+      const queried = await config.sqlDb.query({
         schema: s.unknown,
         sql: query,
         vars: vars,

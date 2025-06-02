@@ -44,9 +44,9 @@ export const FixtureFlowBuilderFrontend = async () => {
     HintCalculator: HintCalculatorTypes.initFrontend,
     solutionsLoader: SolutionsLoaderTypes.initFrontend,
     solutions: Solutions.init,
-    puzzleDb: PuzzleDb({ t: 'sql-db', dbConnSql: f.ctx.dbConnSql, logger: f.ctx.logger }),
-    packDb: PackDb({ t: 'sql-db', dbConnSql: f.ctx.dbConnSql, logger: f.ctx.logger }),
-    solutionsDb: SolutionsDb({ t: 'sql-db', dbConnSql: f.ctx.dbConnSql }),
+    puzzleDb: PuzzleDb({ t: 'sql-db', sqlDb: f.ctx.sqlDb, logger: f.ctx.logger }),
+    packDb: PackDb({ t: 'sql-db', sqlDb: f.ctx.sqlDb, logger: f.ctx.logger }),
+    solutionsDb: SolutionsDb({ t: 'sql-db', sqlDb: f.ctx.sqlDb }),
   }
   const model = BuilderTypes.initFrontend
   const modelSpace = BuildSpace.initSpace({ ctx })
