@@ -1,5 +1,4 @@
 import { IHttpServer } from '~/@/http-server'
-import { allowCORS } from '~/@/http-server/cors'
 import { isErr } from '~/@/result'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
@@ -7,7 +6,7 @@ import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Base, Contract, Server } from '../types'
 
-export const registerRespond = <T extends Base>(registerInput: {
+export const registerRespond = <T extends Base>(config: {
   httpServer: IHttpServer
   contract: T
   server: Server<T>
@@ -62,7 +61,7 @@ export const registerRespond = <T extends Base>(registerInput: {
     }
   }
 
-  registerInput.httpServer.registerRespond(async (request) => {
+  config.httpServer.registerRespond(async (request) => {
     try {
       const url = new URL(request.url)
       if (url.pathname !== '/rpc') {
@@ -85,8 +84,8 @@ export const registerRespond = <T extends Base>(registerInput: {
       const clientSessionId = maybeClientSessionId ?? ClientSessionId.generate()
 
       const response = await handleRequest({
-        contract: registerInput.contract,
-        handlers: registerInput.server,
+        contract: config.contract,
+        handlers: config.server,
         name: rpcName ?? '',
         request,
         sessionId,
@@ -95,13 +94,11 @@ export const registerRespond = <T extends Base>(registerInput: {
 
       if (!response) return null
 
-      const responseWithCORS = allowCORS({ request, response })
-
       if (!maybeSessionId) {
-        responseWithCORS.headers.set('Set-Cookie', SessionIdHttp.toSetCookieHeaderValue({ sessionId, isProd: true }))
+        response.headers.set('Set-Cookie', SessionIdHttp.toSetCookieHeaderValue({ sessionId, isProd: true }))
       }
 
-      return responseWithCORS
+      return response
     } catch (error) {
       return new Response(JSON.stringify({ error: String(error) }), { status: 500 })
     }

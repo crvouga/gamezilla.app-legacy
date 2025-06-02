@@ -21,8 +21,8 @@ const main = async () => {
   })
 
   PowerSyncBackendApp.registerRespond({
+    ctx,
     httpServer: ctx.httpServer,
-    ctx: { userSessionDb: ctx.userSessionDb },
   })
 
   ctx.httpServer.registerRespond(() => {

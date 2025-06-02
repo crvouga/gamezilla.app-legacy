@@ -1,12 +1,11 @@
 import { pipe } from '~/@/function/pipe'
-import { allowCORS } from '~/@/http-server/cors'
 import * as SignJWT from '~/@/json-crypto/sign-jwt'
 import { isErr } from '~/@/result/result'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Ctx } from '../ctx'
 import { getKeys } from '../keys/keys'
 
-const respondMain = async (input: { request: Request; ctx: Ctx }) => {
+const respond = async (input: { request: Request; ctx: Ctx }) => {
   const keys = await getKeys()
   const powerSyncKey = keys.privateKey
   const maybeSessionId = SessionIdHttp.fromRequest(input.request)
@@ -63,11 +62,6 @@ const respondMain = async (input: { request: Request; ctx: Ctx }) => {
   )
 
   return response
-}
-
-const respond = async (input: { request: Request; ctx: Ctx }) => {
-  const response = await respondMain(input)
-  return allowCORS({ request: input.request, response })
 }
 
 export const PowerSyncCredentials = {

@@ -23,7 +23,10 @@ const respond = async (input: { request: Request; ctx: Ctx }): Promise<Response 
 
 const registerRespond = (config: { httpServer: IHttpServer; ctx: Ctx }) => {
   config.httpServer.registerRespond((request) => {
-    return respond({ request, ctx: config.ctx })
+    return respond({
+      request,
+      ctx: config.ctx,
+    })
   })
 }
 
