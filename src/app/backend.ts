@@ -13,6 +13,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
+import { PowerSyncBackendApp } from '~/service-powersync/backend/respond'
 import { AppTypes } from '.'
 import { BackendInstanceId } from './@/backend/backend-instance/backend-instance-id'
 import { AppBackendCtxBase } from './@/backend/ctx'
@@ -82,7 +83,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
 
   const backendInstanceId = BackendInstanceId.generate()
 
-  const ctx: AppBackendCtxBase = {
+  const ctxBase: AppBackendCtxBase = {
     env,
     sms,
     dbConnSql,
@@ -97,19 +98,36 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     runtime,
   }
 
-  const wire = await WireBackend.initCtx({ ctx, topic })
-  const profile = await ProfileBackend.initCtx({ ctx })
-  const spaces = await SpacesBackend.initCtx({ ctx, topic })
-  const auth = await AuthBackend.initCtx({ ctx })
+  const wire = await WireBackend.initCtx({ ctx: ctxBase, topic })
+  const profile = await ProfileBackend.initCtx({ ctx: ctxBase })
+  const spaces = await SpacesBackend.initCtx({ ctx: ctxBase, topic })
+  const auth = await AuthBackend.initCtx({ ctx: ctxBase })
 
-  return {
-    ...ctx,
+  const ctx: BackendCtxModule = {
+    ...ctxBase,
     ...auth,
     ...spaces,
     ...profile,
     ...wire,
     topic,
   }
+
+  RPC.registerRespond({
+    httpServer,
+    contract: AppTypes.rpcContract,
+    server: AppBackend.rpc({ ctx }),
+  })
+
+  PowerSyncBackendApp.registerRespond({ ctx, httpServer: ctx.httpServer })
+
+  httpServer.registerRespond(() => {
+    return new Response('Hello from gamezilla.app backend', {
+      status: 200,
+      headers: { 'Content-Type': 'text/plain' },
+    })
+  })
+
+  return ctx
 }
 
 const rpc = (input: { ctx: BackendCtxModule }) => {
