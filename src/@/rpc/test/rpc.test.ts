@@ -15,27 +15,15 @@ type Fixture = {
 export const FixtureHttp = async (): Promise<Fixture> => {
   const port = 1234
 
-  const httpServer = HttpServer({
-    t: 'bun',
-    logger: Logger({ t: 'noop' }),
-  })
+  const httpServer = HttpServer({ t: 'bun', logger: Logger({ t: 'noop' }) })
 
   const clientSessionId = ClientSessionId.generate()
 
   const serverUrl = `http://localhost:${port}`
 
-  RPC.registerRespond({
-    httpServer,
-    contract,
-    server,
-  })
+  RPC.registerRespond({ httpServer, contract, server })
 
-  const client = RPC.initClient({
-    t: 'http',
-    contract,
-    serverUrl,
-    clientSessionId,
-  })
+  const client = RPC.initClient({ t: 'http', contract, serverUrl, clientSessionId })
 
   await httpServer.start(port)
 

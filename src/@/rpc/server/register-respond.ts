@@ -11,66 +11,17 @@ export const registerRespond = <T extends Base>(config: {
   contract: T
   server: Server<T>
 }) => {
-  const handleRequest = async (requestInput: {
-    contract: Contract<any>
-    handlers: Server<any>
-    name: string
-    request: Request
-    sessionId: SessionId
-    clientSessionId: ClientSessionId
-  }) => {
-    try {
-      const endpointConfig = requestInput.contract[requestInput.name]
-
-      if (!endpointConfig) return null
-
-      const handler = requestInput.handlers[requestInput.name]
-
-      if (typeof handler !== 'function') return null
-
-      const requestData = await requestInput.request.json()
-
-      const parsedInput = endpointConfig.input.parse(requestData)
-
-      if (isErr(parsedInput)) {
-        return new Response(JSON.stringify({ error: parsedInput.error }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        })
-      }
-
-      const outputData = await handler(parsedInput.value, {
-        sessionId: requestInput.sessionId,
-        clientSessionId: requestInput.clientSessionId,
-      })
-      const parsedOutput = endpointConfig.output.parse(outputData)
-
-      if (isErr(parsedOutput)) {
-        return new Response(JSON.stringify({ error: parsedOutput.error }), {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        })
-      }
-
-      return new Response(JSON.stringify(parsedOutput.value), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    } catch (error) {
-      return new Response(JSON.stringify({ error: String(error) }), { status: 400 })
-    }
-  }
-
   config.httpServer.registerRespond(async (request) => {
     try {
       const url = new URL(request.url)
+
       if (url.pathname !== '/rpc') {
         return null
       }
 
-      const rpcName = url.searchParams.get('rpc-name')
+      const name = url.searchParams.get('rpc-name')
 
-      if (!rpcName) {
+      if (!name) {
         return new Response(JSON.stringify({ error: 'rpc-name is required' }), {
           status: 400,
           headers: { 'Content-Type': 'application/json' },
@@ -85,13 +36,12 @@ export const registerRespond = <T extends Base>(config: {
 
       const response = await handleRequest({
         contract: config.contract,
-        handlers: config.server,
-        name: rpcName ?? '',
+        server: config.server,
+        name,
         request,
         sessionId,
         clientSessionId,
       })
-
       if (!response) return null
 
       if (!maybeSessionId) {
@@ -103,4 +53,54 @@ export const registerRespond = <T extends Base>(config: {
       return new Response(JSON.stringify({ error: String(error) }), { status: 500 })
     }
   })
+}
+
+const handleRequest = async (input: {
+  contract: Contract<any>
+  server: Server<any>
+  name: string
+  request: Request
+  sessionId: SessionId
+  clientSessionId: ClientSessionId
+}) => {
+  try {
+    const endpointConfig = input.contract[input.name]
+
+    if (!endpointConfig) return null
+
+    const handler = input.server[input.name]
+
+    if (typeof handler !== 'function') return null
+
+    const requestData = await input.request.json()
+
+    const parsedInput = endpointConfig.input.parse(requestData)
+
+    if (isErr(parsedInput)) {
+      return new Response(JSON.stringify({ error: parsedInput.error }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const outputData = await handler(parsedInput.value, {
+      sessionId: input.sessionId,
+      clientSessionId: input.clientSessionId,
+    })
+    const parsedOutput = endpointConfig.output.parse(outputData)
+
+    if (isErr(parsedOutput)) {
+      return new Response(JSON.stringify({ error: parsedOutput.error }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    return new Response(JSON.stringify(parsedOutput.value), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  } catch (error) {
+    return new Response(JSON.stringify({ error: String(error) }), { status: 400 })
+  }
 }
