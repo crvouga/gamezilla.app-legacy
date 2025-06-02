@@ -1,4 +1,3 @@
-import { call, takeEvery } from 'typed-redux-saga'
 import { EventSourced } from '~/@/event-sourced'
 import { isErr, unwrapOr } from '~/@/result'
 import { RPC } from '~/@/rpc'
@@ -35,13 +34,13 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
   })
 }
 
-const saga = function* (input: { ctx: BackendCtxModule }) {
+const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   const ctx = input.ctx
 
-  const msgSpaceChan = Sub.chan(ctx.topic.msgSpace.subAll((c) => c))
+  const msgSpaceChan = ctx.topic.msgSpace.subAll((c) => c)
 
-  yield takeEvery(msgSpaceChan, function* (c) {
-    const updated = yield* call(ctx.spacesCore.update, c)
+  Sub.takeEvery(s, msgSpaceChan, async (c) => {
+    const updated = await ctx.spacesCore.update(c)
 
     if (isErr(updated)) {
       ctx.logger.error(updated.error)
@@ -51,5 +50,5 @@ const saga = function* (input: { ctx: BackendCtxModule }) {
 
 export const SyncBackend = {
   rpc,
-  saga,
+  worker,
 }

@@ -1,4 +1,3 @@
-import { fork } from 'typed-redux-saga'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { GamesBackend } from '../game/games/backend'
 import { GamesBackendCtxModule } from './types'
@@ -11,11 +10,11 @@ const initCtx = (input: { ctx: SpaceBackendCtx }): GamesBackendCtxModule => {
   }
 }
 
-const saga = function* (input: { ctx: GamesBackendCtxModule }) {
-  yield fork(GamesBackend.saga, input)
+const worker = async (s: AbortSignal, input: { ctx: GamesBackendCtxModule }) => {
+  GamesBackend.worker(s, input)
 }
 
 export const GameBackend = {
   initCtx,
-  saga,
+  worker,
 }

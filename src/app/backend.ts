@@ -1,4 +1,3 @@
-import { fork } from 'redux-saga/effects'
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
 import { allowCORS } from '~/@/http-server/cors'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
@@ -132,7 +131,7 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
   })
 }
 
-const saga = function* (input: { ctx: BackendCtxModule }) {
+const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   RPC.registerRespond({
     httpServer: input.ctx.httpServer,
     contract: AppTypes.rpcContract,
@@ -153,14 +152,14 @@ const saga = function* (input: { ctx: BackendCtxModule }) {
 
   input.ctx.httpServer.start(CONFIG_BACKEND.SERVER_PORT!)
 
-  yield fork(WireBackend.saga, input)
-  yield fork(AuthBackend.saga, input)
-  yield fork(SpacesBackend.saga, input)
-  yield fork(ProfileBackend.saga, input)
+  WireBackend.worker(s, input)
+  AuthBackend.worker(s, input)
+  SpacesBackend.worker(s, input)
+  ProfileBackend.worker(s, input)
 }
 
 export const AppBackend = {
   initCtx,
   rpc,
-  saga,
+  worker,
 }

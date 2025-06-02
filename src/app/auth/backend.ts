@@ -14,10 +14,10 @@ const rpc = (input: { ctx: AuthBackendCtx }) => {
   }
 }
 
-const saga = function* (_input: { ctx: AuthBackendCtx }) {}
+const worker = async (_s: AbortSignal, _input: { ctx: AuthBackendCtx }) => {}
 
 export const AuthBackend = {
   rpc,
   initCtx,
-  saga,
+  worker,
 }

@@ -1,11 +1,10 @@
-import { fork } from 'typed-redux-saga'
 import { RPC } from '~/@/rpc'
 import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
 import { AppBackendCtxBase } from '../@/backend/ctx'
-import { SpacesCoreAsync } from './spaces-core/spaces-core-async'
 import { GameBackend } from './game/backend'
 import { ListSpacesBackend } from './list-spaces/backend'
+import { SpacesCoreAsync } from './spaces-core/spaces-core-async'
 import { SyncBackend } from './sync/backend'
 import { type BackendCtxModule, rpcContract, topicContract } from './types'
 
@@ -28,9 +27,9 @@ const initCtx = async (input: {
   }
 }
 
-const saga = function* (input: { ctx: BackendCtxModule }) {
-  yield fork(SyncBackend.saga, input)
-  yield fork(GameBackend.saga, input)
+const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
+  SyncBackend.worker(s, input)
+  GameBackend.worker(s, input)
 }
 
 const rpc = (input: { ctx: BackendCtxModule }) => {
@@ -42,6 +41,6 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
 
 export const SpacesBackend = {
   initCtx,
-  saga,
+  worker,
   rpc,
 }

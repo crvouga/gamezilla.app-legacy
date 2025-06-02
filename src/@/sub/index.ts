@@ -1,5 +1,3 @@
-import { eventChannel, TakeableChannel } from 'redux-saga'
-
 export type Sub<Msg> = {
   sub: (subscriber: (msg: Msg) => Promise<unknown> | unknown) => () => void
 }
@@ -36,10 +34,6 @@ const takeEvery = <A>(abortSignal: AbortSignal, sub: Sub<A>, callback: (a: A) =>
       once: true,
     },
   )
-}
-
-const chan = <Msg extends {} | null>(sub: Sub<Msg>): TakeableChannel<Msg> => {
-  return eventChannel<Msg>((emit) => sub.sub(emit))
 }
 
 const where = <A, B extends A>(sub: Sub<A>, guard: (msg: A) => msg is B): Sub<B> => {
@@ -124,7 +118,6 @@ export const Sub = {
   deduplicate,
   none,
   where,
-  chan,
   create,
   takeEvery,
 }

@@ -11,9 +11,9 @@ const initCtx = (input: { ctx: SpaceBackendCtx }): FlowBackendCtx => {
   }
 }
 
-const saga = function* (_input: { ctx: FlowBackendCtx }) {}
+const worker = async (_s: AbortSignal, _input: { ctx: FlowBackendCtx }) => {}
 
 export const FlowBackend = {
   initCtx,
-  saga,
+  worker,
 }
