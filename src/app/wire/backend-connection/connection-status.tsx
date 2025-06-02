@@ -11,7 +11,7 @@ export type BackendConnectionStatus =
   | { t: 'connecting' }
 
 const fromModel = (model: Model): BackendConnectionStatus => {
-  const ping = CappedOrderedDict.newest(model.pings)
+  const ping = CappedOrderedDict.valuesNewestFirst(model.pings).find((ping) => ping.pongAt)
 
   if (!ping) return { t: 'connecting' }
 
