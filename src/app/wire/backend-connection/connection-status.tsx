@@ -11,20 +11,16 @@ export type BackendConnectionStatus =
   | { t: 'connecting' }
 
 const fromModel = (model: Model): BackendConnectionStatus => {
-  const latestPing = CappedOrderedDict.valuesNewestFirst(model.pings).find((ping) => Boolean(ping.pongAt))
+  const ping = CappedOrderedDict.newest(model.pings)
 
-  if (!latestPing) {
-    return { t: 'connecting' }
-  }
+  if (!ping) return { t: 'connecting' }
 
-  if (!latestPing.pongAt) {
-    return { t: 'connecting' }
-  }
+  if (!ping.pongAt) return { t: 'connecting' }
 
   return {
     t: 'connected',
     averagePing: toAveragePing(model),
-    latestPing: Posix.diff(latestPing.pingAt, latestPing.pongAt),
+    latestPing: Posix.diff(ping.pingAt, ping.pongAt),
   }
 }
 

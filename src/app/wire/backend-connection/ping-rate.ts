@@ -7,7 +7,7 @@ export const toPingRate = (model: Model): TimeSpan => {
 
   switch (status.t) {
     case 'connected': {
-      return TimeSpan.seconds(10)
+      return TimeSpan.seconds(1)
     }
     case 'connecting': {
       return TimeSpan.seconds(1)

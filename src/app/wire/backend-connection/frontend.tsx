@@ -63,11 +63,8 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const pings: FrontendModule['subscriptions'] = (input) => {
-  return Time.interval(
-    'pings',
-    toPingRate(input.model),
-    (now): MsgFrontend => ({ t: 'ping', now, pingId: PingId.generate() }),
-  )
+  const pingRate = toPingRate(input.model)
+  return Time.interval('pings', pingRate, (now): MsgFrontend => ({ t: 'ping', now, pingId: PingId.generate() }))
 }
 
 const pongs: FrontendModule['subscriptions'] = (input) => {

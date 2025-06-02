@@ -7,6 +7,8 @@ import type { IKeyValueDb } from './interface'
 import { Logger } from '../logger'
 import { TimeSpan } from '../time/time-span'
 
+const MAX_LEN = 1000
+
 const Row = s.obj({
   id: s.str(),
   value: s.str(),
@@ -52,7 +54,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
           case 'err': {
             const errorStr = parsed.error.map((e) => e.message).join(', ')
 
-            logger.error(`get: not a value: ${key} ${errorStr}`)
+            logger.error(`get: not a value: ${key} ${errorStr.slice(0, MAX_LEN)}`)
 
             return Err(errorStr)
           }
@@ -62,7 +64,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
         }
       } catch (e) {
         const errorStr = `Caught error: get: ${String(e)}`
-        logger.error(errorStr)
+        logger.error(errorStr.slice(0, MAX_LEN))
 
         return Err(errorStr)
       }
@@ -107,7 +109,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
           if (isErr(parsed)) {
             const errorStr = JSON.stringify(parsed.error, null, 2)
 
-            logger.error(`get: not a value: ${row.id} ${errorStr}`)
+            logger.error(`get: not a value: ${row.id} ${errorStr.slice(0, MAX_LEN)}`)
 
             continue
           }
@@ -139,7 +141,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
         return Ok(null)
       } catch (e) {
-        logger.error(`set: ${key} ${String(e)}`)
+        logger.error(`set: ${key} ${String(e).slice(0, MAX_LEN)}`)
         return Err(String(e))
       }
     },
@@ -164,7 +166,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
         return Ok(null)
       } catch (e) {
-        logger.error(`setMany: ${String(e)}`)
+        logger.error(`setMany: ${String(e).slice(0, MAX_LEN)}`)
         return Err(String(e))
       }
     },
@@ -181,7 +183,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
         return Result.mapOk(queried, () => null)
       } catch (e) {
-        logger.error(`zap: ${key} ${String(e)}`)
+        logger.error(`zap: ${key} ${String(e).slice(0, MAX_LEN)}`)
         return Err(String(e))
       }
     },
