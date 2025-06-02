@@ -1,5 +1,8 @@
 import { Sub } from '~/@/sub'
 
+/**
+ * A web socket is a connection to a server.
+ */
 const create = (config: { url: string }) => {
   const msgsOpen = Sub.create<{ t: 'opened' }>()
   const msgsClose = Sub.create<{ t: 'closed' }>()

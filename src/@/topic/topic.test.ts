@@ -44,8 +44,8 @@ const Fixture = async () => {
     endpoint,
   })
 
-  const reconnectionRate = TimeSpan.milliseconds(10)
-  const syncSubscriptionRate = TimeSpan.milliseconds(10)
+  const reconnectionRate = TimeSpan.milliseconds(0)
+  const syncSubscriptionRate = TimeSpan.milliseconds(0)
 
   const clientA = Topic.initClient({
     t: 'web-sockets',
@@ -94,7 +94,7 @@ const Fixture = async () => {
   }
 }
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 20))
+const sleep = () => new Promise((resolve) => setTimeout(resolve, 10))
 
 describe.only('Topic', () => {
   it('should work', async () => {

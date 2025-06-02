@@ -137,26 +137,26 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     const closed = await p.race(s, {
       close: (s) => Sub.take(socket.msgsClose, s),
       error: (s) => Sub.take(socket.msgsError, s),
-      senderReciever: (s) => {
-        workerSenderReciever(s, socket)
+      senderReceiver: (s) => {
+        workerSenderReceiver(s, socket)
         return p.neverResolve
       },
     })
 
     if (closed.close) config.logger.warn('connection closed')
     if (closed.error) config.logger.warn('connection error')
-    if (closed.senderReciever) config.logger.warn('sender/reciever error')
+    if (closed.senderReceiver) config.logger.warn('sender/receiver error')
 
     config.logger.info('restarting connection')
   }
 
-  const workerSenderReciever = async (s: AbortSignal, socket: Socket) => {
+  const workerSenderReceiver = async (s: AbortSignal, socket: Socket) => {
     const send = (msg: ToServerMsg) => {
       socket.send(JSON.stringify(msg))
-      config.logger.debug('worker sender reciever send', msg)
+      config.logger.debug('worker sender receiver send', msg)
     }
     workerSender(s, send)
-    workerReciever(s, socket)
+    workerReceiver(s, socket)
     workerSyncTopic(s, send)
     workerSyncTopicName(s, send)
   }
@@ -228,18 +228,17 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     })
   }
 
-  const workerReciever = async (s: AbortSignal, socket: Socket) => {
+  const workerReceiver = async (s: AbortSignal, socket: Socket) => {
     Sub.takeEvery(s, socket.msgsFromServer, (fromServer) => {
       const fromServerParsed = JSON.parse(fromServer) as ToClientMsg
 
       switch (fromServerParsed[0]) {
         case PUB: {
-          config.logger.debug('worker reciever pub', fromServerParsed)
+          config.logger.debug('worker receiver pub', fromServerParsed)
           const topic = toTopic(fromServerParsed[1], fromServerParsed[2])
-          const subcription = subscriptionsByTopic.get(topic)
-          if (!subcription) return
-
-          subcription.pubSub.pub(fromServerParsed[3])
+          const subscription = subscriptionsByTopic.get(topic)
+          if (!subscription) return
+          subscription.pubSub.pub(fromServerParsed[3])
           return
         }
       }
