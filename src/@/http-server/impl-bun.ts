@@ -31,8 +31,8 @@ export const HttpServerBun = <T>(config: Config) => {
           try {
             for (const handler of handlers) {
               const response = await handler(request, httpServer)
+
               if (response) {
-                // return response
                 return allowCORS(request, response)
               }
             }
