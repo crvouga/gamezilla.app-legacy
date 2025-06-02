@@ -147,6 +147,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
   const workerSenderReciever = async (s: AbortSignal, socket: Socket) => {
     const send = (msg: ToServerMsg) => {
       socket.send(JSON.stringify(msg))
+      config.logger.debug('worker sender reciever send', msg)
     }
     workerSender(s, send)
     workerReciever(s, socket)
@@ -156,8 +157,11 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
 
   const workerSyncTopic = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
     const subscribedTopicsServer = new Set<string>()
+    console.log('workerSyncTopic')
     while (true) {
       for (const [topic, { topicName, topicParams, pubSub }] of subscriptionsByTopic.entries()) {
+        // config.logger.debug('worker sync topic', topic)
+
         const isSubbedServer = subscribedTopicsServer.has(topic)
         const isSubbedClient = pubSub.subscriberCount() > 0
 
@@ -183,6 +187,8 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
 
     while (true) {
       for (const [topicName, { pubSub }] of subscriptionsByTopicName.entries()) {
+        config.logger.debug('worker sync topic name', topicName)
+
         const isSubbedServer = subscribedTopicsServer.has(topicName)
         const isSubbedClient = pubSub.subscriberCount() > 0
 
@@ -207,6 +213,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     Sub.takeEvery(s, msgsToServer, (toServer) => {
       switch (toServer[0]) {
         case PUB: {
+          config.logger.debug('worker sender pub', toServer)
           send(toServer)
           return
         }
@@ -220,6 +227,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
 
       switch (fromServerParsed[0]) {
         case PUB: {
+          config.logger.debug('worker reciever pub', fromServerParsed)
           const topic = toTopic(fromServerParsed[1], fromServerParsed[2])
           const subcription = subscriptionsByTopic.get(topic)
           if (!subcription) return

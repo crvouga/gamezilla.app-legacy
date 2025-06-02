@@ -9,13 +9,13 @@ export type Sleep = (timeSpan: TimeSpan, signal?: AbortSignal) => Promise<unknow
 export const sleep: Sleep = (timeSpan, signal) => {
   const ms = timeSpan ? TimeSpan.toMilliseconds(timeSpan) : 0
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const timeoutId = setTimeout(resolve, ms)
 
     const onAbort = () => {
       clearTimeout(timeoutId)
       signal?.removeEventListener('abort', onAbort)
-      reject(new Error('Sleep aborted'))
+      resolve(null)
     }
 
     if (signal) {

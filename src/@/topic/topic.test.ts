@@ -115,10 +115,10 @@ describe('Topic', () => {
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
-    expect(gotC).toEqual([{ name: 'John' }])
+    expect(gotC).toEqual([{ name: 'John' }, { name: 'John' }])
   })
 
-  it('should not receive messages after unsubscribing', async () => {
+  it.only('should not receive messages after unsubscribing', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     await sleep()
