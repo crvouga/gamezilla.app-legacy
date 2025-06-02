@@ -45,8 +45,9 @@ const cancelTimeout = (timeoutId: string | number): Eff => {
 
 const intervals = new Map<string, PubSub<Posix>>()
 
-const toIntervalKey = (intervalId: string, timeSpan: TimeSpan) => {
-  return `${intervalId}-${TimeSpan.toMilliseconds(timeSpan)}`
+const toIntervalKey = (intervalId: string, _timeSpan: TimeSpan) => {
+  return intervalId
+  // return `${intervalId}-${TimeSpan.toMilliseconds(timeSpan)}`
 }
 
 const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {

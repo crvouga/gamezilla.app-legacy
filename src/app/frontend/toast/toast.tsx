@@ -7,7 +7,6 @@ import { TimeSpan } from '~/@/time/time-span'
 import { cn } from '~/@/ui/cn'
 import { IconXMark } from '~/@/ui/icon/icon-x-mark'
 import { PAPER_CLASS_NAME } from '~/@/ui/paper'
-import { Show } from '~/@/ui/show'
 import { Transition } from '~/@/ui/transition'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
@@ -133,10 +132,9 @@ export const subscriptions: Module['subscriptions'] = ({ model }) => {
 export const View: Module['View'] = (input) => {
   return (
     <Transition mode='out-in' id='toast-root' onEnter={onEnter} onExit={onExit}>
-      <Show
-        when={() => input.model.toast}
-        render={(toast) => <Toast key={toast.toastId} ctx={input.ctx} toast={toast} dispatch={input.dispatch} />}
-      />
+      {input.model.toast && (
+        <Toast key={input.model.toast.toastId} ctx={input.ctx} toast={input.model.toast} dispatch={input.dispatch} />
+      )}
     </Transition>
   )
 }

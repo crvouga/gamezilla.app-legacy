@@ -22,7 +22,9 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   }))
 
   Sub.takeEvery(s, pings, (ping) => {
-    input.ctx.topic.pong.pub(ping.clientSessionId, ping)
+    input.ctx.topic.pong.pub(ping.clientSessionId, {
+      pingId: ping.pingId,
+    })
   })
 }
 

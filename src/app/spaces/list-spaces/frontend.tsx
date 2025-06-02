@@ -35,15 +35,15 @@ const update: SpaceFrontendModule['update'] = (input) => {
       }
     }
 
-    case 'list-spaces.time-passed': {
-      return {
-        model: input.model,
-        async eff(dispatch) {
-          const spaces = await input.ctx.rpc['spaces.list-spaces.list']({ pagination: { limit: 100, offset: 0 } })
-          dispatch({ t: 'list-spaces.list-spaces-response', spaces })
-        },
-      }
-    }
+    // case 'list-spaces.time-passed': {
+    //   return {
+    //     model: input.model,
+    //     async eff(dispatch) {
+    //       const spaces = await input.ctx.rpc['spaces.list-spaces.list']({ pagination: { limit: 100, offset: 0 } })
+    //       dispatch({ t: 'list-spaces.list-spaces-response', spaces })
+    //     },
+    //   }
+    // }
   }
 
   if (ScreenChangedEvt.is(input.msgIn)) {
