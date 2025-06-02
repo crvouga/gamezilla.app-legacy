@@ -2,7 +2,8 @@ import * as http from 'node:http'
 import { Logger, type ILogger } from '~/@/logger'
 import { Sub } from '../sub'
 import { Posix } from '../time/posix'
-import { HttpServerEvent, type IHttpServer, type Respond } from './interface'
+import { HttpServerEvent, Middleware, type IHttpServer, type Respond } from './interface'
+import { createRespond } from './respond'
 
 export type Config = {
   t: 'node'
@@ -14,9 +15,12 @@ export const HttpServerNode = (
   t: 'node'
 } => {
   const logger = Logger.prefix('node', config.logger)
-  const httpServer = new http.Server()
-  const handlers: Respond[] = []
+  const server = new http.Server()
+  const responds: Respond[] = []
+  const middlewares: Middleware[] = []
   const events = Sub.create<HttpServerEvent>()
+
+  const respond = createRespond({ server, middlewares, responds })
 
   const respondNode = async (req: http.IncomingMessage, res: http.ServerResponse) => {
     const request = await incomingMessageToFetchRequest(req)
@@ -26,19 +30,8 @@ export const HttpServerNode = (
     }
   }
 
-  const respond = async (request: Request): Promise<Response> => {
-    for (const handler of handlers) {
-      const response = await handler(request, httpServer)
-      if (response) {
-        return response
-      }
-    }
-
-    return new Response('Not found', { status: 404 })
-  }
-
   const start = async (port: number) => {
-    httpServer.listen(port, () => {
+    server.listen(port, () => {
       logger.info(`Listening on port ${port}`)
       events.pub({
         t: 'started',
@@ -48,18 +41,22 @@ export const HttpServerNode = (
       })
     })
 
-    httpServer.on('request', respondNode)
+    server.on('request', respondNode)
   }
 
   const registerRespond = (handler: Respond) => {
-    handlers.push(handler)
+    responds.push(handler)
   }
 
   const stop = async () => {
-    await new Promise((resolve) => httpServer.close(resolve))
+    await new Promise((resolve) => server.close(resolve))
     events.pub({
       t: 'stopped',
     })
+  }
+
+  const registerMiddleware = (middleware: Middleware) => {
+    middlewares.push(middleware)
   }
 
   return {
@@ -67,6 +64,7 @@ export const HttpServerNode = (
     start,
     stop,
     registerRespond,
+    registerMiddleware,
     events,
   }
 }

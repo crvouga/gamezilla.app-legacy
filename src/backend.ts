@@ -11,8 +11,6 @@ const main = async () => {
     yield fork(AppBackend.saga, { ctx })
   })
 
-  ctx.httpServer.start(CONFIG_BACKEND.SERVER_PORT!)
-
   ctx.logger.info({ ...CONFIG_SHARED, ...CONFIG_BACKEND })
 }
 

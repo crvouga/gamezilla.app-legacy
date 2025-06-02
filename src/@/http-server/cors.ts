@@ -1,17 +1,14 @@
-export const allowCORS = (request: Request, response: Response) => {
+export const allowCORS = (request: Request, response: Response): Response => {
   const origin = request.headers.get('Origin')
 
-  const headers = new Headers()
-  for (const [key, value] of response.headers.entries()) {
-    headers.set(key, value)
-  }
+  const headers = new Headers(response.headers)
 
   if (origin) {
     headers.set('Access-Control-Allow-Origin', origin)
     headers.set('Access-Control-Allow-Credentials', 'true')
     headers.set(
       'Access-Control-Allow-Headers',
-      request.headers.get('Access-Control-Request-Headers') ?? 'Content-Type, Authorization',
+      headers.get('Access-Control-Request-Headers') ?? 'Content-Type, Authorization',
     )
     headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD')
   }
@@ -21,9 +18,5 @@ export const allowCORS = (request: Request, response: Response) => {
     return new Response(null, { status: 204, headers })
   }
 
-  return new Response(response.body, {
-    status: response.status,
-    statusText: response.statusText,
-    headers,
-  })
+  return new Response(response.body, { status: response.status, headers, statusText: response.statusText })
 }

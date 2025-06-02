@@ -13,20 +13,9 @@ export const registerRespond = <T extends Base>(config: {
 }) => {
   config.httpServer.registerRespond(async (request) => {
     try {
-      const url = new URL(request.url)
+      const rpcName = new URL(request.url).searchParams.get('rpc-name')
 
-      if (url.pathname !== '/rpc') {
-        return null
-      }
-
-      const name = url.searchParams.get('rpc-name')
-
-      if (!name) {
-        return new Response(JSON.stringify({ error: 'rpc-name is required' }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        })
-      }
+      if (!rpcName) return null
 
       const maybeSessionId = SessionIdHttp.fromRequest(request)
       const sessionId = maybeSessionId ?? SessionId.generate()
@@ -37,7 +26,7 @@ export const registerRespond = <T extends Base>(config: {
       const response = await handleRequest({
         contract: config.contract,
         server: config.server,
-        name,
+        rpcName,
         request,
         sessionId,
         clientSessionId,
@@ -58,17 +47,17 @@ export const registerRespond = <T extends Base>(config: {
 const handleRequest = async (input: {
   contract: Contract<any>
   server: Server<any>
-  name: string
+  rpcName: string
   request: Request
   sessionId: SessionId
   clientSessionId: ClientSessionId
 }) => {
   try {
-    const endpointConfig = input.contract[input.name]
+    const endpointConfig = input.contract[input.rpcName]
 
     if (!endpointConfig) return null
 
-    const handler = input.server[input.name]
+    const handler = input.server[input.rpcName]
 
     if (typeof handler !== 'function') return null
 

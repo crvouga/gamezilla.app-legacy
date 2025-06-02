@@ -1,5 +1,6 @@
 import { fork } from 'redux-saga/effects'
 import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
+import { allowCORS } from '~/@/http-server/cors'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb } from '~/@/key-value-db'
 import { Logger } from '~/@/logger'
@@ -60,6 +61,11 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     logger,
   })
 
+  httpServer.registerMiddleware(async (request, next) => {
+    const response = await next(request)
+    return allowCORS(request, response)
+  })
+
   const pubSub = await PubSubTopicBased({ t: 'noop' })
 
   const topic = Topic.initServer({
@@ -67,7 +73,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     contract: AppTypes.topicContract,
     endpoint: '/topic',
     httpServer,
-    logger: Logger({ t: 'noop' }),
+    logger,
     isProd: CONFIG_SHARED.IS_PROD,
   })
 
@@ -112,21 +118,6 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     topic,
   }
 
-  RPC.registerRespond({
-    httpServer,
-    contract: AppTypes.rpcContract,
-    server: AppBackend.rpc({ ctx }),
-  })
-
-  PowerSyncBackendApp.registerRespond({ ctx, httpServer: ctx.httpServer })
-
-  httpServer.registerRespond(() => {
-    return new Response('Hello from gamezilla.app backend', {
-      status: 200,
-      headers: { 'Content-Type': 'text/plain' },
-    })
-  })
-
   return ctx
 }
 
@@ -139,6 +130,26 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
 }
 
 const saga = function* (input: { ctx: BackendCtxModule }) {
+  RPC.registerRespond({
+    httpServer: input.ctx.httpServer,
+    contract: AppTypes.rpcContract,
+    server: AppBackend.rpc(input),
+  })
+
+  PowerSyncBackendApp.registerRespond({
+    ctx: input.ctx,
+    httpServer: input.ctx.httpServer,
+  })
+
+  input.ctx.httpServer.registerRespond(() => {
+    return new Response('Hello from gamezilla.app backend', {
+      status: 200,
+      headers: { 'Content-Type': 'text/plain' },
+    })
+  })
+
+  input.ctx.httpServer.start(CONFIG_BACKEND.SERVER_PORT!)
+
   yield fork(WireBackend.saga, input)
   yield fork(AuthBackend.saga, input)
   yield fork(SpacesBackend.saga, input)
