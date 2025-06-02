@@ -1,14 +1,12 @@
-import { withEventId } from '~/@/event-sourced/event'
 import { Ok, RemoteResult, isLoading } from '~/@/result'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconDeleteForever } from '~/@/ui/icon/icon-delete-forever'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-
-import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
 import { RemovePuzzlesCmd } from '../../../../@/frontend/remove-puzzles-cmd'
 import type { FrontendModule } from '../../../types'
 
@@ -66,7 +64,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'delete-forever.db-zapped-puzzle': {
       return {
         model: { ...input.model, puzzleDeleteForeverRequest: input.msg.deleted },
-        msgSpace: [withEventId({ ...input.msg, t: 'user-deleted-puzzle' })],
+        msgSpace: [{ ...input.msg, t: 'user-deleted-puzzle' }],
       }
     }
 

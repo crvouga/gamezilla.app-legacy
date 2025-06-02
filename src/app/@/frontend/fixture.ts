@@ -1,4 +1,4 @@
-import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
+import { dbConnSqlNoop } from '~/@/sql-db/impl'
 import { HttpClient } from '~/@/http-client'
 import { loggerNoop } from '~/@/logger/impl-noop'
 import { PhoneNumber } from '~/@/phone-number'

@@ -1,4 +1,4 @@
-import type { IDbConnSql } from '~/@/db-conn-sql'
+import type { SqlDb } from '~/@/sql-db'
 import type { ILogger } from '~/@/logger'
 import { s } from '~/@/schema'
 import { Pagination } from '~/@/query/query'
@@ -14,7 +14,7 @@ import { Row } from './sql/row'
 export type Config = {
   t: 'db-conn-sql'
   logger: ILogger
-  dbConnSql: IDbConnSql
+  dbConnSql: SqlDb
 }
 
 export const PuzzleDb = (config: Config): IPuzzleDb => {

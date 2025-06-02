@@ -14,7 +14,7 @@ export type DbConnSqlQueryInput<TRow> = {
   vars: Sql.Vars
 }
 
-export type IDbConnSql = {
+export type SqlDb = {
   query: <TRow>(input: DbConnSqlQueryInput<TRow>) => Promise<Result<string, TRow[]>>
   sub: <TRow>(input: DbConnSqlQueryInput<TRow>) => Sub<TRow[]>
   // execute: (rawSql: string, variables: Sql.Vars) => Promise<Result<string, null>>

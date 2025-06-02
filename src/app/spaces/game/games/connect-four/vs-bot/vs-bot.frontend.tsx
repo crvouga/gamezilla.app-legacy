@@ -1,4 +1,4 @@
-import { type WithEventId, withEventId } from '~/@/event-sourced/event'
+import { type WithEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
@@ -189,10 +189,9 @@ const updateFromMsg =
       }
 
       default: {
-        const msgSpace = withEventId(msg)
         return {
           model,
-          msgSpace: [msgSpace],
+          msgSpace: [msg],
         }
       }
     }

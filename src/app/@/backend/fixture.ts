@@ -1,6 +1,6 @@
-import { type IDbConnSql } from '~/@/db-conn-sql'
-import { DbConnSql } from '~/@/db-conn-sql/backend/impl'
-import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
+import { type SqlDb } from '~/@/sql-db'
+import { DbConnSql } from '~/@/sql-db/backend/impl'
+import { dbConnSqlNoop } from '~/@/sql-db/impl'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { ILogger } from '~/@/logger'
@@ -26,13 +26,13 @@ export type IFixtureAppBackendUnit = {
   runtime: IRuntime
   logger: ILogger
   pubSubTopicBased: IPubSubTopicBased
-  dbConnSqlite: IDbConnSql
+  dbConnSqlite: SqlDb
   keyValueDbHashMap: IKeyValueDb
 }
 
 export type IFixtureAppBackendIntegration = Omit<IFixtureAppBackendUnit, 't'> & {
   t: 'integration'
-  dbConnPostgres: IDbConnSql
+  dbConnPostgres: SqlDb
   // dbConnPowersyncClient: IDbConnSql
   keyValueDbRedis: IKeyValueDb
   keyValueDbPostgres: IKeyValueDb

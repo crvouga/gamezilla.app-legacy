@@ -1,4 +1,4 @@
-import type { IDbConnSql } from '~/@/db-conn-sql'
+import type { SqlDb } from '~/@/sql-db'
 import { ILogger, Logger } from '~/@/logger'
 import { s } from '~/@/schema'
 import { Result, unwrapOr } from '~/@/result'
@@ -35,7 +35,7 @@ const rowToUserSession = (row: Row): UserSession => ({
 
 export type Config = {
   t: 'sql'
-  dbConnSql: IDbConnSql
+  dbConnSql: SqlDb
   logger: ILogger
 }
 

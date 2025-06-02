@@ -2,7 +2,7 @@ import { Ok, Result, isErr } from '~/@/result'
 import { s } from '~/@/schema'
 import { Hash } from '~/@/hashing'
 import { Sql } from '~/@/sql'
-import { IDbConnSql } from '~/@/db-conn-sql'
+import { SqlDb } from '~/@/sql-db'
 import { Verification } from '../verification'
 import { VerificationId } from '../verification-id'
 import type { IVerificationDb, OrderClause, WhereClause } from './interface'
@@ -21,7 +21,7 @@ type Row = s.Infer<typeof Row>
 
 export type Config = {
   t: 'postgres'
-  dbConnSql: IDbConnSql
+  dbConnSql: SqlDb
 }
 
 export const VerificationDb = (config: Config): IVerificationDb => {

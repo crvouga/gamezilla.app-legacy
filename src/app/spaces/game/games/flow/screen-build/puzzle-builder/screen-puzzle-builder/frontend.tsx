@@ -1,4 +1,3 @@
-import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { IconPen } from '~/@/ui/icon/icon-pen'
 import { IconPlay } from '~/@/ui/icon/icon-play'
@@ -51,16 +50,14 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
     case 'screen-puzzle-builder.got-edit-msg': {
       return {
         model,
-        msgSpace: [withEventId(msg)],
+        msgSpace: [msg],
       }
     }
 
     case 'screen-puzzle-builder.user-clicked-edit-mode-button': {
       return {
         model,
-        msgSpace: [
-          withEventId({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button', userId: ctx.currentUser.userId }),
-        ],
+        msgSpace: [{ t: 'screen-puzzle-builder.user-clicked-edit-mode-button', userId: ctx.currentUser.userId }],
         msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin)],
       }
     }
@@ -68,9 +65,7 @@ const updateFromMsg: BuilderTypes.FrontendModule['update'] = (input) => {
     case 'screen-puzzle-builder.user-clicked-play-mode-button': {
       return {
         model,
-        msgSpace: [
-          withEventId({ t: 'screen-puzzle-builder.user-clicked-play-mode-button', userId: ctx.currentUser.userId }),
-        ],
+        msgSpace: [{ t: 'screen-puzzle-builder.user-clicked-play-mode-button', userId: ctx.currentUser.userId }],
         msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
       }
     }

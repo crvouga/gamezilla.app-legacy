@@ -1,4 +1,3 @@
-import { withEventId } from '~/@/event-sourced/event'
 import { isErr, RemoteResult, Result } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { IconPlus } from '~/@/ui/icon/icon-plus'
@@ -41,11 +40,11 @@ const update: FrontendModule['update'] = (input) => {
           puzzleCreateRequest: input.msg.result,
         },
         msgSpace: [
-          withEventId({
+          {
             t: 'create-new-puzzle.user-created-puzzle',
             created: input.msg.result,
             userId: input.ctx.currentUser.userId,
-          }),
+          },
         ],
       }
     }

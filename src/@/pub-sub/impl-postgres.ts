@@ -1,11 +1,11 @@
 import { s } from '~/@/schema'
-import type { IDbConnSql } from '../db-conn-sql'
+import type { SqlDb } from '../sql-db'
 import type { ILogger } from '../logger/interface'
 import { IPubSub } from './interface'
 
 export type Config = {
   t: 'postgres'
-  dbConnSql: IDbConnSql
+  dbConnSql: SqlDb
   logger: ILogger
   channel: string
 }

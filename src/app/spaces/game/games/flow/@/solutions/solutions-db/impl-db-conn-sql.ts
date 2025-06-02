@@ -1,4 +1,4 @@
-import { IDbConnSql } from '~/@/db-conn-sql'
+import { SqlDb } from '~/@/sql-db'
 import { Json } from '~/@/json/json'
 import { s } from '~/@/schema'
 import { Err, isErr, Ok, Result, unwrapOr } from '~/@/result'
@@ -10,7 +10,7 @@ import { ISolutionsDb } from './interface'
 
 export type Config = {
   t: 'db-conn-sql'
-  dbConnSql: IDbConnSql
+  dbConnSql: SqlDb
 }
 
 const Row = s.obj({

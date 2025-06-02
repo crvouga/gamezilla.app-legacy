@@ -1,4 +1,3 @@
-import { withEventId } from '~/@/event-sourced/event'
 import { Err, isErr, isLoading, isOk, Loading } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
@@ -89,13 +88,13 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.refreshFeed)],
         msgSpace: [
-          withEventId({
+          {
             t: 'user-edited-puzzle-name',
             edited: input.msg.result,
             puzzleId: puzzleBuilder.puzzle.id,
             newName: input.model.puzzleEditNameDraft,
             userId: input.ctx.currentUser.userId,
-          }),
+          },
         ],
       }
     }

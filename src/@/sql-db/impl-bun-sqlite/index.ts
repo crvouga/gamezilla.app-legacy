@@ -1,56 +1,62 @@
-import postgres from 'postgres'
-import type { s } from '~/@/schema'
 import { Err, Ok } from '~/@/result'
-import { SecretString } from '~/@/secrets/secret-string'
+import type { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
+import type { SqlDb } from '../interface'
 import { Sleep } from '../../promise/sleep'
 import { Sub } from '../../sub'
-import type { IDbConnSql } from '../interface'
+import { Database } from 'bun:sqlite'
+import { BunSqliteFileSystem } from './bun-sqlite-file-system'
 import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {
-  t: 'postgres'
-  databaseUrl: SecretString
+  t: 'bun-sqlite'
+  fileSystem: BunSqliteFileSystem
   logger: ILogger
   simulateLatency?: Sleep
 }
 
-let postgresClient: postgres.Sql<{}>
+let db: Database
 
-export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
-  const logger = Logger.prefix('postgres', config.logger)
-  postgresClient ??= postgres(config.databaseUrl.dangerouslyReadValue())
+export const DbConnSql = async (config: Config): Promise<SqlDb> => {
+  const logger = Logger.prefix('sqlite', config.logger)
+  db ??= new Database(BunSqliteFileSystem.toConnectionString(config.fileSystem))
 
   return {
     sub() {
       return Sub.none()
     },
+
     aggregate: {
-      StringConcat: (column, separator) => `STRING_AGG(${column}, '${separator}')`,
+      StringConcat: (column, separator) => `GROUP_CONCAT(${column}, '${separator}')`,
     },
-    async query({ schema, sql: rawSql, vars: variables }) {
-      const sql = Sql.to(rawSql, variables)
+
+    async query(input) {
+      const sql = Sql.to(input.sql, input.vars)
 
       try {
         const start = process.hrtime.bigint()
 
         await config.simulateLatency?.(TimeSpan.milliseconds(100))
 
-        const rows = await postgresClient.unsafe(sql)
+        const rows = db.query(sql).all()
 
         const end = process.hrtime.bigint()
 
         const durationMs = Number(end - start) / 1e6
         const durationFormatted = `${durationMs.toFixed(2)}ms`
+        logger.debug(
+          `duration=${durationFormatted}\nsql=\n${cleanSql(input.sql)}\vars=${JSON.stringify(input.vars, null, 4).slice(
+            0,
+            500,
+          )}`,
+        )
 
-        logger.debug({ duration: durationFormatted, sql: cleanSql(rawSql), variables: variables })
-
-        const output: s.Infer<typeof schema>[] = []
+        const output: s.Infer<typeof input.schema>[] = []
 
         for (const row of rows) {
-          const parsed = schema.parse(row)
+          const parsed = input.schema.parse(row)
 
           switch (parsed.t) {
             case 'err': {
@@ -69,31 +75,20 @@ export const DbConnSql = async (config: Config): Promise<IDbConnSql> => {
 
         return Ok(output)
       } catch (error) {
-        logger.error({ error: error, sql: sql, variables: variables })
+        logger.error(`${error} sql=${sql}`)
         return Err(`${error} sql=${sql}`)
       }
     },
 
-    async notify(channel, payload) {
-      try {
-        await postgresClient.notify(channel, payload)
-        return Ok(null)
-      } catch (error) {
-        logger.error(`${error} channel=${channel} payload=${payload}`)
-        return Err(String(error))
-      }
+    async notify(channel, _payload) {
+      logger.warn(`SQLite does not support NOTIFY/LISTEN natively. Skipping notify for channel=${channel}`)
+      return Err('NOTIFY/LISTEN is not supported in SQLite')
     },
 
-    async listen(channel, callback) {
-      const listening = await postgresClient.listen(channel, (payload) => {
-        callback({
-          channel: channel,
-          payload: payload,
-        })
-      })
-
+    async listen(channel, _callback) {
+      logger.warn(`SQLite does not support NOTIFY/LISTEN natively. Skipping listen for channel=${channel}`)
       return async () => {
-        await listening.unlisten()
+        logger.warn(`Unlisten operation is not needed for SQLite.`)
       }
     },
   }

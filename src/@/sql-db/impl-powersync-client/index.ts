@@ -3,7 +3,7 @@ import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { PubSub, Sub } from '~/@/sub'
 import { IPowerSyncClient } from '~/service-powersync/frontend/database'
-import { DbConnSqlQueryInput, IDbConnSql } from '../interface'
+import { DbConnSqlQueryInput, SqlDb } from '../interface'
 
 export type Config = {
   t: 'powersync-client'
@@ -11,10 +11,10 @@ export type Config = {
   logger: ILogger
 }
 
-export const DbConnSql = (config: Config): IDbConnSql => {
+export const DbConnSql = (config: Config): SqlDb => {
   const logger = Logger.prefix('powersync', config.logger)
 
-  const query: IDbConnSql['query'] = async (input) => {
+  const query: SqlDb['query'] = async (input) => {
     try {
       const sql = Sql.to(input.sql, input.vars)
       const rows = await config.powerSyncClient.database.getAll?.(sql)
@@ -80,7 +80,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     }
   >()
 
-  const sub: IDbConnSql['sub'] = <TRow>(input: DbConnSqlQueryInput<TRow>) => {
+  const sub: SqlDb['sub'] = <TRow>(input: DbConnSqlQueryInput<TRow>) => {
     const sql = Sql.to(input.sql, input.vars)
     const subscriptionKey = sql
       .replaceAll(/\s+/g, ' ')
@@ -153,7 +153,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
   }
 
   const channels = new Map<string, PubSub<string>>()
-  const notify: IDbConnSql['notify'] = async (channel, payload) => {
+  const notify: SqlDb['notify'] = async (channel, payload) => {
     const got = channels.get(channel)
     const chan = got ?? Sub.create<string>()
     channels.set(channel, chan)
@@ -161,7 +161,7 @@ export const DbConnSql = (config: Config): IDbConnSql => {
     return Ok(null)
   }
 
-  const listen: IDbConnSql['listen'] = async (channel, callback) => {
+  const listen: SqlDb['listen'] = async (channel, callback) => {
     const got = channels.get(channel)
     const chan = got ?? Sub.create<string>()
     channels.set(channel, chan)

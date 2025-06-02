@@ -1,19 +1,18 @@
 import { Eff } from '~/@/eff'
 import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
+import { SpaceId } from '~/app/@/data/space-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ExitGameCmd } from '../@/frontend/exit-game-cmd'
 import { SpaceFrontendModule } from '../architecture/space-frontend'
-import { SpacesCore } from '../spaces-core/spaces-core'
 import { Space } from '../spaces-core/space'
-import { MsgSpace } from '../spaces-core/space-msg/space-msg'
+import { SpacesCore } from '../spaces-core/spaces-core'
 import type { MsgFrontend } from '../types'
 import { ScreenNotInGameFrontend } from './frontend/screen-not-in-game'
 import { GamesFrontend } from './games/frontend'
-import { SpaceId } from '~/app/@/data/space-id'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -148,7 +147,7 @@ const updateGame: SpaceFrontendModule['update'] = (input) => {
     model: { ...input.model, games: { ...input.model.games, [spaceId]: gameUpdated.model } },
     msgOut: gameUpdated.msgOut,
     eff: Eff.map(gameUpdated.eff, (c) => ({ t: 'game', c, spaceId })),
-    msgSpace: gameUpdated.msgSpace?.map((c) => withEventId<MsgSpace>({ spaceId, t: 'game', c })),
+    msgSpace: gameUpdated.msgSpace?.map((c) => withEventId({ spaceId, t: 'game', c })),
     msgEvt: [],
   }
 }

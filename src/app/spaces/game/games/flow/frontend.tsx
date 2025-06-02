@@ -1,5 +1,4 @@
 import { Eff } from '~/@/eff'
-import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
 import { IconScrewdriverWrench } from '~/@/ui/icon/icon-screwdriver-wrench'
@@ -215,8 +214,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 const updateFromMsg: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'got-msg-space': {
-      const msgSpace = withEventId(input.msg.c)
-      return { model: input.model, msgSpace: [msgSpace] }
+      return { model: input.model, msgSpace: [input.msg.c] }
     }
 
     default: {

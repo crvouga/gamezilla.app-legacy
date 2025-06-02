@@ -1,4 +1,4 @@
-import { IDbConnSql } from '../db-conn-sql'
+import { SqlDb } from '../sql-db'
 import { ILogger } from '../logger'
 import { sleep } from '../promise/sleep'
 import { TimeSpan } from '../time/time-span'
@@ -6,7 +6,7 @@ import { IPubSubTopicBased } from './interface'
 
 export type Config = {
   t: 'postgres'
-  dbConnSql: IDbConnSql
+  dbConnSql: SqlDb
   logger: ILogger
 }
 

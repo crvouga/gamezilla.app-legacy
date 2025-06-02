@@ -10,7 +10,7 @@ import { Uuid } from '../id/uuid'
 import { KeyValueDb } from './impl'
 import { IKeyValueDb } from './interface'
 import { Logger } from '../logger'
-import { DbConnSql } from '../db-conn-sql/backend/impl'
+import { DbConnSql } from '../sql-db/backend/impl'
 
 type Fixture = {
   name: string

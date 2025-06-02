@@ -1,4 +1,4 @@
-import { IDbConnSql } from '~/@/db-conn-sql'
+import { SqlDb } from '~/@/sql-db'
 import { Hashing } from '~/@/hashing'
 import { ILogger, Logger } from '~/@/logger'
 import { SMS } from '~/@/sms'
@@ -19,7 +19,7 @@ export const VerifySMSFactory = {
   /**
    * Creates an in-house implementation of VerifySMS
    */
-  createInHouse: (config: { logger: ILogger; dbConnSql: IDbConnSql }): IVerifySMS => {
+  createInHouse: (config: { logger: ILogger; dbConnSql: SqlDb }): IVerifySMS => {
     const logger = Logger.prefix('verify-sms', config.logger)
     const hashing = Hashing({ t: 'bun' })
     const sms = SMS({ t: 'fake', logger })
@@ -81,7 +81,7 @@ export const VerifySMSFactory = {
   /**
    * Creates the appropriate VerifySMS implementation based on environment
    */
-  createForEnvironment: (config: { logger: ILogger; env: Env; dbConnSql: IDbConnSql }): IVerifySMS => {
+  createForEnvironment: (config: { logger: ILogger; env: Env; dbConnSql: SqlDb }): IVerifySMS => {
     switch (config.env) {
       case 'prod': {
         return VerifySMSFactory.createTwilio(config)

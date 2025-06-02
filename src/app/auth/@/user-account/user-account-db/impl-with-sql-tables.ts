@@ -1,10 +1,10 @@
-import { IDbConnSql } from '~/@/db-conn-sql'
+import { SqlDb } from '~/@/sql-db'
 import { s } from '~/@/schema'
 import { IUserAccountDb } from './interface'
 
 export type Config = {
   t: 'with-sql-tables'
-  dbConnSql: IDbConnSql
+  dbConnSql: SqlDb
   userAccountDb: IUserAccountDb
 }
 

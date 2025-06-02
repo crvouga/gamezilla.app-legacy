@@ -1,4 +1,3 @@
-import { withEventId } from '~/@/event-sourced/event'
 import { Loading, Ok } from '~/@/result'
 import { IconPlus } from '~/@/ui/icon/icon-plus'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -44,7 +43,7 @@ const update: FrontendModule['update'] = (input) => {
           ...input.model,
           packCreateNewRequest: Ok(null),
         },
-        msgSpace: [withEventId({ ...input.msg, t: 'create-new-pack.user-created-pack' })],
+        msgSpace: [{ ...input.msg, t: 'create-new-pack.user-created-pack' }],
         msgOut: [PlaySoundCmd.init(APP_SOUND.refreshFeed), ShowToastCmd.init(input.ctx.t('flow.pack-created'))],
       }
     }
