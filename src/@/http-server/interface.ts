@@ -9,8 +9,8 @@ export type HttpServerEvent = { t: 'started'; ipAddress: string; port: number; s
 
 export type Middleware = (
   request: Request,
-  next: (request: Request) => MaybePromise<Response>,
-) => MaybePromise<Response>
+  next: (request: Request) => MaybePromise<Response | null | undefined>,
+) => MaybePromise<Response | null | undefined>
 
 export type IHttpServer = {
   start: (port: number) => Promise<void>

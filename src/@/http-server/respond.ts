@@ -1,20 +1,20 @@
 import { Middleware, Respond } from './interface'
 
-export const createRespond = (config: { getServer: () => unknown; middlewares: Middleware[]; responds: Respond[] }) => {
-  const respond = async (request: Request): Promise<Response> => {
-    for (const middleware of config.middlewares) {
-      const response = await middleware(request, respondMain)
+export const createRespond = (middlewares: Middleware[], responds: Respond[]): Respond => {
+  const respond: Respond = async (request: Request, server: unknown) => {
+    for (const middleware of middlewares) {
+      const response = await middleware(request, (request) => respondMain(request, server))
       if (response) {
         return response
       }
     }
-    return respondMain(request)
+    return respondMain(request, server)
   }
 
-  const respondMain = async (request: Request): Promise<Response> => {
+  const respondMain: Respond = async (request: Request, server: unknown) => {
     try {
-      for (const respond of config.responds) {
-        const response = await respond(request, config.getServer())
+      for (const respond of responds) {
+        const response = await respond(request, server)
 
         if (response) {
           return response

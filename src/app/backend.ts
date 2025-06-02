@@ -63,7 +63,10 @@ const initCtx = async (): Promise<BackendCtxModule> => {
 
   httpServer.registerMiddleware(async (request, next) => {
     const response = await next(request)
-    return allowCORS(request, response)
+    if (response) {
+      return allowCORS(request, response)
+    }
+    return response
   })
 
   const pubSub = await PubSubTopicBased({ t: 'noop' })

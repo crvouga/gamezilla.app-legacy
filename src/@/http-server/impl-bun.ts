@@ -21,15 +21,14 @@ export const HttpServerBun = <T>(config: Config) => {
   const base: IHttpServer = {
     events,
     async start(port) {
-      const respond = createRespond({
-        getServer: () => server,
-        middlewares,
-        responds,
-      })
+      const respond = createRespond(middlewares, responds)
 
       server = Bun.serve({
         port: port,
-        fetch: respond,
+        async fetch(request, server) {
+          const response = await respond(request, server)
+          return response ?? undefined
+        },
         websocket: webSocketHandler,
       })
 

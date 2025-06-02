@@ -20,11 +20,11 @@ export const HttpServerNode = (
   const middlewares: Middleware[] = []
   const events = Sub.create<HttpServerEvent>()
 
-  const respond = createRespond({ server, middlewares, responds })
+  const respond = createRespond(middlewares, responds)
 
   const respondNode = async (req: http.IncomingMessage, res: http.ServerResponse) => {
     const request = await incomingMessageToFetchRequest(req)
-    const response = await respond(request)
+    const response = await respond(request, server)
     if (response) {
       await applyFetchResponseToNodeResponse(res, response)
     }
