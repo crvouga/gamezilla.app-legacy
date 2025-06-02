@@ -38,6 +38,7 @@ const create = <Msg>(): PubSub<Msg> => {
     },
     sub(subscriber) {
       subscribers.add(subscriber)
+
       return () => {
         subscribers.delete(subscriber)
       }

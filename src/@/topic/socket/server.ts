@@ -98,7 +98,7 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
 
     if (!subscription) return
 
-    const msgPayload = msg[2]
+    const msgPayload = msg[3]
 
     if (!ws) {
       subscription.pubSub.pub(msgPayload)

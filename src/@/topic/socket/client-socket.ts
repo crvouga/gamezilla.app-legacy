@@ -171,7 +171,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
           const topic = toTopic(fromServerParsed[1], fromServerParsed[2])
           const activeSubscription = subscriptionsByTopic.get(topic)
           if (!activeSubscription) return
-          activeSubscription.pubSub.pub(fromServerParsed[2])
+          activeSubscription.pubSub.pub(fromServerParsed[3])
           return
         }
       }

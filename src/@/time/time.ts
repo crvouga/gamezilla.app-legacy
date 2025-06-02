@@ -45,8 +45,14 @@ const cancelTimeout = (timeoutId: string | number): Eff => {
 
 const intervals = new Map<string, PubSub<Posix>>()
 
+const toIntervalKey = (intervalId: string, timeSpan: TimeSpan) => {
+  return `${intervalId}-${TimeSpan.toMilliseconds(timeSpan)}`
+}
+
 const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
-  const sub = intervals.get(intervalId)
+  const key = toIntervalKey(intervalId, timeSpan)
+
+  const sub = intervals.get(key)
 
   if (sub && sub.subscriberCount() > 0) {
     sub.pub(Posix.now())
@@ -62,7 +68,9 @@ const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
 }
 
 const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: Posix) => Msg): Sub<Msg> => {
-  const sub = intervals.get(intervalId)
+  const key = toIntervalKey(intervalId, timeSpan)
+
+  const sub = intervals.get(key)
 
   if (sub) {
     return Sub.map(sub, () => f(Posix.now()))
@@ -70,7 +78,7 @@ const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: Posix) =
 
   const subNew = Sub.create<Posix>()
 
-  intervals.set(intervalId, subNew)
+  intervals.set(key, subNew)
 
   setTimeout(() => {
     onTimeout(intervalId, timeSpan)

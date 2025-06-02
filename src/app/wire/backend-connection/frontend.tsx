@@ -9,20 +9,15 @@ import { Typography } from '~/@/ui/typography'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { BackendConnectionStatus } from './connection-status'
 import { PingId } from './ping-id'
+import { toPingRate } from './ping-rate'
 import { FrontendModule, initModel, Model, MsgFrontend, PingItem } from './types'
 import { Dot } from './ui'
 
-const init: FrontendModule['init'] = (input) => {
+const init: FrontendModule['init'] = (_input) => {
   const model = initModel()
-  const pingId = PingId.generate()
+
   return {
-    model: {
-      ...model,
-      pings: CappedOrderedDict.add(model.pings, pingId, { pingId, pingAt: input.ctx.now, pongAt: null }),
-    },
-    eff: () => {
-      input.ctx.topic['wire.ping'].pub(null, { pingId })
-    },
+    model: model,
   }
 }
 
@@ -32,19 +27,22 @@ const update: FrontendModule['update'] = (input) => {
   if (!msg) return { model }
 
   switch (msg.t) {
-    case 'wire.backend-connection.ping': {
+    case 'ping': {
+      const pingNew: PingItem = { pingId: msg.pingId, pingAt: msg.now, pongAt: null }
+
+      const pingsNew = CappedOrderedDict.add(model.pings, msg.pingId, pingNew)
+
+      const modelNew: Model = { ...model, pings: pingsNew }
+
       return {
-        model: {
-          ...model,
-          pings: CappedOrderedDict.add(model.pings, msg.pingId, { pingId: msg.pingId, pingAt: msg.now, pongAt: null }),
-        },
+        model: modelNew,
         eff: () => {
           input.ctx.topic['wire.ping'].pub(null, { pingId: msg.pingId })
         },
       }
     }
 
-    case 'wire.backend-connection.pong': {
+    case 'pong': {
       const ping = CappedOrderedDict.get(model.pings, msg.pingId)
 
       if (!ping) return { model }
@@ -53,7 +51,9 @@ const update: FrontendModule['update'] = (input) => {
 
       const pingsNew = CappedOrderedDict.set(model.pings, msg.pingId, pingNew)
 
-      return { model: { ...model, pings: pingsNew } }
+      const modelNew: Model = { ...model, pings: pingsNew }
+
+      return { model: modelNew }
     }
   }
 }
@@ -65,15 +65,15 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 const pings: FrontendModule['subscriptions'] = (input) => {
   return Time.interval(
     'pings',
-    input.model['pingRate'],
-    (now): MsgFrontend => ({ t: 'wire.backend-connection.ping', now, pingId: PingId.generate() }),
+    toPingRate(input.model),
+    (now): MsgFrontend => ({ t: 'ping', now, pingId: PingId.generate() }),
   )
 }
 
 const pongs: FrontendModule['subscriptions'] = (input) => {
   return input.ctx.topic['wire.pong'].sub(
     input.ctx.clientSessionId,
-    (msg): MsgFrontend => ({ t: 'wire.backend-connection.pong', pingId: msg.pingId, now: Posix.now() }),
+    (msg): MsgFrontend => ({ t: 'pong', pingId: msg.pingId, now: Posix.now() }),
   )
 }
 
