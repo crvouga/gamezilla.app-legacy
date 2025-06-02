@@ -16,7 +16,7 @@ import { PackName } from '../pack-name'
 import type { IPackDb } from './interface'
 
 export type Config = {
-  t: 'db-conn-sql'
+  t: 'sql-db'
   dbConnSql: ISqlDb
   logger: ILogger
 }

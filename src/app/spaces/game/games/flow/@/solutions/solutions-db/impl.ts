@@ -1,4 +1,4 @@
-import * as ImplSqlDb from './impl-db-conn-sql'
+import * as ImplSqlDb from './impl-sql-db'
 import * as ImplKeyValueDb from './impl-key-value-db'
 import { ISolutionsDb } from './interface'
 import * as ImplWithSqlTables from './with-sql-tables'
@@ -10,7 +10,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
     case 'key-value-db': {
       return ImplKeyValueDb.SolutionsDb(config)
     }
-    case 'db-conn-sql': {
+    case 'sql-db': {
       return ImplSqlDb.SolutionsDb(config)
     }
     case 'with-sql-tables': {

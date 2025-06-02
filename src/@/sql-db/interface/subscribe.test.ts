@@ -58,7 +58,7 @@ const Row = s.obj({ id: s.num() })
 
 type Row = s.Infer<typeof Row>
 
-describe.skip('db-conn-sql subscribe', () => {
+describe.skip('sql-db subscribe', () => {
   test('subscribe', async () => {
     for (const f of await Fixtures()) {
       await f.dbConnSql.query({ schema: s.unknown, sql: `DROP TABLE foo`, vars: {} }).catch(() => {})

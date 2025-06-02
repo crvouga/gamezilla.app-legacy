@@ -1,7 +1,7 @@
 import { Logger } from '../logger'
 import * as ImplHashMap from './impl-hash-map'
 import * as ImplInMemory from './impl-in-memory'
-import * as ImplSqlDb from './impl-db-conn-sql'
+import * as ImplSqlDb from './impl-sql-db'
 import * as ImplRedis from './impl-redis'
 import type { IKeyValueDb } from './interface'
 import * as WithCache from './with-cache'
@@ -36,7 +36,7 @@ export const KeyValueDb = async (configInput: Config): Promise<IKeyValueDb> => {
       return ImplRedis.KeyValueDb(config)
     }
 
-    case 'db-conn-sql': {
+    case 'sql-db': {
       return ImplSqlDb.KeyValueDb(config)
     }
 

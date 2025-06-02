@@ -9,7 +9,7 @@ import { Solutions } from '../solutions'
 import { ISolutionsDb } from './interface'
 
 export type Config = {
-  t: 'db-conn-sql'
+  t: 'sql-db'
   dbConnSql: ISqlDb
 }
 

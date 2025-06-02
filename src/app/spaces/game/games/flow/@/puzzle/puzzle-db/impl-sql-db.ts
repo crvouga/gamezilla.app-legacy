@@ -12,7 +12,7 @@ import { OrderClause, PuzzleQuery, WhereClause } from './query'
 import { Row } from './sql/row'
 
 export type Config = {
-  t: 'db-conn-sql'
+  t: 'sql-db'
   logger: ILogger
   dbConnSql: ISqlDb
 }

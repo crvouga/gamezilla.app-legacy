@@ -40,7 +40,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
   })
 
   const keyValueDb = await KeyValueDb({
-    t: 'db-conn-sql',
+    t: 'sql-db',
     dbConnSql,
     logger,
   })

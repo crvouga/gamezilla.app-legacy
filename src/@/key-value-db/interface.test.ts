@@ -110,7 +110,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
       t: 'with-sql-tables',
       dbConnSql: dbConnSqlSqlite,
       keyValueDb: await KeyValueDb({
-        t: 'db-conn-sql',
+        t: 'sql-db',
         dbConnSql: dbConnSqlSqlite,
         logger,
       }),
@@ -131,7 +131,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
     fixtures.push({
       name: 'postgres',
       keyValueDb: await KeyValueDb({
-        t: 'db-conn-sql',
+        t: 'sql-db',
         dbConnSql: await SqlDb({
           t: 'postgres',
           logger,

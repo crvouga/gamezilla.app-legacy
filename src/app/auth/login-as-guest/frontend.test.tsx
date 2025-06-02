@@ -1,5 +1,5 @@
 // import { describe, expect, it } from 'bun:test'
-// import { dbConnSqlNoop } from '~/@/db-conn-sql/impl'
+// import { dbConnSqlNoop } from '~/@/sql-db/impl'
 // import { loggerNoop } from '~/@/logger/impl-noop'
 // import { isRequesting, isResponseErr, isResponseOk } from '~/@/request-response/request-response'
 // import { Err, Ok } from '~/@/result'

@@ -15,13 +15,13 @@ const Row = s.obj({
 })
 
 export type Config = {
-  t: 'db-conn-sql'
+  t: 'sql-db'
   dbConnSql: ISqlDb
   logger: ILogger
 }
 
 export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
-  const logger = Logger.prefix('db-conn-sql', config.logger)
+  const logger = Logger.prefix('sql-db', config.logger)
   return {
     async get(key, schema) {
       try {

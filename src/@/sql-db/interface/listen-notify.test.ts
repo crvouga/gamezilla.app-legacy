@@ -53,7 +53,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe('db-conn-sql', () => {
+describe('sql-db', () => {
   test('listen, notify', async () => {
     for (const f of await Fixtures()) {
       const channel = 'foo'

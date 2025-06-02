@@ -6,8 +6,8 @@ import { PuzzleDb } from './@/puzzle/puzzle-db'
 const initCtx = (input: { ctx: SpaceBackendCtx }): FlowBackendCtx => {
   return {
     ...input.ctx,
-    flowPuzzleDb: PuzzleDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: input.ctx.logger }),
-    flowPackDb: PackDb({ t: 'db-conn-sql', dbConnSql: input.ctx.dbConnSql, logger: input.ctx.logger }),
+    flowPuzzleDb: PuzzleDb({ t: 'sql-db', dbConnSql: input.ctx.dbConnSql, logger: input.ctx.logger }),
+    flowPackDb: PackDb({ t: 'sql-db', dbConnSql: input.ctx.dbConnSql, logger: input.ctx.logger }),
   }
 }
 

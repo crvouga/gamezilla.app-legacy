@@ -117,13 +117,13 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   })
 
   const keyValueDbPostgres = await KeyValueDb({
-    t: 'db-conn-sql',
+    t: 'sql-db',
     dbConnSql: dbConnPostgres,
     logger,
   })
 
   const keyValueDbSqlite = await KeyValueDb({
-    t: 'db-conn-sql',
+    t: 'sql-db',
     dbConnSql: dbConnSqlite,
     logger,
   })
