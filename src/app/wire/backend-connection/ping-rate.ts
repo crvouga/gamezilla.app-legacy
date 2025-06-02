@@ -2,7 +2,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { BackendConnectionStatus } from './connection-status'
 import { Model } from './types'
 
-const PING_RATE = TimeSpan.seconds(10)
+const PING_RATE = TimeSpan.seconds(1)
 
 export const toPingRate = (model: Model): TimeSpan => {
   const status = BackendConnectionStatus.fromModel(model)

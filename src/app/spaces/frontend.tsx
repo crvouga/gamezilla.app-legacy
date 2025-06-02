@@ -25,11 +25,7 @@ const initCtx = (input: {
   rpc: RPC.Client<typeof rpcContract>
   topic: Topic.Client<typeof topicContract>
 }): FrontendCtxModule => {
-  return {
-    ...input.ctx,
-    rpc: input.rpc,
-    topic: input.topic,
-  }
+  return { ...input.ctx, rpc: input.rpc, topic: input.topic }
 }
 
 const init: FrontendModule['init'] = (_input) => {

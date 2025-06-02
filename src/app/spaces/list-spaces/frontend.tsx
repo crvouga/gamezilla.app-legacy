@@ -34,15 +34,15 @@ const update: SpaceFrontendModule['update'] = (input) => {
         },
       }
     }
-    case 'list-spaces.time-passed': {
-      return {
-        model: input.model,
-        async eff(dispatch) {
-          const spaces = await input.ctx.rpc['spaces.list-spaces.list']({ pagination: { limit: 100, offset: 0 } })
-          dispatch({ t: 'list-spaces.list-spaces-response', spaces })
-        },
-      }
-    }
+    // case 'list-spaces.time-passed': {
+    //   return {
+    //     model: input.model,
+    //     async eff(dispatch) {
+    //       const spaces = await input.ctx.rpc['spaces.list-spaces.list']({ pagination: { limit: 100, offset: 0 } })
+    //       dispatch({ t: 'list-spaces.list-spaces-response', spaces })
+    //     },
+    //   }
+    // }
   }
 
   if (ScreenChangedEvt.is(input.msgIn)) {
@@ -73,10 +73,11 @@ const View: SpaceFrontendModule['View'] = (input) => {
       }}
       postAction={StartSpaceFrontend.viewStartSpaceButton(input)}
       renderBody={() => {
-        if (spaces.length === 0)
+        if (spaces.length === 0) {
           return (
             <EmptyState renderIcon={(input) => <IconGamepad {...input} />} label={input.ctx.t('spaces.no-spaces')} />
           )
+        }
         return (
           <div className='flex flex-1 flex-col gap-4 overflow-y-auto p-6'>
             {spaces.map((state) => (
