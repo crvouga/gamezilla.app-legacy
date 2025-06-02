@@ -42,8 +42,7 @@ const publishMsgSpace: SpaceFrontendModule['update'] = (input) => {
   return {
     model: input.model,
     eff() {
-      input.ctx.topic['spaces.sync.msg-space'].pub(spaceEventWithMeta.spaceId, spaceEventWithMeta)
-      input.ctx.topic['spaces.sync.msg-space-all'].pub(null, spaceEventWithMeta)
+      input.ctx.topic.msgSpace.pub(spaceEventWithMeta.spaceId, spaceEventWithMeta)
     },
   }
 }
@@ -84,12 +83,7 @@ const updateSynced: SpaceFrontendModule['update'] = (input) => {
 
       const merged = SpacesCore.mergeOne(input.model.spaces, synced.value.space)
 
-      return {
-        model: {
-          ...input.model,
-          spaces: merged,
-        },
-      }
+      return { model: { ...input.model, spaces: merged } }
     }
   }
 
@@ -101,7 +95,7 @@ const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
 
   if (!currentUserSpaceId) return Sub.none()
 
-  return input.ctx.topic['spaces.sync.msg-space'].sub(currentUserSpaceId, (c) => ({ t: 'sync.got-msg-space', c }))
+  return input.ctx.topic.msgSpace.sub(currentUserSpaceId, (c) => ({ t: 'sync.got-msg-space', c }))
 }
 
 export const SyncFrontend = {

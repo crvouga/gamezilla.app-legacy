@@ -17,7 +17,7 @@ const initCtx = async (input: {
 
 const saga = function* (input: { ctx: BackendCtxModule }) {
   const pings = Sub.chan(
-    input.ctx.topic.ping.sub(null, (msg) => ({
+    input.ctx.topic.ping.subAll((msg) => ({
       pingId: msg.pingId,
       now: Posix.now(),
       clientSessionId: msg.clientSessionId,

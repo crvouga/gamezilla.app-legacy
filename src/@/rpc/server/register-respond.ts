@@ -73,43 +73,47 @@ export const registerRespond = <T extends Base>(registerInput: {
   }
 
   registerInput.httpServer.registerRespond(async (request) => {
-    const url = new URL(request.url)
-    if (url.pathname !== '/rpc') {
-      return null
-    }
+    try {
+      const url = new URL(request.url)
+      if (url.pathname !== '/rpc') {
+        return null
+      }
 
-    const rpcName = url.searchParams.get('rpc-name')
+      const rpcName = url.searchParams.get('rpc-name')
 
-    if (!rpcName) {
-      return new Response(JSON.stringify({ error: 'rpc-name is required' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
+      if (!rpcName) {
+        return new Response(JSON.stringify({ error: 'rpc-name is required' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+
+      const maybeSessionId = SessionIdHttp.fromRequest(request)
+      const sessionId = maybeSessionId ?? SessionId.generate()
+
+      const maybeClientSessionId = ClientSessionIdHttp.fromRequest(request)
+      const clientSessionId = maybeClientSessionId ?? ClientSessionId.generate()
+
+      const response = await handleRequest({
+        contract: registerInput.contract,
+        handlers: registerInput.server,
+        name: rpcName ?? '',
+        request,
+        sessionId,
+        clientSessionId,
       })
+
+      if (!response) return null
+
+      const responseWithCORS = allowCORS({ request, response })
+
+      if (!maybeSessionId) {
+        responseWithCORS.headers.set('Set-Cookie', SessionIdHttp.toSetCookieHeaderValue({ sessionId, isProd: true }))
+      }
+
+      return responseWithCORS
+    } catch (error) {
+      return new Response(JSON.stringify({ error: String(error) }), { status: 500 })
     }
-
-    const maybeSessionId = SessionIdHttp.fromRequest(request)
-    const sessionId = maybeSessionId ?? SessionId.generate()
-
-    const maybeClientSessionId = ClientSessionIdHttp.fromRequest(request)
-    const clientSessionId = maybeClientSessionId ?? ClientSessionId.generate()
-
-    const response = await handleRequest({
-      contract: registerInput.contract,
-      handlers: registerInput.server,
-      name: rpcName ?? '',
-      request,
-      sessionId,
-      clientSessionId,
-    })
-
-    if (!response) return null
-
-    const responseWithCORS = allowCORS({ request, response })
-
-    if (!maybeSessionId) {
-      responseWithCORS.headers.set('Set-Cookie', SessionIdHttp.toSetCookieHeaderValue({ sessionId, isProd: true }))
-    }
-
-    return responseWithCORS
   })
 }

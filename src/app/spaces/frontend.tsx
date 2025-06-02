@@ -47,34 +47,22 @@ const init: FrontendModule['init'] = (_input) => {
 }
 
 const update: FrontendModule['update'] = (input) => {
-  const updated = updateLoop(input, updateChild(input), 0)
+  const updated = updateLoop(input, updateChild(input))
   return updated
 }
 
-const updateLoop = (input: Input, acc: Output, depth: number): Output => {
+const updateLoop = (input: Input, acc: Output): Output => {
   const [msgSpace, ...msgSpaceRest] = acc.msgSpace ?? []
 
-  if (depth > 10) {
-    throw new Error('updateLoop depth > 10')
-  }
-
   if (msgSpace) {
-    const updated = updateChild({
-      ctx: input.ctx,
-      model: acc.model,
-      msgSpace: msgSpace,
-    })
+    const updated = updateChild({ ctx: input.ctx, model: acc.model, msgSpace: msgSpace })
 
-    return updateLoop(
-      input,
-      {
-        model: updated.model,
-        eff: Eff.batch(acc.eff, updated.eff),
-        msgSpace: Msg.batch(msgSpaceRest, updated.msgSpace),
-        msgOut: Msg.batch(acc.msgOut, updated.msgOut),
-      },
-      depth + 1,
-    )
+    return updateLoop(input, {
+      model: updated.model,
+      eff: Eff.batch(acc.eff, updated.eff),
+      msgSpace: Msg.batch(msgSpaceRest, updated.msgSpace),
+      msgOut: Msg.batch(acc.msgOut, updated.msgOut),
+    })
   }
 
   return acc

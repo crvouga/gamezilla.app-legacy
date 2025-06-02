@@ -30,8 +30,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
   const throttle = config.writeThrottle
   const keyValueDb = await pipe(
     config.keyValueDb,
-    async (keyValueDb) =>
-      KeyValueDb({ t: 'with-throttled-writes', logger, keyValueDb: await keyValueDb, throttle, runtime }),
+    async (keyValueDb) => KeyValueDb({ t: 'with-throttled-writes', logger, keyValueDb, throttle, runtime }),
     async (keyValueDb) => KeyValueDb({ t: 'with-cache', logger, source: await keyValueDb, cache }),
     async (keyValueDb) => KeyValueDb({ t: 'with-reduced-parsing', logger, keyValueDb: await keyValueDb, verifiedKeys }),
   )
@@ -143,9 +142,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
 
     const got = await spacesBySpaceId.getMany(subset)
 
-    if (isErr(got)) {
-      return got
-    }
+    if (isErr(got)) return got
 
     return Ok({
       items: got.value,

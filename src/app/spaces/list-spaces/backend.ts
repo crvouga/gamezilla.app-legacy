@@ -8,7 +8,7 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
     'spaces.list-spaces.list': async (_input, _reqCtx) => {
       const spaces = await config.ctx.spacesCore.list({
         pagination: {
-          limit: 100_000,
+          limit: 1_000_000,
           offset: 0,
         },
       })

@@ -1,18 +1,13 @@
 import { Err, isErr, Ok } from '~/@/result'
 import { ClientSessionIdHttp } from '../../wire/client-session-id-http'
-import { Base, Client, ClientConfigHttp, Contract } from '../types'
+import { Base, Client, ClientConfigHttp } from '../types'
 
 export const initClientHttp = <T extends Base>(config: ClientConfigHttp<T>): Client<T> => {
-  const createClient = (contract: Base, path: string[] = []): any => {
-    const client: any = {}
-
-    for (const rpcName in contract) {
-      const endpointConfig = contract[rpcName]
-      if (!endpointConfig) continue
-
-      if ('input' in endpointConfig && 'output' in endpointConfig) {
-        // Leaf endpoint
-        client[rpcName] = async (input: unknown) => {
+  const client: Client<T> = Object.entries(config.contract)
+    .map(([rpcName, endpointConfig]) => {
+      return [
+        rpcName,
+        async (input: unknown) => {
           try {
             const parsedInput = endpointConfig.input.parse(input)
             if (isErr(parsedInput)) {
@@ -21,13 +16,12 @@ export const initClientHttp = <T extends Base>(config: ClientConfigHttp<T>): Cli
             const urlBase = new URL(`/rpc`, config.serverUrl)
             urlBase.searchParams.set('rpc-name', rpcName)
             const url = ClientSessionIdHttp.addToUrl(urlBase, config.clientSessionId)
-
             const request = new Request(url, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(parsedInput.value),
             })
-            const response = await config.httpClient.fetch(request)
+            const response = await fetch(request)
             if (!response.ok) {
               return Err(`Request failed with status ${response.status}`)
             }
@@ -40,14 +34,14 @@ export const initClientHttp = <T extends Base>(config: ClientConfigHttp<T>): Cli
           } catch (error) {
             return Err(`Error: ${error}`)
           }
-        }
-      } else {
-        // Nested contract
-        client[rpcName] = createClient(endpointConfig as Contract<any>, [...path, rpcName])
-      }
-    }
-    return client
-  }
+        },
+      ] as const
+    })
+    .reduce((acc, [rpcName, fn]) => {
+      // @ts-ignore
+      acc[rpcName] = fn
+      return acc
+    }, {} as Client<T>)
 
-  return createClient(config.contract)
+  return client
 }

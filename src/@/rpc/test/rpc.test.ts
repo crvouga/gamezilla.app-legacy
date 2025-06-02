@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'bun:test'
-import { HttpClient } from '~/@/http-client'
 import { HttpServer } from '~/@/http-server'
 import { Logger } from '~/@/logger'
 import { isErr, Ok } from '~/@/result'
@@ -25,13 +24,6 @@ export const FixtureHttp = async (): Promise<Fixture> => {
 
   const serverUrl = `http://localhost:${port}`
 
-  const httpClient = HttpClient({
-    t: 'fetch',
-    defaultHeaders: {
-      Origin: serverUrl,
-    },
-  })
-
   RPC.registerRespond({
     httpServer,
     contract,
@@ -40,7 +32,6 @@ export const FixtureHttp = async (): Promise<Fixture> => {
 
   const client = RPC.initClient({
     t: 'http',
-    httpClient,
     contract,
     serverUrl,
     clientSessionId,

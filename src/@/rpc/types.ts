@@ -1,4 +1,3 @@
-import { IHttpClient } from '~/@/http-client'
 import { Result } from '~/@/result'
 import { s } from '~/@/schema'
 import { ClientSessionId } from '../wire/client-session-id'
@@ -35,7 +34,6 @@ export type ClientConfigHttp<T extends Base> = {
   t: 'http'
   serverUrl: string
   clientSessionId: ClientSessionId
-  httpClient: IHttpClient
   contract: T
 }
 

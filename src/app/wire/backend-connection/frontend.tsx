@@ -37,7 +37,7 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: modelNew,
         eff: () => {
-          input.ctx.topic.ping.pub(null, { pingId: msg.pingId })
+          input.ctx.topic.ping.pub(input.ctx.clientSessionId, { pingId: msg.pingId })
         },
       }
     }

@@ -42,11 +42,8 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
           serverCore.publishTopicName(topicName, [PUB, topicName, topicParams, msg], null)
           serverCore.publishTopic(topic, [PUB, topicName, topicParams, msg], null)
 
-          const subscription = serverCore.subscriptionsByTopic.get(topic)
-
-          if (!subscription) return
-
-          subscription.pubSub.pub(msg)
+          serverCore.subscriptionsByTopic.get(topic)?.pubSub.pub(msg)
+          serverCore.subscriptionsByTopicName.get(topicName)?.pubSub.pub(msg)
         },
         sub(topicParams, mapper) {
           const topic = toTopic(topicName, topicParams)
@@ -113,29 +110,14 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
   }
 
   const publishTopic = (topic: Topic, msg: ToClientMsgMany, ws: ServerWebSocket<BackendWebSocketData> | null) => {
-    const msgString = JSON.stringify(msg)
+    bunServer.publish(topic, JSON.stringify(msg))
 
-    bunServer.publish(topic, msgString)
-
-    const subscription = subscriptionsByTopic.get(topic)
-
-    if (!subscription) return
-
-    const msgPayload = msg[3]
-
-    if (!ws) {
-      subscription.pubSub.pub(msgPayload)
-      return
-    }
-
-    const msgPayloadWithMeta = {
-      ...msgPayload,
-      clientId: ws.data.clientId,
-      sessionId: ws.data.sessionId,
-      clientSessionId: ws.data.clientSessionId,
-    }
-
-    subscription.pubSub.pub(msgPayloadWithMeta)
+    subscriptionsByTopic.get(topic)?.pubSub.pub({
+      ...msg[3],
+      clientId: ws?.data.clientId,
+      sessionId: ws?.data.sessionId,
+      clientSessionId: ws?.data.clientSessionId,
+    })
   }
 
   const publishTopicName = (
@@ -143,29 +125,14 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
     msg: ToClientMsgMany,
     ws: ServerWebSocket<BackendWebSocketData> | null,
   ) => {
-    const msgString = JSON.stringify(msg)
+    bunServer.publish(topicName, JSON.stringify(msg))
 
-    bunServer.publish(topicName, msgString)
-
-    const subscription = subscriptionsByTopicName.get(topicName)
-
-    if (!subscription) return
-
-    const msgPayload = msg[3]
-
-    if (!ws) {
-      subscription.pubSub.pub(msgPayload)
-      return
-    }
-
-    const msgPayloadWithMeta = {
-      ...msgPayload,
-      clientId: ws.data.clientId,
-      sessionId: ws.data.sessionId,
-      clientSessionId: ws.data.clientSessionId,
-    }
-
-    subscription.pubSub.pub(msgPayloadWithMeta)
+    subscriptionsByTopicName.get(topicName)?.pubSub.pub({
+      ...msg[3],
+      clientId: ws?.data.clientId,
+      sessionId: ws?.data.sessionId,
+      clientSessionId: ws?.data.clientSessionId,
+    })
   }
 
   config.httpServer._setWebSocketHandler({

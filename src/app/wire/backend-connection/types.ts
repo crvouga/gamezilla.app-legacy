@@ -36,7 +36,7 @@ export type MsgFrontend = { t: 'ping'; pingId: PingId; now: Posix } | { t: 'pong
 
 export const topicContract = Topic.initContract({
   ping: {
-    params: s.l(null),
+    params: ClientSessionId,
     msg: PingPongMsg,
   },
   pong: {

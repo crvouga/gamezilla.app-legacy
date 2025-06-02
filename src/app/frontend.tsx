@@ -53,7 +53,6 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
 
   const rpc = RPC.initClient({
     t: 'http',
-    httpClient,
     contract,
     serverUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
     clientSessionId,
