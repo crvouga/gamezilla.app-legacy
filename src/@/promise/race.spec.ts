@@ -5,7 +5,8 @@ import { TimeSpan } from '../time/time-span'
 
 describe('race', () => {
   it('should return the first promise that resolves', async () => {
-    const signal = new AbortSignal()
+    const controller = new AbortController()
+    const signal = controller.signal
     const result = await race(signal, {
       fast: async (s) => {
         await sleep(TimeSpan.milliseconds(100), s)
@@ -24,7 +25,8 @@ describe('race', () => {
   })
 
   it('should abort other promises when one resolves', async () => {
-    const signal = new AbortSignal()
+    const controller = new AbortController()
+    const signal = controller.signal
     const abortedSignals: AbortSignal[] = []
 
     const result = await race(signal, {
@@ -47,7 +49,8 @@ describe('race', () => {
   })
 
   it('should handle rejected promises', async () => {
-    const signal = new AbortSignal()
+    const controller = new AbortController()
+    const signal = controller.signal
     const result = await race(signal, {
       success: async (s) => {
         await sleep(TimeSpan.milliseconds(100), s)
@@ -66,7 +69,8 @@ describe('race', () => {
   })
 
   it('should work with multiple promises', async () => {
-    const signal = new AbortSignal()
+    const controller = new AbortController()
+    const signal = controller.signal
     const result = await race(signal, {
       first: async (s) => {
         await sleep(TimeSpan.milliseconds(50), s)

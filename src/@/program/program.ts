@@ -55,7 +55,6 @@ export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
   let model: TModel = init.model
 
   const onCrash: (input: ProgramCrashReport<TModel, TMsg>) => MaybePromise<unknown> = (input) => {
-    console.error('program crashed!', input)
     program.crash?.(input)
   }
 

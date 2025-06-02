@@ -63,6 +63,7 @@ export const race = async <T extends Record<string, AbortablePromise<unknown>>>(
     return results as { [K in keyof T]: Awaited<ReturnType<T[K]>> | null }
   } catch (error) {
     // If aborted, abort all controllers and return null results
+
     for (const key in controllers) {
       controllers[key]!.abort()
       results[key] = null

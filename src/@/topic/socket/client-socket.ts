@@ -99,17 +99,23 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
   const subscriptionsByTopic = new Map<Topic, TopicSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
-  const worker = async (s: AbortSignal) => {
+  const worker = async () => {
     while (true) {
-      config.logger.info('connecting to server')
+      const abortController = new AbortController()
+      try {
+        config.logger.info('connecting to server')
 
-      const socket = Socket.create({ url: toWebSocketUrl(config) })
+        const socket = Socket.create({ url: toWebSocketUrl(config) })
 
-      await workerSocket(s, socket)
+        await workerSocket(abortController.signal, socket)
 
-      socket.close()
+        socket.close()
 
-      await p.sleep(config.reconnectionRate, s)
+        await p.sleep(config.reconnectionRate, abortController.signal)
+      } catch (e) {
+        config.logger.error('worker error', e)
+        abortController.abort()
+      }
     }
   }
 
@@ -157,11 +163,10 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
 
   const workerSyncTopic = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
     const subscribedTopicsServer = new Set<string>()
-    console.log('workerSyncTopic')
     while (true) {
-      for (const [topic, { topicName, topicParams, pubSub }] of subscriptionsByTopic.entries()) {
-        // config.logger.debug('worker sync topic', topic)
+      s.throwIfAborted()
 
+      for (const [topic, { topicName, topicParams, pubSub }] of subscriptionsByTopic.entries()) {
         const isSubbedServer = subscribedTopicsServer.has(topic)
         const isSubbedClient = pubSub.subscriberCount() > 0
 
@@ -186,6 +191,8 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     const subscribedTopicsServer = new Set<string>()
 
     while (true) {
+      s.throwIfAborted()
+
       for (const [topicName, { pubSub }] of subscriptionsByTopicName.entries()) {
         config.logger.debug('worker sync topic name', topicName)
 
@@ -239,8 +246,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     })
   }
 
-  const abortController = new AbortController()
-  worker(abortController.signal)
+  worker()
 
   return {
     subscriptionsByTopic,

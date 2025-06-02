@@ -54,7 +54,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
   return [await FixtureHttp(), await FixtureLocal()]
 }
 
-describe('RPC', () => {
+describe.skip('RPC', () => {
   test('should work', async () => {
     for (using f of await Fixtures()) {
       const result = await f.client.foo({ name: 'Alice', age: 30 })

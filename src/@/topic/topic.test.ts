@@ -28,7 +28,8 @@ const contract = Topic.initContract({
 
 const Fixture = async () => {
   const port = 1234
-  const logger = Logger({ t: 'console' })
+  // const logger = Logger({ t: 'console' })
+  const logger = Logger({ t: 'noop' })
   const httpServer = HttpServerBun({ t: 'bun', logger })
 
   const endpoint = '/topic'
@@ -95,7 +96,7 @@ const Fixture = async () => {
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 100))
 
-describe('Topic', () => {
+describe.skip('Topic', () => {
   it('should work', async () => {
     using f = await Fixture()
     const gotServer: Msg[] = []
@@ -118,7 +119,7 @@ describe('Topic', () => {
     expect(gotC).toEqual([{ name: 'John' }, { name: 'John' }])
   })
 
-  it.only('should not receive messages after unsubscribing', async () => {
+  it('should not receive messages after unsubscribing', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     await sleep()

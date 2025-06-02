@@ -1,49 +1,43 @@
 import { s } from '~/@/schema'
 
-const schema = s.obj({
-  _type: s.l('LamportTimestamp'),
-  _value: s.num(),
-})
+const schema = s.brand(s.num(), 'LamportTimestamp')
 
 export type LamportTimestamp = s.Infer<typeof schema>
 
 const fromNumber = (value: number): LamportTimestamp => {
-  return {
-    _type: 'LamportTimestamp',
-    _value: Math.max(0, Math.floor(value)),
-  }
+  return Math.max(0, Math.floor(value)) as LamportTimestamp
 }
 
 const toNumber = (timestamp: LamportTimestamp): number => {
-  return timestamp._value
+  return timestamp
 }
 
 const increment = (timestamp: LamportTimestamp): LamportTimestamp => {
-  return fromNumber(timestamp._value + 1)
+  return fromNumber(timestamp + 1)
 }
 
 const max = (timestampA: LamportTimestamp, timestampB: LamportTimestamp): LamportTimestamp => {
-  return fromNumber(Math.max(timestampA._value, timestampB._value))
+  return fromNumber(Math.max(timestampA, timestampB))
 }
 
 const lte = (timestampA: LamportTimestamp, timestampB: LamportTimestamp): boolean => {
-  return timestampA._value <= timestampB._value
+  return timestampA <= timestampB
 }
 
 const gte = (timestampA: LamportTimestamp, timestampB: LamportTimestamp): boolean => {
-  return timestampA._value >= timestampB._value
+  return timestampA >= timestampB
 }
 
 const eq = (timestampA: LamportTimestamp, timestampB: LamportTimestamp): boolean => {
-  return timestampA._value === timestampB._value
+  return timestampA === timestampB
 }
 
 const lt = (timestampA: LamportTimestamp, timestampB: LamportTimestamp): boolean => {
-  return timestampA._value < timestampB._value
+  return timestampA < timestampB
 }
 
 const gt = (timestampA: LamportTimestamp, timestampB: LamportTimestamp): boolean => {
-  return timestampA._value > timestampB._value
+  return timestampA > timestampB
 }
 
 export const LamportTimestamp = {
