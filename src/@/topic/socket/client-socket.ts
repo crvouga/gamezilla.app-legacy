@@ -99,13 +99,13 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
   const subscriptionsByTopic = new Map<Topic, TopicSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
-  const process = async (s: AbortSignal) => {
+  const worker = async (s: AbortSignal) => {
     while (true) {
       config.logger.info('connecting to server')
 
       const socket = Socket.create({ url: toWebSocketUrl(config) })
 
-      await processSocket(s, socket)
+      await workerSocket(s, socket)
 
       socket.close()
 
@@ -113,7 +113,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     }
   }
 
-  const processSocket = async (s: AbortSignal, socket: Socket) => {
+  const workerSocket = async (s: AbortSignal, socket: Socket) => {
     config.logger.info('waiting for connection')
 
     const got = await p.race(s, {
@@ -132,7 +132,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
       close: (s) => Sub.take(socket.msgsClose, s),
       error: (s) => Sub.take(socket.msgsError, s),
       senderReciever: (s) => {
-        processSenderReciever(s, socket)
+        workerSenderReciever(s, socket)
         return p.neverResolve
       },
     })
@@ -144,17 +144,17 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     config.logger.info('restarting connection')
   }
 
-  const processSenderReciever = async (s: AbortSignal, socket: Socket) => {
+  const workerSenderReciever = async (s: AbortSignal, socket: Socket) => {
     const send = (msg: ToServerMsg) => {
       socket.send(JSON.stringify(msg))
     }
-    processSender(s, send)
-    processReciever(s, socket)
-    processSyncTopic(s, send)
-    processSyncTopicName(s, send)
+    workerSender(s, send)
+    workerReciever(s, socket)
+    workerSyncTopic(s, send)
+    workerSyncTopicName(s, send)
   }
 
-  const processSyncTopic = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
+  const workerSyncTopic = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
     const subscribedTopicsServer = new Set<string>()
     while (true) {
       for (const [topic, { topicName, topicParams, pubSub }] of subscriptionsByTopic.entries()) {
@@ -178,7 +178,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     }
   }
 
-  const processSyncTopicName = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
+  const workerSyncTopicName = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
     const subscribedTopicsServer = new Set<string>()
 
     while (true) {
@@ -203,7 +203,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     }
   }
 
-  const processSender = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
+  const workerSender = async (s: AbortSignal, send: (msg: ToServerMsg) => void) => {
     Sub.takeEvery(s, msgsToServer, (toServer) => {
       switch (toServer[0]) {
         case PUB: {
@@ -214,7 +214,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     })
   }
 
-  const processReciever = async (s: AbortSignal, socket: Socket) => {
+  const workerReciever = async (s: AbortSignal, socket: Socket) => {
     Sub.takeEvery(s, socket.msgsFromServer, (fromServer) => {
       const fromServerParsed = JSON.parse(fromServer) as ToClientMsg
 
@@ -232,7 +232,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
   }
 
   const abortController = new AbortController()
-  process(abortController.signal)
+  worker(abortController.signal)
 
   return {
     subscriptionsByTopic,
