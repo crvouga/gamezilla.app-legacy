@@ -1,6 +1,13 @@
 import type { Task } from '~/@/promise/task'
 import type { Schema } from '~/@/schema/schema'
 
+export type KeyValueDbError<TValue> = {
+  t: 'failed-to-parse-value'
+  value: unknown
+  successfullyParsed: TValue[]
+  failedParsed: { key: string; value: unknown; error: unknown }[]
+}
+
 export type IKeyValueDb = {
   get: <TValue>(key: string, schema: Schema<TValue>) => Task<string, TValue | null>
   getMany: <TValue>(keys: string[], schema: Schema<TValue>) => Task<string, TValue[]>

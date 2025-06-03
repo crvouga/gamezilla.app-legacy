@@ -107,7 +107,8 @@ export const SpacesDb = async (config: Config): Promise<ISpacesDb> => {
 
     const got = await spacesBySpaceId.getMany(subset)
 
-    if (isErr(got)) return got
+    // if (isErr(got)) return got
+    if (isErr(got)) return Ok({ items: [], total: 0, limit: 0, offset: 0 })
 
     return Ok({
       items: got.value,
