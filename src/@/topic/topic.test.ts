@@ -3,8 +3,9 @@ import { Topic } from '.'
 import { HttpServerBun } from '../http-server/impl-bun'
 import { Logger } from '../logger'
 import { s } from '../schema'
-import { ClientSessionId } from '../wire/client-session-id'
 import { TimeSpan } from '../time/time-span'
+import { ClientSessionId } from '../wire/client-session-id'
+import { TopicMsgCodecMsgPack } from './socket/topic-msg-codec'
 
 const Msg = s.obj({
   name: s.str(),
@@ -35,6 +36,8 @@ const Fixture = async () => {
   const endpoint = '/topic'
   const serverUrl = `http://localhost:${port}`
 
+  const codec = TopicMsgCodecMsgPack
+
   const server = Topic.initServer({
     t: 'web-sockets',
     httpServer,
@@ -42,6 +45,7 @@ const Fixture = async () => {
     contract,
     isProd: false,
     endpoint,
+    codec,
   })
 
   const reconnectionRate = TimeSpan.milliseconds(0)
@@ -56,6 +60,7 @@ const Fixture = async () => {
     logger: Logger.prefix('clientA', logger),
     reconnectionRate,
     syncSubscriptionRate,
+    codec,
   })
   const clientB = Topic.initClient({
     t: 'web-sockets',
@@ -66,6 +71,7 @@ const Fixture = async () => {
     logger: Logger.prefix('clientB', logger),
     reconnectionRate,
     syncSubscriptionRate,
+    codec,
   })
   const clientC = Topic.initClient({
     t: 'web-sockets',
@@ -76,6 +82,7 @@ const Fixture = async () => {
     logger: Logger.prefix('clientC', logger),
     reconnectionRate,
     syncSubscriptionRate,
+    codec,
   })
 
   await httpServer.start(port)
@@ -96,7 +103,7 @@ const Fixture = async () => {
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 10))
 
-describe.only('Topic', () => {
+describe('Topic', () => {
   it('should work', async () => {
     using f = await Fixture()
     const gotServer: Msg[] = []

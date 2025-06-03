@@ -12,6 +12,7 @@ import { PUB, SUB, SUB_ALL, ToClientMsg, ToClientMsgMany, ToClientMsgOne, UNSUB,
 import { Topic, TopicName, toTopic } from './topic'
 import { TopicNameSubscription } from './topic-name-subscription'
 import { TopicSubscription } from './topic-subscription'
+import { TopicMsgCodec } from './topic-msg-codec'
 
 export type BackendWebSocketData = {
   clientId: ClientId
@@ -26,6 +27,7 @@ type Config<TContract extends ContractBase> = {
   logger: ILogger
   isProd: boolean
   endpoint: string
+  codec: TopicMsgCodec
 }
 
 export const initServer = <TContract extends ContractBase>(config: Config<TContract>): Client<TContract> => {
@@ -104,13 +106,11 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
   const send = (ws: ServerWebSocket<BackendWebSocketData>, msg: ToClientMsgOne) => {
-    const msgString = JSON.stringify(msg)
-
-    ws.send(msgString)
+    ws.send(config.codec.encode(msg))
   }
 
   const publishTopic = (topic: Topic, msg: ToClientMsgMany, ws: ServerWebSocket<BackendWebSocketData> | null) => {
-    bunServer.publish(topic, JSON.stringify(msg))
+    bunServer.publish(topic, config.codec.encode(msg))
 
     subscriptionsByTopic.get(topic)?.pubSub.pub({
       ...msg[3],
@@ -125,7 +125,7 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
     msg: ToClientMsgMany,
     ws: ServerWebSocket<BackendWebSocketData> | null,
   ) => {
-    bunServer.publish(topicName, JSON.stringify(msg))
+    bunServer.publish(topicName, config.codec.encode(msg))
 
     subscriptionsByTopicName.get(topicName)?.pubSub.pub({
       ...msg[3],
@@ -136,8 +136,8 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
   }
 
   config.httpServer._setWebSocketHandler({
-    async message(ws: ServerWebSocket<BackendWebSocketData>, message: string) {
-      const msg: ToClientMsg = JSON.parse(message)
+    async message(ws: ServerWebSocket<BackendWebSocketData>, encodedMsg: string | Uint8Array) {
+      const msg = config.codec.decode(encodedMsg) as ToClientMsg
 
       switch (msg[0]) {
         case SUB: {

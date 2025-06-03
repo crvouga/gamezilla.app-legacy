@@ -4,6 +4,7 @@ import { PubSub, Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { Client, ClientNode, ContractBase } from '../types'
+import { TopicMsgCodec } from './topic-msg-codec'
 import { PUB, SUB, SUB_ALL, ToClientMsg, ToServerMsg, UNSUB, UNSUB_ALL } from './msgs'
 import { Socket } from './socket'
 import { toWebSocketUrl } from './to-websocket-url'
@@ -21,6 +22,8 @@ export type Config<T extends ContractBase> = {
   //
   reconnectionRate: TimeSpan
   syncSubscriptionRate: TimeSpan
+  //
+  codec: TopicMsgCodec
 }
 
 export const initClient = <TContract extends ContractBase>(config: Config<TContract>): Client<TContract> => {
@@ -152,7 +155,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
 
   const workerSenderReceiver = async (s: AbortSignal, socket: Socket) => {
     const send = (msg: ToServerMsg) => {
-      socket.send(JSON.stringify(msg))
+      socket.send(config.codec.encode(msg) as any)
       config.logger.debug('worker sender receiver send', msg)
     }
     workerSender(s, send)
@@ -230,7 +233,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
 
   const workerReceiver = async (s: AbortSignal, socket: Socket) => {
     Sub.takeEvery(s, socket.msgsFromServer, (fromServer) => {
-      const fromServerParsed = JSON.parse(fromServer) as ToClientMsg
+      const fromServerParsed = config.codec.decode(fromServer) as ToClientMsg
 
       switch (fromServerParsed[0]) {
         case PUB: {

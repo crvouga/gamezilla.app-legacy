@@ -1,11 +1,11 @@
 import { Browser } from '~/@/browser'
-import { SqlDb } from '~/@/sql-db/frontend/impl'
 import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screen/generated/screens'
+import { SqlDb } from '~/@/sql-db/frontend/impl'
 import { Sub } from '~/@/sub'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
@@ -18,6 +18,7 @@ import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { setupNewPowerSyncClient } from '~/service-powersync/frontend/database'
 import { Logger } from '../@/logger'
+import { topicMsgCodec } from './@/codec'
 import { APP_SOUND } from './@/frontend/app-sound'
 import { AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { PreloadSoundsCmd } from './@/frontend/preload-sounds-cmd'
@@ -68,6 +69,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     endpoint: '/topic',
     reconnectionRate: TimeSpan.seconds(3),
     syncSubscriptionRate: TimeSpan.seconds(3),
+    codec: topicMsgCodec,
   })
 
   const sqlDb = await SqlDb({

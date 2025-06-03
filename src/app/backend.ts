@@ -1,4 +1,3 @@
-import { SqlDb } from '~/@/sql-db/backend/impl'
 import { AllowCORS } from '~/@/http-server/allow-cors'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb } from '~/@/key-value-db'
@@ -8,6 +7,7 @@ import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
 import { SMS } from '~/@/sms'
+import { SqlDb } from '~/@/sql-db/backend/impl'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
@@ -17,6 +17,7 @@ import { PowerSyncBackendApp } from '~/service-powersync/backend/respond'
 import { AppTypes } from '.'
 import { BackendInstanceId } from './@/backend/backend-instance/backend-instance-id'
 import { AppBackendCtxBase } from './@/backend/ctx'
+import { topicMsgCodec } from './@/codec'
 import { AuthBackend } from './auth/backend'
 import { ProfileDb } from './profile/@/user-profile/user-profile-db'
 import { ProfileBackend } from './profile/backend'
@@ -70,6 +71,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     httpServer,
     logger,
     isProd: CONFIG_SHARED.IS_PROD,
+    codec: topicMsgCodec,
   })
 
   const userProfileDb = ProfileDb({

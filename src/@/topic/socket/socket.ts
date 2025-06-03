@@ -43,9 +43,7 @@ const create = (config: { url: string }) => {
     ws.onmessage = null
   }
 
-  const send = (toServer: string) => {
-    ws.send(toServer)
-  }
+  const send = ws.send
 
   return {
     msgsOpen,
