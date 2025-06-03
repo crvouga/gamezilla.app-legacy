@@ -20,7 +20,15 @@ let postgresClient: postgres.Sql<{}>
 
 export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   const logger = Logger.prefix('postgres', config.logger)
-  postgresClient ??= postgres(config.databaseUrl.dangerouslyReadValue())
+  postgresClient ??= postgres(config.databaseUrl.dangerouslyReadValue(), {
+    connect_timeout: 10, // 10 seconds connection timeout
+    idle_timeout: 20, // 20 seconds idle timeout
+    max_lifetime: 60 * 30, // 30 minutes max lifetime
+    max: 10, // Maximum number of connections
+    connection: {
+      application_name: 'gamezilla-app',
+    },
+  })
 
   return {
     sub() {
