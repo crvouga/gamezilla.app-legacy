@@ -1,3 +1,5 @@
-import { TopicMsgCodec, TopicMsgCodecJson } from '~/@/topic/socket/topic-msg-codec'
+import { TopicMsgCodec, TopicMsgCodecJson, TopicMsgCodecMsgPack } from '~/@/topic/socket/topic-msg-codec'
 
-export const topicMsgCodec: TopicMsgCodec = TopicMsgCodecJson
+const USE_MSG_PACK = true
+
+export const topicMsgCodec: TopicMsgCodec = USE_MSG_PACK ? TopicMsgCodecMsgPack : TopicMsgCodecJson

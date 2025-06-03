@@ -8,11 +8,11 @@ import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Client, ClientNode, ContractBase } from '../types'
-import { PUB, SUB, SUB_ALL, ToClientMsg, ToClientMsgMany, ToClientMsgOne, UNSUB, UNSUB_ALL } from './msgs'
+import { PUB, SUB, SUB_ALL, ToClientMsgMany, ToClientMsgOne, ToServerMsg, UNSUB, UNSUB_ALL } from './msgs'
 import { Topic, TopicName, toTopic } from './topic'
+import { TopicMsgCodec } from './topic-msg-codec'
 import { TopicNameSubscription } from './topic-name-subscription'
 import { TopicSubscription } from './topic-subscription'
-import { TopicMsgCodec } from './topic-msg-codec'
 
 export type BackendWebSocketData = {
   clientId: ClientId
@@ -106,11 +106,20 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
   const send = (ws: ServerWebSocket<BackendWebSocketData>, msg: ToClientMsgOne) => {
-    ws.send(config.codec.encode(msg))
+    const encoded = config.codec.encode(msg)
+    ws.send(
+      // @ts-expect-error
+      encoded,
+    )
   }
 
   const publishTopic = (topic: Topic, msg: ToClientMsgMany, ws: ServerWebSocket<BackendWebSocketData> | null) => {
-    bunServer.publish(topic, config.codec.encode(msg))
+    const encoded = config.codec.encode(msg)
+    bunServer.publish(
+      topic,
+      // @ts-expect-error
+      encoded,
+    )
 
     subscriptionsByTopic.get(topic)?.pubSub.pub({
       ...msg[3],
@@ -125,7 +134,12 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
     msg: ToClientMsgMany,
     ws: ServerWebSocket<BackendWebSocketData> | null,
   ) => {
-    bunServer.publish(topicName, config.codec.encode(msg))
+    const encoded = config.codec.encode(msg)
+    bunServer.publish(
+      topicName,
+      // @ts-expect-error
+      encoded,
+    )
 
     subscriptionsByTopicName.get(topicName)?.pubSub.pub({
       ...msg[3],
@@ -137,7 +151,8 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
 
   config.httpServer._setWebSocketHandler({
     async message(ws: ServerWebSocket<BackendWebSocketData>, encodedMsg: string | Uint8Array) {
-      const msg = config.codec.decode(encodedMsg) as ToClientMsg
+      // @ts-expect-error
+      const msg: ToServerMsg = config.codec.decode(encodedMsg)
 
       switch (msg[0]) {
         case SUB: {
