@@ -2,8 +2,8 @@ import { EventSourced } from '~/@/event-sourced'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
-import { SpaceFrontendModule } from '../architecture/space-frontend'
-import { SpacesCore } from '../spaces-core/spaces-core'
+import { SpaceFrontendModule } from '../frontend/space-frontend-module'
+import { Spaces } from '../spaces/spaces'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -31,11 +31,7 @@ const outputMsgSpaces: SpaceFrontendModule['update'] = (input) => {
 const publishMsgSpace: SpaceFrontendModule['update'] = (input) => {
   if (!input.msgSpace) return { model: input.model }
 
-  const spaceEventWithMeta = SpacesCore.toEventWithMeta(
-    input.model.spaces,
-    input.msgSpace.spaceId,
-    input.msgSpace.eventId,
-  )
+  const spaceEventWithMeta = Spaces.toEventWithMeta(input.model.spaces, input.msgSpace.spaceId, input.msgSpace.eventId)
 
   if (!spaceEventWithMeta) return { model: input.model }
 
@@ -53,7 +49,7 @@ const updateSync: SpaceFrontendModule['update'] = (input) => {
 
     if (!currentUserId) return { model: input.model }
 
-    const currentUserSpace = SpacesCore.toSpaceByUserId({
+    const currentUserSpace = Spaces.toSpaceByUserId({
       model: input.model.spaces,
       userId: currentUserId,
     })
@@ -81,7 +77,7 @@ const updateSynced: SpaceFrontendModule['update'] = (input) => {
 
       if (isErr(synced)) return { model: input.model }
 
-      const merged = SpacesCore.mergeOne(input.model.spaces, synced.value.space)
+      const merged = Spaces.mergeOne(input.model.spaces, synced.value.space)
 
       return { model: { ...input.model, spaces: merged } }
     }
@@ -91,7 +87,7 @@ const updateSynced: SpaceFrontendModule['update'] = (input) => {
 }
 
 const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
-  const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+  const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
 
   if (!currentUserSpaceId) return Sub.none()
 

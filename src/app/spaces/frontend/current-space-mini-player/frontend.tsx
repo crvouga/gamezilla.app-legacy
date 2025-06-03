@@ -8,8 +8,8 @@ import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
-import type { SpaceFrontendModule } from '../../architecture/space-frontend'
-import { SpacesCore } from '../../spaces-core/spaces-core'
+import type { SpaceFrontendModule } from '../space-frontend-module'
+import { Spaces } from '../../spaces/spaces'
 import { GameCoverArt } from '../../game/games/cover-art'
 import { SPACE_CARD_GRADIENT_CLASS_NAME } from '../../list-spaces/space-card/space-card-gradient'
 import type { ModelFrontend, MsgFrontend } from '../../types'
@@ -17,7 +17,7 @@ import type { ModelFrontend, MsgFrontend } from '../../types'
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'current-space-bar.clicked-current-space-bottom-bar': {
-      const currentUsersSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+      const currentUsersSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
 
       if (!currentUsersSpaceId) return { model: input.model }
 
@@ -34,8 +34,8 @@ const update: SpaceFrontendModule['update'] = (input) => {
 }
 
 const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
-  const userSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
-  const space = SpacesCore.toSpaceStarted(input.model.spaces, userSpaceId)
+  const userSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
+  const space = Spaces.toSpaceStarted(input.model.spaces, userSpaceId)
 
   if (!space) return null
 

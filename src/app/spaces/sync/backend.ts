@@ -2,7 +2,7 @@ import { EventSourced } from '~/@/event-sourced'
 import { isErr, unwrapOr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
-import { Space } from '../spaces-core/space'
+import { Space } from '../space/space'
 import { BackendCtxModule } from '../types'
 import { rpcContract } from './types'
 

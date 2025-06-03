@@ -4,7 +4,7 @@ import { Topic } from '~/@/topic'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { GameBackend } from './game/backend'
 import { ListSpacesBackend } from './list-spaces/backend'
-import { SpacesCoreAsync } from './spaces-core/spaces-core-async'
+import { SpacesCoreAsync } from './spaces/spaces-async'
 import { SyncBackend } from './sync/backend'
 import { type BackendCtxModule, rpcContract, topicContract } from './types'
 

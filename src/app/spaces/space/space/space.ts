@@ -4,7 +4,7 @@ import { pipe } from '~/@/function/pipe'
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { MsgSpace } from '../space-msg/space-msg'
+import { MsgSpace } from '../space-msg'
 import { SpaceState } from '../space-state'
 
 export const Model = EventSourced.schema(MsgSpace, SpaceState.State)

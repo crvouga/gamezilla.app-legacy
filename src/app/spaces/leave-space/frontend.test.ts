@@ -5,7 +5,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { FixtureSpacesFrontend, userJoinedSpace, userLeftSpace, userStartedSpace } from '../@/fixture/frontend'
-import { SpacesCore } from '../spaces-core/spaces-core'
+import { Spaces } from '../spaces/spaces'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 
 const Fixture = async () => {
@@ -77,7 +77,7 @@ describe('leave space', () => {
         },
       },
     ])
-    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser!.userId)
+    const currentUserSpaceId = Spaces.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser!.userId)
     expect(currentUserSpaceId).toEqual(null)
   })
 

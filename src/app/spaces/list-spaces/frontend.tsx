@@ -9,8 +9,8 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import type { SpaceFrontendModule } from '../architecture/space-frontend'
-import { SpacesCore } from '../spaces-core/spaces-core'
+import type { SpaceFrontendModule } from '../frontend/space-frontend-module'
+import { Spaces } from '../spaces/spaces'
 import { StartSpaceFrontend } from '../start-space/frontend'
 import { ViewSpaceCard } from './space-card/space-card'
 
@@ -30,7 +30,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
         model: {
           ...input.model,
           listSpacesRequest: input.msg.spaces,
-          spaces: unwrapOr(input.msg.spaces, { spaces: [] }).spaces.reduce(SpacesCore.mergeOne, input.model.spaces),
+          spaces: unwrapOr(input.msg.spaces, { spaces: [] }).spaces.reduce(Spaces.mergeOne, input.model.spaces),
         },
       }
     }
@@ -62,7 +62,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 const View: SpaceFrontendModule['View'] = (input) => {
   if (!input.ctx.currentUser?.userId) return null
 
-  const spaces = SpacesCore.toSpaces(input.model.spaces)
+  const spaces = Spaces.toSpaces(input.model.spaces)
 
   return (
     <ScreenLayout

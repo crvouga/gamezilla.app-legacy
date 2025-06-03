@@ -1,8 +1,8 @@
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { GameName } from '../../game/games/@/game-name'
-import * as Game from '../../game/games/types'
+import { GameName } from '../game/games/@/game-name'
+import * as Game from '../game/games/types'
 
 export const MsgSpace = s.or(
   s.obj({

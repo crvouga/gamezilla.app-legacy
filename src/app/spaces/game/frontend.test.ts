@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 
 import { SpaceId } from '~/app/@/data/space-id'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
-import { SpacesCore } from '../spaces-core/spaces-core'
+import { Spaces } from '../spaces/spaces'
 import { GameName } from './games/@/game-name'
 import { NonEmpty } from '~/@/array/non-empty'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
@@ -55,7 +55,7 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const gameName = SpacesCore.toSpaceStarted(output.model.spaces, spaceId)?.game?.t
+    const gameName = Spaces.toSpaceStarted(output.model.spaces, spaceId)?.game?.t
     expect(gameName).toBe(gameNameExpected)
   })
 
@@ -68,7 +68,7 @@ describe(import.meta.file, () => {
       { msgIn: ExitGameCmd.init() },
     ])
 
-    const gameName = SpacesCore.toSpaceStarted(NonEmpty.last(outputs).model.spaces, spaceId)?.game?.t ?? null
+    const gameName = Spaces.toSpaceStarted(NonEmpty.last(outputs).model.spaces, spaceId)?.game?.t ?? null
 
     expect(gameName).toBeNull()
   })

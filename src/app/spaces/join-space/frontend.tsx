@@ -12,9 +12,9 @@ import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 import { SpaceFrontendCtx } from '../@/frontend/ctx'
 import { SectionPeopleList } from '../@/ui/section-people-list'
 import { SectionPersonDetails } from '../@/ui/section-person-details'
-import { SpaceFrontendModule } from '../architecture/space-frontend'
-import { SpacesCore } from '../spaces-core/spaces-core'
-import { MsgSpace } from '../spaces-core/space-msg/space-msg'
+import { SpaceFrontendModule } from '../frontend/space-frontend-module'
+import { Spaces } from '../spaces/spaces'
+import { MsgSpace } from '../space/space-msg'
 import { GameName } from '../game/games/@/game-name'
 import { GameCoverArt } from '../game/games/cover-art'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
@@ -76,7 +76,7 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
 const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-joined-space': {
-      const error = SpacesCore.toErrorByEvenId(input.model.spaces, input.msgSpace.eventId)
+      const error = Spaces.toErrorByEvenId(input.model.spaces, input.msgSpace.eventId)
 
       switch (error?.t) {
         case 'user-already-in-a-space': {
@@ -91,7 +91,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
         }
       }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
 
       if (input.msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
 
@@ -129,7 +129,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   if (!space) return <div>No space</div>
 
-  const spaceState = SpacesCore.toSpaceStarted(input.model.spaces, space?.spaceId)
+  const spaceState = Spaces.toSpaceStarted(input.model.spaces, space?.spaceId)
 
   if (!spaceState) return <div>Space is not started</div>
 

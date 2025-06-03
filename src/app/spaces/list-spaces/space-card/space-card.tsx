@@ -1,14 +1,14 @@
 import { Avatar } from '~/@/ui/avatar'
+import { Clickable } from '~/@/ui/clickable'
 import { cn } from '~/@/ui/cn'
 import { Typography } from '~/@/ui/typography'
-import { Clickable } from '~/@/ui/clickable'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
 import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
 import { ViewHostChip } from '../../@/ui/host-chip'
-import { SpaceState } from '../../spaces-core/space-state'
 import { GameName } from '../../game/games/@/game-name'
+import { SpaceState } from '../../space/space-state'
 import { SPACE_CARD_GRADIENT_CLASS_NAME } from './space-card-gradient'
 
 const MAX_AVATAR_COUNT = 3

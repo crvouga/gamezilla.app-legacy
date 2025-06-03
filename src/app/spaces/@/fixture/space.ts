@@ -1,6 +1,6 @@
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { Space } from '../../spaces-core/space'
+import { Space } from '../../space/space'
 import { SpaceCtx } from '../space/ctx'
 import { makeSpace } from './shared'
 

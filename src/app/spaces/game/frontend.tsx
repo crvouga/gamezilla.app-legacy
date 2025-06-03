@@ -7,9 +7,9 @@ import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ExitGameCmd } from '../@/frontend/exit-game-cmd'
-import { SpaceFrontendModule } from '../architecture/space-frontend'
-import { Space } from '../spaces-core/space'
-import { SpacesCore } from '../spaces-core/spaces-core'
+import { SpaceFrontendModule } from '../frontend/space-frontend-module'
+import { Space } from '../space/space'
+import { Spaces } from '../spaces/spaces'
 import type { MsgFrontend } from '../types'
 import { ScreenNotInGameFrontend } from './frontend/screen-not-in-game'
 import { GamesFrontend } from './games/frontend'
@@ -30,7 +30,7 @@ const updateFromMsg: SpaceFrontendModule['update'] = ({ msg, model, ctx }) => {
       const currentUserId = ctx.currentUser?.userId
       if (!currentUserId) return { model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, currentUserId)
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(model.spaces, currentUserId)
 
       if (!currentUserSpaceId) return { model }
 
@@ -56,7 +56,7 @@ const updateFromCmd: SpaceFrontendModule['update'] = (input) => {
 
     if (!currentUserId) return { model: input.model }
 
-    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, currentUserId)
+    const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, currentUserId)
 
     if (!currentUserSpaceId) return { model: input.model }
 
@@ -81,7 +81,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
     case 'user-inputted-game': {
       if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
 
       if (input.msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
 
@@ -106,7 +106,7 @@ const inputToSpaceId = (
     return input.msgSpace.spaceId
   }
 
-  const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, currentUser.userId) ?? null
+  const spaceId = Spaces.toSpaceIdByUserId(input.model.spaces, currentUser.userId) ?? null
 
   return spaceId
 }
@@ -120,7 +120,7 @@ const updateGame: SpaceFrontendModule['update'] = (input) => {
 
   if (!spaceId) return { model: input.model }
 
-  const spaceState = SpacesCore.toSpaceStarted(input.model.spaces, spaceId)
+  const spaceState = Spaces.toSpaceStarted(input.model.spaces, spaceId)
 
   if (!spaceState) return { model: input.model }
 
@@ -174,7 +174,7 @@ const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (inpu
     currentUser: input.ctx.currentUser,
   }
 
-  const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, frontendCtx.currentUser?.userId)
+  const spaceId = Spaces.toSpaceIdByUserId(input.model.spaces, frontendCtx.currentUser?.userId)
 
   if (!spaceId) return Sub.none()
 
@@ -212,7 +212,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   if (!input.ctx.currentUser) return null
 
-  const space = SpacesCore.toSpaceStarted(input.model.spaces, input.ctx.space?.spaceId)
+  const space = Spaces.toSpaceStarted(input.model.spaces, input.ctx.space?.spaceId)
 
   if (!space) return null
 

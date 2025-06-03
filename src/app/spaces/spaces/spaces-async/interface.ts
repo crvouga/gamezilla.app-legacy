@@ -5,10 +5,10 @@ import { Sub } from '~/@/sub'
 import { Paginated } from '~/app/@/data/pagination'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { Space } from '../space'
-import { MsgSpace } from '../space-msg/space-msg'
+import { Space } from '../../space/space'
+import { MsgSpace } from '../../space/space-msg'
 
-export type ISpacesCoreAsync = {
+export type ISpacesAsync = {
   list: (input: {
     pagination: Pagination
     whereAnd?: SpacesCoreWhereAnd

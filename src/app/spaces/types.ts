@@ -5,8 +5,8 @@ import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { Space } from './@/space/space'
-import { SpacesCore } from './spaces-core/spaces-core'
-import { ISpacesCoreAsync } from './spaces-core/spaces-core-async/interface'
+import { Spaces } from './spaces/spaces'
+import { ISpacesAsync } from './spaces/spaces-async/interface'
 import { EndSpaceTypes } from './end-space'
 import { CurrentSpaceMiniPlayerTypes } from './frontend/current-space-mini-player'
 import { ExitSpaceActionTypes } from './frontend/exit-space-action'
@@ -27,7 +27,7 @@ type Opened =
   | 'leave-space.confirmation'
 
 type ModelFrontendBase = {
-  spaces: SpacesCore.Model
+  spaces: Spaces.Model
   openedPreviewUserId: UserId | null
   opened: Opened
 }
@@ -60,7 +60,7 @@ export type FrontendCtxModule = AppFrontendCtxBase & {
 
 export type BackendCtxModule = AppBackendCtxBase &
   GameTypes.GamesBackendCtxModule & {
-    spacesCore: ISpacesCoreAsync
+    spacesCore: ISpacesAsync
     topic: Topic.Client<typeof topicContract>
   }
 

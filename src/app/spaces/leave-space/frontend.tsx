@@ -5,9 +5,9 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
-import { SpaceFrontendModule } from '../architecture/space-frontend'
-import { SpacesCore } from '../spaces-core/spaces-core'
-import { MsgSpace } from '../spaces-core/space-msg/space-msg'
+import { SpaceFrontendModule } from '../frontend/space-frontend-module'
+import { Spaces } from '../spaces/spaces'
+import { MsgSpace } from '../space/space-msg'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -22,7 +22,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: ms
     case 'user-left-space': {
       if (!ctx.currentUser?.userId) return { model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, ctx.currentUser?.userId)
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(model.spaces, ctx.currentUser?.userId)
 
       if (msgSpace.spaceId !== currentUserSpaceId) return { model }
 
@@ -60,7 +60,7 @@ const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg
     case 'leave-space.clicked-leave-space-button': {
       if (!ctx.currentUser?.userId) return { model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(model.spaces, ctx.currentUser.userId)
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(model.spaces, ctx.currentUser.userId)
 
       if (!currentUserSpaceId) return { model }
 
@@ -85,7 +85,7 @@ const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg
 }
 
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
-  const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+  const spaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
   if (!spaceId) return null
   return {
     id: input.ctx.t('spaces.leave'),

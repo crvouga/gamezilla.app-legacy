@@ -2,7 +2,7 @@ import { Pagination } from '~/@/query/query'
 import { RPC } from '~/@/rpc'
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
-import { Space } from '../spaces-core/space'
+import { Space } from '../space/space'
 import { RemoteResult, Result } from '~/@/result'
 import { RPCError } from '~/@/rpc/error'
 

@@ -5,8 +5,8 @@ import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Topic } from '~/@/topic'
 import { AppFrontendCtxBase, isAppFrontendCtx } from '../@/frontend/ctx'
-import { type Input, type Output, SpaceFrontendModule } from './architecture/space-frontend'
-import { SpacesCore } from './spaces-core/spaces-core'
+import { type Input, type Output, SpaceFrontendModule } from './frontend/space-frontend-module'
+import { Spaces } from './spaces/spaces'
 import { EndSpaceFrontend } from './end-space/frontend'
 import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/frontend'
 import { ExitSpaceAction } from './frontend/exit-space-action/frontend'
@@ -30,7 +30,7 @@ const initCtx = (input: {
 
 const init: FrontendModule['init'] = (_input) => {
   const model: ModelFrontend = {
-    spaces: SpacesCore.init,
+    spaces: Spaces.init,
     games: {},
     opened: null,
     openedPreviewUserId: null,
@@ -65,7 +65,7 @@ const updateLoop = (input: Input, acc: Output): Output => {
 }
 
 const updateChild: SpaceFrontendModule['update'] = (input) => {
-  if (input.msgSpace && SpacesCore.hasEvent(input.model.spaces, input.msgSpace.spaceId, input.msgSpace.eventId)) {
+  if (input.msgSpace && Spaces.hasEvent(input.model.spaces, input.msgSpace.spaceId, input.msgSpace.eventId)) {
     return { model: input.model }
   }
 
@@ -88,7 +88,7 @@ const updateChild: SpaceFrontendModule['update'] = (input) => {
 const updateSpacesFromMsgSpace: SpaceFrontendModule['update'] = ({ msgSpace, model }) => {
   if (!msgSpace) return { model }
 
-  const updated = SpacesCore.update({ modelSpace: model.spaces, msgSpace })
+  const updated = Spaces.update({ modelSpace: model.spaces, msgSpace })
 
   return { model: { ...model, spaces: updated.model } }
 }

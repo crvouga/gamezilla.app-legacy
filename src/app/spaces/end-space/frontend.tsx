@@ -6,9 +6,9 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
-import { SpaceFrontendModule } from '../architecture/space-frontend'
-import { SpacesCore } from '../spaces-core/spaces-core'
-import { MsgSpace } from '../spaces-core/space-msg/space-msg'
+import { SpaceFrontendModule } from '../frontend/space-frontend-module'
+import { Spaces } from '../spaces/spaces'
+import { MsgSpace } from '../space/space-msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 
 const update: SpaceFrontendModule['update'] = (input) => {
@@ -24,7 +24,7 @@ const updateFromAppEvent: SpaceFrontendModule['update'] = (input) => {
   if (CurrentUserLoggedOutEvt.is(input.msgIn)) {
     if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-    const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
+    const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
 
     if (!currentUserSpaceId) return { model: input.model }
 
@@ -44,7 +44,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
     case 'user-ended-space': {
       if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
 
       const msgSpace = input.msgSpace
 
@@ -98,7 +98,7 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
     case 'end-space.clicked-end-space-button': {
       if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
 
       if (!currentUserSpaceId) return { model: input.model }
 
@@ -119,7 +119,7 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
 }
 
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
-  const spaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+  const spaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
 
   if (!spaceId) return null
 

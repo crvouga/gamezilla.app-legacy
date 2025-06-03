@@ -9,8 +9,8 @@ import { s } from '~/@/schema'
 import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
 import { type UserId } from '~/app/@/data/user-id'
-import { Space } from '../space'
-import type { ISpacesCoreAsync, SpacesCoreConfig } from './interface'
+import { Space } from '../../space/space'
+import type { ISpacesAsync, SpacesCoreConfig } from './interface'
 
 export type Config = SpacesCoreConfig & {
   t: 'key-value-db'
@@ -21,7 +21,7 @@ export type Config = SpacesCoreConfig & {
   namespace: string[]
 }
 
-export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync> => {
+export const SpacesCoreAsync = async (config: Config): Promise<ISpacesAsync> => {
   const { runtime } = config
   const logger = Logger.prefix('spaces-core-async', config.logger)
 
@@ -72,7 +72,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
   //
   //
 
-  const get: ISpacesCoreAsync['get'] = async (spaceId) => {
+  const get: ISpacesAsync['get'] = async (spaceId) => {
     if (!spaceId) {
       return Ok(null)
     }
@@ -86,7 +86,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
     return Ok(got.value)
   }
 
-  const upsert: ISpacesCoreAsync['upsert'] = async (space) => {
+  const upsert: ISpacesAsync['upsert'] = async (space) => {
     const spaceId = Space.toSpaceId(space)
 
     if (!spaceId) {
@@ -111,7 +111,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
     return result
   }
 
-  const hasEvent: ISpacesCoreAsync['hasEvent'] = async (spaceId, eventId) => {
+  const hasEvent: ISpacesAsync['hasEvent'] = async (spaceId, eventId) => {
     const got = await spacesBySpaceId.get(spaceId)
 
     if (isErr(got)) {
@@ -121,7 +121,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
     return Boolean(got.value && eventId in got.value.eventIds)
   }
 
-  const getByUserId: ISpacesCoreAsync['getByUserId'] = async (userId) => {
+  const getByUserId: ISpacesAsync['getByUserId'] = async (userId) => {
     if (!userId) {
       return Ok(null)
     }
@@ -135,7 +135,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
     return get(got.value)
   }
 
-  const list: ISpacesCoreAsync['list'] = async (input) => {
+  const list: ISpacesAsync['list'] = async (input) => {
     const allSpaceIds = Result.unwrapOr(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? []
 
     const subset = allSpaceIds.slice(input.pagination.offset, input.pagination.offset + input.pagination.limit)
@@ -152,7 +152,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
     })
   }
 
-  const update: ISpacesCoreAsync['update'] = async (spaceEvent) => {
+  const update: ISpacesAsync['update'] = async (spaceEvent) => {
     if (await hasEvent(spaceEvent.spaceId, spaceEvent.eventId)) {
       return Ok(null)
     }
@@ -166,7 +166,7 @@ export const SpacesCoreAsync = async (config: Config): Promise<ISpacesCoreAsync>
     return upsert(spaceNew)
   }
 
-  const merge: ISpacesCoreAsync['merge'] = async (space) => {
+  const merge: ISpacesAsync['merge'] = async (space) => {
     const spaceId = Space.toSpaceId(space)
 
     const currentSpace = Result.unwrapOr(await get(spaceId), null) ?? Space.init

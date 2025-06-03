@@ -1,7 +1,7 @@
 import type { SpaceId } from '~/app/@/data/space-id'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { SpacesCore } from '../spaces-core/spaces-core'
+import { Spaces } from '../spaces/spaces'
 import { EndSpaceFrontend } from '../end-space/frontend'
 import { ExitSpaceAction } from '../frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from '../frontend/people-action/frontend'
@@ -16,7 +16,7 @@ const View = (input: {
   dispatch: (m: MsgFrontend) => void
   spaceId: SpaceId
 }) => {
-  const spaceState = SpacesCore.toSpaceState(input.model.spaces, input.spaceId)
+  const spaceState = Spaces.toSpaceState(input.model.spaces, input.spaceId)
 
   switch (spaceState.type) {
     case 'initial': {
@@ -40,7 +40,7 @@ const View = (input: {
         space: spaceState,
       }
 
-      const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(input.model.spaces, currentUser.userId)
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, currentUser.userId)
 
       const isNotJoined = currentUserSpaceId !== spaceCtx.space.spaceId
 
