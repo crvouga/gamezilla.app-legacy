@@ -20,10 +20,10 @@ export const BaseFixtures = async () => {
 
   configs.push({
     t: 'with-sql-tables',
-    sqlDb: f.sqlDbite,
+    sqlDb: f.sqlDbSqlite,
     puzzleDb: PuzzleDb({
       t: 'sql-db',
-      sqlDb: f.sqlDbite,
+      sqlDb: f.sqlDbSqlite,
       logger: Logger({ t: 'noop' }),
     }),
   })

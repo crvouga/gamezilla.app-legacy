@@ -3,7 +3,7 @@ import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { EventSourced } from '~/@/event-sourced'
 import { EventMeta, withEventId } from '~/@/event-sourced/event'
 import { sleep } from '~/@/promise/sleep'
-import { Ok, unwrap } from '~/@/result'
+import { unwrap } from '~/@/result'
 import { s } from '~/@/schema'
 import { Stream } from '~/@/stream/impl'
 import { Sub } from '~/@/sub'
@@ -11,14 +11,14 @@ import { TimeSpan } from '~/@/time/time-span'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { Space } from '../../space/space'
 import { MsgSpace } from '../../space/msg-space'
+import { Space } from '../../space/space'
 import { SpaceState } from '../../space/space-state'
 import { Config, SpacesDb } from './impl'
 
 const Fixture = async (config: Config) => {
   const _dangerouslyOverrideModel = Sub.create<Space.Model>()
-  const spacesCore = await SpacesDb({
+  const spacesDb = await SpacesDb({
     ...config,
     _dangerouslyOverrideModel,
   })
@@ -27,7 +27,7 @@ const Fixture = async (config: Config) => {
 
   return {
     _dangerouslyOverrideModel,
-    spacesCore,
+    spacesDb,
     spaceId,
     space,
   }
@@ -84,34 +84,40 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe('Spaces Core Async', () => {
+describe('SpacesDb', () => {
   it('should work', async () => {
     for (const f of await Fixtures()) {
       const spaceId = Space.toSpaceStarted(f.space)?.spaceId ?? null
 
-      const before = await f.spacesCore.get(spaceId)
+      const before = await f.spacesDb.query({
+        pagination: { limit: 1, offset: 0 },
+        whereAnd: { equalsSpaceId: spaceId },
+      })
 
-      unwrap(await f.spacesCore.upsert(f.space))
+      unwrap(await f.spacesDb.upsert(f.space))
 
-      const after = await f.spacesCore.get(spaceId)
+      const after = await f.spacesDb.query({
+        pagination: { limit: 1, offset: 0 },
+        whereAnd: { equalsSpaceId: spaceId },
+      })
 
-      expect(before).toEqual(Ok(null))
-      expect(after).toEqual(Ok(f.space))
+      expect(unwrap(before).items).toEqual([])
+      expect(unwrap(after).items).toEqual([f.space])
     }
   })
 
   test('list spaces', async () => {
     for (const f of await Fixtures()) {
       const before = unwrap(
-        await f.spacesCore.query({
+        await f.spacesDb.query({
           pagination: { limit: 10, offset: 0 },
         }),
       )
 
-      unwrap(await f.spacesCore.upsert(f.space))
+      unwrap(await f.spacesDb.upsert(f.space))
 
       const after = unwrap(
-        await f.spacesCore.query({
+        await f.spacesDb.query({
           pagination: {
             limit: 10,
             offset: 0,
@@ -127,55 +133,80 @@ describe('Spaces Core Async', () => {
   test('update', async () => {
     const spaceId = SpaceId.generate()
     for (const f of await Fixtures()) {
-      const before = unwrap(await f.spacesCore.get(spaceId))
-      await f.spacesCore.update(
+      const before = unwrap(
+        await f.spacesDb.query({
+          pagination: { limit: 1, offset: 0 },
+          whereAnd: { equalsSpaceId: spaceId },
+        }),
+      )
+      await f.spacesDb.update(
         withEventId({
           t: 'user-started-space',
           spaceId: spaceId,
           userId: UserId.generate(),
         }),
       )
-      const after = unwrap(await f.spacesCore.get(spaceId))
-      expect(Space.toSpaceStarted(before)).toEqual(null)
-      expect(Space.toSpaceStarted(after)?.type).toEqual('started')
+      const after = unwrap(
+        await f.spacesDb.query({
+          pagination: { limit: 1, offset: 0 },
+          whereAnd: { equalsSpaceId: spaceId },
+        }),
+      )
+      expect(Space.toSpaceStarted(before.items[0])).toEqual(null)
+      expect(Space.toSpaceStarted(after.items[0])?.type).toEqual('started')
     }
   })
 
   test('get with fallback', async () => {
     for (const f of await Fixtures()) {
-      const before = unwrap(await f.spacesCore.get(f.spaceId)) ?? Space.init
-      unwrap(await f.spacesCore.upsert(f.space))
-      const after = unwrap(await f.spacesCore.get(f.spaceId)) ?? Space.init
-      expect(EventSourced.toState(Space.config, before).type).toEqual('initial')
-      expect(EventSourced.toState(Space.config, after).type).toEqual('started')
+      const before = unwrap(
+        await f.spacesDb.query({ pagination: { limit: 1, offset: 0 }, whereAnd: { equalsSpaceId: f.spaceId } }),
+      )
+
+      unwrap(await f.spacesDb.upsert(f.space))
+
+      const after = unwrap(
+        await f.spacesDb.query({ pagination: { limit: 1, offset: 0 }, whereAnd: { equalsSpaceId: f.spaceId } }),
+      )
+      expect(EventSourced.toState(Space.config, before.items[0] ?? Space.init)?.type).toEqual('initial')
+      expect(EventSourced.toState(Space.config, after.items[0] ?? Space.init)?.type).toEqual('started')
     }
   })
 
   test("multiple spaces don't collide", async () => {
     for (const f1 of await Fixtures()) {
       for (const f2 of await Fixtures()) {
-        unwrap(await f1.spacesCore.upsert(f1.space))
-        unwrap(await f2.spacesCore.upsert(f2.space))
-        const after1 = unwrap(await f1.spacesCore.get(f1.spaceId))
-        const after2 = unwrap(await f2.spacesCore.get(f2.spaceId))
-        expect(after1).toMatchObject(f1.space)
-        expect(after2).toMatchObject(f2.space)
+        unwrap(await f1.spacesDb.upsert(f1.space))
+        unwrap(await f2.spacesDb.upsert(f2.space))
+        const after1 = unwrap(
+          await f1.spacesDb.query({ pagination: { limit: 1, offset: 0 }, whereAnd: { equalsSpaceId: f1.spaceId } }),
+        )
+        const after2 = unwrap(
+          await f2.spacesDb.query({ pagination: { limit: 1, offset: 0 }, whereAnd: { equalsSpaceId: f2.spaceId } }),
+        )
+        expect(after1.items[0]).toMatchObject(f1.space)
+        expect(after2.items[0]).toMatchObject(f2.space)
       }
     }
   })
 
   test('error when db has invalid data', async () => {
     for (const f of await Fixtures()) {
-      unwrap(await f.spacesCore.upsert(f.space))
-      const before = await f.spacesCore.get(f.spaceId)
+      unwrap(await f.spacesDb.upsert(f.space))
+      const before = await f.spacesDb.query({
+        pagination: { limit: 1, offset: 0 },
+        whereAnd: { equalsSpaceId: f.spaceId },
+      })
       const invalid = toInvalidSpaceModel(f.space)
       await f._dangerouslyOverrideModel.pub(invalid)
       await sleep(TimeSpan.milliseconds(100))
-      const after = await f.spacesCore.get(f.spaceId)
-      expect(before).toEqual(Ok(f.space))
-      expect(after).not.toEqual(Ok(f.space))
+      const after = await f.spacesDb.query({
+        pagination: { limit: 1, offset: 0 },
+        whereAnd: { equalsSpaceId: f.spaceId },
+      })
+      expect(unwrap(before).items).toEqual([f.space])
       expect(after.t).toEqual('err')
-      expect(before).toEqual(Ok(f.space))
+      expect(unwrap(before).items).toEqual([f.space])
     }
   })
 })

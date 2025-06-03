@@ -46,6 +46,8 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
         const parsed = schema.parse(got)
         if (parsed.t === 'ok') {
           rows.push(parsed.value)
+        } else {
+          return Err(parsed.error.map((e) => e.message).join(', '))
         }
       }
 

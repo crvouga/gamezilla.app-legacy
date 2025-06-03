@@ -40,8 +40,8 @@ const Fixtures = async () => {
 
   configs.push({
     t: 'with-sql-tables',
-    sqlDb: f.sqlDbite,
-    userSessionDb: await UserSessionDb({ t: 'sql', sqlDb: f.sqlDbite, logger: Logger({ t: 'noop' }) }),
+    sqlDb: f.sqlDbSqlite,
+    userSessionDb: await UserSessionDb({ t: 'sql', sqlDb: f.sqlDbSqlite, logger: Logger({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {

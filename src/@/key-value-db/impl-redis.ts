@@ -84,7 +84,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
             logger.error(`getMany: not a value: ${row} ${errorStr}`)
 
-            continue
+            return Err(errorStr)
           }
 
           rows.push(parsed.value)

@@ -21,13 +21,13 @@ const Fixtures = async () => {
 
   configs.push({
     t: 'sql',
-    sqlDb: f.sqlDbite,
+    sqlDb: f.sqlDbSqlite,
   })
 
   configs.push({
     t: 'with-sql-tables',
-    sqlDb: f.sqlDbite,
-    guestSessionMappingDb: GuestSessionMappingDb({ t: 'sql', sqlDb: f.sqlDbite }),
+    sqlDb: f.sqlDbSqlite,
+    guestSessionMappingDb: GuestSessionMappingDb({ t: 'sql', sqlDb: f.sqlDbSqlite }),
   })
 
   if (f.t === 'integration') {

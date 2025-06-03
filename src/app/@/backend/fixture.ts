@@ -26,7 +26,7 @@ export type IFixtureAppBackendUnit = {
   runtime: IRuntime
   logger: ILogger
   pubSubTopicBased: IPubSubTopicBased
-  sqlDbite: ISqlDb
+  sqlDbSqlite: ISqlDb
   keyValueDbHashMap: IKeyValueDb
 }
 
@@ -88,7 +88,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     return {
       t: 'unit',
       ctx,
-      sqlDbite,
+      sqlDbSqlite: sqlDbite,
       keyValueDbHashMap,
       pubSubTopicBased,
       runtime,
@@ -137,7 +137,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   return {
     t: 'integration',
     ctx,
-    sqlDbite,
+    sqlDbSqlite: sqlDbite,
     dbConnPostgres,
     // dbConnPowersyncClient,
     keyValueDbSqlite,

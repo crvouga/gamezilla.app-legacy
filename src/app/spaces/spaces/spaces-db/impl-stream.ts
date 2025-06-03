@@ -2,7 +2,7 @@ import { EventSourced } from '~/@/event-sourced'
 import { WithEventMeta } from '~/@/event-sourced/event'
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import { ILogger, Logger } from '~/@/logger'
-import { isErr, Ok, unwrapOr } from '~/@/result'
+import { isErr, Ok, Result, unwrapOr } from '~/@/result'
 import { IRuntime } from '~/@/runtime'
 import { EventId } from '~/@/stream/event-id'
 import { IStream } from '~/@/stream/interface'
@@ -72,7 +72,7 @@ export const SpacesDb = async (config: Config): Promise<ISpacesDb> => {
     return upsert(spaceNew)
   }
 
-  const get: ISpacesDb['get'] = async (spaceId) => {
+  const get = async (spaceId: SpaceId): Promise<Result<string, Space.Model | null>> => {
     if (!spaceId) {
       return Ok(null)
     }
@@ -106,30 +106,13 @@ export const SpacesDb = async (config: Config): Promise<ISpacesDb> => {
     return unwrapOr(await config.stream.has(spaceId, eventId), false)
   }
 
-  const getByUserId: ISpacesDb['getByUserId'] = async (userId) => {
-    return implDbConnKb.getByUserId(userId)
-  }
-
   const query: ISpacesDb['query'] = async (input) => {
     return implDbConnKb.query(input)
   }
 
-  const merge: ISpacesDb['merge'] = async (space) => {
-    const spaceId = Space.toSpaceId(space)
-
-    const currentSpace = unwrapOr(await get(spaceId), null) ?? Space.init
-
-    const spaceNew = EventSourced.mergeLeft(space, currentSpace)
-
-    return upsert(spaceNew)
-  }
-
   return {
-    get,
     upsert,
-    getByUserId,
     query,
-    merge,
     update,
   }
 }

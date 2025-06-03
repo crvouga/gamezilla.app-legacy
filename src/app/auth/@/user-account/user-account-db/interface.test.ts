@@ -22,8 +22,8 @@ const Fixtures = async () => {
 
   configs.push({
     t: 'with-sql-tables',
-    sqlDb: f.sqlDbite,
-    userAccountDb: UserAccountDb({ t: 'sql', sqlDb: f.sqlDbite }),
+    sqlDb: f.sqlDbSqlite,
+    userAccountDb: UserAccountDb({ t: 'sql', sqlDb: f.sqlDbSqlite }),
   })
 
   if (f.t === 'integration') {

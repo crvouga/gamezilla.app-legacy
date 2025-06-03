@@ -111,7 +111,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
             logger.error(`get: not a value: ${row.id} ${errorStr.slice(0, MAX_LEN)}`)
 
-            continue
+            return Err(errorStr)
           }
 
           rows.push(parsed.value)

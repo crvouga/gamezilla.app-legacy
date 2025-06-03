@@ -69,20 +69,6 @@ export const SpacesDb = async (config: Config): Promise<ISpacesDb> => {
     await Promise.all([cache.zap(spaceId), config.keyValueDb.zap(spaceId), upsert(model)])
   })
 
-  const get: ISpacesDb['get'] = async (spaceId) => {
-    if (!spaceId) {
-      return Ok(null)
-    }
-
-    const got = await spacesBySpaceId.get(spaceId)
-
-    if (isErr(got)) {
-      return got
-    }
-
-    return Ok(got.value)
-  }
-
   const upsert: ISpacesDb['upsert'] = async (space) => {
     const spaceId = Space.toSpaceId(space)
 
@@ -118,20 +104,6 @@ export const SpacesDb = async (config: Config): Promise<ISpacesDb> => {
     return Boolean(got.value && eventId in got.value.eventIds)
   }
 
-  const getByUserId: ISpacesDb['getByUserId'] = async (userId) => {
-    if (!userId) {
-      return Ok(null)
-    }
-
-    const got = await indexSpaceIdByUserId.get(userId)
-
-    if (isErr(got)) {
-      return got
-    }
-
-    return get(got.value)
-  }
-
   const query: ISpacesDb['query'] = async (input) => {
     const allSpaceIds = Result.unwrapOr(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? []
 
@@ -163,22 +135,9 @@ export const SpacesDb = async (config: Config): Promise<ISpacesDb> => {
     return upsert(spaceNew)
   }
 
-  const merge: ISpacesDb['merge'] = async (space) => {
-    const spaceId = Space.toSpaceId(space)
-
-    const currentSpace = Result.unwrapOr(await get(spaceId), null) ?? Space.init
-
-    const spaceNew = EventSourced.mergeLeft(space, currentSpace)
-
-    return upsert(spaceNew)
-  }
-
   return {
-    get,
     upsert,
-    getByUserId,
     query,
     update,
-    merge,
   }
 }

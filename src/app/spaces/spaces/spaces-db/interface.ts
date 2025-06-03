@@ -14,22 +14,16 @@ export type SpacesDbQueryDb = {
 }
 
 export type SpacesDbWhereAnd = {
-  equalsSpaceId?: SpaceId
-  equalsUserId?: UserId
+  equalsSpaceId?: SpaceId | null
+  equalsUserId?: UserId | null
 }
 
 export type ISpacesDb = {
   query: (input: SpacesDbQueryDb) => Promise<Result<string, Paginated<Space.Model>>>
 
-  get: (spaceId: SpaceId | null) => Promise<Result<string, Space.Model | null>>
-
-  getByUserId: (userId: UserId | null) => Promise<Result<string, Space.Model | null>>
-
   upsert: (space: Space.Model) => Promise<Result<string, null>>
 
   update: (spaceEvent: WithEventId<MsgSpace>) => Promise<Result<string, null>>
-
-  merge: (space: Space.Model) => Promise<Result<string, null>>
 }
 
 export type SpacesDbConfig = {

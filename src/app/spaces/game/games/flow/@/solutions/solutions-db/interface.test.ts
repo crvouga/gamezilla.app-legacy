@@ -27,10 +27,10 @@ const Fixtures = async () => {
 
   configs.push({
     t: 'with-sql-tables',
-    sqlDb: f.sqlDbite,
+    sqlDb: f.sqlDbSqlite,
     solutionsDb: SolutionsDb({
       t: 'sql-db',
-      sqlDb: f.sqlDbite,
+      sqlDb: f.sqlDbSqlite,
     }),
   })
 

@@ -1,5 +1,5 @@
 import { EventSourced } from '~/@/event-sourced'
-import { isErr, unwrapOr } from '~/@/result'
+import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Space } from '../space/space'
@@ -9,25 +9,36 @@ import { rpcContract } from './types'
 const rpc = (config: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
     async 'spaces.sync.sync'(input) {
-      const merged = await config.ctx.spacesDb.merge(input.space)
-
-      if (isErr(merged)) {
-        return { space: input.space }
-      }
-
       const spaceId = Space.toSpaceId(input.space)
 
-      if (!spaceId) {
+      const found = await config.ctx.spacesDb.query({
+        pagination: { limit: 1, offset: 0 },
+        whereAnd: { equalsSpaceId: spaceId },
+      })
+
+      if (isErr(found)) {
         return { space: input.space }
       }
 
-      const spaceNew = unwrapOr(await config.ctx.spacesDb.get(spaceId), null)
+      const existing = found.value.items[0] ?? null
 
-      if (!spaceNew) {
+      if (!existing) {
         return { space: input.space }
       }
 
-      const starting = EventSourced.startFromLatestSnapshot(spaceNew)
+      const spaceNew = EventSourced.mergeLeft(existing, input.space)
+
+      const upserted = await config.ctx.spacesDb.upsert(spaceNew)
+
+      if (isErr(upserted)) {
+        return { space: input.space }
+      }
+
+      if (!existing) {
+        return { space: input.space }
+      }
+
+      const starting = EventSourced.startFromLatestSnapshot(existing)
 
       return { space: starting }
     },
