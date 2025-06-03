@@ -41,11 +41,12 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
         pub(topicParams, msg) {
           const topic = toTopic(topicName, topicParams)
 
-          serverCore.publishTopicName(topicName, [PUB, topicName, topicParams, msg], null)
-          serverCore.publishTopic(topic, [PUB, topicName, topicParams, msg], null)
+          const decodedMsg: ToClientMsgMany = [PUB, topicName, topicParams, msg]
+          // @ts-expect-error
+          const encodedMsg: EncodedMsg = config.codec.encode(decodedMsg)
 
-          serverCore.subscriptionsByTopic.get(topic)?.pubSub.pub(msg)
-          serverCore.subscriptionsByTopicName.get(topicName)?.pubSub.pub(msg)
+          serverCore.publishTopicName(topicName, encodedMsg, decodedMsg, null)
+          serverCore.publishTopic(topic, encodedMsg, decodedMsg, null)
         },
         sub(topicParams, mapper) {
           const topic = toTopic(topicName, topicParams)
@@ -100,29 +101,30 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
   return client
 }
 
+type EncodedMsg = string | Bun.ArrayBufferView | ArrayBuffer | SharedArrayBuffer
+
 const initServerCore = <TContract extends ContractBase>(config: Config<TContract>) => {
   let bunServer: Bun.Server
   const subscriptionsByTopic = new Map<string, TopicSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
-  const send = (ws: ServerWebSocket<BackendWebSocketData>, msg: ToClientMsgOne) => {
-    const encoded = config.codec.encode(msg)
+  const send = (ws: ServerWebSocket<BackendWebSocketData>, decodedMsg: ToClientMsgOne) => {
+    const encodedMsg = config.codec.encode(decodedMsg)
     ws.send(
       // @ts-expect-error
-      encoded,
+      encodedMsg,
     )
   }
 
-  const publishTopic = (topic: Topic, msg: ToClientMsgMany, ws: ServerWebSocket<BackendWebSocketData> | null) => {
-    const encoded = config.codec.encode(msg)
-    bunServer.publish(
-      topic,
-      // @ts-expect-error
-      encoded,
-    )
-
+  const publishTopic = (
+    topic: Topic,
+    encodedMsg: EncodedMsg,
+    decodedMsg: ToClientMsgMany,
+    ws: ServerWebSocket<BackendWebSocketData> | null,
+  ) => {
+    bunServer.publish(topic, encodedMsg)
     subscriptionsByTopic.get(topic)?.pubSub.pub({
-      ...msg[3],
+      ...decodedMsg[3],
       clientId: ws?.data.clientId,
       sessionId: ws?.data.sessionId,
       clientSessionId: ws?.data.clientSessionId,
@@ -131,18 +133,13 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
 
   const publishTopicName = (
     topicName: TopicName,
-    msg: ToClientMsgMany,
+    encodedMsg: EncodedMsg,
+    decodedMsg: ToClientMsgMany,
     ws: ServerWebSocket<BackendWebSocketData> | null,
   ) => {
-    const encoded = config.codec.encode(msg)
-    bunServer.publish(
-      topicName,
-      // @ts-expect-error
-      encoded,
-    )
-
+    bunServer.publish(topicName, encodedMsg)
     subscriptionsByTopicName.get(topicName)?.pubSub.pub({
-      ...msg[3],
+      ...decodedMsg[3],
       clientId: ws?.data.clientId,
       sessionId: ws?.data.sessionId,
       clientSessionId: ws?.data.clientSessionId,
@@ -150,39 +147,39 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
   }
 
   config.httpServer._setWebSocketHandler({
-    async message(ws: ServerWebSocket<BackendWebSocketData>, encodedMsg: string | Uint8Array) {
+    async message(ws: ServerWebSocket<BackendWebSocketData>, encodedMsg: EncodedMsg) {
       // @ts-expect-error
-      const msg: ToServerMsg = config.codec.decode(encodedMsg)
+      const decodedMsg: ToServerMsg = config.codec.decode(encodedMsg)
 
-      switch (msg[0]) {
+      switch (decodedMsg[0]) {
         case SUB: {
-          const topic = toTopic(msg[1], msg[2])
+          const topic = toTopic(decodedMsg[1], decodedMsg[2])
           ws.subscribe(topic)
-          send(ws, msg)
+          send(ws, decodedMsg)
           return
         }
         case UNSUB: {
-          const topic = toTopic(msg[1], msg[2])
+          const topic = toTopic(decodedMsg[1], decodedMsg[2])
           ws.unsubscribe(topic)
-          send(ws, msg)
+          send(ws, decodedMsg)
           return
         }
         case SUB_ALL: {
-          const topicName = msg[1]
+          const topicName = decodedMsg[1]
           ws.subscribe(topicName)
-          send(ws, msg)
+          send(ws, decodedMsg)
           return
         }
         case UNSUB_ALL: {
-          const topicName = msg[1]
+          const topicName = decodedMsg[1]
           ws.unsubscribe(topicName)
-          send(ws, msg)
+          send(ws, decodedMsg)
           return
         }
         case PUB: {
-          const topic = toTopic(msg[1], msg[2])
-          publishTopic(topic, msg, ws)
-          publishTopicName(msg[1], msg, ws)
+          const topic = toTopic(decodedMsg[1], decodedMsg[2])
+          publishTopic(topic, encodedMsg, decodedMsg, ws)
+          publishTopicName(decodedMsg[1], encodedMsg, decodedMsg, ws)
           return
         }
       }
