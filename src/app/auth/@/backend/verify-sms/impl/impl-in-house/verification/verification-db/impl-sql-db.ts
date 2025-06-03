@@ -20,7 +20,7 @@ export const Row = s.obj({
 type Row = s.Infer<typeof Row>
 
 export type Config = {
-  t: 'postgres'
+  t: 'sql-db'
   sqlDb: ISqlDb
 }
 
