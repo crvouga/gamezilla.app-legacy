@@ -147,9 +147,11 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
   }
 
   config.httpServer._setWebSocketHandler({
-    async message(ws: ServerWebSocket<BackendWebSocketData>, encodedMsg: EncodedMsg) {
+    async message(ws: ServerWebSocket<BackendWebSocketData>, encodedMsg) {
       // @ts-expect-error
-      const decodedMsg: ToServerMsg = config.codec.decode(encodedMsg)
+      const decodedMsg: ToServerMsg =
+        //
+        config.codec.decodeBunJsWebSocketMessage(encodedMsg)
 
       switch (decodedMsg[0]) {
         case SUB: {

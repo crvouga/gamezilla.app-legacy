@@ -2,27 +2,32 @@ import { decode, encode } from '@msgpack/msgpack'
 
 export type TopicMsgCodec = {
   encode: (msg: unknown) => unknown
-  decode: (msg: unknown) => unknown
-  decodeFromWebSocketMessageEvent: (event: MessageEvent<any>) => Promise<unknown> | unknown
+  decodeWebSocketMessageEvent: (event: MessageEvent<any>) => Promise<unknown> | unknown
+  decodeBunJsWebSocketMessage: (event: string | Buffer<ArrayBufferLike>) => Promise<unknown> | unknown
 }
 
 export const TopicMsgCodecJson: TopicMsgCodec = {
-  encode: (msg) => JSON.stringify(msg),
-  decode: (msg) =>
-    JSON.parse(
-      // @ts-expect-error
-      msg,
-    ),
-  decodeFromWebSocketMessageEvent: (event) => {
+  encode: (msg) => {
+    return JSON.stringify(msg)
+  },
+  decodeWebSocketMessageEvent: (event) => {
     return JSON.parse(event.data)
+  },
+  decodeBunJsWebSocketMessage: (event) => {
+    return JSON.parse(event.toString())
   },
 }
 
 // https://www.npmjs.com/package/@msgpack/msgpack#decoding-a-blob
 export const TopicMsgCodecMsgPack: TopicMsgCodec = {
   encode: (msg) => encode(msg),
-  decode: (msg) => decode(msg as ArrayBufferLike),
-  decodeFromWebSocketMessageEvent: async (event) => {
+  decodeBunJsWebSocketMessage: (msg) => {
+    if (typeof msg === 'string') {
+      throw new Error('CodecError: decodeFromBunJsWebSocketMessageEvent: string not supported')
+    }
+    return decode(msg)
+  },
+  decodeWebSocketMessageEvent: async (event) => {
     if (event.data instanceof Blob) {
       return decode(await event.data.arrayBuffer())
     }
@@ -34,10 +39,10 @@ export const TopicMsgCodecError: TopicMsgCodec = {
   encode: (_msg) => {
     throw new Error('CodecError: encode not implemented')
   },
-  decode: (_msg) => {
+  decodeBunJsWebSocketMessage: (_msg) => {
     throw new Error('CodecError: decode not implemented')
   },
-  decodeFromWebSocketMessageEvent: (_event) => {
+  decodeWebSocketMessageEvent: (_event) => {
     throw new Error('CodecError: mapEvent not implemented')
   },
 }

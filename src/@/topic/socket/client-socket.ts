@@ -201,8 +201,6 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
       s.throwIfAborted()
 
       for (const [topicName, { pubSub }] of subscriptionsByTopicName.entries()) {
-        // config.logger.debug('worker sync topic name', topicName)
-
         const isSubbedServer = subscribedTopicsServer.has(topicName)
         const isSubbedClient = pubSub.subscriberCount() > 0
 
@@ -227,7 +225,6 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     Sub.takeEvery(s, msgsToServer, (toServer) => {
       switch (toServer[0]) {
         case PUB: {
-          // config.logger.debug('worker sender pub', toServer)
           send(toServer)
           return
         }
@@ -237,11 +234,10 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
 
   const workerReceiver = async (s: AbortSignal, socket: Socket) => {
     Sub.takeEvery(s, socket.msgsFromServer, async (fromServer) => {
-      const fromServerParsed = (await config.codec.decodeFromWebSocketMessageEvent(fromServer)) as ToClientMsg
+      const fromServerParsed = (await config.codec.decodeWebSocketMessageEvent(fromServer)) as ToClientMsg
 
       switch (fromServerParsed[0]) {
         case PUB: {
-          // config.logger.debug('worker receiver pub', fromServerParsed)
           const topic = toTopic(fromServerParsed[1], fromServerParsed[2])
           const subscription = subscriptionsByTopic.get(topic)
           if (!subscription) return
