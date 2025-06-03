@@ -73,14 +73,39 @@ describe('SpacesDb', () => {
 
       const before = await f.spacesDb.query({
         pagination: { limit: 1, offset: 0 },
-        whereAnd: { equalsSpaceId: spaceId },
+        whereAnd: { spaceId: { '=': spaceId } },
       })
 
       unwrap(await f.spacesDb.upsert(f.space))
 
       const after = await f.spacesDb.query({
         pagination: { limit: 1, offset: 0 },
-        whereAnd: { equalsSpaceId: spaceId },
+        whereAnd: { spaceId: { '=': spaceId } },
+      })
+
+      expect(unwrap(before).items).toEqual([])
+      expect(unwrap(after).items).toEqual([f.space])
+    }
+  })
+
+  test('query by space id', async () => {
+    for (const f of await Fixtures()) {
+      unwrap(await f.spacesDb.upsert(Space.random({ spaceId: SpaceId.generate() })))
+      unwrap(await f.spacesDb.upsert(Space.random({ spaceId: SpaceId.generate() })))
+      unwrap(await f.spacesDb.upsert(Space.random({ spaceId: SpaceId.generate() })))
+
+      const spaceId = Space.toSpaceStarted(f.space)?.spaceId ?? null
+
+      const before = await f.spacesDb.query({
+        pagination: { limit: 1, offset: 0 },
+        whereAnd: { spaceId: { '=': spaceId } },
+      })
+
+      unwrap(await f.spacesDb.upsert(f.space))
+
+      const after = await f.spacesDb.query({
+        pagination: { limit: 1, offset: 0 },
+        whereAnd: { spaceId: { '=': spaceId } },
       })
 
       expect(unwrap(before).items).toEqual([])
@@ -115,13 +140,13 @@ describe('SpacesDb', () => {
   test('get with fallback', async () => {
     for (const f of await Fixtures()) {
       const before = unwrap(
-        await f.spacesDb.query({ pagination: { limit: 1, offset: 0 }, whereAnd: { equalsSpaceId: f.spaceId } }),
+        await f.spacesDb.query({ pagination: { limit: 1, offset: 0 }, whereAnd: { spaceId: { '=': f.spaceId } } }),
       )
 
       unwrap(await f.spacesDb.upsert(f.space))
 
       const after = unwrap(
-        await f.spacesDb.query({ pagination: { limit: 1, offset: 0 }, whereAnd: { equalsSpaceId: f.spaceId } }),
+        await f.spacesDb.query({ pagination: { limit: 1, offset: 0 }, whereAnd: { spaceId: { '=': f.spaceId } } }),
       )
       expect(EventSourced.toState(Space.config, before.items[0] ?? Space.init)?.type).toEqual('initial')
       expect(EventSourced.toState(Space.config, after.items[0] ?? Space.init)?.type).toEqual('started')
@@ -134,10 +159,10 @@ describe('SpacesDb', () => {
         unwrap(await f1.spacesDb.upsert(f1.space))
         unwrap(await f2.spacesDb.upsert(f2.space))
         const after1 = unwrap(
-          await f1.spacesDb.query({ pagination: { limit: 1, offset: 0 }, whereAnd: { equalsSpaceId: f1.spaceId } }),
+          await f1.spacesDb.query({ pagination: { limit: 1, offset: 0 }, whereAnd: { spaceId: { '=': f1.spaceId } } }),
         )
         const after2 = unwrap(
-          await f2.spacesDb.query({ pagination: { limit: 1, offset: 0 }, whereAnd: { equalsSpaceId: f2.spaceId } }),
+          await f2.spacesDb.query({ pagination: { limit: 1, offset: 0 }, whereAnd: { spaceId: { '=': f2.spaceId } } }),
         )
         expect(after1.items[0]).toMatchObject(f1.space)
         expect(after2.items[0]).toMatchObject(f2.space)
@@ -150,14 +175,14 @@ describe('SpacesDb', () => {
       unwrap(await f.spacesDb.upsert(f.space))
       const before = await f.spacesDb.query({
         pagination: { limit: 1, offset: 0 },
-        whereAnd: { equalsSpaceId: f.spaceId },
+        whereAnd: { spaceId: { '=': f.spaceId } },
       })
       const invalid = toInvalidSpaceModel(f.space)
       await f._dangerouslyOverrideModel.pub(invalid)
       await sleep(TimeSpan.milliseconds(100))
       const after = await f.spacesDb.query({
         pagination: { limit: 1, offset: 0 },
-        whereAnd: { equalsSpaceId: f.spaceId },
+        whereAnd: { spaceId: { '=': f.spaceId } },
       })
       expect(unwrap(before).items).toEqual([f.space])
       expect(after.t).toEqual('err')

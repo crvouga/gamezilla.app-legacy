@@ -12,8 +12,12 @@ export type SpacesDbQueryDb = {
 }
 
 export type SpacesDbWhereAnd = {
-  equalsSpaceId?: SpaceId | null
-  equalsUserId?: UserId | null
+  spaceId?: {
+    '=': SpaceId | null
+  }
+  userId?: {
+    '=': UserId | null
+  }
 }
 
 export type ISpacesDb = {

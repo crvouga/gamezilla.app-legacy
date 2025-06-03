@@ -93,6 +93,14 @@ export const SpacesDb = async (config: Config): Promise<ISpacesDb> => {
   }
 
   const query: ISpacesDb['query'] = async (input) => {
+    if (input.whereAnd?.spaceId?.['=']) {
+      const spaceId = input.whereAnd.spaceId['=']
+      const got = await spacesBySpaceId.get(spaceId)
+      if (isErr(got)) return Err('Failed to get space by space id')
+      if (!got.value) return Ok({ items: [], total: 0, limit: 0, offset: 0 })
+      return Ok({ items: [got.value], total: 1, limit: 1, offset: 0 })
+    }
+
     const allSpaceIds = Result.unwrapOr(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? []
 
     const subset = allSpaceIds.slice(input.pagination.offset, input.pagination.offset + input.pagination.limit)

@@ -15,7 +15,7 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
 
       const found = await config.ctx.spacesDb.query({
         pagination: { limit: 1, offset: 0 },
-        whereAnd: { equalsSpaceId: spaceId },
+        whereAnd: { spaceId: { '=': spaceId } },
       })
 
       if (isErr(found)) {
@@ -64,7 +64,7 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
 const update = async (ctx: BackendCtxModule, spaceEvent: WithEventId<MsgSpace>) => {
   const got = await ctx.spacesDb.query({
     pagination: { limit: 1, offset: 0 },
-    whereAnd: { equalsSpaceId: spaceEvent.spaceId },
+    whereAnd: { spaceId: { '=': spaceEvent.spaceId } },
   })
 
   if (isErr(got)) return got
