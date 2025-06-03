@@ -4,7 +4,7 @@ import { Topic } from '~/@/topic'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { GameBackend } from './game/backend'
 import { ListSpacesBackend } from './list-spaces/backend'
-import { SpacesCoreAsync } from './spaces/spaces-async'
+import { SpacesDb } from './spaces/spaces-db'
 import { SyncBackend } from './sync/backend'
 import { type BackendCtxModule, rpcContract, topicContract } from './types'
 
@@ -16,7 +16,7 @@ const initCtx = async (input: {
     ...input.ctx,
     ...GameBackend.initCtx(input),
     topic: input.topic,
-    spacesCore: await SpacesCoreAsync({
+    spacesDb: await SpacesDb({
       t: 'key-value-db',
       keyValueDb: input.ctx.keyValueDbDurable,
       logger: input.ctx.logger,

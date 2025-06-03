@@ -9,7 +9,7 @@ import { rpcContract } from './types'
 const rpc = (config: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
     async 'spaces.sync.sync'(input) {
-      const merged = await config.ctx.spacesCore.merge(input.space)
+      const merged = await config.ctx.spacesDb.merge(input.space)
 
       if (isErr(merged)) {
         return { space: input.space }
@@ -21,7 +21,7 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
         return { space: input.space }
       }
 
-      const spaceNew = unwrapOr(await config.ctx.spacesCore.get(spaceId), null)
+      const spaceNew = unwrapOr(await config.ctx.spacesDb.get(spaceId), null)
 
       if (!spaceNew) {
         return { space: input.space }
@@ -40,7 +40,7 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   const msgSpaceSub = ctx.topic['spaces/msg'].subAll((c) => c)
 
   Sub.takeEvery(s, msgSpaceSub, async (msgSpace) => {
-    const updated = await ctx.spacesCore.update(msgSpace)
+    const updated = await ctx.spacesDb.update(msgSpace)
 
     if (isErr(updated)) {
       ctx.logger.error(updated.error)

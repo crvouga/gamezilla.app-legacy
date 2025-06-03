@@ -55,14 +55,14 @@ export const toSpaceByUserId = ({ model, userId }: { model: Model; userId: UserI
   return space
 }
 
-export const toEventWithMeta = (model: Model, spaceId: SpaceId, msgEvtId?: EventId | null) => {
-  if (!msgEvtId) return null
+export const toEventWithMeta = (model: Model, spaceId: SpaceId, eventId?: EventId | null) => {
+  if (!eventId) return null
 
   const space = model.spaces[spaceId]
 
   if (!space) return null
 
-  return EventSourced.toEvent(space, msgEvtId)
+  return EventSourced.toEvent(space, eventId)
 }
 
 export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined): SpaceState.State => {

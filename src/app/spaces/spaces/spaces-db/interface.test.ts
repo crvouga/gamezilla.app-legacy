@@ -14,11 +14,11 @@ import { UserId } from '~/app/@/data/user-id'
 import { Space } from '../../space/space'
 import { MsgSpace } from '../../space/msg-space'
 import { SpaceState } from '../../space/space-state'
-import { Config, SpacesCoreAsync } from './impl'
+import { Config, SpacesDb } from './impl'
 
 const Fixture = async (config: Config) => {
   const _dangerouslyOverrideModel = Sub.create<Space.Model>()
-  const spacesCore = await SpacesCoreAsync({
+  const spacesCore = await SpacesDb({
     ...config,
     _dangerouslyOverrideModel,
   })
@@ -103,7 +103,7 @@ describe('Spaces Core Async', () => {
   test('list spaces', async () => {
     for (const f of await Fixtures()) {
       const before = unwrap(
-        await f.spacesCore.list({
+        await f.spacesCore.query({
           pagination: { limit: 10, offset: 0 },
         }),
       )
@@ -111,7 +111,7 @@ describe('Spaces Core Async', () => {
       unwrap(await f.spacesCore.upsert(f.space))
 
       const after = unwrap(
-        await f.spacesCore.list({
+        await f.spacesCore.query({
           pagination: {
             limit: 10,
             offset: 0,
@@ -121,25 +121,6 @@ describe('Spaces Core Async', () => {
 
       expect(before.items).toEqual([])
       expect(after.items).toEqual([f.space])
-    }
-  })
-
-  test('hasEvent', async () => {
-    for (const f of await Fixtures()) {
-      const eventId = Object.values(f.space.eventIds)[0]
-      if (!eventId) throw new Error('eventId not found')
-
-      const spaceId = Space.toSpaceStarted(f.space)?.spaceId
-      if (!spaceId) throw new Error('spaceId not found')
-
-      const before = await f.spacesCore.hasEvent(spaceId, eventId)
-
-      unwrap(await f.spacesCore.upsert(f.space))
-
-      const after = await f.spacesCore.hasEvent(spaceId, eventId)
-
-      expect(before).toEqual(false)
-      expect(after).toEqual(true)
     }
   })
 

@@ -11,7 +11,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { SpacesTypes } from '../..'
-import { SpacesCoreAsync } from '../../spaces/spaces-async'
+import { SpacesDb } from '../../spaces/spaces-db'
 import { Space } from '../../space/space'
 import { GamesBackend } from '../../game/games/backend'
 import { BackendCtxModule } from '../../types'
@@ -67,7 +67,7 @@ export const FixtureSpaceBackend = async () => {
   const backendCtx: BackendCtxModule = {
     ...f.ctx,
     ...GamesBackend.initCtx({ ctx: f.ctx }),
-    spacesCore: await SpacesCoreAsync({
+    spacesDb: await SpacesDb({
       t: 'key-value-db',
       keyValueDb: f.ctx.keyValueDbDurable,
       logger: f.ctx.logger,

@@ -5,8 +5,6 @@ import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { Space } from './@/space/space'
-import { Spaces } from './spaces/spaces'
-import { ISpacesAsync } from './spaces/spaces-async/interface'
 import { EndSpaceTypes } from './end-space'
 import { CurrentSpaceMiniPlayerTypes } from './frontend/current-space-mini-player'
 import { ExitSpaceActionTypes } from './frontend/exit-space-action'
@@ -15,6 +13,8 @@ import { GameTypes } from './game'
 import { JoinSpaceTypes } from './join-space'
 import { LeaveSpaceTypes } from './leave-space'
 import { ListSpacesTypes } from './list-spaces'
+import { Spaces } from './spaces/spaces'
+import { ISpacesDb } from './spaces/spaces-db/interface'
 import { StartSpaceTypes } from './start-space'
 import { SyncTypes } from './sync'
 
@@ -60,7 +60,7 @@ export type FrontendCtxModule = AppFrontendCtxBase & {
 
 export type BackendCtxModule = AppBackendCtxBase &
   GameTypes.GamesBackendCtxModule & {
-    spacesCore: ISpacesAsync
+    spacesDb: ISpacesDb
     topic: Topic.Client<typeof topicContract>
   }
 
