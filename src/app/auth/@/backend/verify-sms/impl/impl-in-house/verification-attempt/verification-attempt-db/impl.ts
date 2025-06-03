@@ -1,14 +1,14 @@
 import { ISqlDb } from '~/@/sql-db'
 import type { IVerificationAttemptDb } from './interface'
 import { VerificationAttemptDbHashMap } from './impl-hash-map'
-import { VerificationAttemptDbPostgres } from './impl-sql'
+import { VerificationAttemptDbSqlDb } from './impl-sql-db'
 
 export type Impl =
   | {
       t: 'hash-map'
     }
   | {
-      t: 'postgres'
+      t: 'sql-db'
       sqlDb: ISqlDb
     }
 
@@ -18,8 +18,8 @@ export const VerificationAttemptDb = (impl: Impl): IVerificationAttemptDb => {
       return VerificationAttemptDbHashMap()
     }
 
-    case 'postgres': {
-      return VerificationAttemptDbPostgres(impl)
+    case 'sql-db': {
+      return VerificationAttemptDbSqlDb(impl)
     }
   }
 }

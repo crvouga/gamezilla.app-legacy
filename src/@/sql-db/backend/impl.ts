@@ -1,6 +1,6 @@
-import * as ImplBunSqlite from '../impl-bun-sqlite'
+import * as ImplBunSqlite from '../impl-bun-sqlite/impl-bun-sqlite'
 import * as ImplNoop from '../impl-noop'
-import * as ImplPgLite from '../impl-pglite'
+import * as ImplPgLite from '../impl-pglite/impl-pglite'
 import * as ImplPostgres from '../impl-postgres'
 import * as ImplPowerSync from '../impl-powersync-client'
 import type { ISqlDb } from '../interface'

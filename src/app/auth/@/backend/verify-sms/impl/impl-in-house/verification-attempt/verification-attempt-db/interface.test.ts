@@ -12,7 +12,7 @@ const Fixture = async () => {
     case 'integration': {
       return {
         verificationAttemptDb: VerificationAttemptDb({
-          t: 'postgres',
+          t: 'sql-db',
           sqlDb: f.dbConnPostgres,
         }),
       }

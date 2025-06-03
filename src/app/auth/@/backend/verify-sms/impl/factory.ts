@@ -24,8 +24,8 @@ export const VerifySMSFactory = {
     const hashing = Hashing({ t: 'bun' })
     const sms = SMS({ t: 'fake', logger })
     const verificationCodeGenerator = VerificationCodeGenerator({ t: 'fake', code: '123' })
-    const verificationAttemptDb = VerificationAttemptDb({ t: 'postgres', sqlDb: config.sqlDb })
-    const verificationDb = VerificationDb({ t: 'postgres', sqlDb: config.sqlDb })
+    const verificationAttemptDb = VerificationAttemptDb({ t: 'sql-db', sqlDb: config.sqlDb })
+    const verificationDb = VerificationDb({ t: 'sql-db', sqlDb: config.sqlDb })
     return VerifySMS({
       t: 'in-house',
       logger,
