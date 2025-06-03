@@ -1,14 +1,13 @@
 import { Sub } from '~/@/sub'
-import { TopicMsgCodec } from './topic-msg-codec'
 
 /**
  * A web socket is a connection to a server.
  */
-const create = (config: { url: string; codec: TopicMsgCodec }) => {
+const create = (config: { url: string }) => {
   const msgsOpen = Sub.create<{ t: 'opened' }>()
   const msgsClose = Sub.create<{ t: 'closed' }>()
   const msgsError = Sub.create<{ t: 'error'; error: Event }>()
-  const msgsFromServer = Sub.create<unknown>()
+  const msgsFromServer = Sub.create<MessageEvent<any>>()
 
   const ws = new WebSocket(config.url)
 
@@ -25,7 +24,7 @@ const create = (config: { url: string; codec: TopicMsgCodec }) => {
   }
 
   ws.onmessage = async (event) => {
-    msgsFromServer.pub(await config.codec.socketMessageEventToMsgFromServer(event))
+    msgsFromServer.pub(event)
   }
 
   const close = () => {

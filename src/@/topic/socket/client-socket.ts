@@ -108,7 +108,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
       try {
         config.logger.info('connecting to server')
 
-        const socket = Socket.create({ url: toWebSocketUrl(config), codec: config.codec })
+        const socket = Socket.create({ url: toWebSocketUrl(config) })
 
         await workerSocket(abortController.signal, socket)
 
@@ -160,7 +160,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
         // @ts-expect-error
         encoded,
       )
-      config.logger.debug('worker sender receiver send', msg)
+      // config.logger.debug('worker sender receiver send', msg)
     }
     workerSender(s, send)
     workerReceiver(s, socket)
@@ -201,7 +201,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
       s.throwIfAborted()
 
       for (const [topicName, { pubSub }] of subscriptionsByTopicName.entries()) {
-        config.logger.debug('worker sync topic name', topicName)
+        // config.logger.debug('worker sync topic name', topicName)
 
         const isSubbedServer = subscribedTopicsServer.has(topicName)
         const isSubbedClient = pubSub.subscriberCount() > 0
@@ -227,7 +227,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     Sub.takeEvery(s, msgsToServer, (toServer) => {
       switch (toServer[0]) {
         case PUB: {
-          config.logger.debug('worker sender pub', toServer)
+          // config.logger.debug('worker sender pub', toServer)
           send(toServer)
           return
         }
@@ -236,12 +236,12 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
   }
 
   const workerReceiver = async (s: AbortSignal, socket: Socket) => {
-    Sub.takeEvery(s, socket.msgsFromServer, (fromServer) => {
-      const fromServerParsed = config.codec.decode(fromServer) as ToClientMsg
+    Sub.takeEvery(s, socket.msgsFromServer, async (fromServer) => {
+      const fromServerParsed = (await config.codec.decodeFromWebSocketMessageEvent(fromServer)) as ToClientMsg
 
       switch (fromServerParsed[0]) {
         case PUB: {
-          config.logger.debug('worker receiver pub', fromServerParsed)
+          // config.logger.debug('worker receiver pub', fromServerParsed)
           const topic = toTopic(fromServerParsed[1], fromServerParsed[2])
           const subscription = subscriptionsByTopic.get(topic)
           if (!subscription) return

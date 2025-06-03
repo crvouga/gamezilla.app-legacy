@@ -1,6 +1,6 @@
 import postgres from 'postgres'
-import type { s } from '~/@/schema'
 import { Err, Ok } from '~/@/result'
+import type { s } from '~/@/schema'
 import { SecretString } from '~/@/secrets/secret-string'
 import { Sql } from '~/@/sql'
 import { Logger } from '../../logger'
@@ -8,7 +8,6 @@ import type { ILogger } from '../../logger/interface'
 import { Sleep } from '../../promise/sleep'
 import { Sub } from '../../sub'
 import type { ISqlDb } from '../interface'
-import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {
   t: 'postgres'
