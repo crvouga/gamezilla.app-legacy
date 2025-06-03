@@ -6,8 +6,8 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
-import { SpaceFrontendModule } from '../frontend/space-frontend-module'
-import { MsgSpace } from '../space/space-msg'
+import { SpaceFrontendModule } from '../frontend/space-frontend'
+import { MsgSpace } from '../space/msg-space'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(

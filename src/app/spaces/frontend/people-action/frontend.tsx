@@ -13,7 +13,7 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { OpenUserDetailsCmd } from '../../@/frontend/open-user-details-cmd'
 import { SectionPeopleList } from '../../@/ui/section-people-list'
 import { SectionPersonDetails } from '../../@/ui/section-person-details'
-import { SpaceFrontendModule } from '../space-frontend-module'
+import { SpaceFrontendModule } from '../space-frontend'
 import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd'
 
 export type FrontendMsg =

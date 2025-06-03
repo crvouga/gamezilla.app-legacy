@@ -6,9 +6,9 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
-import { SpaceFrontendModule } from '../frontend/space-frontend-module'
+import { SpaceFrontendModule } from '../frontend/space-frontend'
 import { Spaces } from '../spaces/spaces'
-import { MsgSpace } from '../space/space-msg'
+import { MsgSpace } from '../space/msg-space'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 
 const update: SpaceFrontendModule['update'] = (input) => {

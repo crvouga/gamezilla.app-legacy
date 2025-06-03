@@ -1,9 +1,6 @@
-import { s } from '~/@/schema'
 import { RemoteResult, Result } from '~/@/result'
-import { AppBackendModule } from '~/app/@/architecture/app-backend'
+import { s } from '~/@/schema'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-
-import { FlowBackendCtx } from '../../backend/ctx'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { Variant } from '../../variant'
 import { SolutionHash } from '../solution-hash/solution-hash'
@@ -37,32 +34,12 @@ export const MsgFrontend = s.or(
 )
 export type MsgFrontend = s.Infer<typeof MsgFrontend>
 
-export const MsgBackend = s.obj({ t: s.l('noop') })
-export type MsgBackend = s.Infer<typeof MsgBackend>
-
-export const MsgToBackend = s.obj({ t: s.l('noop') })
-export type MsgToBackend = s.Infer<typeof MsgToBackend>
-
-export const MsgToFrontend = s.obj({ t: s.l('noop') })
-export type MsgToFrontend = s.Infer<typeof MsgToFrontend>
-
 export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend
   Msg: MsgFrontend
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
   Ctx: FlowFrontendCtxBase & {
     flow?: Variant.Model | null
   }
-
   ViewSlot: {}
   ViewEmit: {}
-}>
-
-export type BackendModule = AppBackendModule<{
-  Msg: MsgBackend
-  MsgCmdOut: null
-  MsgToFrontend: MsgToFrontend
-  MsgToBackend: MsgToBackend
-  Ctx: FlowBackendCtx
 }>

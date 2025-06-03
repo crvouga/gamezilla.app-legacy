@@ -46,7 +46,7 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   await p.race(s, {
     serverStopped: (s) => Sub.take(msgsServerStopped, s),
     runtimeStopped: (s) => Sub.take(msgsRuntimeStopping, s),
-    hearbeat: (s) => {
+    heartbeat: (s) => {
       workerHeartbeat(s, input)
       return p.neverResolve
     },

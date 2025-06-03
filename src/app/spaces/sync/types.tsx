@@ -6,7 +6,7 @@ import { s } from '~/@/schema'
 import { Topic } from '~/@/topic'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space/space'
-import { MsgSpace } from '../space/space-msg'
+import { MsgSpace } from '../space/msg-space'
 
 export type MsgFrontend =
   | {

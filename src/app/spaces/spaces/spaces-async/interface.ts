@@ -6,7 +6,7 @@ import { Paginated } from '~/app/@/data/pagination'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Space } from '../../space/space'
-import { MsgSpace } from '../../space/space-msg'
+import { MsgSpace } from '../../space/msg-space'
 
 export type ISpacesAsync = {
   list: (input: {

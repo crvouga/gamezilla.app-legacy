@@ -1,6 +1,6 @@
 import { Typography } from '~/@/ui/typography'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { SpaceFrontendModule } from '../../frontend/space-frontend-module'
+import { SpaceFrontendModule } from '../../frontend/space-frontend'
 import { SpaceFrontendCtx } from '../../@/frontend/ctx'
 import type { MsgFrontend } from '../../types'
 import { GameName } from '../games/@/game-name'

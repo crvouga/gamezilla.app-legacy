@@ -3,7 +3,6 @@ import { s } from '~/@/schema'
 import { Posix } from '~/@/time/posix'
 import { Topic } from '~/@/topic'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { AppBackendModule } from '~/app/@/architecture/app-backend'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
@@ -57,8 +56,4 @@ export type FrontendModule = AppFrontendModule<{
   Ctx: FrontendCtxModule
   Model: ModelFrontend
   Msg: MsgFrontend
-}>
-
-export type BackendModule = AppBackendModule<{
-  Ctx: BackendCtxModule
 }>

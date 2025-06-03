@@ -2,7 +2,7 @@ import { EventSourced } from '~/@/event-sourced'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
-import { SpaceFrontendModule } from '../frontend/space-frontend-module'
+import { SpaceFrontendModule } from '../frontend/space-frontend'
 import { Spaces } from '../spaces/spaces'
 
 const update: SpaceFrontendModule['update'] = (input) => {
