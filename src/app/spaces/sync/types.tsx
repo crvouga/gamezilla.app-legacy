@@ -24,9 +24,13 @@ export type MsgBackend = {
 }
 
 export const topicContract = Topic.initContract({
-  msgSpace: {
+  'spaces/msg': {
     params: SpaceId,
     msg: WithEventMeta(MsgSpace),
+  },
+  'spaces/snapshot': {
+    params: SpaceId,
+    msg: Space.Model,
   },
 })
 

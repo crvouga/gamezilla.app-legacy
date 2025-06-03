@@ -37,7 +37,7 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   const ctx = input.ctx
 
-  const msgSpaceSub = ctx.topic.msgSpace.subAll((c) => c)
+  const msgSpaceSub = ctx.topic['spaces/msg'].subAll((c) => c)
 
   Sub.takeEvery(s, msgSpaceSub, async (msgSpace) => {
     const updated = await ctx.spacesCore.update(msgSpace)
