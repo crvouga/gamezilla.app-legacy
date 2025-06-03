@@ -36,8 +36,6 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
       try {
         const start = process.hrtime.bigint()
 
-        await config.simulateLatency?.(TimeSpan.milliseconds(100))
-
         const rows = await postgresClient.unsafe(sql)
 
         const end = process.hrtime.bigint()
@@ -45,7 +43,11 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
         const durationMs = Number(end - start) / 1e6
         const durationFormatted = `${durationMs.toFixed(2)}ms`
 
-        logger.debug({ duration: durationFormatted, sql: cleanSql(rawSql), variables: variables })
+        logger.debug({
+          duration: durationFormatted,
+          sql: cleanSql(rawSql),
+          variables: Object.entries(variables).map(([key, value]) => `${key}=${String(value).slice(0, 100)}`),
+        })
 
         const output: s.Infer<typeof schema>[] = []
 
@@ -54,8 +56,8 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
 
           switch (parsed.t) {
             case 'err': {
-              const rowStr = JSON.stringify(row, null, 4)
-              const errorStr = JSON.stringify(parsed.error, null, 4)
+              const rowStr = JSON.stringify(row, null, 4).slice(0, 1000)
+              const errorStr = JSON.stringify(parsed.error, null, 4).slice(0, 1000)
               const error = `Failed to parse row\nerror=${errorStr}\nrow=${rowStr}`
               return Err(error)
             }

@@ -21,16 +21,16 @@ export type Config = SpacesDbConfig & {
 }
 
 export const SpacesDb = async (config: Config): Promise<ISpacesDb> => {
-  const { runtime } = config
+  // const { runtime } = config
   const logger = Logger.prefix('spaces-core-async', config.logger)
 
   const verifiedKeys = new Set<string>()
   const cache = await KeyValueDb({ t: 'hash-map', map: LRUCache({ maxCapacity: 10_000 }) })
-  const throttle = config.writeThrottle
+  // const throttle = config.writeThrottle
   const keyValueDb = await pipe(
     config.keyValueDb,
-    async (keyValueDb) => KeyValueDb({ t: 'with-throttled-writes', logger, keyValueDb, throttle, runtime }),
-    async (keyValueDb) => KeyValueDb({ t: 'with-cache', logger, source: await keyValueDb, cache }),
+    // async (keyValueDb) => KeyValueDb({ t: 'with-throttled-writes', logger, keyValueDb, throttle, runtime }),
+    // async (keyValueDb) => KeyValueDb({ t: 'with-cache', logger, source: await keyValueDb, cache }),
     async (keyValueDb) => KeyValueDb({ t: 'with-reduced-parsing', logger, keyValueDb: await keyValueDb, verifiedKeys }),
   )
 
@@ -77,14 +77,14 @@ export const SpacesDb = async (config: Config): Promise<ISpacesDb> => {
     const allSpaceIds = new Set(Result.unwrapOr(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? [])
     allSpaceIds.add(spaceId)
 
-    const results = await Promise.all([
-      indexSpaceIds.set(INDEX_SPACE_IDS_KEY_ALL, Array.from(allSpaceIds)),
-      spacesBySpaceId.set(spaceId, space),
-      indexSpaceIdByUserId.setMany(Space.toUserIds(space).map((userId): [UserId, SpaceId] => [userId, spaceId])),
-    ])
+    const setIndexSpaceIds = await indexSpaceIds.set(INDEX_SPACE_IDS_KEY_ALL, Array.from(allSpaceIds))
+    const setSpaceBySpaceId = await spacesBySpaceId.set(spaceId, space)
+    const setIndexSpaceIdByUserId = await indexSpaceIdByUserId.setMany(
+      Space.toUserIds(space).map((userId): [UserId, SpaceId] => [userId, spaceId]),
+    )
 
     const result = pipe(
-      results,
+      [setIndexSpaceIds, setSpaceBySpaceId, setIndexSpaceIdByUserId],
       (results) => Result.combine(results),
       (result) => Result.mapOk(result, () => null),
     )
