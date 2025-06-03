@@ -18,12 +18,25 @@ export const TopicMsgCodecJson: TopicMsgCodec = {
   },
 }
 
-export const TopicMsgCodecMsgPack: TopicMsgCodec = {
+// https://www.npmjs.com/package/@msgpack/msgpack
+export const TopicMsgCodecMsgPackBlob: TopicMsgCodec = {
   encode: (msg) => encode(msg),
   decode: (msg) => decode(msg as ArrayBufferLike),
   socketMessageEventToMsgFromServer: async (event) => {
-    const arrayBuffer = await event.data.arrayBuffer()
-    return arrayBuffer
+    const blob = event.data
+    if (blob.stream) {
+      return blob.stream()
+    } else {
+      return blob.arrayBuffer()
+    }
+  },
+}
+
+export const TopicMsgCodecMsgPackBinaryData: TopicMsgCodec = {
+  encode: (msg) => encode(msg),
+  decode: (msg) => decode(msg as ArrayBufferLike),
+  socketMessageEventToMsgFromServer: async (event) => {
+    return event.data
   },
 }
 
