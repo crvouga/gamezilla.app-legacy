@@ -43,6 +43,11 @@ const Fixtures = async () => {
     namespace: uniqueNamespace(),
   })
 
+  configs.push({
+    t: 'sql-db',
+    sqlDb: f.sqlDbSqlite,
+  })
+
   if (f.t === 'integration') {
     configs.push({
       t: 'key-value-db',
