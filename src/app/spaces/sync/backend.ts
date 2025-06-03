@@ -1,9 +1,10 @@
 import { EventSourced } from '~/@/event-sourced'
-import { WithEventId } from '~/@/event-sourced/event'
-import { isErr, Ok } from '~/@/result'
+import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
-import { MsgSpace } from '../space/msg-space'
+import { throttleByKey } from '~/@/throttle/throttle'
+import { TimeSpan } from '~/@/time/time-span'
+import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space/space'
 import { BackendCtxModule } from '../types'
 import { rpcContract } from './types'
@@ -52,34 +53,34 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
 
   const msgSpaceSub = ctx.topic['spaces/msg'].subAll((c) => c)
 
+  const spaces = new Map<SpaceId, Space.Model>()
+
+  const upsertSpace = throttleByKey({
+    behavior: 'use-latest',
+    throttle: TimeSpan.seconds(3),
+    keyFn: (spaceId, _space) => spaceId,
+    fn: (_spaceId: SpaceId, space: Space.Model) => ctx.spacesDb.upsert(space),
+  })
+
   Sub.takeEvery(s, msgSpaceSub, async (msgSpace) => {
-    const updated = await update(ctx, msgSpace)
+    if (!spaces.has(msgSpace.spaceId)) {
+      const got = await ctx.spacesDb.query({
+        pagination: { limit: 1, offset: 0 },
+        whereAnd: { spaceId: { '=': msgSpace.spaceId } },
+      })
+      if (isErr(got)) return
 
-    if (isErr(updated)) {
-      ctx.logger.error(updated.error)
+      spaces.set(msgSpace.spaceId, got.value.items[0] ?? Space.init)
     }
+
+    const space = spaces.get(msgSpace.spaceId) ?? Space.init
+
+    const spaceNew = EventSourced.appendEvent(Space.config, space, msgSpace)
+
+    spaces.set(msgSpace.spaceId, spaceNew)
+
+    upsertSpace(msgSpace.spaceId, spaceNew)
   })
-}
-
-const update = async (ctx: BackendCtxModule, spaceEvent: WithEventId<MsgSpace>) => {
-  const got = await ctx.spacesDb.query({
-    pagination: { limit: 1, offset: 0 },
-    whereAnd: { spaceId: { '=': spaceEvent.spaceId } },
-  })
-
-  if (isErr(got)) return got
-
-  const maybeSpace = got.value.items[0]
-
-  const space = maybeSpace ?? Space.init
-
-  const spaceNew = EventSourced.appendEvent(Space.config, space, spaceEvent)
-
-  const upserted = await ctx.spacesDb.upsert(spaceNew)
-
-  if (isErr(upserted)) return upserted
-
-  return Ok(null)
 }
 
 export const SyncBackend = {
