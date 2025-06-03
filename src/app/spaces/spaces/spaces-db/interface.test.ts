@@ -1,17 +1,12 @@
 import { describe, expect, it, test } from 'bun:test'
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { EventSourced } from '~/@/event-sourced'
-import { EventMeta, withEventId } from '~/@/event-sourced/event'
 import { sleep } from '~/@/promise/sleep'
 import { unwrap } from '~/@/result'
-import { s } from '~/@/schema'
-import { Stream } from '~/@/stream/impl'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceId } from '~/app/@/data/space-id'
-import { UserId } from '~/app/@/data/user-id'
-import { MsgSpace } from '../../space/msg-space'
 import { Space } from '../../space/space'
 import { SpaceState } from '../../space/space-state'
 import { Config, SpacesDb } from './impl'
@@ -68,19 +63,6 @@ const Fixtures = async () => {
     })
   }
 
-  const TEST = false
-
-  if (TEST) {
-    configs.push({
-      t: 'stream',
-      keyValueDb: f.keyValueDbHashMap,
-      logger: f.logger,
-      stream: await Stream({ t: 'in-memory', schema: s.and(MsgSpace, EventMeta) }),
-      runtime: f.runtime,
-      namespace: uniqueNamespace(),
-    })
-  }
-
   return Promise.all(configs.map(Fixture))
 }
 
@@ -127,33 +109,6 @@ describe('SpacesDb', () => {
 
       expect(before.items).toEqual([])
       expect(after.items).toEqual([f.space])
-    }
-  })
-
-  test('update', async () => {
-    const spaceId = SpaceId.generate()
-    for (const f of await Fixtures()) {
-      const before = unwrap(
-        await f.spacesDb.query({
-          pagination: { limit: 1, offset: 0 },
-          whereAnd: { equalsSpaceId: spaceId },
-        }),
-      )
-      await f.spacesDb.update(
-        withEventId({
-          t: 'user-started-space',
-          spaceId: spaceId,
-          userId: UserId.generate(),
-        }),
-      )
-      const after = unwrap(
-        await f.spacesDb.query({
-          pagination: { limit: 1, offset: 0 },
-          whereAnd: { equalsSpaceId: spaceId },
-        }),
-      )
-      expect(Space.toSpaceStarted(before.items[0])).toEqual(null)
-      expect(Space.toSpaceStarted(after.items[0])?.type).toEqual('started')
     }
   })
 

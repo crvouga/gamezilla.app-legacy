@@ -1,9 +1,8 @@
-import { EventSourced } from '~/@/event-sourced'
 import { pipe } from '~/@/function/pipe'
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import { LRUCache } from '~/@/least-recently-used-cache'
 import { ILogger, Logger } from '~/@/logger'
-import { Err, Ok, Result, isErr, unwrapOr } from '~/@/result'
+import { Err, Ok, Result, isErr } from '~/@/result'
 import { IRuntime } from '~/@/runtime'
 import { s } from '~/@/schema'
 import { TimeSpan } from '~/@/time/time-span'
@@ -11,7 +10,6 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { type UserId } from '~/app/@/data/user-id'
 import { Space } from '../../space/space'
 import type { ISpacesDb, SpacesDbConfig } from './interface'
-import { EventId } from '~/@/event-sourced/event'
 
 export type Config = SpacesDbConfig & {
   t: 'key-value-db'
@@ -94,16 +92,6 @@ export const SpacesDb = async (config: Config): Promise<ISpacesDb> => {
     return result
   }
 
-  const hasEvent = async (spaceId: SpaceId, eventId: EventId): Promise<boolean> => {
-    const got = await spacesBySpaceId.get(spaceId)
-
-    if (isErr(got)) {
-      return false
-    }
-
-    return Boolean(got.value && eventId in got.value.eventIds)
-  }
-
   const query: ISpacesDb['query'] = async (input) => {
     const allSpaceIds = Result.unwrapOr(await indexSpaceIds.get(INDEX_SPACE_IDS_KEY_ALL), null) ?? []
 
@@ -121,23 +109,8 @@ export const SpacesDb = async (config: Config): Promise<ISpacesDb> => {
     })
   }
 
-  const update: ISpacesDb['update'] = async (spaceEvent) => {
-    if (await hasEvent(spaceEvent.spaceId, spaceEvent.eventId)) {
-      return Ok(null)
-    }
-
-    const maybeSpace = unwrapOr(await spacesBySpaceId.get(spaceEvent.spaceId), null)
-
-    const space = maybeSpace ?? Space.init
-
-    const spaceNew = EventSourced.appendEvent(Space.config, space, spaceEvent)
-
-    return upsert(spaceNew)
-  }
-
   return {
     upsert,
     query,
-    update,
   }
 }
