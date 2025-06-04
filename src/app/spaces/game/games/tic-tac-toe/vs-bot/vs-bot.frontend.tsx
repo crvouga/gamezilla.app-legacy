@@ -15,7 +15,6 @@ import {
   type ModelBackend,
   type ModelFrontend,
   type MsgFrontend,
-  
   type MsgToFrontend,
   handle,
   initSpaceModel,
@@ -59,7 +58,6 @@ export const update = ({
 }): {
   model: Model
   eff?: Eff<Msg>
-  
 } => {
   if (msg.t === 'vs-bot-setup') {
     const updated = VsBotSetup.update(model.vsBotSetup, msg.c)
@@ -75,7 +73,6 @@ export const update = ({
   if (handled.t === 'err') {
     return {
       model,
-     
     }
   }
   const merged = mergeWithBackend({
@@ -83,7 +80,7 @@ export const update = ({
     frontend: model,
     backend: handled.value,
   })
-  return { model: merged,  }
+  return { model: merged }
 }
 
 export const updateFromBackend = ({

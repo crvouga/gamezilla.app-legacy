@@ -77,7 +77,6 @@ export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
 
 export const keyUps = <T extends {}>(callback: (key: Key) => T): Sub<T> => {
   return {
-    
     sub: (subscriber) => {
       const handler = (msgEvt: KeyboardEvent) => {
         if (msgEvt.repeat) {

@@ -1,4 +1,3 @@
-
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { VsUserSetupScreen } from '~/app/spaces/game/games/@/vs-user'
 import { toTurn } from '../@/tic-tic-toe/tic-tac-toe'
@@ -8,7 +7,6 @@ import {
   type ModelBackend,
   type ModelFrontend,
   type MsgFrontend,
-  
   type MsgToFrontend,
   type Res,
   initSpaceModel,
@@ -39,7 +37,6 @@ export const update = (
   model: ModelFrontend,
 ): {
   model: ModelFrontend
-  
 } => {
   switch (msg[0]) {
     //
