@@ -1,6 +1,3 @@
-import { type ISqlDb } from '~/@/sql-db'
-import { SqlDb } from '~/@/sql-db/backend/impl'
-import { sqlDbNoop } from '~/@/sql-db/impl'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { ILogger } from '~/@/logger'
@@ -9,6 +6,9 @@ import { IPubSubTopicBased, PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import type { IRuntime } from '~/@/runtime'
 import { Runtime } from '~/@/runtime'
 import { SMS } from '~/@/sms'
+import { type ISqlDb } from '~/@/sql-db'
+import { SqlDb } from '~/@/sql-db/backend/impl'
+import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { ProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
@@ -70,7 +70,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const ctx: AppBackendCtxBase = {
     env: 'test',
     keyValueDbDurable: keyValueDbHashMap,
-    postgres: sqlDbNoop,
+    postgres: SQL_DB_NOOP,
     logger,
     now,
     sms,

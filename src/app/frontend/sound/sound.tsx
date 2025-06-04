@@ -158,8 +158,8 @@ export const updateFromCmd: Module['update'] = (input) => {
     return {
       model: input.model,
       async eff(dispatch) {
-        const preloaded = await preloadSoundsEffect(msgIn.srcs)
-        dispatch({ t: 'preloaded-sounds', src: msgIn.srcs, result: preloaded })
+        const preloaded = await preloadSoundsEffect(msgIn.srcList)
+        dispatch({ t: 'preloaded-sounds', src: msgIn.srcList, result: preloaded })
       },
     }
   }

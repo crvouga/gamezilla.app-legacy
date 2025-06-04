@@ -4,16 +4,16 @@ import { isOk } from '~/@/result'
 export const schema = s.or(
   s.obj({
     t: s.l('preload-sounds'),
-    srcs: s.arr(s.str()),
+    srcList: s.arr(s.str()),
   }),
 )
 
 export type PreloadSoundsCmd = s.Infer<typeof schema>
 
-export const init = (srcs: string[]): PreloadSoundsCmd => {
+export const init = (srcList: string[]): PreloadSoundsCmd => {
   return {
     t: 'preload-sounds',
-    srcs,
+    srcList,
   }
 }
 
@@ -25,7 +25,7 @@ const did = (output?: { msgOut?: unknown[] | null }, src?: string): boolean => {
   return Boolean(
     output?.msgOut?.some((cmd) => {
       if (is(cmd)) {
-        return src ? cmd.srcs.includes(src) : true
+        return src ? cmd.srcList.includes(src) : true
       }
       return false
     }),
@@ -33,7 +33,7 @@ const did = (output?: { msgOut?: unknown[] | null }, src?: string): boolean => {
 }
 
 const count = (output?: { msgOut?: unknown[] | null }, src?: string): number => {
-  return output?.msgOut?.filter((cmd) => is(cmd) && (src ? cmd.srcs.includes(src) : true)).length ?? 0
+  return output?.msgOut?.filter((cmd) => is(cmd) && (src ? cmd.srcList.includes(src) : true)).length ?? 0
 }
 
 export const PreloadSoundsCmd = {

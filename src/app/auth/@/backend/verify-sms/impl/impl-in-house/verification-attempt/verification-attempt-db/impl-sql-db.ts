@@ -17,7 +17,7 @@ export const Row = s.obj({
 })
 type Row = s.Infer<typeof Row>
 
-export const VerificationAttemptDbPostgres = (deps: { sqlDb: ISqlDb }): IVerificationAttemptDb => {
+export const VerificationAttemptDbSqlDb = (deps: { sqlDb: ISqlDb }): IVerificationAttemptDb => {
   deps
   return {
     async insert(input) {

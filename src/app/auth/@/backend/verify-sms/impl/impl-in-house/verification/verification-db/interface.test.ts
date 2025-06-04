@@ -14,7 +14,7 @@ const FixtureVariant = async () => {
     case 'integration': {
       return {
         verificationDb: VerificationDb({
-          t: 'postgres',
+          t: 'sql-db',
           sqlDb: f.dbConnPostgres,
         }),
       }

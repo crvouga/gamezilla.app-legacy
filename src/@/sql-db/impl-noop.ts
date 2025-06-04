@@ -1,6 +1,6 @@
 import { Ok } from '~/@/result'
-import type { ISqlDb } from '../interface'
-import { Sub } from '../../sub'
+import type { ISqlDb } from './interface'
+import { Sub } from '../sub'
 
 export type Config = {
   t: 'noop'
@@ -25,3 +25,5 @@ export const SqlDb = (_config: Config): ISqlDb => {
     },
   }
 }
+
+export const SQL_DB_NOOP = SqlDb({ t: 'noop' })

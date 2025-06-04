@@ -1,8 +1,8 @@
-import { sqlDbNoop } from '~/@/sql-db/impl'
 import { HttpClient } from '~/@/http-client'
 import { loggerNoop } from '~/@/logger/impl-noop'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screen/generated/screens'
+import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
 import { Posix } from '~/@/time/posix'
 import { TestRender } from '~/@/vdom/test-render'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -10,7 +10,6 @@ import { CONFIG_FRONTEND } from '~/config/frontend'
 import { UserId } from '../data/user-id'
 import type { AppFrontendCtx } from './ctx'
 import { Translator } from './translator'
-
 export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => {
   const currentUserId = UserId.generate()
 
@@ -21,7 +20,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     },
     clientSessionId: ClientSessionId.generate(),
     parentScreen: null,
-    sqlDb: sqlDbNoop,
+    sqlDb: SQL_DB_NOOP,
     logger: loggerNoop,
     currentScreen: input?.currentScreen ?? {
       n: 'auth-login',
