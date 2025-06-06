@@ -40,10 +40,10 @@ const StateBase = s.obj({
   latestEventId: s.maybe(EventId),
 })
 
-export const State = s.and(StateBase, s.or(Initial, Started, Ended))
-export type State = s.Infer<typeof State>
+export const Model = s.and(StateBase, s.or(Initial, Started, Ended))
+export type Model = s.Infer<typeof Model>
 
-export const init: State = {
+export const init: Model = {
   type: 'initial',
   latestEventId: null,
 }
@@ -54,7 +54,7 @@ export const init: State = {
 //
 //
 
-export const toUserIds = (state: State): UserId[] => {
+export const toUserIds = (state: Model): UserId[] => {
   switch (state.type) {
     case 'initial':
     case 'ended': {
@@ -74,7 +74,7 @@ export const toUserIds = (state: State): UserId[] => {
 //
 //
 
-export const updateSpace = (state: State, msgSpace: WithEventMeta<MsgSpace>): State => {
+export const updateSpace = (state: Model, msgSpace: WithEventMeta<MsgSpace>): Model => {
   switch (state.type) {
     case 'ended': {
       return state

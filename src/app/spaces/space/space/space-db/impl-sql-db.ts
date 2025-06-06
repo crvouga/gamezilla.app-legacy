@@ -1,10 +1,10 @@
 import { ISqlDb } from '~/@/sql-db'
-import type { ISpacesDb, SpacesDbConfig } from './interface'
+import type { ISpaceDb, SpaceDbConfig } from './interface'
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 
-export type Config = SpacesDbConfig & {
+export type Config = SpaceDbConfig & {
   t: 'sql-db'
   sqlDb: ISqlDb
 }
@@ -16,9 +16,9 @@ export const Row = s.obj({
 
 export type Row = s.Infer<typeof Row>
 
-export const SpacesDb = async (_config: Config): Promise<ISpacesDb> => {
+export const SpaceDb = async (_config: Config): Promise<ISpaceDb> => {
   return {
-    async query(input) {
+    async get(input) {
       console.log('query', input)
       throw new Error('Not implemented')
     },

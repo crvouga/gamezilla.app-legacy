@@ -5,7 +5,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { FixtureSpacesFrontend, userJoinedSpace, userLeftSpace, userStartedSpace } from '../@/fixture/frontend'
-import { Spaces } from '../spaces/spaces'
+import { Spaces } from '../space/spaces'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 
 const Fixture = async () => {

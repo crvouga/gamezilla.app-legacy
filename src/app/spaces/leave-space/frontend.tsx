@@ -6,7 +6,7 @@ import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SpaceFrontendModule } from '../frontend/space-frontend'
-import { Spaces } from '../spaces/spaces'
+import { Spaces } from '../space/spaces'
 import { MsgSpace } from '../space/msg-space'
 
 const update: SpaceFrontendModule['update'] = (input) => {

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 
 import { SpaceId } from '~/app/@/data/space-id'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
-import { Spaces } from '../spaces/spaces'
+import { Spaces } from '../space/spaces'
 import { GameName } from './games/@/game-name'
 import { NonEmpty } from '~/@/array/non-empty'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'

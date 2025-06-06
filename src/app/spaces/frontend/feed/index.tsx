@@ -3,8 +3,8 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { FeedItem } from '../../@/feed-item'
 import { GamesFrontend } from '../../game/games/frontend'
 import { MsgSpace } from '../../space/msg-space'
-import { SpaceState } from '../../space/space-state'
-import { Spaces } from '../../spaces/spaces'
+import { SpaceProjection } from '../../space/space-projection'
+import { Spaces } from '../../space/spaces'
 import type { ModelFrontend, MsgFrontend } from '../../types'
 
 const View = ({
@@ -12,7 +12,7 @@ const View = ({
   ctx,
   model,
 }: {
-  spaceState: SpaceState.State
+  spaceState: SpaceProjection.Model
   dispatch: (m: MsgFrontend) => void
   model: ModelFrontend
   ctx: SpaceFrontendCtx
@@ -36,7 +36,7 @@ const ViewFeedItem = ({
 }: {
   ctx: SpaceFrontendCtx
   msgEvt: WithEventId<MsgSpace>
-  state: SpaceState.Started
+  state: SpaceProjection.Started
 }) => {
   switch (msgEvt.t) {
     case 'game': {

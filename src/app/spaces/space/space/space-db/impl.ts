@@ -1,14 +1,14 @@
 import * as ImplKeyValueDb from './impl-key-value-db'
 import * as ImplSqlDb from './impl-sql-db'
-import type { ISpacesDb } from './interface'
+import type { ISpaceDb } from './interface'
 
 export type Config = ImplKeyValueDb.Config | ImplSqlDb.Config
 
-export const SpacesDb = async (config: Config): Promise<ISpacesDb> => {
+export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
   switch (config.t) {
     case 'key-value-db':
-      return ImplKeyValueDb.SpacesDb(config)
+      return ImplKeyValueDb.SpaceDb(config)
     case 'sql-db':
-      return ImplSqlDb.SpacesDb(config)
+      return ImplSqlDb.SpaceDb(config)
   }
 }

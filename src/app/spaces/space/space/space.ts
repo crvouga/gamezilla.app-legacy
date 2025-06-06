@@ -5,15 +5,15 @@ import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { MsgSpace } from '../msg-space'
-import { SpaceState } from '../space-state'
+import { SpaceProjection } from '../space-projection'
 
-export const Model = EventSourced.schema(MsgSpace, SpaceState.State)
+export const Model = EventSourced.schema(MsgSpace, SpaceProjection.Model)
 export type Model = s.Infer<typeof Model>
 
-export const init: Model = EventSourced.init(SpaceState.init)
+export const init: Model = EventSourced.init(SpaceProjection.init)
 
-export const config: EventSourcedConfig<MsgSpace, SpaceState.State> = {
-  reducer: SpaceState.updateSpace,
+export const config: EventSourcedConfig<MsgSpace, SpaceProjection.Model> = {
+  reducer: SpaceProjection.updateSpace,
 }
 
 export const isEqual = (left: Model, right: Model) => EventSourced.isSameState(config, left, right)
@@ -46,7 +46,7 @@ export const toSpaceId = (model: Model): SpaceId | null => {
   }
 }
 
-export const toSpaceStarted = (model: Model | null | undefined): SpaceState.Started | null => {
+export const toSpaceStarted = (model: Model | null | undefined): SpaceProjection.Started | null => {
   if (!model) {
     return null
   }
@@ -68,5 +68,5 @@ export const isStarted = (model: Model | null | undefined): boolean => {
 }
 
 export const toUserIds = (model: Model): UserId[] => {
-  return SpaceState.toUserIds(EventSourced.toState(config, model))
+  return SpaceProjection.toUserIds(EventSourced.toState(config, model))
 }

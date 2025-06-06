@@ -14,16 +14,17 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
     async 'spaces.sync.sync'(input) {
       const spaceId = Space.toSpaceId(input.space)
 
-      const found = await config.ctx.spacesDb.query({
-        pagination: { limit: 1, offset: 0 },
-        whereAnd: { spaceId: { '=': spaceId } },
-      })
+      if (!spaceId) {
+        return { space: input.space }
+      }
+
+      const found = await config.ctx.spaceDb.get([spaceId])
 
       if (isErr(found)) {
         return { space: input.space }
       }
 
-      const existing = found.value.items[0] ?? null
+      const existing = found.value[0] ?? null
 
       if (!existing) {
         return { space: input.space }
@@ -31,7 +32,7 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
 
       const spaceNew = EventSourced.mergeLeft(existing, input.space)
 
-      const upserted = await config.ctx.spacesDb.upsert(spaceNew)
+      const upserted = await config.ctx.spaceDb.upsert(spaceNew)
 
       if (isErr(upserted)) {
         return { space: input.space }
@@ -53,31 +54,29 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
 
   const msgSpaceSub = ctx.topic['spaces/msg'].subAll((c) => c)
 
-  const spaces = new Map<SpaceId, Space.Model>()
+  const spaceCache = new Map<SpaceId, Space.Model>()
 
   const upsertSpace = throttleByKey({
     behavior: 'use-latest',
     throttle: TimeSpan.seconds(3),
     keyFn: (spaceId, _space) => spaceId,
-    fn: (_spaceId: SpaceId, space: Space.Model) => ctx.spacesDb.upsert(space),
+    fn: (_spaceId: SpaceId, space: Space.Model) => ctx.spaceDb.upsert(space),
   })
 
   Sub.takeEvery(s, msgSpaceSub, async (msgSpace) => {
-    if (!spaces.has(msgSpace.spaceId)) {
-      const got = await ctx.spacesDb.query({
-        pagination: { limit: 1, offset: 0 },
-        whereAnd: { spaceId: { '=': msgSpace.spaceId } },
-      })
+    if (!spaceCache.has(msgSpace.spaceId)) {
+      const got = await ctx.spaceDb.get([msgSpace.spaceId])
+
       if (isErr(got)) return
 
-      spaces.set(msgSpace.spaceId, got.value.items[0] ?? Space.init)
+      spaceCache.set(msgSpace.spaceId, got.value[0] ?? Space.init)
     }
 
-    const space = spaces.get(msgSpace.spaceId) ?? Space.init
+    const space = spaceCache.get(msgSpace.spaceId) ?? Space.init
 
     const spaceNew = EventSourced.appendEvent(Space.config, space, msgSpace)
 
-    spaces.set(msgSpace.spaceId, spaceNew)
+    spaceCache.set(msgSpace.spaceId, spaceNew)
 
     upsertSpace(msgSpace.spaceId, spaceNew)
   })

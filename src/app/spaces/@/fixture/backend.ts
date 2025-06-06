@@ -1,7 +1,6 @@
 import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
-import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
 import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -11,9 +10,10 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { SpacesTypes } from '../..'
-import { SpacesDb } from '../../spaces/spaces-db'
-import { Space } from '../../space/space'
 import { GamesBackend } from '../../game/games/backend'
+import { Space } from '../../space/space'
+import { SpaceProjectionDb } from '../../space/space-projection/space-projection-db'
+import { SpaceDb } from '../../space/space/space-db'
 import { BackendCtxModule } from '../../types'
 import { SpaceBackendCtx } from '../backend/ctx'
 
@@ -67,13 +67,15 @@ export const FixtureSpaceBackend = async () => {
   const backendCtx: BackendCtxModule = {
     ...f.ctx,
     ...GamesBackend.initCtx({ ctx: f.ctx }),
-    spacesDb: await SpacesDb({
+    spaceDb: await SpaceDb({
       t: 'key-value-db',
       keyValueDb: f.ctx.keyValueDbDurable,
       logger: f.ctx.logger,
-      runtime: f.ctx.runtime,
-      writeThrottle: TimeSpan.milliseconds(0),
       namespace: [],
+    }),
+    spaceProjectionDb: await SpaceProjectionDb({
+      t: 'sql-db',
+      sqlDb: f.ctx.postgres,
     }),
     topic,
   }

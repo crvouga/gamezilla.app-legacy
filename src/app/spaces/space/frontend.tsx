@@ -1,7 +1,7 @@
 import type { SpaceId } from '~/app/@/data/space-id'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { Spaces } from '../spaces/spaces'
+import { Spaces } from './spaces'
 import { EndSpaceFrontend } from '../end-space/frontend'
 import { ExitSpaceAction } from '../frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from '../frontend/people-action/frontend'
@@ -16,7 +16,7 @@ const View = (input: {
   dispatch: (m: MsgFrontend) => void
   spaceId: SpaceId
 }) => {
-  const spaceState = Spaces.toSpaceState(input.model.spaces, input.spaceId)
+  const spaceState = Spaces.toSpaceProjection(input.model.spaces, input.spaceId)
 
   switch (spaceState.type) {
     case 'initial': {

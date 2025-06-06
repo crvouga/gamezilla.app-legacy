@@ -10,7 +10,7 @@ import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { SpaceFrontendModule } from '../frontend/space-frontend'
-import { Spaces } from '../spaces/spaces'
+import { Spaces } from '../space/spaces'
 import { StartSpaceFrontend } from '../start-space/frontend'
 import { ViewSpaceCard } from './space-card/space-card'
 
@@ -62,7 +62,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
 const View: SpaceFrontendModule['View'] = (input) => {
   if (!input.ctx.currentUser?.userId) return null
 
-  const spaces = Spaces.toSpaces(input.model.spaces)
+  const spaces = Spaces.toSpaceProjections(input.model.spaces)
 
   return (
     <ScreenLayout

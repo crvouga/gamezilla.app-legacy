@@ -4,14 +4,15 @@ import { Sub } from '~/@/sub'
 import { Paginated } from '~/app/@/data/pagination'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { Space } from '../../space/space'
+import { Space } from '../../space'
+import { SpaceProjection } from '..'
 
-export type SpacesDbQueryDb = {
+export type SpaceProjectionQuery = {
   pagination: Pagination
-  whereAnd?: SpacesDbWhereAnd
+  whereAnd?: SpaceProjectionWhereAnd
 }
 
-export type SpacesDbWhereAnd = {
+export type SpaceProjectionWhereAnd = {
   spaceId?: {
     '=': SpaceId | null
   }
@@ -20,13 +21,12 @@ export type SpacesDbWhereAnd = {
   }
 }
 
-export type ISpacesDb = {
-  query: (input: SpacesDbQueryDb) => Promise<Result<string, Paginated<Space.Model>>>
-
-  upsert: (space: Space.Model) => Promise<Result<string, null>>
+export type ISpaceProjectionDb = {
+  query: (input: SpaceProjectionQuery) => Promise<Result<string, Paginated<SpaceProjection.Model>>>
+  upsert: (space: SpaceProjection.Model) => Promise<Result<string, null>>
 }
 
-export type SpacesDbConfig = {
+export type SpaceProjectionDbConfig = {
   /**
    * This is used for testing purposes only. Testing invalid data
    */

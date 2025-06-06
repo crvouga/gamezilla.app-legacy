@@ -1,10 +1,10 @@
 import { Pagination } from '~/@/query/query'
+import { RemoteResult, Result } from '~/@/result'
 import { RPC } from '~/@/rpc'
+import { RPCError } from '~/@/rpc/error'
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space/space'
-import { RemoteResult, Result } from '~/@/result'
-import { RPCError } from '~/@/rpc/error'
 
 export type ModelFrontend = {
   listSpacesRequest: RemoteResult<RPCError, unknown>

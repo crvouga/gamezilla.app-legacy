@@ -1,3 +1,4 @@
+// @ts-ignore
 declare global {
   namespace JSX {
     interface IntrinsicElements {

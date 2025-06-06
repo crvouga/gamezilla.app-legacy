@@ -4,7 +4,7 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
-import { Spaces } from '../spaces/spaces'
+import { Spaces } from '../space/spaces'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()

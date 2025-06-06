@@ -1,10 +1,10 @@
 import { RPC } from '~/@/rpc'
-import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { GameBackend } from './game/backend'
 import { ListSpacesBackend } from './list-spaces/backend'
-import { SpacesDb } from './spaces/spaces-db'
+import { SpaceProjectionDb } from './space/space-projection/space-projection-db'
+import { SpaceDb } from './space/space/space-db'
 import { SyncBackend } from './sync/backend'
 import { type BackendCtxModule, rpcContract, topicContract } from './types'
 
@@ -16,13 +16,15 @@ const initCtx = async (input: {
     ...input.ctx,
     ...GameBackend.initCtx(input),
     topic: input.topic,
-    spacesDb: await SpacesDb({
+    spaceDb: await SpaceDb({
       t: 'key-value-db',
       keyValueDb: input.ctx.keyValueDbDurable,
       logger: input.ctx.logger,
-      runtime: input.ctx.runtime,
-      writeThrottle: TimeSpan.seconds(10),
       namespace: [],
+    }),
+    spaceProjectionDb: await SpaceProjectionDb({
+      t: 'sql-db',
+      sqlDb: input.ctx.postgres,
     }),
   }
 }

@@ -3,9 +3,9 @@ import { EventId, WithEventId } from '~/@/event-sourced/event'
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { Space } from '../../space/space'
-import { MsgSpace } from '../../space/msg-space'
-import { SpaceState } from '../../space/space-state'
+import { Space } from '../space'
+import { MsgSpace } from '../msg-space'
+import { SpaceProjection } from '../space-projection'
 
 export const SpaceError = s.obj({
   t: s.l('user-already-in-a-space'),
@@ -65,20 +65,20 @@ export const toEventWithMeta = (model: Model, spaceId: SpaceId, eventId?: EventI
   return EventSourced.toEvent(space, eventId)
 }
 
-export const toSpaceState = (model: Model, spaceId?: SpaceId | null | undefined): SpaceState.State => {
-  if (!spaceId) return SpaceState.init
+export const toSpaceProjection = (model: Model, spaceId?: SpaceId | null | undefined): SpaceProjection.Model => {
+  if (!spaceId) return SpaceProjection.init
 
   const spaceModel = model.spaces[spaceId]
 
-  if (!spaceModel) return SpaceState.init
+  if (!spaceModel) return SpaceProjection.init
 
   const spaceState = EventSourced.toState(Space.config, spaceModel)
 
   return spaceState
 }
 
-export const toSpaces = (model: Model): SpaceState.Started[] => {
-  const spaces: SpaceState.Started[] = []
+export const toSpaceProjections = (model: Model): SpaceProjection.Started[] => {
+  const spaces: SpaceProjection.Started[] = []
   for (const spaceId in model.spaces) {
     const started = toSpaceStarted(model, spaceId as SpaceId)
     if (started) {
@@ -88,7 +88,7 @@ export const toSpaces = (model: Model): SpaceState.Started[] => {
   return spaces
 }
 
-export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceState.Started | null => {
+export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceProjection.Started | null => {
   if (!spaceId) return null
 
   const spaceModel = model.spaces[spaceId]
@@ -260,7 +260,7 @@ const updateIndexSpaceIdByUserId = (
 
   spaceIdByUserIdNew[spaceState.hostId] = spaceState.spaceId
 
-  for (const userId of SpaceState.toUserIds(spaceState)) {
+  for (const userId of SpaceProjection.toUserIds(spaceState)) {
     spaceIdByUserIdNew[userId] = spaceState.spaceId
   }
 

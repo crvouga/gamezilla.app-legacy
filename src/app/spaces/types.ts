@@ -13,8 +13,9 @@ import { GameTypes } from './game'
 import { JoinSpaceTypes } from './join-space'
 import { LeaveSpaceTypes } from './leave-space'
 import { ListSpacesTypes } from './list-spaces'
-import { Spaces } from './spaces/spaces'
-import { ISpacesDb } from './spaces/spaces-db/interface'
+import { ISpaceProjectionDb } from './space/space-projection/space-projection-db'
+import { ISpaceDb } from './space/space/space-db/interface'
+import { Spaces } from './space/spaces'
 import { StartSpaceTypes } from './start-space'
 import { SyncTypes } from './sync'
 
@@ -60,7 +61,8 @@ export type FrontendCtxModule = AppFrontendCtxBase & {
 
 export type BackendCtxModule = AppBackendCtxBase &
   GameTypes.GamesBackendCtxModule & {
-    spacesDb: ISpacesDb
+    spaceDb: ISpaceDb
+    spaceProjectionDb: ISpaceProjectionDb
     topic: Topic.Client<typeof topicContract>
   }
 

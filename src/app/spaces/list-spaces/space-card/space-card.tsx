@@ -8,12 +8,16 @@ import { ViewYouChip } from '~/app/spaces/@/ui/you-chip'
 import { GameCoverArt } from '~/app/spaces/game/games/cover-art'
 import { ViewHostChip } from '../../@/ui/host-chip'
 import { GameName } from '../../game/games/@/game-name'
-import { SpaceState } from '../../space/space-state'
+import { SpaceProjection } from '../../space/space-projection'
 import { SPACE_CARD_GRADIENT_CLASS_NAME } from './space-card-gradient'
 
 const MAX_AVATAR_COUNT = 3
 
-export const ViewSpaceCard = (input: { ctx: AppFrontendCtxBase; state: SpaceState.Started; onClick?: () => void }) => {
+export const ViewSpaceCard = (input: {
+  ctx: AppFrontendCtxBase
+  state: SpaceProjection.Started
+  onClick?: () => void
+}) => {
   const host = input.ctx.profilesByUserId[input.state.hostId]
   const users = Object.values(input.state.users).flatMap((userId): UserProfile[] => {
     const profile = input.ctx.profilesByUserId[userId]
