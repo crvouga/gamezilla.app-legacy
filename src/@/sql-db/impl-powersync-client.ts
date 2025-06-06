@@ -45,6 +45,21 @@ export const SqlDb = (config: Config): ISqlDb => {
       input.onChange(parsedRows)
     })
 
+    // TODO: This is a hack. Powersync isn't reliable returning data on initial load
+    const interval = setInterval(async () => {
+      if (abortController.signal.aborted) {
+        clearInterval(interval)
+        return
+      }
+      const queried = await config.powerSyncClient.database.getAll?.(sql)
+      const parsedRows = queried.flatMap((row) => {
+        const parsed = input.schema.parse(row)
+        if (isOk(parsed)) return [parsed.value]
+        return []
+      })
+      input.onChange(parsedRows)
+    }, 1000)
+
     config.powerSyncClient.database.watchWithCallback(
       sql,
       [],
