@@ -16,7 +16,7 @@ export const config: EventSourcedConfig<MsgSpace, SpaceProjection.Model> = {
   reducer: SpaceProjection.updateSpace,
 }
 
-export const isEqual = (left: Model, right: Model) => EventSourced.isSameState(config, left, right)
+export const isEqual = (left: Model, right: Model) => EventSourced.isSameProjection(config, left, right)
 
 export const random = (input?: { hostId?: UserId; spaceId?: SpaceId }) => {
   return pipe(
@@ -33,7 +33,7 @@ export const random = (input?: { hostId?: UserId; spaceId?: SpaceId }) => {
 }
 
 export const toSpaceId = (model: Model): SpaceId | null => {
-  const state = EventSourced.toState(config, model)
+  const state = EventSourced.toProjection(config, model)
 
   switch (state.type) {
     case 'ended':
@@ -51,7 +51,7 @@ export const toSpaceStarted = (model: Model | null | undefined): SpaceProjection
     return null
   }
 
-  const state = EventSourced.toState(config, model)
+  const state = EventSourced.toProjection(config, model)
 
   switch (state.type) {
     case 'started': {
@@ -68,5 +68,5 @@ export const isStarted = (model: Model | null | undefined): boolean => {
 }
 
 export const toUserIds = (model: Model): UserId[] => {
-  return SpaceProjection.toUserIds(EventSourced.toState(config, model))
+  return SpaceProjection.toUserIds(EventSourced.toProjection(config, model))
 }

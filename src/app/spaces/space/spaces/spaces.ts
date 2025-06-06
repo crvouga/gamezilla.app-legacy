@@ -72,7 +72,7 @@ export const toSpaceProjection = (model: Model, spaceId?: SpaceId | null | undef
 
   if (!spaceModel) return SpaceProjection.init
 
-  const spaceState = EventSourced.toState(Space.config, spaceModel)
+  const spaceState = EventSourced.toProjection(Space.config, spaceModel)
 
   return spaceState
 }

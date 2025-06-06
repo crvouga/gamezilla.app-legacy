@@ -120,8 +120,8 @@ describe('SpaceDb', () => {
       unwrap(await f.spacesDb.upsert(f.space))
 
       const after = unwrap(await f.spacesDb.get([f.spaceId]))
-      expect(EventSourced.toState(Space.config, before[0] ?? Space.init)?.type).toEqual('initial')
-      expect(EventSourced.toState(Space.config, after[0] ?? Space.init)?.type).toEqual('started')
+      expect(EventSourced.toProjection(Space.config, before[0] ?? Space.init)?.type).toEqual('initial')
+      expect(EventSourced.toProjection(Space.config, after[0] ?? Space.init)?.type).toEqual('started')
     }
   })
 
