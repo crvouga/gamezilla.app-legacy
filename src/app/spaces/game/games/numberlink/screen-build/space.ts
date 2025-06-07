@@ -1,5 +1,5 @@
 import { isErr } from '~/@/result'
-import { FlowSpaceCtx } from '../@/space/ctx'
+import { NumberlinkSpaceCtx } from '../@/space/ctx'
 import { ScreenPackBuilderOpenSpace } from './pack-builder/screen-pack-builder-open/space'
 import { ScreenPackBuildSpace } from './pack-builder/screen-pack-builder/space/space'
 import { ScreenPuzzleBuilderOpenSpace } from './puzzle-builder/screen-puzzle-builder-open/space'
@@ -7,7 +7,7 @@ import { ScreenPuzzleBuilderSpace } from './puzzle-builder/screen-puzzle-builder
 import { ScreenMainMenuSpace } from './screen-main-menu/space'
 import type { ModelSpace, Screen, UpdateSpace } from './types'
 
-const initSpace = (_input: { ctx: FlowSpaceCtx }): ModelSpace => {
+const initSpace = (_input: { ctx: NumberlinkSpaceCtx }): ModelSpace => {
   return {
     screen: { t: 'screen-main-menu' },
     screenPackBuilder: null,

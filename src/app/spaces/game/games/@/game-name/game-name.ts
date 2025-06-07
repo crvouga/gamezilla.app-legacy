@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 
-export const GAME_NAME = ['connect-four', 'flow', 'tic-tac-toe', 'gomoku', 'chess'] as const
+export const GAME_NAME = ['connect-four', 'numberlink', 'tic-tac-toe', 'gomoku', 'chess'] as const
 
 export const GameName = s.enumeration(GAME_NAME)
 
@@ -8,7 +8,7 @@ export type GameName = s.Infer<typeof GameName>
 
 export const gameNames: { [gameName in GameName]: GameName } = {
   'connect-four': 'connect-four',
-  flow: 'flow',
+  numberlink: 'numberlink',
   'tic-tac-toe': 'tic-tac-toe',
   gomoku: 'gomoku',
   chess: 'chess',

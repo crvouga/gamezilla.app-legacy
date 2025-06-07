@@ -3,27 +3,27 @@ import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceFrontendCtx } from '../../@/frontend/ctx'
 import { GameFrontendModule } from './@/architecture/game-frontend-v2'
 import { GameName } from './@/game-name'
-import * as ConnectFour from './connect-four/connect-four.types'
-import { FlowBackendCtx } from './numberlink/@/backend/ctx'
-import * as Flow from './numberlink/types'
+import { ConnectFourTypes } from './connect-four'
+import { NumberlinkTypes } from './numberlink'
 
-export type ModelFrontend = { t: 'connect-four'; c: ConnectFour.ModelFrontend } | { t: 'flow'; c: Flow.ModelFrontend }
+export type ModelFrontend =
+  | { t: 'connect-four'; c: ConnectFourTypes.ModelFrontend }
+  | { t: 'numberlink'; c: NumberlinkTypes.ModelFrontend }
 
-export type MsgFrontend = { t: 'connect-four'; c: ConnectFour.MsgFrontend } | { t: 'flow'; c: Flow.MsgFrontend }
+export type MsgFrontend =
+  | { t: 'connect-four'; c: ConnectFourTypes.MsgFrontend }
+  | { t: 'numberlink'; c: NumberlinkTypes.MsgFrontend }
 
-export const GAME_NAME_LIST: GameName[] = [
-  // "connect-four",
-  'flow',
-]
+export const GAME_NAME_LIST: GameName[] = ['numberlink']
 
 export const ModelSpace = s.or(
   s.obj({
     t: s.l('connect-four'),
-    c: ConnectFour.ModelSpace,
+    c: ConnectFourTypes.ModelSpace,
   }),
   s.obj({
-    t: s.l('flow'),
-    c: Flow.ModelSpace,
+    t: s.l('numberlink'),
+    c: NumberlinkTypes.ModelSpace,
   }),
 )
 export type ModelSpace = s.Infer<typeof ModelSpace>
@@ -31,11 +31,11 @@ export type ModelSpace = s.Infer<typeof ModelSpace>
 export const MsgSpace = s.or(
   s.obj({
     t: s.l('connect-four'),
-    c: ConnectFour.MsgSpace,
+    c: ConnectFourTypes.MsgSpace,
   }),
   s.obj({
-    t: s.l('flow'),
-    c: Flow.MsgSpace,
+    t: s.l('numberlink'),
+    c: NumberlinkTypes.MsgSpace,
   }),
 )
 export type MsgSpace = s.Infer<typeof MsgSpace>
@@ -48,4 +48,4 @@ export type FrontendModule = GameFrontendModule<{
   Ctx: SpaceFrontendCtx
 }>
 
-export type GameBackendCtxModule = SpaceBackendCtx & FlowBackendCtx
+export type GameBackendCtxModule = SpaceBackendCtx & NumberlinkTypes.BackendCtxModule

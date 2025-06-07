@@ -1,6 +1,6 @@
 import { ModeEdit } from '../../../@/mode-edit'
 import { ModePlay } from '../../../@/mode-play'
-import { FlowSpaceCtx } from '../../../@/space/ctx'
+import { NumberlinkSpaceCtx } from '../../../@/space/ctx'
 import { Variant } from '../../../@/variant'
 import * as BuilderTypes from '../../types'
 import { DeleteForeverSpace } from './surface-delete-forever/space'
@@ -29,7 +29,7 @@ const updateSpaceMain = ({
   msgSpace,
   ctx,
 }: {
-  ctx: FlowSpaceCtx
+  ctx: NumberlinkSpaceCtx
   msgSpace: BuilderTypes.MsgSpace
   modelSpace: BuilderTypes.ModelSpace
 }): BuilderTypes.ModelSpace => {

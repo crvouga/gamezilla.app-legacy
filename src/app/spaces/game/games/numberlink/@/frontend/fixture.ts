@@ -2,7 +2,7 @@ import { NonEmpty } from '~/@/array/non-empty'
 import { withEventMeta, WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 import { FlowFrontend } from '../../frontend'
-import { FlowSpace } from '../../space'
+import { NumberlinkSpace } from '../../space'
 import { ModelSpace, MsgFrontend, MsgSpace } from '../../types'
 import { PackDb } from '../pack/pack-db'
 import { PackLoaderTypes } from '../pack/pack-loader'
@@ -53,13 +53,13 @@ export const FixtureFlowFrontend = async () => {
           .reduce(
             (acc, msgSpace): ModelSpace =>
               msgSpace
-                ? FlowSpace.updateSpace({
+                ? NumberlinkSpace.updateSpace({
                     ctx: input.ctx ?? ctx,
                     modelSpace: acc,
                     msgSpace: withEventMeta(msgSpace),
                   })
                 : acc,
-            FlowSpace.initSpace({ ctx: input.ctx ?? ctx }),
+            NumberlinkSpace.initSpace({ ctx: input.ctx ?? ctx }),
           ),
       })
       outputs.push(output)

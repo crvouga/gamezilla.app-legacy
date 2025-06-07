@@ -333,7 +333,7 @@ const ViewMainMenu: FrontendModule['View'] = (input) => {
     <GameMainMenu.View
       renderCoverArt={(input) => <CoverArt {...input} />}
       ctx={ctx}
-      title={ctx.t('flow')}
+      title={ctx.t('numberlink')}
       dispatch={input.dispatch}
       onBack={() => input.dispatch({ t: 'game-main-menu.clicked-exit-game-button' })}
       buttons={[

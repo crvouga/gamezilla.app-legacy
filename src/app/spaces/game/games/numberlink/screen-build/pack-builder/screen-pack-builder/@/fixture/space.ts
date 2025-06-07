@@ -2,13 +2,13 @@ import { UserId } from '~/app/@/data/user-id'
 import { SpaceGameSpaceFixture } from '~/app/spaces/game/games/@/testing/sync'
 import { Pack } from '../../../../../@/pack/pack'
 import { Puzzle } from '../../../../../@/puzzle/puzzle'
-import { FlowSpaceCtx } from '../../../../../@/space/ctx'
+import { NumberlinkSpaceCtx } from '../../../../../@/space/ctx'
 import { ScreenPackBuildSpace } from '../../space/space'
 import type { ModelSpace, MsgSpace, UpdateSpace } from '../../types'
 
 export const ScreenPackBuildSpaceFixture = async (input?: { puzzleCount?: number; appendDuplicatesOf?: Puzzle }) => {
   const f = await SpaceGameSpaceFixture()
-  const ctx: FlowSpaceCtx = {
+  const ctx: NumberlinkSpaceCtx = {
     ...f.ctx,
   }
   const createdBy = UserId.generate()

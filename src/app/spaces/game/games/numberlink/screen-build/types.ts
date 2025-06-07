@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import type { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import type { FlowFrontendCtx } from '../@/frontend/ctx'
-import { FlowSpaceCtx } from '../@/space/ctx'
+import { NumberlinkSpaceCtx } from '../@/space/ctx'
 import { FlowSpaceEvt } from '../@/space/event'
 import { ScreenPackBuilderTypes } from './pack-builder/screen-pack-builder'
 import { ScreenPackBuilderOpenTypes } from './pack-builder/screen-pack-builder-open'
@@ -106,7 +106,7 @@ export const ModelSpace = s.obj({
 export type ModelSpace = s.Infer<typeof ModelSpace>
 
 export type UpdateSpace = (input: {
-  ctx: FlowSpaceCtx
+  ctx: NumberlinkSpaceCtx
   msgSpace: MsgSpace
   modelSpace: ModelSpace
 }) => ModelSpace & { event?: FlowSpaceEvt }

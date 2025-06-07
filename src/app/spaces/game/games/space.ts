@@ -1,8 +1,8 @@
 import type { EventMeta } from '~/@/event-sourced/event'
 import { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { GameName } from './@/game-name'
-import * as ConnectFour from './connect-four/connect-four.types'
-import { FlowSpace } from './numberlink/space'
+import * as ConnectFour from './connect-four/types'
+import { NumberlinkSpace } from './numberlink/space'
 import type { ModelSpace, MsgSpace } from './types'
 
 export const initSpace = (input: { gameName: GameName; ctx: SpaceCtx }): ModelSpace => {
@@ -14,17 +14,17 @@ export const initSpace = (input: { gameName: GameName; ctx: SpaceCtx }): ModelSp
       }
     }
 
-    case 'flow': {
+    case 'numberlink': {
       return {
-        t: 'flow',
-        c: FlowSpace.initSpace(input),
+        t: 'numberlink',
+        c: NumberlinkSpace.initSpace(input),
       }
     }
 
     default: {
       return {
-        t: 'flow',
-        c: FlowSpace.initSpace(input),
+        t: 'numberlink',
+        c: NumberlinkSpace.initSpace(input),
       }
     }
   }
@@ -61,12 +61,12 @@ export const updateSpace = ({
       }
     }
 
-    case 'flow': {
+    case 'numberlink': {
       switch (msgSpace.t) {
-        case 'flow': {
+        case 'numberlink': {
           return {
-            t: 'flow',
-            c: FlowSpace.updateSpace({
+            t: 'numberlink',
+            c: NumberlinkSpace.updateSpace({
               ctx,
               msgSpace: {
                 ...msgSpace,

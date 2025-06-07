@@ -30,7 +30,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'game.clicked-game-tile',
-          gameName: 'flow',
+          gameName: 'numberlink',
         },
       },
     ])
@@ -40,7 +40,7 @@ describe(import.meta.file, () => {
   it('should be able to start game', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()
-    const gameNameExpected: GameName = 'flow'
+    const gameNameExpected: GameName = 'numberlink'
     const output = f.update(f.initial, [
       {
         msg: {
@@ -64,7 +64,7 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const outputs = f.updates(f.initial, [
       { msg: { t: 'start-space.clicked-start-space-button', spaceId } },
-      { msg: { t: 'game.clicked-game-tile', gameName: 'flow' } },
+      { msg: { t: 'game.clicked-game-tile', gameName: 'numberlink' } },
       { msgIn: ExitGameCmd.init() },
     ])
 

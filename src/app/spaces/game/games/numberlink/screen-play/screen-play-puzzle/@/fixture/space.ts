@@ -6,7 +6,7 @@ import { ModePlay } from '../../../../@/mode-play'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
 import { Solutions } from '../../../../@/solutions/solutions'
-import { FlowSpaceCtx } from '../../../../@/space/ctx'
+import { NumberlinkSpaceCtx } from '../../../../@/space/ctx'
 import type { Variant } from '../../../../@/variant'
 import { FlowPlaySpaceFixture } from '../../../@/space/fixture'
 import { ScreenPlayPuzzleSpace } from '../../space'
@@ -32,7 +32,7 @@ export const FixtureScreenPuzzlePlaySpace = async (input?: { flow?: Variant.Mode
     logger: loggerNoop,
   })
 
-  const ctx: FlowSpaceCtx = {
+  const ctx: NumberlinkSpaceCtx = {
     ...f.ctx,
   }
 

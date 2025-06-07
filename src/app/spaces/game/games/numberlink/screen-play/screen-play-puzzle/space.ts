@@ -2,7 +2,7 @@ import { ModePlay } from '../../@/mode-play'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
-import { FlowSpaceCtx } from '../../@/space/ctx'
+import { NumberlinkSpaceCtx } from '../../@/space/ctx'
 import type { MsgSpace, SpaceModule } from '../types'
 import * as CopyPuzzleSpace from './button-copy-puzzle/space'
 import { LastPuzzleSpace } from './last-puzzle/space'
@@ -30,7 +30,7 @@ const updatePuzzleScreen: SpaceModule['updateSpace'] = (input) => {
 const updateScreen = (input: {
   modelSpace: ModelSpace
   msgSpace: MsgSpace
-  ctx: FlowSpaceCtx
+  ctx: NumberlinkSpaceCtx
 }): ModelSpace & { events?: MsgSpaceEvt[] } => {
   switch (input.msgSpace.t) {
     case 'got-flow-play-msg': {
@@ -187,7 +187,12 @@ const updateSpaceMain: SpaceModule['updateSpace'] = ({ modelSpace, msgSpace }) =
   }
 }
 
-const initSpace = (input: { pack: Pack; puzzle: PuzzleResult; puzzleIndex: number; ctx: FlowSpaceCtx }): ModelSpace => {
+const initSpace = (input: {
+  pack: Pack
+  puzzle: PuzzleResult
+  puzzleIndex: number
+  ctx: NumberlinkSpaceCtx
+}): ModelSpace => {
   return {
     pack: input.pack,
     puzzleIndex: input.puzzleIndex,

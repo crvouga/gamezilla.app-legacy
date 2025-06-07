@@ -8,7 +8,7 @@ import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { ModePlay } from '../../../@/mode-play'
 import { Pack } from '../../../@/pack/pack'
 import { PuzzleResult } from '../../../@/puzzle/puzzle-result'
-import { FlowSpaceCtx } from '../../../@/space/ctx'
+import { NumberlinkSpaceCtx } from '../../../@/space/ctx'
 import { ScreenAddPuzzleTypes } from './screen-add-puzzle'
 import { EditPackNameTypes } from './surface-edit-pack-name'
 
@@ -140,7 +140,7 @@ type MsgOutSpace = {
 }
 
 export type UpdateSpace = (input: {
-  ctx: FlowSpaceCtx
+  ctx: NumberlinkSpaceCtx
   msgSpace: MsgSpace
   modelSpace: ModelSpace
 }) => ModelSpace & { msgs?: MsgOutSpace[] }

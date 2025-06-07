@@ -6,7 +6,7 @@ import { GameMainMenu } from '../../@/ui/game-main-menu'
 import type { FlowFrontendCtx } from '../@/frontend/ctx'
 import { Pack } from '../@/pack/pack'
 import { PuzzleResult } from '../@/puzzle/puzzle-result'
-import { FlowSpaceCtx } from '../@/space/ctx'
+import { NumberlinkSpaceCtx } from '../@/space/ctx'
 import { FlowSpaceEvt } from '../@/space/event'
 import { ScreenPuzzleTypes } from './screen-play-puzzle'
 
@@ -81,7 +81,7 @@ export type FrontendModule = GameFrontendModule<{
 }>
 
 export type SpaceModule = GameSpaceModule<{
-  Ctx: FlowSpaceCtx
+  Ctx: NumberlinkSpaceCtx
   ModelSpace: ModelSpace
   MsgSpace: MsgSpace
   EvtSpace: FlowSpaceEvt

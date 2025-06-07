@@ -1,7 +1,7 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import type { WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpace } from '~/app/spaces/@/fixture/space'
-import { FlowSpaceCtx } from '../../../@/space/ctx'
+import { NumberlinkSpaceCtx } from '../../../@/space/ctx'
 import { PlaySpace } from '../../space'
 import type { ModelSpace, MsgFrontend, MsgSpace } from '../../types'
 
@@ -14,7 +14,7 @@ export type FixtureUpdateInput = {
 export const FlowPlaySpaceFixture = async () => {
   const f = await FixtureSpace()
 
-  const ctx: FlowSpaceCtx = { ...f.ctx }
+  const ctx: NumberlinkSpaceCtx = { ...f.ctx }
 
   const updates = (modelSpace: ModelSpace, msgs: MsgSpace[]): NonEmpty<ModelSpace> => {
     const [msgSpace, ...rest] = msgs

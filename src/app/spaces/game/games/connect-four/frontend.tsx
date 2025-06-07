@@ -8,14 +8,7 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/connect-four-ui/connect-four-cover-art'
-import type {
-  ModelFrontend,
-  ModelSpace,
-  MsgFrontend,
-  MsgSpace,
-  MsgToBackend,
-  MsgToFrontend,
-} from './connect-four.types'
+import type { ModelFrontend, ModelSpace, MsgFrontend, MsgSpace, MsgToBackend, MsgToFrontend } from './types'
 import { VsBot } from './vs-bot/vs-bot.frontend'
 import { VsUser } from './vs-user/vs-user.frontend'
 

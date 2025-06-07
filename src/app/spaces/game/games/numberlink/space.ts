@@ -1,12 +1,12 @@
 import type { WithEventMeta } from '~/@/event-sourced/event'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
-import { FlowSpaceCtx } from './@/space/ctx'
+import { NumberlinkSpaceCtx } from './@/space/ctx'
 import { BuildSpace } from './screen-build/space'
 import { PlaySpace } from './screen-play/space'
 import type { ModelSpace, MsgSpace } from './types'
 
 const initSpace = (input: { ctx: SpaceCtx }): ModelSpace => {
-  const ctx: FlowSpaceCtx = input.ctx
+  const ctx: NumberlinkSpaceCtx = input.ctx
   return {
     mode: 'none',
     screenBuild: BuildSpace.initSpace({ ctx }),
@@ -19,7 +19,7 @@ const updateSpace = (input: {
   msgSpace: WithEventMeta<MsgSpace>
   modelSpace: ModelSpace
 }): ModelSpace => {
-  const ctx: FlowSpaceCtx = input.ctx
+  const ctx: NumberlinkSpaceCtx = input.ctx
   switch (input.msgSpace.t) {
     case 'got-screen-play-msg': {
       const updated = PlaySpace.updateSpace({
@@ -70,7 +70,7 @@ const updateSpace = (input: {
   }
 }
 
-export const FlowSpace = {
+export const NumberlinkSpace = {
   initSpace,
   updateSpace,
 }

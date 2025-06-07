@@ -18,7 +18,7 @@ const GameCoverArtSwitch = (input: { className?: string; gameName: GameName }) =
       return <ConnectFour.CoverArt className={input.className} />
     }
 
-    case 'flow': {
+    case 'numberlink': {
       return <Numberlink.CoverArt className={input.className} />
     }
 

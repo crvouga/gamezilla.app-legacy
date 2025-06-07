@@ -1,11 +1,11 @@
 import { SpaceGameSpaceFixture } from '~/app/spaces/game/games/@/testing/sync'
-import { FlowSpaceCtx } from '../../../@/space/ctx'
+import { NumberlinkSpaceCtx } from '../../../@/space/ctx'
 import { BuildSpace } from '../../space'
 import type { ModelSpace, MsgSpace, UpdateSpace } from '../../types'
 
 export const ScreenBuildSpaceFixture = async () => {
   const f = await SpaceGameSpaceFixture()
-  const ctx: FlowSpaceCtx = {
+  const ctx: NumberlinkSpaceCtx = {
     ...f.ctx,
   }
 
