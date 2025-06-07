@@ -25,10 +25,10 @@ const grid2 = pipe(
 
 const grid = false ? grid2 : grid1
 
-const gridView = (
+const VIEW_GRID = (
   <VariantGridBoard.View model={grid} disabled borderless disableHighlight className='aspect-square bg-black' />
 )
 
 export const CoverArt = (input: { className?: string }) => {
-  return <div {...input}>{gridView}</div>
+  return <div {...input}>{VIEW_GRID}</div>
 }
