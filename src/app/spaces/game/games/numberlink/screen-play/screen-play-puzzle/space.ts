@@ -33,7 +33,7 @@ const updateScreen = (input: {
   ctx: NumberlinkSpaceCtx
 }): ModelSpace & { events?: MsgSpaceEvt[] } => {
   switch (input.msgSpace.t) {
-    case 'got-flow-play-msg': {
+    case 'got-numberlink-play-msg': {
       if (input.modelSpace.puzzleResult.t === 'not-found') {
         return input.modelSpace
       }

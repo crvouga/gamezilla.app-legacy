@@ -197,7 +197,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
         msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
         msgShared: [
           {
-            t: 'flow-evt.user-changed-mode',
+            t: 'numberlink-evt.user-changed-mode',
             mode: input.msgSpace.mode,
             userId: input.msgSpace.userId,
           },

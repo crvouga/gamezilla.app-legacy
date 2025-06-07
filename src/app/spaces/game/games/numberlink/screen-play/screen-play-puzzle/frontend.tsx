@@ -55,7 +55,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
       return { model: input.model, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
     }
 
-    case 'got-flow-play-msg': {
+    case 'got-numberlink-play-msg': {
       if (input.modelSpace.screen.t !== 'screen-play-puzzle') return { model: input.model }
       if (input.modelSpace.screen.puzzleResult.t === 'not-found') return { model: input.model }
 
@@ -157,7 +157,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
               dispatch={(c) =>
                 input.dispatch({
                   t: 'got-msg-space',
-                  c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUser.userId },
+                  c: { t: 'got-numberlink-play-msg', c, userId: input.ctx.currentUser.userId },
                 })
               }
               showSolvedAnimation
@@ -205,7 +205,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
                   dispatch: (c) =>
                     input.dispatch({
                       t: 'got-msg-space',
-                      c: { t: 'got-flow-play-msg', c, userId: input.ctx.currentUser.userId },
+                      c: { t: 'got-numberlink-play-msg', c, userId: input.ctx.currentUser.userId },
                     }),
                 })
               : []),

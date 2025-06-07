@@ -35,7 +35,9 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const after = f.update(
       f.init,
-      ModePlay.randomMsgs(f.puzzle).map((c): MsgSpace => ({ userId: UserId.generate(), t: 'got-flow-play-msg', c })),
+      ModePlay.randomMsgs(f.puzzle).map(
+        (c): MsgSpace => ({ userId: UserId.generate(), t: 'got-numberlink-play-msg', c }),
+      ),
     )
 
     expect(f.init.modePlay).not.toEqual(after.modePlay)
@@ -86,7 +88,7 @@ describe(import.meta.file, () => {
     }).map(
       (c): MsgSpace => ({
         userId: UserId.generate(),
-        t: 'got-flow-play-msg',
+        t: 'got-numberlink-play-msg',
         c,
       }),
     )
@@ -151,7 +153,7 @@ describe(import.meta.file, () => {
     const after = f.update(before, [
       {
         userId: UserId.generate(),
-        t: 'got-flow-play-msg',
+        t: 'got-numberlink-play-msg',
         c: {
           t: 'user-pressed-down-node',
           nodeId,
@@ -202,7 +204,7 @@ describe(import.meta.file, () => {
     ])
     const after = f.update(before, [
       {
-        t: 'got-flow-play-msg',
+        t: 'got-numberlink-play-msg',
         c: {
           t: 'user-pressed-up-node',
           nodeId: endId,
@@ -234,7 +236,7 @@ describe(import.meta.file, () => {
     const before = f.update(f.init, [
       ...f.solvePuzzleMsgs,
       {
-        t: 'got-flow-play-msg',
+        t: 'got-numberlink-play-msg',
         c: {
           t: 'user-clicked-reset',
         },
@@ -355,7 +357,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const output = f.update(f.init, [
       {
-        t: 'got-flow-play-msg',
+        t: 'got-numberlink-play-msg',
         c: { t: 'user-clicked-use-hint', solutions: f.solutions },
         userId: UserId.generate(),
       },

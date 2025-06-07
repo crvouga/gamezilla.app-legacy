@@ -3,6 +3,6 @@ import { IPackDb } from '../pack/pack-db'
 import { IPuzzleDb } from '../puzzle/puzzle-db'
 
 export type NumberlinkBackendCtx = SpaceBackendCtx & {
-  flowPuzzleDb: IPuzzleDb
-  flowPackDb: IPackDb
+  numberlinkPuzzleDb: IPuzzleDb
+  numberlinkPackDb: IPackDb
 }

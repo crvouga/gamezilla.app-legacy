@@ -269,7 +269,7 @@ const ViewSurface = (
         render: () => (
           <SurfaceBody>
             <TextField
-              id='flow-edit-puzzle-name-input'
+              id='game-numberlink-edit-puzzle-name-input'
               label={input.ctx.t('game.numberlink.edit-puzzle-name.name')}
               value={input.model.puzzleEditNameDraft}
               onChange={(draftName) => input.dispatch({ t: 'puzzle.edit-name.user-inputted-draft-name', draftName })}

@@ -127,7 +127,7 @@ export const translations: Text = {
   'game.numberlink.you-have-completed-the-pack': '你已完成这个包！',
   'game.numberlink.copy-puzzle-to-clipboard': '将拼图复制到剪贴板',
   'game.numberlink.select-a-pack': '选择一个包',
-  'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
+  'numberlink-puzzle-name': (puzzleName) => `${puzzleName}`,
   'game.numberlink.no-puzzles': '没有拼图',
   'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
     `\u5DF2\u9009\u62E9 ${selectedCount} \u4E2A\uFF0C\u5171 ${totalCount} \u4E2A`,
@@ -143,11 +143,11 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': '没有可用提示',
   'game.numberlink.no-packs': '没有包',
   'game.numberlink.puzzle-count': (count) => `${count} \u62FC\u56FE`,
-  'flow-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
   'game.numberlink.editing': '编辑',
   'game.numberlink.placing': ({ position }) =>
     position === 'first' ? '\u653E\u7F6E\u7B2C\u4E00\u4E2A' : '\u653E\u7F6E\u6700\u540E\u4E00\u4E2A',
-  'flow-play.no-hints-available': '没有提示',
+  'game-numberlink-play.no-hints-available': '没有提示',
   'game.numberlink.next-pack': '下一个包',
   'game.numberlink.play': '玩',
   'game.numberlink.play-description': '开始玩拼图',

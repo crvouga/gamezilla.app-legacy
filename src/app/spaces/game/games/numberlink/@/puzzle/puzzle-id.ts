@@ -4,7 +4,7 @@ import { s } from '~/@/schema'
 
 export type PuzzleId = Brand<string, 'PuzzleId'>
 
-const namespace = 'game-flow-puzzle'
+const namespace = 'game-numberlink-puzzle'
 const separator = ':'
 
 const is = (maybePuzzleId: unknown): maybePuzzleId is PuzzleId => {

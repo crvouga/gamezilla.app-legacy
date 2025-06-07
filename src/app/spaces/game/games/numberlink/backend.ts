@@ -6,8 +6,8 @@ import { PuzzleDb } from './@/puzzle/puzzle-db'
 const initCtx = (input: { ctx: SpaceBackendCtx }): NumberlinkBackendCtx => {
   return {
     ...input.ctx,
-    flowPuzzleDb: PuzzleDb({ t: 'sql-db', sqlDb: input.ctx.postgres, logger: input.ctx.logger }),
-    flowPackDb: PackDb({ t: 'sql-db', sqlDb: input.ctx.postgres, logger: input.ctx.logger }),
+    numberlinkPuzzleDb: PuzzleDb({ t: 'sql-db', sqlDb: input.ctx.postgres, logger: input.ctx.logger }),
+    numberlinkPackDb: PackDb({ t: 'sql-db', sqlDb: input.ctx.postgres, logger: input.ctx.logger }),
   }
 }
 

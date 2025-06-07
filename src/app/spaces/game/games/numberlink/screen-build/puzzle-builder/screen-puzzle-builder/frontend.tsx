@@ -177,7 +177,7 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
           <SaveChangesFrontend.ViewUnsavedChangesSurface {...input} dropDown={dropDown} />
         ),
       },
-      title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
+      title: input.ctx.t('numberlink-puzzle-name', puzzleBuilder.puzzle.name),
     },
     actionBar: {
       id: 'puzzle-builder-actions',
@@ -311,7 +311,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
       id='puzzle-builder-screen-mode-play'
       ctx={input.ctx}
       navBar={{
-        title: input.ctx.t('flow-puzzle-name', puzzleBuilder.puzzle.name),
+        title: input.ctx.t('numberlink-puzzle-name', puzzleBuilder.puzzle.name),
       }}
       renderBody={() => (
         <LayoutGame ctx={input.ctx} isSpectating>

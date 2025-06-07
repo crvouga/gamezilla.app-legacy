@@ -132,7 +132,7 @@ export const translations: Text = {
   'game.numberlink.you-have-completed-the-pack': 'Вы завершили пакет!',
   'game.numberlink.copy-puzzle-to-clipboard': 'Скопировать головоломку в буфер обмена',
   'game.numberlink.select-a-pack': 'Выберите пакет',
-  'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
+  'numberlink-puzzle-name': (puzzleName) => `${puzzleName}`,
   'game.numberlink.no-puzzles': 'Нет пазлов',
   'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
     `${selectedCount} \u0438\u0437 ${totalCount} \u0432\u044B\u0431\u0440\u0430\u043D\u043E`,
@@ -151,13 +151,13 @@ export const translations: Text = {
   'game.numberlink.no-packs': 'Нет пакетов',
   'game.numberlink.puzzle-count': (count) =>
     `${count} \u0433\u043E\u043B\u043E\u0432\u043E\u043B\u043E\u043C\u043E\u043A`,
-  'flow-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
   'game.numberlink.editing': 'редактирование',
   'game.numberlink.placing': ({ position }) =>
     position === 'first'
       ? '\u0420\u0430\u0437\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043F\u0435\u0440\u0432\u043E\u0433\u043E'
       : '\u0420\u0430\u0437\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043F\u043E\u0441\u043B\u0435\u0434\u043D\u0435\u0433\u043E',
-  'flow-play.no-hints-available': 'Подсказки отсутствуют',
+  'game-numberlink-play.no-hints-available': 'Подсказки отсутствуют',
   'game.numberlink.next-pack': 'Следующий Пакет',
   'game.numberlink.play': 'Играть',
   'game.numberlink.play-description': 'Начните играть в головоломки',

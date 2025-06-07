@@ -130,7 +130,7 @@ export const translations: Text = {
   'game.numberlink.you-have-completed-the-pack': 'لقد أكملت الحزمة!',
   'game.numberlink.copy-puzzle-to-clipboard': 'نسخ اللغز إلى الحافظة',
   'game.numberlink.select-a-pack': 'اختر حزمة',
-  'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
+  'numberlink-puzzle-name': (puzzleName) => `${puzzleName}`,
   'game.numberlink.no-puzzles': 'لا توجد ألغاز',
   'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
     `${selectedCount} \u0645\u0646 ${totalCount} \u062A\u0645 \u062A\u062D\u062F\u064A\u062F\u0647\u0627`,
@@ -147,13 +147,13 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': 'لا توجد تلميحات متاحة',
   'game.numberlink.no-packs': 'لا توجد حزم',
   'game.numberlink.puzzle-count': (count) => `${count} \u0623\u0644\u063A\u0627\u0632`,
-  'flow-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
   'game.numberlink.editing': 'تحرير',
   'game.numberlink.placing': ({ position }) =>
     position === 'first'
       ? '\u0648\u0636\u0639 \u0627\u0644\u0623\u0648\u0644'
       : '\u0648\u0636\u0639 \u0627\u0644\u0623\u062E\u064A\u0631',
-  'flow-play.no-hints-available': 'لا تتوفر تلميحات',
+  'game-numberlink-play.no-hints-available': 'لا تتوفر تلميحات',
   'game.numberlink.next-pack': 'الحزمة التالية',
   'game.numberlink.play': 'لعب',
   'game.numberlink.play-description': 'ابدأ في لعب الألغاز',

@@ -128,7 +128,7 @@ export const translations: Text = {
   'game.numberlink.you-have-completed-the-pack': '팩을 완료했습니다!',
   'game.numberlink.copy-puzzle-to-clipboard': '퍼즐을 클립 보드로 복사',
   'game.numberlink.select-a-pack': '팩 선택',
-  'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
+  'numberlink-puzzle-name': (puzzleName) => `${puzzleName}`,
   'game.numberlink.no-puzzles': '퍼즐이 없습니다',
   'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
     `${selectedCount} / ${totalCount} \uC120\uD0DD\uB428`,
@@ -146,11 +146,11 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': '힌트가 없습니다',
   'game.numberlink.no-packs': '팩 없음',
   'game.numberlink.puzzle-count': (count) => `${count} \uD37C\uC990`,
-  'flow-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
   'game.numberlink.editing': '편집',
   'game.numberlink.placing': ({ position }) =>
     position === 'first' ? '\uCCAB \uBC88\uC9F8 \uBC30\uCE58' : '\uB9C8\uC9C0\uB9C9 \uBC30\uCE58',
-  'flow-play.no-hints-available': '힌트 없음',
+  'game-numberlink-play.no-hints-available': '힌트 없음',
   'game.numberlink.next-pack': '다음 팩',
   'game.numberlink.play': '놀이',
   'game.numberlink.play-description': '퍼즐 플레이 시작',

@@ -49,7 +49,7 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
     }
   }
   console.error(
-    `[flow-puzzle-db] Failed to parse row=${JSON.stringify(row, null, 4)} \nerror=${JSON.stringify(
+    `[numberlink-puzzle-db] Failed to parse row=${JSON.stringify(row, null, 4)} \nerror=${JSON.stringify(
       parsedNumberlink,
       null,
       4,

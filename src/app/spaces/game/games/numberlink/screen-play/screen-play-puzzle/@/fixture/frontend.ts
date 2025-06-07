@@ -16,7 +16,7 @@ const toCompletePuzzleMsgs = (puzzle: Puzzle) => {
   }).map(
     (c): FixtureUpdateInput => ({
       msgSpace: withEventMeta({
-        t: 'got-flow-play-msg',
+        t: 'got-numberlink-play-msg',
         userId,
         c,
       }),

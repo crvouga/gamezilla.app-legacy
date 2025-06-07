@@ -128,7 +128,7 @@ export const translations: Text = {
   'game.numberlink.you-have-completed-the-pack': 'Hai completato il pacchetto!',
   'game.numberlink.copy-puzzle-to-clipboard': 'Copia il puzzle negli appunti',
   'game.numberlink.select-a-pack': 'Seleziona un pacchetto',
-  'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
+  'numberlink-puzzle-name': (puzzleName) => `${puzzleName}`,
   'game.numberlink.no-puzzles': 'Nessun puzzle',
   'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
     `${selectedCount} di ${totalCount} selezionati`,
@@ -146,11 +146,11 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': 'Nessun suggerimento disponibile',
   'game.numberlink.no-packs': 'Nessun pacchetto',
   'game.numberlink.puzzle-count': (count) => `${count} puzzle`,
-  'flow-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
   'game.numberlink.editing': 'Modifica',
   'game.numberlink.placing': ({ position }) =>
     position === 'first' ? 'Posizionamento primo' : 'Posizionamento ultimo',
-  'flow-play.no-hints-available': 'Nessun suggerimento disponibile',
+  'game-numberlink-play.no-hints-available': 'Nessun suggerimento disponibile',
   'game.numberlink.next-pack': 'Prossimo Pacchetto',
   'game.numberlink.play': 'Gioca',
   'game.numberlink.play-description': 'Inizia a giocare ai puzzle',

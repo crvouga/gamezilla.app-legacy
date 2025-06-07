@@ -7,10 +7,10 @@ import { ModeEditFrontend } from './frontend'
 
 type Output = ReturnType<typeof ModeEdit.update>
 
-const Fixture = async (input?: { flow?: NumberlinkVariant.Model }) => {
+const Fixture = async (input?: { numberlink?: NumberlinkVariant.Model }) => {
   const f = await FixtureAppFrontend()
   const numberlink =
-    input?.flow ??
+    input?.numberlink ??
     VariantGridShorthand.toGrid([
       ['A', ' '],
       [' ', 'A'],

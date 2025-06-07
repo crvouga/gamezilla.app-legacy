@@ -12,7 +12,7 @@ import { CopyPuzzleTypes } from './button-copy-puzzle'
 export const MsgSpace = s.or(
   CopyPuzzleTypes.MsgSpace,
   s.obj({
-    t: s.l('got-flow-play-msg'),
+    t: s.l('got-numberlink-play-msg'),
     c: ModePlay.Msg,
     userId: UserId,
   }),

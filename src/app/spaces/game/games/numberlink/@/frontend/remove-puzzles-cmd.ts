@@ -4,7 +4,7 @@ import { PuzzleId } from '../puzzle/puzzle-id'
 
 export const schema = s.or(
   s.obj({
-    t: s.l('flow-cmd.remove-puzzles'),
+    t: s.l('numberlink-cmd.remove-puzzles'),
     puzzles: s.dict(PuzzleId, PuzzleId),
     causedBy: s.any,
   }),
@@ -14,7 +14,7 @@ export type RemovePuzzlesCmd = s.Infer<typeof schema>
 
 export const init = (puzzles: { [puzzleId: PuzzleId]: PuzzleId }, causedBy: unknown): RemovePuzzlesCmd => {
   return {
-    t: 'flow-cmd.remove-puzzles',
+    t: 'numberlink-cmd.remove-puzzles',
     puzzles,
     causedBy,
   }

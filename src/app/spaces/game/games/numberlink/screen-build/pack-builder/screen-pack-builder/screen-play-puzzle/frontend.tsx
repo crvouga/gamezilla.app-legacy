@@ -44,7 +44,7 @@ const update: FrontendModule['update'] = (input) => {
       }
     }
 
-    case 'screen-pack-builder.got-flow-play-msg': {
+    case 'screen-pack-builder.got-numberlink-play-msg': {
       const modePlay = input.modelSpace?.screen.t === 'screen-puzzle' ? input.modelSpace.screen.play : null
 
       if (!modePlay) return { model: input.model }
@@ -92,7 +92,7 @@ const View: FrontendModule['View'] = (input) => {
         renderBody={() => (
           <ModePlayFrontend.View
             dispatch={(c) =>
-              input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
+              input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-numberlink-play-msg', c } })
             }
             numberlink={puzzleResult.c.numberlink}
             model={play}
@@ -107,7 +107,7 @@ const View: FrontendModule['View'] = (input) => {
               model: play,
               dispatchCmd: (c) => input.dispatch({ t: 'got-msg-out', c }),
               dispatch: (c) =>
-                input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } }),
+                input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-numberlink-play-msg', c } }),
             }),
           },
         }}
@@ -155,7 +155,8 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
     id: 'screen-puzzle',
     navBar: {
       title: input.ctx.t('game.numberlink.level', screen.puzzleIndex + 1),
-      subtitle: screen.puzzleResult.t === 'got' ? input.ctx.t('flow-puzzle-name', screen.puzzleResult.c.name) : null,
+      subtitle:
+        screen.puzzleResult.t === 'got' ? input.ctx.t('numberlink-puzzle-name', screen.puzzleResult.c.name) : null,
       back: {
         onClick: () =>
           input.dispatch({

@@ -101,7 +101,7 @@ export const MsgSpace = s.or(
     userId: UserId,
   }),
   s.obj({
-    t: s.l('screen-pack-builder.got-flow-play-msg'),
+    t: s.l('screen-pack-builder.got-numberlink-play-msg'),
     c: ModePlay.Msg,
   }),
   s.obj({

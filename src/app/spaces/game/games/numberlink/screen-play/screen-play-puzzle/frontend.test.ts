@@ -131,7 +131,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
     const output = f.update(f.init, [
       {
         msgSpace: withEventMeta({
-          t: 'got-flow-play-msg',
+          t: 'got-numberlink-play-msg',
           userId: UserId.generate(),
           c: { t: 'user-pressed-down-node', nodeId: terminal.startId },
         }),

@@ -132,7 +132,7 @@ export const translations: Text = {
   'game.numberlink.you-have-completed-the-pack': 'आपने पैक पूरा कर लिया है!',
   'game.numberlink.copy-puzzle-to-clipboard': 'क्लिपबोर्ड पर पहेली कॉपी करें',
   'game.numberlink.select-a-pack': 'पैक चुनें',
-  'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
+  'numberlink-puzzle-name': (puzzleName) => `${puzzleName}`,
   'game.numberlink.no-puzzles': 'कोई पहेली नहीं',
   'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
     `${selectedCount} \u0915\u093E ${totalCount} \u091A\u092F\u0928\u093F\u0924`,
@@ -150,13 +150,13 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': 'कोई संकेत उपलब्ध नहीं है',
   'game.numberlink.no-packs': 'कोई पैक नहीं',
   'game.numberlink.puzzle-count': (count) => `${count} \u092A\u0939\u0947\u0932\u093F\u092F\u093E\u0901`,
-  'flow-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
   'game.numberlink.editing': 'संपादन',
   'game.numberlink.placing': ({ position }) =>
     position === 'first'
       ? '\u092A\u0939\u0932\u093E \u0930\u0916 \u0930\u0939\u0947 \u0939\u0948\u0902'
       : '\u0905\u0902\u0924\u093F\u092E \u0930\u0916 \u0930\u0939\u0947 \u0939\u0948\u0902',
-  'flow-play.no-hints-available': 'कोई संकेत उपलब्ध नहीं है',
+  'game-numberlink-play.no-hints-available': 'कोई संकेत उपलब्ध नहीं है',
   'game.numberlink.next-pack': 'अगला पैक',
   'game.numberlink.play': 'खेलें',
   'game.numberlink.play-description': 'पहेलियों का खेल शुरू करें',

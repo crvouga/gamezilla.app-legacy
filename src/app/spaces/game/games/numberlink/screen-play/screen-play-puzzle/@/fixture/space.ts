@@ -52,7 +52,7 @@ export const FixtureScreenPuzzlePlaySpace = async (input?: { numberlink?: Number
 
   const userId = UserId.generate()
   const solvePuzzleMsgs = pipe(ModePlay.toSolutionMsgs(puzzle), (msgs) =>
-    msgs.map((c): MsgSpace => ({ userId, t: 'got-flow-play-msg', c })),
+    msgs.map((c): MsgSpace => ({ userId, t: 'got-numberlink-play-msg', c })),
   )
 
   return {

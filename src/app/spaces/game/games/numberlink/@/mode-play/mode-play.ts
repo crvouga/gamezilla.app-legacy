@@ -284,7 +284,10 @@ export const eventsToFrontendCmd = ({ t }: { t: Translator }, events?: Event[] |
         }
 
         case 'no-hints': {
-          return [PlaySoundCmd.init(APP_SOUND.alertErrorSm), ShowToastCmd.init(t('flow-play.no-hints-available'))]
+          return [
+            PlaySoundCmd.init(APP_SOUND.alertErrorSm),
+            ShowToastCmd.init(t('game-numberlink-play.no-hints-available')),
+          ]
         }
       }
     }) ?? []

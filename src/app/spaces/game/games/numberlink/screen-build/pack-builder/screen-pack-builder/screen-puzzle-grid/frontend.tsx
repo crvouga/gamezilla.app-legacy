@@ -29,7 +29,7 @@ const View: FrontendModule['View'] = (input) => {
       id='screen-puzzle-grid'
       ctx={input.ctx}
       navBar={{
-        title: input.ctx.t('flow-pack-name', packBuilder.pack.name),
+        title: input.ctx.t('numberlink-pack-name', packBuilder.pack.name),
         back: {
           onClick: () =>
             input.dispatch({

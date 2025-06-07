@@ -6,7 +6,7 @@ const schema = s.brand(s.str(), 'PackId')
 export type PackId = s.Infer<typeof schema>
 
 const generate = () => {
-  return `game-flow-pack:${Uuid.generate()}` as PackId
+  return `game-numberlink-pack:${Uuid.generate()}` as PackId
 }
 
 const is = (flowPackId: unknown): flowPackId is PackId => {

@@ -139,7 +139,7 @@ updates.push((input) => {
 
 updates.push(({ modelSpace, msgSpace }) => {
   switch (msgSpace.t) {
-    case 'screen-pack-builder.got-flow-play-msg': {
+    case 'screen-pack-builder.got-numberlink-play-msg': {
       if (!modelSpace) {
         return modelSpace
       }

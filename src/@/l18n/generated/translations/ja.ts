@@ -130,7 +130,7 @@ export const translations: Text = {
   'game.numberlink.you-have-completed-the-pack': 'パックを完了しました！',
   'game.numberlink.copy-puzzle-to-clipboard': 'パズルをクリップボードにコピー',
   'game.numberlink.select-a-pack': 'パックを選択',
-  'flow-puzzle-name': (puzzleName) => `${puzzleName}`,
+  'numberlink-puzzle-name': (puzzleName) => `${puzzleName}`,
   'game.numberlink.no-puzzles': 'パズルなし',
   'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
     `${selectedCount} / ${totalCount} \u304C\u9078\u629E\u3055\u308C\u307E\u3057\u305F`,
@@ -148,11 +148,11 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': 'ヒントがありません',
   'game.numberlink.no-packs': 'パックなし',
   'game.numberlink.puzzle-count': (count) => `${count} \u30D1\u30BA\u30EB`,
-  'flow-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
   'game.numberlink.editing': '編集',
   'game.numberlink.placing': ({ position }) =>
     position === 'first' ? '\u6700\u521D\u3092\u914D\u7F6E' : '\u6700\u5F8C\u3092\u914D\u7F6E',
-  'flow-play.no-hints-available': 'ヒントはありません',
+  'game-numberlink-play.no-hints-available': 'ヒントはありません',
   'game.numberlink.next-pack': '次のパック',
   'game.numberlink.play': '遊ぶ',
   'game.numberlink.play-description': 'パズルをプレイし始める',
