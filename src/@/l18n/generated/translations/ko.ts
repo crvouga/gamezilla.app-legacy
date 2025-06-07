@@ -151,7 +151,6 @@ export const translations: Text = {
     position === 'first' ? '\uCCAB \uBC88\uC9F8 \uBC30\uCE58' : '\uB9C8\uC9C0\uB9C9 \uBC30\uCE58',
   'flow-play.no-hints-available': '힌트 없음',
   'flow.next-pack': '다음 팩',
-  'flow.flow': '흐름',
   'flow.play': '놀이',
   'flow.play-description': '퍼즐 플레이 시작',
   'flow.build': '건설',

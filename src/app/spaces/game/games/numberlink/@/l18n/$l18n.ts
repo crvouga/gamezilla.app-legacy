@@ -1,7 +1,6 @@
 import type { Translations } from '~/@/l18n'
 
 export type Text = {
-  'flow.flow': string
   'flow.play': string
   'flow.play-description': string
   'flow.build': string
@@ -17,7 +16,6 @@ export type Text = {
 
 export const translations: Translations<Text> = {
   ar: {
-    'flow.flow': 'تدفق',
     'flow.play': 'لعب',
     'flow.play-description': 'ابدأ في لعب الألغاز',
     'flow.build': 'بناء',
@@ -31,7 +29,6 @@ export const translations: Translations<Text> = {
     'flow.puzzle-not-found': 'اللغز غير موجود',
   },
   de: {
-    'flow.flow': 'Fluss',
     'flow.play': 'Spielen',
     'flow.play-description': 'Beginnen Sie mit dem Spielen von Rätseln',
     'flow.build': 'Erstellen',
@@ -45,7 +42,6 @@ export const translations: Translations<Text> = {
     'flow.puzzle-not-found': 'Rätsel nicht gefunden',
   },
   en: {
-    'flow.flow': 'Flow',
     'flow.play': 'Play',
     'flow.play-description': 'Start playing puzzles',
     'flow.build': 'Build',
@@ -59,7 +55,6 @@ export const translations: Translations<Text> = {
     'flow.puzzle-not-found': 'Puzzle not found',
   },
   es: {
-    'flow.flow': 'Flujo',
     'flow.play': 'Jugar',
     'flow.play-description': 'Comienza a jugar rompecabezas',
     'flow.build': 'Construir',
@@ -73,7 +68,6 @@ export const translations: Translations<Text> = {
     'flow.puzzle-not-found': 'Rompecabezas no encontrado',
   },
   fr: {
-    'flow.flow': 'Flux',
     'flow.play': 'Jouer',
     'flow.play-description': 'Commencez à jouer à des puzzles',
     'flow.build': 'Construire',
@@ -87,7 +81,6 @@ export const translations: Translations<Text> = {
     'flow.puzzle-not-found': 'Puzzle non trouvé',
   },
   it: {
-    'flow.flow': 'Flusso',
     'flow.play': 'Gioca',
     'flow.play-description': 'Inizia a giocare ai puzzle',
     'flow.build': 'Costruisci',
@@ -101,7 +94,6 @@ export const translations: Translations<Text> = {
     'flow.puzzle-not-found': 'Puzzle non trovato',
   },
   ja: {
-    'flow.flow': 'フロー',
     'flow.play': '遊ぶ',
     'flow.play-description': 'パズルをプレイし始める',
     'flow.build': 'ビルド',
@@ -115,7 +107,6 @@ export const translations: Translations<Text> = {
     'flow.puzzle-not-found': 'パズルが見つかりません',
   },
   ko: {
-    'flow.flow': '흐름',
     'flow.play': '놀이',
     'flow.play-description': '퍼즐 플레이 시작',
     'flow.build': '건설',
@@ -129,7 +120,6 @@ export const translations: Translations<Text> = {
     'flow.puzzle-not-found': '퍼즐을 찾을 수 없습니다',
   },
   pt: {
-    'flow.flow': 'Fluxo',
     'flow.play': 'Jogar',
     'flow.play-description': 'Comece a jogar quebra-cabeças',
     'flow.build': 'Construir',
@@ -143,7 +133,6 @@ export const translations: Translations<Text> = {
     'flow.puzzle-not-found': 'Quebra-cabeça não encontrado',
   },
   ru: {
-    'flow.flow': 'Поток',
     'flow.play': 'Играть',
     'flow.play-description': 'Начните играть в головоломки',
     'flow.build': 'Создать',
@@ -157,7 +146,6 @@ export const translations: Translations<Text> = {
     'flow.puzzle-not-found': 'Головоломка не найдена',
   },
   zh: {
-    'flow.flow': '流',
     'flow.play': '玩',
     'flow.play-description': '开始玩拼图',
     'flow.build': '建立',
@@ -171,7 +159,6 @@ export const translations: Translations<Text> = {
     'flow.puzzle-not-found': '找不到拼图',
   },
   hi: {
-    'flow.flow': 'फ्लो',
     'flow.play': 'खेलें',
     'flow.play-description': 'पहेलियों का खेल शुरू करें',
     'flow.build': 'निर्माण',

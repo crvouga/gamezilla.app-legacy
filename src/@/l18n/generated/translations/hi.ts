@@ -158,7 +158,6 @@ export const translations: Text = {
       : '\u0905\u0902\u0924\u093F\u092E \u0930\u0916 \u0930\u0939\u0947 \u0939\u0948\u0902',
   'flow-play.no-hints-available': 'कोई संकेत उपलब्ध नहीं है',
   'flow.next-pack': 'अगला पैक',
-  'flow.flow': 'फ्लो',
   'flow.play': 'खेलें',
   'flow.play-description': 'पहेलियों का खेल शुरू करें',
   'flow.build': 'निर्माण',

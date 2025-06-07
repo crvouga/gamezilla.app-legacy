@@ -154,7 +154,6 @@ export const translations: Text = {
     position === 'first' ? '\u6700\u521D\u3092\u914D\u7F6E' : '\u6700\u5F8C\u3092\u914D\u7F6E',
   'flow-play.no-hints-available': 'ヒントはありません',
   'flow.next-pack': '次のパック',
-  'flow.flow': 'フロー',
   'flow.play': '遊ぶ',
   'flow.play-description': 'パズルをプレイし始める',
   'flow.build': 'ビルド',

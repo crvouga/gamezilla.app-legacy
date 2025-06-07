@@ -151,7 +151,6 @@ export const translations: Text = {
   'flow.placing': ({ position }) => (position === 'first' ? 'Colocando primeiro' : 'Colocando \xFAltimo'),
   'flow-play.no-hints-available': 'Nenhumas dicas disponíveis',
   'flow.next-pack': 'Próximo Pacote',
-  'flow.flow': 'Fluxo',
   'flow.play': 'Jogar',
   'flow.play-description': 'Comece a jogar quebra-cabeças',
   'flow.build': 'Construir',

@@ -152,7 +152,6 @@ export const translations: Text = {
   'flow.placing': ({ position }) => (position === 'first' ? 'Platziere ersten' : 'Platziere letzten'),
   'flow-play.no-hints-available': 'Keine Hinweise verfügbar',
   'flow.next-pack': 'Nächstes Paket',
-  'flow.flow': 'Fluss',
   'flow.play': 'Spielen',
   'flow.play-description': 'Beginnen Sie mit dem Spielen von Rätseln',
   'flow.build': 'Erstellen',

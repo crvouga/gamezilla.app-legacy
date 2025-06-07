@@ -154,7 +154,6 @@ export const translations: Text = {
       : '\u0648\u0636\u0639 \u0627\u0644\u0623\u062E\u064A\u0631',
   'flow-play.no-hints-available': 'لا تتوفر تلميحات',
   'flow.next-pack': 'الحزمة التالية',
-  'flow.flow': 'تدفق',
   'flow.play': 'لعب',
   'flow.play-description': 'ابدأ في لعب الألغاز',
   'flow.build': 'بناء',

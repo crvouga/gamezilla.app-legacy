@@ -149,7 +149,6 @@ export const translations: Text = {
     position === 'first' ? '\u653E\u7F6E\u7B2C\u4E00\u4E2A' : '\u653E\u7F6E\u6700\u540E\u4E00\u4E2A',
   'flow-play.no-hints-available': '没有提示',
   'flow.next-pack': '下一个包',
-  'flow.flow': '流',
   'flow.play': '玩',
   'flow.play-description': '开始玩拼图',
   'flow.build': '建立',

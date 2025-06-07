@@ -158,7 +158,6 @@ export const translations: Text = {
       : '\u0420\u0430\u0437\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043F\u043E\u0441\u043B\u0435\u0434\u043D\u0435\u0433\u043E',
   'flow-play.no-hints-available': 'Подсказки отсутствуют',
   'flow.next-pack': 'Следующий Пакет',
-  'flow.flow': 'Поток',
   'flow.play': 'Играть',
   'flow.play-description': 'Начните играть в головоломки',
   'flow.build': 'Создать',
