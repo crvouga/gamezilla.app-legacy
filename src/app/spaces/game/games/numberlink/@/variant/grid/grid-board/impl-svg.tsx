@@ -1,11 +1,11 @@
-import type { VDom } from '~/@/vdom/vdom'
-import { IconCheckmark } from '~/@/ui/icon/icon-checkmark'
 import { cn } from '~/@/ui/cn'
+import { IconCheckmark } from '~/@/ui/icon/icon-checkmark'
+import type { VDom } from '~/@/vdom/vdom'
 import { Flow } from '../../../numberlink'
 import { NodeId } from '../../../numberlink/node-id'
 import { BoardInput } from '../../../ui/board'
-import * as VariantGrid from '../grid'
 import { Color } from '../../../ui/color'
+import * as VariantGrid from '../grid'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
@@ -74,7 +74,7 @@ const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
     <>
       <defs>
         <pattern id='grid' width='1' height='1' patternUnits='userSpaceOnUse'>
-          <path d='M 1 0 L 0 0 0 1' fill='none' stroke='green' strokeWidth='0.02' />
+          <path d='M 1 0 L 0 0 0 1' fill='none' stroke={Color.GRID_LINE_COLOR} strokeWidth='0.02' />
         </pattern>
       </defs>
 
@@ -84,7 +84,7 @@ const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
         width={input.model.width}
         height={input.model.height}
         fill='url(#grid)'
-        stroke={input.borderless ? 'black' : 'green'}
+        stroke={input.borderless ? Color.BACKGROUND_COLOR : Color.GRID_LINE_COLOR}
         strokeWidth='0.02'
       />
     </>

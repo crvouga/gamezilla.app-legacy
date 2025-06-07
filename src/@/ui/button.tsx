@@ -101,7 +101,7 @@ const toColorClass = (input: ButtonInput): string => {
   const combo: Combo = `${input.variant ?? 'outlined'}-${input.color ?? 'primary'}`
   switch (combo) {
     case 'contained-primary':
-      return 'bg-blue-500 text-white ring-blue-500'
+      return 'bg-blue-600 text-white ring-blue-500'
     case 'contained-danger':
       return 'bg-red-600 text-white ring-red-500'
     case 'contained-default':

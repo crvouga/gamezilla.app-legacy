@@ -14,9 +14,14 @@ const toOrder = (groupId: GroupId): number => {
   return ORDER.indexOf(groupId)
 }
 
+const toNumber = (groupId: GroupId): number => {
+  return toOrder(groupId) + 1
+}
+
 export const GroupId = {
   ...schema,
   ORDER,
   toOrder,
+  toNumber,
   is,
 }
