@@ -1,7 +1,7 @@
 import { cn } from '~/@/ui/cn'
 import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four-cover-art'
-import * as Flow from './flow/cover-art'
+import * as Numberlink from './numberlink/cover-art'
 
 export const GameCoverArt = (input: { rounded?: boolean; className?: string; gameName: GameName }) => {
   return (
@@ -19,7 +19,7 @@ const GameCoverArtSwitch = (input: { className?: string; gameName: GameName }) =
     }
 
     case 'flow': {
-      return <Flow.CoverArt className={input.className} />
+      return <Numberlink.CoverArt className={input.className} />
     }
 
     default: {

@@ -2,7 +2,7 @@ import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/connect-four.frontend'
-import { FlowFrontend } from './flow/frontend'
+import { FlowFrontend } from './numberlink/frontend'
 import type { FrontendModule, MsgFrontend } from './types'
 
 //

@@ -2,7 +2,7 @@ import type { EventMeta } from '~/@/event-sourced/event'
 import { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four.types'
-import { FlowSpace } from './flow/space'
+import { FlowSpace } from './numberlink/space'
 import type { ModelSpace, MsgSpace } from './types'
 
 export const initSpace = (input: { gameName: GameName; ctx: SpaceCtx }): ModelSpace => {

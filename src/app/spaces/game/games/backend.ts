@@ -1,16 +1,16 @@
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { FlowBackend } from './flow/backend'
+import { NumberlinkBackend } from './numberlink/backend'
 import type { GameBackendCtxModule } from './types'
 
 const initCtx = (input: { ctx: SpaceBackendCtx }): GameBackendCtxModule => {
   return {
     ...input.ctx,
-    ...FlowBackend.initCtx(input),
+    ...NumberlinkBackend.initCtx(input),
   }
 }
 
 const worker = async (s: AbortSignal, input: { ctx: GameBackendCtxModule }) => {
-  FlowBackend.worker(s, input)
+  NumberlinkBackend.worker(s, input)
 }
 
 export const GamesBackend = {

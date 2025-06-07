@@ -4,8 +4,8 @@ import { SpaceFrontendCtx } from '../../@/frontend/ctx'
 import { GameFrontendModule } from './@/architecture/game-frontend-v2'
 import { GameName } from './@/game-name'
 import * as ConnectFour from './connect-four/connect-four.types'
-import { FlowBackendCtx } from './flow/@/backend/ctx'
-import * as Flow from './flow/types'
+import { FlowBackendCtx } from './numberlink/@/backend/ctx'
+import * as Flow from './numberlink/types'
 
 export type ModelFrontend = { t: 'connect-four'; c: ConnectFour.ModelFrontend } | { t: 'flow'; c: Flow.ModelFrontend }
 
