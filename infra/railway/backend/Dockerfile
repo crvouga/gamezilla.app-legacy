@@ -11,6 +11,6 @@ ARG DATABASE_URL
 
 ENV DATABASE_URL=${DATABASE_URL}
 
-RUN bun backend:build
+RUN bun db:up
 
 CMD ["bun", "backend"]
