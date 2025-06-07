@@ -66,7 +66,9 @@ const ViewList = (input: {
   return (
     <div className='relative flex w-full flex-1 flex-col gap-2 overflow-hidden'>
       <div className='relative flex max-h-full w-full flex-1 flex-col items-center overflow-x-hidden overflow-y-scroll border-t-neutral-800'>
-        {isEmpty && <EmptyState label={input.ctx.t('flow.no-packs')} renderIcon={(input) => <IconBox {...input} />} />}
+        {isEmpty && (
+          <EmptyState label={input.ctx.t('game.numberlink.no-packs')} renderIcon={(input) => <IconBox {...input} />} />
+        )}
 
         {packs.sort(descend((pack) => Posix.toNumber(pack.lastUpdatedAt))).map((pack) => (
           <ViewPackListItem ctx={input.ctx} key={pack.id} pack={pack} onClick={() => input.onClick(pack)} />
@@ -90,7 +92,7 @@ const ViewPackListItem = (input: { ctx: { now: Posix; t: Translator }; pack: Pac
         <Typography text={toListItemSecondaryText(input)} variant='subtitle' color='text-secondary' />
       </div>
       <Typography
-        text={input.ctx.t('flow.puzzle-count', input.pack.puzzleIds.length)}
+        text={input.ctx.t('game.numberlink.puzzle-count', input.pack.puzzleIds.length)}
         variant='body'
         color='text-secondary'
         className='text-xs'

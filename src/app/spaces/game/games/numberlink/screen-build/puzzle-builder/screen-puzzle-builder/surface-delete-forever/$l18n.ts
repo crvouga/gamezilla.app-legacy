@@ -1,57 +1,57 @@
 import type { Translations } from '~/@/l18n'
 
 export type Text = {
-  'flow.puzzle-deleted': string
-  'flow.delete-puzzle-forever?': string
+  'game.numberlink.puzzle-deleted': string
+  'game.numberlink.delete-puzzle-forever?': string
 }
 
 export const translations: Translations<Text> = {
   ar: {
-    'flow.puzzle-deleted': 'تم حذف اللغز',
-    'flow.delete-puzzle-forever?': 'هل تريد حذف اللغز نهائياً؟',
+    'game.numberlink.puzzle-deleted': 'تم حذف اللغز',
+    'game.numberlink.delete-puzzle-forever?': 'هل تريد حذف اللغز نهائياً؟',
   },
   de: {
-    'flow.puzzle-deleted': 'Puzzle gelöscht',
-    'flow.delete-puzzle-forever?': 'Möchtest du das Puzzle endgültig löschen?',
+    'game.numberlink.puzzle-deleted': 'Puzzle gelöscht',
+    'game.numberlink.delete-puzzle-forever?': 'Möchtest du das Puzzle endgültig löschen?',
   },
   en: {
-    'flow.puzzle-deleted': 'Puzzle deleted',
-    'flow.delete-puzzle-forever?': 'Delete puzzle forever?',
+    'game.numberlink.puzzle-deleted': 'Puzzle deleted',
+    'game.numberlink.delete-puzzle-forever?': 'Delete puzzle forever?',
   },
   es: {
-    'flow.puzzle-deleted': 'Rompecabezas eliminado',
-    'flow.delete-puzzle-forever?': '¿Eliminar rompecabezas para siempre?',
+    'game.numberlink.puzzle-deleted': 'Rompecabezas eliminado',
+    'game.numberlink.delete-puzzle-forever?': '¿Eliminar rompecabezas para siempre?',
   },
   fr: {
-    'flow.puzzle-deleted': 'Puzzle supprimé',
-    'flow.delete-puzzle-forever?': 'Supprimer le puzzle pour toujours?',
+    'game.numberlink.puzzle-deleted': 'Puzzle supprimé',
+    'game.numberlink.delete-puzzle-forever?': 'Supprimer le puzzle pour toujours?',
   },
   hi: {
-    'flow.puzzle-deleted': 'पहेली हटा दी गई',
-    'flow.delete-puzzle-forever?': 'क्या आप पहेली को स्थायी रूप से हटाना चाहते हैं?',
+    'game.numberlink.puzzle-deleted': 'पहेली हटा दी गई',
+    'game.numberlink.delete-puzzle-forever?': 'क्या आप पहेली को स्थायी रूप से हटाना चाहते हैं?',
   },
   it: {
-    'flow.puzzle-deleted': 'Puzzle eliminato',
-    'flow.delete-puzzle-forever?': 'Elimina il puzzle per sempre?',
+    'game.numberlink.puzzle-deleted': 'Puzzle eliminato',
+    'game.numberlink.delete-puzzle-forever?': 'Elimina il puzzle per sempre?',
   },
   ja: {
-    'flow.puzzle-deleted': 'パズルが削除されました',
-    'flow.delete-puzzle-forever?': 'パズルを完全に削除しますか？',
+    'game.numberlink.puzzle-deleted': 'パズルが削除されました',
+    'game.numberlink.delete-puzzle-forever?': 'パズルを完全に削除しますか？',
   },
   ko: {
-    'flow.puzzle-deleted': '퍼즐이 삭제되었습니다',
-    'flow.delete-puzzle-forever?': '퍼즐을 영구적으로 삭제하시겠습니까?',
+    'game.numberlink.puzzle-deleted': '퍼즐이 삭제되었습니다',
+    'game.numberlink.delete-puzzle-forever?': '퍼즐을 영구적으로 삭제하시겠습니까?',
   },
   pt: {
-    'flow.puzzle-deleted': 'Quebra-cabeça excluído',
-    'flow.delete-puzzle-forever?': 'Excluir quebra-cabeça para sempre?',
+    'game.numberlink.puzzle-deleted': 'Quebra-cabeça excluído',
+    'game.numberlink.delete-puzzle-forever?': 'Excluir quebra-cabeça para sempre?',
   },
   ru: {
-    'flow.puzzle-deleted': 'Головоломка удалена',
-    'flow.delete-puzzle-forever?': 'Удалить головоломку навсегда?',
+    'game.numberlink.puzzle-deleted': 'Головоломка удалена',
+    'game.numberlink.delete-puzzle-forever?': 'Удалить головоломку навсегда?',
   },
   zh: {
-    'flow.puzzle-deleted': '拼图已删除',
-    'flow.delete-puzzle-forever?': '永久删除拼图？',
+    'game.numberlink.puzzle-deleted': '拼图已删除',
+    'game.numberlink.delete-puzzle-forever?': '永久删除拼图？',
   },
 }

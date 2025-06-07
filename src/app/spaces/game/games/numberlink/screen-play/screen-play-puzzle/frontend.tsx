@@ -130,7 +130,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
       id='screen-play-puzzle'
       ctx={input.ctx}
       navBar={{
-        title: input.ctx.t('flow.level', puzzleIndex + 1),
+        title: input.ctx.t('game.numberlink.level', puzzleIndex + 1),
         back: {
           onClick: () =>
             input.dispatch({
@@ -229,7 +229,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
       id='flow-spectating'
       ctx={input.ctx}
       navBar={{
-        title: input.ctx.t('flow.level', puzzleIndex + 1),
+        title: input.ctx.t('game.numberlink.level', puzzleIndex + 1),
       }}
       renderBody={() => (
         <LayoutGame isSpectating ctx={input.ctx}>
@@ -300,11 +300,11 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
   return (
     <Dialog delay={CHECKMARK_DURATION} open={isSolvedPuzzleDialogOpen} onClose={onClose}>
       <DialogSurface>
-        <SurfaceHeader ctx={input.ctx} title={input.ctx.t('flow.puzzle-completed')} onClose={onClose} />
+        <SurfaceHeader ctx={input.ctx} title={input.ctx.t('game.numberlink.puzzle-completed')} onClose={onClose} />
 
         <SurfaceActions>
           <Button
-            text={input.ctx.t('flow.next-puzzle')}
+            text={input.ctx.t('game.numberlink.next-puzzle')}
             className='w-full'
             onClick={() =>
               input.dispatch({

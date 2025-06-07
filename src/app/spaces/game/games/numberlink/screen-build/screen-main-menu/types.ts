@@ -26,7 +26,7 @@ export const MsgSpace = s.or(
     userId: UserId,
   }),
   s.obj({
-    t: s.l('flow.build.screen-main-menu.user-clicked-option'),
+    t: s.l('game.numberlink.build.screen-main-menu.user-clicked-option'),
     userId: UserId,
     option: Option,
   }),

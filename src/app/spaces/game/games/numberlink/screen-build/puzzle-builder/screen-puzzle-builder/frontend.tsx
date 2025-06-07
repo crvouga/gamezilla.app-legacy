@@ -213,9 +213,9 @@ const viewToggleModeAction = (
     case 'edit': {
       return [
         {
-          id: input.ctx.t('flow.play-mode'),
+          id: input.ctx.t('game.numberlink.play-mode'),
           icon: (input) => <IconPlay {...input} />,
-          label: input.ctx.t('flow.play-mode'),
+          label: input.ctx.t('game.numberlink.play-mode'),
           classNames: { button: 'text-blue-500' },
           onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
         },
@@ -224,9 +224,9 @@ const viewToggleModeAction = (
     case 'play': {
       return [
         {
-          id: input.ctx.t('flow.edit-mode'),
+          id: input.ctx.t('game.numberlink.edit-mode'),
           icon: (input) => <IconPen {...input} />,
-          label: input.ctx.t('flow.edit-mode'),
+          label: input.ctx.t('game.numberlink.edit-mode'),
           classNames: { button: 'text-amber-500' },
           onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
         },
@@ -272,7 +272,9 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
       ctx={input.ctx}
       renderBody={() => (
         <BoardLayout>
-          <div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>
+          <div className='flex w-full items-center justify-center gap-1 p-2'>
+            {input.ctx.t('game.numberlink.playing')}
+          </div>
           <ModePlayFrontend.View
             model={puzzleBuilder.modePlay}
             numberlink={numberlink}

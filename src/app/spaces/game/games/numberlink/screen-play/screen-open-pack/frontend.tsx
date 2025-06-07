@@ -69,7 +69,7 @@ const View: FrontendModule['View'] = (input) => {
       ctx={input.ctx}
       id='screen-open-pack'
       navBar={{
-        title: input.ctx.t('flow.select-a-pack'),
+        title: input.ctx.t('game.numberlink.select-a-pack'),
         back: {
           onClick: () =>
             input.dispatch({

@@ -1,44 +1,44 @@
 import { Translations } from '~/@/l18n'
 
 export type Text = {
-  'flow.next-pack': string
+  'game.numberlink.next-pack': string
 }
 
 export const translations: Translations<Text> = {
   en: {
-    'flow.next-pack': 'Next Pack',
+    'game.numberlink.next-pack': 'Next Pack',
   },
   es: {
-    'flow.next-pack': 'Siguiente Paquete',
+    'game.numberlink.next-pack': 'Siguiente Paquete',
   },
   fr: {
-    'flow.next-pack': 'Prochain Pack',
+    'game.numberlink.next-pack': 'Prochain Pack',
   },
   de: {
-    'flow.next-pack': 'Nächstes Paket',
+    'game.numberlink.next-pack': 'Nächstes Paket',
   },
   it: {
-    'flow.next-pack': 'Prossimo Pacchetto',
+    'game.numberlink.next-pack': 'Prossimo Pacchetto',
   },
   pt: {
-    'flow.next-pack': 'Próximo Pacote',
+    'game.numberlink.next-pack': 'Próximo Pacote',
   },
   ru: {
-    'flow.next-pack': 'Следующий Пакет',
+    'game.numberlink.next-pack': 'Следующий Пакет',
   },
   ja: {
-    'flow.next-pack': '次のパック',
+    'game.numberlink.next-pack': '次のパック',
   },
   ko: {
-    'flow.next-pack': '다음 팩',
+    'game.numberlink.next-pack': '다음 팩',
   },
   zh: {
-    'flow.next-pack': '下一个包',
+    'game.numberlink.next-pack': '下一个包',
   },
   ar: {
-    'flow.next-pack': 'الحزمة التالية',
+    'game.numberlink.next-pack': 'الحزمة التالية',
   },
   hi: {
-    'flow.next-pack': 'अगला पैक',
+    'game.numberlink.next-pack': 'अगला पैक',
   },
 }

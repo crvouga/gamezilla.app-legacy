@@ -106,14 +106,14 @@ describe('ScreenPlayPuzzleFrontend', () => {
     const f = await Fixture()
     const output = f.update(f.init, f.msgsCompletePuzzle)
     const r = f.render(output)
-    expect(r.getByRole('dialog')[0]?.getByRole('heading', f.ctx.t('flow.puzzle-completed'))).toBeTruthy()
+    expect(r.getByRole('dialog')[0]?.getByRole('heading', f.ctx.t('game.numberlink.puzzle-completed'))).toBeTruthy()
   })
 
   it('should render next puzzle button in completion dialog', async () => {
     const f = await Fixture()
     const output = f.update(f.init, f.msgsCompletePuzzle)
     const r = f.render(output)
-    expect(r.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.next-puzzle'))[0]).toBeTruthy()
+    expect(r.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('game.numberlink.next-puzzle'))[0]).toBeTruthy()
   })
 
   it('should play sound after completing a puzzle', async () => {

@@ -123,7 +123,7 @@ const ViewStatus: typeof View = (input) => {
   const position = ModeEdit.toCurrentPlacingTerminalPosition(input.model) === 'start' ? 'first' : 'last'
   return (
     <div className='flex w-full items-center justify-center gap-1 p-2'>
-      <Typography variant='body' text={input.ctx.t('flow.placing', { position })} />
+      <Typography variant='body' text={input.ctx.t('game.numberlink.placing', { position })} />
       <ViewTerminal groupId={ModeEdit.toCurrentPlacingGroupId(input.model)} className='size-6' />
     </div>
   )

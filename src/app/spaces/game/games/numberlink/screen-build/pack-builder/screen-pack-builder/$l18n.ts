@@ -1,83 +1,83 @@
 import type { Translations } from '~/@/l18n'
 
 export type Text = {
-  'flow.add-puzzle': string
-  'flow.puzzle-removed': string
-  'flow.puzzle-added': string
-  'flow.remove-from-pack': string
+  'game.numberlink.add-puzzle': string
+  'game.numberlink.puzzle-removed': string
+  'game.numberlink.puzzle-added': string
+  'game.numberlink.remove-from-pack': string
 }
 
 export const translations: Translations<Text> = {
   ar: {
-    'flow.add-puzzle': 'إضافة لغز',
-    'flow.puzzle-removed': 'تمت إزالة اللغز',
-    'flow.puzzle-added': 'تمت إضافة اللغز',
-    'flow.remove-from-pack': 'إزالة من الحزمة',
+    'game.numberlink.add-puzzle': 'إضافة لغز',
+    'game.numberlink.puzzle-removed': 'تمت إزالة اللغز',
+    'game.numberlink.puzzle-added': 'تمت إضافة اللغز',
+    'game.numberlink.remove-from-pack': 'إزالة من الحزمة',
   },
   de: {
-    'flow.add-puzzle': 'Puzzle hinzufügen',
-    'flow.puzzle-removed': 'Rätsel entfernt',
-    'flow.puzzle-added': 'Rätsel hinzugefügt',
-    'flow.remove-from-pack': 'Aus Packung entfernen',
+    'game.numberlink.add-puzzle': 'Puzzle hinzufügen',
+    'game.numberlink.puzzle-removed': 'Rätsel entfernt',
+    'game.numberlink.puzzle-added': 'Rätsel hinzugefügt',
+    'game.numberlink.remove-from-pack': 'Aus Packung entfernen',
   },
   en: {
-    'flow.add-puzzle': 'Add Puzzle',
-    'flow.puzzle-removed': 'Puzzle removed',
-    'flow.puzzle-added': 'Puzzle added',
-    'flow.remove-from-pack': 'Remove from pack',
+    'game.numberlink.add-puzzle': 'Add Puzzle',
+    'game.numberlink.puzzle-removed': 'Puzzle removed',
+    'game.numberlink.puzzle-added': 'Puzzle added',
+    'game.numberlink.remove-from-pack': 'Remove from pack',
   },
   es: {
-    'flow.add-puzzle': 'Agregar rompecabezas',
-    'flow.puzzle-removed': 'Rompecabezas eliminado',
-    'flow.puzzle-added': 'Rompecabezas añadido',
-    'flow.remove-from-pack': 'Eliminar del paquete',
+    'game.numberlink.add-puzzle': 'Agregar rompecabezas',
+    'game.numberlink.puzzle-removed': 'Rompecabezas eliminado',
+    'game.numberlink.puzzle-added': 'Rompecabezas añadido',
+    'game.numberlink.remove-from-pack': 'Eliminar del paquete',
   },
   fr: {
-    'flow.add-puzzle': 'Ajouter',
-    'flow.puzzle-removed': 'Puzzle supprimé',
-    'flow.puzzle-added': 'Puzzle ajouté',
-    'flow.remove-from-pack': 'Retirer du pack',
+    'game.numberlink.add-puzzle': 'Ajouter',
+    'game.numberlink.puzzle-removed': 'Puzzle supprimé',
+    'game.numberlink.puzzle-added': 'Puzzle ajouté',
+    'game.numberlink.remove-from-pack': 'Retirer du pack',
   },
   hi: {
-    'flow.add-puzzle': 'पहेली जोड़ें',
-    'flow.puzzle-removed': 'पहेली हटा दी गई',
-    'flow.puzzle-added': 'पहेली जोड़ी गई',
-    'flow.remove-from-pack': 'पैक से हटाएं',
+    'game.numberlink.add-puzzle': 'पहेली जोड़ें',
+    'game.numberlink.puzzle-removed': 'पहेली हटा दी गई',
+    'game.numberlink.puzzle-added': 'पहेली जोड़ी गई',
+    'game.numberlink.remove-from-pack': 'पैक से हटाएं',
   },
   it: {
-    'flow.add-puzzle': 'Aggiungi Puzzle',
-    'flow.puzzle-removed': 'Puzzle rimosso',
-    'flow.puzzle-added': 'Puzzle aggiunto',
-    'flow.remove-from-pack': 'Rimuovi dal pacchetto',
+    'game.numberlink.add-puzzle': 'Aggiungi Puzzle',
+    'game.numberlink.puzzle-removed': 'Puzzle rimosso',
+    'game.numberlink.puzzle-added': 'Puzzle aggiunto',
+    'game.numberlink.remove-from-pack': 'Rimuovi dal pacchetto',
   },
   ja: {
-    'flow.add-puzzle': 'パズルを追加',
-    'flow.puzzle-removed': 'パズルが削除されました',
-    'flow.puzzle-added': 'パズルが追加されました',
-    'flow.remove-from-pack': 'パックから削除',
+    'game.numberlink.add-puzzle': 'パズルを追加',
+    'game.numberlink.puzzle-removed': 'パズルが削除されました',
+    'game.numberlink.puzzle-added': 'パズルが追加されました',
+    'game.numberlink.remove-from-pack': 'パックから削除',
   },
   ko: {
-    'flow.add-puzzle': '퍼즐 추가',
-    'flow.puzzle-removed': '퍼즐이 제거되었습니다',
-    'flow.puzzle-added': '퍼즐이 추가되었습니다',
-    'flow.remove-from-pack': '팩에서 제거',
+    'game.numberlink.add-puzzle': '퍼즐 추가',
+    'game.numberlink.puzzle-removed': '퍼즐이 제거되었습니다',
+    'game.numberlink.puzzle-added': '퍼즐이 추가되었습니다',
+    'game.numberlink.remove-from-pack': '팩에서 제거',
   },
   pt: {
-    'flow.add-puzzle': 'Adicionar quebra-cabeça',
-    'flow.puzzle-removed': 'Quebra-cabeça removido',
-    'flow.puzzle-added': 'Quebra-cabeça adicionado',
-    'flow.remove-from-pack': 'Remover do pacote',
+    'game.numberlink.add-puzzle': 'Adicionar quebra-cabeça',
+    'game.numberlink.puzzle-removed': 'Quebra-cabeça removido',
+    'game.numberlink.puzzle-added': 'Quebra-cabeça adicionado',
+    'game.numberlink.remove-from-pack': 'Remover do pacote',
   },
   ru: {
-    'flow.add-puzzle': 'Добавить головоломку',
-    'flow.puzzle-removed': 'Головоломка удалена',
-    'flow.puzzle-added': 'Головоломка добавлена',
-    'flow.remove-from-pack': 'Удалить из пакета',
+    'game.numberlink.add-puzzle': 'Добавить головоломку',
+    'game.numberlink.puzzle-removed': 'Головоломка удалена',
+    'game.numberlink.puzzle-added': 'Головоломка добавлена',
+    'game.numberlink.remove-from-pack': 'Удалить из пакета',
   },
   zh: {
-    'flow.add-puzzle': '添加拼图',
-    'flow.puzzle-removed': '拼图已删除',
-    'flow.puzzle-added': '拼图已添加',
-    'flow.remove-from-pack': '从包中删除',
+    'game.numberlink.add-puzzle': '添加拼图',
+    'game.numberlink.puzzle-removed': '拼图已删除',
+    'game.numberlink.puzzle-added': '拼图已添加',
+    'game.numberlink.remove-from-pack': '从包中删除',
   },
 }

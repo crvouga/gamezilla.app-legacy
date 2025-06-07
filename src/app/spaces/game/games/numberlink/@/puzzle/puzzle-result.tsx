@@ -23,7 +23,7 @@ const ViewNotFound = (input: {
   return (
     <EmptyState
       renderIcon={(props) => <IconExclamationCircle {...props} />}
-      label={input.ctx.t('flow.puzzle-not-found')}
+      label={input.ctx.t('game.numberlink.puzzle-not-found')}
       // action={
       //   input.onNextPuzzle
       //     ? {

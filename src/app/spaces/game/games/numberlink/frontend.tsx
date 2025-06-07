@@ -339,8 +339,8 @@ const ViewMainMenu: FrontendModule['View'] = (input) => {
       buttons={[
         {
           renderIcon: (input) => <IconGamepad {...input} />,
-          title: ctx.t('flow.play'),
-          description: ctx.t('flow.play-description'),
+          title: ctx.t('game.numberlink.play'),
+          description: ctx.t('game.numberlink.play-description'),
           onClick: () => {
             input.dispatch({
               t: 'got-msg-space',
@@ -350,8 +350,8 @@ const ViewMainMenu: FrontendModule['View'] = (input) => {
         },
         {
           renderIcon: (input) => <IconScrewdriverWrench {...input} />,
-          title: ctx.t('flow.build'),
-          description: ctx.t('flow.build-description'),
+          title: ctx.t('game.numberlink.build'),
+          description: ctx.t('game.numberlink.build-description'),
           onClick: () => {
             input.dispatch({
               t: 'got-msg-space',

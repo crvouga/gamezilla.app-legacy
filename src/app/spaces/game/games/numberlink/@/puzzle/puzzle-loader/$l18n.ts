@@ -1,58 +1,66 @@
 import type { Translations } from '~/@/l18n'
 
 export type Text = {
-  'flow.no-puzzles': string
-  'flow.puzzles-selected': (input: { totalCount: number; selectedCount: number }) => string
+  'game.numberlink.no-puzzles': string
+  'game.numberlink.puzzles-selected': (input: { totalCount: number; selectedCount: number }) => string
 }
 
 export const translations: Translations<Text> = {
   ar: {
-    'flow.no-puzzles': 'لا توجد ألغاز',
-    'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} من ${totalCount} تم تحديدها`,
+    'game.numberlink.no-puzzles': 'لا توجد ألغاز',
+    'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
+      `${selectedCount} من ${totalCount} تم تحديدها`,
   },
   de: {
-    'flow.no-puzzles': 'Keine Puzzles',
-    'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} von ${totalCount} ausgewählt`,
+    'game.numberlink.no-puzzles': 'Keine Puzzles',
+    'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
+      `${selectedCount} von ${totalCount} ausgewählt`,
   },
   en: {
-    'flow.no-puzzles': 'No puzzles',
-    'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} of ${totalCount} selected`,
+    'game.numberlink.no-puzzles': 'No puzzles',
+    'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} of ${totalCount} selected`,
   },
   es: {
-    'flow.no-puzzles': 'Sin rompecabezas',
-    'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} de ${totalCount} seleccionados`,
+    'game.numberlink.no-puzzles': 'Sin rompecabezas',
+    'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
+      `${selectedCount} de ${totalCount} seleccionados`,
   },
   fr: {
-    'flow.no-puzzles': 'Aucun puzzle',
-    'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} de ${totalCount} sélectionnés`,
+    'game.numberlink.no-puzzles': 'Aucun puzzle',
+    'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
+      `${selectedCount} de ${totalCount} sélectionnés`,
   },
   hi: {
-    'flow.no-puzzles': 'कोई पहेली नहीं',
-    'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} का ${totalCount} चयनित`,
+    'game.numberlink.no-puzzles': 'कोई पहेली नहीं',
+    'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} का ${totalCount} चयनित`,
   },
   it: {
-    'flow.no-puzzles': 'Nessun puzzle',
-    'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} di ${totalCount} selezionati`,
+    'game.numberlink.no-puzzles': 'Nessun puzzle',
+    'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
+      `${selectedCount} di ${totalCount} selezionati`,
   },
   ja: {
-    'flow.no-puzzles': 'パズルなし',
-    'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} / ${totalCount} が選択されました`,
+    'game.numberlink.no-puzzles': 'パズルなし',
+    'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
+      `${selectedCount} / ${totalCount} が選択されました`,
   },
 
   ko: {
-    'flow.no-puzzles': '퍼즐이 없습니다',
-    'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} / ${totalCount} 선택됨`,
+    'game.numberlink.no-puzzles': '퍼즐이 없습니다',
+    'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} / ${totalCount} 선택됨`,
   },
   pt: {
-    'flow.no-puzzles': 'Sem quebra-cabeças',
-    'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} de ${totalCount} selecionados`,
+    'game.numberlink.no-puzzles': 'Sem quebra-cabeças',
+    'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
+      `${selectedCount} de ${totalCount} selecionados`,
   },
   ru: {
-    'flow.no-puzzles': 'Нет пазлов',
-    'flow.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} из ${totalCount} выбрано`,
+    'game.numberlink.no-puzzles': 'Нет пазлов',
+    'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) => `${selectedCount} из ${totalCount} выбрано`,
   },
   zh: {
-    'flow.no-puzzles': '没有拼图',
-    'flow.puzzles-selected': ({ totalCount, selectedCount }) => `已选择 ${selectedCount} 个，共 ${totalCount} 个`,
+    'game.numberlink.no-puzzles': '没有拼图',
+    'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
+      `已选择 ${selectedCount} 个，共 ${totalCount} 个`,
   },
 }

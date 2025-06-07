@@ -44,7 +44,10 @@ const update: FrontendModule['update'] = (input) => {
           packCreateNewRequest: Ok(null),
         },
         msgSpace: [{ ...input.msg, t: 'create-new-pack.user-created-pack' }],
-        msgOut: [PlaySoundCmd.init(APP_SOUND.refreshFeed), ShowToastCmd.init(input.ctx.t('flow.pack-created'))],
+        msgOut: [
+          PlaySoundCmd.init(APP_SOUND.refreshFeed),
+          ShowToastCmd.init(input.ctx.t('game.numberlink.pack-created')),
+        ],
       }
     }
   }
@@ -58,7 +61,7 @@ const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): PostAct
       input.dispatch({
         t: 'create-new-pack.clicked-create-button',
       }),
-    submitText: input.ctx.t('flow.create-pack'),
+    submitText: input.ctx.t('game.numberlink.create-pack'),
     submitLoading: input.model.packCreateNewRequest.t === 'loading',
     submitDisabled: input.model.packCreateNewRequest.t === 'loading',
     submitIcon: (iconInput) => <IconPlus {...iconInput} />,

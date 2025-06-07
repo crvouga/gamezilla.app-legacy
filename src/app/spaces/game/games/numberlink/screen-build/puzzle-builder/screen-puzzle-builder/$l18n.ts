@@ -1,70 +1,70 @@
 import type { Translations } from '~/@/l18n'
 
 export type Text = {
-  'flow.edit-mode': string
-  'flow.play-mode': string
-  'flow.playing': string
+  'game.numberlink.edit-mode': string
+  'game.numberlink.play-mode': string
+  'game.numberlink.playing': string
 }
 
 export const translations: Translations<Text> = {
   ar: {
-    'flow.edit-mode': 'وضع التحرير',
-    'flow.play-mode': 'وضع اللعب',
-    'flow.playing': 'اللعب',
+    'game.numberlink.edit-mode': 'وضع التحرير',
+    'game.numberlink.play-mode': 'وضع اللعب',
+    'game.numberlink.playing': 'اللعب',
   },
   de: {
-    'flow.edit-mode': 'Bearbeitungsmodus',
-    'flow.play-mode': 'Spielmodus',
-    'flow.playing': 'Spielen',
+    'game.numberlink.edit-mode': 'Bearbeitungsmodus',
+    'game.numberlink.play-mode': 'Spielmodus',
+    'game.numberlink.playing': 'Spielen',
   },
   en: {
-    'flow.edit-mode': 'Edit Mode',
-    'flow.play-mode': 'Play Mode',
-    'flow.playing': 'Playing',
+    'game.numberlink.edit-mode': 'Edit Mode',
+    'game.numberlink.play-mode': 'Play Mode',
+    'game.numberlink.playing': 'Playing',
   },
   es: {
-    'flow.edit-mode': 'Modo de edición',
-    'flow.play-mode': 'Modo de juego',
-    'flow.playing': 'Jugando',
+    'game.numberlink.edit-mode': 'Modo de edición',
+    'game.numberlink.play-mode': 'Modo de juego',
+    'game.numberlink.playing': 'Jugando',
   },
   fr: {
-    'flow.edit-mode': 'Mode édition',
-    'flow.play-mode': 'Mode jeu',
-    'flow.playing': 'Jouer',
+    'game.numberlink.edit-mode': 'Mode édition',
+    'game.numberlink.play-mode': 'Mode jeu',
+    'game.numberlink.playing': 'Jouer',
   },
   hi: {
-    'flow.edit-mode': 'संपादन मोड',
-    'flow.play-mode': 'खेल मोड',
-    'flow.playing': 'खेल रहे हैं',
+    'game.numberlink.edit-mode': 'संपादन मोड',
+    'game.numberlink.play-mode': 'खेल मोड',
+    'game.numberlink.playing': 'खेल रहे हैं',
   },
   it: {
-    'flow.edit-mode': 'Modalità modifica',
-    'flow.play-mode': 'Modalità gioco',
-    'flow.playing': 'Giocando',
+    'game.numberlink.edit-mode': 'Modalità modifica',
+    'game.numberlink.play-mode': 'Modalità gioco',
+    'game.numberlink.playing': 'Giocando',
   },
   ja: {
-    'flow.edit-mode': '編集モード',
-    'flow.play-mode': 'プレイモード',
-    'flow.playing': 'プレイ中',
+    'game.numberlink.edit-mode': '編集モード',
+    'game.numberlink.play-mode': 'プレイモード',
+    'game.numberlink.playing': 'プレイ中',
   },
   ko: {
-    'flow.edit-mode': '편집 모드',
-    'flow.play-mode': '플레이 모드',
-    'flow.playing': '플레이 중',
+    'game.numberlink.edit-mode': '편집 모드',
+    'game.numberlink.play-mode': '플레이 모드',
+    'game.numberlink.playing': '플레이 중',
   },
   pt: {
-    'flow.edit-mode': 'Modo de edição',
-    'flow.play-mode': 'Modo de jogo',
-    'flow.playing': 'Jogando',
+    'game.numberlink.edit-mode': 'Modo de edição',
+    'game.numberlink.play-mode': 'Modo de jogo',
+    'game.numberlink.playing': 'Jogando',
   },
   ru: {
-    'flow.edit-mode': 'Режим редактирования',
-    'flow.play-mode': 'Режим игры',
-    'flow.playing': 'Игра',
+    'game.numberlink.edit-mode': 'Режим редактирования',
+    'game.numberlink.play-mode': 'Режим игры',
+    'game.numberlink.playing': 'Игра',
   },
   zh: {
-    'flow.edit-mode': '编辑模式',
-    'flow.play-mode': '游戏模式',
-    'flow.playing': '游戏中',
+    'game.numberlink.edit-mode': '编辑模式',
+    'game.numberlink.play-mode': '游戏模式',
+    'game.numberlink.playing': '游戏中',
   },
 }

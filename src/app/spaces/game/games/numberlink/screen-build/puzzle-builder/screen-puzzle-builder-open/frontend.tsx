@@ -66,7 +66,7 @@ const View: FrontendModule['View'] = (input) => {
       id='screen-puzzle-builder-open'
       ctx={input.ctx}
       navBar={{
-        title: input.ctx.t('flow.puzzle-builder'),
+        title: input.ctx.t('game.numberlink.puzzle-builder'),
         back: {
           onClick: () =>
             input.dispatch({

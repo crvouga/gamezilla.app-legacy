@@ -1,70 +1,70 @@
 import type { Translations } from '~/@/l18n'
 
 export type Text = {
-  'flow.create-new': string
-  'flow.create-puzzle': string
-  'flow.puzzle-created': string
+  'game.numberlink.create-new': string
+  'game.numberlink.create-puzzle': string
+  'game.numberlink.puzzle-created': string
 }
 
 export const translations: Translations<Text> = {
   en: {
-    'flow.create-new': 'Create New',
-    'flow.create-puzzle': 'Create Puzzle',
-    'flow.puzzle-created': 'Puzzle created',
+    'game.numberlink.create-new': 'Create New',
+    'game.numberlink.create-puzzle': 'Create Puzzle',
+    'game.numberlink.puzzle-created': 'Puzzle created',
   },
   ar: {
-    'flow.create-new': 'إنشاء جديد',
-    'flow.create-puzzle': 'إنشاء لغز',
-    'flow.puzzle-created': 'تم إنشاء اللغز',
+    'game.numberlink.create-new': 'إنشاء جديد',
+    'game.numberlink.create-puzzle': 'إنشاء لغز',
+    'game.numberlink.puzzle-created': 'تم إنشاء اللغز',
   },
   de: {
-    'flow.create-new': 'Neu erstellen',
-    'flow.create-puzzle': 'Puzzle erstellen',
-    'flow.puzzle-created': 'Puzzle erstellt',
+    'game.numberlink.create-new': 'Neu erstellen',
+    'game.numberlink.create-puzzle': 'Puzzle erstellen',
+    'game.numberlink.puzzle-created': 'Puzzle erstellt',
   },
   es: {
-    'flow.create-new': 'Crear nuevo',
-    'flow.create-puzzle': 'Crear rompecabezas',
-    'flow.puzzle-created': 'Rompecabezas creado',
+    'game.numberlink.create-new': 'Crear nuevo',
+    'game.numberlink.create-puzzle': 'Crear rompecabezas',
+    'game.numberlink.puzzle-created': 'Rompecabezas creado',
   },
   fr: {
-    'flow.create-new': 'Créer nouveau',
-    'flow.create-puzzle': 'Créer un puzzle',
-    'flow.puzzle-created': 'Puzzle créé',
+    'game.numberlink.create-new': 'Créer nouveau',
+    'game.numberlink.create-puzzle': 'Créer un puzzle',
+    'game.numberlink.puzzle-created': 'Puzzle créé',
   },
   hi: {
-    'flow.create-new': 'नया बनाएं',
-    'flow.create-puzzle': 'पहेली बनाएं',
-    'flow.puzzle-created': 'पहेली बनाई गई',
+    'game.numberlink.create-new': 'नया बनाएं',
+    'game.numberlink.create-puzzle': 'पहेली बनाएं',
+    'game.numberlink.puzzle-created': 'पहेली बनाई गई',
   },
   it: {
-    'flow.create-new': 'Crea nuovo',
-    'flow.create-puzzle': 'Crea puzzle',
-    'flow.puzzle-created': 'Puzzle creato',
+    'game.numberlink.create-new': 'Crea nuovo',
+    'game.numberlink.create-puzzle': 'Crea puzzle',
+    'game.numberlink.puzzle-created': 'Puzzle creato',
   },
   ja: {
-    'flow.create-new': '新規作成',
-    'flow.create-puzzle': 'パズルを作成',
-    'flow.puzzle-created': 'パズルが作成されました',
+    'game.numberlink.create-new': '新規作成',
+    'game.numberlink.create-puzzle': 'パズルを作成',
+    'game.numberlink.puzzle-created': 'パズルが作成されました',
   },
   ko: {
-    'flow.create-new': '새로 만들기',
-    'flow.create-puzzle': '퍼즐 만들기',
-    'flow.puzzle-created': '퍼즐이 생성되었습니다',
+    'game.numberlink.create-new': '새로 만들기',
+    'game.numberlink.create-puzzle': '퍼즐 만들기',
+    'game.numberlink.puzzle-created': '퍼즐이 생성되었습니다',
   },
   pt: {
-    'flow.create-new': 'Criar novo',
-    'flow.create-puzzle': 'Criar quebra-cabeça',
-    'flow.puzzle-created': 'Quebra-cabeça criado',
+    'game.numberlink.create-new': 'Criar novo',
+    'game.numberlink.create-puzzle': 'Criar quebra-cabeça',
+    'game.numberlink.puzzle-created': 'Quebra-cabeça criado',
   },
   ru: {
-    'flow.create-new': 'Создать новый',
-    'flow.create-puzzle': 'Создать головоломку',
-    'flow.puzzle-created': 'Головоломка создана',
+    'game.numberlink.create-new': 'Создать новый',
+    'game.numberlink.create-puzzle': 'Создать головоломку',
+    'game.numberlink.puzzle-created': 'Головоломка создана',
   },
   zh: {
-    'flow.create-new': '创建新',
-    'flow.create-puzzle': '创建拼图',
-    'flow.puzzle-created': '拼图已创建',
+    'game.numberlink.create-new': '创建新',
+    'game.numberlink.create-puzzle': '创建拼图',
+    'game.numberlink.puzzle-created': '拼图已创建',
   },
 }

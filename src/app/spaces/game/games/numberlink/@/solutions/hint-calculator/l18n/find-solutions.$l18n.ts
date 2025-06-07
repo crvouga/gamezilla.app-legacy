@@ -1,44 +1,44 @@
 import { Translations } from '~/@/l18n'
 
 export type Text = {
-  'flow.find-solutions': string
+  'game.numberlink.find-solutions': string
 }
 
 export const translations: Translations<Text> = {
   en: {
-    'flow.find-solutions': 'Find Solutions',
+    'game.numberlink.find-solutions': 'Find Solutions',
   },
   de: {
-    'flow.find-solutions': 'Lösungen finden',
+    'game.numberlink.find-solutions': 'Lösungen finden',
   },
   es: {
-    'flow.find-solutions': 'Encontrar soluciones',
+    'game.numberlink.find-solutions': 'Encontrar soluciones',
   },
   fr: {
-    'flow.find-solutions': 'Trouver des solutions',
+    'game.numberlink.find-solutions': 'Trouver des solutions',
   },
   it: {
-    'flow.find-solutions': 'Trovare soluzioni',
+    'game.numberlink.find-solutions': 'Trovare soluzioni',
   },
   ar: {
-    'flow.find-solutions': 'البحث عن حلول',
+    'game.numberlink.find-solutions': 'البحث عن حلول',
   },
   ja: {
-    'flow.find-solutions': '解決策を見つける',
+    'game.numberlink.find-solutions': '解決策を見つける',
   },
   hi: {
-    'flow.find-solutions': 'समाधान ढूंढें',
+    'game.numberlink.find-solutions': 'समाधान ढूंढें',
   },
   ko: {
-    'flow.find-solutions': '해결 방법 찾기',
+    'game.numberlink.find-solutions': '해결 방법 찾기',
   },
   pt: {
-    'flow.find-solutions': 'Encontrar soluções',
+    'game.numberlink.find-solutions': 'Encontrar soluções',
   },
   ru: {
-    'flow.find-solutions': 'Найти решения',
+    'game.numberlink.find-solutions': 'Найти решения',
   },
   zh: {
-    'flow.find-solutions': '找到解决方案',
+    'game.numberlink.find-solutions': '找到解决方案',
   },
 }

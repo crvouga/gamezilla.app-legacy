@@ -88,7 +88,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
             input.msgSpace.puzzleId ? { [input.msgSpace.puzzleId]: input.msgSpace.puzzleId } : {},
             input,
           ),
-          ...ShowOkSmall.init(input.ctx.t('flow.puzzle-deleted')),
+          ...ShowOkSmall.init(input.ctx.t('game.numberlink.puzzle-deleted')),
         ],
       }
     }
@@ -103,14 +103,14 @@ const ViewSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDown: 
   return (
     <SurfaceConfirmation
       ctx={input.ctx}
-      ariaLabel={input.ctx.t('flow.delete-puzzle-forever?')}
+      ariaLabel={input.ctx.t('game.numberlink.delete-puzzle-forever?')}
       id='delete-forever-drawer'
       open={input.model.puzzleBuilderOpened === 'delete-forever' || isLoading(input.model.puzzleDeleteForeverRequest)}
       onClose={() => input.dispatch({ t: 'delete-forever.user-closed-drawer' })}
       variant='danger'
       dropDown={input.dropDown}
       position='bottom'
-      title={input.ctx.t('flow.delete-puzzle-forever?')}
+      title={input.ctx.t('game.numberlink.delete-puzzle-forever?')}
       body={input.ctx.t('app.this-action-cannot-be-undone')}
       confirmLoading={isLoading(input.model.puzzleDeleteForeverRequest)}
       confirmText={input.ctx.t('app.delete')}

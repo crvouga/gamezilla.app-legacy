@@ -14,7 +14,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
-    case 'flow.build.screen-main-menu.user-clicked-option': {
+    case 'game.numberlink.build.screen-main-menu.user-clicked-option': {
       return {
         model: input.model,
         msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
@@ -57,17 +57,17 @@ const View: FrontendModule['View'] = (input) => {
           </div>
         </div>
       )}
-      title={input.ctx.t('flow.build')}
+      title={input.ctx.t('game.numberlink.build')}
       buttons={[
         {
           renderIcon: (input) => <IconPuzzlePiece {...input} />,
-          title: input.ctx.t('flow.open-puzzle-builder-title'),
-          description: input.ctx.t('flow.open-puzzle-builder-description'),
+          title: input.ctx.t('game.numberlink.open-puzzle-builder-title'),
+          description: input.ctx.t('game.numberlink.open-puzzle-builder-description'),
           onClick: () =>
             input.dispatch({
               t: 'got-msg-space',
               c: {
-                t: 'flow.build.screen-main-menu.user-clicked-option',
+                t: 'game.numberlink.build.screen-main-menu.user-clicked-option',
                 option: 'puzzle-builder',
                 userId: input.ctx.currentUser.userId,
               },
@@ -75,13 +75,13 @@ const View: FrontendModule['View'] = (input) => {
         },
         {
           renderIcon: (input) => <IconBox {...input} />,
-          title: input.ctx.t('flow.open-pack-builder-title'),
-          description: input.ctx.t('flow.open-pack-builder-description'),
+          title: input.ctx.t('game.numberlink.open-pack-builder-title'),
+          description: input.ctx.t('game.numberlink.open-pack-builder-description'),
           onClick: () =>
             input.dispatch({
               t: 'got-msg-space',
               c: {
-                t: 'flow.build.screen-main-menu.user-clicked-option',
+                t: 'game.numberlink.build.screen-main-menu.user-clicked-option',
                 option: 'pack-builder',
                 userId: input.ctx.currentUser.userId,
               },

@@ -27,7 +27,7 @@ describe(import.meta.file, () => {
       currentUserRole: 'super',
     })
     const r = f.render(f.init, f.ctx)
-    const button = r.getByRole('button', f.ctx.t('flow.copy-puzzle-to-clipboard'))
+    const button = r.getByRole('button', f.ctx.t('game.numberlink.copy-puzzle-to-clipboard'))
     expect(button).toBeTruthy()
   })
 
@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
         currentUserRole,
       })
       const r = f.render(f.init, f.ctx)
-      const button = r.getByRole('button', f.ctx.t('flow.copy-puzzle-to-clipboard'))[0]
+      const button = r.getByRole('button', f.ctx.t('game.numberlink.copy-puzzle-to-clipboard'))[0]
       expect(button).toBeFalsy()
     }
   })

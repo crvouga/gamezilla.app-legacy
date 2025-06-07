@@ -83,8 +83,8 @@ const update: FrontendModule['update'] = (input) => {
         msgOut: isErr(result)
           ? ShowErrorSmall.init(input.ctx.t('app.something-went-wrong'), result.error)
           : Solutions.isEmpty(result.value.solutions)
-            ? ShowWarningSmall.init(input.ctx.t('flow.no-solutions-found'))
-            : ShowOkSmall.init(input.ctx.t('flow.solutions-found')),
+            ? ShowWarningSmall.init(input.ctx.t('game.numberlink.no-solutions-found'))
+            : ShowOkSmall.init(input.ctx.t('game.numberlink.solutions-found')),
         async eff() {
           if (isErr(result)) return
           await input.ctx.solutionsDb.put(result.value.solutions)
@@ -112,12 +112,12 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
       testId: TEST_ID_HINT_CALCULATOR_ACTION,
       renderSurface: ({ dropDown }) => (
         <SurfaceConfirmation
-          title={input.ctx.t('flow.no-hints-available')}
-          body={input.ctx.t('flow.no-hints-available-body')}
+          title={input.ctx.t('game.numberlink.no-hints-available')}
+          body={input.ctx.t('game.numberlink.no-hints-available-body')}
           ctx={input.ctx}
           dropDown={dropDown}
           id={TEST_ID_HINT_CALCULATOR_ACTION}
-          ariaLabel={input.ctx.t('flow.no-hints-available')}
+          ariaLabel={input.ctx.t('game.numberlink.no-hints-available')}
           onClose={() => input.dispatch({ t: 'dialog.clicked-close' })}
           open={input.model.open === 'find-solutions-confirmation'}
           onCancel={() => input.dispatch({ t: 'dialog.clicked-close' })}

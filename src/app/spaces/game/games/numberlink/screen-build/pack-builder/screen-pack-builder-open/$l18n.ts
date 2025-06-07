@@ -1,44 +1,44 @@
 import { Translations } from '~/@/l18n'
 
 export type Text = {
-  'flow.pack-builder': string
+  'game.numberlink.pack-builder': string
 }
 
 export const translations: Translations<Text> = {
   en: {
-    'flow.pack-builder': 'Pack Builder',
+    'game.numberlink.pack-builder': 'Pack Builder',
   },
   ar: {
-    'flow.pack-builder': 'منشئ الحزم',
+    'game.numberlink.pack-builder': 'منشئ الحزم',
   },
   es: {
-    'flow.pack-builder': 'Constructor de paquetes',
+    'game.numberlink.pack-builder': 'Constructor de paquetes',
   },
   fr: {
-    'flow.pack-builder': 'Constructeur de packs',
+    'game.numberlink.pack-builder': 'Constructeur de packs',
   },
   de: {
-    'flow.pack-builder': 'Pack-Builder',
+    'game.numberlink.pack-builder': 'Pack-Builder',
   },
   hi: {
-    'flow.pack-builder': 'पैक निर्माता',
+    'game.numberlink.pack-builder': 'पैक निर्माता',
   },
   it: {
-    'flow.pack-builder': 'Costruttore di pacchetti',
+    'game.numberlink.pack-builder': 'Costruttore di pacchetti',
   },
   ja: {
-    'flow.pack-builder': 'パックビルダー',
+    'game.numberlink.pack-builder': 'パックビルダー',
   },
   ko: {
-    'flow.pack-builder': '팩 빌더',
+    'game.numberlink.pack-builder': '팩 빌더',
   },
   pt: {
-    'flow.pack-builder': 'Construtor de pacotes',
+    'game.numberlink.pack-builder': 'Construtor de pacotes',
   },
   ru: {
-    'flow.pack-builder': 'Конструктор пакетов',
+    'game.numberlink.pack-builder': 'Конструктор пакетов',
   },
   zh: {
-    'flow.pack-builder': '包生成器',
+    'game.numberlink.pack-builder': '包生成器',
   },
 }

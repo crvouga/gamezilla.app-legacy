@@ -2,7 +2,7 @@ import type { UpdateSpace } from '../types'
 
 const update: UpdateSpace = (input) => {
   switch (input.msgSpace.t) {
-    case 'flow.build.screen-main-menu.user-clicked-option': {
+    case 'game.numberlink.build.screen-main-menu.user-clicked-option': {
       switch (input.msgSpace.option) {
         case 'pack-builder': {
           return {

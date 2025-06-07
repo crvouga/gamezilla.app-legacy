@@ -123,7 +123,7 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
         msgOut: [
           AddPuzzlesCmd.init(puzzlesNew, input),
           isOk(input.msgSpace.edited)
-            ? ShowOkSmall.init(input.ctx.t('flow.saved-name'))
+            ? ShowOkSmall.init(input.ctx.t('game.numberlink.saved-name'))
             : ShowErrorSmall.init(input.ctx.t('app.something-went-wrong')),
         ],
       }
@@ -270,7 +270,7 @@ const ViewSurface = (
           <SurfaceBody>
             <TextField
               id='flow-edit-puzzle-name-input'
-              label={input.ctx.t('flow.edit-puzzle-name.name')}
+              label={input.ctx.t('game.numberlink.edit-puzzle-name.name')}
               value={input.model.puzzleEditNameDraft}
               onChange={(draftName) => input.dispatch({ t: 'puzzle.edit-name.user-inputted-draft-name', draftName })}
               error={Boolean(input.model.puzzleEditNameValidationError)}

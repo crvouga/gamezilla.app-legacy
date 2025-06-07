@@ -1,44 +1,44 @@
 import { Translations } from '~/@/l18n'
 
 export type Text = {
-  'flow.puzzle-builder': string
+  'game.numberlink.puzzle-builder': string
 }
 
 export const translations: Translations<Text> = {
   en: {
-    'flow.puzzle-builder': 'Puzzle Builder',
+    'game.numberlink.puzzle-builder': 'Puzzle Builder',
   },
   ar: {
-    'flow.puzzle-builder': 'منشئ الألغاز',
+    'game.numberlink.puzzle-builder': 'منشئ الألغاز',
   },
   de: {
-    'flow.puzzle-builder': 'Puzzle-Builder',
+    'game.numberlink.puzzle-builder': 'Puzzle-Builder',
   },
   es: {
-    'flow.puzzle-builder': 'Constructor de rompecabezas',
+    'game.numberlink.puzzle-builder': 'Constructor de rompecabezas',
   },
   fr: {
-    'flow.puzzle-builder': 'Constructeur de puzzle',
+    'game.numberlink.puzzle-builder': 'Constructeur de puzzle',
   },
   hi: {
-    'flow.puzzle-builder': 'पहेली निर्माता',
+    'game.numberlink.puzzle-builder': 'पहेली निर्माता',
   },
   it: {
-    'flow.puzzle-builder': 'Costruttore di puzzle',
+    'game.numberlink.puzzle-builder': 'Costruttore di puzzle',
   },
   ja: {
-    'flow.puzzle-builder': 'パズルビルダー',
+    'game.numberlink.puzzle-builder': 'パズルビルダー',
   },
   ko: {
-    'flow.puzzle-builder': '퍼즐 빌더',
+    'game.numberlink.puzzle-builder': '퍼즐 빌더',
   },
   pt: {
-    'flow.puzzle-builder': 'Construtor de quebra-cabeças',
+    'game.numberlink.puzzle-builder': 'Construtor de quebra-cabeças',
   },
   ru: {
-    'flow.puzzle-builder': 'Конструктор пазлов',
+    'game.numberlink.puzzle-builder': 'Конструктор пазлов',
   },
   zh: {
-    'flow.puzzle-builder': '拼图构建器',
+    'game.numberlink.puzzle-builder': '拼图构建器',
   },
 }

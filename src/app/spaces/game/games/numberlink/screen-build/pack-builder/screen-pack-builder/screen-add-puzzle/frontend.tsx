@@ -15,7 +15,10 @@ const update: FrontendModule['update'] = (input) => {
       const { msgSpace } = input
       return {
         model: input.model,
-        msgOut: [PlaySoundCmd.init(APP_SOUND.refreshFeed), ShowToastCmd.init(input.ctx.t('flow.puzzle-added'))],
+        msgOut: [
+          PlaySoundCmd.init(APP_SOUND.refreshFeed),
+          ShowToastCmd.init(input.ctx.t('game.numberlink.puzzle-added')),
+        ],
         async eff(dispatch) {
           const modelSpace = ScreenPackBuildSpace.updateSpace({ ...input, msgSpace })
 
@@ -82,7 +85,7 @@ const View: FrontendModule['View'] = (input) => {
       id='screen-pack-builder-add-puzzle'
       ctx={input.ctx}
       navBar={{
-        title: input.ctx.t('flow.add-puzzle'),
+        title: input.ctx.t('game.numberlink.add-puzzle'),
         back: {
           onClick: () =>
             input.dispatch({

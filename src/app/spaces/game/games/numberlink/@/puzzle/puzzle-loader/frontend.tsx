@@ -97,7 +97,7 @@ const ViewList = (input: {
             variant='body'
             color='text-secondary'
             className='text-lg'
-            text={input.ctx.t('flow.puzzles-selected', {
+            text={input.ctx.t('game.numberlink.puzzles-selected', {
               totalCount: puzzles.length,
               selectedCount: input.selected?.length ?? 0,
             })}
@@ -119,7 +119,10 @@ const ViewList = (input: {
         ))}
 
         {isEmpty && (
-          <EmptyState renderIcon={(input) => <IconPuzzlePiece {...input} />} label={input.ctx.t('flow.no-puzzles')} />
+          <EmptyState
+            renderIcon={(input) => <IconPuzzlePiece {...input} />}
+            label={input.ctx.t('game.numberlink.no-puzzles')}
+          />
         )}
 
         {isLoading && <SpinnerBlock />}

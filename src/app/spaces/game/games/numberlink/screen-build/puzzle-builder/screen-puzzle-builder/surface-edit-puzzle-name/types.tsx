@@ -26,7 +26,7 @@ export const editNameValidationErrorToString = (
 ): TranslatedText | null => {
   switch (error) {
     case 'name-cannot-be-empty': {
-      return t('flow.edit-puzzle-name.name-cannot-be-empty')
+      return t('game.numberlink.edit-puzzle-name.name-cannot-be-empty')
     }
     default: {
       return null

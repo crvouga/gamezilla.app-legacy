@@ -20,15 +20,19 @@ describe('LastPuzzleFrontend', () => {
     const before = f.render(f.init)
     const output = f.update(f.init, f.msgsCompleteLastPuzzle)
     const after = f.render(output)
-    expect(before.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.select-next-pack'))[0]).toBeFalsy()
-    expect(after.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.select-next-pack'))[0]).toBeTruthy()
+    expect(
+      before.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('game.numberlink.select-next-pack'))[0],
+    ).toBeFalsy()
+    expect(
+      after.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('game.numberlink.select-next-pack'))[0],
+    ).toBeTruthy()
   })
 
   it('should dispatch a msg after clicking select next pack button', async () => {
     const f = await Fixture()
     const output = f.update(f.init, f.msgsCompleteLastPuzzle)
     const rendered = f.render(output)
-    const button = rendered.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.select-next-pack'))[0]
+    const button = rendered.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('game.numberlink.select-next-pack'))[0]
     button?.click()
     const msg = await Sub.take(rendered.msgs)
     expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-select-next-pack', userId: f.hostId } })
@@ -54,7 +58,7 @@ describe('LastPuzzleFrontend', () => {
     const f = await Fixture()
     const output = f.update(f.init, f.msgsCompleteLastPuzzle)
     const r = f.render(output)
-    const button = r.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('flow.select-next-pack'))[0]
+    const button = r.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('game.numberlink.select-next-pack'))[0]
     button?.click()
     expect(button).toBeTruthy()
     const msg = await Sub.take(r.msgs)

@@ -52,13 +52,13 @@ const ViewDialog = (input: {
         <SurfaceHeader ctx={input.ctx} title={input.ctx.t('app.congratulations')} onClose={onClose} />
 
         <SurfaceBody>
-          <Typography text={input.ctx.t('flow.you-have-completed-the-pack')} />
+          <Typography text={input.ctx.t('game.numberlink.you-have-completed-the-pack')} />
         </SurfaceBody>
 
         <SurfaceActions>
           <Button
             className='w-full'
-            text={input.ctx.t('flow.select-next-pack')}
+            text={input.ctx.t('game.numberlink.select-next-pack')}
             onClick={() =>
               input.dispatch({
                 t: 'got-msg-space',
@@ -83,7 +83,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
   return [
     PrebuiltActions.next({
       ctx: input.ctx,
-      label: input.ctx.t('flow.next-pack'),
+      label: input.ctx.t('game.numberlink.next-pack'),
       color: 'success',
       onClick: () => {
         input.dispatch({

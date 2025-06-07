@@ -37,7 +37,10 @@ const update: FrontendModule['update'] = (input) => {
     case 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button': {
       return {
         model: input.model,
-        msgOut: [PlaySoundCmd.init(APP_SOUND.refreshFeed), ShowToastCmd.init(input.ctx.t('flow.puzzle-removed'))],
+        msgOut: [
+          PlaySoundCmd.init(APP_SOUND.refreshFeed),
+          ShowToastCmd.init(input.ctx.t('game.numberlink.puzzle-removed')),
+        ],
       }
     }
 
@@ -151,7 +154,7 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
     parentScreen: input.ctx.parentScreen,
     id: 'screen-puzzle',
     navBar: {
-      title: input.ctx.t('flow.level', screen.puzzleIndex + 1),
+      title: input.ctx.t('game.numberlink.level', screen.puzzleIndex + 1),
       subtitle: screen.puzzleResult.t === 'got' ? input.ctx.t('flow-puzzle-name', screen.puzzleResult.c.name) : null,
       back: {
         onClick: () =>

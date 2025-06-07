@@ -68,7 +68,7 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: input.model,
         msgOut: [
-          ShowOkSmall.init(input.ctx.t('flow.puzzle-created')),
+          ShowOkSmall.init(input.ctx.t('game.numberlink.puzzle-created')),
           AddPuzzlesCmd.init({ [puzzleNew.id]: puzzleNew }, input),
         ],
       }
@@ -100,7 +100,7 @@ const createNewPuzzle = async (input: { now: Posix; createdByUserId: UserId; puz
 const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): PostActionProps => {
   return {
     onSubmit: () => input.dispatch({ t: 'create-new-puzzle.user-clicked-create-button' }),
-    submitText: input.ctx.t('flow.create-puzzle'),
+    submitText: input.ctx.t('game.numberlink.create-puzzle'),
     submitLoading: input.model.puzzleCreateRequest.t === 'loading',
     submitDisabled: input.model.puzzleCreateRequest.t === 'loading',
     submitIcon: (iconInput) => <IconPlus {...iconInput} />,

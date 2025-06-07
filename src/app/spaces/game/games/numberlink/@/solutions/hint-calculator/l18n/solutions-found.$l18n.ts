@@ -1,44 +1,44 @@
 import { Translations } from '~/@/l18n'
 
 export type Text = {
-  'flow.solutions-found': string
+  'game.numberlink.solutions-found': string
 }
 
 export const translations: Translations<Text> = {
   en: {
-    'flow.solutions-found': 'Solutions found',
+    'game.numberlink.solutions-found': 'Solutions found',
   },
   de: {
-    'flow.solutions-found': 'Lösungen gefunden',
+    'game.numberlink.solutions-found': 'Lösungen gefunden',
   },
   es: {
-    'flow.solutions-found': 'Soluciones encontradas',
+    'game.numberlink.solutions-found': 'Soluciones encontradas',
   },
   fr: {
-    'flow.solutions-found': 'Solutions trouvées',
+    'game.numberlink.solutions-found': 'Solutions trouvées',
   },
   it: {
-    'flow.solutions-found': 'Soluzioni trovate',
+    'game.numberlink.solutions-found': 'Soluzioni trovate',
   },
   ar: {
-    'flow.solutions-found': 'تم العثور على الحلول',
+    'game.numberlink.solutions-found': 'تم العثور على الحلول',
   },
   ja: {
-    'flow.solutions-found': '解決策が見つかりました',
+    'game.numberlink.solutions-found': '解決策が見つかりました',
   },
   hi: {
-    'flow.solutions-found': 'समाधान मिल गए',
+    'game.numberlink.solutions-found': 'समाधान मिल गए',
   },
   ko: {
-    'flow.solutions-found': '해결 방법을 찾았습니다',
+    'game.numberlink.solutions-found': '해결 방법을 찾았습니다',
   },
   pt: {
-    'flow.solutions-found': 'Soluções encontradas',
+    'game.numberlink.solutions-found': 'Soluções encontradas',
   },
   ru: {
-    'flow.solutions-found': 'Решения найдены',
+    'game.numberlink.solutions-found': 'Решения найдены',
   },
   zh: {
-    'flow.solutions-found': '已找到解决方案',
+    'game.numberlink.solutions-found': '已找到解决方案',
   },
 }
