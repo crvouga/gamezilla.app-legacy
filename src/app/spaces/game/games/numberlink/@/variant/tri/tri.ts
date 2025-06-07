@@ -1,10 +1,10 @@
 import { s } from '~/@/schema'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 import * as VariantTriDimensions from './tri-dimensions'
 import { NodeId } from '../../numberlink/node-id'
 
 export const Model = s.and(
-  Flow.Model,
+  Numberlink.Model,
   VariantTriDimensions.Model,
   s.obj({
     t: s.l('tri'),
@@ -15,10 +15,10 @@ export type Model = s.Infer<typeof Model>
 
 export const init = (input: {
   dimensions: VariantTriDimensions.Model
-  terminalsByGroupId: Flow.Model['terminalsByGroupId']
+  terminalsByGroupId: Numberlink.Model['terminalsByGroupId']
 }): Model => {
   return {
-    ...Flow.init,
+    ...Numberlink.init,
     ...input.dimensions,
     t: 'tri',
     VariantTri: true,

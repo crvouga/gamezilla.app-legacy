@@ -1,3 +1,3 @@
-export * as Variant from './variant'
-export * as VariantDimensions from './variant-dimensions'
-export * as VariantBoard from './variant-board'
+export * as NumberlinkVariant from './variant'
+export * as NumberlinkVariantDimensions from './variant-dimensions'
+export * as NumberlinkVariantBoard from './variant-board'

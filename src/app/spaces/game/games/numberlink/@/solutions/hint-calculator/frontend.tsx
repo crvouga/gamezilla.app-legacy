@@ -43,7 +43,7 @@ const update: FrontendModule['update'] = (input) => {
       }
     }
     case 'clicked-find-solutions': {
-      const { flow } = input.msg
+      const { numberlink: flow } = input.msg
       const hash = SolutionHash.init(flow)
       const requestNew: FindSolutionRequest = {
         hash,
@@ -70,13 +70,13 @@ const update: FrontendModule['update'] = (input) => {
             (s) => mapOk(s, (solutions) => ({ solutions })),
             (s) => mapErr(s, problemToString),
           )
-          dispatch({ t: 'found-solution', flow, found })
+          dispatch({ t: 'found-solution', numberlink: flow, found })
         },
       }
     }
     case 'found-solution': {
       const result = input.msg.found
-      const hash = SolutionHash.init(input.msg.flow)
+      const hash = SolutionHash.init(input.msg.numberlink)
       const requestNew: FindSolutionRequest = { hash, result }
       return {
         model: { ...input.model, requests: { ...input.model.requests, [hash]: requestNew }, open: null },
@@ -125,7 +125,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
           position='bottom'
           confirmText={input.ctx.t('app.calculate')}
           confirmLoading={isLoading(input.model, hash)}
-          onConfirm={() => input.dispatch({ t: 'clicked-find-solutions', flow })}
+          onConfirm={() => input.dispatch({ t: 'clicked-find-solutions', numberlink: flow })}
         />
       ),
     },

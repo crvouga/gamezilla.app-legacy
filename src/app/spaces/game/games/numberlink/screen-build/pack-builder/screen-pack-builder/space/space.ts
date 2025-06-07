@@ -80,7 +80,7 @@ updates.push(({ modelSpace, msgSpace }) => {
             msgSpace.puzzleResult.t === 'got'
               ? ModePlay.init({
                   ctx: ModePlay.initCtx({
-                    flow: msgSpace.puzzleResult.c.flow,
+                    numberlink: msgSpace.puzzleResult.c.numberlink,
                   }),
                 })
               : null,
@@ -158,7 +158,7 @@ updates.push(({ modelSpace, msgSpace }) => {
         screen.puzzleResult.t === 'got'
           ? ModePlay.update({
               ctx: ModePlay.initCtx({
-                flow: screen.puzzleResult.c.flow,
+                numberlink: screen.puzzleResult.c.numberlink,
               }),
               model: screen.play,
               msg: msgSpace.c,
@@ -199,7 +199,7 @@ updates.push(({ modelSpace, msgSpace }) => {
             msgSpace.nextPuzzleResult.t === 'got'
               ? ModePlay.init({
                   ctx: ModePlay.initCtx({
-                    flow: msgSpace.nextPuzzleResult.c.flow,
+                    numberlink: msgSpace.nextPuzzleResult.c.numberlink,
                   }),
                 })
               : modelSpace.screen.play,
@@ -231,7 +231,7 @@ updates.push(({ modelSpace, msgSpace }) => {
             msgSpace.previousPuzzleResult.t === 'got'
               ? ModePlay.init({
                   ctx: ModePlay.initCtx({
-                    flow: msgSpace.previousPuzzleResult.c.flow,
+                    numberlink: msgSpace.previousPuzzleResult.c.numberlink,
                   }),
                 })
               : modelSpace.screen.play,

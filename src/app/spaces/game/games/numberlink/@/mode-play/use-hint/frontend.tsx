@@ -5,7 +5,7 @@ import { AlgoIsSolved } from '../../solutions/algo-is-solved/algo-is-solved'
 import { SolutionHash } from '../../solutions/solution-hash/solution-hash'
 import { Solutions } from '../../solutions/solutions'
 import { ModePlayFrontendCtx } from '../frontend/ctx'
-import { Model, Msg, toFlow } from './use-hint'
+import { Model, Msg, toNumberlink } from './use-hint'
 
 const TEST_ID_USE_HINT_ACTION = 'use-hint'
 
@@ -14,12 +14,12 @@ const viewAction = (input: {
   dispatch: (msg: Msg) => void
   ctx: ModePlayFrontendCtx
 }): ScreenAction[] => {
-  if (!input.ctx.flow) return []
-  const flow = toFlow(input.model, input.ctx.flow)
-  const hash = SolutionHash.init(flow)
+  if (!input.ctx.numberlink) return []
+  const numberlink = toNumberlink(input.model, input.ctx.numberlink)
+  const hash = SolutionHash.init(numberlink)
   const hasSolution = Solutions.selectOne(input.ctx.solutions, hash) !== null
   if (!hasSolution) return []
-  const isSolved = AlgoIsSolved.isSolved(flow)
+  const isSolved = AlgoIsSolved.isSolved(numberlink)
   if (isSolved) return []
 
   return [
@@ -28,8 +28,8 @@ const viewAction = (input: {
       icon: (input) => <IconLightbulb {...input} />,
       label: input.ctx.t('game.hint'),
       onClick: () => {
-        const flow = toFlow(input.model, input.ctx.flow)
-        const hash = SolutionHash.init(flow)
+        const numberlink = toNumberlink(input.model, input.ctx.numberlink)
+        const hash = SolutionHash.init(numberlink)
         const solutions = Solutions.limit(input.ctx.solutions, hash)
         input.dispatch({ t: 'user-clicked-use-hint', solutions })
       },

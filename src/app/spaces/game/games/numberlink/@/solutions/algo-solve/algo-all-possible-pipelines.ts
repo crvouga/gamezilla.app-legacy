@@ -1,13 +1,13 @@
 import { MinHeap } from '~/@/min-heap/min-heap'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 import { GroupId } from '../../numberlink/group-id'
 import { NodeId } from '../../numberlink/node-id'
-import { Variant } from '../../variant'
+import { NumberlinkVariant } from '../../variant'
 
 const MAX_ITERATIONS = 10_000
 
 type HeapItem = {
-  path: Flow.Edge[]
+  path: Numberlink.Edge[]
   currentNode: NodeId
   visited: Set<NodeId>
   cost: number
@@ -15,11 +15,11 @@ type HeapItem = {
 }
 
 export const toAllPossiblePipelines = function* (input: {
-  model: Variant.Model
+  model: NumberlinkVariant.Model
   groupId: GroupId
   startId: NodeId
   endId: NodeId
-}): Iterable<Flow.Edge[]> {
+}): Iterable<Numberlink.Edge[]> {
   const minHeap = new MinHeap<HeapItem>((a, b) => a.heuristic - b.heuristic)
   const visitedPaths = new Set<string>()
   let iterations = 0
@@ -29,7 +29,7 @@ export const toAllPossiblePipelines = function* (input: {
     currentNode: input.startId,
     visited: new Set([input.startId]),
     cost: 0,
-    heuristic: Variant.distance(input.model, input.startId, input.endId),
+    heuristic: NumberlinkVariant.distance(input.model, input.startId, input.endId),
   })
 
   while (true) {
@@ -52,8 +52,8 @@ export const toAllPossiblePipelines = function* (input: {
       continue
     }
 
-    for (const edgeOut of Flow.yieldEdgesOut(input.model, currentNode)) {
-      const targetGroupId = Flow.toGroupId(input.model, edgeOut.targetId)
+    for (const edgeOut of Numberlink.yieldEdgesOut(input.model, currentNode)) {
+      const targetGroupId = Numberlink.toGroupId(input.model, edgeOut.targetId)
 
       if (targetGroupId && targetGroupId !== input.groupId) continue
 
@@ -75,12 +75,12 @@ export const toAllPossiblePipelines = function* (input: {
   }
 }
 
-const toDirection = (model: Variant.Model, sourceId: NodeId, targetId: NodeId): string => {
-  const distance = Variant.distance(model, sourceId, targetId)
+const toDirection = (model: NumberlinkVariant.Model, sourceId: NodeId, targetId: NodeId): string => {
+  const distance = NumberlinkVariant.distance(model, sourceId, targetId)
   return `${sourceId}${targetId}${distance}`
 }
 
-const countTurns = (model: Variant.Model, path: Flow.Edge[]): number => {
+const countTurns = (model: NumberlinkVariant.Model, path: Numberlink.Edge[]): number => {
   let turns = 0
   let prevDirection = ''
   for (let i = 0; i < path.length; i++) {
@@ -95,12 +95,17 @@ const countTurns = (model: Variant.Model, path: Flow.Edge[]): number => {
   return turns
 }
 
-const toHeuristic = (model: Variant.Model, currentNode: NodeId, endNode: NodeId, path: Flow.Edge[]): number => {
-  const distanceHeuristic = Variant.distance(model, currentNode, endNode)
+const toHeuristic = (
+  model: NumberlinkVariant.Model,
+  currentNode: NodeId,
+  endNode: NodeId,
+  path: Numberlink.Edge[],
+): number => {
+  const distanceHeuristic = NumberlinkVariant.distance(model, currentNode, endNode)
   const turnsHeuristic = countTurns(model, path)
   return distanceHeuristic + turnsHeuristic
 }
 
-const normalizePath = (path: Flow.Edge[]): string => {
+const normalizePath = (path: Numberlink.Edge[]): string => {
   return path.map((edge) => `${edge.sourceId}-${edge.targetId}`).join(',')
 }

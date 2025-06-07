@@ -1,21 +1,21 @@
 import { describe, expect, it, test } from 'bun:test'
 import { loggerNoop } from '~/@/logger/impl-noop'
 import { UserId } from '~/app/@/data/user-id'
-import { Flow } from '../../@/numberlink'
+import { Numberlink } from '../../@/numberlink'
 import { ModePlay } from '../../@/mode-play'
 import { Pack } from '../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { AlgoIsSolved } from '../../@/solutions/algo-is-solved/algo-is-solved'
 import { Solutions } from '../../@/solutions/solutions'
-import { type Variant } from '../../@/variant'
+import { type NumberlinkVariant } from '../../@/variant'
 import { VariantGrid, VariantGridShorthand } from '../../@/variant/grid'
 import { FlowPlaySpaceFixture } from '../@/space/fixture'
 import { FixtureScreenPuzzlePlaySpaceChild } from './@/fixture/space'
 import { ScreenPlayPuzzleSpace } from './space'
 import type { MsgSpace } from './types'
 
-const Fixture = async (input?: { flow?: Variant.Model }) => {
+const Fixture = async (input?: { numberlink?: NumberlinkVariant.Model }) => {
   const f = await FixtureScreenPuzzlePlaySpaceChild(input)
 
   return {
@@ -82,7 +82,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
 
     const msgs = ModePlay.randomMsgs({
-      flow: f.puzzle.flow,
+      numberlink: f.puzzle.numberlink,
     }).map(
       (c): MsgSpace => ({
         userId: UserId.generate(),
@@ -106,8 +106,8 @@ describe(import.meta.file, () => {
       f.nextPuzzle.t === 'got'
         ? ModePlay.init({
             ctx: ModePlay.initCtx({
-              flow: f.nextPuzzle.c.flow,
-              solutions: await Solutions.find({ models: [f.nextPuzzle.c.flow], logger: loggerNoop }),
+              numberlink: f.nextPuzzle.c.numberlink,
+              solutions: await Solutions.find({ models: [f.nextPuzzle.c.numberlink], logger: loggerNoop }),
             }),
           })
         : null,
@@ -119,7 +119,7 @@ describe(import.meta.file, () => {
     const before = f.init
     const after = f.update(before, f.solvePuzzleMsgs)
     if (!after.modePlay) throw new Error('failed to setup test')
-    const afterFlow = ModePlay.toFlow(after.modePlay, f.puzzle.flow)
+    const afterFlow = ModePlay.toNumberlink(after.modePlay, f.puzzle.numberlink)
 
     expect(ScreenPlayPuzzleSpace.toStatus(before)).toBe('solving')
     expect(ScreenPlayPuzzleSpace.toStatus(after)).toBe('solved')
@@ -136,7 +136,7 @@ describe(import.meta.file, () => {
 
   test('still in solved state after pressing solved board', async () => {
     const f = await Fixture({
-      flow: VariantGridShorthand.toGrid([
+      numberlink: VariantGridShorthand.toGrid([
         [' ', ' ', 'A'],
         [' ', ' ', ' '],
         [' ', ' ', 'A'],
@@ -189,7 +189,7 @@ describe(import.meta.file, () => {
 
   it('should only open puzzle complete dialog when transitions to solved state', async () => {
     const f = await Fixture()
-    const endId = Flow.randomTerminal(f.puzzle.flow)?.endId
+    const endId = Numberlink.randomTerminal(f.puzzle.numberlink)?.endId
 
     if (!endId) throw new Error('endId not found')
 
@@ -243,8 +243,8 @@ describe(import.meta.file, () => {
     ])
 
     const ctx = ModePlay.initCtx({
-      flow: f.puzzle.flow,
-      solutions: await Solutions.find({ models: [f.puzzle.flow], logger: loggerNoop }),
+      numberlink: f.puzzle.numberlink,
+      solutions: await Solutions.find({ models: [f.puzzle.numberlink], logger: loggerNoop }),
     })
 
     expect(before.modePlay).toEqual(ModePlay.init({ ctx }))

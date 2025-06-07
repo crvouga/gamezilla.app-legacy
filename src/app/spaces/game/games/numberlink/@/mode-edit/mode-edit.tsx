@@ -2,10 +2,10 @@ import { eq } from '~/@/equals/equals'
 import { History } from '~/@/history'
 import { s } from '~/@/schema'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { Flow } from '../numberlink'
+import { Numberlink } from '../numberlink'
 import { GroupId } from '../numberlink/group-id'
 import { NodeId } from '../numberlink/node-id'
-import { Variant, VariantDimensions } from '../variant'
+import { NumberlinkVariant, NumberlinkVariantDimensions } from '../variant'
 
 //
 //
@@ -27,14 +27,14 @@ type DraftTerminals = s.Infer<typeof DraftTerminals>
 
 const Form = s.obj({
   terminalsByGroupId: DraftTerminals,
-  dimensions: VariantDimensions.Model,
+  dimensions: NumberlinkVariantDimensions.Model,
 })
 type Form = s.Infer<typeof Form>
 
 const Opened = s.or(
   s.obj({
     t: s.l('dimensions'),
-    draftDimensions: VariantDimensions.Model,
+    draftDimensions: NumberlinkVariantDimensions.Model,
   }),
 )
 
@@ -51,10 +51,10 @@ export const canClear = (model: Model): boolean => {
   return Object.keys(History.present(model.form).terminalsByGroupId).length > 0
 }
 
-export const init = (input: { flow: Variant.Model }): Model => {
+export const init = (input: { numberlink: NumberlinkVariant.Model }): Model => {
   const form: Form = {
-    dimensions: VariantDimensions.init(input.flow),
-    terminalsByGroupId: input.flow.terminalsByGroupId,
+    dimensions: NumberlinkVariantDimensions.init(input.numberlink),
+    terminalsByGroupId: input.numberlink.terminalsByGroupId,
   }
   return {
     form: History.init(form),
@@ -63,15 +63,18 @@ export const init = (input: { flow: Variant.Model }): Model => {
   }
 }
 
-export const isUnsavedChanges = (model: Model, flow: Variant.Model): boolean => {
+export const isUnsavedChanges = (model: Model, numberlink: NumberlinkVariant.Model): boolean => {
   const draft: Form = History.present(model.form)
 
   const actual: Form = {
-    terminalsByGroupId: flow.terminalsByGroupId,
-    dimensions: VariantDimensions.init(flow),
+    terminalsByGroupId: numberlink.terminalsByGroupId,
+    dimensions: NumberlinkVariantDimensions.init(numberlink),
   }
 
-  const areTerminalsDifferent = !Flow.isSameTerminalsByGroupId(actual.terminalsByGroupId, draft.terminalsByGroupId)
+  const areTerminalsDifferent = !Numberlink.isSameTerminalsByGroupId(
+    actual.terminalsByGroupId,
+    draft.terminalsByGroupId,
+  )
   const areDimensionsDifferent = !eq(actual.dimensions, draft.dimensions)
 
   return areTerminalsDifferent || areDimensionsDifferent
@@ -96,7 +99,7 @@ export const Msg = s.or(
   s.obj({ t: s.l('dimensions-form.closed') }),
   s.obj({ t: s.l('dimensions-form.clicked-cancel') }),
   s.obj({ t: s.l('dimensions-form.clicked-save') }),
-  s.obj({ t: s.l('dimensions-form.inputted'), dimensions: VariantDimensions.Model }),
+  s.obj({ t: s.l('dimensions-form.inputted'), dimensions: NumberlinkVariantDimensions.Model }),
 )
 export type Msg = s.Infer<typeof Msg>
 
@@ -106,7 +109,7 @@ export type Cmd = {
 }
 
 export const update = (input: {
-  flow: Variant.Model
+  numberlink: NumberlinkVariant.Model
   msg: Msg
   model: Model
 }): {
@@ -224,14 +227,14 @@ export const update = (input: {
 
       const present = History.present(input.model.form)
 
-      const flowNew = Variant.init({
+      const flowNew = NumberlinkVariant.init({
         dimensions: opened.draftDimensions,
         terminalsByGroupId: present.terminalsByGroupId,
       })
 
       const formNew: Form = {
         terminalsByGroupId: flowNew.terminalsByGroupId,
-        dimensions: Variant.toDimensions(flowNew),
+        dimensions: NumberlinkVariant.toDimensions(flowNew),
       }
 
       const modelNew: Model = {
@@ -419,10 +422,10 @@ export const toCurrentPlacingTerminalPosition = (model: Model): 'start' | 'end' 
   return 'start'
 }
 
-export const toFlow = (model: Model): Variant.Model => {
+export const toNumberlink = (model: Model): NumberlinkVariant.Model => {
   const form = History.present(model.form)
   const dimensions = model.opened?.draftDimensions ?? form.dimensions
-  return Variant.init({
+  return NumberlinkVariant.init({
     dimensions,
     terminalsByGroupId: form.terminalsByGroupId,
   })

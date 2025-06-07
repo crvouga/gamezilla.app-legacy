@@ -12,7 +12,7 @@ import { SpinnerBlock } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
 import { AddPuzzlesCmd } from '../../frontend/add-puzzles-cmd'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
-import { VariantBoard } from '../../variant'
+import { NumberlinkVariantBoard } from '../../variant'
 import { Puzzle } from '../puzzle'
 import { PuzzleQuery } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
@@ -161,7 +161,7 @@ const ViewListItem = (input: {
       )}
 
       <div className='flex aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden'>
-        <VariantBoard.View disabled model={input.puzzle.flow} />
+        <NumberlinkVariantBoard.View disabled model={input.puzzle.numberlink} />
       </div>
 
       <div className='flex flex-col gap-1 truncate overflow-hidden px-4'>

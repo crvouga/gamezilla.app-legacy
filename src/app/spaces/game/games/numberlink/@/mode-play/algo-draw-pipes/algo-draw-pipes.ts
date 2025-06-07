@@ -1,11 +1,11 @@
 import { pipe } from '~/@/function/pipe'
 import { MinHeap } from '~/@/min-heap/min-heap'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 import { EdgeId } from '../../numberlink/edge-id'
 import { GroupId } from '../../numberlink/group-id'
 import { NodeId } from '../../numberlink/node-id'
 import { Terminal } from '../../numberlink/terminal'
-import { Variant } from '../../variant'
+import { NumberlinkVariant } from '../../variant'
 
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.
@@ -15,15 +15,19 @@ type Pipeline = NodeId[]
 /**
  * Starts
  */
-export const startDrawPipes = (model: Variant.Model, groupId: GroupId, newNodeId: NodeId): Flow.Model => {
-  const terminal = Flow.toTerminalByGroupId(model, groupId)
+export const startDrawPipes = (
+  model: NumberlinkVariant.Model,
+  groupId: GroupId,
+  newNodeId: NodeId,
+): Numberlink.Model => {
+  const terminal = Numberlink.toTerminalByGroupId(model, groupId)
 
   if (!terminal) {
     return model
   }
 
   if (terminal.endId === newNodeId) {
-    const reversed = Flow.flipTerminal(model, terminal)
+    const reversed = Numberlink.flipTerminal(model, terminal)
 
     const drew = drawPipes(reversed, groupId, newNodeId)
 
@@ -38,14 +42,14 @@ export const startDrawPipes = (model: Variant.Model, groupId: GroupId, newNodeId
 /**
  * Algorithm that draws pipes from the inputted group id to the inputted node id
  */
-export const drawPipes = (model: Variant.Model, groupId: GroupId, nodeIdNew: NodeId): Flow.Model => {
-  const newNodeGroupId = Flow.findGroupIdByNodeId(model, nodeIdNew)
+export const drawPipes = (model: NumberlinkVariant.Model, groupId: GroupId, nodeIdNew: NodeId): Numberlink.Model => {
+  const newNodeGroupId = Numberlink.findGroupIdByNodeId(model, nodeIdNew)
 
   if (newNodeGroupId && newNodeGroupId !== groupId) {
     return model
   }
 
-  const terminal = Flow.toTerminalByGroupId(model, groupId)
+  const terminal = Numberlink.toTerminalByGroupId(model, groupId)
 
   if (!terminal) {
     return model
@@ -74,7 +78,7 @@ export const drawPipes = (model: Variant.Model, groupId: GroupId, nodeIdNew: Nod
       }
 
       const shortest = findShortestEmptyPipelineAStar(
-        (nodeId) => 1 - 1 / Variant.distance(model, nodeId, nodeIdNew),
+        (nodeId) => 1 - 1 / NumberlinkVariant.distance(model, nodeId, nodeIdNew),
         model,
         startNodeId,
         nodeIdNew,
@@ -86,7 +90,7 @@ export const drawPipes = (model: Variant.Model, groupId: GroupId, nodeIdNew: Nod
     },
   )
 
-  const added = addPipeline(Flow.removePipeline(model, groupId), terminal, pipelineNew)
+  const added = addPipeline(Numberlink.removePipeline(model, groupId), terminal, pipelineNew)
 
   return added
 }
@@ -94,7 +98,7 @@ export const drawPipes = (model: Variant.Model, groupId: GroupId, nodeIdNew: Nod
 /**
  * Takes nodes in order from the inputted pipeline until a node are no longer connected to the previous node
  */
-const takeWhileConnected = (model: Flow.Model, pipeline: Pipeline): Pipeline => {
+const takeWhileConnected = (model: Numberlink.Model, pipeline: Pipeline): Pipeline => {
   const pipelineNew: Pipeline = []
 
   for (let i = 0; i < pipeline.length; i++) {
@@ -111,7 +115,7 @@ const takeWhileConnected = (model: Flow.Model, pipeline: Pipeline): Pipeline => 
       continue
     }
 
-    if (Flow.hasEdge(model, prevNode, currNode)) {
+    if (Numberlink.hasEdge(model, prevNode, currNode)) {
       pipelineNew.push(currNode)
       continue
     }
@@ -124,7 +128,7 @@ const takeWhileConnected = (model: Flow.Model, pipeline: Pipeline): Pipeline => 
 /**
  *
  */
-const isTerminalConnected = (model: Flow.Model, terminal: Terminal): boolean => {
+const isTerminalConnected = (model: Numberlink.Model, terminal: Terminal): boolean => {
   let currentId = terminal.startId
 
   while (true) {
@@ -132,7 +136,7 @@ const isTerminalConnected = (model: Flow.Model, terminal: Terminal): boolean => 
       return true
     }
 
-    const pipe = Flow.toPipeBySourceId(model, currentId)
+    const pipe = Numberlink.toPipeBySourceId(model, currentId)
 
     if (!pipe) {
       return false
@@ -149,14 +153,14 @@ const isTerminalConnected = (model: Flow.Model, terminal: Terminal): boolean => 
 /**
  * Returns a pipeline for inputted group id starting from inputted node id
  */
-const findPipeline = (model: Flow.Model, groupId: GroupId, initial: NodeId): Pipeline => {
+const findPipeline = (model: Numberlink.Model, groupId: GroupId, initial: NodeId): Pipeline => {
   const pipeline: Pipeline = []
   let currentId = initial
 
   while (true) {
     pipeline.push(currentId)
 
-    const pipe = Flow.toPipeBySourceId(model, currentId)
+    const pipe = Numberlink.toPipeBySourceId(model, currentId)
 
     if (!pipe) {
       break
@@ -175,8 +179,8 @@ const findPipeline = (model: Flow.Model, groupId: GroupId, initial: NodeId): Pip
 /**
  * Adds all pipes that are part of the pipeline with the inputted group id
  */
-const addPipeline = (model: Flow.Model, terminal: Terminal, pipeline: Pipeline): Flow.Model => {
-  const modelNew: Flow.Model = { ...model }
+const addPipeline = (model: Numberlink.Model, terminal: Terminal, pipeline: Pipeline): Numberlink.Model => {
+  const modelNew: Numberlink.Model = { ...model }
 
   for (let i = 0; i < pipeline.length - 1; i++) {
     const first = pipeline[i]
@@ -191,17 +195,17 @@ const addPipeline = (model: Flow.Model, terminal: Terminal, pipeline: Pipeline):
       break
     }
 
-    const edge: Flow.Edge = {
+    const edge: Numberlink.Edge = {
       sourceId: first,
       targetId: second,
     }
 
-    if (!Flow.hasEdge(modelNew, first, second)) {
+    if (!Numberlink.hasEdge(modelNew, first, second)) {
       continue
     }
 
-    const pipeNew: Flow.Pipe = {
-      edgeId: Flow.toEdgeId(edge),
+    const pipeNew: Numberlink.Pipe = {
+      edgeId: Numberlink.toEdgeId(edge),
       groupId: terminal.groupId,
     }
 
@@ -214,14 +218,18 @@ const addPipeline = (model: Flow.Model, terminal: Terminal, pipeline: Pipeline):
 /**
  * Returns a list of nodes without a groupId that form the shortest path between the source and target nodes.
  */
-export const _findShortestEmptyPipelineBFS = (model: Flow.Model, sourceId: NodeId, targetId: NodeId): NodeId[] => {
-  const sourceGroupId = Flow.findGroupIdByNodeId(model, sourceId)
+export const _findShortestEmptyPipelineBFS = (
+  model: Numberlink.Model,
+  sourceId: NodeId,
+  targetId: NodeId,
+): NodeId[] => {
+  const sourceGroupId = Numberlink.findGroupIdByNodeId(model, sourceId)
 
   if (!sourceGroupId) {
     return []
   }
 
-  const terminal = Flow.toTerminalByGroupId(model, sourceGroupId)
+  const terminal = Numberlink.toTerminalByGroupId(model, sourceGroupId)
 
   //
   //
@@ -253,20 +261,20 @@ export const _findShortestEmptyPipelineBFS = (model: Flow.Model, sourceId: NodeI
       break
     }
 
-    for (const outEdge of Flow.yieldEdgesOut(model, currentId)) {
+    for (const outEdge of Numberlink.yieldEdgesOut(model, currentId)) {
       const adjacentId = outEdge.targetId
 
       if (visited.has(adjacentId)) {
         continue
       }
 
-      const adjacentPipe = Flow.findPipeByNodeId(model, adjacentId)
+      const adjacentPipe = Numberlink.findPipeByNodeId(model, adjacentId)
 
       if (adjacentPipe) {
         continue
       }
 
-      const adjacentTerminal = Flow.findTerminalByNodeId(model, adjacentId)
+      const adjacentTerminal = Numberlink.findTerminalByNodeId(model, adjacentId)
 
       if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
         continue
@@ -311,7 +319,7 @@ export const _findShortestEmptyPipelineBFS = (model: Flow.Model, sourceId: NodeI
       continue
     }
     path.push(
-      Flow.toEdgeId({
+      Numberlink.toEdgeId({
         sourceId: from,
         targetId: to,
       }),
@@ -338,7 +346,7 @@ const openSet = new MinHeap<NodeId>((a, b) => {
 
 const findShortestEmptyPipelineAStar = (
   heuristicSspace: (node: NodeId) => number,
-  model: Flow.Model,
+  model: Numberlink.Model,
   sourceId: NodeId,
   targetId: NodeId,
 ): NodeId[] => {
@@ -347,7 +355,7 @@ const findShortestEmptyPipelineAStar = (
   cameFrom.clear()
   openSet.clear()
 
-  const sourceGroupId = Flow.findGroupIdByNodeId(model, sourceId)
+  const sourceGroupId = Numberlink.findGroupIdByNodeId(model, sourceId)
 
   if (!sourceGroupId) {
     return []
@@ -370,22 +378,22 @@ const findShortestEmptyPipelineAStar = (
       return reconstructPath(cameFrom, current)
     }
 
-    const currentTerminal = Flow.findTerminalByNodeId(model, current)
+    const currentTerminal = Numberlink.findTerminalByNodeId(model, current)
 
     if (currentTerminal) {
       return reconstructPath(cameFrom, current)
     }
 
-    for (const edgeOut of Flow.yieldEdgesOut(model, current)) {
+    for (const edgeOut of Numberlink.yieldEdgesOut(model, current)) {
       const adjacent = edgeOut.targetId
 
-      const adjacentPipe = Flow.findPipeByNodeId(model, adjacent)
+      const adjacentPipe = Numberlink.findPipeByNodeId(model, adjacent)
 
       if (adjacentPipe) {
         continue
       }
 
-      const adjacentTerminal = Flow.findTerminalByNodeId(model, adjacent)
+      const adjacentTerminal = Numberlink.findTerminalByNodeId(model, adjacent)
 
       if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
         continue

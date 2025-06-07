@@ -2,11 +2,11 @@ import { Logger } from '~/@/logger'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceGameFixtureBackend } from '../../../../@/testing/backend'
-import { FlowBackendCtx } from '../../../@/backend/ctx'
+import { NumberlinkBackendCtx } from '../../../@/backend/ctx'
 import { PackDb } from '../../../@/pack/pack-db/impl'
 import { PuzzleDb } from '../../../@/puzzle/puzzle-db'
 
-const initCtx = async (ctx: SpaceBackendCtx): Promise<FlowBackendCtx> => {
+const initCtx = async (ctx: SpaceBackendCtx): Promise<NumberlinkBackendCtx> => {
   const f = await FixtureAppBackend()
   switch (f.t) {
     case 'integration': {

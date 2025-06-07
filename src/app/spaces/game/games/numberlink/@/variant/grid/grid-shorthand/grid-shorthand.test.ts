@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Flow } from '../../../numberlink'
+import { Numberlink } from '../../../numberlink'
 import { VariantGrid, VariantGridDimensions } from '../index'
 import * as VariantGridShorthand from './grid-shorthand'
 
@@ -20,7 +20,7 @@ describe(import.meta.file, () => {
         },
       },
     })
-    expect(Flow.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toBe(true)
   })
 
   test('2x2 with A', async () => {
@@ -50,7 +50,7 @@ describe(import.meta.file, () => {
         },
       },
     })
-    expect(Flow.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toBe(true)
   })
 
   test('2x2 with A and B', async () => {
@@ -91,7 +91,7 @@ describe(import.meta.file, () => {
         },
       },
     })
-    expect(Flow.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toBe(true)
   })
 
   test('3x3 with A', async () => {
@@ -117,7 +117,7 @@ describe(import.meta.file, () => {
         },
       },
     })
-    expect(Flow.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toBe(true)
   })
 
   test('3x3 with A and B', async () => {
@@ -154,7 +154,7 @@ describe(import.meta.file, () => {
         },
       },
     })
-    expect(Flow.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toBe(true)
   })
 
   test('2x2 with terminal and pipe', async () => {
@@ -185,7 +185,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 0,
@@ -201,7 +201,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 1,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 1,
@@ -216,7 +216,7 @@ describe(import.meta.file, () => {
       },
     })
 
-    expect(Flow.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toBe(true)
   })
 
   test('2x2 with adjacent connected terminals', async () => {
@@ -247,7 +247,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 0,
@@ -262,7 +262,7 @@ describe(import.meta.file, () => {
       },
     })
 
-    expect(Flow.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toBe(true)
   })
 
   test('2x2 with adjacent non-connected terminals', async () => {
@@ -290,7 +290,7 @@ describe(import.meta.file, () => {
       },
     })
 
-    expect(Flow.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toBe(true)
   })
 
   test('2x2 with A terminal with pipe and B terminal with pipe', async () => {
@@ -332,7 +332,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 0,
@@ -348,7 +348,7 @@ describe(import.meta.file, () => {
           x: 1,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 1,
               y: 0,
@@ -363,7 +363,7 @@ describe(import.meta.file, () => {
       },
     })
 
-    const isSame = Flow.isSame(actual, expected)
+    const isSame = Numberlink.isSame(actual, expected)
 
     expect(isSame).toBe(true)
   })
@@ -408,7 +408,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 0,
@@ -424,7 +424,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 1,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 1,
@@ -440,7 +440,7 @@ describe(import.meta.file, () => {
           x: 1,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 1,
               y: 0,
@@ -456,7 +456,7 @@ describe(import.meta.file, () => {
           x: 1,
           y: 1,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 1,
               y: 1,
@@ -471,7 +471,7 @@ describe(import.meta.file, () => {
       },
     })
 
-    const isSame = Flow.isSame(actual, expected)
+    const isSame = Numberlink.isSame(actual, expected)
 
     expect(isSame).toBe(true)
   })
@@ -513,7 +513,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 0,
@@ -529,7 +529,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 1,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 1,
@@ -544,7 +544,7 @@ describe(import.meta.file, () => {
       },
     })
 
-    expect(Flow.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toBe(true)
   })
 
   it('should only return grids with the longest paths', async () => {
@@ -591,7 +591,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 0,
@@ -607,7 +607,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 1,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 1,
@@ -623,7 +623,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 2,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 2,
@@ -639,7 +639,7 @@ describe(import.meta.file, () => {
           x: 1,
           y: 2,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 1,
               y: 2,
@@ -655,7 +655,7 @@ describe(import.meta.file, () => {
           x: 1,
           y: 1,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 1,
               y: 1,
@@ -671,7 +671,7 @@ describe(import.meta.file, () => {
           x: 1,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 1,
               y: 0,
@@ -687,7 +687,7 @@ describe(import.meta.file, () => {
           x: 2,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 2,
               y: 0,
@@ -703,7 +703,7 @@ describe(import.meta.file, () => {
           x: 2,
           y: 1,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 2,
               y: 1,
@@ -718,7 +718,7 @@ describe(import.meta.file, () => {
       },
     })
 
-    expect(actual.some((actual) => Flow.isSame(actual, expected))).toBe(true)
+    expect(actual.some((actual) => Numberlink.isSame(actual, expected))).toBe(true)
   })
 
   test('3x3 with A terminal and pipes and B terminal and pipes and C terminal and pipes', () => {
@@ -772,7 +772,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 0,
@@ -788,7 +788,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 1,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 1,
@@ -804,7 +804,7 @@ describe(import.meta.file, () => {
           x: 1,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 1,
               y: 0,
@@ -820,7 +820,7 @@ describe(import.meta.file, () => {
           x: 1,
           y: 1,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 1,
               y: 1,
@@ -836,7 +836,7 @@ describe(import.meta.file, () => {
           x: 2,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 2,
               y: 0,
@@ -852,7 +852,7 @@ describe(import.meta.file, () => {
           x: 2,
           y: 1,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 2,
               y: 1,
@@ -867,7 +867,7 @@ describe(import.meta.file, () => {
       },
     })
 
-    const isSame = Flow.isSame(actual, expected)
+    const isSame = Numberlink.isSame(actual, expected)
 
     expect(isSame).toBe(true)
   })
@@ -925,7 +925,7 @@ describe(import.meta.file, () => {
 
     const actualGrid = VariantGridShorthand.toGrid(actual)
 
-    expect(Flow.isSame(actualGrid, expectedGrid)).toBe(true)
+    expect(Numberlink.isSame(actualGrid, expectedGrid)).toBe(true)
   })
 
   test('from grid 2x3', () => {
@@ -949,7 +949,7 @@ describe(import.meta.file, () => {
       ['a', 'a', 'A'],
     ])
 
-    const pipeline = Flow.toPipelineFromGroupId(grid, 'A')
+    const pipeline = Numberlink.toPipelineFromGroupId(grid, 'A')
     expect(pipeline.length).toEqual(2)
   })
 
@@ -970,7 +970,7 @@ describe(import.meta.file, () => {
           x: 1,
           y: 2,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 1,
               y: 2,
@@ -985,6 +985,6 @@ describe(import.meta.file, () => {
       },
     })
 
-    expect(Flow.isSame(actual, expected)).toEqual(true)
+    expect(Numberlink.isSame(actual, expected)).toEqual(true)
   })
 })

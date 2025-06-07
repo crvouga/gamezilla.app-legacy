@@ -1,31 +1,31 @@
 import { describe, expect, it, test } from 'bun:test'
 import { ModeEdit } from '.'
-import { Flow } from '../numberlink'
-import { Variant, VariantDimensions } from '../variant'
+import { Numberlink } from '../numberlink'
+import { NumberlinkVariant, NumberlinkVariantDimensions } from '../variant'
 import { VariantGridShorthand } from '../variant/grid'
 
 type Output = ReturnType<typeof ModeEdit.update>
 
-const Fixture = async (input?: { flow?: Variant.Model }) => {
-  const flow =
-    input?.flow ??
+const Fixture = async (input?: { numberlink?: NumberlinkVariant.Model }) => {
+  const numberlink =
+    input?.numberlink ??
     VariantGridShorthand.toGrid([
       ['A', ' '],
       [' ', 'A'],
     ])
 
   const init: Output = {
-    model: ModeEdit.init({ flow }),
+    model: ModeEdit.init({ numberlink }),
   }
 
   const update = (acc: Output, [msg, ...msgs]: ModeEdit.Msg[]): Output => {
     if (!msg) return acc
-    const updated = ModeEdit.update({ flow, model: acc.model, msg })
+    const updated = ModeEdit.update({ numberlink, model: acc.model, msg })
     return update(updated, msgs)
   }
 
   return {
-    flow,
+    numberlink,
     init,
     update,
   }
@@ -39,7 +39,10 @@ describe('ModeEdit', () => {
       { t: 'dimensions-form.clicked-cancel' },
       { t: 'dimensions-form.clicked-open' },
       { t: 'dimensions-form.closed' },
-      { t: 'dimensions-form.inputted', dimensions: VariantDimensions.init({ t: 'grid', height: 0, width: 0 }) },
+      {
+        t: 'dimensions-form.inputted',
+        dimensions: NumberlinkVariantDimensions.init({ t: 'grid', height: 0, width: 0 }),
+      },
     ]
 
     for (const msg of msgs) {
@@ -57,7 +60,7 @@ describe('ModeEdit', () => {
       },
       {
         t: 'dimensions-form.inputted',
-        dimensions: VariantDimensions.init({
+        dimensions: NumberlinkVariantDimensions.init({
           t: 'grid',
           height: Math.floor(Math.random() * 20),
           width: Math.floor(Math.random() * 20),
@@ -69,9 +72,9 @@ describe('ModeEdit', () => {
         t: 'dimensions-form.clicked-cancel',
       },
     ])
-    const beforeDim = Variant.toDimensions(ModeEdit.toFlow(before.model))
-    const updatedDim = Variant.toDimensions(ModeEdit.toFlow(updated.model))
-    const afterDim = Variant.toDimensions(ModeEdit.toFlow(after.model))
+    const beforeDim = NumberlinkVariant.toDimensions(ModeEdit.toNumberlink(before.model))
+    const updatedDim = NumberlinkVariant.toDimensions(ModeEdit.toNumberlink(updated.model))
+    const afterDim = NumberlinkVariant.toDimensions(ModeEdit.toNumberlink(after.model))
     expect(beforeDim).toEqual(afterDim)
     expect(updatedDim).not.toEqual(afterDim)
   })
@@ -84,7 +87,7 @@ describe('ModeEdit', () => {
       },
       {
         t: 'dimensions-form.inputted',
-        dimensions: VariantDimensions.init({
+        dimensions: NumberlinkVariantDimensions.init({
           t: 'grid',
           height: Math.floor(Math.random() * 20),
           width: Math.floor(Math.random() * 20),
@@ -99,18 +102,18 @@ describe('ModeEdit', () => {
         t: 'dimensions-form.clicked-open',
       },
     ])
-    const afterDim = Variant.toDimensions(ModeEdit.toFlow(after.model))
-    const updatedDim = Variant.toDimensions(ModeEdit.toFlow(updated.model))
+    const afterDim = NumberlinkVariant.toDimensions(ModeEdit.toNumberlink(after.model))
+    const updatedDim = NumberlinkVariant.toDimensions(ModeEdit.toNumberlink(updated.model))
     expect(afterDim).toEqual(updatedDim)
   })
 
   test('remove incomplete terminals cut off by smaller dimensions when applied', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       [' ', ' ', ' '],
       [' ', ' ', 'A'],
     ])
-    const f = await Fixture({ flow })
+    const f = await Fixture({ numberlink: numberlink })
 
     const updated = f.update(f.init, [
       {
@@ -118,7 +121,7 @@ describe('ModeEdit', () => {
       },
       {
         t: 'dimensions-form.inputted',
-        dimensions: VariantDimensions.init({
+        dimensions: NumberlinkVariantDimensions.init({
           t: 'grid',
           height: 2,
           width: 2,
@@ -133,7 +136,7 @@ describe('ModeEdit', () => {
 
   test('clear should only remove terminals not change dimensions', async () => {
     const f = await Fixture()
-    const dimensionsNew = VariantDimensions.init({
+    const dimensionsNew = NumberlinkVariantDimensions.init({
       t: 'grid',
       height: Math.floor(Math.random() * 10),
       width: Math.floor(Math.random() * 10),
@@ -153,7 +156,7 @@ describe('ModeEdit', () => {
         t: 'clicked-clear',
       },
     ])
-    const actual = Variant.toDimensions(ModeEdit.toFlow(updated.model))
+    const actual = NumberlinkVariant.toDimensions(ModeEdit.toNumberlink(updated.model))
     expect(actual).toEqual(dimensionsNew)
   })
 
@@ -168,7 +171,7 @@ describe('ModeEdit', () => {
 
   test('ghost terminal should be visible when hovering over node', async () => {
     const f = await Fixture()
-    const emptyNode = Flow.randomEmptyNode(f.flow)
+    const emptyNode = Numberlink.randomEmptyNode(f.numberlink)
     if (!emptyNode) throw new Error('No empty node found')
     const nodeId = emptyNode.nodeId
 

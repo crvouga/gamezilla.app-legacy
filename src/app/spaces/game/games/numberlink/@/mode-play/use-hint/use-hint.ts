@@ -1,6 +1,6 @@
 import { Eff } from '~/@/eff'
 import { s } from '~/@/schema'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 import { GroupId } from '../../numberlink/group-id'
 import { NodeId } from '../../numberlink/node-id'
 import { Terminal } from '../../numberlink/terminal'
@@ -8,11 +8,11 @@ import { AlgoIsSolved } from '../../solutions/algo-is-solved/algo-is-solved'
 import { Solution } from '../../solutions/solution'
 import { SolutionHash } from '../../solutions/solution-hash/solution-hash'
 import { Solutions } from '../../solutions/solutions'
-import type { Variant } from '../../variant'
+import type { NumberlinkVariant } from '../../variant'
 import { TerminalFull } from '../../numberlink/terminal-full'
 
 export type Ctx = {
-  flow: Variant.Model
+  numberlink: NumberlinkVariant.Model
 }
 
 export const initCtx = (input: Ctx): Ctx => {
@@ -20,7 +20,7 @@ export const initCtx = (input: Ctx): Ctx => {
 }
 
 export const Model = s.obj({
-  pipesBySourceId: s.dict(NodeId, Flow.Pipe),
+  pipesBySourceId: s.dict(NodeId, Numberlink.Pipe),
   terminalsByGroupId: s.partialDict(GroupId, Terminal),
   usedHints: s.partialDict(GroupId, GroupId),
 })
@@ -38,7 +38,7 @@ export const init = (input: { ctx: Ctx }): Model => {
   return {
     pipesBySourceId: {},
     usedHints: {},
-    terminalsByGroupId: input.ctx.flow.terminalsByGroupId,
+    terminalsByGroupId: input.ctx.numberlink.terminalsByGroupId,
   }
 }
 
@@ -68,13 +68,13 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
     case 'user-clicked-use-hint': {
       if (!('solutions' in msg)) return { model: input.model }
 
-      const flow = toFlow(input.model, input.ctx.flow)
+      const numberlink = toNumberlink(input.model, input.ctx.numberlink)
 
-      const nextHintGroupId = toNextHintGroupId(flow)
+      const nextHintGroupId = toNextHintGroupId(numberlink)
 
       if (!nextHintGroupId) return { model: input.model }
 
-      const solutionHash = SolutionHash.init(flow)
+      const solutionHash = SolutionHash.init(numberlink)
 
       const solution = Solutions.selectOne(msg.solutions, solutionHash)
 
@@ -82,7 +82,7 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
 
       const solutionPipeline = Solution.toPipelineByGroupId(solution, nextHintGroupId)
 
-      const addedSolution = Flow.addPipeline(flow, solutionPipeline)
+      const addedSolution = Numberlink.addPipeline(numberlink, solutionPipeline)
 
       const modelNew: TModel = {
         ...input.model,
@@ -97,7 +97,7 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
         },
       }
 
-      const flowNew = toFlow(modelNew, input.ctx.flow)
+      const flowNew = toNumberlink(modelNew, input.ctx.numberlink)
 
       if (AlgoIsSolved.isSolved(flowNew)) {
         return {
@@ -118,16 +118,16 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
   }
 }
 
-export const toNextHintGroupId = (model: Flow.Model): GroupId | null => {
+export const toNextHintGroupId = (model: Numberlink.Model): GroupId | null => {
   for (const groupId of GroupId.ORDER) {
-    if (hasFullTerminalForGroupId(model, groupId) && !Flow.isTerminalConnectedWithPipes(model, groupId)) {
+    if (hasFullTerminalForGroupId(model, groupId) && !Numberlink.isTerminalConnectedWithPipes(model, groupId)) {
       return groupId
     }
   }
   return null
 }
 
-const hasFullTerminalForGroupId = (model: Flow.Model, groupId: GroupId): boolean => {
+const hasFullTerminalForGroupId = (model: Numberlink.Model, groupId: GroupId): boolean => {
   const terminal = model.terminalsByGroupId[groupId]
   if (!terminal) return false
   return TerminalFull.is(terminal)
@@ -153,9 +153,9 @@ export const toUsedHints = (
   return model.usedHints
 }
 
-export const toFlow = (model: Model, flow: Variant.Model): Variant.Model => {
+export const toNumberlink = (model: Model, numberlink: NumberlinkVariant.Model): NumberlinkVariant.Model => {
   return {
-    ...flow,
+    ...numberlink,
     pipesBySourceId: model.pipesBySourceId,
     terminalsByGroupId: model.terminalsByGroupId,
   }

@@ -60,7 +60,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
       if (input.modelSpace.screen.puzzleResult.t === 'not-found') return { model: input.model }
 
       const playCtx = ModePlay.initCtx({
-        flow: input.modelSpace.screen.puzzleResult.c.flow,
+        numberlink: input.modelSpace.screen.puzzleResult.c.numberlink,
         solutions: input.ctx.solutions,
       })
       const modePlay = input.modelSpace.screen.modePlay ?? ModePlay.init({ ctx: playCtx })
@@ -75,11 +75,11 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   if (input.modelSpace.screen.t !== 'screen-play-puzzle') return Sub.none()
   if (input.modelSpace.screen.puzzleResult.t !== 'got') return Sub.none()
-  const flow = input.modelSpace.screen.puzzleResult.c.flow
+  const numberlink = input.modelSpace.screen.puzzleResult.c.numberlink
   const play = input.modelSpace.screen.modePlay
   if (!play) return Sub.none()
   return ModePlayFrontend.subscriptions(
-    { model: play, ctx: { ...input.ctx, flow } },
+    { model: play, ctx: { ...input.ctx, numberlink: numberlink } },
     (c): MsgFrontend => ({ t: 'got-msg-out', c }),
   )
 }
@@ -147,10 +147,12 @@ const ViewHosting: FrontendModule['View'] = (input) => {
           {puzzle.t === 'got' ? (
             <ModePlayFrontend.View
               key={puzzle.c.id}
-              flow={puzzle.c.flow}
+              numberlink={puzzle.c.numberlink}
               model={
                 modePlay ??
-                ModePlay.init({ ctx: ModePlay.initCtx({ flow: puzzle.c.flow, solutions: input.ctx.solutions }) })
+                ModePlay.init({
+                  ctx: ModePlay.initCtx({ numberlink: puzzle.c.numberlink, solutions: input.ctx.solutions }),
+                })
               }
               dispatch={(c) =>
                 input.dispatch({
@@ -198,7 +200,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
             ...(puzzle.t === 'got' && modePlay
               ? ModePlayFrontend.viewActions({
                   model: modePlay,
-                  ctx: ModePlay.initCtx({ ...input.ctx, flow: puzzle.c.flow }),
+                  ctx: ModePlay.initCtx({ ...input.ctx, numberlink: puzzle.c.numberlink }),
                   dispatchCmd: (c) => input.dispatch({ t: 'got-msg-out', c }),
                   dispatch: (c) =>
                     input.dispatch({
@@ -241,10 +243,12 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
               <ModePlayFrontend.View
                 disabled
                 key={puzzle.c.id}
-                flow={puzzle.c.flow}
+                numberlink={puzzle.c.numberlink}
                 model={
                   modePlay ??
-                  ModePlay.init({ ctx: ModePlay.initCtx({ flow: puzzle.c.flow, solutions: input.ctx.solutions }) })
+                  ModePlay.init({
+                    ctx: ModePlay.initCtx({ numberlink: puzzle.c.numberlink, solutions: input.ctx.solutions }),
+                  })
                 }
                 dispatch={() => {}}
                 showSolvedAnimation

@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { pipe } from '~/@/function/pipe'
 import { loggerNoop } from '~/@/logger/impl-noop'
 import { UseHint } from '.'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 import { AlgoIsSolved } from '../../solutions/algo-is-solved/algo-is-solved'
 import { Solutions } from '../../solutions/solutions'
 import { VariantGridShorthand } from '../../variant/grid'
@@ -17,13 +17,13 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
         },
       },
     ])
-    const flow = UseHint.toFlow(after.model, f.ctx.flow)
+    const numberlink = UseHint.toNumberlink(after.model, f.ctx.numberlink)
     for (const groupId of UseHint.toShowingHintGroupIds(after.model)) {
-      expect(Flow.isTerminalConnectedWithPipes(flow, groupId)).toBe(true)
+      expect(Numberlink.isTerminalConnectedWithPipes(numberlink, groupId)).toBe(true)
     }
   })
 
@@ -40,18 +40,18 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
         },
       },
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
         },
       },
     ])
-    const flow = UseHint.toFlow(output.model, f.ctx.flow)
-    expect(AlgoIsSolved.isSolved(flow)).toBe(true)
+    const numberlink = UseHint.toNumberlink(output.model, f.ctx.numberlink)
+    expect(AlgoIsSolved.isSolved(numberlink)).toBe(true)
   })
 
   test('output use hint event', async () => {
@@ -67,7 +67,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
         },
       },
     ])
@@ -87,19 +87,19 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
         },
       },
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
         },
       },
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
         },
       },
     ])
@@ -121,14 +121,14 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
         },
       },
     ])
 
-    const derived = UseHint.toFlow(output.model, f.ctx.flow)
+    const derived = UseHint.toNumberlink(output.model, f.ctx.numberlink)
 
-    expect(Flow.hasMultipleDeadEndPipelines(derived)).toBe(false)
+    expect(Numberlink.hasMultipleDeadEndPipelines(derived)).toBe(false)
   })
 
   it('should work even with flipped terminal', async () => {
@@ -140,8 +140,8 @@ describe(import.meta.file, () => {
       ]),
     })
 
-    const terminal = Flow.toTerminalByGroupId(f.ctx.flow, 'A')
-    const flipped = Flow.flipTerminal(f.ctx.flow, terminal)
+    const terminal = Numberlink.toTerminalByGroupId(f.ctx.numberlink, 'A')
+    const flipped = Numberlink.flipTerminal(f.ctx.numberlink, terminal)
 
     const output = f.update(
       {
@@ -154,15 +154,15 @@ describe(import.meta.file, () => {
         {
           msg: {
             t: 'user-clicked-use-hint',
-            solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
+            solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
           },
         },
       ],
     )
 
-    const derived = UseHint.toFlow(output.model, f.ctx.flow)
+    const derived = UseHint.toNumberlink(output.model, f.ctx.numberlink)
 
-    const pipeline = Flow.toPipelineFromGroupId(derived, 'A')
+    const pipeline = Numberlink.toPipelineFromGroupId(derived, 'A')
 
     expect(pipeline.length > 0).toBe(true)
   })
@@ -173,7 +173,7 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
         },
       },
     ])
@@ -199,11 +199,11 @@ describe(import.meta.file, () => {
         },
       },
     ])
-    const after = UseHint.toFlow(updated.model, f.ctx.flow)
-    expect(Flow.toPipelineFromGroupId(before, 'A').length).toEqual(0)
-    expect(Flow.toPipelineFromGroupId(before, 'B').length).toEqual(6)
-    expect(Flow.toPipelineFromGroupId(after, 'A').length).toEqual(4)
-    expect(Flow.toPipelineFromGroupId(after, 'B').length).toEqual(0)
+    const after = UseHint.toNumberlink(updated.model, f.ctx.numberlink)
+    expect(Numberlink.toPipelineFromGroupId(before, 'A').length).toEqual(0)
+    expect(Numberlink.toPipelineFromGroupId(before, 'B').length).toEqual(6)
+    expect(Numberlink.toPipelineFromGroupId(after, 'A').length).toEqual(4)
+    expect(Numberlink.toPipelineFromGroupId(after, 'B').length).toEqual(0)
   })
 
   it('should NOT branch pipelines after using hint', async () => {
@@ -230,12 +230,12 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
         },
       },
     ])
-    const after = UseHint.toFlow(updated.model, f.ctx.flow)
-    expect(Flow.hasBranchingPipelines(after)).toBe(false)
+    const after = UseHint.toNumberlink(updated.model, f.ctx.numberlink)
+    expect(Numberlink.hasBranchingPipelines(after)).toBe(false)
   })
 
   it('should never change the positions of the terminals when using a hint', async () => {
@@ -247,14 +247,14 @@ describe(import.meta.file, () => {
       ]),
     })
 
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       [' ', ' ', 'A'],
       [' ', ' ', ' '],
       ['A', ' ', ' '],
     ])
     const init = UseHint.init({
       ctx: UseHint.initCtx({
-        flow,
+        numberlink,
       }),
     })
 
@@ -262,16 +262,16 @@ describe(import.meta.file, () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [flow], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [numberlink], logger: loggerNoop }),
         },
       },
     ])
 
-    const before = UseHint.toFlow(init, f.ctx.flow)
+    const before = UseHint.toNumberlink(init, f.ctx.numberlink)
 
-    const after = UseHint.toFlow(output.model, f.ctx.flow)
+    const after = UseHint.toNumberlink(output.model, f.ctx.numberlink)
 
-    expect(Flow.toTerminals(before)).toEqual(Flow.toTerminals(after))
+    expect(Numberlink.toTerminals(before)).toEqual(Numberlink.toTerminals(after))
   })
 
   it('should update terminal orientation if needed', async () => {
@@ -281,7 +281,7 @@ describe(import.meta.file, () => {
       ['a', 'a', 'A'],
     ])
 
-    const ctxFlow = pipe(solution, Flow.removeAllPipelines, Flow.flipAllTerminals)
+    const ctxFlow = pipe(solution, Numberlink.removeAllPipelines, Numberlink.flipAllTerminals)
 
     const f = await Fixture({ ctxFlow: ctxFlow })
 
@@ -294,10 +294,10 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const flowNew = UseHint.toFlow(output.model, ctxFlow)
+    const flowNew = UseHint.toNumberlink(output.model, ctxFlow)
 
-    const expected = Flow.toPipelineFromGroupId(solution, 'A')
-    const actual = Flow.toPipelineFromGroupId(flowNew, 'A')
+    const expected = Numberlink.toPipelineFromGroupId(solution, 'A')
+    const actual = Numberlink.toPipelineFromGroupId(flowNew, 'A')
 
     expect(expected).toEqual(actual)
   })
@@ -311,7 +311,7 @@ describe(import.meta.file, () => {
       ]),
     })
 
-    const solutions = await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop })
+    const solutions = await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop })
 
     const output = f.update(f.init, [
       { msg: { t: 'user-clicked-use-hint', solutions } },

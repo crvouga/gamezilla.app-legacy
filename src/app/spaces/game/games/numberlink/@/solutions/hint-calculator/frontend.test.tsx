@@ -5,7 +5,7 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
 import { ShowWarningSmall } from '~/app/@/frontend/show-warning-small'
-import { FixtureFlowFrontend } from '../../frontend/fixture'
+import { FixtureNumberlinkFrontend } from '../../frontend/fixture'
 import { VariantGridShorthand } from '../../variant/grid'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
@@ -13,21 +13,21 @@ import { HintCalculatorFrontend } from './frontend'
 import { GotHintCalculatorMsg } from './got-hint-calculator-msg'
 
 export const Fixture = async () => {
-  const f = await FixtureFlowFrontend()
+  const f = await FixtureNumberlinkFrontend()
 
-  const flow = VariantGridShorthand.toGrid([
+  const numberlink = VariantGridShorthand.toGrid([
     ['A', ' ', ' '],
     [' ', ' ', ' '],
     [' ', ' ', 'A'],
   ])
 
-  const solutions = await Solutions.find({ logger: f.ctx.logger, models: [flow] })
-  const hash = SolutionHash.init(flow)
+  const solutions = await Solutions.find({ logger: f.ctx.logger, models: [numberlink] })
+  const hash = SolutionHash.init(numberlink)
   const solution = Solutions.selectOne(solutions, hash)
   if (!solution) throw new Error('No solution found')
   return {
     ...f,
-    flow,
+    numberlink,
     hash,
     solutions,
     solution,
@@ -111,7 +111,7 @@ describe('HintCalculatorFrontend', () => {
     const after = HintCalculatorFrontend.update({
       ...f,
       model: before.model,
-      msg: { t: 'clicked-find-solutions', flow: f.flow },
+      msg: { t: 'clicked-find-solutions', numberlink: f.numberlink },
     })
     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(true)
     expect(PlaySoundCmd.did(after)).toBe(true)
@@ -124,12 +124,12 @@ describe('HintCalculatorFrontend', () => {
     const before = HintCalculatorFrontend.update({
       ...f,
       model: HintCalculatorFrontend.init,
-      msg: { t: 'clicked-find-solutions', flow: f.flow },
+      msg: { t: 'clicked-find-solutions', numberlink: f.numberlink },
     })
     const after = HintCalculatorFrontend.update({
       ...f,
       model: before.model,
-      msg: { t: 'found-solution', flow: f.flow, found: Ok({ solutions: f.solutions }) },
+      msg: { t: 'found-solution', numberlink: f.numberlink, found: Ok({ solutions: f.solutions }) },
     })
     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
@@ -142,12 +142,12 @@ describe('HintCalculatorFrontend', () => {
     const before = HintCalculatorFrontend.update({
       ...f,
       model: HintCalculatorFrontend.init,
-      msg: { t: 'clicked-find-solutions', flow: f.flow },
+      msg: { t: 'clicked-find-solutions', numberlink: f.numberlink },
     })
     const after = HintCalculatorFrontend.update({
       ...f,
       model: before.model,
-      msg: { t: 'found-solution', flow: f.flow, found: Ok({ solutions: Solutions.init }) },
+      msg: { t: 'found-solution', numberlink: f.numberlink, found: Ok({ solutions: Solutions.init }) },
     })
     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
@@ -159,12 +159,12 @@ describe('HintCalculatorFrontend', () => {
     const before = HintCalculatorFrontend.update({
       ...f,
       model: HintCalculatorFrontend.init,
-      msg: { t: 'clicked-find-solutions', flow: f.flow },
+      msg: { t: 'clicked-find-solutions', numberlink: f.numberlink },
     })
     const after = HintCalculatorFrontend.update({
       ...f,
       model: before.model,
-      msg: { t: 'found-solution', flow: f.flow, found: Err('some error') },
+      msg: { t: 'found-solution', numberlink: f.numberlink, found: Err('some error') },
     })
     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
     expect(after.model.open).toBe(null)
@@ -182,7 +182,7 @@ describe('HintCalculatorFrontend', () => {
     const after = HintCalculatorFrontend.update({
       ...f,
       model: before.model,
-      msg: { t: 'found-solution', flow: f.flow, found: Ok({ solutions: f.solutions }) },
+      msg: { t: 'found-solution', numberlink: f.numberlink, found: Ok({ solutions: f.solutions }) },
     })
     expect(before.model.open).toBe('find-solutions-confirmation')
     expect(after.model.open).toBe(null)

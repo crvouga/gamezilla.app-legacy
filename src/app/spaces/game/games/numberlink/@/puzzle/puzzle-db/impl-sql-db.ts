@@ -85,7 +85,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           vars: {
             id: puzzle.id,
             name: puzzle.name,
-            flow: Sql.json(puzzle.flow),
+            flow: Sql.json(puzzle.numberlink),
             lastUpdatedAt: puzzle.lastUpdatedAt,
             lastUpdatedBy: puzzle.lastUpdatedBy,
             solutions: Sql.json(puzzle.solutions),
@@ -126,7 +126,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         vars: {
           id: puzzle.id,
           name: puzzle.name,
-          flow: Sql.json(puzzle.flow),
+          flow: Sql.json(puzzle.numberlink),
           createdAt: puzzle.createdAt,
           createdBy: puzzle.createdBy,
           lastUpdatedAt: puzzle.lastUpdatedAt,

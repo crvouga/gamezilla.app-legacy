@@ -1,5 +1,5 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { Flow } from '../../../numberlink'
+import { Numberlink } from '../../../numberlink'
 import { GroupId } from '../../../numberlink/group-id'
 import { NodeId } from '../../../numberlink/node-id'
 import { Terminal as FlowTerminal } from '../../../numberlink/terminal'
@@ -251,7 +251,7 @@ const toPipesBySourceIdForTerminalList = (input: {
 
     // Special case for terminal with pipe.
     if (isTerminalWithPipe(currentElement)) {
-      let adjacentTerminalNode: Flow.Node | null = null
+      let adjacentTerminalNode: Numberlink.Node | null = null
       for (const delta of DELTAS) {
         const adjacentPosition = {
           x: currentNode.x + delta.x,
@@ -285,7 +285,7 @@ const toPipesBySourceIdForTerminalList = (input: {
       }
 
       if (adjacentTerminalNode) {
-        const edgeId = Flow.toEdgeId({
+        const edgeId = Numberlink.toEdgeId({
           sourceId: currentNodeId,
           targetId: adjacentTerminalNode.nodeId,
         })
@@ -341,7 +341,7 @@ const toPipesBySourceIdForTerminalList = (input: {
     }
 
     for (const { adjacentNodeId, adjacentElement } of validAdjacent) {
-      const edgeId = Flow.toEdgeId({
+      const edgeId = Numberlink.toEdgeId({
         sourceId: currentNodeId,
         targetId: adjacentNodeId,
       })
@@ -419,10 +419,10 @@ const toPipesBySourceIdList = (
   return [{}]
 }
 
-const toTotalPipelineLength = (model: Flow.Model): number => {
+const toTotalPipelineLength = (model: Numberlink.Model): number => {
   let total = 0
-  for (const terminal of Flow.yieldTerminals(model)) {
-    for (const _ of Flow.yieldPipeline(model, terminal.startId)) {
+  for (const terminal of Numberlink.yieldTerminals(model)) {
+    for (const _ of Numberlink.yieldPipeline(model, terminal.startId)) {
       total += 1
     }
   }
@@ -520,7 +520,7 @@ export const toGrids = (model: Model): NonEmpty<VariantGrid.Model> => {
     }),
   )
 
-  const flippedGrid = Flow.flipAllTerminals(grid)
+  const flippedGrid = Numberlink.flipAllTerminals(grid)
   const flippedSolutions = NonEmpty.map(
     toPipesBySourceIdList(model, flippedGrid),
     (pipesBySourceId): VariantGrid.Model => ({
@@ -532,7 +532,7 @@ export const toGrids = (model: Model): NonEmpty<VariantGrid.Model> => {
   const allGrid = NonEmpty.concat(solutions, flippedSolutions)
 
   const maxGrids = maxAllBy(allGrid, toTotalPipelineLength)
-  const deduplicated = uniqueWith(maxGrids, Flow.isSame)
+  const deduplicated = uniqueWith(maxGrids, Numberlink.isSame)
 
   if (NonEmpty.is(deduplicated)) {
     return deduplicated
@@ -555,7 +555,7 @@ export const fromGrid = (grid: VariantGrid.Model): Model => {
     shorthand.push(row)
   }
 
-  for (const terminal of Flow.toTerminals(grid)) {
+  for (const terminal of Numberlink.toTerminals(grid)) {
     const start = grid.positions[terminal.startId]
     if (start) {
       const row = shorthand[start.y]
@@ -574,7 +574,7 @@ export const fromGrid = (grid: VariantGrid.Model): Model => {
     }
   }
 
-  for (const pipelines of Flow.yieldPipelines(grid)) {
+  for (const pipelines of Numberlink.yieldPipelines(grid)) {
     for (const pipe of pipelines) {
       const edge = grid.edges[pipe.edgeId]
 
@@ -582,8 +582,8 @@ export const fromGrid = (grid: VariantGrid.Model): Model => {
         continue
       }
 
-      const groupId = Flow.toGroupId(grid, edge.sourceId)
-      const terminal = groupId ? Flow.toTerminalByGroupId(grid, groupId) : null
+      const groupId = Numberlink.toGroupId(grid, edge.sourceId)
+      const terminal = groupId ? Numberlink.toTerminalByGroupId(grid, groupId) : null
       const isSourceTerminal = terminal?.startId === edge.sourceId || terminal?.endId === edge.sourceId
       const isTargetTerminal = terminal?.startId === edge.targetId || terminal?.endId === edge.targetId
 

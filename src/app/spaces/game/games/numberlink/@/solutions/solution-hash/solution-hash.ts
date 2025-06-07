@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 
 const schema = s.brand(s.str(), 'SolutionHash')
 
@@ -10,9 +10,9 @@ const schema = s.brand(s.str(), 'SolutionHash')
  */
 export type SolutionHash = s.Infer<typeof schema>
 
-const init = (model: Flow.Model): SolutionHash => {
-  const terminalHash = model.terminalHash ?? Flow.deriveTerminalHash(model.terminalsByGroupId)
-  const edgeHash = model.edgeHash ?? Flow.deriveEdgeHash(model.edges)
+const init = (model: Numberlink.Model): SolutionHash => {
+  const terminalHash = model.terminalHash ?? Numberlink.deriveTerminalHash(model.terminalsByGroupId)
+  const edgeHash = model.edgeHash ?? Numberlink.deriveEdgeHash(model.edges)
   const hash = `${terminalHash}-${edgeHash}`
   if (is(hash)) return hash
 

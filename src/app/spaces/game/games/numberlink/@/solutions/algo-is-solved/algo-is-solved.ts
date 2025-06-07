@@ -1,11 +1,11 @@
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 
-const isSolved = (model: Flow.Model): boolean => {
-  for (const terminal of Flow.yieldTerminals(model)) {
+const isSolved = (model: Numberlink.Model): boolean => {
+  for (const terminal of Numberlink.yieldTerminals(model)) {
     if (!terminal.endId) {
       continue
     }
-    if (!Flow.isConnectedWithPipes(model, terminal.startId, terminal.endId)) {
+    if (!Numberlink.isConnectedWithPipes(model, terminal.startId, terminal.endId)) {
       return false
     }
   }

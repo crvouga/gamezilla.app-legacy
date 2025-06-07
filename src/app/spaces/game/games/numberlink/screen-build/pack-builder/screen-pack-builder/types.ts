@@ -3,7 +3,7 @@ import { Result } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 import { GameBackendModule } from '../../../../@/architecture/game-backend-v2'
 import { GameFrontendModule } from '../../../../@/architecture/game-frontend-v2'
-import { FlowBackendCtx } from '../../../@/backend/ctx'
+import { NumberlinkBackendCtx } from '../../../@/backend/ctx'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { ModePlay } from '../../../@/mode-play'
 import { Pack } from '../../../@/pack/pack'
@@ -160,7 +160,7 @@ export type BackendModule = GameBackendModule<{
   MsgToBackend: MsgToBackend
   MsgSpace: MsgSpace
   ModelSpace: ModelSpace
-  Ctx: FlowBackendCtx
+  Ctx: NumberlinkBackendCtx
   Msg: MsgBackend
   Deps: null
 }>

@@ -1,9 +1,9 @@
 import { s } from '~/@/schema'
-import { Flow } from '../numberlink'
+import { Numberlink } from '../numberlink'
 import { Pipe } from '../numberlink/numberlink'
 import { GroupId } from '../numberlink/group-id'
 
-const schema = Flow.Model
+const schema = Numberlink.Model
 
 export type Solution = s.Infer<typeof schema>
 
@@ -11,7 +11,7 @@ const toPipelineByGroupId = (solution: Solution, groupId: GroupId): Pipe[] => {
   return Object.values(solution.pipesBySourceId).filter((pipe) => pipe.groupId === groupId)
 }
 
-const fromFlow = (model: Flow.Model): Solution => {
+const fromNumberlink = (model: Numberlink.Model): Solution => {
   return {
     edgeHash: model.edgeHash,
     nodeHash: model.nodeHash,
@@ -24,7 +24,7 @@ const fromFlow = (model: Flow.Model): Solution => {
   }
 }
 
-const toSolvedFlow = (solution: Solution): Flow.Model => {
+const toSolvedNumberlink = (solution: Solution): Numberlink.Model => {
   return {
     ...solution,
     pipesBySourceId: solution.pipesBySourceId,
@@ -35,6 +35,6 @@ const toSolvedFlow = (solution: Solution): Flow.Model => {
 export const Solution = {
   ...schema,
   toPipelineByGroupId,
-  fromFlow,
-  toSolvedFlow,
+  fromNumberlink,
+  toSolvedNumberlink,
 }

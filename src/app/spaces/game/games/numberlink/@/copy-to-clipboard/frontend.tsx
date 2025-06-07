@@ -6,7 +6,7 @@ import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
-import { Variant } from '../variant'
+import { NumberlinkVariant } from '../variant'
 import { VariantGridShorthand } from '../variant/grid'
 
 export const MsgFrontend = s.or(
@@ -23,20 +23,20 @@ const update = <TModel,>(input: {
   msg: MsgFrontend | { t: string & {} }
   model: TModel
   ctx: AppFrontendCtx
-  flow: Variant.Model
+  numberlink: NumberlinkVariant.Model
 }): {
   model: TModel
   msgOut?: unknown[]
 } => {
   switch (input.msg?.t) {
     case 'user-clicked-copy-to-clipboard': {
-      if (input.flow.t !== 'grid') {
+      if (input.numberlink.t !== 'grid') {
         return {
           model: input.model,
         }
       }
 
-      const shorthand = VariantGridShorthand.fromGrid(input.flow)
+      const shorthand = VariantGridShorthand.fromGrid(input.numberlink)
 
       const encoded = JSON.stringify(shorthand)
 

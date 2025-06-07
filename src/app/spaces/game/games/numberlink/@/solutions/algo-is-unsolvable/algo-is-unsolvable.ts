@@ -1,11 +1,11 @@
-import { Flow } from '../../numberlink'
-import { Variant } from '../../variant'
+import { Numberlink } from '../../numberlink'
+import { NumberlinkVariant } from '../../variant'
 import { NodeId } from '../../numberlink/node-id'
 import { Terminal } from '../../numberlink/terminal'
 import { GroupId } from '../../numberlink/group-id'
 import { TerminalFull } from '../../numberlink/terminal-full'
 
-const isSplittingTerminal = (model: Variant.Model, terminal: Terminal): boolean => {
+const isSplittingTerminal = (model: NumberlinkVariant.Model, terminal: Terminal): boolean => {
   if (!terminal.endId) {
     return false
   }
@@ -23,7 +23,7 @@ const isSplittingTerminal = (model: Variant.Model, terminal: Terminal): boolean 
 
     const pipe = model.pipesBySourceId[nodeId]
     if (pipe && pipe.groupId === terminal.groupId) {
-      const targetId = Flow.toTargetId(model, pipe.edgeId)
+      const targetId = Numberlink.toTargetId(model, pipe.edgeId)
       if (targetId && targetId !== terminal.endId && !connected.has(targetId)) {
         stack.push(targetId)
       }
@@ -31,7 +31,7 @@ const isSplittingTerminal = (model: Variant.Model, terminal: Terminal): boolean 
 
     for (const [sourceId, sourcePipe] of Object.entries(model.pipesBySourceId)) {
       if (sourcePipe.groupId === terminal.groupId) {
-        const targetId = Flow.toTargetId(model, sourcePipe.edgeId)
+        const targetId = Numberlink.toTargetId(model, sourcePipe.edgeId)
         if (targetId === nodeId && !connected.has(sourceId as NodeId)) {
           stack.push(sourceId as NodeId)
         }
@@ -41,7 +41,7 @@ const isSplittingTerminal = (model: Variant.Model, terminal: Terminal): boolean 
 
   if (connected.size === nodeIds.size) return false
 
-  const otherTerminals = Flow.toTerminals(model).filter((t) => t.groupId !== terminal.groupId)
+  const otherTerminals = Numberlink.toTerminals(model).filter((t) => t.groupId !== terminal.groupId)
   for (const otherTerminal of otherTerminals) {
     if (!otherTerminal.endId) {
       continue
@@ -56,8 +56,8 @@ const isSplittingTerminal = (model: Variant.Model, terminal: Terminal): boolean 
   return false
 }
 
-const isUnsolvableDueToSplittingTerminal = (model: Variant.Model): boolean => {
-  const terminals = Flow.toTerminals(model)
+const isUnsolvableDueToSplittingTerminal = (model: NumberlinkVariant.Model): boolean => {
+  const terminals = Numberlink.toTerminals(model)
   for (const terminal of terminals) {
     if (isSplittingTerminal(model, terminal)) {
       return true
@@ -69,25 +69,25 @@ const isUnsolvableDueToSplittingTerminal = (model: Variant.Model): boolean => {
 /**
  * Returns true when a terminal
  */
-const hasSmotheredTerminal = (model: Variant.Model): boolean => {
-  return Array.from(Flow.yieldFullTerminals(model)).some((terminal) => isSmotheredTerminal(model, terminal))
+const hasSmotheredTerminal = (model: NumberlinkVariant.Model): boolean => {
+  return Array.from(Numberlink.yieldFullTerminals(model)).some((terminal) => isSmotheredTerminal(model, terminal))
 }
 
-const isSmotheredTerminal = (model: Variant.Model, terminal: TerminalFull): boolean => {
+const isSmotheredTerminal = (model: NumberlinkVariant.Model, terminal: TerminalFull): boolean => {
   return (
     isSmotheredTerminalNode(model, terminal.groupId, terminal.startId) ||
     isSmotheredTerminalNode(model, terminal.groupId, terminal.endId)
   )
 }
 
-const isSmotheredTerminalNode = (model: Variant.Model, groupId: GroupId, nodeId: NodeId): boolean => {
-  return Array.from(Flow.yieldAdjacentNodes(model, nodeId)).every((adjacentNodeId) => {
-    const adjacentNodeGroup = Flow.toGroupId(model, adjacentNodeId)
+const isSmotheredTerminalNode = (model: NumberlinkVariant.Model, groupId: GroupId, nodeId: NodeId): boolean => {
+  return Array.from(Numberlink.yieldAdjacentNodes(model, nodeId)).every((adjacentNodeId) => {
+    const adjacentNodeGroup = Numberlink.toGroupId(model, adjacentNodeId)
     return adjacentNodeGroup !== groupId && adjacentNodeGroup !== null
   })
 }
 
-export const isUnsolvable = (model: Variant.Model): boolean => {
+export const isUnsolvable = (model: NumberlinkVariant.Model): boolean => {
   if (isUnsolvableDueToSplittingTerminal(model)) {
     return true
   }

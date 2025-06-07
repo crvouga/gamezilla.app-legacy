@@ -13,7 +13,7 @@ import { ModeEdit } from '.'
 import { GroupId } from '../numberlink/group-id'
 import { BoardLayout } from '../ui/board-layout'
 import { Color } from '../ui/color'
-import { VariantBoard, VariantDimensions } from '../variant'
+import { NumberlinkVariantBoard, NumberlinkVariantDimensions } from '../variant'
 
 const View = (input: {
   ctx: AppFrontendCtx
@@ -31,8 +31,8 @@ const View = (input: {
         <BoardLayout>
           <ViewStatus {...input} />
 
-          <VariantBoard.View
-            model={ModeEdit.toFlow(input.model)}
+          <NumberlinkVariantBoard.View
+            model={ModeEdit.toNumberlink(input.model)}
             onDraggedOver={(nodeId) => input.dispatch({ t: 'dragged-over', nodeId })}
             onPressDown={(nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId })}
             onPressUp={(nodeId) => input.dispatch({ t: 'pressed-up-node', nodeId })}
@@ -102,7 +102,7 @@ const View = (input: {
                   body={{
                     render: () =>
                       input.model.opened?.draftDimensions && (
-                        <VariantDimensions.ViewForm
+                        <NumberlinkVariantDimensions.ViewForm
                           ctx={input.ctx}
                           form={input.model.opened?.draftDimensions}
                           onInput={(dimensions) => input.dispatch({ t: 'dimensions-form.inputted', dimensions })}

@@ -1,7 +1,7 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { withEventMeta, WithEventMeta } from '~/@/event-sourced/event'
 import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
-import { FlowFrontend } from '../../frontend'
+import { NumberlinkFrontend } from '../../frontend'
 import { NumberlinkSpace } from '../../space'
 import { ModelSpace, MsgFrontend, MsgSpace } from '../../types'
 import { PackDb } from '../pack/pack-db'
@@ -14,7 +14,7 @@ import { SolutionsDb } from '../solutions/solutions-db/impl'
 import { SolutionsLoaderTypes } from '../solutions/solutions-loader'
 import type { FlowFrontendCtx } from './ctx'
 
-export const FixtureFlowFrontend = async () => {
+export const FixtureNumberlinkFrontend = async () => {
   const f = await FixtureSpacesFrontend()
 
   const ctx: FlowFrontendCtx = {
@@ -36,14 +36,14 @@ export const FixtureFlowFrontend = async () => {
     msgSpace?: WithEventMeta<MsgSpace> | null
   }
 
-  type Output = ReturnType<typeof FlowFrontend.update>
+  type Output = ReturnType<typeof NumberlinkFrontend.update>
 
   const updates = (initial: Output, inputs: Input[]): NonEmpty<Output> => {
     const outputs: NonEmpty<Output> = [initial]
     for (const input of inputs) {
       const lastOutput = NonEmpty.last(outputs)
 
-      const output = FlowFrontend.update({
+      const output = NumberlinkFrontend.update({
         ctx: input.ctx ?? ctx,
         model: lastOutput.model,
         msg: input.msg,
@@ -72,7 +72,7 @@ export const FixtureFlowFrontend = async () => {
   }
 
   const initial = {
-    model: FlowFrontend.init,
+    model: NumberlinkFrontend.init,
   }
 
   return {

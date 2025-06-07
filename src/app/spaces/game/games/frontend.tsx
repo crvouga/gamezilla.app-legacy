@@ -2,7 +2,7 @@ import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/frontend'
-import { FlowFrontend } from './numberlink/frontend'
+import { NumberlinkFrontend } from './numberlink/frontend'
 import type { FrontendModule, MsgFrontend } from './types'
 
 //
@@ -25,7 +25,7 @@ const init = (gameName: GameName): FrontendModule['init'] => {
     case 'numberlink': {
       return {
         t: 'numberlink',
-        c: FlowFrontend.init,
+        c: NumberlinkFrontend.init,
       }
     }
 
@@ -64,10 +64,10 @@ const update: FrontendModule['update'] = (input) => {
     }
 
     case 'numberlink': {
-      const updated = FlowFrontend.update({
+      const updated = NumberlinkFrontend.update({
         ctx: input.ctx,
         modelSpace: input.modelSpace.c,
-        model: input.model?.t === 'numberlink' ? input.model.c : FlowFrontend.init,
+        model: input.model?.t === 'numberlink' ? input.model.c : NumberlinkFrontend.init,
         msgIn: input.msgIn,
         msgSpace: input.msgSpace?.t === 'numberlink' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
         msg: input.msg?.t === 'numberlink' ? input.msg.c : null,
@@ -106,10 +106,10 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 
     case 'numberlink': {
       return Sub.map(
-        FlowFrontend.subscriptions({
+        NumberlinkFrontend.subscriptions({
           ctx: input.ctx,
           modelSpace: input.modelSpace.c,
-          model: input.model.t === 'numberlink' ? input.model.c : FlowFrontend.init,
+          model: input.model.t === 'numberlink' ? input.model.c : NumberlinkFrontend.init,
         }),
         (c): MsgFrontend => ({ t: 'numberlink', c }),
       )
@@ -140,11 +140,11 @@ const View: FrontendModule['View'] = (input) => {
 
     case 'numberlink': {
       return (
-        <FlowFrontend.View
+        <NumberlinkFrontend.View
           ctx={input.ctx}
           dispatch={(c) => input.dispatch({ t: 'numberlink', c })}
           modelSpace={input.modelSpace.c}
-          model={input.model.t === 'numberlink' ? input.model.c : FlowFrontend.init}
+          model={input.model.t === 'numberlink' ? input.model.c : NumberlinkFrontend.init}
         />
       )
     }

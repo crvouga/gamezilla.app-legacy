@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { pipe } from '~/@/function/pipe'
-import { Flow } from '.'
+import { Numberlink } from '.'
 import { VariantGrid, VariantGridShorthand } from '../variant/grid'
 import { Model } from './numberlink'
 import { NodeId } from './node-id'
@@ -12,7 +12,7 @@ describe(import.meta.file, () => {
       ['a', 'A'],
     ])
     expect(
-      Flow.isConnectedWithPipes(grid, VariantGrid.toNodeId({ x: 0, y: 0 }), VariantGrid.toNodeId({ x: 1, y: 1 })),
+      Numberlink.isConnectedWithPipes(grid, VariantGrid.toNodeId({ x: 0, y: 0 }), VariantGrid.toNodeId({ x: 1, y: 1 })),
     ).toBe(true)
   })
 
@@ -24,7 +24,7 @@ describe(import.meta.file, () => {
     ])
     const start = VariantGrid.toNodeId({ x: 0, y: 0 })
     const end = VariantGrid.toNodeId({ x: 2, y: 2 })
-    const isConnected = Flow.isConnectedWithPipes(grid, start, end)
+    const isConnected = Numberlink.isConnectedWithPipes(grid, start, end)
     expect(isConnected).toBe(true)
   })
 
@@ -44,19 +44,19 @@ describe(import.meta.file, () => {
       y: 0,
     })
 
-    const gridWithCycles: Flow.Model = {
+    const gridWithCycles: Numberlink.Model = {
       ...grid,
       pipesBySourceId: {
         ...grid.pipesBySourceId,
         [node3]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: node3,
             targetId: node2,
           }),
           groupId: 'A',
         },
         [node2]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: node2,
             targetId: node1,
           }),
@@ -65,7 +65,7 @@ describe(import.meta.file, () => {
       },
     }
 
-    const isConnected = Flow.isConnectedWithPipes(gridWithCycles, node1, node3)
+    const isConnected = Numberlink.isConnectedWithPipes(gridWithCycles, node1, node3)
 
     expect(isConnected).toBe(true)
   })
@@ -90,7 +90,7 @@ describe(import.meta.file, () => {
       },
     }
 
-    const actual = Flow.hasBranchingPipelines(grid)
+    const actual = Numberlink.hasBranchingPipelines(grid)
     expect(actual).toBe(true)
   })
 
@@ -100,7 +100,7 @@ describe(import.meta.file, () => {
       ['a', ' ', ' '],
       [' ', ' ', 'A'],
     ])
-    expect(Flow.hasBranchingPipelines(grid)).toBe(false)
+    expect(Numberlink.hasBranchingPipelines(grid)).toBe(false)
   })
 
   test('multiple dead ends detection', async () => {
@@ -123,7 +123,7 @@ describe(import.meta.file, () => {
         ...solution.pipesBySourceId,
       },
     }
-    expect(Flow.hasMultipleDeadEndPipelines(multipleDeadEnds)).toBe(true)
+    expect(Numberlink.hasMultipleDeadEndPipelines(multipleDeadEnds)).toBe(true)
   })
 
   test('multiple dead ends false positive', async () => {
@@ -132,7 +132,7 @@ describe(import.meta.file, () => {
       ['a', ' ', ' '],
       ['a', ' ', 'A'],
     ])
-    expect(Flow.hasMultipleDeadEndPipelines(grid)).toBe(false)
+    expect(Numberlink.hasMultipleDeadEndPipelines(grid)).toBe(false)
   })
 
   test('add pipeline', async () => {
@@ -146,9 +146,9 @@ describe(import.meta.file, () => {
       ['a', ' ', ' '],
       ['a', 'a', 'A'],
     ])
-    const pipeline = Flow.toPipelineFromGroupId(expected, 'A')
-    const actual = Flow.addPipeline(emptyGrid, pipeline)
-    const isSame = Flow.isSame(actual, expected)
+    const pipeline = Numberlink.toPipelineFromGroupId(expected, 'A')
+    const actual = Numberlink.addPipeline(emptyGrid, pipeline)
+    const isSame = Numberlink.isSame(actual, expected)
 
     expect(isSame).toBe(true)
   })
@@ -160,7 +160,7 @@ describe(import.meta.file, () => {
         ['a', ' ', ' '],
         ['a', 'a', 'A'],
       ]),
-      (x) => Flow.toPipelineFromGroupId(x, 'A'),
+      (x) => Numberlink.toPipelineFromGroupId(x, 'A'),
     )
 
     const actual = pipe(
@@ -169,9 +169,9 @@ describe(import.meta.file, () => {
         [' ', ' ', ' '],
         [' ', ' ', 'A'],
       ]),
-      Flow.flipAllTerminals,
-      (x) => Flow.addPipeline(x, expected),
-      (x) => Flow.toPipelineFromGroupId(x, 'A'),
+      Numberlink.flipAllTerminals,
+      (x) => Numberlink.addPipeline(x, expected),
+      (x) => Numberlink.toPipelineFromGroupId(x, 'A'),
     )
 
     expect(expected).toEqual(actual)
@@ -191,7 +191,7 @@ describe(import.meta.file, () => {
         startId: NodeId.init('3'),
       },
     }
-    const hash = Flow.deriveTerminalHash(terminals)
+    const hash = Numberlink.deriveTerminalHash(terminals)
     expect(hash).toBeDefined()
   })
 })

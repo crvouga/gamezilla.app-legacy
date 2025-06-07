@@ -1,1 +1,1 @@
-export * as Flow from './numberlink'
+export * as Numberlink from './numberlink'

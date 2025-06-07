@@ -8,24 +8,24 @@ import { VariantGridShorthand } from '../variant/grid'
 import { ModePlayFrontend } from './frontend'
 import { ModePlayFrontendCtx } from './frontend/ctx'
 import { UseHintFrontend } from './use-hint/frontend'
-import { FixtureFlowFrontend } from '../frontend/fixture'
+import { FixtureNumberlinkFrontend } from '../frontend/fixture'
 
 const Fixture = async () => {
-  const f = await FixtureFlowFrontend()
-  const flow = VariantGridShorthand.toGrid([
+  const f = await FixtureNumberlinkFrontend()
+  const numberlink = VariantGridShorthand.toGrid([
     ['A', ' ', ' '],
     [' ', ' ', ' '],
     [' ', ' ', 'A'],
   ])
-  const ctx: ModePlayFrontendCtx = { ...f.ctx, flow }
+  const ctx: ModePlayFrontendCtx = { ...f.ctx, numberlink }
   const init = ModePlay.init({ ctx })
-  const solutions = await Solutions.find({ logger: f.ctx.logger, models: [flow] })
+  const solutions = await Solutions.find({ logger: f.ctx.logger, models: [numberlink] })
   const ctxWithSolutions: ModePlayFrontendCtx = { ...ctx, solutions }
   const solution = solutions[0]
   if (!solution) throw new Error('No solution found')
-  const modelSolved: ModePlay.Model = { ...init, ...Solution.toSolvedFlow(solution) }
+  const modelSolved: ModePlay.Model = { ...init, ...Solution.toSolvedNumberlink(solution) }
 
-  if (!AlgoIsSolved.isSolved(ModePlay.toFlow(modelSolved, flow))) throw new Error('Model is not solved')
+  if (!AlgoIsSolved.isSolved(ModePlay.toNumberlink(modelSolved, numberlink))) throw new Error('Model is not solved')
 
   const render = (input?: Partial<Parameters<typeof ModePlayFrontend.TestView>[0]>) => {
     const r = f.render(
@@ -39,7 +39,7 @@ const Fixture = async () => {
     render,
     ctx,
     ctxWithSolutions,
-    flow,
+    numberlink,
     init,
     solutions,
     modelSolved,

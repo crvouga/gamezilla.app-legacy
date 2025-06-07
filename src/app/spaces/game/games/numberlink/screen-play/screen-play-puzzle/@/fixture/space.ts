@@ -7,15 +7,15 @@ import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
 import { Solutions } from '../../../../@/solutions/solutions'
 import { NumberlinkSpaceCtx } from '../../../../@/space/ctx'
-import type { Variant } from '../../../../@/variant'
+import type { NumberlinkVariant } from '../../../../@/variant'
 import { FlowPlaySpaceFixture } from '../../../@/space/fixture'
 import { ScreenPlayPuzzleSpace } from '../../space'
 import type { ModelSpace, MsgSpace } from '../../types'
 import { loggerNoop } from '~/@/logger/impl-noop'
 
-export const FixtureScreenPuzzlePlaySpace = async (input?: { flow?: Variant.Model }) => {
+export const FixtureScreenPuzzlePlaySpace = async (input?: { numberlink?: NumberlinkVariant.Model }) => {
   const f = await FlowPlaySpaceFixture()
-  const puzzle = await Puzzle.random(input)
+  const puzzle = await Puzzle.random({ numberlink: input?.numberlink })
   const puzzleIndex = 1
   const prevPuzzle = await Puzzle.random()
   const prevPuzzleResult: PuzzleResult = { t: 'got', c: prevPuzzle }
@@ -28,7 +28,7 @@ export const FixtureScreenPuzzlePlaySpace = async (input?: { flow?: Variant.Mode
   })
 
   const solutions = await Solutions.find({
-    models: [prevPuzzle, puzzle, nextPuzzle].map((p) => p.flow),
+    models: [prevPuzzle, puzzle, nextPuzzle].map((p) => p.numberlink),
     logger: loggerNoop,
   })
 
@@ -71,7 +71,7 @@ export const FixtureScreenPuzzlePlaySpace = async (input?: { flow?: Variant.Mode
   }
 }
 
-export const FixtureScreenPuzzlePlaySpaceChild = async (input?: { flow?: Variant.Model }) => {
+export const FixtureScreenPuzzlePlaySpaceChild = async (input?: { numberlink?: NumberlinkVariant.Model }) => {
   const f = await FixtureScreenPuzzlePlaySpace(input)
 
   const updates = (

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoSolve from './algo-solve'
 import { AlgoIsSolved } from '../algo-is-solved/algo-is-solved'
@@ -26,17 +26,17 @@ describe('AlgoSolve', () => {
 
     const actual = AlgoSolve.solutions(grid)
 
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test('3x3 one full terminals', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       [' ', 'B', ' '],
       [' ', ' ', 'A'],
     ])
 
-    const solution = AlgoSolve.solve(flow)
+    const solution = AlgoSolve.solve(numberlink)
     expect(solution).not.toBeNull()
   })
 
@@ -67,7 +67,7 @@ describe('AlgoSolve', () => {
 
     const actual = AlgoSolve.solutions(grid)
 
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test('3x3 with A terminals and B terminals and C terminals', () => {
@@ -87,7 +87,7 @@ describe('AlgoSolve', () => {
 
     const actual = AlgoSolve.solutions(grid)
 
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test('3x3 with far A terminals', () => {
@@ -147,7 +147,7 @@ describe('AlgoSolve', () => {
 
     const actual = AlgoSolve.solutions(grid)
 
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test('adjacent terminals', () => {
@@ -162,7 +162,7 @@ describe('AlgoSolve', () => {
       ]),
     ]
     const actual = AlgoSolve.solutions(grid)
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test('3x3 with far A terminals and B terminals and C terminals', () => {
@@ -179,7 +179,7 @@ describe('AlgoSolve', () => {
       ]),
     ]
     const actual = AlgoSolve.solutions(grid)
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test('5x5 puzzle', () => {
@@ -203,7 +203,7 @@ describe('AlgoSolve', () => {
 
     const actual = AlgoSolve.solutions(grid)
 
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test('6x6 puzzle', () => {
@@ -229,7 +229,7 @@ describe('AlgoSolve', () => {
 
     const actual = AlgoSolve.solutions(grid)
 
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test('7x7 puzzle', () => {
@@ -256,7 +256,7 @@ describe('AlgoSolve', () => {
     ]
     const actual = AlgoSolve.solutions(grid)
 
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test('8x8 puzzle', () => {
@@ -284,7 +284,7 @@ describe('AlgoSolve', () => {
     ]
     const actual = AlgoSolve.solutions(grid)
 
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test('9x9 puzzle', () => {
@@ -314,7 +314,7 @@ describe('AlgoSolve', () => {
     ]
     const actual = AlgoSolve.solutions(grid)
 
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test('10x10 puzzle', () => {
@@ -346,7 +346,7 @@ describe('AlgoSolve', () => {
     ]
 
     expect(
-      some(AlgoSolve.solutions(grid), (actual) => expected.some((expected) => Flow.isSame(actual, expected))),
+      some(AlgoSolve.solutions(grid), (actual) => expected.some((expected) => Numberlink.isSame(actual, expected))),
     ).toBe(true)
   })
 
@@ -381,7 +381,7 @@ describe('AlgoSolve', () => {
     ]
 
     expect(
-      some(AlgoSolve.solutions(grid), (actual) => expected.some((expected) => Flow.isSame(actual, expected))),
+      some(AlgoSolve.solutions(grid), (actual) => expected.some((expected) => Numberlink.isSame(actual, expected))),
     ).toBe(true)
   })
 
@@ -418,7 +418,7 @@ describe('AlgoSolve', () => {
     ]
     const actual = AlgoSolve.solutions(grid)
 
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test.if(SHOULD_TEST_LARGE_PUZZLES)('13x13 puzzle', () => {
@@ -456,7 +456,7 @@ describe('AlgoSolve', () => {
     ]
     const actual = AlgoSolve.solutions(grid)
 
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test.if(SHOULD_TEST_LARGE_PUZZLES)('14x14 puzzle', () => {
@@ -496,7 +496,7 @@ describe('AlgoSolve', () => {
     ]
     const actual = AlgoSolve.solutions(grid)
 
-    expect(some(actual, (actual) => expected.some((expected) => Flow.isSame(actual, expected)))).toBe(true)
+    expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
   test.if(SHOULD_TEST_LARGE_PUZZLES)('14x14 puzzle', () => {

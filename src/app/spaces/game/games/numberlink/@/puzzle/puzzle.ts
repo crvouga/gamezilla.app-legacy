@@ -1,9 +1,9 @@
 import { s } from '~/@/schema'
 import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data/user-id'
-import { Flow } from '../numberlink'
+import { Numberlink } from '../numberlink'
+import { NumberlinkVariant } from '../variant'
 import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
-import * as FlowVariant from '../variant/variant'
 import { PuzzleId } from './puzzle-id'
 import { PuzzleName } from './puzzle-name'
 
@@ -14,20 +14,20 @@ const schema = s.obj({
   createdBy: UserId,
   lastUpdatedAt: Posix,
   lastUpdatedBy: UserId,
-  flow: FlowVariant.Model,
-  solutions: s.arr(Flow.Model),
+  numberlink: NumberlinkVariant.Model,
+  solutions: s.arr(Numberlink.Model),
 })
 
 export type Puzzle = s.Infer<typeof schema>
 
 const create = async (input: {
   count?: number
-  flow: FlowVariant.Model
+  numberlink: NumberlinkVariant.Model
   createdAt: Posix
   createdBy: UserId
 }): Promise<Puzzle> => {
   return {
-    flow: input.flow,
+    numberlink: input.numberlink,
     name: await PuzzleName.generate({
       // count: input.count,
     }),
@@ -40,11 +40,15 @@ const create = async (input: {
   }
 }
 
-const random = async (input?: { flow?: FlowVariant.Model; createdBy?: UserId; createdAt?: Posix }): Promise<Puzzle> => {
+const random = async (input?: {
+  numberlink?: NumberlinkVariant.Model
+  createdBy?: UserId
+  createdAt?: Posix
+}): Promise<Puzzle> => {
   const createdBy = input?.createdBy ?? UserId.generate()
   const createdAt = input?.createdAt ?? Posix.now()
-  const flow =
-    input?.flow ??
+  const numberlink =
+    input?.numberlink ??
     VariantGridShorthand.toGrid([
       ['A', ' '],
       [' ', 'A'],
@@ -59,7 +63,7 @@ const random = async (input?: { flow?: FlowVariant.Model; createdBy?: UserId; cr
     lastUpdatedAt: Posix.now(),
     lastUpdatedBy: createdBy,
     id: PuzzleId.generate(),
-    flow,
+    numberlink,
     solutions: [],
   }
 }

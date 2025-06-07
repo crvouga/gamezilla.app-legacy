@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { VariantGridShorthand } from '../../variant/grid'
 import { isImpossibleForAnyTerminalToConnect } from './algo-is-impossible-for-terminals-to-connect'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 
 describe('isImpossibleForAnyTerminalToConnect', () => {
   test('should return true when there are not enough available spaces', () => {
@@ -10,7 +10,7 @@ describe('isImpossibleForAnyTerminalToConnect', () => {
       ['a', 'a', 'a'],
       ['C', 'B', 'C'],
     ])
-    const terminals = Flow.toFullTerminals(model)
+    const terminals = Numberlink.toFullTerminals(model)
     const result = isImpossibleForAnyTerminalToConnect(model, terminals)
     expect(result).toBe(true)
   })
@@ -21,7 +21,7 @@ describe('isImpossibleForAnyTerminalToConnect', () => {
       ['a', 'a', 'a'],
       [' ', 'B', 'A'],
     ])
-    const terminals = Flow.toFullTerminals(model)
+    const terminals = Numberlink.toFullTerminals(model)
     const result = isImpossibleForAnyTerminalToConnect(model, terminals)
     expect(result).toBe(true)
   })
@@ -32,7 +32,7 @@ describe('isImpossibleForAnyTerminalToConnect', () => {
       ['a', ' ', ' '],
       ['a', 'a', 'A'],
     ])
-    const terminals = Flow.toFullTerminals(model)
+    const terminals = Numberlink.toFullTerminals(model)
     const result = isImpossibleForAnyTerminalToConnect(model, terminals)
     expect(result).toBe(false)
   })

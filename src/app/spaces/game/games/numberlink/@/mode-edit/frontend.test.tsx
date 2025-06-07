@@ -1,15 +1,15 @@
 import { describe, test } from 'bun:test'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { ModeEdit } from '.'
-import { Variant } from '../variant'
+import { NumberlinkVariant } from '../variant'
 import { VariantGridShorthand } from '../variant/grid'
 import { ModeEditFrontend } from './frontend'
 
 type Output = ReturnType<typeof ModeEdit.update>
 
-const Fixture = async (input?: { flow?: Variant.Model }) => {
+const Fixture = async (input?: { flow?: NumberlinkVariant.Model }) => {
   const f = await FixtureAppFrontend()
-  const flow =
+  const numberlink =
     input?.flow ??
     VariantGridShorthand.toGrid([
       ['A', ' '],
@@ -17,12 +17,12 @@ const Fixture = async (input?: { flow?: Variant.Model }) => {
     ])
 
   const init: Output = {
-    model: ModeEdit.init({ flow }),
+    model: ModeEdit.init({ numberlink }),
   }
 
   const update = (acc: Output, [msg, ...msgs]: ModeEdit.Msg[]): Output => {
     if (!msg) return acc
-    const updated = ModeEdit.update({ flow, model: acc.model, msg })
+    const updated = ModeEdit.update({ numberlink, model: acc.model, msg })
     return update(updated, msgs)
   }
 
@@ -41,7 +41,7 @@ const Fixture = async (input?: { flow?: Variant.Model }) => {
   }
 
   return {
-    flow,
+    numberlink,
     init,
     update,
     render,

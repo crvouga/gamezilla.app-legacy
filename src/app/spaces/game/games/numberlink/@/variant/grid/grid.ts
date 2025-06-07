@@ -1,5 +1,5 @@
 import { s } from '~/@/schema'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 import { EdgeId } from '../../numberlink/edge-id'
 import { GroupId } from '../../numberlink/group-id'
 import { NodeId } from '../../numberlink/node-id'
@@ -16,7 +16,7 @@ import { Position } from './grid-position'
 //
 
 export const Model = s.and(
-  Flow.Model,
+  Numberlink.Model,
   VariantGridDimensions.Model,
   s.obj({
     t: s.l('grid'),
@@ -55,8 +55,8 @@ export const distance = (model: Model, a: NodeId, b: NodeId): number => {
 
 export const init = (input: {
   dimensions: VariantGridDimensions.Model
-  terminalsByGroupId?: Flow.Model['terminalsByGroupId']
-  pipesBySourceId?: Flow.Model['pipesBySourceId']
+  terminalsByGroupId?: Numberlink.Model['terminalsByGroupId']
+  pipesBySourceId?: Numberlink.Model['pipesBySourceId']
 }): Model => {
   const model: Model = {
     t: 'grid',
@@ -96,38 +96,38 @@ export const init = (input: {
 
       if (y > 0) {
         const north = initNodeId(x, y - 1)
-        const edgeNorth: Flow.Edge = {
+        const edgeNorth: Numberlink.Edge = {
           sourceId: nodeId,
           targetId: north,
         }
-        model.edges[Flow.toEdgeId(edgeNorth)] = edgeNorth
+        model.edges[Numberlink.toEdgeId(edgeNorth)] = edgeNorth
       }
 
       if (x < maxX) {
         const east = initNodeId(x + 1, y)
-        const edgeEast: Flow.Edge = {
+        const edgeEast: Numberlink.Edge = {
           sourceId: nodeId,
           targetId: east,
         }
-        model.edges[Flow.toEdgeId(edgeEast)] = edgeEast
+        model.edges[Numberlink.toEdgeId(edgeEast)] = edgeEast
       }
 
       if (y < maxY) {
         const south = initNodeId(x, y + 1)
-        const edgeSouth: Flow.Edge = {
+        const edgeSouth: Numberlink.Edge = {
           sourceId: nodeId,
           targetId: south,
         }
-        model.edges[Flow.toEdgeId(edgeSouth)] = edgeSouth
+        model.edges[Numberlink.toEdgeId(edgeSouth)] = edgeSouth
       }
 
       if (x > 0) {
         const west = initNodeId(x - 1, y)
-        const edgeWest: Flow.Edge = {
+        const edgeWest: Numberlink.Edge = {
           sourceId: nodeId,
           targetId: west,
         }
-        model.edges[Flow.toEdgeId(edgeWest)] = edgeWest
+        model.edges[Numberlink.toEdgeId(edgeWest)] = edgeWest
       }
     }
   }
@@ -163,8 +163,8 @@ export const init = (input: {
     model.terminalsByGroupId[terminalNew.groupId] = terminalNew
   }
 
-  model.edgeHash = Flow.deriveEdgeHash(model.edges)
-  model.nodeHash = Flow.deriveNodeHash(model.nodes)
+  model.edgeHash = Numberlink.deriveEdgeHash(model.edges)
+  model.nodeHash = Numberlink.deriveNodeHash(model.nodes)
 
   return model
 }
@@ -177,15 +177,15 @@ export const init = (input: {
 //
 //
 
-export type Node = Flow.Node & Position
+export type Node = Numberlink.Node & Position
 
-export type Edge = Flow.Edge & {
+export type Edge = Numberlink.Edge & {
   source: Node
   target: Node
 }
 
 export const toNode = (model: Model, nodeId: NodeId): Node | null => {
-  const node = Flow.toNode(model, nodeId)
+  const node = Numberlink.toNode(model, nodeId)
 
   if (!node) return null
 
@@ -197,7 +197,7 @@ export const toNode = (model: Model, nodeId: NodeId): Node | null => {
 }
 
 export const toEdge = (model: Model, edgeId: EdgeId): Edge | null => {
-  const edge = Flow.toEdge(model, edgeId)
+  const edge = Numberlink.toEdge(model, edgeId)
 
   if (!edge) return null
 
@@ -217,7 +217,7 @@ export const toEdge = (model: Model, edgeId: EdgeId): Edge | null => {
  */
 export const addNode = (model: Model, position: Position): Model => {
   const nodeId = toNodeId(position)
-  const added = Flow.addNode(model, { nodeId })
+  const added = Numberlink.addNode(model, { nodeId })
   return {
     ...model,
     ...added,
@@ -229,7 +229,7 @@ export const addNode = (model: Model, position: Position): Model => {
 }
 
 export const yieldPositions = function* (model: Model): Generator<Position> {
-  for (const node of Flow.yieldNodes(model)) {
+  for (const node of Numberlink.yieldNodes(model)) {
     const position = model.positions[node.nodeId]
     if (!position) continue
     yield position
@@ -237,7 +237,7 @@ export const yieldPositions = function* (model: Model): Generator<Position> {
 }
 
 export const yieldEdges = function* (model: Model): Generator<Edge> {
-  for (const edge of Flow.yieldEdges(model)) {
+  for (const edge of Numberlink.yieldEdges(model)) {
     const source = toNode(model, edge.sourceId)
 
     if (!source) continue
@@ -251,7 +251,7 @@ export const yieldEdges = function* (model: Model): Generator<Edge> {
 }
 
 export const yieldNodes = function* (model: Model): Generator<Node> {
-  for (const node of Flow.yieldNodes(model)) {
+  for (const node of Numberlink.yieldNodes(model)) {
     const position = model.positions[node.nodeId]
     if (!position) continue
     yield { ...position, ...node }
@@ -264,7 +264,7 @@ export type GridTerminal = Terminal & {
 }
 
 export const yieldTerminals = function* (model: Model): Generator<GridTerminal> {
-  for (const terminal of Flow.yieldTerminals(model)) {
+  for (const terminal of Numberlink.yieldTerminals(model)) {
     const start = toNode(model, terminal.startId)
 
     if (!start) continue
@@ -275,13 +275,13 @@ export const yieldTerminals = function* (model: Model): Generator<GridTerminal> 
   }
 }
 
-export type PipeJoined = Flow.PipeJoined & {
+export type PipeJoined = Numberlink.PipeJoined & {
   source: Node
   target: Node
 }
 
 export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
-  for (const pipe of Flow.yieldPipes(model)) {
+  for (const pipe of Numberlink.yieldPipes(model)) {
     const source = toNode(model, pipe.edge.sourceId)
 
     if (!source) continue
@@ -299,13 +299,13 @@ export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
 }
 
 export const yieldPipelines = function* (model: Model): Iterable<Iterable<PipeJoined>> {
-  for (const terminal of Flow.yieldTerminals(model)) {
+  for (const terminal of Numberlink.yieldTerminals(model)) {
     yield toPipeline(model, terminal.startId)
   }
 }
 
-const pipeToPipeJoined = (model: Model, pipe: Flow.Pipe): PipeJoined[] => {
-  const edge = Flow.toEdge(model, pipe.edgeId)
+const pipeToPipeJoined = (model: Model, pipe: Numberlink.Pipe): PipeJoined[] => {
+  const edge = Numberlink.toEdge(model, pipe.edgeId)
 
   if (!edge) return []
 
@@ -321,7 +321,7 @@ const pipeToPipeJoined = (model: Model, pipe: Flow.Pipe): PipeJoined[] => {
 }
 
 export const toPipeline = (model: Model, startingNodeId: NodeId): PipeJoined[] => {
-  const pipeline = Flow.toPipeline(model, startingNodeId)
+  const pipeline = Numberlink.toPipeline(model, startingNodeId)
   const pipelineJoined = pipeline.flatMap((pipe) => pipeToPipeJoined(model, pipe))
   return pipelineJoined
 }

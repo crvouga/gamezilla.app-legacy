@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 import { Result } from '~/@/result'
 import { Posix } from '~/@/time/posix'
 import { UserId } from '~/app/@/data/user-id'
-import { Variant } from '../../../variant'
+import { NumberlinkVariant } from '../../../variant'
 import type { Puzzle } from '../../puzzle'
 import { PuzzleId } from '../../puzzle-id'
 import { PuzzleName } from '../../puzzle-name'
@@ -27,20 +27,20 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
   const puzzleId = PuzzleId.is(row.id) ? row.id : null
   const puzzleName = PuzzleName.is(row.name) ? row.name : null
 
-  const rowFlow = typeof row.flow === 'string' ? JSON.parse(row.flow) : row.flow
-  const parsedFlow = Variant.Model.parse(rowFlow)
-  const flow = Result.unwrapOr(parsedFlow, null)
+  const rowNumberlink = typeof row.flow === 'string' ? JSON.parse(row.flow) : row.flow
+  const parsedNumberlink = NumberlinkVariant.Model.parse(rowNumberlink)
+  const numberlink = Result.unwrapOr(parsedNumberlink, null)
 
   const createdAt = Posix.init(ensureNumber(row.created_at_posix))
   const createdBy = UserId.is(row.created_by_user_id) ? row.created_by_user_id : null
   const lastUpdatedAt = Posix.init(ensureNumber(row.last_updated_at_posix))
   const lastUpdatedBy = UserId.is(row.last_updated_by_user_id) ? row.last_updated_by_user_id : null
 
-  if (puzzleId && puzzleName && flow && createdAt && createdBy && lastUpdatedAt && lastUpdatedBy) {
+  if (puzzleId && puzzleName && numberlink && createdAt && createdBy && lastUpdatedAt && lastUpdatedBy) {
     return {
       id: puzzleId,
       name: puzzleName,
-      flow: flow,
+      numberlink: numberlink,
       solutions: [],
       createdAt,
       createdBy,
@@ -50,7 +50,7 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
   }
   console.error(
     `[flow-puzzle-db] Failed to parse row=${JSON.stringify(row, null, 4)} \nerror=${JSON.stringify(
-      parsedFlow,
+      parsedNumberlink,
       null,
       4,
     )}`,

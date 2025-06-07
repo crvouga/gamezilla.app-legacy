@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { UserId } from '~/app/@/data/user-id'
 
-import { Flow } from '../../@/numberlink'
+import { Numberlink } from '../../@/numberlink'
 import { FixtureScreenPlayPuzzleFrontend } from './@/fixture/frontend'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { Sub } from '~/@/sub'
@@ -124,7 +124,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
 
   it('should play sound pressing down on a terminal', async () => {
     const f = await Fixture()
-    const terminal = Flow.randomTerminal(f.puzzle.flow)
+    const terminal = Numberlink.randomTerminal(f.puzzle.numberlink)
 
     if (!terminal) throw new Error('No terminal found')
 

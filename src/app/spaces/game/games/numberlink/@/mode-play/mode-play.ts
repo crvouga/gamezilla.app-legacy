@@ -4,14 +4,14 @@ import { s } from '~/@/schema'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
-import { Flow } from '../numberlink'
+import { Numberlink } from '../numberlink'
 import { GroupId } from '../numberlink/group-id'
 import { NodeId } from '../numberlink/node-id'
 import { Terminal } from '../numberlink/terminal'
 import { AlgoIsSolved } from '../solutions/algo-is-solved/algo-is-solved'
 import { AlgoSolve } from '../solutions/algo-solve'
 import { Solutions } from '../solutions/solutions'
-import { type Variant } from '../variant'
+import { type NumberlinkVariant } from '../variant'
 import { AlgoDrawPipes } from './algo-draw-pipes'
 import { UseHint } from './use-hint'
 
@@ -24,10 +24,10 @@ import { UseHint } from './use-hint'
 //
 
 export type Ctx = UseHint.Ctx & {
-  flow: Variant.Model
+  numberlink: NumberlinkVariant.Model
 }
 
-export const initCtx = <TCtx>(input: { flow: Variant.Model } & TCtx): Ctx & TCtx => {
+export const initCtx = <TCtx>(input: { numberlink: NumberlinkVariant.Model } & TCtx): Ctx & TCtx => {
   return {
     ...UseHint.initCtx(input),
     ...input,
@@ -40,7 +40,7 @@ type Idle = s.Infer<typeof Idle>
 const Dragging = s.obj({
   t: s.l('dragging'),
   activeGroupId: GroupId,
-  autocompleteEdge: s.maybe(Flow.Edge),
+  autocompleteEdge: s.maybe(Numberlink.Edge),
 })
 type Dragging = s.Infer<typeof Dragging>
 
@@ -50,7 +50,7 @@ type Status = s.Infer<typeof Status>
 export const Model = s.and(
   UseHint.Model,
   s.obj({
-    pipesBySourceId: s.dict(NodeId, Flow.Pipe),
+    pipesBySourceId: s.dict(NodeId, Numberlink.Pipe),
     terminalsByGroupId: s.partialDict(GroupId, Terminal),
     status: Status,
     showCheckmarkAnimation: s.bool,
@@ -62,23 +62,23 @@ export const init = (input: { ctx: Ctx }): Model => {
   return {
     ...UseHint.init(input),
     pipesBySourceId: {
-      ...input.ctx.flow.pipesBySourceId,
+      ...input.ctx.numberlink.pipesBySourceId,
     },
     terminalsByGroupId: {
-      ...input.ctx.flow.terminalsByGroupId,
+      ...input.ctx.numberlink.terminalsByGroupId,
     },
     status: { t: 'idle' },
     showCheckmarkAnimation: false,
   }
 }
 
-export const toStatus = (input: { flow: Variant.Model; model: Model }) => {
-  const flow = toFlow(input.model, input.flow)
+export const toStatus = (input: { numberlink: NumberlinkVariant.Model; model: Model }) => {
+  const numberlink = toNumberlink(input.model, input.numberlink)
 
   if (input.model.status.t === 'dragging') {
-    const terminal = Flow.toTerminalByGroupId(flow, input.model.status.activeGroupId)
+    const terminal = Numberlink.toTerminalByGroupId(numberlink, input.model.status.activeGroupId)
     if (!terminal?.endId) {
-      if (AlgoIsSolved.isSolved(flow)) {
+      if (AlgoIsSolved.isSolved(numberlink)) {
         return 'solved'
       }
       return 'solving'
@@ -87,23 +87,23 @@ export const toStatus = (input: { flow: Variant.Model; model: Model }) => {
     return 'solving'
   }
 
-  if (AlgoIsSolved.isSolved(flow)) {
+  if (AlgoIsSolved.isSolved(numberlink)) {
     return 'solved'
   }
 
   return 'solving'
 }
 
-export const random = (input: { flow: Variant.Model; solutions: Solutions }): Model => {
+export const random = (input: { numberlink: NumberlinkVariant.Model; solutions: Solutions }): Model => {
   const initial = init({ ctx: initCtx(input) })
 
-  const terminal = Flow.randomTerminal(input.flow)
+  const terminal = Numberlink.randomTerminal(input.numberlink)
 
   if (!terminal) {
     return initial
   }
 
-  const edge = Flow.randomOutEdge(input.flow, terminal.startId)
+  const edge = Numberlink.randomOutEdge(input.numberlink, terminal.startId)
 
   if (!edge) {
     return initial
@@ -113,7 +113,7 @@ export const random = (input: { flow: Variant.Model; solutions: Solutions }): Mo
     ...initial,
     pipesBySourceId: {
       [terminal.startId]: {
-        edgeId: Flow.toEdgeId(edge),
+        edgeId: Numberlink.toEdgeId(edge),
         groupId: terminal.groupId,
       },
     },
@@ -123,19 +123,19 @@ export const random = (input: { flow: Variant.Model; solutions: Solutions }): Mo
   }
 }
 
-export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
-  const terminal = Flow.randomTerminal(flow)
+export const randomMsgs = ({ numberlink }: { numberlink: Numberlink.Model }): Msg[] => {
+  const terminal = Numberlink.randomTerminal(numberlink)
 
   if (!terminal) {
     return []
   }
 
-  const edges: Flow.Edge[] = []
+  const edges: Numberlink.Edge[] = []
 
   const currentNodeId: NodeId = terminal.startId
 
   for (let i = 0; i < Math.random() * 10; i++) {
-    const edge = Flow.randomOutEdge(flow, currentNodeId)
+    const edge = Numberlink.randomOutEdge(numberlink, currentNodeId)
 
     if (!edge) {
       break
@@ -164,8 +164,8 @@ export const isShowingHint = (_model: Model): boolean => {
   return false
 }
 
-export const toSolutionMsgs = ({ flow }: { flow: Variant.Model }): Msg[] => {
-  const solutions = AlgoSolve.solutions(flow)
+export const toSolutionMsgs = ({ numberlink }: { numberlink: NumberlinkVariant.Model }): Msg[] => {
+  const solutions = AlgoSolve.solutions(numberlink)
 
   const solution = first(solutions)
 
@@ -175,7 +175,7 @@ export const toSolutionMsgs = ({ flow }: { flow: Variant.Model }): Msg[] => {
 
   const msgs: Msg[] = []
 
-  for (const terminal of Flow.toTerminals(solution)) {
+  for (const terminal of Numberlink.toTerminals(solution)) {
     if (!terminal.endId) {
       continue
     }
@@ -185,8 +185,8 @@ export const toSolutionMsgs = ({ flow }: { flow: Variant.Model }): Msg[] => {
       nodeId: terminal.startId,
     })
 
-    for (const pipe of Flow.toPipeline(solution, terminal.startId)) {
-      const edge = Flow.toEdge(solution, pipe.edgeId)
+    for (const pipe of Numberlink.toPipeline(solution, terminal.startId)) {
+      const edge = Numberlink.toEdge(solution, pipe.edgeId)
       if (!edge) {
         continue
       }
@@ -367,9 +367,9 @@ const updateMain: typeof update = (input) => {
 const updateIdle: typeof update = (input) => {
   switch (input.msg.t) {
     case 'user-pressed-down-node': {
-      const current = toFlow(input.model, input.ctx.flow)
+      const current = toNumberlink(input.model, input.ctx.numberlink)
 
-      const groupId = Flow.toGroupId(current, input.msg.nodeId)
+      const groupId = Numberlink.toGroupId(current, input.msg.nodeId)
 
       if (!groupId) return { model: input.model }
 
@@ -403,7 +403,7 @@ const updateDragging = (input: {
 } => {
   switch (input.msg.t) {
     case 'user-dragged-over-node': {
-      const current = toFlow(input.model, input.ctx.flow)
+      const current = toNumberlink(input.model, input.ctx.numberlink)
 
       const drew = AlgoDrawPipes.drawPipes(current, input.modelStatus.activeGroupId, input.msg.nodeId)
 
@@ -418,7 +418,7 @@ const updateDragging = (input: {
     }
 
     case 'user-pressed-up-node': {
-      const current = toFlow(input.model, input.ctx.flow)
+      const current = toNumberlink(input.model, input.ctx.numberlink)
       const modelNew: Model = {
         ...input.model,
         status: {
@@ -426,11 +426,15 @@ const updateDragging = (input: {
         },
       }
 
-      const activeGroupTerminal = Flow.toTerminalByGroupId(current, input.modelStatus.activeGroupId)
+      const activeGroupTerminal = Numberlink.toTerminalByGroupId(current, input.modelStatus.activeGroupId)
 
       if (!activeGroupTerminal) return { model: modelNew }
 
-      const isConnected = Flow.isConnectedWithPipes(current, activeGroupTerminal.startId, activeGroupTerminal.endId)
+      const isConnected = Numberlink.isConnectedWithPipes(
+        current,
+        activeGroupTerminal.startId,
+        activeGroupTerminal.endId,
+      )
 
       const isSolved = AlgoIsSolved.isSolved(current)
 
@@ -448,7 +452,7 @@ const updateDragging = (input: {
       if (isConnected) {
         return {
           model: modelNew,
-          events: [{ t: 'connected-terminals', connectedTerminalCount: Flow.countConnectedPipes(current) }],
+          events: [{ t: 'connected-terminals', connectedTerminalCount: Numberlink.countConnectedPipes(current) }],
         }
       }
 
@@ -458,10 +462,10 @@ const updateDragging = (input: {
     }
 
     case 'user-dragging-left': {
-      const current = toFlow(input.model, input.ctx.flow)
+      const current = toNumberlink(input.model, input.ctx.numberlink)
       const isSolved = AlgoIsSolved.isSolved(current)
 
-      const terminal = Flow.toTerminalByGroupId(current, input.modelStatus.activeGroupId)
+      const terminal = Numberlink.toTerminalByGroupId(current, input.modelStatus.activeGroupId)
 
       if (!terminal?.endId) {
         return {
@@ -483,8 +487,8 @@ const updateDragging = (input: {
   }
 }
 
-export const toFlow = (model: Model, flow: Variant.Model): Variant.Model => {
-  const derived = UseHint.toFlow(model, flow)
+export const toNumberlink = (model: Model, numberlink: NumberlinkVariant.Model): NumberlinkVariant.Model => {
+  const derived = UseHint.toNumberlink(model, numberlink)
   return {
     ...derived,
     terminalsByGroupId: model.terminalsByGroupId,

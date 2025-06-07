@@ -1,7 +1,7 @@
 import { ModeEdit } from '../../../@/mode-edit'
 import { ModePlay } from '../../../@/mode-play'
 import { NumberlinkSpaceCtx } from '../../../@/space/ctx'
-import { Variant } from '../../../@/variant'
+import { NumberlinkVariant } from '../../../@/variant'
 import * as BuilderTypes from '../../types'
 import { DeleteForeverSpace } from './surface-delete-forever/space'
 import { EditPuzzleNameSpace } from './surface-edit-puzzle-name/space'
@@ -9,17 +9,17 @@ import { SaveChangesSpace } from './surface-save-changes/space'
 import { ModelSpace } from './types'
 
 const toStatus = (modelSpace: ModelSpace): 'solving' | 'solved' => {
-  return ModePlay.toStatus({ model: modelSpace.modePlay, flow: toFlow(modelSpace) })
+  return ModePlay.toStatus({ model: modelSpace.modePlay, numberlink: toNumberlink(modelSpace) })
 }
 
-const toFlow = (modelSpace: ModelSpace): Variant.Model => {
+const toNumberlink = (modelSpace: ModelSpace): NumberlinkVariant.Model => {
   switch (modelSpace.mode.t) {
     case 'edit': {
-      return ModeEdit.toFlow(modelSpace.modeEdit)
+      return ModeEdit.toNumberlink(modelSpace.modeEdit)
     }
 
     case 'play': {
-      return ModePlay.toFlow(modelSpace.modePlay, ModeEdit.toFlow(modelSpace.modeEdit))
+      return ModePlay.toNumberlink(modelSpace.modePlay, ModeEdit.toNumberlink(modelSpace.modeEdit))
     }
   }
 }
@@ -39,12 +39,12 @@ const updateSpaceMain = ({
         return modelSpace
       }
 
-      const flow = ModeEdit.toFlow(modelSpace.screenPuzzleBuilder.modeEdit)
+      const numberlink = ModeEdit.toNumberlink(modelSpace.screenPuzzleBuilder.modeEdit)
 
       const updated = ModePlay.update({
         model: modelSpace.screenPuzzleBuilder.modePlay,
         msg: msgSpace.c,
-        ctx: ModePlay.initCtx({ flow }),
+        ctx: ModePlay.initCtx({ numberlink: numberlink }),
       })
 
       return {
@@ -64,7 +64,7 @@ const updateSpaceMain = ({
       const updated = ModeEdit.update({
         model: modelSpace.screenPuzzleBuilder.modeEdit,
         msg: msgSpace.c,
-        flow: modelSpace.screenPuzzleBuilder.puzzle.flow,
+        numberlink: modelSpace.screenPuzzleBuilder.puzzle.numberlink,
       })
 
       return {
@@ -101,7 +101,7 @@ const updateSpaceMain = ({
         return modelSpace
       }
       const initial = ModePlay.init({
-        ctx: ModePlay.initCtx({ flow: ModeEdit.toFlow(modelSpace.screenPuzzleBuilder.modeEdit) }),
+        ctx: ModePlay.initCtx({ numberlink: ModeEdit.toNumberlink(modelSpace.screenPuzzleBuilder.modeEdit) }),
       })
       return {
         ...modelSpace,
@@ -147,6 +147,6 @@ const updateSpace: typeof updateSpaceMain = (input) => {
 
 export const ScreenPuzzleBuilderSpace = {
   updateSpace,
-  toFlow,
+  toNumberlink,
   toStatus,
 }

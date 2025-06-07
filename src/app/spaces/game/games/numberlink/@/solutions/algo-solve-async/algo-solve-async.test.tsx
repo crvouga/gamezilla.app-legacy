@@ -1,14 +1,14 @@
 import { describe, expect, test } from 'bun:test'
 import { loggerNoop } from '~/@/logger/impl-noop'
 import { isErr, unwrap } from '~/@/result'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoSolveAsync from './algo-solve-async'
 import { TimeSpan } from '~/@/time/time-span'
 
 describe('AlgoSolveAsync', () => {
-  test('solve flow', async () => {
-    const flow = VariantGridShorthand.toGrid([
+  test('solve numberlink', async () => {
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', 'B', 'C'],
       [' ', ' ', ' '],
       ['A', 'B', 'C'],
@@ -16,7 +16,7 @@ describe('AlgoSolveAsync', () => {
 
     const solution = unwrap(
       await AlgoSolveAsync.solve({
-        model: flow,
+        model: numberlink,
         logger: loggerNoop,
         maxDuration: TimeSpan.seconds(10),
       }),
@@ -30,12 +30,12 @@ describe('AlgoSolveAsync', () => {
 
     expect(solution).toBeTruthy()
     if (solution) {
-      expect(Flow.isSame(solution, expected)).toBe(true)
+      expect(Numberlink.isSame(solution, expected)).toBe(true)
     }
   })
 
   test('abort', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
       ['I', ' ', ' ', ' ', ' ', ' ', ' ', 'J'],
       ['K', ' ', 'L', 'M', 'N', 'O', ' ', 'P'],
@@ -49,7 +49,7 @@ describe('AlgoSolveAsync', () => {
     const abortController = new AbortController()
 
     const solvePromise = AlgoSolveAsync.solve({
-      model: flow,
+      model: numberlink,
       logger: loggerNoop,
       maxDuration: TimeSpan.seconds(10),
       abortSignal: abortController.signal,

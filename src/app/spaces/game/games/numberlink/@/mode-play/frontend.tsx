@@ -6,33 +6,33 @@ import { IconCheckmark } from '~/@/ui/icon/icon-checkmark'
 import { Transition } from '~/@/ui/transition/transition'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { Flow } from '../numberlink'
+import { Numberlink } from '../numberlink'
 import { HintCalculatorFrontend } from '../solutions/hint-calculator/frontend'
 import { GotHintCalculatorMsg } from '../solutions/hint-calculator/got-hint-calculator-msg'
 import { SolutionHash } from '../solutions/solution-hash/solution-hash'
 import { SolutionsLoaderFrontend } from '../solutions/solutions-loader/frontend'
 import { GotSolutionsLoaderMsg } from '../solutions/solutions-loader/got-solutions-loader-msg'
-import { Variant, VariantBoard } from '../variant'
+import { NumberlinkVariant, NumberlinkVariantBoard } from '../variant'
 import { ModePlayFrontendCtx } from './frontend/ctx'
-import { Model, Msg, toFlow } from './mode-play'
+import { Model, Msg, toNumberlink } from './mode-play'
 import { UseHint } from './use-hint'
 import { UseHintFrontend } from './use-hint/frontend'
 import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 
 const View = (input: {
-  flow: Variant.Model
+  numberlink: NumberlinkVariant.Model
   model: Model
   dispatch: (m: Msg) => void
   disabled?: boolean
   showSolvedAnimation?: boolean
 }) => {
-  const flow = toFlow(input.model, input.flow)
+  const numberlink = toNumberlink(input.model, input.numberlink)
 
   return (
     <div className='relative aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none'>
-      <VariantBoard.View
+      <NumberlinkVariantBoard.View
         disabled={input.disabled}
-        model={flow}
+        model={numberlink}
         showCoordinates={false}
         isDragging={input.model.status.t === 'dragging'}
         onDraggedOver={(nodeId) => input.dispatch({ t: 'user-dragged-over-node', nodeId })}
@@ -54,15 +54,15 @@ const View = (input: {
 }
 
 const viewResetAction = (input: {
-  flow: Variant.Model
+  numberlink: NumberlinkVariant.Model
   model: Model
   dispatch: (m: Msg) => void
   ctx: {
     t: Translator
   }
 }): ScreenAction[] => {
-  const flow = toFlow(input.model, input.flow)
-  const disabled = Flow.isPipesEmpty(flow)
+  const numberlink = toNumberlink(input.model, input.numberlink)
+  const disabled = Numberlink.isPipesEmpty(numberlink)
   return [
     PrebuiltActions.reset({
       ctx: input.ctx,
@@ -94,7 +94,7 @@ const viewActions = (input: {
     ...viewResetAction({
       ctx: input.ctx,
       dispatch: input.dispatch,
-      flow: input.ctx.flow,
+      numberlink: input.ctx.numberlink,
       model: input.model,
     }),
   ]
@@ -139,7 +139,7 @@ const subscriptions = <TMsg,>(
   input: { model: Model; ctx: ModePlayFrontendCtx },
   map: (c: unknown) => TMsg,
 ): Sub<TMsg> => {
-  const solutionHash = SolutionHash.init(input.ctx.flow)
+  const solutionHash = SolutionHash.init(input.ctx.numberlink)
   if (!solutionHash) return Sub.none()
   return Sub.map(
     SolutionsLoaderFrontend.watch(input.ctx, solutionHash, (c) => GotSolutionsLoaderMsg.init(c)),

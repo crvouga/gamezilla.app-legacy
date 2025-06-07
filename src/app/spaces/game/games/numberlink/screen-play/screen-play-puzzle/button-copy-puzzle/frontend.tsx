@@ -30,18 +30,21 @@ export const update: FrontendModule['update'] = (input) => {
       const modePlay =
         input.modelSpace.screen.modePlay ??
         ModePlay.init({
-          ctx: ModePlay.initCtx({ flow: input.modelSpace.screen.puzzleResult.c.flow, solutions: input.ctx.solutions }),
+          ctx: ModePlay.initCtx({
+            numberlink: input.modelSpace.screen.puzzleResult.c.numberlink,
+            solutions: input.ctx.solutions,
+          }),
         })
 
-      const flow = ModePlay.toFlow(modePlay, input.modelSpace.screen.puzzleResult.c.flow)
+      const numberlink = ModePlay.toNumberlink(modePlay, input.modelSpace.screen.puzzleResult.c.numberlink)
 
-      if (flow.t !== 'grid') {
+      if (numberlink.t !== 'grid') {
         return {
           model: input.model,
         }
       }
 
-      const shorthand = VariantGridShorthand.fromGrid(flow)
+      const shorthand = VariantGridShorthand.fromGrid(numberlink)
 
       const encoded = Json.stringify(shorthand)
 

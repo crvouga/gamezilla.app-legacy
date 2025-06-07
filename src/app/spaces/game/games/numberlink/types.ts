@@ -3,7 +3,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
-import { FlowBackendCtx } from './@/backend/ctx'
+import { NumberlinkBackendCtx } from './@/backend/ctx'
 import { Pack } from './@/pack/pack'
 import type { PackId } from './@/pack/pack-id'
 import { PackLoaderTypes } from './@/pack/pack-loader'
@@ -100,7 +100,7 @@ export type ModelSpace = s.Infer<typeof ModelSpace>
 
 export type FrontendCtxModule = SpaceFrontendCtx
 
-export type BackendCtxModule = FlowBackendCtx
+export type BackendCtxModule = NumberlinkBackendCtx
 
 export type FrontendModule = GameFrontendModule<{
   Model: ModelFrontend

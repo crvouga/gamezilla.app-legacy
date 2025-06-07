@@ -1,6 +1,6 @@
 import { FlowFrontendCtx } from '../../frontend/ctx'
-import { Variant } from '../../variant'
+import { NumberlinkVariant } from '../../variant'
 
 export type ModePlayFrontendCtx = FlowFrontendCtx & {
-  flow: Variant.Model
+  numberlink: NumberlinkVariant.Model
 }

@@ -1,6 +1,6 @@
 import type { ILogger } from '~/@/logger'
 import { Err, Ok, Result } from '~/@/result'
-import type { Variant } from '../../variant'
+import type { NumberlinkVariant } from '../../variant'
 import { AlgoSolve } from '../algo-solve'
 import { MsgToMaster, type MsgToWorker } from './types'
 import { TimeSpan } from '~/@/time/time-span'
@@ -35,13 +35,13 @@ export const problemToString = (problem: SolveAsyncProblem): string => {
 }
 
 export type SolveAsyncInput = {
-  model: Variant.Model
+  model: NumberlinkVariant.Model
   logger: ILogger
   maxDuration: TimeSpan
   abortSignal?: AbortSignal
 }
 
-type SolveAsync = (input: SolveAsyncInput) => Promise<Result<SolveAsyncProblem, Variant.Model | null>>
+type SolveAsync = (input: SolveAsyncInput) => Promise<Result<SolveAsyncProblem, NumberlinkVariant.Model | null>>
 
 export const solve: SolveAsync = async (input) => {
   return solveWorker(input)
@@ -75,7 +75,7 @@ export const solveWorker: SolveAsync = async (input) => {
 
   const worker = new Worker(url)
 
-  const solutionPromise = new Promise<Variant.Model | null>((resolve) => {
+  const solutionPromise = new Promise<NumberlinkVariant.Model | null>((resolve) => {
     worker.onmessage = (event: MessageEvent<unknown>) => {
       const parsed = MsgToMaster.parse(event.data)
       if (parsed.t === 'err') {

@@ -1,39 +1,39 @@
 import { s } from '~/@/schema'
-import type { Flow } from '../numberlink'
+import { Numberlink } from '../numberlink'
 import { NodeId } from '../numberlink/node-id'
+import { Terminal } from '../numberlink/terminal'
 import { VariantGrid } from './grid'
 import { VariantHex } from './hex'
 import { VariantTri } from './tri'
 import type * as VariantDimensions from './variant-dimensions'
-import { Terminal } from '../numberlink/terminal'
 
 export const Model = s.or(VariantGrid.Model, VariantHex.Model, VariantTri.Model)
 export type Model = s.Infer<typeof Model>
 
-export const isGrid = (flow: Model): flow is VariantGrid.Model => {
-  return flow.t === 'grid'
+export const isGrid = (numberlink: Model): numberlink is VariantGrid.Model => {
+  return numberlink.t === 'grid'
 }
 
-export const isHex = (flow: Model): flow is VariantHex.Model => {
-  return flow.t === 'hex'
+export const isHex = (numberlink: Model): numberlink is VariantHex.Model => {
+  return numberlink.t === 'hex'
 }
 
-export const isTri = (flow: Model): flow is VariantTri.Model => {
-  return flow.t === 'tri'
+export const isTri = (numberlink: Model): numberlink is VariantTri.Model => {
+  return numberlink.t === 'tri'
 }
 
-export const distance = (flow: Model, a: NodeId, b: NodeId): number => {
-  switch (flow.t) {
+export const distance = (numberlink: Model, a: NodeId, b: NodeId): number => {
+  switch (numberlink.t) {
     case 'grid': {
-      return VariantGrid.distance(flow, a, b)
+      return VariantGrid.distance(numberlink, a, b)
     }
 
     case 'hex': {
-      return VariantHex.distance(flow, a, b)
+      return VariantHex.distance(numberlink, a, b)
     }
 
     case 'tri': {
-      return VariantTri.distance(flow, a, b)
+      return VariantTri.distance(numberlink, a, b)
     }
   }
 }
@@ -45,7 +45,7 @@ export const toTerminalDistance = (model: Model, terminal: Terminal): number => 
 
 export const init = (input: {
   dimensions: VariantDimensions.Model
-  terminalsByGroupId: Flow.Model['terminalsByGroupId']
+  terminalsByGroupId: Numberlink.Model['terminalsByGroupId']
 }): Model => {
   switch (input.dimensions.t) {
     case 'grid': {
@@ -62,18 +62,18 @@ export const init = (input: {
   }
 }
 
-export const toDimensions = (flow: Model): VariantDimensions.Model => {
-  switch (flow.t) {
+export const toDimensions = (numberlink: Model): VariantDimensions.Model => {
+  switch (numberlink.t) {
     case 'grid': {
-      return VariantGrid.toDimensions(flow)
+      return VariantGrid.toDimensions(numberlink)
     }
 
     case 'hex': {
-      return VariantHex.toDimensions(flow)
+      return VariantHex.toDimensions(numberlink)
     }
 
     case 'tri': {
-      return VariantTri.toDimensions(flow)
+      return VariantTri.toDimensions(numberlink)
     }
   }
 }

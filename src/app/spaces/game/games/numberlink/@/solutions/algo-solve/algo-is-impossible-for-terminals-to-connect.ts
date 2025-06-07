@@ -1,12 +1,15 @@
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 import { GroupId } from '../../numberlink/group-id'
 import { NodeId } from '../../numberlink/node-id'
 import { TerminalFull } from '../../numberlink/terminal-full'
-import { Variant } from '../../variant'
+import { NumberlinkVariant } from '../../variant'
 
-export const isImpossibleForAnyTerminalToConnect = (model: Variant.Model, terminals: TerminalFull[]): boolean => {
+export const isImpossibleForAnyTerminalToConnect = (
+  model: NumberlinkVariant.Model,
+  terminals: TerminalFull[],
+): boolean => {
   for (const terminal of terminals) {
-    const minPathLength = Variant.distance(model, terminal.startId, terminal.endId)
+    const minPathLength = NumberlinkVariant.distance(model, terminal.startId, terminal.endId)
     const availableSpaces = countAvailableSpaces(model, terminal.groupId)
     if (availableSpaces < minPathLength) {
       return true
@@ -18,7 +21,7 @@ export const isImpossibleForAnyTerminalToConnect = (model: Variant.Model, termin
   return false
 }
 
-const isTerminalCutOff = (model: Variant.Model, terminal: TerminalFull): boolean => {
+const isTerminalCutOff = (model: NumberlinkVariant.Model, terminal: TerminalFull): boolean => {
   const visited = new Set<NodeId>()
   const stack = [terminal.startId]
 
@@ -26,9 +29,9 @@ const isTerminalCutOff = (model: Variant.Model, terminal: TerminalFull): boolean
     const nodeId = stack.pop()!
     visited.add(nodeId)
 
-    for (const edge of Flow.yieldEdgesOut(model, nodeId)) {
+    for (const edge of Numberlink.yieldEdgesOut(model, nodeId)) {
       const targetId = edge.targetId
-      const targetGroupId = Flow.toGroupId(model, targetId)
+      const targetGroupId = Numberlink.toGroupId(model, targetId)
 
       if (targetId === terminal.endId) {
         return false
@@ -45,10 +48,10 @@ const isTerminalCutOff = (model: Variant.Model, terminal: TerminalFull): boolean
   return true
 }
 
-const countAvailableSpaces = (model: Variant.Model, groupId: GroupId): number => {
+const countAvailableSpaces = (model: NumberlinkVariant.Model, groupId: GroupId): number => {
   let count = 0
-  for (const node of Flow.yieldNodes(model)) {
-    const nodeGroupId = Flow.toGroupId(model, node.nodeId)
+  for (const node of Numberlink.yieldNodes(model)) {
+    const nodeGroupId = Numberlink.toGroupId(model, node.nodeId)
     if (nodeGroupId === null || nodeGroupId === groupId) {
       count++
     }

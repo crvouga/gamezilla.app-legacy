@@ -1,21 +1,21 @@
 import { describe, expect, test } from 'bun:test'
 import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
-import { VariantBoard } from '.'
+import { NumberlinkVariantBoard } from '.'
 import { BoardInput } from '../ui/board'
 import { VariantGridShorthand } from './grid'
 import type * as FlowVariant from './variant'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()
-  const flow = VariantGridShorthand.toGrid([
+  const numberlink = VariantGridShorthand.toGrid([
     ['A', ' '],
     [' ', 'A'],
   ])
   const input: BoardInput<FlowVariant.Model> = {
-    model: flow,
+    model: numberlink,
   }
   const render = (input: BoardInput<FlowVariant.Model>) => {
-    return f.render(<VariantBoard.View {...input} />)
+    return f.render(<NumberlinkVariantBoard.View {...input} />)
   }
   return {
     ...f,

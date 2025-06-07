@@ -1,18 +1,18 @@
 import { describe, expect, it, test } from 'bun:test'
 import { loggerNoop } from '~/@/logger/impl-noop'
 import { ModePlay } from '.'
-import { Flow } from '../numberlink'
+import { Numberlink } from '../numberlink'
 import { AlgoIsSolved } from '../solutions/algo-is-solved/algo-is-solved'
 import { Solutions } from '../solutions/solutions'
-import type { Variant } from '../variant'
+import type { NumberlinkVariant } from '../variant'
 import { VariantGrid } from '../variant/grid'
 import { VariantGridShorthand } from '../variant/grid/grid-shorthand'
 import { toStatus } from './mode-play'
 
-const Fixture = async (input: { ctxFlow: Variant.Model }) => {
+const Fixture = async (input: { numberlink: NumberlinkVariant.Model }) => {
   const ctx: ModePlay.Ctx = ModePlay.initCtx({
-    solutions: await Solutions.find({ models: [input.ctxFlow], logger: loggerNoop }),
-    flow: input.ctxFlow,
+    solutions: await Solutions.find({ models: [input.numberlink], logger: loggerNoop }),
+    numberlink: input.numberlink,
   })
 
   const init = ModePlay.init({ ctx })
@@ -25,11 +25,11 @@ const Fixture = async (input: { ctxFlow: Variant.Model }) => {
   }
 
   const solutionMsgs = ModePlay.toSolutionMsgs({
-    flow: input.ctxFlow,
+    numberlink: input.numberlink,
   })
 
   return {
-    flow: input.ctxFlow,
+    numberlink: input.numberlink,
     init,
     update,
     solutionMsgs,
@@ -38,36 +38,36 @@ const Fixture = async (input: { ctxFlow: Variant.Model }) => {
 
 describe(import.meta.file, () => {
   test('to solution msgs', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       [' ', 'B', ' '],
       [' ', ' ', 'A'],
     ])
 
     const f = await Fixture({
-      ctxFlow: flow,
+      numberlink: numberlink,
     })
 
     const msgs = ModePlay.toSolutionMsgs({
-      flow,
+      numberlink: numberlink,
     })
 
-    const before = ModePlay.toFlow(f.init, f.flow)
+    const before = ModePlay.toNumberlink(f.init, f.numberlink)
 
-    const after = ModePlay.toFlow(f.update(f.init, msgs).model, f.flow)
+    const after = ModePlay.toNumberlink(f.update(f.init, msgs).model, f.numberlink)
 
     expect(AlgoIsSolved.isSolved(before)).toBe(false)
     expect(AlgoIsSolved.isSolved(after)).toBe(true)
   })
 
   it('should output connected terminals event', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', 'B'],
       ['a', 'B', ' '],
       ['a', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow,
+      numberlink: numberlink,
     })
 
     const output = f.update(f.init, [
@@ -105,13 +105,13 @@ describe(import.meta.file, () => {
   })
 
   it('should output started dragging event', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
       ['a', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow,
+      numberlink: numberlink,
     })
 
     const output = f.update(f.init, [
@@ -128,13 +128,13 @@ describe(import.meta.file, () => {
   })
 
   it('should output solved event', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
       ['a', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow,
+      numberlink: numberlink,
     })
 
     const output = f.update(f.init, [
@@ -172,13 +172,13 @@ describe(import.meta.file, () => {
   })
 
   it('should output solved event even after dragging left the board', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
       ['a', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow,
+      numberlink: numberlink,
     })
 
     const output = f.update(f.init, [
@@ -211,13 +211,13 @@ describe(import.meta.file, () => {
   })
 
   it('should not output solved event after dragging left the board if not connected', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
       ['a', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow,
+      numberlink: numberlink,
     })
 
     const output = f.update(f.init, [
@@ -243,13 +243,13 @@ describe(import.meta.file, () => {
   })
 
   it('should not output solved if not pressed up on terminal', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
       ['a', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow,
+      numberlink: numberlink,
     })
 
     const output = f.update(f.init, [
@@ -280,14 +280,14 @@ describe(import.meta.file, () => {
   })
 
   it('should not output solved event if terminals are not connected', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
       ['a', 'a', 'A'],
     ])
 
     const f = await Fixture({
-      ctxFlow: flow,
+      numberlink: numberlink,
     })
 
     const output = f.update(f.init, [
@@ -300,12 +300,12 @@ describe(import.meta.file, () => {
   })
 
   test('hint', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', ' '],
       [' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow,
+      numberlink: numberlink,
     })
 
     const msgs: ModePlay.Msg[] = [
@@ -319,35 +319,35 @@ describe(import.meta.file, () => {
     expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
   })
 
-  test('derive flow with hints', async () => {
-    const flow = VariantGridShorthand.toGrid([
+  test('derive numberlink with hints', async () => {
+    const numberlink = VariantGridShorthand.toGrid([
       ['A', ' '],
       [' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow,
+      numberlink: numberlink,
     })
 
     const model = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
-        solutions: await Solutions.find({ models: [flow], logger: loggerNoop }),
+        solutions: await Solutions.find({ models: [numberlink], logger: loggerNoop }),
       },
     ]).model
 
-    const flowNew = ModePlay.toFlow(model, flow)
+    const numberlinkNew = ModePlay.toNumberlink(model, numberlink)
 
-    expect(AlgoIsSolved.isSolved(flowNew)).toBe(true)
+    expect(AlgoIsSolved.isSolved(numberlinkNew)).toBe(true)
   })
 
   it('should not output solved event when drawing from incomplete terminal and then leave drawing', async () => {
-    const flow = VariantGridShorthand.toGrid([
+    const numberlink = VariantGridShorthand.toGrid([
       ['B', ' ', 'A'],
       [' ', ' ', 'a'],
       [' ', ' ', 'A'],
     ])
     const f = await Fixture({
-      ctxFlow: flow,
+      numberlink: numberlink,
     })
 
     const msgs: ModePlay.Msg[] = [
@@ -384,7 +384,7 @@ describe(import.meta.file, () => {
 
   test('reset pipes', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      numberlink: VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         ['a', ' ', ' '],
         ['a', 'a', 'A'],
@@ -397,16 +397,16 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const before = ModePlay.toFlow(f.init, f.flow)
-    const after = ModePlay.toFlow(output.model, f.flow)
+    const before = ModePlay.toNumberlink(f.init, f.numberlink)
+    const after = ModePlay.toNumberlink(output.model, f.numberlink)
 
-    expect(Flow.isPipesEmpty(before)).toBe(false)
-    expect(Flow.isPipesEmpty(after)).toBe(true)
+    expect(Numberlink.isPipesEmpty(before)).toBe(false)
+    expect(Numberlink.isPipesEmpty(after)).toBe(true)
   })
 
   test('reset hints used', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      numberlink: VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         [' ', ' ', ' '],
         [' ', ' ', 'A'],
@@ -415,7 +415,7 @@ describe(import.meta.file, () => {
     const before = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
-        solutions: await Solutions.find({ models: [f.flow], logger: loggerNoop }),
+        solutions: await Solutions.find({ models: [f.numberlink], logger: loggerNoop }),
       },
     ])
     const after = f.update(before.model, [
@@ -429,7 +429,7 @@ describe(import.meta.file, () => {
 
   test('output reset event', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      numberlink: VariantGridShorthand.toGrid([
         ['A', ' '],
         [' ', 'A'],
       ]),
@@ -444,7 +444,7 @@ describe(import.meta.file, () => {
 
   test('not output solved is no', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      numberlink: VariantGridShorthand.toGrid([
         ['A', ' '],
         [' ', 'A'],
       ]),
@@ -452,7 +452,7 @@ describe(import.meta.file, () => {
     const output = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
-        solutions: await Solutions.find({ models: [f.flow], logger: loggerNoop }),
+        solutions: await Solutions.find({ models: [f.numberlink], logger: loggerNoop }),
       },
     ])
     expect(output.events?.some((e) => e.t === 'used-hint')).toBe(true)
@@ -460,7 +460,7 @@ describe(import.meta.file, () => {
 
   test('show checkmark animation on solve', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      numberlink: VariantGridShorthand.toGrid([
         ['A', ' '],
         [' ', 'A'],
       ]),
@@ -471,7 +471,7 @@ describe(import.meta.file, () => {
 
   test('status should be solved if solved but is dragging lonely terminal', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      numberlink: VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         [' ', ' ', ' '],
         ['A', ' ', 'B'],
@@ -485,6 +485,6 @@ describe(import.meta.file, () => {
         nodeId: VariantGrid.toNodeId({ x: 2, y: 2 }),
       },
     ])
-    expect(toStatus({ model: output.model, flow: f.flow })).toBe('solved')
+    expect(toStatus({ model: output.model, numberlink: f.numberlink })).toBe('solved')
   })
 })

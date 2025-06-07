@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { eq } from '~/@/equals/equals'
 import { VariantGrid, VariantGridDimensions, VariantGridShorthand } from '.'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 
 describe(import.meta.file, () => {
   it('should initialize the model', () => {
@@ -57,7 +57,7 @@ describe(import.meta.file, () => {
           x: 0,
           y: 0,
         })]: {
-          edgeId: Flow.toEdgeId({
+          edgeId: Numberlink.toEdgeId({
             sourceId: VariantGrid.toNodeId({
               x: 0,
               y: 0,
@@ -76,7 +76,7 @@ describe(import.meta.file, () => {
         x: 0,
         y: 1,
       })]: {
-        edgeId: Flow.toEdgeId({
+        edgeId: Numberlink.toEdgeId({
           targetId: VariantGrid.toNodeId({
             x: 0,
             y: 0,
@@ -89,7 +89,7 @@ describe(import.meta.file, () => {
         groupId: 'A',
       },
     }
-    const actual = Flow.toReversedPipesBySourceId(grid)
+    const actual = Numberlink.toReversedPipesBySourceId(grid)
     expect(eq(actual, expected)).toBe(true)
   })
 

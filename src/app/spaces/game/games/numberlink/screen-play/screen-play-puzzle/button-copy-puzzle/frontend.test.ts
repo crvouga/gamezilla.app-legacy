@@ -4,7 +4,7 @@ import { UserRole } from '~/app/@/data/user-role'
 import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
-import { Flow } from '../../../@/numberlink'
+import { Numberlink } from '../../../@/numberlink'
 import { VariantGridShorthand } from '../../../@/variant/grid'
 import { FixtureScreenPlayPuzzleFrontend } from '../@/fixture/frontend'
 
@@ -85,7 +85,7 @@ describe(import.meta.file, () => {
       CopyToClipboardCmd.did(output, (text) => {
         const shorthand = JSON.parse(text)
         const grid = VariantGridShorthand.toGrid(shorthand)
-        return Flow.isSame(f.puzzle.flow, grid)
+        return Numberlink.isSame(f.puzzle.numberlink, grid)
       }),
     ).toBe(true)
   })

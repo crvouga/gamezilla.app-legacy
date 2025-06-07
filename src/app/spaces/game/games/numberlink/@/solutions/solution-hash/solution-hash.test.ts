@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 import { EdgeId } from '../../numberlink/edge-id'
 import { VariantGrid, VariantGridShorthand } from '../../variant/grid'
 import { SolutionHash } from './solution-hash'
@@ -38,7 +38,7 @@ describe(import.meta.file, () => {
       [' ', ' ', ' '],
       [' ', ' ', 'A'],
     ])
-    const modelB = Flow.flipAllTerminals(modelA)
+    const modelB = Numberlink.flipAllTerminals(modelA)
     const hashA = SolutionHash.init(modelA)
     const hashB = SolutionHash.init(modelB)
     expect(hashA).toEqual(hashB)
@@ -51,7 +51,7 @@ describe(import.meta.file, () => {
       [' ', ' ', 'A'],
     ])
     const edgeId = EdgeId.init(VariantGrid.toNodeId({ x: 0, y: 0 }), VariantGrid.toNodeId({ x: 0, y: 1 }))
-    const modelB = Flow.removeEdge(modelA, edgeId)
+    const modelB = Numberlink.removeEdge(modelA, edgeId)
     const hashA = SolutionHash.init(modelA)
     const hashB = SolutionHash.init(modelB)
     expect(hashA).not.toEqual(hashB)

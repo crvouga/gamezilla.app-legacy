@@ -54,7 +54,7 @@ const update: FrontendModule['update'] = (input) => {
       if (!puzzle) return { model: input.model }
 
       const updated = ModePlay.update({
-        ctx: ModePlay.initCtx({ flow: puzzle.flow, solutions: input.ctx.solutions }),
+        ctx: ModePlay.initCtx({ numberlink: puzzle.numberlink, solutions: input.ctx.solutions }),
         model: modePlay,
         msg: input.msgSpace.c,
       })
@@ -91,7 +91,7 @@ const View: FrontendModule['View'] = (input) => {
             dispatch={(c) =>
               input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-flow-play-msg', c } })
             }
-            flow={puzzleResult.c.flow}
+            numberlink={puzzleResult.c.numberlink}
             model={play}
             showSolvedAnimation
           />
@@ -100,7 +100,7 @@ const View: FrontendModule['View'] = (input) => {
           variant: {
             t: 'uniform',
             actions: ModePlayFrontend.viewActions({
-              ctx: { ...input.ctx, flow: puzzleResult.c.flow },
+              ctx: { ...input.ctx, numberlink: puzzleResult.c.numberlink },
               model: play,
               dispatchCmd: (c) => input.dispatch({ t: 'got-msg-out', c }),
               dispatch: (c) =>
@@ -231,11 +231,11 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   if (input.modelSpace.screen.t !== 'screen-puzzle') return Sub.none()
   if (input.modelSpace.screen.puzzleResult.t !== 'got') return Sub.none()
-  const flow = input.modelSpace.screen.puzzleResult.c.flow
+  const numberlink = input.modelSpace.screen.puzzleResult.c.numberlink
   const play = input.modelSpace.screen.play
   if (!play) return Sub.none()
   return ModePlayFrontend.subscriptions(
-    { model: play, ctx: { ...input.ctx, flow } },
+    { model: play, ctx: { ...input.ctx, numberlink: numberlink } },
     (c): MsgFrontend => ({ t: 'got-msg-out', c: c }),
   )
 }

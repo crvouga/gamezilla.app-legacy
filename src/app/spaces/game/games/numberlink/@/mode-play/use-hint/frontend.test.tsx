@@ -11,7 +11,7 @@ const Fixture = async (params?: Parameters<typeof FixtureModePlayUseHint>[0]) =>
     const r = f.render(<UseHintFrontend.TestView dispatch={() => {}} ctx={f.ctx} model={f.init} {...input} />)
     return r
   }
-  const solutions = await Solutions.find({ models: [f.ctx.flow], logger: loggerNoop })
+  const solutions = await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop })
   f.ctx = {
     ...f.ctx,
     solutions,
@@ -34,8 +34,8 @@ describe('UseHintFrontend', () => {
     const r = f.render({
       model: {
         ...f.init,
-        pipesBySourceId: f.ctx.flow.pipesBySourceId,
-        terminalsByGroupId: f.ctx.flow.terminalsByGroupId,
+        pipesBySourceId: f.ctx.numberlink.pipesBySourceId,
+        terminalsByGroupId: f.ctx.numberlink.terminalsByGroupId,
       },
       dispatch: () => {},
       ctx: f.ctx,

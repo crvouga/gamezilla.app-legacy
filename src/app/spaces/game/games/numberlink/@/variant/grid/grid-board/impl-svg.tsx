@@ -1,7 +1,7 @@
 import { cn } from '~/@/ui/cn'
 import { IconCheckmark } from '~/@/ui/icon/icon-checkmark'
 import type { VDom } from '~/@/vdom/vdom'
-import { Flow } from '../../../numberlink'
+import { Numberlink } from '../../../numberlink'
 import { NodeId } from '../../../numberlink/node-id'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
@@ -111,7 +111,7 @@ const ViewPipeline = (
   const pipeline = VariantGrid.toPipeline(input.model, terminal.startId)
   const pipelinePathData = pipelineToSvgPathData(pipeline)
   const didUseHint = Boolean(input.usedHints?.[terminal.groupId])
-  const isConnectedWithPipes = Flow.isTerminalConnectedWithPipes(input.model, terminal.groupId)
+  const isConnectedWithPipes = Numberlink.isTerminalConnectedWithPipes(input.model, terminal.groupId)
   const shouldShowUsedHint = isConnectedWithPipes && didUseHint
 
   return (

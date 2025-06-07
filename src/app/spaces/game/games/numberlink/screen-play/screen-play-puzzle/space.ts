@@ -42,7 +42,7 @@ const updateScreen = (input: {
         input.modelSpace.modePlay ??
         ModePlay.init({
           ctx: ModePlay.initCtx({
-            flow: input.modelSpace.puzzleResult.c.flow,
+            numberlink: input.modelSpace.puzzleResult.c.numberlink,
             solutions: {},
           }),
         })
@@ -50,7 +50,7 @@ const updateScreen = (input: {
       const modelPlayNew = ModePlay.update({
         msg: input.msgSpace.c,
         model: modelPlay,
-        ctx: ModePlay.initCtx({ flow: input.modelSpace.puzzleResult.c.flow, solutions: {} }),
+        ctx: ModePlay.initCtx({ numberlink: input.modelSpace.puzzleResult.c.numberlink, solutions: {} }),
       })
 
       const didSolve = modelPlayNew.events?.some((e) => e.t === 'solved')
@@ -110,7 +110,7 @@ const updateScreen = (input: {
             ...input.modelSpace,
             modePlay: ModePlay.init({
               ctx: ModePlay.initCtx({
-                flow: input.msgSpace.nextPuzzle.c.flow,
+                numberlink: input.msgSpace.nextPuzzle.c.numberlink,
                 solutions: {},
               }),
             }),
@@ -129,7 +129,7 @@ const updateScreen = (input: {
             ...input.modelSpace,
             modePlay: ModePlay.init({
               ctx: ModePlay.initCtx({
-                flow: input.msgSpace.prevPuzzle.c.flow,
+                numberlink: input.msgSpace.prevPuzzle.c.numberlink,
                 solutions: {},
               }),
             }),
@@ -198,7 +198,7 @@ const initSpace = (input: {
     puzzleIndex: input.puzzleIndex,
     modePlay:
       input.puzzle.t === 'got'
-        ? ModePlay.init({ ctx: ModePlay.initCtx({ flow: input.puzzle.c.flow, solutions: {} }) })
+        ? ModePlay.init({ ctx: ModePlay.initCtx({ numberlink: input.puzzle.c.numberlink, solutions: {} }) })
         : null,
     opened: null,
     t: 'screen-play-puzzle',
@@ -230,7 +230,7 @@ const toStatus = (modelSpace: ModelSpace) => {
   }
 
   return ModePlay.toStatus({
-    flow: modelSpace.puzzleResult.c.flow,
+    numberlink: modelSpace.puzzleResult.c.numberlink,
     model: modelPlay,
   })
 }

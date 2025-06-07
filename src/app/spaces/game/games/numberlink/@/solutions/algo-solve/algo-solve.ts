@@ -1,29 +1,32 @@
 import { ascend } from '~/@/array/sorting'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 import { Terminal } from '../../numberlink/terminal'
 import { TerminalFull } from '../../numberlink/terminal-full'
-import { Variant } from '../../variant'
+import { NumberlinkVariant } from '../../variant'
 import { AlgoIsSolved } from '../algo-is-solved/algo-is-solved'
 import { toAllPossiblePipelines } from './algo-all-possible-pipelines'
 import { isImpossibleForAnyTerminalToConnect } from './algo-is-impossible-for-terminals-to-connect'
 
-export const solve = (model: Variant.Model): Variant.Model | null => {
+export const solve = (model: NumberlinkVariant.Model): NumberlinkVariant.Model | null => {
   for (const solution of solutions(model)) {
     return solution
   }
   return null
 }
 
-export const solutions = function* (model: Variant.Model): Iterable<Variant.Model> {
-  const cleared = Flow.removeAllPipelines(model)
+export const solutions = function* (model: NumberlinkVariant.Model): Iterable<NumberlinkVariant.Model> {
+  const cleared = Numberlink.removeAllPipelines(model)
 
-  const disconnectedTerminals = Flow.toFullTerminals(cleared)
-  disconnectedTerminals.sort(ascend((terminal) => Variant.toTerminalDistance(cleared, terminal)))
+  const disconnectedTerminals = Numberlink.toFullTerminals(cleared)
+  disconnectedTerminals.sort(ascend((terminal) => NumberlinkVariant.toTerminalDistance(cleared, terminal)))
 
   yield* solveStep(cleared, disconnectedTerminals)
 }
 
-const solveStep = function* (model: Variant.Model, disconnectedTerminals: TerminalFull[]): Iterable<Variant.Model> {
+const solveStep = function* (
+  model: NumberlinkVariant.Model,
+  disconnectedTerminals: TerminalFull[],
+): Iterable<NumberlinkVariant.Model> {
   if (isImpossibleForAnyTerminalToConnect(model, disconnectedTerminals)) {
     return
   }
@@ -50,12 +53,16 @@ const solveStep = function* (model: Variant.Model, disconnectedTerminals: Termin
   }
 }
 
-const drawPipeline = (model: Variant.Model, terminal: Terminal, path: Flow.Edge[]): Variant.Model => {
+const drawPipeline = (
+  model: NumberlinkVariant.Model,
+  terminal: Terminal,
+  path: Numberlink.Edge[],
+): NumberlinkVariant.Model => {
   const pipesBySourceId = { ...model.pipesBySourceId }
 
   for (const edge of path) {
     pipesBySourceId[edge.sourceId] = {
-      edgeId: Flow.toEdgeId(edge),
+      edgeId: Numberlink.toEdgeId(edge),
       groupId: terminal.groupId,
     }
   }

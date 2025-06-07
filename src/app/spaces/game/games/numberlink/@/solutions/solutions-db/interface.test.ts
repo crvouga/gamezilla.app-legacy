@@ -47,15 +47,15 @@ const Fixtures = async () => {
 describe(import.meta.file, () => {
   test('get and put', async () => {
     for (const f of await Fixtures()) {
-      const flow = VariantGridShorthand.toGrid([
+      const numberlink = VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         [' ', ' ', ' '],
         [' ', ' ', 'A'],
       ])
-      const hash = SolutionHash.init(flow)
+      const hash = SolutionHash.init(numberlink)
       const zapped = await f.solutionsDb.zap(hash)
 
-      const solutions = await Solutions.find({ models: [flow], logger: loggerNoop })
+      const solutions = await Solutions.find({ models: [numberlink], logger: loggerNoop })
 
       const before = await f.solutionsDb.get(hash)
       const put = await f.solutionsDb.put(solutions)
@@ -70,13 +70,13 @@ describe(import.meta.file, () => {
 
   test('zap', async () => {
     for (const f of await Fixtures()) {
-      const flow = VariantGridShorthand.toGrid([
+      const numberlink = VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         [' ', ' ', ' '],
         [' ', ' ', 'A'],
       ])
-      const hash = SolutionHash.init(flow)
-      const solutions = await Solutions.find({ models: [flow], logger: loggerNoop })
+      const hash = SolutionHash.init(numberlink)
+      const solutions = await Solutions.find({ models: [numberlink], logger: loggerNoop })
       await f.solutionsDb.put(solutions)
 
       const before = await f.solutionsDb.get(hash)

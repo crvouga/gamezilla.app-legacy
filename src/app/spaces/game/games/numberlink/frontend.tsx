@@ -43,7 +43,7 @@ const init: FrontendModule['init'] = {
 let puzzleDb: IPuzzleDb
 let packDb: IPackDb
 let solutionsDb: ISolutionsDb
-const toFlowFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): FlowFrontendCtx => {
+const toFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): FlowFrontendCtx => {
   puzzleDb ??= PuzzleDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb, logger: input.ctx.logger })
   packDb ??= PackDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb, logger: input.ctx.logger })
   solutionsDb ??= SolutionsDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb })
@@ -79,7 +79,7 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const updatePuzzleLoader: FrontendModule['update'] = (input) => {
-  const ctx = toFlowFrontendCtx(input)
+  const ctx = toFrontendCtx(input)
 
   const updated = PuzzleLoaderFrontend.update({
     ctx,
@@ -95,7 +95,7 @@ const updatePuzzleLoader: FrontendModule['update'] = (input) => {
 }
 
 const updatePackLoader: FrontendModule['update'] = (input) => {
-  const ctx = toFlowFrontendCtx(input)
+  const ctx = toFrontendCtx(input)
 
   const updated = PackLoaderFrontend.update({
     ctx,
@@ -112,7 +112,7 @@ const updatePackLoader: FrontendModule['update'] = (input) => {
 }
 
 const updateHintCalculator: FrontendModule['update'] = (input) => {
-  const ctx = toFlowFrontendCtx(input)
+  const ctx = toFrontendCtx(input)
 
   const updated = HintCalculatorFrontend.update({
     ctx,
@@ -129,7 +129,7 @@ const updateHintCalculator: FrontendModule['update'] = (input) => {
 }
 
 const updateSolutionsLoader: FrontendModule['update'] = (input) => {
-  const ctx = toFlowFrontendCtx(input)
+  const ctx = toFrontendCtx(input)
 
   const updated = SolutionsLoaderFrontend.update({
     ctx,
@@ -146,7 +146,7 @@ const updateSolutionsLoader: FrontendModule['update'] = (input) => {
 }
 
 const updateScreenPlay: FrontendModule['update'] = (input) => {
-  const ctx = toFlowFrontendCtx(input)
+  const ctx = toFrontendCtx(input)
 
   const updated = ScreenPlayFrontend.update({
     ctx,
@@ -166,7 +166,7 @@ const updateScreenPlay: FrontendModule['update'] = (input) => {
 }
 
 const updateScreenBuild: FrontendModule['update'] = (input) => {
-  const ctx = toFlowFrontendCtx(input)
+  const ctx = toFrontendCtx(input)
 
   const updated = ScreenBuildFrontend.update({
     ctx,
@@ -258,7 +258,7 @@ const updateFromCmd: FrontendModule['update'] = (input) => {
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   switch (input.modelSpace.mode) {
     case 'build': {
-      const ctx = toFlowFrontendCtx(input)
+      const ctx = toFrontendCtx(input)
       return Sub.map(
         ScreenBuildFrontend.subscriptions({
           ctx,
@@ -270,7 +270,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
     }
 
     case 'play': {
-      const ctx = toFlowFrontendCtx(input)
+      const ctx = toFrontendCtx(input)
       return Sub.map(
         ScreenPlayFrontend.subscriptions({
           ctx,
@@ -300,7 +300,7 @@ const View: FrontendModule['View'] = (input) => {
     }
 
     case 'build': {
-      const ctx = toFlowFrontendCtx(input)
+      const ctx = toFrontendCtx(input)
 
       return (
         <ScreenBuildFrontend.View
@@ -313,7 +313,7 @@ const View: FrontendModule['View'] = (input) => {
     }
 
     case 'play': {
-      const ctx = toFlowFrontendCtx(input)
+      const ctx = toFrontendCtx(input)
       return (
         <ScreenPlayFrontend.View
           ctx={ctx}
@@ -327,7 +327,7 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewMainMenu: FrontendModule['View'] = (input) => {
-  const ctx = toFlowFrontendCtx(input)
+  const ctx = toFrontendCtx(input)
 
   return (
     <GameMainMenu.View
@@ -368,7 +368,7 @@ const ViewFeedItem: FrontendModule['ViewFeedItem'] = (_input) => {
   return null
 }
 
-export const FlowFrontend = {
+export const NumberlinkFrontend = {
   init,
   subscriptions,
   update,

@@ -1,5 +1,5 @@
 import { s } from '~/@/schema'
-import { Flow } from '../../numberlink'
+import { Numberlink } from '../../numberlink'
 import * as VariantHexDimensions from './hex-dimensions'
 import { NodeId } from '../../numberlink/node-id'
 
@@ -11,7 +11,7 @@ export const HexPosition = s.obj({
 export type HexPosition = s.Infer<typeof HexPosition>
 
 export const Model = s.and(
-  Flow.Model,
+  Numberlink.Model,
   VariantHexDimensions.Model,
   s.obj({
     t: s.l('hex'),
@@ -23,10 +23,10 @@ export type Model = s.Infer<typeof Model>
 
 export const init = (input: {
   dimensions: VariantHexDimensions.Model
-  terminalsByGroupId: Flow.Model['terminalsByGroupId']
+  terminalsByGroupId: Numberlink.Model['terminalsByGroupId']
 }): Model => {
   return {
-    ...Flow.init,
+    ...Numberlink.init,
     ...input.dimensions,
     t: 'hex',
     VariantHex: true,

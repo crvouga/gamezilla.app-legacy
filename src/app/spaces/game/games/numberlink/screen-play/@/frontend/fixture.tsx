@@ -1,7 +1,7 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import type { WithEventMeta } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
-import { FixtureFlowFrontend } from '../../../@/frontend/fixture'
+import { FixtureNumberlinkFrontend } from '../../../@/frontend/fixture'
 import { ScreenPlayFrontend } from '../../frontend'
 import { PlaySpace } from '../../space'
 import type { ModelSpace, MsgFrontend, MsgSpace } from '../../types'
@@ -13,7 +13,7 @@ export type FixtureUpdateInput = {
 }
 
 export const FixturePlayFrontend = async () => {
-  const f = await FixtureFlowFrontend()
+  const f = await FixtureNumberlinkFrontend()
   const initSpace = PlaySpace.initSpace(f)
 
   type Output = ReturnType<typeof ScreenPlayFrontend.update> & {

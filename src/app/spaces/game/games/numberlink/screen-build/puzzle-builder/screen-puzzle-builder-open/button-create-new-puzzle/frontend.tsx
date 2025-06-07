@@ -10,7 +10,7 @@ import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { AddPuzzlesCmd } from '../../../../@/frontend/add-puzzles-cmd'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { IPuzzleDb } from '../../../../@/puzzle/puzzle-db'
-import { Variant, VariantDimensions } from '../../../../@/variant'
+import { NumberlinkVariant, NumberlinkVariantDimensions } from '../../../../@/variant'
 import { FrontendModule } from '../../../types'
 
 const update: FrontendModule['update'] = (input) => {
@@ -86,9 +86,9 @@ const createNewPuzzle = async (input: { now: Posix; createdByUserId: UserId; puz
   const puzzleNew = await Puzzle.create({
     createdAt: input.now,
     createdBy: input.createdByUserId,
-    flow: Variant.init({
+    numberlink: NumberlinkVariant.init({
       terminalsByGroupId: {},
-      dimensions: VariantDimensions.init({ t: 'grid', height: 8, width: 8 }),
+      dimensions: NumberlinkVariantDimensions.init({ t: 'grid', height: 8, width: 8 }),
     }),
   })
 

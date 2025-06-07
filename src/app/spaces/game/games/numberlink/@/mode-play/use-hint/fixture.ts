@@ -1,6 +1,6 @@
 import { UseHint } from '.'
-import { FixtureFlowFrontend } from '../../frontend/fixture'
-import { Variant } from '../../variant'
+import { FixtureNumberlinkFrontend } from '../../frontend/fixture'
+import { NumberlinkVariant } from '../../variant'
 import { VariantGridShorthand } from '../../variant/grid'
 
 type Input = {
@@ -8,8 +8,8 @@ type Input = {
   ctx?: UseHint.Ctx
 }
 
-export const FixtureModePlayUseHint = async (input?: { ctxFlow?: Variant.Model }) => {
-  const f = await FixtureFlowFrontend()
+export const FixtureModePlayUseHint = async (input?: { ctxFlow?: NumberlinkVariant.Model }) => {
+  const f = await FixtureNumberlinkFrontend()
 
   const ctxFlow =
     input?.ctxFlow ??
@@ -19,7 +19,7 @@ export const FixtureModePlayUseHint = async (input?: { ctxFlow?: Variant.Model }
     ])
 
   const ctx = UseHint.initCtx({
-    flow: ctxFlow,
+    numberlink: ctxFlow,
   })
 
   const update = (init: UseHint.Model, inputs: Input[]): ReturnType<typeof UseHint.update> => {

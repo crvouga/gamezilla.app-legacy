@@ -9,7 +9,7 @@ import { BaseFixtures } from '../fixture'
 const Fixtures = async function* () {
   for await (const f of await BaseFixtures()) {
     const puzzleWithEmptySolutions = await Puzzle.random({
-      flow: VariantGridShorthand.toGrid([
+      numberlink: VariantGridShorthand.toGrid([
         ['A', ' '],
         [' ', 'A'],
       ]),

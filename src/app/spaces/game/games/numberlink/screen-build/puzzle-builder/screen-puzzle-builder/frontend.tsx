@@ -15,7 +15,7 @@ import { ModeEditFrontend } from '../../../@/mode-edit/frontend'
 import { ModePlay } from '../../../@/mode-play'
 import { ModePlayFrontend } from '../../../@/mode-play/frontend'
 import { BoardLayout } from '../../../@/ui/board-layout'
-import { VariantBoard } from '../../../@/variant'
+import { NumberlinkVariantBoard } from '../../../@/variant'
 import * as BuilderTypes from '../../types'
 import { ScreenPuzzleBuilderSpace } from './space'
 import { DeleteForeverFrontend } from './surface-delete-forever/frontend'
@@ -97,11 +97,11 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
     case 'screen-puzzle-builder.got-play-msg': {
       if (input.modelSpace.screenPuzzleBuilder?.mode.t !== 'play') return { model: input.model }
 
-      const flow = ScreenPuzzleBuilderSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
+      const numberlink = ScreenPuzzleBuilderSpace.toNumberlink(input.modelSpace.screenPuzzleBuilder)
       const updated = ModePlay.update({
         msg: input.msgSpace.c,
         model: input.modelSpace.screenPuzzleBuilder.modePlay,
-        ctx: ModePlay.initCtx({ flow, solutions: input.ctx.solutions }),
+        ctx: ModePlay.initCtx({ numberlink: numberlink, solutions: input.ctx.solutions }),
       })
 
       return {
@@ -115,7 +115,7 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
       const updated = ModeEdit.update({
         model: input.modelSpace.screenPuzzleBuilder.modeEdit,
         msg: input.msgSpace.c,
-        flow: input.modelSpace.screenPuzzleBuilder.puzzle.flow,
+        numberlink: input.modelSpace.screenPuzzleBuilder.puzzle.numberlink,
       })
 
       if (!updated.msgCmd) return { model: input.model }
@@ -263,7 +263,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
   if (!puzzleBuilder) return null
 
-  const flow = ScreenPuzzleBuilderSpace.toFlow(puzzleBuilder)
+  const numberlink = ScreenPuzzleBuilderSpace.toNumberlink(puzzleBuilder)
 
   return (
     <ScreenLayout
@@ -275,7 +275,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
           <div className='flex w-full items-center justify-center gap-1 p-2'>{input.ctx.t('flow.playing')}</div>
           <ModePlayFrontend.View
             model={puzzleBuilder.modePlay}
-            flow={flow}
+            numberlink={numberlink}
             dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c })}
             showSolvedAnimation
           />
@@ -285,7 +285,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
         variant: {
           t: 'uniform',
           actions: ModePlayFrontend.viewActions({
-            ctx: ModePlay.initCtx({ ...input.ctx, flow }),
+            ctx: ModePlay.initCtx({ ...input.ctx, numberlink: numberlink }),
             dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
             model: puzzleBuilder.modePlay,
             dispatchCmd: (c) => {
@@ -301,7 +301,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
 const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
   if (!puzzleBuilder) return null
-  const flow = ScreenPuzzleBuilderSpace.toFlow(puzzleBuilder)
+  const numberlink = ScreenPuzzleBuilderSpace.toNumberlink(puzzleBuilder)
 
   return (
     <ScreenLayout
@@ -319,7 +319,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
               profile={input.ctx.profilesByUserId[input.ctx.space.hostId]}
               subtitle={input.ctx.t('app.editor')}
             />
-            <VariantBoard.View disabled model={flow} />
+            <NumberlinkVariantBoard.View disabled model={numberlink} />
           </div>
         </LayoutGame>
       )}
@@ -361,14 +361,14 @@ const updateMoreDrawer: BuilderTypes.FrontendModule['update'] = (input) => {
 const subscriptions: BuilderTypes.FrontendModule['subscriptions'] = (input) => {
   if (!input.modelSpace.screenPuzzleBuilder) return Sub.none()
 
-  const flow = ScreenPuzzleBuilderSpace.toFlow(input.modelSpace.screenPuzzleBuilder)
+  const numberlink = ScreenPuzzleBuilderSpace.toNumberlink(input.modelSpace.screenPuzzleBuilder)
 
   const play = input.modelSpace.screenPuzzleBuilder.modePlay
 
   if (!play) return Sub.none()
 
   return ModePlayFrontend.subscriptions(
-    { model: play, ctx: { ...input.ctx, flow } },
+    { model: play, ctx: { ...input.ctx, numberlink: numberlink } },
     (c): BuilderTypes.MsgFrontend => ({ t: 'got-msg-out', c }),
   )
 }
