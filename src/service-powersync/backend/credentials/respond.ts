@@ -8,27 +8,42 @@ import { getKeyPair } from '../keys/keys'
 const respond = async (input: { request: Request; ctx: Ctx }) => {
   const keys = await getKeyPair()
   if (isErr(keys)) {
-    return new Response(`Internal Server Error. Errored while getting keys: ${keys.error}`, {
-      status: 500,
-    })
+    return new Response(
+      JSON.stringify({
+        message: `Internal Server Error. Errored while getting keys: ${keys.error}`,
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )
   }
 
   const powerSyncKey = keys.value.privateKey
   const maybeSessionId = SessionIdHttp.fromRequest(input.request)
 
   if (!maybeSessionId) {
-    return new Response('No session ID found in the request', {
-      status: 401,
-    })
+    return new Response(
+      JSON.stringify({
+        message: 'No session ID found in the request',
+      }),
+      {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )
   }
 
   const foundUserId = await input.ctx.userSessionDb.findUserIdBySessionId(maybeSessionId)
 
   if (isErr(foundUserId)) {
     return new Response(
-      `Internal Server Error. Errored while finding userID associated with request session ID: ${foundUserId.error}`,
+      JSON.stringify({
+        message: `Internal Server Error. Errored while finding userID associated with request session ID: ${foundUserId.error}`,
+      }),
       {
         status: 500,
+        headers: { 'Content-Type': 'application/json' },
       },
     )
   }
@@ -36,20 +51,32 @@ const respond = async (input: { request: Request; ctx: Ctx }) => {
   const userId = foundUserId.value
 
   if (!userId) {
-    return new Response('No user id found to be associated with the request session ID', { status: 401 })
+    return new Response(
+      JSON.stringify({
+        message: 'No user id found to be associated with the request session ID',
+      }),
+      {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )
   }
 
   if (typeof powerSyncKey?.alg !== 'string') {
-    return new Response('Internal Server Error. PowerSync private key algorithm is not a string', { status: 500 })
+    return new Response(
+      JSON.stringify({
+        message: 'Internal Server Error. PowerSync private key algorithm is not a string',
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )
   }
 
   const jwt = pipe(
     SignJWT.createJWT(),
-    (jwt) =>
-      SignJWT.setProtectedHeader(jwt, {
-        alg: powerSyncKey?.alg,
-        kid: powerSyncKey?.kid,
-      }),
+    (jwt) => SignJWT.setProtectedHeader(jwt, { alg: powerSyncKey?.alg, kid: powerSyncKey?.kid }),
     (jwt) => SignJWT.setSubject(jwt, userId),
     (jwt) => SignJWT.setIssuedAt(jwt),
     (jwt) => SignJWT.setIssuer(jwt, ''), // config?.powersync?.jwtIssuer ?? ''
