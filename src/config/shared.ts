@@ -4,7 +4,9 @@ const IS_INTEGRATION_TEST = IS_TEST && import.meta.env?.IS_INTEGRATION_TEST === 
 
 const IS_UNIT_TEST = IS_TEST && !IS_INTEGRATION_TEST
 
-const IS_PROD = Boolean(import.meta.env?.PROD || import.meta.env?.NODE_ENV === 'production')
+const IS_PROD = Boolean(
+  import.meta.env?.PROD || (typeof process !== 'undefined' && process.env?.NODE_ENV === 'production'),
+)
 
 const IS_LOCAL = !IS_PROD
 
