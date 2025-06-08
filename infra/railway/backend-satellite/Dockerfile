@@ -7,4 +7,4 @@ COPY ./ ./
 
 RUN bun install
 
-CMD ["bun", "backend"]
+CMD ["bun", "backend-satellite"]

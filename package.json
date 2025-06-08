@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "backend": "bun --watch ./src/backend.ts",
+    "backend-satellite": "bun --watch ./src/backend-satellite.ts",
     "backend:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./src/backend.ts",
     "backend:ngrok": "ngrok http 5002 --subdomain=gamezilla",
     "bash": "bun infra:backend:bash",

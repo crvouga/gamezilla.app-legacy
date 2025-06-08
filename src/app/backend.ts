@@ -115,6 +115,24 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     topic,
   }
 
+  RPC.registerRespond({
+    httpServer: ctx.httpServer,
+    contract: AppTypes.rpcContract,
+    server: AppBackend.rpc({ ctx }),
+  })
+
+  PowerSyncBackendApp.registerRespond({
+    ctx,
+    httpServer: ctx.httpServer,
+  })
+
+  ctx.httpServer.registerRespond(() => {
+    return new Response('Hello from gamezilla.app backend', {
+      status: 200,
+      headers: { 'Content-Type': 'text/plain' },
+    })
+  })
+
   return ctx
 }
 
@@ -127,24 +145,6 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
 }
 
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
-  RPC.registerRespond({
-    httpServer: input.ctx.httpServer,
-    contract: AppTypes.rpcContract,
-    server: AppBackend.rpc(input),
-  })
-
-  PowerSyncBackendApp.registerRespond({
-    ctx: input.ctx,
-    httpServer: input.ctx.httpServer,
-  })
-
-  input.ctx.httpServer.registerRespond(() => {
-    return new Response('Hello from gamezilla.app backend', {
-      status: 200,
-      headers: { 'Content-Type': 'text/plain' },
-    })
-  })
-
   input.ctx.httpServer.start(CONFIG_BACKEND.SERVER_PORT!)
 
   WireBackend.worker(s, input)
