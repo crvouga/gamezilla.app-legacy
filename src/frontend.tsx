@@ -5,10 +5,7 @@ import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {
-  const render = await Render({
-    vDomImpl: CONFIG_FRONTEND.VDOM_IMPL,
-    node: document.getElementById('root')!,
-  })
+  const render = await Render(CONFIG_FRONTEND.VDOM_IMPL, document.getElementById('root')!)
 
   const ctx = await AppFrontend.initCtx()
 

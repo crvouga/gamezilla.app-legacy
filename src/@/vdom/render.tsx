@@ -7,14 +7,14 @@ export type CreatePortal = (vDom: VDom, container: Element) => VDom
 
 export let createPortal: CreatePortal | null = null
 
-export const Render = async (config: { vDomImpl: VDomImpl; node: HTMLElement }): Promise<Render> => {
-  switch (config.vDomImpl) {
+export const Render = async (vDomImpl: VDomImpl, node: HTMLElement): Promise<Render> => {
+  switch (vDomImpl) {
     case 'inferno': {
       const Inferno = await import('inferno')
       // @ts-expect-error We're using react types of vdom
       createPortal = Inferno.createPortal
       return (vDom) => {
-        Inferno.render(vDom, config.node)
+        Inferno.render(vDom, node)
       }
     }
 
@@ -23,7 +23,7 @@ export const Render = async (config: { vDomImpl: VDomImpl; node: HTMLElement }):
       // @ts-expect-error We're using react types of vdom
       createPortal = PreactCompat.createPortal
       return (vDom) => {
-        Preact.render(vDom, config.node)
+        Preact.render(vDom, node)
       }
     }
 
@@ -34,7 +34,7 @@ export const Render = async (config: { vDomImpl: VDomImpl; node: HTMLElement }):
         import('react-dom'),
         import('react-dom/client'),
       ])
-      const reactRoot = ReactDOMClient.createRoot(config.node)
+      const reactRoot = ReactDOMClient.createRoot(node)
       createPortal = ReactDOM.createPortal
       return (vDom) => {
         reactRoot.render(<React.StrictMode>{vDom}</React.StrictMode>)
