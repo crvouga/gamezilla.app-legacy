@@ -15,7 +15,7 @@ import { IconUserCircle } from '~/@/ui/icon/icon-user-circle'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
-import { CONFIG_FRONTEND } from '~/config/frontend'
+import { CONFIG_SHARED } from '~/config/shared'
 import { PowerSyncClient } from '~/service-powersync/client/database'
 import { Logger } from '../@/logger'
 import { APP_SOUND } from './@/frontend/app-sound'
@@ -42,10 +42,6 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     t: 'console',
   })
 
-  if (typeof CONFIG_FRONTEND.VITE_BACKEND_URL !== 'string') {
-    throw new Error('VITE_BACKEND_URL is undefined')
-  }
-
   const clientSessionId = ClientSessionIdStorage().get()
 
   const httpClient = HttpClient({
@@ -55,7 +51,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   const rpc = RPC.initClient({
     t: 'http',
     contract,
-    serverUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
+    serverUrl: CONFIG_SHARED.BACKEND_URL,
     clientSessionId,
     httpClient,
   })
@@ -63,7 +59,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   const topic = Topic.initClient({
     t: 'web-sockets',
     contract: topicContract,
-    serverUrl: CONFIG_FRONTEND.VITE_BACKEND_URL,
+    serverUrl: CONFIG_SHARED.POWERSYNC_URL,
     clientSessionId,
     logger,
     endpoint: '/topic',
