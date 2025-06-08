@@ -1,5 +1,7 @@
 import { SecretString } from '../secrets/secret-string'
 
+export const REDIS_URL = () => SecretString.of('REDIS_URL', import.meta.env?.REDIS_URL)
+
 export const newRedis = async (redisUrl: SecretString) => {
   // if (typeof window !== 'undefined') {
   //   throw new Error('Redis is not available in the browser')

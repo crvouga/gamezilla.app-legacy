@@ -36,7 +36,7 @@ const Fixtures = async () => {
   if (f.t === 'integration') {
     configs.push({
       t: 'sql-db',
-      sqlDb: f.dbConnPostgres,
+      sqlDb: f.sqlDbPostgres,
       logger: Logger({ t: 'console' }),
     })
   }

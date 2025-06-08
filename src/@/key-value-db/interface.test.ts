@@ -11,6 +11,7 @@ import { KeyValueDb } from './impl'
 import { IKeyValueDb } from './interface'
 import { Logger } from '../logger'
 import { SqlDb } from '../sql-db/backend/impl'
+import { REDIS_URL } from '../redis'
 
 type Fixture = {
   name: string
@@ -123,7 +124,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
       keyValueDb: await KeyValueDb({
         t: 'redis',
         simulateLatency: async () => {},
-        redisUrl: CONFIG_BACKEND.REDIS_URL,
+        redisUrl: REDIS_URL(),
         logger,
       }),
     })

@@ -15,7 +15,7 @@ const FixtureVariant = async () => {
       return {
         verificationDb: VerificationDb({
           t: 'sql-db',
-          sqlDb: f.dbConnPostgres,
+          sqlDb: f.sqlDbPostgres,
         }),
       }
     }

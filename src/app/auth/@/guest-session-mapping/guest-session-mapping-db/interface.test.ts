@@ -31,7 +31,7 @@ const Fixtures = async () => {
   })
 
   if (f.t === 'integration') {
-    configs.push({ t: 'sql', sqlDb: f.dbConnPostgres })
+    configs.push({ t: 'sql', sqlDb: f.sqlDbPostgres })
   }
 
   return Promise.all(configs.map(Fixture))

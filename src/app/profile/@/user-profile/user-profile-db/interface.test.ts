@@ -36,7 +36,7 @@ const Fixtures = async () => {
     configs.push({
       t: 'sql',
       // sqlDb: f.dbConnPostgres,
-      sqlDb: f.dbConnPostgres,
+      sqlDb: f.sqlDbPostgres,
       logger: Logger({ t: 'console' }),
     })
   }

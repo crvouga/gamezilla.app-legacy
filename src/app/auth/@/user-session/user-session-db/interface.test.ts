@@ -45,12 +45,12 @@ const Fixtures = async () => {
   })
 
   if (f.t === 'integration') {
-    configs.push({ t: 'sql', sqlDb: f.dbConnPostgres, logger: Logger({ t: 'noop' }) })
+    configs.push({ t: 'sql', sqlDb: f.sqlDbPostgres, logger: Logger({ t: 'noop' }) })
 
     configs.push({
       t: 'sql-with-cache',
       keyValueDb: f.keyValueDbHashMap,
-      sqlDb: f.dbConnPostgres,
+      sqlDb: f.sqlDbPostgres,
       pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() }),
       logger: Logger({ t: 'noop' }),
     })

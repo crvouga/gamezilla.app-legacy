@@ -1,6 +1,7 @@
 import { PowerSyncDatabase } from '@powersync/web'
 import Logger from 'js-logger'
 import { Sub } from '~/@/sub'
+import { BackendConnector } from '../frontend/backend-connector'
 import { AppSchema } from './database-schema'
 
 Logger.useDefaults()
@@ -20,15 +21,21 @@ export type PowerSyncDatabaseEvent =
 export type IPowerSyncClient = {
   database: PowerSyncDatabase
   events: Sub<PowerSyncDatabaseEvent>
+  start: () => Promise<void>
 }
 
-export const newPowerSyncClient = async (input?: { test?: boolean }): Promise<IPowerSyncClient> => {
+export type PowerSyncClientVariant = 'in-memory' | 'durable'
+
+export const PowerSyncClient = async (input?: {
+  variant?: PowerSyncClientVariant
+  debug?: boolean
+}): Promise<IPowerSyncClient> => {
   const database = new PowerSyncDatabase({
     schema: AppSchema,
     database: {
-      dbFilename: input?.test ? ':memory:' : 'powersync.db',
-      dbLocation: input?.test ? 'test' : undefined,
-      debugMode: input?.test,
+      dbFilename: input?.variant === 'in-memory' ? ':memory:' : 'powersync.db',
+      dbLocation: input?.variant === 'in-memory' ? 'test' : undefined,
+      debugMode: input?.debug,
     },
     flags: {
       broadcastLogs: true,
@@ -50,24 +57,17 @@ export const newPowerSyncClient = async (input?: { test?: boolean }): Promise<IP
     events.pub({ t: 'first-sync-completed' })
   })
 
+  const start = async () => {
+    const connector = new BackendConnector()
+    database.connect(connector).then(() => {
+      console.log('PowerSync connected to backend')
+      events.pub({ t: 'connected' })
+    })
+  }
+
   return {
     database,
     events,
+    start,
   }
-}
-
-export const setupNewPowerSyncClient = async () => {
-  const powerSync = await newPowerSyncClient()
-
-  // @ts-expect-error - Expose powerSync to the window for debugging
-  window.powerSync = powerSync.database
-
-  // const connector = new Connector()
-
-  // powerSync.database.connect(connector).then(() => {
-  //   console.log('PowerSync connected to backend')
-  //   powerSync.events.pub({ t: 'connected' })
-  // })
-
-  return powerSync
 }

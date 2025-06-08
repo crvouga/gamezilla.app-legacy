@@ -3,11 +3,17 @@ import * as SignJWT from '~/@/json-crypto/sign-jwt'
 import { isErr } from '~/@/result/result'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Ctx } from '../ctx'
-import { getKeys } from '../keys/keys'
+import { getKeyPair } from '../keys/keys'
 
 const respond = async (input: { request: Request; ctx: Ctx }) => {
-  const keys = await getKeys()
-  const powerSyncKey = keys.privateKey
+  const keys = await getKeyPair()
+  if (isErr(keys)) {
+    return new Response(`Internal Server Error. Errored while getting keys: ${keys.error}`, {
+      status: 500,
+    })
+  }
+
+  const powerSyncKey = keys.value.privateKey
   const maybeSessionId = SessionIdHttp.fromRequest(input.request)
 
   if (!maybeSessionId) {

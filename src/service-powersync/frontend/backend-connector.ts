@@ -1,15 +1,15 @@
 import { AbstractPowerSyncDatabase, BaseObserver, PowerSyncBackendConnector } from '@powersync/web'
 import { unwrap } from '~/@/result'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { BackendAppRpc } from './backend-rpc'
+import { BackendConnectorRPC } from './backend-connector-rpc'
 
-export class Connector extends BaseObserver<{}> implements PowerSyncBackendConnector {
+export class BackendConnector extends BaseObserver<{}> implements PowerSyncBackendConnector {
   constructor() {
     super()
   }
   async fetchCredentials() {
     try {
-      const got = await BackendAppRpc.getPowerSyncCredentials()
+      const got = await BackendConnectorRPC.fetchCredentials()
 
       const { token } = unwrap(got)
 
@@ -24,6 +24,7 @@ export class Connector extends BaseObserver<{}> implements PowerSyncBackendConne
     const crudTransaction = await database.getNextCrudTransaction()
 
     console.log('crudTransaction', crudTransaction)
-    console.log('uploadData not implemented yet', database)
+
+    console.error('uploadData not implemented yet', database)
   }
 }

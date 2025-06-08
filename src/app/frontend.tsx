@@ -16,13 +16,13 @@ import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { setupNewPowerSyncClient } from '~/service-powersync/frontend/database'
+import { PowerSyncClient } from '~/service-powersync/client/database'
 import { Logger } from '../@/logger'
-import { topicMsgCodec } from './@/topic-msg-codec'
 import { APP_SOUND } from './@/frontend/app-sound'
 import { AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
 import { PreloadSoundsCmd } from './@/frontend/preload-sounds-cmd'
 import { Translator } from './@/frontend/translator'
+import { topicMsgCodec } from './@/topic-msg-codec'
 import { ViewAppRoot } from './@/ui/app-root/app-root'
 import { SplashScreen } from './@/ui/logo/splash-screen'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
@@ -72,9 +72,16 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     codec: topicMsgCodec,
   })
 
+  const powerSyncClient = await PowerSyncClient({
+    variant: 'durable',
+    debug: true,
+  })
+
+  powerSyncClient.start()
+
   const sqlDb = await SqlDb({
     t: 'powersync-client',
-    powerSyncClient: await setupNewPowerSyncClient(),
+    powerSyncClient,
     logger,
   })
 

@@ -3,6 +3,7 @@ import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { ILogger } from '~/@/logger'
 import { Logger } from '~/@/logger'
 import { IPubSubTopicBased, PubSubTopicBased } from '~/@/pub-sub-topic-based'
+import { REDIS_URL } from '~/@/redis'
 import type { IRuntime } from '~/@/runtime'
 import { Runtime } from '~/@/runtime'
 import { SMS } from '~/@/sms'
@@ -18,7 +19,6 @@ import { ClientId } from '../../../@/wire/client-id'
 import { SessionId } from '../../../@/wire/session-id'
 import { BackendInstanceId } from './backend-instance/backend-instance-id'
 import type { AppBackendCtxBase } from './ctx'
-// import { newPowerSyncClient } from '~/service-powersync/frontend/database'
 
 export type IFixtureAppBackendUnit = {
   t: 'unit'
@@ -32,8 +32,7 @@ export type IFixtureAppBackendUnit = {
 
 export type IFixtureAppBackendIntegration = Omit<IFixtureAppBackendUnit, 't'> & {
   t: 'integration'
-  dbConnPostgres: ISqlDb
-  // dbConnPowersyncClient: ISqlDb
+  sqlDbPostgres: ISqlDb
   keyValueDbRedis: IKeyValueDb
   keyValueDbPostgres: IKeyValueDb
   keyValueDbSqlite: IKeyValueDb
@@ -54,7 +53,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const keyValueDbHashMap = await KeyValueDb({ t: 'hash-map' })
 
-  const sqlDbite = await SqlDb({ t: 'bun-sqlite', fileSystem: { t: 'in-memory' }, logger })
+  const sqlDbSqlite = await SqlDb({ t: 'bun-sqlite', fileSystem: { t: 'in-memory' }, logger })
 
   const profileDb = ProfileDb({
     t: 'hash-map',
@@ -88,7 +87,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     return {
       t: 'unit',
       ctx,
-      sqlDbSqlite: sqlDbite,
+      sqlDbSqlite: sqlDbSqlite,
       keyValueDbHashMap,
       pubSubTopicBased,
       runtime,
@@ -96,50 +95,43 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     }
   }
 
-  const dbConnPostgres = await SqlDb({
+  const sqlDbPostgres = await SqlDb({
     t: 'postgres',
     databaseUrl: CONFIG_BACKEND.DATABASE_URL,
     logger,
     simulateLatency: async () => {},
   })
 
-  // const dbConnPowersyncClient = await SqlDb({
-  //   t: 'powersync-client',
-  //   powerSyncClient: await newPowerSyncClient({ test: true }),
-  //   logger,
-  // })
-
   const keyValueDbRedis = await KeyValueDb({
     t: 'redis',
     logger,
-    redisUrl: CONFIG_BACKEND.REDIS_URL,
+    redisUrl: REDIS_URL(),
     simulateLatency: async () => {},
   })
 
   const keyValueDbPostgres = await KeyValueDb({
     t: 'sql-db',
-    sqlDb: dbConnPostgres,
+    sqlDb: sqlDbPostgres,
     logger,
   })
 
   const keyValueDbSqlite = await KeyValueDb({
     t: 'sql-db',
-    sqlDb: sqlDbite,
+    sqlDb: sqlDbSqlite,
     logger,
   })
 
   const pubSubTopicBased = await PubSubTopicBased({
     t: 'redis',
     logger,
-    redisUrl: CONFIG_BACKEND.REDIS_URL,
+    redisUrl: REDIS_URL(),
   })
 
   return {
     t: 'integration',
     ctx,
-    sqlDbSqlite: sqlDbite,
-    dbConnPostgres,
-    // dbConnPowersyncClient,
+    sqlDbSqlite,
+    sqlDbPostgres,
     keyValueDbSqlite,
     keyValueDbHashMap,
     keyValueDbRedis,

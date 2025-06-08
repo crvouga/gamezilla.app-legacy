@@ -2,7 +2,7 @@ import { ILogger, Logger } from '~/@/logger'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { PubSub, Sub } from '~/@/sub'
-import { IPowerSyncClient } from '~/service-powersync/frontend/database'
+import { IPowerSyncClient } from '~/service-powersync/client/database'
 import { SqlDbQueryInput, ISqlDb } from './interface'
 
 export type Config = {
@@ -45,7 +45,7 @@ export const SqlDb = (config: Config): ISqlDb => {
       input.onChange(parsedRows)
     })
 
-    // TODO: This is a hack. Powersync isn't reliable returning data on initial load
+    // TODO: This is a hack. PowerSync isn't reliable returning data on initial load
     const interval = setInterval(async () => {
       if (abortController.signal.aborted) {
         clearInterval(interval)
