@@ -8,9 +8,9 @@ const IS_PROD = Boolean(import.meta.env?.PROD)
 
 const IS_LOCAL = !IS_PROD
 
-const BACKEND_URL = IS_PROD ? 'https://backend.gamezilla.app/' : 'http://localhost:5002'
+const BACKEND_URL = IS_PROD ? 'https://backend.gamezilla.app' : 'http://localhost:5002'
 
-const POWERSYNC_URL = IS_PROD ? 'https://powersync.gamezilla.app/' : 'http://localhost:5001'
+const POWERSYNC_URL = IS_PROD ? 'https://powersync.gamezilla.app' : 'http://localhost:5001'
 
 export const CONFIG_SHARED = {
   IS_INTEGRATION_TEST,
