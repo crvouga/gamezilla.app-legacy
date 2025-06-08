@@ -24,7 +24,7 @@ import { SpacesBackend } from './spaces/backend'
 import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
 
-const initCtx = async (config: { database: 'postgres' | 'noop' }): Promise<BackendCtxModule> => {
+const initCtx = async (config: { sqlDb: 'postgres' | 'noop' }): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console' })
 
   const runtime = Runtime({
@@ -34,7 +34,7 @@ const initCtx = async (config: { database: 'postgres' | 'noop' }): Promise<Backe
   })
 
   const sqlDb =
-    config.database === 'postgres'
+    config.sqlDb === 'postgres'
       ? await SqlDb({ t: 'postgres', databaseUrl: CONFIG_BACKEND.DATABASE_URL(), logger })
       : await SqlDb({ t: 'noop' })
 
