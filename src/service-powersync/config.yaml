@@ -63,7 +63,6 @@ client_auth:
   #       k: '[secret]'
 
   # JWKS URIs can be specified here.
-  # jwks_uri: http://localhost:5002/powersync/jwks
   jwks_uri: !env PS_JWKS_URI
 
   # JWKS audience

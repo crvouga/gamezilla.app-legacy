@@ -23,8 +23,9 @@ import { ProfileBackend } from './profile/backend'
 import { SpacesBackend } from './spaces/backend'
 import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
+import { BackendRole } from './@/backend/backend-role'
 
-const initCtx = async (config: { sqlDb: 'postgres' | 'noop' }): Promise<BackendCtxModule> => {
+const initCtx = async (config: { role: BackendRole }): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console' })
 
   const runtime = Runtime({
@@ -34,7 +35,7 @@ const initCtx = async (config: { sqlDb: 'postgres' | 'noop' }): Promise<BackendC
   })
 
   const sqlDb =
-    config.sqlDb === 'postgres'
+    config.role === 'primary'
       ? await SqlDb({ t: 'postgres', databaseUrl: CONFIG_BACKEND.DATABASE_URL(), logger })
       : await SqlDb({ t: 'noop' })
 
@@ -119,7 +120,11 @@ const initCtx = async (config: { sqlDb: 'postgres' | 'noop' }): Promise<BackendC
   })
 
   ctx.httpServer.registerRespond(() => {
-    return new Response('Hello from gamezilla.app backend', {
+    const message =
+      config.role === 'primary'
+        ? 'Hello from gamezilla.app primary backend'
+        : 'Hello from gamezilla.app satellite backend'
+    return new Response(message, {
       status: 200,
       headers: { 'Content-Type': 'text/plain' },
     })
@@ -137,7 +142,7 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
 }
 
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
-  input.ctx.httpServer.start(CONFIG_BACKEND.PORT!)
+  input.ctx.httpServer.start(CONFIG_BACKEND.PORT)
 
   WireBackend.worker(s, input)
   AuthBackend.worker(s, input)
