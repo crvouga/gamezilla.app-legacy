@@ -1,19 +1,23 @@
 import { AbstractPowerSyncDatabase, BaseObserver, PowerSyncBackendConnector } from '@powersync/web'
 import { unwrap } from '~/@/result'
-import { CONFIG_FRONTEND } from '~/config/frontend'
 import { BackendConnectorRPC } from './backend-connector-rpc'
 
 export class BackendConnector extends BaseObserver<{}> implements PowerSyncBackendConnector {
-  constructor() {
+  private readonly powersyncUrl: string
+  private readonly backendUrl: string
+
+  constructor(config: { powersyncUrl: string; backendUrl: string }) {
     super()
+    this.powersyncUrl = config.powersyncUrl
+    this.backendUrl = config.backendUrl
   }
   async fetchCredentials() {
     try {
-      const got = await BackendConnectorRPC.fetchCredentials()
+      const got = await BackendConnectorRPC.fetchCredentials({ backendUrl: this.backendUrl })
 
       const { token } = unwrap(got)
 
-      return { token, endpoint: String(CONFIG_FRONTEND.VITE_POWERSYNC_URL) }
+      return { token, endpoint: this.powersyncUrl }
     } catch (error) {
       console.error('Failed to fetchCredentials:', error)
       throw error

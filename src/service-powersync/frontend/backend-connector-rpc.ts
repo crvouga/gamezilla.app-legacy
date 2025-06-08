@@ -1,13 +1,12 @@
 import { Err, isErr, Ok, Result } from '~/@/result'
 import { s } from '~/@/schema'
-import { CONFIG_SHARED } from '~/config/shared'
 
-const fetchCredentials = async (): Promise<Result<string, { token: string }>> => {
+const fetchCredentials = async (config: { backendUrl: string }): Promise<Result<string, { token: string }>> => {
   try {
     const PATH = '/powersync/credentials'
     let urlString = PATH
     try {
-      const url = new URL(ensureProtocol(String(CONFIG_SHARED.BACKEND_URL)))
+      const url = new URL(ensureProtocol(String(config.backendUrl)))
       url.pathname = PATH
       urlString = url.toString()
     } catch (e) {

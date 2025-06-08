@@ -43,7 +43,12 @@ const Fixtures = async () => {
   if (SHOULD_TEST_POWERSYNC_CLIENT) {
     configs.push({
       t: 'powersync-client',
-      powerSyncClient: await PowerSyncClient({ variant: 'in-memory', debug: true }),
+      powerSyncClient: await PowerSyncClient({
+        variant: 'in-memory',
+        debug: true,
+        powersyncUrl: CONFIG_SHARED.POWERSYNC_URL,
+        backendUrl: CONFIG_SHARED.BACKEND_URL,
+      }),
       logger: Logger({ t: 'noop' }),
     })
   }

@@ -59,7 +59,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   const topic = Topic.initClient({
     t: 'web-sockets',
     contract: topicContract,
-    serverUrl: CONFIG_SHARED.POWERSYNC_URL,
+    serverUrl: CONFIG_SHARED.BACKEND_URL,
     clientSessionId,
     logger,
     endpoint: '/topic',
@@ -71,6 +71,8 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   const powerSyncClient = await PowerSyncClient({
     variant: 'durable',
     debug: true,
+    powersyncUrl: CONFIG_SHARED.POWERSYNC_URL,
+    backendUrl: CONFIG_SHARED.BACKEND_URL,
   })
 
   powerSyncClient.start()

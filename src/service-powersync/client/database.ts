@@ -26,9 +26,11 @@ export type IPowerSyncClient = {
 
 export type PowerSyncClientVariant = 'in-memory' | 'durable'
 
-export const PowerSyncClient = async (input?: {
+export const PowerSyncClient = async (input: {
   variant?: PowerSyncClientVariant
   debug?: boolean
+  powersyncUrl: string
+  backendUrl: string
 }): Promise<IPowerSyncClient> => {
   const database = new PowerSyncDatabase({
     schema: AppSchema,
@@ -57,8 +59,12 @@ export const PowerSyncClient = async (input?: {
     events.pub({ t: 'first-sync-completed' })
   })
 
+  const connector = new BackendConnector({
+    powersyncUrl: input.powersyncUrl,
+    backendUrl: input.backendUrl,
+  })
+
   const start = async () => {
-    const connector = new BackendConnector()
     database.connect(connector).then(() => {
       console.log('PowerSync connected to backend')
       events.pub({ t: 'connected' })
