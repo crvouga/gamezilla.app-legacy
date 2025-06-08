@@ -14,7 +14,9 @@ const fetchCredentials = async (): Promise<Result<string, { token: string }>> =>
       urlString = PATH
     }
 
-    const response = await fetch(urlString, { credentials: 'include' })
+    const response = await fetch(urlString, {
+      credentials: 'include',
+    })
 
     const responseJson: unknown = await response.json()
 

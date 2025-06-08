@@ -17,7 +17,9 @@ const respond = async (input: { request: Request; ctx: Ctx }) => {
   const maybeSessionId = SessionIdHttp.fromRequest(input.request)
 
   if (!maybeSessionId) {
-    return new Response('No session ID found in the request', { status: 401 })
+    return new Response('No session ID found in the request', {
+      status: 401,
+    })
   }
 
   const foundUserId = await input.ctx.userSessionDb.findUserIdBySessionId(maybeSessionId)

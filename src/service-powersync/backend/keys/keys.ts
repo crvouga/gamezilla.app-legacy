@@ -54,8 +54,12 @@ const ensureExists = async () => {
     }
 
     const decodedPublicKey = Buffer.from(base64Keys.public, 'base64')
-
-    keys.publicKey = JSON.parse(new TextDecoder().decode(decodedPublicKey))
+    const powerSyncPublicKey = JSON.parse(new TextDecoder().decode(decodedPublicKey))
+    keys.publicKey = {
+      alg: powerSyncPublicKey.alg,
+      kid: powerSyncPublicKey.kid,
+      key: await importJWK(powerSyncPublicKey),
+    }
 
     return Ok(null)
   } catch (e) {
