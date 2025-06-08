@@ -9,8 +9,10 @@ import type { TimeSpan } from '~/@/time/time-span'
 import { IUserProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
 import { Env } from '../data/env'
 import type { BackendInstanceId } from './backend-instance/backend-instance-id'
+import { BackendRole } from './backend-role'
 
 export type AppBackendCtxBase = {
+  role: BackendRole
   sqlDb: ISqlDb
   keyValueDbDurable: IKeyValueDb
   now: Posix

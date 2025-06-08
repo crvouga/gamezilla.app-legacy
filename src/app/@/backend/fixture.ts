@@ -64,6 +64,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const backendInstanceId = BackendInstanceId.generate()
 
   const ctx: AppBackendCtxBase = {
+    role: 'primary',
     env: 'test',
     keyValueDbDurable: keyValueDbHashMap,
     sqlDb: SQL_DB_NOOP,

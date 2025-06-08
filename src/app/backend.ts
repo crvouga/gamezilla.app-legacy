@@ -81,6 +81,7 @@ const initCtx = async (config: { role: BackendRole }): Promise<BackendCtxModule>
   const backendInstanceId = BackendInstanceId.generate()
 
   const ctxBase: AppBackendCtxBase = {
+    role: config.role,
     env,
     sqlDb,
     keyValueDbDurable,
