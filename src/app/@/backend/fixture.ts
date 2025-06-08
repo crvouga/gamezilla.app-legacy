@@ -6,7 +6,6 @@ import { IPubSubTopicBased, PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { REDIS_URL } from '~/@/redis'
 import type { IRuntime } from '~/@/runtime'
 import { Runtime } from '~/@/runtime'
-import { SMS } from '~/@/sms'
 import { type ISqlDb } from '~/@/sql-db'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
@@ -43,8 +42,6 @@ export type IFixtureAppBackend = IFixtureAppBackendUnit | IFixtureAppBackendInte
 export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const logger = Logger({ t: 'noop' })
 
-  const sms = SMS({ t: 'fake', logger })
-
   const pubSub = await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() })
 
   const runtime = Runtime({ t: 'process', logger, shutoffFGracePeriod: TimeSpan.seconds(0) })
@@ -69,10 +66,9 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const ctx: AppBackendCtxBase = {
     env: 'test',
     keyValueDbDurable: keyValueDbHashMap,
-    postgres: SQL_DB_NOOP,
+    sqlDb: SQL_DB_NOOP,
     logger,
     now,
-    sms,
     sleep,
     pubSub,
     userProfileDb: profileDb,
@@ -97,7 +93,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const sqlDbPostgres = await SqlDb({
     t: 'postgres',
-    databaseUrl: CONFIG_BACKEND.DATABASE_URL,
+    databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
     logger,
     simulateLatency: async () => {},
   })

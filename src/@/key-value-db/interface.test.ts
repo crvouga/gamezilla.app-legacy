@@ -136,7 +136,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
         sqlDb: await SqlDb({
           t: 'postgres',
           logger,
-          databaseUrl: CONFIG_BACKEND.DATABASE_URL,
+          databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
         }),
         logger,
       }),

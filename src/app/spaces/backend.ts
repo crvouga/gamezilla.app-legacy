@@ -24,7 +24,7 @@ const initCtx = async (input: {
     }),
     spaceProjectionDb: await SpaceProjectionDb({
       t: 'sql-db',
-      sqlDb: input.ctx.postgres,
+      sqlDb: input.ctx.sqlDb,
     }),
   }
 }

@@ -75,7 +75,7 @@ export const FixtureSpaceBackend = async () => {
     }),
     spaceProjectionDb: await SpaceProjectionDb({
       t: 'sql-db',
-      sqlDb: f.ctx.postgres,
+      sqlDb: f.ctx.sqlDb,
     }),
     topic,
   }

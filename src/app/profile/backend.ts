@@ -8,7 +8,7 @@ const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<ProfileBacken
     profileDb: ProfileDb({
       t: 'sql',
       logger: input.ctx.logger,
-      sqlDb: input.ctx.postgres,
+      sqlDb: input.ctx.sqlDb,
     }),
   }
 }

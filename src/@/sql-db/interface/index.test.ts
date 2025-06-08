@@ -69,7 +69,7 @@ const Fixtures = async () => {
   if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
     configs.push({
       t: 'postgres',
-      databaseUrl: CONFIG_BACKEND.DATABASE_URL,
+      databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
       logger: Logger({ t: 'noop' }),
     })
   }

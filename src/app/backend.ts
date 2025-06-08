@@ -6,7 +6,6 @@ import { sleep } from '~/@/promise/sleep'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
-import { SMS } from '~/@/sms'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { Posix } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
@@ -25,7 +24,7 @@ import { SpacesBackend } from './spaces/backend'
 import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
 
-const initCtx = async (): Promise<BackendCtxModule> => {
+const initCtx = async (config: { database: 'postgres' | 'noop' }): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console' })
 
   const runtime = Runtime({
@@ -34,26 +33,20 @@ const initCtx = async (): Promise<BackendCtxModule> => {
     logger,
   })
 
-  const sqlDbPostgres = await SqlDb({
-    t: 'postgres',
-    databaseUrl: CONFIG_BACKEND.DATABASE_URL,
-    logger,
-  })
+  const sqlDb =
+    config.database === 'postgres'
+      ? await SqlDb({ t: 'postgres', databaseUrl: CONFIG_BACKEND.DATABASE_URL(), logger })
+      : await SqlDb({ t: 'noop' })
 
   const keyValueDbDurable = await KeyValueDb({
     t: 'sql-db',
-    sqlDb: sqlDbPostgres,
-    logger,
-  })
-
-  const sms = SMS({
-    t: 'twilio',
+    sqlDb,
     logger,
   })
 
   const pubSub = await PubSubTopicBased({
     t: 'postgres',
-    sqlDb: sqlDbPostgres,
+    sqlDb,
     logger,
   })
 
@@ -76,7 +69,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
 
   const userProfileDb = ProfileDb({
     t: 'sql',
-    sqlDb: sqlDbPostgres,
+    sqlDb,
     logger,
   })
 
@@ -88,8 +81,7 @@ const initCtx = async (): Promise<BackendCtxModule> => {
 
   const ctxBase: AppBackendCtxBase = {
     env,
-    sms,
-    postgres: sqlDbPostgres,
+    sqlDb,
     keyValueDbDurable,
     logger,
     now,
@@ -145,7 +137,7 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
 }
 
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
-  input.ctx.httpServer.start(CONFIG_BACKEND.SERVER_PORT!)
+  input.ctx.httpServer.start(CONFIG_BACKEND.PORT!)
 
   WireBackend.worker(s, input)
   AuthBackend.worker(s, input)

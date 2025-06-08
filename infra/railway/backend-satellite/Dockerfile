@@ -7,4 +7,8 @@ COPY ./ ./
 
 RUN bun install
 
+ARG PORT
+
+ENV PORT=${PORT}
+
 CMD ["bun", "backend-satellite"]

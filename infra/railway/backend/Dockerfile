@@ -13,4 +13,8 @@ ENV DATABASE_URL=${DATABASE_URL}
 
 RUN bun db:up
 
+ARG PORT
+
+ENV PORT=${PORT}
+
 CMD ["bun", "backend"]

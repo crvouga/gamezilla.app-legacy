@@ -3,7 +3,7 @@ import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {
-  const ctx = await AppBackend.initCtx()
+  const ctx = await AppBackend.initCtx({ database: 'noop' })
 
   const abortController = new AbortController()
   AppBackend.worker(abortController.signal, { ctx })

@@ -15,12 +15,12 @@ export type AuthBackendCtx = AppBackendCtxBase & {
 const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> => {
   const userAccountDb = UserAccountDb({
     t: 'sql',
-    sqlDb: input.ctx.postgres,
+    sqlDb: input.ctx.sqlDb,
   })
 
   const userSessionDb = await UserSessionDb({
     t: 'sql-with-cache',
-    sqlDb: input.ctx.postgres,
+    sqlDb: input.ctx.sqlDb,
     keyValueDb: input.ctx.keyValueDbDurable,
     logger: input.ctx.logger,
     pubSubTopicBased: input.ctx.pubSub,
@@ -29,12 +29,12 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
   const verifySMS = VerifySMSFactory.createForEnvironment({
     logger: input.ctx.logger,
     env: input.ctx.env,
-    sqlDb: input.ctx.postgres,
+    sqlDb: input.ctx.sqlDb,
   })
 
   const guestSessionMappingDb = GuestSessionMappingDb({
     t: 'sql',
-    sqlDb: input.ctx.postgres,
+    sqlDb: input.ctx.sqlDb,
   })
 
   return {
