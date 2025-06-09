@@ -1,32 +1,41 @@
 import { pipe } from '~/@/function/pipe'
 import { VariantGridShorthand, VariantGridBoard } from '../variant/grid'
 
-const grid1 = pipe(
-  VariantGridShorthand.init([
+const init = (x: VariantGridShorthand.Model) => pipe(VariantGridShorthand.init(x), VariantGridShorthand.toGrid)
+
+const GRIDS = [
+  init([
     ['B', 'a', 'a', 'A', 'D'],
     ['b', 'a', 'c', 'C', 'd'],
     ['b', 'a', 'C', 'd', 'd'],
     ['b', 'A', 'D', 'd', 'E'],
     ['b', 'B', 'E', 'e', 'e'],
   ]),
-  VariantGridShorthand.toGrid,
-)
-
-const grid2 = pipe(
-  VariantGridShorthand.init([
+  init([
     ['d', 'd', 'd', 'A', 'a'],
     ['d', 'C', 'D', 'B', 'a'],
     ['d', 'c', 'C', 'b', 'a'],
     ['d', 'b', 'b', 'b', 'a'],
     ['D', 'B', 'A', 'a', 'a'],
   ]),
-  VariantGridShorthand.toGrid,
-)
+  init([
+    ['C', 'Aa', 'A'],
+    ['c', 'B', 'b'],
+    ['c', 'C', 'B'],
+  ]),
+  init([
+    ['B', 'b', 'D', 'd', 'E'],
+    ['A', 'b', 'E', 'd', 'e'],
+    ['a', 'B', 'e', 'D', 'e'],
+    ['a', 'C', 'e', 'e', 'e'],
+    ['A', 'c', 'c', 'c', 'C'],
+  ]),
+] as const
 
-const grid = false ? grid2 : grid1
+const GRID = GRIDS[3]
 
 const VIEW_GRID = (
-  <VariantGridBoard.View model={grid} disabled borderless disableHighlight className='aspect-square bg-black' />
+  <VariantGridBoard.View model={GRID} disabled borderless disableHighlight className='aspect-square bg-black' />
 )
 
 export const CoverArt = (input: { className?: string }) => {
