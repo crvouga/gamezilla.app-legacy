@@ -1,3 +1,3 @@
-export type BackendRole = 'primary' | 'satellite'
+export type BackendRole = 'primary' | 'edge'
 
 export const BackendRole = {}

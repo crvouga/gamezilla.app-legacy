@@ -11,4 +11,4 @@ ARG PORT
 
 ENV PORT=${PORT}
 
-CMD ["bun", "backend-satellite"]
+CMD ["bun", "backend-edge"]

@@ -3,7 +3,7 @@ import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {
-  const ctx = await AppBackend.initCtx({ role: 'satellite' })
+  const ctx = await AppBackend.initCtx({ role: 'edge' })
 
   const abortController = new AbortController()
 
