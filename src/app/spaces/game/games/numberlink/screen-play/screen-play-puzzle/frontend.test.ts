@@ -1,11 +1,10 @@
 import { describe, expect, it, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
+import { Sub } from '~/@/sub'
 import { UserId } from '~/app/@/data/user-id'
-
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 import { Numberlink } from '../../@/numberlink'
 import { FixtureScreenPlayPuzzleFrontend } from './@/fixture/frontend'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
-import { Sub } from '~/@/sub'
 
 const Fixture = async () => {
   const f = await FixtureScreenPlayPuzzleFrontend()

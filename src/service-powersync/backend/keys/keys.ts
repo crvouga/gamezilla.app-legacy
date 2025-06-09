@@ -21,15 +21,15 @@ const keys: KeyPair = {
   publicKey: null,
 }
 
-const ensureExists = async () => {
+const ensureExists = async (env?: Record<string, string>) => {
   try {
     if (keys.privateKey) {
       return Ok(null)
     }
 
     const base64Keys = {
-      private: import.meta.env?.POWERSYNC_PRIVATE_KEY,
-      public: import.meta.env?.POWERSYNC_PUBLIC_KEY,
+      private: env?.POWERSYNC_PRIVATE_KEY,
+      public: env?.POWERSYNC_PUBLIC_KEY,
     }
 
     if (!base64Keys.private) {
@@ -68,8 +68,8 @@ const ensureExists = async () => {
   }
 }
 
-export const getKeyPair = async (): Promise<Result<string, KeyPair>> => {
-  const result = await ensureExists()
+export const getKeyPair = async (env?: Record<string, string>): Promise<Result<string, KeyPair>> => {
+  const result = await ensureExists(env)
   if (isErr(result)) {
     return result
   }
