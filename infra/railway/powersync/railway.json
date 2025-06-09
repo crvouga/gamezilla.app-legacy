@@ -5,6 +5,6 @@
     "dockerfilePath": "./infra/railway/powersync/Dockerfile"
   },
   "deploy": {
-    "sleepApplication": true
+    "sleepApplication": false
   }
 }
