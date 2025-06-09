@@ -30,7 +30,7 @@
     "frontend": "vite",
     "frontend:build": "bun x vite build",
     "frontend:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./src/frontend.tsx",
-    "frontend:docker": "docker build --no-cache -f infra/railway/frontend/Dockerfile --build-arg VITE_BACKEND_URL=http://localhost:5002 --build-arg VITE_POWERSYNC_URL=http://localhost:8080 --build-arg VITE_ELECTRIC_URL=http://localhost:3000 -t my-frontend-app .",
+    "frontend:docker": "docker build --no-cache -f infra/railway/frontend/Dockerfile -t my-frontend-app .",
     "frontend:docker:run": "docker run -p 80:80  my-frontend-app",
     "frontend:serve": "bun x serve -s dist -p 3001",
     "gen:events": "bun ./src/@/events/events-gen.ts",
