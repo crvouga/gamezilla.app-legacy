@@ -103,14 +103,14 @@ const ScreenActionButton = (input: ScreenAction) => {
     >
       <div
         className={cn(
-          'flex flex-col items-center gap-1 xl:flex-row xl:gap-3',
+          'flex flex-col items-center gap-1 xl:flex-row xl:gap-4',
           input.loading ? 'opacity-0' : 'opacity-100',
         )}
       >
         {input.icon({ className: toIconSizeClasses(size) })}
         <Typography
           text={input.label}
-          className={cn('truncate text-center xl:text-left', 'text-inherit', input.classNames?.label)}
+          className={cn('truncate text-center xl:text-left xl:text-xl', 'text-inherit', input.classNames?.label)}
         />
       </div>
 
@@ -130,7 +130,7 @@ const toColorClasses = (input: ScreenAction): string => {
     case 'success':
       return 'text-green-500'
     case 'selected':
-      return 'text-blue-500'
+      return 'text-blue-500 font-bold'
     default:
       return ''
   }
