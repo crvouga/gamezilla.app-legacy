@@ -294,10 +294,10 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const flowNew = UseHint.toNumberlink(output.model, ctxFlow)
+    const numberlinkNew = UseHint.toNumberlink(output.model, ctxFlow)
 
     const expected = Numberlink.toPipelineFromGroupId(solution, 'A')
-    const actual = Numberlink.toPipelineFromGroupId(flowNew, 'A')
+    const actual = Numberlink.toPipelineFromGroupId(numberlinkNew, 'A')
 
     expect(expected).toEqual(actual)
   })

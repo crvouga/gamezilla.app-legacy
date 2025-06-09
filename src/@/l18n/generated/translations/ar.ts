@@ -147,7 +147,7 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': 'لا توجد تلميحات متاحة',
   'game.numberlink.no-packs': 'لا توجد حزم',
   'game.numberlink.puzzle-count': (count) => `${count} \u0623\u0644\u063A\u0627\u0632`,
-  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (packName) => `${packName}`,
   'game.numberlink.editing': 'تحرير',
   'game.numberlink.placing': ({ position }) =>
     position === 'first'

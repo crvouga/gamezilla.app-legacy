@@ -164,7 +164,7 @@ const ViewListItem = (input: {
       )}
 
       <div className='flex aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden'>
-        <NumberlinkVariantBoard.View disabled model={input.puzzle.numberlink} />
+        <NumberlinkVariantBoard.View disabled model={input.puzzle.model} />
       </div>
 
       <div className='flex flex-col gap-1 truncate overflow-hidden px-4'>

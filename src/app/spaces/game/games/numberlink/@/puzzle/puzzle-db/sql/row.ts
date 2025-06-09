@@ -10,7 +10,7 @@ import { PuzzleName } from '../../puzzle-name'
 const schema = s.obj({
   id: s.str(),
   name: s.str(),
-  flow: s.or(s.str(), s.json),
+  model: s.or(s.str(), s.json),
   created_at_unix_ms: s.or(s.num(), s.str()),
   created_by_user_id: s.str(),
   last_updated_at_unix_ms: s.or(s.num(), s.str()),
@@ -27,7 +27,7 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
   const puzzleId = PuzzleId.is(row.id) ? row.id : null
   const puzzleName = PuzzleName.is(row.name) ? row.name : null
 
-  const rowNumberlink = typeof row.flow === 'string' ? JSON.parse(row.flow) : row.flow
+  const rowNumberlink = typeof row.model === 'string' ? JSON.parse(row.model) : row.model
   const parsedNumberlink = NumberlinkVariant.Model.parse(rowNumberlink)
   const numberlink = Result.unwrapOr(parsedNumberlink, null)
 
@@ -40,7 +40,7 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
     return {
       id: puzzleId,
       name: puzzleName,
-      numberlink: numberlink,
+      model: numberlink,
       solutions: [],
       createdAt,
       createdBy,

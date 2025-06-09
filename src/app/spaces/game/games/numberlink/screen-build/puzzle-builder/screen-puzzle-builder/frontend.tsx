@@ -115,7 +115,7 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
       const updated = ModeEdit.update({
         model: input.modelSpace.screenPuzzleBuilder.modeEdit,
         msg: input.msgSpace.c,
-        numberlink: input.modelSpace.screenPuzzleBuilder.puzzle.numberlink,
+        numberlink: input.modelSpace.screenPuzzleBuilder.puzzle.model,
       })
 
       if (!updated.msgCmd) return { model: input.model }

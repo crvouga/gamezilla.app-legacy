@@ -38,7 +38,7 @@ const updateExitBuilder: FrontendModule['update'] = (input) => {
       if (
         ModeEdit.isUnsavedChanges(
           input.modelSpace.screenPuzzleBuilder.modeEdit,
-          input.modelSpace.screenPuzzleBuilder.puzzle.numberlink,
+          input.modelSpace.screenPuzzleBuilder.puzzle.model,
         )
       ) {
         return {
@@ -166,7 +166,7 @@ const saveChanges: FrontendModule['update'] = (input) => {
     ...puzzleBuilder.puzzle,
     lastUpdatedAt: input.ctx.now,
     lastUpdatedBy: input.ctx.currentUser.userId,
-    numberlink: ModeEdit.toNumberlink(puzzleBuilder.modeEdit),
+    model: ModeEdit.toNumberlink(puzzleBuilder.modeEdit),
   }
 
   return {

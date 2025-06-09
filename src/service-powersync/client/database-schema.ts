@@ -4,7 +4,7 @@ const game_numberlink_puzzle = new Table(
   {
     id: column.text,
     name: column.text,
-    flow: column.text,
+    model: column.text,
     created_at_unix_ms: column.integer,
     created_by_user_id: column.text,
     last_updated_at_unix_ms: column.integer,
@@ -28,7 +28,6 @@ const game_numberlink_puzzle = new Table(
     },
   },
 )
-export type GameFlowPuzzle = AppSchema['game_numberlink_puzzle']
 
 const game_numberlink_pack = new Table(
   {
@@ -56,7 +55,6 @@ const game_numberlink_pack = new Table(
     },
   },
 )
-export type GameFlowPack = AppSchema['game_numberlink_pack']
 
 const game_numberlink_pack_item = new Table(
   {
@@ -75,7 +73,6 @@ const game_numberlink_pack_item = new Table(
     },
   },
 )
-export type GameFlowPackItem = AppSchema['game_numberlink_pack_item']
 
 const game_numberlink_solutions = new Table(
   {
@@ -86,7 +83,6 @@ const game_numberlink_solutions = new Table(
   },
   {},
 )
-export type GameFlowSolutions = AppSchema['game_numberlink_solutions']
 
 const user_account = new Table(
   {
@@ -97,7 +93,6 @@ const user_account = new Table(
   },
   {},
 )
-export type UserAccount = AppSchema['user_account']
 
 const user_session = new Table(
   {
@@ -110,7 +105,6 @@ const user_session = new Table(
   },
   {},
 )
-export type UserSession = AppSchema['user_session']
 
 const user_guest_session_mapping = new Table(
   {
@@ -127,7 +121,6 @@ const user_guest_session_mapping = new Table(
     },
   },
 )
-export type UserGuestSessionMapping = AppSchema['user_guest_session_mapping']
 
 const user_profile = new Table(
   {
@@ -140,7 +133,6 @@ const user_profile = new Table(
   },
   {},
 )
-export type UserProfile = AppSchema['user_profile']
 
 const space = new Table(
   {
@@ -150,11 +142,8 @@ const space = new Table(
     deleted_at_epoch: column.integer,
     model: column.text,
   },
-  {
-    localOnly: true,
-  },
+  {},
 )
-export type Space = AppSchema['space']
 
 export const AppSchema = new Schema({
   space,

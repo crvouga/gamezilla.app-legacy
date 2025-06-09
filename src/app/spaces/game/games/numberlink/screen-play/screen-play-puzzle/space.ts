@@ -42,7 +42,7 @@ const updateScreen = (input: {
         input.modelSpace.modePlay ??
         ModePlay.init({
           ctx: ModePlay.initCtx({
-            numberlink: input.modelSpace.puzzleResult.c.numberlink,
+            numberlink: input.modelSpace.puzzleResult.c.model,
             solutions: {},
           }),
         })
@@ -50,7 +50,7 @@ const updateScreen = (input: {
       const modelPlayNew = ModePlay.update({
         msg: input.msgSpace.c,
         model: modelPlay,
-        ctx: ModePlay.initCtx({ numberlink: input.modelSpace.puzzleResult.c.numberlink, solutions: {} }),
+        ctx: ModePlay.initCtx({ numberlink: input.modelSpace.puzzleResult.c.model, solutions: {} }),
       })
 
       const didSolve = modelPlayNew.events?.some((e) => e.t === 'solved')
@@ -110,7 +110,7 @@ const updateScreen = (input: {
             ...input.modelSpace,
             modePlay: ModePlay.init({
               ctx: ModePlay.initCtx({
-                numberlink: input.msgSpace.nextPuzzle.c.numberlink,
+                numberlink: input.msgSpace.nextPuzzle.c.model,
                 solutions: {},
               }),
             }),
@@ -129,7 +129,7 @@ const updateScreen = (input: {
             ...input.modelSpace,
             modePlay: ModePlay.init({
               ctx: ModePlay.initCtx({
-                numberlink: input.msgSpace.prevPuzzle.c.numberlink,
+                numberlink: input.msgSpace.prevPuzzle.c.model,
                 solutions: {},
               }),
             }),
@@ -198,7 +198,7 @@ const initSpace = (input: {
     puzzleIndex: input.puzzleIndex,
     modePlay:
       input.puzzle.t === 'got'
-        ? ModePlay.init({ ctx: ModePlay.initCtx({ numberlink: input.puzzle.c.numberlink, solutions: {} }) })
+        ? ModePlay.init({ ctx: ModePlay.initCtx({ numberlink: input.puzzle.c.model, solutions: {} }) })
         : null,
     opened: null,
     t: 'screen-play-puzzle',
@@ -230,7 +230,7 @@ const toStatus = (modelSpace: ModelSpace) => {
   }
 
   return ModePlay.toStatus({
-    numberlink: modelSpace.puzzleResult.c.numberlink,
+    numberlink: modelSpace.puzzleResult.c.model,
     model: modelPlay,
   })
 }

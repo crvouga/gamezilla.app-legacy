@@ -123,7 +123,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
 
   it('should play sound pressing down on a terminal', async () => {
     const f = await Fixture()
-    const terminal = Numberlink.randomTerminal(f.puzzle.numberlink)
+    const terminal = Numberlink.randomTerminal(f.puzzle.model)
 
     if (!terminal) throw new Error('No terminal found')
 

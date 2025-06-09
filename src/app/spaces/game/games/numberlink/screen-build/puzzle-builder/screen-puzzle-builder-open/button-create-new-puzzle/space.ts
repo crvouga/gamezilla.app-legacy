@@ -19,8 +19,8 @@ const updateSpace: UpdateSpace = ({ modelSpace, msgSpace }) => {
         screenPuzzleBuilder: {
           t: 'puzzle-builder',
           mode: { t: 'edit' },
-          modeEdit: ModeEdit.init({ numberlink: puzzleNew.numberlink }),
-          modePlay: ModePlay.init({ ctx: ModePlay.initCtx({ numberlink: puzzleNew.numberlink }) }),
+          modeEdit: ModeEdit.init({ numberlink: puzzleNew.model }),
+          modePlay: ModePlay.init({ ctx: ModePlay.initCtx({ numberlink: puzzleNew.model }) }),
           puzzle: puzzleNew,
         },
       }

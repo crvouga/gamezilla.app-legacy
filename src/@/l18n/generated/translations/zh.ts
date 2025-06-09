@@ -143,7 +143,7 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': '没有可用提示',
   'game.numberlink.no-packs': '没有包',
   'game.numberlink.puzzle-count': (count) => `${count} \u62FC\u56FE`,
-  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (packName) => `${packName}`,
   'game.numberlink.editing': '编辑',
   'game.numberlink.placing': ({ position }) =>
     position === 'first' ? '\u653E\u7F6E\u7B2C\u4E00\u4E2A' : '\u653E\u7F6E\u6700\u540E\u4E00\u4E2A',

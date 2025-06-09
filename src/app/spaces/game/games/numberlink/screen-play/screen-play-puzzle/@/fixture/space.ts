@@ -28,7 +28,7 @@ export const FixtureScreenPuzzlePlaySpace = async (input?: { numberlink?: Number
   })
 
   const solutions = await Solutions.find({
-    models: [prevPuzzle, puzzle, nextPuzzle].map((p) => p.numberlink),
+    models: [prevPuzzle, puzzle, nextPuzzle].map((p) => p.model),
     logger: loggerNoop,
   })
 
@@ -51,7 +51,7 @@ export const FixtureScreenPuzzlePlaySpace = async (input?: { numberlink?: Number
   ])
 
   const userId = UserId.generate()
-  const solvePuzzleMsgs = pipe(ModePlay.toSolutionMsgs(puzzle), (msgs) =>
+  const solvePuzzleMsgs = pipe(ModePlay.toSolutionMsgs({ numberlink: puzzle.model }), (msgs) =>
     msgs.map((c): MsgSpace => ({ userId, t: 'got-numberlink-play-msg', c })),
   )
 

@@ -97,9 +97,9 @@ export const update = <TModel extends Model, TMsg extends { t: string & {} }>(in
         },
       }
 
-      const flowNew = toNumberlink(modelNew, input.ctx.numberlink)
+      const numberlinkNew = toNumberlink(modelNew, input.ctx.numberlink)
 
-      if (AlgoIsSolved.isSolved(flowNew)) {
+      if (AlgoIsSolved.isSolved(numberlinkNew)) {
         return {
           model: modelNew,
           events: [{ t: 'solved' }, { t: 'used-hint', groupId: nextHintGroupId }],

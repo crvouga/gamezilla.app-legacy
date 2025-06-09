@@ -35,7 +35,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const after = f.update(
       f.init,
-      ModePlay.randomMsgs(f.puzzle).map(
+      ModePlay.randomMsgs({ numberlink: f.puzzle.model }).map(
         (c): MsgSpace => ({ userId: UserId.generate(), t: 'got-numberlink-play-msg', c }),
       ),
     )
@@ -84,7 +84,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
 
     const msgs = ModePlay.randomMsgs({
-      numberlink: f.puzzle.numberlink,
+      numberlink: f.puzzle.model,
     }).map(
       (c): MsgSpace => ({
         userId: UserId.generate(),
@@ -108,8 +108,8 @@ describe(import.meta.file, () => {
       f.nextPuzzle.t === 'got'
         ? ModePlay.init({
             ctx: ModePlay.initCtx({
-              numberlink: f.nextPuzzle.c.numberlink,
-              solutions: await Solutions.find({ models: [f.nextPuzzle.c.numberlink], logger: loggerNoop }),
+              numberlink: f.nextPuzzle.c.model,
+              solutions: await Solutions.find({ models: [f.nextPuzzle.c.model], logger: loggerNoop }),
             }),
           })
         : null,
@@ -121,7 +121,7 @@ describe(import.meta.file, () => {
     const before = f.init
     const after = f.update(before, f.solvePuzzleMsgs)
     if (!after.modePlay) throw new Error('failed to setup test')
-    const afterFlow = ModePlay.toNumberlink(after.modePlay, f.puzzle.numberlink)
+    const afterFlow = ModePlay.toNumberlink(after.modePlay, f.puzzle.model)
 
     expect(ScreenPlayPuzzleSpace.toStatus(before)).toBe('solving')
     expect(ScreenPlayPuzzleSpace.toStatus(after)).toBe('solved')
@@ -191,7 +191,7 @@ describe(import.meta.file, () => {
 
   it('should only open puzzle complete dialog when transitions to solved state', async () => {
     const f = await Fixture()
-    const endId = Numberlink.randomTerminal(f.puzzle.numberlink)?.endId
+    const endId = Numberlink.randomTerminal(f.puzzle.model)?.endId
 
     if (!endId) throw new Error('endId not found')
 
@@ -245,8 +245,8 @@ describe(import.meta.file, () => {
     ])
 
     const ctx = ModePlay.initCtx({
-      numberlink: f.puzzle.numberlink,
-      solutions: await Solutions.find({ models: [f.puzzle.numberlink], logger: loggerNoop }),
+      numberlink: f.puzzle.model,
+      solutions: await Solutions.find({ models: [f.puzzle.model], logger: loggerNoop }),
     })
 
     expect(before.modePlay).toEqual(ModePlay.init({ ctx }))

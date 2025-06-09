@@ -147,7 +147,7 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': 'Nenhuma dica disponível',
   'game.numberlink.no-packs': 'Sem pacotes',
   'game.numberlink.puzzle-count': (count) => `${count} quebra-cabe\xE7as`,
-  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (packName) => `${packName}`,
   'game.numberlink.editing': 'Edição',
   'game.numberlink.placing': ({ position }) => (position === 'first' ? 'Colocando primeiro' : 'Colocando \xFAltimo'),
   'game-numberlink-play.no-hints-available': 'Nenhumas dicas disponíveis',

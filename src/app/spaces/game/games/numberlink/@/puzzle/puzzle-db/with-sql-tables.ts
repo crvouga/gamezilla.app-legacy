@@ -12,7 +12,7 @@ const query = `
 CREATE TABLE IF NOT EXISTS game_numberlink_puzzle (
     id TEXT NOT NULL,
     name TEXT NOT NULL,
-    flow TEXT NOT NULL,
+    model TEXT NOT NULL,
     created_at_unix_ms INTEGER NOT NULL,
     created_by_user_id TEXT NOT NULL,
     last_updated_at_unix_ms INTEGER NOT NULL,

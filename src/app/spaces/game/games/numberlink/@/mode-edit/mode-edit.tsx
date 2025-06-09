@@ -227,14 +227,14 @@ export const update = (input: {
 
       const present = History.present(input.model.form)
 
-      const flowNew = NumberlinkVariant.init({
+      const numberlinkNew = NumberlinkVariant.init({
         dimensions: opened.draftDimensions,
         terminalsByGroupId: present.terminalsByGroupId,
       })
 
       const formNew: Form = {
-        terminalsByGroupId: flowNew.terminalsByGroupId,
-        dimensions: NumberlinkVariant.toDimensions(flowNew),
+        terminalsByGroupId: numberlinkNew.terminalsByGroupId,
+        dimensions: NumberlinkVariant.toDimensions(numberlinkNew),
       }
 
       const modelNew: Model = {

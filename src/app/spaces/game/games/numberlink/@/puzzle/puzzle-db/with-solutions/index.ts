@@ -28,7 +28,7 @@ export const WithSolutions = (config: Config): IPuzzleDb => {
 
         const solution = unwrapOr(
           await AlgoSolveAsync.solve({
-            model: puzzle.numberlink,
+            model: puzzle.model,
             logger: config.logger,
             maxDuration: TimeSpan.seconds(10),
           }),
@@ -67,7 +67,7 @@ export const WithSolutions = (config: Config): IPuzzleDb => {
 
       const solution = unwrapOr(
         await AlgoSolveAsync.solve({
-          model: got.value.numberlink,
+          model: got.value.model,
           logger: config.logger,
           maxDuration: TimeSpan.seconds(10),
         }),
@@ -86,7 +86,7 @@ export const WithSolutions = (config: Config): IPuzzleDb => {
     async put(puzzle) {
       const solution = unwrapOr(
         await AlgoSolveAsync.solve({
-          model: puzzle.numberlink,
+          model: puzzle.model,
           logger: config.logger,
           maxDuration: TimeSpan.seconds(10),
         }),

@@ -26,7 +26,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         SELECT
           id,
           name,
-          flow,
+          model,
           solutions,
           created_at_unix_ms,
           created_by_user_id,
@@ -75,7 +75,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           UPDATE game_numberlink_puzzle
           SET
             name = :name,
-            flow = :flow,
+            model = :model,
             last_updated_at_unix_ms = :lastUpdatedAt,
             last_updated_by_user_id = :lastUpdatedBy,
             solutions = :solutions
@@ -85,7 +85,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           vars: {
             id: puzzle.id,
             name: puzzle.name,
-            flow: Sql.json(puzzle.numberlink),
+            model: Sql.json(puzzle.model),
             lastUpdatedAt: puzzle.lastUpdatedAt,
             lastUpdatedBy: puzzle.lastUpdatedBy,
             solutions: Sql.json(puzzle.solutions),
@@ -105,7 +105,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           INSERT INTO game_numberlink_puzzle (
             id,
             name,
-            flow,
+            model,
             created_at_unix_ms,
             created_by_user_id,
             last_updated_at_unix_ms,
@@ -115,7 +115,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           VALUES (
             :id,
             :name,
-            :flow,
+            :model,
             :createdAt,
             :createdBy,
             :lastUpdatedAt,
@@ -126,7 +126,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         vars: {
           id: puzzle.id,
           name: puzzle.name,
-          flow: Sql.json(puzzle.numberlink),
+          model: Sql.json(puzzle.model),
           createdAt: puzzle.createdAt,
           createdBy: puzzle.createdBy,
           lastUpdatedAt: puzzle.lastUpdatedAt,
@@ -261,7 +261,7 @@ const toQuerySql = (input: { where: WhereClause; order?: OrderClause; pagination
     SELECT
       id,
       name,
-      flow,
+      model,
       solutions,
       created_at_unix_ms,
       created_by_user_id,

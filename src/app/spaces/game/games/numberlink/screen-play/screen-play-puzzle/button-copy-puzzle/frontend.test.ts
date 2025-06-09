@@ -85,7 +85,7 @@ describe(import.meta.file, () => {
       CopyToClipboardCmd.did(output, (text) => {
         const shorthand = JSON.parse(text)
         const grid = VariantGridShorthand.toGrid(shorthand)
-        return Numberlink.isSame(f.puzzle.numberlink, grid)
+        return Numberlink.isSame(f.puzzle.model, grid)
       }),
     ).toBe(true)
   })

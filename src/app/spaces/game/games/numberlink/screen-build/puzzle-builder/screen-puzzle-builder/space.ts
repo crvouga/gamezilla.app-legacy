@@ -64,7 +64,7 @@ const updateSpaceMain = ({
       const updated = ModeEdit.update({
         model: modelSpace.screenPuzzleBuilder.modeEdit,
         msg: msgSpace.c,
-        numberlink: modelSpace.screenPuzzleBuilder.puzzle.numberlink,
+        numberlink: modelSpace.screenPuzzleBuilder.puzzle.model,
       })
 
       return {

@@ -14,7 +14,7 @@ const schema = s.obj({
   createdBy: UserId,
   lastUpdatedAt: UnixMs,
   lastUpdatedBy: UserId,
-  numberlink: NumberlinkVariant.Model,
+  model: NumberlinkVariant.Model,
   solutions: s.arr(Numberlink.Model),
 })
 
@@ -27,7 +27,7 @@ const create = async (input: {
   createdBy: UserId
 }): Promise<Puzzle> => {
   return {
-    numberlink: input.numberlink,
+    model: input.numberlink,
     name: await PuzzleName.generate({
       // count: input.count,
     }),
@@ -63,7 +63,7 @@ const random = async (input?: {
     lastUpdatedAt: UnixMs.now(),
     lastUpdatedBy: createdBy,
     id: PuzzleId.generate(),
-    numberlink,
+    model: numberlink,
     solutions: [],
   }
 }

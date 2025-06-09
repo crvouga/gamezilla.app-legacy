@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { ascend } from '~/@/array/sorting'
-import { Ok, Result } from '~/@/result'
+import { Ok, Result, unwrap } from '~/@/result'
 import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { UserId } from '~/app/@/data/user-id'
@@ -17,6 +17,7 @@ describe(import.meta.file, () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
       const inserted = await f.puzzleDb.put(puzzle)
+      unwrap(inserted)
       expect(inserted.t).toBe('ok')
     }
   })

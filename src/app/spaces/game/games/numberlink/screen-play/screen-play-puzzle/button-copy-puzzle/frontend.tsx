@@ -31,12 +31,12 @@ export const update: FrontendModule['update'] = (input) => {
         input.modelSpace.screen.modePlay ??
         ModePlay.init({
           ctx: ModePlay.initCtx({
-            numberlink: input.modelSpace.screen.puzzleResult.c.numberlink,
+            numberlink: input.modelSpace.screen.puzzleResult.c.model,
             solutions: input.ctx.solutions,
           }),
         })
 
-      const numberlink = ModePlay.toNumberlink(modePlay, input.modelSpace.screen.puzzleResult.c.numberlink)
+      const numberlink = ModePlay.toNumberlink(modePlay, input.modelSpace.screen.puzzleResult.c.model)
 
       if (numberlink.t !== 'grid') {
         return {

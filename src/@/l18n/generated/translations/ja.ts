@@ -148,7 +148,7 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': 'ヒントがありません',
   'game.numberlink.no-packs': 'パックなし',
   'game.numberlink.puzzle-count': (count) => `${count} \u30D1\u30BA\u30EB`,
-  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (packName) => `${packName}`,
   'game.numberlink.editing': '編集',
   'game.numberlink.placing': ({ position }) =>
     position === 'first' ? '\u6700\u521D\u3092\u914D\u7F6E' : '\u6700\u5F8C\u3092\u914D\u7F6E',

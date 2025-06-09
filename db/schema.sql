@@ -133,7 +133,7 @@ CREATE TABLE public.game_numberlink_pack_item (
 CREATE TABLE public.game_numberlink_puzzle (
     id text NOT NULL,
     name text NOT NULL,
-    flow json NOT NULL,
+    model json NOT NULL,
     created_at_unix_ms bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
     created_by_user_id text NOT NULL,
     last_updated_at_unix_ms bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
@@ -508,4 +508,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250429010045'),
     ('20250609225401'),
     ('20250609230850'),
-    ('20250609231740');
+    ('20250609231740'),
+    ('20250609232555');

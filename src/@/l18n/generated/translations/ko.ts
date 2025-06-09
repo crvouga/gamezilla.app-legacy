@@ -146,7 +146,7 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': '힌트가 없습니다',
   'game.numberlink.no-packs': '팩 없음',
   'game.numberlink.puzzle-count': (count) => `${count} \uD37C\uC990`,
-  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (packName) => `${packName}`,
   'game.numberlink.editing': '편집',
   'game.numberlink.placing': ({ position }) =>
     position === 'first' ? '\uCCAB \uBC88\uC9F8 \uBC30\uCE58' : '\uB9C8\uC9C0\uB9C9 \uBC30\uCE58',

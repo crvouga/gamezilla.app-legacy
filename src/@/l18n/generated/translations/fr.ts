@@ -146,7 +146,7 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': 'Aucun indice disponible',
   'game.numberlink.no-packs': 'Aucun pack',
   'game.numberlink.puzzle-count': (count) => `${count} puzzles`,
-  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (packName) => `${packName}`,
   'game.numberlink.editing': 'Édition',
   'game.numberlink.placing': ({ position }) => (position === 'first' ? 'Placement du premier' : 'Placement du dernier'),
   'game-numberlink-play.no-hints-available': 'Aucun indice disponible',

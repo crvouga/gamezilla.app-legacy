@@ -60,7 +60,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
       if (input.modelSpace.screen.puzzleResult.t === 'not-found') return { model: input.model }
 
       const playCtx = ModePlay.initCtx({
-        numberlink: input.modelSpace.screen.puzzleResult.c.numberlink,
+        numberlink: input.modelSpace.screen.puzzleResult.c.model,
         solutions: input.ctx.solutions,
       })
       const modePlay = input.modelSpace.screen.modePlay ?? ModePlay.init({ ctx: playCtx })
@@ -75,7 +75,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   if (input.modelSpace.screen.t !== 'screen-play-puzzle') return Sub.none()
   if (input.modelSpace.screen.puzzleResult.t !== 'got') return Sub.none()
-  const numberlink = input.modelSpace.screen.puzzleResult.c.numberlink
+  const numberlink = input.modelSpace.screen.puzzleResult.c.model
   const play = input.modelSpace.screen.modePlay
   if (!play) return Sub.none()
   return ModePlayFrontend.subscriptions(
@@ -147,11 +147,11 @@ const ViewHosting: FrontendModule['View'] = (input) => {
           {puzzle.t === 'got' ? (
             <ModePlayFrontend.View
               key={puzzle.c.id}
-              numberlink={puzzle.c.numberlink}
+              numberlink={puzzle.c.model}
               model={
                 modePlay ??
                 ModePlay.init({
-                  ctx: ModePlay.initCtx({ numberlink: puzzle.c.numberlink, solutions: input.ctx.solutions }),
+                  ctx: ModePlay.initCtx({ numberlink: puzzle.c.model, solutions: input.ctx.solutions }),
                 })
               }
               dispatch={(c) =>
@@ -200,7 +200,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
             ...(puzzle.t === 'got' && modePlay
               ? ModePlayFrontend.viewActions({
                   model: modePlay,
-                  ctx: ModePlay.initCtx({ ...input.ctx, numberlink: puzzle.c.numberlink }),
+                  ctx: ModePlay.initCtx({ ...input.ctx, numberlink: puzzle.c.model }),
                   dispatchCmd: (c) => input.dispatch({ t: 'got-msg-out', c }),
                   dispatch: (c) =>
                     input.dispatch({
@@ -243,11 +243,11 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
               <ModePlayFrontend.View
                 disabled
                 key={puzzle.c.id}
-                numberlink={puzzle.c.numberlink}
+                numberlink={puzzle.c.model}
                 model={
                   modePlay ??
                   ModePlay.init({
-                    ctx: ModePlay.initCtx({ numberlink: puzzle.c.numberlink, solutions: input.ctx.solutions }),
+                    ctx: ModePlay.initCtx({ numberlink: puzzle.c.model, solutions: input.ctx.solutions }),
                   })
                 }
                 dispatch={() => {}}

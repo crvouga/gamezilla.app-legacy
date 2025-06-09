@@ -151,7 +151,7 @@ export const translations: Text = {
   'game.numberlink.no-packs': 'Нет пакетов',
   'game.numberlink.puzzle-count': (count) =>
     `${count} \u0433\u043E\u043B\u043E\u0432\u043E\u043B\u043E\u043C\u043E\u043A`,
-  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (packName) => `${packName}`,
   'game.numberlink.editing': 'редактирование',
   'game.numberlink.placing': ({ position }) =>
     position === 'first'

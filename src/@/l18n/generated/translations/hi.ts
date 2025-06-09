@@ -150,7 +150,7 @@ export const translations: Text = {
   'game.numberlink.no-hints-available': 'कोई संकेत उपलब्ध नहीं है',
   'game.numberlink.no-packs': 'कोई पैक नहीं',
   'game.numberlink.puzzle-count': (count) => `${count} \u092A\u0939\u0947\u0932\u093F\u092F\u093E\u0901`,
-  'numberlink-pack-name': (flowPackName) => `${flowPackName}`,
+  'numberlink-pack-name': (packName) => `${packName}`,
   'game.numberlink.editing': 'संपादन',
   'game.numberlink.placing': ({ position }) =>
     position === 'first'

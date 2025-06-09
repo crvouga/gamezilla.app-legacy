@@ -12,7 +12,7 @@ import { loggerNoop } from '~/@/logger/impl-noop'
 const toCompletePuzzleMsgs = (puzzle: Puzzle) => {
   const userId = UserId.generate()
   return ModePlay.toSolutionMsgs({
-    numberlink: puzzle.numberlink,
+    numberlink: puzzle.model,
   }).map(
     (c): FixtureUpdateInput => ({
       msgSpace: withEventMeta({
@@ -31,7 +31,7 @@ export const FixtureScreenPlayPuzzleFrontend = async () => {
   const prevPuzzle = await Puzzle.random()
 
   const solutions = await Solutions.find({
-    models: [puzzle.numberlink, nextPuzzle.numberlink, prevPuzzle.numberlink],
+    models: [puzzle.model, nextPuzzle.model, prevPuzzle.model],
     logger: loggerNoop,
   })
   const ctx: FlowFrontendCtx = {
