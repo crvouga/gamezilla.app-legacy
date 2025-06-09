@@ -2,7 +2,6 @@ import { describe, expect, test } from 'bun:test'
 import 'fake-indexeddb/auto'
 import { sleep } from '~/@/promise/sleep'
 import { TimeSpan } from '~/@/time/time-span'
-import { Logger } from '../../logger'
 import { s } from '../../schema'
 import { Config, SqlDb } from '../backend/impl'
 
@@ -15,41 +14,6 @@ const Fixture = async (config: Config) => {
 
 const Fixtures = async () => {
   const configs: Config[] = []
-
-  const SHOULD_TEST_IN_MEMORY_PG = true
-  if (SHOULD_TEST_IN_MEMORY_PG) {
-    configs.push({
-      t: 'pglite',
-      fileSystem: {
-        t: 'in-memory',
-      },
-      logger: Logger({ t: 'noop' }),
-    })
-  }
-
-  const SHOULD_TEST_INDEXED_DB_PG = false
-  if (SHOULD_TEST_INDEXED_DB_PG) {
-    configs.push({
-      t: 'pglite',
-      fileSystem: {
-        t: 'indexed-db',
-        dbName: 'test-gamezilla-app',
-      },
-      logger: Logger({ t: 'noop' }),
-    })
-  }
-
-  const SHOULD_TEST_LOCAL_PG = false
-  if (SHOULD_TEST_LOCAL_PG) {
-    configs.push({
-      t: 'pglite',
-      fileSystem: {
-        t: 'file-system',
-        dataDir: './postgres-data',
-      },
-      logger: Logger({ t: 'noop' }),
-    })
-  }
 
   return Promise.all(configs.map(Fixture))
 }

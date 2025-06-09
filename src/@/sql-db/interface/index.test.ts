@@ -4,8 +4,8 @@ import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { PowerSyncClient } from '../../../service-powersync/client/database'
 import { Logger } from '../../logger'
-import { s } from '../../schema'
 import { isErr, isOk } from '../../result'
+import { s } from '../../schema'
 import { Config, SqlDb } from '../backend/impl'
 
 const Fixture = async (config: Config) => {
@@ -30,15 +30,6 @@ const Fixtures = async () => {
     })
   }
 
-  const SHOULD_TEST_PGLITE = false
-  if (SHOULD_TEST_PGLITE) {
-    configs.push({
-      t: 'pglite',
-      fileSystem: { t: 'in-memory' },
-      logger: Logger({ t: 'noop' }),
-    })
-  }
-
   const SHOULD_TEST_POWERSYNC_CLIENT = false
   if (SHOULD_TEST_POWERSYNC_CLIENT) {
     configs.push({
@@ -49,19 +40,6 @@ const Fixtures = async () => {
         powersyncUrl: CONFIG_SHARED.POWERSYNC_URL,
         backendUrl: CONFIG_SHARED.BACKEND_URL,
       }),
-      logger: Logger({ t: 'noop' }),
-    })
-  }
-  const SHOULD_TEST_LOCAL_PG = false
-  if (SHOULD_TEST_LOCAL_PG) {
-    configs.push({
-      t: 'pglite',
-      fileSystem: { t: 'indexed-db', dbName: 'test-gamezilla-app' },
-      logger: Logger({ t: 'noop' }),
-    })
-    configs.push({
-      t: 'pglite',
-      fileSystem: { t: 'file-system', dataDir: './postgres-data' },
       logger: Logger({ t: 'noop' }),
     })
   }

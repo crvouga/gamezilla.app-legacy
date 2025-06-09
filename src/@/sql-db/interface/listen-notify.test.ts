@@ -18,30 +18,6 @@ const Fixture = async (config: Config) => {
 const Fixtures = async () => {
   const configs: Config[] = []
 
-  const SHOULD_TEST_PGLITE = false
-  if (SHOULD_TEST_PGLITE) {
-    configs.push({
-      t: 'pglite',
-      fileSystem: { t: 'in-memory' },
-      logger: Logger({ t: 'noop' }),
-    })
-
-    configs.push({
-      t: 'pglite',
-      fileSystem: { t: 'indexed-db', dbName: 'test-gamezilla-app' },
-      logger: Logger({ t: 'noop' }),
-    })
-
-    const SHOULD_TEST_LOCAL_PG = false
-    if (SHOULD_TEST_LOCAL_PG) {
-      configs.push({
-        t: 'pglite',
-        fileSystem: { t: 'file-system', dataDir: './postgres-data' },
-        logger: Logger({ t: 'noop' }),
-      })
-    }
-  }
-
   if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
     configs.push({
       t: 'postgres',
