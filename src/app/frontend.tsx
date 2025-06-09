@@ -7,7 +7,7 @@ import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screen/generated/screens'
 import { SqlDb } from '~/@/sql-db/frontend/impl'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
@@ -90,7 +90,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     clientSessionId,
     sqlDb,
     logger,
-    now: Posix.now(),
+    now: UnixMs.now(),
     navigatorLanguage,
     currentScreen: { t: 'login', n: 'auth-login' },
     t: Translator(navigatorLanguage),
@@ -125,7 +125,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
 const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): FrontendCtxModule => {
   const baseCtx: FrontendCtxModule = {
     ...input.ctx,
-    now: Posix.now(),
+    now: UnixMs.now(),
     t: Translator(input.model.lang.lang),
     profilesByUserId: input.model.profile.profilesByUserId,
     documentVisibilityState: input.model.frontend.visibility.documentVisibilityState,

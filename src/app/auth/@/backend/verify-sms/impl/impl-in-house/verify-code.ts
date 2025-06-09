@@ -38,13 +38,13 @@ export const VerifyCode =
       })
     }
 
-    if (verification.verifiedAtPosix) {
+    if (verification.verifiedAtUnixMs) {
       return Err({
         t: 'verification-already-verified',
       })
     }
 
-    if (deps.now() >= verification.expiresAtPosix) {
+    if (deps.now() >= verification.expiresAtUnixMs) {
       return Err({
         t: 'verification-expired',
       })
@@ -138,7 +138,7 @@ export const VerifyCode =
 
     const verificationNew: Verification = {
       ...verification,
-      verifiedAtPosix: deps.now(),
+      verifiedAtUnixMs: deps.now(),
     }
 
     await deps.verificationDb.put(verificationNew)

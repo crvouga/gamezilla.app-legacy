@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 import { EventId, type WithEventId } from '~/@/event-sourced/event'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { UserId } from '~/app/@/data/user-id'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
@@ -15,15 +15,15 @@ import { BotLevel } from './bot-level'
 //
 
 export const ModelBackend = s.obj({
-  botStartedFindingMoveAt: s.maybe(Posix),
+  botStartedFindingMoveAt: s.maybe(UnixMs),
 })
 export type ModelBackend = s.Infer<typeof ModelBackend>
 
-export const isBotMoving = (now: Posix, model: ModelBackend) => {
+export const isBotMoving = (now: UnixMs, model: ModelBackend) => {
   if (!model.botStartedFindingMoveAt) {
     return false
   }
-  return TimeSpan.lte(Posix.diff(now, model.botStartedFindingMoveAt), TimeSpan.seconds(5))
+  return TimeSpan.lte(UnixMs.diff(now, model.botStartedFindingMoveAt), TimeSpan.seconds(5))
 }
 
 export type ModelFrontend = {
@@ -43,7 +43,7 @@ export type MsgBackend =
   | {
       t: 'bot-found-best-move'
       found: ConnectFour.BestMoveResult
-      startedAt: Posix
+      startedAt: UnixMs
     }
   | {
       t: 'time-passed'
@@ -95,7 +95,7 @@ export const MsgSpace = s.or(
   }),
   s.obj({
     t: s.l('time-passed'),
-    now: Posix,
+    now: UnixMs,
   }),
   s.obj({
     t: s.l('user-restarted-game'),

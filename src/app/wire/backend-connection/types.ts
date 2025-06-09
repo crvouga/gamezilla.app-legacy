@@ -1,6 +1,6 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { s } from '~/@/schema'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { Topic } from '~/@/topic'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
@@ -10,8 +10,8 @@ import { PingId } from './ping-id'
 
 export type PingItem = {
   pingId: PingId
-  pingAt: Posix
-  pongAt: Posix | null
+  pingAt: UnixMs
+  pongAt: UnixMs | null
 }
 
 export type Model = {
@@ -31,7 +31,7 @@ export const PingPongMsg = s.obj({
 })
 export type PingPongMsg = s.Infer<typeof PingPongMsg>
 
-export type MsgFrontend = { t: 'ping'; pingId: PingId; now: Posix } | { t: 'pong'; pingId: PingId; now: Posix }
+export type MsgFrontend = { t: 'ping'; pingId: PingId; now: UnixMs } | { t: 'pong'; pingId: PingId; now: UnixMs }
 
 export const topicContract = Topic.initContract({
   ping: {

@@ -7,7 +7,7 @@ import type { IVerificationAttemptDb } from './verification-attempt'
 import type { IVerificationCodeGenerator } from './verification-code-generator'
 import type { IVerificationDb } from './verification/verification-db'
 import { TimeSpan } from '~/@/time/time-span'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 
 export type Config = {
   t: 'in-house'
@@ -18,7 +18,7 @@ export type Config = {
   verificationAttemptDb: IVerificationAttemptDb
   Translator: (lang: LanguageCodeISO_639_1) => Translator
   hashing: IHashing
-  now: () => Posix
+  now: () => UnixMs
   verifyCodeMaxAttempts: number
   verifyCodeExpiresIn: TimeSpan
   sendCodeHourlyLimit: number

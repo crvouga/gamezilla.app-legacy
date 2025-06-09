@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { Ok, unwrap } from '~/@/result'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { BackendInstance } from '../backend-instance'
@@ -64,8 +64,8 @@ describe(import.meta.file, () => {
       const expected: BackendInstance[] = []
       for (let i = 0; i < 10; i++) {
         const backendInstance = BackendInstance.random({
-          startedAt: Posix.past(Posix.now(), TimeSpan.hours(1)),
-          lastHeartbeatAt: Posix.past(Posix.now(), TimeSpan.minutes(1)),
+          startedAt: UnixMs.past(UnixMs.now(), TimeSpan.hours(1)),
+          lastHeartbeatAt: UnixMs.past(UnixMs.now(), TimeSpan.minutes(1)),
         })
         expected.push(backendInstance)
         await f.backendInstanceDb.put(backendInstance)
@@ -75,8 +75,8 @@ describe(import.meta.file, () => {
       for (let i = 0; i < 10; i++) {
         await f.backendInstanceDb.put(
           BackendInstance.random({
-            startedAt: Posix.past(Posix.now(), TimeSpan.hours(1)),
-            lastHeartbeatAt: Posix.past(Posix.now(), TimeSpan.add(MINIMAL_HEART_RATE, TimeSpan.minutes(1))),
+            startedAt: UnixMs.past(UnixMs.now(), TimeSpan.hours(1)),
+            lastHeartbeatAt: UnixMs.past(UnixMs.now(), TimeSpan.add(MINIMAL_HEART_RATE, TimeSpan.minutes(1))),
           }),
         )
       }

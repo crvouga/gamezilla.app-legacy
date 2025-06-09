@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { EventStreamInMemory } from '.'
-import { Posix } from '../time/posix'
+import { UnixMs } from '../time/posix'
 
 //
 //
@@ -11,14 +11,14 @@ import { Posix } from '../time/posix'
 type EventId = string
 
 type EventMeta = {
-  happenedAt: Posix
+  happenedAt: UnixMs
   eventId: EventId
 }
 
 const withId = <T>(eventNew: T): T & EventMeta => {
   return {
     ...eventNew,
-    happenedAt: Posix.now(),
+    happenedAt: UnixMs.now(),
     eventId: Math.random().toString(),
   }
 }
@@ -37,7 +37,7 @@ type Event =
 
 type Indexes = 'byUserId' | 'byCounterId'
 
-const withMetaAt = (event: Event, happenedAt: Posix): Event & EventMeta => {
+const withMetaAt = (event: Event, happenedAt: UnixMs): Event & EventMeta => {
   return {
     ...withId<Event>(event),
     happenedAt,
@@ -134,7 +134,7 @@ describe(import.meta.file, async () => {
   })
 
   it('should be able to merge', async () => {
-    const t0 = Posix.now()
+    const t0 = UnixMs.now()
 
     const event1 = withMetaAt(
       {
@@ -151,7 +151,7 @@ describe(import.meta.file, async () => {
         userId: '1',
         counterId: '2',
       },
-      Posix.init(t0 + 1000),
+      UnixMs.init(t0 + 1000),
     )
 
     const event3 = withMetaAt(
@@ -160,7 +160,7 @@ describe(import.meta.file, async () => {
         userId: '1',
         counterId: '3',
       },
-      Posix.init(t0 + 2000),
+      UnixMs.init(t0 + 2000),
     )
 
     const streamA = await EventStream.fromArray(config, [event1, event3])

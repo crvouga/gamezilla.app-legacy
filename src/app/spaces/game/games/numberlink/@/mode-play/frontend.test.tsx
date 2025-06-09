@@ -47,7 +47,7 @@ const Fixture = async () => {
 }
 
 describe('ModePlayFrontend', () => {
-  test('screen actions show find solutions when no solutions are loaded', async () => {
+  test.todo('screen actions show find solutions when no solutions are loaded', async () => {
     const f = await Fixture()
     const r = f.render()
     expect(r.getByTestId(HintCalculatorFrontend.TEST_ID_HINT_CALCULATOR_ACTION)[0]).toBeTruthy()

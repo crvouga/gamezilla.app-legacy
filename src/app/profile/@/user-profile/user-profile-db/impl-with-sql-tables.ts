@@ -15,8 +15,8 @@ const queries: string[] = [
     username TEXT NOT NULL,
     avatar_seed TEXT,
     avatar_style TEXT,
-    created_at_posix BIGINT NOT NULL,
-    updated_at_posix BIGINT NOT NULL
+    created_at_unix_ms BIGINT NOT NULL,
+    updated_at_unix_ms BIGINT NOT NULL
   );
   `,
 ]

@@ -2,7 +2,7 @@ import { ILogger, Logger } from '~/@/logger'
 import { sleep } from '~/@/promise/sleep'
 import { IRuntime, RuntimeEvent } from '~/@/runtime/interface'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {
@@ -18,7 +18,7 @@ export const Runtime = (config: Config): IRuntime => {
 
   const handleShutdown = async () => {
     logger.info('Shutting down...')
-    await events.pub({ t: 'runtime/stopping', stoppedAt: Posix.now() })
+    await events.pub({ t: 'runtime/stopping', stoppedAt: UnixMs.now() })
     logger.info('Waiting for grace period...')
     await sleep(config.shutoffFGracePeriod)
     logger.info('Grace period over. Process exit')

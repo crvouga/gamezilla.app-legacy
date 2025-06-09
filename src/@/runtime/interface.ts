@@ -1,10 +1,10 @@
 import { Sub } from '../sub'
-import { Posix } from '../time/posix'
+import { UnixMs } from '../time/posix'
 
 export type RuntimeEvent =
   | {
       t: 'runtime/stopping'
-      stoppedAt: Posix
+      stoppedAt: UnixMs
     }
   | {
       t: 'runtime/other'

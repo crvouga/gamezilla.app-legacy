@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { PhoneNumber } from '~/@/phone-number'
 import { Ok, Result, unwrap } from '~/@/result'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import type { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
@@ -39,7 +39,7 @@ describe(import.meta.file, () => {
       const inserted = await f.userAccountDb.insert({
         userId: UserId.generate(),
         role: 'guest',
-        createdAt: Posix.now({
+        createdAt: UnixMs.now({
           precision: 'seconds',
         }),
         phoneNumber: null,
@@ -53,7 +53,7 @@ describe(import.meta.file, () => {
       const account: UserAccount = {
         userId: UserId.generate(),
         role: 'guest',
-        createdAt: Posix.now({
+        createdAt: UnixMs.now({
           precision: 'seconds',
         }),
         phoneNumber: null,
@@ -74,7 +74,7 @@ describe(import.meta.file, () => {
         phoneNumber,
         userId: UserId.generate(),
         role: 'normal',
-        createdAt: Posix.now({
+        createdAt: UnixMs.now({
           precision: 'seconds',
         }),
       }
@@ -92,7 +92,7 @@ describe(import.meta.file, () => {
       const account: UserAccount = {
         userId: UserId.generate(),
         role: 'guest',
-        createdAt: Posix.now({
+        createdAt: UnixMs.now({
           precision: 'seconds',
         }),
         phoneNumber: null,
@@ -128,7 +128,7 @@ describe(import.meta.file, () => {
       const account: UserAccount = {
         userId,
         role: 'guest',
-        createdAt: Posix.now({
+        createdAt: UnixMs.now({
           precision: 'seconds',
         }),
         phoneNumber: null,

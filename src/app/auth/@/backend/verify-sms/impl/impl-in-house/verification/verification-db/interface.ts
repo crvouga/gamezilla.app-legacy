@@ -1,6 +1,6 @@
 import { PhoneNumber } from '~/@/phone-number'
 import type { Task } from '~/@/promise/task'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import type { Paginated } from '~/app/@/data/pagination'
 import type { Verification, VerificationId } from '..'
 
@@ -8,9 +8,9 @@ export type WhereClause = {
   verificationId?: {
     '='?: VerificationId
   }
-  createdAtPosix?: {
-    '<='?: Posix
-    '>='?: Posix
+  createdAtUnixMs?: {
+    '<='?: UnixMs
+    '>='?: UnixMs
   }
   phoneNumber?: {
     '='?: PhoneNumber

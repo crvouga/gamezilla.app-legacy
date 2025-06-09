@@ -1,5 +1,5 @@
 import { type Hash, Hashing } from '~/@/hashing'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { VerificationId } from './verification-id'
 import { TimeSpan } from '~/@/time/time-span'
 import { PhoneNumber } from '~/@/phone-number'
@@ -8,13 +8,13 @@ export type Verification = {
   verificationId: VerificationId
   codeHash: Hash | null
   phoneNumber: PhoneNumber
-  createdAtPosix: Posix
-  expiresAtPosix: Posix
-  verifiedAtPosix: Posix | null
+  createdAtUnixMs: UnixMs
+  expiresAtUnixMs: UnixMs
+  verifiedAtUnixMs: UnixMs | null
 }
 
-const random = async (input?: { createdAt?: Posix; codeHash?: Hash | null }): Promise<Verification> => {
-  const createdAt = input?.createdAt ?? Posix.now()
+const random = async (input?: { createdAt?: UnixMs; codeHash?: Hash | null }): Promise<Verification> => {
+  const createdAt = input?.createdAt ?? UnixMs.now()
   const codeHashArbitrary = await Hashing({
     t: 'noop',
   }).hash({
@@ -26,9 +26,9 @@ const random = async (input?: { createdAt?: Posix; codeHash?: Hash | null }): Pr
     verificationId: VerificationId.generate(),
     codeHash,
     phoneNumber: PhoneNumber.random(),
-    createdAtPosix: createdAt,
-    expiresAtPosix: Posix.future(createdAt, TimeSpan.minutes(1)),
-    verifiedAtPosix: null,
+    createdAtUnixMs: createdAt,
+    expiresAtUnixMs: UnixMs.future(createdAt, TimeSpan.minutes(1)),
+    verifiedAtUnixMs: null,
   }
 }
 

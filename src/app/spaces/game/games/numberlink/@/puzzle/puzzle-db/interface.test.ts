@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { ascend } from '~/@/array/sorting'
 import { Ok, Result } from '~/@/result'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../puzzle'
@@ -141,13 +141,13 @@ describe(import.meta.file, () => {
     for await (const f of await Fixtures()) {
       const puzzles: Puzzle[] = []
       const createdBy = UserId.generate()
-      let createdAt = Posix.now()
+      let createdAt = UnixMs.now()
       for (let i = 0; i < 5; i++) {
         const puzzle = await Puzzle.random({
           createdBy,
           createdAt,
         })
-        createdAt = Posix.future(createdAt, TimeSpan.seconds(1))
+        createdAt = UnixMs.future(createdAt, TimeSpan.seconds(1))
         puzzles.push(puzzle)
         Result.unwrap(await f.puzzleDb.put(puzzle))
       }

@@ -3,7 +3,7 @@ import type { IVerifySMS } from '../../interface'
 import { VerificationId, type Verification } from './verification'
 import { Config } from './shared'
 import { TimeSpan } from '~/@/time/time-span'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 
 export const SendCode =
   (deps: Config): IVerifySMS['sendCode'] =>
@@ -12,9 +12,9 @@ export const SendCode =
 
     const lastDayVerifications = await deps.verificationDb.find({
       where: {
-        createdAtPosix: {
+        createdAtUnixMs: {
           '<=': now,
-          '>=': Posix.past(now, TimeSpan.days(1)),
+          '>=': UnixMs.past(now, TimeSpan.days(1)),
         },
         phoneNumber: {
           '=': input.phoneNumber,
@@ -37,9 +37,9 @@ export const SendCode =
 
     const lastHourVerifications = await deps.verificationDb.find({
       where: {
-        createdAtPosix: {
+        createdAtUnixMs: {
           '<=': now,
-          '>=': Posix.past(now, TimeSpan.hours(1)),
+          '>=': UnixMs.past(now, TimeSpan.hours(1)),
         },
         phoneNumber: {
           '=': input.phoneNumber,
@@ -68,10 +68,10 @@ export const SendCode =
 
     const verificationNew: Verification = {
       phoneNumber: input.phoneNumber,
-      createdAtPosix: createdAt,
-      expiresAtPosix: Posix.future(createdAt, deps.verifyCodeExpiresIn),
+      createdAtUnixMs: createdAt,
+      expiresAtUnixMs: UnixMs.future(createdAt, deps.verifyCodeExpiresIn),
       verificationId: VerificationId.generate(),
-      verifiedAtPosix: null,
+      verifiedAtUnixMs: null,
       codeHash: await deps.hashing.hash({
         algo: {
           t: 'sha256',

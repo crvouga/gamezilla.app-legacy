@@ -1,4 +1,4 @@
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
@@ -21,7 +21,7 @@ export async function testSpaceFrontendCtx(): Promise<SpaceFrontendCtx> {
     currentUserId,
     currentUserRole: 'normal',
     documentVisibilityState: 'visible',
-    now: Posix.now(),
+    now: UnixMs.now(),
     profilesByUserId: {
       [currentUserId]: await UserProfile.random({
         id: currentUserId,

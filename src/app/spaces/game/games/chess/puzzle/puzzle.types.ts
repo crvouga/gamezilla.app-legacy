@@ -1,6 +1,6 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Err, Ok, type RemoteResult, type Result } from '~/@/result'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import type { UserId } from '~/app/@/data/user-id'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { Chess } from '../@/chess'
@@ -32,23 +32,23 @@ type BaseModel = {
 type MainModel =
   | {
       t: 'started'
-      startedAt: Posix
+      startedAt: UnixMs
       hint?: Hint | null
     }
   | {
       t: 'solved'
-      startedAt: Posix
-      endedAt: Posix
+      startedAt: UnixMs
+      endedAt: UnixMs
     }
   | {
       t: 'solved-with-hint'
-      startedAt: Posix
-      endedAt: Posix
+      startedAt: UnixMs
+      endedAt: UnixMs
     }
   | {
       t: 'incorrect'
-      startedAt: Posix
-      endedAt: Posix
+      startedAt: UnixMs
+      endedAt: UnixMs
     }
 
 export type SpaceModel =
@@ -66,7 +66,7 @@ export type ModelBackend = SpaceModel & {
 
 export type ModelFrontend = SpaceModel & {
   initializedAt?: number
-  backendNow?: Posix
+  backendNow?: UnixMs
 }
 
 type Hint = 'from' | 'from-and-to'
@@ -185,7 +185,7 @@ export type MsgToBackend = Req
 
 export type MsgToFrontend =
   | Res
-  | { t: 'clock-tick'; now: Posix }
+  | { t: 'clock-tick'; now: UnixMs }
   | (Omit<DbMsg, 'result'> & {
       result: Result<string, SpaceModel>
     })
@@ -287,7 +287,7 @@ export const updateSpace = ({
   model,
 }: {
   ctx: SpaceCtx & {
-    now: Posix
+    now: UnixMs
     currentUserId: UserId
   }
   msg: Req
@@ -432,7 +432,7 @@ const transitionNextPuzzle = ({ model }: { ctx: SpaceCtx; model: SpaceModel }): 
     hasLost: false,
     hasUsedHint: false,
     hint: null,
-    startedAt: Posix.now(),
+    startedAt: UnixMs.now(),
     moves: [],
     profile: profileNew,
     puzzle: puzzleNew,
@@ -476,7 +476,7 @@ export const toNextEloRating = (model: SpaceModel): EloRating | null => {
   return null
 }
 
-export const transitionLoadingToStarted = ({ model, ctx }: { ctx: { now: Posix }; model: SpaceModel }): SpaceModel => {
+export const transitionLoadingToStarted = ({ model, ctx }: { ctx: { now: UnixMs }; model: SpaceModel }): SpaceModel => {
   if (model.t === 'loading') {
     const profile = model.profile
 

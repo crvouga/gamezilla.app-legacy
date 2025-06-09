@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { Checkbox, CheckboxState } from '~/@/ui/checkbox/checkbox'
 import { Clickable, ClickableTransparent } from '~/@/ui/clickable'
@@ -146,7 +146,7 @@ const toTopLevelCheckboxState = (input: { totalCount: number; selectedCount: num
 const ViewListItem = (input: {
   selectable?: boolean
   query: PuzzleQuery
-  ctx: { t: Translator; now: Posix }
+  ctx: { t: Translator; now: UnixMs }
   puzzle: Puzzle
   onClick?: () => void
   selected: boolean
@@ -187,7 +187,7 @@ const ViewListItem = (input: {
 }
 
 const toListItemSecondaryText = (input: {
-  ctx: { t: Translator; now: Posix }
+  ctx: { t: Translator; now: UnixMs }
   puzzle: Puzzle
   query: PuzzleQuery
 }): TranslatedText => {
@@ -197,13 +197,13 @@ const toListItemSecondaryText = (input: {
     default: {
       return input.ctx.t(
         'app.created-at',
-        TimeSpan.humanFriendlyString(Posix.diff(input.puzzle.createdAt, input.ctx.now), input.ctx.t),
+        TimeSpan.humanFriendlyString(UnixMs.diff(input.puzzle.createdAt, input.ctx.now), input.ctx.t),
       )
     }
     case 'lastUpdatedAt': {
       return input.ctx.t(
         'app.last-updated-at',
-        TimeSpan.humanFriendlyString(Posix.diff(input.puzzle.lastUpdatedAt, input.ctx.now), input.ctx.t),
+        TimeSpan.humanFriendlyString(UnixMs.diff(input.puzzle.lastUpdatedAt, input.ctx.now), input.ctx.t),
       )
     }
   }

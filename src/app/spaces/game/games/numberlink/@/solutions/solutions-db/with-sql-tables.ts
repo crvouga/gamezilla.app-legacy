@@ -12,8 +12,8 @@ const query = `
 CREATE TABLE IF NOT EXISTS game_flow_solutions (
     id TEXT NOT NULL PRIMARY KEY,
     solutions TEXT NOT NULL,
-    created_at_posix INTEGER NOT NULL,
-    last_updated_at_posix INTEGER NOT NULL
+    created_at_unix_ms INTEGER NOT NULL,
+    last_updated_at_unix_ms INTEGER NOT NULL
 );
 `
 export const SolutionsDb = (config: Config): ISolutionsDb => {

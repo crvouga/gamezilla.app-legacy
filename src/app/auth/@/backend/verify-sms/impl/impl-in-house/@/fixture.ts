@@ -10,7 +10,7 @@ import { type IVerificationDb, VerificationDb } from '../verification/verificati
 import { VerifySMS } from '../impl'
 import { Config } from '../shared'
 import { TimeSpan } from '~/@/time/time-span'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { PhoneNumber } from '~/@/phone-number'
 
 export const VerifySMSInHouseFixture = async (input?: {
@@ -19,7 +19,7 @@ export const VerifySMSInHouseFixture = async (input?: {
   sendCodeHourlyLimit?: number
   sendCodeDailyLimit?: number
   codeGenerator?: IVerificationCodeGenerator
-  now?: () => Posix
+  now?: () => UnixMs
   hashing?: IHashing
   verificationDb?: IVerificationDb
 }) => {
@@ -45,7 +45,7 @@ export const VerifySMSInHouseFixture = async (input?: {
     verificationDb,
     verificationAttemptDb,
     hashing,
-    now: input?.now ?? Posix.now,
+    now: input?.now ?? UnixMs.now,
     sendCodeHourlyLimit: input?.sendCodeHourlyLimit ?? 10,
     sendCodeDailyLimit: input?.sendCodeDailyLimit ?? 10,
     verifyCodeExpiresIn: input?.verifyCodeExpiresIn ?? TimeSpan.minutes(5),

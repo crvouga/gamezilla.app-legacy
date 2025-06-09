@@ -2,7 +2,7 @@ import { ISqlDb } from '~/@/sql-db'
 import { Hashing } from '~/@/hashing'
 import { ILogger, Logger } from '~/@/logger'
 import { SMS } from '~/@/sms'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { Env } from '~/app/@/data/env'
 import { Translator } from '~/app/@/frontend/translator'
@@ -30,7 +30,7 @@ export const VerifySMSFactory = {
       t: 'in-house',
       logger,
       hashing,
-      now: Posix.now,
+      now: UnixMs.now,
       sendCodeDailyLimit: 1000,
       sendCodeHourlyLimit: 100,
       verificationAttemptDb,
@@ -57,7 +57,7 @@ export const VerifySMSFactory = {
       t: 'in-house',
       logger,
       hashing,
-      now: Posix.now,
+      now: UnixMs.now,
       sendCodeDailyLimit: 1000,
       sendCodeHourlyLimit: 100,
       verificationAttemptDb,

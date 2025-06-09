@@ -2,7 +2,7 @@ import type { ISqlDb } from '~/@/sql-db'
 import { s } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, Ok, Result, isErr } from '~/@/result'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import type { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { UserRole } from '~/app/@/data/user-role'
@@ -10,7 +10,7 @@ import type { IUserAccountDb } from './interface'
 
 export const UserAccountRow = s.obj({
   id: s.str(),
-  created_at_posix: s.or(s.str(), s.num()),
+  created_at_unix_ms: s.or(s.str(), s.num()),
   user_role: UserRole,
   phone_number: s.maybe(s.str()),
 })
@@ -26,7 +26,7 @@ const toAccount = ({ userAccount }: { userAccount: UserAccountRow }): Result<str
   const account: UserAccount = {
     userId,
     role: userAccount.user_role,
-    createdAt: Posix.init(userAccount.created_at_posix),
+    createdAt: UnixMs.init(userAccount.created_at_unix_ms),
     phoneNumber: Result.unwrapOr(PhoneNumber.fromString(userAccount.phone_number), null),
   }
 
@@ -50,7 +50,7 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
         sql: `
         SELECT
 					id,
-					created_at_posix,
+					created_at_unix_ms,
 					user_role,
 					phone_number
 				FROM
@@ -86,7 +86,7 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
         sql: `
 				SELECT
 					id,
-					created_at_posix,
+					created_at_unix_ms,
 					user_role,
 					phone_number
 				FROM
@@ -117,7 +117,7 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
     },
     async insert(input) {
       const row = {
-        created_at_posix: input.createdAt,
+        created_at_unix_ms: input.createdAt,
         id: input.userId,
         user_role: input.role,
         phone_number: input.phoneNumber ? PhoneNumber.toString(input.phoneNumber) : null,
@@ -129,13 +129,13 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
 					phone_number,
 					user_role,
 					id,         
-					created_at_posix
+					created_at_unix_ms
 				)
 				VALUES (
 					:phone_number,
 					:user_role,
 					:id,
-					:created_at_posix
+					:created_at_unix_ms
 				)`,
         vars: row,
       })

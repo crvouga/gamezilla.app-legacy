@@ -1,4 +1,4 @@
-import { Posix } from '../time/posix'
+import { UnixMs } from '../time/posix'
 
 export type Easing =
   | { type: 'ease-out-bounce'; n1?: number; d1?: number }
@@ -9,7 +9,7 @@ export type Easing =
   | { type: 'ease-out-back' }
 
 export type Model = {
-  startMs: Posix
+  startMs: UnixMs
   durationMs: number
   value: number
   from: number
@@ -20,7 +20,7 @@ export type Model = {
 
 const initConstant = (value: number): Model => {
   return {
-    startMs: Posix.init(0),
+    startMs: UnixMs.init(0),
     durationMs: 0,
     value,
     from: value,
@@ -91,7 +91,7 @@ function easeOutBounce(x: number): number {
   return n1 * (x -= 2.625 / d1) * x + 0.984375
 }
 
-const step = (now: Posix, model: Model): Model => {
+const step = (now: UnixMs, model: Model): Model => {
   const elapsedMs = now - model.startMs
   if (elapsedMs < model.delayMs) {
     return model
@@ -123,7 +123,7 @@ const init = ({
   from: number
   to: number
   durationMs: number
-  startMs: Posix
+  startMs: UnixMs
 }): Model => {
   return {
     startMs,

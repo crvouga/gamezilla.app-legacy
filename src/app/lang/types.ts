@@ -1,12 +1,12 @@
 import type { LanguageCodeISO_639_1 } from '~/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { AnonymousFrontendCtx } from '../@/frontend/ctx'
 import type { TranslatorMsg } from '../@/frontend/translator'
 
 export type TranslationLoading = {
-  startedAt: Posix
-  endedAt?: Posix | null
+  startedAt: UnixMs
+  endedAt?: UnixMs | null
 }
 
 export type ModelFrontend = {

@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 import { Result } from '~/@/result'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { UserId } from '~/app/@/data/user-id'
 import { NumberlinkVariant } from '../../../variant'
 import type { Puzzle } from '../../puzzle'
@@ -11,9 +11,9 @@ const schema = s.obj({
   id: s.str(),
   name: s.str(),
   flow: s.or(s.str(), s.json),
-  created_at_posix: s.or(s.num(), s.str()),
+  created_at_unix_ms: s.or(s.num(), s.str()),
   created_by_user_id: s.str(),
-  last_updated_at_posix: s.or(s.num(), s.str()),
+  last_updated_at_unix_ms: s.or(s.num(), s.str()),
   last_updated_by_user_id: s.str(),
 })
 
@@ -31,9 +31,9 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
   const parsedNumberlink = NumberlinkVariant.Model.parse(rowNumberlink)
   const numberlink = Result.unwrapOr(parsedNumberlink, null)
 
-  const createdAt = Posix.init(ensureNumber(row.created_at_posix))
+  const createdAt = UnixMs.init(ensureNumber(row.created_at_unix_ms))
   const createdBy = UserId.is(row.created_by_user_id) ? row.created_by_user_id : null
-  const lastUpdatedAt = Posix.init(ensureNumber(row.last_updated_at_posix))
+  const lastUpdatedAt = UnixMs.init(ensureNumber(row.last_updated_at_unix_ms))
   const lastUpdatedBy = UserId.is(row.last_updated_by_user_id) ? row.last_updated_by_user_id : null
 
   if (puzzleId && puzzleName && numberlink && createdAt && createdBy && lastUpdatedAt && lastUpdatedBy) {

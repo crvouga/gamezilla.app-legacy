@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'bun:test'
-import { Posix } from './posix'
+import { UnixMs } from './posix'
 
 describe(import.meta.file, () => {
   it('should be able to be precise to the second', () => {
-    const now = Posix.now({
+    const now = UnixMs.now({
       precision: 'minutes',
     })
-    const now2 = Posix.now({
+    const now2 = UnixMs.now({
       precision: 'minutes',
     })
     expect(now).toEqual(now2)

@@ -1,11 +1,11 @@
 import { Sub } from '../sub'
-import { Posix } from '../time/posix'
+import { UnixMs } from '../time/posix'
 
 type MaybePromise<T> = Promise<T> | T
 
 export type Respond = (request: Request, server: unknown) => MaybePromise<Response | null | undefined>
 
-export type HttpServerEvent = { t: 'started'; ipAddress: string; port: number; startedAt: Posix } | { t: 'stopped' }
+export type HttpServerEvent = { t: 'started'; ipAddress: string; port: number; startedAt: UnixMs } | { t: 'stopped' }
 
 export type Middleware = (
   request: Request,

@@ -3,7 +3,7 @@ import { loggerNoop } from '~/@/logger/impl-noop'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screen/generated/screens'
 import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TestRender } from '~/@/vdom/test-render'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { CONFIG_FRONTEND } from '~/config/frontend'
@@ -30,13 +30,13 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     currentUserRole: 'normal',
     documentVisibilityState: 'visible',
     navigatorLanguage: 'en',
-    now: Posix.now(),
+    now: UnixMs.now(),
     profilesByUserId: {},
     screenSize: 'mobile',
     t: Translator('en'),
     currentUser: {
       userId: currentUserId,
-      createdAt: Posix.now(),
+      createdAt: UnixMs.now(),
       phoneNumber: PhoneNumber.random(),
       role: 'normal',
     },

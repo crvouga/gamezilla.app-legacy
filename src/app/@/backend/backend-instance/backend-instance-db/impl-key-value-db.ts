@@ -4,7 +4,7 @@ import { KeyValueDb, IKeyValueDb } from '../../../../../@/key-value-db'
 import { BackendInstance } from '../backend-instance'
 import { BackendInstanceId } from '../backend-instance-id'
 import { IBackendInstanceDb } from './interface'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {
@@ -53,7 +53,7 @@ export const BackendInstanceDb = (config: Config): IBackendInstanceDb => {
     const listed = unwrapOr(await list(), [])
     const alive = listed
       .filter((backendInstance) => {
-        const heartRate = Posix.diff(backendInstance.lastHeartbeatAt, Posix.now())
+        const heartRate = UnixMs.diff(backendInstance.lastHeartbeatAt, UnixMs.now())
         return TimeSpan.lte(heartRate, input.minimalHeartRate)
       })
       .filter((backendInstance) => {

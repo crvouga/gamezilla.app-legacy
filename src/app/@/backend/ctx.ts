@@ -4,7 +4,7 @@ import type { ILogger } from '~/@/logger/interface'
 import type { IPubSubTopicBased } from '~/@/pub-sub-topic-based'
 import type { IRuntime } from '~/@/runtime'
 import type { ISqlDb } from '~/@/sql-db/interface'
-import type { Posix } from '~/@/time/posix'
+import type { UnixMs } from '~/@/time/posix'
 import type { TimeSpan } from '~/@/time/time-span'
 import { IUserProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
 import { Env } from '../data/env'
@@ -15,7 +15,7 @@ export type AppBackendCtxBase = {
   role: BackendRole
   sqlDb: ISqlDb
   keyValueDbDurable: IKeyValueDb
-  now: Posix
+  now: UnixMs
   logger: ILogger
   env: Env
   sleep: (time: TimeSpan) => Promise<unknown>

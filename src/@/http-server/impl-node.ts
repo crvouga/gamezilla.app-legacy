@@ -1,7 +1,7 @@
 import * as http from 'node:http'
 import { Logger, type ILogger } from '~/@/logger'
 import { Sub } from '../sub'
-import { Posix } from '../time/posix'
+import { UnixMs } from '../time/posix'
 import { HttpServerEvent, Middleware, type IHttpServer, type Respond } from './interface'
 import { createRespond } from './respond'
 
@@ -37,7 +37,7 @@ export const HttpServerNode = (
         t: 'started',
         ipAddress: '127.0.0.1',
         port,
-        startedAt: Posix.now(),
+        startedAt: UnixMs.now(),
       })
     })
 

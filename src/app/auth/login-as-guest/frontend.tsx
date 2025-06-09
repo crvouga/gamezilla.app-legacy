@@ -1,5 +1,5 @@
 import { isErr, Loading, NotAsked, Ok, Result, unwrapOr } from '~/@/result'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { Button } from '~/@/ui/button'
 import { IconUserCircle } from '~/@/ui/icon/icon-user-circle'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -55,7 +55,7 @@ const update: FrontendModule['update'] = (input) => {
 const continueAsGuest = async (input: {
   ctx: AuthFrontendCtx
   clientSessionId: ClientSessionId
-  now: Posix
+  now: UnixMs
 }): Promise<Result<string, UserAccount>> => {
   const existingGuestUserId = await input.ctx.guestSessionMappingDb.findUserIdByClientSessionId(input.clientSessionId)
 

@@ -9,7 +9,7 @@ import { Runtime } from '~/@/runtime'
 import { type ISqlDb } from '~/@/sql-db'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { ProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
 import { CONFIG_BACKEND } from '~/config/backend'
@@ -57,7 +57,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     logger,
   })
 
-  const now = Posix.now()
+  const now = UnixMs.now()
 
   const sleep = async () => {}
 

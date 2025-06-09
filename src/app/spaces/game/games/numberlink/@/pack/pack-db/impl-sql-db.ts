@@ -5,7 +5,7 @@ import { s } from '~/@/schema'
 import { isErr, isOk, Result, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { Uuid } from '~/@/id/uuid'
 import { UserId } from '~/app/@/data/user-id'
 import { OrderClause, WhereClause } from '../../puzzle/puzzle-db/query'
@@ -24,11 +24,11 @@ export type Config = {
 const Row = s.obj({
   id: PackId,
   name: PackName,
-  created_at_posix: s.or(s.num(), s.str()),
+  created_at_unix_ms: s.or(s.num(), s.str()),
   created_by_user_id: UserId,
-  last_updated_at_posix: s.or(s.num(), s.str()),
+  last_updated_at_unix_ms: s.or(s.num(), s.str()),
   last_updated_by_user_id: UserId,
-  deleted_at_posix: s.maybe(s.or(s.num(), s.str())),
+  deleted_at_unix_ms: s.maybe(s.or(s.num(), s.str())),
   deleted_by_user_id: s.maybe(UserId),
   is_official: s.maybe(s.bool),
 })
@@ -40,9 +40,9 @@ const RowItem = s.obj({
   pack_id: s.str(),
   puzzle_id: s.str(),
   position: s.or(s.num(), s.str()),
-  created_at_posix: s.or(s.num(), s.str()),
+  created_at_unix_ms: s.or(s.num(), s.str()),
   created_by_user_id: s.str(),
-  deleted_at_posix: s.maybe(s.or(s.num(), s.str())),
+  deleted_at_unix_ms: s.maybe(s.or(s.num(), s.str())),
   deleted_by_user_id: s.maybe(s.str()),
 })
 
@@ -51,17 +51,17 @@ type RowItem = s.Infer<typeof RowItem>
 const rowToPack = (row: Row, items: RowItem[]): Pack | null => {
   return {
     isOfficial: row.is_official ?? false,
-    createdAt: Posix.init(row.created_at_posix),
+    createdAt: UnixMs.init(row.created_at_unix_ms),
     createdBy: row.created_by_user_id,
     id: row.id,
-    lastUpdatedAt: Posix.init(row.last_updated_at_posix),
+    lastUpdatedAt: UnixMs.init(row.last_updated_at_unix_ms),
     lastUpdatedBy: row.last_updated_by_user_id,
     name: row.name,
     puzzleIds: items
       .sort(
         ascend(
           (i) => ensureNumber(i.position),
-          (i) => ensureNumber(i.created_at_posix),
+          (i) => ensureNumber(i.created_at_unix_ms),
           (i) => i.puzzle_id,
         ),
       )
@@ -77,7 +77,7 @@ const rowToPack = (row: Row, items: RowItem[]): Pack | null => {
 const toSqlWhere = (where: WhereClause) => {
   const clauses: string[] = []
 
-  clauses.push('game_flow_pack.deleted_at_posix IS NULL')
+  clauses.push('game_flow_pack.deleted_at_unix_ms IS NULL')
 
   const vars: Record<string, string | number | undefined | null> = {}
 
@@ -95,10 +95,10 @@ const toSqlOrder = (order: OrderClause) => {
   const clauses: string[] = []
   const vars: Record<string, any> = {}
   if (order.createdAt) {
-    clauses.push(`game_flow_pack.created_at_posix ${order.createdAt === 'asc' ? 'ASC' : 'DESC'}`)
+    clauses.push(`game_flow_pack.created_at_unix_ms ${order.createdAt === 'asc' ? 'ASC' : 'DESC'}`)
   }
   if (order.lastUpdatedAt) {
-    clauses.push(`game_flow_pack.last_updated_at_posix ${order.lastUpdatedAt === 'asc' ? 'ASC' : 'DESC'}`)
+    clauses.push(`game_flow_pack.last_updated_at_unix_ms ${order.lastUpdatedAt === 'asc' ? 'ASC' : 'DESC'}`)
   }
 
   const str = clauses.length > 0 ? `ORDER BY ${clauses.join(',\n')}` : ''
@@ -129,7 +129,7 @@ export const PackDb = (config: Config): IPackDb => {
     async get(id) {
       const queried = await config.sqlDb.query({
         schema: Row,
-        sql: 'SELECT * FROM game_flow_pack WHERE id = :id AND deleted_at_posix IS NULL',
+        sql: 'SELECT * FROM game_flow_pack WHERE id = :id AND deleted_at_unix_ms IS NULL',
         vars: {
           id: id,
         },
@@ -137,7 +137,7 @@ export const PackDb = (config: Config): IPackDb => {
 
       const queriedItems = await config.sqlDb.query({
         schema: RowItem,
-        sql: 'SELECT * FROM game_flow_pack_item WHERE pack_id = :pack_id AND deleted_at_posix IS NULL',
+        sql: 'SELECT * FROM game_flow_pack_item WHERE pack_id = :pack_id AND deleted_at_unix_ms IS NULL',
         vars: {
           pack_id: id,
         },
@@ -280,7 +280,7 @@ export const PackDb = (config: Config): IPackDb => {
             singleQuote(input.id),
             singleQuote(puzzleId),
             position,
-            Posix.now(),
+            UnixMs.now(),
             singleQuote(input.createdBy),
           ]
           return `(${entry.join(',\n')})`
@@ -292,7 +292,7 @@ export const PackDb = (config: Config): IPackDb => {
           pack_id,
           puzzle_id,
           "position",
-          created_at_posix,
+          created_at_unix_ms,
           created_by_user_id
         ) VALUES 
           ${sqlItemsEntries.join(',\n')}
@@ -317,7 +317,7 @@ export const PackDb = (config: Config): IPackDb => {
             game_flow_pack
           SET
             name = :name,
-            last_updated_at_posix = :last_updated_at_posix,
+            last_updated_at_unix_ms = :last_updated_at_unix_ms,
             last_updated_by_user_id = :last_updated_by_user_id
           WHERE
             id = :id
@@ -325,7 +325,7 @@ export const PackDb = (config: Config): IPackDb => {
           vars: {
             id: input.id,
             name: input.name,
-            last_updated_at_posix: input.lastUpdatedAt,
+            last_updated_at_unix_ms: input.lastUpdatedAt,
             last_updated_by_user_id: input.lastUpdatedBy,
           },
         })
@@ -338,30 +338,30 @@ export const PackDb = (config: Config): IPackDb => {
 				INSERT INTO game_flow_pack (
 					id,
 					name,
-					created_at_posix,
+					created_at_unix_ms,
 					created_by_user_id,
-					last_updated_at_posix,
+					last_updated_at_unix_ms,
 					last_updated_by_user_id,
-					deleted_at_posix,
+					deleted_at_unix_ms,
 					deleted_by_user_id
 				) VALUES (
 					:id,
 					:name,
-					:created_at_posix,
+					:created_at_unix_ms,
 					:created_by_user_id,
-					:last_updated_at_posix,
+					:last_updated_at_unix_ms,
 					:last_updated_by_user_id,
-					:deleted_at_posix,
+					:deleted_at_unix_ms,
 					:deleted_by_user_id
 				)`,
         vars: {
           id: input.id,
           name: input.name,
-          created_at_posix: input.createdAt,
+          created_at_unix_ms: input.createdAt,
           created_by_user_id: input.createdBy,
-          last_updated_at_posix: input.lastUpdatedAt,
+          last_updated_at_unix_ms: input.lastUpdatedAt,
           last_updated_by_user_id: input.lastUpdatedBy,
-          deleted_at_posix: null,
+          deleted_at_unix_ms: null,
           deleted_by_user_id: null,
         },
       })
@@ -375,13 +375,13 @@ export const PackDb = (config: Config): IPackDb => {
         sql: `
           UPDATE game_flow_pack 
           SET 
-            deleted_at_posix = :deleted_at_posix,
+            deleted_at_unix_ms = :deleted_at_unix_ms,
             deleted_by_user_id = :deleted_by_user_id
           WHERE id = :id
         `,
         vars: {
           id: input.id,
-          deleted_at_posix: Posix.now(),
+          deleted_at_unix_ms: UnixMs.now(),
           deleted_by_user_id: input.deletedBy,
         },
       })

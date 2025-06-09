@@ -5,7 +5,7 @@ import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { ILogger } from '~/@/logger'
 import type { Screen } from '~/@/screen/generated/screens'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserAccount } from '../data/user-account'
 import { UserId } from '../data/user-id'
@@ -22,7 +22,7 @@ export type AppFrontendCtxBase = {
   t: Translator
   navigatorLanguage: LanguageCodeISO_639_1
   currentScreen: Screen
-  now: Posix
+  now: UnixMs
   profilesByUserId: {
     [userId: UserId]: UserProfile
   }

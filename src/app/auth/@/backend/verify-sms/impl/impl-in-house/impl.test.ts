@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { isErr, isOk, unwrap } from '~/@/result'
 import { eq } from '~/@/equals/equals'
 import { Hashing } from '~/@/hashing'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { Translator } from '~/app/@/frontend/translator'
 import { VerificationDb } from './verification/verification-db'
@@ -114,7 +114,7 @@ describe(import.meta.file, () => {
   it('should error if verification expired', async () => {
     const verifyCodeExpiresIn = TimeSpan.minutes(5)
 
-    let now = Posix.now()
+    let now = UnixMs.now()
 
     const f = await Fixture({
       verifyCodeExpiresIn,
@@ -123,7 +123,7 @@ describe(import.meta.file, () => {
 
     await f.verifySMS.sendCode(f)
 
-    now = Posix.future(now, verifyCodeExpiresIn)
+    now = UnixMs.future(now, verifyCodeExpiresIn)
 
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
@@ -137,7 +137,7 @@ describe(import.meta.file, () => {
   it('should fail if the code has expired, even if no new code has been sent', async () => {
     const verifyCodeExpiresIn = TimeSpan.minutes(5)
 
-    let now = Posix.now()
+    let now = UnixMs.now()
     const f = await Fixture({
       verifyCodeExpiresIn,
       now: () => now,
@@ -148,8 +148,8 @@ describe(import.meta.file, () => {
       phoneNumber: f.phoneNumber,
     })
 
-    now = Posix.future(now, verifyCodeExpiresIn)
-    now = Posix.future(now, TimeSpan.seconds(1))
+    now = UnixMs.future(now, verifyCodeExpiresIn)
+    now = UnixMs.future(now, TimeSpan.seconds(1))
 
     const verified = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
@@ -164,7 +164,7 @@ describe(import.meta.file, () => {
   it('should error if using previous unused code', async () => {
     const CODE_A = '123'
     const CODE_B = '456'
-    let now = Posix.now()
+    let now = UnixMs.now()
     let code = CODE_A
     const f = await Fixture({
       now: () => now,
@@ -177,13 +177,13 @@ describe(import.meta.file, () => {
 
     await f.verifySMS.sendCode(f)
 
-    now = Posix.future(now, TimeSpan.seconds(1))
+    now = UnixMs.future(now, TimeSpan.seconds(1))
 
     code = CODE_B
 
     await f.verifySMS.sendCode(f)
 
-    now = Posix.future(now, TimeSpan.seconds(1))
+    now = UnixMs.future(now, TimeSpan.seconds(1))
 
     const verifiedA = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
@@ -191,7 +191,7 @@ describe(import.meta.file, () => {
       preferredLanguage: 'en',
     })
 
-    now = Posix.future(now, TimeSpan.seconds(1))
+    now = UnixMs.future(now, TimeSpan.seconds(1))
 
     const verifiedB = await f.verifySMS.verifyCode({
       phoneNumber: f.phoneNumber,
@@ -225,7 +225,7 @@ describe(import.meta.file, () => {
 
   it('should let user send code again after it has been over an hour after they hit the hourly limit', async () => {
     const sendCodeHourlyLimit = 3
-    let now = Posix.now()
+    let now = UnixMs.now()
     const f = await Fixture({
       sendCodeHourlyLimit,
       now: () => now,
@@ -236,7 +236,7 @@ describe(import.meta.file, () => {
         phoneNumber: f.phoneNumber,
       })
     }
-    now = Posix.future(now, TimeSpan.add(TimeSpan.hours(1), TimeSpan.milliseconds(1)))
+    now = UnixMs.future(now, TimeSpan.add(TimeSpan.hours(1), TimeSpan.milliseconds(1)))
     const sent = await f.verifySMS.sendCode({
       ...f,
       phoneNumber: f.phoneNumber,
@@ -288,7 +288,7 @@ describe(import.meta.file, () => {
 
   it('should let user send code again after it has been over a day after they hit the daily limit', async () => {
     const sendCodeDailyLimit = 3
-    let now = Posix.now()
+    let now = UnixMs.now()
     const f = await Fixture({
       sendCodeDailyLimit,
       now: () => now,
@@ -299,7 +299,7 @@ describe(import.meta.file, () => {
         phoneNumber: f.phoneNumber,
       })
     }
-    now = Posix.future(now, TimeSpan.add(TimeSpan.days(1), TimeSpan.milliseconds(1)))
+    now = UnixMs.future(now, TimeSpan.add(TimeSpan.days(1), TimeSpan.milliseconds(1)))
     const sent = await f.verifySMS.sendCode({
       ...f,
       phoneNumber: f.phoneNumber,

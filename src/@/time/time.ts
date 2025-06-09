@@ -1,6 +1,6 @@
 import type { Eff } from '../eff'
 import { PubSub, Sub } from '../sub'
-import { Posix } from './posix'
+import { UnixMs } from './posix'
 import { TimeSpan } from './time-span'
 
 //
@@ -43,7 +43,7 @@ const cancelTimeout = (timeoutId: string | number): Eff => {
 //
 //
 
-const intervals = new Map<string, PubSub<Posix>>()
+const intervals = new Map<string, PubSub<UnixMs>>()
 
 const toIntervalKey = (intervalId: string, _timeSpan: TimeSpan) => {
   return intervalId
@@ -56,7 +56,7 @@ const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
   const sub = intervals.get(key)
 
   if (sub && sub.subscriberCount() > 0) {
-    sub.pub(Posix.now())
+    sub.pub(UnixMs.now())
 
     setTimeout(() => {
       onTimeout(intervalId, timeSpan)
@@ -68,16 +68,16 @@ const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
   intervals.delete(intervalId)
 }
 
-const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: Posix) => Msg): Sub<Msg> => {
+const interval = <Msg>(intervalId: string, timeSpan: TimeSpan, f: (now: UnixMs) => Msg): Sub<Msg> => {
   const key = toIntervalKey(intervalId, timeSpan)
 
   const sub = intervals.get(key)
 
   if (sub) {
-    return Sub.map(sub, () => f(Posix.now()))
+    return Sub.map(sub, () => f(UnixMs.now()))
   }
 
-  const subNew = Sub.create<Posix>()
+  const subNew = Sub.create<UnixMs>()
 
   intervals.set(key, subNew)
 

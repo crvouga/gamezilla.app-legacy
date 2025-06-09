@@ -7,7 +7,7 @@ import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
 import { SqlDb } from '~/@/sql-db/backend/impl'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
 import { CONFIG_BACKEND } from '~/config/backend'
@@ -76,7 +76,7 @@ const initCtx = async (config: { role: BackendRole }): Promise<BackendCtxModule>
 
   const env = CONFIG_SHARED.IS_PROD ? 'prod' : 'dev'
 
-  const now = Posix.now()
+  const now = UnixMs.now()
 
   const backendInstanceId = BackendInstanceId.generate()
 

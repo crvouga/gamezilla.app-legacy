@@ -1,5 +1,5 @@
 import { Err, isErr, isLoading, isOk, Loading } from '~/@/result'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconPen } from '~/@/ui/icon/icon-pen'
 import { SurfaceBody } from '~/@/ui/surface/surface-body'
@@ -151,7 +151,7 @@ const patchName = async (input: { puzzleId: PuzzleId; newName: string; userId: U
   const patched: Puzzle = {
     ...puzzle,
     name: newNameFinal,
-    lastUpdatedAt: Posix.now(),
+    lastUpdatedAt: UnixMs.now(),
     lastUpdatedBy: input.userId,
   }
 

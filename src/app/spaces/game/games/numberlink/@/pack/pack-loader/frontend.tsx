@@ -2,7 +2,7 @@ import { descend } from '~/@/array/sorting'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClickableTransparent } from '~/@/ui/clickable'
 import { EmptyState } from '~/@/ui/empty-state'
@@ -70,7 +70,7 @@ const ViewList = (input: {
           <EmptyState label={input.ctx.t('game.numberlink.no-packs')} renderIcon={(input) => <IconBox {...input} />} />
         )}
 
-        {packs.sort(descend((pack) => Posix.toNumber(pack.lastUpdatedAt))).map((pack) => (
+        {packs.sort(descend((pack) => UnixMs.toNumber(pack.lastUpdatedAt))).map((pack) => (
           <ViewPackListItem ctx={input.ctx} key={pack.id} pack={pack} onClick={() => input.onClick(pack)} />
         ))}
 
@@ -80,7 +80,7 @@ const ViewList = (input: {
   )
 }
 
-const ViewPackListItem = (input: { ctx: { now: Posix; t: Translator }; pack: Pack; onClick: () => void }) => {
+const ViewPackListItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pack; onClick: () => void }) => {
   return (
     <ClickableTransparent
       className='flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left'
@@ -101,10 +101,10 @@ const ViewPackListItem = (input: { ctx: { now: Posix; t: Translator }; pack: Pac
   )
 }
 
-const toListItemSecondaryText = (input: { ctx: { now: Posix; t: Translator }; pack: Pack }): TranslatedText => {
+const toListItemSecondaryText = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pack }): TranslatedText => {
   return input.ctx.t(
     'app.last-updated-at',
-    TimeSpan.humanFriendlyString(Posix.diff(input.pack.lastUpdatedAt, input.ctx.now), input.ctx.t),
+    TimeSpan.humanFriendlyString(UnixMs.diff(input.pack.lastUpdatedAt, input.ctx.now), input.ctx.t),
   )
 }
 

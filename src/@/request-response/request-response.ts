@@ -1,6 +1,6 @@
 import { Err, Ok, type Loading, type NotAsked, type Result } from '../result'
 import { Sub } from '../sub'
-import { Posix } from '../time/posix'
+import { UnixMs } from '../time/posix'
 import { Time } from '../time/time'
 import { TimeSpan } from '../time/time-span'
 import { Uuid } from '../id/uuid'
@@ -14,7 +14,7 @@ import { Uuid } from '../id/uuid'
 //
 
 export type Requesting = Loading & {
-  requestedAt: Posix
+  requestedAt: UnixMs
   lifeSpan: TimeSpan
   requestId: string
 }
@@ -29,15 +29,15 @@ export type RequestTimedOut = {
 export type RequestFailed = RequestTimedOut
 
 export type ResponseErr<TError> = Err<TError> & {
-  requestedAt: Posix
-  respondedAt: Posix
+  requestedAt: UnixMs
+  respondedAt: UnixMs
   lifeSpan: TimeSpan
   requestId: string
 }
 
 export type ResponseOk<TValue> = Ok<TValue> & {
-  requestedAt: Posix
-  respondedAt: Posix
+  requestedAt: UnixMs
+  respondedAt: UnixMs
   lifeSpan: TimeSpan
   requestId: string
 }
@@ -49,7 +49,7 @@ export type RequestResponse<TError, TValue> =
   | ResponseErr<TError>
   | ResponseOk<TValue>
 
-export const startedRequest = (requestedAt: Posix, lifeSpan: TimeSpan = TimeSpan.minutes(1)): Requesting => {
+export const startedRequest = (requestedAt: UnixMs, lifeSpan: TimeSpan = TimeSpan.minutes(1)): Requesting => {
   return {
     t: 'loading',
     requestedAt,
@@ -82,7 +82,7 @@ export const isResponseErr = <TError, TValue>(
 
 export const response = <TError, TValue>(
   request: RequestResponse<TError, TValue>,
-  respondedAt: Posix,
+  respondedAt: UnixMs,
   result: Result<TError, TValue>,
 ): RequestResponse<TError, TValue> => {
   if (request.t === 'not-asked') {
@@ -99,9 +99,9 @@ export const response = <TError, TValue>(
 
 export const timePassed = <TError, TValue>(
   request: RequestResponse<TError, TValue>,
-  now: Posix,
+  now: UnixMs,
 ): RequestResponse<TError, TValue> => {
-  if (isRequesting(request) && TimeSpan.gte(Posix.diff(now, request.requestedAt), request.lifeSpan)) {
+  if (isRequesting(request) && TimeSpan.gte(UnixMs.diff(now, request.requestedAt), request.lifeSpan)) {
     return {
       t: 'request-failed',
       reason: 'timed-out',

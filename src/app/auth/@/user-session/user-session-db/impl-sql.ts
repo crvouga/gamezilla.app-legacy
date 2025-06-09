@@ -4,7 +4,7 @@ import { s } from '~/@/schema'
 import { Result, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
@@ -18,8 +18,8 @@ export const Row = s.obj({
   session_id: s.maybe(SessionId),
   client_session_id: ClientSessionId,
   user_id: UserId,
-  created_at_posix: s.or(s.str(), s.num()),
-  ended_at_posix: s.maybe(s.or(s.str(), s.num())),
+  created_at_unix_ms: s.or(s.str(), s.num()),
+  ended_at_unix_ms: s.maybe(s.or(s.str(), s.num())),
 })
 
 export type Row = s.Infer<typeof Row>
@@ -28,8 +28,8 @@ const rowToUserSession = (row: Row): UserSession => ({
   userSessionId: row.id,
   sessionId: row.session_id ?? null,
   userId: row.user_id,
-  createdAt: Posix.init(row.created_at_posix),
-  endedAt: row.ended_at_posix ? Posix.init(row.ended_at_posix) : null,
+  createdAt: UnixMs.init(row.created_at_unix_ms),
+  endedAt: row.ended_at_unix_ms ? UnixMs.init(row.ended_at_unix_ms) : null,
   clientSessionId: row.client_session_id,
 })
 
@@ -47,7 +47,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
       logger.debug(`findSessionIdsByUserId: userId=${userId}`)
       const queried = await sqlDb.query({
         schema: Row,
-        sql: 'SELECT * FROM user_session WHERE ended_at_posix IS NULL AND user_id = :user_id',
+        sql: 'SELECT * FROM user_session WHERE ended_at_unix_ms IS NULL AND user_id = :user_id',
         vars: {
           user_id: userId,
         },
@@ -60,7 +60,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
       logger.debug(`findUserIdBySessionId: sessionId=${sessionId}`)
       const queried = await sqlDb.query({
         schema: Row,
-        sql: 'SELECT * FROM user_session WHERE ended_at_posix IS NULL AND session_id = :session_id',
+        sql: 'SELECT * FROM user_session WHERE ended_at_unix_ms IS NULL AND session_id = :session_id',
         vars: {
           session_id: sessionId,
         },
@@ -83,13 +83,13 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
             session_id,
             client_session_id,
             user_id,
-            created_at_posix
+            created_at_unix_ms
           ) VALUES (
             :id,
             :session_id,
             :client_session_id,
             :user_id,
-            :created_at_posix
+            :created_at_unix_ms
           )
         `,
         vars: {
@@ -97,7 +97,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
           session_id: userSession.sessionId,
           client_session_id: userSession.clientSessionId,
           user_id: userSession.userId,
-          created_at_posix: userSession.createdAt,
+          created_at_unix_ms: userSession.createdAt,
         },
       })
       return Result.mapOk(queried, () => null)
@@ -107,9 +107,9 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
       logger.debug(`zapByUserId: userId=${userId}`)
       const queried = await sqlDb.query({
         schema: Row,
-        sql: 'UPDATE user_session SET ended_at_posix = :ended_at_posix WHERE user_id = :user_id',
+        sql: 'UPDATE user_session SET ended_at_unix_ms = :ended_at_unix_ms WHERE user_id = :user_id',
         vars: {
-          ended_at_posix: Date.now(),
+          ended_at_unix_ms: Date.now(),
           user_id: userId,
         },
       })
@@ -120,9 +120,9 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
       logger.debug(`zapBySessionId: sessionId=${sessionId}`)
       const queried = await sqlDb.query({
         schema: Row,
-        sql: 'UPDATE user_session SET ended_at_posix = :ended_at_posix WHERE session_id = :session_id',
+        sql: 'UPDATE user_session SET ended_at_unix_ms = :ended_at_unix_ms WHERE session_id = :session_id',
         vars: {
-          ended_at_posix: Date.now(),
+          ended_at_unix_ms: Date.now(),
           session_id: sessionId,
         },
       })
@@ -168,9 +168,9 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
       logger.debug(`zapByClientSessionId: clientSessionId=${clientSessionId}`)
       const queried = await sqlDb.query({
         schema: Row,
-        sql: 'UPDATE user_session SET ended_at_posix = :ended_at_posix WHERE client_session_id = :client_session_id',
+        sql: 'UPDATE user_session SET ended_at_unix_ms = :ended_at_unix_ms WHERE client_session_id = :client_session_id',
         vars: {
-          ended_at_posix: Date.now(),
+          ended_at_unix_ms: Date.now(),
           client_session_id: clientSessionId,
         },
       })
@@ -188,7 +188,7 @@ const queryToSql = (query: UserSessionDbQuery) => {
   const whereClauses: string[] = []
   const vars: Sql.Vars = {}
 
-  whereClauses.push('ended_at_posix IS NULL')
+  whereClauses.push('ended_at_unix_ms IS NULL')
 
   if (query.whereAnd.userId?.equals) {
     whereClauses.push('user_id = :user_id')
@@ -210,7 +210,7 @@ const queryToSql = (query: UserSessionDbQuery) => {
 
   const whereStr = whereClauses.join(' AND ')
 
-  const orderStr = query.order.createdAt ? `ORDER BY created_at_posix ${query.order.createdAt.toUpperCase()}` : ''
+  const orderStr = query.order.createdAt ? `ORDER BY created_at_unix_ms ${query.order.createdAt.toUpperCase()}` : ''
 
   const sql = `SELECT * FROM user_session WHERE ${whereStr} ${orderStr} LIMIT :limit OFFSET :offset`
   const sqlCount = `SELECT COUNT(*) AS total FROM user_session WHERE ${whereStr}`

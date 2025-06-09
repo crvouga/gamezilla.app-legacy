@@ -1,6 +1,6 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import { Clickable } from '~/@/ui/clickable'
@@ -70,7 +70,7 @@ const pings: FrontendModule['subscriptions'] = (input) => {
 const pongs: FrontendModule['subscriptions'] = (input) => {
   return input.ctx.topic.pong.sub(
     input.ctx.clientSessionId,
-    (msg): MsgFrontend => ({ t: 'pong', pingId: msg.pingId, now: Posix.now() }),
+    (msg): MsgFrontend => ({ t: 'pong', pingId: msg.pingId, now: UnixMs.now() }),
   )
 }
 

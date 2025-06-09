@@ -15,8 +15,8 @@ const queries: string[] = [
     user_id TEXT NOT NULL,
     session_id TEXT,
     client_session_id TEXT NOT NULL,
-    created_at_posix BIGINT NOT NULL,
-    ended_at_posix BIGINT
+    created_at_unix_ms BIGINT NOT NULL,
+    ended_at_unix_ms BIGINT
   );
   `,
 ]

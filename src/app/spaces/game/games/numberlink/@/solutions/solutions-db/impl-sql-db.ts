@@ -4,7 +4,7 @@ import { s } from '~/@/schema'
 import { Err, isErr, Ok, Result, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { Solutions } from '../solutions'
 import { ISolutionsDb } from './interface'
 
@@ -16,8 +16,8 @@ export type Config = {
 const Row = s.obj({
   id: s.str(),
   solutions: s.or(s.str(), s.json),
-  created_at_posix: s.maybe(s.or(Posix, s.str())),
-  last_updated_at_posix: s.maybe(s.or(Posix, s.str())),
+  created_at_unix_ms: s.maybe(s.or(UnixMs, s.str())),
+  last_updated_at_unix_ms: s.maybe(s.or(UnixMs, s.str())),
 })
 
 export type Row = s.Infer<typeof Row>
@@ -38,8 +38,8 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
           SELECT
             id,
             solutions,
-            created_at_posix,
-            last_updated_at_posix
+            created_at_unix_ms,
+            last_updated_at_unix_ms
           FROM
             game_flow_solutions
           WHERE
@@ -69,7 +69,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
           return got
         }
 
-        const now = Posix.now()
+        const now = UnixMs.now()
 
         if (got.value.length > 0) {
           // Update existing record
@@ -79,7 +79,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
             UPDATE game_flow_solutions
             SET
               solutions = :solutions,
-              last_updated_at_posix = :lastUpdatedAt
+              last_updated_at_unix_ms = :lastUpdatedAt
             WHERE
               id = :id
             `,
@@ -101,8 +101,8 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
             INSERT INTO game_flow_solutions (
               id,
               solutions,
-              created_at_posix,
-              last_updated_at_posix
+              created_at_unix_ms,
+              last_updated_at_unix_ms
             )
             VALUES (
               :id,
@@ -148,8 +148,8 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
             SELECT
               id,
               solutions,
-              created_at_posix,
-              last_updated_at_posix
+              created_at_unix_ms,
+              last_updated_at_unix_ms
             FROM
               game_flow_solutions
             WHERE

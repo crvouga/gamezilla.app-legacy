@@ -12,7 +12,7 @@
 // );
 
 // CREATE INDEX IF NOT EXISTS idx_query1              ON immutable_store (key_space, key, posix_timestamp DESC, instance_step DESC, append_step DESC);
-// CREATE INDEX IF NOT EXISTS idx_key_posix_timestamp ON immutable_store (key, posix_timestamp);
+// CREATE INDEX IF NOT EXISTS idx_key_unix_ms_timestamp ON immutable_store (key, posix_timestamp);
 // CREATE INDEX IF NOT EXISTS idx_query2_join_order   ON immutable_store (key, posix_timestamp, instance_step, append_step);
 // CREATE INDEX IF NOT EXISTS idx_latest_keys         ON immutable_store (key, posix_timestamp, instance_step, append_step);
 // CREATE INDEX IF NOT EXISTS idx_join_optimization   ON immutable_store (key, posix_timestamp);
@@ -87,7 +87,7 @@
 //     entries: [TKey, TValue | null][],
 //   ): Promise<Store<TKey, TValue>> => {
 //     const instanceNew: Store<TKey, TValue> = {
-//       _posixTimestamp: Math.max(now, 0),
+//       _unix_msTimestamp: Math.max(now, 0),
 //       _instanceStep: instance._instanceStep + 1,
 //       _appendStep: runningAppendStep++,
 //     }
@@ -100,7 +100,7 @@
 //         return [
 //           quote(keySpace),
 //           quote(key),
-//           instanceNew._posixTimestamp,
+//           instanceNew._unix_msTimestamp,
 //           instanceNew._appendStep,
 //           instanceNew._instanceStep,
 //           valueSql,
@@ -129,7 +129,7 @@
 //   return {
 //     startingAt(now) {
 //       return {
-//         _posixTimestamp: Math.max(now, 0),
+//         _unix_msTimestamp: Math.max(now, 0),
 //         _instanceStep: 0,
 //         _appendStep: 0,
 //       }
@@ -159,7 +159,7 @@
 //           WITH latest_keys AS (
 //             SELECT
 //                 key,
-//                 MAX(posix_timestamp) as max_posix_timestamp
+//                 MAX(posix_timestamp) as max_unix_ms_timestamp
 //             FROM
 //                 immutable_store
 //             WHERE
@@ -173,7 +173,7 @@
 //             AND
 //                 append_step <= ${instance._appendStep}
 //             AND
-//                 posix_timestamp <= ${instance._posixTimestamp}
+//                 posix_timestamp <= ${instance._unix_msTimestamp}
 //             GROUP BY
 //                 key
 //         )
@@ -183,7 +183,7 @@
 //             immutable_store
 //         INNER JOIN latest_keys ON
 //             immutable_store.key = latest_keys.key AND
-//             immutable_store.posix_timestamp = latest_keys.max_posix_timestamp
+//             immutable_store.posix_timestamp = latest_keys.max_unix_ms_timestamp
 //         ORDER BY
 //             immutable_store.posix_timestamp ASC,
 //             immutable_store.instance_step ASC,
@@ -223,16 +223,16 @@
 //         AND
 //           key = '${key}'
 //         AND (
-//             posix_timestamp < ${instance._posixTimestamp}
+//             posix_timestamp < ${instance._unix_msTimestamp}
 //           OR (
-//                 posix_timestamp = ${instance._posixTimestamp}
+//                 posix_timestamp = ${instance._unix_msTimestamp}
 //             AND instance_step < ${instance._instanceStep}
 //           ) OR (
-//                 posix_timestamp = ${instance._posixTimestamp}
+//                 posix_timestamp = ${instance._unix_msTimestamp}
 //             AND instance_step = ${instance._instanceStep}
 //             AND append_step < ${instance._appendStep}
 //           ) OR (
-//                 posix_timestamp = ${instance._posixTimestamp}
+//                 posix_timestamp = ${instance._unix_msTimestamp}
 //             AND instance_step = ${instance._instanceStep}
 //             AND append_step = ${instance._appendStep}
 //           )

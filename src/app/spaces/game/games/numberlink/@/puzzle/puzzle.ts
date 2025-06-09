@@ -1,5 +1,5 @@
 import { s } from '~/@/schema'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { UserId } from '~/app/@/data/user-id'
 import { Numberlink } from '../numberlink'
 import { NumberlinkVariant } from '../variant'
@@ -10,9 +10,9 @@ import { PuzzleName } from './puzzle-name'
 const schema = s.obj({
   id: PuzzleId,
   name: PuzzleName,
-  createdAt: Posix,
+  createdAt: UnixMs,
   createdBy: UserId,
-  lastUpdatedAt: Posix,
+  lastUpdatedAt: UnixMs,
   lastUpdatedBy: UserId,
   numberlink: NumberlinkVariant.Model,
   solutions: s.arr(Numberlink.Model),
@@ -23,7 +23,7 @@ export type Puzzle = s.Infer<typeof schema>
 const create = async (input: {
   count?: number
   numberlink: NumberlinkVariant.Model
-  createdAt: Posix
+  createdAt: UnixMs
   createdBy: UserId
 }): Promise<Puzzle> => {
   return {
@@ -43,10 +43,10 @@ const create = async (input: {
 const random = async (input?: {
   numberlink?: NumberlinkVariant.Model
   createdBy?: UserId
-  createdAt?: Posix
+  createdAt?: UnixMs
 }): Promise<Puzzle> => {
   const createdBy = input?.createdBy ?? UserId.generate()
-  const createdAt = input?.createdAt ?? Posix.now()
+  const createdAt = input?.createdAt ?? UnixMs.now()
   const numberlink =
     input?.numberlink ??
     VariantGridShorthand.toGrid([
@@ -60,7 +60,7 @@ const random = async (input?: {
     name: await PuzzleName.generate({
       count: 0,
     }),
-    lastUpdatedAt: Posix.now(),
+    lastUpdatedAt: UnixMs.now(),
     lastUpdatedBy: createdBy,
     id: PuzzleId.generate(),
     numberlink,

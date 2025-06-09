@@ -1,5 +1,5 @@
 export type Store<_TKey, _TValue> = {
-  _posixTimestamp: number
+  _unix_msTimestamp: number
   _instanceStep: number
   _appendStep: number
 }

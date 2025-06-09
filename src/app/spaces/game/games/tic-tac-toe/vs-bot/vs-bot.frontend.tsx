@@ -1,5 +1,5 @@
 import type { Eff } from '~/@/eff'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
 import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
 import { IconRightLeft } from '~/@/ui/icon/icon-right-left'
@@ -115,7 +115,7 @@ export const mergeWithBackend = ({
   backend,
   frontend = init({ userId: null }),
 }: {
-  now: Posix
+  now: UnixMs
   frontend?: ModelFrontend
   backend: ModelBackend
 }): ModelFrontend => {

@@ -5,7 +5,7 @@ import { Pagination } from '~/@/query/query'
 import { Ok, Result, isErr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { Puzzle } from '../puzzle'
 import type { IPuzzleDb } from './interface'
 import { OrderClause, PuzzleQuery, WhereClause } from './query'
@@ -28,15 +28,15 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           name,
           flow,
           solutions,
-          created_at_posix,
+          created_at_unix_ms,
           created_by_user_id,
-          last_updated_at_posix,
+          last_updated_at_unix_ms,
           last_updated_by_user_id
         FROM
           game_flow_puzzle
         WHERE
           id = :id
-          AND deleted_at_posix IS NULL
+          AND deleted_at_unix_ms IS NULL
         LIMIT 1
         `,
         vars: {
@@ -76,7 +76,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           SET
             name = :name,
             flow = :flow,
-            last_updated_at_posix = :lastUpdatedAt,
+            last_updated_at_unix_ms = :lastUpdatedAt,
             last_updated_by_user_id = :lastUpdatedBy,
             solutions = :solutions
           WHERE
@@ -106,9 +106,9 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
             id,
             name,
             flow,
-            created_at_posix,
+            created_at_unix_ms,
             created_by_user_id,
-            last_updated_at_posix,
+            last_updated_at_unix_ms,
             last_updated_by_user_id,
             solutions
           )
@@ -149,13 +149,13 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         UPDATE
           game_flow_puzzle
         SET
-          deleted_at_posix = :deletedAt,
+          deleted_at_unix_ms = :deletedAt,
           deleted_by_user_id = :deletedBy
         WHERE
           id = :id
         `,
         vars: {
-          deletedAt: Posix.now(),
+          deletedAt: UnixMs.now(),
           deletedBy: input.deletedByUserId,
           id: input.puzzleId,
         },
@@ -263,9 +263,9 @@ const toQuerySql = (input: { where: WhereClause; order?: OrderClause; pagination
       name,
       flow,
       solutions,
-      created_at_posix,
+      created_at_unix_ms,
       created_by_user_id,
-      last_updated_at_posix,
+      last_updated_at_unix_ms,
       last_updated_by_user_id
     FROM
       game_flow_puzzle
@@ -285,7 +285,7 @@ const toQuerySql = (input: { where: WhereClause; order?: OrderClause; pagination
 
 const toSqlWhere = (input: { where: WhereClause }) => {
   const variables: Sql.Vars = {}
-  const where: string[] = ['deleted_at_posix IS NULL']
+  const where: string[] = ['deleted_at_unix_ms IS NULL']
 
   if (input.where.createdBy?.equals) {
     where.push('created_by_user_id = :createdBy')
@@ -316,11 +316,11 @@ const toSqlOrder = (input: { order: OrderClause }) => {
   const orderBy: string[] = []
 
   if (input.order.createdAt) {
-    orderBy.push(`created_at_posix ${input.order.createdAt === 'desc' ? 'DESC' : 'ASC'}`)
+    orderBy.push(`created_at_unix_ms ${input.order.createdAt === 'desc' ? 'DESC' : 'ASC'}`)
   }
 
   if (input.order.lastUpdatedAt) {
-    orderBy.push(`last_updated_at_posix ${input.order.lastUpdatedAt === 'desc' ? 'DESC' : 'ASC'}`)
+    orderBy.push(`last_updated_at_unix_ms ${input.order.lastUpdatedAt === 'desc' ? 'DESC' : 'ASC'}`)
   }
 
   const str = orderBy.length > 0 ? `ORDER BY ${orderBy.join(', ')}` : ''

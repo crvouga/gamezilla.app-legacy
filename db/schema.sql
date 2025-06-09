@@ -33,9 +33,9 @@ CREATE TABLE public.auth_sms_verification (
     id text NOT NULL,
     code_hash json,
     phone_number text NOT NULL,
-    created_at_posix bigint NOT NULL,
-    expires_at_posix bigint NOT NULL,
-    verified_at_posix bigint
+    created_at_unix_ms bigint NOT NULL,
+    expires_at_unix_ms bigint NOT NULL,
+    verified_at_unix_ms bigint
 );
 
 
@@ -47,7 +47,7 @@ CREATE TABLE public.auth_sms_verification_attempt (
     id text NOT NULL,
     verification_id text NOT NULL,
     inputted_code_hash json NOT NULL,
-    created_at_posix bigint NOT NULL
+    created_at_unix_ms bigint NOT NULL
 );
 
 
@@ -101,11 +101,11 @@ CREATE TABLE public.game_chess_puzzle_profile (
 CREATE TABLE public.game_flow_pack (
     id text NOT NULL,
     name text NOT NULL,
-    created_at_posix bigint NOT NULL,
+    created_at_unix_ms bigint NOT NULL,
     created_by_user_id text NOT NULL,
-    last_updated_at_posix bigint NOT NULL,
+    last_updated_at_unix_ms bigint NOT NULL,
     last_updated_by_user_id text NOT NULL,
-    deleted_at_posix bigint,
+    deleted_at_unix_ms bigint,
     deleted_by_user_id text
 );
 
@@ -119,9 +119,9 @@ CREATE TABLE public.game_flow_pack_item (
     pack_id text NOT NULL,
     puzzle_id text NOT NULL,
     "position" bigint NOT NULL,
-    created_at_posix bigint NOT NULL,
+    created_at_unix_ms bigint NOT NULL,
     created_by_user_id text NOT NULL,
-    deleted_at_posix bigint,
+    deleted_at_unix_ms bigint,
     deleted_by_user_id text
 );
 
@@ -134,11 +134,11 @@ CREATE TABLE public.game_flow_puzzle (
     id text NOT NULL,
     name text NOT NULL,
     flow json NOT NULL,
-    created_at_posix bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
+    created_at_unix_ms bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
     created_by_user_id text NOT NULL,
-    last_updated_at_posix bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
+    last_updated_at_unix_ms bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
     last_updated_by_user_id text NOT NULL,
-    deleted_at_posix bigint,
+    deleted_at_unix_ms bigint,
     deleted_by_user_id text,
     solutions jsonb DEFAULT '[]'::jsonb NOT NULL
 );
@@ -151,8 +151,8 @@ CREATE TABLE public.game_flow_puzzle (
 CREATE TABLE public.game_flow_solutions (
     id text NOT NULL,
     solutions jsonb DEFAULT '[]'::jsonb NOT NULL,
-    created_at_posix bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
-    last_updated_at_posix bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL
+    created_at_unix_ms bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
+    last_updated_at_unix_ms bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL
 );
 
 
@@ -194,7 +194,7 @@ CREATE TABLE public.space (
 
 CREATE TABLE public.user_account (
     id text NOT NULL,
-    created_at_posix bigint NOT NULL,
+    created_at_unix_ms bigint NOT NULL,
     user_role public.user_role NOT NULL,
     phone_number text
 );
@@ -207,7 +207,7 @@ CREATE TABLE public.user_account (
 CREATE TABLE public.user_guest_session_mapping (
     guest_user_id text NOT NULL,
     session_id text NOT NULL,
-    created_at_posix bigint NOT NULL,
+    created_at_unix_ms bigint NOT NULL,
     id text NOT NULL,
     client_session_id text NOT NULL
 );
@@ -224,8 +224,8 @@ CREATE TABLE public.user_profile (
     username text NOT NULL,
     avatar_seed text,
     avatar_style text,
-    created_at_posix bigint NOT NULL,
-    updated_at_posix bigint NOT NULL
+    created_at_unix_ms bigint NOT NULL,
+    updated_at_unix_ms bigint NOT NULL
 );
 
 ALTER TABLE ONLY public.user_profile REPLICA IDENTITY FULL;
@@ -239,8 +239,8 @@ CREATE TABLE public.user_session (
     id text NOT NULL,
     user_id text NOT NULL,
     session_id text,
-    created_at_posix bigint NOT NULL,
-    ended_at_posix bigint,
+    created_at_unix_ms bigint NOT NULL,
+    ended_at_unix_ms bigint,
     client_session_id text NOT NULL
 );
 
@@ -420,7 +420,7 @@ CREATE INDEX idx_game_chess_puzzle_rating ON public.game_chess_puzzle USING btre
 -- Name: idx_game_flow_pack_item_pack_id_not_deleted; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_game_flow_pack_item_pack_id_not_deleted ON public.game_flow_pack_item USING btree (pack_id) WHERE (deleted_at_posix IS NULL);
+CREATE INDEX idx_game_flow_pack_item_pack_id_not_deleted ON public.game_flow_pack_item USING btree (pack_id) WHERE (deleted_at_unix_ms IS NULL);
 
 
 --
@@ -506,4 +506,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250427220854'),
     ('20250428003412'),
     ('20250429010045'),
-    ('20250609225401');
+    ('20250609225401'),
+    ('20250609230850');

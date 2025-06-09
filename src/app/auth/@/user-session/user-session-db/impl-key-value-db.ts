@@ -2,7 +2,7 @@ import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import { s } from '~/@/schema'
 import { Ok, unwrapOr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
@@ -16,8 +16,8 @@ const Row = s.obj({
   session_id: s.maybe(SessionId),
   client_session_id: ClientSessionId,
   user_id: UserId,
-  created_at_posix: Posix,
-  ended_at_posix: s.maybe(Posix),
+  created_at_unix_ms: UnixMs,
+  ended_at_unix_ms: s.maybe(UnixMs),
 })
 
 export type Row = s.Infer<typeof Row>
@@ -26,8 +26,8 @@ const rowToUserSession = (row: Row): UserSession => ({
   userSessionId: row.user_session_id,
   sessionId: row.session_id ?? null,
   userId: row.user_id,
-  createdAt: row.created_at_posix,
-  endedAt: row.ended_at_posix ?? null,
+  createdAt: row.created_at_unix_ms,
+  endedAt: row.ended_at_unix_ms ?? null,
   clientSessionId: row.client_session_id,
 })
 
@@ -36,8 +36,8 @@ const userSessionToRow = (userSession: UserSession): Row => ({
   session_id: userSession.sessionId,
   client_session_id: userSession.clientSessionId,
   user_id: userSession.userId,
-  created_at_posix: userSession.createdAt,
-  ended_at_posix: userSession.endedAt,
+  created_at_unix_ms: userSession.createdAt,
+  ended_at_unix_ms: userSession.endedAt,
 })
 
 export type Config = {

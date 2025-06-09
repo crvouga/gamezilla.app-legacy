@@ -2,7 +2,7 @@ import { p } from '~/@/promise'
 import { Err, isErr, Result, unwrapOr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { BackendInstance } from '~/app/@/backend/backend-instance/backend-instance'
 import { BackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
@@ -56,7 +56,7 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
 
   const backendInstanceStopped: BackendInstance = {
     ...backendInstanceStarted,
-    stoppedAt: Posix.now(),
+    stoppedAt: UnixMs.now(),
   }
 
   await ctx.backendInstanceDb.put(backendInstanceStopped)
@@ -89,7 +89,7 @@ const heartbeat = async (_s: AbortSignal, input: { ctx: BackendCtxModule }): Pro
 
   const backendInstanceNew: BackendInstance = {
     ...got.value,
-    lastHeartbeatAt: Posix.now(),
+    lastHeartbeatAt: UnixMs.now(),
   }
 
   const put = await ctx.backendInstanceDb.put(backendInstanceNew)

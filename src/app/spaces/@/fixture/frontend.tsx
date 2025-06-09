@@ -6,7 +6,7 @@ import { loggerNoop } from '~/@/logger/impl-noop'
 import { PhoneNumber } from '~/@/phone-number'
 import { RPC } from '~/@/rpc'
 import type { Screen } from '~/@/screen/generated/screens'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { Topic } from '~/@/topic'
 import { SessionId } from '~/@/wire/session-id'
 import { SpaceId } from '~/app/@/data/space-id'
@@ -86,7 +86,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
   const f = await FixtureAppFrontend(input)
   const currentUser: UserAccount = {
     userId: f.ctx.currentUser.userId,
-    createdAt: Posix.now(),
+    createdAt: UnixMs.now(),
     phoneNumber: PhoneNumber.random(),
     role: 'normal',
   }
@@ -167,7 +167,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     currentUserId: currentUser.userId,
     currentUserRole: 'normal',
     documentVisibilityState: 'visible',
-    now: Posix.now(),
+    now: UnixMs.now(),
     profilesByUserId: UserProfile.indexByUserId([currentUserProfile, userA, userB, userC]),
     space,
     currentUser,

@@ -15,7 +15,7 @@ const queries: string[] = [
     guest_user_id text NOT NULL,
     session_id text,
     client_session_id text NOT NULL,
-    created_at_posix bigint NOT NULL
+    created_at_unix_ms bigint NOT NULL
   );
   `,
 ]

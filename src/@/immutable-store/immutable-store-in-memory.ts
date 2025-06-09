@@ -48,7 +48,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
     return {
       _appendStep: encodedEntry._appendStep,
       _instanceStep: encodedEntry._instanceStep,
-      _posixTimestamp: encodedEntry._posixTimestamp,
+      _unix_msTimestamp: encodedEntry._unix_msTimestamp,
       key: encodedEntry.key as TKey,
       value,
     }
@@ -62,7 +62,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
     entries: [TKey, TValue | undefined][],
   ): Promise<Store<TKey, TValue>> => {
     const instanceNew: Store<TKey, TValue> = {
-      _posixTimestamp: now,
+      _unix_msTimestamp: now,
       _instanceStep: instance._instanceStep + 1,
       _appendStep: runningAppendStep++,
     }
@@ -101,7 +101,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
     },
     startingAt(now) {
       return {
-        _posixTimestamp: now,
+        _unix_msTimestamp: now,
         _instanceStep: 0,
         _appendStep: 0,
       }
@@ -156,7 +156,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
         }
 
         // SKIP entry is from the future
-        if (entry._posixTimestamp > instance._posixTimestamp) {
+        if (entry._unix_msTimestamp > instance._unix_msTimestamp) {
           continue
         }
 
@@ -177,7 +177,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
         }
 
         // KEEP entry is newer
-        if (entry._posixTimestamp > runningEntry._posixTimestamp) {
+        if (entry._unix_msTimestamp > runningEntry._unix_msTimestamp) {
           runningEntry = entry
           continue
         }

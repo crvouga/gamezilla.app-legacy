@@ -7,13 +7,13 @@ import { VerificationAttemptId } from '../verification-attempt-id'
 import type { IVerificationAttemptDb, WhereClause } from './interface'
 import type { VerificationAttempt } from '../verification-attempt'
 import { Hash } from '~/@/hashing'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 
 export const Row = s.obj({
   id: VerificationAttemptId,
   verification_id: VerificationId,
   inputted_code_hash: s.json,
-  created_at_posix: s.or(s.str(), s.num()),
+  created_at_unix_ms: s.or(s.str(), s.num()),
 })
 type Row = s.Infer<typeof Row>
 
@@ -26,19 +26,19 @@ export const VerificationAttemptDbSqlDb = (deps: { sqlDb: ISqlDb }): IVerificati
 					id,
 					verification_id,
 					inputted_code_hash,
-					created_at_posix
+					created_at_unix_ms
 				) VALUES (
 					:id,
 					:verification_id,
 					:inputted_code_hash,
-					:created_at_posix
+					:created_at_unix_ms
 				)		
 			`
       const vars: Sql.Vars = {
         id: input.verificationAttemptId,
         verification_id: input.verificationId,
         inputted_code_hash: Sql.json(input.codeHash),
-        created_at_posix: input.createdAt,
+        created_at_unix_ms: input.createdAt,
       }
       const queried = await deps.sqlDb.query({
         schema: s.unknown,
@@ -55,10 +55,10 @@ export const VerificationAttemptDbSqlDb = (deps: { sqlDb: ISqlDb }): IVerificati
 					id,
 					verification_id,
 					inputted_code_hash,
-					created_at_posix
+					created_at_unix_ms
 				FROM auth_sms_verification_attempt
 				${where.str}
-				ORDER BY created_at_posix DESC
+				ORDER BY created_at_unix_ms DESC
 			`
 
       const queried = await deps.sqlDb.query({
@@ -82,7 +82,7 @@ const rowToVerificationAttempt = (row: Row): VerificationAttempt[] => {
       verificationAttemptId: row.id,
       verificationId: row.verification_id,
       codeHash: codeHash.value,
-      createdAt: Posix.init(row.created_at_posix),
+      createdAt: UnixMs.init(row.created_at_unix_ms),
     },
   ]
 }

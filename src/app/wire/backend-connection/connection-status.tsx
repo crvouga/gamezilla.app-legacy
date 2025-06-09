@@ -1,6 +1,6 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { Translator } from '~/@/l18n/generated'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { Model } from './types'
 import { Dot } from './ui'
@@ -20,14 +20,14 @@ const fromModel = (model: Model): BackendConnectionStatus => {
   return {
     t: 'connected',
     averagePing: toAveragePing(model),
-    latestPing: Posix.diff(ping.pingAt, ping.pongAt),
+    latestPing: UnixMs.diff(ping.pingAt, ping.pongAt),
   }
 }
 
 const toAveragePing = (model: Model): TimeSpan => {
   const pings = CappedOrderedDict.valuesNewestFirst(model.pings)
   const total = pings.reduce(
-    (acc, ping) => (ping.pongAt ? acc + TimeSpan.toMilliseconds(Posix.diff(ping.pingAt, ping.pongAt)) : acc),
+    (acc, ping) => (ping.pongAt ? acc + TimeSpan.toMilliseconds(UnixMs.diff(ping.pingAt, ping.pongAt)) : acc),
     0,
   )
   const average = Math.floor(total / pings.length)

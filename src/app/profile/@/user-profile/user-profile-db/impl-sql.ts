@@ -4,7 +4,7 @@ import { s } from '~/@/schema'
 import { Ok, Result, isErr, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
@@ -17,8 +17,8 @@ const ProfileRow = s.obj({
   username: Username,
   avatar_seed: s.maybe(s.str()),
   avatar_style: s.maybe(s.str()),
-  created_at_posix: s.or(s.num(), s.str()),
-  updated_at_posix: s.or(s.num(), s.str()),
+  created_at_unix_ms: s.or(s.num(), s.str()),
+  updated_at_unix_ms: s.or(s.num(), s.str()),
 })
 
 type ProfileRow = s.Infer<typeof ProfileRow>
@@ -35,8 +35,8 @@ const fromProfileRow = (row: ProfileRow): Result<string, UserProfile> => {
     username: row.username,
     avatarSeed: avatarSeed,
     avatarStyle: avatarStyle,
-    createdAt: Posix.init(row.created_at_posix),
-    updatedAt: Posix.init(row.updated_at_posix),
+    createdAt: UnixMs.init(row.created_at_unix_ms),
+    updatedAt: UnixMs.init(row.updated_at_unix_ms),
   }
 
   return Ok(profile)
@@ -57,8 +57,8 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
           username,
           avatar_seed,
           avatar_style,
-          created_at_posix,
-          updated_at_posix
+          created_at_unix_ms,
+          updated_at_unix_ms
         FROM
           user_profile
         WHERE
@@ -88,8 +88,8 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
         username: profile.username,
         avatar_seed: profile.avatarSeed,
         avatar_style: profile.avatarStyle,
-        created_at_posix: profile.createdAt,
-        updated_at_posix: profile.updatedAt,
+        created_at_unix_ms: profile.createdAt,
+        updated_at_unix_ms: profile.updatedAt,
       }
 
       const upserted = await config.sqlDb.query({
@@ -100,23 +100,23 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
           username,
           avatar_seed,
           avatar_style,
-          created_at_posix,
-          updated_at_posix
+          created_at_unix_ms,
+          updated_at_unix_ms
         )
         VALUES (
           :id,          
           :username,
           :avatar_seed,
           :avatar_style,
-          :created_at_posix,
-          :updated_at_posix
+          :created_at_unix_ms,
+          :updated_at_unix_ms
         )
         ON CONFLICT (id) DO UPDATE SET
           username = EXCLUDED.username,
           avatar_seed = EXCLUDED.avatar_seed,
           avatar_style = EXCLUDED.avatar_style,
-          created_at_posix = EXCLUDED.created_at_posix,
-          updated_at_posix = EXCLUDED.updated_at_posix
+          created_at_unix_ms = EXCLUDED.created_at_unix_ms,
+          updated_at_unix_ms = EXCLUDED.updated_at_unix_ms
         `,
         vars: rowNew,
       })
@@ -183,12 +183,12 @@ const queryToSql = (query: ProfileDbQuery) => {
           username,
           avatar_seed,
           avatar_style,
-          created_at_posix,
-          updated_at_posix
+          created_at_unix_ms,
+          updated_at_unix_ms
         FROM
           user_profile
         ${whereClause}
-        ORDER BY created_at_posix ${query.order.createdAt.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
+        ORDER BY created_at_unix_ms ${query.order.createdAt.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
         LIMIT :limit
         OFFSET :offset
       `

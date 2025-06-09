@@ -1,6 +1,6 @@
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { UserId } from '~/app/@/data/user-id'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { s } from '~/@/schema'
 import {
   type ColumnIndex,
@@ -106,7 +106,7 @@ export const MsgSpace = s.or(
   }),
   s.obj({
     t: s.l('time-passed'),
-    currentTime: Posix,
+    currentTime: UnixMs,
   }),
   s.obj({
     t: s.l('user-left'),
@@ -197,7 +197,7 @@ export const StateGame = s.and(
     moveTimeLimit: MoveTimeLimit,
     columns: Columns,
     gameId: s.num(),
-    lastMoveAt: Posix,
+    lastMoveAt: UnixMs,
     players: s.dict(PlayerType, UserId),
   }),
 )
@@ -323,7 +323,7 @@ export const updateSpace = (modelSpace: ModelSpace, msgSpace: MsgSpace): ModelSp
             type: 'game',
             columns: EMPTY_COLUMNS,
             moveTimeLimit: modelSpace.moveTimeLimit,
-            lastMoveAt: Posix.now(),
+            lastMoveAt: UnixMs.now(),
             gameId: 0,
             players: {
               'player-one': playerOne,

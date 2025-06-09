@@ -1,7 +1,7 @@
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, isErr, Ok } from '~/@/result'
 import { RPC } from '~/@/rpc'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
@@ -154,7 +154,7 @@ const verifyCode = async (
     sessionId: input.sessionId,
     clientSessionId: input.clientSessionId,
     userId: account.userId,
-    createdAt: Posix.now(),
+    createdAt: UnixMs.now(),
     endedAt: null,
   }
 

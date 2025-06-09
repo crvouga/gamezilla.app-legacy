@@ -4,7 +4,7 @@ import { Ok, unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Verification } from '../verification'
 import { VerificationDb } from './impl'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 
 const FixtureVariant = async () => {
@@ -32,10 +32,10 @@ const FixtureVariant = async () => {
 const Fixture = async () => {
   const f = await FixtureVariant()
   const inserted: Verification[] = []
-  const insertVerifications = async ({ start, end, count = 3 }: { end: Posix; count?: number; start: Posix }) => {
+  const insertVerifications = async ({ start, end, count = 3 }: { end: UnixMs; count?: number; start: UnixMs }) => {
     const verifications: Verification[] = []
 
-    const timeSpan = TimeSpan.scale(Posix.diff(end, start), 1 / count)
+    const timeSpan = TimeSpan.scale(UnixMs.diff(end, start), 1 / count)
 
     let runningCreatedAt = start
 
@@ -45,7 +45,7 @@ const Fixture = async () => {
       })
       await f.verificationDb.put(verification)
       verifications.push(verification)
-      runningCreatedAt = Posix.future(runningCreatedAt, timeSpan)
+      runningCreatedAt = UnixMs.future(runningCreatedAt, timeSpan)
     }
 
     inserted.push(...verifications)
@@ -59,8 +59,8 @@ const Fixture = async () => {
     }
   }
 
-  const now = (): Posix => {
-    return Posix.future(Posix.now(), TimeSpan.years(10))
+  const now = (): UnixMs => {
+    return UnixMs.future(UnixMs.now(), TimeSpan.years(10))
   }
 
   return {
@@ -134,7 +134,7 @@ describe(import.meta.file, () => {
     })
     const verificationNew: Verification = {
       ...verification,
-      verifiedAtPosix: Posix.now(),
+      verifiedAtUnixMs: UnixMs.now(),
     }
     await f.verificationDb.put(verificationNew)
     const after = await f.verificationDb.find({
@@ -179,17 +179,17 @@ describe(import.meta.file, () => {
     const now = f.now()
 
     await f.insertVerifications({
-      start: Posix.past(now, TimeSpan.milliseconds(20)),
-      end: Posix.past(now, TimeSpan.milliseconds(10)),
+      start: UnixMs.past(now, TimeSpan.milliseconds(20)),
+      end: UnixMs.past(now, TimeSpan.milliseconds(10)),
     })
 
     await f.insertVerifications({
-      start: Posix.future(now, TimeSpan.milliseconds(10)),
-      end: Posix.future(now, TimeSpan.milliseconds(20)),
+      start: UnixMs.future(now, TimeSpan.milliseconds(10)),
+      end: UnixMs.future(now, TimeSpan.milliseconds(20)),
     })
 
     const start = now
-    const end = Posix.future(now, TimeSpan.milliseconds(3))
+    const end = UnixMs.future(now, TimeSpan.milliseconds(3))
     const expected = await f.insertVerifications({
       start,
       end,
@@ -198,7 +198,7 @@ describe(import.meta.file, () => {
 
     const found = await f.verificationDb.find({
       where: {
-        createdAtPosix: {
+        createdAtUnixMs: {
           '<=': end,
           '>=': start,
         },
@@ -209,16 +209,16 @@ describe(import.meta.file, () => {
       limit: 1000,
       offset: 0,
     })
-    const actual = unwrap(found).items.sort(ascend((v) => v.createdAtPosix))
+    const actual = unwrap(found).items.sort(ascend((v) => v.createdAtUnixMs))
     await f.cleanUp()
-    expect(actual).toEqual(expected.sort(ascend((v) => v.createdAtPosix)))
+    expect(actual).toEqual(expected.sort(ascend((v) => v.createdAtUnixMs)))
   })
 
   it('should limit correctly', async () => {
     const f = await Fixture()
     const now = f.now()
     const start = now
-    const end = Posix.future(now, TimeSpan.milliseconds(1))
+    const end = UnixMs.future(now, TimeSpan.milliseconds(1))
     const LIMIT = 5
     const expected = await f.insertVerifications({
       start,
@@ -229,7 +229,7 @@ describe(import.meta.file, () => {
       limit: LIMIT,
       offset: 0,
       where: {
-        createdAtPosix: {
+        createdAtUnixMs: {
           '<=': end,
           '>=': start,
         },
@@ -251,7 +251,7 @@ describe(import.meta.file, () => {
     const start = now
     const LIMIT = 5
     const OFFSET = 3
-    const end = Posix.future(now, TimeSpan.milliseconds(10))
+    const end = UnixMs.future(now, TimeSpan.milliseconds(10))
     const expected = await f.insertVerifications({
       start,
       end,
@@ -260,7 +260,7 @@ describe(import.meta.file, () => {
 
     const found = await f.verificationDb.find({
       where: {
-        createdAtPosix: {
+        createdAtUnixMs: {
           '<=': end,
           '>=': start,
         },
@@ -285,7 +285,7 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const now = f.now()
     const start = now
-    const end = Posix.future(now, TimeSpan.milliseconds(1))
+    const end = UnixMs.future(now, TimeSpan.milliseconds(1))
     const expected = await f.insertVerifications({
       start,
       end,
@@ -294,7 +294,7 @@ describe(import.meta.file, () => {
 
     const found = await f.verificationDb.find({
       where: {
-        createdAtPosix: {
+        createdAtUnixMs: {
           '<=': end,
           '>=': start,
         },
@@ -314,18 +314,18 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const now = f.now()
     const start = now
-    const end = Posix.future(now, TimeSpan.milliseconds(10))
+    const end = UnixMs.future(now, TimeSpan.milliseconds(10))
     const expected = await f.insertVerifications({
       start,
       end,
       count: 10,
     })
 
-    expected.sort(ascend((v) => v.createdAtPosix))
+    expected.sort(ascend((v) => v.createdAtUnixMs))
 
     const found = await f.verificationDb.find({
       where: {
-        createdAtPosix: {
+        createdAtUnixMs: {
           '<=': end,
           '>=': start,
         },
@@ -346,18 +346,18 @@ describe(import.meta.file, () => {
     const f = await Fixture()
     const now = f.now()
     const start = now
-    const end = Posix.future(now, TimeSpan.milliseconds(10))
+    const end = UnixMs.future(now, TimeSpan.milliseconds(10))
     const expected = await f.insertVerifications({
       start,
       end,
       count: 10,
     })
 
-    expected.sort(descend((v) => v.createdAtPosix))
+    expected.sort(descend((v) => v.createdAtUnixMs))
 
     const found = await f.verificationDb.find({
       where: {
-        createdAtPosix: {
+        createdAtUnixMs: {
           '<=': end,
           '>=': start,
         },

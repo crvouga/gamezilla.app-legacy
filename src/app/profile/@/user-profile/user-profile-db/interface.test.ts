@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { Logger } from '~/@/logger'
 import { Ok, unwrap } from '~/@/result'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserId } from '~/app/@/data/user-id'
@@ -96,7 +96,7 @@ describe('ProfileDb', () => {
 
       const expected = await UserProfile.random({
         id: userId,
-        createdAt: Posix.future(Posix.now(), TimeSpan.seconds(0)),
+        createdAt: UnixMs.future(UnixMs.now(), TimeSpan.seconds(0)),
       })
       unwrap(await f.profileDb.put(expected))
 

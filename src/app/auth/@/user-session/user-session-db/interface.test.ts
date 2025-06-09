@@ -7,7 +7,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import { Config, UserSessionDb } from './impl'
 import { SessionId } from '~/@/wire/session-id'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 
@@ -152,7 +152,7 @@ describe(import.meta.file, () => {
       for (let i = 0; i < 10; i++) {
         const session = UserSession.random({
           userId,
-          createdAt: Posix.future(Posix.now(), TimeSpan.seconds(i)),
+          createdAt: UnixMs.future(UnixMs.now(), TimeSpan.seconds(i)),
         })
         await f.userSessionDb.insert(session)
         expected.push(session)
@@ -214,7 +214,7 @@ describe(import.meta.file, () => {
       for (let i = 0; i < 10; i++) {
         const session = UserSession.random({
           sessionId,
-          createdAt: Posix.future(Posix.now(), TimeSpan.seconds(i)),
+          createdAt: UnixMs.future(UnixMs.now(), TimeSpan.seconds(i)),
         })
         await f.userSessionDb.insert(session)
         expected.push(session)
@@ -276,7 +276,7 @@ describe(import.meta.file, () => {
       for (let i = 0; i < 10; i++) {
         const session = UserSession.random({
           clientSessionId,
-          createdAt: Posix.future(Posix.now(), TimeSpan.seconds(i)),
+          createdAt: UnixMs.future(UnixMs.now(), TimeSpan.seconds(i)),
         })
         await f.userSessionDb.insert(session)
         expected.push(session)

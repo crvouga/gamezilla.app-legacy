@@ -12,7 +12,7 @@ const queries: string[] = [
   `
   CREATE TABLE user_account (
     id TEXT NOT NULL PRIMARY KEY,
-    created_at_posix BIGINT NOT NULL,
+    created_at_unix_ms BIGINT NOT NULL,
     user_role TEXT NOT NULL CHECK (user_role IN ('super', 'normal', 'guest')),
     phone_number TEXT
   );

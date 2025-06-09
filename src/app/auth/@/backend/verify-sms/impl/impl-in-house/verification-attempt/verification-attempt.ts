@@ -1,4 +1,4 @@
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { type Hash, Hashing } from '~/@/hashing'
 import { VerificationAttemptId } from './verification-attempt-id'
 import { VerificationId } from '../verification'
@@ -7,7 +7,7 @@ export type VerificationAttempt = {
   verificationAttemptId: VerificationAttemptId
   verificationId: VerificationId
   codeHash: Hash
-  createdAt: Posix
+  createdAt: UnixMs
 }
 
 const random = async (): Promise<VerificationAttempt> => {
@@ -22,7 +22,7 @@ const random = async (): Promise<VerificationAttempt> => {
       },
       password: '123',
     }),
-    createdAt: Posix.now(),
+    createdAt: UnixMs.now(),
   }
 }
 

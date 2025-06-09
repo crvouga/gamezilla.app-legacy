@@ -1,6 +1,6 @@
 import { unwrap } from '~/@/result'
 import { s } from '~/@/schema'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { UserId } from '~/app/@/data/user-id'
 import { PuzzleId } from '../puzzle/puzzle-id'
 import { PackId } from './pack-id'
@@ -9,9 +9,9 @@ import { PackName } from './pack-name'
 const schema = s.obj({
   id: PackId,
   createdBy: UserId,
-  createdAt: Posix,
+  createdAt: UnixMs,
   lastUpdatedBy: UserId,
-  lastUpdatedAt: Posix,
+  lastUpdatedAt: UnixMs,
   name: PackName,
   puzzleIds: s.arr(PuzzleId),
   isOfficial: s.maybe(s.bool),
@@ -23,7 +23,7 @@ const create = async (input: {
   count?: number
   createdBy: UserId
   puzzleIds: PuzzleId[]
-  now: Posix
+  now: UnixMs
 }): Promise<Pack> => {
   return {
     id: PackId.generate(),
@@ -73,10 +73,10 @@ const canGoNext = (pack: Pack, puzzleIndex: number): boolean => {
 const randomSync = (input?: { createdBy?: UserId; puzzleIds?: PuzzleId[] }): Pack => {
   const createdBy = input?.createdBy ?? UserId.generate()
   return {
-    createdAt: Posix.now(),
+    createdAt: UnixMs.now(),
     createdBy: createdBy,
     id: PackId.generate(),
-    lastUpdatedAt: Posix.now(),
+    lastUpdatedAt: UnixMs.now(),
     lastUpdatedBy: createdBy,
     name: unwrap(PackName.parse(`Pack 0`)),
     puzzleIds: input?.puzzleIds ?? [],
@@ -87,10 +87,10 @@ const randomSync = (input?: { createdBy?: UserId; puzzleIds?: PuzzleId[] }): Pac
 const random = async (input?: { createdBy?: UserId; puzzleIds?: PuzzleId[] }): Promise<Pack> => {
   const createdBy = input?.createdBy ?? UserId.generate()
   return {
-    createdAt: Posix.now(),
+    createdAt: UnixMs.now(),
     createdBy: createdBy,
     id: PackId.generate(),
-    lastUpdatedAt: Posix.now(),
+    lastUpdatedAt: UnixMs.now(),
     lastUpdatedBy: createdBy,
     name: await PackName.generate(),
     puzzleIds: input?.puzzleIds ?? Array.from({ length: 3 }, () => PuzzleId.generate()),

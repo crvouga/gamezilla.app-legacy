@@ -1,13 +1,13 @@
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { BackendInstanceId } from './backend-instance-id'
 import { s } from '~/@/schema'
 import { TimeSpan } from '~/@/time/time-span'
 
 const schema = s.obj({
   backendInstanceId: BackendInstanceId,
-  startedAt: Posix,
-  stoppedAt: s.maybe(Posix),
-  lastHeartbeatAt: Posix,
+  startedAt: UnixMs,
+  stoppedAt: s.maybe(UnixMs),
+  lastHeartbeatAt: UnixMs,
   ipAddress: s.maybe(s.str()),
   port: s.maybe(s.num()),
 })
@@ -19,9 +19,9 @@ const HEARTBEAT = TimeSpan.seconds(60)
 const random = (overrides?: Partial<BackendInstance>): BackendInstance => {
   return {
     backendInstanceId: BackendInstanceId.generate(),
-    startedAt: Posix.now(),
+    startedAt: UnixMs.now(),
     stoppedAt: null,
-    lastHeartbeatAt: Posix.now(),
+    lastHeartbeatAt: UnixMs.now(),
     ipAddress: null,
     port: null,
     ...overrides,

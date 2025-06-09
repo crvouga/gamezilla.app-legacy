@@ -21,14 +21,14 @@ export const VerificationDb = (_config: Config): IVerificationDb => {
           return true
         })
         .filter((v) => {
-          if (input.where?.createdAtPosix?.['<=']) {
-            return v.createdAtPosix <= input.where?.createdAtPosix?.['<=']
+          if (input.where?.createdAtUnixMs?.['<=']) {
+            return v.createdAtUnixMs <= input.where?.createdAtUnixMs?.['<=']
           }
           return true
         })
         .filter((v) => {
-          if (input.where?.createdAtPosix?.['>=']) {
-            return v.createdAtPosix >= input.where?.createdAtPosix?.['>=']
+          if (input.where?.createdAtUnixMs?.['>=']) {
+            return v.createdAtUnixMs >= input.where?.createdAtUnixMs?.['>=']
           }
           return true
         })
@@ -41,11 +41,11 @@ export const VerificationDb = (_config: Config): IVerificationDb => {
 
       switch (input.order?.createdAt) {
         case 'asc': {
-          filtered.sort(ascend((v) => v.createdAtPosix))
+          filtered.sort(ascend((v) => v.createdAtUnixMs))
           break
         }
         case 'desc': {
-          filtered.sort(descend((v) => v.createdAtPosix))
+          filtered.sort(descend((v) => v.createdAtUnixMs))
           break
         }
       }

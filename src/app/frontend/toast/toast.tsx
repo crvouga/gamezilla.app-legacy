@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import { cn } from '~/@/ui/cn'
@@ -15,7 +15,7 @@ import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 
 type Ctx = {
-  now: Posix
+  now: UnixMs
   t: Translator
   screenSize: ScreenSize
 }
@@ -40,7 +40,7 @@ export type Toast = {
   text: TranslatedText
   duration: TimeSpan
   variant: 'error' | 'info'
-  createdAt: Posix
+  createdAt: UnixMs
   errorMsg?: string | null
 }
 
@@ -75,7 +75,7 @@ const updateFromMsg: Module['update'] = (input) => {
       if (!input.model.toast) return { model: input.model }
 
       const isToastActive = TimeSpan.lte(
-        Posix.diff(input.model.toast.createdAt, input.ctx.now),
+        UnixMs.diff(input.model.toast.createdAt, input.ctx.now),
         input.model.toast.duration,
       )
 

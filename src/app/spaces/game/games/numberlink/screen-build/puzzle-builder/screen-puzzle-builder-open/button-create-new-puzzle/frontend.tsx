@@ -1,5 +1,5 @@
 import { isErr, RemoteResult, Result } from '~/@/result'
-import { Posix } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/posix'
 import { IconPlus } from '~/@/ui/icon/icon-plus'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -82,7 +82,7 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const createNewPuzzle = async (input: { now: Posix; createdByUserId: UserId; puzzleDb: IPuzzleDb }) => {
+const createNewPuzzle = async (input: { now: UnixMs; createdByUserId: UserId; puzzleDb: IPuzzleDb }) => {
   const puzzleNew = await Puzzle.create({
     createdAt: input.now,
     createdBy: input.createdByUserId,

@@ -1,27 +1,26 @@
 import { s } from '~/@/schema'
 import { TimeSpan } from './time-span'
 
-const schema = s.brand(s.num(), 'Posix')
-export type Posix = s.Infer<typeof schema>
+const schema = s.brand(s.num(), 'UnixMs')
+/**
+ * UnixMs represents the number of milliseconds since Jan 1, 1970 UTC 00:00:00.
+ */
+export type UnixMs = s.Infer<typeof schema>
 
-const minPosixTime = new Date('1970-01-01T00:00:00.000Z').getTime()
-const maxPosixTime = new Date('2038-01-19T03:14:07.999Z').getTime()
+const min = new Date('1970-01-01T00:00:00.000Z').getTime()
 
-function explain(posixTime: unknown): string[] {
+const explain = (posixTime: unknown): string[] => {
   const errors: string[] = []
   if (typeof posixTime !== 'number') {
     errors.push(`Expected a number, but got ${posixTime}`)
   }
-  if (typeof posixTime === 'number' && posixTime < minPosixTime) {
-    errors.push(`Expected a number greater than ${minPosixTime}, but got ${posixTime}`)
-  }
-  if (typeof posixTime === 'number' && posixTime > maxPosixTime) {
-    errors.push(`Expected a number less than ${maxPosixTime}, but got ${posixTime}`)
+  if (typeof posixTime === 'number' && posixTime < min) {
+    errors.push(`Expected a number greater than ${min}, but got ${posixTime}`)
   }
   return errors
 }
 
-const is = (posixTime: unknown): posixTime is Posix => {
+const is = (posixTime: unknown): posixTime is UnixMs => {
   const errors = explain(posixTime)
   if (errors.length > 0) {
     return false
@@ -29,10 +28,10 @@ const is = (posixTime: unknown): posixTime is Posix => {
   return true
 }
 
-const init = (posixTime: number | string): Posix => {
+const init = (posixTime: number | string): UnixMs => {
   const cleaned = typeof posixTime === 'string' ? Number.parseFloat(posixTime) : posixTime
 
-  const clamped = Math.floor(Math.max(cleaned, minPosixTime))
+  const clamped = Math.floor(Math.max(cleaned, min))
 
   if (is(clamped)) {
     return clamped
@@ -40,7 +39,7 @@ const init = (posixTime: number | string): Posix => {
   throw new Error('impossible condition. failed to clamp posix time')
 }
 
-const toNumber = (posixTime: Posix): number => {
+const toNumber = (posixTime: UnixMs): number => {
   return Math.floor(posixTime)
 }
 
@@ -49,7 +48,7 @@ type Precision = 'milliseconds' | 'seconds' | 'minutes'
 /**
  * Impure function that returns the current posix timestamp.
  */
-const now = (config?: { precision: Precision }): Posix => {
+const now = (config?: { precision: Precision }): UnixMs => {
   let timestamp = Date.now()
 
   if (config?.precision) {
@@ -68,29 +67,29 @@ const now = (config?: { precision: Precision }): Posix => {
 /**
  * Returns the time span between two posix timestamps.
  */
-const diff = (a: Posix, b: Posix): TimeSpan => {
+const diff = (a: UnixMs, b: UnixMs): TimeSpan => {
   return TimeSpan.milliseconds(Math.abs(a - b))
 }
 
-const future = (posix: Posix, timeSpan: TimeSpan): Posix => {
+const future = (posix: UnixMs, timeSpan: TimeSpan): UnixMs => {
   return init(toNumber(posix) + TimeSpan.toMilliseconds(timeSpan))
 }
 
-const past = (posix: Posix, timeSpan: TimeSpan): Posix => {
+const past = (posix: UnixMs, timeSpan: TimeSpan): UnixMs => {
   return init(toNumber(posix) - TimeSpan.toMilliseconds(timeSpan))
 }
 
-const fromIsoString = (isoString: string): Posix => {
+const fromIsoString = (isoString: string): UnixMs => {
   return init(new Date(isoString).getTime())
 }
 
-const toIsoString = (posix: Posix): string => {
+const toIsoString = (posix: UnixMs): string => {
   return new Date(toNumber(posix)).toISOString()
 }
 
 const zero = init(0)
 
-export const Posix = {
+export const UnixMs = {
   ...schema,
   zero,
   is,

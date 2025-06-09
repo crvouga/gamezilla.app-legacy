@@ -3,7 +3,7 @@
 // import { loggerNoop } from '~/@/logger/impl-noop'
 // import { isRequesting, isResponseErr, isResponseOk } from '~/@/request-response/request-response'
 // import { Err, Ok } from '~/@/result'
-// import { Posix } from '~/@/time/posix'
+// import { UnixMs } from '~/@/time/posix'
 // import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 // import { UserId } from '~/app/@/data/user-id'
 // import { PlaySoundCmd.did,  } from '~/app/@/frontend/cmd'
@@ -23,7 +23,7 @@
 //   navigatorLanguage: 'en',
 //   t: Translator('en'),
 //   documentVisibilityState: 'visible',
-//   now: Posix.now(),
+//   now: UnixMs.now(),
 //   profiles: {},
 //   screenSize: 'mobile',
 // }
