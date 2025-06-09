@@ -126,7 +126,22 @@ const user_profile = new Table(
 )
 export type UserProfile = AppSchema['user_profile']
 
+const space = new Table(
+  {
+    id: column.text,
+    created_at_epoch: column.integer,
+    updated_at_epoch: column.integer,
+    deleted_at_epoch: column.integer,
+    model: column.text,
+  },
+  {
+    localOnly: true,
+  },
+)
+export type Space = AppSchema['space']
+
 export const AppSchema = new Schema({
+  space,
   game_flow_puzzle,
   game_flow_pack,
   game_flow_pack_item,

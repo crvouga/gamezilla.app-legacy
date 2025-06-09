@@ -21,7 +21,7 @@ function explain(posixTime: unknown): string[] {
   return errors
 }
 
-function is(posixTime: unknown): posixTime is Posix {
+const is = (posixTime: unknown): posixTime is Posix => {
   const errors = explain(posixTime)
   if (errors.length > 0) {
     return false

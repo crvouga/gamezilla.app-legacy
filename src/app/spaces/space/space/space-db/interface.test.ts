@@ -65,7 +65,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe.todo('SpaceDb', () => {
+describe('SpaceDb', () => {
   it('should work', async () => {
     for (const f of await Fixtures()) {
       const spaceId = Space.toSpaceStarted(f.space)?.spaceId ?? SpaceId.generate()

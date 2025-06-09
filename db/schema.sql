@@ -176,6 +176,19 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: space; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.space (
+    id text NOT NULL,
+    created_at_unix_ms bigint NOT NULL,
+    updated_at_unix_ms bigint NOT NULL,
+    deleted_at_unix_ms bigint,
+    model jsonb NOT NULL
+);
+
+
+--
 -- Name: user_account; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -318,6 +331,14 @@ ALTER TABLE ONLY public.key_value
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: space space_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.space
+    ADD CONSTRAINT space_pkey PRIMARY KEY (id);
 
 
 --
@@ -484,4 +505,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250427212455'),
     ('20250427220854'),
     ('20250428003412'),
-    ('20250429010045');
+    ('20250429010045'),
+    ('20250609225401');
