@@ -9,7 +9,7 @@ export type Config = {
 }
 
 const query = `
-CREATE TABLE IF NOT EXISTS game_flow_solutions (
+CREATE TABLE IF NOT EXISTS game_numberlink_solutions (
     id TEXT NOT NULL PRIMARY KEY,
     solutions TEXT NOT NULL,
     created_at_unix_ms INTEGER NOT NULL,

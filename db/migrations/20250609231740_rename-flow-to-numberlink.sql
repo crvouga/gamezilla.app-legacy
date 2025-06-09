@@ -1,0 +1,25 @@
+-- migrate:up
+ALTER TABLE public.game_flow_pack RENAME TO game_numberlink_pack;
+ALTER TABLE public.game_flow_pack_item RENAME TO game_numberlink_pack_item;
+ALTER TABLE public.game_flow_puzzle RENAME TO game_numberlink_puzzle;
+ALTER TABLE public.game_flow_solutions RENAME TO game_numberlink_solutions;
+
+ALTER INDEX idx_game_flow_pack_item_pack_id_not_deleted RENAME TO idx_game_numberlink_pack_item_pack_id_not_deleted;
+
+ALTER TABLE public.game_numberlink_pack RENAME CONSTRAINT game_flow_pack_pkey TO game_numberlink_pack_pkey;
+ALTER TABLE public.game_numberlink_pack_item RENAME CONSTRAINT game_flow_pack_item_pkey TO game_numberlink_pack_item_pkey;
+ALTER TABLE public.game_numberlink_puzzle RENAME CONSTRAINT game_flow_puzzle_pkey TO game_numberlink_puzzle_pkey;
+ALTER TABLE public.game_numberlink_solutions RENAME CONSTRAINT game_flow_solutions_pkey TO game_numberlink_solutions_pkey;
+
+-- migrate:down
+ALTER TABLE public.game_numberlink_pack RENAME TO game_flow_pack;
+ALTER TABLE public.game_numberlink_pack_item RENAME TO game_flow_pack_item;
+ALTER TABLE public.game_numberlink_puzzle RENAME TO game_flow_puzzle;
+ALTER TABLE public.game_numberlink_solutions RENAME TO game_flow_solutions;
+
+ALTER INDEX idx_game_numberlink_pack_item_pack_id_not_deleted RENAME TO idx_game_flow_pack_item_pack_id_not_deleted;
+
+ALTER TABLE public.game_flow_pack RENAME CONSTRAINT game_numberlink_pack_pkey TO game_flow_pack_pkey;
+ALTER TABLE public.game_flow_pack_item RENAME CONSTRAINT game_numberlink_pack_item_pkey TO game_flow_pack_item_pkey;
+ALTER TABLE public.game_flow_puzzle RENAME CONSTRAINT game_numberlink_puzzle_pkey TO game_flow_puzzle_pkey;
+ALTER TABLE public.game_flow_solutions RENAME CONSTRAINT game_numberlink_solutions_pkey TO game_flow_solutions_pkey;

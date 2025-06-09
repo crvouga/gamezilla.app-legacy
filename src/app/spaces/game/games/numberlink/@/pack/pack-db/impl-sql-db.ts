@@ -77,12 +77,12 @@ const rowToPack = (row: Row, items: RowItem[]): Pack | null => {
 const toSqlWhere = (where: WhereClause) => {
   const clauses: string[] = []
 
-  clauses.push('game_flow_pack.deleted_at_unix_ms IS NULL')
+  clauses.push('game_numberlink_pack.deleted_at_unix_ms IS NULL')
 
   const vars: Record<string, string | number | undefined | null> = {}
 
   if (where.createdBy?.equals) {
-    clauses.push('game_flow_pack.created_by_user_id = :created_by_user_id')
+    clauses.push('game_numberlink_pack.created_by_user_id = :created_by_user_id')
     vars['created_by_user_id'] = where.createdBy?.equals
   }
 
@@ -95,10 +95,10 @@ const toSqlOrder = (order: OrderClause) => {
   const clauses: string[] = []
   const vars: Record<string, any> = {}
   if (order.createdAt) {
-    clauses.push(`game_flow_pack.created_at_unix_ms ${order.createdAt === 'asc' ? 'ASC' : 'DESC'}`)
+    clauses.push(`game_numberlink_pack.created_at_unix_ms ${order.createdAt === 'asc' ? 'ASC' : 'DESC'}`)
   }
   if (order.lastUpdatedAt) {
-    clauses.push(`game_flow_pack.last_updated_at_unix_ms ${order.lastUpdatedAt === 'asc' ? 'ASC' : 'DESC'}`)
+    clauses.push(`game_numberlink_pack.last_updated_at_unix_ms ${order.lastUpdatedAt === 'asc' ? 'ASC' : 'DESC'}`)
   }
 
   const str = clauses.length > 0 ? `ORDER BY ${clauses.join(',\n')}` : ''
@@ -129,7 +129,7 @@ export const PackDb = (config: Config): IPackDb => {
     async get(id) {
       const queried = await config.sqlDb.query({
         schema: Row,
-        sql: 'SELECT * FROM game_flow_pack WHERE id = :id AND deleted_at_unix_ms IS NULL',
+        sql: 'SELECT * FROM game_numberlink_pack WHERE id = :id AND deleted_at_unix_ms IS NULL',
         vars: {
           id: id,
         },
@@ -137,7 +137,7 @@ export const PackDb = (config: Config): IPackDb => {
 
       const queriedItems = await config.sqlDb.query({
         schema: RowItem,
-        sql: 'SELECT * FROM game_flow_pack_item WHERE pack_id = :pack_id AND deleted_at_unix_ms IS NULL',
+        sql: 'SELECT * FROM game_numberlink_pack_item WHERE pack_id = :pack_id AND deleted_at_unix_ms IS NULL',
         vars: {
           pack_id: id,
         },
@@ -151,7 +151,7 @@ export const PackDb = (config: Config): IPackDb => {
     async count(input) {
       const where = toSqlWhere(input.where)
       const vars = where.vars
-      const sql = `SELECT COUNT(*) AS count FROM game_flow_pack ${where.str}`
+      const sql = `SELECT COUNT(*) AS count FROM game_numberlink_pack ${where.str}`
       const queried = await config.sqlDb.query({
         schema: s.obj({ count: s.maybe(s.or(s.num(), s.str())) }),
         sql,
@@ -172,15 +172,15 @@ export const PackDb = (config: Config): IPackDb => {
 
       const sql = `
         SELECT
-          game_flow_pack.*,
-          ${config.sqlDb.aggregate.StringConcat('game_flow_pack_item.puzzle_id', ',')} AS puzzle_ids_csv
+          game_numberlink_pack.*,
+          ${config.sqlDb.aggregate.StringConcat('game_numberlink_pack_item.puzzle_id', ',')} AS puzzle_ids_csv
         FROM
-          game_flow_pack
+          game_numberlink_pack
         LEFT JOIN
-          game_flow_pack_item ON game_flow_pack_item.pack_id = game_flow_pack.id
+          game_numberlink_pack_item ON game_numberlink_pack_item.pack_id = game_numberlink_pack.id
         ${sqlWhere.str}
         GROUP BY
-          game_flow_pack.id
+          game_numberlink_pack.id
         ${sqlOrder.str}
         ${sqlPagination.str};
 			`
@@ -211,7 +211,7 @@ export const PackDb = (config: Config): IPackDb => {
       }
 
       const str = `
-				SELECT * FROM game_flow_pack
+				SELECT * FROM game_numberlink_pack
 				${sqlWhere.str}
 				${sqlOrder.str}
 				${sqlPagination.str}
@@ -229,9 +229,9 @@ export const PackDb = (config: Config): IPackDb => {
         SELECT
           *
         FROM
-          game_flow_pack_item
+          game_numberlink_pack_item
         JOIN
-          game_flow_pack ON game_flow_pack_item.pack_id = game_flow_pack.id
+          game_numberlink_pack ON game_numberlink_pack_item.pack_id = game_numberlink_pack.id
         ${sqlWhere.str}
         ${sqlOrder.str}
         ${sqlPagination.str}
@@ -263,7 +263,7 @@ export const PackDb = (config: Config): IPackDb => {
 
       const deleted = await config.sqlDb.query({
         schema: s.unknown,
-        sql: 'DELETE FROM game_flow_pack_item WHERE pack_id = :pack_id',
+        sql: 'DELETE FROM game_numberlink_pack_item WHERE pack_id = :pack_id',
         vars: {
           pack_id: input.id,
         },
@@ -287,7 +287,7 @@ export const PackDb = (config: Config): IPackDb => {
         })
 
         const sqlItems = `
-        INSERT INTO game_flow_pack_item (
+        INSERT INTO game_numberlink_pack_item (
           id,
           pack_id,
           puzzle_id,
@@ -314,7 +314,7 @@ export const PackDb = (config: Config): IPackDb => {
           schema: s.unknown,
           sql: `
           UPDATE
-            game_flow_pack
+            game_numberlink_pack
           SET
             name = :name,
             last_updated_at_unix_ms = :last_updated_at_unix_ms,
@@ -335,7 +335,7 @@ export const PackDb = (config: Config): IPackDb => {
       const queried = await config.sqlDb.query({
         schema: s.unknown,
         sql: `
-				INSERT INTO game_flow_pack (
+				INSERT INTO game_numberlink_pack (
 					id,
 					name,
 					created_at_unix_ms,
@@ -373,7 +373,7 @@ export const PackDb = (config: Config): IPackDb => {
       const queried = await config.sqlDb.query({
         schema: s.unknown,
         sql: `
-          UPDATE game_flow_pack 
+          UPDATE game_numberlink_pack 
           SET 
             deleted_at_unix_ms = :deleted_at_unix_ms,
             deleted_by_user_id = :deleted_by_user_id

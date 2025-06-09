@@ -10,7 +10,7 @@ export type Config = {
 
 const queries: string[] = [
   `
-  CREATE TABLE IF NOT EXISTS game_flow_pack (
+  CREATE TABLE IF NOT EXISTS game_numberlink_pack (
       id TEXT NOT NULL,
       name TEXT NOT NULL,
       created_at_unix_ms INT NOT NULL,
@@ -22,7 +22,7 @@ const queries: string[] = [
   );
   `,
   `
-  CREATE TABLE game_flow_pack_item (
+  CREATE TABLE game_numberlink_pack_item (
       id TEXT NOT NULL,
       pack_id TEXT NOT NULL,
       puzzle_id TEXT NOT NULL,

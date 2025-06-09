@@ -42,10 +42,10 @@ sync_rules:
     bucket_definitions:
       global:
         data:
-          - SELECT * FROM game_flow_puzzle
-          - SELECT * FROM game_flow_pack
-          - SELECT * FROM game_flow_pack_item
-          - SELECT * FROM game_flow_solutions
+          - SELECT * FROM game_numberlink_puzzle
+          - SELECT * FROM game_numberlink_pack
+          - SELECT * FROM game_numberlink_pack_item
+          - SELECT * FROM game_numberlink_solutions
           - SELECT * FROM user_session
           - SELECT * FROM user_account
           - SELECT * FROM user_guest_session_mapping

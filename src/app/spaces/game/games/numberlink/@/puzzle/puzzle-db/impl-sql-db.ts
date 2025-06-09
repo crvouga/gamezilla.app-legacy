@@ -33,7 +33,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
           last_updated_at_unix_ms,
           last_updated_by_user_id
         FROM
-          game_flow_puzzle
+          game_numberlink_puzzle
         WHERE
           id = :id
           AND deleted_at_unix_ms IS NULL
@@ -72,7 +72,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         const updateResult = await config.sqlDb.query({
           schema: s.num(),
           sql: `
-          UPDATE game_flow_puzzle
+          UPDATE game_numberlink_puzzle
           SET
             name = :name,
             flow = :flow,
@@ -102,7 +102,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
       const insertResult = await config.sqlDb.query({
         schema: s.unknown,
         sql: `
-          INSERT INTO game_flow_puzzle (
+          INSERT INTO game_numberlink_puzzle (
             id,
             name,
             flow,
@@ -147,7 +147,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         schema: s.num(),
         sql: `
         UPDATE
-          game_flow_puzzle
+          game_numberlink_puzzle
         SET
           deleted_at_unix_ms = :deletedAt,
           deleted_by_user_id = :deletedBy
@@ -174,7 +174,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         SELECT
           COUNT(id) AS count
         FROM
-          game_flow_puzzle
+          game_numberlink_puzzle
         ${where.str}
         `,
         vars: where.variables,
@@ -203,7 +203,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
         SELECT
           COUNT(id) AS count
         FROM
-          game_flow_puzzle
+          game_numberlink_puzzle
         ${sql.where.str}
         `,
         vars: sql.variables,
@@ -268,7 +268,7 @@ const toQuerySql = (input: { where: WhereClause; order?: OrderClause; pagination
       last_updated_at_unix_ms,
       last_updated_by_user_id
     FROM
-      game_flow_puzzle
+      game_numberlink_puzzle
     ${where.str}
     ${order.str}
     ${pagination.str}

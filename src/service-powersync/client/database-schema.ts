@@ -1,6 +1,6 @@
 import { column, Schema, Table } from '@powersync/web'
 
-const game_flow_puzzle = new Table(
+const game_numberlink_puzzle = new Table(
   {
     id: column.text,
     name: column.text,
@@ -15,18 +15,22 @@ const game_flow_puzzle = new Table(
   },
   {
     indexes: {
-      idx_game_flow_puzzle_created_by_last_updated: [
+      idx_game_numberlink_puzzle_created_by_last_updated: [
         'created_by_user_id',
         'deleted_at_unix_ms',
         'last_updated_at_unix_ms',
       ],
-      idx_game_flow_puzzle_created_by_created_at: ['created_by_user_id', 'deleted_at_unix_ms', 'created_at_unix_ms'],
+      idx_game_numberlink_puzzle_created_by_created_at: [
+        'created_by_user_id',
+        'deleted_at_unix_ms',
+        'created_at_unix_ms',
+      ],
     },
   },
 )
-export type GameFlowPuzzle = AppSchema['game_flow_puzzle']
+export type GameFlowPuzzle = AppSchema['game_numberlink_puzzle']
 
-const game_flow_pack = new Table(
+const game_numberlink_pack = new Table(
   {
     id: column.text,
     name: column.text,
@@ -39,18 +43,22 @@ const game_flow_pack = new Table(
   },
   {
     indexes: {
-      idx_game_flow_pack_created_by_last_updated: [
+      idx_game_numberlink_pack_created_by_last_updated: [
         'created_by_user_id',
         'deleted_at_unix_ms',
         'last_updated_at_unix_ms',
       ],
-      idx_game_flow_pack_created_by_created_at: ['created_by_user_id', 'deleted_at_unix_ms', 'created_at_unix_ms'],
+      idx_game_numberlink_pack_created_by_created_at: [
+        'created_by_user_id',
+        'deleted_at_unix_ms',
+        'created_at_unix_ms',
+      ],
     },
   },
 )
-export type GameFlowPack = AppSchema['game_flow_pack']
+export type GameFlowPack = AppSchema['game_numberlink_pack']
 
-const game_flow_pack_item = new Table(
+const game_numberlink_pack_item = new Table(
   {
     id: column.text,
     pack_id: column.text,
@@ -63,13 +71,13 @@ const game_flow_pack_item = new Table(
   },
   {
     indexes: {
-      idx_game_flow_pack_item_pack_id: ['pack_id'],
+      idx_game_numberlink_pack_item_pack_id: ['pack_id'],
     },
   },
 )
-export type GameFlowPackItem = AppSchema['game_flow_pack_item']
+export type GameFlowPackItem = AppSchema['game_numberlink_pack_item']
 
-const game_flow_solutions = new Table(
+const game_numberlink_solutions = new Table(
   {
     id: column.text,
     solutions: column.text,
@@ -78,7 +86,7 @@ const game_flow_solutions = new Table(
   },
   {},
 )
-export type GameFlowSolutions = AppSchema['game_flow_solutions']
+export type GameFlowSolutions = AppSchema['game_numberlink_solutions']
 
 const user_account = new Table(
   {
@@ -150,10 +158,10 @@ export type Space = AppSchema['space']
 
 export const AppSchema = new Schema({
   space,
-  game_flow_puzzle,
-  game_flow_pack,
-  game_flow_pack_item,
-  game_flow_solutions,
+  game_numberlink_puzzle,
+  game_numberlink_pack,
+  game_numberlink_pack_item,
+  game_numberlink_solutions,
   user_account,
   user_session,
   user_guest_session_mapping,

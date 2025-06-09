@@ -95,10 +95,10 @@ CREATE TABLE public.game_chess_puzzle_profile (
 
 
 --
--- Name: game_flow_pack; Type: TABLE; Schema: public; Owner: -
+-- Name: game_numberlink_pack; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.game_flow_pack (
+CREATE TABLE public.game_numberlink_pack (
     id text NOT NULL,
     name text NOT NULL,
     created_at_unix_ms bigint NOT NULL,
@@ -111,10 +111,10 @@ CREATE TABLE public.game_flow_pack (
 
 
 --
--- Name: game_flow_pack_item; Type: TABLE; Schema: public; Owner: -
+-- Name: game_numberlink_pack_item; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.game_flow_pack_item (
+CREATE TABLE public.game_numberlink_pack_item (
     id text NOT NULL,
     pack_id text NOT NULL,
     puzzle_id text NOT NULL,
@@ -127,10 +127,10 @@ CREATE TABLE public.game_flow_pack_item (
 
 
 --
--- Name: game_flow_puzzle; Type: TABLE; Schema: public; Owner: -
+-- Name: game_numberlink_puzzle; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.game_flow_puzzle (
+CREATE TABLE public.game_numberlink_puzzle (
     id text NOT NULL,
     name text NOT NULL,
     flow json NOT NULL,
@@ -145,10 +145,10 @@ CREATE TABLE public.game_flow_puzzle (
 
 
 --
--- Name: game_flow_solutions; Type: TABLE; Schema: public; Owner: -
+-- Name: game_numberlink_solutions; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.game_flow_solutions (
+CREATE TABLE public.game_numberlink_solutions (
     id text NOT NULL,
     solutions jsonb DEFAULT '[]'::jsonb NOT NULL,
     created_at_unix_ms bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
@@ -286,35 +286,35 @@ ALTER TABLE ONLY public.game_chess_puzzle_profile
 
 
 --
--- Name: game_flow_pack_item game_flow_pack_item_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: game_numberlink_pack_item game_numberlink_pack_item_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.game_flow_pack_item
-    ADD CONSTRAINT game_flow_pack_item_pkey PRIMARY KEY (id);
-
-
---
--- Name: game_flow_pack game_flow_pack_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.game_flow_pack
-    ADD CONSTRAINT game_flow_pack_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.game_numberlink_pack_item
+    ADD CONSTRAINT game_numberlink_pack_item_pkey PRIMARY KEY (id);
 
 
 --
--- Name: game_flow_puzzle game_flow_puzzle_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: game_numberlink_pack game_numberlink_pack_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.game_flow_puzzle
-    ADD CONSTRAINT game_flow_puzzle_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.game_numberlink_pack
+    ADD CONSTRAINT game_numberlink_pack_pkey PRIMARY KEY (id);
 
 
 --
--- Name: game_flow_solutions game_flow_solutions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: game_numberlink_puzzle game_numberlink_puzzle_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.game_flow_solutions
-    ADD CONSTRAINT game_flow_solutions_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.game_numberlink_puzzle
+    ADD CONSTRAINT game_numberlink_puzzle_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: game_numberlink_solutions game_numberlink_solutions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.game_numberlink_solutions
+    ADD CONSTRAINT game_numberlink_solutions_pkey PRIMARY KEY (id);
 
 
 --
@@ -417,10 +417,10 @@ CREATE INDEX idx_game_chess_puzzle_rating ON public.game_chess_puzzle USING btre
 
 
 --
--- Name: idx_game_flow_pack_item_pack_id_not_deleted; Type: INDEX; Schema: public; Owner: -
+-- Name: idx_game_numberlink_pack_item_pack_id_not_deleted; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_game_flow_pack_item_pack_id_not_deleted ON public.game_flow_pack_item USING btree (pack_id) WHERE (deleted_at_unix_ms IS NULL);
+CREATE INDEX idx_game_numberlink_pack_item_pack_id_not_deleted ON public.game_numberlink_pack_item USING btree (pack_id) WHERE (deleted_at_unix_ms IS NULL);
 
 
 --
@@ -507,4 +507,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250428003412'),
     ('20250429010045'),
     ('20250609225401'),
-    ('20250609230850');
+    ('20250609230850'),
+    ('20250609231740');

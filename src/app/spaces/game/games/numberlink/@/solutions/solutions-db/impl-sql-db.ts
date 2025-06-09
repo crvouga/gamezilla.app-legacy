@@ -41,7 +41,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
             created_at_unix_ms,
             last_updated_at_unix_ms
           FROM
-            game_flow_solutions
+            game_numberlink_solutions
           WHERE
             id = :id
         `,
@@ -76,7 +76,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
           const updateResult = await config.sqlDb.query({
             schema: s.num(),
             sql: `
-            UPDATE game_flow_solutions
+            UPDATE game_numberlink_solutions
             SET
               solutions = :solutions,
               last_updated_at_unix_ms = :lastUpdatedAt
@@ -98,7 +98,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
           const insertResult = await config.sqlDb.query({
             schema: s.unknown,
             sql: `
-            INSERT INTO game_flow_solutions (
+            INSERT INTO game_numberlink_solutions (
               id,
               solutions,
               created_at_unix_ms,
@@ -131,7 +131,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
     async zap(hash) {
       const result = await config.sqlDb.query({
         schema: s.unknown,
-        sql: `DELETE FROM game_flow_solutions WHERE id = :id`,
+        sql: `DELETE FROM game_numberlink_solutions WHERE id = :id`,
         vars: { id: hash },
       })
 
@@ -151,7 +151,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
               created_at_unix_ms,
               last_updated_at_unix_ms
             FROM
-              game_flow_solutions
+              game_numberlink_solutions
             WHERE
               id = :id
           `,
