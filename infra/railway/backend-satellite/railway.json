@@ -5,6 +5,6 @@
     "dockerfilePath": "./infra/railway/backend-satellite/Dockerfile"
   },
   "deploy": {
-    "sleepApplication": false
+    "sleepApplication": true
   }
 }
