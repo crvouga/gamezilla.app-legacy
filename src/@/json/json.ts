@@ -1,4 +1,4 @@
-import { Result } from '../result'
+import { Err, Ok, Result } from '../result'
 
 export type Json = boolean | number | string | null | JsonArray | JsonRecord
 
@@ -8,29 +8,21 @@ export interface JsonRecord {
   readonly [key: string]: Json
 }
 
-export type Problem = { message: string }
-
-const parse = (s: string): Result<Problem, Json> => {
+const parse = (s: string): Result<string, Json> => {
   try {
     const parsed: Json = JSON.parse(s)
-
-    return Result.Ok(parsed)
+    return Ok(parsed)
   } catch (error) {
-    // todo make better
-    const message = String(error)
-    return Result.Err({ message })
+    return Err(String(error))
   }
 }
 
-const stringify = (json: Json): Result<Problem, string> => {
+const stringify = (json: unknown): Result<string, string> => {
   try {
     const stringified: string = JSON.stringify(json)
-
-    return Result.Ok(stringified)
+    return Ok(stringified)
   } catch (error) {
-    // todo make better
-    const message = String(error)
-    return Result.Err({ message })
+    return Err(String(error))
   }
 }
 

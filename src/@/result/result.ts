@@ -128,15 +128,15 @@ export const unwrapOr = <T>(result: ResultInternal<unknown, T>, fallback: T) => 
  * Combines an array of results into a single result.
  * If any of the results are an error, the first error is returned.
  * @example
- * const results = [ok(1), ok(2), ok(3)];
- * const result = combine(results);
- * // result = ok([1, 2, 3]);
+ * const results = [Ok(1), Ok(2), Ok(3)];
+ * const result = combineUntilError(results);
+ * // result = Ok([1, 2, 3]);
  * @example
- * const results = [ok(1), err("error"), ok(3)];
- * const result = combine(results);
- * // result = err("error");
+ * const results = [Ok(1), Err("error"), Ok(3)];
+ * const result = combineUntilError(results);
+ * // result = Err("error");
  */
-const combine = <E, A>(results: ResultInternal<E, A>[]): ResultInternal<E, A[]> => {
+const combineUntilError = <E, A>(results: ResultInternal<E, A>[]): ResultInternal<E, A[]> => {
   const values: A[] = []
   for (const result of results) {
     if (isErr(result)) {
@@ -180,7 +180,7 @@ export const ResultInternal = {
   mapErr,
   fromNullable,
   unwrapOr,
-  combine,
+  combine: combineUntilError,
   unwrap,
 }
 

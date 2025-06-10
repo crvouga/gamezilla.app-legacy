@@ -13,10 +13,7 @@ import { Config, SpaceDb } from './impl'
 
 const Fixture = async (config: Config) => {
   const _dangerouslyOverrideModel = Sub.create<Space.Model>()
-  const spacesDb = await SpaceDb({
-    ...config,
-    _dangerouslyOverrideModel,
-  })
+  const spacesDb = await SpaceDb({ ...config, _dangerouslyOverrideModel })
   const spaceId = SpaceId.generate()
   const space = Space.random({ spaceId: spaceId })
 
@@ -48,6 +45,11 @@ const Fixtures = async () => {
 
   if (f.t === 'integration') {
     configs.push({
+      t: 'sql-db',
+      sqlDb: f.sqlDbPostgres,
+    })
+
+    configs.push({
       t: 'key-value-db',
       keyValueDb: f.keyValueDbRedis,
       logger: f.logger,
@@ -65,7 +67,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe.todo('SpaceDb', () => {
+describe('SpaceDb', () => {
   it('should work', async () => {
     for (const f of await Fixtures()) {
       const spaceId = Space.toSpaceStarted(f.space)?.spaceId ?? SpaceId.generate()
@@ -125,7 +127,7 @@ describe.todo('SpaceDb', () => {
     }
   })
 
-  test("multiple spaces don't collide", async () => {
+  test.skip("multiple spaces don't collide", async () => {
     for (const f1 of await Fixtures()) {
       for (const f2 of await Fixtures()) {
         unwrap(await f1.spacesDb.upsert(f1.space))
@@ -138,12 +140,12 @@ describe.todo('SpaceDb', () => {
     }
   })
 
-  test('error when db has invalid data', async () => {
+  test.skip('error when db has invalid data', async () => {
     for (const f of await Fixtures()) {
       unwrap(await f.spacesDb.upsert(f.space))
       const before = await f.spacesDb.get([f.spaceId])
       const invalid = toInvalidSpaceModel(f.space)
-      await f._dangerouslyOverrideModel.pub(invalid)
+      await f._dangerouslyOverrideModel?.pub(invalid)
       await sleep(TimeSpan.milliseconds(100))
       const after = await f.spacesDb.get([f.spaceId])
       expect(unwrap(before)).toEqual([f.space])
