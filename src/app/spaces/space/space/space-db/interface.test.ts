@@ -10,15 +10,18 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '..'
 import { SpaceProjection } from '../../space-projection'
 import { Config, SpaceDb } from './impl'
+import { SpaceDbInputMsg, SpaceDbOutputMsg } from './interface'
 
 const Fixture = async (config: Config) => {
-  const _dangerouslyOverrideModel = Sub.create<Space.Model>()
-  const spacesDb = await SpaceDb({ ...config, _dangerouslyOverrideModel })
+  const input = Sub.create<SpaceDbInputMsg>()
+  const output = Sub.create<SpaceDbOutputMsg>()
+  const spacesDb = await SpaceDb({ ...config, input, output })
   const spaceId = SpaceId.generate()
   const space = Space.random({ spaceId: spaceId })
 
   return {
-    _dangerouslyOverrideModel,
+    input,
+    output,
     spacesDb,
     spaceId,
     space,
@@ -127,25 +130,27 @@ describe('SpaceDb', () => {
     }
   })
 
-  test.skip("multiple spaces don't collide", async () => {
+  test("multiple spaces don't collide", async () => {
     for (const f1 of await Fixtures()) {
       for (const f2 of await Fixtures()) {
         unwrap(await f1.spacesDb.upsert(f1.space))
         unwrap(await f2.spacesDb.upsert(f2.space))
         const after1 = unwrap(await f1.spacesDb.get([f1.spaceId]))
         const after2 = unwrap(await f2.spacesDb.get([f2.spaceId]))
-        expect(after1).toMatchObject(f1.space)
-        expect(after2).toMatchObject(f2.space)
+        expect(after1).toEqual([f1.space])
+        expect(after2).toEqual([f2.space])
       }
     }
   })
 
-  test.skip('error when db has invalid data', async () => {
+  test('error when db has invalid data', async () => {
     for (const f of await Fixtures()) {
       unwrap(await f.spacesDb.upsert(f.space))
       const before = await f.spacesDb.get([f.spaceId])
       const invalid = toInvalidSpaceModel(f.space)
-      await f._dangerouslyOverrideModel?.pub(invalid)
+      const p = Sub.take(Sub.where(f.output, (m): m is SpaceDbOutputMsg => m.t === 'model-dangerously-overridden'))
+      await f.input.pub({ t: 'dangerously-override-model', model: invalid })
+      await p
       await sleep(TimeSpan.milliseconds(100))
       const after = await f.spacesDb.get([f.spaceId])
       expect(unwrap(before)).toEqual([f.space])

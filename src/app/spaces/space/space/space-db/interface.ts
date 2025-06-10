@@ -1,5 +1,5 @@
 import { Result } from '~/@/result'
-import { Sub } from '~/@/sub'
+import { PubSub, Sub } from '~/@/sub'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '..'
 
@@ -9,9 +9,6 @@ export type ISpaceDb = {
   upsert: (space: Space.Model) => Promise<Result<string, null>>
 }
 
-export type SpaceDbConfig = {
-  /**
-   * This is used for testing purposes only. Testing invalid data
-   */
-  _dangerouslyOverrideModel?: Sub<Space.Model>
-}
+export type SpaceDbInputMsg = { t: 'dangerously-override-model'; model: Space.Model }
+export type SpaceDbOutputMsg = { t: 'model-dangerously-overridden'; model: Space.Model }
+export type SpaceDbConfig = { input?: Sub<SpaceDbInputMsg>; output?: PubSub<SpaceDbOutputMsg> }

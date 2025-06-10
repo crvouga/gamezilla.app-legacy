@@ -15,9 +15,9 @@ export type Config = SpaceDbConfig & {
 
 export const Row = s.obj({
   id: SpaceId,
-  created_at_unix_ms: UnixMs,
-  updated_at_unix_ms: UnixMs,
-  deleted_at_unix_ms: s.maybe(UnixMs),
+  created_at_unix_ms: s.or(UnixMs, s.str()),
+  updated_at_unix_ms: s.or(UnixMs, s.str()),
+  deleted_at_unix_ms: s.maybe(s.or(UnixMs, s.str())),
   model: s.or(s.str(), s.json),
 })
 
@@ -85,6 +85,31 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
     }),
   )
 
+  config.input?.sub(async (msg) => {
+    switch (msg.t) {
+      case 'dangerously-override-model': {
+        const { model } = msg
+        const spaceId = Space.toSpaceId(model)
+        if (!spaceId) return
+        const stringified = Json.stringify(model)
+        if (isErr(stringified)) return
+        const result = await config.sqlDb.query({
+          schema: s.unknown,
+          sql: QUERY_UPSERT,
+          vars: {
+            id: spaceId,
+            created_at_unix_ms: UnixMs.now(),
+            updated_at_unix_ms: UnixMs.now(),
+            model: stringified.value,
+          },
+        })
+        if (isErr(result)) return
+        config.output?.pub({ t: 'model-dangerously-overridden', model })
+        return
+      }
+    }
+  })
+
   return {
     async get(input) {
       const result = await config.sqlDb.query({
@@ -95,9 +120,13 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
 
       if (isErr(result)) return result
 
-      const parsed = Result.combine(result.value.map((row) => rowToSpace(row)))
+      const parsed = result.value.flatMap((row) => {
+        const parsed = rowToSpace(row)
+        if (isErr(parsed)) return []
+        return [parsed.value]
+      })
 
-      return parsed
+      return Ok(parsed)
     },
     async upsert(space) {
       const stringified = Json.stringify(space)

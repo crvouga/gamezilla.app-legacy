@@ -21,15 +21,25 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
     schema: Space.Model,
   })
 
-  config._dangerouslyOverrideModel?.sub(async (model) => {
-    const spaceId = Space.toSpaceId(model)
-    if (!spaceId) {
-      config.logger.error('Failed to dangerously set model. Failed to derive spaceId from model')
-      return
-    }
-    config.logger.debug(`Dangerously setting model for spaceId=${spaceId}`)
+  config.input?.sub(async (msg) => {
+    switch (msg.t) {
+      case 'dangerously-override-model': {
+        const { model } = msg
 
-    await Promise.all([spacesBySpaceId.zap(spaceId), upsert(model)])
+        const spaceId = Space.toSpaceId(model)
+
+        if (!spaceId) {
+          config.logger.error('Failed to dangerously set model. Failed to derive spaceId from model')
+          return
+        }
+
+        config.logger.debug(`Dangerously setting model for spaceId=${spaceId}`)
+
+        await Promise.all([spacesBySpaceId.zap(spaceId), upsert(model)])
+        config.output?.pub({ t: 'model-dangerously-overridden', model })
+        return
+      }
+    }
   })
 
   const upsert: ISpaceDb['upsert'] = async (space) => {
@@ -46,7 +56,7 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
 
   const get: ISpaceDb['get'] = async (spaceIds) => {
     const got = await spacesBySpaceId.getMany(spaceIds)
-    if (isErr(got)) return Err('Failed to get space by space id')
+    if (isErr(got)) return Ok([])
     return Ok(got.value)
   }
 
