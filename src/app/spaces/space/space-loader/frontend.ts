@@ -9,24 +9,6 @@ import { ISpaceDb } from '../space/space-db/interface'
 import { Spaces } from '../spaces'
 import { MsgFrontend } from './types'
 
-const persistSpace = async (
-  spaceDb: ISpaceDb,
-  spaceId: SpaceId,
-  space: Space.Model,
-  dispatch: (m: MsgFrontend) => void,
-) => {
-  const spaceNew = EventSourced.startFromLatestSnapshot(space)
-  const upserted = await spaceDb.upsert(spaceNew)
-  dispatch({ t: 'space-loader.upserted', spaceId, upserted })
-}
-
-const persistSpaceThrottled = throttleByKey({
-  fn: persistSpace,
-  keyFn: (_spaceDb, spaceId, _space, _dispatch) => spaceId,
-  throttle: TimeSpan.seconds(1),
-  behavior: 'use-latest',
-})
-
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-ended-space':
@@ -71,6 +53,24 @@ const update: SpaceFrontendModule['update'] = (input) => {
 
   return { model: input.model }
 }
+
+const persistSpace = async (
+  spaceDb: ISpaceDb,
+  spaceId: SpaceId,
+  space: Space.Model,
+  dispatch: (m: MsgFrontend) => void,
+) => {
+  const spaceNew = EventSourced.startFromLatestSnapshot(space)
+  const upserted = await spaceDb.upsert(spaceNew)
+  dispatch({ t: 'space-loader.upserted', spaceId, upserted })
+}
+
+const persistSpaceThrottled = throttleByKey({
+  fn: persistSpace,
+  keyFn: (_spaceDb, spaceId, _space, _dispatch) => spaceId,
+  throttle: TimeSpan.seconds(1),
+  behavior: 'use-latest',
+})
 
 const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
   const currentUserId = input.ctx.currentUser?.userId
