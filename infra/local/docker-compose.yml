@@ -113,17 +113,6 @@ services:
       timeout: 5s
       retries: 5
 
-  electric:
-    container_name: electric
-    image: electricsql/electric
-    restart: always
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-    ports:
-      - '3000:3000'
-    depends_on:
-      - postgres
-
   redis:
     container_name: redis
     image: redis:latest
