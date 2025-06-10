@@ -98,9 +98,9 @@ const update: FrontendModule['update'] = (input) => {
 const TEST_ID_HINT_CALCULATOR_ACTION = 'hint-calculator'
 
 const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
-  const { flow } = input.ctx
-  if (!flow) return []
-  const hash = SolutionHash.init(flow)
+  const { numberlink } = input.ctx
+  if (!numberlink) return []
+  const hash = SolutionHash.init(numberlink)
   const hasSolution = Solutions.selectOne(input.ctx.solutions, hash) !== null
   if (hasSolution) return []
   return [
@@ -125,7 +125,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
           position='bottom'
           confirmText={input.ctx.t('app.calculate')}
           confirmLoading={isLoading(input.model, hash)}
-          onConfirm={() => input.dispatch({ t: 'clicked-find-solutions', numberlink: flow })}
+          onConfirm={() => input.dispatch({ t: 'clicked-find-solutions', numberlink })}
         />
       ),
     },

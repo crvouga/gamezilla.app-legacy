@@ -38,7 +38,7 @@ export type FrontendModule = AppFrontendModule<{
   Model: ModelFrontend
   Msg: MsgFrontend
   Ctx: FlowFrontendCtxBase & {
-    flow?: NumberlinkVariant.Model | null
+    numberlink?: NumberlinkVariant.Model | null
   }
   ViewSlot: {}
   ViewEmit: {}

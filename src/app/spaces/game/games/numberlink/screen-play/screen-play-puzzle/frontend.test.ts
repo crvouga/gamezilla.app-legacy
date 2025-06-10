@@ -155,7 +155,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
     expect(f.render(f.init).getByRole('button', f.ctx.t('game.hint'))).toBeTruthy()
   })
 
-  test.todo('hint button click', async () => {
+  test('hint button click', async () => {
     const f = await Fixture()
     const r = f.render(f.init)
     const btn = r.getByRole('button', f.ctx.t('game.hint'))[0]
@@ -216,9 +216,7 @@ describe('ScreenPlayPuzzleFrontend', () => {
         {
           msgSpace: withEventMeta({
             t: 'user-clicked-next-puzzle',
-            nextPuzzle: {
-              t: 'not-found',
-            },
+            nextPuzzle: { t: 'not-found' },
             nextPuzzleIndex: f.nextPuzzleIndex,
             userId: f.hostId,
           }),
