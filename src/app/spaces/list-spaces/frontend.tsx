@@ -1,6 +1,5 @@
 import { unwrapOr } from '~/@/result'
-import { Time } from '~/@/time/time'
-import { TimeSpan } from '~/@/time/time-span'
+import { Sub } from '~/@/sub'
 import { EmptyState } from '~/@/ui/empty-state'
 import { Gutter } from '~/@/ui/gutter'
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
@@ -26,24 +25,15 @@ const update: SpaceFrontendModule['update'] = (input) => {
       }
     }
     case 'list-spaces.list-spaces-response': {
+      const spacesNew = unwrapOr(input.msg.spaces, { spaces: [] }).spaces
       return {
         model: {
           ...input.model,
           listSpacesRequest: input.msg.spaces,
-          spaces: unwrapOr(input.msg.spaces, { spaces: [] }).spaces.reduce(Spaces.mergeOne, input.model.spaces),
+          spaces: Spaces.merge(input.model.spaces, spacesNew),
         },
       }
     }
-
-    // case 'list-spaces.time-passed': {
-    //   return {
-    //     model: input.model,
-    //     async eff(dispatch) {
-    //       const spaces = await input.ctx.rpc['spaces.list-spaces.list']({ pagination: { limit: 100, offset: 0 } })
-    //       dispatch({ t: 'list-spaces.list-spaces-response', spaces })
-    //     },
-    //   }
-    // }
   }
 
   if (ScreenChangedEvt.is(input.msgIn)) {
@@ -98,7 +88,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 }
 
 const subscriptions: SpaceFrontendModule['subscriptions'] = (_input) => {
-  return Time.interval('list-spaces-interval', TimeSpan.seconds(1), () => ({ t: 'list-spaces.time-passed' }))
+  return Sub.none()
 }
 
 export const ListSpacesFrontend = {

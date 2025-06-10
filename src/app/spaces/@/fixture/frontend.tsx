@@ -18,6 +18,7 @@ import { Space } from '../../space/space'
 import { SpacesFrontend } from '../../frontend'
 import * as SpacesTypes from '../../types'
 import { SpaceFrontendCtx } from '../frontend/ctx'
+import { SpaceDb } from '../../space/space/space-db'
 
 export const SpaceFrontendFixture = async () => {
   const f = await FixtureAppFrontend()
@@ -52,10 +53,13 @@ export const SpaceFrontendFixture = async () => {
     },
   })
 
+  const spaceDb = await SpaceDb({ t: 'sql-db', sqlDb: f.ctx.sqlDb, logger: loggerNoop, shouldCreateTable: true })
+
   const ctx: SpacesTypes.FrontendCtxModule = {
     ...f.ctx,
     topic,
     rpc,
+    spaceDb,
   }
 
   const updates = (initial: SpacesTypes.ModelFrontend, msgs: Msg[]) => {
@@ -156,9 +160,12 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     },
   })
 
+  const spaceDb = await SpaceDb({ t: 'sql-db', sqlDb: f.ctx.sqlDb, logger: loggerNoop, shouldCreateTable: true })
+
   const currentUserProfile = await UserProfile.random({ id: currentUser.userId })
   const ctx: SpacesTypes.FrontendCtxModule & SpaceFrontendCtx = {
     ...f.ctx,
+    spaceDb,
     parentScreen: null,
     currentScreen: {
       n: 'spaces',

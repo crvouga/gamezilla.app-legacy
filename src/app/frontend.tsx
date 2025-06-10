@@ -36,6 +36,7 @@ import { ProfileFrontend } from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract, topicContract } from './types'
 import { WireFrontend } from './wire/frontend'
+import { s } from '~/@/schema'
 
 const initCtx = async (): Promise<FrontendCtxModule> => {
   const logger = Logger({
@@ -83,6 +84,10 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     logger,
   })
 
+  const q = (sql: string) => sqlDb.query({ schema: s.unknown, sql, vars: {} }).then(console.log)
+  // @ts-expect-error
+  window.q = q
+
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
 
   const ctx: AppFrontendCtxBase = {
@@ -106,7 +111,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
 
   const auth = await AuthFrontend.initCtx({ ctx, rpc })
   const profile = ProfileFrontend.initCtx({ ctx })
-  const spaces = SpacesFrontend.initCtx({ ctx, rpc, topic })
+  const spaces = await SpacesFrontend.initCtx({ ctx, rpc, topic })
   const wire = WireFrontend.initCtx({ ctx, rpc, topic })
 
   const ctxModule: FrontendCtxModule = {

@@ -5,27 +5,39 @@ import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Topic } from '~/@/topic'
 import { AppFrontendCtxBase, isAppFrontendCtx } from '../@/frontend/ctx'
-import { type Input, type Output, SpaceFrontendModule } from './frontend/space-frontend'
-import { Spaces } from './space/spaces'
 import { EndSpaceFrontend } from './end-space/frontend'
 import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/frontend'
 import { ExitSpaceAction } from './frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from './frontend/people-action/frontend'
+import { type Input, type Output, SpaceFrontendModule } from './frontend/space-frontend'
 import { GameFrontend } from './game/frontend'
 import { JoinSpaceFrontend } from './join-space/frontend'
 import { LeaveSpaceFrontend } from './leave-space/frontend'
 import { ListSpacesFrontend } from './list-spaces/frontend'
 import { SpaceFrontend } from './space/frontend'
+import { SpaceDb } from './space/space/space-db'
+import { Spaces } from './space/spaces'
 import { StartSpaceFrontend } from './start-space/frontend'
 import { SyncFrontend } from './sync/frontend'
 import type { FrontendCtxModule, FrontendModule, ModelFrontend, rpcContract, topicContract } from './types'
+import { SpaceLoaderFrontend } from './space/space-loader/frontend'
 
-const initCtx = (input: {
+const initCtx = async (input: {
   ctx: AppFrontendCtxBase
   rpc: RPC.Client<typeof rpcContract>
   topic: Topic.Client<typeof topicContract>
-}): FrontendCtxModule => {
-  return { ...input.ctx, rpc: input.rpc, topic: input.topic }
+}): Promise<FrontendCtxModule> => {
+  return {
+    ...input.ctx,
+    rpc: input.rpc,
+    topic: input.topic,
+    spaceDb: await SpaceDb({
+      t: 'sql-db',
+      sqlDb: input.ctx.sqlDb,
+      logger: input.ctx.logger,
+      shouldCreateTable: false,
+    }),
+  }
 }
 
 const init: FrontendModule['init'] = (_input) => {
@@ -82,13 +94,14 @@ const updateChild: SpaceFrontendModule['update'] = (input) => {
     (model) => ExitSpaceAction.update({ ...input, model }),
     (model) => CurrentSpaceMiniPlayer.update({ ...input, model }),
     (model) => PeopleActionFrontend.update({ ...input, model }),
+    (model) => SpaceLoaderFrontend.update({ ...input, model }),
   )
 }
 
 const updateSpacesFromMsgSpace: SpaceFrontendModule['update'] = ({ msgSpace, model }) => {
   if (!msgSpace) return { model }
 
-  const updated = Spaces.update({ modelSpace: model.spaces, msgSpace })
+  const updated = Spaces.update({ model: model.spaces, msgSpace })
 
   return { model: { ...model, spaces: updated.model } }
 }
@@ -98,6 +111,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
     GameFrontend.subscriptions(input),
     SyncFrontend.subscriptions(input),
     ListSpacesFrontend.subscriptions(input),
+    SpaceLoaderFrontend.subscriptions(input),
   ])
 }
 

@@ -1,7 +1,7 @@
 import { EventId, WithEventMeta } from '~/@/event-sourced/event'
 import { s } from '~/@/schema'
-import type { UserId } from '~/app/@/data/user-id'
-import { Space } from '~/app/spaces/@/space/space'
+import { SpaceId } from '~/app/@/data/space-id'
+import { UserId } from '~/app/@/data/user-id'
 import * as GameSpace from '../../game/games/space'
 import * as Game from '../../game/games/types'
 import { MsgSpace } from '../msg-space'
@@ -17,23 +17,28 @@ export const Initial = s.obj({
 })
 export type Initial = s.Infer<typeof Initial>
 
-export const Started = s.and(
-  Space,
-  s.obj({
-    type: s.l('started'),
-    game: s.maybe(Game.ModelSpace),
-    latestEventId: EventId,
-  }),
-)
+export const Started = s.obj({
+  type: s.l('started'),
+  game: s.maybe(Game.ModelSpace),
+  latestEventId: EventId,
+  visibility: s.enumeration(['public', 'private']),
+  spaceId: SpaceId,
+  hostId: UserId,
+  users: s.dict(UserId, UserId),
+})
+
 export type Started = s.Infer<typeof Started>
 
-export const Ended = s.and(
-  Space,
-  s.obj({
-    type: s.l('ended'),
-    latestEventId: EventId,
-  }),
-)
+export const Ended = s.obj({
+  type: s.l('ended'),
+  latestEventId: EventId,
+  game: s.maybe(Game.ModelSpace),
+  visibility: s.enumeration(['public', 'private']),
+  spaceId: SpaceId,
+  hostId: UserId,
+  users: s.dict(UserId, UserId),
+})
+
 export type Ended = s.Infer<typeof Ended>
 
 const StateBase = s.obj({

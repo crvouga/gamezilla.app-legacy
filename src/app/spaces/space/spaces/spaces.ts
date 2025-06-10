@@ -101,7 +101,7 @@ export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpacePro
 }
 
 export const update = (input: {
-  modelSpace: Model
+  model: Model
   msgSpace: WithEventId<MsgSpace>
 }): {
   model: Model
@@ -116,10 +116,10 @@ export const update = (input: {
     }
 
     case 'user-ended-space': {
-      const userIds = Space.toUserIds(input.modelSpace.spaces[input.msgSpace.spaceId] ?? Space.init)
+      const userIds = Space.toUserIds(input.model.spaces[input.msgSpace.spaceId] ?? Space.init)
 
       const spaceIdByUserIdNew = {
-        ...input.modelSpace.indexSpaceIdByUserId,
+        ...input.model.indexSpaceIdByUserId,
       }
       for (const userId of userIds) {
         delete spaceIdByUserIdNew[userId]
@@ -136,14 +136,14 @@ export const update = (input: {
     }
 
     case 'user-joined-space': {
-      const spaceId = input.modelSpace.indexSpaceIdByUserId[input.msgSpace.userId]
+      const spaceId = input.model.indexSpaceIdByUserId[input.msgSpace.userId]
 
       if (spaceId) {
         return {
           model: {
-            ...input.modelSpace,
+            ...input.model,
             errors: {
-              ...input.modelSpace.errors,
+              ...input.model.errors,
               [input.msgSpace.eventId]: {
                 t: 'user-already-in-a-space',
                 userId: input.msgSpace.userId,
@@ -154,7 +154,7 @@ export const update = (input: {
       }
 
       const spaceIdByUserIdNew = {
-        ...input.modelSpace.indexSpaceIdByUserId,
+        ...input.model.indexSpaceIdByUserId,
         [input.msgSpace.userId]: input.msgSpace.spaceId,
       }
 
@@ -170,10 +170,10 @@ export const update = (input: {
 
     case 'user-left-space': {
       const spaceIdByUserIdNew = {
-        ...input.modelSpace.indexSpaceIdByUserId,
+        ...input.model.indexSpaceIdByUserId,
       }
 
-      if (input.msgSpace.spaceId === input.modelSpace.indexSpaceIdByUserId[input.msgSpace.userId]) {
+      if (input.msgSpace.spaceId === input.model.indexSpaceIdByUserId[input.msgSpace.userId]) {
         delete spaceIdByUserIdNew[input.msgSpace.userId]
       }
 
@@ -189,7 +189,7 @@ export const update = (input: {
 
     case 'user-started-space': {
       const spaceIdByUserIdNew = {
-        ...input.modelSpace.indexSpaceIdByUserId,
+        ...input.model.indexSpaceIdByUserId,
         [input.msgSpace.userId]: input.msgSpace.spaceId,
       }
 
@@ -206,29 +206,33 @@ export const update = (input: {
 }
 
 const append = (input: {
-  modelSpace: Model
+  model: Model
   msgSpace: WithEventId<MsgSpace>
 }): {
   model: Model
 } => {
   const spaceId = input.msgSpace.spaceId
 
-  const space = input.modelSpace.spaces[spaceId] ?? Space.init
+  const space = input.model.spaces[spaceId] ?? Space.init
 
   const spaceNew = EventSourced.appendEvent(Space.config, space, input.msgSpace)
 
   return {
     model: {
-      ...input.modelSpace,
+      ...input.model,
       spaces: {
-        ...input.modelSpace.spaces,
+        ...input.model.spaces,
         [spaceId]: spaceNew,
       },
     },
   }
 }
 
-export const mergeOne = (model: Model, space: Space.Model): Model => {
+export const merge = (model: Model, spaces: Space.Model[]): Model => {
+  return spaces.reduce(mergeOne, model)
+}
+
+const mergeOne = (model: Model, space: Space.Model): Model => {
   const spaceId = Space.toSpaceId(space)
 
   const maybeCurrentSpace = spaceId ? model.spaces[spaceId] : null

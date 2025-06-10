@@ -1,5 +1,5 @@
-import { UserProfile } from '~/app/@/data/user-profile'
 import { UserId } from '~/app/@/data/user-id'
+import { UserProfile } from '~/app/@/data/user-profile'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { SpaceCtx } from '../space/ctx'
 

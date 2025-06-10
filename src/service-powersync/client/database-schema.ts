@@ -137,16 +137,30 @@ const user_profile = new Table(
 const space = new Table(
   {
     id: column.text,
-    created_at_epoch: column.integer,
-    updated_at_epoch: column.integer,
-    deleted_at_epoch: column.integer,
+    created_at_unix_ms: column.integer,
+    updated_at_unix_ms: column.integer,
+    deleted_at_unix_ms: column.integer,
     model: column.text,
   },
   {},
 )
 
+const space_projection = new Table(
+  {
+    id: column.text,
+    host_id: column.text,
+    game_id: column.text,
+  },
+  {
+    indexes: {
+      idx_space_projection_host_id: ['host_id'],
+    },
+  },
+)
+
 export const AppSchema = new Schema({
   space,
+  space_projection,
   game_numberlink_puzzle,
   game_numberlink_pack,
   game_numberlink_pack_item,

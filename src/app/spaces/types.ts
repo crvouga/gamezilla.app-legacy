@@ -13,7 +13,7 @@ import { GameTypes } from './game'
 import { JoinSpaceTypes } from './join-space'
 import { LeaveSpaceTypes } from './leave-space'
 import { ListSpacesTypes } from './list-spaces'
-import { ISpaceProjectionDb } from './space/space-projection/space-projection-db'
+import { SpaceLoaderTypes } from './space/space-loader'
 import { ISpaceDb } from './space/space/space-db/interface'
 import { Spaces } from './space/spaces'
 import { StartSpaceTypes } from './start-space'
@@ -33,9 +33,13 @@ type ModelFrontendBase = {
   opened: Opened
 }
 
-export type ModelFrontend = ListSpacesTypes.ModelFrontend & GameTypes.ModelFrontend & ModelFrontendBase
+export type ModelFrontend = SpaceLoaderTypes.ModelFrontend &
+  ListSpacesTypes.ModelFrontend &
+  GameTypes.ModelFrontend &
+  ModelFrontendBase
 
 export type MsgFrontend =
+  | SpaceLoaderTypes.MsgFrontend
   | PeopleActionTypes.MsgFrontend
   | LeaveSpaceTypes.MsgFrontend
   | EndSpaceTypes.MsgFrontend
@@ -57,12 +61,12 @@ export type FrontendCtxModule = AppFrontendCtxBase & {
   topic: Topic.Client<typeof topicContract>
   rpc: RPC.Client<typeof rpcContract>
   space?: Space | null
+  spaceDb: ISpaceDb
 }
 
 export type BackendCtxModule = AppBackendCtxBase &
   GameTypes.GamesBackendCtxModule & {
     spaceDb: ISpaceDb
-    spaceProjectionDb: ISpaceProjectionDb
     topic: Topic.Client<typeof topicContract>
   }
 

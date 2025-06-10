@@ -6,27 +6,16 @@ import { rpcContract } from './types'
 const rpc = (config: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
     'spaces.list-spaces.list': async (_input, _reqCtx) => {
-      const spaceProjections = await config.ctx.spaceProjectionDb.query({
-        pagination: {
-          limit: 1_000_000,
-          offset: 0,
-        },
+      const spaces = await config.ctx.spaceDb.query({
+        where: {},
       })
-
-      if (isErr(spaceProjections)) {
-        return { spaces: [] }
-      }
-
-      const spaces = await config.ctx.spaceDb.get(
-        spaceProjections.value.items.flatMap((space) => (space.type === 'started' ? [space.spaceId] : [])),
-      )
 
       if (isErr(spaces)) {
         return { spaces: [] }
       }
 
       return {
-        spaces: spaces.value,
+        spaces: spaces.value.items,
       }
     },
   })

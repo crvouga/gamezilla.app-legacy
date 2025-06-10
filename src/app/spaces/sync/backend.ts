@@ -18,13 +18,17 @@ const rpc = (config: { ctx: BackendCtxModule }) => {
         return { space: input.space }
       }
 
-      const found = await config.ctx.spaceDb.get([spaceId])
+      const found = await config.ctx.spaceDb.query({
+        where: {
+          spaceId: { '=': spaceId },
+        },
+      })
 
       if (isErr(found)) {
         return { space: input.space }
       }
 
-      const existing = found.value[0] ?? null
+      const existing = found.value.items[0] ?? null
 
       if (!existing) {
         return { space: input.space }
@@ -65,11 +69,15 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
 
   Sub.takeEvery(s, msgSpaceSub, async (msgSpace) => {
     if (!spaceCache.has(msgSpace.spaceId)) {
-      const got = await ctx.spaceDb.get([msgSpace.spaceId])
+      const got = await ctx.spaceDb.query({
+        where: {
+          spaceId: { '=': msgSpace.spaceId },
+        },
+      })
 
       if (isErr(got)) return
 
-      spaceCache.set(msgSpace.spaceId, got.value[0] ?? Space.init)
+      spaceCache.set(msgSpace.spaceId, got.value.items[0] ?? Space.init)
     }
 
     const space = spaceCache.get(msgSpace.spaceId) ?? Space.init

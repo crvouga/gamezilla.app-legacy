@@ -11,6 +11,9 @@ import { Space } from '..'
 import { SpaceProjection } from '../../space-projection'
 import { Config, SpaceDb } from './impl'
 import { SpaceDbInputMsg, SpaceDbOutputMsg } from './interface'
+import { pipe } from '~/@/function/pipe'
+import { withEventId } from '~/@/event-sourced/event'
+import { UserId } from '~/app/@/data/user-id'
 
 const Fixture = async (config: Config) => {
   const input = Sub.create<SpaceDbInputMsg>()
@@ -27,19 +30,11 @@ const Fixture = async (config: Config) => {
     space,
   }
 }
-const uniqueNamespace = () => [`test-${Math.random().toString(36).substring(2, 15)}`]
 
 const Fixtures = async () => {
   const f = await FixtureAppBackend()
 
   const configs: Config[] = []
-
-  configs.push({
-    t: 'key-value-db',
-    keyValueDb: f.keyValueDbHashMap,
-    logger: f.logger,
-    namespace: uniqueNamespace(),
-  })
 
   configs.push({
     t: 'sql-db',
@@ -55,20 +50,6 @@ const Fixtures = async () => {
       logger: f.logger,
       shouldCreateTable: false,
     })
-
-    configs.push({
-      t: 'key-value-db',
-      keyValueDb: f.keyValueDbRedis,
-      logger: f.logger,
-      namespace: uniqueNamespace(),
-    })
-
-    configs.push({
-      t: 'key-value-db',
-      keyValueDb: f.keyValueDbPostgres,
-      logger: f.logger,
-      namespace: uniqueNamespace(),
-    })
   }
 
   return Promise.all(configs.map(Fixture))
@@ -79,14 +60,14 @@ describe('SpaceDb', () => {
     for (const f of await Fixtures()) {
       const spaceId = Space.toSpaceStarted(f.space)?.spaceId ?? SpaceId.generate()
 
-      const before = await f.spacesDb.get([spaceId])
+      const before = await f.spacesDb.query({ where: { spaceId: { '=': spaceId } } })
 
       unwrap(await f.spacesDb.upsert(f.space))
 
-      const after = await f.spacesDb.get([spaceId])
+      const after = await f.spacesDb.query({ where: { spaceId: { '=': spaceId } } })
 
-      expect(unwrap(before)).toEqual([])
-      expect(unwrap(after)).toEqual([f.space])
+      expect(unwrap(before).items).toEqual([])
+      expect(unwrap(after).items).toEqual([f.space])
     }
   })
 
@@ -98,39 +79,39 @@ describe('SpaceDb', () => {
 
       const spaceId = Space.toSpaceStarted(f.space)?.spaceId ?? SpaceId.generate()
 
-      const before = await f.spacesDb.get([spaceId])
+      const before = await f.spacesDb.query({ where: { spaceId: { '=': spaceId } } })
 
       unwrap(await f.spacesDb.upsert(f.space))
 
-      const after = await f.spacesDb.get([spaceId])
+      const after = await f.spacesDb.query({ where: { spaceId: { '=': spaceId } } })
 
-      expect(unwrap(before)).toEqual([])
-      expect(unwrap(after)).toEqual([f.space])
+      expect(unwrap(before).items).toEqual([])
+      expect(unwrap(after).items).toEqual([f.space])
     }
   })
 
   test('list spaces', async () => {
     for (const f of await Fixtures()) {
-      const before = unwrap(await f.spacesDb.get([f.spaceId]))
+      const before = unwrap(await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } }))
 
       unwrap(await f.spacesDb.upsert(f.space))
 
-      const after = unwrap(await f.spacesDb.get([f.spaceId]))
+      const after = unwrap(await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } }))
 
-      expect(before).toEqual([])
-      expect(after).toEqual([f.space])
+      expect(before.items).toEqual([])
+      expect(after.items).toEqual([f.space])
     }
   })
 
   test('get with fallback', async () => {
     for (const f of await Fixtures()) {
-      const before = unwrap(await f.spacesDb.get([f.spaceId]))
+      const before = unwrap(await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } }))
 
       unwrap(await f.spacesDb.upsert(f.space))
 
-      const after = unwrap(await f.spacesDb.get([f.spaceId]))
-      expect(EventSourced.toProjection(Space.config, before[0] ?? Space.init)?.type).toEqual('initial')
-      expect(EventSourced.toProjection(Space.config, after[0] ?? Space.init)?.type).toEqual('started')
+      const after = unwrap(await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } }))
+      expect(EventSourced.toProjection(Space.config, before.items[0] ?? Space.init)?.type).toEqual('initial')
+      expect(EventSourced.toProjection(Space.config, after.items[0] ?? Space.init)?.type).toEqual('started')
     }
   })
 
@@ -139,10 +120,10 @@ describe('SpaceDb', () => {
       for (const f2 of await Fixtures()) {
         unwrap(await f1.spacesDb.upsert(f1.space))
         unwrap(await f2.spacesDb.upsert(f2.space))
-        const after1 = unwrap(await f1.spacesDb.get([f1.spaceId]))
-        const after2 = unwrap(await f2.spacesDb.get([f2.spaceId]))
-        expect(after1).toEqual([f1.space])
-        expect(after2).toEqual([f2.space])
+        const after1 = unwrap(await f1.spacesDb.query({ where: { spaceId: { '=': f1.spaceId } } }))
+        const after2 = unwrap(await f2.spacesDb.query({ where: { spaceId: { '=': f2.spaceId } } }))
+        expect(after1.items).toEqual([f1.space])
+        expect(after2.items).toEqual([f2.space])
       }
     }
   })
@@ -150,15 +131,36 @@ describe('SpaceDb', () => {
   test('error when db has invalid data', async () => {
     for (const f of await Fixtures()) {
       unwrap(await f.spacesDb.upsert(f.space))
-      const before = await f.spacesDb.get([f.spaceId])
+      const before = await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } })
       const invalid = toInvalidSpaceModel(f.space)
       const p = Sub.take(Sub.where(f.output, (m): m is SpaceDbOutputMsg => m.t === 'model-dangerously-overridden'))
       await f.input.pub({ t: 'dangerously-override-model', model: invalid })
       await p
       await sleep(TimeSpan.milliseconds(100))
-      const after = await f.spacesDb.get([f.spaceId])
-      expect(unwrap(before)).toEqual([f.space])
-      expect(unwrap(after)).toEqual([])
+      const after = await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } })
+      expect(unwrap(before).items).toEqual([f.space])
+      expect(unwrap(after).items).toEqual([])
+    }
+  })
+
+  test('upsert updates existing records', async () => {
+    for (const f of await Fixtures()) {
+      unwrap(await f.spacesDb.upsert(f.space))
+      const before = unwrap(await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } }))
+
+      const modifiedSpace = pipe(f.space, (model) =>
+        EventSourced.appendEvent(
+          Space.config,
+          model,
+          withEventId({ t: 'user-joined-space', spaceId: f.spaceId, userId: UserId.generate() } as const),
+        ),
+      )
+
+      unwrap(await f.spacesDb.upsert(modifiedSpace))
+      const after = unwrap(await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } }))
+
+      expect(before.items[0]?.events.length).toBeLessThan(after.items[0]?.events.length ?? 0)
+      expect(after.items).toEqual([modifiedSpace])
     }
   })
 })

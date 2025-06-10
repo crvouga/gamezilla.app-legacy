@@ -77,7 +77,7 @@ const updateSynced: SpaceFrontendModule['update'] = (input) => {
 
       if (isErr(synced)) return { model: input.model }
 
-      const merged = Spaces.mergeOne(input.model.spaces, synced.value.space)
+      const merged = Spaces.merge(input.model.spaces, [synced.value.space])
 
       return { model: { ...input.model, spaces: merged } }
     }

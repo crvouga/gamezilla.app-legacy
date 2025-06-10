@@ -12,7 +12,6 @@ import { UserProfile } from '~/app/@/data/user-profile'
 import { SpacesTypes } from '../..'
 import { GamesBackend } from '../../game/games/backend'
 import { Space } from '../../space/space'
-import { SpaceProjectionDb } from '../../space/space-projection/space-projection-db'
 import { SpaceDb } from '../../space/space/space-db'
 import { BackendCtxModule } from '../../types'
 import { SpaceBackendCtx } from '../backend/ctx'
@@ -68,14 +67,10 @@ export const FixtureSpaceBackend = async () => {
     ...f.ctx,
     ...GamesBackend.initCtx({ ctx: f.ctx }),
     spaceDb: await SpaceDb({
-      t: 'key-value-db',
-      keyValueDb: f.ctx.keyValueDbDurable,
-      logger: f.ctx.logger,
-      namespace: [],
-    }),
-    spaceProjectionDb: await SpaceProjectionDb({
       t: 'sql-db',
       sqlDb: f.ctx.sqlDb,
+      logger: f.ctx.logger,
+      shouldCreateTable: true,
     }),
     topic,
   }

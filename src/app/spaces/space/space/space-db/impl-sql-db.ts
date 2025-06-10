@@ -1,13 +1,16 @@
+import { EventSourced } from '~/@/event-sourced'
 import { Json } from '~/@/json/json'
 import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok, Result, unwrap } from '~/@/result'
 import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { ISqlDb } from '~/@/sql-db'
+import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/posix'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '..'
-import type { ISpaceDb, SpaceDbConfig } from './interface'
+import { SpaceProjection } from '../../space-projection'
+import type { ISpaceDb, SpaceDbConfig, SpaceDbQueryInput } from './interface'
 
 export type Config = SpaceDbConfig & {
   t: 'sql-db'
@@ -49,27 +52,17 @@ const parseRow = (row: Row, logger: ILogger): Result<string, Space.Model> => {
   return Ok(space.value)
 }
 
-const QUERY_GET = `
-SELECT 
-  id, 
-  created_at_unix_ms,
-  updated_at_unix_ms,
-  deleted_at_unix_ms,
-  model
-FROM space
-WHERE id IN (:space_ids)
-`
+const parseRows = (rows: Row[], logger: ILogger): Space.Model[] => {
+  const parsed = rows.flatMap((row) => {
+    const parsed = parseRow(row, logger)
+    if (isErr(parsed)) return []
+    return [parsed.value]
+  })
+  return parsed
+}
 
-const QUERY_UPSERT = `
-INSERT INTO space (id, created_at_unix_ms, updated_at_unix_ms, model)
-VALUES (:id, :created_at_unix_ms, :updated_at_unix_ms, :model)
-ON CONFLICT (id) DO UPDATE SET
-  created_at_unix_ms = :created_at_unix_ms,
-  updated_at_unix_ms = :updated_at_unix_ms,
-  model = :model
-`
-
-const QUERY_CREATE_TABLE = `
+const QUERY_CREATE_TABLES = [
+  `
 CREATE TABLE IF NOT EXISTS space (
   id TEXT PRIMARY KEY,
   created_at_unix_ms INT NOT NULL,
@@ -77,12 +70,22 @@ CREATE TABLE IF NOT EXISTS space (
   deleted_at_unix_ms INT,
   model TEXT NOT NULL
 )
-`
+`,
+  `
+CREATE TABLE IF NOT EXISTS space_projection (
+  id TEXT PRIMARY KEY,
+  host_id TEXT,
+  game_id TEXT
+)
+`,
+]
 
 export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
   if (config.shouldCreateTable) {
     config.logger.info('Creating space table')
-    unwrap(await config.sqlDb.query({ schema: s.unknown, sql: QUERY_CREATE_TABLE, vars: {} }))
+    for (const query of QUERY_CREATE_TABLES) {
+      unwrap(await config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} }))
+    }
     config.logger.info('Space table created')
   }
 
@@ -91,20 +94,10 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
       case 'dangerously-override-model': {
         const { model } = msg
         const spaceId = Space.toSpaceId(model)
-        if (!spaceId) return
+        if (!spaceId) throw new Error('Failed to derive spaceId from space')
         const stringified = Json.stringify(model)
-        if (isErr(stringified)) return
-        const result = await config.sqlDb.query({
-          schema: s.unknown,
-          sql: QUERY_UPSERT,
-          vars: {
-            id: spaceId,
-            created_at_unix_ms: UnixMs.now(),
-            updated_at_unix_ms: UnixMs.now(),
-            model: stringified.value,
-          },
-        })
-        if (isErr(result)) return
+        if (isErr(stringified)) throw stringified.error
+        await upsertSpace(config, spaceId, model)
         config.output?.pub({ t: 'model-dangerously-overridden', model })
         return
       }
@@ -112,22 +105,32 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
   })
 
   return {
-    async get(input) {
+    async query(input) {
+      const { sql, vars } = toSqlQuery(input)
+
       const result = await config.sqlDb.query({
         schema: Row,
-        sql: QUERY_GET,
-        vars: { space_ids: Sql.commas(input) },
+        sql,
+        vars,
       })
 
       if (isErr(result)) return result
 
-      const parsed = result.value.flatMap((row) => {
-        const parsed = parseRow(row, config.logger)
-        if (isErr(parsed)) return []
-        return [parsed.value]
-      })
+      const parsed = parseRows(result.value, config.logger)
 
-      return Ok(parsed)
+      return Ok({
+        items: parsed,
+        total: parsed.length,
+        limit: input.limit ?? Infinity,
+        offset: input.offset ?? 0,
+      })
+    },
+    sub(input, map) {
+      const { sql, vars } = toSqlQuery(input)
+      return Sub.map(config.sqlDb.sub({ schema: Row, sql, vars }), (rows) => {
+        const mapped = map(parseRows(rows, config.logger))
+        return mapped
+      })
     },
     async upsert(space) {
       const stringified = Json.stringify(space)
@@ -136,20 +139,177 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
       const spaceId = Space.toSpaceId(space)
       if (!spaceId) return Err('Failed to derive spaceId from space')
 
-      const result = await config.sqlDb.query({
-        schema: s.unknown,
-        sql: QUERY_UPSERT,
-        vars: {
-          id: spaceId,
-          created_at_unix_ms: UnixMs.now(),
-          updated_at_unix_ms: UnixMs.now(),
-          model: stringified.value,
-        },
-      })
+      const latestSnapshot = EventSourced.toLatestSnapshot(space)
 
-      if (isErr(result)) return result
+      const upsertedSnapshot = await upsertSnapshot(config, spaceId, latestSnapshot)
+
+      if (isErr(upsertedSnapshot)) return upsertedSnapshot
+
+      const upserted = await upsertSpace(config, spaceId, space)
+
+      if (isErr(upserted)) return upserted
 
       return Ok(null)
     },
+  }
+}
+
+const upsertSpace = async (config: Config, spaceId: SpaceId, space: Space.Model): Promise<Result<string, null>> => {
+  const found = await config.sqlDb.query({
+    schema: s.unknown,
+    sql: `SELECT * FROM space WHERE id = :id`,
+    vars: {
+      id: spaceId,
+    },
+  })
+
+  if (isErr(found)) return found
+
+  const stringified = Json.stringify(space)
+  if (isErr(stringified)) return stringified
+
+  if (found.value.length === 0) {
+    const inserted = await config.sqlDb.query({
+      schema: s.unknown,
+      sql: `INSERT INTO space (id, created_at_unix_ms, updated_at_unix_ms, model) VALUES (:id, :created_at_unix_ms, :updated_at_unix_ms, :model)`,
+      vars: {
+        id: spaceId,
+        created_at_unix_ms: UnixMs.now(),
+        updated_at_unix_ms: UnixMs.now(),
+        model: stringified.value,
+      },
+    })
+
+    if (isErr(inserted)) return inserted
+
+    return Ok(null)
+  }
+
+  const updated = await config.sqlDb.query({
+    schema: s.unknown,
+    sql: `UPDATE space SET model = :model WHERE id = :id`,
+    vars: {
+      id: spaceId,
+      model: stringified.value,
+    },
+  })
+
+  if (isErr(updated)) return updated
+
+  return Ok(null)
+}
+
+const upsertSnapshot = async (
+  config: Config,
+  spaceId: SpaceId,
+  snapshot: SpaceProjection.Model,
+): Promise<Result<string, null>> => {
+  const found = await config.sqlDb.query({
+    schema: s.unknown,
+    sql: `SELECT * FROM space_projection WHERE id = :id`,
+    vars: {
+      id: spaceId,
+    },
+  })
+
+  if (isErr(found)) return found
+
+  if (found.value.length === 0) {
+    const inserted = await config.sqlDb.query({
+      schema: s.unknown,
+      sql: `INSERT INTO space_projection (id, host_id, game_id) VALUES (:id, :host_id, :game_id)`,
+      vars: {
+        id: spaceId,
+        host_id: snapshot.type === 'initial' ? null : snapshot.hostId,
+        game_id: snapshot.type === 'initial' ? null : (snapshot.game?.t ?? null),
+      },
+    })
+
+    if (isErr(inserted)) return inserted
+
+    return Ok(null)
+  }
+
+  const updated = await config.sqlDb.query({
+    schema: s.unknown,
+    sql: `UPDATE space_projection SET host_id = :host_id, game_id = :game_id WHERE id = :id`,
+    vars: {
+      id: spaceId,
+      host_id: snapshot.type === 'initial' ? null : snapshot.hostId,
+      game_id: snapshot.type === 'initial' ? null : (snapshot.game?.t ?? null),
+    },
+  })
+
+  if (isErr(updated)) return updated
+
+  return Ok(null)
+}
+
+const toSqlQuery = (input: SpaceDbQueryInput) => {
+  const sqlWhere = toSqlWhere(input)
+  const sqlPagination = toSqlPagination(input)
+
+  const vars: Sql.Vars = {
+    ...sqlWhere.vars,
+    ...sqlPagination.vars,
+  }
+
+  const sql = `
+  WITH space_ids AS (
+    SELECT id FROM space_projection
+    ${sqlWhere.str}
+    ${sqlPagination.str}
+  )
+  SELECT id, created_at_unix_ms, updated_at_unix_ms, deleted_at_unix_ms, model FROM space
+  WHERE id IN (SELECT id FROM space_ids)
+  `
+
+  return {
+    sql,
+    vars,
+  }
+}
+
+const toSqlWhere = (input: SpaceDbQueryInput) => {
+  const vars: Sql.Vars = {}
+  const clauses: string[] = []
+
+  if (input.where.spaceId?.['=']) {
+    clauses.push(`id = :space_id`)
+    vars['space_id'] = input.where.spaceId['=']
+  }
+
+  if (input.where.hostId?.['=']) {
+    clauses.push(`host_id = :host_id`)
+    vars['host_id'] = input.where.hostId['=']
+  }
+
+  const str = clauses.length > 0 ? `WHERE ${clauses.join(' AND ')}` : ''
+
+  return {
+    str,
+    vars,
+  }
+}
+
+const toSqlPagination = (input: SpaceDbQueryInput) => {
+  const vars: Sql.Vars = {}
+  const clauses: string[] = []
+
+  if (input.limit) {
+    clauses.push(`LIMIT :limit`)
+    vars['limit'] = input.limit
+  }
+
+  if (input.offset) {
+    clauses.push(`OFFSET :offset`)
+    vars['offset'] = input.offset
+  }
+
+  const str = clauses.length > 0 ? `LIMIT :limit OFFSET :offset` : ''
+
+  return {
+    str,
+    vars,
   }
 }
