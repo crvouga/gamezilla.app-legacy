@@ -44,12 +44,16 @@ const Fixtures = async () => {
   configs.push({
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
+    logger: f.logger,
+    shouldCreateTable: true,
   })
 
   if (f.t === 'integration') {
     configs.push({
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
+      logger: f.logger,
+      shouldCreateTable: false,
     })
 
     configs.push({

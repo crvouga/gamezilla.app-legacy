@@ -1,4 +1,5 @@
 import { Json } from '~/@/json/json'
+import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok, Result, unwrap } from '~/@/result'
 import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
@@ -11,6 +12,8 @@ import type { ISpaceDb, SpaceDbConfig } from './interface'
 export type Config = SpaceDbConfig & {
   t: 'sql-db'
   sqlDb: ISqlDb
+  logger: ILogger
+  shouldCreateTable: boolean
 }
 
 export const Row = s.obj({
@@ -23,14 +26,14 @@ export const Row = s.obj({
 
 export type Row = s.Infer<typeof Row>
 
-const rowToSpace = (row: Row): Result<string, Space.Model> => {
+const parseRow = (row: Row, logger: ILogger): Result<string, Space.Model> => {
   if (typeof row.model === 'string') {
     const json = Json.parse(row.model)
     if (isErr(json)) return Err('Failed to parse model as json')
 
     const space = Space.Model.parse(json.value)
     if (isErr(space)) {
-      console.error(space.error)
+      logger.error('Errored parsing model as space', space.error)
       return Err('Failed to parse model as space')
     }
 
@@ -39,7 +42,7 @@ const rowToSpace = (row: Row): Result<string, Space.Model> => {
 
   const space = Space.Model.parse(row.model)
   if (isErr(space)) {
-    console.error(space.error)
+    logger.error('Errored parsing model as space', space.error)
     return Err('Failed to parse model as space')
   }
 
@@ -77,13 +80,11 @@ CREATE TABLE IF NOT EXISTS space (
 `
 
 export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
-  unwrap(
-    await config.sqlDb.query({
-      schema: s.unknown,
-      sql: QUERY_CREATE_TABLE,
-      vars: {},
-    }),
-  )
+  if (config.shouldCreateTable) {
+    config.logger.info('Creating space table')
+    unwrap(await config.sqlDb.query({ schema: s.unknown, sql: QUERY_CREATE_TABLE, vars: {} }))
+    config.logger.info('Space table created')
+  }
 
   config.input?.sub(async (msg) => {
     switch (msg.t) {
@@ -121,7 +122,7 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
       if (isErr(result)) return result
 
       const parsed = result.value.flatMap((row) => {
-        const parsed = rowToSpace(row)
+        const parsed = parseRow(row, config.logger)
         if (isErr(parsed)) return []
         return [parsed.value]
       })

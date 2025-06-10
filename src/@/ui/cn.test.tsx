@@ -1,5 +1,9 @@
 import { describe, expect, test } from 'bun:test'
+import { Logger } from '../logger'
 import { cnFilter, cnLoop, cnParams } from './cn'
+
+const SHOULD_LOG = false
+const logger = SHOULD_LOG ? Logger({ t: 'console' }) : Logger({ t: 'noop' })
 
 describe('cn performance', () => {
   test('should be fast for typical usage', () => {
@@ -24,7 +28,7 @@ describe('cn performance', () => {
     expect(timePerOp).toBeLessThan(0.01)
 
     // Log actual performance for reference
-    console.log(`Average time per cnParams() call: ${timePerOp.toFixed(6)}ms`)
+    logger.info(`Average time per cnParams() call: ${timePerOp.toFixed(6)}ms`)
   })
 
   test('should compare cn vs cnLoop performance', () => {
@@ -78,10 +82,10 @@ describe('cn performance', () => {
     const endFilter = process.hrtime.bigint()
     const timePerFilter = Number(endFilter - startFilter) / iterations / 1_000_000 // Convert nanoseconds to milliseconds
 
-    console.log(`Average time per cnParams() call: ${timePerCn.toFixed(6)}ms`)
-    console.log(`Average time per cnLoop() call: ${timePerLoop.toFixed(6)}ms`)
-    console.log(`Average time per cnFilter() call: ${timePerFilter.toFixed(6)}ms`)
-    console.log(`cn is ${timePerLoop / timePerCn}x faster than cnLoop`)
-    console.log(`cn is ${timePerFilter / timePerCn}x faster than cn`)
+    logger.info(`Average time per cnParams() call: ${timePerCn.toFixed(6)}ms`)
+    logger.info(`Average time per cnLoop() call: ${timePerLoop.toFixed(6)}ms`)
+    logger.info(`Average time per cnFilter() call: ${timePerFilter.toFixed(6)}ms`)
+    logger.info(`cn is ${timePerLoop / timePerCn}x faster than cnLoop`)
+    logger.info(`cn is ${timePerFilter / timePerCn}x faster than cn`)
   })
 })

@@ -198,7 +198,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
         const result = Json.parse(String(msg.payload))
         switch (result.t) {
           case 'err':
-            return Result.Err(result.error.message)
+            return Result.Err(result.error)
 
           case 'ok':
             return Result.Ok(dispatchToApp(result.value))
@@ -281,7 +281,7 @@ const handleActions = <Model, Msg extends object>({ connection }: DevToolHandler
 const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
   return pipe(
     Json.parse(String(msg['state'])),
-    (_) => Result.mapErr(_, (problem) => problem.message),
+    (_) => Result.mapErr(_, (problem) => problem),
     (x) =>
       Result.mapOk(
         x,
@@ -300,7 +300,7 @@ const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
 const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
   return pipe(
     Json.parse(String(msg['state'])),
-    (_) => Result.mapErr(_, (problem) => problem.message),
+    (_) => Result.mapErr(_, (problem) => problem),
     (x) =>
       Result.mapOk(
         x,
@@ -344,7 +344,7 @@ const parseToggleAction = <Model>(msg: Monitor): Result<string, [number, LiftedS
         // @ts-ignore
         (u) => u as LiftedState<Model>,
       ),
-    (_) => Result.mapErr(_, (problem) => problem.message),
+    (_) => Result.mapErr(_, (problem) => problem),
   )
 
   if (parseState.t === 'err') {
