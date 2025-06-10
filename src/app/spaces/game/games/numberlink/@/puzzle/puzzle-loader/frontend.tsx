@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
 import { Checkbox, CheckboxState } from '~/@/ui/checkbox/checkbox'
 import { Clickable, ClickableTransparent } from '~/@/ui/clickable'

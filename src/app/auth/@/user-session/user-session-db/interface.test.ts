@@ -7,7 +7,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import { Config, UserSessionDb } from './impl'
 import { SessionId } from '~/@/wire/session-id'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 

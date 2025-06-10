@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { Ok, unwrap } from '~/@/result'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { BackendInstance } from '../backend-instance'

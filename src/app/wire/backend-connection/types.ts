@@ -1,6 +1,6 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { s } from '~/@/schema'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'

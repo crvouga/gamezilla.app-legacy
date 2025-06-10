@@ -1,5 +1,5 @@
 import type { LanguageCodeISO_639_1 } from '~/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { AnonymousFrontendCtx } from '../@/frontend/ctx'
 import type { TranslatorMsg } from '../@/frontend/translator'

@@ -2,20 +2,21 @@ import { s } from '~/@/schema'
 import { TimeSpan } from './time-span'
 
 const schema = s.brand(s.num(), 'UnixMs')
+
 /**
  * UnixMs represents the number of milliseconds since Jan 1, 1970 UTC 00:00:00.
  */
 export type UnixMs = s.Infer<typeof schema>
 
-const min = new Date('1970-01-01T00:00:00.000Z').getTime()
+const MIN = 0
 
 const explain = (posixTime: unknown): string[] => {
   const errors: string[] = []
   if (typeof posixTime !== 'number') {
     errors.push(`Expected a number, but got ${posixTime}`)
   }
-  if (typeof posixTime === 'number' && posixTime < min) {
-    errors.push(`Expected a number greater than ${min}, but got ${posixTime}`)
+  if (typeof posixTime === 'number' && posixTime < MIN) {
+    errors.push(`Expected a number greater than ${MIN}, but got ${posixTime}`)
   }
   return errors
 }
@@ -31,7 +32,7 @@ const is = (posixTime: unknown): posixTime is UnixMs => {
 const init = (posixTime: number | string): UnixMs => {
   const cleaned = typeof posixTime === 'string' ? Number.parseFloat(posixTime) : posixTime
 
-  const clamped = Math.floor(Math.max(cleaned, min))
+  const clamped = Math.floor(Math.max(cleaned, MIN))
 
   if (is(clamped)) {
     return clamped

@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { UserId } from './user-id'
 
 const schema = s.obj({

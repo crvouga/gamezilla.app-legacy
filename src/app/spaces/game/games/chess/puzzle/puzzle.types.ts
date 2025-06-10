@@ -1,6 +1,6 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Err, Ok, type RemoteResult, type Result } from '~/@/result'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import type { UserId } from '~/app/@/data/user-id'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { Chess } from '../@/chess'

@@ -1,5 +1,5 @@
 import { type Hash, Hashing } from '~/@/hashing'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { VerificationId } from './verification-id'
 import { TimeSpan } from '~/@/time/time-span'
 import { PhoneNumber } from '~/@/phone-number'

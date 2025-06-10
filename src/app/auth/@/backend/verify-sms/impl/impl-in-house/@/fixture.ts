@@ -10,7 +10,7 @@ import { type IVerificationDb, VerificationDb } from '../verification/verificati
 import { VerifySMS } from '../impl'
 import { Config } from '../shared'
 import { TimeSpan } from '~/@/time/time-span'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { PhoneNumber } from '~/@/phone-number'
 
 export const VerifySMSInHouseFixture = async (input?: {

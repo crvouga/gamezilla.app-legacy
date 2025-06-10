@@ -1,7 +1,7 @@
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, isErr, Ok } from '~/@/result'
 import { RPC } from '~/@/rpc'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'

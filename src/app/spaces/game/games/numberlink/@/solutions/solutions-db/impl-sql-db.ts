@@ -4,7 +4,7 @@ import { s } from '~/@/schema'
 import { Err, isErr, Ok, Result, unwrapOr } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { Sub } from '~/@/sub'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { Solutions } from '../solutions'
 import { ISolutionsDb } from './interface'
 

@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { ascend } from '~/@/array/sorting'
 import { Ok, Result, unwrap } from '~/@/result'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../puzzle'

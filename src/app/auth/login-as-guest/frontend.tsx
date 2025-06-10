@@ -1,5 +1,5 @@
 import { isErr, Loading, NotAsked, Ok, Result, unwrapOr } from '~/@/result'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { Button } from '~/@/ui/button'
 import { IconUserCircle } from '~/@/ui/icon/icon-user-circle'
 import { ClientSessionId } from '~/@/wire/client-session-id'

@@ -1,6 +1,6 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { Translator } from '~/@/l18n/generated'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
 import { Model } from './types'
 import { Dot } from './ui'

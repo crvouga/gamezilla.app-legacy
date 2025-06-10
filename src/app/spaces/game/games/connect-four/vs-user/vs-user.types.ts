@@ -1,6 +1,6 @@
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { UserId } from '~/app/@/data/user-id'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { s } from '~/@/schema'
 import {
   type ColumnIndex,

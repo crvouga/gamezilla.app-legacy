@@ -1,4 +1,4 @@
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { type Hash, Hashing } from '~/@/hashing'
 import { VerificationAttemptId } from './verification-attempt-id'
 import { VerificationId } from '../verification'

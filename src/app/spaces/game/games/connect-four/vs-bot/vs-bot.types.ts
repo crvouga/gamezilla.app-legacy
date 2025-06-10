@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 import { EventId, type WithEventId } from '~/@/event-sourced/event'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
 import { UserId } from '~/app/@/data/user-id'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'

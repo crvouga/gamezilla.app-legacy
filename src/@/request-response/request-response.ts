@@ -1,6 +1,6 @@
 import { Err, Ok, type Loading, type NotAsked, type Result } from '../result'
 import { Sub } from '../sub'
-import { UnixMs } from '../time/posix'
+import { UnixMs } from '../time/unix-ms'
 import { Time } from '../time/time'
 import { TimeSpan } from '../time/time-span'
 import { Uuid } from '../id/uuid'

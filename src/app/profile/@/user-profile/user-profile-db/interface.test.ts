@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'bun:test'
 import { Logger } from '~/@/logger'
 import { Ok, unwrap } from '~/@/result'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserId } from '~/app/@/data/user-id'

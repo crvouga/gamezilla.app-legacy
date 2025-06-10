@@ -1,5 +1,5 @@
 import { isErr, RemoteResult, Result } from '~/@/result'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { IconPlus } from '~/@/ui/icon/icon-plus'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'

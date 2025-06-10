@@ -6,7 +6,7 @@ import { ISqlDb } from '~/@/sql-db'
 import { Verification } from '../verification'
 import { VerificationId } from '../verification-id'
 import type { IVerificationDb, OrderClause, WhereClause } from './interface'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { PhoneNumber } from '~/@/phone-number'
 
 export const Row = s.obj({

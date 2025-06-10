@@ -1,5 +1,5 @@
 import { s } from '~/@/schema'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'

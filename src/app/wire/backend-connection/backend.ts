@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { BackendCtxModule, topicContract } from './types'

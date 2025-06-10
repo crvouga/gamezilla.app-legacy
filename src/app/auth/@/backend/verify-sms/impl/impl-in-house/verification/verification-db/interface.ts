@@ -1,6 +1,6 @@
 import { PhoneNumber } from '~/@/phone-number'
 import type { Task } from '~/@/promise/task'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import type { Paginated } from '~/app/@/data/pagination'
 import type { Verification, VerificationId } from '..'
 

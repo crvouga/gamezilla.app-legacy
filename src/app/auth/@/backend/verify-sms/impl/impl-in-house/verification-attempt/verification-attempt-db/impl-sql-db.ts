@@ -7,7 +7,7 @@ import { VerificationAttemptId } from '../verification-attempt-id'
 import type { IVerificationAttemptDb, WhereClause } from './interface'
 import type { VerificationAttempt } from '../verification-attempt'
 import { Hash } from '~/@/hashing'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 
 export const Row = s.obj({
   id: VerificationAttemptId,

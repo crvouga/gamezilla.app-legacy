@@ -1,5 +1,5 @@
 import type { Eff } from '~/@/eff'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
 import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
 import { IconRightLeft } from '~/@/ui/icon/icon-right-left'

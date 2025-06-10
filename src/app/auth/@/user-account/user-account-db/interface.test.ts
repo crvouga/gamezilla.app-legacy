@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { PhoneNumber } from '~/@/phone-number'
 import { Ok, Result, unwrap } from '~/@/result'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import type { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'

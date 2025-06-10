@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { EventStreamInMemory } from '.'
-import { UnixMs } from '../time/posix'
+import { UnixMs } from '../time/unix-ms'
 
 //
 //

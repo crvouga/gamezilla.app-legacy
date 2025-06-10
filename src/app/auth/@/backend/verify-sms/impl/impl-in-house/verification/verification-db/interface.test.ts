@@ -4,7 +4,7 @@ import { Ok, unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Verification } from '../verification'
 import { VerificationDb } from './impl'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
 
 const FixtureVariant = async () => {

@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 import { Result } from '~/@/result'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { UserId } from '~/app/@/data/user-id'
 import { NumberlinkVariant } from '../../../variant'
 import type { Puzzle } from '../../puzzle'

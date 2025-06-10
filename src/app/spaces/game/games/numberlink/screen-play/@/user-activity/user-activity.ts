@@ -1,5 +1,5 @@
 import { s } from '~/@/schema'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { UserId } from '~/app/@/data/user-id'
 import { PuzzleId } from '../../../@/puzzle/puzzle-id'
 

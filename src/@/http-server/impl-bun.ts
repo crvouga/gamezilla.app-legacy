@@ -1,7 +1,7 @@
 import type { Server, WebSocketHandler } from 'bun'
 import { Logger, type ILogger } from '~/@/logger'
 import { Sub } from '../sub'
-import { UnixMs } from '../time/posix'
+import { UnixMs } from '../time/unix-ms'
 import { HttpServerEvent, Middleware, type IHttpServer, type Respond } from './interface'
 import { createRespond } from './respond'
 

@@ -1,4 +1,4 @@
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { BackendInstanceId } from './backend-instance-id'
 import { s } from '~/@/schema'
 import { TimeSpan } from '~/@/time/time-span'

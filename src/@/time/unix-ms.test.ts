@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { UnixMs } from './posix'
+import { UnixMs } from './unix-ms'
 
 describe(import.meta.file, () => {
   it('should be able to be precise to the second', () => {

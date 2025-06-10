@@ -4,7 +4,7 @@ import { KeyValueDb, IKeyValueDb } from '../../../../../@/key-value-db'
 import { BackendInstance } from '../backend-instance'
 import { BackendInstanceId } from '../backend-instance-id'
 import { IBackendInstanceDb } from './interface'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {

@@ -1,4 +1,4 @@
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import type { UserId } from '~/app/@/data/user-id'
 import { samples } from '../../../@/variant/grid/grid-samples'
 import { Puzzle } from '../../../@/puzzle/puzzle'

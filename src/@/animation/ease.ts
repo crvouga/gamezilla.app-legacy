@@ -1,4 +1,4 @@
-import { UnixMs } from '../time/posix'
+import { UnixMs } from '../time/unix-ms'
 
 export type Easing =
   | { type: 'ease-out-bounce'; n1?: number; d1?: number }

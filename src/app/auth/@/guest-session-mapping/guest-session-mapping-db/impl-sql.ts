@@ -1,7 +1,7 @@
 import { ISqlDb } from '~/@/sql-db'
 import { s } from '~/@/schema'
 import { Ok, isErr } from '~/@/result'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { IGuestSessionMappingDb } from './interface'

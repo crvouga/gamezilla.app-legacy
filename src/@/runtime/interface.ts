@@ -1,5 +1,5 @@
 import { Sub } from '../sub'
-import { UnixMs } from '../time/posix'
+import { UnixMs } from '../time/unix-ms'
 
 export type RuntimeEvent =
   | {

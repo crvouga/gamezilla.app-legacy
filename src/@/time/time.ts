@@ -1,6 +1,6 @@
 import type { Eff } from '../eff'
 import { PubSub, Sub } from '../sub'
-import { UnixMs } from './posix'
+import { UnixMs } from './unix-ms'
 import { TimeSpan } from './time-span'
 
 //

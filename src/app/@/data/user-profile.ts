@@ -1,5 +1,5 @@
 import { s } from '~/@/schema'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'

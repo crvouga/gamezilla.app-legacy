@@ -3,7 +3,7 @@ import type { IVerifySMS } from '../../interface'
 import { VerificationId, type Verification } from './verification'
 import { Config } from './shared'
 import { TimeSpan } from '~/@/time/time-span'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 
 export const SendCode =
   (deps: Config): IVerifySMS['sendCode'] =>

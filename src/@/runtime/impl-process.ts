@@ -2,7 +2,7 @@ import { ILogger, Logger } from '~/@/logger'
 import { sleep } from '~/@/promise/sleep'
 import { IRuntime, RuntimeEvent } from '~/@/runtime/interface'
 import { Sub } from '~/@/sub'
-import { UnixMs } from '~/@/time/posix'
+import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
 
 export type Config = {
