@@ -113,6 +113,13 @@ services:
       timeout: 5s
       retries: 5
 
+  powersync_diagnostics:
+    container_name: powersync_diagnostics
+    image: journeyapps/powersync-diagnostics-app:latest
+    restart: unless-stopped
+    ports:
+      - '8082:80'
+
   redis:
     container_name: redis
     image: redis:latest

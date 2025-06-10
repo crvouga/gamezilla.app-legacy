@@ -30,5 +30,4 @@ tsconfig.tsbuildinfo
 .lsp
 .env
 
-./powersync/test-client/*
-powersync/test-client/**/*w
+powersync
