@@ -1,5 +1,6 @@
 import { s } from '~/@/schema'
 import { MsgFrontend } from './types'
+import { isOk } from '~/@/result'
 
 const schema = s.obj({
   t: s.l('numberlink.got-hint-calculator-msg'),
@@ -14,7 +15,7 @@ export type GotHintCalculatorMsg = s.Infer<typeof schema>
 export type MsgShared = GotHintCalculatorMsg
 
 const is = (input: unknown): input is GotHintCalculatorMsg => {
-  return typeof input === 'object' && input !== null && 't' in input && input.t === 'got-hint-calculator-msg'
+  return isOk(schema.parse(input))
 }
 
 const init = (msg: MsgFrontend): GotHintCalculatorMsg => {
