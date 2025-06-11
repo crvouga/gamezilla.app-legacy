@@ -13,6 +13,8 @@ export const schema = s.or(
 
 export type AddPuzzlesCmd = s.Infer<typeof schema>
 
+export type MsgShared = AddPuzzlesCmd
+
 export const init = (puzzles: { [puzzleId: PuzzleId]: Puzzle }, causedBy: unknown): AddPuzzlesCmd => {
   return {
     t: 'numberlink-cmd.add-puzzles',

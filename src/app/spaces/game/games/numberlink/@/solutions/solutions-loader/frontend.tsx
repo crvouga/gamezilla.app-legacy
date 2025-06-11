@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import { AddSolutionsCmd } from '../../frontend/add-solutions-cmd'
+import { AddSolutionsCmd } from '../../frontend/add-solutions-cmd.$msg'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { GotSolutionsLoaderMsg } from './got-solutions-loader-msg.$msg'

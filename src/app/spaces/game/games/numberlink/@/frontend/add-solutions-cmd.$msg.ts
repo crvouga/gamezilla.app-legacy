@@ -4,7 +4,7 @@ import { Solutions } from '../solutions/solutions'
 
 export const schema = s.or(
   s.obj({
-    t: s.l('add-solutions'),
+    t: s.l('numberlink.add-solutions'),
     solutions: Solutions,
     causedBy: s.any,
   }),
@@ -12,9 +12,11 @@ export const schema = s.or(
 
 export type AddSolutionsCmd = s.Infer<typeof schema>
 
+export type MsgShared = AddSolutionsCmd
+
 export const init = (solutions: Solutions, causedBy: unknown): AddSolutionsCmd => {
   return {
-    t: 'add-solutions',
+    t: 'numberlink.add-solutions',
     solutions,
     causedBy,
   }
