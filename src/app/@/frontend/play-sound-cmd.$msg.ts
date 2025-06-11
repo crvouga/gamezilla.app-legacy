@@ -14,6 +14,8 @@ export const schema = s.or(
 
 export type PlaySoundCmd = s.Infer<typeof schema>
 
+export type MsgShared = PlaySoundCmd
+
 export const init = (
   src: string,
   config?: {

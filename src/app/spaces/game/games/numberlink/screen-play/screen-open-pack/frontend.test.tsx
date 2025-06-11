@@ -3,7 +3,7 @@ import { withEventMeta } from '~/@/event-sourced/event'
 
 import { Pack } from '../../@/pack/pack'
 import { FixturePlayFrontend } from '../@/frontend/fixture'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 
 const Fixture = async () => {
   const f = await FixturePlayFrontend()

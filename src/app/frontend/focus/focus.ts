@@ -2,7 +2,7 @@ import { Eff } from '~/@/eff'
 import { sleep } from '~/@/promise/sleep'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
-import { FocusViewCmd } from '~/app/@/frontend/focus-view-cmd'
+import { FocusViewCmd } from '~/app/@/frontend/focus-view-cmd.$msg'
 
 export type Model = {
   t: 'noop'

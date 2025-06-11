@@ -7,25 +7,33 @@ import { SpaceFrontendModule } from '../../frontend/space-frontend'
 import { Space } from '../space'
 import { ISpaceDb } from '../space/space-db/interface'
 import { Spaces } from '../spaces'
-import { MsgFrontend } from './types'
+import { ModelFrontend, MsgFrontend } from './types'
+
+const init: ModelFrontend = {
+  'space-loader.queries': {},
+  'space-loader.results': {},
+}
 
 const update: SpaceFrontendModule['update'] = (input) => {
+  switch (input.msg?.t) {
+    case 'space-loader.got-spaces': {
+      const spacesNew = Spaces.merge(input.model.spaces, input.msg.spaces)
+      return {
+        model: {
+          ...input.model,
+          isInitialized: true,
+          spaces: spacesNew,
+        },
+      }
+    }
+  }
+
   switch (input.msgSpace?.t) {
     case 'user-ended-space':
     case 'user-inputted-game':
     case 'user-joined-space':
     case 'user-left-space':
-    case 'user-started-space': {
-      const spaceId = input.msgSpace.spaceId
-      const space = Spaces.toSpace(input.model.spaces, spaceId)
-      if (!space) return { model: input.model }
-      return {
-        model: input.model,
-        async eff(dispatch) {
-          persistSpace(input.ctx.spaceDb, spaceId, space, dispatch)
-        },
-      }
-    }
+    case 'user-started-space':
     case 'game': {
       const spaceId = input.msgSpace.spaceId
       const space = Spaces.toSpace(input.model.spaces, spaceId)
@@ -33,19 +41,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
       return {
         model: input.model,
         async eff(dispatch) {
-          persistSpaceThrottled(input.ctx.spaceDb, spaceId, space, dispatch)
-        },
-      }
-    }
-  }
-
-  switch (input.msg?.t) {
-    case 'space-loader.got-spaces': {
-      const spacesNew = Spaces.merge(input.model.spaces, input.msg.spaces)
-      return {
-        model: {
-          ...input.model,
-          spaces: spacesNew,
+          upsertSpaceThrottled(input.ctx.spaceDb, spaceId, space, dispatch)
         },
       }
     }
@@ -54,7 +50,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const persistSpace = async (
+const upsertSpace = async (
   spaceDb: ISpaceDb,
   spaceId: SpaceId,
   space: Space.Model,
@@ -65,8 +61,8 @@ const persistSpace = async (
   dispatch({ t: 'space-loader.upserted', spaceId, upserted })
 }
 
-const persistSpaceThrottled = throttleByKey({
-  fn: persistSpace,
+const upsertSpaceThrottled = throttleByKey({
+  fn: upsertSpace,
   keyFn: (_spaceDb, spaceId, _space, _dispatch) => spaceId,
   throttle: TimeSpan.seconds(1),
   behavior: 'use-latest',
@@ -84,7 +80,10 @@ const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
           hostId: {
             '=': currentUserId,
           },
+          spaceId: undefined,
         },
+        limit: 1,
+        offset: 0,
       },
       (spaces) => ({
         t: 'space-loader.got-spaces',
@@ -95,6 +94,7 @@ const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
 }
 
 export const SpaceLoaderFrontend = {
+  init,
   update,
   subscriptions,
 }

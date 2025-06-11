@@ -15,6 +15,8 @@ export const schema = s.or(
 
 export type ShowToastCmd = s.Infer<typeof schema>
 
+export type MsgShared = ShowToastCmd
+
 export const init = (
   text: TranslatedText,
   config?: {

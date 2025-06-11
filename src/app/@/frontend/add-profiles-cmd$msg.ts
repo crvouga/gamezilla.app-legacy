@@ -9,6 +9,8 @@ const schema = s.obj({
 
 export type AddProfilesCmd = s.Infer<typeof schema>
 
+export type MsgShared = AddProfilesCmd
+
 const init = (profiles: UserProfile[]): AddProfilesCmd => {
   return {
     t: 'add-profiles',

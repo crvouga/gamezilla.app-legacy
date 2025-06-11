@@ -10,6 +10,8 @@ export const schema = s.or(
 
 export type CurrentUserLoggedOutEvt = s.Infer<typeof schema>
 
+export type MsgShared = CurrentUserLoggedOutEvt
+
 export const init = (text: string): CurrentUserLoggedOutEvt => {
   return {
     t: 'current-user-logged-out',

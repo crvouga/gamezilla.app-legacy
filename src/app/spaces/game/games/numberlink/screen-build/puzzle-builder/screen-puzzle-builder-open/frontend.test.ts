@@ -4,7 +4,7 @@ import { withEventMeta } from '~/@/event-sourced/event'
 import { Puzzle } from '../../../@/puzzle/puzzle'
 import { FixtureFlowBuilderFrontend } from '../../@/fixture/frontend'
 import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/query'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 
 const Fixture = async () => {
   const f = await FixtureFlowBuilderFrontend()

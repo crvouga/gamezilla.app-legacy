@@ -9,6 +9,8 @@ export const schema = s.or(
 
 export type BackendConnectedEvt = s.Infer<typeof schema>
 
+export type MsgShared = BackendConnectedEvt
+
 export const init = (): BackendConnectedEvt => {
   return {
     t: 'backend-evt.connected',

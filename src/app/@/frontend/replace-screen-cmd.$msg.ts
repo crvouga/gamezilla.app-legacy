@@ -12,6 +12,8 @@ export const schema = s.or(
 
 export type ReplaceScreenCmd = s.Infer<typeof schema>
 
+export type MsgShared = ReplaceScreenCmd
+
 export const init = (screen: Screen, playSound?: boolean): ReplaceScreenCmd => {
   return {
     t: 'replace',

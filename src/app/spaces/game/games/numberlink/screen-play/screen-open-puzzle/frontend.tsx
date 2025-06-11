@@ -1,13 +1,13 @@
 import { Sub } from '~/@/sub'
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutHostSettingUpGame } from '../../../@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { PackPuzzleGridUI } from '../../@/pack/pack-puzzle-grid-ui'
 import { PuzzleQuery } from '../../@/puzzle/puzzle-db/query'
 import { PuzzleLoaderFrontend } from '../../@/puzzle/puzzle-loader/frontend'
-import { GotPuzzleLoaderMsg } from '../../@/puzzle/puzzle-loader/got-puzzle-loader-msg'
+import { GotPuzzleLoaderMsg } from '../../@/puzzle/puzzle-loader/got-puzzle-loader-msg.$msg'
 import type { FrontendModule, ModelSpace, MsgFrontend } from '../types'
 
 const update: FrontendModule['update'] = (input) => {

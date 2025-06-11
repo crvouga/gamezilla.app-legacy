@@ -1,10 +1,27 @@
 import { Result } from '~/@/result'
+import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space'
+import { SpaceQuery } from '../space/space-db/query'
 
-export type ModelFrontend = {}
+export type ModelFrontend = {
+  'space-loader.results': {
+    [queryKey: string]: SpaceId[]
+  }
+  'space-loader.queries': {
+    [name: string]: SpaceQuery
+  }
+}
 
-export type MsgFrontend =
-  | { t: 'space-loader.tick' }
-  | { t: 'space-loader.upserted'; spaceId: SpaceId; upserted: Result<string, null> }
-  | { t: 'space-loader.got-spaces'; spaces: Space.Model[] }
+export const MsgFrontend = s.or(
+  s.obj({
+    t: s.l('space-loader.upserted'),
+    spaceId: SpaceId,
+    upserted: Result.schema(s.str(), s.unknown),
+  }),
+  s.obj({
+    t: s.l('space-loader.got-spaces'),
+    spaces: s.arr(Space.Model),
+  }),
+)
+export type MsgFrontend = s.Infer<typeof MsgFrontend>

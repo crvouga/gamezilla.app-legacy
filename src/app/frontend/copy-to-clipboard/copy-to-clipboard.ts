@@ -1,6 +1,6 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd'
+import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd.$msg'
 
 export type Model = {
   t: 'noop'

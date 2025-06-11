@@ -4,7 +4,7 @@ import { sleep } from '~/@/promise/sleep'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PuzzleQuery } from '../../../../@/puzzle/puzzle-db/query'
 import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
 import { MsgFrontend } from '../types'

@@ -10,6 +10,8 @@ export const schema = s.or(
 
 export type PreloadSoundsCmd = s.Infer<typeof schema>
 
+export type MsgShared = PreloadSoundsCmd
+
 export const init = (srcList: string[]): PreloadSoundsCmd => {
   return {
     t: 'preload-sounds',

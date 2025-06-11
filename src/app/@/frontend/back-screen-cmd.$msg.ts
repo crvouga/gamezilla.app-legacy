@@ -10,6 +10,8 @@ export const schema = s.or(
 
 export type BackScreenCmd = s.Infer<typeof schema>
 
+export type MsgShared = BackScreenCmd
+
 export const init = (playSound?: boolean): BackScreenCmd => {
   return {
     t: 'back',

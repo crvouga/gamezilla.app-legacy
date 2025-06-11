@@ -1,12 +1,12 @@
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutHostSettingUpGame } from '../../../@/ui/screen-layout-host-setting-up-game/screen-layout-host-setting-up-game'
 import { PacksDbQuery } from '../../@/pack/pack-db/query'
 import { PackLoaderFrontend } from '../../@/pack/pack-loader/frontend'
-import { GotPackLoaderMsg } from '../../@/pack/pack-loader/got-pack-loader-msg'
+import { GotPackLoaderMsg } from '../../@/pack/pack-loader/got-pack-loader-msg.$msg'
 import type { FrontendModule, MsgFrontend } from '../types'
 
 const update: FrontendModule['update'] = (input) => {

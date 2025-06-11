@@ -12,6 +12,8 @@ export const schema = s.or(
 
 export type PushScreenCmd = s.Infer<typeof schema>
 
+export type MsgShared = PushScreenCmd
+
 export const init = (screen: Screen, playSound?: boolean): PushScreenCmd => {
   return {
     t: 'push',

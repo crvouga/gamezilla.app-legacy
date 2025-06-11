@@ -3,7 +3,7 @@ import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
 import { EditPackNameFrontend } from './frontend'
 import { MsgFrontend } from '../types'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 
 export const Fixture = async () => {
   const f = await FixturePackBuilderFrontend()

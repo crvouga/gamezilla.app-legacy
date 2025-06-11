@@ -1,7 +1,7 @@
 import { EventSourced } from '~/@/event-sourced'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt'
+import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt.$msg'
 import { SpaceFrontendModule } from '../frontend/space-frontend'
 import { Spaces } from '../space/spaces'
 

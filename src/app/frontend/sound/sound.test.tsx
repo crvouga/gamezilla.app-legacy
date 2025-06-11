@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import { FixtureAppFrontend } from '../../@/frontend/fixture'
 import * as Sound from './sound'

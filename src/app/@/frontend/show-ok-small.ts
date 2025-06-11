@@ -1,8 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
 import { TimeSpan } from '~/@/time/time-span'
 import { APP_SOUND } from './app-sound'
-import { PlaySoundCmd } from './play-sound-cmd'
-import { ShowToastCmd } from './show-toast-cmd'
+import { PlaySoundCmd } from './play-sound-cmd.$msg'
+import { ShowToastCmd } from './show-toast-cmd.$msg'
 
 export const init = (text: TranslatedText, duration?: TimeSpan): unknown[] => {
   return [

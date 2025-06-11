@@ -7,6 +7,8 @@ const schema = s.obj({
 
 export type LogoutCmd = s.Infer<typeof schema>
 
+export type MsgShared = LogoutCmd
+
 const init = (): LogoutCmd => {
   return {
     t: 'logout-cmd',

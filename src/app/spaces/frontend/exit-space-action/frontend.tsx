@@ -1,7 +1,7 @@
 import { IconDoorOpen } from '~/@/ui/icon/icon-door-open'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import type { SpaceFrontendModule } from '../space-frontend'
 

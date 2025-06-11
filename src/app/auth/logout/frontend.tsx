@@ -1,9 +1,9 @@
 import { NotAsked } from '~/@/result'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { LogoutCmd } from '~/app/@/frontend/logout-cmd'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
-import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
+import { LogoutCmd } from '~/app/@/frontend/logout-cmd.$msg'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 

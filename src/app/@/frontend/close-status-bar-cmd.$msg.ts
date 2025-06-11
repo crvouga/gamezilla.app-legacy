@@ -12,6 +12,8 @@ export const schema = s.or(
 
 export type CloseStatusBarCmd = s.Infer<typeof schema>
 
+export type MsgShared = CloseStatusBarCmd
+
 export const init = (): CloseStatusBarCmd => {
   return {
     t: 'status-bar',

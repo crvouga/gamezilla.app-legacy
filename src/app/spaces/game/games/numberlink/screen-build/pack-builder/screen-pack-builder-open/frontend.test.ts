@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { Pack } from '../../../@/pack/pack'
 import { FixtureFlowBuilderFrontend } from '../../@/fixture/frontend'
 

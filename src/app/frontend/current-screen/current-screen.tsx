@@ -3,11 +3,11 @@ import { Eff } from '~/@/eff'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
-import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd'
-import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
+import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd.$msg'
+import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt.$msg'
 
 //
 //

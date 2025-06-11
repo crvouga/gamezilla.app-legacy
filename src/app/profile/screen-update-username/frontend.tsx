@@ -1,6 +1,6 @@
 import { RequestResponse } from '~/@/request-response/request-response'
 import { TextField } from '~/@/ui/text-field'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { FrontendModule } from './types'
 

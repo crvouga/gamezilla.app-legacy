@@ -10,7 +10,8 @@ import { UnixMs } from '~/@/time/unix-ms'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '..'
 import { SpaceProjection } from '../../space-projection'
-import type { ISpaceDb, SpaceDbConfig, SpaceDbQueryInput } from './interface'
+import type { ISpaceDb, SpaceDbConfig } from './interface'
+import { SpaceQuery } from './query'
 
 export type Config = SpaceDbConfig & {
   t: 'sql-db'
@@ -245,7 +246,7 @@ const upsertSnapshot = async (
   return Ok(null)
 }
 
-const toSqlQuery = (input: SpaceDbQueryInput) => {
+const toSqlQuery = (input: SpaceQuery) => {
   const sqlWhere = toSqlWhere(input)
   const sqlPagination = toSqlPagination(input)
 
@@ -270,16 +271,16 @@ const toSqlQuery = (input: SpaceDbQueryInput) => {
   }
 }
 
-const toSqlWhere = (input: SpaceDbQueryInput) => {
+const toSqlWhere = (input: SpaceQuery) => {
   const vars: Sql.Vars = {}
   const clauses: string[] = []
 
-  if (input.where.spaceId?.['=']) {
+  if (input.where?.spaceId?.['=']) {
     clauses.push(`id = :space_id`)
     vars['space_id'] = input.where.spaceId['=']
   }
 
-  if (input.where.hostId?.['=']) {
+  if (input.where?.hostId?.['=']) {
     clauses.push(`host_id = :host_id`)
     vars['host_id'] = input.where.hostId['=']
   }
@@ -292,7 +293,7 @@ const toSqlWhere = (input: SpaceDbQueryInput) => {
   }
 }
 
-const toSqlPagination = (input: SpaceDbQueryInput) => {
+const toSqlPagination = (input: SpaceQuery) => {
   const vars: Sql.Vars = {}
   const clauses: string[] = []
 

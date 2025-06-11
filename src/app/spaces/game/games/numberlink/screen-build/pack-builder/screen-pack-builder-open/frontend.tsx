@@ -1,10 +1,10 @@
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { PackLoaderFrontend } from '../../../@/pack/pack-loader/frontend'
-import { GotPackLoaderMsg } from '../../../@/pack/pack-loader/got-pack-loader-msg'
+import { GotPackLoaderMsg } from '../../../@/pack/pack-loader/got-pack-loader-msg.$msg'
 import type { FrontendModule, MsgFrontend } from '../../types'
 import { PackCreateNewFrontend } from './button-create-new-pack/frontend'
 

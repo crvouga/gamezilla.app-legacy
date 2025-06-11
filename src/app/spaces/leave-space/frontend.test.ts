@@ -2,11 +2,11 @@ import { describe, expect, it } from 'bun:test'
 import { withEventMetaAt } from '~/@/event-sourced/event'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
-import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { FixtureSpacesFrontend, userJoinedSpace, userLeftSpace, userStartedSpace } from '../@/fixture/frontend'
 import { Spaces } from '../space/spaces'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 
 const Fixture = async () => {
   const f = await FixtureSpacesFrontend()

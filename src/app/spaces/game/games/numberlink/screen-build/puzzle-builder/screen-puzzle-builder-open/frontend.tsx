@@ -1,11 +1,11 @@
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
 import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/query'
 import { PuzzleLoaderFrontend } from '../../../@/puzzle/puzzle-loader/frontend'
-import { GotPuzzleLoaderMsg } from '../../../@/puzzle/puzzle-loader/got-puzzle-loader-msg'
+import { GotPuzzleLoaderMsg } from '../../../@/puzzle/puzzle-loader/got-puzzle-loader-msg.$msg'
 import type { FrontendModule, ModelSpace, MsgFrontend } from '../../types'
 import { CreateNewPuzzleFrontend } from './button-create-new-puzzle/frontend'
 

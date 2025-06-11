@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'bun:test'
 import { withEventMeta } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { UserId } from '~/app/@/data/user-id'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { Numberlink } from '../../@/numberlink'
 import { FixtureScreenPlayPuzzleFrontend } from './@/fixture/frontend'
 

@@ -5,7 +5,7 @@ import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { Spaces } from '../space/spaces'
 import { GameName } from './games/@/game-name'
 import { NonEmpty } from '~/@/array/non-empty'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ExitGameCmd } from '../@/frontend/exit-game-cmd'
 
 const Fixture = async () => {

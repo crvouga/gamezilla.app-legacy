@@ -1,14 +1,14 @@
 import type { SpaceId } from '~/app/@/data/space-id'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
-import { Spaces } from './spaces'
 import { EndSpaceFrontend } from '../end-space/frontend'
 import { ExitSpaceAction } from '../frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from '../frontend/people-action/frontend'
 import { GameFrontend } from '../game/frontend'
 import { JoinSpaceFrontend } from '../join-space/frontend'
 import { LeaveSpaceFrontend } from '../leave-space/frontend'
-import type { ModelFrontend, MsgFrontend, FrontendCtxModule } from '../types'
+import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../types'
+import { Spaces } from './spaces'
 
 const View = (input: {
   model: ModelFrontend

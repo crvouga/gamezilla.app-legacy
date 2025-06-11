@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { SpaceId } from '~/app/@/data/space-id'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 
 const Fixture = async () => {

@@ -4,7 +4,7 @@ import { withEventMeta } from '~/@/event-sourced/event'
 import { Pack } from '../../@/pack/pack'
 import { Puzzle } from '../../@/puzzle/puzzle'
 import { FixturePlayFrontend } from '../@/frontend/fixture'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { Sub } from '~/@/sub'
 
 const Fixture = async () => {

@@ -14,7 +14,7 @@ import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import type { Pack } from '../pack'
 import { PacksDbQuery } from '../pack-db/query'
 import { PackId } from '../pack-id'
-import { GotPackLoaderMsg } from './got-pack-loader-msg'
+import { GotPackLoaderMsg } from './got-pack-loader-msg.$msg'
 import { ModelFrontend, MsgFrontend, initFrontend, type FrontendModule } from './types'
 
 const update: FrontendModule['update'] = (input) => {

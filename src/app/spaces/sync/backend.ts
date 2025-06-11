@@ -72,7 +72,10 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
       const got = await ctx.spaceDb.query({
         where: {
           spaceId: { '=': msgSpace.spaceId },
+          hostId: undefined,
         },
+        limit: 1,
+        offset: 0,
       })
 
       if (isErr(got)) return

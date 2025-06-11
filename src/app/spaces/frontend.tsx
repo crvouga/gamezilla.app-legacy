@@ -42,6 +42,7 @@ const initCtx = async (input: {
 
 const init: FrontendModule['init'] = (_input) => {
   const model: ModelFrontend = {
+    ...SpaceLoaderFrontend.init,
     spaces: Spaces.init,
     games: {},
     opened: null,

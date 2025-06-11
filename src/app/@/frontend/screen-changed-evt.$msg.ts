@@ -11,6 +11,8 @@ export const schema = s.or(
 
 export type ScreenChangedEvt = s.Infer<typeof schema>
 
+export type MsgShared = ScreenChangedEvt
+
 export const init = (screen: Screen): ScreenChangedEvt => {
   return {
     t: 'screen-evt.screen-changed',

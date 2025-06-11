@@ -10,6 +10,8 @@ export const schema = s.or(
 
 export type CopyToClipboardCmd = s.Infer<typeof schema>
 
+export type MsgShared = CopyToClipboardCmd
+
 export const init = (text: string): CopyToClipboardCmd => {
   return {
     t: 'copy-to-clipboard',

@@ -1,6 +1,6 @@
 import { Sub } from '~/@/sub'
 
-import { AddProfilesCmd } from '~/app/@/frontend/add-profiles-cmd'
+import { AddProfilesCmd } from '~/app/@/frontend/add-profiles-cmd$msg'
 import { ProfileFrontendCtx } from '../frontend/ctx'
 import { ProfileDbQuery } from '../user-profile/user-profile-db/query'
 import type { FrontendModule, MsgFrontend, MsgInCmdFrontend } from './types'

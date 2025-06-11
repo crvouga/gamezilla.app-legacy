@@ -10,6 +10,8 @@ export const schema = s.or(
 
 export type FocusViewCmd = s.Infer<typeof schema>
 
+export type MsgShared = FocusViewCmd
+
 export const init = (viewId: string): FocusViewCmd => {
   return {
     t: 'focus',

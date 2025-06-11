@@ -3,22 +3,24 @@ import { isOk } from '~/@/result'
 import { MsgFrontend } from './types'
 
 const schema = s.obj({
-  t: s.l('got-puzzle-loader-msg'),
+  t: s.l('numberlink.got-pack-loader-msg'),
   c: s.obj({
     t: s.l('got-msg'),
     msg: MsgFrontend,
   }),
 })
 
-export type GotPuzzleLoaderMsg = s.Infer<typeof schema>
+export type GotPackLoaderMsg = s.Infer<typeof schema>
 
-const is = (input: unknown): input is GotPuzzleLoaderMsg => {
+export type MsgShared = GotPackLoaderMsg
+
+const is = (input: unknown): input is GotPackLoaderMsg => {
   return isOk(schema.parse(input))
 }
 
-const init = (msg: MsgFrontend): GotPuzzleLoaderMsg => {
+const init = (msg: MsgFrontend): GotPackLoaderMsg => {
   return {
-    t: 'got-puzzle-loader-msg',
+    t: 'numberlink.got-pack-loader-msg',
     c: {
       t: 'got-msg',
       msg,
@@ -26,7 +28,7 @@ const init = (msg: MsgFrontend): GotPuzzleLoaderMsg => {
   }
 }
 
-export const GotPuzzleLoaderMsg = {
+export const GotPackLoaderMsg = {
   schema: schema,
   is,
   init,

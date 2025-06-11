@@ -9,9 +9,9 @@ import { ToggleButton } from '~/@/ui/toggle-button'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { DocumentVisibilityChangedEvt } from '~/app/@/frontend/document-visbility-changed-evt'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
-import { PreloadSoundsCmd } from '~/app/@/frontend/preload-sounds-cmd'
+import { DocumentVisibilityChangedEvt } from '~/app/@/frontend/document-visibility-changed-evt.$msg'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
+import { PreloadSoundsCmd } from '~/app/@/frontend/preload-sounds-cmd.$msg'
 
 //
 //

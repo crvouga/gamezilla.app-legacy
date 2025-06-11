@@ -10,6 +10,8 @@ export const schema = s.or(
 
 export type DocumentVisibilityChangedEvt = s.Infer<typeof schema>
 
+export type MsgShared = DocumentVisibilityChangedEvt
+
 export const init = (state: 'visible' | 'hidden'): DocumentVisibilityChangedEvt => {
   return {
     t: 'document-visibility-changed',

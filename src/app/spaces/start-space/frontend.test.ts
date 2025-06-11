@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'bun:test'
 import { SpaceId } from '~/app/@/data/space-id'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
-import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
-import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 import { Spaces } from '../space/spaces'
 

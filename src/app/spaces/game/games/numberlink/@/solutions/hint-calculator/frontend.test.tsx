@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { Err, Ok } from '~/@/result'
 
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
+import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
 import { ShowWarningSmall } from '~/app/@/frontend/show-warning-small'
@@ -10,7 +10,7 @@ import { VariantGridShorthand } from '../../variant/grid'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
 import { HintCalculatorFrontend } from './frontend'
-import { GotHintCalculatorMsg } from './got-hint-calculator-msg'
+import { GotHintCalculatorMsg } from './got-hint-calculator-msg.$msg'
 
 export const Fixture = async () => {
   const f = await FixtureNumberlinkFrontend()

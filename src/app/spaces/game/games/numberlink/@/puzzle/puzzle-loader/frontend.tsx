@@ -18,7 +18,7 @@ import { PuzzleQuery } from '../puzzle-db/query'
 import { PuzzleId } from '../puzzle-id'
 import { QueryForm } from './query-form'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
-import { GotPuzzleLoaderMsg } from './got-puzzle-loader-msg'
+import { GotPuzzleLoaderMsg } from './got-puzzle-loader-msg.$msg'
 
 const update: FrontendModule['update'] = (input) => {
   if (GotPuzzleLoaderMsg.is(input.msgIn)) {
