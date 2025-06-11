@@ -70,27 +70,11 @@ const upsertSpaceThrottled = throttleByKey({
 
 const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
   const currentUserId = input.ctx.currentUser?.userId
-
   if (!currentUserId) return Sub.none()
-
-  return Sub.batch<MsgFrontend>([
-    input.ctx.spaceDb.sub(
-      {
-        where: {
-          hostId: {
-            '=': currentUserId,
-          },
-          spaceId: undefined,
-        },
-        limit: 1,
-        offset: 0,
-      },
-      (spaces) => ({
-        t: 'space-loader.got-spaces',
-        spaces,
-      }),
-    ),
-  ])
+  return input.ctx.spaceDb.sub({ where: { hostId: { '=': currentUserId } } }, (spaces) => ({
+    t: 'space-loader.got-spaces',
+    spaces,
+  }))
 }
 
 export const SpaceLoaderFrontend = {
