@@ -61,9 +61,9 @@ describe('ModePlayFrontend', () => {
     expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]).toBeTruthy()
   })
 
-  test('remove hint button when puzzle is solved', async () => {
+  test('disable hint button when puzzle is solved', async () => {
     const f = await Fixture()
     const r = f.render({ ctx: f.ctxWithSolutions, model: f.modelSolved })
-    expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]).toBeFalsy()
+    expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]?.disabled).toBe(true)
   })
 })

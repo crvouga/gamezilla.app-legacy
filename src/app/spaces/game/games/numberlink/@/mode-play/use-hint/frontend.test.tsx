@@ -23,7 +23,7 @@ const Fixture = async (params?: Parameters<typeof FixtureModePlayUseHint>[0]) =>
 }
 
 describe('UseHintFrontend', () => {
-  it('should hide hint button if puzzle is solved', async () => {
+  it('should disable hint button if puzzle is solved', async () => {
     const f = await Fixture({
       ctxFlow: VariantGridShorthand.toGrid([
         ['A', 'B'],
@@ -41,7 +41,7 @@ describe('UseHintFrontend', () => {
       ctx: f.ctx,
     })
     const btn = r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]
-    expect(btn).not.toBeDefined()
+    expect(btn?.disabled).toBe(true)
   })
 
   it('should show hint button if puzzle is not solved', async () => {
