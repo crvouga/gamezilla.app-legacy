@@ -20,13 +20,13 @@ const viewAction = (input: {
   const hasSolution = Solutions.selectOne(input.ctx.solutions, hash) !== null
   if (!hasSolution) return []
   const isSolved = AlgoIsSolved.isSolved(numberlink)
-  if (isSolved) return []
 
   return [
     {
       id: input.ctx.t('game.hint'),
       icon: (input) => <IconLightbulb {...input} />,
       label: input.ctx.t('game.hint'),
+      disabled: isSolved,
       onClick: () => {
         const numberlink = toNumberlink(input.model, input.ctx.numberlink)
         const hash = SolutionHash.init(numberlink)
