@@ -1,5 +1,4 @@
 import { describe, expect, it, test } from 'bun:test'
-import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { unwrap } from '~/@/result'
@@ -43,8 +42,7 @@ describe('SpaceDb', () => {
       const before = unwrap(await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } }))
 
       const modifiedSpace = pipe(f.space, (model) =>
-        EventSourced.appendEvent(
-          Space.config,
+        Space.append(
           model,
           withEventId({ t: 'user-joined-space', spaceId: f.spaceId, userId: UserId.generate() } as const),
         ),

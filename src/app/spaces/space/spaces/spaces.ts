@@ -71,7 +71,7 @@ export const toSpaceProjection = (model: Model, spaceId?: SpaceId | null | undef
 
   if (!spaceModel) return SpaceProjection.init
 
-  const spaceState = EventSourced.toProjection(Space.config, spaceModel)
+  const spaceState = Space.toSpaceProjection(spaceModel)
 
   return spaceState
 }
@@ -214,7 +214,7 @@ const append = (input: {
 
   const space = input.model.spaces[spaceId] ?? Space.init
 
-  const spaceNew = EventSourced.appendEvent(Space.config, space, input.msgSpace)
+  const spaceNew = Space.append(space, input.msgSpace)
 
   return {
     model: {

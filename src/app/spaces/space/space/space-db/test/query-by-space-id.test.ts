@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'bun:test'
-import { EventSourced } from '~/@/event-sourced'
 import { unwrap } from '~/@/result'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../..'
@@ -45,8 +44,8 @@ describe('SpaceDb - query by space id', () => {
       unwrap(await f.spacesDb.upsert(f.space))
 
       const after = unwrap(await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } }))
-      expect(EventSourced.toProjection(Space.config, before.items[0] ?? Space.init)?.type).toEqual('initial')
-      expect(EventSourced.toProjection(Space.config, after.items[0] ?? Space.init)?.type).toEqual('started')
+      expect(Space.toSpaceProjection(before.items[0] ?? Space.init)?.type).toEqual('initial')
+      expect(Space.toSpaceProjection(after.items[0] ?? Space.init)?.type).toEqual('started')
     }
   })
 })

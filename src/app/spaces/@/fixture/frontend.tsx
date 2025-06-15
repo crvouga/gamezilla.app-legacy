@@ -1,5 +1,4 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { EventSourced } from '~/@/event-sourced'
 import { withEventId, withEventMetaAt } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { loggerNoop } from '~/@/logger/impl-noop'
@@ -14,11 +13,11 @@ import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
-import { Space } from '../../space/space'
 import { SpacesFrontend } from '../../frontend'
+import { Space } from '../../space/space'
+import { SpaceDb } from '../../space/space/space-db'
 import * as SpacesTypes from '../../types'
 import { SpaceFrontendCtx } from '../frontend/ctx'
-import { SpaceDb } from '../../space/space/space-db'
 
 export const SpaceFrontendFixture = async () => {
   const f = await FixtureAppFrontend()
@@ -103,34 +102,13 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
   const space = pipe(
     Space.init,
     (model) =>
-      EventSourced.appendEvent(
-        Space.config,
-        model,
-        withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId } as const),
-      ),
-    (model) =>
-      EventSourced.appendEvent(
-        Space.config,
-        model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userA.id } as const),
-      ),
-    (model) =>
-      EventSourced.appendEvent(
-        Space.config,
-        model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userB.id } as const),
-      ),
-    (model) =>
-      EventSourced.appendEvent(
-        Space.config,
-        model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userC.id } as const),
-      ),
+      Space.append(model, withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId } as const)),
+    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userA.id } as const)),
+    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userB.id } as const)),
+    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userC.id } as const)),
     (model) => Space.toSpaceStarted(model),
     (space) => {
-      if (!space) {
-        throw new Error('Invalid fixture. Space is not started.')
-      }
+      if (!space) throw new Error('Invalid fixture. Space is not started.')
       return space
     },
   )

@@ -85,7 +85,7 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
 
     const space = spaceCache.get(msgSpace.spaceId) ?? Space.init
 
-    const spaceNew = EventSourced.appendEvent(Space.config, space, msgSpace)
+    const spaceNew = Space.append(space, msgSpace)
 
     spaceCache.set(msgSpace.spaceId, spaceNew)
 

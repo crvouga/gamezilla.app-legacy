@@ -14,6 +14,7 @@ import { MsgSpace } from '../msg-space'
 
 export const Initial = s.obj({
   type: s.l('initial'),
+  latestEventId: s.maybe(EventId),
 })
 export type Initial = s.Infer<typeof Initial>
 
@@ -26,7 +27,6 @@ export const Started = s.obj({
   hostId: UserId,
   users: s.dict(UserId, UserId),
 })
-
 export type Started = s.Infer<typeof Started>
 
 export const Ended = s.obj({
@@ -38,14 +38,9 @@ export const Ended = s.obj({
   hostId: UserId,
   users: s.dict(UserId, UserId),
 })
-
 export type Ended = s.Infer<typeof Ended>
 
-const StateBase = s.obj({
-  latestEventId: s.maybe(EventId),
-})
-
-export const Model = s.and(StateBase, s.or(Initial, Started, Ended))
+export const Model = s.or(Initial, Started, Ended)
 export type Model = s.Infer<typeof Model>
 
 export const init: Model = {

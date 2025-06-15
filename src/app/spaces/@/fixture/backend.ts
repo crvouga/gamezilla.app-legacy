@@ -1,4 +1,3 @@
-import { EventSourced } from '~/@/event-sourced'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { Topic } from '~/@/topic'
@@ -29,24 +28,9 @@ export const FixtureSpaceBackend = async () => {
 
   const space = pipe(
     Space.init,
-    (model) =>
-      EventSourced.appendEvent(
-        Space.config,
-        model,
-        withEventId({ t: 'user-started-space', spaceId, userId: userA.id } as const),
-      ),
-    (model) =>
-      EventSourced.appendEvent(
-        Space.config,
-        model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userB.id } as const),
-      ),
-    (model) =>
-      EventSourced.appendEvent(
-        Space.config,
-        model,
-        withEventId({ t: 'user-joined-space', spaceId, userId: userC.id } as const),
-      ),
+    (model) => Space.append(model, withEventId({ t: 'user-started-space', spaceId, userId: userA.id } as const)),
+    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userB.id } as const)),
+    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userC.id } as const)),
   )
 
   const spaceState = Space.toSpaceStarted(space)

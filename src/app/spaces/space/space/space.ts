@@ -1,5 +1,5 @@
 import { EventSourced, EventSourcedConfig } from '~/@/event-sourced'
-import { EventId } from '~/@/event-sourced/event'
+import { EventId, WithEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
@@ -12,8 +12,12 @@ export type Model = s.Infer<typeof Model>
 
 export const init: Model = EventSourced.init(SpaceProjection.init)
 
-export const config: EventSourcedConfig<MsgSpace, SpaceProjection.Model> = {
+const config: EventSourcedConfig<MsgSpace, SpaceProjection.Model> = {
   reducer: SpaceProjection.updateSpace,
+}
+
+export const append = (model: Model, msg: WithEventId<MsgSpace>): Model => {
+  return EventSourced.appendEvent(config, model, msg)
 }
 
 export const random = (input?: { hostId?: UserId; spaceId?: SpaceId; guestIds?: UserId[] }) => {
