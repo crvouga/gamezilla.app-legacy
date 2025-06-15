@@ -2,7 +2,7 @@ import { PowerSyncDatabase } from '@powersync/web'
 import Logger from 'js-logger'
 import { Sub } from '~/@/sub'
 import { BackendConnector } from '../frontend/backend-connector'
-import { AppSchema } from './database-schema'
+import { AppSchema } from './powersync-client-schema'
 
 Logger.useDefaults()
 Logger.setLevel(Logger.DEBUG)

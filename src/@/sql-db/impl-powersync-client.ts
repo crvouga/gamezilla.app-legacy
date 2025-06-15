@@ -2,7 +2,7 @@ import { ILogger, Logger } from '~/@/logger'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { PubSub, Sub } from '~/@/sub'
-import { IPowerSyncClient } from '~/service-powersync/client/database'
+import { IPowerSyncClient } from '~/service-powersync/client/powersync-client'
 import { SqlDbQueryInput, ISqlDb } from './interface'
 
 export type Config = {
