@@ -5,7 +5,7 @@ import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { MsgSpace } from '../msg-space'
-import { SpaceProjection } from '../space-projection'
+import * as SpaceProjection from './space-projection'
 
 export const Model = EventSourced.schema(MsgSpace, SpaceProjection.Model)
 export type Model = s.Infer<typeof Model>
@@ -15,8 +15,6 @@ export const init: Model = EventSourced.init(SpaceProjection.init)
 export const config: EventSourcedConfig<MsgSpace, SpaceProjection.Model> = {
   reducer: SpaceProjection.updateSpace,
 }
-
-export const isEqual = (left: Model, right: Model) => EventSourced.isSameProjection(config, left, right)
 
 export const random = (input?: { hostId?: UserId; spaceId?: SpaceId; guestIds?: UserId[] }) => {
   const spaceId = input?.spaceId ?? SpaceId.generate()
@@ -48,39 +46,23 @@ export const random = (input?: { hostId?: UserId; spaceId?: SpaceId; guestIds?: 
 
 export const toSpaceId = (model: Model): SpaceId | null => {
   const state = EventSourced.toProjection(config, model)
+  if (state.type === 'initial') return null
+  return state.spaceId
+}
 
-  switch (state.type) {
-    case 'ended':
-    case 'started': {
-      return state.spaceId
-    }
-    case 'initial': {
-      return null
-    }
-  }
+export const toSpaceProjection = (model: Model): SpaceProjection.Model => {
+  return EventSourced.toProjection(config, model)
 }
 
 export const toSpaceStarted = (model: Model | null | undefined): SpaceProjection.Started | null => {
-  if (!model) {
-    return null
-  }
-
-  const state = EventSourced.toProjection(config, model)
-
-  switch (state.type) {
-    case 'started': {
-      return state
-    }
-    default: {
-      return null
-    }
-  }
-}
-
-export const isStarted = (model: Model | null | undefined): boolean => {
-  return toSpaceStarted(model) !== null
+  if (!model) return null
+  const projection = toSpaceProjection(model)
+  if (projection.type !== 'started') return null
+  return projection
 }
 
 export const toUserIds = (model: Model): UserId[] => {
-  return SpaceProjection.toUserIds(EventSourced.toProjection(config, model))
+  const projection = toSpaceProjection(model)
+  const userIds = SpaceProjection.toUserIds(projection)
+  return userIds
 }

@@ -3,9 +3,8 @@ import { EventId, WithEventId } from '~/@/event-sourced/event'
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { Space } from '../space'
 import { MsgSpace } from '../msg-space'
-import { SpaceProjection } from '../space-projection'
+import { Space, SpaceProjection } from '../space'
 
 export const SpaceError = s.obj({
   t: s.l('user-already-in-a-space'),

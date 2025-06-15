@@ -3,7 +3,7 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { FeedItem } from '../../@/feed-item'
 import { GamesFrontend } from '../../game/games/frontend'
 import { MsgSpace } from '../../space/msg-space'
-import { SpaceProjection } from '../../space/space-projection'
+import { SpaceProjection } from '../../space/space'
 import { Spaces } from '../../space/spaces'
 import type { ModelFrontend, MsgFrontend } from '../../types'
 
