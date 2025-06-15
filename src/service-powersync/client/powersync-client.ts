@@ -65,10 +65,9 @@ export const PowerSyncClient = async (input: {
   })
 
   const start = async () => {
-    database.connect(connector).then(() => {
-      console.log('PowerSync connected to backend')
-      events.pub({ t: 'connected' })
-    })
+    await database.connect(connector)
+    console.log('PowerSync connected to backend')
+    events.pub({ t: 'connected' })
   }
 
   return {
