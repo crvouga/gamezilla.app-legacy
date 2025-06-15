@@ -5,12 +5,13 @@ import { Err, isErr, Ok, Result, unwrap } from '~/@/result'
 import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { ISqlDb } from '~/@/sql-db'
-import { Sub } from '~/@/sub'
+import { PubSub, Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { SpaceId } from '~/app/@/data/space-id'
+import { UserId } from '~/app/@/data/user-id'
 import { Space } from '..'
 import { SpaceProjection } from '../../space-projection'
-import type { ISpaceDb, SpaceDbConfig } from './interface'
+import type { ISpaceDb, SpaceDbConfig, SpaceDbInputMsg, SpaceDbOutputMsg } from './interface'
 import { SpaceDbQuery } from './query'
 
 export type Config = SpaceDbConfig & {
@@ -78,13 +79,25 @@ CREATE TABLE IF NOT EXISTS space (
   `
 CREATE TABLE IF NOT EXISTS space_projection (
   id TEXT PRIMARY KEY,
-  host_id TEXT NOT NULL,
+  host_user_id TEXT NOT NULL,
   game_id TEXT
+)
+  `,
+  `
+CREATE TABLE IF NOT EXISTS space_projection_user (
+  id TEXT PRIMARY KEY,
+  space_id TEXT NOT NULL,
+  user_id TEXT NOT NULL
 )
   `,
 ]
 
+const toSpaceProjectionUserPrimaryKey = (spaceId: SpaceId, userId: UserId) => `${spaceId}-${userId}`
+
 export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
+  const input: PubSub<SpaceDbInputMsg> = config.input ?? Sub.create()
+  const output: PubSub<SpaceDbOutputMsg> = config.output ?? Sub.create()
+
   if (config.shouldCreateTable) {
     config.logger.info('Creating space table')
     for (const query of QUERY_CREATE_TABLES) {
@@ -93,7 +106,7 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
     config.logger.info('Space table created')
   }
 
-  config.input?.sub(async (msg) => {
+  input.sub(async (msg) => {
     switch (msg.t) {
       case 'dangerously-override-model': {
         const { model } = msg
@@ -102,13 +115,15 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
         const stringified = Json.stringify(model)
         if (isErr(stringified)) throw stringified.error
         await upsertSpace(config, spaceId, model)
-        config.output?.pub({ t: 'model-dangerously-overridden', model })
+        output.pub({ t: 'model-dangerously-overridden', model })
         return
       }
     }
   })
 
   return {
+    input,
+    output,
     async query(input) {
       const { sql, vars } = toSqlQuery(input)
 
@@ -141,9 +156,17 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
 
       const latestSnapshot = EventSourced.toLatestSnapshot(space)
 
-      const upsertedSnapshot = await upsertProjection(config, spaceId, latestSnapshot)
+      const upsertedProjection = await upsertProjection(config, spaceId, latestSnapshot)
 
-      if (isErr(upsertedSnapshot)) return upsertedSnapshot
+      if (isErr(upsertedProjection)) return upsertedProjection
+
+      const upsertedProjectionGuest = await upsertProjectionUser(
+        config,
+        spaceId,
+        latestSnapshot.type === 'initial' ? [] : Object.values(latestSnapshot.users),
+      )
+
+      if (isErr(upsertedProjectionGuest)) return upsertedProjectionGuest
 
       const upserted = await upsertSpace(config, spaceId, space)
 
@@ -217,10 +240,10 @@ const upsertProjection = async (
   if (found.value.length === 0) {
     const inserted = await config.sqlDb.query({
       schema: s.unknown,
-      sql: `INSERT INTO space_projection (id, host_id, game_id) VALUES (:id, :host_id, :game_id)`,
+      sql: `INSERT INTO space_projection (id, host_user_id, game_id) VALUES (:id, :host_user_id, :game_id)`,
       vars: {
         id: spaceId,
-        host_id: snapshot.type === 'initial' ? null : snapshot.hostId,
+        host_user_id: snapshot.type === 'initial' ? null : snapshot.hostId,
         game_id: snapshot.type === 'initial' ? null : (snapshot.game?.t ?? null),
       },
     })
@@ -232,15 +255,47 @@ const upsertProjection = async (
 
   const updated = await config.sqlDb.query({
     schema: s.unknown,
-    sql: `UPDATE space_projection SET host_id = :host_id, game_id = :game_id WHERE id = :id`,
+    sql: `UPDATE space_projection SET host_user_id = :host_user_id, game_id = :game_id WHERE id = :id`,
     vars: {
       id: spaceId,
-      host_id: snapshot.type === 'initial' ? null : snapshot.hostId,
+      host_user_id: snapshot.type === 'initial' ? null : snapshot.hostId,
       game_id: snapshot.type === 'initial' ? null : (snapshot.game?.t ?? null),
     },
   })
 
   if (isErr(updated)) return updated
+
+  return Ok(null)
+}
+
+const upsertProjectionUser = async (
+  config: Config,
+  spaceId: SpaceId,
+  guestIds: UserId[],
+): Promise<Result<string, null>> => {
+  const found = await config.sqlDb.query({
+    schema: s.unknown,
+    sql: `DELETE FROM space_projection_user WHERE space_id = :space_id`,
+    vars: {
+      space_id: spaceId,
+    },
+  })
+
+  if (isErr(found)) return found
+
+  for (const guestId of guestIds) {
+    const inserted = await config.sqlDb.query({
+      schema: s.unknown,
+      sql: `INSERT INTO space_projection_user (id, space_id, user_id) VALUES (:id, :space_id, :user_id)`,
+      vars: {
+        id: toSpaceProjectionUserPrimaryKey(spaceId, guestId),
+        space_id: spaceId,
+        user_id: guestId,
+      },
+    })
+
+    if (isErr(inserted)) return inserted
+  }
 
   return Ok(null)
 }
@@ -280,8 +335,16 @@ const toSqlWhere = (input: SpaceDbQuery) => {
   }
 
   if (input.where?.hostId?.['=']) {
-    clauses.push(`host_id = :host_id`)
-    vars['host_id'] = input.where.hostId['=']
+    clauses.push(`host_user_id = :host_user_id`)
+    vars['host_user_id'] = input.where.hostId['=']
+  }
+
+  const guestIdsIn = input.where?.userId?.in
+  if (guestIdsIn && guestIdsIn.length > 0) {
+    clauses.push(
+      `EXISTS (SELECT 1 FROM space_projection_user WHERE space_id = space_projection.id AND user_id IN (:guest_ids))`,
+    )
+    vars['guest_ids'] = Sql.commas(guestIdsIn)
   }
 
   const str = clauses.length > 0 ? `WHERE ${clauses.join(' AND ')}` : ''

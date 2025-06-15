@@ -11,6 +11,9 @@ const schema = s.partialObj({
     hostId: s.partialObj({
       '=': UserId,
     }),
+    userId: s.partialObj({
+      in: s.arr(UserId),
+    }),
   }),
   limit: s.num(),
   offset: s.num(),
@@ -18,9 +21,7 @@ const schema = s.partialObj({
 
 export type SpaceDbQuery = s.Infer<typeof schema>
 
-const toKey = (input: SpaceDbQuery): string => {
-  return deterministicJsonStringify(input)
-}
+const toKey = (input: SpaceDbQuery): string => deterministicJsonStringify(input)
 
 export const SpaceDbQuery = {
   ...schema,

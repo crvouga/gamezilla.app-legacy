@@ -18,17 +18,31 @@ export const config: EventSourcedConfig<MsgSpace, SpaceProjection.Model> = {
 
 export const isEqual = (left: Model, right: Model) => EventSourced.isSameProjection(config, left, right)
 
-export const random = (input?: { hostId?: UserId; spaceId?: SpaceId }) => {
+export const random = (input?: { hostId?: UserId; spaceId?: SpaceId; guestIds?: UserId[] }) => {
+  const spaceId = input?.spaceId ?? SpaceId.generate()
+  const hostId = input?.hostId ?? UserId.generate()
+  const guestIds = input?.guestIds ?? []
+
   return pipe(
     init,
-
     (model) =>
       EventSourced.appendEvent(config, model, {
         t: 'user-started-space',
         eventId: EventId.generate(),
-        spaceId: input?.spaceId ?? SpaceId.generate(),
-        userId: input?.hostId ?? UserId.generate(),
+        spaceId,
+        userId: hostId,
       }),
+    (model) =>
+      guestIds.reduce(
+        (model, guestId) =>
+          EventSourced.appendEvent(config, model, {
+            t: 'user-joined-space',
+            eventId: EventId.generate(),
+            spaceId,
+            userId: guestId,
+          }),
+        model,
+      ),
   )
 }
 

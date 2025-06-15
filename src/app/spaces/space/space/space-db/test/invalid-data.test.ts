@@ -15,8 +15,10 @@ describe('SpaceDb - invalid data', () => {
       unwrap(await f.spacesDb.upsert(f.space))
       const before = await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } })
       const invalid = toInvalidSpaceModel(f.space)
-      const p = Sub.take(Sub.where(f.output, (m): m is SpaceDbOutputMsg => m.t === 'model-dangerously-overridden'))
-      await f.input.pub({ t: 'dangerously-override-model', model: invalid })
+      const p = Sub.take(
+        Sub.where(f.spacesDb.output, (m): m is SpaceDbOutputMsg => m.t === 'model-dangerously-overridden'),
+      )
+      await f.spacesDb.input.pub({ t: 'dangerously-override-model', model: invalid })
       await p
       await sleep(TimeSpan.milliseconds(100))
       const after = await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } })

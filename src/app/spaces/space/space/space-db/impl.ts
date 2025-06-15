@@ -5,7 +5,8 @@ export type Config = ImplSqlDb.Config
 
 export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
   switch (config.t) {
-    case 'sql-db':
+    case 'sql-db': {
       return ImplSqlDb.SpaceDb(config)
+    }
   }
 }
