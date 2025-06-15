@@ -2,14 +2,14 @@ import { Result } from '~/@/result'
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space'
-import { SpaceQuery } from '../space/space-db/query'
+import { SpaceDbQuery } from '../space/space-db/query'
 
 export type ModelFrontend = {
   'space-loader.results': {
     [queryKey: string]: SpaceId[]
   }
   'space-loader.queries': {
-    [name: string]: SpaceQuery
+    [name: string]: SpaceDbQuery
   }
 }
 

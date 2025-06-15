@@ -11,7 +11,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '..'
 import { SpaceProjection } from '../../space-projection'
 import type { ISpaceDb, SpaceDbConfig } from './interface'
-import { SpaceQuery } from './query'
+import { SpaceDbQuery } from './query'
 
 export type Config = SpaceDbConfig & {
   t: 'sql-db'
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS space (
 CREATE TABLE IF NOT EXISTS space_projection (
   id TEXT PRIMARY KEY,
   host_id TEXT NOT NULL,
-  game_id TEXT NOT NULL
+  game_id TEXT
 )
   `,
 ]
@@ -141,7 +141,7 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
 
       const latestSnapshot = EventSourced.toLatestSnapshot(space)
 
-      const upsertedSnapshot = await upsertSnapshot(config, spaceId, latestSnapshot)
+      const upsertedSnapshot = await upsertProjection(config, spaceId, latestSnapshot)
 
       if (isErr(upsertedSnapshot)) return upsertedSnapshot
 
@@ -199,14 +199,14 @@ const upsertSpace = async (config: Config, spaceId: SpaceId, space: Space.Model)
   return Ok(null)
 }
 
-const upsertSnapshot = async (
+const upsertProjection = async (
   config: Config,
   spaceId: SpaceId,
   snapshot: SpaceProjection.Model,
 ): Promise<Result<string, null>> => {
   const found = await config.sqlDb.query({
     schema: s.unknown,
-    sql: `SELECT * FROM space_projection WHERE id = :id`,
+    sql: `SELECT 1 FROM space_projection WHERE id = :id`,
     vars: {
       id: spaceId,
     },
@@ -245,7 +245,7 @@ const upsertSnapshot = async (
   return Ok(null)
 }
 
-const toSqlQuery = (input: SpaceQuery) => {
+const toSqlQuery = (input: SpaceDbQuery) => {
   const sqlWhere = toSqlWhere(input)
   const sqlPagination = toSqlPagination(input)
 
@@ -270,7 +270,7 @@ const toSqlQuery = (input: SpaceQuery) => {
   }
 }
 
-const toSqlWhere = (input: SpaceQuery) => {
+const toSqlWhere = (input: SpaceDbQuery) => {
   const vars: Sql.Vars = {}
   const clauses: string[] = []
 
@@ -292,7 +292,7 @@ const toSqlWhere = (input: SpaceQuery) => {
   }
 }
 
-const toSqlPagination = (input: SpaceQuery) => {
+const toSqlPagination = (input: SpaceDbQuery) => {
   const vars: Sql.Vars = {}
   const clauses: string[] = []
 

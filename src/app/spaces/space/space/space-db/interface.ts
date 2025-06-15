@@ -2,11 +2,11 @@ import { Result } from '~/@/result'
 import { PubSub, Sub } from '~/@/sub'
 import { Paginated } from '~/app/@/data/pagination'
 import { Space } from '..'
-import { SpaceQuery } from './query'
+import { SpaceDbQuery } from './query'
 
 export type ISpaceDb = {
-  query: (query: SpaceQuery) => Promise<Result<string, Paginated<Space.Model>>>
-  sub: <T>(input: SpaceQuery, map: (spaces: Space.Model[]) => T) => Sub<T>
+  query: (query: SpaceDbQuery) => Promise<Result<string, Paginated<Space.Model>>>
+  sub: <T>(input: SpaceDbQuery, map: (spaces: Space.Model[]) => T) => Sub<T>
   upsert: (space: Space.Model) => Promise<Result<string, null>>
 }
 
