@@ -270,7 +270,7 @@ const upsertProjection = async (
 const upsertProjectionUser = async (
   config: Config,
   spaceId: SpaceId,
-  guestIds: UserId[],
+  userIds: UserId[],
 ): Promise<Result<string, null>> => {
   const found = await config.sqlDb.query({
     schema: s.unknown,
@@ -282,7 +282,7 @@ const upsertProjectionUser = async (
 
   if (isErr(found)) return found
 
-  for (const guestId of guestIds) {
+  for (const guestId of userIds) {
     const inserted = await config.sqlDb.query({
       schema: s.unknown,
       sql: `INSERT INTO space_projection_user (id, space_id, user_id) VALUES (:id, :space_id, :user_id)`,
@@ -338,12 +338,12 @@ const toSqlWhere = (input: SpaceDbQuery) => {
     vars['host_user_id'] = input.where.hostId['=']
   }
 
-  const guestIdsIn = input.where?.userId?.in
-  if (guestIdsIn && guestIdsIn.length > 0) {
+  const whereUserIdIn = input.where?.userId?.in
+  if (whereUserIdIn && whereUserIdIn.length > 0) {
     clauses.push(
-      `EXISTS (SELECT 1 FROM space_projection_user WHERE space_id = space_projection.id AND user_id IN (:guest_ids))`,
+      `EXISTS (SELECT 1 FROM space_projection_user WHERE space_id = space_projection.id AND user_id IN (:user_ids))`,
     )
-    vars['guest_ids'] = Sql.commas(guestIdsIn)
+    vars['user_ids'] = Sql.commas(whereUserIdIn)
   }
 
   const str = clauses.length > 0 ? `WHERE ${clauses.join(' AND ')}` : ''
