@@ -148,12 +148,25 @@ const space = new Table(
 const space_projection = new Table(
   {
     id: column.text,
-    host_id: column.text,
+    host_user_id: column.text,
     game_id: column.text,
   },
   {
     indexes: {
-      idx_space_projection_host_id: ['host_id'],
+      idx_space_projection_host_user_id: ['host_user_id'],
+    },
+  },
+)
+
+const space_projection_user = new Table(
+  {
+    id: column.text,
+    space_id: column.text,
+    user_id: column.text,
+  },
+  {
+    indexes: {
+      idx_space_projection_user_space_id: ['space_id'],
     },
   },
 )
@@ -161,6 +174,7 @@ const space_projection = new Table(
 export const AppSchema = new Schema({
   space,
   space_projection,
+  space_projection_user,
   game_numberlink_puzzle,
   game_numberlink_pack,
   game_numberlink_pack_item,
