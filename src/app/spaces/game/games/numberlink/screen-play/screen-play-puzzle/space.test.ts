@@ -31,7 +31,7 @@ describe(import.meta.file, () => {
     expect(after.screen.t).toEqual('screen-select-puzzle')
   })
 
-  it('should update puzzle screen flow play ui', async () => {
+  it('should update puzzle screen play ui', async () => {
     const f = await Fixture()
     const after = f.update(
       f.init,

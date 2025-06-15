@@ -33,9 +33,11 @@ export type Row = s.Infer<typeof Row>
 const parseRow = (row: Row, logger: ILogger): Result<string, Space.Model> => {
   if (typeof row.model === 'string') {
     const json = Json.parse(row.model)
+
     if (isErr(json)) return Err('Failed to parse model as json')
 
     const space = Space.Model.parse(json.value)
+
     if (isErr(space)) {
       logger.error('Errored parsing model as space', space.error)
       return Err('Failed to parse model as space')
@@ -45,6 +47,7 @@ const parseRow = (row: Row, logger: ILogger): Result<string, Space.Model> => {
   }
 
   const space = Space.Model.parse(row.model)
+
   if (isErr(space)) {
     logger.error('Errored parsing model as space', space.error)
     return Err('Failed to parse model as space')
@@ -71,14 +74,14 @@ CREATE TABLE IF NOT EXISTS space (
   deleted_at_unix_ms INT,
   model TEXT NOT NULL
 )
-`,
+  `,
   `
 CREATE TABLE IF NOT EXISTS space_projection (
   id TEXT PRIMARY KEY,
-  host_id TEXT,
-  game_id TEXT
+  host_id TEXT NOT NULL,
+  game_id TEXT NOT NULL
 )
-`,
+  `,
 ]
 
 export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
@@ -109,11 +112,7 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
     async query(input) {
       const { sql, vars } = toSqlQuery(input)
 
-      const result = await config.sqlDb.query({
-        schema: Row,
-        sql,
-        vars,
-      })
+      const result = await config.sqlDb.query({ schema: Row, sql, vars })
 
       if (isErr(result)) return result
 

@@ -8,18 +8,18 @@ type Input = {
   ctx?: UseHint.Ctx
 }
 
-export const FixtureModePlayUseHint = async (input?: { ctxFlow?: NumberlinkVariant.Model }) => {
+export const FixtureModePlayUseHint = async (input?: { ctxNumberlink?: NumberlinkVariant.Model }) => {
   const f = await FixtureNumberlinkFrontend()
 
-  const ctxFlow =
-    input?.ctxFlow ??
+  const ctxNumberlink =
+    input?.ctxNumberlink ??
     VariantGridShorthand.toGrid([
       ['A', ' '],
       [' ', 'A'],
     ])
 
   const ctx = UseHint.initCtx({
-    numberlink: ctxFlow,
+    numberlink: ctxNumberlink,
   })
 
   const update = (init: UseHint.Model, inputs: Input[]): ReturnType<typeof UseHint.update> => {

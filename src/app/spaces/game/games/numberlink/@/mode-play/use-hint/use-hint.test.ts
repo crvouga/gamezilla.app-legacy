@@ -29,7 +29,7 @@ describe(import.meta.file, () => {
 
   test('hint multiple terminals', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      ctxNumberlink: VariantGridShorthand.toGrid([
         ['A', 'B'],
         [' ', ' '],
         ['A', 'B'],
@@ -56,7 +56,7 @@ describe(import.meta.file, () => {
 
   test('output use hint event', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      ctxNumberlink: VariantGridShorthand.toGrid([
         ['A', 'B'],
         [' ', ' '],
         ['A', 'B'],
@@ -76,7 +76,7 @@ describe(import.meta.file, () => {
 
   test('output solved event', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      ctxNumberlink: VariantGridShorthand.toGrid([
         ['A', 'B', 'C'],
         [' ', ' ', ' '],
         ['A', 'B', 'C'],
@@ -109,7 +109,7 @@ describe(import.meta.file, () => {
 
   it('should not create branching in pipes after using a hint', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      ctxNumberlink: VariantGridShorthand.toGrid([
         ['A', 'a', 'a', ' '],
         [' ', ' ', 'a', ' '],
         ['a', 'a', 'a', ' '],
@@ -133,7 +133,7 @@ describe(import.meta.file, () => {
 
   it('should work even with flipped terminal', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      ctxNumberlink: VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         [' ', ' ', ' '],
         ['A', ' ', ' '],
@@ -189,7 +189,7 @@ describe(import.meta.file, () => {
       ['A', 'B'],
     ])
     const f = await Fixture({
-      ctxFlow: before,
+      ctxNumberlink: before,
     })
     const updated = f.update(f.init, [
       {
@@ -208,7 +208,7 @@ describe(import.meta.file, () => {
 
   it('should NOT branch pipelines after using hint', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      ctxNumberlink: VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         [' ', ' ', ' '],
         [' ', ' ', 'A'],
@@ -240,7 +240,7 @@ describe(import.meta.file, () => {
 
   it('should never change the positions of the terminals when using a hint', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      ctxNumberlink: VariantGridShorthand.toGrid([
         ['A', ' ', ' '],
         [' ', ' ', ' '],
         [' ', ' ', 'A'],
@@ -281,9 +281,9 @@ describe(import.meta.file, () => {
       ['a', 'a', 'A'],
     ])
 
-    const ctxFlow = pipe(solution, Numberlink.removeAllPipelines, Numberlink.flipAllTerminals)
+    const ctxNumberlink = pipe(solution, Numberlink.removeAllPipelines, Numberlink.flipAllTerminals)
 
-    const f = await Fixture({ ctxFlow: ctxFlow })
+    const f = await Fixture({ ctxNumberlink: ctxNumberlink })
 
     const output = f.update(f.init, [
       {
@@ -294,7 +294,7 @@ describe(import.meta.file, () => {
       },
     ])
 
-    const numberlinkNew = UseHint.toNumberlink(output.model, ctxFlow)
+    const numberlinkNew = UseHint.toNumberlink(output.model, ctxNumberlink)
 
     const expected = Numberlink.toPipelineFromGroupId(solution, 'A')
     const actual = Numberlink.toPipelineFromGroupId(numberlinkNew, 'A')
@@ -304,7 +304,7 @@ describe(import.meta.file, () => {
 
   it('should work when terminal groups have gaps in sequence', async () => {
     const f = await Fixture({
-      ctxFlow: VariantGridShorthand.toGrid([
+      ctxNumberlink: VariantGridShorthand.toGrid([
         ['A', ' ', 'C'],
         [' ', ' ', ' '],
         ['A', ' ', 'C'],

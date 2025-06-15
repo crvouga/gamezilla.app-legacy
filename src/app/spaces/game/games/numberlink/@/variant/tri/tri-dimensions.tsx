@@ -15,5 +15,5 @@ export const init = (input: { side: number }): Model => {
 }
 
 export const ViewForm = (_input: { form: Model; onInput: (dimensions: Model) => void }) => {
-  return <>flow tri dimensions form</>
+  return <>tri dimensions form</>
 }

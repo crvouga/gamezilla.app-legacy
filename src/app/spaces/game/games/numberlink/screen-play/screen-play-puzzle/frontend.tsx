@@ -226,7 +226,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
   return (
     <ScreenLayout
       parentScreen={input.ctx.parentScreen}
-      id='flow-spectating'
+      id='spectating'
       ctx={input.ctx}
       navBar={{
         title: input.ctx.t('game.numberlink.level', puzzleIndex + 1),
