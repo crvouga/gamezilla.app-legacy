@@ -2,6 +2,8 @@ import { pipe } from '~/@/function/pipe'
 import * as SignJWT from '~/@/json-crypto/sign-jwt'
 import { isErr } from '~/@/result/result'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
+import { CONFIG_SHARED } from '~/config/shared'
+import { CredentialsResponseBodyOk, ENDPOINT } from '~/service-powersync/@/credentials'
 import { Ctx } from '../ctx'
 import { getKeyPair } from '../keys/keys'
 
@@ -86,19 +88,20 @@ const respond = async (input: { request: Request; ctx: Ctx }) => {
 
   const token = await SignJWT.sign(jwt, powerSyncKey?.key)
 
-  const response = new Response(
-    JSON.stringify({
-      token: token,
-    }),
-    {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    },
-  )
+  const responseBodyOk: CredentialsResponseBodyOk = {
+    token,
+    endpoint: CONFIG_SHARED.POWERSYNC_URL,
+  }
+
+  const response = new Response(JSON.stringify(responseBodyOk), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  })
 
   return response
 }
 
 export const PowerSyncCredentials = {
+  ENDPOINT,
   respond,
 }

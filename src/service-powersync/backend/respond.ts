@@ -7,11 +7,11 @@ import { PowerSyncJwks } from './jwks/respond.js'
 const respond = async (input: { request: Request; ctx: Ctx }): Promise<Response | null> => {
   const pathname = new URL(input.request.url).pathname
   switch (pathname) {
-    case '/powersync/credentials': {
+    case PowerSyncCredentials.ENDPOINT: {
       return PowerSyncCredentials.respond(input)
     }
 
-    case '/powersync/jwks': {
+    case PowerSyncJwks.ENDPOINT: {
       return PowerSyncJwks.respond(input)
     }
 
@@ -23,10 +23,7 @@ const respond = async (input: { request: Request; ctx: Ctx }): Promise<Response 
 
 const registerRespond = (config: { httpServer: IHttpServer; ctx: Ctx }) => {
   config.httpServer.registerRespond((request) => {
-    return respond({
-      request,
-      ctx: config.ctx,
-    })
+    return respond({ request, ctx: config.ctx })
   })
 }
 

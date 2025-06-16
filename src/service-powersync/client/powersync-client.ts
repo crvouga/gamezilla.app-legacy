@@ -1,11 +1,12 @@
 import { PowerSyncDatabase } from '@powersync/web'
-import Logger from 'js-logger'
+import JsLogger from 'js-logger'
+import { ILogger, Logger } from '~/@/logger'
 import { Sub } from '~/@/sub'
 import { BackendConnector } from '../frontend/backend-connector'
 import { AppSchema } from './powersync-client-schema'
 
-Logger.useDefaults()
-Logger.setLevel(Logger.DEBUG)
+JsLogger.useDefaults()
+JsLogger.setLevel(JsLogger.DEBUG)
 
 export type PowerSyncDatabaseEvent =
   | {
@@ -31,7 +32,9 @@ export const PowerSyncClient = async (input: {
   debug?: boolean
   powersyncUrl: string
   backendUrl: string
+  logger: ILogger
 }): Promise<IPowerSyncClient> => {
+  const logger = Logger.prefix('PowerSyncClient', input.logger)
   const database = new PowerSyncDatabase({
     schema: AppSchema,
     database: {
@@ -50,23 +53,24 @@ export const PowerSyncClient = async (input: {
   const events = Sub.create<PowerSyncDatabaseEvent>()
 
   database.init().then(() => {
-    console.log('PowerSync initialized')
+    logger.info('PowerSync initialized')
     events.pub({ t: 'initialized' })
   })
 
   database.waitForFirstSync().then(() => {
-    console.log('PowerSync first sync completed')
+    logger.info('PowerSync first sync completed')
     events.pub({ t: 'first-sync-completed' })
   })
 
   const connector = new BackendConnector({
     powersyncUrl: input.powersyncUrl,
     backendUrl: input.backendUrl,
+    logger,
   })
 
   const start = async () => {
     await database.connect(connector)
-    console.log('PowerSync connected to backend')
+    logger.info('PowerSync connected to backend')
     events.pub({ t: 'connected' })
   }
 

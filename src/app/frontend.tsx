@@ -72,6 +72,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   const powerSyncClient = await PowerSyncClient({
     variant: 'durable',
     debug: true,
+    logger,
     powersyncUrl: CONFIG_SHARED.POWERSYNC_URL,
     backendUrl: CONFIG_SHARED.BACKEND_URL,
   })

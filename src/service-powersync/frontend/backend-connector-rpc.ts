@@ -1,16 +1,19 @@
+import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok, Result } from '~/@/result'
-import { s } from '~/@/schema'
+import { CredentialsResponseBodyOk, ENDPOINT } from '../@/credentials'
 
-const fetchCredentials = async (config: { backendUrl: string }): Promise<Result<string, { token: string }>> => {
+const fetchCredentials = async (config: {
+  backendUrl: string
+  logger: ILogger
+}): Promise<Result<string, { token: string; endpoint: string }>> => {
   try {
-    const PATH = '/powersync/credentials'
-    let urlString = PATH
+    let urlString = ENDPOINT
     try {
       const url = new URL(ensureProtocol(String(config.backendUrl)))
-      url.pathname = PATH
+      url.pathname = ENDPOINT
       urlString = url.toString()
     } catch (e) {
-      urlString = PATH
+      urlString = ENDPOINT
     }
 
     const response = await fetch(urlString, {
@@ -19,20 +22,18 @@ const fetchCredentials = async (config: { backendUrl: string }): Promise<Result<
 
     const responseJson: unknown = await response.json()
 
-    const parsed = s
-      .obj({
-        token: s.str(),
-      })
-      .parse(responseJson)
+    const parsed = CredentialsResponseBodyOk.parse(responseJson)
 
     if (isErr(parsed)) {
-      console.error('Failed to parse response', responseJson, parsed.error)
-      return Err('Failed to parse response')
+      const errorMessage = `Failed to parse response: ${parsed.error}`
+      config.logger.error(errorMessage, responseJson)
+      return Err(errorMessage)
     }
     return Ok(parsed.value)
   } catch (e) {
-    console.error('Failed to fetch credentials', e)
-    return Err('Failed to fetch credentials')
+    const errorMessage = `Failed to fetch credentials: ${e}`
+    config.logger.error(errorMessage)
+    return Err(errorMessage)
   }
 }
 

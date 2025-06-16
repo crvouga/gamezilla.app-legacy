@@ -2,6 +2,8 @@
 import { isErr } from '~/@/result/result.js'
 import { getKeyPair } from '../keys/keys.js'
 
+const ENDPOINT = '/powersync/jwks'
+
 const respond = async (_input: {}): Promise<Response | null> => {
   const keyPair = await getKeyPair()
   if (isErr(keyPair)) {
@@ -17,5 +19,6 @@ const respond = async (_input: {}): Promise<Response | null> => {
 }
 
 export const PowerSyncJwks = {
+  ENDPOINT,
   respond,
 }

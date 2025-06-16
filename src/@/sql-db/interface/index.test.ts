@@ -39,6 +39,7 @@ const Fixtures = async () => {
         debug: true,
         powersyncUrl: CONFIG_SHARED.POWERSYNC_URL,
         backendUrl: CONFIG_SHARED.BACKEND_URL,
+        logger: Logger({ t: 'noop' }),
       }),
       logger: Logger({ t: 'noop' }),
     })

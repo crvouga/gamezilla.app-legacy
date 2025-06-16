@@ -49,6 +49,9 @@ sync_rules:
           - SELECT * FROM user_session
           - SELECT * FROM user_account
           - SELECT * FROM user_guest_session_mapping
+          - SELECT * FROM space
+          - SELECT * FROM space_projection
+          - SELECT * FROM space_projection_user
 
 # Settings for client authentication
 client_auth:
