@@ -33,6 +33,30 @@ const PORT = () => {
   return Number(value)
 }
 
+const TWILIO_ACCOUNT_SID = () => {
+  const value = import.meta.env?.TWILIO_ACCOUNT_SID
+  if (!value) {
+    throw new Error('TWILIO_ACCOUNT_SID is not set')
+  }
+  return value
+}
+
+const TWILIO_AUTH_TOKEN = () => {
+  const value = SecretString.init('TWILIO_AUTH_TOKEN', import.meta.env?.TWILIO_AUTH_TOKEN)
+  if (!value) {
+    throw new Error('TWILIO_AUTH_TOKEN is not set')
+  }
+  return value
+}
+
+const TWILIO_MESSAGING_SERVICE_SID = () => {
+  const value = import.meta.env?.TWILIO_MESSAGING_SERVICE_SID
+  if (!value) {
+    throw new Error('TWILIO_MESSAGING_SERVICE_SID is not set')
+  }
+  return value
+}
+
 const CORS_ORIGINS: string[] = []
 
 if (CONFIG_SHARED.IS_LOCAL) {
@@ -45,6 +69,9 @@ if (CONFIG_SHARED.IS_PROD) {
 
 export const CONFIG_BACKEND = {
   CORS_ORIGINS,
+  TWILIO_ACCOUNT_SID,
+  TWILIO_AUTH_TOKEN,
+  TWILIO_MESSAGING_SERVICE_SID,
   PORT,
   DATABASE_URL,
   POWERSYNC_PRIVATE_KEY,

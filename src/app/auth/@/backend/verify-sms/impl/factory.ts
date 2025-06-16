@@ -11,6 +11,9 @@ import { VerificationCodeGenerator } from './impl-in-house/verification-code-gen
 import { VerificationDb } from './impl-in-house/verification/verification-db'
 import type { IVerifySMS } from '../interface'
 import { VerifySMS } from './impl'
+import { CONFIG_BACKEND } from '~/config/backend'
+import { BackendRole } from '~/app/@/backend/backend-role'
+import { SecretString } from '~/@/secrets/secret-string'
 
 /**
  * Factory for creating VerifySMS implementations
@@ -73,18 +76,46 @@ export const VerifySMSFactory = {
   /**
    * Creates a Twilio implementation of VerifySMS
    */
-  createTwilio: (config: { logger: ILogger }): IVerifySMS => {
+  createTwilio: (config: {
+    logger: ILogger
+    twilioAccountSid: string
+    twilioAuthToken: SecretString
+    twilioMessagingServiceSid: string
+  }): IVerifySMS => {
     const logger = Logger.prefix('verify-sms', config.logger)
-    return VerifySMS({ t: 'twilio', logger })
+    return VerifySMS({
+      t: 'twilio',
+      logger,
+      twilioAccountSid: config.twilioAccountSid,
+      twilioAuthToken: config.twilioAuthToken,
+      twilioMessagingServiceSid: config.twilioMessagingServiceSid,
+    })
   },
 
   /**
    * Creates the appropriate VerifySMS implementation based on environment
    */
-  createForEnvironment: (config: { logger: ILogger; env: Env; sqlDb: ISqlDb }): IVerifySMS => {
+  createForEnvironment: (config: {
+    logger: ILogger
+    backendRole: BackendRole
+    env: Env
+    sqlDb: ISqlDb
+  }): IVerifySMS => {
+    if (config.backendRole !== 'primary') {
+      return VerifySMS({
+        t: 'fake-always-ok',
+        logger: config.logger,
+      })
+    }
+
     switch (config.env) {
       case 'prod': {
-        return VerifySMSFactory.createTwilio(config)
+        return VerifySMSFactory.createTwilio({
+          logger: config.logger,
+          twilioAccountSid: CONFIG_BACKEND.TWILIO_ACCOUNT_SID(),
+          twilioAuthToken: CONFIG_BACKEND.TWILIO_AUTH_TOKEN(),
+          twilioMessagingServiceSid: CONFIG_BACKEND.TWILIO_MESSAGING_SERVICE_SID(),
+        })
       }
       case 'test': {
         return VerifySMSFactory.createInHouse(config)

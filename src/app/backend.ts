@@ -81,7 +81,7 @@ const initCtx = async (config: { role: BackendRole }): Promise<BackendCtxModule>
   const backendInstanceId = BackendInstanceId.generate()
 
   const ctxBase: AppBackendCtxBase = {
-    role: config.role,
+    backendRole: config.role,
     env,
     sqlDb,
     keyValueDbDurable,
@@ -121,7 +121,7 @@ const initCtx = async (config: { role: BackendRole }): Promise<BackendCtxModule>
   })
 
   ctx.httpServer.registerRespond(() => {
-    const message = toHelloMessage(ctx.role)
+    const message = toHelloMessage(ctx.backendRole)
     return new Response(message, { status: 200, headers: { 'Content-Type': 'text/plain' } })
   })
 

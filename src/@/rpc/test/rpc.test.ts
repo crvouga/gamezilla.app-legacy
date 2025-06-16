@@ -21,7 +21,7 @@ export const FixtureHttp = async (): Promise<Fixture> => {
 
   const httpServer = HttpServer({ t: 'node', logger })
 
-  httpServer.registerMiddleware(AllowCORS.middleware)
+  httpServer.registerMiddleware(AllowCORS.middleware(['http://localhost:2222']))
 
   const clientSessionId = ClientSessionId.generate()
 

@@ -12,7 +12,7 @@ import type { BackendInstanceId } from './backend-instance/backend-instance-id'
 import { BackendRole } from './backend-role'
 
 export type AppBackendCtxBase = {
-  role: BackendRole
+  backendRole: BackendRole
   sqlDb: ISqlDb
   keyValueDbDurable: IKeyValueDb
   now: UnixMs

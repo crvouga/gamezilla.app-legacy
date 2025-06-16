@@ -1,36 +1,29 @@
 import { Logger, type ILogger } from '~/@/logger'
-import { s } from '~/@/schema'
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, Ok, isErr } from '~/@/result'
+import { s } from '~/@/schema'
 import type { IVerifySMS } from '../../interface'
+import { SecretString } from '~/@/secrets/secret-string'
 
 export type Config = {
   t: 'twilio'
   logger: ILogger
+  twilioAccountSid: string
+  twilioAuthToken: SecretString
+  twilioMessagingServiceSid: string
+}
+
+const toBasicAuthorizationHeaderValue = (username: string, password: string) => {
+  return `Basic ${btoa(`${username}:${password}`)}`
 }
 
 export const VerifySMS = (config: Config): IVerifySMS => {
   const logger = Logger.prefix('verify-sms-twilio', config.logger)
 
-  const TWILIO_ACCOUNT_SID = import.meta.env?.TWILIO_ACCOUNT_SID
-
-  if (!TWILIO_ACCOUNT_SID) {
-    throw new Error('TWILIO_ACCOUNT_SID is not set')
-  }
-
-  const TWILIO_AUTH_TOKEN = import.meta.env?.TWILIO_AUTH_TOKEN
-
-  if (!TWILIO_AUTH_TOKEN) {
-    throw new Error('TWILIO_AUTH_TOKEN is not set')
-  }
-
-  const TWILIO_MESSAGING_SERVICE_SID = import.meta.env?.TWILIO_MESSAGING_SERVICE_SID
-
-  if (!TWILIO_MESSAGING_SERVICE_SID) {
-    throw new Error('TWILIO_MESSAGING_SERVICE_SID is not set')
-  }
-
-  const AUTHORIZATION = `Basic ${btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`)}`
+  const AUTHORIZATION = toBasicAuthorizationHeaderValue(
+    config.twilioAccountSid,
+    config.twilioAuthToken.dangerouslyReadValue(),
+  )
 
   return {
     async sendCode(input) {
@@ -52,7 +45,7 @@ export const VerifySMS = (config: Config): IVerifySMS => {
           })
         }
         const response = await fetch(
-          `https://verify.twilio.com/v2/Services/${TWILIO_MESSAGING_SERVICE_SID}/Verifications`,
+          `https://verify.twilio.com/v2/Services/${config.twilioMessagingServiceSid}/Verifications`,
           {
             method: 'POST',
             headers: {
@@ -102,7 +95,7 @@ export const VerifySMS = (config: Config): IVerifySMS => {
         logger.info(`Verifying code for ${to}`)
 
         const response = await fetch(
-          `https://verify.twilio.com/v2/Services/${TWILIO_MESSAGING_SERVICE_SID}/VerificationCheck`,
+          `https://verify.twilio.com/v2/Services/${config.twilioMessagingServiceSid}/VerificationCheck`,
           {
             method: 'POST',
             headers: {

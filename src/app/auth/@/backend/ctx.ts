@@ -28,6 +28,7 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
 
   const verifySMS = VerifySMSFactory.createForEnvironment({
     logger: input.ctx.logger,
+    backendRole: input.ctx.backendRole,
     env: input.ctx.env,
     sqlDb: input.ctx.sqlDb,
   })

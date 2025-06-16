@@ -2,6 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import { isErr, unwrap } from '~/@/result'
+import { CONFIG_BACKEND } from '~/config/backend'
 import { Config, VerifySMS } from './impl'
 import { VerifySMSInHouseFixture } from './impl/impl-in-house/@/fixture'
 
@@ -22,7 +23,13 @@ const Fixtures = async () => {
 
   const TEST_TWILIO = false
   if (TEST_TWILIO) {
-    configs.push({ t: 'twilio', logger: Logger({ t: 'console' }) })
+    configs.push({
+      t: 'twilio',
+      logger: Logger({ t: 'console' }),
+      twilioAccountSid: CONFIG_BACKEND.TWILIO_ACCOUNT_SID(),
+      twilioAuthToken: CONFIG_BACKEND.TWILIO_AUTH_TOKEN(),
+      twilioMessagingServiceSid: CONFIG_BACKEND.TWILIO_MESSAGING_SERVICE_SID(),
+    })
   }
 
   return configs.map(Fixture)
