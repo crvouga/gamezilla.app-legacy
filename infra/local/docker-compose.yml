@@ -1,53 +1,6 @@
 name: gamezilla_app
 
 services:
-  frontend:
-    profiles: ['web']
-    container_name: frontend
-    image: oven/bun:latest
-    working_dir: /app
-    volumes:
-      - type: bind
-        source: ${PWD}
-        target: /app
-    command: >
-      sh -c "bun install && bun frontend"
-    ports:
-      - '5173:5173'
-    depends_on:
-      backend:
-        condition: service_started
-      powersync:
-        condition: service_started
-      electric:
-        condition: service_started
-
-  backend:
-    profiles: ['web']
-    container_name: backend
-    image: oven/bun:latest
-    working_dir: /app
-    volumes:
-      - type: bind
-        source: ${PWD}
-        target: /app
-    command: >
-      sh -c "bun install && bun db:up && bun backend:watch"
-    ports:
-      - '${PORT}:${PORT}'
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      REDIS_URL: ${REDIS_URL}
-      PORT: ${PORT}
-      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID}
-      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
-      TWILIO_MESSAGING_SERVICE_SID: ${TWILIO_MESSAGING_SERVICE_SID}
-    depends_on:
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-
   postgres:
     container_name: postgres
     image: postgres:latest
