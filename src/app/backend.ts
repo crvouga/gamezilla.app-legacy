@@ -56,7 +56,7 @@ const initCtx = async (config: { role: BackendRole }): Promise<BackendCtxModule>
     logger,
   })
 
-  httpServer.registerMiddleware(AllowCORS.middleware)
+  httpServer.registerMiddleware(AllowCORS.middleware(CONFIG_BACKEND.CORS_ORIGINS))
 
   const topic = Topic.initServer({
     t: 'web-sockets',

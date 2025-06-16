@@ -1,19 +1,17 @@
 import { Middleware } from './interface'
 
-const allowCORS = (request: Request, response: Response): Response => {
-  const origin = request.headers.get('Origin')
-
+const allowCORS = (origins: string[], request: Request, response: Response): Response => {
   const headers = new Headers(response.headers)
-
+  const origin = origins.find((origin) => request.headers.get('Origin')?.includes(origin)) ?? null
   if (origin) {
     headers.set('Access-Control-Allow-Origin', origin)
-    headers.set('Access-Control-Allow-Credentials', 'true')
-    headers.set(
-      'Access-Control-Allow-Headers',
-      headers.get('Access-Control-Request-Headers') ?? 'Content-Type, Authorization',
-    )
-    headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD')
   }
+  headers.set('Access-Control-Allow-Credentials', 'true')
+  headers.set(
+    'Access-Control-Allow-Headers',
+    headers.get('Access-Control-Request-Headers') ?? 'Content-Type, Authorization',
+  )
+  headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD')
 
   if (request.method === 'OPTIONS') {
     headers.set('Access-Control-Max-Age', '3600')
@@ -23,14 +21,16 @@ const allowCORS = (request: Request, response: Response): Response => {
   return new Response(response.body, { status: response.status, headers, statusText: response.statusText })
 }
 
-const middleware: Middleware = async (request, next) => {
-  const response = await next(request)
-  if (response) {
-    const allowed = allowCORS(request, response)
-    return allowed
+const middleware =
+  (origins: string[]): Middleware =>
+  async (request, next) => {
+    const response = await next(request)
+    if (response) {
+      const allowed = allowCORS(origins, request, response)
+      return allowed
+    }
+    return response
   }
-  return response
-}
 
 export const AllowCORS = {
   middleware,

@@ -1,4 +1,5 @@
 import { SecretString } from '~/@/secrets/secret-string'
+import { CONFIG_SHARED } from './shared'
 
 const DATABASE_URL = () => {
   const value = SecretString.init('DATABASE_URL', import.meta.env?.DATABASE_URL)
@@ -32,7 +33,18 @@ const PORT = () => {
   return Number(value)
 }
 
+const CORS_ORIGINS: string[] = []
+
+if (CONFIG_SHARED.IS_LOCAL) {
+  CORS_ORIGINS.push('http://localhost:5173', 'http://localhost:5174')
+}
+
+if (CONFIG_SHARED.IS_PROD) {
+  CORS_ORIGINS.push('https://www.gamezilla.app')
+}
+
 export const CONFIG_BACKEND = {
+  CORS_ORIGINS,
   PORT,
   DATABASE_URL,
   POWERSYNC_PRIVATE_KEY,
