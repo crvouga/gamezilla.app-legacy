@@ -121,15 +121,20 @@ const initCtx = async (config: { role: BackendRole }): Promise<BackendCtxModule>
   })
 
   ctx.httpServer.registerRespond(() => {
-    const message =
-      config.role === 'primary' ? 'Hello from gamezilla.app primary backend' : 'Hello from gamezilla.app edge backend'
-    return new Response(message, {
-      status: 200,
-      headers: { 'Content-Type': 'text/plain' },
-    })
+    const message = toHelloMessage(ctx.role)
+    return new Response(message, { status: 200, headers: { 'Content-Type': 'text/plain' } })
   })
 
   return ctx
+}
+
+const toHelloMessage = (role: BackendRole): string => {
+  switch (role) {
+    case 'primary':
+      return 'Hello from gamezilla.app primary backend'
+    case 'edge':
+      return 'Hello from gamezilla.app edge backend'
+  }
 }
 
 const rpc = (input: { ctx: BackendCtxModule }) => {
