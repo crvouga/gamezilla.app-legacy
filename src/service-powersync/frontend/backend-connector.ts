@@ -4,13 +4,12 @@ import { unwrap } from '~/@/result'
 import { BackendConnectorRPC } from './backend-connector-rpc'
 
 export class BackendConnector extends BaseObserver<{}> implements PowerSyncBackendConnector {
-  private readonly powersyncUrl: string
   private readonly backendUrl: string
   private readonly logger: ILogger
 
-  constructor(config: { powersyncUrl: string; backendUrl: string; logger: ILogger }) {
+  constructor(config: { backendUrl: string; logger: ILogger }) {
     super()
-    this.powersyncUrl = config.powersyncUrl
+
     this.backendUrl = config.backendUrl
     this.logger = Logger.prefix('PowerSyncBackendConnector', config.logger)
   }
