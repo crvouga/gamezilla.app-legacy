@@ -41,6 +41,8 @@ services:
       PS_POSTGRES_STORAGE_DATABASE_URL: ${PS_POSTGRES_STORAGE_DATABASE_URL}
       PS_POSTGRES_REPLICATION_DATABASE_URL: ${PS_POSTGRES_REPLICATION_DATABASE_URL}
       PS_JWKS_URI: ${PS_JWKS_URI}
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
     ports:
       - 8080:8080
 
