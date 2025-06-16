@@ -138,6 +138,11 @@ async function generateIndexFile() {
 import type { Text } from './text';
 import type { LanguageCodeISO_639_1 } from '../lang-code-iso-639-1';  
 import { createTranslator } from '../translations';
+${LanguageCodeISO_639_1.ALL.map((code) => `import * as ${code} from './translations/${code}.ts'`).join('\n')}
+
+export const translations = {
+  ${LanguageCodeISO_639_1.ALL.map((code) => `${code}: ${code}.translations`).join(',\n')}
+} as const;
 
 export const loadTranslations = async (languageCode: LanguageCodeISO_639_1): Promise<Text> => {
   const translations = await import(\`./translations/\${languageCode}.ts\`);

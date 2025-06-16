@@ -2,6 +2,33 @@
 import type { Text } from './text'
 import type { LanguageCodeISO_639_1 } from '../lang-code-iso-639-1'
 import { createTranslator } from '../translations'
+import * as en from './translations/en.ts'
+import * as es from './translations/es.ts'
+import * as fr from './translations/fr.ts'
+import * as de from './translations/de.ts'
+import * as it from './translations/it.ts'
+import * as ja from './translations/ja.ts'
+import * as ko from './translations/ko.ts'
+import * as pt from './translations/pt.ts'
+import * as ru from './translations/ru.ts'
+import * as zh from './translations/zh.ts'
+import * as hi from './translations/hi.ts'
+import * as ar from './translations/ar.ts'
+
+export const translations = {
+  en: en.translations,
+  es: es.translations,
+  fr: fr.translations,
+  de: de.translations,
+  it: it.translations,
+  ja: ja.translations,
+  ko: ko.translations,
+  pt: pt.translations,
+  ru: ru.translations,
+  zh: zh.translations,
+  hi: hi.translations,
+  ar: ar.translations,
+} as const
 
 export const loadTranslations = async (languageCode: LanguageCodeISO_639_1): Promise<Text> => {
   const translations = await import(`./translations/${languageCode}.ts`)
