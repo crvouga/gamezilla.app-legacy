@@ -1,19 +1,19 @@
-import { ISqlDb } from '~/@/sql-db'
 import { Hashing } from '~/@/hashing'
 import { ILogger, Logger } from '~/@/logger'
+import { SecretString } from '~/@/secrets/secret-string'
 import { SMS } from '~/@/sms'
-import { UnixMs } from '~/@/time/unix-ms'
+import { ISqlDb } from '~/@/sql-db'
 import { TimeSpan } from '~/@/time/time-span'
+import { UnixMs } from '~/@/time/unix-ms'
+import { BackendRole } from '~/app/@/backend/backend-role'
 import { Env } from '~/app/@/data/env'
 import { Translator } from '~/app/@/frontend/translator'
+import { CONFIG_BACKEND } from '~/config/backend'
+import type { IVerifySMS } from '../interface'
+import { VerifySMS } from './impl'
 import { VerificationAttemptDb } from './impl-in-house/verification-attempt'
 import { VerificationCodeGenerator } from './impl-in-house/verification-code-generator'
 import { VerificationDb } from './impl-in-house/verification/verification-db'
-import type { IVerifySMS } from '../interface'
-import { VerifySMS } from './impl'
-import { CONFIG_BACKEND } from '~/config/backend'
-import { BackendRole } from '~/app/@/backend/backend-role'
-import { SecretString } from '~/@/secrets/secret-string'
 
 /**
  * Factory for creating VerifySMS implementations
@@ -102,27 +102,21 @@ export const VerifySMSFactory = {
     sqlDb: ISqlDb
   }): IVerifySMS => {
     if (config.backendRole !== 'primary') {
-      return VerifySMS({
-        t: 'fake-always-ok',
+      config.logger.info('Using noop verify SMS for non-primary backend')
+      return VerifySMS({ t: 'fake-always-ok', logger: config.logger })
+    }
+
+    if (config.backendRole === 'primary' && config.env === 'prod') {
+      config.logger.info('Using Twilio for production and primary backend')
+      return VerifySMSFactory.createTwilio({
         logger: config.logger,
+        twilioAccountSid: CONFIG_BACKEND.TWILIO_ACCOUNT_SID(),
+        twilioAuthToken: CONFIG_BACKEND.TWILIO_AUTH_TOKEN(),
+        twilioMessagingServiceSid: CONFIG_BACKEND.TWILIO_MESSAGING_SERVICE_SID(),
       })
     }
 
-    switch (config.env) {
-      case 'prod': {
-        return VerifySMSFactory.createTwilio({
-          logger: config.logger,
-          twilioAccountSid: CONFIG_BACKEND.TWILIO_ACCOUNT_SID(),
-          twilioAuthToken: CONFIG_BACKEND.TWILIO_AUTH_TOKEN(),
-          twilioMessagingServiceSid: CONFIG_BACKEND.TWILIO_MESSAGING_SERVICE_SID(),
-        })
-      }
-      case 'test': {
-        return VerifySMSFactory.createInHouse(config)
-      }
-      case 'dev': {
-        return VerifySMSFactory.createInHouse(config)
-      }
-    }
+    config.logger.info('Using in-house for non-production and primary backend')
+    return VerifySMSFactory.createInHouse(config)
   },
 }
