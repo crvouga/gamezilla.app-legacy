@@ -49,6 +49,8 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
 
     if (!crudTransaction) return
 
+    crudTransaction.crud[0]
+
     this.logger.info('crudTransaction', crudTransaction)
 
     // const entity = crudTransaction.crud[0]
