@@ -77,7 +77,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     backendUrl: CONFIG_SHARED.BACKEND_URL,
   })
 
-  powerSyncClient.start()
+  await powerSyncClient.start()
 
   const sqlDb = await SqlDb({
     t: 'powersync-client',
