@@ -63,6 +63,7 @@ export const PowerSyncClient = async (input: {
   })
 
   const connector = new BackendConnector({
+    powersyncUrl: input.powersyncUrl,
     backendUrl: input.backendUrl,
     logger,
   })

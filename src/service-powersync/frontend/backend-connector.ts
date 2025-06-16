@@ -7,7 +7,7 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
   private readonly backendUrl: string
   private readonly logger: ILogger
 
-  constructor(config: { backendUrl: string; logger: ILogger }) {
+  constructor(config: { powersyncUrl: string; backendUrl: string; logger: ILogger }) {
     super()
 
     this.backendUrl = config.backendUrl

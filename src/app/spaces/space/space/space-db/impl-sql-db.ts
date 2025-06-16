@@ -358,17 +358,17 @@ const toSqlPagination = (input: SpaceDbQuery) => {
   const vars: Sql.Vars = {}
   const clauses: string[] = []
 
-  if (input.limit) {
+  if (typeof input.limit === 'number') {
     clauses.push(`LIMIT :limit`)
     vars['limit'] = input.limit
   }
 
-  if (input.offset) {
+  if (typeof input.offset === 'number') {
     clauses.push(`OFFSET :offset`)
     vars['offset'] = input.offset
   }
 
-  const str = clauses.length > 0 ? `LIMIT :limit OFFSET :offset` : ''
+  const str = clauses.join(' ')
 
   return {
     str,
