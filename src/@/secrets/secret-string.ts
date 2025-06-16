@@ -1,14 +1,12 @@
-import { Err, Ok, Result } from '../result'
-
 export type SecretString = {
   dangerouslyReadValue: () => string
   toString: () => string
   toJSON: () => string
 }
 
-const init = (name: string, value: unknown): Result<string, SecretString> => {
+const init = (name: string, value: unknown): SecretString | null => {
   if (typeof value !== 'string') {
-    return Err(`SecretString named ${name} must be a string. This is used to prevent accidental logging of secrets.`)
+    return null
   }
   const message = `SecretString.of(${name})`
   const secretString: SecretString = {
@@ -17,7 +15,7 @@ const init = (name: string, value: unknown): Result<string, SecretString> => {
     [Symbol.for('nodejs.util.inspect.custom')]: () => message,
     toJSON: () => message,
   }
-  return Ok(secretString)
+  return secretString
 }
 
 export const SecretString = {

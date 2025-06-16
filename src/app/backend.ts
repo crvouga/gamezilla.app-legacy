@@ -141,7 +141,7 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
 }
 
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
-  input.ctx.httpServer.start(CONFIG_BACKEND.PORT)
+  input.ctx.httpServer.start(CONFIG_BACKEND.PORT())
 
   WireBackend.worker(s, input)
   AuthBackend.worker(s, input)

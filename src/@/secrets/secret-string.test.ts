@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import { unwrap } from '../result'
 import { SecretString } from './secret-string'
 
 describe('SecretString', () => {
@@ -7,7 +6,7 @@ describe('SecretString', () => {
   const value = 'TestValue'
 
   it('should return an object with the expected methods and properties', () => {
-    const secret = unwrap(SecretString.init(name, value))
+    const secret = SecretString.init(name, value)
 
     expect(secret).toHaveProperty('dangerouslyReadValue')
     expect(secret).toHaveProperty('toString')
@@ -15,17 +14,26 @@ describe('SecretString', () => {
   })
 
   it('should hide the value in toString', () => {
-    const secret = unwrap(SecretString.init(name, value))
+    const secret = SecretString.init(name, value)
+    if (!secret) {
+      throw new Error('SecretString is null')
+    }
     expect(secret.toString()).toBe(`SecretString.of(${name})`)
   })
 
   it('should return the value from dangerouslyReadValue', () => {
-    const secret = unwrap(SecretString.init(name, value))
+    const secret = SecretString.init(name, value)
+    if (!secret) {
+      throw new Error('SecretString is null')
+    }
     expect(secret.dangerouslyReadValue()).toBe(value)
   })
 
   it('should hide the value in JSON serialization', () => {
-    const secret = unwrap(SecretString.init(name, value))
+    const secret = SecretString.init(name, value)
+    if (!secret) {
+      throw new Error('SecretString is null')
+    }
     expect(JSON.stringify(secret)).toBe(`"SecretString.of(${name})"`)
   })
 })
