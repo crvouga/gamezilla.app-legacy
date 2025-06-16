@@ -2,8 +2,8 @@
 import { importJWK } from '~/@/json-crypto/import-jwk.js'
 import { KeyLike } from '~/@/json-crypto/key-like'
 import { Result } from '~/@/result/index.js'
-import { Err, isErr, Ok } from '~/@/result/result.js'
-import { keysGenerate } from './keys-generate.js'
+import { Err, Ok } from '~/@/result/result.js'
+import { CONFIG_BACKEND } from '~/config/backend'
 
 type Key = {
   alg: string
@@ -16,62 +16,38 @@ type KeyPair = {
   publicKey: Key | null
 }
 
-const keys: KeyPair = {
-  privateKey: null,
-  publicKey: null,
-}
-
-const ensureExists = async (env?: Record<string, string>) => {
+export const getKeyPair = async (): Promise<Result<string, KeyPair>> => {
   try {
-    if (keys.privateKey) {
-      return Ok(null)
+    const privateKeyBase64 = CONFIG_BACKEND.POWERSYNC_PRIVATE_KEY.dangerouslyReadValue()
+    const publicKeyBase64 = CONFIG_BACKEND.POWERSYNC_PUBLIC_KEY
+
+    if (!privateKeyBase64) {
+      return Err('POWERSYNC_PRIVATE_KEY environment variable is required')
     }
 
-    const base64Keys = {
-      private: env?.POWERSYNC_PRIVATE_KEY,
-      public: env?.POWERSYNC_PUBLIC_KEY,
+    if (!publicKeyBase64) {
+      return Err('POWERSYNC_PUBLIC_KEY environment variable is required')
     }
 
-    if (!base64Keys.private) {
-      console.warn(
-        'Private key has not been supplied in import.meta.env?.POWERSYNC_PRIVATE_KEY. A temporary key pair will be generated.',
-      )
-      const generated = await keysGenerate()
-      base64Keys.private = generated.privateBase64
-      base64Keys.public = generated.publicBase64
-    }
-
-    const decodedPrivateKey = Buffer.from(base64Keys.private, 'base64')
+    const decodedPrivateKey = Buffer.from(privateKeyBase64, 'base64')
     const powerSyncPrivateKey = JSON.parse(new TextDecoder().decode(decodedPrivateKey))
-    keys.privateKey = {
+    const privateKey: Key = {
       alg: powerSyncPrivateKey.alg,
       kid: powerSyncPrivateKey.kid,
       key: await importJWK(powerSyncPrivateKey),
     }
 
-    if (!base64Keys.public) {
-      return Err('Public key has not been supplied in import.meta.env?.POWERSYNC_PUBLIC_KEY')
-    }
-
-    const decodedPublicKey = Buffer.from(base64Keys.public, 'base64')
+    const decodedPublicKey = Buffer.from(publicKeyBase64, 'base64')
     const powerSyncPublicKey = JSON.parse(new TextDecoder().decode(decodedPublicKey))
-    keys.publicKey = {
+    const publicKey: Key = {
       alg: powerSyncPublicKey.alg,
       kid: powerSyncPublicKey.kid,
       key: await importJWK(powerSyncPublicKey),
     }
 
-    return Ok(null)
+    return Ok({ privateKey, publicKey })
   } catch (e) {
-    console.error('Error ensuring keys', e)
+    console.error('Error loading PowerSync keys:', e)
     return Err(String(e))
   }
-}
-
-export const getKeyPair = async (env?: Record<string, string>): Promise<Result<string, KeyPair>> => {
-  const result = await ensureExists(env)
-  if (isErr(result)) {
-    return result
-  }
-  return Ok(keys)
 }
