@@ -183,7 +183,7 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
       id: 'puzzle-builder-actions',
       variant: {
         limit: {
-          max: 3,
+          max: Infinity,
           onToggle: () => {
             if (input.model.puzzleBuilderOpened === 'more') {
               input.dispatch({ t: 'screen-puzzle-builder.user-closed-more-drawer' })

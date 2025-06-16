@@ -1,6 +1,7 @@
 // https://docs.powersync.com/installation/authentication-setup/custom
 import { isErr } from '~/@/result/result.js'
 import { getKeyPair } from '../keys/keys.js'
+import { exportJWK } from '~/@/json-crypto/export-jwk.js'
 
 const ENDPOINT = '/powersync/jwks'
 
@@ -12,7 +13,19 @@ const respond = async (_input: {}): Promise<Response | null> => {
     })
   }
   const powerSyncPublicKey = keyPair.value.publicKey
-  return new Response(JSON.stringify({ keys: [powerSyncPublicKey] }), {
+  if (!powerSyncPublicKey) {
+    return new Response('Public key not found', {
+      status: 500,
+    })
+  }
+  if (!(powerSyncPublicKey.key instanceof CryptoKey)) {
+    return new Response('Invalid public key format', {
+      status: 500,
+    })
+  }
+  const jwk = await exportJWK(powerSyncPublicKey.key)
+  const jwkWithMetadata = { ...jwk, alg: powerSyncPublicKey.alg, kid: powerSyncPublicKey.kid, use: 'sig' }
+  return new Response(JSON.stringify({ keys: [jwkWithMetadata] }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
   })
