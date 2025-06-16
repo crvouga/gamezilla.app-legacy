@@ -44,6 +44,6 @@ const ensureProtocol = (url: string) => {
   return 'https://' + url
 }
 
-export const CredentialsFrontend = {
+export const CredentialsClient = {
   request,
 }

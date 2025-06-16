@@ -6,7 +6,7 @@ import {
 } from '@powersync/web'
 import { ILogger, Logger } from '~/@/logger'
 import { unwrap } from '~/@/result'
-import { CredentialsFrontend } from '../credentials/client'
+import { CredentialsClient } from '../credentials/client'
 
 export class BackendConnector extends BaseObserver<{}> implements PowerSyncBackendConnector {
   private readonly backendUrl: string
@@ -23,7 +23,7 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
   async fetchCredentials(): Promise<PowerSyncCredentials | null> {
     try {
       this.logger.info('BackendConnector: Fetching credentials from', this.backendUrl)
-      const got = await CredentialsFrontend.request({
+      const got = await CredentialsClient.request({
         backendUrl: this.backendUrl,
         logger: this.logger,
       })

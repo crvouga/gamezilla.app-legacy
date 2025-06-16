@@ -2,6 +2,6 @@ const request = () => {
   throw new Error('Not implemented')
 }
 
-export const UploadDataFrontend = {
+export const UploadDataClient = {
   request,
 }
