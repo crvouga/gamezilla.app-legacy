@@ -1,8 +1,9 @@
+import { unwrap } from '~/@/result'
 import { SecretString } from '~/@/secrets/secret-string'
 
-const DATABASE_URL = () => SecretString.of('DATABASE_URL', import.meta.env?.DATABASE_URL)
+const DATABASE_URL = () => unwrap(SecretString.init('DATABASE_URL', import.meta.env?.DATABASE_URL))
 
-const POWERSYNC_PRIVATE_KEY = SecretString.of('POWERSYNC_PRIVATE_KEY', import.meta.env?.POWERSYNC_PRIVATE_KEY)
+const POWERSYNC_PRIVATE_KEY = unwrap(SecretString.init('POWERSYNC_PRIVATE_KEY', import.meta.env?.POWERSYNC_PRIVATE_KEY))
 
 const POWERSYNC_PUBLIC_KEY = import.meta.env?.POWERSYNC_PUBLIC_KEY
 

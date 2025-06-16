@@ -1,6 +1,7 @@
+import { unwrap } from '../result'
 import { SecretString } from '../secrets/secret-string'
 
-export const REDIS_URL = () => SecretString.of('REDIS_URL', import.meta.env?.REDIS_URL)
+export const REDIS_URL = () => unwrap(SecretString.init('REDIS_URL', import.meta.env?.REDIS_URL))
 
 export const newRedis = async (redisUrl: SecretString) => {
   // if (typeof window !== 'undefined') {
