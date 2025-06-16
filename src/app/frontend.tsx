@@ -4,11 +4,12 @@ import { HttpClient } from '~/@/http-client'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
+import { s } from '~/@/schema'
 import { Screen } from '~/@/screen/generated/screens'
 import { SqlDb } from '~/@/sql-db/frontend/impl'
 import { Sub } from '~/@/sub'
-import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
+import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
 import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
 import { IconUserCircle } from '~/@/ui/icon/icon-user-circle'
@@ -16,6 +17,7 @@ import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { CONFIG_SHARED } from '~/config/shared'
+import { BackendConnector } from '~/service-powersync/client/backend-connector'
 import { PowerSyncClient } from '~/service-powersync/client/powersync-client'
 import { Logger } from '../@/logger'
 import { APP_SOUND } from './@/frontend/app-sound'
@@ -36,7 +38,6 @@ import { ProfileFrontend } from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract, topicContract } from './types'
 import { WireFrontend } from './wire/frontend'
-import { s } from '~/@/schema'
 
 const initCtx = async (): Promise<FrontendCtxModule> => {
   const logger = Logger({
@@ -69,15 +70,21 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     codec: topicMsgCodec,
   })
 
+  logger.info('Frontend: Initializing PowerSync client...')
   const powerSyncClient = await PowerSyncClient({
     variant: 'durable',
     debug: true,
     logger,
-    powersyncUrl: CONFIG_SHARED.POWERSYNC_URL,
-    backendUrl: CONFIG_SHARED.BACKEND_URL,
+    backendConnector: new BackendConnector({
+      logger,
+      backendUrl: CONFIG_SHARED.BACKEND_URL,
+      powersyncUrl: CONFIG_SHARED.POWERSYNC_URL,
+    }),
   })
 
+  logger.info('Frontend: Starting PowerSync client...')
   await powerSyncClient.start()
+  logger.info('Frontend: PowerSync client started successfully!')
 
   const sqlDb = await SqlDb({
     t: 'powersync-client',

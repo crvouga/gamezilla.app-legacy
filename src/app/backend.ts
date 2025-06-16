@@ -12,7 +12,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
-import { PowerSyncBackendApp } from '~/service-powersync/backend/respond'
+import { PowerSyncBackend } from '~/service-powersync/backend'
 import { AppTypes } from '.'
 import { BackendInstanceId } from './@/backend/backend-instance/backend-instance-id'
 import { AppBackendCtxBase } from './@/backend/ctx'
@@ -115,7 +115,7 @@ const initCtx = async (config: { role: BackendRole }): Promise<BackendCtxModule>
     server: AppBackend.rpc({ ctx }),
   })
 
-  PowerSyncBackendApp.registerRespond({
+  PowerSyncBackend.registerRespond({
     ctx,
     httpServer: ctx.httpServer,
   })

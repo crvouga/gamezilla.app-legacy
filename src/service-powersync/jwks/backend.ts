@@ -1,9 +1,7 @@
 // https://docs.powersync.com/installation/authentication-setup/custom
 import { exportJWK } from '~/@/json-crypto/export-jwk.js'
 import { isErr } from '~/@/result/result.js'
-import { getKeyPair } from '../keys/keys.js'
-
-const ENDPOINT = '/powersync/jwks'
+import { getKeyPair } from '../@/backend/keys/keys.js'
 
 const respond = async (_input: {}): Promise<Response | null> => {
   const keyPair = await getKeyPair()
@@ -32,7 +30,6 @@ const respond = async (_input: {}): Promise<Response | null> => {
   })
 }
 
-export const PowerSyncJwks = {
-  ENDPOINT,
+export const JwksBackend = {
   respond,
 }

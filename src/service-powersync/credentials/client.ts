@@ -1,8 +1,8 @@
 import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok, Result } from '~/@/result'
-import { CredentialsResponseBodyOk, ENDPOINT } from '../@/credentials'
+import { CredentialsResponseBodyOk, ENDPOINT } from './types'
 
-const fetchCredentials = async (config: {
+const request = async (config: {
   backendUrl: string
   logger: ILogger
 }): Promise<Result<string, { token: string; endpoint: string }>> => {
@@ -44,6 +44,6 @@ const ensureProtocol = (url: string) => {
   return 'https://' + url
 }
 
-export const BackendConnectorRPC = {
-  fetchCredentials,
+export const CredentialsFrontend = {
+  request,
 }

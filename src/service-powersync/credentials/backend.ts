@@ -3,9 +3,9 @@ import * as SignJWT from '~/@/json-crypto/sign-jwt'
 import { isErr } from '~/@/result/result'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { CONFIG_SHARED } from '~/config/shared'
-import { CredentialsResponseBodyOk, ENDPOINT } from '~/service-powersync/@/credentials'
-import { Ctx } from '../ctx'
-import { getKeyPair } from '../keys/keys'
+import { CredentialsResponseBodyOk } from '~/service-powersync/credentials/types'
+import { getKeyPair } from '../@/backend/keys/keys'
+import { Ctx } from '../@/backend/ctx'
 
 const respond = async (input: { request: Request; ctx: Ctx }) => {
   const keys = await getKeyPair()
@@ -101,7 +101,6 @@ const respond = async (input: { request: Request; ctx: Ctx }) => {
   return response
 }
 
-export const PowerSyncCredentials = {
-  ENDPOINT,
+export const CredentialsBackend = {
   respond,
 }

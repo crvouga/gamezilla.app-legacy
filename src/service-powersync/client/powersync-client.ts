@@ -1,8 +1,7 @@
-import { PowerSyncDatabase } from '@powersync/web'
+import { PowerSyncBackendConnector, PowerSyncDatabase } from '@powersync/web'
 import JsLogger from 'js-logger'
 import { ILogger, Logger } from '~/@/logger'
 import { Sub } from '~/@/sub'
-import { BackendConnector } from '../frontend/backend-connector'
 import { AppSchema } from './powersync-client-schema'
 
 JsLogger.useDefaults()
@@ -28,25 +27,24 @@ export type IPowerSyncClient = {
 export type PowerSyncClientVariant = 'in-memory' | 'durable'
 
 export const PowerSyncClient = async (input: {
-  variant?: PowerSyncClientVariant
-  debug?: boolean
-  powersyncUrl: string
-  backendUrl: string
+  variant: PowerSyncClientVariant
+  debug: boolean
   logger: ILogger
+  backendConnector: PowerSyncBackendConnector
 }): Promise<IPowerSyncClient> => {
   const logger = Logger.prefix('PowerSyncClient', input.logger)
   const database = new PowerSyncDatabase({
     schema: AppSchema,
     database: {
-      dbFilename: input?.variant === 'in-memory' ? ':memory:' : 'powersync.db',
-      dbLocation: input?.variant === 'in-memory' ? 'test' : undefined,
-      debugMode: input?.debug,
+      dbFilename: input.variant === 'in-memory' ? ':memory:' : 'powersync.db',
+      dbLocation: input.variant === 'in-memory' ? 'test' : undefined,
+      debugMode: input.debug,
     },
     flags: {
       broadcastLogs: true,
       enableMultiTabs: true,
       ssrMode: false,
-      useWebWorker: true,
+      useWebWorker: false,
     },
   })
 
@@ -62,17 +60,16 @@ export const PowerSyncClient = async (input: {
     events.pub({ t: 'first-sync-completed' })
   })
 
-  const connector = new BackendConnector({
-    powersyncUrl: input.powersyncUrl,
-    backendUrl: input.backendUrl,
-    logger,
-  })
-
   const start = async () => {
-    await database.connect(connector)
-
-    logger.info('PowerSync connected to backend')
-    events.pub({ t: 'connected' })
+    try {
+      logger.info('PowerSync: Starting connection...')
+      await database.connect(input.backendConnector)
+      logger.info('PowerSync connected to backend')
+      events.pub({ t: 'connected' })
+    } catch (error) {
+      logger.error('PowerSync connection failed:', error)
+      throw error
+    }
   }
 
   return {

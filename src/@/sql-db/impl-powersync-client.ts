@@ -3,7 +3,7 @@ import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { PubSub, Sub } from '~/@/sub'
 import { IPowerSyncClient } from '~/service-powersync/client/powersync-client'
-import { SqlDbQueryInput, ISqlDb } from './interface'
+import { ISqlDb, SqlDbQueryInput } from './interface'
 
 export type Config = {
   t: 'powersync-client'
