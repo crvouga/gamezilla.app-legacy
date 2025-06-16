@@ -189,6 +189,28 @@ CREATE TABLE public.space (
 
 
 --
+-- Name: space_projection; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.space_projection (
+    id text NOT NULL,
+    host_user_id text NOT NULL,
+    game_id text
+);
+
+
+--
+-- Name: space_projection_user; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.space_projection_user (
+    id text NOT NULL,
+    space_id text NOT NULL,
+    user_id text NOT NULL
+);
+
+
+--
 -- Name: user_account; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -342,6 +364,22 @@ ALTER TABLE ONLY public.space
 
 
 --
+-- Name: space_projection space_projection_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.space_projection
+    ADD CONSTRAINT space_projection_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: space_projection_user space_projection_user_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.space_projection_user
+    ADD CONSTRAINT space_projection_user_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: user_account user_account_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -445,6 +483,27 @@ CREATE INDEX idx_username ON public.user_profile USING btree (username);
 
 
 --
+-- Name: space_projection_host_user_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX space_projection_host_user_id_idx ON public.space_projection USING btree (host_user_id);
+
+
+--
+-- Name: space_projection_user_space_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX space_projection_user_space_id_idx ON public.space_projection_user USING btree (space_id);
+
+
+--
+-- Name: space_projection_user_user_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX space_projection_user_user_id_idx ON public.space_projection_user USING btree (user_id);
+
+
+--
 -- Name: powersync; Type: PUBLICATION; Schema: -; Owner: -
 --
 
@@ -509,4 +568,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250609225401'),
     ('20250609230850'),
     ('20250609231740'),
-    ('20250609232555');
+    ('20250609232555'),
+    ('20250616011319');

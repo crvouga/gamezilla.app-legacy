@@ -70,7 +70,7 @@
   },
   "dependencies": {
     "@msgpack/msgpack": "^3.1.2",
-    "@powersync/web": "^1.12.3",
+    "@powersync/web": "^1.22.0",
     "chess.js": "^1.0.0-beta.8",
     "inferno": "^9.0.1",
     "postgres": "^3.4.4",

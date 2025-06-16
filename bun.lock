@@ -5,7 +5,7 @@
       "name": "gamezilla.app",
       "dependencies": {
         "@msgpack/msgpack": "^3.1.2",
-        "@powersync/web": "^1.12.3",
+        "@powersync/web": "^1.22.0",
         "chess.js": "^1.0.0-beta.8",
         "inferno": "^9.0.1",
         "postgres": "^3.4.4",
@@ -308,9 +308,9 @@
 
     "@pkgjs/parseargs": ["@pkgjs/parseargs@0.11.0", "", {}, "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg=="],
 
-    "@powersync/common": ["@powersync/common@1.31.0", "", { "dependencies": { "js-logger": "^1.6.1" } }, "sha512-b24fzj2w9+cPHqZBGnmUtOZDofgo14lTbA4SfzAcmWdKRu+72TJUWFzHrrXLdlnPj3/XXL0i6/g5BBo7Ffzvfw=="],
+    "@powersync/common": ["@powersync/common@1.32.0", "", { "dependencies": { "js-logger": "^1.6.1" } }, "sha512-2dSspy3Xk6j3Q2LbLWD8X792I0Rr5DgAbEXGmL3UnE2WGSRWTWiPVMnwUnZ7lBLcQbCQU1YSddRaoOvSq9XGsQ=="],
 
-    "@powersync/web": ["@powersync/web@1.21.0", "", { "dependencies": { "@powersync/common": "1.31.0", "async-mutex": "^0.4.0", "bson": "^6.6.0", "comlink": "^4.4.2", "commander": "^12.1.0" }, "peerDependencies": { "@journeyapps/wa-sqlite": "^1.2.4" }, "bin": { "powersync-web": "bin/powersync.js" } }, "sha512-GDSqDCruBQTCKhtEkoEqejJAb0kaxV1l3LNOY+LSInO8FV9a8JIlunlPgYFH8pJhMJNHqwsR1dGImQo44fpz7Q=="],
+    "@powersync/web": ["@powersync/web@1.22.0", "", { "dependencies": { "@powersync/common": "1.32.0", "async-mutex": "^0.4.0", "bson": "^6.6.0", "comlink": "^4.4.2", "commander": "^12.1.0" }, "peerDependencies": { "@journeyapps/wa-sqlite": "^1.2.4" }, "bin": { "powersync-web": "bin/powersync.js" } }, "sha512-HP2wAyEhmic++FLKm+nm82C3s8RmL2u9eM7yPqwqxlFjY9L/Hm2mvRu0eXwJDfRJKx+tunOsDV4eZSzGwO8aNQ=="],
 
     "@preact/preset-vite": ["@preact/preset-vite@2.10.1", "", { "dependencies": { "@babel/plugin-transform-react-jsx": "^7.22.15", "@babel/plugin-transform-react-jsx-development": "^7.22.5", "@prefresh/vite": "^2.4.1", "@rollup/pluginutils": "^4.1.1", "babel-plugin-transform-hook-names": "^1.0.2", "debug": "^4.3.4", "kolorist": "^1.8.0", "vite-prerender-plugin": "^0.5.3" }, "peerDependencies": { "@babel/core": "7.x", "vite": "2.x || 3.x || 4.x || 5.x || 6.x" } }, "sha512-59lyGBXNfZIr5OOuBUB4/IB8AqF/ULbvYnyItgK/2BJnsGJqaeaJobRVtMp1129obHQuj8oZ/dVxB9inmH8Xig=="],
 
