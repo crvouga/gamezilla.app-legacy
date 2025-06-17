@@ -21,6 +21,7 @@ const init = async (input: { ctx: AppFrontendCtxBase }): Promise<AuthFrontendCtx
       t: 'sql',
       sqlDb: input.ctx.sqlDb,
       logger: input.ctx.logger,
+      createTable: false,
     }),
     userAccountDb: UserAccountDb({
       t: 'sql',

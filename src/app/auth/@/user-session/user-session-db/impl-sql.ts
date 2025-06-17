@@ -24,22 +24,46 @@ export const Row = s.obj({
 
 export type Row = s.Infer<typeof Row>
 
-const rowToUserSession = (row: Row): UserSession => ({
-  userSessionId: row.id,
-  sessionId: row.session_id ?? null,
-  userId: row.user_id,
-  createdAt: UnixMs.init(row.created_at_unix_ms),
-  endedAt: row.ended_at_unix_ms ? UnixMs.init(row.ended_at_unix_ms) : null,
-  clientSessionId: row.client_session_id,
-})
+const rowToUserSession = (row: Row): UserSession => {
+  return {
+    userSessionId: row.id,
+    sessionId: row.session_id ?? null,
+    userId: row.user_id,
+    createdAt: UnixMs.init(row.created_at_unix_ms),
+    endedAt: row.ended_at_unix_ms ? UnixMs.init(row.ended_at_unix_ms) : null,
+    clientSessionId: row.client_session_id,
+  }
+}
 
 export type Config = {
   t: 'sql'
   sqlDb: ISqlDb
   logger: ILogger
+  createTable: boolean
 }
 
+const CREATE_TABLE_SQL: string[] = [
+  `
+  CREATE TABLE IF NOT EXISTS user_session (
+    id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    session_id TEXT,
+    client_session_id TEXT NOT NULL,
+    created_at_unix_ms BIGINT NOT NULL,
+    ended_at_unix_ms BIGINT
+  );
+  `,
+]
+
 export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
+  if (config.createTable) {
+    for (const query of CREATE_TABLE_SQL) {
+      sqlDb.query({ schema: s.unknown, sql: query, vars: {} }).then(() => {
+        //
+      })
+    }
+  }
+
   const logger = Logger.prefix('user-session-db', config.logger)
 
   return {

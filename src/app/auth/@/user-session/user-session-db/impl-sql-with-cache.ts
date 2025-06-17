@@ -53,6 +53,7 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
     t: 'sql',
     sqlDb: config.sqlDb,
     logger: config.logger,
+    createTable: false,
   })
 
   return WithCache({

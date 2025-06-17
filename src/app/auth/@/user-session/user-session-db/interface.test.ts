@@ -39,13 +39,19 @@ const Fixtures = async () => {
   configs.push({ t: 'in-memory', simulateLatency: async () => {} })
 
   configs.push({
-    t: 'with-sql-tables',
+    t: 'sql',
     sqlDb: f.sqlDbSqlite,
-    userSessionDb: await UserSessionDb({ t: 'sql', sqlDb: f.sqlDbSqlite, logger: Logger({ t: 'noop' }) }),
+    logger: Logger({ t: 'noop' }),
+    createTable: true,
   })
 
   if (f.t === 'integration') {
-    configs.push({ t: 'sql', sqlDb: f.sqlDbPostgres, logger: Logger({ t: 'noop' }) })
+    configs.push({
+      t: 'sql',
+      sqlDb: f.sqlDbPostgres,
+      logger: Logger({ t: 'noop' }),
+      createTable: false,
+    })
 
     configs.push({
       t: 'sql-with-cache',
