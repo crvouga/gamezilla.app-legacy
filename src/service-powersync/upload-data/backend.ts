@@ -62,12 +62,10 @@ const respond = async (input: { req: Request; ctx: Ctx }): Promise<Response | nu
         })
 
         const uploaded = await uploadData.upload({ ctx, entry })
+
         if (isErr(uploaded)) {
-          input.ctx.logger.error('Failed to upload entry', {
-            error: uploaded,
-            table: entry.table,
-            id: entry.id,
-          })
+          input.ctx.logger.error('Failed to upload entry', { error: uploaded, table: entry.table, id: entry.id })
+
           return new Response(JSON.stringify(uploaded), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
