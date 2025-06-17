@@ -4,14 +4,14 @@ import { s } from '~/@/schema'
 
 export type GuestSessionMappingId = Brand<string, 'GuestSessionMappingId'>
 
+const namespace = 'guest-session-mapping'
+const separator = ':'
+
 const is = (guestSessionMappingId: unknown): guestSessionMappingId is GuestSessionMappingId => {
-  return typeof guestSessionMappingId === 'string'
+  return typeof guestSessionMappingId === 'string' && guestSessionMappingId.startsWith(namespace)
 }
 
 const schema = s.custom(is, 'Invalid guest session mapping id')
-
-const namespace = 'guest-session-mapping'
-const separator = ':'
 
 const generate = () => {
   const id = Uuid.generate()

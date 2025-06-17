@@ -50,6 +50,7 @@ const respond = async (input: { req: Request; ctx: Ctx }): Promise<Response | nu
           table: entry.table,
           id: entry.id,
         })
+        break
       }
     }
   }
