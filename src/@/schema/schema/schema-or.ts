@@ -1,5 +1,6 @@
 import { Err } from '../../result/result'
-import type { Schema, ParserError } from './schema-types'
+import type { Schema } from './schema-types'
+import { ParseErrorEntry } from './parse-error-entry'
 
 export function or<A>(a: Schema<A>): Schema<A>
 export function or<A, B>(a: Schema<A>, b: Schema<B>): Schema<A | B>
@@ -393,7 +394,7 @@ export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U
 export function or(...schemas: Schema<unknown>[]): Schema<unknown> {
   return {
     parse(input) {
-      const errors: ParserError[] = []
+      const errors: ParseErrorEntry[] = []
 
       for (let i = 0; i < schemas.length; i++) {
         const result = schemas[i]!.parse(input)
@@ -402,13 +403,13 @@ export function or(...schemas: Schema<unknown>[]): Schema<unknown> {
             return result
           }
           case 'err': {
-            errors.push(...result.error)
+            errors.push(...result.error.entries)
             break
           }
         }
       }
 
-      return Err(errors)
+      return Err({ entries: errors })
     },
   }
 }

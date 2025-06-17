@@ -1,5 +1,6 @@
 import { Err, Ok } from '../../result/result'
-import type { Schema, ParserError } from './schema-types'
+import type { Schema } from './schema-types'
+import { ParseErrorEntry } from './parse-error-entry'
 
 export function and<A>(a: Schema<A>): Schema<A>
 export function and<A, B>(a: Schema<A>, b: Schema<B>): Schema<A & B>
@@ -393,7 +394,7 @@ export function and<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, 
 export function and(...schemas: Schema<unknown>[]): Schema<unknown> {
   return {
     parse(input) {
-      const errors: ParserError[] = []
+      const errors: ParseErrorEntry[] = []
 
       for (let i = 0; i < schemas.length; i++) {
         const result = schemas[i]!.parse(input)
@@ -402,7 +403,7 @@ export function and(...schemas: Schema<unknown>[]): Schema<unknown> {
             continue
           }
           case 'err': {
-            errors.push(...result.error)
+            errors.push(...result.error.entries)
             break
           }
         }
@@ -412,7 +413,7 @@ export function and(...schemas: Schema<unknown>[]): Schema<unknown> {
         return Ok(input)
       }
 
-      return Err(errors)
+      return Err({ entries: errors })
     },
   }
 }

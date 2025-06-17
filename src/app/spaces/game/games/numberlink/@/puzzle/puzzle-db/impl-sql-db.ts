@@ -8,7 +8,7 @@ import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Puzzle } from '../puzzle'
 import type { IPuzzleDb } from './interface'
-import { OrderClause, PuzzleQuery, WhereClause } from './query'
+import { OrderClause, PuzzleQuery, WhereClause } from './interface-query'
 import { Row } from './sql/row'
 
 export type Config = {

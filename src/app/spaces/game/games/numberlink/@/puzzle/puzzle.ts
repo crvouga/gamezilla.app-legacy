@@ -1,4 +1,8 @@
+import { FromUnknown } from '~/@/from-unknown/from-unknown'
+import { pipe } from '~/@/function/pipe'
+import { Result } from '~/@/result'
 import { s } from '~/@/schema'
+import { ParseError } from '~/@/schema/schema/parse-error'
 import { UnixMs } from '~/@/time/unix-ms'
 import { UserId } from '~/app/@/data/user-id'
 import { Numberlink } from '../numberlink'
@@ -68,8 +72,13 @@ const random = async (input?: {
   }
 }
 
+const fromUnknown = FromUnknown<Puzzle>()
+
 export const Puzzle = {
   ...schema,
+  ...fromUnknown,
   create,
   random,
 }
+
+Puzzle.fromUnknownRegister((data) => pipe(data, schema.parse, (x) => Result.mapErr(x, ParseError.toString)))

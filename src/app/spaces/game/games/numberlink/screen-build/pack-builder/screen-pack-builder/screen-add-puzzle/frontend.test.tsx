@@ -5,7 +5,7 @@ import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { PuzzleQuery } from '../../../../@/puzzle/puzzle-db/query'
+import { PuzzleQuery } from '../../../../@/puzzle/puzzle-db/interface-query'
 import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
 import { MsgFrontend } from '../types'
 import { ScreenAddPuzzle } from './frontend'

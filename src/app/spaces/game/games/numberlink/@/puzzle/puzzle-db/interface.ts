@@ -4,7 +4,7 @@ import { Paginated } from '~/app/@/data/pagination'
 import { UserId } from '~/app/@/data/user-id'
 import type { Puzzle } from '../puzzle'
 import type { PuzzleId } from '../puzzle-id'
-import { PuzzleQuery } from './query'
+import { PuzzleQuery } from './interface-query'
 
 export type ListPuzzlesOutput = Awaited<ReturnType<IPuzzleDb['query']>>
 

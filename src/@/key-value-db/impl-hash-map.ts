@@ -2,6 +2,7 @@ import { Err, Ok } from '~/@/result'
 import type { s } from '~/@/schema'
 import type { IKeyValueDb } from './interface'
 import { ILogger, Logger } from '../logger'
+import { ParseError } from '../schema/schema/parse-error'
 
 export type Config = {
   t: 'hash-map'
@@ -25,7 +26,7 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
 
       switch (parsed.t) {
         case 'err': {
-          return Err(parsed.error.map((e) => e.message).join(', '))
+          return Err(ParseError.toString(parsed.error))
         }
         case 'ok': {
           return Ok(parsed.value)
@@ -47,7 +48,7 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
         if (parsed.t === 'ok') {
           rows.push(parsed.value)
         } else {
-          return Err(parsed.error.map((e) => e.message).join(', '))
+          return Err(ParseError.toString(parsed.error))
         }
       }
 

@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
-import { PuzzleQuery } from '../../../../@/puzzle/puzzle-db/query'
+import { PuzzleQuery } from '../../../../@/puzzle/puzzle-db/interface-query'
 import { PuzzleId } from '../../../../@/puzzle/puzzle-id'
 
 export const ModelSpace = s.obj({

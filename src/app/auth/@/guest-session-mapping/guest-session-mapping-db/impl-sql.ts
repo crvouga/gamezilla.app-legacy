@@ -1,6 +1,6 @@
-import { ISqlDb } from '~/@/sql-db'
-import { s } from '~/@/schema'
 import { Ok, isErr } from '~/@/result'
+import { s } from '~/@/schema'
+import { ISqlDb } from '~/@/sql-db'
 import { UnixMs } from '~/@/time/unix-ms'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
@@ -13,10 +13,30 @@ export const Row = s.obj({
   created_at_unix_ms: s.or(s.str(), s.num()),
 })
 
+export type Row = s.Infer<typeof Row>
+
+// const rowToEntity = (row: Row): Result<string, GuestSessionMapping> => {
+//   return {
+//     id: GuestSessionMappingId.parse(row.id),
+//     sessionId: row.session_id,
+//     clientSessionId: row.client_session_id,
+//     guestUserId: row.guest_user_id,
+//   }
+// }
+
 export type Config = {
   t: 'sql'
   sqlDb: ISqlDb
 }
+
+// GuestSessionMapping.fromUnknownRegister((data) => {
+//   return pipe(
+//     data,
+//     Row.parse,
+//     (x) => Result.mapErr(x, ParseError.toString),
+//     (x) => Result.flatMapOk(x, rowToEntity),
+//   )
+// })
 
 export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb => {
   return {

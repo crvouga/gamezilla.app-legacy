@@ -3,7 +3,7 @@ import { IconUserCircle } from '~/@/ui/icon/icon-user-circle'
 import { Chip } from '~/@/ui/chip'
 import { IconArrowDownShortWide } from '~/@/ui/icon/icon-arrow-down-short-wide'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
-import { PuzzleQuery } from '../puzzle-db/query'
+import { PuzzleQuery } from '../puzzle-db/interface-query'
 
 type Model = PuzzleQuery
 

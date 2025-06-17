@@ -1,7 +1,10 @@
-import { s } from '~/@/schema'
+import { FromUnknown } from '~/@/from-unknown/from-unknown'
 import { PhoneNumber } from '~/@/phone-number'
+import { s } from '~/@/schema'
 import { UnixMs } from '~/@/time/unix-ms'
 import { UserId } from './user-id'
+import { ParseError } from '~/@/schema/schema/parse-error'
+import { mapErr } from '~/@/result'
 
 const schema = s.obj({
   userId: UserId,
@@ -35,8 +38,13 @@ const randomNormal = (input?: { userId?: UserId; createdAt?: UnixMs; phoneNumber
   } satisfies UserAccount
 }
 
+const fromUnknown = FromUnknown<UserAccount>()
+
 export const UserAccount = {
   ...schema,
+  ...fromUnknown,
   random,
   randomNormal,
 }
+
+UserAccount.fromUnknownRegister((data) => mapErr(schema.parse(data), ParseError.toString))

@@ -6,6 +6,7 @@ import { withDuration } from '../time/with-duration'
 import type { IKeyValueDb } from './interface'
 import { Logger } from '../logger'
 import { TimeSpan } from '../time/time-span'
+import { ParseError } from '../schema/schema/parse-error'
 
 const MAX_LEN = 1000
 
@@ -52,7 +53,7 @@ export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
 
         switch (parsed.t) {
           case 'err': {
-            const errorStr = parsed.error.map((e) => e.message).join(', ')
+            const errorStr = ParseError.toString(parsed.error)
 
             logger.error(`get: not a value: ${key} ${errorStr.slice(0, MAX_LEN)}`)
 

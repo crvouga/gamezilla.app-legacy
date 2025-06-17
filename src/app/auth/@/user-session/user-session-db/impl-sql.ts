@@ -1,8 +1,10 @@
-import type { ISqlDb } from '~/@/sql-db'
+import { pipe } from '~/@/function/pipe'
 import { ILogger, Logger } from '~/@/logger'
-import { s } from '~/@/schema'
 import { Result, unwrapOr } from '~/@/result'
+import { s } from '~/@/schema'
+import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
+import type { ISqlDb } from '~/@/sql-db'
 import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -11,7 +13,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import { UserSessionId } from '../user-session-id'
 import type { IUserSessionDb } from './interface'
-import { UserSessionDbQuery } from './query'
+import { UserSessionDbQuery } from './interface-query'
 
 export const Row = s.obj({
   id: UserSessionId,
@@ -34,6 +36,15 @@ const rowToUserSession = (row: Row): UserSession => {
     clientSessionId: row.client_session_id,
   }
 }
+
+UserSession.fromUnknownRegister((data) => {
+  return pipe(
+    data,
+    (x) => Row.parse(x),
+    (x) => Result.mapErr(x, ParseError.toString),
+    (x) => Result.mapOk(x, rowToUserSession),
+  )
+})
 
 export type Config = {
   t: 'sql'

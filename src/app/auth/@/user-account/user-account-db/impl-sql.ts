@@ -1,23 +1,25 @@
-import type { ISqlDb } from '~/@/sql-db'
-import { s } from '~/@/schema'
+import { pipe } from '~/@/function/pipe'
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, Ok, Result, isErr } from '~/@/result'
+import { s } from '~/@/schema'
+import { ParseError } from '~/@/schema/schema/parse-error'
+import type { ISqlDb } from '~/@/sql-db'
 import { UnixMs } from '~/@/time/unix-ms'
-import type { UserAccount } from '~/app/@/data/user-account'
+import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { UserRole } from '~/app/@/data/user-role'
 import type { IUserAccountDb } from './interface'
 
-export const UserAccountRow = s.obj({
+export const Row = s.obj({
   id: s.str(),
   created_at_unix_ms: s.or(s.str(), s.num()),
   user_role: UserRole,
   phone_number: s.maybe(s.str()),
 })
-export type UserAccountRow = s.Infer<typeof UserAccountRow>
+export type Row = s.Infer<typeof Row>
 
-const toAccount = ({ userAccount }: { userAccount: UserAccountRow }): Result<string, UserAccount> => {
-  const userId = Result.unwrapOr(UserId.parse(userAccount.id), null)
+const toAccount = (row: Row): Result<string, UserAccount> => {
+  const userId = Result.unwrapOr(UserId.parse(row.id), null)
 
   if (!userId) {
     return Err('Invalid account. Missing userId.')
@@ -25,13 +27,22 @@ const toAccount = ({ userAccount }: { userAccount: UserAccountRow }): Result<str
 
   const account: UserAccount = {
     userId,
-    role: userAccount.user_role,
-    createdAt: UnixMs.init(userAccount.created_at_unix_ms),
-    phoneNumber: Result.unwrapOr(PhoneNumber.fromString(userAccount.phone_number), null),
+    role: row.user_role,
+    createdAt: UnixMs.init(row.created_at_unix_ms),
+    phoneNumber: Result.unwrapOr(PhoneNumber.fromString(row.phone_number), null),
   }
 
   return Ok(account)
 }
+
+UserAccount.fromUnknownRegister((data) => {
+  return pipe(
+    data,
+    (x) => Row.parse(x),
+    (x) => Result.mapErr(x, ParseError.toString),
+    (x) => Result.flatMapOk(x, toAccount),
+  )
+})
 
 export type Config = {
   t: 'sql'
@@ -46,7 +57,7 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
       }
 
       const queried = await sqlDb.query({
-        schema: UserAccountRow,
+        schema: Row,
         sql: `
         SELECT
 					id,
@@ -73,16 +84,14 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
         return Ok(null)
       }
 
-      const account = toAccount({
-        userAccount: row,
-      })
+      const account = toAccount(row)
 
       return account
     },
 
     async findOneByPhoneNumber(input) {
       const queried = await sqlDb.query({
-        schema: UserAccountRow,
+        schema: Row,
         sql: `
 				SELECT
 					id,
@@ -109,9 +118,7 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
         return Ok(null)
       }
 
-      const account = toAccount({
-        userAccount: row,
-      })
+      const account = toAccount(row)
 
       return account
     },

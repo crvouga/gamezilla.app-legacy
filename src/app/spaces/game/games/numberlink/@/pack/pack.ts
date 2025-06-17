@@ -1,10 +1,13 @@
-import { unwrap } from '~/@/result'
+import { Result, unwrap } from '~/@/result'
 import { s } from '~/@/schema'
 import { UnixMs } from '~/@/time/unix-ms'
 import { UserId } from '~/app/@/data/user-id'
 import { PuzzleId } from '../puzzle/puzzle-id'
 import { PackId } from './pack-id'
 import { PackName } from './pack-name'
+import { FromUnknown } from '~/@/from-unknown/from-unknown'
+import { ParseError } from '~/@/schema/schema/parse-error'
+import { pipe } from '~/@/function/pipe'
 
 const schema = s.obj({
   id: PackId,
@@ -98,8 +101,11 @@ const random = async (input?: { createdBy?: UserId; puzzleIds?: PuzzleId[] }): P
   }
 }
 
+const fromUnknown = FromUnknown<Pack>()
+
 export const Pack = {
   ...schema,
+  ...fromUnknown,
   randomSync,
   create,
   add,
@@ -110,3 +116,5 @@ export const Pack = {
   removePuzzleAtIndex,
   random,
 }
+
+Pack.fromUnknownRegister((data) => pipe(data, schema.parse, (x) => Result.mapErr(x, ParseError.toString)))

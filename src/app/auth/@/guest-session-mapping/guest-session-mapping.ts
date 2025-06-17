@@ -1,14 +1,18 @@
+import { FromUnknown } from '~/@/from-unknown/from-unknown'
+import { s } from '~/@/schema'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { GuestSessionMappingId } from './guest-session-mapping-id'
 
-export type GuestSessionMapping = {
-  id: GuestSessionMappingId
-  sessionId: SessionId | null
-  clientSessionId: ClientSessionId
-  guestUserId: UserId
-}
+const schema = s.obj({
+  id: GuestSessionMappingId,
+  sessionId: s.maybe(SessionId),
+  clientSessionId: ClientSessionId,
+  guestUserId: UserId,
+})
+
+export type GuestSessionMapping = s.Infer<typeof schema>
 
 const random = (overrides?: Partial<GuestSessionMapping>): GuestSessionMapping => {
   return {
@@ -20,6 +24,9 @@ const random = (overrides?: Partial<GuestSessionMapping>): GuestSessionMapping =
   }
 }
 
+const fromUnknown = FromUnknown<GuestSessionMapping>()
+
 export const GuestSessionMapping = {
+  ...fromUnknown,
   random,
 }

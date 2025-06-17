@@ -7,6 +7,7 @@ import { ListSpacesBackend } from './list-spaces/backend'
 import { SpaceDb } from './space/space/space-db'
 import { SyncBackend } from './sync/backend'
 import { type BackendCtxModule, rpcContract, topicContract } from './types'
+import { UploadDataSpace } from './space/space/upload-data'
 
 const initCtx = async (input: {
   ctx: AppBackendCtxBase
@@ -19,7 +20,7 @@ const initCtx = async (input: {
     shouldCreateTable: false,
   })
 
-  uploadDataRegistry.add(SpaceDb.UploadData({ spaceDb }))
+  uploadDataRegistry.add(UploadDataSpace({ spaceDb }))
 
   return {
     ...input.ctx,

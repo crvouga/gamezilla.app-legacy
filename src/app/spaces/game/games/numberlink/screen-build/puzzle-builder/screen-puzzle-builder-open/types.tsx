@@ -1,7 +1,7 @@
 import { s } from '~/@/schema'
 import { UserId } from '~/app/@/data/user-id'
 import { Puzzle } from '../../../@/puzzle/puzzle'
-import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/query'
+import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/interface-query'
 import { CreateNewPuzzleTypes } from './button-create-new-puzzle'
 
 //

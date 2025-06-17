@@ -1,4 +1,7 @@
+import { FromUnknown } from '~/@/from-unknown/from-unknown'
+import { mapErr } from '~/@/result'
 import { s } from '~/@/schema'
+import { ParseError } from '~/@/schema/schema/parse-error'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
@@ -28,7 +31,12 @@ const random = (overrides?: Partial<UserSession>): UserSession => {
   }
 }
 
+const fromUnknown = FromUnknown<UserSession>()
+
 export const UserSession = {
   ...schema,
+  ...fromUnknown,
   random,
 }
+
+UserSession.fromUnknownRegister((data) => mapErr(schema.parse(data), ParseError.toString))

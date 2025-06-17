@@ -1,11 +1,13 @@
+import { Err, Ok, Result } from '~/@/result'
 import { s } from '~/@/schema'
-import { Result } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
 import { UserId } from '~/app/@/data/user-id'
 import { NumberlinkVariant } from '../../../variant'
-import type { Puzzle } from '../../puzzle'
+import { Puzzle } from '../../puzzle'
 import { PuzzleId } from '../../puzzle-id'
 import { PuzzleName } from '../../puzzle-name'
+import { pipe } from '~/@/function/pipe'
+import { ParseError } from '~/@/schema/schema/parse-error'
 
 const schema = s.obj({
   id: s.str(),
@@ -58,7 +60,18 @@ const rowToPuzzle = (row: Row): Puzzle | null => {
   return null
 }
 
+Puzzle.fromUnknownRegister((data) => {
+  return pipe(
+    data,
+    schema.parse,
+    (x) => Result.mapErr(x, ParseError.toString),
+    (x) => Result.mapOk(x, rowToPuzzle),
+    (x) => Result.flatMapOk(x, (x) => (x === null ? Err('failed to parse puzzle') : Ok(x))),
+  )
+})
+
 export const Row = {
   ...schema,
+
   rowToPuzzle,
 }

@@ -1,12 +1,8 @@
 import type { ResultInternal } from '../../result/result'
-
-export type ParserError = {
-  message: string
-  path: string[]
-}
+import { ParseError } from './parse-error'
 
 export type Schema<T> = {
-  parse: (input: unknown) => ResultInternal<ParserError[], T>
+  parse: (input: unknown) => ResultInternal<ParseError, T>
 }
 
 export const isSchema = <T>(input: unknown): input is Schema<T> => {

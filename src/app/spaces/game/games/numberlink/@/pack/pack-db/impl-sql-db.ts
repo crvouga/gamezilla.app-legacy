@@ -8,12 +8,14 @@ import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Uuid } from '~/@/id/uuid'
 import { UserId } from '~/app/@/data/user-id'
-import { OrderClause, WhereClause } from '../../puzzle/puzzle-db/query'
+import { OrderClause, WhereClause } from '../../puzzle/puzzle-db/interface-query'
 import { PuzzleId } from '../../puzzle/puzzle-id'
-import type { Pack } from '../pack'
+import { Pack } from '../pack'
 import { PackId } from '../pack-id'
 import { PackName } from '../pack-name'
 import type { IPackDb } from './interface'
+import { ParseError } from '~/@/schema/schema/parse-error'
+import { pipe } from '~/@/function/pipe'
 
 export type Config = {
   t: 'sql-db'
@@ -48,7 +50,7 @@ const RowItem = s.obj({
 
 type RowItem = s.Infer<typeof RowItem>
 
-const rowToPack = (row: Row, items: RowItem[]): Pack | null => {
+const rowToPack = (row: Row, items: RowItem[]): Pack => {
   return {
     isOfficial: row.is_official ?? false,
     createdAt: UnixMs.init(row.created_at_unix_ms),
@@ -73,6 +75,15 @@ const rowToPack = (row: Row, items: RowItem[]): Pack | null => {
       }),
   }
 }
+
+Pack.fromUnknownRegister((data) => {
+  return pipe(
+    data,
+    Row.parse,
+    (x) => Result.mapErr(x, ParseError.toString),
+    (x) => Result.mapOk(x, (row) => rowToPack(row, [])),
+  )
+})
 
 const toSqlWhere = (where: WhereClause) => {
   const clauses: string[] = []

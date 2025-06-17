@@ -2,13 +2,16 @@ import { uploadDataRegistry } from '~/@/upload-data/upload-data-registry'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { NumberlinkBackendCtx } from './@/backend/ctx'
 import { PackDb } from './@/pack/pack-db'
+import { UploadDataPack } from './@/pack/upload-data'
 import { PuzzleDb } from './@/puzzle/puzzle-db'
+import { UploadDataPuzzle } from './@/puzzle/upload-data'
 
 const initCtx = (input: { ctx: SpaceBackendCtx }): NumberlinkBackendCtx => {
   const numberlinkPuzzleDb = PuzzleDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb, logger: input.ctx.logger })
   const numberlinkPackDb = PackDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb, logger: input.ctx.logger })
-  uploadDataRegistry.add(PuzzleDb.UploadData({ numberlinkPuzzleDb }))
-  uploadDataRegistry.add(PackDb.UploadData({ numberlinkPackDb }))
+  uploadDataRegistry.add(UploadDataPuzzle({ numberlinkPuzzleDb }))
+  uploadDataRegistry.add(UploadDataPack({ numberlinkPackDb }))
+
   return {
     ...input.ctx,
     numberlinkPuzzleDb,

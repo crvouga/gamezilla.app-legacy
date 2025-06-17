@@ -1,7 +1,10 @@
 import { EventSourced, EventSourcedConfig } from '~/@/event-sourced'
 import { EventId, WithEventId } from '~/@/event-sourced/event'
+import { FromUnknown } from '~/@/from-unknown/from-unknown'
 import { pipe } from '~/@/function/pipe'
+import { Result } from '~/@/result'
 import { s } from '~/@/schema'
+import { ParseError } from '~/@/schema/schema/parse-error'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { MsgSpace } from '../msg-space'
@@ -70,3 +73,7 @@ export const toUserIds = (model: Model): UserId[] => {
   const userIds = SpaceProjection.toUserIds(projection)
   return userIds
 }
+
+export const { fromUnknownRegister, fromUnknown } = FromUnknown<Model>()
+
+fromUnknownRegister((data) => pipe(data, Model.parse, (x) => Result.mapErr(x, ParseError.toString)))

@@ -1,5 +1,6 @@
 import { Err, Ok } from '../../result/result'
-import type { Schema, ParserError } from './schema-types'
+import type { Schema } from './schema-types'
+import { ParseErrorEntry } from './parse-error-entry'
 
 export function tuple<A>(a: Schema<A>): Schema<[A]>
 export function tuple<A, B>(a: Schema<A>, b: Schema<B>): Schema<[A, B]>
@@ -393,7 +394,7 @@ export function tuple<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T
 export function tuple(...schemas: Schema<unknown>[]): Schema<unknown> {
   return {
     parse(input) {
-      const errors: ParserError[] = []
+      const errors: ParseErrorEntry[] = []
       const tuple: any[] = []
 
       for (let i = 0; i < schemas.length; i++) {
@@ -404,7 +405,7 @@ export function tuple(...schemas: Schema<unknown>[]): Schema<unknown> {
             continue
           }
           case 'err': {
-            errors.push(...result.error)
+            errors.push(...result.error.entries)
             break
           }
         }
@@ -414,7 +415,7 @@ export function tuple(...schemas: Schema<unknown>[]): Schema<unknown> {
         return Ok(tuple)
       }
 
-      return Err(errors)
+      return Err({ entries: errors })
     },
   }
 }

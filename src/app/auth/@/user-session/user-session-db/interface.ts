@@ -4,7 +4,7 @@ import type { SessionId } from '~/@/wire/session-id'
 import { Paginated } from '~/app/@/data/pagination'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
-import { UserSessionDbQuery } from './query'
+import { UserSessionDbQuery } from './interface-query'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 
 export type IUserSessionDb = {

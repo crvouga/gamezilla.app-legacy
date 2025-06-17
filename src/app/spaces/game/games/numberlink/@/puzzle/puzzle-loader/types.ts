@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { Puzzle } from '../puzzle'
-import { PuzzleQuery } from '../puzzle-db/query'
+import { PuzzleQuery } from '../puzzle-db/interface-query'
 import { PuzzleId } from '../puzzle-id'
 
 export type ModelFrontend = {

@@ -1,8 +1,9 @@
-import { ISqlDb } from '~/@/sql-db'
 import { Json } from '~/@/json/json'
-import { s } from '~/@/schema'
 import { Err, isErr, Ok, Result, unwrapOr } from '~/@/result'
+import { s } from '~/@/schema'
+import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
+import { ISqlDb } from '~/@/sql-db'
 import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Solutions } from '../solutions'
@@ -25,7 +26,7 @@ export type Row = s.Infer<typeof Row>
 const rowToSolutions = (row: Row): Result<string, Solutions> => {
   const json = unwrapOr(typeof row.solutions === 'string' ? Json.parse(row.solutions) : Ok(row.solutions), [])
   const parsed = Solutions.parse(json)
-  if (isErr(parsed)) return Err(parsed.error.map((e) => e.message).join('\n'))
+  if (isErr(parsed)) return Err(ParseError.toString(parsed.error))
   return Ok(parsed.value)
 }
 
