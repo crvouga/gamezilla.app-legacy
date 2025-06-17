@@ -4,14 +4,13 @@ import { s } from '~/@/schema'
 
 export type UserSessionId = Brand<string, 'UserSessionId'>
 
+const namespace = 'user-session'
+const separator = ':'
 const is = (userSessionId: unknown): userSessionId is UserSessionId => {
-  return typeof userSessionId === 'string'
+  return typeof userSessionId === 'string' && userSessionId.startsWith(namespace)
 }
 
 const schema = s.custom(is, 'Invalid user session id')
-
-const namespace = 'user-session'
-const separator = ':'
 
 const generate = () => {
   const id = Uuid.generate()
