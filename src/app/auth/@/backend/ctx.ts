@@ -5,6 +5,7 @@ import { IUserSessionDb, UserSessionDb } from '../user-session/user-session-db'
 import { IVerifySMS } from './verify-sms'
 import { VerifySMSFactory } from './verify-sms/impl/factory'
 import { Logger } from '~/@/logger'
+import { uploadDataRegistry } from '~/@/upload-data/upload-data-registry'
 
 export type AuthBackendCtx = AppBackendCtxBase & {
   userAccountDb: IUserAccountDb
@@ -38,6 +39,9 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
   })
+
+  uploadDataRegistry.add(UserAccountDbUploadData({ userAccountDb }))
+  uploadDataRegistry.add(UserSessionDbUploadData({ userSessionDb }))
 
   return {
     ...input.ctx,

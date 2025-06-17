@@ -1,7 +1,7 @@
 import { Result } from '../result'
-import { CrudTransaction } from './crud-transaction'
+import { CrudTransactionEntry } from './crud-transaction-entry'
 
 export type IUploadData = {
-  match: (transaction: CrudTransaction) => boolean
-  upload: (transaction: CrudTransaction) => Promise<Result<string, null>>
+  match: (entry: CrudTransactionEntry) => boolean
+  upload: (entry: CrudTransactionEntry) => Promise<Result<string, null>>
 }

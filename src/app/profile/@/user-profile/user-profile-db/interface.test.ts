@@ -8,7 +8,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { Username } from '~/app/@/data/username'
 import { Config, ProfileDb } from './impl'
-import { ProfileDbQuery } from './query'
+import { ProfileDbQuery } from './interface-query'
 
 const Fixture = (config: Config) => {
   const profileDb = ProfileDb(config)

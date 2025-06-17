@@ -4,7 +4,7 @@ import { Paginated } from '~/app/@/data/pagination'
 import { UserId } from '~/app/@/data/user-id'
 import type { Pack } from '../pack'
 import type { PackId } from '../pack-id'
-import { PacksDbQuery, WhereClause } from './query'
+import { PacksDbQuery, WhereClause } from './inteface-query'
 
 export type IPackDb = {
   count: (input: { where: WhereClause }) => Task<string, number>

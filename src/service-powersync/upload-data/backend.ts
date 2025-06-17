@@ -1,33 +1,38 @@
-// https://docs.powersync.com/installation/authentication-setup/custom
-import { exportJWK } from '~/@/json-crypto/export-jwk.js'
-import { isErr } from '~/@/result/result.js'
-import { getKeyPairFromEnv } from '../@/backend/keys/keys.js'
+import { isErr } from '~/@/result'
+import { uploadDataRegistry } from '~/@/upload-data/upload-data-registry'
+import { RequestBody } from './types'
 
-const respond = async (_input: {}): Promise<Response | null> => {
-  const keyPair = await getKeyPairFromEnv()
+const respond = async (input: { req: Request }): Promise<Response | null> => {
+  const body = await input.req.json()
 
-  if (isErr(keyPair)) {
-    return new Response(keyPair.error, {
-      status: 500,
-    })
+  const parsed = RequestBody.parse(body)
+
+  if (isErr(parsed)) {
+    return new Response(JSON.stringify(parsed), { status: 400 })
   }
-  const powerSyncPublicKey = keyPair.value.publicKey
-  if (!powerSyncPublicKey) {
-    return new Response('Public key not found', {
-      status: 500,
-    })
+
+  console.log('parsed', parsed)
+
+  for (const entry of parsed.value.crudTransaction.entries) {
+    for (const uploadData of uploadDataRegistry.values()) {
+      if (uploadData.match(entry)) {
+        const uploaded = await uploadData.upload(entry)
+        if (isErr(uploaded)) {
+          return new Response(JSON.stringify(uploaded), { status: 500 })
+        }
+      }
+    }
   }
-  if (!(powerSyncPublicKey.key instanceof CryptoKey)) {
-    return new Response('Invalid public key format', {
-      status: 500,
-    })
-  }
-  const jwk = await exportJWK(powerSyncPublicKey.key)
-  const jwkWithMetadata = { ...jwk, alg: powerSyncPublicKey.alg, kid: powerSyncPublicKey.kid, use: 'sig' }
-  return new Response(JSON.stringify({ keys: [jwkWithMetadata] }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  })
+
+  return new Response(
+    JSON.stringify({
+      success: true,
+    }),
+    {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    },
+  )
 }
 
 export const PowerSyncUploadData = {

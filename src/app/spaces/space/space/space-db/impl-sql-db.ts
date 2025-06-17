@@ -11,7 +11,7 @@ import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { Space, SpaceProjection } from '..'
 import type { ISpaceDb, SpaceDbConfig, SpaceDbInputMsg, SpaceDbOutputMsg } from './interface'
-import { SpaceDbQuery } from './query'
+import { SpaceDbQuery } from './inteface-query'
 
 export type Config = SpaceDbConfig & {
   t: 'sql-db'

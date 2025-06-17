@@ -5,9 +5,10 @@ import {
   PowerSyncCredentials,
 } from '@powersync/common'
 import { ILogger, Logger } from '~/@/logger'
-import { unwrap } from '~/@/result'
+import { isErr, unwrap } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 import { CredentialsClient } from '../credentials/client'
+import { UploadDataClient } from '../upload-data/client'
 
 export class BackendConnector extends BaseObserver<{}> implements PowerSyncBackendConnector {
   private readonly backendUrl: string
@@ -58,20 +59,24 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
   async uploadData(database: AbstractPowerSyncDatabase): Promise<void> {
     const crudTransaction = await database.getNextCrudTransaction()
 
-    if (!crudTransaction) return
-
-    crudTransaction.crud[0]
+    if (!crudTransaction) {
+      this.logger.warn('No crud transaction found, skipping upload')
+      return
+    }
 
     this.logger.info('crudTransaction', crudTransaction)
 
-    // const entity = crudTransaction.crud[0]
+    const uploaded = await UploadDataClient.request({
+      crudTransaction,
+    })
 
-    this.logger.info('uploadData not implemented yet', database)
+    if (isErr(uploaded)) {
+      this.logger.error('Failed to upload data', uploaded.error)
+      return
+    }
 
-    // await new Promise((resolve) => setTimeout(resolve, 2000))
+    this.logger.warn('marking transaction as complete')
 
-    this.logger.warn('marking transaction as complete but not implemented yet')
-
-    crudTransaction?.complete()
+    crudTransaction.complete()
   }
 }

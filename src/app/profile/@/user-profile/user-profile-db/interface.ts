@@ -3,7 +3,7 @@ import { Sub } from '~/@/sub'
 import { Paginated } from '~/app/@/data/pagination'
 import { UserProfile } from '~/app/@/data/user-profile'
 import type { UserId } from '~/app/@/data/user-id'
-import { ProfileDbQuery } from './query'
+import { ProfileDbQuery } from './interface-query'
 
 export type IUserProfileDb = {
   findByUserIds: (userIds: UserId[]) => Promise<Result<string, UserProfile[]>>

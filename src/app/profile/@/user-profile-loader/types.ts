@@ -2,7 +2,7 @@ import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { ProfileFrontendCtx } from '../frontend/ctx'
-import { ProfileDbQuery } from '../user-profile/user-profile-db/query'
+import { ProfileDbQuery } from '../user-profile/user-profile-db/interface-query'
 
 export type ModelFrontend = {
   results: {

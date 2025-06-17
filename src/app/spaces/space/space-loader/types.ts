@@ -2,7 +2,7 @@ import { Result } from '~/@/result'
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../space'
-import { SpaceDbQuery } from '../space/space-db/query'
+import { SpaceDbQuery } from '../space/space-db/inteface-query'
 
 export type ModelFrontend = {
   'space-loader.results': {

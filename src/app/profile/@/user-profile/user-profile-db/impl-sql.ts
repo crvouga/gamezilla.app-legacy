@@ -10,7 +10,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { Username } from '~/app/@/data/username'
 import type { IUserProfileDb } from './interface'
-import { ProfileDbQuery } from './query'
+import { ProfileDbQuery } from './interface-query'
 
 const ProfileRow = s.obj({
   id: UserId,
