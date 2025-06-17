@@ -81,7 +81,7 @@
     "swiper": "^11.2.0"
   },
   "devDependencies": {
-    "@happy-dom/global-registrator": "^17.4.1",
+    "@happy-dom/global-registrator": "^18.0.1",
     "@preact/preset-vite": "^2.7.0",
     "@tailwindcss/vite": "^4.1.6",
     "@testing-library/react": "^16.1.0",
