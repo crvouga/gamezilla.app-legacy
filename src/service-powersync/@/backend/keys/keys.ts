@@ -11,12 +11,12 @@ type Key = {
   key: KeyLike | Uint8Array<ArrayBufferLike>
 }
 
-type KeyPair = {
-  privateKey: Key | null
-  publicKey: Key | null
+export type KeyPair = {
+  privateKey: Key
+  publicKey: Key
 }
 
-export const getKeyPair = async (): Promise<Result<string, KeyPair>> => {
+export const getKeyPairFromEnv = async (): Promise<Result<string, KeyPair>> => {
   try {
     const privateKeyBase64 = CONFIG_BACKEND.POWERSYNC_PRIVATE_KEY().dangerouslyReadValue()
     const publicKeyBase64 = CONFIG_BACKEND.POWERSYNC_PUBLIC_KEY()

@@ -38,6 +38,7 @@ import { ProfileFrontend } from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract, topicContract } from './types'
 import { WireFrontend } from './wire/frontend'
+import { isErr } from '~/@/result'
 
 const initCtx = async (): Promise<FrontendCtxModule> => {
   const logger = Logger({
@@ -72,15 +73,18 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
 
   logger.info('Frontend: Initializing PowerSync client...')
 
+  const powersyncBackendConnector = new BackendConnector({
+    logger,
+    backendUrl: CONFIG_SHARED.BACKEND_URL,
+    powersyncUrl: CONFIG_SHARED.POWERSYNC_URL,
+    getGuestUserId: async () => null,
+  })
+
   const powerSyncClient = await PowerSyncClient({
     t: 'browser',
     debug: true,
     logger,
-    backendConnector: new BackendConnector({
-      logger,
-      backendUrl: CONFIG_SHARED.BACKEND_URL,
-      powersyncUrl: CONFIG_SHARED.POWERSYNC_URL,
-    }),
+    backendConnector: powersyncBackendConnector,
   })
 
   logger.info('Frontend: Starting PowerSync client...')
@@ -131,6 +135,16 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     ...wire,
     rpc,
     topic,
+  }
+
+  powersyncBackendConnector.getGuestUserId = async () => {
+    const userSession = await ctxModule.userSessionDb.query({
+      whereAnd: { clientSessionId: { equals: ctxModule.clientSessionId } },
+      order: { createdAt: 'desc' },
+      pagination: { limit: 1, offset: 0 },
+    })
+    if (isErr(userSession)) return null
+    return userSession.value.items[0]?.userId ?? null
   }
 
   return ctxModule

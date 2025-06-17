@@ -1,10 +1,10 @@
 // https://docs.powersync.com/installation/authentication-setup/custom
 import { exportJWK } from '~/@/json-crypto/export-jwk.js'
 import { isErr } from '~/@/result/result.js'
-import { getKeyPair } from '../@/backend/keys/keys.js'
+import { getKeyPairFromEnv } from '../@/backend/keys/keys.js'
 
 const respond = async (_input: {}): Promise<Response | null> => {
-  const keyPair = await getKeyPair()
+  const keyPair = await getKeyPairFromEnv()
 
   if (isErr(keyPair)) {
     return new Response(keyPair.error, {

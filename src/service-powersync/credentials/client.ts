@@ -1,24 +1,21 @@
 import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok, Result } from '~/@/result'
 import { CredentialsResponseBodyOk, ENDPOINT } from './types'
+import { UserId } from '~/app/@/data/user-id'
 
 const request = async (config: {
   backendUrl: string
   logger: ILogger
+  guestUserId: UserId | null
 }): Promise<Result<string, { token: string; endpoint: string }>> => {
   try {
-    let urlString = ENDPOINT
-    try {
-      const url = new URL(ensureProtocol(String(config.backendUrl)))
-      url.pathname = ENDPOINT
-      urlString = url.toString()
-    } catch (e) {
-      urlString = ENDPOINT
+    const url = new URL(ENDPOINT, ensureProtocol(config.backendUrl))
+
+    if (config.guestUserId) {
+      url.searchParams.set('guestUserId', config.guestUserId)
     }
 
-    const response = await fetch(urlString, {
-      credentials: 'include',
-    })
+    const response = await fetch(url, { credentials: 'include' })
 
     const responseJson: unknown = await response.json()
 

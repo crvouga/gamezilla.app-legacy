@@ -6,26 +6,37 @@ import {
 } from '@powersync/common'
 import { ILogger, Logger } from '~/@/logger'
 import { unwrap } from '~/@/result'
+import { UserId } from '~/app/@/data/user-id'
 import { CredentialsClient } from '../credentials/client'
 
 export class BackendConnector extends BaseObserver<{}> implements PowerSyncBackendConnector {
   private readonly backendUrl: string
   private readonly powersyncUrl: string
   private readonly logger: ILogger
+  getGuestUserId: () => Promise<UserId | null>
 
-  constructor(config: { powersyncUrl: string; backendUrl: string; logger: ILogger }) {
+  constructor(config: {
+    powersyncUrl: string
+    backendUrl: string
+    logger: ILogger
+    getGuestUserId: () => Promise<UserId | null>
+  }) {
     super()
 
     this.backendUrl = config.backendUrl
     this.powersyncUrl = config.powersyncUrl
     this.logger = Logger.prefix('PowerSyncBackendConnector', config.logger)
+    this.getGuestUserId = config.getGuestUserId
   }
   async fetchCredentials(): Promise<PowerSyncCredentials | null> {
     try {
       this.logger.info('BackendConnector: Fetching credentials from', this.backendUrl)
+      const guestUserId = await this.getGuestUserId()
+
       const got = await CredentialsClient.request({
         backendUrl: this.backendUrl,
         logger: this.logger,
+        guestUserId,
       })
 
       const credentials = unwrap(got)

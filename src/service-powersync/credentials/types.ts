@@ -8,3 +8,9 @@ export const CredentialsResponseBodyOk = s.obj({
 })
 
 export type CredentialsResponseBodyOk = s.Infer<typeof CredentialsResponseBodyOk>
+
+const CredentialsResponseBodyErr = s.obj({
+  message: s.str(),
+})
+
+export type CredentialsResponseBodyErr = s.Infer<typeof CredentialsResponseBodyErr>
