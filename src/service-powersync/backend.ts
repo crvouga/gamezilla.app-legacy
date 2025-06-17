@@ -1,12 +1,12 @@
 // https://docs.powersync.com/installation/authentication-setup/custom
-import { IHttpServer } from '~/@/http-server/interface.js'
-import { Ctx } from './@/backend/ctx.js'
-import { PowerSyncCredentialsBackend } from './credentials/backend.js'
-import { PowerSyncCredentialsTypes } from './credentials/index.js'
-import { PowerSyncJwksBackend } from './jwks/backend.js'
-import { PowerSyncJwksTypes } from './jwks/index.js'
-import { PowerSyncUploadDataBackend } from './upload-data/backend.js'
-import { PowerSyncUploadDataTypes } from './upload-data/index.js'
+import { IHttpServer } from '~/@/http-server/interface'
+import { Ctx } from './@/backend/ctx'
+import { PowerSyncCredentialsBackend } from './credentials/backend'
+import { PowerSyncCredentialsTypes } from './credentials/index'
+import { PowerSyncJwksBackend } from './jwks/backend'
+import { PowerSyncJwksTypes } from './jwks/index'
+import { PowerSyncUploadDataBackend } from './upload-data/backend'
+import { PowerSyncUploadDataTypes } from './upload-data/index'
 
 const respond = async (input: { req: Request; ctx: Ctx }): Promise<Response | null> => {
   const pathname = new URL(input.req.url).pathname

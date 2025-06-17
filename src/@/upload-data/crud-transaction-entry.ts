@@ -1,11 +1,12 @@
 import { s } from '../schema'
+import { CrudTransactionEntryOp } from './crud-transaction-entry-op'
 
 const schema = s.obj({
-  type: s.enumeration(['create', 'update', 'delete']),
+  op: CrudTransactionEntryOp,
   id: s.str(),
   table: s.str(),
-  newData: s.dict(s.str(), s.unknown),
-  prevData: s.dict(s.str(), s.unknown),
+  newData: s.maybe(s.partialDict(s.str(), s.unknown)),
+  prevData: s.maybe(s.partialDict(s.str(), s.unknown)),
 })
 
 export type CrudTransactionEntry = s.Infer<typeof schema>

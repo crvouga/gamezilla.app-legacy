@@ -9,7 +9,7 @@ const request = async (config: {
   guestUserId: UserId | null
 }): Promise<Result<string, { token: string; endpoint: string }>> => {
   try {
-    const url = new URL(ENDPOINT, ensureProtocol(config.backendUrl))
+    const url = new URL(ENDPOINT, config.backendUrl)
 
     if (config.guestUserId) {
       url.searchParams.set(GUEST_USER_ID_QUERY_PARAM_NAME, config.guestUserId)
@@ -32,13 +32,6 @@ const request = async (config: {
     config.logger.error(errorMessage)
     return Err(errorMessage)
   }
-}
-
-const ensureProtocol = (url: string) => {
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url
-  }
-  return 'https://' + url
 }
 
 export const PowerSyncCredentialsClient = {

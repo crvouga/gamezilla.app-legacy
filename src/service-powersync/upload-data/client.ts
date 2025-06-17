@@ -1,32 +1,22 @@
-import { CrudTransaction as PowerSyncCrudTransaction } from '@powersync/web'
+import { CrudTransaction as PowerSyncCrudTransaction } from '@powersync/common'
 import { Err, Ok, Result } from '~/@/result'
-import { CrudTransaction } from '~/@/upload-data/crud-transaction'
-import { ENDPOINT } from './types'
-import { CrudTransactionEntry } from '~/@/upload-data/crud-transaction-entry'
+import { fromPowerSyncCrudTransaction } from './mapping'
+import { ENDPOINT, RequestBody } from './types'
 
-const fromPowerSyncCrudTransaction = (input: PowerSyncCrudTransaction): CrudTransaction => {
-  return {
-    entries: input.crud.map((powersyncEntry): CrudTransactionEntry => {
-      const entry: CrudTransactionEntry = {
-        id: powersyncEntry.id,
-        table: powersyncEntry.table,
-        type: powersyncEntry.op,
-        newData: powersyncEntry.opData as Record<string, unknown>,
-        prevData: powersyncEntry.previousValues as Record<string, unknown>,
-      }
-      return entry
-    }),
-  }
-}
-
-const request = async (input: { crudTransaction: PowerSyncCrudTransaction }): Promise<Result<string, null>> => {
+const request = async (input: {
+  backendUrl: string
+  crudTransaction: PowerSyncCrudTransaction
+}): Promise<Result<string, null>> => {
   console.log('uploading data', input)
 
   try {
-    const body: { crudTransaction: CrudTransaction } = {
-      crudTransaction: fromPowerSyncCrudTransaction(input.crudTransaction),
-    }
-    const uploaded = await fetch(ENDPOINT, {
+    const crudTransaction = fromPowerSyncCrudTransaction(input.crudTransaction)
+
+    const body: RequestBody = { crudTransaction }
+
+    const url = new URL(ENDPOINT, input.backendUrl)
+
+    const uploaded = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },
@@ -38,7 +28,7 @@ const request = async (input: { crudTransaction: PowerSyncCrudTransaction }): Pr
 
     return Ok(null)
   } catch (error) {
-    return Err(error as string)
+    return Err(String(error))
   }
 }
 

@@ -67,6 +67,7 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
     this.logger.info('crudTransaction', crudTransaction)
 
     const uploaded = await PowerSyncUploadDataClient.request({
+      backendUrl: this.backendUrl,
       crudTransaction,
     })
 
