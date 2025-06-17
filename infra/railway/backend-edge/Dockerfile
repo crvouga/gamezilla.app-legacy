@@ -12,4 +12,4 @@ ARG PORT
 ENV PORT=${PORT}
 
 
-CMD ["bun", "backend-edge"]
+CMD ["bun", "backend-edge:railway"]

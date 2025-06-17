@@ -25,7 +25,7 @@ import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
 import { BackendRole } from './@/backend/backend-role'
 
-const initCtx = async (config: { role: BackendRole }): Promise<BackendCtxModule> => {
+const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console' })
 
   const runtime = Runtime({
@@ -35,7 +35,7 @@ const initCtx = async (config: { role: BackendRole }): Promise<BackendCtxModule>
   })
 
   const sqlDb =
-    config.role === 'primary'
+    config.backendRole === 'primary'
       ? await SqlDb({ t: 'postgres', databaseUrl: CONFIG_BACKEND.DATABASE_URL(), logger })
       : await SqlDb({ t: 'noop' })
 
@@ -81,7 +81,7 @@ const initCtx = async (config: { role: BackendRole }): Promise<BackendCtxModule>
   const backendInstanceId = BackendInstanceId.generate()
 
   const ctxBase: AppBackendCtxBase = {
-    backendRole: config.role,
+    backendRole: config.backendRole,
     env,
     sqlDb,
     keyValueDbDurable,
