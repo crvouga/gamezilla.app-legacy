@@ -28,20 +28,21 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
     pubSubTopicBased: input.ctx.pubSub,
   })
 
+  const guestSessionMappingDb = GuestSessionMappingDb({
+    t: 'sql',
+    sqlDb: input.ctx.sqlDb,
+  })
+
+  uploadDataRegistry.add(UserAccountDb.UploadData({ userAccountDb }))
+  uploadDataRegistry.add(UserSessionDb.UploadData({ userSessionDb }))
+  uploadDataRegistry.add(GuestSessionMappingDb.UploadData({ guestSessionMappingDb }))
+
   const verifySMS = VerifySMSFactory.createForEnvironment({
     logger: Logger.prefix('verifySMS', input.ctx.logger),
     backendRole: input.ctx.backendRole,
     env: input.ctx.env,
     sqlDb: input.ctx.sqlDb,
   })
-
-  const guestSessionMappingDb = GuestSessionMappingDb({
-    t: 'sql',
-    sqlDb: input.ctx.sqlDb,
-  })
-
-  uploadDataRegistry.add(UserAccountDbUploadData({ userAccountDb }))
-  uploadDataRegistry.add(UserSessionDbUploadData({ userSessionDb }))
 
   return {
     ...input.ctx,

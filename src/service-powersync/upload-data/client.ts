@@ -2,16 +2,19 @@ import { CrudTransaction as PowerSyncCrudTransaction } from '@powersync/web'
 import { Err, Ok, Result } from '~/@/result'
 import { CrudTransaction } from '~/@/upload-data/crud-transaction'
 import { ENDPOINT } from './types'
+import { CrudTransactionEntry } from '~/@/upload-data/crud-transaction-entry'
 
 const fromPowerSyncCrudTransaction = (input: PowerSyncCrudTransaction): CrudTransaction => {
   return {
-    entries: input.crud.map((entry) => {
-      return {
-        id: entry.id,
-        type: entry.op,
-        newData: entry.opData as Record<string, unknown>,
-        prevData: entry.previousValues as Record<string, unknown>,
+    entries: input.crud.map((powersyncEntry): CrudTransactionEntry => {
+      const entry: CrudTransactionEntry = {
+        id: powersyncEntry.id,
+        table: powersyncEntry.table,
+        type: powersyncEntry.op,
+        newData: powersyncEntry.opData as Record<string, unknown>,
+        prevData: powersyncEntry.previousValues as Record<string, unknown>,
       }
+      return entry
     }),
   }
 }

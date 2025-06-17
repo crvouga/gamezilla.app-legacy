@@ -2,7 +2,7 @@ import { Ok } from '~/@/result'
 import { IUploadData } from '~/@/upload-data/upload-data'
 import { IUserProfileDb } from './interface'
 
-export const UploadData = (_config: { userProfileDb: IUserProfileDb }): IUploadData => {
+export const UploadData = (_config: { profileDb: IUserProfileDb }): IUploadData => {
   return {
     match: (entry) => {
       return entry.id.startsWith('user-profile:')
