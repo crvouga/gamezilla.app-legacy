@@ -3,7 +3,7 @@ import {
   BaseObserver,
   PowerSyncBackendConnector,
   PowerSyncCredentials,
-} from '@powersync/web'
+} from '@powersync/common'
 import { ILogger, Logger } from '~/@/logger'
 import { unwrap } from '~/@/result'
 import { CredentialsClient } from '../credentials/client'

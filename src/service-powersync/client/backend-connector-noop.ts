@@ -3,7 +3,7 @@ import {
   BaseObserver,
   PowerSyncBackendConnector,
   PowerSyncCredentials,
-} from '@powersync/web'
+} from '@powersync/common'
 import { ILogger, Logger } from '~/@/logger'
 
 export class BackendConnectorNoop extends BaseObserver<{}> implements PowerSyncBackendConnector {

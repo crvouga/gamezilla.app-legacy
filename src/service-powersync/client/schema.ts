@@ -1,4 +1,4 @@
-import { column, Schema, Table } from '@powersync/web'
+import { column, Schema, Table } from '@powersync/common'
 
 const game_numberlink_puzzle = new Table(
   {
@@ -171,7 +171,7 @@ const space_projection_user = new Table(
   },
 )
 
-export const AppSchema = new Schema({
+export const schema = new Schema({
   space,
   space_projection,
   space_projection_user,
@@ -184,4 +184,3 @@ export const AppSchema = new Schema({
   user_guest_session_mapping,
   user_profile,
 })
-export type AppSchema = (typeof AppSchema)['types']

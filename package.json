@@ -70,6 +70,8 @@
   },
   "dependencies": {
     "@msgpack/msgpack": "^3.1.2",
+    "@powersync/better-sqlite3": "^0.2.0",
+    "@powersync/node": "^0.5.0",
     "@powersync/web": "^1.22.0",
     "chess.js": "^1.0.0-beta.8",
     "inferno": "^9.0.1",
@@ -79,6 +81,10 @@
     "react-dom": "^19.0.0",
     "swiper": "^11.2.0"
   },
+  "trustedDependencies": [
+    "@powersync/better-sqlite3",
+    "@powersync/node"
+  ],
   "devDependencies": {
     "@happy-dom/global-registrator": "^17.4.1",
     "@preact/preset-vite": "^2.7.0",

@@ -71,8 +71,9 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   })
 
   logger.info('Frontend: Initializing PowerSync client...')
+
   const powerSyncClient = await PowerSyncClient({
-    variant: 'durable',
+    t: 'browser',
     debug: true,
     logger,
     backendConnector: new BackendConnector({

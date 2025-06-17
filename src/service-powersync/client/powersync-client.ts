@@ -1,11 +1,7 @@
-import { PowerSyncBackendConnector, PowerSyncDatabase } from '@powersync/web'
-import JsLogger from 'js-logger'
+import type { AbstractPowerSyncDatabase, PowerSyncBackendConnector } from '@powersync/common'
 import { ILogger, Logger } from '~/@/logger'
 import { Sub } from '~/@/sub'
-import { AppSchema } from './powersync-client-schema'
-
-JsLogger.useDefaults()
-JsLogger.setLevel(JsLogger.DEBUG)
+import { schema } from './schema'
 
 export type PowerSyncDatabaseEvent =
   | {
@@ -19,32 +15,37 @@ export type PowerSyncDatabaseEvent =
     }
 
 export type IPowerSyncClient = {
-  database: PowerSyncDatabase
+  database: AbstractPowerSyncDatabase
   events: Sub<PowerSyncDatabaseEvent>
   start: () => Promise<void>
 }
 
-export type PowerSyncClientVariant = 'in-memory' | 'durable'
-
-export const PowerSyncClient = async (input: {
-  variant: PowerSyncClientVariant
+export type ConfigBase = {
   debug: boolean
   logger: ILogger
   backendConnector: PowerSyncBackendConnector
-}): Promise<IPowerSyncClient> => {
-  const logger = Logger.prefix('PowerSyncClient', input.logger)
+}
+
+export type ConfigVariant =
+  | {
+      t: 'browser'
+    }
+  | {
+      t: 'node.js'
+    }
+
+export type Config = ConfigBase & ConfigVariant
+
+export const PowerSyncClient = async (config: Config): Promise<IPowerSyncClient> => {
+  const logger = Logger.prefix('PowerSyncClient', config.logger)
+
+  const { PowerSyncDatabase } = await importPowerSyncDatabase(config)
+
   const database = new PowerSyncDatabase({
-    schema: AppSchema,
+    schema,
     database: {
-      dbFilename: input.variant === 'in-memory' ? ':memory:' : 'powersync.db',
-      dbLocation: input.variant === 'in-memory' ? 'test' : undefined,
-      debugMode: input.debug,
-    },
-    flags: {
-      broadcastLogs: true,
-      enableMultiTabs: true,
-      ssrMode: false,
-      useWebWorker: false,
+      dbFilename: 'powersync.db',
+      debugMode: config.debug,
     },
   })
 
@@ -63,7 +64,7 @@ export const PowerSyncClient = async (input: {
   const start = async () => {
     try {
       logger.info('PowerSync: Starting connection...')
-      await database.connect(input.backendConnector)
+      await database.connect(config.backendConnector)
       logger.info('PowerSync connected to backend')
       events.pub({ t: 'connected' })
     } catch (error) {
@@ -76,5 +77,18 @@ export const PowerSyncClient = async (input: {
     database,
     events,
     start,
+  }
+}
+
+const importPowerSyncDatabase = async (config: Config) => {
+  switch (config.t) {
+    case 'browser': {
+      const { PowerSyncDatabase } = await import('@powersync/web')
+      return { PowerSyncDatabase }
+    }
+    case 'node.js': {
+      const { PowerSyncDatabase } = await import('@powersync/node')
+      return { PowerSyncDatabase }
+    }
   }
 }

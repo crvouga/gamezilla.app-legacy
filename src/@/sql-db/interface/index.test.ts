@@ -2,8 +2,8 @@ import { describe, expect, test } from 'bun:test'
 import 'fake-indexeddb/auto'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
-import { PowerSyncClient } from '~/service-powersync/client/powersync-client'
 import { BackendConnectorNoop } from '~/service-powersync/client/backend-connector-noop'
+import { PowerSyncClient } from '~/service-powersync/client/powersync-client'
 import { Logger } from '../../logger'
 import { isErr, isOk } from '../../result'
 import { s } from '../../schema'
@@ -36,7 +36,7 @@ const Fixtures = async () => {
     configs.push({
       t: 'powersync-client',
       powerSyncClient: await PowerSyncClient({
-        variant: 'in-memory',
+        t: 'node.js',
         debug: true,
         logger: Logger({ t: 'noop' }),
         backendConnector: new BackendConnectorNoop({ logger: Logger({ t: 'noop' }) }),
