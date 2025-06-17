@@ -6,8 +6,8 @@
   "scripts": {
     "backend-edge": "bun --watch ./src/backend-edge.ts",
     "backend-edge:railway": "PROD=true bun ./src/backend-edge.ts",
-    "backend-primary": "bun --watch ./src/backend.ts",
-    "backend-primary:railway": "PROD=true bun ./src/backend.ts",
+    "backend-primary": "bun --watch ./src/backend-primary.ts",
+    "backend-primary:railway": "PROD=true bun ./src/backend-primary.ts",
     "backend:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./src/backend.ts",
     "cg": "bun cg:l18n && bun cg:screens && bun cg:events && bun cg:msg-shared",
     "cg:events": "bun ./src/@/events/events-gen.ts",
