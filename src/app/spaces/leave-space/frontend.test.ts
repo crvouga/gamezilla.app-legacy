@@ -21,7 +21,7 @@ describe('leave space', () => {
     const spaceId = SpaceId.generate()
 
     const outputs = f.updates(f.initial, [
-      userStartedSpace(0, f.userA.id, spaceId),
+      userStartedSpace(0, f.userA.userId, spaceId),
       userJoinedSpace(1, f.ctx.currentUser!.userId, spaceId),
       {
         msg: { t: 'leave-space.clicked-leave-space-button', spaceId: spaceId },

@@ -125,6 +125,7 @@ const user_guest_session_mapping = new Table(
 const user_profile = new Table(
   {
     id: column.text,
+    user_id: column.text,
     username: column.text,
     avatar_seed: column.text,
     avatar_style: column.text,

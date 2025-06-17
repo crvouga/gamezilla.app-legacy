@@ -13,7 +13,7 @@ const update: FrontendModule['update'] = (input) => {
           ...input.model,
           results: {
             ...input.model.results,
-            [ProfileDbQuery.toKey(input.msg.query)]: input.msg.profiles.map((p) => p.id),
+            [ProfileDbQuery.toKey(input.msg.query)]: input.msg.profiles.map((p) => p.userId),
           },
         },
         msgOut: [AddProfilesCmd.init(input.msg.profiles)],

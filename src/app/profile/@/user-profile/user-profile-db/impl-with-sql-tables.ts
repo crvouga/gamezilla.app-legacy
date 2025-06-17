@@ -12,6 +12,7 @@ const queries: string[] = [
   `
   CREATE TABLE IF NOT EXISTS user_profile (
     id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
     username TEXT NOT NULL,
     avatar_seed TEXT,
     avatar_style TEXT,

@@ -13,6 +13,7 @@ import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { UserSession } from '../@/user-session/user-session'
 import { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 import { Username } from '~/app/@/data/username'
+import { UserProfileId } from '~/app/@/data/user-profile-id'
 
 const init: ModelFrontend = {
   status: NotAsked,
@@ -63,7 +64,8 @@ export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFronte
   }
 
   const userProfile: UserProfile = input.ctx.profilesByUserId[userSession.userId] ?? {
-    id: userSession.userId,
+    id: UserProfileId.generate(),
+    userId: userSession.userId,
     username: Username.of(''),
     avatarSeed: null,
     avatarStyle: null,

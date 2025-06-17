@@ -15,17 +15,17 @@ export const ProfileDb = (_config: Config): IUserProfileDb => {
   const profiles = new Map<UserId, UserProfile>()
   return {
     async findByUserIds(userIds) {
-      const output: UserProfile[] = Array.from(profiles.values()).filter((profile) => userIds.includes(profile.id))
+      const output: UserProfile[] = Array.from(profiles.values()).filter((profile) => userIds.includes(profile.userId))
 
       return Ok(output)
     },
     async put(profile) {
-      profiles.set(profile.id, profile)
+      profiles.set(profile.userId, profile)
       return Ok(null)
     },
     async query(query) {
       const hits = Array.from(profiles.values()).filter((profile) =>
-        query.whereAnd?.userId?.equals ? query.whereAnd?.userId?.equals === profile.id : true,
+        query.whereAnd?.userId?.equals ? query.whereAnd?.userId?.equals === profile.userId : true,
       )
       const ordered = hits.sort((a, b) => {
         if (query.order.createdAt === 'asc') {

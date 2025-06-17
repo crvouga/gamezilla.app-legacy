@@ -1,19 +1,21 @@
-import type { ISqlDb } from '~/@/sql-db'
 import { ILogger } from '~/@/logger'
-import { s } from '~/@/schema'
 import { Ok, Result, isErr, unwrapOr } from '~/@/result'
+import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
+import type { ISqlDb } from '~/@/sql-db'
 import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
+import { UserProfileId } from '~/app/@/data/user-profile-id'
 import { Username } from '~/app/@/data/username'
 import type { IUserProfileDb } from './interface'
 import { ProfileDbQuery } from './interface-query'
 
 const ProfileRow = s.obj({
-  id: UserId,
+  id: UserProfileId,
+  user_id: UserId,
   username: Username,
   avatar_seed: s.maybe(s.str()),
   avatar_style: s.maybe(s.str()),
@@ -23,7 +25,7 @@ const ProfileRow = s.obj({
 
 type ProfileRow = s.Infer<typeof ProfileRow>
 
-const fromProfileRow = (row: ProfileRow): Result<string, UserProfile> => {
+const rowToEntity = (row: ProfileRow): Result<string, UserProfile> => {
   const avatarSeed = row.avatar_seed ? ProfileAvatar.toSeed(row.avatar_seed) : ProfileAvatar.toSeed(row.username)
 
   const avatarStyle = row.avatar_style
@@ -32,6 +34,7 @@ const fromProfileRow = (row: ProfileRow): Result<string, UserProfile> => {
 
   const profile: UserProfile = {
     id: row.id,
+    userId: row.user_id,
     username: row.username,
     avatarSeed: avatarSeed,
     avatarStyle: avatarStyle,
@@ -54,6 +57,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
       const sql = `
         SELECT
           id,
+          user_id,
           username,
           avatar_seed,
           avatar_style,
@@ -62,7 +66,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
         FROM
           user_profile
         WHERE
-          id IN (:id_commas)
+          user_id IN (:id_commas)
       `
 
       const queried = await config.sqlDb.query({
@@ -75,7 +79,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
 
       if (isErr(queried)) return queried
 
-      const parsed = Result.combine(queried.value.map(fromProfileRow))
+      const parsed = Result.combine(queried.value.map(rowToEntity))
 
       if (isErr(parsed)) return parsed
 
@@ -85,6 +89,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
     async put(profile) {
       const rowNew: ProfileRow = {
         id: profile.id,
+        user_id: profile.userId,
         username: profile.username,
         avatar_seed: profile.avatarSeed,
         avatar_style: profile.avatarStyle,
@@ -97,6 +102,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
         sql: `
         INSERT INTO user_profile (
           id,
+          user_id,
           username,
           avatar_seed,
           avatar_style,
@@ -104,7 +110,8 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
           updated_at_unix_ms
         )
         VALUES (
-          :id,          
+          :id,
+          :user_id,
           :username,
           :avatar_seed,
           :avatar_style,
@@ -112,6 +119,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
           :updated_at_unix_ms
         )
         ON CONFLICT (id) DO UPDATE SET
+          user_id = EXCLUDED.user_id,
           username = EXCLUDED.username,
           avatar_seed = EXCLUDED.avatar_seed,
           avatar_style = EXCLUDED.avatar_style,
@@ -142,7 +150,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
       if (isErr(queried)) return queried
       if (isErr(queriedTotal)) return queriedTotal
 
-      const parsed = Result.combine(queried.value.map(fromProfileRow))
+      const parsed = Result.combine(queried.value.map(rowToEntity))
       if (isErr(parsed)) return parsed
 
       const total = Number(queriedTotal.value[0]?.total ?? 0)
@@ -157,7 +165,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
     sub(query) {
       const { sql, vars } = queryToSql(query)
       return Sub.map(config.sqlDb.sub({ schema: ProfileRow, sql: sql, vars: vars }), (rows) =>
-        unwrapOr(Result.combine(rows.map(fromProfileRow)), []),
+        unwrapOr(Result.combine(rows.map(rowToEntity)), []),
       )
     },
   }
@@ -168,8 +176,8 @@ const queryToSql = (query: ProfileDbQuery) => {
   const vars: Sql.Vars = {}
 
   if (query.whereAnd?.userId?.equals) {
-    whereClauses.push('id = :id')
-    vars.id = query.whereAnd.userId.equals
+    whereClauses.push('user_id = :user_id')
+    vars.user_id = query.whereAnd.userId.equals
   }
 
   vars.limit = query.pagination.limit
@@ -180,6 +188,7 @@ const queryToSql = (query: ProfileDbQuery) => {
   const sql = `
         SELECT
           id,
+          user_id,
           username,
           avatar_seed,
           avatar_style,

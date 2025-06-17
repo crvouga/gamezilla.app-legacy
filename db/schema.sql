@@ -247,7 +247,8 @@ CREATE TABLE public.user_profile (
     avatar_seed text,
     avatar_style text,
     created_at_unix_ms bigint NOT NULL,
-    updated_at_unix_ms bigint NOT NULL
+    updated_at_unix_ms bigint NOT NULL,
+    user_id text NOT NULL
 );
 
 ALTER TABLE ONLY public.user_profile REPLICA IDENTITY FULL;
@@ -569,4 +570,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250609230850'),
     ('20250609231740'),
     ('20250609232555'),
-    ('20250616011319');
+    ('20250616011319'),
+    ('20250617205957');

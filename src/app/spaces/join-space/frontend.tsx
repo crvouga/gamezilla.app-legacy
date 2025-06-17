@@ -190,7 +190,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
                   render: () => (
                     <SectionPersonDetails
                       onOpenDetails={() =>
-                        input.dispatch({ t: 'join-space.opened-person-details', userId: profile.id })
+                        input.dispatch({ t: 'join-space.opened-person-details', userId: profile.userId })
                       }
                       ctx={spaceCtx}
                       profile={profile}

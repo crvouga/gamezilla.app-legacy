@@ -25,7 +25,7 @@ describe('join space', () => {
       {
         msg: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.id }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.userId }),
         },
       },
       {
@@ -56,12 +56,12 @@ describe('join space', () => {
         ctx: {
           ...f.ctx,
           profilesByUserId: {
-            [otherUser.id]: otherUser,
+            [otherUser.userId]: otherUser,
           },
         },
         msg: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({ t: 'user-joined-space', spaceId: f.spaceId, userId: otherUser.id }),
+          c: withEventMeta({ t: 'user-joined-space', spaceId: f.spaceId, userId: otherUser.userId }),
         },
       },
     ])
@@ -83,7 +83,7 @@ describe('join space', () => {
       {
         msg: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({ t: 'user-joined-space', spaceId: f.spaceId, userId: f.userA.id }),
+          c: withEventMeta({ t: 'user-joined-space', spaceId: f.spaceId, userId: f.userA.userId }),
         },
       },
     ])
@@ -97,7 +97,7 @@ describe('join space', () => {
       {
         msg: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.id }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.userId }),
         },
       },
       {
@@ -113,7 +113,7 @@ describe('join space', () => {
       {
         msg: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.id }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: f.spaceId, userId: f.userA.userId }),
         },
       },
       { msg: { t: 'join-space.submitted-join-space-form', spaceId: f.spaceId } },
@@ -131,7 +131,7 @@ describe('join space', () => {
       {
         msg: {
           t: 'sync.got-msg-space',
-          c: withEventMeta({ t: 'user-started-space', spaceId: spaceA, userId: f.userA.id }),
+          c: withEventMeta({ t: 'user-started-space', spaceId: spaceA, userId: f.userA.userId }),
         },
       },
       { msg: { t: 'join-space.submitted-join-space-form', spaceId: spaceA } },

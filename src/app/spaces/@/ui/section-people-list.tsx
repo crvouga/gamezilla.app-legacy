@@ -32,7 +32,7 @@ export const SectionPeopleList = (input: {
                 key={profile.id}
                 profile={profile}
                 ctx={input.ctx}
-                onClick={() => input.onClickItem(profile.id)}
+                onClick={() => input.onClickItem(profile.userId)}
               />,
             )}
           </Frag>
@@ -51,8 +51,8 @@ const PersonListItem = (input: {
     <Clickable key={input.profile.id} onClick={input.onClick} className='flex w-full items-center gap-2 p-2 px-6'>
       <Avatar className='size-12' src={UserProfile.toAvatarUrl(input.profile)} />
       <p>{input.profile.username}</p>
-      {input.profile.id === input.ctx.space.hostId && <ViewHostChip ctx={input.ctx} />}
-      {input.profile.id === input.ctx.currentUser.userId && <ViewYouChip ctx={input.ctx} />}
+      {input.profile.userId === input.ctx.space.hostId && <ViewHostChip ctx={input.ctx} />}
+      {input.profile.userId === input.ctx.currentUser.userId && <ViewYouChip ctx={input.ctx} />}
     </Clickable>
   )
 }

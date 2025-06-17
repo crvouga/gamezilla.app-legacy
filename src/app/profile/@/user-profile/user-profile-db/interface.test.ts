@@ -48,9 +48,9 @@ describe('ProfileDb', () => {
   it('should work', async () => {
     for (const f of await Fixtures()) {
       const profile = await UserProfile.random()
-      const before = await f.profileDb.findByUserIds([profile.id])
+      const before = await f.profileDb.findByUserIds([profile.userId])
       const put = await f.profileDb.put(profile)
-      const after = await f.profileDb.findByUserIds([profile.id])
+      const after = await f.profileDb.findByUserIds([profile.userId])
       expect(before).toEqual(Ok([]))
       expect(put).toEqual(Ok(null))
       expect(after).toEqual(Ok([profile]))
@@ -63,14 +63,14 @@ describe('ProfileDb', () => {
       const upsertResult = await f.profileDb.put(profile)
       expect(upsertResult).toEqual(Ok(null))
 
-      const fetchedProfileAfterInsert = await f.profileDb.findByUserIds([profile.id])
+      const fetchedProfileAfterInsert = await f.profileDb.findByUserIds([profile.userId])
       expect(fetchedProfileAfterInsert).toEqual(Ok([profile]))
 
       const updatedProfile = { ...profile, username: await Username.generate() }
       const upsertResultUpdate = await f.profileDb.put(updatedProfile)
       expect(upsertResultUpdate).toEqual(Ok(null))
 
-      const fetchedProfileAfterUpdate = await f.profileDb.findByUserIds([updatedProfile.id])
+      const fetchedProfileAfterUpdate = await f.profileDb.findByUserIds([updatedProfile.userId])
       expect(fetchedProfileAfterUpdate).toEqual(Ok([updatedProfile]))
     }
   })
@@ -95,7 +95,7 @@ describe('ProfileDb', () => {
       const before = await f.profileDb.query(query)
 
       const expected = await UserProfile.random({
-        id: userId,
+        userId: userId,
         createdAt: UnixMs.future(UnixMs.now(), TimeSpan.seconds(0)),
       })
       unwrap(await f.profileDb.put(expected))

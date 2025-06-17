@@ -17,6 +17,7 @@ import { VerifyCodeProblem } from '../@/backend/verify-sms/verify-code-problem'
 import { UserSession } from '../@/user-session/user-session'
 import { UserSessionId } from '../@/user-session/user-session-id'
 import { rpcContract, VerifyCodeOutput } from './types'
+import { UserProfileId } from '~/app/@/data/user-profile-id'
 
 const rpc = (config: { ctx: AuthBackendCtx }) => {
   return RPC.initServer(rpcContract, {
@@ -130,7 +131,8 @@ const verifyCode = async (
   const profileFound = foundProfiles.value[0] ?? null
 
   const profileNew: UserProfile = {
-    id: account.userId,
+    id: UserProfileId.generate(),
+    userId: account.userId,
     username: await Username.generate(),
     avatarSeed: ProfileAvatar.randomSeed(),
     avatarStyle: ProfileAvatar.randomStyle(),

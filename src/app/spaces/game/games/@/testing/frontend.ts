@@ -24,7 +24,7 @@ export async function testSpaceFrontendCtx(): Promise<SpaceFrontendCtx> {
     now: UnixMs.now(),
     profilesByUserId: {
       [currentUserId]: await UserProfile.random({
-        id: currentUserId,
+        userId: currentUserId,
       }),
     },
     space: {

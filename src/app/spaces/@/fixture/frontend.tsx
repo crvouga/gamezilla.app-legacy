@@ -103,9 +103,9 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     Space.init,
     (model) =>
       Space.append(model, withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId } as const)),
-    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userA.id } as const)),
-    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userB.id } as const)),
-    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userC.id } as const)),
+    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userA.userId } as const)),
+    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const)),
+    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const)),
     (model) => Space.toSpaceStarted(model),
     (space) => {
       if (!space) throw new Error('Invalid fixture. Space is not started.')
@@ -140,7 +140,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
 
   const spaceDb = await SpaceDb({ t: 'sql-db', sqlDb: f.ctx.sqlDb, logger: loggerNoop, shouldCreateTable: true })
 
-  const currentUserProfile = await UserProfile.random({ id: currentUser.userId })
+  const currentUserProfile = await UserProfile.random({ userId: currentUser.userId })
   const ctx: SpacesTypes.FrontendCtxModule & SpaceFrontendCtx = {
     ...f.ctx,
     spaceDb,

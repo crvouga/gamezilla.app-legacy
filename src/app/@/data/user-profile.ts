@@ -3,9 +3,11 @@ import { UnixMs } from '~/@/time/unix-ms'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
 import { Username } from '~/app/@/data/username'
+import { UserProfileId } from './user-profile-id'
 
 const schema = s.obj({
-  id: UserId,
+  id: UserProfileId,
+  userId: UserId,
   username: Username,
   avatarSeed: s.maybe(s.str()),
   avatarStyle: s.maybe(s.str()),
@@ -17,7 +19,8 @@ export type UserProfile = s.Infer<typeof schema>
 
 const random = async (overrides?: Partial<UserProfile>): Promise<UserProfile> => {
   return {
-    id: UserId.generate(),
+    id: UserProfileId.generate(),
+    userId: UserId.generate(),
     username: await Username.generate(),
     avatarSeed: ProfileAvatar.randomSeed(),
     avatarStyle: ProfileAvatar.randomStyle(),
@@ -39,7 +42,7 @@ const toAvatarUrl = (profile?: UserProfile | null | undefined): string => {
 
 const indexByUserId = (profiles: UserProfile[]): { [userId: UserId]: UserProfile } => {
   return profiles.reduce<{ [userId: UserId]: UserProfile }>((acc, profile) => {
-    acc[profile.id] = profile
+    acc[profile.userId] = profile
     return acc
   }, {})
 }
