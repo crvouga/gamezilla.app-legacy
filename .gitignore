@@ -29,5 +29,3 @@ tsconfig.tsbuildinfo
 .clj-kondo
 .lsp
 .env
-
-powersync
