@@ -11,8 +11,6 @@ const respond = async (input: { req: Request }): Promise<Response | null> => {
     return new Response(JSON.stringify(parsed), { status: 400 })
   }
 
-  console.log('parsed', parsed)
-
   for (const entry of parsed.value.crudTransaction.entries) {
     for (const uploadData of uploadDataRegistry.values()) {
       if (uploadData.match(entry)) {
@@ -35,6 +33,6 @@ const respond = async (input: { req: Request }): Promise<Response | null> => {
   )
 }
 
-export const PowerSyncUploadData = {
+export const PowerSyncUploadDataBackend = {
   respond,
 }

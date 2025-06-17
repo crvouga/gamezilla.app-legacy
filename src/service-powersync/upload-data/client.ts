@@ -42,6 +42,6 @@ const request = async (input: { crudTransaction: PowerSyncCrudTransaction }): Pr
   }
 }
 
-export const UploadDataClient = {
+export const PowerSyncUploadDataClient = {
   request,
 }

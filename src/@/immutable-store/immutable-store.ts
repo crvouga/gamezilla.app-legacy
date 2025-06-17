@@ -5,15 +5,15 @@ export type Store<_TKey, _TValue> = {
 }
 
 export type StoreModule<TKey extends string | number, TValue> = {
-  startingAt: (posix: number) => Store<TKey, TValue>
+  startingAt: (unixMs: number) => Store<TKey, TValue>
 
-  assoc: (posix: number, instance: Store<TKey, TValue>, key: TKey, value: TValue) => Promise<Store<TKey, TValue>>
+  assoc: (unixMs: number, instance: Store<TKey, TValue>, key: TKey, value: TValue) => Promise<Store<TKey, TValue>>
 
-  assocMany: (posix: number, instance: Store<TKey, TValue>, entries: [TKey, TValue][]) => Promise<Store<TKey, TValue>>
+  assocMany: (unixMs: number, instance: Store<TKey, TValue>, entries: [TKey, TValue][]) => Promise<Store<TKey, TValue>>
 
-  dissoc: (posix: number, instance: Store<TKey, TValue>, key: TKey) => Promise<Store<TKey, TValue>>
+  dissoc: (unixMs: number, instance: Store<TKey, TValue>, key: TKey) => Promise<Store<TKey, TValue>>
 
-  dissocMany: (posix: number, instance: Store<TKey, TValue>, keys: TKey[]) => Promise<Store<TKey, TValue>>
+  dissocMany: (unixMs: number, instance: Store<TKey, TValue>, keys: TKey[]) => Promise<Store<TKey, TValue>>
 
   /**
    * Returns the latest value for the given key, if it exists.
@@ -24,5 +24,5 @@ export type StoreModule<TKey extends string | number, TValue> = {
    * Returns a list of all values in the store that exist between the given
    * timestamps.
    */
-  listLatest: (posixFrom: number, posixTo: number, instance: Store<TKey, TValue>, log?: boolean) => Promise<TValue[]>
+  listLatest: (unixMsFrom: number, unixMsTo: number, instance: Store<TKey, TValue>, log?: boolean) => Promise<TValue[]>
 }

@@ -1,1 +1,1 @@
-export * as JwksTypes from './types'
+export * as PowerSyncJwksTypes from './types'

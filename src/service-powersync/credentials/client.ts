@@ -1,7 +1,7 @@
 import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok, Result } from '~/@/result'
-import { CredentialsResponseBodyOk, ENDPOINT } from './types'
 import { UserId } from '~/app/@/data/user-id'
+import { CredentialsResponseBodyOk, ENDPOINT, GUEST_USER_ID_QUERY_PARAM_NAME } from './types'
 
 const request = async (config: {
   backendUrl: string
@@ -12,7 +12,7 @@ const request = async (config: {
     const url = new URL(ENDPOINT, ensureProtocol(config.backendUrl))
 
     if (config.guestUserId) {
-      url.searchParams.set('guestUserId', config.guestUserId)
+      url.searchParams.set(GUEST_USER_ID_QUERY_PARAM_NAME, config.guestUserId)
     }
 
     const response = await fetch(url, { credentials: 'include' })
@@ -41,6 +41,6 @@ const ensureProtocol = (url: string) => {
   return 'https://' + url
 }
 
-export const CredentialsClient = {
+export const PowerSyncCredentialsClient = {
   request,
 }

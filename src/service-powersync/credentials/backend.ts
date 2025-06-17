@@ -4,12 +4,16 @@ import { isErr } from '~/@/result/result'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { UserId } from '~/app/@/data/user-id'
 import { CONFIG_SHARED } from '~/config/shared'
-import { CredentialsResponseBodyErr, CredentialsResponseBodyOk } from '~/service-powersync/credentials/types'
+import {
+  CredentialsResponseBodyErr,
+  CredentialsResponseBodyOk,
+  GUEST_USER_ID_QUERY_PARAM_NAME,
+} from '~/service-powersync/credentials/types'
 import { Ctx } from '../@/backend/ctx'
 import { getKeyPairFromEnv, KeyPair } from '../@/backend/keys/keys'
 
-const respond = async (input: { request: Request; ctx: Ctx }) => {
-  input.ctx.logger.info('CredentialsBackend: Responding to request', input.request.url)
+const respond = async (input: { req: Request; ctx: Ctx }) => {
+  input.ctx.logger.info('CredentialsBackend: Responding to request', input.req.url)
 
   const keys = await getKeyPairFromEnv()
 
@@ -20,7 +24,7 @@ const respond = async (input: { request: Request; ctx: Ctx }) => {
     })
   }
 
-  const maybeSessionId = SessionIdHttp.fromRequest(input.request)
+  const maybeSessionId = SessionIdHttp.fromRequest(input.req)
 
   if (!maybeSessionId) {
     input.ctx.logger.warn('CredentialsBackend: No session ID found in request')
@@ -44,7 +48,7 @@ const respond = async (input: { request: Request; ctx: Ctx }) => {
 
   if (!userId) {
     input.ctx.logger.info('CredentialsBackend: No userId found for session, checking for guest user')
-    const guestUserId = UserId.parse(new URL(input.request.url).searchParams.get('guestUserId'))
+    const guestUserId = UserId.parse(new URL(input.req.url).searchParams.get(GUEST_USER_ID_QUERY_PARAM_NAME))
 
     if (isErr(guestUserId)) {
       input.ctx.logger.warn('CredentialsBackend: Invalid or missing guest user ID')
@@ -96,6 +100,6 @@ const ErrResponse = (status: 401 | 400 | 500, input: CredentialsResponseBodyErr)
   })
 }
 
-export const CredentialsBackend = {
+export const PowerSyncCredentialsBackend = {
   respond,
 }

@@ -3,7 +3,7 @@ import { exportJWK } from '~/@/json-crypto/export-jwk.js'
 import { isErr } from '~/@/result/result.js'
 import { getKeyPairFromEnv } from '../@/backend/keys/keys.js'
 
-const respond = async (_input: {}): Promise<Response | null> => {
+const respond = async (_input: { req: Request }): Promise<Response | null> => {
   const keyPair = await getKeyPairFromEnv()
 
   if (isErr(keyPair)) {
@@ -30,6 +30,6 @@ const respond = async (_input: {}): Promise<Response | null> => {
   })
 }
 
-export const JwksBackend = {
+export const PowerSyncJwksBackend = {
   respond,
 }

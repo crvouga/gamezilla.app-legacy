@@ -14,3 +14,5 @@ const CredentialsResponseBodyErr = s.obj({
 })
 
 export type CredentialsResponseBodyErr = s.Infer<typeof CredentialsResponseBodyErr>
+
+export const GUEST_USER_ID_QUERY_PARAM_NAME = 'guestUserId'

@@ -1,1 +1,1 @@
-export * as CredentialsTypes from './types'
+export * as PowerSyncCredentialsTypes from './types'

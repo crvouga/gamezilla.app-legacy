@@ -1,1 +1,1 @@
-export * as UploadDataTypes from './types'
+export * as PowerSyncUploadDataTypes from './types'
