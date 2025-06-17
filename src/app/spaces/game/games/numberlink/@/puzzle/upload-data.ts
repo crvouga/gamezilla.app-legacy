@@ -6,10 +6,10 @@ import { PuzzleId } from './puzzle-id'
 
 export const UploadDataPuzzle = (_config: { numberlinkPuzzleDb: IPuzzleDb }): IUploadData => {
   return {
-    match: (entry) => {
+    match: ({ entry }) => {
       return PuzzleId.is(entry.id)
     },
-    upload: async (entry) => {
+    upload: async ({ entry }) => {
       const puzzle = Puzzle.fromUnknown(entry.newData)
 
       if (isErr(puzzle)) {

@@ -6,10 +6,10 @@ import { UserSessionId } from './user-session-id'
 
 export const UploadDataUserSession = (_config: { userSessionDb: IUserSessionDb }): IUploadData => {
   return {
-    match: (entry) => {
+    match: ({ entry }) => {
       return UserSessionId.is(entry.id)
     },
-    upload: async (entry) => {
+    upload: async ({ entry }) => {
       const userSession = UserSession.fromUnknown(entry.newData)
 
       if (isErr(userSession)) {

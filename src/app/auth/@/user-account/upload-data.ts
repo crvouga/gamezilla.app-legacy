@@ -6,10 +6,10 @@ import { IUserAccountDb } from './user-account-db/interface'
 
 export const UploadDataUserAccount = (_config: { userAccountDb: IUserAccountDb }): IUploadData => {
   return {
-    match: (entry) => {
+    match: ({ entry }) => {
       return UserId.is(entry.id)
     },
-    upload: async (entry) => {
+    upload: async ({ entry }) => {
       const account = UserAccount.fromUnknown(entry.newData)
 
       console.log('account', account)

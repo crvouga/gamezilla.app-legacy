@@ -1,6 +1,8 @@
+import { pipe } from '~/@/function/pipe'
 import { ILogger } from '~/@/logger'
 import { Ok, Result, isErr, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
+import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
 import type { ISqlDb } from '~/@/sql-db'
 import { Sub } from '~/@/sub'
@@ -13,7 +15,7 @@ import { Username } from '~/app/@/data/username'
 import type { IUserProfileDb } from './interface'
 import { ProfileDbQuery } from './interface-query'
 
-const ProfileRow = s.obj({
+const Row = s.obj({
   id: UserProfileId,
   user_id: UserId,
   username: Username,
@@ -23,9 +25,9 @@ const ProfileRow = s.obj({
   updated_at_unix_ms: s.or(s.num(), s.str()),
 })
 
-type ProfileRow = s.Infer<typeof ProfileRow>
+type Row = s.Infer<typeof Row>
 
-const rowToEntity = (row: ProfileRow): Result<string, UserProfile> => {
+const rowToEntity = (row: Row): Result<string, UserProfile> => {
   const avatarSeed = row.avatar_seed ? ProfileAvatar.toSeed(row.avatar_seed) : ProfileAvatar.toSeed(row.username)
 
   const avatarStyle = row.avatar_style
@@ -44,6 +46,15 @@ const rowToEntity = (row: ProfileRow): Result<string, UserProfile> => {
 
   return Ok(profile)
 }
+
+UserProfile.fromUnknownRegister((data) => {
+  return pipe(
+    data,
+    Row.parse,
+    (x) => Result.mapErr(x, ParseError.toString),
+    (x) => Result.flatMapOk(x, rowToEntity),
+  )
+})
 
 export type Config = {
   t: 'sql'
@@ -70,7 +81,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
       `
 
       const queried = await config.sqlDb.query({
-        schema: ProfileRow,
+        schema: Row,
         sql: sql,
         vars: {
           id_commas: Sql.commas(userIds),
@@ -87,7 +98,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
     },
 
     async put(profile) {
-      const rowNew: ProfileRow = {
+      const rowNew: Row = {
         id: profile.id,
         user_id: profile.userId,
         username: profile.username,
@@ -98,7 +109,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
       }
 
       const upserted = await config.sqlDb.query({
-        schema: ProfileRow,
+        schema: Row,
         sql: `
         INSERT INTO user_profile (
           id,
@@ -137,7 +148,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
     async query(query) {
       const { sql, sqlTotal, vars } = queryToSql(query)
       const queried = await config.sqlDb.query({
-        schema: ProfileRow,
+        schema: Row,
         sql: sql,
         vars: vars,
       })
@@ -164,7 +175,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
     },
     sub(query) {
       const { sql, vars } = queryToSql(query)
-      return Sub.map(config.sqlDb.sub({ schema: ProfileRow, sql: sql, vars: vars }), (rows) =>
+      return Sub.map(config.sqlDb.sub({ schema: Row, sql: sql, vars: vars }), (rows) =>
         unwrapOr(Result.combine(rows.map(rowToEntity)), []),
       )
     },

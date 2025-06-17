@@ -1,4 +1,8 @@
+import { FromUnknown } from '~/@/from-unknown/from-unknown'
+import { pipe } from '~/@/function/pipe'
+import { Result } from '~/@/result'
 import { s } from '~/@/schema'
+import { ParseError } from '~/@/schema/schema/parse-error'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
@@ -47,9 +51,14 @@ const indexByUserId = (profiles: UserProfile[]): { [userId: UserId]: UserProfile
   }, {})
 }
 
+const fromUnknown = FromUnknown<UserProfile>()
+
 export const UserProfile = {
   ...schema,
+  ...fromUnknown,
   random,
   toAvatarUrl,
   indexByUserId,
 }
+
+UserProfile.fromUnknownRegister((data) => pipe(data, UserProfile.parse, (x) => Result.mapErr(x, ParseError.toString)))

@@ -7,10 +7,10 @@ export const UploadDataGuestSessionMapping = (_config: {
   guestSessionMappingDb: IGuestSessionMappingDb
 }): IUploadData => {
   return {
-    match: (entry) => {
+    match: ({ entry }) => {
       return GuestSessionMappingId.is(entry.id)
     },
-    upload: async (_entry) => {
+    upload: async ({}) => {
       return Ok(null)
     },
   }

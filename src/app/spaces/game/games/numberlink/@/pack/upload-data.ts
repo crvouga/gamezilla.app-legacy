@@ -5,10 +5,10 @@ import { PackId } from './pack-id'
 
 export const UploadDataPack = (_config: { numberlinkPackDb: IPackDb }): IUploadData => {
   return {
-    match: (entry) => {
+    match: ({ entry }) => {
       return PackId.is(entry.id)
     },
-    upload: async (_entry) => {
+    upload: async ({}) => {
       return Ok(null)
     },
   }
@@ -16,7 +16,7 @@ export const UploadDataPack = (_config: { numberlinkPackDb: IPackDb }): IUploadD
 
 export const UploadDataPackItem = (_config: { numberlinkPackDb: IPackDb }): IUploadData => {
   return {
-    match: (entry) => {
+    match: ({ entry }) => {
       return PackId.is(entry.id)
     },
     upload: async (_entry) => {
