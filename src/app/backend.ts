@@ -26,8 +26,6 @@ import { ProfileBackend } from './profile/backend'
 import { SpacesBackend } from './spaces/backend'
 import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
-import { PowerSyncClient } from '~/service-powersync/client/powersync-client'
-import { BackendConnector } from '~/service-powersync/client/backend-connector'
 
 const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console' })
@@ -145,18 +143,9 @@ const initSqlDb = async (config: { backendRole: BackendRole; logger: ILogger }):
     }
     case 'edge': {
       return SqlDb({
-        t: 'powersync-client',
+        t: 'bun-sqlite',
         logger: config.logger,
-        powerSyncClient: await PowerSyncClient({
-          t: 'node.js',
-          logger: config.logger,
-          debug: true,
-          backendConnector: new BackendConnector({
-            backendUrl: CONFIG_SHARED.BACKEND_URL,
-            powersyncUrl: CONFIG_SHARED.POWERSYNC_URL,
-            logger: config.logger,
-          }),
-        }),
+        fileSystem: { t: 'in-memory' },
       })
     }
   }
