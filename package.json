@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "backend": "bun backend-primary",
     "backend-edge": "PROD=false PROD=false bun --watch ./src/backend-edge.ts",
     "backend-edge:railway": "PROD=true bun ./src/backend-edge.ts",
     "backend-primary": "PROD=false bun --watch ./src/backend-primary.ts",
