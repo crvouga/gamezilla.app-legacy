@@ -7,7 +7,7 @@ import { ScreenPackBuildSpace } from './space'
 
 const Fixture = ScreenPackBuildSpaceFixture
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   let f: Awaited<ReturnType<typeof Fixture>>
 
   beforeEach(async () => {

@@ -50,7 +50,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const keyValueDbHashMap = await KeyValueDb({ t: 'hash-map' })
 
-  const sqlDbSqlite = await SqlDb({ t: 'bun-sqlite', fileSystem: { t: 'in-memory' }, logger })
+  const sqlDbSqlite = await SqlDb({ t: 'bun-sqlite', fs: { t: 'in-memory' }, logger })
 
   const profileDb = ProfileDb({
     t: 'hash-map',

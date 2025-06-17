@@ -13,7 +13,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('show toast', async () => {
     const f = await Fixture()
     const started = f.update(f.initial, [

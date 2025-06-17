@@ -8,7 +8,7 @@ export const Fixture = async () => {
   const f = await ScreenBuildSpaceFixture()
   return f
 }
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('enter and exit pack builder', async () => {
     const f = await Fixture()
     const pack = await Pack.random()

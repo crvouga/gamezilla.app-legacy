@@ -21,7 +21,7 @@ const Fixture = async (input?: { currentUserRole: UserRole }) => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test.todo('render button for super users', async () => {
     const f = await Fixture({
       currentUserRole: 'super',

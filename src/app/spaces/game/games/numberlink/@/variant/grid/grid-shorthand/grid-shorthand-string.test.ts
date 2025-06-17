@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import * as VariantGridShorthandString from './grid-shorthand-string'
 import * as VariantGridShorthand from './grid-shorthand'
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('3x3', () => {
     const stringShorthand = `
             123

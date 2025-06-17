@@ -4,7 +4,7 @@ import { CustomAuthProvider } from './auth-custom'
 
 const AuthProvider = CustomAuthProvider()
 
-describe(import.meta.file, () => {
+describe('Auth', () => {
   it('should sign up with email and password', async () => {
     await signUpWithEmailAndPassword(AuthProvider, {
       email: '',

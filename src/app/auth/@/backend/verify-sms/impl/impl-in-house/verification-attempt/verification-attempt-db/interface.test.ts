@@ -27,7 +27,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should be ok after inserting', async () => {
     const f = await Fixture()
     const verificationAttempt = await VerificationAttempt.random()

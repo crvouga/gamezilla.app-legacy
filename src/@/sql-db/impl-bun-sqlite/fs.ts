@@ -1,4 +1,4 @@
-export type BunSqliteFileSystem =
+export type Fs =
   | {
       t: 'in-memory'
     }
@@ -7,7 +7,7 @@ export type BunSqliteFileSystem =
       fileName: string
     }
 
-const toConnectionString = (fs: BunSqliteFileSystem): string => {
+const toConnectionString = (fs: Fs): string => {
   switch (fs.t) {
     case 'file-system': {
       return `${fs.fileName}.sqlite`
@@ -17,6 +17,6 @@ const toConnectionString = (fs: BunSqliteFileSystem): string => {
     }
   }
 }
-export const BunSqliteFileSystem = {
+export const Fs = {
   toConnectionString,
 }

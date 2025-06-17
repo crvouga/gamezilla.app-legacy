@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { CappedOrderedDict } from './capped-ordered-dict'
 
-describe(import.meta.file, () => {
+describe('CappedOrderedDict', () => {
   it('adding stuff', async () => {
     const initial = CappedOrderedDict.init<string, string>({
       maxSize: 3,

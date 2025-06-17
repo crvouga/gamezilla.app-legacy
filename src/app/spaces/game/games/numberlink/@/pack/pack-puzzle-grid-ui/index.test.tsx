@@ -12,7 +12,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   let f: Awaited<ReturnType<typeof Fixture>>
 
   beforeEach(async () => {

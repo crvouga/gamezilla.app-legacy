@@ -15,7 +15,7 @@ const shapes2D = [
   Rect({ width: 10, height: 20 }),
 ]
 
-describe(import.meta.file, () => {
+describe('Shapes', () => {
   it('area', async () => {
     for (const shape of shapes2D) {
       expect(typeof area(shape)).toBe('number')

@@ -4,7 +4,7 @@ import { Pack } from '../@/pack/pack'
 import { Puzzle } from '../@/puzzle/puzzle'
 import { FlowPlaySpaceFixture } from './@/space/fixture'
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should be able to open pack from list', async () => {
     const f = await FlowPlaySpaceFixture()
     const before = f.init

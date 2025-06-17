@@ -16,7 +16,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('play sound when opening edit name drawer', async () => {
     const f = await Fixture()
 

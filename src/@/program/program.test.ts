@@ -33,7 +33,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should work', async () => {
     const f = await Fixture()
     expect(f.program.getModel()).toEqual({ counter: { count: 0 } })

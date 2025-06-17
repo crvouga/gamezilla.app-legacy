@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { s } from './index'
 import { Ok } from '../result'
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should be ok parsing json', async () => {
     const validJson: unknown[] = [
       1,

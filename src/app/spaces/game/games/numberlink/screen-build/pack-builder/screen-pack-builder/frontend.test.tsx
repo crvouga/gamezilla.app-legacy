@@ -13,7 +13,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('render edit name drawer', async () => {
     const f = await Fixture()
     const r = f.render(

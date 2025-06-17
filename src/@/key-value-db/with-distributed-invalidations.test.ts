@@ -76,7 +76,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('WithDistributedInvalidations', () => {
   test('invalidate set', async () => {
     const f = await Fixture()
 

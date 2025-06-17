@@ -14,7 +14,7 @@ export const Fixture = async () => {
   return { ...f, renderMsgs, dispatch }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('sound open drawer', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [

@@ -12,7 +12,7 @@
 //   }
 // }
 
-// describe(import.meta.file, () => {
+// describe('Test', () => {
 //   it('should open current space when clicking current space bottom bar', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()

@@ -24,7 +24,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('render username input', async () => {
     const f = await Fixture()
     const r = f.render(f.initial)

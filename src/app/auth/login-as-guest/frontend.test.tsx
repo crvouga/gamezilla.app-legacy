@@ -57,7 +57,7 @@
 //     },
 //   })
 
-// describe(import.meta.file, () => {
+// describe('Test', () => {
 //   it('should request to continue as guest when button is clicked', () => {
 //     const output = AppFrontendModule.andThen(
 //       AuthFrontend.init({

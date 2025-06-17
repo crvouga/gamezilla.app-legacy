@@ -4,7 +4,7 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { Pack } from '../../../@/pack/pack'
 import { FixtureFlowBuilderFrontend } from '../../@/fixture/frontend'
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('open pack builder', async () => {
     const f = await FixtureFlowBuilderFrontend()
     const pack = await Pack.random({

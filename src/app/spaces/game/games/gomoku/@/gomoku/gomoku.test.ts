@@ -31,7 +31,7 @@ const toBoard = (matrix: Matrix): Board => {
   return board
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should detect one horizontal win', async () => {
     const board = toBoard([
       [w, w, w, w, w],

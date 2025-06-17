@@ -3,7 +3,7 @@ import { MinHeap } from './min-heap'
 
 const comparator = (a: number, b: number) => a - b
 
-describe(import.meta.file, () => {
+describe('MinHeap', () => {
   test('initialization', async () => {
     const heap = new MinHeap(comparator)
     expect(heap.isEmpty()).toBe(true)

@@ -33,7 +33,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should be able to insert accounts', async () => {
     for (const f of await Fixtures()) {
       const inserted = await f.userAccountDb.insert({

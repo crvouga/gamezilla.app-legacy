@@ -145,7 +145,7 @@ const initSqlDb = async (config: { backendRole: BackendRole; logger: ILogger }):
       return SqlDb({
         t: 'bun-sqlite',
         logger: config.logger,
-        fileSystem: { t: 'in-memory' },
+        fs: { t: 'in-memory' },
       })
     }
   }

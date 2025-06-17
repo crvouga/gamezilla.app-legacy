@@ -8,7 +8,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test.todo('close action drawer', async () => {
     const f = await Fixture()
     const output = f.updates(f.init, [

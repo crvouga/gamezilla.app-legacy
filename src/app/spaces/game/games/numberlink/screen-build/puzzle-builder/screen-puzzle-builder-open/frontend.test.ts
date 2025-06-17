@@ -18,7 +18,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('open puzzle builder', async () => {
     const f = await Fixture()
 

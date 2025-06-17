@@ -10,7 +10,7 @@ import { FixtureModePlayUseHint } from './fixture'
 
 const Fixture = FixtureModePlayUseHint
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('hint', async () => {
     const f = await Fixture()
     const after = f.update(f.init, [

@@ -5,7 +5,7 @@ import { VariantGrid, VariantGridShorthand } from '../variant/grid'
 import { Model } from './numberlink'
 import { NodeId } from './node-id'
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('isConnectedWithPipes with connected terminals', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' '],

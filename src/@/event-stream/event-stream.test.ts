@@ -62,7 +62,7 @@ const config = EventStream.config({
   toOrdering: (event) => event.happenedAt,
 })
 
-describe(import.meta.file, async () => {
+describe('EventStream', async () => {
   it('should be able to append events', async () => {
     const before = await EventStream.init(config)
     const event = withId<Event>({

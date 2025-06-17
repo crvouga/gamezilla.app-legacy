@@ -11,7 +11,7 @@ import { PhoneNumber } from '~/@/phone-number'
 
 const Fixture = VerifySMSInHouseFixture
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should be ok', async () => {
     const f = await Fixture()
 

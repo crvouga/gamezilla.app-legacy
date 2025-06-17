@@ -35,7 +35,7 @@ const Fixtures = async () => {
   return configs.map(Fixture)
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should be ok sending code', async () => {
     for (const f of await Fixtures()) {
       const phoneNumber = unwrap(f.phone)

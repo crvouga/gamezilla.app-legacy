@@ -24,7 +24,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should render exit button', async () => {
     const f = await Fixture()
     const rendered = f.render(f.initial)

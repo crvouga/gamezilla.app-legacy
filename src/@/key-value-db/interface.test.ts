@@ -100,7 +100,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
   const sqlDbSqlite = await SqlDb({
     t: 'bun-sqlite',
     logger,
-    fileSystem: {
+    fs: {
       t: 'in-memory',
     },
   })

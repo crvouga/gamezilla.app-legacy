@@ -12,7 +12,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should go to list screen after clicking go home button', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()

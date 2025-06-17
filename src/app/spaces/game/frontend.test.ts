@@ -16,7 +16,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should play a sound after inputting a game', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()

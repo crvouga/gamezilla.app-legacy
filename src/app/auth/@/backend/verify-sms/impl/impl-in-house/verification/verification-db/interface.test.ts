@@ -74,7 +74,7 @@ const Fixture = async () => {
 
 type Fixture = Awaited<ReturnType<typeof Fixture>>
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should be ok inserting records', async () => {
     const f = await Fixture()
     const verification = await Verification.random()

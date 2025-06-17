@@ -10,7 +10,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should play a sound when selecting play mode', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [

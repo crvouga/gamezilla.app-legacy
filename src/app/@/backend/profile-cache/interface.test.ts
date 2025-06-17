@@ -13,7 +13,7 @@ const Fixture = async () => {
   return { profileCache }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('add and get', async () => {
     const f = await Fixture()
     const profiles = [await UserProfile.random(), await UserProfile.random(), await UserProfile.random()]

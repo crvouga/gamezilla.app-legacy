@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { LamportClock } from './lamport-clock'
 
-describe(import.meta.file, () => {
+describe('LamportClock', () => {
   it('should update the Lamport clock when receiving a smaller timestamp', async () => {
     const clockA = LamportClock.init
     const clockB = LamportClock.init

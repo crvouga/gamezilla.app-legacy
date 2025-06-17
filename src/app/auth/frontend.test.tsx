@@ -11,7 +11,7 @@
 //   }
 // }
 
-// describe(import.meta.file, () => {
+// describe('Test', () => {
 //   test('continue with phone', async () => {
 //     const f = await Fixture()
 //     const output = AuthFrontend.update({

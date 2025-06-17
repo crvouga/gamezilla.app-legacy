@@ -15,7 +15,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should start with no modals open', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [])

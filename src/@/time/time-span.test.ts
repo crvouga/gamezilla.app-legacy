@@ -4,7 +4,7 @@ import { TimeSpan } from './time-span'
 
 const t = Translator('en')
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test("should return 'X year(s) ago' for year intervals", () => {
     expect(TimeSpan.humanFriendlyString(TimeSpan.days(365), t)).toBe(t('time-span.year-singular'))
     expect(TimeSpan.humanFriendlyString(TimeSpan.days(365 * 2), t)).toBe(t('time-span.year-plural', 2))

@@ -59,7 +59,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should insert correctly', async () => {
     for (const f of await Fixtures()) {
       const userSession = UserSession.random()

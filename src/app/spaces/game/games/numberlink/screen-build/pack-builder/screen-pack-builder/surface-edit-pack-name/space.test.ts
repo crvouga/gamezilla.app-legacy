@@ -8,7 +8,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should let host input pack name', async () => {
     const f = await Fixture()
     const packNameDraft = 'pack-name'

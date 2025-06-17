@@ -21,7 +21,7 @@ const Fixture = async (...params: Parameters<typeof ScreenPackBuildSpaceFixture>
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   let f: Awaited<ReturnType<typeof Fixture>>
 
   beforeEach(async () => {

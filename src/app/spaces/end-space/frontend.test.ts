@@ -11,7 +11,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should redirect to space list after ending space if on space screen', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()

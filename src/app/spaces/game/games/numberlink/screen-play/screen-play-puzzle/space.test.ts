@@ -23,7 +23,7 @@ const Fixture = async (input?: { numberlink?: NumberlinkVariant.Model }) => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should close puzzle after clicking exit puzzle button', async () => {
     const f = await Fixture()
     const after = f.parent.update(f.parent.init, [{ t: 'user-clicked-exit-play-puzzle-screen', userId: f.hostId }])

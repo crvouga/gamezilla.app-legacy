@@ -40,7 +40,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   //
 
   test('make sound', async () => {

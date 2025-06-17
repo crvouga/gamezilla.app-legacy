@@ -46,7 +46,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('it works', async () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent()

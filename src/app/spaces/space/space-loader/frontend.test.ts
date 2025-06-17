@@ -10,7 +10,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test.todo('persist current user space on an interval', async () => {
     const f = await Fixture()
     const spaceId = SpaceId.generate()

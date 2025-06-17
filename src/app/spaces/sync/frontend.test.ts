@@ -12,7 +12,7 @@ export const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('SpacesSyncFrontend', () => {
   // it('should record profiles when received from backend', async () => {
   //   const f = await Fixture()
   //   const someProfile = await UserProfile.random()

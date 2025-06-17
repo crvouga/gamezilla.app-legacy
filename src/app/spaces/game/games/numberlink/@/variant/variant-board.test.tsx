@@ -23,7 +23,7 @@ const Fixture = async () => {
     input,
   }
 }
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('render hint checkmark', async () => {
     const f = await Fixture()
     f.render(f.input)

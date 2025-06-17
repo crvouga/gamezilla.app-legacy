@@ -3,7 +3,7 @@ import { eq } from '~/@/equals/equals'
 import { VariantGrid, VariantGridDimensions, VariantGridShorthand } from '.'
 import { Numberlink } from '../../numberlink'
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should initialize the model', () => {
     const initial = VariantGrid.init({
       dimensions: VariantGridDimensions.init({

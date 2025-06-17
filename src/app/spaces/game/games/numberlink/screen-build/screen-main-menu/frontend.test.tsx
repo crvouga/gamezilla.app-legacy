@@ -1,5 +1,5 @@
 import { describe, it } from 'bun:test'
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it.todo('play a sound when changing list tabs')
 })

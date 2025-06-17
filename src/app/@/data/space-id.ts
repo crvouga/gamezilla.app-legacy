@@ -8,7 +8,7 @@ const namespace = 'space'
 const separator = ':'
 
 const is = (id: unknown): id is SpaceId => {
-  // todo: better validation
+  // todo: bun-sqlite validation
   return typeof id === 'string'
 }
 const schema = s.custom(is, 'Invalid space id')

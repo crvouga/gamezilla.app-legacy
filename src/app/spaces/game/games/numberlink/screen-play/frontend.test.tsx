@@ -8,7 +8,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should fetch puzzles in pack when on puzzle screen', async () => {
     const f = await Fixture()
     f

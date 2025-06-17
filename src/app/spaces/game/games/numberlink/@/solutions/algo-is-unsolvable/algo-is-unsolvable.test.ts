@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoIsUnsolvable from './algo-is-unsolvable'
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('solvable 3x3 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', 'B', 'C'],

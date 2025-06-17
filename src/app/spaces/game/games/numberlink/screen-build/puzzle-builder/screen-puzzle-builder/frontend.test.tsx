@@ -49,7 +49,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it.todo('should open puzzle builder on list item click', async () => {})
 
   it.todo('should exit puzzle builder after clicking exit button', async () => {})

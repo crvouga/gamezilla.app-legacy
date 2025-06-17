@@ -24,7 +24,7 @@ const Fixtures = async () => {
   if (SHOULD_TEST_SQLITE) {
     configs.push({
       t: 'bun-sqlite',
-      fileSystem: {
+      fs: {
         t: 'in-memory',
       },
       logger: Logger({ t: 'noop' }),

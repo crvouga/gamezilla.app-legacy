@@ -14,7 +14,7 @@ const Fixture = async () => {
   }
   return { ...f, renderMsgs, dispatch }
 }
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('play sound opening add puzzle screen', async () => {
     const f = await Fixture()
     const output = f.update(f.init, [

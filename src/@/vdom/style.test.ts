@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { camelStringToKebabString, styles } from './style'
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   it('should convert kebab-case to camelCase', () => {
     const kebab = 'transition-delay'
     const camel = 'transitionDelay'

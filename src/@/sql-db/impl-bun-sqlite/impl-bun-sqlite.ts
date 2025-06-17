@@ -1,18 +1,18 @@
+import { Database } from 'bun:sqlite'
 import { Err, Ok } from '~/@/result'
 import type { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
+import { TimeSpan } from '~/@/time/time-span'
 import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
-import type { ISqlDb } from '../interface'
 import { Sleep } from '../../promise/sleep'
 import { Sub } from '../../sub'
-import { Database } from 'bun:sqlite'
-import { BunSqliteFileSystem } from './bun-sqlite-file-system'
-import { TimeSpan } from '~/@/time/time-span'
+import type { ISqlDb } from '../interface'
+import { Fs } from './fs'
 
 export type Config = {
   t: 'bun-sqlite'
-  fileSystem: BunSqliteFileSystem
+  fs: Fs
   logger: ILogger
   simulateLatency?: Sleep
 }
@@ -21,7 +21,7 @@ let db: Database
 
 export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   const logger = Logger.prefix('sqlite', config.logger)
-  db ??= new Database(BunSqliteFileSystem.toConnectionString(config.fileSystem))
+  db ??= new Database(Fs.toConnectionString(config.fs))
 
   return {
     sub() {

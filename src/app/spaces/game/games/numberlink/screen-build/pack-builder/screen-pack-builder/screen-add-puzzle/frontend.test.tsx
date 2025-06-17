@@ -26,7 +26,7 @@ const Fixture = async () => {
   }
 }
 
-describe(import.meta.file, () => {
+describe('Test', () => {
   test('play sound sound clicking puzzle list item', async () => {
     const f = await Fixture()
 
