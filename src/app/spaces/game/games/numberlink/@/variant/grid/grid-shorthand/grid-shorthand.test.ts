@@ -3,7 +3,7 @@ import { Numberlink } from '../../../numberlink'
 import { VariantGrid, VariantGridDimensions } from '../index'
 import * as VariantGridShorthand from './grid-shorthand'
 
-describe('Test', () => {
+describe('Grid shorthand', () => {
   test('1x1 with A', async () => {
     const shorthand = VariantGridShorthand.init([['A']])
     const actual = VariantGridShorthand.toGrid(shorthand)
