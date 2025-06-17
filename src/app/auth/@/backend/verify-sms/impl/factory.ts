@@ -101,8 +101,8 @@ export const VerifySMSFactory = {
     env: Env
     sqlDb: ISqlDb
   }): IVerifySMS => {
-    if (config.backendRole !== 'primary') {
-      config.logger.info('Using noop verify SMS for non-primary backend')
+    if (config.backendRole === 'edge') {
+      config.logger.info('Using noop verify SMS for edge backend')
       return VerifySMS({ t: 'fake-always-ok', logger: config.logger })
     }
 

@@ -1,32 +1,36 @@
 import { AllowCORS } from '~/@/http-server/allow-cors'
 import { HttpServerBun } from '~/@/http-server/impl-bun'
 import { KeyValueDb } from '~/@/key-value-db'
-import { Logger } from '~/@/logger'
+import { ILogger, Logger } from '~/@/logger'
 import { sleep } from '~/@/promise/sleep'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
+import { ISqlDb } from '~/@/sql-db'
 import { SqlDb } from '~/@/sql-db/backend/impl'
-import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
+import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { PowerSyncBackend } from '~/service-powersync/backend'
 import { AppTypes } from '.'
 import { BackendInstanceId } from './@/backend/backend-instance/backend-instance-id'
+import { BackendRole } from './@/backend/backend-role'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AuthBackend } from './auth/backend'
+import { HelloBackend } from './backend/hello'
 import { ProfileDb } from './profile/@/user-profile/user-profile-db'
 import { ProfileBackend } from './profile/backend'
 import { SpacesBackend } from './spaces/backend'
 import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
-import { BackendRole } from './@/backend/backend-role'
 
 const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console' })
+
+  logger.info(`Starting ${config.backendRole} backend...`)
 
   const runtime = Runtime({
     t: 'process',
@@ -34,10 +38,10 @@ const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtx
     logger,
   })
 
-  const sqlDb =
-    config.backendRole === 'primary'
-      ? await SqlDb({ t: 'postgres', databaseUrl: CONFIG_BACKEND.DATABASE_URL(), logger })
-      : await SqlDb({ t: 'noop' })
+  const sqlDb = await initSqlDb({
+    backendRole: config.backendRole,
+    logger,
+  })
 
   const keyValueDbDurable = await KeyValueDb({
     t: 'sql-db',
@@ -120,20 +124,20 @@ const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtx
     httpServer: ctx.httpServer,
   })
 
-  ctx.httpServer.registerRespond(() => {
-    const message = toHelloMessage(ctx.backendRole)
-    return new Response(message, { status: 200, headers: { 'Content-Type': 'text/plain' } })
+  HelloBackend.registerRespond({
+    ctx,
+    httpServer: ctx.httpServer,
   })
 
   return ctx
 }
 
-const toHelloMessage = (role: BackendRole): string => {
-  switch (role) {
+const initSqlDb = (config: { backendRole: BackendRole; logger: ILogger }): Promise<ISqlDb> => {
+  switch (config.backendRole) {
     case 'primary':
-      return 'Hello from gamezilla.app primary backend'
+      return SqlDb({ t: 'postgres', databaseUrl: CONFIG_BACKEND.DATABASE_URL(), logger: config.logger })
     case 'edge':
-      return 'Hello from gamezilla.app edge backend'
+      return SqlDb({ t: 'noop' })
   }
 }
 

@@ -4,6 +4,7 @@ import { IUserAccountDb, UserAccountDb } from '../user-account/user-account-db'
 import { IUserSessionDb, UserSessionDb } from '../user-session/user-session-db'
 import { IVerifySMS } from './verify-sms'
 import { VerifySMSFactory } from './verify-sms/impl/factory'
+import { Logger } from '~/@/logger'
 
 export type AuthBackendCtx = AppBackendCtxBase & {
   userAccountDb: IUserAccountDb
@@ -27,7 +28,7 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
   })
 
   const verifySMS = VerifySMSFactory.createForEnvironment({
-    logger: input.ctx.logger,
+    logger: Logger.prefix('verifySMS', input.ctx.logger),
     backendRole: input.ctx.backendRole,
     env: input.ctx.env,
     sqlDb: input.ctx.sqlDb,
