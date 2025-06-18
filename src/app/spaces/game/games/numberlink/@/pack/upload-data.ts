@@ -1,5 +1,5 @@
 import { Ok } from '~/@/result'
-import { IUploadData } from '~/@/upload-data/upload-data'
+import { IUploadData } from '~/@/upload-data/interface'
 import { IPackDb } from './pack-db/interface'
 import { PackId } from './pack-id'
 

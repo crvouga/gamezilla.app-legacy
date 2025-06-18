@@ -1,5 +1,5 @@
 import { Ok } from '~/@/result'
-import { IUploadData } from '~/@/upload-data/upload-data'
+import { IUploadData } from '~/@/upload-data/interface'
 import { IGuestSessionMappingDb } from './guest-session-mapping-db/interface'
 import { GuestSessionMappingId } from './guest-session-mapping-id'
 

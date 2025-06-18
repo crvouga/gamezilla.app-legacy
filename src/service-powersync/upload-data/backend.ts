@@ -1,10 +1,11 @@
 import { isErr } from '~/@/result'
-import { uploadDataRegistry } from '~/@/upload-data/upload-data-registry'
+import { UploadDataCtx } from '~/@/upload-data/interface'
+import { uploadDataRegistry } from '~/@/upload-data/registry'
+import { uploadData } from '~/@/upload-data/upload-data'
+import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
+import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Ctx } from '../@/backend/ctx'
 import { RequestBody } from './types'
-import { SessionIdHttp } from '~/@/wire/session-id-http'
-import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
-import { UploadDataCtx } from '~/@/upload-data/upload-data'
 
 const respond = async (input: { req: Request; ctx: Ctx }): Promise<Response | null> => {
   input.ctx.logger.info('Received upload data request')
@@ -47,38 +48,19 @@ const respond = async (input: { req: Request; ctx: Ctx }): Promise<Response | nu
     clientSessionId,
   }
 
-  for (const entry of parsed.value.crudTransaction.entries) {
-    input.ctx.logger.debug('Processing entry', {
-      table: entry.table,
-      id: entry.id,
-      op: entry.op,
+  const uploaded = await uploadData({
+    ctx,
+    logger: input.ctx.logger,
+    crudTransaction: parsed.value.crudTransaction,
+    uploadDataRegistry: uploadDataRegistry,
+  })
+
+  if (isErr(uploaded)) {
+    input.ctx.logger.error('Failed to upload data', { error: uploaded })
+    return new Response(JSON.stringify(uploaded), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
     })
-
-    for (const uploadData of uploadDataRegistry.values()) {
-      if (uploadData.match({ ctx, entry })) {
-        input.ctx.logger.debug('Found matching upload handler', {
-          table: entry.table,
-          handler: uploadData.constructor.name,
-        })
-
-        const uploaded = await uploadData.upload({ ctx, entry })
-
-        if (isErr(uploaded)) {
-          input.ctx.logger.error('Failed to upload entry', { error: uploaded, table: entry.table, id: entry.id })
-
-          return new Response(JSON.stringify(uploaded), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' },
-          })
-        }
-
-        input.ctx.logger.debug('Successfully uploaded entry', {
-          table: entry.table,
-          id: entry.id,
-        })
-        break
-      }
-    }
   }
 
   input.ctx.logger.info('Successfully processed all entries')

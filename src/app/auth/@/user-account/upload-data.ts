@@ -1,5 +1,5 @@
 import { Ok } from '~/@/result'
-import { IUploadData } from '~/@/upload-data/upload-data'
+import { IUploadData } from '~/@/upload-data/interface'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { IUserAccountDb } from './user-account-db/interface'

@@ -1,4 +1,4 @@
-import { uploadDataRegistry } from '~/@/upload-data/upload-data-registry'
+import { uploadDataRegistry } from '~/@/upload-data/registry'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { ProfileBackendCtx } from './@/backend/ctx'
 import { ProfileDb } from './@/user-profile/user-profile-db/impl'

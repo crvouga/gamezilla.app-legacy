@@ -1,5 +1,5 @@
 import { isErr, Ok } from '~/@/result'
-import { IUploadData } from '~/@/upload-data/upload-data'
+import { IUploadData } from '~/@/upload-data/interface'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { UserProfileId } from '~/app/@/data/user-profile-id'
 import { IUserProfileDb } from './user-profile-db/interface'

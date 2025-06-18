@@ -1,5 +1,5 @@
 import { Err, isErr, Ok } from '~/@/result'
-import { IUploadData } from '~/@/upload-data/upload-data'
+import { IUploadData } from '~/@/upload-data/interface'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '.'
 import { ISpaceDb } from './space-db/interface'

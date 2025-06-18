@@ -1,5 +1,5 @@
 import { Err, isErr, Ok } from '~/@/result'
-import { IUploadData } from '~/@/upload-data/upload-data'
+import { IUploadData } from '~/@/upload-data/interface'
 import { Puzzle } from './puzzle'
 import { IPuzzleDb } from './puzzle-db/interface'
 import { PuzzleId } from './puzzle-id'

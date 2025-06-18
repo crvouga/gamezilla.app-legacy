@@ -1,4 +1,4 @@
-import { uploadDataRegistry } from '~/@/upload-data/upload-data-registry'
+import { uploadDataRegistry } from '~/@/upload-data/registry'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { NumberlinkBackendCtx } from './@/backend/ctx'
 import { PackDb } from './@/pack/pack-db'

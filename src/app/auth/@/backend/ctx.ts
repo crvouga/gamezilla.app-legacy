@@ -1,5 +1,5 @@
 import { Logger } from '~/@/logger'
-import { uploadDataRegistry } from '~/@/upload-data/upload-data-registry'
+import { uploadDataRegistry } from '~/@/upload-data/registry'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { GuestSessionMappingDb, IGuestSessionMappingDb } from '../guest-session-mapping/guest-session-mapping-db'
 import { UploadDataGuestSessionMapping } from '../guest-session-mapping/upload-data'
