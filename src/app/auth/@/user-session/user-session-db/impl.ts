@@ -6,17 +6,19 @@ import type { IUserSessionDb } from './interface'
 export type Config = ImplInMemory.Config | ImplSql.Config | ImplSqlWithCache.Config
 
 export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => {
+  const logger = config.logger.child(['user-session-db'])
+
   switch (config.t) {
     case 'in-memory': {
-      return ImplInMemory.UserSessionDb(config)
+      return ImplInMemory.UserSessionDb({ ...config, logger })
     }
 
     case 'sql': {
-      return ImplSql.UserSessionDb(config)
+      return ImplSql.UserSessionDb({ ...config, logger })
     }
 
     case 'sql-with-cache': {
-      return ImplSqlWithCache.UserSessionDb(config)
+      return ImplSqlWithCache.UserSessionDb({ ...config, logger })
     }
   }
 }

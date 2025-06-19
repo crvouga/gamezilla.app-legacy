@@ -80,6 +80,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     backendUrl: CONFIG_SHARED.BACKEND_URL,
     powersyncUrl: CONFIG_SHARED.POWERSYNC_URL,
     getGuestUserId: async () => null,
+    clientSessionId,
   })
 
   const powerSyncClient = await PowerSyncClient({

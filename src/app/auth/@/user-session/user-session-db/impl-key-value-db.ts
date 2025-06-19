@@ -10,6 +10,7 @@ import { UserSession } from '../user-session'
 import { UserSessionId } from '../user-session-id'
 import * as ImplInMemory from './impl-in-memory'
 import type { IUserSessionDb } from './interface'
+import { ILogger } from '~/@/logger'
 
 const Row = s.obj({
   user_session_id: UserSessionId,
@@ -43,6 +44,7 @@ const userSessionToRow = (userSession: UserSession): Row => ({
 export type Config = {
   t: 'key-value-db'
   keyValueDb: IKeyValueDb
+  logger: ILogger
 }
 
 export const UserSessionDb = (config: Config): IUserSessionDb => {
@@ -119,6 +121,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       const db = ImplInMemory.UserSessionDb({
         t: 'in-memory',
         simulateLatency: () => Promise.resolve(),
+        logger: config.logger,
       })
       for (const row of all) {
         await db.insert(rowToUserSession(row))

@@ -6,14 +6,16 @@ import {
 } from '@powersync/common'
 import { ILogger } from '~/@/logger'
 import { isErr, unwrap } from '~/@/result'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserId } from '~/app/@/data/user-id'
 import { PowerSyncCredentialsClient } from '../credentials/client'
-import { PowerSyncPushEntryClient } from '../upload-data/client'
+import { PowerSyncUploadDataClient } from '../upload-data/client'
 
 export class BackendConnector extends BaseObserver<{}> implements PowerSyncBackendConnector {
   private readonly backendUrl: string
   private readonly powersyncUrl: string
   private readonly logger: ILogger
+  private readonly clientSessionId: ClientSessionId
   getGuestUserId: () => Promise<UserId | null>
 
   constructor(config: {
@@ -21,6 +23,7 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
     backendUrl: string
     logger: ILogger
     getGuestUserId: () => Promise<UserId | null>
+    clientSessionId: ClientSessionId
   }) {
     super()
 
@@ -28,6 +31,7 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
     this.powersyncUrl = config.powersyncUrl
     this.logger = config.logger.child(['PowerSyncBackendConnector'])
     this.getGuestUserId = config.getGuestUserId
+    this.clientSessionId = config.clientSessionId
   }
   async fetchCredentials(): Promise<PowerSyncCredentials | null> {
     try {
@@ -38,6 +42,7 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
         backendUrl: this.backendUrl,
         logger: this.logger,
         guestUserId,
+        clientSessionId: this.clientSessionId,
       })
 
       const credentials = unwrap(got)
@@ -66,8 +71,9 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
 
     this.logger.info('crudTransaction', crudTransaction)
 
-    const uploaded = await PowerSyncPushEntryClient.request({
+    const uploaded = await PowerSyncUploadDataClient.request({
       backendUrl: this.backendUrl,
+      clientSessionId: this.clientSessionId,
       crudTransaction,
     })
 

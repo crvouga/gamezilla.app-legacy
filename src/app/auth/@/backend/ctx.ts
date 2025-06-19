@@ -66,6 +66,7 @@ const initUnitTest = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBack
   const userSessionDb = await UserSessionDb({
     t: 'in-memory',
     async simulateLatency() {},
+    logger: input.ctx.logger,
   })
 
   const verifySMS = VerifySMSFactory.createInHouseUnitTest({

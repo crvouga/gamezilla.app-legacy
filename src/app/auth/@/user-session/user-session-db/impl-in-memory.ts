@@ -6,11 +6,13 @@ import { UserSession } from '../user-session'
 import type { IUserSessionDb } from './interface'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
+import { ILogger } from '~/@/logger'
 const userSessions = new Map<string, UserSession>()
 
 export type Config = {
   t: 'in-memory'
   simulateLatency: Sleep
+  logger: ILogger
 }
 
 export const UserSessionDb = (config: Config): IUserSessionDb => {

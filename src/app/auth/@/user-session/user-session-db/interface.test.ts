@@ -36,7 +36,7 @@ const Fixtures = async () => {
   const f = await FixtureAppBackend()
   const configs: Config[] = []
 
-  configs.push({ t: 'in-memory', simulateLatency: async () => {} })
+  configs.push({ t: 'in-memory', simulateLatency: async () => {}, logger: Logger({ t: 'noop' }) })
 
   configs.push({
     t: 'sql',

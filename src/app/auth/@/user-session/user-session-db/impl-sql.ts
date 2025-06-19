@@ -67,6 +67,7 @@ const CREATE_TABLE_SQL: string[] = [
 ]
 
 export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
+  const logger = config.logger.child(['impl-sql'])
   if (config.createTable) {
     for (const query of CREATE_TABLE_SQL) {
       sqlDb.query({ schema: s.unknown, sql: query, vars: {} }).then(() => {
@@ -74,8 +75,6 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
       })
     }
   }
-
-  const logger = config.logger.child(['user-session-db'])
 
   return {
     async findSessionIdsByUserId(userId: UserId) {
