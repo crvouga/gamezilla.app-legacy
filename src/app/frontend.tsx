@@ -3,6 +3,7 @@ import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Msg } from '~/@/msg/msg'
+import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { s } from '~/@/schema'
 import { Screen } from '~/@/screen/generated/screens'
@@ -38,7 +39,6 @@ import { ProfileFrontend } from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract, topicContract } from './types'
 import { WireFrontend } from './wire/frontend'
-import { isErr } from '~/@/result'
 
 const initCtx = async (): Promise<FrontendCtxModule> => {
   const logger = Logger({
