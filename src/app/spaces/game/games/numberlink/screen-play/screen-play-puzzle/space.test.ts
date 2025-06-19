@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { loggerNoop } from '~/@/logger/impl-noop'
+import { Logger } from '~/@/logger'
 import { UserId } from '~/app/@/data/user-id'
 import { Numberlink } from '../../@/numberlink'
 import { ModePlay } from '../../@/mode-play'
@@ -109,7 +109,7 @@ describe('Test', () => {
         ? ModePlay.init({
             ctx: ModePlay.initCtx({
               numberlink: f.nextPuzzle.c.model,
-              solutions: await Solutions.find({ models: [f.nextPuzzle.c.model], logger: loggerNoop }),
+              solutions: await Solutions.find({ models: [f.nextPuzzle.c.model], logger: Logger({ t: 'noop' }) }),
             }),
           })
         : null,
@@ -246,7 +246,7 @@ describe('Test', () => {
 
     const ctx = ModePlay.initCtx({
       numberlink: f.puzzle.model,
-      solutions: await Solutions.find({ models: [f.puzzle.model], logger: loggerNoop }),
+      solutions: await Solutions.find({ models: [f.puzzle.model], logger: Logger({ t: 'noop' }) }),
     })
 
     expect(before.modePlay).toEqual(ModePlay.init({ ctx }))

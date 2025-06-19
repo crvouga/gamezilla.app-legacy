@@ -1,12 +1,14 @@
 import { ascend } from '~/@/array/sorting'
-import type { ISqlDb } from '~/@/sql-db'
-import { ILogger, Logger } from '~/@/logger'
-import { s } from '~/@/schema'
+import { pipe } from '~/@/function/pipe'
+import { Uuid } from '~/@/id/uuid'
+import { ILogger } from '~/@/logger'
 import { isErr, isOk, Result, unwrapOr } from '~/@/result'
+import { s } from '~/@/schema'
+import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
+import type { ISqlDb } from '~/@/sql-db'
 import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
-import { Uuid } from '~/@/id/uuid'
 import { UserId } from '~/app/@/data/user-id'
 import { OrderClause, WhereClause } from '../../puzzle/puzzle-db/interface-query'
 import { PuzzleId } from '../../puzzle/puzzle-id'
@@ -14,8 +16,6 @@ import { Pack } from '../pack'
 import { PackId } from '../pack-id'
 import { PackName } from '../pack-name'
 import type { IPackDb } from './interface'
-import { ParseError } from '~/@/schema/schema/parse-error'
-import { pipe } from '~/@/function/pipe'
 
 export type Config = {
   t: 'sql-db'
@@ -135,7 +135,7 @@ const puzzleIdCsvToArray = (puzzleIdCsv: string): PuzzleId[] => {
 }
 
 export const PackDb = (config: Config): IPackDb => {
-  const logger = Logger.prefix('pack db impl sql', config.logger)
+  const logger = config.logger.child(['pack db impl sql'])
   return {
     async get(id) {
       const queried = await config.sqlDb.query({

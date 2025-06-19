@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { loggerNoop } from '~/@/logger/impl-noop'
+import { Logger } from '~/@/logger'
 import { ModePlay } from '.'
 import { Numberlink } from '../numberlink'
 import { AlgoIsSolved } from '../solutions/algo-is-solved/algo-is-solved'
@@ -11,7 +11,7 @@ import { toStatus } from './mode-play'
 
 const Fixture = async (input: { numberlink: NumberlinkVariant.Model }) => {
   const ctx: ModePlay.Ctx = ModePlay.initCtx({
-    solutions: await Solutions.find({ models: [input.numberlink], logger: loggerNoop }),
+    solutions: await Solutions.find({ models: [input.numberlink], logger: Logger({ t: 'noop' }) }),
     numberlink: input.numberlink,
   })
 
@@ -331,7 +331,7 @@ describe('Test', () => {
     const model = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
-        solutions: await Solutions.find({ models: [numberlink], logger: loggerNoop }),
+        solutions: await Solutions.find({ models: [numberlink], logger: Logger({ t: 'noop' }) }),
       },
     ]).model
 
@@ -415,7 +415,7 @@ describe('Test', () => {
     const before = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
-        solutions: await Solutions.find({ models: [f.numberlink], logger: loggerNoop }),
+        solutions: await Solutions.find({ models: [f.numberlink], logger: Logger({ t: 'noop' }) }),
       },
     ])
     const after = f.update(before.model, [
@@ -452,7 +452,7 @@ describe('Test', () => {
     const output = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
-        solutions: await Solutions.find({ models: [f.numberlink], logger: loggerNoop }),
+        solutions: await Solutions.find({ models: [f.numberlink], logger: Logger({ t: 'noop' }) }),
       },
     ])
     expect(output.events?.some((e) => e.t === 'used-hint')).toBe(true)

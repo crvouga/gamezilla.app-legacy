@@ -1,4 +1,4 @@
-import { Logger, type ILogger } from '../logger'
+import { type ILogger } from '../logger'
 import { IPubSub } from '../pub-sub'
 import { IKeyValueDb } from './interface'
 
@@ -40,7 +40,7 @@ export type Config = {
 export const withDistributedInvalidations = async (
   config: Config,
 ): Promise<IKeyValueDb & { unsubscribe: () => void }> => {
-  const logger = Logger.prefix('with-distributed-invalidations', config.logger)
+  const logger = config.logger.child(['with-distributed-invalidations'])
 
   const unsubscribe = await config.pubSub.sub(async (encoded) => {
     const update = decode(encoded)

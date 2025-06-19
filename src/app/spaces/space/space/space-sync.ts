@@ -1,15 +1,15 @@
 import { Err, isErr, Ok } from '~/@/result'
-import { IUploadData } from '~/@/upload-data/interface'
+import { ISync } from '~/@/sync-engine/sync'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '.'
 import { ISpaceDb } from './space-db/interface'
 
-export const UploadDataSpace = (_config: { spaceDb: ISpaceDb }): IUploadData => {
+export const SpaceSync = (_config: { spaceDb: ISpaceDb }): ISync => {
   return {
-    match: ({ entry }) => {
+    match({ entry }) {
       return SpaceId.is(entry.id)
     },
-    upload: async ({ entry }) => {
+    async push({ entry }) {
       const space = Space.fromUnknown(entry.newData)
 
       if (isErr(space)) {
@@ -23,6 +23,9 @@ export const UploadDataSpace = (_config: { spaceDb: ISpaceDb }): IUploadData => 
       // }
 
       return Ok(null)
+    },
+    async pull() {
+      return Ok({ entries: [] })
     },
   }
 }

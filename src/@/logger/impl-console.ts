@@ -1,33 +1,36 @@
+import { Logger as LoggerNoop } from './impl-noop'
 import type { ILogger } from './interface'
-
 export type Config = {
   t: 'console'
-
   newLinePerMsg: boolean
+  namespace: [string, ...string[]]
 }
 
-export const LoggerConsole = (config: Config): ILogger => {
+export const Logger = (config: Config): ILogger => {
   const timestamp = () => new Date().toISOString()
 
+  const log =
+    (level: string, color: string, fn: typeof console.log) =>
+    (...msg: unknown[]) => {
+      fn(
+        `\x1b[90m[${timestamp()}]\x1b[0m ${color}[${level}]\x1b[0m \x1b[90m${config.namespace.join(' > ')}\x1b[0m`,
+        ...msg,
+        config.newLinePerMsg ? '\n' : '',
+      )
+    }
+
   return {
-    info(...msg) {
-      console.log(`[${timestamp()}][inf]`, ...msg, config.newLinePerMsg ? '\n' : '')
+    info: log('INF', '\x1b[36m', console.log),
+    warn: log('WRN', '\x1b[33m', console.warn),
+    error: log('ERR', '\x1b[31m', console.error),
+    debug: log('DBG', '\x1b[35m', console.debug),
+    trace: log('TRC', '\x1b[90m', console.trace),
+    fatal: log('FTL', '\x1b[41m', console.error),
+    noop() {
+      return LoggerNoop({ t: 'noop' })
     },
-    warn(...msg) {
-      console.warn(`[${timestamp()}][wrn]`, ...msg, config.newLinePerMsg ? '\n' : '')
+    child(namespace) {
+      return Logger({ ...config, namespace: [...config.namespace, ...namespace] })
     },
-    error(...msg) {
-      console.error(`[${timestamp()}][err]`, ...msg, config.newLinePerMsg ? '\n' : '')
-    },
-    debug(...msg) {
-      console.debug(`[${timestamp()}][dbg]`, ...msg, config.newLinePerMsg ? '\n' : '')
-    },
-    trace(...msg) {
-      console.trace(`[${timestamp()}][trc]`, ...msg, config.newLinePerMsg ? '\n' : '')
-    },
-    fatal(...msg) {
-      console.error(`[${timestamp()}][ftl]`, ...msg, config.newLinePerMsg ? '\n' : '')
-    },
-    noop() {},
   }
 }

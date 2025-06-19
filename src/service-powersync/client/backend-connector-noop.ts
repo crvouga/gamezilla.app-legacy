@@ -4,14 +4,14 @@ import {
   PowerSyncBackendConnector,
   PowerSyncCredentials,
 } from '@powersync/common'
-import { ILogger, Logger } from '~/@/logger'
+import { ILogger } from '~/@/logger'
 
 export class BackendConnectorNoop extends BaseObserver<{}> implements PowerSyncBackendConnector {
   private readonly logger: ILogger
 
   constructor(config: { logger: ILogger }) {
     super()
-    this.logger = Logger.prefix('PowerSyncBackendConnectorNoop', config.logger)
+    this.logger = config.logger.child(['PowerSyncBackendConnectorNoop'])
   }
 
   async fetchCredentials(): Promise<PowerSyncCredentials | null> {

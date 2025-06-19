@@ -1,4 +1,4 @@
-import { s } from '../schema'
+import { s } from '../../schema'
 
 const schema = s.enumeration(['create', 'update', 'delete'] as const)
 

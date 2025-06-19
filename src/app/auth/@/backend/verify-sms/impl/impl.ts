@@ -1,4 +1,3 @@
-import { Logger } from '~/@/logger'
 import type { IVerifySMS } from '../interface'
 import * as ImplFake from './impl-fake'
 import * as ImplFakeAlwaysOk from './impl-fake-always-ok'
@@ -8,7 +7,7 @@ import * as ImplTwilio from './impl-twilio'
 export type Config = ImplInHouse.Config | ImplFake.Config | ImplTwilio.Config | ImplFakeAlwaysOk.Config
 
 export const VerifySMS = (config: Config): IVerifySMS => {
-  const logger = Logger.prefix('verify-sms', config.logger)
+  const logger = config.logger.child(['verify-sms'])
   switch (config.t) {
     case 'fake': {
       return ImplFake.VerifySMS({ ...config, logger })

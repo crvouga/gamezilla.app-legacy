@@ -7,7 +7,7 @@ import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { FixturePlayFrontend, type FixtureUpdateInput } from '../../../@/frontend/fixture'
 import { Solutions } from '../../../../@/solutions/solutions'
 import { FlowFrontendCtx } from '../../../../@/frontend/ctx'
-import { loggerNoop } from '~/@/logger/impl-noop'
+import { Logger } from '~/@/logger'
 
 const toCompletePuzzleMsgs = (puzzle: Puzzle) => {
   const userId = UserId.generate()
@@ -32,7 +32,7 @@ export const FixtureScreenPlayPuzzleFrontend = async () => {
 
   const solutions = await Solutions.find({
     models: [puzzle.model, nextPuzzle.model, prevPuzzle.model],
-    logger: loggerNoop,
+    logger: Logger({ t: 'noop' }),
   })
   const ctx: FlowFrontendCtx = {
     ...f.ctx,

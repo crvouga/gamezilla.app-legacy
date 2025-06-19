@@ -28,7 +28,7 @@ import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
 
 const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtxModule> => {
-  const logger = Logger({ t: 'console' })
+  const logger = Logger({ t: 'console', namespace: ['backend'], newLinePerMsg: false })
 
   logger.info(`Starting ${config.backendRole} backend...`)
 

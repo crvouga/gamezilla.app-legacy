@@ -1,20 +1,23 @@
 import { isErr, Ok } from '~/@/result'
-import { IUploadData } from '~/@/upload-data/interface'
+import { ISync } from '~/@/sync-engine/sync'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { UserProfileId } from '~/app/@/data/user-profile-id'
 import { IUserProfileDb } from './user-profile-db/interface'
 
-export const UploadDataProfile = (_config: { profileDb: IUserProfileDb }): IUploadData => {
+export const UserProfileSync = (_config: { profileDb: IUserProfileDb }): ISync => {
   return {
-    match: ({ entry }) => {
+    match({ entry }) {
       return UserProfileId.is(entry.id)
     },
-    upload: async ({ entry }) => {
+    async push({ entry }) {
       const profile = UserProfile.fromUnknown(entry)
 
       if (isErr(profile)) return profile
 
       return Ok(null)
+    },
+    async pull() {
+      return Ok({ entries: [] })
     },
   }
 }

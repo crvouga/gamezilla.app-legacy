@@ -29,7 +29,11 @@ const Fixtures = async () => {
   configs.push({
     t: 'with-sql-tables',
     sqlDb: f.sqlDbSqlite,
-    profileDb: ProfileDb({ t: 'sql', sqlDb: f.sqlDbSqlite, logger: Logger({ t: 'console' }) }),
+    profileDb: ProfileDb({
+      t: 'sql',
+      sqlDb: f.sqlDbSqlite,
+      logger: Logger({ t: 'console', namespace: ['profile-db'], newLinePerMsg: true }),
+    }),
   })
 
   if (f.t === 'integration') {
@@ -37,7 +41,7 @@ const Fixtures = async () => {
       t: 'sql',
       // sqlDb: f.dbConnPostgres,
       sqlDb: f.sqlDbPostgres,
-      logger: Logger({ t: 'console' }),
+      logger: Logger({ t: 'console', namespace: ['profile-db'], newLinePerMsg: true }),
     })
   }
 

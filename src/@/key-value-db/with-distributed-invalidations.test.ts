@@ -2,11 +2,11 @@ import { describe, expect, test } from 'bun:test'
 import { Ok } from '~/@/result'
 import { s } from '~/@/schema'
 import { Logger } from '../logger'
+import { PubSub } from '../pub-sub'
 import { PubSubTopicBased } from '../pub-sub-topic-based'
+import { PubSubTopicBasedMap } from '../pub-sub-topic-based/impl-in-memory'
 import { KeyValueDb } from './impl'
 import { withNamespace } from './with-namespace'
-import { PubSub } from '../pub-sub'
-import { PubSubTopicBasedMap } from '../pub-sub-topic-based/impl-in-memory'
 
 const MyEvent = s.obj({
   id: s.str(),
@@ -31,7 +31,7 @@ const Fixture = async () => {
   const sourceMap = new Map<string, MyEvent>()
 
   const make = async (id: string) => {
-    const loggerChild = Logger.prefix(id, logger)
+    const loggerChild = logger.child([id])
     return withNamespace({
       namespace: ['my-event'],
       schema: MyEvent,
@@ -39,7 +39,7 @@ const Fixture = async () => {
         t: 'with-cache',
         source: await KeyValueDb({
           t: 'hash-map',
-          logger: Logger.prefix('source', logger),
+          logger: logger.child(['source']),
           map: sourceMap,
         }),
         logger: loggerChild,
@@ -69,7 +69,7 @@ const Fixture = async () => {
   const instanceC = await make('C')
 
   return {
-    logger: Logger.prefix('test', logger),
+    logger: logger.child(['test']),
     instanceA,
     instanceB,
     instanceC,

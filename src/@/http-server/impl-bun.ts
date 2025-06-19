@@ -1,5 +1,5 @@
 import type { Server, WebSocketHandler } from 'bun'
-import { Logger, type ILogger } from '~/@/logger'
+import { type ILogger } from '~/@/logger'
 import { Sub } from '../sub'
 import { UnixMs } from '../time/unix-ms'
 import { HttpServerEvent, Middleware, type IHttpServer, type Respond } from './interface'
@@ -11,7 +11,7 @@ export type Config = {
 }
 
 export const HttpServerBun = <T>(config: Config) => {
-  const logger = Logger.prefix('bun', config.logger)
+  const logger = config.logger.child(['bun'])
   const responds: Respond[] = []
   const middlewares: Middleware[] = []
   const events = Sub.create<HttpServerEvent>()

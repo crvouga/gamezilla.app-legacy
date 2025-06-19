@@ -11,7 +11,7 @@ import type { NumberlinkVariant } from '../../../../@/variant'
 import { FlowPlaySpaceFixture } from '../../../@/space/fixture'
 import { ScreenPlayPuzzleSpace } from '../../space'
 import type { ModelSpace, MsgSpace } from '../../types'
-import { loggerNoop } from '~/@/logger/impl-noop'
+import { Logger } from '~/@/logger'
 
 export const FixtureScreenPuzzlePlaySpace = async (input?: { numberlink?: NumberlinkVariant.Model }) => {
   const f = await FlowPlaySpaceFixture()
@@ -29,7 +29,7 @@ export const FixtureScreenPuzzlePlaySpace = async (input?: { numberlink?: Number
 
   const solutions = await Solutions.find({
     models: [prevPuzzle, puzzle, nextPuzzle].map((p) => p.model),
-    logger: loggerNoop,
+    logger: Logger({ t: 'noop' }),
   })
 
   const ctx: NumberlinkSpaceCtx = {

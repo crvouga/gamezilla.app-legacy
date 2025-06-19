@@ -1,8 +1,8 @@
-import { uploadDataRegistry } from '~/@/upload-data/registry'
+import { syncRegistry } from '~/@/sync-engine/sync'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { ProfileBackendCtx } from './@/backend/ctx'
 import { ProfileDb } from './@/user-profile/user-profile-db/impl'
-import { UploadDataProfile } from './@/user-profile/upload-data'
+import { UserProfileSync } from './@/user-profile/user-profile-sync'
 
 const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<ProfileBackendCtx> => {
   const profileDb = ProfileDb({
@@ -11,7 +11,7 @@ const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<ProfileBacken
     sqlDb: input.ctx.sqlDb,
   })
 
-  uploadDataRegistry.add(UploadDataProfile({ profileDb }))
+  syncRegistry.add(UserProfileSync({ profileDb }))
 
   return {
     ...input.ctx,

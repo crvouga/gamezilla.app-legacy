@@ -3,7 +3,6 @@ import { Err, Ok } from '~/@/result'
 import type { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { TimeSpan } from '~/@/time/time-span'
-import { Logger } from '../../logger'
 import type { ILogger } from '../../logger/interface'
 import { Sleep } from '../../promise/sleep'
 import { Sub } from '../../sub'
@@ -20,7 +19,7 @@ export type Config = {
 let db: Database
 
 export const SqlDb = async (config: Config): Promise<ISqlDb> => {
-  const logger = Logger.prefix('sqlite', config.logger)
+  const logger = config.logger.child(['sqlite'])
   db ??= new Database(Fs.toConnectionString(config.fs))
 
   return {

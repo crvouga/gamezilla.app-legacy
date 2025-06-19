@@ -1,5 +1,5 @@
 import { Err, Ok, Result } from '~/@/result'
-import { ILogger, Logger } from '../logger'
+import { ILogger } from '../logger'
 import { IRedis, newRedis } from '../redis'
 import { SecretString } from '../secrets/secret-string'
 import { IStream } from './interface'
@@ -15,7 +15,7 @@ export type Config<T> = {
 let redis: IRedis
 
 export const Stream = async <T>(config: Config<T>): Promise<IStream<T>> => {
-  const logger = Logger.prefix('redis', config.logger)
+  const logger = config.logger.child(['redis'])
   redis ??= await newRedis(config.redisUrl)
 
   return {

@@ -1,16 +1,16 @@
 import { Logger } from '../logger'
 import * as ImplHashMap from './impl-hash-map'
 import * as ImplInMemory from './impl-in-memory'
-import * as ImplSqlDb from './impl-sql-db'
 import * as ImplRedis from './impl-redis'
+import * as ImplSqlDb from './impl-sql-db'
 import type { IKeyValueDb } from './interface'
 import * as WithCache from './with-cache'
 import * as WithDistributedInvalidations from './with-distributed-invalidations'
 import * as WithDistributedUpdates from './with-distributed-updates'
 import * as WithNamespace from './with-namespace'
 import * as WithReducedParsing from './with-reduced-parsing'
-import * as WithThrottledWrites from './with-throttled-writes'
 import * as WithSqlTables from './with-sql-tables'
+import * as WithThrottledWrites from './with-throttled-writes'
 
 export type Config =
   | ImplHashMap.Config
@@ -25,7 +25,7 @@ export type Config =
   | WithSqlTables.Config
 
 export const KeyValueDb = async (configInput: Config): Promise<IKeyValueDb> => {
-  const logger = Logger.prefix('key-value-db', configInput.logger ?? Logger({ t: 'noop' }))
+  const logger = configInput.logger?.child(['key-value-db']) ?? Logger({ t: 'noop' })
   const config: Config = { ...configInput, logger }
   switch (config.t) {
     case 'hash-map': {

@@ -1,5 +1,5 @@
 import * as http from 'node:http'
-import { Logger, type ILogger } from '~/@/logger'
+import { type ILogger } from '~/@/logger'
 import { Sub } from '../sub'
 import { UnixMs } from '../time/unix-ms'
 import { HttpServerEvent, Middleware, type IHttpServer, type Respond } from './interface'
@@ -14,7 +14,7 @@ export const HttpServerNode = (
 ): IHttpServer & {
   t: 'node'
 } => {
-  const logger = Logger.prefix('node', config.logger)
+  const logger = config.logger.child(['node'])
   const server = new http.Server()
   const responds: Respond[] = []
   const middlewares: Middleware[] = []

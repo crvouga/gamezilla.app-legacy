@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { loggerNoop } from '~/@/logger/impl-noop'
+import { Logger } from '~/@/logger'
 import { Ok } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SolutionHash } from '../solution-hash/solution-hash'
@@ -55,7 +55,7 @@ describe('Test', () => {
       const hash = SolutionHash.init(numberlink)
       const zapped = await f.solutionsDb.zap(hash)
 
-      const solutions = await Solutions.find({ models: [numberlink], logger: loggerNoop })
+      const solutions = await Solutions.find({ models: [numberlink], logger: Logger({ t: 'noop' }) })
 
       const before = await f.solutionsDb.get(hash)
       const put = await f.solutionsDb.put(solutions)
@@ -76,7 +76,7 @@ describe('Test', () => {
         [' ', ' ', 'A'],
       ])
       const hash = SolutionHash.init(numberlink)
-      const solutions = await Solutions.find({ models: [numberlink], logger: loggerNoop })
+      const solutions = await Solutions.find({ models: [numberlink], logger: Logger({ t: 'noop' }) })
       await f.solutionsDb.put(solutions)
 
       const before = await f.solutionsDb.get(hash)

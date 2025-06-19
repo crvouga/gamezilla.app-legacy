@@ -1,15 +1,15 @@
 import { Err, isErr, Ok } from '~/@/result'
-import { IUploadData } from '~/@/upload-data/interface'
+import { ISync } from '~/@/sync-engine/sync'
 import { Puzzle } from './puzzle'
 import { IPuzzleDb } from './puzzle-db/interface'
 import { PuzzleId } from './puzzle-id'
 
-export const UploadDataPuzzle = (_config: { numberlinkPuzzleDb: IPuzzleDb }): IUploadData => {
+export const PuzzleSync = (_config: { numberlinkPuzzleDb: IPuzzleDb }): ISync => {
   return {
-    match: ({ entry }) => {
+    match({ entry }) {
       return PuzzleId.is(entry.id)
     },
-    upload: async ({ entry }) => {
+    async push({ entry }) {
       const puzzle = Puzzle.fromUnknown(entry.newData)
 
       if (isErr(puzzle)) {
@@ -17,6 +17,9 @@ export const UploadDataPuzzle = (_config: { numberlinkPuzzleDb: IPuzzleDb }): IU
       }
 
       return Ok(null)
+    },
+    async pull() {
+      return Ok({ entries: [] })
     },
   }
 }

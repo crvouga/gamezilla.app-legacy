@@ -1,5 +1,5 @@
 import { Result } from '~/@/result'
-import { ILogger, Logger } from '../logger'
+import { ILogger } from '../logger'
 import { IKeyValueDb } from './interface'
 
 export type Config = {
@@ -10,7 +10,7 @@ export type Config = {
 }
 
 export const withCache = (config: Config): IKeyValueDb => {
-  const logger = Logger.prefix('with-cache', config.logger)
+  const logger = config.logger.child(['with-cache'])
   return {
     async get(key, schema) {
       const start = process.hrtime.bigint()

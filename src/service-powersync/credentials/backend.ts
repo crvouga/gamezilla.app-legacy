@@ -11,14 +11,16 @@ import {
 } from '~/service-powersync/credentials/types'
 import { Ctx } from '../@/backend/ctx'
 import { getKeyPairFromEnv, KeyPair } from '../@/backend/keys/keys'
+import { ILogger } from '~/@/logger'
 
-const respond = async (input: { req: Request; ctx: Ctx }) => {
-  input.ctx.logger.info('CredentialsBackend: Responding to request', input.req.url)
+const respond = async (input: { req: Request; ctx: Ctx; logger: ILogger }) => {
+  const logger = input.logger.child(['credentials'])
+  logger.info('CredentialsBackend: Responding to request', input.req.url)
 
   const keys = await getKeyPairFromEnv()
 
   if (isErr(keys)) {
-    input.ctx.logger.error('CredentialsBackend: Failed to get keys:', keys.error)
+    logger.error('CredentialsBackend: Failed to get keys:', keys.error)
     return ErrResponse(500, {
       message: `Internal Server Error. Errored while getting keys: ${keys.error}`,
     })
@@ -27,18 +29,18 @@ const respond = async (input: { req: Request; ctx: Ctx }) => {
   const maybeSessionId = SessionIdHttp.fromRequest(input.req)
 
   if (!maybeSessionId) {
-    input.ctx.logger.warn('CredentialsBackend: No session ID found in request')
+    logger.warn('CredentialsBackend: No session ID found in request')
     return ErrResponse(401, {
       message: 'No session ID found in the request',
     })
   }
 
-  input.ctx.logger.info('CredentialsBackend: Found session ID:', maybeSessionId)
+  logger.info('CredentialsBackend: Found session ID:', maybeSessionId)
 
   const foundUserId = await input.ctx.userSessionDb.findUserIdBySessionId(maybeSessionId)
 
   if (isErr(foundUserId)) {
-    input.ctx.logger.error('CredentialsBackend: Error finding userId for session:', foundUserId.error)
+    logger.error('CredentialsBackend: Error finding userId for session:', foundUserId.error)
     return ErrResponse(500, {
       message: `Internal Server Error. Errored while finding userID associated with request session ID: ${foundUserId.error}`,
     })
@@ -47,22 +49,22 @@ const respond = async (input: { req: Request; ctx: Ctx }) => {
   const userId = foundUserId.value
 
   if (!userId) {
-    input.ctx.logger.info('CredentialsBackend: No userId found for session, checking for guest user')
+    logger.info('CredentialsBackend: No userId found for session, checking for guest user')
     const guestUserId = UserId.parse(new URL(input.req.url).searchParams.get(GUEST_USER_ID_QUERY_PARAM_NAME))
 
     if (isErr(guestUserId)) {
-      input.ctx.logger.warn('CredentialsBackend: Invalid or missing guest user ID')
+      logger.warn('CredentialsBackend: Invalid or missing guest user ID')
       return ErrResponse(401, {
         message: 'No user id found to be associated with the request session ID',
       })
     }
 
-    input.ctx.logger.info('CredentialsBackend: Using guest user ID:', guestUserId.value)
-    return respondOk(keys.value, guestUserId.value, input.ctx.logger)
+    logger.info('CredentialsBackend: Using guest user ID:', guestUserId.value)
+    return respondOk(keys.value, guestUserId.value, logger)
   }
 
-  input.ctx.logger.info('CredentialsBackend: Using authenticated user ID:', userId)
-  return respondOk(keys.value, userId, input.ctx.logger)
+  logger.info('CredentialsBackend: Using authenticated user ID:', userId)
+  return respondOk(keys.value, userId, logger)
 }
 
 const respondOk = async (keys: KeyPair, userId: UserId, logger: Ctx['logger']) => {

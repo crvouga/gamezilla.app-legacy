@@ -12,16 +12,16 @@ import type { BackendInstanceId } from './backend-instance/backend-instance-id'
 import { BackendRole } from './backend-role'
 
 export type AppBackendCtxBase = {
+  now: UnixMs
   backendRole: BackendRole
+  backendInstanceId: BackendInstanceId
   sqlDb: ISqlDb
   keyValueDbDurable: IKeyValueDb
-  now: UnixMs
   logger: ILogger
   env: Env
   sleep: (time: TimeSpan) => Promise<unknown>
   pubSub: IPubSubTopicBased
   userProfileDb: IUserProfileDb
-  backendInstanceId: BackendInstanceId
   httpServer: IHttpServer
   runtime: IRuntime
 }

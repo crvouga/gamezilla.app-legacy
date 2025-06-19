@@ -1,5 +1,5 @@
 import { pipe } from '~/@/function/pipe'
-import { ILogger, Logger } from '~/@/logger'
+import { ILogger } from '~/@/logger'
 import { Result, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
@@ -75,7 +75,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
     }
   }
 
-  const logger = Logger.prefix('user-session-db', config.logger)
+  const logger = config.logger.child(['user-session-db'])
 
   return {
     async findSessionIdsByUserId(userId: UserId) {

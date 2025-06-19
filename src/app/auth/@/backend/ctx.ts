@@ -1,12 +1,11 @@
-import { Logger } from '~/@/logger'
-import { uploadDataRegistry } from '~/@/upload-data/registry'
+import { syncRegistry } from '~/@/sync-engine/sync'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { GuestSessionMappingDb, IGuestSessionMappingDb } from '../guest-session-mapping/guest-session-mapping-db'
-import { UploadDataGuestSessionMapping } from '../guest-session-mapping/upload-data'
-import { UploadDataUserAccount } from '../user-account/upload-data'
+import { GuestSessionMappingSync } from '../guest-session-mapping/guest-session-mapping-sync'
 import { IUserAccountDb, UserAccountDb } from '../user-account/user-account-db'
-import { UploadDataUserSession } from '../user-session/upload-data'
+import { UserAccountSync } from '../user-account/user-account-sync'
 import { IUserSessionDb, UserSessionDb } from '../user-session/user-session-db'
+import { UserSessionSync } from '../user-session/user-session-sync'
 import { IVerifySMS } from './verify-sms'
 import { VerifySMSFactory } from './verify-sms/impl/factory'
 
@@ -36,12 +35,14 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
     sqlDb: input.ctx.sqlDb,
   })
 
-  uploadDataRegistry.add(UploadDataUserAccount({ userAccountDb }))
-  uploadDataRegistry.add(UploadDataUserSession({ userSessionDb }))
-  uploadDataRegistry.add(UploadDataGuestSessionMapping({ guestSessionMappingDb }))
+  syncRegistry.add(UserAccountSync({ userAccountDb }))
+
+  syncRegistry.add(UserSessionSync({ userSessionDb }))
+
+  syncRegistry.add(GuestSessionMappingSync({ guestSessionMappingDb }))
 
   const verifySMS = VerifySMSFactory.createForEnvironment({
-    logger: Logger.prefix('verifySMS', input.ctx.logger),
+    logger: input.ctx.logger.child(['verifySMS']),
     backendRole: input.ctx.backendRole,
     env: input.ctx.env,
     sqlDb: input.ctx.sqlDb,

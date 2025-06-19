@@ -1,16 +1,16 @@
-import { uploadDataRegistry } from '~/@/upload-data/registry'
+import { syncRegistry } from '~/@/sync-engine/sync'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { NumberlinkBackendCtx } from './@/backend/ctx'
 import { PackDb } from './@/pack/pack-db'
-import { UploadDataPack } from './@/pack/upload-data'
+import { PackSync } from './@/pack/pack-sync'
 import { PuzzleDb } from './@/puzzle/puzzle-db'
-import { UploadDataPuzzle } from './@/puzzle/upload-data'
+import { PuzzleSync } from './@/puzzle/puzzle-sync'
 
 const initCtx = (input: { ctx: SpaceBackendCtx }): NumberlinkBackendCtx => {
   const numberlinkPuzzleDb = PuzzleDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb, logger: input.ctx.logger })
   const numberlinkPackDb = PackDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb, logger: input.ctx.logger })
-  uploadDataRegistry.add(UploadDataPuzzle({ numberlinkPuzzleDb }))
-  uploadDataRegistry.add(UploadDataPack({ numberlinkPackDb }))
+  syncRegistry.add(PuzzleSync({ numberlinkPuzzleDb }))
+  syncRegistry.add(PackSync({ numberlinkPackDb }))
 
   return {
     ...input.ctx,

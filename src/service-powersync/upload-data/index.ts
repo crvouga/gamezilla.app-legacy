@@ -1,1 +1,1 @@
-export * as PowerSyncUploadDataTypes from './types'
+export * as PowerSyncPushEntryTypes from './types'

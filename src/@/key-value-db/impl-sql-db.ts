@@ -1,12 +1,11 @@
 import { Err, Ok, Result, isErr } from '~/@/result'
 import { s } from '~/@/schema'
-import type { ISqlDb } from '../sql-db'
 import type { ILogger } from '../logger/interface'
+import { ParseError } from '../schema/schema/parse-error'
+import type { ISqlDb } from '../sql-db'
+import { TimeSpan } from '../time/time-span'
 import { withDuration } from '../time/with-duration'
 import type { IKeyValueDb } from './interface'
-import { Logger } from '../logger'
-import { TimeSpan } from '../time/time-span'
-import { ParseError } from '../schema/schema/parse-error'
 
 const MAX_LEN = 1000
 
@@ -22,7 +21,7 @@ export type Config = {
 }
 
 export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
-  const logger = Logger.prefix('sql-db', config.logger)
+  const logger = config.logger.child(['sql-db'])
   return {
     async get(key, schema) {
       try {

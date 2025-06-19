@@ -1,52 +1,17 @@
-import { LoggerConsole } from './impl-console'
-import { loggerNoop } from './impl-noop'
+import * as ImplConsole from './impl-console'
+import * as ImplNoop from './impl-noop'
 import type { ILogger } from './interface'
 
-export type Impl =
-  | {
-      t: 'console'
-    }
-  | {
-      t: 'noop'
-    }
+export type Config = ImplConsole.Config | ImplNoop.Config
 
-export const Logger = (impl: Impl): ILogger => {
-  switch (impl.t) {
+export const Logger = (config: Config): ILogger => {
+  switch (config.t) {
     case 'console': {
-      return LoggerConsole({
-        t: 'console',
-        newLinePerMsg: true,
-      })
+      return ImplConsole.Logger(config)
     }
 
     case 'noop': {
-      return loggerNoop
+      return ImplNoop.Logger(config)
     }
   }
 }
-
-const prefix = (prefix: string, logger: ILogger): ILogger => {
-  return {
-    noop() {},
-    debug(...msg) {
-      logger.debug(`[${prefix}]`, ...msg)
-    },
-    error(...msg) {
-      logger.error(`[${prefix}]`, ...msg)
-    },
-    fatal(...msg) {
-      logger.fatal(`[${prefix}]`, ...msg)
-    },
-    info(...msg) {
-      logger.info(`[${prefix}]`, ...msg)
-    },
-    trace(...msg) {
-      logger.trace(`[${prefix}]`, ...msg)
-    },
-    warn(...msg) {
-      logger.warn(`[${prefix}]`, ...msg)
-    },
-  }
-}
-
-Logger.prefix = prefix

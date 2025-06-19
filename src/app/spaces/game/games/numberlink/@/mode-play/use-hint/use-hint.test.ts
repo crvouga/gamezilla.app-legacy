@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { pipe } from '~/@/function/pipe'
-import { loggerNoop } from '~/@/logger/impl-noop'
+import { Logger } from '~/@/logger'
 import { UseHint } from '.'
 import { Numberlink } from '../../numberlink'
 import { AlgoIsSolved } from '../../solutions/algo-is-solved/algo-is-solved'
@@ -17,7 +17,7 @@ describe('Test', () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
         },
       },
     ])
@@ -40,13 +40,13 @@ describe('Test', () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
         },
       },
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
         },
       },
     ])
@@ -67,7 +67,7 @@ describe('Test', () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
         },
       },
     ])
@@ -87,19 +87,19 @@ describe('Test', () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
         },
       },
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
         },
       },
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
         },
       },
     ])
@@ -121,7 +121,7 @@ describe('Test', () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
         },
       },
     ])
@@ -154,7 +154,7 @@ describe('Test', () => {
         {
           msg: {
             t: 'user-clicked-use-hint',
-            solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
+            solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
           },
         },
       ],
@@ -173,7 +173,7 @@ describe('Test', () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
         },
       },
     ])
@@ -195,7 +195,7 @@ describe('Test', () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [before], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [before], logger: Logger({ t: 'noop' }) }),
         },
       },
     ])
@@ -230,7 +230,7 @@ describe('Test', () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
         },
       },
     ])
@@ -262,7 +262,7 @@ describe('Test', () => {
       {
         msg: {
           t: 'user-clicked-use-hint',
-          solutions: await Solutions.find({ models: [numberlink], logger: loggerNoop }),
+          solutions: await Solutions.find({ models: [numberlink], logger: Logger({ t: 'noop' }) }),
         },
       },
     ])
@@ -311,7 +311,7 @@ describe('Test', () => {
       ]),
     })
 
-    const solutions = await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop })
+    const solutions = await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) })
 
     const output = f.update(f.init, [
       { msg: { t: 'user-clicked-use-hint', solutions } },

@@ -29,7 +29,7 @@ const Fixtures = async () => {
     packDb: PackDb({
       t: 'sql-db',
       sqlDb: f.sqlDbSqlite,
-      logger: Logger({ t: 'console' }),
+      logger: Logger({ t: 'console', namespace: ['pack-db'], newLinePerMsg: true }),
     }),
   })
 
@@ -37,7 +37,7 @@ const Fixtures = async () => {
     configs.push({
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
-      logger: Logger({ t: 'console' }),
+      logger: Logger({ t: 'console', namespace: ['pack-db'], newLinePerMsg: true }),
     })
   }
 

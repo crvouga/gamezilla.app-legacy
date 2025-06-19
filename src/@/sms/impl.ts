@@ -1,8 +1,7 @@
-import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
-import type { ISMS } from './interface'
 import { SMSFake } from './impl-fake'
 import { SMSTwilio } from './impl-twilio'
+import type { ISMS } from './interface'
 
 export type SMSImpl =
   | {
@@ -15,7 +14,7 @@ export type SMSImpl =
     }
 
 export const SMS = (config: SMSImpl): ISMS => {
-  const logger = Logger.prefix('sms', config.logger)
+  const logger = config.logger.child(['sms'])
   switch (config.t) {
     case 'fake': {
       return SMSFake({ ...config, logger })

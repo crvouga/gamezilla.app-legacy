@@ -6,4 +6,5 @@ export type ILogger = {
   noop: (...msg: unknown[]) => void
   trace: (...msg: unknown[]) => void
   fatal: (...msg: unknown[]) => void
+  child: (namespace: [string, ...string[]]) => ILogger
 }

@@ -1,7 +1,7 @@
 import { isErr } from '~/@/result'
 import { s } from '~/@/schema'
+import { ILogger } from '../logger'
 import type { IKeyValueDb } from './interface'
-import { ILogger, Logger } from '../logger'
 
 export type Config = {
   t: 'with-reduced-parsing'
@@ -11,7 +11,7 @@ export type Config = {
 }
 
 export const withReducedParsing = ({ keyValueDb, verifiedKeys, ...config }: Config): IKeyValueDb => {
-  const logger = Logger.prefix('with-reduced-parsing', config.logger)
+  const logger = config.logger.child(['with-reduced-parsing'])
   return {
     ...keyValueDb,
 

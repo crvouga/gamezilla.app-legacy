@@ -1,8 +1,8 @@
 import { Err, Ok } from '~/@/result'
 import type { s } from '~/@/schema'
-import type { IKeyValueDb } from './interface'
-import { ILogger, Logger } from '../logger'
+import { ILogger } from '../logger'
 import { ParseError } from '../schema/schema/parse-error'
+import type { IKeyValueDb } from './interface'
 
 export type Config = {
   t: 'hash-map'
@@ -11,7 +11,7 @@ export type Config = {
 }
 
 export const KeyValueDb = (config: Config): IKeyValueDb => {
-  const logger = config.logger ? Logger.prefix('hash-map', config.logger) : null
+  const logger = config.logger ? config.logger.child(['hash-map']) : null
   const hashMap = config?.map ?? new Map<string, unknown>()
   return {
     async get(key, schema) {

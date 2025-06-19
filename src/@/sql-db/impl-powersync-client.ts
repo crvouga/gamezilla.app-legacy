@@ -1,4 +1,4 @@
-import { ILogger, Logger } from '~/@/logger'
+import { ILogger } from '~/@/logger'
 import { Err, isOk, Ok } from '~/@/result'
 import { Sql } from '~/@/sql'
 import { PubSub, Sub } from '~/@/sub'
@@ -12,7 +12,7 @@ export type Config = {
 }
 
 export const SqlDb = (config: Config): ISqlDb => {
-  const logger = Logger.prefix('powersync', config.logger)
+  const logger = config.logger.child(['powersync'])
 
   const query: ISqlDb['query'] = async (input) => {
     try {

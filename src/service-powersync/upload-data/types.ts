@@ -1,5 +1,5 @@
 import { s } from '~/@/schema'
-import { CrudTransaction } from '~/@/upload-data/crud-transaction'
+import { CrudTransaction } from '~/@/sync-engine/crud-transaction/crud-transaction'
 
 export const ENDPOINT = '/powersync/upload-data'
 

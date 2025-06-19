@@ -1,5 +1,5 @@
 import { HttpClient } from '~/@/http-client'
-import { loggerNoop } from '~/@/logger/impl-noop'
+import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screen/generated/screens'
 import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
@@ -21,7 +21,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     clientSessionId: ClientSessionId.generate(),
     parentScreen: null,
     sqlDb: SQL_DB_NOOP,
-    logger: loggerNoop,
+    logger: Logger({ t: 'noop' }),
     currentScreen: input?.currentScreen ?? {
       n: 'auth-login',
       t: 'login',

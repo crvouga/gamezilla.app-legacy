@@ -5,22 +5,23 @@ import { PowerSyncCredentialsBackend } from './credentials/backend'
 import { PowerSyncCredentialsTypes } from './credentials/index'
 import { PowerSyncJwksBackend } from './jwks/backend'
 import { PowerSyncJwksTypes } from './jwks/index'
-import { PowerSyncUploadDataBackend } from './upload-data/backend'
-import { PowerSyncUploadDataTypes } from './upload-data/index'
+import { PowerSyncPushEntryBackend } from './upload-data/backend'
+import { PowerSyncPushEntryTypes } from './upload-data/index'
 
 const respond = async (input: { req: Request; ctx: Ctx }): Promise<Response | null> => {
   const pathname = new URL(input.req.url).pathname
+  const logger = input.ctx.logger.child(['powersync'])
   switch (pathname) {
     case PowerSyncCredentialsTypes.ENDPOINT: {
-      return PowerSyncCredentialsBackend.respond(input)
+      return PowerSyncCredentialsBackend.respond({ ...input, logger })
     }
 
     case PowerSyncJwksTypes.ENDPOINT: {
-      return PowerSyncJwksBackend.respond(input)
+      return PowerSyncJwksBackend.respond({ ...input, logger })
     }
 
-    case PowerSyncUploadDataTypes.ENDPOINT: {
-      return PowerSyncUploadDataBackend.respond(input)
+    case PowerSyncPushEntryTypes.ENDPOINT: {
+      return PowerSyncPushEntryBackend.respond({ ...input, logger })
     }
 
     default: {

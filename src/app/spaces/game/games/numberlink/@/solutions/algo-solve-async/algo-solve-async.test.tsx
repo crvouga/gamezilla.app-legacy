@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { loggerNoop } from '~/@/logger/impl-noop'
+import { Logger } from '~/@/logger'
 import { isErr, unwrap } from '~/@/result'
 import { Numberlink } from '../../numberlink'
 import { VariantGridShorthand } from '../../variant/grid'
@@ -17,7 +17,7 @@ describe('AlgoSolveAsync', () => {
     const solution = unwrap(
       await AlgoSolveAsync.solve({
         model: numberlink,
-        logger: loggerNoop,
+        logger: Logger({ t: 'noop' }),
         maxDuration: TimeSpan.seconds(10),
       }),
     )
@@ -50,7 +50,7 @@ describe('AlgoSolveAsync', () => {
 
     const solvePromise = AlgoSolveAsync.solve({
       model: numberlink,
-      logger: loggerNoop,
+      logger: Logger({ t: 'noop' }),
       maxDuration: TimeSpan.seconds(10),
       abortSignal: abortController.signal,
     })

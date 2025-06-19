@@ -1,9 +1,9 @@
-import { Logger, type ILogger } from '~/@/logger'
+import { type ILogger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, Ok, isErr } from '~/@/result'
 import { s } from '~/@/schema'
-import type { IVerifySMS } from '../../interface'
 import { SecretString } from '~/@/secrets/secret-string'
+import type { IVerifySMS } from '../../interface'
 
 export type Config = {
   t: 'twilio'
@@ -18,7 +18,7 @@ const toBasicAuthorizationHeaderValue = (username: string, password: string) => 
 }
 
 export const VerifySMS = (config: Config): IVerifySMS => {
-  const logger = Logger.prefix('verify-sms-twilio', config.logger)
+  const logger = config.logger.child(['verify-sms-twilio'])
 
   const AUTHORIZATION = toBasicAuthorizationHeaderValue(
     config.twilioAccountSid,

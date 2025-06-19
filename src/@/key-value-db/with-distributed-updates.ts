@@ -1,5 +1,4 @@
 import { PubSub } from '~/@/sub'
-import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
 import { IKeyValueDb } from './interface'
 
@@ -32,7 +31,7 @@ export type Config = {
 }
 
 export const withDistributedUpdates = (config: Config): IKeyValueDb & { unsubscribe: () => void } => {
-  const logger = Logger.prefix('with-distributed-updates', config.logger)
+  const logger = config.logger.child(['with-distributed-updates'])
   const unsubscribe = config.pubSub.sub((update) => {
     switch (update.t) {
       case DistributedUpdateType.SET: {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { loggerNoop } from '~/@/logger/impl-noop'
+import { Logger } from '~/@/logger'
 import { Solutions } from '../../solutions/solutions'
 import { VariantGridShorthand } from '../../variant/grid'
 import { FixtureModePlayUseHint } from './fixture'
@@ -11,7 +11,7 @@ const Fixture = async (params?: Parameters<typeof FixtureModePlayUseHint>[0]) =>
     const r = f.render(<UseHintFrontend.TestView dispatch={() => {}} ctx={f.ctx} model={f.init} {...input} />)
     return r
   }
-  const solutions = await Solutions.find({ models: [f.ctx.numberlink], logger: loggerNoop })
+  const solutions = await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) })
   f.ctx = {
     ...f.ctx,
     solutions,

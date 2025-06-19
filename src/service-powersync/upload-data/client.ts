@@ -32,6 +32,6 @@ const request = async (input: {
   }
 }
 
-export const PowerSyncUploadDataClient = {
+export const PowerSyncPushEntryClient = {
   request,
 }

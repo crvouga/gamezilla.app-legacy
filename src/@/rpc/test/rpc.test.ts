@@ -17,7 +17,7 @@ type Fixture = {
 export const FixtureHttp = async (): Promise<Fixture> => {
   const port = 1234
 
-  const logger = Logger({ t: 'console' })
+  const logger = Logger({ t: 'console', namespace: ['rpc', 'test'], newLinePerMsg: true })
 
   const httpServer = HttpServer({ t: 'node', logger })
 

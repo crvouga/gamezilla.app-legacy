@@ -1,9 +1,9 @@
-import { ILogger, Logger } from '~/@/logger'
+import { ILogger } from '~/@/logger'
 import { sleep } from '~/@/promise/sleep'
 import { IRuntime, RuntimeEvent } from '~/@/runtime/interface'
 import { Sub } from '~/@/sub'
-import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
+import { UnixMs } from '~/@/time/unix-ms'
 
 export type Config = {
   t: 'process'
@@ -12,7 +12,7 @@ export type Config = {
 }
 
 export const Runtime = (config: Config): IRuntime => {
-  const logger = Logger.prefix('process', config.logger)
+  const logger = config.logger.child(['process'])
 
   const events = Sub.create<RuntimeEvent>()
 

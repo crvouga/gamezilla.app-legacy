@@ -1,7 +1,7 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { withEventId, withEventMetaAt } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
-import { loggerNoop } from '~/@/logger/impl-noop'
+import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import { RPC } from '~/@/rpc'
 import type { Screen } from '~/@/screen/generated/screens'
@@ -30,7 +30,7 @@ export const SpaceFrontendFixture = async () => {
   const topic = Topic.initClient({
     t: 'local',
     contract: SpacesTypes.topicContract,
-    logger: loggerNoop,
+    logger: Logger({ t: 'noop' }),
   })
 
   const rpc = RPC.initClient({
@@ -52,7 +52,12 @@ export const SpaceFrontendFixture = async () => {
     },
   })
 
-  const spaceDb = await SpaceDb({ t: 'sql-db', sqlDb: f.ctx.sqlDb, logger: loggerNoop, shouldCreateTable: true })
+  const spaceDb = await SpaceDb({
+    t: 'sql-db',
+    sqlDb: f.ctx.sqlDb,
+    logger: Logger({ t: 'noop' }),
+    shouldCreateTable: true,
+  })
 
   const ctx: SpacesTypes.FrontendCtxModule = {
     ...f.ctx,
@@ -116,7 +121,7 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
   const topic = Topic.initClient({
     t: 'local',
     contract: SpacesTypes.topicContract,
-    logger: loggerNoop,
+    logger: Logger({ t: 'noop' }),
   })
 
   const rpc = RPC.initClient({
@@ -138,7 +143,12 @@ export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) 
     },
   })
 
-  const spaceDb = await SpaceDb({ t: 'sql-db', sqlDb: f.ctx.sqlDb, logger: loggerNoop, shouldCreateTable: true })
+  const spaceDb = await SpaceDb({
+    t: 'sql-db',
+    sqlDb: f.ctx.sqlDb,
+    logger: Logger({ t: 'noop' }),
+    shouldCreateTable: true,
+  })
 
   const currentUserProfile = await UserProfile.random({ userId: currentUser.userId })
   const ctx: SpacesTypes.FrontendCtxModule & SpaceFrontendCtx = {

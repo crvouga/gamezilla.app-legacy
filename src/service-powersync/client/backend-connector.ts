@@ -4,11 +4,11 @@ import {
   PowerSyncBackendConnector,
   PowerSyncCredentials,
 } from '@powersync/common'
-import { ILogger, Logger } from '~/@/logger'
+import { ILogger } from '~/@/logger'
 import { isErr, unwrap } from '~/@/result'
 import { UserId } from '~/app/@/data/user-id'
 import { PowerSyncCredentialsClient } from '../credentials/client'
-import { PowerSyncUploadDataClient } from '../upload-data/client'
+import { PowerSyncPushEntryClient } from '../upload-data/client'
 
 export class BackendConnector extends BaseObserver<{}> implements PowerSyncBackendConnector {
   private readonly backendUrl: string
@@ -26,7 +26,7 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
 
     this.backendUrl = config.backendUrl
     this.powersyncUrl = config.powersyncUrl
-    this.logger = Logger.prefix('PowerSyncBackendConnector', config.logger)
+    this.logger = config.logger.child(['PowerSyncBackendConnector'])
     this.getGuestUserId = config.getGuestUserId
   }
   async fetchCredentials(): Promise<PowerSyncCredentials | null> {
@@ -66,7 +66,7 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
 
     this.logger.info('crudTransaction', crudTransaction)
 
-    const uploaded = await PowerSyncUploadDataClient.request({
+    const uploaded = await PowerSyncPushEntryClient.request({
       backendUrl: this.backendUrl,
       crudTransaction,
     })

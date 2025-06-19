@@ -1,4 +1,4 @@
-import { s } from '../schema'
+import { s } from '../../schema'
 import { CrudTransactionEntry } from './crud-transaction-entry'
 
 const schema = s.obj({

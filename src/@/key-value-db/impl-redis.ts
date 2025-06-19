@@ -1,8 +1,7 @@
-import { Logger } from '~/@/logger'
 import type { ILogger } from '~/@/logger/interface'
-import { s } from '~/@/schema'
 import { Sleep } from '~/@/promise/sleep'
 import { Err, Ok, isErr } from '~/@/result'
+import { s } from '~/@/schema'
 import { TimeSpan } from '~/@/time/time-span'
 import { withDuration } from '~/@/time/with-duration'
 import { IRedis, newRedis } from '../redis'
@@ -19,7 +18,7 @@ export type Config = {
 let redis: IRedis
 
 export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
-  const logger = Logger.prefix('redis', config.logger)
+  const logger = config.logger.child(['redis'])
 
   redis ??= await newRedis(config.redisUrl)
 

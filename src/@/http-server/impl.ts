@@ -1,4 +1,4 @@
-import { Logger, type ILogger } from '~/@/logger'
+import { type ILogger } from '~/@/logger'
 import { HttpServerBun } from './impl-bun'
 import { HttpServerNode } from './impl-node'
 
@@ -13,7 +13,7 @@ type Config =
     }
 
 export const HttpServer = (config: Config) => {
-  const logger = Logger.prefix('backend', config.logger)
+  const logger = config.logger.child(['backend'])
   switch (config.t) {
     case 'bun': {
       return HttpServerBun<unknown>({ ...config, logger })

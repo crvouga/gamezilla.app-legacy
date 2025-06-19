@@ -1,6 +1,6 @@
 import type { AbstractPowerSyncDatabase, PowerSyncBackendConnector } from '@powersync/common'
 import { PowerSyncDatabase } from '@powersync/web'
-import { ILogger, Logger } from '~/@/logger'
+import { ILogger } from '~/@/logger'
 import { Sub } from '~/@/sub'
 import { schema } from './schema'
 
@@ -38,7 +38,7 @@ export type ConfigVariant =
 export type Config = ConfigBase & ConfigVariant
 
 export const PowerSyncClient = async (config: Config): Promise<IPowerSyncClient> => {
-  const logger = Logger.prefix('PowerSyncClient', config.logger)
+  const logger = config.logger.child(['PowerSyncClient'])
 
   const database = new PowerSyncDatabase({
     schema,

@@ -3,7 +3,6 @@ import { Err, Ok } from '~/@/result'
 import type { s } from '~/@/schema'
 import { SecretString } from '~/@/secrets/secret-string'
 import { Sql } from '~/@/sql'
-import { Logger } from '../logger'
 import type { ILogger } from '../logger/interface'
 import { Sleep } from '../promise/sleep'
 import { Sub } from '../sub'
@@ -19,7 +18,7 @@ export type Config = {
 let postgresClient: postgres.Sql<{}>
 
 export const SqlDb = async (config: Config): Promise<ISqlDb> => {
-  const logger = Logger.prefix('postgres', config.logger)
+  const logger = config.logger.child(['postgres'])
   postgresClient ??= postgres(config.databaseUrl.dangerouslyReadValue(), {
     connect_timeout: 10, // 10 seconds connection timeout
     idle_timeout: 20, // 20 seconds idle timeout

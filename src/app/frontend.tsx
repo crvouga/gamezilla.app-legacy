@@ -43,6 +43,8 @@ import { isErr } from '~/@/result'
 const initCtx = async (): Promise<FrontendCtxModule> => {
   const logger = Logger({
     t: 'console',
+    namespace: ['frontend'],
+    newLinePerMsg: true,
   })
 
   const clientSessionId = ClientSessionIdStorage().get()

@@ -1,5 +1,5 @@
 import { Hashing } from '~/@/hashing'
-import { ILogger, Logger } from '~/@/logger'
+import { ILogger } from '~/@/logger'
 import { SecretString } from '~/@/secrets/secret-string'
 import { SMS } from '~/@/sms'
 import { ISqlDb } from '~/@/sql-db'
@@ -23,7 +23,7 @@ export const VerifySMSFactory = {
    * Creates an in-house implementation of VerifySMS
    */
   createInHouse: (config: { logger: ILogger; sqlDb: ISqlDb }): IVerifySMS => {
-    const logger = Logger.prefix('verify-sms', config.logger)
+    const logger = config.logger.child(['verify-sms'])
     const hashing = Hashing({ t: 'bun' })
     const sms = SMS({ t: 'fake', logger })
     const verificationCodeGenerator = VerificationCodeGenerator({ t: 'fake', code: '123' })
@@ -50,7 +50,7 @@ export const VerifySMSFactory = {
    * Creates an in-house implementation of VerifySMS
    */
   createInHouseUnitTest: (config: { logger: ILogger }): IVerifySMS => {
-    const logger = Logger.prefix('verify-sms', config.logger)
+    const logger = config.logger.child(['verify-sms'])
     const hashing = Hashing({ t: 'bun' })
     const sms = SMS({ t: 'fake', logger })
     const verificationCodeGenerator = VerificationCodeGenerator({ t: 'fake', code: '123' })
@@ -82,7 +82,7 @@ export const VerifySMSFactory = {
     twilioAuthToken: SecretString
     twilioMessagingServiceSid: string
   }): IVerifySMS => {
-    const logger = Logger.prefix('verify-sms', config.logger)
+    const logger = config.logger.child(['verify-sms'])
     return VerifySMS({
       t: 'twilio',
       logger,
