@@ -28,22 +28,15 @@ const update: SpaceFrontendModule['update'] = (input) => {
     }
   }
 
-  switch (input.msgSpace?.t) {
-    case 'user-ended-space':
-    case 'user-inputted-game':
-    case 'user-joined-space':
-    case 'user-left-space':
-    case 'user-started-space':
-    case 'game': {
-      const spaceId = input.msgSpace.spaceId
-      const space = Spaces.toSpace(input.model.spaces, spaceId)
-      if (!space) return { model: input.model }
-      return {
-        model: input.model,
-        async eff(dispatch) {
-          upsertSpaceThrottled(input.ctx.spaceDb, spaceId, space, dispatch)
-        },
-      }
+  if (input.msgSpace) {
+    const spaceId = input.msgSpace.spaceId
+    const space = Spaces.toSpace(input.model.spaces, spaceId)
+    if (!space) return { model: input.model }
+    return {
+      model: input.model,
+      async eff(dispatch) {
+        upsertSpaceThrottled(input.ctx.spaceDb, spaceId, space, dispatch)
+      },
     }
   }
 

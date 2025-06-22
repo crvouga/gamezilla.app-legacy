@@ -1,6 +1,6 @@
 import { isErr } from '~/@/result'
 import { syncRegistry } from '~/@/sync-engine/sync'
-import { SyncEngine } from '~/@/sync-engine/sync-engine'
+import { SyncEngine } from '~/@/sync-engine/interface'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Ctx } from '../@/backend/ctx'

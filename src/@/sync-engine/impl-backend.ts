@@ -1,27 +1,16 @@
 import { ILogger } from '../logger'
-import { isErr, Ok, Result } from '../result'
-import { UnixMs } from '../time/unix-ms'
-import { ClientSessionId } from '../wire/client-session-id'
-import { SessionId } from '../wire/session-id'
-import { CrudTransaction } from './crud-transaction/crud-transaction'
+import { isErr, Ok } from '../result'
 import { ISync } from './sync'
+import { ISyncEngine } from './interface'
 
-export type ISyncEngine = {
-  push(input: {
-    sessionId: SessionId
-    clientSessionId: ClientSessionId
-    crudTransaction: CrudTransaction
-  }): Promise<Result<string, null>>
-  pull(input: {
-    sessionId: SessionId
-    clientSessionId: ClientSessionId
-    query: unknown
-    lastPulledAt: UnixMs
-  }): Promise<Result<string, CrudTransaction>>
+export type Config = {
+  t: 'backend'
+  syncRegistry: Iterable<ISync>
+  logger: ILogger
 }
 
-export const SyncEngine = (config: { syncRegistry: Iterable<ISync>; logger: ILogger }): ISyncEngine => {
-  const logger = config.logger.child(['sync-engine'])
+export const SyncEngineBackend = (config: Config): ISyncEngine => {
+  const logger = config.logger.child(['impl-backend'])
 
   return {
     async push(input) {

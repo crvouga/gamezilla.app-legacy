@@ -3,8 +3,8 @@ import { Ok } from '~/@/result'
 import { Logger } from '../logger'
 import { ClientSessionId } from '../wire/client-session-id'
 import { SessionId } from '../wire/session-id'
+import { SyncEngine } from './impl'
 import { ISync } from './sync'
-import { SyncEngine } from './sync-engine'
 
 const Fixture = () => {
   const sessionId = SessionId.generate()
@@ -13,6 +13,7 @@ const Fixture = () => {
   const syncRegistry = new Set<ISync>()
 
   const syncEngine = SyncEngine({
+    t: 'backend',
     logger,
     syncRegistry,
   })
@@ -20,8 +21,8 @@ const Fixture = () => {
   return { sessionId, clientSessionId, logger, syncEngine, syncRegistry }
 }
 
-describe('uploadData', () => {
-  it('should upload data', async () => {
+describe('SyncEngine', () => {
+  it('should work', async () => {
     const f = Fixture()
     const pushed = await f.syncEngine.push({
       sessionId: f.sessionId,
