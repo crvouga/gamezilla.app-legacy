@@ -62,8 +62,8 @@ export const WithCache = ({ userSessionDb, keyValueDb }: Config): IUserSessionDb
       return queried
     },
 
-    async insert(userSession) {
-      const queried = await userSessionDb.insert(userSession)
+    async upsert(userSession) {
+      const queried = await userSessionDb.upsert(userSession)
 
       if (isOk(queried) && userSession.sessionId) {
         await userIdBySessionId.set(userSession.sessionId, userSession.userId)
@@ -109,6 +109,12 @@ export const WithCache = ({ userSessionDb, keyValueDb }: Config): IUserSessionDb
 
     async zapByClientSessionId(clientSessionId) {
       const queried = await userSessionDb.zapByClientSessionId(clientSessionId)
+
+      return queried
+    },
+
+    async update(input) {
+      const queried = await userSessionDb.update(input)
 
       return queried
     },

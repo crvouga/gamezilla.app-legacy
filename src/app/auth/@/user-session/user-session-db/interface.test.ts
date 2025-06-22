@@ -23,7 +23,7 @@ const Fixture = async (config: Config) => {
     UserSession.random(),
   ]
   for (const session of sessions) {
-    await userSessionDb.insert(session)
+    await userSessionDb.upsert(session)
   }
   return {
     userSessionDb,
@@ -36,13 +36,17 @@ const Fixtures = async () => {
   const f = await FixtureAppBackend()
   const configs: Config[] = []
 
-  configs.push({ t: 'in-memory', simulateLatency: async () => {}, logger: Logger({ t: 'noop' }) })
+  configs.push({
+    t: 'in-memory',
+    simulateLatency: async () => {},
+    logger: Logger({ t: 'noop' }),
+  })
 
   configs.push({
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
     logger: Logger({ t: 'noop' }),
-    createTable: true,
+    shouldCreateTable: true,
   })
 
   if (f.t === 'integration') {
@@ -50,14 +54,17 @@ const Fixtures = async () => {
       t: 'sql',
       sqlDb: f.sqlDbPostgres,
       logger: Logger({ t: 'noop' }),
-      createTable: false,
+      shouldCreateTable: false,
     })
 
     configs.push({
       t: 'sql-with-cache',
       keyValueDb: f.keyValueDbHashMap,
       sqlDb: f.sqlDbPostgres,
-      pubSubTopicBased: await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() }),
+      pubSubTopicBased: await PubSubTopicBased({
+        t: 'in-memory',
+        subscribersByTopic: new Map(),
+      }),
       logger: Logger({ t: 'noop' }),
     })
   }
@@ -72,7 +79,7 @@ describe('Test', () => {
       if (!userSession.sessionId) throw new Error('test setup failed')
 
       const before = await f.userSessionDb.findUserIdBySessionId(userSession.sessionId)
-      const inserted = await f.userSessionDb.insert(userSession)
+      const inserted = await f.userSessionDb.upsert(userSession)
       const after = await f.userSessionDb.findUserIdBySessionId(userSession.sessionId)
       expect(unwrap(before)).toBe(null)
       expect(unwrap(inserted)).toBe(null)
@@ -160,9 +167,9 @@ describe('Test', () => {
           userId,
           createdAt: UnixMs.future(UnixMs.now(), TimeSpan.seconds(i)),
         })
-        await f.userSessionDb.insert(session)
+        await f.userSessionDb.upsert(session)
         expected.push(session)
-        await f.userSessionDb.insert(UserSession.random())
+        await f.userSessionDb.upsert(UserSession.random())
       }
 
       expected.sort((a, b) => a.createdAt - b.createdAt)
@@ -222,9 +229,9 @@ describe('Test', () => {
           sessionId,
           createdAt: UnixMs.future(UnixMs.now(), TimeSpan.seconds(i)),
         })
-        await f.userSessionDb.insert(session)
+        await f.userSessionDb.upsert(session)
         expected.push(session)
-        await f.userSessionDb.insert(UserSession.random())
+        await f.userSessionDb.upsert(UserSession.random())
       }
 
       expected.sort((a, b) => a.createdAt - b.createdAt)
@@ -260,6 +267,62 @@ describe('Test', () => {
     }
   })
 
+  test('upsert should insert if not exists', async () => {
+    for (const f of await Fixtures()) {
+      const session = UserSession.random()
+      const inserted = await f.userSessionDb.upsert(session)
+      const before = await f.userSessionDb.query({
+        whereAnd: { userId: { equals: session.userId } },
+        order: {},
+        pagination: { limit: 1, offset: 0 },
+      })
+      const sessionNew: UserSession = {
+        ...session,
+        clientSessionId: ClientSessionId.generate(),
+      }
+      const updated = await f.userSessionDb.upsert(sessionNew)
+      const after = await f.userSessionDb.query({
+        whereAnd: { userId: { equals: session.userId } },
+        order: {},
+        pagination: { limit: 1, offset: 0 },
+      })
+      expect(unwrap(inserted)).toBe(null)
+      expect(unwrap(updated)).toBe(null)
+      expect(unwrap(before).items).toEqual([session])
+      expect(unwrap(after).items).toEqual([sessionNew])
+    }
+  })
+
+  test('update should modify specified fields', async () => {
+    for (const f of await Fixtures()) {
+      const session = UserSession.random()
+      await f.userSessionDb.upsert(session)
+
+      const updates = {
+        clientSessionId: ClientSessionId.generate(),
+        sessionId: session.sessionId,
+        userId: session.userId,
+      }
+
+      const updated = await f.userSessionDb.update({
+        userSessionId: session.userSessionId,
+        updates,
+      })
+
+      const result = await f.userSessionDb.query({
+        whereAnd: { userSessionId: { equals: session.userSessionId } },
+        order: {},
+        pagination: { limit: 1, offset: 0 },
+      })
+
+      expect(unwrap(updated)).toBe(null)
+      expect(unwrap(result).items[0]).toEqual({
+        ...session,
+        ...updates,
+      })
+    }
+  })
+
   test('query equals clientSessionId', async () => {
     for (const f of await Fixtures()) {
       const clientSessionId = ClientSessionId.generate()
@@ -284,9 +347,9 @@ describe('Test', () => {
           clientSessionId,
           createdAt: UnixMs.future(UnixMs.now(), TimeSpan.seconds(i)),
         })
-        await f.userSessionDb.insert(session)
+        await f.userSessionDb.upsert(session)
         expected.push(session)
-        await f.userSessionDb.insert(UserSession.random())
+        await f.userSessionDb.upsert(UserSession.random())
       }
 
       expected.sort((a, b) => a.createdAt - b.createdAt)

@@ -156,6 +156,7 @@ const space_projection = new Table(
     indexes: {
       idx_space_projection_host_user_id: ['host_user_id'],
     },
+    localOnly: true,
   },
 )
 
@@ -169,6 +170,7 @@ const space_projection_user = new Table(
     indexes: {
       idx_space_projection_user_space_id: ['space_id'],
     },
+    localOnly: true,
   },
 )
 

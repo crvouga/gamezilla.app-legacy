@@ -55,7 +55,7 @@ const respond = async (input: { req: Request; ctx: Ctx; logger: ILogger }) => {
     if (isErr(guestUserId)) {
       logger.warn('CredentialsBackend: Invalid or missing guest user ID')
       return ErrResponse(401, {
-        message: 'No user id found to be associated with the request session ID',
+        message: 'No user id found to be associated with the request session ID and no guest user ID provided',
       })
     }
 

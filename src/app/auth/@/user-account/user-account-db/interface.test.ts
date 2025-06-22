@@ -3,7 +3,7 @@ import { PhoneNumber } from '~/@/phone-number'
 import { Ok, Result, unwrap } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import type { UserAccount } from '~/app/@/data/user-account'
+import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { Impl, UserAccountDb } from './impl'
 
@@ -18,7 +18,10 @@ const Fixtures = async () => {
   const f = await FixtureAppBackend()
   const configs: Impl[] = []
 
-  // configs.push({ t: 'in-memory', async delay() {} })
+  configs.push({
+    t: 'in-memory',
+    simulateLatency: async () => {},
+  })
 
   configs.push({
     t: 'with-sql-tables',
@@ -36,7 +39,7 @@ const Fixtures = async () => {
 describe('Test', () => {
   it('should be able to insert accounts', async () => {
     for (const f of await Fixtures()) {
-      const inserted = await f.userAccountDb.insert({
+      const inserted = await f.userAccountDb.upsert({
         userId: UserId.generate(),
         role: 'guest',
         createdAt: UnixMs.now({
@@ -58,7 +61,7 @@ describe('Test', () => {
         }),
         phoneNumber: null,
       }
-      await f.userAccountDb.insert(account)
+      await f.userAccountDb.upsert(account)
       const found = await f.userAccountDb.findOneByUserId({
         userId: account.userId,
       })
@@ -78,29 +81,12 @@ describe('Test', () => {
           precision: 'seconds',
         }),
       }
-      const insert = await f.userAccountDb.insert(account)
+      const insert = await f.userAccountDb.upsert(account)
       expect(insert.t).toBe('ok')
       const found = await f.userAccountDb.findOneByPhoneNumber({
         phoneNumber,
       })
       expect(found).toEqual(Ok(account))
-    }
-  })
-
-  it('should error if after inserting an existing account', async () => {
-    for (const f of await Fixtures()) {
-      const account: UserAccount = {
-        userId: UserId.generate(),
-        role: 'guest',
-        createdAt: UnixMs.now({
-          precision: 'seconds',
-        }),
-        phoneNumber: null,
-      }
-      const insertBefore = await f.userAccountDb.insert(account)
-      const insert = await f.userAccountDb.insert(account)
-      expect(unwrap(insertBefore)).toBe(null)
-      expect(insert).not.toEqual(Ok(null))
     }
   })
 
@@ -122,20 +108,25 @@ describe('Test', () => {
     }
   })
 
-  it('should error if inserting an account with the same user id twice', async () => {
+  it('should upsert an account', async () => {
     for (const f of await Fixtures()) {
-      const userId = UserId.generate()
-      const account: UserAccount = {
-        userId,
-        role: 'guest',
-        createdAt: UnixMs.now({
-          precision: 'seconds',
-        }),
-        phoneNumber: null,
+      const account = UserAccount.random()
+      const inserted = await f.userAccountDb.upsert(account)
+      const before = await f.userAccountDb.findOneByUserId({
+        userId: account.userId,
+      })
+      const accountNew: UserAccount = {
+        ...account,
+        phoneNumber: PhoneNumber.random(),
       }
-      await f.userAccountDb.insert(account)
-      const insert = await f.userAccountDb.insert(account)
-      expect(insert.t).toBe('err')
+      const updated = await f.userAccountDb.upsert(accountNew)
+      const found = await f.userAccountDb.findOneByUserId({
+        userId: accountNew.userId,
+      })
+      expect(unwrap(inserted)).toBe(null)
+      expect(unwrap(before)).toEqual(account)
+      expect(unwrap(updated)).toBe(null)
+      expect(unwrap(found)).toEqual(accountNew)
     }
   })
 })

@@ -1,9 +1,9 @@
 import * as ImplHashMap from './impl-hash-map'
 import * as ImplSql from './impl-sql'
-import * as ImplWithSqlTables from './impl-with-sql-tables'
+
 import { IGuestSessionMappingDb } from './interface'
 
-export type Config = ImplHashMap.Config | ImplSql.Config | ImplWithSqlTables.Config
+export type Config = ImplHashMap.Config | ImplSql.Config
 
 export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb => {
   switch (config.t) {
@@ -13,10 +13,6 @@ export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb =>
 
     case 'sql': {
       return ImplSql.GuestSessionMappingDb(config)
-    }
-
-    case 'with-sql-tables': {
-      return ImplWithSqlTables.GuestSessionMappingDb(config)
     }
   }
 }

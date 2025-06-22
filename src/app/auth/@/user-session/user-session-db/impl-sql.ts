@@ -1,6 +1,6 @@
 import { pipe } from '~/@/function/pipe'
 import { ILogger } from '~/@/logger'
-import { Result, unwrapOr } from '~/@/result'
+import { isErr, Result, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
@@ -50,7 +50,7 @@ export type Config = {
   t: 'sql'
   sqlDb: ISqlDb
   logger: ILogger
-  createTable: boolean
+  shouldCreateTable: boolean
 }
 
 const CREATE_TABLE_SQL: string[] = [
@@ -68,7 +68,7 @@ const CREATE_TABLE_SQL: string[] = [
 
 export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
   const logger = config.logger.child(['impl-sql'])
-  if (config.createTable) {
+  if (config.shouldCreateTable) {
     for (const query of CREATE_TABLE_SQL) {
       sqlDb.query({ schema: s.unknown, sql: query, vars: {} }).then(() => {
         //
@@ -105,27 +105,42 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
       })
     },
 
-    async insert(userSession) {
+    async upsert(userSession) {
       logger.debug(
         `insert: userSession=${userSession.userSessionId} sessionId=${userSession.sessionId} clientSessionId=${userSession.clientSessionId} userId=${userSession.userId}`,
       )
-      const queried = await sqlDb.query({
+
+      const existing = await this.query({
+        whereAnd: {
+          userSessionId: {
+            equals: userSession.userSessionId,
+          },
+        },
+        order: {},
+        pagination: { limit: 1, offset: 0 },
+      })
+
+      if (isErr(existing)) {
+        return existing
+      }
+
+      if (existing.value.items.length > 0) {
+        const updated = await sqlDb.query({
+          schema: Row,
+          sql: `UPDATE user_session SET session_id = :session_id, client_session_id = :client_session_id, user_id = :user_id WHERE id = :id`,
+          vars: {
+            id: userSession.userSessionId,
+            session_id: userSession.sessionId,
+            client_session_id: userSession.clientSessionId,
+            user_id: userSession.userId,
+          },
+        })
+        return Result.mapOk(updated, () => null)
+      }
+
+      const inserted = await sqlDb.query({
         schema: Row,
-        sql: `
-          INSERT INTO user_session (
-            id,
-            session_id,
-            client_session_id,
-            user_id,
-            created_at_unix_ms
-          ) VALUES (
-            :id,
-            :session_id,
-            :client_session_id,
-            :user_id,
-            :created_at_unix_ms
-          )
-        `,
+        sql: `INSERT INTO user_session (id, session_id, client_session_id, user_id, created_at_unix_ms) VALUES (:id, :session_id, :client_session_id, :user_id, :created_at_unix_ms)`,
         vars: {
           id: userSession.userSessionId,
           session_id: userSession.sessionId,
@@ -134,7 +149,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
           created_at_unix_ms: userSession.createdAt,
         },
       })
-      return Result.mapOk(queried, () => null)
+      return Result.mapOk(inserted, () => null)
     },
 
     async zapByUserId(userId) {
@@ -161,6 +176,32 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
         },
       })
       return Result.mapOk(queried, () => null)
+    },
+
+    async update(input) {
+      const sql: string[] = []
+      const sqlVars: Sql.Vars = {}
+      if (input.updates.sessionId) {
+        sql.push('session_id = :session_id')
+        sqlVars.session_id = input.updates.sessionId
+      }
+      if (input.updates.clientSessionId) {
+        sql.push('client_session_id = :client_session_id')
+        sqlVars.client_session_id = input.updates.clientSessionId
+      }
+      if (input.updates.userId) {
+        sql.push('user_id = :user_id')
+        sqlVars.user_id = input.updates.userId
+      }
+      const updated = await sqlDb.query({
+        schema: Row,
+        sql: `UPDATE user_session SET ${sql.join(', ')} WHERE id = :id`,
+        vars: {
+          id: input.userSessionId,
+          ...sqlVars,
+        },
+      })
+      return Result.mapOk(updated, () => null)
     },
 
     async query(input) {
@@ -223,6 +264,11 @@ const queryToSql = (query: UserSessionDbQuery) => {
   const vars: Sql.Vars = {}
 
   whereClauses.push('ended_at_unix_ms IS NULL')
+
+  if (query.whereAnd.userSessionId?.equals) {
+    whereClauses.push('id = :user_session_id')
+    vars.user_session_id = query.whereAnd.userSessionId.equals
+  }
 
   if (query.whereAnd.userId?.equals) {
     whereClauses.push('user_id = :user_id')

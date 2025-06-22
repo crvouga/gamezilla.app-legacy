@@ -22,16 +22,15 @@ const Fixtures = async () => {
   configs.push({
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
-  })
-
-  configs.push({
-    t: 'with-sql-tables',
-    sqlDb: f.sqlDbSqlite,
-    guestSessionMappingDb: GuestSessionMappingDb({ t: 'sql', sqlDb: f.sqlDbSqlite }),
+    shouldCreateTables: true,
   })
 
   if (f.t === 'integration') {
-    configs.push({ t: 'sql', sqlDb: f.sqlDbPostgres })
+    configs.push({
+      t: 'sql',
+      sqlDb: f.sqlDbPostgres,
+      shouldCreateTables: false,
+    })
   }
 
   return Promise.all(configs.map(Fixture))
@@ -46,7 +45,7 @@ describe('Test', () => {
 
       const before = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(guestSessionMapping.sessionId))
 
-      unwrap(await f.guestSessionMappingDb.insert(guestSessionMapping))
+      unwrap(await f.guestSessionMappingDb.upsert(guestSessionMapping))
 
       const after = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(guestSessionMapping.sessionId))
 
@@ -62,19 +61,19 @@ describe('Test', () => {
       const sessionIdC = SessionId.generate()
       const guestUserId = UserId.generate()
 
-      await f.guestSessionMappingDb.insert(
+      await f.guestSessionMappingDb.upsert(
         GuestSessionMapping.random({
           guestUserId,
           sessionId: sessionIdA,
         }),
       )
-      await f.guestSessionMappingDb.insert(
+      await f.guestSessionMappingDb.upsert(
         GuestSessionMapping.random({
           guestUserId,
           sessionId: sessionIdB,
         }),
       )
-      await f.guestSessionMappingDb.insert(
+      await f.guestSessionMappingDb.upsert(
         GuestSessionMapping.random({
           guestUserId,
           sessionId: sessionIdC,
@@ -88,6 +87,24 @@ describe('Test', () => {
       expect(userIdA).toBe(guestUserId)
       expect(userIdB).toBe(guestUserId)
       expect(userIdC).toBe(guestUserId)
+    }
+  })
+
+  it('should upsert correctly', async () => {
+    for (const f of await Fixtures()) {
+      const guestSessionMapping = GuestSessionMapping.random()
+      const inserted = await f.guestSessionMappingDb.upsert(guestSessionMapping)
+      const before = await f.guestSessionMappingDb.findUserIdByClientSessionId(guestSessionMapping.clientSessionId)
+      const guestSessionMappingNew: GuestSessionMapping = {
+        ...guestSessionMapping,
+        guestUserId: UserId.generate(),
+      }
+      const updated = await f.guestSessionMappingDb.upsert(guestSessionMappingNew)
+      const after = await f.guestSessionMappingDb.findUserIdByClientSessionId(guestSessionMappingNew.clientSessionId)
+      expect(unwrap(inserted)).toBe(null)
+      expect(unwrap(before)).toEqual(guestSessionMapping.guestUserId)
+      expect(unwrap(updated)).toBe(null)
+      expect(unwrap(after)).toEqual(guestSessionMappingNew.guestUserId)
     }
   })
 })

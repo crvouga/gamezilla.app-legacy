@@ -82,11 +82,11 @@ const continueAsGuest = async (input: {
     sessionId: null,
   }
 
-  const inserted = await input.ctx.guestSessionMappingDb.insert(guestSessionMappingNew)
+  const inserted = await input.ctx.guestSessionMappingDb.upsert(guestSessionMappingNew)
 
   if (isErr(inserted)) return inserted
 
-  const insertedAccount = existingGuestAccount ? Ok(null) : await input.ctx.userAccountDb.insert(guestAccount)
+  const insertedAccount = existingGuestAccount ? Ok(null) : await input.ctx.userAccountDb.upsert(guestAccount)
 
   if (isErr(insertedAccount)) return insertedAccount
 
@@ -99,7 +99,7 @@ const continueAsGuest = async (input: {
     endedAt: null,
   }
 
-  const insertedSession = await input.ctx.userSessionDb.insert(userSessionNew)
+  const insertedSession = await input.ctx.userSessionDb.upsert(userSessionNew)
 
   if (isErr(insertedSession)) return insertedSession
 

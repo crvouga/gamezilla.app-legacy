@@ -2,9 +2,13 @@ import { Pagination } from '~/@/query/query'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import { UserId } from '~/app/@/data/user-id'
+import { UserSessionId } from '../user-session-id'
 
 export type UserSessionDbQuery = {
   whereAnd: {
+    userSessionId?: {
+      equals: UserSessionId
+    }
     userId?: {
       equals: UserId
     }

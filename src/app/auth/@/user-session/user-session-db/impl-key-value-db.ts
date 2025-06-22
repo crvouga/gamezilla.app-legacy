@@ -79,7 +79,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       return Ok(got?.user_id ?? null)
     },
 
-    async insert(input) {
+    async upsert(input) {
       const all = await getAll()
       all.push(userSessionToRow(input))
       await allIds.set(
@@ -124,7 +124,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
         logger: config.logger,
       })
       for (const row of all) {
-        await db.insert(rowToUserSession(row))
+        await db.upsert(rowToUserSession(row))
       }
       return db.query(input)
     },

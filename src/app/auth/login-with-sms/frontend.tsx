@@ -186,7 +186,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       return {
         model: modelNew,
         async eff(_dispatch) {
-          await Promise.all([input.ctx.userSessionDb.insert(userSession), input.ctx.userAccountDb.insert(userAccount)])
+          await Promise.all([input.ctx.userSessionDb.upsert(userSession), input.ctx.userAccountDb.upsert(userAccount)])
         },
       }
     }

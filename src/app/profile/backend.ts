@@ -1,4 +1,4 @@
-import { syncRegistry } from '~/@/sync-engine/sync'
+import { SYNC_REGISTRY } from '~/@/sync-engine/sync'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { ProfileBackendCtx } from './@/backend/ctx'
 import { ProfileDb } from './@/user-profile/user-profile-db/impl'
@@ -11,7 +11,7 @@ const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<ProfileBacken
     sqlDb: input.ctx.sqlDb,
   })
 
-  syncRegistry.add(UserProfileSync({ profileDb }))
+  SYNC_REGISTRY.add(UserProfileSync({ profileDb }))
 
   return {
     ...input.ctx,

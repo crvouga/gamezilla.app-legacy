@@ -1,5 +1,5 @@
-import { Uuid } from '~/@/id/uuid'
 import type { Brand } from '~/@/brand/brand'
+import { Uuid } from '~/@/id/uuid'
 import { s } from '~/@/schema'
 
 export type GuestSessionMappingId = Brand<string, 'GuestSessionMappingId'>

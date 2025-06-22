@@ -55,7 +55,7 @@ describe('LoginWithSMSBackend', () => {
   it('should use existing account on verification', async () => {
     const f = await Fixture()
     const userAccount = UserAccount.randomNormal()
-    unwrap(await f.ctx.userAccountDb.insert(userAccount))
+    unwrap(await f.ctx.userAccountDb.upsert(userAccount))
     unwrap(await LoginWithSMSBackend.sendCode({ ...f, phoneNumber: userAccount.phoneNumber }))
     const result = unwrap(
       await LoginWithSMSBackend.verifyCode({
@@ -72,7 +72,7 @@ describe('LoginWithSMSBackend', () => {
   it.todo('should use existing profile on verification', async () => {
     const f = await Fixture()
     const userAccount = UserAccount.randomNormal()
-    unwrap(await f.ctx.userAccountDb.insert(userAccount))
+    unwrap(await f.ctx.userAccountDb.upsert(userAccount))
     const userProfile = await UserProfile.random()
     unwrap(await f.ctx.userProfileDb.put(userProfile))
     unwrap(await LoginWithSMSBackend.sendCode({ ...f, phoneNumber: userAccount.phoneNumber }))

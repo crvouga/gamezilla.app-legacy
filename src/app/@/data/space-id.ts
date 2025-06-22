@@ -8,8 +8,7 @@ const namespace = 'space'
 const separator = ':'
 
 const is = (id: unknown): id is SpaceId => {
-  // todo: bun-sqlite validation
-  return typeof id === 'string'
+  return typeof id === 'string' && id.startsWith(namespace)
 }
 const schema = s.custom(is, 'Invalid space id')
 

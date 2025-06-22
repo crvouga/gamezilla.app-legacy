@@ -1,8 +1,8 @@
-import { Err, Ok } from '~/@/result'
-import type { UserId } from '~/app/@/data/user-id'
-import type { UserAccount } from '~/app/@/data/user-account'
-import type { IUserAccountDb } from './interface'
 import { PhoneNumber } from '~/@/phone-number'
+import { Ok } from '~/@/result'
+import type { UserAccount } from '~/app/@/data/user-account'
+import type { UserId } from '~/app/@/data/user-id'
+import type { IUserAccountDb } from './interface'
 
 export type Config = {
   t: 'in-memory'
@@ -34,12 +34,8 @@ export const UserAccountDb = (config: Config): IUserAccountDb => {
       return Ok(null)
     },
 
-    async insert(input) {
+    async upsert(input) {
       await config.simulateLatency()
-      const existing = accounts.get(input.userId)
-      if (existing) {
-        return Err('Can not insert account that already exists.')
-      }
       accounts.set(input.userId, input)
       return Ok(null)
     },

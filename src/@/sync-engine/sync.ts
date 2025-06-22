@@ -22,4 +22,4 @@ export type ISync = {
   }): Promise<Result<string, CrudTransaction>>
 }
 
-export const syncRegistry = new Set<ISync>()
+export const SYNC_REGISTRY = new Set<ISync>()

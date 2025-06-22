@@ -36,6 +36,7 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
   async fetchCredentials(): Promise<PowerSyncCredentials | null> {
     try {
       this.logger.info('BackendConnector: Fetching credentials from', this.backendUrl)
+
       const guestUserId = await this.getGuestUserId()
 
       const got = await PowerSyncCredentialsClient.request({
@@ -69,12 +70,11 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
       return
     }
 
-    this.logger.info('crudTransaction', crudTransaction)
-
     const uploaded = await PowerSyncUploadDataClient.request({
       backendUrl: this.backendUrl,
       clientSessionId: this.clientSessionId,
       crudTransaction,
+      logger: this.logger,
     })
 
     if (isErr(uploaded)) {
@@ -82,7 +82,7 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
       return
     }
 
-    this.logger.warn('marking transaction as complete')
+    this.logger.debug('marking transaction as complete')
 
     crudTransaction.complete()
   }

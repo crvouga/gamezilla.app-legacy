@@ -19,7 +19,7 @@ export const GuestSessionMappingDb = (_config: Config): IGuestSessionMappingDb =
       }
       return Ok(hits.map((hit) => hit.guestUserId)[0] ?? null)
     },
-    async insert(input) {
+    async upsert(input) {
       guestSessionMappings.set(input.id, input)
       return Ok(null)
     },

@@ -122,13 +122,37 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
 
       return account
     },
-    async insert(input) {
-      const row = {
-        created_at_unix_ms: input.createdAt,
-        id: input.userId,
-        user_role: input.role,
-        phone_number: input.phoneNumber ? PhoneNumber.toString(input.phoneNumber) : null,
+    async upsert(input) {
+      const existing = await this.findOneByUserId({
+        userId: input.userId,
+      })
+
+      if (isErr(existing)) {
+        return existing
       }
+
+      if (existing.value) {
+        const updated = await sqlDb.query({
+          schema: s.unknown,
+          sql: `
+          UPDATE user_account SET
+          phone_number = :phone_number,
+          user_role = :user_role,
+          id = :id,
+          created_at_unix_ms = :created_at_unix_ms
+          WHERE id = :id
+          `,
+          vars: {
+            created_at_unix_ms: input.createdAt,
+            id: input.userId,
+            user_role: input.role,
+            phone_number: input.phoneNumber ? PhoneNumber.toString(input.phoneNumber) : null,
+          },
+        })
+
+        return Result.mapOk(updated, () => null)
+      }
+
       const inserted = await sqlDb.query({
         schema: s.unknown,
         sql: `
@@ -144,7 +168,12 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
 					:id,
 					:created_at_unix_ms
 				)`,
-        vars: row,
+        vars: {
+          created_at_unix_ms: input.createdAt,
+          id: input.userId,
+          user_role: input.role,
+          phone_number: input.phoneNumber ? PhoneNumber.toString(input.phoneNumber) : null,
+        },
       })
       return Result.mapOk(inserted, () => null)
     },

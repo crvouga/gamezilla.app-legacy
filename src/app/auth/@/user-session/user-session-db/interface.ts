@@ -6,6 +6,7 @@ import type { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import { UserSessionDbQuery } from './interface-query'
 import { ClientSessionId } from '~/@/wire/client-session-id'
+import { UserSessionId } from '../user-session-id'
 
 export type IUserSessionDb = {
   findSessionIdsByUserId: (userId: UserId) => Promise<Result<string, SessionId[]>>
@@ -16,7 +17,9 @@ export type IUserSessionDb = {
 
   sub: (input: UserSessionDbQuery) => Sub<UserSession[]>
 
-  insert: (input: UserSession) => Promise<Result<string, null>>
+  upsert: (input: UserSession) => Promise<Result<string, null>>
+
+  update: (input: { userSessionId: UserSessionId; updates: Partial<UserSession> }) => Promise<Result<string, null>>
 
   zapByUserId: (userId: UserId) => Promise<Result<string, null>>
 

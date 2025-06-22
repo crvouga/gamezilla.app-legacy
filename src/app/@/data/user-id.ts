@@ -5,9 +5,8 @@ import { s } from '~/@/schema'
 export type UserId = Brand<string, 'UserId'>
 
 const is = (userId: unknown): userId is UserId => {
-  return typeof userId === 'string'
+  return typeof userId === 'string' && userId.startsWith('user:')
 }
-
 const schema = s.custom(is, 'Invalid user id')
 
 const namespace = 'user'

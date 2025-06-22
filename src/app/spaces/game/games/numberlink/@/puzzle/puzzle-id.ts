@@ -8,7 +8,7 @@ const namespace = 'game-numberlink-puzzle'
 const separator = ':'
 
 const is = (maybePuzzleId: unknown): maybePuzzleId is PuzzleId => {
-  return typeof maybePuzzleId === 'string' && maybePuzzleId.trim().length > 0
+  return typeof maybePuzzleId === 'string' && maybePuzzleId.startsWith(namespace)
 }
 
 const schema = s.custom(is, 'Invalid flow puzzle id')

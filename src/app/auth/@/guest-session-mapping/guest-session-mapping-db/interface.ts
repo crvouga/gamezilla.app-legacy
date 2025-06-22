@@ -7,5 +7,5 @@ import { GuestSessionMapping } from '../guest-session-mapping'
 export type IGuestSessionMappingDb = {
   findUserIdBySessionId: (sessionId: SessionId) => Task<string, UserId | null>
   findUserIdByClientSessionId: (clientSessionId: ClientSessionId) => Task<string, UserId | null>
-  insert: (input: GuestSessionMapping) => Task<string, null>
+  upsert: (input: GuestSessionMapping) => Task<string, null>
 }

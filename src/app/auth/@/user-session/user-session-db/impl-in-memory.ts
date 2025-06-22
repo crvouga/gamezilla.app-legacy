@@ -1,12 +1,12 @@
+import { ILogger } from '~/@/logger'
 import { Sleep } from '~/@/promise/sleep'
 import { Ok } from '~/@/result'
+import { Sub } from '~/@/sub'
+import { TimeSpan } from '~/@/time/time-span'
 import type { SessionId } from '~/@/wire/session-id'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import type { IUserSessionDb } from './interface'
-import { Sub } from '~/@/sub'
-import { TimeSpan } from '~/@/time/time-span'
-import { ILogger } from '~/@/logger'
 const userSessions = new Map<string, UserSession>()
 
 export type Config = {
@@ -29,9 +29,23 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       const hits = Array.from(userSessions.values()).filter((userSession) => userSession.sessionId === sessionId)
       return Ok(hits[0]?.userId ?? null)
     },
-    async insert(input) {
+    async upsert(input) {
       await config.simulateLatency(TimeSpan.milliseconds(100))
       userSessions.set(input.userSessionId, input)
+      return Ok(null)
+    },
+    async update(input) {
+      await config.simulateLatency(TimeSpan.milliseconds(100))
+      const existing = userSessions.get(input.userSessionId)
+      if (!existing) {
+        return Ok(null)
+      }
+      delete input.updates.createdAt
+      delete input.updates.userSessionId
+      userSessions.set(input.userSessionId, {
+        ...existing,
+        ...input.updates,
+      })
       return Ok(null)
     },
     async zapByUserId(userId) {

@@ -112,7 +112,7 @@ const verifyCode = async (
 
   const account: UserAccount = foundAccount.value ?? accountNew
 
-  const insertedAccount = foundAccount.value ? Ok(null) : await input.ctx.userAccountDb.insert(account)
+  const insertedAccount = foundAccount.value ? Ok(null) : await input.ctx.userAccountDb.upsert(account)
 
   if (isErr(insertedAccount)) {
     input.ctx.logger.error(`Failed to insert new account: ${insertedAccount.error}`)
@@ -160,7 +160,7 @@ const verifyCode = async (
     endedAt: null,
   }
 
-  const insertedSession = await input.ctx.userSessionDb.insert(userSessionNew)
+  const insertedSession = await input.ctx.userSessionDb.upsert(userSessionNew)
 
   if (isErr(insertedSession)) {
     input.ctx.logger.error(`Failed to insert new session: ${insertedSession.error}`)

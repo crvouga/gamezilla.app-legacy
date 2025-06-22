@@ -16,12 +16,13 @@ const init = async (input: { ctx: AppFrontendCtxBase }): Promise<AuthFrontendCtx
     guestSessionMappingDb: GuestSessionMappingDb({
       t: 'sql',
       sqlDb: input.ctx.sqlDb,
+      shouldCreateTables: false,
     }),
     userSessionDb: await UserSessionDb({
       t: 'sql',
       sqlDb: input.ctx.sqlDb,
       logger: input.ctx.logger,
-      createTable: false,
+      shouldCreateTable: false,
     }),
     userAccountDb: UserAccountDb({
       t: 'sql',

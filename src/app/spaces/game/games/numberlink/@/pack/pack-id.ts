@@ -9,8 +9,8 @@ const generate = () => {
   return `game-numberlink-pack:${Uuid.generate()}` as PackId
 }
 
-const is = (flowPackId: unknown): flowPackId is PackId => {
-  return typeof flowPackId === 'string'
+const is = (id: unknown): id is PackId => {
+  return typeof id === 'string' && id.startsWith('game-numberlink-pack:')
 }
 
 export const PackId = {
