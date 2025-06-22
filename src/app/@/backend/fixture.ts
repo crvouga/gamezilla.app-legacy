@@ -3,7 +3,6 @@ import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { ILogger } from '~/@/logger'
 import { Logger } from '~/@/logger'
 import { IPubSubTopicBased, PubSubTopicBased } from '~/@/pub-sub-topic-based'
-import { REDIS_URL } from '~/@/redis'
 import type { IRuntime } from '~/@/runtime'
 import { Runtime } from '~/@/runtime'
 import { type ISqlDb } from '~/@/sql-db'
@@ -32,7 +31,6 @@ export type IFixtureAppBackendUnit = {
 export type IFixtureAppBackendIntegration = Omit<IFixtureAppBackendUnit, 't'> & {
   t: 'integration'
   sqlDbPostgres: ISqlDb
-  keyValueDbRedis: IKeyValueDb
   keyValueDbPostgres: IKeyValueDb
   keyValueDbSqlite: IKeyValueDb
 }
@@ -99,13 +97,6 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     simulateLatency: async () => {},
   })
 
-  const keyValueDbRedis = await KeyValueDb({
-    t: 'redis',
-    logger,
-    redisUrl: REDIS_URL(),
-    simulateLatency: async () => {},
-  })
-
   const keyValueDbPostgres = await KeyValueDb({
     t: 'sql-db',
     sqlDb: sqlDbPostgres,
@@ -119,9 +110,9 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   })
 
   const pubSubTopicBased = await PubSubTopicBased({
-    t: 'redis',
+    t: 'postgres',
     logger,
-    redisUrl: REDIS_URL(),
+    sqlDb: sqlDbPostgres,
   })
 
   return {
@@ -131,7 +122,6 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     sqlDbPostgres,
     keyValueDbSqlite,
     keyValueDbHashMap,
-    keyValueDbRedis,
     keyValueDbPostgres,
     pubSubTopicBased,
     runtime,

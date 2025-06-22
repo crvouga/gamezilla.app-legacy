@@ -17,7 +17,7 @@ export class BackendConnectorNoop extends BaseObserver<{}> implements PowerSyncB
   async fetchCredentials(): Promise<PowerSyncCredentials | null> {
     this.logger.info('Noop: fetchCredentials')
     return {
-      endpoint: 'http://localhost:8080',
+      endpoint: 'http://localhost:8088',
       token: 'noop-token',
     }
   }

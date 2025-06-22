@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     ports:
-      - '5432:5432'
+      - '5438:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     command: >
@@ -44,7 +44,7 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
-      - 8080:8080
+      - 8088:8088
 
   powersync_storage_postgres:
     container_name: powersync_storage_postgres
@@ -55,7 +55,7 @@ services:
       POSTGRES_PASSWORD: powersync_storage_postgres
       POSTGRES_DB: powersync_storage_postgres
     ports:
-      - '5433:5433'
+      - '5439:5432'
     volumes:
       - powersync_storage_postgres_data:/var/lib/postgresql/data
     command: >
@@ -76,21 +76,6 @@ services:
     ports:
       - '8082:80'
 
-  redis:
-    container_name: redis
-    image: redis:latest
-    restart: always
-    ports:
-      - '6379:6379'
-    healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    volumes:
-      - redis_data:/data
-
 volumes:
   postgres_data:
   powersync_storage_postgres_data:
-  redis_data:

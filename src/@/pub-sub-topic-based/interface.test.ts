@@ -2,7 +2,7 @@ import { describe, expect, mock, test } from 'bun:test'
 import { s } from '~/@/schema'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Logger } from '../logger'
-import { REDIS_URL } from '../redis'
+
 import { Config, PubSubTopicBased } from './impl'
 
 const Fixture = async (config: Config) => {
@@ -35,10 +35,9 @@ const Fixtures = async () => {
   const configs: Config[] = [{ t: 'in-memory', subscribersByTopic: new Map() }]
 
   if (f.t === 'integration') {
-    configs.push({ t: 'postgres', sqlDb: f.sqlDbPostgres, logger: Logger({ t: 'noop' }) })
     configs.push({
-      t: 'redis',
-      redisUrl: REDIS_URL(),
+      t: 'postgres',
+      sqlDb: f.sqlDbPostgres,
       logger: Logger({ t: 'noop' }),
     })
   }

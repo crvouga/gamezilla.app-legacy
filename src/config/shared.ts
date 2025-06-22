@@ -10,7 +10,7 @@ const IS_LOCAL = !IS_PROD
 
 const BACKEND_URL = IS_PROD ? 'https://backend.gamezilla.app' : 'http://localhost:5002'
 
-const POWERSYNC_URL = IS_PROD ? 'https://powersync.gamezilla.app' : 'http://localhost:8080'
+const POWERSYNC_URL = IS_PROD ? 'https://powersync.gamezilla.app' : 'http://localhost:8088'
 
 export const CONFIG_SHARED = {
   IS_INTEGRATION_TEST,

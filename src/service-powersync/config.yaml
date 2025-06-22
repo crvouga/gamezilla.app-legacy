@@ -35,7 +35,7 @@ storage:
   sslmode: disable
 
 # The port which the PowerSync API server will listen on
-port: 8080
+port: 8088
 
 # Specify sync rules
 sync_rules:

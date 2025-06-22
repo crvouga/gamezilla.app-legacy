@@ -11,7 +11,6 @@ import { KeyValueDb } from './impl'
 import { IKeyValueDb } from './interface'
 import { Logger } from '../logger'
 import { SqlDb } from '../sql-db/backend/impl'
-import { REDIS_URL } from '../redis'
 
 type Fixture = {
   name: string
@@ -119,16 +118,6 @@ const Fixtures = async (): Promise<Fixture[]> => {
   })
 
   if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
-    fixtures.push({
-      name: 'redis',
-      keyValueDb: await KeyValueDb({
-        t: 'redis',
-        simulateLatency: async () => {},
-        redisUrl: REDIS_URL(),
-        logger,
-      }),
-    })
-
     fixtures.push({
       name: 'postgres',
       keyValueDb: await KeyValueDb({

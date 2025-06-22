@@ -1,13 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { Ok, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
-import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { NonEmpty } from '../array/non-empty'
 import { KeyValueDb } from '../key-value-db'
-import { Logger } from '../logger'
 import { EventId } from './event-id'
 import { Config, Stream } from './impl'
-import { REDIS_URL } from '../redis'
 
 const Fixture = async <T>(config: Config<T>) => {
   const stream = await Stream(config)
@@ -46,18 +43,6 @@ const Fixtures = async () => {
       schema: MyEvent,
     },
   ]
-
-  const f = await FixtureAppBackend()
-
-  if (f.t === 'integration') {
-    configs.push({
-      t: 'redis',
-      decode: (encoded) => Ok(JSON.parse(encoded)),
-      encode: (value) => Ok(JSON.stringify(value)),
-      logger: Logger({ t: 'noop' }),
-      redisUrl: REDIS_URL(),
-    })
-  }
 
   return Promise.all(configs.map(Fixture))
 }
