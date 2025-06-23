@@ -71,6 +71,6 @@ const respond = async (input: { req: Request; ctx: Ctx; logger: ILogger }): Prom
   })
 }
 
-export const PowerSyncPushEntryBackend = {
+export const PowerSyncUploadDataBackend = {
   respond,
 }
