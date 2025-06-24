@@ -42,6 +42,6 @@ describe('SyncEngine', () => {
       },
     })
 
-    expect(pushed).toBe(Ok(null))
+    expect(pushed).toEqual(Ok(null))
   })
 })
