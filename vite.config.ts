@@ -31,7 +31,17 @@ const IS_PROD = process.env.NODE_ENV === 'production'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tailwindcss(), tsconfigPaths(), vDomPlugin(), wasm(), VitePWA()],
+  plugins: [
+    tailwindcss(),
+    tsconfigPaths(),
+    vDomPlugin(),
+    wasm(),
+    VitePWA({
+      workbox: {
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB to accommodate the 2.26 MB WASM file
+      },
+    }),
+  ],
   optimizeDeps: {
     exclude: ['@journeyapps/wa-sqlite', '@powersync/web'],
   },

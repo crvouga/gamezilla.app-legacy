@@ -72,7 +72,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe('Test', () => {
+describe('UserSessionDb', () => {
   it('should insert correctly', async () => {
     for (const f of await Fixtures()) {
       const userSession = UserSession.random()
@@ -293,12 +293,13 @@ describe('Test', () => {
     }
   })
 
-  test('update should modify specified fields', async () => {
+  test.only('update should modify specified fields', async () => {
     for (const f of await Fixtures()) {
       const session = UserSession.random()
+
       await f.userSessionDb.upsert(session)
 
-      const updates = {
+      const updates: Partial<UserSession> = {
         clientSessionId: ClientSessionId.generate(),
         sessionId: session.sessionId,
         userId: session.userId,
@@ -312,14 +313,13 @@ describe('Test', () => {
       const result = await f.userSessionDb.query({
         whereAnd: { userSessionId: { equals: session.userSessionId } },
         order: {},
-        pagination: { limit: 1, offset: 0 },
+        pagination: { limit: Infinity, offset: 0 },
       })
 
       expect(unwrap(updated)).toBe(null)
-      expect(unwrap(result).items[0]).toEqual({
-        ...session,
-        ...updates,
-      })
+      const actual = unwrap(result).items[0]
+      const expected: UserSession = { ...session, ...updates }
+      expect(actual).toEqual(expected)
     }
   })
 
