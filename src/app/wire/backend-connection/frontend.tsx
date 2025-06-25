@@ -96,7 +96,7 @@ const ViewListItemInner: typeof ViewListItem = (input) => {
           icon={(inputIcon) => <Dot className={inputIcon.className} colorClassName='bg-green-500' />}
           className='text-green-500'
           label={input.ctx.t('wire.online')}
-          end={() => <Typography text={TimeSpan.format(status.averagePing)} />}
+          end={() => <Typography text={TimeSpan.format(status.latestPing)} />}
         />
       )
     }

@@ -12,11 +12,11 @@ const fromTimeSpan = (latency: TimeSpan): LatencyStatus => {
     return { t: 'excellent' }
   }
 
-  if (TimeSpan.lte(latency, TimeSpan.milliseconds(300))) {
+  if (TimeSpan.lte(latency, TimeSpan.milliseconds(250))) {
     return { t: 'good' }
   }
 
-  if (TimeSpan.lte(latency, TimeSpan.milliseconds(600))) {
+  if (TimeSpan.lte(latency, TimeSpan.milliseconds(500))) {
     return { t: 'acceptable' }
   }
 
