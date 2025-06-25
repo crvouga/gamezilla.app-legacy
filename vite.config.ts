@@ -29,6 +29,9 @@ const vDomPlugin = (): PluginOption => {
 
 const IS_PROD = process.env.NODE_ENV === 'production'
 
+const KILOBYTE = 1024
+const MEGABYTE = KILOBYTE * KILOBYTE
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -38,7 +41,7 @@ export default defineConfig({
     wasm(),
     VitePWA({
       workbox: {
-        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB to accommodate the 2.26 MB WASM file
+        maximumFileSizeToCacheInBytes: 3 * MEGABYTE,
       },
     }),
   ],
@@ -47,6 +50,7 @@ export default defineConfig({
   },
   build: {
     target: ['es2022', 'chrome100', 'safari15'],
+    chunkSizeWarningLimit: 2 * MEGABYTE,
   },
   worker: {
     format: 'es',
