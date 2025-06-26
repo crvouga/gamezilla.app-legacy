@@ -40,3 +40,4 @@ export const UserSession = {
 }
 
 UserSession.fromUnknownRegister((data) => mapErr(schema.parse(data), ParseError.toString))
+UserSession.fromUnknownPartialRegister((data) => mapErr(schema.parse(data), ParseError.toString))

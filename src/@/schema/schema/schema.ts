@@ -7,6 +7,14 @@ const toErrorMessage = (expected: string, actual: string, actualValue: string) =
   return `Expected: ${expected}.\nActual Type: ${actual}.\nActual Value: ${actualValue}\n`
 }
 
+const safeJsonStringify = (input: unknown): string => {
+  try {
+    return JSON.stringify(input)
+  } catch (error) {
+    return String(input)
+  }
+}
+
 export const is =
   <T>(schema: Schema<T>) =>
   (input: unknown): input is T => {
@@ -34,7 +42,7 @@ export const obj = <T>(schemas: {
         return Err({
           entries: [
             {
-              message: toErrorMessage('object', typeof input, JSON.stringify(input)),
+              message: toErrorMessage('object', typeof input, safeJsonStringify(input)),
               path: [],
             },
           ],
@@ -45,7 +53,7 @@ export const obj = <T>(schemas: {
         return Err({
           entries: [
             {
-              message: toErrorMessage('object', 'null', JSON.stringify(input)),
+              message: toErrorMessage('object', 'null', safeJsonStringify(input)),
               path: [],
             },
           ],
@@ -56,7 +64,7 @@ export const obj = <T>(schemas: {
         return Err({
           entries: [
             {
-              message: toErrorMessage('object', 'non-indexable', JSON.stringify(input)),
+              message: toErrorMessage('object', 'non-indexable', safeJsonStringify(input)),
               path: [],
             },
           ],
@@ -142,7 +150,7 @@ export const str = (): Schema<string> => {
         return Err({
           entries: [
             {
-              message: toErrorMessage('string', typeof input, `${input instanceof Date}, ${JSON.stringify(input)}`),
+              message: toErrorMessage('string', typeof input, `${input instanceof Date}, ${safeJsonStringify(input)}`),
               path: [],
             },
           ],
@@ -160,7 +168,7 @@ export const num = (): Schema<number> => {
         return Err({
           entries: [
             {
-              message: toErrorMessage('number', typeof input, JSON.stringify(input)),
+              message: toErrorMessage('number', typeof input, safeJsonStringify(input)),
               path: [],
             },
           ],
@@ -178,7 +186,7 @@ export const l = <T extends string | number | boolean | null | undefined>(value:
         return Err({
           entries: [
             {
-              message: toErrorMessage(String(value), String(input), JSON.stringify(input)),
+              message: toErrorMessage(String(value), String(input), safeJsonStringify(input)),
               path: [],
             },
           ],
@@ -196,7 +204,7 @@ export const arr = <T>(schema: Schema<T>): Schema<T[]> => {
         return Err({
           entries: [
             {
-              message: toErrorMessage('array', typeof input, JSON.stringify(input)),
+              message: toErrorMessage('array', typeof input, safeJsonStringify(input)),
               path: [],
             },
           ],
@@ -252,7 +260,7 @@ export const dict = <TKey extends string | number, TValue>(
         return Err({
           entries: [
             {
-              message: toErrorMessage('object', typeof input, JSON.stringify(input)),
+              message: toErrorMessage('object', typeof input, safeJsonStringify(input)),
               path: [],
             },
           ],
@@ -310,7 +318,7 @@ export const partialDict = <TKey extends string | number, TValue>(
         return Err({
           entries: [
             {
-              message: toErrorMessage('object', typeof input, JSON.stringify(input)),
+              message: toErrorMessage('object', typeof input, safeJsonStringify(input)),
               path: [],
             },
           ],
@@ -397,7 +405,7 @@ export const enumeration = <T extends string | number | boolean | null | undefin
         return Err({
           entries: [
             {
-              message: toErrorMessage(`one of ${values.join(', ')}`, String(input), JSON.stringify(input)),
+              message: toErrorMessage(`one of ${values.join(', ')}`, String(input), safeJsonStringify(input)),
               path: [],
             },
           ],
@@ -432,7 +440,7 @@ export const regex = (regex: RegExp): Schema<string> => {
         return Err({
           entries: [
             {
-              message: toErrorMessage('string', typeof input, JSON.stringify(input)),
+              message: toErrorMessage('string', typeof input, safeJsonStringify(input)),
               path: [],
             },
           ],
@@ -460,12 +468,12 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 export const json: Schema<Json> = {
   parse(input) {
     try {
-      const serialized = JSON.stringify(input)
+      const serialized = safeJsonStringify(input)
       if (typeof serialized !== 'string') {
         return Err({
           entries: [
             {
-              message: toErrorMessage('string', typeof input, JSON.stringify(input)),
+              message: toErrorMessage('string', typeof input, safeJsonStringify(input)),
               path: [],
             },
           ],
@@ -491,7 +499,7 @@ export const bool: Schema<boolean> = {
       return Err({
         entries: [
           {
-            message: toErrorMessage('boolean', typeof input, JSON.stringify(input)),
+            message: toErrorMessage('boolean', typeof input, safeJsonStringify(input)),
             path: [],
           },
         ],
@@ -499,4 +507,51 @@ export const bool: Schema<boolean> = {
     }
     return Ok(input)
   },
+}
+
+export const partial = <T extends Record<string, unknown>>(schema: Schema<T>): Schema<Partial<T>> => {
+  return {
+    parse(input) {
+      if (!isIndexable(input)) {
+        return Err({
+          entries: [
+            {
+              message: toErrorMessage('object', typeof input, safeJsonStringify(input)),
+              path: [],
+            },
+          ],
+        })
+      }
+
+      const result = {} as Partial<T>
+      const errors: ParseErrorEntry[] = []
+
+      for (const key in input) {
+        if (!(key in (schema as any))) {
+          continue
+        }
+        const value = input[key]
+        const parsed = (schema as any)[key].parse(value)
+        if (parsed.t === 'ok') {
+          // @ts-ignore
+          result[key] = parsed.value as T[keyof T]
+        } else {
+          errors.push(
+            ...parsed.error.entries.map((err: ParseErrorEntry): ParseErrorEntry => {
+              return {
+                message: err.message,
+                path: [key, ...err.path],
+              }
+            }),
+          )
+        }
+      }
+
+      if (errors.length > 0) {
+        return Err({ entries: errors })
+      }
+
+      return Ok(result)
+    },
+  }
 }

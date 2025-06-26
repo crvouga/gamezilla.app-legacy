@@ -115,6 +115,27 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       }
       return Ok(null)
     },
+    async update(input) {
+      const all = await getAll()
+      const filtered = all.filter((row) => row.user_session_id !== input.userSessionId)
+      await allIds.set(
+        ALL_IDS,
+        filtered.map((row) => row.user_session_id),
+      )
+      await userSessions.set(
+        input.userSessionId,
+        userSessionToRow({
+          ...input.updates,
+          userSessionId: input.userSessionId,
+          sessionId: input.updates.sessionId!,
+          clientSessionId: input.updates.clientSessionId!,
+          userId: input.updates.userId!,
+          createdAt: input.updates.createdAt!,
+          endedAt: input.updates.endedAt,
+        }),
+      )
+      return Ok(null)
+    },
 
     async query(input) {
       const all = await getAll()
