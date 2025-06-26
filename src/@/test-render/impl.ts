@@ -1,4 +1,4 @@
-import type { VDomImpl } from '../vdom-impl'
+import type { VDomImpl } from '../vdom/vdom-impl'
 import './happydom'
 import { TestRenderReact } from './impl-react'
 import type { ITestRender } from './interface'

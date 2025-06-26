@@ -1,5 +1,5 @@
-import type { VDom } from '../vdom'
-import type { AriaRole } from '../aria-role'
+import type { VDom } from '../vdom/vdom'
+import type { AriaRole } from '../vdom/aria-role'
 
 export type TestNode = {
   click: () => Promise<void>
