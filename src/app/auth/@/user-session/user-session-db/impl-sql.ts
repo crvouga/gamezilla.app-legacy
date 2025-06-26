@@ -285,8 +285,8 @@ const queryToSql = (query: UserSessionDbQuery) => {
     vars.client_session_id = query.whereAnd.clientSessionId.equals
   }
 
-  vars.offset = query.pagination.offset
-  vars.limit = query.pagination.limit
+  vars.offset = ensureNormalNumber(query.pagination.offset, 0)
+  vars.limit = ensureNormalNumber(query.pagination.limit, 100)
 
   const whereStr = whereClauses.join(' AND ')
 
@@ -300,4 +300,18 @@ const queryToSql = (query: UserSessionDbQuery) => {
     sqlCount,
     vars,
   }
+}
+
+const ensureNormalNumber = (x: number | string, fallback: number): number => {
+  if (typeof x === 'number') {
+    if (!Number.isFinite(x)) {
+      return fallback ?? x
+    }
+    return x
+  }
+  const parsed = parseInt(x)
+  if (Number.isNaN(parsed) || !Number.isFinite(parsed)) {
+    return fallback ?? x
+  }
+  return parsed
 }
