@@ -20,6 +20,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
         input.onChange?.(!isChecked)
       }}
       onKeyDown={(e) => {
+        console.log('onKeyDown', e.key)
         if (element === 'button' && e.key === 'Enter') {
           e.preventDefault()
           input.onChange?.(!isChecked)

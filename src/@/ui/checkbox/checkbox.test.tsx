@@ -1,12 +1,12 @@
-import { describe, expect, it, test } from 'bun:test'
+import { describe, expect, test } from 'bun:test'
 import { Sub } from '~/@/sub'
 import { TestClient } from '~/@/test-client'
 import { Render } from '~/@/vdom/render'
-import { Checkbox } from './checkbox'
 import { VDom } from '~/@/vdom/vdom'
+import { Checkbox } from './checkbox'
 
 const Fixture = async () => {
-  const driver = await TestClient({ t: 'jsdom' })
+  const driver = await TestClient({ t: 'happydom' })
 
   document.body.innerHTML = ''
 
@@ -26,56 +26,48 @@ const Fixture = async () => {
 }
 
 describe('Checkbox', () => {
-  it('should render checkbox with correct state', async () => {
+  test('should render checkbox with check mark when checked', async () => {
     const f = await Fixture()
-
     await f.render(<Checkbox state='checked' />)
-
-    const nodes = await f.driver.query('[role="checkbox"]')
-    expect(await nodes[0]?.text()).toBe('✓')
-
-    // Clear and render unchecked state
-    document.body.innerHTML = '<div></div>'
-    const root2 = document.body.firstElementChild as HTMLElement
-    const render2 = await Render('react', root2)
-    render2(<Checkbox state='unchecked' />)
-    await new Promise((resolve) => setTimeout(resolve, 10))
-    const nodes2 = await f.driver.query('[role="checkbox"]')
-    expect(await nodes2[0]?.text()).toBe('')
-
-    // Clear and render indeterminate state
-    document.body.innerHTML = '<div></div>'
-    const root3 = document.body.firstElementChild as HTMLElement
-    const render3 = await Render('react', root3)
-    render3(<Checkbox state='indeterminate' />)
-    await new Promise((resolve) => setTimeout(resolve, 10))
-    const nodes3 = await f.driver.query('[role="checkbox"]')
-    expect(await nodes3[0]?.text()).toBe('—')
+    const [checkbox] = await f.driver.query('[role="checkbox"]')
+    expect(await checkbox!.text()).toBe('✓')
   })
 
-  it('should have correct aria-checked state', async () => {
+  test('should render checkbox empty when unchecked', async () => {
+    const f = await Fixture()
+    await f.render(<Checkbox state='unchecked' />)
+    const [checkbox] = await f.driver.query('[role="checkbox"]')
+    expect(await checkbox!.text()).toBe('')
+  })
+
+  test('should render checkbox with dash when indeterminate', async () => {
+    const f = await Fixture()
+    await f.render(<Checkbox state='indeterminate' />)
+    const [checkbox] = await f.driver.query('[role="checkbox"]')
+    expect(await checkbox!.text()).toBe('—')
+  })
+
+  test('should have aria-checked=true when checked', async () => {
     const f = await Fixture()
     await f.render(<Checkbox state='checked' />)
+    const [checkbox] = await f.driver.query('[role="checkbox"]')
+    expect(await checkbox!.attr('aria-checked')).toBe('true')
+  })
 
-    const nodes = await f.driver.query('[role="checkbox"]')
-    expect(await nodes[0]?.attr('aria-checked')).toBe('true')
-
-    document.body.innerHTML = '<div></div>'
-    const root2 = document.body.firstElementChild as HTMLElement
-    const render2 = await Render('react', root2)
-    render2(<Checkbox state='unchecked' />)
-    await new Promise((resolve) => setTimeout(resolve, 10))
-    const nodes2 = await f.driver.query('[role="checkbox"]')
-    expect(await nodes2[0]?.attr('aria-checked')).toBe('false')
+  test('should have aria-checked=false when unchecked', async () => {
+    const f = await Fixture()
+    await f.render(<Checkbox state='unchecked' />)
+    const [checkbox] = await f.driver.query('[role="checkbox"]')
+    expect(await checkbox!.attr('aria-checked')).toBe('false')
   })
 
   test('clicking checkbox triggers onChange when unchecked', async () => {
     const f = await Fixture()
     const onChange = Sub.queued<boolean>()
     await f.render(<Checkbox state='unchecked' onChange={onChange.pub} />)
-    const before = await f.driver.query('[role="checkbox"]')
-    expect(before.length).toBe(1)
-    await before[0]?.do({ t: 'click' })
+    const [checkbox] = await f.driver.query('[role="checkbox"]')
+    expect(checkbox).toBeDefined()
+    await checkbox!.do({ t: 'click' })
     expect(await Sub.take(onChange)).toBe(true)
   })
 
@@ -83,22 +75,8 @@ describe('Checkbox', () => {
     const f = await Fixture()
     const onChange = Sub.queued<boolean>()
     await f.render(<Checkbox state='checked' onChange={onChange.pub} />)
-    const after = await f.driver.query('[role="checkbox"]')
-    await after[0]?.do({ t: 'click' })
-    expect(await Sub.take(onChange)).toBe(false)
-  })
-
-  test.skip('pressing enter triggers onChange', async () => {
-    const f = await Fixture()
-    const onChange = Sub.create<boolean>()
-    f.render(<Checkbox state='unchecked' onChange={onChange.pub} />)
-    const nodes = await f.driver.query('[role="checkbox"]')
-    await nodes[0]?.do({ t: 'keydown', key: 'Enter' })
-    expect(await Sub.take(onChange)).toBe(true)
-
-    f.render(<Checkbox state='checked' onChange={onChange.pub} />)
-    const nodes2 = await f.driver.query('[role="checkbox"]')
-    await nodes2[0]?.do({ t: 'keydown', key: 'Enter' })
+    const [checkbox] = await f.driver.query('[role="checkbox"]')
+    await checkbox!.do({ t: 'click' })
     expect(await Sub.take(onChange)).toBe(false)
   })
 
@@ -106,17 +84,37 @@ describe('Checkbox', () => {
     const f = await Fixture()
     f.render(<Checkbox state='unchecked' onChange={() => {}} />)
     await new Promise((resolve) => setTimeout(resolve, 10))
-    const nodes = await f.driver.query('button')
-    expect(nodes.length).toBe(1)
+    const [button] = await f.driver.query('button')
+    expect(button).toBeDefined()
   })
 
   test('should render as checkbox when no onChange provided', async () => {
     const f = await Fixture()
     f.render(<Checkbox state='unchecked' />)
     await new Promise((resolve) => setTimeout(resolve, 10))
-    const nodes = await f.driver.query('[role="checkbox"]')
-    expect(nodes.length).toBe(1)
-    const nodes2 = await f.driver.query('button')
-    expect(nodes2.length).toBe(0)
+    const [checkbox] = await f.driver.query('[role="checkbox"]')
+    expect(checkbox).toBeDefined()
+    const [button] = await f.driver.query('button')
+    expect(button).toBeUndefined()
+  })
+
+  describe('pressing enter', () => {
+    test('pressing enter triggers onChange when unchecked', async () => {
+      const f = await Fixture()
+      const onChange = Sub.queued<boolean>()
+      await f.render(<Checkbox state='unchecked' onChange={onChange.pub} />)
+      const [checkbox] = await f.driver.query('[role="checkbox"]')
+      await checkbox!.do({ t: 'keydown', key: 'Enter' })
+      expect(await Sub.take(onChange)).toBe(true)
+    })
+
+    test('pressing enter triggers onChange when checked', async () => {
+      const f = await Fixture()
+      const onChange = Sub.queued<boolean>()
+      await f.render(<Checkbox state='checked' onChange={onChange.pub} />)
+      const [checkbox] = await f.driver.query('[role="checkbox"]')
+      await checkbox!.do({ t: 'keydown', key: 'Enter' })
+      expect(await Sub.take(onChange)).toBe(false)
+    })
   })
 })
