@@ -23,7 +23,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     sqlDb: SQL_DB_NOOP,
     logger: Logger({ t: 'noop' }),
     currentScreen: input?.currentScreen ?? {
-      n: 'auth-login',
+      n: 'auth',
       t: 'login',
     },
     currentUserId,

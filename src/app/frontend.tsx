@@ -104,7 +104,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     logger,
     now: UnixMs.now(),
     navigatorLanguage,
-    currentScreen: { t: 'login', n: 'auth-login' },
+    currentScreen: { t: 'login', n: 'auth' },
     t: Translator(navigatorLanguage),
     documentVisibilityState: 'visible',
     profilesByUserId: {},
@@ -401,7 +401,7 @@ const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
 
 const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
   switch (input.ctx.currentScreen.n) {
-    case 'auth-login':
+    case 'auth':
       return (
         <AuthFrontend.View
           model={input.model.auth}
@@ -418,7 +418,7 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
           onVisible={() =>
             input.dispatch({
               t: 'frontend',
-              c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth-login' } } },
+              c: { t: 'current-screen', c: { t: 'clicked-link', screen: { t: 'login', n: 'auth' } } },
             })
           }
         />
@@ -450,7 +450,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
       )
 
     case 'lang':
-    case 'auth-login':
+    case 'auth':
       return (
         <IntersectionObserverEmitter
           id='app-intersection-observer'

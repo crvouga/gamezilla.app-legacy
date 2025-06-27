@@ -27,6 +27,20 @@ export const TestClient = (_config: Config): ITestClient => {
     configurable: true,
   })
   Object.defineProperty(global, 'InputEvent', { value: dom.window.InputEvent, writable: true, configurable: true })
+
+  // Mock the Web Locks API for tests (required by Comlink/PowerSync)
+  if (!dom.window.navigator.locks) {
+    Object.defineProperty(dom.window.navigator, 'locks', {
+      value: {
+        request: async (_name: string, callback: Function) => {
+          return await callback()
+        },
+      },
+      writable: true,
+      configurable: true,
+    })
+  }
+
   const testClient = ImplWindow.TestClient({ t: 'window' })
   return testClient
 }

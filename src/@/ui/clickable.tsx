@@ -18,12 +18,14 @@ export type ClickableProps = {
   type?: 'button' | 'submit' | 'reset'
   tabIndex?: number
   disabled?: boolean
+  dataTestId?: string
 }
 
-export const Clickable = (input: ClickableProps) => {
+export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
   return (
     <button
       {...input}
+      data-testid={dataTestId}
       type={input.type ?? 'button'}
       onClick={input.onClick}
       disabled={input.disabled}

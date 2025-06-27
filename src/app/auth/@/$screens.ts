@@ -4,21 +4,17 @@ import { PhoneNumber } from '~/@/phone-number'
 
 const Screen = s.or(
   s.obj({
-    n: s.l('auth-login'),
+    n: s.l('auth'),
     t: s.l('login'),
   }),
   s.obj({
-    n: s.l('auth-login'),
-    t: s.l('login-sms-request'),
+    n: s.l('auth'),
+    t: s.l('send-code'),
   }),
   s.obj({
-    n: s.l('auth-login'),
-    t: s.l('login-sms-verify'),
+    n: s.l('auth'),
+    t: s.l('verify-code'),
     phoneNumber: PhoneNumber,
-  }),
-  s.obj({
-    n: s.l('auth-login'),
-    t: s.l('login-email-send-link'),
   }),
 )
 

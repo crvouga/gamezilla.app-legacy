@@ -43,7 +43,7 @@ export const initFrontendCtx = async (config: {
     logger,
     now: UnixMs.now(),
     navigatorLanguage: 'en',
-    currentScreen: { t: 'login', n: 'auth-login' },
+    currentScreen: { t: 'login', n: 'auth' },
     t: Translator('en'),
     documentVisibilityState: 'visible',
     profilesByUserId: {},

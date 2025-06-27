@@ -29,11 +29,13 @@ export type ButtonInput = {
   color?: ButtonColor
   size?: ButtonSize
   loading?: boolean
+  dataTestId?: string
 }
 
 export const Button = (input: ButtonInput) => {
   return (
     <Clickable
+      dataTestId={input.dataTestId}
       disabled={input.disabled || input.loading}
       type={input.type ?? 'button'}
       className={cn(

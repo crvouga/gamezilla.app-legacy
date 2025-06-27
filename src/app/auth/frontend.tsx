@@ -141,10 +141,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     case 'clicked-login-with-phone': {
       return {
         model: input.model,
-        msgOut: [
-          PushScreenCmd.init({ n: 'auth-login', t: 'login-sms-request' }),
-          PlaySoundCmd.init(APP_SOUND.navForwardMin),
-        ],
+        msgOut: [PushScreenCmd.init({ n: 'auth', t: 'send-code' }), PlaySoundCmd.init(APP_SOUND.navForwardMin)],
       }
     }
     case 'clicked-logout-list-item': {
@@ -184,13 +181,13 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 
 const View: FrontendModule['View'] = (input) => {
   switch (input.ctx.currentScreen.n) {
-    case 'auth-login': {
+    case 'auth': {
       switch (input.ctx.currentScreen.t) {
         case 'login': {
           return <ViewLoginScreen {...input} />
         }
-        case 'login-sms-request':
-        case 'login-sms-verify': {
+        case 'send-code':
+        case 'verify-code': {
           return (
             <LoginWithSMSFrontend.View
               ctx={input.ctx}
@@ -198,9 +195,6 @@ const View: FrontendModule['View'] = (input) => {
               model={input.model.continueWithSms}
             />
           )
-        }
-        case 'login-email-send-link': {
-          return null
         }
       }
     }
@@ -212,13 +206,14 @@ const View: FrontendModule['View'] = (input) => {
 
 const ViewLoginScreen: FrontendModule['View'] = (input) => {
   return (
-    <AuthScreenLayout dataTestId='auth-login-screen' ctx={input.ctx} center={true} navBar={null}>
+    <AuthScreenLayout dataTestId='login-screen' ctx={input.ctx} center={true} navBar={null}>
       <div className='flex w-full flex-1 flex-col gap-6'>
         <AuthScreenHeaderCta ctx={input.ctx} />
 
         <Button
           onClick={() => input.dispatch({ t: 'clicked-login-with-phone' })}
           size='lg'
+          dataTestId='continue-with-phone-button'
           className='w-full'
           renderIconStart={(iconInput) => <IconMobilePhone {...iconInput} />}
           text={input.ctx.t('auth.continue-with-phone')}

@@ -8,7 +8,7 @@ export type PubSub<Msg> = Sub<Msg> & {
 }
 
 const take = <A>(sub: Sub<A>, abortSignal?: AbortSignal) => {
-  return new Promise<A>((resolve, reject) => {
+  return new Promise<A>((resolve, _reject) => {
     let unsubscribe: (() => void) | undefined
 
     unsubscribe = sub.sub((a) => {
@@ -18,7 +18,7 @@ const take = <A>(sub: Sub<A>, abortSignal?: AbortSignal) => {
 
     abortSignal?.addEventListener('abort', () => {
       unsubscribe?.()
-      reject(new Error('Subscription aborted'))
+      // reject(new Error('Subscription aborted'))
     })
   })
 }

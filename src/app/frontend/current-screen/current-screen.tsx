@@ -22,7 +22,7 @@ export type Model = {
 }
 
 const FALLBACK: Screen = {
-  n: 'auth-login',
+  n: 'auth',
   t: 'login',
 }
 

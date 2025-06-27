@@ -292,7 +292,7 @@ const queryToSql = (query: UserSessionDbQuery) => {
 
   const orderStr = query.order.createdAt ? `ORDER BY created_at_unix_ms ${query.order.createdAt.toUpperCase()}` : ''
 
-  const sql = `SELECT * FROM user_session WHERE ${whereStr} ${orderStr} LIMIT :limit OFFSET :offset`
+  const sql = `SELECT id, session_id, client_session_id, user_id, created_at_unix_ms, ended_at_unix_ms FROM user_session WHERE ${whereStr} ${orderStr} LIMIT :limit OFFSET :offset`
   const sqlCount = `SELECT COUNT(*) AS total FROM user_session WHERE ${whereStr}`
 
   return {

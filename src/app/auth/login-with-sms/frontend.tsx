@@ -38,16 +38,16 @@ const update: FrontendModule['update'] = (input) => {
 const updateFromMsg: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'clicked-back-button': {
-      if (input.ctx.currentScreen.t === 'login-sms-verify') {
+      if (input.ctx.currentScreen.t === 'verify-code') {
         return {
           model: input.model,
-          msgOut: [ReplaceScreenCmd.init({ n: 'auth-login', t: 'login-sms-request' })],
+          msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'send-code' })],
         }
       }
 
       return {
         model: input.model,
-        msgOut: [ReplaceScreenCmd.init({ n: 'auth-login', t: 'login' })],
+        msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'send-code' })],
       }
     }
 
@@ -121,7 +121,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
           code: '',
         },
         msgOut: [
-          PushScreenCmd.init({ n: 'auth-login', t: 'login-sms-verify', phoneNumber }),
+          PushScreenCmd.init({ n: 'auth', t: 'verify-code', phoneNumber }),
           ShowToastCmd.init(input.ctx.t('auth-sms.sent-code-to', PhoneNumber.format(phoneNumber)), {
             duration: TimeSpan.seconds(4),
           }),
@@ -199,12 +199,12 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 
 const View: FrontendModule['View'] = (input) => {
   switch (input.ctx.currentScreen.n) {
-    case 'auth-login': {
+    case 'auth': {
       switch (input.ctx.currentScreen.t) {
-        case 'login-sms-request': {
+        case 'send-code': {
           return <ViewSendCode {...input} />
         }
-        case 'login-sms-verify': {
+        case 'verify-code': {
           return <ViewVerifyCode {...input} />
         }
         default: {
@@ -221,6 +221,7 @@ const View: FrontendModule['View'] = (input) => {
 const ViewSendCode: FrontendModule['View'] = (input) => {
   return (
     <AuthScreenFormLayout
+      dataTestId='continue-with-phone-screen'
       ctx={input.ctx}
       title={input.ctx.t('auth-sms.send-code')}
       onBack={() => input.dispatch({ t: 'clicked-back-button' })}
@@ -258,12 +259,13 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
 }
 
 const ViewVerifyCode: FrontendModule['View'] = (input) => {
-  if (input.ctx.currentScreen.t !== 'login-sms-verify') return null
+  if (input.ctx.currentScreen.t !== 'verify-code') return null
 
   const phoneNumber = input.ctx.currentScreen.phoneNumber
 
   return (
     <AuthScreenFormLayout
+      dataTestId='verify-code-screen'
       ctx={input.ctx}
       title={input.ctx.t('auth-sms.verify-code')}
       onBack={() => input.dispatch({ t: 'clicked-back-button' })}

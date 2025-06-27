@@ -18,9 +18,11 @@ export const AuthScreenFormLayout = (input: {
   submitLoading: boolean
   submitDisabled: boolean
   onSubmit: () => void
+  dataTestId: string
 }) => {
   return (
     <AuthScreenLayout
+      dataTestId={input.dataTestId}
       ctx={input.ctx}
       navBar={{
         back: {

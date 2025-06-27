@@ -54,9 +54,20 @@ export const FixtureApp = async () => {
   const client = await TestClientApp({ frontendCtx })
   const backend = await TestBackendPrimary({ backendCtx })
 
+  const dispose = async () => {
+    try {
+      await backendCtx.httpServer.stop()
+      backend.abortController.abort()
+    } catch (error) {
+      logger.error('Error during test cleanup:', error)
+    }
+  }
+
   return {
     client,
     backend,
+    dispose,
+    [Symbol.asyncDispose]: dispose,
   }
 }
 

@@ -41,7 +41,7 @@
     "infra:down": "docker compose --env-file .env -f ./infra/local/docker-compose.yml down",
     "infra:restart": "docker compose --env-file .env -f ./infra/local/docker-compose.yml restart",
     "infra:up": "bun dir:reset && docker compose --env-file .env -f ./infra/local/docker-compose.yml up --build -d",
-    "kp": "bun run env && bun x kill-port 8088 && bun x kill-port $PORT",
+    "kp": "bun x kill-port 5002 && bun x kill-port 8088 && bun x kill-port $PORT",
     "powersync:development-token": "cd powersync/test-client && node dist/bin.js generate-token --config path/to/powersync.yaml --sub test-user",
     "powersync:test-client:build": "cd powersync/test-client && tsc -b",
     "powersync:test-client:get": "bun x degit powersync-ja/powersync-service/test-client powersync/test-client",
