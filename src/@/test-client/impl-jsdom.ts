@@ -2,11 +2,11 @@ import { JSDOM } from 'jsdom'
 import * as ImplWindow from './impl-window'
 import type { ITestClient } from './interface'
 
-export type Config = {
+export type Config = ImplWindow.BaseConfig & {
   t: 'jsdom'
 }
 
-export const TestClient = (_config: Config): ITestClient => {
+export const TestClient = (config: Config): ITestClient => {
   const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
     url: 'http://localhost',
     pretendToBeVisual: true,
@@ -41,6 +41,6 @@ export const TestClient = (_config: Config): ITestClient => {
     })
   }
 
-  const testClient = ImplWindow.TestClient({ t: 'window' })
+  const testClient = ImplWindow.TestClient({ ...config, t: 'window' })
   return testClient
 }

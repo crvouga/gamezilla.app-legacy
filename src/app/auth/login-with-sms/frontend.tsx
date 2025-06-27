@@ -36,7 +36,9 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const updateFromMsg: FrontendModule['update'] = (input) => {
-  switch (input.msg?.t) {
+  if (!input.msg) return { model: input.model }
+
+  switch (input.msg.t) {
     case 'clicked-back-button': {
       if (input.ctx.currentScreen.t === 'verify-code') {
         return {
@@ -190,10 +192,6 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         },
       }
     }
-
-    default: {
-      return { model: input.model }
-    }
   }
 }
 
@@ -221,7 +219,7 @@ const View: FrontendModule['View'] = (input) => {
 const ViewSendCode: FrontendModule['View'] = (input) => {
   return (
     <AuthScreenFormLayout
-      dataTestId='continue-with-phone-screen'
+      dataTestId='send-code-screen'
       ctx={input.ctx}
       title={input.ctx.t('auth-sms.send-code')}
       onBack={() => input.dispatch({ t: 'clicked-back-button' })}
@@ -243,6 +241,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
 
           <TextField
             id='phoneNumberInput'
+            dataTestId='phone-number-input'
             label={input.ctx.t('auth-sms.phone-number')}
             type='tel'
             startIcon={<IconMobilePhone className='h-5 w-5' />}

@@ -13,14 +13,14 @@ const Fixture = async () => {
 describe('PaginationDots', () => {
   it('should render pagination dots if there is more than one slide', async () => {
     const f = await Fixture()
-    await f.render(<PaginationDots activeIndex={0} count={2} />)
+    f.render(<PaginationDots activeIndex={0} count={2} />)
     const nodes = await f.client.query(`[data-testid="${PAGINATION_DOTS_TEST_ID}"] *`)
     expect(nodes.length).toEqual(2)
   })
 
   it('should NOT render pagination dots if there is only one slide', async () => {
     const f = await Fixture()
-    await f.render(<PaginationDots activeIndex={0} count={1} />)
+    f.render(<PaginationDots activeIndex={0} count={1} />)
     const nodes = await f.client.query(`[data-testid="${PAGINATION_DOTS_TEST_ID}"]`)
     expect(nodes.length).toEqual(0)
   })
@@ -28,7 +28,7 @@ describe('PaginationDots', () => {
   test('clicked dots', async () => {
     const f = await Fixture()
     const clickedIndex = Sub.queued<number>()
-    await f.render(<PaginationDots activeIndex={0} count={3} onClick={clickedIndex.pub} />)
+    f.render(<PaginationDots activeIndex={0} count={3} onClick={clickedIndex.pub} />)
     const [firstDot] = await f.client.query(toPaginationDotSelector(1))
     await firstDot!.do({ t: 'click' })
     expect(await Sub.take(clickedIndex)).toEqual(1)
@@ -36,7 +36,7 @@ describe('PaginationDots', () => {
 
   test('should NOT be buttons if no onClick is provided', async () => {
     const f = await Fixture()
-    await f.render(<PaginationDots activeIndex={0} count={3} />)
+    f.render(<PaginationDots activeIndex={0} count={3} />)
     const nodes = await f.client.query('button')
     expect(nodes.length).toEqual(0)
   })

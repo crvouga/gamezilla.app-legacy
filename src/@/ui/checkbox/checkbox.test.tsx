@@ -14,35 +14,35 @@ const Fixture = async () => {
 describe('Checkbox', () => {
   test('should render checkbox with check mark when checked', async () => {
     const f = await Fixture()
-    await f.render(<Checkbox state='checked' />)
+    f.render(<Checkbox state='checked' />)
     const [checkbox] = await f.client.query('[role="checkbox"]')
     expect(await checkbox!.text()).toBe('✓')
   })
 
   test('should render checkbox empty when unchecked', async () => {
     const f = await Fixture()
-    await f.render(<Checkbox state='unchecked' />)
+    f.render(<Checkbox state='unchecked' />)
     const [checkbox] = await f.client.query('[role="checkbox"]')
     expect(await checkbox!.text()).toBe('')
   })
 
   test('should render checkbox with dash when indeterminate', async () => {
     const f = await Fixture()
-    await f.render(<Checkbox state='indeterminate' />)
+    f.render(<Checkbox state='indeterminate' />)
     const [checkbox] = await f.client.query('[role="checkbox"]')
     expect(await checkbox!.text()).toBe('—')
   })
 
   test('should have aria-checked=true when checked', async () => {
     const f = await Fixture()
-    await f.render(<Checkbox state='checked' />)
+    f.render(<Checkbox state='checked' />)
     const [checkbox] = await f.client.query('[role="checkbox"]')
     expect(await checkbox!.attr('aria-checked')).toBe('true')
   })
 
   test('should have aria-checked=false when unchecked', async () => {
     const f = await Fixture()
-    await f.render(<Checkbox state='unchecked' />)
+    f.render(<Checkbox state='unchecked' />)
     const [checkbox] = await f.client.query('[role="checkbox"]')
     expect(await checkbox!.attr('aria-checked')).toBe('false')
   })
@@ -50,7 +50,7 @@ describe('Checkbox', () => {
   test('clicking checkbox triggers onChange when unchecked', async () => {
     const f = await Fixture()
     const onChange = Sub.queued<boolean>()
-    await f.render(<Checkbox state='unchecked' onChange={onChange.pub} />)
+    f.render(<Checkbox state='unchecked' onChange={onChange.pub} />)
     const [checkbox] = await f.client.query('[role="checkbox"]')
     expect(checkbox).toBeDefined()
     await checkbox!.do({ t: 'click' })
@@ -60,7 +60,7 @@ describe('Checkbox', () => {
   test('clicking checkbox triggers onChange when checked', async () => {
     const f = await Fixture()
     const onChange = Sub.queued<boolean>()
-    await f.render(<Checkbox state='checked' onChange={onChange.pub} />)
+    f.render(<Checkbox state='checked' onChange={onChange.pub} />)
     const [checkbox] = await f.client.query('[role="checkbox"]')
     await checkbox!.do({ t: 'click' })
     expect(await Sub.take(onChange)).toBe(false)
@@ -88,7 +88,7 @@ describe('Checkbox', () => {
     test('pressing enter triggers onChange when unchecked', async () => {
       const f = await Fixture()
       const onChange = Sub.queued<boolean>()
-      await f.render(<Checkbox state='unchecked' onChange={onChange.pub} />)
+      f.render(<Checkbox state='unchecked' onChange={onChange.pub} />)
       const [checkbox] = await f.client.query('[role="checkbox"]')
       await checkbox!.do({ t: 'keydown', key: 'Enter' })
       expect(await Sub.take(onChange)).toBe(true)
@@ -97,7 +97,7 @@ describe('Checkbox', () => {
     test('pressing enter triggers onChange when checked', async () => {
       const f = await Fixture()
       const onChange = Sub.queued<boolean>()
-      await f.render(<Checkbox state='checked' onChange={onChange.pub} />)
+      f.render(<Checkbox state='checked' onChange={onChange.pub} />)
       const [checkbox] = await f.client.query('[role="checkbox"]')
       await checkbox!.do({ t: 'keydown', key: 'Enter' })
       expect(await Sub.take(onChange)).toBe(false)

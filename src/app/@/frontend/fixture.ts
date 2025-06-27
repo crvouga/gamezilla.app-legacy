@@ -3,7 +3,6 @@ import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screen/generated/screens'
 import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
-import { TestClient } from '~/@/test-client'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserId } from '../data/user-id'
@@ -45,18 +44,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     }),
   }
 
-  const client = await TestClient({
-    t: 'happydom',
-  })
-
-  // const document = window.document
-
-  // const html = readFileSync(join(__dirname, 'index.html'), 'utf8')
-  // document.write(html)
-  // document.close()
-
   return {
     ctx,
-    client,
   }
 }

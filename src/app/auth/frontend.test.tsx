@@ -17,7 +17,7 @@ describe('Auth', () => {
     await using f = await Fixture()
     const [button] = await f.client.query(`[data-testid='continue-with-phone-button']`)
     await button!.do({ t: 'click' })
-    const [screen] = await f.client.query(`[data-testid='continue-with-phone-screen']`)
+    const [screen] = await f.client.query(`[data-testid='send-code-screen']`)
     expect(screen).toBeDefined()
   })
 })

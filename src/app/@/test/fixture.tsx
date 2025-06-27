@@ -2,6 +2,7 @@ import { Logger } from '~/@/logger'
 import { Program } from '~/@/program/program'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { TestClient } from '~/@/test-client'
+import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
 import { Render } from '~/@/vdom/render'
 import { SessionId } from '~/@/wire/session-id'
@@ -9,9 +10,9 @@ import { AppTypes } from '~/app'
 import { AppBackend } from '~/app/backend'
 import { AppFrontend } from '~/app/frontend'
 import { BackendCtxModule, FrontendCtxModule } from '~/app/types'
+import { CONFIG_BACKEND } from '~/config/backend'
 import { initBackendCtx } from './ctx/backend'
 import { initFrontendCtx } from './ctx/frontend'
-import { CONFIG_BACKEND } from '~/config/backend'
 
 export const FixtureApp = async () => {
   const logger = Logger({
@@ -84,7 +85,11 @@ const TestBackendPrimary = async (config: { backendCtx: BackendCtxModule }) => {
 }
 
 export const TestClientApp = async (config: { frontendCtx: FrontendCtxModule }) => {
-  const client = await TestClient({ t: 'jsdom' })
+  const client = await TestClient({
+    t: 'happydom',
+    maxWait: TimeSpan.seconds(5),
+    poll: TimeSpan.milliseconds(1),
+  })
 
   document.body.innerHTML = '<div id="root"></div>'
   const root = document.getElementById('root')

@@ -1,9 +1,13 @@
 import { TestClient } from '~/@/test-client'
 import { Render } from '~/@/vdom/render'
-import { VDom } from '../vdom/vdom'
+import { TimeSpan } from '../time/time-span'
 
 export const BaseFixture = async () => {
-  const client = await TestClient({ t: 'happydom' })
+  const client = await TestClient({
+    t: 'happydom',
+    maxWait: TimeSpan.milliseconds(10),
+    poll: TimeSpan.milliseconds(1),
+  })
 
   document.body.innerHTML = '<div id="root"></div>'
 
@@ -13,9 +17,6 @@ export const BaseFixture = async () => {
 
   return {
     client,
-    async render(node: VDom) {
-      render(node)
-      await new Promise((resolve) => setTimeout(resolve, 10))
-    },
+    render,
   }
 }

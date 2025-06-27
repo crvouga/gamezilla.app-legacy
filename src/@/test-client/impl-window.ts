@@ -1,13 +1,18 @@
 import { TimeSpan } from '../time/time-span'
 import type { ITestClient, ITestNode, TestAction } from './interface'
 
-export type Config = {
-  t: 'window'
+export type BaseConfig = {
+  maxWait: TimeSpan
+  poll: TimeSpan
 }
 
-export const TestClient = (_config: Config): ITestClient => {
+export type Config = {
+  t: 'window'
+} & BaseConfig
+
+export const TestClient = (config: Config): ITestClient => {
   return {
-    async query(selector: string, config) {
+    async query(selector: string, queryConfig) {
       const poll = async () => {
         const found = Array.from(document.querySelectorAll(selector))
         const testNodes = found.map((node): ITestNode => {
@@ -43,8 +48,8 @@ export const TestClient = (_config: Config): ITestClient => {
         return testNodes
       }
 
-      const maxWait = config?.maxWait ?? TimeSpan.milliseconds(5000)
-      const pollInterval = config?.poll ?? TimeSpan.milliseconds(100)
+      const maxWait = queryConfig?.maxWait ?? config.maxWait
+      const pollInterval = queryConfig?.poll ?? config.poll
 
       const pollIntervalMs = TimeSpan.toMilliseconds(pollInterval)
       const maxWaitMs = TimeSpan.toMilliseconds(maxWait)

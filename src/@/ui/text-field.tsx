@@ -8,6 +8,7 @@ export const TextField = (input: {
   startIcon?: VDom
   type?: 'text' | 'password' | 'email' | 'number' | 'search' | 'tel' | 'url'
   autoFocus?: boolean
+  dataTestId?: string
   id: string
   label: TranslatedText
   value: string | number
@@ -35,6 +36,7 @@ export const TextField = (input: {
       >
         <input
           role='textbox'
+          data-testid={input.dataTestId}
           aria-label={input.label}
           id={input.id}
           autoFocus={input.autoFocus}
@@ -51,7 +53,12 @@ export const TextField = (input: {
           defaultValue={input.value}
           onInput={(e) => {
             e.preventDefault()
-            input.onChange(e.currentTarget.value)
+            let valueNew: string = e.currentTarget.value
+
+            if (valueNew.length === 0)
+              valueNew = 'data' in e.nativeEvent && typeof e.nativeEvent.data === 'string' ? e.nativeEvent.data : ''
+
+            input.onChange(valueNew)
           }}
           className={cn(
             'flex flex-1 appearance-none items-center gap-2 bg-transparent p-3 py-4 text-xl outline-none',
