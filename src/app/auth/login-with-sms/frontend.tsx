@@ -219,7 +219,7 @@ const View: FrontendModule['View'] = (input) => {
 const ViewSendCode: FrontendModule['View'] = (input) => {
   return (
     <AuthScreenFormLayout
-      dataTestId='send-code-screen'
+      dataTestId='auth/send-code-screen'
       ctx={input.ctx}
       title={input.ctx.t('auth-sms.send-code')}
       onBack={() => input.dispatch({ t: 'clicked-back-button' })}
@@ -264,7 +264,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
 
   return (
     <AuthScreenFormLayout
-      dataTestId='verify-code-screen'
+      dataTestId='auth/verify-code-screen'
       ctx={input.ctx}
       title={input.ctx.t('auth-sms.verify-code')}
       onBack={() => input.dispatch({ t: 'clicked-back-button' })}

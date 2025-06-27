@@ -32,7 +32,7 @@ import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
 import { ViewAppStatusBar } from './frontend/app-status-bar/app-status-bar'
 import { FrontendFrontend } from './frontend/frontend'
-import { ToastFrontend } from './frontend/toast'
+import { ToasterFrontend } from './frontend/toaster'
 import { LangFrontend } from './lang/frontend'
 import { ProfileFrontend } from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
@@ -363,7 +363,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
 
       <DrawerPortalExit />
 
-      <ToastFrontend.View
+      <ToasterFrontend.View
         ctx={frontendCtx}
         model={input.model.frontend.toast}
         dispatch={(c) => input.dispatch({ t: 'frontend', c: { t: 'toast', c } })}

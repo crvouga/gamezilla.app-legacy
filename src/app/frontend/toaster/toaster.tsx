@@ -160,6 +160,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
   return (
     <div
       id={String(input.toast.toastId)}
+      data-testid='toaster/toast'
       className='pointer-events-none absolute top-0 left-0 z-40 flex w-full items-center justify-center overflow-visible p-4'
       onMouseDown={() => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast })}
       onMouseUp={() => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast })}

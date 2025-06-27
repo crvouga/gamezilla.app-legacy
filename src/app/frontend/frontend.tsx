@@ -11,7 +11,7 @@ import { FocusFrontend } from '../frontend/focus'
 import { ScreenSizeFrontend } from '../frontend/screen-size'
 import { SoundFrontend } from '../frontend/sound'
 import { StatusBarFrontend } from '../frontend/status-bar/index'
-import { ToastFrontend } from '../frontend/toast'
+import { ToasterFrontend } from './toaster'
 import { VisibilityFrontend } from '../frontend/visibility'
 import { type ModelFrontend, type MsgFrontend } from './types'
 import './update-prompt/update-prompt'
@@ -27,7 +27,7 @@ const init = (input: {
   const screen = CurrentScreenFrontend.init({ location: input.location })
   const visibility = VisibilityFrontend.init()
   const screenSize = ScreenSizeFrontend.init()
-  const toast = ToastFrontend.init({ ctx: input.ctx })
+  const toast = ToasterFrontend.init({ ctx: input.ctx })
   const sound = SoundFrontend.init({ ctx: input.ctx })
   const statusBar = StatusBarFrontend.init()
   const focus = FocusFrontend.init()
@@ -87,7 +87,7 @@ const update = (input: {
     msgIn: input.msgIn,
   })
 
-  const toast = ToastFrontend.update({
+  const toast = ToasterFrontend.update({
     model: input.model.toast,
     msg: input.msg?.t === 'toast' ? input.msg.c : null,
     ctx: input.ctx,
@@ -146,7 +146,7 @@ const subscriptions = (input: {
     Sub.map(ScreenSizeFrontend.subscriptions, (c): MsgFrontend => ({ t: 'screen-size', c })),
     Sub.map(CurrentScreenFrontend.subscriptions, (c): MsgFrontend => ({ t: 'current-screen', c })),
     Sub.map(
-      ToastFrontend.subscriptions({ ctx: input.ctx, model: input.model.toast }),
+      ToasterFrontend.subscriptions({ ctx: input.ctx, model: input.model.toast }),
       (c): MsgFrontend => ({ t: 'toast', c }),
     ),
   ])

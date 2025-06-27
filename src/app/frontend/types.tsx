@@ -4,12 +4,12 @@ import { FocusFrontend } from './focus'
 import { ScreenSizeFrontend } from './screen-size'
 import { SoundFrontend } from './sound'
 import { StatusBarFrontend } from './status-bar'
-import { ToastFrontend } from './toast'
+import { ToasterFrontend } from './toaster'
 import { VisibilityFrontend } from './visibility'
 
 export type ModelFrontend = {
   currentScreen: CurrentScreenFrontend.Model
-  toast: ToastFrontend.Model
+  toast: ToasterFrontend.Model
   sound: SoundFrontend.Model
   visibility: VisibilityFrontend.Model
   screenSize: ScreenSizeFrontend.Model
@@ -20,7 +20,7 @@ export type ModelFrontend = {
 
 export type MsgFrontend =
   | { t: 'current-screen'; c: CurrentScreenFrontend.Msg }
-  | { t: 'toast'; c: ToastFrontend.Msg }
+  | { t: 'toast'; c: ToasterFrontend.Msg }
   | { t: 'sound'; c: SoundFrontend.Msg }
   | { t: 'visibility'; c: VisibilityFrontend.Msg }
   | { t: 'screen-size'; c: ScreenSizeFrontend.Msg }

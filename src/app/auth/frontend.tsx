@@ -206,14 +206,14 @@ const View: FrontendModule['View'] = (input) => {
 
 const ViewLoginScreen: FrontendModule['View'] = (input) => {
   return (
-    <AuthScreenLayout dataTestId='login-screen' ctx={input.ctx} center={true} navBar={null}>
+    <AuthScreenLayout dataTestId='auth/login-screen' ctx={input.ctx} center={true} navBar={null}>
       <div className='flex w-full flex-1 flex-col gap-6'>
         <AuthScreenHeaderCta ctx={input.ctx} />
 
         <Button
           onClick={() => input.dispatch({ t: 'clicked-login-with-phone' })}
           size='lg'
-          dataTestId='continue-with-phone-button'
+          dataTestId='auth/continue-with-phone-button'
           className='w-full'
           renderIconStart={(iconInput) => <IconMobilePhone {...iconInput} />}
           text={input.ctx.t('auth.continue-with-phone')}
