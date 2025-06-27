@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { RenderToString } from './render-to-string'
 import { VDom } from './vdom'
 
-describe('Test', () => {
+describe('RenderToString', () => {
   it('should be able to render to string', async () => {
     const renderToString = await RenderToString()
 
