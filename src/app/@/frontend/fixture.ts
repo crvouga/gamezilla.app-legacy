@@ -3,13 +3,13 @@ import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screen/generated/screens'
 import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
+import { TestClient } from '~/@/test-client'
 import { UnixMs } from '~/@/time/unix-ms'
-import { TestRender } from '~/@/test-render'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { CONFIG_FRONTEND } from '~/config/frontend'
 import { UserId } from '../data/user-id'
 import type { AppFrontendCtx } from './ctx'
 import { Translator } from './translator'
+
 export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => {
   const currentUserId = UserId.generate()
 
@@ -45,10 +45,18 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     }),
   }
 
-  const render = await TestRender(CONFIG_FRONTEND.VDOM_IMPL_TEST)
+  const driver = await TestClient({
+    t: 'happydom',
+  })
+
+  // const document = window.document
+
+  // const html = readFileSync(join(__dirname, 'index.html'), 'utf8')
+  // document.write(html)
+  // document.close()
 
   return {
     ctx,
-    render,
+    driver,
   }
 }

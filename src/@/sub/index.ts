@@ -9,13 +9,15 @@ export type PubSub<Msg> = Sub<Msg> & {
 
 const take = <A>(sub: Sub<A>, abortSignal?: AbortSignal) => {
   return new Promise<A>((resolve, reject) => {
-    const unsubscribe = sub.sub((a) => {
+    let unsubscribe: (() => void) | undefined
+
+    unsubscribe = sub.sub((a) => {
+      unsubscribe?.()
       resolve(a)
-      unsubscribe()
     })
 
     abortSignal?.addEventListener('abort', () => {
-      unsubscribe()
+      unsubscribe?.()
       reject(new Error('Subscription aborted'))
     })
   })
@@ -40,6 +42,42 @@ const where = <A, B extends A>(sub: Sub<A>, guard: (msg: A) => msg is B): Sub<B>
   return {
     ...sub,
     sub: (subscriber) => sub.sub((msg) => (guard(msg) ? subscriber(msg) : undefined)),
+  }
+}
+
+const queued = <Msg>(): PubSub<Msg> => {
+  const subscribers = new Set<(msg: Msg) => Promise<unknown> | unknown>()
+  let queue: Msg[] = []
+
+  return {
+    subscriberCount() {
+      return subscribers.size
+    },
+    sub(subscriber) {
+      subscribers.add(subscriber)
+
+      for (const msg of queue) {
+        subscriber(msg)
+      }
+      queue = []
+
+      return () => {
+        subscribers.delete(subscriber)
+      }
+    },
+    async pub(msg: Msg) {
+      queue.push(msg)
+
+      for (const msg of queue) {
+        for (const subscriber of subscribers) {
+          subscriber(msg)
+        }
+      }
+
+      if (subscribers.size > 0) {
+        queue = []
+      }
+    },
   }
 }
 
@@ -119,5 +157,6 @@ export const Sub = {
   none,
   where,
   create,
+  queued,
   takeEvery,
 }

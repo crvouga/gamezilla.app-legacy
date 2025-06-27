@@ -1,262 +1,262 @@
-import { NonEmpty } from '~/@/array/non-empty'
-import { withEventId, withEventMetaAt } from '~/@/event-sourced/event'
-import { pipe } from '~/@/function/pipe'
-import { Logger } from '~/@/logger'
-import { PhoneNumber } from '~/@/phone-number'
-import { RPC } from '~/@/rpc'
-import type { Screen } from '~/@/screen/generated/screens'
-import { UnixMs } from '~/@/time/unix-ms'
-import { Topic } from '~/@/topic'
-import { SessionId } from '~/@/wire/session-id'
-import { SpaceId } from '~/app/@/data/space-id'
-import { UserAccount } from '~/app/@/data/user-account'
-import { UserId } from '~/app/@/data/user-id'
-import { UserProfile } from '~/app/@/data/user-profile'
-import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
-import { SpacesFrontend } from '../../frontend'
-import { Space } from '../../space/space'
-import { SpaceDb } from '../../space/space/space-db'
-import * as SpacesTypes from '../../types'
-import { SpaceFrontendCtx } from '../frontend/ctx'
+// import { NonEmpty } from '~/@/array/non-empty'
+// import { withEventId, withEventMetaAt } from '~/@/event-sourced/event'
+// import { pipe } from '~/@/function/pipe'
+// import { Logger } from '~/@/logger'
+// import { PhoneNumber } from '~/@/phone-number'
+// import { RPC } from '~/@/rpc'
+// import type { Screen } from '~/@/screen/generated/screens'
+// import { UnixMs } from '~/@/time/unix-ms'
+// import { Topic } from '~/@/topic'
+// import { SessionId } from '~/@/wire/session-id'
+// import { SpaceId } from '~/app/@/data/space-id'
+// import { UserAccount } from '~/app/@/data/user-account'
+// import { UserId } from '~/app/@/data/user-id'
+// import { UserProfile } from '~/app/@/data/user-profile'
+// import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
+// import { SpacesFrontend } from '../../frontend'
+// import { Space } from '../../space/space'
+// import { SpaceDb } from '../../space/space/space-db'
+// import * as SpacesTypes from '../../types'
+// import { SpaceFrontendCtx } from '../frontend/ctx'
 
-export const SpaceFrontendFixture = async () => {
-  const f = await FixtureAppFrontend()
+// export const SpaceFrontendFixture = async () => {
+//   const f = await FixtureAppFrontend()
 
-  type Msg = {
-    t: 'msg'
-    c: SpacesTypes.MsgFrontend
-  }
+//   type Msg = {
+//     t: 'msg'
+//     c: SpacesTypes.MsgFrontend
+//   }
 
-  const topic = Topic.initClient({
-    t: 'local',
-    contract: SpacesTypes.topicContract,
-    logger: Logger({ t: 'noop' }),
-  })
+//   const topic = Topic.initClient({
+//     t: 'local',
+//     contract: SpacesTypes.topicContract,
+//     logger: Logger({ t: 'noop' }),
+//   })
 
-  const rpc = RPC.initClient({
-    t: 'local',
-    contract: SpacesTypes.rpcContract,
-    clientSessionId: f.ctx.clientSessionId,
-    sessionId: SessionId.generate(),
-    server: {
-      'spaces.sync.sync': async (input) => {
-        return {
-          space: input.space,
-        }
-      },
-      'spaces.list-spaces.list': async (_input) => {
-        return {
-          spaces: [],
-        }
-      },
-    },
-  })
+//   const rpc = RPC.initClient({
+//     t: 'local',
+//     contract: SpacesTypes.rpcContract,
+//     clientSessionId: f.ctx.clientSessionId,
+//     sessionId: SessionId.generate(),
+//     server: {
+//       'spaces.sync.sync': async (input) => {
+//         return {
+//           space: input.space,
+//         }
+//       },
+//       'spaces.list-spaces.list': async (_input) => {
+//         return {
+//           spaces: [],
+//         }
+//       },
+//     },
+//   })
 
-  const spaceDb = await SpaceDb({
-    t: 'sql-db',
-    sqlDb: f.ctx.sqlDb,
-    logger: Logger({ t: 'noop' }),
-    shouldCreateTable: true,
-  })
+//   const spaceDb = await SpaceDb({
+//     t: 'sql-db',
+//     sqlDb: f.ctx.sqlDb,
+//     logger: Logger({ t: 'noop' }),
+//     shouldCreateTable: true,
+//   })
 
-  const ctx: SpacesTypes.FrontendCtxModule = {
-    ...f.ctx,
-    topic,
-    rpc,
-    spaceDb,
-  }
+//   const ctx: SpacesTypes.FrontendCtxModule = {
+//     ...f.ctx,
+//     topic,
+//     rpc,
+//     spaceDb,
+//   }
 
-  const updates = (initial: SpacesTypes.ModelFrontend, msgs: Msg[]) => {
-    const outputs: ReturnType<typeof SpacesFrontend.update>[] = []
-    for (const msg of msgs) {
-      switch (msg.t) {
-        case 'msg': {
-          const output = SpacesFrontend.update({ ctx, model: initial, msg: msg.c })
-          outputs.push(output)
-          break
-        }
-      }
-    }
-    return outputs
-  }
+//   const updates = (initial: SpacesTypes.ModelFrontend, msgs: Msg[]) => {
+//     const outputs: ReturnType<typeof SpacesFrontend.update>[] = []
+//     for (const msg of msgs) {
+//       switch (msg.t) {
+//         case 'msg': {
+//           const output = SpacesFrontend.update({ ctx, model: initial, msg: msg.c })
+//           outputs.push(output)
+//           break
+//         }
+//       }
+//     }
+//     return outputs
+//   }
 
-  return {
-    ...f,
-    updates,
-  }
-}
+//   return {
+//     ...f,
+//     updates,
+//   }
+// }
 
-export type FixtureInput = Partial<Parameters<typeof SpacesFrontend.update>[0]>
+// export type FixtureInput = Partial<Parameters<typeof SpacesFrontend.update>[0]>
 
-export type Output = ReturnType<typeof SpacesFrontend.update>
+// export type Output = ReturnType<typeof SpacesFrontend.update>
 
-export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) => {
-  const f = await FixtureAppFrontend(input)
-  const currentUser: UserAccount = {
-    userId: f.ctx.currentUser.userId,
-    createdAt: UnixMs.now(),
-    phoneNumber: PhoneNumber.random(),
-    role: 'normal',
-  }
-  const userA = await UserProfile.random()
-  const userB = await UserProfile.random()
-  const userC = await UserProfile.random()
+// export const FixtureSpacesFrontend = async (input?: { currentScreen?: Screen }) => {
+//   const f = await FixtureAppFrontend(input)
+//   const currentUser: UserAccount = {
+//     userId: f.ctx.currentUser.userId,
+//     createdAt: UnixMs.now(),
+//     phoneNumber: PhoneNumber.random(),
+//     role: 'normal',
+//   }
+//   const userA = await UserProfile.random()
+//   const userB = await UserProfile.random()
+//   const userC = await UserProfile.random()
 
-  const spaceId = SpaceId.generate()
+//   const spaceId = SpaceId.generate()
 
-  const space = pipe(
-    Space.init,
-    (model) =>
-      Space.append(model, withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId } as const)),
-    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userA.userId } as const)),
-    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const)),
-    (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const)),
-    (model) => Space.toSpaceStarted(model),
-    (space) => {
-      if (!space) throw new Error('Invalid fixture. Space is not started.')
-      return space
-    },
-  )
+//   const space = pipe(
+//     Space.init,
+//     (model) =>
+//       Space.append(model, withEventId({ t: 'user-started-space', spaceId, userId: currentUser.userId } as const)),
+//     (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userA.userId } as const)),
+//     (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userB.userId } as const)),
+//     (model) => Space.append(model, withEventId({ t: 'user-joined-space', spaceId, userId: userC.userId } as const)),
+//     (model) => Space.toSpaceStarted(model),
+//     (space) => {
+//       if (!space) throw new Error('Invalid fixture. Space is not started.')
+//       return space
+//     },
+//   )
 
-  const topic = Topic.initClient({
-    t: 'local',
-    contract: SpacesTypes.topicContract,
-    logger: Logger({ t: 'noop' }),
-  })
+//   const topic = Topic.initClient({
+//     t: 'local',
+//     contract: SpacesTypes.topicContract,
+//     logger: Logger({ t: 'noop' }),
+//   })
 
-  const rpc = RPC.initClient({
-    t: 'local',
-    contract: SpacesTypes.rpcContract,
-    clientSessionId: f.ctx.clientSessionId,
-    sessionId: SessionId.generate(),
-    server: {
-      'spaces.sync.sync': async (input) => {
-        return {
-          space: input.space,
-        }
-      },
-      'spaces.list-spaces.list': async (_input) => {
-        return {
-          spaces: [],
-        }
-      },
-    },
-  })
+//   const rpc = RPC.initClient({
+//     t: 'local',
+//     contract: SpacesTypes.rpcContract,
+//     clientSessionId: f.ctx.clientSessionId,
+//     sessionId: SessionId.generate(),
+//     server: {
+//       'spaces.sync.sync': async (input) => {
+//         return {
+//           space: input.space,
+//         }
+//       },
+//       'spaces.list-spaces.list': async (_input) => {
+//         return {
+//           spaces: [],
+//         }
+//       },
+//     },
+//   })
 
-  const spaceDb = await SpaceDb({
-    t: 'sql-db',
-    sqlDb: f.ctx.sqlDb,
-    logger: Logger({ t: 'noop' }),
-    shouldCreateTable: true,
-  })
+//   const spaceDb = await SpaceDb({
+//     t: 'sql-db',
+//     sqlDb: f.ctx.sqlDb,
+//     logger: Logger({ t: 'noop' }),
+//     shouldCreateTable: true,
+//   })
 
-  const currentUserProfile = await UserProfile.random({ userId: currentUser.userId })
-  const ctx: SpacesTypes.FrontendCtxModule & SpaceFrontendCtx = {
-    ...f.ctx,
-    spaceDb,
-    parentScreen: null,
-    currentScreen: {
-      n: 'spaces',
-      t: 'space-list',
-    },
-    currentUserId: currentUser.userId,
-    currentUserRole: 'normal',
-    documentVisibilityState: 'visible',
-    now: UnixMs.now(),
-    profilesByUserId: UserProfile.indexByUserId([currentUserProfile, userA, userB, userC]),
-    space,
-    currentUser,
-    topic,
-    rpc,
-  }
+//   const currentUserProfile = await UserProfile.random({ userId: currentUser.userId })
+//   const ctx: SpacesTypes.FrontendCtxModule & SpaceFrontendCtx = {
+//     ...f.ctx,
+//     spaceDb,
+//     parentScreen: null,
+//     currentScreen: {
+//       n: 'spaces',
+//       t: 'space-list',
+//     },
+//     currentUserId: currentUser.userId,
+//     currentUserRole: 'normal',
+//     documentVisibilityState: 'visible',
+//     now: UnixMs.now(),
+//     profilesByUserId: UserProfile.indexByUserId([currentUserProfile, userA, userB, userC]),
+//     space,
+//     currentUser,
+//     topic,
+//     rpc,
+//   }
 
-  const updates = (initial: Output, inputs: FixtureInput[]): NonEmpty<Output> => {
-    const outputs: NonEmpty<Output> = [initial]
-    for (const input of inputs) {
-      let output = SpacesFrontend.update({
-        ...input,
-        ctx: input.ctx ?? ctx,
-        model: NonEmpty.last(outputs).model,
-      })
-      const msgOuts: unknown[] = []
+//   const updates = (initial: Output, inputs: FixtureInput[]): NonEmpty<Output> => {
+//     const outputs: NonEmpty<Output> = [initial]
+//     for (const input of inputs) {
+//       let output = SpacesFrontend.update({
+//         ...input,
+//         ctx: input.ctx ?? ctx,
+//         model: NonEmpty.last(outputs).model,
+//       })
+//       const msgOuts: unknown[] = []
 
-      for (const msgOut of output.msgOut ?? []) {
-        msgOuts.push(msgOut)
-        output = SpacesFrontend.update({
-          ctx: input.ctx ?? ctx,
-          model: output.model,
-          msgIn: msgOut,
-        })
-      }
+//       for (const msgOut of output.msgOut ?? []) {
+//         msgOuts.push(msgOut)
+//         output = SpacesFrontend.update({
+//           ctx: input.ctx ?? ctx,
+//           model: output.model,
+//           msgIn: msgOut,
+//         })
+//       }
 
-      outputs.push({
-        ...output,
-        msgOut: msgOuts,
-      })
-    }
-    return outputs
-  }
+//       outputs.push({
+//         ...output,
+//         msgOut: msgOuts,
+//       })
+//     }
+//     return outputs
+//   }
 
-  const update = (initial: Output, inputs: FixtureInput[]): Output => {
-    return NonEmpty.last(updates(initial, inputs))
-  }
+//   const update = (initial: Output, inputs: FixtureInput[]): Output => {
+//     return NonEmpty.last(updates(initial, inputs))
+//   }
 
-  const view = (input: { model: SpacesTypes.ModelFrontend }) => {
-    return f.render(<SpacesFrontend.View ctx={ctx} dispatch={() => {}} {...input} />)
-  }
+//   const view = (input: { model: SpacesTypes.ModelFrontend }) => {
+//     return f.render(<SpacesFrontend.View ctx={ctx} dispatch={() => {}} {...input} />)
+//   }
 
-  const initial = SpacesFrontend.init({ ctx })
+//   const initial = SpacesFrontend.init({ ctx })
 
-  return {
-    ...f,
-    hostId: currentUser.userId,
-    ctx,
-    initial,
-    currentUser,
-    userA,
-    userB,
-    userC,
-    updates,
-    update,
-    view,
-  }
-}
+//   return {
+//     ...f,
+//     hostId: currentUser.userId,
+//     ctx,
+//     initial,
+//     currentUser,
+//     userA,
+//     userB,
+//     userC,
+//     updates,
+//     update,
+//     view,
+//   }
+// }
 
-export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
-  return {
-    msg: {
-      t: 'sync.got-msg-space',
-      c: withEventMetaAt(happenedAt, {
-        t: 'user-started-space',
-        spaceId,
-        userId,
-      }),
-    },
-  }
-}
+// export const userStartedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
+//   return {
+//     msg: {
+//       t: 'sync.got-msg-space',
+//       c: withEventMetaAt(happenedAt, {
+//         t: 'user-started-space',
+//         spaceId,
+//         userId,
+//       }),
+//     },
+//   }
+// }
 
-export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
-  return {
-    msg: {
-      t: 'sync.got-msg-space',
-      c: withEventMetaAt(happenedAt, {
-        t: 'user-left-space',
-        spaceId,
-        userId,
-      }),
-    },
-  }
-}
+// export const userLeftSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
+//   return {
+//     msg: {
+//       t: 'sync.got-msg-space',
+//       c: withEventMetaAt(happenedAt, {
+//         t: 'user-left-space',
+//         spaceId,
+//         userId,
+//       }),
+//     },
+//   }
+// }
 
-export const userJoinedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
-  return {
-    msg: {
-      t: 'sync.got-msg-space',
-      c: withEventMetaAt(happenedAt, {
-        t: 'user-joined-space',
-        spaceId,
-        userId,
-      }),
-    },
-  }
-}
+// export const userJoinedSpace = (happenedAt: number, userId: UserId, spaceId: SpaceId): FixtureInput => {
+//   return {
+//     msg: {
+//       t: 'sync.got-msg-space',
+//       c: withEventMetaAt(happenedAt, {
+//         t: 'user-joined-space',
+//         spaceId,
+//         userId,
+//       }),
+//     },
+//   }
+// }

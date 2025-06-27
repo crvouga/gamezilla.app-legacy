@@ -1,117 +1,117 @@
-import { withEventMeta } from '~/@/event-sourced/event'
-import { UserId } from '~/app/@/data/user-id'
-import { ModePlay } from '../../../../@/mode-play'
-import { Pack } from '../../../../@/pack/pack'
-import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
-import { Puzzle } from '../../../../@/puzzle/puzzle'
-import { FixturePlayFrontend, type FixtureUpdateInput } from '../../../@/frontend/fixture'
-import { Solutions } from '../../../../@/solutions/solutions'
-import { FlowFrontendCtx } from '../../../../@/frontend/ctx'
-import { Logger } from '~/@/logger'
+// import { withEventMeta } from '~/@/event-sourced/event'
+// import { UserId } from '~/app/@/data/user-id'
+// import { ModePlay } from '../../../../@/mode-play'
+// import { Pack } from '../../../../@/pack/pack'
+// import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
+// import { Puzzle } from '../../../../@/puzzle/puzzle'
+// import { FixturePlayFrontend, type FixtureUpdateInput } from '../../../@/frontend/fixture'
+// import { Solutions } from '../../../../@/solutions/solutions'
+// import { FlowFrontendCtx } from '../../../../@/frontend/ctx'
+// import { Logger } from '~/@/logger'
 
-const toCompletePuzzleMsgs = (puzzle: Puzzle) => {
-  const userId = UserId.generate()
-  return ModePlay.toSolutionMsgs({
-    numberlink: puzzle.model,
-  }).map(
-    (c): FixtureUpdateInput => ({
-      msgSpace: withEventMeta({
-        t: 'got-numberlink-play-msg',
-        userId,
-        c,
-      }),
-    }),
-  )
-}
+// const toCompletePuzzleMsgs = (puzzle: Puzzle) => {
+//   const userId = UserId.generate()
+//   return ModePlay.toSolutionMsgs({
+//     numberlink: puzzle.model,
+//   }).map(
+//     (c): FixtureUpdateInput => ({
+//       msgSpace: withEventMeta({
+//         t: 'got-numberlink-play-msg',
+//         userId,
+//         c,
+//       }),
+//     }),
+//   )
+// }
 
-export const FixtureScreenPlayPuzzleFrontend = async () => {
-  const f = await FixturePlayFrontend()
-  const puzzle = await Puzzle.random()
-  const nextPuzzle = await Puzzle.random()
-  const prevPuzzle = await Puzzle.random()
+// export const FixtureScreenPlayPuzzleFrontend = async () => {
+//   const f = await FixturePlayFrontend()
+//   const puzzle = await Puzzle.random()
+//   const nextPuzzle = await Puzzle.random()
+//   const prevPuzzle = await Puzzle.random()
 
-  const solutions = await Solutions.find({
-    models: [puzzle.model, nextPuzzle.model, prevPuzzle.model],
-    logger: Logger({ t: 'noop' }),
-  })
-  const ctx: FlowFrontendCtx = {
-    ...f.ctx,
-    solutions,
-  }
+//   const solutions = await Solutions.find({
+//     models: [puzzle.model, nextPuzzle.model, prevPuzzle.model],
+//     logger: Logger({ t: 'noop' }),
+//   })
+//   const ctx: FlowFrontendCtx = {
+//     ...f.ctx,
+//     solutions,
+//   }
 
-  const nextPuzzleResult: PuzzleResult = { t: 'got', c: nextPuzzle }
-  const prevPuzzleResult: PuzzleResult = { t: 'got', c: prevPuzzle }
+//   const nextPuzzleResult: PuzzleResult = { t: 'got', c: nextPuzzle }
+//   const prevPuzzleResult: PuzzleResult = { t: 'got', c: prevPuzzle }
 
-  const pack = await Pack.random({
-    puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
-  })
-  const puzzleIndex = 1
-  const prevPuzzleIndex = 0
-  const nextPuzzleIndex = 2
+//   const pack = await Pack.random({
+//     puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
+//   })
+//   const puzzleIndex = 1
+//   const prevPuzzleIndex = 0
+//   const nextPuzzleIndex = 2
 
-  const init = f.update(f.initial, [
-    {
-      msg: {
-        t: 'got-msg-space',
-        c: {
-          t: 'user-clicked-open-pack-puzzle-grid-item',
-          pack,
-          userId: f.hostId,
-        },
-      },
-    },
-    {
-      msg: {
-        t: 'got-msg-space',
-        c: {
-          t: 'user-clicked-open-screen-play-puzzle',
-          userId: f.hostId,
-          puzzle: { t: 'got', c: puzzle },
-          puzzleIndex,
-        },
-      },
-    },
-  ])
+//   const init = f.update(f.initial, [
+//     {
+//       msg: {
+//         t: 'got-msg-space',
+//         c: {
+//           t: 'user-clicked-open-pack-puzzle-grid-item',
+//           pack,
+//           userId: f.hostId,
+//         },
+//       },
+//     },
+//     {
+//       msg: {
+//         t: 'got-msg-space',
+//         c: {
+//           t: 'user-clicked-open-screen-play-puzzle',
+//           userId: f.hostId,
+//           puzzle: { t: 'got', c: puzzle },
+//           puzzleIndex,
+//         },
+//       },
+//     },
+//   ])
 
-  const firstPuzzle = prevPuzzle
-  const firstPuzzleIndex = 0
-  const lastPuzzle = nextPuzzle
-  const lastPuzzleIndex = 2
+//   const firstPuzzle = prevPuzzle
+//   const firstPuzzleIndex = 0
+//   const lastPuzzle = nextPuzzle
+//   const lastPuzzleIndex = 2
 
-  const msgsCompletePuzzle = toCompletePuzzleMsgs(puzzle)
-  const msgsGoToLastPuzzle: FixtureUpdateInput[] = [
-    {
-      msgSpace: withEventMeta({
-        t: 'user-clicked-next-puzzle',
-        nextPuzzleIndex: lastPuzzleIndex,
-        userId: f.hostId,
-        nextPuzzle: {
-          t: 'got',
-          c: lastPuzzle,
-        },
-      }),
-    },
-  ]
-  const msgsCompleteLastPuzzle: FixtureUpdateInput[] = [...msgsGoToLastPuzzle, ...toCompletePuzzleMsgs(lastPuzzle)]
+//   const msgsCompletePuzzle = toCompletePuzzleMsgs(puzzle)
+//   const msgsGoToLastPuzzle: FixtureUpdateInput[] = [
+//     {
+//       msgSpace: withEventMeta({
+//         t: 'user-clicked-next-puzzle',
+//         nextPuzzleIndex: lastPuzzleIndex,
+//         userId: f.hostId,
+//         nextPuzzle: {
+//           t: 'got',
+//           c: lastPuzzle,
+//         },
+//       }),
+//     },
+//   ]
+//   const msgsCompleteLastPuzzle: FixtureUpdateInput[] = [...msgsGoToLastPuzzle, ...toCompletePuzzleMsgs(lastPuzzle)]
 
-  return {
-    ...f,
-    ctx,
-    msgsGoToLastPuzzle,
-    msgsCompleteLastPuzzle,
-    msgsCompletePuzzle,
-    init,
-    pack,
-    puzzle,
-    puzzleIndex,
-    firstPuzzle,
-    firstPuzzleIndex,
-    lastPuzzle,
-    lastPuzzleIndex,
-    //
-    nextPuzzle: nextPuzzleResult,
-    nextPuzzleIndex,
-    prevPuzzle: prevPuzzleResult,
-    prevPuzzleIndex,
-  }
-}
+//   return {
+//     ...f,
+//     ctx,
+//     msgsGoToLastPuzzle,
+//     msgsCompleteLastPuzzle,
+//     msgsCompletePuzzle,
+//     init,
+//     pack,
+//     puzzle,
+//     puzzleIndex,
+//     firstPuzzle,
+//     firstPuzzleIndex,
+//     lastPuzzle,
+//     lastPuzzleIndex,
+//     //
+//     nextPuzzle: nextPuzzleResult,
+//     nextPuzzleIndex,
+//     prevPuzzle: prevPuzzleResult,
+//     prevPuzzleIndex,
+//   }
+// }

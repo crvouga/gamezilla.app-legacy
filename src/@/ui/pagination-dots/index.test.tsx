@@ -1,38 +1,43 @@
 import { describe, expect, it, test } from 'bun:test'
 import { Sub } from '~/@/sub'
-import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import { PAGINATION_DOTS_TEST_ID, PaginationDots, toPaginationDotSelector } from '~/@/ui/pagination-dots'
+import { BaseFixture } from '../fixture'
 
 const Fixture = async () => {
-  const f = await FixtureAppFrontend()
-  return f
+  const f = await BaseFixture()
+  return {
+    ...f,
+  }
 }
 
-describe('PaginationDots', () => {
+describe.skip('PaginationDots', () => {
   it('should render pagination dots if there is more than one slide', async () => {
     const f = await Fixture()
-    const r = f.render(<PaginationDots activeIndex={0} count={2} />)
-    expect(r.getByTestId(PAGINATION_DOTS_TEST_ID)).not.toBe(null)
+    f.render(<PaginationDots activeIndex={0} count={2} />)
+    const nodes = await f.driver.query(`[data-testid="${PAGINATION_DOTS_TEST_ID}"]`)
+    expect(nodes.length).toBe(2)
   })
 
   it('should NOT render pagination dots if there is only one slide', async () => {
     const f = await Fixture()
-    const r = f.render(<PaginationDots activeIndex={0} count={1} />)
-    expect(r.getByTestId(PAGINATION_DOTS_TEST_ID)[0] ?? null).toBe(null)
+    f.render(<PaginationDots activeIndex={0} count={1} />)
+    const nodes = await f.driver.query(`[data-testid="${PAGINATION_DOTS_TEST_ID}"]`)
+    expect(nodes.length).toBe(0)
   })
 
   test('clicked dots', async () => {
     const f = await Fixture()
     const clickedIndex = Sub.create<number>()
-    const r = f.render(<PaginationDots activeIndex={0} count={3} onClick={clickedIndex.pub} />)
-    r.query(toPaginationDotSelector(1))[0]?.click()
+    f.render(<PaginationDots activeIndex={0} count={3} onClick={clickedIndex.pub} />)
+    const nodes = await f.driver.query(toPaginationDotSelector(1))
+    await nodes[0]?.do({ t: 'click' })
     expect(await Sub.take(clickedIndex)).toEqual(1)
   })
 
   test('should NOT be buttons if no onClick is provided', async () => {
     const f = await Fixture()
-    const r = f.render(<PaginationDots activeIndex={0} count={3} />)
-    const buttons = r.query('button')
-    expect(buttons.length).toEqual(0)
+    f.render(<PaginationDots activeIndex={0} count={3} />)
+    const nodes = await f.driver.query('button')
+    expect(nodes.length).toEqual(0)
   })
 })

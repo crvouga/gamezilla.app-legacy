@@ -5,9 +5,9 @@ import { AppFrontend } from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { CONFIG_SHARED } from './config/shared'
 
-injectSpeedInsights()
-
 const main = async () => {
+  injectSpeedInsights()
+
   const render = await Render(CONFIG_FRONTEND.VDOM_IMPL, document.getElementById('root')!)
 
   const ctx = await AppFrontend.initCtx()

@@ -1,85 +1,85 @@
-import { NonEmpty } from '~/@/array/non-empty'
-import { withEventMeta, WithEventMeta } from '~/@/event-sourced/event'
-import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
-import { NumberlinkFrontend } from '../../frontend'
-import { NumberlinkSpace } from '../../space'
-import { ModelSpace, MsgFrontend, MsgSpace } from '../../types'
-import { PackDb } from '../pack/pack-db'
-import { PackLoaderTypes } from '../pack/pack-loader'
-import { PuzzleDb } from '../puzzle/puzzle-db'
-import { PuzzleLoaderTypes } from '../puzzle/puzzle-loader'
-import { HintCalculatorTypes } from '../solutions/hint-calculator'
-import { Solutions } from '../solutions/solutions'
-import { SolutionsDb } from '../solutions/solutions-db/impl'
-import { SolutionsLoaderTypes } from '../solutions/solutions-loader'
-import type { FlowFrontendCtx } from './ctx'
+// import { NonEmpty } from '~/@/array/non-empty'
+// import { withEventMeta, WithEventMeta } from '~/@/event-sourced/event'
+// import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
+// import { NumberlinkFrontend } from '../../frontend'
+// import { NumberlinkSpace } from '../../space'
+// import { ModelSpace, MsgFrontend, MsgSpace } from '../../types'
+// import { PackDb } from '../pack/pack-db'
+// import { PackLoaderTypes } from '../pack/pack-loader'
+// import { PuzzleDb } from '../puzzle/puzzle-db'
+// import { PuzzleLoaderTypes } from '../puzzle/puzzle-loader'
+// import { HintCalculatorTypes } from '../solutions/hint-calculator'
+// import { Solutions } from '../solutions/solutions'
+// import { SolutionsDb } from '../solutions/solutions-db/impl'
+// import { SolutionsLoaderTypes } from '../solutions/solutions-loader'
+// import type { FlowFrontendCtx } from './ctx'
 
-export const FixtureNumberlinkFrontend = async () => {
-  const f = await FixtureSpacesFrontend()
+// export const FixtureNumberlinkFrontend = async () => {
+//   const f = await FixtureSpacesFrontend()
 
-  const ctx: FlowFrontendCtx = {
-    ...f.ctx,
-    packs: {},
-    puzzles: {},
-    solutions: Solutions.init,
-    puzzleLoader: PuzzleLoaderTypes.initFrontend,
-    packLoader: PackLoaderTypes.initFrontend,
-    hintCalculator: HintCalculatorTypes.initFrontend,
-    solutionsLoader: SolutionsLoaderTypes.initFrontend,
-    puzzleDb: PuzzleDb({ ...f.ctx, t: 'sql-db' }),
-    packDb: PackDb({ ...f.ctx, t: 'sql-db' }),
-    solutionsDb: SolutionsDb({ t: 'sql-db', sqlDb: f.ctx.sqlDb }),
-  }
-  type Input = {
-    ctx?: FlowFrontendCtx | null
-    msg?: MsgFrontend | null
-    msgSpace?: WithEventMeta<MsgSpace> | null
-  }
+//   const ctx: FlowFrontendCtx = {
+//     ...f.ctx,
+//     packs: {},
+//     puzzles: {},
+//     solutions: Solutions.init,
+//     puzzleLoader: PuzzleLoaderTypes.initFrontend,
+//     packLoader: PackLoaderTypes.initFrontend,
+//     hintCalculator: HintCalculatorTypes.initFrontend,
+//     solutionsLoader: SolutionsLoaderTypes.initFrontend,
+//     puzzleDb: PuzzleDb({ ...f.ctx, t: 'sql-db' }),
+//     packDb: PackDb({ ...f.ctx, t: 'sql-db' }),
+//     solutionsDb: SolutionsDb({ t: 'sql-db', sqlDb: f.ctx.sqlDb }),
+//   }
+//   type Input = {
+//     ctx?: FlowFrontendCtx | null
+//     msg?: MsgFrontend | null
+//     msgSpace?: WithEventMeta<MsgSpace> | null
+//   }
 
-  type Output = ReturnType<typeof NumberlinkFrontend.update>
+//   type Output = ReturnType<typeof NumberlinkFrontend.update>
 
-  const updates = (initial: Output, inputs: Input[]): NonEmpty<Output> => {
-    const outputs: NonEmpty<Output> = [initial]
-    for (const input of inputs) {
-      const lastOutput = NonEmpty.last(outputs)
+//   const updates = (initial: Output, inputs: Input[]): NonEmpty<Output> => {
+//     const outputs: NonEmpty<Output> = [initial]
+//     for (const input of inputs) {
+//       const lastOutput = NonEmpty.last(outputs)
 
-      const output = NumberlinkFrontend.update({
-        ctx: input.ctx ?? ctx,
-        model: lastOutput.model,
-        msg: input.msg,
-        msgSpace: input.msgSpace,
-        modelSpace: outputs
-          .flatMap((o) => o.msgSpace ?? [])
-          .reduce(
-            (acc, msgSpace): ModelSpace =>
-              msgSpace
-                ? NumberlinkSpace.updateSpace({
-                    ctx: input.ctx ?? ctx,
-                    modelSpace: acc,
-                    msgSpace: withEventMeta(msgSpace),
-                  })
-                : acc,
-            NumberlinkSpace.initSpace({ ctx: input.ctx ?? ctx }),
-          ),
-      })
-      outputs.push(output)
-    }
-    return outputs
-  }
+//       const output = NumberlinkFrontend.update({
+//         ctx: input.ctx ?? ctx,
+//         model: lastOutput.model,
+//         msg: input.msg,
+//         msgSpace: input.msgSpace,
+//         modelSpace: outputs
+//           .flatMap((o) => o.msgSpace ?? [])
+//           .reduce(
+//             (acc, msgSpace): ModelSpace =>
+//               msgSpace
+//                 ? NumberlinkSpace.updateSpace({
+//                     ctx: input.ctx ?? ctx,
+//                     modelSpace: acc,
+//                     msgSpace: withEventMeta(msgSpace),
+//                   })
+//                 : acc,
+//             NumberlinkSpace.initSpace({ ctx: input.ctx ?? ctx }),
+//           ),
+//       })
+//       outputs.push(output)
+//     }
+//     return outputs
+//   }
 
-  const update = (initial: Output, inputs: Input[]): Output => {
-    return NonEmpty.last(updates(initial, inputs))
-  }
+//   const update = (initial: Output, inputs: Input[]): Output => {
+//     return NonEmpty.last(updates(initial, inputs))
+//   }
 
-  const initial = {
-    model: NumberlinkFrontend.init,
-  }
+//   const initial = {
+//     model: NumberlinkFrontend.init,
+//   }
 
-  return {
-    ...f,
-    ctx,
-    initial,
-    update,
-    updates,
-  }
-}
+//   return {
+//     ...f,
+//     ctx,
+//     initial,
+//     update,
+//     updates,
+//   }
+// }

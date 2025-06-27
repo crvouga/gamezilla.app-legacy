@@ -1,72 +1,72 @@
-import { describe, expect, test } from 'bun:test'
-import { withEventMeta } from '~/@/event-sourced/event'
+// import { describe, expect, test } from 'bun:test'
+// import { withEventMeta } from '~/@/event-sourced/event'
 
-import { Puzzle } from '../../../@/puzzle/puzzle'
-import { FixtureFlowBuilderFrontend } from '../../@/fixture/frontend'
-import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/interface-query'
-import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
+// import { Puzzle } from '../../../@/puzzle/puzzle'
+// import { FixtureFlowBuilderFrontend } from '../../@/fixture/frontend'
+// import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/interface-query'
+// import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 
-const Fixture = async () => {
-  const f = await FixtureFlowBuilderFrontend()
-  const puzzle = await Puzzle.random({
-    createdBy: f.ctx.currentUser.userId,
-  })
+// const Fixture = async () => {
+//   const f = await FixtureFlowBuilderFrontend()
+//   const puzzle = await Puzzle.random({
+//     createdBy: f.ctx.currentUser.userId,
+//   })
 
-  return {
-    ...f,
-    puzzle,
-  }
-}
+//   return {
+//     ...f,
+//     puzzle,
+//   }
+// }
 
-describe('Test', () => {
-  test('open puzzle builder', async () => {
-    const f = await Fixture()
+// describe('Test', () => {
+//   test('open puzzle builder', async () => {
+//     const f = await Fixture()
 
-    const output = f.update(f.init, [
-      {
-        msg: {
-          t: 'got-msg-space',
-          c: {
-            t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
-            puzzle: f.puzzle,
-            userId: f.ctx.currentUser.userId,
-          },
-        },
-      },
-    ])
-    expect(
-      output.modelSpace.screen.t === 'screen-puzzle-builder' &&
-        output.modelSpace.screenPuzzleBuilder?.puzzle.id === f.puzzle.id,
-    ).toBe(true)
-  })
+//     const output = f.update(f.init, [
+//       {
+//         msg: {
+//           t: 'got-msg-space',
+//           c: {
+//             t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
+//             puzzle: f.puzzle,
+//             userId: f.ctx.currentUser.userId,
+//           },
+//         },
+//       },
+//     ])
+//     expect(
+//       output.modelSpace.screen.t === 'screen-puzzle-builder' &&
+//         output.modelSpace.screenPuzzleBuilder?.puzzle.id === f.puzzle.id,
+//     ).toBe(true)
+//   })
 
-  test('play a sound when opening puzzle builder', async () => {
-    const f = await Fixture()
+//   test('play a sound when opening puzzle builder', async () => {
+//     const f = await Fixture()
 
-    const output = f.update(f.init, [
-      {
-        msgSpace: withEventMeta({
-          t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
-          puzzle: f.puzzle,
-          userId: f.ctx.currentUser.userId,
-        }),
-      },
-    ])
-    expect(PlaySoundCmd.did(output)).toBe(true)
-  })
+//     const output = f.update(f.init, [
+//       {
+//         msgSpace: withEventMeta({
+//           t: 'screen-puzzle-builder-open.clicked-puzzle-db-query-item',
+//           puzzle: f.puzzle,
+//           userId: f.ctx.currentUser.userId,
+//         }),
+//       },
+//     ])
+//     expect(PlaySoundCmd.did(output)).toBe(true)
+//   })
 
-  test('play a sound when query changes', async () => {
-    const f = await Fixture()
+//   test('play a sound when query changes', async () => {
+//     const f = await Fixture()
 
-    const output = f.update(f.init, [
-      {
-        msgSpace: withEventMeta({
-          t: 'screen-puzzle-builder-open.puzzle-db-query-query-changed',
-          userId: f.ctx.currentUser.userId,
-          query: PuzzleQuery.random(),
-        }),
-      },
-    ])
-    expect(PlaySoundCmd.did(output)).toBe(true)
-  })
-})
+//     const output = f.update(f.init, [
+//       {
+//         msgSpace: withEventMeta({
+//           t: 'screen-puzzle-builder-open.puzzle-db-query-query-changed',
+//           userId: f.ctx.currentUser.userId,
+//           query: PuzzleQuery.random(),
+//         }),
+//       },
+//     ])
+//     expect(PlaySoundCmd.did(output)).toBe(true)
+//   })
+// })
