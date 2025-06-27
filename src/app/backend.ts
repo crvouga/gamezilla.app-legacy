@@ -113,22 +113,6 @@ const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtx
     topic,
   }
 
-  RPC.registerRespond({
-    httpServer: ctx.httpServer,
-    contract: AppTypes.rpcContract,
-    server: AppBackend.rpc({ ctx }),
-  })
-
-  PowerSyncBackend.registerRespond({
-    ctx,
-    httpServer: ctx.httpServer,
-  })
-
-  HelloBackend.registerRespond({
-    ctx,
-    httpServer: ctx.httpServer,
-  })
-
   return ctx
 }
 
@@ -160,6 +144,22 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
 }
 
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
+  RPC.registerRespond({
+    httpServer: input.ctx.httpServer,
+    contract: AppTypes.rpcContract,
+    server: AppBackend.rpc({ ctx: input.ctx }),
+  })
+
+  PowerSyncBackend.registerRespond({
+    ctx: input.ctx,
+    httpServer: input.ctx.httpServer,
+  })
+
+  HelloBackend.registerRespond({
+    ctx: input.ctx,
+    httpServer: input.ctx.httpServer,
+  })
+
   input.ctx.httpServer.start(CONFIG_BACKEND.PORT())
 
   WireBackend.worker(s, input)

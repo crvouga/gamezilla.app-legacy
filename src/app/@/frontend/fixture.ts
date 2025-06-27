@@ -45,7 +45,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     }),
   }
 
-  const driver = await TestClient({
+  const client = await TestClient({
     t: 'happydom',
   })
 
@@ -57,6 +57,6 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
 
   return {
     ctx,
-    driver,
+    client,
   }
 }

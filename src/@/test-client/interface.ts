@@ -1,3 +1,5 @@
+import { TimeSpan } from '../time/time-span'
+
 export type TestAction =
   | { t: 'keydown'; key: string }
   | { t: 'click' }
@@ -12,5 +14,5 @@ export type ITestNode = {
 }
 
 export type ITestClient = {
-  query: (selector: string) => Promise<ITestNode[]>
+  query: (selector: string, config?: { poll?: TimeSpan; maxWait?: TimeSpan }) => Promise<ITestNode[]>
 }

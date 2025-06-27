@@ -1,38 +1,18 @@
-// import { describe, expect, test } from 'bun:test'
-// import { PlaySoundCmd.did, PushScreenCmd.did } from '../@/frontend/cmd'
-// import { FixtureAuthFrontend } from './@/fixture/frontend'
-// import * as AuthFrontend from './frontend'
+import { describe, expect, test } from 'bun:test'
+import { FixtureAuth } from './@/test/fixture'
 
-// const Fixture = async () => {
-//   const f = await FixtureAuthFrontend()
+const Fixture = async () => {
+  const f = await FixtureAuth()
 
-//   return {
-//     ...f,
-//   }
-// }
+  return {
+    ...f,
+  }
+}
 
-// describe('Test', () => {
-//   test('continue with phone', async () => {
-//     const f = await Fixture()
-//     const output = AuthFrontend.update({
-//       ctx: f.ctx,
-//       model: f.initial.model,
-//       msg: { t: 'clicked-login-with-phone' },
-//     })
-//     expect(PlaySoundCmd.did(output)).toBe(true)
-//     expect(PushScreenCmd.did(output, (screen) => screen.n === 'auth-login' && screen.t === 'login-sms-request')).toBe(true)
-//   })
-
-//   test('continue with email', async () => {
-//     const f = await Fixture()
-//     const output = AuthFrontend.update({
-//       ctx: f.ctx,
-//       model: f.initial.model,
-//       msg: { t: 'user-clicked-login-with-email' },
-//     })
-//     expect(PlaySoundCmd.did(output)).toBe(true)
-//     expect(PushScreenCmd.did(output, (screen) => screen.n === 'auth-login' && screen.t === 'login-email-send-link')).toBe(
-//       true,
-//     )
-//   })
-// })
+describe('Auth', () => {
+  test('login screen', async () => {
+    const f = await Fixture()
+    const [screen] = await f.client.query(`[data-testid='auth-login-screen']`)
+    expect(screen).toBeDefined()
+  })
+})

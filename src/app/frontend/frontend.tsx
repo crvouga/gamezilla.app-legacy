@@ -79,7 +79,6 @@ const update = (input: {
   const visibility = VisibilityFrontend.update({
     model: input.model.visibility,
     msg: input.msg?.t === 'visibility' ? input.msg.c : null,
-    // msgIn: input.msgIn,
   })
 
   const statusBar = StatusBarFrontend.update({

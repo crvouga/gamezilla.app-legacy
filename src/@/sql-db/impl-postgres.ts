@@ -1,11 +1,12 @@
 import postgres from 'postgres'
-import { Err, Ok } from '~/@/result'
+import { Err, isErr, Ok } from '~/@/result'
 import type { s } from '~/@/schema'
 import { SecretString } from '~/@/secrets/secret-string'
 import { Sql } from '~/@/sql'
+import { deterministicJsonStringify } from '../json/deterministic-stringify'
 import type { ILogger } from '../logger/interface'
 import { Sleep } from '../promise/sleep'
-import { Sub } from '../sub'
+import { PubSub, Sub } from '../sub'
 import type { ISqlDb } from './interface'
 
 export type Config = {
@@ -19,6 +20,7 @@ let postgresClient: postgres.Sql<{}>
 
 export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   const logger = config.logger.child(['postgres'])
+
   postgresClient ??= postgres(config.databaseUrl.dangerouslyReadValue(), {
     connect_timeout: 10, // 10 seconds connection timeout
     idle_timeout: 20, // 20 seconds idle timeout
@@ -29,57 +31,88 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
     },
   })
 
-  return {
-    sub() {
-      return Sub.none()
-    },
-    aggregate: {
-      StringConcat: (column, separator) => `STRING_AGG(${column}, '${separator}')`,
-    },
-    async query({ schema, sql: rawSql, vars: variables }) {
-      const sql = Sql.to(rawSql, variables)
+  const events = Sub.create<{ t: 'queried' }>()
+  const subsByQuery = new Map<string, PubSub<unknown>>()
 
-      try {
-        const start = process.hrtime.bigint()
+  const query: ISqlDb['query'] = async (input) => {
+    const sql = Sql.to(input.sql, input.vars)
 
-        const rows = await postgresClient.unsafe(sql)
+    try {
+      const start = process.hrtime.bigint()
 
-        const end = process.hrtime.bigint()
+      const rows = await postgresClient.unsafe(sql)
 
-        const durationMs = Number(end - start) / 1e6
-        const durationFormatted = `${durationMs.toFixed(2)}ms`
+      const end = process.hrtime.bigint()
 
-        logger.debug({
-          duration: durationFormatted,
-          sql: cleanSql(rawSql),
-          variables: Object.entries(variables).map(([key, value]) => `${key}=${String(value).slice(0, 100)}`),
-        })
+      const durationMs = Number(end - start) / 1e6
+      const durationFormatted = `${durationMs.toFixed(2)}ms`
 
-        const output: s.Infer<typeof schema>[] = []
+      logger.debug({
+        duration: durationFormatted,
+        sql: cleanSql(input.sql),
+        variables: Object.entries(input.vars).map(([key, value]) => `${key}=${String(value).slice(0, 100)}`),
+      })
 
-        for (const row of rows) {
-          const parsed = schema.parse(row)
+      const output: s.Infer<typeof input.schema>[] = []
 
-          switch (parsed.t) {
-            case 'err': {
-              const rowStr = JSON.stringify(row, null, 4).slice(0, 1000)
-              const errorStr = JSON.stringify(parsed.error, null, 4).slice(0, 1000)
-              const error = `Failed to parse row\nerror=${errorStr}\nrow=${rowStr}`
-              return Err(error)
-            }
+      for (const row of rows) {
+        const parsed = input.schema.parse(row)
 
-            case 'ok': {
-              output.push(parsed.value)
-              break
-            }
+        switch (parsed.t) {
+          case 'err': {
+            const rowStr = JSON.stringify(row, null, 4).slice(0, 1000)
+            const errorStr = JSON.stringify(parsed.error, null, 4).slice(0, 1000)
+            const error = `Failed to parse row\nerror=${errorStr}\nrow=${rowStr}`
+            return Err(error)
+          }
+
+          case 'ok': {
+            output.push(parsed.value)
+            break
           }
         }
-
-        return Ok(output)
-      } catch (error) {
-        logger.error({ error: error, sql: sql, variables: variables })
-        return Err(`${error} sql=${sql}`)
       }
+
+      return Ok(output)
+    } catch (error) {
+      logger.error({ error: error, sql: input.sql, variables: input.vars })
+      return Err(`${error} sql=${sql}`)
+    }
+  }
+
+  return {
+    async query(input) {
+      const queried = await query(input)
+      events.pub({ t: 'queried' })
+      return queried
+    },
+    sub(input) {
+      const queryKey = deterministicJsonStringify({ sql: input.sql, vars: input.vars })
+
+      const sub = subsByQuery.get(queryKey)
+
+      type Row = s.Infer<typeof input.schema>
+
+      if (sub) {
+        return sub as Sub<Row[]>
+      }
+
+      const subNew = Sub.create<unknown>()
+
+      subsByQuery.set(queryKey, subNew)
+      const pub = async () => {
+        const queried = await query(input)
+        if (isErr(queried)) return
+        subNew.pub(queried.value)
+      }
+      events.sub(pub)
+      pub()
+
+      return subNew as Sub<Row[]>
+    },
+
+    aggregate: {
+      StringConcat: (column, separator) => `STRING_AGG(${column}, '${separator}')`,
     },
 
     async notify(channel, payload) {

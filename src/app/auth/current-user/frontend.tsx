@@ -149,22 +149,23 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  const userSessions = input.ctx.userSessionDb.sub({
+    whereAnd: {
+      clientSessionId: {
+        equals: input.ctx.clientSessionId,
+      },
+    },
+    order: {
+      createdAt: 'desc',
+    },
+    pagination: {
+      limit: 10,
+      offset: 0,
+    },
+  })
   return Sub.batch<MsgFrontend>([
     Sub.map(
-      input.ctx.userSessionDb.sub({
-        whereAnd: {
-          clientSessionId: {
-            equals: input.ctx.clientSessionId,
-          },
-        },
-        order: {
-          createdAt: 'desc',
-        },
-        pagination: {
-          limit: 10,
-          offset: 0,
-        },
-      }),
+      userSessions,
       (userSessions): MsgFrontend => ({
         t: 'got-user-sessions',
         userSessions,

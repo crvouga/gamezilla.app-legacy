@@ -5,6 +5,7 @@ import { NavBarProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 
 export const AuthScreenLayout = (input: {
+  dataTestId: string
   ctx: {
     t: Translator
     screenSize: ScreenSize
@@ -14,7 +15,10 @@ export const AuthScreenLayout = (input: {
   navBar: NavBarProps | null
 }) => {
   return (
-    <div className={cn('flex h-full flex-col items-center', input.center ? 'justify-center' : 'justify-start')}>
+    <div
+      data-testid={input.dataTestId}
+      className={cn('flex h-full flex-col items-center', input.center ? 'justify-center' : 'justify-start')}
+    >
       <div className='flex w-full max-w-xl flex-col items-center justify-center gap-4 p-6'>{input.children}</div>
     </div>
   )

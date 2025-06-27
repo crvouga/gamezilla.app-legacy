@@ -5,7 +5,6 @@ import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Msg } from '~/@/msg/msg'
 import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
-import { s } from '~/@/schema'
 import { Screen } from '~/@/screen/generated/screens'
 import { SqlDb } from '~/@/sql-db/frontend/impl'
 import { Sub } from '~/@/sub'
@@ -95,10 +94,6 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     powerSyncClient,
     logger,
   })
-
-  const q = (sql: string) => sqlDb.query({ schema: s.unknown, sql, vars: {} }).then(console.log)
-  // @ts-expect-error
-  window.q = q
 
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
 
