@@ -1,5 +1,5 @@
 import { describe, it } from 'bun:test'
 
-describe('Test', () => {
+describe('NumberLinkScreenMainMenuFrontend', () => {
   it.todo('play a sound when changing list tabs')
 })

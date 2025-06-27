@@ -10,7 +10,7 @@ import { AlgoIsSolved } from '../../@/solutions/algo-is-solved/algo-is-solved'
 import { Solutions } from '../../@/solutions/solutions'
 import { type NumberlinkVariant } from '../../@/variant'
 import { VariantGrid, VariantGridShorthand } from '../../@/variant/grid'
-import { FlowPlaySpaceFixture } from '../@/space/fixture'
+import { NumberlinkPlaySpaceFixture } from '../@/space/fixture'
 import { FixtureScreenPuzzlePlaySpaceChild } from './@/fixture/space'
 import { ScreenPlayPuzzleSpace } from './space'
 import type { MsgSpace } from './types'
@@ -366,7 +366,7 @@ describe('ScreenPlayPuzzleSpace', () => {
   })
 
   it('should be on the slide index corresponding with the opened puzzle', async () => {
-    const f = await FlowPlaySpaceFixture()
+    const f = await NumberlinkPlaySpaceFixture()
     const puzzles = await Promise.all(
       Array.from({ length: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT * 2 }, () => Puzzle.random()),
     )

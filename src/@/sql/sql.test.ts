@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import * as Sql from './sql'
 
-describe('Test', () => {
+describe('SQL', () => {
   it('should replace named parameter with number', async () => {
     const expected = 'SELECT * FROM users WHERE id = 1'
     const actual = Sql.to('SELECT * FROM users WHERE id = :id', { id: 1 })

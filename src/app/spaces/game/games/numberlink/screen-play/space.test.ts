@@ -2,11 +2,11 @@ import { describe, expect, it, test } from 'bun:test'
 import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../@/pack/pack'
 import { Puzzle } from '../@/puzzle/puzzle'
-import { FlowPlaySpaceFixture } from './@/space/fixture'
+import { NumberlinkPlaySpaceFixture } from './@/space/fixture'
 
-describe('Test', () => {
+describe('NumberLinkScreenPlaySpace', () => {
   it('should be able to open pack from list', async () => {
-    const f = await FlowPlaySpaceFixture()
+    const f = await NumberlinkPlaySpaceFixture()
     const before = f.init
     const after = f.update(before, [
       {
@@ -21,7 +21,7 @@ describe('Test', () => {
   })
 
   it('should exit to select pack screen after clicking exit button', async () => {
-    const f = await FlowPlaySpaceFixture()
+    const f = await NumberlinkPlaySpaceFixture()
     const before = f.update(f.init, [
       {
         t: 'user-clicked-open-pack-puzzle-grid-item',
@@ -40,7 +40,7 @@ describe('Test', () => {
   })
 
   it('should open puzzle from pack', async () => {
-    const f = await FlowPlaySpaceFixture()
+    const f = await NumberlinkPlaySpaceFixture()
     const puzzle = await Puzzle.random()
     const pack = await Pack.random({
       puzzleIds: [puzzle.id],
@@ -73,7 +73,7 @@ describe('Test', () => {
   })
 
   test('user changed slides', async () => {
-    const f = await FlowPlaySpaceFixture()
+    const f = await NumberlinkPlaySpaceFixture()
     const puzzle = await Puzzle.random()
     const pack = await Pack.random({
       puzzleIds: [puzzle.id],

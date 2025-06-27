@@ -10,34 +10,34 @@ const Fixture = async () => {
   }
 }
 
-describe.skip('PaginationDots', () => {
+describe('PaginationDots', () => {
   it('should render pagination dots if there is more than one slide', async () => {
     const f = await Fixture()
-    f.render(<PaginationDots activeIndex={0} count={2} />)
-    const nodes = await f.driver.query(`[data-testid="${PAGINATION_DOTS_TEST_ID}"]`)
-    expect(nodes.length).toBe(2)
+    await f.render(<PaginationDots activeIndex={0} count={2} />)
+    const nodes = await f.client.query(`[data-testid="${PAGINATION_DOTS_TEST_ID}"] *`)
+    expect(nodes.length).toEqual(2)
   })
 
   it('should NOT render pagination dots if there is only one slide', async () => {
     const f = await Fixture()
-    f.render(<PaginationDots activeIndex={0} count={1} />)
-    const nodes = await f.driver.query(`[data-testid="${PAGINATION_DOTS_TEST_ID}"]`)
-    expect(nodes.length).toBe(0)
+    await f.render(<PaginationDots activeIndex={0} count={1} />)
+    const nodes = await f.client.query(`[data-testid="${PAGINATION_DOTS_TEST_ID}"]`)
+    expect(nodes.length).toEqual(0)
   })
 
   test('clicked dots', async () => {
     const f = await Fixture()
     const clickedIndex = Sub.create<number>()
-    f.render(<PaginationDots activeIndex={0} count={3} onClick={clickedIndex.pub} />)
-    const nodes = await f.driver.query(toPaginationDotSelector(1))
-    await nodes[0]?.do({ t: 'click' })
+    await f.render(<PaginationDots activeIndex={0} count={3} onClick={clickedIndex.pub} />)
+    const [firstDot] = await f.client.query(toPaginationDotSelector(1))
+    await firstDot!.do({ t: 'click' })
     expect(await Sub.take(clickedIndex)).toEqual(1)
   })
 
   test('should NOT be buttons if no onClick is provided', async () => {
     const f = await Fixture()
-    f.render(<PaginationDots activeIndex={0} count={3} />)
-    const nodes = await f.driver.query('button')
+    await f.render(<PaginationDots activeIndex={0} count={3} />)
+    const nodes = await f.client.query('button')
     expect(nodes.length).toEqual(0)
   })
 })

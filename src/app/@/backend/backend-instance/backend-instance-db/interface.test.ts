@@ -27,7 +27,7 @@ const Fixtures = async () => {
   return configs.map(Fixture)
 }
 
-describe('Test', () => {
+describe('BackendInstanceDb', () => {
   test('put and get', async () => {
     for (const f of await Fixtures()) {
       const backendInstance = BackendInstance.random()

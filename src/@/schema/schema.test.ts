@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { s } from './index'
 import { Ok } from '../result'
 
-describe('Test', () => {
+describe('Schema', () => {
   it('should be ok parsing json', async () => {
     const validJson: unknown[] = [
       1,

@@ -40,7 +40,7 @@ const Fixture = async () => {
   }
 }
 
-describe('Test', () => {
+describe('Sound', () => {
   //
 
   test('make sound', async () => {

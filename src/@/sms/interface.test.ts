@@ -33,7 +33,7 @@ const Fixture = async () => {
   }
 }
 
-describe('Test', () => {
+describe('SMS', () => {
   it('should be ok sending sms message', async () => {
     const f = await Fixture()
     const sent = await f.sms.sendMessage({

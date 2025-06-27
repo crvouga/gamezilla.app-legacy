@@ -9,7 +9,7 @@ const Fixture = async () => {
   }
 }
 
-describe('Test', () => {
+describe('NumberLinkScreenPlayPuzzleLastPuzzleSpace', () => {
   it('should exit to pack list after clicking "select next pack" button', async () => {
     const f = await Fixture()
     const before = f.update(f.init, f.solvePuzzleMsgs)

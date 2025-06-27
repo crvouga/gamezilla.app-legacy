@@ -8,13 +8,13 @@ import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
 import { Solutions } from '../../../../@/solutions/solutions'
 import { NumberlinkSpaceCtx } from '../../../../@/space/ctx'
 import type { NumberlinkVariant } from '../../../../@/variant'
-import { FlowPlaySpaceFixture } from '../../../@/space/fixture'
+import { NumberlinkPlaySpaceFixture } from '../../../@/space/fixture'
 import { ScreenPlayPuzzleSpace } from '../../space'
 import type { ModelSpace, MsgSpace } from '../../types'
 import { Logger } from '~/@/logger'
 
 export const FixtureScreenPuzzlePlaySpace = async (input?: { numberlink?: NumberlinkVariant.Model }) => {
-  const f = await FlowPlaySpaceFixture()
+  const f = await NumberlinkPlaySpaceFixture()
   const puzzle = await Puzzle.random({ numberlink: input?.numberlink })
   const puzzleIndex = 1
   const prevPuzzle = await Puzzle.random()

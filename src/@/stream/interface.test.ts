@@ -49,7 +49,7 @@ const Fixtures = async () => {
 
 const randomStreamId = () => Math.floor(Math.random() * 1_000_000).toString()
 
-describe('Test', () => {
+describe('Stream', () => {
   test('it works', async () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent(null)

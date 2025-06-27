@@ -4,7 +4,7 @@ import { EdgeId } from '../../numberlink/edge-id'
 import { VariantGrid, VariantGridShorthand } from '../../variant/grid'
 import { SolutionHash } from './solution-hash'
 
-describe('Test', () => {
+describe('SolutionHash', () => {
   test('deterministic', () => {
     const model = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],

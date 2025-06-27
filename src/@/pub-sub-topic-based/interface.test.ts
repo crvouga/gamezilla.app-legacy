@@ -45,7 +45,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe('Test', () => {
+describe('PubSubTopicBased', () => {
   test('it works', async () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent()

@@ -38,7 +38,7 @@ const expectWinner = (columns: Columns) => {
   }
 }
 
-describe('Test', () => {
+describe('ConnectFour', () => {
   test('detects horizontal win', async () => {
     expectWinner(horizontal)
     expect(findWins(horizontal).length).toBe(1)

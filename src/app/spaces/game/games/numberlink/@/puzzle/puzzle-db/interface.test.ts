@@ -12,7 +12,7 @@ const Fixtures = async () => {
   return await BaseFixtures()
 }
 
-describe('Test', () => {
+describe('NumberlinkPuzzleDb', () => {
   it('should be able to insert', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()

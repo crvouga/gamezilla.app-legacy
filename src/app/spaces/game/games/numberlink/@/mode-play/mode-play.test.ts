@@ -36,7 +36,7 @@ const Fixture = async (input: { numberlink: NumberlinkVariant.Model }) => {
   }
 }
 
-describe('Test', () => {
+describe('NumberlinkModePlay', () => {
   test('to solution msgs', async () => {
     const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],

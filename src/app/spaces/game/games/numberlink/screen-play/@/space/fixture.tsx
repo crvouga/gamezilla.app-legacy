@@ -11,7 +11,7 @@ export type FixtureUpdateInput = {
   msgSpace?: WithEventMeta<MsgSpace>
 }
 
-export const FlowPlaySpaceFixture = async () => {
+export const NumberlinkPlaySpaceFixture = async () => {
   const f = await FixtureSpace()
 
   const ctx: NumberlinkSpaceCtx = { ...f.ctx }

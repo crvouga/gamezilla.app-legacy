@@ -1,19 +1,21 @@
 import { TestClient } from '~/@/test-client'
 import { Render } from '~/@/vdom/render'
+import { VDom } from '../vdom/vdom'
 
 export const BaseFixture = async () => {
-  const driver = await TestClient({ t: 'happydom' })
+  const client = await TestClient({ t: 'happydom' })
 
-  document.body.innerHTML = ''
+  document.body.innerHTML = '<div id="root"></div>'
 
-  const root = document.createElement('div')
+  const root = document.getElementById('root')!
 
-  document.body.appendChild(root)
-
-  const render = await Render('preact', root)
+  const render = await Render('react', root)
 
   return {
-    driver,
-    render,
+    client,
+    async render(node: VDom) {
+      render(node)
+      await new Promise((resolve) => setTimeout(resolve, 10))
+    },
   }
 }
