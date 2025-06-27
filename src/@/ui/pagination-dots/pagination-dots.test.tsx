@@ -27,7 +27,7 @@ describe('PaginationDots', () => {
 
   test('clicked dots', async () => {
     const f = await Fixture()
-    const clickedIndex = Sub.create<number>()
+    const clickedIndex = Sub.queued<number>()
     await f.render(<PaginationDots activeIndex={0} count={3} onClick={clickedIndex.pub} />)
     const [firstDot] = await f.client.query(toPaginationDotSelector(1))
     await firstDot!.do({ t: 'click' })

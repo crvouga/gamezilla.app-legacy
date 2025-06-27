@@ -8,7 +8,7 @@ describe('Frontend Build (Integration)', () => {
   it.skipIf(CONFIG_SHARED.IS_UNIT_TEST)(
     'should build frontend successfully',
     async () => {
-      const proc = spawn(['bun', 'x', 'vite', 'build'], { cwd: process.cwd(), stdout: 'pipe', stderr: 'pipe' })
+      const proc = spawn(['bun', 'frontend:build'], { cwd: process.cwd(), stdout: 'pipe', stderr: 'pipe' })
 
       const result = await proc.exited
 
