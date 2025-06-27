@@ -1,27 +1,13 @@
 import { describe, expect, test } from 'bun:test'
 import { Sub } from '~/@/sub'
-import { TestClient } from '~/@/test-client'
-import { Render } from '~/@/vdom/render'
-import { VDom } from '~/@/vdom/vdom'
+import { BaseFixture } from '../fixture'
 import { Checkbox } from './checkbox'
 
 const Fixture = async () => {
-  const driver = await TestClient({ t: 'happydom' })
-
-  document.body.innerHTML = ''
-
-  const root = document.createElement('div')
-
-  document.body.appendChild(root)
-
-  const render = await Render('react', root)
+  const f = await BaseFixture()
 
   return {
-    driver,
-    async render(vDom: VDom) {
-      render(vDom)
-      await new Promise((resolve) => setTimeout(resolve, 10))
-    },
+    ...f,
   }
 }
 
