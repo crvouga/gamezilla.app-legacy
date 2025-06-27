@@ -14,7 +14,6 @@ describe('login with sms', () => {
   it('should navigate to verify code screen after sending code', async () => {
     await using f = await Fixture()
     const [input] = await f.client.query(`[data-testid='phone-number-input']`)
-    await input!.do({ t: 'change', value: '4802098698' })
     await input!.do({ t: 'input', value: '4802098698' })
     const [button] = await f.client.query(`button[type='submit']`)
     await button!.do({ t: 'click' })
