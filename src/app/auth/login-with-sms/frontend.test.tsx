@@ -80,10 +80,12 @@ describe('login with sms', () => {
     test('verify code screen back button', async () => {
       await using f = await Fixture()
       await f.sendCode()
+      const [verifyCodeScreen] = await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
+      expect(verifyCodeScreen).toBeDefined()
       const [backButton] = await f.frontend.query(`[data-testid='nav/back-button']`)
       await backButton!.do({ t: 'click' })
-      const [screen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
-      expect(screen).toBeDefined()
+      const [sendCodeScreen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
+      expect(sendCodeScreen).toBeDefined()
     })
 
     test('go to space screen after verifying code', async () => {

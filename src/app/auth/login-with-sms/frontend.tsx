@@ -43,13 +43,13 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       if (input.ctx.currentScreen.t === 'verify-code') {
         return {
           model: input.model,
-          msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'send-code' })],
+          msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'send-code' }, true)],
         }
       }
 
       return {
         model: input.model,
-        msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'login' })],
+        msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'login' }, true)],
       }
     }
 
