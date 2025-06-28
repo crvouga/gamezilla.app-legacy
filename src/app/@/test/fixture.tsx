@@ -84,8 +84,8 @@ const TestBackend = async (config: { backendCtx: BackendCtxModule }) => {
 export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) => {
   const client = await TestClient({
     t: 'happydom',
-    maxWait: TimeSpan.seconds(3),
-    poll: TimeSpan.milliseconds(100),
+    maxWait: TimeSpan.seconds(1),
+    poll: TimeSpan.milliseconds(10),
   })
 
   document.body.innerHTML = '<div id="root"></div>'
@@ -98,9 +98,7 @@ export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) =
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
-    render: (input) => {
-      render(<AppFrontend.View {...input} ctx={ctx} />)
-    },
+    render: (input) => render(<AppFrontend.View {...input} ctx={ctx} />),
   })
 
   const cleanUp = async () => {
