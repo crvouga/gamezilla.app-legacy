@@ -48,10 +48,10 @@ describe('login with sms', () => {
 
     test('play sound on sending code', async () => {
       await using f = await Fixture()
-      const before = f.frontend.audioPlayer.played()
+      const before = f.frontend.audio.played()
       await f.sendCode()
       await new Promise((resolve) => setTimeout(resolve, 0))
-      const after = f.frontend.audioPlayer.played()
+      const after = f.frontend.audio.played()
       const played = difference(after, before, (x) => x.id)
       expect(played.map((x) => x.src)).toEqual([APP_SOUND.tap, APP_SOUND.navForwardMin])
     })

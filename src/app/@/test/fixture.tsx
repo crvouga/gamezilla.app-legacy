@@ -93,11 +93,11 @@ export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) =
 
   const render = await Render('react', root)
 
-  const audioPlayer = AudioPlayer({ t: 'fake', logger: config.frontendCtx.logger })
+  const audio = AudioPlayer({ t: 'fake', logger: config.frontendCtx.logger })
 
   const ctx = {
     ...config.frontendCtx,
-    audioPlayer,
+    audioPlayer: audio,
   }
 
   const program = await Program.run({
@@ -115,7 +115,7 @@ export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) =
   return {
     ...client,
     ...program,
-    audioPlayer,
+    audio,
     cleanUp,
   }
 }
