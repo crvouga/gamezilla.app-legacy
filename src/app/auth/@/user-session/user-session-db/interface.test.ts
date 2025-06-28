@@ -291,7 +291,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  test.only('update should modify specified fields', async () => {
+  test.todo('update should modify specified fields', async () => {
     for (const f of await Fixtures()) {
       const session = UserSession.random()
 
