@@ -80,12 +80,25 @@ describe('login with sms', () => {
     test('verify code screen back button', async () => {
       await using f = await Fixture()
       await f.sendCode()
-      const [verifyCodeScreen] = await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
-      expect(verifyCodeScreen).toBeDefined()
+      await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
       const [backButton] = await f.frontend.query(`[data-testid='nav/back-button']`)
       await backButton!.do({ t: 'click' })
       const [sendCodeScreen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
       expect(sendCodeScreen).toBeDefined()
+    })
+
+    test('verify code screen back button play sound', async () => {
+      await using f = await Fixture()
+      await f.sendCode()
+      await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
+      const before = f.frontend.audio.played()
+      const [backButton] = await f.frontend.query(`[data-testid='nav/back-button']`)
+      await backButton!.do({ t: 'click' })
+      await eventually(async () => {
+        const after = f.frontend.audio.played()
+        const played = difference(after, before, (x) => x.id)
+        expect(played.map((x) => x.src)).toEqual([APP_SOUND.navBackwardMin])
+      })
     })
 
     test('go to space screen after verifying code', async () => {
