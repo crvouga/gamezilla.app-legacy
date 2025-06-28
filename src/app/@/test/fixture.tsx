@@ -54,7 +54,6 @@ export const FixtureApp = async () => {
   const backend = await TestBackend({ backendCtx })
 
   const cleanUp = async () => {
-    await backend.cleanUp()
     await frontend.cleanUp()
   }
 
@@ -73,30 +72,22 @@ const TestBackend = async (config: { backendCtx: BackendCtxModule }) => {
 
   AppBackend.worker(abortController.signal, { ctx })
 
-  const cleanUp = async () => {
-    try {
-      // abortController.abort()
-      await ctx.httpServer.stop()
-    } catch (error) {
-      console.error('Error during test cleanup:', error)
-    }
-  }
-
   return {
     abortController,
-    cleanUp,
   }
 }
 
 export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) => {
   const client = await TestClient({
     t: 'happydom',
-    maxWait: TimeSpan.seconds(1),
+    maxWait: TimeSpan.seconds(3),
     poll: TimeSpan.milliseconds(10),
   })
 
-  document.body.innerHTML = '<div id="root"></div>'
-  const root = document.getElementById('root')
+  const id = Math.random().toString(36).slice(2)
+
+  document.body.innerHTML = `<div id="root-${id}"></div>`
+  const root = document.getElementById(`root-${id}`)
   if (!root) throw new Error('Root element not found')
   const render = await Render('react', root)
   const ctx = config.frontendCtx
@@ -110,7 +101,9 @@ export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) =
 
   const cleanUp = async () => {
     document.body.innerHTML = ''
-    await program.cleanUp()
+    window.location.search = ''
+    window.history.pushState({}, '', '/')
+    program.cleanUp()
   }
 
   return {

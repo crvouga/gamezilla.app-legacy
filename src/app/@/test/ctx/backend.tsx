@@ -41,7 +41,7 @@ export const initBackendCtx = async (config: {
   const pubSub = await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() })
 
   const httpServer = HttpServer({
-    t: 'node',
+    t: 'noop',
     logger,
   })
 

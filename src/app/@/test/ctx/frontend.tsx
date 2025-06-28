@@ -1,4 +1,3 @@
-import { Browser } from '~/@/browser'
 import { HttpClient } from '~/@/http-client'
 import { ILogger } from '~/@/logger'
 import { RPC } from '~/@/rpc'
@@ -37,7 +36,6 @@ export const initFrontendCtx = async (config: {
   const httpClient = HttpClient({ t: 'fetch' })
 
   const ctx: AppFrontendCtxBase = {
-    location: Browser.location(),
     clientSessionId,
     sqlDb: config.sqlDb,
     logger,

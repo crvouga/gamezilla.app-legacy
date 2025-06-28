@@ -13,10 +13,6 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
   const currentUserId = UserId.generate()
 
   const ctx: AppFrontendCtx = {
-    location: {
-      pathname: '/',
-      query: {},
-    },
     clientSessionId: ClientSessionId.generate(),
     parentScreen: null,
     sqlDb: SQL_DB_NOOP,

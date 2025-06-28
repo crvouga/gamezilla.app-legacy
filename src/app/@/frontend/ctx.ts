@@ -1,10 +1,9 @@
-import { Browser } from '~/@/browser'
-import { ISqlDb } from '~/@/sql-db'
 import { IHttpClient } from '~/@/http-client'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { ILogger } from '~/@/logger'
 import type { Screen } from '~/@/screen/generated/screens'
+import { ISqlDb } from '~/@/sql-db'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserAccount } from '../data/user-account'
@@ -31,7 +30,6 @@ export type AppFrontendCtxBase = {
   currentUser?: UserAccount | null
   currentUserId?: UserId | null
   currentUserRole?: UserRole | null
-  location: Browser.Location
   httpClient: IHttpClient
 }
 

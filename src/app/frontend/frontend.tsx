@@ -1,4 +1,3 @@
-import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
@@ -11,20 +10,19 @@ import { FocusFrontend } from '../frontend/focus'
 import { ScreenSizeFrontend } from '../frontend/screen-size'
 import { SoundFrontend } from '../frontend/sound'
 import { StatusBarFrontend } from '../frontend/status-bar/index'
-import { ToasterFrontend } from './toaster'
 import { VisibilityFrontend } from '../frontend/visibility'
+import { ToasterFrontend } from './toaster'
 import { type ModelFrontend, type MsgFrontend } from './types'
 import './update-prompt/update-prompt'
 
 const init = (input: {
   ctx: AnonymousFrontendCtx
-  location: Browser.Location
 }): {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
   msgOut?: unknown[]
 } => {
-  const screen = CurrentScreenFrontend.init({ location: input.location })
+  const screen = CurrentScreenFrontend.init()
   const visibility = VisibilityFrontend.init()
   const screenSize = ScreenSizeFrontend.init()
   const toast = ToasterFrontend.init({ ctx: input.ctx })

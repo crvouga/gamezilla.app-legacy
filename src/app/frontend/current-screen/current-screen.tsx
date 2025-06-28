@@ -47,19 +47,19 @@ const locationToScreen = (location: Browser.Location): Screen => {
   return decodeScreen(location.query[SCREEN_QUERY_PARAM_NAME])
 }
 
-export const init = (input: {
-  location: Browser.Location
-}): {
+export const init = (): {
   model: Model
   eff?: Eff
 } => {
-  const currentScreen = locationToScreen(input.location)
+  const location = Browser.location()
+  const currentScreen = locationToScreen(location)
+
   return {
     model: {
       currentScreen,
     },
     eff: Eff.batch([
-      input.location.pathname === '/' ? null : Browser.replace('/'),
+      location.pathname === '/' ? null : Browser.replace('/'),
       Browser.replaceQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(currentScreen)),
     ]),
   }

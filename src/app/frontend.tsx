@@ -1,4 +1,3 @@
-import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
@@ -98,7 +97,6 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
 
   const ctx: AppFrontendCtxBase = {
-    location: Browser.location(),
     clientSessionId,
     sqlDb,
     logger,
@@ -178,10 +176,7 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
 }
 
 const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
-  const frontend = FrontendFrontend.init({
-    ctx: input.ctx,
-    location: input.ctx.location,
-  })
+  const frontend = FrontendFrontend.init({ ctx: input.ctx })
 
   const ctx: FrontendCtxModule = {
     ...input.ctx,
