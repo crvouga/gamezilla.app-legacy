@@ -1,4 +1,4 @@
-import { type IntersectionObserverEmitterinput, sub } from './intersection-observer-shared'
+import { type IntersectionObserverEmitterInput, sub } from './intersection-observer-shared'
 
 declare global {
   namespace JSX {
@@ -12,7 +12,7 @@ declare global {
 if (typeof window !== 'undefined' && 'customElements' in window) {
   class IntersectionObserverEmitter extends HTMLElement {
     private unsubscribe: () => void = () => {}
-    private input: IntersectionObserverEmitterinput | null = null
+    private input: IntersectionObserverEmitterInput | null = null
     private intersectionObbackend: IntersectionObserver | null = null
     private queue: IntersectionObserverEntry[] = []
 

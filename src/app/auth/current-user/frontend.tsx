@@ -36,48 +36,51 @@ export type CurrentUserState =
     }
 
 export const toCurrentUserState = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase }): CurrentUserState => {
-  if (input.model.status.t === 'not-asked') {
-    return { t: 'loading' }
-  }
-  if (input.model.status.t === 'loading') {
-    return { t: 'loading' }
-  }
-  if (input.model.status.t === 'err') {
-    return { t: 'logged-out' }
-  }
+  switch (input.model.status.t) {
+    case 'not-asked':
+    case 'loading': {
+      return { t: 'loading' }
+    }
+    case 'err': {
+      return { t: 'logged-out' }
+    }
+    case 'ok': {
+      const userSession = Object.values(input.model.userSessions).find(
+        (userSession) => userSession.clientSessionId === input.ctx.clientSessionId,
+      )
 
-  const userSession = Object.values(input.model.userSessions).find(
-    (userSession) => userSession.clientSessionId === input.ctx.clientSessionId,
-  )
+      if (!userSession) return { t: 'logged-out' }
 
-  if (!userSession) {
-    return { t: 'logged-out' }
-  }
+      const maybeUserAccount = Object.values(input.model.userAccounts).find(
+        (userAccount) => userAccount.userId === userSession.userId,
+      )
 
-  const userAccount: UserAccount = Object.values(input.model.userAccounts).find(
-    (userAccount) => userAccount.userId === userSession.userId,
-  ) ?? {
-    createdAt: input.ctx.now,
-    phoneNumber: null,
-    role: 'normal',
-    userId: userSession.userId,
-  }
+      const userAccount: UserAccount = maybeUserAccount ?? {
+        createdAt: input.ctx.now,
+        phoneNumber: null,
+        role: 'normal',
+        userId: userSession.userId,
+      }
 
-  const userProfile: UserProfile = input.ctx.profilesByUserId[userSession.userId] ?? {
-    id: UserProfileId.generate(),
-    userId: userSession.userId,
-    username: Username.of(''),
-    avatarSeed: null,
-    avatarStyle: null,
-    createdAt: input.ctx.now,
-    updatedAt: input.ctx.now,
-  }
+      const maybeUserProfile = input.ctx.profilesByUserId[userSession.userId]
 
-  return {
-    t: 'logged-in',
-    userSession,
-    userAccount,
-    userProfile,
+      const userProfile: UserProfile = maybeUserProfile ?? {
+        id: UserProfileId.generate(),
+        userId: userSession.userId,
+        username: Username.of(''),
+        avatarSeed: null,
+        avatarStyle: null,
+        createdAt: input.ctx.now,
+        updatedAt: input.ctx.now,
+      }
+
+      return {
+        t: 'logged-in',
+        userSession,
+        userAccount,
+        userProfile,
+      }
+    }
   }
 }
 

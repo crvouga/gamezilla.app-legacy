@@ -1,6 +1,6 @@
 import { Sub } from '~/@/sub'
 
-export type IntersectionObserverEmitterinput = {
+export type IntersectionObserverEmitterInput = {
   onVisible?: () => void
   onHidden?: () => void
   className?: string
@@ -9,7 +9,7 @@ export type IntersectionObserverEmitterinput = {
 
 export type IntersectionObserverEmitterEvent = {
   type: 'input'
-  input: IntersectionObserverEmitterinput
+  input: IntersectionObserverEmitterInput
 }
 
 export const sub = Sub.create<IntersectionObserverEmitterEvent>()

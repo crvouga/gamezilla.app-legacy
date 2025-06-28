@@ -51,50 +51,34 @@ export type ProgramDebugger = (
 ) => MaybePromise<(model: unknown, msg?: unknown) => void>
 
 export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
+  const PROGRAM_ID = generateProgramId()
+
   const init = await program.init()
+
   let model: TModel = init.model
-
-  const onCrash: (input: ProgramCrashReport<TModel, TMsg>) => MaybePromise<unknown> = (input) => {
-    program.crash?.(input)
-  }
-
-  const msgs: TMsg[] = []
-
   let isUpdating = false
+  const msgs: TMsg[] = []
   const queue: TMsg[] = []
-  async function dispatch(msg: TMsg) {
-    msgs.push(msg)
-    new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(true)
-      }, 0)
-    })
+  let cleanUpSubscriptions = () => {}
 
-    if (!model) {
-      return
-    }
+  async function dispatch(msg: TMsg) {
     try {
-      // This is so we don't overwrite ongoing updates
+      msgs.push(msg)
+
+      if (!model) return
+
       if (isUpdating) {
         queue.push(msg)
         return
       }
 
       isUpdating = true
-
-      const updated = await program.update({
-        msg,
-        model,
-      })
+      const updated = await program.update({ msg, model })
       isUpdating = false
 
       model = updated.model
       updateDebugger?.(model, msg)
-      program.render?.({
-        model,
-
-        dispatch,
-      })
+      program.render?.({ model, dispatch })
       updateEff(updated.eff)
       updateSubscriptions(model)
 
@@ -106,12 +90,7 @@ export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
         dispatch(msg)
       }
     } catch (error) {
-      await onCrash({
-        message: 'Program crashed while dispatching message',
-        error,
-        msg,
-        model,
-      })
+      await program.crash?.({ message: 'Program crashed while dispatching message', error, msg, model })
     }
   }
 
@@ -123,14 +102,8 @@ export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
     }
   }
 
-  const intervalId = generateProgramId()
-  let cleanUpSubscriptions = () => {}
   async function updateSubscriptions(model: TModel) {
-    const sub = await program.subscriptions({
-      intervalId,
-
-      model,
-    })
+    const sub = await program.subscriptions({ intervalId: PROGRAM_ID, model })
     cleanUpSubscriptions()
     cleanUpSubscriptions = sub.sub(dispatch)
   }
@@ -138,26 +111,24 @@ export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
   const updateDebugger = await program.debugger?.(model, async function debuggerSetModel(modelNew) {
     model = modelNew as TModel
 
-    if (!model) {
-      return
-    }
+    if (!model) return
 
     program.render?.({ model, dispatch })
   })
 
   updateDebugger?.(model, '@INIT')
-  program.render?.({ model, dispatch })
   updateEff(init.eff)
   updateSubscriptions(model)
+  program.render?.({ model, dispatch })
 
   return {
+    dispatch,
     getModel() {
       return model
     },
     getMsgs() {
       return msgs
     },
-    dispatch,
     cleanUp() {
       cleanUpSubscriptions()
     },

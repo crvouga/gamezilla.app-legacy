@@ -158,20 +158,20 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
     parentScreen: null,
   }
 
-  const currentUser = toCurrentUserState({
-    model: input.model.auth.currentUser,
-    ctx: input.ctx,
-  })
+  const currentUser = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
 
-  if (currentUser.t !== 'logged-in') {
-    return baseCtx
-  }
-
-  return {
-    ...baseCtx,
-    currentUser: currentUser.userAccount,
-    currentUserRole: currentUser.userAccount.role,
-    currentUserId: currentUser.userAccount.userId,
+  switch (currentUser.t) {
+    case 'logged-in': {
+      return {
+        ...baseCtx,
+        currentUser: currentUser.userAccount,
+        currentUserRole: currentUser.userAccount.role,
+        currentUserId: currentUser.userAccount.userId,
+      }
+    }
+    default: {
+      return baseCtx
+    }
   }
 }
 
@@ -379,10 +379,7 @@ const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
         />
       )
     default: {
-      const currentUser = toCurrentUserState({
-        model: input.model.auth.currentUser,
-        ctx: input.ctx,
-      })
+      const currentUser = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
       switch (currentUser.t) {
         case 'loading':
           return <SplashScreen />

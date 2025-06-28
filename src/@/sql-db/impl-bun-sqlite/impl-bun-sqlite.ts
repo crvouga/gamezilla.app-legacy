@@ -17,12 +17,9 @@ export type Config = {
   simulateLatency?: Sleep
 }
 
-let db: Database
-
 export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   const logger = config.logger.child(['sqlite'])
-  db ??= new Database(Fs.toConnectionString(config.fs))
-
+  const db = new Database(Fs.toConnectionString(config.fs))
   const events = Sub.create<{ t: 'queried' }>()
 
   const query: ISqlDb['query'] = async (input) => {

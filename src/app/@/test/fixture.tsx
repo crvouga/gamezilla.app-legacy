@@ -80,14 +80,12 @@ const TestBackend = async (config: { backendCtx: BackendCtxModule }) => {
 export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) => {
   const client = await TestClient({
     t: 'happydom',
-    maxWait: TimeSpan.seconds(3),
-    poll: TimeSpan.milliseconds(10),
+    maxWait: TimeSpan.milliseconds(100),
+    poll: TimeSpan.milliseconds(1),
   })
 
-  const id = Math.random().toString(36).slice(2)
-
-  document.body.innerHTML = `<div id="root-${id}"></div>`
-  const root = document.getElementById(`root-${id}`)
+  document.body.innerHTML = `<div id="root"></div>`
+  const root = document.getElementById(`root`)
   if (!root) throw new Error('Root element not found')
   const render = await Render('react', root)
   const ctx = config.frontendCtx
@@ -100,9 +98,7 @@ export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) =
   })
 
   const cleanUp = async () => {
-    document.body.innerHTML = ''
-    window.location.search = ''
-    window.history.pushState({}, '', '/')
+    window.history.replaceState({}, '', '/')
     program.cleanUp()
   }
 

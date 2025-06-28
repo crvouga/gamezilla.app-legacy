@@ -1,9 +1,9 @@
 import type { VDom } from '~/@/vdom/vdom'
 import './intersection-observer-element'
-import { type IntersectionObserverEmitterinput, sub } from './intersection-observer-shared'
+import { type IntersectionObserverEmitterInput, sub } from './intersection-observer-shared'
 
 export const IntersectionObserverEmitter = (
-  input: IntersectionObserverEmitterinput & {
+  input: IntersectionObserverEmitterInput & {
     children?: VDom
   },
 ) => {
