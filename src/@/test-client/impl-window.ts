@@ -61,7 +61,9 @@ export const TestClient = (config: Config): ITestClient => {
       const startTimeMs = Date.now()
 
       while (Date.now() - startTimeMs < maxWaitMs) {
+        queryConfig?.onPoll?.()
         const nodes = await poll()
+        queryConfig?.onPoll?.()
         if (nodes.length > 0) {
           return nodes
         }

@@ -15,7 +15,7 @@ const main = async () => {
 
   registerServiceWorker({ logger: ctx.logger })
 
-  await Program.run({
+  const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
@@ -23,6 +23,9 @@ const main = async () => {
     // debugger: DebuggerReduxDevTools,
     // debugger: DebuggerConsole,
   })
+
+  // @ts-expect-error
+  window.program = program
 
   console.table({ ...CONFIG_SHARED, ...CONFIG_FRONTEND })
 }

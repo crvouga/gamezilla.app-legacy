@@ -4,6 +4,8 @@ import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
+import { UserProfileId } from '~/app/@/data/user-profile-id'
+import { Username } from '~/app/@/data/username'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -12,8 +14,6 @@ import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { UserSession } from '../@/user-session/user-session'
 import { FrontendModule, ModelFrontend, MsgFrontend } from './types'
-import { Username } from '~/app/@/data/username'
-import { UserProfileId } from '~/app/@/data/user-profile-id'
 
 const init: ModelFrontend = {
   status: NotAsked,
@@ -108,6 +108,7 @@ const watchForLogin = (
     return {
       model: input.modelAfter,
       msgOut: [
+        // PushScreenCmd.init({ n: 'spaces', t: 'space-list' }, false),
         ReplaceScreenCmd.init({ n: 'spaces', t: 'space-list' }, false),
         PlaySoundCmd.init(APP_SOUND.celebration),
         ShowToastCmd.init(input.ctx.t('auth.logged-in')),

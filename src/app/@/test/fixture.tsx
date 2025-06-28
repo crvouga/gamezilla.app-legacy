@@ -60,12 +60,8 @@ export const FixtureApp = async () => {
     frontend,
     backend,
     async [Symbol.asyncDispose]() {
-      try {
-        await backendCtx.httpServer.stop()
-        backend.abortController.abort()
-      } catch (error) {
-        logger.error('Error during test cleanup:', error)
-      }
+      await backend.cleanUp()
+      await frontend.cleanUp()
     },
   }
 }
@@ -77,32 +73,50 @@ const TestBackend = async (config: { backendCtx: BackendCtxModule }) => {
 
   AppBackend.worker(abortController.signal, { ctx })
 
+  const cleanUp = async () => {
+    try {
+      await ctx.httpServer.stop()
+      // abortController.abort()
+    } catch (error) {
+      console.error('Error during test cleanup:', error)
+    }
+  }
+
   return {
     abortController,
+    cleanUp,
   }
 }
 
 export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) => {
   const client = await TestClient({
-    t: 'happydom',
+    t: 'jsdom',
     maxWait: TimeSpan.seconds(3),
-    poll: TimeSpan.milliseconds(10),
+    poll: TimeSpan.milliseconds(100),
   })
 
   document.body.innerHTML = '<div id="root"></div>'
   const root = document.getElementById('root')
-  const render = await Render('react', root!)
+  if (!root) throw new Error('Root element not found')
+  const render = await Render('react', root)
   const ctx = config.frontendCtx
 
-  const p = await Program.run({
+  const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
-    render: (input) => render(<AppFrontend.View {...input} ctx={ctx} />),
+    render: (input) => {
+      render(<AppFrontend.View {...input} ctx={ctx} />)
+    },
   })
+
+  const cleanUp = async () => {
+    document.body.innerHTML = ''
+  }
 
   return {
     ...client,
-    ...p,
+    ...program,
+    cleanUp,
   }
 }

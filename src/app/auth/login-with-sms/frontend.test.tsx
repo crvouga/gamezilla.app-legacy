@@ -12,7 +12,7 @@ const Fixture = async () => {
   const sendCode = async () => {
     await f.frontend.query(`[data-testid='auth/send-code-screen']`)
     const [input] = await f.frontend.query(`input[type='tel']`)
-    await input!.do({ t: 'input', value: '4802098690' })
+    await input!.do({ t: 'input', value: '4802098698' })
     const [button] = await f.frontend.query(`button[type='submit']`)
     await button!.do({ t: 'click' })
   }
@@ -54,7 +54,7 @@ describe('login with sms', () => {
   })
 
   describe('verify code', () => {
-    test.only('go to space screen after verifying code', async () => {
+    test('go to space screen after verifying code', async () => {
       await using f = await Fixture()
       await f.sendCode()
       await f.verifyCode()

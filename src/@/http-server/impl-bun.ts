@@ -43,7 +43,7 @@ export const HttpServerBun = <T>(config: Config) => {
     },
     async stop() {
       logger.info('Stopping HTTP server')
-      await server.stop(true)
+      await server?.stop(true)
       events.pub({
         t: 'stopped',
       })

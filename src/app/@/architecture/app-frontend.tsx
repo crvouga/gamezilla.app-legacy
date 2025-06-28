@@ -1,5 +1,5 @@
-import { Msg } from '~/@/msg/msg'
 import { Eff } from '~/@/eff'
+import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import type { VDom } from '~/@/vdom/vdom'
 
@@ -168,7 +168,6 @@ const andThen = <T extends AppFrontendModuleTypes>(
         ...updated.model,
       },
       eff: Eff.batch(acc.eff, updated.eff),
-      msgCmd: Msg.batch(acc.msgCmd, updated.msgCmd),
       msgOut: Msg.batch(acc.msgOut, updated.msgOut),
     }
   }
