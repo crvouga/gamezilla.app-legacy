@@ -158,6 +158,9 @@ export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
       return msgs
     },
     dispatch,
+    cleanUp() {
+      cleanUpSubscriptions()
+    },
   }
 }
 

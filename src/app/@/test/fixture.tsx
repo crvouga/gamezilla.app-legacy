@@ -53,13 +53,16 @@ export const FixtureApp = async () => {
 
   const backend = await TestBackend({ backendCtx })
 
+  const cleanUp = async () => {
+    await backend.cleanUp()
+    await frontend.cleanUp()
+  }
+
   return {
     frontend,
     backend,
-    async cleanUp() {
-      await backend.cleanUp()
-      await frontend.cleanUp()
-    },
+    cleanUp,
+    [Symbol.asyncDispose]: cleanUp,
   }
 }
 
@@ -72,8 +75,8 @@ const TestBackend = async (config: { backendCtx: BackendCtxModule }) => {
 
   const cleanUp = async () => {
     try {
-      await ctx.httpServer.stop()
       // abortController.abort()
+      await ctx.httpServer.stop()
     } catch (error) {
       console.error('Error during test cleanup:', error)
     }
@@ -107,6 +110,7 @@ export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) =
 
   const cleanUp = async () => {
     document.body.innerHTML = ''
+    await program.cleanUp()
   }
 
   return {
