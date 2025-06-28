@@ -26,20 +26,33 @@ type DynamicElementProps = {
   className?: string
   tabIndex?: number
   disabled?: boolean
+  dataTestId?: string
 }
 
 export const DynamicElement = (input: DynamicElementProps) => {
-  const { element, children, ...props } = input
+  const { element, children, dataTestId, ...props } = input
 
   switch (element) {
     case 'form': {
-      return <form {...props}>{children}</form>
+      return (
+        <form data-testid={dataTestId} {...props}>
+          {children}
+        </form>
+      )
     }
     case 'button': {
-      return <button {...props}>{children}</button>
+      return (
+        <button data-testid={dataTestId} {...props}>
+          {children}
+        </button>
+      )
     }
     default: {
-      return <div {...props}>{children}</div>
+      return (
+        <div data-testid={dataTestId} {...props}>
+          {children}
+        </div>
+      )
     }
   }
 }

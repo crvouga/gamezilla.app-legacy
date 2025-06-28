@@ -20,14 +20,14 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
   const userAccountDb = UserAccountDb({
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
+    logger: input.ctx.logger,
   })
 
   const userSessionDb = await UserSessionDb({
-    t: 'sql-with-cache',
+    t: 'sql',
     sqlDb: input.ctx.sqlDb,
-    keyValueDb: input.ctx.keyValueDbDurable,
     logger: input.ctx.logger,
-    pubSubTopicBased: input.ctx.pubSub,
+    shouldCreateTable: false,
   })
 
   const guestSessionMappingDb = GuestSessionMappingDb({

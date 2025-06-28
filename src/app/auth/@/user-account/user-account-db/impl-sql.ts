@@ -9,6 +9,7 @@ import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { UserRole } from '~/app/@/data/user-role'
 import type { IUserAccountDb } from './interface'
+import { ILogger } from '~/@/logger'
 
 export const Row = s.obj({
   id: s.str(),
@@ -47,12 +48,18 @@ UserAccount.fromUnknownRegister((data) => {
 export type Config = {
   t: 'sql'
   sqlDb: ISqlDb
+  logger: ILogger
 }
 
-export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
+export const UserAccountDb = ({ sqlDb, logger }: Config): IUserAccountDb => {
+  const log = logger.child(['user-account-db'])
+
   return {
     async findOneByUserId(input) {
+      log.debug(`Finding user account by userId=${input.userId}`)
+
       if (!UserId.is(input.userId)) {
+        log.debug(`Invalid userId=${input.userId}`)
         return Ok(null)
       }
 
@@ -75,21 +82,31 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
       })
 
       if (isErr(queried)) {
+        log.error(`Database error while finding by userId: ${queried.error}`)
         return queried
       }
 
       const row = queried.value[0] ?? null
 
       if (!row) {
+        log.debug(`No user account found for userId=${input.userId}`)
         return Ok(null)
       }
 
       const account = toAccount(row)
 
+      if (isErr(account)) {
+        log.error(`Failed to parse account: ${account.error}`)
+        return account
+      }
+
+      log.debug(`Found user account for userId=${input.userId}`)
       return account
     },
 
     async findOneByPhoneNumber(input) {
+      log.debug(`Finding user account by phoneNumber=${PhoneNumber.toString(input.phoneNumber)}`)
+
       const queried = await sqlDb.query({
         schema: Row,
         sql: `
@@ -109,29 +126,41 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
       })
 
       if (isErr(queried)) {
+        log.error(`Database error while finding by phone number: ${queried.error}`)
         return queried
       }
 
       const row = queried.value[0] ?? null
 
       if (!row) {
+        log.debug(`No user account found for phoneNumber=${PhoneNumber.toString(input.phoneNumber)}`)
         return Ok(null)
       }
 
       const account = toAccount(row)
 
+      if (isErr(account)) {
+        log.error(`Failed to parse account: ${account.error}`)
+        return account
+      }
+
+      log.debug(`Found user account for phoneNumber=${PhoneNumber.toString(input.phoneNumber)}`)
       return account
     },
     async upsert(input) {
+      log.debug(`Upserting user account for userId=${input.userId}`)
+
       const existing = await this.findOneByUserId({
         userId: input.userId,
       })
 
       if (isErr(existing)) {
+        log.error(`Failed to check for existing account: ${existing.error}`)
         return existing
       }
 
       if (existing.value) {
+        log.debug(`Updating existing user account for userId=${input.userId}`)
         const updated = await sqlDb.query({
           schema: s.unknown,
           sql: `
@@ -150,9 +179,16 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
           },
         })
 
+        if (isErr(updated)) {
+          log.error(`Failed to update user account: ${updated.error}`)
+          return updated
+        }
+
+        log.debug(`Successfully updated user account for userId=${input.userId}`)
         return Result.mapOk(updated, () => null)
       }
 
+      log.debug(`Inserting new user account for userId=${input.userId}`)
       const inserted = await sqlDb.query({
         schema: s.unknown,
         sql: `
@@ -175,6 +211,13 @@ export const UserAccountDb = ({ sqlDb }: Config): IUserAccountDb => {
           phone_number: input.phoneNumber ? PhoneNumber.toString(input.phoneNumber) : null,
         },
       })
+
+      if (isErr(inserted)) {
+        log.error(`Failed to insert user account: ${inserted.error}`)
+        return inserted
+      }
+
+      log.debug(`Successfully inserted new user account for userId=${input.userId}`)
       return Result.mapOk(inserted, () => null)
     },
   }

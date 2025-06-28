@@ -239,6 +239,7 @@ export const View = (input: {
 
   return (
     <ScreenLayout
+      dataTestId='tic-tac-to/vs-bot-screen'
       parentScreen={input.ctx.parentScreen}
       ctx={input.ctx}
       id='tic-tac-toe-vs-bot'

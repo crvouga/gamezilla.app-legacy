@@ -127,6 +127,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
   return (
     <ScreenLayout
       parentScreen={input.ctx.parentScreen}
+      dataTestId='numberlink/play-puzzle-screen'
       id='screen-play-puzzle'
       ctx={input.ctx}
       navBar={{
@@ -225,6 +226,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
 
   return (
     <ScreenLayout
+      dataTestId='numberlink/play-puzzle-screen'
       parentScreen={input.ctx.parentScreen}
       id='spectating'
       ctx={input.ctx}

@@ -24,7 +24,7 @@ export const FixtureApp = async () => {
   const sqlDb = await SqlDb({
     t: 'postgres',
     databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
-    logger,
+    logger: Logger({ t: 'noop' }),
   })
 
   const topic = Topic.initClient({
@@ -52,27 +52,25 @@ export const FixtureApp = async () => {
     logger,
   })
 
-  const client = await TestClientApp({ frontendCtx })
-  const backend = await TestBackendPrimary({ backendCtx })
+  const frontend = await TestFrontend({ frontendCtx })
 
-  const dispose = async () => {
-    try {
-      await backendCtx.httpServer.stop()
-      backend.abortController.abort()
-    } catch (error) {
-      logger.error('Error during test cleanup:', error)
-    }
-  }
+  const backend = await TestBackend({ backendCtx })
 
   return {
-    client,
+    frontend,
     backend,
-    dispose,
-    [Symbol.asyncDispose]: dispose,
+    async [Symbol.asyncDispose]() {
+      try {
+        await backendCtx.httpServer.stop()
+        backend.abortController.abort()
+      } catch (error) {
+        logger.error('Error during test cleanup:', error)
+      }
+    },
   }
 }
 
-const TestBackendPrimary = async (config: { backendCtx: BackendCtxModule }) => {
+const TestBackend = async (config: { backendCtx: BackendCtxModule }) => {
   const ctx = config.backendCtx
 
   const abortController = new AbortController()
@@ -84,11 +82,11 @@ const TestBackendPrimary = async (config: { backendCtx: BackendCtxModule }) => {
   }
 }
 
-export const TestClientApp = async (config: { frontendCtx: FrontendCtxModule }) => {
+export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) => {
   const client = await TestClient({
     t: 'happydom',
-    maxWait: TimeSpan.seconds(5),
-    poll: TimeSpan.milliseconds(1),
+    maxWait: TimeSpan.seconds(3),
+    poll: TimeSpan.milliseconds(10),
   })
 
   document.body.innerHTML = '<div id="root"></div>'

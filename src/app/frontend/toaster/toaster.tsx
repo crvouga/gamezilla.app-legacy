@@ -140,7 +140,7 @@ export const View: Module['View'] = (input) => {
 }
 
 const onEnter = async (node: HTMLElement) => {
-  await node?.animate([{ transform: 'translateY(-150%)' }, { transform: 'translateY(0%)' }], {
+  await node?.animate?.([{ transform: 'translateY(-150%)' }, { transform: 'translateY(0%)' }], {
     duration: 200,
     easing: 'ease-in-out',
     fill: 'both',
@@ -148,7 +148,7 @@ const onEnter = async (node: HTMLElement) => {
 }
 
 const onExit = async (node: HTMLElement) => {
-  await node?.animate([{ transform: 'translateY(0%)' }, { transform: 'translateY(-150%)' }], {
+  await node?.animate?.([{ transform: 'translateY(0%)' }, { transform: 'translateY(-150%)' }], {
     duration: 200,
     easing: 'ease-in-out',
     fill: 'both',

@@ -11,6 +11,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
 
   return (
     <DynamicElement
+      dataTestId={input.dataTestId}
       element={element}
       className='flex w-full flex-1 flex-col overflow-hidden'
       onSubmit={(e) => {

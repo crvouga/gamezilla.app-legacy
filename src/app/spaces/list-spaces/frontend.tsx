@@ -56,6 +56,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   return (
     <ScreenLayout
+      dataTestId='spaces/space-list-screen'
       parentScreen={input.ctx.parentScreen}
       id='list-spaces'
       ctx={input.ctx}

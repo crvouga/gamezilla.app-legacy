@@ -79,6 +79,7 @@ const View: FrontendModule['View'] = (input) => {
   return (
     <ScreenLayout
       parentScreen={input.ctx.parentScreen}
+      dataTestId='numberlink/open-puzzle-screen'
       ctx={input.ctx}
       id='screen-open-puzzle'
       navBar={{

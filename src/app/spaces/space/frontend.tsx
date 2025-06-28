@@ -57,6 +57,7 @@ const View = (input: {
         topic: input.ctx.topic,
         rpc: input.ctx.rpc,
         parentScreen: {
+          dataTestId: 'spaces/space-screen',
           id: 'space-screen',
           parentScreen: null,
           actionBar: {

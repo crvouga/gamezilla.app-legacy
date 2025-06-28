@@ -67,6 +67,7 @@ const View: FrontendModule['View'] = (input) => {
     <ScreenLayout
       parentScreen={input.ctx.parentScreen}
       ctx={input.ctx}
+      dataTestId='numberlink/open-pack-screen'
       id='screen-open-pack'
       navBar={{
         title: input.ctx.t('game.numberlink.select-a-pack'),

@@ -12,6 +12,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
 
   return (
     <DynamicElement
+      dataTestId={input.dataTestId}
       element={element}
       className='relative flex w-full flex-1 flex-row overflow-hidden'
       onSubmit={(e) => {

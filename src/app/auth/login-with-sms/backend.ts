@@ -18,11 +18,13 @@ import { UserSession } from '../@/user-session/user-session'
 import { UserSessionId } from '../@/user-session/user-session-id'
 import { rpcContract, VerifyCodeOutput } from './types'
 import { UserProfileId } from '~/app/@/data/user-profile-id'
+import { ILogger } from '~/@/logger'
 
 const rpc = (config: { ctx: AuthBackendCtx }) => {
+  const logger = config.ctx.logger.child(['login-with-sms'])
   return RPC.initServer(rpcContract, {
     'auth/login-with-sms/send-code': async (input) => {
-      const sent = await sendCode({ ...input, ctx: config.ctx })
+      const sent = await sendCode({ ...input, ctx: config.ctx, logger })
       return sent
     },
     'auth/login-with-sms/verify-code': async (input, reqCtx) => {
@@ -31,6 +33,7 @@ const rpc = (config: { ctx: AuthBackendCtx }) => {
         sessionId: reqCtx.sessionId,
         ctx: config.ctx,
         clientSessionId: reqCtx.clientSessionId,
+        logger,
       })
 
       return verified
@@ -41,23 +44,25 @@ const rpc = (config: { ctx: AuthBackendCtx }) => {
 const sendCode = async (
   input: SendCodeInput & {
     ctx: AuthBackendCtx
+    logger: ILogger
   },
 ): Promise<SendCodeOutput> => {
-  input.ctx.logger.info(`Sending code to ${PhoneNumber.toString(input.phoneNumber)}`)
+  const logger = input.logger.child(['send-code'])
+  logger.info(`Sending code to ${PhoneNumber.toString(input.phoneNumber)}`)
   const sent = await input.ctx.verifySMS.sendCode({
     phoneNumber: input.phoneNumber,
     preferredLanguage: input.preferredLanguage,
   })
 
   if (isErr(sent)) {
-    input.ctx.logger.error(
+    logger.error(
       `Failed to send code. ${SendCodeProblem.toString({
         problem: sent.error,
         t: Translator('en'),
       })}`,
     )
   } else {
-    input.ctx.logger.info(`Successfully sent code to ${PhoneNumber.toString(input.phoneNumber)}`)
+    logger.info(`Successfully sent code to ${PhoneNumber.toString(input.phoneNumber)}`)
   }
 
   return sent
@@ -68,14 +73,17 @@ const verifyCode = async (
     sessionId: SessionId
     ctx: AuthBackendCtx
     clientSessionId: ClientSessionId
+    logger: ILogger
   },
 ): Promise<VerifyCodeOutput> => {
-  input.ctx.logger.info(`Verifying code for phone number ${PhoneNumber.toString(input.phoneNumber)}`)
+  const logger = input.logger.child(['verify-code'])
+
+  logger.info(`Verifying code for phone number ${PhoneNumber.toString(input.phoneNumber)}`)
 
   const verified = await input.ctx.verifySMS.verifyCode(input)
 
   if (isErr(verified)) {
-    input.ctx.logger.error(
+    logger.error(
       `Code verification failed: ${VerifyCodeProblem.toString({
         problem: verified.error,
         t: Translator('en'),
@@ -84,15 +92,15 @@ const verifyCode = async (
     return verified
   }
 
-  input.ctx.logger.info(`Code verification successful for ${PhoneNumber.toString(input.phoneNumber)}`)
+  logger.info(`Code verification successful for ${PhoneNumber.toString(input.phoneNumber)}`)
 
-  input.ctx.logger.info(`Looking up user account for ${PhoneNumber.toString(input.phoneNumber)}`)
+  logger.info(`Looking up user account for ${PhoneNumber.toString(input.phoneNumber)}`)
   const foundAccount = await input.ctx.userAccountDb.findOneByPhoneNumber({
     phoneNumber: input.phoneNumber,
   })
 
   if (isErr(foundAccount)) {
-    input.ctx.logger.error(`Database error while looking up user: ${foundAccount.error}`)
+    logger.error(`Database error while looking up user: ${foundAccount.error}`)
     return Err({
       t: 'database-error',
       error: foundAccount.error,
@@ -100,7 +108,7 @@ const verifyCode = async (
   }
 
   if (!foundAccount.value) {
-    input.ctx.logger.info(`No existing account found for ${PhoneNumber.toString(input.phoneNumber)}`)
+    logger.info(`No existing account found for ${PhoneNumber.toString(input.phoneNumber)}`)
   }
 
   const accountNew: UserAccount = {
@@ -115,16 +123,16 @@ const verifyCode = async (
   const insertedAccount = foundAccount.value ? Ok(null) : await input.ctx.userAccountDb.upsert(account)
 
   if (isErr(insertedAccount)) {
-    input.ctx.logger.error(`Failed to insert new account: ${insertedAccount.error}`)
+    logger.error(`Failed to insert new account: ${insertedAccount.error}`)
     return Err({ t: 'database-error', error: insertedAccount.error })
   }
 
-  input.ctx.logger.info(`Successfully created new account for ${PhoneNumber.toString(input.phoneNumber)}`)
+  logger.info(`Successfully created new account for ${PhoneNumber.toString(input.phoneNumber)}`)
 
   const foundProfiles = await input.ctx.userProfileDb.findByUserIds([account.userId])
 
   if (isErr(foundProfiles)) {
-    input.ctx.logger.error(`Failed to find profile: ${foundProfiles.error}`)
+    logger.error(`Failed to find profile: ${foundProfiles.error}`)
     return Err({ t: 'database-error', error: foundProfiles.error })
   }
 
@@ -145,11 +153,11 @@ const verifyCode = async (
   const insertedProfile = profileFound ? Ok(null) : await input.ctx.userProfileDb.put(profile)
 
   if (isErr(insertedProfile)) {
-    input.ctx.logger.error(`Failed to insert new profile: ${insertedProfile.error}`)
+    logger.error(`Failed to insert new profile: ${insertedProfile.error}`)
     return Err({ t: 'database-error', error: insertedProfile.error })
   }
 
-  input.ctx.logger.info(`Successfully created new profile for ${PhoneNumber.toString(input.phoneNumber)}`)
+  logger.info(`Successfully created new profile for ${PhoneNumber.toString(input.phoneNumber)}`)
 
   const userSessionNew: UserSession = {
     userSessionId: UserSessionId.generate(),
@@ -163,7 +171,7 @@ const verifyCode = async (
   const insertedSession = await input.ctx.userSessionDb.upsert(userSessionNew)
 
   if (isErr(insertedSession)) {
-    input.ctx.logger.error(`Failed to insert new session: ${insertedSession.error}`)
+    logger.error(`Failed to insert new session: ${insertedSession.error}`)
     return Err({ t: 'database-error', error: insertedSession.error })
   }
 

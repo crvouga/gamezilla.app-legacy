@@ -170,6 +170,7 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
   return {
     id: 'puzzle-builder-screen',
     parentScreen: input.ctx.parentScreen,
+    dataTestId: 'numberlink/puzzle-builder-screen',
     navBar: {
       back: {
         onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
@@ -268,6 +269,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
   return (
     <ScreenLayout
       parentScreen={input.ctx.parentScreen}
+      dataTestId='numberlink/puzzle-builder-play-mode-screen'
       id='puzzle-builder-screen-mode-play'
       ctx={input.ctx}
       renderBody={() => (
@@ -309,6 +311,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
     <ScreenLayout
       parentScreen={input.ctx.parentScreen}
       id='puzzle-builder-screen-mode-play'
+      dataTestId='numberlink/puzzle-builder-screen'
       ctx={input.ctx}
       navBar={{
         title: input.ctx.t('numberlink-puzzle-name', puzzleBuilder.puzzle.name),

@@ -6,6 +6,9 @@ export type Config = {
 
 export const TestClient = (_config: Config): ITestClient => {
   return {
+    audio() {
+      return []
+    },
     async query(_selector: string) {
       throw new Error('Not implemented')
     },

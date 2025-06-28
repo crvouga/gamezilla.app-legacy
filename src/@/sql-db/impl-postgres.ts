@@ -32,7 +32,6 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   })
 
   const events = Sub.create<{ t: 'queried' }>()
-  const subsByQuery = new Map<string, PubSub<unknown>>()
 
   const query: ISqlDb['query'] = async (input) => {
     const sql = Sql.to(input.sql, input.vars)
@@ -79,6 +78,8 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
       return Err(`${error} sql=${sql}`)
     }
   }
+
+  const subsByQuery = new Map<string, PubSub<unknown>>()
 
   return {
     async query(input) {

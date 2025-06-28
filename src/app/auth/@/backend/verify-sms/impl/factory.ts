@@ -102,8 +102,8 @@ export const VerifySMSFactory = {
     sqlDb: ISqlDb
   }): IVerifySMS => {
     if (config.backendRole === 'edge') {
-      config.logger.info('Using noop verify SMS for edge backend')
-      return VerifySMS({ t: 'fake-always-ok', logger: config.logger })
+      config.logger.info('Using fake verify SMS for edge backend')
+      return VerifySMS({ t: 'fake', logger: config.logger })
     }
 
     if (config.backendRole === 'primary' && config.env === 'prod') {
@@ -116,7 +116,7 @@ export const VerifySMSFactory = {
       })
     }
 
-    config.logger.info('Using in-house for non-production and primary backend')
-    return VerifySMSFactory.createInHouse(config)
+    config.logger.info('Using fake for non-production and primary backend')
+    return VerifySMS({ t: 'fake', logger: config.logger })
   },
 }

@@ -43,6 +43,7 @@ export type ParentScreenProps = Omit<ScreenLayoutProps, 'ctx' | 'renderBody'>
 
 export type ScreenLayoutProps = {
   id: string
+  dataTestId?: string
   ctx: {
     t: Translator
     screenSize: ScreenSize

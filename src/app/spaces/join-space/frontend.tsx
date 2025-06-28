@@ -144,6 +144,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   return (
     <ScreenLayout
+      dataTestId='spaces/join-space'
       id='join-space'
       parentScreen={input.ctx.parentScreen}
       ctx={input.ctx}

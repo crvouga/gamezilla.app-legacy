@@ -1,36 +1,65 @@
-import { describe, expect, it, test } from 'bun:test'
+import { describe, expect, test } from 'bun:test'
 import { FixtureAuth } from '../@/test/fixture'
 
 const Fixture = async () => {
   const f = await FixtureAuth()
 
-  const [button] = await f.client.query(`[data-testid='auth/continue-with-phone-button']`)
+  const [button] = await f.frontend.query(`[data-testid='auth/continue-with-phone-button']`)
   await button!.do({ t: 'click' })
-  const [screen] = await f.client.query(`[data-testid='auth/send-code-screen']`)
+  const [screen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
   expect(screen).toBeDefined()
 
   const sendCode = async () => {
-    const [input] = await f.client.query(`input[type='tel']`)
-    await input!.do({ t: 'input', value: '4802098698' })
-    const [button] = await f.client.query(`button[type='submit']`)
+    await f.frontend.query(`[data-testid='auth/send-code-screen']`)
+    const [input] = await f.frontend.query(`input[type='tel']`)
+    await input!.do({ t: 'input', value: '4802098690' })
+    const [button] = await f.frontend.query(`button[type='submit']`)
     await button!.do({ t: 'click' })
   }
 
-  return { ...f, sendCode }
+  const verifyCode = async () => {
+    await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
+    const [input] = await f.frontend.query(`input[type='tel']`)
+    await input!.do({ t: 'input', value: '123' })
+    const [button] = await f.frontend.query(`button[type='submit']`)
+    await button!.do({ t: 'click' })
+  }
+
+  return { ...f, sendCode, verifyCode }
 }
 
 describe('login with sms', () => {
-  it('should navigate to verify code screen after sending code', async () => {
-    await using f = await Fixture()
-    await f.sendCode()
-    const [screen] = await f.client.query(`[data-testid='auth/verify-code-screen']`)
-    expect(screen).toBeDefined()
+  describe('send code', () => {
+    test('go to verify code screen', async () => {
+      await using f = await Fixture()
+      await f.sendCode()
+      const [screen] = await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
+      expect(screen).toBeDefined()
+    })
+
+    test('show toasts on sending code', async () => {
+      await using f = await Fixture()
+      await f.sendCode()
+      const [toast] = await f.frontend.query(`[data-testid='toaster/toast']`)
+      expect(toast).toBeDefined()
+    })
+
+    test.skip('play sound on sending code', async () => {
+      await using f = await Fixture()
+      const before = f.frontend.audio()
+      await f.sendCode()
+      const after = f.frontend.audio()
+      expect(after.length).toEqual(before.length + 1)
+    })
   })
 
-  test('show toasts on sending code', async () => {
-    await using f = await Fixture()
-    await f.sendCode()
-    const [toast] = await f.client.query(`[data-testid='toaster/toast']`)
-    expect(toast).toBeDefined()
+  describe('verify code', () => {
+    test.only('go to space screen after verifying code', async () => {
+      await using f = await Fixture()
+      await f.sendCode()
+      await f.verifyCode()
+      const [screen] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
+      expect(screen).toBeDefined()
+    })
   })
 })
