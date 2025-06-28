@@ -1,5 +1,5 @@
 import { TimeSpan } from '../time/time-span'
-import type { ITestClient, ITestNode, PlayedAudioRecord, TestAction } from './interface'
+import type { ITestClient, ITestNode, TestAction } from './interface'
 
 export type BaseConfig = {
   maxWait: TimeSpan
@@ -11,12 +11,7 @@ export type Config = {
 } & BaseConfig
 
 export const TestClient = (config: Config): ITestClient => {
-  const playedAudioRecords: PlayedAudioRecord[] = []
-
   return {
-    audio() {
-      return playedAudioRecords
-    },
     async query(selector: string, queryConfig) {
       const poll = async () => {
         const found = Array.from(document.querySelectorAll(selector))

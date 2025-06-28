@@ -1,3 +1,4 @@
+import { AudioPlayer } from '~/@/audio-player'
 import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
@@ -96,7 +97,13 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
 
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
 
+  const audioPlayer = AudioPlayer({
+    t: 'web-standard',
+    logger,
+  })
+
   const ctx: AppFrontendCtxBase = {
+    audioPlayer,
     clientSessionId,
     sqlDb,
     logger,

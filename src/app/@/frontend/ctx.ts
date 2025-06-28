@@ -1,3 +1,4 @@
+import { IAudioPlayer } from '~/@/audio-player'
 import { IHttpClient } from '~/@/http-client'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
@@ -31,6 +32,7 @@ export type AppFrontendCtxBase = {
   currentUserId?: UserId | null
   currentUserRole?: UserRole | null
   httpClient: IHttpClient
+  audioPlayer: IAudioPlayer
 }
 
 export type AnonymousFrontendCtx = AppFrontendCtxBase

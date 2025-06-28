@@ -1,7 +1,6 @@
 import { Translator as SoundFrontend } from '~/@/l18n/generated'
 import { sleep } from '~/@/promise/sleep'
-import { UnitInterval } from '~/@/range/unit-interval'
-import { Err, Ok, type Result } from '~/@/result'
+import { type Result } from '~/@/result'
 import { IconVolumeHigh } from '~/@/ui/icon/icon-volume-high'
 import { IconVolumeXMark } from '~/@/ui/icon/icon-volume-x-mark'
 import { ListItemButton } from '~/@/ui/list-item-button'
@@ -13,14 +12,6 @@ import { DocumentVisibilityChangedEvt } from '~/app/@/frontend/document-visibili
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PreloadSoundsCmd } from '~/app/@/frontend/preload-sounds-cmd.$msg'
 
-//
-//
-//
-//
-//
-//
-//
-
 type Module = AppFrontendModule<{
   Ctx: AppFrontendCtxBase
   Model: Model
@@ -29,16 +20,6 @@ type Module = AppFrontendModule<{
   MsgToFrontend: never
   MsgToBackend: never
 }>
-
-//
-//
-//
-//
-// Model
-//
-//
-//
-//
 
 export type Model = {
   muted: boolean
@@ -51,16 +32,6 @@ export const init: Module['init'] = () => {
     },
   }
 }
-
-//
-//
-//
-//
-// Update
-//
-//
-//
-//
 
 export type Msg =
   | {
@@ -87,9 +58,7 @@ export const update: Module['update'] = (input) => {
 }
 
 const updateFromMsg: Module['update'] = (input) => {
-  if (!input.msg) {
-    return { model: input.model }
-  }
+  if (!input.msg) return { model: input.model }
 
   switch (input.msg.t) {
     case 'toggle-mute': {
@@ -148,7 +117,7 @@ export const updateFromCmd: Module['update'] = (input) => {
       async eff(dispatch) {
         const { delay } = msgIn
         if (delay) await sleep(delay)
-        const played = await playSoundEffect(msgIn.src, msgIn.volume ?? UnitInterval.init(1))
+        const played = await input.ctx.audioPlayer.play({ src: msgIn.src })
         dispatch({ t: 'played-sound', src: msgIn.src, result: played })
       },
     }
@@ -158,7 +127,7 @@ export const updateFromCmd: Module['update'] = (input) => {
     return {
       model: input.model,
       async eff(dispatch) {
-        const preloaded = await preloadSoundsEffect(msgIn.srcList)
+        const preloaded = await input.ctx.audioPlayer.preload({ srcList: msgIn.srcList })
         dispatch({ t: 'preloaded-sounds', src: msgIn.srcList, result: preloaded })
       },
     }
@@ -194,124 +163,4 @@ export const ViewSoundListItem = (input: {
       end={() => <ToggleButton label='toggle sound' checked={!input.model.muted} id='toggle-sound' />}
     />
   )
-}
-
-//
-//
-//
-//
-//
-// Web Audio
-//
-//
-//
-//
-//
-
-const MyAudioContext = (): typeof window.AudioContext => {
-  return (
-    window.AudioContext ||
-    // @ts-expect-error - webkitAudioContext is not in the types
-    window.webkitAudioContext
-  )
-}
-
-const nextUserGesture = async () => {
-  await new Promise((resolve) => {
-    const handler = async () => {
-      resolve(null)
-      document.body.removeEventListener('click', handler)
-      document.body.removeEventListener('touchstart', handler)
-    }
-
-    document.body.addEventListener('click', handler, { once: true })
-    document.body.addEventListener('touchstart', handler, { once: true })
-  })
-}
-
-let _didUserGesture = false
-const awaitUserGesture = async () => {
-  if (!_didUserGesture) {
-    await nextUserGesture()
-    _didUserGesture = true
-    return false
-  }
-  return true
-}
-
-let _audioContext: AudioContext
-const getAudioContext = async (): Promise<AudioContext | null> => {
-  await awaitUserGesture()
-
-  if (!_audioContext) {
-    _audioContext = new (MyAudioContext())()
-  }
-
-  return _audioContext
-}
-
-const audioBuffers = new Map<string, AudioBuffer>()
-
-const preloadSoundsEffect = async (src: string[]) => {
-  await Promise.allSettled(src.map((s) => preloadSoundEffect(s)))
-  return Ok(null)
-}
-
-const preloadSoundEffect = async (src: string) => {
-  try {
-    const response = await fetch(src)
-    const arrayBuffer = await response.arrayBuffer()
-    const audioContext = await getAudioContext()
-    if (!audioContext) {
-      return Err('No audio context')
-    }
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
-    audioBuffers.set(src, audioBuffer)
-    return Ok(null)
-  } catch (e) {
-    return Err(String(e))
-  }
-}
-
-const playSoundEffect = async (src: string, volume: UnitInterval): Promise<Result<string, null>> => {
-  try {
-    const audioContext = await getAudioContext()
-    if (!audioContext) {
-      return Err('No audio context')
-    }
-    const audioBuffer = audioBuffers.get(src)
-    if (audioBuffer) {
-      return playSoundEffect_(audioContext, audioBuffer, volume)
-    }
-    const response = await fetch(src)
-    const arrayBuffer = await response.arrayBuffer()
-    const audioBufferNew = await audioContext.decodeAudioData(arrayBuffer)
-    audioBuffers.set(src, audioBufferNew)
-    // return playSoundEffect_(audioContext, audioBufferNew, volume)
-    return Ok(null)
-  } catch (e) {
-    return Err(String(e))
-  }
-}
-
-const playSoundEffect_ = async (
-  audioContext: AudioContext,
-  audioBuffer: AudioBuffer,
-  volume: UnitInterval,
-): Promise<Result<string, null>> => {
-  try {
-    const sourceNode = audioContext.createBufferSource()
-    sourceNode.buffer = audioBuffer
-    const gainNode = audioContext.createGain()
-    gainNode.gain.value = volume
-
-    sourceNode.connect(gainNode)
-    gainNode.connect(audioContext.destination)
-
-    sourceNode.start(0)
-
-    return Ok(null)
-  } catch (e) {
-    return Err(String(e))
-  }
 }

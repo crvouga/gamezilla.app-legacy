@@ -1,3 +1,4 @@
+import { AudioPlayer } from '~/@/audio-player'
 import { ILogger, Logger } from '~/@/logger'
 import { Program } from '~/@/program/program'
 import { SqlDb } from '~/@/sql-db/backend/impl'
@@ -85,10 +86,19 @@ export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) =
   })
 
   document.body.innerHTML = `<div id="root"></div>`
+
   const root = document.getElementById(`root`)
+
   if (!root) throw new Error('Root element not found')
+
   const render = await Render('react', root)
-  const ctx = config.frontendCtx
+
+  const audioPlayer = AudioPlayer({ t: 'fake', logger: config.frontendCtx.logger })
+
+  const ctx = {
+    ...config.frontendCtx,
+    audioPlayer,
+  }
 
   const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),
@@ -105,6 +115,7 @@ export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) =
   return {
     ...client,
     ...program,
+    audioPlayer,
     cleanUp,
   }
 }

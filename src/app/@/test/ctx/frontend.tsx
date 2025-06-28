@@ -1,3 +1,4 @@
+import { AudioPlayer } from '~/@/audio-player'
 import { HttpClient } from '~/@/http-client'
 import { ILogger } from '~/@/logger'
 import { RPC } from '~/@/rpc'
@@ -36,6 +37,7 @@ export const initFrontendCtx = async (config: {
   const httpClient = HttpClient({ t: 'fetch' })
 
   const ctx: AppFrontendCtxBase = {
+    audioPlayer: AudioPlayer({ t: 'fake', logger }),
     clientSessionId,
     sqlDb: config.sqlDb,
     logger,

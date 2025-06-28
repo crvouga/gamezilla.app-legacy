@@ -1,4 +1,6 @@
 import { describe, expect, test } from 'bun:test'
+import { difference } from '~/@/array/difference'
+import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { FixtureAuth } from '../@/test/fixture'
 
 const Fixture = async () => {
@@ -44,12 +46,14 @@ describe('login with sms', () => {
       expect(toast).toBeDefined()
     })
 
-    test.skip('play sound on sending code', async () => {
+    test('play sound on sending code', async () => {
       await using f = await Fixture()
-      const before = f.frontend.audio()
+      const before = f.frontend.audioPlayer.played()
       await f.sendCode()
-      const after = f.frontend.audio()
-      expect(after.length).toEqual(before.length + 1)
+      await new Promise((resolve) => setTimeout(resolve, 0))
+      const after = f.frontend.audioPlayer.played()
+      const played = difference(after, before, (x) => x.id)
+      expect(played.map((x) => x.src)).toEqual([APP_SOUND.tap, APP_SOUND.navForwardMin])
     })
   })
 

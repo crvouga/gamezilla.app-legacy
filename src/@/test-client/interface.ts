@@ -1,5 +1,4 @@
 import { TimeSpan } from '../time/time-span'
-import { UnixMs } from '../time/unix-ms'
 
 export type TestAction =
   | { t: 'keydown'; key: string }
@@ -14,22 +13,13 @@ export type ITestNode = {
   do: (action: TestAction) => Promise<void>
 }
 
-export type PlayedAudioRecord = {
-  startedAt: UnixMs
-  endedAt: UnixMs | null
-  duration: TimeSpan
-  url: string
+export type TestClientQueryConfig = {
+  poll?: TimeSpan
+  maxWait?: TimeSpan
+  onPoll?: () => void
+  onDone?: () => void
 }
 
 export type ITestClient = {
-  query: (
-    selector: string,
-    config?: {
-      poll?: TimeSpan
-      maxWait?: TimeSpan
-      onPoll?: () => void
-      onDone?: () => void
-    },
-  ) => Promise<ITestNode[]>
-  audio: () => PlayedAudioRecord[]
+  query: (selector: string, config?: TestClientQueryConfig) => Promise<ITestNode[]>
 }

@@ -36,15 +36,6 @@ function generateProgramId() {
   return `program:${Math.random().toString(36).slice(2)}`
 }
 
-//
-//
-//
-//
-//
-//
-//
-//
-
 export type ProgramDebugger = (
   initialModel: unknown,
   setModel: (model: unknown, msg?: unknown) => MaybePromise<void>,

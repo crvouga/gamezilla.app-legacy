@@ -1,3 +1,4 @@
+import { AudioPlayer } from '~/@/audio-player'
 import { HttpClient } from '~/@/http-client'
 import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
@@ -13,6 +14,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
   const currentUserId = UserId.generate()
 
   const ctx: AppFrontendCtx = {
+    audioPlayer: AudioPlayer({ t: 'fake', logger: Logger({ t: 'noop' }) }),
     clientSessionId: ClientSessionId.generate(),
     parentScreen: null,
     sqlDb: SQL_DB_NOOP,
