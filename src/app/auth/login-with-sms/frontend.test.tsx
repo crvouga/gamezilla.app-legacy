@@ -12,18 +12,18 @@ const Fixture = async () => {
   const [screen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
   expect(screen).toBeDefined()
 
-  const sendCode = async () => {
+  const sendCode = async (config?: { phoneNumber?: string }) => {
     await f.frontend.query(`[data-testid='auth/send-code-screen']`)
     const [input] = await f.frontend.query(`input[type='tel']`)
-    await input!.do({ t: 'input', value: '4802098698' })
+    await input!.do({ t: 'input', value: config?.phoneNumber ?? '4802098698' })
     const [button] = await f.frontend.query(`button[type='submit']`)
     await button!.do({ t: 'click' })
   }
 
-  const verifyCode = async (code?: string) => {
+  const verifyCode = async (config?: { code?: string }) => {
     await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
     const [input] = await f.frontend.query(`input[type='tel']`)
-    await input!.do({ t: 'input', value: code ?? '123' })
+    await input!.do({ t: 'input', value: config?.code ?? '123' })
     const [button] = await f.frontend.query(`button[type='submit']`)
     await button!.do({ t: 'click' })
   }
@@ -40,11 +40,18 @@ describe('login with sms', () => {
       expect(screen).toBeDefined()
     })
 
-    test('show toasts on sending code', async () => {
+    test('show alert on sending code', async () => {
       await using f = await Fixture()
       await f.sendCode()
-      const [toast] = await f.frontend.query(`[data-testid='toaster/toast']`)
-      expect(toast).toBeDefined()
+      const [alert] = await f.frontend.query(`[role='alert'][data-info='true']`)
+      expect(alert).toBeDefined()
+    })
+
+    test('should error alert when phone number is invalid', async () => {
+      await using f = await Fixture()
+      await f.sendCode({ phoneNumber: '123' })
+      const [alert] = await f.frontend.query(`[role='alert'][data-error='true']`)
+      expect(alert).toBeDefined()
     })
 
     test('play sound on sending code', async () => {
@@ -68,22 +75,30 @@ describe('login with sms', () => {
       expect(screen).toBeDefined()
     })
 
-    test('show toasts on verifying code', async () => {
+    test('show alert on verifying code', async () => {
       await using f = await Fixture()
       await f.sendCode()
       await f.verifyCode()
-      const [toast] = await f.frontend.query(`[data-testid='toaster/toast']`)
-      expect(toast).toBeDefined()
+      const [alert] = await f.frontend.query(`[role='alert'][data-info='true']`)
+      expect(alert).toBeDefined()
     })
 
     test('enter wrong code does not go to space screen', async () => {
       await using f = await Fixture()
       await f.sendCode()
-      await f.verifyCode('111')
-      const [screen2] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
-      expect(screen2).toBeUndefined()
-      const [screen] = await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
-      expect(screen).toBeDefined()
+      await f.verifyCode({ code: '111' })
+      const [spaceScreen] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
+      expect(spaceScreen).toBeUndefined()
+      const [verifyCodeScreen] = await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
+      expect(verifyCodeScreen).toBeDefined()
+    })
+
+    test('show error alert when code is wrong', async () => {
+      await using f = await Fixture()
+      await f.sendCode()
+      await f.verifyCode({ code: '111' })
+      const [error] = await f.frontend.query(`[role='alert'][data-error='true']`)
+      expect(error).toBeDefined()
     })
   })
 })

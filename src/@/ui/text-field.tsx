@@ -86,7 +86,16 @@ export const TextField = (input: {
         )}
       </div>
 
-      {input.helperText && <div className={cn('text-sm', input.error && 'text-red-500')}>{input.helperText}</div>}
+      {input.helperText && (
+        <div
+          role='alert'
+          data-error={Boolean(input.error)}
+          data-info={!Boolean(input.error)}
+          className={cn('text-sm', input.error && 'text-red-500')}
+        >
+          {input.helperText}
+        </div>
+      )}
     </label>
   )
 }
