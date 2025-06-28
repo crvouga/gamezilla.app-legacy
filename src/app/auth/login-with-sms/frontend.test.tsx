@@ -58,11 +58,7 @@ describe('login with sms', () => {
       await using f = await Fixture()
       await f.sendCode()
       await f.verifyCode()
-      const [screen] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`, {
-        onDone() {
-          debugger
-        },
-      })
+      const [screen] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
       expect(screen).toBeDefined()
     })
   })
