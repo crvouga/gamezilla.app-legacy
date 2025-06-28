@@ -10,12 +10,10 @@ import { IconPowerOff } from '~/@/ui/icon/icon-power-off'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Typography } from '~/@/ui/typography'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
-import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { UserProfile } from '../@/data/user-profile'
 import { CloseStatusBarCmd } from '../@/frontend/close-status-bar-cmd.$msg'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { LogoutCmd } from '../@/frontend/logout-cmd.$msg'
-import { PlaySoundCmd } from '../@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '../@/frontend/push-screen-cmd.$msg'
 import { AuthFrontendCtx } from './@/frontend/ctx'
 import { AuthScreenHeaderCta } from './@/frontend/ui/auth-screen-header-cta'
@@ -133,15 +131,13 @@ const updateSMS: FrontendModule['update'] = (input) => {
 }
 
 const updateFromMsg: FrontendModule['update'] = (input) => {
-  if (!input.msg) {
-    return { model: input.model }
-  }
+  if (!input.msg) return { model: input.model }
 
   switch (input.msg.t) {
     case 'clicked-login-with-phone': {
       return {
         model: input.model,
-        msgOut: [PushScreenCmd.init({ n: 'auth', t: 'send-code' }), PlaySoundCmd.init(APP_SOUND.navForwardMin)],
+        msgOut: [PushScreenCmd.init({ n: 'auth', t: 'send-code' }, true)],
       }
     }
     case 'clicked-logout-list-item': {

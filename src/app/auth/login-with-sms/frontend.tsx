@@ -222,7 +222,9 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
       dataTestId='auth/send-code-screen'
       ctx={input.ctx}
       title={input.ctx.t('auth-sms.send-code')}
-      onBack={() => input.dispatch({ t: 'clicked-back-button' })}
+      onBack={() => {
+        input.dispatch({ t: 'clicked-back-button' })
+      }}
       submitText={input.ctx.t('auth-sms.send-code')}
       submitLoading={input.model.sent.t === 'loading'}
       submitDisabled={false}
@@ -267,7 +269,9 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
       dataTestId='auth/verify-code-screen'
       ctx={input.ctx}
       title={input.ctx.t('auth-sms.verify-code')}
-      onBack={() => input.dispatch({ t: 'clicked-back-button' })}
+      onBack={() => {
+        input.dispatch({ t: 'clicked-back-button' })
+      }}
       submitText={input.ctx.t('auth-sms.verify-code')}
       submitLoading={input.model.verified.t === 'loading'}
       submitDisabled={false}

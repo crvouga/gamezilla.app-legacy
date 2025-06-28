@@ -7,6 +7,7 @@ export const schema = s.or(
     t: s.l('push'),
     screen: s.custom((input): input is Screen => toScreen(input) !== null, 'invalid screen'),
     playSound: s.maybe(s.bool),
+    causedBy: s.maybe(s.str()),
   }),
 )
 
@@ -14,11 +15,12 @@ export type PushScreenCmd = s.Infer<typeof schema>
 
 export type MsgShared = PushScreenCmd
 
-export const init = (screen: Screen, playSound?: boolean): PushScreenCmd => {
+export const init = (screen: Screen, playSound?: boolean, causedBy?: string): PushScreenCmd => {
   return {
     t: 'push',
     screen,
     playSound,
+    causedBy,
   }
 }
 

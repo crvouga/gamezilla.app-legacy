@@ -82,7 +82,7 @@ export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) =
   const client = await TestClient({
     t: 'happydom',
     maxWait: TimeSpan.milliseconds(100),
-    poll: TimeSpan.milliseconds(1),
+    poll: TimeSpan.milliseconds(10),
   })
 
   document.body.innerHTML = `<div id="root"></div>`
