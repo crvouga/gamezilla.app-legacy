@@ -4,14 +4,14 @@ import { VerificationId } from '../impl-in-house/verification'
 import type { IVerifySMS } from '../../interface'
 import { PhoneNumber } from '~/@/phone-number'
 
-const DEFAULT_CODE = '123'
+const DEFAULT_CORRECT_CODE = '123'
 
 export type Config = {
   t: 'fake'
   logger: ILogger
   delay?: () => Promise<void>
   verificationId?: VerificationId
-  code?: string
+  correctCode?: string
 }
 
 export const VerifySMS = (deps: Config): IVerifySMS => {
@@ -27,7 +27,7 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
 
       const phoneNumberStr = PhoneNumber.toString(input.phoneNumber)
 
-      deps.logger?.info(`[verify-sms] [test] fake sent code to ${phoneNumberStr}. code: ${DEFAULT_CODE}`)
+      deps.logger?.info(`[verify-sms] [test] fake sent code to ${phoneNumberStr}. code: ${DEFAULT_CORRECT_CODE}`)
 
       return Ok({
         phoneNumber: input.phoneNumber,
@@ -42,8 +42,8 @@ export const VerifySMS = (deps: Config): IVerifySMS => {
         })
       }
 
-      const code = deps.code ?? DEFAULT_CODE
-      if (code === DEFAULT_CODE) {
+      const correctCode = deps.correctCode ?? DEFAULT_CORRECT_CODE
+      if (input.code === correctCode) {
         return Ok({
           phoneNumber: input.phoneNumber,
         })

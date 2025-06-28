@@ -17,10 +17,10 @@ const Fixture = async () => {
     await button!.do({ t: 'click' })
   }
 
-  const verifyCode = async () => {
+  const verifyCode = async (code?: string) => {
     await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
     const [input] = await f.frontend.query(`input[type='tel']`)
-    await input!.do({ t: 'input', value: '123' })
+    await input!.do({ t: 'input', value: code ?? '123' })
     const [button] = await f.frontend.query(`button[type='submit']`)
     await button!.do({ t: 'click' })
   }
@@ -59,6 +59,24 @@ describe('login with sms', () => {
       await f.sendCode()
       await f.verifyCode()
       const [screen] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
+      expect(screen).toBeDefined()
+    })
+
+    test('show toasts on verifying code', async () => {
+      await using f = await Fixture()
+      await f.sendCode()
+      await f.verifyCode()
+      const [toast] = await f.frontend.query(`[data-testid='toaster/toast']`)
+      expect(toast).toBeDefined()
+    })
+
+    test('enter wrong code does not go to space screen', async () => {
+      await using f = await Fixture()
+      await f.sendCode()
+      await f.verifyCode('111')
+      const [screen2] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
+      expect(screen2).toBeUndefined()
+      const [screen] = await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
       expect(screen).toBeDefined()
     })
   })
