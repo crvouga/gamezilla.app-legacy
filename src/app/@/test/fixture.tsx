@@ -18,7 +18,11 @@ export const FixtureApp = async () => {
   logger ??= Logger({ t: 'noop' })
   logger ??= Logger({ t: 'console', namespace: ['fixture'], newLinePerMsg: false })
 
-  const sqlDb = await SqlDb({ t: 'bun-sqlite', fs: { t: 'in-memory' }, logger: Logger({ t: 'noop' }) })
+  const sqlDb = await SqlDb({
+    t: 'bun-sqlite',
+    fs: { t: 'in-memory' },
+    logger: Logger({ t: 'noop' }),
+  })
 
   const topic = Topic.initClient({
     t: 'local',
@@ -52,7 +56,7 @@ export const FixtureApp = async () => {
   return {
     frontend,
     backend,
-    async [Symbol.asyncDispose]() {
+    async cleanUp() {
       await backend.cleanUp()
       await frontend.cleanUp()
     },

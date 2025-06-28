@@ -1,13 +1,15 @@
-import { describe, expect, test } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { FixtureAuth } from '../@/test/fixture'
 
 const Fixture = async () => {
   const f = await FixtureAuth()
 
-  const [button] = await f.frontend.query(`[data-testid='auth/continue-with-phone-button']`)
-  await button!.do({ t: 'click' })
-  const [screen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
-  expect(screen).toBeDefined()
+  const setup = async () => {
+    const [button] = await f.frontend.query(`[data-testid='auth/continue-with-phone-button']`)
+    await button!.do({ t: 'click' })
+    const [screen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
+    expect(screen).toBeDefined()
+  }
 
   const sendCode = async () => {
     await f.frontend.query(`[data-testid='auth/send-code-screen']`)
@@ -25,27 +27,37 @@ const Fixture = async () => {
     await button!.do({ t: 'click' })
   }
 
-  return { ...f, sendCode, verifyCode }
+  return { ...f, setup, sendCode, verifyCode }
 }
 
 describe('login with sms', () => {
+  let f: Awaited<ReturnType<typeof Fixture>>
+
+  beforeEach(async () => {
+    f = await Fixture()
+  })
+
+  afterEach(async () => {
+    await f.cleanUp()
+  })
+
   describe('send code', () => {
     test('go to verify code screen', async () => {
-      await using f = await Fixture()
+      await f.setup()
       await f.sendCode()
       const [screen] = await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
       expect(screen).toBeDefined()
     })
 
     test('show toasts on sending code', async () => {
-      await using f = await Fixture()
+      await f.setup()
       await f.sendCode()
       const [toast] = await f.frontend.query(`[data-testid='toaster/toast']`)
       expect(toast).toBeDefined()
     })
 
     test.skip('play sound on sending code', async () => {
-      await using f = await Fixture()
+      await f.setup()
       const before = f.frontend.audio()
       await f.sendCode()
       const after = f.frontend.audio()
@@ -55,7 +67,7 @@ describe('login with sms', () => {
 
   describe('verify code', () => {
     test('go to space screen after verifying code', async () => {
-      await using f = await Fixture()
+      await f.setup()
       await f.sendCode()
       await f.verifyCode()
       const [screen] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
@@ -63,7 +75,7 @@ describe('login with sms', () => {
     })
 
     test('show toasts on verifying code', async () => {
-      await using f = await Fixture()
+      await f.setup()
       await f.sendCode()
       await f.verifyCode()
       const [toast] = await f.frontend.query(`[data-testid='toaster/toast']`)
@@ -71,7 +83,7 @@ describe('login with sms', () => {
     })
 
     test('enter wrong code does not go to space screen', async () => {
-      await using f = await Fixture()
+      await f.setup()
       await f.sendCode()
       await f.verifyCode('111')
       const [screen2] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
