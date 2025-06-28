@@ -95,7 +95,7 @@ export const SqlDb = (config: Config): ISqlDb => {
     }
   >()
 
-  const sub: ISqlDb['sub'] = <TRow>(input: SqlDbQueryInput<TRow>) => {
+  const sub = <TRow>(input: SqlDbQueryInput<TRow>) => {
     const sql = Sql.to(input.sql, input.vars)
     const subscriptionKey = sql
       .replaceAll(/\s+/g, ' ')
@@ -193,7 +193,9 @@ export const SqlDb = (config: Config): ISqlDb => {
       StringConcat: (column, separator) => `GROUP_CONCAT(${column}, '${separator}')`,
     },
     query,
-    sub,
+    sub: <TRow, TMsg>(input: SqlDbQueryInput<TRow>, mapper: (rows: TRow[]) => TMsg) => {
+      return Sub.map(sub(input), mapper)
+    },
     notify,
     listen,
   }

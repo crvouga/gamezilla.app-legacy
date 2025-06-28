@@ -9,7 +9,7 @@ import { Username } from '~/app/@/data/username'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd.$msg'
+import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { AuthFrontendCtx } from '../@/frontend/ctx'
 import { UserSession } from '../@/user-session/user-session'
@@ -108,8 +108,8 @@ const watchForLogin = (
     return {
       model: input.modelAfter,
       msgOut: [
-        // PushScreenCmd.init({ n: 'spaces', t: 'space-list' }, false),
-        ReplaceScreenCmd.init({ n: 'spaces', t: 'space-list' }, false),
+        // ReplaceScreenCmd.init({ n: 'spaces', t: 'space-list' }, false),
+        PushScreenCmd.init({ n: 'spaces', t: 'space-list' }, false),
         PlaySoundCmd.init(APP_SOUND.celebration),
         ShowToastCmd.init(input.ctx.t('auth.logged-in')),
       ],
@@ -150,38 +150,29 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  const userSessions = input.ctx.userSessionDb.sub({
-    whereAnd: {
-      clientSessionId: {
-        equals: input.ctx.clientSessionId,
-      },
-    },
-    order: {
-      createdAt: 'desc',
-    },
-    pagination: {
-      limit: 10,
-      offset: 0,
-    },
-  })
   return Sub.batch<MsgFrontend>([
-    Sub.map(
-      userSessions,
-      (userSessions): MsgFrontend => ({
-        t: 'got-user-sessions',
-        userSessions,
-      }),
+    input.ctx.userSessionDb.sub(
+      {
+        whereAnd: {
+          clientSessionId: {
+            equals: input.ctx.clientSessionId,
+          },
+        },
+        order: {
+          createdAt: 'desc',
+        },
+        pagination: {
+          limit: 10,
+          offset: 0,
+        },
+      },
+      (userSessions): MsgFrontend => {
+        return {
+          t: 'got-user-sessions',
+          userSessions,
+        }
+      },
     ),
-    // input.ctx.userAccountDb.sub({
-    //   where: {
-    //     userId: input.model.currentUserId,
-    //   },
-    // }),
-    // input.ctx.guestSessionMappingDb.sub({
-    //   where: {
-    //     clientSessionId: input.ctx.clientSessionId,
-    //   },
-    // }),
   ])
 }
 

@@ -1,9 +1,8 @@
 import * as ImplHashMap from './impl-hash-map'
 import * as ImplSqlDb from './impl-sql-db'
 import type { IPackDb } from './interface'
-import * as WithSqlTables from './with-sql-tables'
 
-export type Config = ImplHashMap.Config | ImplSqlDb.Config | WithSqlTables.Config
+export type Config = ImplHashMap.Config | ImplSqlDb.Config
 
 export const PackDb = (config: Config): IPackDb => {
   switch (config.t) {
@@ -12,9 +11,6 @@ export const PackDb = (config: Config): IPackDb => {
     }
     case 'sql-db': {
       return ImplSqlDb.PackDb(config)
-    }
-    case 'with-sql-tables': {
-      return WithSqlTables.PackDb(config)
     }
   }
 }

@@ -8,7 +8,6 @@ import * as WithDistributedInvalidations from './with-distributed-invalidations'
 import * as WithDistributedUpdates from './with-distributed-updates'
 import * as WithNamespace from './with-namespace'
 import * as WithReducedParsing from './with-reduced-parsing'
-import * as WithSqlTables from './with-sql-tables'
 import * as WithThrottledWrites from './with-throttled-writes'
 
 export type Config =
@@ -20,7 +19,6 @@ export type Config =
   | WithReducedParsing.Config
   | WithThrottledWrites.Config
   | WithDistributedInvalidations.Config
-  | WithSqlTables.Config
 
 export const KeyValueDb = async (configInput: Config): Promise<IKeyValueDb> => {
   const logger = configInput.logger?.child(['key-value-db']) ?? Logger({ t: 'noop' })
@@ -56,10 +54,6 @@ export const KeyValueDb = async (configInput: Config): Promise<IKeyValueDb> => {
 
     case 'in-memory': {
       return ImplInMemory.KeyValueDb(config)
-    }
-
-    case 'with-sql-tables': {
-      return WithSqlTables.KeyValueDb(config)
     }
   }
 }

@@ -17,7 +17,6 @@ const initCtx = async (input: {
     t: 'sql-db',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
-    shouldCreateTable: false,
   })
 
   SYNC_REGISTRY.add(SpaceSync({ spaceDb }))

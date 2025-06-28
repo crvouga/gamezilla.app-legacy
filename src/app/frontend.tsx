@@ -231,6 +231,7 @@ const update = (input: {
 } => {
   const updatedChild = updateChild(input)
   const updated = updateLoop(input.ctx, updatedChild)
+
   return updated
 }
 

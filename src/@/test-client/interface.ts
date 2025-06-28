@@ -24,7 +24,12 @@ export type PlayedAudioRecord = {
 export type ITestClient = {
   query: (
     selector: string,
-    config?: { poll?: TimeSpan; maxWait?: TimeSpan; onPoll?: () => void },
+    config?: {
+      poll?: TimeSpan
+      maxWait?: TimeSpan
+      onPoll?: () => void
+      onDone?: () => void
+    },
   ) => Promise<ITestNode[]>
   audio: () => PlayedAudioRecord[]
 }

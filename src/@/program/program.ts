@@ -58,9 +58,12 @@ export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
     program.crash?.(input)
   }
 
+  const msgs: TMsg[] = []
+
   let isUpdating = false
   const queue: TMsg[] = []
   async function dispatch(msg: TMsg) {
+    msgs.push(msg)
     new Promise((resolve) => {
       setTimeout(() => {
         resolve(true)
@@ -150,6 +153,9 @@ export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
   return {
     getModel() {
       return model
+    },
+    getMsgs() {
+      return msgs
     },
     dispatch,
   }

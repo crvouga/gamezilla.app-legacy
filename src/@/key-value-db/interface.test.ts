@@ -1,16 +1,16 @@
 import { describe, expect, it, test } from 'bun:test'
-import { s } from '~/@/schema'
 import { Ok, Result } from '~/@/result'
 import { Runtime } from '~/@/runtime'
+import { s } from '~/@/schema'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
-import { PubSub } from '../pub-sub'
-import { TimeSpan } from '../time/time-span'
 import { Uuid } from '../id/uuid'
+import { Logger } from '../logger'
+import { PubSub } from '../pub-sub'
+import { SqlDb } from '../sql-db/backend/impl'
+import { TimeSpan } from '../time/time-span'
 import { KeyValueDb } from './impl'
 import { IKeyValueDb } from './interface'
-import { Logger } from '../logger'
-import { SqlDb } from '../sql-db/backend/impl'
 
 type Fixture = {
   name: string
@@ -107,13 +107,9 @@ const Fixtures = async (): Promise<Fixture[]> => {
   fixtures.push({
     name: 'sqlite',
     keyValueDb: await KeyValueDb({
-      t: 'with-sql-tables',
+      t: 'sql-db',
       sqlDb: sqlDbSqlite,
-      keyValueDb: await KeyValueDb({
-        t: 'sql-db',
-        sqlDb: sqlDbSqlite,
-        logger,
-      }),
+      logger,
     }),
   })
 

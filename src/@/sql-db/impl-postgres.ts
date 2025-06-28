@@ -87,7 +87,7 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
       events.pub({ t: 'queried' })
       return queried
     },
-    sub(input) {
+    sub(input, mapper) {
       const queryKey = deterministicJsonStringify({ sql: input.sql, vars: input.vars })
 
       const sub = subsByQuery.get(queryKey)
@@ -95,7 +95,7 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
       type Row = s.Infer<typeof input.schema>
 
       if (sub) {
-        return sub as Sub<Row[]>
+        return Sub.map(sub as Sub<Row[]>, mapper)
       }
 
       const subNew = Sub.create<unknown>()
@@ -109,7 +109,7 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
       events.sub(pub)
       pub()
 
-      return subNew as Sub<Row[]>
+      return Sub.map(subNew as Sub<Row[]>, mapper)
     },
 
     aggregate: {

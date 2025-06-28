@@ -10,7 +10,6 @@ import { AppTypes } from '~/app'
 import { AppBackend } from '~/app/backend'
 import { AppFrontend } from '~/app/frontend'
 import { BackendCtxModule, FrontendCtxModule } from '~/app/types'
-import { CONFIG_BACKEND } from '~/config/backend'
 import { initBackendCtx } from './ctx/backend'
 import { initFrontendCtx } from './ctx/frontend'
 
@@ -21,11 +20,7 @@ export const FixtureApp = async () => {
     newLinePerMsg: false,
   })
 
-  const sqlDb = await SqlDb({
-    t: 'postgres',
-    databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
-    logger: Logger({ t: 'noop' }),
-  })
+  const sqlDb = await SqlDb({ t: 'bun-sqlite', fs: { t: 'in-memory' }, logger: Logger({ t: 'noop' }) })
 
   const topic = Topic.initClient({
     t: 'local',
@@ -90,7 +85,7 @@ const TestBackend = async (config: { backendCtx: BackendCtxModule }) => {
 
 export const TestFrontend = async (config: { frontendCtx: FrontendCtxModule }) => {
   const client = await TestClient({
-    t: 'jsdom',
+    t: 'happydom',
     maxWait: TimeSpan.seconds(3),
     poll: TimeSpan.milliseconds(100),
   })

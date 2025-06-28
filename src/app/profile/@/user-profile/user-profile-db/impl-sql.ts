@@ -5,7 +5,6 @@ import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
 import type { ISqlDb } from '~/@/sql-db'
-import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
@@ -26,6 +25,20 @@ const Row = s.obj({
 })
 
 type Row = s.Infer<typeof Row>
+
+const CREATE_TABLES: string[] = [
+  `
+  CREATE TABLE IF NOT EXISTS user_profile (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    username TEXT NOT NULL,
+    avatar_seed TEXT,
+    avatar_style TEXT,
+    created_at_unix_ms BIGINT NOT NULL,
+    updated_at_unix_ms BIGINT NOT NULL
+  );
+  `,
+]
 
 const rowToEntity = (row: Row): Result<string, UserProfile> => {
   const avatarSeed = row.avatar_seed ? ProfileAvatar.toSeed(row.avatar_seed) : ProfileAvatar.toSeed(row.username)
@@ -63,6 +76,10 @@ export type Config = {
 }
 
 export const ProfileDb = (config: Config): IUserProfileDb => {
+  for (const query of CREATE_TABLES) {
+    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
+  }
+
   return {
     async findByUserIds(userIds) {
       const sql = `
@@ -175,7 +192,7 @@ export const ProfileDb = (config: Config): IUserProfileDb => {
     },
     sub(query) {
       const { sql, vars } = queryToSql(query)
-      return Sub.map(config.sqlDb.sub({ schema: Row, sql: sql, vars: vars }), (rows) =>
+      return config.sqlDb.sub({ schema: Row, sql: sql, vars: vars }, (rows) =>
         unwrapOr(Result.combine(rows.map(rowToEntity)), []),
       )
     },

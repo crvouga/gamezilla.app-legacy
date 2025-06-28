@@ -7,7 +7,6 @@ import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
 import type { ISqlDb } from '~/@/sql-db'
-import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { UserId } from '~/app/@/data/user-id'
 import { OrderClause, WhereClause } from '../../puzzle/puzzle-db/interface-query'
@@ -33,6 +32,7 @@ const Row = s.obj({
   deleted_at_unix_ms: s.maybe(s.or(s.num(), s.str())),
   deleted_by_user_id: s.maybe(UserId),
   is_official: s.maybe(s.bool),
+  puzzle_ids_csv: s.maybe(s.str()),
 })
 
 type Row = s.Infer<typeof Row>
@@ -49,6 +49,33 @@ const RowItem = s.obj({
 })
 
 type RowItem = s.Infer<typeof RowItem>
+
+const CREATE_TABLES: string[] = [
+  `
+  CREATE TABLE IF NOT EXISTS game_numberlink_pack (
+      id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      created_at_unix_ms INT NOT NULL,
+      created_by_user_id TEXT NOT NULL,
+      last_updated_at_unix_ms INT NOT NULL,
+      last_updated_by_user_id TEXT NOT NULL,
+      deleted_at_unix_ms INT,
+      deleted_by_user_id TEXT
+  );
+  `,
+  `
+  CREATE TABLE IF NOT EXISTS game_numberlink_pack_item (
+      id TEXT NOT NULL,
+      pack_id TEXT NOT NULL,
+      puzzle_id TEXT NOT NULL,
+      "position" INT NOT NULL,
+      created_at_unix_ms INT NOT NULL,
+      created_by_user_id TEXT NOT NULL,
+      deleted_at_unix_ms INT,
+      deleted_by_user_id TEXT
+  );
+  `,
+]
 
 const rowToPack = (row: Row, items: RowItem[]): Pack => {
   return {
@@ -136,6 +163,11 @@ const puzzleIdCsvToArray = (puzzleIdCsv: string): PuzzleId[] => {
 
 export const PackDb = (config: Config): IPackDb => {
   const logger = config.logger.child(['pack db impl sql'])
+
+  for (const query of CREATE_TABLES) {
+    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
+  }
+
   return {
     async get(id) {
       const queried = await config.sqlDb.query({
@@ -195,13 +227,8 @@ export const PackDb = (config: Config): IPackDb => {
         ${sqlOrder.str}
         ${sqlPagination.str};
 			`
-      const packsSub = config.sqlDb.sub({
-        schema: s.and(Row, s.obj({ puzzle_ids_csv: s.maybe(s.str()) })),
-        sql,
-        vars,
-      })
 
-      return Sub.map(packsSub, (packRows) => {
+      return config.sqlDb.sub({ schema: Row, sql, vars }, (packRows) => {
         const packs = packRows.flatMap((row) => {
           const puzzleIds = puzzleIdCsvToArray(row.puzzle_ids_csv ?? '')
           const pack = rowToPack(row, [])

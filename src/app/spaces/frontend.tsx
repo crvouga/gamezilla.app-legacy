@@ -35,7 +35,6 @@ const initCtx = async (input: {
       t: 'sql-db',
       sqlDb: input.ctx.sqlDb,
       logger: input.ctx.logger,
-      shouldCreateTable: false,
     }),
   }
 }

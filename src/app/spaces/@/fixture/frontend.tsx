@@ -56,7 +56,7 @@
 //     t: 'sql-db',
 //     sqlDb: f.ctx.sqlDb,
 //     logger: Logger({ t: 'noop' }),
-//     shouldCreateTable: true,
+
 //   })
 
 //   const ctx: SpacesTypes.FrontendCtxModule = {
@@ -147,7 +147,7 @@
 //     t: 'sql-db',
 //     sqlDb: f.ctx.sqlDb,
 //     logger: Logger({ t: 'noop' }),
-//     shouldCreateTable: true,
+
 //   })
 
 //   const currentUserProfile = await UserProfile.random({ userId: currentUser.userId })

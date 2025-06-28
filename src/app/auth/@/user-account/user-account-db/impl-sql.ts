@@ -1,4 +1,5 @@
 import { pipe } from '~/@/function/pipe'
+import { ILogger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import { Err, Ok, Result, isErr } from '~/@/result'
 import { s } from '~/@/schema'
@@ -9,7 +10,6 @@ import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { UserRole } from '~/app/@/data/user-role'
 import type { IUserAccountDb } from './interface'
-import { ILogger } from '~/@/logger'
 
 export const Row = s.obj({
   id: s.str(),
@@ -51,8 +51,23 @@ export type Config = {
   logger: ILogger
 }
 
+const CREATE_TABLES: string[] = [
+  `
+  CREATE TABLE IF NOT EXISTS user_account (
+    id TEXT NOT NULL PRIMARY KEY,
+    created_at_unix_ms BIGINT NOT NULL,
+    user_role TEXT NOT NULL CHECK (user_role IN ('super', 'normal', 'guest')),
+    phone_number TEXT
+  );
+  `,
+]
+
 export const UserAccountDb = ({ sqlDb, logger }: Config): IUserAccountDb => {
   const log = logger.child(['user-account-db'])
+
+  for (const query of CREATE_TABLES) {
+    sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
+  }
 
   return {
     async findOneByUserId(input) {

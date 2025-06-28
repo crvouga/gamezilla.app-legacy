@@ -15,7 +15,7 @@ export type IUserSessionDb = {
 
   query: (input: UserSessionDbQuery) => Promise<Result<string, Paginated<UserSession>>>
 
-  sub: (input: UserSessionDbQuery) => Sub<UserSession[]>
+  sub: <TMsg>(input: UserSessionDbQuery, mapper: (userSessions: UserSession[]) => TMsg) => Sub<TMsg>
 
   upsert: (input: UserSession) => Promise<Result<string, null>>
 

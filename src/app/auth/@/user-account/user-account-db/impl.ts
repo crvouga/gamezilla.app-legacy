@@ -1,9 +1,8 @@
 import * as ImplInMemory from './impl-in-memory'
 import * as ImplSql from './impl-sql'
-import * as ImplWithSqlTables from './impl-with-sql-tables'
 import type { IUserAccountDb } from './interface'
 
-export type Impl = ImplInMemory.Config | ImplSql.Config | ImplWithSqlTables.Config
+export type Impl = ImplInMemory.Config | ImplSql.Config
 
 export const UserAccountDb = (impl: Impl): IUserAccountDb => {
   switch (impl.t) {
@@ -13,10 +12,6 @@ export const UserAccountDb = (impl: Impl): IUserAccountDb => {
 
     case 'sql': {
       return ImplSql.UserAccountDb(impl)
-    }
-
-    case 'with-sql-tables': {
-      return ImplWithSqlTables.UserAccountDb(impl)
     }
   }
 }

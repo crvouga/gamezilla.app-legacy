@@ -17,7 +17,6 @@ export type Config = SpaceDbConfig & {
   t: 'sql-db'
   sqlDb: ISqlDb
   logger: ILogger
-  shouldCreateTable: boolean
 }
 
 export const Row = s.obj({
@@ -97,13 +96,11 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
   const input: PubSub<SpaceDbInputMsg> = config.input ?? Sub.create()
   const output: PubSub<SpaceDbOutputMsg> = config.output ?? Sub.create()
 
-  if (config.shouldCreateTable) {
-    config.logger.info('Creating space table')
-    for (const query of QUERY_CREATE_TABLES) {
-      unwrap(await config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} }))
-    }
-    config.logger.info('Space table created')
+  config.logger.info('Creating space table')
+  for (const query of QUERY_CREATE_TABLES) {
+    unwrap(await config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} }))
   }
+  config.logger.info('Space table created')
 
   input.sub(async (msg) => {
     switch (msg.t) {
@@ -141,10 +138,7 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
     },
     sub(input, map) {
       const { sql, vars } = toSqlQuery(input)
-      return Sub.map(config.sqlDb.sub({ schema: Row, sql, vars }), (rows) => {
-        const mapped = map(parseRows(rows, config.logger))
-        return mapped
-      })
+      return config.sqlDb.sub({ schema: Row, sql, vars }, (rows) => map(parseRows(rows, config.logger)))
     },
     async upsert(space) {
       const stringified = Json.stringify(space)

@@ -5,7 +5,6 @@ import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
 import type { ISqlDb } from '~/@/sql-db'
-import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
@@ -50,7 +49,6 @@ export type Config = {
   t: 'sql'
   sqlDb: ISqlDb
   logger: ILogger
-  shouldCreateTable: boolean
 }
 
 const CREATE_TABLE_SQL: string[] = [
@@ -68,12 +66,11 @@ const CREATE_TABLE_SQL: string[] = [
 
 export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
   const logger = config.logger.child(['impl-sql'])
-  if (config.shouldCreateTable) {
-    for (const query of CREATE_TABLE_SQL) {
-      sqlDb.query({ schema: s.unknown, sql: query, vars: {} }).then(() => {
-        //
-      })
-    }
+
+  for (const query of CREATE_TABLE_SQL) {
+    sqlDb.query({ schema: s.unknown, sql: query, vars: {} }).then(() => {
+      //
+    })
   }
 
   return {
@@ -252,9 +249,9 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
       return Result.mapOk(queried, () => null)
     },
 
-    sub(input) {
+    sub(input, mapper) {
       const { sql, vars } = queryToSql(input)
-      return Sub.map(sqlDb.sub({ schema: Row, sql, vars }), (rows) => rows.map(rowToUserSession))
+      return sqlDb.sub({ schema: Row, sql, vars }, (rows) => mapper(rows.map(rowToUserSession)))
     },
   }
 }

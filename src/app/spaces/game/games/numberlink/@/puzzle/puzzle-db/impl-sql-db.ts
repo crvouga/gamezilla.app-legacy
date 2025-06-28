@@ -1,10 +1,9 @@
-import type { ISqlDb } from '~/@/sql-db'
 import type { ILogger } from '~/@/logger'
-import { s } from '~/@/schema'
 import { Pagination } from '~/@/query/query'
 import { Ok, Result, isErr } from '~/@/result'
+import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
-import { Sub } from '~/@/sub'
+import type { ISqlDb } from '~/@/sql-db'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Puzzle } from '../puzzle'
 import type { IPuzzleDb } from './interface'
@@ -17,7 +16,28 @@ export type Config = {
   sqlDb: ISqlDb
 }
 
+const CREATE_TABLES: string[] = [
+  `
+  CREATE TABLE IF NOT EXISTS game_numberlink_puzzle (
+      id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      model TEXT NOT NULL,
+      created_at_unix_ms INTEGER NOT NULL,
+      created_by_user_id TEXT NOT NULL,
+      last_updated_at_unix_ms INTEGER NOT NULL,
+      last_updated_by_user_id TEXT NOT NULL,
+      deleted_at_unix_ms INTEGER,
+      deleted_by_user_id TEXT,
+      solutions TEXT NOT NULL
+  );
+  `,
+]
+
 export const PuzzleDb = (config: Config): IPuzzleDb => {
+  for (const query of CREATE_TABLES) {
+    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
+  }
+
   return {
     async get(puzzleId) {
       const queried = await config.sqlDb.query({
@@ -237,7 +257,7 @@ export const PuzzleDb = (config: Config): IPuzzleDb => {
 
     sub(input: PuzzleQuery) {
       const sql = toQuerySql(input)
-      return Sub.map(config.sqlDb.sub({ schema: Row, sql: sql.str, vars: sql.variables }), (rows) => {
+      return config.sqlDb.sub({ schema: Row, sql: sql.str, vars: sql.variables }, (rows) => {
         return rows.flatMap((row) => {
           const puzzle = Row.rowToPuzzle(row)
           return puzzle ? [puzzle] : []

@@ -24,13 +24,9 @@ const Fixtures = async () => {
   })
 
   configs.push({
-    t: 'with-sql-tables',
+    t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
-    packDb: PackDb({
-      t: 'sql-db',
-      sqlDb: f.sqlDbSqlite,
-      logger: Logger({ t: 'console', namespace: ['pack-db'], newLinePerMsg: true }),
-    }),
+    logger: Logger({ t: 'console', namespace: ['pack-db'], newLinePerMsg: true }),
   })
 
   if (f.t === 'integration') {

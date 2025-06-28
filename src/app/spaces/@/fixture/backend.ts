@@ -54,7 +54,6 @@ export const FixtureSpaceBackend = async () => {
       t: 'sql-db',
       sqlDb: f.ctx.sqlDb,
       logger: f.ctx.logger,
-      shouldCreateTable: true,
     }),
     topic,
   }

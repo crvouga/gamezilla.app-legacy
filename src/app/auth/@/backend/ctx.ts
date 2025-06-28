@@ -27,13 +27,11 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
-    shouldCreateTable: false,
   })
 
   const guestSessionMappingDb = GuestSessionMappingDb({
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
-    shouldCreateTables: false,
   })
 
   SYNC_REGISTRY.add(UserAccountSync({ userAccountDb, logger: input.ctx.logger }))

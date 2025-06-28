@@ -4,7 +4,6 @@ import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
 import { ISqlDb } from '~/@/sql-db'
-import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Solutions } from '../solutions'
 import { ISolutionsDb } from './interface'
@@ -23,6 +22,17 @@ const Row = s.obj({
 
 export type Row = s.Infer<typeof Row>
 
+const CREATE_TABLES: string[] = [
+  `
+  CREATE TABLE IF NOT EXISTS game_numberlink_solutions (
+      id TEXT NOT NULL PRIMARY KEY,
+      solutions TEXT NOT NULL,
+      created_at_unix_ms INTEGER NOT NULL,
+      last_updated_at_unix_ms INTEGER NOT NULL
+  );
+  `,
+]
+
 const rowToSolutions = (row: Row): Result<string, Solutions> => {
   const json = unwrapOr(typeof row.solutions === 'string' ? Json.parse(row.solutions) : Ok(row.solutions), [])
   const parsed = Solutions.parse(json)
@@ -31,6 +41,10 @@ const rowToSolutions = (row: Row): Result<string, Solutions> => {
 }
 
 export const SolutionsDb = (config: Config): ISolutionsDb => {
+  for (const query of CREATE_TABLES) {
+    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
+  }
+
   return {
     async get(hash) {
       const queried = await config.sqlDb.query({
@@ -142,8 +156,8 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
     },
 
     sub(hash) {
-      return Sub.map(
-        config.sqlDb.sub({
+      return config.sqlDb.sub(
+        {
           schema: Row,
           sql: `
             SELECT
@@ -157,7 +171,7 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
               id = :id
           `,
           vars: { id: hash },
-        }),
+        },
         (rows) => {
           return rows.flatMap((row) => {
             const solutions = rowToSolutions(row)

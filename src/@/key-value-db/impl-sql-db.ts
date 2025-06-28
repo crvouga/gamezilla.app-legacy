@@ -20,8 +20,20 @@ export type Config = {
   logger: ILogger
 }
 
+const CREATE_TABLES: string[] = [
+  `
+  CREATE TABLE IF NOT EXISTS key_value (
+    id TEXT NOT NULL PRIMARY KEY,
+    value TEXT NOT NULL
+  );
+  `,
+]
 export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
   const logger = config.logger.child(['sql-db'])
+  for (const query of CREATE_TABLES) {
+    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
+  }
+
   return {
     async get(key, schema) {
       try {

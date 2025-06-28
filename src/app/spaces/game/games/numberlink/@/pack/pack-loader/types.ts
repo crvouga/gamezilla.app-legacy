@@ -2,7 +2,7 @@ import { s } from '~/@/schema'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { Pack } from '../pack'
-import { PacksDbQuery } from '../pack-db/inteface-query'
+import { PacksDbQuery } from '../pack-db/interface-query'
 import { PackId } from '../pack-id'
 
 //

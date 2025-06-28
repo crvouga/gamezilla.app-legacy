@@ -33,7 +33,6 @@ const rowToEntity = (row: Row): Result<string, GuestSessionMapping> => {
 export type Config = {
   t: 'sql'
   sqlDb: ISqlDb
-  shouldCreateTables: boolean
 }
 
 GuestSessionMapping.fromUnknownRegister((data) => {
@@ -58,10 +57,8 @@ const CREATE_TABLE_QUERIES: string[] = [
 ]
 
 export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb => {
-  if (config.shouldCreateTables) {
-    for (const query of CREATE_TABLE_QUERIES) {
-      config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
-    }
+  for (const query of CREATE_TABLE_QUERIES) {
+    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
   }
 
   return {

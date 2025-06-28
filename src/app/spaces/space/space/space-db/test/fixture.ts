@@ -43,7 +43,6 @@ export const Fixtures = async () => {
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
     logger: f.logger,
-    shouldCreateTable: true,
   })
 
   if (f.t === 'integration') {
@@ -51,7 +50,6 @@ export const Fixtures = async () => {
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
       logger: f.logger,
-      shouldCreateTable: false,
     })
   }
 

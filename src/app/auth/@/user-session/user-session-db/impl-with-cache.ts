@@ -123,8 +123,8 @@ export const WithCache = ({ userSessionDb, keyValueDb }: Config): IUserSessionDb
       return userSessionDb.query(input)
     },
 
-    sub(input) {
-      return userSessionDb.sub(input)
+    sub(input, mapper) {
+      return userSessionDb.sub(input, mapper)
     },
   }
 }

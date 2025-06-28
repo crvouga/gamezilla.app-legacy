@@ -70,6 +70,8 @@ export const TestClient = (config: Config): ITestClient => {
         await new Promise((resolve) => setTimeout(resolve, pollIntervalMs))
       }
 
+      queryConfig?.onDone?.()
+
       return []
     },
   }

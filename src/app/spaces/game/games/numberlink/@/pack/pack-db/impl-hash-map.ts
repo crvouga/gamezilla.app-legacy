@@ -2,7 +2,7 @@ import { Ok, Result, unwrapOr } from '~/@/result'
 import { PubSub, Sub } from '~/@/sub'
 import type { Pack } from '../pack'
 import type { IPackDb } from './interface'
-import { PacksDbQuery } from './inteface-query'
+import { PacksDbQuery } from './interface-query'
 
 const db = new Map<string, Pack>()
 

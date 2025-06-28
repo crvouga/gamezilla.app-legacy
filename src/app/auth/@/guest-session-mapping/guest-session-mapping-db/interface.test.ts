@@ -22,14 +22,12 @@ const Fixtures = async () => {
   configs.push({
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
-    shouldCreateTables: true,
   })
 
   if (f.t === 'integration') {
     configs.push({
       t: 'sql',
       sqlDb: f.sqlDbPostgres,
-      shouldCreateTables: false,
     })
   }
 
