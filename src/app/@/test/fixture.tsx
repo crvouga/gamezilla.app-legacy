@@ -1,4 +1,4 @@
-import { Logger } from '~/@/logger'
+import { ILogger, Logger } from '~/@/logger'
 import { Program } from '~/@/program/program'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { TestClient } from '~/@/test-client'
@@ -14,11 +14,9 @@ import { initBackendCtx } from './ctx/backend'
 import { initFrontendCtx } from './ctx/frontend'
 
 export const FixtureApp = async () => {
-  const logger = Logger({
-    t: 'console',
-    namespace: ['test', 'fixture'],
-    newLinePerMsg: false,
-  })
+  let logger: ILogger
+  logger ??= Logger({ t: 'noop' })
+  logger ??= Logger({ t: 'console', namespace: ['fixture'], newLinePerMsg: false })
 
   const sqlDb = await SqlDb({ t: 'bun-sqlite', fs: { t: 'in-memory' }, logger: Logger({ t: 'noop' }) })
 
