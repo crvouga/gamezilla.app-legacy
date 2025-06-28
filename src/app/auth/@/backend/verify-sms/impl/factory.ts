@@ -117,6 +117,6 @@ export const VerifySMSFactory = {
     }
 
     config.logger.info('Using fake for non-production and primary backend')
-    return VerifySMS({ t: 'fake', logger: config.logger })
+    return VerifySMSFactory.createInHouseUnitTest({ logger: config.logger })
   },
 }

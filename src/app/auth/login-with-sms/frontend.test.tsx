@@ -100,5 +100,16 @@ describe('login with sms', () => {
       const [error] = await f.frontend.query(`[role='alert'][data-error='true']`)
       expect(error).toBeDefined()
     })
+
+    test('fail for correct code after enough wrong attempts', async () => {
+      await using f = await Fixture()
+      await f.sendCode()
+      for (let i = 0; i < 5; i++) {
+        await f.verifyCode({ code: '111' })
+      }
+      await f.verifyCode({ code: '123' })
+      const [error] = await f.frontend.query(`[role='alert'][data-error='true']`)
+      expect(error).toBeDefined()
+    })
   })
 })
