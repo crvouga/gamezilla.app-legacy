@@ -1,7 +1,7 @@
 import { EventSourced } from '~/@/event-sourced'
 import { Json } from '~/@/json/json'
 import { ILogger } from '~/@/logger'
-import { Err, isErr, Ok, Result, unwrap } from '~/@/result'
+import { Err, isErr, Ok, Result } from '~/@/result'
 import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { ISqlDb } from '~/@/sql-db'
@@ -96,11 +96,9 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
   const input: PubSub<SpaceDbInputMsg> = config.input ?? Sub.create()
   const output: PubSub<SpaceDbOutputMsg> = config.output ?? Sub.create()
 
-  config.logger.info('Creating space table')
   for (const query of QUERY_CREATE_TABLES) {
-    unwrap(await config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} }))
+    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
   }
-  config.logger.info('Space table created')
 
   input.sub(async (msg) => {
     switch (msg.t) {

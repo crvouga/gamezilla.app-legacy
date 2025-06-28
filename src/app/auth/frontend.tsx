@@ -206,7 +206,7 @@ const View: FrontendModule['View'] = (input) => {
 
 const ViewLoginScreen: FrontendModule['View'] = (input) => {
   return (
-    <AuthScreenLayout dataTestId='auth/login-screen' ctx={input.ctx} center={true} navBar={null}>
+    <AuthScreenLayout dataTestId='auth/login-screen' ctx={input.ctx} center={true}>
       <div className='flex w-full flex-1 flex-col gap-6'>
         <AuthScreenHeaderCta ctx={input.ctx} />
 

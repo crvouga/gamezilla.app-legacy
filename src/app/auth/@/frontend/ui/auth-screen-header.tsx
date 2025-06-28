@@ -18,6 +18,7 @@ export const AuthScreenHeader = (input: {
         label={input.ctx.t('app.back')}
         renderIcon={(iconInput) => <IconArrowLeft {...iconInput} />}
         onClick={input.onBack}
+        dataTestId='nav/back-button'
       />
       <Typography text={input.title} variant='title' className='font-bold' />
     </div>

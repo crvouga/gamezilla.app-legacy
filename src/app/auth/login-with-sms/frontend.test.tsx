@@ -33,6 +33,16 @@ const Fixture = async () => {
 
 describe('login with sms', () => {
   describe('send code', () => {
+    test('send code screen back button', async () => {
+      await using f = await Fixture()
+      const [sendCodeScreen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
+      expect(sendCodeScreen).toBeDefined()
+      const [backButton] = await f.frontend.query(`[data-testid='nav/back-button']`)
+      await backButton!.do({ t: 'click' })
+      const [loginScreen] = await f.frontend.query(`[data-testid='auth/login-screen']`)
+      expect(loginScreen).toBeDefined()
+    })
+
     test('go to verify code screen', async () => {
       await using f = await Fixture()
       await f.sendCode()
@@ -67,6 +77,15 @@ describe('login with sms', () => {
   })
 
   describe('verify code', () => {
+    test('verify code screen back button', async () => {
+      await using f = await Fixture()
+      await f.sendCode()
+      const [backButton] = await f.frontend.query(`[data-testid='nav/back-button']`)
+      await backButton!.do({ t: 'click' })
+      const [screen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
+      expect(screen).toBeDefined()
+    })
+
     test('go to space screen after verifying code', async () => {
       await using f = await Fixture()
       await f.sendCode()

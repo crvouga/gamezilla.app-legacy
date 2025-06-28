@@ -49,7 +49,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 
       return {
         model: input.model,
-        msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'send-code' })],
+        msgOut: [ReplaceScreenCmd.init({ n: 'auth', t: 'login' })],
       }
     }
 

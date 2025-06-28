@@ -11,6 +11,7 @@ export const IconButton = (input: {
   renderIcon: (input: { className: string }) => VDom
   className?: string
   size?: IconButtonSize
+  dataTestId?: string
 }) => {
   return (
     <ClickableTransparent
@@ -22,6 +23,8 @@ export const IconButton = (input: {
       onClick={input.onClick}
       aria-label={input.label}
       title={input.label}
+      dataTestId={input.dataTestId}
+      type='button'
     >
       {input.renderIcon({
         className: 'w-full h-full cursor-pointer',

@@ -21,17 +21,7 @@ export const AuthScreenFormLayout = (input: {
   dataTestId: string
 }) => {
   return (
-    <AuthScreenLayout
-      dataTestId={input.dataTestId}
-      ctx={input.ctx}
-      navBar={{
-        back: {
-          onClick: input.onBack,
-        },
-        title: input.title,
-      }}
-      center={false}
-    >
+    <AuthScreenLayout dataTestId={input.dataTestId} ctx={input.ctx} center={false}>
       <AuthScreenHeader ctx={input.ctx} title={input.title} onBack={input.onBack} />
       <form
         className='flex w-full flex-col gap-16 pt-4'

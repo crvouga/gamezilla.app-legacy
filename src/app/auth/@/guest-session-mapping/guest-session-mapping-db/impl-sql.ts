@@ -46,7 +46,7 @@ GuestSessionMapping.fromUnknownRegister((data) => {
 
 const CREATE_TABLE_QUERIES: string[] = [
   `
-  CREATE TABLE user_guest_session_mapping (
+  CREATE TABLE IF NOT EXISTS user_guest_session_mapping (
     id text NOT NULL PRIMARY KEY,
     guest_user_id text NOT NULL,
     session_id text,
