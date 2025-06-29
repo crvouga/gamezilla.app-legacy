@@ -1,4 +1,4 @@
-// import { describe, expect, it } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 
 // import { SpaceId } from '~/app/@/data/space-id'
 // import { FixtureSpacesFrontend } from '../@/fixture/frontend'
@@ -16,8 +16,8 @@
 //   }
 // }
 
-// describe('Test', () => {
-//   it('should play a sound after inputting a game', async () => {
+// describe('GameFrontend', () => {
+//   test('should play a sound after inputting a game', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const output = f.update(f.initial, [
@@ -37,7 +37,7 @@
 //     expect(PlaySoundCmd.did(output)).toBe(true)
 //   })
 
-//   it('should be able to start game', async () => {
+//   test('should be able to start game', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const gameNameExpected: GameName = 'numberlink'
@@ -59,7 +59,7 @@
 //     expect(gameName).toBe(gameNameExpected)
 //   })
 
-//   it('should exit game for corresponding cmd', async () => {
+//   test('should exit game for corresponding cmd', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const outputs = f.updates(f.initial, [

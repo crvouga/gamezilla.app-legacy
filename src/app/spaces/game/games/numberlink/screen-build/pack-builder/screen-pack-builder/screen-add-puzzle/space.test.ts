@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, test } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 import { assertNotNullish } from '~/@/assert'
 import { Pack } from '../../../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../../../@/pack/pack-puzzle-grid-ui'
@@ -21,14 +21,14 @@ const Fixture = async (...params: Parameters<typeof ScreenPackBuildSpaceFixture>
   }
 }
 
-describe('Test', () => {
+describe('ScreenAddPuzzleSpace', () => {
   let f: Awaited<ReturnType<typeof Fixture>>
 
   beforeEach(async () => {
     f = await Fixture()
   })
 
-  it('should unselect all puzzles after submitting form', async () => {
+  test('should unselect all puzzles after submitting form', async () => {
     const puzzle = await Puzzle.random()
     const before = f.update(f.initial, [
       {
@@ -89,7 +89,7 @@ describe('Test', () => {
     expect(after?.screenAddPuzzle_selected.includes(puzzle.id)).toEqual(false)
   })
 
-  it('should be able to close add puzzle screen', async () => {
+  test('should be able to close add puzzle screen', async () => {
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
@@ -99,7 +99,7 @@ describe('Test', () => {
     expect(modelSpace?.screen.t === 'screen-puzzle-grid').toBe(true)
   })
 
-  it('should be able to add new puzzle', async () => {
+  test('should be able to add new puzzle', async () => {
     const newPuzzle = await Puzzle.random({
       createdBy: f.createdBy,
     })
@@ -117,7 +117,7 @@ describe('Test', () => {
     expect(modelSpace?.pack.puzzleIds.includes(newPuzzle.id)).toBe(true)
   })
 
-  it('should be on the correct slide when closing the add puzzle screen', async () => {
+  test('should be on the correct slide when closing the add puzzle screen', async () => {
     f = await Fixture({
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
@@ -142,7 +142,7 @@ describe('Test', () => {
     expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(1)
   })
 
-  it('should open puzzle when user clicks puzzle grid item', async () => {
+  test('should open puzzle when user clicks puzzle grid item', async () => {
     const output = f.update(f.initial, [
       {
         t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
@@ -167,7 +167,7 @@ describe('Test', () => {
     expect(output?.screen.t === 'screen-puzzle' && output.screen.puzzleIndex === 0).toBe(true)
   })
 
-  it('should open puzzle picker when user clicks add puzzle button', async () => {
+  test('should open puzzle picker when user clicks add puzzle button', async () => {
     const output = f.update(f.initial, [
       {
         t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
@@ -177,7 +177,7 @@ describe('Test', () => {
     expect(output?.screen.t === 'screen-add-puzzle').toBe(true)
   })
 
-  it('should close puzzle picker when user clicks closes', async () => {
+  test('should close puzzle picker when user clicks closes', async () => {
     const output = f.update(f.initial, [
       {
         t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
@@ -191,7 +191,7 @@ describe('Test', () => {
     expect(output?.screen.t === 'screen-puzzle-grid').toBe(true)
   })
 
-  it('should add puzzle to the pack after clicking a puzzle in the picker', async () => {
+  test('should add puzzle to the pack after clicking a puzzle in the picker', async () => {
     const puzzle = await Puzzle.random()
     const output = f.update(f.initial, [
       {
@@ -212,7 +212,7 @@ describe('Test', () => {
     expect(output && Pack.includes(output.pack, puzzle.id)).toBe(true)
   })
 
-  it('should close puzzle picker after adding a puzzle to the pack', async () => {
+  test('should close puzzle picker after adding a puzzle to the pack', async () => {
     const puzzle = await Puzzle.random()
     const output = f.update(f.initial, [
       {

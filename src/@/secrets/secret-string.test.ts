@@ -1,11 +1,11 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { SecretString } from './secret-string'
 
 describe('SecretString', () => {
   const name = 'TestName'
   const value = 'TestValue'
 
-  it('should return an object with the expected methods and properties', () => {
+  test('should return an object with the expected methods and properties', () => {
     const secret = SecretString.init(name, value)
 
     expect(secret).toHaveProperty('dangerouslyReadValue')
@@ -13,7 +13,7 @@ describe('SecretString', () => {
     expect(secret).toHaveProperty('toJSON')
   })
 
-  it('should hide the value in toString', () => {
+  test('should hide the value in toString', () => {
     const secret = SecretString.init(name, value)
     if (!secret) {
       throw new Error('SecretString is null')
@@ -21,7 +21,7 @@ describe('SecretString', () => {
     expect(secret.toString()).toBe(`SecretString.of(${name})`)
   })
 
-  it('should return the value from dangerouslyReadValue', () => {
+  test('should return the value from dangerouslyReadValue', () => {
     const secret = SecretString.init(name, value)
     if (!secret) {
       throw new Error('SecretString is null')
@@ -29,7 +29,7 @@ describe('SecretString', () => {
     expect(secret.dangerouslyReadValue()).toBe(value)
   })
 
-  it('should hide the value in JSON serialization', () => {
+  test('should hide the value in JSON serialization', () => {
     const secret = SecretString.init(name, value)
     if (!secret) {
       throw new Error('SecretString is null')

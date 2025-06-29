@@ -1,10 +1,10 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { isSubset } from './is-subset'
 
 const eq = <A>(a: A, b: A) => a === b
 
 describe('isSubset', async () => {
-  it('isSubset', async () => {
+  test('isSubset', async () => {
     expect(isSubset(eq, [], [])).toBe(true)
     expect(isSubset(eq, [], ['a'])).toBe(true)
     expect(isSubset(eq, ['a'], ['a'])).toBe(true)

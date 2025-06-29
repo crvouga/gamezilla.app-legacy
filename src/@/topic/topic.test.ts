@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Topic } from '.'
 import { HttpServer } from '../http-server/impl-node'
 import { Logger } from '../logger'
@@ -105,7 +105,7 @@ const Fixture = async () => {
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 50))
 
 describe('Topic', () => {
-  it('should work', async () => {
+  test('should work', async () => {
     using f = await Fixture()
     const gotServer: Msg[] = []
     const gotA: Msg[] = []
@@ -127,7 +127,7 @@ describe('Topic', () => {
     expect(gotC).toEqual([{ name: 'John' }, { name: 'John' }])
   })
 
-  it('should not receive messages after unsubscribing', async () => {
+  test('should not receive messages after unsubscribing', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     await sleep()
@@ -140,7 +140,7 @@ describe('Topic', () => {
     expect(gotA).toEqual([])
   })
 
-  it('should not receive messages for different topic params', async () => {
+  test('should not receive messages for different topic params', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
@@ -155,7 +155,7 @@ describe('Topic', () => {
     expect(gotB).toEqual([])
   })
 
-  it('should handle multiple messages in sequence', async () => {
+  test('should handle multiple messages in sequence', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     await sleep()
@@ -177,7 +177,7 @@ describe('Topic', () => {
     ])
   })
 
-  it('should handle multiple subscribers with different topic params', async () => {
+  test('should handle multiple subscribers with different topic params', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
@@ -202,7 +202,7 @@ describe('Topic', () => {
     expect(gotC).toEqual([{ name: 'Bob' }, { name: 'Bob' }])
   })
 
-  it('should handle unsubscribe correctly', async () => {
+  test('should handle unsubscribe correctly', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
@@ -225,7 +225,7 @@ describe('Topic', () => {
     expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }])
   })
 
-  it('should handle multiple messages on the same topic', async () => {
+  test('should handle multiple messages on the same topic', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
@@ -253,7 +253,7 @@ describe('Topic', () => {
     expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }, { name: 'Bob' }])
   })
 
-  it('should handle nested topics correctly', async () => {
+  test('should handle nested topics correctly', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
@@ -270,7 +270,7 @@ describe('Topic', () => {
     expect(gotB).toEqual([{ name: 'John' }])
   })
 
-  it('should handle multiple unsubscribes correctly', async () => {
+  test('should handle multiple unsubscribes correctly', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
@@ -300,7 +300,7 @@ describe('Topic', () => {
     expect(gotC).toEqual([{ name: 'John' }, { name: 'Jane' }])
   })
 
-  it('should handle multiple subscriptions to the same topic correctly', async () => {
+  test('should handle multiple subscriptions to the same topic correctly', async () => {
     using f = await Fixture()
     const gotA1: Msg[] = []
     const gotA2: Msg[] = []
@@ -321,7 +321,7 @@ describe('Topic', () => {
     expect(gotB).toEqual([{ name: 'John' }])
   })
 
-  it('should handle different topic parameters correctly', async () => {
+  test('should handle different topic parameters correctly', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
@@ -340,7 +340,7 @@ describe('Topic', () => {
     expect(gotB).toEqual([{ name: 'Jane' }])
   })
 
-  it('should handle reconnection correctly', async () => {
+  test('should handle reconnection correctly', async () => {
     using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []

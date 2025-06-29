@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { ascend } from '~/@/array/sorting'
 import { Ok, Result, unwrap } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -13,7 +13,7 @@ const Fixtures = async () => {
 }
 
 describe('NumberlinkPuzzleDb', () => {
-  it('should be able to insert', async () => {
+  test('should be able to insert', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
       const inserted = await f.puzzleDb.put(puzzle)
@@ -22,7 +22,7 @@ describe('NumberlinkPuzzleDb', () => {
     }
   })
 
-  it('should be ok', async () => {
+  test('should be ok', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
       const before = await f.puzzleDb.get(puzzle.id)
@@ -35,7 +35,7 @@ describe('NumberlinkPuzzleDb', () => {
     }
   })
 
-  it('should be able to insert puzzles', async () => {
+  test('should be able to insert puzzles', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
       const before = await f.puzzleDb.get(puzzle.id)
@@ -47,7 +47,7 @@ describe('NumberlinkPuzzleDb', () => {
     }
   })
 
-  it('should be able to list puzzles by created by', async () => {
+  test('should be able to list puzzles by created by', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
       await f.puzzleDb.put(puzzle)
@@ -78,7 +78,7 @@ describe('NumberlinkPuzzleDb', () => {
     }
   })
 
-  it('should be able to list puzzles by id', async () => {
+  test('should be able to list puzzles by id', async () => {
     for await (const f of await Fixtures()) {
       const puzzleA = await Puzzle.random()
       await f.puzzleDb.put(puzzleA)
@@ -111,7 +111,7 @@ describe('NumberlinkPuzzleDb', () => {
     }
   })
 
-  it('should be able to count puzzles by created by user id', async () => {
+  test('should be able to count puzzles by created by user id', async () => {
     const EXPECTED_COUNT = 1
 
     for await (const f of await Fixtures()) {
@@ -138,7 +138,7 @@ describe('NumberlinkPuzzleDb', () => {
     }
   })
 
-  it('should paginate correctly', async () => {
+  test('should paginate correctly', async () => {
     for await (const f of await Fixtures()) {
       const puzzles: Puzzle[] = []
       const createdBy = UserId.generate()
@@ -179,7 +179,7 @@ describe('NumberlinkPuzzleDb', () => {
     }
   })
 
-  it('should update existing record when upserting', async () => {
+  test('should update existing record when upserting', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
       await f.puzzleDb.put(puzzle)
@@ -195,7 +195,7 @@ describe('NumberlinkPuzzleDb', () => {
     }
   })
 
-  it('should be able to zap records', async () => {
+  test('should be able to zap records', async () => {
     for await (const f of await Fixtures()) {
       const puzzle = await Puzzle.random()
       await f.puzzleDb.put(puzzle)

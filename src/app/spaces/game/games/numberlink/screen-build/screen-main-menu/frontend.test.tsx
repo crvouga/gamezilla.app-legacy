@@ -1,5 +1,5 @@
-import { describe, it } from 'vitest'
+import { describe, test } from 'vitest'
 
 describe('NumberLinkScreenMainMenuFrontend', () => {
-  it.todo('play a sound when changing list tabs')
+  test.todo('play a sound when changing list tabs')
 })

@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import { describe, test, expect } from 'vitest'
 import { generateKeyPair } from './generate-key-pair'
 
 describe('generateKeyPair', () => {
-  it('should generate an RSA key pair with extractable keys', async () => {
+  test('should generate an RSA key pair with extractable keys', async () => {
     const keyPair = await generateKeyPair('RSA', { extractable: true })
 
     // Verify the key pair was generated
@@ -23,7 +23,7 @@ describe('generateKeyPair', () => {
     expect(keyPair.privateKey.usages).toContain('sign')
   })
 
-  it.todo('should generate an RSA key pair with non-extractable keys', async () => {
+  test.todo('should generate an RSA key pair with non-extractable keys', async () => {
     const keyPair = await generateKeyPair('RSA', { extractable: false })
 
     // Verify the key pair was generated
@@ -36,7 +36,7 @@ describe('generateKeyPair', () => {
     expect(keyPair.privateKey.extractable).toBe(false)
   })
 
-  it('should generate an ECDSA key pair', async () => {
+  test('should generate an ECDSA key pair', async () => {
     const keyPair = await generateKeyPair('ECDSA', { extractable: true })
 
     // Verify the key pair was generated
@@ -55,7 +55,7 @@ describe('generateKeyPair', () => {
     expect(keyPair.privateKey.usages).toContain('sign')
   })
 
-  it('should throw an error for unsupported algorithms', async () => {
+  test('should throw an error for unsupported algorithms', async () => {
     // @ts-expect-error Testing invalid algorithm
     await expect(generateKeyPair('INVALID_ALGO', { extractable: true })).rejects.toThrow(
       'Unsupported algorithm: INVALID_ALGO',

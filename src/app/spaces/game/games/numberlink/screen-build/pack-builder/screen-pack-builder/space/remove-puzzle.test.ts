@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 import { assertNotNullish } from '~/@/assert'
 import { ScreenPackBuildSpaceFixture } from '../@/fixture/space'
 
@@ -32,7 +32,7 @@ describe('remove puzzle from pack', () => {
     f = await Fixture()
   })
 
-  it('should remove puzzle from pack after clicking remove button', async () => {
+  test('should remove puzzle from pack after clicking remove button', async () => {
     const modelSpace = f.update(f.initial, [
       {
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
@@ -44,7 +44,7 @@ describe('remove puzzle from pack', () => {
     expect(modelSpace?.pack.puzzleIds.includes(f.puzzle.id)).toBe(false)
   })
 
-  it('should close more drawer when removing puzzle', async () => {
+  test('should close more drawer when removing puzzle', async () => {
     const output = f.update(f.initial, [
       {
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
@@ -55,7 +55,7 @@ describe('remove puzzle from pack', () => {
     expect(output?.opened).toBe(null)
   })
 
-  it('should navigate back to puzzle grid when removing puzzle', async () => {
+  test('should navigate back to puzzle grid when removing puzzle', async () => {
     const output = f.update(f.initial, [
       {
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',

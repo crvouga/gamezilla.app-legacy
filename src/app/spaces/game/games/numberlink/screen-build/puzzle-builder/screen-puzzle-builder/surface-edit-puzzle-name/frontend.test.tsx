@@ -1,4 +1,4 @@
-// import { describe, expect, it, test } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 
 // import { Puzzle } from '../../../../@/puzzle/puzzle'
 // import { FixtureFlowBuilderFrontend } from '../../../@/fixture/frontend'
@@ -16,7 +16,7 @@
 //   }
 // }
 
-// describe('Test', () => {
+// describe('SurfaceEditPuzzleNameFrontend', () => {
 //   test('play sound when opening edit name drawer', async () => {
 //     const f = await Fixture()
 
@@ -49,7 +49,7 @@
 //     expect(afterSecondClick.model.puzzleBuilderOpened).not.toBe('edit-name')
 //   })
 
-//   it('should close when user clicks cancel when action location is bar', async () => {
+//   test('should close when user clicks cancel when action location is bar', async () => {
 //     const f = await Fixture()
 
 //     const before = f.update(f.init, [
@@ -66,7 +66,7 @@
 //     expect(after.model.puzzleBuilderOpened).toBe(null)
 //   })
 
-//   it('should open more drawer when user clicks cancel when action location is more drawer', async () => {
+//   test('should open more drawer when user clicks cancel when action location is more drawer', async () => {
 //     const f = await Fixture()
 
 //     const before = f.update(f.init, [

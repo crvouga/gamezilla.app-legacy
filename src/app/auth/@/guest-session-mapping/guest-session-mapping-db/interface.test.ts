@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { unwrap } from '~/@/result'
 import { SessionId } from '~/@/wire/session-id'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
@@ -34,8 +34,8 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe('Test', () => {
-  it('should insert correctly', async () => {
+describe('GuestSessionMappingDb', () => {
+  test('should insert correctly', async () => {
     for (const f of await Fixtures()) {
       const guestSessionMapping = GuestSessionMapping.random()
 
@@ -52,7 +52,7 @@ describe('Test', () => {
     }
   })
 
-  it('should let guest have many sessions', async () => {
+  test('should let guest have many sessions', async () => {
     for (const f of await Fixtures()) {
       const sessionIdA = SessionId.generate()
       const sessionIdB = SessionId.generate()
@@ -88,7 +88,7 @@ describe('Test', () => {
     }
   })
 
-  it('should upsert correctly', async () => {
+  test('should upsert correctly', async () => {
     for (const f of await Fixtures()) {
       const guestSessionMapping = GuestSessionMapping.random()
       const inserted = await f.guestSessionMappingDb.upsert(guestSessionMapping)

@@ -1,4 +1,4 @@
-// import { describe, expect, it, test } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { EventSourced } from '~/@/event-sourced'
 // import { withEventId } from '~/@/event-sourced/event'
 // import { pipe } from '~/@/function/pipe'
@@ -24,7 +24,7 @@ import { describe } from 'node:test'
 // }
 
 // describe('list spaces frontend', () => {
-//   it('should request spaces on init if on space list screen', async () => {
+//   test('should request spaces on init if on space list screen', async () => {
 //     const f = await Fixture({
 //       currentScreen: {
 //         n: 'spaces',
@@ -39,7 +39,7 @@ import { describe } from 'node:test'
 //     ).toBe(true)
 //   })
 
-//   it('should send list space request to backend initially', async () => {
+//   test('should send list space request to backend initially', async () => {
 //     const f = await Fixture({
 //       currentScreen: {
 //         n: 'spaces',
@@ -50,7 +50,7 @@ import { describe } from 'node:test'
 //     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'wire' && msgCmd.c.toBackend?.t === 'list-spaces')).toBe(true)
 //   })
 
-//   it('should request spaces on space list screen change', async () => {
+//   test('should request spaces on space list screen change', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [
 //       {
@@ -63,7 +63,7 @@ import { describe } from 'node:test'
 //     expect(output.model.listSpacesRequest.t === 'loading').toBe(true)
 //   })
 
-//   it('should be ok when backend responds with a list of spaces', async () => {
+//   test('should be ok when backend responds with a list of spaces', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [
 //       {
@@ -83,7 +83,7 @@ import { describe } from 'node:test'
 //     expect(isResponseOk(output.model.listSpacesRequest)).toBe(true)
 //   })
 
-//   it('should navigate to space screen after clicking a space card', async () => {
+//   test('should navigate to space screen after clicking a space card', async () => {
 //     const f = await Fixture()
 
 //     const space = Space.random()
@@ -115,7 +115,7 @@ import { describe } from 'node:test'
 //     expect(PushScreenCmd.did(updated)).toBe(true)
 //   })
 
-//   it('should make a nav forward sound when opening a space screen', async () => {
+//   test('should make a nav forward sound when opening a space screen', async () => {
 //     const f = await Fixture()
 
 //     const space = Space.random()
@@ -147,7 +147,7 @@ import { describe } from 'node:test'
 //     expect(PlaySoundCmd.did(updated, APP_SOUND.navForwardMin)).toBe(true)
 //   })
 
-//   it('should make a sound when closing room screen', async () => {
+//   test('should make a sound when closing room screen', async () => {
 //     const f = await Fixture()
 
 //     const space = Space.random()

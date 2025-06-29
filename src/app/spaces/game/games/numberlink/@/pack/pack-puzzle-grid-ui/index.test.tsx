@@ -1,4 +1,4 @@
-// import { beforeEach, describe, expect, it, test } from 'vitest'
+// import { beforeEach, describe, expect, test } from 'vitest'
 // import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 // import { PAGINATION_DOTS_TEST_ID, toPaginationDotSelector } from '~/@/ui/pagination-dots'
 // import { PackPuzzleGridUI } from '.'
@@ -12,19 +12,19 @@
 //   }
 // }
 
-// describe('Test', () => {
+// describe('NumberlinkPackPuzzleGridUI', () => {
 //   let f: Awaited<ReturnType<typeof Fixture>>
 
 //   beforeEach(async () => {
 //     f = await Fixture()
 //   })
 
-//   it('should not render pagination dots if there is only one slide', () => {
+//   test('should not render pagination dots if there is only one slide', () => {
 //     const r = f.render(<PackPuzzleGridUI.View puzzleIds={[]} />)
 //     expect(r.getByTestId(PAGINATION_DOTS_TEST_ID)).toEqual([])
 //   })
 
-//   it('should only render one slide when puzzles count is at max per slide', () => {
+//   test('should only render one slide when puzzles count is at max per slide', () => {
 //     const r = f.render(
 //       <PackPuzzleGridUI.View
 //         puzzleIds={Array.from({ length: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT }, PuzzleId.generate)}
@@ -34,7 +34,7 @@
 //     expect(slides.length).toBe(1)
 //   })
 
-//   it('should only render two slide when puzzles count is at max per slide and including add button cell', () => {
+//   test('should only render two slide when puzzles count is at max per slide and including add button cell', () => {
 //     const r = f.render(
 //       <PackPuzzleGridUI.View
 //         puzzleIds={Array.from({ length: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT }, PuzzleId.generate)}
@@ -45,7 +45,7 @@
 //     expect(slides.length).toBe(2)
 //   })
 
-//   it.skip('should change slide when clicking pagination dots', async () => {
+//   test.skip('should change slide when clicking pagination dots', async () => {
 //     const slideIndex = Sub.create<number>()
 //     const r = f.render(
 //       <PackPuzzleGridUI.View

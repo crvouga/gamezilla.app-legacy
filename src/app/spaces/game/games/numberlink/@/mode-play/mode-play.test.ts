@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Logger } from '~/@/logger'
 import { ModePlay } from '.'
 import { Numberlink } from '../numberlink'
@@ -60,7 +60,7 @@ describe('NumberlinkModePlay', () => {
     expect(AlgoIsSolved.isSolved(after)).toBe(true)
   })
 
-  it('should output connected terminals event', async () => {
+  test('should output connected terminals event', async () => {
     const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', 'B'],
       ['a', 'B', ' '],
@@ -104,7 +104,7 @@ describe('NumberlinkModePlay', () => {
     expect(output.events?.some((e) => e.t === 'connected-terminals')).toBe(true)
   })
 
-  it('should output started dragging event', async () => {
+  test('should output started dragging event', async () => {
     const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
@@ -127,7 +127,7 @@ describe('NumberlinkModePlay', () => {
     expect(output.events?.some((e) => e.t === 'started-dragging')).toBe(true)
   })
 
-  it('should output solved event', async () => {
+  test('should output solved event', async () => {
     const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
@@ -171,7 +171,7 @@ describe('NumberlinkModePlay', () => {
     expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
   })
 
-  it('should output solved event even after dragging left the board', async () => {
+  test('should output solved event even after dragging left the board', async () => {
     const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
@@ -210,7 +210,7 @@ describe('NumberlinkModePlay', () => {
     expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
   })
 
-  it('should not output solved event after dragging left the board if not connected', async () => {
+  test('should not output solved event after dragging left the board if not connected', async () => {
     const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
@@ -242,7 +242,7 @@ describe('NumberlinkModePlay', () => {
     expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
   })
 
-  it('should not output solved if not pressed up on terminal', async () => {
+  test('should not output solved if not pressed up on terminal', async () => {
     const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
@@ -279,7 +279,7 @@ describe('NumberlinkModePlay', () => {
     expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
   })
 
-  it('should not output solved event if terminals are not connected', async () => {
+  test('should not output solved event if terminals are not connected', async () => {
     const numberlink = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
@@ -340,7 +340,7 @@ describe('NumberlinkModePlay', () => {
     expect(AlgoIsSolved.isSolved(numberlinkNew)).toBe(true)
   })
 
-  it('should not output solved event when drawing from incomplete terminal and then leave drawing', async () => {
+  test('should not output solved event when drawing from incomplete terminal and then leave drawing', async () => {
     const numberlink = VariantGridShorthand.toGrid([
       ['B', ' ', 'A'],
       [' ', ' ', 'a'],

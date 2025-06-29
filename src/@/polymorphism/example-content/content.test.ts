@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { renderHTML } from './content'
 import { Announcement } from './content-announcement'
 import { BlogPost } from './content-blog-post'
@@ -25,7 +25,7 @@ const feed = [
 ]
 
 describe('Content', () => {
-  it('should render html string', async () => {
+  test('should render html string', async () => {
     feed.forEach((content) => {
       expect(typeof renderHTML(content)).toBe('string')
     })

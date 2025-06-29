@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Logger } from '~/@/logger'
 import { Ok, Result, unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
@@ -41,7 +41,7 @@ const Fixtures = async () => {
 }
 
 describe(`PackDb`, () => {
-  it('should be able to put', async () => {
+  test('should be able to put', async () => {
     for (const f of await Fixtures()) {
       const pack = await Pack.random()
       const put = await f.packDb.put(pack)
@@ -49,7 +49,7 @@ describe(`PackDb`, () => {
     }
   })
 
-  it('should be able to get', async () => {
+  test('should be able to get', async () => {
     for (const f of await Fixtures()) {
       const pack = await Pack.random()
       const before = await f.packDb.get(pack.id)
@@ -60,7 +60,7 @@ describe(`PackDb`, () => {
     }
   })
 
-  it('should be able to list', async () => {
+  test('should be able to list', async () => {
     for (const f of await Fixtures()) {
       const pack = await Pack.random()
       const put = await f.packDb.put(pack)
@@ -88,7 +88,7 @@ describe(`PackDb`, () => {
     }
   })
 
-  it('should be able to filter by created by', async () => {
+  test('should be able to filter by created by', async () => {
     for (const f of await Fixtures()) {
       const createdBy = UserId.generate()
       const pack = await Pack.random({
@@ -123,7 +123,7 @@ describe(`PackDb`, () => {
     }
   })
 
-  it('should be able to count', async () => {
+  test('should be able to count', async () => {
     for (const f of await Fixtures()) {
       const pack = await Pack.random()
       unwrap(await f.packDb.put(pack))
@@ -138,7 +138,7 @@ describe(`PackDb`, () => {
     }
   })
 
-  it('should be able to zap', async () => {
+  test('should be able to zap', async () => {
     for (const f of await Fixtures()) {
       const pack = await Pack.random()
       await f.packDb.put(pack)
@@ -152,7 +152,7 @@ describe(`PackDb`, () => {
     }
   })
 
-  it('should be able to zap and verify using list', async () => {
+  test('should be able to zap and verify using list', async () => {
     for (const f of await Fixtures()) {
       const pack = await Pack.random()
       await f.packDb.put(pack)
@@ -174,7 +174,7 @@ describe(`PackDb`, () => {
     }
   })
 
-  it('should be able to update', async () => {
+  test('should be able to update', async () => {
     for (const f of await Fixtures()) {
       const pack = await Pack.random()
 

@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import * as VariantGridShorthandString from './grid-shorthand-string'
 import * as VariantGridShorthand from './grid-shorthand'
 
-describe('Test', () => {
+describe('GridShorthandString', () => {
   test('3x3', () => {
     const stringShorthand = `
             123

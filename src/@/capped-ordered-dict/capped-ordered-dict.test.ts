@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { CappedOrderedDict } from './capped-ordered-dict'
 
 describe('CappedOrderedDict', () => {
-  it('adding stuff', async () => {
+  test('adding stuff', async () => {
     const initial = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -15,7 +15,7 @@ describe('CappedOrderedDict', () => {
     expect(after).toBe('1')
   })
 
-  it('adding stuff then removing stuff', async () => {
+  test('adding stuff then removing stuff', async () => {
     const initial = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -29,7 +29,7 @@ describe('CappedOrderedDict', () => {
     expect(CappedOrderedDict.get(removed, '1')).toBe(null)
   })
 
-  it('remove oldest on max capacity', async () => {
+  test('remove oldest on max capacity', async () => {
     const initial = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -50,7 +50,7 @@ describe('CappedOrderedDict', () => {
     expect(CappedOrderedDict.get(dict4, '4')).toBe('4')
   })
 
-  it('should never mutate the input "model"', async () => {
+  test('should never mutate the input "model"', async () => {
     const initial = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -61,7 +61,7 @@ describe('CappedOrderedDict', () => {
     expect(CappedOrderedDict.get(added, '1')).toBe('1')
   })
 
-  it('should not remove non-existing key', async () => {
+  test('should not remove non-existing key', async () => {
     const initial = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -71,7 +71,7 @@ describe('CappedOrderedDict', () => {
     expect(CappedOrderedDict.get(removed, '1')).toBe(null)
   })
 
-  it('should not add the same key twice', async () => {
+  test('should not add the same key twice', async () => {
     const initial = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -83,7 +83,7 @@ describe('CappedOrderedDict', () => {
     expect(CappedOrderedDict.get(addedTwice, '1')).toBe('1')
   })
 
-  it('should not remove the same key twice', async () => {
+  test('should not remove the same key twice', async () => {
     const initial = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -97,7 +97,7 @@ describe('CappedOrderedDict', () => {
     expect(CappedOrderedDict.get(removedTwice, '1')).toBe(null)
   })
 
-  it('merges two dictionaries prioritizing left dictionary values', async () => {
+  test('merges two dictionaries prioritizing left dictionary values', async () => {
     let left = CappedOrderedDict.init<string, string>({
       maxSize: 5,
     })
@@ -117,7 +117,7 @@ describe('CappedOrderedDict', () => {
     expect(CappedOrderedDict.get(merged, '3')).toBe('Three')
   })
 
-  it('preserves order from left dictionary and manages new keys from right', async () => {
+  test('preserves order from left dictionary and manages new keys from right', async () => {
     let left = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -136,7 +136,7 @@ describe('CappedOrderedDict', () => {
     expect(values).toEqual(['Left2', 'Left1', 'Right3'])
   })
 
-  it('handles maximum size limit correctly', async () => {
+  test('handles maximum size limit correctly', async () => {
     let left = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -156,7 +156,7 @@ describe('CappedOrderedDict', () => {
     expect(values).toEqual(['Left3', 'Left2', 'Left1'])
   })
 
-  it('handles empty dictionaries', async () => {
+  test('handles empty dictionaries', async () => {
     const left = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -169,7 +169,7 @@ describe('CappedOrderedDict', () => {
     expect(CappedOrderedDict.valuesNewestFirst(merged)).toEqual([])
   })
 
-  it('manages non-overlapping keys', async () => {
+  test('manages non-overlapping keys', async () => {
     let left = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -186,7 +186,7 @@ describe('CappedOrderedDict', () => {
     expect(values).toEqual(['Left1', 'Right2'])
   })
 
-  it('should be immutable when merging dictionaries', async () => {
+  test('should be immutable when merging dictionaries', async () => {
     let left = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })

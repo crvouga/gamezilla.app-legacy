@@ -1,4 +1,4 @@
-// import { describe, expect, it } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { withEventMeta } from '~/@/event-sourced/event'
 
 import { describe } from 'vitest'
@@ -17,7 +17,7 @@ import { describe } from 'vitest'
 // }
 
 // describe('LastPuzzleFrontend', () => {
-//   it('should render select next pack button in completion dialog after completing last puzzle', async () => {
+//   test('should render select next pack button in completion dialog after completing last puzzle', async () => {
 //     const f = await Fixture()
 //     const before = f.render(f.init)
 //     const output = f.update(f.init, f.msgsCompleteLastPuzzle)
@@ -30,7 +30,7 @@ import { describe } from 'vitest'
 //     ).toBeTruthy()
 //   })
 
-//   it('should dispatch a msg after clicking select next pack button', async () => {
+//   test('should dispatch a msg after clicking select next pack button', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, f.msgsCompleteLastPuzzle)
 //     const rendered = f.render(output)
@@ -40,7 +40,7 @@ import { describe } from 'vitest'
 //     expect(msg).toEqual({ t: 'got-msg-space', c: { t: 'user-clicked-select-next-pack', userId: f.hostId } })
 //   })
 
-//   it('should output select next pack event', async () => {
+//   test('should output select next pack event', async () => {
 //     const f = await Fixture()
 //     const initial = f.update(f.init, f.msgsCompleteLastPuzzle)
 //     const output = f.update(initial, [
@@ -49,14 +49,14 @@ import { describe } from 'vitest'
 //     expect(output.msgSpace?.some((m) => m.t === 'user-clicked-select-next-pack')).toBe(true)
 //   })
 
-//   it('should render congrats message after completing last puzzle', async () => {
+//   test('should render congrats message after completing last puzzle', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, f.msgsCompleteLastPuzzle)
 
 //     expect(f.render(output).getByRole('dialog')[0]?.getByRole('heading', f.ctx.t('app.congratulations'))).toBeTruthy()
 //   })
 
-//   it('should dispatch correct msg after clicking select next pack button', async () => {
+//   test('should dispatch correct msg after clicking select next pack button', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, f.msgsCompleteLastPuzzle)
 //     const r = f.render(output)
@@ -73,7 +73,7 @@ import { describe } from 'vitest'
 //     })
 //   })
 
-//   it('should play sound after clicking select next pack button', async () => {
+//   test('should play sound after clicking select next pack button', async () => {
 //     const f = await Fixture()
 //     const initial = f.update(f.init, f.msgsCompleteLastPuzzle)
 //     const output = f.update(initial, [
@@ -82,7 +82,7 @@ import { describe } from 'vitest'
 //     expect(PlaySoundCmd.did(output)).toBe(true)
 //   })
 
-//   it('should render exit screen action when last puzzle is completed', async () => {
+//   test('should render exit screen action when last puzzle is completed', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, f.msgsCompleteLastPuzzle)
 //     const r = f.render(output)
@@ -90,7 +90,7 @@ import { describe } from 'vitest'
 //     expect(got).toBeTruthy()
 //   })
 
-//   it('should NOT render exit screen action when last puzzle is completed', async () => {
+//   test('should NOT render exit screen action when last puzzle is completed', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, f.msgsGoToLastPuzzle)
 //     const r = f.render(output)
@@ -98,7 +98,7 @@ import { describe } from 'vitest'
 //     expect(got).toBeFalsy()
 //   })
 
-//   it('should NOT render if not last puzzle', async () => {
+//   test('should NOT render if not last puzzle', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, f.msgsCompletePuzzle)
 //     const r = f.render(output)

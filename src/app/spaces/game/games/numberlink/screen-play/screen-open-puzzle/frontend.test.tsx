@@ -1,4 +1,4 @@
-// import { describe, expect, it } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { withEventMeta } from '~/@/event-sourced/event'
 
 import { describe } from 'node:test'
@@ -26,20 +26,20 @@ import { describe } from 'node:test'
 //   }
 // }
 
-// describe('Test', () => {
-//   it('should render exit button', async () => {
+// describe('ScreenOpenPuzzleFrontend', () => {
+//   test('should render exit button', async () => {
 //     const f = await Fixture()
 //     const rendered = f.render(f.initial)
 //     expect(rendered.getByRole('button', f.ctx.t('app.exit'))).toBeTruthy()
 //   })
 
-//   it('should render pack grid', async () => {
+//   test('should render pack grid', async () => {
 //     const f = await Fixture()
 //     const rendered = f.render(f.initial)
 //     expect(rendered.getByRole('grid')).toBeTruthy()
 //   })
 
-//   it('should emit msg from clicking exit button', async () => {
+//   test('should emit msg from clicking exit button', async () => {
 //     const f = await Fixture()
 //     const r = f.render(f.initial)
 //     const exitButton = r.getByRole('button', f.ctx.t('app.exit'))[0]
@@ -48,7 +48,7 @@ import { describe } from 'node:test'
 //     expect(msg).toEqual({ t: 'got-msg-space', c: { userId: f.hostId, t: 'user-clicked-exit-screen-open-pack' } })
 //   })
 
-//   it('should exit to pack list on exit button pack click', async () => {
+//   test('should exit to pack list on exit button pack click', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [
 //       {
@@ -64,7 +64,7 @@ import { describe } from 'node:test'
 //     expect(output.modelSpace.screen.t).toBe('screen-select-pack')
 //   })
 
-//   it('should play nav back sound on exit', async () => {
+//   test('should play nav back sound on exit', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [
 //       { msgSpace: withEventMeta({ t: 'user-clicked-exit-screen-open-pack', userId: f.hostId }) },
@@ -72,7 +72,7 @@ import { describe } from 'node:test'
 //     expect(PlaySoundCmd.did(output)).toBe(true)
 //   })
 
-//   it('should open puzzle after clicking grid item', async () => {
+//   test('should open puzzle after clicking grid item', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [
 //       {
@@ -96,7 +96,7 @@ import { describe } from 'node:test'
 //     }
 //   })
 
-//   it('should play sound after user opens puzzle', async () => {
+//   test('should play sound after user opens puzzle', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [
 //       {

@@ -1,4 +1,4 @@
-// import { describe, expect, it } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { SpaceId } from '~/app/@/data/space-id'
 // import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 // import { FixtureSpacesFrontend } from '../../@/fixture/frontend'
@@ -12,8 +12,8 @@
 //   }
 // }
 
-// describe('Test', () => {
-//   it('should go to list screen after clicking go home button', async () => {
+// describe('ExitSpaceActionFrontend', () => {
+//   test('should go to list screen after clicking go home button', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const output = f.update(f.initial, [
@@ -23,7 +23,7 @@
 //     expect(PushScreenCmd.did(output, (s) => s.t === 'space-list')).toBe(true)
 //   })
 
-//   it('should play a sound after clicking go home button', async () => {
+//   test('should play a sound after clicking go home button', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const output = f.update(f.initial, [

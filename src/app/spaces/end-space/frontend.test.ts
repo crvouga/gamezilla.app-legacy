@@ -1,4 +1,4 @@
-// import { describe, expect, it } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { SpaceId } from '~/app/@/data/space-id'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 // import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -11,8 +11,8 @@
 //   }
 // }
 
-// describe('Test', () => {
-//   it('should redirect to space list after ending space if on space screen', async () => {
+// describe('EndSpaceFrontend', () => {
+//   test('should redirect to space list after ending space if on space screen', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const output = f.update(f.initial, [
@@ -28,7 +28,7 @@
 //     expect(PushScreenCmd.did(output)).toBe(true)
 //   })
 
-//   it('should NOT redirect to space list after ending space if NOT on space screen', async () => {
+//   test('should NOT redirect to space list after ending space if NOT on space screen', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const output = f.update(f.initial, [
@@ -42,7 +42,7 @@
 //     expect(PushScreenCmd.did(output)).toBe(false)
 //   })
 
-//   it('should play sound after ending space', async () => {
+//   test('should play sound after ending space', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const output = f.update(f.initial, [

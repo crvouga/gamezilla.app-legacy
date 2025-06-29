@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import { describe, test, expect } from 'vitest'
 import { exportJWK } from './export-jwk'
 
 describe('exportJWK', () => {
-  it('should export an extractable key to JWK format', async () => {
+  test('should export an extractable key to JWK format', async () => {
     // Generate a test key that is extractable
     const keyPair = await crypto.subtle.generateKey(
       {
@@ -31,7 +31,7 @@ describe('exportJWK', () => {
     expect(privateJwk.q).toBeDefined() // RSA second prime factor
   })
 
-  it('should throw an error when trying to export a non-extractable key', async () => {
+  test('should throw an error when trying to export a non-extractable key', async () => {
     // Generate a test key that is not extractable
     const keyPair = await crypto.subtle.generateKey(
       {
@@ -48,7 +48,7 @@ describe('exportJWK', () => {
     await expect(exportJWK(keyPair.privateKey)).rejects.toThrow('Key is not extractable')
   })
 
-  it('should export an ECDSA key to JWK format', async () => {
+  test('should export an ECDSA key to JWK format', async () => {
     // Generate an ECDSA key
     const keyPair = await crypto.subtle.generateKey(
       {

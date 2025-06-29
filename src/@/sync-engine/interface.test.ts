@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Ok } from '~/@/result'
 import { Logger } from '../logger'
 import { ClientSessionId } from '../wire/client-session-id'
@@ -22,7 +22,7 @@ const Fixture = () => {
 }
 
 describe('SyncEngine', () => {
-  it('should work', async () => {
+  test('should work', async () => {
     const f = Fixture()
     const pushed = await f.syncEngine.push({
       sessionId: f.sessionId,

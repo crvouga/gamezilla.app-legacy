@@ -1,4 +1,4 @@
-// import { describe, expect, it, test } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { withEventMeta } from '~/@/event-sourced/event'
 
 // import { Pack } from '../../@/pack/pack'
@@ -12,20 +12,20 @@
 //   }
 // }
 
-// describe('Test', () => {
-//   it('should render exit button', async () => {
+// describe('ScreenOpenPackFrontend', () => {
+//   test('should render exit button', async () => {
 //     const f = await Fixture()
 //     const rendered = f.render(f.initial)
 //     expect(rendered.getByRole('button', f.ctx.t('app.exit'))).toBeTruthy()
 //   })
 
-//   it('should render select pack screen', async () => {
+//   test('should render select pack screen', async () => {
 //     const f = await Fixture()
 //     const r = f.render(f.initial)
 //     expect(r.getByRole('heading', f.ctx.t('game.numberlink.select-a-pack'))).toBeTruthy()
 //   })
 
-//   it('should show pack screen after opening pack', async () => {
+//   test('should show pack screen after opening pack', async () => {
 //     const f = await Fixture()
 //     const pack = await Pack.random()
 //     const updated = f.update(f.initial, [
@@ -35,7 +35,7 @@
 //     expect(r.getByRole('heading', pack.name)).toBeTruthy()
 //   })
 
-//   it('should make a sound when opening a pack', async () => {
+//   test('should make a sound when opening a pack', async () => {
 //     const f = await Fixture()
 //     const pack = await Pack.random()
 //     const updated = f.update(f.initial, [
@@ -50,7 +50,7 @@
 //     expect(PlaySoundCmd.did(updated)).toBe(true)
 //   })
 
-//   it.todo('should render all packs', async () => {})
+//   test.todo('should render all packs', async () => {})
 
 //   test('sound on exit play mode ', async () => {
 //     const f = await Fixture()

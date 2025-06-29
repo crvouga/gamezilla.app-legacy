@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { unwrap } from '~/@/result'
@@ -8,7 +8,7 @@ import { Space } from '../..'
 import { Fixtures } from './fixture'
 
 describe('SpaceDb', () => {
-  it('should work', async () => {
+  test('should work', async () => {
     for (const f of await Fixtures()) {
       const spaceId = Space.toSpaceStarted(f.space)?.spaceId ?? SpaceId.generate()
 

@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { ModeEdit } from '.'
 import { Numberlink } from '../numberlink'
 import { NumberlinkVariant, NumberlinkVariantDimensions } from '../variant'
@@ -32,7 +32,7 @@ const Fixture = async (input?: { numberlink?: NumberlinkVariant.Model }) => {
 }
 
 describe('ModeEdit', () => {
-  it('should make sounds interacting with dimensions form', async () => {
+  test('should make sounds interacting with dimensions form', async () => {
     const f = await Fixture()
     const msgs: ModeEdit.Msg[] = [
       { t: 'dimensions-form.clicked-save' },

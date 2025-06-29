@@ -1,25 +1,25 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { deterministicJsonStringify } from './deterministic-stringify'
 
 describe('deterministicJsonStringify', () => {
-  it('should handle primitive values', () => {
+  test('should handle primitive values', () => {
     expect(deterministicJsonStringify(42)).toBe('42')
     expect(deterministicJsonStringify('hello')).toBe('"hello"')
     expect(deterministicJsonStringify(true)).toBe('true')
     expect(deterministicJsonStringify(null)).toBe('null')
   })
 
-  it('should handle arrays', () => {
+  test('should handle arrays', () => {
     expect(deterministicJsonStringify([1, 2, 3])).toBe('[1,2,3]')
     expect(deterministicJsonStringify(['a', 'b', 'c'])).toBe('["a","b","c"]')
   })
 
-  it('should handle objects with sorted keys', () => {
+  test('should handle objects with sorted keys', () => {
     const input = { b: 2, a: 1, c: 3 }
     expect(deterministicJsonStringify(input)).toBe('{"a":1,"b":2,"c":3}')
   })
 
-  it('should handle nested objects with sorted keys', () => {
+  test('should handle nested objects with sorted keys', () => {
     const input = {
       b: { y: 2, x: 1 },
       a: { z: 3, w: 0 },
@@ -27,12 +27,12 @@ describe('deterministicJsonStringify', () => {
     expect(deterministicJsonStringify(input)).toBe('{"a":{"w":0,"z":3},"b":{"x":1,"y":2}}')
   })
 
-  it('should handle bigint values', () => {
+  test('should handle bigint values', () => {
     expect(deterministicJsonStringify(BigInt(123))).toBe('"123"')
     expect(deterministicJsonStringify({ value: BigInt(456) })).toBe('{"value":"456"}')
   })
 
-  it('should handle mixed types', () => {
+  test('should handle mixed types', () => {
     const input = {
       b: [2, 1],
       a: { y: 2, x: 1 },
@@ -41,17 +41,17 @@ describe('deterministicJsonStringify', () => {
     expect(deterministicJsonStringify(input)).toBe('{"a":{"x":1,"y":2},"b":[2,1],"c":"123"}')
   })
 
-  it('should handle empty objects and arrays', () => {
+  test('should handle empty objects and arrays', () => {
     expect(deterministicJsonStringify({})).toBe('{}')
     expect(deterministicJsonStringify([])).toBe('[]')
   })
 
-  it('should handle objects with undefined and null values', () => {
+  test('should handle objects with undefined and null values', () => {
     const input = { a: undefined, b: null, c: 1 }
     expect(deterministicJsonStringify(input)).toBe('{"b":null,"c":1}')
   })
 
-  it('should handle deeply nested structures', () => {
+  test('should handle deeply nested structures', () => {
     const input = {
       a: {
         b: {
@@ -63,12 +63,12 @@ describe('deterministicJsonStringify', () => {
     expect(deterministicJsonStringify(input)).toBe('{"a":{"b":{"c":[1,2,{"d":3}],"e":{"f":4}}}}')
   })
 
-  it('should handle arrays with mixed types', () => {
+  test('should handle arrays with mixed types', () => {
     const input = [1, 'two', { three: 3 }, [4, 5], BigInt(6)]
     expect(deterministicJsonStringify(input)).toBe('[1,"two",{"three":3},[4,5],"6"]')
   })
 
-  it.skip('should handle objects with special characters in keys', () => {
+  test.skip('should handle objects with special characters in keys', () => {
     const input = {
       'key with spaces': 1,
       'key-with-dashes': 2,
@@ -84,7 +84,7 @@ describe('deterministicJsonStringify', () => {
     )
   })
 
-  it.skip('should handle objects with numeric keys', () => {
+  test.skip('should handle objects with numeric keys', () => {
     const input = {
       '1': 'one',
       '2': 'two',
@@ -94,7 +94,7 @@ describe('deterministicJsonStringify', () => {
     expect(deterministicJsonStringify(input)).toBe('{"01":"zero-one","1":"one","10":"ten","2":"two"}')
   })
 
-  it.skip('should handle objects with unicode keys', () => {
+  test.skip('should handle objects with unicode keys', () => {
     const input = {
       '😊': 'emoji',
       你好: 'chinese',
@@ -106,7 +106,7 @@ describe('deterministicJsonStringify', () => {
     )
   })
 
-  it('should produce consistent output for deep equality checks', () => {
+  test('should produce consistent output for deep equality checks', () => {
     const obj1 = {
       b: 2,
       a: 1,
@@ -129,14 +129,14 @@ describe('deterministicJsonStringify', () => {
     expect(deterministicJsonStringify(obj1)).toBe(deterministicJsonStringify(obj2))
   })
 
-  it('should handle nested arrays with objects for deep equality', () => {
+  test('should handle nested arrays with objects for deep equality', () => {
     const arr1 = [{ b: 2, a: 1 }, [3, { y: 2, x: 1 }], { c: 3, d: 4 }]
     const arr2 = [{ a: 1, b: 2 }, [3, { x: 1, y: 2 }], { d: 4, c: 3 }]
     // Arrays contain objects with different key orders
     expect(deterministicJsonStringify(arr1)).toBe(deterministicJsonStringify(arr2))
   })
 
-  it('should maintain consistent output for complex nested structures', () => {
+  test('should maintain consistent output for complex nested structures', () => {
     const struct1 = {
       data: {
         users: [
@@ -165,7 +165,7 @@ describe('deterministicJsonStringify', () => {
     expect(deterministicJsonStringify(struct1)).not.toBe(deterministicJsonStringify(struct2))
   })
 
-  it('should return null for non-serializable data', () => {
+  test('should return null for non-serializable data', () => {
     const circular: any = { a: 1 }
     circular.self = circular
 

@@ -23,7 +23,7 @@
 //     input,
 //   }
 // }
-// describe('Test', () => {
+// describe('VariantBoard', () => {
 //   test('render hint checkmark', async () => {
 //     const f = await Fixture()
 //     f.render(f.input)

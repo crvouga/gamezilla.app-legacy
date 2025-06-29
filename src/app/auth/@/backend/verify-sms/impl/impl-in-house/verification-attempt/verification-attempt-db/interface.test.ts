@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { VerificationAttempt } from '../verification-attempt'
 import { VerificationAttemptDb } from './impl'
@@ -27,15 +27,15 @@ const Fixture = async () => {
   }
 }
 
-describe('Test', () => {
-  it('should be ok after inserting', async () => {
+describe('VerificationAttemptDb', () => {
+  test('should be ok after inserting', async () => {
     const f = await Fixture()
     const verificationAttempt = await VerificationAttempt.random()
     const result = await f.verificationAttemptDb.insert(verificationAttempt)
     expect(result.t).toBe('ok')
   })
 
-  it('should insert correctly', async () => {
+  test('should insert correctly', async () => {
     const f = await Fixture()
     const verificationAttempt = await VerificationAttempt.random()
     const before = await f.verificationAttemptDb.find({
@@ -57,7 +57,7 @@ describe('Test', () => {
     expect(unwrap(after)[0]).toEqual(verificationAttempt)
   })
 
-  it('should find correctly', async () => {
+  test('should find correctly', async () => {
     const f = await Fixture()
     const verificationAttempt = await VerificationAttempt.random()
     await f.verificationAttemptDb.insert(verificationAttempt)
@@ -71,7 +71,7 @@ describe('Test', () => {
     expect(unwrap(result)[0]).toEqual(verificationAttempt)
   })
 
-  it('should not find when verificationId is not equal', async () => {
+  test('should not find when verificationId is not equal', async () => {
     const f = await Fixture()
     const verificationAttempt = await VerificationAttempt.random()
     await f.verificationAttemptDb.insert(verificationAttempt)

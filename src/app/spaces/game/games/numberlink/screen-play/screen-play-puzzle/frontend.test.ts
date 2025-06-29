@@ -1,4 +1,4 @@
-// import { describe, expect, it, test } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { withEventMeta } from '~/@/event-sourced/event'
 // import { Sub } from '~/@/sub'
 // import { UserId } from '~/app/@/data/user-id'
@@ -16,18 +16,18 @@ import { describe } from 'node:test'
 // }
 
 // describe('ScreenPlayPuzzleFrontend', () => {
-//   it('should render puzzle screen after opening puzzle from pack', async () => {
+//   test('should render puzzle screen after opening puzzle from pack', async () => {
 //     const f = await Fixture()
 //     const r = f.render(f.init)
 //     expect(r.getAttribute('data-puzzle-id')).toBe(f.puzzle.id)
 //   })
 
-//   it('should render exit button for puzzle screen', async () => {
+//   test('should render exit button for puzzle screen', async () => {
 //     const f = await Fixture()
 //     expect(f.render(f.init).getByRole('button', f.ctx.t('app.exit'))).toBeTruthy()
 //   })
 
-//   it('should make a sound after clicking exit button', async () => {
+//   test('should make a sound after clicking exit button', async () => {
 //     const f = await Fixture()
 //     const updated = f.update(f.init, [
 //       { msgSpace: withEventMeta({ t: 'user-clicked-exit-play-puzzle-screen', userId: f.hostId }) },
@@ -35,7 +35,7 @@ import { describe } from 'node:test'
 //     expect(PlaySoundCmd.did(updated)).toBe(true)
 //   })
 
-//   it('should exit to pack after clicking exit puzzle button', async () => {
+//   test('should exit to pack after clicking exit puzzle button', async () => {
 //     const f = await Fixture()
 //     const updated = f.update(f.init, [
 //       { msg: { t: 'got-msg-space', c: { userId: f.hostId, t: 'user-clicked-exit-play-puzzle-screen' } } },
@@ -43,7 +43,7 @@ import { describe } from 'node:test'
 //     expect(updated.modelSpace.screen.t).toBe('screen-select-puzzle')
 //   })
 
-//   it('should render next puzzle button only when puzzle is completed', async () => {
+//   test('should render next puzzle button only when puzzle is completed', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, [...f.msgsCompletePuzzle])
 //     const before = f.render(f.init).getByRole('button', f.ctx.t('app.next'))[0]
@@ -53,7 +53,7 @@ import { describe } from 'node:test'
 //     expect(after).toBeTruthy()
 //   })
 
-//   it('should dispatch msg after clicking next puzzle button', async () => {
+//   test('should dispatch msg after clicking next puzzle button', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, [...f.msgsCompletePuzzle])
 //     const r = f.render(output)
@@ -74,7 +74,7 @@ import { describe } from 'node:test'
 //     expect(nextPuzzle).toBeTruthy()
 //   })
 
-//   it('should render next puzzle after clicking next puzzle button', async () => {
+//   test('should render next puzzle after clicking next puzzle button', async () => {
 //     const f = await Fixture()
 //     const updated = f.update(f.init, [
 //       {
@@ -93,7 +93,7 @@ import { describe } from 'node:test'
 //     expect(r.getAttribute('data-puzzle-id')).toBe(f.nextPuzzle.c.id)
 //   })
 
-//   it('should play sound after user clicks next puzzle button', async () => {
+//   test('should play sound after user clicks next puzzle button', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, [
 //       {
@@ -108,33 +108,33 @@ import { describe } from 'node:test'
 //     expect(PlaySoundCmd.did(output)).toBe(true)
 //   })
 
-//   it('should render which level of the pack is being played', async () => {
+//   test('should render which level of the pack is being played', async () => {
 //     const f = await Fixture()
 //     const r = f.render(f.init)
 //     expect(r.getByRole('heading', `Level ${f.puzzleIndex + 1}`)).toBeTruthy()
 //   })
 
-//   it('should render puzzle complete dialog after completing a puzzle', async () => {
+//   test('should render puzzle complete dialog after completing a puzzle', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, f.msgsCompletePuzzle)
 //     const r = f.render(output)
 //     expect(r.getByRole('dialog')[0]?.getByRole('heading', f.ctx.t('game.numberlink.puzzle-completed'))).toBeTruthy()
 //   })
 
-//   it('should render next puzzle button in completion dialog', async () => {
+//   test('should render next puzzle button in completion dialog', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, f.msgsCompletePuzzle)
 //     const r = f.render(output)
 //     expect(r.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('game.numberlink.next-puzzle'))[0]).toBeTruthy()
 //   })
 
-//   it('should play sound after completing a puzzle', async () => {
+//   test('should play sound after completing a puzzle', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, f.msgsCompletePuzzle)
 //     expect(PlaySoundCmd.did(output)).toBe(true)
 //   })
 
-//   it('should play sound pressing down on a terminal', async () => {
+//   test('should play sound pressing down on a terminal', async () => {
 //     const f = await Fixture()
 //     const terminal = Numberlink.randomTerminal(f.puzzle.model)
 
@@ -152,7 +152,7 @@ import { describe } from 'node:test'
 //     expect(PlaySoundCmd.did(output)).toBe(true)
 //   })
 
-//   it('should play sound after solving puzzle', async () => {
+//   test('should play sound after solving puzzle', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, f.msgsCompletePuzzle)
 //     expect(PlaySoundCmd.did(output)).toBe(true)

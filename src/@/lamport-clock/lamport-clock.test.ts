@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { LamportClock } from './lamport-clock'
 
 describe('LamportClock', () => {
-  it('should update the Lamport clock when receiving a smaller timestamp', async () => {
+  test('should update the Lamport clock when receiving a smaller timestamp', async () => {
     const clockA = LamportClock.init
     const clockB = LamportClock.init
 
@@ -12,7 +12,7 @@ describe('LamportClock', () => {
     expect(LamportClock.toNumber(updatedClockB)).toBe(2)
   })
 
-  it('should not update the Lamport clock when receiving an equal timestamp', async () => {
+  test('should not update the Lamport clock when receiving an equal timestamp', async () => {
     const clockA = LamportClock.init
     const clockB = LamportClock.init
 
@@ -24,7 +24,7 @@ describe('LamportClock', () => {
     expect(LamportClock.toNumber(updatedClockB2)).toBe(3)
   })
 
-  it('should not update the Lamport clock when receiving a larger timestamp', async () => {
+  test('should not update the Lamport clock when receiving a larger timestamp', async () => {
     const clockA = LamportClock.init
     const clockB = LamportClock.init
 

@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Numberlink } from '../../../numberlink'
 import { VariantGrid, VariantGridDimensions } from '../index'
 import * as VariantGridShorthand from './grid-shorthand'
@@ -476,7 +476,7 @@ describe('Grid shorthand', () => {
     expect(isSame).toBe(true)
   })
 
-  it('should work with 3x3 grid with A terminal and pipes', async () => {
+  test('should work with 3x3 grid with A terminal and pipes', async () => {
     const shorthand = VariantGridShorthand.init([
       ['A', ' ', ' '],
       ['a', 'B', ' '],
@@ -547,7 +547,7 @@ describe('Grid shorthand', () => {
     expect(Numberlink.isSame(actual, expected)).toBe(true)
   })
 
-  it('should only return grids with the longest paths', async () => {
+  test('should only return grids with the longest paths', async () => {
     const shorthand = VariantGridShorthand.init([
       ['A', 'a', 'a'],
       ['a', 'a', 'a'],
@@ -562,7 +562,7 @@ describe('Grid shorthand', () => {
     expect(actual).toBe(expected)
   })
 
-  it('should be able to find longest path', async () => {
+  test('should be able to find longest path', async () => {
     const shorthand = VariantGridShorthand.init([
       ['A', 'a', 'a'],
       ['a', 'a', 'a'],

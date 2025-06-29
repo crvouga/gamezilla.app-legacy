@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { ascend, descend } from '~/@/array/sorting'
 import { Ok, unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
@@ -74,8 +74,8 @@ const Fixture = async () => {
 
 type Fixture = Awaited<ReturnType<typeof Fixture>>
 
-describe('Test', () => {
-  it('should be ok inserting records', async () => {
+describe('VerificationDb', () => {
+  test('should be ok inserting records', async () => {
     const f = await Fixture()
     const verification = await Verification.random()
     const inserted = await f.verificationDb.put(verification)
@@ -83,7 +83,7 @@ describe('Test', () => {
     expect(inserted).toEqual(Ok(null))
   })
 
-  it('should insert records correctly', async () => {
+  test('should insert records correctly', async () => {
     const f = await Fixture()
     const verification = await Verification.random()
     const before = await f.verificationDb.find({
@@ -116,7 +116,7 @@ describe('Test', () => {
     expect(unwrap(after).items[0]).toEqual(verification)
   })
 
-  it('should upsert records correctly', async () => {
+  test('should upsert records correctly', async () => {
     const f = await Fixture()
     const verification = await Verification.random()
     await f.verificationDb.put(verification)
@@ -154,7 +154,7 @@ describe('Test', () => {
     expect(unwrap(after).items[0]).toEqual(verificationNew)
   })
 
-  it('should find by phone number', async () => {
+  test('should find by phone number', async () => {
     const f = await Fixture()
     const verification = await Verification.random()
     await f.verificationDb.put(verification)
@@ -174,7 +174,7 @@ describe('Test', () => {
     expect(unwrap(found).items[0]).toEqual(verification)
   })
 
-  it('should find by created at correctly', async () => {
+  test('should find by created at correctly', async () => {
     const f = await Fixture()
     const now = f.now()
 
@@ -214,7 +214,7 @@ describe('Test', () => {
     expect(actual).toEqual(expected.sort(ascend((v) => v.createdAtUnixMs)))
   })
 
-  it('should limit correctly', async () => {
+  test('should limit correctly', async () => {
     const f = await Fixture()
     const now = f.now()
     const start = now
@@ -245,7 +245,7 @@ describe('Test', () => {
     expect(expectedIds).toEqual(actualIds)
   })
 
-  it('should offset correctly', async () => {
+  test('should offset correctly', async () => {
     const f = await Fixture()
     const now = f.now()
     const start = now
@@ -281,7 +281,7 @@ describe('Test', () => {
     expect(actual).toEqual(sliced)
   })
 
-  it.todo('should offset and limit correctly', async () => {
+  test.todo('should offset and limit correctly', async () => {
     const f = await Fixture()
     const now = f.now()
     const start = now
@@ -310,7 +310,7 @@ describe('Test', () => {
     expect(actual).toEqual(expected.slice(3, 8))
   })
 
-  it('should order by asc created at correctly', async () => {
+  test('should order by asc created at correctly', async () => {
     const f = await Fixture()
     const now = f.now()
     const start = now
@@ -342,7 +342,7 @@ describe('Test', () => {
     expect(actual).toEqual(expected)
   })
 
-  it('should order by desc created at correctly', async () => {
+  test('should order by desc created at correctly', async () => {
     const f = await Fixture()
     const now = f.now()
     const start = now
@@ -374,7 +374,7 @@ describe('Test', () => {
     expect(actual).toEqual(expected)
   })
 
-  it('should allow code hash to be null', async () => {
+  test('should allow code hash to be null', async () => {
     const f = await Fixture()
     const verification = await Verification.random({
       codeHash: null,

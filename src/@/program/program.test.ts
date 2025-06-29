@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Sub } from '../sub'
 import { Program, ProgramCrashReport } from './program'
 import { TimeSpan } from '../time/time-span'
@@ -34,7 +34,7 @@ const Fixture = async () => {
 }
 
 describe('Program', () => {
-  it('should work', async () => {
+  test('should work', async () => {
     const f = await Fixture()
     expect(f.program.getModel()).toEqual({ counter: { count: 0 } })
     await f.program.dispatch({ t: 'inc' })
@@ -45,7 +45,7 @@ describe('Program', () => {
     expect(f.program.getModel()).toEqual({ counter: { count: 1 } })
   })
 
-  it('should ignore crashing message and continue to work', async () => {
+  test('should ignore crashing message and continue to work', async () => {
     const f = await Fixture()
 
     expect(f.program.getModel()).toEqual({ counter: { count: 0 } })

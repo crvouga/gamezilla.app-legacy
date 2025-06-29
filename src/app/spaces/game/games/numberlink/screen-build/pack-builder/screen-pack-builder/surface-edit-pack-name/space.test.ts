@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { ScreenPackBuildSpaceFixture } from '../@/fixture/space'
 
 const Fixture = async () => {
@@ -8,8 +8,8 @@ const Fixture = async () => {
   }
 }
 
-describe('Test', () => {
-  it('should let host input pack name', async () => {
+describe('SurfaceEditPackNameSpace', () => {
+  test('should let host input pack name', async () => {
     const f = await Fixture()
     const packNameDraft = 'pack-name'
     const model = f.update(f.initial, [
@@ -22,7 +22,7 @@ describe('Test', () => {
     expect(model.editPackName_draft).toBe(packNameDraft)
   })
 
-  it('should only allow host to input pack name', async () => {
+  test('should only allow host to input pack name', async () => {
     const f = await Fixture()
 
     const model = f.update(f.initial, [
@@ -37,7 +37,7 @@ describe('Test', () => {
     expect(after).toBe(before)
   })
 
-  it('should be loading after saving pack name', async () => {
+  test('should be loading after saving pack name', async () => {
     const f = await Fixture()
     const model = f.update(f.initial, [
       {
@@ -48,7 +48,7 @@ describe('Test', () => {
     expect(model.editPackName_result.t).toBe('loading')
   })
 
-  it('should error if name is empty', async () => {
+  test('should error if name is empty', async () => {
     const f = await Fixture()
     const model = f.update(f.initial, [
       {
@@ -64,7 +64,7 @@ describe('Test', () => {
     expect(model.editPackName_validationError?.t).toBe('name-cannot-be-empty')
   })
 
-  it('should clear validation error after input of non empty name', async () => {
+  test('should clear validation error after input of non empty name', async () => {
     const f = await Fixture()
     const model = f.update(f.initial, [
       {
@@ -81,7 +81,7 @@ describe('Test', () => {
     expect(model.editPackName_validationError).toBe(null)
   })
 
-  it('should optimistically update pack name', async () => {
+  test('should optimistically update pack name', async () => {
     const f = await Fixture()
     const newPackName = 'pack'
     f.update(f.initial, [
@@ -97,7 +97,7 @@ describe('Test', () => {
     ])
   })
 
-  it('should open edit name drawer', async () => {
+  test('should open edit name drawer', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {
@@ -109,7 +109,7 @@ describe('Test', () => {
     expect(output.opened).toBe('edit-pack-name-drawer')
   })
 
-  it('should close edit name drawer', async () => {
+  test('should close edit name drawer', async () => {
     const f = await Fixture()
     const output = f.update(f.initial, [
       {

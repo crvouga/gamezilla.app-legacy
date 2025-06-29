@@ -1,4 +1,4 @@
-// import { describe, expect, it, test } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { withEventMeta } from '~/@/event-sourced/event'
 // import { UserRole } from '~/app/@/data/user-role'
 // import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd.$msg'
@@ -23,7 +23,7 @@ import { describe } from 'node:test'
 //   }
 // }
 
-// describe('Test', () => {
+// describe('ButtonCopyPuzzleFrontend', () => {
 //   test.todo('render button for super users', async () => {
 //     const f = await Fixture({
 //       currentUserRole: 'super',
@@ -74,7 +74,7 @@ import { describe } from 'node:test'
 //     expect(ShowToastCmd.did(output)).toBe(true)
 //   })
 
-//   it('should copy the shorthand json to the clipboard', async () => {
+//   test('should copy the shorthand json to the clipboard', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, [
 //       {

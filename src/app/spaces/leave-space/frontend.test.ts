@@ -1,4 +1,4 @@
-// import { describe, expect, it } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { withEventMetaAt } from '~/@/event-sourced/event'
 // import { SpaceId } from '~/app/@/data/space-id'
 // import { UserId } from '~/app/@/data/user-id'
@@ -18,7 +18,7 @@ import { describe } from 'node:test'
 // }
 
 // describe('leave space', () => {
-//   it('should navigate to list screen after leaving space', async () => {
+//   test('should navigate to list screen after leaving space', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 
@@ -32,7 +32,7 @@ import { describe } from 'node:test'
 //     expect(outputs.some((output) => PushScreenCmd.did(output, (x) => x.t === 'space-list'))).toBe(true)
 //   })
 
-//   it('should only redirect to list screen for the user leaving the space', async () => {
+//   test('should only redirect to list screen for the user leaving the space', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const userId = UserId.generate()
@@ -55,7 +55,7 @@ import { describe } from 'node:test'
 //     expect(PushScreenCmd.did(output)).toBe(false)
 //   })
 
-//   it('should show some toast after leaving a space', async () => {
+//   test('should show some toast after leaving a space', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const output = f.update(f.initial, [
@@ -66,7 +66,7 @@ import { describe } from 'node:test'
 //     expect(ShowToastCmd.did(output)).toBe(true)
 //   })
 
-//   it('user is not in space after leaving', async () => {
+//   test('user is not in space after leaving', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const output = f.update(f.initial, [
@@ -83,7 +83,7 @@ import { describe } from 'node:test'
 //     expect(currentUserSpaceId).toEqual(null)
 //   })
 
-//   it('should play sound after leaving', async () => {
+//   test('should play sound after leaving', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const output = f.update(f.initial, [

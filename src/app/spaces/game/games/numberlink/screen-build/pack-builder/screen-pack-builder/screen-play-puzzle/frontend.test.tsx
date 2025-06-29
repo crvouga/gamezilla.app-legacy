@@ -41,7 +41,7 @@
 //   }
 // }
 
-// describe('Test', () => {
+// describe('ScreenPuzzlePlayFrontend', () => {
 //   test('play sound when clicking exit button', async () => {
 //     const f = await Fixture()
 //     const output = ScreenPuzzlePlay.update({

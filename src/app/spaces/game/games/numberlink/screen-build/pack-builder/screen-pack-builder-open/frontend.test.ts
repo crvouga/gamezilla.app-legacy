@@ -4,7 +4,7 @@
 // import { Pack } from '../../../@/pack/pack'
 // import { FixtureFlowBuilderFrontend } from '../../@/fixture/frontend'
 
-// describe('Test', () => {
+// describe('ScreenPackBuilderOpenFrontend', () => {
 //   test('open pack builder', async () => {
 //     const f = await FixtureFlowBuilderFrontend()
 //     const pack = await Pack.random({

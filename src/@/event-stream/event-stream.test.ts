@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { EventStreamInMemory } from '.'
 import { UnixMs } from '../time/unix-ms'
 
@@ -63,7 +63,7 @@ const config = EventStream.config({
 })
 
 describe('EventStream', async () => {
-  it('should be able to append events', async () => {
+  test('should be able to append events', async () => {
     const before = await EventStream.init(config)
     const event = withId<Event>({
       t: 'incremented',
@@ -76,7 +76,7 @@ describe('EventStream', async () => {
     expect(await EventStream.toArray(after)).toEqual([event])
   })
 
-  it('should be able to append events', async () => {
+  test('should be able to append events', async () => {
     const event1 = withId<Event>({
       t: 'incremented',
       userId: '1',
@@ -101,7 +101,7 @@ describe('EventStream', async () => {
     expect(await EventStream.toArray(after)).toEqual([event1, event2, event3])
   })
 
-  it('should be able get subsets', async () => {
+  test('should be able get subsets', async () => {
     const user_a_count_a = withId<Event>({
       t: 'incremented',
       userId: 'userA',
@@ -133,7 +133,7 @@ describe('EventStream', async () => {
     expect(await EventStream.toArray(counterB)).toEqual([user_a_count_b, user_b_count_a])
   })
 
-  it('should be able to merge', async () => {
+  test('should be able to merge', async () => {
     const t0 = UnixMs.now()
 
     const event1 = withMetaAt(

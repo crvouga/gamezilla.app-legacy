@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { isErr, isOk, unwrap } from '~/@/result'
 import { eq } from '~/@/equals/equals'
 import { Hashing } from '~/@/hashing'
@@ -12,7 +12,7 @@ import { PhoneNumber } from '~/@/phone-number'
 const Fixture = VerifySMSInHouseFixture
 
 describe('VerifySMS', () => {
-  it('should be ok', async () => {
+  test('should be ok', async () => {
     const f = await Fixture()
 
     const sent = await f.verifySMS.sendCode(f)
@@ -27,7 +27,7 @@ describe('VerifySMS', () => {
     expect(isOk(verified)).toBe(true)
   })
 
-  it('should send a sms message with the code in it', async () => {
+  test('should send a sms message with the code in it', async () => {
     const f = await Fixture()
     await f.verifySMS.sendCode({
       ...f,
@@ -36,7 +36,7 @@ describe('VerifySMS', () => {
     expect(f.sms.sent[0]?.message.includes(f.CODE)).toBe(true)
   })
 
-  it('should send a sms message to the phone number inputted', async () => {
+  test('should send a sms message to the phone number inputted', async () => {
     const f = await Fixture()
     await f.verifySMS.sendCode({
       ...f,
@@ -45,7 +45,7 @@ describe('VerifySMS', () => {
     expect(f.sms.sent.every((smsMessage) => eq(smsMessage.phoneNumber, f.phoneNumber))).toBe(true)
   })
 
-  it('should sent a sms message with the "verify-sms.code-message" translation', async () => {
+  test('should sent a sms message with the "verify-sms.code-message" translation', async () => {
     const f = await Fixture()
     await f.verifySMS.sendCode({
       ...f,
@@ -54,7 +54,7 @@ describe('VerifySMS', () => {
     expect(f.sms.sent[0]?.message === Translator(f.preferredLanguage)('verify-sms.code-message', f.CODE)).toBe(true)
   })
 
-  it('should never send an empty sms message with the "verify-sms.code-message" translation', async () => {
+  test('should never send an empty sms message with the "verify-sms.code-message" translation', async () => {
     const f = await Fixture()
     await f.verifySMS.sendCode({
       ...f,
@@ -63,7 +63,7 @@ describe('VerifySMS', () => {
     expect((f.sms.sent[0]?.message.length ?? 0) > 0).toBe(true)
   })
 
-  it('should fail if the code is not the same as the code sent', async () => {
+  test('should fail if the code is not the same as the code sent', async () => {
     const f = await Fixture()
 
     await f.verifySMS.sendCode(f)
@@ -77,7 +77,7 @@ describe('VerifySMS', () => {
     expect(isErr(verified) && verified.error.t === 'code-incorrect').toBe(true)
   })
 
-  it('should eventually error after enough failed attempts', async () => {
+  test('should eventually error after enough failed attempts', async () => {
     const f = await Fixture({
       verifyCodeMaxAttempts: 1,
     })
@@ -97,7 +97,7 @@ describe('VerifySMS', () => {
     expect(isErr(verified) && verified.error.t === 'verification-expired-too-many-failed-attempts').toBe(true)
   })
 
-  it('should error if the verification id is not found', async () => {
+  test('should error if the verification id is not found', async () => {
     const f = await Fixture()
 
     await f.verifySMS.sendCode(f)
@@ -111,7 +111,7 @@ describe('VerifySMS', () => {
     expect(isErr(verified) && verified.error.t === 'verification-not-found').toBe(true)
   })
 
-  it('should error if verification expired', async () => {
+  test('should error if verification expired', async () => {
     const verifyCodeExpiresIn = TimeSpan.minutes(5)
 
     let now = UnixMs.now()
@@ -134,7 +134,7 @@ describe('VerifySMS', () => {
     expect(isErr(verified) && verified.error.t === 'verification-expired').toBe(true)
   })
 
-  it('should fail if the code has expired, even if no new code has been sent', async () => {
+  test('should fail if the code has expired, even if no new code has been sent', async () => {
     const verifyCodeExpiresIn = TimeSpan.minutes(5)
 
     let now = UnixMs.now()
@@ -161,7 +161,7 @@ describe('VerifySMS', () => {
     isErr(verified) && expect(verified.error.t).toBe('verification-expired')
   })
 
-  it('should error if using previous unused code', async () => {
+  test('should error if using previous unused code', async () => {
     const CODE_A = '123'
     const CODE_B = '456'
     let now = UnixMs.now()
@@ -204,7 +204,7 @@ describe('VerifySMS', () => {
     expect(isOk(verifiedB)).toBe(true)
   })
 
-  it('should error sending code if hourly limit is reached', async () => {
+  test('should error sending code if hourly limit is reached', async () => {
     const sendCodeHourlyLimit = 3
     const f = await Fixture({
       sendCodeHourlyLimit,
@@ -223,7 +223,7 @@ describe('VerifySMS', () => {
     if (isErr(sent)) expect(sent.error.t).toBe('hourly-limit-reached')
   })
 
-  it('should let user send code again after it has been over an hour after they hit the hourly limit', async () => {
+  test('should let user send code again after it has been over an hour after they hit the hourly limit', async () => {
     const sendCodeHourlyLimit = 3
     let now = UnixMs.now()
     const f = await Fixture({
@@ -244,7 +244,7 @@ describe('VerifySMS', () => {
     expect(isOk(sent)).toBe(true)
   })
 
-  it('should only apply hourly limit to a single phone number', async () => {
+  test('should only apply hourly limit to a single phone number', async () => {
     const sendCodeHourlyLimit = 3
 
     const f = await Fixture({
@@ -267,7 +267,7 @@ describe('VerifySMS', () => {
     expect(isOk(sent)).toBe(true)
   })
 
-  it('should error sending code if daily limit is reached', async () => {
+  test('should error sending code if daily limit is reached', async () => {
     const sendCodeDailyLimit = 3
     const f = await Fixture({
       sendCodeDailyLimit,
@@ -286,7 +286,7 @@ describe('VerifySMS', () => {
     if (isErr(sent)) expect(sent.error.t).toBe('daily-limit-reached')
   })
 
-  it('should let user send code again after it has been over a day after they hit the daily limit', async () => {
+  test('should let user send code again after it has been over a day after they hit the daily limit', async () => {
     const sendCodeDailyLimit = 3
     let now = UnixMs.now()
     const f = await Fixture({
@@ -307,7 +307,7 @@ describe('VerifySMS', () => {
     expect(isOk(sent)).toBe(true)
   })
 
-  it('should only apply daily limit to a single phone number', async () => {
+  test('should only apply daily limit to a single phone number', async () => {
     const sendCodeDailyLimit = 3
 
     const f = await Fixture({
@@ -329,7 +329,7 @@ describe('VerifySMS', () => {
     expect(isOk(sent)).toBe(true)
   })
 
-  it('should only allow verifications to be used once', async () => {
+  test('should only allow verifications to be used once', async () => {
     const f = await Fixture()
     await f.verifySMS.sendCode({
       ...f,
@@ -350,7 +350,7 @@ describe('VerifySMS', () => {
     if (isErr(secondVerification)) expect(secondVerification.error.t).toBe('verification-already-verified')
   })
 
-  it('should hash sent codes stored in the database', async () => {
+  test('should hash sent codes stored in the database', async () => {
     const f = await Fixture({
       hashing: await Hashing({
         t: 'node',
@@ -386,7 +386,7 @@ describe('VerifySMS', () => {
     expect(codeHash).not.toEqual(code)
   })
 
-  it('should return database error when database returns an error', async () => {
+  test('should return database error when database returns an error', async () => {
     const f = await Fixture({
       verificationDb: VerificationDb({
         t: 'always-err',

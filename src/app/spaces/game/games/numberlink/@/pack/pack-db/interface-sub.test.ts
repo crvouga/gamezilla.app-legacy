@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Pack } from '../pack'
 import { Config, PackDb } from './impl'
@@ -20,7 +20,7 @@ const Fixtures = async () => {
 }
 
 describe(`PackDb.sub`, () => {
-  it('should be able to subscribe to packs', async () => {
+  test('should be able to subscribe to packs', async () => {
     for (const f of await Fixtures()) {
       const pack = await Pack.random()
       let results: Pack[] = []

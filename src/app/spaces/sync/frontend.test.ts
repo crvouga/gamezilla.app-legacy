@@ -15,7 +15,7 @@ import { describe } from 'node:test'
 // }
 
 // describe('SpacesSyncFrontend', () => {
-//   // it('should record profiles when received from backend', async () => {
+//   // test('should record profiles when received from backend', async () => {
 //   //   const f = await Fixture()
 //   //   const someProfile = await UserProfile.random()
 //   //   const someProfiles: {
@@ -34,7 +34,7 @@ import { describe } from 'node:test'
 //   //   ])
 //   //   expect(AddProfilesCmd.did(output, Object.values(someProfiles))).toBe(true)
 //   // })
-//   // it('should merge space received from backend', async () => {
+//   // test('should merge space received from backend', async () => {
 //   //   const f = await Fixture()
 //   //   const someSpace = makeSpace({
 //   //     spaceId: SpaceId.generate(),
@@ -55,7 +55,7 @@ import { describe } from 'node:test'
 //   //   })
 //   //   expect(listed.some((space) => Space.isEqual(space, someSpace))).toBe(true)
 //   // })
-//   // it("should merge current user's space when received from backend", async () => {
+//   // test("should merge current user's space when received from backend", async () => {
 //   //   const f = await Fixture()
 //   //   const spaceId = SpaceId.generate()
 //   //   const someStartedSpace = makeSpace({
@@ -74,7 +74,7 @@ import { describe } from 'node:test'
 //   //   const currentUserSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)
 //   //   expect(currentUserSpaceId).toEqual(spaceId)
 //   // })
-//   // it("should sync current user's space when backend connects if in space", async () => {
+//   // test("should sync current user's space when backend connects if in space", async () => {
 //   //   const f = await Fixture()
 //   //   const output = f.update(f.initial, [
 //   //     {
@@ -94,7 +94,7 @@ import { describe } from 'node:test'
 //   //     ),
 //   //   ).toBe(true)
 //   // })
-//   // it('should send events to the backend like user joined space', async () => {
+//   // test('should send events to the backend like user joined space', async () => {
 //   //   const f = await Fixture()
 //   //   const spaceId = SpaceId.generate()
 //   //   const output = f.update(f.initial, [
@@ -119,7 +119,7 @@ import { describe } from 'node:test'
 //   //     ),
 //   //   ).toBe(true)
 //   // })
-//   // it('should send events to the backend like user ended space', async () => {
+//   // test('should send events to the backend like user ended space', async () => {
 //   //   const f = await Fixture()
 //   //   const spaceId = SpaceId.generate()
 //   //   const output = f.update(f.initial, [

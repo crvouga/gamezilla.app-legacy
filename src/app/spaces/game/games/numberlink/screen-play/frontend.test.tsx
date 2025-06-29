@@ -1,4 +1,4 @@
-// import { describe, it } from 'vitest'
+// import { describe, test } from 'vitest'
 // import { FixturePlayFrontend } from './@/frontend/fixture'
 
 // const Fixture = async () => {
@@ -8,8 +8,8 @@
 //   }
 // }
 
-// describe('Test', () => {
-//   it('should fetch puzzles in pack when on puzzle screen', async () => {
+// describe('ScreenPlayFrontend', () => {
+//   test('should fetch puzzles in pack when on puzzle screen', async () => {
 //     const f = await Fixture()
 //     f
 //     //

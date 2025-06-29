@@ -1,18 +1,18 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { camelStringToKebabString, styles } from './style'
 
 describe('styles', () => {
-  it('should convert kebab-case to camelCase', () => {
+  test('should convert kebab-case to camelCase', () => {
     const kebab = 'transition-delay'
     const camel = 'transitionDelay'
     expect(camelStringToKebabString(camel)).toBe(kebab)
   })
-  it('should convert camelCase to kebab-case', () => {
+  test('should convert camelCase to kebab-case', () => {
     const kebab = 'transition-delay'
     const camel = 'transitionDelay'
     expect(camelStringToKebabString(camel)).toBe(kebab)
   })
-  it('should convert kebab-case to camelCase when rendering with React', () => {
+  test('should convert kebab-case to camelCase when rendering with React', () => {
     expect(
       styles(
         {
@@ -25,7 +25,7 @@ describe('styles', () => {
     })
   })
 
-  it('should not convert kebab-case to camelCase when rendering with Inferno', () => {
+  test('should not convert kebab-case to camelCase when rendering with Inferno', () => {
     expect(
       styles(
         {

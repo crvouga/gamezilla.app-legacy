@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Logger } from '~/@/logger'
 import { Result } from '~/@/result'
 import { WithSolutions } from '.'
@@ -24,8 +24,8 @@ const Fixtures = async function* () {
   }
 }
 
-describe('Test', () => {
-  it.todo('should assoc solutions before put', async () => {
+describe('WithSolutions', () => {
+  test.todo('should assoc solutions before put', async () => {
     for await (const f of await Fixtures()) {
       const before = Result.unwrap(await f.puzzleDb.get(f.puzzleWithEmptySolutions.id))
       await f.withSolutions.put(f.puzzleWithEmptySolutions)
@@ -35,7 +35,7 @@ describe('Test', () => {
     }
   })
 
-  it.todo('should assoc solutions before get', async () => {
+  test.todo('should assoc solutions before get', async () => {
     for await (const f of await Fixtures()) {
       const before = Result.unwrap(await f.withSolutions.get(f.puzzleWithEmptySolutions.id))
       await f.puzzleDb.put(f.puzzleWithEmptySolutions)
@@ -45,7 +45,7 @@ describe('Test', () => {
     }
   })
 
-  it.todo('should assoc solutions before list', async () => {
+  test.todo('should assoc solutions before list', async () => {
     for await (const f of await Fixtures()) {
       const before = Result.unwrap(
         await f.puzzleDb.query({

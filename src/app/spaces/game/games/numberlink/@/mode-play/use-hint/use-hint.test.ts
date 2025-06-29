@@ -1,4 +1,4 @@
-// import { describe, expect, it, test } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { pipe } from '~/@/function/pipe'
 // import { Logger } from '~/@/logger'
 // import { UseHint } from '.'
@@ -10,7 +10,7 @@
 
 // const Fixture = FixtureModePlayUseHint
 
-// describe('Test', () => {
+// describe('UseHint', () => {
 //   test('hint', async () => {
 //     const f = await Fixture()
 //     const after = f.update(f.init, [
@@ -107,7 +107,7 @@
 //     expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
 //   })
 
-//   it('should not create branching in pipes after using a hint', async () => {
+//   test('should not create branching in pipes after using a hint', async () => {
 //     const f = await Fixture({
 //       ctxNumberlink: VariantGridShorthand.toGrid([
 //         ['A', 'a', 'a', ' '],
@@ -131,7 +131,7 @@
 //     expect(Numberlink.hasMultipleDeadEndPipelines(derived)).toBe(false)
 //   })
 
-//   it('should work even with flipped terminal', async () => {
+//   test('should work even with flipped terminal', async () => {
 //     const f = await Fixture({
 //       ctxNumberlink: VariantGridShorthand.toGrid([
 //         ['A', ' ', ' '],
@@ -206,7 +206,7 @@
 //     expect(Numberlink.toPipelineFromGroupId(after, 'B').length).toEqual(0)
 //   })
 
-//   it('should NOT branch pipelines after using hint', async () => {
+//   test('should NOT branch pipelines after using hint', async () => {
 //     const f = await Fixture({
 //       ctxNumberlink: VariantGridShorthand.toGrid([
 //         ['A', ' ', ' '],
@@ -238,7 +238,7 @@
 //     expect(Numberlink.hasBranchingPipelines(after)).toBe(false)
 //   })
 
-//   it('should never change the positions of the terminals when using a hint', async () => {
+//   test('should never change the positions of the terminals when using a hint', async () => {
 //     const f = await Fixture({
 //       ctxNumberlink: VariantGridShorthand.toGrid([
 //         ['A', ' ', ' '],
@@ -274,7 +274,7 @@
 //     expect(Numberlink.toTerminals(before)).toEqual(Numberlink.toTerminals(after))
 //   })
 
-//   it('should update terminal orientation if needed', async () => {
+//   test('should update terminal orientation if needed', async () => {
 //     const solution = VariantGridShorthand.toGrid([
 //       ['A', ' ', ' '],
 //       ['a', ' ', ' '],
@@ -302,7 +302,7 @@
 //     expect(expected).toEqual(actual)
 //   })
 
-//   it('should work when terminal groups have gaps in sequence', async () => {
+//   test('should work when terminal groups have gaps in sequence', async () => {
 //     const f = await Fixture({
 //       ctxNumberlink: VariantGridShorthand.toGrid([
 //         ['A', ' ', 'C'],

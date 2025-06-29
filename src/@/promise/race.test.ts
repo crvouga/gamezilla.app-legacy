@@ -1,10 +1,10 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { race } from './race'
 import { sleep } from './sleep'
 import { TimeSpan } from '../time/time-span'
 
 describe('race', () => {
-  it('should return the first promise that resolves', async () => {
+  test('should return the first promise that resolves', async () => {
     const controller = new AbortController()
     const signal = controller.signal
     const result = await race(signal, {
@@ -24,7 +24,7 @@ describe('race', () => {
     })
   })
 
-  it('should abort other promises when one resolves', async () => {
+  test('should abort other promises when one resolves', async () => {
     const controller = new AbortController()
     const signal = controller.signal
     const abortedSignals: AbortSignal[] = []
@@ -48,7 +48,7 @@ describe('race', () => {
     expect(abortedSignals[0]?.aborted).toBe(true)
   })
 
-  it('should handle rejected promises', async () => {
+  test('should handle rejected promises', async () => {
     const controller = new AbortController()
     const signal = controller.signal
     const result = await race(signal, {
@@ -68,7 +68,7 @@ describe('race', () => {
     })
   })
 
-  it('should work with multiple promises', async () => {
+  test('should work with multiple promises', async () => {
     const controller = new AbortController()
     const signal = controller.signal
     const result = await race(signal, {

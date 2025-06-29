@@ -1,4 +1,4 @@
-// import { describe, expect, it, test } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { withEventMeta } from '~/@/event-sourced/event'
 // import { SpaceId } from '~/app/@/data/space-id'
 // import { UserId } from '~/app/@/data/user-id'
@@ -72,7 +72,7 @@ import { describe } from 'node:test'
 //     expect(ShowToastCmd.did(output, (toast) => toast.text === expectedText)).toBe(true)
 //   })
 
-//   it('should should toast of other user leaving space', async () => {
+//   test('should should toast of other user leaving space', async () => {
 //     const f = await Fixture()
 
 //     const output = f.update(f.initial, [
@@ -93,7 +93,7 @@ import { describe } from 'node:test'
 //     expect(ShowToastCmd.did(output)).toBe(true)
 //   })
 
-//   it('should join space when clicking join space button', async () => {
+//   test('should join space when clicking join space button', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [
 //       {
@@ -109,7 +109,7 @@ import { describe } from 'node:test'
 //     expect(Spaces.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser!.userId)).toEqual(f.spaceId)
 //   })
 
-//   it('current user leaving joined space', async () => {
+//   test('current user leaving joined space', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [
 //       {
@@ -124,7 +124,7 @@ import { describe } from 'node:test'
 //     expect(Spaces.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser!.userId)).toEqual(null)
 //   })
 
-//   it('preventing joining a space if already in a space', async () => {
+//   test('preventing joining a space if already in a space', async () => {
 //     const f = await Fixture()
 //     const spaceA = SpaceId.generate()
 //     const spaceB = SpaceId.generate()
@@ -144,7 +144,7 @@ import { describe } from 'node:test'
 //     expect(ShowErrorSmall.did(output)).toBe(true)
 //   })
 
-//   it('opens person details surface when clicking person list item', async () => {
+//   test('opens person details surface when clicking person list item', async () => {
 //     const f = await Fixture()
 //     const someUserId = UserId.generate()
 //     const output = f.update(f.initial, [{ msg: { t: 'join-space.clicked-person-list-item', userId: someUserId } }])
@@ -152,7 +152,7 @@ import { describe } from 'node:test'
 //     expect(PlaySoundCmd.did(output)).toBe(true)
 //   })
 
-//   it('toggles person details surface when clicking the same person list item again', async () => {
+//   test('toggles person details surface when clicking the same person list item again', async () => {
 //     const f = await Fixture()
 //     const someUserId = UserId.generate()
 //     const before = f.update(f.initial, [{ msg: { t: 'join-space.clicked-person-list-item', userId: someUserId } }])
@@ -162,7 +162,7 @@ import { describe } from 'node:test'
 //     expect(PlaySoundCmd.did(after)).toBe(true)
 //   })
 
-//   it('closes person details surface when closing surface', async () => {
+//   test('closes person details surface when closing surface', async () => {
 //     const f = await Fixture()
 //     const someUserId = UserId.generate()
 //     const before = f.update(f.initial, [{ msg: { t: 'join-space.clicked-person-list-item', userId: someUserId } }])
@@ -172,7 +172,7 @@ import { describe } from 'node:test'
 //     expect(PlaySoundCmd.did(after)).toBe(true)
 //   })
 
-//   it('pushes route to profile page when opening person details', async () => {
+//   test('pushes route to profile page when opening person details', async () => {
 //     const f = await Fixture()
 //     const someUserId = UserId.generate()
 //     const output = f.update(f.initial, [{ msg: { t: 'join-space.opened-person-details', userId: someUserId } }])

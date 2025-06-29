@@ -40,7 +40,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe('Test', () => {
+describe('SolutionsDb', () => {
   test('get and put', async () => {
     for (const f of await Fixtures()) {
       const numberlink = VariantGridShorthand.toGrid([

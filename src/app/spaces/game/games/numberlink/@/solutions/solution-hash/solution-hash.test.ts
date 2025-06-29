@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Numberlink } from '../../numberlink'
 import { EdgeId } from '../../numberlink/edge-id'
 import { VariantGrid, VariantGridShorthand } from '../../variant/grid'
@@ -44,7 +44,7 @@ describe('SolutionHash', () => {
     expect(hashA).toEqual(hashB)
   })
 
-  it('should be sensitive to edges', () => {
+  test('should be sensitive to edges', () => {
     const modelA = VariantGridShorthand.toGrid([
       ['A', ' ', ' '],
       [' ', ' ', ' '],
@@ -57,7 +57,7 @@ describe('SolutionHash', () => {
     expect(hashA).not.toEqual(hashB)
   })
 
-  it('should not crash when missing intermediate terminal groups', () => {
+  test('should not crash when missing intermediate terminal groups', () => {
     const model = VariantGridShorthand.toGrid([
       ['A', ' ', 'C', ' '],
       [' ', ' ', ' ', ' '],

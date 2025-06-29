@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { PhoneNumber } from '~/@/phone-number'
 import { isErr, Ok, unwrap } from '~/@/result'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -19,14 +19,14 @@ const Fixture = async () => {
 }
 
 describe('LoginWithSMSBackend', () => {
-  it('should send code successfully', async () => {
+  test('should send code successfully', async () => {
     const f = await Fixture()
     const phoneNumber = PhoneNumber.random()
     const result = await LoginWithSMSBackend.sendCode({ ...f, phoneNumber })
     expect(result).toEqual(Ok({ phoneNumber }))
   })
 
-  it('should create new account on successful verification', async () => {
+  test('should create new account on successful verification', async () => {
     const f = await Fixture()
     const phoneNumber = PhoneNumber.random()
 
@@ -52,7 +52,7 @@ describe('LoginWithSMSBackend', () => {
     expect(userAccount.phoneNumber).toBe(phoneNumber)
   })
 
-  it('should use existing account on verification', async () => {
+  test('should use existing account on verification', async () => {
     const f = await Fixture()
     const userAccount = UserAccount.randomNormal()
     unwrap(await f.ctx.userAccountDb.upsert(userAccount))
@@ -69,7 +69,7 @@ describe('LoginWithSMSBackend', () => {
     expect(after).toEqual(userAccount)
   })
 
-  it.todo('should use existing profile on verification', async () => {
+  test.todo('should use existing profile on verification', async () => {
     const f = await Fixture()
     const userAccount = UserAccount.randomNormal()
     unwrap(await f.ctx.userAccountDb.upsert(userAccount))

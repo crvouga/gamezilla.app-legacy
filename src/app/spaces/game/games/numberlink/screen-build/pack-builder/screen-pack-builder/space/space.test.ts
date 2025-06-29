@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, test } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 import { assertNotNullish } from '~/@/assert'
 import { PackPuzzleGridUI } from '../../../../@/pack/pack-puzzle-grid-ui'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
@@ -7,7 +7,7 @@ import { ScreenPackBuildSpace } from './space'
 
 const Fixture = ScreenPackBuildSpaceFixture
 
-describe('Test', () => {
+describe('ScreenPackBuildSpace', () => {
   let f: Awaited<ReturnType<typeof Fixture>>
 
   beforeEach(async () => {
@@ -15,7 +15,7 @@ describe('Test', () => {
   })
 
   describe('puzzle grid', () => {
-    it('should be able to open add puzzle screen', async () => {
+    test('should be able to open add puzzle screen', async () => {
       const modelSpace = f.update(f.initial, [
         {
           t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
@@ -26,7 +26,7 @@ describe('Test', () => {
     })
 
     describe('slide management', () => {
-      it('should be on the correct slide index after exiting the puzzle screen', async () => {
+      test('should be on the correct slide index after exiting the puzzle screen', async () => {
         f = await Fixture({
           puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
         })
@@ -50,7 +50,7 @@ describe('Test', () => {
         expect(actual).toBe(expected)
       })
 
-      it('should allow user to change slide', async () => {
+      test('should allow user to change slide', async () => {
         f = await Fixture({
           puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
         })
@@ -66,7 +66,7 @@ describe('Test', () => {
         expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(1)
       })
 
-      it('should prevent slide index from going out of bounds', async () => {
+      test('should prevent slide index from going out of bounds', async () => {
         f = await Fixture({
           puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
         })
@@ -84,7 +84,7 @@ describe('Test', () => {
   })
 
   describe('puzzle opening behavior', () => {
-    it('should open the correct level when opening puzzle screen', async () => {
+    test('should open the correct level when opening puzzle screen', async () => {
       f = await Fixture({
         puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
       })
@@ -102,7 +102,7 @@ describe('Test', () => {
       ).toBe(true)
     })
 
-    it('should open the correct level when opening puzzle screen event when there is duplicate puzzles in the pack', async () => {
+    test('should open the correct level when opening puzzle screen event when there is duplicate puzzles in the pack', async () => {
       const puzzle = await Puzzle.random()
       f = await Fixture({
         appendDuplicatesOf: puzzle,
@@ -121,7 +121,7 @@ describe('Test', () => {
       )
     })
 
-    it('should not open pack item if puzzle is not at index given', async () => {
+    test('should not open pack item if puzzle is not at index given', async () => {
       const puzzle = await Puzzle.random()
       f = await Fixture({
         appendDuplicatesOf: puzzle,
@@ -140,7 +140,7 @@ describe('Test', () => {
       expect(modelSpace?.screen.t === 'screen-puzzle-grid').toBe(true)
     })
 
-    it('should open not-found puzzle', async () => {
+    test('should open not-found puzzle', async () => {
       const modelSpace = f.update(f.initial, [
         {
           t: 'screen-pack-builder.user-clicked-pack-item',

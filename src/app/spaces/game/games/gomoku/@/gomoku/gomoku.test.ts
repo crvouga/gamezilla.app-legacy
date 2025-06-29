@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { type Board, setStone, type Stone, toWins } from './gomoku'
 
 type Matrix = (' ' | 'b' | 'w')[][]
@@ -31,8 +31,8 @@ const toBoard = (matrix: Matrix): Board => {
   return board
 }
 
-describe('Test', () => {
-  it('should detect one horizontal win', async () => {
+describe('Gomoku', () => {
+  test('should detect one horizontal win', async () => {
     const board = toBoard([
       [w, w, w, w, w],
       [b, b, b, b, _],
@@ -44,7 +44,7 @@ describe('Test', () => {
     expect(wins.length).toBe(1)
   })
 
-  it('should detect one vertical win', async () => {
+  test('should detect one vertical win', async () => {
     const board = toBoard([
       [w, b, _, _, _],
       [w, b, _, _, _],
@@ -56,7 +56,7 @@ describe('Test', () => {
     expect(wins.length).toBe(1)
   })
 
-  it('should detect one left diagonal win', async () => {
+  test('should detect one left diagonal win', async () => {
     const board = toBoard([
       [w, _, _, _, _],
       [b, w, _, _, _],
@@ -68,7 +68,7 @@ describe('Test', () => {
     expect(wins.length).toBe(1)
   })
 
-  it('should detect one right diagonal win', async () => {
+  test('should detect one right diagonal win', async () => {
     const board = toBoard([
       [_, _, _, _, w],
       [_, _, _, w, b],
@@ -80,7 +80,7 @@ describe('Test', () => {
     expect(wins.length).toBe(1)
   })
 
-  it('should detect two wins', async () => {
+  test('should detect two wins', async () => {
     const board = toBoard([
       [w, w, w, w, w],
       [b, b, b, b, b],
@@ -92,7 +92,7 @@ describe('Test', () => {
     expect(wins.length).toBe(2)
   })
 
-  it('should detect no wins', async () => {
+  test('should detect no wins', async () => {
     const board = toBoard([
       [w, w, w, w, b],
       [b, b, b, b, w],

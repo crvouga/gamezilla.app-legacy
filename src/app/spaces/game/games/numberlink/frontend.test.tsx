@@ -1,4 +1,4 @@
-// import { describe, expect, it } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { withEventMeta } from '~/@/event-sourced/event'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 // import { FixtureNumberlinkFrontend } from './@/frontend/fixture'
@@ -10,8 +10,8 @@
 //   }
 // }
 
-// describe('Test', () => {
-//   it('should play a sound when selecting play mode', async () => {
+// describe('NumberlinkFrontend', () => {
+//   test('should play a sound when selecting play mode', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [
 //       {
@@ -25,7 +25,7 @@
 //     expect(PlaySoundCmd.count(output)).toEqual(1)
 //   })
 
-//   it('should play a sound when selecting create mode', async () => {
+//   test('should play a sound when selecting create mode', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [
 //       {
@@ -39,7 +39,7 @@
 //     expect(PlaySoundCmd.count(output)).toEqual(1)
 //   })
 
-//   it('should not play a sound when selecting no mode', async () => {
+//   test('should not play a sound when selecting no mode', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [
 //       {

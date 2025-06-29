@@ -1,15 +1,15 @@
-import { describe, it, expect } from 'vitest'
+import { describe, test, expect } from 'vitest'
 import * as SignJWT from './sign-jwt'
 
 describe('SignJWT', () => {
   describe('createJWT', () => {
-    it('should create a JWT with default values', () => {
+    test('should create a JWT with default values', () => {
       const jwt = SignJWT.createJWT()
       expect(jwt.header).toEqual({ alg: 'HS256', typ: 'JWT' })
       expect(jwt.payload).toEqual({})
     })
 
-    it('should create a JWT with provided payload', () => {
+    test('should create a JWT with provided payload', () => {
       const payload = { foo: 'bar' }
       const jwt = SignJWT.createJWT(payload)
       expect(jwt.header).toEqual({ alg: 'HS256', typ: 'JWT' })
@@ -18,7 +18,7 @@ describe('SignJWT', () => {
   })
 
   describe('setProtectedHeader', () => {
-    it('should update the header', () => {
+    test('should update the header', () => {
       const jwt = SignJWT.createJWT()
       const updated = SignJWT.setProtectedHeader(jwt, { kid: 'test-key' })
       expect(updated.header).toEqual({ alg: 'HS256', typ: 'JWT', kid: 'test-key' })
@@ -26,7 +26,7 @@ describe('SignJWT', () => {
   })
 
   describe('setSubject', () => {
-    it('should set the subject claim', () => {
+    test('should set the subject claim', () => {
       const jwt = SignJWT.createJWT()
       const updated = SignJWT.setSubject(jwt, 'user123')
       expect(updated.payload.sub).toBe('user123')
@@ -34,7 +34,7 @@ describe('SignJWT', () => {
   })
 
   describe('setIssuedAt', () => {
-    it('should set the issued at claim with current time when no value provided', () => {
+    test('should set the issued at claim with current time when no value provided', () => {
       const jwt = SignJWT.createJWT()
       const before = Math.floor(Date.now() / 1000)
       const updated = SignJWT.setIssuedAt(jwt)
@@ -43,7 +43,7 @@ describe('SignJWT', () => {
       expect(updated.payload.iat).toBeLessThanOrEqual(after)
     })
 
-    it('should set the issued at claim with provided value', () => {
+    test('should set the issued at claim with provided value', () => {
       const jwt = SignJWT.createJWT()
       const iat = 1234567890
       const updated = SignJWT.setIssuedAt(jwt, iat)
@@ -52,7 +52,7 @@ describe('SignJWT', () => {
   })
 
   describe('setIssuer', () => {
-    it('should set the issuer claim', () => {
+    test('should set the issuer claim', () => {
       const jwt = SignJWT.createJWT()
       const updated = SignJWT.setIssuer(jwt, 'https://example.com')
       expect(updated.payload.iss).toBe('https://example.com')
@@ -60,13 +60,13 @@ describe('SignJWT', () => {
   })
 
   describe('setAudience', () => {
-    it('should set the audience claim with a string', () => {
+    test('should set the audience claim with a string', () => {
       const jwt = SignJWT.createJWT()
       const updated = SignJWT.setAudience(jwt, 'api:access')
       expect(updated.payload.aud).toBe('api:access')
     })
 
-    it('should set the audience claim with an array', () => {
+    test('should set the audience claim with an array', () => {
       const jwt = SignJWT.createJWT()
       const audiences = ['api:access', 'api:admin']
       const updated = SignJWT.setAudience(jwt, audiences)
@@ -75,35 +75,35 @@ describe('SignJWT', () => {
   })
 
   describe('setExpirationTime', () => {
-    it('should set expiration time with a number', () => {
+    test('should set expiration time with a number', () => {
       const jwt = SignJWT.createJWT()
       const exp = 1234567890
       const updated = SignJWT.setExpirationTime(jwt, exp)
       expect(updated.payload.exp).toBe(exp)
     })
 
-    it('should set expiration time with a duration string (seconds)', () => {
+    test('should set expiration time with a duration string (seconds)', () => {
       const jwt = SignJWT.createJWT()
       const now = Math.floor(Date.now() / 1000)
       const updated = SignJWT.setExpirationTime(jwt, '30s')
       expect(updated.payload.exp).toBeCloseTo(now + 30, 0)
     })
 
-    it('should set expiration time with a duration string (minutes)', () => {
+    test('should set expiration time with a duration string (minutes)', () => {
       const jwt = SignJWT.createJWT()
       const now = Math.floor(Date.now() / 1000)
       const updated = SignJWT.setExpirationTime(jwt, '5m')
       expect(updated.payload.exp).toBeCloseTo(now + 5 * 60, 0)
     })
 
-    it('should set expiration time with a duration string (hours)', () => {
+    test('should set expiration time with a duration string (hours)', () => {
       const jwt = SignJWT.createJWT()
       const now = Math.floor(Date.now() / 1000)
       const updated = SignJWT.setExpirationTime(jwt, '2h')
       expect(updated.payload.exp).toBeCloseTo(now + 2 * 3600, 0)
     })
 
-    it('should set expiration time with a duration string (days)', () => {
+    test('should set expiration time with a duration string (days)', () => {
       const jwt = SignJWT.createJWT()
       const now = Math.floor(Date.now() / 1000)
       const updated = SignJWT.setExpirationTime(jwt, '1d')
@@ -112,14 +112,14 @@ describe('SignJWT', () => {
   })
 
   describe('sign', () => {
-    it('should sign a JWT with HS256 algorithm using a string key', async () => {
+    test('should sign a JWT with HS256 algorithm using a string key', async () => {
       const jwt = SignJWT.createJWT({ sub: 'test' })
       const token = await SignJWT.sign(jwt, 'secret')
       expect(typeof token).toBe('string')
       expect(token.split('.').length).toBe(3)
     })
 
-    it('should throw an error for unsupported algorithms', async () => {
+    test('should throw an error for unsupported algorithms', async () => {
       const jwt = SignJWT.createJWT({ sub: 'test' })
       const jwtWithUnsupportedAlg = SignJWT.setProtectedHeader(jwt, { alg: 'UNSUPPORTED' })
       await expect(SignJWT.sign(jwtWithUnsupportedAlg, 'secret')).rejects.toThrow('Unsupported algorithm')
@@ -127,7 +127,7 @@ describe('SignJWT', () => {
   })
 
   describe('chaining methods', () => {
-    it('should support method chaining for building a complete JWT', async () => {
+    test('should support method chaining for building a complete JWT', async () => {
       const now = Math.floor(Date.now() / 1000)
       let jwt = SignJWT.createJWT()
       jwt = SignJWT.setSubject(jwt, 'user123')

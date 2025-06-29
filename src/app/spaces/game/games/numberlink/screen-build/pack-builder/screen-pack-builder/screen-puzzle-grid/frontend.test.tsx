@@ -14,7 +14,7 @@
 //   }
 //   return { ...f, renderMsgs, dispatch }
 // }
-// describe('Test', () => {
+// describe('ScreenPuzzleGridFrontend', () => {
 //   test('play sound opening add puzzle screen', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, [

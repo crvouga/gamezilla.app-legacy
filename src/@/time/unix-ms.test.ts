@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { UnixMs } from './unix-ms'
 
 describe('UnixMs', () => {
-  it('should be able to be precise to the second', () => {
+  test('should be able to be precise to the second', () => {
     const now = UnixMs.now({
       precision: 'minutes',
     })

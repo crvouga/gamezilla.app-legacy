@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { PhoneNumber } from '~/@/phone-number'
 import { Ok, Result, unwrap } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -36,8 +36,8 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe('Test', () => {
-  it('should be able to insert accounts', async () => {
+describe('UserAccountDb', () => {
+  test('should be able to insert accounts', async () => {
     for (const f of await Fixtures()) {
       const inserted = await f.userAccountDb.upsert({
         userId: UserId.generate(),
@@ -51,7 +51,7 @@ describe('Test', () => {
     }
   })
 
-  it('should be able to find account by user id', async () => {
+  test('should be able to find account by user id', async () => {
     for (const f of await Fixtures()) {
       const account: UserAccount = {
         userId: UserId.generate(),
@@ -70,7 +70,7 @@ describe('Test', () => {
     }
   })
 
-  it('should be able to find account by phone number', async () => {
+  test('should be able to find account by phone number', async () => {
     for (const f of await Fixtures()) {
       const phoneNumber = PhoneNumber.random()
       const account: UserAccount = {
@@ -90,7 +90,7 @@ describe('Test', () => {
     }
   })
 
-  it('should find null if finding account by user id and null is passed as user id', async () => {
+  test('should find null if finding account by user id and null is passed as user id', async () => {
     for (const f of await Fixtures()) {
       const found = await f.userAccountDb.findOneByUserId({
         userId: null,
@@ -99,7 +99,7 @@ describe('Test', () => {
     }
   })
 
-  it("should find null if user id doesn't exist", async () => {
+  test("should find null if user id doesn't exist", async () => {
     for (const f of await Fixtures()) {
       const found = await f.userAccountDb.findOneByUserId({
         userId: UserId.generate(),
@@ -108,7 +108,7 @@ describe('Test', () => {
     }
   })
 
-  it('should upsert an account', async () => {
+  test('should upsert an account', async () => {
     for (const f of await Fixtures()) {
       const account = UserAccount.random()
       const inserted = await f.userAccountDb.upsert(account)

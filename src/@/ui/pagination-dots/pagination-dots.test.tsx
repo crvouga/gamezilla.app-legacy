@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Sub } from '~/@/sub'
 import { PAGINATION_DOTS_TEST_ID, PaginationDots, toPaginationDotSelector } from '~/@/ui/pagination-dots'
 import { BaseFixture } from '../fixture'
@@ -11,14 +11,14 @@ const Fixture = async () => {
 }
 
 describe('PaginationDots', () => {
-  it('should render pagination dots if there is more than one slide', async () => {
+  test('should render pagination dots if there is more than one slide', async () => {
     const f = await Fixture()
     f.render(<PaginationDots activeIndex={0} count={2} />)
     const nodes = await f.client.query(`[data-testid="${PAGINATION_DOTS_TEST_ID}"] *`)
     expect(nodes.length).toEqual(2)
   })
 
-  it('should NOT render pagination dots if there is only one slide', async () => {
+  test('should NOT render pagination dots if there is only one slide', async () => {
     const f = await Fixture()
     f.render(<PaginationDots activeIndex={0} count={1} />)
     const nodes = await f.client.query(`[data-testid="${PAGINATION_DOTS_TEST_ID}"]`)

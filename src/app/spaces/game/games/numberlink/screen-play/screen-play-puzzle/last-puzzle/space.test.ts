@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { FixtureScreenPuzzlePlaySpace } from '../@/fixture/space'
 
 const Fixture = async () => {
@@ -10,7 +10,7 @@ const Fixture = async () => {
 }
 
 describe('NumberLinkScreenPlayPuzzleLastPuzzleSpace', () => {
-  it('should exit to pack list after clicking "select next pack" button', async () => {
+  test('should exit to pack list after clicking "select next pack" button', async () => {
     const f = await Fixture()
     const before = f.update(f.init, f.solvePuzzleMsgs)
     const after = f.update(before, [

@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { ScreenBuildSpaceFixture } from './@/fixture/space'
 import { Pack } from '../@/pack/pack'
 import { UserId } from '~/app/@/data/user-id'
@@ -33,7 +33,7 @@ describe('NumberLinkScreenBuildSpace', () => {
     expect(after.screen.t).toEqual('screen-pack-builder-open')
   })
 
-  it('should open pack builder after user creates a new pack', async () => {
+  test('should open pack builder after user creates a new pack', async () => {
     const f = await Fixture()
     const pack = await Pack.random()
     const modelSpace = f.update(f.initial, [

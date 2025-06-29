@@ -1,9 +1,9 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { s } from './index'
 import { Ok } from '../result'
 
 describe('Schema', () => {
-  it('should be ok parsing json', async () => {
+  test('should be ok parsing json', async () => {
     const validJson: unknown[] = [
       1,
       'string',

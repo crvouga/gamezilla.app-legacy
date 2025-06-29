@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { SMS } from './impl'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Logger } from '../logger'
@@ -34,7 +34,7 @@ const Fixture = async () => {
 }
 
 describe('SMS', () => {
-  it('should be ok sending sms message', async () => {
+  test('should be ok sending sms message', async () => {
     const f = await Fixture()
     const sent = await f.sms.sendMessage({
       message: 'Hello, World!',

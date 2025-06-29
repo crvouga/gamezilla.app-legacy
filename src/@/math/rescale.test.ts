@@ -1,8 +1,8 @@
-import { it, expect, describe } from 'vitest'
+import { test, expect, describe } from 'vitest'
 import { rescale } from './rescale'
 
 describe('rescale', async () => {
-  it('rescales', async () => {
+  test('rescales', async () => {
     expect(
       rescale({
         value: 10,

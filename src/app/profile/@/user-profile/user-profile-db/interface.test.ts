@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Logger } from '~/@/logger'
 import { Ok, unwrap } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -45,7 +45,7 @@ const Fixtures = async () => {
 }
 
 describe('ProfileDb', () => {
-  it('should work', async () => {
+  test('should work', async () => {
     for (const f of await Fixtures()) {
       const profile = await UserProfile.random()
       const before = await f.profileDb.findByUserIds([profile.userId])
@@ -57,7 +57,7 @@ describe('ProfileDb', () => {
     }
   })
 
-  it('should upsert a profile', async () => {
+  test('should upsert a profile', async () => {
     for (const f of await Fixtures()) {
       const profile = await UserProfile.random()
       const upsertResult = await f.profileDb.put(profile)

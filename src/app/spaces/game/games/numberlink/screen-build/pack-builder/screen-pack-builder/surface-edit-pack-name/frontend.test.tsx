@@ -14,7 +14,7 @@
 //   return { ...f, renderMsgs, dispatch }
 // }
 
-// describe('Test', () => {
+// describe('SurfaceEditPackNameFrontend', () => {
 //   test('sound open drawer', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [

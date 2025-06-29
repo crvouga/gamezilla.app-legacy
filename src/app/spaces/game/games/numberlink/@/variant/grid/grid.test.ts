@@ -1,10 +1,10 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { eq } from '~/@/equals/equals'
 import { VariantGrid, VariantGridDimensions, VariantGridShorthand } from '.'
 import { Numberlink } from '../../numberlink'
 
-describe('Test', () => {
-  it('should initialize the model', () => {
+describe('Grid', () => {
+  test('should initialize the model', () => {
     const initial = VariantGrid.init({
       dimensions: VariantGridDimensions.init({
         height: 3,
@@ -14,7 +14,7 @@ describe('Test', () => {
     expect(VariantGrid.Model.parse(initial).t).toBe('ok')
   })
 
-  it.skip('should initialize the model quickly', () => {
+  test.skip('should initialize the model quickly', () => {
     const start = process.hrtime()
 
     VariantGrid.init({

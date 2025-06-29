@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { s } from '..'
 
 describe('schema', () => {
-  it('should parse object', () => {
+  test('should parse object', () => {
     const schema = s.obj({
       name: s.str(),
       age: s.num(),
@@ -13,7 +13,7 @@ describe('schema', () => {
     expect(schema.parse(null).t).toEqual('err')
   })
 
-  it('should parse partial object', () => {
+  test('should parse partial object', () => {
     const schema = s.partial(
       s.obj({
         name: s.str(),

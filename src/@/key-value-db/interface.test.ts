@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Ok, Result } from '~/@/result'
 import { Runtime } from '~/@/runtime'
 import { s } from '~/@/schema'
@@ -148,7 +148,7 @@ const normalizeItemArrayResult = <T>(result: Result<T, Item[]>): Result<T, Item[
 }
 
 describe(`KeyValueDb`, () => {
-  it('should set correctly', async () => {
+  test('should set correctly', async () => {
     const fixtures = await Fixtures()
     for (const fixture of fixtures) {
       const item = randomItem()
@@ -171,7 +171,7 @@ describe(`KeyValueDb`, () => {
     }
   })
 
-  it('should set many correctly', async () => {
+  test('should set many correctly', async () => {
     const fixtures = await Fixtures()
     for (const fixture of fixtures) {
       const items = [randomItem(), randomItem(), randomItem()]
@@ -193,7 +193,7 @@ describe(`KeyValueDb`, () => {
     }
   })
 
-  it('should get correctly', async () => {
+  test('should get correctly', async () => {
     const fixtures = await Fixtures()
     for (const fixture of fixtures) {
       const item = randomItem()
@@ -206,7 +206,7 @@ describe(`KeyValueDb`, () => {
     }
   })
 
-  it('should get many correctly', async () => {
+  test('should get many correctly', async () => {
     const fixtures = await Fixtures()
     for (const fixture of fixtures) {
       const items = [randomItem(), randomItem(), randomItem()]
@@ -233,7 +233,7 @@ describe(`KeyValueDb`, () => {
     }
   })
 
-  it('should zap items correctly', async () => {
+  test('should zap items correctly', async () => {
     const fixtures = await Fixtures()
     for (const fixture of fixtures) {
       const item = randomItem()
@@ -251,7 +251,7 @@ describe(`KeyValueDb`, () => {
     }
   })
 
-  it.skip('should handle overwriting existing keys', async () => {
+  test.skip('should handle overwriting existing keys', async () => {
     const fixtures = await Fixtures()
     for (const fixture of fixtures) {
       const key = 'test-key'

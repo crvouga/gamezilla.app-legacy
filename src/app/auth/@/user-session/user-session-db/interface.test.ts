@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Logger } from '~/@/logger'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { unwrap } from '~/@/result'
@@ -71,7 +71,7 @@ const Fixtures = async () => {
 }
 
 describe('UserSessionDb', () => {
-  it('should insert correctly', async () => {
+  test('should insert correctly', async () => {
     for (const f of await Fixtures()) {
       const userSession = UserSession.random()
       if (!userSession.sessionId) throw new Error('test setup failed')
@@ -85,7 +85,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  it('should find session ids by user id', async () => {
+  test('should find session ids by user id', async () => {
     for (const f of await Fixtures()) {
       const userId = UserId.generate()
       const sessionIds = await f.userSessionDb.findSessionIdsByUserId(userId)
@@ -95,7 +95,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  it('should be able to zap by user id', async () => {
+  test('should be able to zap by user id', async () => {
     for (const f of await Fixtures()) {
       const userId = UserId.generate()
       const before = await f.userSessionDb.findSessionIdsByUserId(userId)
@@ -110,7 +110,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  it('should be able to zap by session id', async () => {
+  test('should be able to zap by session id', async () => {
     for (const f of await Fixtures()) {
       const userId = UserId.generate()
       const sessionId = f.sessions[0].sessionId
@@ -125,7 +125,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  it('should be able to zap by client session id', async () => {
+  test('should be able to zap by client session id', async () => {
     for (const f of await Fixtures()) {
       const userId = UserId.generate()
       const clientSessionId = ClientSessionId.generate()

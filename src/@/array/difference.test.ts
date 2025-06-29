@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { difference } from './difference'
 
 describe('difference', () => {
-  it('should return elements in first array that are not in second array using key function', () => {
+  test('should return elements in first array that are not in second array using key function', () => {
     const a = [
       { id: '1', name: 'Alice' },
       { id: '2', name: 'Bob' },
@@ -18,7 +18,7 @@ describe('difference', () => {
     expect(result).toEqual([{ id: '2', name: 'Bob' }])
   })
 
-  it('should return all elements when second array is empty', () => {
+  test('should return all elements when second array is empty', () => {
     const a = ['a', 'b', 'c']
     const b: string[] = []
 
@@ -27,7 +27,7 @@ describe('difference', () => {
     expect(result).toEqual(['a', 'b', 'c'])
   })
 
-  it('should return empty array when first array is empty', () => {
+  test('should return empty array when first array is empty', () => {
     const a: string[] = []
     const b = ['a', 'b', 'c']
 
@@ -36,7 +36,7 @@ describe('difference', () => {
     expect(result).toEqual([])
   })
 
-  it('should handle primitive values using identity function', () => {
+  test('should handle primitive values using identity function', () => {
     const a = ['a1', 'b1', 'c1', 'd1']
     const b = ['a1', 'c1']
 

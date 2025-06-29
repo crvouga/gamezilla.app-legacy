@@ -1,11 +1,11 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Err, Ok } from '../result'
 import { TimeSpan } from '../time/time-span'
 import { BackoffFunction } from './backoff-functions'
 import { Retry } from './retry'
 
 describe('Retry', () => {
-  it('should return success on first attempt', async () => {
+  test('should return success on first attempt', async () => {
     let attempts = 0
     const fn = () => {
       attempts++
@@ -25,7 +25,7 @@ describe('Retry', () => {
     expect(attempts).toBe(1)
   })
 
-  it('should retry on failure and eventually succeed', async () => {
+  test('should retry on failure and eventually succeed', async () => {
     let attempts = 0
     const fn = () => {
       attempts++
@@ -48,7 +48,7 @@ describe('Retry', () => {
     expect(attempts).toBe(2)
   })
 
-  it('should return all errors when max attempts reached', async () => {
+  test('should return all errors when max attempts reached', async () => {
     let attempts = 0
     const errors = [new Error('First attempt'), new Error('Second attempt')]
     const fn = () => {
@@ -70,7 +70,7 @@ describe('Retry', () => {
     expect(attempts).toBe(2)
   })
 
-  it('should respect max attempts limit', async () => {
+  test('should respect max attempts limit', async () => {
     let attempts = 0
     const fn = () => {
       attempts++

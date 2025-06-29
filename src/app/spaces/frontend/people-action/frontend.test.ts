@@ -1,4 +1,4 @@
-// import { describe, expect, it, test } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { UserId } from '~/app/@/data/user-id'
 // import { APP_SOUND } from '~/app/@/frontend/app-sound'
 // import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd.$msg'
@@ -15,14 +15,14 @@
 //   }
 // }
 
-// describe('Test', () => {
-//   it('should start with no modals open', async () => {
+// describe('PeopleActionFrontend', () => {
+//   test('should start with no modals open', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [])
 //     expect(output.model.opened === null).toBe(true)
 //   })
 
-//   it('should open users modal when user clicks on users button', async () => {
+//   test('should open users modal when user clicks on users button', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [
 //       {
@@ -34,7 +34,7 @@
 //     expect(output.model.opened === 'people.people-surface').toBe(true)
 //   })
 
-//   it('should open user details modal after clicking user', async () => {
+//   test('should open user details modal after clicking user', async () => {
 //     const f = await Fixture()
 //     const someUserId = UserId.generate()
 //     const output = f.update(f.initial, [
@@ -50,7 +50,7 @@
 //     ).toBe(true)
 //   })
 
-//   it('should close modal when the current screen changes', async () => {
+//   test('should close modal when the current screen changes', async () => {
 //     const f = await Fixture()
 //     const someUserId = UserId.generate()
 //     const output = f.update(f.initial, [
@@ -70,7 +70,7 @@
 //     expect(output.model.opened === null).toBe(true)
 //   })
 
-//   it('should open user details corresponding cmd', async () => {
+//   test('should open user details corresponding cmd', async () => {
 //     const f = await Fixture()
 
 //     const someUserId = UserId.generate()
@@ -86,7 +86,7 @@
 //     ).toBe(true)
 //   })
 
-//   it('should navigate to preview users profile page when clicked', async () => {
+//   test('should navigate to preview users profile page when clicked', async () => {
 //     const f = await FixtureSpacesFrontend()
 //     const someUserId = UserId.generate()
 //     const output = f.update(f.initial, [
@@ -106,7 +106,7 @@
 //     expect(OpenProfileCmd.did(output, someUserId)).toBe(true)
 //   })
 
-//   it('should play sound when clicking preview user link', async () => {
+//   test('should play sound when clicking preview user link', async () => {
 //     const f = await FixtureSpacesFrontend()
 //     const someUserId = UserId.generate()
 //     const output = f.update(f.initial, [
@@ -125,7 +125,7 @@
 //     expect(PlaySoundCmd.did(output)).toBe(true)
 //   })
 
-//   it('should not navigate after clicking preview user link if preview is not open', async () => {
+//   test('should not navigate after clicking preview user link if preview is not open', async () => {
 //     const f = await FixtureSpacesFrontend()
 //     const someUserId = UserId.generate()
 //     const output = f.update(f.initial, [

@@ -1,4 +1,4 @@
-// import { describe, expect, it, test } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { Sub } from '~/@/sub'
 // import { Puzzle } from '../../../@/puzzle/puzzle'
 // import { FixtureFlowBuilderFrontend } from '../../@/fixture/frontend'
@@ -49,12 +49,12 @@
 //   }
 // }
 
-// describe('Test', () => {
-//   it.todo('should open puzzle builder on list item click', async () => {})
+// describe('ScreenPuzzleBuilderFrontend', () => {
+//   test.todo('should open puzzle builder on list item click', async () => {})
 
-//   it.todo('should exit puzzle builder after clicking exit button', async () => {})
+//   test.todo('should exit puzzle builder after clicking exit button', async () => {})
 
-//   it.todo('should open save prompt when exiting with unsaved changes', async () => {})
+//   test.todo('should open save prompt when exiting with unsaved changes', async () => {})
 
 //   test('render hint button', async () => {
 //     const f = await Fixture()

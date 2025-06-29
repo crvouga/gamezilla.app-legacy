@@ -1,4 +1,4 @@
-// import { describe, expect, it } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { SpaceId } from '~/app/@/data/space-id'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 // import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
@@ -12,8 +12,8 @@
 //   }
 // }
 
-// describe('Test', () => {
-//   it('should open current space when clicking current space bottom bar', async () => {
+// describe('CurrentSpaceMiniPlayerFrontend', () => {
+//   test('should open current space when clicking current space bottom bar', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 //     const output = f.update(f.initial, [
@@ -35,7 +35,7 @@
 //     expect(PushScreenCmd.did(output, (m) => m.t === 'space' && m.spaceId === currentUsersSpaceId)).toBe(true)
 //   })
 
-//   it('should play a sound when clicking current space bottom bar', async () => {
+//   test('should play a sound when clicking current space bottom bar', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
 

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import { isErr, unwrap } from '~/@/result'
@@ -35,8 +35,8 @@ const Fixtures = async () => {
   return configs.map(Fixture)
 }
 
-describe('Test', () => {
-  it('should be ok sending code', async () => {
+describe('VerifySMS', () => {
+  test('should be ok sending code', async () => {
     for (const f of await Fixtures()) {
       const phoneNumber = unwrap(f.phone)
       const result = await f.verifySMS.sendCode({
@@ -47,7 +47,7 @@ describe('Test', () => {
     }
   })
 
-  it('should return code incorrect', async () => {
+  test('should return code incorrect', async () => {
     for (const f of await Fixtures()) {
       const phoneNumber = unwrap(f.phone)
       await f.verifySMS.sendCode({

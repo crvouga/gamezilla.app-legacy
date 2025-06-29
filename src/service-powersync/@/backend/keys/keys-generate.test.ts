@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { keysGenerate } from './keys-generate'
 
 describe('keysGenerate', () => {
-  it('should generate valid key pairs', async () => {
+  test('should generate valid key pairs', async () => {
     const result = await keysGenerate()
 
     // Check that both keys are present

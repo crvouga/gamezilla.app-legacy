@@ -1,9 +1,9 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { RenderToString } from './render-to-string'
 import { VDom } from './vdom'
 
 describe('RenderToString', () => {
-  it('should be able to render to string', async () => {
+  test('should be able to render to string', async () => {
     const renderToString = await RenderToString()
 
     const vDom: VDom = (

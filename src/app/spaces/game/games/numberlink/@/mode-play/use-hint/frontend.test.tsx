@@ -1,4 +1,4 @@
-// import { describe, expect, it } from 'vitest'
+// import { describe, expect, test } from 'vitest'
 // import { Logger } from '~/@/logger'
 // import { Solutions } from '../../solutions/solutions'
 // import { VariantGridShorthand } from '../../variant/grid'
@@ -23,7 +23,7 @@
 // }
 
 // describe('UseHintFrontend', () => {
-//   it('should disable hint button if puzzle is solved', async () => {
+//   test('should disable hint button if puzzle is solved', async () => {
 //     const f = await Fixture({
 //       ctxNumberlink: VariantGridShorthand.toGrid([
 //         ['A', 'B'],
@@ -44,7 +44,7 @@
 //     expect(btn?.disabled).toBe(true)
 //   })
 
-//   it('should show hint button if puzzle is not solved', async () => {
+//   test('should show hint button if puzzle is not solved', async () => {
 //     const f = await Fixture({
 //       ctxNumberlink: VariantGridShorthand.toGrid([
 //         ['A', 'B'],

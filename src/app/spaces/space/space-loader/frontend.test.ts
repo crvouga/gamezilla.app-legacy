@@ -12,7 +12,7 @@ import { describe } from 'node:test'
 //   }
 // }
 
-// describe('Test', () => {
+// describe('SpaceLoaderFrontend', () => {
 //   test.todo('persist current user space on an interval', async () => {
 //     const f = await Fixture()
 //     const spaceId = SpaceId.generate()
