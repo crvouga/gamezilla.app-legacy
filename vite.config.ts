@@ -64,78 +64,16 @@ export default defineConfig({
     target: ['es2022', 'chrome100', 'safari15'],
     chunkSizeWarningLimit: 2 * MEGABYTE,
     rollupOptions: {
-      external: (id) => {
-        // External Node.js packages that should not be bundled
-        const nodeOnlyPackages = [
-          'bcrypt',
-          'argon2',
-          'better-sqlite3',
-          'ws',
-          '@mapbox/node-pre-gyp',
-          'mock-aws-s3',
-          'aws-sdk',
-          'nock',
-          'node-pre-gyp',
-          'express',
-          'compression',
-          'tsx',
-          'nodemon',
-        ]
-
-        // External Node.js built-in modules
-        const nodeBuiltins = [
-          'crypto',
-          'fs',
-          'path',
-          'url',
-          'util',
-          'stream',
-          'os',
-          'zlib',
-          'http',
-          'https',
-          'net',
-          'tls',
-          'child_process',
-          'cluster',
-          'events',
-          'buffer',
-          'querystring',
-          'readline',
-          'repl',
-          'string_decoder',
-          'sys',
-          'timers',
-          'tty',
-          'dgram',
-          'dns',
-          'domain',
-          'module',
-          'perf_hooks',
-          'process',
-          'punycode',
-          'vm',
-          'worker_threads',
-          'constants',
-        ]
-
-        // Check if id is a Node.js-only package
-        if (nodeOnlyPackages.some((pkg) => id === pkg || id.startsWith(pkg + '/'))) {
-          return true
-        }
-
-        // Check if id is a Node.js built-in module (with or without 'node:' prefix)
-        if (nodeBuiltins.some((builtin) => id === builtin || id === `node:${builtin}`)) {
-          return true
-        }
-
-        // External backend/test files
-        if (id.includes('/backend/') || id.includes('.test.') || id.includes('/test/')) {
-          return true
-        }
-
-        return false
-      },
+      external: [
+        // '@journeyapps/wa-sqlite',
+        // '@powersync/web',
+        'bcrypt',
+        'argon2',
+        'better-sqlite3',
+        'ws',
+        '@mapbox/node-pre-gyp',
+        'crypto',
+      ],
     },
   },
   worker: {
