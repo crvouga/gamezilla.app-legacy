@@ -1,4 +1,4 @@
-// import { describe, expect, test } from 'bun:test'
+// import { describe, expect, test } from 'vitest'
 // import { ModePlay } from '.'
 // import { AlgoIsSolved } from '../solutions/algo-is-solved/algo-is-solved'
 // import { HintCalculatorFrontend } from '../solutions/hint-calculator/frontend'

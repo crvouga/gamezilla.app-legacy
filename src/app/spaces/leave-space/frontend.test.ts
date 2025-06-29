@@ -1,4 +1,4 @@
-// import { describe, expect, it } from 'bun:test'
+// import { describe, expect, it } from 'vitest'
 // import { withEventMetaAt } from '~/@/event-sourced/event'
 // import { SpaceId } from '~/app/@/data/space-id'
 // import { UserId } from '~/app/@/data/user-id'

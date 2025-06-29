@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { isErr, isOk, unwrap } from '~/@/result'
 import { eq } from '~/@/equals/equals'
 import { Hashing } from '~/@/hashing'
@@ -352,8 +352,8 @@ describe('VerifySMS', () => {
 
   it('should hash sent codes stored in the database', async () => {
     const f = await Fixture({
-      hashing: Hashing({
-        t: 'bun',
+      hashing: await Hashing({
+        t: 'node',
       }),
     })
     await f.verifySMS.sendCode({

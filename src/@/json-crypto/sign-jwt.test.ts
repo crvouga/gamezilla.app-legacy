@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'bun:test'
+import { describe, it, expect } from 'vitest'
 import * as SignJWT from './sign-jwt'
 
 describe('SignJWT', () => {
@@ -115,7 +115,7 @@ describe('SignJWT', () => {
     it('should sign a JWT with HS256 algorithm using a string key', async () => {
       const jwt = SignJWT.createJWT({ sub: 'test' })
       const token = await SignJWT.sign(jwt, 'secret')
-      expect(token).toBeString()
+      expect(typeof token).toBe('string')
       expect(token.split('.').length).toBe(3)
     })
 

@@ -1,19 +1,19 @@
 import type { IHashing } from './hashing'
-import * as ImplBun from './hashing-impl-bun'
 import * as ImplNoop from './hashing-impl-noop'
 
 export type HashingImpl =
   | {
-      t: 'bun'
+      t: 'node'
     }
   | {
       t: 'noop'
     }
 
-export const Hashing = (impl: HashingImpl): IHashing => {
+export const Hashing = async (impl: HashingImpl): Promise<IHashing> => {
   switch (impl.t) {
-    case 'bun': {
-      return ImplBun.Hashing()
+    case 'node': {
+      const ImplNode = await import('./hashing-impl-node')
+      return ImplNode.Hashing()
     }
 
     case 'noop': {

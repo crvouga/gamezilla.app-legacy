@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { ascend, descend } from '~/@/array/sorting'
 import { Ok, unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'

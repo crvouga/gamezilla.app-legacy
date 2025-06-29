@@ -1,4 +1,4 @@
-// import { describe, expect, test } from 'bun:test'
+// import { describe, expect, test } from 'vitest'
 // import { Err, Ok } from '~/@/result'
 
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'

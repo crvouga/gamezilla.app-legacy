@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { UserId } from '~/app/@/data/user-id'
 import { Row } from './impl-sql'
 

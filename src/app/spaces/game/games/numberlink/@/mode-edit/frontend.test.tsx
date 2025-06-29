@@ -1,4 +1,4 @@
-// import { describe, test } from 'bun:test'
+// import { describe, test } from 'vitest'
 // import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 // import { ModeEdit } from '.'
 // import { NumberlinkVariant } from '../variant'

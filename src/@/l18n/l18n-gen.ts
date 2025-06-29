@@ -163,7 +163,7 @@ export type Translator = Awaited<ReturnType<typeof loadTranslator>>;
 
 async function runPrettierOnDirectory(directoryPath: string) {
   return new Promise((resolve, reject) => {
-    const command = `bun x prettier --loglevel silent --write "${path.join(directoryPath, '**/*.ts')}"`
+    const command = `npx prettier --loglevel silent --write "${path.join(directoryPath, '**/*.ts')}"`
 
     exec(command, (error, stdout, stderr) => {
       if (error) {

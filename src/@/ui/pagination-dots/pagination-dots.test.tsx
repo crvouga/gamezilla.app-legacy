@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'bun:test'
+import { describe, expect, it, test } from 'vitest'
 import { Sub } from '~/@/sub'
 import { PAGINATION_DOTS_TEST_ID, PaginationDots, toPaginationDotSelector } from '~/@/ui/pagination-dots'
 import { BaseFixture } from '../fixture'

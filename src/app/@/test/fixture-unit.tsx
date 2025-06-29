@@ -11,7 +11,11 @@ export const FixtureAppUnitTest = async (): Promise<IFixtureApp> => {
   logger ??= Logger({ t: 'noop' })
   logger ??= Logger({ t: 'console', namespace: ['fixture'], newLinePerMsg: false })
 
-  const sqlDb = await SqlDb({ t: 'bun-sqlite', fs: { t: 'in-memory' }, logger: Logger({ t: 'noop' }) })
+  const sqlDb = await SqlDb({
+    t: 'better-sqlite3',
+    databasePath: ':memory:',
+    logger: Logger({ t: 'noop' }),
+  })
 
   const topic = Topic.initClient({ t: 'local', contract: AppTypes.topicContract, logger })
 

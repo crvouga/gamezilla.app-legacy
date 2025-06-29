@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { Sub } from '~/@/sub'
 import { BaseFixture } from '../fixture'
 import { Checkbox } from './checkbox'

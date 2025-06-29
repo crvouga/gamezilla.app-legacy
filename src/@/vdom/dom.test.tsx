@@ -1,4 +1,4 @@
-import { expect, test } from 'bun:test'
+import { expect, test } from 'vitest'
 
 test.skip('dom test', () => {
   document.body.innerHTML = '<button>My button</button>'

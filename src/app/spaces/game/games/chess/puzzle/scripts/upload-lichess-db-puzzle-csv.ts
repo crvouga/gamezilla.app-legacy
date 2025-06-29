@@ -1,3 +1,4 @@
+import { promises as fs } from 'fs'
 import { Result } from '~/@/result'
 import { s } from '~/@/schema'
 import type { ISqlDb } from '~/@/sql-db'
@@ -51,9 +52,9 @@ export const uploadLichessDbPuzzleCsv = async ({
 
   log(`reading ${lichessDbPuzzleCsvPath}`)
 
-  const file = Bun.file(lichessDbPuzzleCsvPath)
-
-  if (await file.exists()) {
+  try {
+    await fs.access(lichessDbPuzzleCsvPath)
+  } catch {
     log(`file ${lichessDbPuzzleCsvPath} does not exist`)
     return
   }

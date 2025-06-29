@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { Topic } from '.'
-import { HttpServerBun } from '../http-server/impl-bun'
+import { HttpServer } from '../http-server/impl-node'
 import { Logger } from '../logger'
 import { s } from '../schema'
 import { TimeSpan } from '../time/time-span'
@@ -31,7 +31,7 @@ const Fixture = async () => {
   const port = 1234
   // const logger = Logger({ t: 'console' })
   const logger = Logger({ t: 'noop' })
-  const httpServer = HttpServerBun({ t: 'bun', logger })
+  const httpServer = HttpServer({ t: 'node', logger })
 
   const endpoint = '/topic'
   const serverUrl = `http://localhost:${port}`

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { Ok, unwrap } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
@@ -50,8 +50,8 @@ describe('BackendInstanceDb', () => {
         await f.backendInstanceDb.put(backendInstance)
       }
       const after = await f.backendInstanceDb.list()
-      expect(unwrap(before)).not.toContainAllValues(expected)
-      expect(unwrap(after)).toContainAllValues(expected)
+      expect(unwrap(before)).not.toContain(expected)
+      expect(unwrap(after)).toContain(expected)
     }
   })
 
@@ -84,8 +84,8 @@ describe('BackendInstanceDb', () => {
       const after = await f.backendInstanceDb.listAlive({
         minimalHeartRate: MINIMAL_HEART_RATE,
       })
-      expect(unwrap(before)).not.toContainAllValues(expected)
-      expect(unwrap(after)).toContainAllValues(expected)
+      expect(unwrap(before)).not.toContain(expected)
+      expect(unwrap(after)).toContain(expected)
     }
   })
 })

@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'bun:test'
+import { describe, expect, it, test } from 'vitest'
 import { Numberlink } from '../../numberlink'
 import { EdgeId } from '../../numberlink/edge-id'
 import { VariantGrid, VariantGridShorthand } from '../../variant/grid'

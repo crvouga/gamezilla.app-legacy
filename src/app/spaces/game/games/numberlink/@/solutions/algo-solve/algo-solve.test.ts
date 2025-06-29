@@ -1,10 +1,8 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { Numberlink } from '../../numberlink'
 import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoSolve from './algo-solve'
 import { AlgoIsSolved } from '../algo-is-solved/algo-is-solved'
-
-const SHOULD_TEST_LARGE_PUZZLES = false
 
 describe('AlgoSolve', () => {
   test('2x2 with A terminals', () => {
@@ -421,7 +419,7 @@ describe('AlgoSolve', () => {
     expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
-  test.if(SHOULD_TEST_LARGE_PUZZLES)('13x13 puzzle', () => {
+  test('13x13 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K', 'L', 'M', 'N'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -459,7 +457,7 @@ describe('AlgoSolve', () => {
     expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
-  test.if(SHOULD_TEST_LARGE_PUZZLES)('14x14 puzzle', () => {
+  test('14x14 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K', 'L', 'M', 'N', 'O'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -499,7 +497,7 @@ describe('AlgoSolve', () => {
     expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toBe(true)
   })
 
-  test.if(SHOULD_TEST_LARGE_PUZZLES)('14x14 puzzle', () => {
+  test('14x14 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'J', 'K', 'L', 'M', 'N', 'O'],
       [' ', ' ', ' ', ' ', 'E', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' '],

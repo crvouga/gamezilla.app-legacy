@@ -1,5 +1,5 @@
 import { AllowCORS } from '~/@/http-server/allow-cors'
-import { HttpServerBun } from '~/@/http-server/impl-bun'
+import { HttpServer } from '~/@/http-server/impl-node'
 import { KeyValueDb } from '~/@/key-value-db'
 import { ILogger, Logger } from '~/@/logger'
 import { sleep } from '~/@/promise/sleep'
@@ -55,8 +55,8 @@ const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtx
     logger,
   })
 
-  const httpServer = HttpServerBun({
-    t: 'bun',
+  const httpServer = HttpServer({
+    t: 'node',
     logger,
   })
 
@@ -127,9 +127,9 @@ const initSqlDb = async (config: { backendRole: BackendRole; logger: ILogger }):
     }
     case 'edge': {
       return SqlDb({
-        t: 'bun-sqlite',
+        t: 'better-sqlite3',
+        databasePath: ':memory:',
         logger: config.logger,
-        fs: { t: 'in-memory' },
       })
     }
   }

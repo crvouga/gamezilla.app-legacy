@@ -6,14 +6,20 @@ import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Ctx } from '../@/backend/ctx'
 import { RequestBody } from './types'
+import { Json } from '~/@/json/json'
 
 const respond = async (input: { req: Request; ctx: Ctx; logger: ILogger }): Promise<Response | null> => {
   const logger = input.logger.child(['upload-data'])
   logger.info('Received upload data request')
-  const body = await input.req.json()
+  const body = Json.parse(await input.req.text())
   logger.debug('Request body', { body })
 
-  const parsed = RequestBody.parse(body)
+  if (isErr(body)) {
+    logger.error('Failed to parse request body', { error: body })
+    return new Response(JSON.stringify(body), { status: 400, headers: { 'Content-Type': 'application/json' } })
+  }
+
+  const parsed = RequestBody.parse(body.value)
 
   if (isErr(parsed)) {
     logger.error('Failed to parse request body', { error: parsed })

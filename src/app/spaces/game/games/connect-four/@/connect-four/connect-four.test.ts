@@ -1,5 +1,5 @@
 import { type Columns, type PlayerType, toStatus, findWins } from './connect-four'
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 
 export const p1: PlayerType = 'player-one'
 export const p2: PlayerType = 'player-two'

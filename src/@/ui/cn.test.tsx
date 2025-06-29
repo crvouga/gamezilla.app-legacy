@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { Logger } from '../logger'
 import { cnFilter, cnLoop, cnParams } from './cn'
 

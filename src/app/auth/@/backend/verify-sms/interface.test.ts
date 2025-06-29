@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import { isErr, unwrap } from '~/@/result'

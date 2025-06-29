@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'bun:test'
+import { describe, expect, it, test } from 'vitest'
 import { ModeEdit } from '.'
 import { Numberlink } from '../numberlink'
 import { NumberlinkVariant, NumberlinkVariantDimensions } from '../variant'

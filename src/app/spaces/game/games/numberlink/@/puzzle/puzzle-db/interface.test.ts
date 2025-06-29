@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'bun:test'
+import { describe, expect, it, test } from 'vitest'
 import { ascend } from '~/@/array/sorting'
 import { Ok, Result, unwrap } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'

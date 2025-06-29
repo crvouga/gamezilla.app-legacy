@@ -1,4 +1,4 @@
-// import { describe, expect, test } from 'bun:test'
+// import { describe, expect, test } from 'vitest'
 // import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 // import { ScreenUpdateUsernameFrontend } from './frontend'
 // import { ModelFrontend, MsgFrontend } from './types'

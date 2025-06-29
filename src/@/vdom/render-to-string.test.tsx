@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { RenderToString } from './render-to-string'
 import { VDom } from './vdom'
 

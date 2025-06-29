@@ -1,14 +1,14 @@
-FROM oven/bun:latest
+FROM node:22-alpine
 
 WORKDIR /app
 
-COPY package.json bun.lock ./
+COPY package.json package-lock.json ./
 COPY ./ ./
 
-RUN bun install
+RUN npm ci --production=false
 
 ARG PORT
 
 ENV PORT=${PORT}
 
-CMD ["bun", "backend-edge:railway"]
+CMD ["npm", "run", "backend-edge:railway"]

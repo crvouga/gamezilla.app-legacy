@@ -1,4 +1,4 @@
-// import { describe, expect, test } from 'bun:test'
+// import { describe, expect, test } from 'vitest'
 // import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 // import { NumberlinkVariantBoard } from '.'
 // import { BoardInput } from '../ui/board'

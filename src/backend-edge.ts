@@ -1,8 +1,12 @@
 import { AppBackend } from '~/app/backend'
 import { CONFIG_BACKEND } from '~/config/backend'
+import { DotEnv } from './@/dotenv/dotenv'
+import { FileSystem } from './@/file-system'
 import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {
+  await DotEnv.load({ fs: FileSystem({ t: 'node' }) })
+
   const ctx = await AppBackend.initCtx({ backendRole: 'edge' })
 
   const abortController = new AbortController()

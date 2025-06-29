@@ -1,4 +1,4 @@
-import { describe, expect, mock, test } from 'bun:test'
+import { describe, expect, test, vi } from 'vitest'
 import { s } from '~/@/schema'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Logger } from '../logger'
@@ -50,10 +50,13 @@ describe('PubSubTopicBased', () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent()
       const topic = Math.random().toString()
-      const sub = mock(() => {})
+      let called = 0
+      const sub = () => {
+        called++
+      }
       await f.pubSub.sub(topic, sub)
       await f.pubSub.pub(topic, encode(myEvent))
-      expect(sub).toHaveBeenCalledTimes(1)
+      expect(called).toBe(1)
     }
   })
 
@@ -61,10 +64,13 @@ describe('PubSubTopicBased', () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent()
       const topic = Math.random().toString()
-      const sub = mock(() => {})
+      let called = 0
+      const sub = () => {
+        called++
+      }
       await f.pubSub.pub(topic, encode(myEvent))
       await f.pubSub.sub(topic, sub)
-      expect(sub).toHaveBeenCalledTimes(0)
+      expect(called).toBe(0)
     }
   })
 
@@ -72,7 +78,7 @@ describe('PubSubTopicBased', () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent()
       const topic = Math.random().toString()
-      const sub = mock(() => {})
+      const sub = vi.fn()
       const unsub = await f.pubSub.sub(topic, sub)
       expect(sub).toHaveBeenCalledTimes(0)
       await f.pubSub.pub(topic, encode(myEvent))
@@ -89,14 +95,13 @@ describe('PubSubTopicBased', () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent()
       const topic = Math.random().toString()
-
-      const sub1 = mock(() => {})
+      const sub1 = vi.fn()
       await f.pubSub.sub(topic, sub1)
 
-      const sub2 = mock(() => {})
+      const sub2 = vi.fn()
       await f.pubSub.sub(topic, sub2)
 
-      const sub3 = mock(() => {})
+      const sub3 = vi.fn()
       await f.pubSub.sub(topic, sub3)
 
       await f.pubSub.unsub(topic)
@@ -113,7 +118,7 @@ describe('PubSubTopicBased', () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent()
       const topic = Math.random().toString()
-      const sub = mock(() => {})
+      const sub = vi.fn()
       for (let i = 0; i < 10; i++) {
         const topic = Math.random().toString()
         await f.pubSub.sub(topic, () => {})

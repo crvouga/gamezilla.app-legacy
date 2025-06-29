@@ -44,7 +44,7 @@ export type SolveAsyncInput = {
 type SolveAsync = (input: SolveAsyncInput) => Promise<Result<SolveAsyncProblem, NumberlinkVariant.Model | null>>
 
 export const solve: SolveAsync = async (input) => {
-  return solveWorker(input)
+  return solveInProcess(input)
 }
 
 export const solveInProcess: SolveAsync = async (input) => {
@@ -70,6 +70,13 @@ export const solveWorker: SolveAsync = async (input) => {
     return Err({
       t: 'failed-to-load-worker',
       error: e instanceof Error ? e.message : 'Unknown error',
+    })
+  }
+
+  if (typeof Worker === 'undefined') {
+    return Err({
+      t: 'failed-to-load-worker',
+      error: 'Worker is not supported',
     })
   }
 

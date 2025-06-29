@@ -1,4 +1,4 @@
-// import { describe, expect, it, test } from 'bun:test'
+// import { describe, expect, it, test } from 'vitest'
 // import { withEventMeta } from '~/@/event-sourced/event'
 // import { UserRole } from '~/app/@/data/user-role'
 // import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd.$msg'

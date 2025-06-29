@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { unwrap } from '~/@/result'
 import { SessionId } from '~/@/wire/session-id'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'

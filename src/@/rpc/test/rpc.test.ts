@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { HttpServer } from '~/@/http-server'
 import { AllowCORS } from '~/@/http-server/allow-cors'
 import { Logger } from '~/@/logger'

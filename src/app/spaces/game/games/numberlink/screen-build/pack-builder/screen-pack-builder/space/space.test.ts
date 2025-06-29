@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, test } from 'bun:test'
+import { beforeEach, describe, expect, it, test } from 'vitest'
 import { assertNotNullish } from '~/@/assert'
 import { PackPuzzleGridUI } from '../../../../@/pack/pack-puzzle-grid-ui'
 import { Puzzle } from '../../../../@/puzzle/puzzle'

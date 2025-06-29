@@ -1,4 +1,4 @@
-// import { describe, it } from 'bun:test'
+// import { describe, it } from 'vitest'
 // import { FixturePlayFrontend } from './@/frontend/fixture'
 
 // const Fixture = async () => {

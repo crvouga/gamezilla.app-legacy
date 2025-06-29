@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'bun:test'
+import { describe, expect, it, test } from 'vitest'
 import { Logger } from '~/@/logger'
 import { Ok, Result, unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'

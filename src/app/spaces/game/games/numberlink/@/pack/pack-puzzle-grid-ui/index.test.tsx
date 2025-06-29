@@ -1,4 +1,4 @@
-// import { beforeEach, describe, expect, it, test } from 'bun:test'
+// import { beforeEach, describe, expect, it, test } from 'vitest'
 // import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 // import { PAGINATION_DOTS_TEST_ID, toPaginationDotSelector } from '~/@/ui/pagination-dots'
 // import { PackPuzzleGridUI } from '.'

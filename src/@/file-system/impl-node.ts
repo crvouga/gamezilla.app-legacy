@@ -16,6 +16,10 @@ export const FileSystem = (_config: Config): IFileSystem => {
       }
     },
 
+    async write(path, data) {
+      await fs.writeFile(path, data)
+    },
+
     async read(path) {
       const fileContent = await fs.readFile(path)
       const readableStream = new ReadableStream({

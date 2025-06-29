@@ -40,7 +40,7 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
 
   SYNC_REGISTRY.add(GuestSessionMappingSync({ guestSessionMappingDb, logger: input.ctx.logger }))
 
-  const verifySMS = VerifySMSFactory.createForEnvironment({
+  const verifySMS = await VerifySMSFactory.createForEnvironment({
     logger: input.ctx.logger.child(['verifySMS']),
     backendRole: input.ctx.backendRole,
     env: input.ctx.env,
@@ -68,7 +68,7 @@ const initUnitTest = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBack
     logger: input.ctx.logger,
   })
 
-  const verifySMS = VerifySMSFactory.createInHouseUnitTest({
+  const verifySMS = await VerifySMSFactory.createInHouseUnitTest({
     logger: input.ctx.logger,
   })
 

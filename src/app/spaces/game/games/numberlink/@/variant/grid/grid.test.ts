@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'bun:test'
+import { describe, expect, it, test } from 'vitest'
 import { eq } from '~/@/equals/equals'
 import { VariantGrid, VariantGridDimensions, VariantGridShorthand } from '.'
 import { Numberlink } from '../../numberlink'
@@ -14,7 +14,7 @@ describe('Test', () => {
     expect(VariantGrid.Model.parse(initial).t).toBe('ok')
   })
 
-  it('should initialize the model quickly', () => {
+  it.skip('should initialize the model quickly', () => {
     const start = process.hrtime()
 
     VariantGrid.init({

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { CssSelector } from './css-selector'
 
 describe('css-selector', () => {

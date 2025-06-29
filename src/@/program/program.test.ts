@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { Sub } from '../sub'
 import { Program, ProgramCrashReport } from './program'
 import { TimeSpan } from '../time/time-span'

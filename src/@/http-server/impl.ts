@@ -1,37 +1,17 @@
-import { type ILogger } from '~/@/logger'
-import { HttpServerBun } from './impl-bun'
-import { HttpServerNode } from './impl-node'
-import { HttpServerNoop } from './impl-noop'
+import * as ImplNode from './impl-node'
+import * as ImplNoop from './impl-noop'
 
-type Config =
-  | {
-      t: 'bun'
-      logger: ILogger
-    }
-  | {
-      t: 'node'
-      logger: ILogger
-    }
-  | {
-      t: 'noop'
-      logger: ILogger
-    }
+export type Config = ImplNode.Config | ImplNoop.Config
 
 export const HttpServer = (config: Config) => {
   const logger = config.logger.child(['backend'])
   switch (config.t) {
-    case 'bun': {
-      return HttpServerBun<unknown>({ ...config, logger })
-    }
-
     case 'node': {
-      return HttpServerNode({ ...config, logger })
+      return ImplNode.HttpServer({ ...config, logger })
     }
 
     case 'noop': {
-      return HttpServerNoop({ ...config, logger })
+      return ImplNoop.HttpServer({ ...config, logger })
     }
   }
 }
-
-export type HttpServer = ReturnType<typeof HttpServer>

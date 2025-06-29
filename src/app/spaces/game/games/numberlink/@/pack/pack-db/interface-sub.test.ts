@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Pack } from '../pack'
 import { Config, PackDb } from './impl'

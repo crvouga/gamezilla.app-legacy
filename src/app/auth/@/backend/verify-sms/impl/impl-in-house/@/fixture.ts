@@ -37,7 +37,7 @@ export const VerifySMSInHouseFixture = async (input?: {
   const verificationAttemptDb = VerificationAttemptDb({
     t: 'hash-map',
   })
-  const hashing = input?.hashing ?? Hashing({ t: 'noop' })
+  const hashing = input?.hashing ?? (await Hashing({ t: 'noop' }))
 
   const config: Config = {
     t: 'in-house',

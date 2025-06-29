@@ -1,4 +1,4 @@
-// import { describe } from 'bun:test'
+// import { describe } from 'vitest'
 // import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 
 // export const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {

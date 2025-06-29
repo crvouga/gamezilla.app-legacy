@@ -15,9 +15,10 @@ export type Verification = {
 
 const random = async (input?: { createdAt?: UnixMs; codeHash?: Hash | null }): Promise<Verification> => {
   const createdAt = input?.createdAt ?? UnixMs.now()
-  const codeHashArbitrary = await Hashing({
+  const hashing = await Hashing({
     t: 'noop',
-  }).hash({
+  })
+  const codeHashArbitrary = await hashing.hash({
     algo: { t: 'sha256' },
     password: '123',
   })

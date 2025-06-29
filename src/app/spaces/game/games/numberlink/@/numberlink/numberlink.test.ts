@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { pipe } from '~/@/function/pipe'
 import { Numberlink } from '.'
 import { VariantGrid, VariantGridShorthand } from '../variant/grid'

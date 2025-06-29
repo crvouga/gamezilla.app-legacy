@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'bun:test'
+import { describe, expect, it, test } from 'vitest'
 import { Logger } from '~/@/logger'
 import { Ok, unwrap } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'

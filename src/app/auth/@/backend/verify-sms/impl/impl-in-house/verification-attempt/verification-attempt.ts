@@ -11,17 +11,19 @@ export type VerificationAttempt = {
 }
 
 const random = async (): Promise<VerificationAttempt> => {
+  const hashing = await Hashing({
+    t: 'noop',
+  })
+  const codeHash = await hashing.hash({
+    algo: {
+      t: 'sha256',
+    },
+    password: '123',
+  })
   return {
     verificationAttemptId: VerificationAttemptId.generate(),
     verificationId: VerificationId.generate(),
-    codeHash: await Hashing({
-      t: 'noop',
-    }).hash({
-      algo: {
-        t: 'sha256',
-      },
-      password: '123',
-    }),
+    codeHash,
     createdAt: UnixMs.now(),
   }
 }

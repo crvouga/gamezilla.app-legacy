@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { takeWhile } from './take-while'
 
 const isNeg = (x: number) => x < 0

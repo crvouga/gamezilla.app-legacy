@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { EventStreamInMemory } from '.'
 import { UnixMs } from '../time/unix-ms'
 

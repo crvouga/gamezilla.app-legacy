@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import 'fake-indexeddb/auto'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
@@ -19,14 +19,12 @@ const Fixture = async (config: Config) => {
 const Fixtures = async () => {
   const configs: Config[] = []
 
-  const SHOULD_TEST_SQLITE = false
+  const SHOULD_TEST_SQLITE = true
 
   if (SHOULD_TEST_SQLITE) {
     configs.push({
-      t: 'bun-sqlite',
-      fs: {
-        t: 'in-memory',
-      },
+      t: 'better-sqlite3',
+      databasePath: ':memory:',
       logger: Logger({ t: 'noop' }),
     })
   }

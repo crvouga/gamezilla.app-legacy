@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { VariantGridShorthand } from '../../variant/grid'
 import { isImpossibleForAnyTerminalToConnect } from './algo-is-impossible-for-terminals-to-connect'
 import { Numberlink } from '../../numberlink'

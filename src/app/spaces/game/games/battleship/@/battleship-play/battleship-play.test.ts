@@ -1,4 +1,4 @@
-import { describe, it } from 'bun:test'
+import { describe, it } from 'vitest'
 import * as Battleship from './battleship-play'
 
 const ALL_PLAYER_TYPES = ['player1', 'player2'] as const

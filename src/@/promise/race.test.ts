@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { race } from './race'
 import { sleep } from './sleep'
 import { TimeSpan } from '../time/time-span'

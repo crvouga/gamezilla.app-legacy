@@ -1,4 +1,4 @@
-// import { describe, expect, it, test } from 'bun:test'
+// import { describe, expect, it, test } from 'vitest'
 // import { UserId } from '~/app/@/data/user-id'
 // import { APP_SOUND } from '~/app/@/frontend/app-sound'
 // import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd.$msg'

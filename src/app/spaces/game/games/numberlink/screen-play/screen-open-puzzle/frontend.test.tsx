@@ -1,4 +1,4 @@
-// import { describe, expect, it } from 'bun:test'
+// import { describe, expect, it } from 'vitest'
 // import { withEventMeta } from '~/@/event-sourced/event'
 
 // import { Pack } from '../../@/pack/pack'

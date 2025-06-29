@@ -1,4 +1,4 @@
-// import { describe, expect, it } from 'bun:test'
+// import { describe, expect, it } from 'vitest'
 // import { SpaceId } from '~/app/@/data/space-id'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 // import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'

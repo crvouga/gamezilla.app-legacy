@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { PhoneNumber } from '~/@/phone-number'
 import { isErr, Ok, unwrap } from '~/@/result'
 import { ClientSessionId } from '~/@/wire/client-session-id'

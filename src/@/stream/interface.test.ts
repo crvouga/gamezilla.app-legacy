@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { Ok, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { NonEmpty } from '../array/non-empty'

@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'bun:test'
+import { describe, expect, it, test } from 'vitest'
 import { Ok, Result } from '~/@/result'
 import { Runtime } from '~/@/runtime'
 import { s } from '~/@/schema'
@@ -97,11 +97,9 @@ const Fixtures = async (): Promise<Fixture[]> => {
   })
 
   const sqlDbSqlite = await SqlDb({
-    t: 'bun-sqlite',
+    t: 'better-sqlite3',
+    databasePath: ':memory:',
     logger,
-    fs: {
-      t: 'in-memory',
-    },
   })
 
   fixtures.push({

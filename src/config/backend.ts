@@ -2,7 +2,7 @@ import { SecretString } from '~/@/secrets/secret-string'
 import { CONFIG_SHARED } from './shared'
 
 const DATABASE_URL = () => {
-  const value = SecretString.init('DATABASE_URL', import.meta.env?.DATABASE_URL)
+  const value = SecretString.init('DATABASE_URL', process.env?.DATABASE_URL)
   if (!value) {
     throw new Error('DATABASE_URL is not set')
   }
@@ -10,7 +10,7 @@ const DATABASE_URL = () => {
 }
 
 const POWERSYNC_PRIVATE_KEY = () => {
-  const value = SecretString.init('POWERSYNC_PRIVATE_KEY', import.meta.env?.POWERSYNC_PRIVATE_KEY)
+  const value = SecretString.init('POWERSYNC_PRIVATE_KEY', process.env?.POWERSYNC_PRIVATE_KEY)
   if (!value) {
     throw new Error('POWERSYNC_PRIVATE_KEY is not set')
   }
@@ -18,7 +18,7 @@ const POWERSYNC_PRIVATE_KEY = () => {
 }
 
 const POWERSYNC_PUBLIC_KEY = () => {
-  const value = import.meta.env?.POWERSYNC_PUBLIC_KEY
+  const value = process.env?.POWERSYNC_PUBLIC_KEY
   if (!value) {
     throw new Error('POWERSYNC_PUBLIC_KEY is not set')
   }
@@ -26,7 +26,7 @@ const POWERSYNC_PUBLIC_KEY = () => {
 }
 
 const PORT = () => {
-  const value = import.meta.env?.PORT
+  const value = process.env?.PORT
   if (!value) {
     throw new Error('PORT is not set')
   }
@@ -34,7 +34,7 @@ const PORT = () => {
 }
 
 const TWILIO_ACCOUNT_SID = () => {
-  const value = import.meta.env?.TWILIO_ACCOUNT_SID
+  const value = process.env?.TWILIO_ACCOUNT_SID
   if (!value) {
     throw new Error('TWILIO_ACCOUNT_SID is not set')
   }
@@ -42,7 +42,7 @@ const TWILIO_ACCOUNT_SID = () => {
 }
 
 const TWILIO_AUTH_TOKEN = () => {
-  const value = SecretString.init('TWILIO_AUTH_TOKEN', import.meta.env?.TWILIO_AUTH_TOKEN)
+  const value = SecretString.init('TWILIO_AUTH_TOKEN', process.env?.TWILIO_AUTH_TOKEN)
   if (!value) {
     throw new Error('TWILIO_AUTH_TOKEN is not set')
   }
@@ -50,7 +50,7 @@ const TWILIO_AUTH_TOKEN = () => {
 }
 
 const TWILIO_MESSAGING_SERVICE_SID = () => {
-  const value = import.meta.env?.TWILIO_MESSAGING_SERVICE_SID
+  const value = process.env?.TWILIO_MESSAGING_SERVICE_SID
   if (!value) {
     throw new Error('TWILIO_MESSAGING_SERVICE_SID is not set')
   }

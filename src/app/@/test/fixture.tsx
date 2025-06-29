@@ -5,7 +5,7 @@ import { IFixtureApp } from './types'
 
 export const FixtureApp = (env: TestRunnerEnv): Promise<IFixtureApp> => {
   switch (env.t) {
-    case 'bun': {
+    case 'vitest': {
       return FixtureAppUnitTest()
     }
     case 'playwright': {

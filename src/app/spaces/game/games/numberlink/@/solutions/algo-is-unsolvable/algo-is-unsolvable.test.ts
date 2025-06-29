@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoIsUnsolvable from './algo-is-unsolvable'
 

@@ -1,6 +1,6 @@
-import { describe, expect, test } from 'bun:test'
 import 'fake-indexeddb/auto'
-import { Logger } from '~/@/logger'
+import { describe, expect, test } from 'vitest'
+import { Logger } from '../../logger'
 import { sleep } from '~/@/promise/sleep'
 import { TimeSpan } from '~/@/time/time-span'
 import { s } from '../../schema'
@@ -23,8 +23,8 @@ const Fixtures = async () => {
   // })
 
   configs.push({
-    t: 'bun-sqlite',
-    fs: { t: 'in-memory' },
+    t: 'better-sqlite3',
+    databasePath: ':memory:',
     logger: Logger({ t: 'noop' }),
   })
 

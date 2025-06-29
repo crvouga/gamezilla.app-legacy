@@ -1,5 +1,4 @@
-import { ServerWebSocket } from 'bun'
-import { HttpServerBun } from '~/@/http-server/impl-bun'
+import type { IHttpServer, IWebSocketConnection } from '~/@/http-server/interface'
 import { ILogger } from '~/@/logger'
 import { PubSub, Sub } from '~/@/sub'
 import { ClientId } from '~/@/wire/client-id'
@@ -23,7 +22,7 @@ export type BackendWebSocketData = {
 type Config<TContract extends ContractBase> = {
   t: 'web-sockets'
   contract: TContract
-  httpServer: HttpServerBun
+  httpServer: IHttpServer
   logger: ILogger
   isProd: boolean
   endpoint: string
@@ -42,8 +41,7 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
           const topic = toTopic(topicName, topicParams)
 
           const decodedMsg: ToClientMsgMany = [PUB, topicName, topicParams, msg]
-          // @ts-expect-error
-          const encodedMsg: EncodedMsg = config.codec.encode(decodedMsg)
+          const encodedMsg = config.codec.encode(decodedMsg) as string | Buffer
 
           serverCore.publishTopicName(topicName, encodedMsg, decodedMsg, null)
           serverCore.publishTopic(topic, encodedMsg, decodedMsg, null)
@@ -101,124 +99,118 @@ export const initServer = <TContract extends ContractBase>(config: Config<TContr
   return client
 }
 
-type EncodedMsg = string | Bun.ArrayBufferView | ArrayBuffer | SharedArrayBuffer
-
 const initServerCore = <TContract extends ContractBase>(config: Config<TContract>) => {
-  let bunServer: Bun.Server
   const subscriptionsByTopic = new Map<string, TopicSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
-  const send = (ws: ServerWebSocket<BackendWebSocketData>, decodedMsg: ToClientMsgOne) => {
+  // Register WebSocket handler with the HTTP server
+  const wsServer = config.httpServer.registerWebSocketHandler<BackendWebSocketData>(config.endpoint, {
+    async onConnection(_connection, request) {
+      const maybeSessionId = SessionIdHttp.fromRequest(request)
+      const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
+
+      const maybeClientSessionId = ClientSessionIdHttp.fromRequest(request)
+      const clientSessionId = maybeClientSessionId ?? ClientSessionId.generate()
+
+      const clientId = ClientId.generate()
+
+      return {
+        clientId,
+        sessionId,
+        clientSessionId,
+      }
+    },
+
+    async onMessage(connection, message) {
+      try {
+        const decodedMsg: ToServerMsg = config.codec.decodeBunJsWebSocketMessage(message) as ToServerMsg
+
+        switch (decodedMsg[0]) {
+          case SUB: {
+            const topic = toTopic(decodedMsg[1], decodedMsg[2])
+            connection.subscribe(topic)
+            send(connection, decodedMsg)
+            return
+          }
+          case UNSUB: {
+            const topic = toTopic(decodedMsg[1], decodedMsg[2])
+            connection.unsubscribe(topic)
+            send(connection, decodedMsg)
+            return
+          }
+          case SUB_ALL: {
+            const topicName = decodedMsg[1]
+            connection.subscribe(topicName)
+            send(connection, decodedMsg)
+            return
+          }
+          case UNSUB_ALL: {
+            const topicName = decodedMsg[1]
+            connection.unsubscribe(topicName)
+            send(connection, decodedMsg)
+            return
+          }
+          case PUB: {
+            const topic = toTopic(decodedMsg[1], decodedMsg[2])
+            publishTopic(topic, message, decodedMsg, connection)
+            publishTopicName(decodedMsg[1], message, decodedMsg, connection)
+            return
+          }
+        }
+      } catch (error) {
+        config.logger.error('WebSocket message handling error:', error)
+      }
+    },
+
+    async onClose(_connection, code, reason) {
+      config.logger.debug(`WebSocket connection closed: ${code} ${reason}`)
+    },
+
+    async onError(_connection, error) {
+      config.logger.error('WebSocket connection error:', error)
+    },
+  })
+
+  const send = (connection: IWebSocketConnection<BackendWebSocketData>, decodedMsg: ToClientMsgOne) => {
     const encodedMsg = config.codec.encode(decodedMsg)
-    ws.send(
-      // @ts-expect-error
-      encodedMsg,
-    )
+    connection.send(encodedMsg as string | Buffer)
   }
 
   const publishTopic = (
     topic: Topic,
-    encodedMsg: EncodedMsg,
+    encodedMsg: string | Buffer,
     decodedMsg: ToClientMsgMany,
-    ws: ServerWebSocket<BackendWebSocketData> | null,
+    sourceConnection: IWebSocketConnection<BackendWebSocketData> | null,
   ) => {
-    bunServer.publish(topic, encodedMsg)
+    // Publish to all connections subscribed to this topic
+    wsServer.publish(topic, encodedMsg)
+
+    // Notify local subscribers
     subscriptionsByTopic.get(topic)?.pubSub.pub({
       ...decodedMsg[3],
-      clientId: ws?.data.clientId,
-      sessionId: ws?.data.sessionId,
-      clientSessionId: ws?.data.clientSessionId,
+      clientId: sourceConnection?.data?.clientId,
+      sessionId: sourceConnection?.data?.sessionId,
+      clientSessionId: sourceConnection?.data?.clientSessionId,
     })
   }
 
   const publishTopicName = (
     topicName: TopicName,
-    encodedMsg: EncodedMsg,
+    encodedMsg: string | Buffer,
     decodedMsg: ToClientMsgMany,
-    ws: ServerWebSocket<BackendWebSocketData> | null,
+    sourceConnection: IWebSocketConnection<BackendWebSocketData> | null,
   ) => {
-    bunServer.publish(topicName, encodedMsg)
+    // Publish to all connections subscribed to this topic name
+    wsServer.publish(topicName, encodedMsg)
+
+    // Notify local subscribers
     subscriptionsByTopicName.get(topicName)?.pubSub.pub({
       ...decodedMsg[3],
-      clientId: ws?.data.clientId,
-      sessionId: ws?.data.sessionId,
-      clientSessionId: ws?.data.clientSessionId,
+      clientId: sourceConnection?.data?.clientId,
+      sessionId: sourceConnection?.data?.sessionId,
+      clientSessionId: sourceConnection?.data?.clientSessionId,
     })
   }
-
-  config.httpServer._setWebSocketHandler({
-    async message(ws: ServerWebSocket<BackendWebSocketData>, encodedMsg) {
-      // @ts-expect-error
-      const decodedMsg: ToServerMsg =
-        //
-        config.codec.decodeBunJsWebSocketMessage(encodedMsg)
-
-      switch (decodedMsg[0]) {
-        case SUB: {
-          const topic = toTopic(decodedMsg[1], decodedMsg[2])
-          ws.subscribe(topic)
-          send(ws, decodedMsg)
-          return
-        }
-        case UNSUB: {
-          const topic = toTopic(decodedMsg[1], decodedMsg[2])
-          ws.unsubscribe(topic)
-          send(ws, decodedMsg)
-          return
-        }
-        case SUB_ALL: {
-          const topicName = decodedMsg[1]
-          ws.subscribe(topicName)
-          send(ws, decodedMsg)
-          return
-        }
-        case UNSUB_ALL: {
-          const topicName = decodedMsg[1]
-          ws.unsubscribe(topicName)
-          send(ws, decodedMsg)
-          return
-        }
-        case PUB: {
-          const topic = toTopic(decodedMsg[1], decodedMsg[2])
-          publishTopic(topic, encodedMsg, decodedMsg, ws)
-          publishTopicName(decodedMsg[1], encodedMsg, decodedMsg, ws)
-          return
-        }
-      }
-    },
-  })
-
-  config.httpServer.registerRespond((request, server) => {
-    bunServer = server as Bun.Server
-
-    const url = new URL(request.url)
-
-    if (url.pathname !== config.endpoint) return null
-
-    const maybeSessionId = SessionIdHttp.fromRequest(request)
-    const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
-
-    const maybeClientSessionId = ClientSessionIdHttp.fromRequest(request)
-    const clientSessionId = maybeClientSessionId ?? ClientSessionId.generate()
-
-    const clientId = ClientId.generate()
-
-    const data: BackendWebSocketData = {
-      clientId,
-      sessionId,
-      clientSessionId,
-    }
-
-    const headers = new Headers()
-
-    if (!maybeSessionId) {
-      headers.append('Set-Cookie', SessionIdHttp.toSetCookieHeaderValue({ sessionId, isProd: config.isProd }))
-    }
-
-    if (bunServer.upgrade(request, { headers, data })) return
-
-    return new Response('Failed to upgrade to WebSocket', { status: 500 })
-  })
 
   return {
     subscriptionsByTopic,

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'vitest'
 import { isSubset } from './is-subset'
 
 const eq = <A>(a: A, b: A) => a === b

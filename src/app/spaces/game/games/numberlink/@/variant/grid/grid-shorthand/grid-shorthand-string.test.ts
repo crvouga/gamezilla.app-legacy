@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import * as VariantGridShorthandString from './grid-shorthand-string'
 import * as VariantGridShorthand from './grid-shorthand'
 

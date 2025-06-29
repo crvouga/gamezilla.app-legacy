@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from 'bun:test'
+import { beforeEach, describe, expect, test } from 'vitest'
 import { PackPuzzleGridUI } from '../../../../@/pack/pack-puzzle-grid-ui'
 import { ScreenPackBuildSpaceFixture } from '../@/fixture/space'
 import { ScreenPackBuildSpace } from './space'

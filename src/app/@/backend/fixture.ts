@@ -1,4 +1,4 @@
-import { HttpServerBun } from '~/@/http-server/impl-bun'
+import { HttpServer } from '~/@/http-server/impl-node'
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { ILogger } from '~/@/logger'
 import { Logger } from '~/@/logger'
@@ -44,11 +44,15 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const runtime = Runtime({ t: 'process', logger, shutoffFGracePeriod: TimeSpan.seconds(0) })
 
-  const httpServer = HttpServerBun({ t: 'bun', logger })
+  const httpServer = HttpServer({ t: 'node', logger })
 
   const keyValueDbHashMap = await KeyValueDb({ t: 'hash-map' })
 
-  const sqlDbSqlite = await SqlDb({ t: 'bun-sqlite', fs: { t: 'in-memory' }, logger })
+  const sqlDbSqlite = await SqlDb({
+    t: 'better-sqlite3',
+    databasePath: ':memory:',
+    logger,
+  })
 
   const profileDb = ProfileDb({
     t: 'hash-map',

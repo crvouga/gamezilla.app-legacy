@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { sleep } from '~/@/promise/sleep'
 import { unwrap } from '~/@/result'

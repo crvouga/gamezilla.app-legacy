@@ -22,9 +22,9 @@ export const VerifySMSFactory = {
   /**
    * Creates an in-house implementation of VerifySMS
    */
-  createInHouse: (config: { logger: ILogger; sqlDb: ISqlDb }): IVerifySMS => {
+  createInHouse: async (config: { logger: ILogger; sqlDb: ISqlDb }): Promise<IVerifySMS> => {
     const logger = config.logger.child(['verify-sms'])
-    const hashing = Hashing({ t: 'bun' })
+    const hashing = await Hashing({ t: 'node' })
     const sms = SMS({ t: 'fake', logger })
     const verificationCodeGenerator = VerificationCodeGenerator({ t: 'fake', code: '123' })
     const verificationAttemptDb = VerificationAttemptDb({ t: 'sql-db', sqlDb: config.sqlDb })
@@ -49,9 +49,9 @@ export const VerifySMSFactory = {
   /**
    * Creates an in-house implementation of VerifySMS
    */
-  createInHouseUnitTest: (config: { logger: ILogger }): IVerifySMS => {
+  createInHouseUnitTest: async (config: { logger: ILogger }): Promise<IVerifySMS> => {
     const logger = config.logger.child(['verify-sms'])
-    const hashing = Hashing({ t: 'bun' })
+    const hashing = await Hashing({ t: 'node' })
     const sms = SMS({ t: 'fake', logger })
     const verificationCodeGenerator = VerificationCodeGenerator({ t: 'fake', code: '123' })
     const verificationAttemptDb = VerificationAttemptDb({ t: 'hash-map' })
@@ -95,12 +95,12 @@ export const VerifySMSFactory = {
   /**
    * Creates the appropriate VerifySMS implementation based on environment
    */
-  createForEnvironment: (config: {
+  createForEnvironment: async (config: {
     logger: ILogger
     backendRole: BackendRole
     env: Env
     sqlDb: ISqlDb
-  }): IVerifySMS => {
+  }): Promise<IVerifySMS> => {
     if (config.backendRole === 'edge') {
       config.logger.info('Using fake verify SMS for edge backend')
       return VerifySMS({ t: 'fake', logger: config.logger })
@@ -117,6 +117,6 @@ export const VerifySMSFactory = {
     }
 
     config.logger.info('Using fake for non-production and primary backend')
-    return VerifySMSFactory.createInHouseUnitTest({ logger: config.logger })
+    return await VerifySMSFactory.createInHouseUnitTest({ logger: config.logger })
   },
 }

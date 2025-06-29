@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from 'bun:test'
+import { describe, expect, it, test } from 'vitest'
 import { Logger } from '~/@/logger'
 import { UserId } from '~/app/@/data/user-id'
 import { Numberlink } from '../../@/numberlink'
@@ -362,7 +362,7 @@ describe('ScreenPlayPuzzleSpace', () => {
         userId: UserId.generate(),
       },
     ])
-    expect(output.events?.some((e) => e.t === 'user-used-hint')).toBe(true)
+    expect(output.events?.some((e) => e.t === 'user-used-hint')).toEqual(true)
   })
 
   it('should be on the slide index corresponding with the opened puzzle', async () => {
