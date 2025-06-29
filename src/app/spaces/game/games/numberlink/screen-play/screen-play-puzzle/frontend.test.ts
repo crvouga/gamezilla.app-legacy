@@ -6,6 +6,8 @@
 // import { Numberlink } from '../../@/numberlink'
 // import { FixtureScreenPlayPuzzleFrontend } from './@/fixture/frontend'
 
+import { describe } from 'node:test'
+
 // const Fixture = async () => {
 //   const f = await FixtureScreenPlayPuzzleFrontend()
 //   return {
@@ -298,3 +300,5 @@
 //     })
 //   })
 // })
+
+describe.todo('ScreenPlayPuzzleFrontend', () => {})

@@ -10,6 +10,8 @@
 // import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 // import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 
+import { describe } from 'node:test'
+
 // const Fixture = async () => {
 //   const f = await FixtureSpacesFrontend()
 //   return {
@@ -177,3 +179,5 @@
 //     expect(PushScreenCmd.did(output, (m) => m.t === 'profile' && m.userId === someUserId)).toBe(true)
 //   })
 // })
+
+describe.todo('JoinSpaceFrontend', () => {})

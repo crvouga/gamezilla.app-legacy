@@ -1,6 +1,8 @@
 // import { describe, expect, it } from 'vitest'
 // import { withEventMeta } from '~/@/event-sourced/event'
 
+import { describe } from 'vitest'
+
 // import { Sub } from '~/@/sub'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 // import { FixtureScreenPlayPuzzleFrontend } from '../@/fixture/frontend'
@@ -104,3 +106,5 @@
 //     expect(got).toBeFalsy()
 //   })
 // })
+
+describe.todo('LastPuzzleFrontend', () => {})

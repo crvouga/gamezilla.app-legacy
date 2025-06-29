@@ -147,8 +147,9 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   }
 
   logger.info('Frontend: Starting PowerSync client...')
-  await powerSyncClient.start()
-  logger.info('Frontend: PowerSync client started successfully!')
+  powerSyncClient.start().then(() => {
+    logger.info('Frontend: PowerSync client started successfully!')
+  })
 
   return ctxModule
 }

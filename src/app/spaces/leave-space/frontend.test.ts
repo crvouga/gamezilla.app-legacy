@@ -8,6 +8,8 @@
 // import { Spaces } from '../space/spaces'
 // import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 
+import { describe } from 'node:test'
+
 // const Fixture = async () => {
 //   const f = await FixtureSpacesFrontend()
 //   return {
@@ -97,3 +99,5 @@
 //     expect(PlaySoundCmd.did(output)).toBe(true)
 //   })
 // })
+
+describe.todo('LeaveSpaceFrontend', () => {})

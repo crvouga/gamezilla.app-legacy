@@ -1,6 +1,8 @@
 // import { describe, expect, it } from 'vitest'
 // import { withEventMeta } from '~/@/event-sourced/event'
 
+import { describe } from 'node:test'
+
 // import { Pack } from '../../@/pack/pack'
 // import { Puzzle } from '../../@/puzzle/puzzle'
 // import { FixturePlayFrontend } from '../@/frontend/fixture'
@@ -109,3 +111,5 @@
 //     expect(PlaySoundCmd.did(output)).toBe(true)
 //   })
 // })
+
+describe.todo('ScreenOpenPuzzleFrontend', () => {})

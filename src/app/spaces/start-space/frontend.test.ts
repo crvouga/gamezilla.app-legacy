@@ -6,6 +6,8 @@
 // import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 // import { Spaces } from '../space/spaces'
 
+import { describe } from 'node:test'
+
 // const Fixture = async () => {
 //   const f = await FixtureSpacesFrontend()
 //   return {
@@ -66,3 +68,5 @@
 //     expect(PushScreenCmd.did(started)).toBe(true)
 //   })
 // })
+
+describe.todo('StartSpaceFrontend', () => {})

@@ -1,6 +1,8 @@
 // import { describe } from 'vitest'
 // import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 
+import { describe } from 'node:test'
+
 // export const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
 //   return items.filter(predicate).length === 1
 // }
@@ -146,3 +148,5 @@
 //   //   ).toBe(true)
 //   // })
 // })
+
+describe.todo('SpacesSyncFrontend', () => {})

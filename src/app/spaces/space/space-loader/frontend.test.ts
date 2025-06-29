@@ -3,6 +3,8 @@
 // import { FixtureSpacesFrontend } from '../../@/fixture/frontend'
 // import { Spaces } from '../spaces'
 
+import { describe } from 'node:test'
+
 // const Fixture = async () => {
 //   const f = await FixtureSpacesFrontend()
 //   return {
@@ -18,3 +20,5 @@
 //     expect(Spaces.toSpaceIdByUserId(started.model.spaces, f.ctx.currentUser!.userId)).toBe(spaceId)
 //   })
 // })
+
+describe.todo('SpaceLoaderFrontend', () => {})

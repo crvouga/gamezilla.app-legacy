@@ -13,6 +13,8 @@
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 // import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
 
+import { describe } from 'node:test'
+
 // const Fixture = async (input?: { currentScreen?: Screen }) => {
 //   const f = await FixtureSpacesFrontend(input)
 
@@ -210,3 +212,5 @@
 //     expect(after?.game?.t ?? null).toEqual(null)
 //   })
 // })
+
+describe.todo('ListSpacesFrontend', () => {})
