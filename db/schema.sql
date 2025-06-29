@@ -52,6 +52,35 @@ CREATE TABLE public.auth_sms_verification_attempt (
 
 
 --
+-- Name: foo; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.foo (
+    id integer NOT NULL
+);
+
+
+--
+-- Name: foo_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.foo_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: foo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.foo_id_seq OWNED BY public.foo.id;
+
+
+--
 -- Name: game_chess_puzzle; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -269,6 +298,13 @@ CREATE TABLE public.user_session (
 
 
 --
+-- Name: foo id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.foo ALTER COLUMN id SET DEFAULT nextval('public.foo_id_seq'::regclass);
+
+
+--
 -- Name: auth_sms_verification_attempt auth_sms_verification_attempt_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -282,6 +318,14 @@ ALTER TABLE ONLY public.auth_sms_verification_attempt
 
 ALTER TABLE ONLY public.auth_sms_verification
     ADD CONSTRAINT auth_sms_verification_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: foo foo_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.foo
+    ADD CONSTRAINT foo_pkey PRIMARY KEY (id);
 
 
 --
