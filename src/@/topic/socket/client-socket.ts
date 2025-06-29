@@ -234,7 +234,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
 
   const workerReceiver = async (s: AbortSignal, socket: Socket) => {
     Sub.takeEvery(s, socket.msgsFromServer, async (fromServer) => {
-      const fromServerParsed = (await config.codec.decodeWebSocketMessageEvent(fromServer)) as ToClientMsg
+      const fromServerParsed = (await config.codec.decodeMessageClient(fromServer)) as ToClientMsg
 
       switch (fromServerParsed[0]) {
         case PUB: {

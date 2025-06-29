@@ -123,7 +123,7 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
 
     async onMessage(connection, message) {
       try {
-        const decodedMsg: ToServerMsg = config.codec.decodeBunJsWebSocketMessage(message) as ToServerMsg
+        const decodedMsg: ToServerMsg = config.codec.decodeMessageServer(message) as ToServerMsg
 
         switch (decodedMsg[0]) {
           case SUB: {

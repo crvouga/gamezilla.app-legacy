@@ -1,5 +1,5 @@
 import express from 'express'
-import { createServer } from 'http'
+import { createServer, Server } from 'http'
 import { WebSocket, WebSocketServer } from 'ws'
 import { type ILogger } from '~/@/logger'
 import { Sub } from '../sub'
@@ -141,7 +141,7 @@ export const HttpServer = (config: Config): IHttpServer => {
   const events = Sub.create<HttpServerEvent>()
   const webSocketServers = new Map<string, NodeWebSocketServer>()
   const pendingWebSocketHandlers = new Map<string, WebSocketHandler<any>>()
-  let server: any
+  let server: Server
 
   return {
     events,
@@ -195,13 +195,10 @@ export const HttpServer = (config: Config): IHttpServer => {
     },
     async stop() {
       logger.info('Stopping HTTP server')
+      events.pub({ t: 'stopped' })
       return new Promise<void>((resolve) => {
-        server?.close(() => {
-          events.pub({
-            t: 'stopped',
-          })
-          resolve()
-        })
+        server?.close()
+        resolve()
       })
     },
     registerRespond(respond) {

@@ -29,14 +29,14 @@ const contract = Topic.initContract({
 
 const Fixture = async () => {
   const port = 1234
-  // const logger = Logger({ t: 'console' })
-  const logger = Logger({ t: 'noop' })
+  const logger = Logger({ t: 'console', newLinePerMsg: false, namespace: ['test'] })
+  // const logger = Logger({ t: 'noop' })
   const httpServer = HttpServer({ t: 'node', logger })
 
   const endpoint = '/topic'
   const serverUrl = `http://localhost:${port}`
 
-  const USE_MSG_PACK = true
+  const USE_MSG_PACK = false
   const codec = USE_MSG_PACK ? TopicMsgCodecMsgPack : TopicMsgCodecJson
 
   const server = Topic.initServer({
@@ -63,6 +63,7 @@ const Fixture = async () => {
     syncSubscriptionRate,
     codec,
   })
+
   const clientB = Topic.initClient({
     t: 'web-sockets',
     clientSessionId: ClientSessionId.generate(),
@@ -96,29 +97,28 @@ const Fixture = async () => {
     clientB,
     clientC,
     server,
-    [Symbol.dispose]: async () => {
+    async [Symbol.asyncDispose]() {
       await httpServer.stop()
     },
   }
 }
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 50))
+const sleep = () => new Promise((resolve) => setTimeout(resolve, 10))
 
 describe('Topic', () => {
   test('should work', async () => {
-    using f = await Fixture()
+    await using f = await Fixture()
     const gotServer: Msg[] = []
     const gotA: Msg[] = []
     const gotB: Msg[] = []
     const gotC: Msg[] = []
-
-    f.server.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotServer.push(msg))
-    await sleep()
     f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
     f.clientB.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
     f.clientC.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
+    await sleep()
+    f.server.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotServer.push(msg))
     await sleep()
     f.clientC.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
@@ -128,9 +128,9 @@ describe('Topic', () => {
   })
 
   test('should not receive messages after unsubscribing', async () => {
-    using f = await Fixture()
+    await using f = await Fixture()
     const gotA: Msg[] = []
-    await sleep()
+
     const unsub = f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
     unsub()
@@ -141,7 +141,7 @@ describe('Topic', () => {
   })
 
   test('should not receive messages for different topic params', async () => {
-    using f = await Fixture()
+    await using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
     await sleep()
@@ -156,7 +156,7 @@ describe('Topic', () => {
   })
 
   test('should handle multiple messages in sequence', async () => {
-    using f = await Fixture()
+    await using f = await Fixture()
     const gotA: Msg[] = []
     await sleep()
     f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
@@ -178,7 +178,7 @@ describe('Topic', () => {
   })
 
   test('should handle multiple subscribers with different topic params', async () => {
-    using f = await Fixture()
+    await using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
     const gotC: Msg[] = []
@@ -203,7 +203,7 @@ describe('Topic', () => {
   })
 
   test('should handle unsubscribe correctly', async () => {
-    using f = await Fixture()
+    await using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
@@ -226,7 +226,7 @@ describe('Topic', () => {
   })
 
   test('should handle multiple messages on the same topic', async () => {
-    using f = await Fixture()
+    await using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
@@ -254,7 +254,7 @@ describe('Topic', () => {
   })
 
   test('should handle nested topics correctly', async () => {
-    using f = await Fixture()
+    await using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
@@ -271,7 +271,7 @@ describe('Topic', () => {
   })
 
   test('should handle multiple unsubscribes correctly', async () => {
-    using f = await Fixture()
+    await using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
     const gotC: Msg[] = []
@@ -301,7 +301,7 @@ describe('Topic', () => {
   })
 
   test('should handle multiple subscriptions to the same topic correctly', async () => {
-    using f = await Fixture()
+    await using f = await Fixture()
     const gotA1: Msg[] = []
     const gotA2: Msg[] = []
     const gotB: Msg[] = []
@@ -322,7 +322,7 @@ describe('Topic', () => {
   })
 
   test('should handle different topic parameters correctly', async () => {
-    using f = await Fixture()
+    await using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
@@ -341,7 +341,7 @@ describe('Topic', () => {
   })
 
   test('should handle reconnection correctly', async () => {
-    using f = await Fixture()
+    await using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 

@@ -24,7 +24,11 @@
  * )
  * ```
  */
-export const eventually = async (fn: () => Promise<void>, timeoutMs = 200, intervalMs = 10) => {
+export const eventually = async (
+  fn: () => Promise<void> | void,
+  config: { timeoutMs?: number; intervalMs?: number } = {},
+) => {
+  const { timeoutMs = 200, intervalMs = 10 } = config
   const deadline = Date.now() + timeoutMs
   while (true) {
     try {
