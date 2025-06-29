@@ -29,3 +29,9 @@ tsconfig.tsbuildinfo
 .clj-kondo
 .lsp
 .env
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

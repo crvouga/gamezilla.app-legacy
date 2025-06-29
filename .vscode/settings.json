@@ -6,6 +6,7 @@
     "chessboardjs",
     "cloc",
     "cmds",
+    "codegen",
     "compat",
     "dbmate",
     "deinterleave",
