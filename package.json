@@ -56,7 +56,7 @@
     "pretty": "npx sort-package-json && npx prettier --write .",
     "preview": "npm run frontend:build && npm run frontend:serve",
     "tc": "npx tsc --noEmit --watch",
-    "test": "vitest run",
+    "test": "NODE_ENV=test vitest run",
     "test:clear-only": "npx replace-in-files-cli '**/*.ts' '**/*.tsx' --string='.only(' --replacement='('",
     "test:int": "IS_INTEGRATION_TEST=true vitest run",
     "test:unit": "IS_INTEGRATION_TEST=false vitest run",

@@ -1,19 +1,19 @@
-import { env, expect, test } from '~/@/test-runner'
+import { expect, test, TestRunnerEnv } from '~/@/test-runner'
 import { FixtureAuth } from './@/test/fixture'
 
-const Fixture = async () => {
-  const f = await FixtureAuth(env)
+const Fixture = async (e: TestRunnerEnv) => {
+  const f = await FixtureAuth(e)
   return f
 }
 
-test('login screen', async () => {
-  await using f = await Fixture()
+test('login screen', async (e) => {
+  await using f = await Fixture(e)
   const [screen] = await f.frontend.query(`[data-testid='auth/login-screen']`)
   expect(screen).toBeDefined()
 })
 
-test('continue with sms', async () => {
-  await using f = await Fixture()
+test('continue with sms', async (e) => {
+  await using f = await Fixture(e)
   const [button] = await f.frontend.query(`[data-testid='auth/continue-with-phone-button']`)
   await button!.do({ t: 'click' })
   const [screen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)

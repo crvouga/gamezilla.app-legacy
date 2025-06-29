@@ -8,7 +8,7 @@ export type Expected<T> = {
 export type Expect = <T>(value: T) => Expected<T>
 type MaybePromise<T> = T | Promise<T>
 export type Describe = (name: string, fn: (...args: any[]) => MaybePromise<void>) => MaybePromise<void>
-export type Test = (name: string, fn: (...args: any[]) => MaybePromise<void>) => MaybePromise<void>
+export type Test = (name: string, fn: (env: TestRunnerEnv) => MaybePromise<void>) => MaybePromise<void>
 
 export type TestRunnerEnv =
   | {

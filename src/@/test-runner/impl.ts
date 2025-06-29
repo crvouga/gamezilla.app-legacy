@@ -1,9 +1,7 @@
-import { Page } from '@playwright/test'
-import { Expect, Test, TestRunnerEnv } from './interface'
+import { Expect, Test } from './interface'
 
 export let expect: Expect
 export let test: Test
-export let env: TestRunnerEnv
 
 type TestRunnerImpl = 'playwright' | 'vitest'
 
@@ -13,13 +11,6 @@ const TEST_RUNNER_IMPL: TestRunnerImpl = IS_PLAYWRIGHT ? 'playwright' : 'vitest'
 
 switch (TEST_RUNNER_IMPL) {
   case 'playwright': {
-    let pageSingleton: Page
-    env = {
-      t: 'playwright',
-      getPage() {
-        return pageSingleton
-      },
-    }
     const playwright = await import('@playwright/test')
     expect = (value) => {
       return {
@@ -36,19 +27,17 @@ switch (TEST_RUNNER_IMPL) {
     }
     test = (name, fn) => {
       playwright.test(name, async ({ page }) => {
-        pageSingleton = page
-        await pageSingleton.goto('http://localhost:3001')
-        await fn()
+        await page.goto('http://localhost:3001')
+        await fn({
+          t: 'playwright',
+          getPage: () => page,
+        })
       })
     }
     break
   }
 
   case 'vitest': {
-    console.log('using vitest test runner')
-    env = {
-      t: 'vitest',
-    }
     const vitest = await import('vitest')
     expect = (value) => {
       return {
@@ -63,7 +52,13 @@ switch (TEST_RUNNER_IMPL) {
         },
       }
     }
-    test = vitest.test
+    test = (name, fn) => {
+      vitest.test(name, async () => {
+        await fn({
+          t: 'vitest',
+        })
+      })
+    }
     break
   }
 }
