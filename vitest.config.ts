@@ -1,11 +1,24 @@
-import { defineConfig } from 'vitest/config'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
+import wasm from 'vite-plugin-wasm'
+import tsconfigPaths from 'vite-tsconfig-paths'
+import { defineConfig } from 'vitest/config'
+
+const KILOBYTE = 1024
+const MEGABYTE = KILOBYTE * KILOBYTE
 
 export default defineConfig({
   plugins: [
+    tailwindcss(),
     tsconfigPaths(),
-    react(), // 👈 needed for JSX to work in tests
+    wasm(),
+    react(),
+    VitePWA({
+      workbox: {
+        maximumFileSizeToCacheInBytes: 3 * MEGABYTE,
+      },
+    }),
   ],
   test: {
     environment: 'happy-dom',
@@ -19,5 +32,9 @@ export default defineConfig({
       '**/.{idea,git,cache,output,temp}/**',
       '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
     ],
+  },
+  define: {
+    global: 'globalThis',
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
   },
 })

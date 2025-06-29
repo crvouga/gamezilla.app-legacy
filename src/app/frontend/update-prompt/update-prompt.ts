@@ -1,11 +1,6 @@
 import { ILogger } from '~/@/logger'
-import { CONFIG_SHARED } from '~/config/shared'
 
 export const registerServiceWorker = async (config: { logger: ILogger }) => {
-  if (CONFIG_SHARED.IS_TEST) {
-    return
-  }
-
   const { registerSW } = await import('virtual:pwa-register')
   const logger = config.logger.child(['frontend', 'update-prompt'])
   logger.info('registerSW')
