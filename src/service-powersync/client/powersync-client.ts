@@ -50,19 +50,35 @@ export const PowerSyncClient = async (config: Config): Promise<IPowerSyncClient>
 
   const events = Sub.create<PowerSyncDatabaseEvent>()
 
-  // database.init().then(() => {
-  //   logger.info('PowerSync initialized')
-  //   events.pub({ t: 'initialized' })
-  // })
+  // Initialize the database
+  database
+    .init()
+    .then(() => {
+      logger.info('PowerSync initialized')
+      events.pub({ t: 'initialized' })
+    })
+    .catch((error) => {
+      logger.error('PowerSync initialization failed:', error)
+    })
 
-  // database.waitForFirstSync().then(() => {
-  //   logger.info('PowerSync first sync completed')
-  //   events.pub({ t: 'first-sync-completed' })
-  // })
+  database
+    .waitForFirstSync()
+    .then(() => {
+      logger.info('PowerSync first sync completed')
+      events.pub({ t: 'first-sync-completed' })
+    })
+    .catch((error) => {
+      logger.error('PowerSync first sync failed:', error)
+    })
 
   const start = async () => {
     try {
       logger.info('PowerSync: Starting connection...')
+
+      // Wait for database to be ready before connecting
+      await database.waitForReady()
+      logger.info('PowerSync database ready')
+
       await database.connect(config.backendConnector)
       logger.info('PowerSync connected to backend')
       events.pub({ t: 'connected' })

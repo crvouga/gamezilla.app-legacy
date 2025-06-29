@@ -89,6 +89,11 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     backendConnector: powersyncBackendConnector,
   })
 
+  // Wait for PowerSync database to be ready before proceeding
+  logger.info('Frontend: Waiting for PowerSync database to be ready...')
+  await powerSyncClient.database.waitForReady()
+  logger.info('Frontend: PowerSync database is ready')
+
   const sqlDb = await SqlDb({
     t: 'powersync-client',
     powerSyncClient,
@@ -147,9 +152,8 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   }
 
   logger.info('Frontend: Starting PowerSync client...')
-  powerSyncClient.start().then(() => {
-    logger.info('Frontend: PowerSync client started successfully!')
-  })
+  await powerSyncClient.start()
+  logger.info('Frontend: PowerSync client started successfully!')
 
   return ctxModule
 }

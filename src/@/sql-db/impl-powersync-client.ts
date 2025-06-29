@@ -17,7 +17,7 @@ export const SqlDb = (config: Config): ISqlDb => {
   const query: ISqlDb['query'] = async (input) => {
     try {
       const sql = Sql.to(input.sql, input.vars)
-      const rows = await config.powerSyncClient.database.getAll?.(sql)
+      const rows = await config.powerSyncClient.database.getAll(sql)
       if (!rows) return Err('No results')
       const parsedRows = rows.map(input.schema.parse).flatMap((parsed) => (isOk(parsed) ? [parsed.value] : []))
       return Ok(parsedRows)
@@ -36,7 +36,7 @@ export const SqlDb = (config: Config): ISqlDb => {
     const abortController = new AbortController()
 
     const unsub = config.powerSyncClient.events.sub(async (_event) => {
-      const got = await config.powerSyncClient.database.getAll?.(sql)
+      const got = await config.powerSyncClient.database.getAll(sql)
       const parsedRows = got.flatMap((row) => {
         const parsed = input.schema.parse(row)
         if (isOk(parsed)) return [parsed.value]
@@ -51,7 +51,7 @@ export const SqlDb = (config: Config): ISqlDb => {
         clearInterval(interval)
         return
       }
-      const queried = await config.powerSyncClient.database.getAll?.(sql)
+      const queried = await config.powerSyncClient.database.getAll(sql)
       const parsedRows = queried.flatMap((row) => {
         const parsed = input.schema.parse(row)
         if (isOk(parsed)) return [parsed.value]
