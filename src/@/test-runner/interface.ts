@@ -1,10 +1,11 @@
-import type { Page, expect as pwExpect } from '@playwright/test'
-import type { expect as vitestExpect } from 'vitest'
+import type { Page } from '@playwright/test'
 
-type VitestExpect = typeof vitestExpect
-type PWExpect = typeof pwExpect
-
-export type Expect = VitestExpect & PWExpect
+export type Expected<T> = {
+  toBeDefined: () => void
+  toBeUndefined: () => void
+  toEqual: (value: T) => void
+}
+export type Expect = <T>(value: T) => Expected<T>
 type MaybePromise<T> = T | Promise<T>
 export type Describe = (name: string, fn: (...args: any[]) => MaybePromise<void>) => MaybePromise<void>
 export type Test = (name: string, fn: (...args: any[]) => MaybePromise<void>) => MaybePromise<void>
@@ -12,7 +13,7 @@ export type Test = (name: string, fn: (...args: any[]) => MaybePromise<void>) =>
 export type TestRunnerEnv =
   | {
       t: 'playwright'
-      getPage: () => Promise<Page>
+      getPage: () => Page
     }
   | {
       t: 'vitest'
