@@ -7,7 +7,6 @@ import { ISqlDb } from '~/@/sql-db'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
-import { AppTypes } from '~/app'
 import { AuthBackend } from '~/app/auth/backend'
 import { AppBackend } from '~/app/backend'
 import { ProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
@@ -16,7 +15,6 @@ import { SpacesBackend } from '~/app/spaces/backend'
 import { BackendCtxModule, topicContract } from '~/app/types'
 import { WireBackend } from '~/app/wire/backend'
 import { BackendInstanceId } from '../backend/backend-instance/backend-instance-id'
-import { BackendRole } from '../backend/backend-role'
 import { AppBackendCtxBase } from '../backend/ctx'
 
 export const TestBackend = async (config: {
@@ -24,36 +22,6 @@ export const TestBackend = async (config: {
   topic: Topic.Client<typeof topicContract>
   logger: ILogger
 }) => {
-  const ctx = await initCtx({
-    backendRole: 'primary',
-    sqlDb: config.sqlDb,
-    topic: config.topic,
-    logger: config.logger,
-  })
-
-  const rpcServer = AppBackend.rpc({ ctx })
-
-  const abortController = new AbortController()
-
-  AppBackend.worker(abortController.signal, { ctx })
-
-  const cleanUp = async () => {
-    abortController.abort()
-  }
-
-  return {
-    rpcServer,
-    abortController,
-    cleanUp,
-  }
-}
-
-const initCtx = async (config: {
-  backendRole: BackendRole
-  sqlDb: ISqlDb
-  topic: Topic.Client<typeof AppTypes.topicContract>
-  logger: ILogger
-}): Promise<BackendCtxModule> => {
   const logger = config.logger.child(['backend'])
 
   const runtime = Runtime({
@@ -86,7 +54,7 @@ const initCtx = async (config: {
   const backendInstanceId = BackendInstanceId.generate()
 
   const ctxBase: AppBackendCtxBase = {
-    backendRole: config.backendRole,
+    backendRole: 'primary',
     env: 'dev',
     sqlDb: config.sqlDb,
     keyValueDbDurable,
@@ -114,5 +82,19 @@ const initCtx = async (config: {
     topic: config.topic,
   }
 
-  return ctx
+  const rpcServer = AppBackend.rpc({ ctx })
+
+  const abortController = new AbortController()
+
+  AppBackend.worker(abortController.signal, { ctx })
+
+  const cleanUp = async () => {
+    abortController.abort()
+  }
+
+  return {
+    rpcServer,
+    abortController,
+    cleanUp,
+  }
 }

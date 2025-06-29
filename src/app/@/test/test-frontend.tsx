@@ -28,13 +28,53 @@ export const TestFrontend = async (config: {
 }) => {
   const sessionId = SessionId.generate()
 
-  const ctx = await initCtx({
+  const logger = config.logger.child(['frontend'])
+
+  const clientSessionId = ClientSessionIdStorage().get()
+
+  const rpc = RPC.initClient({
+    t: 'local',
+    contract: rpcContract,
+    clientSessionId,
+    server: config.rpcServer,
     sessionId,
-    rpcServer: config.rpcServer,
-    topic: config.topic,
-    sqlDb: config.sqlDb,
-    logger: config.logger,
   })
+
+  const httpClient = HttpClient({ t: 'fetch' })
+
+  const ctxBase: AppFrontendCtxBase = {
+    audioPlayer: AudioPlayer({ t: 'fake', logger }),
+    clientSessionId,
+    sqlDb: config.sqlDb,
+    logger,
+    now: UnixMs.now(),
+    navigatorLanguage: 'en',
+    currentScreen: { t: 'login', n: 'auth' },
+    t: Translator('en'),
+    documentVisibilityState: 'visible',
+    profilesByUserId: {},
+    screenSize: 'mobile',
+    parentScreen: null,
+    currentUser: null,
+    currentUserId: null,
+    currentUserRole: null,
+    httpClient,
+  }
+
+  const auth = await AuthFrontend.initCtx({ ctx: ctxBase, rpc })
+  const profile = ProfileFrontend.initCtx({ ctx: ctxBase })
+  const spaces = await SpacesFrontend.initCtx({ ctx: ctxBase, rpc, topic: config.topic })
+  const wire = WireFrontend.initCtx({ ctx: ctxBase, rpc, topic: config.topic })
+
+  const ctx: FrontendCtxModule = {
+    ...ctxBase,
+    ...auth,
+    ...profile,
+    ...spaces,
+    ...wire,
+    rpc,
+    topic: config.topic,
+  }
 
   const client = await TestClient({
     t: 'happydom',
@@ -63,65 +103,9 @@ export const TestFrontend = async (config: {
   return {
     ...client,
     ...program,
+    clientSessionId,
+    sessionId,
     audio: ctx.audioPlayer,
     cleanUp,
   }
-}
-
-const initCtx = async (config: {
-  rpcServer: RPC.Server<typeof rpcContract>
-  sessionId: SessionId
-  topic: Topic.Client<typeof topicContract>
-  sqlDb: ISqlDb
-  logger: ILogger
-}): Promise<FrontendCtxModule> => {
-  const logger = config.logger.child(['frontend'])
-
-  const clientSessionId = ClientSessionIdStorage().get()
-
-  const rpc = RPC.initClient({
-    t: 'local',
-    contract: rpcContract,
-    clientSessionId,
-    server: config.rpcServer,
-    sessionId: config.sessionId,
-  })
-
-  const httpClient = HttpClient({ t: 'fetch' })
-
-  const ctx: AppFrontendCtxBase = {
-    audioPlayer: AudioPlayer({ t: 'fake', logger }),
-    clientSessionId,
-    sqlDb: config.sqlDb,
-    logger,
-    now: UnixMs.now(),
-    navigatorLanguage: 'en',
-    currentScreen: { t: 'login', n: 'auth' },
-    t: Translator('en'),
-    documentVisibilityState: 'visible',
-    profilesByUserId: {},
-    screenSize: 'mobile',
-    parentScreen: null,
-    currentUser: null,
-    currentUserId: null,
-    currentUserRole: null,
-    httpClient,
-  }
-
-  const auth = await AuthFrontend.initCtx({ ctx, rpc })
-  const profile = ProfileFrontend.initCtx({ ctx })
-  const spaces = await SpacesFrontend.initCtx({ ctx, rpc, topic: config.topic })
-  const wire = WireFrontend.initCtx({ ctx, rpc, topic: config.topic })
-
-  const ctxModule: FrontendCtxModule = {
-    ...ctx,
-    ...auth,
-    ...profile,
-    ...spaces,
-    ...wire,
-    rpc,
-    topic: config.topic,
-  }
-
-  return ctxModule
 }
