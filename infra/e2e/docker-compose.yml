@@ -1,0 +1,85 @@
+name: gamezilla_app
+
+services:
+  frontend:
+
+  backend:
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - '5438:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: >
+      sh -c "docker-entrypoint.sh postgres -c listen_addresses='*' -c port=5432 -c ssl=off -c wal_level=logical &
+      until pg_isready -U postgres; do sleep 1; done;
+      psql -U postgres -d postgres -c \"CREATE PUBLICATION powersync FOR ALL TABLES;\";
+      wait"
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  powersync:
+    container_name: powersync
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      powersync_storage_postgres:
+        condition: service_healthy
+    image: journeyapps/powersync-service:latest
+    command: ['start', '-r', 'unified']
+    volumes:
+      - ../../src/service-powersync:/powersync
+    environment:
+      POWERSYNC_CONFIG_PATH: /powersync/config.yaml
+      PS_POSTGRES_STORAGE_DATABASE_URL: ${PS_POSTGRES_STORAGE_DATABASE_URL}
+      PS_POSTGRES_REPLICATION_DATABASE_URL: ${PS_POSTGRES_REPLICATION_DATABASE_URL}
+      PS_JWKS_URI: ${PS_JWKS_URI}
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - 8088:8088
+
+  powersync_storage_postgres:
+    container_name: powersync_storage_postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: powersync_storage_postgres
+      POSTGRES_PASSWORD: powersync_storage_postgres
+      POSTGRES_DB: powersync_storage_postgres
+    ports:
+      - '5439:5432'
+    volumes:
+      - powersync_storage_postgres_data:/var/lib/postgresql/data
+    command: >
+      sh -c "docker-entrypoint.sh postgres -c listen_addresses='*' -c port=5432 -c ssl=off -c wal_level=logical &
+      until pg_isready -U powersync_storage_postgres; do sleep 1; done;
+      wait"
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U powersync_storage_postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  powersync_diagnostics:
+    container_name: powersync_diagnostics
+    image: journeyapps/powersync-diagnostics-app:latest
+    restart: unless-stopped
+    platform: linux/amd64
+    ports:
+      - '8082:80'
+
+volumes:
+  postgres_data:
+  powersync_storage_postgres_data:

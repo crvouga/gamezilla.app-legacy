@@ -1,3 +1,4 @@
+import { PlayedAudioRecord } from '../audio-player'
 import { TimeSpan } from '../time/time-span'
 
 export type TestAction =
@@ -22,4 +23,5 @@ export type TestClientQueryConfig = {
 
 export type ITestClient = {
   query: (selector: string, config?: TestClientQueryConfig) => Promise<ITestNode[]>
+  audio: () => PlayedAudioRecord[]
 }

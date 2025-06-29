@@ -80,6 +80,7 @@ export const TestFrontend = async (config: {
     t: 'happydom',
     maxWait: TimeSpan.milliseconds(100),
     poll: TimeSpan.milliseconds(10),
+    audioPlayer: ctx.audioPlayer,
   })
 
   document.body.innerHTML = `<div id="root"></div>`
@@ -103,9 +104,6 @@ export const TestFrontend = async (config: {
   return {
     ...client,
     ...program,
-    clientSessionId,
-    sessionId,
-    audio: ctx.audioPlayer,
     cleanUp,
   }
 }

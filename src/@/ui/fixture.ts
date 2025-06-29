@@ -1,5 +1,7 @@
 import { TestClient } from '~/@/test-client'
 import { Render } from '~/@/vdom/render'
+import { AudioPlayer } from '../audio-player'
+import { Logger } from '../logger'
 import { TimeSpan } from '../time/time-span'
 
 export const BaseFixture = async () => {
@@ -7,6 +9,7 @@ export const BaseFixture = async () => {
     t: 'happydom',
     maxWait: TimeSpan.milliseconds(10),
     poll: TimeSpan.milliseconds(1),
+    audioPlayer: AudioPlayer({ t: 'fake', logger: Logger({ t: 'noop' }) }),
   })
 
   document.body.innerHTML = '<div id="root"></div>'

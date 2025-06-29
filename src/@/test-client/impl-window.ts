@@ -1,9 +1,11 @@
+import { IAudioPlayer } from '../audio-player'
 import { TimeSpan } from '../time/time-span'
 import type { ITestClient, ITestNode, TestAction } from './interface'
 
 export type BaseConfig = {
   maxWait: TimeSpan
   poll: TimeSpan
+  audioPlayer: IAudioPlayer
 }
 
 export type Config = {
@@ -12,14 +14,21 @@ export type Config = {
 
 export const TestClient = (config: Config): ITestClient => {
   return {
+    audio() {
+      return config.audioPlayer.played()
+    },
     async query(selector: string, queryConfig) {
       const poll = async () => {
         const found = Array.from(document.querySelectorAll(selector))
         const testNodes = found.map((node): ITestNode => {
           return {
-            text: () => Promise.resolve(node.textContent ?? null),
-            attr: (name: string) => Promise.resolve(node.getAttribute(name) ?? null),
-            do: async (action: TestAction) => {
+            async text() {
+              return node.textContent ?? null
+            },
+            async attr(name: string) {
+              return node.getAttribute(name) ?? null
+            },
+            async do(action: TestAction) {
               switch (action.t) {
                 case 'keydown': {
                   node.dispatchEvent(new KeyboardEvent('keydown', { key: action.key, bubbles: true }))
