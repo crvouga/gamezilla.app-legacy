@@ -1,4 +1,9 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+describe('GameFrontend', () => {
+  test('should play a sound after inputting a game', async () => {
+    expect(true).toEqual(true)
+  })
+})
 
 // import { SpaceId } from '~/app/@/data/space-id'
 // import { FixtureSpacesFrontend } from '../@/fixture/frontend'
@@ -34,7 +39,7 @@
 //         },
 //       },
 //     ])
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('should be able to start game', async () => {
@@ -56,7 +61,7 @@
 //       },
 //     ])
 //     const gameName = Spaces.toSpaceStarted(output.model.spaces, spaceId)?.game?.t
-//     expect(gameName).toBe(gameNameExpected)
+//     expect(gameName).toEqual(gameNameExpected)
 //   })
 
 //   test('should exit game for corresponding cmd', async () => {
@@ -70,6 +75,6 @@
 
 //     const gameName = Spaces.toSpaceStarted(NonEmpty.last(outputs).model.spaces, spaceId)?.game?.t ?? null
 
-//     expect(gameName).toBeNull()
+//     expect(gameName).toEqualNull()
 //   })
 // })

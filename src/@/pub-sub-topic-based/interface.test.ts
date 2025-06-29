@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { s } from '~/@/schema'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Logger } from '../logger'
@@ -56,7 +56,7 @@ describe('PubSubTopicBased', () => {
       }
       await f.pubSub.sub(topic, sub)
       await f.pubSub.pub(topic, encode(myEvent))
-      expect(called).toBe(1)
+      expect(called).toEqual(1)
     }
   })
 
@@ -70,7 +70,7 @@ describe('PubSubTopicBased', () => {
       }
       await f.pubSub.pub(topic, encode(myEvent))
       await f.pubSub.sub(topic, sub)
-      expect(called).toBe(0)
+      expect(called).toEqual(0)
     }
   })
 
@@ -78,16 +78,19 @@ describe('PubSubTopicBased', () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent()
       const topic = Math.random().toString()
-      const sub = vi.fn()
+      let called = 0
+      const sub = () => {
+        called++
+      }
       const unsub = await f.pubSub.sub(topic, sub)
-      expect(sub).toHaveBeenCalledTimes(0)
+      expect(called).toEqual(0)
       await f.pubSub.pub(topic, encode(myEvent))
-      expect(sub).toHaveBeenCalledTimes(1)
+      expect(called).toEqual(1)
       await unsub()
       await f.pubSub.pub(topic, encode(myEvent))
       await f.pubSub.pub(topic, encode(myEvent))
       await f.pubSub.pub(topic, encode(myEvent))
-      expect(sub).toHaveBeenCalledTimes(1)
+      expect(called).toEqual(1)
     }
   })
 
@@ -95,22 +98,31 @@ describe('PubSubTopicBased', () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent()
       const topic = Math.random().toString()
-      const sub1 = vi.fn()
+      let called1 = 0
+      const sub1 = () => {
+        called1++
+      }
       await f.pubSub.sub(topic, sub1)
 
-      const sub2 = vi.fn()
+      let called2 = 0
+      const sub2 = () => {
+        called2++
+      }
       await f.pubSub.sub(topic, sub2)
 
-      const sub3 = vi.fn()
+      let called3 = 0
+      const sub3 = () => {
+        called3++
+      }
       await f.pubSub.sub(topic, sub3)
 
       await f.pubSub.unsub(topic)
 
       await f.pubSub.pub(topic, encode(myEvent))
 
-      expect(sub1).toHaveBeenCalledTimes(0)
-      expect(sub2).toHaveBeenCalledTimes(0)
-      expect(sub3).toHaveBeenCalledTimes(0)
+      expect(called1).toEqual(0)
+      expect(called2).toEqual(0)
+      expect(called3).toEqual(0)
     }
   })
 
@@ -118,16 +130,19 @@ describe('PubSubTopicBased', () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent()
       const topic = Math.random().toString()
-      const sub = vi.fn()
+      let called = 0
+      const sub = () => {
+        called++
+      }
       for (let i = 0; i < 10; i++) {
         const topic = Math.random().toString()
         await f.pubSub.sub(topic, () => {})
         await f.pubSub.pub(topic, encode(myEvent))
       }
-      expect(sub).toHaveBeenCalledTimes(0)
+      expect(called).toEqual(0)
       await f.pubSub.sub(topic, sub)
       await f.pubSub.pub(topic, encode(myEvent))
-      expect(sub).toHaveBeenCalledTimes(1)
+      expect(called).toEqual(1)
     }
   })
 })

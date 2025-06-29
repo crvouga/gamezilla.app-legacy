@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
 import { isErr, unwrap } from '~/@/result'
 import { Numberlink } from '../../numberlink'
@@ -28,13 +28,13 @@ describe('AlgoSolveAsync', () => {
       ['A', 'B', 'C'],
     ])
 
-    expect(solution).toBeTruthy()
+    expect(Boolean(solution)).toEqual(true)
     if (solution) {
-      expect(Numberlink.isSame(solution, expected)).toBe(true)
+      expect(Numberlink.isSame(solution, expected)).toEqual(true)
     }
   })
 
-  test.skip('abort', async () => {
+  test.todo('abort', async () => {
     const numberlink = VariantGridShorthand.toGrid([
       ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
       ['I', ' ', ' ', ' ', ' ', ' ', ' ', 'J'],
@@ -59,7 +59,7 @@ describe('AlgoSolveAsync', () => {
 
     const result = await solvePromise
 
-    expect(result.t).toBe('err')
-    if (isErr(result)) expect(result.error.t).toBe('aborted')
+    expect(result.t).toEqual('err')
+    if (isErr(result)) expect(result.error.t).toEqual('aborted')
   })
 })

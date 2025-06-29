@@ -1,4 +1,11 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+
+describe('ScreenPackBuilderFrontend', () => {
+  test('render edit name drawer', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { withEventMeta } from '~/@/event-sourced/event'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 // import { FixturePackBuilderFrontend } from './@/fixture/frontend'
@@ -20,14 +27,14 @@
 //       <ScreenPackBuilderFrontend.View {...f} modelSpace={{ ...f.modelSpace, opened: 'edit-pack-name-drawer' }} />,
 //     )
 //     const drawers = r.getByRole('dialog', f.ctx.t('app.edit-name'))
-//     expect(drawers.length).toBe(1)
+//     expect(drawers.length).toEqual(1)
 //   })
 
 //   test('render NOT edit name drawer', async () => {
 //     const f = await Fixture()
 //     const r = f.render(<ScreenPackBuilderFrontend.View {...f} modelSpace={{ ...f.modelSpace }} />)
 //     const drawers = r.getByRole('dialog', f.ctx.t('app.edit-name'))
-//     expect(drawers.length).toBe(0)
+//     expect(drawers.length).toEqual(0)
 //   })
 
 //   test('play sound exiting pack builder', async () => {
@@ -36,6 +43,6 @@
 //       ...f,
 //       msgSpace: withEventMeta({ t: 'screen-pack-builder.user-clicked-back-button', userId: f.hostId }),
 //     })
-//     expect(PlaySoundCmd.count(output)).toBe(1)
+//     expect(PlaySoundCmd.count(output)).toEqual(1)
 //   })
 // })

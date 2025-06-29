@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { unwrap } from '~/@/result'
@@ -79,9 +79,9 @@ describe('UserSessionDb', () => {
       const before = await f.userSessionDb.findUserIdBySessionId(userSession.sessionId)
       const inserted = await f.userSessionDb.upsert(userSession)
       const after = await f.userSessionDb.findUserIdBySessionId(userSession.sessionId)
-      expect(unwrap(before)).toBe(null)
-      expect(unwrap(inserted)).toBe(null)
-      expect(unwrap(after)).toBe(userSession.userId)
+      expect(unwrap(before)).toEqual(null)
+      expect(unwrap(inserted)).toEqual(null)
+      expect(unwrap(after)).toEqual(userSession.userId)
     }
   })
 
@@ -89,7 +89,7 @@ describe('UserSessionDb', () => {
     for (const f of await Fixtures()) {
       const userId = UserId.generate()
       const sessionIds = await f.userSessionDb.findSessionIdsByUserId(userId)
-      expect(sessionIds.t).toBe('ok')
+      expect(sessionIds.t).toEqual('ok')
       const expected = f.sessions.filter((s) => s.userId === userId).flatMap((s) => (s.sessionId ? [s.sessionId] : []))
       expect(unwrap(sessionIds)).toEqual(expected)
     }
@@ -105,7 +105,7 @@ describe('UserSessionDb', () => {
       expect(unwrap(before)).toEqual(
         f.sessions.filter((s) => s.userId === userId).flatMap((s) => (s.sessionId ? [s.sessionId] : [])),
       )
-      expect(after.t).toBe('ok')
+      expect(after.t).toEqual('ok')
       expect(unwrap(after)).toEqual([])
     }
   })
@@ -117,7 +117,7 @@ describe('UserSessionDb', () => {
       if (!sessionId) throw new Error('test setup failed')
       await f.userSessionDb.zapBySessionId(sessionId)
       const sessionIds = await f.userSessionDb.findSessionIdsByUserId(userId)
-      expect(sessionIds.t).toBe('ok')
+      expect(sessionIds.t).toEqual('ok')
       const expected = f.sessions
         .filter((s) => s.userId === userId && s.sessionId !== f.sessions[0].sessionId)
         .flatMap((s) => (s.sessionId ? [s.sessionId] : []))
@@ -133,7 +133,7 @@ describe('UserSessionDb', () => {
       if (!sessionId) throw new Error('test setup failed')
       await f.userSessionDb.zapByClientSessionId(clientSessionId)
       const sessionIds = await f.userSessionDb.findSessionIdsByUserId(userId)
-      expect(sessionIds.t).toBe('ok')
+      expect(sessionIds.t).toEqual('ok')
       const expected = f.sessions
         .filter((s) => s.userId === userId && s.sessionId !== f.sessions[0].sessionId)
         .flatMap((s) => (s.sessionId ? [s.sessionId] : []))
@@ -284,8 +284,8 @@ describe('UserSessionDb', () => {
         order: {},
         pagination: { limit: 1, offset: 0 },
       })
-      expect(unwrap(inserted)).toBe(null)
-      expect(unwrap(updated)).toBe(null)
+      expect(unwrap(inserted)).toEqual(null)
+      expect(unwrap(updated)).toEqual(null)
       expect(unwrap(before).items).toEqual([session])
       expect(unwrap(after).items).toEqual([sessionNew])
     }
@@ -314,7 +314,7 @@ describe('UserSessionDb', () => {
         pagination: { limit: Infinity, offset: 0 },
       })
 
-      expect(unwrap(updated)).toBe(null)
+      expect(unwrap(updated)).toEqual(null)
       const actual = unwrap(result).items[0]
       const expected: UserSession = { ...session, ...updates }
       expect(actual).toEqual(expected)

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Ok, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { NonEmpty } from '../array/non-empty'

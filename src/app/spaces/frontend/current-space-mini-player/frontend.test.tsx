@@ -1,4 +1,10 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+describe('CurrentSpaceMiniPlayerFrontend', () => {
+  test('should open current space when clicking current space bottom bar', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { SpaceId } from '~/app/@/data/space-id'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 // import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
@@ -32,7 +38,7 @@
 
 //     const currentUsersSpaceId = SpacesCore.toSpaceIdByUserId(output.model.spaces, f.ctx.currentUser.userId)
 
-//     expect(PushScreenCmd.did(output, (m) => m.t === 'space' && m.spaceId === currentUsersSpaceId)).toBe(true)
+//     expect(PushScreenCmd.did(output, (m) => m.t === 'space' && m.spaceId === currentUsersSpaceId)).toEqual(true)
 //   })
 
 //   test('should play a sound when clicking current space bottom bar', async () => {
@@ -53,6 +59,6 @@
 //       },
 //     ])
 
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 // })

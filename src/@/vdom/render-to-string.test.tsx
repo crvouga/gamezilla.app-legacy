@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { RenderToString } from './render-to-string'
 import { VDom } from './vdom'
 

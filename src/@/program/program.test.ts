@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Sub } from '../sub'
 import { Program, ProgramCrashReport } from './program'
 import { TimeSpan } from '../time/time-span'
@@ -63,6 +63,6 @@ describe('Program', () => {
 
     await sleep(TimeSpan.milliseconds(100))
 
-    expect(crashReport).toBeTruthy()
+    expect(Boolean(crashReport)).toEqual(true)
   })
 })

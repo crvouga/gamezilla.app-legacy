@@ -1,5 +1,5 @@
-import { describe, test } from 'vitest'
+import { describe, test } from '~/@/test-runner'
 
 describe('NumberLinkScreenMainMenuFrontend', () => {
-  test.todo('play a sound when changing list tabs')
+  test.todo('play a sound when changing list tabs', () => {})
 })

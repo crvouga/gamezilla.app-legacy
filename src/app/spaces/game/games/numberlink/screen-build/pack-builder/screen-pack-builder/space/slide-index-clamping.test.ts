@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { PackPuzzleGridUI } from '../../../../@/pack/pack-puzzle-grid-ui'
 import { ScreenPackBuildSpaceFixture } from '../@/fixture/space'
 import { ScreenPackBuildSpace } from './space'
@@ -6,13 +6,8 @@ import { ScreenPackBuildSpace } from './space'
 const Fixture = ScreenPackBuildSpaceFixture
 
 describe('slide index clamping', () => {
-  let f: Awaited<ReturnType<typeof Fixture>>
-
-  beforeEach(async () => {
-    f = await Fixture()
-  })
-
   test('should clamp large slide index to 0', async () => {
+    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-changed-slide',
@@ -20,11 +15,11 @@ describe('slide index clamping', () => {
         newSlideIndex: 100000,
       },
     ])
-    expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(0)
+    expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toEqual(0)
   })
 
   test('should account for add puzzle cell when clamping', async () => {
-    f = await Fixture({ puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT })
+    const f = await Fixture({ puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT })
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-changed-slide',
@@ -32,6 +27,6 @@ describe('slide index clamping', () => {
         newSlideIndex: 1,
       },
     ])
-    expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(1)
+    expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toEqual(1)
   })
 })

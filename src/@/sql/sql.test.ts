@@ -1,11 +1,11 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import * as Sql from './sql'
 
 describe('SQL', () => {
   test('should replace named parameter with number', async () => {
     const expected = 'SELECT * FROM users WHERE id = 1'
     const actual = Sql.to('SELECT * FROM users WHERE id = :id', { id: 1 })
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should replace named parameter with string', async () => {
@@ -13,7 +13,7 @@ describe('SQL', () => {
     const actual = Sql.to('SELECT * FROM users WHERE name = :name', {
       name: 'John',
     })
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should handle SQL injection attempt', async () => {
@@ -21,7 +21,7 @@ describe('SQL', () => {
     const actual = Sql.to('SELECT * FROM users WHERE id = :id', {
       id: "1' OR '1' = '1",
     })
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should prevent SQL injection', async () => {
@@ -29,7 +29,7 @@ describe('SQL', () => {
     const actual = Sql.to('SELECT * FROM users WHERE id = :id', {
       id: "1' OR '1' = '1",
     })
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should handle multiple variables', async () => {
@@ -38,7 +38,7 @@ describe('SQL', () => {
       id: 2,
       name: 'John',
     })
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should handle variables not in query', async () => {
@@ -46,19 +46,19 @@ describe('SQL', () => {
     const actual = Sql.to('SELECT * FROM users', {
       id: 3,
     })
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should handle no variables', async () => {
     const expected = 'SELECT * FROM users'
     const actual = Sql.to('SELECT * FROM users', {})
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should handle missing parameter', async () => {
     const expected = 'SELECT * FROM users WHERE id = :id'
     const actual = Sql.to('SELECT * FROM users WHERE id = :id', {})
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should handle non-string parameter values', async () => {
@@ -66,7 +66,7 @@ describe('SQL', () => {
     const actual = Sql.to('SELECT * FROM users WHERE age > :age', {
       age: 30,
     })
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should handle non-string parameter names', async () => {
@@ -74,7 +74,7 @@ describe('SQL', () => {
     const actual = Sql.to('SELECT * FROM users WHERE age > :age', {
       age: 30,
     })
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should handle parameter names with underscores', async () => {
@@ -82,7 +82,7 @@ describe('SQL', () => {
     const actual = Sql.to('SELECT * FROM users WHERE first_name = :first_name', {
       first_name: 'John',
     })
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should handle parameter with overlapping names', async () => {
@@ -94,7 +94,7 @@ describe('SQL', () => {
         phone_number_country: 'US',
       },
     )
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should handle json columns', async () => {
@@ -102,7 +102,7 @@ describe('SQL', () => {
       Sql.to("SELECT * FROM users WHERE meta->>'email' = :email", {
         email: 'it@email.com',
       }),
-    ).toBe("SELECT * FROM users WHERE meta->>'email' = 'it@email.com'")
+    ).toEqual("SELECT * FROM users WHERE meta->>'email' = 'it@email.com'")
   })
 
   test('should handle inserting JSON column correctly', async () => {
@@ -124,7 +124,7 @@ describe('SQL', () => {
 
     const built = Sql.to(sqlQuery, variables)
 
-    expect(built === expectedResult).toBe(true)
+    expect(built === expectedResult).toEqual(true)
   })
 
   test('should be safe against SQL injection', async () => {
@@ -137,7 +137,7 @@ describe('SQL', () => {
 
     const built = Sql.to(sqlQuery, variables)
 
-    expect(built === expectedResult).toBe(true)
+    expect(built === expectedResult).toEqual(true)
   })
 
   test('should handle second-order SQL injection', async () => {
@@ -149,7 +149,7 @@ describe('SQL', () => {
 
     const safeQuery = Sql.to(query, variables)
 
-    expect(Sql.to(query, variables)).toBe(safeQuery)
+    expect(Sql.to(query, variables)).toEqual(safeQuery)
   })
 
   test('should handle tautologies', async () => {
@@ -160,7 +160,7 @@ describe('SQL', () => {
     }
 
     const safeQuery = Sql.to(query, variables)
-    expect(Sql.to(query, variables)).toBe(safeQuery)
+    expect(Sql.to(query, variables)).toEqual(safeQuery)
   })
 
   test('should handle union attacks', async () => {
@@ -171,7 +171,7 @@ describe('SQL', () => {
     }
 
     const safeQuery = Sql.to(query, variables)
-    expect(Sql.to(query, variables)).toBe(safeQuery)
+    expect(Sql.to(query, variables)).toEqual(safeQuery)
   })
 
   test('should handle batch injection attempts', async () => {
@@ -182,7 +182,7 @@ describe('SQL', () => {
     }
 
     const safeQuery = Sql.to(query, variables)
-    expect(Sql.to(query, variables)).toBe(safeQuery)
+    expect(Sql.to(query, variables)).toEqual(safeQuery)
   })
 
   test('should handle null byte injection', async () => {
@@ -193,7 +193,7 @@ describe('SQL', () => {
     }
 
     const safeQuery = Sql.to(query, variables)
-    expect(Sql.to(query, variables)).toBe(safeQuery)
+    expect(Sql.to(query, variables)).toEqual(safeQuery)
   })
 
   test('should handle type mismatch exploits', async () => {
@@ -204,7 +204,7 @@ describe('SQL', () => {
     }
 
     const safeQuery = Sql.to(query, variables)
-    expect(Sql.to(query, variables)).toBe(safeQuery)
+    expect(Sql.to(query, variables)).toEqual(safeQuery)
   })
 
   test('should handle comment injection', async () => {
@@ -215,7 +215,7 @@ describe('SQL', () => {
     }
 
     const safeQuery = Sql.to(query, variables)
-    expect(Sql.to(query, variables)).toBe(safeQuery)
+    expect(Sql.to(query, variables)).toEqual(safeQuery)
   })
 
   test('should handle array column data type', async () => {
@@ -226,7 +226,7 @@ describe('SQL', () => {
       emails: Sql.commas(['email@email.com', 'email@email.com']),
     })
 
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should be able to handle "IN" clause', async () => {
@@ -234,6 +234,6 @@ describe('SQL', () => {
     const actual = Sql.to('SELECT * FROM users WHERE id IN (:ids)', {
       ids: Sql.commas([1, 2, 3]),
     })
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 })

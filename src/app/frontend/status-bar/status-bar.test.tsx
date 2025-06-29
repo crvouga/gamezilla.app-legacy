@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 import * as StatusBar from './status-bar'
 
@@ -28,15 +28,15 @@ describe('StatusBar', () => {
     const f = await Fixture()
     const before = f.init
     const after = f.update(before, [{ msg: { t: 'clicked-status-bar' } }])
-    expect(before.model.isOpen).toBe(false)
-    expect(after.model.isOpen).toBe(true)
+    expect(before.model.isOpen).toEqual(false)
+    expect(after.model.isOpen).toEqual(true)
   })
 
   test('should close status bar on click when open', async () => {
     const f = await Fixture()
     const before = f.update(f.init, [{ msg: { t: 'clicked-status-bar' } }])
     const after = f.update(before, [{ msg: { t: 'clicked-status-bar' } }])
-    expect(before.model.isOpen).toBe(true)
-    expect(after.model.isOpen).toBe(false)
+    expect(before.model.isOpen).toEqual(true)
+    expect(after.model.isOpen).toEqual(false)
   })
 })

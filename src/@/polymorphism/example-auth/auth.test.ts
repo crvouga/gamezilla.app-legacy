@@ -1,4 +1,4 @@
-import { describe, test } from 'vitest'
+import { describe, test } from '~/@/test-runner'
 import { signUpWithEmailAndPassword } from './auth'
 import { CustomAuthProvider } from './auth-custom'
 

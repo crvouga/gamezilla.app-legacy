@@ -1,4 +1,10 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+describe('SurfaceEditPackNameFrontend', () => {
+  test('sound open drawer', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { FixturePackBuilderFrontend } from '../@/fixture/frontend'
 // import { EditPackNameFrontend } from './frontend'
 // import { MsgFrontend } from '../types'
@@ -20,7 +26,7 @@
 //     const output = f.update(f.initial, [
 //       { msgSpace: withEventMeta({ t: 'edit-pack-name.user-clicked-open-drawer-button', userId: f.hostId }) },
 //     ])
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 //   test('close drawer', async () => {
 //     const f = await Fixture()

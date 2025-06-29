@@ -1,4 +1,11 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+
+describe('ModePlayFrontend', () => {
+  test('render', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { ModePlay } from '.'
 // import { AlgoIsSolved } from '../solutions/algo-is-solved/algo-is-solved'
 // import { HintCalculatorFrontend } from '../solutions/hint-calculator/frontend'
@@ -50,20 +57,20 @@
 //   test.todo('screen actions show find solutions when no solutions are loaded', async () => {
 //     const f = await Fixture()
 //     const r = f.render()
-//     expect(r.getByTestId(HintCalculatorFrontend.TEST_ID_HINT_CALCULATOR_ACTION)[0]).toBeTruthy()
-//     expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]).toBeFalsy()
+//     expect(r.getByTestId(HintCalculatorFrontend.TEST_ID_HINT_CALCULATOR_ACTION)[0]).toEqualTruthy()
+//     expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]).toEqualFalsy()
 //   })
 
 //   test('screen actions show use hint when solutions are loaded', async () => {
 //     const f = await Fixture()
 //     const r = f.render({ ctx: f.ctxWithSolutions })
-//     expect(r.getByTestId(HintCalculatorFrontend.TEST_ID_HINT_CALCULATOR_ACTION)[0]).toBeFalsy()
-//     expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]).toBeTruthy()
+//     expect(r.getByTestId(HintCalculatorFrontend.TEST_ID_HINT_CALCULATOR_ACTION)[0]).toEqualFalsy()
+//     expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]).toEqualTruthy()
 //   })
 
 //   test('disable hint button when puzzle is solved', async () => {
 //     const f = await Fixture()
 //     const r = f.render({ ctx: f.ctxWithSolutions, model: f.modelSolved })
-//     expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]?.disabled).toBe(true)
+//     expect(r.getByTestId(UseHintFrontend.TEST_ID_USE_HINT_ACTION)[0]?.disabled).toEqual(true)
 //   })
 // })

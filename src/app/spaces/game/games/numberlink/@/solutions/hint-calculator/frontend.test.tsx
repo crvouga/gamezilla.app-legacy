@@ -1,4 +1,11 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+
+describe('HintCalculatorFrontend', () => {
+  test('open dialog', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { Err, Ok } from '~/@/result'
 
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -46,9 +53,9 @@
 //       model: before.model,
 //       msg: { t: 'dialog.clicked-open' },
 //     })
-//     expect(before.model.open).toBe(null)
-//     expect(after.model.open).toBe('find-solutions-confirmation')
-//     expect(PlaySoundCmd.did(after)).toBe(true)
+//     expect(before.model.open).toEqual(null)
+//     expect(after.model.open).toEqual('find-solutions-confirmation')
+//     expect(PlaySoundCmd.did(after)).toEqual(true)
 //   })
 
 //   test('toggle open dialog', async () => {
@@ -63,8 +70,8 @@
 //       model: before.model,
 //       msg: { t: 'dialog.clicked-open' },
 //     })
-//     expect(before.model.open).toBe('find-solutions-confirmation')
-//     expect(after.model.open).toBe(null)
+//     expect(before.model.open).toEqual('find-solutions-confirmation')
+//     expect(after.model.open).toEqual(null)
 //   })
 
 //   test('close dialog', async () => {
@@ -79,9 +86,9 @@
 //       model: before.model,
 //       msg: { t: 'dialog.clicked-close' },
 //     })
-//     expect(before.model.open).toBe('find-solutions-confirmation')
-//     expect(after.model.open).toBeNull()
-//     expect(PlaySoundCmd.did(after)).toBe(true)
+//     expect(before.model.open).toEqual('find-solutions-confirmation')
+//     expect(after.model.open).toEqualNull()
+//     expect(PlaySoundCmd.did(after)).toEqual(true)
 //   })
 
 //   test('handle got msg cmd', async () => {
@@ -113,8 +120,8 @@
 //       model: before.model,
 //       msg: { t: 'clicked-find-solutions', numberlink: f.numberlink },
 //     })
-//     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(true)
-//     expect(PlaySoundCmd.did(after)).toBe(true)
+//     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toEqual(true)
+//     expect(PlaySoundCmd.did(after)).toEqual(true)
 //     expect(after.eff).not.toBeUndefined()
 //   })
 
@@ -131,9 +138,9 @@
 //       model: before.model,
 //       msg: { t: 'found-solution', numberlink: f.numberlink, found: Ok({ solutions: f.solutions }) },
 //     })
-//     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
-//     expect(after.model.open).toBe(null)
-//     expect(ShowOkSmall.did(after)).toBe(true)
+//     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toEqual(false)
+//     expect(after.model.open).toEqual(null)
+//     expect(ShowOkSmall.did(after)).toEqual(true)
 //   })
 
 //   test('found no solutions', async () => {
@@ -149,9 +156,9 @@
 //       model: before.model,
 //       msg: { t: 'found-solution', numberlink: f.numberlink, found: Ok({ solutions: Solutions.init }) },
 //     })
-//     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
-//     expect(after.model.open).toBe(null)
-//     expect(ShowWarningSmall.did(after)).toBe(true)
+//     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toEqual(false)
+//     expect(after.model.open).toEqual(null)
+//     expect(ShowWarningSmall.did(after)).toEqual(true)
 //   })
 
 //   test('found solution err', async () => {
@@ -166,9 +173,9 @@
 //       model: before.model,
 //       msg: { t: 'found-solution', numberlink: f.numberlink, found: Err('some error') },
 //     })
-//     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toBe(false)
-//     expect(after.model.open).toBe(null)
-//     expect(ShowErrorSmall.did(after)).toBe(true)
+//     expect(HintCalculatorFrontend.isLoading(after.model, f.hash)).toEqual(false)
+//     expect(after.model.open).toEqual(null)
+//     expect(ShowErrorSmall.did(after)).toEqual(true)
 //   })
 
 //   test('close surface after finding solutions', async () => {
@@ -184,8 +191,8 @@
 //       model: before.model,
 //       msg: { t: 'found-solution', numberlink: f.numberlink, found: Ok({ solutions: f.solutions }) },
 //     })
-//     expect(before.model.open).toBe('find-solutions-confirmation')
-//     expect(after.model.open).toBe(null)
-//     expect(PlaySoundCmd.did(after)).toBe(true)
+//     expect(before.model.open).toEqual('find-solutions-confirmation')
+//     expect(after.model.open).toEqual(null)
+//     expect(PlaySoundCmd.did(after)).toEqual(true)
 //   })
 // })

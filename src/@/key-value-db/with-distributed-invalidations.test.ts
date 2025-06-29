@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Ok } from '~/@/result'
 import { s } from '~/@/schema'
 import { Logger } from '../logger'

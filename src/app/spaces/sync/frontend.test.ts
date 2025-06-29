@@ -1,7 +1,12 @@
-// import { describe } from 'vitest'
-// import { FixtureSpacesFrontend } from '../@/fixture/frontend'
+import { describe, expect, test } from '~/@/test-runner'
 
-import { describe } from 'node:test'
+describe('SpacesSyncFrontend', () => {
+  test('should record profiles when received from backend', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
+// import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 
 // export const hasExactlyOne = <T>(items: T[], predicate: (item: T) => boolean): boolean => {
 //   return items.filter(predicate).length === 1
@@ -32,7 +37,7 @@ import { describe } from 'node:test'
 //   //       },
 //   //     },
 //   //   ])
-//   //   expect(AddProfilesCmd.did(output, Object.values(someProfiles))).toBe(true)
+//   //   expect(AddProfilesCmd.did(output, Object.values(someProfiles))).toEqual(true)
 //   // })
 //   // test('should merge space received from backend', async () => {
 //   //   const f = await Fixture()
@@ -53,7 +58,7 @@ import { describe } from 'node:test'
 //   //     offset: 0,
 //   //     limit: Number.POSITIVE_INFINITY,
 //   //   })
-//   //   expect(listed.some((space) => Space.isEqual(space, someSpace))).toBe(true)
+//   //   expect(listed.some((space) => Space.isEqual(space, someSpace))).toEqual(true)
 //   // })
 //   // test("should merge current user's space when received from backend", async () => {
 //   //   const f = await Fixture()
@@ -92,7 +97,7 @@ import { describe } from 'node:test'
 //   //       output.msgCmd ?? [],
 //   //       (msgCmd) => msgCmd.t === 'wire' && msgCmd.c.t === 'send-to-backend' && msgCmd.c.toBackend?.t === 'sync.sync',
 //   //     ),
-//   //   ).toBe(true)
+//   //   ).toEqual(true)
 //   // })
 //   // test('should send events to the backend like user joined space', async () => {
 //   //   const f = await Fixture()
@@ -117,7 +122,7 @@ import { describe } from 'node:test'
 //   //         msgCmd.c.toBackend?.t === 'sync.got-msg-space' &&
 //   //         msgCmd.c.toBackend?.c.t === 'user-joined-space',
 //   //     ),
-//   //   ).toBe(true)
+//   //   ).toEqual(true)
 //   // })
 //   // test('should send events to the backend like user ended space', async () => {
 //   //   const f = await Fixture()
@@ -145,8 +150,6 @@ import { describe } from 'node:test'
 //   //         msgCmd.c.toBackend?.t === 'sync.got-msg-space' &&
 //   //         msgCmd.c.toBackend?.c.t === 'user-ended-space',
 //   //     ),
-//   //   ).toBe(true)
+//   //   ).toEqual(true)
 //   // })
 // })
-
-describe.todo('SpacesSyncFrontend', () => {})

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { APP_SOUND } from '../../@/frontend/app-sound'
@@ -50,6 +50,6 @@ describe('Sound', () => {
         msgIn: PlaySoundCmd.init(APP_SOUND.tap),
       },
     ])
-    expect(after.eff).toBeTruthy()
+    expect(Boolean(after.eff)).toEqual(true)
   })
 })

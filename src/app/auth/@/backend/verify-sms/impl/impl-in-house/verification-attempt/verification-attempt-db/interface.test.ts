@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { VerificationAttempt } from '../verification-attempt'
 import { VerificationAttemptDb } from './impl'
@@ -32,7 +32,7 @@ describe('VerificationAttemptDb', () => {
     const f = await Fixture()
     const verificationAttempt = await VerificationAttempt.random()
     const result = await f.verificationAttemptDb.insert(verificationAttempt)
-    expect(result.t).toBe('ok')
+    expect(result.t).toEqual('ok')
   })
 
   test('should insert correctly', async () => {
@@ -53,7 +53,7 @@ describe('VerificationAttemptDb', () => {
         },
       },
     })
-    expect(unwrap(before)[0] ?? null).toBe(null)
+    expect(unwrap(before)[0] ?? null).toEqual(null)
     expect(unwrap(after)[0]).toEqual(verificationAttempt)
   })
 
@@ -82,6 +82,6 @@ describe('VerificationAttemptDb', () => {
         },
       },
     })
-    expect(unwrap(result)[0] ?? null).toBe(null)
+    expect(unwrap(result)[0] ?? null).toEqual(null)
   })
 })

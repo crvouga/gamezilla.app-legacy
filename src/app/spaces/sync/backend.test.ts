@@ -1,3 +1,3 @@
-import { describe } from 'vitest'
+import { describe } from '~/@/test-runner'
 
-describe.todo('SyncBackend', () => {})
+describe('SyncBackend', () => {})

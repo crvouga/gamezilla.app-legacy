@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { SMS } from './impl'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Logger } from '../logger'
@@ -40,6 +40,6 @@ describe('SMS', () => {
       message: 'Hello, World!',
       phoneNumber: f.phoneNumber,
     })
-    expect(isOk(sent)).toBe(true)
+    expect(isOk(sent)).toEqual(true)
   })
 })

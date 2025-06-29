@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { VariantGridShorthand } from '../../variant/grid'
 import { isImpossibleForAnyTerminalToConnect } from './algo-is-impossible-for-terminals-to-connect'
 import { Numberlink } from '../../numberlink'
@@ -12,7 +12,7 @@ describe('isImpossibleForAnyTerminalToConnect', () => {
     ])
     const terminals = Numberlink.toFullTerminals(model)
     const result = isImpossibleForAnyTerminalToConnect(model, terminals)
-    expect(result).toBe(true)
+    expect(result).toEqual(true)
   })
 
   test('should return true when a terminal is cut off', () => {
@@ -23,7 +23,7 @@ describe('isImpossibleForAnyTerminalToConnect', () => {
     ])
     const terminals = Numberlink.toFullTerminals(model)
     const result = isImpossibleForAnyTerminalToConnect(model, terminals)
-    expect(result).toBe(true)
+    expect(result).toEqual(true)
   })
 
   test('should return false when all terminals can connect', () => {
@@ -34,6 +34,6 @@ describe('isImpossibleForAnyTerminalToConnect', () => {
     ])
     const terminals = Numberlink.toFullTerminals(model)
     const result = isImpossibleForAnyTerminalToConnect(model, terminals)
-    expect(result).toBe(false)
+    expect(result).toEqual(false)
   })
 })

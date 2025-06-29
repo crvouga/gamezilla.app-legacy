@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { CappedOrderedDict } from './capped-ordered-dict'
 
 describe('CappedOrderedDict', () => {
@@ -11,8 +11,8 @@ describe('CappedOrderedDict', () => {
 
     const before = CappedOrderedDict.get(initial, '1')
     const after = CappedOrderedDict.get(added, '1')
-    expect(before).toBe(null)
-    expect(after).toBe('1')
+    expect(before).toEqual(null)
+    expect(after).toEqual('1')
   })
 
   test('adding stuff then removing stuff', async () => {
@@ -24,9 +24,9 @@ describe('CappedOrderedDict', () => {
 
     const removed = CappedOrderedDict.remove(initial, '1')
 
-    expect(CappedOrderedDict.get(initial, '1')).toBe(null)
-    expect(CappedOrderedDict.get(added, '1')).toBe('1')
-    expect(CappedOrderedDict.get(removed, '1')).toBe(null)
+    expect(CappedOrderedDict.get(initial, '1')).toEqual(null)
+    expect(CappedOrderedDict.get(added, '1')).toEqual('1')
+    expect(CappedOrderedDict.get(removed, '1')).toEqual(null)
   })
 
   test('remove oldest on max capacity', async () => {
@@ -39,15 +39,15 @@ describe('CappedOrderedDict', () => {
     const dict4 = CappedOrderedDict.add(dict3, '4', '4')
 
     //
-    expect(CappedOrderedDict.get(dict3, '1')).toBe('1')
-    expect(CappedOrderedDict.get(dict3, '2')).toBe('2')
-    expect(CappedOrderedDict.get(dict3, '3')).toBe('3')
-    expect(CappedOrderedDict.get(dict3, '4')).toBe(null)
+    expect(CappedOrderedDict.get(dict3, '1')).toEqual('1')
+    expect(CappedOrderedDict.get(dict3, '2')).toEqual('2')
+    expect(CappedOrderedDict.get(dict3, '3')).toEqual('3')
+    expect(CappedOrderedDict.get(dict3, '4')).toEqual(null)
     //
-    expect(CappedOrderedDict.get(dict4, '1')).toBe(null)
-    expect(CappedOrderedDict.get(dict4, '2')).toBe('2')
-    expect(CappedOrderedDict.get(dict4, '3')).toBe('3')
-    expect(CappedOrderedDict.get(dict4, '4')).toBe('4')
+    expect(CappedOrderedDict.get(dict4, '1')).toEqual(null)
+    expect(CappedOrderedDict.get(dict4, '2')).toEqual('2')
+    expect(CappedOrderedDict.get(dict4, '3')).toEqual('3')
+    expect(CappedOrderedDict.get(dict4, '4')).toEqual('4')
   })
 
   test('should never mutate the input "model"', async () => {
@@ -57,8 +57,8 @@ describe('CappedOrderedDict', () => {
 
     const added = CappedOrderedDict.add(initial, '1', '1')
 
-    expect(CappedOrderedDict.get(initial, '1')).toBe(null)
-    expect(CappedOrderedDict.get(added, '1')).toBe('1')
+    expect(CappedOrderedDict.get(initial, '1')).toEqual(null)
+    expect(CappedOrderedDict.get(added, '1')).toEqual('1')
   })
 
   test('should not remove non-existing key', async () => {
@@ -68,7 +68,7 @@ describe('CappedOrderedDict', () => {
 
     const removed = CappedOrderedDict.remove(initial, '1')
 
-    expect(CappedOrderedDict.get(removed, '1')).toBe(null)
+    expect(CappedOrderedDict.get(removed, '1')).toEqual(null)
   })
 
   test('should not add the same key twice', async () => {
@@ -79,8 +79,8 @@ describe('CappedOrderedDict', () => {
     const added = CappedOrderedDict.add(initial, '1', '1')
     const addedTwice = CappedOrderedDict.add(added, '1', '1')
 
-    expect(CappedOrderedDict.get(added, '1')).toBe('1')
-    expect(CappedOrderedDict.get(addedTwice, '1')).toBe('1')
+    expect(CappedOrderedDict.get(added, '1')).toEqual('1')
+    expect(CappedOrderedDict.get(addedTwice, '1')).toEqual('1')
   })
 
   test('should not remove the same key twice', async () => {
@@ -92,9 +92,9 @@ describe('CappedOrderedDict', () => {
     const removed = CappedOrderedDict.remove(added, '1')
     const removedTwice = CappedOrderedDict.remove(removed, '1')
 
-    expect(CappedOrderedDict.get(added, '1')).toBe('1')
-    expect(CappedOrderedDict.get(removed, '1')).toBe(null)
-    expect(CappedOrderedDict.get(removedTwice, '1')).toBe(null)
+    expect(CappedOrderedDict.get(added, '1')).toEqual('1')
+    expect(CappedOrderedDict.get(removed, '1')).toEqual(null)
+    expect(CappedOrderedDict.get(removedTwice, '1')).toEqual(null)
   })
 
   test('merges two dictionaries prioritizing left dictionary values', async () => {
@@ -112,9 +112,9 @@ describe('CappedOrderedDict', () => {
 
     const merged = CappedOrderedDict.mergeLeft(left, right)
 
-    expect(CappedOrderedDict.get(merged, '1')).toBe('One')
-    expect(CappedOrderedDict.get(merged, '2')).toBe('Two')
-    expect(CappedOrderedDict.get(merged, '3')).toBe('Three')
+    expect(CappedOrderedDict.get(merged, '1')).toEqual('One')
+    expect(CappedOrderedDict.get(merged, '2')).toEqual('Two')
+    expect(CappedOrderedDict.get(merged, '3')).toEqual('Three')
   })
 
   test('preserves order from left dictionary and manages new keys from right', async () => {
@@ -199,9 +199,9 @@ describe('CappedOrderedDict', () => {
 
     const merged = CappedOrderedDict.mergeLeft(left, right)
 
-    expect(CappedOrderedDict.get(left, '1')).toBe('Left1')
-    expect(CappedOrderedDict.get(right, '2')).toBe('Right2')
-    expect(CappedOrderedDict.get(merged, '1')).toBe('Left1')
-    expect(CappedOrderedDict.get(merged, '2')).toBe('Right2')
+    expect(CappedOrderedDict.get(left, '1')).toEqual('Left1')
+    expect(CappedOrderedDict.get(right, '2')).toEqual('Right2')
+    expect(CappedOrderedDict.get(merged, '1')).toEqual('Left1')
+    expect(CappedOrderedDict.get(merged, '2')).toEqual('Right2')
   })
 })

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { HttpServer } from '~/@/http-server'
 import { AllowCORS } from '~/@/http-server/allow-cors'
 import { Logger } from '~/@/logger'
@@ -75,7 +75,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
   return [await FixtureHttp(), await FixtureLocal()]
 }
 
-describe.todo('RPC', () => {
+describe('RPC', () => {
   test('should work', async () => {
     for (using f of await Fixtures()) {
       const result = await f.client.foo({ name: 'Alice', age: 30 })
@@ -97,7 +97,7 @@ describe.todo('RPC', () => {
         // @ts-expect-error Testing runtime behavior with invalid endpoint
         age: 'invalid',
       })
-      expect(isErr(result)).toBe(true)
+      expect(isErr(result)).toEqual(true)
     }
   })
 
@@ -107,7 +107,7 @@ describe.todo('RPC', () => {
         // @ts-expect-error Testing runtime behavior with invalid endpoint
         name: 123,
       })
-      expect(isErr(result)).toBe(true)
+      expect(isErr(result)).toEqual(true)
     }
   })
 

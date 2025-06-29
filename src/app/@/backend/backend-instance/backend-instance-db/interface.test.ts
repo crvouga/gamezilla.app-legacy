@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Ok, unwrap } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
@@ -50,8 +50,10 @@ describe('BackendInstanceDb', () => {
         await f.backendInstanceDb.put(backendInstance)
       }
       const after = await f.backendInstanceDb.list()
-      expect(unwrap(before)).not.toContain(expected)
-      expect(unwrap(after)).toContain(expected)
+      expect(unwrap(before).some((b) => expected.some((e) => b.backendInstanceId === e.backendInstanceId))).toEqual(
+        false,
+      )
+      expect(unwrap(after).some((a) => expected.some((e) => a.backendInstanceId === e.backendInstanceId))).toEqual(true)
     }
   })
 
@@ -84,8 +86,10 @@ describe('BackendInstanceDb', () => {
       const after = await f.backendInstanceDb.listAlive({
         minimalHeartRate: MINIMAL_HEART_RATE,
       })
-      expect(unwrap(before)).not.toContain(expected)
-      expect(unwrap(after)).toContain(expected)
+      expect(unwrap(before).some((b) => expected.some((e) => b.backendInstanceId === e.backendInstanceId))).toEqual(
+        false,
+      )
+      expect(unwrap(after).some((a) => expected.some((e) => a.backendInstanceId === e.backendInstanceId))).toEqual(true)
     }
   })
 })

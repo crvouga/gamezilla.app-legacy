@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { UserId } from '~/app/@/data/user-id'
 import { Row } from './impl-sql'
 
@@ -11,6 +11,6 @@ describe('UserAccountDbImplSql', () => {
       phone_number: null,
     }
 
-    expect(Row.parse(row).t === 'ok').toBe(true)
+    expect(Row.parse(row).t === 'ok').toEqual(true)
   })
 })

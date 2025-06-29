@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { race } from './race'
 import { sleep } from './sleep'
 import { TimeSpan } from '../time/time-span'
@@ -45,7 +45,7 @@ describe('race', () => {
       fast: 'fast',
       slow: null,
     })
-    expect(abortedSignals[0]?.aborted).toBe(true)
+    expect(abortedSignals[0]?.aborted).toEqual(true)
   })
 
   test('should handle rejected promises', async () => {

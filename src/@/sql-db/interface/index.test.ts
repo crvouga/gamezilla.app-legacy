@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import 'fake-indexeddb/auto'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
@@ -62,7 +62,7 @@ describe('SqlDb', () => {
         sql: `SELECT 1`,
         vars: {},
       })
-      expect(isOk(result)).toBe(true)
+      expect(isOk(result)).toEqual(true)
     }
   })
 
@@ -73,7 +73,7 @@ describe('SqlDb', () => {
         sql: `SELECT foo`,
         vars: {},
       })
-      expect(isErr(result)).toBe(true)
+      expect(isErr(result)).toEqual(true)
     }
   })
 
@@ -84,20 +84,20 @@ describe('SqlDb', () => {
         sql: `CREATE TABLE foo (id SERIAL PRIMARY KEY)`,
         vars: {},
       })
-      expect(isOk(created)).toBe(true)
+      expect(isOk(created)).toEqual(true)
       const inserted = await f.sqlDb.query({
         schema: s.unknown,
         sql: `INSERT INTO foo(id) VALUES (1)`,
         vars: {},
       })
-      expect(isOk(inserted)).toBe(true)
+      expect(isOk(inserted)).toEqual(true)
       const queried = await f.sqlDb.query({
         schema: s.obj({ id: s.maybe(s.or(s.num(), s.str(), s.bool)) }),
         sql: `SELECT id FROM foo`,
         vars: {},
       })
 
-      expect(isOk(queried)).toBe(true)
+      expect(isOk(queried)).toEqual(true)
       if (isOk(queried)) {
         expect(queried.value).toEqual([{ id: 1 }])
       }
@@ -106,7 +106,7 @@ describe('SqlDb', () => {
         sql: `DROP TABLE foo`,
         vars: {},
       })
-      expect(isOk(dropped)).toBe(true)
+      expect(isOk(dropped)).toEqual(true)
     }
   })
 })

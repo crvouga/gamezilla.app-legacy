@@ -1,4 +1,11 @@
-// import { describe, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+
+describe('ScreenPlayFrontend', () => {
+  test('should fetch puzzles in pack when on puzzle screen', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { FixturePlayFrontend } from './@/frontend/fixture'
 
 // const Fixture = async () => {

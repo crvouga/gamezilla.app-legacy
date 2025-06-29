@@ -1,4 +1,4 @@
-// import { describe, expect, test } from 'vitest'
+// import { describe, expect, test } from '~/@/test-runner'
 // import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 // import { ScreenUpdateUsernameFrontend } from './frontend'
 // import { ModelFrontend, MsgFrontend } from './types'
@@ -29,26 +29,26 @@
 //     const f = await Fixture()
 //     const r = f.render(f.initial)
 //     const textbox = r.getByRole('textbox', f.ctx.t('username.username-label'))
-//     expect(textbox).toBeTruthy()
+//     expect(textbox).toEqualTruthy()
 //     // textbox?.input('new-username')
 //     // const msg = await r.msgs.once()
-//     // expect(msg.t).toBe('inputted-username')
+//     // expect(msg.t).toEqual('inputted-username')
 //   })
 
 //   test('render save button', async () => {
 //     const f = await Fixture()
 //     const r = f.render(f.initial)
 //     const button = r.getByRole('button', f.ctx.t('app.save'))[0]
-//     expect(button).toBeTruthy()
+//     expect(button).toEqualTruthy()
 //     button?.click()
 //     const msg = await Sub.take(r.msgs)
-//     expect(msg.t).toBe('profile.update-username.clicked-save')
+//     expect(msg.t).toEqual('profile.update-username.clicked-save')
 //   })
 
 //   test('render exit button', async () => {
 //     const f = await Fixture()
 //     const r = f.render(f.initial)
 //     const button = r.getByRole('button', f.ctx.t('app.exit'))[0]
-//     expect(button).toBeTruthy()
+//     expect(button).toEqualTruthy()
 //   })
 // })

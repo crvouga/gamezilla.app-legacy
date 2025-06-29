@@ -67,7 +67,7 @@ export const getBestMove =
 
     // const boardWorker = await spawn<BoardWorker>(worker);
 
-    // const result = await boardWorker.toBestMove(level, model);
+    // const result = await boardWorker.toEqualstMove(level, model);
 
     // await Thread.terminate(boardWorker);
 

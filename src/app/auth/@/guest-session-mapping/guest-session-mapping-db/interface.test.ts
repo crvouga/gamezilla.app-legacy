@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { unwrap } from '~/@/result'
 import { SessionId } from '~/@/wire/session-id'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
@@ -47,8 +47,8 @@ describe('GuestSessionMappingDb', () => {
 
       const after = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(guestSessionMapping.sessionId))
 
-      expect(before).toBeNull()
-      expect(after).toBe(guestSessionMapping.guestUserId)
+      expect(before).toEqual(null)
+      expect(after).toEqual(guestSessionMapping.guestUserId)
     }
   })
 
@@ -82,9 +82,9 @@ describe('GuestSessionMappingDb', () => {
       const userIdB = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(sessionIdB))
       const userIdC = unwrap(await f.guestSessionMappingDb.findUserIdBySessionId(sessionIdC))
 
-      expect(userIdA).toBe(guestUserId)
-      expect(userIdB).toBe(guestUserId)
-      expect(userIdC).toBe(guestUserId)
+      expect(userIdA).toEqual(guestUserId)
+      expect(userIdB).toEqual(guestUserId)
+      expect(userIdC).toEqual(guestUserId)
     }
   })
 
@@ -99,9 +99,9 @@ describe('GuestSessionMappingDb', () => {
       }
       const updated = await f.guestSessionMappingDb.upsert(guestSessionMappingNew)
       const after = await f.guestSessionMappingDb.findUserIdByClientSessionId(guestSessionMappingNew.clientSessionId)
-      expect(unwrap(inserted)).toBe(null)
+      expect(unwrap(inserted)).toEqual(null)
       expect(unwrap(before)).toEqual(guestSessionMapping.guestUserId)
-      expect(unwrap(updated)).toBe(null)
+      expect(unwrap(updated)).toEqual(null)
       expect(unwrap(after)).toEqual(guestSessionMappingNew.guestUserId)
     }
   })

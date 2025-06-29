@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { type Board, setStone, type Stone, toWins } from './gomoku'
 
 type Matrix = (' ' | 'b' | 'w')[][]
@@ -41,7 +41,7 @@ describe('Gomoku', () => {
       [_, _, _, _, _],
     ])
     const wins = toWins(board)
-    expect(wins.length).toBe(1)
+    expect(wins.length).toEqual(1)
   })
 
   test('should detect one vertical win', async () => {
@@ -53,7 +53,7 @@ describe('Gomoku', () => {
       [w, _, _, _, _],
     ])
     const wins = toWins(board)
-    expect(wins.length).toBe(1)
+    expect(wins.length).toEqual(1)
   })
 
   test('should detect one left diagonal win', async () => {
@@ -65,7 +65,7 @@ describe('Gomoku', () => {
       [_, _, _, b, w],
     ])
     const wins = toWins(board)
-    expect(wins.length).toBe(1)
+    expect(wins.length).toEqual(1)
   })
 
   test('should detect one right diagonal win', async () => {
@@ -77,7 +77,7 @@ describe('Gomoku', () => {
       [w, b, _, _, _],
     ])
     const wins = toWins(board)
-    expect(wins.length).toBe(1)
+    expect(wins.length).toEqual(1)
   })
 
   test('should detect two wins', async () => {
@@ -89,7 +89,7 @@ describe('Gomoku', () => {
       [_, _, _, _, _],
     ])
     const wins = toWins(board)
-    expect(wins.length).toBe(2)
+    expect(wins.length).toEqual(2)
   })
 
   test('should detect no wins', async () => {
@@ -101,6 +101,6 @@ describe('Gomoku', () => {
       [_, _, _, _, _],
     ])
     const wins = toWins(board)
-    expect(wins.length).toBe(0)
+    expect(wins.length).toEqual(0)
   })
 })

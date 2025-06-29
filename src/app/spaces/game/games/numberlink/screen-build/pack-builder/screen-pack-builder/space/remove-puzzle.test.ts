@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, test } from 'vitest'
 import { assertNotNullish } from '~/@/assert'
+import { describe, expect, test } from '~/@/test-runner'
 import { ScreenPackBuildSpaceFixture } from '../@/fixture/space'
 
 const Fixture = async (props?: Parameters<typeof ScreenPackBuildSpaceFixture>[0]) => {
@@ -26,13 +26,8 @@ const Fixture = async (props?: Parameters<typeof ScreenPackBuildSpaceFixture>[0]
 }
 
 describe('remove puzzle from pack', () => {
-  let f: Awaited<ReturnType<typeof Fixture>>
-
-  beforeEach(async () => {
-    f = await Fixture()
-  })
-
   test('should remove puzzle from pack after clicking remove button', async () => {
+    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
@@ -41,10 +36,11 @@ describe('remove puzzle from pack', () => {
       },
     ])
 
-    expect(modelSpace?.pack.puzzleIds.includes(f.puzzle.id)).toBe(false)
+    expect(modelSpace?.pack.puzzleIds.includes(f.puzzle.id)).toEqual(false)
   })
 
   test('should close more drawer when removing puzzle', async () => {
+    const f = await Fixture()
     const output = f.update(f.initial, [
       {
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
@@ -52,10 +48,11 @@ describe('remove puzzle from pack', () => {
         puzzleIndex: f.puzzleIndex,
       },
     ])
-    expect(output?.opened).toBe(null)
+    expect(output?.opened).toEqual(null)
   })
 
   test('should navigate back to puzzle grid when removing puzzle', async () => {
+    const f = await Fixture()
     const output = f.update(f.initial, [
       {
         t: 'remove-puzzle-from-pack.user-clicked-remove-from-pack-button',
@@ -63,6 +60,6 @@ describe('remove puzzle from pack', () => {
         puzzleIndex: f.puzzleIndex,
       },
     ])
-    expect(output?.screen.t === 'screen-puzzle-grid').toBe(true)
+    expect(output?.screen.t === 'screen-puzzle-grid').toEqual(true)
   })
 })

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { FixtureScreenPuzzlePlaySpace } from '../@/fixture/space'
 
 const Fixture = async () => {
@@ -19,7 +19,7 @@ describe('NumberLinkScreenPlayPuzzleLastPuzzleSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(before.screen.t).toBe('screen-play-puzzle')
-    expect(after.screen.t).toBe('screen-select-pack')
+    expect(before.screen.t).toEqual('screen-play-puzzle')
+    expect(after.screen.t).toEqual('screen-select-pack')
   })
 })

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Ok } from '~/@/result'
 import { Logger } from '../logger'
 import { ClientSessionId } from '../wire/client-session-id'

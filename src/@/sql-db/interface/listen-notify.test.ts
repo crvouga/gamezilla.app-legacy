@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import 'fake-indexeddb/auto'
 import { sleep } from '~/@/promise/sleep'
 import { TimeSpan } from '~/@/time/time-span'

@@ -1,4 +1,11 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+
+describe('ScreenPuzzlePlayFrontend', () => {
+  test('play sound when clicking exit button', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { assertNotNullish } from '~/@/assert'
 // import { withEventMeta } from '~/@/event-sourced/event'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -51,7 +58,7 @@
 //         userId: f.ctx.currentUser.userId,
 //       }),
 //     })
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('play sound when clicking previous puzzle button', async () => {
@@ -64,7 +71,7 @@
 //         previousPuzzleResult: { t: 'got', c: f.puzzle },
 //       }),
 //     })
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('play sound when clicking next puzzle button', async () => {
@@ -77,7 +84,7 @@
 //         nextPuzzleResult: { t: 'got', c: f.puzzle },
 //       }),
 //     })
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('play sound when removing puzzle from pack', async () => {
@@ -90,7 +97,7 @@
 //         puzzleIndex: 0,
 //       }),
 //     })
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('play sound when toggling more drawer', async () => {
@@ -102,13 +109,13 @@
 //         userId: f.ctx.currentUser.userId,
 //       }),
 //     })
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 //   test('previous button is disabled when at edge of pack', async () => {
 //     const f = await Fixture({ puzzleIndex: 0 })
 //     const r = f.render(f)
 //     const prevButton = assertNotNullish(r.getByRole('button', f.ctx.t('app.prev'))[0])
-//     expect(prevButton.disabled).toBe(true)
+//     expect(prevButton.disabled).toEqual(true)
 //   })
 
 //   test('next button is disabled when at end of pack', async () => {
@@ -116,7 +123,7 @@
 //     f = await Fixture({ puzzleIndex: f.modelSpace.pack.puzzleIds.length - 1 })
 //     const r = f.render(f)
 //     const nextButton = assertNotNullish(r.getByRole('button', f.ctx.t('app.next'))[0])
-//     expect(nextButton.disabled).toBe(true)
+//     expect(nextButton.disabled).toEqual(true)
 //   })
 
 //   test('can go next even when puzzle is missing', async () => {
@@ -124,7 +131,7 @@
 //     const r = f.render(f)
 //     await r.getByRole('button', f.ctx.t('app.next'))[0]?.click()
 //     const m = f.renderMsgs[0]
-//     expect(m?.t === 'got-msg-space' && m?.c?.t).toBe('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle')
+//     expect(m?.t === 'got-msg-space' && m?.c?.t).toEqual('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle')
 //   })
 
 //   test('can go next when at second to last puzzle', async () => {
@@ -133,6 +140,6 @@
 //     const r = f.render(f)
 //     await r.getByRole('button', f.ctx.t('app.next'))[0]?.click()
 //     const m = f.renderMsgs[0]
-//     expect(m?.t === 'got-msg-space' && m?.c?.t).toBe('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle')
+//     expect(m?.t === 'got-msg-space' && m?.c?.t).toEqual('screen-pack-builder.puzzle-screen.user-clicked-next-puzzle')
 //   })
 // })

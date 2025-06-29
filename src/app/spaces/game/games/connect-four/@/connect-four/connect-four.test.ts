@@ -1,5 +1,5 @@
 import { type Columns, type PlayerType, toStatus, findWins } from './connect-four'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 
 export const p1: PlayerType = 'player-one'
 export const p2: PlayerType = 'player-two'
@@ -31,32 +31,32 @@ const winner = p1
 const expectWinner = (columns: Columns) => {
   const status = toStatus(columns)
 
-  expect(status.type).toBe('Winner')
+  expect(status.type).toEqual('Winner')
 
   if (status.type === 'Winner') {
-    expect(status.winner).toBe(winner)
+    expect(status.winner).toEqual(winner)
   }
 }
 
 describe('ConnectFour', () => {
   test('detects horizontal win', async () => {
     expectWinner(horizontal)
-    expect(findWins(horizontal).length).toBe(1)
+    expect(findWins(horizontal).length).toEqual(1)
   })
 
   test('detects vertical win', async () => {
     expectWinner(vertical)
-    expect(findWins(vertical).length).toBe(1)
+    expect(findWins(vertical).length).toEqual(1)
   })
 
   test('detects right diagonal win', async () => {
     expectWinner(rightDiagonal)
-    expect(findWins(rightDiagonal).length).toBe(1)
+    expect(findWins(rightDiagonal).length).toEqual(1)
   })
 
   test('detects left diagonal win', async () => {
     expectWinner(leftDiagonal)
-    expect(findWins(leftDiagonal).length).toBe(1)
+    expect(findWins(leftDiagonal).length).toEqual(1)
   })
 
   test('detects left and right diagonal win', async () => {
@@ -64,7 +64,7 @@ describe('ConnectFour', () => {
 
     const wins = findWins(leftAndRightDiagonal)
 
-    expect(wins.length).toBe(2)
+    expect(wins.length).toEqual(2)
   })
 
   test('detects wins longer than 4', async () => {
@@ -72,20 +72,20 @@ describe('ConnectFour', () => {
 
     const wins = findWins(horizontalLongest)
 
-    expect(wins.length).toBeGreaterThanOrEqual(1)
+    expect(wins.length >= 1).toEqual(true)
 
-    // expect(wins.length).toBe(1)
+    // expect(wins.length).toEqual(1)
 
     // const [win] = wins
 
     // if (win) {
-    //     expect(win.length).toBe(horizontalLongest.length)
+    //     expect(win.length).toEqual(horizontalLongest.length)
     // }
   })
 
   test('detects draw', async () => {
     const status = toStatus(tie)
-    expect(status.type).toBe('Tie')
+    expect(status.type).toEqual('Tie')
   })
 
   test('detects left diagonal win', async () => {
@@ -93,7 +93,7 @@ describe('ConnectFour', () => {
 
     const wins = findWins(columns)
 
-    expect(wins.length).toBe(1)
+    expect(wins.length).toEqual(1)
   })
 
   test('detects diagonal', async () => {
@@ -101,7 +101,7 @@ describe('ConnectFour', () => {
 
     const wins = findWins(columns)
 
-    expect(wins.length).toBe(1)
+    expect(wins.length).toEqual(1)
   })
 
   test('detects right most vertical', async () => {
@@ -117,7 +117,7 @@ describe('ConnectFour', () => {
 
     const wins = findWins(columns)
 
-    expect(wins.length).toBe(1)
+    expect(wins.length).toEqual(1)
   })
 
   test('remove win subsets', async () => {
@@ -125,9 +125,9 @@ describe('ConnectFour', () => {
 
     const wins = findWins(columns)
 
-    expect(wins.length).toBe(1)
+    expect(wins.length).toEqual(1)
     if (wins[0]) {
-      expect(wins[0].length).toBe(5)
+      expect(wins[0].length).toEqual(5)
     }
   })
 })

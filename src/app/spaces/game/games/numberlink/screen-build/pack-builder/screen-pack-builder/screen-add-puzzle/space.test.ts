@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, test } from 'vitest'
 import { assertNotNullish } from '~/@/assert'
+import { describe, expect, test } from '~/@/test-runner'
 import { Pack } from '../../../../@/pack/pack'
 import { PackPuzzleGridUI } from '../../../../@/pack/pack-puzzle-grid-ui'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
@@ -22,13 +22,8 @@ const Fixture = async (...params: Parameters<typeof ScreenPackBuildSpaceFixture>
 }
 
 describe('ScreenAddPuzzleSpace', () => {
-  let f: Awaited<ReturnType<typeof Fixture>>
-
-  beforeEach(async () => {
-    f = await Fixture()
-  })
-
   test('should unselect all puzzles after submitting form', async () => {
+    const f = await Fixture()
     const puzzle = await Puzzle.random()
     const before = f.update(f.initial, [
       {
@@ -52,6 +47,7 @@ describe('ScreenAddPuzzleSpace', () => {
 
   test('selecting puzzles', async () => {
     const puzzle = await Puzzle.random()
+    const f = await Fixture()
     const output = f.update(f.initial, [
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
@@ -66,7 +62,7 @@ describe('ScreenAddPuzzleSpace', () => {
 
   test('toggling puzzles', async () => {
     const puzzle = await Puzzle.random()
-
+    const f = await Fixture()
     const before = f.update(f.initial, [
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-puzzle-list-item',
@@ -90,16 +86,18 @@ describe('ScreenAddPuzzleSpace', () => {
   })
 
   test('should be able to close add puzzle screen', async () => {
+    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.screen-add-puzzle.user-clicked-close',
         userId: f.createdBy,
       },
     ])
-    expect(modelSpace?.screen.t === 'screen-puzzle-grid').toBe(true)
+    expect(modelSpace?.screen.t === 'screen-puzzle-grid').toEqual(true)
   })
 
   test('should be able to add new puzzle', async () => {
+    const f = await Fixture()
     const newPuzzle = await Puzzle.random({
       createdBy: f.createdBy,
     })
@@ -114,11 +112,11 @@ describe('ScreenAddPuzzleSpace', () => {
         userId: f.createdBy,
       },
     ])
-    expect(modelSpace?.pack.puzzleIds.includes(newPuzzle.id)).toBe(true)
+    expect(modelSpace?.pack.puzzleIds.includes(newPuzzle.id)).toEqual(true)
   })
 
   test('should be on the correct slide when closing the add puzzle screen', async () => {
-    f = await Fixture({
+    const f = await Fixture({
       puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
     })
 
@@ -138,11 +136,12 @@ describe('ScreenAddPuzzleSpace', () => {
       },
     ])
 
-    expect(ScreenPackBuildSpace.toSlideIndex(f.initial)).toBe(0)
-    expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(1)
+    expect(ScreenPackBuildSpace.toSlideIndex(f.initial)).toEqual(0)
+    expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toEqual(1)
   })
 
   test('should open puzzle when user clicks puzzle grid item', async () => {
+    const f = await Fixture()
     const output = f.update(f.initial, [
       {
         t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
@@ -164,20 +163,22 @@ describe('ScreenAddPuzzleSpace', () => {
       },
     ])
 
-    expect(output?.screen.t === 'screen-puzzle' && output.screen.puzzleIndex === 0).toBe(true)
+    expect(output?.screen.t === 'screen-puzzle' && output.screen.puzzleIndex === 0).toEqual(true)
   })
 
   test('should open puzzle picker when user clicks add puzzle button', async () => {
+    const f = await Fixture()
     const output = f.update(f.initial, [
       {
         t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
         userId: f.createdBy,
       },
     ])
-    expect(output?.screen.t === 'screen-add-puzzle').toBe(true)
+    expect(output?.screen.t === 'screen-add-puzzle').toEqual(true)
   })
 
   test('should close puzzle picker when user clicks closes', async () => {
+    const f = await Fixture()
     const output = f.update(f.initial, [
       {
         t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
@@ -188,10 +189,11 @@ describe('ScreenAddPuzzleSpace', () => {
         userId: f.createdBy,
       },
     ])
-    expect(output?.screen.t === 'screen-puzzle-grid').toBe(true)
+    expect(output?.screen.t === 'screen-puzzle-grid').toEqual(true)
   })
 
   test('should add puzzle to the pack after clicking a puzzle in the picker', async () => {
+    const f = await Fixture()
     const puzzle = await Puzzle.random()
     const output = f.update(f.initial, [
       {
@@ -209,10 +211,11 @@ describe('ScreenAddPuzzleSpace', () => {
       },
     ])
 
-    expect(output && Pack.includes(output.pack, puzzle.id)).toBe(true)
+    expect(output && Pack.includes(output.pack, puzzle.id)).toEqual(true)
   })
 
   test('should close puzzle picker after adding a puzzle to the pack', async () => {
+    const f = await Fixture()
     const puzzle = await Puzzle.random()
     const output = f.update(f.initial, [
       {
@@ -229,10 +232,11 @@ describe('ScreenAddPuzzleSpace', () => {
         userId: f.createdBy,
       },
     ])
-    expect(output?.screen.t === 'screen-puzzle-grid').toBe(true)
+    expect(output?.screen.t === 'screen-puzzle-grid').toEqual(true)
   })
 
   test('select all puzzles after clicking header checkbox', async () => {
+    const f = await Fixture()
     const puzzles = await Promise.all(Array.from({ length: 10 }, () => Puzzle.random()))
     const puzzleIds = puzzles.map((p) => p.id)
     const output = f.update(f.initial, [
@@ -246,6 +250,7 @@ describe('ScreenAddPuzzleSpace', () => {
   })
 
   test('unselect all puzzles after clicking header checkbox when all are selected', async () => {
+    const f = await Fixture()
     const puzzles = await Promise.all(Array.from({ length: 10 }, () => Puzzle.random()))
     const puzzleIds = puzzles.map((p) => p.id)
     const output = f.update(f.initial, [
@@ -264,6 +269,7 @@ describe('ScreenAddPuzzleSpace', () => {
   })
 
   test('unselect all after closing screen', async () => {
+    const f = await Fixture()
     const puzzles = await Promise.all(Array.from({ length: 10 }, () => Puzzle.random()))
     const puzzleIds = puzzles.map((p) => p.id)
     const before = f.update(f.initial, [
@@ -279,7 +285,7 @@ describe('ScreenAddPuzzleSpace', () => {
         userId: f.createdBy,
       },
     ])
-    expect(before?.screenAddPuzzle_selected.length > 0).toBe(true)
+    expect(before?.screenAddPuzzle_selected.length > 0).toEqual(true)
     expect(after?.screenAddPuzzle_selected.length).toEqual(0)
   })
 })

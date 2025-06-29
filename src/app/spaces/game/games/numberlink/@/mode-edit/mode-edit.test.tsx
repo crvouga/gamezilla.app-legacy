@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { ModeEdit } from '.'
 import { Numberlink } from '../numberlink'
 import { NumberlinkVariant, NumberlinkVariantDimensions } from '../variant'
@@ -47,7 +47,7 @@ describe('ModeEdit', () => {
 
     for (const msg of msgs) {
       const updated = f.update(f.init, [msg])
-      expect(updated.msgCmd?.t).toBe('play-sound')
+      expect(updated.msgCmd?.t).toEqual('play-sound')
     }
   })
 
@@ -165,8 +165,8 @@ describe('ModeEdit', () => {
     const afterOpen = f.update(f.init, [{ t: 'dimensions-form.clicked-open' }])
     const afterSecondClick = f.update(afterOpen, [{ t: 'dimensions-form.clicked-open' }])
 
-    expect(afterOpen.model.opened?.t).toBe('dimensions')
-    expect(afterSecondClick.model.opened).toBe(null)
+    expect(afterOpen.model.opened?.t).toEqual('dimensions')
+    expect(afterSecondClick.model.opened).toEqual(null)
   })
 
   test('ghost terminal should be visible when hovering over node', async () => {
@@ -178,7 +178,7 @@ describe('ModeEdit', () => {
     const before = f.init
     const after = f.update(before, [{ t: 'hovered-over-node', nodeId }])
 
-    expect(ModeEdit.hasGhostTerminal(before.model, nodeId)).toBe(false)
-    expect(ModeEdit.hasGhostTerminal(after.model, nodeId)).toBe(true)
+    expect(ModeEdit.hasGhostTerminal(before.model, nodeId)).toEqual(false)
+    expect(ModeEdit.hasGhostTerminal(after.model, nodeId)).toEqual(true)
   })
 })

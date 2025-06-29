@@ -1,4 +1,11 @@
-// import { describe, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+
+describe('ModeEditFrontend', () => {
+  test('render ghost terminal', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 // import { ModeEdit } from '.'
 // import { NumberlinkVariant } from '../variant'

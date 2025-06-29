@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { sleep } from '~/@/promise/sleep'
 import { unwrap } from '~/@/result'

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { FixtureScreenPuzzlePlaySpaceChild } from '../@/fixture/space'
 
 const Fixture = async () => {
@@ -21,6 +21,6 @@ describe('ButtonCopyPuzzleSpace', () => {
         // userId: f.hostId,
       },
     ])
-    expect(output[0].opened).toBe(null)
+    expect(output[0].opened).toEqual(null)
   })
 })

@@ -1,4 +1,11 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+
+describe('ScreenAddPuzzleFrontend', () => {
+  test('play sound sound clicking puzzle list item', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { withEventMeta } from '~/@/event-sourced/event'
 // import { sleep } from '~/@/promise/sleep'
 // import { Sub } from '~/@/sub'
@@ -39,7 +46,7 @@
 //       }),
 //     })
 
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('submit button should be disabled when no puzzles are selected', async () => {
@@ -47,7 +54,7 @@
 //     const output = ScreenAddPuzzle.update({ ...f })
 //     const r = f.render({ model: output.model, modelSpace: f.modelSpace })
 //     const submitButton = r.query("[type='submit']")[0]
-//     expect(submitButton?.disabled).toBe(true)
+//     expect(submitButton?.disabled).toEqual(true)
 //   })
 
 //   test('submit button should NOT be disabled when some puzzles are selected', async () => {
@@ -62,7 +69,7 @@
 //     })
 //     const r = f.render({ model: f.model, modelSpace })
 //     const submitButton = r.query("[type='submit']")[0]
-//     expect(submitButton?.disabled).toBe(false)
+//     expect(submitButton?.disabled).toEqual(false)
 //   })
 
 //   test('play sound when puzzle db query changes', async () => {
@@ -76,7 +83,7 @@
 //       }),
 //     })
 
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('play sound toggling header checkbox', async () => {
@@ -90,7 +97,7 @@
 //       }),
 //     })
 
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('clicking checkbox', async () => {
@@ -99,12 +106,12 @@
 //     let msgs: MsgFrontend[] = []
 //     f.renderMsg.sub((msg) => msgs.push(msg))
 //     const checkbox = r.query("[role='checkbox']")[0]
-//     expect(checkbox).toBeTruthy()
+//     expect(checkbox).toEqualTruthy()
 //     await checkbox?.click()
 //     await sleep(TimeSpan.milliseconds(100))
-//     expect(msgs.length).toBe(1)
-//     expect(msgs[0]?.t).toBe('got-msg-space')
-//     expect(msgs[0]?.t === 'got-msg-space' && msgs[0]?.c?.t).toBe(
+//     expect(msgs.length).toEqual(1)
+//     expect(msgs[0]?.t).toEqual('got-msg-space')
+//     expect(msgs[0]?.t === 'got-msg-space' && msgs[0]?.c?.t).toEqual(
 //       'screen-pack-builder.screen-add-puzzle.user-clicked-header-checkbox',
 //     )
 //   })

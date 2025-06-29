@@ -1,5 +1,5 @@
 import 'fake-indexeddb/auto'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '../../logger'
 import { sleep } from '~/@/promise/sleep'
 import { TimeSpan } from '~/@/time/time-span'
@@ -35,7 +35,7 @@ const Row = s.obj({ id: s.num() })
 
 type Row = s.Infer<typeof Row>
 
-describe.todo('sql-db subscribe', () => {
+describe('sql-db subscribe', () => {
   test('subscribe', async () => {
     for (const f of await Fixtures()) {
       await f.sqlDb.query({ schema: s.unknown, sql: `DROP TABLE foo`, vars: {} }).catch(() => {})

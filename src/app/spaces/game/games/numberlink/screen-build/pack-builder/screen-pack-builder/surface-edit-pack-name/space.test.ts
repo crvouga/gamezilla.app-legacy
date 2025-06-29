@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { ScreenPackBuildSpaceFixture } from '../@/fixture/space'
 
 const Fixture = async () => {
@@ -19,7 +19,7 @@ describe('SurfaceEditPackNameSpace', () => {
         packNameDraft,
       },
     ])
-    expect(model.editPackName_draft).toBe(packNameDraft)
+    expect(model.editPackName_draft).toEqual(packNameDraft)
   })
 
   test('should only allow host to input pack name', async () => {
@@ -34,7 +34,7 @@ describe('SurfaceEditPackNameSpace', () => {
     ])
     const before = f.initial.pack.name
     const after = model.pack.name
-    expect(after).toBe(before)
+    expect(after).toEqual(before)
   })
 
   test('should be loading after saving pack name', async () => {
@@ -45,7 +45,7 @@ describe('SurfaceEditPackNameSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(model.editPackName_result.t).toBe('loading')
+    expect(model.editPackName_result.t).toEqual('loading')
   })
 
   test('should error if name is empty', async () => {
@@ -61,7 +61,7 @@ describe('SurfaceEditPackNameSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(model.editPackName_validationError?.t).toBe('name-cannot-be-empty')
+    expect(model.editPackName_validationError?.t).toEqual('name-cannot-be-empty')
   })
 
   test('should clear validation error after input of non empty name', async () => {
@@ -78,7 +78,7 @@ describe('SurfaceEditPackNameSpace', () => {
         packNameDraft: 'pack-name',
       },
     ])
-    expect(model.editPackName_validationError).toBe(null)
+    expect(model.editPackName_validationError).toEqual(null)
   })
 
   test('should optimistically update pack name', async () => {
@@ -106,7 +106,7 @@ describe('SurfaceEditPackNameSpace', () => {
       },
     ])
 
-    expect(output.opened).toBe('edit-pack-name-drawer')
+    expect(output.opened).toEqual('edit-pack-name-drawer')
   })
 
   test('should close edit name drawer', async () => {
@@ -121,6 +121,6 @@ describe('SurfaceEditPackNameSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(output.opened).toBe(null)
+    expect(output.opened).toEqual(null)
   })
 })

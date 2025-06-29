@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { ascend, descend } from '~/@/array/sorting'
 import { Ok, unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
@@ -392,7 +392,7 @@ describe('VerificationDb', () => {
       limit: 1,
       offset: 0,
     })
-    expect(put.t).toBe('ok')
+    expect(put.t).toEqual('ok')
     await f.cleanUp()
     expect(unwrap(found).items[0]).toEqual(verification)
   })

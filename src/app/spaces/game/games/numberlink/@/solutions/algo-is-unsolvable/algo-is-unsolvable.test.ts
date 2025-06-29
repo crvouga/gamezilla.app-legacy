@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { VariantGridShorthand } from '../../variant/grid'
 import * as AlgoIsUnsolvable from './algo-is-unsolvable'
 
@@ -9,7 +9,7 @@ describe('AlgoIsUnsolvable', () => {
       [' ', ' ', ' '],
       ['A', 'B', 'C'],
     ])
-    expect(AlgoIsUnsolvable.isUnsolvable(grid)).toBe(false)
+    expect(AlgoIsUnsolvable.isUnsolvable(grid)).toEqual(false)
   })
 
   test('unsolvable 3x3 puzzle', () => {
@@ -18,7 +18,7 @@ describe('AlgoIsUnsolvable', () => {
       ['a', 'a', 'a'],
       ['C', 'B', 'C'],
     ])
-    expect(AlgoIsUnsolvable.isUnsolvable(grid)).toBe(true)
+    expect(AlgoIsUnsolvable.isUnsolvable(grid)).toEqual(true)
   })
 
   test.todo('unsolvable 8x8', () => {
@@ -31,6 +31,6 @@ describe('AlgoIsUnsolvable', () => {
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       ['A', ' ', ' ', 'D', ' ', ' ', ' ', 'C'],
     ])
-    expect(AlgoIsUnsolvable.isUnsolvable(grid)).toBe(true)
+    expect(AlgoIsUnsolvable.isUnsolvable(grid)).toEqual(true)
   })
 })

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { takeWhile } from './take-while'
 
 const isNeg = (x: number) => x < 0

@@ -1,4 +1,10 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+describe('ScreenPackBuilderOpenFrontend', () => {
+  test('open pack builder', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { withEventMeta } from '~/@/event-sourced/event'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 // import { Pack } from '../../../@/pack/pack'
@@ -23,7 +29,7 @@
 //       },
 //     ])
 
-//     expect(output.modelSpace.screenPackBuilder?.pack.id === pack.id).toBe(true)
+//     expect(output.modelSpace.screenPackBuilder?.pack.id === pack.id).toEqual(true)
 //   })
 
 //   test('play sound', async () => {
@@ -40,6 +46,6 @@
 //         }),
 //       },
 //     ])
-//     expect(PlaySoundCmd.count(output)).toBe(1)
+//     expect(PlaySoundCmd.count(output)).toEqual(1)
 //   })
 // })

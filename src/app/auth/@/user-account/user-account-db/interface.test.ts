@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { PhoneNumber } from '~/@/phone-number'
 import { Ok, Result, unwrap } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -47,7 +47,7 @@ describe('UserAccountDb', () => {
         }),
         phoneNumber: null,
       })
-      expect(unwrap(inserted)).toBe(null)
+      expect(unwrap(inserted)).toEqual(null)
     }
   })
 
@@ -82,7 +82,7 @@ describe('UserAccountDb', () => {
         }),
       }
       const insert = await f.userAccountDb.upsert(account)
-      expect(insert.t).toBe('ok')
+      expect(insert.t).toEqual('ok')
       const found = await f.userAccountDb.findOneByPhoneNumber({
         phoneNumber,
       })
@@ -123,9 +123,9 @@ describe('UserAccountDb', () => {
       const found = await f.userAccountDb.findOneByUserId({
         userId: accountNew.userId,
       })
-      expect(unwrap(inserted)).toBe(null)
+      expect(unwrap(inserted)).toEqual(null)
       expect(unwrap(before)).toEqual(account)
-      expect(unwrap(updated)).toBe(null)
+      expect(unwrap(updated)).toEqual(null)
       expect(unwrap(found)).toEqual(accountNew)
     }
   })

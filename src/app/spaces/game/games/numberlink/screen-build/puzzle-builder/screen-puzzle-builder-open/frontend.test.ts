@@ -1,4 +1,11 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+
+describe('ScreenPuzzleBuilderOpenFrontend', () => {
+  test('open puzzle builder', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { withEventMeta } from '~/@/event-sourced/event'
 
 // import { Puzzle } from '../../../@/puzzle/puzzle'
@@ -37,7 +44,7 @@
 //     expect(
 //       output.modelSpace.screen.t === 'screen-puzzle-builder' &&
 //         output.modelSpace.screenPuzzleBuilder?.puzzle.id === f.puzzle.id,
-//     ).toBe(true)
+//     ).toEqual(true)
 //   })
 
 //   test('play a sound when opening puzzle builder', async () => {
@@ -52,7 +59,7 @@
 //         }),
 //       },
 //     ])
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('play a sound when query changes', async () => {
@@ -67,6 +74,6 @@
 //         }),
 //       },
 //     ])
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 // })

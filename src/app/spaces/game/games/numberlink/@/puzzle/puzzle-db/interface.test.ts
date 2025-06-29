@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { ascend } from '~/@/array/sorting'
 import { Ok, Result, unwrap } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -18,7 +18,7 @@ describe('NumberlinkPuzzleDb', () => {
       const puzzle = await Puzzle.random()
       const inserted = await f.puzzleDb.put(puzzle)
       unwrap(inserted)
-      expect(inserted.t).toBe('ok')
+      expect(inserted.t).toEqual('ok')
     }
   })
 
@@ -29,9 +29,9 @@ describe('NumberlinkPuzzleDb', () => {
       const inserted = await f.puzzleDb.put(puzzle)
       const after = await f.puzzleDb.get(puzzle.id)
 
-      expect(before.t).toBe('ok')
-      expect(inserted.t).toBe('ok')
-      expect(after.t).toBe('ok')
+      expect(before.t).toEqual('ok')
+      expect(inserted.t).toEqual('ok')
+      expect(after.t).toEqual('ok')
     }
   })
 
@@ -71,7 +71,7 @@ describe('NumberlinkPuzzleDb', () => {
         },
       })
 
-      expect(listed.t).toBe('ok')
+      expect(listed.t).toEqual('ok')
       if (listed.t === 'ok') {
         expect(listed.value.puzzles.items).toEqual([puzzle])
       }
@@ -104,7 +104,7 @@ describe('NumberlinkPuzzleDb', () => {
         },
       })
 
-      expect(listed.t).toBe('ok')
+      expect(listed.t).toEqual('ok')
       if (listed.t === 'ok') {
         expect(listed.value.puzzles.items).toEqual([puzzleA, puzzleB])
       }
@@ -134,7 +134,7 @@ describe('NumberlinkPuzzleDb', () => {
           },
         },
       })
-      expect(Result.unwrap(counted)).toBe(EXPECTED_COUNT)
+      expect(Result.unwrap(counted)).toEqual(EXPECTED_COUNT)
     }
   })
 
@@ -169,7 +169,7 @@ describe('NumberlinkPuzzleDb', () => {
               },
             },
           })
-          expect(listed.t).toBe('ok')
+          expect(listed.t).toEqual('ok')
           if (listed.t === 'ok') {
             const expected = puzzles.slice(offset, offset + limit)
             expect(listed.value.puzzles.items).toEqual(expected)
@@ -206,7 +206,7 @@ describe('NumberlinkPuzzleDb', () => {
       })
       const after = Result.unwrapOr(await f.puzzleDb.get(puzzle.id), null)
       expect(before).toEqual(puzzle)
-      expect(after).toBe(null)
+      expect(after).toEqual(null)
     }
   })
 

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import { isErr, unwrap } from '~/@/result'
@@ -43,7 +43,7 @@ describe('VerifySMS', () => {
         phoneNumber,
         preferredLanguage: 'en',
       })
-      expect(result.t).toBe('ok')
+      expect(result.t).toEqual('ok')
     }
   })
 
@@ -59,8 +59,8 @@ describe('VerifySMS', () => {
         code: '42',
         preferredLanguage: 'en',
       })
-      expect(result.t).toBe('err')
-      isErr(result) && expect(result.error.t).toBe('code-incorrect')
+      expect(result.t).toEqual('err')
+      isErr(result) && expect(result.error.t).toEqual('code-incorrect')
     }
   })
 })

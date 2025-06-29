@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, test } from 'vitest'
 import { assertNotNullish } from '~/@/assert'
+import { describe, expect, test } from '~/@/test-runner'
 import { PackPuzzleGridUI } from '../../../../@/pack/pack-puzzle-grid-ui'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { ScreenPackBuildSpaceFixture } from '../@/fixture/space'
@@ -8,26 +8,21 @@ import { ScreenPackBuildSpace } from './space'
 const Fixture = ScreenPackBuildSpaceFixture
 
 describe('ScreenPackBuildSpace', () => {
-  let f: Awaited<ReturnType<typeof Fixture>>
-
-  beforeEach(async () => {
-    f = await Fixture()
-  })
-
   describe('puzzle grid', () => {
     test('should be able to open add puzzle screen', async () => {
+      const f = await Fixture()
       const modelSpace = f.update(f.initial, [
         {
           t: 'screen-puzzle-grid.user-clicked-open-add-puzzle-screen-button',
           userId: f.createdBy,
         },
       ])
-      expect(modelSpace?.screen.t === 'screen-add-puzzle').toBe(true)
+      expect(modelSpace?.screen.t === 'screen-add-puzzle').toEqual(true)
     })
 
     describe('slide management', () => {
       test('should be on the correct slide index after exiting the puzzle screen', async () => {
-        f = await Fixture({
+        const f = await Fixture({
           puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
         })
 
@@ -47,11 +42,11 @@ describe('ScreenPackBuildSpace', () => {
 
         const expected = PackPuzzleGridUI.toSlideIndex(modelSpace?.pack.puzzleIds.indexOf(puzzle.id) ?? 0)
         const actual = ScreenPackBuildSpace.toSlideIndex(modelSpace)
-        expect(actual).toBe(expected)
+        expect(actual).toEqual(expected)
       })
 
       test('should allow user to change slide', async () => {
-        f = await Fixture({
+        const f = await Fixture({
           puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
         })
 
@@ -62,12 +57,12 @@ describe('ScreenPackBuildSpace', () => {
             userId: f.createdBy,
           },
         ])
-        expect(ScreenPackBuildSpace.toSlideIndex(f.initial)).toBe(0)
-        expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(1)
+        expect(ScreenPackBuildSpace.toSlideIndex(f.initial)).toEqual(0)
+        expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toEqual(1)
       })
 
       test('should prevent slide index from going out of bounds', async () => {
-        f = await Fixture({
+        const f = await Fixture({
           puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
         })
         const expectedSlide = PackPuzzleGridUI.toSlideIndex(PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1)
@@ -78,14 +73,14 @@ describe('ScreenPackBuildSpace', () => {
             userId: f.createdBy,
           },
         ])
-        expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toBe(expectedSlide)
+        expect(ScreenPackBuildSpace.toSlideIndex(modelSpace)).toEqual(expectedSlide)
       })
     })
   })
 
   describe('puzzle opening behavior', () => {
     test('should open the correct level when opening puzzle screen', async () => {
-      f = await Fixture({
+      const f = await Fixture({
         puzzleCount: PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT + 1,
       })
       const firstPuzzleIndexNextSlide = PackPuzzleGridUI.PER_SLIDE_ITEM_COUNT
@@ -99,12 +94,12 @@ describe('ScreenPackBuildSpace', () => {
       ])
       expect(
         modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === firstPuzzleIndexNextSlide,
-      ).toBe(true)
+      ).toEqual(true)
     })
 
     test('should open the correct level when opening puzzle screen event when there is duplicate puzzles in the pack', async () => {
       const puzzle = await Puzzle.random()
-      f = await Fixture({
+      const f = await Fixture({
         appendDuplicatesOf: puzzle,
       })
 
@@ -116,14 +111,14 @@ describe('ScreenPackBuildSpace', () => {
         },
       ])
 
-      expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === f.puzzles.length - 1).toBe(
-        true,
-      )
+      expect(
+        modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === f.puzzles.length - 1,
+      ).toEqual(true)
     })
 
     test('should not open pack item if puzzle is not at index given', async () => {
       const puzzle = await Puzzle.random()
-      f = await Fixture({
+      const f = await Fixture({
         appendDuplicatesOf: puzzle,
       })
 
@@ -137,10 +132,11 @@ describe('ScreenPackBuildSpace', () => {
         },
       ])
 
-      expect(modelSpace?.screen.t === 'screen-puzzle-grid').toBe(true)
+      expect(modelSpace?.screen.t === 'screen-puzzle-grid').toEqual(true)
     })
 
     test('should open not-found puzzle', async () => {
+      const f = await Fixture()
       const modelSpace = f.update(f.initial, [
         {
           t: 'screen-pack-builder.user-clicked-pack-item',
@@ -148,18 +144,19 @@ describe('ScreenPackBuildSpace', () => {
           puzzleIndex: 0,
         },
       ])
-      expect(modelSpace?.screen.t === 'screen-puzzle').toBe(true)
+      expect(modelSpace?.screen.t === 'screen-puzzle').toEqual(true)
     })
   })
 
   test('exit pack builder', async () => {
+    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-back-button',
         userId: f.createdBy,
       },
     ])
-    expect(modelSpace.msgs?.length).toBe(1)
-    expect(modelSpace.msgs?.some((m) => m.t === 'exit-pack-builder')).toBe(true)
+    expect(modelSpace.msgs?.length).toEqual(1)
+    expect(modelSpace.msgs?.some((m) => m.t === 'exit-pack-builder')).toEqual(true)
   })
 })

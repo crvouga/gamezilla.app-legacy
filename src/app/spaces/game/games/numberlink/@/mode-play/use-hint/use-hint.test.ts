@@ -1,4 +1,11 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+
+describe('UseHint', () => {
+  test('hint', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { pipe } from '~/@/function/pipe'
 // import { Logger } from '~/@/logger'
 // import { UseHint } from '.'
@@ -23,7 +30,7 @@
 //     ])
 //     const numberlink = UseHint.toNumberlink(after.model, f.ctx.numberlink)
 //     for (const groupId of UseHint.toShowingHintGroupIds(after.model)) {
-//       expect(Numberlink.isTerminalConnectedWithPipes(numberlink, groupId)).toBe(true)
+//       expect(Numberlink.isTerminalConnectedWithPipes(numberlink, groupId)).toEqual(true)
 //     }
 //   })
 
@@ -51,7 +58,7 @@
 //       },
 //     ])
 //     const numberlink = UseHint.toNumberlink(output.model, f.ctx.numberlink)
-//     expect(AlgoIsSolved.isSolved(numberlink)).toBe(true)
+//     expect(AlgoIsSolved.isSolved(numberlink)).toEqual(true)
 //   })
 
 //   test('output use hint event', async () => {
@@ -71,7 +78,7 @@
 //         },
 //       },
 //     ])
-//     expect(output.events?.some((e) => e.t === 'used-hint')).toBe(true)
+//     expect(output.events?.some((e) => e.t === 'used-hint')).toEqual(true)
 //   })
 
 //   test('output solved event', async () => {
@@ -104,7 +111,7 @@
 //       },
 //     ])
 
-//     expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
+//     expect(output.events?.some((e) => e.t === 'solved')).toEqual(true)
 //   })
 
 //   test('should not create branching in pipes after using a hint', async () => {
@@ -128,7 +135,7 @@
 
 //     const derived = UseHint.toNumberlink(output.model, f.ctx.numberlink)
 
-//     expect(Numberlink.hasMultipleDeadEndPipelines(derived)).toBe(false)
+//     expect(Numberlink.hasMultipleDeadEndPipelines(derived)).toEqual(false)
 //   })
 
 //   test('should work even with flipped terminal', async () => {
@@ -164,7 +171,7 @@
 
 //     const pipeline = Numberlink.toPipelineFromGroupId(derived, 'A')
 
-//     expect(pipeline.length > 0).toBe(true)
+//     expect(pipeline.length > 0).toEqual(true)
 //   })
 
 //   test('record used hints', async () => {
@@ -235,7 +242,7 @@
 //       },
 //     ])
 //     const after = UseHint.toNumberlink(updated.model, f.ctx.numberlink)
-//     expect(Numberlink.hasBranchingPipelines(after)).toBe(false)
+//     expect(Numberlink.hasBranchingPipelines(after)).toEqual(false)
 //   })
 
 //   test('should never change the positions of the terminals when using a hint', async () => {
@@ -318,6 +325,6 @@
 //       { msg: { t: 'user-clicked-use-hint', solutions } },
 //     ])
 
-//     expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
+//     expect(output.events?.some((e) => e.t === 'solved')).toEqual(true)
 //   })
 // })

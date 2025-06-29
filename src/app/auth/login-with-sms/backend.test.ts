@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { PhoneNumber } from '~/@/phone-number'
 import { isErr, Ok, unwrap } from '~/@/result'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -47,9 +47,9 @@ describe('LoginWithSMSBackend', () => {
     ).items[0]
     if (!userSession) throw new Error('No session found')
 
-    expect(before).toBe(null)
+    expect(before).toEqual(null)
     expect(result).toEqual({ userAccount, userSession })
-    expect(userAccount.phoneNumber).toBe(phoneNumber)
+    expect(userAccount.phoneNumber).toEqual(phoneNumber)
   })
 
   test('should use existing account on verification', async () => {

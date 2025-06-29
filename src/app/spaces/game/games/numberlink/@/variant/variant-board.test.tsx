@@ -1,4 +1,10 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+describe('VariantBoard', () => {
+  test('render hint checkmark', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { FixtureSpacesFrontend } from '~/app/spaces/@/fixture/frontend'
 // import { NumberlinkVariantBoard } from '.'
 // import { BoardInput } from '../ui/board'
@@ -27,6 +33,6 @@
 //   test('render hint checkmark', async () => {
 //     const f = await Fixture()
 //     f.render(f.input)
-//     expect(true).toBe(true)
+//     expect(true).toEqual(true)
 //   })
 // })

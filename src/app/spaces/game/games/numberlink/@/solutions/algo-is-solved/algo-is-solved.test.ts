@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { VariantGridShorthand } from '../../variant/grid'
 import { AlgoIsSolved } from './algo-is-solved'
 
@@ -9,7 +9,7 @@ describe('AlgoIsSolved', () => {
       ['a', ' ', ' '],
       ['a', 'a', 'A'],
     ])
-    expect(AlgoIsSolved.isSolved(grid)).toBe(true)
+    expect(AlgoIsSolved.isSolved(grid)).toEqual(true)
   })
 
   test('isSolved 3x3 with A terminals', () => {
@@ -18,7 +18,7 @@ describe('AlgoIsSolved', () => {
       ['a', ' ', ' '],
       ['a', ' ', 'A'],
     ])
-    expect(AlgoIsSolved.isSolved(grid)).toBe(false)
+    expect(AlgoIsSolved.isSolved(grid)).toEqual(false)
   })
 
   test('not isSolved 3x3 with A terminals and A pipes and B terminals', () => {
@@ -27,7 +27,7 @@ describe('AlgoIsSolved', () => {
       ['a', ' ', 'B'],
       ['a', 'a', 'A'],
     ])
-    expect(AlgoIsSolved.isSolved(grid)).toBe(false)
+    expect(AlgoIsSolved.isSolved(grid)).toEqual(false)
   })
 
   test('not isSolved 3x3 with A terminals and A pipes and B terminals and B pipes', () => {
@@ -36,7 +36,7 @@ describe('AlgoIsSolved', () => {
       ['a', ' ', 'B'],
       ['a', 'a', 'A'],
     ])
-    expect(AlgoIsSolved.isSolved(grid)).toBe(true)
+    expect(AlgoIsSolved.isSolved(grid)).toEqual(true)
   })
 
   test('isSolved with A terminals and A pipes long', () => {
@@ -45,7 +45,7 @@ describe('AlgoIsSolved', () => {
       ['a', 'a', 'a'],
       ['a', 'a', 'A'],
     ])
-    expect(AlgoIsSolved.isSolved(grid)).toBe(true)
+    expect(AlgoIsSolved.isSolved(grid)).toEqual(true)
   })
 
   test('isSolved with adjacent connected A terminals', () => {
@@ -53,7 +53,7 @@ describe('AlgoIsSolved', () => {
       ['Aa', 'A'],
       [' ', ' '],
     ])
-    expect(AlgoIsSolved.isSolved(grid)).toBe(true)
+    expect(AlgoIsSolved.isSolved(grid)).toEqual(true)
   })
 
   test('not isSolved with adjacent disconnected A terminals', () => {
@@ -61,6 +61,6 @@ describe('AlgoIsSolved', () => {
       ['A', ' '],
       ['A', ' '],
     ])
-    expect(AlgoIsSolved.isSolved(grid)).toBe(false)
+    expect(AlgoIsSolved.isSolved(grid)).toEqual(false)
   })
 })

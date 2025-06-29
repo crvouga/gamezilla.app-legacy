@@ -1,4 +1,4 @@
-// import { describe, expect, test } from 'vitest'
+// import { describe, expect, test } from '~/@/test-runner'
 // import { EventSourced } from '~/@/event-sourced'
 // import { withEventId } from '~/@/event-sourced/event'
 // import { pipe } from '~/@/function/pipe'
@@ -36,7 +36,7 @@ import { describe } from 'node:test'
 //     })
 //     expect(
 //       isRequesting(output.model.listSpacesRequest) && output.model.listSpacesRequest.requestedAt === f.ctx.now,
-//     ).toBe(true)
+//     ).toEqual(true)
 //   })
 
 //   test('should send list space request to backend initially', async () => {
@@ -47,7 +47,7 @@ import { describe } from 'node:test'
 //       },
 //     })
 //     const output = SpacesFrontend.init({ ctx: f.ctx })
-//     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'wire' && msgCmd.c.toBackend?.t === 'list-spaces')).toBe(true)
+//     expect(output.msgCmd?.some((msgCmd) => msgCmd.t === 'wire' && msgCmd.c.toBackend?.t === 'list-spaces')).toEqual(true)
 //   })
 
 //   test('should request spaces on space list screen change', async () => {
@@ -60,7 +60,7 @@ import { describe } from 'node:test'
 //         }),
 //       },
 //     ])
-//     expect(output.model.listSpacesRequest.t === 'loading').toBe(true)
+//     expect(output.model.listSpacesRequest.t === 'loading').toEqual(true)
 //   })
 
 //   test('should be ok when backend responds with a list of spaces', async () => {
@@ -80,7 +80,7 @@ import { describe } from 'node:test'
 //         },
 //       },
 //     ])
-//     expect(isResponseOk(output.model.listSpacesRequest)).toBe(true)
+//     expect(isResponseOk(output.model.listSpacesRequest)).toEqual(true)
 //   })
 
 //   test('should navigate to space screen after clicking a space card', async () => {
@@ -112,7 +112,7 @@ import { describe } from 'node:test'
 //       },
 //     ])
 
-//     expect(PushScreenCmd.did(updated)).toBe(true)
+//     expect(PushScreenCmd.did(updated)).toEqual(true)
 //   })
 
 //   test('should make a nav forward sound when opening a space screen', async () => {
@@ -144,7 +144,7 @@ import { describe } from 'node:test'
 //       },
 //     ])
 
-//     expect(PlaySoundCmd.did(updated, APP_SOUND.navForwardMin)).toBe(true)
+//     expect(PlaySoundCmd.did(updated, APP_SOUND.navForwardMin)).toEqual(true)
 //   })
 
 //   test('should make a sound when closing room screen', async () => {
@@ -180,7 +180,7 @@ import { describe } from 'node:test'
 //         },
 //       },
 //     ])
-//     expect(PlaySoundCmd.did(updated, APP_SOUND.navBackwardMin)).toBe(true)
+//     expect(PlaySoundCmd.did(updated, APP_SOUND.navBackwardMin)).toEqual(true)
 //   })
 
 //   test('listing stale space should not override current state', async () => {
@@ -213,4 +213,4 @@ import { describe } from 'node:test'
 //   })
 // })
 
-describe.todo('ListSpacesFrontend', () => {})
+describe('ListSpacesFrontend', () => {})

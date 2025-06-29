@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Err, Ok } from '../result'
 import { TimeSpan } from '../time/time-span'
 import { BackoffFunction } from './backoff-functions'
@@ -22,7 +22,7 @@ describe('Retry', () => {
     })
 
     expect(result).toEqual(Ok(42))
-    expect(attempts).toBe(1)
+    expect(attempts).toEqual(1)
   })
 
   test('should retry on failure and eventually succeed', async () => {
@@ -45,7 +45,7 @@ describe('Retry', () => {
     })
 
     expect(result).toEqual(Ok(42))
-    expect(attempts).toBe(2)
+    expect(attempts).toEqual(2)
   })
 
   test('should return all errors when max attempts reached', async () => {
@@ -67,7 +67,7 @@ describe('Retry', () => {
     })
 
     expect(result).toEqual(Err(errors))
-    expect(attempts).toBe(2)
+    expect(attempts).toEqual(2)
   })
 
   test('should respect max attempts limit', async () => {
@@ -87,6 +87,6 @@ describe('Retry', () => {
     })
 
     expect(result).toEqual(Err([new Error('Failed attempt'), new Error('Failed attempt')]))
-    expect(attempts).toBe(2)
+    expect(attempts).toEqual(2)
   })
 })

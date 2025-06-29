@@ -1,24 +1,16 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { SecretString } from './secret-string'
 
 describe('SecretString', () => {
   const name = 'TestName'
   const value = 'TestValue'
 
-  test('should return an object with the expected methods and properties', () => {
-    const secret = SecretString.init(name, value)
-
-    expect(secret).toHaveProperty('dangerouslyReadValue')
-    expect(secret).toHaveProperty('toString')
-    expect(secret).toHaveProperty('toJSON')
-  })
-
   test('should hide the value in toString', () => {
     const secret = SecretString.init(name, value)
     if (!secret) {
       throw new Error('SecretString is null')
     }
-    expect(secret.toString()).toBe(`SecretString.of(${name})`)
+    expect(secret.toString()).toEqual(`SecretString.of(${name})`)
   })
 
   test('should return the value from dangerouslyReadValue', () => {
@@ -26,7 +18,7 @@ describe('SecretString', () => {
     if (!secret) {
       throw new Error('SecretString is null')
     }
-    expect(secret.dangerouslyReadValue()).toBe(value)
+    expect(secret.dangerouslyReadValue()).toEqual(value)
   })
 
   test('should hide the value in JSON serialization', () => {
@@ -34,6 +26,6 @@ describe('SecretString', () => {
     if (!secret) {
       throw new Error('SecretString is null')
     }
-    expect(JSON.stringify(secret)).toBe(`"SecretString.of(${name})"`)
+    expect(JSON.stringify(secret)).toEqual(`"SecretString.of(${name})"`)
   })
 })

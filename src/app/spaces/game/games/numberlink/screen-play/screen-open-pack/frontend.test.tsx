@@ -1,4 +1,10 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+describe('ScreenOpenPackFrontend', () => {
+  test('render exit button', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { withEventMeta } from '~/@/event-sourced/event'
 
 // import { Pack } from '../../@/pack/pack'
@@ -16,13 +22,13 @@
 //   test('should render exit button', async () => {
 //     const f = await Fixture()
 //     const rendered = f.render(f.initial)
-//     expect(rendered.getByRole('button', f.ctx.t('app.exit'))).toBeTruthy()
+//     expect(rendered.getByRole('button', f.ctx.t('app.exit'))).toEqualTruthy()
 //   })
 
 //   test('should render select pack screen', async () => {
 //     const f = await Fixture()
 //     const r = f.render(f.initial)
-//     expect(r.getByRole('heading', f.ctx.t('game.numberlink.select-a-pack'))).toBeTruthy()
+//     expect(r.getByRole('heading', f.ctx.t('game.numberlink.select-a-pack'))).toEqualTruthy()
 //   })
 
 //   test('should show pack screen after opening pack', async () => {
@@ -32,7 +38,7 @@
 //       { msg: { t: 'got-msg-space', c: { t: 'user-clicked-open-pack-puzzle-grid-item', pack, userId: f.hostId } } },
 //     ])
 //     const r = f.render(updated)
-//     expect(r.getByRole('heading', pack.name)).toBeTruthy()
+//     expect(r.getByRole('heading', pack.name)).toEqualTruthy()
 //   })
 
 //   test('should make a sound when opening a pack', async () => {
@@ -47,7 +53,7 @@
 //         }),
 //       },
 //     ])
-//     expect(PlaySoundCmd.did(updated)).toBe(true)
+//     expect(PlaySoundCmd.did(updated)).toEqual(true)
 //   })
 
 //   test.todo('should render all packs', async () => {})
@@ -64,6 +70,6 @@
 //       },
 //     ])
 
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 // })

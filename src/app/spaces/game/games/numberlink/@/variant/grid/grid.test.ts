@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { eq } from '~/@/equals/equals'
 import { VariantGrid, VariantGridDimensions, VariantGridShorthand } from '.'
 import { Numberlink } from '../../numberlink'
@@ -11,10 +11,10 @@ describe('Grid', () => {
         width: 3,
       }),
     })
-    expect(VariantGrid.Model.parse(initial).t).toBe('ok')
+    expect(VariantGrid.Model.parse(initial).t).toEqual('ok')
   })
 
-  test.skip('should initialize the model quickly', () => {
+  test.todo('should initialize the model quickly', () => {
     const start = process.hrtime()
 
     VariantGrid.init({
@@ -30,7 +30,7 @@ describe('Grid', () => {
 
     const expectedMaxNanoseconds = 10 * 1e6
 
-    expect(actualNanoseconds).toBeLessThan(expectedMaxNanoseconds)
+    expect(actualNanoseconds <= expectedMaxNanoseconds).toEqual(true)
   })
 
   test('reverse pipes by source id', () => {
@@ -90,7 +90,7 @@ describe('Grid', () => {
       },
     }
     const actual = Numberlink.toReversedPipesBySourceId(grid)
-    expect(eq(actual, expected)).toBe(true)
+    expect(eq(actual, expected)).toEqual(true)
   })
 
   test('distance', () => {
@@ -105,6 +105,6 @@ describe('Grid', () => {
       VariantGrid.toNodeId({ x: 0, y: 0 }),
       VariantGrid.toNodeId({ x: 2, y: 2 }),
     )
-    expect(actual).toBe(EXPECTED)
+    expect(actual).toEqual(EXPECTED)
   })
 })

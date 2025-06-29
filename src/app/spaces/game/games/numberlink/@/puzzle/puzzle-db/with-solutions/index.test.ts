@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
 import { Result } from '~/@/result'
 import { WithSolutions } from '.'
@@ -30,8 +30,8 @@ describe('WithSolutions', () => {
       const before = Result.unwrap(await f.puzzleDb.get(f.puzzleWithEmptySolutions.id))
       await f.withSolutions.put(f.puzzleWithEmptySolutions)
       const after = Result.unwrap(await f.puzzleDb.get(f.puzzleWithEmptySolutions.id))
-      expect((before?.solutions.length ?? 0) === 0).toBe(true)
-      expect((after?.solutions.length ?? 0) > 0).toBe(true)
+      expect((before?.solutions.length ?? 0) === 0).toEqual(true)
+      expect((after?.solutions.length ?? 0) > 0).toEqual(true)
     }
   })
 
@@ -40,8 +40,8 @@ describe('WithSolutions', () => {
       const before = Result.unwrap(await f.withSolutions.get(f.puzzleWithEmptySolutions.id))
       await f.puzzleDb.put(f.puzzleWithEmptySolutions)
       const after = Result.unwrap(await f.withSolutions.get(f.puzzleWithEmptySolutions.id))
-      expect((before?.solutions.length ?? 0) === 0).toBe(true)
-      expect((after?.solutions.length ?? 0) > 0).toBe(true)
+      expect((before?.solutions.length ?? 0) === 0).toEqual(true)
+      expect((after?.solutions.length ?? 0) > 0).toEqual(true)
     }
   })
 
@@ -80,10 +80,10 @@ describe('WithSolutions', () => {
           },
         }),
       )
-      expect(before?.puzzles.items.length === 0).toBe(true)
-      expect(after?.puzzles.items.length === 1).toBe(true)
+      expect(before?.puzzles.items.length === 0).toEqual(true)
+      expect(after?.puzzles.items.length === 1).toEqual(true)
       for (const item of after?.puzzles.items ?? []) {
-        expect(item?.solutions.length > 0).toBe(true)
+        expect(item?.solutions.length > 0).toEqual(true)
       }
     }
   })

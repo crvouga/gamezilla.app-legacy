@@ -1,4 +1,4 @@
-import { expect, test } from 'vitest'
+import { expect, test } from '~/@/test-runner'
 import type { StoreModule } from './immutable-store'
 
 export const buildTest = (makeStore: () => Promise<StoreModule<string, string | null>>) => {

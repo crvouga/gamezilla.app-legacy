@@ -1,4 +1,4 @@
-import { test, expect, describe } from 'vitest'
+import { test, expect, describe } from '~/@/test-runner'
 import { rescale } from './rescale'
 
 describe('rescale', async () => {

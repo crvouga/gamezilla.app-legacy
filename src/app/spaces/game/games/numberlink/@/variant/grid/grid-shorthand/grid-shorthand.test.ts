@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Numberlink } from '../../../numberlink'
 import { VariantGrid, VariantGridDimensions } from '../index'
 import * as VariantGridShorthand from './grid-shorthand'
@@ -20,7 +20,7 @@ describe('Grid shorthand', () => {
         },
       },
     })
-    expect(Numberlink.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toEqual(true)
   })
 
   test('2x2 with A', async () => {
@@ -50,7 +50,7 @@ describe('Grid shorthand', () => {
         },
       },
     })
-    expect(Numberlink.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toEqual(true)
   })
 
   test('2x2 with A and B', async () => {
@@ -91,7 +91,7 @@ describe('Grid shorthand', () => {
         },
       },
     })
-    expect(Numberlink.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toEqual(true)
   })
 
   test('3x3 with A', async () => {
@@ -117,7 +117,7 @@ describe('Grid shorthand', () => {
         },
       },
     })
-    expect(Numberlink.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toEqual(true)
   })
 
   test('3x3 with A and B', async () => {
@@ -154,7 +154,7 @@ describe('Grid shorthand', () => {
         },
       },
     })
-    expect(Numberlink.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toEqual(true)
   })
 
   test('2x2 with terminal and pipe', async () => {
@@ -216,7 +216,7 @@ describe('Grid shorthand', () => {
       },
     })
 
-    expect(Numberlink.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toEqual(true)
   })
 
   test('2x2 with adjacent connected terminals', async () => {
@@ -262,7 +262,7 @@ describe('Grid shorthand', () => {
       },
     })
 
-    expect(Numberlink.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toEqual(true)
   })
 
   test('2x2 with adjacent non-connected terminals', async () => {
@@ -290,7 +290,7 @@ describe('Grid shorthand', () => {
       },
     })
 
-    expect(Numberlink.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toEqual(true)
   })
 
   test('2x2 with A terminal with pipe and B terminal with pipe', async () => {
@@ -365,7 +365,7 @@ describe('Grid shorthand', () => {
 
     const isSame = Numberlink.isSame(actual, expected)
 
-    expect(isSame).toBe(true)
+    expect(isSame).toEqual(true)
   })
 
   test('3x3 with A terminal and pipes and B terminal and pipes', async () => {
@@ -473,7 +473,7 @@ describe('Grid shorthand', () => {
 
     const isSame = Numberlink.isSame(actual, expected)
 
-    expect(isSame).toBe(true)
+    expect(isSame).toEqual(true)
   })
 
   test('should work with 3x3 grid with A terminal and pipes', async () => {
@@ -544,7 +544,7 @@ describe('Grid shorthand', () => {
       },
     })
 
-    expect(Numberlink.isSame(actual, expected)).toBe(true)
+    expect(Numberlink.isSame(actual, expected)).toEqual(true)
   })
 
   test('should only return grids with the longest paths', async () => {
@@ -559,7 +559,7 @@ describe('Grid shorthand', () => {
     const expected = 2
     const actual = grids.length
 
-    expect(actual).toBe(expected)
+    expect(actual).toEqual(expected)
   })
 
   test('should be able to find longest path', async () => {
@@ -718,7 +718,7 @@ describe('Grid shorthand', () => {
       },
     })
 
-    expect(actual.some((actual) => Numberlink.isSame(actual, expected))).toBe(true)
+    expect(actual.some((actual) => Numberlink.isSame(actual, expected))).toEqual(true)
   })
 
   test('3x3 with A terminal and pipes and B terminal and pipes and C terminal and pipes', () => {
@@ -869,7 +869,7 @@ describe('Grid shorthand', () => {
 
     const isSame = Numberlink.isSame(actual, expected)
 
-    expect(isSame).toBe(true)
+    expect(isSame).toEqual(true)
   })
 
   test('from grid 3x3', () => {
@@ -925,7 +925,7 @@ describe('Grid shorthand', () => {
 
     const actualGrid = VariantGridShorthand.toGrid(actual)
 
-    expect(Numberlink.isSame(actualGrid, expectedGrid)).toBe(true)
+    expect(Numberlink.isSame(actualGrid, expectedGrid)).toEqual(true)
   })
 
   test('from grid 2x3', () => {

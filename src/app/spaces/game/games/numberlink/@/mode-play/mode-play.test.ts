@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
 import { ModePlay } from '.'
 import { Numberlink } from '../numberlink'
@@ -56,8 +56,8 @@ describe('NumberlinkModePlay', () => {
 
     const after = ModePlay.toNumberlink(f.update(f.init, msgs).model, f.numberlink)
 
-    expect(AlgoIsSolved.isSolved(before)).toBe(false)
-    expect(AlgoIsSolved.isSolved(after)).toBe(true)
+    expect(AlgoIsSolved.isSolved(before)).toEqual(false)
+    expect(AlgoIsSolved.isSolved(after)).toEqual(true)
   })
 
   test('should output connected terminals event', async () => {
@@ -101,7 +101,7 @@ describe('NumberlinkModePlay', () => {
       },
     ])
 
-    expect(output.events?.some((e) => e.t === 'connected-terminals')).toBe(true)
+    expect(output.events?.some((e) => e.t === 'connected-terminals')).toEqual(true)
   })
 
   test('should output started dragging event', async () => {
@@ -124,7 +124,7 @@ describe('NumberlinkModePlay', () => {
       },
     ])
 
-    expect(output.events?.some((e) => e.t === 'started-dragging')).toBe(true)
+    expect(output.events?.some((e) => e.t === 'started-dragging')).toEqual(true)
   })
 
   test('should output solved event', async () => {
@@ -168,7 +168,7 @@ describe('NumberlinkModePlay', () => {
       },
     ])
 
-    expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
+    expect(output.events?.some((e) => e.t === 'solved')).toEqual(true)
   })
 
   test('should output solved event even after dragging left the board', async () => {
@@ -207,7 +207,7 @@ describe('NumberlinkModePlay', () => {
         t: 'user-dragging-left',
       },
     ])
-    expect(output.events?.some((e) => e.t === 'solved')).toBe(true)
+    expect(output.events?.some((e) => e.t === 'solved')).toEqual(true)
   })
 
   test('should not output solved event after dragging left the board if not connected', async () => {
@@ -239,7 +239,7 @@ describe('NumberlinkModePlay', () => {
         t: 'user-dragging-left',
       },
     ])
-    expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
+    expect(output.events?.every((e) => e.t !== 'solved')).toEqual(true)
   })
 
   test('should not output solved if not pressed up on terminal', async () => {
@@ -276,7 +276,7 @@ describe('NumberlinkModePlay', () => {
       },
     ])
 
-    expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
+    expect(output.events?.every((e) => e.t !== 'solved')).toEqual(true)
   })
 
   test('should not output solved event if terminals are not connected', async () => {
@@ -296,7 +296,7 @@ describe('NumberlinkModePlay', () => {
       { t: 'user-pressed-up-node', nodeId: VariantGrid.toNodeId({ x: 1, y: 0 }) },
     ])
 
-    expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
+    expect(output.events?.every((e) => e.t !== 'solved')).toEqual(true)
   })
 
   test('hint', async () => {
@@ -316,7 +316,7 @@ describe('NumberlinkModePlay', () => {
 
     const output = f.update(f.init, msgs)
 
-    expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
+    expect(output.events?.every((e) => e.t !== 'solved')).toEqual(true)
   })
 
   test('derive numberlink with hints', async () => {
@@ -337,7 +337,7 @@ describe('NumberlinkModePlay', () => {
 
     const numberlinkNew = ModePlay.toNumberlink(model, numberlink)
 
-    expect(AlgoIsSolved.isSolved(numberlinkNew)).toBe(true)
+    expect(AlgoIsSolved.isSolved(numberlinkNew)).toEqual(true)
   })
 
   test('should not output solved event when drawing from incomplete terminal and then leave drawing', async () => {
@@ -379,7 +379,7 @@ describe('NumberlinkModePlay', () => {
 
     const output = f.update(f.init, msgs)
 
-    expect(output.events?.every((e) => e.t !== 'solved')).toBe(true)
+    expect(output.events?.every((e) => e.t !== 'solved')).toEqual(true)
   })
 
   test('reset pipes', async () => {
@@ -400,8 +400,8 @@ describe('NumberlinkModePlay', () => {
     const before = ModePlay.toNumberlink(f.init, f.numberlink)
     const after = ModePlay.toNumberlink(output.model, f.numberlink)
 
-    expect(Numberlink.isPipesEmpty(before)).toBe(false)
-    expect(Numberlink.isPipesEmpty(after)).toBe(true)
+    expect(Numberlink.isPipesEmpty(before)).toEqual(false)
+    expect(Numberlink.isPipesEmpty(after)).toEqual(true)
   })
 
   test('reset hints used', async () => {
@@ -439,7 +439,7 @@ describe('NumberlinkModePlay', () => {
         t: 'user-clicked-reset',
       },
     ])
-    expect(output.events?.some((e) => e.t === 'reset')).toBe(true)
+    expect(output.events?.some((e) => e.t === 'reset')).toEqual(true)
   })
 
   test('not output solved is no', async () => {
@@ -455,7 +455,7 @@ describe('NumberlinkModePlay', () => {
         solutions: await Solutions.find({ models: [f.numberlink], logger: Logger({ t: 'noop' }) }),
       },
     ])
-    expect(output.events?.some((e) => e.t === 'used-hint')).toBe(true)
+    expect(output.events?.some((e) => e.t === 'used-hint')).toEqual(true)
   })
 
   test('show checkmark animation on solve', async () => {
@@ -466,7 +466,7 @@ describe('NumberlinkModePlay', () => {
       ]),
     })
     const output = f.update(f.init, [...f.solutionMsgs])
-    expect(output.model.showCheckmarkAnimation).toBe(true)
+    expect(output.model.showCheckmarkAnimation).toEqual(true)
   })
 
   test('status should be solved if solved but is dragging lonely terminal', async () => {
@@ -485,6 +485,6 @@ describe('NumberlinkModePlay', () => {
         nodeId: VariantGrid.toNodeId({ x: 2, y: 2 }),
       },
     ])
-    expect(toStatus({ model: output.model, numberlink: f.numberlink })).toBe('solved')
+    expect(toStatus({ model: output.model, numberlink: f.numberlink })).toEqual('solved')
   })
 })

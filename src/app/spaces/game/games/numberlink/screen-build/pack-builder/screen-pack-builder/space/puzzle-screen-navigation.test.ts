@@ -1,17 +1,12 @@
-import { beforeEach, describe, expect, test } from 'vitest'
 import { assertNotNullish } from '~/@/assert'
+import { describe, expect, test } from '~/@/test-runner'
 import { ScreenPackBuildSpaceFixture } from '../@/fixture/space'
 
 const Fixture = ScreenPackBuildSpaceFixture
 
 describe('puzzle screen navigation', () => {
-  let f: Awaited<ReturnType<typeof Fixture>>
-
-  beforeEach(async () => {
-    f = await Fixture()
-  })
-
   test('should be able to exit puzzle screen', async () => {
+    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.puzzle-screen.user-clicked-exit-play-puzzle-screen',
@@ -19,10 +14,11 @@ describe('puzzle screen navigation', () => {
       },
     ])
 
-    expect(modelSpace?.screen.t === 'screen-puzzle-grid').toBe(true)
+    expect(modelSpace?.screen.t === 'screen-puzzle-grid').toEqual(true)
   })
 
   test('should open puzzle screen when clicking puzzle grid item', async () => {
+    const f = await Fixture()
     const modelSpace = f.update(f.initial, [
       {
         t: 'screen-pack-builder.user-clicked-pack-item',
@@ -35,11 +31,12 @@ describe('puzzle screen navigation', () => {
       modelSpace?.screen.t === 'screen-puzzle' &&
         modelSpace.screen.puzzleResult.t === 'got' &&
         modelSpace.screen.puzzleResult.c.id === assertNotNullish(f.puzzles[0]).id,
-    ).toBe(true)
+    ).toEqual(true)
   })
 
   describe('puzzle navigation', () => {
     test('should be able to go to next puzzle', async () => {
+      const f = await Fixture()
       const modelSpace = f.update(f.initial, [
         {
           t: 'screen-pack-builder.user-clicked-pack-item',
@@ -56,10 +53,11 @@ describe('puzzle screen navigation', () => {
         modelSpace?.screen.t === 'screen-puzzle' &&
           modelSpace?.screen.puzzleResult.t === 'got' &&
           modelSpace?.screen.puzzleResult.c.id === assertNotNullish(f.puzzles[1]).id,
-      ).toBe(true)
+      ).toEqual(true)
     })
 
     test('should be able to go to previous puzzle', async () => {
+      const f = await Fixture()
       const modelSpace = f.update(f.initial, [
         {
           t: 'screen-pack-builder.user-clicked-pack-item',
@@ -76,10 +74,11 @@ describe('puzzle screen navigation', () => {
         modelSpace?.screen.t === 'screen-puzzle' &&
           modelSpace?.screen.puzzleResult.t === 'got' &&
           modelSpace?.screen.puzzleResult.c.id === assertNotNullish(f.puzzles[0]).id,
-      ).toBe(true)
+      ).toEqual(true)
     })
 
     test('should go to previous puzzle even when puzzle result is not found', async () => {
+      const f = await Fixture()
       const modelSpace = f.update(f.initial, [
         {
           t: 'screen-pack-builder.user-clicked-pack-item',
@@ -92,10 +91,11 @@ describe('puzzle screen navigation', () => {
           previousPuzzleResult: { t: 'not-found' },
         },
       ])
-      expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === 0).toBe(true)
+      expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === 0).toEqual(true)
     })
 
     test('should go to next puzzle even when puzzle result is not found', async () => {
+      const f = await Fixture()
       const modelSpace = f.update(f.initial, [
         {
           t: 'screen-pack-builder.user-clicked-pack-item',
@@ -108,7 +108,7 @@ describe('puzzle screen navigation', () => {
           nextPuzzleResult: { t: 'not-found' },
         },
       ])
-      expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === 1).toBe(true)
+      expect(modelSpace?.screen.t === 'screen-puzzle' && modelSpace?.screen.puzzleIndex === 1).toEqual(true)
     })
   })
 })

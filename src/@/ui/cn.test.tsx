@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '../logger'
 import { cnFilter, cnLoop, cnParams } from './cn'
 
@@ -25,7 +25,7 @@ describe('cn performance', () => {
     const end = process.hrtime.bigint()
     const timePerOp = Number(end - start) / iterations / 1_000_000 // Convert nanoseconds to milliseconds
 
-    expect(timePerOp).toBeLessThan(0.01)
+    expect(timePerOp <= 0.01).toEqual(true)
 
     // Log actual performance for reference
     logger.info(`Average time per cnParams() call: ${timePerOp.toFixed(6)}ms`)

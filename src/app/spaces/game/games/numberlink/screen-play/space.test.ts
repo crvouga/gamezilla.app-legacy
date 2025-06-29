@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { UserId } from '~/app/@/data/user-id'
 import { Pack } from '../@/pack/pack'
 import { Puzzle } from '../@/puzzle/puzzle'

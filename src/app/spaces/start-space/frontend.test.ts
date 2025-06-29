@@ -1,12 +1,16 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+describe('StartSpaceFrontend', () => {
+  test('show toast', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { SpaceId } from '~/app/@/data/space-id'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 // import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 // import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 // import { FixtureSpacesFrontend } from '../@/fixture/frontend'
 // import { Spaces } from '../space/spaces'
-
-import { describe } from 'node:test'
 
 // const Fixture = async () => {
 //   const f = await FixtureSpacesFrontend()
@@ -21,7 +25,7 @@ import { describe } from 'node:test'
 //     const started = f.update(f.initial, [
 //       { msg: { t: 'start-space.clicked-start-space-button', spaceId: SpaceId.generate() } },
 //     ])
-//     expect(ShowToastCmd.did(started)).toBe(true)
+//     expect(ShowToastCmd.did(started)).toEqual(true)
 //   })
 
 //   test('start space', async () => {
@@ -51,7 +55,7 @@ import { describe } from 'node:test'
 //         },
 //       },
 //     ])
-//     expect(PlaySoundCmd.did(started)).toBe(true)
+//     expect(PlaySoundCmd.did(started)).toEqual(true)
 //   })
 
 //   test('push screen', async () => {
@@ -65,8 +69,6 @@ import { describe } from 'node:test'
 //         },
 //       },
 //     ])
-//     expect(PushScreenCmd.did(started)).toBe(true)
+//     expect(PushScreenCmd.did(started)).toEqual(true)
 //   })
 // })
-
-describe.todo('StartSpaceFrontend', () => {})

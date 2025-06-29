@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { pipe } from '~/@/function/pipe'
 import { Numberlink } from '.'
 import { VariantGrid, VariantGridShorthand } from '../variant/grid'
@@ -13,7 +13,7 @@ describe('Numberlink', () => {
     ])
     expect(
       Numberlink.isConnectedWithPipes(grid, VariantGrid.toNodeId({ x: 0, y: 0 }), VariantGrid.toNodeId({ x: 1, y: 1 })),
-    ).toBe(true)
+    ).toEqual(true)
   })
 
   test('isConnectedWithPipes should not fail in case of branching', () => {
@@ -25,7 +25,7 @@ describe('Numberlink', () => {
     const start = VariantGrid.toNodeId({ x: 0, y: 0 })
     const end = VariantGrid.toNodeId({ x: 2, y: 2 })
     const isConnected = Numberlink.isConnectedWithPipes(grid, start, end)
-    expect(isConnected).toBe(true)
+    expect(isConnected).toEqual(true)
   })
 
   test('isConnectedWithPipes should not fail in case of cycles', () => {
@@ -67,7 +67,7 @@ describe('Numberlink', () => {
 
     const isConnected = Numberlink.isConnectedWithPipes(gridWithCycles, node1, node3)
 
-    expect(isConnected).toBe(true)
+    expect(isConnected).toEqual(true)
   })
 
   test('branching pipelines detection', async () => {
@@ -91,7 +91,7 @@ describe('Numberlink', () => {
     }
 
     const actual = Numberlink.hasBranchingPipelines(grid)
-    expect(actual).toBe(true)
+    expect(actual).toEqual(true)
   })
 
   test('branching pipelines false positives', async () => {
@@ -100,7 +100,7 @@ describe('Numberlink', () => {
       ['a', ' ', ' '],
       [' ', ' ', 'A'],
     ])
-    expect(Numberlink.hasBranchingPipelines(grid)).toBe(false)
+    expect(Numberlink.hasBranchingPipelines(grid)).toEqual(false)
   })
 
   test('multiple dead ends detection', async () => {
@@ -123,7 +123,7 @@ describe('Numberlink', () => {
         ...solution.pipesBySourceId,
       },
     }
-    expect(Numberlink.hasMultipleDeadEndPipelines(multipleDeadEnds)).toBe(true)
+    expect(Numberlink.hasMultipleDeadEndPipelines(multipleDeadEnds)).toEqual(true)
   })
 
   test('multiple dead ends false positive', async () => {
@@ -132,7 +132,7 @@ describe('Numberlink', () => {
       ['a', ' ', ' '],
       ['a', ' ', 'A'],
     ])
-    expect(Numberlink.hasMultipleDeadEndPipelines(grid)).toBe(false)
+    expect(Numberlink.hasMultipleDeadEndPipelines(grid)).toEqual(false)
   })
 
   test('add pipeline', async () => {
@@ -150,7 +150,7 @@ describe('Numberlink', () => {
     const actual = Numberlink.addPipeline(emptyGrid, pipeline)
     const isSame = Numberlink.isSame(actual, expected)
 
-    expect(isSame).toBe(true)
+    expect(isSame).toEqual(true)
   })
 
   test('add pipeline when terminal orientation does not match pipeline being added', async () => {

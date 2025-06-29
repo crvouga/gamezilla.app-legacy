@@ -1,7 +1,7 @@
-// import { describe, expect, test } from 'vitest'
+// import { describe, expect, test } from '~/@/test-runner'
 // import { withEventMeta } from '~/@/event-sourced/event'
 
-import { describe } from 'vitest'
+import { describe } from '~/@/test-runner'
 
 // import { Sub } from '~/@/sub'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -24,10 +24,10 @@ import { describe } from 'vitest'
 //     const after = f.render(output)
 //     expect(
 //       before.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('game.numberlink.select-next-pack'))[0],
-//     ).toBeFalsy()
+//     ).toEqualFalsy()
 //     expect(
 //       after.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('game.numberlink.select-next-pack'))[0],
-//     ).toBeTruthy()
+//     ).toEqualTruthy()
 //   })
 
 //   test('should dispatch a msg after clicking select next pack button', async () => {
@@ -46,14 +46,14 @@ import { describe } from 'vitest'
 //     const output = f.update(initial, [
 //       { msg: { t: 'got-msg-space', c: { t: 'user-clicked-select-next-pack', userId: f.hostId } } },
 //     ])
-//     expect(output.msgSpace?.some((m) => m.t === 'user-clicked-select-next-pack')).toBe(true)
+//     expect(output.msgSpace?.some((m) => m.t === 'user-clicked-select-next-pack')).toEqual(true)
 //   })
 
 //   test('should render congrats message after completing last puzzle', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.init, f.msgsCompleteLastPuzzle)
 
-//     expect(f.render(output).getByRole('dialog')[0]?.getByRole('heading', f.ctx.t('app.congratulations'))).toBeTruthy()
+//     expect(f.render(output).getByRole('dialog')[0]?.getByRole('heading', f.ctx.t('app.congratulations'))).toEqualTruthy()
 //   })
 
 //   test('should dispatch correct msg after clicking select next pack button', async () => {
@@ -62,7 +62,7 @@ import { describe } from 'vitest'
 //     const r = f.render(output)
 //     const button = r.getByRole('dialog')[0]?.getByRole('button', f.ctx.t('game.numberlink.select-next-pack'))[0]
 //     button?.click()
-//     expect(button).toBeTruthy()
+//     expect(button).toEqualTruthy()
 //     const msg = await Sub.take(r.msgs)
 //     expect(msg).toEqual({
 //       t: 'got-msg-space',
@@ -79,7 +79,7 @@ import { describe } from 'vitest'
 //     const output = f.update(initial, [
 //       { msgSpace: withEventMeta({ t: 'user-clicked-select-next-pack', userId: f.hostId }) },
 //     ])
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('should render exit screen action when last puzzle is completed', async () => {
@@ -87,7 +87,7 @@ import { describe } from 'vitest'
 //     const output = f.update(f.init, f.msgsCompleteLastPuzzle)
 //     const r = f.render(output)
 //     const got = r.getByTestId(LastPuzzleFrontend.TEST_ID_LAST_PUZZLE_SELECT_NEXT_ID)[0]
-//     expect(got).toBeTruthy()
+//     expect(got).toEqualTruthy()
 //   })
 
 //   test('should NOT render exit screen action when last puzzle is completed', async () => {
@@ -95,7 +95,7 @@ import { describe } from 'vitest'
 //     const output = f.update(f.init, f.msgsGoToLastPuzzle)
 //     const r = f.render(output)
 //     const got = r.getByTestId(LastPuzzleFrontend.TEST_ID_LAST_PUZZLE_SELECT_NEXT_ID)[0]
-//     expect(got).toBeFalsy()
+//     expect(got).toEqualFalsy()
 //   })
 
 //   test('should NOT render if not last puzzle', async () => {
@@ -103,8 +103,8 @@ import { describe } from 'vitest'
 //     const output = f.update(f.init, f.msgsCompletePuzzle)
 //     const r = f.render(output)
 //     const got = r.getByTestId(LastPuzzleFrontend.TEST_ID_LAST_PUZZLE_SELECT_NEXT_ID)[0]
-//     expect(got).toBeFalsy()
+//     expect(got).toEqualFalsy()
 //   })
 // })
 
-describe.todo('LastPuzzleFrontend', () => {})
+describe('LastPuzzleFrontend', () => {})

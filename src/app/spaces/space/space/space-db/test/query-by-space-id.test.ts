@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { unwrap } from '~/@/result'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '../..'

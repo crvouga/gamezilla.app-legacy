@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { unwrap } from '~/@/result'
@@ -51,7 +51,7 @@ describe('SpaceDb', () => {
       unwrap(await f.spacesDb.upsert(modifiedSpace))
       const after = unwrap(await f.spacesDb.query({ where: { spaceId: { '=': f.spaceId } } }))
 
-      expect(before.items[0]?.events.length).toBeLessThan(after.items[0]?.events.length ?? 0)
+      expect((before.items[0]?.events.length ?? 0) < (after.items[0]?.events.length ?? 0)).toEqual(true)
       expect(after.items).toEqual([modifiedSpace])
     }
   })

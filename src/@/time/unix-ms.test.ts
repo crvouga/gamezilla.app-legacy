@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { UnixMs } from './unix-ms'
 
 describe('UnixMs', () => {

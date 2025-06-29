@@ -17,7 +17,7 @@
  * // Wait for async state change with custom timeout
  * await eventually(
  *   async () => {
- *     expect(someAsyncState).toBe('expected value')
+ *     expect(someAsyncState).toEqual('expected value')
  *   },
  *   1000, // 1 second timeout
  *   50    // Check every 50ms

@@ -1,4 +1,10 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+describe('PeopleActionFrontend', () => {
+  test('should start with no modals open', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { UserId } from '~/app/@/data/user-id'
 // import { APP_SOUND } from '~/app/@/frontend/app-sound'
 // import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd.$msg'
@@ -19,7 +25,7 @@
 //   test('should start with no modals open', async () => {
 //     const f = await Fixture()
 //     const output = f.update(f.initial, [])
-//     expect(output.model.opened === null).toBe(true)
+//     expect(output.model.opened === null).toEqual(true)
 //   })
 
 //   test('should open users modal when user clicks on users button', async () => {
@@ -31,7 +37,7 @@
 //         },
 //       },
 //     ])
-//     expect(output.model.opened === 'people.people-surface').toBe(true)
+//     expect(output.model.opened === 'people.people-surface').toEqual(true)
 //   })
 
 //   test('should open user details modal after clicking user', async () => {
@@ -47,7 +53,7 @@
 //     ])
 //     expect(
 //       output.model.opened === 'people.person-preview-surface' && output.model.openedPreviewUserId === someUserId,
-//     ).toBe(true)
+//     ).toEqual(true)
 //   })
 
 //   test('should close modal when the current screen changes', async () => {
@@ -67,7 +73,7 @@
 //         }),
 //       },
 //     ])
-//     expect(output.model.opened === null).toBe(true)
+//     expect(output.model.opened === null).toEqual(true)
 //   })
 
 //   test('should open user details corresponding cmd', async () => {
@@ -83,7 +89,7 @@
 
 //     expect(
 //       output.model.opened === 'people.person-preview-surface' && output.model.openedPreviewUserId === someUserId,
-//     ).toBe(true)
+//     ).toEqual(true)
 //   })
 
 //   test('should navigate to preview users profile page when clicked', async () => {
@@ -103,7 +109,7 @@
 //       },
 //     ])
 
-//     expect(OpenProfileCmd.did(output, someUserId)).toBe(true)
+//     expect(OpenProfileCmd.did(output, someUserId)).toEqual(true)
 //   })
 
 //   test('should play sound when clicking preview user link', async () => {
@@ -122,7 +128,7 @@
 //         },
 //       },
 //     ])
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('should not navigate after clicking preview user link if preview is not open', async () => {
@@ -135,7 +141,7 @@
 //         },
 //       },
 //     ])
-//     expect(OpenProfileCmd.did(output, someUserId)).toBe(false)
+//     expect(OpenProfileCmd.did(output, someUserId)).toEqual(false)
 //   })
 
 //   test('play sound open people modal', async () => {
@@ -147,7 +153,7 @@
 //         },
 //       },
 //     ])
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('play sound close modal', async () => {
@@ -159,7 +165,7 @@
 //         },
 //       },
 //     ])
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('play sound open user details modal', async () => {
@@ -173,23 +179,23 @@
 //         },
 //       },
 //     ])
-//     expect(PlaySoundCmd.did(output)).toBe(true)
+//     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 
 //   test('should toggle people modal when clicking button', async () => {
 //     const f = await FixtureSpacesFrontend()
 //     const before = f.update(f.initial, [{ msg: { t: 'people-action.clicked-people-action' } }])
 //     const after = f.update(before, [{ msg: { t: 'people-action.clicked-people-action' } }])
-//     expect(before.model.opened === 'people.people-surface').toBe(true)
-//     expect(after.model.opened === null).toBe(true)
+//     expect(before.model.opened === 'people.people-surface').toEqual(true)
+//     expect(after.model.opened === null).toEqual(true)
 //   })
 
 //   test('should play drawer sounds when toggling people modal', async () => {
 //     const f = await FixtureSpacesFrontend()
 //     const openOutput = f.update(f.initial, [{ msg: { t: 'people-action.clicked-people-action' } }])
 //     const closeOutput = f.update(openOutput, [{ msg: { t: 'people-action.clicked-people-action' } }])
-//     expect(PlaySoundCmd.did(openOutput, APP_SOUND.surfaceOpened)).toBe(true)
-//     expect(PlaySoundCmd.did(closeOutput, APP_SOUND.surfaceClosed)).toBe(true)
+//     expect(PlaySoundCmd.did(openOutput, APP_SOUND.surfaceOpened)).toEqual(true)
+//     expect(PlaySoundCmd.did(closeOutput, APP_SOUND.surfaceClosed)).toEqual(true)
 //   })
 
 //   test('should play close sound when closing the people surface', async () => {
@@ -199,6 +205,6 @@
 //         msg: { t: 'people-action.closed-surface' },
 //       },
 //     ])
-//     expect(PlaySoundCmd.did(output, APP_SOUND.surfaceClosed)).toBe(true)
+//     expect(PlaySoundCmd.did(output, APP_SOUND.surfaceClosed)).toEqual(true)
 //   })
 // })

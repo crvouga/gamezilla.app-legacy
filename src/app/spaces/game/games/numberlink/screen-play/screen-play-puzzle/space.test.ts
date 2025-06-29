@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
 import { UserId } from '~/app/@/data/user-id'
 import { Numberlink } from '../../@/numberlink'
@@ -123,9 +123,9 @@ describe('ScreenPlayPuzzleSpace', () => {
     if (!after.modePlay) throw new Error('failed to setup test')
     const afterFlow = ModePlay.toNumberlink(after.modePlay, f.puzzle.model)
 
-    expect(ScreenPlayPuzzleSpace.toStatus(before)).toBe('solving')
-    expect(ScreenPlayPuzzleSpace.toStatus(after)).toBe('solved')
-    expect(AlgoIsSolved.isSolved(afterFlow)).toBe(true)
+    expect(ScreenPlayPuzzleSpace.toStatus(before)).toEqual('solving')
+    expect(ScreenPlayPuzzleSpace.toStatus(after)).toEqual('solved')
+    expect(AlgoIsSolved.isSolved(afterFlow)).toEqual(true)
   })
 
   test('should open puzzle complete dialog after solving', async () => {
@@ -133,7 +133,7 @@ describe('ScreenPlayPuzzleSpace', () => {
 
     const after = f.update(f.init, f.solvePuzzleMsgs)
 
-    expect(ScreenPlayPuzzleSpace.toStatus(after) === 'solved' && after.opened === 'puzzle-complete').toBe(true)
+    expect(ScreenPlayPuzzleSpace.toStatus(after) === 'solved' && after.opened === 'puzzle-complete').toEqual(true)
   })
 
   test('still in solved state after pressing solved board', async () => {
@@ -160,7 +160,7 @@ describe('ScreenPlayPuzzleSpace', () => {
         },
       },
     ])
-    expect(ScreenPlayPuzzleSpace.toStatus(after) === 'solved').toBe(true)
+    expect(ScreenPlayPuzzleSpace.toStatus(after) === 'solved').toEqual(true)
   })
 
   test('should be able to close the puzzle complete dialog', async () => {
@@ -172,7 +172,7 @@ describe('ScreenPlayPuzzleSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(ScreenPlayPuzzleSpace.toStatus(after) === 'solved' && after.opened === null).toBe(true)
+    expect(ScreenPlayPuzzleSpace.toStatus(after) === 'solved' && after.opened === null).toEqual(true)
   })
 
   test('should close puzzle complete dialog after clicking next puzzle button', async () => {
@@ -186,7 +186,7 @@ describe('ScreenPlayPuzzleSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(after.opened === null).toBe(true)
+    expect(after.opened === null).toEqual(true)
   })
 
   test('should only open puzzle complete dialog when transitions to solved state', async () => {
@@ -212,8 +212,8 @@ describe('ScreenPlayPuzzleSpace', () => {
         userId: UserId.generate(),
       },
     ])
-    expect(before.opened === null).toBe(true)
-    expect(after.opened === null).toBe(true)
+    expect(before.opened === null).toEqual(true)
+    expect(after.opened === null).toEqual(true)
   })
 
   test('should close puzzle complete dialog after clicking prev puzzle button', async () => {
@@ -227,8 +227,8 @@ describe('ScreenPlayPuzzleSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(before.opened === 'puzzle-complete').toBe(true)
-    expect(after.opened === null).toBe(true)
+    expect(before.opened === 'puzzle-complete').toEqual(true)
+    expect(after.opened === null).toEqual(true)
   })
 
   test('should clear puzzle after clicking reset button', async () => {
@@ -263,7 +263,7 @@ describe('ScreenPlayPuzzleSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(ScreenPlayPuzzleSpace.toStatus(output)).toBe('solving')
+    expect(ScreenPlayPuzzleSpace.toStatus(output)).toEqual('solving')
   })
 
   test('should be in a solving state after going to the prev puzzle', async () => {
@@ -277,7 +277,7 @@ describe('ScreenPlayPuzzleSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(ScreenPlayPuzzleSpace.toStatus(output)).toBe('solving')
+    expect(ScreenPlayPuzzleSpace.toStatus(output)).toEqual('solving')
   })
 
   test('open action drawer', async () => {
@@ -288,7 +288,7 @@ describe('ScreenPlayPuzzleSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(output.opened).toBe('action-drawer')
+    expect(output.opened).toEqual('action-drawer')
   })
 
   test('close action drawer', async () => {
@@ -303,7 +303,7 @@ describe('ScreenPlayPuzzleSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(output.opened).toBe(null)
+    expect(output.opened).toEqual(null)
   })
 
   test('close action drawer', async () => {
@@ -318,7 +318,7 @@ describe('ScreenPlayPuzzleSpace', () => {
         // userId: f.hostId,
       },
     ])
-    expect(output[0].opened).toBe(null)
+    expect(output[0].opened).toEqual(null)
   })
 
   test('open next puzzle not found', async () => {
@@ -331,7 +331,7 @@ describe('ScreenPlayPuzzleSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(output[1]?.puzzleResult.t).toBe('not-found')
+    expect(output[1]?.puzzleResult.t).toEqual('not-found')
   })
 
   test('open prev puzzle not found', async () => {
@@ -344,13 +344,13 @@ describe('ScreenPlayPuzzleSpace', () => {
         userId: f.hostId,
       },
     ])
-    expect(output[1]?.puzzleResult.t).toBe('not-found')
+    expect(output[1]?.puzzleResult.t).toEqual('not-found')
   })
 
   test('output user completed puzzle event', async () => {
     const f = await Fixture()
     const output = f.update(f.init, [...f.solvePuzzleMsgs])
-    expect(output.events?.some((e) => e.t === 'user-completed-puzzle')).toBe(true)
+    expect(output.events?.some((e) => e.t === 'user-completed-puzzle')).toEqual(true)
   })
 
   test('output user used hint event', async () => {

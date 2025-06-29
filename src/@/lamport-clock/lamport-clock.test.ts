@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { LamportClock } from './lamport-clock'
 
 describe('LamportClock', () => {
@@ -9,7 +9,7 @@ describe('LamportClock', () => {
     const updatedClockA = LamportClock.increment(clockA)
     const updatedClockB = LamportClock.update(clockB, updatedClockA)
 
-    expect(LamportClock.toNumber(updatedClockB)).toBe(2)
+    expect(LamportClock.toNumber(updatedClockB)).toEqual(2)
   })
 
   test('should not update the Lamport clock when receiving an equal timestamp', async () => {
@@ -21,7 +21,7 @@ describe('LamportClock', () => {
 
     const updatedClockB2 = LamportClock.update(updatedClockB, updatedClockA)
 
-    expect(LamportClock.toNumber(updatedClockB2)).toBe(3)
+    expect(LamportClock.toNumber(updatedClockB2)).toEqual(3)
   })
 
   test('should not update the Lamport clock when receiving a larger timestamp', async () => {
@@ -31,6 +31,6 @@ describe('LamportClock', () => {
     const updatedClockB = LamportClock.increment(clockB)
     const updatedClockA = LamportClock.update(clockA, updatedClockB)
 
-    expect(LamportClock.toNumber(updatedClockA)).toBe(2)
+    expect(LamportClock.toNumber(updatedClockA)).toEqual(2)
   })
 })

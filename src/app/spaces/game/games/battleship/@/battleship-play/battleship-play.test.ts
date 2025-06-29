@@ -1,4 +1,4 @@
-import { describe, test } from 'vitest'
+import { describe, test } from '~/@/test-runner'
 import * as Battleship from './battleship-play'
 
 const ALL_PLAYER_TYPES = ['player1', 'player2'] as const

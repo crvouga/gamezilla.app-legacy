@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { isErr, isOk, unwrap } from '~/@/result'
 import { eq } from '~/@/equals/equals'
 import { Hashing } from '~/@/hashing'
@@ -23,8 +23,8 @@ describe('VerifySMS', () => {
       preferredLanguage: 'en',
     })
 
-    expect(isOk(sent)).toBe(true)
-    expect(isOk(verified)).toBe(true)
+    expect(isOk(sent)).toEqual(true)
+    expect(isOk(verified)).toEqual(true)
   })
 
   test('should send a sms message with the code in it', async () => {
@@ -33,7 +33,7 @@ describe('VerifySMS', () => {
       ...f,
       phoneNumber: f.phoneNumber,
     })
-    expect(f.sms.sent[0]?.message.includes(f.CODE)).toBe(true)
+    expect(f.sms.sent[0]?.message.includes(f.CODE)).toEqual(true)
   })
 
   test('should send a sms message to the phone number inputted', async () => {
@@ -42,7 +42,7 @@ describe('VerifySMS', () => {
       ...f,
       phoneNumber: f.phoneNumber,
     })
-    expect(f.sms.sent.every((smsMessage) => eq(smsMessage.phoneNumber, f.phoneNumber))).toBe(true)
+    expect(f.sms.sent.every((smsMessage) => eq(smsMessage.phoneNumber, f.phoneNumber))).toEqual(true)
   })
 
   test('should sent a sms message with the "verify-sms.code-message" translation', async () => {
@@ -51,7 +51,7 @@ describe('VerifySMS', () => {
       ...f,
       phoneNumber: f.phoneNumber,
     })
-    expect(f.sms.sent[0]?.message === Translator(f.preferredLanguage)('verify-sms.code-message', f.CODE)).toBe(true)
+    expect(f.sms.sent[0]?.message === Translator(f.preferredLanguage)('verify-sms.code-message', f.CODE)).toEqual(true)
   })
 
   test('should never send an empty sms message with the "verify-sms.code-message" translation', async () => {
@@ -60,7 +60,7 @@ describe('VerifySMS', () => {
       ...f,
       phoneNumber: f.phoneNumber,
     })
-    expect((f.sms.sent[0]?.message.length ?? 0) > 0).toBe(true)
+    expect((f.sms.sent[0]?.message.length ?? 0) > 0).toEqual(true)
   })
 
   test('should fail if the code is not the same as the code sent', async () => {
@@ -74,7 +74,7 @@ describe('VerifySMS', () => {
       preferredLanguage: 'en',
     })
 
-    expect(isErr(verified) && verified.error.t === 'code-incorrect').toBe(true)
+    expect(isErr(verified) && verified.error.t === 'code-incorrect').toEqual(true)
   })
 
   test('should eventually error after enough failed attempts', async () => {
@@ -94,7 +94,7 @@ describe('VerifySMS', () => {
       code: f.WRONG_CODE,
       preferredLanguage: 'en',
     })
-    expect(isErr(verified) && verified.error.t === 'verification-expired-too-many-failed-attempts').toBe(true)
+    expect(isErr(verified) && verified.error.t === 'verification-expired-too-many-failed-attempts').toEqual(true)
   })
 
   test('should error if the verification id is not found', async () => {
@@ -108,7 +108,7 @@ describe('VerifySMS', () => {
       preferredLanguage: 'en',
     })
 
-    expect(isErr(verified) && verified.error.t === 'verification-not-found').toBe(true)
+    expect(isErr(verified) && verified.error.t === 'verification-not-found').toEqual(true)
   })
 
   test('should error if verification expired', async () => {
@@ -131,7 +131,7 @@ describe('VerifySMS', () => {
       preferredLanguage: 'en',
     })
 
-    expect(isErr(verified) && verified.error.t === 'verification-expired').toBe(true)
+    expect(isErr(verified) && verified.error.t === 'verification-expired').toEqual(true)
   })
 
   test('should fail if the code has expired, even if no new code has been sent', async () => {
@@ -157,8 +157,8 @@ describe('VerifySMS', () => {
       preferredLanguage: 'en',
     })
 
-    expect(isErr(verified)).toBe(true)
-    isErr(verified) && expect(verified.error.t).toBe('verification-expired')
+    expect(isErr(verified)).toEqual(true)
+    isErr(verified) && expect(verified.error.t).toEqual('verification-expired')
   })
 
   test('should error if using previous unused code', async () => {
@@ -199,9 +199,9 @@ describe('VerifySMS', () => {
       preferredLanguage: 'en',
     })
 
-    expect(isErr(verifiedA)).toBe(true)
-    isErr(verifiedA) && expect(verifiedA.error.t).toBe('code-incorrect')
-    expect(isOk(verifiedB)).toBe(true)
+    expect(isErr(verifiedA)).toEqual(true)
+    isErr(verifiedA) && expect(verifiedA.error.t).toEqual('code-incorrect')
+    expect(isOk(verifiedB)).toEqual(true)
   })
 
   test('should error sending code if hourly limit is reached', async () => {
@@ -219,8 +219,8 @@ describe('VerifySMS', () => {
       ...f,
       phoneNumber: f.phoneNumber,
     })
-    expect(sent.t).toBe('err')
-    if (isErr(sent)) expect(sent.error.t).toBe('hourly-limit-reached')
+    expect(sent.t).toEqual('err')
+    if (isErr(sent)) expect(sent.error.t).toEqual('hourly-limit-reached')
   })
 
   test('should let user send code again after it has been over an hour after they hit the hourly limit', async () => {
@@ -241,7 +241,7 @@ describe('VerifySMS', () => {
       ...f,
       phoneNumber: f.phoneNumber,
     })
-    expect(isOk(sent)).toBe(true)
+    expect(isOk(sent)).toEqual(true)
   })
 
   test('should only apply hourly limit to a single phone number', async () => {
@@ -264,7 +264,7 @@ describe('VerifySMS', () => {
       ...f,
       phoneNumber: phoneNumberB,
     })
-    expect(isOk(sent)).toBe(true)
+    expect(isOk(sent)).toEqual(true)
   })
 
   test('should error sending code if daily limit is reached', async () => {
@@ -282,8 +282,8 @@ describe('VerifySMS', () => {
       ...f,
       phoneNumber: f.phoneNumber,
     })
-    expect(sent.t).toBe('err')
-    if (isErr(sent)) expect(sent.error.t).toBe('daily-limit-reached')
+    expect(sent.t).toEqual('err')
+    if (isErr(sent)) expect(sent.error.t).toEqual('daily-limit-reached')
   })
 
   test('should let user send code again after it has been over a day after they hit the daily limit', async () => {
@@ -304,7 +304,7 @@ describe('VerifySMS', () => {
       ...f,
       phoneNumber: f.phoneNumber,
     })
-    expect(isOk(sent)).toBe(true)
+    expect(isOk(sent)).toEqual(true)
   })
 
   test('should only apply daily limit to a single phone number', async () => {
@@ -326,7 +326,7 @@ describe('VerifySMS', () => {
       ...f,
       phoneNumber: phoneNumberB,
     })
-    expect(isOk(sent)).toBe(true)
+    expect(isOk(sent)).toEqual(true)
   })
 
   test('should only allow verifications to be used once', async () => {
@@ -345,9 +345,9 @@ describe('VerifySMS', () => {
       code: f.CODE,
       preferredLanguage: 'en',
     })
-    expect(firstVerification.t).toBe('ok')
-    expect(secondVerification.t).toBe('err')
-    if (isErr(secondVerification)) expect(secondVerification.error.t).toBe('verification-already-verified')
+    expect(firstVerification.t).toEqual('ok')
+    expect(secondVerification.t).toEqual('err')
+    if (isErr(secondVerification)) expect(secondVerification.error.t).toEqual('verification-already-verified')
   })
 
   test('should hash sent codes stored in the database', async () => {
@@ -382,8 +382,8 @@ describe('VerifySMS', () => {
 
     const codeHash = unwrap(found).items[0]?.codeHash?.value
 
-    expect(isOk(verification)).toBe(true)
-    expect(codeHash).not.toEqual(code)
+    expect(isOk(verification)).toEqual(true)
+    expect(String(codeHash)).not.toEqual(String(code))
   })
 
   test('should return database error when database returns an error', async () => {
@@ -399,7 +399,7 @@ describe('VerifySMS', () => {
       preferredLanguage: 'en',
     })
 
-    expect(verification.t).toBe('err')
-    if (isErr(verification)) expect(verification.error.t).toBe('database-error')
+    expect(verification.t).toEqual('err')
+    if (isErr(verification)) expect(verification.error.t).toEqual('database-error')
   })
 })

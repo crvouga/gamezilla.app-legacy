@@ -1,4 +1,4 @@
-import { expect, test, describe } from 'vitest'
+import { expect, test, describe } from '~/@/test-runner'
 import { area, perimeter, volume } from './shape'
 import { Circle } from './shape-circle'
 import { Octagon } from './shape-octagon'
@@ -18,19 +18,19 @@ const shapes2D = [
 describe('Shapes', () => {
   test('area', async () => {
     for (const shape of shapes2D) {
-      expect(typeof area(shape)).toBe('number')
+      expect(typeof area(shape)).toEqual('number')
     }
   })
 
   test('perimeter', async () => {
     for (const shape of shapes2D) {
-      expect(typeof perimeter(shape)).toBe('number')
+      expect(typeof perimeter(shape)).toEqual('number')
     }
   })
 
   test('volume', async () => {
     for (const shape of shapes3D) {
-      expect(typeof volume(shape)).toBe('number')
+      expect(typeof volume(shape)).toEqual('number')
     }
   })
 })

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
 import { ScreenBuildSpaceFixture } from './@/fixture/space'
 import { Pack } from '../@/pack/pack'
 import { UserId } from '~/app/@/data/user-id'
@@ -43,7 +43,7 @@ describe('NumberLinkScreenBuildSpace', () => {
         created: Ok(pack),
       },
     ])
-    expect(modelSpace).toBeTruthy()
+    expect(Boolean(modelSpace)).toEqual(true)
     expect(modelSpace.screen.t).toEqual('screen-pack-builder')
   })
 })

@@ -1,4 +1,6 @@
-import { Describe, Expect, Test } from './interface'
+import { Describe, Expect, Test, TestRunnerEnv } from './interface'
+
+type MaybePromise<T> = T | Promise<T>
 
 export let expect: Expect
 export let test: Test
@@ -6,11 +8,13 @@ export let describe: Describe
 
 export type TestRunnerImpl = 'playwright' | 'vitest'
 
-const IS_PLAYWRIGHT = process.env.PLAYWRIGHT_TEST === 'true'
+const TEST_RUNNER_IMPL = (): TestRunnerImpl => {
+  if (process.env.IS_PLAYWRIGHT_TEST === 'true') return 'playwright'
+  if (process.env.IS_VITEST_TEST === 'true') return 'vitest'
+  return 'vitest'
+}
 
-const TEST_RUNNER_IMPL: TestRunnerImpl = IS_PLAYWRIGHT ? 'playwright' : 'vitest'
-
-switch (TEST_RUNNER_IMPL) {
+switch (TEST_RUNNER_IMPL()) {
   case 'playwright': {
     const playwright = await import('@playwright/test')
     expect = (value) => {
@@ -24,9 +28,20 @@ switch (TEST_RUNNER_IMPL) {
         toEqual(expected) {
           playwright.expect(value).toBe(expected)
         },
+        not: {
+          toBeDefined() {
+            playwright.expect(value).not.toBeDefined()
+          },
+          toBeUndefined() {
+            playwright.expect(value).not.toBeUndefined()
+          },
+          toEqual(expected) {
+            playwright.expect(value).not.toBe(expected)
+          },
+        },
       }
     }
-    test = (name, fn) => {
+    const testFn = (name: string, fn: (env: TestRunnerEnv) => MaybePromise<void>) => {
       playwright.test(name, async ({ page }) => {
         await page.goto('http://localhost:3001')
         await fn({
@@ -35,12 +50,28 @@ switch (TEST_RUNNER_IMPL) {
         })
       })
     }
+    testFn.todo = (name: string, fn: (env: TestRunnerEnv) => MaybePromise<void>) => {
+      playwright.test.skip(name, async ({ page }) => {
+        await page.goto('http://localhost:3001')
+        await fn({
+          t: 'playwright',
+          getPage: () => page,
+        })
+      })
+    }
+    test = testFn
 
-    describe = (name, fn) => {
+    const describeFn = (name: string, fn: (...args: any[]) => MaybePromise<void>) => {
       playwright.test.describe(name, () => {
         fn()
       })
     }
+    describeFn.todo = (name: string, fn: (...args: any[]) => MaybePromise<void>) => {
+      playwright.test.describe.skip(name, () => {
+        fn()
+      })
+    }
+    describe = describeFn
 
     break
   }
@@ -58,20 +89,50 @@ switch (TEST_RUNNER_IMPL) {
         toEqual(expected) {
           vitest.expect(value).toEqual(expected)
         },
+        not: {
+          toBeDefined() {
+            vitest.expect(value).not.toBeDefined()
+          },
+          toBeUndefined() {
+            vitest.expect(value).not.toBeUndefined()
+          },
+          toEqual(expected) {
+            vitest.expect(value).not.toEqual(expected)
+          },
+        },
       }
     }
-    test = (name, fn) => {
+    const testFn = (name: string, fn: (env: TestRunnerEnv) => MaybePromise<void>) => {
       vitest.test(name, async () => {
         await fn({
           t: 'vitest',
         })
       })
     }
-    describe = (name, fn) => {
+    testFn.todo = (name: string, fn: (env: TestRunnerEnv) => MaybePromise<void>) => {
+      vitest.test.skip(name, async () => {
+        await fn({
+          t: 'vitest',
+        })
+      })
+    }
+    test = testFn
+
+    const describeFn = (name: string, fn: (...args: any[]) => MaybePromise<void>) => {
       vitest.describe(name, () => {
         fn()
       })
     }
+    describeFn.todo = (name: string, fn: (...args: any[]) => MaybePromise<void>) => {
+      vitest.describe.skip(name, () => {
+        fn()
+      })
+    }
+    describe = describeFn
     break
+  }
+
+  default: {
+    throw new Error(`Unsupported test runner: ${TEST_RUNNER_IMPL}`)
   }
 }

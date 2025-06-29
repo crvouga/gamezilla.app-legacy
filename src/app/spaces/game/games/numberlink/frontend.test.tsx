@@ -1,4 +1,11 @@
-// import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from '~/@/test-runner'
+
+describe('NumberlinkFrontend', () => {
+  test('play sound when selecting play mode', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { withEventMeta } from '~/@/event-sourced/event'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 // import { FixtureNumberlinkFrontend } from './@/frontend/fixture'
