@@ -49,8 +49,8 @@
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
     "types": ["vite/client", "preact", "react", "vite-plugin-pwa/client"],
-    "jsx": "preserve",
-    // "jsxImportSource": "vue",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "allowJs": false,
 
     //

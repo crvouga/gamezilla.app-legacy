@@ -3,7 +3,7 @@ import type { ITestClient, ITestNode, TestAction } from './interface'
 
 export type Config = {
   t: 'playwright'
-  page: Page
+  getPage: () => Promise<Page>
 }
 
 export const TestClient = (config: Config): ITestClient => {
@@ -12,7 +12,8 @@ export const TestClient = (config: Config): ITestClient => {
       return []
     },
     async query(selector: string): Promise<ITestNode[]> {
-      const elements = await config.page.$$(selector)
+      const page = await config.getPage()
+      const elements = await page.$$(selector)
       return elements.map(
         (element): ITestNode => ({
           async text() {

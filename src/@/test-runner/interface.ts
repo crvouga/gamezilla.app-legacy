@@ -17,7 +17,7 @@ export type SharedTest = VitestTest & PWTest
 export type TestRunnerEnv =
   | {
       t: 'playwright'
-      page: Page
+      getPage: () => Promise<Page>
     }
   | {
       t: 'vitest'
