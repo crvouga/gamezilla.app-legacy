@@ -1,9 +1,11 @@
 import { describe, expect, test } from '~/@/test-runner'
+
 describe('ScreenOpenPuzzleFrontend', () => {
   test('render exit button', async () => {
     expect(true).toEqual(true)
   })
 })
+
 // import { withEventMeta } from '~/@/event-sourced/event'
 
 // import { Pack } from '../../@/pack/pack'
@@ -114,5 +116,3 @@ describe('ScreenOpenPuzzleFrontend', () => {
 //     expect(PlaySoundCmd.did(output)).toEqual(true)
 //   })
 // })
-
-describe('ScreenOpenPuzzleFrontend', () => {})

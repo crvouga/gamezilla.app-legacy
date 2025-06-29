@@ -1,10 +1,10 @@
+import { HttpServer } from '~/@/http-server'
+import { Logger } from '~/@/logger'
+import { s } from '~/@/schema'
 import { describe, expect, test } from '~/@/test-runner'
-import { Topic } from '.'
-import { HttpServer } from '../http-server/impl-node'
-import { Logger } from '../logger'
-import { s } from '../schema'
-import { TimeSpan } from '../time/time-span'
-import { ClientSessionId } from '../wire/client-session-id'
+import { TimeSpan } from '~/@/time/time-span'
+import { ClientSessionId } from '~/@/wire/client-session-id'
+import { Topic } from './index'
 import { TopicMsgCodecJson, TopicMsgCodecMsgPack } from './socket/topic-msg-codec'
 
 const Msg = s.obj({

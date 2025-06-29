@@ -1,5 +1,5 @@
+import { HttpServer } from '~/@/http-server'
 import { AllowCORS } from '~/@/http-server/allow-cors'
-import { HttpServer } from '~/@/http-server/impl-node'
 import { KeyValueDb } from '~/@/key-value-db'
 import { ILogger, Logger } from '~/@/logger'
 import { sleep } from '~/@/promise/sleep'

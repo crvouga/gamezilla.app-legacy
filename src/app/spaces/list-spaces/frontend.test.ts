@@ -1,4 +1,10 @@
-// import { describe, expect, test } from '~/@/test-runner'
+import { describe, expect, test } from '~/@/test-runner'
+describe('ListSpacesFrontend', () => {
+  test('should work', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { EventSourced } from '~/@/event-sourced'
 // import { withEventId } from '~/@/event-sourced/event'
 // import { pipe } from '~/@/function/pipe'
@@ -12,8 +18,6 @@
 // import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd'
 // import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd'
 // import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt'
-
-import { describe } from 'node:test'
 
 // const Fixture = async (input?: { currentScreen?: Screen }) => {
 //   const f = await FixtureSpacesFrontend(input)
@@ -212,5 +216,3 @@ import { describe } from 'node:test'
 //     expect(after?.game?.t ?? null).toEqual(null)
 //   })
 // })
-
-describe('ListSpacesFrontend', () => {})

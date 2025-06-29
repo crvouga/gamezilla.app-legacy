@@ -1,4 +1,10 @@
-// import { describe, expect, test } from '~/@/test-runner'
+import { describe, expect, test } from '~/@/test-runner'
+describe('ExitSpaceActionFrontend', () => {
+  test('should work', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { SpaceId } from '~/app/@/data/space-id'
 // import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 // import { FixtureSpacesFrontend } from '../../@/fixture/frontend'

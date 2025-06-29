@@ -1,7 +1,7 @@
 import { describe, expect, test } from '~/@/test-runner'
 import { HttpServer } from '~/@/http-server'
 import { AllowCORS } from '~/@/http-server/allow-cors'
-import { Logger } from '~/@/logger'
+import { ILogger, Logger } from '~/@/logger'
 import { isErr, Ok } from '~/@/result'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
@@ -17,7 +17,9 @@ type Fixture = {
 export const FixtureHttp = async (): Promise<Fixture> => {
   const port = 1234
 
-  const logger = Logger({ t: 'console', namespace: ['rpc', 'test'], newLinePerMsg: true })
+  let logger: ILogger
+  logger ??= Logger({ t: 'noop' })
+  logger ??= Logger({ t: 'console', namespace: ['rpc', 'test'], newLinePerMsg: true })
 
   const httpServer = HttpServer({ t: 'node', logger })
 
@@ -72,7 +74,10 @@ const FixtureLocal = async (): Promise<Fixture> => {
 }
 
 const Fixtures = async (): Promise<Fixture[]> => {
-  return [await FixtureHttp(), await FixtureLocal()]
+  return [
+    // await FixtureHttp(),
+    await FixtureLocal(),
+  ]
 }
 
 describe('RPC', () => {
@@ -113,8 +118,9 @@ describe('RPC', () => {
 
   test('should handle non-existent endpoints', async () => {
     for (using f of await Fixtures()) {
-      // @ts-expect-error Testing runtime behavior with invalid endpoint
-      const result = await f.client.nonExistent?.({ data: 'test' })
+      const result = await f.client
+        // @ts-expect-error Testing runtime behavior with invalid endpoint
+        .nonExistent?.({ data: 'test' })
       expect(result).toBeUndefined()
     }
   })

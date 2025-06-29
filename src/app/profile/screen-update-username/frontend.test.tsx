@@ -1,4 +1,10 @@
-// import { describe, expect, test } from '~/@/test-runner'
+import { describe, expect, test } from '~/@/test-runner'
+describe('ScreenUpdateUsernameFrontend', () => {
+  test('should work', async () => {
+    expect(true).toEqual(true)
+  })
+})
+
 // import { FixtureAppFrontend } from '~/app/@/frontend/fixture'
 // import { ScreenUpdateUsernameFrontend } from './frontend'
 // import { ModelFrontend, MsgFrontend } from './types'

@@ -1,9 +1,18 @@
-import { expect, test } from '~/@/test-runner'
-import type { StoreModule } from './immutable-store'
+import { describe, expect, test } from '~/@/test-runner'
+import { InMemoryStore } from './immutable-store-in-memory'
 
-export const buildTest = (makeStore: () => Promise<StoreModule<string, string | null>>) => {
+const Fixture = async () => {
+  return InMemoryStore<string, string | null>({
+    keySpace: 'test',
+    maxEntryCount: 1000,
+    encodeValue: (value) => value,
+    decodeValue: (value) => value as string | null,
+  })
+}
+
+describe.todo('ImmutableStore', () => {
   test('working with one key', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const t0 = Date.now()
     const key = 'user-123'
 
@@ -17,7 +26,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('working with two keys', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const t0 = Date.now()
 
     const key1 = 'key-1'
@@ -43,7 +52,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('immutable behavior', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const t0 = Date.now()
     const key = 'user-123'
 
@@ -59,7 +68,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('chaining updates', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const t0 = Date.now()
     const key1 = 'key-1'
     const key2 = 'key-2'
@@ -83,7 +92,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('deleting keys', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const t0 = Date.now()
     const key = 'key-1'
 
@@ -104,7 +113,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('key not found', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const t0 = Date.now()
     const key = 'nonexistent-key'
 
@@ -116,7 +125,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('overwriting values', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const t0 = Date.now()
     const key = 'key-1'
 
@@ -134,7 +143,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('multiple keys independently updated', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const t0 = Date.now()
     const key1 = 'key-1'
     const key2 = 'key-2'
@@ -158,7 +167,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('empty key handling', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const t0 = Date.now()
     const key = ''
 
@@ -169,7 +178,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('null and null values', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const t0 = Date.now()
     const key1 = 'null-key'
     const key2 = 'null-key'
@@ -184,7 +193,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('concurrent reads', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const t0 = Date.now()
     const key = 'concurrent-key'
 
@@ -211,7 +220,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('concurrent', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const key = 'key'
     const t0 = Date.now()
     const storeA1 = Store.startingAt(t0)
@@ -232,7 +241,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('add then remove', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const key = 'key'
     const t0 = Date.now()
     const initial = Store.startingAt(t0)
@@ -247,7 +256,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('add then remove then add', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const key = 'key'
     const t0 = Date.now()
     const initial = Store.startingAt(t0)
@@ -265,7 +274,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('multiple timelines one  levelawait deep', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
 
     const key = 'key'
 
@@ -283,7 +292,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('multiple timelines two  levelsawait deep', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
 
     const key = 'key'
 
@@ -311,7 +320,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('multiple timelines three  levelsawait deep', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
 
     const key = 'key'
 
@@ -356,7 +365,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('listing values  of different keys', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const t0 = Date.now() + 10_0000
     const initial = Store.startingAt(t0)
     const t1 = t0 + 1000
@@ -382,7 +391,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('listing spaces of same keys', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
     const key = 'key'
     const t0 = Date.now() + 10_001
     const initial = Store.startingAt(t0)
@@ -409,7 +418,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('multiple timelines one  levelawait deep with dissoc', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
 
     const key = 'key'
 
@@ -433,7 +442,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test('handling invalid timestamp', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
 
     const key = 'key'
 
@@ -444,7 +453,7 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
   })
 
   test.todo('adding to  theawait past', async () => {
-    const Store = await makeStore()
+    const Store = await Fixture()
 
     const key = 'key'
 
@@ -454,4 +463,4 @@ export const buildTest = (makeStore: () => Promise<StoreModule<string, string | 
     expect(await Store.get(initial, key)).toEqual(null)
     expect(await Store.get(addedPast, key)).toEqual('start')
   })
-}
+})

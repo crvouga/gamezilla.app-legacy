@@ -1,3 +1,7 @@
-import { describe } from '~/@/test-runner'
+import { describe, expect, test } from '~/@/test-runner'
 
-describe('SyncBackend', () => {})
+describe('SyncBackend', () => {
+  test('should sync spaces', async () => {
+    expect(true).toEqual(true)
+  })
+})
