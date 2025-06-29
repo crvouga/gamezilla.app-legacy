@@ -1,18 +1,13 @@
-import type { Page, expect as pwExpect, test as pwTest } from '@playwright/test'
-import type { describe as vitestDescribe, expect as vitestExpect, test as vitestTest } from 'vitest'
+import type { Page, expect as pwExpect } from '@playwright/test'
+import type { expect as vitestExpect } from 'vitest'
 
 type VitestExpect = typeof vitestExpect
 type PWExpect = typeof pwExpect
 
-type VitestDescribe = typeof vitestDescribe
-type PWDescribe = typeof pwTest.describe
-
-type VitestTest = typeof vitestTest
-type PWTest = typeof pwTest
-
-export type SharedExpect = VitestExpect & PWExpect
-export type SharedDescribe = VitestDescribe & PWDescribe
-export type SharedTest = VitestTest & PWTest
+export type Expect = VitestExpect & PWExpect
+type MaybePromise<T> = T | Promise<T>
+export type Describe = (name: string, fn: (...args: any[]) => MaybePromise<void>) => MaybePromise<void>
+export type Test = (name: string, fn: (...args: any[]) => MaybePromise<void>) => MaybePromise<void>
 
 export type TestRunnerEnv =
   | {
@@ -24,10 +19,5 @@ export type TestRunnerEnv =
     }
 
 export type ITestRunner = (
-  defineTests: (config: {
-    expect: SharedExpect
-    test: SharedTest
-    describe: SharedDescribe
-    env: TestRunnerEnv
-  }) => void,
+  defineTests: (config: { expect: Expect; test: Test; describe: Describe; env: TestRunnerEnv }) => void,
 ) => void

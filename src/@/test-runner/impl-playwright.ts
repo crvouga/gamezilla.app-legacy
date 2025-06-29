@@ -14,9 +14,20 @@ const getPage = async (): Promise<Page> => {
 
 export const playwrightTestRunner: ITestRunner = async (defineTests) => {
   defineTests({
-    expect: expect as any,
-    test: test as any,
-    describe: test.describe as any,
+    // @ts-ignore
+    expect: expect,
+
+    test(name, fn): void {
+      test(name, async (testInput) => {
+        page = testInput.page
+        await fn()
+      })
+    },
+    describe(_name, fn): void {
+      // test.describe(name, () => {
+      fn()
+      // })
+    },
     env: {
       t: 'playwright',
       getPage,
