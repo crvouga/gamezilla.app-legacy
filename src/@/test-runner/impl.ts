@@ -1,9 +1,10 @@
-import { Expect, Test } from './interface'
+import { Describe, Expect, Test } from './interface'
 
 export let expect: Expect
 export let test: Test
+export let describe: Describe
 
-type TestRunnerImpl = 'playwright' | 'vitest'
+export type TestRunnerImpl = 'playwright' | 'vitest'
 
 const IS_PLAYWRIGHT = process.env.PLAYWRIGHT_TEST === 'true'
 
@@ -34,6 +35,13 @@ switch (TEST_RUNNER_IMPL) {
         })
       })
     }
+
+    describe = (name, fn) => {
+      playwright.test.describe(name, () => {
+        fn()
+      })
+    }
+
     break
   }
 
@@ -57,6 +65,11 @@ switch (TEST_RUNNER_IMPL) {
         await fn({
           t: 'vitest',
         })
+      })
+    }
+    describe = (name, fn) => {
+      vitest.describe(name, () => {
+        fn()
       })
     }
     break
