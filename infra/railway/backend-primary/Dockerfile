@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY ./ ./
 
-RUN npm ci --production=false
+RUN npm ci --omit=dev --legacy-peer-deps
 
 ARG DATABASE_URL
 
