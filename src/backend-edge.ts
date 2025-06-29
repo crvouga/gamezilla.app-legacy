@@ -7,13 +7,13 @@ import { CONFIG_SHARED } from './config/shared'
 const main = async () => {
   await DotEnv.load({ fs: FileSystem({ t: 'node' }) })
 
+  console.table({ ...CONFIG_SHARED, ...CONFIG_BACKEND })
+
   const ctx = await AppBackend.initCtx({ backendRole: 'edge' })
 
   const abortController = new AbortController()
 
   AppBackend.worker(abortController.signal, { ctx })
-
-  ctx.logger.info({ ...CONFIG_SHARED, ...CONFIG_BACKEND })
 }
 
 main()

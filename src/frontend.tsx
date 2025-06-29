@@ -7,6 +7,8 @@ import { registerServiceWorker } from './app/frontend/update-prompt/update-promp
 import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {
+  console.table({ ...CONFIG_SHARED, ...CONFIG_FRONTEND })
+
   injectSpeedInsights()
 
   const render = await Render(CONFIG_FRONTEND.VDOM_IMPL, document.getElementById('root')!)
@@ -26,8 +28,6 @@ const main = async () => {
 
   // @ts-expect-error
   window.program = program
-
-  console.table({ ...CONFIG_SHARED, ...CONFIG_FRONTEND })
 }
 
 main()

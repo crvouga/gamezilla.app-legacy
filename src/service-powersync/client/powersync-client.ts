@@ -50,15 +50,15 @@ export const PowerSyncClient = async (config: Config): Promise<IPowerSyncClient>
 
   const events = Sub.create<PowerSyncDatabaseEvent>()
 
-  database.init().then(() => {
-    logger.info('PowerSync initialized')
-    events.pub({ t: 'initialized' })
-  })
+  // database.init().then(() => {
+  //   logger.info('PowerSync initialized')
+  //   events.pub({ t: 'initialized' })
+  // })
 
-  database.waitForFirstSync().then(() => {
-    logger.info('PowerSync first sync completed')
-    events.pub({ t: 'first-sync-completed' })
-  })
+  // database.waitForFirstSync().then(() => {
+  //   logger.info('PowerSync first sync completed')
+  //   events.pub({ t: 'first-sync-completed' })
+  // })
 
   const start = async () => {
     try {

@@ -1,7 +1,7 @@
 import { AudioPlayer } from '~/@/audio-player'
 import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
-import { LanguageCodeISO_639_1 } from '~/@/l18n'
+import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { Msg } from '~/@/msg/msg'
 import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
@@ -390,7 +390,7 @@ const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
       const currentUser = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
       switch (currentUser.t) {
         case 'loading':
-          return <SplashScreen />
+          return <SplashScreen reason={TranslatedText.of('Loading current user...')} />
         case 'logged-out':
           return <ViewScreenLoggedOut model={input.model} dispatch={input.dispatch} ctx={input.ctx} />
         case 'logged-in':
