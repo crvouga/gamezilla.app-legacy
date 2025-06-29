@@ -28,9 +28,6 @@ export type TestRunnerEnv =
   | {
       t: 'vitest'
     }
-  | {
-      t: 'uvu'
-    }
 
 export type ITestRunner = (
   defineTests: (config: { expect: Expect; test: Test; describe: Describe; env: TestRunnerEnv }) => void,

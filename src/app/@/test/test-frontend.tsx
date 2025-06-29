@@ -78,7 +78,7 @@ export const TestFrontend = async (config: {
 
   const client = await TestClient({
     t: 'happydom',
-    maxWait: TimeSpan.milliseconds(100),
+    maxWait: TimeSpan.milliseconds(80),
     poll: TimeSpan.milliseconds(10),
     audioPlayer: ctx.audioPlayer,
   })

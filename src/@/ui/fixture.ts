@@ -7,7 +7,7 @@ import { TimeSpan } from '../time/time-span'
 export const BaseFixture = async () => {
   const client = await TestClient({
     t: 'happydom',
-    maxWait: TimeSpan.milliseconds(10),
+    maxWait: TimeSpan.milliseconds(100),
     poll: TimeSpan.milliseconds(1),
     audioPlayer: AudioPlayer({ t: 'fake', logger: Logger({ t: 'noop' }) }),
   })

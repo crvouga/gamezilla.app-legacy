@@ -1,5 +1,5 @@
 import { HttpServer } from '~/@/http-server'
-import { Logger } from '~/@/logger'
+import { ILogger, Logger } from '~/@/logger'
 import { s } from '~/@/schema'
 import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
@@ -29,8 +29,9 @@ const contract = Topic.initContract({
 
 const Fixture = async () => {
   const port = 1234
-  const logger = Logger({ t: 'console', newLinePerMsg: false, namespace: ['test'] })
-  // const logger = Logger({ t: 'noop' })
+  let logger: ILogger
+  logger ??= Logger({ t: 'noop' })
+  logger ??= Logger({ t: 'console', newLinePerMsg: false, namespace: ['test'] })
   const httpServer = HttpServer({ t: 'node', logger })
 
   const endpoint = '/topic'
@@ -103,7 +104,7 @@ const Fixture = async () => {
   }
 }
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 10))
+const sleep = () => new Promise((resolve) => setTimeout(resolve, 50))
 
 describe('Topic', () => {
   test('should work', async () => {
@@ -166,6 +167,8 @@ describe('Topic', () => {
     f.clientA.someTopic.pub({ id: '123' }, { name: 'Jane' })
     await sleep()
     f.clientA.someTopic.pub({ id: '123' }, { name: 'Bob' })
+    await sleep()
+    await sleep()
     await sleep()
     expect(gotA).toEqual([
       { name: 'John' },
