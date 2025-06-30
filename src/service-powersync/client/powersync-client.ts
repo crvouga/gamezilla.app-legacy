@@ -74,9 +74,10 @@ export const PowerSyncClient = async (config: Config): Promise<IPowerSyncClient>
     logger.info('Initializing PowerSync database...')
     const init = await p.race(null, {
       init: () => database.init(),
-      timeout: (s) => p.countdown(timeouts.init, () => logger.info(`Still waiting for PowerSync initialization...`), s),
+      timeout: (s) =>
+        p.countdown(timeouts.init, () => logger.debug(`Still waiting for PowerSync initialization...`), s),
     })
-    if (init.timeout) logger.error('PowerSync initialization took too long')
+    if (init.timeout) logger.warn('PowerSync initialization took too long')
     if (init.init) {
       logger.info('PowerSync initialized')
       events.pub({ t: 'initialized' })
@@ -88,9 +89,9 @@ export const PowerSyncClient = async (config: Config): Promise<IPowerSyncClient>
     const firstSync = await p.race(null, {
       firstSync: () => database.waitForFirstSync(),
       timeout: (s) =>
-        p.countdown(timeouts.firstSync, () => logger.info(`Still waiting for PowerSync first sync...`), s),
+        p.countdown(timeouts.firstSync, () => logger.debug(`Still waiting for PowerSync first sync...`), s),
     })
-    if (firstSync.timeout) logger.error('PowerSync first sync took too long')
+    if (firstSync.timeout) logger.warn('PowerSync first sync took too long')
     if (firstSync.firstSync) {
       logger.info('PowerSync first sync completed')
       events.pub({ t: 'first-sync-completed' })
@@ -101,9 +102,9 @@ export const PowerSyncClient = async (config: Config): Promise<IPowerSyncClient>
     logger.info('Waiting for PowerSync database to be ready...')
     const ready = await p.race(null, {
       ready: () => database.waitForReady(),
-      timeout: (s) => p.countdown(timeouts.ready, () => logger.info(`Still waiting for PowerSync database...`), s),
+      timeout: (s) => p.countdown(timeouts.ready, () => logger.debug(`Still waiting for PowerSync database...`), s),
     })
-    if (ready.timeout) logger.error('PowerSync database took too long to be ready. Continuing anyway...')
+    if (ready.timeout) logger.warn('PowerSync database took too long to be ready. Continuing anyway...')
     if (ready.ready) logger.info('PowerSync database ready')
   }
 
@@ -111,9 +112,9 @@ export const PowerSyncClient = async (config: Config): Promise<IPowerSyncClient>
     logger.info('Connecting to backend...')
     const connected = await p.race(null, {
       connect: () => database.connect(config.backendConnector),
-      timeout: (s) => p.countdown(timeouts.connect, () => logger.info(`Still waiting for PowerSync connection...`), s),
+      timeout: (s) => p.countdown(timeouts.connect, () => logger.debug(`Still waiting for PowerSync connection...`), s),
     })
-    if (connected.timeout) logger.error('PowerSync connection took too long. Continuing anyway...')
+    if (connected.timeout) logger.warn('PowerSync connection took too long. Continuing anyway...')
     if (connected.connect) logger.info('PowerSync connected to backend')
 
     events.pub({ t: 'connected' })

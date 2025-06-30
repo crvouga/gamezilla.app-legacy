@@ -35,7 +35,7 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
   }
   async fetchCredentials(): Promise<PowerSyncCredentials | null> {
     try {
-      this.logger.info('BackendConnector: Fetching credentials from', this.backendUrl)
+      this.logger.debug('Fetching credentials from', this.backendUrl)
 
       const guestUserId = await this.getGuestUserId()
 
@@ -47,14 +47,14 @@ export class BackendConnector extends BaseObserver<{}> implements PowerSyncBacke
       })
 
       const credentials = unwrap(got)
-      this.logger.info('BackendConnector: Got credentials, token length:', credentials.token.length)
+      this.logger.debug('Got credentials, token length:', credentials.token.length)
 
       const result = {
         endpoint: this.powersyncUrl,
         token: credentials.token,
       }
 
-      this.logger.info('BackendConnector: Returning credentials for endpoint:', result.endpoint)
+      this.logger.debug('Returning credentials for endpoint:', result.endpoint)
       return result
     } catch (error) {
       this.logger.error('Failed to fetchCredentials:', error)
