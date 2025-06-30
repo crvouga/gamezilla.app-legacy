@@ -49,7 +49,7 @@ export default defineConfig({
       name: 'mobile-safari',
       use: { ...devices['iPhone 12'] },
     },
-  ].slice(0, 1),
+  ].slice(0, process.env.CI ? 1 : undefined),
 
   /* Run your local dev server before starting the tests */
 })
