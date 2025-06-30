@@ -7,8 +7,4 @@ COPY ./ ./
 
 RUN npm ci --omit=dev --legacy-peer-deps
 
-ARG PORT
-
-ENV PORT=${PORT}
-
 CMD ["npm", "run", "backend-edge:railway"]

@@ -7,14 +7,4 @@ COPY ./ ./
 
 RUN npm ci --omit=dev --legacy-peer-deps
 
-ARG DATABASE_URL
-
-ENV DATABASE_URL=${DATABASE_URL}
-
-RUN npm run db:up
-
-ARG PORT
-
-ENV PORT=${PORT}
-
 CMD ["npm", "run", "backend-primary:railway"]
