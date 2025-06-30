@@ -22,12 +22,19 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   const logger = config.logger.child(['postgres'])
 
   postgresClient ??= postgres(config.databaseUrl.dangerouslyReadValue(), {
-    connect_timeout: 10, // 10 seconds connection timeout
-    idle_timeout: 20, // 20 seconds idle timeout
-    max_lifetime: 60 * 30, // 30 minutes max lifetime
-    max: 10, // Maximum number of connections
+    connect_timeout: 10,
+    idle_timeout: 20,
+    max_lifetime: 60 * 30,
+    max: 10,
     connection: {
       application_name: 'gamezilla-app',
+    },
+    debug: false,
+    onnotice(notice) {
+      logger.debug({ notice })
+    },
+    onclose(error) {
+      logger.error({ error: error, message: 'onclose' })
     },
   })
 
@@ -143,9 +150,9 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
 
 const cleanSql = (str: string) =>
   str
-    // remove tabs
+
     .replace(/\t/g, ' ')
-    // remove newlines
+
     .replace(/\n/g, ' ')
-    // remove multiple spaces
+
     .replace(/ +/g, ' ')
