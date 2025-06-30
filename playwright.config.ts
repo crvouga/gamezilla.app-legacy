@@ -1,4 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
+import { DotEnv } from './src/@/dotenv/dotenv'
+import { FileSystem } from './src/@/file-system'
 
 /**
  * Read environment variables from file.
@@ -7,6 +9,7 @@ import { defineConfig, devices } from '@playwright/test'
 // import dotenv from 'dotenv';
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
+DotEnv.load({ fs: FileSystem({ t: 'node' }), path: '.env' })
 
 /**
  * See https://playwright.dev/docs/test-configuration.

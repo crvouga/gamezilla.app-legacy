@@ -31,7 +31,7 @@ echo "Database is ready!"\n\
 echo "Running migrations..."\n\
 DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable npm run db:up\n\
 echo "Starting application..."\n\
-npm run backend-primary:railway\n' > /app/start.sh && chmod +x /app/start.sh
+npm run backend-primary\n' > /app/start.sh && chmod +x /app/start.sh
 
 # Expose port
 EXPOSE 5002

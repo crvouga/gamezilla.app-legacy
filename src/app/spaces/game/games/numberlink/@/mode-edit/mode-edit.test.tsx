@@ -54,6 +54,7 @@ describe('ModeEdit', () => {
   test('cancel button', async () => {
     const f = await Fixture()
     const before = f.init
+    const beforeDim = NumberlinkVariant.toDimensions(ModeEdit.toNumberlink(before.model))
     const updated = f.update(before, [
       {
         t: 'dimensions-form.clicked-open',
@@ -62,8 +63,8 @@ describe('ModeEdit', () => {
         t: 'dimensions-form.inputted',
         dimensions: NumberlinkVariantDimensions.init({
           t: 'grid',
-          height: Math.floor(Math.random() * 20),
-          width: Math.floor(Math.random() * 20),
+          height: beforeDim.t === 'grid' ? beforeDim.height + 1 : Math.floor(Math.random() * 20),
+          width: beforeDim.t === 'grid' ? beforeDim.width + 1 : Math.floor(Math.random() * 20),
         }),
       },
     ])
@@ -72,7 +73,7 @@ describe('ModeEdit', () => {
         t: 'dimensions-form.clicked-cancel',
       },
     ])
-    const beforeDim = NumberlinkVariant.toDimensions(ModeEdit.toNumberlink(before.model))
+
     const updatedDim = NumberlinkVariant.toDimensions(ModeEdit.toNumberlink(updated.model))
     const afterDim = NumberlinkVariant.toDimensions(ModeEdit.toNumberlink(after.model))
     expect(beforeDim).toEqual(afterDim)
