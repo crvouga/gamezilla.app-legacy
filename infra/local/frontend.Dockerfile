@@ -15,6 +15,9 @@ RUN npm install --legacy-peer-deps
 # Copy source code
 COPY . .
 
+# Set NODE_ENV to development to ensure import.meta.env.PROD is false
+ENV NODE_ENV=development
+
 # Build the application
 RUN npm run frontend:build
 
