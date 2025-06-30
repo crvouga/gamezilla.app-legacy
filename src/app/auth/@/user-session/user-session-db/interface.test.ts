@@ -324,6 +324,7 @@ describe('UserSessionDb', () => {
   test('query equals clientSessionId', async () => {
     for (const f of await Fixtures()) {
       const clientSessionId = ClientSessionId.generate()
+
       const before = await f.userSessionDb.query({
         whereAnd: {
           clientSessionId: {
