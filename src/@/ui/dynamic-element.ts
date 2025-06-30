@@ -10,7 +10,7 @@ type OnSubmitEvent = {
   preventDefault: () => void
 }
 
-type OnKeyDownEvent = {
+export type OnKeyDownEvent = {
   key: string
   preventDefault: () => void
 }
@@ -28,6 +28,7 @@ type DynamicElementProps = {
   tabIndex?: number
   disabled?: boolean
   dataTestId?: string
+  'aria-checked'?: boolean
 }
 
 export const DynamicElement = (input: DynamicElementProps) => {

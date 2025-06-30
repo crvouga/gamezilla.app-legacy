@@ -1,3 +1,4 @@
+import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import './intersection-observer-element'
 import { type IntersectionObserverEmitterInput, sub } from './intersection-observer-shared'
@@ -10,6 +11,5 @@ export const IntersectionObserverEmitter = (
   // There is some kind of race condition setTimeout fixes
   setTimeout(() => sub.pub({ type: 'input', input }), 1)
 
-  // @ts-ignore
-  return <intersection-observer-dispatcher id={input.id} />
+  return h('intersection-observer-dispatcher', { id: input.id })
 }

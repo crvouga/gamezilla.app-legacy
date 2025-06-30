@@ -1,4 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
+import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 import { Clickable } from '../clickable'
 import { cn } from '../cn'
@@ -13,18 +14,17 @@ export type ChipProps = {
 }
 
 export const Chip = (input: ChipProps) => {
-  return (
-    <Tag
-      tagName={typeof input.onClick === 'function' ? 'button' : 'div'}
-      className={cn('flex items-center gap-1 truncate border border-white/30 font-semibold', toSizeClass(input))}
-      onClick={input.onClick}
-    >
-      {input.renderStartIcon?.({
+  return h(Tag, {
+    tagName: typeof input.onClick === 'function' ? 'button' : 'div',
+    className: cn('flex items-center gap-1 truncate border border-white/30 font-semibold', toSizeClass(input)),
+    onClick: input.onClick,
+    children: [
+      input.renderStartIcon?.({
         className: cn(toIconSizeClass(input), 'shrink-0'),
-      })}
-      <span className='truncate'>{input.label}</span>
-    </Tag>
-  )
+      }),
+      h('span', { className: 'truncate' }, [input.label]),
+    ],
+  })
 }
 
 const Tag = ({
@@ -39,9 +39,9 @@ const Tag = ({
 }) => {
   switch (tagName) {
     case 'button':
-      return <Clickable {...input}>{children}</Clickable>
+      return h(Clickable, input, [children])
     default:
-      return <div {...input}>{children}</div>
+      return h('div', input, [children])
   }
 }
 

@@ -1,3 +1,4 @@
+import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 import { cn } from '../cn'
 import { Transition } from '../transition'
@@ -29,26 +30,49 @@ export const DropDown = (props: {
     }
   }
 
-  return (
-    <>
-      <Backdrop open={props.open} onClick={onClose} onKeyDown={onKeyDown} />
-      <div id={props.id} className={cn('relative', props.className, props.open && 'z-50')} onKeyDown={onKeyDown}>
-        {props.renderReference()}
-        <Transition id={`${props.id}-transition`} mode='in-out' onEnter={onEnter} onExit={onExit}>
-          {props.open && (
-            <div id={props.id} className={toPositionClasses(position, alignment)}>
-              {props.renderFloating()}
-            </div>
-          )}
-        </Transition>
-      </div>
-    </>
-  )
+  return h('div', {}, [
+    h(Backdrop, { open: props.open, onClick: onClose, onKeyDown }),
+    h(
+      'div',
+      {
+        id: props.id,
+        className: cn('relative', props.className, props.open && 'z-50'),
+        onKeyDown,
+      },
+      [
+        props.renderReference(),
+        h(
+          Transition,
+          {
+            id: `${props.id}-transition`,
+            mode: 'in-out',
+            onEnter,
+            onExit,
+          },
+          [
+            props.open &&
+              h(
+                'div',
+                {
+                  id: props.id,
+                  className: toPositionClasses(position, alignment),
+                },
+                [props.renderFloating()],
+              ),
+          ],
+        ),
+      ],
+    ),
+  ])
 }
 
 const Backdrop = (props: { open: boolean; onClick: () => void; onKeyDown: (e: unknown) => void }) => {
   if (!props.open) return null
-  return <button className='fixed inset-0 z-40 bg-black/50' onClick={props.onClick} onKeyDown={props.onKeyDown} />
+  return h('button', {
+    className: 'fixed inset-0 z-40 bg-black/50',
+    onClick: props.onClick,
+    onKeyDown: props.onKeyDown,
+  })
 }
 
 const onEnter = async (node: HTMLElement) => {

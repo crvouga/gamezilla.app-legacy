@@ -1,5 +1,6 @@
 import { register } from 'swiper/element/bundle'
 import { waitForElementById } from '~/@/dom/dom'
+import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 
 if (typeof window !== 'undefined') {
@@ -71,31 +72,30 @@ const Container = (input: {
   slideIndex: number
 }) => {
   onContainer(input)
-  return (
-    // @ts-ignore
-    <swiper-container
-      id={input.id}
-      slides-per-view='auto'
-      className={input.className}
-      grab-cursor
-      centered-slides
-      initial-slide={input.slideIndex}
-      slide={input.slideIndex}
-      role='tablist'
-    >
-      {input.children}
-      {/* @ts-ignore */}
-    </swiper-container>
+  return h(
+    'swiper-container',
+    {
+      id: input.id,
+      'slides-per-view': 'auto',
+      className: input.className,
+      'grab-cursor': true,
+      'centered-slides': true,
+      'initial-slide': input.slideIndex,
+      slide: input.slideIndex,
+      role: 'tablist',
+    },
+    input.children,
   )
 }
 
 const Slide = (input: { children?: VDom; className?: string }) => {
-  return (
-    // @ts-ignore
-    <swiper-slide className={input.className} role='tabpanel'>
-      {input.children}
-      {/*  @ts-ignore */}
-    </swiper-slide>
+  return h(
+    'swiper-slide',
+    {
+      className: input.className,
+      role: 'tabpanel',
+    },
+    input.children,
   )
 }
 

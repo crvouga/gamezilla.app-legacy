@@ -1,33 +1,34 @@
+import { h } from '~/@/vdom/h'
 import { cn } from '../cn'
-import { DynamicElement } from '../dynamic-element'
+import { DynamicElement, OnKeyDownEvent } from '../dynamic-element'
 
 export type CheckboxState = 'checked' | 'unchecked' | 'indeterminate'
 
 export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: boolean) => void }) => {
   const element = input.onChange ? 'button' : 'div'
   const isChecked = input.state === 'checked'
-  return (
-    <DynamicElement
-      element={element}
-      className={cn(
+  return h(
+    DynamicElement,
+    {
+      element,
+      className: cn(
         'flex size-6 items-center justify-center rounded border-2 border-neutral-500 text-xl font-black text-neutral-800',
         input.state !== 'unchecked' && 'border-neutral-100 bg-neutral-100',
-      )}
-      role='checkbox'
-      aria-checked={input.state === 'checked'}
-      tabIndex={element === 'button' ? 0 : undefined}
-      onClick={() => {
+      ),
+      role: 'checkbox',
+      'aria-checked': input.state === 'checked',
+      tabIndex: element === 'button' ? 0 : undefined,
+      onClick: () => {
         input.onChange?.(!isChecked)
-      }}
-      onKeyDown={(e) => {
+      },
+      onKeyDown: (e: OnKeyDownEvent) => {
         if (element === 'button' && e.key === 'Enter') {
           e.preventDefault()
           input.onChange?.(!isChecked)
         }
-      }}
-    >
-      {toCheckboxText(input.state)}
-    </DynamicElement>
+      },
+    },
+    [toCheckboxText(input.state)],
   )
 }
 
