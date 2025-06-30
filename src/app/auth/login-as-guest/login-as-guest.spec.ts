@@ -1,4 +1,6 @@
+import { difference } from '~/@/array/difference'
 import { describe, expect, test, TestRunnerEnv } from '~/@/test-runner'
+import { eventually } from '~/@/test/eventually'
 import { FixtureAuth } from '../@/test/fixture'
 
 const Fixture = async (e: TestRunnerEnv) => {
@@ -23,5 +25,17 @@ describe('login as guest', () => {
     await f.continueAsGuest()
     const [alert] = await f.frontend.query(`[role='alert'][data-info='true']`)
     expect(alert).toBeDefined()
+  })
+
+  test('sound', async (e) => {
+    if (e.e2e) return
+    await using f = await Fixture(e)
+    const before = await f.frontend.audio()
+    await f.continueAsGuest()
+    await eventually(async () => {
+      const after = await f.frontend.audio()
+      const played = difference(after, before, (x) => x.id)
+      expect(played.map((x) => x.tag)).toEqual(['interaction.tap', 'feedback.positive'])
+    })
   })
 })

@@ -23,7 +23,7 @@ export const AudioPlayer = (config: Config): IAudioPlayer => {
       const played = await playSoundEffect(input.src, UnitInterval.init(0.5))
       const endedAt = UnixMs.now()
       const duration = UnixMs.diff(endedAt, startedAt)
-      playedAudio.push({ startedAt, endedAt, duration, src: input.src, id: ShortId.generate(10) })
+      playedAudio.push({ startedAt, endedAt, duration, src: input.src, id: ShortId.generate(10), tag: input.tag })
       return played
     },
     async preload(input) {

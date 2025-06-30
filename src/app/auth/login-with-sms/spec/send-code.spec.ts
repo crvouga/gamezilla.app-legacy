@@ -1,7 +1,6 @@
 import { difference } from '~/@/array/difference'
 import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
-import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { Fixture } from './fixture'
 
 describe('send code', () => {
@@ -44,7 +43,7 @@ describe('send code', () => {
     await eventually(async () => {
       const after = await f.frontend.audio()
       const played = difference(after, before, (x) => x.id)
-      expect(played.map((x) => x.src)).toEqual([APP_SOUND.tap, APP_SOUND.navForwardMin])
+      expect(played.map((x) => x.tag)).toEqual(['interaction.tap', 'interaction.navigate'])
     })
   })
 })

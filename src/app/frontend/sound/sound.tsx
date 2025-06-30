@@ -117,7 +117,7 @@ export const updateFromCmd: Module['update'] = (input) => {
       async eff(dispatch) {
         const { delay } = msgIn
         if (delay) await sleep(delay)
-        const played = await input.ctx.audioPlayer.play({ src: msgIn.src })
+        const played = await input.ctx.audioPlayer.play({ src: msgIn.src, tag: msgIn.tag })
         dispatch({ t: 'played-sound', src: msgIn.src, result: played })
       },
     }

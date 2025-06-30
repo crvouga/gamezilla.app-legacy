@@ -23,7 +23,7 @@ export const AudioPlayer = (config: Config): IAudioPlayer => {
       const startedAt = UnixMs.now()
       const endedAt = null
       const duration = TimeSpan.seconds(0)
-      playedAudio.push({ startedAt, endedAt, duration, src: input.src, id: ShortId.generate(10) })
+      playedAudio.push({ startedAt, endedAt, duration, src: input.src, id: ShortId.generate(10), tag: input.tag })
       return Ok(null)
     },
     async preload(input) {

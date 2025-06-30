@@ -124,7 +124,7 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
         case 'play-sound': {
           return {
             model: input.model,
-            msgOut: [PlaySoundCmd.init(updated.msgCmd.sourceSrc)],
+            msgOut: [PlaySoundCmd.init(updated.msgCmd.sound)],
           }
         }
 

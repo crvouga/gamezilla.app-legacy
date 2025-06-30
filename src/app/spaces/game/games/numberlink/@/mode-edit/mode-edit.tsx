@@ -6,6 +6,7 @@ import { Numberlink } from '../numberlink'
 import { GroupId } from '../numberlink/group-id'
 import { NodeId } from '../numberlink/node-id'
 import { NumberlinkVariant, NumberlinkVariantDimensions } from '../variant'
+import { Sound } from '~/@/sound/sound'
 
 //
 //
@@ -105,7 +106,7 @@ export type Msg = s.Infer<typeof Msg>
 
 export type Cmd = {
   t: 'play-sound'
-  sourceSrc: string
+  sound: Sound
 }
 
 export const update = (input: {
@@ -141,7 +142,7 @@ export const update = (input: {
         },
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.navTransitionLeft,
+          sound: APP_SOUND.navTransitionLeft,
         },
       }
     }
@@ -154,7 +155,7 @@ export const update = (input: {
         },
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.navBackwardMin,
+          sound: APP_SOUND.navBackwardMin,
         },
       }
     }
@@ -167,7 +168,7 @@ export const update = (input: {
         },
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.navForwardMin,
+          sound: APP_SOUND.navForwardMin,
         },
       }
     }
@@ -191,7 +192,7 @@ export const update = (input: {
         },
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.tap,
+          sound: APP_SOUND.tap,
         },
       }
     }
@@ -207,7 +208,7 @@ export const update = (input: {
         },
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.tap,
+          sound: APP_SOUND.tap,
         },
       }
     }
@@ -220,7 +221,7 @@ export const update = (input: {
           model: input.model,
           msgCmd: {
             t: 'play-sound',
-            sourceSrc: APP_SOUND.surfaceClosed,
+            sound: APP_SOUND.surfaceClosed,
           },
         }
       }
@@ -247,7 +248,7 @@ export const update = (input: {
         model: modelNew,
         msgCmd: {
           t: 'play-sound',
-          sourceSrc: APP_SOUND.refreshFeed,
+          sound: APP_SOUND.refreshFeed,
         },
       }
     }
@@ -259,7 +260,7 @@ export const update = (input: {
       if (isOpen) {
         return {
           model: { ...input.model, opened: null },
-          msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.surfaceClosed },
+          msgCmd: { t: 'play-sound', sound: APP_SOUND.surfaceClosed },
         }
       }
 
@@ -268,14 +269,14 @@ export const update = (input: {
           ...input.model,
           opened: { t: 'dimensions', draftDimensions: present.dimensions },
         },
-        msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.surfaceOpened },
+        msgCmd: { t: 'play-sound', sound: APP_SOUND.surfaceOpened },
       }
     }
 
     case 'dimensions-form.closed': {
       return {
         model: { ...input.model, opened: null },
-        msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.surfaceClosed },
+        msgCmd: { t: 'play-sound', sound: APP_SOUND.surfaceClosed },
       }
     }
 
@@ -285,7 +286,7 @@ export const update = (input: {
           ...input.model,
           opened: null,
         },
-        msgCmd: { t: 'play-sound', sourceSrc: APP_SOUND.surfaceClosed },
+        msgCmd: { t: 'play-sound', sound: APP_SOUND.surfaceClosed },
       }
     }
   }

@@ -1,5 +1,6 @@
-import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
+import { s } from '~/@/schema'
+import { Sound } from '~/@/sound/sound'
 
 export const schema = s.or(
   s.obj({
@@ -12,10 +13,10 @@ export type PreloadSoundsCmd = s.Infer<typeof schema>
 
 export type MsgShared = PreloadSoundsCmd
 
-export const init = (srcList: string[]): PreloadSoundsCmd => {
+export const init = (sounds: Sound[]): PreloadSoundsCmd => {
   return {
     t: 'preload-sounds',
-    srcList,
+    srcList: sounds.map((x) => x.src),
   }
 }
 

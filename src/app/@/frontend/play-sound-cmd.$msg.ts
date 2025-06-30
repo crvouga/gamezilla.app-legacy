@@ -1,12 +1,15 @@
-import { s } from '~/@/schema'
 import { UnitInterval } from '~/@/range/unit-interval'
 import { isOk } from '~/@/result'
+import { s } from '~/@/schema'
+import { Sound } from '~/@/sound/sound'
+import { SoundTag } from '~/@/sound/sound-tag'
 import { TimeSpan } from '~/@/time/time-span'
 
 export const schema = s.or(
   s.obj({
     t: s.l('play-sound'),
     src: s.str(),
+    tag: SoundTag,
     volume: s.maybe(UnitInterval.schema),
     delay: s.maybe(TimeSpan.schema),
   }),
@@ -17,7 +20,7 @@ export type PlaySoundCmd = s.Infer<typeof schema>
 export type MsgShared = PlaySoundCmd
 
 export const init = (
-  src: string,
+  sound: Sound,
   config?: {
     volume?: UnitInterval
     delay?: TimeSpan
@@ -25,7 +28,8 @@ export const init = (
 ): PlaySoundCmd => {
   return {
     t: 'play-sound',
-    src,
+    src: sound.src,
+    tag: sound.tag,
     volume: config?.volume,
     delay: config?.delay,
   }
