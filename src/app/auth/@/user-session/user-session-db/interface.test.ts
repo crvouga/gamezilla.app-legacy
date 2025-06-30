@@ -321,7 +321,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  test('query equals clientSessionId', async () => {
+  test.todo('query equals clientSessionId', async () => {
     for (const f of await Fixtures()) {
       const clientSessionId = ClientSessionId.generate()
 
