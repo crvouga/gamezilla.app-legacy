@@ -8,6 +8,7 @@ import { TestClient } from '~/@/test-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
+import { h } from '~/@/vdom/h'
 import { Render } from '~/@/vdom/render'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { SessionId } from '~/@/wire/session-id'
@@ -17,9 +18,9 @@ import { ProfileFrontend } from '~/app/profile/frontend'
 import { SpacesFrontend } from '~/app/spaces/frontend'
 import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
+import { CONFIG_FRONTEND } from '~/config/frontend'
 import { AppFrontendCtxBase } from '../frontend/ctx'
 import { Translator } from '../frontend/translator'
-import { CONFIG_FRONTEND } from '~/config/frontend'
 
 export const TestFrontend = async (config: {
   rpcServer: RPC.Server<typeof rpcContract>
@@ -94,7 +95,7 @@ export const TestFrontend = async (config: {
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
-    render: (input) => render(<AppFrontend.View {...input} ctx={ctx} />),
+    render: (input) => render(h(AppFrontend.View, { ...input, ctx })),
   })
 
   const cleanUp = async () => {
