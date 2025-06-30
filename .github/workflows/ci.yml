@@ -7,8 +7,8 @@ on:
     branches: [main, master]
 
 jobs:
-  unit-tests:
-    name: Type Checking & Unit Tests
+  type-check:
+    name: Type Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -27,6 +27,25 @@ jobs:
 
       - name: Type check
         run: npx tsc --noEmit
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: type-check
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
 
       - name: Run unit tests
         run: npm run test
