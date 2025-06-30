@@ -17,4 +17,11 @@ describe('login as guest', () => {
     const [screen] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
     expect(screen).toBeDefined()
   })
+
+  test('should show alert on login as guest', async (e) => {
+    await using f = await Fixture(e)
+    await f.continueAsGuest()
+    const [alert] = await f.frontend.query(`[role='alert'][data-info='true']`)
+    expect(alert).toBeDefined()
+  })
 })
