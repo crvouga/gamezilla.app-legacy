@@ -28,7 +28,7 @@ const contract = Topic.initContract({
 })
 
 const Fixture = async () => {
-  const port = 1234
+  const port = 1000 + Math.floor(Math.random() * 9000)
   let logger: ILogger
   logger ??= Logger({ t: 'noop' })
   logger ??= Logger({ t: 'console', newLinePerMsg: false, namespace: ['test'] })

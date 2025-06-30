@@ -1,10 +1,13 @@
 import { expect, TestRunnerEnv } from '~/@/test-runner'
 import { FixtureAuth } from '../../@/test/fixture'
+import { PhoneNumber } from '~/@/phone-number'
 
 const randomPhoneNumber = (): number => {
   const basePhoneNumber = 480_209_0000
   const random4Digits = Math.floor(Math.random() * 10000)
-  return basePhoneNumber + random4Digits
+  const phoneNumber = basePhoneNumber + random4Digits
+  PhoneNumber.unsafeParse(phoneNumber.toString())
+  return phoneNumber
 }
 
 export const Fixture = async (e: TestRunnerEnv) => {
