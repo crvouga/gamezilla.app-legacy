@@ -10,9 +10,7 @@ export const AuthScreenHeaderCta = (input: {
 }) => {
   return h('div', {
     className: 'flex w-full flex-col items-start justify-center',
-    children: h(
-      Frag,
-      null,
+    children: h(Frag, null, [
       h(Typography, {
         text: input.ctx.t('auth.sign-in-to'),
         variant: 'title',
@@ -22,6 +20,6 @@ export const AuthScreenHeaderCta = (input: {
           'bg-gradient-to-b from-blue-400 to-blue-500 bg-clip-text pb-2 text-5xl font-extrabold text-transparent',
         children: input.ctx.t('app.gamezilla-app'),
       }),
-    ),
+    ]),
   })
 }

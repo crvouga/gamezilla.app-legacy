@@ -23,5 +23,5 @@ export const Transition = ({
     className: className,
     mode,
   })
-  return h('transition-element', { id: id }, children)
+  return h('transition-element', { id: id }, [children])
 }

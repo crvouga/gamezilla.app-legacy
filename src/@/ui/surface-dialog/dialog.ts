@@ -31,6 +31,6 @@ export const Dialog = (input: { children: VDom; open: boolean; onClose: () => vo
         }
       },
     },
-    input.children,
+    [input.children],
   )
 }

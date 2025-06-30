@@ -58,20 +58,22 @@ export const Button = (input: ButtonInput) => {
         }),
     },
 
-    h(
-      'div',
-      { className: cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent') },
+    [
       h(
         'div',
-        { className: 'flex-none' },
-        input.renderIconStart?.({
-          className: cn(toIconSizeClass(input), 'mr-2'),
-        }),
+        { className: cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent') },
+        [
+          h('div', { className: 'flex-none' }, [
+            input.renderIconStart?.({ className: cn(toIconSizeClass(input), 'mr-2') }),
+          ]),
+          h('div', { className: 'truncate' }, [input.text]),
+        ],
       ),
-      h('div', { className: 'truncate' }, input.text),
-    ),
-    input.loading &&
-      h('div', { className: 'absolute inset-0 flex items-center justify-center' }, h(Spinner, { className: 'size-8' })),
+      input.loading &&
+        h('div', { className: 'absolute inset-0 flex items-center justify-center' }, [
+          h(Spinner, { className: 'size-8' }),
+        ]),
+    ],
   )
 }
 

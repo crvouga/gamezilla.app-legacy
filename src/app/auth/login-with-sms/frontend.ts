@@ -231,9 +231,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
     submitDisabled: false,
     onSubmit: () => input.dispatch({ t: 'user-clicked-send-code-button' }),
     renderInputs: () =>
-      h(
-        Frag,
-        null,
+      h(Frag, null, [
         h(Select<Iso3166Alpha2Code>, {
           id: 'countryCode',
           label: input.ctx.t('auth-sms.country'),
@@ -256,7 +254,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
           onChange: (value: string) => input.dispatch({ t: 'inputted-phone-number', phone: value }),
           onClear: () => input.dispatch({ t: 'clicked-phone-number-clear' }),
         }),
-      ),
+      ]),
   })
 }
 
@@ -282,9 +280,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
         code: input.model.code,
       }),
     renderInputs: () =>
-      h(
-        Frag,
-        null,
+      h(Frag, null, [
         h(Typography, {
           role: 'status',
           className: 'text-lg',
@@ -303,7 +299,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
           onChange: (value) => input.dispatch({ t: 'inputted-code', code: value }),
           onClear: () => input.dispatch({ t: 'clicked-code-clear' }),
         }),
-      ),
+      ]),
   })
 }
 

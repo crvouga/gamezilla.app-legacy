@@ -24,9 +24,7 @@ export const TextField = (input: {
 }) => {
   return h('label', {
     className: 'flex w-full flex-col gap-1',
-    children: h(
-      Frag,
-      null,
+    children: h(Frag, null, [
       h('label', {
         htmlFor: input.id,
         className: cn('text-base', input.error && 'text-red-500'),
@@ -39,9 +37,7 @@ export const TextField = (input: {
           input.error && 'border-2 border-red-500 text-red-500',
           !input.error && 'ring-blue-500 focus-within:ring-2',
         ),
-        children: h(
-          Frag,
-          null,
+        children: h(Frag, null, [
           h('input', {
             role: 'textbox',
             'data-testid': input.dataTestId,
@@ -92,7 +88,7 @@ export const TextField = (input: {
               },
               children: h(IconXMark, { className: 'size-6' }),
             }),
-        ),
+        ]),
       }),
       input.helperText &&
         h('div', {
@@ -102,6 +98,6 @@ export const TextField = (input: {
           className: cn('text-sm', input.error && 'text-red-500'),
           children: input.helperText,
         }),
-    ),
+    ]),
   })
 }

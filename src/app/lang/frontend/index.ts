@@ -5,6 +5,7 @@ import { Gutter } from '~/@/ui/gutter'
 import { IconCheckmarkCircle, IconLanguage } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Spinner } from '~/@/ui/spinner'
+import { h } from '~/@/vdom/h'
 import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -146,18 +147,15 @@ const subscriptions: FrontendModule['subscriptions'] = (_input) => {
 //
 
 const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
-  return (
-    <ListItemButton
-      icon={(input) => <IconLanguage {...input} />}
-      label={ctx.t('lang.language')}
-      end={() => ctx.t(model.lang)}
-      onClick={() =>
-        dispatch({
-          t: 'clicked-change-lang',
-        })
-      }
-    />
-  )
+  return h(ListItemButton, {
+    icon: (input) => h(IconLanguage, input),
+    label: ctx.t('lang.language'),
+    end: () => ctx.t(model.lang),
+    onClick: () =>
+      dispatch({
+        t: 'clicked-change-lang',
+      }),
+  })
 }
 
 const View: FrontendModule['View'] = (input) => {
@@ -165,7 +163,7 @@ const View: FrontendModule['View'] = (input) => {
     case 'lang': {
       switch (input.ctx.currentScreen.t) {
         case 'choose-lang': {
-          return <ViewChooseLang ctx={input.ctx} dispatch={input.dispatch} model={input.model} />
+          return h(ViewChooseLang, { ctx: input.ctx, dispatch: input.dispatch, model: input.model })
         }
         default: {
           return null
@@ -179,51 +177,47 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewChooseLang: FrontendModule['View'] = (input) => {
-  return (
-    <ScreenLayout
-      id='choose-lang'
-      ctx={input.ctx}
-      parentScreen={input.ctx.parentScreen}
-      navBar={{
-        title: input.ctx.t('lang.choose-language'),
-        back: {
-          onClick: () =>
-            input.dispatch({
-              t: 'choose-lang.clicked-done',
-            }),
-        },
-      }}
-      renderBody={() => (
-        <div className='flex flex-1 flex-col overflow-y-scroll'>
-          {LanguageCodeISO_639_1.ALL.map((code) => (
-            <ListItemButton
-              key={code}
-              label={input.ctx.t(code)}
-              icon={(inputIcon) => {
-                if (input.model.loading[code]?.endedAt === null) {
-                  return <Spinner {...inputIcon} />
-                }
-
-                if (input.model.lang === code) {
-                  return <IconCheckmarkCircle {...inputIcon} />
-                }
-
-                return <IconCheckmarkCircle {...inputIcon} />
-              }}
-              end={() => <div>{input.ctx.t(code)}</div>}
-              onClick={() =>
-                input.dispatch({
-                  t: 'choose-lang.clicked-lang',
-                  lang: code,
-                })
+  return h(ScreenLayout, {
+    id: 'choose-lang',
+    ctx: input.ctx,
+    parentScreen: input.ctx.parentScreen,
+    navBar: {
+      title: input.ctx.t('lang.choose-language'),
+      back: {
+        onClick: () =>
+          input.dispatch({
+            t: 'choose-lang.clicked-done',
+          }),
+      },
+    },
+    renderBody: () =>
+      h('div', { className: 'flex flex-1 flex-col overflow-y-scroll' }, [
+        ...LanguageCodeISO_639_1.ALL.map((code) =>
+          h(ListItemButton, {
+            key: code,
+            label: input.ctx.t(code),
+            icon: (inputIcon) => {
+              if (input.model.loading[code]?.endedAt === null) {
+                return h(Spinner, inputIcon)
               }
-            />
-          ))}
-          <Gutter variant='screen' />
-        </div>
-      )}
-    />
-  )
+
+              if (input.model.lang === code) {
+                return h(IconCheckmarkCircle, inputIcon)
+              }
+
+              return h(IconCheckmarkCircle, inputIcon)
+            },
+            end: () => h('div', {}, [input.ctx.t(code)]),
+            onClick: () =>
+              input.dispatch({
+                t: 'choose-lang.clicked-lang',
+                lang: code,
+              }),
+          }),
+        ),
+        h(Gutter, { variant: 'screen' }),
+      ]),
+  })
 }
 
 export const LangFrontend = {

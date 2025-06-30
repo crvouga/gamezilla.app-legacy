@@ -2,5 +2,5 @@ import { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/h'
 
 export const SurfaceActions = (input: { children: VDom }) => {
-  return h('div', { className: 'flex w-full items-center gap-6 p-6 pt-6' }, input.children)
+  return h('div', { className: 'flex w-full items-center gap-6 p-6 pt-6' }, [input.children])
 }

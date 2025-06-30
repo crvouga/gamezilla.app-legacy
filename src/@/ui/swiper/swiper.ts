@@ -84,7 +84,7 @@ const Container = (input: {
       slide: input.slideIndex,
       role: 'tablist',
     },
-    input.children,
+    [input.children],
   )
 }
 
@@ -95,7 +95,7 @@ const Slide = (input: { children?: VDom; className?: string }) => {
       className: input.className,
       role: 'tabpanel',
     },
-    input.children,
+    [input.children],
   )
 }
 

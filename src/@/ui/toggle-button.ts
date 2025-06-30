@@ -20,9 +20,7 @@ export const ToggleButton = ({
     }
   }
 
-  return h(
-    'label',
-    { className: 'relative inline-flex cursor-pointer items-center' },
+  return h('label', { className: 'relative inline-flex cursor-pointer items-center' }, [
     h('input', {
       'aria-label': label,
       type: 'checkbox',
@@ -37,5 +35,5 @@ export const ToggleButton = ({
         PAPER_CLASS_NAME,
       ),
     }),
-  )
+  ])
 }

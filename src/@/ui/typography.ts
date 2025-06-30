@@ -71,6 +71,6 @@ export const Typography = (input: Input) => {
       'aria-level': toAriaLevel(input),
       'aria-label': input.text,
     },
-    input.text,
+    [input.text],
   )
 }

@@ -15,6 +15,6 @@ export const ClickOutside = (
       id: props.id,
       className: props.className,
     },
-    props.children,
+    [props.children],
   )
 }

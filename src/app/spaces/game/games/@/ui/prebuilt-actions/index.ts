@@ -1,5 +1,6 @@
 import type { Translator } from '~/@/l18n/generated'
 import { IconArrowLeftOnRect, IconArrowRightCircle, IconArrowRotateLeft, IconChevronLeft } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 
 type PrebuiltActionInput = Partial<ScreenAction> & {
@@ -14,14 +15,14 @@ type PrebuiltActionInput = Partial<ScreenAction> & {
 const exit = (input: PrebuiltActionInput): ScreenAction => ({
   ...input,
   id: input.ctx.t('prebuilt-actions.exit'),
-  icon: (input) => <IconArrowLeftOnRect {...input} />,
+  icon: (input) => h(IconArrowLeftOnRect, input),
   label: input.ctx.t('prebuilt-actions.exit'),
 })
 
 const next = (input: PrebuiltActionInput): ScreenAction => ({
   id: input.ctx.t('prebuilt-actions.next'),
-  // icon: (input) => <IconChevronRight {...input} />,
-  icon: (input) => <IconArrowRightCircle {...input} />,
+  // icon: (input) => h(IconChevronRight, input),
+  icon: (input) => h(IconArrowRightCircle, input),
   label: input.ctx.t('prebuilt-actions.next'),
   ...input,
 })
@@ -29,14 +30,14 @@ const next = (input: PrebuiltActionInput): ScreenAction => ({
 const reset = (input: PrebuiltActionInput): ScreenAction => ({
   ...input,
   id: input.ctx.t('prebuilt-actions.reset'),
-  icon: (input) => <IconArrowRotateLeft {...input} />,
+  icon: (input) => h(IconArrowRotateLeft, input),
   label: input.ctx.t('prebuilt-actions.reset'),
 })
 
 const prev = (input: PrebuiltActionInput): ScreenAction => ({
   ...input,
   id: input.ctx.t('prebuilt-actions.prev'),
-  icon: (input) => <IconChevronLeft {...input} />,
+  icon: (input) => h(IconChevronLeft, input),
   label: input.ctx.t('prebuilt-actions.prev'),
 })
 

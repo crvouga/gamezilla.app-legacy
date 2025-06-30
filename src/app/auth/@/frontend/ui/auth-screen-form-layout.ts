@@ -26,9 +26,7 @@ export const AuthScreenFormLayout = (input: {
     dataTestId: input.dataTestId,
     ctx: input.ctx,
     center: false,
-    children: h(
-      Frag,
-      null,
+    children: h(Frag, null, [
       h(AuthScreenHeader, {
         ctx: input.ctx,
         title: input.title,
@@ -40,9 +38,7 @@ export const AuthScreenFormLayout = (input: {
           e.preventDefault()
           input.onSubmit()
         },
-        children: h(
-          Frag,
-          null,
+        children: h(Frag, null, [
           h('div', {
             className: 'flex w-full flex-col gap-6',
             children: input.renderInputs(),
@@ -57,8 +53,8 @@ export const AuthScreenFormLayout = (input: {
             loading: input.submitLoading,
             disabled: input.submitDisabled,
           }),
-        ),
+        ]),
       }),
-    ),
+    ]),
   })
 }

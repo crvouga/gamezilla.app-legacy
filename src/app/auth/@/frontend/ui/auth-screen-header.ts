@@ -15,9 +15,7 @@ export const AuthScreenHeader = (input: {
 }) => {
   return h('div', {
     className: 'flex w-full flex-row items-center justify-start gap-2',
-    children: h(
-      Frag,
-      null,
+    children: h(Frag, null, [
       h(IconButton, {
         className: '-ml-2',
         label: input.ctx.t('app.back'),
@@ -30,6 +28,6 @@ export const AuthScreenHeader = (input: {
         variant: 'title',
         className: 'font-bold',
       }),
-    ),
+    ]),
   })
 }

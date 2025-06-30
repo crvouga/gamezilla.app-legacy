@@ -203,9 +203,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
     dataTestId: 'auth/login-screen',
     ctx: input.ctx,
     center: true,
-    children: h(
-      'div',
-      { className: 'flex w-full flex-1 flex-col gap-6' },
+    children: h('div', { className: 'flex w-full flex-1 flex-col gap-6' }, [
       h(AuthScreenHeaderCta, { ctx: input.ctx }),
 
       h(Button, {
@@ -217,23 +215,21 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
         text: input.ctx.t('auth.continue-with-phone'),
       }),
 
-      h(
-        'div',
-        { className: 'flex w-full items-center justify-center py-1' },
+      h('div', { className: 'flex w-full items-center justify-center py-1' }, [
         h(Typography, {
           variant: 'body',
           className: 'text-base font-bold uppercase',
           color: 'text-secondary',
           text: input.ctx.t('auth.or'),
         }),
-      ),
+      ]),
 
       h(ContinueAsGuestFrontend.ViewButton, {
         ctx: input.ctx,
         dispatch: (c) => input.dispatch({ t: 'got-login-as-guest-msg', c }),
         model: input.model.continueAsGuest,
       }),
-    ),
+    ]),
   })
 }
 

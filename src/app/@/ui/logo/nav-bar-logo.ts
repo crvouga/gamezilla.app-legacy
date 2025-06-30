@@ -8,6 +8,6 @@ export const NavBarLogo = (input: { onClick: () => void }) => {
       className: 'flex h-full w-full items-center justify-center text-4xl',
       onClick: input.onClick,
     },
-    LOGO_TEXT,
+    [LOGO_TEXT],
   )
 }

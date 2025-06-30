@@ -11,9 +11,7 @@ import { Frag } from '../frag'
 export const DrawerComponent = (props: DrawerInput) => {
   return h(Portal.Entrance, {
     portalId: DRAWER_PORTAL_ID,
-    children: h(
-      Frag,
-      null,
+    children: h(Frag, null, [
       h(
         'div',
         {
@@ -47,12 +45,14 @@ export const DrawerComponent = (props: DrawerInput) => {
                   : `rounded-b-2xl ${props.open ? 'translate-y-0' : '-translate-y-full'}`,
               ),
             },
-            props.position === 'top' && h(Gutter, { variant: 'drawer' }),
-            props.children,
-            props.position === 'bottom' && h(Gutter, { variant: 'drawer' }),
+            [
+              props.position === 'top' && h(Gutter, { variant: 'drawer' }),
+              props.children,
+              props.position === 'bottom' && h(Gutter, { variant: 'drawer' }),
+            ],
           ),
         ],
       ),
-    ),
+    ]),
   })
 }

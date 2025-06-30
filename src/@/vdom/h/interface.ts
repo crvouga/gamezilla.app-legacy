@@ -7,5 +7,5 @@ export type Props = Record<string, unknown> | null
 export type H = <TProps extends Props = Props>(
   tag: Tag | ((props: TProps) => VDom),
   props?: TProps | null,
-  ...children: VDom[]
+  children?: VDom[],
 ) => VDom

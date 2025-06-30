@@ -17,13 +17,11 @@ export const AuthScreenLayout = (input: {
   return h('div', {
     'data-testid': input.dataTestId,
     className: cn('flex h-full flex-col items-center', input.center ? 'justify-center' : 'justify-start'),
-    children: h(
-      Frag,
-      null,
+    children: h(Frag, null, [
       h('div', {
         className: 'flex w-full max-w-xl flex-col items-center justify-center gap-4 p-6',
         children: input.children,
       }),
-    ),
+    ]),
   })
 }

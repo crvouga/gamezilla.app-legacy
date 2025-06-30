@@ -25,5 +25,5 @@ const init = (vdomImpl: VDomImpl) => {
 export const h: H = init(CONFIG_FRONTEND.VDOM_IMPL)
 
 export const view = (props: { message: string }) => {
-  return h('div', null, `Hello ${props.message}`)
+  return h('div', null, [`Hello ${props.message}`])
 }

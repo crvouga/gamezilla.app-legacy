@@ -6,5 +6,5 @@ export type IconInput = {
 }
 
 export const IconShared = (props: { className?: string; children: string }) => {
-  return h('svg', { className: props.className, fill: 'currentColor', viewBox: '0 0 24 24' }, props.children)
+  return h('svg', { className: props.className, fill: 'currentColor', viewBox: '0 0 24 24' }, [props.children])
 }

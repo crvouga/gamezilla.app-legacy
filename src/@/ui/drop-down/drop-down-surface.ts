@@ -12,6 +12,6 @@ export const DropDownSurface = (input: { children: VDom }) => {
         'opacity-100 transition-opacity duration-300 ease-in-out',
       ),
     },
-    input.children,
+    [input.children],
   )
 }

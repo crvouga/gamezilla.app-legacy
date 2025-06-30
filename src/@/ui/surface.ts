@@ -11,6 +11,6 @@ export const Surface = (input: { children?: VDom; className?: string; role?: str
       className: cn(SURFACE_CLASS_NAME, input.className),
       role: input.role,
     },
-    input.children,
+    [input.children],
   )
 }

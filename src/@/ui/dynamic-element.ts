@@ -36,13 +36,13 @@ export const DynamicElement = (input: DynamicElementProps) => {
 
   switch (element) {
     case 'form': {
-      return h('form', { ...props, 'data-testid': dataTestId }, children)
+      return h('form', { ...props, 'data-testid': dataTestId }, [children])
     }
     case 'button': {
-      return h('button', { ...props, 'data-testid': dataTestId }, children)
+      return h('button', { ...props, 'data-testid': dataTestId }, [children])
     }
     default: {
-      return h('div', { ...props, 'data-testid': dataTestId }, children)
+      return h('div', { ...props, 'data-testid': dataTestId }, [children])
     }
   }
 }
