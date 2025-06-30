@@ -1,3 +1,4 @@
+import { h } from '~/@/vdom/h'
 import { isErr, Loading, NotAsked, Ok, Result, unwrapOr } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Button } from '~/@/ui/button'
@@ -107,14 +108,12 @@ const continueAsGuest = async (input: {
 }
 
 const ViewButton: FrontendModule['View'] = (input) => {
-  return (
-    <Button
-      dataTestId='auth/continue-as-guest-button'
-      onClick={() => input.dispatch({ t: 'clicked-continue-as-guest-button' })}
-      renderIconStart={(iconInput) => <IconUserCircle {...iconInput} />}
-      text={input.ctx.t('auth.continue-as-guest')}
-    />
-  )
+  return h(Button, {
+    dataTestId: 'auth/continue-as-guest-button',
+    onClick: () => input.dispatch({ t: 'clicked-continue-as-guest-button' }),
+    renderIconStart: (iconInput) => h(IconUserCircle, iconInput),
+    text: input.ctx.t('auth.continue-as-guest'),
+  })
 }
 
 export const ContinueAsGuestFrontend = {

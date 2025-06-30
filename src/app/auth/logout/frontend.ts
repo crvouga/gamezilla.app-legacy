@@ -1,3 +1,4 @@
+import { h } from '~/@/vdom/h'
 import { NotAsked } from '~/@/result'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
@@ -55,31 +56,21 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const View = ({
-  model,
-  dispatch,
-  ctx,
-}: {
-  ctx: AppFrontendCtxBase
-  model: ModelFrontend
-  dispatch: (msg: MsgFrontend) => void
-}) => {
-  return (
-    <SurfaceConfirmation
-      ctx={ctx}
-      ariaLabel={ctx.t('auth.logout-of-gamezilla.app')}
-      open={model.opened === 'logged-out'}
-      title={ctx.t('auth.logout-of-gamezilla.app')}
-      body={ctx.t('auth.logout-of-gamezilla.app-body')}
-      confirmText={ctx.t('auth.logout')}
-      cancelText={ctx.t('app.cancel')}
-      id='logout'
-      position='bottom'
-      onClose={() => dispatch({ t: 'logout-drawer-closed' })}
-      onCancel={() => dispatch({ t: 'logout-drawer-clicked-cancel' })}
-      onConfirm={() => dispatch({ t: 'logout-drawer-clicked-confirm' })}
-    />
-  )
+const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
+  return h(SurfaceConfirmation, {
+    ctx: input.ctx,
+    ariaLabel: input.ctx.t('auth.logout-of-gamezilla.app'),
+    open: input.model.opened === 'logged-out',
+    title: input.ctx.t('auth.logout-of-gamezilla.app'),
+    body: input.ctx.t('auth.logout-of-gamezilla.app-body'),
+    confirmText: input.ctx.t('auth.logout'),
+    cancelText: input.ctx.t('app.cancel'),
+    id: 'logout',
+    position: 'bottom',
+    onClose: () => input.dispatch({ t: 'logout-drawer-closed' }),
+    onCancel: () => input.dispatch({ t: 'logout-drawer-clicked-cancel' }),
+    onConfirm: () => input.dispatch({ t: 'logout-drawer-clicked-confirm' }),
+  })
 }
 
 export const LogoutFrontend = {
