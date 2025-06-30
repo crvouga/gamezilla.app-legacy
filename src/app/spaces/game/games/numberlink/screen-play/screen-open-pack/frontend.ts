@@ -1,4 +1,5 @@
 import { IconGamepad } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -52,51 +53,45 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   const isCurrentUserSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
   if (isCurrentUserSpectating) {
-    return (
-      <ScreenLayoutHostSettingUpGame
-        parentScreen={input.ctx.parentScreen}
-        ctx={input.ctx}
-        renderCoverArt={(props) => <IconGamepad {...props} />}
-      />
-    )
+    return h(ScreenLayoutHostSettingUpGame, {
+      parentScreen: input.ctx.parentScreen,
+      ctx: input.ctx,
+      renderCoverArt: (props) => h(IconGamepad, props),
+    })
   }
 
   const query = toQuery(input)
 
-  return (
-    <ScreenLayout
-      parentScreen={input.ctx.parentScreen}
-      ctx={input.ctx}
-      dataTestId='numberlink/open-pack-screen'
-      id='screen-open-pack'
-      navBar={{
-        title: input.ctx.t('game.numberlink.select-a-pack'),
-        back: {
-          onClick: () =>
-            input.dispatch({
-              t: 'got-msg-space',
-              c: { t: 'user-clicked-exit-play-mode-button', userId: input.ctx.currentUser.userId },
-            }),
+  return h(ScreenLayout, {
+    parentScreen: input.ctx.parentScreen,
+    ctx: input.ctx,
+    dataTestId: 'numberlink/open-pack-screen',
+    id: 'screen-open-pack',
+    navBar: {
+      title: input.ctx.t('game.numberlink.select-a-pack'),
+      back: {
+        onClick: () =>
+          input.dispatch({
+            t: 'got-msg-space',
+            c: { t: 'user-clicked-exit-play-mode-button', userId: input.ctx.currentUser.userId },
+          }),
+      },
+    },
+    renderBody: () =>
+      h(PackLoaderFrontend.ViewList, {
+        ctx: input.ctx,
+        model: input.ctx.packLoader,
+        query: query,
+        onQueryChanged: (query) => {
+          console.log('query', query)
         },
-      }}
-      renderBody={() => (
-        <PackLoaderFrontend.ViewList
-          ctx={input.ctx}
-          model={input.ctx.packLoader}
-          query={query}
-          onQueryChanged={(query) => {
-            console.log('query', query)
-          }}
-          onClick={(pack) =>
-            input.dispatch({
-              t: 'got-msg-space',
-              c: { userId: input.ctx.currentUser.userId, t: 'user-clicked-open-pack-puzzle-grid-item', pack },
-            })
-          }
-        />
-      )}
-    />
-  )
+        onClick: (pack) =>
+          input.dispatch({
+            t: 'got-msg-space',
+            c: { userId: input.ctx.currentUser.userId, t: 'user-clicked-open-pack-puzzle-grid-item', pack },
+          }),
+      }),
+  })
 }
 
 export const ScreenOpenPackFrontend = {

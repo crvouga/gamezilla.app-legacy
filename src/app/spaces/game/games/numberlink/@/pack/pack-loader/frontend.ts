@@ -2,13 +2,14 @@ import { descend } from '~/@/array/sorting'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
-import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
+import { UnixMs } from '~/@/time/unix-ms'
 import { ClickableTransparent } from '~/@/ui/clickable'
 import { EmptyState } from '~/@/ui/empty-state'
 import { IconBox } from '~/@/ui/icon'
 import { SpinnerBlock } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
+import { h } from '~/@/vdom/h'
 import { AddPacksCmd } from '../../frontend/add-packs-cmd.$msg'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import type { Pack } from '../pack'
@@ -45,7 +46,7 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const watch = <TMsg,>(ctx: FlowFrontendCtxBase, query: PacksDbQuery, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
+const watch = <TMsg>(ctx: FlowFrontendCtxBase, query: PacksDbQuery, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
   return Sub.map(ctx.packDb.sub(query), (packs) => map({ t: 'got-pack-db-packs', query, packs }))
 }
 
@@ -63,41 +64,56 @@ const ViewList = (input: {
   const isLoading = !(queryKey in input.model.results)
   const isEmpty = !isLoading && packs.length === 0
 
-  return (
-    <div className='relative flex w-full flex-1 flex-col gap-2 overflow-hidden'>
-      <div className='relative flex max-h-full w-full flex-1 flex-col items-center overflow-x-hidden overflow-y-scroll border-t-neutral-800'>
-        {isEmpty && (
-          <EmptyState label={input.ctx.t('game.numberlink.no-packs')} renderIcon={(input) => <IconBox {...input} />} />
-        )}
+  return h('div', { className: 'relative flex w-full flex-1 flex-col gap-2 overflow-hidden' }, [
+    h(
+      'div',
+      {
+        className:
+          'relative flex max-h-full w-full flex-1 flex-col items-center overflow-x-hidden overflow-y-scroll border-t-neutral-800',
+      },
+      [
+        isEmpty &&
+          h(EmptyState, {
+            label: input.ctx.t('game.numberlink.no-packs'),
+            renderIcon: (input) => h(IconBox, input),
+          }),
 
-        {packs.sort(descend((pack) => UnixMs.toNumber(pack.lastUpdatedAt))).map((pack) => (
-          <ViewPackListItem ctx={input.ctx} key={pack.id} pack={pack} onClick={() => input.onClick(pack)} />
-        ))}
+        ...packs.sort(descend((pack) => UnixMs.toNumber(pack.lastUpdatedAt))).map((pack) =>
+          h(ViewPackListItem, {
+            ctx: input.ctx,
+            key: pack.id,
+            pack: pack,
+            onClick: () => input.onClick(pack),
+          }),
+        ),
 
-        {isLoading && <SpinnerBlock />}
-      </div>
-    </div>
-  )
+        isLoading && h(SpinnerBlock),
+      ].filter(Boolean),
+    ),
+  ])
 }
 
 const ViewPackListItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pack; onClick: () => void }) => {
-  return (
-    <ClickableTransparent
-      className='flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left'
-      onClick={input.onClick}
-    >
-      {false && <IconBox className='h-9 w-9 shrink-0' />}
-      <div className='flex flex-1 flex-col overflow-hidden'>
-        <Typography text={TranslatedText.of(input.pack.name)} variant='body' />
-        <Typography text={toListItemSecondaryText(input)} variant='subtitle' color='text-secondary' />
-      </div>
-      <Typography
-        text={input.ctx.t('game.numberlink.puzzle-count', input.pack.puzzleIds.length)}
-        variant='body'
-        color='text-secondary'
-        className='text-xs'
-      />
-    </ClickableTransparent>
+  return h(
+    ClickableTransparent,
+    {
+      className:
+        'flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left',
+      onClick: input.onClick,
+    },
+    [
+      false && h(IconBox, { className: 'h-9 w-9 shrink-0' }),
+      h('div', { className: 'flex flex-1 flex-col overflow-hidden' }, [
+        h(Typography, { text: TranslatedText.of(input.pack.name), variant: 'body' }),
+        h(Typography, { text: toListItemSecondaryText(input), variant: 'subtitle', color: 'text-secondary' }),
+      ]),
+      h(Typography, {
+        text: input.ctx.t('game.numberlink.puzzle-count', input.pack.puzzleIds.length),
+        variant: 'body',
+        color: 'text-secondary',
+        className: 'text-xs',
+      }),
+    ].filter(Boolean),
   )
 }
 

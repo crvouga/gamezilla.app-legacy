@@ -1,5 +1,6 @@
 import { s } from '~/@/schema'
 import { IconCopy } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd.$msg'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -19,7 +20,7 @@ export const MsgFrontend = s.or(
 )
 export type MsgFrontend = s.Infer<typeof MsgFrontend>
 
-const update = <TModel,>(input: {
+const update = <TModel>(input: {
   msg: MsgFrontend | { t: string & {} }
   model: TModel
   ctx: AppFrontendCtx
@@ -59,7 +60,7 @@ const viewAction = ({ ctx, dispatch }: { ctx: AppFrontendCtx; dispatch: (m: MsgF
   return [
     {
       id: ctx.t('game.numberlink.copy-puzzle-to-clipboard'),
-      icon: (input) => <IconCopy {...input} />,
+      icon: (input) => h(IconCopy, input),
       label: ctx.t('game.numberlink.copy-puzzle-to-clipboard'),
       onClick: () =>
         dispatch({

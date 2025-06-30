@@ -9,6 +9,7 @@ import { PuzzleQuery } from '../../@/puzzle/puzzle-db/interface-query'
 import { PuzzleLoaderFrontend } from '../../@/puzzle/puzzle-loader/frontend'
 import { GotPuzzleLoaderMsg } from '../../@/puzzle/puzzle-loader/got-puzzle-loader-msg.$msg'
 import type { FrontendModule, ModelSpace, MsgFrontend } from '../types'
+import { h } from '~/@/vdom/h'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -62,67 +63,61 @@ const View: FrontendModule['View'] = (input) => {
   const isSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
 
   if (isSpectating) {
-    return (
-      <ScreenLayoutHostSettingUpGame
-        parentScreen={input.ctx.parentScreen}
-        ctx={input.ctx}
-        navBar={{
-          title: input.ctx.t('game.numberlink.play'),
-        }}
-        renderCoverArt={(input) => <IconGamepad {...input} />}
-      />
-    )
+    return h(ScreenLayoutHostSettingUpGame, {
+      parentScreen: input.ctx.parentScreen,
+      ctx: input.ctx,
+      navBar: {
+        title: input.ctx.t('game.numberlink.play'),
+      },
+      renderCoverArt: (input) => h(IconGamepad, input),
+    })
   }
 
   const screen = input.modelSpace.screen
 
-  return (
-    <ScreenLayout
-      parentScreen={input.ctx.parentScreen}
-      dataTestId='numberlink/open-puzzle-screen'
-      ctx={input.ctx}
-      id='screen-open-puzzle'
-      navBar={{
-        title: input.ctx.t('numberlink-pack-name', pack.name),
-        back: {
-          onClick: () =>
-            input.dispatch({
-              t: 'got-msg-space',
-              c: { t: 'user-clicked-exit-screen-open-pack', userId: input.ctx.currentUser.userId },
-            }),
+  return h(ScreenLayout, {
+    parentScreen: input.ctx.parentScreen,
+    dataTestId: 'numberlink/open-puzzle-screen',
+    ctx: input.ctx,
+    id: 'screen-open-puzzle',
+    navBar: {
+      title: input.ctx.t('numberlink-pack-name', pack.name),
+      back: {
+        onClick: () =>
+          input.dispatch({
+            t: 'got-msg-space',
+            c: { t: 'user-clicked-exit-screen-open-pack', userId: input.ctx.currentUser.userId },
+          }),
+      },
+    },
+    renderBody: () =>
+      h(PackPuzzleGridUI.View, {
+        id: 'pack-puzzle-grid',
+        currentSlideIndex: screen.slideIndex,
+        onSlideIndexChanged: (slideIndex) =>
+          input.dispatch({
+            t: 'got-msg-space',
+            c: {
+              t: 'user-changed-slides',
+              slideIndex,
+              userId: input.ctx.currentUser.userId,
+            },
+          }),
+        puzzleIds: pack.puzzleIds,
+        onClickPuzzleCell: ({ puzzleIndex, puzzleId }) => {
+          const puzzle = input.ctx.puzzles[puzzleId]
+          input.dispatch({
+            t: 'got-msg-space',
+            c: {
+              t: 'user-clicked-open-screen-play-puzzle',
+              puzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
+              puzzleIndex,
+              userId: input.ctx.currentUser.userId,
+            },
+          })
         },
-      }}
-      renderBody={() => (
-        <PackPuzzleGridUI.View
-          id='pack-puzzle-grid'
-          currentSlideIndex={screen.slideIndex}
-          onSlideIndexChanged={(slideIndex) =>
-            input.dispatch({
-              t: 'got-msg-space',
-              c: {
-                t: 'user-changed-slides',
-                slideIndex,
-                userId: input.ctx.currentUser.userId,
-              },
-            })
-          }
-          puzzleIds={pack.puzzleIds}
-          onClickPuzzleCell={({ puzzleIndex, puzzleId }) => {
-            const puzzle = input.ctx.puzzles[puzzleId]
-            input.dispatch({
-              t: 'got-msg-space',
-              c: {
-                t: 'user-clicked-open-screen-play-puzzle',
-                puzzle: puzzle ? { t: 'got', c: puzzle } : { t: 'not-found' },
-                puzzleIndex,
-                userId: input.ctx.currentUser.userId,
-              },
-            })
-          }}
-        />
-      )}
-    />
-  )
+      }),
+  })
 }
 
 export const ScreenOpenPuzzleFrontend = {

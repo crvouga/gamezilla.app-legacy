@@ -1,8 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
-import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
+import { UnixMs } from '~/@/time/unix-ms'
 import { Checkbox, CheckboxState } from '~/@/ui/checkbox/checkbox'
 import { Clickable, ClickableTransparent } from '~/@/ui/clickable'
 import { EmptyState } from '~/@/ui/empty-state'
@@ -10,15 +10,16 @@ import { Gutter } from '~/@/ui/gutter'
 import { IconPuzzlePiece } from '~/@/ui/icon'
 import { SpinnerBlock } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
+import { h } from '~/@/vdom/h'
 import { AddPuzzlesCmd } from '../../frontend/add-puzzles-cmd.$msg'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { NumberlinkVariantBoard } from '../../variant'
 import { Puzzle } from '../puzzle'
 import { PuzzleQuery } from '../puzzle-db/interface-query'
 import { PuzzleId } from '../puzzle-id'
+import { GotPuzzleLoaderMsg } from './got-puzzle-loader-msg.$msg'
 import { QueryForm } from './query-form'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
-import { GotPuzzleLoaderMsg } from './got-puzzle-loader-msg.$msg'
 
 const update: FrontendModule['update'] = (input) => {
   if (GotPuzzleLoaderMsg.is(input.msgIn)) {
@@ -52,11 +53,7 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const watch = <TMsg,>(
-  ctx: FlowFrontendCtxBase,
-  query: PuzzleQuery | null,
-  map: (m: MsgFrontend) => TMsg,
-): Sub<TMsg> => {
+const watch = <TMsg>(ctx: FlowFrontendCtxBase, query: PuzzleQuery | null, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
   if (!query) {
     return Sub.none()
   }
@@ -83,54 +80,54 @@ const ViewList = (input: {
   const totalCount = puzzles.length
   const selectedCount = Math.min(input.selected?.length ?? 0, totalCount)
 
-  return (
-    <div className='relative flex w-full flex-1 flex-col overflow-hidden'>
-      <QueryForm.View ctx={input.ctx} query={input.query} onChange={input.onQueryChanged} />
+  return h('div', { className: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+    h(QueryForm.View, { ctx: input.ctx, query: input.query, onChange: input.onQueryChanged }),
 
-      {input.selectable && (
-        <Clickable
-          className='flex w-fit items-center gap-4 px-4 py-2'
-          onClick={() => input.onHeaderCheckboxClick?.(puzzleIds)}
-        >
-          <Checkbox state={toTopLevelCheckboxState({ totalCount, selectedCount })} />
-          <Typography
-            variant='body'
-            color='text-secondary'
-            className='text-lg'
-            text={input.ctx.t('game.numberlink.puzzles-selected', {
+    input.selectable &&
+      h(
+        Clickable,
+        {
+          className: 'flex w-fit items-center gap-4 px-4 py-2',
+          onClick: () => input.onHeaderCheckboxClick?.(puzzleIds),
+        },
+        [
+          h(Checkbox, { state: toTopLevelCheckboxState({ totalCount, selectedCount }) }),
+          h(Typography, {
+            variant: 'body',
+            color: 'text-secondary',
+            className: 'text-lg',
+            text: input.ctx.t('game.numberlink.puzzles-selected', {
               totalCount: puzzles.length,
               selectedCount: input.selected?.length ?? 0,
-            })}
-          />
-        </Clickable>
-      )}
+            }),
+          }),
+        ],
+      ),
 
-      <div className='relative flex w-full flex-1 flex-col items-center overflow-y-scroll'>
-        {puzzles.map((puzzle) => (
-          <ViewListItem
-            selectable={input.selectable}
-            query={input.query}
-            key={puzzle.id}
-            ctx={input.ctx}
-            selected={input.selected?.some((id) => id === puzzle.id) ?? false}
-            puzzle={puzzle}
-            onClick={() => input.onItemClick(puzzle)}
-          />
-        ))}
+    h('div', { className: 'relative flex w-full flex-1 flex-col items-center overflow-y-scroll' }, [
+      ...puzzles.map((puzzle) =>
+        h(ViewListItem, {
+          selectable: input.selectable,
+          query: input.query,
+          key: puzzle.id,
+          ctx: input.ctx,
+          selected: input.selected?.some((id) => id === puzzle.id) ?? false,
+          puzzle: puzzle,
+          onClick: () => input.onItemClick(puzzle),
+        }),
+      ),
 
-        {isEmpty && (
-          <EmptyState
-            renderIcon={(input) => <IconPuzzlePiece {...input} />}
-            label={input.ctx.t('game.numberlink.no-puzzles')}
-          />
-        )}
+      isEmpty &&
+        h(EmptyState, {
+          renderIcon: (input) => h(IconPuzzlePiece, input),
+          label: input.ctx.t('game.numberlink.no-puzzles'),
+        }),
 
-        {isLoading && <SpinnerBlock />}
+      isLoading && h(SpinnerBlock),
 
-        <Gutter variant='screen' />
-      </div>
-    </div>
-  )
+      h(Gutter, { variant: 'screen' }),
+    ]),
+  ])
 }
 
 const toTopLevelCheckboxState = (input: { totalCount: number; selectedCount: number }): CheckboxState => {
@@ -151,38 +148,37 @@ const ViewListItem = (input: {
   onClick?: () => void
   selected: boolean
 }) => {
-  return (
-    <ClickableTransparent
-      key={input.puzzle.id}
-      className='box-border flex w-full items-center text-left'
-      onClick={input.onClick}
-    >
-      {input.selectable && (
-        <div className='px-4'>
-          <Checkbox state={input.selected ? 'checked' : 'unchecked'} />
-        </div>
-      )}
+  return h(
+    ClickableTransparent,
+    {
+      key: input.puzzle.id,
+      className: 'box-border flex w-full items-center text-left',
+      onClick: input.onClick,
+    },
+    [
+      input.selectable &&
+        h('div', { className: 'px-4' }, [h(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
 
-      <div className='flex aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden'>
-        <NumberlinkVariantBoard.View disabled model={input.puzzle.model} />
-      </div>
+      h('div', { className: 'flex aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden' }, [
+        h(NumberlinkVariantBoard.View, { disabled: true, model: input.puzzle.model }),
+      ]),
 
-      <div className='flex flex-col gap-1 truncate overflow-hidden px-4'>
-        <Typography
-          variant='body'
-          color='text-primary'
-          text={TranslatedText.of(input.puzzle.name)}
-          className='truncate'
-        />
+      h('div', { className: 'flex flex-col gap-1 truncate overflow-hidden px-4' }, [
+        h(Typography, {
+          variant: 'body',
+          color: 'text-primary',
+          text: TranslatedText.of(input.puzzle.name),
+          className: 'truncate',
+        }),
 
-        <Typography
-          variant='subtitle'
-          color='text-secondary'
-          text={toListItemSecondaryText(input)}
-          className='truncate text-xs'
-        />
-      </div>
-    </ClickableTransparent>
+        h(Typography, {
+          variant: 'subtitle',
+          color: 'text-secondary',
+          text: toListItemSecondaryText(input),
+          className: 'truncate text-xs',
+        }),
+      ]),
+    ],
   )
 }
 
