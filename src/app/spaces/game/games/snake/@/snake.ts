@@ -1,9 +1,10 @@
-import { TimeSpan } from '~/@/time/time-span'
 import { pipe } from '~/@/function/pipe'
+import { List } from '~/@/list/list'
 import { NonNegInt } from '~/@/math/non-neg-int'
+import { TimeSpan } from '~/@/time/time-span'
+import { h } from '~/@/vdom/h'
 import { Direction } from './direction'
 import { Position } from './position'
-import { List } from '~/@/list/list'
 
 //
 //
@@ -159,7 +160,7 @@ export const step = (model: Model): Model => {
   }
 }
 
-const shuffle = <T,>(xs: T[]): T[] => {
+const shuffle = <T>(xs: T[]): T[] => {
   const ys = [...xs]
 
   ys.sort(() => (Math.random() > 0.5 ? 1 : -1))
@@ -167,7 +168,7 @@ const shuffle = <T,>(xs: T[]): T[] => {
   return ys
 }
 
-const unique = <T,>(as: T[]): T[] => {
+const unique = <T>(as: T[]): T[] => {
   return Array.from(new Set(as))
 }
 
@@ -258,34 +259,46 @@ export const CoverArt = () => {
 
   const food: Model['food'] = { x: 2, y: 2 }
 
-  return (
-    <svg width='100%' viewBox={toViewBox(bounds)}>
-      {Position.range(bounds).map(({ x, y }, index) => (
-        <rect
-          key={`${x} ${y} ${index}`}
-          x={x}
-          y={y}
-          width={1}
-          height={1}
-          fill={
-            theme[
-              toTileVariant({
-                x,
-                y,
-              })
-            ]
-          }
-          stroke='none'
-        />
-      ))}
+  return h('svg', { width: '100%', viewBox: toViewBox(bounds) }, [
+    ...Position.range(bounds).map(({ x, y }, index) =>
+      h('rect', {
+        key: `${x} ${y} ${index}`,
+        x,
+        y,
+        width: 1,
+        height: 1,
+        fill: theme[
+          toTileVariant({
+            x,
+            y,
+          })
+        ],
+        stroke: 'none',
+      }),
+    ),
 
-      {List.map(tail, ({ x, y }, index) => (
-        <rect key={`${x} ${y} ${index}`} x={x} y={y} width={1} height={1} fill={theme.snake} stroke='none' />
-      ))}
+    ...List.map(tail, ({ x, y }, index) =>
+      h('rect', {
+        key: `${x} ${y} ${index}`,
+        x,
+        y,
+        width: 1,
+        height: 1,
+        fill: theme.snake,
+        stroke: 'none',
+      }),
+    ),
 
-      {[food].map(({ x, y }, index) => (
-        <rect key={`${x} ${y} ${index}`} x={x} y={y} width={1} height={1} fill={theme.apple} stroke='none' />
-      ))}
-    </svg>
-  )
+    ...[food].map(({ x, y }, index) =>
+      h('rect', {
+        key: `${x} ${y} ${index}`,
+        x,
+        y,
+        width: 1,
+        height: 1,
+        fill: theme.apple,
+        stroke: 'none',
+      }),
+    ),
+  ])
 }

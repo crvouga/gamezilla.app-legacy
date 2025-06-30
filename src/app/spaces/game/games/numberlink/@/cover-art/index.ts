@@ -1,5 +1,6 @@
 import { pipe } from '~/@/function/pipe'
-import { VariantGridShorthand, VariantGridBoard } from '../variant/grid'
+import { h } from '~/@/vdom/h'
+import { VariantGridBoard, VariantGridShorthand } from '../variant/grid'
 
 const init = (x: VariantGridShorthand.Model) => pipe(VariantGridShorthand.init(x), VariantGridShorthand.toGrid)
 
@@ -34,10 +35,14 @@ const GRIDS = [
 
 const GRID = GRIDS[3]
 
-const VIEW_GRID = (
-  <VariantGridBoard.View model={GRID} disabled borderless disableHighlight className='aspect-square bg-black' />
-)
+const VIEW_GRID = h(VariantGridBoard.View, {
+  model: GRID,
+  disabled: true,
+  borderless: true,
+  disableHighlight: true,
+  className: 'aspect-square bg-black',
+})
 
 export const CoverArt = (input: { className?: string }) => {
-  return <div {...input}>{VIEW_GRID}</div>
+  return h('div', input, [VIEW_GRID])
 }

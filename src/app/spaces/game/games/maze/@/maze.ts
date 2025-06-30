@@ -1,6 +1,7 @@
-import { Random } from '~/@/random/random'
 import { eq } from '~/@/equals/equals'
 import { memoize } from '~/@/function/memoize'
+import { Random } from '~/@/random/random'
+import { h } from '~/@/vdom/h'
 import { Direction, Position } from './position'
 
 //
@@ -153,7 +154,7 @@ const hasEdge = (edge: [Position, Position], maze: Maze): boolean => {
   return maze.edges.some((arbitrary) => eqEdge(arbitrary, edge))
 }
 
-const eqEdge = <T,>(x: [T, T], y: [T, T]): boolean => {
+const eqEdge = <T>(x: [T, T], y: [T, T]): boolean => {
   return (eq(x[0], y[0]) && eq(x[1], y[1])) || (eq(x[1], y[0]) && eq(x[0], y[1]))
 }
 
@@ -184,14 +185,31 @@ const viewBox = [
 ].join(' ')
 
 export const CoverArt = () => {
-  return (
-    <svg viewBox={viewBox} width='100%' className='border'>
-      <rect x={coverArtMaze.lower.x} y={coverArtMaze.lower.y} width='100%' height='100%' fill={'#000'} />
-      {coverArtMaze.edges.map(([a, b]) => (
-        <g key={[a.x, a.y, b.x, b.y].join('-')} strokeWidth='0.1' stroke={'#fff'}>
-          <line x1={a.x + 1 / 2} y1={a.y + 1 / 2} x2={b.x + 1 / 2} y2={b.y + 1 / 2} />
-        </g>
-      ))}
-    </svg>
-  )
+  return h('svg', { viewBox, width: '100%', className: 'border' }, [
+    h('rect', {
+      x: coverArtMaze.lower.x,
+      y: coverArtMaze.lower.y,
+      width: '100%',
+      height: '100%',
+      fill: '#000',
+    }),
+    ...coverArtMaze.edges.map(([a, b]) =>
+      h(
+        'g',
+        {
+          key: [a.x, a.y, b.x, b.y].join('-'),
+          strokeWidth: '0.1',
+          stroke: '#fff',
+        },
+        [
+          h('line', {
+            x1: a.x + 1 / 2,
+            y1: a.y + 1 / 2,
+            x2: b.x + 1 / 2,
+            y2: b.y + 1 / 2,
+          }),
+        ],
+      ),
+    ),
+  ])
 }

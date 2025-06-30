@@ -1,6 +1,7 @@
 import { Loading, Result, isOk } from '~/@/result'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconFloppyDisk } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
@@ -233,30 +234,28 @@ const updateDbSavedPuzzle: FrontendModule['update'] = (input) => {
 //
 
 const ViewUnsavedChangesSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDown: DropDownConfig }) => {
-  return (
-    <SurfaceUnsavedChanges
-      dropDown={input.dropDown}
-      ctx={input.ctx}
-      title={input.ctx.t('app.save-changes?')}
-      body={input.ctx.t('unsaved-changes.unsaved-changes-warning')}
-      open={input.model.puzzleBuilderOpened === 'unsaved-changes'}
-      onClose={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit' })}
-      saveText={input.ctx.t('app.save')}
-      onSave={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit' })}
-      saveLoading={input.model.puzzleSaveChangesRequest?.t === 'loading'}
-      discardText={input.ctx.t("app.don't-save")}
-      onDiscard={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-discard-and-exit' })}
-      cancelText={input.ctx.t('app.cancel')}
-      onCancel={() => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit' })}
-    />
-  )
+  return h(SurfaceUnsavedChanges, {
+    dropDown: input.dropDown,
+    ctx: input.ctx,
+    title: input.ctx.t('app.save-changes?'),
+    body: input.ctx.t('unsaved-changes.unsaved-changes-warning'),
+    open: input.model.puzzleBuilderOpened === 'unsaved-changes',
+    onClose: () => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit' }),
+    saveText: input.ctx.t('app.save'),
+    onSave: () => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-save-and-exit' }),
+    saveLoading: input.model.puzzleSaveChangesRequest?.t === 'loading',
+    discardText: input.ctx.t("app.don't-save"),
+    onDiscard: () => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-discard-and-exit' }),
+    cancelText: input.ctx.t('app.cancel'),
+    onCancel: () => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-cancel-exit' }),
+  })
 }
 
 const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
   return [
     {
       id: input.ctx.t('app.save'),
-      icon: (input) => <IconFloppyDisk {...input} />,
+      icon: (input) => h(IconFloppyDisk, input),
       label: input.ctx.t('app.save'),
       onClick: () => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-save-button' }),
       loading: input.model.puzzleSaveChangesRequest?.t === 'loading',

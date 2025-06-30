@@ -1,6 +1,7 @@
 import { Sub } from '~/@/sub'
 import { Button } from '~/@/ui/button'
 import { IconArrowLeft } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -29,26 +30,21 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  return (
-    <>
-      <ViewScreen {...input} />
-      <EditPackNameFrontend.ViewSurface {...input} />
-    </>
-  )
+  return h('div', {}, [h(ViewScreen, input), h(EditPackNameFrontend.ViewSurface, input)])
 }
 
 const ViewScreen: FrontendModule['View'] = (input) => {
   switch (input.modelSpace.screen.t) {
     case 'screen-add-puzzle': {
-      return <ScreenAddPuzzle.View {...input} />
+      return h(ScreenAddPuzzle.View, input)
     }
 
     case 'screen-puzzle-grid': {
-      return <ScreenPuzzleGrid.View {...input} />
+      return h(ScreenPuzzleGrid.View, input)
     }
 
     case 'screen-puzzle': {
-      return <ScreenPuzzlePlay.View {...input} />
+      return h(ScreenPuzzlePlay.View, input)
     }
   }
 }
@@ -86,22 +82,19 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
   },
 
   View(input) {
-    return (
-      <Button
-        renderIconStart={(inputIcons) => <IconArrowLeft {...inputIcons} />}
-        className='w-full'
-        text={input.ctx.t('app.exit')}
-        onClick={() =>
-          input.dispatch({
-            t: 'got-msg-space',
-            c: {
-              t: 'screen-pack-builder.user-clicked-back-button',
-              userId: input.ctx.currentUser.userId,
-            },
-          })
-        }
-      />
-    )
+    return h(Button, {
+      renderIconStart: (inputIcons) => h(IconArrowLeft, inputIcons),
+      className: 'w-full',
+      text: input.ctx.t('app.exit'),
+      onClick: () =>
+        input.dispatch({
+          t: 'got-msg-space',
+          c: {
+            t: 'screen-pack-builder.user-clicked-back-button',
+            userId: input.ctx.currentUser.userId,
+          },
+        }),
+    })
   },
 }
 

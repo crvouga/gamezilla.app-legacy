@@ -5,6 +5,7 @@ import { IconPen } from '~/@/ui/icon'
 import { SurfaceBody } from '~/@/ui/surface/surface-body'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { TextField } from '~/@/ui/text-field'
+import { h } from '~/@/vdom/h'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -219,12 +220,11 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
   return [
     {
       id: input.ctx.t('app.edit-name'),
-      icon: (input) => <IconPen {...input} />,
+      icon: (input) => h(IconPen, input),
       label: input.ctx.t('app.edit-name'),
       onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
-      renderSurface: ({ dropDown, screenActionLocation }) => (
-        <ViewSurface {...input} ctx={input.ctx} dropDown={dropDown} screenActionLocation={screenActionLocation} />
-      ),
+      renderSurface: ({ dropDown, screenActionLocation }) =>
+        h(ViewSurface, { ...input, ctx: input.ctx, dropDown, screenActionLocation }),
     },
   ]
 }
@@ -235,52 +235,48 @@ const ViewSurface = (
     screenActionLocation: ScreenActionLocation
   },
 ) => {
-  return (
-    <SurfaceLayout
-      id='edit-name-drawer'
-      ctx={input.ctx}
-      ariaLabel={input.ctx.t('app.edit-name')}
-      open={input.model.puzzleBuilderOpened === 'edit-name'}
-      onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
-      header={{
-        render: () => (
-          <SurfaceHeader
-            ctx={input.ctx}
-            title={input.ctx.t('app.edit-name')}
-            onClose={() => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' })}
-          />
-        ),
-      }}
-      form={{
-        onSubmit: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-save-button' }),
-        onCancel: () =>
-          input.dispatch({
-            t: 'puzzle.edit-name.user-clicked-cancel-button',
-            screenActionLocation: input.screenActionLocation,
+  return h(SurfaceLayout, {
+    id: 'edit-name-drawer',
+    ctx: input.ctx,
+    ariaLabel: input.ctx.t('app.edit-name'),
+    open: input.model.puzzleBuilderOpened === 'edit-name',
+    onClose: () => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' }),
+    header: {
+      render: () =>
+        h(SurfaceHeader, {
+          ctx: input.ctx,
+          title: input.ctx.t('app.edit-name'),
+          onClose: () => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' }),
+        }),
+    },
+    form: {
+      onSubmit: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-save-button' }),
+      onCancel: () =>
+        input.dispatch({
+          t: 'puzzle.edit-name.user-clicked-cancel-button',
+          screenActionLocation: input.screenActionLocation,
+        }),
+      cancelDisabled: false,
+      cancelText: input.ctx.t('app.cancel'),
+      submitText: input.ctx.t('app.save'),
+      submitLoading: isLoading(input.model.puzzleEditNameRequest),
+      submitDisabled: input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name,
+    },
+    dropDown: input.dropDown,
+    body: {
+      render: () =>
+        h(SurfaceBody, null, [
+          h(TextField, {
+            id: 'game-numberlink-edit-puzzle-name-input',
+            label: input.ctx.t('game.numberlink.edit-puzzle-name.name'),
+            value: input.model.puzzleEditNameDraft,
+            onChange: (draftName) => input.dispatch({ t: 'puzzle.edit-name.user-inputted-draft-name', draftName }),
+            error: Boolean(input.model.puzzleEditNameValidationError),
+            helperText: editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError),
           }),
-        cancelDisabled: false,
-        cancelText: input.ctx.t('app.cancel'),
-        submitText: input.ctx.t('app.save'),
-        submitLoading: isLoading(input.model.puzzleEditNameRequest),
-        submitDisabled: input.model.puzzleEditNameDraft === input.modelSpace.screenPuzzleBuilder?.puzzle.name,
-      }}
-      dropDown={input.dropDown}
-      body={{
-        render: () => (
-          <SurfaceBody>
-            <TextField
-              id='game-numberlink-edit-puzzle-name-input'
-              label={input.ctx.t('game.numberlink.edit-puzzle-name.name')}
-              value={input.model.puzzleEditNameDraft}
-              onChange={(draftName) => input.dispatch({ t: 'puzzle.edit-name.user-inputted-draft-name', draftName })}
-              error={Boolean(input.model.puzzleEditNameValidationError)}
-              helperText={editNameValidationErrorToString(input.ctx.t, input.model.puzzleEditNameValidationError)}
-            />
-          </SurfaceBody>
-        ),
-      }}
-    />
-  )
+        ]),
+    },
+  })
 }
 
 export const EditPuzzleNameFrontend = {

@@ -1,5 +1,6 @@
 import { Sub } from '~/@/sub'
 import { IconPen, IconPlay } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
@@ -148,19 +149,19 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
 //
 
 const View: BuilderTypes.FrontendModule['View'] = (input) => {
-  if (!input.modelSpace.screenPuzzleBuilder) return <ViewSpectating {...input} />
+  if (!input.modelSpace.screenPuzzleBuilder) return h(ViewSpectating, input)
 
   const isSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
 
-  if (isSpectating) return <ViewSpectating {...input} />
+  if (isSpectating) return h(ViewSpectating, input)
 
   const parentScreen = toParentScreenProps(input)
 
-  if (!parentScreen) return <ViewSpectating {...input} />
+  if (!parentScreen) return h(ViewSpectating, input)
 
   const screenCtx: FlowFrontendCtx = { ...input.ctx, parentScreen }
 
-  return <ViewMode {...input} ctx={screenCtx} />
+  return h(ViewMode, { ...input, ctx: screenCtx })
 }
 
 const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View']>[0]): ParentScreenProps | null => {
@@ -173,9 +174,7 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
     navBar: {
       back: {
         onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
-        renderSurface: ({ dropDown }) => (
-          <SaveChangesFrontend.ViewUnsavedChangesSurface {...input} dropDown={dropDown} />
-        ),
+        renderSurface: ({ dropDown }) => h(SaveChangesFrontend.ViewUnsavedChangesSurface, { ...input, dropDown }),
       },
       title: input.ctx.t('numberlink-puzzle-name', puzzleBuilder.puzzle.name),
     },
@@ -214,7 +213,7 @@ const viewToggleModeAction = (
       return [
         {
           id: input.ctx.t('game.numberlink.play-mode'),
-          icon: (input) => <IconPlay {...input} />,
+          icon: (input) => h(IconPlay, input),
           label: input.ctx.t('game.numberlink.play-mode'),
           classNames: { button: 'text-blue-500' },
           onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
@@ -225,7 +224,7 @@ const viewToggleModeAction = (
       return [
         {
           id: input.ctx.t('game.numberlink.edit-mode'),
-          icon: (input) => <IconPen {...input} />,
+          icon: (input) => h(IconPen, input),
           label: input.ctx.t('game.numberlink.edit-mode'),
           classNames: { button: 'text-amber-500' },
           onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
@@ -240,9 +239,9 @@ const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
   if (!puzzleBuilder) return null
   switch (puzzleBuilder.mode.t) {
     case 'edit':
-      return <ViewModeEdit {...input} />
+      return h(ViewModeEdit, input)
     case 'play':
-      return <ViewModePlay {...input} />
+      return h(ViewModePlay, input)
   }
 }
 
@@ -250,55 +249,51 @@ const ViewModeEdit: BuilderTypes.FrontendModule['View'] = (input) => {
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
   if (!puzzleBuilder) return null
 
-  return (
-    <ModeEditFrontend.View
-      {...input}
-      model={puzzleBuilder.modeEdit}
-      dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c })}
-      screenLayout={{ parentScreen: input.ctx.parentScreen }}
-    />
-  )
+  return h(ModeEditFrontend.View, {
+    ...input,
+    model: puzzleBuilder.modeEdit,
+    dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c }),
+    screenLayout: { parentScreen: input.ctx.parentScreen },
+  })
 }
+
 const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
   if (!puzzleBuilder) return null
 
   const numberlink = ScreenPuzzleBuilderSpace.toNumberlink(puzzleBuilder)
 
-  return (
-    <ScreenLayout
-      parentScreen={input.ctx.parentScreen}
-      dataTestId='numberlink/puzzle-builder-play-mode-screen'
-      id='puzzle-builder-screen-mode-play'
-      ctx={input.ctx}
-      renderBody={() => (
-        <BoardLayout>
-          <div className='flex w-full items-center justify-center gap-1 p-2'>
-            {input.ctx.t('game.numberlink.playing')}
-          </div>
-          <ModePlayFrontend.View
-            model={puzzleBuilder.modePlay}
-            numberlink={numberlink}
-            dispatch={(c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c })}
-            showSolvedAnimation
-          />
-        </BoardLayout>
-      )}
-      actionBar={{
-        variant: {
-          t: 'uniform',
-          actions: ModePlayFrontend.viewActions({
-            ctx: ModePlay.initCtx({ ...input.ctx, numberlink: numberlink }),
-            dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
-            model: puzzleBuilder.modePlay,
-            dispatchCmd: (c) => {
-              input.dispatch({ t: 'got-msg-out', c })
-            },
-          }),
-        },
-      }}
-    />
-  )
+  return h(ScreenLayout, {
+    parentScreen: input.ctx.parentScreen,
+    dataTestId: 'numberlink/puzzle-builder-play-mode-screen',
+    id: 'puzzle-builder-screen-mode-play',
+    ctx: input.ctx,
+    renderBody: () =>
+      h(BoardLayout, null, [
+        h('div', { className: 'flex w-full items-center justify-center gap-1 p-2' }, [
+          input.ctx.t('game.numberlink.playing'),
+        ]),
+        h(ModePlayFrontend.View, {
+          model: puzzleBuilder.modePlay,
+          numberlink: numberlink,
+          dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
+          showSolvedAnimation: true,
+        }),
+      ]),
+    actionBar: {
+      variant: {
+        t: 'uniform',
+        actions: ModePlayFrontend.viewActions({
+          ctx: ModePlay.initCtx({ ...input.ctx, numberlink: numberlink }),
+          dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
+          model: puzzleBuilder.modePlay,
+          dispatchCmd: (c) => {
+            input.dispatch({ t: 'got-msg-out', c })
+          },
+        }),
+      },
+    },
+  })
 }
 
 const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
@@ -306,29 +301,26 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
   if (!puzzleBuilder) return null
   const numberlink = ScreenPuzzleBuilderSpace.toNumberlink(puzzleBuilder)
 
-  return (
-    <ScreenLayout
-      parentScreen={input.ctx.parentScreen}
-      id='puzzle-builder-screen-mode-play'
-      dataTestId='numberlink/puzzle-builder-screen'
-      ctx={input.ctx}
-      navBar={{
-        title: input.ctx.t('numberlink-puzzle-name', puzzleBuilder.puzzle.name),
-      }}
-      renderBody={() => (
-        <LayoutGame ctx={input.ctx} isSpectating>
-          <div className='flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll'>
-            <ProfileListItem
-              ctx={input.ctx}
-              profile={input.ctx.profilesByUserId[input.ctx.space.hostId]}
-              subtitle={input.ctx.t('app.editor')}
-            />
-            <NumberlinkVariantBoard.View disabled model={numberlink} />
-          </div>
-        </LayoutGame>
-      )}
-    />
-  )
+  return h(ScreenLayout, {
+    parentScreen: input.ctx.parentScreen,
+    id: 'puzzle-builder-screen-mode-play',
+    dataTestId: 'numberlink/puzzle-builder-screen',
+    ctx: input.ctx,
+    navBar: {
+      title: input.ctx.t('numberlink-puzzle-name', puzzleBuilder.puzzle.name),
+    },
+    renderBody: () =>
+      h(LayoutGame, { ctx: input.ctx, isSpectating: true }, [
+        h('div', { className: 'flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll' }, [
+          h(ProfileListItem, {
+            ctx: input.ctx,
+            profile: input.ctx.profilesByUserId[input.ctx.space.hostId],
+            subtitle: input.ctx.t('app.editor'),
+          }),
+          h(NumberlinkVariantBoard.View, { disabled: true, model: numberlink }),
+        ]),
+      ]),
+  })
 }
 
 export const capitalize = (s: string) => {

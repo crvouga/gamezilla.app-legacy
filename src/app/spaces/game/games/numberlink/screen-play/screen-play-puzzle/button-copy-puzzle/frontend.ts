@@ -1,6 +1,7 @@
 import { Json } from '~/@/json/json'
 import { isErr } from '~/@/result'
 import { IconCopy } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd.$msg'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -81,7 +82,7 @@ export const viewButtonAction = ({
 
   return {
     id: ctx.t('app.copy'),
-    icon: (input) => <IconCopy {...input} />,
+    icon: (input) => h(IconCopy, input),
     label: ctx.t('app.copy'),
     onClick: () =>
       dispatch({

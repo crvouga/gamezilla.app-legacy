@@ -1,6 +1,7 @@
 import { Ok, RemoteResult, isLoading } from '~/@/result'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconDeleteForever } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
@@ -100,37 +101,35 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 }
 
 const ViewSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDown: DropDownConfig }) => {
-  return (
-    <SurfaceConfirmation
-      ctx={input.ctx}
-      ariaLabel={input.ctx.t('game.numberlink.delete-puzzle-forever?')}
-      id='delete-forever-drawer'
-      open={input.model.puzzleBuilderOpened === 'delete-forever' || isLoading(input.model.puzzleDeleteForeverRequest)}
-      onClose={() => input.dispatch({ t: 'delete-forever.user-closed-drawer' })}
-      variant='danger'
-      dropDown={input.dropDown}
-      position='bottom'
-      title={input.ctx.t('game.numberlink.delete-puzzle-forever?')}
-      body={input.ctx.t('app.this-action-cannot-be-undone')}
-      confirmLoading={isLoading(input.model.puzzleDeleteForeverRequest)}
-      confirmText={input.ctx.t('app.delete')}
-      cancelText={input.ctx.t('app.cancel')}
-      onConfirm={() => input.dispatch({ t: 'delete-forever.user-clicked-confirm-button' })}
-      cancelDisabled={isLoading(input.model.puzzleDeleteForeverRequest)}
-      onCancel={() => input.dispatch({ t: 'delete-forever.user-clicked-cancel-button' })}
-    />
-  )
+  return h(SurfaceConfirmation, {
+    ctx: input.ctx,
+    ariaLabel: input.ctx.t('game.numberlink.delete-puzzle-forever?'),
+    id: 'delete-forever-drawer',
+    open: input.model.puzzleBuilderOpened === 'delete-forever' || isLoading(input.model.puzzleDeleteForeverRequest),
+    onClose: () => input.dispatch({ t: 'delete-forever.user-closed-drawer' }),
+    variant: 'danger',
+    dropDown: input.dropDown,
+    position: 'bottom',
+    title: input.ctx.t('game.numberlink.delete-puzzle-forever?'),
+    body: input.ctx.t('app.this-action-cannot-be-undone'),
+    confirmLoading: isLoading(input.model.puzzleDeleteForeverRequest),
+    confirmText: input.ctx.t('app.delete'),
+    cancelText: input.ctx.t('app.cancel'),
+    onConfirm: () => input.dispatch({ t: 'delete-forever.user-clicked-confirm-button' }),
+    cancelDisabled: isLoading(input.model.puzzleDeleteForeverRequest),
+    onCancel: () => input.dispatch({ t: 'delete-forever.user-clicked-cancel-button' }),
+  })
 }
 
 const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction[] => {
   return [
     {
       id: input.ctx.t('app.delete'),
-      icon: (input) => <IconDeleteForever {...input} />,
+      icon: (input) => h(IconDeleteForever, input),
       label: input.ctx.t('app.delete'),
       color: 'danger',
       onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
-      renderSurface: ({ dropDown }) => <ViewSurface {...input} dropDown={dropDown} />,
+      renderSurface: ({ dropDown }) => h(ViewSurface, { ...input, dropDown }),
     },
   ]
 }
