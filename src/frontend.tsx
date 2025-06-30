@@ -20,7 +20,7 @@ const main = async () => {
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
     render: (input) => render(<AppFrontend.View {...input} ctx={ctx} />),
     // debugger: DebuggerReduxDevTools,
-    // debugger: DebuggerConsole,∏
+    // debugger: DebuggerConsole,
   })
 
   // @ts-expect-error

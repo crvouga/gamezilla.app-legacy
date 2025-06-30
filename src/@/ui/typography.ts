@@ -1,6 +1,7 @@
 import type { TranslatedText } from '~/@/l18n'
 import { AriaRole } from '~/@/vdom/aria-role'
 import { cn } from './cn'
+import { h } from '~/@/vdom/h'
 
 export type TypographyVariant = 'title' | 'body' | 'label' | 'subtitle' | 'caption'
 
@@ -61,15 +62,15 @@ const SKELETON_CLASS = 'animate-pulse text-transparent select-none pointer-event
 export const Typography = (input: Input) => {
   const sizeClassName = input.sizeClassName ?? sizeClassNames[input.variant ?? 'body']
   const colorClassName = input.color && !input.skeleton ? colorClassNames[input.color] : null
-  return (
-    <div
-      className={cn(sizeClassName, colorClassName, input.skeleton ? SKELETON_CLASS : null, input.className)}
-      role={input.role}
-      aria-busy={input.skeleton}
-      aria-level={toAriaLevel(input)}
-      aria-label={input.text}
-    >
-      {input.text}
-    </div>
+  return h(
+    'div',
+    {
+      className: cn(sizeClassName, colorClassName, input.skeleton ? SKELETON_CLASS : null, input.className),
+      role: input.role,
+      'aria-busy': input.skeleton,
+      'aria-level': toAriaLevel(input),
+      'aria-label': input.text,
+    },
+    input.text,
   )
 }
