@@ -1,4 +1,4 @@
-import { VDom } from './vdom'
+import { VDom } from '../vdom'
 
 export type Tag = 'div' | (string & {})
 
