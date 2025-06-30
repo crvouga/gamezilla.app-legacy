@@ -79,10 +79,9 @@ describe('PubSubTopicBased', () => {
       const myEvent = randomMyEvent()
       const topic = Math.random().toString()
       let called = 0
-      const sub = () => {
+      const unsub = await f.pubSub.sub(topic, () => {
         called++
-      }
-      const unsub = await f.pubSub.sub(topic, sub)
+      })
       expect(called).toEqual(0)
       await f.pubSub.pub(topic, encode(myEvent))
       expect(called).toEqual(1)
