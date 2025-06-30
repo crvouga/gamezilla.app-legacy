@@ -5,7 +5,7 @@ import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { Topic } from './index'
-import { TopicMsgCodecJson, TopicMsgCodecMsgPack } from './socket/topic-msg-codec'
+import { TopicMsgCodecJson } from './socket/topic-msg-codec'
 
 const Msg = s.obj({
   name: s.str(),
@@ -37,8 +37,7 @@ const Fixture = async () => {
   const endpoint = '/topic'
   const serverUrl = `http://localhost:${port}`
 
-  const USE_MSG_PACK = false
-  const codec = USE_MSG_PACK ? TopicMsgCodecMsgPack : TopicMsgCodecJson
+  const codec = TopicMsgCodecJson
 
   const server = Topic.initServer({
     t: 'web-sockets',

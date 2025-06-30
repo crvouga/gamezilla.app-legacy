@@ -1,5 +1,3 @@
-import { decode, encode } from '@msgpack/msgpack'
-
 export type TopicMsgCodec = {
   encode: (msg: unknown) => unknown
   decodeMessageClient: (event: MessageEvent<any>) => Promise<unknown> | unknown
@@ -40,23 +38,6 @@ export const TopicMsgCodecJson: TopicMsgCodec = {
   },
   decodeMessageServer: (event) => {
     return JSON.parse(event.toString())
-  },
-}
-
-// https://www.npmjs.com/package/@msgpack/msgpack#decoding-a-blob
-export const TopicMsgCodecMsgPack: TopicMsgCodec = {
-  encode: (msg) => encode(msg),
-  decodeMessageServer: (msg) => {
-    if (typeof msg === 'string') {
-      throw new Error('CodecError: decodeFromBunJsWebSocketMessageEvent: string not supported')
-    }
-    return decode(msg)
-  },
-  decodeMessageClient: async (event) => {
-    if (event.data instanceof Blob) {
-      return decode(await event.data.arrayBuffer())
-    }
-    return decode(event.data)
   },
 }
 

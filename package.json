@@ -74,7 +74,6 @@
   },
   "dependencies": {
     "@journeyapps/wa-sqlite": "^1.2.5",
-    "@msgpack/msgpack": "^3.1.2",
     "@powersync/web": "^1.22.0",
     "argon2": "^0.43.0",
     "bcrypt": "^6.0.0",
