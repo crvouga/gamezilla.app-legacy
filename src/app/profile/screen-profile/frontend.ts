@@ -5,6 +5,7 @@ import { Button } from '~/@/ui/button'
 import { Gutter } from '~/@/ui/gutter'
 import { IconUserPen } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
+import { h } from '~/@/vdom/h'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -50,14 +51,12 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  return (
-    <ScreenLayout
-      ctx={input.ctx}
-      parentScreen={input.ctx.parentScreen}
-      id='profile-screen'
-      renderBody={() => <ViewBody {...input} />}
-    />
-  )
+  return h(ScreenLayout, {
+    ctx: input.ctx,
+    parentScreen: input.ctx.parentScreen,
+    id: 'profile-screen',
+    renderBody: () => h(ViewBody, input),
+  })
 }
 
 const ViewBody: typeof View = (input) => {
@@ -69,31 +68,28 @@ const ViewBody: typeof View = (input) => {
 
   const isCurrentUserProfile = input.ctx.currentUserId === userId
 
-  return (
-    <div className='flex w-full flex-col items-center gap-4 p-6'>
-      <Avatar className='size-28' src={UserProfile.toAvatarUrl(profile)} alt='profile avatar' />
-      <Typography
-        variant='title'
-        text={profile ? input.ctx.t('username', profile.username) : TranslatedText.ellipsis}
-      />
+  return h('div', { className: 'flex w-full flex-col items-center gap-4 p-6' }, [
+    h(Avatar, { className: 'size-28', src: UserProfile.toAvatarUrl(profile), alt: 'profile avatar' }),
+    h(Typography, {
+      variant: 'title',
+      text: profile ? input.ctx.t('username', profile.username) : TranslatedText.ellipsis,
+    }),
 
-      {isCurrentUserProfile && (
-        <div className='flex w-full items-center justify-center gap-6 pt-4'>
-          <Button
-            onClick={() =>
-              input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) })
-            }
-            className='max-w-64 flex-1'
-            renderIconStart={(iconInput) => <IconUserPen {...iconInput} />}
-            text={input.ctx.t('profile.edit-profile')}
-            size='sm'
-          />
-        </div>
-      )}
+    isCurrentUserProfile
+      ? h('div', { className: 'flex w-full items-center justify-center gap-6 pt-4' }, [
+          h(Button, {
+            onClick: () =>
+              input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) }),
+            className: 'max-w-64 flex-1',
+            renderIconStart: (iconInput) => h(IconUserPen, iconInput),
+            text: input.ctx.t('profile.edit-profile'),
+            size: 'sm',
+          }),
+        ])
+      : null,
 
-      <Gutter variant='screen' />
-    </div>
-  )
+    h(Gutter, { variant: 'screen' }),
+  ])
 }
 
 export const ScreenProfileFrontend = {

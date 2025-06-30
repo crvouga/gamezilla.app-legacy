@@ -3,8 +3,10 @@ import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'
 import { IconUserGroup } from '~/@/ui/icon'
 import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
+import { h } from '~/@/vdom/h'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
+import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
@@ -14,7 +16,6 @@ import { OpenUserDetailsCmd } from '../../@/frontend/open-user-details-cmd'
 import { SectionPeopleList } from '../../@/ui/section-people-list'
 import { SectionPersonDetails } from '../../@/ui/section-person-details'
 import { SpaceFrontendModule } from '../space-frontend'
-import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd.$msg'
 
 export type FrontendMsg =
   | { t: 'people-action.closed-surface' }
@@ -119,56 +120,50 @@ const ViewSurfaces = (
   const modalProfile = input.model.openedPreviewUserId
     ? input.ctx.profilesByUserId[input.model.openedPreviewUserId]
     : null
-  return (
-    <SurfaceLayout
-      ctx={input.ctx}
-      drawer={{
-        position: DRAWER_POSITION,
-      }}
-      dropDown={{
-        position: DROPDOWN_POSITION,
-        alignment: DROPDOWN_ALIGNMENT,
-        reference: (
-          <SurfaceLayout
-            drawer={{
-              position: DRAWER_POSITION,
-            }}
-            dropDown={{
-              ...input.dropDown,
-              position: DROPDOWN_POSITION,
-              alignment: DROPDOWN_ALIGNMENT,
-            }}
-            id='users'
-            ctx={input.ctx}
-            ariaLabel={input.ctx.t('app.people')}
-            open={input.model.opened === 'people.people-surface'}
-            onClose={() => input.dispatch({ t: 'people-action.closed-surface' })}
-            body={{
-              render: () => (
-                <SectionPeopleList
-                  ctx={spaceCtx}
-                  onClickItem={(userId) => input.dispatch({ t: 'people-action.clicked-person-list-item', userId })}
-                />
-              ),
-            }}
-          />
-        ),
-      }}
-      ariaLabel={input.ctx.t('spaces.see-profile')}
-      id='user-preview'
-      open={input.model.opened === 'people.person-preview-surface'}
-      onClose={() => input.dispatch({ t: 'people-action.closed-surface' })}
-      body={{
-        render: () => (
-          <SectionPersonDetails
-            ctx={spaceCtx}
-            profile={modalProfile ?? null}
-            onOpenDetails={() => input.dispatch({ t: 'people-action.clicked-preview-user-link' })}
-          />
-        ),
-      }}
-    />
-  )
+  return h(SurfaceLayout, {
+    ctx: input.ctx,
+    drawer: {
+      position: DRAWER_POSITION,
+    },
+    dropDown: {
+      position: DROPDOWN_POSITION,
+      alignment: DROPDOWN_ALIGNMENT,
+      reference: h(SurfaceLayout, {
+        drawer: {
+          position: DRAWER_POSITION,
+        },
+        dropDown: {
+          ...input.dropDown,
+          position: DROPDOWN_POSITION,
+          alignment: DROPDOWN_ALIGNMENT,
+        },
+        id: 'users',
+        ctx: input.ctx,
+        ariaLabel: input.ctx.t('app.people'),
+        open: input.model.opened === 'people.people-surface',
+        onClose: () => input.dispatch({ t: 'people-action.closed-surface' }),
+        body: {
+          render: () =>
+            h(SectionPeopleList, {
+              ctx: spaceCtx,
+              onClickItem: (userId) => input.dispatch({ t: 'people-action.clicked-person-list-item', userId }),
+            }),
+        },
+      }),
+    },
+    ariaLabel: input.ctx.t('spaces.see-profile'),
+    id: 'user-preview',
+    open: input.model.opened === 'people.person-preview-surface',
+    onClose: () => input.dispatch({ t: 'people-action.closed-surface' }),
+    body: {
+      render: () =>
+        h(SectionPersonDetails, {
+          ctx: spaceCtx,
+          profile: modalProfile ?? null,
+          onOpenDetails: () => input.dispatch({ t: 'people-action.clicked-preview-user-link' }),
+        }),
+    },
+  })
 }
 
 const view = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
@@ -179,11 +174,11 @@ const view = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction |
 
   return {
     id: input.ctx.t('app.people'),
-    icon: (inputIcon) => <IconUserGroup {...inputIcon} />,
+    icon: (inputIcon) => h(IconUserGroup, inputIcon),
     label: input.ctx.t('spaces.people-count', peopleCount),
     onClick: () => input.dispatch({ t: 'people-action.clicked-people-action' }),
     badge: peopleCount > 1 ? peopleCount : undefined,
-    renderSurface: ({ dropDown }) => <ViewSurfaces {...input} dropDown={dropDown} />,
+    renderSurface: ({ dropDown }) => h(ViewSurfaces, { ...input, dropDown }),
   }
 }
 

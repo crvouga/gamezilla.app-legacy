@@ -1,4 +1,5 @@
 import { IconDoorOpen } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -20,7 +21,7 @@ const update: SpaceFrontendModule['update'] = ({ msg, model }) => {
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction => {
   return {
     id: input.ctx.t('app.exit'),
-    icon: (inputIcon) => <IconDoorOpen {...inputIcon} />,
+    icon: (inputIcon) => h(IconDoorOpen, inputIcon),
     label: input.ctx.t('app.exit'),
     onClick: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
   }

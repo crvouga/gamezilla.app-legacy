@@ -1,6 +1,7 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { IconGamepad, IconScrewdriverWrench } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -295,32 +296,28 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   switch (input.modelSpace.mode) {
     case 'none': {
-      return <ViewMainMenu {...input} />
+      return h(ViewMainMenu, input)
     }
 
     case 'build': {
       const ctx = toFrontendCtx(input)
 
-      return (
-        <ScreenBuildFrontend.View
-          ctx={ctx}
-          dispatch={(c) => input.dispatch({ t: 'got-screen-build-msg', c })}
-          modelSpace={input.modelSpace.screenBuild}
-          model={input.model.screenBuild}
-        />
-      )
+      return h(ScreenBuildFrontend.View, {
+        ctx,
+        dispatch: (c) => input.dispatch({ t: 'got-screen-build-msg', c }),
+        modelSpace: input.modelSpace.screenBuild,
+        model: input.model.screenBuild,
+      })
     }
 
     case 'play': {
       const ctx = toFrontendCtx(input)
-      return (
-        <ScreenPlayFrontend.View
-          ctx={ctx}
-          dispatch={(c) => input.dispatch({ t: 'got-screen-play-msg', c })}
-          modelSpace={input.modelSpace.screenPlay}
-          model={input.model.screenPlay}
-        />
-      )
+      return h(ScreenPlayFrontend.View, {
+        ctx,
+        dispatch: (c) => input.dispatch({ t: 'got-screen-play-msg', c }),
+        modelSpace: input.modelSpace.screenPlay,
+        model: input.model.screenPlay,
+      })
     }
   }
 }
@@ -328,39 +325,37 @@ const View: FrontendModule['View'] = (input) => {
 const ViewMainMenu: FrontendModule['View'] = (input) => {
   const ctx = toFrontendCtx(input)
 
-  return (
-    <GameMainMenu.View
-      renderCoverArt={(input) => <CoverArt {...input} />}
-      ctx={ctx}
-      title={ctx.t('numberlink')}
-      dispatch={input.dispatch}
-      onBack={() => input.dispatch({ t: 'game-main-menu.clicked-exit-game-button' })}
-      buttons={[
-        {
-          renderIcon: (input) => <IconGamepad {...input} />,
-          title: ctx.t('game.numberlink.play'),
-          description: ctx.t('game.numberlink.play-description'),
-          onClick: () => {
-            input.dispatch({
-              t: 'got-msg-space',
-              c: { t: 'user-changed-mode', mode: 'play', userId: input.ctx.currentUser.userId },
-            })
-          },
+  return h(GameMainMenu.View, {
+    renderCoverArt: (input) => h(CoverArt, input),
+    ctx,
+    title: ctx.t('numberlink'),
+    dispatch: input.dispatch,
+    onBack: () => input.dispatch({ t: 'game-main-menu.clicked-exit-game-button' }),
+    buttons: [
+      {
+        renderIcon: (input) => h(IconGamepad, input),
+        title: ctx.t('game.numberlink.play'),
+        description: ctx.t('game.numberlink.play-description'),
+        onClick: () => {
+          input.dispatch({
+            t: 'got-msg-space',
+            c: { t: 'user-changed-mode', mode: 'play', userId: input.ctx.currentUser.userId },
+          })
         },
-        {
-          renderIcon: (input) => <IconScrewdriverWrench {...input} />,
-          title: ctx.t('game.numberlink.build'),
-          description: ctx.t('game.numberlink.build-description'),
-          onClick: () => {
-            input.dispatch({
-              t: 'got-msg-space',
-              c: { t: 'user-changed-mode', mode: 'build', userId: input.ctx.currentUser.userId },
-            })
-          },
+      },
+      {
+        renderIcon: (input) => h(IconScrewdriverWrench, input),
+        title: ctx.t('game.numberlink.build'),
+        description: ctx.t('game.numberlink.build-description'),
+        onClick: () => {
+          input.dispatch({
+            t: 'got-msg-space',
+            c: { t: 'user-changed-mode', mode: 'build', userId: input.ctx.currentUser.userId },
+          })
         },
-      ]}
-    />
-  )
+      },
+    ],
+  })
 }
 
 const ViewFeedItem: FrontendModule['ViewFeedItem'] = (_input) => {
