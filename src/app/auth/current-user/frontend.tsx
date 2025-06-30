@@ -111,7 +111,6 @@ const watchForLogin = (
     return {
       model: input.modelAfter,
       msgOut: [
-        // ReplaceScreenCmd.init({ n: 'spaces', t: 'space-list' }, false),
         PushScreenCmd.init({ n: 'spaces', t: 'space-list' }, false),
         PlaySoundCmd.init(APP_SOUND.celebration),
         ShowToastCmd.init(input.ctx.t('auth.logged-in')),
