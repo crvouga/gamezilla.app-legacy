@@ -4,9 +4,13 @@ import { VitePWA } from 'vite-plugin-pwa'
 import wasm from 'vite-plugin-wasm'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
+import { DotEnv } from './src/@/dotenv/dotenv'
+import { FileSystem } from './src/@/file-system'
 
 const KILOBYTE = 1024
 const MEGABYTE = KILOBYTE * KILOBYTE
+
+DotEnv.load({ fs: FileSystem({ t: 'node' }), path: '.env' })
 
 export default defineConfig({
   plugins: [

@@ -49,6 +49,7 @@
     "preview": "npm run frontend:build && npm run frontend:serve",
     "tc": "npx tsc --noEmit --watch",
     "test": "npm run test:vitest",
+    "test:int": "npm run test:vitest:int",
     "test:playwright": "IS_PLAYWRIGHT_TEST=true npx playwright test",
     "test:playwright:chromium": "IS_PLAYWRIGHT_TEST=true npx playwright test --project=chromium",
     "test:playwright:codegen": "IS_PLAYWRIGHT_TEST=true npx playwright codegen",
