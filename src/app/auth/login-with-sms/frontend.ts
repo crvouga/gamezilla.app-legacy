@@ -1,3 +1,4 @@
+import { h } from '~/@/vdom/h'
 import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { PhoneNumber } from '~/@/phone-number'
 import { NotAsked, RemoteResult, isErr } from '~/@/result'
@@ -200,10 +201,10 @@ const View: FrontendModule['View'] = (input) => {
     case 'auth': {
       switch (input.ctx.currentScreen.t) {
         case 'send-code': {
-          return <ViewSendCode {...input} />
+          return h(ViewSendCode, input)
         }
         case 'verify-code': {
-          return <ViewVerifyCode {...input} />
+          return h(ViewVerifyCode, input)
         }
         default: {
           return null
@@ -217,46 +218,42 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewSendCode: FrontendModule['View'] = (input) => {
-  return (
-    <AuthScreenFormLayout
-      dataTestId='auth/send-code-screen'
-      ctx={input.ctx}
-      title={input.ctx.t('auth-sms.send-code')}
-      onBack={() => {
-        input.dispatch({ t: 'clicked-back-button' })
-      }}
-      submitText={input.ctx.t('auth-sms.send-code')}
-      submitLoading={input.model.sent.t === 'loading'}
-      submitDisabled={false}
-      onSubmit={() => input.dispatch({ t: 'user-clicked-send-code-button' })}
-      renderInputs={() => (
-        <>
-          <Select
-            id='countryCode'
-            label={input.ctx.t('auth-sms.country')}
-            onChange={(countryCode) => input.dispatch({ t: 'inputted-country-code', countryCode })}
-            value={input.model.countryCode}
-            options={Iso3166Alpha2Code.all}
-            toKey={(countryCode) => countryCode}
-            toName={(countryCode) => Iso3166Alpha2Code.toNameWithEmoji(countryCode)}
-          />
+  return h(AuthScreenFormLayout, {
+    dataTestId: 'auth/send-code-screen',
+    ctx: input.ctx,
+    title: input.ctx.t('auth-sms.send-code'),
+    onBack: () => {
+      input.dispatch({ t: 'clicked-back-button' })
+    },
+    submitText: input.ctx.t('auth-sms.send-code'),
+    submitLoading: input.model.sent.t === 'loading',
+    submitDisabled: false,
+    onSubmit: () => input.dispatch({ t: 'user-clicked-send-code-button' }),
+    renderInputs: () => [
+      h(Select<Iso3166Alpha2Code>, {
+        id: 'countryCode',
+        label: input.ctx.t('auth-sms.country'),
+        onChange: (countryCode) => input.dispatch({ t: 'inputted-country-code', countryCode }),
+        value: input.model.countryCode,
+        options: Iso3166Alpha2Code.all,
+        toKey: (countryCode) => countryCode,
+        toName: (countryCode) => Iso3166Alpha2Code.toNameWithEmoji(countryCode),
+      }),
 
-          <TextField
-            id='phoneNumberInput'
-            dataTestId='phone-number-input'
-            label={input.ctx.t('auth-sms.phone-number')}
-            type='tel'
-            startIcon={<IconMobilePhone className='h-5 w-5' />}
-            error={typeof input.model.phoneError === 'string'}
-            value={input.model.phone}
-            helperText={input.model.phoneError}
-            onChange={(value) => input.dispatch({ t: 'inputted-phone-number', phone: value })}
-            onClear={() => input.dispatch({ t: 'clicked-phone-number-clear' })}
-          />
-        </>
-      )}
-    />
-  )
+      h(TextField, {
+        id: 'phoneNumberInput',
+        dataTestId: 'phone-number-input',
+        label: input.ctx.t('auth-sms.phone-number'),
+        type: 'tel',
+        startIcon: h(IconMobilePhone, { className: 'h-5 w-5' }),
+        error: typeof input.model.phoneError === 'string',
+        value: input.model.phone,
+        helperText: input.model.phoneError,
+        onChange: (value: string) => input.dispatch({ t: 'inputted-phone-number', phone: value }),
+        onClear: () => input.dispatch({ t: 'clicked-phone-number-clear' }),
+      }),
+    ],
+  })
 }
 
 const ViewVerifyCode: FrontendModule['View'] = (input) => {
@@ -264,48 +261,43 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
 
   const phoneNumber = input.ctx.currentScreen.phoneNumber
 
-  return (
-    <AuthScreenFormLayout
-      dataTestId='auth/verify-code-screen'
-      ctx={input.ctx}
-      title={input.ctx.t('auth-sms.verify-code')}
-      onBack={() => {
-        input.dispatch({ t: 'clicked-back-button' })
-      }}
-      submitText={input.ctx.t('auth-sms.verify-code')}
-      submitLoading={input.model.verified.t === 'loading'}
-      submitDisabled={false}
-      onSubmit={() =>
-        input.dispatch({
-          t: 'user-clicked-verify-code-button',
-          phone: phoneNumber,
-          code: input.model.code,
-        })
-      }
-      renderInputs={() => (
-        <>
-          <Typography
-            role='status'
-            className='text-lg'
-            variant='body'
-            text={input.ctx.t('auth-sms.enter-code-sent-to', PhoneNumber.format(phoneNumber))}
-          />
+  return h(AuthScreenFormLayout, {
+    dataTestId: 'auth/verify-code-screen',
+    ctx: input.ctx,
+    title: input.ctx.t('auth-sms.verify-code'),
+    onBack: () => {
+      input.dispatch({ t: 'clicked-back-button' })
+    },
+    submitText: input.ctx.t('auth-sms.verify-code'),
+    submitLoading: input.model.verified.t === 'loading',
+    submitDisabled: false,
+    onSubmit: () =>
+      input.dispatch({
+        t: 'user-clicked-verify-code-button',
+        phone: phoneNumber,
+        code: input.model.code,
+      }),
+    renderInputs: () => [
+      h(Typography, {
+        role: 'status',
+        className: 'text-lg',
+        variant: 'body',
+        text: input.ctx.t('auth-sms.enter-code-sent-to', PhoneNumber.format(phoneNumber)),
+      }),
 
-          <TextField
-            id={CODE_INPUT_VIEW_ID}
-            label={input.ctx.t('auth-sms.code')}
-            error={typeof input.model.codeError === 'string'}
-            helperText={typeof input.model.codeError === 'string' ? input.model.codeError : null}
-            autoFocus
-            type='tel'
-            value={input.model.code}
-            onChange={(value) => input.dispatch({ t: 'inputted-code', code: value })}
-            onClear={() => input.dispatch({ t: 'clicked-code-clear' })}
-          />
-        </>
-      )}
-    />
-  )
+      h(TextField, {
+        id: CODE_INPUT_VIEW_ID,
+        label: input.ctx.t('auth-sms.code'),
+        error: typeof input.model.codeError === 'string',
+        helperText: typeof input.model.codeError === 'string' ? input.model.codeError : null,
+        autoFocus: true,
+        type: 'tel',
+        value: input.model.code,
+        onChange: (value) => input.dispatch({ t: 'inputted-code', code: value }),
+        onClear: () => input.dispatch({ t: 'clicked-code-clear' }),
+      }),
+    ],
+  })
 }
 
 export const LoginWithSMSFrontend = {
