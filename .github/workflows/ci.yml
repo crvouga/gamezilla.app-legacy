@@ -76,16 +76,11 @@ jobs:
       - name: Start infrastructure
         run: npm run infra:up:test
 
-      - name: Wait for services to be ready
-        run: |
-          echo "Waiting for services to start..."
-          sleep 15
-
       - name: Run integration tests
         run: npm run test:int
 
-      - name: Install Playwright browsers
-        run: npm run test:playwright:install
+      - name: Setup E2E tests
+        run: npm run test:e2e:setup
 
       - name: Run E2E tests
         run: npm run test:e2e
@@ -98,7 +93,7 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-      - name: Cleanup infrastructure
+      - name: Stop infrastructure
         if: always()
         run: npm run infra:down
 
