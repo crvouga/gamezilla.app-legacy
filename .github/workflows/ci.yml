@@ -89,9 +89,9 @@ jobs:
         run: npm run test:int
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: npm run test:playwright:install
 
-      - name: Run Playwright tests
+      - name: Run E2E tests
         run: npm run test:playwright
 
       - name: Upload Playwright report

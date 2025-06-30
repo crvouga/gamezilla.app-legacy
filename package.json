@@ -51,6 +51,7 @@
     "test": "npm run test:vitest",
     "test:int": "npm run test:vitest:int",
     "test:playwright": "IS_PLAYWRIGHT_TEST=true npx playwright test",
+    "test:playwright:install": "npx playwright install --with-deps",
     "test:playwright:chromium": "IS_PLAYWRIGHT_TEST=true npx playwright test --project=chromium",
     "test:playwright:codegen": "IS_PLAYWRIGHT_TEST=true npx playwright codegen",
     "test:playwright:debug": "IS_PLAYWRIGHT_TEST=true npx playwright test --debug",
