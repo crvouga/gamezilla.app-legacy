@@ -24,7 +24,13 @@ const allowCORS = (origins: string[], request: Request, response: Response): Res
 const middleware =
   (origins: string[]): Middleware =>
   async (request, next) => {
-    const response = await next(request)
+    let response: Response | null | undefined = null
+    try {
+      response = await next(request)
+    } catch (error) {
+      console.error(error)
+      response = new Response(null, { status: 500 })
+    }
     if (response) {
       const allowed = allowCORS(origins, request, response)
       return allowed

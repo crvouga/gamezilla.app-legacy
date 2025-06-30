@@ -1,4 +1,3 @@
-import { injectSpeedInsights } from '@vercel/speed-insights'
 import { Program } from '~/@/program/program'
 import { Render } from '~/@/vdom/render'
 import { AppFrontend } from '~/app/frontend'
@@ -8,8 +7,6 @@ import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {
   console.table({ ...CONFIG_SHARED, ...CONFIG_FRONTEND })
-
-  injectSpeedInsights()
 
   const render = await Render(CONFIG_FRONTEND.VDOM_IMPL, document.getElementById('root')!)
 

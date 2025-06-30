@@ -21,7 +21,7 @@ export type AbortablePromise<T> = (signal: AbortSignal) => Promise<T>
  * ```
  */
 export const race = async <T extends Record<string, AbortablePromise<unknown>>>(
-  signal: AbortSignal,
+  signal: AbortSignal | null,
   promises: T,
 ): Promise<{ [K in keyof T]: Awaited<ReturnType<T[K]>> | null }> => {
   const controllers: Record<string, AbortController> = {}
@@ -31,7 +31,7 @@ export const race = async <T extends Record<string, AbortablePromise<unknown>>>(
 
   // Create a promise that rejects when the input signal is aborted
   const abortPromise = new Promise<never>((_, reject) => {
-    signal.addEventListener('abort', () => {
+    signal?.addEventListener('abort', () => {
       reject(new Error('Race aborted'))
     })
   })

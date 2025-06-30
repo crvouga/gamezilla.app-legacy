@@ -3,6 +3,8 @@ import { PowerSyncDatabase } from '@powersync/web'
 import { ILogger } from '~/@/logger'
 import { Sub } from '~/@/sub'
 import { schema } from './schema'
+import { p } from '~/@/promise'
+import { TimeSpan } from '~/@/time/time-span'
 
 export type PowerSyncDatabaseEvent =
   | {
@@ -73,18 +75,30 @@ export const PowerSyncClient = async (config: Config): Promise<IPowerSyncClient>
 
   const start = async () => {
     try {
-      logger.info('PowerSync: Starting connection...')
+      logger.info('Starting connection...')
+      const waited = await p.race(null, {
+        wait: () => database.waitForReady(),
+        timeout: (s) =>
+          p.countdown(TimeSpan.seconds(5), () => logger.info(`Still waiting for PowerSync database...`), s),
+      })
+      if (waited.timeout) logger.error('PowerSync database took too long to be ready. Continuing anyway...')
+      if (waited.wait) logger.info('PowerSync database ready')
 
-      // Wait for database to be ready before connecting
-      await database.waitForReady()
-      logger.info('PowerSync database ready')
+      logger.info('Connecting to backend...')
+      const connected = await p.race(null, {
+        connect: () => database.connect(config.backendConnector),
+        timeout: (s) =>
+          p.countdown(TimeSpan.seconds(5), () => logger.info(`Still waiting for PowerSync connection...`), s),
+      })
+      if (connected.timeout) logger.error('PowerSync connection took too long. Continuing anyway...')
+      if (connected.connect) logger.info('PowerSync connected to backend')
 
-      await database.connect(config.backendConnector)
-      logger.info('PowerSync connected to backend')
       events.pub({ t: 'connected' })
+
+      return
     } catch (error) {
       logger.error('PowerSync connection failed:', error)
-      throw error
+      return
     }
   }
 

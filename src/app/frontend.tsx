@@ -72,7 +72,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     codec: topicMsgCodec,
   })
 
-  logger.info('Frontend: Initializing PowerSync client...')
+  logger.info('Initializing PowerSync client...')
 
   const powersyncBackendConnector = new BackendConnector({
     logger,
@@ -89,10 +89,9 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     backendConnector: powersyncBackendConnector,
   })
 
-  // Wait for PowerSync database to be ready before proceeding
-  logger.info('Frontend: Waiting for PowerSync database to be ready...')
-  await powerSyncClient.database.waitForReady()
-  logger.info('Frontend: PowerSync database is ready')
+  logger.info('Starting PowerSync client...')
+  await powerSyncClient.start()
+  logger.info('PowerSync client started')
 
   const sqlDb = await SqlDb({
     t: 'powersync-client',
@@ -150,10 +149,6 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     if (isErr(userSession)) return null
     return userSession.value.items[0]?.userId ?? null
   }
-
-  logger.info('Frontend: Starting PowerSync client...')
-  await powerSyncClient.start()
-  logger.info('Frontend: PowerSync client started successfully!')
 
   return ctxModule
 }

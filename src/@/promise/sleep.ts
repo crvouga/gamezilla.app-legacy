@@ -1,6 +1,6 @@
 import { TimeSpan } from '../time/time-span'
 
-export type Sleep = (timeSpan: TimeSpan, signal?: AbortSignal) => Promise<unknown>
+export type Sleep = (timeSpan: TimeSpan, signal?: AbortSignal) => Promise<true>
 
 /**
  * Sleeps for a given time span.
@@ -9,8 +9,8 @@ export type Sleep = (timeSpan: TimeSpan, signal?: AbortSignal) => Promise<unknow
 export const sleep: Sleep = (timeSpan, signal) => {
   const ms = timeSpan ? TimeSpan.toMilliseconds(timeSpan) : 0
 
-  return new Promise((resolve, _reject) => {
-    const timeoutId = setTimeout(resolve, ms)
+  return new Promise<true>((resolve, _reject) => {
+    const timeoutId = setTimeout(() => resolve(true), ms)
 
     const onAbort = () => {
       clearTimeout(timeoutId)

@@ -43,20 +43,14 @@ switch (TEST_RUNNER_IMPL()) {
     }
     const testFn = (name: string, fn: (env: TestRunnerEnv) => MaybePromise<void>) => {
       playwright.test(name, async ({ page }) => {
-        await page.goto('http://localhost:3001')
-        await fn({
-          t: 'playwright',
-          getPage: () => page,
-        })
+        page.goto('/')
+        await fn({ t: 'playwright', getPage: () => page })
       })
     }
     testFn.todo = (name: string, fn: (env: TestRunnerEnv) => MaybePromise<void>) => {
       playwright.test.skip(name, async ({ page }) => {
-        await page.goto('http://localhost:3001')
-        await fn({
-          t: 'playwright',
-          getPage: () => page,
-        })
+        page.goto('/')
+        await fn({ t: 'playwright', getPage: () => page })
       })
     }
     test = testFn

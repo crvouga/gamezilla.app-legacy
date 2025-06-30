@@ -1,6 +1,37 @@
 name: gamezilla_app
 
 services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ../../
+      dockerfile: infra/local/Dockerfile.frontend
+    ports:
+      - '3000:80'
+    depends_on:
+      - backend
+
+  backend:
+    container_name: backend
+    build:
+      context: ../../
+      dockerfile: infra/local/Dockerfile.backend
+    ports:
+      - '5002:5002'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=development
+      - PROD=false
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+      - PORT=5002
+      - PS_POSTGRES_STORAGE_DATABASE_URL=postgresql://powersync_storage_postgres:powersync_storage_postgres@powersync_storage_postgres:5432/powersync_storage_postgres
+      - PS_POSTGRES_REPLICATION_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+      - PS_JWKS_URI=http://backend:5002/auth/jwks
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
   postgres:
     container_name: postgres
     image: postgres:latest
@@ -38,9 +69,9 @@ services:
       - ../../src/service-powersync:/powersync
     environment:
       POWERSYNC_CONFIG_PATH: /powersync/config.yaml
-      PS_POSTGRES_STORAGE_DATABASE_URL: ${PS_POSTGRES_STORAGE_DATABASE_URL}
-      PS_POSTGRES_REPLICATION_DATABASE_URL: ${PS_POSTGRES_REPLICATION_DATABASE_URL}
-      PS_JWKS_URI: ${PS_JWKS_URI}
+      PS_POSTGRES_STORAGE_DATABASE_URL: postgresql://powersync_storage_postgres:powersync_storage_postgres@powersync_storage_postgres:5432/powersync_storage_postgres
+      PS_POSTGRES_REPLICATION_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/postgres
+      PS_JWKS_URI: http://backend:5002/auth/jwks
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
