@@ -31,7 +31,7 @@ async function generateScreenTypeFile(files: string[]) {
 
   for (const [index, file] of enumerate(files)) {
     const importPath = path.relative(dirname, file).replace(/\\/g, '/')
-    imports.push(`import { Evt as Evt${index} } from "../../${importPath.replace('.ts', '')}";`)
+    imports.push(`import { Evt as Evt${index} } from "../${importPath.replace('.ts', '')}";`)
     typeRefs.push(`Evt${index}`)
   }
   const typeRefsFinal = typeRefs.length === 0 ? ['{t: "noop"}'] : typeRefs

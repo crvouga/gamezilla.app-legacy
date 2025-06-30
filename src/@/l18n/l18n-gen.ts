@@ -33,7 +33,7 @@ async function generateTextTypeFile(files: string[]) {
 
   for (const [index, file] of enumerate(files)) {
     const importPath = path.relative(dirname, file).replace(/\\/g, '/')
-    imports.push(`import type { Text as Text${index} } from "../../${importPath.replace('.ts', '')}";`)
+    imports.push(`import type { Text as Text${index} } from "../${importPath.replace('.ts', '')}";`)
     typeRefs.push(`Text${index}`)
   }
 

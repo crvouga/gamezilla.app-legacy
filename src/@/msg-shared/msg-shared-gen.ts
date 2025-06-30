@@ -31,7 +31,7 @@ async function generateScreenTypeFile(files: string[]) {
 
   for (const [index, file] of enumerate(files)) {
     const importPath = path.relative(dirname, file).replace(/\\/g, '/')
-    imports.push(`import { MsgShared as MsgShared${index} } from "../../${importPath.replace('.ts', '')}";`)
+    imports.push(`import { MsgShared as MsgShared${index} } from "../${importPath.replace('.ts', '')}";`)
     typeRefs.push(`MsgShared${index}`)
   }
 

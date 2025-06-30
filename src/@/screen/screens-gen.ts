@@ -33,7 +33,7 @@ async function generateScreenTypeFile(files: string[]) {
   for (const [index, file] of enumerate(files)) {
     const importPath = path.relative(dirname, file).replace(/\\/g, '/')
     imports.push(
-      `import { Screen as Screen${index}, toScreen as toScreen${index} } from "../../${importPath.replace('.ts', '')}";`,
+      `import { Screen as Screen${index}, toScreen as toScreen${index} } from "../${importPath.replace('.ts', '')}";`,
     )
     typeRefs.push(`Screen${index}`)
     schemas.push(`toScreen${index}`)
