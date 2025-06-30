@@ -1,2 +1,1 @@
-export * from './interface'
-export * from './impl'
+export * from './h'
