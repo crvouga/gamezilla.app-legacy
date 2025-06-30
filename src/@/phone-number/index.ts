@@ -2,6 +2,7 @@ import { Iso3166Alpha2Code } from '../country/iso-3166-alpha-2-code'
 import { s } from '~/@/schema'
 import { Result } from '../result'
 import { phone } from './phone'
+import countryPhoneData from './data/country_phone_data'
 
 const schema = s.obj({
   _country: Iso3166Alpha2Code,
@@ -116,6 +117,18 @@ const toString = (phoneNumber: PhoneNumber): string => {
   return phoneNumber._validPhoneNumber
 }
 
+const toStringWithoutCountry = (phoneNumber: PhoneNumber): string => {
+  const countryCode = countryPhoneData.find((x) => x.alpha2 === phoneNumber._country)?.country_code
+
+  if (!countryCode) return phoneNumber._validPhoneNumber
+
+  const countryCodeWithPlus = `+${countryCode}`
+
+  const phoneNumberWithoutCountryCode = phoneNumber._validPhoneNumber.replace(countryCodeWithPlus, '')
+
+  return phoneNumberWithoutCountryCode
+}
+
 const toCountry = (phoneNumber: PhoneNumber): Iso3166Alpha2Code => {
   return phoneNumber._country
 }
@@ -146,9 +159,9 @@ const is = (phoneNumber: unknown): phoneNumber is PhoneNumber => {
 
 const countries = [
   { code: 'US', format: '10000000000' },
-  { code: 'GB', format: '20000000000' },
-  { code: 'DE', format: '30000000000' },
-  { code: 'IN', format: '40000000000' },
+  // { code: 'GB', format: '20000000000' },
+  // { code: 'DE', format: '30000000000' },
+  // { code: 'IN', format: '40000000000' },
 ] as const
 
 const random = (): PhoneNumber => {
@@ -179,4 +192,5 @@ export const PhoneNumber = {
   fromString,
   unsafeParse,
   format,
+  toStringWithoutCountry,
 }

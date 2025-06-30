@@ -1,6 +1,12 @@
 import { expect, TestRunnerEnv } from '~/@/test-runner'
 import { FixtureAuth } from '../../@/test/fixture'
 
+const randomPhoneNumber = (): number => {
+  const basePhoneNumber = 480_209_0000
+  const random4Digits = Math.floor(Math.random() * 10000)
+  return basePhoneNumber + random4Digits
+}
+
 export const Fixture = async (e: TestRunnerEnv) => {
   const f = await FixtureAuth(e)
 
@@ -12,7 +18,10 @@ export const Fixture = async (e: TestRunnerEnv) => {
   const sendCode = async (config?: { phoneNumber?: string }) => {
     await f.frontend.query(`[data-testid='auth/send-code-screen']`)
     const [input] = await f.frontend.query(`input[type='tel']`)
-    await input!.do({ t: 'input', value: config?.phoneNumber ?? '4802098698' })
+    await input!.do({
+      t: 'input',
+      value: config?.phoneNumber ?? String(randomPhoneNumber()),
+    })
     const [button] = await f.frontend.query(`button[type='submit']`)
     await button!.do({ t: 'click' })
   }
