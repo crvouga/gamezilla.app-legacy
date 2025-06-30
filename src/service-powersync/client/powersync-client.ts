@@ -52,53 +52,59 @@ export const PowerSyncClient = async (config: Config): Promise<IPowerSyncClient>
 
   const events = Sub.create<PowerSyncDatabaseEvent>()
 
-  // Initialize the database
-  database
-    .init()
-    .then(() => {
-      logger.info('PowerSync initialized')
-      events.pub({ t: 'initialized' })
+  const init = async () => {
+    logger.info('Initializing PowerSync database...')
+    const init = await p.race(null, {
+      init: () => database.init(),
+      timeout: (s) =>
+        p.countdown(TimeSpan.seconds(5), () => logger.info(`Still waiting for PowerSync initialization...`), s),
     })
-    .catch((error) => {
-      logger.error('PowerSync initialization failed:', error)
-    })
+    if (init.timeout) logger.error('PowerSync initialization took too long')
+    if (init.init) logger.info('PowerSync initialized')
+  }
 
-  database
-    .waitForFirstSync()
-    .then(() => {
-      logger.info('PowerSync first sync completed')
-      events.pub({ t: 'first-sync-completed' })
+  const waitForFirstSync = async () => {
+    logger.info('Waiting for first sync...')
+    const firstSync = await p.race(null, {
+      firstSync: () => database.waitForFirstSync(),
+      timeout: (s) =>
+        p.countdown(TimeSpan.seconds(5), () => logger.info(`Still waiting for PowerSync first sync...`), s),
     })
-    .catch((error) => {
-      logger.error('PowerSync first sync failed:', error)
+    if (firstSync.timeout) logger.error('PowerSync first sync took too long')
+    if (firstSync.firstSync) logger.info('PowerSync first sync completed')
+  }
+
+  const waitForReady = async () => {
+    logger.info('Waiting for PowerSync database to be ready...')
+    const ready = await p.race(null, {
+      ready: () => database.waitForReady(),
+      timeout: (s) => p.countdown(TimeSpan.seconds(5), () => logger.info(`Still waiting for PowerSync database...`), s),
     })
+    if (ready.timeout) logger.error('PowerSync database took too long to be ready. Continuing anyway...')
+    if (ready.ready) logger.info('PowerSync database ready')
+  }
+
+  const connect = async () => {
+    logger.info('Connecting to backend...')
+    const connected = await p.race(null, {
+      connect: () => database.connect(config.backendConnector),
+      timeout: (s) =>
+        p.countdown(TimeSpan.seconds(5), () => logger.info(`Still waiting for PowerSync connection...`), s),
+    })
+    if (connected.timeout) logger.error('PowerSync connection took too long. Continuing anyway...')
+    if (connected.connect) logger.info('PowerSync connected to backend')
+
+    events.pub({ t: 'connected' })
+  }
 
   const start = async () => {
     try {
-      logger.info('Starting connection...')
-      const waited = await p.race(null, {
-        wait: () => database.waitForReady(),
-        timeout: (s) =>
-          p.countdown(TimeSpan.seconds(5), () => logger.info(`Still waiting for PowerSync database...`), s),
-      })
-      if (waited.timeout) logger.error('PowerSync database took too long to be ready. Continuing anyway...')
-      if (waited.wait) logger.info('PowerSync database ready')
-
-      logger.info('Connecting to backend...')
-      const connected = await p.race(null, {
-        connect: () => database.connect(config.backendConnector),
-        timeout: (s) =>
-          p.countdown(TimeSpan.seconds(5), () => logger.info(`Still waiting for PowerSync connection...`), s),
-      })
-      if (connected.timeout) logger.error('PowerSync connection took too long. Continuing anyway...')
-      if (connected.connect) logger.info('PowerSync connected to backend')
-
-      events.pub({ t: 'connected' })
-
-      return
+      await init()
+      await waitForFirstSync()
+      await waitForReady()
+      await connect()
     } catch (error) {
       logger.error('PowerSync connection failed:', error)
-      return
     }
   }
 
