@@ -8,7 +8,7 @@ on:
 
 jobs:
   unit-tests:
-    name: Unit Tests
+    name: Type Checking & Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -24,6 +24,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+
+      - name: Type check
+        run: npx tsc --noEmit
 
       - name: Run unit tests
         run: npm run test
