@@ -3,19 +3,19 @@ name: gamezilla_app
 services:
   frontend:
     container_name: frontend
+    profiles: ['testing']
     build:
       context: ../../
-      dockerfile: infra/local/Dockerfile.frontend
+      dockerfile: infra/local/frontend.Dockerfile
     ports:
       - '3000:80'
-    depends_on:
-      - backend
 
-  backend:
-    container_name: backend
+  backend-primary:
+    container_name: backend-primary
+    profiles: ['testing']
     build:
       context: ../../
-      dockerfile: infra/local/Dockerfile.backend
+      dockerfile: infra/local/backend-primary.Dockerfile
     ports:
       - '5002:5002'
     depends_on:
