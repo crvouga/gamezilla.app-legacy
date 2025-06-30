@@ -1,20 +1,21 @@
+import { TraceId } from '../wire/trace-id'
 import { Middleware, Respond } from './interface'
 
 export const createRespond = (middlewares: Middleware[], responds: Respond[]): Respond => {
-  const respond: Respond = async (request: Request, server: unknown) => {
+  const respond: Respond = async (request: Request, server: unknown, traceId: TraceId) => {
     for (const middleware of middlewares) {
-      const response = await middleware(request, (request) => respondMain(request, server))
+      const response = await middleware(request, (request) => respondMain(request, server, traceId))
       if (response) {
         return response
       }
     }
-    return respondMain(request, server)
+    return respondMain(request, server, traceId)
   }
 
-  const respondMain: Respond = async (request: Request, server: unknown) => {
+  const respondMain: Respond = async (request: Request, server: unknown, traceId: TraceId) => {
     try {
       for (const respond of responds) {
-        const response = await respond(request, server)
+        const response = await respond(request, server, traceId)
 
         if (response) {
           return response

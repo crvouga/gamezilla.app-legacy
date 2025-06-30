@@ -29,7 +29,7 @@ export const FixtureHttp = async (): Promise<Fixture> => {
 
   const serverUrl = `http://localhost:${port}`
 
-  RPC.registerRespond({ httpServer, contract, server })
+  RPC.registerRespond({ httpServer, contract, server, logger })
 
   const httpClient = HttpClient({
     t: 'fetch',

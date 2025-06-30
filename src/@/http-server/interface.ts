@@ -1,9 +1,10 @@
 import { Sub } from '../sub'
 import { UnixMs } from '../time/unix-ms'
+import { TraceId } from '../wire/trace-id'
 
 type MaybePromise<T> = Promise<T> | T
 
-export type Respond = (request: Request, server: unknown) => MaybePromise<Response | null | undefined>
+export type Respond = (request: Request, server: unknown, traceId: TraceId) => MaybePromise<Response | null | undefined>
 
 export type HttpServerEvent = { t: 'started'; ipAddress: string; port: number; startedAt: UnixMs } | { t: 'stopped' }
 

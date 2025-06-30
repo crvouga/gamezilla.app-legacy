@@ -1,6 +1,6 @@
 import { TimeSpan } from '../time/time-span'
 
-export type Sleep = (timeSpan: TimeSpan, signal?: AbortSignal) => Promise<true>
+export type Sleep = (timeSpan: TimeSpan, signal?: AbortSignal) => Promise<unknown>
 
 /**
  * Sleeps for a given time span.

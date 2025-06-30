@@ -15,6 +15,8 @@ import {
   type WebSocketHandler,
 } from './interface'
 import { createRespond } from './respond'
+import { TraceId } from '../wire/trace-id'
+import { TraceIdHttp } from '../wire/trace-id-http'
 
 export type Config = {
   t: 'node'
@@ -146,20 +148,25 @@ export const HttpServer = (config: Config): IHttpServer => {
   return {
     events,
     async start(port) {
+      logger.info('Starting HTTP server on port', port)
       const app = express()
       const respond = createRespond(middlewares, responds)
 
-      // Handle HTTP requests
       app.use(async (req, res, next) => {
+        const traceId = TraceId.generate()
+        res.setHeader(TraceIdHttp.HEADER_NAME, traceId)
+        const requestLogger = logger.child([traceId])
         try {
+          requestLogger.debug('Handling HTTP request', { method: req.method, url: req.url })
           const request = new Request(`http://localhost:${port}${req.url}`, {
             method: req.method,
             headers: req.headers as Record<string, string>,
             body: req.method !== 'GET' && req.method !== 'HEAD' ? JSON.stringify(req.body) : undefined,
           })
 
-          const response = await respond(request, server)
+          const response = await respond(request, server, traceId)
           if (response) {
+            requestLogger.debug('Sending response', { status: response.status })
             res.status(response.status)
             for (const [key, value] of response.headers.entries()) {
               res.set(key, value)
@@ -167,10 +174,11 @@ export const HttpServer = (config: Config): IHttpServer => {
             const body = await response.text()
             res.send(body)
           } else {
+            requestLogger.debug('No response handler found, continuing to next middleware')
             next()
           }
         } catch (error) {
-          logger.error('HTTP request error:', error)
+          requestLogger.error('HTTP request error:', error)
           next(error)
         }
       })
@@ -178,13 +186,14 @@ export const HttpServer = (config: Config): IHttpServer => {
       server = createServer(app)
 
       // Initialize WebSocket servers after HTTP server is created
+      logger.debug('Initializing pending WebSocket handlers', { count: pendingWebSocketHandlers.size })
       for (const [path, handler] of pendingWebSocketHandlers) {
         initializeWebSocketServer(path, handler)
       }
       pendingWebSocketHandlers.clear()
 
       server.listen(port, () => {
-        logger.info(`Listening on port ${port}`)
+        logger.info(`HTTP server listening on port ${port}`)
         events.pub({
           t: 'started',
           ipAddress: '127.0.0.1',
@@ -195,27 +204,28 @@ export const HttpServer = (config: Config): IHttpServer => {
     },
     async stop() {
       logger.info('Stopping HTTP server')
+      server?.close()
+      logger.info('HTTP server stopped')
       events.pub({ t: 'stopped' })
-      return new Promise<void>((resolve) => {
-        server?.close()
-        resolve()
-      })
     },
     registerRespond(respond) {
+      logger.debug('Registering respond handler')
       responds.push(respond)
     },
     registerMiddleware(middleware) {
+      logger.debug('Registering middleware')
       middlewares.push(middleware)
     },
     registerWebSocketHandler<TData = any>(path: string, handler: WebSocketHandler<TData>): IWebSocketServer {
+      logger.debug('Registering WebSocket handler', { path })
       const wsServer = new NodeWebSocketServer()
       webSocketServers.set(path, wsServer)
 
       if (server) {
-        // Server is already running, initialize immediately
+        logger.debug('Server running, initializing WebSocket handler immediately', { path })
         initializeWebSocketServer(path, handler)
       } else {
-        // Server not started yet, defer initialization
+        logger.debug('Server not running, deferring WebSocket handler initialization', { path })
         pendingWebSocketHandlers.set(path, handler)
       }
 
@@ -224,6 +234,7 @@ export const HttpServer = (config: Config): IHttpServer => {
   }
 
   function initializeWebSocketServer<TData = any>(path: string, handler: WebSocketHandler<TData>) {
+    logger.debug('Initializing WebSocket server', { path })
     const wsServer = webSocketServers.get(path)!
 
     // Create WebSocket server for this path
@@ -234,11 +245,13 @@ export const HttpServer = (config: Config): IHttpServer => {
 
     wss.on('connection', async (ws, request) => {
       const connectionId = Math.random().toString(36).substring(2)
+      logger.debug('New WebSocket connection', { connectionId, path })
       let connectionData: TData | undefined
 
       try {
         // Handle connection
         if (handler.onConnection) {
+          logger.debug('Handling WebSocket connection', { connectionId })
           connectionData = await handler.onConnection(
             new NodeWebSocketConnection(ws),
             new Request(`http://localhost${request.url}`, {
@@ -261,6 +274,7 @@ export const HttpServer = (config: Config): IHttpServer => {
         // Handle messages
         ws.on('message', async (message) => {
           try {
+            logger.debug('Received WebSocket message', { connectionId })
             if (handler.onMessage) {
               await handler.onMessage(connection, Buffer.from(message as any))
             }
@@ -277,6 +291,7 @@ export const HttpServer = (config: Config): IHttpServer => {
         // Handle close
         ws.on('close', async (code, reason) => {
           try {
+            logger.debug('WebSocket connection closing', { connectionId, code, reason: reason.toString() })
             if (handler.onClose) {
               await handler.onClose(connection, code, reason.toString())
             }
@@ -295,6 +310,7 @@ export const HttpServer = (config: Config): IHttpServer => {
         // Handle errors
         ws.on('error', async (error) => {
           try {
+            logger.error('WebSocket error:', { connectionId, error })
             if (handler.onError) {
               await handler.onError(connection, error)
             }
@@ -313,11 +329,13 @@ export const HttpServer = (config: Config): IHttpServer => {
         const originalUnsubscribe = connection.unsubscribe.bind(connection)
 
         connection.subscribe = (topic: string) => {
+          logger.debug('WebSocket subscribing to topic', { connectionId, topic })
           originalSubscribe(topic)
           wsServer.subscribeToTopic(connectionId, topic)
         }
 
         connection.unsubscribe = (topic: string) => {
+          logger.debug('WebSocket unsubscribing from topic', { connectionId, topic })
           originalUnsubscribe(topic)
           wsServer.unsubscribeFromTopic(connectionId, topic)
         }

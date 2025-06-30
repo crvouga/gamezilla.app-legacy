@@ -146,6 +146,7 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   RPC.registerRespond({
     httpServer: input.ctx.httpServer,
+    logger: input.ctx.logger,
     contract: AppTypes.rpcContract,
     server: AppBackend.rpc({ ctx: input.ctx }),
   })
