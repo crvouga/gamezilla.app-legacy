@@ -4,10 +4,8 @@ import { type IFileSystem } from '~/@/file-system'
 /**
  * Loads environment variables from a .env file
  */
-const load = async (config: { fs: IFileSystem; path?: string }): Promise<void> => {
-  const projectRoot = process.cwd()
-
-  const envPath = join(projectRoot, config.path ?? '.env')
+const loadOne = async (config: { fs: IFileSystem; path: string }): Promise<void> => {
+  const envPath = join(process.cwd(), config.path)
 
   const exists = await config.fs.exists(envPath)
   if (!exists) {
@@ -56,6 +54,15 @@ const load = async (config: { fs: IFileSystem; path?: string }): Promise<void> =
     }
   } catch (err) {
     console.warn('Error loading .env file:', err)
+  }
+}
+
+/**
+ * Loads environment variables from a .env file
+ */
+const load = async (config: { fs: IFileSystem; paths: string[] }): Promise<void> => {
+  for (const path of config.paths) {
+    await loadOne({ fs: config.fs, path })
   }
 }
 

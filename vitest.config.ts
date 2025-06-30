@@ -10,7 +10,7 @@ import { FileSystem } from './src/@/file-system'
 const KILOBYTE = 1024
 const MEGABYTE = KILOBYTE * KILOBYTE
 
-DotEnv.load({ fs: FileSystem({ t: 'node' }), path: '.env' })
+DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env.local', '.env'] })
 
 export default defineConfig({
   plugins: [

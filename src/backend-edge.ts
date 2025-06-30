@@ -5,7 +5,7 @@ import { FileSystem } from './@/file-system'
 import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {
-  await DotEnv.load({ fs: FileSystem({ t: 'node' }) })
+  await DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env.local', '.env'] })
 
   console.table({ ...CONFIG_SHARED, ...CONFIG_BACKEND })
 

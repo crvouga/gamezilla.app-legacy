@@ -28,8 +28,6 @@
     "db:dump": "npx dbmate dump",
     "db:new": "npx dbmate new",
     "db:up": "npx dbmate up",
-    "dir:reset": "rm -rf .env && [ -f .env.example ] && cp .env.example .env && npm install --legacy-peer-deps || true",
-    "dir:reset:hard": "rm -rf dist node_modules package-lock.json && npm run dir:reset",
     "docker:down": "docker compose --env-file .env -f ./infra/docker/docker-compose.yml down",
     "docker:rebuild": "docker compose --env-file .env -f ./infra/docker/docker-compose.yml build --no-cache",
     "docker:up": "docker compose --env-file .env -f ./infra/docker/docker-compose.yml up -d",
