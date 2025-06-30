@@ -17,6 +17,7 @@ import { ClientId } from '../../../@/wire/client-id'
 import { SessionId } from '../../../@/wire/session-id'
 import { BackendInstanceId } from './backend-instance/backend-instance-id'
 import type { AppBackendCtxBase } from './ctx'
+import { FileSystem } from '~/@/file-system'
 
 export type IFixtureAppBackendUnit = {
   t: 'unit'
@@ -48,10 +49,13 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const keyValueDbHashMap = await KeyValueDb({ t: 'hash-map' })
 
+  const fs = FileSystem({ t: 'node' })
+
   const sqlDbSqlite = await SqlDb({
     t: 'better-sqlite3',
     databasePath: ':memory:',
     logger,
+    fs,
   })
 
   const profileDb = ProfileDb({

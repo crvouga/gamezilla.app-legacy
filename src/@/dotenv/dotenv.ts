@@ -59,33 +59,6 @@ const load = async (config: { fs: IFileSystem; path?: string }): Promise<void> =
   }
 }
 
-const loadImportMetaEnv = () => {
-  if (typeof import.meta === 'undefined' || !import.meta.env) {
-    return
-  }
-
-  for (const key in process.env) {
-    const value = process.env[key]
-    if (import.meta.env.hasOwnProperty(key)) {
-      continue
-    }
-
-    try {
-      ;(import.meta.env as any)[key] = value
-    } catch {
-      try {
-        Object.defineProperty(import.meta.env, key, {
-          value: value,
-          writable: true,
-          enumerable: true,
-          configurable: true,
-        })
-      } catch {}
-    }
-  }
-}
-
 export const DotEnv = {
-  loadImportMetaEnv,
   load,
 }

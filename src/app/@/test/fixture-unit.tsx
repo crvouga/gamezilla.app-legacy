@@ -1,3 +1,4 @@
+import { FileSystem } from '~/@/file-system'
 import { ILogger, Logger } from '~/@/logger'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { Topic } from '~/@/topic'
@@ -11,7 +12,9 @@ export const FixtureAppUnitTestE2E = async (): Promise<IFixtureApp> => {
   logger ??= Logger({ t: 'noop' })
   logger ??= Logger({ t: 'console', namespace: ['fixture'], newLinePerMsg: false })
 
-  const sqlDb = await SqlDb({ t: 'better-sqlite3', databasePath: ':memory:', logger })
+  const fs = FileSystem({ t: 'node' })
+
+  const sqlDb = await SqlDb({ t: 'better-sqlite3', databasePath: ':memory:', logger, fs })
 
   const topic = Topic.initClient({ t: 'local', contract: AppTypes.topicContract, logger })
 

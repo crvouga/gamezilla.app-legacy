@@ -1,6 +1,7 @@
 import { exec } from 'node:child_process'
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 //
 //
@@ -10,7 +11,7 @@ import path from 'node:path'
 //
 //
 
-const DIR_PATH = path.join(__dirname, '..', '..')
+const DIR_PATH = path.join(fileURLToPath(import.meta.url), '..', '..')
 const TARGET_FILE_SUFFIX = '.type.ts'
 
 //

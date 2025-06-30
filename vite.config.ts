@@ -8,6 +8,7 @@ import inferno from 'vite-plugin-inferno'
 import wasm from 'vite-plugin-wasm'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { CONFIG_FRONTEND } from './src/config/frontend'
+import { CONFIG_SHARED } from './src/config/shared'
 
 const vDomPlugin = (): PluginOption => {
   switch (CONFIG_FRONTEND.VDOM_IMPL) {
@@ -26,8 +27,6 @@ const vDomPlugin = (): PluginOption => {
       })
   }
 }
-
-const IS_PROD = process.env.NODE_ENV === 'production'
 
 const KILOBYTE = 1024
 const MEGABYTE = KILOBYTE * KILOBYTE
@@ -82,7 +81,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      inferno: IS_PROD ? 'inferno' : 'inferno/dist/index.dev.mjs',
+      inferno: CONFIG_SHARED.IS_PROD ? 'inferno' : 'inferno/dist/index.dev.mjs',
     },
   },
 })

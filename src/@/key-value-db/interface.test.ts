@@ -1,9 +1,10 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { Ok, Result } from '~/@/result'
 import { Runtime } from '~/@/runtime'
 import { s } from '~/@/schema'
+import { describe, expect, test } from '~/@/test-runner'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
+import { FileSystem } from '../file-system'
 import { Uuid } from '../id/uuid'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
@@ -100,6 +101,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
     t: 'better-sqlite3',
     databasePath: ':memory:',
     logger,
+    fs: FileSystem({ t: 'node' }),
   })
 
   fixtures.push({

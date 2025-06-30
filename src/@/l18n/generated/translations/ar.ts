@@ -2,254 +2,35 @@
 import type { Text } from '../text'
 
 export const translations: Text = {
-  'status-bar.status-bar': 'شريط الحالة',
-  'sound.sound-off': 'الصوت معطل',
-  'sound.sound-on': 'الصوت مفعل',
-  'wire.backend-restarted': 'تم إعادة تشغيل الخادم',
-  'wire.connecting...': 'جاري الاتصال...',
-  'wire.offline': 'غير متصل',
-  'wire.online': 'متصل',
-  'wire.try-reconnect': 'حاول إعادة الاتصال',
-  'auth.continue-as-guest.errored': 'حدث خطأ أثناء المحاولة',
-  'auth-sms.login-with-phone': 'تسجيل الدخول برقم الهاتف',
-  'auth-sms.phone-number': 'رقم الهاتف',
-  'auth-sms.send-code': 'إرسال الرمز',
-  'auth-sms.country': 'بلد',
-  'auth-sms.code': 'الرمز',
-  'auth-sms.verify-code': 'التحقق من الرمز',
-  'auth-sms.invalid-phone-number': 'رقم الهاتف غير صالح',
-  'auth-sms.enter-code-sent-to': (formattedPhoneNumber) =>
-    `\u0623\u062F\u062E\u0644 \u0627\u0644\u0631\u0645\u0632 \u0627\u0644\u0645\u0631\u0633\u0644 \u0625\u0644\u0649 ${formattedPhoneNumber}`,
-  'auth-sms.sent-code-to': (formattedPhoneNumber) =>
-    `\u062A\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0631\u0645\u0632 \u0625\u0644\u0649 ${formattedPhoneNumber}`,
-  'auth-sms.please-enter-code': 'الرجاء إدخال الرمز',
-  'auth.logout': 'تسجيل الخروج',
-  'auth.logged-in-as-guest': 'تم تسجيل الدخول كضيف',
-  'auth.logged-in-with-phone': 'تم تسجيل الدخول بالهاتف',
-  'auth.current-user-logged-out': 'تسجيل الخروج',
-  'auth.current-user-logged-in': 'تسجيل الدخول',
-  'auth.continue-as-guest': 'المتابعة كضيف',
-  'auth.continue-with-phone': 'المتابعة بالهاتف',
-  'auth.or': 'أو',
-  'auth.sign-in-to': 'تسجيل الدخول إلى',
-  'auth.logged-in': 'تم تسجيل الدخول',
-  'auth.logout-of-gamezilla.app': 'تسجيل الخروج من gamezilla.app',
-  'auth.logout-of-gamezilla.app-body': 'هل أنت متأكد أنك تريد تسجيل الخروج؟',
-  'auth.continue-with-email': 'المتابعة بالبريد الإلكتروني',
-  'verify-sms.code-message': (code) =>
-    `\u0631\u0645\u0632 \u0627\u0644\u062A\u062D\u0642\u0642 \u0627\u0644\u062E\u0627\u0635 \u0628\u0643 \u0647\u0648 ${code}`,
-  'verify-sms-problem.code-incorrect': 'الرمز غير صحيح',
-  'verify-sms-problem.verification-expired': 'انتهت صلاحية التحقق',
-  'verify-sms-problem.verification-not-found': 'لم يتم العثور على التحقق',
-  'verify-sms-problem.verification-already-verified': 'تم التحقق بالفعل',
-  'verify-sms-problem.database-error': 'خطأ في قاعدة البيانات',
-  'verify-sms-problem.verification-expired-too-many-failed-attempts':
-    'انتهت صلاحية التحقق بسبب عدد كبير من المحاولات الفاشلة',
-  'verify-sms-problem.send-code-hourly-limit-reached': 'تم الوصول إلى الحد الساعي. يرجى المحاولة مرة أخرى في وقت لاحق.',
-  'verify-sms-problem.send-code-daily-limit-reached': 'تم الوصول إلى الحد اليومي. يرجى المحاولة مرة أخرى في وقت لاحق.',
-  'verify-sms-problem.verification-expired-not-latest-verification': 'انتهت صلاحية التحقق لأنها ليست أحدث عملية تحقق',
-  'verify-sms-problem.send-code-limit-reached': 'تم الوصول إلى الحد. يرجى المحاولة مرة أخرى في وقت لاحق.',
-  'auth.logged-in-as': 'تم تسجيل الدخول ك',
-  'spaces.see-profile': 'مشاهدة الملف الشخصي',
-  'spaces.current-user-left': 'ترك الفضاء',
-  'spaces.other-user-left': (username) => `${username} \u062A\u0631\u0643 \u0627\u0644\u0641\u0636\u0627\u0621`,
-  'spaces.leave': 'غادر',
-  'spaces.start-space': 'بدء المساحة',
-  'spaces.space-started': 'بدأت المساحة',
-  'tic-tac-toe.bot-level': (botLevel) => {
-    switch (botLevel) {
-      case 'Easy':
-        return '\u0633\u0647\u0644'
-      case 'Impossible':
-        return '\u0645\u0633\u062A\u062D\u064A\u0644'
-      case 'Medium':
-        return '\u0645\u062A\u0648\u0633\u0637'
-      default:
-        return '\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641'
-    }
-  },
-  'tic-tac-toe.cross': 'صليب',
-  'tic-tac-toe.naught': 'دائرة',
-  'connect-four.bot-level': (botLevel) => {
-    switch (botLevel) {
-      case 'Easy':
-        return '\u0633\u0647\u0644'
-      case 'Hard':
-        return '\u0635\u0639\u0628'
-      case 'Medium':
-        return '\u0645\u062A\u0648\u0633\u0637'
-      default:
-        return '\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641'
-    }
-  },
-  'connect-four.red': 'أحمر',
-  'connect-four.yellow': 'أصفر',
-  'chess.puzzle-description': 'تدرب مع أكثر من 3 ملايين لغز',
-  'chess.puzzle-title': 'ألغاز',
-  'chess.black': 'أسود',
-  'chess.white': 'أبيض',
-  'chess.bot-level': (botLevel) => {
-    switch (botLevel) {
-      case 0:
-        return '\u0645\u0628\u062A\u062F\u0626'
-      case 1:
-        return '\u0645\u062A\u0648\u0633\u0637'
-      case 2:
-        return '\u0645\u062A\u0642\u062F\u0645'
-      case 3:
-        return '\u062E\u0628\u064A\u0631'
-      case 4:
-        return '\u0645\u0627\u062C\u0633\u062A\u064A\u0631'
-      default:
-        return '\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641'
-    }
-  },
-  'game.numberlink.create-pack': 'إنشاء حزمة',
-  'game.numberlink.pack-created': 'تم إنشاء الحزمة',
-  'game.numberlink.pack-builder': 'منشئ الحزم',
-  'game.numberlink.add-puzzle': 'إضافة لغز',
-  'game.numberlink.puzzle-removed': 'تمت إزالة اللغز',
-  'game.numberlink.puzzle-added': 'تمت إضافة اللغز',
-  'game.numberlink.remove-from-pack': 'إزالة من الحزمة',
-  'game.numberlink.create-new': 'إنشاء جديد',
-  'game.numberlink.create-puzzle': 'إنشاء لغز',
-  'game.numberlink.puzzle-created': 'تم إنشاء اللغز',
-  'game.numberlink.puzzle-deleted': 'تم حذف اللغز',
-  'game.numberlink.delete-puzzle-forever?': 'هل تريد حذف اللغز نهائياً؟',
-  'game.numberlink.edit-mode': 'وضع التحرير',
-  'game.numberlink.play-mode': 'وضع اللعب',
-  'game.numberlink.playing': 'اللعب',
-  'game.numberlink.saved-name': 'تم حفظ الاسم',
-  'game.numberlink.edit-puzzle-name.name-cannot-be-empty': 'لا يمكن أن يكون الاسم فارغًا',
-  'game.numberlink.edit-puzzle-name.name': 'الاسم',
-  'game.numberlink.open-pack-builder-title': 'منشئ الحزم',
-  'game.numberlink.open-puzzle-builder-title': 'منشئ الألغاز',
-  'game.numberlink.open-pack-builder-description': 'ابدأ في بناء حزم جديدة',
-  'game.numberlink.open-puzzle-builder-description': 'ابدأ في بناء ألغاز جديدة',
-  'game.numberlink.puzzle-builder': 'منشئ الألغاز',
-  'game.numberlink.you-have-completed-the-pack': 'لقد أكملت الحزمة!',
-  'game.numberlink.copy-puzzle-to-clipboard': 'نسخ اللغز إلى الحافظة',
-  'game.numberlink.select-a-pack': 'اختر حزمة',
-  'numberlink-puzzle-name': (puzzleName) => `${puzzleName}`,
-  'game.numberlink.no-puzzles': 'لا توجد ألغاز',
-  'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
-    `${selectedCount} \u0645\u0646 ${totalCount} \u062A\u0645 \u062A\u062D\u062F\u064A\u062F\u0647\u0627`,
-  'game.numberlink.find-solutions-confirmation-body':
-    'لم يتم تحميل أي حلول لهذا اللغز على جهازك بعد. سيؤدي النقر فوق "بحث" إلى بدء البحث عن الحلول - يرجى ملاحظة أن التطبيق سيكون مشغولاً حتى اكتمال البحث.',
-  'game.numberlink.solutions-found': 'تم العثور على الحلول',
-  'game.numberlink.find-solutions': 'البحث عن حلول',
-  'game.numberlink.no-hints-loaded': 'لم يتم تحميل أي تلميحات',
-  'game.numberlink.no-hints-loaded-body': 'لا توجد تلميحات محملة على جهازك. هل تريد حساب الحلول الآن لتمكين التلميحات؟',
-  'game.numberlink.no-hints-available-body':
-    'لا توجد تلميحات محملة على جهازك. هل تريد حساب الحلول الآن لتمكين التلميحات؟',
-  'game.numberlink.no-hints-calculated': 'لم يتم حساب أي تلميحات',
-  'game.numberlink.no-solutions-found': 'لم يتم العثور على حلول',
-  'game.numberlink.no-hints-available': 'لا توجد تلميحات متاحة',
-  'game.numberlink.no-packs': 'لا توجد حزم',
-  'game.numberlink.puzzle-count': (count) => `${count} \u0623\u0644\u063A\u0627\u0632`,
-  'numberlink-pack-name': (packName) => `${packName}`,
-  'game.numberlink.editing': 'تحرير',
-  'game.numberlink.placing': ({ position }) =>
-    position === 'first'
-      ? '\u0648\u0636\u0639 \u0627\u0644\u0623\u0648\u0644'
-      : '\u0648\u0636\u0639 \u0627\u0644\u0623\u062E\u064A\u0631',
-  'game-numberlink-play.no-hints-available': 'لا تتوفر تلميحات',
-  'game.numberlink.next-pack': 'الحزمة التالية',
-  'game.numberlink.play': 'لعب',
-  'game.numberlink.play-description': 'ابدأ في لعب الألغاز',
-  'game.numberlink.build': 'بناء',
-  'game.numberlink.build-description': 'إنشاء وتحرير الألغاز والحزم',
-  'game.numberlink.puzzle-completed': 'تم حل اللغز',
-  'game.numberlink.select-next-pack': 'حدد الحزمة التالية',
-  'game.numberlink.next-puzzle': 'اللغز التالي',
-  'game.numberlink.level': (level) => `\u0645\u0633\u062A\u0648\u0649 ${level}`,
-  'game.numberlink.packs': 'حزم',
-  'game.numberlink.puzzles': 'ألغاز',
-  'game.numberlink.puzzle-not-found': 'اللغز غير موجود',
-  'connect-four': 'ربط أربعة',
-  numberlink: 'نمبرلينك',
-  'tic-tac-toe': 'لعبة إكس أو',
-  gomoku: 'جوموكو',
-  chess: 'شطرنج',
-  'prebuilt-actions.exit': 'خروج',
-  'prebuilt-actions.next': 'التالى',
-  'prebuilt-actions.prev': 'سابق',
-  'prebuilt-actions.reset': 'إعادة تعيين',
-  'prebuilt-actions.hint': 'تلميح',
-  'game.play-friend-title': 'العب مع صديق',
-  'game.play-friend-description': 'العب ضد أصدقائك في المكان',
-  'game.play-computer-title': 'العب مع الكمبيوتر',
-  'game.play-computer-description': 'العب ضد الكمبيوتر',
-  'game.you-are-spectating': 'أنت تشاهد',
-  'game.host-is-setting-up-game': 'المضيف يقوم بإعداد اللعبة',
-  'game.player': 'اللاعب',
-  'game.hint': 'ملحوظة',
-  'game.start-game': 'بدء اللعبة',
-  'game.start-playing': 'بدء اللعب',
-  'game.stop-playing': 'توقف عن اللعب',
-  'game.change-bot': 'تغيير البوت',
-  'game.swap-sides': 'تبديل الجانب',
-  'game.rematch': 'إعادة المباراة',
-  'game.draw': 'تعادل',
-  'game.loser': 'الخاسر',
-  'game.play-again': 'العب مرة أخرى',
-  'game.winner': 'الفائز',
-  'game.vs': 'ضد',
-  'spaces.end': 'نهاية',
-  'spaces.end-space': 'انهاء المساحة',
-  'spaces.ended-space-host': 'تم انهاء المساحة من قبل المضيف',
-  'spaces.ended-space-current-user': 'انهاء المساحة',
-  'spaces.ended-space-other-user': (username) =>
-    `${username} \u0627\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,
-  'spaces.space-ended': 'تم انهاء المساحة',
-  'spaces.space': 'الفضاء',
-  'spaces.join-space': 'انضم إلى المساحة',
-  'spaces.current-user-joined-space': 'انضم إلى الفضاء',
-  'spaces.other-user-joined-space': (username) =>
-    username
-      ? `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
-      : '\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621',
-  "spaces.you're-already-in-a-space": 'أنت بالفعل في مساحة',
-  'spaces.spaces': 'الفضاءات',
-  'spaces.no-spaces': 'لا توجد مساحات',
-  'space-card.live': 'حي',
-  'space-card.people-count': (count) => `${count.toLocaleString()} \u0623\u0634\u062E\u0627\u0635`,
-  host: 'المضيف',
-  you: 'أنت',
-  'spaces.space-not-found': 'الفضاء غير موجود',
-  'spaces.exit-space': 'اذهب إلى الصفحة الرئيسية',
-  'spaces.current-user-ended-space': 'انتهى الفضاء',
-  'spaces.other-user-ended-space': (username) =>
-    username
-      ? `${username} \u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
-      : '\u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621',
-  'spaces.games': 'الألعاب',
-  'spaces.current-space': ({ hostUsername }) =>
-    `\u0627\u0644\u0645\u0633\u0627\u062D\u0629 \u0627\u0644\u062D\u0627\u0644\u064A\u0629 \u0644\u0640 ${hostUsername}`,
-  'spaces.home': 'الصفحة الرئيسية',
-  'spaces.people-count': (peopleCount) =>
-    peopleCount === 1
-      ? '\u0627\u0644\u0646\u0627\u0633'
-      : `\u0627\u0644\u0646\u0627\u0633 (${peopleCount.toLocaleString()})`,
-  'spaces.game': 'لعبة',
-  'lang.language': 'اللغة',
-  'lang.choose-language': 'اختر اللغة',
-  'lang.done': 'تم',
-  'lang.loaded-translations': 'تم تحميل الترجمات',
-  'profile.edit-profile': 'تحرير الملف الشخصي',
-  'profile.update-profile': 'تحديث الملف الشخصي',
-  'profile.update-avatar': 'تحديث الصورة الرمزية',
-  'profile.profile': 'الملف الشخصي',
-  'profile-avatar.seed': 'بذرة',
-  'profile.update-username.update-username': 'تحديث اسم المستخدم',
-  'unsaved-changes.unsaved-changes-warning': 'سيتم فقدان تغييراتك إذا لم تقم بحفظها قبل الخروج.',
+  en: 'إنجليزي',
+  es: 'إسباني',
+  ar: 'عربي',
+  de: 'ألماني',
+  fr: 'فرنسي',
+  hi: 'هندي',
+  it: 'إيطالي',
+  ja: 'ياباني',
+  ko: 'كوري',
+  pt: 'برتغالي',
+  ru: 'روسي',
+  zh: 'صيني',
+  'time-span.month-plural': (months) => `${Math.floor(months)} \u0623\u0634\u0647\u0631`,
+  'time-span.month-singular': 'شهر واحد',
+  'time-span.day-plural': (days) => `${Math.floor(days)} \u0623\u064A\u0627\u0645`,
+  'time-span.day-singular': 'يوم واحد',
+  'time-span.hour-plural': (hours) => `${Math.floor(hours)} \u0633\u0627\u0639\u0627\u062A`,
+  'time-span.hour-singular': 'ساعة واحدة',
+  'time-span.minute-plural': (minutes) => `${Math.floor(minutes)} \u062F\u0642\u0627\u0626\u0642`,
+  'time-span.minute-singular': 'دقيقة واحدة',
+  'time-span.moment-ago': 'لحظة',
+  'time-span.week-plural': (weeks) => `${Math.floor(weeks)} \u0623\u0633\u0627\u0628\u064A\u0639`,
+  'time-span.week-singular': 'أسبوع واحد',
+  'time-span.year-plural': (years) => `${Math.floor(years)} \u0633\u0646\u0648\u0627\u062A`,
+  'time-span.year-singular': 'سنة واحدة',
+  'drawer.close': 'إغلاق الدرج',
   'profile.avatar-label': 'الصورة الرمزية',
   'username.username-label': 'اسم المستخدم',
   username: (username) => `@${username}`,
-  'app.load': 'تحميل',
-  'app.find': 'بحث',
-  'app.open-settings': 'فتح الإعدادات',
-  'app.submit': 'إرسال',
   'app.edit-name': 'تعديل الإسم',
   'app.updated-name': 'تم تعديل الاسم',
   'app.created-by-you': 'تم إنشاؤه بواسطتك',
@@ -297,34 +78,251 @@ export const translations: Text = {
   '?': '؟',
   'app.save-changes?': 'حفظ التغييرات؟',
   'app.remove': 'إزالة',
-  'app.apply': 'تطبيق',
-  'app.join': 'انضم',
   'app.add': 'إضافة',
+  'app.apply': 'تطبيق',
   'app.calculate': 'حساب',
-  'drawer.close': 'إغلاق الدرج',
-  'time-span.month-plural': (months) => `${Math.floor(months)} \u0623\u0634\u0647\u0631`,
-  'time-span.month-singular': 'شهر واحد',
-  'time-span.day-plural': (days) => `${Math.floor(days)} \u0623\u064A\u0627\u0645`,
-  'time-span.day-singular': 'يوم واحد',
-  'time-span.hour-plural': (hours) => `${Math.floor(hours)} \u0633\u0627\u0639\u0627\u062A`,
-  'time-span.hour-singular': 'ساعة واحدة',
-  'time-span.minute-plural': (minutes) => `${Math.floor(minutes)} \u062F\u0642\u0627\u0626\u0642`,
-  'time-span.minute-singular': 'دقيقة واحدة',
-  'time-span.moment-ago': 'لحظة',
-  'time-span.week-plural': (weeks) => `${Math.floor(weeks)} \u0623\u0633\u0627\u0628\u064A\u0639`,
-  'time-span.week-singular': 'أسبوع واحد',
-  'time-span.year-plural': (years) => `${Math.floor(years)} \u0633\u0646\u0648\u0627\u062A`,
-  'time-span.year-singular': 'سنة واحدة',
-  en: 'إنجليزي',
-  es: 'إسباني',
-  ar: 'عربي',
-  de: 'ألماني',
-  fr: 'فرنسي',
-  hi: 'هندي',
-  it: 'إيطالي',
-  ja: 'ياباني',
-  ko: 'كوري',
-  pt: 'برتغالي',
-  ru: 'روسي',
-  zh: 'صيني',
+  'app.find': 'بحث',
+  'app.join': 'انضم',
+  'app.load': 'تحميل',
+  'app.open-settings': 'فتح الإعدادات',
+  'app.submit': 'إرسال',
+  'unsaved-changes.unsaved-changes-warning': 'سيتم فقدان تغييراتك إذا لم تقم بحفظها قبل الخروج.',
+  'auth.logout': 'تسجيل الخروج',
+  'auth.logged-in-as-guest': 'تم تسجيل الدخول كضيف',
+  'auth.logged-in-with-phone': 'تم تسجيل الدخول بالهاتف',
+  'auth.current-user-logged-out': 'تسجيل الخروج',
+  'auth.current-user-logged-in': 'تسجيل الدخول',
+  'auth.continue-as-guest': 'المتابعة كضيف',
+  'auth.continue-with-phone': 'المتابعة بالهاتف',
+  'auth.or': 'أو',
+  'auth.sign-in-to': 'تسجيل الدخول إلى',
+  'auth.logged-in': 'تم تسجيل الدخول',
+  'auth.logout-of-gamezilla.app': 'تسجيل الخروج من gamezilla.app',
+  'auth.logout-of-gamezilla.app-body': 'هل أنت متأكد أنك تريد تسجيل الخروج؟',
+  'auth.continue-with-email': 'المتابعة بالبريد الإلكتروني',
+  'verify-sms.code-message': (code) =>
+    `\u0631\u0645\u0632 \u0627\u0644\u062A\u062D\u0642\u0642 \u0627\u0644\u062E\u0627\u0635 \u0628\u0643 \u0647\u0648 ${code}`,
+  'verify-sms-problem.code-incorrect': 'الرمز غير صحيح',
+  'verify-sms-problem.verification-expired': 'انتهت صلاحية التحقق',
+  'verify-sms-problem.verification-not-found': 'لم يتم العثور على التحقق',
+  'verify-sms-problem.verification-already-verified': 'تم التحقق بالفعل',
+  'verify-sms-problem.database-error': 'خطأ في قاعدة البيانات',
+  'verify-sms-problem.verification-expired-too-many-failed-attempts':
+    'انتهت صلاحية التحقق بسبب عدد كبير من المحاولات الفاشلة',
+  'verify-sms-problem.send-code-hourly-limit-reached': 'تم الوصول إلى الحد الساعي. يرجى المحاولة مرة أخرى في وقت لاحق.',
+  'verify-sms-problem.send-code-daily-limit-reached': 'تم الوصول إلى الحد اليومي. يرجى المحاولة مرة أخرى في وقت لاحق.',
+  'verify-sms-problem.verification-expired-not-latest-verification': 'انتهت صلاحية التحقق لأنها ليست أحدث عملية تحقق',
+  'verify-sms-problem.send-code-limit-reached': 'تم الوصول إلى الحد. يرجى المحاولة مرة أخرى في وقت لاحق.',
+  'auth.logged-in-as': 'تم تسجيل الدخول ك',
+  'auth.continue-as-guest.errored': 'حدث خطأ أثناء المحاولة',
+  'auth-sms.login-with-phone': 'تسجيل الدخول برقم الهاتف',
+  'auth-sms.phone-number': 'رقم الهاتف',
+  'auth-sms.send-code': 'إرسال الرمز',
+  'auth-sms.country': 'بلد',
+  'auth-sms.code': 'الرمز',
+  'auth-sms.verify-code': 'التحقق من الرمز',
+  'auth-sms.invalid-phone-number': 'رقم الهاتف غير صالح',
+  'auth-sms.enter-code-sent-to': (formattedPhoneNumber) =>
+    `\u0623\u062F\u062E\u0644 \u0627\u0644\u0631\u0645\u0632 \u0627\u0644\u0645\u0631\u0633\u0644 \u0625\u0644\u0649 ${formattedPhoneNumber}`,
+  'auth-sms.sent-code-to': (formattedPhoneNumber) =>
+    `\u062A\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0631\u0645\u0632 \u0625\u0644\u0649 ${formattedPhoneNumber}`,
+  'auth-sms.please-enter-code': 'الرجاء إدخال الرمز',
+  'sound.sound-off': 'الصوت معطل',
+  'sound.sound-on': 'الصوت مفعل',
+  'status-bar.status-bar': 'شريط الحالة',
+  'lang.language': 'اللغة',
+  'lang.choose-language': 'اختر اللغة',
+  'lang.done': 'تم',
+  'lang.loaded-translations': 'تم تحميل الترجمات',
+  'profile.update-profile': 'تحديث الملف الشخصي',
+  'profile.update-avatar': 'تحديث الصورة الرمزية',
+  'profile.profile': 'الملف الشخصي',
+  'profile-avatar.seed': 'بذرة',
+  'profile.edit-profile': 'تحرير الملف الشخصي',
+  'profile.update-username.update-username': 'تحديث اسم المستخدم',
+  'spaces.current-user-joined-space': 'انضمت إلى المساحة',
+  'spaces.other-user-joined-space': (username) =>
+    `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,
+  'spaces.space-not-found': 'الفضاء غير موجود',
+  'spaces.exit-space': 'اذهب إلى الصفحة الرئيسية',
+  'spaces.current-user-ended-space': 'انتهى الفضاء',
+  'spaces.other-user-ended-space': (username) =>
+    username
+      ? `${username} \u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
+      : '\u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621',
+  'spaces.games': 'الألعاب',
+  'spaces.current-space': ({ hostUsername }) =>
+    `\u0627\u0644\u0645\u0633\u0627\u062D\u0629 \u0627\u0644\u062D\u0627\u0644\u064A\u0629 \u0644\u0640 ${hostUsername}`,
+  'spaces.home': 'الصفحة الرئيسية',
+  'spaces.people-count': (peopleCount) =>
+    peopleCount === 1
+      ? '\u0627\u0644\u0646\u0627\u0633'
+      : `\u0627\u0644\u0646\u0627\u0633 (${peopleCount.toLocaleString()})`,
+  'spaces.game': 'لعبة',
+  host: 'المضيف',
+  you: 'أنت',
+  'spaces.end': 'نهاية',
+  'spaces.end-space': 'انهاء المساحة',
+  'spaces.ended-space-host': 'تم انهاء المساحة من قبل المضيف',
+  'spaces.ended-space-current-user': 'انهاء المساحة',
+  'spaces.ended-space-other-user': (username) =>
+    `${username} \u0627\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,
+  'spaces.space-ended': 'تم انهاء المساحة',
+  'spaces.see-profile': 'مشاهدة الملف الشخصي',
+  'connect-four': 'ربط أربعة',
+  numberlink: 'نمبرلينك',
+  'tic-tac-toe': 'لعبة إكس أو',
+  gomoku: 'جوموكو',
+  chess: 'شطرنج',
+  'game.player': 'اللاعب',
+  'game.hint': 'ملحوظة',
+  'game.start-game': 'بدء اللعبة',
+  'game.start-playing': 'بدء اللعب',
+  'game.stop-playing': 'توقف عن اللعب',
+  'game.change-bot': 'تغيير البوت',
+  'game.swap-sides': 'تبديل الجانب',
+  'game.rematch': 'إعادة المباراة',
+  'game.draw': 'تعادل',
+  'game.loser': 'الخاسر',
+  'game.play-again': 'العب مرة أخرى',
+  'game.winner': 'الفائز',
+  'game.vs': 'ضد',
+  'game.you-are-spectating': 'أنت تشاهد',
+  'game.play-friend-title': 'العب مع صديق',
+  'game.play-friend-description': 'العب ضد أصدقائك في المكان',
+  'game.play-computer-title': 'العب مع الكمبيوتر',
+  'game.play-computer-description': 'العب ضد الكمبيوتر',
+  'prebuilt-actions.exit': 'خروج',
+  'prebuilt-actions.next': 'التالى',
+  'prebuilt-actions.prev': 'سابق',
+  'prebuilt-actions.reset': 'إعادة تعيين',
+  'prebuilt-actions.hint': 'تلميح',
+  'game.host-is-setting-up-game': 'المضيف يقوم بإعداد اللعبة',
+  'chess.bot-level': (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return '\u0645\u0628\u062A\u062F\u0626'
+      case 1:
+        return '\u0645\u062A\u0648\u0633\u0637'
+      case 2:
+        return '\u0645\u062A\u0642\u062F\u0645'
+      case 3:
+        return '\u062E\u0628\u064A\u0631'
+      case 4:
+        return '\u0645\u0627\u062C\u0633\u062A\u064A\u0631'
+      default:
+        return '\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641'
+    }
+  },
+  'chess.puzzle-description': 'تدرب مع أكثر من 3 ملايين لغز',
+  'chess.puzzle-title': 'ألغاز',
+  'chess.black': 'أسود',
+  'chess.white': 'أبيض',
+  'connect-four.bot-level': (botLevel) => {
+    switch (botLevel) {
+      case 'Easy':
+        return '\u0633\u0647\u0644'
+      case 'Hard':
+        return '\u0635\u0639\u0628'
+      case 'Medium':
+        return '\u0645\u062A\u0648\u0633\u0637'
+      default:
+        return '\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641'
+    }
+  },
+  'connect-four.red': 'أحمر',
+  'connect-four.yellow': 'أصفر',
+  'game.numberlink.copy-puzzle-to-clipboard': 'نسخ اللغز إلى الحافظة',
+  'game.numberlink.play': 'لعب',
+  'game.numberlink.play-description': 'ابدأ في لعب الألغاز',
+  'game.numberlink.build': 'بناء',
+  'game.numberlink.build-description': 'إنشاء وتحرير الألغاز والحزم',
+  'game.numberlink.puzzle-completed': 'تم حل اللغز',
+  'game.numberlink.select-next-pack': 'حدد الحزمة التالية',
+  'game.numberlink.next-puzzle': 'اللغز التالي',
+  'game.numberlink.level': (level) => `\u0645\u0633\u062A\u0648\u0649 ${level}`,
+  'game.numberlink.packs': 'حزم',
+  'game.numberlink.puzzles': 'ألغاز',
+  'game.numberlink.puzzle-not-found': 'اللغز غير موجود',
+  'game.numberlink.next-pack': 'الحزمة التالية',
+  'game.numberlink.editing': 'تحرير',
+  'game.numberlink.placing': ({ position }) =>
+    position === 'first'
+      ? '\u0648\u0636\u0639 \u0627\u0644\u0623\u0648\u0644'
+      : '\u0648\u0636\u0639 \u0627\u0644\u0623\u062E\u064A\u0631',
+  'game-numberlink-play.no-hints-available': 'لا تتوفر تلميحات',
+  'game.numberlink.no-packs': 'لا توجد حزم',
+  'game.numberlink.puzzle-count': (count) => `${count} \u0623\u0644\u063A\u0627\u0632`,
+  'numberlink-pack-name': (packName) => `${packName}`,
+  'game.numberlink.no-puzzles': 'لا توجد ألغاز',
+  'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
+    `${selectedCount} \u0645\u0646 ${totalCount} \u062A\u0645 \u062A\u062D\u062F\u064A\u062F\u0647\u0627`,
+  'numberlink-puzzle-name': (puzzleName) => `${puzzleName}`,
+  'game.numberlink.find-solutions-confirmation-body':
+    'لم يتم تحميل أي حلول لهذا اللغز على جهازك بعد. سيؤدي النقر فوق "بحث" إلى بدء البحث عن الحلول - يرجى ملاحظة أن التطبيق سيكون مشغولاً حتى اكتمال البحث.',
+  'game.numberlink.find-solutions': 'البحث عن حلول',
+  'game.numberlink.no-hints-available-body':
+    'لا توجد تلميحات محملة على جهازك. هل تريد حساب الحلول الآن لتمكين التلميحات؟',
+  'game.numberlink.no-hints-available': 'لا توجد تلميحات متاحة',
+  'game.numberlink.no-hints-calculated': 'لم يتم حساب أي تلميحات',
+  'game.numberlink.no-hints-loaded-body': 'لا توجد تلميحات محملة على جهازك. هل تريد حساب الحلول الآن لتمكين التلميحات؟',
+  'game.numberlink.no-hints-loaded': 'لم يتم تحميل أي تلميحات',
+  'game.numberlink.no-solutions-found': 'لم يتم العثور على حلول',
+  'game.numberlink.solutions-found': 'تم العثور على الحلول',
+  'game.numberlink.puzzle-builder': 'منشئ الألغاز',
+  'game.numberlink.add-puzzle': 'إضافة لغز',
+  'game.numberlink.puzzle-removed': 'تمت إزالة اللغز',
+  'game.numberlink.puzzle-added': 'تمت إضافة اللغز',
+  'game.numberlink.remove-from-pack': 'إزالة من الحزمة',
+  'game.numberlink.pack-builder': 'منشئ الحزم',
+  'game.numberlink.create-pack': 'إنشاء حزمة',
+  'game.numberlink.pack-created': 'تم إنشاء الحزمة',
+  'game.numberlink.edit-mode': 'وضع التحرير',
+  'game.numberlink.play-mode': 'وضع اللعب',
+  'game.numberlink.playing': 'اللعب',
+  'game.numberlink.puzzle-deleted': 'تم حذف اللغز',
+  'game.numberlink.delete-puzzle-forever?': 'هل تريد حذف اللغز نهائياً؟',
+  'game.numberlink.saved-name': 'تم حفظ الاسم',
+  'game.numberlink.edit-puzzle-name.name-cannot-be-empty': 'لا يمكن أن يكون الاسم فارغًا',
+  'game.numberlink.edit-puzzle-name.name': 'الاسم',
+  'game.numberlink.create-new': 'إنشاء جديد',
+  'game.numberlink.create-puzzle': 'إنشاء لغز',
+  'game.numberlink.puzzle-created': 'تم إنشاء اللغز',
+  'game.numberlink.open-pack-builder-title': 'منشئ الحزم',
+  'game.numberlink.open-puzzle-builder-title': 'منشئ الألغاز',
+  'game.numberlink.open-pack-builder-description': 'ابدأ في بناء حزم جديدة',
+  'game.numberlink.open-puzzle-builder-description': 'ابدأ في بناء ألغاز جديدة',
+  'game.numberlink.select-a-pack': 'اختر حزمة',
+  'game.numberlink.you-have-completed-the-pack': 'لقد أكملت الحزمة!',
+  'tic-tac-toe.bot-level': (botLevel) => {
+    switch (botLevel) {
+      case 'Easy':
+        return '\u0633\u0647\u0644'
+      case 'Impossible':
+        return '\u0645\u0633\u062A\u062D\u064A\u0644'
+      case 'Medium':
+        return '\u0645\u062A\u0648\u0633\u0637'
+      default:
+        return '\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641'
+    }
+  },
+  'tic-tac-toe.cross': 'صليب',
+  'tic-tac-toe.naught': 'دائرة',
+  'spaces.space': 'الفضاء',
+  'spaces.join-space': 'انضم إلى المساحة',
+  "spaces.you're-already-in-a-space": 'أنت بالفعل في مساحة',
+  'spaces.current-user-left': 'ترك الفضاء',
+  'spaces.other-user-left': (username) => `${username} \u062A\u0631\u0643 \u0627\u0644\u0641\u0636\u0627\u0621`,
+  'spaces.leave': 'غادر',
+  'spaces.spaces': 'الفضاءات',
+  'spaces.no-spaces': 'لا توجد مساحات',
+  'space-card.live': 'حي',
+  'space-card.people-count': (count) => `${count.toLocaleString()} \u0623\u0634\u062E\u0627\u0635`,
+  'spaces.start-space': 'بدء المساحة',
+  'spaces.space-started': 'بدأت المساحة',
+  'wire.backend-restarted': 'تم إعادة تشغيل الخادم',
+  'wire.connecting...': 'جاري الاتصال...',
+  'wire.offline': 'غير متصل',
+  'wire.online': 'متصل',
+  'wire.try-reconnect': 'حاول إعادة الاتصال',
 }

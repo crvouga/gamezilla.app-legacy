@@ -2,249 +2,35 @@
 import type { Text } from '../text'
 
 export const translations: Text = {
-  'status-bar.status-bar': 'ステータスバー',
-  'sound.sound-off': 'サウンドオフ',
-  'sound.sound-on': 'サウンドオン',
-  'wire.backend-restarted': 'サーバーが再起動しました',
-  'wire.connecting...': '接続中...',
-  'wire.offline': 'オフライン',
-  'wire.online': 'オンライン',
-  'wire.try-reconnect': '再接続を試みる',
-  'auth.continue-as-guest.errored': '試行中にエラーが発生しました',
-  'auth-sms.login-with-phone': '電話でログイン',
-  'auth-sms.phone-number': '電話番号',
-  'auth-sms.send-code': 'コードを送信',
-  'auth-sms.country': '国',
-  'auth-sms.code': 'コード',
-  'auth-sms.verify-code': '確認',
-  'auth-sms.invalid-phone-number': '無効な電話番号',
-  'auth-sms.enter-code-sent-to': (formattedPhoneNumber) =>
-    `${formattedPhoneNumber} \u306B\u9001\u4FE1\u3055\u308C\u305F\u30B3\u30FC\u30C9\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044`,
-  'auth-sms.sent-code-to': (formattedPhoneNumber) =>
-    `${formattedPhoneNumber} \u306B\u30B3\u30FC\u30C9\u3092\u9001\u4FE1\u3057\u307E\u3057\u305F`,
-  'auth-sms.please-enter-code': 'コードを入力してください',
-  'auth.logout': 'ログアウト',
-  'auth.logged-in-as-guest': 'ゲストとしてログイン',
-  'auth.logged-in-with-phone': '電話でログイン',
-  'auth.current-user-logged-out': 'ログアウトしました',
-  'auth.current-user-logged-in': 'ログインしました',
-  'auth.continue-as-guest': 'ゲストとして続行',
-  'auth.continue-with-phone': '電話で続行',
-  'auth.or': 'または',
-  'auth.sign-in-to': 'サインイン',
-  'auth.logged-in': 'ログインしました',
-  'auth.logout-of-gamezilla.app': 'gamezilla.appからログアウト',
-  'auth.logout-of-gamezilla.app-body': '本当にログアウトしますか？',
-  'auth.continue-with-email': 'メールで続行',
-  'verify-sms.code-message': (code) => `\u8A8D\u8A3C\u30B3\u30FC\u30C9\u306F${code}\u3067\u3059`,
-  'verify-sms-problem.code-incorrect': 'コードが間違っています',
-  'verify-sms-problem.verification-expired': '認証期限切れ',
-  'verify-sms-problem.verification-not-found': '認証が見つかりません',
-  'verify-sms-problem.verification-already-verified': '認証済み',
-  'verify-sms-problem.database-error': 'データベースエラー',
-  'verify-sms-problem.verification-expired-too-many-failed-attempts': '多くの失敗した試行のため、認証が期限切れ',
-  'verify-sms-problem.send-code-hourly-limit-reached': '時間制限に達しました。後でもう一度お試しください。',
-  'verify-sms-problem.send-code-daily-limit-reached': '1日の制限に達しました。後でもう一度お試しください。',
-  'verify-sms-problem.verification-expired-not-latest-verification':
-    '最新の検証ではないため、検証が期限切れになりました',
-  'verify-sms-problem.send-code-limit-reached': '制限に達しました。後でもう一度お試しください。',
-  'auth.logged-in-as': 'としてログイン',
-  'spaces.see-profile': 'プロフィールを見る',
-  'spaces.current-user-left': 'スペースを離れました',
-  'spaces.other-user-left': (username) =>
-    `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u3092\u96E2\u308C\u307E\u3057\u305F`,
-  'spaces.leave': '去る',
-  'spaces.start-space': 'スペースを開始',
-  'spaces.space-started': 'スペースが開始されました',
-  'tic-tac-toe.bot-level': (botLevel) => {
-    switch (botLevel) {
-      case 'Easy':
-        return '\u7C21\u5358'
-      case 'Impossible':
-        return '\u4E0D\u53EF\u80FD'
-      case 'Medium':
-        return '\u4E2D'
-      default:
-        return '\u672A\u77E5'
-    }
-  },
-  'tic-tac-toe.cross': 'クロス',
-  'tic-tac-toe.naught': 'ノート',
-  'connect-four.bot-level': (botLevel) => {
-    switch (botLevel) {
-      case 'Easy':
-        return '\u7C21\u5358'
-      case 'Hard':
-        return '\u96E3\u3057\u3044'
-      case 'Medium':
-        return '\u4E2D'
-      default:
-        return '\u4E0D\u660E'
-    }
-  },
-  'connect-four.red': '赤',
-  'connect-four.yellow': '黄色',
-  'chess.puzzle-description': '300 万以上のパズルでトレーニング',
-  'chess.puzzle-title': 'パズル',
-  'chess.black': '黒',
-  'chess.white': '白',
-  'chess.bot-level': (botLevel) => {
-    switch (botLevel) {
-      case 0:
-        return '\u521D\u5FC3\u8005'
-      case 1:
-        return '\u4E2D\u7D1A'
-      case 2:
-        return '\u4E0A\u7D1A'
-      case 3:
-        return '\u30A8\u30AD\u30B9\u30D1\u30FC\u30C8'
-      case 4:
-        return '\u30DE\u30B9\u30BF\u30FC'
-      default:
-        return '\u4E0D\u660E'
-    }
-  },
-  'game.numberlink.create-pack': 'パックを作成',
-  'game.numberlink.pack-created': 'パックが作成されました',
-  'game.numberlink.pack-builder': 'パックビルダー',
-  'game.numberlink.add-puzzle': 'パズルを追加',
-  'game.numberlink.puzzle-removed': 'パズルが削除されました',
-  'game.numberlink.puzzle-added': 'パズルが追加されました',
-  'game.numberlink.remove-from-pack': 'パックから削除',
-  'game.numberlink.create-new': '新規作成',
-  'game.numberlink.create-puzzle': 'パズルを作成',
-  'game.numberlink.puzzle-created': 'パズルが作成されました',
-  'game.numberlink.puzzle-deleted': 'パズルが削除されました',
-  'game.numberlink.delete-puzzle-forever?': 'パズルを完全に削除しますか？',
-  'game.numberlink.edit-mode': '編集モード',
-  'game.numberlink.play-mode': 'プレイモード',
-  'game.numberlink.playing': 'プレイ中',
-  'game.numberlink.saved-name': '名前が保存されました',
-  'game.numberlink.edit-puzzle-name.name-cannot-be-empty': '名前は空にできません',
-  'game.numberlink.edit-puzzle-name.name': '名前',
-  'game.numberlink.open-pack-builder-title': 'パックビルダー',
-  'game.numberlink.open-pack-builder-description': '新しいパックの作成を開始',
-  'game.numberlink.open-puzzle-builder-description': '新しいパズルの作成を開始',
-  'game.numberlink.open-puzzle-builder-title': 'パズルビルダー',
-  'game.numberlink.puzzle-builder': 'パズルビルダー',
-  'game.numberlink.you-have-completed-the-pack': 'パックを完了しました！',
-  'game.numberlink.copy-puzzle-to-clipboard': 'パズルをクリップボードにコピー',
-  'game.numberlink.select-a-pack': 'パックを選択',
-  'numberlink-puzzle-name': (puzzleName) => `${puzzleName}`,
-  'game.numberlink.no-puzzles': 'パズルなし',
-  'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
-    `${selectedCount} / ${totalCount} \u304C\u9078\u629E\u3055\u308C\u307E\u3057\u305F`,
-  'game.numberlink.find-solutions-confirmation-body':
-    'このパズルの解決策はまだデバイスに読み込まれていません。「検索」をクリックすると解決策の検索が開始されます - 検索が完了するまでアプリがビジー状態になることにご注意ください。',
-  'game.numberlink.solutions-found': '解決策が見つかりました',
-  'game.numberlink.find-solutions': '解決策を見つける',
-  'game.numberlink.no-hints-loaded': 'ヒントが読み込まれていません',
-  'game.numberlink.no-hints-loaded-body':
-    'デバイスにヒントが読み込まれていません。ヒントを有効にするために今すぐ解決策を計算しますか？',
-  'game.numberlink.no-hints-available-body':
-    'デバイスにヒントが読み込まれていません。ヒントを有効にするために今すぐ解決策を計算しますか？',
-  'game.numberlink.no-hints-calculated': 'ヒントが計算されていません',
-  'game.numberlink.no-solutions-found': '解決策が見つかりません',
-  'game.numberlink.no-hints-available': 'ヒントがありません',
-  'game.numberlink.no-packs': 'パックなし',
-  'game.numberlink.puzzle-count': (count) => `${count} \u30D1\u30BA\u30EB`,
-  'numberlink-pack-name': (packName) => `${packName}`,
-  'game.numberlink.editing': '編集',
-  'game.numberlink.placing': ({ position }) =>
-    position === 'first' ? '\u6700\u521D\u3092\u914D\u7F6E' : '\u6700\u5F8C\u3092\u914D\u7F6E',
-  'game-numberlink-play.no-hints-available': 'ヒントはありません',
-  'game.numberlink.next-pack': '次のパック',
-  'game.numberlink.play': '遊ぶ',
-  'game.numberlink.play-description': 'パズルをプレイし始める',
-  'game.numberlink.build': 'ビルド',
-  'game.numberlink.build-description': 'パズルとパックを作成および編集',
-  'game.numberlink.puzzle-completed': 'パズルが完了しました',
-  'game.numberlink.select-next-pack': '次のパックを選択',
-  'game.numberlink.next-puzzle': '次のパズル',
-  'game.numberlink.level': (level) => `\u30EC\u30D9\u30EB${level}`,
-  'game.numberlink.packs': 'パック',
-  'game.numberlink.puzzles': 'パズル',
-  'game.numberlink.puzzle-not-found': 'パズルが見つかりません',
-  'connect-four': 'フォーをつなげる',
-  numberlink: 'ナンバーリンク',
-  'tic-tac-toe': '三目並べ',
-  gomoku: '五目並べ',
-  chess: 'チェス',
-  'prebuilt-actions.exit': '出口',
-  'prebuilt-actions.next': '次',
-  'prebuilt-actions.prev': '前',
-  'prebuilt-actions.reset': 'リセット',
-  'prebuilt-actions.hint': 'ヒント',
-  'game.play-friend-title': '友達と遊ぶ',
-  'game.play-friend-description': 'あなたのスペースの人々と対戦する',
-  'game.play-computer-title': 'コンピューターと遊ぶ',
-  'game.play-computer-description': 'コンピューターと対戦する',
-  'game.you-are-spectating': 'あなたは観戦しています',
-  'game.host-is-setting-up-game': 'ホストがゲームを設定中です',
-  'game.player': 'プレイヤー',
-  'game.hint': 'ヒント',
-  'game.start-game': 'ゲームを開始',
-  'game.start-playing': 'プレイを開始',
-  'game.stop-playing': 'プレイを停止',
-  'game.change-bot': 'ボットを変更',
-  'game.swap-sides': 'サイドを交換',
-  'game.rematch': 'リマッチ',
-  'game.draw': '引き分け',
-  'game.loser': '敗者',
-  'game.play-again': 'もう一度プレイ',
-  'game.winner': '勝者',
-  'game.vs': '対',
-  'spaces.end': '終了',
-  'spaces.end-space': 'スペースを終了',
-  'spaces.ended-space-host': 'ホストによってスペースが終了しました',
-  'spaces.ended-space-current-user': 'スペースが終了しました',
-  'spaces.ended-space-other-user': (username) =>
-    `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`,
-  'spaces.space-ended': 'スペースが終了しました',
-  'spaces.space': 'スペース',
-  'spaces.join-space': 'スペースに参加',
-  'spaces.current-user-joined-space': 'スペースに参加しました',
-  'spaces.other-user-joined-space': (username) =>
-    username
-      ? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F`
-      : '\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F',
-  "spaces.you're-already-in-a-space": 'すでにスペースにいます',
-  'spaces.spaces': 'スペース',
-  'spaces.no-spaces': 'スペースなし',
-  'space-card.live': 'ライブ',
-  'space-card.people-count': (count) => `${count.toLocaleString()} \u4EBA`,
-  host: 'ホスト',
-  you: 'あなた',
-  'spaces.space-not-found': 'スペースが見つかりません',
-  'spaces.exit-space': '家に帰る',
-  'spaces.current-user-ended-space': 'スペース終了',
-  'spaces.other-user-ended-space': (username) =>
-    username
-      ? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`
-      : '\u30B9\u30DA\u30FC\u30B9\u7D42\u4E86',
-  'spaces.games': 'ゲーム',
-  'spaces.current-space': ({ hostUsername }) => `${hostUsername} \u306E\u30B9\u30DA\u30FC\u30B9`,
-  'spaces.home': 'ホーム',
-  'spaces.people-count': (peopleCount) => (peopleCount === 1 ? '\u4EBA' : `\u4EBA (${peopleCount.toLocaleString()})`),
-  'spaces.game': 'ゲーム',
-  'lang.language': '言語',
-  'lang.choose-language': '言語を選択',
-  'lang.done': '完了',
-  'lang.loaded-translations': '翻訳が読み込まれました',
-  'profile.edit-profile': 'プロフィールを編集',
-  'profile.update-profile': 'プロフィールを更新',
-  'profile.update-avatar': 'アバターを更新',
-  'profile.profile': 'プロフィール',
-  'profile-avatar.seed': 'シード',
-  'profile.update-username.update-username': 'ユーザー名を更新',
-  'unsaved-changes.unsaved-changes-warning': '終了する前に保存しないと、変更が失われます。',
+  en: '英語',
+  es: 'スペイン語',
+  ar: 'アラビア語',
+  de: 'ドイツ語',
+  fr: 'フランス語',
+  hi: 'ヒンディー語',
+  it: 'イタリア語',
+  ja: '日本語',
+  ko: '韓国語',
+  pt: 'ポルトガル語',
+  ru: 'ロシア語',
+  zh: '中国語',
+  'time-span.month-plural': (months) => `${Math.floor(months)} \u30F6\u6708`,
+  'time-span.month-singular': '1 ヶ月',
+  'time-span.day-plural': (days) => `${Math.floor(days)} \u65E5`,
+  'time-span.day-singular': '1 日',
+  'time-span.hour-plural': (hours) => `${Math.floor(hours)} \u6642\u9593`,
+  'time-span.hour-singular': '1 時間',
+  'time-span.minute-plural': (minutes) => `${Math.floor(minutes)} \u5206`,
+  'time-span.minute-singular': '1 分',
+  'time-span.moment-ago': 'ちょっと前',
+  'time-span.week-plural': (weeks) => `${Math.floor(weeks)} \u9031\u9593`,
+  'time-span.week-singular': '1 週間',
+  'time-span.year-plural': (years) => `${Math.floor(years)} \u5E74`,
+  'time-span.year-singular': '1 年',
+  'drawer.close': 'ドロワーを閉じる',
   'profile.avatar-label': 'アバター',
   'username.username-label': 'ユーザー名',
   username: (username) => `@${username}`,
-  'app.load': '読み込み',
-  'app.find': '検索',
-  'app.open-settings': '設定を開く',
-  'app.submit': '送信',
   'app.edit-name': '名前を編集',
   'app.updated-name': '名前が更新されました',
   'app.created-by-you': 'あなたが作成',
@@ -290,34 +76,246 @@ export const translations: Text = {
   '?': '？',
   'app.save-changes?': '変更を保存しますか？',
   'app.remove': '削除',
-  'app.apply': '適用',
-  'app.join': '参加',
   'app.add': '追加',
+  'app.apply': '適用',
   'app.calculate': '計算',
-  'drawer.close': 'ドロワーを閉じる',
-  'time-span.month-plural': (months) => `${Math.floor(months)} \u30F6\u6708`,
-  'time-span.month-singular': '1 ヶ月',
-  'time-span.day-plural': (days) => `${Math.floor(days)} \u65E5`,
-  'time-span.day-singular': '1 日',
-  'time-span.hour-plural': (hours) => `${Math.floor(hours)} \u6642\u9593`,
-  'time-span.hour-singular': '1 時間',
-  'time-span.minute-plural': (minutes) => `${Math.floor(minutes)} \u5206`,
-  'time-span.minute-singular': '1 分',
-  'time-span.moment-ago': 'ちょっと前',
-  'time-span.week-plural': (weeks) => `${Math.floor(weeks)} \u9031\u9593`,
-  'time-span.week-singular': '1 週間',
-  'time-span.year-plural': (years) => `${Math.floor(years)} \u5E74`,
-  'time-span.year-singular': '1 年',
-  en: '英語',
-  es: 'スペイン語',
-  ar: 'アラビア語',
-  de: 'ドイツ語',
-  fr: 'フランス語',
-  hi: 'ヒンディー語',
-  it: 'イタリア語',
-  ja: '日本語',
-  ko: '韓国語',
-  pt: 'ポルトガル語',
-  ru: 'ロシア語',
-  zh: '中国語',
+  'app.find': '検索',
+  'app.join': '参加',
+  'app.load': '読み込み',
+  'app.open-settings': '設定を開く',
+  'app.submit': '送信',
+  'unsaved-changes.unsaved-changes-warning': '終了する前に保存しないと、変更が失われます。',
+  'auth.logout': 'ログアウト',
+  'auth.logged-in-as-guest': 'ゲストとしてログイン',
+  'auth.logged-in-with-phone': '電話でログイン',
+  'auth.current-user-logged-out': 'ログアウトしました',
+  'auth.current-user-logged-in': 'ログインしました',
+  'auth.continue-as-guest': 'ゲストとして続行',
+  'auth.continue-with-phone': '電話で続行',
+  'auth.or': 'または',
+  'auth.sign-in-to': 'サインイン',
+  'auth.logged-in': 'ログインしました',
+  'auth.logout-of-gamezilla.app': 'gamezilla.appからログアウト',
+  'auth.logout-of-gamezilla.app-body': '本当にログアウトしますか？',
+  'auth.continue-with-email': 'メールで続行',
+  'verify-sms.code-message': (code) => `\u8A8D\u8A3C\u30B3\u30FC\u30C9\u306F${code}\u3067\u3059`,
+  'verify-sms-problem.code-incorrect': 'コードが間違っています',
+  'verify-sms-problem.verification-expired': '認証期限切れ',
+  'verify-sms-problem.verification-not-found': '認証が見つかりません',
+  'verify-sms-problem.verification-already-verified': '認証済み',
+  'verify-sms-problem.database-error': 'データベースエラー',
+  'verify-sms-problem.verification-expired-too-many-failed-attempts': '多くの失敗した試行のため、認証が期限切れ',
+  'verify-sms-problem.send-code-hourly-limit-reached': '時間制限に達しました。後でもう一度お試しください。',
+  'verify-sms-problem.send-code-daily-limit-reached': '1日の制限に達しました。後でもう一度お試しください。',
+  'verify-sms-problem.verification-expired-not-latest-verification':
+    '最新の検証ではないため、検証が期限切れになりました',
+  'verify-sms-problem.send-code-limit-reached': '制限に達しました。後でもう一度お試しください。',
+  'auth.logged-in-as': 'としてログイン',
+  'auth.continue-as-guest.errored': '試行中にエラーが発生しました',
+  'auth-sms.login-with-phone': '電話でログイン',
+  'auth-sms.phone-number': '電話番号',
+  'auth-sms.send-code': 'コードを送信',
+  'auth-sms.country': '国',
+  'auth-sms.code': 'コード',
+  'auth-sms.verify-code': '確認',
+  'auth-sms.invalid-phone-number': '無効な電話番号',
+  'auth-sms.enter-code-sent-to': (formattedPhoneNumber) =>
+    `${formattedPhoneNumber} \u306B\u9001\u4FE1\u3055\u308C\u305F\u30B3\u30FC\u30C9\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044`,
+  'auth-sms.sent-code-to': (formattedPhoneNumber) =>
+    `${formattedPhoneNumber} \u306B\u30B3\u30FC\u30C9\u3092\u9001\u4FE1\u3057\u307E\u3057\u305F`,
+  'auth-sms.please-enter-code': 'コードを入力してください',
+  'sound.sound-off': 'サウンドオフ',
+  'sound.sound-on': 'サウンドオン',
+  'status-bar.status-bar': 'ステータスバー',
+  'lang.language': '言語',
+  'lang.choose-language': '言語を選択',
+  'lang.done': '完了',
+  'lang.loaded-translations': '翻訳が読み込まれました',
+  'profile.update-profile': 'プロフィールを更新',
+  'profile.update-avatar': 'アバターを更新',
+  'profile.profile': 'プロフィール',
+  'profile-avatar.seed': 'シード',
+  'profile.edit-profile': 'プロフィールを編集',
+  'profile.update-username.update-username': 'ユーザー名を更新',
+  'spaces.current-user-joined-space': 'スペースに参加しました',
+  'spaces.other-user-joined-space': (username) =>
+    `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F`,
+  'spaces.space-not-found': 'スペースが見つかりません',
+  'spaces.exit-space': '家に帰る',
+  'spaces.current-user-ended-space': 'スペース終了',
+  'spaces.other-user-ended-space': (username) =>
+    username
+      ? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`
+      : '\u30B9\u30DA\u30FC\u30B9\u7D42\u4E86',
+  'spaces.games': 'ゲーム',
+  'spaces.current-space': ({ hostUsername }) => `${hostUsername} \u306E\u30B9\u30DA\u30FC\u30B9`,
+  'spaces.home': 'ホーム',
+  'spaces.people-count': (peopleCount) => (peopleCount === 1 ? '\u4EBA' : `\u4EBA (${peopleCount.toLocaleString()})`),
+  'spaces.game': 'ゲーム',
+  host: 'ホスト',
+  you: 'あなた',
+  'spaces.end': '終了',
+  'spaces.end-space': 'スペースを終了',
+  'spaces.ended-space-host': 'ホストによってスペースが終了しました',
+  'spaces.ended-space-current-user': 'スペースが終了しました',
+  'spaces.ended-space-other-user': (username) =>
+    `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`,
+  'spaces.space-ended': 'スペースが終了しました',
+  'spaces.see-profile': 'プロフィールを見る',
+  'connect-four': 'フォーをつなげる',
+  numberlink: 'ナンバーリンク',
+  'tic-tac-toe': '三目並べ',
+  gomoku: '五目並べ',
+  chess: 'チェス',
+  'game.player': 'プレイヤー',
+  'game.hint': 'ヒント',
+  'game.start-game': 'ゲームを開始',
+  'game.start-playing': 'プレイを開始',
+  'game.stop-playing': 'プレイを停止',
+  'game.change-bot': 'ボットを変更',
+  'game.swap-sides': 'サイドを交換',
+  'game.rematch': 'リマッチ',
+  'game.draw': '引き分け',
+  'game.loser': '敗者',
+  'game.play-again': 'もう一度プレイ',
+  'game.winner': '勝者',
+  'game.vs': '対',
+  'game.you-are-spectating': 'あなたは観戦しています',
+  'game.play-friend-title': '友達と遊ぶ',
+  'game.play-friend-description': 'あなたのスペースの人々と対戦する',
+  'game.play-computer-title': 'コンピューターと遊ぶ',
+  'game.play-computer-description': 'コンピューターと対戦する',
+  'prebuilt-actions.exit': '出口',
+  'prebuilt-actions.next': '次',
+  'prebuilt-actions.prev': '前',
+  'prebuilt-actions.reset': 'リセット',
+  'prebuilt-actions.hint': 'ヒント',
+  'game.host-is-setting-up-game': 'ホストがゲームを設定中です',
+  'chess.bot-level': (botLevel) => {
+    switch (botLevel) {
+      case 0:
+        return '\u521D\u5FC3\u8005'
+      case 1:
+        return '\u4E2D\u7D1A'
+      case 2:
+        return '\u4E0A\u7D1A'
+      case 3:
+        return '\u30A8\u30AD\u30B9\u30D1\u30FC\u30C8'
+      case 4:
+        return '\u30DE\u30B9\u30BF\u30FC'
+      default:
+        return '\u4E0D\u660E'
+    }
+  },
+  'chess.puzzle-description': '300 万以上のパズルでトレーニング',
+  'chess.puzzle-title': 'パズル',
+  'chess.black': '黒',
+  'chess.white': '白',
+  'connect-four.bot-level': (botLevel) => {
+    switch (botLevel) {
+      case 'Easy':
+        return '\u7C21\u5358'
+      case 'Hard':
+        return '\u96E3\u3057\u3044'
+      case 'Medium':
+        return '\u4E2D'
+      default:
+        return '\u4E0D\u660E'
+    }
+  },
+  'connect-four.red': '赤',
+  'connect-four.yellow': '黄色',
+  'game.numberlink.copy-puzzle-to-clipboard': 'パズルをクリップボードにコピー',
+  'game.numberlink.play': '遊ぶ',
+  'game.numberlink.play-description': 'パズルをプレイし始める',
+  'game.numberlink.build': 'ビルド',
+  'game.numberlink.build-description': 'パズルとパックを作成および編集',
+  'game.numberlink.puzzle-completed': 'パズルが完了しました',
+  'game.numberlink.select-next-pack': '次のパックを選択',
+  'game.numberlink.next-puzzle': '次のパズル',
+  'game.numberlink.level': (level) => `\u30EC\u30D9\u30EB${level}`,
+  'game.numberlink.packs': 'パック',
+  'game.numberlink.puzzles': 'パズル',
+  'game.numberlink.puzzle-not-found': 'パズルが見つかりません',
+  'game.numberlink.next-pack': '次のパック',
+  'game.numberlink.editing': '編集',
+  'game.numberlink.placing': ({ position }) =>
+    position === 'first' ? '\u6700\u521D\u3092\u914D\u7F6E' : '\u6700\u5F8C\u3092\u914D\u7F6E',
+  'game-numberlink-play.no-hints-available': 'ヒントはありません',
+  'game.numberlink.no-packs': 'パックなし',
+  'game.numberlink.puzzle-count': (count) => `${count} \u30D1\u30BA\u30EB`,
+  'numberlink-pack-name': (packName) => `${packName}`,
+  'game.numberlink.no-puzzles': 'パズルなし',
+  'game.numberlink.puzzles-selected': ({ totalCount, selectedCount }) =>
+    `${selectedCount} / ${totalCount} \u304C\u9078\u629E\u3055\u308C\u307E\u3057\u305F`,
+  'numberlink-puzzle-name': (puzzleName) => `${puzzleName}`,
+  'game.numberlink.find-solutions-confirmation-body':
+    'このパズルの解決策はまだデバイスに読み込まれていません。「検索」をクリックすると解決策の検索が開始されます - 検索が完了するまでアプリがビジー状態になることにご注意ください。',
+  'game.numberlink.find-solutions': '解決策を見つける',
+  'game.numberlink.no-hints-available-body':
+    'デバイスにヒントが読み込まれていません。ヒントを有効にするために今すぐ解決策を計算しますか？',
+  'game.numberlink.no-hints-available': 'ヒントがありません',
+  'game.numberlink.no-hints-calculated': 'ヒントが計算されていません',
+  'game.numberlink.no-hints-loaded-body':
+    'デバイスにヒントが読み込まれていません。ヒントを有効にするために今すぐ解決策を計算しますか？',
+  'game.numberlink.no-hints-loaded': 'ヒントが読み込まれていません',
+  'game.numberlink.no-solutions-found': '解決策が見つかりません',
+  'game.numberlink.solutions-found': '解決策が見つかりました',
+  'game.numberlink.puzzle-builder': 'パズルビルダー',
+  'game.numberlink.add-puzzle': 'パズルを追加',
+  'game.numberlink.puzzle-removed': 'パズルが削除されました',
+  'game.numberlink.puzzle-added': 'パズルが追加されました',
+  'game.numberlink.remove-from-pack': 'パックから削除',
+  'game.numberlink.pack-builder': 'パックビルダー',
+  'game.numberlink.create-pack': 'パックを作成',
+  'game.numberlink.pack-created': 'パックが作成されました',
+  'game.numberlink.edit-mode': '編集モード',
+  'game.numberlink.play-mode': 'プレイモード',
+  'game.numberlink.playing': 'プレイ中',
+  'game.numberlink.puzzle-deleted': 'パズルが削除されました',
+  'game.numberlink.delete-puzzle-forever?': 'パズルを完全に削除しますか？',
+  'game.numberlink.saved-name': '名前が保存されました',
+  'game.numberlink.edit-puzzle-name.name-cannot-be-empty': '名前は空にできません',
+  'game.numberlink.edit-puzzle-name.name': '名前',
+  'game.numberlink.create-new': '新規作成',
+  'game.numberlink.create-puzzle': 'パズルを作成',
+  'game.numberlink.puzzle-created': 'パズルが作成されました',
+  'game.numberlink.open-pack-builder-title': 'パックビルダー',
+  'game.numberlink.open-pack-builder-description': '新しいパックの作成を開始',
+  'game.numberlink.open-puzzle-builder-description': '新しいパズルの作成を開始',
+  'game.numberlink.open-puzzle-builder-title': 'パズルビルダー',
+  'game.numberlink.select-a-pack': 'パックを選択',
+  'game.numberlink.you-have-completed-the-pack': 'パックを完了しました！',
+  'tic-tac-toe.bot-level': (botLevel) => {
+    switch (botLevel) {
+      case 'Easy':
+        return '\u7C21\u5358'
+      case 'Impossible':
+        return '\u4E0D\u53EF\u80FD'
+      case 'Medium':
+        return '\u4E2D'
+      default:
+        return '\u672A\u77E5'
+    }
+  },
+  'tic-tac-toe.cross': 'クロス',
+  'tic-tac-toe.naught': 'ノート',
+  'spaces.space': 'スペース',
+  'spaces.join-space': 'スペースに参加',
+  "spaces.you're-already-in-a-space": 'すでにスペースにいます',
+  'spaces.current-user-left': 'スペースを離れました',
+  'spaces.other-user-left': (username) =>
+    `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u3092\u96E2\u308C\u307E\u3057\u305F`,
+  'spaces.leave': '去る',
+  'spaces.spaces': 'スペース',
+  'spaces.no-spaces': 'スペースなし',
+  'space-card.live': 'ライブ',
+  'space-card.people-count': (count) => `${count.toLocaleString()} \u4EBA`,
+  'spaces.start-space': 'スペースを開始',
+  'spaces.space-started': 'スペースが開始されました',
+  'wire.backend-restarted': 'サーバーが再起動しました',
+  'wire.connecting...': '接続中...',
+  'wire.offline': 'オフライン',
+  'wire.online': 'オンライン',
+  'wire.try-reconnect': '再接続を試みる',
 }

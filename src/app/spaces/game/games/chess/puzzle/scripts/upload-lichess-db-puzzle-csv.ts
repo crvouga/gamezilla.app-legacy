@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs'
+import type { IFileSystem } from '~/@/file-system'
 import { Result } from '~/@/result'
 import { s } from '~/@/schema'
 import type { ISqlDb } from '~/@/sql-db'
@@ -39,10 +39,12 @@ export const uploadLichessDbPuzzleCsv = async ({
   dbConn,
   lichessDbPuzzleCsvPath,
   batchSize = 10_000,
+  fs,
 }: {
   dbConn: ISqlDb
   lichessDbPuzzleCsvPath: string
   batchSize?: number
+  fs: IFileSystem
 }) => {
   if (typeof window !== 'undefined') {
     // Code to run in the browser environment
@@ -52,9 +54,8 @@ export const uploadLichessDbPuzzleCsv = async ({
 
   log(`reading ${lichessDbPuzzleCsvPath}`)
 
-  try {
-    await fs.access(lichessDbPuzzleCsvPath)
-  } catch {
+  const fileExists = await fs.exists(lichessDbPuzzleCsvPath)
+  if (!fileExists) {
     log(`file ${lichessDbPuzzleCsvPath} does not exist`)
     return
   }

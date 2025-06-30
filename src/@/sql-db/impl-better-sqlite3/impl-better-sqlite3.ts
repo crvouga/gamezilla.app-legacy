@@ -1,19 +1,19 @@
 import * as DatabaseNamespace from 'better-sqlite3'
-const Database = (DatabaseNamespace as any).default || DatabaseNamespace
-import { existsSync, mkdirSync } from 'fs'
-import { dirname } from 'path'
 import { Err, isErr, Ok } from '~/@/result'
 import type { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
+import type { IFileSystem } from '../../file-system/interface'
 import { deterministicJsonStringify } from '../../json/deterministic-stringify'
 import type { ILogger } from '../../logger/interface'
 import { PubSub, Sub } from '../../sub'
 import type { ISqlDb } from '../interface'
+const Database = (DatabaseNamespace as any).default || DatabaseNamespace
 
 export type Config = {
   t: 'better-sqlite3'
   databasePath: string
   logger: ILogger
+  fs: IFileSystem
   options?: {
     readonly?: boolean
     fileMustExist?: boolean
@@ -27,9 +27,14 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
 
   // Ensure directory exists if using file-based database
   if (config.databasePath !== ':memory:') {
-    const dir = dirname(config.databasePath)
-    if (!existsSync(dir)) {
-      mkdirSync(dir, { recursive: true })
+    const dir = config.databasePath.substring(0, config.databasePath.lastIndexOf('/'))
+    const dirExists = await config.fs.exists(dir)
+    if (!dirExists) {
+      // Create directory by writing a temporary file and then removing it
+      const tempPath = `${dir}/.temp`
+      await config.fs.write(tempPath, '')
+      // Note: We don't have a delete method in IFileSystem, so we'll leave the temp file
+      // In a real implementation, you might want to add a delete method to IFileSystem
     }
   }
 

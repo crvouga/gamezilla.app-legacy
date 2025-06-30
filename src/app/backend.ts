@@ -1,3 +1,4 @@
+import { FileSystem, IFileSystem } from '~/@/file-system'
 import { HttpServer } from '~/@/http-server'
 import { AllowCORS } from '~/@/http-server/allow-cors'
 import { KeyValueDb } from '~/@/key-value-db'
@@ -38,9 +39,12 @@ const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtx
     logger,
   })
 
+  const fs = FileSystem({ t: 'node' })
+
   const sqlDb = await initSqlDb({
     backendRole: config.backendRole,
     logger,
+    fs,
   })
 
   const keyValueDbDurable = await KeyValueDb({
@@ -116,7 +120,7 @@ const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtx
   return ctx
 }
 
-const initSqlDb = async (config: { backendRole: BackendRole; logger: ILogger }): Promise<ISqlDb> => {
+const initSqlDb = async (config: { backendRole: BackendRole; logger: ILogger; fs: IFileSystem }): Promise<ISqlDb> => {
   switch (config.backendRole) {
     case 'primary': {
       return SqlDb({
@@ -130,6 +134,7 @@ const initSqlDb = async (config: { backendRole: BackendRole; logger: ILogger }):
         t: 'better-sqlite3',
         databasePath: ':memory:',
         logger: config.logger,
+        fs: config.fs,
       })
     }
   }

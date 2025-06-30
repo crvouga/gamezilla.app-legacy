@@ -8,6 +8,7 @@ import { Logger } from '../../logger'
 import { isErr, isOk } from '../../result'
 import { s } from '../../schema'
 import { Config, SqlDb } from '../backend/impl'
+import { FileSystem } from '~/@/file-system'
 
 const Fixture = async (config: Config) => {
   const sqlDb = await SqlDb(config)
@@ -26,6 +27,7 @@ const Fixtures = async () => {
       t: 'better-sqlite3',
       databasePath: ':memory:',
       logger: Logger({ t: 'noop' }),
+      fs: FileSystem({ t: 'node' }),
     })
   }
 

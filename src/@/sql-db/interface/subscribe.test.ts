@@ -1,8 +1,9 @@
 import 'fake-indexeddb/auto'
-import { describe, expect, test } from '~/@/test-runner'
-import { Logger } from '../../logger'
+import { FileSystem } from '~/@/file-system'
 import { sleep } from '~/@/promise/sleep'
+import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
+import { Logger } from '../../logger'
 import { s } from '../../schema'
 import { Config, SqlDb } from '../backend/impl'
 
@@ -26,6 +27,7 @@ const Fixtures = async () => {
     t: 'better-sqlite3',
     databasePath: ':memory:',
     logger: Logger({ t: 'noop' }),
+    fs: FileSystem({ t: 'node' }),
   })
 
   return Promise.all(configs.map(Fixture))
