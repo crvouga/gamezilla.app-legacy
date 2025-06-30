@@ -4,42 +4,6 @@ import { FileSystem } from './src/@/file-system'
 
 DotEnv.load({ fs: FileSystem({ t: 'node' }), path: '.env' })
 
-const PLAYWRIGHT_PROJECT_SAMPLE_COUNT = parseEnvInt('PLAYWRIGHT_PROJECT_SAMPLE_COUNT')
-
-const projects = sample(
-  [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-    {
-      name: 'mobile-chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'mobile-safari',
-      use: { ...devices['iPhone 12'] },
-    },
-  ],
-  PLAYWRIGHT_PROJECT_SAMPLE_COUNT,
-)
-
-if (typeof PLAYWRIGHT_PROJECT_SAMPLE_COUNT === 'number') {
-  console.log(`🎲 Running Playwright tests on a random sample of ${PLAYWRIGHT_PROJECT_SAMPLE_COUNT} projects`)
-}
-
-for (const project of projects) {
-  console.log(`🎲 Running Playwright tests on ${project.name}`)
-}
-
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -64,22 +28,28 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   /* Configure projects for major browsers */
-  projects,
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+    },
+    {
+      name: 'mobile-chrome',
+      use: { ...devices['Pixel 5'] },
+    },
+    {
+      name: 'mobile-safari',
+      use: { ...devices['iPhone 12'] },
+    },
+  ].slice(0, 1),
 
   /* Run your local dev server before starting the tests */
 })
-
-function sample<T>(arr: T[], count: number | null | undefined): T[] {
-  if (count === null || count === undefined) return arr
-  if (count >= arr.length) return arr
-  const shuffled = [...arr].sort(() => 0.5 - Math.random())
-  return shuffled.slice(0, count)
-}
-
-function parseEnvInt(name: string): number | null {
-  const value = process.env[name]
-  if (!value) return null
-  const parsed = parseInt(value)
-  if (isNaN(parsed)) return null
-  return parsed
-}
