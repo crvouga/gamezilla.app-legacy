@@ -19,6 +19,7 @@ import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
 import { AppFrontendCtxBase } from '../frontend/ctx'
 import { Translator } from '../frontend/translator'
+import { CONFIG_FRONTEND } from '~/config/frontend'
 
 export const TestFrontend = async (config: {
   rpcServer: RPC.Server<typeof rpcContract>
@@ -87,7 +88,7 @@ export const TestFrontend = async (config: {
 
   const root = document.getElementById(`root`)!
 
-  const render = await Render('react', root)
+  const render = await Render(CONFIG_FRONTEND.VDOM_IMPL, root)
 
   const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),

@@ -1,7 +1,6 @@
-import { CONFIG_FRONTEND } from '~/config/frontend'
-import { CONFIG_SHARED } from '~/config/shared'
-import { VDomImpl } from './vdom-impl'
 import type { CSSProperties } from 'preact/compat'
+import { CONFIG_FRONTEND } from '~/config/frontend'
+import { VDomImpl } from './vdom-impl'
 
 export type StylesObjectKebab = { [key: string]: string | number | undefined | null | false }
 export type StylesObjectCamel = React.CSSProperties & CSSProperties
@@ -34,9 +33,7 @@ const kebabObjectToCamelObject = (kebabObject: StylesObjectKebab): StylesObjectC
   return camelObject
 }
 
-const VDOM_IMPL_DEFAULT = CONFIG_SHARED.IS_TEST ? CONFIG_FRONTEND.VDOM_IMPL_TEST : CONFIG_FRONTEND.VDOM_IMPL
-
-export const styles = (stylesObject: StylesObjectKebab, vdomImpl: VDomImpl = VDOM_IMPL_DEFAULT): unknown => {
+export const styles = (stylesObject: StylesObjectKebab, vdomImpl: VDomImpl = CONFIG_FRONTEND.VDOM_IMPL): unknown => {
   switch (vdomImpl) {
     case 'react-with-compiler':
     case 'react': {
