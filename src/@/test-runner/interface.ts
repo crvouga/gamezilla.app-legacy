@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test'
+import { TestRunnerEnv } from './test-runner-env'
 
 type MaybePromise<T> = T | Promise<T>
 
@@ -19,19 +19,6 @@ export type Describe = DescribeFn & { todo: DescribeFn }
 
 type TestFn = (name: string, fn: (env: TestRunnerEnv) => MaybePromise<void>) => MaybePromise<void>
 export type Test = TestFn & { todo: TestFn }
-
-export type TestRunnerEnv =
-  | {
-      t: 'playwright'
-      getPage: () => Page
-      e2e: boolean
-      unit: boolean
-    }
-  | {
-      t: 'vitest'
-      e2e: boolean
-      unit: boolean
-    }
 
 export type ITestRunner = (
   defineTests: (config: { expect: Expect; test: Test; describe: Describe; env: TestRunnerEnv }) => void,
