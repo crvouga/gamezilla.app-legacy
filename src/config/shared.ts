@@ -4,7 +4,7 @@ const IS_INTEGRATION_TEST = IS_TEST && process.env?.IS_INTEGRATION_TEST === 'tru
 
 const IS_UNIT_TEST = IS_TEST && !IS_INTEGRATION_TEST
 
-const IS_PROD = String(process.env?.PROD) === 'true'
+const IS_PROD = String(process.env?.PROD) === 'true' || import.meta.env.PROD
 
 const IS_LOCAL = !IS_PROD
 
