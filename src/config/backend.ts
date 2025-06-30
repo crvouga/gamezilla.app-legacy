@@ -26,7 +26,7 @@ const POWERSYNC_PUBLIC_KEY = () => {
 }
 
 const PORT = () => {
-  const value = process.env?.PORT ?? 5002
+  const value = process.env?.PORT
   if (!value) {
     throw new Error('PORT is not set')
   }
