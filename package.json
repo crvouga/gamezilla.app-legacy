@@ -23,7 +23,7 @@
     "clean-install": "rm -rf node_modules && rm -rf dist && rm package-lock.json && npm install --legacy-peer-deps",
     "cloc": "npx cloc src",
     "db": "psql postgresql://postgres:postgres@localhost:5438/postgres?sslmode=disable",
-    "db:down": "npx dbmate -e DATABASE_URL down",
+    "db:down": "npx dbmate down",
     "db:dump": "npx dbmate dump",
     "db:new": "npx dbmate new",
     "db:up": "npx dbmate up",
