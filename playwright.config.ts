@@ -2,13 +2,6 @@ import { defineConfig, devices } from '@playwright/test'
 import { DotEnv } from './src/@/dotenv/dotenv'
 import { FileSystem } from './src/@/file-system'
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
 DotEnv.load({ fs: FileSystem({ t: 'node' }), path: '.env' })
 
 const PLAYWRIGHT_PROJECT_SAMPLE_COUNT = parseEnvInt('PLAYWRIGHT_PROJECT_SAMPLE_COUNT')
