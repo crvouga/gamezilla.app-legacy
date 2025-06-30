@@ -27,8 +27,10 @@ export const Select = <T>({
   onChange: (value: T) => void
 }) => {
   const labelId = `${id}-label`
-  return h('div', { className: 'flex w-full flex-col gap-1' }, [
-    h('label', { id: labelId, htmlFor: id, className: cn('text-base', error && 'text-red-500') }, [label]),
+  return h(
+    'div',
+    { className: 'flex w-full flex-col gap-1' },
+    h('label', { id: labelId, htmlFor: id, className: cn('text-base', error && 'text-red-500') }, label),
     h(
       'select',
       {
@@ -51,9 +53,9 @@ export const Select = <T>({
         },
       },
       options.map((option) => {
-        return h('option', { key: toKey(option), value: toKey(option) }, [toName(option)])
+        return h('option', { key: toKey(option), value: toKey(option) }, toName(option))
       }),
     ),
-    helperText && h('div', { className: cn('text-sm', error && 'text-red-500') }, [helperText]),
-  ])
+    helperText && h('div', { className: cn('text-sm', error && 'text-red-500') }, helperText),
+  )
 }

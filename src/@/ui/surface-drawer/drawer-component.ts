@@ -6,11 +6,14 @@ import type { DrawerInput } from './drawer-shared'
 import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
 import { Surface } from '../surface'
 import { h } from '~/@/vdom/h'
+import { Frag } from '../frag'
 
 export const DrawerComponent = (props: DrawerInput) => {
   return h(Portal.Entrance, {
     portalId: DRAWER_PORTAL_ID,
-    children: [
+    children: h(
+      Frag,
+      null,
       h(
         'div',
         {
@@ -44,14 +47,12 @@ export const DrawerComponent = (props: DrawerInput) => {
                   : `rounded-b-2xl ${props.open ? 'translate-y-0' : '-translate-y-full'}`,
               ),
             },
-            [
-              props.position === 'top' && h(Gutter, { variant: 'drawer' }),
-              props.children,
-              props.position === 'bottom' && h(Gutter, { variant: 'drawer' }),
-            ].filter(Boolean),
+            props.position === 'top' && h(Gutter, { variant: 'drawer' }),
+            props.children,
+            props.position === 'bottom' && h(Gutter, { variant: 'drawer' }),
           ),
         ],
       ),
-    ],
+    ),
   })
 }

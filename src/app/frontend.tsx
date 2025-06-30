@@ -355,12 +355,16 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
 const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   const frontendCtx = toCtx(input)
 
-  return h(ViewAppRoot, null, [
+  return h(
+    ViewAppRoot,
+    null,
     h(ViewAppStatusBar, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
 
-    h('div', { className: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+    h(
+      'div',
+      { className: 'relative flex w-full flex-1 flex-col overflow-hidden' },
       h(ViewScreen, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
-    ]),
+    ),
 
     h(AuthFrontend.ViewModals, {
       ctx: frontendCtx,
@@ -375,7 +379,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
       model: input.model.frontend.toast,
       dispatch: (c) => input.dispatch({ t: 'frontend', c: { t: 'toast', c } }),
     }),
-  ])
+  )
 }
 
 const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {

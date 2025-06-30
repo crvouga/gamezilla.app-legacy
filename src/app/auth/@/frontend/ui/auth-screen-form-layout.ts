@@ -6,6 +6,7 @@ import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { AuthScreenHeader } from './auth-screen-header'
 import { AuthScreenLayout } from './auth-screen-layout'
+import { Frag } from '~/@/ui/frag'
 
 export const AuthScreenFormLayout = (input: {
   ctx: {
@@ -25,7 +26,9 @@ export const AuthScreenFormLayout = (input: {
     dataTestId: input.dataTestId,
     ctx: input.ctx,
     center: false,
-    children: [
+    children: h(
+      Frag,
+      null,
       h(AuthScreenHeader, {
         ctx: input.ctx,
         title: input.title,
@@ -37,7 +40,9 @@ export const AuthScreenFormLayout = (input: {
           e.preventDefault()
           input.onSubmit()
         },
-        children: [
+        children: h(
+          Frag,
+          null,
           h('div', {
             className: 'flex w-full flex-col gap-6',
             children: input.renderInputs(),
@@ -52,8 +57,8 @@ export const AuthScreenFormLayout = (input: {
             loading: input.submitLoading,
             disabled: input.submitDisabled,
           }),
-        ],
+        ),
       }),
-    ],
+    ),
   })
 }

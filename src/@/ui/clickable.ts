@@ -42,7 +42,7 @@ export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
         input.className,
       ),
     },
-    input.children,
+    ...(Array.isArray(input.children) ? input.children : [input.children]),
   )
 }
 
@@ -50,7 +50,7 @@ export const ClickableTransparent = (input: ClickableProps) => {
   return h(
     Clickable,
     { ...input, className: cn('[@media(hover:hover)]:enabled:hover:bg-neutral-700/50', input.className) },
-    input.children,
+    ...(Array.isArray(input.children) ? input.children : [input.children]),
   )
 }
 
@@ -61,6 +61,6 @@ export const ClickablePaper = (input: ClickableProps) => {
       ...input,
       className: cn(PAPER_CLASS_NAME, '[@media(hover:hover)]:enabled:hover:bg-neutral-800', input.className),
     },
-    input.children,
+    ...(Array.isArray(input.children) ? input.children : [input.children]),
   )
 }

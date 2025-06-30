@@ -1,5 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
+import { Frag } from '~/@/ui/frag'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
@@ -14,7 +15,9 @@ export const AuthScreenHeader = (input: {
 }) => {
   return h('div', {
     className: 'flex w-full flex-row items-center justify-start gap-2',
-    children: [
+    children: h(
+      Frag,
+      null,
       h(IconButton, {
         className: '-ml-2',
         label: input.ctx.t('app.back'),
@@ -27,6 +30,6 @@ export const AuthScreenHeader = (input: {
         variant: 'title',
         className: 'font-bold',
       }),
-    ],
+    ),
   })
 }

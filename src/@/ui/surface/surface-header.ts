@@ -10,24 +10,20 @@ export const SurfaceHeader = (input: { ctx: { t: Translator }; title: Translated
   return h(
     'div',
     { className: 'flex w-full items-center justify-center px-6 pt-4 pb-0' },
-    [
-      h(
-        'div',
-        { className: 'flex-1' },
-        [input.title && h(Typography, { text: input.title, variant: 'title', sizeClassName: 'text-2xl' })].filter(
-          Boolean,
-        ),
-      ),
-      input.onClose &&
-        h(IconButton, {
-          label: input.ctx.t('app.close'),
-          onClick: (event) => {
-            preventConsoleErrorWhenClosingDrawer(event)
-            input.onClose?.()
-          },
-          className: '-mr-1',
-          renderIcon: (inputIcon) => h(IconXMark, inputIcon),
-        }),
-    ].filter(Boolean),
+    h(
+      'div',
+      { className: 'flex-1' },
+      input.title && h(Typography, { text: input.title, variant: 'title', sizeClassName: 'text-2xl' }),
+    ),
+    input.onClose &&
+      h(IconButton, {
+        label: input.ctx.t('app.close'),
+        onClick: (event) => {
+          preventConsoleErrorWhenClosingDrawer(event)
+          input.onClose?.()
+        },
+        className: '-mr-1',
+        renderIcon: (inputIcon) => h(IconXMark, inputIcon),
+      }),
   )
 }

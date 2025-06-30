@@ -7,16 +7,21 @@ import { DRAWER_PORTAL_ID } from '../drawer-portal-exit'
 import type { DrawerInput } from '../drawer-shared'
 import './drawer-element'
 import { drawerSub } from './drawer-shared'
+import { Frag } from '../../frag'
 
 export const DrawerWebComponent = (input: DrawerInput) => {
   drawerSub.pub({ type: 'input', ...input })
   return h(Portal.Entrance, {
     portalId: DRAWER_PORTAL_ID,
-    children: [
+    children: h(
+      Frag,
+      null,
       h('drawer-element', {
         id: input.id,
         position: input.position,
-        children: [
+        children: h(
+          Frag,
+          null,
           h(Surface, {
             'aria-hidden': !input.open,
             role: 'dialog',
@@ -25,14 +30,16 @@ export const DrawerWebComponent = (input: DrawerInput) => {
               'h-fit max-h-full w-full overflow-hidden border',
               input.position === 'bottom' ? 'rounded-t-2xl' : 'rounded-b-2xl',
             ),
-            children: [
+            children: h(
+              Frag,
+              null,
               input.position === 'top' && h(Gutter, { variant: 'drawer' }),
               input.children,
               input.position === 'bottom' && h(Gutter, { variant: 'drawer' }),
-            ].filter(Boolean),
+            ),
           }),
-        ],
+        ),
       }),
-    ],
+    ),
   })
 }

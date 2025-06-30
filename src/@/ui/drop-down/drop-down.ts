@@ -30,7 +30,9 @@ export const DropDown = (props: {
     }
   }
 
-  return h('div', {}, [
+  return h(
+    'div',
+    {},
     h(Backdrop, { open: props.open, onClick: onClose, onKeyDown }),
     h(
       'div',
@@ -39,31 +41,28 @@ export const DropDown = (props: {
         className: cn('relative', props.className, props.open && 'z-50'),
         onKeyDown,
       },
-      [
-        props.renderReference(),
-        h(
-          Transition,
-          {
-            id: `${props.id}-transition`,
-            mode: 'in-out',
-            onEnter,
-            onExit,
-          },
-          [
-            props.open &&
-              h(
-                'div',
-                {
-                  id: props.id,
-                  className: toPositionClasses(position, alignment),
-                },
-                [props.renderFloating()],
-              ),
-          ],
-        ),
-      ],
+
+      props.renderReference(),
+      h(
+        Transition,
+        {
+          id: `${props.id}-transition`,
+          mode: 'in-out',
+          onEnter,
+          onExit,
+        },
+        props.open &&
+          h(
+            'div',
+            {
+              id: props.id,
+              className: toPositionClasses(position, alignment),
+            },
+            [props.renderFloating()],
+          ),
+      ),
     ),
-  ])
+  )
 }
 
 const Backdrop = (props: { open: boolean; onClick: () => void; onKeyDown: (e: unknown) => void }) => {
