@@ -4,6 +4,7 @@ import { NotAsked } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Topic } from '~/@/topic'
+import { h } from '~/@/vdom/h'
 import { AppFrontendCtxBase, isAppFrontendCtx } from '../@/frontend/ctx'
 import { EndSpaceFrontend } from './end-space/frontend'
 import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/frontend'
@@ -15,12 +16,12 @@ import { JoinSpaceFrontend } from './join-space/frontend'
 import { LeaveSpaceFrontend } from './leave-space/frontend'
 import { ListSpacesFrontend } from './list-spaces/frontend'
 import { SpaceFrontend } from './space/frontend'
+import { SpaceLoaderFrontend } from './space/space-loader/frontend'
 import { SpaceDb } from './space/space/space-db'
 import { Spaces } from './space/spaces'
 import { StartSpaceFrontend } from './start-space/frontend'
 import { SyncFrontend } from './sync/frontend'
 import type { FrontendCtxModule, FrontendModule, ModelFrontend, rpcContract, topicContract } from './types'
-import { SpaceLoaderFrontend } from './space/space-loader/frontend'
 
 const initCtx = async (input: {
   ctx: AppFrontendCtxBase
@@ -120,18 +121,16 @@ const View: FrontendModule['View'] = (input) => {
     case 'spaces': {
       switch (input.ctx.currentScreen.t) {
         case 'space-list': {
-          return <ListSpacesFrontend.View dispatch={input.dispatch} ctx={input.ctx} model={input.model} />
+          return h(ListSpacesFrontend.View, { dispatch: input.dispatch, ctx: input.ctx, model: input.model })
         }
         case 'space': {
           if (isAppFrontendCtx(input.ctx)) {
-            return (
-              <SpaceFrontend.View
-                spaceId={input.ctx.currentScreen.spaceId}
-                ctx={input.ctx}
-                dispatch={input.dispatch}
-                model={input.model}
-              />
-            )
+            return h(SpaceFrontend.View, {
+              spaceId: input.ctx.currentScreen.spaceId,
+              ctx: input.ctx,
+              dispatch: input.dispatch,
+              model: input.model,
+            })
           }
           return null
         }

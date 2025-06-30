@@ -1,15 +1,16 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { IconArrowLeftOnRect } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { CurrentUserLoggedOutEvt } from '~/app/@/frontend/current-user-logged-out-evt.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
+import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendModule } from '../frontend/space-frontend'
-import { Spaces } from '../space/spaces'
 import { MsgSpace } from '../space/msg-space'
-import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
+import { Spaces } from '../space/spaces'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -125,7 +126,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
 
   return {
     id: input.ctx.t('spaces.end'),
-    icon: (inputIcon) => <IconArrowLeftOnRect {...inputIcon} />,
+    icon: (inputIcon) => h(IconArrowLeftOnRect, { ...inputIcon }),
     label: input.ctx.t('spaces.end'),
     onClick: () => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId }),
     color: 'danger',
@@ -133,13 +134,11 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
 }
 
 const ViewSpaceEnded: SpaceFrontendModule['View'] = (input) => {
-  return (
-    <ScreenTitleButton
-      title={input.ctx.t('spaces.space-ended')}
-      buttonText={input.ctx.t('spaces.exit-space')}
-      onClick={() => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' })}
-    />
-  )
+  return h(ScreenTitleButton, {
+    title: input.ctx.t('spaces.space-ended'),
+    buttonText: input.ctx.t('spaces.exit-space'),
+    onClick: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
+  })
 }
 
 export const EndSpaceFrontend = {

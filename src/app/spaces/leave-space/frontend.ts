@@ -1,13 +1,14 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { IconArrowLeftOnRect } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SpaceFrontendModule } from '../frontend/space-frontend'
-import { Spaces } from '../space/spaces'
 import { MsgSpace } from '../space/msg-space'
+import { Spaces } from '../space/spaces'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -89,7 +90,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
   if (!spaceId) return null
   return {
     id: input.ctx.t('spaces.leave'),
-    icon: (inputIcon) => <IconArrowLeftOnRect {...inputIcon} />,
+    icon: (inputIcon) => h(IconArrowLeftOnRect, inputIcon),
     label: input.ctx.t('spaces.leave'),
     onClick: () => input.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId }),
     color: 'danger',

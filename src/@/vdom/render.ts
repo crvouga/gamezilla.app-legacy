@@ -31,7 +31,7 @@ export const Render = async (vDomImpl: VDomImpl, node: RenderNode): Promise<Rend
 
     case 'react':
     case 'react-with-compiler': {
-      const [React, ReactDOM, ReactDOMClient] = await Promise.all([
+      const [_React, ReactDOM, ReactDOMClient] = await Promise.all([
         import('react'),
         import('react-dom'),
         import('react-dom/client'),
@@ -39,7 +39,7 @@ export const Render = async (vDomImpl: VDomImpl, node: RenderNode): Promise<Rend
       const reactRoot = ReactDOMClient.createRoot(node)
       createPortal = ReactDOM.createPortal
       return (vDom) => {
-        reactRoot.render(<React.StrictMode>{vDom}</React.StrictMode>)
+        reactRoot.render(vDom)
       }
     }
   }

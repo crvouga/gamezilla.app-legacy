@@ -1,13 +1,14 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
-import { UnixMs } from '~/@/time/unix-ms'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
+import { UnixMs } from '~/@/time/unix-ms'
 import { cn } from '~/@/ui/cn'
 import { IconXMark } from '~/@/ui/icon'
 import { PAPER_CLASS_NAME } from '~/@/ui/paper'
 import { Transition } from '~/@/ui/transition'
+import { h } from '~/@/vdom/h'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
@@ -130,12 +131,23 @@ export const subscriptions: Module['subscriptions'] = ({ model }) => {
 }
 
 export const View: Module['View'] = (input) => {
-  return (
-    <Transition mode='out-in' id='toast-root' onEnter={onEnter} onExit={onExit}>
-      {input.model.toast && (
-        <Toast key={input.model.toast.toastId} ctx={input.ctx} toast={input.model.toast} dispatch={input.dispatch} />
-      )}
-    </Transition>
+  return h(
+    Transition,
+    {
+      mode: 'out-in',
+      id: 'toast-root',
+      onEnter,
+      onExit,
+    },
+    [
+      input.model.toast &&
+        h(Toast, {
+          key: input.model.toast.toastId,
+          ctx: input.ctx,
+          toast: input.model.toast,
+          dispatch: input.dispatch,
+        }),
+    ],
   )
 }
 
@@ -157,58 +169,70 @@ const onExit = async (node: HTMLElement) => {
 
 const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) => {
   const errorMsg = input.toast.errorMsg
-  return (
-    <div
-      id={String(input.toast.toastId)}
-      role='alert'
-      data-error={input.toast.variant === 'error'}
-      data-info={input.toast.variant === 'info'}
-      data-success={input.toast.variant === 'success'}
-      className='pointer-events-none absolute top-0 left-0 z-40 flex w-full items-center justify-center overflow-visible p-4'
-      onMouseDown={() => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast })}
-      onMouseUp={() => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast })}
-      onTouchStart={() => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast })}
-      onTouchEnd={() => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast })}
-      onContextMenu={(e) => e.preventDefault()}
-    >
-      <div className={cn('w-full bg-black', toWidthClass(input))}>
-        <div
-          className={cn(
-            'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
-            input.toast.variant === 'info' && PAPER_CLASS_NAME,
-            input.toast.variant === 'success' && PAPER_CLASS_NAME,
-            input.toast.variant === 'error' && 'border-red-400 bg-red-500',
-          )}
-          key={input.toast.toastId}
-        >
-          {input.toast.text}
-          {errorMsg && (
-            <>
-              <button
-                type='button'
-                className='font-bold'
-                onClick={() =>
-                  input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId })
-                }
-              >
-                See Error
-              </button>
-            </>
-          )}
-          <button
-            type='button'
-            onClick={() =>
-              input.dispatch({
-                t: 'clicked-dismiss-button',
-                toastId: input.toast.toastId,
-              })
-            }
-          >
-            <IconXMark className='h-5 w-5' />
-          </button>
-        </div>
-      </div>
-    </div>
+  return h(
+    'div',
+    {
+      id: String(input.toast.toastId),
+      role: 'alert',
+      'data-error': input.toast.variant === 'error',
+      'data-info': input.toast.variant === 'info',
+      'data-success': input.toast.variant === 'success',
+      className:
+        'pointer-events-none absolute top-0 left-0 z-40 flex w-full items-center justify-center overflow-visible p-4',
+      onMouseDown: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
+      onMouseUp: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
+      onTouchStart: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
+      onTouchEnd: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
+      onContextMenu: (e: any) => e.preventDefault(),
+    },
+    [
+      h(
+        'div',
+        {
+          className: cn('w-full bg-black', toWidthClass(input)),
+        },
+        [
+          h(
+            'div',
+            {
+              className: cn(
+                'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
+                input.toast.variant === 'info' && PAPER_CLASS_NAME,
+                input.toast.variant === 'success' && PAPER_CLASS_NAME,
+                input.toast.variant === 'error' && 'border-red-400 bg-red-500',
+              ),
+              key: input.toast.toastId,
+            },
+            [
+              input.toast.text,
+              errorMsg &&
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'font-bold',
+                    onClick: () =>
+                      input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
+                  },
+                  ['See Error'],
+                ),
+              h(
+                'button',
+                {
+                  type: 'button',
+                  onClick: () =>
+                    input.dispatch({
+                      t: 'clicked-dismiss-button',
+                      toastId: input.toast.toastId,
+                    }),
+                },
+                [h(IconXMark, { className: 'h-5 w-5' })],
+              ),
+            ],
+          ),
+        ],
+      ),
+    ],
   )
 }
 
