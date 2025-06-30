@@ -1,10 +1,10 @@
 import { difference } from '~/@/array/difference'
 import { describe, expect, test, TestRunnerEnv } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
-import { FixtureAuth } from '../@/test/fixture'
+import { FixtureAuthE2E } from '../@/test/e2e'
 
 const Fixture = async (e: TestRunnerEnv) => {
-  const f = await FixtureAuth(e)
+  const f = await FixtureAuthE2E(e)
   const continueAsGuest = async () => {
     const [button] = await f.frontend.query(`[data-testid='auth/continue-as-guest-button']`)
     await button!.do({ t: 'click' })

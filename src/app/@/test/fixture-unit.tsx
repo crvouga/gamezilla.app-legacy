@@ -6,7 +6,7 @@ import { TestBackend } from './test-backend'
 import { TestFrontend } from './test-frontend'
 import { IFixtureApp } from './types'
 
-export const FixtureAppUnitTest = async (): Promise<IFixtureApp> => {
+export const FixtureAppUnitTestE2E = async (): Promise<IFixtureApp> => {
   let logger: ILogger
   logger ??= Logger({ t: 'noop' })
   logger ??= Logger({ t: 'console', namespace: ['fixture'], newLinePerMsg: false })

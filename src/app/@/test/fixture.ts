@@ -1,15 +1,15 @@
 import { TestRunnerEnv } from '~/@/test-runner'
 import { IFixtureApp } from './types'
 
-export const FixtureApp = async (env: TestRunnerEnv): Promise<IFixtureApp> => {
+export const FixtureAppE2E = async (env: TestRunnerEnv): Promise<IFixtureApp> => {
   switch (env.t) {
     case 'playwright': {
-      const { FixtureAppPlaywright } = await import('./fixture-playwright')
-      return FixtureAppPlaywright(env)
+      const { FixtureAppPlaywrightE2E } = await import('./fixture-playwright')
+      return FixtureAppPlaywrightE2E(env)
     }
     default: {
-      const { FixtureAppUnitTest } = await import('./fixture-unit')
-      return FixtureAppUnitTest()
+      const { FixtureAppUnitTestE2E } = await import('./fixture-unit')
+      return FixtureAppUnitTestE2E()
     }
   }
 }

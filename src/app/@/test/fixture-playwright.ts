@@ -3,7 +3,7 @@ import { TestClient } from '~/@/test-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { IFixtureApp } from './types'
 
-export const FixtureAppPlaywright = async (config: { getPage: () => Page }): Promise<IFixtureApp> => {
+export const FixtureAppPlaywrightE2E = async (config: { getPage: () => Page }): Promise<IFixtureApp> => {
   const client = await TestClient({
     t: 'playwright',
     getPage: config.getPage,

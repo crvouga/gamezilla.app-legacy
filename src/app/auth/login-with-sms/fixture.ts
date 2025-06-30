@@ -1,5 +1,5 @@
 import { expect, TestRunnerEnv } from '~/@/test-runner'
-import { FixtureAuth } from '../../@/test/fixture'
+import { FixtureAuthE2E } from '../@/test/e2e'
 import { PhoneNumber } from '~/@/phone-number'
 
 const randomPhoneNumber = (): number => {
@@ -11,7 +11,7 @@ const randomPhoneNumber = (): number => {
 }
 
 export const Fixture = async (e: TestRunnerEnv) => {
-  const f = await FixtureAuth(e)
+  const f = await FixtureAuthE2E(e)
 
   const [button] = await f.frontend.query(`[data-testid='auth/continue-with-phone-button']`)
   await button!.do({ t: 'click' })

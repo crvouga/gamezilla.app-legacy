@@ -1,10 +1,10 @@
 import { difference } from '~/@/array/difference'
 import { describe, expect, test, TestRunnerEnv } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
-import { FixtureSpaces } from '../@/fixture/spaces'
+import { FixtureSpacesE2E } from '../@/fixture/e2e'
 
 const Fixture = async (e: TestRunnerEnv) => {
-  const f = await FixtureSpaces(e)
+  const f = await FixtureSpacesE2E(e)
   return {
     ...f,
   }

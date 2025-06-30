@@ -1,8 +1,8 @@
 import { expect, test, TestRunnerEnv, describe } from '~/@/test-runner'
-import { FixtureAuth } from './@/test/fixture'
+import { FixtureAuthE2E } from './@/test/e2e'
 
 const Fixture = async (e: TestRunnerEnv) => {
-  const f = await FixtureAuth(e)
+  const f = await FixtureAuthE2E(e)
   return f
 }
 

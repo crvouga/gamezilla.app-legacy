@@ -1,9 +1,9 @@
 import { expect, TestRunnerEnv } from '~/@/test-runner'
-import { FixtureApp } from '~/app/@/test/fixture'
+import { FixtureAppE2E } from '~/app/@/test/fixture'
 import { setupLoginWithSms } from '~/app/@/test/setup-login-with-sms'
 
-export const FixtureSpaces = async (e: TestRunnerEnv) => {
-  const f = await FixtureApp(e)
+export const FixtureSpacesE2E = async (e: TestRunnerEnv) => {
+  const f = await FixtureAppE2E(e)
 
   await setupLoginWithSms(f)
 
