@@ -9,9 +9,3 @@ export type H = <TProps extends Props = Props>(
   props: TProps | null,
   ...children: VDom[]
 ) => VDom
-
-export let h: H
-
-export const view = (props: { message: string }) => {
-  return h('div', null, `Hello ${props.message}`)
-}
