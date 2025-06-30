@@ -1,5 +1,5 @@
 import { Loading, Ok } from '~/@/result'
-import { IconPlus } from '~/@/ui/icon/icon-plus'
+import { IconPlus } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'

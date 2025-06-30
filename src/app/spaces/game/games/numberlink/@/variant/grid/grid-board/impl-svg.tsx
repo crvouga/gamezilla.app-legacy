@@ -1,5 +1,5 @@
 import { cn } from '~/@/ui/cn'
-import { IconCheckmark } from '~/@/ui/icon/icon-checkmark'
+import { IconCheckmark } from '~/@/ui/icon'
 import type { VDom } from '~/@/vdom/vdom'
 import { Numberlink } from '../../../numberlink'
 import { NodeId } from '../../../numberlink/node-id'

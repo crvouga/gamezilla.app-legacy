@@ -2,12 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
-import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
-import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
-import { IconCheckmarkCircle } from '~/@/ui/icon/icon-checkmark-circle'
-import { IconFlag } from '~/@/ui/icon/icon-flag'
-import { IconSpinner } from '~/@/ui/icon/icon-spinner'
-import { IconXMark } from '~/@/ui/icon/icon-x-mark'
+import { IconArrowLeft, IconArrowRotateLeft, IconCheckmarkCircle, IconFlag, IconSpinner, IconXMark } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
 import { Typography } from '~/@/ui/typography'
 import { UserProfile } from '~/app/@/data/user-profile'
@@ -298,7 +293,7 @@ const View: Module['View'] = (input) => {
                 input.modelSpace.type === 'game-over' && input.ctx.currentUser.userId === input.ctx.space.hostId
                   ? {
                       id: input.ctx.t('app.exit'),
-                      icon: (props: { className?: string }) => <IconArrowLeftOnRect {...props} />,
+                      icon: (props: { className?: string }) => <IconArrowLeft {...props} />,
                       label: input.ctx.t('app.exit'),
                       onClick: () => {
                         input.dispatch({

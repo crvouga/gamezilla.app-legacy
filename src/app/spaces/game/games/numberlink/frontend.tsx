@@ -1,7 +1,6 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
-import { IconScrewdriverWrench } from '~/@/ui/icon/icon-screwdriver-wrench'
+import { IconGamepad, IconScrewdriverWrench } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'

@@ -1,7 +1,5 @@
 import { Sub } from '~/@/sub'
-import { IconChevronLeft } from '~/@/ui/icon/icon-chevron-left'
-import { IconChevronRight } from '~/@/ui/icon/icon-chevron-right'
-import { IconDeleteForever } from '~/@/ui/icon/icon-delete-forever'
+import { IconChevronLeft, IconChevronRight, IconDeleteForever } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'

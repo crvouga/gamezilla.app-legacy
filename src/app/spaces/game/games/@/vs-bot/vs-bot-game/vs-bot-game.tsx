@@ -1,5 +1,5 @@
 import type { UserId } from '~/app/@/data/user-id'
-import { IconRobot } from '~/@/ui/icon/icon-robot'
+import { IconRobot } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
 import { Avatar } from '~/@/ui/avatar'
 import { Transition } from '~/@/ui/transition'

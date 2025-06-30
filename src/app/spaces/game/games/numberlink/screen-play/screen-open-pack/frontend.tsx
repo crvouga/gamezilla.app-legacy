@@ -1,4 +1,4 @@
-import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
+import { IconGamepad } from '~/@/ui/icon'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'

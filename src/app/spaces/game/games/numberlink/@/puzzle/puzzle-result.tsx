@@ -1,7 +1,7 @@
 import { Translator } from '~/@/l18n/generated'
 import { s } from '~/@/schema'
 import { EmptyState } from '~/@/ui/empty-state'
-import { IconExclamationCircle } from '~/@/ui/icon/icon-exclamation-circle'
+import { IconExclamationCircle } from '~/@/ui/icon'
 import { Puzzle } from './puzzle'
 
 const schema = s.or(

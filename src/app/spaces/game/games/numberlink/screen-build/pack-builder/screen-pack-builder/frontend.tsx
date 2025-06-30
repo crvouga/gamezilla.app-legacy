@@ -1,6 +1,6 @@
 import { Sub } from '~/@/sub'
 import { Button } from '~/@/ui/button'
-import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
+import { IconArrowLeft } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -88,7 +88,7 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
   View(input) {
     return (
       <Button
-        renderIconStart={(inputIcons) => <IconArrowLeftOnRect {...inputIcons} />}
+        renderIconStart={(inputIcons) => <IconArrowLeft {...inputIcons} />}
         className='w-full'
         text={input.ctx.t('app.exit')}
         onClick={() =>

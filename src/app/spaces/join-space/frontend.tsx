@@ -1,6 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { Translator } from '~/@/l18n/generated'
-import { IconArrowRightOnRect } from '~/@/ui/icon/icon-arrow-right-on-rect'
+import { IconArrowRightOnRect } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'

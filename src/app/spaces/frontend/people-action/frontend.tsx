@@ -1,7 +1,7 @@
 import { DropDownAlignment } from '~/@/ui/drop-down/drop-down-alignment'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'
-import { IconUserGroup } from '~/@/ui/icon/icon-user-group'
+import { IconUserGroup } from '~/@/ui/icon'
 import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'

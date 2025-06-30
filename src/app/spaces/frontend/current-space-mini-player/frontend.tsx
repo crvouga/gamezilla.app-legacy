@@ -1,7 +1,7 @@
 import { Avatar } from '~/@/ui/avatar'
 import { cn } from '~/@/ui/cn'
 import { IconButton } from '~/@/ui/icon-button'
-import { IconXMark } from '~/@/ui/icon/icon-x-mark'
+import { IconXMark } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'

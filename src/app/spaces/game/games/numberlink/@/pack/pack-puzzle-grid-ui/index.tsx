@@ -1,5 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
-import { IconPlus } from '~/@/ui/icon/icon-plus'
+import { IconPlus } from '~/@/ui/icon'
 import { Swiper } from '~/@/ui/swiper'
 import { Typography } from '~/@/ui/typography'
 import { Clickable, ClickablePaper } from '~/@/ui/clickable'

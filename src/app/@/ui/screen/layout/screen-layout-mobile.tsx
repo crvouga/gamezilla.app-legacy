@@ -1,10 +1,10 @@
-import { Button } from '~/@/ui/button.tsx'
-import { DynamicElement } from '~/@/ui/dynamic-element.tsx'
+import { Button } from '~/@/ui/button'
+import { DynamicElement } from '~/@/ui/dynamic-element'
 import { VDom } from '~/@/vdom/vdom'
-import { CancelSubmitButtons } from '../../form/cancel-submit-buttons.tsx'
-import { HorizontalActionBar } from '../action-bar/screen-action-bar-horizontal.tsx'
-import { ScreenNavBarMobile } from '../nav-bar/screen-nav-bar-mobile.tsx'
-import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props.tsx'
+import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
+import { HorizontalActionBar } from '../action-bar/screen-action-bar-horizontal'
+import { ScreenNavBarMobile } from '../nav-bar/screen-nav-bar-mobile'
+import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const element = input.patchAction ? 'form' : 'div'

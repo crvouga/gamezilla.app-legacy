@@ -4,8 +4,8 @@ import { pipe } from '~/@/function/pipe'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
-import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
-import { IconRobot } from '~/@/ui/icon/icon-robot'
+import { IconArrowLeft } from '~/@/ui/icon'
+import { IconRobot } from '~/@/ui/icon'
 import { Spinner } from '~/@/ui/spinner'
 import { UserProfile } from '~/app/@/data/user-profile'
 
@@ -453,7 +453,7 @@ export const View = ({
           actions: [
             {
               id: ctx.t('app.exit'),
-              icon: (props) => <IconArrowLeftOnRect {...props} />,
+              icon: (props) => <IconArrowLeft {...props} />,
               label: ctx.t('app.exit'),
               onClick: onClose,
             },

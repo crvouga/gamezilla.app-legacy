@@ -4,13 +4,15 @@ import { Translator } from '~/@/l18n/generated'
 import { isErr } from '~/@/result'
 import { Avatar } from '~/@/ui/avatar'
 import { cn } from '~/@/ui/cn'
-import { IconArrowRightCircle } from '~/@/ui/icon/icon-arrow-circle'
-import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
-import { IconArrowRight } from '~/@/ui/icon/icon-arrow-right'
-import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
-import { IconCheckmarkCircle } from '~/@/ui/icon/icon-checkmark-circle'
-import { IconLightbulb } from '~/@/ui/icon/icon-lightbulb'
-import { IconXMark } from '~/@/ui/icon/icon-x-mark'
+import {
+  IconArrowRightCircle,
+  IconArrowLeft,
+  IconArrowRight,
+  IconArrowRotateLeft,
+  IconCheckmarkCircle,
+  IconLightbulb,
+  IconXMark,
+} from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
 import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
@@ -392,7 +394,7 @@ export const BottomBarActions = ({
 }): ScreenAction[] => {
   const exit: ScreenAction = {
     id: ctx.t('app.exit'),
-    icon: (input) => <IconArrowLeftOnRect {...input} />,
+    icon: (input) => <IconArrowLeft {...input} />,
     label: ctx.t('app.exit'),
     onClick: onClose,
   }

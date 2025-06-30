@@ -1,8 +1,6 @@
 import type { Eff } from '~/@/eff'
 import { UnixMs } from '~/@/time/unix-ms'
-import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
-import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
-import { IconRightLeft } from '~/@/ui/icon/icon-right-left'
+import { IconArrowLeft, IconArrowRotateLeft, IconRightLeft } from '~/@/ui/icon'
 import { LoadingBar } from '~/@/ui/loading-bar'
 
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -262,7 +260,7 @@ export const View = (input: {
           actions: [
             {
               id: input.ctx.t('app.exit'),
-              icon: (input) => <IconArrowLeftOnRect {...input} />,
+              icon: (input) => <IconArrowLeft {...input} />,
               label: input.ctx.t('app.exit'),
               onClick: () =>
                 input.dispatch({

@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
-import { IconQuestionMark } from '~/@/ui/icon/icon-question-mark'
+import { IconQuestionMark } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import type { VDom } from '~/@/vdom/vdom'

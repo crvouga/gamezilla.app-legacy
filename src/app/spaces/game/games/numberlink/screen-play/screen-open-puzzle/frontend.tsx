@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import { IconGamepad } from '~/@/ui/icon/icon-gamepad'
+import { IconGamepad } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'

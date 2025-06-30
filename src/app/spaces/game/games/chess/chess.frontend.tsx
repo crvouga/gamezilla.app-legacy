@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { RemoteResult, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { IconPuzzlePiece } from '~/@/ui/icon/icon-puzzle-piece'
+import { IconPuzzlePiece } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'

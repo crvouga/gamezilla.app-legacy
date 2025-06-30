@@ -1,5 +1,5 @@
 import { withEventId } from '~/@/event-sourced/event'
-import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
+import { IconArrowLeftOnRect } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { CurrentUserLoggedOutEvt } from '~/app/@/frontend/current-user-logged-out-evt.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'

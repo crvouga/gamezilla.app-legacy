@@ -1,4 +1,4 @@
-import { IconEllipsisVertical } from '~/@/ui/icon/icon-ellipsis-vertical'
+import { IconEllipsisVertical } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'

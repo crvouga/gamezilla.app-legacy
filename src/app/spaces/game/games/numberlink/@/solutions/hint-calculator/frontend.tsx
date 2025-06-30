@@ -1,7 +1,7 @@
 import { pipe } from '~/@/function/pipe'
 import { isErr, Loading, mapErr, mapOk } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
-import { IconLightbulb } from '~/@/ui/icon/icon-lightbulb'
+import { IconLightbulb } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'

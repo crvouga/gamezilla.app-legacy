@@ -1,6 +1,6 @@
 import { Json } from '~/@/json/json'
 import { isErr } from '~/@/result'
-import { IconCopy } from '~/@/ui/icon/icon-copy'
+import { IconCopy } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd.$msg'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'

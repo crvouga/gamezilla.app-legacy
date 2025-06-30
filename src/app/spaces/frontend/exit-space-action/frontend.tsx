@@ -1,4 +1,4 @@
-import { IconDoorOpen } from '~/@/ui/icon/icon-door-open'
+import { IconDoorOpen } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'

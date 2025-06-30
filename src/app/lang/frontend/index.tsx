@@ -2,8 +2,7 @@ import { LocalStorage } from '~/@/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
-import { IconCheckmarkCircle, IconCheckmarkCircleEmpty } from '~/@/ui/icon/icon-checkmark-circle'
-import { IconLanguage } from '~/@/ui/icon/icon-language'
+import { IconCheckmarkCircle, IconLanguage } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Spinner } from '~/@/ui/spinner'
 import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
@@ -209,7 +208,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
                   return <IconCheckmarkCircle {...inputIcon} />
                 }
 
-                return <IconCheckmarkCircleEmpty {...inputIcon} />
+                return <IconCheckmarkCircle {...inputIcon} />
               }}
               end={() => <div>{input.ctx.t(code)}</div>}
               onClick={() =>

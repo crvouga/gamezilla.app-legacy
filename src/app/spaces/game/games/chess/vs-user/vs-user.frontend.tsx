@@ -6,7 +6,7 @@ import { Sub } from '~/@/sub'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import type { UserId } from '~/app/@/data/user-id'
 import { Button } from '~/@/ui/button'
-import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
+import { IconArrowLeft } from '~/@/ui/icon'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Chess } from '../@/chess'
 import {
@@ -423,7 +423,7 @@ export const View = ({
           <Button
             className='flex-1'
             onClick={onQuit}
-            renderIconStart={(iconInput) => <IconArrowLeftOnRect {...iconInput} />}
+            renderIconStart={(iconInput) => <IconArrowLeft {...iconInput} />}
             text={ctx.t('app.exit')}
           />
           <Button variant='contained' color='primary' className='flex-1' text={ctx.t('game.start-game')} />

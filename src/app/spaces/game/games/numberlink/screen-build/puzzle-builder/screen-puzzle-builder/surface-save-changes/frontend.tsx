@@ -1,6 +1,6 @@
 import { Loading, Result, isOk } from '~/@/result'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
-import { IconFloppyDisk } from '~/@/ui/icon/icon-floppy-disk'
+import { IconFloppyDisk } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'

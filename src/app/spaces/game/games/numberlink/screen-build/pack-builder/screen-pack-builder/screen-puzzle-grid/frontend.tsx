@@ -1,4 +1,4 @@
-import { IconPen } from '~/@/ui/icon/icon-pen'
+import { IconPen } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'

@@ -1,6 +1,6 @@
 import { isErr, RemoteResult, Result } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
-import { IconPlus } from '~/@/ui/icon/icon-plus'
+import { IconPlus } from '~/@/ui/icon'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'

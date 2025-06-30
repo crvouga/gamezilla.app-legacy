@@ -1,7 +1,5 @@
 import { Sub } from '~/@/sub'
-import { IconBox } from '~/@/ui/icon/icon-box'
-import { IconPuzzlePiece } from '~/@/ui/icon/icon-puzzle-piece'
-import { IconScrewdriverWrench } from '~/@/ui/icon/icon-screwdriver-wrench'
+import { IconBox, IconPuzzlePiece, IconScrewdriverWrench } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'

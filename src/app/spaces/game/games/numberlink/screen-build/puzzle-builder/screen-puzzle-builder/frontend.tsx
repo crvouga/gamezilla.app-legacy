@@ -1,6 +1,5 @@
 import { Sub } from '~/@/sub'
-import { IconPen } from '~/@/ui/icon/icon-pen'
-import { IconPlay } from '~/@/ui/icon/icon-play'
+import { IconPen, IconPlay } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'

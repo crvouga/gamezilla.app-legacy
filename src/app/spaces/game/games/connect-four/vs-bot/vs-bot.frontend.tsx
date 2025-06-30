@@ -1,9 +1,7 @@
 import { type WithEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
-import { IconArrowLeftOnRect } from '~/@/ui/icon/icon-arrow-left-on-rect'
-import { IconArrowRotateLeft } from '~/@/ui/icon/icon-arrow-rotate-left'
-import { IconRightLeft } from '~/@/ui/icon/icon-right-left'
+import { IconArrowLeft, IconArrowRotateLeft, IconRightLeft } from '~/@/ui/icon'
 import type { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -453,7 +451,7 @@ const View: Module['View'] = (input) => {
                 actions: [
                   {
                     id: input.ctx.t('app.exit'),
-                    icon: (props) => <IconArrowLeftOnRect {...props} />,
+                    icon: (props) => <IconArrowLeft {...props} />,
                     label: input.ctx.t('app.exit'),
                     onClick: () => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUser.userId }),
                   },

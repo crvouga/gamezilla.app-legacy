@@ -1,6 +1,6 @@
-import { s } from '~/@/schema'
 import { Translator } from '~/@/l18n/generated'
-import { IconXMark } from '~/@/ui/icon/icon-x-mark'
+import { s } from '~/@/schema'
+import { IconXMark } from '~/@/ui/icon'
 import { Slider } from '~/@/ui/slider'
 
 export const Model = s.obj({

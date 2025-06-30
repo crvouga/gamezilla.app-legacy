@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
-import { IconChevronRight } from '~/@/ui/icon/icon-chevron-right'
+import { IconChevronRight } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'

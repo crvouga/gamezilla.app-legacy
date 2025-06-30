@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/surface-drawer/drawer-shared'
 import { IconButton } from '~/@/ui/icon-button'
-import { IconXMark } from '~/@/ui/icon/icon-x-mark'
+import { IconXMark } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
 
 export const SurfaceHeader = (input: { ctx: { t: Translator }; title: TranslatedText | null; onClose: () => void }) => {

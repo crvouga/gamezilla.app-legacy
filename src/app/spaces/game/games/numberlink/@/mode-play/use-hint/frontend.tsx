@@ -1,4 +1,4 @@
-import { IconLightbulb } from '~/@/ui/icon/icon-lightbulb'
+import { IconLightbulb } from '~/@/ui/icon'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { AlgoIsSolved } from '../../solutions/algo-is-solved/algo-is-solved'

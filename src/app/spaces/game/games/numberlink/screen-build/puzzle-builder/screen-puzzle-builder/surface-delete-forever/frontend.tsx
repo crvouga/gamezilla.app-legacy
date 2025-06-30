@@ -1,6 +1,6 @@
 import { Ok, RemoteResult, isLoading } from '~/@/result'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
-import { IconDeleteForever } from '~/@/ui/icon/icon-delete-forever'
+import { IconDeleteForever } from '~/@/ui/icon'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
