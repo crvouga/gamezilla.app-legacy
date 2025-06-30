@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import { h } from '~/@/vdom/h'
 import './click-outside-element'
 import { Props, propsSub } from './shared'
 

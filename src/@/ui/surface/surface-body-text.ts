@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import { h } from '~/@/vdom/h'
 import { TranslatedText } from '~/@/l18n'
 import { Typography } from '~/@/ui/typography'
 import { SurfaceBody } from './surface-body'
