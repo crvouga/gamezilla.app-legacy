@@ -18,7 +18,7 @@ export type ButtonEvent = {
 }
 
 export type ButtonInput = {
-  rounded?: boolean
+  fab?: boolean
   text?: TranslatedText
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
@@ -38,12 +38,13 @@ export const Button = (input: ButtonInput) => {
       dataTestId={input.dataTestId}
       disabled={input.disabled || input.loading}
       type={input.type ?? 'button'}
+      data-fab={input.fab}
       className={cn(
         input.className,
         'relative flex shrink-0 appearance-none flex-nowrap items-center justify-center truncate overflow-hidden rounded font-semibold select-none',
         toColorClass(input),
         toSizeClass(input),
-        input.rounded && 'rounded-3xl shadow-2xl',
+        input.fab && 'rounded-3xl shadow-2xl',
         input.disabled && 'cursor-not-allowed opacity-60',
         input.loading && 'cursor-wait opacity-70',
       )}

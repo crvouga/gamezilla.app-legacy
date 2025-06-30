@@ -12,7 +12,6 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
 
   return (
     <DynamicElement
-      dataTestId={input.dataTestId}
       element={element}
       className='relative flex w-full flex-1 flex-row overflow-hidden'
       onSubmit={(e) => {
@@ -104,7 +103,7 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
               {screen.postAction && (
                 <Button
                   color='primary'
-                  rounded
+                  fab
                   variant='contained'
                   size='md'
                   onClick={screen.postAction.onSubmit}

@@ -1,17 +1,16 @@
 import { Button } from '~/@/ui/button.tsx'
+import { DynamicElement } from '~/@/ui/dynamic-element.tsx'
 import { VDom } from '~/@/vdom/vdom'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons.tsx'
 import { HorizontalActionBar } from '../action-bar/screen-action-bar-horizontal.tsx'
 import { ScreenNavBarMobile } from '../nav-bar/screen-nav-bar-mobile.tsx'
 import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props.tsx'
-import { DynamicElement } from '~/@/ui/dynamic-element.tsx'
 
 export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
   const element = input.patchAction ? 'form' : 'div'
 
   return (
     <DynamicElement
-      dataTestId={input.dataTestId}
       element={element}
       className='flex w-full flex-1 flex-col overflow-hidden'
       onSubmit={(e) => {
@@ -33,7 +32,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
                 color='primary'
                 size='lg'
                 variant='contained'
-                rounded
+                fab
                 onClick={input.postAction.onSubmit}
                 disabled={input.postAction.submitDisabled}
                 loading={input.postAction.submitLoading}

@@ -35,21 +35,21 @@ export const DynamicElement = (input: DynamicElementProps) => {
   switch (element) {
     case 'form': {
       return (
-        <form data-testid={dataTestId} {...props}>
+        <form {...props} data-testid={dataTestId}>
           {children}
         </form>
       )
     }
     case 'button': {
       return (
-        <button data-testid={dataTestId} {...props}>
+        <button {...props} data-testid={dataTestId}>
           {children}
         </button>
       )
     }
     default: {
       return (
-        <div data-testid={dataTestId} {...props}>
+        <div {...props} data-testid={dataTestId}>
           {children}
         </div>
       )

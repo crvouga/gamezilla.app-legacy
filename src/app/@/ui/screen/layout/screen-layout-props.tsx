@@ -56,3 +56,9 @@ export type ScreenLayoutProps = {
   postAction?: PostActionProps | null
   patchAction?: PatchActionProps
 }
+
+export const toDataTestIds = (input: Pick<ScreenLayoutProps, 'dataTestId' | 'parentScreen'>): string[] => {
+  const dataTestIds = input.parentScreen ? toDataTestIds(input.parentScreen) : []
+  if (input.dataTestId) dataTestIds.push(input.dataTestId)
+  return dataTestIds
+}
