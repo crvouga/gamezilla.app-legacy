@@ -26,9 +26,6 @@ services:
       - PROD=false
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
       - PORT=5002
-      - PS_POSTGRES_STORAGE_DATABASE_URL=postgresql://powersync_storage_postgres:powersync_storage_postgres@powersync_storage_postgres:5432/powersync_storage_postgres
-      - PS_POSTGRES_REPLICATION_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
-      - PS_JWKS_URI=http://backend:5002/auth/jwks
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
