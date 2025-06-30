@@ -43,14 +43,24 @@ switch (TEST_RUNNER_IMPL()) {
     }
     const testFn = (name: string, fn: (env: TestRunnerEnv) => MaybePromise<void>) => {
       playwright.test(name, async ({ page }) => {
-        page.goto('/')
-        await fn({ t: 'playwright', getPage: () => page })
+        await page.goto('/')
+        await fn({
+          t: 'playwright',
+          getPage: () => page,
+          e2e: true,
+          unit: false,
+        })
       })
     }
     testFn.todo = (name: string, fn: (env: TestRunnerEnv) => MaybePromise<void>) => {
       playwright.test.skip(name, async ({ page }) => {
-        page.goto('/')
-        await fn({ t: 'playwright', getPage: () => page })
+        await page.goto('/')
+        await fn({
+          t: 'playwright',
+          getPage: () => page,
+          e2e: true,
+          unit: false,
+        })
       })
     }
     test = testFn
@@ -100,6 +110,8 @@ switch (TEST_RUNNER_IMPL()) {
       vitest.test(name, async () => {
         await fn({
           t: 'vitest',
+          e2e: false,
+          unit: true,
         })
       })
     }
@@ -107,6 +119,8 @@ switch (TEST_RUNNER_IMPL()) {
       vitest.test.skip(name, async () => {
         await fn({
           t: 'vitest',
+          e2e: false,
+          unit: true,
         })
       })
     }

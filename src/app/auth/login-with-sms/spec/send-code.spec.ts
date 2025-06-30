@@ -37,11 +37,12 @@ describe('send code', () => {
   })
 
   test('play sound on sending code', async (e) => {
+    if (e.e2e) return
     await using f = await Fixture(e)
-    const before = f.frontend.audio()
+    const before = await f.frontend.audio()
     await f.sendCode()
     await eventually(async () => {
-      const after = f.frontend.audio()
+      const after = await f.frontend.audio()
       const played = difference(after, before, (x) => x.id)
       expect(played.map((x) => x.src)).toEqual([APP_SOUND.tap, APP_SOUND.navForwardMin])
     })

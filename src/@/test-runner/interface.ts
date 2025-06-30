@@ -24,9 +24,13 @@ export type TestRunnerEnv =
   | {
       t: 'playwright'
       getPage: () => Page
+      e2e: boolean
+      unit: boolean
     }
   | {
       t: 'vitest'
+      e2e: boolean
+      unit: boolean
     }
 
 export type ITestRunner = (

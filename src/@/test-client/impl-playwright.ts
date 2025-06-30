@@ -1,4 +1,5 @@
 import { type Page } from '@playwright/test'
+import type { PlayedAudioRecord } from '../audio-player'
 import { TimeSpan } from '../time/time-span'
 import type { ITestClient, ITestNode, TestAction } from './interface'
 
@@ -14,7 +15,7 @@ export type Config = {
 
 export const TestClient = (config: Config): ITestClient => {
   return {
-    audio() {
+    async audio(): Promise<PlayedAudioRecord[]> {
       return []
     },
     async query(selector: string, queryConfig) {

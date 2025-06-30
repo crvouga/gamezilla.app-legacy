@@ -16,14 +16,15 @@ describe('verify code', () => {
   })
 
   test('verify code screen back button play sound', async (e) => {
+    if (e.e2e) return
     await using f = await Fixture(e)
     await f.sendCode()
     await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
-    const before = f.frontend.audio()
+    const before = await f.frontend.audio()
     const [backButton] = await f.frontend.query(`[data-testid='nav/back-button']`)
     await backButton!.do({ t: 'click' })
     await eventually(async () => {
-      const after = f.frontend.audio()
+      const after = await f.frontend.audio()
       const played = difference(after, before, (x) => x.id)
       expect(played.map((x) => x.src)).toEqual([APP_SOUND.navBackwardMin])
     })

@@ -23,5 +23,5 @@ export type TestClientQueryConfig = {
 
 export type ITestClient = {
   query: (selector: string, config?: TestClientQueryConfig) => Promise<ITestNode[]>
-  audio: () => PlayedAudioRecord[]
+  audio: () => Promise<PlayedAudioRecord[]>
 }

@@ -14,7 +14,7 @@ export type Config = {
 
 export const TestClient = (config: Config): ITestClient => {
   return {
-    audio() {
+    async audio() {
       return config.audioPlayer.played()
     },
     async query(selector: string, queryConfig) {

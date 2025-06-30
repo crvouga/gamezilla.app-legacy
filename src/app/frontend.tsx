@@ -106,6 +106,11 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     logger,
   })
 
+  // @ts-expect-error
+  window.audioPlayer =
+    //
+    audioPlayer
+
   const ctx: AppFrontendCtxBase = {
     audioPlayer,
     clientSessionId,
