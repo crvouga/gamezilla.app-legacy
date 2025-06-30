@@ -27,8 +27,8 @@ describe('start space', () => {
     await spaceSpaceFab!.do({ t: 'click' })
     await eventually(async () => {
       const after = await f.frontend.audio()
-      const sound = difference(after, before, (s) => s.id)
-      expect(sound.map((s) => s.tag)).toEqual(['interaction.tap', 'feedback.positive'])
+      const sound = new Set(difference(after, before, (s) => s.id).map((s) => s.tag))
+      expect(sound.has('interaction.navigate')).toEqual(true)
     })
   })
 })

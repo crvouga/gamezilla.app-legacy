@@ -2,7 +2,6 @@ import { isSubset } from '~/@/array/is-subset'
 import { unique } from '~/@/array/unique'
 import { Err, Ok, type Result } from '~/@/result'
 import { s } from '~/@/schema'
-import { eq } from '~/@/equals/equals'
 
 //
 //
@@ -334,5 +333,5 @@ const isWin = (positions: Pos2d[]): positions is Win => {
 }
 
 const isSameWin = (a: Win, b: Win) => {
-  return isSubset(eq, a, b) && isSubset(eq, b, a)
+  return isSubset(a, b) && isSubset(b, a)
 }

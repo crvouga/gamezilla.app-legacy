@@ -5,11 +5,11 @@ const eq = <A>(a: A, b: A) => a === b
 
 describe('isSubset', async () => {
   test('isSubset', async () => {
-    expect(isSubset(eq, [], [])).toEqual(true)
-    expect(isSubset(eq, [], ['a'])).toEqual(true)
-    expect(isSubset(eq, ['a'], ['a'])).toEqual(true)
-    expect(isSubset(eq, ['a'], ['a', 'b'])).toEqual(true)
-    expect(isSubset(eq, ['a'], [])).toEqual(false)
-    expect(isSubset(eq, ['a', 'b'], ['a'])).toEqual(false)
+    expect(isSubset([], [], eq)).toEqual(true)
+    expect(isSubset([], ['a'], eq)).toEqual(true)
+    expect(isSubset(['a'], ['a'], eq)).toEqual(true)
+    expect(isSubset(['a'], ['a', 'b'], eq)).toEqual(true)
+    expect(isSubset(['a'], [], eq)).toEqual(false)
+    expect(isSubset(['a', 'b'], ['a'], eq)).toEqual(false)
   })
 })
