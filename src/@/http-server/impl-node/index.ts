@@ -113,7 +113,11 @@ export const HttpServer = (config: Config): IHttpServer => {
     },
     async stop() {
       logger.info('Stopping HTTP server')
-      server?.close()
+      await Promise.race([
+        new Promise((r) => server?.close(r)),
+        new Promise((r) => server.on('close', r)),
+        new Promise((r) => setTimeout(r, 10)),
+      ])
       logger.info('HTTP server stopped')
       events.pub({ t: 'stopped' })
     },
