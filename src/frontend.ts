@@ -1,4 +1,5 @@
 import { Program } from '~/@/program/program'
+import { h } from '~/@/vdom/h'
 import { Render } from '~/@/vdom/render'
 import { AppFrontend } from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
@@ -18,7 +19,7 @@ const main = async () => {
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
-    render: (input) => render(<AppFrontend.View {...input} ctx={ctx} />),
+    render: (input) => render(h(AppFrontend.View, { ...input, ctx })),
     // debugger: DebuggerReduxDevTools,
     // debugger: DebuggerConsole,
   })
