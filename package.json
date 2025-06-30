@@ -38,7 +38,7 @@
     "frontend:cir-deps": "npx dpdm --progress --no-warning --no-tree ./src/frontend.tsx",
     "frontend:serve": "npx serve -s dist -p 3001",
     "i": "npm i --legacy-peer-deps",
-    "infra:down": "docker compose --profile test --env-file .env -f ./infra/local/docker-compose.yml down --remove-orphans",
+    "infra:down": "docker compose --profile test --env-file .env -f ./infra/local/docker-compose.yml down",
     "infra:up": "docker compose --env-file .env -f ./infra/local/docker-compose.yml up --build -d",
     "infra:up:test": "docker compose --profile test --env-file .env -f ./infra/local/docker-compose.yml up --build -d",
     "kp": "npx kill-port 5002 && npx kill-port 8088 && npx kill-port $PORT",
