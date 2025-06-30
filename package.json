@@ -81,7 +81,6 @@
     "better-sqlite3": "^12.2.0",
     "chess.js": "^1.0.0-beta.8",
     "compression": "^1.7.5",
-    "express": "^5.1.0",
     "inferno": "^9.0.1",
     "postgres": "^3.4.4",
     "preact": "^10.19.3",

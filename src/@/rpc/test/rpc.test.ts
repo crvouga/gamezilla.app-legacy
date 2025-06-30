@@ -74,10 +74,7 @@ const FixtureLocal = async (): Promise<Fixture> => {
 }
 
 const Fixtures = async (): Promise<Fixture[]> => {
-  return [
-    // await FixtureHttp(),
-    await FixtureLocal(),
-  ]
+  return [await FixtureHttp(), await FixtureLocal()]
 }
 
 describe('RPC', () => {
