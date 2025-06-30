@@ -43,7 +43,7 @@ const Fixtures = async () => {
     })
   }
 
-  if (CONFIG_SHARED.IS_INTEGRATION_TEST && false) {
+  if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
     configs.push({
       t: 'postgres',
       databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
@@ -79,27 +79,33 @@ describe('SqlDb', () => {
 
   test('create, insert, query, drop', async () => {
     for (const f of await Fixtures()) {
+      await f.sqlDb.query({
+        schema: s.unknown,
+        sql: `DROP TABLE foo`,
+        vars: {},
+      })
       const created = await f.sqlDb.query({
         schema: s.unknown,
-        sql: `CREATE TABLE foo (id SERIAL PRIMARY KEY)`,
+        sql: `CREATE TABLE IF NOT EXISTS foo (id SERIAL PRIMARY KEY)`,
         vars: {},
       })
       expect(isOk(created)).toEqual(true)
+      const id = 1
       const inserted = await f.sqlDb.query({
         schema: s.unknown,
-        sql: `INSERT INTO foo(id) VALUES (1)`,
-        vars: {},
+        sql: `INSERT INTO foo(id) VALUES (:id)`,
+        vars: { id },
       })
       expect(isOk(inserted)).toEqual(true)
       const queried = await f.sqlDb.query({
         schema: s.obj({ id: s.maybe(s.or(s.num(), s.str(), s.bool)) }),
-        sql: `SELECT id FROM foo`,
-        vars: {},
+        sql: `SELECT id FROM foo WHERE id = :id`,
+        vars: { id },
       })
 
       expect(isOk(queried)).toEqual(true)
       if (isOk(queried)) {
-        expect(queried.value).toEqual([{ id: 1 }])
+        expect(queried.value).toEqual([{ id }])
       }
       const dropped = await f.sqlDb.query({
         schema: s.unknown,
