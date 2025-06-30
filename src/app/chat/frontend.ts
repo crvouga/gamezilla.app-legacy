@@ -1,6 +1,7 @@
 import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
+import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCtx } from '../@/frontend/ctx'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './types'
@@ -164,7 +165,7 @@ export const View = (_input: {
 }
 
 export const ViewChat = (_input: { model: ModelFrontend; dispatch: (m: Msg) => void }) => {
-  return <div>ViewChat</div>
+  return h('div', { children: 'ViewChat' })
 }
 
 export const ViewChatNew = (_input: {
@@ -176,9 +177,9 @@ export const ViewChatNew = (_input: {
     loading: boolean
   }
 }) => {
-  return <div>ViewChat</div>
+  return h('div', { children: 'ViewChat' })
 }
 
 export const ViewChatList = (_input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (m: Msg) => void }) => {
-  return <div>View </div>
+  return h('div', { children: 'View ' })
 }
