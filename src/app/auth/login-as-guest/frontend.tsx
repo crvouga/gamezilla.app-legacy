@@ -109,6 +109,7 @@ const continueAsGuest = async (input: {
 const ViewButton: FrontendModule['View'] = (input) => {
   return (
     <Button
+      dataTestId='auth/continue-as-guest-button'
       onClick={() => input.dispatch({ t: 'clicked-continue-as-guest-button' })}
       renderIconStart={(iconInput) => <IconUserCircle {...iconInput} />}
       text={input.ctx.t('auth.continue-as-guest')}
