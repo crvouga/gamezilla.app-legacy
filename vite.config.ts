@@ -1,32 +1,8 @@
-import preact from '@preact/preset-vite'
 import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react'
-import { defineConfig, PluginOption } from 'vite'
+import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
-// @ts-expect-error library missing types
-import inferno from 'vite-plugin-inferno'
 import wasm from 'vite-plugin-wasm'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import { CONFIG_FRONTEND } from './src/config/frontend'
-import { CONFIG_SHARED } from './src/config/shared'
-
-const vDomPlugin = (): PluginOption => {
-  switch (CONFIG_FRONTEND.VDOM_IMPL) {
-    case 'inferno':
-      return inferno()
-
-    case 'preact':
-      return preact()
-
-    case 'react':
-      return react()
-
-    case 'react-with-compiler':
-      return react({
-        babel: { plugins: [['babel-plugin-react-compiler', {}]] },
-      })
-  }
-}
 
 const KILOBYTE = 1024
 const MEGABYTE = KILOBYTE * KILOBYTE
@@ -36,13 +12,8 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     tsconfigPaths(),
-    vDomPlugin(),
     wasm(),
-    VitePWA({
-      workbox: {
-        maximumFileSizeToCacheInBytes: 3 * MEGABYTE,
-      },
-    }),
+    VitePWA({ workbox: { maximumFileSizeToCacheInBytes: 3 * MEGABYTE } }),
   ],
   optimizeDeps: {
     exclude: [
@@ -81,7 +52,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      inferno: CONFIG_SHARED.IS_PROD ? 'inferno' : 'inferno/dist/index.dev.mjs',
+      inferno: process.env.NODE_ENV === 'production' ? 'inferno' : 'inferno/dist/index.dev.mjs',
     },
   },
 })

@@ -368,7 +368,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
           x2: x,
           y2: rowCount,
           stroke: gridStroke,
-          strokeWidth: gridStrokeWidth
+          'stroke-width': gridStrokeWidth
         })
       ),
 
@@ -380,7 +380,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
           x2: columnCount,
           y2: y,
           stroke: gridStroke,
-          strokeWidth: gridStrokeWidth
+          'stroke-width': gridStrokeWidth
         })
       ),
 

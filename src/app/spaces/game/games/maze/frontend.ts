@@ -203,7 +203,7 @@ export const View = ({
     h('svg', { width: '100%', viewBox }, [
       h('rect', { x: model.lower.x, y: model.lower.y, width: '100%', height: '100%', fill: '#000' }),
       ...maze.edges.map(([a, b]) =>
-        h('g', { key: [a.x, a.y, b.x, b.y].join('-'), strokeWidth: '0.1', stroke: '#fff' }, [
+        h('g', { key: [a.x, a.y, b.x, b.y].join('-'), 'stroke-width': '0.1', stroke: '#fff' }, [
           h('line', {
             x1: a.x + 1 / 2,
             y1: a.y + 1 / 2,
@@ -266,7 +266,7 @@ const ViewJoystick = ({
   return h('div', null, [
     h('svg', { width: '100%', viewBox: '-1 -1 2 2', className: 'touch-none overflow-hidden select-none' }, [
       h('defs', null, [h('clipPath', { id: 'cut-off-bottom' }, [h('circle', { x: '0', y: '0', r: 1 })])]),
-      h('g', { strokeWidth: 0.025 }, [
+      h('g', { 'stroke-width': 0.025 }, [
         h('g', { clipPath: 'url(#cut-off-bottom)', stroke }, [
           ...Direction.all.map((direction) => {
             const { x, y } = directionToVector(direction)

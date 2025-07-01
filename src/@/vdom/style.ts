@@ -35,7 +35,6 @@ const kebabObjectToCamelObject = (kebabObject: StylesObjectKebab): StylesObjectC
 
 export const styles = (stylesObject: StylesObjectKebab, vdomImpl: VDomImpl = CONFIG_FRONTEND.VDOM_IMPL): unknown => {
   switch (vdomImpl) {
-    case 'react-with-compiler':
     case 'react': {
       return kebabObjectToCamelObject(stylesObject) as unknown
     }

@@ -30,7 +30,7 @@ export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
       cy: 0,
       r: 0.9,
       fill: stoneToColor(stone),
-      strokeWidth: 0.1,
+      'stroke-width': 0.1,
       stroke: '#454545',
     }),
   ])
@@ -106,7 +106,7 @@ export const ViewBoard = ({
       className: cn('overflow-hidden', className),
     },
     [
-      h('g', { strokeWidth: 0.05 }, [
+      h('g', { 'stroke-width': 0.05 }, [
         h('rect', {
           x: boundsView.lower.x,
           y: boundsView.lower.y,

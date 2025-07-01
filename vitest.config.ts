@@ -1,5 +1,4 @@
 import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import wasm from 'vite-plugin-wasm'
 import tsconfigPaths from 'vite-tsconfig-paths'
@@ -17,7 +16,6 @@ export default defineConfig({
     tailwindcss(),
     tsconfigPaths(),
     wasm(),
-    react(),
     VitePWA({
       workbox: {
         maximumFileSizeToCacheInBytes: 3 * MEGABYTE,
@@ -45,5 +43,10 @@ export default defineConfig({
   define: {
     global: 'globalThis',
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+  },
+  resolve: {
+    alias: {
+      inferno: process.env.NODE_ENV === 'production' ? 'inferno' : 'inferno/dist/index.dev.mjs',
+    },
   },
 })

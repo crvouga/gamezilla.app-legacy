@@ -130,7 +130,7 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
           rx: n / 2,
           stroke: 'transparent',
           fill: 'transparent',
-          strokeWidth: n / 8,
+          'stroke-width': n / 8,
           className: 'pointer-events-none',
         }),
       ]

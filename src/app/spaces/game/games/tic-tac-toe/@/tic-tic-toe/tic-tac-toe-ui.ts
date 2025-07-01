@@ -36,7 +36,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
           x2: line.x2 * scale,
           y2: line.y2 * scale,
           stroke: gameTheme.line,
-          strokeWidth: 0.1 * scale,
+          'stroke-width': 0.1 * scale,
         }),
       ),
     ),
@@ -308,7 +308,7 @@ export const PlayerTypeIcon = ({ playerType, className }: { playerType: PlayerTy
       slot: playerType,
       r: 2 / 3,
       color: 'currentColor',
-      strokeWidth: 0.33,
+      'stroke-width': 0.33,
     }),
   ])
 }
@@ -328,7 +328,7 @@ export const CoverArt = (input: { className?: string }) => {
 
   return h('svg', { width: '100%', viewBox: '0 0 2 2', ...input }, [
     h('rect', { x: 0, y: 0, width: 2, height: 2, fill: gameTheme.background }),
-    LINES.map((line, index) => h('line', { key: index, ...line, stroke: gameTheme.line, strokeWidth: 0.1 })),
+    LINES.map((line, index) => h('line', { key: index, ...line, stroke: gameTheme.line, 'stroke-width': 0.1 })),
     positions.map(([{ column, row }, slot], index) =>
       h(ViewSlot, { key: index, slot, cx: Number(column) + 0.5, cy: Number(row) + 0.5, r: 0.3 }),
     ),

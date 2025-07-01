@@ -16,9 +16,6 @@ const init = (vdomImpl: VDomImpl) => {
     case 'inferno': {
       return initInferno()
     }
-    case 'react-with-compiler': {
-      return initReact()
-    }
   }
 }
 
