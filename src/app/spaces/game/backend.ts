@@ -1,5 +1,5 @@
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
-import { GamesBackend } from '../game/games/backend'
+import { GamesBackend } from './games/backend'
 import { GamesBackendCtxModule } from './types'
 
 const initCtx = (input: { ctx: SpaceBackendCtx }): GamesBackendCtxModule => {

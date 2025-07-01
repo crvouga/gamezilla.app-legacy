@@ -1,0 +1,421 @@
+import type { UserId } from '~/app/@/data/user-id'
+import { IconRobot } from '~/@/ui/icon'
+import { Paper } from '~/@/ui/paper'
+import { Avatar } from '~/@/ui/avatar'
+import { Transition } from '~/@/ui/transition'
+import { cn } from '~/@/ui/cn'
+import { Typography } from '~/@/ui/typography'
+import type { PlayerType, VsBotInput } from '../vs-bot'
+import type { VDom } from '~/@/vdom/vdom'
+import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
+import { UserProfile } from '~/app/@/data/user-profile'
+import { TranslatedText } from '~/@/l18n/translations'
+import { h } from '~/@/vdom/h'
+
+//
+//
+//
+// Model
+//
+//
+//
+
+export type Model = null
+
+export function init(_gameOver?: GameOver | null): Model {
+  return null
+}
+
+//
+//
+//
+// Update
+//
+//
+//
+
+export type Msg = {
+  t: null
+}
+
+export const update = (model: Model, _msg: Msg): Model => {
+  return model
+}
+
+//
+//
+//
+// View
+//
+//
+//
+
+export type GameOver =
+  | {
+      t: null
+    }
+  | {
+      t: 'winner'
+      winner: PlayerType
+    }
+  | {
+      t: 'draw'
+    }
+
+type Input = {
+  ctx: SpaceFrontendCtx
+  model?: Model
+  gameOver: GameOver | null
+  human: {
+    userId: UserId
+    player: PlayerType
+  }
+  bot: {
+    label: string
+    renderIcon: (input: { className: string }) => VDom
+  }
+  playerOne: {
+    renderIcon: (input: { className: string }) => VDom
+  }
+  playerTwo: {
+    renderIcon: (input: { className: string }) => VDom
+  }
+  onPlayAgain?: () => void
+}
+
+export type VsBotGameInput = VsBotInput & {
+  turn: PlayerType | null
+  human: {
+    player: PlayerType
+    userId: UserId
+  }
+  isSpectating: boolean
+}
+
+export type Status =
+  | {
+      t: 'playing'
+      turn: PlayerType
+    }
+  | {
+      t: 'winner'
+      winner: PlayerType
+    }
+  | {
+      t: 'draw'
+    }
+
+export const ViewStatusBar = (input: VsBotInput & { status: Status }) => {
+  return h(
+    Transition,
+    {
+      id: 'status-bar',
+      mode: 'in-out',
+      onEnter: fadeIn({
+        duration: 300,
+        delay: 0,
+      }),
+      onExit: fadeOut({
+        duration: 300,
+        delay: 0,
+      }),
+      className: 'relative h-8 w-full',
+    },
+    [
+      h(
+        'div',
+        { key: statusToKey(input.status), className: 'absolute inset-0 flex items-center justify-center gap-1' },
+        [ViewStatusBarContent(input)],
+      ),
+    ],
+  )
+}
+
+function statusToKey(status: Status) {
+  switch (status.t) {
+    case 'playing': {
+      switch (status.turn) {
+        case 'player-one': {
+          return 'playing/player-one'
+        }
+
+        case 'player-two': {
+          return 'playing/player-two'
+        }
+      }
+    }
+
+    case 'winner': {
+      switch (status.winner) {
+        case 'player-one': {
+          return 'winner/player-one'
+        }
+
+        case 'player-two': {
+          return 'winner/player-two'
+        }
+      }
+    }
+
+    case 'draw': {
+      return 'draw'
+    }
+  }
+}
+
+const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
+  switch (input.status.t) {
+    case 'playing': {
+      switch (input.status.turn) {
+        case 'player-one': {
+          return h('div', {}, [
+            input.playerOne.renderIcon({
+              className: 'h-5 w-5',
+            }),
+            h(Typography, { text: TranslatedText.of('Turn'), color: 'text-secondary' }),
+          ])
+        }
+
+        case 'player-two': {
+          return h('div', {}, [
+            input.playerTwo.renderIcon({
+              className: 'h-5 w-5',
+            }),
+            h(Typography, { text: TranslatedText.of('Turn'), color: 'text-secondary' }),
+          ])
+        }
+      }
+    }
+
+    default: {
+      return h(Typography, { text: TranslatedText.of('Game Over'), color: 'text-secondary' })
+    }
+  }
+}
+
+export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) => {
+  const { gameOver } = input
+
+  return h(
+    Transition,
+    {
+      id: 'game-over-overlay',
+      mode: 'out-in',
+      onEnter: fadeIn({
+        duration: 200,
+        delay: 500,
+      }),
+      onExit: fadeOut({
+        duration: 200,
+        delay: 0,
+      }),
+    },
+    [
+      gameOver?.t === 'winner' &&
+        h(
+          'button',
+          {
+            className: 'absolute inset-0 flex flex-col items-center justify-center bg-black/70',
+            disabled: input.isSpectating,
+            onClick: !input.isSpectating ? input.onPlayAgain : undefined,
+          },
+          [
+            h('div', { className: 'flex-1' }),
+            h(Winner, { ...input, winner: gameOver.winner }),
+            input.onPlayAgain && !input.isSpectating
+              ? h('div', { className: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold' }, [
+                  'Tap to play again',
+                ])
+              : h('div', { className: 'flex-1' }),
+          ],
+        ),
+      gameOver?.t === 'draw' &&
+        h(
+          'button',
+          {
+            className: 'absolute inset-0 flex flex-col items-center justify-center bg-black/60',
+            disabled: input.isSpectating,
+            onClick: !input.isSpectating ? input.onPlayAgain : undefined,
+          },
+          [
+            h('div', { className: 'flex-1' }),
+            h(Draw, input),
+            input.onPlayAgain && !input.isSpectating
+              ? h('div', { className: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0' }, [
+                  'Tap to play again',
+                ])
+              : h('div', { className: 'flex-1' }),
+          ],
+        ),
+    ].filter(Boolean),
+  )
+}
+
+const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { winner: PlayerType }) => {
+  const humanSlot = h('div', {}, [
+    h(Avatar, { className: 'size-16', src: UserProfile.toAvatarUrl(ctx.profilesByUserId[human.userId]) }),
+  ])
+
+  const botSlot = h('div', {}, [
+    bot.renderIcon({
+      className: 'size-16',
+    }),
+  ])
+
+  const playerOneSlot = h('div', { className: 'flex flex-col items-center justify-center gap-3' }, [
+    h('div', { className: 'flex items-center justify-center gap-3' }, [
+      playerOne.renderIcon({
+        className: 'size-16',
+      }),
+      human.player === 'player-one' ? humanSlot : botSlot,
+    ]),
+    h(Typography, {
+      variant: 'title',
+      className: 'text-center text-4xl font-black',
+      text: winner === 'player-one' ? ctx.t('game.winner') : ctx.t('game.loser'),
+    }),
+  ])
+
+  const playerTwoSlot = h('div', { className: 'flex flex-col items-center justify-center gap-3' }, [
+    h('div', { className: 'flex items-center justify-center gap-3' }, [
+      playerTwo.renderIcon({
+        className: 'size-16',
+      }),
+      human.player === 'player-two' ? humanSlot : botSlot,
+    ]),
+    h(Typography, {
+      variant: 'title',
+      className: 'text-center text-4xl font-black',
+      text: winner === 'player-two' ? ctx.t('game.winner') : ctx.t('game.loser'),
+    }),
+  ])
+
+  return h('div', { className: 'grid w-full flex-1 grid-cols-2 items-center' }, [playerOneSlot, playerTwoSlot])
+}
+
+const Draw = (input: Input) => {
+  const humanSlot = h('div', {}, [
+    h(Avatar, { src: UserProfile.toAvatarUrl(input.ctx.profilesByUserId[input.ctx.currentUser.userId]) }),
+  ])
+
+  const botSlot = h('div', {}, [h(IconRobot, { className: 'size-6' })])
+
+  const playerOneSlot = h('div', {}, [
+    input.playerOne.renderIcon({
+      className: 'h-5 w-5',
+    }),
+    input.human.player === 'player-one' ? humanSlot : botSlot,
+  ])
+
+  const playerTwoSlot = h('div', {}, [
+    input.playerTwo.renderIcon({
+      className: 'h-5 w-5',
+    }),
+    input.human.player === 'player-two' ? humanSlot : botSlot,
+  ])
+
+  return h('div', { className: 'flex h-full w-full flex-1 items-center justify-center' }, [
+    h('div', {}, [playerOneSlot, playerTwoSlot]),
+    h('p', {}, ['Tie']),
+  ])
+}
+
+export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn }: VsBotGameInput) => {
+  const profile = ctx.profilesByUserId[human.userId]
+  const humanSlot = h('div', {}, [
+    h(Avatar, { className: 'size-6', src: UserProfile.toAvatarUrl(profile) }),
+    profile && h(Typography, { className: 'truncate', variant: 'body', text: ctx.t('username', profile.username) }),
+  ])
+
+  const botSlot = h('div', {}, [
+    bot.renderIcon({
+      className: 'size-6 flex-shrink-0',
+    }),
+    h(Typography, { className: 'truncate', variant: 'body', text: bot.label }),
+  ])
+
+  return h('section', { className: 'flex w-full items-center gap-3 px-3' }, [
+    h('div', { className: 'flex w-1/2 items-center justify-center overflow-hidden' }, [
+      h(Slot, { active: turn === 'player-one' }, [
+        h('div', {}, [
+          playerOne.renderIcon({
+            className: 'size-6',
+          }),
+        ]),
+        human.player === 'player-one' ? humanSlot : botSlot,
+      ]),
+    ]),
+    h('div', { className: 'flex w-1/2 items-center justify-center overflow-hidden' }, [
+      h(Slot, { active: turn === 'player-two' }, [
+        playerTwo.renderIcon({
+          className: 'size-6',
+        }),
+        human.player === 'player-two' ? humanSlot : botSlot,
+      ]),
+    ]),
+  ])
+}
+
+const Slot = ({ active, children }: { active: boolean; children?: VDom }) => {
+  return h(
+    Paper,
+    {
+      className: cn(
+        'flex max-w-full flex-1 items-center gap-2 rounded-md bg-black p-2 text-sm transition-colors duration-200 ease-in-out',
+        active && 'border-b-blue-500',
+      ),
+    },
+    [children],
+  )
+}
+
+//
+//
+//
+//
+//
+//
+//
+//
+
+const fadeIn =
+  ({ duration, delay }: { delay: number; duration: number }) =>
+  async (node: HTMLElement) => {
+    await node.animate(
+      [
+        {
+          opacity: 0,
+        },
+        {
+          opacity: 1,
+        },
+      ],
+      {
+        duration: duration,
+        delay: delay,
+        easing: 'ease-in-out',
+        fill: 'both',
+      },
+    ).finished
+  }
+
+const fadeOut =
+  ({ duration, delay }: { delay: number; duration: number }) =>
+  async (node: HTMLElement) => {
+    await node.animate(
+      [
+        {
+          opacity: 1,
+        },
+        {
+          opacity: 0,
+        },
+      ],
+      {
+        duration: duration,
+        delay: delay,
+        easing: 'ease-in-out',
+        fill: 'both',
+      },
+    ).finished
+  }
