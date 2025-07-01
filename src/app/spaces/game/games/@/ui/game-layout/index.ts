@@ -1,6 +1,6 @@
 import { Translator } from '~/@/l18n/generated'
 import { cn } from '~/@/ui/cn'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import type { VDom } from '~/@/vdom/vdom'
 
 export const LayoutGame = ({
@@ -17,7 +17,7 @@ export const LayoutGame = ({
   isSpectating?: boolean
   children?: VDom
 }) => {
-  return h(
+  return v(
     'div',
     {
       className: cn(
@@ -29,7 +29,7 @@ export const LayoutGame = ({
     },
     [
       isSpectating &&
-        h(
+        v(
           'div',
           {
             className: 'flex w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white',

@@ -1,5 +1,5 @@
 import type { VDom } from '~/@/vdom/vdom'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { cn } from '../cn'
 import { styles } from '~/@/vdom/style'
 import { TimeSpan } from '~/@/time/time-span'
@@ -9,7 +9,7 @@ export const Dialog = (input: { children?: VDom; open: boolean; onClose: () => v
   const style = styles({
     'transition-delay': input.open && delayMs ? `${delayMs}ms` : undefined,
   })
-  return h(
+  return v(
     'div',
     {
       role: 'dialog',

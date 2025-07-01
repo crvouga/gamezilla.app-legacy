@@ -6,7 +6,7 @@ import { IconEllipsisVertical } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { VDom } from '~/@/vdom/vdom'
 import { SurfaceLayout } from '../../surface/layout/surface-layout'
 import {
@@ -41,15 +41,15 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
   const firstActions = input.actions.slice(0, limit)
   const lastActions = input.actions.slice(limit)
   const hasLastActions = lastActions.some((button) => button !== null)
-  return h('div', { className: cn('flex w-full shrink-0 items-center', toHeightClass(size)), role: 'toolbar' }, [
+  return v('div', { className: cn('flex w-full shrink-0 items-center', toHeightClass(size)), role: 'toolbar' }, [
     ...firstActions.map((action) => {
       if (!action) return null
 
       const button = ScreenActionButton({ ...action, size: input.size })
 
-      if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
+      if (!action.renderSurface) return v(Frag, { key: action.id }, [button])
 
-      return h(Frag, { key: action.id }, [
+      return v(Frag, { key: action.id }, [
         action.renderSurface({
           dropDown: toDropDownConfig(button),
           screenActionLocation: 'bar',
@@ -58,7 +58,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
     }),
 
     hasLastActions &&
-      h(SurfaceLayout, {
+      v(SurfaceLayout, {
         ctx: input.ctx,
         id: input.id,
         key: input.id,
@@ -71,7 +71,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
         dropDown: {
           reference: ScreenActionButton({
             id: input.ctx.t('app.more'),
-            icon: (input) => h(IconEllipsisVertical, input),
+            icon: (input) => v(IconEllipsisVertical, input),
             label: input.ctx.t('app.more'),
             size: input.size,
             onClick: input.limit?.onToggle ?? (() => {}),
@@ -82,13 +82,13 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
 }
 
 const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
-  return h(
+  return v(
     Frag,
     null,
     input.actions.map((action) => {
       if (!action) return null
       if (action.hidden) return null
-      const listItemButton = h(ListItemButton, {
+      const listItemButton = v(ListItemButton, {
         key: action.id,
         icon: action.icon,
         label: action.label,
@@ -96,7 +96,7 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
         color: action.color,
       })
       if (!action.renderSurface) return listItemButton
-      return h(Frag, { key: action.id }, [
+      return v(Frag, { key: action.id }, [
         action.renderSurface({
           dropDown: toDropDownConfig(listItemButton),
           screenActionLocation: 'more-drawer',
@@ -108,11 +108,11 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
 
 const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpaceBetween) => {
   const size = input.size ?? 'md'
-  return h(
+  return v(
     'div',
     { className: cn('flex w-full shrink-0 items-center justify-between', toHeightClass(size)), role: 'toolbar' },
     [
-      h(
+      v(
         'div',
         { className: 'flex items-center' },
         input.start.map((action) => {
@@ -120,9 +120,9 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
 
           const button = ScreenActionButton({ ...action, size: input.size, className: 'min-w-20' })
 
-          if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
+          if (!action.renderSurface) return v(Frag, { key: action.id }, [button])
 
-          return h(Frag, { key: action.id }, [
+          return v(Frag, { key: action.id }, [
             action.renderSurface({
               dropDown: toDropDownConfig(button),
               screenActionLocation: 'bar',
@@ -131,7 +131,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
         }),
       ),
 
-      h(
+      v(
         'div',
         { className: 'flex items-center' },
         input.end.map((action) => {
@@ -139,9 +139,9 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
 
           const button = ScreenActionButton({ ...action, size: input.size, className: 'min-w-20' })
 
-          if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
+          if (!action.renderSurface) return v(Frag, { key: action.id }, [button])
 
-          return h(Frag, { key: action.id }, [
+          return v(Frag, { key: action.id }, [
             action.renderSurface({
               dropDown: toDropDownConfig(button),
               screenActionLocation: 'bar',
@@ -157,7 +157,7 @@ const ScreenActionButton = (input: ScreenAction & { className?: string }) => {
   const isDisabled = input.disabled || input.loading
   const size = input.size ?? 'md'
   if (input.hidden) return null
-  return h(ClickableTransparent, {
+  return v(ClickableTransparent, {
     role: 'button',
     disabled: isDisabled,
     name: input.label,
@@ -175,7 +175,7 @@ const ScreenActionButton = (input: ScreenAction & { className?: string }) => {
       input.className,
     ),
     children: [
-      h(
+      v(
         'div',
         {
           className: cn(
@@ -185,7 +185,7 @@ const ScreenActionButton = (input: ScreenAction & { className?: string }) => {
         },
         [
           input.icon({ className: toIconSizeClasses(size) }),
-          h(Typography, {
+          v(Typography, {
             variant: 'label',
             text: input.label,
             className: cn('truncate', input.classNames?.label),
@@ -194,8 +194,8 @@ const ScreenActionButton = (input: ScreenAction & { className?: string }) => {
       ),
 
       input.loading &&
-        h('div', { className: 'absolute inset-0 flex h-full w-full items-center justify-center' }, [
-          h(Spinner, { className: toIconSizeClasses(size) }),
+        v('div', { className: 'absolute inset-0 flex h-full w-full items-center justify-center' }, [
+          v(Spinner, { className: toIconSizeClasses(size) }),
         ]),
     ],
   })

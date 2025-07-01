@@ -3,7 +3,7 @@ import { Sub } from '~/@/sub'
 import { EmptyState } from '~/@/ui/empty-state'
 import { Gutter } from '~/@/ui/gutter'
 import { IconGamepad } from '~/@/ui/icon'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -55,7 +55,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   const spaces = Spaces.toSpaceProjections(input.model.spaces)
 
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     dataTestId: 'spaces/space-list-screen',
     parentScreen: input.ctx.parentScreen,
     id: 'list-spaces',
@@ -66,26 +66,26 @@ const View: SpaceFrontendModule['View'] = (input) => {
     postAction: StartSpaceFrontend.viewStartSpaceButton(input),
     renderBody: () => {
       if (spaces.length === 0) {
-        return h(EmptyState, {
-          renderIcon: (input) => h(IconGamepad, input),
+        return v(EmptyState, {
+          renderIcon: (input) => v(IconGamepad, input),
           label: input.ctx.t('spaces.no-spaces'),
         })
       }
-      return h(
+      return v(
         'div',
         {
           className: 'flex flex-1 flex-col gap-4 overflow-y-auto p-6',
         },
         [
           ...spaces.map((state) =>
-            h(ViewSpaceCard, {
+            v(ViewSpaceCard, {
               key: state.spaceId,
               ctx: { ...input.ctx, currentUser: input.ctx.currentUser },
               onClick: () => input.dispatch({ t: 'list-spaces.clicked-space-card', spaceId: state.spaceId }),
               state: state,
             }),
           ),
-          h(Gutter, { variant: 'screen' }),
+          v(Gutter, { variant: 'screen' }),
         ],
       )
     },

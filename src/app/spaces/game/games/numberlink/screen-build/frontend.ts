@@ -1,6 +1,6 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -80,26 +80,26 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   switch (input.modelSpace.screen.t) {
     case 'screen-main-menu': {
-      return h(ScreenMainMenuFrontend.View, input)
+      return v(ScreenMainMenuFrontend.View, input)
     }
 
     case 'screen-puzzle-builder': {
-      return h(ScreenPuzzleBuilderFrontend.View, input)
+      return v(ScreenPuzzleBuilderFrontend.View, input)
     }
 
     case 'screen-pack-builder-open': {
-      return h(ScreenPackBuilderOpenFrontend.View, input)
+      return v(ScreenPackBuilderOpenFrontend.View, input)
     }
 
     case 'screen-puzzle-builder-open': {
-      return h(ScreenPuzzleBuilderOpenFrontend.View, input)
+      return v(ScreenPuzzleBuilderOpenFrontend.View, input)
     }
 
     case 'screen-pack-builder': {
       if (!input.modelSpace.screenPackBuilder) {
         return null
       }
-      return h(ScreenPackBuilderFrontend.View, {
+      return v(ScreenPackBuilderFrontend.View, {
         ...input,
         dispatch: (c) => input.dispatch({ t: 'got-screen-pack-builder-msg', c }),
         model: input.model,
@@ -110,7 +110,7 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewFeedItem: FrontendModule['ViewFeedItem'] = () => {
-  return h('div')
+  return v('div')
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {

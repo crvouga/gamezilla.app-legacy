@@ -4,7 +4,7 @@ export type Tag = 'div' | (string & {})
 
 export type Props = Record<string, unknown> | null
 
-export type H = <TProps extends Props = Props>(
+export type V = <TProps extends Props = Props>(
   tag: Tag | ((props: TProps) => VDom),
   props?: TProps | null,
   children?: VDom[],

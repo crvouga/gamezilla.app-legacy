@@ -1,6 +1,6 @@
 import { register } from 'swiper/element/bundle'
 import { waitForElementById } from '~/@/dom/dom'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import type { VDom } from '~/@/vdom/vdom'
 
 if (typeof window !== 'undefined') {
@@ -72,7 +72,7 @@ const Container = (input: {
   slideIndex: number
 }) => {
   onContainer(input)
-  return h(
+  return v(
     'swiper-container',
     {
       id: input.id,
@@ -89,7 +89,7 @@ const Container = (input: {
 }
 
 const Slide = (input: { children?: VDom; className?: string }) => {
-  return h(
+  return v(
     'swiper-slide',
     {
       className: input.className,

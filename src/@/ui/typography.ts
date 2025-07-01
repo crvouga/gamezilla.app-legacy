@@ -1,7 +1,7 @@
 import type { TranslatedText } from '~/@/l18n'
 import { AriaRole } from '~/@/vdom/aria-role'
 import { cn } from './cn'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 
 export type TypographyVariant = 'title' | 'body' | 'label' | 'subtitle' | 'caption'
 
@@ -62,7 +62,7 @@ const SKELETON_CLASS = 'animate-pulse text-transparent select-none pointer-event
 export const Typography = (input: Input) => {
   const sizeClassName = input.sizeClassName ?? sizeClassNames[input.variant ?? 'body']
   const colorClassName = input.color && !input.skeleton ? colorClassNames[input.color] : null
-  return h(
+  return v(
     'div',
     {
       className: cn(sizeClassName, colorClassName, input.skeleton ? SKELETON_CLASS : null, input.className),

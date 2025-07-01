@@ -5,7 +5,7 @@ import { Button } from '~/@/ui/button'
 import { Gutter } from '~/@/ui/gutter'
 import { IconUserPen } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -51,11 +51,11 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
     id: 'profile-screen',
-    renderBody: () => h(ViewBody, input),
+    renderBody: () => v(ViewBody, input),
   })
 }
 
@@ -68,27 +68,27 @@ const ViewBody: typeof View = (input) => {
 
   const isCurrentUserProfile = input.ctx.currentUserId === userId
 
-  return h('div', { className: 'flex w-full flex-col items-center gap-4 p-6' }, [
-    h(Avatar, { className: 'size-28', src: UserProfile.toAvatarUrl(profile), alt: 'profile avatar' }),
-    h(Typography, {
+  return v('div', { className: 'flex w-full flex-col items-center gap-4 p-6' }, [
+    v(Avatar, { className: 'size-28', src: UserProfile.toAvatarUrl(profile), alt: 'profile avatar' }),
+    v(Typography, {
       variant: 'title',
       text: profile ? input.ctx.t('username', profile.username) : TranslatedText.ellipsis,
     }),
 
     isCurrentUserProfile
-      ? h('div', { className: 'flex w-full items-center justify-center gap-6 pt-4' }, [
-          h(Button, {
+      ? v('div', { className: 'flex w-full items-center justify-center gap-6 pt-4' }, [
+          v(Button, {
             onClick: () =>
               input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) }),
             className: 'max-w-64 flex-1',
-            renderIconStart: (iconInput) => h(IconUserPen, iconInput),
+            renderIconStart: (iconInput) => v(IconUserPen, iconInput),
             text: input.ctx.t('profile.edit-profile'),
             size: 'sm',
           }),
         ])
       : null,
 
-    h(Gutter, { variant: 'screen' }),
+    v(Gutter, { variant: 'screen' }),
   ])
 }
 

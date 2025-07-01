@@ -1,6 +1,6 @@
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { TextField } from '~/@/ui/text-field'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
@@ -22,7 +22,7 @@ const ViewSurface: FrontendModule['View'] = (input) => {
     })
   }
 
-  return h(SurfaceLayout, {
+  return v(SurfaceLayout, {
     ctx: input.ctx,
     ariaLabel: input.ctx.t('app.edit-name'),
     id: 'edit-pack-name',
@@ -45,11 +45,11 @@ const ViewSurface: FrontendModule['View'] = (input) => {
       submitDisabled: false,
     },
     header: {
-      render: () => h(SurfaceHeader, { ctx: input.ctx, title: input.ctx.t('app.edit-name'), onClose: onClose }),
+      render: () => v(SurfaceHeader, { ctx: input.ctx, title: input.ctx.t('app.edit-name'), onClose: onClose }),
     },
     body: {
       render: () =>
-        h(TextField, {
+        v(TextField, {
           id: 'pack-name',
           label: input.ctx.t('app.edit-name'),
           value: input.modelSpace.editPackName_draft,

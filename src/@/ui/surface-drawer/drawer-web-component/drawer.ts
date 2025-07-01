@@ -1,4 +1,4 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { cn } from '../../cn'
 import { Gutter } from '../../gutter'
 import { Portal } from '../../portal'
@@ -11,14 +11,14 @@ import { Frag } from '../../frag'
 
 export const DrawerWebComponent = (input: DrawerInput) => {
   drawerSub.pub({ type: 'input', ...input })
-  return h(Portal.Entrance, {
+  return v(Portal.Entrance, {
     portalId: DRAWER_PORTAL_ID,
-    children: h(Frag, null, [
-      h('drawer-element', {
+    children: v(Frag, null, [
+      v('drawer-element', {
         id: input.id,
         position: input.position,
-        children: h(Frag, null, [
-          h(Surface, {
+        children: v(Frag, null, [
+          v(Surface, {
             'aria-hidden': !input.open,
             role: 'dialog',
             'aria-label': input.ariaLabel,
@@ -26,10 +26,10 @@ export const DrawerWebComponent = (input: DrawerInput) => {
               'h-fit max-h-full w-full overflow-hidden border',
               input.position === 'bottom' ? 'rounded-t-2xl' : 'rounded-b-2xl',
             ),
-            children: h(Frag, null, [
-              input.position === 'top' && h(Gutter, { variant: 'drawer' }),
+            children: v(Frag, null, [
+              input.position === 'top' && v(Gutter, { variant: 'drawer' }),
               input.children,
-              input.position === 'bottom' && h(Gutter, { variant: 'drawer' }),
+              input.position === 'bottom' && v(Gutter, { variant: 'drawer' }),
             ]),
           }),
         ]),

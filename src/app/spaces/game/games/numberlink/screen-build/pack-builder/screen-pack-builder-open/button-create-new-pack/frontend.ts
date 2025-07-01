@@ -1,6 +1,6 @@
 import { Loading, Ok } from '~/@/result'
 import { IconPlus } from '~/@/ui/icon'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
@@ -65,7 +65,7 @@ const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): PostAct
     submitText: input.ctx.t('game.numberlink.create-pack'),
     submitLoading: input.model.packCreateNewRequest.t === 'loading',
     submitDisabled: input.model.packCreateNewRequest.t === 'loading',
-    submitIcon: (iconInput) => h(IconPlus, iconInput),
+    submitIcon: (iconInput) => v(IconPlus, iconInput),
   }
 }
 

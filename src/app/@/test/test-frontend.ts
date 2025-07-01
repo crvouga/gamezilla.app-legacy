@@ -8,7 +8,7 @@ import { TestClient } from '~/@/test-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { Render } from '~/@/vdom/render'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { SessionId } from '~/@/wire/session-id'
@@ -95,7 +95,7 @@ export const TestFrontend = async (config: {
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
-    render: (input) => render(h(AppFrontend.View, { ...input, ctx })),
+    render: (input) => render(v(AppFrontend.View, { ...input, ctx })),
   })
 
   const cleanUp = async () => {

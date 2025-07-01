@@ -5,7 +5,7 @@ import { ClickablePaper } from '~/@/ui/clickable'
 import { IconQuestionMark } from '~/@/ui/icon'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
@@ -146,8 +146,8 @@ export const View = ({
           renderBotIcon: bot.renderIcon,
         }
 
-  return h('div', { className: 'flex w-full flex-1 flex-col' }, [
-    h(ScreenLayoutGameCoverArt, {
+  return v('div', { className: 'flex w-full flex-1 flex-col' }, [
+    v(ScreenLayoutGameCoverArt, {
       id: 'vs-bot-setup',
       parentScreen: ctx.parentScreen,
       ctx,
@@ -159,35 +159,35 @@ export const View = ({
       },
       renderCoverArt,
       renderBody: () =>
-        h('div', { className: 'flex w-full flex-col gap-2 p-4' }, [
-          h('div', { className: 'grid w-full grid-cols-7' }, [
-            h(PlayerIcons, { player: playerOneProp, ctx }),
-            h('div', { className: 'col-span-1 grid place-items-center' }, [
-              h(Typography, {
+        v('div', { className: 'flex w-full flex-col gap-2 p-4' }, [
+          v('div', { className: 'grid w-full grid-cols-7' }, [
+            v(PlayerIcons, { player: playerOneProp, ctx }),
+            v('div', { className: 'col-span-1 grid place-items-center' }, [
+              v(Typography, {
                 className: 'flex h-full flex-1 flex-col items-center justify-center text-3xl font-black',
                 variant: 'title',
                 text: ctx.t('game.vs'),
               }),
             ]),
-            h(PlayerIcons, { player: playerTwoProp, ctx }),
+            v(PlayerIcons, { player: playerTwoProp, ctx }),
           ]),
 
-          h('div', { className: 'grid w-full grid-cols-7' }, [
-            h(PlayerLabels, { player: playerOneProp, ctx }),
-            h('div', { className: 'col-span-1' }),
-            h(PlayerLabels, { player: playerTwoProp, ctx }),
+          v('div', { className: 'grid w-full grid-cols-7' }, [
+            v(PlayerLabels, { player: playerOneProp, ctx }),
+            v('div', { className: 'col-span-1' }),
+            v(PlayerLabels, { player: playerTwoProp, ctx }),
           ]),
 
-          h('div', { className: 'mt-2 grid w-full grid-cols-7' }, [
-            h(PlayerButtons, {
+          v('div', { className: 'mt-2 grid w-full grid-cols-7' }, [
+            v(PlayerButtons, {
               onSwapSides,
               dispatch,
               human,
               player: playerOneProp,
               ctx,
             }),
-            h('div', { className: 'col-span-1' }),
-            h(PlayerButtons, {
+            v('div', { className: 'col-span-1' }),
+            v(PlayerButtons, {
               onSwapSides,
               dispatch,
               human,
@@ -199,8 +199,8 @@ export const View = ({
     }),
 
     ctx.currentUser.userId === ctx.space.hostId &&
-      h('div', { className: 'flex items-center gap-4 p-4' }, [
-        h(Button, {
+      v('div', { className: 'flex items-center gap-4 p-4' }, [
+        v(Button, {
           disabled: !canStartGame,
           variant: 'contained',
           color: 'primary',
@@ -210,7 +210,7 @@ export const View = ({
         }),
       ]),
 
-    h(SurfaceLayout, {
+    v(SurfaceLayout, {
       ctx,
       ariaLabel: ctx.t('game.change-bot'),
       drawer: {
@@ -224,7 +224,7 @@ export const View = ({
         }),
       header: {
         render: () =>
-          h(SurfaceHeader, {
+          v(SurfaceHeader, {
             ctx,
             title: ctx.t('game.change-bot'),
             onClose: () => dispatch({ t: 'closed-modal' }),
@@ -232,7 +232,7 @@ export const View = ({
       },
       body: {
         render: () =>
-          h('div', {}, [
+          v('div', {}, [
             botVariants.map((botLevel) => {
               const onClick = () => {
                 botLevel.onSelect()
@@ -240,7 +240,7 @@ export const View = ({
                   t: 'closed-modal',
                 })
               }
-              return h(
+              return v(
                 'button',
                 {
                   key: botLevel.label,
@@ -262,24 +262,24 @@ export const View = ({
 }
 
 const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
-  return h('div', { className: 'col-span-3 grid grid-cols-2 place-items-center' }, [
+  return v('div', { className: 'col-span-3 grid grid-cols-2 place-items-center' }, [
     player.t === 'bot'
       ? player.renderBotIcon({
           className: 'h-14 w-14',
         })
       : player.userId
-        ? h(Avatar, {
+        ? v(Avatar, {
             className: 'h-14 w-14',
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[player.userId]),
           })
-        : h(
+        : v(
             ClickablePaper,
             {
               role: 'button',
               className: 'grid h-14 w-14 place-items-center overflow-hidden rounded-full',
               onClick: player.onStartPlaying,
             },
-            [h(IconQuestionMark, { className: 'text-secondary h-10 w-10' })],
+            [v(IconQuestionMark, { className: 'text-secondary h-10 w-10' })],
           ),
     player.renderIcon({
       className: 'w-14 h-14',
@@ -289,14 +289,14 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
 
 const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
   const profile = player.t === 'user' && player.userId ? ctx.profilesByUserId[player.userId] : null
-  return h('div', { className: 'col-span-3 grid grid-cols-2 place-items-center' }, [
-    h(Typography, {
+  return v('div', { className: 'col-span-3 grid grid-cols-2 place-items-center' }, [
+    v(Typography, {
       variant: 'label',
       color: 'text-secondary',
       className: 'w-full overflow-hidden text-center text-sm text-ellipsis whitespace-nowrap',
       text: player.t === 'bot' ? player.botLabel : profile ? ctx.t('username', profile.username) : ctx.t('?'),
     }),
-    h(Typography, {
+    v(Typography, {
       color: 'text-secondary',
       variant: 'label',
       className: 'text-center text-sm',
@@ -318,9 +318,9 @@ const PlayerButtons = ({
   player: PlayerProp
   dispatch: (m: Msg) => void
 }) => {
-  return h('div', { className: 'col-span-3 flex flex-col gap-2' }, [
+  return v('div', { className: 'col-span-3 flex flex-col gap-2' }, [
     !human.userId &&
-      h(Button, {
+      v(Button, {
         onClick: player.onStartPlaying,
         className: 'w-full',
         color: 'primary',
@@ -328,7 +328,7 @@ const PlayerButtons = ({
       }),
     player.t === 'user' &&
       ctx.currentUser.userId === player.userId &&
-      h(Button, {
+      v(Button, {
         onClick: player.onStopPlaying,
         className: 'w-full',
         variant: 'text',
@@ -337,7 +337,7 @@ const PlayerButtons = ({
       }),
     player.t === 'bot' &&
       human.userId === ctx.currentUser.userId &&
-      h(Button, {
+      v(Button, {
         onClick: onSwapSides,
         className: 'w-full',
         variant: 'text',
@@ -346,7 +346,7 @@ const PlayerButtons = ({
       }),
     player.t === 'bot' &&
       human.userId === ctx.currentUser.userId &&
-      h(Button, {
+      v(Button, {
         onClick: () =>
           dispatch({
             t: 'clicked-change-bot',

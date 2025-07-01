@@ -1,6 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { IconPlus } from '~/@/ui/icon'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { SpaceId } from '~/app/@/data/space-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -82,7 +82,7 @@ export const viewStartSpaceButton = (input: Parameters<SpaceFrontendModule['View
   return {
     onSubmit: () => input.dispatch({ t: 'start-space.clicked-start-space-button', spaceId: SpaceId.generate() }),
     submitText: input.ctx.t('spaces.start-space'),
-    submitIcon: (iconInput) => h(IconPlus, iconInput),
+    submitIcon: (iconInput) => v(IconPlus, iconInput),
     submitDisabled: false,
     submitLoading: false,
   }

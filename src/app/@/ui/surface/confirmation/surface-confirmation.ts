@@ -5,7 +5,7 @@ import { DrawerInput } from '~/@/ui/surface-drawer'
 import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
 import { SurfaceBodyText } from '~/@/ui/surface/surface-body-text'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
 
@@ -36,13 +36,13 @@ type PropsBase = {
 export type SurfaceConfirmationProps = DrawerInput & PropsBase
 
 export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
-  return h(SurfaceLayout, {
+  return v(SurfaceLayout, {
     ...input,
     id: 'surface-confirmation',
     ariaLabel: input.title,
     header: {
       render: () =>
-        h(SurfaceHeader, {
+        v(SurfaceHeader, {
           ctx: input.ctx,
           title: input.title,
           onClose: input.onClose,
@@ -60,7 +60,7 @@ export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
     },
     body: {
       render: () =>
-        h(SurfaceBodyText, {
+        v(SurfaceBodyText, {
           text: input.body,
         }),
     },

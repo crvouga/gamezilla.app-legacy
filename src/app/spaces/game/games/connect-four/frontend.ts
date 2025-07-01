@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { FeedItem } from '~/app/spaces/@/feed-item'
@@ -202,10 +202,10 @@ const View: Module['View'] = (input) => {
 
   switch (input.modelSpace.t) {
     case 'none': {
-      return h(GameMainMenu.View, {
+      return v(GameMainMenu.View, {
         ctx: input.ctx,
         title: input.ctx.t('connect-four'),
-        renderCoverArt: (input) => h(CoverArt, input),
+        renderCoverArt: (input) => v(CoverArt, input),
         onBack: () => input.dispatch({ t: 'game-main-menu.clicked-exit-game-button' }),
         dispatch: input.dispatch,
         buttons: [
@@ -232,7 +232,7 @@ const View: Module['View'] = (input) => {
     }
 
     case 'vs-bot': {
-      return h(VsBot.View, {
+      return v(VsBot.View, {
         ctx: input.ctx,
         dispatch: (c) =>
           input.dispatch({
@@ -245,7 +245,7 @@ const View: Module['View'] = (input) => {
     }
 
     case 'vs-user': {
-      return h(VsUser.View, {
+      return v(VsUser.View, {
         ctx: {
           ...input.ctx,
           onQuit,
@@ -271,20 +271,20 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
           const profile = ctx.profilesByUserId[ctx.currentUser.userId]
 
           if (!profile) {
-            return h(FeedItem.Info, { text: 'Exited game to main menu' })
+            return v(FeedItem.Info, { text: 'Exited game to main menu' })
           }
 
-          return h(FeedItem.Info, { text: `${profile.username} exited game to main menu` })
+          return v(FeedItem.Info, { text: `${profile.username} exited game to main menu` })
         }
 
         default: {
           const profile = ctx.profilesByUserId[ctx.currentUser.userId]
 
           if (!profile) {
-            return h(FeedItem.Info, { text: 'Changed game mode' })
+            return v(FeedItem.Info, { text: 'Changed game mode' })
           }
 
-          return h(FeedItem.Info, { text: `${profile.username} changed game mode` })
+          return v(FeedItem.Info, { text: `${profile.username} changed game mode` })
         }
       }
     }
@@ -292,7 +292,7 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
     case 'vs-bot': {
       switch (modelSpace.t) {
         case 'vs-bot': {
-          return h(VsBot.ViewFeedItem, {
+          return v(VsBot.ViewFeedItem, {
             ctx: ctx,
             msgSpace: msgSpace.c,
             modelSpace: modelSpace.c,
@@ -312,7 +312,7 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
     case 'vs-user': {
       switch (modelSpace.t) {
         case 'vs-user': {
-          return h(VsUser.ViewFeedItem, {
+          return v(VsUser.ViewFeedItem, {
             ctx: {
               ...ctx,
               onQuit: () => {},

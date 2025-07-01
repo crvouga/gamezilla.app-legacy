@@ -1,4 +1,4 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { cn } from './cn'
 
 type AvatarProps = {
@@ -14,7 +14,7 @@ const isImage = (src: string | null | undefined): boolean => {
 
 export const Avatar = (props: AvatarProps) => {
   if (isImage(props.src)) {
-    return h('img', {
+    return v('img', {
       onClick: props.onClick,
       src: props.src ?? '',
       alt: props.alt ?? 'user avatar',
@@ -25,7 +25,7 @@ export const Avatar = (props: AvatarProps) => {
     })
   }
 
-  return h(
+  return v(
     'span',
     {
       onClick: props.onClick,
@@ -35,8 +35,8 @@ export const Avatar = (props: AvatarProps) => {
       ),
     },
     [
-      h('svg', { className: 'h-full w-full text-neutral-300', fill: 'currentColor', viewBox: '0 0 24 24' }, [
-        h('path', {
+      v('svg', { className: 'h-full w-full text-neutral-300', fill: 'currentColor', viewBox: '0 0 24 24' }, [
+        v('path', {
           d: 'M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z',
         }),
       ]),

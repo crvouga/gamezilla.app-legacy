@@ -1,6 +1,6 @@
 import { Sub } from '~/@/sub'
 import { IconPen, IconPlay } from '~/@/ui/icon'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
@@ -149,19 +149,19 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
 //
 
 const View: BuilderTypes.FrontendModule['View'] = (input) => {
-  if (!input.modelSpace.screenPuzzleBuilder) return h(ViewSpectating, input)
+  if (!input.modelSpace.screenPuzzleBuilder) return v(ViewSpectating, input)
 
   const isSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
 
-  if (isSpectating) return h(ViewSpectating, input)
+  if (isSpectating) return v(ViewSpectating, input)
 
   const parentScreen = toParentScreenProps(input)
 
-  if (!parentScreen) return h(ViewSpectating, input)
+  if (!parentScreen) return v(ViewSpectating, input)
 
   const screenCtx: FlowFrontendCtx = { ...input.ctx, parentScreen }
 
-  return h(ViewMode, { ...input, ctx: screenCtx })
+  return v(ViewMode, { ...input, ctx: screenCtx })
 }
 
 const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View']>[0]): ParentScreenProps | null => {
@@ -174,7 +174,7 @@ const toParentScreenProps = (input: Parameters<BuilderTypes.FrontendModule['View
     navBar: {
       back: {
         onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-exit-button' }),
-        renderSurface: ({ dropDown }) => h(SaveChangesFrontend.ViewUnsavedChangesSurface, { ...input, dropDown }),
+        renderSurface: ({ dropDown }) => v(SaveChangesFrontend.ViewUnsavedChangesSurface, { ...input, dropDown }),
       },
       title: input.ctx.t('numberlink-puzzle-name', puzzleBuilder.puzzle.name),
     },
@@ -213,7 +213,7 @@ const viewToggleModeAction = (
       return [
         {
           id: input.ctx.t('game.numberlink.play-mode'),
-          icon: (input) => h(IconPlay, input),
+          icon: (input) => v(IconPlay, input),
           label: input.ctx.t('game.numberlink.play-mode'),
           classNames: { button: 'text-blue-500' },
           onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
@@ -224,7 +224,7 @@ const viewToggleModeAction = (
       return [
         {
           id: input.ctx.t('game.numberlink.edit-mode'),
-          icon: (input) => h(IconPen, input),
+          icon: (input) => v(IconPen, input),
           label: input.ctx.t('game.numberlink.edit-mode'),
           classNames: { button: 'text-amber-500' },
           onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
@@ -239,9 +239,9 @@ const ViewMode: BuilderTypes.FrontendModule['View'] = (input) => {
   if (!puzzleBuilder) return null
   switch (puzzleBuilder.mode.t) {
     case 'edit':
-      return h(ViewModeEdit, input)
+      return v(ViewModeEdit, input)
     case 'play':
-      return h(ViewModePlay, input)
+      return v(ViewModePlay, input)
   }
 }
 
@@ -249,7 +249,7 @@ const ViewModeEdit: BuilderTypes.FrontendModule['View'] = (input) => {
   const puzzleBuilder = input.modelSpace.screenPuzzleBuilder
   if (!puzzleBuilder) return null
 
-  return h(ModeEditFrontend.View, {
+  return v(ModeEditFrontend.View, {
     ...input,
     model: puzzleBuilder.modeEdit,
     dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-edit-msg', c }),
@@ -263,17 +263,17 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
 
   const numberlink = ScreenPuzzleBuilderSpace.toNumberlink(puzzleBuilder)
 
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     dataTestId: 'numberlink/puzzle-builder-play-mode-screen',
     id: 'puzzle-builder-screen-mode-play',
     ctx: input.ctx,
     renderBody: () =>
-      h(BoardLayout, null, [
-        h('div', { className: 'flex w-full items-center justify-center gap-1 p-2' }, [
+      v(BoardLayout, null, [
+        v('div', { className: 'flex w-full items-center justify-center gap-1 p-2' }, [
           input.ctx.t('game.numberlink.playing'),
         ]),
-        h(ModePlayFrontend.View, {
+        v(ModePlayFrontend.View, {
           model: puzzleBuilder.modePlay,
           numberlink: numberlink,
           dispatch: (c) => input.dispatch({ t: 'screen-puzzle-builder.got-play-msg', c }),
@@ -301,7 +301,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
   if (!puzzleBuilder) return null
   const numberlink = ScreenPuzzleBuilderSpace.toNumberlink(puzzleBuilder)
 
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     id: 'puzzle-builder-screen-mode-play',
     dataTestId: 'numberlink/puzzle-builder-screen',
@@ -310,14 +310,14 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
       title: input.ctx.t('numberlink-puzzle-name', puzzleBuilder.puzzle.name),
     },
     renderBody: () =>
-      h(LayoutGame, { ctx: input.ctx, isSpectating: true }, [
-        h('div', { className: 'flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll' }, [
-          h(ProfileListItem, {
+      v(LayoutGame, { ctx: input.ctx, isSpectating: true }, [
+        v('div', { className: 'flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll' }, [
+          v(ProfileListItem, {
             ctx: input.ctx,
             profile: input.ctx.profilesByUserId[input.ctx.space.hostId],
             subtitle: input.ctx.t('app.editor'),
           }),
-          h(NumberlinkVariantBoard.View, { disabled: true, model: numberlink }),
+          v(NumberlinkVariantBoard.View, { disabled: true, model: numberlink }),
         ]),
       ]),
   })

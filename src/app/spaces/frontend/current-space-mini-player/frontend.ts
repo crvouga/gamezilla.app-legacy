@@ -3,7 +3,7 @@ import { cn } from '~/@/ui/cn'
 import { IconXMark } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -44,7 +44,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
 
   const userCount = Object.values(space.users).length
   const isCurrentUserHost = input.ctx.currentUser.userId === space.hostId
-  return h(
+  return v(
     'div',
     {
       className: cn(
@@ -54,7 +54,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
       ),
     },
     [
-      h(
+      v(
         'button',
         {
           type: 'button',
@@ -62,18 +62,18 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
           onClick: () => input.dispatch({ t: 'current-space-bar.clicked-current-space-bottom-bar' }),
         },
         [
-          h('div', { className: 'p-2' }, [
+          v('div', { className: 'p-2' }, [
             !space.game
-              ? h(Avatar, {
+              ? v(Avatar, {
                   src: hostProfile ? UserProfile.toAvatarUrl(hostProfile) : '',
                   alt: 'Host Avatar',
                   className: 'size-14',
                 })
-              : h(GameCoverArt, { rounded: true, className: 'size-14', gameName: space.game.t }),
+              : v(GameCoverArt, { rounded: true, className: 'size-14', gameName: space.game.t }),
           ]),
 
-          h('div', { className: 'flex flex-1 flex-col gap-0.5 overflow-hidden py-3 pr-3' }, [
-            h(Typography, {
+          v('div', { className: 'flex flex-1 flex-col gap-0.5 overflow-hidden py-3 pr-3' }, [
+            v(Typography, {
               variant: 'title',
               className: 'truncate text-left text-lg font-normal',
               text: hostProfile
@@ -82,7 +82,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
                   })
                 : input.ctx.t('spaces.space'),
             }),
-            h(Typography, {
+            v(Typography, {
               variant: 'subtitle',
               className: 'truncate text-left',
               text: input.ctx.t('space-card.people-count', userCount),
@@ -91,20 +91,20 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
         ],
       ),
 
-      h(
+      v(
         'div',
         { className: 'pr-4' },
         [
           isCurrentUserHost &&
-            h(IconButton, {
-              renderIcon: (iconInput) => h(IconXMark, iconInput),
+            v(IconButton, {
+              renderIcon: (iconInput) => v(IconXMark, iconInput),
               label: input.ctx.t('spaces.end'),
               onClick: () => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId: space.spaceId }),
             }),
 
           !isCurrentUserHost &&
-            h(IconButton, {
-              renderIcon: (iconInput) => h(IconXMark, iconInput),
+            v(IconButton, {
+              renderIcon: (iconInput) => v(IconXMark, iconInput),
               label: input.ctx.t('spaces.leave'),
               onClick: () => input.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId: space.spaceId }),
             }),

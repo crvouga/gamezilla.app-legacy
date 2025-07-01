@@ -4,7 +4,7 @@ import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { VDom } from '~/@/vdom/vdom'
 
 export const ScreenNavBarTablet = (input: {
@@ -20,25 +20,25 @@ export const ScreenNavBarTablet = (input: {
   renderEnd?: () => VDom
 }) => {
   const renderSurface = input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference)
-  return h(ScreenNavBarTabletRoot, null, [
+  return v(ScreenNavBarTabletRoot, null, [
     input.back &&
       renderSurface({
         dropDown: {
           alignment: 'starting',
           position: 'bottom',
-          reference: h(IconButton, {
+          reference: v(IconButton, {
             onClick: input.back.onClick,
             className: '-ml-2',
             size: 'lg',
             label: input.ctx.t('app.exit'),
-            renderIcon: (inputIcon) => h(IconArrowLeft, inputIcon),
+            renderIcon: (inputIcon) => v(IconArrowLeft, inputIcon),
           }),
         },
       }),
 
-    h('div', { className: 'flex flex-1 flex-col truncate' }, [
+    v('div', { className: 'flex flex-1 flex-col truncate' }, [
       input.title &&
-        h(Typography, {
+        v(Typography, {
           role: 'heading',
           className: 'truncate px-2',
           sizeClassName: 'text-3xl font-bold',
@@ -46,7 +46,7 @@ export const ScreenNavBarTablet = (input: {
           text: input.title,
         }),
       input.subtitle &&
-        h(Typography, {
+        v(Typography, {
           className: 'truncate px-2',
           color: 'text-secondary',
           sizeClassName: 'text-xl',
@@ -60,5 +60,5 @@ export const ScreenNavBarTablet = (input: {
 }
 
 export const ScreenNavBarTabletRoot = (input: { children: VDom }) => {
-  return h('div', { className: 'flex h-24 w-full shrink-0 items-center px-6' }, [input.children])
+  return v('div', { className: 'flex h-24 w-full shrink-0 items-center px-6' }, [input.children])
 }

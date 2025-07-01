@@ -6,7 +6,7 @@ import { UnixMs } from '~/@/time/unix-ms'
 import { Clickable } from '~/@/ui/clickable'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { BackendConnectionStatus } from './connection-status'
 import { PingId } from './ping-id'
@@ -77,40 +77,40 @@ const pongs: FrontendModule['subscriptions'] = (input) => {
 
 const ViewDot = (input: { model: Model; ctx: AppFrontendCtxBase; className: string }) => {
   const status = BackendConnectionStatus.fromModel(input.model)
-  return h(BackendConnectionStatus.ViewDot, { model: status, ctx: input.ctx, className: input.className })
+  return v(BackendConnectionStatus.ViewDot, { model: status, ctx: input.ctx, className: input.className })
 }
 
 const ViewListItem = (input: { model: Model; ctx: AppFrontendCtxBase; dispatch: (msg: MsgFrontend) => void }) => {
-  return h('div', null, [h(ViewListItemInner, input)])
+  return v('div', null, [v(ViewListItemInner, input)])
 }
 
 const ViewListItemInner: typeof ViewListItem = (input) => {
   const status = BackendConnectionStatus.fromModel(input.model)
   switch (status.t) {
     case 'connected': {
-      return h(ListItemButton, {
-        icon: (inputIcon) => h(Dot, { className: inputIcon.className, colorClassName: 'bg-green-500' }),
+      return v(ListItemButton, {
+        icon: (inputIcon) => v(Dot, { className: inputIcon.className, colorClassName: 'bg-green-500' }),
         className: 'text-green-500',
         label: input.ctx.t('wire.online'),
-        end: () => h(Typography, { text: TimeSpan.format(status.latestPing) }),
+        end: () => v(Typography, { text: TimeSpan.format(status.latestPing) }),
       })
     }
 
     case 'connecting': {
-      return h(ListItemButton, {
-        icon: (input) => h(Dot, { className: input.className, colorClassName: 'bg-orange-500' }),
+      return v(ListItemButton, {
+        icon: (input) => v(Dot, { className: input.className, colorClassName: 'bg-orange-500' }),
         color: 'warning',
         label: input.ctx.t('wire.connecting...'),
       })
     }
 
     case 'disconnected': {
-      return h(ListItemButton, {
-        icon: (input) => h(Dot, { className: input.className, colorClassName: 'bg-red-500' }),
+      return v(ListItemButton, {
+        icon: (input) => v(Dot, { className: input.className, colorClassName: 'bg-red-500' }),
         color: 'danger',
         label: input.ctx.t('wire.offline'),
         end: () =>
-          h(
+          v(
             Clickable,
             {
               type: 'button',

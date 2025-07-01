@@ -8,7 +8,7 @@ import { cn } from '~/@/ui/cn'
 import { IconXMark } from '~/@/ui/icon'
 import { PAPER_CLASS_NAME } from '~/@/ui/paper'
 import { Transition } from '~/@/ui/transition'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
@@ -131,7 +131,7 @@ export const subscriptions: Module['subscriptions'] = ({ model }) => {
 }
 
 export const View: Module['View'] = (input) => {
-  return h(
+  return v(
     Transition,
     {
       mode: 'out-in',
@@ -141,7 +141,7 @@ export const View: Module['View'] = (input) => {
     },
     [
       input.model.toast &&
-        h(Toast, {
+        v(Toast, {
           key: input.model.toast.toastId,
           ctx: input.ctx,
           toast: input.model.toast,
@@ -169,7 +169,7 @@ const onExit = async (node: HTMLElement) => {
 
 const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) => {
   const errorMsg = input.toast.errorMsg
-  return h(
+  return v(
     'div',
     {
       id: String(input.toast.toastId),
@@ -186,13 +186,13 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
       onContextMenu: (e: any) => e.preventDefault(),
     },
     [
-      h(
+      v(
         'div',
         {
           className: cn('w-full bg-black', toWidthClass(input)),
         },
         [
-          h(
+          v(
             'div',
             {
               className: cn(
@@ -206,7 +206,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
             [
               input.toast.text,
               errorMsg &&
-                h(
+                v(
                   'button',
                   {
                     type: 'button',
@@ -216,7 +216,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
                   },
                   ['See Error'],
                 ),
-              h(
+              v(
                 'button',
                 {
                   type: 'button',
@@ -226,7 +226,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
                       toastId: input.toast.toastId,
                     }),
                 },
-                [h(IconXMark, { className: 'h-5 w-5' })],
+                [v(IconXMark, { className: 'h-5 w-5' })],
               ),
             ],
           ),

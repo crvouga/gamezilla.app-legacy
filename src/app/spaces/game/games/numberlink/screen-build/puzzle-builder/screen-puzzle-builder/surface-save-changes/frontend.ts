@@ -1,7 +1,7 @@
 import { Loading, Result, isOk } from '~/@/result'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconFloppyDisk } from '~/@/ui/icon'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
@@ -234,7 +234,7 @@ const updateDbSavedPuzzle: FrontendModule['update'] = (input) => {
 //
 
 const ViewUnsavedChangesSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDown: DropDownConfig }) => {
-  return h(SurfaceUnsavedChanges, {
+  return v(SurfaceUnsavedChanges, {
     dropDown: input.dropDown,
     ctx: input.ctx,
     title: input.ctx.t('app.save-changes?'),
@@ -255,7 +255,7 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
   return [
     {
       id: input.ctx.t('app.save'),
-      icon: (input) => h(IconFloppyDisk, input),
+      icon: (input) => v(IconFloppyDisk, input),
       label: input.ctx.t('app.save'),
       onClick: () => input.dispatch({ t: 'screen-puzzle-builder.save-changes.user-clicked-save-button' }),
       loading: input.model.puzzleSaveChangesRequest?.t === 'loading',

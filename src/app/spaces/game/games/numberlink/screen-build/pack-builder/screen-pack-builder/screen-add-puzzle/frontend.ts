@@ -1,4 +1,4 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
@@ -80,7 +80,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   const query = toQuery(input)
 
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     id: 'screen-pack-builder-add-puzzle',
     ctx: input.ctx,
@@ -122,7 +122,7 @@ const View: FrontendModule['View'] = (input) => {
       submitDisabled: input.modelSpace.screenAddPuzzle_selected.length === 0,
     },
     renderBody: () =>
-      h(PuzzleLoaderFrontend.ViewList, {
+      v(PuzzleLoaderFrontend.ViewList, {
         selectable: true,
         ctx: input.ctx,
         model: input.ctx.puzzleLoader,

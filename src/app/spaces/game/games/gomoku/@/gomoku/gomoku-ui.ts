@@ -1,4 +1,4 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { Hex } from '~/@/hex/hex'
 import { cn } from '~/@/ui/cn'
 import { type Board, type Bounds, type Stone, allPositions, bounds, presetToStars } from './gomoku'
@@ -24,8 +24,8 @@ export const stoneToColor = (stone: Stone): string => {
 }
 
 export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
-  return h('svg', { viewBox: '-1 -1 2 2' }, [
-    h('circle', {
+  return v('svg', { viewBox: '-1 -1 2 2' }, [
+    v('circle', {
       cx: 0,
       cy: 0,
       r: 0.9,
@@ -37,7 +37,7 @@ export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
 }
 
 export const CoverArt = (input: { className?: string }) => {
-  return h(ViewBoard, {
+  return v(ViewBoard, {
     ...input,
     viewBoxOffset: 0.5,
     bounds: {
@@ -98,7 +98,7 @@ export const ViewBoard = ({
 
   const viewBox = [boundsView.lower.x, boundsView.lower.y, width, height].join(' ')
 
-  return h(
+  return v(
     'svg',
     {
       width: '100%',
@@ -106,8 +106,8 @@ export const ViewBoard = ({
       className: cn('overflow-hidden', className),
     },
     [
-      h('g', { 'stroke-width': 0.05 }, [
-        h('rect', {
+      v('g', { 'stroke-width': 0.05 }, [
+        v('rect', {
           x: boundsView.lower.x,
           y: boundsView.lower.y,
           width,
@@ -115,8 +115,8 @@ export const ViewBoard = ({
           fill: gameTheme.background,
         }),
 
-        h('g', { stroke: gameTheme.line }, [
-          h('rect', {
+        v('g', { stroke: gameTheme.line }, [
+          v('rect', {
             x: bounds_.lower.x,
             y: bounds_.lower.y,
             width: bounds_.upper.x - 1 - bounds_.lower.x,
@@ -127,7 +127,7 @@ export const ViewBoard = ({
             lower: 1,
             upper: bounds_.upper.y,
           }).map((x) =>
-            h('line', {
+            v('line', {
               key: `x${x}`,
               x1: x,
               y1: bounds_.lower.y,
@@ -139,7 +139,7 @@ export const ViewBoard = ({
             lower: 1,
             upper: bounds.upper.x,
           }).map((y) =>
-            h('line', {
+            v('line', {
               key: `y${y}`,
               x1: bounds_.lower.x,
               y1: y,
@@ -149,11 +149,11 @@ export const ViewBoard = ({
           ),
         ]),
 
-        h(
+        v(
           'g',
           {},
           stars.map((pos) =>
-            h('circle', {
+            v('circle', {
               key: [pos.x, pos.y].join(', '),
               cx: pos.x,
               cy: pos.y,
@@ -170,7 +170,7 @@ export const ViewBoard = ({
           }
 
           return [
-            h('circle', {
+            v('circle', {
               key: [x, y, stone].join('-'),
               cx: x,
               cy: y,
@@ -180,11 +180,11 @@ export const ViewBoard = ({
           ]
         }),
 
-        h(
+        v(
           'g',
           {},
           allPositions.map(({ x, y }) =>
-            h('circle', {
+            v('circle', {
               key: [x, y].join(', '),
               cx: x,
               cy: y,

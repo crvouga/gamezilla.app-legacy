@@ -2,7 +2,7 @@ import { pipe } from '~/@/function/pipe'
 import { List } from '~/@/list/list'
 import { NonNegInt } from '~/@/math/non-neg-int'
 import { TimeSpan } from '~/@/time/time-span'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { Direction } from './direction'
 import { Position } from './position'
 
@@ -259,9 +259,9 @@ export const CoverArt = () => {
 
   const food: Model['food'] = { x: 2, y: 2 }
 
-  return h('svg', { width: '100%', viewBox: toViewBox(bounds) }, [
+  return v('svg', { width: '100%', viewBox: toViewBox(bounds) }, [
     ...Position.range(bounds).map(({ x, y }, index) =>
-      h('rect', {
+      v('rect', {
         key: `${x} ${y} ${index}`,
         x,
         y,
@@ -278,7 +278,7 @@ export const CoverArt = () => {
     ),
 
     ...List.map(tail, ({ x, y }, index) =>
-      h('rect', {
+      v('rect', {
         key: `${x} ${y} ${index}`,
         x,
         y,
@@ -290,7 +290,7 @@ export const CoverArt = () => {
     ),
 
     ...[food].map(({ x, y }, index) =>
-      h('rect', {
+      v('rect', {
         key: `${x} ${y} ${index}`,
         x,
         y,

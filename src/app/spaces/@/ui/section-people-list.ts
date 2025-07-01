@@ -1,7 +1,7 @@
 import { Avatar } from '~/@/ui/avatar'
 import { Clickable } from '~/@/ui/clickable'
 import { Frag } from '~/@/ui/frag'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
@@ -20,14 +20,14 @@ export const SectionPeopleList = (input: {
 
   const renderItem = input.renderItem ?? ((_profile, vDom) => vDom)
 
-  return h('section', { className: 'flex w-full flex-col gap-3 py-6' }, [
-    h(SectionTitle, { text: input.ctx.t('app.people') }),
-    h('div', { className: 'flex w-full flex-col' }, [
+  return v('section', { className: 'flex w-full flex-col gap-3 py-6' }, [
+    v(SectionTitle, { text: input.ctx.t('app.people') }),
+    v('div', { className: 'flex w-full flex-col' }, [
       profiles.map((profile) =>
-        h(Frag, { key: profile.id }, [
+        v(Frag, { key: profile.id }, [
           renderItem(
             profile,
-            h(PersonListItem, {
+            v(PersonListItem, {
               key: profile.id,
               profile: profile,
               ctx: input.ctx,
@@ -45,7 +45,7 @@ const PersonListItem = (input: {
   ctx: SpaceFrontendCtx
   onClick: () => void
 }) => {
-  return h(
+  return v(
     Clickable,
     {
       key: input.profile.id,
@@ -53,10 +53,10 @@ const PersonListItem = (input: {
       className: 'flex w-full items-center gap-2 p-2 px-6',
     },
     [
-      h(Avatar, { className: 'size-12', src: UserProfile.toAvatarUrl(input.profile) }),
-      h('p', {}, [input.profile.username]),
-      input.profile.userId === input.ctx.space.hostId && h(ViewHostChip, { ctx: input.ctx }),
-      input.profile.userId === input.ctx.currentUser.userId && h(ViewYouChip, { ctx: input.ctx }),
+      v(Avatar, { className: 'size-12', src: UserProfile.toAvatarUrl(input.profile) }),
+      v('p', {}, [input.profile.username]),
+      input.profile.userId === input.ctx.space.hostId && v(ViewHostChip, { ctx: input.ctx }),
+      input.profile.userId === input.ctx.currentUser.userId && v(ViewYouChip, { ctx: input.ctx }),
     ],
   )
 }

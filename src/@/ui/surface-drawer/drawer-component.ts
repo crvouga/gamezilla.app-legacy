@@ -5,14 +5,14 @@ import { DRAWER_PORTAL_ID } from './drawer-portal-exit'
 import type { DrawerInput } from './drawer-shared'
 import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
 import { Surface } from '../surface'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { Frag } from '../frag'
 
 export const DrawerComponent = (props: DrawerInput) => {
-  return h(Portal.Entrance, {
+  return v(Portal.Entrance, {
     portalId: DRAWER_PORTAL_ID,
-    children: h(Frag, null, [
-      h(
+    children: v(Frag, null, [
+      v(
         'div',
         {
           id: props.id,
@@ -26,7 +26,7 @@ export const DrawerComponent = (props: DrawerInput) => {
           ),
         },
         [
-          h('div', {
+          v('div', {
             className: 'w-full flex-1',
             'aria-label': props.ctx.t('drawer.close'),
             onClick: (event: unknown) => {
@@ -35,7 +35,7 @@ export const DrawerComponent = (props: DrawerInput) => {
             },
           }),
 
-          h(
+          v(
             Surface,
             {
               className: cn(
@@ -46,9 +46,9 @@ export const DrawerComponent = (props: DrawerInput) => {
               ),
             },
             [
-              props.position === 'top' && h(Gutter, { variant: 'drawer' }),
+              props.position === 'top' && v(Gutter, { variant: 'drawer' }),
               props.children,
-              props.position === 'bottom' && h(Gutter, { variant: 'drawer' }),
+              props.position === 'bottom' && v(Gutter, { variant: 'drawer' }),
             ],
           ),
         ],

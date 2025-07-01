@@ -1,4 +1,4 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -60,7 +60,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 
 const View: FrontendModule['View'] = (input) => {
   const query = toQuery({ currentUserId: input.ctx.currentUser.userId, offset: 0 })
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     id: 'screen-pack-builder-open',
     ctx: input.ctx,
@@ -76,7 +76,7 @@ const View: FrontendModule['View'] = (input) => {
     },
     postAction: PackCreateNewFrontend.viewCreateAction(input),
     renderBody: () =>
-      h(PackLoaderFrontend.ViewList, {
+      v(PackLoaderFrontend.ViewList, {
         ...input,
         model: input.ctx.packLoader,
         query: query,

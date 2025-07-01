@@ -1,4 +1,4 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { PhoneNumber } from '~/@/phone-number'
 import { NotAsked, RemoteResult, isErr } from '~/@/result'
@@ -202,10 +202,10 @@ const View: FrontendModule['View'] = (input) => {
     case 'auth': {
       switch (input.ctx.currentScreen.t) {
         case 'send-code': {
-          return h(ViewSendCode, input)
+          return v(ViewSendCode, input)
         }
         case 'verify-code': {
-          return h(ViewVerifyCode, input)
+          return v(ViewVerifyCode, input)
         }
         default: {
           return null
@@ -219,7 +219,7 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewSendCode: FrontendModule['View'] = (input) => {
-  return h(AuthScreenFormLayout, {
+  return v(AuthScreenFormLayout, {
     dataTestId: 'auth/send-code-screen',
     ctx: input.ctx,
     title: input.ctx.t('auth-sms.send-code'),
@@ -231,8 +231,8 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
     submitDisabled: false,
     onSubmit: () => input.dispatch({ t: 'user-clicked-send-code-button' }),
     renderInputs: () =>
-      h(Frag, null, [
-        h(Select<Iso3166Alpha2Code>, {
+      v(Frag, null, [
+        v(Select<Iso3166Alpha2Code>, {
           id: 'countryCode',
           label: input.ctx.t('auth-sms.country'),
           onChange: (countryCode) => input.dispatch({ t: 'inputted-country-code', countryCode }),
@@ -242,12 +242,12 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
           toName: (countryCode) => Iso3166Alpha2Code.toNameWithEmoji(countryCode),
         }),
 
-        h(TextField, {
+        v(TextField, {
           id: 'phoneNumberInput',
           dataTestId: 'phone-number-input',
           label: input.ctx.t('auth-sms.phone-number'),
           type: 'tel',
-          startIcon: h(IconMobilePhone, { className: 'h-5 w-5' }),
+          startIcon: v(IconMobilePhone, { className: 'h-5 w-5' }),
           error: typeof input.model.phoneError === 'string',
           value: input.model.phone,
           helperText: input.model.phoneError,
@@ -263,7 +263,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
 
   const phoneNumber = input.ctx.currentScreen.phoneNumber
 
-  return h(AuthScreenFormLayout, {
+  return v(AuthScreenFormLayout, {
     dataTestId: 'auth/verify-code-screen',
     ctx: input.ctx,
     title: input.ctx.t('auth-sms.verify-code'),
@@ -280,15 +280,15 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
         code: input.model.code,
       }),
     renderInputs: () =>
-      h(Frag, null, [
-        h(Typography, {
+      v(Frag, null, [
+        v(Typography, {
           role: 'status',
           className: 'text-lg',
           variant: 'body',
           text: input.ctx.t('auth-sms.enter-code-sent-to', PhoneNumber.format(phoneNumber)),
         }),
 
-        h(TextField, {
+        v(TextField, {
           id: CODE_INPUT_VIEW_ID,
           label: input.ctx.t('auth-sms.code'),
           error: typeof input.model.codeError === 'string',

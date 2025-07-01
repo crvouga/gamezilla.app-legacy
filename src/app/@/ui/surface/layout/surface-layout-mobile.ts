@@ -1,13 +1,13 @@
 import { Frag } from '~/@/ui/frag'
 import { Drawer } from '~/@/ui/surface-drawer/drawer'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { SurfaceContent } from './surface-content'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
-  return h(Frag, null, [
+  return v(Frag, null, [
     props.dropDown?.reference,
-    h(
+    v(
       Drawer,
       {
         id: 'surface-layout',
@@ -17,7 +17,7 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
         ctx: props.ctx,
         ariaLabel: props.ariaLabel,
       },
-      [h(SurfaceContent, props)],
+      [v(SurfaceContent, props)],
     ),
   ])
 }

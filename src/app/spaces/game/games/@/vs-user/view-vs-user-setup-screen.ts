@@ -4,7 +4,7 @@ import { Button } from '~/@/ui/button'
 import { ClickablePaper } from '~/@/ui/clickable'
 import { IconQuestionMark } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
@@ -30,35 +30,35 @@ const VersusSection = ({
   playerTwo: PlayerProp
   ctx: SpaceFrontendCtx
 }) => {
-  return h('div', { className: 'flex w-full flex-col gap-2 p-4' }, [
-    h('div', { className: 'grid w-full grid-cols-7' }, [
-      h(PlayerIcons, { player: playerOne, ctx }),
+  return v('div', { className: 'flex w-full flex-col gap-2 p-4' }, [
+    v('div', { className: 'grid w-full grid-cols-7' }, [
+      v(PlayerIcons, { player: playerOne, ctx }),
 
-      h('div', { className: 'col-span-1' }, [
-        h(Typography, {
+      v('div', { className: 'col-span-1' }, [
+        v(Typography, {
           text: ctx.t('game.vs'),
           variant: 'title',
           className: 'flex h-full flex-1 flex-col items-center justify-center text-3xl font-black',
         }),
       ]),
 
-      h(PlayerIcons, { player: playerTwo, ctx }),
+      v(PlayerIcons, { player: playerTwo, ctx }),
     ]),
 
-    h('div', { className: 'grid w-full grid-cols-7' }, [
-      h(PlayerLabels, { player: playerOne, ctx }),
+    v('div', { className: 'grid w-full grid-cols-7' }, [
+      v(PlayerLabels, { player: playerOne, ctx }),
 
-      h('div', { className: 'col-span-1' }),
+      v('div', { className: 'col-span-1' }),
 
-      h(PlayerLabels, { player: playerTwo, ctx }),
+      v(PlayerLabels, { player: playerTwo, ctx }),
     ]),
 
-    h('div', { className: 'mt-2 grid w-full grid-cols-7' }, [
-      h(PlayerButtons, { player: playerOne, ctx }),
+    v('div', { className: 'mt-2 grid w-full grid-cols-7' }, [
+      v(PlayerButtons, { player: playerOne, ctx }),
 
-      h('div', { className: 'col-span-1' }),
+      v('div', { className: 'col-span-1' }),
 
-      h(PlayerButtons, { player: playerTwo, ctx }),
+      v(PlayerButtons, { player: playerTwo, ctx }),
     ]),
   ])
 }
@@ -68,10 +68,10 @@ export const VsUserSetup = {
 }
 
 const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
-  return h('div', { className: 'col-span-3 w-full' }, [
+  return v('div', { className: 'col-span-3 w-full' }, [
     player.userId &&
       player.userId === ctx.currentUser.userId &&
-      h(Button, {
+      v(Button, {
         className: 'w-full',
         variant: 'text',
         color: 'primary',
@@ -80,7 +80,7 @@ const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerP
       }),
 
     !player.userId &&
-      h(Button, {
+      v(Button, {
         className: 'w-full',
         variant: 'contained',
         color: 'primary',
@@ -91,7 +91,7 @@ const PlayerButtons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerP
 }
 
 const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
-  return h(
+  return v(
     'div',
     {
       className: 'col-span-3 grid w-full cursor-pointer grid-cols-2 place-items-center text-center',
@@ -99,19 +99,19 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
     },
     [
       player.userId
-        ? h(Avatar, {
+        ? v(Avatar, {
             className: 'h-14 w-14',
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[player.userId]),
             alt: '',
           })
-        : h(
+        : v(
             ClickablePaper,
             {
               role: 'button',
               className: 'grid h-14 w-14 place-items-center overflow-hidden rounded-full',
               onClick: player.onStartPlaying,
             },
-            [h(IconQuestionMark, { className: 'text-secondary h-10 w-10' })],
+            [v(IconQuestionMark, { className: 'text-secondary h-10 w-10' })],
           ),
 
       player.renderIcon({
@@ -122,15 +122,15 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
 }
 
 const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
-  return h('div', { className: 'col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm' }, [
-    h(Typography, {
+  return v('div', { className: 'col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm' }, [
+    v(Typography, {
       className: 'w-full overflow-hidden text-center text-ellipsis whitespace-nowrap',
       text: TranslatedText.of(player.userId ? (ctx.profilesByUserId[player.userId]?.username ?? '...') : '?'),
       variant: 'body',
       color: 'text-secondary',
     }),
 
-    h(Typography, {
+    v(Typography, {
       color: 'text-secondary',
       className: 'w-full overflow-hidden text-center text-ellipsis whitespace-nowrap',
       text: player.label,
@@ -158,8 +158,8 @@ export const VsUserSetupScreen = ({
   onQuit: () => void
   canStartGame?: boolean
 }) => {
-  return h('div', { className: 'flex h-full w-full flex-1 flex-col overflow-hidden' }, [
-    h(ScreenLayoutGameCoverArt, {
+  return v('div', { className: 'flex h-full w-full flex-1 flex-col overflow-hidden' }, [
+    v(ScreenLayoutGameCoverArt, {
       id: 'vs-user-setup',
       parentScreen: ctx.parentScreen,
       ctx: ctx,
@@ -170,12 +170,12 @@ export const VsUserSetupScreen = ({
         },
       },
       renderCoverArt: renderCoverArt,
-      renderBody: () => h(VersusSection, { playerOne, playerTwo, ctx }),
+      renderBody: () => v(VersusSection, { playerOne, playerTwo, ctx }),
     }),
 
     ctx.currentUser.userId === ctx.space.hostId &&
-      h('div', { className: 'flex w-full items-center gap-4 p-4' }, [
-        h(Button, {
+      v('div', { className: 'flex w-full items-center gap-4 p-4' }, [
+        v(Button, {
           disabled: !canStartGame,
           variant: 'contained',
           color: 'primary',

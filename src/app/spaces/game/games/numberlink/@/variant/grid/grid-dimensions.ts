@@ -2,7 +2,7 @@ import { Translator } from '~/@/l18n/generated'
 import { s } from '~/@/schema'
 import { IconXMark } from '~/@/ui/icon'
 import { Slider } from '~/@/ui/slider'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 
 export const Model = s.obj({
   t: s.l('grid'),
@@ -27,17 +27,17 @@ export const ViewForm = (input: {
     t: Translator
   }
 }) => {
-  return h('div', { className: 'flex flex-col gap-4 p-6' }, [
-    h('div', { className: 'flex items-center justify-center gap-1 text-center text-4xl font-bold' }, [
-      h('p', {}, [`${input.form.width}w`]),
+  return v('div', { className: 'flex flex-col gap-4 p-6' }, [
+    v('div', { className: 'flex items-center justify-center gap-1 text-center text-4xl font-bold' }, [
+      v('p', {}, [`${input.form.width}w`]),
 
-      h(IconXMark, { className: 'size-6' }),
+      v(IconXMark, { className: 'size-6' }),
 
-      h('p', {}, [`${input.form.height}h`]),
+      v('p', {}, [`${input.form.height}h`]),
     ]),
 
-    h('div', { className: 'flex flex-col gap-3' }, [
-      h(Slider, {
+    v('div', { className: 'flex flex-col gap-3' }, [
+      v(Slider, {
         onInput: (width) => input.onInput({ ...input.form, width }),
         value: input.form.width,
         label: input.ctx.t('app.width'),
@@ -45,7 +45,7 @@ export const ViewForm = (input: {
         max: 15,
         step: 1,
       }),
-      h(Slider, {
+      v(Slider, {
         onInput: (height) => input.onInput({ ...input.form, height }),
         value: input.form.height,
         label: input.ctx.t('app.height'),

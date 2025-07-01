@@ -1,6 +1,6 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import {
   type ModelBackend,
@@ -141,5 +141,5 @@ export const View = (_input: {
   model: Model
   onCancel: () => void
 }) => {
-  return h('div', {}, ['View'])
+  return v('div', {}, ['View'])
 }

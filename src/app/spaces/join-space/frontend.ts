@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { Translator } from '~/@/l18n/generated'
 import { IconArrowRightOnRect } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -124,15 +124,15 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
 const View: SpaceFrontendModule['View'] = (input) => {
   const currentUser = input.ctx.currentUser
 
-  if (!currentUser) return h('div', {}, ['No current user'])
+  if (!currentUser) return v('div', {}, ['No current user'])
 
   const space = input.ctx.space
 
-  if (!space) return h('div', {}, ['No space'])
+  if (!space) return v('div', {}, ['No space'])
 
   const spaceState = Spaces.toSpaceStarted(input.model.spaces, space?.spaceId)
 
-  if (!spaceState) return h('div', {}, ['Space is not started'])
+  if (!spaceState) return v('div', {}, ['Space is not started'])
 
   const spaceCtx: SpaceFrontendCtx = {
     ...input.ctx,
@@ -143,7 +143,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
   }
   const hostProfile = input.ctx.profilesByUserId[spaceState.hostId]
 
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     dataTestId: 'spaces/join-space',
     id: 'join-space',
     parentScreen: input.ctx.parentScreen,
@@ -153,7 +153,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       submitText: input.ctx.t('spaces.join-space'),
       submitLoading: false,
       submitDisabled: false,
-      submitIcon: (props) => h(IconArrowRightOnRect, props),
+      submitIcon: (props) => v(IconArrowRightOnRect, props),
     },
     navBar: {
       title: hostProfile
@@ -166,14 +166,14 @@ const View: SpaceFrontendModule['View'] = (input) => {
       },
     },
     renderBody: () =>
-      h('div', { className: 'flex w-full flex-col gap-6' }, [
-        spaceState.game && h(SectionGame, { ctx: input.ctx, gameName: spaceState.game.t }),
+      v('div', { className: 'flex w-full flex-col gap-6' }, [
+        spaceState.game && v(SectionGame, { ctx: input.ctx, gameName: spaceState.game.t }),
 
-        h(SectionPeopleList, {
+        v(SectionPeopleList, {
           ctx: spaceCtx,
           onClickItem: (userId) => input.dispatch({ t: 'join-space.clicked-person-list-item', userId }),
           renderItem: (profile, vDom) =>
-            h(SurfaceLayout, {
+            v(SurfaceLayout, {
               ctx: spaceCtx,
               ariaLabel: input.ctx.t('?'),
               open: input.model.opened === 'join-space.person-preview-surface',
@@ -189,7 +189,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
               id: 'user-preview',
               body: {
                 render: () =>
-                  h(SectionPersonDetails, {
+                  v(SectionPersonDetails, {
                     onOpenDetails: () =>
                       input.dispatch({ t: 'join-space.opened-person-details', userId: profile.userId }),
                     ctx: spaceCtx,
@@ -208,13 +208,13 @@ const SectionGame = (props: {
   }
   gameName: GameName
 }) => {
-  return h('section', { className: 'flex w-full flex-col gap-6 py-3' }, [
-    h(SectionTitle, { text: props.ctx.t('spaces.game') }),
+  return v('section', { className: 'flex w-full flex-col gap-6 py-3' }, [
+    v(SectionTitle, { text: props.ctx.t('spaces.game') }),
 
-    h('div', { className: 'flex w-fit flex-row items-center gap-4 px-6' }, [
-      h(GameCoverArt, { rounded: true, className: 'size-20', gameName: props.gameName }),
+    v('div', { className: 'flex w-fit flex-row items-center gap-4 px-6' }, [
+      v(GameCoverArt, { rounded: true, className: 'size-20', gameName: props.gameName }),
 
-      h(Typography, { variant: 'label', sizeClassName: 'text-lg', text: props.ctx.t(props.gameName) }),
+      v(Typography, { variant: 'label', sizeClassName: 'text-lg', text: props.ctx.t(props.gameName) }),
     ]),
   ])
 }

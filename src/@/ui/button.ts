@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { Clickable } from './clickable'
 import { cn } from './cn'
 import { Spinner } from './spinner'
@@ -34,7 +34,7 @@ export type ButtonInput = {
 }
 
 export const Button = (input: ButtonInput) => {
-  return h(
+  return v(
     Clickable,
     {
       dataTestId: input.dataTestId,
@@ -59,19 +59,19 @@ export const Button = (input: ButtonInput) => {
     },
 
     [
-      h(
+      v(
         'div',
         { className: cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent') },
         [
-          h('div', { className: 'flex-none' }, [
+          v('div', { className: 'flex-none' }, [
             input.renderIconStart?.({ className: cn(toIconSizeClass(input), 'mr-2') }),
           ]),
-          h('div', { className: 'truncate' }, [input.text]),
+          v('div', { className: 'truncate' }, [input.text]),
         ],
       ),
       input.loading &&
-        h('div', { className: 'absolute inset-0 flex items-center justify-center' }, [
-          h(Spinner, { className: 'size-8' }),
+        v('div', { className: 'absolute inset-0 flex items-center justify-center' }, [
+          v(Spinner, { className: 'size-8' }),
         ]),
     ],
   )

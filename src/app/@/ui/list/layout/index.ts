@@ -1,5 +1,5 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 
 export const ListLayout = () => {
-  return h('div', {}, ['ListLayout'])
+  return v('div', {}, ['ListLayout'])
 }

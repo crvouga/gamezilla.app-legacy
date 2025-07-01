@@ -5,7 +5,7 @@ import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { Button } from '~/@/ui/button'
 import { IconArrowLeft } from '~/@/ui/icon'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import type { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -417,16 +417,16 @@ export const View = ({
   onQuit: () => void
 }) => {
   if (model.spaceModel.type === 'setup') {
-    return h('div', {}, [
-      h('div', { className: 'flex-1' }),
-      h('div', { className: 'flex items-center gap-4 p-4' }, [
-        h(Button, {
+    return v('div', {}, [
+      v('div', { className: 'flex-1' }),
+      v('div', { className: 'flex items-center gap-4 p-4' }, [
+        v(Button, {
           className: 'flex-1',
           onClick: onQuit,
-          renderIconStart: (iconInput) => h(IconArrowLeft, iconInput),
+          renderIconStart: (iconInput) => v(IconArrowLeft, iconInput),
           text: ctx.t('app.exit'),
         }),
-        h(Button, {
+        v(Button, {
           variant: 'contained',
           color: 'primary',
           className: 'flex-1',
@@ -454,7 +454,7 @@ export const View = ({
   //   (color) => (model.isFlipped ? Chess.toOppositeColor(color) : color)
   // );
 
-  return h('div', {}, [
+  return v('div', {}, [
     /* h(Chessboard, {
       model: board,
       boardOrientation: boardOrientation,
@@ -481,22 +481,22 @@ export const View = ({
       },
     }), */
 
-    h('div', { className: 'flex-1' }),
+    v('div', { className: 'flex-1' }),
 
-    h(ViewGameOverDialog, { model, dispatch }),
+    v(ViewGameOverDialog, { model, dispatch }),
   ])
 }
 
 const ViewGameOverDialog = ({ model }: { model: Model; dispatch: (msg: Msg) => void }) => {
   if (model.spaceModel.type === 'setup') {
-    return h('span', {}, [toGameText(model.spaceModel)])
+    return v('span', {}, [toGameText(model.spaceModel)])
   }
 
   if (model.spaceModel.type === 'game') {
-    return h('span')
+    return v('span')
   }
 
-  return h('span')
+  return v('span')
 }
 
 const toGameText = (model: SpaceModel): string => {

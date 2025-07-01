@@ -16,7 +16,7 @@ import {
 import { Paper } from '~/@/ui/paper'
 import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -233,46 +233,46 @@ export const View = ({
   const durationMs = toDurationMs(ctx, model)
   const isSpectating = ctx.currentUser.userId !== ctx.space.hostId
   const nextEloRating = toNextEloRating(model)
-  return h(LayoutGame, { ctx, isSpectating }, [
-    h(ViewStatusBar, { model }),
+  return v(LayoutGame, { ctx, isSpectating }, [
+    v(ViewStatusBar, { model }),
 
-    h('div', { className: 'flex w-full flex-1 flex-col items-center justify-center' }, [
-      h('div', { className: 'flex w-full items-center gap-2 px-3 py-2' }, [
-        h(Avatar, {
+    v('div', { className: 'flex w-full flex-1 flex-col items-center justify-center' }, [
+      v('div', { className: 'flex w-full items-center gap-2 px-3 py-2' }, [
+        v(Avatar, {
           src: UserProfile.toAvatarUrl(ctx.profilesByUserId[ctx.space.hostId]),
           className: 'h-10 w-10',
           alt: '',
         }),
 
-        h('div', { className: 'flex flex-1 flex-col justify-center' }, [
-          h(Typography, {
+        v('div', { className: 'flex flex-1 flex-col justify-center' }, [
+          v(Typography, {
             text: TranslatedText.of('Rating'),
             variant: 'label',
             color: 'text-secondary',
             className: '-mb-1/2 text-xs',
           }),
-          h('div', { className: 'flex items-center gap-1' }, [
-            h('p', { className: 'text-xl font-semibold' }, [model.profile?.eloRating ?? '...']),
+          v('div', { className: 'flex items-center gap-1' }, [
+            v('p', { className: 'text-xl font-semibold' }, [model.profile?.eloRating ?? '...']),
 
             model.t === 'solved' &&
               !model.hasLost &&
               nextEloRating &&
-              h('div', { className: 'rounded-xl text-lg font-semibold text-green-500' }, [
+              v('div', { className: 'rounded-xl text-lg font-semibold text-green-500' }, [
                 `+${nextEloRating - model.profile.eloRating}`,
               ]),
 
             model.t !== 'loading' &&
               model.hasLost &&
               nextEloRating &&
-              h('div', { className: 'rounded-xl text-lg font-semibold text-red-500' }, [
+              v('div', { className: 'rounded-xl text-lg font-semibold text-red-500' }, [
                 nextEloRating - model.profile.eloRating,
               ]),
           ]),
         ]),
 
-        h('div', { className: 'flex items-center justify-end gap-2' }, [
-          h(TickingClock, { sec: durationMs ? Math.floor(durationMs / 1_000) : 0 }),
-          h(Typography, {
+        v('div', { className: 'flex items-center justify-end gap-2' }, [
+          v(TickingClock, { sec: durationMs ? Math.floor(durationMs / 1_000) : 0 }),
+          v(Typography, {
             text: TranslatedText.of(durationMs ? formatDuration(durationMs) : '-:--'),
             color: 'text-secondary',
             className: 'font-mono text-lg font-bold',
@@ -280,8 +280,8 @@ export const View = ({
         ]),
       ]),
 
-      h(Paper, { className: 'relative flex aspect-square w-full items-center justify-end overflow-hidden' }, [
-        h(Chessboard, {
+      v(Paper, { className: 'relative flex aspect-square w-full items-center justify-end overflow-hidden' }, [
+        v(Chessboard, {
           id: 'puzzle-chess-board',
           orientation: model.t === 'loading' ? undefined : toPlayerColor(model.puzzle),
           model: model.t === 'loading' ? undefined : toCurrentBoard(model),
@@ -317,25 +317,25 @@ export const View = ({
           },
         }),
         model.t === 'loading' &&
-          h('div', { className: 'absolute top-0 left-0 z-20 grid h-full w-full place-items-center bg-black/50' }, [
-            h(Spinner),
+          v('div', { className: 'absolute top-0 left-0 z-20 grid h-full w-full place-items-center bg-black/50' }, [
+            v(Spinner),
           ]),
       ]),
 
-      h('div', { className: 'grid w-full grid-cols-2 px-2 py-1' }, [
-        h('div', { className: 'flex items-center justify-start gap-1 text-xs' }, [
-          h(Typography, { text: TranslatedText.of('Puzzle Rating'), color: 'text-secondary' }),
-          h('p', null, [model.t === 'loading' ? '...' : model.puzzle.rating]),
+      v('div', { className: 'grid w-full grid-cols-2 px-2 py-1' }, [
+        v('div', { className: 'flex items-center justify-start gap-1 text-xs' }, [
+          v(Typography, { text: TranslatedText.of('Puzzle Rating'), color: 'text-secondary' }),
+          v('p', null, [model.t === 'loading' ? '...' : model.puzzle.rating]),
         ]),
 
-        h('div', { className: 'flex flex-1 items-center justify-end gap-1 text-right text-xs' }, [
-          h(Typography, { text: TranslatedText.of('Moved'), color: 'text-secondary' }),
-          h(Typography, {
+        v('div', { className: 'flex flex-1 items-center justify-end gap-1 text-right text-xs' }, [
+          v(Typography, { text: TranslatedText.of('Moved'), color: 'text-secondary' }),
+          v(Typography, {
             text: TranslatedText.of(model.t === 'loading' ? '0' : (model.moves?.length ?? '0').toString()),
             color: 'inherit',
           }),
-          h(Typography, { text: TranslatedText.of('out of'), color: 'text-secondary' }),
-          h(Typography, {
+          v(Typography, { text: TranslatedText.of('out of'), color: 'text-secondary' }),
+          v(Typography, {
             text: TranslatedText.of(model.t === 'loading' ? '0' : (model.puzzle?.moves?.length ?? '0').toString()),
             color: 'inherit',
           }),
@@ -366,14 +366,14 @@ export const BottomBarActions = ({
 }): ScreenAction[] => {
   const exit: ScreenAction = {
     id: ctx.t('app.exit'),
-    icon: (input) => h(IconArrowLeft, input),
+    icon: (input) => v(IconArrowLeft, input),
     label: ctx.t('app.exit'),
     onClick: onClose,
   }
 
   const hint: ScreenAction = {
     id: ctx.t('game.hint'),
-    icon: (input) => h(IconLightbulb, input),
+    icon: (input) => v(IconLightbulb, input),
     label: ctx.t('game.hint'),
     disabled: isNoMoreHints(model) || model.t === 'loading',
     onClick: () =>
@@ -384,7 +384,7 @@ export const BottomBarActions = ({
 
   const retry: ScreenAction = {
     id: ctx.t('app.retry'),
-    icon: (input) => h(IconArrowRotateLeft, input),
+    icon: (input) => v(IconArrowRotateLeft, input),
     label: ctx.t('app.retry'),
     onClick: () =>
       dispatch({
@@ -395,7 +395,7 @@ export const BottomBarActions = ({
 
   const skip: ScreenAction = {
     id: ctx.t('app.skip'),
-    icon: (input) => h(IconArrowRight, input),
+    icon: (input) => v(IconArrowRight, input),
     label: ctx.t('app.skip'),
     onClick: () =>
       dispatch({
@@ -405,7 +405,7 @@ export const BottomBarActions = ({
 
   const next: ScreenAction = {
     id: ctx.t('app.next'),
-    icon: (input) => h(IconArrowRightCircle, input),
+    icon: (input) => v(IconArrowRightCircle, input),
     label: ctx.t('app.next'),
     color: 'success',
     onClick: () => dispatch({ t: 'next' }),
@@ -436,27 +436,27 @@ export const BottomBarActions = ({
 
 const ViewStatusBar = (input: { model: ModelFrontend }) => {
   if (input.model.t === 'loading') {
-    return h('div', { className: 'flex w-full items-center justify-center p-2' }, [
-      h('p', { className: 'text-xl' }, ['...']),
+    return v('div', { className: 'flex w-full items-center justify-center p-2' }, [
+      v('p', { className: 'text-xl' }, ['...']),
     ])
   }
 
   if (input.model.t === 'incorrect') {
-    return h('div', { className: 'flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white' }, [
-      h(IconXMark, { className: 'size-6' }),
-      h('p', { className: 'text-xl' }, ['Incorrect']),
+    return v('div', { className: 'flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white' }, [
+      v(IconXMark, { className: 'size-6' }),
+      v('p', { className: 'text-xl' }, ['Incorrect']),
     ])
   }
 
   if (input.model.t === 'solved') {
-    return h('div', { className: 'flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white' }, [
-      h(IconCheckmarkCircle, { className: 'size-6' }),
-      h('p', { className: 'text-xl' }, ['Correct']),
+    return v('div', { className: 'flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white' }, [
+      v(IconCheckmarkCircle, { className: 'size-6' }),
+      v('p', { className: 'text-xl' }, ['Correct']),
     ])
   }
 
   if (input.model.t === 'started') {
-    return h(
+    return v(
       'div',
       {
         className: cn(
@@ -465,13 +465,13 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
         ),
       },
       [
-        h('div', {
+        v('div', {
           className: cn(
             'size-6 rounded-full border-2',
             toPlayerColor(input.model.puzzle) === 'b' ? 'border-[#ababab] bg-black' : 'border-black bg-white',
           ),
         }),
-        h('p', { className: 'text-xl text-inherit' }, [
+        v('p', { className: 'text-xl text-inherit' }, [
           `${Chess.colorToString(toPlayerColor(input.model.puzzle))} to move`,
         ]),
       ],
@@ -479,40 +479,40 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
   }
 
   if (input.model.t === 'solved-with-hint') {
-    return h(Paper, { className: 'flex w-full items-center justify-center gap-2 p-2 text-white' }, [
-      h(IconCheckmarkCircle, { className: 'size-6' }),
-      h('p', { className: 'text-xl' }, ['Solved with hint']),
+    return v(Paper, { className: 'flex w-full items-center justify-center gap-2 p-2 text-white' }, [
+      v(IconCheckmarkCircle, { className: 'size-6' }),
+      v('p', { className: 'text-xl' }, ['Solved with hint']),
     ])
   }
 
-  return h('div')
+  return v('div')
 }
 
 const TickingClock = (input: { sec: number }) => {
-  return h('svg', { className: 'h-5 w-5', viewBox: '-1 -1 2 2', stroke: 'currentColor', 'stroke-width': '0.2' }, [
-    h('circle', { cx: '0', cy: '0', r: '0.9' }),
-    h('line', {
+  return v('svg', { className: 'h-5 w-5', viewBox: '-1 -1 2 2', stroke: 'currentColor', 'stroke-width': '0.2' }, [
+    v('circle', { cx: '0', cy: '0', r: '0.9' }),
+    v('line', {
       stroke: input.sec % 4 === 0 ? undefined : 'transparent',
       x1: '0',
       y1: '0',
       x2: '0',
       y2: '-1',
     }),
-    h('line', {
+    v('line', {
       stroke: input.sec % 4 === 1 ? undefined : 'transparent',
       x1: '0',
       y1: '0',
       x2: '1',
       y2: '0',
     }),
-    h('line', {
+    v('line', {
       stroke: input.sec % 4 === 2 ? undefined : 'transparent',
       x1: '0',
       y1: '0',
       x2: '0',
       y2: '1',
     }),
-    h('line', {
+    v('line', {
       stroke: input.sec % 4 === 3 ? undefined : 'transparent',
       x1: '0',
       y1: '0',

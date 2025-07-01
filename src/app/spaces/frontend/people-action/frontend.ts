@@ -3,7 +3,7 @@ import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { DropDownPosition } from '~/@/ui/drop-down/drop-down-position'
 import { IconUserGroup } from '~/@/ui/icon'
 import { DrawerPosition } from '~/@/ui/surface-drawer/drawer-position'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd.$msg'
@@ -120,7 +120,7 @@ const ViewSurfaces = (
   const modalProfile = input.model.openedPreviewUserId
     ? input.ctx.profilesByUserId[input.model.openedPreviewUserId]
     : null
-  return h(SurfaceLayout, {
+  return v(SurfaceLayout, {
     ctx: input.ctx,
     drawer: {
       position: DRAWER_POSITION,
@@ -128,7 +128,7 @@ const ViewSurfaces = (
     dropDown: {
       position: DROPDOWN_POSITION,
       alignment: DROPDOWN_ALIGNMENT,
-      reference: h(SurfaceLayout, {
+      reference: v(SurfaceLayout, {
         drawer: {
           position: DRAWER_POSITION,
         },
@@ -144,7 +144,7 @@ const ViewSurfaces = (
         onClose: () => input.dispatch({ t: 'people-action.closed-surface' }),
         body: {
           render: () =>
-            h(SectionPeopleList, {
+            v(SectionPeopleList, {
               ctx: spaceCtx,
               onClickItem: (userId) => input.dispatch({ t: 'people-action.clicked-person-list-item', userId }),
             }),
@@ -157,7 +157,7 @@ const ViewSurfaces = (
     onClose: () => input.dispatch({ t: 'people-action.closed-surface' }),
     body: {
       render: () =>
-        h(SectionPersonDetails, {
+        v(SectionPersonDetails, {
           ctx: spaceCtx,
           profile: modalProfile ?? null,
           onOpenDetails: () => input.dispatch({ t: 'people-action.clicked-preview-user-link' }),
@@ -174,11 +174,11 @@ const view = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction |
 
   return {
     id: input.ctx.t('app.people'),
-    icon: (inputIcon) => h(IconUserGroup, inputIcon),
+    icon: (inputIcon) => v(IconUserGroup, inputIcon),
     label: input.ctx.t('spaces.people-count', peopleCount),
     onClick: () => input.dispatch({ t: 'people-action.clicked-people-action' }),
     badge: peopleCount > 1 ? peopleCount : undefined,
-    renderSurface: ({ dropDown }) => h(ViewSurfaces, { ...input, dropDown }),
+    renderSurface: ({ dropDown }) => v(ViewSurfaces, { ...input, dropDown }),
   }
 }
 

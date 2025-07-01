@@ -1,10 +1,10 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from '../cn'
 import { Surface } from '../surface'
 
 export const DropDownSurface = (input: { children: VDom }) => {
-  return h(
+  return v(
     Surface,
     {
       className: cn(

@@ -1,7 +1,7 @@
 import { easeAttrs } from '~/@/animation'
 import { Eff } from '~/@/eff'
 import { Transition } from '~/@/transition'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { COLUMN_COUNT, type Columns, MAX_COLUMN_HEIGHT, type Win, findWins, winToId } from '../../connect-four'
 import './columns-element'
 import { ViewColumnsCanvas } from './columns-ui-canvas'
@@ -198,11 +198,11 @@ export const View = ({
 }) => {
   switch (implementation) {
     case 'canvas': {
-      return h(ViewColumnsCanvas, input)
+      return v(ViewColumnsCanvas, input)
     }
 
     case 'svg': {
-      return h(
+      return v(
         ViewColumnsSvg,
         {
           id: rootId,

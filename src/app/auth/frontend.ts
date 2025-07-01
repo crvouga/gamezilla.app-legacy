@@ -8,7 +8,7 @@ import { IconUserCircle } from '~/@/ui/icon'
 import { IconMobilePhone, IconPowerOff } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserProfile } from '../@/data/user-profile'
 import { CloseStatusBarCmd } from '../@/frontend/close-status-bar-cmd.$msg'
@@ -180,11 +180,11 @@ const View: FrontendModule['View'] = (input) => {
     case 'auth': {
       switch (input.ctx.currentScreen.t) {
         case 'login': {
-          return h(ViewLoginScreen, input)
+          return v(ViewLoginScreen, input)
         }
         case 'send-code':
         case 'verify-code': {
-          return h(LoginWithSMSFrontend.View, {
+          return v(LoginWithSMSFrontend.View, {
             ctx: input.ctx,
             dispatch: (c) => input.dispatch({ t: 'got-login-with-sms-msg', c }),
             model: input.model.continueWithSms,
@@ -199,24 +199,24 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewLoginScreen: FrontendModule['View'] = (input) => {
-  return h(AuthScreenLayout, {
+  return v(AuthScreenLayout, {
     dataTestId: 'auth/login-screen',
     ctx: input.ctx,
     center: true,
-    children: h('div', { className: 'flex w-full flex-1 flex-col gap-6' }, [
-      h(AuthScreenHeaderCta, { ctx: input.ctx }),
+    children: v('div', { className: 'flex w-full flex-1 flex-col gap-6' }, [
+      v(AuthScreenHeaderCta, { ctx: input.ctx }),
 
-      h(Button, {
+      v(Button, {
         onClick: () => input.dispatch({ t: 'clicked-login-with-phone' }),
         size: 'lg',
         dataTestId: 'auth/continue-with-phone-button',
         className: 'w-full',
-        renderIconStart: (iconInput) => h(IconMobilePhone, iconInput),
+        renderIconStart: (iconInput) => v(IconMobilePhone, iconInput),
         text: input.ctx.t('auth.continue-with-phone'),
       }),
 
-      h('div', { className: 'flex w-full items-center justify-center py-1' }, [
-        h(Typography, {
+      v('div', { className: 'flex w-full items-center justify-center py-1' }, [
+        v(Typography, {
           variant: 'body',
           className: 'text-base font-bold uppercase',
           color: 'text-secondary',
@@ -224,7 +224,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
         }),
       ]),
 
-      h(ContinueAsGuestFrontend.ViewButton, {
+      v(ContinueAsGuestFrontend.ViewButton, {
         ctx: input.ctx,
         dispatch: (c) => input.dispatch({ t: 'got-login-as-guest-msg', c }),
         model: input.model.continueAsGuest,
@@ -234,7 +234,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
 }
 
 const ViewModals = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
-  return h(LogoutFrontend.View, {
+  return v(LogoutFrontend.View, {
     ctx: input.ctx,
     dispatch: (c) => input.dispatch({ t: 'got-logout-msg', c }),
     model: input.model.logout,
@@ -249,20 +249,20 @@ const ViewCurrentUserListItem = (input: {
   const currentUser = toCurrentUserState({ model: input.model.currentUser, ctx: input.ctx })
   switch (currentUser.t) {
     case 'loading': {
-      return h(ListItemButton, {
-        icon: (input) => h(IconUserCircle, input),
+      return v(ListItemButton, {
+        icon: (input) => v(IconUserCircle, input),
         label: input.ctx.t('app.add'),
       })
     }
     case 'logged-out': {
-      return h(ListItemButton, {
-        icon: (input) => h(IconUserCircle, input),
+      return v(ListItemButton, {
+        icon: (input) => v(IconUserCircle, input),
         label: input.ctx.t('app.add'),
       })
     }
     case 'logged-in': {
-      return h(ListItemButton, {
-        icon: (input) => h(Avatar, { src: UserProfile.toAvatarUrl(currentUser.userProfile), ...input }),
+      return v(ListItemButton, {
+        icon: (input) => v(Avatar, { src: UserProfile.toAvatarUrl(currentUser.userProfile), ...input }),
         label: TranslatedText.of(`${input.ctx.t('auth.logged-in-as')} ${currentUser.userProfile.username}`),
       })
     }
@@ -277,7 +277,7 @@ export const ViewLogoutIcon = (input: { model: ModelFrontend; ctx: AppFrontendCt
       return null
     }
     case 'logged-in': {
-      return h(IconPowerOff, { className: input.className })
+      return v(IconPowerOff, { className: input.className })
     }
   }
 }
@@ -295,12 +295,12 @@ const ViewLogoutListItem = (input: {
       return null
     }
     case 'logged-in': {
-      return h(ListItemButton, {
+      return v(ListItemButton, {
         onClick: () => input.dispatch({ t: 'clicked-logout-list-item' }),
-        icon: (input) => h(IconPowerOff, input),
+        icon: (input) => v(IconPowerOff, input),
         label: input.ctx.t('auth.logout'),
         end: () =>
-          h(Typography, {
+          v(Typography, {
             variant: 'caption',
             text: TranslatedText.of(currentUser.userProfile.username),
           }),

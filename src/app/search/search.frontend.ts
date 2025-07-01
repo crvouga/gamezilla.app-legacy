@@ -5,7 +5,7 @@ import { pipe } from '~/@/function/pipe'
 import { ClickableTransparent } from '~/@/ui/clickable'
 import { IconMagnifyingGlass, IconXMark } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import type { VDom } from '~/@/vdom/vdom'
 import type { ModelFrontend, MsgFrontend, MsgToFrontend } from './search.types'
 
@@ -125,13 +125,13 @@ export const View = ({
   //   const request = model.requests[model.searchText] ?? { type: 'not-asked' };
   const results = matchSort(Object.values(model.searchResults), (item) => item.username, model.searchText)
 
-  return h('div', null, [
-    h('div', { className: 'flex h-full w-full flex-col' }, [
+  return v('div', null, [
+    v('div', { className: 'flex h-full w-full flex-col' }, [
       // input
-      h('div', { className: 'w-full p-4' }, [
-        h(Paper, { className: 'flex w-full items-center gap-2 rounded-full px-4 py-2' }, [
-          h(IconMagnifyingGlass, { className: 'size-6' }),
-          h('input', {
+      v('div', { className: 'w-full p-4' }, [
+        v(Paper, { className: 'flex w-full items-center gap-2 rounded-full px-4 py-2' }, [
+          v(IconMagnifyingGlass, { className: 'size-6' }),
+          v('input', {
             id: searchInputId,
             className: 'flex-1 bg-transparent text-lg outline-none',
             placeholder: 'Search',
@@ -143,7 +143,7 @@ export const View = ({
                 searchText: msgEvt.currentTarget.value,
               }),
           }),
-          h(
+          v(
             'button',
             {
               type: 'button',
@@ -152,17 +152,17 @@ export const View = ({
                   t: 'clicked-clear',
                 }),
             },
-            [h(IconXMark, { className: 'size-6' })],
+            [v(IconXMark, { className: 'size-6' })],
           ),
         ]),
       ]),
       // results
-      h(
+      v(
         'ul',
         null,
         results.map((result) =>
-          h('li', { key: result.userId }, [
-            h(
+          v('li', { key: result.userId }, [
+            v(
               ClickableTransparent,
               {
                 className: 'flex w-full items-center gap-4 p-4',

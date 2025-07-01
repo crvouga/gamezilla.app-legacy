@@ -3,7 +3,7 @@ import { cn } from '~/@/ui/cn'
 import { Frag } from '~/@/ui/frag'
 import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenNavBarTabletRoot } from '../nav-bar/screen-nav-bar-tablet'
 import { ScreenAction, ScreenActionBarProps } from './screen-action-bar-props'
@@ -16,44 +16,44 @@ export const VerticalActionBar = (
     renderNavBar?: () => VDom
   },
 ) => {
-  return h('div', { className: cn('flex h-full max-w-48 flex-1 shrink-0 flex-col gap-1', input.className) }, [
-    h(ScreenNavBarTabletRoot, null, [input.renderNavBar?.()]),
+  return v('div', { className: cn('flex h-full max-w-48 flex-1 shrink-0 flex-col gap-1', input.className) }, [
+    v(ScreenNavBarTabletRoot, null, [input.renderNavBar?.()]),
 
     input.variant.t === 'uniform'
-      ? h(VerticalUniform, { actions: input.variant.actions })
-      : h(VerticalSpaceBetween, { start: input.variant.start, end: input.variant.end }),
+      ? v(VerticalUniform, { actions: input.variant.actions })
+      : v(VerticalSpaceBetween, { start: input.variant.start, end: input.variant.end }),
   ])
 }
 
 const VerticalUniform = (input: { actions: (ScreenAction | null)[] }) => {
-  return h(Toolbar, null, [h(ActionButtonList, { actions: input.actions })])
+  return v(Toolbar, null, [v(ActionButtonList, { actions: input.actions })])
 }
 
 const VerticalSpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
-  return h(Toolbar, null, [
-    h(ActionButtonList, { actions: input.start }),
-    h('div', { className: 'flex-1' }),
-    h(ActionButtonList, { actions: input.end }),
-    h('div', { className: 'w-full pb-6' }),
+  return v(Toolbar, null, [
+    v(ActionButtonList, { actions: input.start }),
+    v('div', { className: 'flex-1' }),
+    v(ActionButtonList, { actions: input.end }),
+    v('div', { className: 'w-full pb-6' }),
   ])
 }
 
 const Toolbar = (input: { children: VDom }) => {
-  return h('div', { className: 'flex w-full flex-1 shrink-0 flex-col', role: 'toolbar' }, [input.children])
+  return v('div', { className: 'flex w-full flex-1 shrink-0 flex-col', role: 'toolbar' }, [input.children])
 }
 
 const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
-  return h(
+  return v(
     'div',
     { className: 'flex w-full shrink-0 flex-col gap-2' },
     input.actions.map((action) => {
       if (!action) return null
 
-      const button = h(ScreenActionButton, { ...action, size: SIZE })
+      const button = v(ScreenActionButton, { ...action, size: SIZE })
 
-      if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
+      if (!action.renderSurface) return v(Frag, { key: action.id }, [button])
 
-      return h(Frag, { key: action.id }, [
+      return v(Frag, { key: action.id }, [
         action.renderSurface({
           dropDown: { reference: button },
           screenActionLocation: 'bar',
@@ -67,7 +67,7 @@ const ScreenActionButton = (input: ScreenAction) => {
   const isDisabled = input.disabled || input.loading
   const size = input.size ?? 'md'
   if (input.hidden) return null
-  return h(ClickableTransparent, {
+  return v(ClickableTransparent, {
     'data-testid': input.testId,
     role: 'button',
     disabled: isDisabled,
@@ -84,7 +84,7 @@ const ScreenActionButton = (input: ScreenAction) => {
       toSizeClasses(size),
     ),
     children: [
-      h(
+      v(
         'div',
         {
           className: cn(
@@ -94,7 +94,7 @@ const ScreenActionButton = (input: ScreenAction) => {
         },
         [
           input.icon({ className: toIconSizeClasses(size) }),
-          h(Typography, {
+          v(Typography, {
             text: input.label,
             className: cn('truncate text-center xl:text-left xl:text-xl', 'text-inherit', input.classNames?.label),
           }),
@@ -102,8 +102,8 @@ const ScreenActionButton = (input: ScreenAction) => {
       ),
 
       input.loading &&
-        h('div', { className: 'absolute inset-0 flex h-full w-full items-center justify-center' }, [
-          h(Spinner, { className: toIconSizeClasses(size) }),
+        v('div', { className: 'absolute inset-0 flex h-full w-full items-center justify-center' }, [
+          v(Spinner, { className: toIconSizeClasses(size) }),
         ]),
     ],
   })

@@ -1,4 +1,4 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 
 const theme = {
   // lightSquare: "#EBEBD0",
@@ -9,18 +9,18 @@ const theme = {
 }
 
 export const CoverArt = (input: { className?: string }) => {
-  return h('svg', { width: '100%', viewBox: '0 0 2 2', ...input }, [
-    h('rect', { x: 0, y: 0, width: 1, height: 1, fill: theme.lightSquare }),
+  return v('svg', { width: '100%', viewBox: '0 0 2 2', ...input }, [
+    v('rect', { x: 0, y: 0, width: 1, height: 1, fill: theme.lightSquare }),
 
-    h('rect', { x: 0, y: 1, width: 1, height: 1, fill: theme.darkSquare }),
+    v('rect', { x: 0, y: 1, width: 1, height: 1, fill: theme.darkSquare }),
 
-    h('rect', { x: 1, y: 1, width: 1, height: 1, fill: theme.lightSquare }),
+    v('rect', { x: 1, y: 1, width: 1, height: 1, fill: theme.lightSquare }),
 
-    h('rect', { x: 1, y: 0, width: 1, height: 1, fill: theme.darkSquare }),
+    v('rect', { x: 1, y: 0, width: 1, height: 1, fill: theme.darkSquare }),
 
-    h('svg', { x: 0, y: 0, width: '2', height: '2', viewBox: '0 0 45 45' }, [
-      h('g', { transform: 'translate(0 -2) scale(0.8)' }, [
-        h('path', {
+    v('svg', { x: 0, y: 0, width: '2', height: '2', viewBox: '0 0 45 45' }, [
+      v('g', { transform: 'translate(0 -2) scale(0.8)' }, [
+        v('path', {
           fill: theme.pawn,
           stroke: theme.pawn,
           'stroke-linecap': 'round',

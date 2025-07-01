@@ -2,7 +2,7 @@ import { pipe } from '~/@/function/pipe'
 import { isErr, Loading, mapErr, mapOk } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconLightbulb } from '~/@/ui/icon'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
@@ -107,12 +107,12 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
   return [
     {
       id: input.ctx.t('game.hint'),
-      icon: (input) => h(IconLightbulb, input),
+      icon: (input) => v(IconLightbulb, input),
       label: input.ctx.t('game.hint'),
       onClick: () => input.dispatch({ t: 'dialog.clicked-open' }),
       testId: TEST_ID_HINT_CALCULATOR_ACTION,
       renderSurface: ({ dropDown }) =>
-        h(SurfaceConfirmation, {
+        v(SurfaceConfirmation, {
           title: input.ctx.t('game.numberlink.no-hints-available'),
           body: input.ctx.t('game.numberlink.no-hints-available-body'),
           ctx: input.ctx,
@@ -137,7 +137,7 @@ const isLoading = (model: ModelFrontend, hash: SolutionHash): boolean => {
 }
 
 const TestView: FrontendModule['View'] = (input) => {
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     ...input,
     id: 'hint-calculator',
     parentScreen: null,

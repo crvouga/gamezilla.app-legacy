@@ -3,7 +3,7 @@ import { cn } from '~/@/ui/cn'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { Frag } from '~/@/ui/frag'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 
 export const AuthScreenLayout = (input: {
   dataTestId: string
@@ -14,11 +14,11 @@ export const AuthScreenLayout = (input: {
   children: VDom
   center: boolean
 }) => {
-  return h('div', {
+  return v('div', {
     'data-testid': input.dataTestId,
     className: cn('flex h-full flex-col items-center', input.center ? 'justify-center' : 'justify-start'),
-    children: h(Frag, null, [
-      h('div', {
+    children: v(Frag, null, [
+      v('div', {
         className: 'flex w-full max-w-xl flex-col items-center justify-center gap-4 p-6',
         children: input.children,
       }),

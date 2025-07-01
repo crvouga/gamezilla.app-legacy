@@ -5,7 +5,7 @@ import { Dialog } from '~/@/ui/surface-dialog/dialog'
 import { DialogSurface } from '~/@/ui/surface-dialog/dialog-surface'
 import { SurfaceActions } from '~/@/ui/surface/surface-actions'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -123,7 +123,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
     })
   }
 
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     dataTestId: 'numberlink/play-puzzle-screen',
     id: 'screen-play-puzzle',
@@ -139,7 +139,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
       },
     },
     renderBody: () =>
-      h(
+      v(
         'div',
         {
           className: 'flex w-full flex-1 items-center justify-center',
@@ -147,7 +147,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
         },
         [
           puzzle.t === 'got'
-            ? h(ModePlayFrontend.View, {
+            ? v(ModePlayFrontend.View, {
                 key: puzzle.c.id,
                 numberlink: puzzle.c.model,
                 model:
@@ -162,7 +162,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
                   }),
                 showSolvedAnimation: true,
               })
-            : h(PuzzleResult.ViewNotFound, { ctx: input.ctx }),
+            : v(PuzzleResult.ViewNotFound, { ctx: input.ctx }),
           ViewSolvedModal(input),
         ],
       ),
@@ -219,7 +219,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
   const modePlay = input.modelSpace.screen.modePlay
   const puzzleIndex = input.modelSpace.screen.puzzleIndex
 
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     dataTestId: 'numberlink/play-puzzle-screen',
     parentScreen: input.ctx.parentScreen,
     id: 'spectating',
@@ -228,15 +228,15 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
       title: input.ctx.t('game.numberlink.level', puzzleIndex + 1),
     },
     renderBody: () =>
-      h(LayoutGame, { isSpectating: true, ctx: input.ctx }, [
-        h(ProfileListItem, {
+      v(LayoutGame, { isSpectating: true, ctx: input.ctx }, [
+        v(ProfileListItem, {
           ctx: input.ctx,
           profile: input.ctx.profilesByUserId[input.ctx.space.hostId],
           subtitle: input.ctx.t('game.player'),
         }),
-        h('div', { className: 'flex flex-1 items-center justify-center' }, [
+        v('div', { className: 'flex flex-1 items-center justify-center' }, [
           puzzle.t === 'got'
-            ? h(ModePlayFrontend.View, {
+            ? v(ModePlayFrontend.View, {
                 disabled: true,
                 key: puzzle.c.id,
                 numberlink: puzzle.c.model,
@@ -248,7 +248,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
                 dispatch: () => {},
                 showSolvedAnimation: true,
               })
-            : h(PuzzleResult.ViewNotFound, { ctx: input.ctx }),
+            : v(PuzzleResult.ViewNotFound, { ctx: input.ctx }),
         ]),
       ]),
   })
@@ -278,7 +278,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
   }
 
   if (isLastPuzzle) {
-    return h(LastPuzzleFrontend.ViewDialog, {
+    return v(LastPuzzleFrontend.ViewDialog, {
       delay: CHECKMARK_DURATION,
       open: isSolvedPuzzleDialogOpen,
       ctx: input.ctx,
@@ -286,15 +286,15 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
     })
   }
 
-  return h(Dialog, { delay: CHECKMARK_DURATION, open: isSolvedPuzzleDialogOpen, onClose }, [
-    h(DialogSurface, null, [
-      h(SurfaceHeader, {
+  return v(Dialog, { delay: CHECKMARK_DURATION, open: isSolvedPuzzleDialogOpen, onClose }, [
+    v(DialogSurface, null, [
+      v(SurfaceHeader, {
         ctx: input.ctx,
         title: input.ctx.t('game.numberlink.puzzle-completed'),
         onClose,
       }),
-      h(SurfaceActions, null, [
-        h(Button, {
+      v(SurfaceActions, null, [
+        v(Button, {
           text: input.ctx.t('game.numberlink.next-puzzle'),
           className: 'w-full',
           onClick: () =>

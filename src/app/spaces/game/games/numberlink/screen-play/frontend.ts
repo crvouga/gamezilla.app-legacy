@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../../@/ui/game-main-menu'
 import { ScreenOpenPackFrontend } from './screen-open-pack/frontend'
@@ -43,21 +43,21 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  return h(ViewScreen, input)
+  return v(ViewScreen, input)
 }
 
 const ViewScreen: typeof View = (input) => {
   switch (input.modelSpace.screen.t) {
     case 'screen-select-puzzle': {
-      return h(ScreenOpenPuzzleFrontend.View, input)
+      return v(ScreenOpenPuzzleFrontend.View, input)
     }
 
     case 'screen-select-pack': {
-      return h(ScreenOpenPackFrontend.View, input)
+      return v(ScreenOpenPackFrontend.View, input)
     }
 
     case 'screen-play-puzzle': {
-      return h(ScreenPuzzleFrontend.View, input)
+      return v(ScreenPuzzleFrontend.View, input)
     }
 
     default: {

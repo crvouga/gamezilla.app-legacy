@@ -9,7 +9,7 @@ import { PuzzleQuery } from '../../@/puzzle/puzzle-db/interface-query'
 import { PuzzleLoaderFrontend } from '../../@/puzzle/puzzle-loader/frontend'
 import { GotPuzzleLoaderMsg } from '../../@/puzzle/puzzle-loader/got-puzzle-loader-msg.$msg'
 import type { FrontendModule, ModelSpace, MsgFrontend } from '../types'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
@@ -63,19 +63,19 @@ const View: FrontendModule['View'] = (input) => {
   const isSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
 
   if (isSpectating) {
-    return h(ScreenLayoutHostSettingUpGame, {
+    return v(ScreenLayoutHostSettingUpGame, {
       parentScreen: input.ctx.parentScreen,
       ctx: input.ctx,
       navBar: {
         title: input.ctx.t('game.numberlink.play'),
       },
-      renderCoverArt: (input) => h(IconGamepad, input),
+      renderCoverArt: (input) => v(IconGamepad, input),
     })
   }
 
   const screen = input.modelSpace.screen
 
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     dataTestId: 'numberlink/open-puzzle-screen',
     ctx: input.ctx,
@@ -91,7 +91,7 @@ const View: FrontendModule['View'] = (input) => {
       },
     },
     renderBody: () =>
-      h(PackPuzzleGridUI.View, {
+      v(PackPuzzleGridUI.View, {
         id: 'pack-puzzle-grid',
         currentSlideIndex: screen.slideIndex,
         onSlideIndexChanged: (slideIndex) =>

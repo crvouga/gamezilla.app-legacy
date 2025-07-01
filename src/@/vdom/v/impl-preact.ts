@@ -1,9 +1,8 @@
-import { Fragment } from 'inferno'
-import { createElement } from 'inferno-create-element'
 import { VDom } from '../vdom'
-import { H } from './interface'
+import { createElement, Fragment } from 'preact'
+import { V } from './interface'
 
-export const initInferno = (): H => {
+export const initPreact = (): V => {
   return (tag: any, props: any, children) => {
     if (tag === 'fragment') {
       return createElement(Fragment, props, ...(children ?? [])) as VDom

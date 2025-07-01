@@ -1,5 +1,5 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 
 export const ActivityFeed = () => {
-  return h('div')
+  return v('div')
 }

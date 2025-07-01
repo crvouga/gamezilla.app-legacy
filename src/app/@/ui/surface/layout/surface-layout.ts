@@ -1,4 +1,4 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { SurfaceLayoutMobile } from './surface-layout-mobile'
 import { SurfaceLayoutProps } from './surface-layout-props'
 import { SurfaceLayoutTablet } from './surface-layout-tablet'
@@ -6,8 +6,8 @@ import { SurfaceLayoutTablet } from './surface-layout-tablet'
 export const SurfaceLayout = (props: SurfaceLayoutProps) => {
   switch (props.ctx.screenSize) {
     case 'mobile':
-      return h(SurfaceLayoutMobile, props)
+      return v(SurfaceLayoutMobile, props)
     case 'tablet':
-      return h(SurfaceLayoutTablet, props)
+      return v(SurfaceLayoutTablet, props)
   }
 }

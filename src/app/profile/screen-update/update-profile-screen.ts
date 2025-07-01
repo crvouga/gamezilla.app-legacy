@@ -3,7 +3,7 @@ import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
 import { IconChevronRight } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { FrontendCtxModule } from '../screen-update-username/types'
@@ -16,7 +16,7 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
 
   if (!profile) return null
 
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     id: 'profile-edit',
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
@@ -27,15 +27,15 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
       },
     },
     renderBody: () =>
-      h('div', { className: 'flex w-full flex-1 flex-col items-center gap-4' }, [
-        h('div', { className: 'flex w-full flex-col items-center justify-center gap-2' }, [
-          h(Avatar, {
+      v('div', { className: 'flex w-full flex-1 flex-col items-center gap-4' }, [
+        v('div', { className: 'flex w-full flex-col items-center justify-center gap-2' }, [
+          v(Avatar, {
             src: UserProfile.toAvatarUrl(profile),
             className: 'size-16',
             //   alt: input.ctx.t('avatar-title'),
             // onClick: () => input.dispatch({ t: 'clicked-avatar' }),
           }),
-          h(Button, {
+          v(Button, {
             size: 'sm',
             color: 'primary',
             variant: 'text',
@@ -45,7 +45,7 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
           }),
         ]),
 
-        h(ViewField, {
+        v(ViewField, {
           // onClick: () => input.dispatch({ t: 'clicked-update-username-button' }),
           label: input.ctx.t('username.username-label'),
           value: input.ctx.t('username', profile.username),
@@ -55,13 +55,13 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
 }
 
 const ViewField = (input: { label: TranslatedText; value: TranslatedText; onClick?: () => void }) => {
-  return h('button', { onClick: input.onClick, className: 'flex w-full items-center justify-start px-4 py-2' }, [
-    h('div', { className: 'flex flex-1 flex-col items-start' }, [
-      h(Typography, { variant: 'label', text: input.label }),
-      input.value && h(Typography, { variant: 'body', text: input.value }),
+  return v('button', { onClick: input.onClick, className: 'flex w-full items-center justify-start px-4 py-2' }, [
+    v('div', { className: 'flex flex-1 flex-col items-start' }, [
+      v(Typography, { variant: 'label', text: input.label }),
+      input.value && v(Typography, { variant: 'body', text: input.value }),
     ]),
 
-    h(IconChevronRight, { className: 'size-6' }),
+    v(IconChevronRight, { className: 'size-6' }),
   ])
 }
 

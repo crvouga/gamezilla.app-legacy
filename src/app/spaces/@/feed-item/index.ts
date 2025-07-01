@@ -1,9 +1,9 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { TranslatedText } from '~/@/l18n'
 import { Typography } from '~/@/ui/typography'
 
 const Info = (input: { text: string }) => {
-  return h(Typography, {
+  return v(Typography, {
     text: TranslatedText.of(input.text),
     color: 'text-secondary',
     className: 'flex w-full items-center justify-center text-xs',

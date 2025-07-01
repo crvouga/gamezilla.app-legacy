@@ -8,7 +8,7 @@ import { IconArrowLeft, IconRobot } from '~/@/ui/icon'
 import { Spinner } from '~/@/ui/spinner'
 import { UserProfile } from '~/app/@/data/user-profile'
 
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { VsBotSetup } from '~/app/spaces/game/games/@/vs-bot'
@@ -303,12 +303,12 @@ export const View = ({
   onClose: () => void
 }) => {
   if (model.spaceModel.type === 'setup') {
-    return h(VsBotSetup.View, {
+    return v(VsBotSetup.View, {
       model: model.vsBotSetup,
       dispatch: (c) => dispatch({ t: 'vs-bot-setup', c }),
       title: ctx.t('chess'),
       renderCoverArt: (input) => {
-        return h(CoverArt, input)
+        return v(CoverArt, input)
       },
       bot: {
         label: ctx.t('chess.bot-level', model.spaceModel.botLevel),
@@ -361,7 +361,7 @@ export const View = ({
             t: 'stop-playing',
           }),
         renderIcon: (input) => {
-          return h(PlayerIcon, { ...input, color: 'w' })
+          return v(PlayerIcon, { ...input, color: 'w' })
         },
       },
       playerTwo: {
@@ -376,24 +376,24 @@ export const View = ({
             t: 'stop-playing',
           }),
         renderIcon: (input) => {
-          return h(PlayerIcon, { ...input, color: 'b' })
+          return v(PlayerIcon, { ...input, color: 'b' })
         },
       },
     })
   }
 
-  const botSlot = h('div', { className: 'flex w-full items-center gap-3 p-3' }, [
-    h(IconRobot, { className: 'h-10 w-10' }),
-    h('p', { className: 'flex-1 text-lg' }, [ChessBotLevel.toString(model.spaceModel.botLevel)]),
-    isBotTurn(model.spaceModel) && h(Spinner, { className: 'h-10 w-10' }),
+  const botSlot = v('div', { className: 'flex w-full items-center gap-3 p-3' }, [
+    v(IconRobot, { className: 'h-10 w-10' }),
+    v('p', { className: 'flex-1 text-lg' }, [ChessBotLevel.toString(model.spaceModel.botLevel)]),
+    isBotTurn(model.spaceModel) && v(Spinner, { className: 'h-10 w-10' }),
   ])
 
-  const userSlot = h('div', { className: 'flex w-full items-center gap-3 p-3' }, [
-    h(Avatar, {
+  const userSlot = v('div', { className: 'flex w-full items-center gap-3 p-3' }, [
+    v(Avatar, {
       className: 'h-10 w-10',
       src: UserProfile.toAvatarUrl(ctx.profilesByUserId[model.spaceModel.userId]),
     }),
-    h('p', { className: 'flex-1 text-lg' }, [ctx.profilesByUserId[model.spaceModel.userId]?.username]),
+    v('p', { className: 'flex-1 text-lg' }, [ctx.profilesByUserId[model.spaceModel.userId]?.username]),
   ])
 
   const boardOrientation = model.isFlipped
@@ -404,15 +404,15 @@ export const View = ({
   const bottomSlot = boardOrientation === model.spaceModel.userColor ? userSlot : botSlot
   const board = model.spaceModel.board
 
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     parentScreen: ctx.parentScreen,
     ctx: ctx,
     id: 'chess-vs-bot',
     renderBody: () =>
-      h(LayoutGame, { ctx }, [
-        h('div', { className: 'flex w-full flex-1 flex-col items-center justify-center' }, [
+      v(LayoutGame, { ctx }, [
+        v('div', { className: 'flex w-full flex-1 flex-col items-center justify-center' }, [
           topSlot,
-          h(Chessboard, {
+          v(Chessboard, {
             id: 'chessboard',
             model: board,
             orientation: boardOrientation,
@@ -439,7 +439,7 @@ export const View = ({
         actions: [
           {
             id: ctx.t('app.exit'),
-            icon: (props) => h(IconArrowLeft, props),
+            icon: (props) => v(IconArrowLeft, props),
             label: ctx.t('app.exit'),
             onClick: onClose,
           },

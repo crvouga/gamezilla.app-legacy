@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { cn } from './cn'
 import { PAPER_CLASS_NAME } from './paper'
 
@@ -27,9 +27,9 @@ export const Select = <T>({
   onChange: (value: T) => void
 }) => {
   const labelId = `${id}-label`
-  return h('div', { className: 'flex w-full flex-col gap-1' }, [
-    h('label', { id: labelId, htmlFor: id, className: cn('text-base', error && 'text-red-500') }, [label]),
-    h(
+  return v('div', { className: 'flex w-full flex-col gap-1' }, [
+    v('label', { id: labelId, htmlFor: id, className: cn('text-base', error && 'text-red-500') }, [label]),
+    v(
       'select',
       {
         id: id,
@@ -51,9 +51,9 @@ export const Select = <T>({
         },
       },
       options.map((option) => {
-        return h('option', { key: toKey(option), value: toKey(option) }, [toName(option)])
+        return v('option', { key: toKey(option), value: toKey(option) }, [toName(option)])
       }),
     ),
-    helperText && h('div', { className: cn('text-sm', error && 'text-red-500') }, [helperText]),
+    helperText && v('div', { className: cn('text-sm', error && 'text-red-500') }, [helperText]),
   ])
 }

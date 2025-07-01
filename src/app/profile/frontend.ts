@@ -1,6 +1,6 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { OpenProfileCmd } from '~/app/@/frontend/open-profile-cmd.$msg'
 import { AddProfilesCmd } from '../@/frontend/add-profiles-cmd$msg'
@@ -95,7 +95,7 @@ const View: FrontendModule['View'] = (input) => {
     case 'profile': {
       switch (input.ctx.currentScreen.t) {
         case 'profile': {
-          return h(ScreenProfileFrontend.View, {
+          return v(ScreenProfileFrontend.View, {
             model: input.model,
             ctx: input.ctx,
             dispatch: (c) => input.dispatch({ t: 'got-profile-screen-msg', c }),
@@ -103,11 +103,11 @@ const View: FrontendModule['View'] = (input) => {
         }
 
         case 'profile-edit': {
-          return h(UpdateProfileScreen.View, input)
+          return v(UpdateProfileScreen.View, input)
         }
 
         case 'profile-edit-avatar': {
-          return h(UpdateAvatarScreen.View, {
+          return v(UpdateAvatarScreen.View, {
             ctx: input.ctx,
             model: input.model,
             dispatch: input.dispatch,
@@ -115,7 +115,7 @@ const View: FrontendModule['View'] = (input) => {
         }
 
         case 'profile-edit-username': {
-          return h(ScreenUpdateUsernameFrontend.View, {
+          return v(ScreenUpdateUsernameFrontend.View, {
             ctx: input.ctx,
             model: input.model.screenUpdateUsername,
             dispatch: (c) => input.dispatch({ t: 'got-update-username-screen-msg', c }),

@@ -1,5 +1,5 @@
 import { Sub } from '~/@/sub'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import type { GameFrontend } from '~/app/spaces/game/games/@/architecture/game-frontend'
 import { GameMainMenu } from '../@/ui/game-main-menu'
@@ -81,12 +81,12 @@ export const View = ({
     })
 
   if (model.t === 'none') {
-    return h(GameMainMenu.View, {
+    return v(GameMainMenu.View, {
       dispatch,
       title: ctx.t('tic-tac-toe'),
       onBack: () => dispatch({ t: 'game-main-menu.clicked-exit-game-button' }),
       ctx,
-      renderCoverArt: (input) => h(CoverArt, input),
+      renderCoverArt: (input) => v(CoverArt, input),
       buttons: [
         GameMainMenu.buttons.playFriend({
           ctx,
@@ -109,7 +109,7 @@ export const View = ({
   }
 
   if (model.t === 'vs-user') {
-    return h(VsUser.View, {
+    return v(VsUser.View, {
       onCloseGame: onQuit,
       ctx,
       model: model.c,
@@ -122,7 +122,7 @@ export const View = ({
   }
 
   if (model.t === 'vs-bot') {
-    return h(VsBot.View, {
+    return v(VsBot.View, {
       goBack: onQuit,
       ctx,
       model: model.c,

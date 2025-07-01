@@ -1,6 +1,6 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import type { VDom } from '~/@/vdom/vdom'
 
 export const Frag = (props: { key?: unknown; children?: VDom }) => {
-  return h('fragment', { key: props.key }, [props.children])
+  return v('fragment', { key: props.key }, [props.children])
 }

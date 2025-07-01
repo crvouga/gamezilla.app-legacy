@@ -1,11 +1,11 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 
 export const SwiperDots = (input: { activeIndex: number; slideCount: number }) => {
-  return h(
+  return v(
     'div',
     {},
     range(input.slideCount).map((index) =>
-      h('div', {
+      v('div', {
         key: index,
         className: `mx-1 h-2 w-2 rounded-full bg-neutral-300 ${input.activeIndex === index ? 'bg-neutral-500' : ''}`,
       }),

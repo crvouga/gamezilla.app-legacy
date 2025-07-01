@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Button } from '~/@/ui/button'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { AuthScreenHeader } from './auth-screen-header'
@@ -22,28 +22,28 @@ export const AuthScreenFormLayout = (input: {
   onSubmit: () => void
   dataTestId: string
 }) => {
-  return h(AuthScreenLayout, {
+  return v(AuthScreenLayout, {
     dataTestId: input.dataTestId,
     ctx: input.ctx,
     center: false,
-    children: h(Frag, null, [
-      h(AuthScreenHeader, {
+    children: v(Frag, null, [
+      v(AuthScreenHeader, {
         ctx: input.ctx,
         title: input.title,
         onBack: input.onBack,
       }),
-      h('form', {
+      v('form', {
         className: 'flex w-full flex-col gap-16 pt-4',
         onSubmit: (e: Event) => {
           e.preventDefault()
           input.onSubmit()
         },
-        children: h(Frag, null, [
-          h('div', {
+        children: v(Frag, null, [
+          v('div', {
             className: 'flex w-full flex-col gap-6',
             children: input.renderInputs(),
           }),
-          h(Button, {
+          v(Button, {
             color: 'primary',
             size: 'lg',
             className: 'w-full',

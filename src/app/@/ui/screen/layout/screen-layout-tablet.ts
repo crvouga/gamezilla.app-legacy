@@ -1,7 +1,7 @@
 import { Button } from '~/@/ui/button'
 import { cn } from '~/@/ui/cn'
 import { DynamicElement } from '~/@/ui/dynamic-element'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { VDom } from '~/@/vdom/vdom'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { VerticalActionBar } from '../action-bar/screen-action-bar-vertical'
@@ -11,7 +11,7 @@ import { ParentScreenProps, ScreenLayoutProps } from './screen-layout-props'
 export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
   const element = input.patchAction ? 'form' : 'div'
 
-  return h(
+  return v(
     DynamicElement,
     {
       element: element,
@@ -22,19 +22,19 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
       },
     },
     [
-      h(ActionBars, { position: 'start', input: input }),
+      v(ActionBars, { position: 'start', input: input }),
 
-      h('div', { className: 'flex max-w-3xl flex-[4] shrink-0 flex-col border-x' }, [
+      v('div', { className: 'flex max-w-3xl flex-[4] shrink-0 flex-col border-x' }, [
         ...renderNavBars(input.ctx, input),
 
-        h('div', { className: 'flex w-full flex-1 flex-col overflow-hidden' }, [
+        v('div', { className: 'flex w-full flex-1 flex-col overflow-hidden' }, [
           input.renderBody(),
           (input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) &&
-            h('div', { className: 'absolute right-8 bottom-8 bg-black' }, [...renderMiniPlayers(input)]),
+            v('div', { className: 'absolute right-8 bottom-8 bg-black' }, [...renderMiniPlayers(input)]),
         ]),
       ]),
 
-      h(ActionBars, { position: 'end', input: input }),
+      v(ActionBars, { position: 'end', input: input }),
     ],
   )
 }
@@ -42,7 +42,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
 const ActionBars = (props: { position: 'start' | 'end'; input: ScreenLayoutProps }) => {
   const actionBars = renderActionBars(props.input.ctx, props.input, props.position)
 
-  return h(
+  return v(
     'div',
     {
       className: cn(
@@ -73,7 +73,7 @@ const renderActionBars = (
       const className = position === 'start' ? 'order-first' : 'order-last'
 
       bars.push(
-        h(VerticalActionBar, {
+        v(VerticalActionBar, {
           ...screen.actionBar,
           id: id,
           ctx: ctx,
@@ -96,7 +96,7 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
   const bars = []
   if (screen.navBar) {
     bars.push(
-      h(ScreenNavBarTablet, {
+      v(ScreenNavBarTablet, {
         key: screen.id,
         ctx: ctx,
         back: screen.navBar.back,
@@ -104,13 +104,13 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
         subtitle: screen.navBar.subtitle,
         renderEnd: () =>
           (screen.patchAction || screen.postAction) &&
-          h('div', { className: 'flex items-center justify-end' }, [
+          v('div', { className: 'flex items-center justify-end' }, [
             screen.patchAction &&
-              h('div', { className: 'flex min-w-64 items-center justify-end' }, [
-                h(CancelSubmitButtons, { ...screen.patchAction, size: 'md' }),
+              v('div', { className: 'flex min-w-64 items-center justify-end' }, [
+                v(CancelSubmitButtons, { ...screen.patchAction, size: 'md' }),
               ]),
             screen.postAction &&
-              h(Button, {
+              v(Button, {
                 color: 'primary',
                 fab: true,
                 variant: 'contained',

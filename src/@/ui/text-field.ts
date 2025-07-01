@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { cn } from './cn'
 import { IconXMark } from './icon'
 import { PAPER_CLASS_NAME } from './paper'
@@ -22,23 +22,23 @@ export const TextField = (input: {
   onClear?: () => void
   onChange: (value: string) => void
 }) => {
-  return h('label', {
+  return v('label', {
     className: 'flex w-full flex-col gap-1',
-    children: h(Frag, null, [
-      h('label', {
+    children: v(Frag, null, [
+      v('label', {
         htmlFor: input.id,
         className: cn('text-base', input.error && 'text-red-500'),
         children: input.label,
       }),
-      h('div', {
+      v('div', {
         className: cn(
           PAPER_CLASS_NAME,
           'flex h-fit w-full flex-row overflow-hidden rounded-md border-2',
           input.error && 'border-2 border-red-500 text-red-500',
           !input.error && 'ring-blue-500 focus-within:ring-2',
         ),
-        children: h(Frag, null, [
-          h('input', {
+        children: v(Frag, null, [
+          v('input', {
             role: 'textbox',
             'data-testid': input.dataTestId,
             'aria-label': input.label,
@@ -72,7 +72,7 @@ export const TextField = (input: {
           input.onClear &&
             input.value &&
             input.value?.toString().length > 0 &&
-            h('button', {
+            v('button', {
               className: 'rounded-md px-3 ring-blue-500 outline-none focus:ring-2',
               'aria-label': 'Clear input',
               type: 'button',
@@ -86,12 +86,12 @@ export const TextField = (input: {
 
                 input.onClear?.()
               },
-              children: h(IconXMark, { className: 'size-6' }),
+              children: v(IconXMark, { className: 'size-6' }),
             }),
         ]),
       }),
       input.helperText &&
-        h('div', {
+        v('div', {
           role: 'alert',
           'data-error': Boolean(input.error),
           'data-info': !Boolean(input.error),

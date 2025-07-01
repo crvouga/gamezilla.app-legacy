@@ -3,7 +3,7 @@ import { VDomImpl } from '../vdom-impl'
 import { initInferno } from './impl-inferno'
 import { initPreact } from './impl-preact'
 import { initReact } from './impl-react'
-import { H } from './interface'
+import { V } from './interface'
 
 export const init = (vdomImpl: VDomImpl) => {
   switch (vdomImpl) {
@@ -19,4 +19,4 @@ export const init = (vdomImpl: VDomImpl) => {
   }
 }
 
-export const h: H = init(CONFIG_FRONTEND.VDOM_IMPL)
+export const v: V = init(CONFIG_FRONTEND.VDOM_IMPL)

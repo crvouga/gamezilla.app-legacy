@@ -1,5 +1,5 @@
 import { rescale } from '~/@/math/rescale'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { COLUMN_COUNT, type Columns, isColumnIndex, MAX_COLUMN_HEIGHT } from '../../connect-four'
 import { gameTheme } from '../shared'
 import type { ViewColumnsInput } from './shared'
@@ -27,7 +27,7 @@ export const doPaint = (columns: Columns) => {
 }
 
 export const ViewColumnsCanvas = (input: ViewColumnsInput) => {
-  return h('canvas', {
+  return v('canvas', {
     id: 'view-columns-canvas',
     className: 'w-full cursor-pointer',
     onClick: (e: MouseEvent) => {

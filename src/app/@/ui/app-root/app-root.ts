@@ -1,8 +1,8 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { VDom } from '~/@/vdom/vdom'
 
 export const ViewAppRoot = (input: { children: VDom }) => {
-  return h(
+  return v(
     'div',
     {
       className:

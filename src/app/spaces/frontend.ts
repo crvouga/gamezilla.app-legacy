@@ -4,7 +4,7 @@ import { NotAsked } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Topic } from '~/@/topic'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { AppFrontendCtxBase, isAppFrontendCtx } from '../@/frontend/ctx'
 import { EndSpaceFrontend } from './end-space/frontend'
 import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/frontend'
@@ -121,11 +121,11 @@ const View: FrontendModule['View'] = (input) => {
     case 'spaces': {
       switch (input.ctx.currentScreen.t) {
         case 'space-list': {
-          return h(ListSpacesFrontend.View, { dispatch: input.dispatch, ctx: input.ctx, model: input.model })
+          return v(ListSpacesFrontend.View, { dispatch: input.dispatch, ctx: input.ctx, model: input.model })
         }
         case 'space': {
           if (isAppFrontendCtx(input.ctx)) {
-            return h(SpaceFrontend.View, {
+            return v(SpaceFrontend.View, {
               spaceId: input.ctx.currentScreen.spaceId,
               ctx: input.ctx,
               dispatch: input.dispatch,

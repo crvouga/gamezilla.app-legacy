@@ -1,5 +1,5 @@
 import { pipe } from '~/@/function/pipe'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { VariantGridBoard, VariantGridShorthand } from '../variant/grid'
 
 const init = (x: VariantGridShorthand.Model) => pipe(VariantGridShorthand.init(x), VariantGridShorthand.toGrid)
@@ -35,7 +35,7 @@ const GRIDS = [
 
 const GRID = GRIDS[3]
 
-const VIEW_GRID = h(VariantGridBoard.View, {
+const VIEW_GRID = v(VariantGridBoard.View, {
   model: GRID,
   disabled: true,
   borderless: true,
@@ -44,5 +44,5 @@ const VIEW_GRID = h(VariantGridBoard.View, {
 })
 
 export const CoverArt = (input: { className?: string }) => {
-  return h('div', input, [VIEW_GRID])
+  return v('div', input, [VIEW_GRID])
 }

@@ -1,4 +1,4 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import type { SpaceId } from '~/app/@/data/space-id'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -21,11 +21,11 @@ const View = (input: {
 
   switch (spaceState.type) {
     case 'initial': {
-      return h(ViewSpaceNotFound, input)
+      return v(ViewSpaceNotFound, input)
     }
 
     case 'ended': {
-      return h(EndSpaceFrontend.ViewSpaceEnded, input)
+      return v(EndSpaceFrontend.ViewSpaceEnded, input)
     }
 
     case 'started': {
@@ -46,7 +46,7 @@ const View = (input: {
       const isNotJoined = currentUserSpaceId !== spaceCtx.space.spaceId
 
       if (isNotJoined) {
-        return h(JoinSpaceFrontend.View, { ...input, ctx: spaceCtx })
+        return v(JoinSpaceFrontend.View, { ...input, ctx: spaceCtx })
       }
 
       const inputNew = { ...input, ctx: spaceCtx }
@@ -79,13 +79,13 @@ const View = (input: {
         ctx: spaceCtxFinal,
       }
 
-      return h(GameFrontend.View, inputFinal)
+      return v(GameFrontend.View, inputFinal)
     }
   }
 }
 
 const ViewSpaceNotFound = (input: { ctx: FrontendCtxModule; dispatch: (m: MsgFrontend) => void }) => {
-  return h(ScreenTitleButton, {
+  return v(ScreenTitleButton, {
     title: input.ctx.t('spaces.space-not-found'),
     buttonText: input.ctx.t('spaces.exit-space'),
     onClick: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),

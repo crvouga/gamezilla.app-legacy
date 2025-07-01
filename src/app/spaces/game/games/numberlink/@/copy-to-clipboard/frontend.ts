@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 import { IconCopy } from '~/@/ui/icon'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { CopyToClipboardCmd } from '~/app/@/frontend/copy-to-clipboard-cmd.$msg'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -60,7 +60,7 @@ const viewAction = ({ ctx, dispatch }: { ctx: AppFrontendCtx; dispatch: (m: MsgF
   return [
     {
       id: ctx.t('game.numberlink.copy-puzzle-to-clipboard'),
-      icon: (input) => h(IconCopy, input),
+      icon: (input) => v(IconCopy, input),
       label: ctx.t('game.numberlink.copy-puzzle-to-clipboard'),
       onClick: () =>
         dispatch({

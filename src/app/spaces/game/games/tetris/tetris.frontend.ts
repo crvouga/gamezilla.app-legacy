@@ -4,7 +4,7 @@ import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import * as Board from './@/board'
 import type * as Direction from './@/direction'
 import * as Piece from './@/piece'
@@ -296,9 +296,9 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // const gridStrokeWidth = 0.025
 
 export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void }) => {
-  return h('div', {}, [
-    h('div', {}, [
-      h('canvas', {
+  return v('div', {}, [
+    v('div', {}, [
+      v('canvas', {
         onTouchMove: (e: unknown) => {
           // @ts-ignore
           const touch = e.touches[0]
@@ -356,12 +356,12 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       }),
     ]),
 
-    /* h('svg', {
+    /* v('svg', {
       width: '100%',
       viewBox: [0, 0, columnCount, rowCount].join(', '),
     }, [
       ...range(1, Board.toColumnCount(model.spaceModel.board)).map(x =>
-        h('line', {
+        v('line', {
           key: x,
           x1: x,
           y1: 0,
@@ -373,7 +373,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       ),
 
       ...range(1, Board.toRowCount(model.spaceModel.board)).map(y =>
-        h('line', {
+        v('line', {
           key: y,
           x1: 0,
           y1: y,
@@ -385,7 +385,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       ),
 
       ...Board.flatMap(model.spaceModel.board, ({ cell, x, y }) =>
-        h('rect', {
+        v('rect', {
           key: `${x}-${y}-${cell}`,
           width: 1,
           height: 1,
@@ -396,7 +396,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       ),
 
       ...toGhostPiece(model.spaceModel).map(position =>
-        h('rect', {
+        v('rect', {
           key: `${position.x}-${position.y}`,
           width: 1,
           height: 1,
@@ -407,7 +407,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       ),
 
       ...toPiece(model.spaceModel).map(position =>
-        h('rect', {
+        v('rect', {
           key: `${position.x}-${position.y}`,
           width: 1,
           height: 1,
@@ -418,7 +418,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       ),
 
       ...Board.flatMap(model.spaceModel.board, ({ x, y }) =>
-        h('rect', {
+        v('rect', {
           key: `${x}-${y}`,
           width: 1,
           height: 1,
@@ -522,14 +522,14 @@ const theme = {
 }
 
 export const CoverArt = () => {
-  return h(
+  return v(
     'svg',
     {
       width: '100%',
       viewBox: [0, 0, 4, 4].join(', '),
     },
     [
-      h('rect', {
+      v('rect', {
         width: '100%',
         height: '100%',
         fill: theme.lightBlue,
@@ -542,7 +542,7 @@ export const CoverArt = () => {
           }),
         )
         .map((position) =>
-          h('rect', {
+          v('rect', {
             key: `${position.x}-${position.y}`,
             x: position.x,
             y: position.y,

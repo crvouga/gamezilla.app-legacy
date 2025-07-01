@@ -2,7 +2,7 @@ import { History } from '~/@/history'
 import { IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark } from '~/@/ui/icon'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -20,16 +20,16 @@ const View = (input: {
   dispatch: (m: ModeEdit.Msg) => void
   screenLayout: Partial<ScreenLayoutProps>
 }): VDom => {
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     ...input.screenLayout,
     parentScreen: input.ctx.parentScreen,
     id: 'mode-edit-screen',
     ctx: input.ctx,
     renderBody: () =>
-      h(BoardLayout, null, [
+      v(BoardLayout, null, [
         ViewStatus(input),
 
-        h(NumberlinkVariantBoard.View, {
+        v(NumberlinkVariantBoard.View, {
           model: ModeEdit.toNumberlink(input.model),
           onDraggedOver: (nodeId) => input.dispatch({ t: 'dragged-over', nodeId }),
           onPressDown: (nodeId) => input.dispatch({ t: 'pressed-down-node', nodeId }),
@@ -42,32 +42,32 @@ const View = (input: {
         actions: [
           {
             id: input.ctx.t('app.undo'),
-            icon: (input) => h(IconArrowRotateLeft, input),
+            icon: (input) => v(IconArrowRotateLeft, input),
             label: input.ctx.t('app.undo'),
             onClick: () => input.dispatch({ t: 'clicked-undo' }),
             disabled: !History.canUndo(input.model.form),
           },
           {
             id: input.ctx.t('app.redo'),
-            icon: (input) => h(IconArrowRotateRight, input),
+            icon: (input) => v(IconArrowRotateRight, input),
             label: input.ctx.t('app.redo'),
             disabled: !History.canRedo(input.model.form),
             onClick: () => input.dispatch({ t: 'clicked-redo' }),
           },
           {
             id: input.ctx.t('app.clear'),
-            icon: (input) => h(IconXMark, input),
+            icon: (input) => v(IconXMark, input),
             label: input.ctx.t('app.clear'),
             disabled: !ModeEdit.canClear(input.model),
             onClick: () => input.dispatch({ t: 'clicked-clear' }),
           },
           {
             id: input.ctx.t('app.dimensions'),
-            icon: (input) => h(IconExpand, input),
+            icon: (input) => v(IconExpand, input),
             label: input.ctx.t('app.dimensions'),
             onClick: () => input.dispatch({ t: 'dimensions-form.clicked-open' }),
             renderSurface: ({ dropDown }) =>
-              h(SurfaceLayout, {
+              v(SurfaceLayout, {
                 id: 'dimensions',
                 ctx: input.ctx,
                 ariaLabel: input.ctx.t('app.dimensions'),
@@ -80,7 +80,7 @@ const View = (input: {
                 },
                 header: {
                   render: () =>
-                    h(SurfaceHeader, {
+                    v(SurfaceHeader, {
                       ctx: input.ctx,
                       title: input.ctx.t('app.dimensions'),
                       onClose: () => input.dispatch({ t: 'dimensions-form.closed' }),
@@ -98,7 +98,7 @@ const View = (input: {
                 body: {
                   render: () =>
                     input.model.opened?.draftDimensions &&
-                    h(NumberlinkVariantDimensions.ViewForm, {
+                    v(NumberlinkVariantDimensions.ViewForm, {
                       ctx: input.ctx,
                       form: input.model.opened?.draftDimensions,
                       onInput: (dimensions) => input.dispatch({ t: 'dimensions-form.inputted', dimensions }),
@@ -114,8 +114,8 @@ const View = (input: {
 
 const ViewStatus: typeof View = (input) => {
   const position = ModeEdit.toCurrentPlacingTerminalPosition(input.model) === 'start' ? 'first' : 'last'
-  return h('div', { className: 'flex w-full items-center justify-center gap-1 p-2' }, [
-    h(Typography, {
+  return v('div', { className: 'flex w-full items-center justify-center gap-1 p-2' }, [
+    v(Typography, {
       variant: 'body',
       text: input.ctx.t('game.numberlink.placing', { position }),
     }),
@@ -128,7 +128,7 @@ const ViewStatus: typeof View = (input) => {
 
 const ViewTerminal = ({ groupId, className }: { className: string; groupId: GroupId }) => {
   const color = Color.groupIdToHex(groupId)
-  return h('svg', { className, viewBox: '-1 -1 2 2' }, [h('circle', { cx: '0', cy: '0', r: '0.8', fill: color })])
+  return v('svg', { className, viewBox: '-1 -1 2 2' }, [v('circle', { cx: '0', cy: '0', r: '0.8', fill: color })])
 }
 
 export const ModeEditFrontend = {

@@ -1,7 +1,7 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import type { VDom } from '~/@/vdom/vdom'
 import { Button } from './button'
 
 export const ButtonVertical = (props: { children: VDom }) => {
-  return h(Button, { className: 'flex-col gap-2' }, [props.children])
+  return v(Button, { className: 'flex-col gap-2' }, [props.children])
 }

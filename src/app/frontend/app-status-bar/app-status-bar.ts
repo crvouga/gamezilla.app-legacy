@@ -1,7 +1,7 @@
 import { Clickable } from '~/@/ui/clickable'
 import { cn } from '~/@/ui/cn'
 import { Frag } from '~/@/ui/frag'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { AuthFrontend } from '~/app/auth/frontend'
 import { LangFrontend } from '~/app/lang/frontend'
 import { type ModelFrontend, type MsgFrontend } from '~/app/types'
@@ -15,20 +15,20 @@ export const ViewAppStatusBar = (input: {
   model: ModelFrontend
   dispatch: (c: MsgFrontend) => void
 }) => {
-  return h(
+  return v(
     'div',
     {
       className: cn(input.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed top-0 right-0 z-10 w-fit'),
     },
     [
-      h(StatusBarFrontend.View, {
+      v(StatusBarFrontend.View, {
         ctx: input.ctx,
         model: input.model.frontend.statusBar,
         dispatch: (c) => input.dispatch({ t: 'frontend', c: { t: 'status-bar', c } }),
         slots: {
           topBar: (props) => {
             const iconSize = input.ctx.screenSize === 'mobile' ? 'size-3' : 'size-4'
-            return h(
+            return v(
               Clickable,
               {
                 ...props,
@@ -40,16 +40,16 @@ export const ViewAppStatusBar = (input: {
                 'aria-label': input.ctx.t('app.open-settings'),
               },
               [
-                h(WireFrontend.ViewDot, {
+                v(WireFrontend.ViewDot, {
                   ctx: input.ctx,
                   model: input.model.wire,
                   className: iconSize,
                 }),
-                h(SoundFrontend.ViewIcon, {
+                v(SoundFrontend.ViewIcon, {
                   model: input.model.frontend.sound,
                   className: iconSize,
                 }),
-                h(AuthFrontend.ViewLogoutIcon, {
+                v(AuthFrontend.ViewLogoutIcon, {
                   model: input.model.auth,
                   ctx: input.ctx,
                   className: iconSize,
@@ -57,26 +57,26 @@ export const ViewAppStatusBar = (input: {
               ],
             )
           },
-          surfaceContent: h(Frag, null, [
-            h(WireFrontend.ViewListItem, {
+          surfaceContent: v(Frag, null, [
+            v(WireFrontend.ViewListItem, {
               model: input.model.wire,
               dispatch: (c) => input.dispatch({ t: 'wire', c }),
               ctx: input.ctx,
             }),
 
-            h(AuthFrontend.ViewLogoutListItem, {
+            v(AuthFrontend.ViewLogoutListItem, {
               model: input.model.auth,
               dispatch: (c) => input.dispatch({ t: 'auth', c }),
               ctx: input.ctx,
             }),
 
-            h(LangFrontend.ViewLangListItem, {
+            v(LangFrontend.ViewLangListItem, {
               ctx: input.ctx,
               dispatch: (c) => input.dispatch({ t: 'lang', c }),
               model: input.model.lang,
             }),
 
-            h(SoundFrontend.ViewSoundListItem, {
+            v(SoundFrontend.ViewSoundListItem, {
               ctx: input.ctx,
               model: input.model.frontend.sound,
               dispatch: (c) => input.dispatch({ t: 'frontend', c: { t: 'sound', c } }),

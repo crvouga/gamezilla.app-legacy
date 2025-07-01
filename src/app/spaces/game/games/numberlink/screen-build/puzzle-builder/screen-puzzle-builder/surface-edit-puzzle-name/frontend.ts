@@ -5,7 +5,7 @@ import { IconPen } from '~/@/ui/icon'
 import { SurfaceBody } from '~/@/ui/surface/surface-body'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { TextField } from '~/@/ui/text-field'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -220,11 +220,11 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
   return [
     {
       id: input.ctx.t('app.edit-name'),
-      icon: (input) => h(IconPen, input),
+      icon: (input) => v(IconPen, input),
       label: input.ctx.t('app.edit-name'),
       onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
       renderSurface: ({ dropDown, screenActionLocation }) =>
-        h(ViewSurface, { ...input, ctx: input.ctx, dropDown, screenActionLocation }),
+        v(ViewSurface, { ...input, ctx: input.ctx, dropDown, screenActionLocation }),
     },
   ]
 }
@@ -235,7 +235,7 @@ const ViewSurface = (
     screenActionLocation: ScreenActionLocation
   },
 ) => {
-  return h(SurfaceLayout, {
+  return v(SurfaceLayout, {
     id: 'edit-name-drawer',
     ctx: input.ctx,
     ariaLabel: input.ctx.t('app.edit-name'),
@@ -243,7 +243,7 @@ const ViewSurface = (
     onClose: () => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' }),
     header: {
       render: () =>
-        h(SurfaceHeader, {
+        v(SurfaceHeader, {
           ctx: input.ctx,
           title: input.ctx.t('app.edit-name'),
           onClose: () => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' }),
@@ -265,8 +265,8 @@ const ViewSurface = (
     dropDown: input.dropDown,
     body: {
       render: () =>
-        h(SurfaceBody, null, [
-          h(TextField, {
+        v(SurfaceBody, null, [
+          v(TextField, {
             id: 'game-numberlink-edit-puzzle-name-input',
             label: input.ctx.t('game.numberlink.edit-puzzle-name.name'),
             value: input.model.puzzleEditNameDraft,

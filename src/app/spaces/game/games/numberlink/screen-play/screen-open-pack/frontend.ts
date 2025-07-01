@@ -1,5 +1,5 @@
 import { IconGamepad } from '~/@/ui/icon'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -53,16 +53,16 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   const isCurrentUserSpectating = input.ctx.currentUser.userId !== input.ctx.space.hostId
   if (isCurrentUserSpectating) {
-    return h(ScreenLayoutHostSettingUpGame, {
+    return v(ScreenLayoutHostSettingUpGame, {
       parentScreen: input.ctx.parentScreen,
       ctx: input.ctx,
-      renderCoverArt: (props) => h(IconGamepad, props),
+      renderCoverArt: (props) => v(IconGamepad, props),
     })
   }
 
   const query = toQuery(input)
 
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     ctx: input.ctx,
     dataTestId: 'numberlink/open-pack-screen',
@@ -78,7 +78,7 @@ const View: FrontendModule['View'] = (input) => {
       },
     },
     renderBody: () =>
-      h(PackLoaderFrontend.ViewList, {
+      v(PackLoaderFrontend.ViewList, {
         ctx: input.ctx,
         model: input.ctx.packLoader,
         query: query,

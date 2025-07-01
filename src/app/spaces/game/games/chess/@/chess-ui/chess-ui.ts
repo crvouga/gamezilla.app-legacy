@@ -1,4 +1,4 @@
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 
 export const toChecker = ({ x, y }: { x: number; y: number }): 'Light' | 'Dark' => {
   if ((isEven(x) && isOdd(y)) || (isOdd(x) && isEven(y))) {
@@ -10,7 +10,7 @@ const isEven = (x: number) => x % 2 === 0
 const isOdd = (x: number) => !isEven(x)
 
 export const PawnIcon = (input: { stroke?: string }) => {
-  return h(
+  return v(
     'g',
     {
       transform: 'translate(0 -2) scale(1)',
@@ -19,7 +19,7 @@ export const PawnIcon = (input: { stroke?: string }) => {
       },
     },
     [
-      h('path', {
+      v('path', {
         fill: 'currentColor',
         stroke: input.stroke ?? '#000',
         strokeLinecap: 'round',
@@ -31,14 +31,14 @@ export const PawnIcon = (input: { stroke?: string }) => {
 }
 
 export const PlayerIcon = ({ className, color }: { className?: string; color: 'w' | 'b' }) => {
-  return h(
+  return v(
     'svg',
     {
       viewBox: '0 0 45 45',
       className: className,
     },
     [
-      h(
+      v(
         'g',
         {
           transform: 'translate(0 -2) scale(1.25)',
@@ -47,7 +47,7 @@ export const PlayerIcon = ({ className, color }: { className?: string; color: 'w
           },
         },
         [
-          h('path', {
+          v('path', {
             fill: color === 'w' ? '#fff' : '#000',
             stroke: color === 'w' ? '#000' : '#fff',
             strokeLinecap: 'round',

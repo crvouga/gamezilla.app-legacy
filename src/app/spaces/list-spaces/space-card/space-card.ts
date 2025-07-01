@@ -2,7 +2,7 @@ import { Avatar } from '~/@/ui/avatar'
 import { Clickable } from '~/@/ui/clickable'
 import { cn } from '~/@/ui/cn'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { VDom } from '~/@/vdom/vdom'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
@@ -27,11 +27,11 @@ export const ViewSpaceCard = (input: {
     return [profile]
   })
 
-  return h(ViewRoot, { onClick: input.onClick }, [
-    h(ViewLiveIndicator, { ctx: input.ctx }),
-    h(ViewSpaceCardGame, { gameName: input.state.game?.t ?? null, ctx: input.ctx }),
-    h(ViewSpaceCardHost, { host, ctx: input.ctx }),
-    h(ViewSpaceCardUsers, { users, ctx: input.ctx }),
+  return v(ViewRoot, { onClick: input.onClick }, [
+    v(ViewLiveIndicator, { ctx: input.ctx }),
+    v(ViewSpaceCardGame, { gameName: input.state.game?.t ?? null, ctx: input.ctx }),
+    v(ViewSpaceCardHost, { host, ctx: input.ctx }),
+    v(ViewSpaceCardUsers, { users, ctx: input.ctx }),
   ])
 }
 
@@ -41,14 +41,14 @@ const ViewRoot = (input: { onClick?: () => void; children?: VDom }) => {
     'flex w-full shrink-0 flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr p-4',
   )
   if (typeof input.onClick === 'function') {
-    return h(Clickable, { onClick: input.onClick, disabled: !input.onClick, className }, [input.children])
+    return v(Clickable, { onClick: input.onClick, disabled: !input.onClick, className }, [input.children])
   }
-  return h('div', { className }, [input.children])
+  return v('div', { className }, [input.children])
 }
 
 const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {
-  return h('div', { className: 'flex items-center justify-start gap-2' }, [
-    h(Typography, {
+  return v('div', { className: 'flex items-center justify-start gap-2' }, [
+    v(Typography, {
       variant: 'label',
       className: 'block flex-1 text-left text-lg font-bold text-white uppercase',
       text: input.ctx.t('space-card.live'),
@@ -59,35 +59,35 @@ const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {
 const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendCtxBase }) => {
   if (!input.gameName) return null
 
-  return h('div', { className: 'flex items-center justify-start gap-2' }, [
-    h(GameCoverArt, { rounded: true, className: 'size-12', gameName: input.gameName }),
-    h(Typography, { variant: 'title', className: 'truncate text-lg font-normal', text: input.ctx.t(input.gameName) }),
+  return v('div', { className: 'flex items-center justify-start gap-2' }, [
+    v(GameCoverArt, { rounded: true, className: 'size-12', gameName: input.gameName }),
+    v(Typography, { variant: 'title', className: 'truncate text-lg font-normal', text: input.ctx.t(input.gameName) }),
   ])
 }
 
 const ViewSpaceCardHost = (input: { host?: UserProfile | null; ctx: AppFrontendCtxBase }) => {
-  return h('div', { className: 'flex max-w-full items-center justify-start gap-2 overflow-x-hidden' }, [
-    h(Avatar, { src: UserProfile.toAvatarUrl(input.host), alt: 'avatar', className: 'size-12' }),
-    h('div', { className: 'flex flex-1 items-center justify-start gap-2 overflow-x-hidden' }, [
+  return v('div', { className: 'flex max-w-full items-center justify-start gap-2 overflow-x-hidden' }, [
+    v(Avatar, { src: UserProfile.toAvatarUrl(input.host), alt: 'avatar', className: 'size-12' }),
+    v('div', { className: 'flex flex-1 items-center justify-start gap-2 overflow-x-hidden' }, [
       input.host &&
-        h(Typography, {
+        v(Typography, {
           variant: 'title',
           className: 'truncate text-left text-lg font-normal',
           text: input.ctx.t('username', input.host.username),
         }),
-      h(ViewHostChip, { ctx: input.ctx }),
+      v(ViewHostChip, { ctx: input.ctx }),
     ]),
-    input.ctx.currentUser?.userId === input.host?.id && h(ViewYouChip, { ctx: input.ctx }),
+    input.ctx.currentUser?.userId === input.host?.id && v(ViewYouChip, { ctx: input.ctx }),
   ])
 }
 
 const ViewSpaceCardUsers = (input: { users: UserProfile[]; ctx: AppFrontendCtxBase }) => {
   if (input.users.length <= 1) return null
 
-  return h('div', { className: 'flex items-center justify-start gap-2' }, [
-    h('div', { className: 'flex items-center' }, [
+  return v('div', { className: 'flex items-center justify-start gap-2' }, [
+    v('div', { className: 'flex items-center' }, [
       ...input.users.slice(0, MAX_AVATAR_COUNT).map((user, index) =>
-        h(Avatar, {
+        v(Avatar, {
           key: user.username,
           src: UserProfile.toAvatarUrl(user),
           alt: 'avatar',
@@ -95,11 +95,11 @@ const ViewSpaceCardUsers = (input: { users: UserProfile[]; ctx: AppFrontendCtxBa
         }),
       ),
       input.users.length > MAX_AVATAR_COUNT &&
-        h('div', { className: '-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30' }, [
-          h(Typography, { variant: 'label', text: input.ctx.t('app.+number', input.users.length - MAX_AVATAR_COUNT) }),
+        v('div', { className: '-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30' }, [
+          v(Typography, { variant: 'label', text: input.ctx.t('app.+number', input.users.length - MAX_AVATAR_COUNT) }),
         ]),
     ]),
-    h(Typography, {
+    v(Typography, {
       variant: 'body',
       className: 'truncate text-lg font-normal',
       text: input.ctx.t('space-card.people-count', input.users.length),

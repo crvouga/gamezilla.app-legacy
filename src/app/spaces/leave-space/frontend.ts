@@ -1,6 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { IconArrowLeftOnRect } from '~/@/ui/icon'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
@@ -90,7 +90,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
   if (!spaceId) return null
   return {
     id: input.ctx.t('spaces.leave'),
-    icon: (inputIcon) => h(IconArrowLeftOnRect, inputIcon),
+    icon: (inputIcon) => v(IconArrowLeftOnRect, inputIcon),
     label: input.ctx.t('spaces.leave'),
     onClick: () => input.dispatch({ t: 'leave-space.clicked-leave-space-button', spaceId }),
     color: 'danger',

@@ -1,6 +1,6 @@
 import { Sub } from '~/@/sub'
 import { IconChevronLeft, IconChevronRight, IconDeleteForever } from '~/@/ui/icon'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
@@ -83,12 +83,12 @@ const View: FrontendModule['View'] = (input) => {
   const { puzzleResult, play } = screen
 
   if (puzzleResult.t === 'got' && play) {
-    return h(ScreenLayout, {
+    return v(ScreenLayout, {
       parentScreen,
       id: 'mode-play',
       ctx: input.ctx,
       renderBody: () =>
-        h(ModePlayFrontend.View, {
+        v(ModePlayFrontend.View, {
           dispatch: (c) =>
             input.dispatch({ t: 'got-msg-space', c: { t: 'screen-pack-builder.got-numberlink-play-msg', c } }),
           numberlink: puzzleResult.c.model,
@@ -110,11 +110,11 @@ const View: FrontendModule['View'] = (input) => {
     })
   }
 
-  return h(ScreenLayout, {
+  return v(ScreenLayout, {
     parentScreen,
     id: 'screen-puzzle',
     ctx: input.ctx,
-    renderBody: () => h(PuzzleResult.ViewNotFound, { ctx: input.ctx }),
+    renderBody: () => v(PuzzleResult.ViewNotFound, { ctx: input.ctx }),
   })
 }
 
@@ -183,7 +183,7 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
         actions: [
           {
             id: input.ctx.t('app.prev'),
-            icon: (input) => h(IconChevronLeft, input),
+            icon: (input) => v(IconChevronLeft, input),
             label: input.ctx.t('app.prev'),
             disabled: !canGoPrevious,
             onClick: () => {
@@ -199,14 +199,14 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
           },
           {
             id: input.ctx.t('app.next'),
-            icon: (input) => h(IconChevronRight, input),
+            icon: (input) => v(IconChevronRight, input),
             label: input.ctx.t('app.next'),
             disabled: !canGoNext,
             onClick: onNextPuzzle,
           },
           {
             id: input.ctx.t('app.remove'),
-            icon: (input) => h(IconDeleteForever, input),
+            icon: (input) => v(IconDeleteForever, input),
             label: input.ctx.t('app.remove'),
             color: 'danger',
             onClick: () =>

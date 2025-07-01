@@ -2,7 +2,7 @@ import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Avatar } from '~/@/ui/avatar'
 import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { UserProfile } from '~/app/@/data/user-profile'
 
 export const ProfileListItem = ({
@@ -16,14 +16,14 @@ export const ProfileListItem = ({
   profile?: UserProfile | null
   subtitle?: TranslatedText
 }) => {
-  return h('div', { className: 'flex w-full items-center gap-2 p-2' }, [
-    h(Avatar, { className: 'size-12', src: profile ? UserProfile.toAvatarUrl(profile) : '' }),
-    h(
+  return v('div', { className: 'flex w-full items-center gap-2 p-2' }, [
+    v(Avatar, { className: 'size-12', src: profile ? UserProfile.toAvatarUrl(profile) : '' }),
+    v(
       'div',
       { className: 'flex flex-1 flex-col gap-0.5' },
       [
-        profile && h(Typography, { variant: 'body', text: ctx.t('username', profile.username) }),
-        subtitle && h(Typography, { color: 'text-secondary', variant: 'caption', text: subtitle }),
+        profile && v(Typography, { variant: 'body', text: ctx.t('username', profile.username) }),
+        subtitle && v(Typography, { color: 'text-secondary', variant: 'caption', text: subtitle }),
       ].filter(Boolean),
     ),
   ])

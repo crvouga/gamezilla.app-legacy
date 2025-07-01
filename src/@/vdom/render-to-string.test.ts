@@ -1,5 +1,5 @@
 import { describe, expect, test } from '~/@/test-runner'
-import { h } from '~/@/vdom/h'
+import { v } from '~/@/vdom/v'
 import { RenderToString } from './render-to-string'
 import { VDom } from './vdom'
 
@@ -7,7 +7,7 @@ describe('RenderToString', () => {
   test('should be able to render to string', async () => {
     const renderToString = await RenderToString()
 
-    const vDom: VDom = h('div', null, [h('div', null, ['hello'])])
+    const vDom: VDom = v('div', null, [v('div', null, ['hello'])])
 
     const string = renderToString(vDom)
 
