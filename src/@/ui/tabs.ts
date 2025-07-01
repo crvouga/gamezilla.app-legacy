@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
+import { v } from '~/@/vdom/v'
 import { ClickableTransparent } from './clickable'
 import { cn } from './cn'
-import { v } from '~/@/vdom/v'
 
 export const Tabs = <TTab extends string>({
   tabs,
@@ -16,21 +16,28 @@ export const Tabs = <TTab extends string>({
 }) => {
   return v('div', {
     class: 'flex w-full items-center',
-    children: tabs.map((tab, index) => {
-      return v('div', {
-        key: tab,
-        class: 'flex-1 shrink-0',
-        children: v(ClickableTransparent, {
+    children: tabs.map((tab, index) =>
+      v(
+        'div',
+        {
           key: tab,
-          onClick: () => onSelect(tab),
-          class: cn(
-            'flex h-full w-full items-center justify-center py-3 text-xl font-bold',
-            index !== tabs.length - 1 && 'border-r-2',
-            selected === tab ? 'border-b-blue-500 text-blue-500' : 'text-neutral-300',
+          class: 'flex-1 shrink-0',
+        },
+        [
+          v(
+            ClickableTransparent,
+            {
+              onClick: () => onSelect(tab),
+              class: cn(
+                'flex h-full w-full items-center justify-center py-3 text-xl font-bold',
+                index !== tabs.length - 1 && 'border-r-2',
+                selected === tab ? 'border-b-blue-500 text-blue-500' : 'text-neutral-300',
+              ),
+            },
+            [labels[tab]],
           ),
-          children: labels[tab],
-        }),
-      })
-    }),
+        ],
+      ),
+    ),
   })
 }

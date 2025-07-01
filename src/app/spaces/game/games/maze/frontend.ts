@@ -184,7 +184,7 @@ export const View = ({
   dispatch: (msg: Msg) => void
 }) => {
   if (model.type === 'setup') {
-    return v('div')
+    return v('div', {})
   }
 
   const viewBox = [
@@ -198,8 +198,8 @@ export const View = ({
 
   const currentUserPlayer = model.players[ctx.currentUser.userId]
 
-  return v('div', null, [
-    !currentUserPlayer && v('p', null, ['Spectating']),
+  return v('div', {}, [
+    !currentUserPlayer && v('p', {}, ['Spectating']),
     v('svg', { width: '100%', viewBox }, [
       v('rect', { x: model.lower.x, y: model.lower.y, width: '100%', height: '100%', fill: '#000' }),
       ...maze.edges.map(([a, b]) =>
@@ -263,9 +263,9 @@ const ViewJoystick = ({
   fill: string
   activeFill: string
 }) => {
-  return v('div', null, [
+  return v('div', {}, [
     v('svg', { width: '100%', viewBox: '-1 -1 2 2', class: 'touch-none overflow-hidden select-none' }, [
-      v('defs', null, [v('clipPath', { id: 'cut-off-bottom' }, [v('circle', { x: '0', y: '0', r: 1 })])]),
+      v('defs', {}, [v('clipPath', { id: 'cut-off-bottom' }, [v('circle', { x: '0', y: '0', r: 1 })])]),
       v('g', { 'stroke-width': 0.025 }, [
         v('g', { clipPath: 'url(#cut-off-bottom)', stroke }, [
           ...Direction.all.map((direction) => {

@@ -64,7 +64,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
         return v('g', { key })
       }),
     ),
-    v(ViewWins, { board }),
+    v(ViewWins, { board }, []),
     allPositions.map((position) =>
       v('rect', {
         key: [position.column, position.row, toSlot(board, position)].join(' '),
@@ -252,7 +252,7 @@ export const ViewSlot = ({
 }) => {
   switch (slot) {
     case Empty:
-      return v('g')
+      return v('g', {})
 
     case 'O':
       return v(Naught, { strokeWidth, color, r, cx, cy })
@@ -308,7 +308,7 @@ export const PlayerTypeIcon = ({ playerType, class: class_ }: { playerType: Play
       slot: playerType,
       r: 2 / 3,
       color: 'currentColor',
-      'stroke-width': 0.33,
+      strokeWidth: 0.33,
     }),
   ])
 }

@@ -80,7 +80,7 @@ const ViewSlideContent = (input: {
 
         const { puzzleId } = inputCell
 
-        if (!puzzleId) return v(ViewEmptyCell)
+        if (!puzzleId) return v(ViewEmptyCell, {})
 
         return v(ViewPuzzleCell, {
           onClick: () => input.onClickPuzzleCell?.({ puzzleId, puzzleIndex: inputCell.index }),

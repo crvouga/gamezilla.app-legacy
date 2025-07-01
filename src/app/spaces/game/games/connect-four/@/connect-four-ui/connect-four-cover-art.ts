@@ -18,7 +18,7 @@ export const CoverArt = (input: { class?: string }) => {
   const playerTwoFill = `url(#${ids.playerTwoGradient})`
 
   return v('svg', { width: '100%', viewBox: '0 0 2 2', ...input }, [
-    v('defs', null, [
+    v('defs', {}, [
       v('pattern', { id: ids.holePattern, patternUnits: 'userSpaceOnUse', width: 1, height: 1 }, [
         v('circle', { cx: 0.5, cy: 0.5, r: 0.425, fill: 'black' }),
       ]),

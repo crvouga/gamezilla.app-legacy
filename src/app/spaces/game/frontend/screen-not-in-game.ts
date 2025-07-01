@@ -64,7 +64,7 @@ const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: M
 }
 
 const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
-  return v('div', null, [
+  return v('div', {}, [
     v(
       Clickable,
       {

@@ -231,7 +231,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
     submitDisabled: false,
     onSubmit: () => input.dispatch({ t: 'user-clicked-send-code-button' }),
     renderInputs: () =>
-      v(Frag, null, [
+      v(Frag, {}, [
         v(Select<Iso3166Alpha2Code>, {
           id: 'countryCode',
           label: input.ctx.t('auth-sms.country'),
@@ -280,7 +280,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
         code: input.model.code,
       }),
     renderInputs: () =>
-      v(Frag, null, [
+      v(Frag, {}, [
         v(Typography, {
           role: 'status',
           class: 'text-lg',

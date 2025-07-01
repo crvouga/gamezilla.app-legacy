@@ -150,7 +150,7 @@ const View: Module['View'] = (input) => {
         ctx: input.ctx,
         title: input.ctx.t('connect-four'),
         renderCoverArt: (input) => {
-          return v('div', { ...input }, [v(CoverArt)])
+          return v('div', { ...input }, [v(CoverArt, {})])
         },
         onStartGame: () => {
           input.dispatch({

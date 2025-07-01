@@ -215,7 +215,7 @@ const viewToggleModeAction = (
           id: input.ctx.t('game.numberlink.play-mode'),
           icon: (input) => v(IconPlay, input),
           label: input.ctx.t('game.numberlink.play-mode'),
-          classs: { button: 'text-blue-500' },
+          classNames: { button: 'text-blue-500' },
           onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
         },
       ]
@@ -226,7 +226,7 @@ const viewToggleModeAction = (
           id: input.ctx.t('game.numberlink.edit-mode'),
           icon: (input) => v(IconPen, input),
           label: input.ctx.t('game.numberlink.edit-mode'),
-          classs: { button: 'text-amber-500' },
+          classNames: { button: 'text-amber-500' },
           onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
         },
       ]
@@ -269,7 +269,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
     id: 'puzzle-builder-screen-mode-play',
     ctx: input.ctx,
     renderBody: () =>
-      v(BoardLayout, null, [
+      v(BoardLayout, {}, [
         v('div', { class: 'flex w-full items-center justify-center gap-1 p-2' }, [
           input.ctx.t('game.numberlink.playing'),
         ]),

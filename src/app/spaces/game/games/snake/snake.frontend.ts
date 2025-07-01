@@ -185,10 +185,10 @@ export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
 
 export const View = ({ model, dispatch }: { ctx: AppFrontendCtx; model: Model; dispatch: (msg: Msg) => void }) => {
   if (model.gameStatus.type === 'GameSetup') {
-    return v('div', null, ['View'])
+    return v('div', {}, ['View'])
   }
 
-  return v('div', null, [v(ViewBoard, { model, dispatch })])
+  return v('div', {}, [v(ViewBoard, { model, dispatch })])
 }
 
 export const ViewBoard = (_input: { model: Model; dispatch: (msg: Msg) => void }) => {

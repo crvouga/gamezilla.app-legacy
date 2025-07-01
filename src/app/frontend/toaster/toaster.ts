@@ -142,7 +142,7 @@ export const View: Module['View'] = (input) => {
     [
       input.model.toast &&
         v(Toast, {
-          key: input.model.toast.toastId,
+          key: String(input.model.toast.toastId),
           ctx: input.ctx,
           toast: input.model.toast,
           dispatch: input.dispatch,
@@ -167,11 +167,12 @@ const onExit = async (node: HTMLElement) => {
   }).finished
 }
 
-const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) => {
+const Toast = (input: { key?: string; ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) => {
   const errorMsg = input.toast.errorMsg
   return v(
     'div',
     {
+      key: input.key,
       id: String(input.toast.toastId),
       role: 'alert',
       'data-error': input.toast.variant === 'error',

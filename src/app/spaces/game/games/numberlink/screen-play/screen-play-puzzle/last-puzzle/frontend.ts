@@ -48,12 +48,12 @@ const ViewDialog = (input: {
   }
 
   return v(Dialog, { delay: TimeSpan.seconds(1), open: input.open, onClose }, [
-    v(DialogSurface, null, [
+    v(DialogSurface, {}, [
       v(SurfaceHeader, { ctx: input.ctx, title: input.ctx.t('app.congratulations'), onClose }),
 
-      v(SurfaceBody, null, [v(Typography, { text: input.ctx.t('game.numberlink.you-have-completed-the-pack') })]),
+      v(SurfaceBody, {}, [v(Typography, { text: input.ctx.t('game.numberlink.you-have-completed-the-pack') })]),
 
-      v(SurfaceActions, null, [
+      v(SurfaceActions, {}, [
         v(Button, {
           class: 'w-full',
           text: input.ctx.t('game.numberlink.select-next-pack'),

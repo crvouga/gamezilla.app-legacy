@@ -7,7 +7,7 @@ describe('RenderToString', () => {
   test('should be able to render to string', async () => {
     const renderToString = await RenderToString()
 
-    const vDom: VDom = v('div', null, [v('div', null, ['hello'])])
+    const vDom: VDom = v('div', {}, [v('div', {}, ['hello'])])
 
     const string = renderToString(vDom)
 

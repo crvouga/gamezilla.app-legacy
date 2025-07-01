@@ -1,22 +1,21 @@
-import { createPortal, Fragment, ParentDOM, render } from 'inferno'
+// @ts-nocheck
+import { Fragment, render } from 'inferno'
 import { createElement } from 'inferno-create-element'
 import { VDOM_FRAGMENT_KEY } from './fragment'
-import { ICreatePortal, VirtualDomEngine } from './interface'
-import { VDom } from './vdom'
+import { VirtualDomEngine } from './interface'
 
 export const initInferno = (): VirtualDomEngine => {
   return {
-    render: (node) => {
-      return (vDom) => {
-        render(vDom, node as unknown as ParentDOM)
-      }
+    render: (node) => (vDom) => render(vDom, node),
+    createPortal: (vDom, container) => {
+      render(vDom, container)
+      return createElement(Fragment, {})
     },
-    createPortal: createPortal as ICreatePortal,
-    v: (tag: any, props: any, children) => {
+    v: (tag, props, children = []) => {
       if (tag === VDOM_FRAGMENT_KEY) {
-        return createElement(Fragment, props, ...(children ?? [])) as VDom
+        return createElement(Fragment, props, ...children)
       }
-      return createElement(tag, props, ...(children ?? [])) as VDom
+      return createElement(tag, props, ...children)
     },
   }
 }

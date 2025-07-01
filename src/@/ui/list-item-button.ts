@@ -12,6 +12,7 @@ type Input = {
   label: TranslatedText
   onClick?: () => void
   color?: Color
+  key?: string
 }
 
 export const ListItemButton = (input: Input) => {

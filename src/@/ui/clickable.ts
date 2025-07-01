@@ -25,6 +25,7 @@ export type ClickableProps = {
   'data-testid'?: string
   'aria-hidden'?: boolean
   'aria-disabled'?: boolean
+  key?: string
 }
 
 export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {

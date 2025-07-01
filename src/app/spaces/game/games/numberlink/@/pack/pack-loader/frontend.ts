@@ -87,7 +87,7 @@ const ViewList = (input: {
           }),
         ),
 
-        isLoading && v(SpinnerBlock),
+        isLoading && v(SpinnerBlock, {}),
       ].filter(Boolean),
     ),
   ])

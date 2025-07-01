@@ -318,14 +318,14 @@ export const View = ({
         }),
         model.t === 'loading' &&
           v('div', { class: 'absolute top-0 left-0 z-20 grid h-full w-full place-items-center bg-black/50' }, [
-            v(Spinner),
+            v(Spinner, {}),
           ]),
       ]),
 
       v('div', { class: 'grid w-full grid-cols-2 px-2 py-1' }, [
         v('div', { class: 'flex items-center justify-start gap-1 text-xs' }, [
           v(Typography, { text: TranslatedText.of('Puzzle Rating'), color: 'text-secondary' }),
-          v('p', null, [model.t === 'loading' ? '...' : model.puzzle.rating]),
+          v('p', {}, [model.t === 'loading' ? '...' : model.puzzle.rating]),
         ]),
 
         v('div', { class: 'flex flex-1 items-center justify-end gap-1 text-right text-xs' }, [
@@ -483,7 +483,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
     ])
   }
 
-  return v('div')
+  return v('div', {})
 }
 
 const TickingClock = (input: { sec: number }) => {

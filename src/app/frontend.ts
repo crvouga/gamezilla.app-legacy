@@ -14,6 +14,7 @@ import { Topic } from '~/@/topic'
 import { IconGamepad, IconUserCircle } from '~/@/ui/icon'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
+import { v } from '~/@/vdom/v'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { CONFIG_SHARED } from '~/config/shared'
 import { BackendConnector } from '~/service-powersync/client/backend-connector'
@@ -37,7 +38,6 @@ import { ProfileFrontend } from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract, topicContract } from './types'
 import { WireFrontend } from './wire/frontend'
-import { v } from '~/@/vdom/v'
 
 const initCtx = async (): Promise<FrontendCtxModule> => {
   const logger = Logger({
@@ -355,7 +355,7 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
 const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   const frontendCtx = toCtx(input)
 
-  return v(ViewAppRoot, null, [
+  return v(ViewAppRoot, {}, [
     v(ViewAppStatusBar, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
 
     v('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
@@ -368,7 +368,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
       model: input.model.auth,
     }),
 
-    v(DrawerPortalExit),
+    v(DrawerPortalExit, {}),
 
     v(ToasterFrontend.View, {
       ctx: frontendCtx,

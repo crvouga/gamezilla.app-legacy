@@ -41,6 +41,7 @@ export const SectionPeopleList = (input: {
 }
 
 const PersonListItem = (input: {
+  key?: string
   profile: ReturnType<typeof SpaceFrontendCtx.toProfiles>[number]
   ctx: SpaceFrontendCtx
   onClick: () => void
@@ -48,7 +49,7 @@ const PersonListItem = (input: {
   return v(
     Clickable,
     {
-      key: input.profile.id,
+      key: input.key,
       onClick: input.onClick,
       class: 'flex w-full items-center gap-2 p-2 px-6',
     },

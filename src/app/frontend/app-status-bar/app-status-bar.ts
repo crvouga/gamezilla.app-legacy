@@ -1,6 +1,5 @@
 import { Clickable } from '~/@/ui/clickable'
 import { cn } from '~/@/ui/cn'
-import { Frag } from '~/@/ui/frag'
 import { v } from '~/@/vdom/v'
 import { AuthFrontend } from '~/app/auth/frontend'
 import { LangFrontend } from '~/app/lang/frontend'
@@ -57,7 +56,7 @@ export const ViewAppStatusBar = (input: {
               ],
             )
           },
-          surfaceContent: v(Frag, null, [
+          surfaceContent: v('div', {}, [
             v(WireFrontend.ViewListItem, {
               model: input.model.wire,
               dispatch: (c) => input.dispatch({ t: 'wire', c }),

@@ -1,5 +1,5 @@
 import { v } from '~/@/vdom/v'
 
 export const ActivityFeed = () => {
-  return v('div')
+  return v('div', {})
 }

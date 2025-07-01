@@ -1,7 +1,7 @@
 import { minBy } from '../array/min-by'
 import { editDistance } from '../string/edit-distance'
 
-const ALL = ['inferno', 'preact', 'react'] as const
+const ALL = ['inferno', 'preact', 'react', 'snabbdom'] as const
 
 export type VDomImpl = (typeof ALL)[number]
 

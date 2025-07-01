@@ -81,7 +81,7 @@ const ViewDot = (input: { model: Model; ctx: AppFrontendCtxBase; class: string }
 }
 
 const ViewListItem = (input: { model: Model; ctx: AppFrontendCtxBase; dispatch: (msg: MsgFrontend) => void }) => {
-  return v('div', null, [v(ViewListItemInner, input)])
+  return v(ViewListItemInner, input)
 }
 
 const ViewListItemInner: typeof ViewListItem = (input) => {

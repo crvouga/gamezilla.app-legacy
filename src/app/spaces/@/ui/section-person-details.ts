@@ -12,7 +12,7 @@ export const SectionPersonDetails = (input: {
   profile: UserProfile | null
   onOpenDetails: () => void
 }) => {
-  return v('div', null, [
+  return v('div', {}, [
     v(
       'button',
       {

@@ -24,7 +24,7 @@ export const TextField = (input: {
 }) => {
   return v('label', {
     class: 'flex w-full flex-col gap-1',
-    children: v(Frag, null, [
+    children: v(Frag, {}, [
       v('label', {
         htmlFor: input.id,
         class: cn('text-base', input.error && 'text-red-500'),
@@ -37,7 +37,7 @@ export const TextField = (input: {
           input.error && 'border-2 border-red-500 text-red-500',
           !input.error && 'ring-blue-500 focus-within:ring-2',
         ),
-        children: v(Frag, null, [
+        children: v(Frag, {}, [
           v('input', {
             role: 'textbox',
             'data-testid': input.dataTestId,

@@ -25,7 +25,7 @@ export type Program<TModel, TMsg> = {
 
   subscriptions: (input: { intervalId: string; model: TModel }) => MaybePromise<Sub<TMsg>>
 
-  crash?: (input: ProgramCrashReport<TModel, TMsg>) => MaybePromise<unknown>
+  crash: (input: ProgramCrashReport<TModel, TMsg>) => MaybePromise<unknown>
 
   debugger?: ProgramDebugger
 
@@ -81,7 +81,7 @@ export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
         dispatch(msg)
       }
     } catch (error) {
-      await program.crash?.({ message: 'Program crashed while dispatching message', error, msg, model })
+      await program.crash({ message: 'Program crashed while dispatching message', error, msg, model })
     }
   }
 

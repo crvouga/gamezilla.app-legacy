@@ -3,7 +3,6 @@ import { v } from '~/@/vdom/v'
 import { VDom } from '~/@/vdom/vdom'
 import { Clickable } from '../clickable'
 import { cn } from '../cn'
-import { Frag } from '../frag'
 
 export type ChipSize = 'sm' | 'lg'
 
@@ -15,17 +14,20 @@ export type ChipProps = {
 }
 
 export const Chip = (input: ChipProps) => {
-  return v(Tag, {
-    tagName: typeof input.onClick === 'function' ? 'button' : 'div',
-    class: cn('flex items-center gap-1 truncate border border-white/30 font-semibold', toSizeClass(input)),
-    onClick: input.onClick,
-    children: v(Frag, null, [
+  return v(
+    Tag,
+    {
+      tagName: typeof input.onClick === 'function' ? 'button' : 'div',
+      class: cn('flex items-center gap-1 truncate border border-white/30 font-semibold', toSizeClass(input)),
+      onClick: input.onClick,
+    },
+    [
       input.renderStartIcon?.({
         class: cn(toIconSizeClass(input), 'shrink-0'),
       }),
       v('span', { class: 'truncate' }, [input.label]),
-    ]),
-  })
+    ],
+  )
 }
 
 const Tag = ({

@@ -19,6 +19,7 @@ const main = async () => {
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
     render: (input) => render(v(AppFrontend.View, { ...input, ctx })),
+    crash: (input) => console.error(input),
   })
 
   // @ts-expect-error

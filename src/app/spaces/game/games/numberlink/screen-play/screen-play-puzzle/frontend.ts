@@ -287,13 +287,13 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
   }
 
   return v(Dialog, { delay: CHECKMARK_DURATION, open: isSolvedPuzzleDialogOpen, onClose }, [
-    v(DialogSurface, null, [
+    v(DialogSurface, {}, [
       v(SurfaceHeader, {
         ctx: input.ctx,
         title: input.ctx.t('game.numberlink.puzzle-completed'),
         onClose,
       }),
-      v(SurfaceActions, null, [
+      v(SurfaceActions, {}, [
         v(Button, {
           text: input.ctx.t('game.numberlink.next-puzzle'),
           class: 'w-full',

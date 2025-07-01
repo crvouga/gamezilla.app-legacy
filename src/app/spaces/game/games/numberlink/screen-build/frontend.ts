@@ -110,7 +110,7 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewFeedItem: FrontendModule['ViewFeedItem'] = () => {
-  return v('div')
+  return v('div', {})
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {

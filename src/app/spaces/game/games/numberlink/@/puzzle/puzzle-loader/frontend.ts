@@ -123,7 +123,7 @@ const ViewList = (input: {
           label: input.ctx.t('game.numberlink.no-puzzles'),
         }),
 
-      isLoading && v(SpinnerBlock),
+      isLoading && v(SpinnerBlock, {}),
 
       v(Gutter, { variant: 'screen' }),
     ]),

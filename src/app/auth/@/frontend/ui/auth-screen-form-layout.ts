@@ -22,11 +22,14 @@ export const AuthScreenFormLayout = (input: {
   onSubmit: () => void
   dataTestId: string
 }) => {
-  return v(AuthScreenLayout, {
-    dataTestId: input.dataTestId,
-    ctx: input.ctx,
-    center: false,
-    children: v(Frag, null, [
+  return v(
+    AuthScreenLayout,
+    {
+      dataTestId: input.dataTestId,
+      ctx: input.ctx,
+      center: false,
+    },
+    [
       v(AuthScreenHeader, {
         ctx: input.ctx,
         title: input.title,
@@ -38,7 +41,7 @@ export const AuthScreenFormLayout = (input: {
           e.preventDefault()
           input.onSubmit()
         },
-        children: v(Frag, null, [
+        children: v(Frag, {}, [
           v('div', {
             class: 'flex w-full flex-col gap-6',
             children: input.renderInputs(),
@@ -55,6 +58,6 @@ export const AuthScreenFormLayout = (input: {
           }),
         ]),
       }),
-    ]),
-  })
+    ],
+  )
 }

@@ -34,7 +34,12 @@ const update: SpaceFrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
+const View = (input: {
+  key?: string
+  ctx: AppFrontendCtx
+  model: ModelFrontend
+  dispatch: (msg: MsgFrontend) => void
+}) => {
   const userSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
   const space = Spaces.toSpaceStarted(input.model.spaces, userSpaceId)
 

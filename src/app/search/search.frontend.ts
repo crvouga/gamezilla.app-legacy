@@ -125,7 +125,7 @@ export const View = ({
   //   const request = model.requests[model.searchText] ?? { type: 'not-asked' };
   const results = matchSort(Object.values(model.searchResults), (item) => item.username, model.searchText)
 
-  return v('div', null, [
+  return v('div', {}, [
     v('div', { class: 'flex h-full w-full flex-col' }, [
       // input
       v('div', { class: 'w-full p-4' }, [
@@ -159,7 +159,7 @@ export const View = ({
       // results
       v(
         'ul',
-        null,
+        {},
         results.map((result) =>
           v('li', { key: result.userId }, [
             v(

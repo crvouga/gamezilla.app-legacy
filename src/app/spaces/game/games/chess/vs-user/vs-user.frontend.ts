@@ -493,10 +493,10 @@ const ViewGameOverDialog = ({ model }: { model: Model; dispatch: (msg: Msg) => v
   }
 
   if (model.spaceModel.type === 'game') {
-    return v('span')
+    return v('span', {})
   }
 
-  return v('span')
+  return v('span', {})
 }
 
 const toGameText = (model: SpaceModel): string => {

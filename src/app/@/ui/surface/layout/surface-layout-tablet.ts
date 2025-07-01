@@ -15,11 +15,11 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
       renderReference: () => props.dropDown?.reference,
       alignment: props.dropDown?.alignment ?? 'ending',
       position: props.dropDown?.position ?? 'bottom',
-      renderFloating: () => v(DropDownSurface, null, [v(SurfaceContent, props)]),
+      renderFloating: () => v(DropDownSurface, {}, [v(SurfaceContent, props)]),
     })
   }
 
-  return v('div', null, [
+  return v('div', {}, [
     props.dropDown?.reference,
     v(
       Dialog,
@@ -27,7 +27,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
         open: props.open,
         onClose: props.onClose,
       },
-      [v(DialogSurface, null, [v(SurfaceContent, props)])],
+      [v(DialogSurface, {}, [v(SurfaceContent, props)])],
     ),
   ])
 }

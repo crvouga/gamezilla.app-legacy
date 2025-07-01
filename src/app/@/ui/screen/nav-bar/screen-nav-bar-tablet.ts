@@ -10,6 +10,7 @@ import { VDom } from '~/@/vdom/vdom'
 export const ScreenNavBarTablet = (input: {
   title?: TranslatedText | null
   subtitle?: TranslatedText | null
+  key?: string
   ctx: {
     t: Translator
   }
@@ -20,7 +21,7 @@ export const ScreenNavBarTablet = (input: {
   renderEnd?: () => VDom
 }) => {
   const renderSurface = input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference)
-  return v(ScreenNavBarTabletRoot, null, [
+  return v(ScreenNavBarTabletRoot, {}, [
     input.back &&
       renderSurface({
         dropDown: {

@@ -17,7 +17,7 @@ export const VerticalActionBar = (
   },
 ) => {
   return v('div', { class: cn('flex h-full max-w-48 flex-1 shrink-0 flex-col gap-1', input.class) }, [
-    v(ScreenNavBarTabletRoot, null, [input.renderNavBar?.()]),
+    v(ScreenNavBarTabletRoot, {}, [input.renderNavBar?.()]),
 
     input.variant.t === 'uniform'
       ? v(VerticalUniform, { actions: input.variant.actions })
@@ -26,11 +26,11 @@ export const VerticalActionBar = (
 }
 
 const VerticalUniform = (input: { actions: (ScreenAction | null)[] }) => {
-  return v(Toolbar, null, [v(ActionButtonList, { actions: input.actions })])
+  return v(Toolbar, {}, [v(ActionButtonList, { actions: input.actions })])
 }
 
 const VerticalSpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
-  return v(Toolbar, null, [
+  return v(Toolbar, {}, [
     v(ActionButtonList, { actions: input.start }),
     v('div', { class: 'flex-1' }),
     v(ActionButtonList, { actions: input.end }),
@@ -67,23 +67,26 @@ const ScreenActionButton = (input: ScreenAction) => {
   const isDisabled = input.disabled || input.loading
   const size = input.size ?? 'md'
   if (input.hidden) return null
-  return v(ClickableTransparent, {
-    'data-testid': input.testId,
-    role: 'button',
-    disabled: isDisabled,
-    name: input.label,
-    'aria-disabled': isDisabled,
-    'aria-label': input.label,
-    'aria-hidden': input.hidden,
-    onClick: input.onClick,
-    class: cn(
-      'relative flex w-full min-w-32 flex-col items-center rounded-lg p-4 xl:flex-row',
-      toColorClasses(input),
-      input.hidden ? 'hidden' : '',
-      input.classs?.button,
-      toSizeClasses(size),
-    ),
-    children: [
+  return v(
+    ClickableTransparent,
+    {
+      'data-testid': input.testId,
+      role: 'button',
+      disabled: isDisabled,
+      name: input.label,
+      'aria-disabled': isDisabled,
+      'aria-label': input.label,
+      'aria-hidden': input.hidden,
+      onClick: input.onClick,
+      class: cn(
+        'relative flex w-full min-w-32 flex-col items-center rounded-lg p-4 xl:flex-row',
+        toColorClasses(input),
+        input.hidden ? 'hidden' : '',
+        input.classNames?.button,
+        toSizeClasses(size),
+      ),
+    },
+    [
       v(
         'div',
         {
@@ -96,7 +99,7 @@ const ScreenActionButton = (input: ScreenAction) => {
           input.icon({ class: toIconSizeClasses(size) }),
           v(Typography, {
             text: input.label,
-            class: cn('truncate text-center xl:text-left xl:text-xl', 'text-inherit', input.classs?.label),
+            class: cn('truncate text-center xl:text-left xl:text-xl', 'text-inherit', input.classNames?.label),
           }),
         ],
       ),
@@ -106,7 +109,7 @@ const ScreenActionButton = (input: ScreenAction) => {
           v(Spinner, { class: toIconSizeClasses(size) }),
         ]),
     ],
-  })
+  )
 }
 
 const toColorClasses = (input: ScreenAction): string => {

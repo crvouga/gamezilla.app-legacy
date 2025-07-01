@@ -10,7 +10,7 @@ export const AuthScreenHeaderCta = (input: {
 }) => {
   return v('div', {
     class: 'flex w-full flex-col items-start justify-center',
-    children: v(Frag, null, [
+    children: v(Frag, {}, [
       v(Typography, {
         text: input.ctx.t('auth.sign-in-to'),
         variant: 'title',

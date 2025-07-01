@@ -61,7 +61,6 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
       v(SurfaceLayout, {
         ctx: input.ctx,
         id: input.id,
-        key: input.id,
         ariaLabel: input.ctx.t('app.more'),
         onClose: input.limit?.onToggle ?? (() => {}),
         open: input.limit?.open ?? false,
@@ -84,7 +83,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
 const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
   return v(
     Frag,
-    null,
+    {},
     input.actions.map((action) => {
       if (!action) return null
       if (action.hidden) return null
@@ -157,24 +156,27 @@ const ScreenActionButton = (input: ScreenAction & { class?: string }) => {
   const isDisabled = input.disabled || input.loading
   const size = input.size ?? 'md'
   if (input.hidden) return null
-  return v(ClickableTransparent, {
-    role: 'button',
-    disabled: isDisabled,
-    name: input.label,
-    'aria-disabled': isDisabled,
-    'aria-label': input.label,
-    'aria-hidden': input.hidden,
-    onClick: input.onClick,
-    class: cn(
-      'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 font-normal',
-      'disabled:cursor-not-allowed disabled:opacity-50',
-      toColorClasses(input),
-      input.hidden ? 'hidden' : '',
-      input.classs?.button,
-      toSizeClasses(size),
-      input.class,
-    ),
-    children: [
+  return v(
+    ClickableTransparent,
+    {
+      role: 'button',
+      disabled: isDisabled,
+      name: input.label,
+      'aria-disabled': isDisabled,
+      'aria-label': input.label,
+      'aria-hidden': input.hidden,
+      onClick: input.onClick,
+      class: cn(
+        'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 font-normal',
+        'disabled:cursor-not-allowed disabled:opacity-50',
+        toColorClasses(input),
+        input.hidden ? 'hidden' : '',
+        input.classNames?.button,
+        toSizeClasses(size),
+        input.class,
+      ),
+    },
+    [
       v(
         'div',
         {
@@ -188,7 +190,7 @@ const ScreenActionButton = (input: ScreenAction & { class?: string }) => {
           v(Typography, {
             variant: 'label',
             text: input.label,
-            class: cn('truncate', input.classs?.label),
+            class: cn('truncate', input.classNames?.label),
           }),
         ],
       ),
@@ -198,7 +200,7 @@ const ScreenActionButton = (input: ScreenAction & { class?: string }) => {
           v(Spinner, { class: toIconSizeClasses(size) }),
         ]),
     ],
-  })
+  )
 }
 
 const toColorClasses = (input: ScreenAction): string => {

@@ -27,9 +27,9 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
         'aria-label': `Page ${i + 1}`,
       }
       if (input.onClick) {
-        return v(Clickable, { key: i, ...baseProps, onClick: () => input.onClick?.(i) })
+        return v(Clickable, { ...baseProps, onClick: () => input.onClick?.(i) })
       }
-      return v('div', { key: i, ...baseProps, onClick: () => input.onClick?.(i) })
+      return v('div', { ...baseProps, onClick: () => input.onClick?.(i) })
     }),
   )
 }

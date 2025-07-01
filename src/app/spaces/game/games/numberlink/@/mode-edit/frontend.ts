@@ -26,7 +26,7 @@ const View = (input: {
     id: 'mode-edit-screen',
     ctx: input.ctx,
     renderBody: () =>
-      v(BoardLayout, null, [
+      v(BoardLayout, {}, [
         ViewStatus(input),
 
         v(NumberlinkVariantBoard.View, {

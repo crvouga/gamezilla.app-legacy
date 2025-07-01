@@ -5,7 +5,7 @@ import { ScreenLayoutProps, toDataTestIds } from './screen-layout-props'
 import { ScreenLayoutTablet } from './screen-layout-tablet'
 
 export const ScreenLayout = (input: ScreenLayoutProps) => {
-  return v(Frag, null, [
+  return v(Frag, {}, [
     ...toDataTestIds(input).map((dataTestId) =>
       v('div', {
         key: dataTestId,

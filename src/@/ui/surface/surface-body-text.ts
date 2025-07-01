@@ -4,5 +4,5 @@ import { Typography } from '~/@/ui/typography'
 import { SurfaceBody } from './surface-body'
 
 export const SurfaceBodyText = (input: { text: TranslatedText }) => {
-  return v(SurfaceBody, null, [v(Typography, { variant: 'body', text: input.text, color: 'text-secondary' })])
+  return v(SurfaceBody, {}, [v(Typography, { variant: 'body', text: input.text, color: 'text-secondary' })])
 }

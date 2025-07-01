@@ -11,7 +11,7 @@ export type ScreenAction = {
   label: TranslatedText
   disabled?: boolean
   icon: (input: { class: string }) => VDom
-  classs?: {
+  classNames?: {
     button?: string
     label?: string
   }
@@ -44,6 +44,7 @@ export type ScreenActionsSpaceBetween = {
 export type ScreenActions = ScreenActionsUniform | ScreenActionsSpaceBetween
 
 export type ScreenActionBarProps = {
+  key?: string
   id: string
   ctx: {
     t: Translator

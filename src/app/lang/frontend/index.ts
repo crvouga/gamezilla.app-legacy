@@ -151,10 +151,11 @@ const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
     icon: (input) => v(IconLanguage, input),
     label: ctx.t('lang.language'),
     end: () => ctx.t(model.lang),
-    onClick: () =>
+    onClick: () => {
       dispatch({
         t: 'clicked-change-lang',
-      }),
+      })
+    },
   })
 }
 
@@ -192,26 +193,47 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       v('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
-        ...LanguageCodeISO_639_1.ALL.map((code) =>
+        ...LanguageCodeISO_639_1.ALL.map((langCode) =>
           v(ListItemButton, {
-            key: code,
-            label: input.ctx.t(code),
+            key: langCode,
+            label: input.ctx.t(langCode),
             icon: (inputIcon) => {
-              if (input.model.loading[code]?.endedAt === null) {
+              if (input.model.loading[langCode]?.endedAt === null) {
                 return v(Spinner, inputIcon)
               }
 
-              if (input.model.lang === code) {
+              if (input.model.lang === langCode) {
                 return v(IconCheckmarkCircle, inputIcon)
               }
 
-              return v(IconCheckmarkCircle, inputIcon)
+              return v(
+                'svg',
+                {
+                  viewBox: '0 0 24 24',
+                  fill: 'none',
+                  stroke: 'currentColor',
+                  'stroke-width': '2',
+                  'stroke-linecap': 'round',
+                  class: inputIcon.class,
+                },
+                [
+                  v('circle', {
+                    r: '8',
+                    cx: '12',
+                    cy: '12',
+                    fill: 'none',
+                    stroke: 'currentColor',
+                    strokeWidth: 2,
+                    strokeLinecap: 'round',
+                  }),
+                ],
+              )
             },
-            end: () => v('div', {}, [input.ctx.t(code)]),
+            end: () => v('div', {}, [input.ctx.t(langCode)]),
             onClick: () =>
               input.dispatch({
                 t: 'choose-lang.clicked-lang',
-                lang: code,
+                lang: langCode,
               }),
           }),
         ),

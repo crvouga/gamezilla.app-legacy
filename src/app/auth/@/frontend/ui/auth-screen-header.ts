@@ -15,7 +15,7 @@ export const AuthScreenHeader = (input: {
 }) => {
   return v('div', {
     class: 'flex w-full flex-row items-center justify-start gap-2',
-    children: v(Frag, null, [
+    children: v(Frag, {}, [
       v(IconButton, {
         class: '-ml-2',
         label: input.ctx.t('app.back'),

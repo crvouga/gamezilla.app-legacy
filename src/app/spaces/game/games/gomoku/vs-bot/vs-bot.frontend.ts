@@ -140,5 +140,5 @@ export const subscriptions = (_ctx: AppFrontendCtx, model: Model): Sub<Msg> => {
 //
 
 export const View = (_input: { model: Model; ctx: AppFrontendCtx; dispatch: (m: Msg) => void; onBack: () => void }) => {
-  return v('div', null, ['View'])
+  return v('div', {}, ['View'])
 }

@@ -47,7 +47,7 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
     },
     body: {
       render: () =>
-        v(Frag, null, [
+        v(Frag, {}, [
           v(Typography, {
             color: 'text-secondary',
             class: 'p-4 px-6',

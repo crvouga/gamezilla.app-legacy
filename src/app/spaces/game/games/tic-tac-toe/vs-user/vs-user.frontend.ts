@@ -189,7 +189,7 @@ export const View = ({
           },
         ]),
       renderCoverArt: (input) => {
-        return v('div', { ...input }, [v(CoverArt)])
+        return v('div', { ...input }, [v(CoverArt, {})])
       },
       title: ctx.t('tic-tac-toe'),
       canStartGame: model.X !== 'none' && model.O !== 'none',
@@ -247,10 +247,10 @@ export const View = ({
   }
 
   if (model.type === 'game') {
-    return v('div')
+    return v('div', {})
   }
 
-  return v('div')
+  return v('div', {})
 }
 
 export const toGameText = ({ model }: { model: ModelFrontend }): string => {

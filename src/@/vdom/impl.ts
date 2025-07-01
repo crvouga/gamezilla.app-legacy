@@ -1,9 +1,10 @@
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { VDomImpl } from './vdom-impl'
 import { initInferno } from './impl-inferno'
 import { initPreact } from './impl-preact'
 import { initReact } from './impl-react'
+import { initSnabbdom } from './impl-snabbdom'
 import { ICreatePortal, IRender, RenderNode, V, VirtualDomEngine } from './interface'
+import { VDomImpl } from './vdom-impl'
 
 export const init = (vdomImpl: VDomImpl): VirtualDomEngine => {
   switch (vdomImpl) {
@@ -15,6 +16,9 @@ export const init = (vdomImpl: VDomImpl): VirtualDomEngine => {
     }
     case 'inferno': {
       return initInferno()
+    }
+    case 'snabbdom': {
+      return initSnabbdom()
     }
   }
 }

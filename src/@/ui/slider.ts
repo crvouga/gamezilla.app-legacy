@@ -17,7 +17,7 @@ export const Slider = ({
   step: number
   onInput?: (newValue: number) => void
 }) => {
-  return v('div', null, [
+  return v('div', {}, [
     v(Typography, { variant: 'label', text: label }),
     v('input', {
       type: 'range',

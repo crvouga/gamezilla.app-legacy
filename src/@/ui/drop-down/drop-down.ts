@@ -30,7 +30,7 @@ export const DropDown = (props: {
     }
   }
 
-  return v('div', null, [
+  return v('div', {}, [
     v(Backdrop, { open: props.open, onClick: onClose, onKeyDown }),
     v(
       'div',

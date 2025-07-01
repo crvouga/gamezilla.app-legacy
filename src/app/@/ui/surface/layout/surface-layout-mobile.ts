@@ -5,7 +5,7 @@ import { SurfaceContent } from './surface-content'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
-  return v(Frag, null, [
+  return v(Frag, {}, [
     props.dropDown?.reference,
     v(
       Drawer,

@@ -4,7 +4,7 @@ import { sleep } from '../promise/sleep'
 import { TimeSpan } from '../time/time-span'
 import { Transition } from './transition'
 
-export const Badge = (input: { badgeContent: VDom; children: VDom; id: string }) => {
+export const Badge = (input: { badgeContent: VDom; id: string; children: VDom[] }) => {
   return v('div', { class: 'relative h-fit w-fit' }, [
     v(Transition, { onEnter: onEnterGrow, id: input.id, mode: 'in-out', onExit: onExitShrink }, [
       input.badgeContent &&
@@ -17,7 +17,7 @@ export const Badge = (input: { badgeContent: VDom; children: VDom; id: string })
           [input.badgeContent],
         ),
     ]),
-    input.children,
+    ...input.children,
   ])
 }
 

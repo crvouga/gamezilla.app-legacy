@@ -199,38 +199,43 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewLoginScreen: FrontendModule['View'] = (input) => {
-  return v(AuthScreenLayout, {
-    dataTestId: 'auth/login-screen',
-    ctx: input.ctx,
-    center: true,
-    children: v('div', { class: 'flex w-full flex-1 flex-col gap-6' }, [
-      v(AuthScreenHeaderCta, { ctx: input.ctx }),
+  return v(
+    AuthScreenLayout,
+    {
+      dataTestId: 'auth/login-screen',
+      ctx: input.ctx,
+      center: true,
+    },
+    [
+      v('div', { class: 'flex w-full flex-1 flex-col gap-6' }, [
+        v(AuthScreenHeaderCta, { ctx: input.ctx }),
 
-      v(Button, {
-        onClick: () => input.dispatch({ t: 'clicked-login-with-phone' }),
-        size: 'lg',
-        dataTestId: 'auth/continue-with-phone-button',
-        class: 'w-full',
-        renderIconStart: (iconInput) => v(IconMobilePhone, iconInput),
-        text: input.ctx.t('auth.continue-with-phone'),
-      }),
+        v(Button, {
+          onClick: () => input.dispatch({ t: 'clicked-login-with-phone' }),
+          size: 'lg',
+          dataTestId: 'auth/continue-with-phone-button',
+          class: 'w-full',
+          renderIconStart: (iconInput) => v(IconMobilePhone, iconInput),
+          text: input.ctx.t('auth.continue-with-phone'),
+        }),
 
-      v('div', { class: 'flex w-full items-center justify-center py-1' }, [
-        v(Typography, {
-          variant: 'body',
-          class: 'text-base font-bold uppercase',
-          color: 'text-secondary',
-          text: input.ctx.t('auth.or'),
+        v('div', { class: 'flex w-full items-center justify-center py-1' }, [
+          v(Typography, {
+            variant: 'body',
+            class: 'text-base font-bold uppercase',
+            color: 'text-secondary',
+            text: input.ctx.t('auth.or'),
+          }),
+        ]),
+
+        v(ContinueAsGuestFrontend.ViewButton, {
+          ctx: input.ctx,
+          dispatch: (c) => input.dispatch({ t: 'got-login-as-guest-msg', c }),
+          model: input.model.continueAsGuest,
         }),
       ]),
-
-      v(ContinueAsGuestFrontend.ViewButton, {
-        ctx: input.ctx,
-        dispatch: (c) => input.dispatch({ t: 'got-login-as-guest-msg', c }),
-        model: input.model.continueAsGuest,
-      }),
-    ]),
-  })
+    ],
+  )
 }
 
 const ViewModals = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {

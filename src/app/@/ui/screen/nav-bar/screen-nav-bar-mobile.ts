@@ -9,6 +9,7 @@ import { VDom } from '~/@/vdom/vdom'
 
 export const ScreenNavBarMobile = (input: {
   title?: TranslatedText | null
+  key?: string
   subtitle?: TranslatedText | null
   ctx: {
     t: Translator
@@ -68,7 +69,7 @@ export const ScreenNavBarMobile = (input: {
         ],
       ),
 
-      shouldRenderBack && v(IconButtonEmpty),
+      shouldRenderBack && v(IconButtonEmpty, {}),
     ],
   )
 }

@@ -265,7 +265,7 @@ const ViewSurface = (
     dropDown: input.dropDown,
     body: {
       render: () =>
-        v(SurfaceBody, null, [
+        v(SurfaceBody, {}, [
           v(TextField, {
             id: 'game-numberlink-edit-puzzle-name-input',
             label: input.ctx.t('game.numberlink.edit-puzzle-name.name'),
