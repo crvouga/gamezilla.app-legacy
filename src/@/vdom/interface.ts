@@ -1,6 +1,22 @@
 import { VDom } from './vdom'
 
-export type Tag = 'div' | (string & {})
+export type Tag =
+  | 'div'
+  | 'button'
+  | 'input'
+  | 'p'
+  | 'a'
+  | 'svg'
+  | 'label'
+  | 'form'
+  | 'span'
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'h6'
+  | (string & {})
 
 export type Props = Record<string, unknown>
 
