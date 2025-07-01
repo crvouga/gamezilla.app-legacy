@@ -48,9 +48,7 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
-    "types": ["vite/client", "preact", "react", "vite-plugin-pwa/client"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
+    "types": ["vite/client", "vite-plugin-pwa/client"],
     "allowJs": false,
 
     //
