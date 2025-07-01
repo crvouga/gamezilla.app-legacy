@@ -35,14 +35,14 @@ const GRIDS = [
 
 const GRID = GRIDS[3]
 
-const VIEW_GRID = h(VariantGridBoard.View, {
-  model: GRID,
-  disabled: true,
-  borderless: true,
-  disableHighlight: true,
-  class: 'aspect-square bg-black',
-})
-
 export const CoverArt = (input: { class?: string }) => {
-  return h('div', input, [VIEW_GRID])
+  return h('div', { class: input.class }, [
+    h(VariantGridBoard.View, {
+      model: GRID,
+      disabled: true,
+      borderless: true,
+      disableHighlight: true,
+      class: 'aspect-square bg-black',
+    }),
+  ])
 }
