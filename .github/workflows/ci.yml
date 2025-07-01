@@ -73,8 +73,15 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Create .env file
+        run: |
+          cp .env.local .env
+
       - name: Start infrastructure
         run: npm run infra:up:test
+
+      - name: Run database migrations
+        run: npm run db:up
 
       - name: Run integration tests
         run: npm run test:int
