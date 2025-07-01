@@ -20,20 +20,20 @@ export const cnParams = (
   )
 }
 
-export const cnLoop = (...classNames: ClassNameValue[]): string => {
+export const cnLoop = (...classes: ClassNameValue[]): string => {
   let result = ''
-  const len = classNames.length
+  const len = classes.length
   for (let i = 0; i < len; i++) {
-    const className = classNames[i]
-    if (className) {
-      result += className
+    const class_ = classes[i]
+    if (class_) {
+      result += class_
     }
   }
   return result
 }
 
-export const cnFilter = (...classNames: ClassNameValue[]): string => {
-  return classNames.filter(Boolean).join(' ')
+export const cnFilter = (...classes: ClassNameValue[]): string => {
+  return classes.filter(Boolean).join(' ')
 }
 
 export const cn = cnFilter

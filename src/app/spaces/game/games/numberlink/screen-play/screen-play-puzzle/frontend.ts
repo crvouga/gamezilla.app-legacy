@@ -142,7 +142,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
       v(
         'div',
         {
-          className: 'flex w-full flex-1 items-center justify-center',
+          class: 'flex w-full flex-1 items-center justify-center',
           'data-puzzle-id': puzzle.t === 'got' ? puzzle.c.id : null,
         },
         [
@@ -234,7 +234,7 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
           profile: input.ctx.profilesByUserId[input.ctx.space.hostId],
           subtitle: input.ctx.t('game.player'),
         }),
-        v('div', { className: 'flex flex-1 items-center justify-center' }, [
+        v('div', { class: 'flex flex-1 items-center justify-center' }, [
           puzzle.t === 'got'
             ? v(ModePlayFrontend.View, {
                 disabled: true,
@@ -296,7 +296,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
       v(SurfaceActions, null, [
         v(Button, {
           text: input.ctx.t('game.numberlink.next-puzzle'),
-          className: 'w-full',
+          class: 'w-full',
           onClick: () =>
             input.dispatch({
               t: 'got-msg-space',

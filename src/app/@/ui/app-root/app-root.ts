@@ -5,7 +5,7 @@ export const ViewAppRoot = (input: { children: VDom }) => {
   return v(
     'div',
     {
-      className:
+      class:
         'relative flex h-[100dvh] w-[100dvw] flex-col items-center justify-center overflow-hidden bg-black text-white',
       style: {
         padding:

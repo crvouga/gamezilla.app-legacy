@@ -215,7 +215,7 @@ const viewToggleModeAction = (
           id: input.ctx.t('game.numberlink.play-mode'),
           icon: (input) => v(IconPlay, input),
           label: input.ctx.t('game.numberlink.play-mode'),
-          classNames: { button: 'text-blue-500' },
+          classs: { button: 'text-blue-500' },
           onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-play-mode-button' }),
         },
       ]
@@ -226,7 +226,7 @@ const viewToggleModeAction = (
           id: input.ctx.t('game.numberlink.edit-mode'),
           icon: (input) => v(IconPen, input),
           label: input.ctx.t('game.numberlink.edit-mode'),
-          classNames: { button: 'text-amber-500' },
+          classs: { button: 'text-amber-500' },
           onClick: () => input.dispatch({ t: 'screen-puzzle-builder.user-clicked-edit-mode-button' }),
         },
       ]
@@ -270,7 +270,7 @@ const ViewModePlay: BuilderTypes.FrontendModule['View'] = (input) => {
     ctx: input.ctx,
     renderBody: () =>
       v(BoardLayout, null, [
-        v('div', { className: 'flex w-full items-center justify-center gap-1 p-2' }, [
+        v('div', { class: 'flex w-full items-center justify-center gap-1 p-2' }, [
           input.ctx.t('game.numberlink.playing'),
         ]),
         v(ModePlayFrontend.View, {
@@ -311,7 +311,7 @@ const ViewSpectating: BuilderTypes.FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       v(LayoutGame, { ctx: input.ctx, isSpectating: true }, [
-        v('div', { className: 'flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll' }, [
+        v('div', { class: 'flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll' }, [
           v(ProfileListItem, {
             ctx: input.ctx,
             profile: input.ctx.profilesByUserId[input.ctx.space.hostId],

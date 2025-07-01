@@ -7,7 +7,7 @@ import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 export const ViewHostChip = (input: { ctx: AppFrontendCtxBase }) => {
   return v(Chip, {
     size: 'sm',
-    renderStartIcon: (input) => v(IconCrown, { className: cn(input.className, 'text-yellow-300') }),
+    renderStartIcon: (input) => v(IconCrown, { class: cn(input.class, 'text-yellow-300') }),
     label: input.ctx.t('host'),
   })
 }

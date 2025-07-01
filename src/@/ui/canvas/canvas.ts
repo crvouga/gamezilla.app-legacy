@@ -3,7 +3,7 @@ import { v } from '~/@/vdom/v'
 export const Canvas = <T>({
   watch,
   paint,
-  className,
+  class: class_,
   onMouseDown,
   onMouseUp,
   onTouchStart,
@@ -11,7 +11,7 @@ export const Canvas = <T>({
   onMouseMove,
   onTouchEnd,
 }: {
-  className?: string
+  class?: string
   watch: T
   paint: (value: T, ctx: CanvasRenderingContext2D) => void
   onMouseDown?: (event: MouseEvent) => void
@@ -25,7 +25,7 @@ export const Canvas = <T>({
   watch
   paint
   return v('canvas', {
-    className,
+    class: class_,
     onMouseDown,
     onMouseUp,
     onMouseMove,

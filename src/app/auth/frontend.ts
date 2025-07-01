@@ -203,22 +203,22 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
     dataTestId: 'auth/login-screen',
     ctx: input.ctx,
     center: true,
-    children: v('div', { className: 'flex w-full flex-1 flex-col gap-6' }, [
+    children: v('div', { class: 'flex w-full flex-1 flex-col gap-6' }, [
       v(AuthScreenHeaderCta, { ctx: input.ctx }),
 
       v(Button, {
         onClick: () => input.dispatch({ t: 'clicked-login-with-phone' }),
         size: 'lg',
         dataTestId: 'auth/continue-with-phone-button',
-        className: 'w-full',
+        class: 'w-full',
         renderIconStart: (iconInput) => v(IconMobilePhone, iconInput),
         text: input.ctx.t('auth.continue-with-phone'),
       }),
 
-      v('div', { className: 'flex w-full items-center justify-center py-1' }, [
+      v('div', { class: 'flex w-full items-center justify-center py-1' }, [
         v(Typography, {
           variant: 'body',
-          className: 'text-base font-bold uppercase',
+          class: 'text-base font-bold uppercase',
           color: 'text-secondary',
           text: input.ctx.t('auth.or'),
         }),
@@ -269,7 +269,7 @@ const ViewCurrentUserListItem = (input: {
   }
 }
 
-export const ViewLogoutIcon = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase; className: string }) => {
+export const ViewLogoutIcon = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase; class: string }) => {
   const currentUser = toCurrentUserState({ model: input.model.currentUser, ctx: input.ctx })
   switch (currentUser.t) {
     case 'loading':
@@ -277,7 +277,7 @@ export const ViewLogoutIcon = (input: { model: ModelFrontend; ctx: AppFrontendCt
       return null
     }
     case 'logged-in': {
-      return v(IconPowerOff, { className: input.className })
+      return v(IconPowerOff, { class: input.class })
     }
   }
 }

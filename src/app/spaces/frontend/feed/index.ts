@@ -23,7 +23,7 @@ const View = ({
       ? Spaces.toEventWithMeta(model.spaces, spaceState.spaceId, spaceState.latestEventId)
       : null
 
-  return v('div', { className: 'flex h-6 w-full items-center justify-center p-1' }, [
+  return v('div', { class: 'flex h-6 w-full items-center justify-center p-1' }, [
     spaceState.type === 'started' && msgEvt ? v(ViewFeedItem, { ctx, msgEvt, state: spaceState }) : null,
   ])
 }

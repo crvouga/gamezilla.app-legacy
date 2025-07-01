@@ -64,11 +64,11 @@ const ViewList = (input: {
   const isLoading = !(queryKey in input.model.results)
   const isEmpty = !isLoading && packs.length === 0
 
-  return v('div', { className: 'relative flex w-full flex-1 flex-col gap-2 overflow-hidden' }, [
+  return v('div', { class: 'relative flex w-full flex-1 flex-col gap-2 overflow-hidden' }, [
     v(
       'div',
       {
-        className:
+        class:
           'relative flex max-h-full w-full flex-1 flex-col items-center overflow-x-hidden overflow-y-scroll border-t-neutral-800',
       },
       [
@@ -97,13 +97,12 @@ const ViewPackListItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pa
   return v(
     ClickableTransparent,
     {
-      className:
-        'flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left',
+      class: 'flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left',
       onClick: input.onClick,
     },
     [
-      false && v(IconBox, { className: 'h-9 w-9 shrink-0' }),
-      v('div', { className: 'flex flex-1 flex-col overflow-hidden' }, [
+      false && v(IconBox, { class: 'h-9 w-9 shrink-0' }),
+      v('div', { class: 'flex flex-1 flex-col overflow-hidden' }, [
         v(Typography, { text: TranslatedText.of(input.pack.name), variant: 'body' }),
         v(Typography, { text: toListItemSecondaryText(input), variant: 'subtitle', color: 'text-secondary' }),
       ]),
@@ -111,7 +110,7 @@ const ViewPackListItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pa
         text: input.ctx.t('game.numberlink.puzzle-count', input.pack.puzzleIds.length),
         variant: 'body',
         color: 'text-secondary',
-        className: 'text-xs',
+        class: 'text-xs',
       }),
     ].filter(Boolean),
   )

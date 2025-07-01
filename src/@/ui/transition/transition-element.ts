@@ -28,7 +28,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
         onEnter: async () => {},
         onExit: async () => {},
         onAppear: async () => {},
-        className: '',
+        class: '',
         mode: 'in-out',
       }
     }
@@ -57,7 +57,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
     }
 
     syncUI() {
-      this.className = this.input.className ?? ''
+      this.className = this.input.class ?? ''
     }
 
     disconnectedCallback() {

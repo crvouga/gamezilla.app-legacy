@@ -21,9 +21,9 @@ const View = (input: {
       },
     },
     renderBody: () =>
-      v('div', { className: 'flex w-full flex-1 flex-col gap-8 p-4' }, [
-        v(Avatar, { src: undefined, className: 'mx-auto size-28' }),
-        v('div', { className: 'flex w-full flex-col gap-4' }, [
+      v('div', { class: 'flex w-full flex-1 flex-col gap-8 p-4' }, [
+        v(Avatar, { src: undefined, class: 'mx-auto size-28' }),
+        v('div', { class: 'flex w-full flex-col gap-4' }, [
           v(TextField, {
             label: input.ctx.t('profile-avatar.seed'),
             // value: input.model.draft?.avatarSeed ?? '',

@@ -41,7 +41,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
   const firstActions = input.actions.slice(0, limit)
   const lastActions = input.actions.slice(limit)
   const hasLastActions = lastActions.some((button) => button !== null)
-  return v('div', { className: cn('flex w-full shrink-0 items-center', toHeightClass(size)), role: 'toolbar' }, [
+  return v('div', { class: cn('flex w-full shrink-0 items-center', toHeightClass(size)), role: 'toolbar' }, [
     ...firstActions.map((action) => {
       if (!action) return null
 
@@ -110,15 +110,15 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
   const size = input.size ?? 'md'
   return v(
     'div',
-    { className: cn('flex w-full shrink-0 items-center justify-between', toHeightClass(size)), role: 'toolbar' },
+    { class: cn('flex w-full shrink-0 items-center justify-between', toHeightClass(size)), role: 'toolbar' },
     [
       v(
         'div',
-        { className: 'flex items-center' },
+        { class: 'flex items-center' },
         input.start.map((action) => {
           if (!action) return null
 
-          const button = ScreenActionButton({ ...action, size: input.size, className: 'min-w-20' })
+          const button = ScreenActionButton({ ...action, size: input.size, class: 'min-w-20' })
 
           if (!action.renderSurface) return v(Frag, { key: action.id }, [button])
 
@@ -133,11 +133,11 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
 
       v(
         'div',
-        { className: 'flex items-center' },
+        { class: 'flex items-center' },
         input.end.map((action) => {
           if (!action) return null
 
-          const button = ScreenActionButton({ ...action, size: input.size, className: 'min-w-20' })
+          const button = ScreenActionButton({ ...action, size: input.size, class: 'min-w-20' })
 
           if (!action.renderSurface) return v(Frag, { key: action.id }, [button])
 
@@ -153,7 +153,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
   )
 }
 
-const ScreenActionButton = (input: ScreenAction & { className?: string }) => {
+const ScreenActionButton = (input: ScreenAction & { class?: string }) => {
   const isDisabled = input.disabled || input.loading
   const size = input.size ?? 'md'
   if (input.hidden) return null
@@ -165,37 +165,37 @@ const ScreenActionButton = (input: ScreenAction & { className?: string }) => {
     'aria-label': input.label,
     'aria-hidden': input.hidden,
     onClick: input.onClick,
-    className: cn(
+    class: cn(
       'relative flex flex-1 flex-col items-center gap-0.5 truncate p-2 font-normal',
       'disabled:cursor-not-allowed disabled:opacity-50',
       toColorClasses(input),
       input.hidden ? 'hidden' : '',
-      input.classNames?.button,
+      input.classs?.button,
       toSizeClasses(size),
-      input.className,
+      input.class,
     ),
     children: [
       v(
         'div',
         {
-          className: cn(
+          class: cn(
             'flex h-full w-full flex-col items-center justify-center gap-0.5 truncate',
             input.loading ? 'opacity-0' : 'opacity-100',
           ),
         },
         [
-          input.icon({ className: toIconSizeClasses(size) }),
+          input.icon({ class: toIconSizeClasses(size) }),
           v(Typography, {
             variant: 'label',
             text: input.label,
-            className: cn('truncate', input.classNames?.label),
+            class: cn('truncate', input.classs?.label),
           }),
         ],
       ),
 
       input.loading &&
-        v('div', { className: 'absolute inset-0 flex h-full w-full items-center justify-center' }, [
-          v(Spinner, { className: toIconSizeClasses(size) }),
+        v('div', { class: 'absolute inset-0 flex h-full w-full items-center justify-center' }, [
+          v(Spinner, { class: toIconSizeClasses(size) }),
         ]),
     ],
   })

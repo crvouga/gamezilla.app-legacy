@@ -7,7 +7,7 @@ export const SwiperDots = (input: { activeIndex: number; slideCount: number }) =
     range(input.slideCount).map((index) =>
       v('div', {
         key: index,
-        className: `mx-1 h-2 w-2 rounded-full bg-neutral-300 ${input.activeIndex === index ? 'bg-neutral-500' : ''}`,
+        class: `mx-1 h-2 w-2 rounded-full bg-neutral-300 ${input.activeIndex === index ? 'bg-neutral-500' : ''}`,
       }),
     ),
   )

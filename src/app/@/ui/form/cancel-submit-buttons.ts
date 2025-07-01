@@ -16,11 +16,11 @@ export const CancelSubmitButtons = (input: {
   return v(
     'div',
     {
-      className: 'flex w-full items-center gap-4 px-6 pt-4 pb-6',
+      class: 'flex w-full items-center gap-4 px-6 pt-4 pb-6',
     },
     [
       v(Button, {
-        className: 'flex-1',
+        class: 'flex-1',
         size: input.size,
         onClick: (event) => {
           preventConsoleErrorWhenClosingDrawer(event)
@@ -30,7 +30,7 @@ export const CancelSubmitButtons = (input: {
         disabled: input.cancelDisabled,
       }),
       v(Button, {
-        className: 'flex-1',
+        class: 'flex-1',
         size: input.size,
         type: 'submit',
         color: input.variant === 'danger' ? 'danger' : 'primary',

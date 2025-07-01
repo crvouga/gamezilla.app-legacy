@@ -14,7 +14,7 @@ export const Dialog = (input: { children?: VDom; open: boolean; onClose: () => v
     {
       role: 'dialog',
       style: style,
-      className: cn(
+      class: cn(
         'fixed top-0 left-0 z-50 grid h-full w-full place-items-center bg-black/50 transition-opacity duration-300 ease-in-out',
         input.open ? 'opacity-100' : 'pointer-events-none opacity-0',
       ),

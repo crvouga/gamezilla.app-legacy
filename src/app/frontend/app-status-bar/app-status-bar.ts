@@ -18,7 +18,7 @@ export const ViewAppStatusBar = (input: {
   return v(
     'div',
     {
-      className: cn(input.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed top-0 right-0 z-10 w-fit'),
+      class: cn(input.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed top-0 right-0 z-10 w-fit'),
     },
     [
       v(StatusBarFrontend.View, {
@@ -32,7 +32,7 @@ export const ViewAppStatusBar = (input: {
               Clickable,
               {
                 ...props,
-                className: cn(
+                class: cn(
                   input.ctx.screenSize === 'mobile'
                     ? 'flex w-full items-center justify-end gap-3 px-3 py-1'
                     : 'flex w-fit justify-center gap-4 px-6 py-3 pl-8',
@@ -43,16 +43,16 @@ export const ViewAppStatusBar = (input: {
                 v(WireFrontend.ViewDot, {
                   ctx: input.ctx,
                   model: input.model.wire,
-                  className: iconSize,
+                  class: iconSize,
                 }),
                 v(SoundFrontend.ViewIcon, {
                   model: input.model.frontend.sound,
-                  className: iconSize,
+                  class: iconSize,
                 }),
                 v(AuthFrontend.ViewLogoutIcon, {
                   model: input.model.auth,
                   ctx: input.ctx,
-                  className: iconSize,
+                  class: iconSize,
                 }),
               ],
             )

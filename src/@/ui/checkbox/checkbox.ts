@@ -11,7 +11,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
     DynamicElement,
     {
       element,
-      className: cn(
+      class: cn(
         'flex size-6 items-center justify-center rounded border-2 border-neutral-500 text-xl font-black text-neutral-800',
         input.state !== 'unchecked' && 'border-neutral-100 bg-neutral-100',
       ),

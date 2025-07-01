@@ -27,11 +27,11 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
       },
     },
     renderBody: () =>
-      v('div', { className: 'flex w-full flex-1 flex-col items-center gap-4' }, [
-        v('div', { className: 'flex w-full flex-col items-center justify-center gap-2' }, [
+      v('div', { class: 'flex w-full flex-1 flex-col items-center gap-4' }, [
+        v('div', { class: 'flex w-full flex-col items-center justify-center gap-2' }, [
           v(Avatar, {
             src: UserProfile.toAvatarUrl(profile),
-            className: 'size-16',
+            class: 'size-16',
             //   alt: input.ctx.t('avatar-title'),
             // onClick: () => input.dispatch({ t: 'clicked-avatar' }),
           }),
@@ -39,7 +39,7 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
             size: 'sm',
             color: 'primary',
             variant: 'text',
-            className: 'block',
+            class: 'block',
             // onClick: () => input.dispatch({ t: 'clicked-change-avatar-button' }),
             text: input.ctx.t('profile.update-avatar'),
           }),
@@ -55,13 +55,13 @@ export const View = (input: { ctx: FrontendCtxModule; dispatch: (msg: MsgFronten
 }
 
 const ViewField = (input: { label: TranslatedText; value: TranslatedText; onClick?: () => void }) => {
-  return v('button', { onClick: input.onClick, className: 'flex w-full items-center justify-start px-4 py-2' }, [
-    v('div', { className: 'flex flex-1 flex-col items-start' }, [
+  return v('button', { onClick: input.onClick, class: 'flex w-full items-center justify-start px-4 py-2' }, [
+    v('div', { class: 'flex flex-1 flex-col items-start' }, [
       v(Typography, { variant: 'label', text: input.label }),
       input.value && v(Typography, { variant: 'body', text: input.value }),
     ]),
 
-    v(IconChevronRight, { className: 'size-6' }),
+    v(IconChevronRight, { class: 'size-6' }),
   ])
 }
 

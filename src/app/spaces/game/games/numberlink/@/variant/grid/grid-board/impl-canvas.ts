@@ -112,7 +112,7 @@ const View = ({
   onPressUp,
 }: BoardInput<VariantGrid.Model>) => {
   return v(Canvas, {
-    className: cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab'),
+    class: cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab'),
     watch: model as unknown,
     paint: (value, ctx) => paint(value as VariantGrid.Model, ctx),
     onMouseDown: (event) => {

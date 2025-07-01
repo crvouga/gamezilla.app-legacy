@@ -47,7 +47,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
   return v(
     'div',
     {
-      className: cn(
+      class: cn(
         'flex w-full flex-row items-center justify-center overflow-hidden rounded-lg text-inherit',
         SPACE_CARD_GRADIENT_CLASS_NAME,
         'rounded-lg',
@@ -58,24 +58,24 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
         'button',
         {
           type: 'button',
-          className: 'flex flex-1 items-center gap-3 overflow-hidden',
+          class: 'flex flex-1 items-center gap-3 overflow-hidden',
           onClick: () => input.dispatch({ t: 'current-space-bar.clicked-current-space-bottom-bar' }),
         },
         [
-          v('div', { className: 'p-2' }, [
+          v('div', { class: 'p-2' }, [
             space.game
-              ? v(GameCoverArt, { rounded: true, className: 'size-14', gameName: space.game.t })
+              ? v(GameCoverArt, { rounded: true, class: 'size-14', gameName: space.game.t })
               : v(Avatar, {
                   src: hostProfile ? UserProfile.toAvatarUrl(hostProfile) : '',
                   alt: 'Host Avatar',
-                  className: 'size-14',
+                  class: 'size-14',
                 }),
           ]),
 
-          v('div', { className: 'flex flex-1 flex-col gap-0.5 overflow-hidden py-3 pr-3' }, [
+          v('div', { class: 'flex flex-1 flex-col gap-0.5 overflow-hidden py-3 pr-3' }, [
             v(Typography, {
               variant: 'title',
-              className: 'truncate text-left text-lg font-normal',
+              class: 'truncate text-left text-lg font-normal',
               text: hostProfile
                 ? input.ctx.t('spaces.current-space', {
                     hostUsername: hostProfile.username,
@@ -84,7 +84,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
             }),
             v(Typography, {
               variant: 'subtitle',
-              className: 'truncate text-left',
+              class: 'truncate text-left',
               text: input.ctx.t('space-card.people-count', userCount),
             }),
           ]),
@@ -93,7 +93,7 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
 
       v(
         'div',
-        { className: 'pr-4' },
+        { class: 'pr-4' },
         [
           isCurrentUserHost &&
             v(IconButton, {

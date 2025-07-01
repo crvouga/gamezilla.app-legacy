@@ -1,7 +1,7 @@
 import { v } from '~/@/vdom/v'
 
 export type Props = {
-  className?: string
+  class?: string
   [key: string]: any
 }
 
@@ -675,7 +675,7 @@ export const IconRightLeft = (input: Props) => {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
-      className: 'size-6 fill-current',
+      class: 'size-6 fill-current',
       fill: 'currentColor',
       ...input,
     },

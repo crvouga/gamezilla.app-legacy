@@ -14,10 +14,10 @@ export const AuthScreenHeader = (input: {
   onBack: () => void
 }) => {
   return v('div', {
-    className: 'flex w-full flex-row items-center justify-start gap-2',
+    class: 'flex w-full flex-row items-center justify-start gap-2',
     children: v(Frag, null, [
       v(IconButton, {
-        className: '-ml-2',
+        class: '-ml-2',
         label: input.ctx.t('app.back'),
         renderIcon: (iconInput) => v(IconArrowLeft, iconInput),
         onClick: input.onBack,
@@ -26,7 +26,7 @@ export const AuthScreenHeader = (input: {
       v(Typography, {
         text: input.title,
         variant: 'title',
-        className: 'font-bold',
+        class: 'font-bold',
       }),
     ]),
   })

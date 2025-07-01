@@ -6,8 +6,8 @@ import { cn } from './cn'
 import { preventConsoleErrorWhenClosingDrawer } from './surface-drawer/drawer-shared'
 
 type Input = {
-  className?: string
-  icon: (input: { className: string }) => VDom
+  class?: string
+  icon: (input: { class: string }) => VDom
   end?: () => VDom
   label: TranslatedText
   onClick?: () => void
@@ -28,14 +28,14 @@ export const ListItemButton = (input: Input) => {
           },
           'aria-label': input.label,
           name: input.label,
-          className: cn(input.className, BASE_CLASS, toColorClass(input)),
+          class: cn(input.class, BASE_CLASS, toColorClass(input)),
         },
         [
-          v('div', { className: 'flex flex-1 items-center gap-3 truncate' }, [
-            input.icon({ className: 'size-6' }),
+          v('div', { class: 'flex flex-1 items-center gap-3 truncate' }, [
+            input.icon({ class: 'size-6' }),
             input.label,
           ]),
-          input.end && v('div', { className: 'shrink-0' }, [input.end()]),
+          input.end && v('div', { class: 'shrink-0' }, [input.end()]),
         ],
       )
     }
@@ -48,14 +48,14 @@ export const ListItemButton = (input: Input) => {
             input.onClick?.()
           },
           'aria-label': input.label,
-          className: cn(input.className, BASE_CLASS, toColorClass(input)),
+          class: cn(input.class, BASE_CLASS, toColorClass(input)),
         },
         [
-          v('div', { className: 'flex flex-1 items-center gap-3 truncate' }, [
-            input.icon({ className: 'size-6' }),
+          v('div', { class: 'flex flex-1 items-center gap-3 truncate' }, [
+            input.icon({ class: 'size-6' }),
             input.label,
           ]),
-          input.end && v('div', { className: 'shrink-0' }, [input.end()]),
+          input.end && v('div', { class: 'shrink-0' }, [input.end()]),
         ],
       )
     }

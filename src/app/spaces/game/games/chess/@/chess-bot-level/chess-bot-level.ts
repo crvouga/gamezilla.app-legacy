@@ -38,7 +38,7 @@ const toString = (level: ChessBotLevel): string => {
   }
 }
 
-const render = ({ level, ...input }: { level: ChessBotLevel; className?: string }): VDom => {
+const render = ({ level, ...input }: { level: ChessBotLevel; class?: string }): VDom => {
   switch (level) {
     case 0: {
       return v(IconBotSimple, input)

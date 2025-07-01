@@ -55,7 +55,7 @@ const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: M
   return v(
     'div',
     {
-      className: 'grid flex-1 grid-cols-3 justify-between gap-8 p-4 md:grid-cols-4 md:gap-12',
+      class: 'grid flex-1 grid-cols-3 justify-between gap-8 p-4 md:grid-cols-4 md:gap-12',
     },
     GAME_NAME_LIST.map((gameName) =>
       v(GameTile, { key: gameName, gameName, ctx: input.ctx, dispatch: input.dispatch }),
@@ -75,7 +75,7 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
       [v(GameCoverArt, { rounded: true, gameName: input.gameName })],
     ),
     v(Typography, {
-      className: 'mt-2 w-full overflow-hidden text-center text-sm font-semibold text-ellipsis whitespace-nowrap',
+      class: 'mt-2 w-full overflow-hidden text-center text-sm font-semibold text-ellipsis whitespace-nowrap',
       variant: 'label',
       sizeClassName: 'text-base',
       text: input.ctx.t(input.gameName),

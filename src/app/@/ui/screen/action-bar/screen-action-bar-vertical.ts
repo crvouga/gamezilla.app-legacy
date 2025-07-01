@@ -12,11 +12,11 @@ const SIZE = 'md' as 'md' | 'sm'
 
 export const VerticalActionBar = (
   input: ScreenActionBarProps & {
-    className?: string
+    class?: string
     renderNavBar?: () => VDom
   },
 ) => {
-  return v('div', { className: cn('flex h-full max-w-48 flex-1 shrink-0 flex-col gap-1', input.className) }, [
+  return v('div', { class: cn('flex h-full max-w-48 flex-1 shrink-0 flex-col gap-1', input.class) }, [
     v(ScreenNavBarTabletRoot, null, [input.renderNavBar?.()]),
 
     input.variant.t === 'uniform'
@@ -32,20 +32,20 @@ const VerticalUniform = (input: { actions: (ScreenAction | null)[] }) => {
 const VerticalSpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
   return v(Toolbar, null, [
     v(ActionButtonList, { actions: input.start }),
-    v('div', { className: 'flex-1' }),
+    v('div', { class: 'flex-1' }),
     v(ActionButtonList, { actions: input.end }),
-    v('div', { className: 'w-full pb-6' }),
+    v('div', { class: 'w-full pb-6' }),
   ])
 }
 
 const Toolbar = (input: { children: VDom }) => {
-  return v('div', { className: 'flex w-full flex-1 shrink-0 flex-col', role: 'toolbar' }, [input.children])
+  return v('div', { class: 'flex w-full flex-1 shrink-0 flex-col', role: 'toolbar' }, [input.children])
 }
 
 const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
   return v(
     'div',
-    { className: 'flex w-full shrink-0 flex-col gap-2' },
+    { class: 'flex w-full shrink-0 flex-col gap-2' },
     input.actions.map((action) => {
       if (!action) return null
 
@@ -76,34 +76,34 @@ const ScreenActionButton = (input: ScreenAction) => {
     'aria-label': input.label,
     'aria-hidden': input.hidden,
     onClick: input.onClick,
-    className: cn(
+    class: cn(
       'relative flex w-full min-w-32 flex-col items-center rounded-lg p-4 xl:flex-row',
       toColorClasses(input),
       input.hidden ? 'hidden' : '',
-      input.classNames?.button,
+      input.classs?.button,
       toSizeClasses(size),
     ),
     children: [
       v(
         'div',
         {
-          className: cn(
+          class: cn(
             'flex flex-col items-center gap-1 xl:flex-row xl:gap-4',
             input.loading ? 'opacity-0' : 'opacity-100',
           ),
         },
         [
-          input.icon({ className: toIconSizeClasses(size) }),
+          input.icon({ class: toIconSizeClasses(size) }),
           v(Typography, {
             text: input.label,
-            className: cn('truncate text-center xl:text-left xl:text-xl', 'text-inherit', input.classNames?.label),
+            class: cn('truncate text-center xl:text-left xl:text-xl', 'text-inherit', input.classs?.label),
           }),
         ],
       ),
 
       input.loading &&
-        v('div', { className: 'absolute inset-0 flex h-full w-full items-center justify-center' }, [
-          v(Spinner, { className: toIconSizeClasses(size) }),
+        v('div', { class: 'absolute inset-0 flex h-full w-full items-center justify-center' }, [
+          v(Spinner, { class: toIconSizeClasses(size) }),
         ]),
     ],
   })

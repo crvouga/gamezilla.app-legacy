@@ -21,7 +21,7 @@ export type PatchActionProps = {
 }
 
 export type PostActionProps = {
-  submitIcon: (input: { className?: string }) => VDom
+  submitIcon: (input: { class?: string }) => VDom
   onSubmit: () => void
   submitText: TranslatedText
   submitLoading: boolean

@@ -177,7 +177,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
       'data-error': input.toast.variant === 'error',
       'data-info': input.toast.variant === 'info',
       'data-success': input.toast.variant === 'success',
-      className:
+      class:
         'pointer-events-none absolute top-0 left-0 z-40 flex w-full items-center justify-center overflow-visible p-4',
       onMouseDown: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
       onMouseUp: () => input.dispatch({ t: 'pressed-up-on-toast', toast: input.toast }),
@@ -189,13 +189,13 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
       v(
         'div',
         {
-          className: cn('w-full bg-black', toWidthClass(input)),
+          class: cn('w-full bg-black', toWidthClass(input)),
         },
         [
           v(
             'div',
             {
-              className: cn(
+              class: cn(
                 'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
                 input.toast.variant === 'info' && PAPER_CLASS_NAME,
                 input.toast.variant === 'success' && PAPER_CLASS_NAME,
@@ -210,7 +210,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
                   'button',
                   {
                     type: 'button',
-                    className: 'font-bold',
+                    class: 'font-bold',
                     onClick: () =>
                       input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
                   },
@@ -226,7 +226,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
                       toastId: input.toast.toastId,
                     }),
                 },
-                [v(IconXMark, { className: 'h-5 w-5' })],
+                [v(IconXMark, { class: 'h-5 w-5' })],
               ),
             ],
           ),

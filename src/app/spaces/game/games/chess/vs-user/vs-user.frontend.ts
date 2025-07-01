@@ -418,10 +418,10 @@ export const View = ({
 }) => {
   if (model.spaceModel.type === 'setup') {
     return v('div', {}, [
-      v('div', { className: 'flex-1' }),
-      v('div', { className: 'flex items-center gap-4 p-4' }, [
+      v('div', { class: 'flex-1' }),
+      v('div', { class: 'flex items-center gap-4 p-4' }, [
         v(Button, {
-          className: 'flex-1',
+          class: 'flex-1',
           onClick: onQuit,
           renderIconStart: (iconInput) => v(IconArrowLeft, iconInput),
           text: ctx.t('app.exit'),
@@ -429,7 +429,7 @@ export const View = ({
         v(Button, {
           variant: 'contained',
           color: 'primary',
-          className: 'flex-1',
+          class: 'flex-1',
           text: ctx.t('game.start-game'),
         }),
       ]),
@@ -481,7 +481,7 @@ export const View = ({
       },
     }), */
 
-    v('div', { className: 'flex-1' }),
+    v('div', { class: 'flex-1' }),
 
     v(ViewGameOverDialog, { model, dispatch }),
   ])

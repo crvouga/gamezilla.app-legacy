@@ -50,22 +50,22 @@ export const SurfaceUnsavedChanges = (input: SurfaceUnsavedChangesProps) => {
         v(Frag, null, [
           v(Typography, {
             color: 'text-secondary',
-            className: 'p-4 px-6',
+            class: 'p-4 px-6',
             variant: 'body',
             text: input.body,
           }),
-          v('div', { className: 'flex w-full flex-col gap-4 p-4 px-6 pb-6' }, [
+          v('div', { class: 'flex w-full flex-col gap-4 p-4 px-6 pb-6' }, [
             v(Button, {
-              className: 'w-full',
+              class: 'w-full',
               text: input.saveText,
               variant: 'contained',
               color: 'primary',
               loading: input.saveLoading,
               onClick: input.onSave,
             }),
-            v(Button, { className: 'w-full', text: input.discardText, onClick: input.onDiscard }),
-            v('div', { className: 'w-full' }),
-            v(Button, { className: 'w-full', text: input.cancelText, onClick: input.onCancel }),
+            v(Button, { class: 'w-full', text: input.discardText, onClick: input.onDiscard }),
+            v('div', { class: 'w-full' }),
+            v(Button, { class: 'w-full', text: input.cancelText, onClick: input.onCancel }),
           ]),
         ]),
     },

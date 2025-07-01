@@ -75,9 +75,9 @@ const pongs: FrontendModule['subscriptions'] = (input) => {
   )
 }
 
-const ViewDot = (input: { model: Model; ctx: AppFrontendCtxBase; className: string }) => {
+const ViewDot = (input: { model: Model; ctx: AppFrontendCtxBase; class: string }) => {
   const status = BackendConnectionStatus.fromModel(input.model)
-  return v(BackendConnectionStatus.ViewDot, { model: status, ctx: input.ctx, className: input.className })
+  return v(BackendConnectionStatus.ViewDot, { model: status, ctx: input.ctx, class: input.class })
 }
 
 const ViewListItem = (input: { model: Model; ctx: AppFrontendCtxBase; dispatch: (msg: MsgFrontend) => void }) => {
@@ -89,8 +89,8 @@ const ViewListItemInner: typeof ViewListItem = (input) => {
   switch (status.t) {
     case 'connected': {
       return v(ListItemButton, {
-        icon: (inputIcon) => v(Dot, { className: inputIcon.className, colorClassName: 'bg-green-500' }),
-        className: 'text-green-500',
+        icon: (inputIcon) => v(Dot, { class: inputIcon.class, colorClassName: 'bg-green-500' }),
+        class: 'text-green-500',
         label: input.ctx.t('wire.online'),
         end: () => v(Typography, { text: TimeSpan.format(status.latestPing) }),
       })
@@ -98,7 +98,7 @@ const ViewListItemInner: typeof ViewListItem = (input) => {
 
     case 'connecting': {
       return v(ListItemButton, {
-        icon: (input) => v(Dot, { className: input.className, colorClassName: 'bg-orange-500' }),
+        icon: (input) => v(Dot, { class: input.class, colorClassName: 'bg-orange-500' }),
         color: 'warning',
         label: input.ctx.t('wire.connecting...'),
       })
@@ -106,7 +106,7 @@ const ViewListItemInner: typeof ViewListItem = (input) => {
 
     case 'disconnected': {
       return v(ListItemButton, {
-        icon: (input) => v(Dot, { className: input.className, colorClassName: 'bg-red-500' }),
+        icon: (input) => v(Dot, { class: input.class, colorClassName: 'bg-red-500' }),
         color: 'danger',
         label: input.ctx.t('wire.offline'),
         end: () =>
@@ -115,7 +115,7 @@ const ViewListItemInner: typeof ViewListItem = (input) => {
             {
               type: 'button',
               onClick: () => {},
-              className: 'font-bold text-red-500',
+              class: 'font-bold text-red-500',
             },
             [input.ctx.t('wire.try-reconnect')],
           ),

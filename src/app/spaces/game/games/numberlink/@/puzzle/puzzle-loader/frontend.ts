@@ -80,14 +80,14 @@ const ViewList = (input: {
   const totalCount = puzzles.length
   const selectedCount = Math.min(input.selected?.length ?? 0, totalCount)
 
-  return v('div', { className: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+  return v('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
     v(QueryForm.View, { ctx: input.ctx, query: input.query, onChange: input.onQueryChanged }),
 
     input.selectable &&
       v(
         Clickable,
         {
-          className: 'flex w-fit items-center gap-4 px-4 py-2',
+          class: 'flex w-fit items-center gap-4 px-4 py-2',
           onClick: () => input.onHeaderCheckboxClick?.(puzzleIds),
         },
         [
@@ -95,7 +95,7 @@ const ViewList = (input: {
           v(Typography, {
             variant: 'body',
             color: 'text-secondary',
-            className: 'text-lg',
+            class: 'text-lg',
             text: input.ctx.t('game.numberlink.puzzles-selected', {
               totalCount: puzzles.length,
               selectedCount: input.selected?.length ?? 0,
@@ -104,7 +104,7 @@ const ViewList = (input: {
         ],
       ),
 
-    v('div', { className: 'relative flex w-full flex-1 flex-col items-center overflow-y-scroll' }, [
+    v('div', { class: 'relative flex w-full flex-1 flex-col items-center overflow-y-scroll' }, [
       ...puzzles.map((puzzle) =>
         v(ViewListItem, {
           selectable: input.selectable,
@@ -152,30 +152,30 @@ const ViewListItem = (input: {
     ClickableTransparent,
     {
       key: input.puzzle.id,
-      className: 'box-border flex w-full items-center text-left',
+      class: 'box-border flex w-full items-center text-left',
       onClick: input.onClick,
     },
     [
       input.selectable &&
-        v('div', { className: 'px-4' }, [v(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
+        v('div', { class: 'px-4' }, [v(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
 
-      v('div', { className: 'flex aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden' }, [
+      v('div', { class: 'flex aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden' }, [
         v(NumberlinkVariantBoard.View, { disabled: true, model: input.puzzle.model }),
       ]),
 
-      v('div', { className: 'flex flex-col gap-1 truncate overflow-hidden px-4' }, [
+      v('div', { class: 'flex flex-col gap-1 truncate overflow-hidden px-4' }, [
         v(Typography, {
           variant: 'body',
           color: 'text-primary',
           text: TranslatedText.of(input.puzzle.name),
-          className: 'truncate',
+          class: 'truncate',
         }),
 
         v(Typography, {
           variant: 'subtitle',
           color: 'text-secondary',
           text: toListItemSecondaryText(input),
-          className: 'truncate text-xs',
+          class: 'truncate text-xs',
         }),
       ]),
     ],

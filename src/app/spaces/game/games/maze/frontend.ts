@@ -264,7 +264,7 @@ const ViewJoystick = ({
   activeFill: string
 }) => {
   return v('div', null, [
-    v('svg', { width: '100%', viewBox: '-1 -1 2 2', className: 'touch-none overflow-hidden select-none' }, [
+    v('svg', { width: '100%', viewBox: '-1 -1 2 2', class: 'touch-none overflow-hidden select-none' }, [
       v('defs', null, [v('clipPath', { id: 'cut-off-bottom' }, [v('circle', { x: '0', y: '0', r: 1 })])]),
       v('g', { 'stroke-width': 0.025 }, [
         v('g', { clipPath: 'url(#cut-off-bottom)', stroke }, [
@@ -293,14 +293,14 @@ const ViewJoystick = ({
           y: '0',
           r: 0.5,
           fill,
-          className: 'pointer-events-none touch-none select-none',
+          class: 'pointer-events-none touch-none select-none',
           stroke,
         }),
         v('circle', {
           x: '0',
           y: '0',
           r: 0.98,
-          className: 'pointer-events-none touch-none select-none',
+          class: 'pointer-events-none touch-none select-none',
           fill: 'transparent',
           stroke,
         }),

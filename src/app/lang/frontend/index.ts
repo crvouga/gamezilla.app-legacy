@@ -191,7 +191,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
       },
     },
     renderBody: () =>
-      v('div', { className: 'flex flex-1 flex-col overflow-y-scroll' }, [
+      v('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
         ...LanguageCodeISO_639_1.ALL.map((code) =>
           v(ListItemButton, {
             key: code,

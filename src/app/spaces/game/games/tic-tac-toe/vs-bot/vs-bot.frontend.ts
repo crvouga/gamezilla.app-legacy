@@ -238,11 +238,11 @@ export const View = (input: {
     ctx: input.ctx,
     id: 'tic-tac-toe-vs-bot',
     renderBody: () =>
-      v('div', { className: 'flex flex-col items-center justify-center' }, [
+      v('div', { class: 'flex flex-col items-center justify-center' }, [
         v(VsBotGame.VsBotPlayerSection, vsBotGameInput),
 
         v(LoadingBar, {
-          className: 'w-full',
+          class: 'w-full',
           disabled: input.model.userPlayerType === turn || status.type !== 'Turn',
           color: gameTheme.background,
         }),
@@ -296,7 +296,7 @@ export const ViewMsg = (input: { msg: Msg | MsgToFrontend }) => {
   return null
 }
 
-export const renderBotLevel = ({ level, ...input }: { level: BotLevel; className?: string }) => {
+export const renderBotLevel = ({ level, ...input }: { level: BotLevel; class?: string }) => {
   switch (level) {
     case 'Easy': {
       return v(IconBotCute, input)

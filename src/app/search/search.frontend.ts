@@ -126,14 +126,14 @@ export const View = ({
   const results = matchSort(Object.values(model.searchResults), (item) => item.username, model.searchText)
 
   return v('div', null, [
-    v('div', { className: 'flex h-full w-full flex-col' }, [
+    v('div', { class: 'flex h-full w-full flex-col' }, [
       // input
-      v('div', { className: 'w-full p-4' }, [
-        v(Paper, { className: 'flex w-full items-center gap-2 rounded-full px-4 py-2' }, [
-          v(IconMagnifyingGlass, { className: 'size-6' }),
+      v('div', { class: 'w-full p-4' }, [
+        v(Paper, { class: 'flex w-full items-center gap-2 rounded-full px-4 py-2' }, [
+          v(IconMagnifyingGlass, { class: 'size-6' }),
           v('input', {
             id: searchInputId,
-            className: 'flex-1 bg-transparent text-lg outline-none',
+            class: 'flex-1 bg-transparent text-lg outline-none',
             placeholder: 'Search',
             value: model.searchText,
             onChange: (msgEvt: unknown) =>
@@ -152,7 +152,7 @@ export const View = ({
                   t: 'clicked-clear',
                 }),
             },
-            [v(IconXMark, { className: 'size-6' })],
+            [v(IconXMark, { class: 'size-6' })],
           ),
         ]),
       ]),
@@ -165,7 +165,7 @@ export const View = ({
             v(
               ClickableTransparent,
               {
-                className: 'flex w-full items-center gap-4 p-4',
+                class: 'flex w-full items-center gap-4 p-4',
                 onClick: () =>
                   dispatch({
                     t: 'clicked-result',

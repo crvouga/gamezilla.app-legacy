@@ -166,7 +166,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
       },
     },
     renderBody: () =>
-      v('div', { className: 'flex w-full flex-col gap-6' }, [
+      v('div', { class: 'flex w-full flex-col gap-6' }, [
         spaceState.game && v(SectionGame, { ctx: input.ctx, gameName: spaceState.game.t }),
 
         v(SectionPeopleList, {
@@ -208,11 +208,11 @@ const SectionGame = (props: {
   }
   gameName: GameName
 }) => {
-  return v('section', { className: 'flex w-full flex-col gap-6 py-3' }, [
+  return v('section', { class: 'flex w-full flex-col gap-6 py-3' }, [
     v(SectionTitle, { text: props.ctx.t('spaces.game') }),
 
-    v('div', { className: 'flex w-fit flex-row items-center gap-4 px-6' }, [
-      v(GameCoverArt, { rounded: true, className: 'size-20', gameName: props.gameName }),
+    v('div', { class: 'flex w-fit flex-row items-center gap-4 px-6' }, [
+      v(GameCoverArt, { rounded: true, class: 'size-20', gameName: props.gameName }),
 
       v(Typography, { variant: 'label', sizeClassName: 'text-lg', text: props.ctx.t(props.gameName) }),
     ]),

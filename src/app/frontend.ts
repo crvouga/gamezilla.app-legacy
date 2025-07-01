@@ -358,7 +358,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
   return v(ViewAppRoot, null, [
     v(ViewAppStatusBar, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
 
-    v('div', { className: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+    v('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
       v(ViewScreen, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
     ]),
 

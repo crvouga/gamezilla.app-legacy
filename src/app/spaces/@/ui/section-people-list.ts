@@ -20,9 +20,9 @@ export const SectionPeopleList = (input: {
 
   const renderItem = input.renderItem ?? ((_profile, vDom) => vDom)
 
-  return v('section', { className: 'flex w-full flex-col gap-3 py-6' }, [
+  return v('section', { class: 'flex w-full flex-col gap-3 py-6' }, [
     v(SectionTitle, { text: input.ctx.t('app.people') }),
-    v('div', { className: 'flex w-full flex-col' }, [
+    v('div', { class: 'flex w-full flex-col' }, [
       profiles.map((profile) =>
         v(Frag, { key: profile.id }, [
           renderItem(
@@ -50,10 +50,10 @@ const PersonListItem = (input: {
     {
       key: input.profile.id,
       onClick: input.onClick,
-      className: 'flex w-full items-center gap-2 p-2 px-6',
+      class: 'flex w-full items-center gap-2 p-2 px-6',
     },
     [
-      v(Avatar, { className: 'size-12', src: UserProfile.toAvatarUrl(input.profile) }),
+      v(Avatar, { class: 'size-12', src: UserProfile.toAvatarUrl(input.profile) }),
       v('p', {}, [input.profile.username]),
       input.profile.userId === input.ctx.space.hostId && v(ViewHostChip, { ctx: input.ctx }),
       input.profile.userId === input.ctx.currentUser.userId && v(ViewYouChip, { ctx: input.ctx }),

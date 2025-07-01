@@ -16,10 +16,10 @@ export const AuthScreenLayout = (input: {
 }) => {
   return v('div', {
     'data-testid': input.dataTestId,
-    className: cn('flex h-full flex-col items-center', input.center ? 'justify-center' : 'justify-start'),
+    class: cn('flex h-full flex-col items-center', input.center ? 'justify-center' : 'justify-start'),
     children: v(Frag, null, [
       v('div', {
-        className: 'flex w-full max-w-xl flex-col items-center justify-center gap-4 p-6',
+        class: 'flex w-full max-w-xl flex-col items-center justify-center gap-4 p-6',
         children: input.children,
       }),
     ]),

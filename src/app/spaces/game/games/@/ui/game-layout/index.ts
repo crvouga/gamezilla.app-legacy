@@ -6,24 +6,24 @@ import type { VDom } from '~/@/vdom/vdom'
 export const LayoutGame = ({
   children,
   isSpectating,
-  className,
+  class: class_,
   ctx,
   ...props
 }: {
   ctx: {
     t: Translator
   }
-  className?: string
+  class?: string
   isSpectating?: boolean
   children?: VDom
 }) => {
   return v(
     'div',
     {
-      className: cn(
+      class: cn(
         'flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll',
         isSpectating && 'border-8 border-t-0 border-blue-500',
-        className,
+        class_,
       ),
       ...props,
     },
@@ -32,7 +32,7 @@ export const LayoutGame = ({
         v(
           'div',
           {
-            className: 'flex w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white',
+            class: 'flex w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white',
           },
           [ctx.t('game.you-are-spectating')],
         ),

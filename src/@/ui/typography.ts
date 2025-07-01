@@ -27,7 +27,7 @@ type Input = {
   text: TranslatedText
   variant?: TypographyVariant
   skeleton?: boolean
-  className?: string
+  class?: string
   sizeClassName?: string
   role?: AriaRole
   color?: 'inherit' | 'text-primary' | 'text-secondary' | null
@@ -65,7 +65,7 @@ export const Typography = (input: Input) => {
   return v(
     'div',
     {
-      className: cn(sizeClassName, colorClassName, input.skeleton ? SKELETON_CLASS : null, input.className),
+      class: cn(sizeClassName, colorClassName, input.skeleton ? SKELETON_CLASS : null, input.class),
       role: input.role,
       'aria-busy': input.skeleton,
       'aria-level': toAriaLevel(input),

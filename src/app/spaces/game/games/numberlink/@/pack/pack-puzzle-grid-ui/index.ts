@@ -28,21 +28,21 @@ const View = (input: {
   const cellCount = (puzzleIds.length ?? 0) + (input.addCell?.include ? 1 : 0)
   const slideCount = Math.ceil(cellCount / (COLUMN_COUNT * ROW_COUNT))
 
-  return v('div', { className: 'flex h-full w-full flex-col gap-4 py-6' }, [
+  return v('div', { class: 'flex h-full w-full flex-col gap-4 py-6' }, [
     v(
       Swiper.Container,
       {
         onSlideIndexChanged: (newSlideIndex: number) => input.onSlideIndexChanged?.(newSlideIndex),
         id: input.id ?? 'pack-puzzle-grid-swiper-container',
         slideIndex: input.currentSlideIndex ?? 0,
-        className: 'flex h-full w-full items-center justify-center',
+        class: 'flex h-full w-full items-center justify-center',
       },
       Array.from({ length: slideCount }).map((_, slideIndex) =>
         v(
           Swiper.Slide,
           {
             key: slideIndex,
-            className: 'flex h-full w-3/4 flex-col items-center justify-center',
+            class: 'flex h-full w-3/4 flex-col items-center justify-center',
           },
           [
             v(ViewSlideContent, {
@@ -68,7 +68,7 @@ const ViewSlideContent = (input: {
   }
   onClickPuzzleCell?: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
 }) => {
-  return v('div', { className: 'flex w-fit flex-col items-center justify-center gap-1' }, [
+  return v('div', { class: 'flex w-fit flex-col items-center justify-center gap-1' }, [
     v(ViewSlideHeading, { slideIndex: input.slideIndex, puzzleIds: input.puzzleIds }),
     v(ViewGrid, {
       slideIndex: input.slideIndex,
@@ -102,7 +102,7 @@ const ViewSlideHeading = (input: { slideIndex: number; puzzleIds: PuzzleId[] }) 
 
   return v(Typography, {
     text: TranslatedText.of(`${startPosition} - ${endPositionPuzzle}`),
-    className: 'flex w-full items-center justify-start p-1 text-2xl',
+    class: 'flex w-full items-center justify-start p-1 text-2xl',
     role: 'heading',
   })
 }
@@ -116,7 +116,7 @@ const ViewGrid = (input: {
 
   return v(
     'div',
-    { role: 'grid', className: 'grid aspect-square w-full grid-cols-5 grid-rows-6' },
+    { role: 'grid', class: 'grid aspect-square w-full grid-cols-5 grid-rows-6' },
     range2d({ x: COLUMN_COUNT, y: ROW_COUNT }).map(({ x, y }) =>
       v(ViewGridCell, {
         key: `${x}-${y}`,
@@ -145,7 +145,7 @@ const ViewGridCell = (input: {
     'div',
     {
       role: 'gridcell',
-      className: 'flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16',
+      class: 'flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16',
     },
     [
       input.renderCell({
@@ -172,9 +172,9 @@ const ViewAddCell = (input: { onClick?: () => void }) => {
     ClickablePaper,
     {
       onClick: input.onClick,
-      className: 'flex h-full w-full items-center justify-center overflow-hidden rounded border-2',
+      class: 'flex h-full w-full items-center justify-center overflow-hidden rounded border-2',
     },
-    [v(IconPlus, { className: 'h-8 w-8' })],
+    [v(IconPlus, { class: 'h-8 w-8' })],
   )
 }
 
@@ -183,7 +183,7 @@ const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number
     ClickablePaper,
     {
       onClick,
-      className: 'flex h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal',
+      class: 'flex h-full w-full items-center justify-center overflow-hidden rounded text-lg font-normal',
     },
     [String(index + 1)],
   )
@@ -191,13 +191,13 @@ const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number
 
 const ViewEmptyCell = () => {
   return v('div', {
-    className: 'flex h-full w-full items-center justify-center overflow-hidden rounded border-2 opacity-70',
+    class: 'flex h-full w-full items-center justify-center overflow-hidden rounded border-2 opacity-70',
   })
 }
 
 export const _ViewLoadingCell = () => {
   return v(Paper, {
-    className: 'flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded opacity-70',
+    class: 'flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded opacity-70',
   })
 }
 
@@ -206,7 +206,7 @@ export const _ViewErrorCell = ({ onClick, index }: { onClick: () => void; index:
     Clickable,
     {
       onClick,
-      className:
+      class:
         'flex h-full w-full items-center justify-center overflow-hidden rounded bg-orange-500/50 text-xl font-bold',
     },
     [String(index + 1)],

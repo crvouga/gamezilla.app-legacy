@@ -36,21 +36,21 @@ export const ViewSpaceCard = (input: {
 }
 
 const ViewRoot = (input: { onClick?: () => void; children?: VDom }) => {
-  const className = cn(
+  const class_ = cn(
     SPACE_CARD_GRADIENT_CLASS_NAME,
     'flex w-full shrink-0 flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr p-4',
   )
   if (typeof input.onClick === 'function') {
-    return v(Clickable, { onClick: input.onClick, disabled: !input.onClick, className }, [input.children])
+    return v(Clickable, { onClick: input.onClick, disabled: !input.onClick, class: class_ }, [input.children])
   }
-  return v('div', { className }, [input.children])
+  return v('div', { class: class_ }, [input.children])
 }
 
 const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {
-  return v('div', { className: 'flex items-center justify-start gap-2' }, [
+  return v('div', { class: 'flex items-center justify-start gap-2' }, [
     v(Typography, {
       variant: 'label',
-      className: 'block flex-1 text-left text-lg font-bold text-white uppercase',
+      class: 'block flex-1 text-left text-lg font-bold text-white uppercase',
       text: input.ctx.t('space-card.live'),
     }),
   ])
@@ -59,20 +59,20 @@ const ViewLiveIndicator = (input: { ctx: AppFrontendCtxBase }) => {
 const ViewSpaceCardGame = (input: { gameName: GameName | null; ctx: AppFrontendCtxBase }) => {
   if (!input.gameName) return null
 
-  return v('div', { className: 'flex items-center justify-start gap-2' }, [
-    v(GameCoverArt, { rounded: true, className: 'size-12', gameName: input.gameName }),
-    v(Typography, { variant: 'title', className: 'truncate text-lg font-normal', text: input.ctx.t(input.gameName) }),
+  return v('div', { class: 'flex items-center justify-start gap-2' }, [
+    v(GameCoverArt, { rounded: true, class: 'size-12', gameName: input.gameName }),
+    v(Typography, { variant: 'title', class: 'truncate text-lg font-normal', text: input.ctx.t(input.gameName) }),
   ])
 }
 
 const ViewSpaceCardHost = (input: { host?: UserProfile | null; ctx: AppFrontendCtxBase }) => {
-  return v('div', { className: 'flex max-w-full items-center justify-start gap-2 overflow-x-hidden' }, [
-    v(Avatar, { src: UserProfile.toAvatarUrl(input.host), alt: 'avatar', className: 'size-12' }),
-    v('div', { className: 'flex flex-1 items-center justify-start gap-2 overflow-x-hidden' }, [
+  return v('div', { class: 'flex max-w-full items-center justify-start gap-2 overflow-x-hidden' }, [
+    v(Avatar, { src: UserProfile.toAvatarUrl(input.host), alt: 'avatar', class: 'size-12' }),
+    v('div', { class: 'flex flex-1 items-center justify-start gap-2 overflow-x-hidden' }, [
       input.host &&
         v(Typography, {
           variant: 'title',
-          className: 'truncate text-left text-lg font-normal',
+          class: 'truncate text-left text-lg font-normal',
           text: input.ctx.t('username', input.host.username),
         }),
       v(ViewHostChip, { ctx: input.ctx }),
@@ -84,24 +84,24 @@ const ViewSpaceCardHost = (input: { host?: UserProfile | null; ctx: AppFrontendC
 const ViewSpaceCardUsers = (input: { users: UserProfile[]; ctx: AppFrontendCtxBase }) => {
   if (input.users.length <= 1) return null
 
-  return v('div', { className: 'flex items-center justify-start gap-2' }, [
-    v('div', { className: 'flex items-center' }, [
+  return v('div', { class: 'flex items-center justify-start gap-2' }, [
+    v('div', { class: 'flex items-center' }, [
       ...input.users.slice(0, MAX_AVATAR_COUNT).map((user, index) =>
         v(Avatar, {
           key: user.username,
           src: UserProfile.toAvatarUrl(user),
           alt: 'avatar',
-          className: cn('h-8 w-8', index !== 0 && '-ml-2'),
+          class: cn('h-8 w-8', index !== 0 && '-ml-2'),
         }),
       ),
       input.users.length > MAX_AVATAR_COUNT &&
-        v('div', { className: '-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30' }, [
+        v('div', { class: '-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30' }, [
           v(Typography, { variant: 'label', text: input.ctx.t('app.+number', input.users.length - MAX_AVATAR_COUNT) }),
         ]),
     ]),
     v(Typography, {
       variant: 'body',
-      className: 'truncate text-lg font-normal',
+      class: 'truncate text-lg font-normal',
       text: input.ctx.t('space-card.people-count', input.users.length),
     }),
   ])

@@ -33,20 +33,20 @@ export const AuthScreenFormLayout = (input: {
         onBack: input.onBack,
       }),
       v('form', {
-        className: 'flex w-full flex-col gap-16 pt-4',
+        class: 'flex w-full flex-col gap-16 pt-4',
         onSubmit: (e: Event) => {
           e.preventDefault()
           input.onSubmit()
         },
         children: v(Frag, null, [
           v('div', {
-            className: 'flex w-full flex-col gap-6',
+            class: 'flex w-full flex-col gap-6',
             children: input.renderInputs(),
           }),
           v(Button, {
             color: 'primary',
             size: 'lg',
-            className: 'w-full',
+            class: 'w-full',
             variant: 'contained',
             type: 'submit',
             text: input.submitText,

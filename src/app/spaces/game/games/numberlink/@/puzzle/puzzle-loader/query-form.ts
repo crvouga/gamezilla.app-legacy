@@ -47,7 +47,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
   }
   return v(
     'div',
-    { className: 'flex w-full gap-2 px-4 py-4 pt-2' },
+    { class: 'flex w-full gap-2 px-4 py-4 pt-2' },
     [
       input.query.where.createdBy?.equals === input.ctx.currentUser.userId &&
         v(Chip, {
@@ -57,7 +57,7 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
           // onClick: () => dispatch({ t: 'toggled-created-by-you', userId: input.ctx.currentUser.userId })
         }),
 
-      v('div', { className: 'flex-1' }),
+      v('div', { class: 'flex-1' }),
 
       input.query.order.lastUpdatedAt &&
         v(Chip, {

@@ -29,7 +29,7 @@ export const doPaint = (columns: Columns) => {
 export const ViewColumnsCanvas = (input: ViewColumnsInput) => {
   return v('canvas', {
     id: 'view-columns-canvas',
-    className: 'w-full cursor-pointer',
+    class: 'w-full cursor-pointer',
     onClick: (e: MouseEvent) => {
       const target = e.currentTarget as HTMLCanvasElement
       const rect = target.getBoundingClientRect()

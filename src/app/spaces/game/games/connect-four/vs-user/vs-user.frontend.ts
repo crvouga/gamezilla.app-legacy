@@ -216,18 +216,18 @@ const View: Module['View'] = (input) => {
             LayoutGame,
             {
               isSpectating,
-              className: 'flex w-full flex-1 flex-col items-center justify-center gap-2',
+              class: 'flex w-full flex-1 flex-col items-center justify-center gap-2',
               ctx: input.ctx,
             },
             [
-              v('div', { className: 'flex w-full items-center gap-2 px-2' }, [
+              v('div', { class: 'flex w-full items-center gap-2 px-2' }, [
                 v(PlayerSlot, { playerType: 'player-one', modelSpace, ctx: input.ctx }),
                 v(PlayerSlot, { playerType: 'player-two', modelSpace, ctx: input.ctx }),
               ]),
 
               v(Feedback, { ctx: input.ctx, modelSpace }),
 
-              v('div', { className: 'relative w-full' }, [
+              v('div', { class: 'relative w-full' }, [
                 v(ViewColumns, {
                   columns: modelSpace.columns,
                   gameId: modelSpace.gameId,
@@ -247,7 +247,7 @@ const View: Module['View'] = (input) => {
                 input.modelSpace.type === 'game-over' &&
                   v(
                     'div',
-                    { className: 'absolute top-0 left-0 flex h-full w-full items-center justify-center bg-black/50' },
+                    { class: 'absolute top-0 left-0 flex h-full w-full items-center justify-center bg-black/50' },
                     [
                       v(ViewGameOverMessage, {
                         dispatch: input.dispatch,
@@ -339,8 +339,8 @@ const ViewGameOverMessage = ({
 
   if (modelSpace.rematch.type === 'Asking' && modelSpace.rematch.asker === currentPlayerType) {
     return v('div', {}, [
-      v('p', { className: 'mb-4 text-center text-xl' }, ['Waiting for response']),
-      v(IconSpinner, { className: 'mb-4 h-8 w-8 animate-spin' }),
+      v('p', { class: 'mb-4 text-center text-xl' }, ['Waiting for response']),
+      v(IconSpinner, { class: 'mb-4 h-8 w-8 animate-spin' }),
       v(Button, {
         variant: 'contained',
         onClick: () =>
@@ -360,7 +360,7 @@ const ViewGameOverMessage = ({
   ) {
     return v('div', {}, [
       v('p', {}, ['Rematch?']),
-      v('div', { className: 'flex w-full items-center justify-center gap-4' }, [
+      v('div', { class: 'flex w-full items-center justify-center gap-4' }, [
         v(Button, {
           variant: 'contained',
           onClick: () =>
@@ -388,7 +388,7 @@ const ViewGameOverMessage = ({
   }
 
   if (modelSpace.gameOver.type === 'Draw') {
-    return v('p', { className: 'text-xl' }, ['Tie'])
+    return v('p', { class: 'text-xl' }, ['Tie'])
   }
 
   if (modelSpace.gameOver.type === 'resignation') {
@@ -398,10 +398,10 @@ const ViewGameOverMessage = ({
 
     if (currentPlayerType === null) {
       return v('div', {}, [
-        v('div', { className: 'flex w-full items-center justify-center' }, [
+        v('div', { class: 'flex w-full items-center justify-center' }, [
           v(PlayerIcon, { playerType: winner }),
           v(Avatar, {
-            className: 'size-12',
+            class: 'size-12',
             alt: '',
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]]),
           }),
@@ -420,11 +420,11 @@ const ViewGameOverMessage = ({
     const { winner } = modelSpace.gameOver
 
     if (currentPlayerType === null) {
-      return v('div', { className: 'flex w-full flex-col items-center justify-center gap-2' }, [
-        v('div', { className: 'flex w-full items-center justify-center gap-2' }, [
-          v(PlayerIcon, { playerType: winner, className: 'size-20' }),
+      return v('div', { class: 'flex w-full flex-col items-center justify-center gap-2' }, [
+        v('div', { class: 'flex w-full items-center justify-center gap-2' }, [
+          v(PlayerIcon, { playerType: winner, class: 'size-20' }),
           v(Avatar, {
-            className: 'size-20',
+            class: 'size-20',
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[winner]]),
           }),
         ]),
@@ -443,7 +443,7 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
     return v(Typography, {
       text: TranslatedText.of('Game Over'),
       color: 'text-secondary',
-      className: 'flex items-center justify-center',
+      class: 'flex items-center justify-center',
     })
   }
 
@@ -452,14 +452,14 @@ const Feedback = ({ ctx, modelSpace }: { ctx: SpaceFrontendCtx; modelSpace: Stat
   const currentUserPlayerType = toPlayerType(ctx.currentUser.userId, modelSpace)
 
   if (currentUserPlayerType !== turn) {
-    return v('div', { className: 'flex items-center justify-center gap-2 text-center' }, [
-      v(PlayerIcon, { className: 'h-4 w-4', playerType: turn }),
+    return v('div', { class: 'flex items-center justify-center gap-2 text-center' }, [
+      v(PlayerIcon, { class: 'h-4 w-4', playerType: turn }),
       v(Typography, { text: TranslatedText.of('Turn'), color: 'text-secondary' }),
     ])
   }
 
-  return v('p', { className: 'flex items-center justify-center gap-2 text-center' }, [
-    v(PlayerIcon, { className: 'h-4 w-4', playerType: turn }),
+  return v('p', { class: 'flex items-center justify-center gap-2 text-center' }, [
+    v(PlayerIcon, { class: 'h-4 w-4', playerType: turn }),
     'Your Turn',
   ])
 }
@@ -473,10 +473,10 @@ const PlayerSlot = ({
   playerType: PlayerType
   ctx: SpaceFrontendCtx
 }) => {
-  return v(Paper, { className: 'flex flex-1 items-center gap-2 overflow-hidden rounded p-2' }, [
-    v(PlayerIcon, { className: 'h-8 w-8', playerType }),
+  return v(Paper, { class: 'flex flex-1 items-center gap-2 overflow-hidden rounded p-2' }, [
+    v(PlayerIcon, { class: 'h-8 w-8', playerType }),
     v(Avatar, {
-      className: 'h-8 w-8',
+      class: 'h-8 w-8',
       alt: '',
       src: UserProfile.toAvatarUrl(ctx.profilesByUserId[modelSpace.players[playerType]]),
     }),

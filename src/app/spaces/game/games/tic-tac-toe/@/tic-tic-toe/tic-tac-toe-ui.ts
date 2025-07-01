@@ -68,7 +68,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
     allPositions.map((position) =>
       v('rect', {
         key: [position.column, position.row, toSlot(board, position)].join(' '),
-        className: 'cursor-pointer',
+        class: 'cursor-pointer',
         x: Number(position.column) * scale,
         y: Number(position.row) * scale,
         width: 1 * scale,
@@ -299,8 +299,8 @@ const Naught = ({
   return v('circle', { r, cx, cy, stroke: color, strokeWidth, fill: 'transparent' })
 }
 
-export const PlayerTypeIcon = ({ playerType, className }: { playerType: PlayerType; className?: string }) => {
-  return v('svg', { viewBox: '-1 -1 2 2', fill: 'currentColor', className }, [
+export const PlayerTypeIcon = ({ playerType, class: class_ }: { playerType: PlayerType; class?: string }) => {
+  return v('svg', { viewBox: '-1 -1 2 2', fill: 'currentColor', class: class_ }, [
     v(ViewSlot, {
       key: playerType,
       cx: 0,
@@ -313,7 +313,7 @@ export const PlayerTypeIcon = ({ playerType, className }: { playerType: PlayerTy
   ])
 }
 
-export const CoverArt = (input: { className?: string }) => {
+export const CoverArt = (input: { class?: string }) => {
   const positions: [Position, Slot][] = [
     [{ row: 0, column: 0 }, 'X'],
     [{ row: 0, column: 1 }, Empty],

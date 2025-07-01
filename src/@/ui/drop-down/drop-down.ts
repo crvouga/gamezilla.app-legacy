@@ -11,7 +11,7 @@ export const DropDown = (props: {
   onClose: () => void
   renderReference: () => VDom
   renderFloating: () => VDom
-  className?: string
+  class?: string
   position?: DropDownPosition
   alignment?: DropDownAlignment
 }) => {
@@ -36,7 +36,7 @@ export const DropDown = (props: {
       'div',
       {
         id: props.id,
-        className: cn('relative', props.className, props.open && 'z-50'),
+        class: cn('relative', props.class, props.open && 'z-50'),
         onKeyDown,
       },
       [
@@ -55,7 +55,7 @@ export const DropDown = (props: {
                 'div',
                 {
                   id: props.id,
-                  className: toPositionClasses(position, alignment),
+                  class: toPositionClasses(position, alignment),
                 },
                 [props.renderFloating()],
               ),
@@ -69,7 +69,7 @@ export const DropDown = (props: {
 const Backdrop = (props: { open: boolean; onClick: () => void; onKeyDown: (e: unknown) => void }) => {
   if (!props.open) return null
   return v('button', {
-    className: 'fixed inset-0 z-40 bg-black/50',
+    class: 'fixed inset-0 z-40 bg-black/50',
     onClick: props.onClick,
     onKeyDown: props.onKeyDown,
   })

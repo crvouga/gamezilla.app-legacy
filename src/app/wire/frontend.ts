@@ -78,11 +78,11 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   ])
 }
 
-const ViewDot = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase; className: string }) => {
+const ViewDot = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase; class: string }) => {
   return v(BackendConnectionFrontend.ViewDot, {
     model: input.model.backendConnection,
     ctx: input.ctx,
-    className: input.className,
+    class: input.class,
   })
 }
 

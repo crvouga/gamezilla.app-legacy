@@ -3,7 +3,7 @@ import { Sub } from '~/@/sub'
 export type IntersectionObserverEmitterInput = {
   onVisible?: () => void
   onHidden?: () => void
-  className?: string
+  class?: string
   id: string
 }
 

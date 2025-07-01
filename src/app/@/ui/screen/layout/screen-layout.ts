@@ -9,7 +9,7 @@ export const ScreenLayout = (input: ScreenLayoutProps) => {
     ...toDataTestIds(input).map((dataTestId) =>
       v('div', {
         key: dataTestId,
-        className: 'hidden',
+        class: 'hidden',
         'data-testid': dataTestId,
       }),
     ),

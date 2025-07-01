@@ -4,7 +4,7 @@ import { Props, propsSub } from './shared'
 
 export const ClickOutside = (
   props: Props & {
-    className?: string
+    class?: string
     children: React.ReactNode
   },
 ) => {
@@ -13,7 +13,7 @@ export const ClickOutside = (
     'click-outside',
     {
       id: props.id,
-      className: props.className,
+      class: props.class,
     },
     [props.children],
   )

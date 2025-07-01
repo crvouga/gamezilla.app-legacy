@@ -8,7 +8,7 @@ export const ScreenTitleButton = (input: {
   buttonText: TranslatedText
   onClick: () => void
 }) => {
-  return v('div', { className: 'flex flex-1 flex-col items-center justify-center gap-4' }, [
+  return v('div', { class: 'flex flex-1 flex-col items-center justify-center gap-4' }, [
     v(Typography, { variant: 'title', text: input.title }),
     v(Button, {
       onClick: input.onClick,

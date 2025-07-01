@@ -23,9 +23,9 @@ export type ButtonInput = {
   text?: TranslatedText
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
-  className?: string
+  class?: string
   onClick?: (event: ButtonEvent) => void
-  renderIconStart?: (input: { className?: string }) => VDom
+  renderIconStart?: (input: { class?: string }) => VDom
   variant?: ButtonVariant
   color?: ButtonColor
   size?: ButtonSize
@@ -41,8 +41,8 @@ export const Button = (input: ButtonInput) => {
       disabled: input.disabled || input.loading,
       type: input.type ?? 'button',
       'data-fab': input.fab,
-      className: cn(
-        input.className,
+      class: cn(
+        input.class,
         'relative flex shrink-0 appearance-none flex-nowrap items-center justify-center truncate overflow-hidden rounded font-semibold select-none',
         toColorClass(input),
         toSizeClass(input),
@@ -59,20 +59,12 @@ export const Button = (input: ButtonInput) => {
     },
 
     [
-      v(
-        'div',
-        { className: cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent') },
-        [
-          v('div', { className: 'flex-none' }, [
-            input.renderIconStart?.({ className: cn(toIconSizeClass(input), 'mr-2') }),
-          ]),
-          v('div', { className: 'truncate' }, [input.text]),
-        ],
-      ),
+      v('div', { class: cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent') }, [
+        v('div', { class: 'flex-none' }, [input.renderIconStart?.({ class: cn(toIconSizeClass(input), 'mr-2') })]),
+        v('div', { class: 'truncate' }, [input.text]),
+      ]),
       input.loading &&
-        v('div', { className: 'absolute inset-0 flex items-center justify-center' }, [
-          v(Spinner, { className: 'size-8' }),
-        ]),
+        v('div', { class: 'absolute inset-0 flex items-center justify-center' }, [v(Spinner, { class: 'size-8' })]),
     ],
   )
 }

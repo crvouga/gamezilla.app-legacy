@@ -19,7 +19,7 @@ export const DrawerComponent = (props: DrawerInput) => {
           'aria-hidden': !props.open,
           role: 'dialog',
           'aria-label': props.ariaLabel,
-          className: cn(
+          class: cn(
             'absolute inset-0 z-50 flex bg-black/80 transition-opacity duration-200',
             props.position === 'bottom' ? 'flex-col' : 'flex-col-reverse',
             props.open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
@@ -27,7 +27,7 @@ export const DrawerComponent = (props: DrawerInput) => {
         },
         [
           v('div', {
-            className: 'w-full flex-1',
+            class: 'w-full flex-1',
             'aria-label': props.ctx.t('drawer.close'),
             onClick: (event: unknown) => {
               preventConsoleErrorWhenClosingDrawer(event)
@@ -38,7 +38,7 @@ export const DrawerComponent = (props: DrawerInput) => {
           v(
             Surface,
             {
-              className: cn(
+              class: cn(
                 'h-fit w-full transition-transform duration-200',
                 props.position === 'bottom'
                   ? `rounded-t-2xl ${props.open ? 'translate-y-0' : 'translate-y-full'}`

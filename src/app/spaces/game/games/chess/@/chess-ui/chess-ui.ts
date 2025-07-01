@@ -30,12 +30,12 @@ export const PawnIcon = (input: { stroke?: string }) => {
   )
 }
 
-export const PlayerIcon = ({ className, color }: { className?: string; color: 'w' | 'b' }) => {
+export const PlayerIcon = ({ class: class_, color }: { class?: string; color: 'w' | 'b' }) => {
   return v(
     'svg',
     {
       viewBox: '0 0 45 45',
-      className: className,
+      class: class_,
     },
     [
       v(

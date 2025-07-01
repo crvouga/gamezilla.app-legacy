@@ -8,7 +8,7 @@ import { Frag } from '../frag'
 export type ChipSize = 'sm' | 'lg'
 
 export type ChipProps = {
-  renderStartIcon?: (input: { className: string }) => VDom
+  renderStartIcon?: (input: { class: string }) => VDom
   label: TranslatedText
   size: ChipSize
   onClick?: () => void
@@ -17,13 +17,13 @@ export type ChipProps = {
 export const Chip = (input: ChipProps) => {
   return v(Tag, {
     tagName: typeof input.onClick === 'function' ? 'button' : 'div',
-    className: cn('flex items-center gap-1 truncate border border-white/30 font-semibold', toSizeClass(input)),
+    class: cn('flex items-center gap-1 truncate border border-white/30 font-semibold', toSizeClass(input)),
     onClick: input.onClick,
     children: v(Frag, null, [
       input.renderStartIcon?.({
-        className: cn(toIconSizeClass(input), 'shrink-0'),
+        class: cn(toIconSizeClass(input), 'shrink-0'),
       }),
-      v('span', { className: 'truncate' }, [input.label]),
+      v('span', { class: 'truncate' }, [input.label]),
     ]),
   })
 }
@@ -36,7 +36,7 @@ const Tag = ({
   children: VDom
   tagName: 'div' | 'button'
   onClick?: () => void
-  className?: string
+  class?: string
 }) => {
   switch (tagName) {
     case 'button':

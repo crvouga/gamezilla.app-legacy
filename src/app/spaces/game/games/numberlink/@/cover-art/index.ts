@@ -40,9 +40,9 @@ const VIEW_GRID = v(VariantGridBoard.View, {
   disabled: true,
   borderless: true,
   disableHighlight: true,
-  className: 'aspect-square bg-black',
+  class: 'aspect-square bg-black',
 })
 
-export const CoverArt = (input: { className?: string }) => {
+export const CoverArt = (input: { class?: string }) => {
   return v('div', input, [VIEW_GRID])
 }

@@ -29,30 +29,26 @@ const View = (input: {
 }) => {
   const numberlink = toNumberlink(input.model, input.numberlink)
 
-  return v(
-    'div',
-    { className: 'relative aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none' },
-    [
-      v(NumberlinkVariantBoard.View, {
-        disabled: input.disabled,
-        model: numberlink,
-        showCoordinates: false,
-        isDragging: input.model.status.t === 'dragging',
-        onDraggedOver: (nodeId) => input.dispatch({ t: 'user-dragged-over-node', nodeId }),
-        onPressDown: (nodeId) => input.dispatch({ t: 'user-pressed-down-node', nodeId }),
-        onPressUp: (nodeId) => input.dispatch({ t: 'user-pressed-up-node', nodeId }),
-        onLeave: () => input.dispatch({ t: 'user-dragging-left' }),
-        autocompleteEdge:
-          input.model.status.t === 'dragging' && input.model.status.autocompleteEdge
-            ? { ...input.model.status.autocompleteEdge, groupId: input.model.status.activeGroupId }
-            : null,
-        isGroupActive: (groupId) => input.model.status.t === 'dragging' && input.model.status.activeGroupId === groupId,
-        usedHints: UseHint.toUsedHints(input.model),
-      }),
+  return v('div', { class: 'relative aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none' }, [
+    v(NumberlinkVariantBoard.View, {
+      disabled: input.disabled,
+      model: numberlink,
+      showCoordinates: false,
+      isDragging: input.model.status.t === 'dragging',
+      onDraggedOver: (nodeId) => input.dispatch({ t: 'user-dragged-over-node', nodeId }),
+      onPressDown: (nodeId) => input.dispatch({ t: 'user-pressed-down-node', nodeId }),
+      onPressUp: (nodeId) => input.dispatch({ t: 'user-pressed-up-node', nodeId }),
+      onLeave: () => input.dispatch({ t: 'user-dragging-left' }),
+      autocompleteEdge:
+        input.model.status.t === 'dragging' && input.model.status.autocompleteEdge
+          ? { ...input.model.status.autocompleteEdge, groupId: input.model.status.activeGroupId }
+          : null,
+      isGroupActive: (groupId) => input.model.status.t === 'dragging' && input.model.status.activeGroupId === groupId,
+      usedHints: UseHint.toUsedHints(input.model),
+    }),
 
-      v(CheckmarkAnimation, { open: Boolean(input.model.showCheckmarkAnimation && input.showSolvedAnimation) }),
-    ],
-  )
+    v(CheckmarkAnimation, { open: Boolean(input.model.showCheckmarkAnimation && input.showSolvedAnimation) }),
+  ])
 }
 
 const viewResetAction = (input: {
@@ -115,12 +111,12 @@ const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan | null |
       }),
       onExit: async () => {},
       mode: 'out-in',
-      className: 'pointer-events-none',
+      class: 'pointer-events-none',
     },
     [
       input.open &&
-        v('div', { className: 'pointer-events-none absolute inset-0 flex items-center justify-center opacity-0' }, [
-          v(IconCheckmark, { className: 'pointer-events-none aspect-square w-full opacity-50' }),
+        v('div', { class: 'pointer-events-none absolute inset-0 flex items-center justify-center opacity-0' }, [
+          v(IconCheckmark, { class: 'pointer-events-none aspect-square w-full opacity-50' }),
         ]),
     ],
   )

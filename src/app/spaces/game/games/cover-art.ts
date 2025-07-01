@@ -4,21 +4,21 @@ import * as ConnectFour from './connect-four/connect-four-cover-art'
 import * as Numberlink from './numberlink/cover-art'
 import { v } from '~/@/vdom/v'
 
-export const GameCoverArt = (input: { rounded?: boolean; className?: string; gameName: GameName }) => {
+export const GameCoverArt = (input: { rounded?: boolean; class?: string; gameName: GameName }) => {
   return v(GameCoverArtSwitch, {
-    className: cn(input.className, 'aspect-square', input.rounded && 'overflow-hidden rounded-lg'),
+    class: cn(input.class, 'aspect-square', input.rounded && 'overflow-hidden rounded-lg'),
     gameName: input.gameName,
   })
 }
 
-const GameCoverArtSwitch = (input: { className?: string; gameName: GameName }) => {
+const GameCoverArtSwitch = (input: { class?: string; gameName: GameName }) => {
   switch (input.gameName) {
     case 'connect-four': {
-      return v(ConnectFour.CoverArt, { className: input.className })
+      return v(ConnectFour.CoverArt, { class: input.class })
     }
 
     case 'numberlink': {
-      return v(Numberlink.CoverArt, { className: input.className })
+      return v(Numberlink.CoverArt, { class: input.class })
     }
 
     default: {

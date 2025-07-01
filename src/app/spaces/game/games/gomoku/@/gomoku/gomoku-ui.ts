@@ -36,7 +36,7 @@ export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
   ])
 }
 
-export const CoverArt = (input: { className?: string }) => {
+export const CoverArt = (input: { class?: string }) => {
   return v(ViewBoard, {
     ...input,
     viewBoxOffset: 0.5,
@@ -72,9 +72,9 @@ export const ViewBoard = ({
   board,
   bounds: bounds_ = bounds,
   viewBoxOffset = 0.8,
-  className,
+  class: class_,
 }: {
-  className?: string
+  class?: string
   board: Board
   onPress?: (position: Position) => void
   bounds?: Bounds
@@ -103,7 +103,7 @@ export const ViewBoard = ({
     {
       width: '100%',
       viewBox,
-      className: cn('overflow-hidden', className),
+      class: cn('overflow-hidden', class_),
     },
     [
       v('g', { 'stroke-width': 0.05 }, [
@@ -195,7 +195,7 @@ export const ViewBoard = ({
                   x,
                   y,
                 }),
-              className: 'cursor-pointer',
+              class: 'cursor-pointer',
             }),
           ),
         ),

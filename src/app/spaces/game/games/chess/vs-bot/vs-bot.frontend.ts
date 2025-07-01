@@ -321,7 +321,7 @@ export const View = ({
       botVariants: ChessBotLevel.all.map((botLevel) => {
         return {
           label: ctx.t('chess.bot-level', botLevel),
-          renderIcon: (input: { className: string }) =>
+          renderIcon: (input: { class: string }) =>
             ChessBotLevel.render({
               level: botLevel,
               ...input,
@@ -382,18 +382,18 @@ export const View = ({
     })
   }
 
-  const botSlot = v('div', { className: 'flex w-full items-center gap-3 p-3' }, [
-    v(IconRobot, { className: 'h-10 w-10' }),
-    v('p', { className: 'flex-1 text-lg' }, [ChessBotLevel.toString(model.spaceModel.botLevel)]),
-    isBotTurn(model.spaceModel) && v(Spinner, { className: 'h-10 w-10' }),
+  const botSlot = v('div', { class: 'flex w-full items-center gap-3 p-3' }, [
+    v(IconRobot, { class: 'h-10 w-10' }),
+    v('p', { class: 'flex-1 text-lg' }, [ChessBotLevel.toString(model.spaceModel.botLevel)]),
+    isBotTurn(model.spaceModel) && v(Spinner, { class: 'h-10 w-10' }),
   ])
 
-  const userSlot = v('div', { className: 'flex w-full items-center gap-3 p-3' }, [
+  const userSlot = v('div', { class: 'flex w-full items-center gap-3 p-3' }, [
     v(Avatar, {
-      className: 'h-10 w-10',
+      class: 'h-10 w-10',
       src: UserProfile.toAvatarUrl(ctx.profilesByUserId[model.spaceModel.userId]),
     }),
-    v('p', { className: 'flex-1 text-lg' }, [ctx.profilesByUserId[model.spaceModel.userId]?.username]),
+    v('p', { class: 'flex-1 text-lg' }, [ctx.profilesByUserId[model.spaceModel.userId]?.username]),
   ])
 
   const boardOrientation = model.isFlipped
@@ -410,7 +410,7 @@ export const View = ({
     id: 'chess-vs-bot',
     renderBody: () =>
       v(LayoutGame, { ctx }, [
-        v('div', { className: 'flex w-full flex-1 flex-col items-center justify-center' }, [
+        v('div', { class: 'flex w-full flex-1 flex-col items-center justify-center' }, [
           topSlot,
           v(Chessboard, {
             id: 'chessboard',

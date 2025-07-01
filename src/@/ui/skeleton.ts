@@ -1,5 +1,5 @@
 import { v } from '~/@/vdom/v'
 
-export const Skeleton = (props: { className?: string }) => {
-  return v('div', { className: `animate-pulse bg-neutral-800 rounded ${props.className ?? ''}` })
+export const Skeleton = (props: { class?: string }) => {
+  return v('div', { class: `animate-pulse bg-neutral-800 rounded ${props.class ?? ''}` })
 }

@@ -16,11 +16,11 @@ export const ProfileListItem = ({
   profile?: UserProfile | null
   subtitle?: TranslatedText
 }) => {
-  return v('div', { className: 'flex w-full items-center gap-2 p-2' }, [
-    v(Avatar, { className: 'size-12', src: profile ? UserProfile.toAvatarUrl(profile) : '' }),
+  return v('div', { class: 'flex w-full items-center gap-2 p-2' }, [
+    v(Avatar, { class: 'size-12', src: profile ? UserProfile.toAvatarUrl(profile) : '' }),
     v(
       'div',
-      { className: 'flex flex-1 flex-col gap-0.5' },
+      { class: 'flex flex-1 flex-col gap-0.5' },
       [
         profile && v(Typography, { variant: 'body', text: ctx.t('username', profile.username) }),
         subtitle && v(Typography, { color: 'text-secondary', variant: 'caption', text: subtitle }),

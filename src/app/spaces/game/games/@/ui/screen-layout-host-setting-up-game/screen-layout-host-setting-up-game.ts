@@ -20,7 +20,7 @@ export const ScreenLayoutHostSettingUpGame = (input: {
     t: Translator
     screenSize: ScreenSize
   }
-  renderCoverArt?: (input: { className: string }) => VDom
+  renderCoverArt?: (input: { class: string }) => VDom
 }) => {
   return v(ScreenLayoutGameCoverArt, {
     id: 'host-setting-up-game',
@@ -32,7 +32,7 @@ export const ScreenLayoutHostSettingUpGame = (input: {
       v(Typography, {
         text: input.ctx.t('game.host-is-setting-up-game'),
         variant: 'title',
-        className: 'w-full px-4 text-center',
+        class: 'w-full px-4 text-center',
         sizeClassName: 'text-lg',
       }),
   })

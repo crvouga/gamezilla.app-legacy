@@ -236,51 +236,51 @@ export const View = ({
   return v(LayoutGame, { ctx, isSpectating }, [
     v(ViewStatusBar, { model }),
 
-    v('div', { className: 'flex w-full flex-1 flex-col items-center justify-center' }, [
-      v('div', { className: 'flex w-full items-center gap-2 px-3 py-2' }, [
+    v('div', { class: 'flex w-full flex-1 flex-col items-center justify-center' }, [
+      v('div', { class: 'flex w-full items-center gap-2 px-3 py-2' }, [
         v(Avatar, {
           src: UserProfile.toAvatarUrl(ctx.profilesByUserId[ctx.space.hostId]),
-          className: 'h-10 w-10',
+          class: 'h-10 w-10',
           alt: '',
         }),
 
-        v('div', { className: 'flex flex-1 flex-col justify-center' }, [
+        v('div', { class: 'flex flex-1 flex-col justify-center' }, [
           v(Typography, {
             text: TranslatedText.of('Rating'),
             variant: 'label',
             color: 'text-secondary',
-            className: '-mb-1/2 text-xs',
+            class: '-mb-1/2 text-xs',
           }),
-          v('div', { className: 'flex items-center gap-1' }, [
-            v('p', { className: 'text-xl font-semibold' }, [model.profile?.eloRating ?? '...']),
+          v('div', { class: 'flex items-center gap-1' }, [
+            v('p', { class: 'text-xl font-semibold' }, [model.profile?.eloRating ?? '...']),
 
             model.t === 'solved' &&
               !model.hasLost &&
               nextEloRating &&
-              v('div', { className: 'rounded-xl text-lg font-semibold text-green-500' }, [
+              v('div', { class: 'rounded-xl text-lg font-semibold text-green-500' }, [
                 `+${nextEloRating - model.profile.eloRating}`,
               ]),
 
             model.t !== 'loading' &&
               model.hasLost &&
               nextEloRating &&
-              v('div', { className: 'rounded-xl text-lg font-semibold text-red-500' }, [
+              v('div', { class: 'rounded-xl text-lg font-semibold text-red-500' }, [
                 nextEloRating - model.profile.eloRating,
               ]),
           ]),
         ]),
 
-        v('div', { className: 'flex items-center justify-end gap-2' }, [
+        v('div', { class: 'flex items-center justify-end gap-2' }, [
           v(TickingClock, { sec: durationMs ? Math.floor(durationMs / 1_000) : 0 }),
           v(Typography, {
             text: TranslatedText.of(durationMs ? formatDuration(durationMs) : '-:--'),
             color: 'text-secondary',
-            className: 'font-mono text-lg font-bold',
+            class: 'font-mono text-lg font-bold',
           }),
         ]),
       ]),
 
-      v(Paper, { className: 'relative flex aspect-square w-full items-center justify-end overflow-hidden' }, [
+      v(Paper, { class: 'relative flex aspect-square w-full items-center justify-end overflow-hidden' }, [
         v(Chessboard, {
           id: 'puzzle-chess-board',
           orientation: model.t === 'loading' ? undefined : toPlayerColor(model.puzzle),
@@ -317,18 +317,18 @@ export const View = ({
           },
         }),
         model.t === 'loading' &&
-          v('div', { className: 'absolute top-0 left-0 z-20 grid h-full w-full place-items-center bg-black/50' }, [
+          v('div', { class: 'absolute top-0 left-0 z-20 grid h-full w-full place-items-center bg-black/50' }, [
             v(Spinner),
           ]),
       ]),
 
-      v('div', { className: 'grid w-full grid-cols-2 px-2 py-1' }, [
-        v('div', { className: 'flex items-center justify-start gap-1 text-xs' }, [
+      v('div', { class: 'grid w-full grid-cols-2 px-2 py-1' }, [
+        v('div', { class: 'flex items-center justify-start gap-1 text-xs' }, [
           v(Typography, { text: TranslatedText.of('Puzzle Rating'), color: 'text-secondary' }),
           v('p', null, [model.t === 'loading' ? '...' : model.puzzle.rating]),
         ]),
 
-        v('div', { className: 'flex flex-1 items-center justify-end gap-1 text-right text-xs' }, [
+        v('div', { class: 'flex flex-1 items-center justify-end gap-1 text-right text-xs' }, [
           v(Typography, { text: TranslatedText.of('Moved'), color: 'text-secondary' }),
           v(Typography, {
             text: TranslatedText.of(model.t === 'loading' ? '0' : (model.moves?.length ?? '0').toString()),
@@ -436,22 +436,20 @@ export const BottomBarActions = ({
 
 const ViewStatusBar = (input: { model: ModelFrontend }) => {
   if (input.model.t === 'loading') {
-    return v('div', { className: 'flex w-full items-center justify-center p-2' }, [
-      v('p', { className: 'text-xl' }, ['...']),
-    ])
+    return v('div', { class: 'flex w-full items-center justify-center p-2' }, [v('p', { class: 'text-xl' }, ['...'])])
   }
 
   if (input.model.t === 'incorrect') {
-    return v('div', { className: 'flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white' }, [
-      v(IconXMark, { className: 'size-6' }),
-      v('p', { className: 'text-xl' }, ['Incorrect']),
+    return v('div', { class: 'flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white' }, [
+      v(IconXMark, { class: 'size-6' }),
+      v('p', { class: 'text-xl' }, ['Incorrect']),
     ])
   }
 
   if (input.model.t === 'solved') {
-    return v('div', { className: 'flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white' }, [
-      v(IconCheckmarkCircle, { className: 'size-6' }),
-      v('p', { className: 'text-xl' }, ['Correct']),
+    return v('div', { class: 'flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white' }, [
+      v(IconCheckmarkCircle, { class: 'size-6' }),
+      v('p', { class: 'text-xl' }, ['Correct']),
     ])
   }
 
@@ -459,19 +457,19 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
     return v(
       'div',
       {
-        className: cn(
+        class: cn(
           'flex w-full items-center justify-center gap-2 p-2',
           toPlayerColor(input.model.puzzle) === 'b' ? 'bg-black text-white' : 'bg-white text-black',
         ),
       },
       [
         v('div', {
-          className: cn(
+          class: cn(
             'size-6 rounded-full border-2',
             toPlayerColor(input.model.puzzle) === 'b' ? 'border-[#ababab] bg-black' : 'border-black bg-white',
           ),
         }),
-        v('p', { className: 'text-xl text-inherit' }, [
+        v('p', { class: 'text-xl text-inherit' }, [
           `${Chess.colorToString(toPlayerColor(input.model.puzzle))} to move`,
         ]),
       ],
@@ -479,9 +477,9 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
   }
 
   if (input.model.t === 'solved-with-hint') {
-    return v(Paper, { className: 'flex w-full items-center justify-center gap-2 p-2 text-white' }, [
-      v(IconCheckmarkCircle, { className: 'size-6' }),
-      v('p', { className: 'text-xl' }, ['Solved with hint']),
+    return v(Paper, { class: 'flex w-full items-center justify-center gap-2 p-2 text-white' }, [
+      v(IconCheckmarkCircle, { class: 'size-6' }),
+      v('p', { class: 'text-xl' }, ['Solved with hint']),
     ])
   }
 
@@ -489,7 +487,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
 }
 
 const TickingClock = (input: { sec: number }) => {
-  return v('svg', { className: 'h-5 w-5', viewBox: '-1 -1 2 2', stroke: 'currentColor', 'stroke-width': '0.2' }, [
+  return v('svg', { class: 'h-5 w-5', viewBox: '-1 -1 2 2', stroke: 'currentColor', 'stroke-width': '0.2' }, [
     v('circle', { cx: '0', cy: '0', r: '0.9' }),
     v('line', {
       stroke: input.sec % 4 === 0 ? undefined : 'transparent',

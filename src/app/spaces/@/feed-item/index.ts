@@ -6,7 +6,7 @@ const Info = (input: { text: string }) => {
   return v(Typography, {
     text: TranslatedText.of(input.text),
     color: 'text-secondary',
-    className: 'flex w-full items-center justify-center text-xs',
+    class: 'flex w-full items-center justify-center text-xs',
   })
 }
 

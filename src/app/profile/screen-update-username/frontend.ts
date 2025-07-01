@@ -67,7 +67,7 @@ const View: FrontendModule['View'] = (input) => {
       cancelDisabled: false,
     },
     renderBody: () =>
-      v('div', { className: 'flex w-full flex-col gap-4 p-4' }, [
+      v('div', { class: 'flex w-full flex-col gap-4 p-4' }, [
         v(TextField, {
           id: 'username',
           label: input.ctx.t('username.username-label'),

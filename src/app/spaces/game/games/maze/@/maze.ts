@@ -185,7 +185,7 @@ const viewBox = [
 ].join(' ')
 
 export const CoverArt = () => {
-  return v('svg', { viewBox, width: '100%', className: 'border' }, [
+  return v('svg', { viewBox, width: '100%', class: 'border' }, [
     v('rect', {
       x: coverArtMaze.lower.x,
       y: coverArtMaze.lower.y,

@@ -22,7 +22,7 @@ export const DrawerWebComponent = (input: DrawerInput) => {
             'aria-hidden': !input.open,
             role: 'dialog',
             'aria-label': input.ariaLabel,
-            className: cn(
+            class: cn(
               'h-fit max-h-full w-full overflow-hidden border',
               input.position === 'bottom' ? 'rounded-t-2xl' : 'rounded-b-2xl',
             ),

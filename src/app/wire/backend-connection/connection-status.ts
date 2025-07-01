@@ -35,18 +35,18 @@ const toAveragePing = (model: Model): TimeSpan => {
   return TimeSpan.milliseconds(average)
 }
 
-const ViewDot = (input: { model: BackendConnectionStatus; ctx: { t: Translator }; className: string }) => {
+const ViewDot = (input: { model: BackendConnectionStatus; ctx: { t: Translator }; class: string }) => {
   switch (input.model.t) {
     case 'connected': {
-      return v(Dot, { className: input.className, colorClassName: 'bg-green-500' })
+      return v(Dot, { class: input.class, colorClassName: 'bg-green-500' })
     }
 
     case 'connecting': {
-      return v(Dot, { className: input.className, colorClassName: 'animate-pulse bg-orange-500' })
+      return v(Dot, { class: input.class, colorClassName: 'animate-pulse bg-orange-500' })
     }
 
     case 'disconnected': {
-      return v(Dot, { className: input.className, colorClassName: 'bg-red-500' })
+      return v(Dot, { class: input.class, colorClassName: 'bg-red-500' })
     }
   }
 }

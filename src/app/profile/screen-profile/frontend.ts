@@ -68,19 +68,19 @@ const ViewBody: typeof View = (input) => {
 
   const isCurrentUserProfile = input.ctx.currentUserId === userId
 
-  return v('div', { className: 'flex w-full flex-col items-center gap-4 p-6' }, [
-    v(Avatar, { className: 'size-28', src: UserProfile.toAvatarUrl(profile), alt: 'profile avatar' }),
+  return v('div', { class: 'flex w-full flex-col items-center gap-4 p-6' }, [
+    v(Avatar, { class: 'size-28', src: UserProfile.toAvatarUrl(profile), alt: 'profile avatar' }),
     v(Typography, {
       variant: 'title',
       text: profile ? input.ctx.t('username', profile.username) : TranslatedText.ellipsis,
     }),
 
     isCurrentUserProfile
-      ? v('div', { className: 'flex w-full items-center justify-center gap-6 pt-4' }, [
+      ? v('div', { class: 'flex w-full items-center justify-center gap-6 pt-4' }, [
           v(Button, {
             onClick: () =>
               input.dispatch({ t: 'got-msg-out', c: PushScreenCmd.init({ t: 'profile-edit', n: 'profile' }) }),
-            className: 'max-w-64 flex-1',
+            class: 'max-w-64 flex-1',
             renderIconStart: (iconInput) => v(IconUserPen, iconInput),
             text: input.ctx.t('profile.edit-profile'),
             size: 'sm',

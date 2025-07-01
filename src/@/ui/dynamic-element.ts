@@ -24,7 +24,7 @@ type DynamicElementProps = {
   children?: VDom
   role?: AriaRole
   name?: string
-  className?: string
+  class?: string
   tabIndex?: number
   disabled?: boolean
   dataTestId?: string

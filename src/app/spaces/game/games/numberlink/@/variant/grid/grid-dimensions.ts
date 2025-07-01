@@ -27,16 +27,16 @@ export const ViewForm = (input: {
     t: Translator
   }
 }) => {
-  return v('div', { className: 'flex flex-col gap-4 p-6' }, [
-    v('div', { className: 'flex items-center justify-center gap-1 text-center text-4xl font-bold' }, [
+  return v('div', { class: 'flex flex-col gap-4 p-6' }, [
+    v('div', { class: 'flex items-center justify-center gap-1 text-center text-4xl font-bold' }, [
       v('p', {}, [`${input.form.width}w`]),
 
-      v(IconXMark, { className: 'size-6' }),
+      v(IconXMark, { class: 'size-6' }),
 
       v('p', {}, [`${input.form.height}h`]),
     ]),
 
-    v('div', { className: 'flex flex-col gap-3' }, [
+    v('div', { class: 'flex flex-col gap-3' }, [
       v(Slider, {
         onInput: (width) => input.onInput({ ...input.form, width }),
         value: input.form.width,

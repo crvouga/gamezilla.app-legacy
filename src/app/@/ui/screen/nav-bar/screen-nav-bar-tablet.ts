@@ -28,7 +28,7 @@ export const ScreenNavBarTablet = (input: {
           position: 'bottom',
           reference: v(IconButton, {
             onClick: input.back.onClick,
-            className: '-ml-2',
+            class: '-ml-2',
             size: 'lg',
             label: input.ctx.t('app.exit'),
             renderIcon: (inputIcon) => v(IconArrowLeft, inputIcon),
@@ -36,18 +36,18 @@ export const ScreenNavBarTablet = (input: {
         },
       }),
 
-    v('div', { className: 'flex flex-1 flex-col truncate' }, [
+    v('div', { class: 'flex flex-1 flex-col truncate' }, [
       input.title &&
         v(Typography, {
           role: 'heading',
-          className: 'truncate px-2',
+          class: 'truncate px-2',
           sizeClassName: 'text-3xl font-bold',
           variant: 'title',
           text: input.title,
         }),
       input.subtitle &&
         v(Typography, {
-          className: 'truncate px-2',
+          class: 'truncate px-2',
           color: 'text-secondary',
           sizeClassName: 'text-xl',
           role: 'heading',
@@ -60,5 +60,5 @@ export const ScreenNavBarTablet = (input: {
 }
 
 export const ScreenNavBarTabletRoot = (input: { children: VDom }) => {
-  return v('div', { className: 'flex h-24 w-full shrink-0 items-center px-6' }, [input.children])
+  return v('div', { class: 'flex h-24 w-full shrink-0 items-center px-6' }, [input.children])
 }

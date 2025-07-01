@@ -3,7 +3,7 @@ import { v } from '~/@/vdom/v'
 import type { PlayerType } from '../connect-four'
 import { gameTheme } from './shared'
 
-export const PlayerIcon = ({ playerType, ...input }: { playerType: PlayerType; key?: string; className?: string }) => {
+export const PlayerIcon = ({ playerType, ...input }: { playerType: PlayerType; key?: string; class?: string }) => {
   switch (playerType) {
     case 'player-one': {
       return v(PlayerOneIcon, input)
@@ -39,7 +39,7 @@ export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string })
   ])
 }
 
-export const PlayerOneIcon = (input: { key?: string; className?: string }) => {
+export const PlayerOneIcon = (input: { key?: string; class?: string }) => {
   const playerOneId = Uuid.generate()
   return v('svg', { viewBox: '-1 -1 2 2', ...input }, [
     v(ViewPlayerOneGradientDef, { cx: 0, cy: 0, r: 1, gradientId: playerOneId }),
@@ -47,7 +47,7 @@ export const PlayerOneIcon = (input: { key?: string; className?: string }) => {
   ])
 }
 
-export const PlayerTwoIcon = (input: { key?: string; className?: string }) => {
+export const PlayerTwoIcon = (input: { key?: string; class?: string }) => {
   const playerTwoId = Uuid.generate()
   return v('svg', { viewBox: '-1 -1 2 2', ...input }, [
     v(ViewPlayerTwoGradientDef, { gradientId: playerTwoId }),

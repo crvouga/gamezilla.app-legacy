@@ -3,5 +3,5 @@ import type { VDom } from '~/@/vdom/vdom'
 import { Button } from './button'
 
 export const ButtonVertical = (props: { children: VDom }) => {
-  return v(Button, { className: 'flex-col gap-2' }, [props.children])
+  return v(Button, { class: 'flex-col gap-2' }, [props.children])
 }

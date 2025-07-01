@@ -49,7 +49,7 @@ const View: FrontendModule['View'] = (input) => {
       }),
     renderCoverArt: (input) =>
       v('div', input, [
-        v('div', { className: 'h-full w-full p-4' }, [v(IconScrewdriverWrench, { className: 'h-full w-full' })]),
+        v('div', { class: 'h-full w-full p-4' }, [v(IconScrewdriverWrench, { class: 'h-full w-full' })]),
       ]),
     title: input.ctx.t('game.numberlink.build'),
     buttons: [

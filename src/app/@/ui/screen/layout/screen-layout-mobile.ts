@@ -14,7 +14,7 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
     DynamicElement,
     {
       element: element,
-      className: 'flex w-full flex-1 flex-col overflow-hidden',
+      class: 'flex w-full flex-1 flex-col overflow-hidden',
       onSubmit: (e) => {
         e.preventDefault()
         input.patchAction?.onSubmit()
@@ -23,14 +23,14 @@ export const ScreenLayoutMobile = (input: ScreenLayoutProps) => {
     [
       ...renderActionBars(input.ctx, input),
 
-      v('div', { className: 'flex flex-1 flex-col overflow-hidden' }, [
+      v('div', { class: 'flex flex-1 flex-col overflow-hidden' }, [
         ...renderNavBars(input.ctx, input),
 
-        v('div', { className: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+        v('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
           input.renderBody(),
 
           input.postAction &&
-            v('div', { className: 'absolute right-4 bottom-6' }, [
+            v('div', { class: 'absolute right-4 bottom-6' }, [
               v(Button, {
                 color: 'primary',
                 size: 'lg',
@@ -62,7 +62,7 @@ const renderActionBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenPro
         'div',
         {
           key: id,
-          className: position === 'top' ? 'order-first' : 'order-last',
+          class: position === 'top' ? 'order-first' : 'order-last',
         },
         [
           screen.renderMiniPlayer?.({ key: `${id}-mini-player` }),

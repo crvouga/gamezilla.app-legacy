@@ -9,18 +9,18 @@ type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 export const IconButton = (input: {
   onClick?: (event: { currentTarget?: HTMLButtonElement | null }) => void
   label: TranslatedText
-  renderIcon: (input: { className: string }) => VDom
-  className?: string
+  renderIcon: (input: { class: string }) => VDom
+  class?: string
   size?: IconButtonSize
   dataTestId?: string
 }) => {
   return v(
     ClickableTransparent,
     {
-      className: cn(
+      class: cn(
         'display flex items-center justify-center overflow-hidden rounded-full',
         toSizeClassName(input.size ?? 'md'),
-        input.className,
+        input.class,
       ),
       onClick: input.onClick,
       'aria-label': input.label,
@@ -30,14 +30,14 @@ export const IconButton = (input: {
     },
     [
       input.renderIcon({
-        className: 'w-full h-full cursor-pointer',
+        class: 'w-full h-full cursor-pointer',
       }),
     ],
   )
 }
 
 export const IconButtonEmpty = (input: { size?: IconButtonSize }) => {
-  return v('div', { className: toSizeClassName(input.size ?? 'md') })
+  return v('div', { class: toSizeClassName(input.size ?? 'md') })
 }
 
 const toSizeClassName = (size: IconButtonSize): string => {

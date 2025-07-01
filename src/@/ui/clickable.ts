@@ -10,7 +10,7 @@ export type ClickableEvent = {
 }
 
 export type ClickableProps = {
-  className?: string
+  class?: string
   children?: VDom
   onClick?: (event: ClickableEvent) => void
   role?: AriaRole
@@ -40,9 +40,9 @@ export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
       name: input.name,
       tabIndex: input.tabIndex,
       title: input.title,
-      className: cn(
+      class: cn(
         'touch-manipulation enabled:cursor-pointer enabled:active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50',
-        input.className,
+        input.class,
       ),
     },
     [input.children],
@@ -50,11 +50,9 @@ export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
 }
 
 export const ClickableTransparent = (input: ClickableProps) => {
-  return v(
-    Clickable,
-    { ...input, className: cn('[@media(hover:hover)]:enabled:hover:bg-neutral-700/50', input.className) },
-    [input.children],
-  )
+  return v(Clickable, { ...input, class: cn('[@media(hover:hover)]:enabled:hover:bg-neutral-700/50', input.class) }, [
+    input.children,
+  ])
 }
 
 export const ClickablePaper = (input: ClickableProps) => {
@@ -62,7 +60,7 @@ export const ClickablePaper = (input: ClickableProps) => {
     Clickable,
     {
       ...input,
-      className: cn(PAPER_CLASS_NAME, '[@media(hover:hover)]:enabled:hover:bg-neutral-800', input.className),
+      class: cn(PAPER_CLASS_NAME, '[@media(hover:hover)]:enabled:hover:bg-neutral-800', input.class),
     },
     [input.children],
   )

@@ -396,7 +396,7 @@ export const Chessboard = (input: ChessboardInput) => {
         e.preventDefault()
         e.stopPropagation()
       },
-      className: 'touch-none overflow-visible select-none',
+      class: 'touch-none overflow-visible select-none',
       preserveAspectRatio: 'xMinYMin meet',
       onMouseLeave: onDragCancel(input),
       onTouchCancel: onDragCancel(input),
@@ -443,7 +443,7 @@ export const Chessboard = (input: ChessboardInput) => {
             id: square ? toLegalMoveDotId(square) : undefined,
             cx: checker.x * SCALE + SCALE / 2,
             cy: checker.y * SCALE + SCALE / 2,
-            className: 'pointer-events-none',
+            class: 'pointer-events-none',
             r: (SCALE * 1) / 4,
             fillOpacity: '0.5',
             fill: 'none',
@@ -461,7 +461,7 @@ export const Chessboard = (input: ChessboardInput) => {
             id: square ? toDropZoneId(square) : undefined,
             cx: checker.x * SCALE + SCALE / 2,
             cy: checker.y * SCALE + SCALE / 2,
-            className: 'pointer-events-none',
+            class: 'pointer-events-none',
             r: SCALE * 1.25,
             fillOpacity: '0.2',
             fill: 'none',

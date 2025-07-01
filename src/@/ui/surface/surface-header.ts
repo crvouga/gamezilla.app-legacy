@@ -7,8 +7,8 @@ import { Typography } from '~/@/ui/typography'
 import { v } from '~/@/vdom/v'
 
 export const SurfaceHeader = (input: { ctx: { t: Translator }; title: TranslatedText | null; onClose: () => void }) => {
-  return v('div', { className: 'flex w-full items-center justify-center px-6 pt-4 pb-0' }, [
-    v('div', { className: 'flex-1' }, [
+  return v('div', { class: 'flex w-full items-center justify-center px-6 pt-4 pb-0' }, [
+    v('div', { class: 'flex-1' }, [
       input.title && v(Typography, { text: input.title, variant: 'title', sizeClassName: 'text-2xl' }),
     ]),
     input.onClose &&
@@ -18,7 +18,7 @@ export const SurfaceHeader = (input: { ctx: { t: Translator }; title: Translated
           preventConsoleErrorWhenClosingDrawer(event)
           input.onClose?.()
         },
-        className: '-mr-1',
+        class: '-mr-1',
         renderIcon: (inputIcon) => v(IconXMark, inputIcon),
       }),
   ])

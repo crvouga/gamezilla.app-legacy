@@ -72,13 +72,13 @@ type Input = {
   }
   bot: {
     label: string
-    renderIcon: (input: { className: string }) => VDom
+    renderIcon: (input: { class: string }) => VDom
   }
   playerOne: {
-    renderIcon: (input: { className: string }) => VDom
+    renderIcon: (input: { class: string }) => VDom
   }
   playerTwo: {
-    renderIcon: (input: { className: string }) => VDom
+    renderIcon: (input: { class: string }) => VDom
   }
   onPlayAgain?: () => void
 }
@@ -119,14 +119,12 @@ export const ViewStatusBar = (input: VsBotInput & { status: Status }) => {
         duration: 300,
         delay: 0,
       }),
-      className: 'relative h-8 w-full',
+      class: 'relative h-8 w-full',
     },
     [
-      v(
-        'div',
-        { key: statusToKey(input.status), className: 'absolute inset-0 flex items-center justify-center gap-1' },
-        [ViewStatusBarContent(input)],
-      ),
+      v('div', { key: statusToKey(input.status), class: 'absolute inset-0 flex items-center justify-center gap-1' }, [
+        ViewStatusBarContent(input),
+      ]),
     ],
   )
 }
@@ -170,7 +168,7 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
         case 'player-one': {
           return v('div', {}, [
             input.playerOne.renderIcon({
-              className: 'h-5 w-5',
+              class: 'h-5 w-5',
             }),
             v(Typography, { text: TranslatedText.of('Turn'), color: 'text-secondary' }),
           ])
@@ -179,7 +177,7 @@ const ViewStatusBarContent = (input: VsBotInput & { status: Status }) => {
         case 'player-two': {
           return v('div', {}, [
             input.playerTwo.renderIcon({
-              className: 'h-5 w-5',
+              class: 'h-5 w-5',
             }),
             v(Typography, { text: TranslatedText.of('Turn'), color: 'text-secondary' }),
           ])
@@ -215,36 +213,36 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
         v(
           'button',
           {
-            className: 'absolute inset-0 flex flex-col items-center justify-center bg-black/70',
+            class: 'absolute inset-0 flex flex-col items-center justify-center bg-black/70',
             disabled: input.isSpectating,
             onClick: !input.isSpectating ? input.onPlayAgain : undefined,
           },
           [
-            v('div', { className: 'flex-1' }),
+            v('div', { class: 'flex-1' }),
             v(Winner, { ...input, winner: gameOver.winner }),
             input.onPlayAgain && !input.isSpectating
-              ? v('div', { className: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold' }, [
+              ? v('div', { class: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold' }, [
                   'Tap to play again',
                 ])
-              : v('div', { className: 'flex-1' }),
+              : v('div', { class: 'flex-1' }),
           ],
         ),
       gameOver?.t === 'draw' &&
         v(
           'button',
           {
-            className: 'absolute inset-0 flex flex-col items-center justify-center bg-black/60',
+            class: 'absolute inset-0 flex flex-col items-center justify-center bg-black/60',
             disabled: input.isSpectating,
             onClick: !input.isSpectating ? input.onPlayAgain : undefined,
           },
           [
-            v('div', { className: 'flex-1' }),
+            v('div', { class: 'flex-1' }),
             v(Draw, input),
             input.onPlayAgain && !input.isSpectating
-              ? v('div', { className: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0' }, [
+              ? v('div', { class: 'flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0' }, [
                   'Tap to play again',
                 ])
-              : v('div', { className: 'flex-1' }),
+              : v('div', { class: 'flex-1' }),
           ],
         ),
     ].filter(Boolean),
@@ -253,44 +251,44 @@ export const ViewGameOverOverlay = (input: Input & { isSpectating: boolean }) =>
 
 const Winner = ({ ctx, playerOne, playerTwo, human, bot, winner }: Input & { winner: PlayerType }) => {
   const humanSlot = v('div', {}, [
-    v(Avatar, { className: 'size-16', src: UserProfile.toAvatarUrl(ctx.profilesByUserId[human.userId]) }),
+    v(Avatar, { class: 'size-16', src: UserProfile.toAvatarUrl(ctx.profilesByUserId[human.userId]) }),
   ])
 
   const botSlot = v('div', {}, [
     bot.renderIcon({
-      className: 'size-16',
+      class: 'size-16',
     }),
   ])
 
-  const playerOneSlot = v('div', { className: 'flex flex-col items-center justify-center gap-3' }, [
-    v('div', { className: 'flex items-center justify-center gap-3' }, [
+  const playerOneSlot = v('div', { class: 'flex flex-col items-center justify-center gap-3' }, [
+    v('div', { class: 'flex items-center justify-center gap-3' }, [
       playerOne.renderIcon({
-        className: 'size-16',
+        class: 'size-16',
       }),
       human.player === 'player-one' ? humanSlot : botSlot,
     ]),
     v(Typography, {
       variant: 'title',
-      className: 'text-center text-4xl font-black',
+      class: 'text-center text-4xl font-black',
       text: winner === 'player-one' ? ctx.t('game.winner') : ctx.t('game.loser'),
     }),
   ])
 
-  const playerTwoSlot = v('div', { className: 'flex flex-col items-center justify-center gap-3' }, [
-    v('div', { className: 'flex items-center justify-center gap-3' }, [
+  const playerTwoSlot = v('div', { class: 'flex flex-col items-center justify-center gap-3' }, [
+    v('div', { class: 'flex items-center justify-center gap-3' }, [
       playerTwo.renderIcon({
-        className: 'size-16',
+        class: 'size-16',
       }),
       human.player === 'player-two' ? humanSlot : botSlot,
     ]),
     v(Typography, {
       variant: 'title',
-      className: 'text-center text-4xl font-black',
+      class: 'text-center text-4xl font-black',
       text: winner === 'player-two' ? ctx.t('game.winner') : ctx.t('game.loser'),
     }),
   ])
 
-  return v('div', { className: 'grid w-full flex-1 grid-cols-2 items-center' }, [playerOneSlot, playerTwoSlot])
+  return v('div', { class: 'grid w-full flex-1 grid-cols-2 items-center' }, [playerOneSlot, playerTwoSlot])
 }
 
 const Draw = (input: Input) => {
@@ -298,23 +296,23 @@ const Draw = (input: Input) => {
     v(Avatar, { src: UserProfile.toAvatarUrl(input.ctx.profilesByUserId[input.ctx.currentUser.userId]) }),
   ])
 
-  const botSlot = v('div', {}, [v(IconRobot, { className: 'size-6' })])
+  const botSlot = v('div', {}, [v(IconRobot, { class: 'size-6' })])
 
   const playerOneSlot = v('div', {}, [
     input.playerOne.renderIcon({
-      className: 'h-5 w-5',
+      class: 'h-5 w-5',
     }),
     input.human.player === 'player-one' ? humanSlot : botSlot,
   ])
 
   const playerTwoSlot = v('div', {}, [
     input.playerTwo.renderIcon({
-      className: 'h-5 w-5',
+      class: 'h-5 w-5',
     }),
     input.human.player === 'player-two' ? humanSlot : botSlot,
   ])
 
-  return v('div', { className: 'flex h-full w-full flex-1 items-center justify-center' }, [
+  return v('div', { class: 'flex h-full w-full flex-1 items-center justify-center' }, [
     v('div', {}, [playerOneSlot, playerTwoSlot]),
     v('p', {}, ['Tie']),
   ])
@@ -323,32 +321,32 @@ const Draw = (input: Input) => {
 export const VsBotPlayerSection = ({ ctx, human, bot, playerOne, playerTwo, turn }: VsBotGameInput) => {
   const profile = ctx.profilesByUserId[human.userId]
   const humanSlot = v('div', {}, [
-    v(Avatar, { className: 'size-6', src: UserProfile.toAvatarUrl(profile) }),
-    profile && v(Typography, { className: 'truncate', variant: 'body', text: ctx.t('username', profile.username) }),
+    v(Avatar, { class: 'size-6', src: UserProfile.toAvatarUrl(profile) }),
+    profile && v(Typography, { class: 'truncate', variant: 'body', text: ctx.t('username', profile.username) }),
   ])
 
   const botSlot = v('div', {}, [
     bot.renderIcon({
-      className: 'size-6 flex-shrink-0',
+      class: 'size-6 flex-shrink-0',
     }),
-    v(Typography, { className: 'truncate', variant: 'body', text: bot.label }),
+    v(Typography, { class: 'truncate', variant: 'body', text: bot.label }),
   ])
 
-  return v('section', { className: 'flex w-full items-center gap-3 px-3' }, [
-    v('div', { className: 'flex w-1/2 items-center justify-center overflow-hidden' }, [
+  return v('section', { class: 'flex w-full items-center gap-3 px-3' }, [
+    v('div', { class: 'flex w-1/2 items-center justify-center overflow-hidden' }, [
       v(Slot, { active: turn === 'player-one' }, [
         v('div', {}, [
           playerOne.renderIcon({
-            className: 'size-6',
+            class: 'size-6',
           }),
         ]),
         human.player === 'player-one' ? humanSlot : botSlot,
       ]),
     ]),
-    v('div', { className: 'flex w-1/2 items-center justify-center overflow-hidden' }, [
+    v('div', { class: 'flex w-1/2 items-center justify-center overflow-hidden' }, [
       v(Slot, { active: turn === 'player-two' }, [
         playerTwo.renderIcon({
-          className: 'size-6',
+          class: 'size-6',
         }),
         human.player === 'player-two' ? humanSlot : botSlot,
       ]),
@@ -360,7 +358,7 @@ const Slot = ({ active, children }: { active: boolean; children?: VDom }) => {
   return v(
     Paper,
     {
-      className: cn(
+      class: cn(
         'flex max-w-full flex-1 items-center gap-2 rounded-md bg-black p-2 text-sm transition-colors duration-200 ease-in-out',
         active && 'border-b-blue-500',
       ),

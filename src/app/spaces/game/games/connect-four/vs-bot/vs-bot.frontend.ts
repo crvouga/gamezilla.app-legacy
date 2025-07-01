@@ -404,12 +404,12 @@ const View: Module['View'] = (input) => {
     id: 'connect-four-vs-bot',
     renderBody: () =>
       v(LayoutGame, { ctx: input.ctx, isSpectating }, [
-        v('div', { className: 'flex w-full flex-1 flex-col items-center justify-center gap-1' }, [
+        v('div', { class: 'flex w-full flex-1 flex-col items-center justify-center gap-1' }, [
           v(VsBotGame.VsBotPlayerSection, vsBotGameInput),
 
           v(VsBotGame.ViewStatusBar, { ...vsBotSetupInput, status: toVsBotStatus(status) }),
 
-          v('div', { className: 'relative flex w-full flex-col items-center justify-center overflow-hidden' }, [
+          v('div', { class: 'relative flex w-full flex-col items-center justify-center overflow-hidden' }, [
             v(ViewColumns, {
               gameId: 0,
               columns: columns,
@@ -540,7 +540,7 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
   }
 }
 
-const ViewBotLevel = ({ level, ...input }: { level: BotLevel; className?: string }) => {
+const ViewBotLevel = ({ level, ...input }: { level: BotLevel; class?: string }) => {
   switch (level) {
     case 'Easy': {
       return v(IconBotHappy, input)

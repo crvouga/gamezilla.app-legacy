@@ -114,21 +114,21 @@ const View = (input: {
 
 const ViewStatus: typeof View = (input) => {
   const position = ModeEdit.toCurrentPlacingTerminalPosition(input.model) === 'start' ? 'first' : 'last'
-  return v('div', { className: 'flex w-full items-center justify-center gap-1 p-2' }, [
+  return v('div', { class: 'flex w-full items-center justify-center gap-1 p-2' }, [
     v(Typography, {
       variant: 'body',
       text: input.ctx.t('game.numberlink.placing', { position }),
     }),
     ViewTerminal({
       groupId: ModeEdit.toCurrentPlacingGroupId(input.model),
-      className: 'size-6',
+      class: 'size-6',
     }),
   ])
 }
 
-const ViewTerminal = ({ groupId, className }: { className: string; groupId: GroupId }) => {
+const ViewTerminal = ({ groupId, class: class_ }: { class: string; groupId: GroupId }) => {
   const color = Color.groupIdToHex(groupId)
-  return v('svg', { className, viewBox: '-1 -1 2 2' }, [v('circle', { cx: '0', cy: '0', r: '0.8', fill: color })])
+  return v('svg', { class: class_, viewBox: '-1 -1 2 2' }, [v('circle', { cx: '0', cy: '0', r: '0.8', fill: color })])
 }
 
 export const ModeEditFrontend = {

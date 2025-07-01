@@ -15,7 +15,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
     DynamicElement,
     {
       element: element,
-      className: 'relative flex w-full flex-1 flex-row overflow-hidden',
+      class: 'relative flex w-full flex-1 flex-row overflow-hidden',
       onSubmit: (e) => {
         e.preventDefault()
         input.patchAction?.onSubmit()
@@ -24,13 +24,13 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
     [
       v(ActionBars, { position: 'start', input: input }),
 
-      v('div', { className: 'flex max-w-3xl flex-[4] shrink-0 flex-col border-x' }, [
+      v('div', { class: 'flex max-w-3xl flex-[4] shrink-0 flex-col border-x' }, [
         ...renderNavBars(input.ctx, input),
 
-        v('div', { className: 'flex w-full flex-1 flex-col overflow-hidden' }, [
+        v('div', { class: 'flex w-full flex-1 flex-col overflow-hidden' }, [
           input.renderBody(),
           (input.renderMiniPlayer || input.parentScreen?.renderMiniPlayer) &&
-            v('div', { className: 'absolute right-8 bottom-8 bg-black' }, [...renderMiniPlayers(input)]),
+            v('div', { class: 'absolute right-8 bottom-8 bg-black' }, [...renderMiniPlayers(input)]),
         ]),
       ]),
 
@@ -45,7 +45,7 @@ const ActionBars = (props: { position: 'start' | 'end'; input: ScreenLayoutProps
   return v(
     'div',
     {
-      className: cn(
+      class: cn(
         'flex h-full flex-1 flex-row items-start',
         props.position === 'start' ? 'justify-end' : 'justify-start',
       ),
@@ -70,7 +70,7 @@ const renderActionBars = (
 
     if (shouldRenderStart || shouldRenderEnd) {
       const id = screen.actionBar.id ?? `${screen.id}-actions`
-      const className = position === 'start' ? 'order-first' : 'order-last'
+      const class_ = position === 'start' ? 'order-first' : 'order-last'
 
       bars.push(
         v(VerticalActionBar, {
@@ -78,7 +78,7 @@ const renderActionBars = (
           id: id,
           ctx: ctx,
           key: id,
-          className: className,
+          class: class_,
         }),
       )
     }
@@ -104,9 +104,9 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
         subtitle: screen.navBar.subtitle,
         renderEnd: () =>
           (screen.patchAction || screen.postAction) &&
-          v('div', { className: 'flex items-center justify-end' }, [
+          v('div', { class: 'flex items-center justify-end' }, [
             screen.patchAction &&
-              v('div', { className: 'flex min-w-64 items-center justify-end' }, [
+              v('div', { class: 'flex min-w-64 items-center justify-end' }, [
                 v(CancelSubmitButtons, { ...screen.patchAction, size: 'md' }),
               ]),
             screen.postAction &&

@@ -57,7 +57,7 @@ export const update = <TModel, TMsg>({
 //
 
 type MainMenuButton = {
-  renderIcon: (input: { className: string }) => VDom
+  renderIcon: (input: { class: string }) => VDom
   title: TranslatedText
   description: TranslatedText
   onClick: () => void
@@ -68,7 +68,7 @@ export const View = (props: {
   ctx: SpaceFrontendCtx
   title: TranslatedText
   dispatch: (msg: Msg) => void
-  renderCoverArt: (input: { className: string }) => VDom
+  renderCoverArt: (input: { class: string }) => VDom
   buttons: MainMenuButton[]
 }) => {
   const isSpectating = props.ctx.currentUser.userId !== props.ctx.space.hostId
@@ -88,7 +88,7 @@ export const View = (props: {
     navBar: { title: props.title, back: { onClick: props.onBack } },
     renderCoverArt: props.renderCoverArt,
     renderBody: () =>
-      v('div', { className: 'flex w-full flex-col gap-6 px-6' }, [
+      v('div', { class: 'flex w-full flex-col gap-6 px-6' }, [
         ...props.buttons.map((button) =>
           v(ViewMainMenuButton, {
             key: `${button.title}${button.description}`,
@@ -100,19 +100,19 @@ export const View = (props: {
 }
 
 const ViewMainMenuButton = (props: MainMenuButton) => {
-  return v(ClickablePaper, { className: 'flex w-full items-center gap-4 rounded p-6', onClick: props.onClick }, [
-    props.renderIcon({ className: 'aspect-square size-12' }),
-    v('div', { className: 'flex flex-1 flex-col gap-1 text-left' }, [
+  return v(ClickablePaper, { class: 'flex w-full items-center gap-4 rounded p-6', onClick: props.onClick }, [
+    props.renderIcon({ class: 'aspect-square size-12' }),
+    v('div', { class: 'flex flex-1 flex-col gap-1 text-left' }, [
       v(Typography, {
         variant: 'title',
         text: props.title,
-        className: 'font-bold',
+        class: 'font-bold',
       }),
       props.description &&
         v(Typography, {
           variant: 'label',
           text: props.description,
-          className: 'text-secondary',
+          class: 'text-secondary',
         }),
     ]),
   ])

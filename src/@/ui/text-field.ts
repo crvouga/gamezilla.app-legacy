@@ -23,15 +23,15 @@ export const TextField = (input: {
   onChange: (value: string) => void
 }) => {
   return v('label', {
-    className: 'flex w-full flex-col gap-1',
+    class: 'flex w-full flex-col gap-1',
     children: v(Frag, null, [
       v('label', {
         htmlFor: input.id,
-        className: cn('text-base', input.error && 'text-red-500'),
+        class: cn('text-base', input.error && 'text-red-500'),
         children: input.label,
       }),
       v('div', {
-        className: cn(
+        class: cn(
           PAPER_CLASS_NAME,
           'flex h-fit w-full flex-row overflow-hidden rounded-md border-2',
           input.error && 'border-2 border-red-500 text-red-500',
@@ -64,7 +64,7 @@ export const TextField = (input: {
 
               input.onChange(valueNew)
             },
-            className: cn(
+            class: cn(
               'flex flex-1 appearance-none items-center gap-2 bg-transparent p-3 py-4 text-xl outline-none',
               '[&:-webkit-autofill]:!bg-transparent [&:-webkit-autofill]:!text-white [&:-webkit-autofill]:!shadow-[0_0_0_1000px_#000000_inset] [&:-webkit-autofill]:![-webkit-text-fill-color:white]',
             ),
@@ -73,7 +73,7 @@ export const TextField = (input: {
             input.value &&
             input.value?.toString().length > 0 &&
             v('button', {
-              className: 'rounded-md px-3 ring-blue-500 outline-none focus:ring-2',
+              class: 'rounded-md px-3 ring-blue-500 outline-none focus:ring-2',
               'aria-label': 'Clear input',
               type: 'button',
               onClick: (e: any) => {
@@ -86,7 +86,7 @@ export const TextField = (input: {
 
                 input.onClear?.()
               },
-              children: v(IconXMark, { className: 'size-6' }),
+              children: v(IconXMark, { class: 'size-6' }),
             }),
         ]),
       }),
@@ -95,7 +95,7 @@ export const TextField = (input: {
           role: 'alert',
           'data-error': Boolean(input.error),
           'data-info': !Boolean(input.error),
-          className: cn('text-sm', input.error && 'text-red-500'),
+          class: cn('text-sm', input.error && 'text-red-500'),
           children: input.helperText,
         }),
     ]),

@@ -4,11 +4,11 @@ import { VDom } from '~/@/vdom/vdom'
 
 export const SURFACE_CLASS_NAME = 'bg-black border border-neutral-700'
 
-export const Surface = (input: { children?: VDom; className?: string; role?: string }) => {
+export const Surface = (input: { children?: VDom; class?: string; role?: string }) => {
   return v(
     'div',
     {
-      className: cn(SURFACE_CLASS_NAME, input.className),
+      class: cn(SURFACE_CLASS_NAME, input.class),
       role: input.role,
     },
     [input.children],

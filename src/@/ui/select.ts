@@ -27,13 +27,13 @@ export const Select = <T>({
   onChange: (value: T) => void
 }) => {
   const labelId = `${id}-label`
-  return v('div', { className: 'flex w-full flex-col gap-1' }, [
-    v('label', { id: labelId, htmlFor: id, className: cn('text-base', error && 'text-red-500') }, [label]),
+  return v('div', { class: 'flex w-full flex-col gap-1' }, [
+    v('label', { id: labelId, htmlFor: id, class: cn('text-base', error && 'text-red-500') }, [label]),
     v(
       'select',
       {
         id: id,
-        className: cn(
+        class: cn(
           PAPER_CLASS_NAME,
           'flex appearance-none items-center rounded-md border p-3 py-4 text-xl outline-none',
           error && 'border-red-500 text-red-500',
@@ -54,6 +54,6 @@ export const Select = <T>({
         return v('option', { key: toKey(option), value: toKey(option) }, [toName(option)])
       }),
     ),
-    helperText && v('div', { className: cn('text-sm', error && 'text-red-500') }, [helperText]),
+    helperText && v('div', { class: cn('text-sm', error && 'text-red-500') }, [helperText]),
   ])
 }

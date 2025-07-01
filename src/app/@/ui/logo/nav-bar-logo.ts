@@ -5,7 +5,7 @@ export const NavBarLogo = (input: { onClick: () => void }) => {
   return v(
     'button',
     {
-      className: 'flex h-full w-full items-center justify-center text-4xl',
+      class: 'flex h-full w-full items-center justify-center text-4xl',
       onClick: input.onClick,
     },
     [LOGO_TEXT],

@@ -17,21 +17,21 @@ export const SectionPersonDetails = (input: {
       'button',
       {
         type: 'button',
-        className: 'flex w-full flex-col items-center justify-center gap-2 p-4',
+        class: 'flex w-full flex-col items-center justify-center gap-2 p-4',
         onClick: input.onOpenDetails,
       },
       [
-        v(Avatar, { src: input.profile ? UserProfile.toAvatarUrl(input.profile) : '', className: 'size-24' }),
+        v(Avatar, { src: input.profile ? UserProfile.toAvatarUrl(input.profile) : '', class: 'size-24' }),
         input.profile && v(Typography, { variant: 'title', text: input.ctx.t('username', input.profile?.username) }),
-        v('div', { className: 'flex items-center gap-2' }, [
+        v('div', { class: 'flex items-center gap-2' }, [
           input.ctx.space.hostId === input.profile?.userId && v(ViewHostChip, { ctx: input.ctx }),
           input.ctx.currentUser.userId === input.profile?.userId && v(ViewYouChip, { ctx: input.ctx }),
         ]),
       ],
     ),
 
-    v('div', { className: 'w-full px-4 pb-8' }, [
-      v(Button, { onClick: input.onOpenDetails, className: 'w-full', text: input.ctx.t('spaces.see-profile') }),
+    v('div', { class: 'w-full px-4 pb-8' }, [
+      v(Button, { onClick: input.onOpenDetails, class: 'w-full', text: input.ctx.t('spaces.see-profile') }),
     ]),
   ])
 }

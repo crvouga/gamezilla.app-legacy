@@ -1,7 +1,7 @@
 import { v } from '~/@/vdom/v'
 
 type Props = {
-  className?: string
+  class?: string
 }
 
 export const IconBotLevel0 = (input: Props) => {

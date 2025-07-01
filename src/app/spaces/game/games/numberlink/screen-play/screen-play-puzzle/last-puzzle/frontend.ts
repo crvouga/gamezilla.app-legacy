@@ -55,7 +55,7 @@ const ViewDialog = (input: {
 
       v(SurfaceActions, null, [
         v(Button, {
-          className: 'w-full',
+          class: 'w-full',
           text: input.ctx.t('game.numberlink.select-next-pack'),
           onClick: () =>
             input.dispatch({

@@ -4,7 +4,7 @@ import { NodeId } from '../numberlink/node-id'
 
 export type BoardInput<TModel> = {
   disabled?: boolean
-  className?: string
+  class?: string
   model: TModel
   isDragging?: boolean
   borderless?: boolean

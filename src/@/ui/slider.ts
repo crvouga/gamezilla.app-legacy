@@ -36,7 +36,7 @@ export const Slider = ({
         }
         onInput?.(parsed)
       },
-      className: 'h-2 w-full cursor-pointer appearance-none rounded-lg bg-blue-500',
+      class: 'h-2 w-full cursor-pointer appearance-none rounded-lg bg-blue-500',
     }),
   ])
 }

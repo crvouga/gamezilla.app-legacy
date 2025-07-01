@@ -42,11 +42,11 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
   return v(
     'svg',
     {
-      className: cn(
+      class: cn(
         'aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none',
         input.isDragging && 'cursor-grabbing',
         input.disabled && 'pointer-events-none',
-        input.className,
+        input.class,
       ),
       onContextMenu: (e: Event) => {
         e.stopPropagation()
@@ -241,7 +241,7 @@ const ViewCoordinates = (input: BoardInput<VariantGrid.Model>) => {
         return v(
           'text',
           {
-            className: 'pointer-events-none',
+            class: 'pointer-events-none',
             key: node.nodeId,
             x: node.x,
             y: node.y,

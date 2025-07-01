@@ -5,13 +5,13 @@ import { TimeSpan } from '../time/time-span'
 import { Transition } from './transition'
 
 export const Badge = (input: { badgeContent: VDom; children: VDom; id: string }) => {
-  return v('div', { className: 'relative h-fit w-fit' }, [
+  return v('div', { class: 'relative h-fit w-fit' }, [
     v(Transition, { onEnter: onEnterGrow, id: input.id, mode: 'in-out', onExit: onExitShrink }, [
       input.badgeContent &&
         v(
           'div',
           {
-            className:
+            class:
               'absolute top-0.5 right-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white',
           },
           [input.badgeContent],

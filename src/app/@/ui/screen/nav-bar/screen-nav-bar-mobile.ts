@@ -25,7 +25,7 @@ export const ScreenNavBarMobile = (input: {
   return v(
     'div',
     {
-      className: 'flex h-16 w-full shrink-0 items-center truncate px-6 text-center',
+      class: 'flex h-16 w-full shrink-0 items-center truncate px-6 text-center',
     },
     [
       shouldRenderBack &&
@@ -35,7 +35,7 @@ export const ScreenNavBarMobile = (input: {
             position: 'bottom',
             reference: v(IconButton, {
               onClick: input.back?.onClick,
-              className: '-ml-2',
+              class: '-ml-2',
               label: input.ctx.t('app.exit'),
               renderIcon: (inputIcon) => v(IconArrowLeft, inputIcon),
             }),
@@ -45,21 +45,21 @@ export const ScreenNavBarMobile = (input: {
       v(
         'div',
         {
-          className: 'flex flex-1 flex-col truncate',
+          class: 'flex flex-1 flex-col truncate',
         },
         [
           typeof input.title === 'string' &&
             v(Typography, {
               role: 'heading',
               sizeClassName: 'text-lg font-bold',
-              className: 'truncate px-2',
+              class: 'truncate px-2',
               variant: 'title',
               text: input.title,
             }),
 
           typeof input.subtitle === 'string' &&
             v(Typography, {
-              className: 'truncate px-2 text-xs',
+              class: 'truncate px-2 text-xs',
               color: 'text-secondary',
               role: 'heading',
               variant: 'subtitle',
