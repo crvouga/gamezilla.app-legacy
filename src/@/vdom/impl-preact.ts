@@ -1,5 +1,6 @@
 import { Fragment, render } from 'preact'
 import { createElement, createPortal } from 'preact/compat'
+import { VDOM_FRAGMENT_KEY } from './fragment'
 import { ICreatePortal, VirtualDomEngine } from './interface'
 import { VDom } from './vdom'
 
@@ -12,7 +13,7 @@ export const initPreact = (): VirtualDomEngine => {
     },
     createPortal: createPortal as ICreatePortal,
     v: (tag, props, children) => {
-      if (tag === 'fragment') {
+      if (tag === VDOM_FRAGMENT_KEY) {
         return createElement(Fragment, props ?? null, ...(children ?? [])) as VDom
       }
       return createElement(tag, props ?? null, ...(children ?? [])) as VDom

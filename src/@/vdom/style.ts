@@ -1,6 +1,4 @@
 import type { CSSProperties } from 'preact/compat'
-import { CONFIG_FRONTEND } from '~/config/frontend'
-import { VDomImpl } from './vdom-impl'
 
 export type StylesObjectKebab = { [key: string]: string | number | undefined | null | false }
 export type StylesObjectCamel = React.CSSProperties & CSSProperties
@@ -14,7 +12,7 @@ export const kebabStringToCamelString = (kebabString: string): string => {
   return kebabString.replace(/-([a-z])/g, (g) => g[1]!.toUpperCase())
 }
 
-const kebabObjectToCamelObject = (kebabObject: StylesObjectKebab): StylesObjectCamel => {
+export const kebabObjectToCamelObject = (kebabObject: StylesObjectKebab): StylesObjectCamel => {
   const camelObject: StylesObjectCamel = {}
 
   if (typeof kebabObject !== 'object') {
@@ -31,15 +29,4 @@ const kebabObjectToCamelObject = (kebabObject: StylesObjectKebab): StylesObjectC
   }
 
   return camelObject
-}
-
-export const styles = (stylesObject: StylesObjectKebab, vdomImpl: VDomImpl = CONFIG_FRONTEND.VDOM_IMPL): unknown => {
-  switch (vdomImpl) {
-    case 'react': {
-      return kebabObjectToCamelObject(stylesObject) as unknown
-    }
-    default: {
-      return stylesObject as unknown
-    }
-  }
 }
