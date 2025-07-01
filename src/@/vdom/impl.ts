@@ -1,33 +1,46 @@
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { initInferno } from './impl-inferno'
-import { initPreact } from './impl-preact'
-import { initReact } from './impl-react'
-// import { initSnabbdom } from './impl-snabbdom'
+import { initNoop } from './impl-noop'
 import { ICreateElement, ICreatePortal, IRender, RenderNode, VirtualDomEngine } from './interface'
 import { VDomImpl } from './vdom-impl'
 
-export const init = (vdomImpl: VDomImpl): VirtualDomEngine => {
+const init = async (vdomImpl: VDomImpl): Promise<VirtualDomEngine> => {
   switch (vdomImpl) {
     case 'react': {
+      const { initReact } = await import('./impl-react')
       return initReact()
     }
     case 'preact': {
+      const { initPreact } = await import('./impl-preact')
       return initPreact()
     }
     case 'inferno': {
+      const { initInferno } = await import('./impl-inferno')
       return initInferno()
     }
     case 'snabbdom': {
-      throw new Error('Snabbdom is not supported in the browser')
-      // return initSnabbdom()
+      const { initSnabbdom } = await import('./impl-snabbdom')
+      return initSnabbdom()
     }
   }
 }
 
-const vdomEngine = init(VDomImpl.readFromUrl({ fallback: CONFIG_FRONTEND.VDOM_IMPL }))
+const vdomEngine = initNoop()
 
-export const Render: (node: RenderNode) => IRender = vdomEngine.render
+export let Render: (node: RenderNode) => IRender = vdomEngine.render
 
-export const createPortal: ICreatePortal = vdomEngine.createPortal
+export let createPortal: ICreatePortal = vdomEngine.createPortal
 
-export const h: ICreateElement = vdomEngine.createElement
+export let h: ICreateElement = vdomEngine.createElement
+
+export const vdomEngineInitialized = new Promise<void>((resolve) => {
+  if (typeof window !== 'undefined') {
+    init(VDomImpl.readFromUrl({ fallback: CONFIG_FRONTEND.VDOM_IMPL })).then((vdomEngine) => {
+      Render = (node) => vdomEngine.render(node)
+      createPortal = vdomEngine.createPortal
+      h = vdomEngine.createElement
+      resolve()
+    })
+  } else {
+    resolve()
+  }
+})
