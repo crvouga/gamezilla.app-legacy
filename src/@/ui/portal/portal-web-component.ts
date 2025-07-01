@@ -14,21 +14,39 @@ if (typeof window !== 'undefined') {
     updatePortal(id)
   }
 
+  const unregisterEntrance = (id: string, element: HTMLElement) => {
+    const entranceSet = entrances.get(id)
+    if (entranceSet) {
+      entranceSet.delete(element)
+      if (entranceSet.size === 0) {
+        entrances.delete(id)
+      }
+      updatePortal(id)
+    }
+  }
+
   const registerExit = (id: string, element: HTMLElement) => {
     exits.set(id, element)
     updatePortal(id)
   }
 
+  const unregisterExit = (id: string) => {
+    exits.delete(id)
+  }
+
   const updatePortal = (id: string) => {
     const entranceSet = entrances.get(id)
     const exit = exits.get(id)
-    if (entranceSet && exit) {
-      // Clear existing content in exit
-      while (exit.firstChild) {
-        exit.removeChild(exit.firstChild)
-      }
 
-      // Aggregate and append children from all entrances to exit
+    if (!exit) return
+
+    // Clear existing content in exit
+    while (exit.firstChild) {
+      exit.removeChild(exit.firstChild)
+    }
+
+    // Aggregate and append children from all entrances to exit
+    if (entranceSet && entranceSet.size > 0) {
       entranceSet.forEach((entrance) => {
         Array.from(entrance.childNodes).forEach((child) => {
           exit.appendChild(child.cloneNode(true))
@@ -39,46 +57,65 @@ if (typeof window !== 'undefined') {
 
   class PortalEntrance extends HTMLElement {
     private observer: MutationObserver
+    private currentPortalId: string | null = null
+
+    static get observedAttributes() {
+      return ['portal-id']
+    }
 
     constructor() {
       super()
       this.observer = new MutationObserver(() => {
-        const id = this.getAttribute('portal-id')
-        if (id) {
-          updatePortal(id)
+        if (this.currentPortalId) {
+          updatePortal(this.currentPortalId)
         }
-      })
-      this.attachShadow({
-        mode: 'open',
       })
     }
 
     connectedCallback() {
-      this.observeChildChanges()
       this.updatePortalId()
+      this.observeChildChanges()
     }
 
-    // attributeChangedCallback() {
-    //   this.updatePortalId();
-    // }
+    disconnectedCallback() {
+      this.observer.disconnect()
+      if (this.currentPortalId) {
+        unregisterEntrance(this.currentPortalId, this)
+      }
+    }
+
+    attributeChangedCallback() {
+      this.updatePortalId()
+    }
 
     private observeChildChanges() {
       this.observer.observe(this, {
         childList: true,
+        subtree: true,
       })
     }
 
     private updatePortalId() {
-      const id = this.getAttribute('portal-id')
-      if (id) {
-        this.observer.disconnect()
-        registerEntrance(id, this)
-        this.observeChildChanges()
+      const newPortalId = this.getAttribute('portal-id')
+
+      // Unregister from old portal if it exists
+      if (this.currentPortalId && this.currentPortalId !== newPortalId) {
+        unregisterEntrance(this.currentPortalId, this)
+      }
+
+      // Register with new portal
+      if (newPortalId) {
+        this.currentPortalId = newPortalId
+        registerEntrance(newPortalId, this)
+      } else {
+        this.currentPortalId = null
       }
     }
   }
 
   class PortalExit extends HTMLElement {
+    private currentPortalId: string | null = null
+
     static get observedAttributes() {
       return ['portal-id']
     }
@@ -87,14 +124,30 @@ if (typeof window !== 'undefined') {
       this.updatePortalId()
     }
 
+    disconnectedCallback() {
+      if (this.currentPortalId) {
+        unregisterExit(this.currentPortalId)
+      }
+    }
+
     attributeChangedCallback() {
       this.updatePortalId()
     }
 
     private updatePortalId() {
-      const id = this.getAttribute('portal-id')
-      if (id) {
-        registerExit(id, this)
+      const newPortalId = this.getAttribute('portal-id')
+
+      // Unregister from old portal if it exists
+      if (this.currentPortalId && this.currentPortalId !== newPortalId) {
+        unregisterExit(this.currentPortalId)
+      }
+
+      // Register with new portal
+      if (newPortalId) {
+        this.currentPortalId = newPortalId
+        registerExit(newPortalId, this)
+      } else {
+        this.currentPortalId = null
       }
     }
   }
@@ -103,12 +156,12 @@ if (typeof window !== 'undefined') {
   customElements.define('portal-exit', PortalExit)
 }
 
-const Entrance = (input: { portalId: string; children: VDom[]; noPortal?: boolean }) => {
-  return h('portal-entrance', { portalId: input.portalId }, input.children)
+const Entrance = (input: { portalId: string; children: VDom[] }) => {
+  return h('portal-entrance', { 'portal-id': input.portalId }, input.children)
 }
 
 const Exit = (input: { portalId: string }) => {
-  return h('portal-exit', { portalId: input.portalId })
+  return h('portal-exit', { style: { 'z-index': 1000 }, 'portal-id': input.portalId })
 }
 
 export const Portal: IPortal = {
