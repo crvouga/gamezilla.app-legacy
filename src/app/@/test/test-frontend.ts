@@ -89,7 +89,7 @@ export const TestFrontend = async (config: {
 
   const root = document.getElementById(`root`)!
 
-  const render = await Render(CONFIG_FRONTEND.VDOM_IMPL, root)
+  const render = Render(CONFIG_FRONTEND.VDOM_IMPL, root)
 
   const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),

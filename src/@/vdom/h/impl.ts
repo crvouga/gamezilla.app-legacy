@@ -5,7 +5,7 @@ import { initPreact } from './impl-preact'
 import { initReact } from './impl-react'
 import { H } from './interface'
 
-const init = (vdomImpl: VDomImpl) => {
+export const init = (vdomImpl: VDomImpl) => {
   switch (vdomImpl) {
     case 'react': {
       return initReact()
@@ -20,7 +20,3 @@ const init = (vdomImpl: VDomImpl) => {
 }
 
 export const h: H = init(CONFIG_FRONTEND.VDOM_IMPL)
-
-export const view = (props: { message: string }) => {
-  return h('div', null, [`Hello ${props.message}`])
-}

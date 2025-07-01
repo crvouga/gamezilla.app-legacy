@@ -1,8 +1,8 @@
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import wasm from 'vite-plugin-wasm'
-import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
+import path from 'path'
 import { DotEnv } from './src/@/dotenv/dotenv'
 import { FileSystem } from './src/@/file-system'
 
@@ -14,7 +14,6 @@ DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env.local', '.env'] })
 export default defineConfig({
   plugins: [
     tailwindcss(),
-    tsconfigPaths(),
     wasm(),
     VitePWA({
       workbox: {
@@ -46,6 +45,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '~': path.resolve(__dirname, 'src'),
       inferno: process.env.NODE_ENV === 'production' ? 'inferno' : 'inferno/dist/index.dev.mjs',
     },
   },

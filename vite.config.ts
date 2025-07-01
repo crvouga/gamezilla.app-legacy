@@ -1,20 +1,15 @@
 import tailwindcss from '@tailwindcss/vite'
+import path from 'path'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import wasm from 'vite-plugin-wasm'
-import tsconfigPaths from 'vite-tsconfig-paths'
 
 const KILOBYTE = 1024
 const MEGABYTE = KILOBYTE * KILOBYTE
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    tsconfigPaths(),
-    wasm(),
-    VitePWA({ workbox: { maximumFileSizeToCacheInBytes: 3 * MEGABYTE } }),
-  ],
+  plugins: [tailwindcss(), wasm(), VitePWA({ workbox: { maximumFileSizeToCacheInBytes: 3 * MEGABYTE } })],
   optimizeDeps: {
     exclude: [
       '@journeyapps/wa-sqlite',
@@ -52,6 +47,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '~': path.resolve(__dirname, 'src'),
       inferno: process.env.NODE_ENV === 'production' ? 'inferno' : 'inferno/dist/index.dev.mjs',
     },
   },
