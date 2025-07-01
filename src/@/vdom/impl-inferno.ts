@@ -11,7 +11,7 @@ export const initInferno = (): VirtualDomEngine => {
       render(vDom, container)
       return createElement(Fragment, {})
     },
-    v: (tag, props, children = []) => {
+    createElement: (tag, props, children = []) => {
       if (tag === VDOM_FRAGMENT_KEY) {
         return createElement(Fragment, props, ...children)
       }

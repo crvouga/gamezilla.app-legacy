@@ -3,7 +3,7 @@ import { initInferno } from './impl-inferno'
 import { initPreact } from './impl-preact'
 import { initReact } from './impl-react'
 // import { initSnabbdom } from './impl-snabbdom'
-import { ICreatePortal, IRender, RenderNode, V as CreateElement, VirtualDomEngine } from './interface'
+import { ICreateElement as CreateElement, ICreatePortal, IRender, RenderNode, VirtualDomEngine } from './interface'
 import { VDomImpl } from './vdom-impl'
 
 export const init = (vdomImpl: VDomImpl): VirtualDomEngine => {
@@ -24,10 +24,10 @@ export const init = (vdomImpl: VDomImpl): VirtualDomEngine => {
   }
 }
 
-const vdomEngine = init(VDomImpl.readFromUrl(CONFIG_FRONTEND.VDOM_IMPL))
+const vdomEngine = init(VDomImpl.readFromUrl({ fallback: CONFIG_FRONTEND.VDOM_IMPL }))
 
 export const Render: (node: RenderNode) => IRender = vdomEngine.render
 
 export const createPortal: ICreatePortal = vdomEngine.createPortal
 
-export const h: CreateElement = vdomEngine.v
+export const h: CreateElement = vdomEngine.createElement

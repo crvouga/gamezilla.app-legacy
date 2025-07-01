@@ -24,7 +24,7 @@ export const initSnabbdom = (): VirtualDomEngine => {
       const vDomNew: VDom = fragment([])
       return vDomNew
     },
-    v(tag, props, childrenUncleaned) {
+    createElement(tag, props, childrenUncleaned) {
       const children = cleanChildren(childrenUncleaned ?? [])
 
       if (tag === VDOM_FRAGMENT_KEY) {

@@ -20,7 +20,7 @@ export type Tag =
 
 export type Props = Record<string, unknown>
 
-export type V = <TProps extends Props = Props>(
+export type ICreateElement = <TProps extends Props = Props>(
   tag: Tag | ((props: TProps) => VDom),
   props: Omit<TProps, 'children'> & { key?: unknown },
   children?: VDom[],
@@ -35,5 +35,5 @@ export type ICreatePortal = (vDom: VDom, container: RenderNode) => VDom
 export type VirtualDomEngine = {
   render: (node: RenderNode) => IRender
   createPortal: ICreatePortal
-  v: V
+  createElement: ICreateElement
 }

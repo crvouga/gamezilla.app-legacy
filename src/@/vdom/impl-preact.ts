@@ -11,7 +11,7 @@ export const initPreact = (): VirtualDomEngine => {
       return createElement(Fragment, {})
     },
     render: (node) => (vDom) => render(vDom, node),
-    v: (tag, props, children = []) => {
+    createElement: (tag, props, children = []) => {
       if (tag === VDOM_FRAGMENT_KEY) {
         return createElement(Fragment, props, ...children)
       }

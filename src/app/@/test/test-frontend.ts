@@ -85,7 +85,7 @@ export const TestFrontend = async (config: {
 
   document.body.innerHTML = `<div id="root"></div>`
 
-  const root = document.getElementById(`root`)!
+  const root = document.getElementById('root')!
 
   const render = Render(root)
 

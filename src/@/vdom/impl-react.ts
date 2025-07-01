@@ -17,10 +17,11 @@ export const initReact = (): VirtualDomEngine => {
       render(vDom, container)
       return createElement(Fragment, {})
     },
-    v: (tag, props, children = []) => {
+    createElement: (tag, props, children = []) => {
       if (props?.style) {
         props.style = kebabObjectToCamelObject(props?.style)
       }
+      props = kebabObjectToCamelObject(props)
 
       if (tag === VDOM_FRAGMENT_KEY) {
         return createElement(Fragment, props, ...children)

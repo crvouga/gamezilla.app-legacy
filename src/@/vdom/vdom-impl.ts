@@ -19,12 +19,12 @@ const from = (s: unknown): VDomImpl | null => {
   return found
 }
 
-const readFromUrl = (fallback: VDomImpl): VDomImpl => {
-  if (typeof window === 'undefined') return fallback
+const readFromUrl = (config: { fallback: VDomImpl }): VDomImpl => {
+  if (typeof window === 'undefined') return config.fallback
   const searchParams = new URLSearchParams(window.location.search)
   const vdomImplParam = searchParams.get('vdom')
   const vdomImpl = VDomImpl.from(vdomImplParam)
-  return vdomImpl ?? fallback
+  return vdomImpl ?? config.fallback
 }
 
 export const VDomImpl = {
