@@ -1,5 +1,6 @@
 import { Fragment, render } from 'preact'
 import { createElement, createPortal } from 'preact/compat'
+import 'preact/debug'
 import { VDOM_FRAGMENT_KEY } from './fragment'
 import { VirtualDomEngine } from './interface'
 import { VDom } from './vdom'

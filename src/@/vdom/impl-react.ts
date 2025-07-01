@@ -22,11 +22,18 @@ export const initReact = (): VirtualDomEngine => {
           props.style = kebabObjectToCamelObject(props?.style)
         }
 
-        if (tag === VDOM_FRAGMENT_KEY) {
-          return createElement(Fragment, props, children)
+        if (typeof tag === 'string' && props?.class) {
+          props.className = props.class
+          delete props.class
         }
 
-        return createElement(tag, props, children)
+        children = Array.isArray(children) ? children : [children]
+
+        if (tag === VDOM_FRAGMENT_KEY) {
+          return createElement(Fragment, props, ...children)
+        }
+
+        return createElement(tag, props, ...children)
       } catch (error) {
         debugger
         return null

@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test'
 import { DotEnv } from './src/@/dotenv/dotenv'
 import { FileSystem } from './src/@/file-system'
 
-DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env.local', '.env'] })
+DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env'] })
 
 /**
  * See https://playwright.dev/docs/test-configuration.

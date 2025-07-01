@@ -90,8 +90,9 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   })
 
   logger.info('Starting PowerSync client...')
-  await powerSyncClient.start()
-  logger.info('PowerSync client started')
+  powerSyncClient.start().then(() => {
+    logger.info('PowerSync client started')
+  })
 
   const sqlDb = await SqlDb({
     t: 'powersync-client',
