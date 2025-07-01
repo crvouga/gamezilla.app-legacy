@@ -1,4 +1,4 @@
-import { createPortal } from '~/@/vdom/render'
+import { createPortal } from '~/@/vdom/v'
 import { VDom } from '~/@/vdom/vdom'
 import { v } from '~/@/vdom/v'
 

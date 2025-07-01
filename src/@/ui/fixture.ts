@@ -1,8 +1,8 @@
 import { TestClient } from '~/@/test-client'
-import { Render } from '~/@/vdom/render'
 import { AudioPlayer } from '../audio-player'
 import { Logger } from '../logger'
 import { TimeSpan } from '../time/time-span'
+import { Render } from '../vdom/v'
 
 export const BaseFixture = async () => {
   const client = await TestClient({
@@ -16,7 +16,7 @@ export const BaseFixture = async () => {
 
   const root = document.getElementById('root')!
 
-  const render = await Render('react', root)
+  const render = Render(root)
 
   return {
     client,

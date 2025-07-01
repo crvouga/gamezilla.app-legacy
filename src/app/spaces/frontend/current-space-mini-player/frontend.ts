@@ -63,13 +63,13 @@ const View = (input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (msg
         },
         [
           v('div', { className: 'p-2' }, [
-            !space.game
-              ? v(Avatar, {
+            space.game
+              ? v(GameCoverArt, { rounded: true, className: 'size-14', gameName: space.game.t })
+              : v(Avatar, {
                   src: hostProfile ? UserProfile.toAvatarUrl(hostProfile) : '',
                   alt: 'Host Avatar',
                   className: 'size-14',
-                })
-              : v(GameCoverArt, { rounded: true, className: 'size-14', gameName: space.game.t }),
+                }),
           ]),
 
           v('div', { className: 'flex flex-1 flex-col gap-0.5 overflow-hidden py-3 pr-3' }, [
