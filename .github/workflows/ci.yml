@@ -92,14 +92,6 @@ jobs:
       - name: Run E2E tests
         run: npm run test:e2e
 
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
-
       - name: Stop infrastructure
         if: always()
         run: npm run infra:down
