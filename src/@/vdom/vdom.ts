@@ -1,3 +1,5 @@
-import type { ReactNode } from 'react'
+import { Brand } from '../brand/brand'
 
-export type VDom = ReactNode | ReactNode[]
+type Primitive = null | false | true | undefined | number | string | bigint | boolean | symbol | object | Function
+
+export type VDom = Brand<unknown, 'VDom'> | Primitive

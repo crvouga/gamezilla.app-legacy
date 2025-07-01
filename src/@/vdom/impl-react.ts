@@ -10,34 +10,29 @@ export const initReact = (): VirtualDomEngine => {
     render: (node) => {
       const reactRoot = createRoot(node)
       return (vDom) => {
-        reactRoot.render(vDom)
+        reactRoot.render(vDom as any)
       }
     },
     createPortal: (vDom, container) => {
-      return createPortal(vDom, container)
+      return createPortal(vDom as any, container) as any
     },
     createElement: (tag: any, props: any, children: any) => {
-      try {
-        if (props?.style) {
-          props.style = kebabObjectToCamelObject(props?.style)
-        }
-
-        if (typeof tag === 'string' && props?.class) {
-          props.className = props.class
-          delete props.class
-        }
-
-        children = Array.isArray(children) ? children : [children]
-
-        if (tag === VDOM_FRAGMENT_KEY) {
-          return createElement(Fragment, props, ...children)
-        }
-
-        return createElement(tag, props, ...children)
-      } catch (error) {
-        debugger
-        return null
+      if (props?.style) {
+        props.style = kebabObjectToCamelObject(props?.style)
       }
+
+      if (typeof tag === 'string' && props?.class) {
+        props.className = props.class
+        delete props.class
+      }
+
+      children = Array.isArray(children) ? children : [children]
+
+      if (tag === VDOM_FRAGMENT_KEY) {
+        return createElement(Fragment, props, ...children) as any
+      }
+
+      return createElement(tag, props, ...children) as any
     },
   }
 }
