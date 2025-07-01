@@ -1,6 +1,6 @@
 import { COLUMN_COUNT, type ColumnIndex, MAX_COLUMN_HEIGHT } from '../../../connect-four'
 import { gameTheme } from '../../shared'
-import { type Columnsinput, columnsinputSub } from '../shared'
+import { type ColumnsInput, columnsInputSub } from '../shared'
 import { initColumns } from './columns'
 import { initDiscs, syncDiscs } from './discs'
 import type { SvgIds } from './shared'
@@ -32,8 +32,8 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
   customElements.define(
     'connect-four-columns',
     class extends HTMLElement {
-      private input: Columnsinput | null = null
-      private previnput: Columnsinput | null = null
+      private input: ColumnsInput | null = null
+      private previnput: ColumnsInput | null = null
       private cleanUps: (() => void)[] = []
 
       constructor() {
@@ -54,7 +54,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
       }
 
       initUI() {
-        const unsubscribe = columnsinputSub.sub((input) => {
+        const unsubscribe = columnsInputSub.sub((input) => {
           this.previnput = this.input
           this.input = input
           this.syncUI()

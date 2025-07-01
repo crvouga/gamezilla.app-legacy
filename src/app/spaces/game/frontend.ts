@@ -1,6 +1,7 @@
 import { Eff } from '~/@/eff'
 import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
+import { h } from '~/@/vdom/h'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -216,22 +217,20 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   if (!space) return null
 
-  if (!space.game) return <ScreenNotInGameFrontend.View {...input} />
+  if (!space.game) return h(ScreenNotInGameFrontend.View, input)
 
-  return (
-    <GamesFrontend.View
-      modelSpace={space.game}
-      ctx={{
-        ...input.ctx,
-        space,
-        currentUserId: input.ctx.currentUser.userId,
-        currentUserRole: input.ctx.currentUser.role,
-        currentUser: input.ctx.currentUser,
-      }}
-      dispatch={(c) => input.dispatch({ t: 'game', spaceId: space.spaceId, c })}
-      model={input.model.games[space.spaceId] ?? GamesFrontend.init(space.game.t)}
-    />
-  )
+  return h(GamesFrontend.View, {
+    modelSpace: space.game,
+    ctx: {
+      ...input.ctx,
+      space,
+      currentUserId: input.ctx.currentUser.userId,
+      currentUserRole: input.ctx.currentUser.role,
+      currentUser: input.ctx.currentUser,
+    },
+    dispatch: (c) => input.dispatch({ t: 'game', spaceId: space.spaceId, c }),
+    model: input.model.games[space.spaceId] ?? GamesFrontend.init(space.game.t),
+  })
 }
 
 export const GameFrontend = {

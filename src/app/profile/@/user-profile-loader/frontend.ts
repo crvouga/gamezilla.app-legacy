@@ -35,7 +35,7 @@ const gotMsg = (msg: MsgFrontend): MsgInCmdFrontend => {
   }
 }
 
-const watch = <TMsg,>(
+const watch = <TMsg>(
   ctx: ProfileFrontendCtx,
   query: ProfileDbQuery | null,
   map: (m: MsgFrontend) => TMsg,

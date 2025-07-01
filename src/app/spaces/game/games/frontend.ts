@@ -1,5 +1,6 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
+import { h } from '~/@/vdom/h'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/frontend'
 import { NumberlinkFrontend } from './numberlink/frontend'
@@ -128,25 +129,21 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   switch (input.modelSpace.t) {
     case 'connect-four': {
-      return (
-        <ConnectFour.View
-          ctx={input.ctx}
-          dispatch={(c) => input.dispatch({ t: 'connect-four', c })}
-          modelSpace={input.modelSpace.c}
-          model={input.model?.t === 'connect-four' ? input.model.c : ConnectFour.init}
-        />
-      )
+      return h(ConnectFour.View, {
+        ctx: input.ctx,
+        dispatch: (c) => input.dispatch({ t: 'connect-four', c }),
+        modelSpace: input.modelSpace.c,
+        model: input.model?.t === 'connect-four' ? input.model.c : ConnectFour.init,
+      })
     }
 
     case 'numberlink': {
-      return (
-        <NumberlinkFrontend.View
-          ctx={input.ctx}
-          dispatch={(c) => input.dispatch({ t: 'numberlink', c })}
-          modelSpace={input.modelSpace.c}
-          model={input.model.t === 'numberlink' ? input.model.c : NumberlinkFrontend.init}
-        />
-      )
+      return h(NumberlinkFrontend.View, {
+        ctx: input.ctx,
+        dispatch: (c) => input.dispatch({ t: 'numberlink', c }),
+        modelSpace: input.modelSpace.c,
+        model: input.model.t === 'numberlink' ? input.model.c : NumberlinkFrontend.init,
+      })
     }
   }
 }
@@ -156,14 +153,12 @@ const ViewFeedItem: FrontendModule['ViewFeedItem'] = (input) => {
     case 'connect-four': {
       switch (input.msgSpace.t) {
         case 'connect-four': {
-          return (
-            <ConnectFour.ViewFeedItem
-              ctx={input.ctx}
-              msgSpace={input.msgSpace.c}
-              modelSpace={input.modelSpace.c}
-              dispatch={(c) => input.dispatch({ t: 'connect-four', c })}
-            />
-          )
+          return h(ConnectFour.ViewFeedItem, {
+            ctx: input.ctx,
+            msgSpace: input.msgSpace.c,
+            modelSpace: input.modelSpace.c,
+            dispatch: (c) => input.dispatch({ t: 'connect-four', c }),
+          })
         }
         default: {
           return null

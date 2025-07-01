@@ -2,13 +2,14 @@ import { Keyboard } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
 import { Sub } from '~/@/sub'
+import { h } from '~/@/vdom/h'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Maze } from './@/maze'
 import { Direction, type Position } from './@/position'
 import {
   type Color,
-  type ModelFrontend,
   type ModelBackend,
+  type ModelFrontend,
   type MsgFrontend,
   type MsgToFrontend,
   initShared,
@@ -183,7 +184,7 @@ export const View = ({
   dispatch: (msg: Msg) => void
 }) => {
   if (model.type === 'setup') {
-    return <div />
+    return h('div')
   }
 
   const viewBox = [
@@ -197,57 +198,54 @@ export const View = ({
 
   const currentUserPlayer = model.players[ctx.currentUser.userId]
 
-  return (
-    <div>
-      {!currentUserPlayer && <p>Spectating</p>}
-      <svg width='100%' viewBox={viewBox}>
-        <rect x={model.lower.x} y={model.lower.y} width='100%' height='100%' fill={'#000'} />
-        {maze.edges.map(([a, b]) => (
-          <g key={[a.x, a.y, b.x, b.y].join('-')} strokeWidth='0.1' stroke={'#fff'}>
-            <line x1={a.x + 1 / 2} y1={a.y + 1 / 2} x2={b.x + 1 / 2} y2={b.y + 1 / 2} />
-          </g>
-        ))}
-
-        {Object.values(model.players).map((player) => (
-          <circle
-            key={player.userId}
-            cx={player.position.x + 1 / 2}
-            cy={player.position.y + 1 / 2}
-            r={1 / 3}
-            fill={colorMap[player.color]}
-          />
-        ))}
-      </svg>
-      {currentUserPlayer && (
-        <>
-          <ViewJoystick
-            activeDirection={pipe(currentUserPlayer.direction, (d) => (d === 'none' ? undefined : d))}
-            onChange={(direction) =>
-              dispatch([
-                'input-direction',
-                {
-                  direction,
-                  userId: ctx.currentUser.userId,
-                },
-              ])
-            }
-            onDone={() =>
-              dispatch([
-                'input-direction',
-                {
-                  direction: 'none',
-                  userId: ctx.currentUser.userId,
-                },
-              ])
-            }
-            activeFill='#fff'
-            fill='#000'
-            stroke='#bcbcbc'
-          />
-        </>
-      )}
-    </div>
-  )
+  return h('div', null, [
+    !currentUserPlayer && h('p', null, ['Spectating']),
+    h('svg', { width: '100%', viewBox }, [
+      h('rect', { x: model.lower.x, y: model.lower.y, width: '100%', height: '100%', fill: '#000' }),
+      ...maze.edges.map(([a, b]) =>
+        h('g', { key: [a.x, a.y, b.x, b.y].join('-'), strokeWidth: '0.1', stroke: '#fff' }, [
+          h('line', {
+            x1: a.x + 1 / 2,
+            y1: a.y + 1 / 2,
+            x2: b.x + 1 / 2,
+            y2: b.y + 1 / 2,
+          }),
+        ]),
+      ),
+      ...Object.values(model.players).map((player) =>
+        h('circle', {
+          key: player.userId,
+          cx: player.position.x + 1 / 2,
+          cy: player.position.y + 1 / 2,
+          r: 1 / 3,
+          fill: colorMap[player.color],
+        }),
+      ),
+    ]),
+    currentUserPlayer &&
+      h(ViewJoystick, {
+        activeDirection: pipe(currentUserPlayer.direction, (d) => (d === 'none' ? undefined : d)),
+        onChange: (direction: Direction) =>
+          dispatch([
+            'input-direction',
+            {
+              direction,
+              userId: ctx.currentUser.userId,
+            },
+          ]),
+        onDone: () =>
+          dispatch([
+            'input-direction',
+            {
+              direction: 'none',
+              userId: ctx.currentUser.userId,
+            },
+          ]),
+        activeFill: '#fff',
+        fill: '#000',
+        stroke: '#bcbcbc',
+      }),
+  ])
 }
 
 const ViewJoystick = ({
@@ -265,62 +263,50 @@ const ViewJoystick = ({
   fill: string
   activeFill: string
 }) => {
-  return (
-    <div>
-      <svg width='100%' viewBox='-1 -1 2 2' className='touch-none overflow-hidden select-none'>
-        <defs>
-          <clipPath id='cut-off-bottom'>
-            <circle x='0' y='0' r={1} />
-          </clipPath>
-        </defs>
-
-        <g strokeWidth={0.025}>
-          <g clipPath='url(#cut-off-bottom)' stroke={stroke}>
-            {Direction.all.map((direction) => {
-              const { x, y } = directionToVector(direction)
-              return (
-                <rect
-                  key={direction}
-                  x={x}
-                  y={y}
-                  width={1}
-                  height={1}
-                  fill={activeDirection === direction ? activeFill : fill}
-                  //
-                  onTouchStart={() => onChange(direction)}
-                  onTouchMove={() => onChange(direction)}
-                  onTouchEnd={onDone}
-                  onTouchCancel={onDone}
-                  onAbort={onDone}
-                  //
-                  onMouseDown={() => onChange(direction)}
-                  onMouseOver={() => onChange(direction)}
-                  onMouseUp={onDone}
-                />
-              )
-            })}
-          </g>
-
-          <circle
-            x='0'
-            y='0'
-            r={0.5}
-            fill={fill}
-            className='pointer-events-none touch-none select-none'
-            stroke={stroke}
-          />
-          <circle
-            x='0'
-            y='0'
-            r={0.98}
-            className='pointer-events-none touch-none select-none'
-            fill='transparent'
-            stroke={stroke}
-          />
-        </g>
-      </svg>
-    </div>
-  )
+  return h('div', null, [
+    h('svg', { width: '100%', viewBox: '-1 -1 2 2', className: 'touch-none overflow-hidden select-none' }, [
+      h('defs', null, [h('clipPath', { id: 'cut-off-bottom' }, [h('circle', { x: '0', y: '0', r: 1 })])]),
+      h('g', { strokeWidth: 0.025 }, [
+        h('g', { clipPath: 'url(#cut-off-bottom)', stroke }, [
+          ...Direction.all.map((direction) => {
+            const { x, y } = directionToVector(direction)
+            return h('rect', {
+              key: direction,
+              x,
+              y,
+              width: 1,
+              height: 1,
+              fill: activeDirection === direction ? activeFill : fill,
+              onTouchStart: () => onChange(direction),
+              onTouchMove: () => onChange(direction),
+              onTouchEnd: onDone,
+              onTouchCancel: onDone,
+              onAbort: onDone,
+              onMouseDown: () => onChange(direction),
+              onMouseOver: () => onChange(direction),
+              onMouseUp: onDone,
+            })
+          }),
+        ]),
+        h('circle', {
+          x: '0',
+          y: '0',
+          r: 0.5,
+          fill,
+          className: 'pointer-events-none touch-none select-none',
+          stroke,
+        }),
+        h('circle', {
+          x: '0',
+          y: '0',
+          r: 0.98,
+          className: 'pointer-events-none touch-none select-none',
+          fill: 'transparent',
+          stroke,
+        }),
+      ]),
+    ]),
+  ])
 }
 
 const directionToVector = (direction: Direction): Position => {

@@ -1,7 +1,8 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { Translator } from '~/@/l18n/generated'
-import { UnixMs } from '~/@/time/unix-ms'
 import { TimeSpan } from '~/@/time/time-span'
+import { UnixMs } from '~/@/time/unix-ms'
+import { h } from '~/@/vdom/h'
 import { Model } from './types'
 import { Dot } from './ui'
 
@@ -37,15 +38,15 @@ const toAveragePing = (model: Model): TimeSpan => {
 const ViewDot = (input: { model: BackendConnectionStatus; ctx: { t: Translator }; className: string }) => {
   switch (input.model.t) {
     case 'connected': {
-      return <Dot className={input.className} colorClassName='bg-green-500' />
+      return h(Dot, { className: input.className, colorClassName: 'bg-green-500' })
     }
 
     case 'connecting': {
-      return <Dot className={input.className} colorClassName='animate-pulse bg-orange-500' />
+      return h(Dot, { className: input.className, colorClassName: 'animate-pulse bg-orange-500' })
     }
 
     case 'disconnected': {
-      return <Dot className={input.className} colorClassName='bg-red-500' />
+      return h(Dot, { className: input.className, colorClassName: 'bg-red-500' })
     }
   }
 }
