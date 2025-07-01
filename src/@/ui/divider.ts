@@ -1,3 +1,3 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
-export const Divider = () => v('hr', {})
+export const Divider = () => h('hr', {})

@@ -14,7 +14,7 @@ import { Topic } from '~/@/topic'
 import { IconGamepad, IconUserCircle } from '~/@/ui/icon'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { CONFIG_SHARED } from '~/config/shared'
 import { BackendConnector } from '~/service-powersync/client/backend-connector'
@@ -355,22 +355,22 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
 const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   const frontendCtx = toCtx(input)
 
-  return v(ViewAppRoot, {}, [
-    v(ViewAppStatusBar, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
+  return h(ViewAppRoot, {}, [
+    h(ViewAppStatusBar, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
 
-    v('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
-      v(ViewScreen, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
+    h('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+      h(ViewScreen, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
     ]),
 
-    v(AuthFrontend.ViewModals, {
+    h(AuthFrontend.ViewModals, {
       ctx: frontendCtx,
       dispatch: (c) => input.dispatch({ t: 'auth', c }),
       model: input.model.auth,
     }),
 
-    v(DrawerPortalExit, {}),
+    h(DrawerPortalExit, {}),
 
-    v(ToasterFrontend.View, {
+    h(ToasterFrontend.View, {
       ctx: frontendCtx,
       model: input.model.frontend.toast,
       dispatch: (c) => input.dispatch({ t: 'frontend', c: { t: 'toast', c } }),
@@ -381,7 +381,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
 const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {
   switch (input.model.frontend.currentScreen.currentScreen.n) {
     case 'lang':
-      return v(LangFrontend.View, {
+      return h(LangFrontend.View, {
         ctx: input.ctx,
         dispatch: (c) => input.dispatch({ t: 'lang', c }),
         model: input.model.lang,
@@ -390,11 +390,11 @@ const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
       const currentUser = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
       switch (currentUser.t) {
         case 'loading':
-          return v(SplashScreen, { reason: TranslatedText.of('Loading current user...') })
+          return h(SplashScreen, { reason: TranslatedText.of('Loading current user...') })
         case 'logged-out':
-          return v(ViewScreenLoggedOut, { model: input.model, dispatch: input.dispatch, ctx: input.ctx })
+          return h(ViewScreenLoggedOut, { model: input.model, dispatch: input.dispatch, ctx: input.ctx })
         case 'logged-in':
-          return v(ViewScreenLoggedIn, { model: input.model, dispatch: input.dispatch, ctx: input.ctx })
+          return h(ViewScreenLoggedIn, { model: input.model, dispatch: input.dispatch, ctx: input.ctx })
       }
     }
   }
@@ -403,7 +403,7 @@ const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
 const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
   switch (input.ctx.currentScreen.n) {
     case 'auth':
-      return v(AuthFrontend.View, {
+      return h(AuthFrontend.View, {
         model: input.model.auth,
         ctx: input.ctx,
         dispatch: (c) => input.dispatch({ t: 'auth', c }),
@@ -411,7 +411,7 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
     case 'spaces':
     case 'profile':
     case 'lang':
-      return v(IntersectionObserverEmitter, {
+      return h(IntersectionObserverEmitter, {
         id: 'app-intersection-observer',
         onVisible: () =>
           input.dispatch({
@@ -425,14 +425,14 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
 const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
   switch (input.ctx.currentScreen.n) {
     case 'profile':
-      return v(ProfileFrontend.View, {
+      return h(ProfileFrontend.View, {
         dispatch: (m) => input.dispatch({ t: 'profile', c: m }),
         model: input.model.profile,
         ctx: { ...input.ctx, parentScreen: toScreenLayoutProps(input) },
       })
 
     case 'spaces':
-      return v(SpacesFrontend.View, {
+      return h(SpacesFrontend.View, {
         dispatch: (m) => input.dispatch({ t: 'spaces', c: m }),
         model: input.model.spaces,
         ctx: {
@@ -443,7 +443,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
 
     case 'lang':
     case 'auth':
-      return v(IntersectionObserverEmitter, {
+      return h(IntersectionObserverEmitter, {
         id: 'app-intersection-observer',
         onVisible: () =>
           input.dispatch({
@@ -471,7 +471,7 @@ const toScreenLayoutProps = (input: {
     parentScreen: null,
     renderMiniPlayer: (props) => {
       if (!isAppFrontendCtx(input.ctx)) return null
-      return v(SpacesFrontend.ViewCurrentSpaceMiniPlayer, {
+      return h(SpacesFrontend.ViewCurrentSpaceMiniPlayer, {
         key: props.key,
         ctx: input.ctx,
         model: input.model.spaces,
@@ -484,14 +484,14 @@ const toScreenLayoutProps = (input: {
         actions: [
           {
             label: ctx.t('spaces.spaces'),
-            icon: (input) => v(IconGamepad, input),
+            icon: (input) => h(IconGamepad, input),
             color: input.model.frontend.currentScreen.currentScreen.n === 'spaces' ? 'selected' : 'inherit',
             onClick: pushSpaceList,
             id: ctx.t('spaces.spaces'),
           },
           {
             label: ctx.t('profile.profile'),
-            icon: (input) => v(IconUserCircle, input),
+            icon: (input) => h(IconUserCircle, input),
             color: input.model.frontend.currentScreen.currentScreen.n === 'profile' ? 'selected' : 'inherit',
             onClick() {
               input.dispatch({

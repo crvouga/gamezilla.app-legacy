@@ -1,5 +1,5 @@
 import { IconPen } from '~/@/ui/icon'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -24,7 +24,7 @@ const View: FrontendModule['View'] = (input) => {
   const packBuilder = input.modelSpace
   if (!packBuilder) return null
 
-  return v(ScreenLayout, {
+  return h(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     id: 'screen-puzzle-grid',
     ctx: input.ctx,
@@ -42,7 +42,7 @@ const View: FrontendModule['View'] = (input) => {
       },
     },
     renderBody: () =>
-      v(PackPuzzleGridUI.View, {
+      h(PackPuzzleGridUI.View, {
         id: packBuilder.pack.id,
         currentSlideIndex: ScreenPackBuildSpace.toSlideIndex(packBuilder),
         puzzleIds: packBuilder.pack.puzzleIds,
@@ -82,7 +82,7 @@ const View: FrontendModule['View'] = (input) => {
         actions: [
           {
             id: input.ctx.t('app.edit-name'),
-            icon: (input) => v(IconPen, input),
+            icon: (input) => h(IconPen, input),
             label: input.ctx.t('app.edit-name'),
             onClick: () => {
               input.dispatch({

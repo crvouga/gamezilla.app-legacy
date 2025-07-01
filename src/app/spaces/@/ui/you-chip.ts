@@ -1,7 +1,7 @@
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { Chip } from '~/@/ui/chip'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 export const ViewYouChip = (input: { ctx: AppFrontendCtxBase }) => {
-  return v(Chip, { size: 'sm', label: input.ctx.t('you') })
+  return h(Chip, { size: 'sm', label: input.ctx.t('you') })
 }

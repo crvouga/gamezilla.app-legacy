@@ -1,9 +1,9 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 export type GameMinesweeperInput = null
 
 export function GameMinesweeper(_input: GameMinesweeperInput) {
-  return v('h1', {}, ['Welcome to GameMinesweeper!'])
+  return h('h1', {}, ['Welcome to GameMinesweeper!'])
 }
 
 export default GameMinesweeper

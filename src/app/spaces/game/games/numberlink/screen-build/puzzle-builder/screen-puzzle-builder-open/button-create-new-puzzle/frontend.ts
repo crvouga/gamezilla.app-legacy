@@ -12,7 +12,7 @@ import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { IPuzzleDb } from '../../../../@/puzzle/puzzle-db'
 import { NumberlinkVariant, NumberlinkVariantDimensions } from '../../../../@/variant'
 import { FrontendModule } from '../../../types'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 const update: FrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
@@ -104,7 +104,7 @@ const viewCreateAction = (input: Parameters<FrontendModule['View']>[0]): PostAct
     submitText: input.ctx.t('game.numberlink.create-puzzle'),
     submitLoading: input.model.puzzleCreateRequest.t === 'loading',
     submitDisabled: input.model.puzzleCreateRequest.t === 'loading',
-    submitIcon: (iconInput) => v(IconPlus, iconInput),
+    submitIcon: (iconInput) => h(IconPlus, iconInput),
   }
 }
 

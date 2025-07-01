@@ -10,7 +10,7 @@ import { Gutter } from '~/@/ui/gutter'
 import { IconPuzzlePiece } from '~/@/ui/icon'
 import { SpinnerBlock } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { AddPuzzlesCmd } from '../../frontend/add-puzzles-cmd.$msg'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { NumberlinkVariantBoard } from '../../variant'
@@ -80,19 +80,19 @@ const ViewList = (input: {
   const totalCount = puzzles.length
   const selectedCount = Math.min(input.selected?.length ?? 0, totalCount)
 
-  return v('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
-    v(QueryForm.View, { ctx: input.ctx, query: input.query, onChange: input.onQueryChanged }),
+  return h('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
+    h(QueryForm.View, { ctx: input.ctx, query: input.query, onChange: input.onQueryChanged }),
 
     input.selectable &&
-      v(
+      h(
         Clickable,
         {
           class: 'flex w-fit items-center gap-4 px-4 py-2',
           onClick: () => input.onHeaderCheckboxClick?.(puzzleIds),
         },
         [
-          v(Checkbox, { state: toTopLevelCheckboxState({ totalCount, selectedCount }) }),
-          v(Typography, {
+          h(Checkbox, { state: toTopLevelCheckboxState({ totalCount, selectedCount }) }),
+          h(Typography, {
             variant: 'body',
             color: 'text-secondary',
             class: 'text-lg',
@@ -104,9 +104,9 @@ const ViewList = (input: {
         ],
       ),
 
-    v('div', { class: 'relative flex w-full flex-1 flex-col items-center overflow-y-scroll' }, [
+    h('div', { class: 'relative flex w-full flex-1 flex-col items-center overflow-y-scroll' }, [
       ...puzzles.map((puzzle) =>
-        v(ViewListItem, {
+        h(ViewListItem, {
           selectable: input.selectable,
           query: input.query,
           key: puzzle.id,
@@ -118,14 +118,14 @@ const ViewList = (input: {
       ),
 
       isEmpty &&
-        v(EmptyState, {
-          renderIcon: (input) => v(IconPuzzlePiece, input),
+        h(EmptyState, {
+          renderIcon: (input) => h(IconPuzzlePiece, input),
           label: input.ctx.t('game.numberlink.no-puzzles'),
         }),
 
-      isLoading && v(SpinnerBlock, {}),
+      isLoading && h(SpinnerBlock, {}),
 
-      v(Gutter, { variant: 'screen' }),
+      h(Gutter, { variant: 'screen' }),
     ]),
   ])
 }
@@ -148,7 +148,7 @@ const ViewListItem = (input: {
   onClick?: () => void
   selected: boolean
 }) => {
-  return v(
+  return h(
     ClickableTransparent,
     {
       key: input.puzzle.id,
@@ -157,21 +157,21 @@ const ViewListItem = (input: {
     },
     [
       input.selectable &&
-        v('div', { class: 'px-4' }, [v(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
+        h('div', { class: 'px-4' }, [h(Checkbox, { state: input.selected ? 'checked' : 'unchecked' })]),
 
-      v('div', { class: 'flex aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden' }, [
-        v(NumberlinkVariantBoard.View, { disabled: true, model: input.puzzle.model }),
+      h('div', { class: 'flex aspect-square h-24 w-24 shrink-0 items-center justify-center overflow-hidden' }, [
+        h(NumberlinkVariantBoard.View, { disabled: true, model: input.puzzle.model }),
       ]),
 
-      v('div', { class: 'flex flex-col gap-1 truncate overflow-hidden px-4' }, [
-        v(Typography, {
+      h('div', { class: 'flex flex-col gap-1 truncate overflow-hidden px-4' }, [
+        h(Typography, {
           variant: 'body',
           color: 'text-primary',
           text: TranslatedText.of(input.puzzle.name),
           class: 'truncate',
         }),
 
-        v(Typography, {
+        h(Typography, {
           variant: 'subtitle',
           color: 'text-secondary',
           text: toListItemSecondaryText(input),

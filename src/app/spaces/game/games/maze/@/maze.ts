@@ -1,7 +1,7 @@
 import { eq } from '~/@/equals/equals'
 import { memoize } from '~/@/function/memoize'
 import { Random } from '~/@/random/random'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { Direction, Position } from './position'
 
 //
@@ -185,8 +185,8 @@ const viewBox = [
 ].join(' ')
 
 export const CoverArt = () => {
-  return v('svg', { viewBox, width: '100%', class: 'border' }, [
-    v('rect', {
+  return h('svg', { viewBox, width: '100%', class: 'border' }, [
+    h('rect', {
       x: coverArtMaze.lower.x,
       y: coverArtMaze.lower.y,
       width: '100%',
@@ -194,7 +194,7 @@ export const CoverArt = () => {
       fill: '#000',
     }),
     ...coverArtMaze.edges.map(([a, b]) =>
-      v(
+      h(
         'g',
         {
           key: [a.x, a.y, b.x, b.y].join('-'),
@@ -202,7 +202,7 @@ export const CoverArt = () => {
           stroke: '#fff',
         },
         [
-          v('line', {
+          h('line', {
             x1: a.x + 1 / 2,
             y1: a.y + 1 / 2,
             x2: b.x + 1 / 2,

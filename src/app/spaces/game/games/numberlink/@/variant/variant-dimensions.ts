@@ -1,6 +1,6 @@
 import { Translator } from '~/@/l18n/generated'
 import { s } from '~/@/schema'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { VariantGridDimensions } from './grid'
 import { VariantHexDimensions } from './hex'
 import { VariantTriDimensions } from './tri'
@@ -34,15 +34,15 @@ export const ViewForm = (input: {
 }) => {
   switch (input.form.t) {
     case 'grid': {
-      return v(VariantGridDimensions.ViewForm, { ctx: input.ctx, form: input.form, onInput: input.onInput })
+      return h(VariantGridDimensions.ViewForm, { ctx: input.ctx, form: input.form, onInput: input.onInput })
     }
 
     case 'hex': {
-      return v(VariantHexDimensions.ViewForm, { form: input.form, onInput: input.onInput })
+      return h(VariantHexDimensions.ViewForm, { form: input.form, onInput: input.onInput })
     }
 
     case 'tri': {
-      return v(VariantTriDimensions.ViewForm, { form: input.form, onInput: input.onInput })
+      return h(VariantTriDimensions.ViewForm, { form: input.form, onInput: input.onInput })
     }
   }
 }

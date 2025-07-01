@@ -2,7 +2,7 @@ import type { Eff } from '~/@/eff'
 import { UnixMs } from '~/@/time/unix-ms'
 import { IconArrowLeft, IconArrowRotateLeft, IconRightLeft } from '~/@/ui/icon'
 import { LoadingBar } from '~/@/ui/loading-bar'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -187,7 +187,7 @@ export const View = (input: {
         input.dispatch({
           t: 'stop-playing',
         }),
-      renderIcon: (input) => v(PlayerTypeIcon, { ...input, playerType: 'X' }),
+      renderIcon: (input) => h(PlayerTypeIcon, { ...input, playerType: 'X' }),
     },
     playerTwo: {
       label: input.ctx.t('tic-tac-toe.naught'),
@@ -200,14 +200,14 @@ export const View = (input: {
         input.dispatch({
           t: 'stop-playing',
         }),
-      renderIcon: (input) => v(PlayerTypeIcon, { ...input, playerType: 'O' }),
+      renderIcon: (input) => h(PlayerTypeIcon, { ...input, playerType: 'O' }),
     },
-    renderCoverArt: (input) => v(CoverArt, input),
+    renderCoverArt: (input) => h(CoverArt, input),
     title: input.ctx.t('tic-tac-toe'),
   }
 
   if (input.model.type === 'setup') {
-    return v(VsBotSetup.View, {
+    return h(VsBotSetup.View, {
       model: input.model.vsBotSetup,
       dispatch: (c) =>
         input.dispatch({
@@ -232,22 +232,22 @@ export const View = (input: {
   const turn = toTurn(board)
   const status = toStatus(board)
 
-  return v(ScreenLayout, {
+  return h(ScreenLayout, {
     dataTestId: 'tic-tac-to/vs-bot-screen',
     parentScreen: input.ctx.parentScreen,
     ctx: input.ctx,
     id: 'tic-tac-toe-vs-bot',
     renderBody: () =>
-      v('div', { class: 'flex flex-col items-center justify-center' }, [
-        v(VsBotGame.VsBotPlayerSection, vsBotGameInput),
+      h('div', { class: 'flex flex-col items-center justify-center' }, [
+        h(VsBotGame.VsBotPlayerSection, vsBotGameInput),
 
-        v(LoadingBar, {
+        h(LoadingBar, {
           class: 'w-full',
           disabled: input.model.userPlayerType === turn || status.type !== 'Turn',
           color: gameTheme.background,
         }),
 
-        v(ViewBoard, {
+        h(ViewBoard, {
           board: board,
           onClick: (position) => input.dispatch({ t: 'input-move', position }),
         }),
@@ -258,7 +258,7 @@ export const View = (input: {
         actions: [
           {
             id: input.ctx.t('app.exit'),
-            icon: (props) => v(IconArrowLeft, props),
+            icon: (props) => h(IconArrowLeft, props),
             label: input.ctx.t('app.exit'),
             onClick: () =>
               input.dispatch({
@@ -267,7 +267,7 @@ export const View = (input: {
           },
           {
             id: input.ctx.t('game.swap-sides'),
-            icon: (props) => v(IconRightLeft, props),
+            icon: (props) => h(IconRightLeft, props),
             label: input.ctx.t('game.swap-sides'),
             onClick: () =>
               input.dispatch({
@@ -276,7 +276,7 @@ export const View = (input: {
           },
           {
             id: input.ctx.t('app.restart'),
-            icon: (props) => v(IconArrowRotateLeft, props),
+            icon: (props) => h(IconArrowRotateLeft, props),
             label: input.ctx.t('app.restart'),
             onClick: () =>
               input.dispatch({
@@ -299,13 +299,13 @@ export const ViewMsg = (input: { msg: Msg | MsgToFrontend }) => {
 export const renderBotLevel = ({ level, ...input }: { level: BotLevel; class?: string }) => {
   switch (level) {
     case 'Easy': {
-      return v(IconBotCute, input)
+      return h(IconBotCute, input)
     }
     case 'Medium': {
-      return v(IconBotLevel1, input)
+      return h(IconBotLevel1, input)
     }
     case 'Impossible': {
-      return v(IconBotScary, input)
+      return h(IconBotScary, input)
     }
   }
 }

@@ -1,8 +1,8 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { LOGO_TEXT } from './logo-text'
 
 export const NavBarLogo = (input: { onClick: () => void }) => {
-  return v(
+  return h(
     'button',
     {
       class: 'flex h-full w-full items-center justify-center text-4xl',

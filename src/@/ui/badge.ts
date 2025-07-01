@@ -1,14 +1,14 @@
 import { VDom } from '~/@/vdom/vdom'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { sleep } from '../promise/sleep'
 import { TimeSpan } from '../time/time-span'
 import { Transition } from './transition'
 
 export const Badge = (input: { badgeContent: VDom; id: string; children: VDom[] }) => {
-  return v('div', { class: 'relative h-fit w-fit' }, [
-    v(Transition, { onEnter: onEnterGrow, id: input.id, mode: 'in-out', onExit: onExitShrink }, [
+  return h('div', { class: 'relative h-fit w-fit' }, [
+    h(Transition, { onEnter: onEnterGrow, id: input.id, mode: 'in-out', onExit: onExitShrink }, [
       input.badgeContent &&
-        v(
+        h(
           'div',
           {
             class:

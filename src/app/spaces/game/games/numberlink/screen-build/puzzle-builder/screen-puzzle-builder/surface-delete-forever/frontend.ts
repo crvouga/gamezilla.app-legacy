@@ -1,7 +1,7 @@
 import { Ok, RemoteResult, isLoading } from '~/@/result'
 import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconDeleteForever } from '~/@/ui/icon'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
@@ -101,7 +101,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 }
 
 const ViewSurface = (input: Parameters<FrontendModule['View']>[0] & { dropDown: DropDownConfig }) => {
-  return v(SurfaceConfirmation, {
+  return h(SurfaceConfirmation, {
     ctx: input.ctx,
     ariaLabel: input.ctx.t('game.numberlink.delete-puzzle-forever?'),
     id: 'delete-forever-drawer',
@@ -125,11 +125,11 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
   return [
     {
       id: input.ctx.t('app.delete'),
-      icon: (input) => v(IconDeleteForever, input),
+      icon: (input) => h(IconDeleteForever, input),
       label: input.ctx.t('app.delete'),
       color: 'danger',
       onClick: () => input.dispatch({ t: 'delete-forever.user-clicked-delete-button' }),
-      renderSurface: ({ dropDown }) => v(ViewSurface, { ...input, dropDown }),
+      renderSurface: ({ dropDown }) => h(ViewSurface, { ...input, dropDown }),
     },
   ]
 }

@@ -1,6 +1,6 @@
 import { Clickable } from '~/@/ui/clickable'
 import { Typography } from '~/@/ui/typography'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SpaceFrontendCtx } from '../../@/frontend/ctx'
 import { SpaceFrontendModule } from '../../frontend/space-frontend'
@@ -25,7 +25,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
   }
 
   if (isGuest) {
-    return v(ScreenLayoutHostSettingUpGame, {
+    return h(ScreenLayoutHostSettingUpGame, {
       parentScreen: input.ctx.parentScreen,
       ctx: spaceCtx,
       navBar: {
@@ -37,7 +37,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
     })
   }
 
-  return v(ScreenLayout, {
+  return h(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     id: 'game-selection-screen',
     ctx: input.ctx,
@@ -47,34 +47,34 @@ const View: SpaceFrontendModule['View'] = (input) => {
         onClick: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),
       },
     },
-    renderBody: () => v(ViewHostGameSelection, { ctx: spaceCtx, dispatch: input.dispatch }),
+    renderBody: () => h(ViewHostGameSelection, { ctx: spaceCtx, dispatch: input.dispatch }),
   })
 }
 
 const ViewHostGameSelection = (input: { ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
-  return v(
+  return h(
     'div',
     {
       class: 'grid flex-1 grid-cols-3 justify-between gap-8 p-4 md:grid-cols-4 md:gap-12',
     },
     GAME_NAME_LIST.map((gameName) =>
-      v(GameTile, { key: gameName, gameName, ctx: input.ctx, dispatch: input.dispatch }),
+      h(GameTile, { key: gameName, gameName, ctx: input.ctx, dispatch: input.dispatch }),
     ),
   )
 }
 
 const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: (msg: MsgFrontend) => void }) => {
-  return v('div', {}, [
-    v(
+  return h('div', {}, [
+    h(
       Clickable,
       {
         type: 'button',
         'aria-label': input.gameName,
         onClick: () => input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName }),
       },
-      [v(GameCoverArt, { rounded: true, gameName: input.gameName })],
+      [h(GameCoverArt, { rounded: true, gameName: input.gameName })],
     ),
-    v(Typography, {
+    h(Typography, {
       class: 'mt-2 w-full overflow-hidden text-center text-sm font-semibold text-ellipsis whitespace-nowrap',
       variant: 'label',
       sizeClassName: 'text-base',

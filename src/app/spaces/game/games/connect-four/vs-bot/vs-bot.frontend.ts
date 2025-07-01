@@ -2,7 +2,7 @@ import { type WithEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconArrowLeft, IconArrowRotateLeft, IconRightLeft } from '~/@/ui/icon'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import type { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -303,7 +303,7 @@ const View: Module['View'] = (input) => {
     ctx: input.ctx,
     onQuit: () => {},
     title: input.ctx.t('chess'),
-    renderCoverArt: (input) => v(CoverArt, input),
+    renderCoverArt: (input) => h(CoverArt, input),
     canStartGame: input.modelSpace.playingUserId !== null,
     onSwapSides: () =>
       input.dispatch({
@@ -318,7 +318,7 @@ const View: Module['View'] = (input) => {
     botVariants: ALL_BOT_LEVELS.map((botLevel) => {
       return {
         label: input.ctx.t('connect-four.bot-level', botLevel),
-        renderIcon: (input) => v(ViewBotLevel, { ...input, level: botLevel }),
+        renderIcon: (input) => h(ViewBotLevel, { ...input, level: botLevel }),
         onSelect: () =>
           input.dispatch({
             t: 'user-changed-bot-level',
@@ -333,11 +333,11 @@ const View: Module['View'] = (input) => {
     },
     bot: {
       label: input.ctx.t('connect-four.bot-level', input.modelSpace.botLevel),
-      renderIcon: (iconInput) => v(ViewBotLevel, { ...iconInput, level: input.modelSpace.botLevel }),
+      renderIcon: (iconInput) => h(ViewBotLevel, { ...iconInput, level: input.modelSpace.botLevel }),
     },
     playerOne: {
       label: input.ctx.t('connect-four.red'),
-      renderIcon: (input) => v(PlayerOneIcon, input),
+      renderIcon: (input) => h(PlayerOneIcon, input),
       onStartPlaying: () =>
         input.dispatch({
           t: 'user-started-playing',
@@ -352,7 +352,7 @@ const View: Module['View'] = (input) => {
     },
     playerTwo: {
       label: input.ctx.t('connect-four.yellow'),
-      renderIcon: (input) => v(PlayerTwoIcon, input),
+      renderIcon: (input) => h(PlayerTwoIcon, input),
       onStartPlaying: () =>
         input.dispatch({
           t: 'user-started-playing',
@@ -372,7 +372,7 @@ const View: Module['View'] = (input) => {
   }
 
   if (input.modelSpace.type === 'setup') {
-    return v(VsBotSetup.View, {
+    return h(VsBotSetup.View, {
       model: input.model.vsBotSetup,
       dispatch: (c) =>
         input.dispatch({
@@ -398,19 +398,19 @@ const View: Module['View'] = (input) => {
   const isSpectating = input.ctx.currentUser.userId !== input.modelSpace.playingUserId
   const columns = input.modelSpace.columns
 
-  return v(ScreenLayout, {
+  return h(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     ctx: input.ctx,
     id: 'connect-four-vs-bot',
     renderBody: () =>
-      v(LayoutGame, { ctx: input.ctx, isSpectating }, [
-        v('div', { class: 'flex w-full flex-1 flex-col items-center justify-center gap-1' }, [
-          v(VsBotGame.VsBotPlayerSection, vsBotGameInput),
+      h(LayoutGame, { ctx: input.ctx, isSpectating }, [
+        h('div', { class: 'flex w-full flex-1 flex-col items-center justify-center gap-1' }, [
+          h(VsBotGame.VsBotPlayerSection, vsBotGameInput),
 
-          v(VsBotGame.ViewStatusBar, { ...vsBotSetupInput, status: toVsBotStatus(status) }),
+          h(VsBotGame.ViewStatusBar, { ...vsBotSetupInput, status: toVsBotStatus(status) }),
 
-          v('div', { class: 'relative flex w-full flex-col items-center justify-center overflow-hidden' }, [
-            v(ViewColumns, {
+          h('div', { class: 'relative flex w-full flex-col items-center justify-center overflow-hidden' }, [
+            h(ViewColumns, {
               gameId: 0,
               columns: columns,
               disabled: isSpectating || status.type !== 'Playing',
@@ -423,7 +423,7 @@ const View: Module['View'] = (input) => {
               },
             }),
             input.model &&
-              v(VsBotGame.ViewGameOverOverlay, {
+              h(VsBotGame.ViewGameOverOverlay, {
                 ...vsBotGameInput,
                 model: input.model.vsBotGame,
                 onPlayAgain: () =>
@@ -445,19 +445,19 @@ const View: Module['View'] = (input) => {
               actions: [
                 {
                   id: input.ctx.t('app.exit'),
-                  icon: (props) => v(IconArrowLeft, props),
+                  icon: (props) => h(IconArrowLeft, props),
                   label: input.ctx.t('app.exit'),
                   onClick: () => input.dispatch({ t: 'user-stopped-game', userId: input.ctx.currentUser.userId }),
                 },
                 {
                   id: input.ctx.t('game.swap-sides'),
-                  icon: (props) => v(IconRightLeft, props),
+                  icon: (props) => h(IconRightLeft, props),
                   label: input.ctx.t('game.swap-sides'),
                   onClick: () => input.dispatch({ t: 'user-swapped-sides', userId: input.ctx.currentUser.userId }),
                 },
                 {
                   id: input.ctx.t('app.restart'),
-                  icon: (props) => v(IconArrowRotateLeft, props),
+                  icon: (props) => h(IconArrowRotateLeft, props),
                   label: input.ctx.t('app.restart'),
                   onClick: () => input.dispatch({ t: 'user-restarted-game', userId: input.ctx.currentUser.userId }),
                 },
@@ -496,43 +496,43 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
 
   switch (input.msgSpace.t) {
     case 'bot-dropped-disc': {
-      return v(FeedItem.Info, { text: 'Bot dropped disc' })
+      return h(FeedItem.Info, { text: 'Bot dropped disc' })
     }
 
     case 'user-changed-bot-level': {
-      return v(FeedItem.Info, { text: `${username} changed bot level to ${input.msgSpace.botLevel}` })
+      return h(FeedItem.Info, { text: `${username} changed bot level to ${input.msgSpace.botLevel}` })
     }
 
     case 'user-dropped-disc': {
       if (input.msgSpace.userId === input.ctx.currentUser.userId) {
-        return v(FeedItem.Info, { text: `${username} dropped disc` })
+        return h(FeedItem.Info, { text: `${username} dropped disc` })
       }
 
-      return v(FeedItem.Info, { text: `${username} dropped disc` })
+      return h(FeedItem.Info, { text: `${username} dropped disc` })
     }
     case 'user-restarted-game': {
-      return v(FeedItem.Info, { text: `${username} restarted game` })
+      return h(FeedItem.Info, { text: `${username} restarted game` })
     }
     case 'user-started-game': {
-      return v(FeedItem.Info, { text: `${username} started game` })
+      return h(FeedItem.Info, { text: `${username} started game` })
     }
     case 'user-started-playing': {
-      return v(FeedItem.Info, { text: `${username} started playing` })
+      return h(FeedItem.Info, { text: `${username} started playing` })
     }
     case 'user-stopped-game': {
-      return v(FeedItem.Info, { text: `${username} stopped game` })
+      return h(FeedItem.Info, { text: `${username} stopped game` })
     }
     case 'user-stopped-playing': {
-      return v(FeedItem.Info, { text: `${username} stopped playing` })
+      return h(FeedItem.Info, { text: `${username} stopped playing` })
     }
     case 'user-swapped-sides': {
-      return v(FeedItem.Info, { text: `${username} swapped sides` })
+      return h(FeedItem.Info, { text: `${username} swapped sides` })
     }
     case 'time-passed': {
       return null
     }
     case 'user-left': {
-      return v(FeedItem.Info, { text: `${username} left space` })
+      return h(FeedItem.Info, { text: `${username} left space` })
     }
     default: {
       return null
@@ -543,13 +543,13 @@ const ViewFeedItem: Module['ViewFeedItem'] = (input) => {
 const ViewBotLevel = ({ level, ...input }: { level: BotLevel; class?: string }) => {
   switch (level) {
     case 'Easy': {
-      return v(IconBotHappy, input)
+      return h(IconBotHappy, input)
     }
     case 'Medium': {
-      return v(IconBotLevel1, input)
+      return h(IconBotLevel1, input)
     }
     case 'Hard': {
-      return v(IconBotLevel4, input)
+      return h(IconBotLevel4, input)
     }
   }
 }

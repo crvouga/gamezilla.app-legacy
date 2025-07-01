@@ -7,7 +7,7 @@ import { PaginationDots } from '~/@/ui/pagination-dots'
 import { Paper } from '~/@/ui/paper'
 import type { VDom } from '~/@/vdom/vdom'
 import type { PuzzleId } from '../../puzzle/puzzle-id'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 const COLUMN_COUNT = 5
 const ROW_COUNT = 6
@@ -28,8 +28,8 @@ const View = (input: {
   const cellCount = (puzzleIds.length ?? 0) + (input.addCell?.include ? 1 : 0)
   const slideCount = Math.ceil(cellCount / (COLUMN_COUNT * ROW_COUNT))
 
-  return v('div', { class: 'flex h-full w-full flex-col gap-4 py-6' }, [
-    v(
+  return h('div', { class: 'flex h-full w-full flex-col gap-4 py-6' }, [
+    h(
       Swiper.Container,
       {
         onSlideIndexChanged: (newSlideIndex: number) => input.onSlideIndexChanged?.(newSlideIndex),
@@ -38,14 +38,14 @@ const View = (input: {
         class: 'flex h-full w-full items-center justify-center',
       },
       Array.from({ length: slideCount }).map((_, slideIndex) =>
-        v(
+        h(
           Swiper.Slide,
           {
             key: slideIndex,
             class: 'flex h-full w-3/4 flex-col items-center justify-center',
           },
           [
-            v(ViewSlideContent, {
+            h(ViewSlideContent, {
               puzzleIds,
               slideIndex,
               onClickPuzzleCell: input.onClickPuzzleCell,
@@ -55,7 +55,7 @@ const View = (input: {
         ),
       ),
     ),
-    v(PaginationDots, { count: slideCount, activeIndex: input.currentSlideIndex ?? 0 }),
+    h(PaginationDots, { count: slideCount, activeIndex: input.currentSlideIndex ?? 0 }),
   ])
 }
 
@@ -68,21 +68,21 @@ const ViewSlideContent = (input: {
   }
   onClickPuzzleCell?: (input: { puzzleIndex: number; puzzleId: PuzzleId }) => void
 }) => {
-  return v('div', { class: 'flex w-fit flex-col items-center justify-center gap-1' }, [
-    v(ViewSlideHeading, { slideIndex: input.slideIndex, puzzleIds: input.puzzleIds }),
-    v(ViewGrid, {
+  return h('div', { class: 'flex w-fit flex-col items-center justify-center gap-1' }, [
+    h(ViewSlideHeading, { slideIndex: input.slideIndex, puzzleIds: input.puzzleIds }),
+    h(ViewGrid, {
       slideIndex: input.slideIndex,
       puzzleIds: input.puzzleIds ?? [],
       renderCell: (inputCell: { x: number; y: number; index: number; puzzleId: PuzzleId | null; empty: boolean }) => {
         const isAddCell = inputCell.index === input.puzzleIds.length && input.addCell?.include
 
-        if (isAddCell) return v(ViewAddCell, { onClick: input.addCell?.onClick })
+        if (isAddCell) return h(ViewAddCell, { onClick: input.addCell?.onClick })
 
         const { puzzleId } = inputCell
 
-        if (!puzzleId) return v(ViewEmptyCell, {})
+        if (!puzzleId) return h(ViewEmptyCell, {})
 
-        return v(ViewPuzzleCell, {
+        return h(ViewPuzzleCell, {
           onClick: () => input.onClickPuzzleCell?.({ puzzleId, puzzleIndex: inputCell.index }),
           index: inputCell.index,
         })
@@ -100,7 +100,7 @@ const ViewSlideHeading = (input: { slideIndex: number; puzzleIds: PuzzleId[] }) 
 
   if (!hasPuzzles) return null
 
-  return v(Typography, {
+  return h(Typography, {
     text: TranslatedText.of(`${startPosition} - ${endPositionPuzzle}`),
     class: 'flex w-full items-center justify-start p-1 text-2xl',
     role: 'heading',
@@ -114,11 +114,11 @@ const ViewGrid = (input: {
 }) => {
   const indexOffset = input.slideIndex * (COLUMN_COUNT * ROW_COUNT)
 
-  return v(
+  return h(
     'div',
     { role: 'grid', class: 'grid aspect-square w-full grid-cols-5 grid-rows-6' },
     range2d({ x: COLUMN_COUNT, y: ROW_COUNT }).map(({ x, y }) =>
-      v(ViewGridCell, {
+      h(ViewGridCell, {
         key: `${x}-${y}`,
         x,
         y,
@@ -141,7 +141,7 @@ const ViewGridCell = (input: {
   const puzzleId = input.puzzleIds[index] ?? null
   const empty = index >= input.puzzleIds.length
 
-  return v(
+  return h(
     'div',
     {
       role: 'gridcell',
@@ -168,18 +168,18 @@ const range = (length: number): number[] => {
 }
 
 const ViewAddCell = (input: { onClick?: () => void }) => {
-  return v(
+  return h(
     ClickablePaper,
     {
       onClick: input.onClick,
       class: 'flex h-full w-full items-center justify-center overflow-hidden rounded border-2',
     },
-    [v(IconPlus, { class: 'h-8 w-8' })],
+    [h(IconPlus, { class: 'h-8 w-8' })],
   )
 }
 
 const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number }) => {
-  return v(
+  return h(
     ClickablePaper,
     {
       onClick,
@@ -190,19 +190,19 @@ const ViewPuzzleCell = ({ onClick, index }: { onClick: () => void; index: number
 }
 
 const ViewEmptyCell = () => {
-  return v('div', {
+  return h('div', {
     class: 'flex h-full w-full items-center justify-center overflow-hidden rounded border-2 opacity-70',
   })
 }
 
 export const _ViewLoadingCell = () => {
-  return v(Paper, {
+  return h(Paper, {
     class: 'flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded opacity-70',
   })
 }
 
 export const _ViewErrorCell = ({ onClick, index }: { onClick: () => void; index: number }) => {
-  return v(
+  return h(
     Clickable,
     {
       onClick,

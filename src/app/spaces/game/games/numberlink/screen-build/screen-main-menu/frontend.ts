@@ -5,7 +5,7 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../../../@/ui/game-main-menu'
 import type { FrontendModule } from '../types'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen({ model: input.model }, (model) => updateFromMsgSpace({ ...input, model }))
@@ -36,7 +36,7 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  return v(GameMainMenu.View, {
+  return h(GameMainMenu.View, {
     ctx: input.ctx,
     dispatch: (c) => input.dispatch(c),
     onBack: () =>
@@ -48,13 +48,13 @@ const View: FrontendModule['View'] = (input) => {
         },
       }),
     renderCoverArt: (input) =>
-      v('div', input, [
-        v('div', { class: 'h-full w-full p-4' }, [v(IconScrewdriverWrench, { class: 'h-full w-full' })]),
+      h('div', input, [
+        h('div', { class: 'h-full w-full p-4' }, [h(IconScrewdriverWrench, { class: 'h-full w-full' })]),
       ]),
     title: input.ctx.t('game.numberlink.build'),
     buttons: [
       {
-        renderIcon: (input) => v(IconPuzzlePiece, input),
+        renderIcon: (input) => h(IconPuzzlePiece, input),
         title: input.ctx.t('game.numberlink.open-puzzle-builder-title'),
         description: input.ctx.t('game.numberlink.open-puzzle-builder-description'),
         onClick: () =>
@@ -68,7 +68,7 @@ const View: FrontendModule['View'] = (input) => {
           }),
       },
       {
-        renderIcon: (input) => v(IconBox, input),
+        renderIcon: (input) => h(IconBox, input),
         title: input.ctx.t('game.numberlink.open-pack-builder-title'),
         description: input.ctx.t('game.numberlink.open-pack-builder-description'),
         onClick: () =>

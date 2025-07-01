@@ -1,7 +1,7 @@
 import { Sub } from '~/@/sub'
 import { Button } from '~/@/ui/button'
 import { IconArrowLeft } from '~/@/ui/icon'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -30,21 +30,21 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const View: FrontendModule['View'] = (input) => {
-  return v('div', {}, [v(ViewScreen, input), v(EditPackNameFrontend.ViewSurface, input)])
+  return h('div', {}, [h(ViewScreen, input), h(EditPackNameFrontend.ViewSurface, input)])
 }
 
 const ViewScreen: FrontendModule['View'] = (input) => {
   switch (input.modelSpace.screen.t) {
     case 'screen-add-puzzle': {
-      return v(ScreenAddPuzzle.View, input)
+      return h(ScreenAddPuzzle.View, input)
     }
 
     case 'screen-puzzle-grid': {
-      return v(ScreenPuzzleGrid.View, input)
+      return h(ScreenPuzzleGrid.View, input)
     }
 
     case 'screen-puzzle': {
-      return v(ScreenPuzzlePlay.View, input)
+      return h(ScreenPuzzlePlay.View, input)
     }
   }
 }
@@ -82,8 +82,8 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
   },
 
   View(input) {
-    return v(Button, {
-      renderIconStart: (inputIcons) => v(IconArrowLeft, inputIcons),
+    return h(Button, {
+      renderIconStart: (inputIcons) => h(IconArrowLeft, inputIcons),
       class: 'w-full',
       text: input.ctx.t('app.exit'),
       onClick: () =>

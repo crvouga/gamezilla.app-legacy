@@ -1,5 +1,5 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 export const CoverArt = () => {
-  return v('div', {}, ['hello'])
+  return h('div', {}, ['hello'])
 }

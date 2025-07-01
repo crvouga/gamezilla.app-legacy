@@ -6,7 +6,7 @@ import { SurfaceActions } from '~/@/ui/surface/surface-actions'
 import { SurfaceBody } from '~/@/ui/surface/surface-body'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { Typography } from '~/@/ui/typography'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { type AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -47,14 +47,14 @@ const ViewDialog = (input: {
     })
   }
 
-  return v(Dialog, { delay: TimeSpan.seconds(1), open: input.open, onClose }, [
-    v(DialogSurface, {}, [
-      v(SurfaceHeader, { ctx: input.ctx, title: input.ctx.t('app.congratulations'), onClose }),
+  return h(Dialog, { delay: TimeSpan.seconds(1), open: input.open, onClose }, [
+    h(DialogSurface, {}, [
+      h(SurfaceHeader, { ctx: input.ctx, title: input.ctx.t('app.congratulations'), onClose }),
 
-      v(SurfaceBody, {}, [v(Typography, { text: input.ctx.t('game.numberlink.you-have-completed-the-pack') })]),
+      h(SurfaceBody, {}, [h(Typography, { text: input.ctx.t('game.numberlink.you-have-completed-the-pack') })]),
 
-      v(SurfaceActions, {}, [
-        v(Button, {
+      h(SurfaceActions, {}, [
+        h(Button, {
           class: 'w-full',
           text: input.ctx.t('game.numberlink.select-next-pack'),
           onClick: () =>

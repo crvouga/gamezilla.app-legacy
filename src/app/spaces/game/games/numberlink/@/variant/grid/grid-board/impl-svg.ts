@@ -1,7 +1,7 @@
 import { cn } from '~/@/ui/cn'
 import { IconCheckmark } from '~/@/ui/icon'
 import type { VDom } from '~/@/vdom/vdom'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { Numberlink } from '../../../numberlink'
 import { NodeId } from '../../../numberlink/node-id'
 import { BoardInput } from '../../../ui/board'
@@ -39,7 +39,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
     draggedOver?.(nodeId)
   }
 
-  return v(
+  return h(
     'svg',
     {
       class: cn(
@@ -58,7 +58,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
       onMouseUp: left,
     },
     [
-      v('title', {}, ['Flow Grid']),
+      h('title', {}, ['Flow Grid']),
       ViewGrid(input),
       ViewPipelines(input),
       ViewAutocompleteEdge(input),
@@ -69,9 +69,9 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
 }
 
 const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
-  return v('g', {}, [
-    v('defs', {}, [
-      v(
+  return h('g', {}, [
+    h('defs', {}, [
+      h(
         'pattern',
         {
           id: 'grid',
@@ -80,7 +80,7 @@ const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
           patternUnits: 'userSpaceOnUse',
         },
         [
-          v('path', {
+          h('path', {
             d: 'M 1 0 L 0 0 0 1',
             fill: 'none',
             stroke: Color.GRID_LINE_COLOR,
@@ -89,7 +89,7 @@ const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
         ],
       ),
     ]),
-    v('rect', {
+    h('rect', {
       x: 0,
       y: 0,
       width: input.model.width,
@@ -102,7 +102,7 @@ const ViewGrid = (input: BoardInput<VariantGrid.Model>) => {
 }
 
 const ViewPipelines = (input: BoardInput<VariantGrid.Model>) => {
-  return v(
+  return h(
     'g',
     {
       transform: 'translate(0.5, 0.5)',
@@ -126,7 +126,7 @@ const ViewPipeline = (
   const isConnectedWithPipes = Numberlink.isTerminalConnectedWithPipes(input.model, terminal.groupId)
   const shouldShowUsedHint = isConnectedWithPipes && didUseHint
 
-  return v(
+  return h(
     'g',
     {
       key: terminal.groupId,
@@ -134,7 +134,7 @@ const ViewPipeline = (
     },
     [
       !input.disableHighlight &&
-        v('path', {
+        h('path', {
           d: input.isGroupActive?.(terminal.groupId) ? '' : pipelinePathData,
           stroke: groupColor,
           fill: 'none',
@@ -143,7 +143,7 @@ const ViewPipeline = (
           'stroke-width': '1',
           'stroke-opacity': '0.2',
         }),
-      v('path', {
+      h('path', {
         d: pipelinePathData,
         stroke: groupColor,
         fill: 'none',
@@ -151,7 +151,7 @@ const ViewPipeline = (
         'stroke-linecap': 'round',
         'stroke-width': EDGE_STROKE_WIDTH,
       }),
-      v('circle', {
+      h('circle', {
         cx: terminal.start.x,
         cy: terminal.start.y,
         r: TERMINAL_NODE_RADIUS,
@@ -159,8 +159,8 @@ const ViewPipeline = (
       }),
       shouldShowUsedHint && HintCheckmark({ x: terminal.start.x, y: terminal.start.y }),
       terminal.end &&
-        v('g', {}, [
-          v('circle', {
+        h('g', {}, [
+          h('circle', {
             cx: terminal.end.x,
             cy: terminal.end.y,
             r: TERMINAL_NODE_RADIUS,
@@ -209,13 +209,13 @@ const WithPadding = (input: {
 const ViewAutocompleteEdge = (input: BoardInput<VariantGrid.Model>) => {
   return (
     input.autocompleteEdge &&
-    v(
+    h(
       'g',
       {
         transform: 'translate(0.5, 0.5)',
       },
       [
-        v('line', {
+        h('line', {
           x1: input.model.positions[input.autocompleteEdge.sourceId]?.x,
           y1: input.model.positions[input.autocompleteEdge.sourceId]?.y,
           x2: input.model.positions[input.autocompleteEdge.targetId]?.x,
@@ -232,13 +232,13 @@ const ViewAutocompleteEdge = (input: BoardInput<VariantGrid.Model>) => {
 const ViewCoordinates = (input: BoardInput<VariantGrid.Model>) => {
   return (
     input.showCoordinates &&
-    v(
+    h(
       'g',
       {
         transform: 'translate(0, 1)',
       },
       map(VariantGrid.yieldNodes(input.model), (node) => {
-        return v(
+        return h(
           'text',
           {
             class: 'pointer-events-none',
@@ -260,7 +260,7 @@ const ViewClickable = (
     draggedOver?: (nodeId: NodeId) => void
   },
 ) => {
-  return v(
+  return h(
     'g',
     {
       key: input.model.nodeHash,
@@ -282,7 +282,7 @@ const ViewClickableNode = (
     draggedOver?: (nodeId: NodeId) => void
   },
 ) => {
-  return v('rect', {
+  return h('rect', {
     key: input.node.nodeId,
     x: input.node.x,
     y: input.node.y,

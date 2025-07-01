@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { Clickable } from './clickable'
 import { cn } from './cn'
 import { Spinner } from './spinner'
@@ -34,7 +34,7 @@ export type ButtonInput = {
 }
 
 export const Button = (input: ButtonInput) => {
-  return v(
+  return h(
     Clickable,
     {
       dataTestId: input.dataTestId,
@@ -59,12 +59,12 @@ export const Button = (input: ButtonInput) => {
     },
 
     [
-      v('div', { class: cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent') }, [
-        v('div', { class: 'flex-none' }, [input.renderIconStart?.({ class: cn(toIconSizeClass(input), 'mr-2') })]),
-        v('div', { class: 'truncate' }, [input.text]),
+      h('div', { class: cn('flex h-full w-full items-center justify-center', input.loading && 'text-transparent') }, [
+        h('div', { class: 'flex-none' }, [input.renderIconStart?.({ class: cn(toIconSizeClass(input), 'mr-2') })]),
+        h('div', { class: 'truncate' }, [input.text]),
       ]),
       input.loading &&
-        v('div', { class: 'absolute inset-0 flex items-center justify-center' }, [v(Spinner, { class: 'size-8' })]),
+        h('div', { class: 'absolute inset-0 flex items-center justify-center' }, [h(Spinner, { class: 'size-8' })]),
     ],
   )
 }

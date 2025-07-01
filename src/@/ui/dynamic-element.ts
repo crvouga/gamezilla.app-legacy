@@ -1,6 +1,6 @@
 import { AriaRole } from '../vdom/aria-role'
 import { VDom } from '../vdom/vdom'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 type OnClickEvent = {
   currentTarget?: HTMLFormElement | HTMLDivElement | HTMLButtonElement | null
@@ -36,13 +36,13 @@ export const DynamicElement = (input: DynamicElementProps) => {
 
   switch (element) {
     case 'form': {
-      return v('form', { ...props, 'data-testid': dataTestId }, [children])
+      return h('form', { ...props, 'data-testid': dataTestId }, [children])
     }
     case 'button': {
-      return v('button', { ...props, 'data-testid': dataTestId }, [children])
+      return h('button', { ...props, 'data-testid': dataTestId }, [children])
     }
     default: {
-      return v('div', { ...props, 'data-testid': dataTestId }, [children])
+      return h('div', { ...props, 'data-testid': dataTestId }, [children])
     }
   }
 }

@@ -2,7 +2,7 @@ import { TestClient } from '~/@/test-client'
 import { AudioPlayer } from '../audio-player'
 import { Logger } from '../logger'
 import { TimeSpan } from '../time/time-span'
-import { Render } from '../vdom/v'
+import { Render } from '../vdom/h'
 
 export const BaseFixture = async () => {
   const client = await TestClient({

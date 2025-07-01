@@ -1,27 +1,27 @@
 import { Frag } from '~/@/ui/frag'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { ScreenLayoutMobile } from './screen-layout-mobile'
 import { ScreenLayoutProps, toDataTestIds } from './screen-layout-props'
 import { ScreenLayoutTablet } from './screen-layout-tablet'
 
 export const ScreenLayout = (input: ScreenLayoutProps) => {
-  return v(Frag, {}, [
+  return h(Frag, {}, [
     ...toDataTestIds(input).map((dataTestId) =>
-      v('div', {
+      h('div', {
         key: dataTestId,
         class: 'hidden',
         'data-testid': dataTestId,
       }),
     ),
-    v(ScreenLayoutVariant, input),
+    h(ScreenLayoutVariant, input),
   ])
 }
 
 const ScreenLayoutVariant = (input: ScreenLayoutProps) => {
   switch (input.ctx.screenSize) {
     case 'mobile':
-      return v(ScreenLayoutMobile, input)
+      return h(ScreenLayoutMobile, input)
     case 'tablet':
-      return v(ScreenLayoutTablet, input)
+      return h(ScreenLayoutTablet, input)
   }
 }

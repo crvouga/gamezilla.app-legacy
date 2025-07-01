@@ -5,7 +5,7 @@ import { s } from '~/@/schema'
 import { ClickablePaper } from '~/@/ui/clickable'
 import { IconRobot, IconUsers } from '~/@/ui/icon'
 import { Typography } from '~/@/ui/typography'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { UserId } from '~/app/@/data/user-id'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -74,23 +74,23 @@ export const View = (props: {
   const isSpectating = props.ctx.currentUser.userId !== props.ctx.space.hostId
 
   if (isSpectating) {
-    return v(ScreenLayoutHostSettingUpGame, {
+    return h(ScreenLayoutHostSettingUpGame, {
       parentScreen: props.ctx.parentScreen,
       ctx: props.ctx,
       navBar: { title: props.title, back: { onClick: props.onBack } },
     })
   }
 
-  return v(ScreenLayoutGameCoverArt, {
+  return h(ScreenLayoutGameCoverArt, {
     id: 'game-main-menu',
     parentScreen: props.ctx.parentScreen,
     ctx: props.ctx,
     navBar: { title: props.title, back: { onClick: props.onBack } },
     renderCoverArt: props.renderCoverArt,
     renderBody: () =>
-      v('div', { class: 'flex w-full flex-col gap-6 px-6' }, [
+      h('div', { class: 'flex w-full flex-col gap-6 px-6' }, [
         ...props.buttons.map((button) =>
-          v(ViewMainMenuButton, {
+          h(ViewMainMenuButton, {
             key: `${button.title}${button.description}`,
             ...button,
           }),
@@ -100,16 +100,16 @@ export const View = (props: {
 }
 
 const ViewMainMenuButton = (props: MainMenuButton) => {
-  return v(ClickablePaper, { class: 'flex w-full items-center gap-4 rounded p-6', onClick: props.onClick }, [
+  return h(ClickablePaper, { class: 'flex w-full items-center gap-4 rounded p-6', onClick: props.onClick }, [
     props.renderIcon({ class: 'aspect-square size-12' }),
-    v('div', { class: 'flex flex-1 flex-col gap-1 text-left' }, [
-      v(Typography, {
+    h('div', { class: 'flex flex-1 flex-col gap-1 text-left' }, [
+      h(Typography, {
         variant: 'title',
         text: props.title,
         class: 'font-bold',
       }),
       props.description &&
-        v(Typography, {
+        h(Typography, {
           variant: 'label',
           text: props.description,
           class: 'text-secondary',
@@ -122,7 +122,7 @@ export const buttons = {
   playFriend: (input: { onClick: () => void; ctx: { t: Translator } }): MainMenuButton => {
     return {
       ...input,
-      renderIcon: (input) => v(IconUsers, input),
+      renderIcon: (input) => h(IconUsers, input),
       title: input.ctx.t('game.play-friend-title'),
       description: input.ctx.t('game.play-friend-description'),
     }
@@ -131,7 +131,7 @@ export const buttons = {
   playComputer: (input: { onClick: () => void; ctx: { t: Translator } }): MainMenuButton => {
     return {
       ...input,
-      renderIcon: (input) => v(IconRobot, input),
+      renderIcon: (input) => h(IconRobot, input),
       title: input.ctx.t('game.play-computer-title'),
       description: input.ctx.t('game.play-computer-description'),
     }

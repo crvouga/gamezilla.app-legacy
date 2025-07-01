@@ -1,4 +1,4 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 export const Canvas = <T>({
   watch,
@@ -24,7 +24,7 @@ export const Canvas = <T>({
   // TODO: implement
   watch
   paint
-  return v('canvas', {
+  return h('canvas', {
     class: class_,
     onMouseDown,
     onMouseUp,

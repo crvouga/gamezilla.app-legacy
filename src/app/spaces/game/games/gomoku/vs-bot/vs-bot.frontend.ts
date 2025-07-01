@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import {
   type ModelBackend,
@@ -140,5 +140,5 @@ export const subscriptions = (_ctx: AppFrontendCtx, model: Model): Sub<Msg> => {
 //
 
 export const View = (_input: { model: Model; ctx: AppFrontendCtx; dispatch: (m: Msg) => void; onBack: () => void }) => {
-  return v('div', {}, ['View'])
+  return h('div', {}, ['View'])
 }

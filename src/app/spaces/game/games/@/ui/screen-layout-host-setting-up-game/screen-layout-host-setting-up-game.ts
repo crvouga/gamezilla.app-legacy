@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Typography } from '~/@/ui/typography'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
@@ -22,14 +22,14 @@ export const ScreenLayoutHostSettingUpGame = (input: {
   }
   renderCoverArt?: (input: { class: string }) => VDom
 }) => {
-  return v(ScreenLayoutGameCoverArt, {
+  return h(ScreenLayoutGameCoverArt, {
     id: 'host-setting-up-game',
     parentScreen: input.parentScreen,
     ctx: input.ctx,
     navBar: input.navBar,
     renderCoverArt: input.renderCoverArt,
     renderBody: () =>
-      v(Typography, {
+      h(Typography, {
         text: input.ctx.t('game.host-is-setting-up-game'),
         variant: 'title',
         class: 'w-full px-4 text-center',

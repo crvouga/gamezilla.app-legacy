@@ -1,16 +1,16 @@
 import { TranslatedText } from '~/@/l18n'
 import { Button } from '~/@/ui/button'
 import { Typography } from '~/@/ui/typography'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 export const ScreenTitleButton = (input: {
   title: TranslatedText
   buttonText: TranslatedText
   onClick: () => void
 }) => {
-  return v('div', { class: 'flex flex-1 flex-col items-center justify-center gap-4' }, [
-    v(Typography, { variant: 'title', text: input.title }),
-    v(Button, {
+  return h('div', { class: 'flex flex-1 flex-col items-center justify-center gap-4' }, [
+    h(Typography, { variant: 'title', text: input.title }),
+    h(Button, {
       onClick: input.onClick,
       size: 'lg',
       variant: 'contained',

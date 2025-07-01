@@ -4,7 +4,7 @@ import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { IconCheckmark } from '~/@/ui/icon'
 import { Transition } from '~/@/ui/transition/transition'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
@@ -29,8 +29,8 @@ const View = (input: {
 }) => {
   const numberlink = toNumberlink(input.model, input.numberlink)
 
-  return v('div', { class: 'relative aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none' }, [
-    v(NumberlinkVariantBoard.View, {
+  return h('div', { class: 'relative aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none' }, [
+    h(NumberlinkVariantBoard.View, {
       disabled: input.disabled,
       model: numberlink,
       showCoordinates: false,
@@ -47,7 +47,7 @@ const View = (input: {
       usedHints: UseHint.toUsedHints(input.model),
     }),
 
-    v(CheckmarkAnimation, { open: Boolean(input.model.showCheckmarkAnimation && input.showSolvedAnimation) }),
+    h(CheckmarkAnimation, { open: Boolean(input.model.showCheckmarkAnimation && input.showSolvedAnimation) }),
   ])
 }
 
@@ -102,7 +102,7 @@ const defaultCheckmarkAnimationDuration = TimeSpan.seconds(1 / 2)
 
 const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan | null | undefined }) => {
   const duration = input.duration ?? defaultCheckmarkAnimationDuration
-  return v(
+  return h(
     Transition,
     {
       id: 'checkmark',
@@ -115,8 +115,8 @@ const CheckmarkAnimation = (input: { open: boolean; duration?: TimeSpan | null |
     },
     [
       input.open &&
-        v('div', { class: 'pointer-events-none absolute inset-0 flex items-center justify-center opacity-0' }, [
-          v(IconCheckmark, { class: 'pointer-events-none aspect-square w-full opacity-50' }),
+        h('div', { class: 'pointer-events-none absolute inset-0 flex items-center justify-center opacity-0' }, [
+          h(IconCheckmark, { class: 'pointer-events-none aspect-square w-full opacity-50' }),
         ]),
     ],
   )
@@ -152,7 +152,7 @@ const TestView = (input: {
   dispatchCmd: (m: unknown) => void
   ctx: ModePlayFrontendCtx
 }) => {
-  return v(ScreenLayout, {
+  return h(ScreenLayout, {
     ...input,
     id: 'hint-calculator',
     parentScreen: null,

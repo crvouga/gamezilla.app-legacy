@@ -1,6 +1,6 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { GameName } from './@/game-name'
 import { ConnectFour } from './connect-four/frontend'
 import { NumberlinkFrontend } from './numberlink/frontend'
@@ -129,7 +129,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   switch (input.modelSpace.t) {
     case 'connect-four': {
-      return v(ConnectFour.View, {
+      return h(ConnectFour.View, {
         ctx: input.ctx,
         dispatch: (c) => input.dispatch({ t: 'connect-four', c }),
         modelSpace: input.modelSpace.c,
@@ -138,7 +138,7 @@ const View: FrontendModule['View'] = (input) => {
     }
 
     case 'numberlink': {
-      return v(NumberlinkFrontend.View, {
+      return h(NumberlinkFrontend.View, {
         ctx: input.ctx,
         dispatch: (c) => input.dispatch({ t: 'numberlink', c }),
         modelSpace: input.modelSpace.c,
@@ -153,7 +153,7 @@ const ViewFeedItem: FrontendModule['ViewFeedItem'] = (input) => {
     case 'connect-four': {
       switch (input.msgSpace.t) {
         case 'connect-four': {
-          return v(ConnectFour.ViewFeedItem, {
+          return h(ConnectFour.ViewFeedItem, {
             ctx: input.ctx,
             msgSpace: input.msgSpace.c,
             modelSpace: input.modelSpace.c,

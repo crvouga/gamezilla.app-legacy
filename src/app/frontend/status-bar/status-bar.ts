@@ -1,5 +1,5 @@
 import { Translator as StatusBarFrontend } from '~/@/l18n/generated'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -58,7 +58,7 @@ export const View = (props: {
   model: Model
   dispatch: (m: Msg) => void
 }) => {
-  return v(SurfaceLayout, {
+  return h(SurfaceLayout, {
     ctx: props.ctx,
     ariaLabel: props.ctx.t('status-bar.status-bar'),
     drawer: {

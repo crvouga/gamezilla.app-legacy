@@ -1,6 +1,6 @@
 import { AriaRole } from '../vdom/aria-role'
 import { VDom } from '../vdom/vdom'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { cn } from './cn'
 import { PAPER_CLASS_NAME } from './paper'
 
@@ -29,7 +29,7 @@ export type ClickableProps = {
 }
 
 export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
-  return v(
+  return h(
     'button',
     {
       ...input,
@@ -51,13 +51,13 @@ export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
 }
 
 export const ClickableTransparent = (input: ClickableProps) => {
-  return v(Clickable, { ...input, class: cn('[@media(hover:hover)]:enabled:hover:bg-neutral-700/50', input.class) }, [
+  return h(Clickable, { ...input, class: cn('[@media(hover:hover)]:enabled:hover:bg-neutral-700/50', input.class) }, [
     input.children,
   ])
 }
 
 export const ClickablePaper = (input: ClickableProps) => {
-  return v(
+  return h(
     Clickable,
     {
       ...input,

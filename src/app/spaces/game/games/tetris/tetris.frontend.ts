@@ -4,7 +4,7 @@ import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import * as Board from './@/board'
 import type * as Direction from './@/direction'
 import * as Piece from './@/piece'
@@ -296,9 +296,9 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // const gridStrokeWidth = 0.025
 
 export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void }) => {
-  return v('div', {}, [
-    v('div', {}, [
-      v('canvas', {
+  return h('div', {}, [
+    h('div', {}, [
+      h('canvas', {
         onTouchMove: (e: unknown) => {
           // @ts-ignore
           const touch = e.touches[0]
@@ -522,14 +522,14 @@ const theme = {
 }
 
 export const CoverArt = () => {
-  return v(
+  return h(
     'svg',
     {
       width: '100%',
       viewBox: [0, 0, 4, 4].join(', '),
     },
     [
-      v('rect', {
+      h('rect', {
         width: '100%',
         height: '100%',
         fill: theme.lightBlue,
@@ -542,7 +542,7 @@ export const CoverArt = () => {
           }),
         )
         .map((position) =>
-          v('rect', {
+          h('rect', {
             key: `${position.x}-${position.y}`,
             x: position.x,
             y: position.y,

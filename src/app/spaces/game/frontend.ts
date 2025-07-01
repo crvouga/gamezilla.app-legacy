@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { withEventId } from '~/@/event-sourced/event'
 import { Sub } from '~/@/sub'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -217,9 +217,9 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   if (!space) return null
 
-  if (!space.game) return v(ScreenNotInGameFrontend.View, input)
+  if (!space.game) return h(ScreenNotInGameFrontend.View, input)
 
-  return v(GamesFrontend.View, {
+  return h(GamesFrontend.View, {
     modelSpace: space.game,
     ctx: {
       ...input.ctx,

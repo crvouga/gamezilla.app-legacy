@@ -1,6 +1,6 @@
 import { Avatar } from '~/@/ui/avatar'
 import { TextField } from '~/@/ui/text-field'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { ModelFrontend, MsgFrontend } from '../types'
@@ -10,7 +10,7 @@ const View = (input: {
   dispatch: (msg: MsgFrontend) => void
   ctx: AnonymousFrontendCtx | AppFrontendCtx
 }) => {
-  return v(ScreenLayout, {
+  return h(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     id: 'profile-update-avatar',
     ctx: input.ctx,
@@ -21,10 +21,10 @@ const View = (input: {
       },
     },
     renderBody: () =>
-      v('div', { class: 'flex w-full flex-1 flex-col gap-8 p-4' }, [
-        v(Avatar, { src: undefined, class: 'mx-auto size-28' }),
-        v('div', { class: 'flex w-full flex-col gap-4' }, [
-          v(TextField, {
+      h('div', { class: 'flex w-full flex-1 flex-col gap-8 p-4' }, [
+        h(Avatar, { src: undefined, class: 'mx-auto size-28' }),
+        h('div', { class: 'flex w-full flex-col gap-4' }, [
+          h(TextField, {
             label: input.ctx.t('profile-avatar.seed'),
             // value: input.model.draft?.avatarSeed ?? '',
             value: '',

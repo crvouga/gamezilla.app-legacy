@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { GameMainMenu } from '../@/ui/game-main-menu'
@@ -248,9 +248,9 @@ export const View = ({
 }) => {
   switch (model.t) {
     case 'none': {
-      return v(GameMainMenu.View, {
+      return h(GameMainMenu.View, {
         title: ctx.t('gomoku'),
-        renderCoverArt: (input) => v(CoverArt, input),
+        renderCoverArt: (input) => h(CoverArt, input),
         ctx: spaceCtx,
         dispatch: () => {
           //
@@ -281,7 +281,7 @@ export const View = ({
     }
 
     case 'vs-bot': {
-      return v(VsBot.View, {
+      return h(VsBot.View, {
         model: model.c,
         ctx: ctx,
         onBack: () =>
@@ -299,7 +299,7 @@ export const View = ({
     }
 
     case 'vs-user': {
-      return v(VsUser.View, {
+      return h(VsUser.View, {
         model: model.c,
         ctx: ctx,
         onCancel: () =>

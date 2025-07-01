@@ -1,4 +1,4 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import {
   IconBotCute,
@@ -41,19 +41,19 @@ const toString = (level: ChessBotLevel): string => {
 const render = ({ level, ...input }: { level: ChessBotLevel; class?: string }): VDom => {
   switch (level) {
     case 0: {
-      return v(IconBotSimple, input)
+      return h(IconBotSimple, input)
     }
     case 1: {
-      return v(IconBotCute, input)
+      return h(IconBotCute, input)
     }
     case 2: {
-      return v(IconBotLevel1, input)
+      return h(IconBotLevel1, input)
     }
     case 3: {
-      return v(IconBotLevel4, input)
+      return h(IconBotLevel4, input)
     }
     case 4: {
-      return v(IconBotScary, input)
+      return h(IconBotScary, input)
     }
   }
 }

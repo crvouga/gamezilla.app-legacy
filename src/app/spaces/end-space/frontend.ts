@@ -1,6 +1,6 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { IconArrowLeftOnRect } from '~/@/ui/icon'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { CurrentUserLoggedOutEvt } from '~/app/@/frontend/current-user-logged-out-evt.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -126,7 +126,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
 
   return {
     id: input.ctx.t('spaces.end'),
-    icon: (inputIcon) => v(IconArrowLeftOnRect, { ...inputIcon }),
+    icon: (inputIcon) => h(IconArrowLeftOnRect, { ...inputIcon }),
     label: input.ctx.t('spaces.end'),
     onClick: () => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId }),
     color: 'danger',
@@ -134,7 +134,7 @@ const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAc
 }
 
 const ViewSpaceEnded: SpaceFrontendModule['View'] = (input) => {
-  return v(ScreenTitleButton, {
+  return h(ScreenTitleButton, {
     title: input.ctx.t('spaces.space-ended'),
     buttonText: input.ctx.t('spaces.exit-space'),
     onClick: () => input.dispatch({ t: 'exit-space-action.clicked-exit-space-button' }),

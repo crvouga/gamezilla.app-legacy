@@ -4,7 +4,7 @@ import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import { type Result, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Direction } from './@/direction'
@@ -185,14 +185,14 @@ export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
 
 export const View = ({ model, dispatch }: { ctx: AppFrontendCtx; model: Model; dispatch: (msg: Msg) => void }) => {
   if (model.gameStatus.type === 'GameSetup') {
-    return v('div', {}, ['View'])
+    return h('div', {}, ['View'])
   }
 
-  return v('div', {}, [v(ViewBoard, { model, dispatch })])
+  return h('div', {}, [h(ViewBoard, { model, dispatch })])
 }
 
 export const ViewBoard = (_input: { model: Model; dispatch: (msg: Msg) => void }) => {
-  return v('canvas', {
+  return h('canvas', {
     class: 'pointer-events-none h-full max-h-full min-h-full w-full touch-none select-none',
   })
 }

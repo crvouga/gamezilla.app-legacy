@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { cn } from './cn'
 import { ClickableTransparent } from './clickable'
 
@@ -14,7 +14,7 @@ export const IconButton = (input: {
   size?: IconButtonSize
   dataTestId?: string
 }) => {
-  return v(
+  return h(
     ClickableTransparent,
     {
       class: cn(
@@ -37,7 +37,7 @@ export const IconButton = (input: {
 }
 
 export const IconButtonEmpty = (input: { size?: IconButtonSize }) => {
-  return v('div', { class: toSizeClassName(input.size ?? 'md') })
+  return h('div', { class: toSizeClassName(input.size ?? 'md') })
 }
 
 const toSizeClassName = (size: IconButtonSize): string => {

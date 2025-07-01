@@ -1,6 +1,6 @@
 import { Canvas } from '~/@/ui/canvas'
 import { cn } from '~/@/ui/cn'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { NodeId } from '../../../numberlink/node-id'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
@@ -111,7 +111,7 @@ const View = ({
   onDraggedOver,
   onPressUp,
 }: BoardInput<VariantGrid.Model>) => {
-  return v(Canvas, {
+  return h(Canvas, {
     class: cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab'),
     watch: model as unknown,
     paint: (value, ctx) => paint(value as VariantGrid.Model, ctx),

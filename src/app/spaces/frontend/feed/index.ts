@@ -1,4 +1,4 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { WithEventId } from '~/@/event-sourced/event'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { FeedItem } from '../../@/feed-item'
@@ -23,8 +23,8 @@ const View = ({
       ? Spaces.toEventWithMeta(model.spaces, spaceState.spaceId, spaceState.latestEventId)
       : null
 
-  return v('div', { class: 'flex h-6 w-full items-center justify-center p-1' }, [
-    spaceState.type === 'started' && msgEvt ? v(ViewFeedItem, { ctx, msgEvt, state: spaceState }) : null,
+  return h('div', { class: 'flex h-6 w-full items-center justify-center p-1' }, [
+    spaceState.type === 'started' && msgEvt ? h(ViewFeedItem, { ctx, msgEvt, state: spaceState }) : null,
   ])
 }
 
@@ -42,7 +42,7 @@ const ViewFeedItem = ({
       if (!state.game) {
         return null
       }
-      return v(GamesFrontend.ViewFeedItem, {
+      return h(GamesFrontend.ViewFeedItem, {
         ctx,
         msgSpace: {
           ...msgEvt,
@@ -57,30 +57,30 @@ const ViewFeedItem = ({
 
     case 'user-ended-space': {
       const profile = ctx.profilesByUserId[msgEvt.userId]
-      return v(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} ended the space` })
+      return h(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} ended the space` })
     }
 
     case 'user-inputted-game': {
       const profile = ctx.profilesByUserId[msgEvt.userId]
       if (!msgEvt.game) {
-        return v(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} quit the game` })
+        return h(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} quit the game` })
       }
-      return v(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} started a game` })
+      return h(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} started a game` })
     }
 
     case 'user-joined-space': {
       const profile = ctx.profilesByUserId[msgEvt.userId]
-      return v(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} joined the space` })
+      return h(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} joined the space` })
     }
 
     case 'user-left-space': {
       const profile = ctx.profilesByUserId[msgEvt.userId]
-      return v(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} left the space` })
+      return h(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} left the space` })
     }
 
     case 'user-started-space': {
       const profile = ctx.profilesByUserId[msgEvt.userId]
-      return v(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} started the space` })
+      return h(FeedItem.Info, { text: `${profile?.username ?? 'Someone'} started the space` })
     }
 
     default: {

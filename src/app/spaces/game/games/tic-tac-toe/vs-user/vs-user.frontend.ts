@@ -1,4 +1,4 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { VsUserSetupScreen } from '~/app/spaces/game/games/@/vs-user'
 import { toTurn } from '../@/tic-tic-toe/tic-tac-toe'
@@ -178,7 +178,7 @@ export const View = ({
   onCloseGame: () => void
 }) => {
   if (model.type === 'setup') {
-    return v(VsUserSetupScreen, {
+    return h(VsUserSetupScreen, {
       ctx,
       onQuit: onCloseGame,
       onStartGame: () =>
@@ -189,7 +189,7 @@ export const View = ({
           },
         ]),
       renderCoverArt: (input) => {
-        return v('div', { ...input }, [v(CoverArt, {})])
+        return h('div', { ...input }, [h(CoverArt, {})])
       },
       title: ctx.t('tic-tac-toe'),
       canStartGame: model.X !== 'none' && model.O !== 'none',
@@ -197,7 +197,7 @@ export const View = ({
         label: ctx.t('tic-tac-toe.cross'),
         userId: model.X === 'none' ? null : model.X,
         renderIcon: (input) => {
-          return v(PlayerTypeIcon, { playerType: 'X', ...input })
+          return h(PlayerTypeIcon, { playerType: 'X', ...input })
         },
         onStartPlaying: () => {
           dispatch([
@@ -222,7 +222,7 @@ export const View = ({
         label: ctx.t('tic-tac-toe.naught'),
         userId: model.O === 'none' ? null : model.O,
         renderIcon: (input) => {
-          return v(PlayerTypeIcon, { playerType: 'O', ...input })
+          return h(PlayerTypeIcon, { playerType: 'O', ...input })
         },
         onStartPlaying: () => {
           dispatch([
@@ -247,10 +247,10 @@ export const View = ({
   }
 
   if (model.type === 'game') {
-    return v('div', {})
+    return h('div', {})
   }
 
-  return v('div', {})
+  return h('div', {})
 }
 
 export const toGameText = ({ model }: { model: ModelFrontend }): string => {

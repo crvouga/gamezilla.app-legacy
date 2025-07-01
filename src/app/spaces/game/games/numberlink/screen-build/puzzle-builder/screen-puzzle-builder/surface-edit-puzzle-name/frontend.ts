@@ -5,7 +5,7 @@ import { IconPen } from '~/@/ui/icon'
 import { SurfaceBody } from '~/@/ui/surface/surface-body'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { TextField } from '~/@/ui/text-field'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { UserId } from '~/app/@/data/user-id'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -220,11 +220,11 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
   return [
     {
       id: input.ctx.t('app.edit-name'),
-      icon: (input) => v(IconPen, input),
+      icon: (input) => h(IconPen, input),
       label: input.ctx.t('app.edit-name'),
       onClick: () => input.dispatch({ t: 'puzzle.edit-name.user-clicked-button' }),
       renderSurface: ({ dropDown, screenActionLocation }) =>
-        v(ViewSurface, { ...input, ctx: input.ctx, dropDown, screenActionLocation }),
+        h(ViewSurface, { ...input, ctx: input.ctx, dropDown, screenActionLocation }),
     },
   ]
 }
@@ -235,7 +235,7 @@ const ViewSurface = (
     screenActionLocation: ScreenActionLocation
   },
 ) => {
-  return v(SurfaceLayout, {
+  return h(SurfaceLayout, {
     id: 'edit-name-drawer',
     ctx: input.ctx,
     ariaLabel: input.ctx.t('app.edit-name'),
@@ -243,7 +243,7 @@ const ViewSurface = (
     onClose: () => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' }),
     header: {
       render: () =>
-        v(SurfaceHeader, {
+        h(SurfaceHeader, {
           ctx: input.ctx,
           title: input.ctx.t('app.edit-name'),
           onClose: () => input.dispatch({ t: 'puzzle.edit-name.user-closed-drawer' }),
@@ -265,8 +265,8 @@ const ViewSurface = (
     dropDown: input.dropDown,
     body: {
       render: () =>
-        v(SurfaceBody, {}, [
-          v(TextField, {
+        h(SurfaceBody, {}, [
+          h(TextField, {
             id: 'game-numberlink-edit-puzzle-name-input',
             label: input.ctx.t('game.numberlink.edit-puzzle-name.name'),
             value: input.model.puzzleEditNameDraft,

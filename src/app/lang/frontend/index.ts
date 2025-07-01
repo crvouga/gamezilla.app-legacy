@@ -5,7 +5,7 @@ import { Gutter } from '~/@/ui/gutter'
 import { IconCheckmarkCircle, IconLanguage } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Spinner } from '~/@/ui/spinner'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -147,8 +147,8 @@ const subscriptions: FrontendModule['subscriptions'] = (_input) => {
 //
 
 const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
-  return v(ListItemButton, {
-    icon: (input) => v(IconLanguage, input),
+  return h(ListItemButton, {
+    icon: (input) => h(IconLanguage, input),
     label: ctx.t('lang.language'),
     end: () => ctx.t(model.lang),
     onClick: () => {
@@ -164,7 +164,7 @@ const View: FrontendModule['View'] = (input) => {
     case 'lang': {
       switch (input.ctx.currentScreen.t) {
         case 'choose-lang': {
-          return v(ViewChooseLang, { ctx: input.ctx, dispatch: input.dispatch, model: input.model })
+          return h(ViewChooseLang, { ctx: input.ctx, dispatch: input.dispatch, model: input.model })
         }
         default: {
           return null
@@ -178,7 +178,7 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewChooseLang: FrontendModule['View'] = (input) => {
-  return v(ScreenLayout, {
+  return h(ScreenLayout, {
     id: 'choose-lang',
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
@@ -192,21 +192,21 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
       },
     },
     renderBody: () =>
-      v('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
+      h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
         ...LanguageCodeISO_639_1.ALL.map((langCode) =>
-          v(ListItemButton, {
+          h(ListItemButton, {
             key: langCode,
             label: input.ctx.t(langCode),
             icon: (inputIcon) => {
               if (input.model.loading[langCode]?.endedAt === null) {
-                return v(Spinner, inputIcon)
+                return h(Spinner, inputIcon)
               }
 
               if (input.model.lang === langCode) {
-                return v(IconCheckmarkCircle, inputIcon)
+                return h(IconCheckmarkCircle, inputIcon)
               }
 
-              return v(
+              return h(
                 'svg',
                 {
                   viewBox: '0 0 24 24',
@@ -217,7 +217,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
                   class: inputIcon.class,
                 },
                 [
-                  v('circle', {
+                  h('circle', {
                     r: '8',
                     cx: '12',
                     cy: '12',
@@ -229,7 +229,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
                 ],
               )
             },
-            end: () => v('div', {}, [input.ctx.t(langCode)]),
+            end: () => h('div', {}, [input.ctx.t(langCode)]),
             onClick: () =>
               input.dispatch({
                 t: 'choose-lang.clicked-lang',
@@ -237,7 +237,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
               }),
           }),
         ),
-        v(Gutter, { variant: 'screen' }),
+        h(Gutter, { variant: 'screen' }),
       ]),
   })
 }

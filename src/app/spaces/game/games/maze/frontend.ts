@@ -2,7 +2,7 @@ import { Keyboard } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
 import { Sub } from '~/@/sub'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Maze } from './@/maze'
 import { Direction, type Position } from './@/position'
@@ -184,7 +184,7 @@ export const View = ({
   dispatch: (msg: Msg) => void
 }) => {
   if (model.type === 'setup') {
-    return v('div', {})
+    return h('div', {})
   }
 
   const viewBox = [
@@ -198,13 +198,13 @@ export const View = ({
 
   const currentUserPlayer = model.players[ctx.currentUser.userId]
 
-  return v('div', {}, [
-    !currentUserPlayer && v('p', {}, ['Spectating']),
-    v('svg', { width: '100%', viewBox }, [
-      v('rect', { x: model.lower.x, y: model.lower.y, width: '100%', height: '100%', fill: '#000' }),
+  return h('div', {}, [
+    !currentUserPlayer && h('p', {}, ['Spectating']),
+    h('svg', { width: '100%', viewBox }, [
+      h('rect', { x: model.lower.x, y: model.lower.y, width: '100%', height: '100%', fill: '#000' }),
       ...maze.edges.map(([a, b]) =>
-        v('g', { key: [a.x, a.y, b.x, b.y].join('-'), 'stroke-width': '0.1', stroke: '#fff' }, [
-          v('line', {
+        h('g', { key: [a.x, a.y, b.x, b.y].join('-'), 'stroke-width': '0.1', stroke: '#fff' }, [
+          h('line', {
             x1: a.x + 1 / 2,
             y1: a.y + 1 / 2,
             x2: b.x + 1 / 2,
@@ -213,7 +213,7 @@ export const View = ({
         ]),
       ),
       ...Object.values(model.players).map((player) =>
-        v('circle', {
+        h('circle', {
           key: player.userId,
           cx: player.position.x + 1 / 2,
           cy: player.position.y + 1 / 2,
@@ -223,7 +223,7 @@ export const View = ({
       ),
     ]),
     currentUserPlayer &&
-      v(ViewJoystick, {
+      h(ViewJoystick, {
         activeDirection: pipe(currentUserPlayer.direction, (d) => (d === 'none' ? undefined : d)),
         onChange: (direction: Direction) =>
           dispatch([
@@ -263,14 +263,14 @@ const ViewJoystick = ({
   fill: string
   activeFill: string
 }) => {
-  return v('div', {}, [
-    v('svg', { width: '100%', viewBox: '-1 -1 2 2', class: 'touch-none overflow-hidden select-none' }, [
-      v('defs', {}, [v('clipPath', { id: 'cut-off-bottom' }, [v('circle', { x: '0', y: '0', r: 1 })])]),
-      v('g', { 'stroke-width': 0.025 }, [
-        v('g', { clipPath: 'url(#cut-off-bottom)', stroke }, [
+  return h('div', {}, [
+    h('svg', { width: '100%', viewBox: '-1 -1 2 2', class: 'touch-none overflow-hidden select-none' }, [
+      h('defs', {}, [h('clipPath', { id: 'cut-off-bottom' }, [h('circle', { x: '0', y: '0', r: 1 })])]),
+      h('g', { 'stroke-width': 0.025 }, [
+        h('g', { clipPath: 'url(#cut-off-bottom)', stroke }, [
           ...Direction.all.map((direction) => {
             const { x, y } = directionToVector(direction)
-            return v('rect', {
+            return h('rect', {
               key: direction,
               x,
               y,
@@ -288,7 +288,7 @@ const ViewJoystick = ({
             })
           }),
         ]),
-        v('circle', {
+        h('circle', {
           x: '0',
           y: '0',
           r: 0.5,
@@ -296,7 +296,7 @@ const ViewJoystick = ({
           class: 'pointer-events-none touch-none select-none',
           stroke,
         }),
-        v('circle', {
+        h('circle', {
           x: '0',
           y: '0',
           r: 0.98,

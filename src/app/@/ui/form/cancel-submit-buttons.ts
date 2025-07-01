@@ -1,7 +1,7 @@
 import { TranslatedText } from '~/@/l18n'
 import { Button, ButtonInput } from '~/@/ui/button'
 import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/surface-drawer/drawer-shared'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 export const CancelSubmitButtons = (input: {
   onCancel: () => void
@@ -13,13 +13,13 @@ export const CancelSubmitButtons = (input: {
   variant?: 'danger' | 'default'
   size?: ButtonInput['size']
 }) => {
-  return v(
+  return h(
     'div',
     {
       class: 'flex w-full items-center gap-4 px-6 pt-4 pb-6',
     },
     [
-      v(Button, {
+      h(Button, {
         class: 'flex-1',
         size: input.size,
         onClick: (event) => {
@@ -29,7 +29,7 @@ export const CancelSubmitButtons = (input: {
         text: input.cancelText,
         disabled: input.cancelDisabled,
       }),
-      v(Button, {
+      h(Button, {
         class: 'flex-1',
         size: input.size,
         type: 'submit',

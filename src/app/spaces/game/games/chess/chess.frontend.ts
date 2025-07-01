@@ -2,7 +2,7 @@ import { Eff } from '~/@/eff'
 import { RemoteResult, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { IconPuzzlePiece } from '~/@/ui/icon'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
@@ -323,10 +323,10 @@ export const subscriptions: Frontend['subscriptions'] = (_input) => {
 export const View: Frontend['View'] = (input) => {
   switch (input.modelSpace.t) {
     case 'none': {
-      return v(GameMainMenu.View, {
+      return h(GameMainMenu.View, {
         title: input.ctx.t('chess'),
         ctx: input.ctx,
-        renderCoverArt: (input) => v(CoverArt, input),
+        renderCoverArt: (input) => h(CoverArt, input),
         onBack: () => input.dispatch({ t: 'game-main-menu.clicked-exit-game-button' }),
         dispatch: input.dispatch,
         buttons: [
@@ -351,7 +351,7 @@ export const View: Frontend['View'] = (input) => {
           {
             title: input.ctx.t('chess.puzzle-title'),
             description: input.ctx.t('chess.puzzle-description'),
-            renderIcon: (input) => v(IconPuzzlePiece, input),
+            renderIcon: (input) => h(IconPuzzlePiece, input),
             onClick: () =>
               input.dispatch({
                 t: 'input-mode',

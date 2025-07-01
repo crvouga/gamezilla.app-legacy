@@ -9,7 +9,7 @@ import { EmptyState } from '~/@/ui/empty-state'
 import { IconBox } from '~/@/ui/icon'
 import { SpinnerBlock } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { AddPacksCmd } from '../../frontend/add-packs-cmd.$msg'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import type { Pack } from '../pack'
@@ -64,8 +64,8 @@ const ViewList = (input: {
   const isLoading = !(queryKey in input.model.results)
   const isEmpty = !isLoading && packs.length === 0
 
-  return v('div', { class: 'relative flex w-full flex-1 flex-col gap-2 overflow-hidden' }, [
-    v(
+  return h('div', { class: 'relative flex w-full flex-1 flex-col gap-2 overflow-hidden' }, [
+    h(
       'div',
       {
         class:
@@ -73,13 +73,13 @@ const ViewList = (input: {
       },
       [
         isEmpty &&
-          v(EmptyState, {
+          h(EmptyState, {
             label: input.ctx.t('game.numberlink.no-packs'),
-            renderIcon: (input) => v(IconBox, input),
+            renderIcon: (input) => h(IconBox, input),
           }),
 
         ...packs.sort(descend((pack) => UnixMs.toNumber(pack.lastUpdatedAt))).map((pack) =>
-          v(ViewPackListItem, {
+          h(ViewPackListItem, {
             ctx: input.ctx,
             key: pack.id,
             pack: pack,
@@ -87,26 +87,26 @@ const ViewList = (input: {
           }),
         ),
 
-        isLoading && v(SpinnerBlock, {}),
+        isLoading && h(SpinnerBlock, {}),
       ].filter(Boolean),
     ),
   ])
 }
 
 const ViewPackListItem = (input: { ctx: { now: UnixMs; t: Translator }; pack: Pack; onClick: () => void }) => {
-  return v(
+  return h(
     ClickableTransparent,
     {
       class: 'flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left',
       onClick: input.onClick,
     },
     [
-      false && v(IconBox, { class: 'h-9 w-9 shrink-0' }),
-      v('div', { class: 'flex flex-1 flex-col overflow-hidden' }, [
-        v(Typography, { text: TranslatedText.of(input.pack.name), variant: 'body' }),
-        v(Typography, { text: toListItemSecondaryText(input), variant: 'subtitle', color: 'text-secondary' }),
+      false && h(IconBox, { class: 'h-9 w-9 shrink-0' }),
+      h('div', { class: 'flex flex-1 flex-col overflow-hidden' }, [
+        h(Typography, { text: TranslatedText.of(input.pack.name), variant: 'body' }),
+        h(Typography, { text: toListItemSecondaryText(input), variant: 'subtitle', color: 'text-secondary' }),
       ]),
-      v(Typography, {
+      h(Typography, {
         text: input.ctx.t('game.numberlink.puzzle-count', input.pack.puzzleIds.length),
         variant: 'body',
         color: 'text-secondary',

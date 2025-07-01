@@ -1,4 +1,4 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import type * as Position from './position'
 
 export type Piece = Position.Position[]
@@ -69,9 +69,9 @@ export const colors: { [name in Name]: string } = {
 export const View = (input: { name: Name }) => {
   switch (input.name) {
     case 'I': {
-      return v('svg', {}, [
+      return h('svg', {}, [
         ...pieces.I.map((position) =>
-          v('rect', {
+          h('rect', {
             key: [position.x, position.y].join('-'),
             x: position.x,
             y: position.x,

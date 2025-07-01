@@ -1,4 +1,4 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { cn } from '../cn'
 import { DynamicElement, OnKeyDownEvent } from '../dynamic-element'
 
@@ -7,7 +7,7 @@ export type CheckboxState = 'checked' | 'unchecked' | 'indeterminate'
 export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: boolean) => void }) => {
   const element = input.onChange ? 'button' : 'div'
   const isChecked = input.state === 'checked'
-  return v(
+  return h(
     DynamicElement,
     {
       element,

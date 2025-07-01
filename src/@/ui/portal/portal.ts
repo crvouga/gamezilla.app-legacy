@@ -1,6 +1,6 @@
-import { createPortal } from '~/@/vdom/v'
+import { createPortal } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 const cache = new Map<string, HTMLElement>()
 const querySelector = (selector: string): HTMLElement | null => {
@@ -27,13 +27,13 @@ const getExit = (portalId: string): HTMLElement | null => {
 const Entrance = (input: { portalId: string; children: VDom; noPortal?: boolean }) => {
   const element = getExit(input.portalId)
   if (!element || input.noPortal) return input.children
-  return v('div', { key: input.portalId, 'data-portal-entrance': true, 'data-portal-id': input.portalId }, [
+  return h('div', { key: input.portalId, 'data-portal-entrance': true, 'data-portal-id': input.portalId }, [
     createPortal?.(input.children, element),
   ])
 }
 
 const Exit = (input: { portalId: string }) => {
-  return v('div', { id: input.portalId, 'data-portal-exit': true, 'data-portal-id': input.portalId })
+  return h('div', { id: input.portalId, 'data-portal-exit': true, 'data-portal-id': input.portalId })
 }
 
 export const Portal = {

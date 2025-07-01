@@ -1,6 +1,6 @@
 import { cn } from '~/@/ui/cn'
 import { Gutter } from '~/@/ui/gutter'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { Portal } from '../portal'
 import { Surface } from '../surface'
 import { DRAWER_PORTAL_ID } from './drawer-portal-exit'
@@ -8,8 +8,8 @@ import type { DrawerInput } from './drawer-shared'
 import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
 
 export const DrawerComponent = (props: DrawerInput) => {
-  return v(Portal.Entrance, { portalId: DRAWER_PORTAL_ID }, [
-    v(
+  return h(Portal.Entrance, { portalId: DRAWER_PORTAL_ID }, [
+    h(
       'div',
       {
         id: props.id,
@@ -23,7 +23,7 @@ export const DrawerComponent = (props: DrawerInput) => {
         ),
       },
       [
-        v('div', {
+        h('div', {
           class: 'w-full flex-1',
           'aria-label': props.ctx.t('drawer.close'),
           onClick: (event: unknown) => {
@@ -32,7 +32,7 @@ export const DrawerComponent = (props: DrawerInput) => {
           },
         }),
 
-        v(
+        h(
           Surface,
           {
             class: cn(
@@ -43,9 +43,9 @@ export const DrawerComponent = (props: DrawerInput) => {
             ),
           },
           [
-            props.position === 'top' && v(Gutter, { variant: 'drawer' }),
+            props.position === 'top' && h(Gutter, { variant: 'drawer' }),
             props.children,
-            props.position === 'bottom' && v(Gutter, { variant: 'drawer' }),
+            props.position === 'bottom' && h(Gutter, { variant: 'drawer' }),
           ],
         ),
       ],

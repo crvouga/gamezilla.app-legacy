@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { ClickableTransparent } from './clickable'
 import { cn } from './cn'
 import { preventConsoleErrorWhenClosingDrawer } from './surface-drawer/drawer-shared'
@@ -19,7 +19,7 @@ export const ListItemButton = (input: Input) => {
   const element = input.onClick ? 'button' : 'div'
   switch (element) {
     case 'button': {
-      return v(
+      return h(
         ClickableTransparent,
         {
           role: 'button',
@@ -32,16 +32,16 @@ export const ListItemButton = (input: Input) => {
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
         },
         [
-          v('div', { class: 'flex flex-1 items-center gap-3 truncate' }, [
+          h('div', { class: 'flex flex-1 items-center gap-3 truncate' }, [
             input.icon({ class: 'size-6' }),
             input.label,
           ]),
-          input.end && v('div', { class: 'shrink-0' }, [input.end()]),
+          input.end && h('div', { class: 'shrink-0' }, [input.end()]),
         ],
       )
     }
     default: {
-      return v(
+      return h(
         'div',
         {
           onClick: (event: unknown) => {
@@ -52,11 +52,11 @@ export const ListItemButton = (input: Input) => {
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
         },
         [
-          v('div', { class: 'flex flex-1 items-center gap-3 truncate' }, [
+          h('div', { class: 'flex flex-1 items-center gap-3 truncate' }, [
             input.icon({ class: 'size-6' }),
             input.label,
           ]),
-          input.end && v('div', { class: 'shrink-0' }, [input.end()]),
+          input.end && h('div', { class: 'shrink-0' }, [input.end()]),
         ],
       )
     }

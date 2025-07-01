@@ -1,7 +1,7 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { BoardInput } from '../../ui/board'
 import type * as VariantHex from './hex'
 
 export const View = (_input: BoardInput<VariantHex.Model>) => {
-  return v('div', {}, ['VariantHex'])
+  return h('div', {}, ['VariantHex'])
 }

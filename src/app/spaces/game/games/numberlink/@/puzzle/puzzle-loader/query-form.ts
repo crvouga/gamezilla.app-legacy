@@ -1,6 +1,6 @@
 import { Chip } from '~/@/ui/chip'
 import { IconArrowDownShortWide, IconUserCircle } from '~/@/ui/icon'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { UserId } from '~/app/@/data/user-id'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { PuzzleQuery } from '../puzzle-db/interface-query'
@@ -45,32 +45,32 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
     const queryNew = update({ model: input.query, msg })
     input.onChange(queryNew)
   }
-  return v(
+  return h(
     'div',
     { class: 'flex w-full gap-2 px-4 py-4 pt-2' },
     [
       input.query.where.createdBy?.equals === input.ctx.currentUser.userId &&
-        v(Chip, {
+        h(Chip, {
           size: 'sm',
-          renderStartIcon: (input) => v(IconUserCircle, input),
+          renderStartIcon: (input) => h(IconUserCircle, input),
           label: input.ctx.t('app.created-by-you'),
           // onClick: () => dispatch({ t: 'toggled-created-by-you', userId: input.ctx.currentUser.userId })
         }),
 
-      v('div', { class: 'flex-1' }),
+      h('div', { class: 'flex-1' }),
 
       input.query.order.lastUpdatedAt &&
-        v(Chip, {
+        h(Chip, {
           size: 'sm',
-          renderStartIcon: (input) => v(IconArrowDownShortWide, input),
+          renderStartIcon: (input) => h(IconArrowDownShortWide, input),
           label: input.ctx.t('app.last-updated-at-desc'),
           onClick: () => dispatch({ t: 'toggled-last-updated-chip' }),
         }),
 
       input.query.order.createdAt &&
-        v(Chip, {
+        h(Chip, {
           size: 'sm',
-          renderStartIcon: (input) => v(IconArrowDownShortWide, input),
+          renderStartIcon: (input) => h(IconArrowDownShortWide, input),
           label: input.ctx.t('app.created-at-desc'),
           onClick: () => dispatch({ t: 'toggled-created-at-chip' }),
         }),

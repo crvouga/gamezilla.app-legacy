@@ -1,12 +1,12 @@
 import { TimeSpan } from '~/@/time/time-span'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from '../cn'
 
 export const Dialog = (input: { children?: VDom; open: boolean; onClose: () => void; delay?: TimeSpan }) => {
   const delayMs = input.delay ? TimeSpan.toMilliseconds(input.delay) : null
 
-  return v(
+  return h(
     'div',
     {
       role: 'dialog',

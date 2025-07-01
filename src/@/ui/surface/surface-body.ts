@@ -1,6 +1,6 @@
 import { VDom } from '~/@/vdom/vdom'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 export const SurfaceBody = (input: { children?: VDom }) => {
-  return v('div', { class: 'px-6 py-3 text-left' }, [input.children])
+  return h('div', { class: 'px-6 py-3 text-left' }, [input.children])
 }

@@ -4,7 +4,7 @@ import { type Result } from '~/@/result'
 import { IconVolumeHigh, IconVolumeXMark } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { ToggleButton } from '~/@/ui/toggle-button'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
@@ -138,10 +138,10 @@ export const updateFromCmd: Module['update'] = (input) => {
 
 export const ViewIcon = (input: { model: Model; class: string }) => {
   if (input.model.muted) {
-    return v(IconVolumeXMark, { class: input.class })
+    return h(IconVolumeXMark, { class: input.class })
   }
 
-  return v(IconVolumeHigh, { class: input.class })
+  return h(IconVolumeHigh, { class: input.class })
 }
 
 export const ViewSoundListItem = (input: {
@@ -151,13 +151,13 @@ export const ViewSoundListItem = (input: {
     t: SoundFrontend
   }
 }) => {
-  return v(ListItemButton, {
+  return h(ListItemButton, {
     onClick: () =>
       input.dispatch({
         t: 'toggle-mute',
       }),
-    icon: (inputIcon) => (input.model.muted ? v(IconVolumeXMark, inputIcon) : v(IconVolumeHigh, inputIcon)),
+    icon: (inputIcon) => (input.model.muted ? h(IconVolumeXMark, inputIcon) : h(IconVolumeHigh, inputIcon)),
     label: input.model.muted ? input.ctx.t('sound.sound-off') : input.ctx.t('sound.sound-on'),
-    end: () => v(ToggleButton, { label: 'toggle sound', checked: !input.model.muted, id: 'toggle-sound' }),
+    end: () => h(ToggleButton, { label: 'toggle sound', checked: !input.model.muted, id: 'toggle-sound' }),
   })
 }

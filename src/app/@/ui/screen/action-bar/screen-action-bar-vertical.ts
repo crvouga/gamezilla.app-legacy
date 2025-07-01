@@ -3,7 +3,7 @@ import { cn } from '~/@/ui/cn'
 import { Frag } from '~/@/ui/frag'
 import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 import { ScreenNavBarTabletRoot } from '../nav-bar/screen-nav-bar-tablet'
 import { ScreenAction, ScreenActionBarProps } from './screen-action-bar-props'
@@ -16,44 +16,44 @@ export const VerticalActionBar = (
     renderNavBar?: () => VDom
   },
 ) => {
-  return v('div', { class: cn('flex h-full max-w-48 flex-1 shrink-0 flex-col gap-1', input.class) }, [
-    v(ScreenNavBarTabletRoot, {}, [input.renderNavBar?.()]),
+  return h('div', { class: cn('flex h-full max-w-48 flex-1 shrink-0 flex-col gap-1', input.class) }, [
+    h(ScreenNavBarTabletRoot, {}, [input.renderNavBar?.()]),
 
     input.variant.t === 'uniform'
-      ? v(VerticalUniform, { actions: input.variant.actions })
-      : v(VerticalSpaceBetween, { start: input.variant.start, end: input.variant.end }),
+      ? h(VerticalUniform, { actions: input.variant.actions })
+      : h(VerticalSpaceBetween, { start: input.variant.start, end: input.variant.end }),
   ])
 }
 
 const VerticalUniform = (input: { actions: (ScreenAction | null)[] }) => {
-  return v(Toolbar, {}, [v(ActionButtonList, { actions: input.actions })])
+  return h(Toolbar, {}, [h(ActionButtonList, { actions: input.actions })])
 }
 
 const VerticalSpaceBetween = (input: { start: (ScreenAction | null)[]; end: (ScreenAction | null)[] }) => {
-  return v(Toolbar, {}, [
-    v(ActionButtonList, { actions: input.start }),
-    v('div', { class: 'flex-1' }),
-    v(ActionButtonList, { actions: input.end }),
-    v('div', { class: 'w-full pb-6' }),
+  return h(Toolbar, {}, [
+    h(ActionButtonList, { actions: input.start }),
+    h('div', { class: 'flex-1' }),
+    h(ActionButtonList, { actions: input.end }),
+    h('div', { class: 'w-full pb-6' }),
   ])
 }
 
 const Toolbar = (input: { children: VDom }) => {
-  return v('div', { class: 'flex w-full flex-1 shrink-0 flex-col', role: 'toolbar' }, [input.children])
+  return h('div', { class: 'flex w-full flex-1 shrink-0 flex-col', role: 'toolbar' }, [input.children])
 }
 
 const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
-  return v(
+  return h(
     'div',
     { class: 'flex w-full shrink-0 flex-col gap-2' },
     input.actions.map((action) => {
       if (!action) return null
 
-      const button = v(ScreenActionButton, { ...action, size: SIZE })
+      const button = h(ScreenActionButton, { ...action, size: SIZE })
 
-      if (!action.renderSurface) return v(Frag, { key: action.id }, [button])
+      if (!action.renderSurface) return h(Frag, { key: action.id }, [button])
 
-      return v(Frag, { key: action.id }, [
+      return h(Frag, { key: action.id }, [
         action.renderSurface({
           dropDown: { reference: button },
           screenActionLocation: 'bar',
@@ -67,7 +67,7 @@ const ScreenActionButton = (input: ScreenAction) => {
   const isDisabled = input.disabled || input.loading
   const size = input.size ?? 'md'
   if (input.hidden) return null
-  return v(
+  return h(
     ClickableTransparent,
     {
       'data-testid': input.testId,
@@ -87,7 +87,7 @@ const ScreenActionButton = (input: ScreenAction) => {
       ),
     },
     [
-      v(
+      h(
         'div',
         {
           class: cn(
@@ -97,7 +97,7 @@ const ScreenActionButton = (input: ScreenAction) => {
         },
         [
           input.icon({ class: toIconSizeClasses(size) }),
-          v(Typography, {
+          h(Typography, {
             text: input.label,
             class: cn('truncate text-center xl:text-left xl:text-xl', 'text-inherit', input.classNames?.label),
           }),
@@ -105,8 +105,8 @@ const ScreenActionButton = (input: ScreenAction) => {
       ),
 
       input.loading &&
-        v('div', { class: 'absolute inset-0 flex h-full w-full items-center justify-center' }, [
-          v(Spinner, { class: toIconSizeClasses(size) }),
+        h('div', { class: 'absolute inset-0 flex h-full w-full items-center justify-center' }, [
+          h(Spinner, { class: toIconSizeClasses(size) }),
         ]),
     ],
   )

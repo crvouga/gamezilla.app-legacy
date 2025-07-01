@@ -4,7 +4,7 @@ import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 
 export const ScreenNavBarTablet = (input: {
@@ -21,25 +21,25 @@ export const ScreenNavBarTablet = (input: {
   renderEnd?: () => VDom
 }) => {
   const renderSurface = input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference)
-  return v(ScreenNavBarTabletRoot, {}, [
+  return h(ScreenNavBarTabletRoot, {}, [
     input.back &&
       renderSurface({
         dropDown: {
           alignment: 'starting',
           position: 'bottom',
-          reference: v(IconButton, {
+          reference: h(IconButton, {
             onClick: input.back.onClick,
             class: '-ml-2',
             size: 'lg',
             label: input.ctx.t('app.exit'),
-            renderIcon: (inputIcon) => v(IconArrowLeft, inputIcon),
+            renderIcon: (inputIcon) => h(IconArrowLeft, inputIcon),
           }),
         },
       }),
 
-    v('div', { class: 'flex flex-1 flex-col truncate' }, [
+    h('div', { class: 'flex flex-1 flex-col truncate' }, [
       input.title &&
-        v(Typography, {
+        h(Typography, {
           role: 'heading',
           class: 'truncate px-2',
           sizeClassName: 'text-3xl font-bold',
@@ -47,7 +47,7 @@ export const ScreenNavBarTablet = (input: {
           text: input.title,
         }),
       input.subtitle &&
-        v(Typography, {
+        h(Typography, {
           class: 'truncate px-2',
           color: 'text-secondary',
           sizeClassName: 'text-xl',
@@ -61,5 +61,5 @@ export const ScreenNavBarTablet = (input: {
 }
 
 export const ScreenNavBarTabletRoot = (input: { children: VDom }) => {
-  return v('div', { class: 'flex h-24 w-full shrink-0 items-center px-6' }, [input.children])
+  return h('div', { class: 'flex h-24 w-full shrink-0 items-center px-6' }, [input.children])
 }

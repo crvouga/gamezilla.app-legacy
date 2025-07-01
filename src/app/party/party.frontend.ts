@@ -3,7 +3,7 @@ import { exhaustive } from '~/@/function/exhaustive'
 import { pipe } from '~/@/function/pipe'
 import { RemoteResult, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import type { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCtx } from '../@/frontend/ctx'
 import { Mic } from './mic'
@@ -183,20 +183,20 @@ export const ViewPage = ({
   const user = model.users[ctx.currentUser.userId]
 
   if (!user) {
-    return v(ViewNotInParty, { ctx, model, dispatch })
+    return h(ViewNotInParty, { ctx, model, dispatch })
   }
 
   const party = model.parties[user.partyId]
 
   if (!party) {
-    return v(ViewNotInParty, { ctx, model, dispatch })
+    return h(ViewNotInParty, { ctx, model, dispatch })
   }
 
   return null
 }
 
 const ViewNotInParty = (_input: { ctx: AppFrontendCtx; model: Model; dispatch: (msg: Msg) => void }) => {
-  return v('div', {}, ['ViewNotInParty'])
+  return h('div', {}, ['ViewNotInParty'])
 }
 
 export const ViewBanner = ({
@@ -220,7 +220,7 @@ export const ViewBanner = ({
     return null
   }
 
-  return v('div', {}, ['ViewBanner'])
+  return h('div', {}, ['ViewBanner'])
 }
 
 //

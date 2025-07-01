@@ -1,5 +1,5 @@
 import { IconLightbulb } from '~/@/ui/icon'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { AlgoIsSolved } from '../../solutions/algo-is-solved/algo-is-solved'
@@ -25,7 +25,7 @@ const viewAction = (input: {
   return [
     {
       id: input.ctx.t('game.hint'),
-      icon: (input) => v(IconLightbulb, input),
+      icon: (input) => h(IconLightbulb, input),
       label: input.ctx.t('game.hint'),
       disabled: isSolved,
       onClick: () => {
@@ -40,7 +40,7 @@ const viewAction = (input: {
 }
 
 const TestView = (input: { model: Model; dispatch: (msg: Msg) => void; ctx: ModePlayFrontendCtx }) => {
-  return v(ScreenLayout, {
+  return h(ScreenLayout, {
     ...input,
     parentScreen: null,
     id: 'use-hint',

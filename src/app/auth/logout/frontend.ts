@@ -1,4 +1,4 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { NotAsked } from '~/@/result'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
@@ -57,7 +57,7 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
-  return v(SurfaceConfirmation, {
+  return h(SurfaceConfirmation, {
     ctx: input.ctx,
     ariaLabel: input.ctx.t('auth.logout-of-gamezilla.app'),
     open: input.model.opened === 'logged-out',

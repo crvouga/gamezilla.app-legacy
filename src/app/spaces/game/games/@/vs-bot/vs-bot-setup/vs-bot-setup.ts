@@ -5,7 +5,7 @@ import { ClickablePaper } from '~/@/ui/clickable'
 import { IconQuestionMark } from '~/@/ui/icon'
 import { SurfaceHeader } from '~/@/ui/surface/surface-header'
 import { Typography } from '~/@/ui/typography'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
@@ -146,8 +146,8 @@ export const View = ({
           renderBotIcon: bot.renderIcon,
         }
 
-  return v('div', { class: 'flex w-full flex-1 flex-col' }, [
-    v(ScreenLayoutGameCoverArt, {
+  return h('div', { class: 'flex w-full flex-1 flex-col' }, [
+    h(ScreenLayoutGameCoverArt, {
       id: 'vs-bot-setup',
       parentScreen: ctx.parentScreen,
       ctx,
@@ -159,35 +159,35 @@ export const View = ({
       },
       renderCoverArt,
       renderBody: () =>
-        v('div', { class: 'flex w-full flex-col gap-2 p-4' }, [
-          v('div', { class: 'grid w-full grid-cols-7' }, [
-            v(PlayerIcons, { player: playerOneProp, ctx }),
-            v('div', { class: 'col-span-1 grid place-items-center' }, [
-              v(Typography, {
+        h('div', { class: 'flex w-full flex-col gap-2 p-4' }, [
+          h('div', { class: 'grid w-full grid-cols-7' }, [
+            h(PlayerIcons, { player: playerOneProp, ctx }),
+            h('div', { class: 'col-span-1 grid place-items-center' }, [
+              h(Typography, {
                 class: 'flex h-full flex-1 flex-col items-center justify-center text-3xl font-black',
                 variant: 'title',
                 text: ctx.t('game.vs'),
               }),
             ]),
-            v(PlayerIcons, { player: playerTwoProp, ctx }),
+            h(PlayerIcons, { player: playerTwoProp, ctx }),
           ]),
 
-          v('div', { class: 'grid w-full grid-cols-7' }, [
-            v(PlayerLabels, { player: playerOneProp, ctx }),
-            v('div', { class: 'col-span-1' }),
-            v(PlayerLabels, { player: playerTwoProp, ctx }),
+          h('div', { class: 'grid w-full grid-cols-7' }, [
+            h(PlayerLabels, { player: playerOneProp, ctx }),
+            h('div', { class: 'col-span-1' }),
+            h(PlayerLabels, { player: playerTwoProp, ctx }),
           ]),
 
-          v('div', { class: 'mt-2 grid w-full grid-cols-7' }, [
-            v(PlayerButtons, {
+          h('div', { class: 'mt-2 grid w-full grid-cols-7' }, [
+            h(PlayerButtons, {
               onSwapSides,
               dispatch,
               human,
               player: playerOneProp,
               ctx,
             }),
-            v('div', { class: 'col-span-1' }),
-            v(PlayerButtons, {
+            h('div', { class: 'col-span-1' }),
+            h(PlayerButtons, {
               onSwapSides,
               dispatch,
               human,
@@ -199,8 +199,8 @@ export const View = ({
     }),
 
     ctx.currentUser.userId === ctx.space.hostId &&
-      v('div', { class: 'flex items-center gap-4 p-4' }, [
-        v(Button, {
+      h('div', { class: 'flex items-center gap-4 p-4' }, [
+        h(Button, {
           disabled: !canStartGame,
           variant: 'contained',
           color: 'primary',
@@ -210,7 +210,7 @@ export const View = ({
         }),
       ]),
 
-    v(SurfaceLayout, {
+    h(SurfaceLayout, {
       ctx,
       ariaLabel: ctx.t('game.change-bot'),
       drawer: {
@@ -224,7 +224,7 @@ export const View = ({
         }),
       header: {
         render: () =>
-          v(SurfaceHeader, {
+          h(SurfaceHeader, {
             ctx,
             title: ctx.t('game.change-bot'),
             onClose: () => dispatch({ t: 'closed-modal' }),
@@ -232,7 +232,7 @@ export const View = ({
       },
       body: {
         render: () =>
-          v('div', {}, [
+          h('div', {}, [
             botVariants.map((botLevel) => {
               const onClick = () => {
                 botLevel.onSelect()
@@ -240,7 +240,7 @@ export const View = ({
                   t: 'closed-modal',
                 })
               }
-              return v(
+              return h(
                 'button',
                 {
                   key: botLevel.label,
@@ -262,24 +262,24 @@ export const View = ({
 }
 
 const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
-  return v('div', { class: 'col-span-3 grid grid-cols-2 place-items-center' }, [
+  return h('div', { class: 'col-span-3 grid grid-cols-2 place-items-center' }, [
     player.t === 'bot'
       ? player.renderBotIcon({
           class: 'h-14 w-14',
         })
       : player.userId
-        ? v(Avatar, {
+        ? h(Avatar, {
             class: 'h-14 w-14',
             src: UserProfile.toAvatarUrl(ctx.profilesByUserId[player.userId]),
           })
-        : v(
+        : h(
             ClickablePaper,
             {
               role: 'button',
               class: 'grid h-14 w-14 place-items-center overflow-hidden rounded-full',
               onClick: player.onStartPlaying,
             },
-            [v(IconQuestionMark, { class: 'text-secondary h-10 w-10' })],
+            [h(IconQuestionMark, { class: 'text-secondary h-10 w-10' })],
           ),
     player.renderIcon({
       class: 'w-14 h-14',
@@ -289,14 +289,14 @@ const PlayerIcons = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerPro
 
 const PlayerLabels = ({ player, ctx }: { ctx: SpaceFrontendCtx; player: PlayerProp }) => {
   const profile = player.t === 'user' && player.userId ? ctx.profilesByUserId[player.userId] : null
-  return v('div', { class: 'col-span-3 grid grid-cols-2 place-items-center' }, [
-    v(Typography, {
+  return h('div', { class: 'col-span-3 grid grid-cols-2 place-items-center' }, [
+    h(Typography, {
       variant: 'label',
       color: 'text-secondary',
       class: 'w-full overflow-hidden text-center text-sm text-ellipsis whitespace-nowrap',
       text: player.t === 'bot' ? player.botLabel : profile ? ctx.t('username', profile.username) : ctx.t('?'),
     }),
-    v(Typography, {
+    h(Typography, {
       color: 'text-secondary',
       variant: 'label',
       class: 'text-center text-sm',
@@ -318,9 +318,9 @@ const PlayerButtons = ({
   player: PlayerProp
   dispatch: (m: Msg) => void
 }) => {
-  return v('div', { class: 'col-span-3 flex flex-col gap-2' }, [
+  return h('div', { class: 'col-span-3 flex flex-col gap-2' }, [
     !human.userId &&
-      v(Button, {
+      h(Button, {
         onClick: player.onStartPlaying,
         class: 'w-full',
         color: 'primary',
@@ -328,7 +328,7 @@ const PlayerButtons = ({
       }),
     player.t === 'user' &&
       ctx.currentUser.userId === player.userId &&
-      v(Button, {
+      h(Button, {
         onClick: player.onStopPlaying,
         class: 'w-full',
         variant: 'text',
@@ -337,7 +337,7 @@ const PlayerButtons = ({
       }),
     player.t === 'bot' &&
       human.userId === ctx.currentUser.userId &&
-      v(Button, {
+      h(Button, {
         onClick: onSwapSides,
         class: 'w-full',
         variant: 'text',
@@ -346,7 +346,7 @@ const PlayerButtons = ({
       }),
     player.t === 'bot' &&
       human.userId === ctx.currentUser.userId &&
-      v(Button, {
+      h(Button, {
         onClick: () =>
           dispatch({
             t: 'clicked-change-bot',

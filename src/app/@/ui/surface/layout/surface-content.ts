@@ -1,10 +1,10 @@
 import { DynamicElement } from '~/@/ui/dynamic-element'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { CancelSubmitButtons } from '../../form/cancel-submit-buttons'
 import { SurfaceLayoutProps } from './surface-layout-props'
 
 export const SurfaceContent = (props: SurfaceLayoutProps) => {
-  return v(
+  return h(
     DynamicElement,
     {
       element: typeof props.form?.onSubmit === 'function' ? 'form' : 'div',
@@ -18,7 +18,7 @@ export const SurfaceContent = (props: SurfaceLayoutProps) => {
       props.header?.render?.(),
       props.body?.render?.(),
       props.form &&
-        v(CancelSubmitButtons, {
+        h(CancelSubmitButtons, {
           variant: props.form?.variant,
           cancelText: props.form?.cancelText ?? props.ctx.t('app.cancel'),
           onCancel: props.form?.onCancel ?? (() => {}),

@@ -3,7 +3,7 @@ import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Topic } from '~/@/topic'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { BackendConnectionFrontend } from './backend-connection/frontend'
 import { BackendInstanceFrontend } from './backend-instance/frontend'
@@ -79,7 +79,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const ViewDot = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase; class: string }) => {
-  return v(BackendConnectionFrontend.ViewDot, {
+  return h(BackendConnectionFrontend.ViewDot, {
     model: input.model.backendConnection,
     ctx: input.ctx,
     class: input.class,
@@ -91,7 +91,7 @@ const ViewListItem = (input: {
   ctx: AppFrontendCtxBase
   dispatch: (msg: MsgFrontend) => void
 }) => {
-  return v(BackendConnectionFrontend.ViewListItem, {
+  return h(BackendConnectionFrontend.ViewListItem, {
     model: input.model.backendConnection,
     ctx: input.ctx,
     dispatch: (c) => input.dispatch({ t: 'got-backend-connection-msg', c }),

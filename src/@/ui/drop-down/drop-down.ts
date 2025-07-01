@@ -1,4 +1,4 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 import { cn } from '../cn'
 import { Transition } from '../transition'
@@ -30,9 +30,9 @@ export const DropDown = (props: {
     }
   }
 
-  return v('div', {}, [
-    v(Backdrop, { open: props.open, onClick: onClose, onKeyDown }),
-    v(
+  return h('div', {}, [
+    h(Backdrop, { open: props.open, onClick: onClose, onKeyDown }),
+    h(
       'div',
       {
         id: props.id,
@@ -41,7 +41,7 @@ export const DropDown = (props: {
       },
       [
         props.renderReference(),
-        v(
+        h(
           Transition,
           {
             id: `${props.id}-transition`,
@@ -51,7 +51,7 @@ export const DropDown = (props: {
           },
           [
             props.open &&
-              v(
+              h(
                 'div',
                 {
                   id: props.id,
@@ -68,7 +68,7 @@ export const DropDown = (props: {
 
 const Backdrop = (props: { open: boolean; onClick: () => void; onKeyDown: (e: unknown) => void }) => {
   if (!props.open) return null
-  return v('button', {
+  return h('button', {
     class: 'fixed inset-0 z-40 bg-black/50',
     onClick: props.onClick,
     onKeyDown: props.onKeyDown,

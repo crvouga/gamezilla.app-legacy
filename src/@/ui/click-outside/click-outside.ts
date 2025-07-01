@@ -1,4 +1,4 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import './click-outside-element'
 import { Props, propsSub } from './shared'
 
@@ -9,7 +9,7 @@ export const ClickOutside = (
   },
 ) => {
   propsSub.pub(props)
-  return v(
+  return h(
     'click-outside',
     {
       id: props.id,

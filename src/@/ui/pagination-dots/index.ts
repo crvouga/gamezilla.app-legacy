@@ -1,5 +1,5 @@
 import { AriaRole } from '~/@/vdom/aria-role'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { Clickable } from '../clickable'
 import { cn } from '../cn'
 
@@ -10,7 +10,7 @@ export const toPaginationDotSelector = (index: number) => `[data-pagination-dot-
 export const PaginationDots = (input: { count: number; activeIndex: number; onClick?: (index: number) => void }) => {
   if (input.count <= 1) return null
 
-  return v(
+  return h(
     'div',
     {
       class: 'flex items-center justify-center space-x-2',
@@ -27,9 +27,9 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
         'aria-label': `Page ${i + 1}`,
       }
       if (input.onClick) {
-        return v(Clickable, { ...baseProps, onClick: () => input.onClick?.(i) })
+        return h(Clickable, { ...baseProps, onClick: () => input.onClick?.(i) })
       }
-      return v('div', { ...baseProps, onClick: () => input.onClick?.(i) })
+      return h('div', { ...baseProps, onClick: () => input.onClick?.(i) })
     }),
   )
 }

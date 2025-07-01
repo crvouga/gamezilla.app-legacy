@@ -1,5 +1,5 @@
 import { s } from '~/@/schema'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 
 export const Model = s.obj({
   t: s.l('hex'),
@@ -25,5 +25,5 @@ export const init = (input: { width: number; height: number; side: number }): Mo
 }
 
 export const ViewForm = (_input: { form: Model; onInput: (dimensions: Model) => void }) => {
-  return v('div', {}, ['hex dimensions form'])
+  return h('div', {}, ['hex dimensions form'])
 }

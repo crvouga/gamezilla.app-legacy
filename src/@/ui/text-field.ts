@@ -1,6 +1,6 @@
 import { TranslatedText } from '~/@/l18n'
 import type { VDom } from '~/@/vdom/vdom'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { cn } from './cn'
 import { IconXMark } from './icon'
 import { PAPER_CLASS_NAME } from './paper'
@@ -22,23 +22,23 @@ export const TextField = (input: {
   onClear?: () => void
   onChange: (value: string) => void
 }) => {
-  return v('label', {
+  return h('label', {
     class: 'flex w-full flex-col gap-1',
-    children: v(Frag, {}, [
-      v('label', {
+    children: h(Frag, {}, [
+      h('label', {
         htmlFor: input.id,
         class: cn('text-base', input.error && 'text-red-500'),
         children: input.label,
       }),
-      v('div', {
+      h('div', {
         class: cn(
           PAPER_CLASS_NAME,
           'flex h-fit w-full flex-row overflow-hidden rounded-md border-2',
           input.error && 'border-2 border-red-500 text-red-500',
           !input.error && 'ring-blue-500 focus-within:ring-2',
         ),
-        children: v(Frag, {}, [
-          v('input', {
+        children: h(Frag, {}, [
+          h('input', {
             role: 'textbox',
             'data-testid': input.dataTestId,
             'aria-label': input.label,
@@ -72,7 +72,7 @@ export const TextField = (input: {
           input.onClear &&
             input.value &&
             input.value?.toString().length > 0 &&
-            v('button', {
+            h('button', {
               class: 'rounded-md px-3 ring-blue-500 outline-none focus:ring-2',
               'aria-label': 'Clear input',
               type: 'button',
@@ -86,12 +86,12 @@ export const TextField = (input: {
 
                 input.onClear?.()
               },
-              children: v(IconXMark, { class: 'size-6' }),
+              children: h(IconXMark, { class: 'size-6' }),
             }),
         ]),
       }),
       input.helperText &&
-        v('div', {
+        h('div', {
           role: 'alert',
           'data-error': Boolean(input.error),
           'data-info': !Boolean(input.error),

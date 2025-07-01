@@ -4,7 +4,7 @@ import { DropDownConfig } from '~/@/ui/drop-down/drop-down-config'
 import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton, IconButtonEmpty } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 
 export const ScreenNavBarMobile = (input: {
@@ -23,7 +23,7 @@ export const ScreenNavBarMobile = (input: {
 
   const renderSurface = input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference)
   const shouldRenderBack = input.back && typeof input.back.onClick === 'function'
-  return v(
+  return h(
     'div',
     {
       class: 'flex h-16 w-full shrink-0 items-center truncate px-6 text-center',
@@ -34,23 +34,23 @@ export const ScreenNavBarMobile = (input: {
           dropDown: {
             alignment: 'starting',
             position: 'bottom',
-            reference: v(IconButton, {
+            reference: h(IconButton, {
               onClick: input.back?.onClick,
               class: '-ml-2',
               label: input.ctx.t('app.exit'),
-              renderIcon: (inputIcon) => v(IconArrowLeft, inputIcon),
+              renderIcon: (inputIcon) => h(IconArrowLeft, inputIcon),
             }),
           },
         }),
 
-      v(
+      h(
         'div',
         {
           class: 'flex flex-1 flex-col truncate',
         },
         [
           typeof input.title === 'string' &&
-            v(Typography, {
+            h(Typography, {
               role: 'heading',
               sizeClassName: 'text-lg font-bold',
               class: 'truncate px-2',
@@ -59,7 +59,7 @@ export const ScreenNavBarMobile = (input: {
             }),
 
           typeof input.subtitle === 'string' &&
-            v(Typography, {
+            h(Typography, {
               class: 'truncate px-2 text-xs',
               color: 'text-secondary',
               role: 'heading',
@@ -69,7 +69,7 @@ export const ScreenNavBarMobile = (input: {
         ],
       ),
 
-      shouldRenderBack && v(IconButtonEmpty, {}),
+      shouldRenderBack && h(IconButtonEmpty, {}),
     ],
   )
 }

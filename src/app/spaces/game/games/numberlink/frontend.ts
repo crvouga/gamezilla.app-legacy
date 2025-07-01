@@ -1,7 +1,7 @@
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { IconGamepad, IconScrewdriverWrench } from '~/@/ui/icon'
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
@@ -296,13 +296,13 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 const View: FrontendModule['View'] = (input) => {
   switch (input.modelSpace.mode) {
     case 'none': {
-      return v(ViewMainMenu, input)
+      return h(ViewMainMenu, input)
     }
 
     case 'build': {
       const ctx = toFrontendCtx(input)
 
-      return v(ScreenBuildFrontend.View, {
+      return h(ScreenBuildFrontend.View, {
         ctx,
         dispatch: (c) => input.dispatch({ t: 'got-screen-build-msg', c }),
         modelSpace: input.modelSpace.screenBuild,
@@ -312,7 +312,7 @@ const View: FrontendModule['View'] = (input) => {
 
     case 'play': {
       const ctx = toFrontendCtx(input)
-      return v(ScreenPlayFrontend.View, {
+      return h(ScreenPlayFrontend.View, {
         ctx,
         dispatch: (c) => input.dispatch({ t: 'got-screen-play-msg', c }),
         modelSpace: input.modelSpace.screenPlay,
@@ -325,15 +325,15 @@ const View: FrontendModule['View'] = (input) => {
 const ViewMainMenu: FrontendModule['View'] = (input) => {
   const ctx = toFrontendCtx(input)
 
-  return v(GameMainMenu.View, {
-    renderCoverArt: (input) => v(CoverArt, input),
+  return h(GameMainMenu.View, {
+    renderCoverArt: (input) => h(CoverArt, input),
     ctx,
     title: ctx.t('numberlink'),
     dispatch: input.dispatch,
     onBack: () => input.dispatch({ t: 'game-main-menu.clicked-exit-game-button' }),
     buttons: [
       {
-        renderIcon: (input) => v(IconGamepad, input),
+        renderIcon: (input) => h(IconGamepad, input),
         title: ctx.t('game.numberlink.play'),
         description: ctx.t('game.numberlink.play-description'),
         onClick: () => {
@@ -344,7 +344,7 @@ const ViewMainMenu: FrontendModule['View'] = (input) => {
         },
       },
       {
-        renderIcon: (input) => v(IconScrewdriverWrench, input),
+        renderIcon: (input) => h(IconScrewdriverWrench, input),
         title: ctx.t('game.numberlink.build'),
         description: ctx.t('game.numberlink.build-description'),
         onClick: () => {

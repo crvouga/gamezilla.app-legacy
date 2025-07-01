@@ -1,4 +1,4 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import {
   Empty,
   MAX_X,
@@ -23,13 +23,13 @@ export const gameTheme = {
 const scale = 1_000
 
 export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position: Position) => void }) => {
-  return v('svg', { width: '100%', viewBox: [0, 0, MAX_X * scale, MAX_Y * scale].join(' ') }, [
-    v('rect', { x: '0', y: '0', width: '100%', height: '100%', fill: gameTheme.background }),
-    v(
+  return h('svg', { width: '100%', viewBox: [0, 0, MAX_X * scale, MAX_Y * scale].join(' ') }, [
+    h('rect', { x: '0', y: '0', width: '100%', height: '100%', fill: gameTheme.background }),
+    h(
       'g',
       {},
       lines.map((line, index) =>
-        v('line', {
+        h('line', {
           key: index,
           x1: line.x1 * scale,
           y1: line.y1 * scale,
@@ -49,24 +49,24 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
         const strokeWidth = 0.1 * scale
 
         if (slot === 'O') {
-          return v('circle', { r, cx, cy, stroke: gameTheme.naught, strokeWidth, fill: 'transparent' })
+          return h('circle', { r, cx, cy, stroke: gameTheme.naught, strokeWidth, fill: 'transparent' })
         }
 
         if (slot === 'X') {
-          return v('g', { strokeWidth, stroke: gameTheme.cross }, [
+          return h('g', { strokeWidth, stroke: gameTheme.cross }, [
             // direction: \
-            v('line', { x1: cx - r, y1: cy - r, x2: cx + r, y2: cy + r }),
+            h('line', { x1: cx - r, y1: cy - r, x2: cx + r, y2: cy + r }),
             // direction: /
-            v('line', { x1: cx + r, y1: cy - r, x2: cx - r, y2: cy + r }),
+            h('line', { x1: cx + r, y1: cy - r, x2: cx - r, y2: cy + r }),
           ])
         }
 
-        return v('g', { key })
+        return h('g', { key })
       }),
     ),
-    v(ViewWins, { board }, []),
+    h(ViewWins, { board }, []),
     allPositions.map((position) =>
-      v('rect', {
+      h('rect', {
         key: [position.column, position.row, toSlot(board, position)].join(' '),
         class: 'cursor-pointer',
         x: Number(position.column) * scale,
@@ -84,7 +84,7 @@ const strokeWidth = 0.1 * scale
 const ViewWins = (input: { board: Model }) => {
   const wins = toWins(input.board)
 
-  return v(
+  return h(
     'g',
     {},
     [...wins.X, ...wins.O].map((winningGroup) => {
@@ -93,7 +93,7 @@ const ViewWins = (input: { board: Model }) => {
       const leftMost = winningGroup[0]
       const rightMost = winningGroup[winningGroup.length - 1] ?? leftMost
 
-      return v('line', {
+      return h('line', {
         key,
         x1: (leftMost.column + 1 / 2) * scale,
         y1: (leftMost.row + 1 / 2) * scale,
@@ -252,13 +252,13 @@ export const ViewSlot = ({
 }) => {
   switch (slot) {
     case Empty:
-      return v('g', {})
+      return h('g', {})
 
     case 'O':
-      return v(Naught, { strokeWidth, color, r, cx, cy })
+      return h(Naught, { strokeWidth, color, r, cx, cy })
 
     case 'X':
-      return v(Cross, { strokeWidth, color, r, cx, cy })
+      return h(Cross, { strokeWidth, color, r, cx, cy })
   }
 }
 
@@ -275,11 +275,11 @@ const Cross = ({
   cy: number
   strokeWidth?: number
 }) => {
-  return v('g', { strokeWidth, stroke: color }, [
+  return h('g', { strokeWidth, stroke: color }, [
     // direction: \
-    v('line', { x1: cx - r, y1: cy - r, x2: cx + r, y2: cy + r }),
+    h('line', { x1: cx - r, y1: cy - r, x2: cx + r, y2: cy + r }),
     // direction: /
-    v('line', { x1: cx + r, y1: cy - r, x2: cx - r, y2: cy + r }),
+    h('line', { x1: cx + r, y1: cy - r, x2: cx - r, y2: cy + r }),
   ])
 }
 
@@ -296,12 +296,12 @@ const Naught = ({
   cx: number
   cy: number
 }) => {
-  return v('circle', { r, cx, cy, stroke: color, strokeWidth, fill: 'transparent' })
+  return h('circle', { r, cx, cy, stroke: color, strokeWidth, fill: 'transparent' })
 }
 
 export const PlayerTypeIcon = ({ playerType, class: class_ }: { playerType: PlayerType; class?: string }) => {
-  return v('svg', { viewBox: '-1 -1 2 2', fill: 'currentColor', class: class_ }, [
-    v(ViewSlot, {
+  return h('svg', { viewBox: '-1 -1 2 2', fill: 'currentColor', class: class_ }, [
+    h(ViewSlot, {
       key: playerType,
       cx: 0,
       cy: 0,
@@ -326,11 +326,11 @@ export const CoverArt = (input: { class?: string }) => {
     { x1: 0, y1: 1, x2: 3, y2: 1 },
   ] as const
 
-  return v('svg', { width: '100%', viewBox: '0 0 2 2', ...input }, [
-    v('rect', { x: 0, y: 0, width: 2, height: 2, fill: gameTheme.background }),
-    LINES.map((line, index) => v('line', { key: index, ...line, stroke: gameTheme.line, 'stroke-width': 0.1 })),
+  return h('svg', { width: '100%', viewBox: '0 0 2 2', ...input }, [
+    h('rect', { x: 0, y: 0, width: 2, height: 2, fill: gameTheme.background }),
+    LINES.map((line, index) => h('line', { key: index, ...line, stroke: gameTheme.line, 'stroke-width': 0.1 })),
     positions.map(([{ column, row }, slot], index) =>
-      v(ViewSlot, { key: index, slot, cx: Number(column) + 0.5, cy: Number(row) + 0.5, r: 0.3 }),
+      h(ViewSlot, { key: index, slot, cx: Number(column) + 0.5, cy: Number(row) + 0.5, r: 0.3 }),
     ),
   ])
 }

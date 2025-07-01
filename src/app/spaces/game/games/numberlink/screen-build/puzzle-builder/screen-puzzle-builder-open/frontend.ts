@@ -1,4 +1,4 @@
-import { v } from '~/@/vdom/v'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -61,7 +61,7 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 
 const View: FrontendModule['View'] = (input) => {
   const query = toPuzzleQuery(input)
-  return v(ScreenLayout, {
+  return h(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,
     id: 'screen-puzzle-builder-open',
     ctx: input.ctx,
@@ -77,7 +77,7 @@ const View: FrontendModule['View'] = (input) => {
     },
     postAction: CreateNewPuzzleFrontend.viewCreateAction(input),
     renderBody: () =>
-      v(PuzzleLoaderFrontend.ViewList, {
+      h(PuzzleLoaderFrontend.ViewList, {
         ctx: input.ctx,
         model: input.ctx.puzzleLoader,
         query: query,
