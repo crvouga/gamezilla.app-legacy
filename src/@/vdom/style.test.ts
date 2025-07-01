@@ -1,5 +1,5 @@
 import { describe, expect, test } from '~/@/test-runner'
-import { camelStringToKebabString, styles } from './style'
+import { camelStringToKebabString, kebabObjectToCamelObject } from './style'
 
 describe('styles', () => {
   test('should convert kebab-case to camelCase', () => {
@@ -14,27 +14,11 @@ describe('styles', () => {
   })
   test('should convert kebab-case to camelCase when rendering with React', () => {
     expect(
-      styles(
-        {
-          'transition-delay': '100ms',
-        },
-        'react',
-      ),
+      kebabObjectToCamelObject({
+        'transition-delay': '100ms',
+      }),
     ).toEqual({
       transitionDelay: '100ms',
-    })
-  })
-
-  test('should not convert kebab-case to camelCase when rendering with Inferno', () => {
-    expect(
-      styles(
-        {
-          'transition-delay': '100ms',
-        },
-        'inferno',
-      ),
-    ).toEqual({
-      'transition-delay': '100ms',
     })
   })
 })
