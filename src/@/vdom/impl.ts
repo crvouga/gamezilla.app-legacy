@@ -2,7 +2,7 @@ import { CONFIG_FRONTEND } from '~/config/frontend'
 import { initInferno } from './impl-inferno'
 import { initPreact } from './impl-preact'
 import { initReact } from './impl-react'
-import { initSnabbdom } from './impl-snabbdom'
+// import { initSnabbdom } from './impl-snabbdom'
 import { ICreatePortal, IRender, RenderNode, V, VirtualDomEngine } from './interface'
 import { VDomImpl } from './vdom-impl'
 
@@ -18,12 +18,13 @@ export const init = (vdomImpl: VDomImpl): VirtualDomEngine => {
       return initInferno()
     }
     case 'snabbdom': {
-      return initSnabbdom()
+      throw new Error('Snabbdom is not supported in the browser')
+      // return initSnabbdom()
     }
   }
 }
 
-const vdomEngine = init(CONFIG_FRONTEND.VDOM_IMPL)
+const vdomEngine = init(VDomImpl.readFromUrl(CONFIG_FRONTEND.VDOM_IMPL))
 
 export const Render: (node: RenderNode) => IRender = vdomEngine.render
 
