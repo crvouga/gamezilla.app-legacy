@@ -3,7 +3,7 @@ import type { VDom } from '~/@/vdom/vdom'
 import type { ColumnIndex, Columns, PlayerType, Win } from '../../connect-four'
 import { Transition } from '~/@/transition'
 
-export type ViewColumnsinput = {
+export type ViewColumnsInput = {
   columns: Columns
   model?: Model
   ghost?: {
@@ -17,7 +17,7 @@ export type ViewColumnsinput = {
   gameOverOverlay?: () => VDom | VDom[] | null
 }
 
-export const columnsinputSub = Sub.create<ViewColumnsinput>()
+export const columnsInputSub = Sub.create<ViewColumnsInput>()
 
 export type Model = {
   discs: Transition.Model<Disc>

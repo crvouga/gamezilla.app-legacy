@@ -8,6 +8,7 @@
     "cmds",
     "codegen",
     "compat",
+    "consecutives",
     "dbmate",
     "deinterleave",
     "dissoc",

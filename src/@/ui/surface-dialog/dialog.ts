@@ -4,7 +4,7 @@ import { cn } from '../cn'
 import { styles } from '~/@/vdom/style'
 import { TimeSpan } from '~/@/time/time-span'
 
-export const Dialog = (input: { children: VDom; open: boolean; onClose: () => void; delay?: TimeSpan }) => {
+export const Dialog = (input: { children?: VDom; open: boolean; onClose: () => void; delay?: TimeSpan }) => {
   const delayMs = input.delay ? TimeSpan.toMilliseconds(input.delay) : null
   const style = styles({
     'transition-delay': input.open && delayMs ? `${delayMs}ms` : undefined,

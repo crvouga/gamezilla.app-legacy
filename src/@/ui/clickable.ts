@@ -22,6 +22,9 @@ export type ClickableProps = {
   dataTestId?: string
   'data-fab'?: boolean
   'aria-label'?: string
+  'data-testid'?: string
+  'aria-hidden'?: boolean
+  'aria-disabled'?: boolean
 }
 
 export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
