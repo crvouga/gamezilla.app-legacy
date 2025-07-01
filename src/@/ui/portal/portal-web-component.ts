@@ -1,25 +1,8 @@
-// @ts-ignore
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'portal-entrance': {
-        'portal-id': string
-        children: unknown
-      }
-      'portal-exit': {
-        'portal-id': string
-      }
-    }
-  }
-}
+import { h } from '~/@/vdom/h'
+import { VDom } from '~/@/vdom/vdom'
+import { IPortal } from './interface'
 
 if (typeof window !== 'undefined') {
-  //
-  //
-  //
-  //
-  //
-  //
   const entrances = new Map<string, Set<HTMLElement>>()
   const exits = new Map<string, HTMLElement>()
 
@@ -53,13 +36,6 @@ if (typeof window !== 'undefined') {
       })
     }
   }
-
-  //
-  //
-  //
-  //
-  //
-  //
 
   class PortalEntrance extends HTMLElement {
     private observer: MutationObserver
@@ -102,15 +78,6 @@ if (typeof window !== 'undefined') {
     }
   }
 
-  customElements.define('portal-entrance', PortalEntrance)
-
-  //
-  //
-  //
-  //
-  //
-  //
-
   class PortalExit extends HTMLElement {
     static get observedAttributes() {
       return ['portal-id']
@@ -132,12 +99,19 @@ if (typeof window !== 'undefined') {
     }
   }
 
+  customElements.define('portal-entrance', PortalEntrance)
   customElements.define('portal-exit', PortalExit)
+}
 
-  //
-  //
-  //
-  //
-  //
-  //
+const Entrance = (input: { portalId: string; children: VDom[]; noPortal?: boolean }) => {
+  return h('portal-entrance', { portalId: input.portalId }, input.children)
+}
+
+const Exit = (input: { portalId: string }) => {
+  return h('portal-exit', { portalId: input.portalId })
+}
+
+export const Portal: IPortal = {
+  Entrance,
+  Exit,
 }
