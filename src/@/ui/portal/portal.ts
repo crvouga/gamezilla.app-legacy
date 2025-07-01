@@ -1,7 +1,8 @@
 import { IPortal } from './interface'
-import { Portal as PortalWebComponent } from './portal-web-component'
+// import { Portal as PortalWebComponent } from './portal-web-component'
+import { Portal as PortalVdom } from './portal-vdom'
 
 export const Portal: IPortal = {
-  Entrance: PortalWebComponent.Entrance,
-  Exit: PortalWebComponent.Exit,
+  Entrance: PortalVdom.Entrance,
+  Exit: PortalVdom.Exit,
 }

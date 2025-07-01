@@ -45,12 +45,13 @@ if (typeof window !== 'undefined') {
       exit.removeChild(exit.firstChild)
     }
 
-    // Aggregate and append children from all entrances to exit
+    // Move (not clone) children from all entrances to exit
     if (entranceSet && entranceSet.size > 0) {
       entranceSet.forEach((entrance) => {
-        Array.from(entrance.childNodes).forEach((child) => {
-          exit.appendChild(child.cloneNode(true))
-        })
+        // Move all child nodes from entrance to exit
+        while (entrance.firstChild) {
+          exit.appendChild(entrance.firstChild)
+        }
       })
     }
   }
@@ -65,8 +66,9 @@ if (typeof window !== 'undefined') {
 
     constructor() {
       super()
-      this.observer = new MutationObserver(() => {
+      this.observer = new MutationObserver((_mutations) => {
         if (this.currentPortalId) {
+          // Immediately move any new children to the portal exit
           updatePortal(this.currentPortalId)
         }
       })
@@ -91,7 +93,7 @@ if (typeof window !== 'undefined') {
     private observeChildChanges() {
       this.observer.observe(this, {
         childList: true,
-        subtree: true,
+        subtree: false, // Only observe direct children
       })
     }
 

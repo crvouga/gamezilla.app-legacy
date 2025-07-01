@@ -12,7 +12,7 @@ export type PrivateDrawerInput = {
 
 export type DrawerInput = PrivateDrawerInput & {
   ariaLabel: TranslatedText
-  children?: VDom
+  children?: VDom[]
   ctx: {
     t: Translator
   }

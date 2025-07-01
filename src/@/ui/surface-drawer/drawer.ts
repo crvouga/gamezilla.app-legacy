@@ -4,7 +4,6 @@ import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { DrawerComponent } from './drawer-component'
 import type { PrivateDrawerInput } from './drawer-shared'
-import { DrawerWebComponent } from './drawer-web-component'
 
 export type DrawerInput = PrivateDrawerInput & {
   children?: VDom
@@ -14,12 +13,6 @@ export type DrawerInput = PrivateDrawerInput & {
   }
 }
 
-export const USE_WEB_COMPONENT = false
-
 export const Drawer = (input: DrawerInput): VDom => {
-  if (USE_WEB_COMPONENT) {
-    return h(DrawerWebComponent, input)
-  }
-
   return h(DrawerComponent, input)
 }

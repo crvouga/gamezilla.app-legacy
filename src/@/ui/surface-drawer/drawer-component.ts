@@ -31,7 +31,6 @@ export const DrawerComponent = (props: DrawerInput) => {
             props.onClose()
           },
         }),
-
         h(
           Surface,
           {
@@ -44,7 +43,7 @@ export const DrawerComponent = (props: DrawerInput) => {
           },
           [
             props.position === 'top' && h(Gutter, { variant: 'drawer' }),
-            props.children,
+            ...(props?.children ?? []),
             props.position === 'bottom' && h(Gutter, { variant: 'drawer' }),
           ],
         ),
