@@ -21,33 +21,18 @@ const View = (input: {
       },
     },
     renderBody: () =>
-      h(
-        'div',
-        {
-          className: 'flex w-full flex-1 flex-col gap-8 p-4',
-        },
-        [
-          h(Avatar, {
-            src: undefined,
-            className: 'mx-auto size-28',
+      h('div', { className: 'flex w-full flex-1 flex-col gap-8 p-4' }, [
+        h(Avatar, { src: undefined, className: 'mx-auto size-28' }),
+        h('div', { className: 'flex w-full flex-col gap-4' }, [
+          h(TextField, {
+            label: input.ctx.t('profile-avatar.seed'),
+            // value: input.model.draft?.avatarSeed ?? '',
+            value: '',
+            onChange: () => {},
+            id: 'seed',
           }),
-          h(
-            'div',
-            {
-              className: 'flex w-full flex-col gap-4',
-            },
-            [
-              h(TextField, {
-                label: input.ctx.t('profile-avatar.seed'),
-                // value: input.model.draft?.avatarSeed ?? '',
-                value: '',
-                onChange: () => {},
-                id: 'seed',
-              }),
-            ],
-          ),
-        ],
-      ),
+        ]),
+      ]),
   })
 }
 
