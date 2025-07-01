@@ -26,10 +26,10 @@ export const initSnabbdom = (): VirtualDomEngine => {
       }
     },
     createPortal: (vDom, _container) => {
-      // Ignore portal creation for now
+      // patch(container, vDom as VNode)
       return vDom
     },
-    createElement(tag: any, props: any, childrenUncleaned: any) {
+    createElement: (tag: any, props: any, childrenUncleaned: any) => {
       try {
         const children = cleanChildren(childrenUncleaned ?? [])
 
