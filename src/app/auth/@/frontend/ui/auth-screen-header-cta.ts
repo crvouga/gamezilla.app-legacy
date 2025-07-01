@@ -1,5 +1,4 @@
 import { Translator } from '~/@/l18n/generated'
-import { Frag } from '~/@/ui/frag'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 
@@ -8,17 +7,24 @@ export const AuthScreenHeaderCta = (input: {
     t: Translator
   }
 }) => {
-  return h('div', {
-    class: 'flex w-full flex-col items-start justify-center',
-    children: h(Frag, {}, [
+  return h(
+    'div',
+    {
+      class: 'flex w-full flex-col items-start justify-center',
+    },
+    [
       h(Typography, {
         text: input.ctx.t('auth.sign-in-to'),
         variant: 'title',
       }),
-      h('span', {
-        class: 'bg-gradient-to-b from-blue-400 to-blue-500 bg-clip-text pb-2 text-5xl font-extrabold text-transparent',
-        children: input.ctx.t('app.gamezilla-app'),
-      }),
-    ]),
-  })
+      h(
+        'span',
+        {
+          class:
+            'bg-gradient-to-b from-blue-400 to-blue-500 bg-clip-text pb-2 text-5xl font-extrabold text-transparent',
+        },
+        [input.ctx.t('app.gamezilla-app')],
+      ),
+    ],
+  )
 }

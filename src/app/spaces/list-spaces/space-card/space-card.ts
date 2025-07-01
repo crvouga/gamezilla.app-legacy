@@ -19,6 +19,7 @@ export const ViewSpaceCard = (input: {
   ctx: AppFrontendCtxBase
   state: SpaceProjection.Started
   onClick?: () => void
+  key?: unknown
 }) => {
   const host = input.ctx.profilesByUserId[input.state.hostId]
   const users = Object.values(input.state.users).flatMap((userId): UserProfile[] => {

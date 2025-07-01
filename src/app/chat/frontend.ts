@@ -165,7 +165,7 @@ export const View = (_input: {
 }
 
 export const ViewChat = (_input: { model: ModelFrontend; dispatch: (m: Msg) => void }) => {
-  return h('div', { children: 'ViewChat' })
+  return h('div', {}, ['ViewChat'])
 }
 
 export const ViewChatNew = (_input: {
@@ -177,9 +177,9 @@ export const ViewChatNew = (_input: {
     loading: boolean
   }
 }) => {
-  return h('div', { children: 'ViewChat' })
+  return h('div', {}, ['ViewChat'])
 }
 
 export const ViewChatList = (_input: { ctx: AppFrontendCtx; model: ModelFrontend; dispatch: (m: Msg) => void }) => {
-  return h('div', { children: 'View ' })
+  return h('div', {}, ['View'])
 }

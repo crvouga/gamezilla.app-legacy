@@ -111,10 +111,10 @@ const View = ({
   onDraggedOver,
   onPressUp,
 }: BoardInput<VariantGrid.Model>) => {
-  return h(Canvas, {
+  return h(Canvas<VariantGrid.Model>, {
     class: cn('aspect-square w-full', isDragging ? 'cursor-grabbing' : 'cursor-grab'),
-    watch: model as unknown,
-    paint: (value, ctx) => paint(value as VariantGrid.Model, ctx),
+    watch: model,
+    paint: (value, ctx) => paint(value, ctx),
     onMouseDown: (event) => {
       // event.preventDefault()
       // event.stopImmediatePropagation()

@@ -1,21 +1,21 @@
-// @ts-nocheck
 import { Fragment, render } from 'preact'
-import { createElement } from 'preact/compat'
+import { createElement, createPortal } from 'preact/compat'
 import { VDOM_FRAGMENT_KEY } from './fragment'
 import { VirtualDomEngine } from './interface'
+import { VDom } from './vdom'
 
 export const initPreact = (): VirtualDomEngine => {
   return {
-    createPortal: (vDom, container) => {
-      render(vDom, container)
-      return createElement(Fragment, {})
-    },
     render: (node) => (vDom) => render(vDom, node),
-    createElement: (tag, props, children = []) => {
+    createPortal: (vDom, container) => {
+      return createPortal(vDom, container) as VDom
+    },
+    createElement: (tag: any, props: any, children: any) => {
       if (tag === VDOM_FRAGMENT_KEY) {
-        return createElement(Fragment, props, ...children)
+        return createElement(Fragment, props, children) as VDom
       }
-      return createElement(tag, props, ...children)
+
+      return createElement(tag, props, children) as VDom
     },
   }
 }

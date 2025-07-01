@@ -7,7 +7,7 @@ import { ClickableTransparent } from './clickable'
 type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
 export const IconButton = (input: {
-  onClick?: (event: { currentTarget?: HTMLButtonElement | null }) => void
+  onClick?: (event: { currentTarget?: EventTarget | null }) => void
   label: TranslatedText
   renderIcon: (input: { class: string }) => VDom
   class?: string

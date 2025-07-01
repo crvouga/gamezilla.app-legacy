@@ -1,3 +1,4 @@
+import { AriaRole } from './aria-role'
 import { VDom } from './vdom'
 
 export type Tag =
@@ -16,15 +17,52 @@ export type Tag =
   | 'h4'
   | 'h5'
   | 'h6'
+  | 'g'
+  | 'line'
+  | 'circle'
+  | 'rect'
+  | 'path'
+  | 'polygon'
+  | 'polyline'
   | (string & {})
 
-export type Props = Record<string, unknown>
+export type StyleAttribute =
+  | string
+  | {
+      [key: string]: string | number | boolean | null | undefined
+    }
 
-export type ICreateElement = <TProps extends Props = Props>(
-  tag: Tag | ((props: TProps) => VDom),
-  props: Omit<TProps, 'children'> & { key?: unknown },
-  children?: VDom[],
-) => VDom
+export type IntrinsicAttributes = {
+  class?: string
+  style?: StyleAttribute
+  role?: AriaRole
+  'aria-label'?: string
+  'aria-selected'?: boolean
+  'aria-hidden'?: boolean
+  'aria-disabled'?: boolean
+  'aria-role'?: AriaRole
+  children?: VDom[]
+  key?: unknown
+  onClick?: (event: MouseEvent) => void
+  onMouseDown?: (event: MouseEvent) => void
+  onMouseUp?: (event: MouseEvent) => void
+  onMouseEnter?: (event: MouseEvent) => void
+  onMouseLeave?: (event: MouseEvent) => void
+  onMouseMove?: (event: MouseEvent) => void
+  onMouseOut?: (event: MouseEvent) => void
+  onMouseOver?: (event: MouseEvent) => void
+  [key: string]: unknown
+}
+
+export type ICreateElement = {
+  <TProps extends Record<string, unknown>>(
+    component: (props: TProps) => VDom,
+    props: Omit<TProps, 'children'> & { key?: string | number | boolean | null | undefined },
+    children?: VDom[],
+  ): VDom
+
+  (tag: Tag, props: IntrinsicAttributes, children?: VDom[]): VDom
+}
 
 export type RenderNode = Element | HTMLBodyElement | HTMLElement
 

@@ -1,5 +1,5 @@
-// @ts-nocheck
 import { createElement, Fragment } from 'react'
+import { createPortal } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { VDOM_FRAGMENT_KEY } from './fragment'
 import { VirtualDomEngine } from './interface'
@@ -14,20 +14,23 @@ export const initReact = (): VirtualDomEngine => {
       }
     },
     createPortal: (vDom, container) => {
-      render(vDom, container)
-      return createElement(Fragment, {})
+      return createPortal(vDom, container)
     },
-    createElement: (tag, props, children = []) => {
-      if (props?.style) {
-        props.style = kebabObjectToCamelObject(props?.style)
-      }
-      props = kebabObjectToCamelObject(props)
+    createElement: (tag: any, props: any, children: any) => {
+      try {
+        if (props?.style) {
+          props.style = kebabObjectToCamelObject(props?.style)
+        }
 
-      if (tag === VDOM_FRAGMENT_KEY) {
-        return createElement(Fragment, props, ...children)
-      }
+        if (tag === VDOM_FRAGMENT_KEY) {
+          return createElement(Fragment, props, children)
+        }
 
-      return createElement(tag, props, ...children)
+        return createElement(tag, props, children)
+      } catch (error) {
+        debugger
+        return null
+      }
     },
   }
 }

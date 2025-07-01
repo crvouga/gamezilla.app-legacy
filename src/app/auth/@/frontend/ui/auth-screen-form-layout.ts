@@ -6,7 +6,6 @@ import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { AuthScreenHeader } from './auth-screen-header'
 import { AuthScreenLayout } from './auth-screen-layout'
-import { Frag } from '~/@/ui/frag'
 
 export const AuthScreenFormLayout = (input: {
   ctx: {
@@ -35,17 +34,23 @@ export const AuthScreenFormLayout = (input: {
         title: input.title,
         onBack: input.onBack,
       }),
-      h('form', {
-        class: 'flex w-full flex-col gap-16 pt-4',
-        onSubmit: (e: Event) => {
-          e.preventDefault()
-          input.onSubmit()
+      h(
+        'form',
+        {
+          class: 'flex w-full flex-col gap-16 pt-4',
+          onSubmit: (e: Event) => {
+            e.preventDefault()
+            input.onSubmit()
+          },
         },
-        children: h(Frag, {}, [
-          h('div', {
-            class: 'flex w-full flex-col gap-6',
-            children: input.renderInputs(),
-          }),
+        [
+          h(
+            'div',
+            {
+              class: 'flex w-full flex-col gap-6',
+            },
+            [input.renderInputs()],
+          ),
           h(Button, {
             color: 'primary',
             size: 'lg',
@@ -56,8 +61,8 @@ export const AuthScreenFormLayout = (input: {
             loading: input.submitLoading,
             disabled: input.submitDisabled,
           }),
-        ]),
-      }),
+        ],
+      ),
     ],
   )
 }

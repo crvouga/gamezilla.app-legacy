@@ -6,12 +6,12 @@ import { PAPER_CLASS_NAME } from './paper'
 
 export type ClickableEvent = {
   stopPropagation: () => void
-  currentTarget: HTMLButtonElement
+  currentTarget: EventTarget | null
 }
 
 export type ClickableProps = {
   class?: string
-  children?: VDom
+  children?: VDom[]
   onClick?: (event: ClickableEvent) => void
   role?: AriaRole
   name?: string
@@ -51,9 +51,14 @@ export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
 }
 
 export const ClickableTransparent = (input: ClickableProps) => {
-  return h(Clickable, { ...input, class: cn('[@media(hover:hover)]:enabled:hover:bg-neutral-700/50', input.class) }, [
+  return h(
+    Clickable,
+    {
+      ...input,
+      class: cn('[@media(hover:hover)]:enabled:hover:bg-neutral-700/50', input.class),
+    },
     input.children,
-  ])
+  )
 }
 
 export const ClickablePaper = (input: ClickableProps) => {

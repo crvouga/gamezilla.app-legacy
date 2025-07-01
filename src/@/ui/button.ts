@@ -53,7 +53,7 @@ export const Button = (input: ButtonInput) => {
       role: 'button',
       onClick: (e) =>
         input.onClick?.({
-          currentTarget: e.currentTarget,
+          currentTarget: e.currentTarget as HTMLButtonElement,
           stopPropagation: () => e.stopPropagation(),
         }),
     },

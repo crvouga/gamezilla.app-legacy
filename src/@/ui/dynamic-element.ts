@@ -3,7 +3,7 @@ import { VDom } from '../vdom/vdom'
 import { h } from '~/@/vdom/h'
 
 type OnClickEvent = {
-  currentTarget?: HTMLFormElement | HTMLDivElement | HTMLButtonElement | null
+  currentTarget?: EventTarget | null
 }
 
 type OnSubmitEvent = {

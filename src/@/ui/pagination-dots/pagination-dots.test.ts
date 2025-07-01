@@ -29,7 +29,7 @@ describe('PaginationDots', () => {
   test('clicked dots', async () => {
     const f = await Fixture()
     const clickedIndex = Sub.queued<number>()
-    f.render(h(PaginationDots, { activeIndex: 0, count: 3, onClick: clickedIndex.pub }))
+    f.render(h(PaginationDots, { activeIndex: 0, count: 3, onClick: (index) => clickedIndex.pub(index) }))
     const [firstDot] = await f.client.query(toPaginationDotSelector(1))
     await firstDot!.do({ t: 'click' })
     expect(await Sub.take(clickedIndex)).toEqual(1)
