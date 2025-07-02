@@ -64,6 +64,12 @@ const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: 
               ctx: input.ctx,
             }),
 
+            h(SoundFrontend.ViewSoundListItem, {
+              ctx: input.ctx,
+              model: input.model.frontend.sound,
+              dispatch: (c) => input.dispatch({ t: 'frontend', c: { t: 'sound', c } }),
+            }),
+
             h(AuthFrontend.ViewLogoutListItem, {
               model: input.model.auth,
               dispatch: (c) => input.dispatch({ t: 'auth', c }),
@@ -74,12 +80,6 @@ const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: 
               ctx: input.ctx,
               dispatch: (c) => input.dispatch({ t: 'settings', c }),
               model: input.model.settings,
-            }),
-
-            h(SoundFrontend.ViewSoundListItem, {
-              ctx: input.ctx,
-              model: input.model.frontend.sound,
-              dispatch: (c) => input.dispatch({ t: 'frontend', c: { t: 'sound', c } }),
             }),
 
             h(SettingsFrontend.ViewSettingsListItem, {
