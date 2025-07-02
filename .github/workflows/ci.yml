@@ -78,6 +78,12 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Clean Docker state
+        run: |
+          echo "Cleaning any existing Docker containers and volumes..."
+          docker system prune -af --volumes || echo "No Docker resources to clean"
+          docker volume prune -f || echo "No volumes to prune"
+
       - name: Start infrastructure
         run: npm run infra:up:test
 
