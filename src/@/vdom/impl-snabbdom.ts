@@ -30,10 +30,10 @@ export const initSnabbdom = (): VirtualDomEngine => {
     },
     createElement: (tag: any, props: any, childrenUncleaned: any) => {
       try {
-        const children = cleanChildren(childrenUncleaned ?? [])
+        const children = cleanChildren(childrenUncleaned ?? props.children ?? [])
 
         if (tag === VDOM_FRAGMENT_KEY) {
-          const vDom: VDom = fragment(children.flat(Infinity))
+          const vDom: VDom = fragment(children)
           return vDom
         }
 

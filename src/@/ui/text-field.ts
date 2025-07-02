@@ -48,8 +48,7 @@ export const TextField = (input: {
           'auto-correct': 'off',
           'auto-save': 'off',
           step: input.step,
-          // Controlled inputs are bugging out in React and Inferno. The cursor jumps to the end of the input on every change.
-          // value={input.value}
+          value: input.value,
           defaultValue: input.value,
           onInput: (e: any) => {
             e.preventDefault()
