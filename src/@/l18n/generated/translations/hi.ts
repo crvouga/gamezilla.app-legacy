@@ -141,6 +141,7 @@ export const translations: Text = {
   'l18n.choose-language': 'भाषा चुनें',
   'l18n.done': 'किया',
   'l18n.loaded-translations': 'लोड की गई अनुवाद',
+  'l18n.default': 'डिफ़ॉल्ट',
   'l18n.renderer': 'Renderer',
   'l18n.settings': 'सेटिंग्स',
   'spaces.current-user-joined-space': 'स्थान जुड़ गया',

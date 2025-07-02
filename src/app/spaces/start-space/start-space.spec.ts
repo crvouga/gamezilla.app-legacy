@@ -16,7 +16,7 @@ describe('start space', () => {
     const [spaceSpaceFab] = await f.frontend.query(`[data-fab='true']`)
     await spaceSpaceFab!.do({ t: 'click' })
     const [screen] = await f.frontend.query(`[data-testid='spaces/space-screen']`)
-    expect(screen).toBeDefined()
+    expect(screen).toBeTruthy()
   })
 
   test('play sound', async (e) => {

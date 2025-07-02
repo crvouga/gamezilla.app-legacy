@@ -17,11 +17,13 @@ const main = async () => {
   registerServiceWorker({ logger: ctx.logger })
 
   await Program.run({
+    crash: (input) => console.error(input),
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
-    render: (input) => render(h(AppFrontend.View, { ...input, ctx })),
-    crash: (input) => console.error(input),
+    render: (input) => {
+      render(h(AppFrontend.View, { ...input, ctx }))
+    },
   })
 }
 

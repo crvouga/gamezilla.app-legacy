@@ -17,18 +17,18 @@ describe('exportJWK', () => {
 
     // Test exporting the public key
     const publicJwk = await exportJWK(keyPair.publicKey)
-    expect(publicJwk).toBeDefined()
+    expect(publicJwk).toBeTruthy()
     expect(publicJwk.kty).toEqual('RSA')
-    expect(publicJwk.n).toBeDefined() // RSA modulus
-    expect(publicJwk.e).toBeDefined() // RSA exponent
+    expect(publicJwk.n).toBeTruthy() // RSA modulus
+    expect(publicJwk.e).toBeTruthy() // RSA exponent
 
     // Test exporting the private key
     const privateJwk = await exportJWK(keyPair.privateKey)
-    expect(privateJwk).toBeDefined()
+    expect(privateJwk).toBeTruthy()
     expect(privateJwk.kty).toEqual('RSA')
-    expect(privateJwk.d).toBeDefined() // RSA private exponent
-    expect(privateJwk.p).toBeDefined() // RSA first prime factor
-    expect(privateJwk.q).toBeDefined() // RSA second prime factor
+    expect(privateJwk.d).toBeTruthy() // RSA private exponent
+    expect(privateJwk.p).toBeTruthy() // RSA first prime factor
+    expect(privateJwk.q).toBeTruthy() // RSA second prime factor
   })
 
   // test('should throw an error when trying to export a non-extractable key', async () => {
@@ -61,10 +61,10 @@ describe('exportJWK', () => {
 
     // Test exporting the public key
     const publicJwk = await exportJWK(keyPair.publicKey)
-    expect(publicJwk).toBeDefined()
+    expect(publicJwk).toBeTruthy()
     expect(publicJwk.kty).toEqual('EC')
     expect(publicJwk.crv).toEqual('P-256')
-    expect(publicJwk.x).toBeDefined() // EC x coordinate
-    expect(publicJwk.y).toBeDefined() // EC y coordinate
+    expect(publicJwk.x).toBeTruthy() // EC x coordinate
+    expect(publicJwk.y).toBeTruthy() // EC y coordinate
   })
 })

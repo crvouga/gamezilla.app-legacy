@@ -65,6 +65,6 @@ describe('SolutionHash', () => {
       ['E', ' ', ' ', 'E'],
     ])
     const hash = SolutionHash.init(model)
-    expect(hash).toBeDefined()
+    expect(hash).toBeTruthy()
   })
 })

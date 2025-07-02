@@ -139,6 +139,7 @@ export const translations: Text = {
   'l18n.choose-language': 'Sprache wählen',
   'l18n.done': 'Fertig',
   'l18n.loaded-translations': 'Übersetzungen geladen',
+  'l18n.default': 'Standard',
   'l18n.renderer': 'Renderer',
   'l18n.settings': 'Einstellungen',
   'spaces.current-user-joined-space': 'Raum beigetreten',

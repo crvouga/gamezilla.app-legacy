@@ -135,6 +135,7 @@ export const translations: Text = {
   'l18n.choose-language': '选择语言',
   'l18n.done': '完成',
   'l18n.loaded-translations': '已加载翻译',
+  'l18n.default': '默认',
   'l18n.renderer': 'Renderer',
   'l18n.settings': '设置',
   'spaces.current-user-joined-space': '加入空间',

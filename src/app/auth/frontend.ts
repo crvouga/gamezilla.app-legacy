@@ -24,6 +24,11 @@ import { LoginWithSMSFrontend } from './login-with-sms/frontend'
 import { LogoutFrontend } from './logout/frontend'
 import { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
 
+const dataTestId = {
+  loginScreen: 'auth/login-screen',
+  continueWithPhoneButton: 'auth/continue-with-phone-button',
+}
+
 //
 //
 //
@@ -202,7 +207,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
   return h(
     AuthScreenLayout,
     {
-      dataTestId: 'auth/login-screen',
+      dataTestId: dataTestId.loginScreen,
       ctx: input.ctx,
       center: true,
     },
@@ -213,7 +218,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
         h(Button, {
           onClick: () => input.dispatch({ t: 'clicked-login-with-phone' }),
           size: 'lg',
-          dataTestId: 'auth/continue-with-phone-button',
+          dataTestId: dataTestId.continueWithPhoneButton,
           class: 'w-full',
           renderIconStart: (iconInput) => h(IconMobilePhone, iconInput),
           text: input.ctx.t('auth.continue-with-phone'),
@@ -256,19 +261,19 @@ const ViewCurrentUserListItem = (input: {
     case 'loading': {
       return h(ListItemButton, {
         icon: (input) => h(IconUserCircle, input),
-        label: input.ctx.t('app.add'),
+        primary: input.ctx.t('app.add'),
       })
     }
     case 'logged-out': {
       return h(ListItemButton, {
         icon: (input) => h(IconUserCircle, input),
-        label: input.ctx.t('app.add'),
+        primary: input.ctx.t('app.add'),
       })
     }
     case 'logged-in': {
       return h(ListItemButton, {
         icon: (input) => h(Avatar, { src: UserProfile.toAvatarUrl(currentUser.userProfile), ...input }),
-        label: TranslatedText.of(`${input.ctx.t('auth.logged-in-as')} ${currentUser.userProfile.username}`),
+        primary: TranslatedText.of(`${input.ctx.t('auth.logged-in-as')} ${currentUser.userProfile.username}`),
       })
     }
   }
@@ -303,7 +308,7 @@ const ViewLogoutListItem = (input: {
       return h(ListItemButton, {
         onClick: () => input.dispatch({ t: 'clicked-logout-list-item' }),
         icon: (input) => h(IconPowerOff, input),
-        label: input.ctx.t('auth.logout'),
+        primary: input.ctx.t('auth.logout'),
         end: () =>
           h(Typography, {
             variant: 'caption',
@@ -324,4 +329,5 @@ export const AuthFrontend = {
   ViewCurrentUserListItem,
   ViewLogoutIcon,
   initCtx,
+  dataTestId,
 }

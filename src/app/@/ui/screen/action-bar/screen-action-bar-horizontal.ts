@@ -90,7 +90,7 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
       const listItemButton = h(ListItemButton, {
         key: action.id,
         icon: action.icon,
-        label: action.label,
+        primary: action.label,
         onClick: action.onClick,
         color: action.color,
       })

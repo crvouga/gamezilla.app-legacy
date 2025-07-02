@@ -9,21 +9,21 @@ export const initPlaywright = async (): Promise<{
 
   const expect: Expect = (value) => {
     return {
-      toBeDefined() {
-        playwright.expect(value).toBeDefined()
+      toBeTruthy() {
+        playwright.expect(value).toBeTruthy()
       },
-      toBeUndefined() {
-        playwright.expect(value).toBeUndefined()
+      toBeFalsy() {
+        playwright.expect(value).toBeFalsy()
       },
       toEqual(expected) {
         playwright.expect(value).toBe(expected)
       },
       not: {
-        toBeDefined() {
-          playwright.expect(value).not.toBeDefined()
+        toBeTruthy() {
+          playwright.expect(value).not.toBeTruthy()
         },
-        toBeUndefined() {
-          playwright.expect(value).not.toBeUndefined()
+        toBeFalsy() {
+          playwright.expect(value).not.toBeFalsy()
         },
         toEqual(expected) {
           playwright.expect(value).not.toBe(expected)

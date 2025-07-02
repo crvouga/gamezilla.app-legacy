@@ -192,6 +192,6 @@ describe('Numberlink', () => {
       },
     }
     const hash = Numberlink.deriveTerminalHash(terminals)
-    expect(hash).toBeDefined()
+    expect(hash).toBeTruthy()
   })
 })

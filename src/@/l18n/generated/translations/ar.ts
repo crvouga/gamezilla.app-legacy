@@ -140,6 +140,7 @@ export const translations: Text = {
   'l18n.choose-language': 'اختر اللغة',
   'l18n.done': 'تم',
   'l18n.loaded-translations': 'تم تحميل الترجمات',
+  'l18n.default': 'افتراضي',
   'l18n.renderer': 'المعرض',
   'l18n.settings': 'الإعدادات',
   'spaces.current-user-joined-space': 'انضمت إلى المساحة',

@@ -9,21 +9,21 @@ export const initVitest = async (): Promise<{
 
   const expect: Expect = (value) => {
     return {
-      toBeDefined() {
-        vitest.expect(value).toBeDefined()
+      toBeTruthy() {
+        vitest.expect(value).toBeTruthy()
       },
-      toBeUndefined() {
-        vitest.expect(value).toBeUndefined()
+      toBeFalsy() {
+        vitest.expect(value).toBeFalsy()
       },
       toEqual(expected) {
         vitest.expect(value).toEqual(expected)
       },
       not: {
-        toBeDefined() {
-          vitest.expect(value).not.toBeDefined()
+        toBeTruthy() {
+          vitest.expect(value).not.toBeTruthy()
         },
-        toBeUndefined() {
-          vitest.expect(value).not.toBeUndefined()
+        toBeFalsy() {
+          vitest.expect(value).not.toBeFalsy()
         },
         toEqual(expected) {
           vitest.expect(value).not.toEqual(expected)

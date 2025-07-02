@@ -6,9 +6,9 @@ describe('generateKeyPair', () => {
     const keyPair = await generateKeyPair('RSA', { extractable: true })
 
     // Verify the key pair was generated
-    expect(keyPair).toBeDefined()
-    expect(keyPair.publicKey).toBeDefined()
-    expect(keyPair.privateKey).toBeDefined()
+    expect(keyPair).toBeTruthy()
+    expect(keyPair.publicKey).toBeTruthy()
+    expect(keyPair.privateKey).toBeTruthy()
 
     // Verify key properties
     expect(keyPair.publicKey.type).toEqual('public')
@@ -27,9 +27,9 @@ describe('generateKeyPair', () => {
     const keyPair = await generateKeyPair('RSA', { extractable: false })
 
     // Verify the key pair was generated
-    expect(keyPair).toBeDefined()
-    expect(keyPair.publicKey).toBeDefined()
-    expect(keyPair.privateKey).toBeDefined()
+    expect(keyPair).toBeTruthy()
+    expect(keyPair.publicKey).toBeTruthy()
+    expect(keyPair.privateKey).toBeTruthy()
 
     // Verify extractable property
     expect(keyPair.publicKey.extractable).toEqual(false)
@@ -40,9 +40,9 @@ describe('generateKeyPair', () => {
     const keyPair = await generateKeyPair('ECDSA', { extractable: true })
 
     // Verify the key pair was generated
-    expect(keyPair).toBeDefined()
-    expect(keyPair.publicKey).toBeDefined()
-    expect(keyPair.privateKey).toBeDefined()
+    expect(keyPair).toBeTruthy()
+    expect(keyPair.publicKey).toBeTruthy()
+    expect(keyPair.privateKey).toBeTruthy()
 
     // Verify key properties
     expect(keyPair.publicKey.type).toEqual('public')

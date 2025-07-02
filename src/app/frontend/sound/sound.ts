@@ -157,7 +157,7 @@ export const ViewSoundListItem = (input: {
         t: 'toggle-mute',
       }),
     icon: (inputIcon) => (input.model.muted ? h(IconVolumeXMark, inputIcon) : h(IconVolumeHigh, inputIcon)),
-    label: input.model.muted ? input.ctx.t('sound.sound-off') : input.ctx.t('sound.sound-on'),
+    primary: input.model.muted ? input.ctx.t('sound.sound-off') : input.ctx.t('sound.sound-on'),
     end: () => h(ToggleButton, { label: 'toggle sound', checked: !input.model.muted, id: 'toggle-sound' }),
   })
 }

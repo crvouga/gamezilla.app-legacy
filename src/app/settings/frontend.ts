@@ -1,19 +1,21 @@
 import { LocalStorage } from '~/@/browser'
+import { pushQueryParam } from '~/@/browser/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
-import { IconCheckmarkCircle, IconChevronRight, IconGear, IconLanguage } from '~/@/ui/icon'
+import { IconCheckmarkCircle, IconChevronRight, IconCode, IconGear, IconLanguage } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Spinner } from '~/@/ui/spinner'
 import { h } from '~/@/vdom/h'
 import { VDomImpl } from '~/@/vdom/vdom-impl'
-import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { CONFIG_FRONTEND } from '~/config/frontend'
 import { APP_SOUND } from '../@/frontend/app-sound'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
+import { ReplaceScreenCmd } from '../@/frontend/replace-screen-cmd.$msg'
 import { translatorSubscriptions } from '../@/frontend/translator'
 import type { FrontendModule, ModelFrontend, MsgFrontend, TranslationLoading } from './types'
 
@@ -24,6 +26,7 @@ const dataTestId = {
   chooseLangScreen: 'settings/choose-lang-screen',
   openChooseRendererScreen: 'settings/open-choose-renderer-screen',
   chooseRendererScreen: 'settings/choose-renderer-screen',
+  chooseRendererListItem: (vDomImpl: VDomImpl) => `settings/choose-renderer-list-item-${vDomImpl}`,
 }
 
 //
@@ -108,14 +111,14 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
     case 'choose-renderer.clicked-back-button': {
       return {
         model,
-        msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin), BackScreenCmd.init()],
+        msgOut: [ReplaceScreenCmd.init({ t: 'main', n: 'settings' }, true)],
       }
     }
 
     case 'choose-lang.clicked-back-button': {
       return {
         model,
-        msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin), BackScreenCmd.init()],
+        msgOut: [ReplaceScreenCmd.init({ t: 'main', n: 'settings' }, true)],
       }
     }
 
@@ -141,6 +144,24 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
       return {
         model,
         msgOut: [PushScreenCmd.init({ t: 'main', n: 'settings' }, true), CloseStatusBarCmd.init()],
+      }
+    }
+
+    case 'clicked-back-button': {
+      return {
+        model,
+        msgOut: [ReplaceScreenCmd.init({ t: 'login', n: 'auth' }, true)],
+      }
+    }
+
+    case 'choose-renderer.clicked-renderer': {
+      return {
+        model: {
+          ...model,
+          vDomImpl: msg.vDomImpl,
+        },
+        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
+        eff: pushQueryParam('vdom', msg.vDomImpl),
       }
     }
 
@@ -175,7 +196,7 @@ const subscriptions: FrontendModule['subscriptions'] = (_input) => {
 const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
   return h(ListItemButton, {
     icon: (input) => h(IconLanguage, input),
-    label: ctx.t('l18n.language'),
+    primary: ctx.t('l18n.language'),
     end: () => ctx.t(model.lang),
     onClick: () => {
       dispatch({
@@ -188,7 +209,7 @@ const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
 const ViewSettingsListItem: FrontendModule['View'] = (input) => {
   return h(ListItemButton, {
     icon: (props) => h(IconGear, props),
-    label: input.ctx.t('l18n.settings'),
+    primary: input.ctx.t('l18n.settings'),
     dataTestId: dataTestId.openSettingsScreen,
     end: () => h(IconChevronRight, { class: 'size-6' }),
     onClick: () => input.dispatch({ t: 'clicked-open-settings' }),
@@ -227,21 +248,21 @@ const ViewMain: FrontendModule['View'] = (input) => {
     parentScreen: input.ctx.parentScreen,
     navBar: {
       title: input.ctx.t('l18n.settings'),
-      back: { onClick: () => input.dispatch({ t: 'choose-lang.clicked-back-button' }) },
+      back: { onClick: () => input.dispatch({ t: 'clicked-back-button' }) },
     },
     renderBody: () =>
       h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
         h(ListItemButton, {
-          label: input.ctx.t('l18n.language'),
+          primary: input.ctx.t('l18n.language'),
           end: () => h('div', {}, [input.ctx.t(input.model.lang)]),
           onClick: () => input.dispatch({ t: 'clicked-change-lang' }),
           icon: (inputIcon) => h(IconLanguage, inputIcon),
         }),
         h(ListItemButton, {
-          label: input.ctx.t('l18n.renderer'),
+          primary: input.ctx.t('l18n.renderer'),
           end: () => h('div', {}, [VDomImpl.toName(input.model.vDomImpl)]),
           onClick: () => input.dispatch({ t: 'clicked-change-renderer' }),
-          icon: (inputIcon) => h(IconLanguage, inputIcon),
+          icon: (inputIcon) => h(IconCode, inputIcon),
           dataTestId: SettingsFrontend.dataTestId.openChooseRendererScreen,
         }),
         h(Gutter, { variant: 'screen' }),
@@ -261,7 +282,22 @@ const ViewChooseRenderer: FrontendModule['View'] = (input) => {
         onClick: () => input.dispatch({ t: 'choose-renderer.clicked-back-button' }),
       },
     },
-    renderBody: () => h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [h(Gutter, { variant: 'screen' })]),
+    renderBody: () =>
+      h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
+        ...VDomImpl.ALL.map((vDomImpl) => {
+          const isSelected = vDomImpl === input.model.vDomImpl
+          const isDefault = vDomImpl === CONFIG_FRONTEND.VDOM_IMPL_DEFAULT
+          return h(ListItemButton, {
+            key: vDomImpl,
+            primary: VDomImpl.toName(vDomImpl),
+            secondary: isDefault ? input.ctx.t('l18n.default') : undefined,
+            dataTestId: dataTestId.chooseRendererListItem(vDomImpl),
+            onClick: () => input.dispatch({ t: 'choose-renderer.clicked-renderer', vDomImpl }),
+            end: () => (isSelected ? h(IconCheckmarkCircle, { class: 'size-7' }) : null),
+          })
+        }),
+        h(Gutter, { variant: 'screen' }),
+      ]),
   })
 }
 
@@ -299,7 +335,7 @@ const ViewChooseLangListItem = (input: {
 }) => {
   return h(ListItemButton, {
     key: input.langCode,
-    label: input.ctx.t(input.langCode),
+    primary: input.ctx.t(input.langCode),
     end: () => h('div', {}, [input.ctx.t(input.langCode)]),
     onClick: () => input.dispatch({ t: 'choose-lang.clicked-lang', lang: input.langCode }),
     icon: (inputIcon) => {

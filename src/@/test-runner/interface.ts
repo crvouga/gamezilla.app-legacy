@@ -3,12 +3,12 @@ import { TestRunnerEnv } from './test-runner-env'
 type MaybePromise<T> = T | Promise<T>
 
 export type Expected<T> = {
-  toBeDefined: () => void
-  toBeUndefined: () => void
+  toBeTruthy: () => void
+  toBeFalsy: () => void
   toEqual: (value: T) => void
   not: {
-    toBeDefined: () => void
-    toBeUndefined: () => void
+    toBeTruthy: () => void
+    toBeFalsy: () => void
     toEqual: (value: T) => void
   }
 }

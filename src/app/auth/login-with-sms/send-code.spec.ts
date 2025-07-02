@@ -11,41 +11,41 @@ describe('send code', () => {
     const [countryCodeSelect] = await f.frontend.query(
       `[data-testid='auth/country-code-select'] option[data-selected='true']`,
     )
-    expect(countryCodeSelect).toBeDefined()
+    expect(countryCodeSelect).toBeTruthy()
     const countryCode = await countryCodeSelect?.text()
-    expect(countryCode).toBeDefined()
+    expect(countryCode).toBeTruthy()
     expect(countryCode).toEqual(Iso3166Alpha2Code.toNameWithEmoji('US'))
   })
 
   test('send code screen back button', async (e) => {
     await using f = await Fixture(e)
     const sendCodeScreen = await f.frontend.byDataTestId('auth/send-code-screen')
-    expect(sendCodeScreen).toBeDefined()
+    expect(sendCodeScreen).toBeTruthy()
     const backButton = await f.frontend.byDataTestId(ScreenTestIds.backButton)
     await backButton!.do({ t: 'click' })
     const loginScreen = await f.frontend.byDataTestId('auth/login-screen')
-    expect(loginScreen).toBeDefined()
+    expect(loginScreen).toBeTruthy()
   })
 
   test('go to verify code screen', async (e) => {
     await using f = await Fixture(e)
     await f.sendCode()
     const [screen] = await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
-    expect(screen).toBeDefined()
+    expect(screen).toBeTruthy()
   })
 
   test('show alert on sending code', async (e) => {
     await using f = await Fixture(e)
     await f.sendCode()
     const [alert] = await f.frontend.query(`[role='alert'][data-info='true']`)
-    expect(alert).toBeDefined()
+    expect(alert).toBeTruthy()
   })
 
   test('should error alert when phone number is invalid', async (e) => {
     await using f = await Fixture(e)
     await f.sendCode({ phoneNumber: '123' })
     const [alert] = await f.frontend.query(`[role='alert'][data-error='true']`)
-    expect(alert).toBeDefined()
+    expect(alert).toBeTruthy()
   })
 
   test('play sound on sending code', async (e) => {

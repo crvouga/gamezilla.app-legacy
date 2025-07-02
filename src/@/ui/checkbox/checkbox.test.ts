@@ -55,7 +55,7 @@ describe('Checkbox', () => {
     const onChange = Sub.queued<boolean>()
     f.render(h(Checkbox, { state: 'unchecked', onChange: onChange.pub }))
     const [checkbox] = await f.client.query('[role="checkbox"]')
-    expect(checkbox).toBeDefined()
+    expect(checkbox).toBeTruthy()
     await checkbox!.do({ t: 'click' })
     expect(await Sub.take(onChange)).toEqual(true)
   })
@@ -74,7 +74,7 @@ describe('Checkbox', () => {
     f.render(h(Checkbox, { state: 'unchecked', onChange: () => {} }))
     await new Promise((resolve) => setTimeout(resolve, 10))
     const [button] = await f.client.query('button')
-    expect(button).toBeDefined()
+    expect(button).toBeTruthy()
   })
 
   test('should render as checkbox when no onChange provided', async () => {
@@ -82,9 +82,9 @@ describe('Checkbox', () => {
     f.render(h(Checkbox, { state: 'unchecked' }))
     await new Promise((resolve) => setTimeout(resolve, 10))
     const [checkbox] = await f.client.query('[role="checkbox"]')
-    expect(checkbox).toBeDefined()
+    expect(checkbox).toBeTruthy()
     const [button] = await f.client.query('button')
-    expect(button).toBeUndefined()
+    expect(button).toBeFalsy()
   })
 
   describe('pressing enter', () => {

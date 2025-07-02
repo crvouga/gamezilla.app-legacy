@@ -17,14 +17,14 @@ describe('login as guest', () => {
     await using f = await Fixture(e)
     await f.continueAsGuest()
     const [screen] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
-    expect(screen).toBeDefined()
+    expect(screen).toBeTruthy()
   })
 
   test('should show alert on login as guest', async (e) => {
     await using f = await Fixture(e)
     await f.continueAsGuest()
     const [alert] = await f.frontend.query(`[role='alert'][data-info='true']`)
-    expect(alert).toBeDefined()
+    expect(alert).toBeTruthy()
   })
 
   test('sound', async (e) => {

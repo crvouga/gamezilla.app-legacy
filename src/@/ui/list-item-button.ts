@@ -1,15 +1,17 @@
 import { TranslatedText } from '~/@/l18n'
-import type { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/h'
+import type { VDom } from '~/@/vdom/vdom'
 import { ClickableTransparent } from './clickable'
 import { cn } from './cn'
 import { preventConsoleErrorWhenClosingDrawer } from './surface-drawer/drawer-shared'
+import { Typography } from './typography'
 
 type Input = {
   class?: string
-  icon: (input: { class: string }) => VDom
+  icon?: (input: { class: string }) => VDom
   end?: () => VDom
-  label: TranslatedText
+  primary: TranslatedText
+  secondary?: TranslatedText
   onClick?: () => void
   color?: Color
   dataTestId?: string
@@ -23,21 +25,23 @@ export const ListItemButton = (input: Input) => {
       return h(
         ClickableTransparent,
         {
+          key: input.key,
           role: 'button',
           onClick: (event) => {
             preventConsoleErrorWhenClosingDrawer(event)
             input.onClick?.()
           },
-          'aria-label': input.label,
+          'aria-label': input.primary,
           dataTestId: input.dataTestId,
-          name: input.label,
+          name: input.primary,
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
         },
         [
-          h('div', { class: 'flex flex-1 items-center gap-3 truncate' }, [
-            input.icon({ class: 'size-6' }),
-            input.label,
-          ]),
+          h(ListItemContent, {
+            primary: input.primary,
+            icon: input.icon,
+            secondary: input.secondary,
+          }),
           input.end && h('div', { class: 'shrink-0' }, [input.end()]),
         ],
       )
@@ -46,19 +50,21 @@ export const ListItemButton = (input: Input) => {
       return h(
         'div',
         {
+          key: input.key,
           onClick: (event: unknown) => {
             preventConsoleErrorWhenClosingDrawer(event)
             input.onClick?.()
           },
-          'aria-label': input.label,
+          'aria-label': input.primary,
           'data-testid': input.dataTestId,
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
         },
         [
-          h('div', { class: 'flex flex-1 items-center gap-3 truncate' }, [
-            input.icon({ class: 'size-6' }),
-            input.label,
-          ]),
+          h(ListItemContent, {
+            primary: input.primary,
+            icon: input.icon,
+            secondary: input.secondary,
+          }),
           input.end && h('div', { class: 'shrink-0' }, [input.end()]),
         ],
       )
@@ -66,7 +72,26 @@ export const ListItemButton = (input: Input) => {
   }
 }
 
-const BASE_CLASS = 'flex w-full shrink-0 items-center truncate p-4 text-lg font-bold'
+const ListItemContent = (input: {
+  primary: TranslatedText
+  icon?: (input: { class: string }) => VDom
+  end?: () => VDom
+  secondary?: TranslatedText
+}) => {
+  return h('div', { class: 'flex flex-1 items-center gap-3 truncate' }, [
+    input.icon?.({ class: 'size-6' }),
+    h('div', { class: 'flex flex-col gap-1 text-left' }, [
+      h(Typography, {
+        variant: 'body',
+        class: 'font-bold text-xl',
+        text: input.primary,
+      }),
+      input.secondary && h(Typography, { class: 'text-left text-xs', color: 'text-secondary', text: input.secondary }),
+    ]),
+  ])
+}
+
+const BASE_CLASS = 'flex w-full shrink-0 items-center truncate h-16 px-4 text-lg font-bold'
 
 type Color = 'default' | 'danger' | 'warning' | 'success' | 'inherit' | 'selected'
 

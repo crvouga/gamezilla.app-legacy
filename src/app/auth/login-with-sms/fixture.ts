@@ -16,7 +16,7 @@ export const Fixture = async (e: TestRunnerEnv) => {
   const [button] = await f.frontend.query(`[data-testid='auth/continue-with-phone-button']`)
   await button!.do({ t: 'click' })
   const [screen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
-  expect(screen).toBeDefined()
+  expect(screen).toBeTruthy()
 
   const sendCode = async (config?: { phoneNumber?: string }) => {
     await f.frontend.query(`[data-testid='auth/send-code-screen']`)

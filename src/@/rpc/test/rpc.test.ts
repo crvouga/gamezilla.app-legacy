@@ -118,7 +118,7 @@ describe('RPC', () => {
       const result = await f.client
         // @ts-expect-error Testing runtime behavior with invalid endpoint
         .nonExistent?.({ data: 'test' })
-      expect(result).toBeUndefined()
+      expect(result).toBeFalsy()
     }
   })
 

@@ -21,9 +21,11 @@ export type MsgFrontend =
   | { t: 'clicked-change-lang' }
   | { t: 'clicked-change-renderer' }
   | { t: 'clicked-open-settings' }
+  | { t: 'clicked-back-button' }
   | { t: 'choose-lang.clicked-back-button' }
   | { t: 'choose-lang.clicked-lang'; lang: LanguageCodeISO_639_1 }
   | { t: 'choose-renderer.clicked-back-button' }
+  | { t: 'choose-renderer.clicked-renderer'; vDomImpl: VDomImpl }
 
 export type FrontendModule = AppFrontendModule<{
   Ctx: AnonymousFrontendCtx

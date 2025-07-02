@@ -5,8 +5,8 @@ describe('keysGenerate', () => {
   test('should generate valid key pairs', async () => {
     const result = await keysGenerate()
     // Check that both keys are present
-    expect(result.privateBase64).toBeDefined()
-    expect(result.publicBase64).toBeDefined()
+    expect(result.privateBase64).toBeTruthy()
+    expect(result.publicBase64).toBeTruthy()
     // Check that keys are valid base64 strings
     // expect(() => Buffer.from(result.privateBase64, 'base64')).not.toThrow()
     // expect(() => Buffer.from(result.publicBase64, 'base64')).not.toThrow()

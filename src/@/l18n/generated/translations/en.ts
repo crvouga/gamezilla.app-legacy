@@ -137,6 +137,7 @@ export const translations: Text = {
   'l18n.choose-language': 'Choose Language',
   'l18n.done': 'Done',
   'l18n.loaded-translations': 'Loaded translations',
+  'l18n.default': 'Default',
   'l18n.renderer': 'Renderer',
   'l18n.settings': 'Settings',
   'spaces.current-user-joined-space': 'Joined space',

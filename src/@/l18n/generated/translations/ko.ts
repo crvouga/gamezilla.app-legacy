@@ -136,6 +136,7 @@ export const translations: Text = {
   'l18n.choose-language': '언어 선택',
   'l18n.done': '완료',
   'l18n.loaded-translations': '번역이 로드되었습니다',
+  'l18n.default': '기본값',
   'l18n.renderer': 'Renderer',
   'l18n.settings': '설정',
   'spaces.current-user-joined-space': '공간에 참여함',

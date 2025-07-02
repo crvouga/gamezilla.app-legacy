@@ -13,7 +13,7 @@ describe('importJWK', () => {
 
     const cryptoKey = await importJWK(publicJwk)
 
-    expect(cryptoKey).toBeDefined()
+    expect(cryptoKey).toBeTruthy()
     expect(cryptoKey instanceof CryptoKey).toEqual(true)
     expect(cryptoKey.type).toEqual('public')
     expect(cryptoKey.algorithm.name).toEqual('RSASSA-PKCS1-v1_5')
@@ -38,7 +38,7 @@ describe('importJWK', () => {
 
     const cryptoKey = await importJWK(privateJwk)
 
-    expect(cryptoKey).toBeDefined()
+    expect(cryptoKey).toBeTruthy()
     expect(cryptoKey instanceof CryptoKey).toEqual(true)
     expect(cryptoKey.type).toEqual('private')
     expect(cryptoKey.algorithm.name).toEqual('RSASSA-PKCS1-v1_5')
@@ -58,7 +58,7 @@ describe('importJWK', () => {
 
     const cryptoKey = await importJWK(publicJwk)
 
-    expect(cryptoKey).toBeDefined()
+    expect(cryptoKey).toBeTruthy()
     expect(cryptoKey instanceof CryptoKey).toEqual(true)
     expect(cryptoKey.type).toEqual('public')
     expect(cryptoKey.algorithm.name).toEqual('ECDSA')

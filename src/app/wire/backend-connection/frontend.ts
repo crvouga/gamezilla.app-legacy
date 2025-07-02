@@ -91,7 +91,7 @@ const ViewListItemInner: typeof ViewListItem = (input) => {
       return h(ListItemButton, {
         icon: (inputIcon) => h(Dot, { class: inputIcon.class, colorClassName: 'bg-green-500' }),
         class: 'text-green-500',
-        label: input.ctx.t('wire.online'),
+        primary: input.ctx.t('wire.online'),
         end: () => h(Typography, { text: TimeSpan.format(status.latestPing) }),
       })
     }
@@ -100,7 +100,7 @@ const ViewListItemInner: typeof ViewListItem = (input) => {
       return h(ListItemButton, {
         icon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-orange-500' }),
         color: 'warning',
-        label: input.ctx.t('wire.connecting...'),
+        primary: input.ctx.t('wire.connecting...'),
       })
     }
 
@@ -108,7 +108,7 @@ const ViewListItemInner: typeof ViewListItem = (input) => {
       return h(ListItemButton, {
         icon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-red-500' }),
         color: 'danger',
-        label: input.ctx.t('wire.offline'),
+        primary: input.ctx.t('wire.offline'),
         end: () =>
           h(
             Clickable,
