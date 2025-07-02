@@ -14,7 +14,8 @@ export const initReact = (): VirtualDomEngine => {
       }
     },
     createPortal: (vDom, container) => {
-      return createPortal(vDom as any, container) as any
+      const portal = createPortal(vDom as any, container)
+      return portal
     },
     createElement: (tag: any, props: any, children: any) => {
       if (props?.style) {
@@ -26,7 +27,7 @@ export const initReact = (): VirtualDomEngine => {
         delete props.class
       }
 
-      children = Array.isArray(children) ? children : [children]
+      children = Array.isArray(children) ? children : children ? [children] : []
 
       if (tag === VDOM_FRAGMENT_KEY) {
         return createElement(Fragment, props, ...children) as any

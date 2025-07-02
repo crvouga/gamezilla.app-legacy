@@ -16,5 +16,12 @@ export const vdomEngineInitialized = new Promise<void>(async (resolve) => {
   Render = (node) => vdomEngine.render(node)
   createPortal = vdomEngine.createPortal
   h = vdomEngine.createElement
+  console.log({
+    createPortal,
+    h,
+    Render,
+    vdomEngine,
+    vdomImpl,
+  })
   resolve()
 })

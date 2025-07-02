@@ -1,6 +1,6 @@
 import { cn } from '~/@/ui/cn'
-import { Gutter } from '~/@/ui/gutter'
 import { h } from '~/@/vdom/h'
+import { Gutter } from '../gutter'
 import { Portal } from '../portal'
 import { Surface } from '../surface'
 import { DRAWER_PORTAL_ID } from './drawer-portal-exit'
@@ -43,7 +43,7 @@ export const DrawerComponent = (props: DrawerInput) => {
           },
           [
             props.position === 'top' && h(Gutter, { variant: 'drawer' }),
-            ...(props?.children ?? []),
+            props.children,
             props.position === 'bottom' && h(Gutter, { variant: 'drawer' }),
           ],
         ),

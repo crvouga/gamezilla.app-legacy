@@ -6,7 +6,7 @@ import { DrawerComponent } from './drawer-component'
 import type { PrivateDrawerInput } from './drawer-shared'
 
 export type DrawerInput = PrivateDrawerInput & {
-  children?: VDom
+  children: VDom[]
   ariaLabel: TranslatedText
   ctx: {
     t: Translator

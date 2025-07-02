@@ -26,7 +26,6 @@ export const initSnabbdom = (): VirtualDomEngine => {
       }
     },
     createPortal: (vDom, _container) => {
-      // patch(container, vDom as VNode)
       return vDom
     },
     createElement: (tag: any, props: any, childrenUncleaned: any) => {
