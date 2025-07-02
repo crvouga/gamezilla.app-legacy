@@ -67,7 +67,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run unit tests
-        run: pnpm run test
+        run: pnpm test
 
   integration-and-e2e:
     name: Integration and E2E Tests
@@ -103,19 +103,19 @@ jobs:
           docker volume prune -f || echo "No volumes to prune"
 
       - name: Start infrastructure
-        run: pnpm run infra:up:test
+        run: pnpm infra:up:test
 
       - name: Run database migrations
-        run: pnpm run db:up
+        run: pnpm db:up
 
       - name: Run integration tests
-        run: pnpm run test:int
+        run: pnpm test:int
 
       - name: Setup E2E tests
-        run: pnpm run test:e2e:setup
+        run: pnpm test:e2e:setup
 
       - name: Run E2E tests
-        run: pnpm run test:e2e
+        run: pnpm test:e2e
 
   deploy:
     name: Deploy
@@ -139,7 +139,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Run database migrations
-        run: pnpm run db:up
+        run: pnpm db:up
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 

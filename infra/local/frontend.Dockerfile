@@ -14,7 +14,7 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm run frontend:build
+RUN pnpm frontend:build
 
 FROM nginx:alpine
 
