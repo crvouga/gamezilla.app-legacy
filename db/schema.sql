@@ -267,6 +267,8 @@ CREATE TABLE public.user_session (
     client_session_id text NOT NULL
 );
 
+ALTER TABLE ONLY public.user_session REPLICA IDENTITY FULL;
+
 
 --
 -- Name: auth_sms_verification_attempt auth_sms_verification_attempt_pkey; Type: CONSTRAINT; Schema: public; Owner: -
@@ -417,7 +419,7 @@ ALTER TABLE ONLY public.user_profile
 --
 
 ALTER TABLE ONLY public.user_session
-    ADD CONSTRAINT user_session_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT user_session_pkey PRIMARY KEY (client_session_id);
 
 
 --
