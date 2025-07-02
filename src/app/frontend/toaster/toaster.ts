@@ -131,24 +131,19 @@ export const subscriptions: Module['subscriptions'] = ({ model }) => {
 }
 
 export const View: Module['View'] = (input) => {
-  return h(
-    Transition,
-    {
-      mode: 'out-in',
-      id: 'toast-root',
-      onEnter,
-      onExit,
-    },
-    [
+  return h('div', {}, [
+    h('div', { class: 'flex-1' }, [String(`toast${input.model.toast?.toastId}`)]),
+
+    h(Transition, { mode: 'out-in', id: 'toast-root', onEnter, onExit }, [
       input.model.toast &&
         h(Toast, {
-          key: String(input.model.toast.toastId),
+          key: `toast${input.model.toast.toastId}`,
           ctx: input.ctx,
           toast: input.model.toast,
           dispatch: input.dispatch,
         }),
-    ],
-  )
+    ]),
+  ])
 }
 
 const onEnter = async (node: HTMLElement) => {
@@ -167,7 +162,7 @@ const onExit = async (node: HTMLElement) => {
   }).finished
 }
 
-const Toast = (input: { key?: string; ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) => {
+const Toast = (input: { key: string; ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) => {
   const errorMsg = input.toast.errorMsg
   return h(
     'div',
@@ -187,52 +182,42 @@ const Toast = (input: { key?: string; ctx: Ctx; toast: Toast; dispatch: (m: Msg)
       onContextMenu: (e: any) => e.preventDefault(),
     },
     [
-      h(
-        'div',
-        {
-          class: cn('w-full bg-black', toWidthClass(input)),
-        },
-        [
-          h(
-            'div',
-            {
-              class: cn(
-                'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
-                input.toast.variant === 'info' && PAPER_CLASS_NAME,
-                input.toast.variant === 'success' && PAPER_CLASS_NAME,
-                input.toast.variant === 'error' && 'border-red-400 bg-red-500',
-              ),
-              key: input.toast.toastId,
-            },
-            [
-              input.toast.text,
-              errorMsg &&
-                h(
-                  'button',
-                  {
-                    type: 'button',
-                    class: 'font-bold',
-                    onClick: () =>
-                      input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
-                  },
-                  ['See Error'],
-                ),
+      h('div', { class: cn('w-full bg-black', toWidthClass(input)) }, [
+        h(
+          'div',
+          {
+            class: cn(
+              'pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden rounded-lg border p-3 text-lg text-white shadow-2xl',
+              input.toast.variant === 'info' && PAPER_CLASS_NAME,
+              input.toast.variant === 'success' && PAPER_CLASS_NAME,
+              input.toast.variant === 'error' && 'border-red-400 bg-red-500',
+            ),
+          },
+          [
+            input.toast.text,
+            errorMsg &&
               h(
                 'button',
                 {
                   type: 'button',
+                  class: 'font-bold',
                   onClick: () =>
-                    input.dispatch({
-                      t: 'clicked-dismiss-button',
-                      toastId: input.toast.toastId,
-                    }),
+                    input.dispatch({ t: 'clicked-see-error', errorMsg: errorMsg, toastId: input.toast.toastId }),
                 },
-                [h(IconXMark, { class: 'h-5 w-5' })],
+                ['See Error'],
               ),
-            ],
-          ),
-        ],
-      ),
+            h(
+              'button',
+              {
+                type: 'button',
+                'aria-label': input.ctx.t('app.close'),
+                onClick: () => input.dispatch({ t: 'clicked-dismiss-button', toastId: input.toast.toastId }),
+              },
+              [h(IconXMark, { class: 'h-5 w-5' })],
+            ),
+          ],
+        ),
+      ]),
     ],
   )
 }

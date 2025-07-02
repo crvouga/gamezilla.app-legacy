@@ -42,7 +42,6 @@ export type IntrinsicAttributes = {
   'aria-disabled'?: 'true' | 'false'
   'aria-role'?: AriaRole
   children?: VDom[]
-  key?: unknown
   onClick?: (event: MouseEvent) => void
   onMouseDown?: (event: MouseEvent) => void
   onMouseUp?: (event: MouseEvent) => void
@@ -61,7 +60,11 @@ export type ICreateElement = {
     children?: VDom[],
   ): VDom
 
-  (tag: Tag, props: IntrinsicAttributes, children?: VDom[]): VDom
+  (
+    tag: Tag,
+    props: IntrinsicAttributes & { key?: string | number | boolean | null | undefined },
+    children?: VDom[],
+  ): VDom
 }
 
 export type RenderNode = Element | HTMLBodyElement | HTMLElement

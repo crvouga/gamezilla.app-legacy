@@ -1,7 +1,6 @@
 import { Attrs, On, VNode, attributesModule, eventListenersModule, fragment, h, init, propsModule } from 'snabbdom'
 import { VDOM_FRAGMENT_KEY } from './fragment'
 import { VirtualDomEngine } from './interface'
-import { VDom } from './vdom'
 
 export const initSnabbdom = (): VirtualDomEngine => {
   const patch = init([attributesModule, propsModule, eventListenersModule], undefined, {
@@ -16,9 +15,9 @@ export const initSnabbdom = (): VirtualDomEngine => {
       return (newVNode) => {
         try {
           if (!oldVNode) {
-            oldVNode = patch(node, newVNode as VNode)
+            oldVNode = patch(node, newVNode as unknown as VNode)
           } else {
-            oldVNode = patch(oldVNode, newVNode as VNode)
+            oldVNode = patch(oldVNode, newVNode as unknown as VNode)
           }
         } catch (e) {
           // console.error(e)
@@ -28,28 +27,50 @@ export const initSnabbdom = (): VirtualDomEngine => {
     createPortal: (vDom, _container) => {
       return vDom
     },
-    createElement: (tag: any, props: any, childrenUncleaned: any) => {
+    createElement: (tag: any, props: any, children: any) => {
       try {
-        const children = cleanChildren(childrenUncleaned ?? props.children ?? [])
+        children = (children ?? props.children ?? []).flat(Infinity)
+
+        for (let i = children.length - 1; i >= 0; i--) {
+          if (!children[i]) children.splice(i, 1)
+        }
 
         if (tag === VDOM_FRAGMENT_KEY) {
-          const vDom: VDom = fragment(children)
-          return vDom
+          return fragment(children)
         }
 
         if (typeof tag === 'function') {
-          const vDom = tag({ ...props, children })
-          return vDom
+          return tag({ ...props, children })
         }
 
-        const { attrs, on } = toSnabbdomProps(props)
+        const attrs: Attrs = {}
+        const on: On = {}
 
-        const snabbdomProps: any = {
-          attrs,
-          on,
+        for (const propKey in props) {
+          if (propKey.startsWith('on')) {
+            const eventName = propKey.slice(2).toLowerCase()
+            on[eventName] = props[propKey]
+            continue
+          }
+
+          if (propKey === 'style') {
+            const styleString = styleObjectToStyleString(props[propKey])
+            if (styleString) {
+              attrs.style = styleString
+            }
+            continue
+          }
+
+          if (propKey !== 'children' && propKey !== 'key') {
+            attrs[propKey] = props[propKey]
+            continue
+          }
         }
 
-        const vDom = h(tag, snabbdomProps, children)
+        if (props.key) {
+          console.log('key', props.key)
+        }
+        const vDom = h(tag, { attrs, on, key: props.key }, children)
 
         return vDom
       } catch (e) {
@@ -59,57 +80,15 @@ export const initSnabbdom = (): VirtualDomEngine => {
   }
 }
 
-const toSnabbdomProps = (props: any): { attrs: Attrs; on: On } => {
-  const attrs: Attrs = {}
-  const on: On = {}
-
-  for (const key in props) {
-    if (key.startsWith('on')) {
-      const eventName = key.slice(2).toLowerCase()
-      on[eventName] = props[key]
-    } else if (key === 'style') {
-      const styleString = styleObjectToStyleString(props[key])
-      if (styleString) {
-        attrs.style = styleString
-      }
-    } else if (key !== 'children') {
-      attrs[key] = props[key]
-    }
-  }
-
-  return { attrs, on }
-}
-
-const cleanChildren = (dirty: any[]): any[] => {
-  const cleaned: VNode[] = []
-
-  for (const c of (dirty ?? []).flat(Infinity)) {
-    if (typeof c === 'string') {
-      cleaned.push(c as unknown as VNode)
-    }
-    if (typeof c === 'object' && c !== null) {
-      cleaned.push(c)
-    }
-  }
-
-  return cleaned
-}
-
 const styleObjectToStyleString = (style: any): string => {
-  if (!style || typeof style !== 'object') {
-    return ''
+  if (!style || typeof style !== 'object') return ''
+
+  let result = ''
+  for (const [key, value] of Object.entries(style)) {
+    if (value != null && value !== false && value !== '') {
+      if (result) result += ';'
+      result += `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}:${value}`
+    }
   }
-
-  return Object.entries(style)
-    .flatMap(([key, value]) => {
-      if (value === undefined || value === null || value === false || value === '') {
-        return []
-      }
-      return [`${kebabCase(key)}:${value}`]
-    })
-    .join(';')
-}
-
-const kebabCase = (str: string): string => {
-  return str.replace(/([A-Z])/g, '-$1').toLowerCase()
+  return result
 }
