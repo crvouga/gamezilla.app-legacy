@@ -66,6 +66,9 @@ export const TextField = (input: {
                   ? e.nativeEvent.data
                   : ''
 
+            if (valueNew.length === 0)
+              valueNew = typeof e === 'object' && e !== null && 'data' in e && typeof e.data === 'string' ? e.data : ''
+
             input.onChange(valueNew)
           },
           class: cn(
