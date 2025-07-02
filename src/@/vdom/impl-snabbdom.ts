@@ -1,9 +1,19 @@
-import { Attrs, On, VNode, attributesModule, eventListenersModule, fragment, h, init, propsModule } from 'snabbdom'
+import {
+  Attrs,
+  On,
+  attributesModule,
+  eventListenersModule,
+  fragment,
+  h,
+  init,
+  propsModule,
+  styleModule,
+} from 'snabbdom'
 import { VDOM_FRAGMENT_KEY } from './fragment'
 import { VirtualDomEngine } from './interface'
 
 export const initSnabbdom = (): VirtualDomEngine => {
-  const patch = init([attributesModule, propsModule, eventListenersModule], undefined, {
+  const patch = init([styleModule, attributesModule, propsModule, eventListenersModule], undefined, {
     experimental: {
       fragments: true,
     },
@@ -11,14 +21,10 @@ export const initSnabbdom = (): VirtualDomEngine => {
 
   return {
     render: (node) => {
-      let oldVNode: VNode
+      let oldVNode: any = node
       return (newVNode) => {
         try {
-          if (!oldVNode) {
-            oldVNode = patch(node, newVNode as unknown as VNode)
-          } else {
-            oldVNode = patch(oldVNode, newVNode as unknown as VNode)
-          }
+          oldVNode = patch(oldVNode, newVNode as any)
         } catch (e) {
           // console.error(e)
         }
@@ -53,24 +59,13 @@ export const initSnabbdom = (): VirtualDomEngine => {
             continue
           }
 
-          if (propKey === 'style') {
-            const styleString = styleObjectToStyleString(props[propKey])
-            if (styleString) {
-              attrs.style = styleString
-            }
-            continue
-          }
-
-          if (propKey !== 'children' && propKey !== 'key') {
+          if (propKey !== 'children' && propKey !== 'key' && propKey !== 'style') {
             attrs[propKey] = props[propKey]
             continue
           }
         }
 
-        if (props.key) {
-          console.log('key', props.key)
-        }
-        const vDom = h(tag, { attrs, on, key: props.key }, children)
+        const vDom = h(tag, { attrs, on, key: props.key, style: props.style }, children)
 
         return vDom
       } catch (e) {
@@ -78,17 +73,4 @@ export const initSnabbdom = (): VirtualDomEngine => {
       }
     },
   }
-}
-
-const styleObjectToStyleString = (style: any): string => {
-  if (!style || typeof style !== 'object') return ''
-
-  let result = ''
-  for (const [key, value] of Object.entries(style)) {
-    if (value != null && value !== false && value !== '') {
-      if (result) result += ';'
-      result += `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}:${value}`
-    }
-  }
-  return result
 }

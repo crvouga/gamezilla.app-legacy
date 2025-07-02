@@ -131,18 +131,14 @@ export const subscriptions: Module['subscriptions'] = ({ model }) => {
 }
 
 export const View: Module['View'] = (input) => {
-  return h('div', {}, [
-    h('div', { class: 'flex-1' }, [String(`toast${input.model.toast?.toastId}`)]),
-
-    h(Transition, { mode: 'out-in', id: 'toast-root', onEnter, onExit }, [
-      input.model.toast &&
-        h(Toast, {
-          key: `toast${input.model.toast.toastId}`,
-          ctx: input.ctx,
-          toast: input.model.toast,
-          dispatch: input.dispatch,
-        }),
-    ]),
+  return h(Transition, { mode: 'out-in', id: 'toast-root', onEnter, onExit }, [
+    input.model.toast &&
+      h(Toast, {
+        key: `toast${input.model.toast.toastId}`,
+        ctx: input.ctx,
+        toast: input.model.toast,
+        dispatch: input.dispatch,
+      }),
   ])
 }
 
