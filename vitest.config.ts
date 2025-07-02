@@ -38,6 +38,12 @@ export default defineConfig({
       '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
     ],
     testTimeout: 10000, // 10 seconds
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        maxThreads: '100%',
+      },
+    },
   },
   define: {
     global: 'globalThis',
