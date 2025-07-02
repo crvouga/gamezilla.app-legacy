@@ -21,7 +21,6 @@ export type ClickableProps = {
   disabled?: boolean
   dataTestId?: string
   'aria-label'?: string
-  'data-testid'?: string
   'aria-hidden'?: boolean
   'aria-disabled'?: boolean
   key?: string

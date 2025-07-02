@@ -30,10 +30,10 @@ import { SplashScreen } from './@/ui/logo/splash-screen'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
-import { ViewAppStatusBar } from './frontend/app-status-bar/app-status-bar'
+import { AppStatusBar } from './frontend/app-status-bar/app-status-bar'
 import { FrontendFrontend } from './frontend/frontend'
 import { ToasterFrontend } from './frontend/toaster'
-import { LangFrontend } from './lang/frontend'
+import { SettingsFrontend } from './settings/frontend'
 import { ProfileFrontend } from './profile/frontend'
 import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract, topicContract } from './types'
@@ -163,7 +163,7 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
   const baseCtx: FrontendCtxModule = {
     ...input.ctx,
     now: UnixMs.now(),
-    t: Translator(input.model.lang.lang),
+    t: Translator(input.model.settings.lang),
     profilesByUserId: input.model.profile.profilesByUserId,
     documentVisibilityState: input.model.frontend.visibility.documentVisibilityState,
     currentScreen: input.model.frontend.currentScreen.currentScreen,
@@ -198,7 +198,7 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
     screenSize: frontend.model.screenSize.screenSize,
   }
 
-  const lang = LangFrontend.init({ ctx })
+  const settings = SettingsFrontend.init({ ctx })
   const wire = WireFrontend.init({ ctx })
   const auth = AuthFrontend.init({ ctx })
   const space = SpacesFrontend.init({ ctx })
@@ -210,13 +210,13 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
     wire: wire.model,
     auth: auth.model,
     profile: profile.model,
-    lang: lang.model,
+    settings: settings.model,
   }
 
   const eff = Eff.batch<MsgFrontend>([
     Eff.tag('frontend', frontend.eff),
     Eff.tag('auth', auth.eff),
-    Eff.tag('lang', lang.eff),
+    Eff.tag('settings', settings.eff),
     Eff.tag('profile', profile.eff),
     Eff.tag('spaces', space.eff),
     Eff.tag('wire', wire.eff),
@@ -299,10 +299,10 @@ const updateChild = (input: {
     msgIn: input.msgIn,
   })
 
-  const lang = LangFrontend.update({
+  const settings = SettingsFrontend.update({
     ctx,
-    model: input.model.lang,
-    msg: input.msg?.t === 'lang' ? input.msg.c : null,
+    model: input.model.settings,
+    msg: input.msg?.t === 'settings' ? input.msg.c : null,
     msgIn: input.msgIn,
   })
 
@@ -320,15 +320,15 @@ const updateChild = (input: {
       profile: profile.model,
       spaces: space.model,
       wire: wire.model,
-      lang: lang.model,
+      settings: settings.model,
     },
-    msgOut: Msg.batch(auth.msgOut, profile.msgOut, space.msgOut, lang.msgOut, frontend.msgOut),
+    msgOut: Msg.batch(auth.msgOut, profile.msgOut, space.msgOut, settings.msgOut, frontend.msgOut),
     eff: Eff.batch<MsgFrontend>([
       Eff.tag('auth', auth.eff),
       Eff.tag('profile', profile.eff),
       Eff.tag('spaces', space.eff),
       Eff.tag('wire', wire.eff),
-      Eff.tag('lang', lang.eff),
+      Eff.tag('settings', settings.eff),
       Eff.tag('frontend', frontend.eff),
     ]),
   }
@@ -343,7 +343,10 @@ const subscriptions = (input: { ctx: FrontendCtxModule; model: ModelFrontend }):
       (c): MsgFrontend => ({ t: 'frontend', c }),
     ),
     Sub.map(WireFrontend.subscriptions({ ctx, model: input.model.wire }), (c): MsgFrontend => ({ t: 'wire', c })),
-    Sub.map(LangFrontend.subscriptions({ ctx, model: input.model.lang }), (c): MsgFrontend => ({ t: 'lang', c })),
+    Sub.map(
+      SettingsFrontend.subscriptions({ ctx, model: input.model.settings }),
+      (c): MsgFrontend => ({ t: 'settings', c }),
+    ),
     Sub.map(AuthFrontend.subscriptions({ ctx, model: input.model.auth }), (c): MsgFrontend => ({ t: 'auth', c })),
     Sub.map(
       ProfileFrontend.subscriptions({ ctx, model: input.model.profile }),
@@ -357,7 +360,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
   const frontendCtx = toCtx(input)
 
   return h(ViewAppRoot, {}, [
-    h(ViewAppStatusBar, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
+    h(AppStatusBar.View, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
 
     h('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
       h(ViewScreen, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
@@ -381,11 +384,11 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
 
 const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {
   switch (input.model.frontend.currentScreen.currentScreen.n) {
-    case 'lang':
-      return h(LangFrontend.View, {
+    case 'settings':
+      return h(SettingsFrontend.View, {
         ctx: input.ctx,
-        dispatch: (c) => input.dispatch({ t: 'lang', c }),
-        model: input.model.lang,
+        dispatch: (c) => input.dispatch({ t: 'settings', c }),
+        model: input.model.settings,
       })
     default: {
       const currentUser = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
@@ -409,9 +412,7 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
         ctx: input.ctx,
         dispatch: (c) => input.dispatch({ t: 'auth', c }),
       })
-    case 'spaces':
-    case 'profile':
-    case 'lang':
+    default:
       return h(IntersectionObserverEmitter, {
         id: 'app-intersection-observer',
         onVisible: () =>
@@ -442,7 +443,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
         },
       })
 
-    case 'lang':
+    case 'settings':
     case 'auth':
       return h(IntersectionObserverEmitter, {
         id: 'app-intersection-observer',

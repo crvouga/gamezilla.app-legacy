@@ -9,7 +9,7 @@ DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env'] })
  */
 export default defineConfig({
   testDir: './src',
-  testMatch: '**/*.e2e.ts',
+  testMatch: '**/*.spec.ts',
   timeout: 1000 * 60,
   /* Run tests in files in parallel */
   fullyParallel: true,

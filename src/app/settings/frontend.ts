@@ -6,14 +6,19 @@ import { IconCheckmarkCircle, IconLanguage } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Spinner } from '~/@/ui/spinner'
 import { h } from '~/@/vdom/h'
+import { VDomImpl } from '~/@/vdom/vdom-impl'
 import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { APP_SOUND } from '../../@/frontend/app-sound'
-import { translatorSubscriptions } from '../../@/frontend/translator'
-import type { FrontendModule, MsgFrontend, TranslationLoading } from '../types'
+import { APP_SOUND } from '../@/frontend/app-sound'
+import { translatorSubscriptions } from '../@/frontend/translator'
+import type { FrontendModule, MsgFrontend, TranslationLoading } from './types'
+
+const dataTestId = {
+  mainScreen: 'settings/main-screen',
+}
 
 //
 //
@@ -31,7 +36,8 @@ const init: FrontendModule['init'] = ({ ctx }) => {
   return {
     model: {
       lang: initialLang,
-      loading: {},
+      langLoading: {},
+      vDomImpl: VDomImpl.readFromUrl({ fallback: 'snabbdom' }),
     },
   }
 }
@@ -50,14 +56,14 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
   switch (msg?.t) {
     case 'translator.loaded': {
       const loadingNew: TranslationLoading = {
-        startedAt: model.loading?.[msg.lang]?.startedAt ?? ctx.now,
+        startedAt: model.langLoading?.[msg.lang]?.startedAt ?? ctx.now,
         endedAt: ctx.now,
       }
       return {
         model: {
           ...model,
-          loading: {
-            ...model.loading,
+          langLoading: {
+            ...model.langLoading,
             [msg.lang]: loadingNew,
           },
         },
@@ -68,8 +74,8 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
       return {
         model: {
           ...model,
-          loading: {
-            ...model.loading,
+          langLoading: {
+            ...model.langLoading,
             [msg.lang]: {
               startedAt: ctx.now,
               endedAt: null,
@@ -80,7 +86,7 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
     }
 
     case 'clicked-change-lang': {
-      if (ctx.currentScreen.n === 'lang' && ctx.currentScreen.t === 'choose-lang') {
+      if (ctx.currentScreen.n === 'settings' && ctx.currentScreen.t === 'choose-lang') {
         return {
           model,
           msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin), CloseStatusBarCmd.init()],
@@ -93,7 +99,7 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
           PlaySoundCmd.init(APP_SOUND.navForwardMin),
           PushScreenCmd.init({
             t: 'choose-lang',
-            n: 'lang',
+            n: 'settings',
           }),
           CloseStatusBarCmd.init(),
         ],
@@ -161,7 +167,7 @@ const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
 
 const View: FrontendModule['View'] = (input) => {
   switch (input.ctx.currentScreen.n) {
-    case 'lang': {
+    case 'settings': {
       switch (input.ctx.currentScreen.t) {
         case 'choose-lang': {
           return h(ViewChooseLang, { ctx: input.ctx, dispatch: input.dispatch, model: input.model })
@@ -198,7 +204,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
             key: langCode,
             label: input.ctx.t(langCode),
             icon: (inputIcon) => {
-              if (input.model.loading[langCode]?.endedAt === null) {
+              if (input.model.langLoading[langCode]?.endedAt === null) {
                 return h(Spinner, inputIcon)
               }
 
@@ -242,10 +248,11 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
   })
 }
 
-export const LangFrontend = {
+export const SettingsFrontend = {
   init,
   update,
   subscriptions,
+  dataTestId,
   ViewLangListItem,
   View,
 }

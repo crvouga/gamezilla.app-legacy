@@ -1,10 +1,16 @@
 import { Result } from '~/@/result'
 import { s } from '~/@/schema'
 
-const Screen = s.obj({
-  n: s.l('lang'),
-  t: s.l('choose-lang'),
-})
+const Screen = s.or(
+  s.obj({
+    n: s.l('settings'),
+    t: s.l('main'),
+  }),
+  s.obj({
+    n: s.l('settings'),
+    t: s.l('choose-lang'),
+  }),
+)
 
 export type Screen = s.Infer<typeof Screen>
 

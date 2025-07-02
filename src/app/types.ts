@@ -4,7 +4,7 @@ import { AppBackendCtxBase } from './@/backend/ctx'
 import { AppFrontendCtxBase } from './@/frontend/ctx'
 import { AuthTypes } from './auth'
 import { FrontendTypes } from './frontend/index'
-import { LangTypes } from './lang'
+import { SettingsTypes } from './settings'
 import { ProfileTypes } from './profile'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
@@ -15,7 +15,7 @@ export type ModelFrontend = {
   spaces: SpacesTypes.ModelFrontend
   profile: ProfileTypes.ModelFrontend
   wire: WireTypes.ModelFrontend
-  lang: LangTypes.ModelFrontend
+  settings: SettingsTypes.ModelFrontend
 }
 
 export type MsgFrontend =
@@ -23,7 +23,7 @@ export type MsgFrontend =
   | { t: 'spaces'; c: SpacesTypes.MsgFrontend }
   | { t: 'auth'; c: AuthTypes.MsgFrontend }
   | { t: 'profile'; c: ProfileTypes.MsgFrontend }
-  | { t: 'lang'; c: LangTypes.MsgFrontend }
+  | { t: 'settings'; c: SettingsTypes.MsgFrontend }
   | { t: 'frontend'; c: FrontendTypes.MsgFrontend }
 
 export const rpcContract = RPC.combineContracts([WireTypes.rpcContract, AuthTypes.rpcContract, SpacesTypes.rpcContract])

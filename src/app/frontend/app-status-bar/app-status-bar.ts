@@ -1,19 +1,22 @@
 import { Clickable } from '~/@/ui/clickable'
 import { cn } from '~/@/ui/cn'
+import { IconChevronRight, IconGear } from '~/@/ui/icon'
+import { ListItemButton } from '~/@/ui/list-item-button'
 import { h } from '~/@/vdom/h'
 import { AuthFrontend } from '~/app/auth/frontend'
-import { LangFrontend } from '~/app/lang/frontend'
+import { SettingsFrontend } from '~/app/settings/frontend'
 import { type ModelFrontend, type MsgFrontend } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
 import { AppFrontendCtxBase } from '../../@/frontend/ctx'
 import { SoundFrontend } from '../sound'
 import { StatusBarFrontend } from '../status-bar/index'
 
-export const ViewAppStatusBar = (input: {
-  ctx: AppFrontendCtxBase
-  model: ModelFrontend
-  dispatch: (c: MsgFrontend) => void
-}) => {
+const dataTestId = {
+  openButton: 'app-status-bar/open-button',
+  openSettingsButton: 'app-status-bar/open-settings-button',
+}
+
+const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (c: MsgFrontend) => void }) => {
   return h(
     'div',
     {
@@ -31,6 +34,7 @@ export const ViewAppStatusBar = (input: {
               Clickable,
               {
                 ...props,
+                dataTestId: dataTestId.openButton,
                 class: cn(
                   input.ctx.screenSize === 'mobile'
                     ? 'flex w-full items-center justify-end gap-3 px-3 py-1'
@@ -69,10 +73,10 @@ export const ViewAppStatusBar = (input: {
               ctx: input.ctx,
             }),
 
-            h(LangFrontend.ViewLangListItem, {
+            h(SettingsFrontend.ViewLangListItem, {
               ctx: input.ctx,
-              dispatch: (c) => input.dispatch({ t: 'lang', c }),
-              model: input.model.lang,
+              dispatch: (c) => input.dispatch({ t: 'settings', c }),
+              model: input.model.settings,
             }),
 
             h(SoundFrontend.ViewSoundListItem, {
@@ -80,9 +84,26 @@ export const ViewAppStatusBar = (input: {
               model: input.model.frontend.sound,
               dispatch: (c) => input.dispatch({ t: 'frontend', c: { t: 'sound', c } }),
             }),
+
+            h(ListItemButton, {
+              icon: (props) => h(IconGear, props),
+              label: input.ctx.t('app.open-settings'),
+              dataTestId: dataTestId.openSettingsButton,
+              end: () => h(IconChevronRight, { class: 'size-6' }),
+              onClick: () =>
+                input.dispatch({
+                  t: 'frontend',
+                  c: { t: 'current-screen', c: { t: 'clicked-link', screen: { n: 'settings', t: 'main' } } },
+                }),
+            }),
           ]),
         },
       }),
     ],
   )
+}
+
+export const AppStatusBar = {
+  View,
+  dataTestId,
 }

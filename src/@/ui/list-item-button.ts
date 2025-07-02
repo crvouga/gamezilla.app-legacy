@@ -12,6 +12,7 @@ type Input = {
   label: TranslatedText
   onClick?: () => void
   color?: Color
+  dataTestId?: string
   key?: string
 }
 
@@ -28,6 +29,7 @@ export const ListItemButton = (input: Input) => {
             input.onClick?.()
           },
           'aria-label': input.label,
+          dataTestId: input.dataTestId,
           name: input.label,
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
         },
@@ -49,6 +51,7 @@ export const ListItemButton = (input: Input) => {
             input.onClick?.()
           },
           'aria-label': input.label,
+          'data-testid': input.dataTestId,
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
         },
         [
