@@ -45,12 +45,14 @@ export const Select = <T>(props: {
         },
       },
       props.options.map((option) => {
+        const isSelected = props.value && props.toKey(option) === props.toKey(props.value)
         return h(
           'option',
           {
             key: props.toKey(option),
             value: props.toKey(option),
-            selected: props.value && props.toKey(option) === props.toKey(props.value) ? 'true' : undefined,
+            'data-selected': isSelected ? 'true' : 'false',
+            selected: isSelected ? 'true' : undefined,
           },
           [props.toName(option)],
         )

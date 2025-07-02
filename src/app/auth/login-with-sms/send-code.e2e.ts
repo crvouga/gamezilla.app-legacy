@@ -8,7 +8,7 @@ describe('send code', () => {
   test('country should match navigator country', async (e) => {
     await using f = await Fixture(e)
     const [countryCodeSelect] = await f.frontend.query(
-      `[data-testid='auth/country-code-select']>select>option[selected]`,
+      `[data-testid='auth/country-code-select'] option[data-selected='true']`,
     )
     expect(countryCodeSelect).toBeDefined()
     const countryCode = await countryCodeSelect?.text()
