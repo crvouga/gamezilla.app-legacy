@@ -45,8 +45,8 @@
     "noStrictGenericChecks": false,
     // if TS 5.x+
     "moduleResolution": "bundler",
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
     "moduleDetection": "force",
     "types": ["vite/client", "vite-plugin-pwa/client"],
     "allowJs": false,
