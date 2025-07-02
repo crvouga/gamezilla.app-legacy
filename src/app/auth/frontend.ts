@@ -27,6 +27,7 @@ import { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend, rpcContr
 const dataTestId = {
   loginScreen: 'auth/login-screen',
   continueWithPhoneButton: 'auth/continue-with-phone-button',
+  logoutListItemButton: 'auth/logout-list-item-button',
 }
 
 //
@@ -307,6 +308,7 @@ const ViewLogoutListItem = (input: {
     case 'logged-in': {
       return h(ListItemButton, {
         onClick: () => input.dispatch({ t: 'clicked-logout-list-item' }),
+        dataTestId: dataTestId.logoutListItemButton,
         icon: (input) => h(IconPowerOff, input),
         primary: input.ctx.t('auth.logout'),
         end: () =>

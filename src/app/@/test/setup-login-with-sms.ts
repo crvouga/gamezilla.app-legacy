@@ -1,3 +1,4 @@
+import { AuthFrontend } from '~/app/auth/frontend'
 import { IFixtureApp } from './types'
 
 const randomPhoneNumber = (): number => {
@@ -8,8 +9,8 @@ const randomPhoneNumber = (): number => {
 
 export const setupLoginWithSms = async (f: IFixtureApp) => {
   //
-  await f.frontend.query(`[data-testid='auth/login-screen']`)
-  const [continueWithPhoneButton] = await f.frontend.query(`[data-testid='auth/continue-with-phone-button']`)
+  await f.frontend.byDataTestId(AuthFrontend.dataTestId.loginScreen)
+  const continueWithPhoneButton = await f.frontend.byDataTestId(AuthFrontend.dataTestId.continueWithPhoneButton)
   await continueWithPhoneButton!.do({ t: 'click' })
   //
   await f.frontend.query(`[data-testid='auth/send-code-screen']`)
