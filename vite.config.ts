@@ -9,7 +9,7 @@ const MEGABYTE = KILOBYTE * KILOBYTE
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tailwindcss(), wasm(), VitePWA({ workbox: { maximumFileSizeToCacheInBytes: 3 * MEGABYTE } })],
+  plugins: [tailwindcss(), wasm(), VitePWA()],
   optimizeDeps: {
     exclude: [
       '@journeyapps/wa-sqlite',
