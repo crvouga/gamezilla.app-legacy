@@ -171,7 +171,7 @@ CREATE UNLOGGED TABLE public.key_value (
 --
 
 CREATE TABLE public.schema_migrations (
-    version character varying(128) NOT NULL
+    version character varying NOT NULL
 );
 
 
@@ -266,8 +266,6 @@ CREATE TABLE public.user_session (
     ended_at_unix_ms bigint,
     client_session_id text NOT NULL
 );
-
-ALTER TABLE ONLY public.user_session REPLICA IDENTITY FULL;
 
 
 --
@@ -419,7 +417,7 @@ ALTER TABLE ONLY public.user_profile
 --
 
 ALTER TABLE ONLY public.user_session
-    ADD CONSTRAINT user_session_pkey PRIMARY KEY (client_session_id);
+    ADD CONSTRAINT user_session_pkey PRIMARY KEY (id);
 
 
 --
