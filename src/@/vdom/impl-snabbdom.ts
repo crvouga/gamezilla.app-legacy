@@ -12,6 +12,10 @@ import {
 import { VDOM_FRAGMENT_KEY } from './fragment'
 import { VirtualDomEngine } from './interface'
 
+// Reusable objects to reduce allocations
+let reusableAttrs: Attrs = {}
+let reusableOn: On = {}
+
 export const initSnabbdom = (): VirtualDomEngine => {
   const patch = init([styleModule, attributesModule, propsModule, eventListenersModule], undefined, {
     experimental: {
@@ -35,42 +39,96 @@ export const initSnabbdom = (): VirtualDomEngine => {
     },
     createElement: (tag: any, props: any, children: any) => {
       try {
-        children = (children ?? props.children ?? []).flat(Infinity)
+        children = processChildren(children ?? props?.children)
 
-        for (let i = children.length - 1; i >= 0; i--) {
-          if (!children[i]) children.splice(i, 1)
+        if (typeof tag === 'function') {
+          return tag({ ...props, children })
         }
 
         if (tag === VDOM_FRAGMENT_KEY) {
           return fragment(children)
         }
 
-        if (typeof tag === 'function') {
-          return tag({ ...props, children })
+        // Clear reusable objects
+        reusableAttrs = {}
+        reusableOn = {}
+
+        let hasAttrs = false
+        let hasEvents = false
+
+        // Single pass through props with early optimizations
+        if (props) {
+          const propKeys = Object.keys(props)
+          for (let i = 0; i < propKeys.length; i++) {
+            const propKey = propKeys[i]!
+            const propValue = props[propKey]
+
+            // Skip undefined/null values
+            if (propValue == null || propValue === undefined) continue
+
+            if (propKey.startsWith('on')) {
+              reusableOn[getEventName(propKey)] = propValue
+              hasEvents = true
+            } else if (propKey !== 'children' && propKey !== 'key' && propKey !== 'style') {
+              reusableAttrs[propKey] = propValue
+              hasAttrs = true
+            }
+          }
         }
 
-        const attrs: Attrs = {}
-        const on: On = {}
+        const vDomProps: any = {}
+        if (hasAttrs) vDomProps.attrs = reusableAttrs
+        if (hasEvents) vDomProps.on = reusableOn
+        if (props?.key !== undefined) vDomProps.key = props.key
+        if (props?.style !== undefined) vDomProps.style = props.style
 
-        for (const propKey in props) {
-          if (propKey.startsWith('on')) {
-            const eventName = propKey.slice(2).toLowerCase()
-            on[eventName] = props[propKey]
-            continue
-          }
-
-          if (propKey !== 'children' && propKey !== 'key' && propKey !== 'style') {
-            attrs[propKey] = props[propKey]
-            continue
-          }
-        }
-
-        const vDom = h(tag, { attrs, on, key: props.key, style: props.style }, children)
-
-        return vDom
+        return h(tag, vDomProps, children)
       } catch (e) {
         // console.error(e)
+        return null
       }
     },
   }
+}
+
+// Cache for event name transformations to avoid repeated string operations
+const eventNameCache = new Map<string, string>()
+const getEventName = (propKey: string): string => {
+  let eventName = eventNameCache.get(propKey)
+  if (eventName === undefined) {
+    eventName = propKey.slice(2).toLowerCase()
+    eventNameCache.set(propKey, eventName)
+  }
+  return eventName
+}
+
+const processChildren = (children: any): any[] => {
+  if (!children) return []
+  if (!Array.isArray(children)) return [children]
+
+  // Check if flattening is needed
+  let needsFlattening = false
+  for (let i = 0; i < children.length; i++) {
+    if (Array.isArray(children[i])) {
+      needsFlattening = true
+      break
+    }
+  }
+
+  let processedChildren = needsFlattening ? children.flat(Infinity) : children
+
+  // Only filter if there are falsy values
+  let hasFalsyValues = false
+  for (let i = 0; i < processedChildren.length; i++) {
+    if (!processedChildren[i]) {
+      hasFalsyValues = true
+      break
+    }
+  }
+
+  if (hasFalsyValues) {
+    return processedChildren.filter(Boolean)
+  }
+
+  return processedChildren
 }
