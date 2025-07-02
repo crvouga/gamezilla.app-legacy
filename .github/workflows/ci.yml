@@ -11,11 +11,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
-    name: CI
+  type-check:
+    name: Type Check
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+  unit-tests:
+    name: Unit Tests
+    needs: type-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,11 +53,30 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Type check
-        run: npx tsc --noEmit
-
       - name: Run unit tests
         run: npm run test
+
+  integration-and-e2e:
+    name: Integration and E2E Tests
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Create .env file
+        run: |
+          cp .env.local .env
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
 
       - name: Start infrastructure
         run: npm run infra:up:test
@@ -54,6 +93,13 @@ jobs:
       - name: Run E2E tests
         run: npm run test:e2e
 
+  deploy:
+    name: Deploy
+    needs: integration-and-e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
       - name: Run database migrations
         run: npm run db:up
         env:
