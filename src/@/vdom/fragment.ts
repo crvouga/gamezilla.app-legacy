@@ -1,1 +1,1 @@
-export const VDOM_FRAGMENT_KEY = '@@fragment'
+export const VDOM_FRAGMENT_KEY = '@frag'
