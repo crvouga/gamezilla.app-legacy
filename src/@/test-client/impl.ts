@@ -2,11 +2,11 @@ import * as ImplHappyDom from './impl-happydom'
 import * as ImplJsdom from './impl-jsdom'
 import * as ImplPlaywright from './impl-playwright'
 import * as ImplWindow from './impl-window'
-import { ITestClient } from './interface'
+import { fromBase, ITestClient, ITestClientBase } from './interface'
 
 export type Config = ImplHappyDom.Config | ImplJsdom.Config | ImplPlaywright.Config | ImplWindow.Config
 
-export const TestClient = async (config: Config): Promise<ITestClient> => {
+export const TestClientBase = async (config: Config): Promise<ITestClientBase> => {
   switch (config.t) {
     case 'happydom': {
       return ImplHappyDom.TestClient(config)
@@ -21,4 +21,8 @@ export const TestClient = async (config: Config): Promise<ITestClient> => {
       return ImplWindow.TestClient(config)
     }
   }
+}
+
+export const TestClient = async (config: Config): Promise<ITestClient> => {
+  return fromBase(await TestClientBase(config))
 }

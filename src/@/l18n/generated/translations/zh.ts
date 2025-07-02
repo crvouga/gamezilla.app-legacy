@@ -136,6 +136,7 @@ export const translations: Text = {
   'l18n.done': '完成',
   'l18n.loaded-translations': '已加载翻译',
   'l18n.renderer': 'Renderer',
+  'l18n.settings': '设置',
   'spaces.current-user-joined-space': '加入空间',
   'spaces.other-user-joined-space': (username) => `${username} \u52A0\u5165\u4E86\u7A7A\u95F4`,
   'spaces.space-not-found': '找不到空间',

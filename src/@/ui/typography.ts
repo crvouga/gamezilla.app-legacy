@@ -23,17 +23,18 @@ const colorClassNames: { [color in TypographyColor]: string } = {
   inherit: 'text-inherit',
 }
 
-type Input = {
+type Props = {
   text: TranslatedText
   variant?: TypographyVariant
   skeleton?: boolean
+  dataTestId?: string
   class?: string
   sizeClassName?: string
   role?: AriaRole
   color?: 'inherit' | 'text-primary' | 'text-secondary' | null
 }
 
-const toAriaLevel = (input: Input): number | undefined => {
+const toAriaLevel = (input: Props): number | undefined => {
   switch (input.role) {
     case 'heading': {
       switch (input.variant) {
@@ -59,7 +60,7 @@ const toAriaLevel = (input: Input): number | undefined => {
 
 const SKELETON_CLASS = 'animate-pulse text-transparent select-none pointer-events-none bg-neutral-500 rounded'
 
-export const Typography = (input: Input) => {
+export const Typography = (input: Props) => {
   const sizeClassName = input.sizeClassName ?? sizeClassNames[input.variant ?? 'body']
   const colorClassName = input.color && !input.skeleton ? colorClassNames[input.color] : null
   return h(
@@ -70,6 +71,8 @@ export const Typography = (input: Input) => {
       'aria-busy': input.skeleton,
       'aria-level': toAriaLevel(input),
       'aria-label': input.text,
+      'data-title': input.variant === 'title' ? 'true' : 'false',
+      'data-testid': input.dataTestId,
     },
     [input.text],
   )

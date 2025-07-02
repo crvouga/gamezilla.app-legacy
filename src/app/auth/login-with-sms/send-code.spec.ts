@@ -3,6 +3,7 @@ import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
 import { Fixture } from './fixture'
+import { ScreenTestIds } from '~/app/@/ui/screen/screen-test-ids'
 
 describe('send code', () => {
   test('country should match navigator country', async (e) => {
@@ -18,11 +19,11 @@ describe('send code', () => {
 
   test('send code screen back button', async (e) => {
     await using f = await Fixture(e)
-    const [sendCodeScreen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
+    const sendCodeScreen = await f.frontend.byDataTestId('auth/send-code-screen')
     expect(sendCodeScreen).toBeDefined()
-    const [backButton] = await f.frontend.query(`[data-testid='nav/back-button']`)
+    const backButton = await f.frontend.byDataTestId(ScreenTestIds.backButton)
     await backButton!.do({ t: 'click' })
-    const [loginScreen] = await f.frontend.query(`[data-testid='auth/login-screen']`)
+    const loginScreen = await f.frontend.byDataTestId('auth/login-screen')
     expect(loginScreen).toBeDefined()
   })
 

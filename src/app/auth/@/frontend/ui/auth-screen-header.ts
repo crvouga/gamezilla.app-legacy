@@ -4,6 +4,7 @@ import { IconArrowLeft } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { ScreenTestIds } from '~/app/@/ui/screen/screen-test-ids'
 
 export const AuthScreenHeader = (input: {
   ctx: {
@@ -23,7 +24,7 @@ export const AuthScreenHeader = (input: {
         label: input.ctx.t('app.back'),
         renderIcon: (iconInput) => h(IconArrowLeft, iconInput),
         onClick: input.onBack,
-        dataTestId: 'nav/back-button',
+        dataTestId: ScreenTestIds.backButton,
       }),
       h(Typography, {
         text: input.title,

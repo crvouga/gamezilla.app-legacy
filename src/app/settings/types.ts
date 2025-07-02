@@ -19,9 +19,11 @@ export type ModelFrontend = {
 export type MsgFrontend =
   | TranslatorMsg
   | { t: 'clicked-change-lang' }
-  | { t: 'choose-lang.clicked-done' }
-  | { t: 'choose-lang.clicked-lang'; lang: LanguageCodeISO_639_1 }
   | { t: 'clicked-change-renderer' }
+  | { t: 'clicked-open-settings' }
+  | { t: 'choose-lang.clicked-back-button' }
+  | { t: 'choose-lang.clicked-lang'; lang: LanguageCodeISO_639_1 }
+  | { t: 'choose-renderer.clicked-back-button' }
 
 export type FrontendModule = AppFrontendModule<{
   Ctx: AnonymousFrontendCtx

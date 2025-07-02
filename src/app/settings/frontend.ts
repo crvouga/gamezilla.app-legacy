@@ -2,7 +2,7 @@ import { LocalStorage } from '~/@/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
-import { IconCheckmarkCircle, IconLanguage } from '~/@/ui/icon'
+import { IconCheckmarkCircle, IconChevronRight, IconGear, IconLanguage } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Spinner } from '~/@/ui/spinner'
 import { h } from '~/@/vdom/h'
@@ -19,6 +19,7 @@ import type { FrontendModule, ModelFrontend, MsgFrontend, TranslationLoading } f
 
 const dataTestId = {
   mainScreen: 'settings/main-screen',
+  openSettingsScreen: 'settings/open-settings-screen',
   openChooseLangScreen: 'settings/open-choose-lang-screen',
   chooseLangScreen: 'settings/choose-lang-screen',
   openChooseRendererScreen: 'settings/open-choose-renderer-screen',
@@ -100,18 +101,18 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
 
       return {
         model,
-        msgOut: [
-          PlaySoundCmd.init(APP_SOUND.navForwardMin),
-          PushScreenCmd.init({
-            t: 'choose-lang',
-            n: 'settings',
-          }),
-          CloseStatusBarCmd.init(),
-        ],
+        msgOut: [PushScreenCmd.init({ t: 'choose-lang', n: 'settings' }, true), CloseStatusBarCmd.init()],
       }
     }
 
-    case 'choose-lang.clicked-done': {
+    case 'choose-renderer.clicked-back-button': {
+      return {
+        model,
+        msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin), BackScreenCmd.init()],
+      }
+    }
+
+    case 'choose-lang.clicked-back-button': {
       return {
         model,
         msgOut: [PlaySoundCmd.init(APP_SOUND.navBackwardMin), BackScreenCmd.init()],
@@ -133,6 +134,13 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
       return {
         model,
         msgOut: [PushScreenCmd.init({ t: 'choose-renderer', n: 'settings' }, true), CloseStatusBarCmd.init()],
+      }
+    }
+
+    case 'clicked-open-settings': {
+      return {
+        model,
+        msgOut: [PushScreenCmd.init({ t: 'main', n: 'settings' }, true), CloseStatusBarCmd.init()],
       }
     }
 
@@ -177,6 +185,16 @@ const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
   })
 }
 
+const ViewSettingsListItem: FrontendModule['View'] = (input) => {
+  return h(ListItemButton, {
+    icon: (props) => h(IconGear, props),
+    label: input.ctx.t('l18n.settings'),
+    dataTestId: dataTestId.openSettingsScreen,
+    end: () => h(IconChevronRight, { class: 'size-6' }),
+    onClick: () => input.dispatch({ t: 'clicked-open-settings' }),
+  })
+}
+
 const View: FrontendModule['View'] = (input) => {
   switch (input.ctx.currentScreen.n) {
     case 'settings': {
@@ -208,13 +226,8 @@ const ViewMain: FrontendModule['View'] = (input) => {
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
     navBar: {
-      title: input.ctx.t('l18n.choose-language'),
-      back: {
-        onClick: () =>
-          input.dispatch({
-            t: 'choose-lang.clicked-done',
-          }),
-      },
+      title: input.ctx.t('l18n.settings'),
+      back: { onClick: () => input.dispatch({ t: 'choose-lang.clicked-back-button' }) },
     },
     renderBody: () =>
       h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
@@ -244,7 +257,9 @@ const ViewChooseRenderer: FrontendModule['View'] = (input) => {
     parentScreen: input.ctx.parentScreen,
     navBar: {
       title: input.ctx.t('l18n.renderer'),
-      back: {},
+      back: {
+        onClick: () => input.dispatch({ t: 'choose-renderer.clicked-back-button' }),
+      },
     },
     renderBody: () => h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [h(Gutter, { variant: 'screen' })]),
   })
@@ -258,7 +273,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
     parentScreen: input.ctx.parentScreen,
     navBar: {
       title: input.ctx.t('l18n.choose-language'),
-      back: { onClick: () => input.dispatch({ t: 'choose-lang.clicked-done' }) },
+      back: { onClick: () => input.dispatch({ t: 'choose-lang.clicked-back-button' }) },
     },
     renderBody: () =>
       h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
@@ -328,5 +343,6 @@ export const SettingsFrontend = {
   subscriptions,
   dataTestId,
   ViewLangListItem,
+  ViewSettingsListItem,
   View,
 }

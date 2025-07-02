@@ -142,6 +142,7 @@ export const translations: Text = {
   'l18n.done': 'किया',
   'l18n.loaded-translations': 'लोड की गई अनुवाद',
   'l18n.renderer': 'Renderer',
+  'l18n.settings': 'सेटिंग्स',
   'spaces.current-user-joined-space': 'स्थान जुड़ गया',
   'spaces.other-user-joined-space': (username) =>
     `${username} \u0928\u0947 \u0938\u094D\u0925\u093E\u0928 \u091C\u094B\u0921\u093C\u093E`,

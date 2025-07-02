@@ -138,6 +138,7 @@ export const translations: Text = {
   'l18n.done': 'Terminé',
   'l18n.loaded-translations': 'Traductions chargées',
   'l18n.renderer': 'Renderer',
+  'l18n.settings': 'Paramètres',
   'spaces.current-user-joined-space': 'Espace rejoint',
   'spaces.other-user-joined-space': (username) => `${username} a rejoint l'espace`,
   'spaces.space-not-found': 'Espace non trouvé',

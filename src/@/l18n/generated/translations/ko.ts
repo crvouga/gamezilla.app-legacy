@@ -137,6 +137,7 @@ export const translations: Text = {
   'l18n.done': '완료',
   'l18n.loaded-translations': '번역이 로드되었습니다',
   'l18n.renderer': 'Renderer',
+  'l18n.settings': '설정',
   'spaces.current-user-joined-space': '공간에 참여함',
   'spaces.other-user-joined-space': (username) => `${username} \uAC00 \uACF5\uAC04\uC5D0 \uCC38\uC5EC\uD568`,
   'spaces.space-not-found': '공간을 찾을 수 없습니다',

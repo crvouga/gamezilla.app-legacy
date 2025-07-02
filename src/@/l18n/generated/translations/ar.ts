@@ -141,6 +141,7 @@ export const translations: Text = {
   'l18n.done': 'تم',
   'l18n.loaded-translations': 'تم تحميل الترجمات',
   'l18n.renderer': 'المعرض',
+  'l18n.settings': 'الإعدادات',
   'spaces.current-user-joined-space': 'انضمت إلى المساحة',
   'spaces.other-user-joined-space': (username) =>
     `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,

@@ -140,6 +140,7 @@ export const translations: Text = {
   'l18n.done': 'Fertig',
   'l18n.loaded-translations': 'Übersetzungen geladen',
   'l18n.renderer': 'Renderer',
+  'l18n.settings': 'Einstellungen',
   'spaces.current-user-joined-space': 'Raum beigetreten',
   'spaces.other-user-joined-space': (username) => `${username} ist dem Raum beigetreten`,
   'spaces.space-not-found': 'Raum nicht gefunden',

@@ -138,6 +138,7 @@ export const translations: Text = {
   'l18n.done': '完了',
   'l18n.loaded-translations': '翻訳が読み込まれました',
   'l18n.renderer': 'Renderer',
+  'l18n.settings': '設定',
   'spaces.current-user-joined-space': 'スペースに参加しました',
   'spaces.other-user-joined-space': (username) =>
     `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F`,

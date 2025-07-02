@@ -1,7 +1,7 @@
 import { type Page } from '@playwright/test'
 import type { PlayedAudioRecord } from '../audio-player'
 import { TimeSpan } from '../time/time-span'
-import type { ITestClient, ITestNode, TestAction } from './interface'
+import type { ITestClientBase, ITestNode, TestAction } from './interface'
 
 export type BaseConfig = {
   maxWait: TimeSpan
@@ -13,7 +13,7 @@ export type Config = {
   getPage: () => Page
 } & BaseConfig
 
-export const TestClient = (config: Config): ITestClient => {
+export const TestClient = (config: Config): ITestClientBase => {
   return {
     async audio(): Promise<PlayedAudioRecord[]> {
       return []

@@ -2,15 +2,17 @@ import { difference } from '~/@/array/difference'
 import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
 import { Fixture } from './fixture'
+import { ScreenTestIds } from '~/app/@/ui/screen/screen-test-ids'
 
 describe('verify code', () => {
   test('verify code screen back button', async (e) => {
     await using f = await Fixture(e)
     await f.sendCode()
-    await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
-    const [backButton] = await f.frontend.query(`[data-testid='nav/back-button']`)
+    const verifyCodeScreen = await f.frontend.byDataTestId('auth/verify-code-screen')
+    expect(verifyCodeScreen).toBeDefined()
+    const backButton = await f.frontend.byDataTestId(ScreenTestIds.backButton)
     await backButton!.do({ t: 'click' })
-    const [sendCodeScreen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
+    const sendCodeScreen = await f.frontend.byDataTestId('auth/send-code-screen')
     expect(sendCodeScreen).toBeDefined()
   })
 
@@ -18,9 +20,10 @@ describe('verify code', () => {
     if (e.e2e) return
     await using f = await Fixture(e)
     await f.sendCode()
-    await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
+    const verifyCodeScreen = await f.frontend.byDataTestId('auth/verify-code-screen')
+    expect(verifyCodeScreen).toBeDefined()
     const before = await f.frontend.audio()
-    const [backButton] = await f.frontend.query(`[data-testid='nav/back-button']`)
+    const backButton = await f.frontend.byDataTestId(ScreenTestIds.backButton)
     await backButton!.do({ t: 'click' })
     await eventually(async () => {
       const after = await f.frontend.audio()
@@ -35,7 +38,7 @@ describe('verify code', () => {
     const [sendCodeError] = await f.frontend.query(`[role='alert'][data-error='true']`)
     expect(sendCodeError).toBeUndefined()
     await f.verifyCode()
-    const [screen] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
+    const screen = await f.frontend.byDataTestId('spaces/space-list-screen')
     expect(screen).toBeDefined()
   })
 

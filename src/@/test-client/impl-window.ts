@@ -1,6 +1,6 @@
 import { IAudioPlayer } from '../audio-player'
 import { TimeSpan } from '../time/time-span'
-import type { ITestClient, ITestNode, TestAction } from './interface'
+import type { ITestClientBase, ITestNode, TestAction } from './interface'
 
 export type BaseConfig = {
   maxWait: TimeSpan
@@ -12,7 +12,7 @@ export type Config = {
   t: 'window'
 } & BaseConfig
 
-export const TestClient = (config: Config): ITestClient => {
+export const TestClient = (config: Config): ITestClientBase => {
   return {
     async audio() {
       return config.audioPlayer.played()

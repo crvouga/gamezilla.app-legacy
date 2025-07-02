@@ -1,7 +1,5 @@
 import { Clickable } from '~/@/ui/clickable'
 import { cn } from '~/@/ui/cn'
-import { IconChevronRight, IconGear } from '~/@/ui/icon'
-import { ListItemButton } from '~/@/ui/list-item-button'
 import { h } from '~/@/vdom/h'
 import { AuthFrontend } from '~/app/auth/frontend'
 import { SettingsFrontend } from '~/app/settings/frontend'
@@ -13,7 +11,6 @@ import { StatusBarFrontend } from '../status-bar/index'
 
 const dataTestId = {
   openButton: 'app-status-bar/open-button',
-  openSettingsButton: 'app-status-bar/open-settings-button',
 }
 
 const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (c: MsgFrontend) => void }) => {
@@ -85,16 +82,10 @@ const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: 
               dispatch: (c) => input.dispatch({ t: 'frontend', c: { t: 'sound', c } }),
             }),
 
-            h(ListItemButton, {
-              icon: (props) => h(IconGear, props),
-              label: input.ctx.t('app.open-settings'),
-              dataTestId: dataTestId.openSettingsButton,
-              end: () => h(IconChevronRight, { class: 'size-6' }),
-              onClick: () =>
-                input.dispatch({
-                  t: 'frontend',
-                  c: { t: 'current-screen', c: { t: 'clicked-link', screen: { n: 'settings', t: 'main' } } },
-                }),
+            h(SettingsFrontend.ViewSettingsListItem, {
+              ctx: input.ctx,
+              dispatch: (c) => input.dispatch({ t: 'settings', c }),
+              model: input.model.settings,
             }),
           ]),
         },

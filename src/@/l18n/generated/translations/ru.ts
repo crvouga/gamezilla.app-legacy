@@ -141,6 +141,7 @@ export const translations: Text = {
   'l18n.done': 'Готово',
   'l18n.loaded-translations': 'Загруженные переводы',
   'l18n.renderer': 'Renderer',
+  'l18n.settings': 'Настройки',
   'spaces.current-user-joined-space': 'Присоединился к пространству',
   'spaces.other-user-joined-space': (username) =>
     `${username} \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443`,
