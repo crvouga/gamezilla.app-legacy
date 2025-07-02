@@ -106,6 +106,15 @@ jobs:
     timeout-minutes: 10
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
       - name: Run database migrations
         run: npm run db:up
         env:
