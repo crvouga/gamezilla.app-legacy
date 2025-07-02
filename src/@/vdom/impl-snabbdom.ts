@@ -21,7 +21,7 @@ export const initSnabbdom = (): VirtualDomEngine => {
             oldVNode = patch(oldVNode, newVNode as VNode)
           }
         } catch (e) {
-          console.error(e)
+          // console.error(e)
         }
       }
     },
@@ -53,8 +53,7 @@ export const initSnabbdom = (): VirtualDomEngine => {
 
         return vDom
       } catch (e) {
-        console.error(e)
-        return h('div', {}, ['errored'])
+        // console.error(e)
       }
     },
   }

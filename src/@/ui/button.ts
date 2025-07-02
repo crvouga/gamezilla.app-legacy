@@ -40,7 +40,7 @@ export const Button = (input: ButtonInput) => {
       dataTestId: input.dataTestId,
       disabled: input.disabled || input.loading,
       type: input.type ?? 'button',
-      'data-fab': input.fab,
+      'data-fab': input.fab ? 'true' : 'false',
       class: cn(
         input.class,
         'relative flex shrink-0 appearance-none flex-nowrap items-center justify-center truncate overflow-hidden rounded font-semibold select-none',

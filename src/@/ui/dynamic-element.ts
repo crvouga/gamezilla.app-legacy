@@ -28,7 +28,7 @@ type DynamicElementProps = {
   tabIndex?: number
   disabled?: boolean
   dataTestId?: string
-  'aria-checked'?: boolean
+  'aria-checked'?: 'true' | 'false'
 }
 
 export const DynamicElement = (input: DynamicElementProps) => {

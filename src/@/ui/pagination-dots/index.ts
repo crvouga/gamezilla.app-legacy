@@ -29,7 +29,11 @@ export const PaginationDots = (input: { count: number; activeIndex: number; onCl
       if (input.onClick) {
         return h(Clickable, { ...baseProps, onClick: () => input.onClick?.(i) })
       }
-      return h('div', { ...baseProps, onClick: () => input.onClick?.(i) })
+      return h('div', {
+        ...baseProps,
+        'aria-selected': baseProps['aria-selected'] ? 'true' : 'false',
+        onClick: () => input.onClick?.(i),
+      })
     }),
   )
 }

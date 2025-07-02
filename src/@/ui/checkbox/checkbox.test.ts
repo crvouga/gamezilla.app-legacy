@@ -38,14 +38,16 @@ describe('Checkbox', () => {
     const f = await Fixture()
     f.render(h(Checkbox, { state: 'checked' }))
     const [checkbox] = await f.client.query('[role="checkbox"]')
-    expect(await checkbox!.attr('aria-checked')).toEqual('true')
+    const ariaChecked = await checkbox!.attr('aria-checked')
+    expect(ariaChecked).toEqual('true')
   })
 
   test('should have aria-checked=false when unchecked', async () => {
     const f = await Fixture()
     f.render(h(Checkbox, { state: 'unchecked' }))
     const [checkbox] = await f.client.query('[role="checkbox"]')
-    expect(await checkbox!.attr('aria-checked')).toEqual('false')
+    const ariaChecked = await checkbox!.attr('aria-checked')
+    expect(ariaChecked).toEqual('false')
   })
 
   test('clicking checkbox triggers onChange when unchecked', async () => {

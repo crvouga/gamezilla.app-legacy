@@ -37,9 +37,9 @@ export type IntrinsicAttributes = {
   style?: StyleAttribute
   role?: AriaRole
   'aria-label'?: string
-  'aria-selected'?: boolean
-  'aria-hidden'?: boolean
-  'aria-disabled'?: boolean
+  'aria-selected'?: 'true' | 'false'
+  'aria-hidden'?: 'true' | 'false'
+  'aria-disabled'?: 'true' | 'false'
   'aria-role'?: AriaRole
   children?: VDom[]
   key?: unknown

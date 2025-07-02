@@ -16,7 +16,7 @@ export const Checkbox = (input: { state: CheckboxState; onChange?: (checkedNew: 
         input.state !== 'unchecked' && 'border-neutral-100 bg-neutral-100',
       ),
       role: 'checkbox',
-      'aria-checked': input.state === 'checked',
+      'aria-checked': input.state === 'checked' ? 'true' : 'false',
       tabIndex: element === 'button' ? 0 : undefined,
       onClick: () => {
         input.onChange?.(!isChecked)

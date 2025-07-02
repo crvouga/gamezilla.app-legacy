@@ -55,7 +55,16 @@ export const TextField = (input: {
             let valueNew: string = e.currentTarget.value
 
             if (valueNew.length === 0)
-              valueNew = 'data' in e.nativeEvent && typeof e.nativeEvent.data === 'string' ? e.nativeEvent.data : ''
+              valueNew =
+                typeof e === 'object' &&
+                e !== null &&
+                'nativeEvent' in e &&
+                typeof e.nativeEvent === 'object' &&
+                e.nativeEvent !== null &&
+                'data' in e.nativeEvent &&
+                typeof e.nativeEvent.data === 'string'
+                  ? e.nativeEvent.data
+                  : ''
 
             input.onChange(valueNew)
           },
@@ -93,8 +102,8 @@ export const TextField = (input: {
         'div',
         {
           role: 'alert',
-          'data-error': Boolean(input.error),
-          'data-info': !Boolean(input.error),
+          'data-error': input.error ? 'true' : 'false',
+          'data-info': input.error ? 'false' : 'true',
           class: cn('text-sm', input.error && 'text-red-500'),
         },
         [input.helperText],

@@ -20,12 +20,12 @@ export type ClickableProps = {
   tabIndex?: number
   disabled?: boolean
   dataTestId?: string
-  'data-fab'?: boolean
   'aria-label'?: string
   'data-testid'?: string
   'aria-hidden'?: boolean
   'aria-disabled'?: boolean
   key?: string
+  [key: string]: unknown
 }
 
 export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
@@ -33,6 +33,8 @@ export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
     'button',
     {
       ...input,
+      'aria-hidden': input['aria-hidden'] ? 'true' : 'false',
+      'aria-disabled': input['aria-disabled'] ? 'true' : 'false',
       'data-testid': dataTestId,
       type: input.type ?? 'button',
       onClick: input.onClick,

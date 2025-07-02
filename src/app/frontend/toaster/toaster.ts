@@ -175,9 +175,9 @@ const Toast = (input: { key?: string; ctx: Ctx; toast: Toast; dispatch: (m: Msg)
       key: input.key,
       id: String(input.toast.toastId),
       role: 'alert',
-      'data-error': input.toast.variant === 'error',
-      'data-info': input.toast.variant === 'info',
-      'data-success': input.toast.variant === 'success',
+      'data-error': input.toast.variant === 'error' ? 'true' : 'false',
+      'data-info': input.toast.variant === 'info' ? 'true' : 'false',
+      'data-success': input.toast.variant === 'success' ? 'true' : 'false',
       class:
         'pointer-events-none absolute top-0 left-0 z-40 flex w-full items-center justify-center overflow-visible p-4',
       onMouseDown: () => input.dispatch({ t: 'pressed-down-on-toast', toast: input.toast }),
