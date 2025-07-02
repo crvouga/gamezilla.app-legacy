@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run frontend:build:vercel",
-  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "pnpm run frontend:build:vercel",
+  "installCommand": "pnpm install",
   "outputDirectory": "dist",
   "git": {
     "deploymentEnabled": false
