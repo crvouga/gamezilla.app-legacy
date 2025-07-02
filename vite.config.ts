@@ -1,7 +1,6 @@
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 import { defineConfig } from 'vite'
-import { VitePWA } from 'vite-plugin-pwa'
 import wasm from 'vite-plugin-wasm'
 
 const KILOBYTE = 1024
@@ -9,7 +8,11 @@ const MEGABYTE = KILOBYTE * KILOBYTE
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tailwindcss(), wasm(), VitePWA()],
+  plugins: [
+    tailwindcss(),
+    wasm(),
+    // VitePWA()
+  ],
   optimizeDeps: {
     exclude: [
       '@journeyapps/wa-sqlite',

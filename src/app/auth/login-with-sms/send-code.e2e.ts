@@ -1,9 +1,21 @@
 import { difference } from '~/@/array/difference'
+import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
 import { Fixture } from './fixture'
 
 describe('send code', () => {
+  test('country should match navigator country', async (e) => {
+    await using f = await Fixture(e)
+    const [countryCodeSelect] = await f.frontend.query(
+      `[data-testid='auth/country-code-select']>select>option[selected]`,
+    )
+    expect(countryCodeSelect).toBeDefined()
+    const countryCode = await countryCodeSelect?.text()
+    expect(countryCode).toBeDefined()
+    expect(countryCode).toEqual(Iso3166Alpha2Code.toNameWithEmoji('US'))
+  })
+
   test('send code screen back button', async (e) => {
     await using f = await Fixture(e)
     const [sendCodeScreen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)

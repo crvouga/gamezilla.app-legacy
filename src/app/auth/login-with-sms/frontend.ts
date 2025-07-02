@@ -234,6 +234,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
       h(Frag, {}, [
         h(Select<Iso3166Alpha2Code>, {
           id: 'countryCode',
+          dataTestId: 'auth/country-code-select',
           label: input.ctx.t('auth-sms.country'),
           onChange: (countryCode) => input.dispatch({ t: 'inputted-country-code', countryCode }),
           value: input.model.countryCode,

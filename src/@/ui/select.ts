@@ -4,18 +4,9 @@ import { h } from '~/@/vdom/h'
 import { cn } from './cn'
 import { PAPER_CLASS_NAME } from './paper'
 
-export const Select = <T>({
-  onChange,
-  options,
-  value,
-  label,
-  id,
-  toKey,
-  toName,
-  error,
-  helperText,
-}: {
+export const Select = <T>(props: {
   helperText?: string
+  dataTestId?: string
   id: string
   label: TranslatedText
   options: T[]
@@ -26,34 +17,45 @@ export const Select = <T>({
   startIcon?: VDom
   onChange: (value: T) => void
 }) => {
-  const labelId = `${id}-label`
-  return h('div', { class: 'flex w-full flex-col gap-1' }, [
-    h('label', { id: labelId, htmlFor: id, class: cn('text-base', error && 'text-red-500') }, [label]),
+  const labelId = `${props.id}-label`
+  return h('div', { class: 'flex w-full flex-col gap-1', 'data-testid': props.dataTestId }, [
+    h('label', { id: labelId, htmlFor: props.id, class: cn('text-base', props.error && 'text-red-500') }, [
+      props.label,
+    ]),
     h(
       'select',
       {
-        id: id,
+        id: props.id,
         class: cn(
           PAPER_CLASS_NAME,
           'flex appearance-none items-center rounded-md border p-3 py-4 text-xl outline-none',
-          error && 'border-red-500 text-red-500',
-          !error && 'border-neutral-600 ring-blue-500 focus:ring-2',
+          props.error && 'border-red-500 text-red-500',
+          !props.error && 'border-neutral-600 ring-blue-500 focus:ring-2',
         ),
+        value: props.value ? props.toKey(props.value) : undefined,
+        'default-value': props.value ? props.toKey(props.value) : undefined,
         'aria-labelledby': labelId,
-        value: value ? toKey(value) : undefined,
         onChange: (e: { currentTarget: { value: string } }) => {
-          for (const option of options) {
-            if (toKey(option) === e.currentTarget.value) {
-              onChange(option)
+          for (const option of props.options) {
+            if (props.toKey(option) === e.currentTarget.value) {
+              props.onChange(option)
               return
             }
           }
         },
       },
-      options.map((option) => {
-        return h('option', { key: toKey(option), value: toKey(option) }, [toName(option)])
+      props.options.map((option) => {
+        return h(
+          'option',
+          {
+            key: props.toKey(option),
+            value: props.toKey(option),
+            selected: props.value && props.toKey(option) === props.toKey(props.value) ? 'true' : undefined,
+          },
+          [props.toName(option)],
+        )
       }),
     ),
-    helperText && h('div', { class: cn('text-sm', error && 'text-red-500') }, [helperText]),
+    props.helperText && h('div', { class: cn('text-sm', props.error && 'text-red-500') }, [props.helperText]),
   ])
 }

@@ -28,6 +28,7 @@
     "initdb",
     "isready",
     "journeyapps",
+    "labelledby",
     "Lamport",
     "Lichess",
     "mapbox",
