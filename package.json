@@ -20,7 +20,7 @@
     "check-imports": "pnpm exec tsx scripts/check-imports.ts",
     "cir-deps": "pnpm run cir-deps:backend-primary && pnpm run cir-deps:frontend",
     "cir-deps:backend-primary": "pnpm exec dpdm --progress --no-warning --no-tree ./src/backend-primary.ts",
-    "cir-deps:frontend": "pnpm exec dpdm --progress --no-warning --no-tree ./src/frontend.tsx",
+    "cir-deps:frontend": "pnpm exec dpdm --progress --no-warning --no-tree ./src/frontend.ts",
     "clean-install": "rm -rf node_modules && rm -rf dist && rm pnpm-lock.yaml && pnpm install",
     "cloc": "pnpm exec cloc src",
     "db": "psql postgresql://postgres:postgres@localhost:5438/postgres?sslmode=disable",
