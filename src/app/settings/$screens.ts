@@ -10,6 +10,10 @@ const Screen = s.or(
     n: s.l('settings'),
     t: s.l('choose-lang'),
   }),
+  s.obj({
+    n: s.l('settings'),
+    t: s.l('choose-renderer'),
+  }),
 )
 
 export type Screen = s.Infer<typeof Screen>

@@ -13,11 +13,16 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { APP_SOUND } from '../@/frontend/app-sound'
+import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { translatorSubscriptions } from '../@/frontend/translator'
-import type { FrontendModule, MsgFrontend, TranslationLoading } from './types'
+import type { FrontendModule, ModelFrontend, MsgFrontend, TranslationLoading } from './types'
 
 const dataTestId = {
   mainScreen: 'settings/main-screen',
+  openChooseLangScreen: 'settings/open-choose-lang-screen',
+  chooseLangScreen: 'settings/choose-lang-screen',
+  openChooseRendererScreen: 'settings/open-choose-renderer-screen',
+  chooseRendererScreen: 'settings/choose-renderer-screen',
 }
 
 //
@@ -124,6 +129,13 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
       }
     }
 
+    case 'clicked-change-renderer': {
+      return {
+        model,
+        msgOut: [PushScreenCmd.init({ t: 'choose-renderer', n: 'settings' }, true), CloseStatusBarCmd.init()],
+      }
+    }
+
     default: {
       return {
         model,
@@ -155,7 +167,7 @@ const subscriptions: FrontendModule['subscriptions'] = (_input) => {
 const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
   return h(ListItemButton, {
     icon: (input) => h(IconLanguage, input),
-    label: ctx.t('lang.language'),
+    label: ctx.t('l18n.language'),
     end: () => ctx.t(model.lang),
     onClick: () => {
       dispatch({
@@ -169,8 +181,14 @@ const View: FrontendModule['View'] = (input) => {
   switch (input.ctx.currentScreen.n) {
     case 'settings': {
       switch (input.ctx.currentScreen.t) {
+        case 'main': {
+          return h(ViewMain, { ctx: input.ctx, dispatch: input.dispatch, model: input.model })
+        }
         case 'choose-lang': {
           return h(ViewChooseLang, { ctx: input.ctx, dispatch: input.dispatch, model: input.model })
+        }
+        case 'choose-renderer': {
+          return h(ViewChooseRenderer, { ctx: input.ctx, dispatch: input.dispatch, model: input.model })
         }
         default: {
           return null
@@ -183,13 +201,14 @@ const View: FrontendModule['View'] = (input) => {
   }
 }
 
-const ViewChooseLang: FrontendModule['View'] = (input) => {
+const ViewMain: FrontendModule['View'] = (input) => {
   return h(ScreenLayout, {
-    id: 'choose-lang',
+    id: 'setting-main',
+    dataTestId: dataTestId.mainScreen,
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
     navBar: {
-      title: input.ctx.t('lang.choose-language'),
+      title: input.ctx.t('l18n.choose-language'),
       back: {
         onClick: () =>
           input.dispatch({
@@ -199,52 +218,107 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
+        h(ListItemButton, {
+          label: input.ctx.t('l18n.language'),
+          end: () => h('div', {}, [input.ctx.t(input.model.lang)]),
+          onClick: () => input.dispatch({ t: 'clicked-change-lang' }),
+          icon: (inputIcon) => h(IconLanguage, inputIcon),
+        }),
+        h(ListItemButton, {
+          label: input.ctx.t('l18n.renderer'),
+          end: () => h('div', {}, [VDomImpl.toName(input.model.vDomImpl)]),
+          onClick: () => input.dispatch({ t: 'clicked-change-renderer' }),
+          icon: (inputIcon) => h(IconLanguage, inputIcon),
+          dataTestId: SettingsFrontend.dataTestId.openChooseRendererScreen,
+        }),
+        h(Gutter, { variant: 'screen' }),
+      ]),
+  })
+}
+
+const ViewChooseRenderer: FrontendModule['View'] = (input) => {
+  return h(ScreenLayout, {
+    id: 'setting-choose-renderer',
+    dataTestId: dataTestId.chooseRendererScreen,
+    ctx: input.ctx,
+    parentScreen: input.ctx.parentScreen,
+    navBar: {
+      title: input.ctx.t('l18n.renderer'),
+      back: {},
+    },
+    renderBody: () => h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [h(Gutter, { variant: 'screen' })]),
+  })
+}
+
+const ViewChooseLang: FrontendModule['View'] = (input) => {
+  return h(ScreenLayout, {
+    id: 'setting-choose-lang',
+    dataTestId: dataTestId.chooseLangScreen,
+    ctx: input.ctx,
+    parentScreen: input.ctx.parentScreen,
+    navBar: {
+      title: input.ctx.t('l18n.choose-language'),
+      back: { onClick: () => input.dispatch({ t: 'choose-lang.clicked-done' }) },
+    },
+    renderBody: () =>
+      h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
         ...LanguageCodeISO_639_1.ALL.map((langCode) =>
-          h(ListItemButton, {
+          h(ViewChooseLangListItem, {
             key: langCode,
-            label: input.ctx.t(langCode),
-            icon: (inputIcon) => {
-              if (input.model.langLoading[langCode]?.endedAt === null) {
-                return h(Spinner, inputIcon)
-              }
-
-              if (input.model.lang === langCode) {
-                return h(IconCheckmarkCircle, inputIcon)
-              }
-
-              return h(
-                'svg',
-                {
-                  viewBox: '0 0 24 24',
-                  fill: 'none',
-                  stroke: 'currentColor',
-                  'stroke-width': '2',
-                  'stroke-linecap': 'round',
-                  class: inputIcon.class,
-                },
-                [
-                  h('circle', {
-                    r: '8',
-                    cx: '12',
-                    cy: '12',
-                    fill: 'none',
-                    stroke: 'currentColor',
-                    strokeWidth: 2,
-                    strokeLinecap: 'round',
-                  }),
-                ],
-              )
-            },
-            end: () => h('div', {}, [input.ctx.t(langCode)]),
-            onClick: () =>
-              input.dispatch({
-                t: 'choose-lang.clicked-lang',
-                lang: langCode,
-              }),
+            ctx: input.ctx,
+            langCode,
+            model: input.model,
+            dispatch: input.dispatch,
           }),
         ),
         h(Gutter, { variant: 'screen' }),
       ]),
+  })
+}
+
+const ViewChooseLangListItem = (input: {
+  ctx: AppFrontendCtxBase
+  langCode: LanguageCodeISO_639_1
+  model: ModelFrontend
+  dispatch: (msg: MsgFrontend) => void
+}) => {
+  return h(ListItemButton, {
+    key: input.langCode,
+    label: input.ctx.t(input.langCode),
+    end: () => h('div', {}, [input.ctx.t(input.langCode)]),
+    onClick: () => input.dispatch({ t: 'choose-lang.clicked-lang', lang: input.langCode }),
+    icon: (inputIcon) => {
+      if (input.model.langLoading[input.langCode]?.endedAt === null) {
+        return h(Spinner, inputIcon)
+      }
+
+      if (input.model.lang === input.langCode) {
+        return h(IconCheckmarkCircle, inputIcon)
+      }
+
+      return h(
+        'svg',
+        {
+          viewBox: '0 0 24 24',
+          fill: 'none',
+          stroke: 'currentColor',
+          'stroke-width': '2',
+          'stroke-linecap': 'round',
+          class: inputIcon.class,
+        },
+        [
+          h('circle', {
+            r: '8',
+            cx: '12',
+            cy: '12',
+            fill: 'none',
+            stroke: 'currentColor',
+            strokeWidth: 2,
+            strokeLinecap: 'round',
+          }),
+        ],
+      )
+    },
   })
 }
 

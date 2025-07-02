@@ -21,6 +21,7 @@ export type MsgFrontend =
   | { t: 'clicked-change-lang' }
   | { t: 'choose-lang.clicked-done' }
   | { t: 'choose-lang.clicked-lang'; lang: LanguageCodeISO_639_1 }
+  | { t: 'clicked-change-renderer' }
 
 export type FrontendModule = AppFrontendModule<{
   Ctx: AnonymousFrontendCtx
