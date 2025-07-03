@@ -21,9 +21,7 @@ const main = async () => {
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
-    render: (input) => {
-      render(h(AppFrontend.View, { ...input, ctx }))
-    },
+    render: (input) => render(h(AppFrontend.View, { ...input, ctx })),
   })
 }
 
