@@ -5,6 +5,7 @@ import { kebabObjectToCamelObject } from './style'
 
 type AppState = {
   vDom: VNode<any>
+  lastUpdate: number
 }
 
 type SetVDomAction = (state: AppState, vDom: VNode<any>) => AppState
@@ -12,11 +13,17 @@ type SetVDomAction = (state: AppState, vDom: VNode<any>) => AppState
 export const initHyperapp = (): VirtualDomEngine => {
   return {
     render: (node) => {
-      const setVDom: SetVDomAction = (state, vDom) => ({ ...state, vDom })
+      const setVDom: SetVDomAction = (state, vDom) => ({
+        ...state,
+        vDom,
+        lastUpdate: Date.now(),
+      })
 
       const dispatch = app({
-        init: { vDom: h('div', {}, []) } as AppState,
-        view: (state: AppState) => state.vDom || h('div', {}, []),
+        init: { vDom: h('div', {}, []), lastUpdate: Date.now() } as AppState,
+        view: (state: AppState) => {
+          return state.vDom || h('div', {}, [])
+        },
         node,
       })
 
@@ -28,6 +35,8 @@ export const initHyperapp = (): VirtualDomEngine => {
           }
         } catch (error) {
           console.error('Error processing vDom:', error)
+          // Fallback to empty div on error
+          dispatch(setVDom, h('div', {}, []))
         }
       }
     },
@@ -60,8 +69,12 @@ export const initHyperapp = (): VirtualDomEngine => {
           } else if (key === 'class' && value) {
             filteredProps.class = value
           } else if (key.startsWith('on') && typeof value === 'function') {
-            // Keep event handlers as-is for hyperapp
-            filteredProps[key] = value
+            // Convert React-style event handlers to hyperapp format
+            // onClick -> onclick, onMouseDown -> onmousedown, onTouchStart -> ontouchstart, etc.
+            const hyperappEventName = key.toLowerCase()
+
+            // Convert event handler name and pass through directly
+            filteredProps[hyperappEventName] = value
           } else if (value !== undefined && value !== null) {
             filteredProps[key] = value
           }
