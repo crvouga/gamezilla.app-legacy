@@ -1,5 +1,5 @@
 import { LocalStorage } from '~/@/browser'
-import { pushQueryParam } from '~/@/browser/browser'
+import { replaceQueryParam } from '~/@/browser/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
@@ -160,7 +160,11 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
           vDomImpl: msg.vDomImpl,
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-        eff: pushQueryParam('vdom', msg.vDomImpl),
+        async eff(dispatch) {
+          replaceQueryParam('vdom', msg.vDomImpl)(dispatch)
+          await new Promise((resolve) => setTimeout(resolve, 100))
+          window.location.reload()
+        },
       }
     }
 
@@ -285,7 +289,7 @@ const ViewChooseRenderer: FrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
-        ...VDomImpl.ALL.map((vDomImpl) => {
+        ...VDomImpl.ALL.filter((vDomImpl) => !VDomImpl.HIDDEN.includes(vDomImpl)).map((vDomImpl) => {
           const isSelected = vDomImpl === input.model.vDomImpl
           // const isDefault = vDomImpl === CONFIG_FRONTEND.VDOM_IMPL_DEFAULT
           return h(ListItemButton, {

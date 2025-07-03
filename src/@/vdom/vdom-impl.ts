@@ -4,6 +4,8 @@ import { editDistance } from '../string/edit-distance'
 
 const ALL = ['hyperapp', 'inferno', 'preact', 'react', 'snabbdom'] as const
 
+const HIDDEN: VDomImpl[] = ['hyperapp']
+
 export type VDomImpl = (typeof ALL)[number]
 
 const of = (impl: VDomImpl): VDomImpl => {
@@ -49,4 +51,5 @@ export const VDomImpl = {
   of,
   readFromUrl,
   toName,
+  HIDDEN,
 }
