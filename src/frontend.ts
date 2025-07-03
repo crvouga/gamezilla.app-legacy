@@ -2,7 +2,7 @@ import { Program } from '~/@/program/program'
 import { Render, h, vdomEngineInitialized } from '~/@/vdom/h'
 import { AppFrontend } from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { registerServiceWorker } from './app/frontend/update-prompt/update-prompt'
+import { registerServiceWorker } from './app/settings/update-prompt/update-prompt'
 import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {

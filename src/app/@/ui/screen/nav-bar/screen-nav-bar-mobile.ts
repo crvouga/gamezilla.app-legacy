@@ -54,7 +54,7 @@ export const ScreenNavBarMobile = (input: {
           typeof input.title === 'string' &&
             h(Typography, {
               role: 'heading',
-              sizeClassName: 'text-lg font-bold',
+              sizeClassName: 'text-xl font-bold',
               class: 'truncate px-2',
               variant: 'title',
               text: input.title,

@@ -9,15 +9,15 @@ const Fixture = async (e: TestRunnerEnv) => {
 describe('login', () => {
   test('login screen', async (e) => {
     await using f = await Fixture(e)
-    const [screen] = await f.frontend.query(`[data-testid='auth/login-screen']`)
+    const [screen] = await f.frontend.find(`[data-testid='auth/login-screen']`)
     expect(screen).toBeTruthy()
   })
 
   test('continue with sms', async (e) => {
     await using f = await Fixture(e)
-    const [button] = await f.frontend.query(`[data-testid='auth/continue-with-phone-button']`)
+    const [button] = await f.frontend.find(`[data-testid='auth/continue-with-phone-button']`)
     await button!.do({ t: 'click' })
-    const [screen] = await f.frontend.query(`[data-testid='auth/send-code-screen']`)
+    const [screen] = await f.frontend.find(`[data-testid='auth/send-code-screen']`)
     expect(screen).toBeTruthy()
   })
 })

@@ -22,19 +22,19 @@ export type TestClientQueryConfig = {
 }
 
 export type ITestClientBase = {
-  query: (selector: string, config?: TestClientQueryConfig) => Promise<ITestNode[]>
+  find: (selector: string, config?: TestClientQueryConfig) => Promise<ITestNode[]>
   audio: () => Promise<PlayedAudioRecord[]>
 }
 
 export type ITestClient = ITestClientBase & {
-  byDataTestId: (testId: string) => Promise<ITestNode | null>
+  findByTestId: (testId: string) => Promise<ITestNode | null>
 }
 
 export const fromBase = (base: ITestClientBase): ITestClient => {
   return {
     ...base,
-    byDataTestId: async (testId) => {
-      const [node] = await base.query(`[data-testid="${testId}"]`)
+    findByTestId: async (testId) => {
+      const [node] = await base.find(`[data-testid="${testId}"]`)
       return node ?? null
     },
   }

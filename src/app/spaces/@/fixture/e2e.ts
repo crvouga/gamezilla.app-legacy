@@ -7,7 +7,7 @@ export const FixtureSpacesE2E = async (e: TestRunnerEnv) => {
 
   await setupLoginWithSms(f)
 
-  const [screen] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
+  const [screen] = await f.frontend.find(`[data-testid='spaces/space-list-screen']`)
   expect(screen).toBeTruthy()
 
   return {

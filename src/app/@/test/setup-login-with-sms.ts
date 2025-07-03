@@ -9,21 +9,21 @@ const randomPhoneNumber = (): number => {
 
 export const setupLoginWithSms = async (f: IFixtureApp) => {
   //
-  await f.frontend.byDataTestId(AuthFrontend.dataTestId.loginScreen)
-  const continueWithPhoneButton = await f.frontend.byDataTestId(AuthFrontend.dataTestId.continueWithPhoneButton)
+  await f.frontend.findByTestId(AuthFrontend.dataTestId.loginScreen)
+  const continueWithPhoneButton = await f.frontend.findByTestId(AuthFrontend.dataTestId.continueWithPhoneButton)
   await continueWithPhoneButton!.do({ t: 'click' })
   //
-  await f.frontend.query(`[data-testid='auth/send-code-screen']`)
-  const [sendCodeInput] = await f.frontend.query(`input[type='tel']`)
+  await f.frontend.find(`[data-testid='auth/send-code-screen']`)
+  const [sendCodeInput] = await f.frontend.find(`input[type='tel']`)
   await sendCodeInput!.do({ t: 'input', value: String(randomPhoneNumber()) })
-  const [sendCodeButton] = await f.frontend.query(`button[type='submit']`)
+  const [sendCodeButton] = await f.frontend.find(`button[type='submit']`)
   await sendCodeButton!.do({ t: 'click' })
   //
-  await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
-  const [verifyCodeInput] = await f.frontend.query(`input[type='tel']`)
+  await f.frontend.find(`[data-testid='auth/verify-code-screen']`)
+  const [verifyCodeInput] = await f.frontend.find(`input[type='tel']`)
   await verifyCodeInput!.do({ t: 'input', value: '123' })
-  const [verifyCodeButton] = await f.frontend.query(`button[type='submit']`)
+  const [verifyCodeButton] = await f.frontend.find(`button[type='submit']`)
   await verifyCodeButton!.do({ t: 'click' })
   //
-  await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
+  await f.frontend.find(`[data-testid='spaces/space-list-screen']`)
 }

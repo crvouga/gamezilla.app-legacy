@@ -18,7 +18,7 @@ export const TestClient = (config: Config): ITestClientBase => {
     async audio(): Promise<PlayedAudioRecord[]> {
       return []
     },
-    async query(selector: string, queryConfig) {
+    async find(selector: string, queryConfig) {
       const poll = async () => {
         const page = config.getPage()
         const locator = page.locator(selector)

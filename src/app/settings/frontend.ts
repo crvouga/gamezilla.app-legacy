@@ -3,9 +3,9 @@ import { pushQueryParam } from '~/@/browser/browser'
 import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
-import { IconCheckmarkCircle, IconChevronRight, IconCode, IconGear, IconLanguage } from '~/@/ui/icon'
+import { IconCode, IconGear, IconLanguage } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
-import { Spinner } from '~/@/ui/spinner'
+import { RadioInputIcon } from '~/@/ui/radio-input'
 import { h } from '~/@/vdom/h'
 import { VDomImpl } from '~/@/vdom/vdom-impl'
 import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd.$msg'
@@ -20,7 +20,7 @@ import { translatorSubscriptions } from '../@/frontend/translator'
 import type { FrontendModule, ModelFrontend, MsgFrontend, TranslationLoading } from './types'
 
 const dataTestId = {
-  mainScreen: 'settings/main-screen',
+  screen: 'settings/screen',
   openSettingsScreen: 'settings/open-settings-screen',
   openChooseLangScreen: 'settings/open-choose-lang-screen',
   chooseLangScreen: 'settings/choose-lang-screen',
@@ -211,7 +211,7 @@ const ViewSettingsListItem: FrontendModule['View'] = (input) => {
     icon: (props) => h(IconGear, props),
     primary: input.ctx.t('l18n.settings'),
     dataTestId: dataTestId.openSettingsScreen,
-    end: () => h(IconChevronRight, { class: 'size-6' }),
+    // end: () => h(IconChevronRight, { class: 'size-6' }),
     onClick: () => input.dispatch({ t: 'clicked-open-settings' }),
   })
 }
@@ -243,7 +243,7 @@ const View: FrontendModule['View'] = (input) => {
 const ViewMain: FrontendModule['View'] = (input) => {
   return h(ScreenLayout, {
     id: 'setting-main',
-    dataTestId: dataTestId.mainScreen,
+    dataTestId: dataTestId.screen,
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
     navBar: {
@@ -256,6 +256,7 @@ const ViewMain: FrontendModule['View'] = (input) => {
           primary: input.ctx.t('l18n.language'),
           end: () => h('div', {}, [input.ctx.t(input.model.lang)]),
           onClick: () => input.dispatch({ t: 'clicked-change-lang' }),
+          link: true,
           icon: (inputIcon) => h(IconLanguage, inputIcon),
         }),
         h(ListItemButton, {
@@ -263,7 +264,8 @@ const ViewMain: FrontendModule['View'] = (input) => {
           end: () => h('div', {}, [VDomImpl.toName(input.model.vDomImpl)]),
           onClick: () => input.dispatch({ t: 'clicked-change-renderer' }),
           icon: (inputIcon) => h(IconCode, inputIcon),
-          dataTestId: SettingsFrontend.dataTestId.openChooseRendererScreen,
+          link: true,
+          dataTestId: dataTestId.openChooseRendererScreen,
         }),
         h(Gutter, { variant: 'screen' }),
       ]),
@@ -293,7 +295,7 @@ const ViewChooseRenderer: FrontendModule['View'] = (input) => {
             secondary: isDefault ? input.ctx.t('l18n.default') : undefined,
             dataTestId: dataTestId.chooseRendererListItem(vDomImpl),
             onClick: () => input.dispatch({ t: 'choose-renderer.clicked-renderer', vDomImpl }),
-            end: () => (isSelected ? h(IconCheckmarkCircle, { class: 'size-7' }) : null),
+            end: () => h(RadioInputIcon, { class: 'size-7', status: isSelected ? 'selected' : 'unselected' }),
           })
         }),
         h(Gutter, { variant: 'screen' }),
@@ -308,7 +310,7 @@ const ViewChooseLang: FrontendModule['View'] = (input) => {
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
     navBar: {
-      title: input.ctx.t('l18n.choose-language'),
+      title: input.ctx.t('l18n.language'),
       back: { onClick: () => input.dispatch({ t: 'choose-lang.clicked-back-button' }) },
     },
     renderBody: () =>
@@ -334,43 +336,25 @@ const ViewChooseLangListItem = (input: {
   dispatch: (msg: MsgFrontend) => void
 }) => {
   return h(ListItemButton, {
+    link: true,
     key: input.langCode,
     primary: input.ctx.t(input.langCode),
     end: () => h('div', {}, [input.ctx.t(input.langCode)]),
     onClick: () => input.dispatch({ t: 'choose-lang.clicked-lang', lang: input.langCode }),
-    icon: (inputIcon) => {
-      if (input.model.langLoading[input.langCode]?.endedAt === null) {
-        return h(Spinner, inputIcon)
-      }
-
-      if (input.model.lang === input.langCode) {
-        return h(IconCheckmarkCircle, inputIcon)
-      }
-
-      return h(
-        'svg',
-        {
-          viewBox: '0 0 24 24',
-          fill: 'none',
-          stroke: 'currentColor',
-          'stroke-width': '2',
-          'stroke-linecap': 'round',
-          class: inputIcon.class,
-        },
-        [
-          h('circle', {
-            r: '8',
-            cx: '12',
-            cy: '12',
-            fill: 'none',
-            stroke: 'currentColor',
-            strokeWidth: 2,
-            strokeLinecap: 'round',
-          }),
-        ],
-      )
-    },
+    icon: (inputIcon) => h(RadioInputIcon, { class: inputIcon.class, status: toStatus(input) }),
   })
+}
+
+const toStatus = (input: { langCode: LanguageCodeISO_639_1; model: ModelFrontend; ctx: AppFrontendCtxBase }) => {
+  if (input.model.langLoading[input.langCode]?.endedAt === null) {
+    return 'loading'
+  }
+
+  if (input.model.lang === input.langCode) {
+    return 'selected'
+  }
+
+  return 'unselected'
 }
 
 export const SettingsFrontend = {

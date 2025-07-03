@@ -8,12 +8,12 @@ import { CopyToClipboardFrontend } from './copy-to-clipboard'
 import { CurrentScreenFrontend } from './current-screen'
 import { FocusFrontend } from './focus'
 import { ScreenSizeFrontend } from './screen-size'
-import { SoundFrontend } from './sound'
-import { StatusBarFrontend } from './status-bar/index'
+import { SoundFrontend } from '../settings/sound'
+import { StatusBarFrontend } from '../settings/status-bar/index'
 import { VisibilityFrontend } from './visibility'
 import { ToasterFrontend } from './toaster'
 import { type ModelFrontend, type MsgFrontend } from './types'
-import './update-prompt/update-prompt'
+import '../settings/update-prompt/update-prompt'
 
 const init = (input: {
   ctx: AnonymousFrontendCtx

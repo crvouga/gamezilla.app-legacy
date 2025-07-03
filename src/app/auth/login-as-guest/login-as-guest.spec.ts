@@ -6,7 +6,7 @@ import { FixtureAuthE2E } from '../@/test/e2e'
 const Fixture = async (e: TestRunnerEnv) => {
   const f = await FixtureAuthE2E(e)
   const continueAsGuest = async () => {
-    const [button] = await f.frontend.query(`[data-testid='auth/continue-as-guest-button']`)
+    const [button] = await f.frontend.find(`[data-testid='auth/continue-as-guest-button']`)
     await button!.do({ t: 'click' })
   }
   return { ...f, continueAsGuest }
@@ -16,14 +16,14 @@ describe('login as guest', () => {
   test('login as guest screen', async (e) => {
     await using f = await Fixture(e)
     await f.continueAsGuest()
-    const [screen] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
+    const [screen] = await f.frontend.find(`[data-testid='spaces/space-list-screen']`)
     expect(screen).toBeTruthy()
   })
 
   test('should show alert on login as guest', async (e) => {
     await using f = await Fixture(e)
     await f.continueAsGuest()
-    const [alert] = await f.frontend.query(`[role='alert'][data-info='true']`)
+    const [alert] = await f.frontend.find(`[role='alert'][data-info='true']`)
     expect(alert).toBeTruthy()
   })
 

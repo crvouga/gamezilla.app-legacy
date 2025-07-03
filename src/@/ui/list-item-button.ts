@@ -16,6 +16,7 @@ type Input = {
   color?: Color
   dataTestId?: string
   key?: string
+  link?: boolean
 }
 
 export const ListItemButton = (input: Input) => {
@@ -42,7 +43,7 @@ export const ListItemButton = (input: Input) => {
             icon: input.icon,
             secondary: input.secondary,
           }),
-          input.end && h('div', { class: 'shrink-0' }, [input.end()]),
+          input.end && h('div', { class: 'shrink-0 flex items-center gap-2' }, [input.end()]),
         ],
       )
     }
@@ -79,7 +80,7 @@ const ListItemContent = (input: {
   secondary?: TranslatedText
 }) => {
   return h('div', { class: 'flex flex-1 items-center gap-3 truncate' }, [
-    input.icon?.({ class: 'size-6' }),
+    input.icon?.({ class: 'size-8' }),
     h('div', { class: 'flex flex-col gap-1 text-left' }, [
       h(Typography, {
         variant: 'body',

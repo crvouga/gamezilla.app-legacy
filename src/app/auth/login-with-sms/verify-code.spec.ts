@@ -8,11 +8,11 @@ describe('verify code', () => {
   test('verify code screen back button', async (e) => {
     await using f = await Fixture(e)
     await f.sendCode()
-    const verifyCodeScreen = await f.frontend.byDataTestId('auth/verify-code-screen')
+    const verifyCodeScreen = await f.frontend.findByTestId('auth/verify-code-screen')
     expect(verifyCodeScreen).toBeTruthy()
-    const backButton = await f.frontend.byDataTestId(ScreenTestIds.backButton)
+    const backButton = await f.frontend.findByTestId(ScreenTestIds.backButton)
     await backButton!.do({ t: 'click' })
-    const sendCodeScreen = await f.frontend.byDataTestId('auth/send-code-screen')
+    const sendCodeScreen = await f.frontend.findByTestId('auth/send-code-screen')
     expect(sendCodeScreen).toBeTruthy()
   })
 
@@ -20,10 +20,10 @@ describe('verify code', () => {
     if (e.e2e) return
     await using f = await Fixture(e)
     await f.sendCode()
-    const verifyCodeScreen = await f.frontend.byDataTestId('auth/verify-code-screen')
+    const verifyCodeScreen = await f.frontend.findByTestId('auth/verify-code-screen')
     expect(verifyCodeScreen).toBeTruthy()
     const before = await f.frontend.audio()
-    const backButton = await f.frontend.byDataTestId(ScreenTestIds.backButton)
+    const backButton = await f.frontend.findByTestId(ScreenTestIds.backButton)
     await backButton!.do({ t: 'click' })
     await eventually(async () => {
       const after = await f.frontend.audio()
@@ -35,10 +35,10 @@ describe('verify code', () => {
   test('go to space screen after verifying code', async (e) => {
     await using f = await Fixture(e)
     await f.sendCode()
-    const [sendCodeError] = await f.frontend.query(`[role='alert'][data-error='true']`)
+    const [sendCodeError] = await f.frontend.find(`[role='alert'][data-error='true']`)
     expect(sendCodeError).toBeFalsy()
     await f.verifyCode()
-    const screen = await f.frontend.byDataTestId('spaces/space-list-screen')
+    const screen = await f.frontend.findByTestId('spaces/space-list-screen')
     expect(screen).toBeTruthy()
   })
 
@@ -46,7 +46,7 @@ describe('verify code', () => {
     await using f = await Fixture(e)
     await f.sendCode()
     await f.verifyCode()
-    const [alert] = await f.frontend.query(`[role='alert'][data-info='true']`)
+    const [alert] = await f.frontend.find(`[role='alert'][data-info='true']`)
     expect(alert).toBeTruthy()
   })
 
@@ -54,9 +54,9 @@ describe('verify code', () => {
     await using f = await Fixture(e)
     await f.sendCode()
     await f.verifyCode({ code: '111' })
-    const [spaceScreen] = await f.frontend.query(`[data-testid='spaces/space-list-screen']`)
+    const [spaceScreen] = await f.frontend.find(`[data-testid='spaces/space-list-screen']`)
     expect(spaceScreen).toBeFalsy()
-    const [verifyCodeScreen] = await f.frontend.query(`[data-testid='auth/verify-code-screen']`)
+    const [verifyCodeScreen] = await f.frontend.find(`[data-testid='auth/verify-code-screen']`)
     expect(verifyCodeScreen).toBeTruthy()
   })
 
@@ -64,7 +64,7 @@ describe('verify code', () => {
     await using f = await Fixture(e)
     await f.sendCode()
     await f.verifyCode({ code: '111' })
-    const [error] = await f.frontend.query(`[role='alert'][data-error='true']`)
+    const [error] = await f.frontend.find(`[role='alert'][data-error='true']`)
     expect(error).toBeTruthy()
   })
 
@@ -75,7 +75,7 @@ describe('verify code', () => {
       await f.verifyCode({ code: '111' })
     }
     await f.verifyCode({ code: '123' })
-    const [error] = await f.frontend.query(`[role='alert'][data-error='true']`)
+    const [error] = await f.frontend.find(`[role='alert'][data-error='true']`)
     expect(error).toBeTruthy()
   })
 })

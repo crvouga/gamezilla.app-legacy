@@ -17,7 +17,7 @@ export const TestClient = (config: Config): ITestClientBase => {
     async audio() {
       return config.audioPlayer.played()
     },
-    async query(selector: string, queryConfig) {
+    async find(selector: string, queryConfig) {
       const poll = async () => {
         const found = Array.from(document.querySelectorAll(selector))
         const testNodes = found.map((node): ITestNode => {

@@ -43,7 +43,7 @@ export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
       tabIndex: input.tabIndex,
       title: input.title,
       class: cn(
-        'touch-manipulation enabled:cursor-pointer enabled:active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50',
+        'touch-manipulation enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 enabled:active:opacity-75',
         input.class,
       ),
     },
