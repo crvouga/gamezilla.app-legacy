@@ -4,6 +4,7 @@ import { FixtureAppE2E } from '~/app/@/test/fixture'
 import { ScreenTestIds } from '../@/ui/screen/screen-test-ids'
 import { AppStatusBar } from './app-status-bar'
 import { SettingsFrontend } from './frontend'
+import { AuthFrontend } from '../auth/frontend'
 
 const Fixture = async (e: TestRunnerEnv) => {
   const f = await FixtureAppE2E(e)
@@ -43,13 +44,10 @@ describe('settings', () => {
   test('back button', async (e) => {
     const f = await Fixture(e)
     await f.openSettingsScreen()
-    // const [title] = await f.frontend.find(`[data-title='true']`)
-    // const titleString = await title?.text()
     const [backButton] = await f.frontend.find(`[data-testid="${ScreenTestIds.backButton}"]`)
     await backButton!.do({ t: 'click' })
-    const [title2] = await f.frontend.find(`[data-title='true']`)
-    const title2String = await title2?.text()
-    expect(title2String).toEqual('Settings')
+    const screen = await f.frontend.findByTestId(AuthFrontend.dataTestId.loginScreen)
+    expect(screen).toBeTruthy()
   })
 
   test('open choose renderer screen', async (e) => {

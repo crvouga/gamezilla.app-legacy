@@ -12,7 +12,6 @@ import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { CONFIG_FRONTEND } from '~/config/frontend'
 import { APP_SOUND } from '../@/frontend/app-sound'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { ReplaceScreenCmd } from '../@/frontend/replace-screen-cmd.$msg'
@@ -288,11 +287,11 @@ const ViewChooseRenderer: FrontendModule['View'] = (input) => {
       h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
         ...VDomImpl.ALL.map((vDomImpl) => {
           const isSelected = vDomImpl === input.model.vDomImpl
-          const isDefault = vDomImpl === CONFIG_FRONTEND.VDOM_IMPL_DEFAULT
+          // const isDefault = vDomImpl === CONFIG_FRONTEND.VDOM_IMPL_DEFAULT
           return h(ListItemButton, {
             key: vDomImpl,
             primary: VDomImpl.toName(vDomImpl),
-            secondary: isDefault ? input.ctx.t('l18n.default') : undefined,
+            // secondary: isDefault ? input.ctx.t('l18n.default') : undefined,
             dataTestId: dataTestId.chooseRendererListItem(vDomImpl),
             onClick: () => input.dispatch({ t: 'choose-renderer.clicked-renderer', vDomImpl }),
             end: () => h(RadioInputIcon, { class: 'size-7', status: isSelected ? 'selected' : 'unselected' }),

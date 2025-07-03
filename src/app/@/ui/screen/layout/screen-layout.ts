@@ -7,11 +7,7 @@ import { ScreenLayoutTablet } from './screen-layout-tablet'
 export const ScreenLayout = (input: ScreenLayoutProps) => {
   return h(Frag, {}, [
     ...toDataTestIds(input).map((dataTestId) =>
-      h('div', {
-        key: dataTestId,
-        class: 'hidden',
-        'data-testid': dataTestId,
-      }),
+      h('div', { key: dataTestId, class: 'hidden', 'data-testid': dataTestId }),
     ),
     h(ScreenLayoutVariant, input),
   ])
