@@ -24,6 +24,7 @@
     "happydom",
     "healthcheck",
     "heapify",
+    "Hyperapp",
     "indexeddb",
     "initdb",
     "isready",
