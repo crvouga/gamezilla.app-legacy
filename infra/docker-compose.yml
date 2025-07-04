@@ -15,7 +15,7 @@ services:
     profiles: ['test']
     build:
       context: ../../
-      dockerfile: infra/local/backend-primary.Dockerfile
+      dockerfile: infra/backend-primary.Dockerfile
     ports:
       - '5002:5002'
     depends_on:

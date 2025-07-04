@@ -1,4 +1,3 @@
-
 FROM node:20-alpine AS builder
 
 WORKDIR /app
@@ -20,7 +19,7 @@ FROM nginx:alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-COPY infra/local/nginx.conf /etc/nginx/nginx.conf
+COPY infra/frontend.nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 

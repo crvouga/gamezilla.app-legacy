@@ -6,9 +6,7 @@
   "scripts": {
     "backend": "pnpm backend-primary",
     "backend-edge": "NODE_ENV=development pnpm exec tsx watch ./src/backend-edge.ts",
-    "backend-edge:railway": "NODE_ENV=production pnpm exec tsx ./src/backend-edge.ts",
     "backend-primary": "NODE_ENV=development pnpm exec tsx watch ./src/backend-primary.ts",
-    "backend-primary:railway": "NODE_ENV=production pnpm exec tsx ./src/backend-primary.ts",
     "cg": "pnpm cg:l18n && pnpm cg:screens && pnpm cg:events && pnpm cg:msg-shared",
     "cg:events": "pnpm exec tsx ./src/@/events/events-gen.ts",
     "cg:guard": "pnpm exec tsx ./src/@/guards/guards-gen.ts",
