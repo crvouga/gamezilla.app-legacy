@@ -6,7 +6,7 @@ services:
     profiles: ['test']
     build:
       context: ../../
-      dockerfile: infra/local/frontend.Dockerfile
+      dockerfile: infra/frontend.Dockerfile
     ports:
       - '5173:80'
 
