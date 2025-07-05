@@ -5,7 +5,7 @@ services:
     container_name: frontend
     profiles: ['test']
     build:
-      context: ../../
+      context: ../
       dockerfile: infra/frontend.Dockerfile
     ports:
       - '5173:80'
@@ -14,7 +14,7 @@ services:
     container_name: backend-primary
     profiles: ['test']
     build:
-      context: ../../
+      context: ../
       dockerfile: infra/backend-primary.Dockerfile
     ports:
       - '5002:5002'
@@ -63,7 +63,7 @@ services:
     image: journeyapps/powersync-service:latest
     command: ['start', '-r', 'unified']
     volumes:
-      - ../../src/service-powersync:/powersync
+      - ../src/service-powersync:/powersync
     environment:
       POWERSYNC_CONFIG_PATH: /powersync/config.yaml
       PS_POSTGRES_STORAGE_DATABASE_URL: postgresql://powersync_storage_postgres:powersync_storage_postgres@powersync_storage_postgres:5432/powersync_storage_postgres
