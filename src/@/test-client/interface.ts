@@ -12,6 +12,7 @@ export type ITestNode = {
   text: () => Promise<string | null>
   attr: (name: string) => Promise<string | null>
   do: (action: TestAction) => Promise<void>
+  find: (selector: string, config?: TestClientQueryConfig) => Promise<ITestNode[]>
 }
 
 export type TestClientQueryConfig = {

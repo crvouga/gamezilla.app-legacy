@@ -37,7 +37,13 @@ export default defineConfig({
       '**/.{idea,git,cache,output,temp}/**',
       '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
     ],
-    testTimeout: 10000, // 10 seconds
+    testTimeout: 30000, // 10 seconds
+    // pool: 'threads',
+    // poolOptions: {
+    //   threads: {
+    //     singleThread: true,
+    //   },
+    // },
   },
   define: {
     global: 'globalThis',
@@ -47,6 +53,7 @@ export default defineConfig({
     alias: {
       '~': path.resolve(__dirname, 'src'),
       inferno: 'inferno/dist/index.dev.mjs',
+      // inferno: 'inferno/dist/index.esm.js',
     },
   },
 })

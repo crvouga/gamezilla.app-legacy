@@ -83,11 +83,9 @@ export const TestFrontend = async (config: {
     audioPlayer: ctx.audioPlayer,
   })
 
-  document.body.innerHTML = `<div id="root"></div>`
+  document.body.innerHTML = '<div id="root"></div>'
 
-  const root = document.getElementById('root')!
-
-  const render = Render(root)
+  const render = Render(document.getElementById('root')!)
 
   const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),
