@@ -22,7 +22,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
       },
     },
     [
-      h(ActionBars, { position: 'start', input: input }),
+      ActionBars({ position: 'start', input: input }),
 
       h('div', { class: 'flex max-w-3xl flex-[4] shrink-0 flex-col border-x' }, [
         ...renderNavBars(input.ctx, input),
@@ -34,7 +34,7 @@ export const ScreenLayoutTablet = (input: ScreenLayoutProps) => {
         ]),
       ]),
 
-      h(ActionBars, { position: 'end', input: input }),
+      ActionBars({ position: 'end', input: input }),
     ],
   )
 }
@@ -96,7 +96,7 @@ const renderNavBars = (ctx: ScreenLayoutProps['ctx'], screen: ParentScreenProps 
   const bars = []
   if (screen.navBar) {
     bars.push(
-      h(ScreenNavBarTablet, {
+      ScreenNavBarTablet({
         key: screen.id,
         ctx: ctx,
         back: screen.navBar.back,

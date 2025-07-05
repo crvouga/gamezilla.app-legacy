@@ -85,6 +85,7 @@ export const translations: Text = {
   'app.join': 'انضم',
   'app.load': 'تحميل',
   'app.open-settings': 'فتح الإعدادات',
+  'status-bar.status-bar': 'شريط الحالة',
   'app.submit': 'إرسال',
   'unsaved-changes.unsaved-changes-warning': 'سيتم فقدان تغييراتك إذا لم تقم بحفظها قبل الخروج.',
   'auth.logout': 'تسجيل الخروج',
@@ -127,9 +128,6 @@ export const translations: Text = {
   'auth-sms.sent-code-to': (formattedPhoneNumber) =>
     `\u062A\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0631\u0645\u0632 \u0625\u0644\u0649 ${formattedPhoneNumber}`,
   'auth-sms.please-enter-code': 'الرجاء إدخال الرمز',
-  'sound.sound-off': 'الصوت معطل',
-  'sound.sound-on': 'الصوت مفعل',
-  'status-bar.status-bar': 'شريط الحالة',
   'profile.update-profile': 'تحديث الملف الشخصي',
   'profile.update-avatar': 'تحديث الصورة الرمزية',
   'profile.profile': 'الملف الشخصي',
@@ -143,6 +141,8 @@ export const translations: Text = {
   'l18n.loaded-translations': 'تم تحميل الترجمات',
   'l18n.renderer': 'المعرض',
   'l18n.settings': 'الإعدادات',
+  'sound.sound-off': 'الصوت معطل',
+  'sound.sound-on': 'الصوت مفعل',
   'spaces.current-user-joined-space': 'انضمت إلى المساحة',
   'spaces.other-user-joined-space': (username) =>
     `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,

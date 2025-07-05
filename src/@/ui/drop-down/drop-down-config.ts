@@ -5,5 +5,7 @@ import { DropDownPosition } from './drop-down-position'
 export type DropDownConfig = {
   position?: DropDownPosition
   alignment?: DropDownAlignment
-  reference?: VDom
+  reference?: {
+    render: () => VDom
+  }
 }

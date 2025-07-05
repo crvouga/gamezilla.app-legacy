@@ -77,7 +77,7 @@ const pongs: FrontendModule['subscriptions'] = (input) => {
 
 const ViewDot = (input: { model: Model; ctx: AppFrontendCtxBase; class: string }) => {
   const status = BackendConnectionStatus.fromModel(input.model)
-  return h(BackendConnectionStatus.ViewDot, { model: status, ctx: input.ctx, class: input.class })
+  return BackendConnectionStatus.ViewDot({ model: status, ctx: input.ctx, class: input.class })
 }
 
 const ViewListItem = (input: { model: Model; ctx: AppFrontendCtxBase; dispatch: (msg: MsgFrontend) => void }) => {

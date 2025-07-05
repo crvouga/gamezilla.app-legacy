@@ -1,31 +1,23 @@
-import type { LanguageCodeISO_639_1 } from '~/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1'
-import { UnixMs } from '~/@/time/unix-ms'
-import { VDomImpl } from '~/@/vdom/vdom-impl'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { AnonymousFrontendCtx } from '../@/frontend/ctx'
-import type { TranslatorMsg } from '../@/frontend/translator'
+import { ScreenLangTypes } from './screen-lang'
+import { ScreenRendererTypes } from './screen-renderer'
+import { SoundFrontend } from './sound'
 
-export type TranslationLoading = {
-  startedAt: UnixMs
-  endedAt?: UnixMs | null
+export type ModelFrontendBase = {
+  isStatusBarOpen: boolean
+  sound: SoundFrontend.Model
 }
+export type ModelFrontend = ModelFrontendBase & ScreenLangTypes.ModelFrontend & ScreenRendererTypes.ModelFrontend
 
-export type ModelFrontend = {
-  lang: LanguageCodeISO_639_1
-  langLoading: { [lang in LanguageCodeISO_639_1]?: TranslationLoading }
-  vDomImpl: VDomImpl
-}
+export type MsgFrontendBase =
+  | { t: 'sound'; c: SoundFrontend.Msg }
+  | { t: 'settings.clicked-open-lang' }
+  | { t: 'settings.clicked-open-renderer' }
+  | { t: 'settings.clicked-open-settings' }
+  | { t: 'settings.clicked-back-button' }
 
-export type MsgFrontend =
-  | TranslatorMsg
-  | { t: 'clicked-change-lang' }
-  | { t: 'clicked-change-renderer' }
-  | { t: 'clicked-open-settings' }
-  | { t: 'clicked-back-button' }
-  | { t: 'choose-lang.clicked-back-button' }
-  | { t: 'choose-lang.clicked-lang'; lang: LanguageCodeISO_639_1 }
-  | { t: 'choose-renderer.clicked-back-button' }
-  | { t: 'choose-renderer.clicked-renderer'; vDomImpl: VDomImpl }
+export type MsgFrontend = MsgFrontendBase | ScreenLangTypes.MsgFrontend | ScreenRendererTypes.MsgFrontend
 
 export type FrontendModule = AppFrontendModule<{
   Ctx: AnonymousFrontendCtx

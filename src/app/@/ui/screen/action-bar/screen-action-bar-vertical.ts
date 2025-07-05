@@ -55,7 +55,7 @@ const ActionButtonList = (input: { actions: (ScreenAction | null)[] }) => {
 
       return h(Frag, { key: action.id }, [
         action.renderSurface({
-          dropDown: { reference: button },
+          dropDown: { reference: { render: () => button } },
           screenActionLocation: 'bar',
         }),
       ])

@@ -84,6 +84,7 @@ export const translations: Text = {
   'app.join': 'Присоединиться',
   'app.load': 'Загрузить',
   'app.open-settings': 'Открыть настройки',
+  'status-bar.status-bar': 'Панель состояния',
   'app.submit': 'Отправить',
   'unsaved-changes.unsaved-changes-warning': 'Ваши изменения будут потеряны, если вы не сохраните их перед выходом.',
   'auth.logout': 'Выйти',
@@ -127,9 +128,6 @@ export const translations: Text = {
   'auth-sms.sent-code-to': (formattedPhoneNumber) =>
     `\u041A\u043E\u0434 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D \u043D\u0430 ${formattedPhoneNumber}`,
   'auth-sms.please-enter-code': 'Пожалуйста, введите код',
-  'sound.sound-off': 'Звук выключен',
-  'sound.sound-on': 'Звук включен',
-  'status-bar.status-bar': 'Панель состояния',
   'profile.update-profile': 'Обновить профиль',
   'profile.update-avatar': 'Обновить аватар',
   'profile.profile': 'Профиль',
@@ -143,6 +141,8 @@ export const translations: Text = {
   'l18n.loaded-translations': 'Загруженные переводы',
   'l18n.renderer': 'Renderer',
   'l18n.settings': 'Настройки',
+  'sound.sound-off': 'Звук выключен',
+  'sound.sound-on': 'Звук включен',
   'spaces.current-user-joined-space': 'Присоединился к пространству',
   'spaces.other-user-joined-space': (username) =>
     `${username} \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443`,

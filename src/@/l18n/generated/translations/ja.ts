@@ -83,6 +83,7 @@ export const translations: Text = {
   'app.join': '参加',
   'app.load': '読み込み',
   'app.open-settings': '設定を開く',
+  'status-bar.status-bar': 'ステータスバー',
   'app.submit': '送信',
   'unsaved-changes.unsaved-changes-warning': '終了する前に保存しないと、変更が失われます。',
   'auth.logout': 'ログアウト',
@@ -124,9 +125,6 @@ export const translations: Text = {
   'auth-sms.sent-code-to': (formattedPhoneNumber) =>
     `${formattedPhoneNumber} \u306B\u30B3\u30FC\u30C9\u3092\u9001\u4FE1\u3057\u307E\u3057\u305F`,
   'auth-sms.please-enter-code': 'コードを入力してください',
-  'sound.sound-off': 'サウンドオフ',
-  'sound.sound-on': 'サウンドオン',
-  'status-bar.status-bar': 'ステータスバー',
   'profile.update-profile': 'プロフィールを更新',
   'profile.update-avatar': 'アバターを更新',
   'profile.profile': 'プロフィール',
@@ -140,6 +138,8 @@ export const translations: Text = {
   'l18n.loaded-translations': '翻訳が読み込まれました',
   'l18n.renderer': 'Renderer',
   'l18n.settings': '設定',
+  'sound.sound-off': 'サウンドオフ',
+  'sound.sound-on': 'サウンドオン',
   'spaces.current-user-joined-space': 'スペースに参加しました',
   'spaces.other-user-joined-space': (username) =>
     `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F`,

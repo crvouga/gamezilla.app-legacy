@@ -34,13 +34,16 @@ export const ScreenNavBarMobile = (input: {
           dropDown: {
             alignment: 'starting',
             position: 'bottom',
-            reference: h(IconButton, {
-              onClick: input.back?.onClick,
-              class: '-ml-2',
-              label: input.ctx.t('app.exit'),
-              ariaLabel: input.ctx.t('app.back'),
-              renderIcon: (inputIcon) => h(IconArrowLeft, inputIcon),
-            }),
+            reference: {
+              render: () =>
+                IconButton({
+                  onClick: input.back?.onClick,
+                  class: '-ml-2',
+                  label: input.ctx.t('app.exit'),
+                  ariaLabel: input.ctx.t('app.back'),
+                  renderIcon: (inputIcon) => h(IconArrowLeft, inputIcon),
+                }),
+            },
           },
         }),
 

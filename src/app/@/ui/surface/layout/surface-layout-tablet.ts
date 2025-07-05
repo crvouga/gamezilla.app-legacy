@@ -12,7 +12,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
       id: `${props.id}-drop-down`,
       open: props.open,
       onClose: props.onClose,
-      renderReference: () => props.dropDown?.reference,
+      renderReference: () => props.dropDown?.reference?.render?.(),
       alignment: props.dropDown?.alignment ?? 'ending',
       position: props.dropDown?.position ?? 'bottom',
       renderFloating: () => h(DropDownSurface, {}, [h(SurfaceContent, props)]),
@@ -20,7 +20,7 @@ export const SurfaceLayoutTablet = (props: SurfaceLayoutProps) => {
   }
 
   return h('div', {}, [
-    props.dropDown?.reference,
+    props.dropDown?.reference?.render?.(),
     h(
       Dialog,
       {

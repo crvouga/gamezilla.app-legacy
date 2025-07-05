@@ -20,21 +20,25 @@ export const ScreenNavBarTablet = (input: {
   } | null
   renderEnd?: () => VDom
 }) => {
-  const renderSurface = input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference)
+  const renderSurface =
+    input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference?.render())
   return h(ScreenNavBarTabletRoot, {}, [
     input.back &&
       renderSurface({
         dropDown: {
           alignment: 'starting',
           position: 'bottom',
-          reference: h(IconButton, {
-            onClick: input.back.onClick,
-            class: '-ml-2',
-            size: 'lg',
-            label: input.ctx.t('app.exit'),
-            renderIcon: (inputIcon) => h(IconArrowLeft, inputIcon),
-            ariaLabel: input.ctx.t('app.back'),
-          }),
+          reference: {
+            render: () =>
+              IconButton({
+                onClick: input.back?.onClick,
+                class: '-ml-2',
+                size: 'lg',
+                label: input.ctx.t('app.exit'),
+                renderIcon: (inputIcon) => IconArrowLeft(inputIcon),
+                ariaLabel: input.ctx.t('app.back'),
+              }),
+          },
         },
       }),
 

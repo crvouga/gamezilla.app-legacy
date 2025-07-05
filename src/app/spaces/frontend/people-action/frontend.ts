@@ -120,7 +120,7 @@ const ViewSurfaces = (
   const modalProfile = input.model.openedPreviewUserId
     ? input.ctx.profilesByUserId[input.model.openedPreviewUserId]
     : null
-  return h(SurfaceLayout, {
+  return SurfaceLayout({
     ctx: input.ctx,
     drawer: {
       position: DRAWER_POSITION,
@@ -128,28 +128,31 @@ const ViewSurfaces = (
     dropDown: {
       position: DROPDOWN_POSITION,
       alignment: DROPDOWN_ALIGNMENT,
-      reference: h(SurfaceLayout, {
-        drawer: {
-          position: DRAWER_POSITION,
-        },
-        dropDown: {
-          ...input.dropDown,
-          position: DROPDOWN_POSITION,
-          alignment: DROPDOWN_ALIGNMENT,
-        },
-        id: 'users',
-        ctx: input.ctx,
-        ariaLabel: input.ctx.t('app.people'),
-        open: input.model.opened === 'people.people-surface',
-        onClose: () => input.dispatch({ t: 'people-action.closed-surface' }),
-        body: {
-          render: () =>
-            h(SectionPeopleList, {
-              ctx: spaceCtx,
-              onClickItem: (userId) => input.dispatch({ t: 'people-action.clicked-person-list-item', userId }),
-            }),
-        },
-      }),
+      reference: {
+        render: () =>
+          SurfaceLayout({
+            drawer: {
+              position: DRAWER_POSITION,
+            },
+            dropDown: {
+              ...input.dropDown,
+              position: DROPDOWN_POSITION,
+              alignment: DROPDOWN_ALIGNMENT,
+            },
+            id: 'users',
+            ctx: input.ctx,
+            ariaLabel: input.ctx.t('app.people'),
+            open: input.model.opened === 'people.people-surface',
+            onClose: () => input.dispatch({ t: 'people-action.closed-surface' }),
+            body: {
+              render: () =>
+                h(SectionPeopleList, {
+                  ctx: spaceCtx,
+                  onClickItem: (userId) => input.dispatch({ t: 'people-action.clicked-person-list-item', userId }),
+                }),
+            },
+          }),
+      },
     },
     ariaLabel: input.ctx.t('spaces.see-profile'),
     id: 'user-preview',

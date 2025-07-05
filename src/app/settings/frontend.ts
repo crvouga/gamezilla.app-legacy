@@ -1,173 +1,106 @@
-import { LocalStorage } from '~/@/browser'
-import { replaceQueryParam } from '~/@/browser/browser'
-import { LanguageCodeISO_639_1 } from '~/@/l18n'
+import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
 import { IconCode, IconGear, IconLanguage } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
-import { RadioInputIcon } from '~/@/ui/radio-input'
 import { h } from '~/@/vdom/h'
 import { VDomImpl } from '~/@/vdom/vdom-impl'
-import { CloseStatusBarCmd } from '~/app/@/frontend/close-status-bar-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { APP_SOUND } from '../@/frontend/app-sound'
-import { AppFrontendCtxBase } from '../@/frontend/ctx'
+import { CloseAppBarCmd } from '../@/frontend/close-app-bar-cmd.$msg'
 import { ReplaceScreenCmd } from '../@/frontend/replace-screen-cmd.$msg'
-import { translatorSubscriptions } from '../@/frontend/translator'
-import type { FrontendModule, ModelFrontend, MsgFrontend, TranslationLoading } from './types'
+import { ScreenLangFrontend } from './screen-lang/frontend'
+import { ScreenRendererFrontend } from './screen-renderer/frontend'
+import { SoundFrontend } from './sound'
+import type { FrontendModule, MsgFrontend } from './types'
 
 const TEST_ID = {
+  ...ScreenLangFrontend.TEST_ID,
+  ...ScreenRendererFrontend.TEST_ID,
   SETTINGS_SCREEN: 'settings/settings-screen',
   SETTINGS_SCREEN_OPEN_BUTTON: 'settings/settings-screen-open-button',
-  LANG_SCREEN_OPEN_BUTTON: 'settings/lang-screen-open-button',
-  LANG_SCREEN: 'settings/lang-screen',
-  RENDERER_SCREEN_OPEN_BUTTON: 'settings/renderer-screen-open-button',
-  RENDERER_SCREEN: 'settings/renderer-screen',
-  RENDERER_MENU_ITEM: (vDomImpl: VDomImpl) => `settings/renderer-menu-item-${vDomImpl}`,
 }
 
-//
-//
-//
-//
-//
-//
-//
-
-const LANG_STORAGE_KEY = 'lang'
-
-const init: FrontendModule['init'] = ({ ctx }) => {
-  const initialLang = LanguageCodeISO_639_1.is(ctx.navigatorLanguage) ? ctx.navigatorLanguage : 'en'
+const init: FrontendModule['init'] = (input) => {
+  const lang = ScreenLangFrontend.init(input)
+  const renderer = ScreenRendererFrontend.init()
+  const sound = SoundFrontend.init(input)
 
   return {
     model: {
-      lang: initialLang,
-      langLoading: {},
-      vDomImpl: VDomImpl.readFromUrl({ fallback: 'snabbdom' }),
+      ...lang.model,
+      ...renderer.model,
+      sound: sound.model,
+      isStatusBarOpen: false,
     },
   }
 }
 
-//
-//
-//
-//
-//
-//
-//
+const update: FrontendModule['update'] = (input) => {
+  return AppFrontendModule.andThen(
+    { model: input.model },
+    (model) => updateBase({ ...input, model }),
+    (model) => updateChild({ ...input, model }),
+    (model) => ScreenLangFrontend.update({ ...input, model }),
+    (model) => ScreenRendererFrontend.update({ ...input, model }),
+  )
+}
 
-const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
+const updateChild: FrontendModule['update'] = (input) => {
+  const sound = SoundFrontend.update({
+    ...input,
+    model: input.model.sound,
+    msg: input.msg?.t === 'sound' ? input.msg.c : null,
+  })
+  return {
+    model: { ...input.model, sound: sound.model },
+    msgOut: sound.msgOut,
+    eff: Eff.tag('sound', sound.eff),
+  }
+}
+
+const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
   if (!msg) return { model }
 
   switch (msg?.t) {
-    case 'translator.loaded': {
-      const loadingNew: TranslationLoading = {
-        startedAt: model.langLoading?.[msg.lang]?.startedAt ?? ctx.now,
-        endedAt: ctx.now,
-      }
+    case 'settings.clicked-open-renderer': {
       return {
-        model: {
-          ...model,
-          langLoading: {
-            ...model.langLoading,
-            [msg.lang]: loadingNew,
-          },
-        },
+        model,
+        msgOut: [PushScreenCmd.init({ t: 'main', n: 'settings' }, true), CloseAppBarCmd.init()],
       }
     }
 
-    case 'translator.loading': {
-      return {
-        model: {
-          ...model,
-          langLoading: {
-            ...model.langLoading,
-            [msg.lang]: {
-              startedAt: ctx.now,
-              endedAt: null,
-            },
-          },
-        },
-      }
-    }
-
-    case 'clicked-change-lang': {
+    case 'settings.clicked-open-lang': {
       if (ctx.currentScreen.n === 'settings' && ctx.currentScreen.t === 'choose-lang') {
         return {
           model,
-          msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin), CloseStatusBarCmd.init()],
+          msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin), CloseAppBarCmd.init()],
         }
       }
 
       return {
         model,
-        msgOut: [PushScreenCmd.init({ t: 'choose-lang', n: 'settings' }, true), CloseStatusBarCmd.init()],
+        msgOut: [PushScreenCmd.init({ t: 'choose-lang', n: 'settings' }, true), CloseAppBarCmd.init()],
       }
     }
 
-    case 'choose-renderer.clicked-back-button': {
+    case 'settings.clicked-open-settings': {
       return {
         model,
-        msgOut: [ReplaceScreenCmd.init({ t: 'main', n: 'settings' }, true)],
+        msgOut: [PushScreenCmd.init({ t: 'main', n: 'settings' }, true), CloseAppBarCmd.init()],
       }
     }
 
-    case 'choose-lang.clicked-back-button': {
-      return {
-        model,
-        msgOut: [ReplaceScreenCmd.init({ t: 'main', n: 'settings' }, true)],
-      }
-    }
-
-    case 'choose-lang.clicked-lang': {
-      return {
-        model: {
-          ...model,
-          lang: msg.lang,
-        },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-        eff: LocalStorage.put(LANG_STORAGE_KEY, msg.lang),
-      }
-    }
-
-    case 'clicked-change-renderer': {
-      return {
-        model,
-        msgOut: [PushScreenCmd.init({ t: 'choose-renderer', n: 'settings' }, true), CloseStatusBarCmd.init()],
-      }
-    }
-
-    case 'clicked-open-settings': {
-      return {
-        model,
-        msgOut: [PushScreenCmd.init({ t: 'main', n: 'settings' }, true), CloseStatusBarCmd.init()],
-      }
-    }
-
-    case 'clicked-back-button': {
+    case 'settings.clicked-back-button': {
       return {
         model,
         msgOut: [ReplaceScreenCmd.init({ t: 'login', n: 'auth' }, true)],
       }
     }
 
-    case 'choose-renderer.clicked-renderer': {
-      return {
-        model: {
-          ...model,
-          vDomImpl: msg.vDomImpl,
-        },
-        msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-        async eff(dispatch) {
-          replaceQueryParam('vdom', msg.vDomImpl)(dispatch)
-          await new Promise((resolve) => setTimeout(resolve, 100))
-          window.location.reload()
-        },
-      }
-    }
-
     default: {
       return {
         model,
@@ -176,188 +109,78 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
   }
 }
 
-//
-//
-//
-//
-//
-//
-//
-
-const subscriptions: FrontendModule['subscriptions'] = (_input) => {
-  return Sub.map(translatorSubscriptions, (c): MsgFrontend => c)
-}
-
-//
-//
-//
-//
-//
-//
-//
-
-const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
-  return h(ListItemButton, {
-    icon: (input) => h(IconLanguage, input),
-    primary: ctx.t('l18n.language'),
-    end: () => ctx.t(model.lang),
-    onClick: () => {
-      dispatch({
-        t: 'clicked-change-lang',
-      })
-    },
-  })
+const subscriptions: FrontendModule['subscriptions'] = (input) => {
+  return Sub.batch<MsgFrontend>([ScreenLangFrontend.subscriptions(input)])
 }
 
 const ViewSettingsListItem: FrontendModule['View'] = (input) => {
-  return h(ListItemButton, {
+  return ListItemButton({
     icon: (props) => h(IconGear, props),
     primary: input.ctx.t('l18n.settings'),
     dataTestId: TEST_ID.SETTINGS_SCREEN_OPEN_BUTTON,
-    // end: () => h(IconChevronRight, { class: 'size-6' }),
-    onClick: () => input.dispatch({ t: 'clicked-open-settings' }),
+    onClick: () => input.dispatch({ t: 'settings.clicked-open-settings' }),
+  })
+}
+
+const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
+  return ListItemButton({
+    icon: (inputIcon) => IconLanguage(inputIcon),
+    primary: ctx.t('l18n.language'),
+    end: () => ctx.t(model.lang),
+    onClick: () => {
+      dispatch({ t: 'settings.clicked-open-lang' })
+    },
   })
 }
 
 const View: FrontendModule['View'] = (input) => {
   switch (input.ctx.currentScreen.n) {
-    case 'settings': {
+    case 'settings':
       switch (input.ctx.currentScreen.t) {
-        case 'main': {
-          return h(ViewMain, { ctx: input.ctx, dispatch: input.dispatch, model: input.model })
-        }
-        case 'choose-lang': {
-          return h(ViewChooseLang, { ctx: input.ctx, dispatch: input.dispatch, model: input.model })
-        }
-        case 'choose-renderer': {
-          return h(ViewChooseRenderer, { ctx: input.ctx, dispatch: input.dispatch, model: input.model })
-        }
-        default: {
+        case 'main':
+          return ViewMain(input)
+        case 'choose-lang':
+          return ScreenLangFrontend.View(input)
+        case 'choose-renderer':
+          return ScreenRendererFrontend.View(input)
+        default:
           return null
-        }
       }
-    }
-    default: {
+    default:
       return null
-    }
   }
 }
 
 const ViewMain: FrontendModule['View'] = (input) => {
-  return h(ScreenLayout, {
+  return ScreenLayout({
     id: 'setting-main',
     dataTestId: TEST_ID.SETTINGS_SCREEN,
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
     navBar: {
       title: input.ctx.t('l18n.settings'),
-      back: { onClick: () => input.dispatch({ t: 'clicked-back-button' }) },
+      back: { onClick: () => input.dispatch({ t: 'settings.clicked-back-button' }) },
     },
     renderBody: () =>
       h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
-        h(ListItemButton, {
+        ListItemButton({
           primary: input.ctx.t('l18n.language'),
           end: () => h('div', {}, [input.ctx.t(input.model.lang)]),
-          onClick: () => input.dispatch({ t: 'clicked-change-lang' }),
+          onClick: () => input.dispatch({ t: 'settings.clicked-open-lang' }),
           link: true,
-          icon: (inputIcon) => h(IconLanguage, inputIcon),
+          icon: (inputIcon) => IconLanguage(inputIcon),
         }),
-        h(ListItemButton, {
+        ListItemButton({
           primary: input.ctx.t('l18n.renderer'),
-          end: () => h('div', {}, [VDomImpl.toName(input.model.vDomImpl)]),
-          onClick: () => input.dispatch({ t: 'clicked-change-renderer' }),
-          icon: (inputIcon) => h(IconCode, inputIcon),
+          end: () => h('div', {}, [VDomImpl.toName(input.model.renderVDomImpl)]),
+          onClick: () => input.dispatch({ t: 'settings.clicked-open-renderer' }),
+          icon: (inputIcon) => IconCode(inputIcon),
           link: true,
           dataTestId: TEST_ID.RENDERER_SCREEN_OPEN_BUTTON,
         }),
-        h(Gutter, { variant: 'screen' }),
+        Gutter({ variant: 'screen' }),
       ]),
   })
-}
-
-const ViewChooseRenderer: FrontendModule['View'] = (input) => {
-  return h(ScreenLayout, {
-    id: 'setting-choose-renderer',
-    dataTestId: TEST_ID.RENDERER_SCREEN,
-    ctx: input.ctx,
-    parentScreen: input.ctx.parentScreen,
-    navBar: {
-      title: input.ctx.t('l18n.renderer'),
-      back: {
-        onClick: () => input.dispatch({ t: 'choose-renderer.clicked-back-button' }),
-      },
-    },
-    renderBody: () =>
-      h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
-        ...VDomImpl.ALL.filter((vDomImpl) => !VDomImpl.HIDDEN.includes(vDomImpl)).map((vDomImpl) => {
-          const isSelected = vDomImpl === input.model.vDomImpl
-          // const isDefault = vDomImpl === CONFIG_FRONTEND.VDOM_IMPL_DEFAULT
-          return h(ListItemButton, {
-            key: vDomImpl,
-            primary: VDomImpl.toName(vDomImpl),
-            // secondary: isDefault ? input.ctx.t('l18n.default') : undefined,
-            dataTestId: TEST_ID.RENDERER_MENU_ITEM(vDomImpl),
-            onClick: () => input.dispatch({ t: 'choose-renderer.clicked-renderer', vDomImpl }),
-            end: () => h(RadioInputIcon, { class: 'size-7', status: isSelected ? 'selected' : 'unselected' }),
-          })
-        }),
-        h(Gutter, { variant: 'screen' }),
-      ]),
-  })
-}
-
-const ViewChooseLang: FrontendModule['View'] = (input) => {
-  return h(ScreenLayout, {
-    id: 'setting-choose-lang',
-    dataTestId: TEST_ID.LANG_SCREEN,
-    ctx: input.ctx,
-    parentScreen: input.ctx.parentScreen,
-    navBar: {
-      title: input.ctx.t('l18n.language'),
-      back: { onClick: () => input.dispatch({ t: 'choose-lang.clicked-back-button' }) },
-    },
-    renderBody: () =>
-      h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
-        ...LanguageCodeISO_639_1.ALL.map((langCode) =>
-          h(ViewChooseLangListItem, {
-            key: langCode,
-            ctx: input.ctx,
-            langCode,
-            model: input.model,
-            dispatch: input.dispatch,
-          }),
-        ),
-        h(Gutter, { variant: 'screen' }),
-      ]),
-  })
-}
-
-const ViewChooseLangListItem = (input: {
-  ctx: AppFrontendCtxBase
-  langCode: LanguageCodeISO_639_1
-  model: ModelFrontend
-  dispatch: (msg: MsgFrontend) => void
-}) => {
-  return h(ListItemButton, {
-    link: true,
-    key: input.langCode,
-    primary: input.ctx.t(input.langCode),
-    end: () => h('div', {}, [input.ctx.t(input.langCode)]),
-    onClick: () => input.dispatch({ t: 'choose-lang.clicked-lang', lang: input.langCode }),
-    icon: (inputIcon) => h(RadioInputIcon, { class: inputIcon.class, status: toStatus(input) }),
-  })
-}
-
-const toStatus = (input: { langCode: LanguageCodeISO_639_1; model: ModelFrontend; ctx: AppFrontendCtxBase }) => {
-  if (input.model.langLoading[input.langCode]?.endedAt === null) {
-    return 'loading'
-  }
-
-  if (input.model.lang === input.langCode) {
-    return 'selected'
-  }
-
-  return 'unselected'
 }
 
 export const SettingsFrontend = {

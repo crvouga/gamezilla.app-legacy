@@ -4,14 +4,13 @@ import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
-import { IconUserCircle } from '~/@/ui/icon'
-import { IconMobilePhone, IconPowerOff } from '~/@/ui/icon'
+import { IconMobilePhone, IconPowerOff, IconUserCircle } from '~/@/ui/icon'
 import { ListItemButton } from '~/@/ui/list-item-button'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserProfile } from '../@/data/user-profile'
-import { CloseStatusBarCmd } from '../@/frontend/close-status-bar-cmd.$msg'
+import { CloseAppBarCmd } from '../@/frontend/close-app-bar-cmd.$msg'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { LogoutCmd } from '../@/frontend/logout-cmd.$msg'
 import { PushScreenCmd } from '../@/frontend/push-screen-cmd.$msg'
@@ -147,7 +146,7 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
       }
     }
     case 'clicked-logout-list-item': {
-      return { model: input.model, msgOut: [LogoutCmd.init(), CloseStatusBarCmd.init()] }
+      return { model: input.model, msgOut: [LogoutCmd.init(), CloseAppBarCmd.init()] }
     }
     case 'got-login-as-guest-msg':
     case 'got-login-with-sms-msg':
@@ -288,7 +287,7 @@ export const ViewLogoutIcon = (input: { model: ModelFrontend; ctx: AppFrontendCt
       return null
     }
     case 'logged-in': {
-      return h(IconPowerOff, { class: input.class })
+      return IconPowerOff({ class: input.class })
     }
   }
 }

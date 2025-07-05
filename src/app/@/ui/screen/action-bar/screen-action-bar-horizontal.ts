@@ -27,9 +27,11 @@ export const HorizontalActionBar = (input: ScreenActionBarProps) => {
   }
 }
 
-const toDropDownConfig = (reference: VDom): DropDownConfig => {
+const toDropDownConfig = (reference: { render: () => VDom }): DropDownConfig => {
   return {
-    reference,
+    reference: {
+      render: reference.render,
+    },
     alignment: 'starting',
     position: 'bottom',
   }
@@ -51,14 +53,14 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
 
       return h(Frag, { key: action.id }, [
         action.renderSurface({
-          dropDown: toDropDownConfig(button),
+          dropDown: toDropDownConfig({ render: () => button }),
           screenActionLocation: 'bar',
         }),
       ])
     }),
 
     hasLastActions &&
-      h(SurfaceLayout, {
+      SurfaceLayout({
         ctx: input.ctx,
         id: input.id,
         ariaLabel: input.ctx.t('app.more'),
@@ -68,13 +70,16 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
           render: () => SurfaceMoreContent({ actions: lastActions }),
         },
         dropDown: {
-          reference: ScreenActionButton({
-            id: input.ctx.t('app.more'),
-            icon: (input) => h(IconEllipsisVertical, input),
-            label: input.ctx.t('app.more'),
-            size: input.size,
-            onClick: input.limit?.onToggle ?? (() => {}),
-          }),
+          reference: {
+            render: () =>
+              ScreenActionButton({
+                id: input.ctx.t('app.more'),
+                icon: (input) => h(IconEllipsisVertical, input),
+                label: input.ctx.t('app.more'),
+                size: input.size,
+                onClick: input.limit?.onToggle ?? (() => {}),
+              }),
+          },
         },
       }),
   ])
@@ -97,7 +102,7 @@ const SurfaceMoreContent = (input: { actions: (ScreenAction | null)[] }) => {
       if (!action.renderSurface) return listItemButton
       return h(Frag, { key: action.id }, [
         action.renderSurface({
-          dropDown: toDropDownConfig(listItemButton),
+          dropDown: toDropDownConfig({ render: () => listItemButton }),
           screenActionLocation: 'more-drawer',
         }),
       ])
@@ -123,7 +128,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
 
           return h(Frag, { key: action.id }, [
             action.renderSurface({
-              dropDown: toDropDownConfig(button),
+              dropDown: toDropDownConfig({ render: () => button }),
               screenActionLocation: 'bar',
             }),
           ])
@@ -142,7 +147,7 @@ const HorizontalSpaceBetween = (input: ScreenActionBarProps & ScreenActionsSpace
 
           return h(Frag, { key: action.id }, [
             action.renderSurface({
-              dropDown: toDropDownConfig(button),
+              dropDown: toDropDownConfig({ render: () => button }),
               screenActionLocation: 'bar',
             }),
           ])

@@ -16,9 +16,6 @@ type Module = AppFrontendModule<{
   Ctx: AppFrontendCtxBase
   Model: Model
   Msg: Msg
-  MsgEvtOut: never
-  MsgToFrontend: never
-  MsgToBackend: never
 }>
 
 export type Model = {
@@ -35,15 +32,15 @@ export const init: Module['init'] = () => {
 
 export type Msg =
   | {
-      t: 'toggle-mute'
+      t: 'sound.toggle-mute'
     }
   | {
-      t: 'played-sound'
+      t: 'sound.played-sound'
       src: string
       result: Result<string, null>
     }
   | {
-      t: 'preloaded-sounds'
+      t: 'sound.preloaded-sounds'
       src: string[]
       result: Result<string, null>
     }
@@ -61,7 +58,7 @@ const updateFromMsg: Module['update'] = (input) => {
   if (!input.msg) return { model: input.model }
 
   switch (input.msg.t) {
-    case 'toggle-mute': {
+    case 'sound.toggle-mute': {
       if (input.model.muted) {
         return {
           model: { ...input.model, muted: false },
@@ -77,11 +74,11 @@ const updateFromMsg: Module['update'] = (input) => {
       }
     }
 
-    case 'played-sound': {
+    case 'sound.played-sound': {
       return { model: input.model }
     }
 
-    case 'preloaded-sounds': {
+    case 'sound.preloaded-sounds': {
       return { model: input.model }
     }
   }
@@ -118,7 +115,7 @@ export const updateFromCmd: Module['update'] = (input) => {
         const { delay } = msgIn
         if (delay) await sleep(delay)
         const played = await input.ctx.audioPlayer.play({ src: msgIn.src, tag: msgIn.tag })
-        dispatch({ t: 'played-sound', src: msgIn.src, result: played })
+        dispatch({ t: 'sound.played-sound', src: msgIn.src, result: played })
       },
     }
   }
@@ -128,7 +125,7 @@ export const updateFromCmd: Module['update'] = (input) => {
       model: input.model,
       async eff(dispatch) {
         const preloaded = await input.ctx.audioPlayer.preload({ srcList: msgIn.srcList })
-        dispatch({ t: 'preloaded-sounds', src: msgIn.srcList, result: preloaded })
+        dispatch({ t: 'sound.preloaded-sounds', src: msgIn.srcList, result: preloaded })
       },
     }
   }
@@ -154,7 +151,7 @@ export const ViewSoundListItem = (input: {
   return h(ListItemButton, {
     onClick: () =>
       input.dispatch({
-        t: 'toggle-mute',
+        t: 'sound.toggle-mute',
       }),
     icon: (inputIcon) => (input.model.muted ? h(IconVolumeXMark, inputIcon) : h(IconVolumeHigh, inputIcon)),
     primary: input.model.muted ? input.ctx.t('sound.sound-off') : input.ctx.t('sound.sound-on'),

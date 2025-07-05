@@ -2,7 +2,7 @@
 import { MsgShared as MsgShared0 } from '../../../app/@/frontend/add-profiles-cmd$msg'
 import { MsgShared as MsgShared1 } from '../../../app/@/frontend/back-screen-cmd.$msg'
 import { MsgShared as MsgShared2 } from '../../../app/@/frontend/backend-connected-evt.$msg'
-import { MsgShared as MsgShared3 } from '../../../app/@/frontend/close-status-bar-cmd.$msg'
+import { MsgShared as MsgShared3 } from '../../../app/@/frontend/close-app-bar-cmd.$msg'
 import { MsgShared as MsgShared4 } from '../../../app/@/frontend/copy-to-clipboard-cmd.$msg'
 import { MsgShared as MsgShared5 } from '../../../app/@/frontend/current-user-logged-out-evt.$msg'
 import { MsgShared as MsgShared6 } from '../../../app/@/frontend/document-visibility-changed-evt.$msg'

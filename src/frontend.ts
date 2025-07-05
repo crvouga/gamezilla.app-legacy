@@ -1,8 +1,9 @@
 import { Program } from '~/@/program/program'
-import { Render, h, vdomEngineInitialized } from '~/@/vdom/h'
+import { Render, vdomEngineInitialized } from '~/@/vdom/h'
 import { AppFrontend } from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { registerServiceWorker } from './app/settings/update-prompt/update-prompt'
+import { DebuggerReduxDevTools } from './@/program/debugger'
+import { registerServiceWorker } from './app/settings/update/update-prompt'
 import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {
@@ -21,7 +22,8 @@ const main = async () => {
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
-    render: (input) => render(h(AppFrontend.View, { ...input, ctx })),
+    render: (input) => render(AppFrontend.View({ ...input, ctx })),
+    debugger: DebuggerReduxDevTools,
   })
 }
 

@@ -84,6 +84,7 @@ export const translations: Text = {
   'app.join': 'शामिल हों',
   'app.load': 'लोड करें',
   'app.open-settings': 'सेटिंग्स खोलें',
+  'status-bar.status-bar': 'स्थिति बार',
   'app.submit': 'जमा करें',
   'unsaved-changes.unsaved-changes-warning':
     'आपके परिवर्तन खो जाएंगे अगर आप उन्हें बाहर निकलने से पहले सहेजते नहीं हैं।',
@@ -128,9 +129,6 @@ export const translations: Text = {
   'auth-sms.sent-code-to': (formattedPhoneNumber) =>
     `\u0915\u094B\u0921 ${formattedPhoneNumber} \u092A\u0930 \u092D\u0947\u091C\u093E \u0917\u092F\u093E`,
   'auth-sms.please-enter-code': 'कृपया कोड दर्ज करें',
-  'sound.sound-off': 'ध्वनि बंद',
-  'sound.sound-on': 'ध्वनि चालू',
-  'status-bar.status-bar': 'स्थिति बार',
   'profile.update-profile': 'प्रोफ़ाइल अपडेट करें',
   'profile.update-avatar': 'अवतार अपडेट करें',
   'profile.profile': 'प्रोफ़ाइल',
@@ -144,6 +142,8 @@ export const translations: Text = {
   'l18n.loaded-translations': 'लोड की गई अनुवाद',
   'l18n.renderer': 'Renderer',
   'l18n.settings': 'सेटिंग्स',
+  'sound.sound-off': 'ध्वनि बंद',
+  'sound.sound-on': 'ध्वनि चालू',
   'spaces.current-user-joined-space': 'स्थान जुड़ गया',
   'spaces.other-user-joined-space': (username) =>
     `${username} \u0928\u0947 \u0938\u094D\u0925\u093E\u0928 \u091C\u094B\u0921\u093C\u093E`,

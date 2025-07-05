@@ -30,11 +30,11 @@ import { SplashScreen } from './@/ui/logo/splash-screen'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
-import { SettingsBar } from './settings/settings-bar'
+import { AppBarFrontend } from './frontend/app-bar'
 import { FrontendFrontend } from './frontend/frontend'
 import { ToasterFrontend } from './frontend/toaster'
-import { SettingsFrontend } from './settings/frontend'
 import { ProfileFrontend } from './profile/frontend'
+import { SettingsFrontend } from './settings/frontend'
 import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract, topicContract } from './types'
 import { WireFrontend } from './wire/frontend'
@@ -361,21 +361,21 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
   const frontendCtx = toCtx(input)
 
   return h(ViewAppRoot, {}, [
-    h(SettingsBar.View, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
+    AppBarFrontend.View({ model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
 
     h('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
-      h(ViewScreen, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
+      ViewScreen({ model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
     ]),
 
-    h(AuthFrontend.ViewModals, {
+    AuthFrontend.ViewModals({
       ctx: frontendCtx,
       dispatch: (c) => input.dispatch({ t: 'auth', c }),
       model: input.model.auth,
     }),
 
-    h(DrawerPortalExit, {}),
+    DrawerPortalExit(),
 
-    h(ToasterFrontend.View, {
+    ToasterFrontend.View({
       ctx: frontendCtx,
       model: input.model.frontend.toast,
       dispatch: (c) => input.dispatch({ t: 'frontend', c: { t: 'toast', c } }),
@@ -386,7 +386,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
 const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {
   switch (input.model.frontend.currentScreen.currentScreen.n) {
     case 'settings':
-      return h(SettingsFrontend.View, {
+      return SettingsFrontend.View({
         ctx: input.ctx,
         dispatch: (c) => input.dispatch({ t: 'settings', c }),
         model: input.model.settings,
@@ -395,11 +395,11 @@ const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
       const currentUser = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
       switch (currentUser.t) {
         case 'loading':
-          return h(SplashScreen, { reason: TranslatedText.of('Loading current user...') })
+          return SplashScreen({ reason: TranslatedText.of('Loading current user...') })
         case 'logged-out':
-          return h(ViewScreenLoggedOut, { model: input.model, dispatch: input.dispatch, ctx: input.ctx })
+          return ViewScreenLoggedOut({ model: input.model, dispatch: input.dispatch, ctx: input.ctx })
         case 'logged-in':
-          return h(ViewScreenLoggedIn, { model: input.model, dispatch: input.dispatch, ctx: input.ctx })
+          return ViewScreenLoggedIn({ model: input.model, dispatch: input.dispatch, ctx: input.ctx })
       }
     }
   }
@@ -408,13 +408,13 @@ const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
 const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
   switch (input.ctx.currentScreen.n) {
     case 'auth':
-      return h(AuthFrontend.View, {
+      return AuthFrontend.View({
         model: input.model.auth,
         ctx: input.ctx,
         dispatch: (c) => input.dispatch({ t: 'auth', c }),
       })
     default:
-      return h(IntersectionObserverEmitter, {
+      return IntersectionObserverEmitter({
         id: 'app-intersection-observer',
         onVisible: () =>
           input.dispatch({
@@ -428,14 +428,14 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
 const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
   switch (input.ctx.currentScreen.n) {
     case 'profile':
-      return h(ProfileFrontend.View, {
+      return ProfileFrontend.View({
         dispatch: (m) => input.dispatch({ t: 'profile', c: m }),
         model: input.model.profile,
         ctx: { ...input.ctx, parentScreen: toScreenLayoutProps(input) },
       })
 
     case 'spaces':
-      return h(SpacesFrontend.View, {
+      return SpacesFrontend.View({
         dispatch: (m) => input.dispatch({ t: 'spaces', c: m }),
         model: input.model.spaces,
         ctx: {
@@ -446,7 +446,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
 
     case 'settings':
     case 'auth':
-      return h(IntersectionObserverEmitter, {
+      return IntersectionObserverEmitter({
         id: 'app-intersection-observer',
         onVisible: () =>
           input.dispatch({
@@ -487,14 +487,14 @@ const toScreenLayoutProps = (input: {
         actions: [
           {
             label: ctx.t('spaces.spaces'),
-            icon: (input) => h(IconGamepad, input),
+            icon: (input) => IconGamepad(input),
             color: input.model.frontend.currentScreen.currentScreen.n === 'spaces' ? 'selected' : 'inherit',
             onClick: pushSpaceList,
             id: ctx.t('spaces.spaces'),
           },
           {
             label: ctx.t('profile.profile'),
-            icon: (input) => h(IconUserCircle, input),
+            icon: (input) => IconUserCircle(input),
             color: input.model.frontend.currentScreen.currentScreen.n === 'profile' ? 'selected' : 'inherit',
             onClick() {
               input.dispatch({

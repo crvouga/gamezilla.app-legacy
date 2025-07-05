@@ -3,27 +3,27 @@ import { isOk } from '~/@/result'
 
 export const schema = s.or(
   s.obj({
-    t: s.l('status-bar'),
+    t: s.l('app-bar'),
     c: s.obj({
       t: s.l('close'),
     }),
   }),
 )
 
-export type CloseStatusBarCmd = s.Infer<typeof schema>
+export type CloseAppBarCmd = s.Infer<typeof schema>
 
-export type MsgShared = CloseStatusBarCmd
+export type MsgShared = CloseAppBarCmd
 
-export const init = (): CloseStatusBarCmd => {
+export const init = (): CloseAppBarCmd => {
   return {
-    t: 'status-bar',
+    t: 'app-bar',
     c: {
       t: 'close',
     },
   }
 }
 
-const is = (cmd: unknown): cmd is CloseStatusBarCmd => {
+const is = (cmd: unknown): cmd is CloseAppBarCmd => {
   return isOk(schema.parse(cmd))
 }
 
@@ -35,7 +35,7 @@ const did = (output?: { msgOut?: unknown[] | null }): boolean => {
   )
 }
 
-export const CloseStatusBarCmd = {
+export const CloseAppBarCmd = {
   is,
   init,
   did,

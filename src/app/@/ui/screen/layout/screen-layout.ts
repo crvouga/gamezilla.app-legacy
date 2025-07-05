@@ -9,15 +9,15 @@ export const ScreenLayout = (input: ScreenLayoutProps) => {
     ...toDataTestIds(input).map((dataTestId) =>
       h('div', { key: dataTestId, class: 'hidden', 'data-testid': dataTestId }),
     ),
-    h(ScreenLayoutVariant, input),
+    ScreenLayoutVariant(input),
   ])
 }
 
 const ScreenLayoutVariant = (input: ScreenLayoutProps) => {
   switch (input.ctx.screenSize) {
     case 'mobile':
-      return h(ScreenLayoutMobile, input)
+      return ScreenLayoutMobile(input)
     case 'tablet':
-      return h(ScreenLayoutTablet, input)
+      return ScreenLayoutTablet(input)
   }
 }
