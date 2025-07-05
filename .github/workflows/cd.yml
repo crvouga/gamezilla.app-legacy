@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  type-check:
-    name: Type Check
+  cir-dep-check:
+    name: Circular Dependency Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -35,6 +35,28 @@ jobs:
 
       - name: Circular dependency check
         run: pnpm cir-deps
+
+  type-check:
+    name: Type Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Type check
         run: pnpm exec tsc --noEmit
@@ -70,7 +92,7 @@ jobs:
 
   integration-tests:
     name: Integration Tests
-    needs: [type-check, unit-tests]
+    needs: [cir-dep-check, type-check, unit-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -110,7 +132,7 @@ jobs:
 
   e2e-tests:
     name: E2E Tests
-    needs: [type-check, unit-tests]
+    needs: [cir-dep-check, type-check, unit-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
