@@ -11,10 +11,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  install:
-    name: Install
+  install-deps:
+    name: Install Dependencies
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      cache-key: ${{ steps.cache-key.outputs.key }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,12 +32,24 @@ jobs:
           node-version: 'lts/*'
           cache: 'pnpm'
 
+      - name: Generate cache key
+        id: cache-key
+        run: echo "key=node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}" >> $GITHUB_OUTPUT
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ steps.cache-key.outputs.key }}
+
       - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
 
   cir-dep-check:
     name: Circular Dependency Check
-    needs: install
+    needs: install-deps
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -53,15 +67,18 @@ jobs:
           node-version: 'lts/*'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Restore cached node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ needs.install-deps.outputs.cache-key }}
 
       - name: Circular dependency check
         run: pnpm cir-deps
 
   type-check:
     name: Type Check
-    needs: install
+    needs: install-deps
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -79,15 +96,18 @@ jobs:
           node-version: 'lts/*'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Restore cached node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ needs.install-deps.outputs.cache-key }}
 
       - name: Type check
         run: pnpm exec tsc --noEmit
 
   unit-tests:
     name: Unit Tests
-    needs: install
+    needs: install-deps
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -105,8 +125,11 @@ jobs:
           node-version: 'lts/*'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Restore cached node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ needs.install-deps.outputs.cache-key }}
 
       - name: Create .env file
         run: |
@@ -117,7 +140,7 @@ jobs:
 
   integration-tests:
     name: Integration Tests
-    needs: [cir-dep-check, type-check, unit-tests]
+    needs: [install-deps, cir-dep-check, type-check, unit-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -135,8 +158,11 @@ jobs:
           node-version: 'lts/*'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Restore cached node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ needs.install-deps.outputs.cache-key }}
 
       - name: Create .env file
         run: |
@@ -157,7 +183,7 @@ jobs:
 
   e2e-tests:
     name: E2E Tests
-    needs: [cir-dep-check, type-check, unit-tests]
+    needs: [install-deps, cir-dep-check, type-check, unit-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -175,8 +201,11 @@ jobs:
           node-version: 'lts/*'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Restore cached node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ needs.install-deps.outputs.cache-key }}
 
       - name: Create .env file
         run: |
@@ -200,7 +229,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: [integration-tests, e2e-tests]
+    needs: [install-deps, integration-tests, e2e-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
@@ -219,8 +248,11 @@ jobs:
           node-version: 'lts/*'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Restore cached node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ needs.install-deps.outputs.cache-key }}
 
       - name: Run database migrations
         run: pnpm db:up
