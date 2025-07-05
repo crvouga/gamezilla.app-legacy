@@ -2,7 +2,7 @@ import { Translator as SoundFrontend } from '~/@/l18n/generated'
 import { sleep } from '~/@/promise/sleep'
 import { type Result } from '~/@/result'
 import { IconVolumeHigh, IconVolumeXMark } from '~/@/ui/icon'
-import { ListItemButton } from '~/@/ui/list-item-button'
+import { ListItem } from '~/@/ui/list-item'
 import { ToggleButton } from '~/@/ui/toggle-button'
 import { h } from '~/@/vdom/h'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
@@ -97,7 +97,7 @@ const updateFromEvent: Module['update'] = (input) => {
   return { model: input.model }
 }
 
-export const updateFromCmd: Module['update'] = (input) => {
+const updateFromCmd: Module['update'] = (input) => {
   const { msgIn } = input
 
   if (PlaySoundCmd.is(msgIn)) {
@@ -148,7 +148,7 @@ export const ViewSoundListItem = (input: {
     t: SoundFrontend
   }
 }) => {
-  return h(ListItemButton, {
+  return h(ListItem, {
     onClick: () =>
       input.dispatch({
         t: 'sound.toggle-mute',

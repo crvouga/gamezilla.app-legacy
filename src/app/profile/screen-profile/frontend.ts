@@ -66,7 +66,7 @@ const ViewBody: typeof View = (input) => {
 
   const profile = input.ctx.profilesByUserId[userId]
 
-  const isCurrentUserProfile = input.ctx.currentUserId === userId
+  const isCurrentUserProfile = input.ctx.currentUser?.userId === userId
 
   return h('div', { class: 'flex w-full flex-col items-center gap-4 p-6' }, [
     h(Avatar, { class: 'size-28', src: UserProfile.toAvatarUrl(profile), alt: 'profile avatar' }),

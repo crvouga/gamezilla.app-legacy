@@ -5,6 +5,7 @@ const Screen = s.or(
   s.obj({
     n: s.l('settings'),
     t: s.l('main'),
+    back: s.unknown,
   }),
   s.obj({
     n: s.l('settings'),
@@ -12,7 +13,7 @@ const Screen = s.or(
   }),
   s.obj({
     n: s.l('settings'),
-    t: s.l('choose-renderer'),
+    t: s.l('renderer'),
   }),
 )
 

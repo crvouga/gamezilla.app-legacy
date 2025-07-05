@@ -1,12 +1,13 @@
 import { Fragment, render } from 'preact'
 import { createElement, createPortal } from 'preact/compat'
-import 'preact/debug'
 import { VDOM_FRAGMENT_KEY } from './fragment'
 import { VirtualDomEngine } from './interface'
 
 export const initPreact = (): VirtualDomEngine => {
   return {
-    render: (node) => (vDom) => render(vDom as any, node),
+    render: (vDom, node) => {
+      render(vDom as any, node)
+    },
     createPortal: (vDom, container) => {
       return createPortal(vDom as any, container) as any
     },

@@ -6,12 +6,11 @@ import { VirtualDomEngine } from './interface'
 import { kebabObjectToCamelObject } from './style'
 
 export const initReact = (): VirtualDomEngine => {
+  let reactRoot: ReturnType<typeof createRoot> | undefined
   return {
-    render: (node) => {
-      const reactRoot = createRoot(node)
-      return (vDom) => {
-        reactRoot.render(vDom as any)
-      }
+    render: (vDom, node) => {
+      reactRoot ??= createRoot(node)
+      reactRoot.render(vDom as any)
     },
     createPortal: (vDom, container) => {
       const portal = createPortal(vDom as any, container)

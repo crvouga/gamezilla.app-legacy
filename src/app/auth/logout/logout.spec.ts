@@ -1,6 +1,5 @@
 import { describe, expect, test, TestRunnerEnv } from '~/@/test-runner'
 import { setupLoginWithSms } from '~/app/@/test/setup/do-login-with-sms'
-import { AppBarFrontend } from '~/app/frontend/app-bar'
 import { FixtureAuthE2E } from '../@/test/e2e'
 import { AuthFrontend } from '../frontend'
 
@@ -14,8 +13,8 @@ describe('logout', () => {
   test.skip('open logout confirmation', async (e) => {
     await using f = await Fixture(e)
     await setupLoginWithSms(f)
-    const openButton = await f.frontend.findByTestId(AppBarFrontend.TEST_ID.OPEN_BUTTON)
-    await openButton!.do({ t: 'click' })
+    // const openButton = await f.frontend.findByTestId(AppBarFrontend.TEST_ID.OPEN_BUTTON)
+    // await openButton!.do({ t: 'click' })
     const logoutListItemButton = await f.frontend.findByTestId(AuthFrontend.dataTestId.logoutListItemButton)
     expect(logoutListItemButton).toBeTruthy()
   })

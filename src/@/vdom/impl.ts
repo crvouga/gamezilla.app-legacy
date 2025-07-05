@@ -1,12 +1,20 @@
-import { CONFIG_FRONTEND } from '~/config/frontend'
-import { ICreateElement, ICreatePortal, IRender, RenderNode, VirtualDomEngine } from './interface'
+import { Sub } from '../sub'
+import { ICreateElement, ICreatePortal, IRender } from './interface'
 import { VDomImpl } from './vdom-impl'
 
-export let Render: (node: RenderNode) => IRender = () => () => {}
-export let createPortal: ICreatePortal = () => null
-export let h: ICreateElement = () => null
+export let render: IRender
+export let createPortal: ICreatePortal
+export let h: ICreateElement
 
-const init = async (vdomImpl: VDomImpl): Promise<VirtualDomEngine> => {
+const initialize = async (vdomImpl: VDomImpl) => {
+  if (typeof window === 'undefined') return
+  const vdomEngine = await init(vdomImpl)
+  render = vdomEngine.render
+  createPortal = vdomEngine.createPortal
+  h = vdomEngine.createElement
+}
+
+const init = async (vdomImpl: VDomImpl) => {
   switch (vdomImpl) {
     case 'react': {
       const { initReact } = await import('./impl-react')
@@ -31,13 +39,9 @@ const init = async (vdomImpl: VDomImpl): Promise<VirtualDomEngine> => {
   }
 }
 
-export const vdomEngineInitialized = new Promise<void>(async (resolve) => {
-  if (typeof window === 'undefined') return resolve()
+const event = Sub.create<{ t: 'changed-vdom-impl'; vdomImpl: VDomImpl }>()
 
-  const vdomEngine = await init(CONFIG_FRONTEND.VDOM_IMPL)
-
-  Render = (node) => vdomEngine.render(node)
-  createPortal = vdomEngine.createPortal
-  h = vdomEngine.createElement
-  resolve()
-})
+export const VDomEngine = {
+  initialize,
+  event,
+}

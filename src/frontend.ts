@@ -1,30 +1,38 @@
 import { Program } from '~/@/program/program'
-import { Render, vdomEngineInitialized } from '~/@/vdom/h'
 import { AppFrontend } from '~/app/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { DebuggerReduxDevTools } from './@/program/debugger'
-import { registerServiceWorker } from './app/settings/update/update-prompt'
+import { render, VDomEngine } from './@/vdom'
+import { VDomImpl } from './@/vdom/vdom-impl'
 import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {
   console.table({ ...CONFIG_SHARED, ...CONFIG_FRONTEND })
 
-  await vdomEngineInitialized
-
-  const render = Render(document.getElementById('root')!)
+  let root = initRoot()
+  await VDomEngine.initialize(CONFIG_FRONTEND.VDOM_IMPL)
 
   const ctx = await AppFrontend.initCtx()
 
-  registerServiceWorker({ logger: ctx.logger })
-
-  await Program.run({
+  const program = await Program.run({
     crash: (input) => console.error(input),
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
-    render: (input) => render(AppFrontend.View({ ...input, ctx })),
-    debugger: DebuggerReduxDevTools,
+    render: (input) => render(AppFrontend.View({ ...input, ctx }), root),
   })
+
+  VDomEngine.event.sub(async (input) => {
+    VDomImpl.setUrl(input.vdomImpl)
+    await VDomEngine.initialize(input.vdomImpl)
+    root = initRoot()
+    program.render()
+  })
+}
+
+const initRoot = () => {
+  document.body.innerHTML = '<div id="root"></div>'
+  const root = document.getElementById('root')!
+  return root
 }
 
 main()

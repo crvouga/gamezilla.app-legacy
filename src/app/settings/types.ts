@@ -5,7 +5,7 @@ import { ScreenRendererTypes } from './screen-renderer'
 import { SoundFrontend } from './sound'
 
 export type ModelFrontendBase = {
-  isStatusBarOpen: boolean
+  isTopBarSurfaceOpen: boolean
   sound: SoundFrontend.Model
 }
 export type ModelFrontend = ModelFrontendBase & ScreenLangTypes.ModelFrontend & ScreenRendererTypes.ModelFrontend
@@ -16,6 +16,9 @@ export type MsgFrontendBase =
   | { t: 'settings.clicked-open-renderer' }
   | { t: 'settings.clicked-open-settings' }
   | { t: 'settings.clicked-back-button' }
+  | { t: 'settings.clicked-logout-list-item' }
+  | { t: 'settings.clicked-top-bar' }
+  | { t: 'settings.closed-top-bar-surface' }
 
 export type MsgFrontend = MsgFrontendBase | ScreenLangTypes.MsgFrontend | ScreenRendererTypes.MsgFrontend
 

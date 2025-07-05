@@ -69,12 +69,12 @@ export type ICreateElement = {
 
 export type RenderNode = Element | HTMLBodyElement | HTMLElement
 
-export type IRender = (vDom: VDom) => void
+export type IRender = (vDom: VDom, node: RenderNode) => void
 
 export type ICreatePortal = (vDom: VDom, container: RenderNode) => VDom
 
 export type VirtualDomEngine = {
-  render: (node: RenderNode) => IRender
+  render: IRender
   createPortal: ICreatePortal
   createElement: ICreateElement
 }

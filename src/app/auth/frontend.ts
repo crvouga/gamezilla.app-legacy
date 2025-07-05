@@ -4,15 +4,13 @@ import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Avatar } from '~/@/ui/avatar'
 import { Button } from '~/@/ui/button'
-import { IconMobilePhone, IconPowerOff, IconUserCircle } from '~/@/ui/icon'
-import { ListItemButton } from '~/@/ui/list-item-button'
+import { IconMobilePhone, IconUserCircle } from '~/@/ui/icon'
+import { ListItem } from '~/@/ui/list-item'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserProfile } from '../@/data/user-profile'
-import { CloseAppBarCmd } from '../@/frontend/close-app-bar-cmd.$msg'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
-import { LogoutCmd } from '../@/frontend/logout-cmd.$msg'
 import { PushScreenCmd } from '../@/frontend/push-screen-cmd.$msg'
 import { AuthFrontendCtx } from './@/frontend/ctx'
 import { AuthScreenHeaderCta } from './@/frontend/ui/auth-screen-header-cta'
@@ -145,9 +143,6 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
         msgOut: [PushScreenCmd.init({ n: 'auth', t: 'send-code' }, true)],
       }
     }
-    case 'clicked-logout-list-item': {
-      return { model: input.model, msgOut: [LogoutCmd.init(), CloseAppBarCmd.init()] }
-    }
     case 'got-login-as-guest-msg':
     case 'got-login-with-sms-msg':
     case 'got-logout-msg':
@@ -259,62 +254,21 @@ const ViewCurrentUserListItem = (input: {
   const currentUser = toCurrentUserState({ model: input.model.currentUser, ctx: input.ctx })
   switch (currentUser.t) {
     case 'loading': {
-      return h(ListItemButton, {
+      return h(ListItem, {
         icon: (input) => h(IconUserCircle, input),
         primary: input.ctx.t('app.add'),
       })
     }
     case 'logged-out': {
-      return h(ListItemButton, {
+      return h(ListItem, {
         icon: (input) => h(IconUserCircle, input),
         primary: input.ctx.t('app.add'),
       })
     }
     case 'logged-in': {
-      return h(ListItemButton, {
+      return h(ListItem, {
         icon: (input) => h(Avatar, { src: UserProfile.toAvatarUrl(currentUser.userProfile), ...input }),
         primary: TranslatedText.of(`${input.ctx.t('auth.logged-in-as')} ${currentUser.userProfile.username}`),
-      })
-    }
-  }
-}
-
-export const ViewLogoutIcon = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase; class: string }) => {
-  const currentUser = toCurrentUserState({ model: input.model.currentUser, ctx: input.ctx })
-  switch (currentUser.t) {
-    case 'loading':
-    case 'logged-out': {
-      return null
-    }
-    case 'logged-in': {
-      return IconPowerOff({ class: input.class })
-    }
-  }
-}
-
-const ViewLogoutListItem = (input: {
-  model: ModelFrontend
-  ctx: AppFrontendCtxBase
-  dispatch: (msg: MsgFrontend) => void
-}) => {
-  const currentUser = toCurrentUserState({ model: input.model.currentUser, ctx: input.ctx })
-
-  switch (currentUser.t) {
-    case 'loading':
-    case 'logged-out': {
-      return null
-    }
-    case 'logged-in': {
-      return h(ListItemButton, {
-        onClick: () => input.dispatch({ t: 'clicked-logout-list-item' }),
-        dataTestId: dataTestId.logoutListItemButton,
-        icon: (input) => h(IconPowerOff, input),
-        primary: input.ctx.t('auth.logout'),
-        end: () =>
-          h(Typography, {
-            variant: 'caption',
-            text: TranslatedText.of(currentUser.userProfile.username),
-          }),
       })
     }
   }
@@ -325,10 +279,8 @@ export const AuthFrontend = {
   update,
   subscriptions,
   View,
-  ViewLogoutListItem,
   ViewModals,
   ViewCurrentUserListItem,
-  ViewLogoutIcon,
   initCtx,
   dataTestId,
 }

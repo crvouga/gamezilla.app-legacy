@@ -1,11 +1,10 @@
-import { replaceQueryParam } from '~/@/browser/browser'
-import { Gutter } from '~/@/ui/gutter'
-import { ListItemButton } from '~/@/ui/list-item-button'
+import { ListItem } from '~/@/ui/list-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
-import { h } from '~/@/vdom/h'
+import { h, VDomEngine } from '~/@/vdom/h'
 import { VDomImpl } from '~/@/vdom/vdom-impl'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
+import { CONFIG_FRONTEND } from '~/config/frontend'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import { ReplaceScreenCmd } from '../../@/frontend/replace-screen-cmd.$msg'
 import type { FrontendModule } from '../types'
@@ -18,7 +17,7 @@ const TEST_ID = {
 }
 
 const init = (): { model: ModelFrontend } => {
-  const initialVDomImpl = VDomImpl.readFromUrl({ fallback: 'snabbdom' })
+  const initialVDomImpl = CONFIG_FRONTEND.VDOM_IMPL
 
   return {
     model: {
@@ -35,7 +34,7 @@ const update: FrontendModule['update'] = (input) => {
     case 'renderer.clicked-back-button': {
       return {
         model: input.model,
-        msgOut: [ReplaceScreenCmd.init({ t: 'main', n: 'settings' }, true)],
+        msgOut: [ReplaceScreenCmd.init({ t: 'main', n: 'settings', back: input.ctx.currentScreen }, true)],
       }
     }
 
@@ -44,13 +43,11 @@ const update: FrontendModule['update'] = (input) => {
       return {
         model: {
           ...input.model,
-          vDomImpl,
+          renderVDomImpl: vDomImpl,
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-        async eff(dispatch) {
-          replaceQueryParam('vdom', vDomImpl)(dispatch)
-          await new Promise((resolve) => setTimeout(resolve, 100))
-          window.location.reload()
+        async eff() {
+          VDomEngine.event.pub({ t: 'changed-vdom-impl', vdomImpl: vDomImpl })
         },
       }
     }
@@ -65,7 +62,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const View: FrontendModule['View'] = (input) => {
   return ScreenLayout({
-    id: 'setting-choose-renderer',
+    id: 'setting-renderer',
     dataTestId: TEST_ID.RENDERER_SCREEN,
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
@@ -76,11 +73,13 @@ const View: FrontendModule['View'] = (input) => {
       },
     },
     renderBody: () =>
-      h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
-        ...VDomImpl.ALL.filter((vDomImpl) => !VDomImpl.HIDDEN.includes(vDomImpl)).map((vDomImpl) => {
+      h(
+        'div',
+        { class: 'flex flex-1 flex-col overflow-y-scroll' },
+        VDomImpl.VISIBLE.map((vDomImpl) => {
           const isSelected = vDomImpl === input.model.renderVDomImpl
           const isDefault = vDomImpl === input.model.renderVDomImplInitial
-          return h(ListItemButton, {
+          return h(ListItem, {
             key: vDomImpl,
             primary: VDomImpl.toName(vDomImpl),
             secondary: isDefault && false ? input.ctx.t('l18n.default') : undefined,
@@ -89,8 +88,7 @@ const View: FrontendModule['View'] = (input) => {
             end: () => h(RadioInputIcon, { class: 'size-7', status: isSelected ? 'selected' : 'unselected' }),
           })
         }),
-        Gutter({ variant: 'screen' }),
-      ]),
+      ),
   })
 }
 

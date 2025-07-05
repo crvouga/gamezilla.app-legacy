@@ -7,12 +7,19 @@ import type { Screen } from '~/@/screen/generated/screens'
 import { ISqlDb } from '~/@/sql-db'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ClientSessionId } from '~/@/wire/client-session-id'
+import { BackendConnectionStatus } from '~/app/@/wire/backend-connection-status'
+import { UserSession } from '~/app/auth/@/user-session/user-session'
 import { UserAccount } from '../data/user-account'
 import { UserId } from '../data/user-id'
 import { UserProfile } from '../data/user-profile'
 import { UserRole } from '../data/user-role'
 import { ParentScreenProps } from '../ui/screen/layout/screen-layout-props'
 import { ScreenSize } from '../ui/screen/screen-size'
+
+export type CurrentUser =
+  | { t: 'loading' }
+  | { t: 'logged-out' }
+  | { t: 'logged-in'; userAccount: UserAccount; userSession: UserSession; userProfile: UserProfile }
 
 export type AppFrontendCtxBase = {
   parentScreen: ParentScreenProps | null
@@ -29,10 +36,10 @@ export type AppFrontendCtxBase = {
   documentVisibilityState: DocumentVisibilityState
   clientSessionId: ClientSessionId
   currentUser?: UserAccount | null
-  currentUserId?: UserId | null
-  currentUserRole?: UserRole | null
+  currentUserState: CurrentUser
   httpClient: IHttpClient
   audioPlayer: IAudioPlayer
+  backendConnectionStatus: BackendConnectionStatus
 }
 
 export type AnonymousFrontendCtx = AppFrontendCtxBase

@@ -8,7 +8,7 @@ import { TestClient } from '~/@/test-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
-import { Render, h } from '~/@/vdom/h'
+import { h, render } from '~/@/vdom/h'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { SessionId } from '~/@/wire/session-id'
 import { AuthFrontend } from '~/app/auth/frontend'
@@ -56,9 +56,15 @@ export const TestFrontend = async (config: {
     screenSize: 'mobile',
     parentScreen: null,
     currentUser: null,
-    currentUserId: null,
-    currentUserRole: null,
+    currentUserState: {
+      t: 'loading',
+    },
     httpClient,
+    backendConnectionStatus: {
+      t: 'connected',
+      averagePing: TimeSpan.milliseconds(100),
+      latestPing: TimeSpan.milliseconds(100),
+    },
   }
 
   const auth = await AuthFrontend.initCtx({ ctx: ctxBase, rpc })
@@ -85,13 +91,13 @@ export const TestFrontend = async (config: {
 
   document.body.innerHTML = '<div id="root"></div>'
 
-  const render = Render(document.getElementById('root')!)
+  const root = document.getElementById('root')!
 
   const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
-    render: (input) => render(h(AppFrontend.View, { ...input, ctx })),
+    render: (input) => render(h(AppFrontend.View, { ...input, ctx }), root),
     crash: (input) => console.error(input),
   })
 

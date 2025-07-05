@@ -20,7 +20,6 @@ export type MsgFrontend =
   | { t: 'got-login-with-sms-msg'; c: LoginWithSMSTypes.MsgFrontend }
   | { t: 'got-logout-msg'; c: LogoutTypes.MsgFrontend }
   | { t: 'got-current-user-msg'; c: CurrentUserTypes.MsgFrontend }
-  | { t: 'clicked-logout-list-item' }
 
 export type FrontendCtxModule = AuthFrontendCtx & {
   rpc: RPC.Client<typeof rpcContract>

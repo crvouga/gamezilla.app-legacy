@@ -5,7 +5,9 @@ import { VirtualDomEngine } from './interface'
 
 export const initInferno = (): VirtualDomEngine => {
   return {
-    render: (node) => (vDom) => render(vDom, node),
+    render: (vDom, node) => {
+      render(vDom, node)
+    },
     createPortal: (vDom, container) => {
       return createPortal(vDom, container) as any
     },

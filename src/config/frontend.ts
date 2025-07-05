@@ -1,9 +1,7 @@
-import { VDomImpl } from '../@/vdom/vdom-impl'
+import { VDomImpl } from '~/@/vdom/vdom-impl'
 
-const VDOM_IMPL_DEFAULT = VDomImpl.of('snabbdom')
-const VDOM_IMPL = VDomImpl.readFromUrl({ fallback: VDOM_IMPL_DEFAULT })
+const VDOM_IMPL = VDomImpl.getUrl({ fallback: 'inferno' })
 
 export const CONFIG_FRONTEND = {
   VDOM_IMPL,
-  VDOM_IMPL_DEFAULT,
 }

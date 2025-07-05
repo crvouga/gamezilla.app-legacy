@@ -1,11 +1,11 @@
 import { TimeSpan } from '~/@/time/time-span'
-import { BackendConnectionStatus } from './connection-status'
+import { BackendConnectionFrontend } from './frontend'
 import { Model } from './types'
 
 const PING_RATE = TimeSpan.seconds(3)
 
 export const toPingRate = (model: Model): TimeSpan => {
-  const status = BackendConnectionStatus.fromModel(model)
+  const status = BackendConnectionFrontend.toBackendConnectionStatus(model)
 
   switch (status.t) {
     case 'connected': {

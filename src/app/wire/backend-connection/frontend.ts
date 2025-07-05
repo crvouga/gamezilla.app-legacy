@@ -3,16 +3,10 @@ import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
-import { Clickable } from '~/@/ui/clickable'
-import { ListItemButton } from '~/@/ui/list-item-button'
-import { Typography } from '~/@/ui/typography'
-import { h } from '~/@/vdom/h'
-import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { BackendConnectionStatus } from './connection-status'
+import { BackendConnectionStatus } from '../../@/wire/backend-connection-status'
 import { PingId } from './ping-id'
 import { toPingRate } from './ping-rate'
 import { FrontendModule, initModel, Model, MsgFrontend, PingItem } from './types'
-import { Dot } from './ui'
 
 const init: FrontendModule['init'] = (_input) => {
   const model = initModel()
@@ -75,59 +69,33 @@ const pongs: FrontendModule['subscriptions'] = (input) => {
   )
 }
 
-const ViewDot = (input: { model: Model; ctx: AppFrontendCtxBase; class: string }) => {
-  const status = BackendConnectionStatus.fromModel(input.model)
-  return BackendConnectionStatus.ViewDot({ model: status, ctx: input.ctx, class: input.class })
-}
+const toBackendConnectionStatus = (model: Model): BackendConnectionStatus => {
+  const ping = CappedOrderedDict.valuesNewestFirst(model.pings).find((ping) => ping.pongAt)
 
-const ViewListItem = (input: { model: Model; ctx: AppFrontendCtxBase; dispatch: (msg: MsgFrontend) => void }) => {
-  return h(ViewListItemInner, input)
-}
+  if (!ping) return { t: 'connecting' }
 
-const ViewListItemInner: typeof ViewListItem = (input) => {
-  const status = BackendConnectionStatus.fromModel(input.model)
-  switch (status.t) {
-    case 'connected': {
-      return h(ListItemButton, {
-        icon: (inputIcon) => h(Dot, { class: inputIcon.class, colorClassName: 'bg-green-500' }),
-        class: 'text-green-500',
-        primary: input.ctx.t('wire.online'),
-        end: () => h(Typography, { text: TimeSpan.format(status.latestPing) }),
-      })
-    }
+  if (!ping.pongAt) return { t: 'connecting' }
 
-    case 'connecting': {
-      return h(ListItemButton, {
-        icon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-orange-500' }),
-        color: 'warning',
-        primary: input.ctx.t('wire.connecting...'),
-      })
-    }
-
-    case 'disconnected': {
-      return h(ListItemButton, {
-        icon: (input) => h(Dot, { class: input.class, colorClassName: 'bg-red-500' }),
-        color: 'danger',
-        primary: input.ctx.t('wire.offline'),
-        end: () =>
-          h(
-            Clickable,
-            {
-              type: 'button',
-              onClick: () => {},
-              class: 'font-bold text-red-500',
-            },
-            [input.ctx.t('wire.try-reconnect')],
-          ),
-      })
-    }
+  return {
+    t: 'connected',
+    averagePing: toAveragePing(model),
+    latestPing: UnixMs.diff(ping.pingAt, ping.pongAt),
   }
+}
+
+const toAveragePing = (model: Model): TimeSpan => {
+  const pings = CappedOrderedDict.valuesNewestFirst(model.pings)
+  const total = pings.reduce(
+    (acc, ping) => (ping.pongAt ? acc + TimeSpan.toMilliseconds(UnixMs.diff(ping.pingAt, ping.pongAt)) : acc),
+    0,
+  )
+  const average = Math.floor(total / pings.length)
+  return TimeSpan.milliseconds(average)
 }
 
 export const BackendConnectionFrontend = {
   subscriptions,
   update,
   init,
-  ViewListItem,
-  ViewDot,
+  toBackendConnectionStatus,
 }

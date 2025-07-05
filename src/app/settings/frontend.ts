@@ -1,8 +1,12 @@
 import { Eff } from '~/@/eff'
+import { TranslatedText } from '~/@/l18n'
 import { Sub } from '~/@/sub'
+import { Clickable } from '~/@/ui/clickable'
+import { cn } from '~/@/ui/cn'
 import { Gutter } from '~/@/ui/gutter'
-import { IconCode, IconGear, IconLanguage } from '~/@/ui/icon'
-import { ListItemButton } from '~/@/ui/list-item-button'
+import { IconCode, IconGear, IconLanguage, IconPowerOff } from '~/@/ui/icon'
+import { ListItem } from '~/@/ui/list-item'
+import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { VDomImpl } from '~/@/vdom/vdom-impl'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -10,8 +14,10 @@ import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { APP_SOUND } from '../@/frontend/app-sound'
-import { CloseAppBarCmd } from '../@/frontend/close-app-bar-cmd.$msg'
+import { LogoutCmd } from '../@/frontend/logout-cmd.$msg'
 import { ReplaceScreenCmd } from '../@/frontend/replace-screen-cmd.$msg'
+import { SurfaceLayout } from '../@/ui/surface/layout/surface-layout'
+import { BackendConnectionStatus } from '../@/wire/backend-connection-status'
 import { ScreenLangFrontend } from './screen-lang/frontend'
 import { ScreenRendererFrontend } from './screen-renderer/frontend'
 import { SoundFrontend } from './sound'
@@ -20,8 +26,11 @@ import type { FrontendModule, MsgFrontend } from './types'
 const TEST_ID = {
   ...ScreenLangFrontend.TEST_ID,
   ...ScreenRendererFrontend.TEST_ID,
+  OPEN_BUTTON: 'settings/open-button',
+  DROP_DOWN_SURFACE: 'settings/drop-down-surface',
   SETTINGS_SCREEN: 'settings/settings-screen',
   SETTINGS_SCREEN_OPEN_BUTTON: 'settings/settings-screen-open-button',
+  LOGOUT_LIST_ITEM_BUTTON: 'settings/logout-list-item-button',
 }
 
 const init: FrontendModule['init'] = (input) => {
@@ -34,7 +43,7 @@ const init: FrontendModule['init'] = (input) => {
       ...lang.model,
       ...renderer.model,
       sound: sound.model,
-      isStatusBarOpen: false,
+      isTopBarSurfaceOpen: false,
     },
   }
 }
@@ -68,29 +77,29 @@ const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
   switch (msg?.t) {
     case 'settings.clicked-open-renderer': {
       return {
-        model,
-        msgOut: [PushScreenCmd.init({ t: 'main', n: 'settings' }, true), CloseAppBarCmd.init()],
+        model: { ...model, isTopBarSurfaceOpen: false },
+        msgOut: [PushScreenCmd.init({ t: 'renderer', n: 'settings' }, true)],
       }
     }
 
     case 'settings.clicked-open-lang': {
       if (ctx.currentScreen.n === 'settings' && ctx.currentScreen.t === 'choose-lang') {
         return {
-          model,
-          msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin), CloseAppBarCmd.init()],
+          model: { ...model, isTopBarSurfaceOpen: false },
+          msgOut: [PlaySoundCmd.init(APP_SOUND.navForwardMin)],
         }
       }
 
       return {
-        model,
-        msgOut: [PushScreenCmd.init({ t: 'choose-lang', n: 'settings' }, true), CloseAppBarCmd.init()],
+        model: { ...model, isTopBarSurfaceOpen: false },
+        msgOut: [PushScreenCmd.init({ t: 'choose-lang', n: 'settings' }, true)],
       }
     }
 
     case 'settings.clicked-open-settings': {
       return {
-        model,
-        msgOut: [PushScreenCmd.init({ t: 'main', n: 'settings' }, true), CloseAppBarCmd.init()],
+        model: { ...model, isTopBarSurfaceOpen: false },
+        msgOut: [PushScreenCmd.init({ t: 'main', n: 'settings', back: ctx.currentScreen }, true)],
       }
     }
 
@@ -99,6 +108,22 @@ const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
         model,
         msgOut: [ReplaceScreenCmd.init({ t: 'login', n: 'auth' }, true)],
       }
+    }
+
+    case 'settings.clicked-logout-list-item': {
+      return {
+        model: { ...model, isTopBarSurfaceOpen: false },
+        msgOut: [LogoutCmd.init()],
+      }
+    }
+
+    case 'settings.clicked-top-bar': {
+      const isOpenNew = !model.isTopBarSurfaceOpen
+      return { model: { ...model, isTopBarSurfaceOpen: isOpenNew }, msgOut: [PlaySoundCmd.init(APP_SOUND.tap)] }
+    }
+
+    case 'settings.closed-top-bar-surface': {
+      return { model: { ...model, isTopBarSurfaceOpen: false } }
     }
 
     default: {
@@ -113,17 +138,8 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch<MsgFrontend>([ScreenLangFrontend.subscriptions(input)])
 }
 
-const ViewSettingsListItem: FrontendModule['View'] = (input) => {
-  return ListItemButton({
-    icon: (props) => h(IconGear, props),
-    primary: input.ctx.t('l18n.settings'),
-    dataTestId: TEST_ID.SETTINGS_SCREEN_OPEN_BUTTON,
-    onClick: () => input.dispatch({ t: 'settings.clicked-open-settings' }),
-  })
-}
-
 const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
-  return ListItemButton({
+  return ListItem({
     icon: (inputIcon) => IconLanguage(inputIcon),
     primary: ctx.t('l18n.language'),
     end: () => ctx.t(model.lang),
@@ -141,7 +157,7 @@ const View: FrontendModule['View'] = (input) => {
           return ViewMain(input)
         case 'choose-lang':
           return ScreenLangFrontend.View(input)
-        case 'choose-renderer':
+        case 'renderer':
           return ScreenRendererFrontend.View(input)
         default:
           return null
@@ -151,44 +167,138 @@ const View: FrontendModule['View'] = (input) => {
   }
 }
 
-const ViewMain: FrontendModule['View'] = (input) => {
+const ViewMain: FrontendModule['View'] = (props) => {
   return ScreenLayout({
     id: 'setting-main',
     dataTestId: TEST_ID.SETTINGS_SCREEN,
-    ctx: input.ctx,
-    parentScreen: input.ctx.parentScreen,
+    ctx: props.ctx,
+    parentScreen: props.ctx.parentScreen,
     navBar: {
-      title: input.ctx.t('l18n.settings'),
-      back: { onClick: () => input.dispatch({ t: 'settings.clicked-back-button' }) },
+      title: props.ctx.t('l18n.settings'),
+      back: { onClick: () => props.dispatch({ t: 'settings.clicked-back-button' }) },
     },
     renderBody: () =>
       h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
-        ListItemButton({
-          primary: input.ctx.t('l18n.language'),
-          end: () => h('div', {}, [input.ctx.t(input.model.lang)]),
-          onClick: () => input.dispatch({ t: 'settings.clicked-open-lang' }),
+        ListItem({
+          primary: props.ctx.t('l18n.language'),
+          end: () => h('div', {}, [props.ctx.t(props.model.lang)]),
+          onClick: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
           link: true,
           icon: (inputIcon) => IconLanguage(inputIcon),
         }),
-        ListItemButton({
-          primary: input.ctx.t('l18n.renderer'),
-          end: () => h('div', {}, [VDomImpl.toName(input.model.renderVDomImpl)]),
-          onClick: () => input.dispatch({ t: 'settings.clicked-open-renderer' }),
+        ListItem({
+          primary: props.ctx.t('l18n.renderer'),
+          end: () => h('div', {}, [VDomImpl.toName(props.model.renderVDomImpl)]),
+          onClick: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
           icon: (inputIcon) => IconCode(inputIcon),
           link: true,
           dataTestId: TEST_ID.RENDERER_SCREEN_OPEN_BUTTON,
         }),
+        ViewLogoutListItem(props),
         Gutter({ variant: 'screen' }),
       ]),
   })
 }
 
+const ViewLogoutListItem: FrontendModule['View'] = (input) => {
+  const { currentUserState } = input.ctx
+  switch (currentUserState.t) {
+    case 'loading':
+    case 'logged-out': {
+      return null
+    }
+    case 'logged-in': {
+      return ListItem({
+        onClick: () => input.dispatch({ t: 'settings.clicked-logout-list-item' }),
+        dataTestId: TEST_ID.LOGOUT_LIST_ITEM_BUTTON,
+        icon: (input) => h(IconPowerOff, input),
+        primary: input.ctx.t('auth.logout'),
+        end: () =>
+          Typography({
+            variant: 'caption',
+            text: TranslatedText.of(currentUserState.userProfile.username),
+          }),
+      })
+    }
+  }
+}
+
+const ViewTopBar: FrontendModule['View'] = (props) => {
+  const iconSize = props.ctx.screenSize === 'mobile' ? 'size-3' : 'size-4'
+
+  return h('div', { class: cn(props.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed top-0 right-0 z-10 w-fit') }, [
+    SurfaceLayout({
+      ctx: props.ctx,
+      ariaLabel: props.ctx.t('status-bar.status-bar'),
+      drawer: {
+        position: 'top',
+      },
+      id: 'status-bar-drawer',
+      open: props.model.isTopBarSurfaceOpen,
+      onClose: () => props.dispatch({ t: 'settings.closed-top-bar-surface' }),
+      dropDown: {
+        reference: {
+          render: () =>
+            h(
+              Clickable,
+              {
+                dataTestId: TEST_ID.OPEN_BUTTON,
+                class: cn(
+                  props.ctx.screenSize === 'mobile'
+                    ? 'flex w-full items-center justify-end gap-3 px-3 py-1'
+                    : 'flex w-fit justify-center gap-4 px-6 py-3 pl-8',
+                ),
+                'aria-label': props.ctx.t('app.open-settings'),
+                onClick: () => props.dispatch({ t: 'settings.clicked-top-bar' }),
+              },
+              [
+                h(BackendConnectionStatus.ViewDot, {
+                  model: props.ctx.backendConnectionStatus,
+                  class: iconSize,
+                  ctx: props.ctx,
+                }),
+                h(SoundFrontend.ViewIcon, { model: props.model.sound, class: iconSize }),
+                h(IconGear, { class: iconSize }),
+              ],
+            ),
+        },
+      },
+      body: {
+        render: () =>
+          h('div', { 'data-testid': TEST_ID.DROP_DOWN_SURFACE }, [
+            h(BackendConnectionStatus.ViewListItem, {
+              ctx: props.ctx,
+              model: props.ctx.backendConnectionStatus,
+              onClick: () => {},
+            }),
+
+            h(SoundFrontend.ViewSoundListItem, {
+              ctx: props.ctx,
+              model: props.model.sound,
+              dispatch: (c) => props.dispatch({ t: 'sound', c }),
+            }),
+
+            h(ViewLangListItem, props),
+
+            ListItem({
+              icon: (inputIcon) => IconGear(inputIcon),
+              primary: props.ctx.t('l18n.settings'),
+              link: true,
+              dataTestId: TEST_ID.SETTINGS_SCREEN_OPEN_BUTTON,
+              onClick: () => props.dispatch({ t: 'settings.clicked-open-settings' }),
+            }),
+          ]),
+      },
+    }),
+  ])
+}
+
 export const SettingsFrontend = {
+  ViewLogoutListItem,
   init,
   update,
   subscriptions,
   TEST_ID,
-  ViewLangListItem,
-  ViewSettingsListItem,
   View,
+  ViewTopBar,
 }

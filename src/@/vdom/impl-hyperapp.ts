@@ -1,4 +1,4 @@
-import { app, h, text, VNode } from 'hyperapp'
+import { app, Dispatch, h, text, VNode } from 'hyperapp'
 import { VDOM_FRAGMENT_KEY } from './fragment'
 import { VirtualDomEngine } from './interface'
 import { kebabObjectToCamelObject } from './style'
@@ -11,33 +11,30 @@ type AppState = {
 type SetVDomAction = (state: AppState, vDom: VNode<any>) => AppState
 
 export const initHyperapp = (): VirtualDomEngine => {
-  return {
-    render: (node) => {
-      const setVDom: SetVDomAction = (state, vDom) => ({
-        ...state,
-        vDom,
-        lastUpdate: Date.now(),
-      })
+  const setVDom: SetVDomAction = (state, vDom) => ({
+    ...state,
+    vDom,
+    lastUpdate: Date.now(),
+  })
 
-      const dispatch = app({
+  let dispatch: Dispatch<AppState>
+  return {
+    render: (vDom, node) => {
+      dispatch ??= app({
         init: { vDom: h('div', {}, []), lastUpdate: Date.now() } as AppState,
-        view: (state: AppState) => {
-          return state.vDom || h('div', {}, [])
-        },
+        view: (state: AppState) => state.vDom || h('div', {}, []),
         node,
       })
 
-      return (vDom) => {
-        try {
-          const processedVDom = processChildren(vDom)
-          if (processedVDom && typeof processedVDom === 'object') {
-            dispatch(setVDom, processedVDom as VNode<any>)
-          }
-        } catch (error) {
-          console.error('Error processing vDom:', error)
-          // Fallback to empty div on error
-          dispatch(setVDom, h('div', {}, []))
+      try {
+        const processedVDom = processChildren(vDom)
+        if (processedVDom && typeof processedVDom === 'object') {
+          dispatch(setVDom, processedVDom as VNode<any>)
         }
+      } catch (error) {
+        console.error('Error processing vDom:', error)
+        // Fallback to empty div on error
+        dispatch(setVDom, h('div', {}, []))
       }
     },
     createPortal: (vDom, _container) => {

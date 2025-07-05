@@ -1,7 +1,7 @@
-import { Sub } from '~/@/sub'
 import type { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { loadTranslator, type Translator } from '~/@/l18n/generated'
 import { sleep } from '~/@/promise/sleep'
+import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 
 const state: {

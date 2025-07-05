@@ -22,12 +22,21 @@ const from = (s: unknown): VDomImpl | null => {
   return found
 }
 
-const readFromUrl = (config: { fallback: VDomImpl }): VDomImpl => {
+const SEARCH_PARAM_KEY = 'vdom'
+
+const getUrl = (config: { fallback: VDomImpl }): VDomImpl => {
   if (typeof window === 'undefined') return config.fallback
   const searchParams = new URLSearchParams(window.location.search)
-  const vdomImplParam = searchParams.get('vdom')
+  const vdomImplParam = searchParams.get(SEARCH_PARAM_KEY)
   const vdomImpl = VDomImpl.from(vdomImplParam)
   return vdomImpl ?? config.fallback
+}
+
+const setUrl = (vdomImpl: VDomImpl) => {
+  const searchParams = new URLSearchParams(window.location.search)
+  searchParams.set(SEARCH_PARAM_KEY, vdomImpl)
+  window.history.replaceState(null, '', `${window.location.pathname}?${searchParams.toString()}`)
+  window.dispatchEvent(new Event('popstate'))
 }
 
 const toName = (impl: VDomImpl): TranslatedText => {
@@ -45,11 +54,15 @@ const toName = (impl: VDomImpl): TranslatedText => {
   }
 }
 
+const VISIBLE = ALL.filter((vDomImpl) => !HIDDEN.includes(vDomImpl))
+
 export const VDomImpl = {
   ALL,
   from,
   of,
-  readFromUrl,
+  getUrl,
+  setUrl,
   toName,
   HIDDEN,
+  VISIBLE,
 }

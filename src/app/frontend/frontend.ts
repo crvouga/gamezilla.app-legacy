@@ -4,8 +4,6 @@ import { Sub } from '~/@/sub'
 import { APP_SOUND } from '../@/frontend/app-sound'
 import { AnonymousFrontendCtx, AppFrontendCtx, AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PreloadSoundsCmd } from '../@/frontend/preload-sounds-cmd.$msg'
-import '../settings/update/update-prompt'
-import { AppBarFrontend } from './app-bar'
 import { CopyToClipboardFrontend } from './copy-to-clipboard'
 import { CurrentScreenFrontend } from './current-screen'
 import { FocusFrontend } from './focus'
@@ -27,7 +25,6 @@ const init = (input: {
   const toast = ToasterFrontend.init({ ctx: input.ctx })
   const focus = FocusFrontend.init()
   const copyToClipboard = CopyToClipboardFrontend.init()
-  const appBar = AppBarFrontend.init()
 
   const initialModel: ModelFrontend = {
     focus: focus.model,
@@ -36,7 +33,6 @@ const init = (input: {
     visibility: visibility.model,
     screenSize: screenSize.model,
     copyToClipboard: copyToClipboard.model,
-    appBar: appBar.model,
   }
 
   const initialEff = Eff.batch<MsgFrontend>([screen.eff, Eff.tag('toast', toast.eff)])
@@ -94,24 +90,16 @@ const update = (input: {
     msgIn: input.msgIn,
   })
 
-  const appBar = AppBarFrontend.update({
-    model: input.model.appBar,
-    msg: input.msg?.t === 'app-bar' ? input.msg.c : null,
-    ctx: input.ctx,
-  })
-
   return {
     model: {
-      appBar: appBar.model,
       focus: focus.model,
       visibility: visibility.model,
       currentScreen: screen.model,
-
       toast: toast.model,
       screenSize: screenSize.model,
       copyToClipboard: copyToClipboard.model,
     },
-    msgOut: Msg.batch(screen.msgOut, toast.msgOut, appBar.msgOut),
+    msgOut: Msg.batch(screen.msgOut, toast.msgOut),
     eff: Eff.batch<MsgFrontend>([
       Eff.tag('visibility', visibility.eff),
       Eff.tag('current-screen', screen.eff),

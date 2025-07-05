@@ -19,7 +19,7 @@ type Input = {
   link?: boolean
 }
 
-export const ListItemButton = (input: Input) => {
+export const ListItem = (input: Input) => {
   const element = input.onClick ? 'button' : 'div'
   switch (element) {
     case 'button': {
@@ -92,7 +92,7 @@ const ListItemContent = (input: {
   ])
 }
 
-const BASE_CLASS = 'flex w-full shrink-0 items-center truncate h-16 px-4 text-lg font-bold'
+const BASE_CLASS = 'flex w-full shrink-0 items-center truncate h-16 px-4 text-xl font-bold'
 
 type Color = 'default' | 'danger' | 'warning' | 'success' | 'inherit' | 'selected'
 

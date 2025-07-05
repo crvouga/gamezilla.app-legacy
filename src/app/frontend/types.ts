@@ -1,4 +1,3 @@
-import { AppBarFrontend } from './app-bar'
 import { CopyToClipboardFrontend } from './copy-to-clipboard'
 import { CurrentScreenFrontend } from './current-screen'
 import { FocusFrontend } from './focus'
@@ -13,7 +12,6 @@ export type ModelFrontend = {
   screenSize: ScreenSizeFrontend.Model
   copyToClipboard: CopyToClipboardFrontend.Model
   focus: FocusFrontend.Model
-  appBar: AppBarFrontend.Model
 }
 
 export type MsgFrontend =
@@ -23,4 +21,3 @@ export type MsgFrontend =
   | { t: 'screen-size'; c: ScreenSizeFrontend.Msg }
   | { t: 'focus'; c: FocusFrontend.Msg }
   | { t: 'copy-to-clipboard'; c: CopyToClipboardFrontend.Msg }
-  | { t: 'app-bar'; c: AppBarFrontend.Msg }

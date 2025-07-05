@@ -3,11 +3,10 @@ import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
 import { Topic } from '~/@/topic'
-import { h } from '~/@/vdom/h'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { BackendConnectionFrontend } from './backend-connection/frontend'
 import { BackendInstanceFrontend } from './backend-instance/frontend'
-import type { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend, rpcContract, topicContract } from './types'
+import type { FrontendCtxModule, FrontendModule, MsgFrontend, rpcContract, topicContract } from './types'
 
 const initCtx = (input: {
   ctx: AppFrontendCtxBase
@@ -78,31 +77,9 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   ])
 }
 
-const ViewDot = (input: { model: ModelFrontend; ctx: AppFrontendCtxBase; class: string }) => {
-  return h(BackendConnectionFrontend.ViewDot, {
-    model: input.model.backendConnection,
-    ctx: input.ctx,
-    class: input.class,
-  })
-}
-
-const ViewListItem = (input: {
-  model: ModelFrontend
-  ctx: AppFrontendCtxBase
-  dispatch: (msg: MsgFrontend) => void
-}) => {
-  return h(BackendConnectionFrontend.ViewListItem, {
-    model: input.model.backendConnection,
-    ctx: input.ctx,
-    dispatch: (c) => input.dispatch({ t: 'got-backend-connection-msg', c }),
-  })
-}
-
 export const WireFrontend = {
   initCtx,
   init,
   update,
   subscriptions,
-  ViewDot,
-  ViewListItem,
 }

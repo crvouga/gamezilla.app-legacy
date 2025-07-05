@@ -30,13 +30,13 @@ import { SplashScreen } from './@/ui/logo/splash-screen'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
-import { AppBarFrontend } from './frontend/app-bar'
 import { FrontendFrontend } from './frontend/frontend'
 import { ToasterFrontend } from './frontend/toaster'
 import { ProfileFrontend } from './profile/frontend'
 import { SettingsFrontend } from './settings/frontend'
 import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract, topicContract } from './types'
+import { BackendConnectionFrontend } from './wire/backend-connection/frontend'
 import { WireFrontend } from './wire/frontend'
 
 const initCtx = async (): Promise<FrontendCtxModule> => {
@@ -108,11 +108,6 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     logger,
   })
 
-  // @ts-expect-error
-  window.audioPlayer =
-    //
-    audioPlayer
-
   const ctx: AppFrontendCtxBase = {
     audioPlayer,
     clientSessionId,
@@ -127,9 +122,11 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     screenSize: 'mobile',
     parentScreen: null,
     currentUser: null,
-    currentUserId: null,
-    currentUserRole: null,
+    currentUserState: {
+      t: 'loading',
+    },
     httpClient,
+    backendConnectionStatus: { t: 'connecting' },
   }
 
   const auth = await AuthFrontend.initCtx({ ctx, rpc })
@@ -161,6 +158,8 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
 }
 
 const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): FrontendCtxModule => {
+  const currentUserState = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
+
   const baseCtx: FrontendCtxModule = {
     ...input.ctx,
     now: UnixMs.now(),
@@ -170,23 +169,12 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
     currentScreen: input.model.frontend.currentScreen.currentScreen,
     screenSize: input.model.frontend.screenSize.screenSize,
     parentScreen: null,
+    currentUserState,
+    currentUser: currentUserState.t === 'logged-in' ? currentUserState.userAccount : null,
+    backendConnectionStatus: BackendConnectionFrontend.toBackendConnectionStatus(input.model.wire.backendConnection),
   }
 
-  const currentUser = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
-
-  switch (currentUser.t) {
-    case 'logged-in': {
-      return {
-        ...baseCtx,
-        currentUser: currentUser.userAccount,
-        currentUserRole: currentUser.userAccount.role,
-        currentUserId: currentUser.userAccount.userId,
-      }
-    }
-    default: {
-      return baseCtx
-    }
-  }
+  return baseCtx
 }
 
 const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
@@ -361,7 +349,11 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
   const frontendCtx = toCtx(input)
 
   return h(ViewAppRoot, {}, [
-    AppBarFrontend.View({ model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
+    SettingsFrontend.ViewTopBar({
+      model: input.model.settings,
+      dispatch: (c) => input.dispatch({ t: 'settings', c }),
+      ctx: frontendCtx,
+    }),
 
     h('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
       ViewScreen({ model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),

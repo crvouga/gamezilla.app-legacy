@@ -23,15 +23,14 @@ export const initSnabbdom = (): VirtualDomEngine => {
     },
   })
 
+  let oldVNode: any | null = null
+
   return {
-    render: (node) => {
-      let oldVNode: any = node
-      return (newVNode) => {
-        try {
-          oldVNode = patch(oldVNode, newVNode as any)
-        } catch (e) {
-          // console.error(e)
-        }
+    render: (vDom, node) => {
+      try {
+        oldVNode = patch(oldVNode ?? node, vDom as any)
+      } catch (e) {
+        console.error(e)
       }
     },
     createPortal: (vDom, _container) => {

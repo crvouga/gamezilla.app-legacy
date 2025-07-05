@@ -113,6 +113,9 @@ export async function run<TModel, TMsg>(program: Program<TModel, TMsg> & {}) {
   program.render?.({ model, dispatch })
 
   return {
+    render: () => {
+      program.render?.({ model, dispatch })
+    },
     dispatch,
     getModel() {
       return model

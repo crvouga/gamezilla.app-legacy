@@ -3,7 +3,7 @@ import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { translations } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
 import { Gutter } from '~/@/ui/gutter'
-import { ListItemButton } from '~/@/ui/list-item-button'
+import { ListItem } from '~/@/ui/list-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
 import { h } from '~/@/vdom/h'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -75,7 +75,7 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
     case 'lang.clicked-back-button': {
       return {
         model,
-        msgOut: [ReplaceScreenCmd.init({ t: 'main', n: 'settings' }, true)],
+        msgOut: [ReplaceScreenCmd.init({ t: 'main', n: 'settings', back: ctx.currentScreen }, true)],
       }
     }
 
@@ -135,7 +135,7 @@ const ViewChooseLangListItem = (input: {
   dispatch: (msg: MsgFrontend) => void
 }) => {
   const primary = translations[input.langCode][input.langCode]
-  return ListItemButton({
+  return ListItem({
     link: true,
     key: input.langCode,
     primary: TranslatedText.of(primary),
