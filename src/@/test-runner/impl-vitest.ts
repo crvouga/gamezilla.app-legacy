@@ -41,7 +41,7 @@ export const initVitest = async (): Promise<{
       })
     })
   }
-  test.todo = (name, fn) => {
+  test.skip = (name, fn) => {
     vitest.test.skip(name, async () => {
       await fn({
         t: 'vitest',
@@ -56,7 +56,7 @@ export const initVitest = async (): Promise<{
       fn()
     })
   }
-  describe.todo = (name, fn) => {
+  describe.skip = (name, fn) => {
     vitest.describe.skip(name, () => {
       fn()
     })

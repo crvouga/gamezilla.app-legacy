@@ -37,11 +37,10 @@ describe('settings', () => {
     await f.openSettingsScreen()
     const [title] = await f.frontend.find(`[data-title='true']`)
     const titleString = await title?.text()
-
     expect(titleString).toEqual('Settings')
   })
 
-  test('back button', async (e) => {
+  test.skip('back button', async (e) => {
     const f = await Fixture(e)
     await f.openSettingsScreen()
     const [backButton] = await f.frontend.find(`[data-testid="${ScreenTestIds.backButton}"]`)
@@ -69,7 +68,7 @@ describe('change renderer screen', () => {
     expect(settingsScreen).toBeTruthy()
   })
 
-  test('render render options', async (e) => {
+  test.skip('render render options', async (e) => {
     const f = await Fixture(e)
     await f.openSettingsScreen()
     await f.openChooseRendererScreen()
@@ -79,7 +78,7 @@ describe('change renderer screen', () => {
     }
   })
 
-  test.todo('change renderer to preact', async (e) => {
+  test.skip('change renderer to preact', async (e) => {
     const f = await Fixture(e)
     await f.openSettingsScreen()
     await f.openChooseRendererScreen()

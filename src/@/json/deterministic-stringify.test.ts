@@ -68,7 +68,7 @@ describe('deterministicJsonStringify', () => {
     expect(deterministicJsonStringify(input)).toEqual('[1,"two",{"three":3},[4,5],"6"]')
   })
 
-  test.todo('should handle objects with special characters in keys', () => {
+  test.skip('should handle objects with special characters in keys', () => {
     const input = {
       'key with spaces': 1,
       'key-with-dashes': 2,
@@ -84,7 +84,7 @@ describe('deterministicJsonStringify', () => {
     )
   })
 
-  test.todo('should handle objects with numeric keys', () => {
+  test.skip('should handle objects with numeric keys', () => {
     const input = {
       '1': 'one',
       '2': 'two',
@@ -94,7 +94,7 @@ describe('deterministicJsonStringify', () => {
     expect(deterministicJsonStringify(input)).toEqual('{"01":"zero-one","1":"one","10":"ten","2":"two"}')
   })
 
-  test.todo('should handle objects with unicode keys', () => {
+  test.skip('should handle objects with unicode keys', () => {
     const input = {
       '😊': 'emoji',
       你好: 'chinese',

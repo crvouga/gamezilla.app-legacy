@@ -9,7 +9,7 @@ const Fixture = async () => {
 }
 
 describe('ButtonCopyPuzzleSpace', () => {
-  test.todo('close action drawer', async () => {
+  test.skip('close action drawer', async () => {
     const f = await Fixture()
     const output = f.updates(f.init, [
       {

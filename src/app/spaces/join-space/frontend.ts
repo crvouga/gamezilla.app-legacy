@@ -121,7 +121,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const View: SpaceFrontendModule['View'] = (input) => {
+const view: SpaceFrontendModule['View'] = (input) => {
   const currentUser = input.ctx.currentUser
 
   if (!currentUser) return h('div', {}, ['No current user'])
@@ -220,6 +220,6 @@ const SectionGame = (props: {
 }
 
 export const JoinSpaceFrontend = {
-  View,
+  view,
   update,
 }

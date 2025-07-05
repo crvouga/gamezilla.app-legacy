@@ -15,10 +15,10 @@ export type Expected<T> = {
 export type Expect = <T>(value: T) => Expected<T>
 
 type DescribeFn = (name: string, fn: (...args: any[]) => MaybePromise<void>) => MaybePromise<void>
-export type Describe = DescribeFn & { todo: DescribeFn }
+export type Describe = DescribeFn & { skip: DescribeFn }
 
 type TestFn = (name: string, fn: (env: TestRunnerEnv) => MaybePromise<void>) => MaybePromise<void>
-export type Test = TestFn & { todo: TestFn }
+export type Test = TestFn & { skip: TestFn }
 
 export type ITestRunner = (
   defineTests: (config: { expect: Expect; test: Test; describe: Describe; env: TestRunnerEnv }) => void,

@@ -25,7 +25,7 @@ const Fixtures = async function* () {
 }
 
 describe('WithSolutions', () => {
-  test.todo('should assoc solutions before put', async () => {
+  test.skip('should assoc solutions before put', async () => {
     for await (const f of await Fixtures()) {
       const before = Result.unwrap(await f.puzzleDb.get(f.puzzleWithEmptySolutions.id))
       await f.withSolutions.put(f.puzzleWithEmptySolutions)
@@ -35,7 +35,7 @@ describe('WithSolutions', () => {
     }
   })
 
-  test.todo('should assoc solutions before get', async () => {
+  test.skip('should assoc solutions before get', async () => {
     for await (const f of await Fixtures()) {
       const before = Result.unwrap(await f.withSolutions.get(f.puzzleWithEmptySolutions.id))
       await f.puzzleDb.put(f.puzzleWithEmptySolutions)
@@ -45,7 +45,7 @@ describe('WithSolutions', () => {
     }
   })
 
-  test.todo('should assoc solutions before list', async () => {
+  test.skip('should assoc solutions before list', async () => {
     for await (const f of await Fixtures()) {
       const before = Result.unwrap(
         await f.puzzleDb.query({

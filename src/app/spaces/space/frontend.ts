@@ -46,7 +46,7 @@ const View = (input: {
       const isNotJoined = currentUserSpaceId !== spaceCtx.space.spaceId
 
       if (isNotJoined) {
-        return h(JoinSpaceFrontend.View, { ...input, ctx: spaceCtx })
+        return h(JoinSpaceFrontend.view, { ...input, ctx: spaceCtx })
       }
 
       const inputNew = { ...input, ctx: spaceCtx }

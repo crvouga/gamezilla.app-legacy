@@ -11,7 +11,7 @@ export const Fixture = async (e: TestRunnerEnv) => {
 }
 
 describe('logout', () => {
-  test.todo('open logout confirmation', async (e) => {
+  test.skip('open logout confirmation', async (e) => {
     await using f = await Fixture(e)
     await setupLoginWithSms(f)
     const openButton = await f.frontend.findByTestId(AppStatusBar.dataTestId.openButton)

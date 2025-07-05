@@ -10,7 +10,7 @@ const Fixture = async () => {
   })
 }
 
-describe.todo('ImmutableStore', () => {
+describe.skip('ImmutableStore', () => {
   test('working with one key', async () => {
     const Store = await Fixture()
     const t0 = Date.now()
@@ -452,7 +452,7 @@ describe.todo('ImmutableStore', () => {
     expect(await Store.get(invalid, key)).toEqual('start')
   })
 
-  test.todo('adding to  theawait past', async () => {
+  test.skip('adding to  theawait past', async () => {
     const Store = await Fixture()
 
     const key = 'key'

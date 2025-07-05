@@ -1,5 +1,5 @@
 import { describe, test } from '~/@/test-runner'
 
 describe('NumberLinkScreenMainMenuFrontend', () => {
-  test.todo('play a sound when changing list tabs', () => {})
+  test.skip('play a sound when changing list tabs', () => {})
 })

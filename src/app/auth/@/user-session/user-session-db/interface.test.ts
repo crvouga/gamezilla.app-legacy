@@ -291,7 +291,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  test.todo('update should modify specified fields', async () => {
+  test.skip('update should modify specified fields', async () => {
     for (const f of await Fixtures()) {
       const session = UserSession.random()
 
@@ -321,7 +321,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  test.todo('query equals clientSessionId', async () => {
+  test.skip('query equals clientSessionId', async () => {
     for (const f of await Fixtures()) {
       const clientSessionId = ClientSessionId.generate()
 

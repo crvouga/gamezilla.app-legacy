@@ -23,7 +23,7 @@ describe('generateKeyPair', () => {
     expect(keyPair.privateKey.usages.includes('sign')).toEqual(true)
   })
 
-  test.todo('should generate an RSA key pair with non-extractable keys', async () => {
+  test.skip('should generate an RSA key pair with non-extractable keys', async () => {
     const keyPair = await generateKeyPair('RSA', { extractable: false })
 
     // Verify the key pair was generated

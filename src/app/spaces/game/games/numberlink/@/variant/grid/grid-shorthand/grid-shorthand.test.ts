@@ -953,7 +953,7 @@ describe('Grid shorthand', () => {
     expect(pipeline.length).toEqual(2)
   })
 
-  test.todo('from grid 2x3', () => {
+  test.skip('from grid 2x3', () => {
     const shorthand = VariantGridShorthand.init([
       ['A', ' '],
       [' ', 'a'],

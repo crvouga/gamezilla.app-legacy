@@ -285,7 +285,7 @@ describe('AlgoSolve', () => {
     expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toEqual(true)
   })
 
-  test.todo('9x9 puzzle', () => {
+  test.skip('9x9 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' '],
@@ -315,7 +315,7 @@ describe('AlgoSolve', () => {
     expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toEqual(true)
   })
 
-  test.todo('10x10 puzzle', () => {
+  test.skip('10x10 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' '],
@@ -348,7 +348,7 @@ describe('AlgoSolve', () => {
     ).toEqual(true)
   })
 
-  test.todo('11x11 puzzle', () => {
+  test.skip('11x11 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K', 'L'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' ', ' '],
@@ -383,7 +383,7 @@ describe('AlgoSolve', () => {
     ).toEqual(true)
   })
 
-  test.todo('12x12 puzzle', () => {
+  test.skip('12x12 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K', 'L', 'M'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' ', ' ', ' '],
@@ -419,7 +419,7 @@ describe('AlgoSolve', () => {
     expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toEqual(true)
   })
 
-  test.todo('13x13 puzzle', () => {
+  test.skip('13x13 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K', 'L', 'M', 'N'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -457,7 +457,7 @@ describe('AlgoSolve', () => {
     expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toEqual(true)
   })
 
-  test.todo('14x14 puzzle', () => {
+  test.skip('14x14 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       ['A', ' ', ' ', 'A', 'B', ' ', ' ', ' ', 'J', 'K', 'L', 'M', 'N', 'O'],
       [' ', ' ', 'C', 'D', 'E', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -497,7 +497,7 @@ describe('AlgoSolve', () => {
     expect(some(actual, (actual) => expected.some((expected) => Numberlink.isSame(actual, expected)))).toEqual(true)
   })
 
-  test.todo('14x14 puzzle', () => {
+  test.skip('14x14 puzzle', () => {
     const grid = VariantGridShorthand.toGrid([
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'J', 'K', 'L', 'M', 'N', 'O'],
       [' ', ' ', ' ', ' ', 'E', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -540,7 +540,7 @@ describe('AlgoSolve', () => {
     expect(solution).not.toEqual(null)
   })
 
-  test.todo('8x8 no solutions', () => {
+  test.skip('8x8 no solutions', () => {
     const grid = VariantGridShorthand.toGrid([
       ['C', ' ', ' ', 'D', ' ', ' ', ' ', 'A'],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],

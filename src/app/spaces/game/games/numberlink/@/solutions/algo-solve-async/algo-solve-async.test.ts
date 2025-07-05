@@ -34,7 +34,7 @@ describe('AlgoSolveAsync', () => {
     }
   })
 
-  test.todo('abort', async () => {
+  test.skip('abort', async () => {
     const numberlink = VariantGridShorthand.toGrid([
       ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
       ['I', ' ', ' ', ' ', ' ', ' ', ' ', 'J'],

@@ -69,7 +69,7 @@ describe('LoginWithSMSBackend', () => {
     expect(after).toEqual(userAccount)
   })
 
-  test.todo('should use existing profile on verification', async () => {
+  test.skip('should use existing profile on verification', async () => {
     const f = await Fixture()
     const userAccount = UserAccount.randomNormal()
     unwrap(await f.ctx.userAccountDb.upsert(userAccount))

@@ -46,7 +46,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '~': path.resolve(__dirname, 'src'),
-      inferno: process.env.NODE_ENV === 'production' ? 'inferno' : 'inferno/dist/index.dev.mjs',
+      inferno: 'inferno/dist/index.dev.mjs',
     },
   },
 })

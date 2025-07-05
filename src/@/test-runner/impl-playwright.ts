@@ -42,7 +42,7 @@ export const initPlaywright = async (): Promise<{
       })
     })
   }
-  test.todo = (name, fn) => {
+  test.skip = (name, fn) => {
     playwright.test.skip(name, async ({ page }) => {
       await page.goto('/')
       await fn({
@@ -59,7 +59,7 @@ export const initPlaywright = async (): Promise<{
       fn()
     })
   }
-  describe.todo = (name, fn) => {
+  describe.skip = (name, fn) => {
     playwright.test.describe.skip(name, () => {
       fn()
     })

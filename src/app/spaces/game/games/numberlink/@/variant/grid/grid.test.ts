@@ -14,7 +14,7 @@ describe('Grid', () => {
     expect(VariantGrid.Model.parse(initial).t).toEqual('ok')
   })
 
-  test.todo('should initialize the model quickly', () => {
+  test.skip('should initialize the model quickly', () => {
     const start = process.hrtime()
 
     VariantGrid.init({

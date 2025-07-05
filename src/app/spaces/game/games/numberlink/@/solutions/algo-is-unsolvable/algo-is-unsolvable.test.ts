@@ -21,7 +21,7 @@ describe('AlgoIsUnsolvable', () => {
     expect(AlgoIsUnsolvable.isUnsolvable(grid)).toEqual(true)
   })
 
-  test.todo('unsolvable 8x8', () => {
+  test.skip('unsolvable 8x8', () => {
     const grid = VariantGridShorthand.toGrid([
       ['C', ' ', ' ', 'D', ' ', ' ', ' ', 'A'],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],

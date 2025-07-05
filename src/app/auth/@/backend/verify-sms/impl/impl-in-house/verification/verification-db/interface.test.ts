@@ -281,7 +281,7 @@ describe('VerificationDb', () => {
     expect(actual).toEqual(sliced)
   })
 
-  test.todo('should offset and limit correctly', async () => {
+  test.skip('should offset and limit correctly', async () => {
     const f = await Fixture()
     const now = f.now()
     const start = now

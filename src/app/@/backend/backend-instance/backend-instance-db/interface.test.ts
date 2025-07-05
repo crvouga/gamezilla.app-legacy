@@ -40,7 +40,7 @@ describe('BackendInstanceDb', () => {
     }
   })
 
-  test.todo('list', async () => {
+  test.skip('list', async () => {
     for (const f of await Fixtures()) {
       const before = await f.backendInstanceDb.list()
       const expected: BackendInstance[] = []
@@ -57,7 +57,7 @@ describe('BackendInstanceDb', () => {
     }
   })
 
-  test.todo('list alive', async () => {
+  test.skip('list alive', async () => {
     const MINIMAL_HEART_RATE = TimeSpan.minutes(1.5)
     for (const f of await Fixtures()) {
       const before = await f.backendInstanceDb.list()

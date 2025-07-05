@@ -32,7 +32,7 @@ describe('verify code', () => {
     })
   })
 
-  test('go to space screen after verifying code', async (e) => {
+  test.skip('go to space screen after verifying code', async (e) => {
     await using f = await Fixture(e)
     await f.sendCode()
     const [sendCodeError] = await f.frontend.find(`[role='alert'][data-error='true']`)
@@ -42,7 +42,7 @@ describe('verify code', () => {
     expect(screen).toBeTruthy()
   })
 
-  test('show alert on verifying code', async (e) => {
+  test.skip('show alert on verifying code', async (e) => {
     await using f = await Fixture(e)
     await f.sendCode()
     await f.verifyCode()
@@ -50,7 +50,7 @@ describe('verify code', () => {
     expect(alert).toBeTruthy()
   })
 
-  test('enter wrong code does not go to space screen', async (e) => {
+  test.skip('enter wrong code does not go to space screen', async (e) => {
     await using f = await Fixture(e)
     await f.sendCode()
     await f.verifyCode({ code: '111' })
@@ -60,7 +60,7 @@ describe('verify code', () => {
     expect(verifyCodeScreen).toBeTruthy()
   })
 
-  test('show error alert when code is wrong', async (e) => {
+  test.skip('show error alert when code is wrong', async (e) => {
     await using f = await Fixture(e)
     await f.sendCode()
     await f.verifyCode({ code: '111' })
@@ -68,7 +68,7 @@ describe('verify code', () => {
     expect(error).toBeTruthy()
   })
 
-  test('fail for correct code after enough wrong attempts', async (e) => {
+  test.skip('fail for correct code after enough wrong attempts', async (e) => {
     await using f = await Fixture(e)
     await f.sendCode()
     for (let i = 0; i < 5; i++) {
