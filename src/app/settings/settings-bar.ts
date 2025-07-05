@@ -9,15 +9,15 @@ import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { SoundFrontend } from './sound'
 import { StatusBarFrontend } from './status-bar/index'
 
-const dataTestId = {
-  openButton: 'app-status-bar/open-button',
+const TEST_ID = {
+  OPEN_BUTTON: 'app-status-bar/open-button',
+  DROP_DOWN_SURFACE: 'app-status-bar/drop-down-surface',
 }
 
 const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (c: MsgFrontend) => void }) => {
   return h('div', { class: cn(input.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed top-0 right-0 z-10 w-fit') }, [
     h(StatusBarFrontend.View, {
       ctx: input.ctx,
-
       model: input.model.frontend.statusBar,
       dispatch: (c) => input.dispatch({ t: 'frontend', c: { t: 'status-bar', c } }),
       slots: {
@@ -27,7 +27,7 @@ const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: 
             Clickable,
             {
               ...props,
-              dataTestId: dataTestId.openButton,
+              dataTestId: TEST_ID.OPEN_BUTTON,
               class: cn(
                 input.ctx.screenSize === 'mobile'
                   ? 'flex w-full items-center justify-end gap-3 px-3 py-1'
@@ -53,7 +53,7 @@ const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: 
             ],
           )
         },
-        surfaceContent: h('div', {}, [
+        surfaceContent: h('div', { 'data-testid': TEST_ID.DROP_DOWN_SURFACE }, [
           h(WireFrontend.ViewListItem, {
             model: input.model.wire,
             dispatch: (c) => input.dispatch({ t: 'wire', c }),
@@ -89,7 +89,7 @@ const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: 
   ])
 }
 
-export const AppStatusBar = {
+export const SettingsBar = {
   View,
-  dataTestId,
+  TEST_ID,
 }

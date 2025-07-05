@@ -1,5 +1,5 @@
 import { AuthFrontend } from '~/app/auth/frontend'
-import { IFixtureApp } from './types'
+import { IFixtureApp } from '../types'
 
 const randomPhoneNumber = (): number => {
   const base = 480_209_0000

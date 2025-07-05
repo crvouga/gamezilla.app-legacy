@@ -6,7 +6,6 @@ import { IconButton } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
-import { ScreenTestIds } from '../screen-test-ids'
 
 export const ScreenNavBarTablet = (input: {
   title?: TranslatedText | null
@@ -30,11 +29,11 @@ export const ScreenNavBarTablet = (input: {
           position: 'bottom',
           reference: h(IconButton, {
             onClick: input.back.onClick,
-            dataTestId: ScreenTestIds.backButton,
             class: '-ml-2',
             size: 'lg',
             label: input.ctx.t('app.exit'),
             renderIcon: (inputIcon) => h(IconArrowLeft, inputIcon),
+            ariaLabel: input.ctx.t('app.back'),
           }),
         },
       }),
@@ -42,7 +41,6 @@ export const ScreenNavBarTablet = (input: {
     h('div', { class: 'flex flex-1 flex-col truncate' }, [
       input.title &&
         h(Typography, {
-          dataTestId: ScreenTestIds.title,
           role: 'heading',
           class: 'truncate px-2',
           sizeClassName: 'text-3xl font-bold',

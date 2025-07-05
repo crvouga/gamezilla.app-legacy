@@ -31,7 +31,7 @@ const Fixture = async () => {
   const port = 1000 + Math.floor(Math.random() * 9000)
   let logger: ILogger
   logger ??= Logger({ t: 'noop' })
-  logger ??= Logger({ t: 'console', newLinePerMsg: false, namespace: ['test'] })
+  logger ??= Logger({ t: 'console', newLinePerMsg: false, namespace: ['test'], maxLogLevel: 'info' })
   const httpServer = HttpServer({ t: 'node', logger })
 
   const endpoint = '/topic'

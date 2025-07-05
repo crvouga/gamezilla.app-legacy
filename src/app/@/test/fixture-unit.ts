@@ -10,7 +10,7 @@ import { IFixtureApp } from './types'
 export const FixtureAppUnitTestE2E = async (): Promise<IFixtureApp> => {
   let logger: ILogger
   logger ??= Logger({ t: 'noop' })
-  logger ??= Logger({ t: 'console', namespace: ['fixture'], newLinePerMsg: false })
+  logger ??= Logger({ t: 'console', namespace: ['fixture'], newLinePerMsg: false, maxLogLevel: 'info' })
 
   const fs = FileSystem({ t: 'node' })
 

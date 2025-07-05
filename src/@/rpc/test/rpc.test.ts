@@ -19,7 +19,12 @@ export const FixtureHttp = async (): Promise<Fixture> => {
 
   let logger: ILogger
   logger ??= Logger({ t: 'noop' })
-  logger ??= Logger({ t: 'console', namespace: ['rpc', 'test'], newLinePerMsg: true })
+  logger ??= Logger({
+    t: 'console',
+    namespace: ['rpc', 'test'],
+    newLinePerMsg: true,
+    maxLogLevel: 'info',
+  })
 
   const httpServer = HttpServer({ t: 'node', logger })
 

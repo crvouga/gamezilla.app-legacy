@@ -6,7 +6,6 @@ import { IconButton, IconButtonEmpty } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
-import { ScreenTestIds } from '../screen-test-ids'
 
 export const ScreenNavBarMobile = (input: {
   title?: TranslatedText | null
@@ -37,9 +36,9 @@ export const ScreenNavBarMobile = (input: {
             position: 'bottom',
             reference: h(IconButton, {
               onClick: input.back?.onClick,
-              dataTestId: ScreenTestIds.backButton,
               class: '-ml-2',
               label: input.ctx.t('app.exit'),
+              ariaLabel: input.ctx.t('app.back'),
               renderIcon: (inputIcon) => h(IconArrowLeft, inputIcon),
             }),
           },

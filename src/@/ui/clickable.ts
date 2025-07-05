@@ -35,6 +35,7 @@ export const Clickable = ({ dataTestId, ...input }: ClickableProps) => {
       'aria-hidden': input['aria-hidden'] ? 'true' : 'false',
       'aria-disabled': input['aria-disabled'] ? 'true' : 'false',
       'data-testid': dataTestId,
+      'aria-label': input['aria-label'],
       type: input.type ?? 'button',
       onClick: input.onClick,
       disabled: input.disabled,

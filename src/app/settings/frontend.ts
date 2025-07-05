@@ -18,14 +18,14 @@ import { ReplaceScreenCmd } from '../@/frontend/replace-screen-cmd.$msg'
 import { translatorSubscriptions } from '../@/frontend/translator'
 import type { FrontendModule, ModelFrontend, MsgFrontend, TranslationLoading } from './types'
 
-const dataTestId = {
-  screen: 'settings/screen',
-  openSettingsScreen: 'settings/open-settings-screen',
-  openChooseLangScreen: 'settings/open-choose-lang-screen',
-  chooseLangScreen: 'settings/choose-lang-screen',
-  openChooseRendererScreen: 'settings/open-choose-renderer-screen',
-  chooseRendererScreen: 'settings/choose-renderer-screen',
-  chooseRendererListItem: (vDomImpl: VDomImpl) => `settings/choose-renderer-list-item-${vDomImpl}`,
+const TEST_ID = {
+  SETTINGS_SCREEN: 'settings/settings-screen',
+  SETTINGS_SCREEN_OPEN_BUTTON: 'settings/settings-screen-open-button',
+  LANG_SCREEN_OPEN_BUTTON: 'settings/lang-screen-open-button',
+  LANG_SCREEN: 'settings/lang-screen',
+  RENDERER_SCREEN_OPEN_BUTTON: 'settings/renderer-screen-open-button',
+  RENDERER_SCREEN: 'settings/renderer-screen',
+  RENDERER_MENU_ITEM: (vDomImpl: VDomImpl) => `settings/renderer-menu-item-${vDomImpl}`,
 }
 
 //
@@ -213,7 +213,7 @@ const ViewSettingsListItem: FrontendModule['View'] = (input) => {
   return h(ListItemButton, {
     icon: (props) => h(IconGear, props),
     primary: input.ctx.t('l18n.settings'),
-    dataTestId: dataTestId.openSettingsScreen,
+    dataTestId: TEST_ID.SETTINGS_SCREEN_OPEN_BUTTON,
     // end: () => h(IconChevronRight, { class: 'size-6' }),
     onClick: () => input.dispatch({ t: 'clicked-open-settings' }),
   })
@@ -246,7 +246,7 @@ const View: FrontendModule['View'] = (input) => {
 const ViewMain: FrontendModule['View'] = (input) => {
   return h(ScreenLayout, {
     id: 'setting-main',
-    dataTestId: dataTestId.screen,
+    dataTestId: TEST_ID.SETTINGS_SCREEN,
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
     navBar: {
@@ -268,7 +268,7 @@ const ViewMain: FrontendModule['View'] = (input) => {
           onClick: () => input.dispatch({ t: 'clicked-change-renderer' }),
           icon: (inputIcon) => h(IconCode, inputIcon),
           link: true,
-          dataTestId: dataTestId.openChooseRendererScreen,
+          dataTestId: TEST_ID.RENDERER_SCREEN_OPEN_BUTTON,
         }),
         h(Gutter, { variant: 'screen' }),
       ]),
@@ -278,7 +278,7 @@ const ViewMain: FrontendModule['View'] = (input) => {
 const ViewChooseRenderer: FrontendModule['View'] = (input) => {
   return h(ScreenLayout, {
     id: 'setting-choose-renderer',
-    dataTestId: dataTestId.chooseRendererScreen,
+    dataTestId: TEST_ID.RENDERER_SCREEN,
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
     navBar: {
@@ -296,7 +296,7 @@ const ViewChooseRenderer: FrontendModule['View'] = (input) => {
             key: vDomImpl,
             primary: VDomImpl.toName(vDomImpl),
             // secondary: isDefault ? input.ctx.t('l18n.default') : undefined,
-            dataTestId: dataTestId.chooseRendererListItem(vDomImpl),
+            dataTestId: TEST_ID.RENDERER_MENU_ITEM(vDomImpl),
             onClick: () => input.dispatch({ t: 'choose-renderer.clicked-renderer', vDomImpl }),
             end: () => h(RadioInputIcon, { class: 'size-7', status: isSelected ? 'selected' : 'unselected' }),
           })
@@ -309,7 +309,7 @@ const ViewChooseRenderer: FrontendModule['View'] = (input) => {
 const ViewChooseLang: FrontendModule['View'] = (input) => {
   return h(ScreenLayout, {
     id: 'setting-choose-lang',
-    dataTestId: dataTestId.chooseLangScreen,
+    dataTestId: TEST_ID.LANG_SCREEN,
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
     navBar: {
@@ -364,7 +364,7 @@ export const SettingsFrontend = {
   init,
   update,
   subscriptions,
-  dataTestId,
+  TEST_ID,
   ViewLangListItem,
   ViewSettingsListItem,
   View,

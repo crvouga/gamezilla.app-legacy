@@ -1,9 +1,17 @@
 import { difference } from '~/@/array/difference'
 import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
-import { describe, expect, test } from '~/@/test-runner'
+import { describe, expect, test, TestRunnerEnv } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
-import { Fixture } from './fixture'
-import { ScreenTestIds } from '~/app/@/ui/screen/screen-test-ids'
+import { FixtureAppE2E } from '~/app/@/test/fixture'
+import { doClickBackButton } from '~/app/@/test/setup/do-click-back-button'
+import { doOpenSendCodeScreen } from './test/do-open-send-code-screen'
+import { doSendCode } from './test/do-send-code'
+
+export const Fixture = async (e: TestRunnerEnv) => {
+  const f = await FixtureAppE2E(e)
+  await doOpenSendCodeScreen(f)
+  return { ...f }
+}
 
 describe('send code', () => {
   test('country should match navigator country', async (e) => {
@@ -21,29 +29,28 @@ describe('send code', () => {
     await using f = await Fixture(e)
     const sendCodeScreen = await f.frontend.findByTestId('auth/send-code-screen')
     expect(sendCodeScreen).toBeTruthy()
-    const backButton = await f.frontend.findByTestId(ScreenTestIds.backButton)
-    await backButton!.do({ t: 'click' })
+    await doClickBackButton(f)
     const loginScreen = await f.frontend.findByTestId('auth/login-screen')
     expect(loginScreen).toBeTruthy()
   })
 
   test('go to verify code screen', async (e) => {
     await using f = await Fixture(e)
-    await f.sendCode()
+    await doSendCode(f)
     const [screen] = await f.frontend.find(`[data-testid='auth/verify-code-screen']`)
     expect(screen).toBeTruthy()
   })
 
   test('show alert on sending code', async (e) => {
     await using f = await Fixture(e)
-    await f.sendCode()
+    await doSendCode(f)
     const [alert] = await f.frontend.find(`[role='alert'][data-info='true']`)
     expect(alert).toBeTruthy()
   })
 
   test('should error alert when phone number is invalid', async (e) => {
     await using f = await Fixture(e)
-    await f.sendCode({ phoneNumber: '123' })
+    await doSendCode(f, { phoneNumber: '123' })
     const [alert] = await f.frontend.find(`[role='alert'][data-error='true']`)
     expect(alert).toBeTruthy()
   })
@@ -52,7 +59,7 @@ describe('send code', () => {
     if (e.e2e) return
     await using f = await Fixture(e)
     const before = await f.frontend.audio()
-    await f.sendCode()
+    await doSendCode(f)
     await eventually(async () => {
       const after = await f.frontend.audio()
       const played = difference(after, before, (x) => x.id)

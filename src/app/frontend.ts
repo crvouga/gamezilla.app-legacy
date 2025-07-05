@@ -30,7 +30,7 @@ import { SplashScreen } from './@/ui/logo/splash-screen'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
-import { AppStatusBar } from './settings/app-status-bar'
+import { SettingsBar } from './settings/settings-bar'
 import { FrontendFrontend } from './frontend/frontend'
 import { ToasterFrontend } from './frontend/toaster'
 import { SettingsFrontend } from './settings/frontend'
@@ -44,6 +44,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     t: 'console',
     namespace: ['frontend'],
     newLinePerMsg: true,
+    maxLogLevel: 'info',
   })
 
   const clientSessionId = ClientSessionIdStorage().get()
@@ -360,7 +361,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
   const frontendCtx = toCtx(input)
 
   return h(ViewAppRoot, {}, [
-    h(AppStatusBar.View, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
+    h(SettingsBar.View, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
 
     h('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
       h(ViewScreen, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),

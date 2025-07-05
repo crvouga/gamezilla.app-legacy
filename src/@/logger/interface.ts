@@ -1,3 +1,5 @@
+import { LogLevel } from './log-level'
+
 export type ILogger = {
   info: (...msg: unknown[]) => void
   warn: (...msg: unknown[]) => void
@@ -7,4 +9,5 @@ export type ILogger = {
   trace: (...msg: unknown[]) => void
   fatal: (...msg: unknown[]) => void
   child: (namespace: [string, ...string[]]) => ILogger
+  maxLogLevel: (level: LogLevel) => ILogger
 }

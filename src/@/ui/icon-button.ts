@@ -1,8 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
-import type { VDom } from '~/@/vdom/vdom'
 import { h } from '~/@/vdom/h'
-import { cn } from './cn'
+import type { VDom } from '~/@/vdom/vdom'
 import { ClickableTransparent } from './clickable'
+import { cn } from './cn'
 
 type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
@@ -13,6 +13,7 @@ export const IconButton = (input: {
   class?: string
   size?: IconButtonSize
   dataTestId?: string
+  ariaLabel?: TranslatedText
 }) => {
   return h(
     ClickableTransparent,
@@ -23,7 +24,7 @@ export const IconButton = (input: {
         input.class,
       ),
       onClick: input.onClick,
-      'aria-label': input.label,
+      'aria-label': input.ariaLabel ?? input.label,
       title: input.label,
       dataTestId: input.dataTestId,
       type: 'button',

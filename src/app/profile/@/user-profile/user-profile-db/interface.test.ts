@@ -29,7 +29,7 @@ const Fixtures = async () => {
   configs.push({
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
-    logger: Logger({ t: 'console', namespace: ['profile-db'], newLinePerMsg: true }),
+    logger: Logger({ t: 'console', namespace: ['profile-db'], newLinePerMsg: true, maxLogLevel: 'info' }),
   })
 
   if (f.t === 'integration') {
@@ -37,7 +37,7 @@ const Fixtures = async () => {
       t: 'sql',
       // sqlDb: f.dbConnPostgres,
       sqlDb: f.sqlDbPostgres,
-      logger: Logger({ t: 'console', namespace: ['profile-db'], newLinePerMsg: true }),
+      logger: Logger({ t: 'console', namespace: ['profile-db'], newLinePerMsg: true, maxLogLevel: 'info' }),
     })
   }
 
