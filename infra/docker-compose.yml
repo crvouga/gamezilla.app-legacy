@@ -3,7 +3,7 @@ name: gamezilla_app
 services:
   frontend:
     container_name: frontend
-    profiles: ['test']
+    profiles: ['e2e']
     build:
       context: ../
       dockerfile: infra/frontend.Dockerfile
@@ -12,7 +12,7 @@ services:
 
   backend-primary:
     container_name: backend-primary
-    profiles: ['test']
+    profiles: ['e2e']
     build:
       context: ../
       dockerfile: infra/backend-primary.Dockerfile

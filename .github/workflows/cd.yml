@@ -117,7 +117,7 @@ jobs:
           cp .env.local .env
 
       - name: Start infrastructure
-        run: pnpm infra:up:test
+        run: pnpm infra:up
 
       - name: Run database migrations
         run: pnpm db:up
@@ -156,7 +156,7 @@ jobs:
           cp .env.local .env
 
       - name: Start infrastructure
-        run: pnpm infra:up:test
+        run: pnpm infra:up:e2e
 
       - name: Run database migrations
         run: pnpm db:up
