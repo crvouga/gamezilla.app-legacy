@@ -1,5 +1,5 @@
 import { expect } from '~/@/test-runner'
-import { IFixtureApp } from '~/app/@/test/types'
+import { IFixtureApp } from '~/app/@/test/app-fixture/interface'
 import { SettingsFrontend } from '~/app/settings/frontend'
 
 export const doOpenRendererScreen = async (f: IFixtureApp) => {

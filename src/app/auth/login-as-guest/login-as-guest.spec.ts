@@ -1,7 +1,7 @@
 import { difference } from '~/@/array/difference'
 import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
-import { IFixtureApp } from '~/app/@/test/types'
+import { IFixtureApp } from '~/app/@/test/app-fixture/interface'
 import { FixtureAuthE2E } from '../@/test/e2e'
 import { AuthFrontend } from '../frontend'
 

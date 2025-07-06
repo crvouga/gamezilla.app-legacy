@@ -1,5 +1,5 @@
 import { expect } from '~/@/test-runner'
-import { IFixtureApp } from '../types'
+import { IFixtureApp } from '../app-fixture/interface'
 
 export const doClickBackButton = async (f: IFixtureApp) => {
   const [backButton] = await f.frontend.find(`button[aria-label='Back']`)

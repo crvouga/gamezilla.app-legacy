@@ -3,9 +3,9 @@ import { ILogger, Logger } from '~/@/logger'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { Topic } from '~/@/topic'
 import { AppTypes } from '~/app'
-import { TestBackend } from './test-backend'
-import { TestFrontend } from './test-frontend'
-import { IFixtureApp } from './types'
+import { TestBackend } from '../test-backend'
+import { TestFrontend } from '../test-frontend'
+import { IFixtureApp } from './interface'
 
 export const FixtureAppUnitTestE2E = async (): Promise<IFixtureApp> => {
   let logger: ILogger

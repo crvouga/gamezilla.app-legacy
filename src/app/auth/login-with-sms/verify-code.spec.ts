@@ -1,7 +1,7 @@
 import { difference } from '~/@/array/difference'
 import { describe, expect, test, TestRunnerEnv } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
-import { FixtureAppE2E } from '~/app/@/test/fixture'
+import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
 import { doClickBackButton } from '~/app/@/test/setup/do-click-back-button'
 import { SpacesFrontend } from '~/app/spaces/frontend'
 import { AuthFrontend } from '../frontend'

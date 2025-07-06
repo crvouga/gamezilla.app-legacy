@@ -1,6 +1,6 @@
 import { describe, expect, test } from '~/@/test-runner'
 import { VDomImpl } from '~/@/vdom/vdom-impl'
-import { FixtureAppE2E } from '~/app/@/test/fixture'
+import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
 import { doClickBackButton } from '~/app/@/test/setup/do-click-back-button'
 import { doOpenRendererScreen } from '../@/test/do-open-renderer-screen'
 import { doOpenSettingsScreen } from '../@/test/do-open-settings-screen'

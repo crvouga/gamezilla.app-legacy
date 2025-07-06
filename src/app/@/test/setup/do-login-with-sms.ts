@@ -1,7 +1,7 @@
 import { expect } from '~/@/test-runner'
 import { AuthFrontend } from '~/app/auth/frontend'
 import { SpacesFrontend } from '~/app/spaces/frontend'
-import { IFixtureApp } from '../types'
+import { IFixtureApp } from '../app-fixture/interface'
 
 const randomPhoneNumber = (): number => {
   const base = 480_209_0000

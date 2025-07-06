@@ -1,4 +1,4 @@
-import { IFixtureApp } from '~/app/@/test/types'
+import { IFixtureApp } from '~/app/@/test/app-fixture/interface'
 import { AuthFrontend } from '../../frontend'
 import { randomPhoneNumber } from './random-phone-number'
 import { expect } from '~/@/test-runner'
