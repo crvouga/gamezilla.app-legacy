@@ -101,7 +101,6 @@ const ViewChooseLangListItem = (input: {
   const primary = translations[input.langCode][input.langCode]
   return ListItem({
     link: true,
-    key: input.langCode,
     primary: TranslatedText.of(primary),
     end: () => h('div', {}, [input.ctx.t(input.langCode)]),
     onClick: () => input.dispatch({ t: 'lang.clicked-lang', lang: input.langCode }),
