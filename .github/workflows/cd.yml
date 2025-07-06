@@ -133,6 +133,7 @@ jobs:
     name: E2E Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    needs: [cir-dep-check, type-check, unit-tests, integration-tests]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
