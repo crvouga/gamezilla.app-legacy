@@ -139,8 +139,8 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 }
 
 const ViewLangListItem: FrontendModule['View'] = ({ model, ctx, dispatch }) => {
-  return ListItem({
-    icon: (inputIcon) => IconLanguage(inputIcon),
+  return h(ListItem, {
+    icon: (inputIcon) => h(IconLanguage, inputIcon),
     primary: ctx.t('l18n.language'),
     end: () => ctx.t(model.lang),
     onClick: () => {
@@ -168,7 +168,7 @@ const View: FrontendModule['View'] = (input) => {
 }
 
 const ViewMain: FrontendModule['View'] = (props) => {
-  return ScreenLayout({
+  return h(ScreenLayout, {
     id: 'setting-main',
     dataTestId: TEST_ID.SETTINGS_SCREEN,
     ctx: props.ctx,
@@ -179,14 +179,14 @@ const ViewMain: FrontendModule['View'] = (props) => {
     },
     renderBody: () =>
       h('div', { class: 'flex flex-1 flex-col overflow-y-scroll' }, [
-        ListItem({
+        h(ListItem, {
           primary: props.ctx.t('l18n.language'),
           end: () => h('div', {}, [props.ctx.t(props.model.lang)]),
           onClick: () => props.dispatch({ t: 'settings.clicked-open-lang' }),
           link: true,
           icon: (inputIcon) => IconLanguage(inputIcon),
         }),
-        ListItem({
+        h(ListItem, {
           primary: props.ctx.t('l18n.renderer'),
           end: () => h('div', {}, [VDomImpl.toName(props.model.renderVDomImpl)]),
           onClick: () => props.dispatch({ t: 'settings.clicked-open-renderer' }),
@@ -194,8 +194,8 @@ const ViewMain: FrontendModule['View'] = (props) => {
           link: true,
           dataTestId: TEST_ID.RENDERER_SCREEN_OPEN_BUTTON,
         }),
-        ViewLogoutListItem(props),
-        Gutter({ variant: 'screen' }),
+        h(ViewLogoutListItem, props),
+        h(Gutter, { variant: 'screen' }),
       ]),
   })
 }
@@ -208,13 +208,13 @@ const ViewLogoutListItem: FrontendModule['View'] = (input) => {
       return null
     }
     case 'logged-in': {
-      return ListItem({
+      return h(ListItem, {
         onClick: () => input.dispatch({ t: 'settings.clicked-logout-list-item' }),
         dataTestId: TEST_ID.LOGOUT_LIST_ITEM_BUTTON,
         icon: (input) => h(IconPowerOff, input),
         primary: input.ctx.t('auth.logout'),
         end: () =>
-          Typography({
+          h(Typography, {
             variant: 'caption',
             text: TranslatedText.of(currentUserState.userProfile.username),
           }),
@@ -227,7 +227,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
   const iconSize = props.ctx.screenSize === 'mobile' ? 'size-3' : 'size-4'
 
   return h('div', { class: cn(props.ctx.screenSize === 'mobile' ? 'w-full' : 'fixed top-0 right-0 z-10 w-fit') }, [
-    SurfaceLayout({
+    h(SurfaceLayout, {
       ctx: props.ctx,
       ariaLabel: props.ctx.t('status-bar.status-bar'),
       drawer: {
@@ -280,8 +280,8 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
 
             h(ViewLangListItem, props),
 
-            ListItem({
-              icon: (inputIcon) => IconGear(inputIcon),
+            h(ListItem, {
+              icon: (inputIcon) => h(IconGear, inputIcon),
               primary: props.ctx.t('l18n.settings'),
               link: true,
               dataTestId: TEST_ID.SETTINGS_SCREEN_OPEN_BUTTON,

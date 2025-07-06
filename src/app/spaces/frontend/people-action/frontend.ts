@@ -120,7 +120,7 @@ const ViewSurfaces = (
   const modalProfile = input.model.openedPreviewUserId
     ? input.ctx.profilesByUserId[input.model.openedPreviewUserId]
     : null
-  return SurfaceLayout({
+  return h(SurfaceLayout, {
     ctx: input.ctx,
     drawer: {
       position: DRAWER_POSITION,
@@ -130,7 +130,7 @@ const ViewSurfaces = (
       alignment: DROPDOWN_ALIGNMENT,
       reference: {
         render: () =>
-          SurfaceLayout({
+          h(SurfaceLayout, {
             drawer: {
               position: DRAWER_POSITION,
             },

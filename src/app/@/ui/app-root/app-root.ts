@@ -1,7 +1,7 @@
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
 
-export const ViewAppRoot = (input: { children: VDom }) => {
+export const ViewAppRoot = (input: { children: VDom[] }) => {
   return h(
     'div',
     {
@@ -12,6 +12,6 @@ export const ViewAppRoot = (input: { children: VDom }) => {
           'env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)',
       },
     },
-    [input.children],
+    input.children,
   )
 }

@@ -60,7 +60,7 @@ const HorizontalUniform = (input: ScreenActionBarProps & ScreenActionsUniform) =
     }),
 
     hasLastActions &&
-      SurfaceLayout({
+      h(SurfaceLayout, {
         ctx: input.ctx,
         id: input.id,
         ariaLabel: input.ctx.t('app.more'),

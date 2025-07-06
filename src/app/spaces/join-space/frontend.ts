@@ -169,11 +169,11 @@ const view: SpaceFrontendModule['View'] = (input) => {
       h('div', { class: 'flex w-full flex-col gap-6' }, [
         spaceState.game && h(SectionGame, { ctx: input.ctx, gameName: spaceState.game.t }),
 
-        SectionPeopleList({
+        h(SectionPeopleList, {
           ctx: spaceCtx,
           onClickItem: (userId) => input.dispatch({ t: 'join-space.clicked-person-list-item', userId }),
           renderItem: (profile, vDom) =>
-            SurfaceLayout({
+            h(SurfaceLayout, {
               ctx: spaceCtx,
               ariaLabel: input.ctx.t('?'),
               open: input.model.opened === 'join-space.person-preview-surface',

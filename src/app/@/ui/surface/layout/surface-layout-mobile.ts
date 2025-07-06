@@ -7,14 +7,17 @@ import { SurfaceLayoutProps } from './surface-layout-props'
 export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
   return h(Frag, {}, [
     props.dropDown?.reference?.render?.(),
-    Drawer({
-      id: 'surface-layout',
-      onClose: props.onClose ?? (() => {}),
-      open: props.open ?? false,
-      position: props.drawer?.position ?? 'bottom',
-      ctx: props.ctx,
-      ariaLabel: props.ariaLabel,
-      children: [SurfaceContent(props)],
-    }),
+    h(
+      Drawer,
+      {
+        id: 'surface-layout',
+        onClose: props.onClose ?? (() => {}),
+        open: props.open ?? false,
+        position: props.drawer?.position ?? 'bottom',
+        ctx: props.ctx,
+        ariaLabel: props.ariaLabel,
+      },
+      [h(SurfaceContent, props)],
+    ),
   ])
 }

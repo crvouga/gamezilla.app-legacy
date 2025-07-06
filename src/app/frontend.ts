@@ -349,25 +349,25 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
   const frontendCtx = toCtx(input)
 
   return h(ViewAppRoot, {}, [
-    SettingsFrontend.ViewTopBar({
+    h(SettingsFrontend.ViewTopBar, {
       model: input.model.settings,
       dispatch: (c) => input.dispatch({ t: 'settings', c }),
       ctx: frontendCtx,
     }),
 
     h('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
-      ViewScreen({ model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
+      h(ViewScreen, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
     ]),
 
-    AuthFrontend.ViewModals({
+    h(AuthFrontend.ViewModals, {
       ctx: frontendCtx,
       dispatch: (c) => input.dispatch({ t: 'auth', c }),
       model: input.model.auth,
     }),
 
-    DrawerPortalExit(),
+    h(DrawerPortalExit, {}),
 
-    ToasterFrontend.View({
+    h(ToasterFrontend.View, {
       ctx: frontendCtx,
       model: input.model.frontend.toast,
       dispatch: (c) => input.dispatch({ t: 'frontend', c: { t: 'toast', c } }),

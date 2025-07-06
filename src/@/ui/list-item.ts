@@ -15,7 +15,7 @@ type Input = {
   onClick?: () => void
   color?: Color
   dataTestId?: string
-  key?: string
+
   link?: boolean
   selected?: boolean
 }
@@ -27,7 +27,6 @@ export const ListItem = (input: Input) => {
       return h(
         ClickableTransparent,
         {
-          key: input.key,
           role: 'button',
           onClick: (event) => {
             preventConsoleErrorWhenClosingDrawer(event)
@@ -53,7 +52,6 @@ export const ListItem = (input: Input) => {
       return h(
         'div',
         {
-          key: input.key,
           onClick: (event: unknown) => {
             preventConsoleErrorWhenClosingDrawer(event)
             input.onClick?.()

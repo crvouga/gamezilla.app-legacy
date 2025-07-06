@@ -1,4 +1,4 @@
-import { createElement, Fragment } from 'react'
+import { createElement, Fragment, StrictMode } from 'react'
 import { createPortal } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { VDOM_FRAGMENT_KEY } from './fragment'
@@ -10,7 +10,7 @@ export const initReact = (): VirtualDomEngine => {
   return {
     render: (vDom, node) => {
       reactRoot ??= createRoot(node)
-      reactRoot.render(vDom as any)
+      reactRoot.render(createElement(StrictMode, {}, vDom as any))
     },
     createPortal: (vDom, container) => {
       const portal = createPortal(vDom as any, container)

@@ -21,7 +21,8 @@ export const ScreenNavBarMobile = (input: {
 }) => {
   if (!input.title && !input.subtitle && !input.back) return null
 
-  const renderSurface = input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference)
+  const renderSurface =
+    input.back?.renderSurface ?? ((input: { dropDown: DropDownConfig }) => input.dropDown.reference?.render())
   const shouldRenderBack = input.back && typeof input.back.onClick === 'function'
   return h(
     'div',
@@ -36,7 +37,7 @@ export const ScreenNavBarMobile = (input: {
             position: 'bottom',
             reference: {
               render: () =>
-                IconButton({
+                h(IconButton, {
                   onClick: input.back?.onClick,
                   class: '-ml-2',
                   label: input.ctx.t('app.exit'),
