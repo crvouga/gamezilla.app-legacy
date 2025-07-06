@@ -14,8 +14,8 @@ import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { APP_SOUND } from '../@/frontend/app-sound'
+import { BackScreenCmd } from '../@/frontend/back-screen-cmd.$msg'
 import { LogoutCmd } from '../@/frontend/logout-cmd.$msg'
-import { ReplaceScreenCmd } from '../@/frontend/replace-screen-cmd.$msg'
 import { SurfaceLayout } from '../@/ui/surface/layout/surface-layout'
 import { BackendConnectionStatus } from '../@/wire/backend-connection-status'
 import { ScreenLangFrontend } from './screen-lang/frontend'
@@ -104,10 +104,7 @@ const updateBase: FrontendModule['update'] = ({ model, ctx, msg }) => {
     }
 
     case 'settings.clicked-back-button': {
-      return {
-        model,
-        msgOut: [ReplaceScreenCmd.init({ t: 'login', n: 'auth' }, true)],
-      }
+      return { model, msgOut: [BackScreenCmd.init()] }
     }
 
     case 'settings.clicked-logout-list-item': {

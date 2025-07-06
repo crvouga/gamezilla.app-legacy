@@ -10,9 +10,9 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import { AppFrontendCtxBase } from '../../@/frontend/ctx'
-import { ReplaceScreenCmd } from '../../@/frontend/replace-screen-cmd.$msg'
 import { FrontendModule } from '../types'
 import { ModelFrontend, MsgFrontend } from './types'
+import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 
 const TEST_ID = {
   LANG_SCREEN_OPEN_BUTTON: 'settings/lang-screen-open-button',
@@ -32,31 +32,28 @@ const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend } => {
   }
 }
 
-const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
-  if (!msg) return { model }
+const update: FrontendModule['update'] = (input) => {
+  if (!input.msg) return { model: input.model }
 
-  switch (msg?.t) {
+  switch (input.msg?.t) {
     case 'lang.clicked-back-button': {
-      return {
-        model,
-        msgOut: [ReplaceScreenCmd.init({ t: 'main', n: 'settings', back: ctx.currentScreen }, true)],
-      }
+      return { model: input.model, msgOut: [BackScreenCmd.init()] }
     }
 
     case 'lang.clicked-lang': {
       return {
         model: {
-          ...model,
-          lang: msg.lang,
+          ...input.model,
+          lang: input.msg.lang,
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-        eff: LocalStorage.put(LANG_STORAGE_KEY, msg.lang),
+        eff: LocalStorage.put(LANG_STORAGE_KEY, input.msg.lang),
       }
     }
 
     default: {
       return {
-        model,
+        model: input.model,
       }
     }
   }

@@ -2,11 +2,11 @@ import { ListItem } from '~/@/ui/list-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
 import { h, VDomEngine } from '~/@/vdom/h'
 import { VDomImpl } from '~/@/vdom/vdom-impl'
+import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { APP_SOUND } from '../../@/frontend/app-sound'
-import { ReplaceScreenCmd } from '../../@/frontend/replace-screen-cmd.$msg'
 import type { FrontendModule } from '../types'
 import { ModelFrontend } from './types'
 
@@ -32,10 +32,7 @@ const update: FrontendModule['update'] = (input) => {
 
   switch (input.msg?.t) {
     case 'renderer.clicked-back-button': {
-      return {
-        model: input.model,
-        msgOut: [ReplaceScreenCmd.init({ t: 'main', n: 'settings', back: input.ctx.currentScreen }, true)],
-      }
+      return { model: input.model, msgOut: [BackScreenCmd.init()] }
     }
 
     case 'renderer.clicked-renderer': {

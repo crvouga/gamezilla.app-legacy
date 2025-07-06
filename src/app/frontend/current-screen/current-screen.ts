@@ -111,6 +111,7 @@ export const update = (input: {
     return {
       model: input.model,
       eff: Browser.back,
+      msgOut: input.msgIn.playSound ? [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] : [],
     }
   }
 

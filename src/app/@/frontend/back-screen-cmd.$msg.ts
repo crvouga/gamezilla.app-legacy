@@ -1,5 +1,5 @@
-import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
+import { s } from '~/@/schema'
 
 export const schema = s.or(
   s.obj({
@@ -15,8 +15,7 @@ export type MsgShared = BackScreenCmd
 export const init = (playSound?: boolean): BackScreenCmd => {
   return {
     t: 'back',
-
-    playSound,
+    playSound: playSound ?? true,
   }
 }
 
