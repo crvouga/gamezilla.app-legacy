@@ -14,8 +14,8 @@ import { ProfileBackend } from '~/app/profile/backend'
 import { SpacesBackend } from '~/app/spaces/backend'
 import { BackendCtxModule, topicContract } from '~/app/types'
 import { WireBackend } from '~/app/wire/backend'
-import { BackendInstanceId } from '../backend/backend-instance/backend-instance-id'
-import { AppBackendCtxBase } from '../backend/ctx'
+import { BackendInstanceId } from '../../../backend/backend-instance/backend-instance-id'
+import { AppBackendCtxBase } from '../../../backend/ctx'
 
 export const TestBackend = async (config: {
   sqlDb: ISqlDb

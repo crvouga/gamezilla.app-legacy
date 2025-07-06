@@ -50,25 +50,10 @@ export const TextField = (input: {
           step: input.step,
           value: input.value,
           defaultValue: input.value,
-          onInput: (e: any) => {
+          onInput: (e: { preventDefault: () => void; currentTarget: { value: string } }) => {
             e.preventDefault()
-            let valueNew: string = e.currentTarget.value
-
-            if (valueNew.length === 0)
-              valueNew =
-                typeof e === 'object' &&
-                e !== null &&
-                'nativeEvent' in e &&
-                typeof e.nativeEvent === 'object' &&
-                e.nativeEvent !== null &&
-                'data' in e.nativeEvent &&
-                typeof e.nativeEvent.data === 'string'
-                  ? e.nativeEvent.data
-                  : ''
-
-            if (valueNew.length === 0)
-              valueNew = typeof e === 'object' && e !== null && 'data' in e && typeof e.data === 'string' ? e.data : ''
-
+            const valueNew = eventToInputValue(e)
+            console.log('valueNew', valueNew)
             input.onChange(valueNew)
           },
           class: cn(
@@ -112,4 +97,27 @@ export const TextField = (input: {
         [input.helperText],
       ),
   ])
+}
+
+const eventToInputValue = (e: { preventDefault: () => void; currentTarget: { value: string } }): string => {
+  let valueNew: string = e.currentTarget.value
+
+  if (valueNew.length === 0) {
+    valueNew =
+      typeof e === 'object' &&
+      e !== null &&
+      'nativeEvent' in e &&
+      typeof e.nativeEvent === 'object' &&
+      e.nativeEvent !== null &&
+      'data' in e.nativeEvent &&
+      typeof e.nativeEvent.data === 'string'
+        ? e.nativeEvent.data
+        : ''
+  }
+
+  if (valueNew.length === 0) {
+    valueNew = typeof e === 'object' && e !== null && 'data' in e && typeof e.data === 'string' ? e.data : ''
+  }
+
+  return valueNew
 }

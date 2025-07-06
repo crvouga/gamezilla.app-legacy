@@ -5,6 +5,14 @@ import { VDOM_FRAGMENT_KEY } from './fragment'
 import { VirtualDomEngine } from './interface'
 import { kebabObjectToCamelObject } from './style'
 
+const propMap = new Map<string, string>()
+propMap.set('class', 'className')
+propMap.set('stroke-linecap', 'strokeLinecap')
+propMap.set('stroke-linejoin', 'strokeLinejoin')
+propMap.set('stroke-width', 'strokeWidth')
+propMap.set('stroke-opacity', 'strokeOpacity')
+const propMapKeys = Array.from(propMap.keys())
+
 export const initReact = (): VirtualDomEngine => {
   let reactRoot: ReturnType<typeof createRoot> | undefined
   return {
@@ -21,9 +29,13 @@ export const initReact = (): VirtualDomEngine => {
         props.style = kebabObjectToCamelObject(props?.style)
       }
 
-      if (typeof tag === 'string' && props?.class) {
-        props.className = props.class
-        delete props.class
+      if (typeof tag === 'string') {
+        for (const propKey of propMapKeys) {
+          if (propKey in props) {
+            props[propMap.get(propKey)!] = props[propKey]
+            delete props[propKey]
+          }
+        }
       }
 
       children = Array.isArray(children) ? children : children ? [children] : []

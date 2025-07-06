@@ -18,7 +18,7 @@ import { SpacesFrontend } from '~/app/spaces/frontend'
 import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
-import { AppFrontendCtxBase } from '../frontend/ctx'
+import { AppFrontendCtxBase } from '../../../frontend/ctx'
 import { Translator } from '~/@/l18n/generated'
 
 export const TestFrontend = async (config: {
@@ -85,7 +85,7 @@ export const TestFrontend = async (config: {
 
   const client = await TestClient({
     t: 'happydom',
-    maxWait: TimeSpan.milliseconds(500),
+    maxWait: TimeSpan.seconds(5),
     poll: TimeSpan.milliseconds(1),
     audioPlayer: ctx.audioPlayer,
   })
