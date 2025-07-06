@@ -1,12 +1,13 @@
-import { h } from '~/@/vdom/h'
 import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { PhoneNumber } from '~/@/phone-number'
 import { NotAsked, RemoteResult, isErr } from '~/@/result'
 import { TimeSpan } from '~/@/time/time-span'
+import { Frag } from '~/@/ui/frag'
 import { IconMobilePhone } from '~/@/ui/icon'
 import { Select } from '~/@/ui/select'
 import { TextField } from '~/@/ui/text-field'
 import { Typography } from '~/@/ui/typography'
+import { h } from '~/@/vdom/h'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { FocusViewCmd } from '~/app/@/frontend/focus-view-cmd.$msg'
@@ -17,7 +18,11 @@ import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { AuthScreenFormLayout } from '../@/frontend/ui/auth-screen-form-layout'
 import { FrontendModule, ModelFrontend, toSendErrorMessage, toVerifyErrorMessage } from './types'
-import { Frag } from '~/@/ui/frag'
+
+const TEST_ID = {
+  SEND_CODE_SCREEN: 'auth/send-code-screen',
+  VERIFY_CODE_SCREEN: 'auth/verify-code-screen',
+}
 
 const init: ModelFrontend = {
   code: '',
@@ -220,7 +225,7 @@ const View: FrontendModule['View'] = (input) => {
 
 const ViewSendCode: FrontendModule['View'] = (input) => {
   return h(AuthScreenFormLayout, {
-    dataTestId: 'auth/send-code-screen',
+    dataTestId: TEST_ID.SEND_CODE_SCREEN,
     ctx: input.ctx,
     title: input.ctx.t('auth-sms.send-code'),
     onBack: () => {
@@ -265,7 +270,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
   const phoneNumber = input.ctx.currentScreen.phoneNumber
 
   return h(AuthScreenFormLayout, {
-    dataTestId: 'auth/verify-code-screen',
+    dataTestId: TEST_ID.VERIFY_CODE_SCREEN,
     ctx: input.ctx,
     title: input.ctx.t('auth-sms.verify-code'),
     onBack: () => {
@@ -308,4 +313,5 @@ export const LoginWithSMSFrontend = {
   init,
   update,
   View,
+  TEST_ID,
 }

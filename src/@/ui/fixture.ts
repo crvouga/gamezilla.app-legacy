@@ -1,8 +1,9 @@
 import { TestClient } from '~/@/test-client'
+import { CONFIG_FRONTEND } from '~/config/frontend'
 import { AudioPlayer } from '../audio-player'
 import { Logger } from '../logger'
 import { TimeSpan } from '../time/time-span'
-import { render } from '../vdom/h'
+import { render, VDomEngine } from '../vdom/h'
 import { VDom } from '../vdom/vdom'
 
 export const BaseFixture = async () => {
@@ -15,10 +16,10 @@ export const BaseFixture = async () => {
 
   document.body.innerHTML = '<div id="root"></div>'
   const root = document.getElementById('root')!
-  const render_ = (vDom: VDom) => render(vDom, root)
+  await VDomEngine.initialize(CONFIG_FRONTEND.VDOM_IMPL)
 
   return {
     client,
-    render: render_,
+    render: (vDom: VDom) => render(vDom, root),
   }
 }

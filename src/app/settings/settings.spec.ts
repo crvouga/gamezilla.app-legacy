@@ -20,7 +20,7 @@ describe('settings', () => {
     const f = await Fixture(e)
     await doOpenSettingsScreen(f)
     await doClickBackButton(f)
-    const screen = await f.frontend.findByTestId(AuthFrontend.dataTestId.loginScreen)
+    const screen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.LOGIN_SCREEN)
     expect(screen).toBeTruthy()
   })
 

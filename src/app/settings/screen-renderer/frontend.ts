@@ -85,7 +85,8 @@ const View: FrontendModule['View'] = (input) => {
             secondary: isDefault && false ? input.ctx.t('l18n.default') : undefined,
             dataTestId: TEST_ID.RENDERER_MENU_ITEM(vDomImpl),
             onClick: () => input.dispatch({ t: 'renderer.clicked-renderer', vDomImpl }),
-            end: () => h(RadioInputIcon, { class: 'size-7', status: isSelected ? 'selected' : 'unselected' }),
+            end: () => RadioInputIcon({ class: 'size-7', status: isSelected ? 'selected' : 'unselected' }),
+            selected: isSelected,
           })
         }),
       ),

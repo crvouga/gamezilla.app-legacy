@@ -1,8 +1,12 @@
 import { IFixtureApp } from '~/app/@/test/types'
+import { AuthFrontend } from '../../frontend'
 import { randomPhoneNumber } from './random-phone-number'
+import { expect } from '~/@/test-runner'
 
 export const doSendCode = async (f: IFixtureApp, config?: { phoneNumber?: string }) => {
-  await f.frontend.find(`[data-testid='auth/send-code-screen']`)
+  const screen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.SEND_CODE_SCREEN)
+  expect(screen).toBeTruthy()
+
   const [input] = await f.frontend.find(`input[type='tel']`)
   await input!.do({
     t: 'input',

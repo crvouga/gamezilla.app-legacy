@@ -3,6 +3,8 @@ import { describe, expect, test, TestRunnerEnv } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
 import { FixtureAppE2E } from '~/app/@/test/fixture'
 import { doClickBackButton } from '~/app/@/test/setup/do-click-back-button'
+import { SpacesFrontend } from '~/app/spaces/frontend'
+import { AuthFrontend } from '../frontend'
 import { doOpenSendCodeScreen } from './test/do-open-send-code-screen'
 import { doSendCode } from './test/do-send-code'
 import { doVerifyCode } from './test/do-verify-code'
@@ -17,17 +19,17 @@ const Fixture = async (e: TestRunnerEnv) => {
 describe('verify code', () => {
   test('verify code screen back button', async (e) => {
     await using f = await Fixture(e)
-    const verifyCodeScreen = await f.frontend.findByTestId('auth/verify-code-screen')
+    const verifyCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
     expect(verifyCodeScreen).toBeTruthy()
     await doClickBackButton(f)
-    const sendCodeScreen = await f.frontend.findByTestId('auth/send-code-screen')
+    const sendCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.SEND_CODE_SCREEN)
     expect(sendCodeScreen).toBeTruthy()
   })
 
   test('verify code screen back button play sound', async (e) => {
     if (e.e2e) return
     await using f = await Fixture(e)
-    const verifyCodeScreen = await f.frontend.findByTestId('auth/verify-code-screen')
+    const verifyCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
     expect(verifyCodeScreen).toBeTruthy()
     const before = await f.frontend.audio()
     await doClickBackButton(f)
@@ -43,7 +45,7 @@ describe('verify code', () => {
     const [sendCodeError] = await f.frontend.find(`[role='alert'][data-error='true']`)
     expect(sendCodeError).toBeFalsy()
     await doVerifyCode(f)
-    const screen = await f.frontend.findByTestId('spaces/space-list-screen')
+    const screen = await f.frontend.findByTestId(SpacesFrontend.TEST_ID.SPACE_LIST_SCREEN)
     expect(screen).toBeTruthy()
   })
 
@@ -57,9 +59,9 @@ describe('verify code', () => {
   test('enter wrong code does not go to space screen', async (e) => {
     await using f = await Fixture(e)
     await doVerifyCode(f, { code: '111' })
-    const [spaceScreen] = await f.frontend.find(`[data-testid='spaces/space-list-screen']`)
+    const spaceScreen = await f.frontend.findByTestId(SpacesFrontend.TEST_ID.SPACE_LIST_SCREEN)
     expect(spaceScreen).toBeFalsy()
-    const [verifyCodeScreen] = await f.frontend.find(`[data-testid='auth/verify-code-screen']`)
+    const verifyCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
     expect(verifyCodeScreen).toBeTruthy()
   })
 

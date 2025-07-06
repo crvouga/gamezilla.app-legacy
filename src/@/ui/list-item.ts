@@ -17,6 +17,7 @@ type Input = {
   dataTestId?: string
   key?: string
   link?: boolean
+  selected?: boolean
 }
 
 export const ListItem = (input: Input) => {
@@ -36,6 +37,7 @@ export const ListItem = (input: Input) => {
           dataTestId: input.dataTestId,
           name: input.primary,
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
+          'aria-selected': input.selected,
         },
         [
           h(ListItemContent, {
@@ -59,6 +61,7 @@ export const ListItem = (input: Input) => {
           'aria-label': input.primary,
           'data-testid': input.dataTestId,
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
+          'aria-selected': input.selected ? 'true' : 'false',
         },
         [
           h(ListItemContent, {

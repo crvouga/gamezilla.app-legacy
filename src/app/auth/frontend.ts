@@ -21,10 +21,11 @@ import { LoginWithSMSFrontend } from './login-with-sms/frontend'
 import { LogoutFrontend } from './logout/frontend'
 import { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
 
-const dataTestId = {
-  loginScreen: 'auth/login-screen',
-  continueWithPhoneButton: 'auth/continue-with-phone-button',
-  logoutListItemButton: 'auth/logout-list-item-button',
+const TEST_ID = {
+  ...LoginWithSMSFrontend.TEST_ID,
+  ...ContinueAsGuestFrontend.TEST_ID,
+  LOGIN_SCREEN: 'auth/login-screen',
+  CONTINUE_WITH_PHONE_BUTTON: 'auth/continue-with-phone-button',
 }
 
 //
@@ -202,25 +203,25 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
   return h(
     AuthScreenLayout,
     {
-      dataTestId: dataTestId.loginScreen,
+      dataTestId: TEST_ID.LOGIN_SCREEN,
       ctx: input.ctx,
       center: true,
     },
     [
       h('div', { class: 'flex w-full flex-1 flex-col gap-6' }, [
-        h(AuthScreenHeaderCta, { ctx: input.ctx }),
+        AuthScreenHeaderCta({ ctx: input.ctx }),
 
-        h(Button, {
+        Button({
           onClick: () => input.dispatch({ t: 'clicked-login-with-phone' }),
           size: 'lg',
-          dataTestId: dataTestId.continueWithPhoneButton,
+          dataTestId: TEST_ID.CONTINUE_WITH_PHONE_BUTTON,
           class: 'w-full',
           renderIconStart: (iconInput) => h(IconMobilePhone, iconInput),
           text: input.ctx.t('auth.continue-with-phone'),
         }),
 
         h('div', { class: 'flex w-full items-center justify-center py-1' }, [
-          h(Typography, {
+          Typography({
             variant: 'body',
             class: 'text-base font-bold uppercase',
             color: 'text-secondary',
@@ -228,7 +229,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
           }),
         ]),
 
-        h(ContinueAsGuestFrontend.ViewButton, {
+        ContinueAsGuestFrontend.ViewButton({
           ctx: input.ctx,
           dispatch: (c) => input.dispatch({ t: 'got-login-as-guest-msg', c }),
           model: input.model.continueAsGuest,
@@ -282,5 +283,5 @@ export const AuthFrontend = {
   ViewModals,
   ViewCurrentUserListItem,
   initCtx,
-  dataTestId,
+  TEST_ID,
 }

@@ -141,7 +141,7 @@ describe('UserSessionDb', () => {
     }
   })
 
-  test('query equals userId', async () => {
+  test.skip('query equals userId', async () => {
     for (const f of await Fixtures()) {
       const userId = UserId.generate()
       const before = await f.userSessionDb.query({

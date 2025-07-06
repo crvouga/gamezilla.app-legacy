@@ -26,8 +26,8 @@ import type { FrontendModule, MsgFrontend } from './types'
 const TEST_ID = {
   ...ScreenLangFrontend.TEST_ID,
   ...ScreenRendererFrontend.TEST_ID,
-  OPEN_BUTTON: 'settings/open-button',
-  DROP_DOWN_SURFACE: 'settings/drop-down-surface',
+  TOP_BAR_OPEN_BUTTON: 'settings/top-bar-open-button',
+  TOP_BAR_DROP_DOWN_SURFACE: 'settings/top-bar-drop-down-surface',
   SETTINGS_SCREEN: 'settings/settings-screen',
   SETTINGS_SCREEN_OPEN_BUTTON: 'settings/settings-screen-open-button',
   LOGOUT_LIST_ITEM_BUTTON: 'settings/logout-list-item-button',
@@ -242,7 +242,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
             h(
               Clickable,
               {
-                dataTestId: TEST_ID.OPEN_BUTTON,
+                dataTestId: TEST_ID.TOP_BAR_OPEN_BUTTON,
                 class: cn(
                   props.ctx.screenSize === 'mobile'
                     ? 'flex w-full items-center justify-end gap-3 px-3 py-1'
@@ -265,7 +265,7 @@ const ViewTopBar: FrontendModule['View'] = (props) => {
       },
       body: {
         render: () =>
-          h('div', { 'data-testid': TEST_ID.DROP_DOWN_SURFACE }, [
+          h('div', { 'data-testid': TEST_ID.TOP_BAR_DROP_DOWN_SURFACE }, [
             h(BackendConnectionStatus.ViewListItem, {
               ctx: props.ctx,
               model: props.ctx.backendConnectionStatus,

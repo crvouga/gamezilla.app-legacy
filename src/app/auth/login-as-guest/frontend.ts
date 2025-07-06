@@ -15,6 +15,10 @@ import { UserSession } from '../@/user-session/user-session'
 import { UserSessionId } from '../@/user-session/user-session-id'
 import type { FrontendModule, ModelFrontend } from './types'
 
+const TEST_ID = {
+  CONTINUE_AS_GUEST_BUTTON: 'auth/continue-as-guest-button',
+}
+
 const init: ModelFrontend = {
   request: NotAsked,
 }
@@ -109,7 +113,7 @@ const continueAsGuest = async (input: {
 
 const ViewButton: FrontendModule['View'] = (input) => {
   return h(Button, {
-    dataTestId: 'auth/continue-as-guest-button',
+    dataTestId: TEST_ID.CONTINUE_AS_GUEST_BUTTON,
     onClick: () => input.dispatch({ t: 'clicked-continue-as-guest-button' }),
     renderIconStart: (iconInput) => h(IconUserCircle, iconInput),
     text: input.ctx.t('auth.continue-as-guest'),
@@ -120,4 +124,5 @@ export const ContinueAsGuestFrontend = {
   init,
   update,
   ViewButton,
+  TEST_ID,
 }

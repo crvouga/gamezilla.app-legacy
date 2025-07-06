@@ -8,7 +8,7 @@ import { TestClient } from '~/@/test-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
-import { h, render } from '~/@/vdom/h'
+import { h, render, VDomEngine } from '~/@/vdom/h'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { SessionId } from '~/@/wire/session-id'
 import { AuthFrontend } from '~/app/auth/frontend'
@@ -17,6 +17,7 @@ import { ProfileFrontend } from '~/app/profile/frontend'
 import { SpacesFrontend } from '~/app/spaces/frontend'
 import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
+import { CONFIG_FRONTEND } from '~/config/frontend'
 import { AppFrontendCtxBase } from '../frontend/ctx'
 import { Translator } from '../frontend/translator'
 
@@ -90,8 +91,8 @@ export const TestFrontend = async (config: {
   })
 
   document.body.innerHTML = '<div id="root"></div>'
-
   const root = document.getElementById('root')!
+  await VDomEngine.initialize(CONFIG_FRONTEND.VDOM_IMPL)
 
   const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),
