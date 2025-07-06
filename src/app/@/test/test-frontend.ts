@@ -19,7 +19,7 @@ import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { AppFrontendCtxBase } from '../frontend/ctx'
-import { Translator } from '../frontend/translator'
+import { Translator } from '~/@/l18n/generated'
 
 export const TestFrontend = async (config: {
   rpcServer: RPC.Server<typeof rpcContract>

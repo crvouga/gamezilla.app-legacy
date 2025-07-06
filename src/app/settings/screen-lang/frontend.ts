@@ -11,9 +11,8 @@ import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import { AppFrontendCtxBase } from '../../@/frontend/ctx'
 import { ReplaceScreenCmd } from '../../@/frontend/replace-screen-cmd.$msg'
-import { translatorSubscriptions } from '../../@/frontend/translator'
 import { FrontendModule } from '../types'
-import { ModelFrontend, MsgFrontend, TranslationLoading } from './types'
+import { ModelFrontend, MsgFrontend } from './types'
 
 const TEST_ID = {
   LANG_SCREEN_OPEN_BUTTON: 'settings/lang-screen-open-button',
@@ -37,41 +36,6 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
   if (!msg) return { model }
 
   switch (msg?.t) {
-    case 'lang.got-translator-msg': {
-      switch (msg.c.t) {
-        case 'translator.loaded': {
-          const loadingNew: TranslationLoading = {
-            startedAt: model.langLoading?.[msg.c.lang]?.startedAt ?? ctx.now,
-            endedAt: ctx.now,
-          }
-          return {
-            model: {
-              ...model,
-              langLoading: {
-                ...model.langLoading,
-                [msg.c.lang]: loadingNew,
-              },
-            },
-          }
-        }
-
-        case 'translator.loading': {
-          return {
-            model: {
-              ...model,
-              langLoading: {
-                ...model.langLoading,
-                [msg.c.lang]: {
-                  startedAt: ctx.now,
-                  endedAt: null,
-                },
-              },
-            },
-          }
-        }
-      }
-    }
-
     case 'lang.clicked-back-button': {
       return {
         model,
@@ -99,7 +63,7 @@ const update: FrontendModule['update'] = ({ model, ctx, msg }) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (_input) => {
-  return Sub.map(translatorSubscriptions, (c): MsgFrontend => ({ t: 'lang.got-translator-msg', c }))
+  return Sub.none()
 }
 
 const View: FrontendModule['View'] = (input) => {

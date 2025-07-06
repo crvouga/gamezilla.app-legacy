@@ -136,7 +136,6 @@ export const translations: Text = ${translationsForLanguageString}
 
 async function generateIndexFile() {
   const content = `${DISCLAIMER}
-import type { Text } from './text';
 import type { LanguageCodeISO_639_1 } from '../lang-code-iso-639-1';  
 import { createTranslator } from '../translations';
 ${LanguageCodeISO_639_1.ALL.map((code) => `import * as ${code} from './translations/${code}'`).join('\n')}
@@ -145,18 +144,11 @@ export const translations = {
   ${LanguageCodeISO_639_1.ALL.map((code) => `${code}: ${code}.translations`).join(',\n')}
 } as const;
 
-export const loadTranslations = async (languageCode: LanguageCodeISO_639_1): Promise<Text> => {
-  const translations = await import(\`./translations/\${languageCode}.ts\`);
-  return translations.translations;
+export const Translator = (languageCode: LanguageCodeISO_639_1) => {
+  return createTranslator(translations[languageCode])
 }
 
-export const loadTranslator = async (languageCode: LanguageCodeISO_639_1) => {
-  const translations = await loadTranslations(languageCode)
-  const t = createTranslator(translations)
-  return t
-}
-
-export type Translator = Awaited<ReturnType<typeof loadTranslator>>;
+export type Translator = ReturnType<typeof Translator>;
 `
   await fs.writeFile(path.join(OUTPUT_DIR, 'index.ts'), content)
   console.log(`Generated index file in: ${OUTPUT_DIR}`)

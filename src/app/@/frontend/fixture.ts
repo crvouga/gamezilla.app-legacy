@@ -12,7 +12,7 @@ import { UserAccount } from '../data/user-account'
 import { UserId } from '../data/user-id'
 import { UserProfile } from '../data/user-profile'
 import type { AppFrontendCtx } from './ctx'
-import { Translator } from './translator'
+import { Translator } from '~/@/l18n/generated'
 
 export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => {
   const currentUserId = UserId.generate()

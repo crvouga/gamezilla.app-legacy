@@ -1,5 +1,5 @@
 import { describe, expect, test } from '~/@/test-runner'
-import { Translator } from '~/app/@/frontend/translator'
+import { Translator } from '~/@/l18n/generated'
 import { TimeSpan } from './time-span'
 
 const t = Translator('en')
