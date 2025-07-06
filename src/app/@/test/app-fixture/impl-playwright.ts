@@ -7,8 +7,8 @@ export const FixtureAppPlaywrightE2E = async (config: { getPage: () => Page }): 
   const client = await TestClient({
     t: 'playwright',
     getPage: config.getPage,
-    maxWait: TimeSpan.seconds(20),
-    poll: TimeSpan.milliseconds(100),
+    maxWait: TimeSpan.seconds(5),
+    poll: TimeSpan.milliseconds(500),
   })
 
   const cleanUp = async () => {

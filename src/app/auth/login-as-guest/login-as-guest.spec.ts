@@ -15,7 +15,7 @@ describe('login as guest', () => {
     expect(screen).toBeTruthy()
   })
 
-  test('should show alert on login as guest', async (e) => {
+  test('show alert on login as guest', async (e) => {
     await using f = await Fixture(e)
     await doContinueAsGuest(f)
     const [alert] = await f.frontend.find(`[role='alert'][data-info='true']`)

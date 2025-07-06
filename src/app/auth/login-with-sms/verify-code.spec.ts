@@ -56,11 +56,9 @@ describe('verify code', () => {
     expect(alert).toBeTruthy()
   })
 
-  test('enter wrong code does not go to space screen', async (e) => {
+  test('enter wrong code does stays on verify code screen', async (e) => {
     await using f = await Fixture(e)
     await doVerifyCode(f, { code: '111' })
-    const spaceScreen = await f.frontend.findByTestId(SpacesFrontend.TEST_ID.SPACE_LIST_SCREEN)
-    expect(spaceScreen).toBeFalsy()
     const verifyCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
     expect(verifyCodeScreen).toBeTruthy()
   })

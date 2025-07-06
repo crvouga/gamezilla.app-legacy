@@ -20,8 +20,8 @@ export const TestClient = (config: Config): ITestClientBase => {
     },
     async find(selector: string, queryConfig) {
       return find(selector, {
-        maxWait: queryConfig?.maxWait ?? TimeSpan.milliseconds(1000),
-        poll: queryConfig?.poll ?? TimeSpan.milliseconds(10),
+        maxWait: queryConfig?.maxWait ?? config.maxWait,
+        poll: queryConfig?.poll ?? config.poll,
         onPoll: queryConfig?.onPoll ?? (() => {}),
         onDone: queryConfig?.onDone ?? (() => {}),
         getPage: config.getPage,
