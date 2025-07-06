@@ -37,5 +37,6 @@ describe('login as guest', () => {
 
 const doContinueAsGuest = async (f: IFixtureApp) => {
   const button = await f.frontend.findByTestId(AuthFrontend.TEST_ID.CONTINUE_AS_GUEST_BUTTON)
+  expect(button).toBeTruthy()
   await button!.do({ t: 'click' })
 }
