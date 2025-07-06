@@ -163,6 +163,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
   return h(
     'div',
     {
+      key: input.toast.toastId,
       id: String(input.toast.toastId),
       role: 'alert',
       'data-error': input.toast.variant === 'error' ? 'true' : 'false',

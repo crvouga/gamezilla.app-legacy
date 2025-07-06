@@ -41,7 +41,7 @@ export const initSnabbdom = (): VirtualDomEngine => {
         children = processChildren(children ?? props?.children)
 
         if (typeof tag === 'function') {
-          return tag({ ...props, children })
+          return tag({ ...props, key: props?.key, children })
         }
 
         if (tag === VDOM_FRAGMENT_KEY) {
