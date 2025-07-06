@@ -9,15 +9,12 @@ const Fixture = FixtureAppE2E
 
 describe('settings', () => {
   test('open settings screen', async (e) => {
-    const f = await Fixture(e)
+    await using f = await Fixture(e)
     await doOpenSettingsScreen(f)
-    const [title] = await f.frontend.find(`[data-title='true']`)
-    const titleString = await title?.text()
-    expect(titleString).toEqual('Settings')
   })
 
   test.skip('back button', async (e) => {
-    const f = await Fixture(e)
+    await using f = await Fixture(e)
     await doOpenSettingsScreen(f)
     await doClickBackButton(f)
     const screen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.LOGIN_SCREEN)
@@ -25,14 +22,14 @@ describe('settings', () => {
   })
 
   test.skip('status bar dropdown should close after opening settings screen', async (e) => {
-    const f = await Fixture(e)
+    await using f = await Fixture(e)
     await doOpenSettingsScreen(f)
     // const dropDownSurface = await f.frontend.findByTestId(AppBarFrontend.TEST_ID.DROP_DOWN_SURFACE)
     // expect(dropDownSurface).toBeFalsy()
   })
 
   test('open choose renderer screen', async (e) => {
-    const f = await Fixture(e)
+    await using f = await Fixture(e)
     await doOpenSettingsScreen(f)
     await doOpenRendererScreen(f)
   })

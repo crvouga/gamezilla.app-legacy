@@ -3,6 +3,7 @@ import { IHttpClient } from '~/@/http-client'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { ILogger } from '~/@/logger'
+import { INavigation } from '~/@/navigation'
 import type { Screen } from '~/@/screen/generated/screens'
 import { ISqlDb } from '~/@/sql-db'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -39,6 +40,7 @@ export type AppFrontendCtxBase = {
   currentUserState: CurrentUser
   httpClient: IHttpClient
   audioPlayer: IAudioPlayer
+  navigation: INavigation
   backendConnectionStatus: BackendConnectionStatus
 }
 

@@ -1,6 +1,8 @@
 import { AudioPlayer } from '~/@/audio-player'
 import { HttpClient } from '~/@/http-client'
+import { Translator } from '~/@/l18n/generated'
 import { ILogger } from '~/@/logger'
+import { Navigation } from '~/@/navigation'
 import { Program } from '~/@/program/program'
 import { RPC } from '~/@/rpc'
 import { ISqlDb } from '~/@/sql-db'
@@ -19,7 +21,6 @@ import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { AppFrontendCtxBase } from '../../../frontend/ctx'
-import { Translator } from '~/@/l18n/generated'
 
 export const TestFrontend = async (config: {
   rpcServer: RPC.Server<typeof rpcContract>
@@ -43,8 +44,13 @@ export const TestFrontend = async (config: {
 
   const httpClient = HttpClient({ t: 'fetch' })
 
+  const navigation = Navigation({ t: 'web-standard', logger })
+
+  const audioPlayer = AudioPlayer({ t: 'fake', logger })
+
   const ctxBase: AppFrontendCtxBase = {
-    audioPlayer: AudioPlayer({ t: 'fake', logger }),
+    audioPlayer,
+    navigation,
     clientSessionId,
     sqlDb: config.sqlDb,
     logger,
@@ -103,7 +109,7 @@ export const TestFrontend = async (config: {
   })
 
   const cleanUp = async () => {
-    window.history.replaceState({}, '', '/')
+    await navigation.clear()
     program.cleanUp()
   }
 

@@ -1,6 +1,8 @@
 import { AudioPlayer } from '~/@/audio-player'
 import { HttpClient } from '~/@/http-client'
+import { Translator } from '~/@/l18n/generated'
 import { Logger } from '~/@/logger'
+import { Navigation } from '~/@/navigation'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screen/generated/screens'
 import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
@@ -12,7 +14,6 @@ import { UserAccount } from '../data/user-account'
 import { UserId } from '../data/user-id'
 import { UserProfile } from '../data/user-profile'
 import type { AppFrontendCtx } from './ctx'
-import { Translator } from '~/@/l18n/generated'
 
 export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => {
   const currentUserId = UserId.generate()
@@ -24,6 +25,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
   }
   const ctx: AppFrontendCtx = {
     audioPlayer: AudioPlayer({ t: 'fake', logger: Logger({ t: 'noop' }) }),
+    navigation: Navigation({ t: 'in-memory', logger: Logger({ t: 'noop' }) }),
     clientSessionId: ClientSessionId.generate(),
     parentScreen: null,
     sqlDb: SQL_DB_NOOP,

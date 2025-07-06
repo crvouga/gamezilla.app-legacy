@@ -4,6 +4,7 @@ import { HttpClient } from '~/@/http-client'
 import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Msg } from '~/@/msg/msg'
+import { Navigation } from '~/@/navigation'
 import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screen/generated/screens'
@@ -108,8 +109,14 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     logger,
   })
 
+  const navigation = Navigation({
+    t: 'web-standard',
+    logger,
+  })
+
   const ctx: AppFrontendCtxBase = {
     audioPlayer,
+    navigation,
     clientSessionId,
     sqlDb,
     logger,

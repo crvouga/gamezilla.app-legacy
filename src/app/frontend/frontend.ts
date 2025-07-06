@@ -2,7 +2,7 @@ import { Eff } from '~/@/eff'
 import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import { APP_SOUND } from '../@/frontend/app-sound'
-import { AnonymousFrontendCtx, AppFrontendCtx, AppFrontendCtxBase } from '../@/frontend/ctx'
+import { AnonymousFrontendCtx, AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PreloadSoundsCmd } from '../@/frontend/preload-sounds-cmd.$msg'
 import { CopyToClipboardFrontend } from './copy-to-clipboard'
 import { CurrentScreenFrontend } from './current-screen'
@@ -19,10 +19,10 @@ const init = (input: {
   eff?: Eff<MsgFrontend>
   msgOut?: unknown[]
 } => {
-  const screen = CurrentScreenFrontend.init()
+  const screen = CurrentScreenFrontend.init(input)
   const visibility = VisibilityFrontend.init()
   const screenSize = ScreenSizeFrontend.init()
-  const toast = ToasterFrontend.init({ ctx: input.ctx })
+  const toast = ToasterFrontend.init(input)
   const focus = FocusFrontend.init()
   const copyToClipboard = CopyToClipboardFrontend.init()
 
@@ -55,6 +55,7 @@ const update = (input: {
   msgOut?: unknown[]
 } => {
   const screen = CurrentScreenFrontend.update({
+    ctx: input.ctx,
     model: input.model.currentScreen,
     msg: input.msg?.t === 'current-screen' ? input.msg.c : null,
     msgIn: input.msgIn,
@@ -110,16 +111,13 @@ const update = (input: {
   }
 }
 
-const subscriptions = (input: {
-  ctx: AppFrontendCtx | AnonymousFrontendCtx
-  model: ModelFrontend
-}): Sub<MsgFrontend> => {
+const subscriptions = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend }): Sub<MsgFrontend> => {
   return Sub.batch<MsgFrontend>([
     Sub.map(VisibilityFrontend.subscriptions, (c): MsgFrontend => ({ t: 'visibility', c })),
     Sub.map(FocusFrontend.subscriptions, (c): MsgFrontend => ({ t: 'focus', c })),
     Sub.map(CopyToClipboardFrontend.subscriptions, (c): MsgFrontend => ({ t: 'copy-to-clipboard', c })),
     Sub.map(ScreenSizeFrontend.subscriptions, (c): MsgFrontend => ({ t: 'screen-size', c })),
-    Sub.map(CurrentScreenFrontend.subscriptions, (c): MsgFrontend => ({ t: 'current-screen', c })),
+    Sub.map(CurrentScreenFrontend.subscriptions({ ctx: input.ctx }), (c): MsgFrontend => ({ t: 'current-screen', c })),
     Sub.map(
       ToasterFrontend.subscriptions({ ctx: input.ctx, model: input.model.toast }),
       (c): MsgFrontend => ({ t: 'toast', c }),

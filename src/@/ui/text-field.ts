@@ -53,7 +53,6 @@ export const TextField = (input: {
           onInput: (e: { preventDefault: () => void; currentTarget: { value: string } }) => {
             e.preventDefault()
             const valueNew = eventToInputValue(e)
-            console.log('valueNew', valueNew)
             input.onChange(valueNew)
           },
           class: cn(

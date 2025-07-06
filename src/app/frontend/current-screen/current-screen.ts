@@ -1,21 +1,13 @@
-import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import type { Screen } from '~/@/screen/generated/screens'
 import { Sub } from '~/@/sub'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ReplaceScreenCmd } from '~/app/@/frontend/replace-screen-cmd.$msg'
 import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt.$msg'
-
-//
-//
-//
-// Model
-//
-//
-//
 
 export type Model = {
   currentScreen: Screen
@@ -43,35 +35,21 @@ const decodeScreen = (screen: unknown): Screen => {
 
 const SCREEN_QUERY_PARAM_NAME = 'screen'
 
-const locationToScreen = (location: Browser.Location): Screen => {
-  return decodeScreen(location.query[SCREEN_QUERY_PARAM_NAME])
-}
-
-export const init = (): {
+export const init = (input: {
+  ctx: AppFrontendCtxBase
+}): {
   model: Model
   eff?: Eff
 } => {
-  const location = Browser.location()
-  const currentScreen = locationToScreen(location)
+  const currentScreen = decodeScreen(input.ctx.navigation.get(SCREEN_QUERY_PARAM_NAME))
 
   return {
-    model: {
-      currentScreen,
+    model: { currentScreen },
+    async eff() {
+      await input.ctx.navigation.replace(SCREEN_QUERY_PARAM_NAME, encodeScreen(currentScreen))
     },
-    eff: Eff.batch([
-      location.pathname === '/' ? null : Browser.replace('/'),
-      Browser.replaceQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(currentScreen)),
-    ]),
   }
 }
-
-//
-//
-//
-// Update
-//
-//
-//
 
 export type Msg =
   | { t: 'screen-changed'; screen: Screen }
@@ -82,63 +60,86 @@ export const update = (input: {
   msg?: Msg | null
   msgIn?: unknown
   model: Model
+  ctx: AppFrontendCtxBase
 }): {
   model: Model
   eff?: Eff<Msg>
-  msgOut?: (PlaySoundCmd | ScreenChangedEvt)[]
+  msgOut?: unknown[]
 } => {
-  if (PushScreenCmd.is(input.msgIn)) {
+  if (input.msgIn) return updateFromMsgIn(input)
+  if (input.msg) return updateFromMsg(input)
+  return { model: input.model }
+}
+
+const updateFromMsgIn = (input: {
+  ctx: AppFrontendCtxBase
+  msgIn?: unknown
+  model: Model
+}): {
+  model: Model
+  eff?: Eff<Msg>
+  msgOut?: unknown[]
+} => {
+  if (!input.msgIn) return { model: input.model }
+
+  const { msgIn } = input
+
+  if (PushScreenCmd.is(msgIn)) {
     return {
       model: {
-        currentScreen: input.msgIn.screen,
+        currentScreen: msgIn.screen,
       },
-      eff: Browser.pushQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(input.msgIn.screen)),
-      msgOut: input.msgIn.playSound ? [PlaySoundCmd.init(APP_SOUND.navForwardMin)] : [],
+      async eff() {
+        await input.ctx.navigation.push(SCREEN_QUERY_PARAM_NAME, encodeScreen(msgIn.screen))
+      },
+      msgOut: msgIn.playSound ? [PlaySoundCmd.init(APP_SOUND.navForwardMin)] : [],
     }
   }
 
-  if (ReplaceScreenCmd.is(input.msgIn)) {
+  if (ReplaceScreenCmd.is(msgIn)) {
     return {
       model: {
-        currentScreen: input.msgIn.screen,
+        currentScreen: msgIn.screen,
       },
-      eff: Browser.replaceQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(input.msgIn.screen)),
-      msgOut: input.msgIn.playSound ? [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] : [],
+      async eff() {
+        await input.ctx.navigation.replace(SCREEN_QUERY_PARAM_NAME, encodeScreen(msgIn.screen))
+      },
+      msgOut: msgIn.playSound ? [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] : [],
     }
   }
 
-  if (BackScreenCmd.is(input.msgIn)) {
+  if (BackScreenCmd.is(msgIn)) {
     return {
       model: input.model,
-      eff: Browser.back,
-      msgOut: input.msgIn.playSound ? [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] : [],
+      async eff() {
+        await input.ctx.navigation.back()
+      },
+      msgOut: msgIn.playSound ? [PlaySoundCmd.init(APP_SOUND.navBackwardMin)] : [],
     }
-  }
-
-  if (input.msg) {
-    return updateFromMsg(input)
   }
 
   return { model: input.model }
 }
 
-const updateFromMsg: typeof update = ({ msg, model }) => {
+const updateFromMsg: typeof update = ({ msg, model, ctx }) => {
   if (!msg) return { model }
 
   switch (msg.t) {
     case 'clicked-back': {
       return {
         model,
-        eff: Browser.back,
+        async eff() {
+          await ctx.navigation.back()
+        },
       }
     }
 
     case 'clicked-link': {
       return {
-        model: {
-          currentScreen: msg.screen,
+        model: { currentScreen: msg.screen },
+        async eff() {
+          await ctx.navigation.push(SCREEN_QUERY_PARAM_NAME, encodeScreen(msg.screen))
         },
-        eff: Browser.pushQueryParam(SCREEN_QUERY_PARAM_NAME, encodeScreen(msg.screen)),
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
       }
     }
@@ -152,17 +153,9 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
   }
 }
 
-//
-//
-//
-// Subscriptions
-//
-//
-//
-
-export const subscriptions: Sub<Msg> = Browser.onLocation(
-  (l): Msg => ({
+export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
+  return Sub.map(input.ctx.navigation.sub(SCREEN_QUERY_PARAM_NAME), (value) => ({
     t: 'screen-changed',
-    screen: locationToScreen(l),
-  }),
-)
+    screen: decodeScreen(value),
+  }))
+}
