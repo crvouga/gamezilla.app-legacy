@@ -1,12 +1,12 @@
 import type { Result } from '~/@/result'
 import { Sub } from '~/@/sub'
+import { ClientSessionId } from '~/@/wire/client-session-id'
 import type { SessionId } from '~/@/wire/session-id'
 import { Paginated } from '~/app/@/data/pagination'
 import type { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
-import { UserSessionDbQuery } from './interface-query'
-import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserSessionId } from '../user-session-id'
+import { UserSessionDbQuery } from './interface-query'
 
 export type IUserSessionDb = {
   findSessionIdsByUserId: (userId: UserId) => Promise<Result<string, SessionId[]>>

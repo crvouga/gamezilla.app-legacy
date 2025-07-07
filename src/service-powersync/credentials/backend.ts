@@ -37,7 +37,20 @@ const respond = async (input: { req: Request; ctx: Ctx; logger: ILogger }) => {
 
   logger.info('CredentialsBackend: Found session ID:', maybeSessionId)
 
-  const foundUserId = await input.ctx.userSessionDb.findUserIdBySessionId(maybeSessionId)
+  const foundUserId = await input.ctx.userSessionDb.query({
+    whereAnd: {
+      sessionId: {
+        equals: maybeSessionId,
+      },
+    },
+    order: {
+      createdAt: 'desc',
+    },
+    pagination: {
+      limit: 1,
+      offset: 0,
+    },
+  })
 
   if (isErr(foundUserId)) {
     logger.error('CredentialsBackend: Error finding userId for session:', foundUserId.error)
@@ -46,7 +59,7 @@ const respond = async (input: { req: Request; ctx: Ctx; logger: ILogger }) => {
     })
   }
 
-  const userId = foundUserId.value
+  const userId = foundUserId.value.items[0]?.userId
 
   if (!userId) {
     logger.info('CredentialsBackend: No userId found for session, checking for guest user')
