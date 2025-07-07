@@ -1,28 +1,21 @@
-import { PGlite } from '@electric-sql/pglite'
 import { Err, isErr, Ok } from '~/@/result'
 import type { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { deterministicJsonStringify } from '../json/deterministic-stringify'
 import type { ILogger } from '../logger/interface'
-import { Sleep } from '../promise/sleep'
+import { IPgliteInstance, IPgliteWorkerInstance } from '../pglite/types'
 import { PubSub, Sub } from '../sub'
 import { ISqlDb } from './interface'
 
 export type Config = {
   t: 'pglite'
-  databaseUrl?: string
-  logger: ILogger
-  simulateLatency?: Sleep
-}
+  pglite: Promise<IPgliteInstance | IPgliteWorkerInstance>
 
-let pgliteClient: PGlite
+  logger: ILogger
+}
 
 export const SqlDb = (config: Config): ISqlDb => {
   const logger = config.logger.child(['pglite'])
-
-  pgliteClient ??= new PGlite(config.databaseUrl, {
-    relaxedDurability: true,
-  })
 
   const events = Sub.create<{ t: 'queried' }>()
 
@@ -32,7 +25,7 @@ export const SqlDb = (config: Config): ISqlDb => {
     try {
       const start =
         typeof process !== 'undefined' && process.hrtime ? process.hrtime.bigint() : BigInt(Date.now() * 1000000)
-
+      const pgliteClient = await config.pglite
       const queried = await pgliteClient.query(sql)
 
       const end =
@@ -113,6 +106,7 @@ export const SqlDb = (config: Config): ISqlDb => {
 
     async notify(channel, payload) {
       try {
+        const pgliteClient = await config.pglite
         await pgliteClient.query(`NOTIFY ${channel}, $1`, [payload])
         return Ok(null)
       } catch (error) {
@@ -122,6 +116,7 @@ export const SqlDb = (config: Config): ISqlDb => {
     },
 
     async listen(channel, callback) {
+      const pgliteClient = await config.pglite
       const unlisten = await pgliteClient.listen(channel, (payload) => {
         callback({
           channel: channel,

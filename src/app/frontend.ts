@@ -8,6 +8,9 @@ import { Translator } from '~/@/l18n/generated'
 import { MigrationPolicy } from '~/@/migration-policy'
 import { Msg } from '~/@/msg/msg'
 import { Navigation } from '~/@/navigation'
+import { PgliteInstance } from '~/@/pglite/pglite-instance'
+import { PgliteWorkerInstance } from '~/@/pglite/pglite-worker-instance/pglite-worker-instance'
+import { IPgliteInstance } from '~/@/pglite/types'
 import { Psql } from '~/@/psql'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
@@ -77,9 +80,15 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     codec: topicMsgCodec,
   })
 
+  let pglite: Promise<IPgliteInstance>
+  pglite ??= PgliteWorkerInstance({ t: 'indexed-db', databaseName: 'db' })
+  pglite ??= PgliteInstance({ t: 'indexed-db', databaseName: 'db' })
+  pglite ??= PgliteInstance({ t: 'in-memory' })
+  pglite ??= PgliteWorkerInstance({ t: 'in-memory' })
+
   const sqlDb = SqlDb({
     t: 'pglite',
-    databaseUrl: 'idb://pglite',
+    pglite,
     logger,
   })
 
@@ -107,8 +116,8 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
 
   const migrationPolicy = MigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
-    logger: logger.maxLogLevel('debug'),
     kvDb: keyValueDb,
+    logger: logger.maxLogLevel('debug'),
   })
 
   const syncEngine = SyncEngine({

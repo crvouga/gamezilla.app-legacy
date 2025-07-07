@@ -1,4 +1,5 @@
 import 'fake-indexeddb/auto'
+import { PgliteInstance } from '~/@/pglite/pglite-instance'
 import { sleep } from '~/@/promise/sleep'
 import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
@@ -23,7 +24,7 @@ const Fixtures = async () => {
     configs.push({
       t: 'pglite',
       logger: Logger({ t: 'console', newLinePerMsg: true, namespace: ['sql-db'], maxLogLevel: 'debug' }),
-      databaseUrl: ':memory:',
+      pglite: PgliteInstance({ t: 'in-memory' }),
     })
   }
 

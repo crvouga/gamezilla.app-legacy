@@ -1,5 +1,6 @@
 import 'fake-indexeddb/auto'
 import { FileSystem } from '~/@/file-system'
+import { PgliteInstance } from '~/@/pglite/pglite-instance'
 import { describe, expect, test } from '~/@/test-runner'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
@@ -29,9 +30,12 @@ const Fixtures = async () => {
     })
   }
 
+  const pglite = PgliteInstance({ t: 'in-memory' })
+
   configs.push({
     t: 'pglite',
     logger: Logger({ t: 'console', newLinePerMsg: true, namespace: ['sql-db'], maxLogLevel: 'debug' }),
+    pglite,
   })
 
   if (CONFIG_SHARED.IS_INTEGRATION_TEST) {

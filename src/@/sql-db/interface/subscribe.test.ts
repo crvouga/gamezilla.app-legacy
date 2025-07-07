@@ -1,5 +1,6 @@
 import 'fake-indexeddb/auto'
 import { FileSystem } from '~/@/file-system'
+import { PgliteInstance } from '~/@/pglite/pglite-instance'
 import { sleep } from '~/@/promise/sleep'
 import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
@@ -24,10 +25,12 @@ const Fixtures = async () => {
     fs: FileSystem({ t: 'node' }),
   })
 
+  const pglite = PgliteInstance({ t: 'in-memory' })
+
   configs.push({
     t: 'pglite',
-    // logger: Logger({ t: 'console', newLinePerMsg: true, namespace: ['sql-db'], maxLogLevel: 'debug' }),
     logger: Logger({ t: 'noop' }),
+    pglite,
   })
 
   return Promise.all(configs.map(Fixture))

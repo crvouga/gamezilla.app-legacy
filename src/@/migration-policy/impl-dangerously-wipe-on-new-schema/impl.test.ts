@@ -1,14 +1,16 @@
 import { KeyValueDb } from '~/@/key-value-db'
 import { Logger } from '~/@/logger'
-import { s } from '~/@/schema'
+import { PgliteInstance } from '~/@/pglite/pglite-instance'
 import { unwrap } from '~/@/result'
+import { s } from '~/@/schema'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { describe, expect, test } from '~/@/test-runner'
 import { MigrationPolicy } from './impl'
 
 const Fixture = async () => {
   const logger = Logger({ t: 'noop' })
-  const sqlDb = SqlDb({ t: 'pglite', logger })
+  const pglite = PgliteInstance({ t: 'in-memory' })
+  const sqlDb = SqlDb({ t: 'pglite', pglite, logger })
   const kvDb = KeyValueDb({ t: 'sql-db', sqlDb, logger })
   const migrationPolicy = MigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
