@@ -9,7 +9,7 @@ import { s } from '../../schema'
 import { Config, SqlDb } from '../backend/impl'
 
 const Fixture = async (config: Config) => {
-  const sqlDb = await SqlDb(config)
+  const sqlDb = SqlDb(config)
   return {
     sqlDb,
   }

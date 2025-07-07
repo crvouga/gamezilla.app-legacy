@@ -4,6 +4,7 @@ import { s } from '~/@/schema'
 import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
+import { randomServerPort } from '../test/random-server-port'
 import { Topic } from './index'
 import { TopicMsgCodecJson } from './socket/topic-msg-codec'
 
@@ -27,16 +28,8 @@ const contract = Topic.initContract({
   },
 })
 
-const seen = new Set<number>()
-const randomPort = () => {
-  const port = 1000 + Math.floor(Math.random() * 9000)
-  if (seen.has(port)) return randomPort()
-  seen.add(port)
-  return port
-}
-
 const Fixture = async () => {
-  const port = randomPort()
+  const port = randomServerPort()
   let logger: ILogger
   logger ??= Logger({ t: 'noop' })
   logger ??= Logger({ t: 'console', newLinePerMsg: false, namespace: ['test'], maxLogLevel: 'info' })

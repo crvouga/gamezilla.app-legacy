@@ -76,7 +76,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     codec: topicMsgCodec,
   })
 
-  const sqlDb = await SqlDb({
+  const sqlDb = SqlDb({
     t: 'pglite',
     databaseUrl: 'idb://pglite',
     logger,

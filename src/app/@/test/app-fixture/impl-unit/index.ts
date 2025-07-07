@@ -14,12 +14,7 @@ export const FixtureAppUnitTestE2E = async (): Promise<IFixtureApp> => {
 
   const fs = FileSystem({ t: 'node' })
 
-  const sqlDb = await SqlDb({
-    t: 'better-sqlite3',
-    databasePath: ':memory:',
-    logger,
-    fs,
-  })
+  const sqlDb = SqlDb({ t: 'better-sqlite3', databasePath: ':memory:', logger, fs })
 
   const topic = Topic.initClient({ t: 'local', contract: AppTypes.topicContract, logger })
 

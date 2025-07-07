@@ -28,4 +28,5 @@ export type AppBackendCtxBase = {
   runtime: IRuntime
   migrationPolicy: IMigrationPolicy
   syncEngine: ISyncEngine
+  port: number
 }

@@ -29,7 +29,7 @@ import { SpacesBackend } from './spaces/backend'
 import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
 
-const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtxModule> => {
+const initCtx = async (config: { backendRole: BackendRole; port: number }): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'info' })
 
   logger.info(`Starting ${config.backendRole} backend...`)
@@ -109,6 +109,7 @@ const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtx
     httpServer,
     runtime,
     migrationPolicy,
+    port: config.port,
   }
 
   const wire = await WireBackend.initCtx({ ctx: ctxBase, topic })
@@ -136,7 +137,7 @@ const initSqlDb = async (config: {
   switch (config.backendRole) {
     case 'primary': {
       return {
-        sqlDb: await SqlDb({
+        sqlDb: SqlDb({
           t: 'postgres',
           databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
           logger: config.logger,
@@ -146,7 +147,7 @@ const initSqlDb = async (config: {
     }
     case 'edge': {
       return {
-        sqlDb: await SqlDb({
+        sqlDb: SqlDb({
           t: 'better-sqlite3',
           databasePath: ':memory:',
           logger: config.logger,
@@ -179,7 +180,7 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
     httpServer: input.ctx.httpServer,
   })
 
-  input.ctx.httpServer.start(CONFIG_BACKEND.PORT())
+  input.ctx.httpServer.start(input.ctx.port)
 
   WireBackend.worker(s, input)
   AuthBackend.worker(s, input)

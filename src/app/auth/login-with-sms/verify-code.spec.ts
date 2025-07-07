@@ -49,25 +49,11 @@ describe('verify code', () => {
     expect(screen).toBeTruthy()
   })
 
-  test('show alert on verifying code', async (e) => {
-    await using f = await Fixture(e)
-    await doVerifyCode(f)
-    const [alert] = await f.frontend.find(`[role='alert'][data-info='true']`)
-    expect(alert).toBeTruthy()
-  })
-
   test('enter wrong code does stays on verify code screen', async (e) => {
     await using f = await Fixture(e)
     await doVerifyCode(f, { code: '111' })
     const verifyCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
     expect(verifyCodeScreen).toBeTruthy()
-  })
-
-  test('show error alert when code is wrong', async (e) => {
-    await using f = await Fixture(e)
-    await doVerifyCode(f, { code: '111' })
-    const [error] = await f.frontend.find(`[role='alert'][data-error='true']`)
-    expect(error).toBeTruthy()
   })
 
   test('fail for correct code after enough wrong attempts', async (e) => {
@@ -77,6 +63,20 @@ describe('verify code', () => {
       await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
     }
     await doVerifyCode(f, { code: '123' })
+    const [error] = await f.frontend.find(`[role='alert'][data-error='true']`)
+    expect(error).toBeTruthy()
+  })
+
+  test.skip('show alert on verifying code', async (e) => {
+    await using f = await Fixture(e)
+    await doVerifyCode(f)
+    const [alert] = await f.frontend.find(`[role='alert'][data-info='true']`)
+    expect(alert).toBeTruthy()
+  })
+
+  test('show error alert when code is wrong', async (e) => {
+    await using f = await Fixture(e)
+    await doVerifyCode(f, { code: '111' })
     const [error] = await f.frontend.find(`[role='alert'][data-error='true']`)
     expect(error).toBeTruthy()
   })

@@ -11,6 +11,7 @@ import { type ISqlDb } from '~/@/sql-db'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
 import { SyncEngine } from '~/@/sync-engine'
+import { randomServerPort } from '~/@/test/random-server-port'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
@@ -53,7 +54,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const fs = FileSystem({ t: 'node' })
 
-  const sqlDbSqlite = await SqlDb({
+  const sqlDbSqlite = SqlDb({
     t: 'better-sqlite3',
     databasePath: ':memory:',
     logger,
@@ -76,6 +77,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const syncEngine = SyncEngine({ t: 'backend', logger })
 
   const ctx: AppBackendCtxBase = {
+    port: randomServerPort(),
     syncEngine,
     backendRole: 'primary',
     env: 'test',
@@ -106,7 +108,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     }
   }
 
-  const sqlDbPostgres = await SqlDb({
+  const sqlDbPostgres = SqlDb({
     t: 'postgres',
     databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
     logger,

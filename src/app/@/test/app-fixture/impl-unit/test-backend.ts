@@ -18,6 +18,7 @@ import { WireBackend } from '~/app/wire/backend'
 import { BackendInstanceId } from '../../../backend/backend-instance/backend-instance-id'
 import { AppBackendCtxBase } from '../../../backend/ctx'
 import { SyncEngine } from '~/@/sync-engine'
+import { randomServerPort } from '~/@/test/random-server-port'
 
 export const TestBackend = async (config: {
   sqlDb: ISqlDb
@@ -60,6 +61,7 @@ export const TestBackend = async (config: {
   const syncEngine = SyncEngine({ t: 'http-client', logger })
 
   const ctxBase: AppBackendCtxBase = {
+    port: randomServerPort(),
     syncEngine,
     backendRole: 'primary',
     migrationPolicy,

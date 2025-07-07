@@ -97,7 +97,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
     }),
   })
 
-  const sqlDbSqlite = await SqlDb({
+  const sqlDbSqlite = SqlDb({
     t: 'better-sqlite3',
     databasePath: ':memory:',
     logger,
@@ -118,7 +118,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
       name: 'postgres',
       keyValueDb: KeyValueDb({
         t: 'sql-db',
-        sqlDb: await SqlDb({
+        sqlDb: SqlDb({
           t: 'postgres',
           logger,
           databaseUrl: CONFIG_BACKEND.DATABASE_URL(),

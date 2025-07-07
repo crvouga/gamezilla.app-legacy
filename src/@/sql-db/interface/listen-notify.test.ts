@@ -9,7 +9,7 @@ import { Config, SqlDb } from '../backend/impl'
 import { SqlDbNotification } from '../interface'
 
 const Fixture = async (config: Config) => {
-  const sqlDb = await SqlDb(config)
+  const sqlDb = SqlDb(config)
   return {
     sqlDb,
   }
