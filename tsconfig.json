@@ -48,7 +48,7 @@
     "noEmit": false,
     "allowImportingTsExtensions": false,
     "moduleDetection": "force",
-    "types": ["vite/client", "vite-plugin-pwa/client"],
+    "types": ["vite/client"],
     "allowJs": false,
 
     //

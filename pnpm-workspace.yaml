@@ -1,9 +1,6 @@
 onlyBuiltDependencies:
-  - '@journeyapps/wa-sqlite'
   - '@swc/core'
   - '@tailwindcss/oxide'
-  - argon2
-  - bcrypt
   - better-sqlite3
   - esbuild
   - inferno

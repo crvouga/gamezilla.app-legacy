@@ -32,10 +32,6 @@ const init = async (vdomImpl: VDomImpl) => {
       const { initSnabbdom } = await import('./impl-snabbdom')
       return initSnabbdom()
     }
-    case 'hyperapp': {
-      const { initHyperapp } = await import('./impl-hyperapp')
-      return initHyperapp()
-    }
   }
 }
 

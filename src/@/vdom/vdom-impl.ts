@@ -2,9 +2,9 @@ import { minBy } from '../array/min-by'
 import { TranslatedText } from '../l18n'
 import { editDistance } from '../string/edit-distance'
 
-const ALL = ['hyperapp', 'inferno', 'preact', 'react', 'snabbdom'] as const
+const ALL = ['inferno', 'preact', 'react', 'snabbdom'] as const
 
-const HIDDEN: VDomImpl[] = ['hyperapp']
+const HIDDEN: VDomImpl[] = []
 
 export type VDomImpl = (typeof ALL)[number]
 
@@ -41,8 +41,6 @@ const setUrl = (vdomImpl: VDomImpl) => {
 
 const toName = (impl: VDomImpl): TranslatedText => {
   switch (impl) {
-    case 'hyperapp':
-      return TranslatedText.of('Hyperapp')
     case 'inferno':
       return TranslatedText.of('Inferno')
     case 'preact':
