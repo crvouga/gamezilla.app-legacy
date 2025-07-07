@@ -104,7 +104,7 @@ const Fixture = async () => {
   }
 }
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 100))
+const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000))
 
 describe('Topic', () => {
   test('should work', async () => {

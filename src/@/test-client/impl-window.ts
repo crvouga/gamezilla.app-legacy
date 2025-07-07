@@ -1,6 +1,6 @@
 import { IAudioPlayer } from '../audio-player'
 import { TimeSpan } from '../time/time-span'
-import type { ITestClientBase, ITestNode, TestAction, TestClientQueryConfig } from './interface'
+import type { ITestClientBase, ITestNode, TestAction, FindConfig } from './interface'
 import { isElementVisible } from './is-element-visible'
 
 export type BaseConfig = {
@@ -18,7 +18,7 @@ export const TestClient = (config: Config): ITestClientBase => {
     async audio() {
       return config.audioPlayer.played()
     },
-    async find(selector: string, queryConfig?: TestClientQueryConfig) {
+    async find(selector: string, queryConfig?: FindConfig) {
       const maxWait = queryConfig?.maxWait ?? config.maxWait
       const pollInterval = queryConfig?.poll ?? config.poll
       return find(document, selector, {
@@ -77,7 +77,7 @@ export const elementToTestNode = (node: Element): ITestNode => {
     async isVisible() {
       return isElementVisible(node)
     },
-    async find(selector: string, queryConfig?: TestClientQueryConfig) {
+    async find(selector: string, queryConfig?: FindConfig) {
       return find(node, selector, {
         maxWait: queryConfig?.maxWait ?? TimeSpan.milliseconds(1000),
         pollInterval: queryConfig?.poll ?? TimeSpan.milliseconds(10),

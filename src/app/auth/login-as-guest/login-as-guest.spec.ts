@@ -41,6 +41,7 @@ const doContinueAsGuest = async (f: IFixtureApp) => {
   expect(screen).toBeTruthy()
   //
   const button = await f.frontend.findByTestId(AuthFrontend.TEST_ID.CONTINUE_AS_GUEST_BUTTON)
+  debugger
   expect(button).toBeTruthy()
   await button!.do({ t: 'click' })
 }

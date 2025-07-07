@@ -28,6 +28,7 @@ import { SpacesBackend } from './spaces/backend'
 import * as AppTypes from './types'
 import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
+import { SinglePageApp } from '~/@/single-page-app'
 
 const initCtx = async (config: { backendRole: BackendRole; port: number }): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'info' })
@@ -94,7 +95,10 @@ const initCtx = async (config: { backendRole: BackendRole; port: number }): Prom
     logger,
   })
 
+  const fileSystem = FileSystem({ t: 'node' })
+
   const ctxBase: AppBackendCtxBase = {
+    fileSystem,
     syncEngine,
     backendRole: config.backendRole,
     env,
@@ -173,6 +177,13 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
     logger: input.ctx.logger,
     contract: AppTypes.rpcContract,
     server: AppBackend.rpc({ ctx: input.ctx }),
+  })
+
+  SinglePageApp.registerRespond({
+    httpServer: input.ctx.httpServer,
+    directory: './dist',
+    indexFilename: 'index.html',
+    fs: input.ctx.fileSystem,
   })
 
   HelloBackend.registerRespond({

@@ -6,15 +6,19 @@ import { AppTypes } from '~/app'
 import { IFixtureApp } from '../interface'
 import { TestBackend } from './test-backend'
 import { TestFrontend } from './test-frontend'
+import { ISqlDb } from '~/@/sql-db'
+import { PgliteInstance } from '~/@/pglite/pglite-instance'
 
 export const FixtureAppUnitTestE2E = async (): Promise<IFixtureApp> => {
   let logger: ILogger
-  logger ??= Logger({ t: 'noop' })
   logger ??= Logger({ t: 'console', namespace: ['fixture'], newLinePerMsg: false, maxLogLevel: 'info' })
+  logger ??= Logger({ t: 'noop' })
 
   const fs = FileSystem({ t: 'node' })
 
-  const sqlDb = SqlDb({ t: 'better-sqlite3', databasePath: ':memory:', logger, fs })
+  let sqlDb: ISqlDb
+  sqlDb ??= SqlDb({ t: 'better-sqlite3', databasePath: ':memory:', logger, fs })
+  sqlDb ??= SqlDb({ t: 'pglite', pglite: PgliteInstance({ t: 'in-memory' }), logger })
 
   const topic = Topic.initClient({ t: 'local', contract: AppTypes.topicContract, logger })
 

@@ -9,7 +9,7 @@ export type TestAction =
   | { t: 'submit' }
 
 export type IFindable = {
-  find: (selector: string, config?: TestClientQueryConfig) => Promise<ITestNode[]>
+  find: (selector: string, config?: FindConfig) => Promise<ITestNode[]>
 }
 
 export type ITestNode = IFindable & {
@@ -19,7 +19,7 @@ export type ITestNode = IFindable & {
   isVisible: () => Promise<boolean>
 }
 
-export type TestClientQueryConfig = {
+export type FindConfig = {
   poll?: TimeSpan
   maxWait?: TimeSpan
   onPoll?: () => void
