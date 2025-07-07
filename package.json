@@ -23,7 +23,7 @@
     "cir-deps:frontend": "pnpm exec dpdm --progress --no-warning --no-tree ./src/frontend.ts",
     "clean-install": "rm -rf node_modules && rm -rf dist && rm pnpm-lock.yaml && pnpm install",
     "cloc": "pnpm exec cloc src",
-    "db": "psql postgresql://postgres:postgres@localhost:5438/postgres?sslmode=disable",
+    "db": "psql postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable",
     "db:down": "pnpm exec dbmate down",
     "db:dump": "pnpm exec dbmate dump",
     "db:new": "pnpm exec dbmate new",
