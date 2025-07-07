@@ -1,6 +1,3 @@
-import bcrypt from 'bcrypt'
-import argon2 from 'argon2'
-import { createHash } from 'crypto'
 import { HashValue } from './hash-value'
 import type { IHashing } from './hashing'
 
@@ -9,7 +6,8 @@ export const Hashing = (): IHashing => {
     async hash(input) {
       switch (input.algo.t) {
         case 'bcrypt': {
-          const hashedInput = await bcrypt.hash(input.password, input.algo.cost)
+          const { hash } = await import('bcrypt')
+          const hashedInput = await hash(input.password, input.algo.cost)
           const value = HashValue.fromString(hashedInput)
 
           return {
@@ -18,8 +16,9 @@ export const Hashing = (): IHashing => {
           }
         }
         case 'argon2d': {
-          const hashedInput = await argon2.hash(input.password, {
-            type: argon2.argon2d,
+          const { hash, argon2d } = await import('argon2')
+          const hashedInput = await hash(input.password, {
+            type: argon2d,
             memoryCost: input.algo.memoryCost,
             timeCost: input.algo.timeCost,
           })
@@ -31,8 +30,9 @@ export const Hashing = (): IHashing => {
           }
         }
         case 'argon2i': {
-          const hashedInput = await argon2.hash(input.password, {
-            type: argon2.argon2i,
+          const { hash, argon2i } = await import('argon2')
+          const hashedInput = await hash(input.password, {
+            type: argon2i,
             memoryCost: input.algo.memoryCost,
             timeCost: input.algo.timeCost,
           })
@@ -44,8 +44,9 @@ export const Hashing = (): IHashing => {
           }
         }
         case 'argon2id': {
-          const hashedInput = await argon2.hash(input.password, {
-            type: argon2.argon2id,
+          const { hash, argon2id } = await import('argon2')
+          const hashedInput = await hash(input.password, {
+            type: argon2id,
             memoryCost: input.algo.memoryCost,
             timeCost: input.algo.timeCost,
           })
@@ -57,6 +58,7 @@ export const Hashing = (): IHashing => {
           }
         }
         case 'sha256': {
+          const { createHash } = await import('crypto')
           const hasher = createHash('sha256')
           hasher.update(input.password)
           const hashedInput = hasher.digest('hex')
@@ -75,10 +77,13 @@ export const Hashing = (): IHashing => {
         case 'argon2d':
         case 'argon2i':
         case 'argon2id':
-          return argon2.verify(input.hash.value.toString(), input.password)
+          const { verify } = await import('argon2')
+          return verify(input.hash.value.toString(), input.password)
         case 'bcrypt':
-          return bcrypt.compare(input.password, input.hash.value.toString())
+          const { compare } = await import('bcrypt')
+          return compare(input.password, input.hash.value.toString())
         case 'sha256': {
+          const { createHash } = await import('crypto')
           const hasher = createHash('sha256')
           hasher.update(input.password)
           const hashedInput = hasher.digest('hex')

@@ -1,26 +1,13 @@
 import tailwindcss from '@tailwindcss/vite'
-import { VitePWA } from 'vite-plugin-pwa'
-import wasm from 'vite-plugin-wasm'
-import { defineConfig } from 'vitest/config'
 import path from 'path'
+import { defineConfig } from 'vitest/config'
 import { DotEnv } from './src/@/dotenv/dotenv'
 import { FileSystem } from './src/@/file-system'
-
-const KILOBYTE = 1024
-const MEGABYTE = KILOBYTE * KILOBYTE
 
 DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env'] })
 
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    wasm(),
-    VitePWA({
-      workbox: {
-        maximumFileSizeToCacheInBytes: 3 * MEGABYTE,
-      },
-    }),
-  ],
+  plugins: [tailwindcss()],
   test: {
     coverage: {
       provider: 'v8',
@@ -46,14 +33,12 @@ export default defineConfig({
     // },
   },
   define: {
-    global: 'globalThis',
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
   },
   resolve: {
     alias: {
       '~': path.resolve(__dirname, 'src'),
       inferno: 'inferno/dist/index.dev.mjs',
-      // inferno: 'inferno/dist/index.esm.js',
     },
   },
 })

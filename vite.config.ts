@@ -1,35 +1,12 @@
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 import { defineConfig } from 'vite'
-import wasm from 'vite-plugin-wasm'
-
-const KILOBYTE = 1024
-const MEGABYTE = KILOBYTE * KILOBYTE
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    wasm(),
-    // VitePWA()
-  ],
-  optimizeDeps: {
-    exclude: ['@electric-sql/pglite', 'bcrypt', 'argon2', 'better-sqlite3', 'ws', '@mapbox/node-pre-gyp'],
-  },
+  plugins: [tailwindcss()],
   define: {
-    global: 'globalThis',
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-  },
-  build: {
-    target: ['es2022', 'chrome100', 'safari15'],
-    chunkSizeWarningLimit: 3 * MEGABYTE,
-    rollupOptions: {
-      external: ['bcrypt', 'argon2', 'better-sqlite3', 'ws', '@mapbox/node-pre-gyp', 'crypto'],
-    },
-  },
-  worker: {
-    format: 'es',
-    plugins: () => [wasm()],
   },
   resolve: {
     alias: {
