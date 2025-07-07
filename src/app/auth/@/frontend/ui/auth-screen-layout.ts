@@ -5,7 +5,7 @@ import { VDom } from '~/@/vdom/vdom'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 
 export const AuthScreenLayout = (input: {
-  dataTestId: string
+  testId: string
   ctx: {
     t: Translator
     screenSize: ScreenSize
@@ -16,7 +16,7 @@ export const AuthScreenLayout = (input: {
   return h(
     'div',
     {
-      'data-testid': input.dataTestId,
+      'data-testid': input.testId,
       class: cn('flex h-full flex-col items-center', input.center ? 'justify-center' : 'justify-start'),
     },
     [h('div', { class: 'flex w-full max-w-xl flex-col items-center justify-center gap-4 p-6' }, input.children)],

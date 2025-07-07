@@ -7,5 +7,5 @@ export type INavigation = {
   back: () => Promise<Result<string, null>>
   clear: () => Promise<Result<string, null>>
   get: (name: string) => string | null
-  sub: (name: string) => Sub<string>
+  sub: (name: string) => Sub<string | null>
 }

@@ -19,12 +19,12 @@ export const AuthScreenFormLayout = (input: {
   submitLoading: boolean
   submitDisabled: boolean
   onSubmit: () => void
-  dataTestId: string
+  testId: string
 }) => {
   return h(
     AuthScreenLayout,
     {
-      dataTestId: input.dataTestId,
+      testId: input.testId,
       ctx: input.ctx,
       center: false,
     },

@@ -15,7 +15,6 @@ type Input = {
   onClick?: () => void
   color?: Color
   dataTestId?: string
-
   link?: boolean
   selected?: boolean
 }
@@ -36,7 +35,7 @@ export const ListItem = (input: Input) => {
           dataTestId: input.dataTestId,
           name: input.primary,
           class: cn(input.class, BASE_CLASS, toColorClass(input)),
-          'aria-selected': input.selected,
+          'aria-selected': input.selected ? 'true' : 'false',
         },
         [
           h(ListItemContent, {

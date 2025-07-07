@@ -11,25 +11,26 @@ export type Config = {
 export const Navigation = (config: Config): INavigation => {
   const logger = config.logger.child(['navigation'])
   let history: { name: string; value: string }[] = []
-  const subsByName: Record<string, PubSub<string>> = {}
+  const subsByName: Record<string, PubSub<string | null>> = {}
 
   const get = (name: string) => {
     return history.find((h) => h.name === name)?.value ?? null
   }
 
-  const onChange = (name: string) => {
-    const sub = subsByName[name]
-    if (!sub) return
-    const value = get(name)
-    if (!value) return
-    sub.pub(value)
+  const onChange = () => {
+    for (const name in subsByName) {
+      const sub = subsByName[name]
+      if (!sub) return
+      const value = get(name)
+      sub.pub(value)
+    }
   }
 
   return {
     async push(name: string, value: string) {
       logger.debug(`push ${name}=${value}`)
       history.push({ name, value })
-      onChange(name)
+      onChange()
       return Ok(null)
     },
     async replace(name: string, value: string) {
@@ -39,7 +40,7 @@ export const Navigation = (config: Config): INavigation => {
       } else {
         history.push({ name, value })
       }
-      onChange(name)
+      onChange()
       return Ok(null)
     },
     async back() {
@@ -47,7 +48,7 @@ export const Navigation = (config: Config): INavigation => {
       if (history.length > 0) {
         history.pop()
       }
-      onChange(history[history.length - 1]?.name ?? '')
+      onChange()
       return Ok(null)
     },
     get(name: string) {
@@ -57,13 +58,14 @@ export const Navigation = (config: Config): INavigation => {
     sub(name: string) {
       const existing = subsByName[name]
       if (existing) return existing
-      const sub = Sub.create<string>()
+      const sub = Sub.create<string | null>()
       subsByName[name] = sub
-      onChange(name)
+      onChange()
       return sub
     },
     async clear() {
       history = []
+      onChange()
       return Ok(null)
     },
   }

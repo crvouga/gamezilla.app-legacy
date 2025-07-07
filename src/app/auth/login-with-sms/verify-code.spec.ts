@@ -74,6 +74,7 @@ describe('verify code', () => {
     await using f = await Fixture(e)
     for (let i = 0; i < 5; i++) {
       await doVerifyCode(f, { code: '111' })
+      await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
     }
     await doVerifyCode(f, { code: '123' })
     const [error] = await f.frontend.find(`[role='alert'][data-error='true']`)

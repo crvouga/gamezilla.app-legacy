@@ -203,7 +203,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
   return h(
     AuthScreenLayout,
     {
-      dataTestId: TEST_ID.LOGIN_SCREEN,
+      testId: TEST_ID.LOGIN_SCREEN,
       ctx: input.ctx,
       center: true,
     },

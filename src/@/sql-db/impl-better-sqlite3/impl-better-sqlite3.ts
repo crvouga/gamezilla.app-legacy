@@ -7,6 +7,7 @@ import { deterministicJsonStringify } from '../../json/deterministic-stringify'
 import type { ILogger } from '../../logger/interface'
 import { PubSub, Sub } from '../../sub'
 import type { ISqlDb } from '../interface'
+import { TimeSpan } from '~/@/time/time-span'
 const Database = (DatabaseNamespace as any).default || DatabaseNamespace
 
 export type Config = {
@@ -20,6 +21,7 @@ export type Config = {
     timeout?: number
     verbose?: (message?: any, ...additionalArgs: any[]) => void
   }
+  pollInterval?: TimeSpan
 }
 
 export const SqlDb = async (config: Config): Promise<ISqlDb> => {
@@ -117,7 +119,7 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
     }
   }
 
-  const subsByQuery = new Map<string, PubSub<unknown>>()
+  const subsByQuery = new Map<string, { sub: PubSub<unknown>; cleanUp: () => void }>()
   const listeners = new Map<string, Set<(notification: any) => void>>()
 
   return {
@@ -135,20 +137,26 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
       type Row = s.Infer<typeof input.schema>
 
       if (sub) {
-        return Sub.map(sub as Sub<Row[]>, mapper)
+        return Sub.map(sub.sub as Sub<Row[]>, mapper)
       }
 
       const subNew = Sub.create<unknown>()
-
-      subsByQuery.set(queryKey, subNew)
       const pub = async () => {
         const queried = await query(input)
         if (isErr(queried)) return
         subNew.pub(queried.value)
       }
+
+      const cleanUp: (() => void)[] = []
+
+      if (config.pollInterval) {
+        const interval = setInterval(pub, TimeSpan.toMilliseconds(config.pollInterval))
+        cleanUp.push(() => clearInterval(interval))
+      }
+
+      subsByQuery.set(queryKey, { sub: subNew, cleanUp: () => cleanUp.forEach((c) => c()) })
       events.sub(pub)
       pub()
-
       return Sub.map(subNew as Sub<Row[]>, mapper)
     },
 

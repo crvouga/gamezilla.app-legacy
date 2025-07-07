@@ -251,7 +251,8 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
 
     sub(input, mapper) {
       const { sql, vars } = queryToSql(input)
-      return sqlDb.sub({ schema: Row, sql, vars }, (rows) => mapper(rows.map(rowToUserSession)))
+      const sub = sqlDb.sub({ schema: Row, sql, vars }, (rows) => mapper(rows.map(rowToUserSession)))
+      return sub
     },
   }
 }

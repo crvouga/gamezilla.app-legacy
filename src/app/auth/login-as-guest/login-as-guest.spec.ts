@@ -1,17 +1,18 @@
 import { difference } from '~/@/array/difference'
 import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
+import { FixtureAppE2E } from '~/app/@/test/app-fixture'
 import { IFixtureApp } from '~/app/@/test/app-fixture/interface'
-import { FixtureAuthE2E } from '../@/test/e2e'
 import { AuthFrontend } from '../frontend'
+import { SpacesFrontend } from '~/app/spaces/frontend'
 
-const Fixture = FixtureAuthE2E
+const Fixture = FixtureAppE2E
 
 describe('login as guest', () => {
   test('login as guest screen', async (e) => {
     await using f = await Fixture(e)
     await doContinueAsGuest(f)
-    const screen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.LOGIN_SCREEN)
+    const screen = await f.frontend.findByTestId(SpacesFrontend.TEST_ID.SPACE_LIST_SCREEN)
     expect(screen).toBeTruthy()
   })
 
@@ -36,6 +37,9 @@ describe('login as guest', () => {
 })
 
 const doContinueAsGuest = async (f: IFixtureApp) => {
+  const screen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.LOGIN_SCREEN)
+  expect(screen).toBeTruthy()
+  //
   const button = await f.frontend.findByTestId(AuthFrontend.TEST_ID.CONTINUE_AS_GUEST_BUTTON)
   expect(button).toBeTruthy()
   await button!.do({ t: 'click' })

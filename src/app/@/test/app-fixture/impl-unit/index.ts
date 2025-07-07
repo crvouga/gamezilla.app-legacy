@@ -1,6 +1,7 @@
 import { FileSystem } from '~/@/file-system'
 import { ILogger, Logger } from '~/@/logger'
 import { SqlDb } from '~/@/sql-db/backend/impl'
+import { TimeSpan } from '~/@/time/time-span'
 import { Topic } from '~/@/topic'
 import { AppTypes } from '~/app'
 import { IFixtureApp } from '../interface'
@@ -14,7 +15,13 @@ export const FixtureAppUnitTestE2E = async (): Promise<IFixtureApp> => {
 
   const fs = FileSystem({ t: 'node' })
 
-  const sqlDb = await SqlDb({ t: 'better-sqlite3', databasePath: ':memory:', logger, fs })
+  const sqlDb = await SqlDb({
+    t: 'better-sqlite3',
+    databasePath: ':memory:',
+    logger,
+    fs,
+    pollInterval: TimeSpan.milliseconds(10),
+  })
 
   const topic = Topic.initClient({ t: 'local', contract: AppTypes.topicContract, logger })
 

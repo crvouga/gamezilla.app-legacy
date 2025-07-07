@@ -9,7 +9,7 @@ export const TextField = (input: {
   startIcon?: VDom
   type?: 'text' | 'password' | 'email' | 'number' | 'search' | 'tel' | 'url'
   autoFocus?: boolean
-  dataTestId?: string
+  testId?: string
   id: string
   label: TranslatedText
   value: string | number
@@ -36,7 +36,7 @@ export const TextField = (input: {
       [
         h('input', {
           role: 'textbox',
-          'data-testid': input.dataTestId,
+          'data-testid': input.testId,
           'aria-label': input.label,
           id: input.id,
           autoFocus: input.autoFocus,

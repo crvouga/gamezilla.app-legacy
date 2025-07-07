@@ -91,11 +91,12 @@ export const TestFrontend = async (config: {
 
   const client = await TestClient({
     t: 'happydom',
-    maxWait: TimeSpan.seconds(5),
+    maxWait: TimeSpan.seconds(1),
     poll: TimeSpan.milliseconds(1),
     audioPlayer: ctx.audioPlayer,
   })
 
+  await navigation.clear()
   document.body.innerHTML = '<div id="root"></div>'
   const root = document.getElementById('root')!
   await VDomEngine.initialize(CONFIG_FRONTEND.VDOM_IMPL)
@@ -105,11 +106,10 @@ export const TestFrontend = async (config: {
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
     render: (input) => render(h(AppFrontend.View, { ...input, ctx }), root),
-    crash: (input) => console.error(input),
+    crash: (input) => logger.error(input),
   })
 
   const cleanUp = async () => {
-    await navigation.clear()
     program.cleanUp()
   }
 

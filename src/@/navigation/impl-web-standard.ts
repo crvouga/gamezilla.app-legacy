@@ -10,18 +10,23 @@ export type Config = {
 
 export const Navigation = (config: Config): INavigation => {
   const logger = config.logger.child(['navigation'])
-  const subsByName: Record<string, PubSub<string>> = {}
+  const subsByName: Record<string, PubSub<string | null>> = {}
 
-  const get = (name: string) => {
-    return new URLSearchParams(window.location.search).get(name) ?? null
+  const getAll = () => {
+    return new URLSearchParams(window.location.search)
   }
 
-  const onChange = (name: string) => {
-    const sub = subsByName[name]
-    if (!sub) return
-    const value = get(name)
-    if (!value) return
-    sub.pub(value)
+  const get = (name: string) => {
+    return getAll().get(name) ?? null
+  }
+
+  const onChange = () => {
+    for (const name in subsByName) {
+      const sub = subsByName[name]
+      if (!sub) return
+      const value = get(name)
+      sub.pub(value)
+    }
   }
 
   return {
@@ -32,8 +37,8 @@ export const Navigation = (config: Config): INavigation => {
         url.searchParams.set(name, value)
         window.history.pushState(null, '', url.toString())
         window.dispatchEvent(new Event('popstate'))
-        await new Promise((resolve) => setTimeout(resolve, 0))
-        onChange(name)
+        await new Promise((resolve) => setTimeout(resolve, 1))
+        onChange()
         return Ok(null)
       } catch (e) {
         logger.error(e)
@@ -47,8 +52,8 @@ export const Navigation = (config: Config): INavigation => {
         url.searchParams.set(name, value)
         window.history.replaceState(null, '', url.toString())
         window.dispatchEvent(new Event('popstate'))
-        await new Promise((resolve) => setTimeout(resolve, 0))
-        onChange(name)
+        await new Promise((resolve) => setTimeout(resolve, 1))
+        onChange()
         return Ok(null)
       } catch (e) {
         logger.error(e)
@@ -59,10 +64,8 @@ export const Navigation = (config: Config): INavigation => {
       try {
         logger.debug('back')
         window.history.back()
-        await new Promise((resolve) => setTimeout(resolve, 0))
-        for (const paramName of new URLSearchParams(window.location.search).keys()) {
-          onChange(paramName)
-        }
+        await new Promise((resolve) => setTimeout(resolve, 1))
+        onChange()
         return Ok(null)
       } catch (e) {
         logger.error(e)
@@ -76,17 +79,15 @@ export const Navigation = (config: Config): INavigation => {
     sub(name: string) {
       const existing = subsByName[name]
       if (existing) return existing
-      const sub = Sub.create<string>()
+      const sub = Sub.create<string | null>()
       subsByName[name] = sub
       return sub
     },
     async clear() {
       try {
-        window.history.replaceState({}, '', '/')
-        await new Promise((resolve) => setTimeout(resolve, 0))
-        for (const paramName of new URLSearchParams(window.location.search).keys()) {
-          onChange(paramName)
-        }
+        window.history.replaceState(null, '', '/')
+        await new Promise((resolve) => setTimeout(resolve, 1))
+        onChange()
         return Ok(null)
       } catch (e) {
         logger.error(e)

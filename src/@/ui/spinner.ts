@@ -1,9 +1,10 @@
 import { h } from '~/@/vdom/h'
 import { cn } from './cn'
+import { IconSpinner } from './icon'
 
 export const Spinner = (props: { class?: string }) => {
-  return h('div', {
-    class: `animate-spin rounded-full border-2 border-neutral-600 border-t-blue-500 ${props.class ?? ''}`,
+  return h(IconSpinner, {
+    class: `animate-spin ${props.class ?? ''}`,
   })
 }
 

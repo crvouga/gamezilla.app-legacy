@@ -185,7 +185,7 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
 }
 
 const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: Eff<MsgFrontend> } => {
-  const frontend = FrontendFrontend.init({ ctx: input.ctx })
+  const frontend = FrontendFrontend.init(input)
 
   const ctx: FrontendCtxModule = {
     ...input.ctx,

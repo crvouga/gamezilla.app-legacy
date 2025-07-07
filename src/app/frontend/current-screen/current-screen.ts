@@ -121,15 +121,16 @@ const updateFromMsgIn = (input: {
   return { model: input.model }
 }
 
-const updateFromMsg: typeof update = ({ msg, model, ctx }) => {
-  if (!msg) return { model }
+const updateFromMsg: typeof update = (input) => {
+  if (!input.msg) return { model: input.model }
+  const { msg } = input
 
   switch (msg.t) {
     case 'clicked-back': {
       return {
-        model,
+        model: input.model,
         async eff() {
-          await ctx.navigation.back()
+          await input.ctx.navigation.back()
         },
       }
     }
@@ -137,10 +138,10 @@ const updateFromMsg: typeof update = ({ msg, model, ctx }) => {
     case 'clicked-link': {
       return {
         model: { currentScreen: msg.screen },
-        async eff() {
-          await ctx.navigation.push(SCREEN_QUERY_PARAM_NAME, encodeScreen(msg.screen))
-        },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
+        async eff() {
+          await input.ctx.navigation.push(SCREEN_QUERY_PARAM_NAME, encodeScreen(msg.screen))
+        },
       }
     }
 

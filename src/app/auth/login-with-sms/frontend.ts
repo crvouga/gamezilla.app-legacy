@@ -225,7 +225,7 @@ const View: FrontendModule['View'] = (input) => {
 
 const ViewSendCode: FrontendModule['View'] = (input) => {
   return h(AuthScreenFormLayout, {
-    dataTestId: TEST_ID.SEND_CODE_SCREEN,
+    testId: TEST_ID.SEND_CODE_SCREEN,
     ctx: input.ctx,
     title: input.ctx.t('auth-sms.send-code'),
     onBack: () => {
@@ -250,7 +250,7 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
 
         h(TextField, {
           id: 'phoneNumberInput',
-          dataTestId: 'phone-number-input',
+          testId: 'phone-number-input',
           label: input.ctx.t('auth-sms.phone-number'),
           type: 'tel',
           startIcon: h(IconMobilePhone, { class: 'h-5 w-5' }),
@@ -270,7 +270,7 @@ const ViewVerifyCode: FrontendModule['View'] = (input) => {
   const phoneNumber = input.ctx.currentScreen.phoneNumber
 
   return h(AuthScreenFormLayout, {
-    dataTestId: TEST_ID.VERIFY_CODE_SCREEN,
+    testId: TEST_ID.VERIFY_CODE_SCREEN,
     ctx: input.ctx,
     title: input.ctx.t('auth-sms.verify-code'),
     onBack: () => {

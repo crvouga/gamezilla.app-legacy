@@ -2,7 +2,7 @@ import { Eff } from '~/@/eff'
 import { Msg } from '~/@/msg/msg'
 import { Sub } from '~/@/sub'
 import { APP_SOUND } from '../@/frontend/app-sound'
-import { AnonymousFrontendCtx, AppFrontendCtxBase } from '../@/frontend/ctx'
+import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PreloadSoundsCmd } from '../@/frontend/preload-sounds-cmd.$msg'
 import { CopyToClipboardFrontend } from './copy-to-clipboard'
 import { CurrentScreenFrontend } from './current-screen'
@@ -13,7 +13,7 @@ import { type ModelFrontend, type MsgFrontend } from './types'
 import { VisibilityFrontend } from './visibility'
 
 const init = (input: {
-  ctx: AnonymousFrontendCtx
+  ctx: AppFrontendCtxBase
 }): {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
