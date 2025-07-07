@@ -5,6 +5,8 @@ import { MigrationPolicy } from '~/@/migration-policy'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { Runtime } from '~/@/runtime'
 import { ISqlDb } from '~/@/sql-db'
+import { SyncEngine } from '~/@/sync-engine/sync-engine-server'
+import { randomServerPort } from '~/@/test/random-server-port'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
@@ -17,8 +19,6 @@ import { BackendCtxModule, topicContract } from '~/app/types'
 import { WireBackend } from '~/app/wire/backend'
 import { BackendInstanceId } from '../../../backend/backend-instance/backend-instance-id'
 import { AppBackendCtxBase } from '../../../backend/ctx'
-import { SyncEngine } from '~/@/sync-engine'
-import { randomServerPort } from '~/@/test/random-server-port'
 
 export const TestBackend = async (config: {
   sqlDb: ISqlDb

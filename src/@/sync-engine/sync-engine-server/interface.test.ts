@@ -1,8 +1,8 @@
+import { Logger } from '~/@/logger'
 import { Ok } from '~/@/result'
 import { describe, expect, test } from '~/@/test-runner'
-import { Logger } from '../logger'
-import { ClientSessionId } from '../wire/client-session-id'
-import { SessionId } from '../wire/session-id'
+import { ClientSessionId } from '~/@/wire/client-session-id'
+import { SessionId } from '~/@/wire/session-id'
 import { SyncEngine } from './impl'
 
 const Fixture = () => {

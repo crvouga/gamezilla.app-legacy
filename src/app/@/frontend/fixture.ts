@@ -9,6 +9,7 @@ import { Navigation } from '~/@/navigation'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screens/generated/screens'
 import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
+import { SyncEngine } from '~/@/sync-engine/sync-engine-server'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Viewport } from '~/@/viewport'
@@ -33,7 +34,12 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     logger: Logger({ t: 'noop' }),
     kvDb: keyValueDb,
   })
+  const syncEngine = SyncEngine({
+    t: 'http-client',
+    logger: Logger({ t: 'noop' }),
+  })
   const ctx: AppFrontendCtx = {
+    syncEngine,
     keyValueDb,
     migrationPolicy,
     keyboard: KeyBoard({ t: 'noop' }),

@@ -17,10 +17,10 @@ export type Config = {
   logger: ILogger
 }
 
-export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => {
-  const keyValueDb = await pipe(
+export const UserSessionDb = (config: Config): IUserSessionDb => {
+  const keyValueDb = pipe(
     config.keyValueDb,
-    async (keyValueDb) =>
+    (keyValueDb) =>
       KeyValueDb({
         ...config,
         t: 'with-cache',
@@ -28,7 +28,7 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
         cache: KeyValueDb({
           ...config,
           t: 'with-distributed-invalidations',
-          pubSub: await PubSub({
+          pubSub: PubSub({
             t: 'pub-sub-topic-based',
             pubSubTopicBased: config.pubSubTopicBased,
             topic: 'user-session-db-cache-invalidation',
@@ -40,11 +40,11 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
         }),
       }),
 
-    async (keyValueDb) =>
+    (keyValueDb) =>
       KeyValueDb({
         ...config,
         t: 'with-reduced-parsing',
-        keyValueDb: await keyValueDb,
+        keyValueDb,
         verifiedKeys: new Set(),
       }),
   )

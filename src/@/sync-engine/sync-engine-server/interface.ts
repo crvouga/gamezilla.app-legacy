@@ -1,9 +1,9 @@
-import { Result } from '../result'
-import { UnixMs } from '../time/unix-ms'
-import { ClientSessionId } from '../wire/client-session-id'
-import { SessionId } from '../wire/session-id'
-import { CrudTransaction } from './crud-transaction/crud-transaction'
-import { ISyncEntry } from './sync-entry'
+import { Result } from '~/@/result'
+import { ISyncEntry } from '~/@/sync-engine/sync-entry'
+import { UnixMs } from '~/@/time/unix-ms'
+import { ClientSessionId } from '~/@/wire/client-session-id'
+import { SessionId } from '~/@/wire/session-id'
+import { CrudTransaction } from '../crud-transaction/crud-transaction'
 
 export type ISyncEngine = {
   /**

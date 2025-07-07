@@ -11,7 +11,7 @@ import { IUserProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
 import { Env } from '../data/env'
 import type { BackendInstanceId } from './backend-instance/backend-instance-id'
 import { BackendRole } from './backend-role'
-import { ISyncEngine } from '~/@/sync-engine'
+import { ISyncEngine } from '~/@/sync-engine/sync-engine-server/interface'
 
 export type AppBackendCtxBase = {
   now: UnixMs

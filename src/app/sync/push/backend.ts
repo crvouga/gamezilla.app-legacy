@@ -1,13 +1,12 @@
 import { Json } from '~/@/json/json'
 import { ILogger } from '~/@/logger'
 import { isErr } from '~/@/result'
-import { SyncEngine } from '~/@/sync-engine/impl'
+import { ISyncEngine } from '~/@/sync-engine/sync-engine-server/interface'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
-import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { RequestBody } from './types'
 
-const respond = async (input: { req: Request; ctx: AppBackendCtxBase; logger: ILogger }): Promise<Response | null> => {
+const respond = async (input: { req: Request; logger: ILogger; syncEngine: ISyncEngine }): Promise<Response | null> => {
   const logger = input.logger.child(['upload-data'])
   logger.info('Received upload data request')
   const body = Json.parse(await input.req.text())
@@ -49,12 +48,7 @@ const respond = async (input: { req: Request; ctx: AppBackendCtxBase; logger: IL
     })
   }
 
-  const syncEngine = SyncEngine({
-    t: 'backend',
-    logger: logger,
-  })
-
-  const pushed = await syncEngine.push({
+  const pushed = await input.syncEngine.push({
     sessionId,
     clientSessionId,
     crudTransaction: parsed.value.crudTransaction,

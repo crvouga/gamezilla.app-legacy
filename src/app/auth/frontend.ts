@@ -12,9 +12,14 @@ import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { UserProfile } from '../@/data/user-profile'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { PushScreenCmd } from '../@/frontend/push-screen-cmd.$msg'
-import { AuthFrontendCtx } from './@/frontend/ctx'
 import { AuthScreenHeaderCta } from './@/frontend/ui/auth-screen-header-cta'
 import { AuthScreenLayout } from './@/frontend/ui/auth-screen-layout'
+import { GuestSessionMappingDb } from './@/guest-session-mapping/guest-session-mapping-db'
+import { GuestSessionMappingSync } from './@/guest-session-mapping/guest-session-mapping-sync'
+import { UserAccountDb } from './@/user-account/user-account-db'
+import { UserAccountSync } from './@/user-account/user-account-sync'
+import { UserSessionDb } from './@/user-session/user-session-db'
+import { UserSessionSync } from './@/user-session/user-session-sync'
 import { CurrentUserFrontend, toCurrentUserState } from './current-user/frontend'
 import { ContinueAsGuestFrontend } from './login-as-guest/frontend'
 import { LoginWithSMSFrontend } from './login-with-sms/frontend'
@@ -41,10 +46,32 @@ const initCtx = async (input: {
   ctx: AppFrontendCtxBase
   rpc: RPC.Client<typeof rpcContract>
 }): Promise<FrontendCtxModule> => {
-  const ctx = await AuthFrontendCtx.init({ ctx: input.ctx })
+  const guestSessionMappingDb = GuestSessionMappingDb({
+    t: 'sql',
+    sqlDb: input.ctx.sqlDb,
+  })
+
+  const userSessionDb = UserSessionDb({
+    t: 'sql',
+    sqlDb: input.ctx.sqlDb,
+    logger: input.ctx.logger,
+  })
+
+  const userAccountDb = UserAccountDb({
+    t: 'sql',
+    sqlDb: input.ctx.sqlDb,
+    logger: input.ctx.logger,
+  })
+
+  input.ctx.syncEngine.registerSync(UserAccountSync({ logger: input.ctx.logger, userAccountDb }))
+  input.ctx.syncEngine.registerSync(UserSessionSync({ logger: input.ctx.logger, userSessionDb }))
+  input.ctx.syncEngine.registerSync(GuestSessionMappingSync({ logger: input.ctx.logger, guestSessionMappingDb }))
+
   return {
     ...input.ctx,
-    ...ctx,
+    guestSessionMappingDb,
+    userSessionDb,
+    userAccountDb,
     rpc: input.rpc,
   }
 }

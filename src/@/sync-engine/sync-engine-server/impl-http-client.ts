@@ -1,7 +1,7 @@
-import { ILogger } from '../logger'
-import { Ok } from '../result'
+import { ILogger } from '~/@/logger'
+import { Ok } from '~/@/result'
 import { ISyncEngine } from './interface'
-import { ISyncEntry } from './sync-entry'
+import { ISyncEntry } from '../sync-entry'
 
 export type Config = {
   t: 'http-client'

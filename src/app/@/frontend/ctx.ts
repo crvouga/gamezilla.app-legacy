@@ -5,9 +5,11 @@ import { IKeyBoard } from '~/@/keyboard'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { ILogger } from '~/@/logger'
+import { IMigrationPolicy } from '~/@/migration-policy'
 import { INavigation } from '~/@/navigation'
 import type { Screen } from '~/@/screens/generated/screens'
 import { ISqlDb } from '~/@/sql-db'
+import { ISyncEngine } from '~/@/sync-engine/sync-engine-server'
 import { UnixMs } from '~/@/time/unix-ms'
 import { IViewport, ViewportVisibility } from '~/@/viewport'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -18,7 +20,6 @@ import { UserId } from '../data/user-id'
 import { UserProfile } from '../data/user-profile'
 import { ParentScreenProps } from '../ui/screen/layout/screen-layout-props'
 import { ScreenSize } from '../ui/screen/screen-size'
-import { IMigrationPolicy } from '~/@/migration-policy'
 
 export type CurrentUser =
   | { t: 'loading' }
@@ -49,6 +50,7 @@ export type AppFrontendCtxBase = {
   audioPlayer: IAudioPlayer
   navigation: INavigation
   backendConnectionStatus: BackendConnectionStatus
+  syncEngine: ISyncEngine
 }
 
 export type AppFrontendCtx = AppFrontendCtxBase & {

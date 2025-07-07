@@ -5,7 +5,7 @@ import { IPubSub } from './interface'
 
 export type Config = ImplPostgres.Config | ImplInMemory.Config | ImplPubSubTopicBased.Config
 
-export const PubSub = async (config: Config): Promise<IPubSub> => {
+export const PubSub = (config: Config): IPubSub => {
   switch (config.t) {
     case 'postgres': {
       return ImplPostgres.PubSub(config)

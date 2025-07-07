@@ -1,15 +1,17 @@
-import { ILogger } from '../logger'
-import { Err, isErr, Ok } from '../result'
+import { IHttpServer } from '~/@/http-server'
+import { ILogger } from '~/@/logger'
+import { Err, isErr, Ok } from '~/@/result'
 import { ISyncEngine } from './interface'
-import { ISyncEntry } from './sync-entry'
+import { ISyncEntry } from '../sync-entry'
 
 export type Config = {
-  t: 'backend'
+  t: 'http-server'
   logger: ILogger
+  httpServer: IHttpServer
 }
 
-export const SyncEngineBackend = (config: Config): ISyncEngine => {
-  const logger = config.logger.child(['impl-backend'])
+export const SyncEngine = (config: Config): ISyncEngine => {
+  const logger = config.logger.child(['impl-http-server'])
 
   const syncRegistry = new Set<ISyncEntry>()
 

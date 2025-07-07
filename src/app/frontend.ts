@@ -13,6 +13,7 @@ import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
 import { SqlDb } from '~/@/sql-db/frontend/impl'
 import { Sub } from '~/@/sub'
+import { SyncEngine } from '~/@/sync-engine/sync-engine-server'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
@@ -110,7 +111,13 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     kvDb: keyValueDb,
   })
 
+  const syncEngine = SyncEngine({
+    t: 'http-client',
+    logger: logger.maxLogLevel('debug'),
+  })
+
   const ctx: AppFrontendCtxBase = {
+    syncEngine,
     migrationPolicy,
     audioPlayer,
     keyboard,
