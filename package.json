@@ -13,7 +13,7 @@
     "cg:guard": "pnpm exec tsx ./src/@/guards/guards-gen.ts",
     "cg:l18n": "pnpm exec tsx ./src/@/l18n/l18n-gen.ts",
     "cg:msg-shared": "pnpm exec tsx ./src/@/msg-shared/msg-shared-gen.ts",
-    "cg:screens": "pnpm exec tsx ./src/@/screen/screens-gen.ts",
+    "cg:screens": "pnpm exec tsx ./src/@/screens/screens-gen.ts",
     "cg:watch": "pnpm exec tsx watch cg",
     "check": "pnpm cir-deps && pnpm exec tsc",
     "check-imports": "pnpm exec tsx scripts/check-imports.ts",

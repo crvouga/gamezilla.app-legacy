@@ -8,10 +8,9 @@ import { h } from '~/@/vdom/h'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { DocumentVisibilityChangedEvt } from '~/app/@/frontend/document-visibility-changed-evt.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PreloadSoundsCmd } from '~/app/@/frontend/preload-sounds-cmd.$msg'
-
+import { ViewportVisibilityChangedEvt } from '~/app/@/frontend/viewport-visibility-changed-evt.$msg'
 type Module = AppFrontendModule<{
   Ctx: AppFrontendCtxBase
   Model: Model
@@ -85,7 +84,7 @@ const updateFromMsg: Module['update'] = (input) => {
 }
 
 const updateFromEvent: Module['update'] = (input) => {
-  if (DocumentVisibilityChangedEvt.is(input.msgIn)) {
+  if (ViewportVisibilityChangedEvt.is(input.msgIn)) {
     return {
       model: {
         ...input.model,
