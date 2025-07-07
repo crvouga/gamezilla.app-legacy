@@ -104,7 +104,11 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
 
   const keyValueDb = await KeyValueDb({ t: 'web-standard-storage', storage: localStorage, logger })
 
-  const migrationPolicy = MigrationPolicy({ t: 'dangerously-wipe-on-new-schema', logger, kvDb: keyValueDb })
+  const migrationPolicy = MigrationPolicy({
+    t: 'dangerously-wipe-on-new-schema',
+    logger: logger.maxLogLevel('debug'),
+    kvDb: keyValueDb,
+  })
 
   const ctx: AppFrontendCtxBase = {
     migrationPolicy,

@@ -5,16 +5,19 @@ import { PackDb } from './@/pack/pack-db'
 import { PackSync } from './@/pack/pack-sync'
 import { PuzzleDb } from './@/puzzle/puzzle-db'
 import { PuzzleSync } from './@/puzzle/puzzle-sync'
-import { MigrationPolicy } from '~/@/migration-policy'
 
 const initCtx = (input: { ctx: SpaceBackendCtx }): NumberlinkBackendCtx => {
   const numberlinkPuzzleDb = PuzzleDb({
     t: 'sql-db',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
-    migrationPolicy: MigrationPolicy({ t: 'always-run', logger: input.ctx.logger }),
+    migrationPolicy: input.ctx.migrationPolicy,
   })
-  const numberlinkPackDb = PackDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb, logger: input.ctx.logger })
+  const numberlinkPackDb = PackDb({
+    t: 'sql-db',
+    sqlDb: input.ctx.sqlDb,
+    logger: input.ctx.logger,
+  })
   SYNC_REGISTRY.add(PuzzleSync({ numberlinkPuzzleDb }))
   SYNC_REGISTRY.add(PackSync({ numberlinkPackDb }))
 
