@@ -1,18 +1,13 @@
-import { describe, expect, test, TestRunnerEnv } from '~/@/test-runner'
+import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
-import { IFixtureApp } from '~/app/@/test/app-fixture'
+import { FixtureAppE2E, IFixtureApp } from '~/app/@/test/app-fixture'
 import { doLoginWithSms } from '~/app/@/test/setup/do-login-with-sms'
 import { doSubmitForm } from '~/app/@/test/setup/do-submit-form'
 import { doOpenSettingsScreen } from '~/app/settings/@/test/do-open-settings-screen'
 import { SettingsFrontend } from '~/app/settings/frontend'
-import { FixtureAuthE2E } from '../@/test/e2e'
 import { AuthFrontend } from '../frontend'
 
-export const Fixture = async (e: TestRunnerEnv) => {
-  const f = await FixtureAuthE2E(e)
-
-  return { ...f }
-}
+export const Fixture = FixtureAppE2E
 
 describe('logout', () => {
   test('logout', async (e) => {
