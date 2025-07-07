@@ -18,9 +18,7 @@ export async function testSpaceFrontendCtx(): Promise<SpaceFrontendCtx> {
       t: 'space',
       spaceId: currentSpaceId,
     },
-    currentUserId,
-    currentUserRole: 'normal',
-    documentVisibilityState: 'visible',
+    viewportVisibility: 'visible',
     now: UnixMs.now(),
     profilesByUserId: {
       [currentUserId]: await UserProfile.random({

@@ -130,13 +130,7 @@ const updateGame: SpaceFrontendModule['update'] = (input) => {
   const modelGame = input.model.games[spaceId] ?? GamesFrontend.init(spaceState.game.t)
 
   const gameUpdated = GamesFrontend.update({
-    ctx: {
-      ...input.ctx,
-      space: spaceState,
-      currentUserId: currentUser.userId,
-      currentUserRole: currentUser.role,
-      currentUser: currentUser,
-    },
+    ctx: { ...input.ctx, space: spaceState, currentUser },
     model: modelGame,
     msgSpace: input.msgSpace?.t === 'game' ? { ...input.msgSpace, ...input.msgSpace.c } : null,
     modelSpace: spaceState.game,
@@ -168,12 +162,7 @@ const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
 const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (input) => {
   if (!input.ctx.currentUser) return Sub.none()
 
-  const frontendCtx: AppFrontendCtx = {
-    ...input.ctx,
-    currentUserId: input.ctx.currentUser.userId,
-    currentUserRole: input.ctx.currentUser.role,
-    currentUser: input.ctx.currentUser,
-  }
+  const frontendCtx: AppFrontendCtx = { ...input.ctx, currentUser: input.ctx.currentUser }
 
   const spaceId = Spaces.toSpaceIdByUserId(input.model.spaces, frontendCtx.currentUser?.userId)
 
@@ -221,13 +210,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
 
   return h(GamesFrontend.View, {
     modelSpace: space.game,
-    ctx: {
-      ...input.ctx,
-      space,
-      currentUserId: input.ctx.currentUser.userId,
-      currentUserRole: input.ctx.currentUser.role,
-      currentUser: input.ctx.currentUser,
-    },
+    ctx: { ...input.ctx, space, currentUser: input.ctx.currentUser },
     dispatch: (c) => input.dispatch({ t: 'game', spaceId: space.spaceId, c }),
     model: input.model.games[space.spaceId] ?? GamesFrontend.init(space.game.t),
   })

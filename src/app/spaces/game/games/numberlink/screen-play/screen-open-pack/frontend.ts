@@ -1,6 +1,6 @@
 import { IconGamepad } from '~/@/ui/icon'
 import { h } from '~/@/vdom/h'
-import { UserId } from '~/app/@/data/user-id'
+import { UserAccount } from '~/app/@/data/user-account'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
@@ -25,7 +25,7 @@ const update: FrontendModule['update'] = (input) => {
   }
 }
 
-const toQuery = (_input: { ctx: { currentUserId: UserId } }): PacksDbQuery => {
+const toQuery = (_input: { ctx: { currentUser: UserAccount } }): PacksDbQuery => {
   return {
     order: {
       lastUpdatedAt: 'desc',

@@ -109,13 +109,7 @@ const ViewSurfaces = (
   if (!input.ctx.space) return null
   if (!input.ctx.currentUser) return null
 
-  const spaceCtx: SpaceFrontendCtx = {
-    ...input.ctx,
-    currentUserId: input.ctx.currentUser.userId,
-    currentUserRole: input.ctx.currentUser.role,
-    space: input.ctx.space,
-    currentUser: input.ctx.currentUser,
-  }
+  const spaceCtx: SpaceFrontendCtx = { ...input.ctx, space: input.ctx.space, currentUser: input.ctx.currentUser }
 
   const modalProfile = input.model.openedPreviewUserId
     ? input.ctx.profilesByUserId[input.model.openedPreviewUserId]

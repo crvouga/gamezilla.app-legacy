@@ -70,7 +70,7 @@ export const TestFrontend = async (config: {
     navigatorLanguage: 'en',
     currentScreen: { t: 'login', n: 'auth' },
     t: Translator('en'),
-    documentVisibilityState: 'visible',
+    viewportVisibility: 'visible',
     profilesByUserId: {},
     screenSize: 'mobile',
     parentScreen: null,
@@ -103,7 +103,7 @@ export const TestFrontend = async (config: {
 
   const client = await TestClient({
     t: 'happydom',
-    maxWait: TimeSpan.seconds(1),
+    maxWait: TimeSpan.milliseconds(100),
     poll: TimeSpan.milliseconds(1),
     audioPlayer: ctx.audioPlayer,
   })

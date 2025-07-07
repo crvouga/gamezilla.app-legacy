@@ -1,6 +1,7 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Err, Ok, type RemoteResult, type Result } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
+import { UserAccount } from '~/app/@/data/user-account'
 import type { UserId } from '~/app/@/data/user-id'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
 import { Chess } from '../@/chess'
@@ -288,7 +289,7 @@ export const updateSpace = ({
 }: {
   ctx: SpaceCtx & {
     now: UnixMs
-    currentUserId: UserId
+    currentUser: UserAccount
   }
   msg: Req
   model: SpaceModel

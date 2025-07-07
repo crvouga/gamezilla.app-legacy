@@ -105,7 +105,7 @@ const updateFromCmd: Module['update'] = (input) => {
       return { model: input.model }
     }
 
-    if (input.ctx.documentVisibilityState === 'hidden') {
+    if (input.ctx.viewportVisibility === 'hidden') {
       return { model: input.model }
     }
 

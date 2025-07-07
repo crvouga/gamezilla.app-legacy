@@ -135,7 +135,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     navigatorLanguage,
     currentScreen: { t: 'login', n: 'auth' },
     t: Translator(navigatorLanguage),
-    documentVisibilityState: 'visible',
+    viewportVisibility: 'visible',
     profilesByUserId: {},
     screenSize: 'mobile',
     parentScreen: null,
@@ -184,7 +184,7 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
     now: UnixMs.now(),
     t: Translator(input.model.settings.lang),
     profilesByUserId: input.model.profile.profilesByUserId,
-    documentVisibilityState: input.model.frontend.visibility.visibility,
+    viewportVisibility: input.model.frontend.visibility.visibility,
     currentScreen: input.model.frontend.currentScreen.currentScreen,
     screenSize: input.model.frontend.screenSize.screenSize,
     parentScreen: null,
@@ -202,7 +202,7 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
   const ctx: FrontendCtxModule = {
     ...input.ctx,
     currentScreen: frontend.model.currentScreen.currentScreen,
-    documentVisibilityState: frontend.model.visibility.visibility,
+    viewportVisibility: frontend.model.visibility.visibility,
     screenSize: frontend.model.screenSize.screenSize,
   }
 

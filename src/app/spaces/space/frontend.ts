@@ -33,13 +33,7 @@ const View = (input: {
 
       if (!currentUser) return null
 
-      const spaceCtx: SpaceFrontendCtx & FrontendCtxModule = {
-        ...input.ctx,
-        currentUserId: currentUser.userId,
-        currentUserRole: currentUser.role,
-        currentUser: currentUser,
-        space: spaceState,
-      }
+      const spaceCtx: SpaceFrontendCtx & FrontendCtxModule = { ...input.ctx, currentUser, space: spaceState }
 
       const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, currentUser.userId)
 

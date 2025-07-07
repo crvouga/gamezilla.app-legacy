@@ -134,13 +134,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
 
   if (!spaceState) return h('div', {}, ['Space is not started'])
 
-  const spaceCtx: SpaceFrontendCtx = {
-    ...input.ctx,
-    space: space,
-    currentUserId: currentUser.userId,
-    currentUserRole: currentUser.role,
-    currentUser,
-  }
+  const spaceCtx: SpaceFrontendCtx = { ...input.ctx, space, currentUser }
   const hostProfile = input.ctx.profilesByUserId[spaceState.hostId]
 
   return h(ScreenLayout, {

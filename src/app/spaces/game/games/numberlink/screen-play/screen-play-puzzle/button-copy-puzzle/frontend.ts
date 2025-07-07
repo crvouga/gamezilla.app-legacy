@@ -78,7 +78,7 @@ export const viewButtonAction = ({
   ctx: AppFrontendCtx
   dispatch: (m: MsgFrontend) => void
 }): ScreenAction | null => {
-  if (ctx.currentUserRole !== 'super') return null
+  if (ctx.currentUser.role !== 'super') return null
 
   return {
     id: ctx.t('app.copy'),
