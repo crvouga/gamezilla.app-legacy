@@ -1,6 +1,6 @@
 import { Ok } from '~/@/result'
-import type { ISqlDb } from './interface'
 import { Sub } from '../sub'
+import type { ISqlDb } from './interface'
 
 export type Config = {
   t: 'noop'

@@ -1,7 +1,7 @@
 import type { Result } from '~/@/result'
 import type { s } from '~/@/schema'
 import type { Sql } from '~/@/sql'
-import { Sub } from '../../sub'
+import { Sub } from '../sub'
 
 export type ISqlDb = {
   query: <TRow>(input: SqlDbQueryInput<TRow>) => Promise<Result<string, TRow[]>>

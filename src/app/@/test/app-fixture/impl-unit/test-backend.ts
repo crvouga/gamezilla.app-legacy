@@ -1,6 +1,7 @@
 import { HttpServer } from '~/@/http-server'
 import { KeyValueDb } from '~/@/key-value-db'
-import { ILogger } from '~/@/logger'
+import { ILogger, Logger } from '~/@/logger'
+import { MigrationPolicy } from '~/@/migration-policy'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { Runtime } from '~/@/runtime'
 import { ISqlDb } from '~/@/sql-db'
@@ -53,8 +54,11 @@ export const TestBackend = async (config: {
 
   const backendInstanceId = BackendInstanceId.generate()
 
+  const migrationPolicy = MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
+
   const ctxBase: AppBackendCtxBase = {
     backendRole: 'primary',
+    migrationPolicy,
     env: 'dev',
     sqlDb: config.sqlDb,
     keyValueDbDurable,

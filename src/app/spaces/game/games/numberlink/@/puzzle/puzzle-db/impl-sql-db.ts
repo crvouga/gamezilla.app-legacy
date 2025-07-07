@@ -1,4 +1,5 @@
 import type { ILogger } from '~/@/logger'
+import { IMigrationPolicy } from '~/@/migration-policy/interface'
 import { Pagination } from '~/@/query/query'
 import { Ok, Result, isErr } from '~/@/result'
 import { s } from '~/@/schema'
@@ -14,29 +15,34 @@ export type Config = {
   t: 'sql-db'
   logger: ILogger
   sqlDb: ISqlDb
+  migrationPolicy: IMigrationPolicy
 }
 
-const CREATE_TABLES: string[] = [
+const UP: string[] = [
   `
   CREATE TABLE IF NOT EXISTS game_numberlink_puzzle (
       id TEXT NOT NULL,
       name TEXT NOT NULL,
       model TEXT NOT NULL,
-      created_at_unix_ms INTEGER NOT NULL,
+      created_at_unix_ms BIGINT NOT NULL,
       created_by_user_id TEXT NOT NULL,
-      last_updated_at_unix_ms INTEGER NOT NULL,
+      last_updated_at_unix_ms BIGINT NOT NULL,
       last_updated_by_user_id TEXT NOT NULL,
-      deleted_at_unix_ms INTEGER,
+      deleted_at_unix_ms BIGINT,
       deleted_by_user_id TEXT,
       solutions TEXT NOT NULL
   );
   `,
 ]
 
+const DOWN: string[] = [
+  `
+  DROP TABLE IF EXISTS game_numberlink_puzzle
+  `,
+]
+
 export const PuzzleDb = (config: Config): IPuzzleDb => {
-  for (const query of CREATE_TABLES) {
-    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
-  }
+  config.migrationPolicy.execute({ sqlDb: config.sqlDb, up: UP, down: DOWN })
 
   return {
     async get(puzzleId) {

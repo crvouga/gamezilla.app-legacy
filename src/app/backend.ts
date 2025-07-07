@@ -3,6 +3,7 @@ import { HttpServer } from '~/@/http-server'
 import { AllowCORS } from '~/@/http-server/allow-cors'
 import { KeyValueDb } from '~/@/key-value-db'
 import { ILogger, Logger } from '~/@/logger'
+import { IMigrationPolicy, MigrationPolicy } from '~/@/migration-policy'
 import { sleep } from '~/@/promise/sleep'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { RPC } from '~/@/rpc'
@@ -41,7 +42,7 @@ const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtx
 
   const fs = FileSystem({ t: 'node' })
 
-  const sqlDb = await initSqlDb({
+  const { sqlDb, migrationPolicy } = await initSqlDb({
     backendRole: config.backendRole,
     logger,
     fs,
@@ -101,6 +102,7 @@ const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtx
     userProfileDb,
     httpServer,
     runtime,
+    migrationPolicy,
   }
 
   const wire = await WireBackend.initCtx({ ctx: ctxBase, topic })
@@ -120,22 +122,32 @@ const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtx
   return ctx
 }
 
-const initSqlDb = async (config: { backendRole: BackendRole; logger: ILogger; fs: IFileSystem }): Promise<ISqlDb> => {
+const initSqlDb = async (config: {
+  backendRole: BackendRole
+  logger: ILogger
+  fs: IFileSystem
+}): Promise<{ sqlDb: ISqlDb; migrationPolicy: IMigrationPolicy }> => {
   switch (config.backendRole) {
     case 'primary': {
-      return SqlDb({
-        t: 'postgres',
-        databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
-        logger: config.logger,
-      })
+      return {
+        sqlDb: await SqlDb({
+          t: 'postgres',
+          databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
+          logger: config.logger,
+        }),
+        migrationPolicy: MigrationPolicy({ t: 'never-run', logger: config.logger }),
+      }
     }
     case 'edge': {
-      return SqlDb({
-        t: 'better-sqlite3',
-        databasePath: ':memory:',
-        logger: config.logger,
-        fs: config.fs,
-      })
+      return {
+        sqlDb: await SqlDb({
+          t: 'better-sqlite3',
+          databasePath: ':memory:',
+          logger: config.logger,
+          fs: config.fs,
+        }),
+        migrationPolicy: MigrationPolicy({ t: 'always-run', logger: config.logger }),
+      }
     }
   }
 }

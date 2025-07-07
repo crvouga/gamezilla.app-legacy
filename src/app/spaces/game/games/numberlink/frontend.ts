@@ -44,7 +44,12 @@ let puzzleDb: IPuzzleDb
 let packDb: IPackDb
 let solutionsDb: ISolutionsDb
 const toFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): FlowFrontendCtx => {
-  puzzleDb ??= PuzzleDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb, logger: input.ctx.logger })
+  puzzleDb ??= PuzzleDb({
+    t: 'sql-db',
+    sqlDb: input.ctx.sqlDb,
+    logger: input.ctx.logger,
+    migrationPolicy: input.ctx.migrationPolicy,
+  })
   packDb ??= PackDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb, logger: input.ctx.logger })
   solutionsDb ??= SolutionsDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb })
   return {

@@ -18,6 +18,7 @@ import { UserId } from '../data/user-id'
 import { UserProfile } from '../data/user-profile'
 import { ParentScreenProps } from '../ui/screen/layout/screen-layout-props'
 import { ScreenSize } from '../ui/screen/screen-size'
+import { IMigrationPolicy } from '~/@/migration-policy'
 
 export type CurrentUser =
   | { t: 'loading' }
@@ -29,6 +30,7 @@ export type AppFrontendCtxBase = {
   screenSize: ScreenSize
   sqlDb: ISqlDb
   logger: ILogger
+  migrationPolicy: IMigrationPolicy
   keyboard: IKeyBoard
   t: Translator
   navigatorLanguage: LanguageCodeISO_639_1

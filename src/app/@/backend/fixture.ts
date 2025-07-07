@@ -1,7 +1,9 @@
+import { FileSystem } from '~/@/file-system'
 import { HttpServer } from '~/@/http-server'
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { ILogger } from '~/@/logger'
 import { Logger } from '~/@/logger'
+import { MigrationPolicy } from '~/@/migration-policy'
 import { IPubSubTopicBased, PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import type { IRuntime } from '~/@/runtime'
 import { Runtime } from '~/@/runtime'
@@ -17,7 +19,6 @@ import { ClientId } from '../../../@/wire/client-id'
 import { SessionId } from '../../../@/wire/session-id'
 import { BackendInstanceId } from './backend-instance/backend-instance-id'
 import type { AppBackendCtxBase } from './ctx'
-import { FileSystem } from '~/@/file-system'
 
 export type IFixtureAppBackendUnit = {
   t: 'unit'
@@ -69,11 +70,14 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const backendInstanceId = BackendInstanceId.generate()
 
+  const migrationPolicy = MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
+
   const ctx: AppBackendCtxBase = {
     backendRole: 'primary',
     env: 'test',
     keyValueDbDurable: keyValueDbHashMap,
     sqlDb: SQL_DB_NOOP,
+    migrationPolicy,
     logger,
     now,
     sleep,
@@ -102,7 +106,6 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     t: 'postgres',
     databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
     logger,
-    simulateLatency: async () => {},
   })
 
   const keyValueDbPostgres = await KeyValueDb({

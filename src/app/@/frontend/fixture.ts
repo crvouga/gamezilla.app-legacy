@@ -4,6 +4,7 @@ import { KeyValueDb } from '~/@/key-value-db'
 import { KeyBoard } from '~/@/keyboard'
 import { Translator } from '~/@/l18n/generated'
 import { Logger } from '~/@/logger'
+import { MigrationPolicy } from '~/@/migration-policy'
 import { Navigation } from '~/@/navigation'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screens/generated/screens'
@@ -26,8 +27,15 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     phoneNumber: PhoneNumber.random(),
     role: 'normal',
   }
+  const keyValueDb = await KeyValueDb({ t: 'in-memory' })
+  const migrationPolicy = MigrationPolicy({
+    t: 'dangerously-wipe-on-new-schema',
+    logger: Logger({ t: 'noop' }),
+    kvDb: keyValueDb,
+  })
   const ctx: AppFrontendCtx = {
-    keyValueDb: await KeyValueDb({ t: 'in-memory' }),
+    keyValueDb,
+    migrationPolicy,
     keyboard: KeyBoard({ t: 'noop' }),
     audioPlayer: AudioPlayer({ t: 'fake', logger: Logger({ t: 'noop' }) }),
     navigation: Navigation({ t: 'in-memory', logger: Logger({ t: 'noop' }) }),

@@ -3,7 +3,7 @@ import { HttpClient } from '~/@/http-client'
 import { KeyValueDb } from '~/@/key-value-db'
 import { KeyBoard } from '~/@/keyboard'
 import { Translator } from '~/@/l18n/generated'
-import { ILogger } from '~/@/logger'
+import { ILogger, Logger } from '~/@/logger'
 import { Navigation } from '~/@/navigation'
 import { Program } from '~/@/program/program'
 import { RPC } from '~/@/rpc'
@@ -24,6 +24,7 @@ import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
 import { CONFIG_FRONTEND } from '~/config/frontend'
 import { AppFrontendCtxBase } from '../../../frontend/ctx'
+import { MigrationPolicy } from '~/@/migration-policy'
 
 export const TestFrontend = async (config: {
   rpcServer: RPC.Server<typeof rpcContract>
@@ -57,8 +58,11 @@ export const TestFrontend = async (config: {
 
   const keyValueDb = await KeyValueDb({ t: 'web-standard-storage', storage: localStorage, logger })
 
+  const migrationPolicy = MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
+
   const ctxBase: AppFrontendCtxBase = {
     keyValueDb,
+    migrationPolicy,
     audioPlayer,
     keyboard,
     navigation,

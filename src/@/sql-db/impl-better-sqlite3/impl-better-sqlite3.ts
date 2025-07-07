@@ -2,12 +2,12 @@ import * as DatabaseNamespace from 'better-sqlite3'
 import { Err, isErr, Ok } from '~/@/result'
 import type { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
+import { TimeSpan } from '~/@/time/time-span'
 import type { IFileSystem } from '../../file-system/interface'
 import { deterministicJsonStringify } from '../../json/deterministic-stringify'
 import type { ILogger } from '../../logger/interface'
 import { PubSub, Sub } from '../../sub'
 import type { ISqlDb } from '../interface'
-import { TimeSpan } from '~/@/time/time-span'
 const Database = (DatabaseNamespace as any).default || DatabaseNamespace
 
 export type Config = {

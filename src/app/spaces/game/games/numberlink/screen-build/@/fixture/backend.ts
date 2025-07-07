@@ -1,4 +1,5 @@
 import { Logger } from '~/@/logger'
+import { MigrationPolicy } from '~/@/migration-policy/impl'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { SpaceGameFixtureBackend } from '../../../../@/testing/backend'
@@ -21,6 +22,7 @@ const initCtx = async (ctx: SpaceBackendCtx): Promise<NumberlinkBackendCtx> => {
           t: 'sql-db',
           sqlDb: f.sqlDbPostgres,
           logger: Logger({ t: 'noop' }),
+          migrationPolicy: MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
         }),
       }
     }

@@ -1,12 +1,12 @@
-import { describe, expect, test } from '~/@/test-runner'
 import 'fake-indexeddb/auto'
 import { sleep } from '~/@/promise/sleep'
+import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
-import { SqlDbNotification } from '.'
 import { Logger } from '../../logger'
 import { Config, SqlDb } from '../backend/impl'
+import { SqlDbNotification } from '../interface'
 
 const Fixture = async (config: Config) => {
   const sqlDb = await SqlDb(config)

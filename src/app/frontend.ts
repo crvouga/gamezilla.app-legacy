@@ -5,9 +5,10 @@ import { KeyValueDb } from '~/@/key-value-db'
 import { KeyBoard } from '~/@/keyboard'
 import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
+import { MigrationPolicy } from '~/@/migration-policy'
 import { Msg } from '~/@/msg/msg'
 import { Navigation } from '~/@/navigation'
-import { isErr } from '~/@/result'
+import { Psql } from '~/@/psql'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
 import { SqlDb } from '~/@/sql-db/frontend/impl'
@@ -22,8 +23,6 @@ import { h } from '~/@/vdom/h'
 import { Viewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { CONFIG_SHARED } from '~/config/shared'
-import { BackendConnector } from '~/service-powersync/client/backend-connector'
-import { PowerSyncClient } from '~/service-powersync/client/powersync-client'
 import { Logger } from '../@/logger'
 import { APP_SOUND } from './@/frontend/app-sound'
 import { AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
@@ -77,33 +76,15 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     codec: topicMsgCodec,
   })
 
-  logger.info('Initializing PowerSync client...')
-
-  const powersyncBackendConnector = new BackendConnector({
-    logger,
-    backendUrl: CONFIG_SHARED.BACKEND_URL,
-    powersyncUrl: CONFIG_SHARED.POWERSYNC_URL,
-    getGuestUserId: async () => null,
-    clientSessionId,
-  })
-
-  const powerSyncClient = await PowerSyncClient({
-    t: 'browser',
-    debug: true,
-    logger,
-    backendConnector: powersyncBackendConnector,
-  })
-
-  logger.info('Starting PowerSync client...')
-  powerSyncClient.start().then(() => {
-    logger.info('PowerSync client started')
-  })
-
   const sqlDb = await SqlDb({
-    t: 'powersync-client',
-    powerSyncClient,
+    t: 'pglite',
+    databaseUrl: 'idb://pglite',
     logger,
   })
+
+  const psql = Psql({ sqlDb })
+  // @ts-ignore
+  window.q = psql.psql
 
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
 
@@ -123,7 +104,10 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
 
   const keyValueDb = await KeyValueDb({ t: 'web-standard-storage', storage: localStorage, logger })
 
+  const migrationPolicy = MigrationPolicy({ t: 'dangerously-wipe-on-new-schema', logger, kvDb: keyValueDb })
+
   const ctx: AppFrontendCtxBase = {
+    migrationPolicy,
     audioPlayer,
     keyboard,
     viewport,
@@ -161,16 +145,6 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     ...wire,
     rpc,
     topic,
-  }
-
-  powersyncBackendConnector.getGuestUserId = async () => {
-    const userSession = await ctxModule.userSessionDb.query({
-      whereAnd: { clientSessionId: { equals: ctxModule.clientSessionId } },
-      order: { createdAt: 'desc' },
-      pagination: { limit: 1, offset: 0 },
-    })
-    if (isErr(userSession)) return null
-    return userSession.value.items[0]?.userId ?? null
   }
 
   return ctxModule

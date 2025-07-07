@@ -68,9 +68,9 @@ const QUERY_CREATE_TABLES = [
   `
 CREATE TABLE IF NOT EXISTS space (
   id TEXT PRIMARY KEY,
-  created_at_unix_ms INT NOT NULL,
-  updated_at_unix_ms INT NOT NULL,
-  deleted_at_unix_ms INT,
+  created_at_unix_ms BIGINT NOT NULL,
+  updated_at_unix_ms BIGINT NOT NULL,
+  deleted_at_unix_ms BIGINT,
   model TEXT NOT NULL
 )
   `,

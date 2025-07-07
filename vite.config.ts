@@ -15,6 +15,7 @@ export default defineConfig({
   ],
   optimizeDeps: {
     exclude: [
+      '@electric-sql/pglite',
       '@journeyapps/wa-sqlite',
       '@powersync/web',
       'bcrypt',

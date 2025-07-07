@@ -6,7 +6,7 @@ import { deterministicJsonStringify } from '../json/deterministic-stringify'
 import type { ILogger } from '../logger/interface'
 import { Sleep } from '../promise/sleep'
 import { PubSub, Sub } from '../sub'
-import type { ISqlDb } from './interface'
+import { ISqlDb } from './interface'
 
 export type Config = {
   t: 'pglite'
@@ -20,7 +20,9 @@ let pgliteClient: PGlite
 export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   const logger = config.logger.child(['pglite'])
 
-  pgliteClient ??= new PGlite(config.databaseUrl)
+  pgliteClient ??= new PGlite(config.databaseUrl, {
+    relaxedDurability: true,
+  })
 
   const events = Sub.create<{ t: 'queried' }>()
 
@@ -28,11 +30,13 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
     const sql = Sql.to(input.sql, input.vars)
 
     try {
-      const start = process.hrtime.bigint()
+      const start =
+        typeof process !== 'undefined' && process.hrtime ? process.hrtime.bigint() : BigInt(Date.now() * 1000000)
 
       const queried = await pgliteClient.query(sql)
 
-      const end = process.hrtime.bigint()
+      const end =
+        typeof process !== 'undefined' && process.hrtime ? process.hrtime.bigint() : BigInt(Date.now() * 1000000)
 
       const durationMs = Number(end - start) / 1e6
       const durationFormatted = `${durationMs.toFixed(2)}ms`
