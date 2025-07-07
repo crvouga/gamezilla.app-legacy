@@ -1,7 +1,6 @@
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 import { defineConfig } from 'vite'
-import { VitePWA } from 'vite-plugin-pwa'
 import { DotEnv } from './src/@/dotenv/dotenv'
 import { FileSystem } from './src/@/file-system'
 
@@ -9,7 +8,7 @@ DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env'] })
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tailwindcss(), VitePWA()],
+  plugins: [tailwindcss()],
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
   },
