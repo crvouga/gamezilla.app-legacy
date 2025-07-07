@@ -21,7 +21,8 @@ export type Config =
   | WithThrottledWrites.Config
   | WithDistributedInvalidations.Config
   | ImplWebStandardStorage.Config
-export const KeyValueDb = async (configInput: Config): Promise<IKeyValueDb> => {
+
+export const KeyValueDb = (configInput: Config): IKeyValueDb => {
   const logger = configInput.logger?.child(['key-value-db']) ?? Logger({ t: 'noop' })
   const config: Config = { ...configInput, logger }
   switch (config.t) {

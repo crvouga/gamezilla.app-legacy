@@ -48,7 +48,7 @@ const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtx
     fs,
   })
 
-  const keyValueDbDurable = await KeyValueDb({
+  const keyValueDbDurable = KeyValueDb({
     t: 'sql-db',
     sqlDb,
     logger,

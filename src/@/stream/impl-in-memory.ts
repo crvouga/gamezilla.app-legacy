@@ -11,7 +11,7 @@ export type Config<T> = {
 export const Stream = async <T>(config: Config<T>): Promise<IStream<T>> => {
   return ImplKeyValueDb.Stream<T>({
     t: 'key-value-db',
-    keyValueDb: await KeyValueDb({
+    keyValueDb: KeyValueDb({
       t: 'hash-map',
       map: new Map(),
     }),

@@ -24,7 +24,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
 
   fixtures.push({
     name: 'hash-map',
-    keyValueDb: await KeyValueDb({
+    keyValueDb: KeyValueDb({
       t: 'hash-map',
       logger,
     }),
@@ -32,12 +32,12 @@ const Fixtures = async (): Promise<Fixture[]> => {
 
   fixtures.push({
     name: 'with-cache',
-    keyValueDb: await KeyValueDb({
+    keyValueDb: KeyValueDb({
       t: 'with-cache',
-      cache: await KeyValueDb({
+      cache: KeyValueDb({
         t: 'hash-map',
       }),
-      source: await KeyValueDb({
+      source: KeyValueDb({
         t: 'hash-map',
         logger,
       }),
@@ -47,9 +47,9 @@ const Fixtures = async (): Promise<Fixture[]> => {
 
   fixtures.push({
     name: 'with-reduced-parsing',
-    keyValueDb: await KeyValueDb({
+    keyValueDb: KeyValueDb({
       t: 'with-reduced-parsing',
-      keyValueDb: await KeyValueDb({
+      keyValueDb: KeyValueDb({
         t: 'hash-map',
         logger,
       }),
@@ -60,14 +60,14 @@ const Fixtures = async (): Promise<Fixture[]> => {
 
   fixtures.push({
     name: 'with-throttled-writes-to-source',
-    keyValueDb: await KeyValueDb({
+    keyValueDb: KeyValueDb({
       t: 'with-cache',
-      cache: await KeyValueDb({
+      cache: KeyValueDb({
         t: 'hash-map',
       }),
-      source: await KeyValueDb({
+      source: KeyValueDb({
         t: 'with-throttled-writes',
-        keyValueDb: await KeyValueDb({
+        keyValueDb: KeyValueDb({
           t: 'hash-map',
           logger,
         }),
@@ -81,16 +81,16 @@ const Fixtures = async (): Promise<Fixture[]> => {
 
   fixtures.push({
     name: 'with-distributed-invalidations-for-cache',
-    keyValueDb: await KeyValueDb({
+    keyValueDb: KeyValueDb({
       t: 'with-cache',
-      source: await KeyValueDb({
+      source: KeyValueDb({
         t: 'hash-map',
         logger,
       }),
       logger,
-      cache: await KeyValueDb({
+      cache: KeyValueDb({
         t: 'with-distributed-invalidations',
-        cache: await KeyValueDb({ t: 'hash-map' }),
+        cache: KeyValueDb({ t: 'hash-map' }),
         logger,
         pubSub: await PubSub({ t: 'in-memory' }),
       }),
@@ -106,7 +106,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
 
   fixtures.push({
     name: 'sqlite',
-    keyValueDb: await KeyValueDb({
+    keyValueDb: KeyValueDb({
       t: 'sql-db',
       sqlDb: sqlDbSqlite,
       logger,
@@ -116,7 +116,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
   if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
     fixtures.push({
       name: 'postgres',
-      keyValueDb: await KeyValueDb({
+      keyValueDb: KeyValueDb({
         t: 'sql-db',
         sqlDb: await SqlDb({
           t: 'postgres',

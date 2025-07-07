@@ -28,7 +28,7 @@ const CREATE_TABLES: string[] = [
   );
   `,
 ]
-export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
+export const KeyValueDb = (config: Config): IKeyValueDb => {
   const logger = config.logger.child(['sql-db'])
   for (const query of CREATE_TABLES) {
     config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })

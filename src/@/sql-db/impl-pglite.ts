@@ -17,7 +17,7 @@ export type Config = {
 
 let pgliteClient: PGlite
 
-export const SqlDb = async (config: Config): Promise<ISqlDb> => {
+export const SqlDb = (config: Config): ISqlDb => {
   const logger = config.logger.child(['pglite'])
 
   pgliteClient ??= new PGlite(config.databaseUrl, {

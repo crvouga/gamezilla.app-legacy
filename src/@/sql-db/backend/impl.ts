@@ -6,7 +6,7 @@ import type { ISqlDb } from '../interface'
 
 export type Config = ImplPostgres.Config | ImplNoop.Config | ImplBetterSqlite3.Config | ImplPglite.Config
 
-export const SqlDb = async (config: Config): Promise<ISqlDb> => {
+export const SqlDb = (config: Config): ISqlDb => {
   switch (config.t) {
     case 'noop': {
       return ImplNoop.SqlDb(config)

@@ -32,7 +32,7 @@ const Fixtures = async () => {
   const configs: Config<MyEvent>[] = [
     {
       t: 'key-value-db',
-      keyValueDb: await KeyValueDb({
+      keyValueDb: KeyValueDb({
         t: 'hash-map',
         map: new Map(),
       }),

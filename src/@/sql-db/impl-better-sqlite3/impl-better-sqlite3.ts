@@ -24,20 +24,23 @@ export type Config = {
   pollInterval?: TimeSpan
 }
 
-export const SqlDb = async (config: Config): Promise<ISqlDb> => {
+export const SqlDb = (config: Config): ISqlDb => {
   const logger = config.logger.child(['better-sqlite3'])
 
   // Ensure directory exists if using file-based database
   if (config.databasePath !== ':memory:') {
     const dir = config.databasePath.substring(0, config.databasePath.lastIndexOf('/'))
-    const dirExists = await config.fs.exists(dir)
-    if (!dirExists) {
-      // Create directory by writing a temporary file and then removing it
-      const tempPath = `${dir}/.temp`
-      await config.fs.write(tempPath, '')
-      // Note: We don't have a delete method in IFileSystem, so we'll leave the temp file
-      // In a real implementation, you might want to add a delete method to IFileSystem
+    const setup = async () => {
+      const dirExists = await config.fs.exists(dir)
+      if (!dirExists) {
+        // Create directory by writing a temporary file and then removing it
+        const tempPath = `${dir}/.temp`
+        await config.fs.write(tempPath, '')
+        // Note: We don't have a delete method in IFileSystem, so we'll leave the temp file
+        // In a real implementation, you might want to add a delete method to IFileSystem
+      }
     }
+    setup()
   }
 
   const db = new Database(config.databasePath, config.options)

@@ -555,3 +555,36 @@ export const partial = <T extends Record<string, unknown>>(schema: Schema<T>): S
     },
   }
 }
+
+export const keyOf = <T extends Record<string, unknown>>(schema: Schema<T>): Schema<keyof T> => {
+  return {
+    parse(input) {
+      if (typeof input !== 'string') {
+        return Err({
+          entries: [
+            {
+              message: toErrorMessage('string', typeof input, safeJsonStringify(input)),
+              path: [],
+            },
+          ],
+        })
+      }
+      if (!(input in schema)) {
+        return Err({
+          entries: [
+            {
+              message: toErrorMessage(
+                `Expected one of ${Object.keys(schema).join(', ')}`,
+                input,
+                safeJsonStringify(input),
+              ),
+              path: [],
+            },
+          ],
+        })
+      }
+
+      return Ok(input as keyof T)
+    },
+  }
+}

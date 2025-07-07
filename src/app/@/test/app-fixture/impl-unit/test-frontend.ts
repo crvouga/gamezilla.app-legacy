@@ -56,7 +56,7 @@ export const TestFrontend = async (config: {
 
   const keyboard = KeyBoard({ t: 'web-standard' })
 
-  const keyValueDb = await KeyValueDb({ t: 'web-standard-storage', storage: localStorage, logger })
+  const keyValueDb = KeyValueDb({ t: 'web-standard-storage', storage: localStorage, logger })
 
   const migrationPolicy = MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
 

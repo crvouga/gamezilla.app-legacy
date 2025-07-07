@@ -32,7 +32,7 @@ export const TestBackend = async (config: {
     logger,
   })
 
-  const keyValueDbDurable = await KeyValueDb({
+  const keyValueDbDurable = KeyValueDb({
     t: 'sql-db',
     sqlDb: config.sqlDb,
     logger,

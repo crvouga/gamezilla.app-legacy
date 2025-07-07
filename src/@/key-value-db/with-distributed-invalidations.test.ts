@@ -35,15 +35,15 @@ const Fixture = async () => {
     return withNamespace({
       namespace: ['my-event'],
       schema: MyEvent,
-      keyValueDb: await KeyValueDb({
+      keyValueDb: KeyValueDb({
         t: 'with-cache',
-        source: await KeyValueDb({
+        source: KeyValueDb({
           t: 'hash-map',
           logger: logger.child(['source']),
           map: sourceMap,
         }),
         logger: loggerChild,
-        cache: await KeyValueDb({
+        cache: KeyValueDb({
           t: 'with-distributed-invalidations',
           pubSub: await PubSub({
             t: 'pub-sub-topic-based',
@@ -54,7 +54,7 @@ const Fixture = async () => {
             topic: 'my-event-cache-invalidation',
           }),
           logger: loggerChild,
-          cache: await KeyValueDb({
+          cache: KeyValueDb({
             t: 'hash-map',
             map: new Map(),
             logger: loggerChild,

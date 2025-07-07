@@ -49,7 +49,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const httpServer = HttpServer({ t: 'node', logger })
 
-  const keyValueDbHashMap = await KeyValueDb({ t: 'hash-map' })
+  const keyValueDbHashMap = KeyValueDb({ t: 'hash-map' })
 
   const fs = FileSystem({ t: 'node' })
 
@@ -112,13 +112,13 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     logger,
   })
 
-  const keyValueDbPostgres = await KeyValueDb({
+  const keyValueDbPostgres = KeyValueDb({
     t: 'sql-db',
     sqlDb: sqlDbPostgres,
     logger,
   })
 
-  const keyValueDbSqlite = await KeyValueDb({
+  const keyValueDbSqlite = KeyValueDb({
     t: 'sql-db',
     sqlDb: sqlDbSqlite,
     logger,

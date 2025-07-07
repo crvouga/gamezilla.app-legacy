@@ -9,7 +9,7 @@ import { MigrationPolicy } from './impl'
 const Fixture = async () => {
   const logger = Logger({ t: 'noop' })
   const sqlDb = await SqlDb({ t: 'pglite', logger })
-  const kvDb = await KeyValueDb({ t: 'sql-db', sqlDb, logger })
+  const kvDb = KeyValueDb({ t: 'sql-db', sqlDb, logger })
   const migrationPolicy = MigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
     kvDb,

@@ -12,7 +12,7 @@ export type Config = {
   logger: ILogger
 }
 
-export const KeyValueDb = async (config: Config): Promise<IKeyValueDb> => {
+export const KeyValueDb = (config: Config): IKeyValueDb => {
   const logger = config.logger.child(['web-standard-storage'])
 
   return {

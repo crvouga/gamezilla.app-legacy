@@ -37,12 +37,10 @@ export type Config = {
   pubSub: IPubSub
 }
 
-export const withDistributedInvalidations = async (
-  config: Config,
-): Promise<IKeyValueDb & { unsubscribe: () => void }> => {
+export const withDistributedInvalidations = (config: Config): IKeyValueDb & { unsubscribe: () => void } => {
   const logger = config.logger.child(['with-distributed-invalidations'])
 
-  const unsubscribe = await config.pubSub.sub(async (encoded) => {
+  const unsubscribePromise = config.pubSub.sub(async (encoded) => {
     const update = decode(encoded)
     switch (update.t) {
       case DistributedUpdateType.SET: {
@@ -67,6 +65,9 @@ export const withDistributedInvalidations = async (
       }
     }
   })
+  const unsubscribe = () => {
+    unsubscribePromise.then((unsubscribe) => unsubscribe())
+  }
   return {
     unsubscribe,
     get(key, schema) {
