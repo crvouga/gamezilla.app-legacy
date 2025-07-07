@@ -1,12 +1,12 @@
 import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok } from '~/@/result'
 import { ParseError } from '~/@/schema/schema/parse-error'
-import { ISync } from '~/@/sync-engine/sync'
+import { ISyncEntry } from '~/@/sync-engine/sync-entry'
 import { UserSession } from './user-session'
 import { IUserSessionDb } from './user-session-db/interface'
 import { UserSessionId } from './user-session-id'
 
-export const UserSessionSync = (config: { userSessionDb: IUserSessionDb; logger: ILogger }): ISync => {
+export const UserSessionSync = (config: { userSessionDb: IUserSessionDb; logger: ILogger }): ISyncEntry => {
   const logger = config.logger.child(['user-session-sync'])
 
   return {

@@ -1,6 +1,6 @@
 import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok } from '~/@/result'
-import { ISync } from '~/@/sync-engine/sync'
+import { ISyncEntry } from '~/@/sync-engine/sync-entry'
 import { GuestSessionMapping } from './guest-session-mapping'
 import { IGuestSessionMappingDb } from './guest-session-mapping-db/interface'
 import { GuestSessionMappingId } from './guest-session-mapping-id'
@@ -8,7 +8,7 @@ import { GuestSessionMappingId } from './guest-session-mapping-id'
 export const GuestSessionMappingSync = (config: {
   guestSessionMappingDb: IGuestSessionMappingDb
   logger: ILogger
-}): ISync => {
+}): ISyncEntry => {
   const logger = config.logger.child(['guest-session-mapping-sync'])
 
   return {

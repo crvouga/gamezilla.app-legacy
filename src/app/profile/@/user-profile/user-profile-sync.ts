@@ -1,10 +1,10 @@
 import { isErr, Ok } from '~/@/result'
-import { ISync } from '~/@/sync-engine/sync'
+import { ISyncEntry } from '~/@/sync-engine/sync-entry'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { UserProfileId } from '~/app/@/data/user-profile-id'
 import { IUserProfileDb } from './user-profile-db/interface'
 
-export const UserProfileSync = (_config: { profileDb: IUserProfileDb }): ISync => {
+export const UserProfileSync = (_config: { profileDb: IUserProfileDb }): ISyncEntry => {
   return {
     match({ entry }) {
       return UserProfileId.is(entry.id)

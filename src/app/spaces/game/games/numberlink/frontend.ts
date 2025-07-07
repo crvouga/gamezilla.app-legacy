@@ -50,8 +50,17 @@ const toFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): FlowFron
     logger: input.ctx.logger,
     migrationPolicy: input.ctx.migrationPolicy,
   })
-  packDb ??= PackDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb, logger: input.ctx.logger })
-  solutionsDb ??= SolutionsDb({ t: 'sql-db', sqlDb: input.ctx.sqlDb })
+  packDb ??= PackDb({
+    t: 'sql-db',
+    sqlDb: input.ctx.sqlDb,
+    logger: input.ctx.logger,
+    migrationPolicy: input.ctx.migrationPolicy,
+  })
+  solutionsDb ??= SolutionsDb({
+    t: 'sql-db',
+    sqlDb: input.ctx.sqlDb,
+    migrationPolicy: input.ctx.migrationPolicy,
+  })
   return {
     ...input.ctx,
     puzzleDb,

@@ -1,11 +1,11 @@
 import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok } from '~/@/result'
-import { ISync } from '~/@/sync-engine/sync'
+import { ISyncEntry } from '~/@/sync-engine/sync-entry'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { IUserAccountDb } from './user-account-db/interface'
 
-export const UserAccountSync = (config: { userAccountDb: IUserAccountDb; logger: ILogger }): ISync => {
+export const UserAccountSync = (config: { userAccountDb: IUserAccountDb; logger: ILogger }): ISyncEntry => {
   const logger = config.logger.child(['user-account-sync'])
 
   return {

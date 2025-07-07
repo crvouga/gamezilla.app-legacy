@@ -10,6 +10,7 @@ import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
 import { ISqlDb } from '~/@/sql-db'
 import { SqlDb } from '~/@/sql-db/backend/impl'
+import { SyncEngine } from '~/@/sync-engine'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
@@ -89,7 +90,13 @@ const initCtx = async (config: { backendRole: BackendRole }): Promise<BackendCtx
 
   const backendInstanceId = BackendInstanceId.generate()
 
+  const syncEngine = SyncEngine({
+    t: 'backend',
+    logger,
+  })
+
   const ctxBase: AppBackendCtxBase = {
+    syncEngine,
     backendRole: config.backendRole,
     env,
     sqlDb,

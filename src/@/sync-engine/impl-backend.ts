@@ -1,25 +1,29 @@
 import { ILogger } from '../logger'
 import { Err, isErr, Ok } from '../result'
-import { ISync } from './sync'
 import { ISyncEngine } from './interface'
+import { ISyncEntry } from './sync-entry'
 
 export type Config = {
   t: 'backend'
-  syncRegistry: Iterable<ISync>
   logger: ILogger
 }
 
 export const SyncEngineBackend = (config: Config): ISyncEngine => {
   const logger = config.logger.child(['impl-backend'])
 
+  const syncRegistry = new Set<ISyncEntry>()
+
   return {
+    registerSync(handler) {
+      syncRegistry.add(handler)
+    },
     async push(input) {
       logger.debug(`Pushing data crudTransaction=${JSON.stringify(input.crudTransaction)}`)
 
       for (const entry of input.crudTransaction.entries) {
         logger.debug(`Processing entry collection=${entry.collection} id=${entry.id} op=${entry.op}`)
 
-        for (const sync of config.syncRegistry) {
+        for (const sync of syncRegistry) {
           const isMatch = sync.match({ entry })
 
           if (!isMatch) {

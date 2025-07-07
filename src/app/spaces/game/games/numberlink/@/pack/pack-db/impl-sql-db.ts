@@ -2,6 +2,7 @@ import { ascend } from '~/@/array/sorting'
 import { pipe } from '~/@/function/pipe'
 import { Uuid } from '~/@/id/uuid'
 import { ILogger } from '~/@/logger'
+import { IMigrationPolicy } from '~/@/migration-policy'
 import { isErr, isOk, Result, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
@@ -20,6 +21,7 @@ export type Config = {
   t: 'sql-db'
   sqlDb: ISqlDb
   logger: ILogger
+  migrationPolicy: IMigrationPolicy
 }
 
 const Row = s.obj({
@@ -50,7 +52,7 @@ const RowItem = s.obj({
 
 type RowItem = s.Infer<typeof RowItem>
 
-const CREATE_TABLES: string[] = [
+const UP: string[] = [
   `
   CREATE TABLE IF NOT EXISTS game_numberlink_pack (
       id TEXT NOT NULL,
@@ -76,6 +78,7 @@ const CREATE_TABLES: string[] = [
   );
   `,
 ]
+const DOWN: string[] = [`DROP TABLE IF EXISTS game_numberlink_pack_item`, `DROP TABLE IF EXISTS game_numberlink_pack`]
 
 const rowToPack = (row: Row, items: RowItem[]): Pack => {
   return {
@@ -164,10 +167,11 @@ const puzzleIdCsvToArray = (puzzleIdCsv: string): PuzzleId[] => {
 export const PackDb = (config: Config): IPackDb => {
   const logger = config.logger.child(['pack db impl sql'])
 
-  for (const query of CREATE_TABLES) {
-    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
-  }
-
+  config.migrationPolicy.execute({
+    up: UP,
+    down: DOWN,
+    sqlDb: config.sqlDb,
+  })
   return {
     async get(id) {
       const queried = await config.sqlDb.query({

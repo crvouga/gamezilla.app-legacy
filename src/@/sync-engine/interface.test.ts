@@ -1,21 +1,20 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { Ok } from '~/@/result'
+import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '../logger'
 import { ClientSessionId } from '../wire/client-session-id'
 import { SessionId } from '../wire/session-id'
 import { SyncEngine } from './impl'
-import { ISync } from './sync'
+import { ISyncEntry } from './sync-entry'
 
 const Fixture = () => {
   const sessionId = SessionId.generate()
   const clientSessionId = ClientSessionId.generate()
   const logger = Logger({ t: 'noop' })
-  const syncRegistry = new Set<ISync>()
+  const syncRegistry = new Set<ISyncEntry>()
 
   const syncEngine = SyncEngine({
     t: 'backend',
     logger,
-    syncRegistry,
   })
 
   return { sessionId, clientSessionId, logger, syncEngine, syncRegistry }

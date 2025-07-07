@@ -1,10 +1,10 @@
 import { Err, isErr, Ok } from '~/@/result'
-import { ISync } from '~/@/sync-engine/sync'
+import { ISyncEntry } from '~/@/sync-engine/sync-entry'
 import { Puzzle } from './puzzle'
 import { IPuzzleDb } from './puzzle-db/interface'
 import { PuzzleId } from './puzzle-id'
 
-export const PuzzleSync = (_config: { numberlinkPuzzleDb: IPuzzleDb }): ISync => {
+export const PuzzleSync = (_config: { numberlinkPuzzleDb: IPuzzleDb }): ISyncEntry => {
   return {
     match({ entry }) {
       return PuzzleId.is(entry.id)

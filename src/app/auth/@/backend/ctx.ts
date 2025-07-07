@@ -1,4 +1,3 @@
-import { SYNC_REGISTRY } from '~/@/sync-engine/sync'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { GuestSessionMappingDb, IGuestSessionMappingDb } from '../guest-session-mapping/guest-session-mapping-db'
 import { GuestSessionMappingSync } from '../guest-session-mapping/guest-session-mapping-sync'
@@ -34,11 +33,11 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
     sqlDb: input.ctx.sqlDb,
   })
 
-  SYNC_REGISTRY.add(UserAccountSync({ userAccountDb, logger: input.ctx.logger }))
+  input.ctx.syncEngine.registerSync(UserAccountSync({ userAccountDb, logger: input.ctx.logger }))
 
-  SYNC_REGISTRY.add(UserSessionSync({ userSessionDb, logger: input.ctx.logger }))
+  input.ctx.syncEngine.registerSync(UserSessionSync({ userSessionDb, logger: input.ctx.logger }))
 
-  SYNC_REGISTRY.add(GuestSessionMappingSync({ guestSessionMappingDb, logger: input.ctx.logger }))
+  input.ctx.syncEngine.registerSync(GuestSessionMappingSync({ guestSessionMappingDb, logger: input.ctx.logger }))
 
   const verifySMS = await VerifySMSFactory.createForEnvironment({
     logger: input.ctx.logger.child(['verifySMS']),

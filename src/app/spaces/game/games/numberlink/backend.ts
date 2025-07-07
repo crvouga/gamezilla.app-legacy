@@ -1,4 +1,3 @@
-import { SYNC_REGISTRY } from '~/@/sync-engine/sync'
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { NumberlinkBackendCtx } from './@/backend/ctx'
 import { PackDb } from './@/pack/pack-db'
@@ -17,9 +16,10 @@ const initCtx = (input: { ctx: SpaceBackendCtx }): NumberlinkBackendCtx => {
     t: 'sql-db',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
+    migrationPolicy: input.ctx.migrationPolicy,
   })
-  SYNC_REGISTRY.add(PuzzleSync({ numberlinkPuzzleDb }))
-  SYNC_REGISTRY.add(PackSync({ numberlinkPackDb }))
+  input.ctx.syncEngine.registerSync(PuzzleSync({ numberlinkPuzzleDb }))
+  input.ctx.syncEngine.registerSync(PackSync({ numberlinkPackDb }))
 
   return {
     ...input.ctx,

@@ -11,6 +11,7 @@ import { IUserProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
 import { Env } from '../data/env'
 import type { BackendInstanceId } from './backend-instance/backend-instance-id'
 import { BackendRole } from './backend-role'
+import { ISyncEngine } from '~/@/sync-engine'
 
 export type AppBackendCtxBase = {
   now: UnixMs
@@ -26,4 +27,5 @@ export type AppBackendCtxBase = {
   httpServer: IHttpServer
   runtime: IRuntime
   migrationPolicy: IMigrationPolicy
+  syncEngine: ISyncEngine
 }

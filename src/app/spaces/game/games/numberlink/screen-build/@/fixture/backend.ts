@@ -17,6 +17,7 @@ const initCtx = async (ctx: SpaceBackendCtx): Promise<NumberlinkBackendCtx> => {
           t: 'sql-db',
           sqlDb: f.sqlDbPostgres,
           logger: Logger({ t: 'noop' }),
+          migrationPolicy: MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
         }),
         numberlinkPuzzleDb: PuzzleDb({
           t: 'sql-db',

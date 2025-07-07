@@ -1,10 +1,10 @@
 import { Err, isErr, Ok } from '~/@/result'
-import { ISync } from '~/@/sync-engine/sync'
+import { ISyncEntry } from '~/@/sync-engine/sync-entry'
 import { SpaceId } from '~/app/@/data/space-id'
 import { Space } from '.'
 import { ISpaceDb } from './space-db/interface'
 
-export const SpaceSync = (_config: { spaceDb: ISpaceDb }): ISync => {
+export const SpaceSync = (_config: { spaceDb: ISpaceDb }): ISyncEntry => {
   return {
     match({ entry }) {
       return SpaceId.is(entry.id)

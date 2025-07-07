@@ -1,9 +1,10 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
+import { MigrationPolicy } from '~/@/migration-policy'
 import { Ok } from '~/@/result'
+import { describe, expect, test } from '~/@/test-runner'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import { SolutionHash } from '../solution-hash/solution-hash'
 import { VariantGridShorthand } from '../../variant/grid'
+import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
 import { Config, SolutionsDb } from './impl'
 
@@ -28,12 +29,14 @@ const Fixtures = async () => {
   configs.push({
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
+    migrationPolicy: MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
     configs.push({
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
+      migrationPolicy: MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     })
   }
 

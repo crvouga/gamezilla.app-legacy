@@ -1,12 +1,11 @@
+import { Json } from '~/@/json/json'
 import { ILogger } from '~/@/logger'
 import { isErr } from '~/@/result'
 import { SyncEngine } from '~/@/sync-engine/impl'
-import { SYNC_REGISTRY } from '~/@/sync-engine/sync'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { Ctx } from '../@/backend/ctx'
 import { RequestBody } from './types'
-import { Json } from '~/@/json/json'
 
 const respond = async (input: { req: Request; ctx: Ctx; logger: ILogger }): Promise<Response | null> => {
   const logger = input.logger.child(['upload-data'])
@@ -53,7 +52,6 @@ const respond = async (input: { req: Request; ctx: Ctx; logger: ILogger }): Prom
   const syncEngine = SyncEngine({
     t: 'backend',
     logger: logger,
-    syncRegistry: SYNC_REGISTRY,
   })
 
   const pushed = await syncEngine.push({

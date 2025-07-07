@@ -5,7 +5,7 @@ import { SessionId } from '../wire/session-id'
 import { CrudTransaction } from './crud-transaction/crud-transaction'
 import { CrudTransactionEntry } from './crud-transaction/crud-transaction-entry'
 
-export type ISync = {
+export type ISyncEntry = {
   match(input: { entry: CrudTransactionEntry }): boolean
 
   push(input: {
@@ -21,5 +21,3 @@ export type ISync = {
     query: unknown
   }): Promise<Result<string, CrudTransaction>>
 }
-
-export const SYNC_REGISTRY = new Set<ISync>()

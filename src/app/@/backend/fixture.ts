@@ -10,6 +10,7 @@ import { Runtime } from '~/@/runtime'
 import { type ISqlDb } from '~/@/sql-db'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
+import { SyncEngine } from '~/@/sync-engine'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
@@ -72,7 +73,10 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const migrationPolicy = MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
 
+  const syncEngine = SyncEngine({ t: 'backend', logger })
+
   const ctx: AppBackendCtxBase = {
+    syncEngine,
     backendRole: 'primary',
     env: 'test',
     keyValueDbDurable: keyValueDbHashMap,

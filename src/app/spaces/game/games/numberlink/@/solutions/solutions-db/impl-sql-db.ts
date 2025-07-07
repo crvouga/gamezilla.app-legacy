@@ -1,4 +1,5 @@
 import { Json } from '~/@/json/json'
+import { IMigrationPolicy } from '~/@/migration-policy'
 import { Err, isErr, Ok, Result, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
@@ -11,6 +12,7 @@ import { ISolutionsDb } from './interface'
 export type Config = {
   t: 'sql-db'
   sqlDb: ISqlDb
+  migrationPolicy: IMigrationPolicy
 }
 
 const Row = s.obj({
@@ -22,7 +24,7 @@ const Row = s.obj({
 
 export type Row = s.Infer<typeof Row>
 
-const CREATE_TABLES: string[] = [
+const UP: string[] = [
   `
   CREATE TABLE IF NOT EXISTS game_numberlink_solutions (
       id TEXT NOT NULL PRIMARY KEY,
@@ -32,6 +34,7 @@ const CREATE_TABLES: string[] = [
   );
   `,
 ]
+const DOWN: string[] = [`DROP TABLE IF EXISTS game_numberlink_solutions`]
 
 const rowToSolutions = (row: Row): Result<string, Solutions> => {
   const json = unwrapOr(typeof row.solutions === 'string' ? Json.parse(row.solutions) : Ok(row.solutions), [])
@@ -41,9 +44,7 @@ const rowToSolutions = (row: Row): Result<string, Solutions> => {
 }
 
 export const SolutionsDb = (config: Config): ISolutionsDb => {
-  for (const query of CREATE_TABLES) {
-    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
-  }
+  config.migrationPolicy.execute({ down: DOWN, up: UP, sqlDb: config.sqlDb })
 
   return {
     async get(hash) {

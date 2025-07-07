@@ -3,6 +3,7 @@ import { UnixMs } from '../time/unix-ms'
 import { ClientSessionId } from '../wire/client-session-id'
 import { SessionId } from '../wire/session-id'
 import { CrudTransaction } from './crud-transaction/crud-transaction'
+import { ISyncEntry } from './sync-entry'
 
 export type ISyncEngine = {
   /**
@@ -22,4 +23,8 @@ export type ISyncEngine = {
     query: unknown
     lastPulledAt: UnixMs
   }): Promise<Result<string, CrudTransaction>>
+  /**
+   * registerPushEntry
+   */
+  registerSync(handler: ISyncEntry): void
 }

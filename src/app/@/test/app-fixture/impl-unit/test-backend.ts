@@ -17,6 +17,7 @@ import { BackendCtxModule, topicContract } from '~/app/types'
 import { WireBackend } from '~/app/wire/backend'
 import { BackendInstanceId } from '../../../backend/backend-instance/backend-instance-id'
 import { AppBackendCtxBase } from '../../../backend/ctx'
+import { SyncEngine } from '~/@/sync-engine'
 
 export const TestBackend = async (config: {
   sqlDb: ISqlDb
@@ -56,7 +57,10 @@ export const TestBackend = async (config: {
 
   const migrationPolicy = MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
 
+  const syncEngine = SyncEngine({ t: 'http-client', logger })
+
   const ctxBase: AppBackendCtxBase = {
+    syncEngine,
     backendRole: 'primary',
     migrationPolicy,
     env: 'dev',
