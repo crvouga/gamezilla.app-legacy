@@ -18,6 +18,15 @@ const Fixture = async (config: Config) => {
 const Fixtures = async () => {
   const configs: Config[] = []
 
+  const SHOULD_TEST_PGLITE = false
+  if (SHOULD_TEST_PGLITE) {
+    configs.push({
+      t: 'pglite',
+      logger: Logger({ t: 'console', newLinePerMsg: true, namespace: ['sql-db'], maxLogLevel: 'debug' }),
+      databaseUrl: ':memory:',
+    })
+  }
+
   if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
     configs.push({
       t: 'postgres',

@@ -55,7 +55,7 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
 
       logger.debug({
         duration: durationFormatted,
-        sql: cleanSql(input.sql),
+        sql: Sql.clean(input.sql),
         variables: Object.entries(input.vars).map(([key, value]) => `${key}=${String(value).slice(0, 100)}`),
       })
 
@@ -147,12 +147,3 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
     },
   }
 }
-
-const cleanSql = (str: string) =>
-  str
-
-    .replace(/\t/g, ' ')
-
-    .replace(/\n/g, ' ')
-
-    .replace(/ +/g, ' ')

@@ -10,6 +10,7 @@
     "codegen",
     "compat",
     "consecutives",
+    "DBFS",
     "dbmate",
     "deinterleave",
     "dissoc",

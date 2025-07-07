@@ -1,5 +1,6 @@
-import { describe, expect, test } from '~/@/test-runner'
 import 'fake-indexeddb/auto'
+import { FileSystem } from '~/@/file-system'
+import { describe, expect, test } from '~/@/test-runner'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { BackendConnectorNoop } from '~/service-powersync/client/backend-connector-noop'
@@ -8,7 +9,6 @@ import { Logger } from '../../logger'
 import { isErr, isOk } from '../../result'
 import { s } from '../../schema'
 import { Config, SqlDb } from '../backend/impl'
-import { FileSystem } from '~/@/file-system'
 
 const Fixture = async (config: Config) => {
   const sqlDb = await SqlDb(config)
@@ -44,6 +44,11 @@ const Fixtures = async () => {
       logger: Logger({ t: 'noop' }),
     })
   }
+
+  configs.push({
+    t: 'pglite',
+    logger: Logger({ t: 'console', newLinePerMsg: true, namespace: ['sql-db'], maxLogLevel: 'debug' }),
+  })
 
   if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
     configs.push({

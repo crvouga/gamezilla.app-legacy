@@ -74,6 +74,7 @@
     "trailingComma": "all"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.3.4",
     "@journeyapps/wa-sqlite": "^1.2.5",
     "@powersync/common": "^1.33.0",
     "@powersync/web": "^1.22.0",

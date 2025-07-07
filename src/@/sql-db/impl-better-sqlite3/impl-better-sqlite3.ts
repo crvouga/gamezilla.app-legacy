@@ -43,13 +43,11 @@ export const SqlDb = async (config: Config): Promise<ISqlDb> => {
   const db = new Database(config.databasePath, config.options)
 
   // Enable WAL mode for better concurrency
-  // if (config.databasePath !== ':memory:') {
   db.exec('PRAGMA journal_mode = WAL;')
   db.exec('PRAGMA synchronous = NORMAL;')
   db.exec('PRAGMA cache_size = 1000;')
   db.exec('PRAGMA foreign_keys = true;')
   db.exec('PRAGMA temp_store = memory;')
-  // }
 
   const events = Sub.create<{ t: 'queried' }>()
 

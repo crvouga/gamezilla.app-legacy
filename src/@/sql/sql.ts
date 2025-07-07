@@ -55,6 +55,11 @@ export const to = (query: string, variables: Vars): string => {
   return replaced
 }
 
+const removeTabs = (str: string) => str.replace(/\t/g, ' ')
+const removeNewLines = (str: string) => str.replace(/\n/g, ' ')
+const removeMultipleSpaces = (str: string) => str.replace(/ +/g, ' ')
+export const clean = (str: string) => removeTabs(removeNewLines(removeMultipleSpaces(str)))
+
 const replaceParam = (query: string, variable: string, value: VarType): string => {
   switch (typeof value) {
     case 'number':

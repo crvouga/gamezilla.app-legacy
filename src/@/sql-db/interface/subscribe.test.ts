@@ -17,17 +17,17 @@ const Fixture = async (config: Config) => {
 const Fixtures = async () => {
   const configs: Config[] = []
 
-  // configs.push({
-  //   t: 'postgres',
-  //   databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
-  //   logger: Logger({ t: 'noop' }),
-  // })
-
   configs.push({
     t: 'better-sqlite3',
     databasePath: ':memory:',
     logger: Logger({ t: 'noop' }),
     fs: FileSystem({ t: 'node' }),
+  })
+
+  configs.push({
+    t: 'pglite',
+    // logger: Logger({ t: 'console', newLinePerMsg: true, namespace: ['sql-db'], maxLogLevel: 'debug' }),
+    logger: Logger({ t: 'noop' }),
   })
 
   return Promise.all(configs.map(Fixture))
