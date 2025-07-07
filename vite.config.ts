@@ -31,18 +31,9 @@ export default defineConfig({
   },
   build: {
     target: ['es2022', 'chrome100', 'safari15'],
-    chunkSizeWarningLimit: 2 * MEGABYTE,
+    chunkSizeWarningLimit: 3 * MEGABYTE,
     rollupOptions: {
-      external: [
-        // '@journeyapps/wa-sqlite',
-        // '@powersync/web',
-        'bcrypt',
-        'argon2',
-        'better-sqlite3',
-        'ws',
-        '@mapbox/node-pre-gyp',
-        'crypto',
-      ],
+      external: ['bcrypt', 'argon2', 'better-sqlite3', 'ws', '@mapbox/node-pre-gyp', 'crypto'],
     },
   },
   worker: {
