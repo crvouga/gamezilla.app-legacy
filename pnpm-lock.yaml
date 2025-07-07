@@ -11,15 +11,6 @@ importers:
       '@electric-sql/pglite':
         specifier: ^0.3.4
         version: 0.3.4
-      '@journeyapps/wa-sqlite':
-        specifier: ^1.2.5
-        version: 1.2.5
-      '@powersync/common':
-        specifier: ^1.33.0
-        version: 1.33.0
-      '@powersync/web':
-        specifier: ^1.22.0
-        version: 1.23.0(@journeyapps/wa-sqlite@1.2.5)(@powersync/common@1.33.0)
       argon2:
         specifier: ^0.43.0
         version: 0.43.0
@@ -921,9 +912,6 @@ packages:
     resolution: {integrity: sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==}
     engines: {node: '>=8'}
 
-  '@journeyapps/wa-sqlite@1.2.5':
-    resolution: {integrity: sha512-h04kyOtKoZbGG9Zslgq8K4+umeiVNvauYoR6fPFOzzacIlfnh6VWYevuFOKIM7yUIQo15q1tYOym3eDiyTsVUA==}
-
   '@jridgewell/gen-mapping@0.3.12':
     resolution: {integrity: sha512-OuLGC46TjB5BbN1dH8JULVVZY4WTdkF7tV9Ys6wLL1rubZnCMstOhNHueU5bLCrnRuDhKPDM4g6sw4Bel5Gzqg==}
 
@@ -955,16 +943,6 @@ packages:
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
-
-  '@powersync/common@1.33.0':
-    resolution: {integrity: sha512-FPJ3A8ic2zt/ZsgXDxIk36W9MOTuGRw+n5vUO178DBoSdUFfheJhlPprEM369e8B7Zq12EYNM7x+2/7UKEGjVw==}
-
-  '@powersync/web@1.23.0':
-    resolution: {integrity: sha512-KbKuov6uX+i8dro1d/MiSfRj7ZEs02F6VNisDeCaryx9HcN6laROARn+PC/xcSQ/UtSA/i2qhjLiGf7+zA2oMA==}
-    hasBin: true
-    peerDependencies:
-      '@journeyapps/wa-sqlite': ^1.2.5
-      '@powersync/common': ^1.33.0
 
   '@rollup/plugin-babel@5.3.1':
     resolution: {integrity: sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==}
@@ -1488,9 +1466,6 @@ packages:
     resolution: {integrity: sha512-hsU18Ae8CDTR6Kgu9DYf0EbCr/a5iGL0rytQDobUcdpYOKokk8LEjVphnXkDkgpi0wYVsqrXuP0bZxJaTqdgoA==}
     engines: {node: '>= 0.4'}
 
-  async-mutex@0.4.1:
-    resolution: {integrity: sha512-WfoBo4E/TbCX1G95XTjbWTE3X2XLG0m1Xbv2cwOtuPdyH9CZvnaA5nCt1ucjaKEgW2A5IF71hxrRhr83Je5xjA==}
-
   async@3.2.6:
     resolution: {integrity: sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==}
 
@@ -1551,10 +1526,6 @@ packages:
     resolution: {integrity: sha512-KGj0KoOMXLpSNkkEI6Z6mShmQy0bc1I+T7K9N81k4WWMrfz+6fQ6es80B/YLAeRoKvjYE1YSHHOW1qe9xIVzHw==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
-
-  bson@6.10.4:
-    resolution: {integrity: sha512-WIsKqkSC0ABoBJuT1LEX+2HEvNmNKKgnTAyd0fL8qzK4SH2i9NXg+t08YtdZp/V9IZ33cxe3iV4yM0qg8lMQng==}
-    engines: {node: '>=16.20.1'}
 
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
@@ -1657,13 +1628,6 @@ packages:
 
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
-
-  comlink@4.4.2:
-    resolution: {integrity: sha512-OxGdvBmJuNKSCMO4NTl1L47VRp6xn2wG4F/2hYzB6tiCb709otOxtEYCSvK80PtjODfXXZu8ds+Nw5kVCjqd2g==}
-
-  commander@12.1.0:
-    resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
-    engines: {node: '>=18'}
 
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
@@ -2296,9 +2260,6 @@ packages:
   jiti@2.4.2:
     resolution: {integrity: sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==}
     hasBin: true
-
-  js-logger@1.6.1:
-    resolution: {integrity: sha512-yTgMCPXVjhmg28CuUH8CKjU+cIKL/G+zTu4Fn4lQxs8mRFH/03QTNvEFngcxfg/gRDiQAOoyCKmMTOm9ayOzXA==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -4355,8 +4316,6 @@ snapshots:
 
   '@istanbuljs/schema@0.1.3': {}
 
-  '@journeyapps/wa-sqlite@1.2.5': {}
-
   '@jridgewell/gen-mapping@0.3.12':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.4
@@ -4386,19 +4345,6 @@ snapshots:
       playwright: 1.53.2
 
   '@polka/url@1.0.0-next.29': {}
-
-  '@powersync/common@1.33.0':
-    dependencies:
-      js-logger: 1.6.1
-
-  '@powersync/web@1.23.0(@journeyapps/wa-sqlite@1.2.5)(@powersync/common@1.33.0)':
-    dependencies:
-      '@journeyapps/wa-sqlite': 1.2.5
-      '@powersync/common': 1.33.0
-      async-mutex: 0.4.1
-      bson: 6.10.4
-      comlink: 4.4.2
-      commander: 12.1.0
 
   '@rollup/plugin-babel@5.3.1(@babel/core@7.28.0)(rollup@2.79.2)':
     dependencies:
@@ -4886,10 +4832,6 @@ snapshots:
 
   async-function@1.0.0: {}
 
-  async-mutex@0.4.1:
-    dependencies:
-      tslib: 2.8.1
-
   async@3.2.6: {}
 
   at-least-node@1.0.0: {}
@@ -4972,8 +4914,6 @@ snapshots:
       electron-to-chromium: 1.5.178
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.25.1)
-
-  bson@6.10.4: {}
 
   buffer-from@1.1.2: {}
 
@@ -5065,10 +5005,6 @@ snapshots:
       color-name: 1.1.4
 
   color-name@1.1.4: {}
-
-  comlink@4.4.2: {}
-
-  commander@12.1.0: {}
 
   commander@2.20.3: {}
 
@@ -5787,8 +5723,6 @@ snapshots:
       minimatch: 3.1.2
 
   jiti@2.4.2: {}
-
-  js-logger@1.6.1: {}
 
   js-tokens@4.0.0: {}
 

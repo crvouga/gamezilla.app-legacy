@@ -16,7 +16,6 @@ import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
-import { PowerSyncBackend } from '~/service-powersync/backend'
 import { AppTypes } from '.'
 import { BackendInstanceId } from './@/backend/backend-instance/backend-instance-id'
 import { BackendRole } from './@/backend/backend-role'
@@ -173,11 +172,6 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
     logger: input.ctx.logger,
     contract: AppTypes.rpcContract,
     server: AppBackend.rpc({ ctx: input.ctx }),
-  })
-
-  PowerSyncBackend.registerRespond({
-    ctx: input.ctx,
-    httpServer: input.ctx.httpServer,
   })
 
   HelloBackend.registerRespond({

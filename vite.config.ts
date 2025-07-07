@@ -14,16 +14,7 @@ export default defineConfig({
     // VitePWA()
   ],
   optimizeDeps: {
-    exclude: [
-      '@electric-sql/pglite',
-      '@journeyapps/wa-sqlite',
-      '@powersync/web',
-      'bcrypt',
-      'argon2',
-      'better-sqlite3',
-      'ws',
-      '@mapbox/node-pre-gyp',
-    ],
+    exclude: ['@electric-sql/pglite', 'bcrypt', 'argon2', 'better-sqlite3', 'ws', '@mapbox/node-pre-gyp'],
   },
   define: {
     global: 'globalThis',

@@ -3,8 +3,6 @@ import { FileSystem } from '~/@/file-system'
 import { describe, expect, test } from '~/@/test-runner'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
-import { BackendConnectorNoop } from '~/service-powersync/client/backend-connector-noop'
-import { PowerSyncClient } from '~/service-powersync/client/powersync-client'
 import { Logger } from '../../logger'
 import { isErr, isOk } from '../../result'
 import { s } from '../../schema'
@@ -28,20 +26,6 @@ const Fixtures = async () => {
       databasePath: ':memory:',
       logger: Logger({ t: 'noop' }),
       fs: FileSystem({ t: 'node' }),
-    })
-  }
-
-  const SHOULD_TEST_POWERSYNC_CLIENT = false
-  if (SHOULD_TEST_POWERSYNC_CLIENT) {
-    configs.push({
-      t: 'powersync-client',
-      powerSyncClient: await PowerSyncClient({
-        t: 'node.js',
-        debug: true,
-        logger: Logger({ t: 'noop' }),
-        backendConnector: new BackendConnectorNoop({ logger: Logger({ t: 'noop' }) }),
-      }),
-      logger: Logger({ t: 'noop' }),
     })
   }
 

@@ -505,13 +505,6 @@ CREATE INDEX space_projection_user_user_id_idx ON public.space_projection_user U
 
 
 --
--- Name: powersync; Type: PUBLICATION; Schema: -; Owner: -
---
-
-CREATE PUBLICATION powersync FOR ALL TABLES WITH (publish = 'insert, update, delete, truncate');
-
-
---
 -- PostgreSQL database dump complete
 --
 
