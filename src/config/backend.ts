@@ -9,22 +9,6 @@ const DATABASE_URL = () => {
   return value
 }
 
-const POWERSYNC_PRIVATE_KEY = () => {
-  const value = SecretString.init('POWERSYNC_PRIVATE_KEY', process.env?.POWERSYNC_PRIVATE_KEY)
-  if (!value) {
-    throw new Error('POWERSYNC_PRIVATE_KEY is not set')
-  }
-  return value
-}
-
-const POWERSYNC_PUBLIC_KEY = () => {
-  const value = process.env?.POWERSYNC_PUBLIC_KEY
-  if (!value) {
-    throw new Error('POWERSYNC_PUBLIC_KEY is not set')
-  }
-  return value
-}
-
 const PORT = () => {
   const value = process.env?.PORT
   if (!value) {
@@ -74,6 +58,4 @@ export const CONFIG_BACKEND = {
   TWILIO_MESSAGING_SERVICE_SID,
   PORT,
   DATABASE_URL,
-  POWERSYNC_PRIVATE_KEY,
-  POWERSYNC_PUBLIC_KEY,
 }
