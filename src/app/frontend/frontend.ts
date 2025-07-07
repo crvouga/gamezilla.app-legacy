@@ -20,8 +20,8 @@ const init = (input: {
   msgOut?: unknown[]
 } => {
   const screen = CurrentScreenFrontend.init(input)
-  const visibility = VisibilityFrontend.init()
-  const screenSize = ScreenSizeFrontend.init()
+  const visibility = VisibilityFrontend.init(input)
+  const screenSize = ScreenSizeFrontend.init(input)
   const toast = ToasterFrontend.init(input)
   const focus = FocusFrontend.init()
   const copyToClipboard = CopyToClipboardFrontend.init()
@@ -113,11 +113,11 @@ const update = (input: {
 
 const subscriptions = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend }): Sub<MsgFrontend> => {
   return Sub.batch<MsgFrontend>([
-    Sub.map(VisibilityFrontend.subscriptions, (c): MsgFrontend => ({ t: 'visibility', c })),
+    Sub.map(VisibilityFrontend.subscriptions(input), (c): MsgFrontend => ({ t: 'visibility', c })),
     Sub.map(FocusFrontend.subscriptions, (c): MsgFrontend => ({ t: 'focus', c })),
     Sub.map(CopyToClipboardFrontend.subscriptions, (c): MsgFrontend => ({ t: 'copy-to-clipboard', c })),
-    Sub.map(ScreenSizeFrontend.subscriptions, (c): MsgFrontend => ({ t: 'screen-size', c })),
-    Sub.map(CurrentScreenFrontend.subscriptions({ ctx: input.ctx }), (c): MsgFrontend => ({ t: 'current-screen', c })),
+    Sub.map(ScreenSizeFrontend.subscriptions(input), (c): MsgFrontend => ({ t: 'screen-size', c })),
+    Sub.map(CurrentScreenFrontend.subscriptions(input), (c): MsgFrontend => ({ t: 'current-screen', c })),
     Sub.map(
       ToasterFrontend.subscriptions({ ctx: input.ctx, model: input.model.toast }),
       (c): MsgFrontend => ({ t: 'toast', c }),

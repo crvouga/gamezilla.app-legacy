@@ -1,6 +1,6 @@
-import { Keyboard } from '~/@/browser'
-import { Result } from '~/@/result'
+import { KeyboardKey } from '~/@/keyboard'
 import { Option } from '~/@/option/option'
+import { Result } from '~/@/result'
 import type { UserId } from '~/app/@/data/user-id'
 import type * as Direction from './@/direction'
 import * as Snake from './@/snake'
@@ -57,7 +57,7 @@ export const initSpaceModel: SpaceModel = {
 //
 //
 
-export type MsgFrontend = ['PressedKeyDown', Keyboard.Key] | ['OpenedMenu', string] | ['ClosedMenu'] | Request
+export type MsgFrontend = ['PressedKeyDown', KeyboardKey] | ['OpenedMenu', string] | ['ClosedMenu'] | Request
 
 export type MsgBackend = ['tick']
 

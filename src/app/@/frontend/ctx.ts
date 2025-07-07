@@ -1,12 +1,14 @@
 import { IAudioPlayer } from '~/@/audio-player'
 import { IHttpClient } from '~/@/http-client'
+import { IKeyBoard } from '~/@/keyboard'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { ILogger } from '~/@/logger'
 import { INavigation } from '~/@/navigation'
-import type { Screen } from '~/@/screen/generated/screens'
+import type { Screen } from '~/@/screens/generated/screens'
 import { ISqlDb } from '~/@/sql-db'
 import { UnixMs } from '~/@/time/unix-ms'
+import { IViewport } from '~/@/viewport'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { BackendConnectionStatus } from '~/app/@/wire/backend-connection-status'
 import { UserSession } from '~/app/auth/@/user-session/user-session'
@@ -16,6 +18,7 @@ import { UserProfile } from '../data/user-profile'
 import { UserRole } from '../data/user-role'
 import { ParentScreenProps } from '../ui/screen/layout/screen-layout-props'
 import { ScreenSize } from '../ui/screen/screen-size'
+import { IKeyValueDb } from '~/@/key-value-db'
 
 export type CurrentUser =
   | { t: 'loading' }
@@ -27,10 +30,13 @@ export type AppFrontendCtxBase = {
   screenSize: ScreenSize
   sqlDb: ISqlDb
   logger: ILogger
+  keyboard: IKeyBoard
   t: Translator
   navigatorLanguage: LanguageCodeISO_639_1
   currentScreen: Screen
   now: UnixMs
+  viewport: IViewport
+  keyValueDb: IKeyValueDb
   profilesByUserId: {
     [userId: UserId]: UserProfile
   }
@@ -44,9 +50,7 @@ export type AppFrontendCtxBase = {
   backendConnectionStatus: BackendConnectionStatus
 }
 
-export type AnonymousFrontendCtx = AppFrontendCtxBase
-
-export const isAnonymous = (ctx: AppFrontendCtxBase): ctx is AnonymousFrontendCtx => {
+export const isAnonymous = (ctx: AppFrontendCtxBase): ctx is AppFrontendCtxBase => {
   return ctx.currentUser === null
 }
 

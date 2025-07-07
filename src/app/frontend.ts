@@ -1,13 +1,15 @@
 import { AudioPlayer } from '~/@/audio-player'
 import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
+import { KeyValueDb } from '~/@/key-value-db'
+import { KeyBoard } from '~/@/keyboard'
 import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Msg } from '~/@/msg/msg'
 import { Navigation } from '~/@/navigation'
 import { isErr } from '~/@/result'
 import { RPC } from '~/@/rpc'
-import { Screen } from '~/@/screen/generated/screens'
+import { Screen } from '~/@/screens/generated/screens'
 import { SqlDb } from '~/@/sql-db/frontend/impl'
 import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
@@ -17,6 +19,7 @@ import { IconGamepad, IconUserCircle } from '~/@/ui/icon'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
 import { h } from '~/@/vdom/h'
+import { Viewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { CONFIG_SHARED } from '~/config/shared'
 import { BackendConnector } from '~/service-powersync/client/backend-connector'
@@ -114,8 +117,16 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     logger,
   })
 
+  const viewport = Viewport({ t: 'web-standard' })
+
+  const keyboard = KeyBoard({ t: 'web-standard' })
+
+  const keyValueDb = await KeyValueDb({ t: 'web-standard-storage', storage: localStorage, logger })
+
   const ctx: AppFrontendCtxBase = {
     audioPlayer,
+    keyboard,
+    viewport,
     navigation,
     clientSessionId,
     sqlDb,
@@ -134,6 +145,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     },
     httpClient,
     backendConnectionStatus: { t: 'connecting' },
+    keyValueDb,
   }
 
   const auth = await AuthFrontend.initCtx({ ctx, rpc })
@@ -172,7 +184,7 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
     now: UnixMs.now(),
     t: Translator(input.model.settings.lang),
     profilesByUserId: input.model.profile.profilesByUserId,
-    documentVisibilityState: input.model.frontend.visibility.documentVisibilityState,
+    documentVisibilityState: input.model.frontend.visibility.visibility,
     currentScreen: input.model.frontend.currentScreen.currentScreen,
     screenSize: input.model.frontend.screenSize.screenSize,
     parentScreen: null,
@@ -190,7 +202,7 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
   const ctx: FrontendCtxModule = {
     ...input.ctx,
     currentScreen: frontend.model.currentScreen.currentScreen,
-    documentVisibilityState: frontend.model.visibility.documentVisibilityState,
+    documentVisibilityState: frontend.model.visibility.visibility,
     screenSize: frontend.model.screenSize.screenSize,
   }
 

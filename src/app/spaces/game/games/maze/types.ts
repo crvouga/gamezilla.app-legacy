@@ -1,7 +1,7 @@
 import { NonEmpty } from '~/@/array/non-empty'
-import { Keyboard } from '~/@/browser'
-import { Err, Ok, type Result } from '~/@/result'
+import { KeyboardKey } from '~/@/keyboard'
 import { dissoc } from '~/@/object/dissoc'
+import { Err, Ok, type Result } from '~/@/result'
 import type { UserId } from '~/app/@/data/user-id'
 import { Maze } from './@/maze'
 import { Direction, Position } from './@/position'
@@ -62,7 +62,7 @@ export type ModelBackend = SpaceModel
 //
 //
 
-export type MsgFrontend = Req | ['key-down', Keyboard.Key] | ['key-up', Keyboard.Key]
+export type MsgFrontend = Req | ['key-down', KeyboardKey] | ['key-up', KeyboardKey]
 
 export type MsgBackend = ['tick']
 

@@ -1,6 +1,4 @@
-import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
-import { pipe } from '~/@/function/pipe'
 import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { AppFrontendCtx } from '../@/frontend/ctx'
@@ -53,8 +51,6 @@ export type Msg = MsgFrontend
 //
 //
 
-const userSearchInputId = 'user-search-input'
-
 export const update = ({
   msg,
   model,
@@ -98,10 +94,6 @@ export const update = ({
           userSelected: {},
           userSearch: '',
         },
-        eff: pipe(
-          Browser.focus(userSearchInputId),
-          Eff.perform((result) => ['focused', result]),
-        ),
       }
     }
 

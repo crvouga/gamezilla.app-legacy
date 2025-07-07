@@ -1,11 +1,10 @@
-import { Keyboard } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { exhaustive } from '~/@/function/exhaustive'
 import { Option } from '~/@/option/option'
 import { type Result, isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
-import { AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { AppFrontendCtx, AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Direction } from './@/direction'
 import {
@@ -171,8 +170,8 @@ const updateResponse = <TProblem extends string, TResult extends Result<TProblem
 //
 //
 
-export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
-  return Keyboard.keyDowns<Msg>((key) => ['PressedKeyDown', key])
+export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
+  return input.ctx.keyboard.keyDowns<Msg>((key) => ['PressedKeyDown', key])
 }
 
 //

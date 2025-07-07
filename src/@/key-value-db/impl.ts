@@ -2,6 +2,7 @@ import { Logger } from '../logger'
 import * as ImplHashMap from './impl-hash-map'
 import * as ImplInMemory from './impl-in-memory'
 import * as ImplSqlDb from './impl-sql-db'
+import * as ImplWebStandardStorage from './impl-web-standard-storage'
 import type { IKeyValueDb } from './interface'
 import * as WithCache from './with-cache'
 import * as WithDistributedInvalidations from './with-distributed-invalidations'
@@ -19,7 +20,7 @@ export type Config =
   | WithReducedParsing.Config
   | WithThrottledWrites.Config
   | WithDistributedInvalidations.Config
-
+  | ImplWebStandardStorage.Config
 export const KeyValueDb = async (configInput: Config): Promise<IKeyValueDb> => {
   const logger = configInput.logger?.child(['key-value-db']) ?? Logger({ t: 'noop' })
   const config: Config = { ...configInput, logger }
@@ -54,6 +55,10 @@ export const KeyValueDb = async (configInput: Config): Promise<IKeyValueDb> => {
 
     case 'in-memory': {
       return ImplInMemory.KeyValueDb(config)
+    }
+
+    case 'web-standard-storage': {
+      return ImplWebStandardStorage.KeyValueDb(config)
     }
   }
 }

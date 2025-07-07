@@ -1,20 +1,21 @@
-import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { Sub } from '~/@/sub'
+import { ViewportVisibility } from '~/@/viewport'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 
 export type Model = {
-  documentVisibilityState: DocumentVisibilityState
+  visibility: ViewportVisibility
 }
 
-export const init = (): { model: Model } => {
+export const init = (input: { ctx: AppFrontendCtxBase }): { model: Model } => {
   return {
     model: {
-      documentVisibilityState: typeof window === 'undefined' ? 'visible' : document.visibilityState,
+      visibility: input.ctx.viewport.visibility.get(),
     },
   }
 }
 
-export type Msg = { t: 'document-became-hidden' } | { t: 'document-became-visible' }
+export type Msg = { t: 'viewport-became-hidden' } | { t: 'viewport-became-visible' }
 
 export const update = ({
   msg,
@@ -35,30 +36,34 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
   if (!msg) return { model }
 
   switch (msg.t) {
-    case 'document-became-hidden': {
-      return { model: { ...model, documentVisibilityState: 'hidden' } }
+    case 'viewport-became-hidden': {
+      return { model: { ...model, visibility: 'hidden' } }
     }
 
-    case 'document-became-visible': {
-      return { model: { ...model, documentVisibilityState: 'visible' } }
+    case 'viewport-became-visible': {
+      return { model: { ...model, visibility: 'visible' } }
     }
   }
 }
 
-const visibilityStateSubscriptions: Sub<Msg> = Browser.onDocumentVisibilityState<Msg>((state) => {
-  switch (state) {
-    case 'hidden': {
-      return {
-        t: 'document-became-hidden',
+const visibilityStateSubscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
+  return input.ctx.viewport.visibility.sub((state) => {
+    switch (state) {
+      case 'hidden': {
+        return {
+          t: 'viewport-became-hidden',
+        }
+      }
+
+      case 'visible': {
+        return {
+          t: 'viewport-became-visible',
+        }
       }
     }
+  })
+}
 
-    case 'visible': {
-      return {
-        t: 'document-became-visible',
-      }
-    }
-  }
-})
-
-export const subscriptions: Sub<Msg> = visibilityStateSubscriptions
+export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
+  return visibilityStateSubscriptions(input)
+}

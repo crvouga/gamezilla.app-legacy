@@ -1,5 +1,5 @@
 import { AppFrontendModule } from '../@/architecture/app-frontend'
-import { AnonymousFrontendCtx } from '../@/frontend/ctx'
+import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { ScreenLangTypes } from './screen-lang'
 import { ScreenRendererTypes } from './screen-renderer'
 import { SoundFrontend } from './sound'
@@ -23,7 +23,7 @@ export type MsgFrontendBase =
 export type MsgFrontend = MsgFrontendBase | ScreenLangTypes.MsgFrontend | ScreenRendererTypes.MsgFrontend
 
 export type FrontendModule = AppFrontendModule<{
-  Ctx: AnonymousFrontendCtx
+  Ctx: AppFrontendCtxBase
   Model: ModelFrontend
   Msg: MsgFrontend
 }>

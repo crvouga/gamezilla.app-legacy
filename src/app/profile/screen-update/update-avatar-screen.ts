@@ -1,14 +1,14 @@
 import { Avatar } from '~/@/ui/avatar'
 import { TextField } from '~/@/ui/text-field'
 import { h } from '~/@/vdom/h'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { AppFrontendCtxBase, AppFrontendCtx } from '~/app/@/frontend/ctx'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { ModelFrontend, MsgFrontend } from '../types'
 
 const View = (input: {
   model: ModelFrontend
   dispatch: (msg: MsgFrontend) => void
-  ctx: AnonymousFrontendCtx | AppFrontendCtx
+  ctx: AppFrontendCtxBase | AppFrontendCtx
 }) => {
   return h(ScreenLayout, {
     parentScreen: input.ctx.parentScreen,

@@ -1,4 +1,3 @@
-import { Browser } from '~/@/browser'
 import type { RemoteResult, Result } from '~/@/result'
 import type { UserId } from '~/app/@/data/user-id'
 import type { Username } from '~/app/@/data/username'
@@ -32,7 +31,6 @@ export type MsgBackend = { t: 'none' }
 export type MsgFrontend =
   | Req
   | { t: 'clicked-clear' }
-  | { t: 'focus-done'; result: Browser.FocusResult }
   | { t: 'inputted-search-text'; searchText: string }
   | { t: 'clicked-result'; userId: UserId }
 

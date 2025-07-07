@@ -1,5 +1,7 @@
 import { AudioPlayer } from '~/@/audio-player'
 import { HttpClient } from '~/@/http-client'
+import { KeyValueDb } from '~/@/key-value-db'
+import { KeyBoard } from '~/@/keyboard'
 import { Translator } from '~/@/l18n/generated'
 import { ILogger } from '~/@/logger'
 import { Navigation } from '~/@/navigation'
@@ -11,6 +13,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
 import { h, render, VDomEngine } from '~/@/vdom/h'
+import { Viewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { SessionId } from '~/@/wire/session-id'
 import { AuthFrontend } from '~/app/auth/frontend'
@@ -48,9 +51,18 @@ export const TestFrontend = async (config: {
 
   const audioPlayer = AudioPlayer({ t: 'fake', logger })
 
+  const viewport = Viewport({ t: 'web-standard' })
+
+  const keyboard = KeyBoard({ t: 'web-standard' })
+
+  const keyValueDb = await KeyValueDb({ t: 'web-standard-storage', storage: localStorage, logger })
+
   const ctxBase: AppFrontendCtxBase = {
+    keyValueDb,
     audioPlayer,
+    keyboard,
     navigation,
+    viewport,
     clientSessionId,
     sqlDb: config.sqlDb,
     logger,

@@ -4,13 +4,13 @@ import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { BackendInstance } from '~/app/@/backend/backend-instance/backend-instance'
 import { IBackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
-import { AnonymousFrontendCtx, AppFrontendCtx } from '~/app/@/frontend/ctx'
+import { AppFrontendCtxBase, AppFrontendCtx } from '~/app/@/frontend/ctx'
 
 export type ModelFrontend = { t: 'noop' }
 
 export type MsgFrontend = { t: 'noop' }
 
-export type FrontendCtx = (AnonymousFrontendCtx | AppFrontendCtx) & {
+export type FrontendCtx = (AppFrontendCtxBase | AppFrontendCtx) & {
   rpc: RPC.Client<typeof rpcContract>
 }
 

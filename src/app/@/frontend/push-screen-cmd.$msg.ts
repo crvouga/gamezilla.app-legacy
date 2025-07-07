@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
 import { isOk } from '~/@/result'
-import { Screen, toScreen } from '~/@/screen/generated/screens'
+import { Screen, toScreen } from '~/@/screens/generated/screens'
 
 export const schema = s.or(
   s.obj({

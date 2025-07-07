@@ -1,4 +1,4 @@
-import { Keyboard } from '~/@/browser'
+import { KeyboardKey } from '~/@/keyboard'
 import { Option } from '~/@/option/option'
 import type { Position } from './position'
 
@@ -39,7 +39,7 @@ const directions: { [direction in Direction]: Direction } = {
   down: 'down',
 }
 
-const fromKey = (key: Keyboard.Key): Option<Direction> => {
+const fromKey = (key: KeyboardKey): Option<Direction> => {
   switch (key) {
     case 'w':
     case 'W':

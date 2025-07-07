@@ -1,6 +1,6 @@
-import { Keyboard } from '~/@/browser'
-import { Result } from '~/@/result'
+import { KeyboardKey } from '~/@/keyboard'
 import { Option } from '~/@/option/option'
+import { Result } from '~/@/result'
 import * as Board from './@/board'
 import * as Direction from './@/direction'
 import * as Piece from './@/piece'
@@ -93,7 +93,7 @@ export const toGhostPiece = (model: SpaceModel): Piece.Piece => {
 //
 
 export type MsgFrontend =
-  | ['PressedKey', Keyboard.Key]
+  | ['PressedKey', KeyboardKey]
   | ['TouchStart', Position.Position]
   | ['TouchMove', Position.Position]
   | ['TouchEnd', Position.Position]

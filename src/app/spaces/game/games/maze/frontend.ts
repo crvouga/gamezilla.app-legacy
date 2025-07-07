@@ -1,8 +1,9 @@
-import { Keyboard } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { pipe } from '~/@/function/pipe'
+import { KeyboardKey } from '~/@/keyboard'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { Maze } from './@/maze'
 import { Direction, type Position } from './@/position'
@@ -115,7 +116,7 @@ export const mergeWithBackend = ({
   return backendModel
 }
 
-const keyToDirection = (key: Keyboard.Key): Direction | null => {
+const keyToDirection = (key: KeyboardKey): Direction | null => {
   switch (key) {
     case 'A':
     case 'a':
@@ -150,10 +151,10 @@ const keyToDirection = (key: Keyboard.Key): Direction | null => {
 //
 //
 
-export const subscriptions = (_model: Model) => {
+export const subscriptions = (input: { ctx: AppFrontendCtxBase }) => {
   return Sub.batch<Msg>([
-    Keyboard.keyDowns((key): Msg => ['key-down', key]),
-    Keyboard.keyUps((key): Msg => ['key-up', key]),
+    input.ctx.keyboard.keyDowns((key): Msg => ['key-down', key]),
+    input.ctx.keyboard.keyUps((key): Msg => ['key-up', key]),
   ])
 }
 

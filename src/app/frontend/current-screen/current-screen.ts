@@ -1,5 +1,5 @@
 import { Eff } from '~/@/eff'
-import type { Screen } from '~/@/screen/generated/screens'
+import type { Screen } from '~/@/screens/generated/screens'
 import { Sub } from '~/@/sub'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'

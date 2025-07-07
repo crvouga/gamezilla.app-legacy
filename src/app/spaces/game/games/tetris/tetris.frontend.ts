@@ -1,10 +1,11 @@
-import { Keyboard } from '~/@/browser'
 import { Eff } from '~/@/eff'
 import { exhaustive } from '~/@/function/exhaustive'
+import { KeyboardKey } from '~/@/keyboard'
 import { Option } from '~/@/option/option'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
+import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import * as Board from './@/board'
 import type * as Direction from './@/direction'
 import * as Piece from './@/piece'
@@ -150,7 +151,7 @@ const positionsToDirection = ({
   return 'none'
 }
 
-const keyToDirection = (key: Keyboard.Key): Direction.Direction | 'none' => {
+const keyToDirection = (key: KeyboardKey): Direction.Direction | 'none' => {
   switch (key) {
     case 'A':
     case 'a':
@@ -280,8 +281,8 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Keyboard.keyDowns<Msg>((key) => ['PressedKey', key])
+export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
+  return input.ctx.keyboard.keyDowns<Msg>((key) => ['PressedKey', key])
 }
 
 //

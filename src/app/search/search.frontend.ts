@@ -1,7 +1,5 @@
 import { matchSort } from '~/@/array/match-sort'
-import { Browser } from '~/@/browser'
 import { Eff } from '~/@/eff'
-import { pipe } from '~/@/function/pipe'
 import { ClickableTransparent } from '~/@/ui/clickable'
 import { IconMagnifyingGlass, IconXMark } from '~/@/ui/icon'
 import { Paper } from '~/@/ui/paper'
@@ -60,23 +58,12 @@ export const update = ({
   model: ModelFrontend
   eff?: Eff<Msg>
 } => {
-  if (msg.t === 'focus-done') {
-    return { model }
-  }
-
   if (msg.t === 'clicked-clear') {
     return {
       model: {
         ...model,
         searchText: '',
       },
-      eff: pipe(
-        Browser.focus(searchInputId),
-        Eff.perform((result) => ({
-          t: 'focus-done',
-          result,
-        })),
-      ),
     }
   }
 

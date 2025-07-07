@@ -1,10 +1,9 @@
+import { Eff } from '~/@/eff'
 import type { RemoteResult, Result } from '~/@/result'
+import type { UserId } from '~/app/@/data/user-id'
 import type { ChatId } from './@/chat-id'
 import type { ChatMessageId } from './@/chat-message-id'
 import type { ChatUserJoinId } from './@/chat-user-join-id'
-import type { UserId } from '~/app/@/data/user-id'
-import { Browser } from '~/@/browser'
-import { Eff } from '~/@/eff'
 
 //
 //
@@ -74,7 +73,6 @@ export type MsgFrontend =
       },
     ]
   | ['clicked-user-search-clear-button']
-  | ['focused', Browser.FocusResult]
   | Req
 
 export type Req =

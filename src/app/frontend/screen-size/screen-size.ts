@@ -1,12 +1,12 @@
-import { Browser } from '~/@/browser'
 import { pipe } from '~/@/function/pipe'
 import { Sub } from '~/@/sub'
+import type { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 
 export type Model = { screenSize: ScreenSize }
 
-export const init = (): { model: Model } => {
-  return { model: { screenSize: ScreenSize.get() } }
+export const init = (input: { ctx: AppFrontendCtxBase }): { model: Model } => {
+  return { model: { screenSize: ScreenSize.get(input.ctx.viewport) } }
 }
 
 export type Msg = { t: 'screen-size-changed'; screenSize: ScreenSize }
@@ -21,7 +21,10 @@ export const update = (input: { msg?: Msg | null; model: Model; msgIn?: unknown 
   }
 }
 
-export const subscriptions: Sub<Msg> = pipe(
-  Browser.onWindowResize<Msg>(({ width }) => ({ t: 'screen-size-changed', screenSize: ScreenSize.to(width) })),
-  (sub) => Sub.deduplicate('screen-size', (msg) => (msg.t === 'screen-size-changed' ? msg.screenSize : 'mobile'), sub),
-)
+export const subscriptions = (input: { ctx: AppFrontendCtxBase }): Sub<Msg> => {
+  return pipe(
+    input.ctx.viewport.size.sub(({ width }): Msg => ({ t: 'screen-size-changed', screenSize: ScreenSize.to(width) })),
+    (sub): Sub<Msg> =>
+      Sub.deduplicate('screen-size', (msg) => (msg.t === 'screen-size-changed' ? msg.screenSize : 'mobile'), sub),
+  )
+}

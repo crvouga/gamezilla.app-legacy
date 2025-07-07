@@ -1,4 +1,3 @@
-import { LocalStorage } from '~/@/browser'
 import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { translations } from '~/@/l18n/generated'
 import { Sub } from '~/@/sub'
@@ -6,13 +5,13 @@ import { Gutter } from '~/@/ui/gutter'
 import { ListItem } from '~/@/ui/list-item'
 import { RadioInputIcon } from '~/@/ui/radio-input'
 import { h } from '~/@/vdom/h'
+import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import { AppFrontendCtxBase } from '../../@/frontend/ctx'
 import { FrontendModule } from '../types'
 import { ModelFrontend, MsgFrontend } from './types'
-import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 
 const TEST_ID = {
   LANG_SCREEN_OPEN_BUTTON: 'settings/lang-screen-open-button',
@@ -41,13 +40,16 @@ const update: FrontendModule['update'] = (input) => {
     }
 
     case 'lang.clicked-lang': {
+      const { lang } = input.msg
       return {
         model: {
           ...input.model,
-          lang: input.msg.lang,
+          lang,
         },
         msgOut: [PlaySoundCmd.init(APP_SOUND.tap)],
-        eff: LocalStorage.put(LANG_STORAGE_KEY, input.msg.lang),
+        async eff(_dispatch) {
+          await input.ctx.keyValueDb.set(LANG_STORAGE_KEY, lang)
+        },
       }
     }
 

@@ -1,4 +1,4 @@
-import { getWindowWidth } from '~/@/browser/browser'
+import { IViewport } from '~/@/viewport'
 
 export type ScreenSize = 'mobile' | 'tablet'
 
@@ -12,8 +12,8 @@ const to = (width: number): ScreenSize => {
   return 'tablet'
 }
 
-const get = (): ScreenSize => {
-  return to(getWindowWidth())
+const get = (viewport: IViewport): ScreenSize => {
+  return to(viewport.size.get().width)
 }
 
 export const ScreenSize = {
