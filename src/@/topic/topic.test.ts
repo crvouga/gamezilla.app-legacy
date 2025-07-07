@@ -27,8 +27,16 @@ const contract = Topic.initContract({
   },
 })
 
-const Fixture = async () => {
+const seen = new Set<number>()
+const randomPort = () => {
   const port = 1000 + Math.floor(Math.random() * 9000)
+  if (seen.has(port)) return randomPort()
+  seen.add(port)
+  return port
+}
+
+const Fixture = async () => {
+  const port = randomPort()
   let logger: ILogger
   logger ??= Logger({ t: 'noop' })
   logger ??= Logger({ t: 'console', newLinePerMsg: false, namespace: ['test'], maxLogLevel: 'info' })
