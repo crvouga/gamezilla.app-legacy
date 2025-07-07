@@ -4,11 +4,11 @@ import { Gutter } from '../../gutter'
 import { Portal } from '../../portal'
 import { Surface } from '../../surface'
 import { DRAWER_PORTAL_ID } from '../drawer-portal-exit'
-import type { DrawerInput } from '../drawer-shared'
+import type { DrawerProps } from '../drawer-shared'
 import './drawer-element'
 import { drawerSub } from './drawer-shared'
 
-export const DrawerWebComponent = (input: DrawerInput) => {
+export const DrawerWebComponent = (input: DrawerProps) => {
   drawerSub.pub({ type: 'input', ...input })
   return h(Portal.Entrance, { portalId: DRAWER_PORTAL_ID }, [
     h('drawer-element', { id: input.id, position: input.position }, [

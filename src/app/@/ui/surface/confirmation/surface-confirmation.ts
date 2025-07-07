@@ -31,6 +31,8 @@ type PropsBase = {
   confirmText: TranslatedText
   onConfirm: () => void
   confirmLoading?: boolean
+  //
+  testId?: string
 }
 
 export type SurfaceConfirmationProps = DrawerInput & PropsBase
@@ -40,6 +42,7 @@ export const SurfaceConfirmation = (input: SurfaceConfirmationProps) => {
     ...input,
     id: 'surface-confirmation',
     ariaLabel: input.title,
+    testId: input.testId,
     header: {
       render: () =>
         h(SurfaceHeader, {

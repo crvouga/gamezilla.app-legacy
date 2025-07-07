@@ -4,16 +4,17 @@ import { Gutter } from '../gutter'
 import { Portal } from '../portal'
 import { Surface } from '../surface'
 import { DRAWER_PORTAL_ID } from './drawer-portal-exit'
-import type { DrawerInput } from './drawer-shared'
+import type { DrawerProps } from './drawer-shared'
 import { preventConsoleErrorWhenClosingDrawer } from './drawer-shared'
 
-export const DrawerComponent = (props: DrawerInput) => {
+export const DrawerComponent = (props: DrawerProps) => {
   return h(Portal.Entrance, { portalId: DRAWER_PORTAL_ID }, [
     h(
       'div',
       {
         id: props.id,
         'aria-hidden': props.open ? 'false' : 'true',
+        'data-testid': props.testId,
         role: 'dialog',
         'aria-label': props.ariaLabel,
         class: cn(

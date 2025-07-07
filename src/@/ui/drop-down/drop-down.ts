@@ -14,6 +14,7 @@ export const DropDown = (props: {
   class?: string
   position?: DropDownPosition
   alignment?: DropDownAlignment
+  testId?: string
 }) => {
   const position = props.position ?? 'bottom'
   const alignment = props.alignment ?? 'starting'
@@ -32,37 +33,15 @@ export const DropDown = (props: {
 
   return h('div', {}, [
     h(Backdrop, { open: props.open, onClick: onClose, onKeyDown }),
-    h(
-      'div',
-      {
-        id: props.id,
-        class: cn('relative', props.class, props.open && 'z-50'),
-        onKeyDown,
-      },
-      [
-        props.renderReference(),
-        h(
-          Transition,
-          {
-            id: `${props.id}-transition`,
-            mode: 'in-out',
-            onEnter,
-            onExit,
-          },
-          [
-            props.open &&
-              h(
-                'div',
-                {
-                  id: props.id,
-                  class: toPositionClasses(position, alignment),
-                },
-                [props.renderFloating()],
-              ),
-          ],
-        ),
-      ],
-    ),
+    h('div', { id: props.id, class: cn('relative', props.class, props.open && 'z-50'), onKeyDown }, [
+      props.renderReference(),
+      h(Transition, { id: `${props.id}-transition`, mode: 'in-out', onEnter, onExit }, [
+        props.open &&
+          h('div', { id: props.id, class: toPositionClasses(position, alignment), 'data-testid': props.testId }, [
+            props.renderFloating(),
+          ]),
+      ]),
+    ]),
   ])
 }
 

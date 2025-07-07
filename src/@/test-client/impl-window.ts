@@ -1,6 +1,7 @@
 import { IAudioPlayer } from '../audio-player'
 import { TimeSpan } from '../time/time-span'
 import type { ITestClientBase, ITestNode, TestAction, TestClientQueryConfig } from './interface'
+import { isElementVisible } from './is-element-visible'
 
 export type BaseConfig = {
   maxWait: TimeSpan
@@ -72,6 +73,9 @@ export const elementToTestNode = (node: Element): ITestNode => {
     },
     async attr(name: string) {
       return node.getAttribute(name) ?? null
+    },
+    async isVisible() {
+      return isElementVisible(node)
     },
     async find(selector: string, queryConfig?: TestClientQueryConfig) {
       return find(node, selector, {

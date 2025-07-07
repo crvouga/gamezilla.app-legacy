@@ -1,7 +1,7 @@
 import { Sub } from '~/@/sub'
-import type { PrivateDrawerInput } from '../drawer-shared'
+import type { DrawerPropsPrivate } from '../drawer-shared'
 
-export type DrawerEvent = PrivateDrawerInput & {
+export type DrawerEvent = DrawerPropsPrivate & {
   type: 'input'
 }
 

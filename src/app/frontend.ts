@@ -375,7 +375,11 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
     }),
 
     h('div', { class: 'relative flex w-full flex-1 flex-col overflow-hidden' }, [
-      h(ViewScreen, { model: input.model, dispatch: input.dispatch, ctx: frontendCtx }),
+      h(ViewScreen, {
+        model: input.model,
+        dispatch: input.dispatch,
+        ctx: frontendCtx,
+      }),
     ]),
 
     h(AuthFrontend.ViewModals, {
@@ -397,7 +401,7 @@ const View = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (
 const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispatch: (m: MsgFrontend) => void }) => {
   switch (input.model.frontend.currentScreen.currentScreen.n) {
     case 'settings':
-      return SettingsFrontend.View({
+      return h(SettingsFrontend.View, {
         ctx: input.ctx,
         dispatch: (c) => input.dispatch({ t: 'settings', c }),
         model: input.model.settings,
@@ -406,11 +410,11 @@ const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
       const currentUser = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
       switch (currentUser.t) {
         case 'loading':
-          return SplashScreen({ reason: TranslatedText.of('Loading current user...') })
+          return h(SplashScreen, { reason: TranslatedText.of('Loading current user...') })
         case 'logged-out':
-          return ViewScreenLoggedOut({ model: input.model, dispatch: input.dispatch, ctx: input.ctx })
+          return h(ViewScreenLoggedOut, { model: input.model, dispatch: input.dispatch, ctx: input.ctx })
         case 'logged-in':
-          return ViewScreenLoggedIn({ model: input.model, dispatch: input.dispatch, ctx: input.ctx })
+          return h(ViewScreenLoggedIn, { model: input.model, dispatch: input.dispatch, ctx: input.ctx })
       }
     }
   }
@@ -419,13 +423,13 @@ const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
 const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
   switch (input.ctx.currentScreen.n) {
     case 'auth':
-      return AuthFrontend.View({
+      return h(AuthFrontend.View, {
         model: input.model.auth,
         ctx: input.ctx,
         dispatch: (c) => input.dispatch({ t: 'auth', c }),
       })
     default:
-      return IntersectionObserverEmitter({
+      return h(IntersectionObserverEmitter, {
         id: 'app-intersection-observer',
         onVisible: () =>
           input.dispatch({
@@ -439,14 +443,14 @@ const ViewScreenLoggedOut: typeof ViewScreen = (input) => {
 const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
   switch (input.ctx.currentScreen.n) {
     case 'profile':
-      return ProfileFrontend.View({
+      return h(ProfileFrontend.View, {
         dispatch: (m) => input.dispatch({ t: 'profile', c: m }),
         model: input.model.profile,
         ctx: { ...input.ctx, parentScreen: toScreenLayoutProps(input) },
       })
 
     case 'spaces':
-      return SpacesFrontend.View({
+      return h(SpacesFrontend.View, {
         dispatch: (m) => input.dispatch({ t: 'spaces', c: m }),
         model: input.model.spaces,
         ctx: {
@@ -457,7 +461,7 @@ const ViewScreenLoggedIn: typeof ViewScreen = (input) => {
 
     case 'settings':
     case 'auth':
-      return IntersectionObserverEmitter({
+      return h(IntersectionObserverEmitter, {
         id: 'app-intersection-observer',
         onVisible: () =>
           input.dispatch({

@@ -117,6 +117,18 @@ const watchForLogin = (
       ],
     }
   }
+
+  if (before.t === 'logged-in' && after.t === 'logged-out') {
+    return {
+      model: input.modelAfter,
+      msgOut: [
+        ShowToastCmd.init(input.ctx.t('auth.current-user-logged-out')),
+        PlaySoundCmd.init(APP_SOUND.navBackwardMin),
+        PushScreenCmd.init({ t: 'login', n: 'auth' }, false),
+      ],
+    }
+  }
+
   return { model: input.modelAfter }
 }
 

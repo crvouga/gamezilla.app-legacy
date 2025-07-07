@@ -3,7 +3,13 @@ import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from '../cn'
 
-export const Dialog = (input: { children?: VDom; open: boolean; onClose: () => void; delay?: TimeSpan }) => {
+export const Dialog = (input: {
+  children?: VDom[]
+  open: boolean
+  onClose: () => void
+  delay?: TimeSpan
+  testId?: string
+}) => {
   const delayMs = input.delay ? TimeSpan.toMilliseconds(input.delay) : null
 
   return h(
@@ -17,6 +23,9 @@ export const Dialog = (input: { children?: VDom; open: boolean; onClose: () => v
         'fixed top-0 left-0 z-50 grid h-full w-full place-items-center bg-black/50 transition-opacity duration-300 ease-in-out',
         input.open ? 'opacity-100' : 'pointer-events-none opacity-0',
       ),
+      'data-open': input.open ? 'true' : 'false',
+      'aria-hidden': input.open ? 'false' : 'true',
+      'data-testid': input.testId,
       onClick: (e: { target: any; currentTarget: any }) => {
         if (e.target === e.currentTarget) {
           input.onClose()
@@ -30,6 +39,6 @@ export const Dialog = (input: { children?: VDom; open: boolean; onClose: () => v
         }
       },
     },
-    [input.children],
+    input.children,
   )
 }

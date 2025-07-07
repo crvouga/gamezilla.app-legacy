@@ -6,8 +6,13 @@ import { preventConsoleErrorWhenClosingDrawer } from '~/@/ui/surface-drawer/draw
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 
-export const SurfaceHeader = (input: { ctx: { t: Translator }; title: TranslatedText | null; onClose: () => void }) => {
-  return h('div', { class: 'flex w-full items-center justify-center px-6 pt-4 pb-0' }, [
+export const SurfaceHeader = (input: {
+  ctx: { t: Translator }
+  title: TranslatedText | null
+  onClose: () => void
+  testId?: string
+}) => {
+  return h('div', { class: 'flex w-full items-center justify-center px-6 pt-4 pb-0', 'data-testid': input.testId }, [
     h('div', { class: 'flex-1' }, [
       input.title && h(Typography, { text: input.title, variant: 'title', sizeClassName: 'text-2xl' }),
     ]),

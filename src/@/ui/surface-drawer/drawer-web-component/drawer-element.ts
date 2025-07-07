@@ -1,4 +1,4 @@
-import type { PrivateDrawerInput } from '../drawer-shared'
+import type { DrawerPropsPrivate } from '../drawer-shared'
 import { drawerSub } from './drawer-shared'
 
 declare global {
@@ -33,7 +33,7 @@ if (typeof window !== 'undefined' && 'customElements' in window) {
     private root: HTMLElement | null = null
 
     private unsubscribe: () => void = () => {}
-    private input: PrivateDrawerInput | null = null
+    private input: DrawerPropsPrivate | null = null
 
     constructor() {
       super()

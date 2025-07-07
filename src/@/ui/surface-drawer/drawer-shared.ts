@@ -3,19 +3,20 @@ import { Translator } from '~/@/l18n/generated'
 import type { VDom } from '~/@/vdom/vdom'
 import { DrawerPosition } from './drawer-position'
 
-export type PrivateDrawerInput = {
+export type DrawerPropsPrivate = {
   id: string
   onClose: () => void
   open: boolean
   position: DrawerPosition
 }
 
-export type DrawerInput = PrivateDrawerInput & {
+export type DrawerProps = DrawerPropsPrivate & {
   ariaLabel: TranslatedText
   children?: VDom[]
   ctx: {
     t: Translator
   }
+  testId?: string
 }
 
 /**

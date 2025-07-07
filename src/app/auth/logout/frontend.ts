@@ -1,12 +1,15 @@
-import { h } from '~/@/vdom/h'
 import { NotAsked } from '~/@/result'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { LogoutCmd } from '~/app/@/frontend/logout-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
-import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
+
+const TEST_ID = {
+  LOGOUT_CONFIRMATION: 'auth/logout-confirmation',
+}
 
 const init: ModelFrontend = {
   opened: null,
@@ -24,10 +27,6 @@ const update: FrontendModule['update'] = (input) => {
         async eff(_dispatch) {
           await input.ctx.userSessionDb.zapByClientSessionId(input.ctx.clientSessionId)
         },
-        msgOut: [
-          ShowToastCmd.init(input.ctx.t('auth.current-user-logged-out')),
-          PlaySoundCmd.init(APP_SOUND.navBackwardMin),
-        ],
       }
     }
 
@@ -59,6 +58,7 @@ const update: FrontendModule['update'] = (input) => {
 const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   return h(SurfaceConfirmation, {
     ctx: input.ctx,
+    testId: TEST_ID.LOGOUT_CONFIRMATION,
     ariaLabel: input.ctx.t('auth.logout-of-gamezilla.app'),
     open: input.model.opened === 'logged-out',
     title: input.ctx.t('auth.logout-of-gamezilla.app'),
@@ -77,4 +77,5 @@ export const LogoutFrontend = {
   init,
   View,
   update,
+  TEST_ID,
 }

@@ -8,11 +8,15 @@ export type TestAction =
   | { t: 'change'; value: string }
   | { t: 'submit' }
 
-export type ITestNode = {
+export type IFindable = {
+  find: (selector: string, config?: TestClientQueryConfig) => Promise<ITestNode[]>
+}
+
+export type ITestNode = IFindable & {
   text: () => Promise<string | null>
   attr: (name: string) => Promise<string | null>
   do: (action: TestAction) => Promise<void>
-  find: (selector: string, config?: TestClientQueryConfig) => Promise<ITestNode[]>
+  isVisible: () => Promise<boolean>
 }
 
 export type TestClientQueryConfig = {
@@ -22,8 +26,7 @@ export type TestClientQueryConfig = {
   onDone?: () => void
 }
 
-export type ITestClientBase = {
-  find: (selector: string, config?: TestClientQueryConfig) => Promise<ITestNode[]>
+export type ITestClientBase = IFindable & {
   audio: () => Promise<PlayedAudioRecord[]>
 }
 

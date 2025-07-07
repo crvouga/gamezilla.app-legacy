@@ -84,6 +84,44 @@ const locatorToTestNode = (locator: Locator): ITestNode => {
       const text = await locator.textContent()
       return text
     },
+    async isVisible() {
+      const element = await locator.elementHandle()
+
+      if (!element) {
+        return false
+      }
+
+      const isVisible = await element.evaluate((el) => {
+        const isElementVisible = (node: Element) => {
+          if (!node) return false
+
+          const ariaHidden = node.getAttribute('aria-hidden')
+          if (ariaHidden === 'true') return false
+
+          const computedStyle = window.getComputedStyle(node)
+          if (computedStyle.display === 'none') return false
+          if (computedStyle.visibility === 'hidden') return false
+          if (computedStyle.visibility === 'collapse') return false
+          if (computedStyle.opacity === '0') return false
+
+          let parent = node.parentElement
+          while (parent) {
+            const parentStyle = window.getComputedStyle(parent)
+            if (parentStyle.display === 'none') return false
+            if (parentStyle.visibility === 'hidden') return false
+            if (parentStyle.visibility === 'collapse') return false
+            if (parent.getAttribute('aria-hidden') === 'true') return false
+
+            parent = parent.parentElement
+          }
+          return true
+        }
+
+        return isElementVisible(el)
+      })
+
+      return isVisible
+    },
     async attr(name: string) {
       const attr = await locator.getAttribute(name)
       return attr

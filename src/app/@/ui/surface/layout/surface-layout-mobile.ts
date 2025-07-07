@@ -16,6 +16,7 @@ export const SurfaceLayoutMobile = (props: SurfaceLayoutProps) => {
         position: props.drawer?.position ?? 'bottom',
         ctx: props.ctx,
         ariaLabel: props.ariaLabel,
+        testId: props.testId,
       },
       [h(SurfaceContent, props)],
     ),

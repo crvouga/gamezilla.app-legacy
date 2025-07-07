@@ -22,6 +22,7 @@ import { LogoutFrontend } from './logout/frontend'
 import { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
 
 const TEST_ID = {
+  ...LogoutFrontend.TEST_ID,
   ...LoginWithSMSFrontend.TEST_ID,
   ...ContinueAsGuestFrontend.TEST_ID,
   LOGIN_SCREEN: 'auth/login-screen',
