@@ -29,6 +29,19 @@ export const Navigation = (config: Config): INavigation => {
     }
   }
 
+  window.addEventListener('popstate', onChange)
+  window.addEventListener('pushstate', onChange)
+  window.addEventListener('replacestate', onChange)
+  window.addEventListener('hashchange', onChange)
+  window.addEventListener('load', onChange)
+  window.addEventListener('beforeunload', onChange)
+  window.addEventListener('unload', onChange)
+  window.addEventListener('pageshow', onChange)
+  window.addEventListener('pagehide', onChange)
+  window.addEventListener('visibilitychange', onChange)
+  window.addEventListener('focus', onChange)
+  window.addEventListener('blur', onChange)
+
   return {
     async push(name: string, value: string) {
       logger.debug(`push ${name}=${value}`)
