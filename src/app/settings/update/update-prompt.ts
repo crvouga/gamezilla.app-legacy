@@ -1,6 +1,7 @@
 import { ILogger } from '~/@/logger'
 
 export const registerServiceWorker = async (_config: { logger: ILogger }) => {
+  if (typeof window === 'undefined') return
   // const { registerSW } = await import('virtual:pwa-register')
   // const logger = config.logger.child(['frontend', 'update-prompt'])
   // logger.info('registerSW')
