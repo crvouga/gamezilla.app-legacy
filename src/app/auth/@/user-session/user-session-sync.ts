@@ -1,25 +1,23 @@
 import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok } from '~/@/result'
 import { ParseError } from '~/@/schema/schema/parse-error'
-import { ISyncEntry } from '~/@/sync-engine/sync-entry'
+import { ISync } from '~/@/sync-engine/sync-transaction'
 import { UserSession } from './user-session'
 import { IUserSessionDb } from './user-session-db/interface'
 import { UserSessionId } from './user-session-id'
 
-export const UserSessionSync = (config: { userSessionDb: IUserSessionDb; logger: ILogger }): ISyncEntry => {
+export const UserSessionSync = (config: { userSessionDb: IUserSessionDb; logger: ILogger }): ISync => {
   const logger = config.logger.child(['user-session-sync'])
 
   return {
-    match({ entry }) {
-      logger.debug(`match: id=${entry.id}`)
-      return UserSessionId.is(entry.id)
-    },
-    async push({ entry, sessionId }) {
-      logger.debug(`push: id=${entry.id}`)
+    async push({ crudTransaction }) {
+      const entry = crudTransaction.entries[0]!
 
       switch (entry.op) {
         case 'create': {
           const userSession = UserSession.fromUnknown(entry.newData)
+          // @ts-ignore
+          const sessionId = crudTransaction.meta?.sessionId
 
           if (isErr(userSession)) {
             logger.error(`push: failed to parse user session: ${userSession.error}`)
@@ -28,7 +26,7 @@ export const UserSessionSync = (config: { userSessionDb: IUserSessionDb; logger:
 
           const inserted = await config.userSessionDb.upsert({
             ...userSession.value,
-            sessionId,
+            sessionId: sessionId!,
           })
 
           if (isErr(inserted)) {
@@ -68,8 +66,7 @@ export const UserSessionSync = (config: { userSessionDb: IUserSessionDb; logger:
       }
     },
     async pull() {
-      logger.debug('pull')
-      return Ok({ entries: [] })
+      throw new Error('Not implemented')
     },
   }
 }

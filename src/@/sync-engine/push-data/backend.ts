@@ -69,6 +69,6 @@ const respond = async (input: { req: Request; logger: ILogger; syncEngine: ISync
   })
 }
 
-export const SyncPushBackend = {
+export const PushDataBackend = {
   respond,
 }

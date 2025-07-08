@@ -10,7 +10,9 @@ import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
 import { ISqlDb } from '~/@/sql-db'
 import { SqlDb } from '~/@/sql-db/backend/impl'
-import { SyncEngine } from '~/@/sync-engine/sync-engine-server'
+
+import { SinglePageApp } from '~/@/single-page-app'
+import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
@@ -28,7 +30,6 @@ import { SpacesBackend } from './spaces/backend'
 import * as AppTypes from './types'
 import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
-import { SinglePageApp } from '~/@/single-page-app'
 
 const initCtx = async (config: { backendRole: BackendRole; port: number }): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'info' })
@@ -90,8 +91,7 @@ const initCtx = async (config: { backendRole: BackendRole; port: number }): Prom
 
   const backendInstanceId = BackendInstanceId.generate()
 
-  const syncEngine = SyncEngine({
-    t: 'backend',
+  const syncEngine = SyncEngineServer({
     logger,
   })
 

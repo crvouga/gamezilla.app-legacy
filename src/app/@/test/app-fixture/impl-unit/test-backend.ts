@@ -6,7 +6,7 @@ import { MigrationPolicy } from '~/@/migration-policy'
 import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
 import { Runtime } from '~/@/runtime'
 import { ISqlDb } from '~/@/sql-db'
-import { SyncEngine } from '~/@/sync-engine/sync-engine-server'
+import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { randomServerPort } from '~/@/test/random-server-port'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -59,7 +59,7 @@ export const TestBackend = async (config: {
 
   const migrationPolicy = MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
 
-  const syncEngine = SyncEngine({ t: 'http-client', logger })
+  const syncEngine = SyncEngineServer({ logger })
 
   const ctxBase: AppBackendCtxBase = {
     port: randomServerPort(),

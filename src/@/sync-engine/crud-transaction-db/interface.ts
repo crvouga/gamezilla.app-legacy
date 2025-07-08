@@ -1,14 +1,19 @@
 import { Result } from '~/@/result'
 import { CrudTransaction } from '../crud-transaction/crud-transaction'
 
-export type ITransactionDb = {
+export type ICrudTransactionDb = {
   /**
-   * Push a list of crud transactions to the database.
+   * Push a crud transaction to the database.
    */
-  push: (crudTransactions: CrudTransaction[]) => Promise<Result<string, null>>
+  push: (crudTransaction: CrudTransaction) => Promise<Result<string, null>>
 
   /**
-   * Pull uncommitted crud transactions from the database.
+   * Mark a crud transaction as committed. Meaning it has been accepted by the backend.
    */
-  pull: () => Promise<Result<string, CrudTransaction[]>>
+  commit: (crudTransaction: CrudTransaction) => Promise<Result<string, null>>
+
+  /**
+   * Return all uncommitted crud transactions.
+   */
+  uncommitted: () => Promise<Result<string, CrudTransaction[]>>
 }

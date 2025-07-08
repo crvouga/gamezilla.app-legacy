@@ -9,7 +9,8 @@ import { Navigation } from '~/@/navigation'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screens/generated/screens'
 import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
-import { SyncEngine } from '~/@/sync-engine/sync-engine-server'
+import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl-sql'
+import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Viewport } from '~/@/viewport'
@@ -34,9 +35,14 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     logger: Logger({ t: 'noop' }),
     kvDb: keyValueDb,
   })
-  const syncEngine = SyncEngine({
-    t: 'http-client',
+  const syncEngine = SyncEngineClient({
     logger: Logger({ t: 'noop' }),
+    crudTransactionDb: CrudTransactionDb({
+      t: 'sql-db',
+      logger: Logger({ t: 'noop' }),
+      migrationPolicy,
+      sqlDb: SQL_DB_NOOP,
+    }),
   })
   const ctx: AppFrontendCtx = {
     syncEngine,

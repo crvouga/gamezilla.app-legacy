@@ -16,7 +16,9 @@ import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
 import { SqlDb } from '~/@/sql-db/frontend/impl'
 import { Sub } from '~/@/sub'
-import { SyncEngine } from '~/@/sync-engine/sync-engine-server'
+
+import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl-sql'
+import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
@@ -120,9 +122,9 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     logger: logger.setMaxLogLevel('debug'),
   })
 
-  const syncEngine = SyncEngine({
-    t: 'http-client',
+  const syncEngine = SyncEngineClient({
     logger: logger.setMaxLogLevel('debug'),
+    crudTransactionDb: CrudTransactionDb({ t: 'sql-db', logger, sqlDb, migrationPolicy }),
   })
 
   const ctx: AppFrontendCtxBase = {

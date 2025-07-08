@@ -1,9 +1,9 @@
 import { SpaceBackendCtx } from '~/app/spaces/@/backend/ctx'
 import { NumberlinkBackendCtx } from './@/backend/ctx'
 import { PackDb } from './@/pack/pack-db'
-import { PackSync } from './@/pack/pack-sync'
+import { PackDbSync } from './@/pack/pack-sync'
 import { PuzzleDb } from './@/puzzle/puzzle-db'
-import { PuzzleSync } from './@/puzzle/puzzle-sync'
+import { PuzzleSync } from './@/puzzle/puzzle-db-sync'
 
 const initCtx = (input: { ctx: SpaceBackendCtx }): NumberlinkBackendCtx => {
   const numberlinkPuzzleDb = PuzzleDb({
@@ -19,7 +19,7 @@ const initCtx = (input: { ctx: SpaceBackendCtx }): NumberlinkBackendCtx => {
     migrationPolicy: input.ctx.migrationPolicy,
   })
   input.ctx.syncEngine.registerSync(PuzzleSync({ numberlinkPuzzleDb }))
-  input.ctx.syncEngine.registerSync(PackSync({ numberlinkPackDb }))
+  input.ctx.syncEngine.registerSync(PackDbSync({ numberlinkPackDb }))
 
   return {
     ...input.ctx,

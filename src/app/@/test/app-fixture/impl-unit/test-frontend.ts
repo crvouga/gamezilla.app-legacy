@@ -9,7 +9,8 @@ import { Navigation } from '~/@/navigation'
 import { Program } from '~/@/program/program'
 import { RPC } from '~/@/rpc'
 import { ISqlDb } from '~/@/sql-db'
-import { SyncEngine } from '~/@/sync-engine/sync-engine-server'
+import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl-sql'
+import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TestClient } from '~/@/test-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -61,8 +62,13 @@ export const TestFrontend = async (config: {
 
   const migrationPolicy = MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
 
-  const syncEngine = SyncEngine({
-    t: 'http-client',
+  const syncEngine = SyncEngineClient({
+    crudTransactionDb: CrudTransactionDb({
+      t: 'sql-db',
+      logger: Logger({ t: 'noop' }),
+      migrationPolicy,
+      sqlDb: config.sqlDb,
+    }),
     logger: Logger({ t: 'noop' }),
   })
 

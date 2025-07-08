@@ -1,17 +1,43 @@
 import { ILogger } from '~/@/logger'
-import { Err, isErr, Ok } from '~/@/result'
-import { ISyncEntry } from '../sync-entry'
-import { ISyncEngine } from './interface'
+import { Err, isErr, Ok, Result } from '~/@/result'
+import { ISync } from '~/@/sync-engine/sync-transaction'
+import { UnixMs } from '~/@/time/unix-ms'
+import { ClientSessionId } from '~/@/wire/client-session-id'
+import { SessionId } from '~/@/wire/session-id'
+import { CrudTransaction } from './crud-transaction/crud-transaction'
+
+export type ISyncEngine = {
+  /**
+   * Uploads a list of changes.
+   */
+  push(input: {
+    sessionId?: SessionId
+    clientSessionId: ClientSessionId
+    crudTransaction: CrudTransaction
+  }): Promise<Result<string, null>>
+  /**
+   * Returns a list of changes that has happened since the last pull.
+   */
+  pull(input: {
+    sessionId: SessionId
+    clientSessionId: ClientSessionId
+    query: unknown
+    lastPulledAt: UnixMs
+  }): Promise<Result<string, CrudTransaction>>
+  /**
+   * registerPushEntry
+   */
+  registerSync(handler: ISync): void
+}
 
 export type Config = {
-  t: 'backend'
   logger: ILogger
 }
 
-export const SyncEngineBackend = (config: Config): ISyncEngine => {
-  const logger = config.logger.child(['impl-backend'])
+export const SyncEngineServer = (config: Config): ISyncEngine => {
+  const logger = config.logger.child(['impl-http-server'])
 
-  const syncRegistry = new Set<ISyncEntry>()
+  const syncRegistry = new Set<ISync>()
 
   return {
     registerSync(handler) {
@@ -24,18 +50,14 @@ export const SyncEngineBackend = (config: Config): ISyncEngine => {
         logger.debug(`Processing entry collection=${entry.collection} id=${entry.id} op=${entry.op}`)
 
         for (const sync of syncRegistry) {
-          const isMatch = sync.match({ entry })
-
-          if (!isMatch) {
-            continue
-          }
-
           logger.debug(`Found matching push handler collection=${entry.collection}`)
 
           const pushed = await sync.push({
-            sessionId: input.sessionId,
-            clientSessionId: input.clientSessionId,
-            entry,
+            meta: {
+              sessionId: input.sessionId,
+              clientSessionId: input.clientSessionId,
+            },
+            crudTransaction: input.crudTransaction,
           })
 
           if (isErr(pushed)) {

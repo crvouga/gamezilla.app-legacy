@@ -1,22 +1,15 @@
 import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok } from '~/@/result'
-import { ISyncEntry } from '~/@/sync-engine/sync-entry'
+import { ISync } from '~/@/sync-engine/sync-transaction'
 import { UserAccount } from '~/app/@/data/user-account'
-import { UserId } from '~/app/@/data/user-id'
 import { IUserAccountDb } from './user-account-db/interface'
 
-export const UserAccountSync = (config: { userAccountDb: IUserAccountDb; logger: ILogger }): ISyncEntry => {
+export const UserAccountSync = (config: { userAccountDb: IUserAccountDb; logger: ILogger }): ISync => {
   const logger = config.logger.child(['user-account-sync'])
 
   return {
-    match({ entry }) {
-      logger.debug('Matching entry', { id: entry.id })
-      return UserId.is(entry.id)
-    },
-    async push({ entry }) {
-      logger.debug('Pushing user account', { id: entry.id })
-
-      const account = UserAccount.fromUnknown(entry.newData)
+    async push({ crudTransaction }) {
+      const account = UserAccount.fromUnknown(crudTransaction.entries[0]!.newData)
 
       if (isErr(account)) {
         logger.error('Failed to parse user account', { error: account.error })
@@ -30,12 +23,10 @@ export const UserAccountSync = (config: { userAccountDb: IUserAccountDb; logger:
         return Err(upserted.error)
       }
 
-      logger.debug('Successfully pushed user account', { id: entry.id })
       return Ok(null)
     },
     async pull() {
-      logger.debug('Pulling user accounts')
-      return Ok({ entries: [] })
+      throw new Error('Not implemented')
     },
   }
 }

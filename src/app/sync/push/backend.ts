@@ -1,7 +1,7 @@
 import { Json } from '~/@/json/json'
 import { ILogger } from '~/@/logger'
 import { isErr } from '~/@/result'
-import { ISyncEngine } from '~/@/sync-engine/sync-engine-server/interface'
+import { ISyncEngine } from '~/@/sync-engine/sync-engine-server'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { RequestBody } from './types'
