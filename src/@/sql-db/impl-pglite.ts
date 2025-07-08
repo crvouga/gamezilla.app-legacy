@@ -1,4 +1,4 @@
-import { Err, isErr, Ok } from '~/@/result'
+import { Err, isOk, Ok } from '~/@/result'
 import type { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { deterministicJsonStringify } from '../json/deterministic-stringify'
@@ -10,14 +10,11 @@ import { ISqlDb } from './interface'
 export type Config = {
   t: 'pglite'
   pglite: Promise<IPgliteInstance | IPgliteWorkerInstance>
-
   logger: ILogger
 }
 
 export const SqlDb = (config: Config): ISqlDb => {
   const logger = config.logger.child(['pglite'])
-
-  const events = Sub.create<{ t: 'queried' }>()
 
   const query: ISqlDb['query'] = async (input) => {
     const sql = Sql.to(input.sql, input.vars)
@@ -72,7 +69,6 @@ export const SqlDb = (config: Config): ISqlDb => {
   return {
     async query(input) {
       const queried = await query(input)
-      events.pub({ t: 'queried' })
       return queried
     },
     sub(input, mapper) {
@@ -89,13 +85,21 @@ export const SqlDb = (config: Config): ISqlDb => {
       const subNew = Sub.create<unknown>()
 
       subsByQuery.set(queryKey, subNew)
-      const pub = async () => {
-        const queried = await query(input)
-        if (isErr(queried)) return
-        subNew.pub(queried.value)
-      }
-      events.sub(pub)
-      pub()
+
+      const sql = Sql.to(input.sql, input.vars)
+
+      config.pglite.then((pgliteClient) => {
+        pgliteClient.live.query(sql, [], (results) => {
+          const rows: Row[] = []
+          for (const row of results.rows) {
+            const parsed = input.schema.parse(row)
+            if (isOk(parsed)) {
+              rows.push(parsed.value)
+            }
+          }
+          subNew.pub(rows)
+        })
+      })
 
       return Sub.map(subNew as Sub<Row[]>, mapper)
     },
