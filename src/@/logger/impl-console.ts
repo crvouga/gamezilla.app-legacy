@@ -41,7 +41,7 @@ export const Logger = (config: Config): ILogger => {
     child(namespace) {
       return Logger({ ...config, namespace: [...config.namespace, ...namespace] })
     },
-    maxLogLevel(level) {
+    setMaxLogLevel(level) {
       return Logger({ ...config, maxLogLevel: level })
     },
   }

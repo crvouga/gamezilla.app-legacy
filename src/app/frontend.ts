@@ -117,12 +117,12 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   const migrationPolicy = MigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
     kvDb: keyValueDb,
-    logger: logger.maxLogLevel('debug'),
+    logger: logger.setMaxLogLevel('debug'),
   })
 
   const syncEngine = SyncEngine({
     t: 'http-client',
-    logger: logger.maxLogLevel('debug'),
+    logger: logger.setMaxLogLevel('debug'),
   })
 
   const ctx: AppFrontendCtxBase = {

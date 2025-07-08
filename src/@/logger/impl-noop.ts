@@ -16,7 +16,7 @@ export const Logger = (config: Config): ILogger => {
     child() {
       return Logger(config)
     },
-    maxLogLevel() {
+    setMaxLogLevel() {
       return Logger(config)
     },
   }

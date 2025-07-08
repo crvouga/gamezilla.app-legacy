@@ -9,5 +9,5 @@ export type ILogger = {
   trace: (...msg: unknown[]) => void
   fatal: (...msg: unknown[]) => void
   child: (namespace: [string, ...string[]]) => ILogger
-  maxLogLevel: (level: LogLevel) => ILogger
+  setMaxLogLevel: (level: LogLevel) => ILogger
 }
