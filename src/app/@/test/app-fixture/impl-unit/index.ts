@@ -11,14 +11,14 @@ import { PgliteInstance } from '~/@/pglite/pglite-instance'
 
 export const FixtureAppUnitTestE2E = async (): Promise<IFixtureApp> => {
   let logger: ILogger
-  logger ??= Logger({ t: 'console', namespace: ['fixture'], newLinePerMsg: false, maxLogLevel: 'info' })
   logger ??= Logger({ t: 'noop' })
+  logger ??= Logger({ t: 'console', namespace: ['fixture'], newLinePerMsg: false, maxLogLevel: 'info' })
 
   const fs = FileSystem({ t: 'node' })
 
   let sqlDb: ISqlDb
-  sqlDb ??= SqlDb({ t: 'better-sqlite3', databasePath: ':memory:', logger, fs })
   sqlDb ??= SqlDb({ t: 'pglite', pglite: PgliteInstance({ t: 'in-memory' }), logger })
+  sqlDb ??= SqlDb({ t: 'better-sqlite3', databasePath: ':memory:', logger, fs })
 
   const topic = Topic.initClient({ t: 'local', contract: AppTypes.topicContract, logger })
 

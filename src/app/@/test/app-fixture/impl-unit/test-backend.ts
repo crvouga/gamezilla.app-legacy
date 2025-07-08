@@ -1,3 +1,4 @@
+import { FileSystem } from '~/@/file-system'
 import { HttpServer } from '~/@/http-server'
 import { KeyValueDb } from '~/@/key-value-db'
 import { ILogger, Logger } from '~/@/logger'
@@ -76,6 +77,7 @@ export const TestBackend = async (config: {
     userProfileDb,
     httpServer,
     runtime,
+    fileSystem: FileSystem({ t: 'node' }),
   }
 
   const wire = await WireBackend.initCtx({ ctx: ctxBase, topic: config.topic })

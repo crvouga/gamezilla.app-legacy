@@ -78,6 +78,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const syncEngine = SyncEngine({ t: 'backend', logger })
 
   const ctx: AppBackendCtxBase = {
+    fileSystem: FileSystem({ t: 'node' }),
     port: randomServerPort(),
     syncEngine,
     backendRole: 'primary',
