@@ -7,6 +7,8 @@ services:
     build:
       context: ../
       dockerfile: infra/frontend.Dockerfile
+    environment:
+      - NODE_ENV=development
     ports:
       - '5173:80'
 

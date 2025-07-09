@@ -13,6 +13,10 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
+ARG NODE_ENV
+
+ENV NODE_ENV=${NODE_ENV}
+
 RUN pnpm frontend:build
 
 FROM nginx:alpine

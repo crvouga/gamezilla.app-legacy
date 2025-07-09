@@ -40,7 +40,6 @@ const UP = [
   `
 CREATE TABLE IF NOT EXISTS crud_transaction (
     id TEXT PRIMARY KEY,
-    created_at_unix_ms BIGINT NOT NULL,
     session_id TEXT NOT NULL,
     client_session_id TEXT NOT NULL,
     committed BOOLEAN NOT NULL DEFAULT FALSE,
