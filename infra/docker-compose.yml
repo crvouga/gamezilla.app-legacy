@@ -7,6 +7,8 @@ services:
     build:
       context: ../
       dockerfile: infra/frontend.Dockerfile
+      args:
+        NODE_ENV: development
     environment:
       - NODE_ENV=development
     ports:
@@ -18,6 +20,8 @@ services:
     build:
       context: ../
       dockerfile: infra/backend-primary.Dockerfile
+      args:
+        NODE_ENV: development
     ports:
       - '5002:5002'
     depends_on:
