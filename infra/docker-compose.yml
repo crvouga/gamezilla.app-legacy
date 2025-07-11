@@ -2,7 +2,6 @@ name: gamezilla_app
 
 services:
   frontend:
-    container_name: frontend
     profiles: ['e2e']
     build:
       context: ../
@@ -11,11 +10,12 @@ services:
         NODE_ENV: development
     environment:
       - NODE_ENV=development
+      - BACKEND_URL=http://localhost:5002
+      - TOPIC_URL=ws://topic:8888
     ports:
       - '5173:80'
 
   backend:
-    container_name: backend
     profiles: ['e2e']
     build:
       context: ../
@@ -30,21 +30,22 @@ services:
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+      - TOPIC_URL=ws://topic:8888
       - PORT=5002
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
   topic:
     profiles: ['e2e']
-    container_name: topic
     build:
       context: ../
       dockerfile: infra/topic.Dockerfile
     ports:
       - '8888:8888'
+    environment:
+      - NATS_URL=nats://nats:4222
 
   nats:
-    container_name: nats
     build:
       context: ../
       dockerfile: infra/nats.Dockerfile
@@ -53,7 +54,6 @@ services:
       - '8888:8888'
 
   postgres:
-    container_name: postgres
     build:
       context: ../
       dockerfile: infra/postgres.Dockerfile
