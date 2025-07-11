@@ -11,7 +11,7 @@ const main = async () => {
   const logger = Logger({
     t: 'console',
     newLinePerMsg: true,
-    namespace: ['relay'],
+    namespace: ['topic'],
     maxLogLevel: 'info',
   })
 

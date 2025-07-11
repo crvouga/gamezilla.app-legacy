@@ -10,6 +10,8 @@ const IS_LOCAL = !IS_PROD
 
 const BACKEND_URL = IS_PROD ? 'https://backend.gamezilla.app' : 'http://localhost:5002'
 
+const TOPIC_URL = IS_PROD ? 'wss://topic.gamezilla.app' : 'ws://localhost:8888'
+
 export const CONFIG_SHARED = {
   IS_INTEGRATION_TEST,
   IS_UNIT_TEST,
@@ -17,4 +19,5 @@ export const CONFIG_SHARED = {
   IS_PROD,
   IS_LOCAL,
   BACKEND_URL,
+  TOPIC_URL,
 }
