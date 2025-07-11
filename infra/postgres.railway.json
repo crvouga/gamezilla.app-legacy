@@ -1,0 +1,9 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "dockerfilePath": "./infra/postgres.Dockerfile"
+  },
+  "deploy": {
+    "sleepApplication": true
+  }
+}

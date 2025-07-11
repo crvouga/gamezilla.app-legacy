@@ -34,9 +34,29 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
+  topic:
+    profiles: ['e2e']
+    container_name: topic
+    build:
+      context: ../
+      dockerfile: infra/topic.Dockerfile
+    ports:
+      - '8888:8888'
+
+  nats:
+    container_name: nats
+    build:
+      context: ../
+      dockerfile: infra/nats.Dockerfile
+    ports:
+      - '4222:4222'
+      - '8888:8888'
+
   postgres:
     container_name: postgres
-    image: postgres:latest
+    build:
+      context: ../
+      dockerfile: infra/postgres.Dockerfile
     restart: always
     environment:
       POSTGRES_USER: postgres
