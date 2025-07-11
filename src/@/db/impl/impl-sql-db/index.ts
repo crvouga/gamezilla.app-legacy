@@ -1,5 +1,5 @@
 import { DbErr } from '~/@/db/interface/error'
-import { IMigrationPolicy } from '~/@/migration-policy/interface'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { isErr, mapErr, Ok, Result, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ascend } from '~/@/sort'
@@ -26,7 +26,7 @@ export type Config<
   migration?: {
     up: string[]
     down: string[]
-    policy: IMigrationPolicy
+    policy: ISqlDbMigrationPolicy
   }
   entityKeyToSqlColumn: (key: keyof TEntity) => keyof TRow
   schema: s.Schema<TRow>

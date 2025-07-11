@@ -1,7 +1,7 @@
 import { Db } from '~/@/db/impl/impl'
 import { IKeyValueDb } from '~/@/key-value-db'
 import { ILogger } from '~/@/logger'
-import { MigrationPolicy } from '~/@/migration-policy/impl'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { s } from '~/@/schema'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { ITodoDb } from './interface'
@@ -37,7 +37,7 @@ export const TodoDb = (config: Config): ITodoDb => {
     parser: ITodoDb.schema,
     sqlDb: config.sqlDb,
     migration: {
-      policy: MigrationPolicy({
+      policy: SqlDbMigrationPolicy({
         t: 'dangerously-wipe-on-new-schema',
         logger: config.logger,
         kvDb: config.kvDb,

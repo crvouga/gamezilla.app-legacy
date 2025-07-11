@@ -2,15 +2,15 @@ import { ISqlDb } from '../sql-db'
 import { ILogger } from '../logger'
 import { sleep } from '../promise/sleep'
 import { TimeSpan } from '../time/time-span'
-import { IPubSubTopicBased } from './interface'
+import { ITopicBasedPubSub } from './interface'
 
 export type Config = {
-  t: 'postgres'
+  t: 'sql-db'
   sqlDb: ISqlDb
   logger: ILogger
 }
 
-export const PubSubTopicBased = (config: Config): IPubSubTopicBased => {
+export const TopicBasedPubSub = (config: Config): ITopicBasedPubSub => {
   const unlistenByTopic = new Map<string, Set<() => void>>()
 
   return {

@@ -1,13 +1,12 @@
 import { Hashing } from '~/@/hashing'
+import { Translator } from '~/@/l18n/generated'
 import { ILogger } from '~/@/logger'
 import { SecretString } from '~/@/secrets/secret-string'
 import { SMS } from '~/@/sms'
 import { ISqlDb } from '~/@/sql-db'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
-import { BackendRole } from '~/app/@/backend/backend-role'
 import { Env } from '~/app/@/data/env'
-import { Translator } from '~/@/l18n/generated'
 import { CONFIG_BACKEND } from '~/config/backend'
 import type { IVerifySMS } from '../interface'
 import { VerifySMS } from './impl'
@@ -97,17 +96,12 @@ export const VerifySMSFactory = {
    */
   createForEnvironment: async (config: {
     logger: ILogger
-    backendRole: BackendRole
+
     env: Env
     sqlDb: ISqlDb
   }): Promise<IVerifySMS> => {
-    if (config.backendRole === 'edge') {
-      config.logger.info('Using fake verify SMS for edge backend')
-      return VerifySMS({ t: 'fake', logger: config.logger })
-    }
-
-    if (config.backendRole === 'primary' && config.env === 'prod') {
-      config.logger.info('Using Twilio for production and primary backend')
+    if (config.env === 'prod') {
+      config.logger.info('Using Twilio for production')
       return VerifySMSFactory.createTwilio({
         logger: config.logger,
         twilioAccountSid: CONFIG_BACKEND.TWILIO_ACCOUNT_SID(),
@@ -116,7 +110,7 @@ export const VerifySMSFactory = {
       })
     }
 
-    config.logger.info('Using fake for non-production and primary backend')
+    config.logger.info('Using fake for non-production')
     return await VerifySMSFactory.createInHouseUnitTest({ logger: config.logger })
   },
 }

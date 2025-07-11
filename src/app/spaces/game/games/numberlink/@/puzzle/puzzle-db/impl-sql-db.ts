@@ -1,5 +1,5 @@
 import type { ILogger } from '~/@/logger'
-import { IMigrationPolicy } from '~/@/migration-policy/interface'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { Pagination } from '~/@/query/query'
 import { Ok, Result, isErr } from '~/@/result'
 import { s } from '~/@/schema'
@@ -15,7 +15,7 @@ export type Config = {
   t: 'sql-db'
   logger: ILogger
   sqlDb: ISqlDb
-  migrationPolicy: IMigrationPolicy
+  migrationPolicy: ISqlDbMigrationPolicy
 }
 
 const UP: string[] = [

@@ -14,12 +14,12 @@ services:
     ports:
       - '5173:80'
 
-  backend-primary:
-    container_name: backend-primary
+  backend:
+    container_name: backend
     profiles: ['e2e']
     build:
       context: ../
-      dockerfile: infra/backend-primary.Dockerfile
+      dockerfile: infra/backend.Dockerfile
       args:
         NODE_ENV: development
     ports:

@@ -13,4 +13,4 @@ ARG NODE_ENV
 
 ENV NODE_ENV=${NODE_ENV}
 
-CMD ["pnpm", "run", "backend-primary"]
+CMD ["pnpm", "run", "relay"]

@@ -1,13 +1,13 @@
 import { ILogger } from '~/@/logger'
 import { s } from '~/@/schema'
-import { IMigrationPolicy } from '../interface'
+import { ISqlDbMigrationPolicy } from '../interface'
 
 export type Config = {
   t: 'always-run'
   logger: ILogger
 }
 
-export const MigrationPolicy = (config: Config): IMigrationPolicy => {
+export const SqlDbMigrationPolicy = (config: Config): ISqlDbMigrationPolicy => {
   const logger = config.logger.child(['always-run'])
   return {
     async execute(input) {

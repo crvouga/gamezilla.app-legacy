@@ -4,7 +4,7 @@ import { KeyValueDb } from '~/@/key-value-db'
 import { KeyBoard } from '~/@/keyboard'
 import { Translator } from '~/@/l18n/generated'
 import { Logger } from '~/@/logger'
-import { MigrationPolicy } from '~/@/migration-policy'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { Navigation } from '~/@/navigation'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screens/generated/screens'
@@ -30,7 +30,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     role: 'normal',
   }
   const keyValueDb = KeyValueDb({ t: 'in-memory' })
-  const migrationPolicy = MigrationPolicy({
+  const migrationPolicy = SqlDbMigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
     logger: Logger({ t: 'noop' }),
     kvDb: keyValueDb,

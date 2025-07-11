@@ -41,7 +41,6 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
 
   const verifySMS = await VerifySMSFactory.createForEnvironment({
     logger: input.ctx.logger.child(['verifySMS']),
-    backendRole: input.ctx.backendRole,
     env: input.ctx.env,
     sqlDb: input.ctx.sqlDb,
   })

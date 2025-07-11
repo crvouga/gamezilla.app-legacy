@@ -5,14 +5,14 @@ import { unwrap } from '~/@/result'
 import { s } from '~/@/schema'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { describe, expect, test } from '~/@/test-runner'
-import { MigrationPolicy } from './impl'
+import { SqlDbMigrationPolicy } from './impl'
 
 const Fixture = async () => {
   const logger = Logger({ t: 'noop' })
   const pglite = PgliteInstance({ t: 'in-memory' })
   const sqlDb = SqlDb({ t: 'pglite', pglite, logger })
   const kvDb = KeyValueDb({ t: 'sql-db', sqlDb, logger })
-  const migrationPolicy = MigrationPolicy({
+  const migrationPolicy = SqlDbMigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
     kvDb,
     logger: Logger({ t: 'noop' }),
@@ -24,7 +24,7 @@ const Fixture = async () => {
   }
 }
 
-describe('MigrationPolicy DangerouslyWipeOnNewSchema', () => {
+describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
   test('should run up migration when no previous schema exists', async () => {
     const f = await Fixture()
     const up = ['CREATE TABLE test (id TEXT)']

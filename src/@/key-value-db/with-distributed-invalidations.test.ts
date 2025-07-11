@@ -3,8 +3,8 @@ import { Ok } from '~/@/result'
 import { s } from '~/@/schema'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
-import { PubSubTopicBased } from '../pub-sub-topic-based'
-import { PubSubTopicBasedMap } from '../pub-sub-topic-based/impl-in-memory'
+import { TopicBasedPubSub } from '../pub-sub-topic-based'
+import { TopicBasedPubSubMap } from '../pub-sub-topic-based/impl-in-memory'
 import { KeyValueDb } from './impl'
 import { withNamespace } from './with-namespace'
 
@@ -27,7 +27,7 @@ const randomMyEvent = (): MyEvent => ({
 const Fixture = async () => {
   const logger = Logger({ t: 'noop' })
 
-  const pubSubMap: PubSubTopicBasedMap = new Map()
+  const pubSubMap: TopicBasedPubSubMap = new Map()
   const sourceMap = new Map<string, MyEvent>()
 
   const make = async (id: string) => {
@@ -47,7 +47,7 @@ const Fixture = async () => {
           t: 'with-distributed-invalidations',
           pubSub: await PubSub({
             t: 'pub-sub-topic-based',
-            pubSubTopicBased: await PubSubTopicBased({
+            pubSubTopicBased: TopicBasedPubSub({
               t: 'in-memory',
               subscribersByTopic: pubSubMap,
             }),

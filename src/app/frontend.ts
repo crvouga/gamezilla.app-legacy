@@ -5,7 +5,7 @@ import { KeyValueDb } from '~/@/key-value-db'
 import { KeyBoard } from '~/@/keyboard'
 import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { MigrationPolicy } from '~/@/migration-policy'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { Msg } from '~/@/msg/msg'
 import { Navigation } from '~/@/navigation'
 import { PgliteInstance } from '~/@/pglite/pglite-instance'
@@ -116,7 +116,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
 
   const keyValueDb = KeyValueDb({ t: 'web-standard-storage', storage: localStorage, logger })
 
-  const migrationPolicy = MigrationPolicy({
+  const migrationPolicy = SqlDbMigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
     kvDb: keyValueDb,
     logger: logger.setMaxLogLevel('debug'),

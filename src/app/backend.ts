@@ -1,25 +1,19 @@
-import { FileSystem, IFileSystem } from '~/@/file-system'
+import { FileSystem } from '~/@/file-system'
 import { HttpServer } from '~/@/http-server'
 import { AllowCORS } from '~/@/http-server/allow-cors'
 import { KeyValueDb } from '~/@/key-value-db'
-import { ILogger, Logger } from '~/@/logger'
-import { IMigrationPolicy, MigrationPolicy } from '~/@/migration-policy'
-import { sleep } from '~/@/promise/sleep'
-import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
+import { Logger } from '~/@/logger'
+import { TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
-import { ISqlDb } from '~/@/sql-db'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { SqlDb } from '~/@/sql-db/backend/impl'
-
-import { SinglePageApp } from '~/@/single-page-app'
 import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
 import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
-import { BackendInstanceId } from './@/backend/backend-instance/backend-instance-id'
-import { BackendRole } from './@/backend/backend-role'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AuthBackend } from './auth/backend'
@@ -31,10 +25,8 @@ import * as AppTypes from './types'
 import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
 
-const initCtx = async (config: { backendRole: BackendRole; port: number }): Promise<BackendCtxModule> => {
+const initCtx = async (config: { port: number }): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'info' })
-
-  logger.info(`Starting ${config.backendRole} backend...`)
 
   const runtime = Runtime({
     t: 'process',
@@ -42,12 +34,15 @@ const initCtx = async (config: { backendRole: BackendRole; port: number }): Prom
     logger,
   })
 
-  const fs = FileSystem({ t: 'node' })
-
-  const { sqlDb, migrationPolicy } = await initSqlDb({
-    backendRole: config.backendRole,
+  const sqlDb = SqlDb({
+    t: 'postgres',
+    databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
     logger,
-    fs,
+  })
+
+  const migrationPolicy = SqlDbMigrationPolicy({
+    t: 'never-run',
+    logger,
   })
 
   const keyValueDbDurable = KeyValueDb({
@@ -56,8 +51,8 @@ const initCtx = async (config: { backendRole: BackendRole; port: number }): Prom
     logger,
   })
 
-  const pubSub = await PubSubTopicBased({
-    t: 'postgres',
+  const pubSub = TopicBasedPubSub({
+    t: 'sql-db',
     sqlDb,
     logger,
   })
@@ -75,8 +70,8 @@ const initCtx = async (config: { backendRole: BackendRole; port: number }): Prom
     endpoint: '/topic',
     httpServer,
     logger,
-    isProd: CONFIG_SHARED.IS_PROD,
     codec: topicMsgCodec,
+    pubSub,
   })
 
   const userProfileDb = ProfileDb({
@@ -89,8 +84,6 @@ const initCtx = async (config: { backendRole: BackendRole; port: number }): Prom
 
   const now = UnixMs.now()
 
-  const backendInstanceId = BackendInstanceId.generate()
-
   const syncEngine = SyncEngineServer({
     logger,
   })
@@ -100,14 +93,11 @@ const initCtx = async (config: { backendRole: BackendRole; port: number }): Prom
   const ctxBase: AppBackendCtxBase = {
     fileSystem,
     syncEngine,
-    backendRole: config.backendRole,
     env,
     sqlDb,
     keyValueDbDurable,
     logger,
     now,
-    backendInstanceId,
-    sleep,
     pubSub,
     userProfileDb,
     httpServer,
@@ -133,36 +123,6 @@ const initCtx = async (config: { backendRole: BackendRole; port: number }): Prom
   return ctx
 }
 
-const initSqlDb = async (config: {
-  backendRole: BackendRole
-  logger: ILogger
-  fs: IFileSystem
-}): Promise<{ sqlDb: ISqlDb; migrationPolicy: IMigrationPolicy }> => {
-  switch (config.backendRole) {
-    case 'primary': {
-      return {
-        sqlDb: SqlDb({
-          t: 'postgres',
-          databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
-          logger: config.logger,
-        }),
-        migrationPolicy: MigrationPolicy({ t: 'never-run', logger: config.logger }),
-      }
-    }
-    case 'edge': {
-      return {
-        sqlDb: SqlDb({
-          t: 'better-sqlite3',
-          databasePath: ':memory:',
-          logger: config.logger,
-          fs: config.fs,
-        }),
-        migrationPolicy: MigrationPolicy({ t: 'always-run', logger: config.logger }),
-      }
-    }
-  }
-}
-
 const rpc = (input: { ctx: BackendCtxModule }) => {
   return RPC.initServer(rpcContract, {
     ...WireBackend.rpc(input),
@@ -177,13 +137,6 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
     logger: input.ctx.logger,
     contract: AppTypes.rpcContract,
     server: AppBackend.rpc({ ctx: input.ctx }),
-  })
-
-  SinglePageApp.registerRespond({
-    httpServer: input.ctx.httpServer,
-    directory: './dist',
-    indexFilename: 'index.html',
-    fs: input.ctx.fileSystem,
   })
 
   HelloBackend.registerRespond({

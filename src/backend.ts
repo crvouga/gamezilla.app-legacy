@@ -9,7 +9,9 @@ const main = async () => {
 
   console.log({ ...CONFIG_SHARED, ...CONFIG_BACKEND })
 
-  const ctx = await AppBackend.initCtx({ backendRole: 'edge', port: CONFIG_BACKEND.PORT() })
+  const port = CONFIG_BACKEND.PORT()
+
+  const ctx = await AppBackend.initCtx({ port })
 
   const abortController = new AbortController()
 

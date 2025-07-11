@@ -4,7 +4,7 @@ import { KeyValueDb } from '~/@/key-value-db'
 import { KeyBoard } from '~/@/keyboard'
 import { Translator } from '~/@/l18n/generated'
 import { ILogger, Logger } from '~/@/logger'
-import { MigrationPolicy } from '~/@/migration-policy'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { Navigation } from '~/@/navigation'
 import { Program } from '~/@/program/program'
 import { RPC } from '~/@/rpc'
@@ -60,7 +60,7 @@ export const TestFrontend = async (config: {
 
   const keyValueDb = KeyValueDb({ t: 'web-standard-storage', storage: localStorage, logger })
 
-  const migrationPolicy = MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
+  const migrationPolicy = SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
 
   const syncEngine = SyncEngineClient({
     crudTransactionDb: CrudTransactionDb({

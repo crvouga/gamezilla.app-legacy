@@ -1,10 +1,10 @@
-import { IPubSubTopicBased } from '../pub-sub-topic-based'
+import { ITopicBasedPubSub } from '../pub-sub-topic-based'
 import { IPubSub } from './interface'
 
 export type Config = {
   t: 'pub-sub-topic-based'
   topic: string
-  pubSubTopicBased: IPubSubTopicBased
+  pubSubTopicBased: ITopicBasedPubSub
 }
 
 export const PubSub = (config: Config): IPubSub => {

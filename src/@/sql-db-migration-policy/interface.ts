@@ -3,7 +3,7 @@ import { ISqlDb } from '../sql-db/interface'
 /**
  *
  */
-export type IMigrationPolicy = {
+export type ISqlDbMigrationPolicy = {
   /**
    * Run the migration policy.
    *

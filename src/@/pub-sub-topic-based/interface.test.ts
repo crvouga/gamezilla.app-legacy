@@ -3,10 +3,10 @@ import { s } from '~/@/schema'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Logger } from '../logger'
 
-import { Config, PubSubTopicBased } from './impl'
+import { Config, TopicBasedPubSub } from './impl'
 
 const Fixture = async (config: Config) => {
-  const pubSub = await PubSubTopicBased(config)
+  const pubSub = TopicBasedPubSub(config)
   return {
     ...config,
     pubSub,
@@ -36,7 +36,7 @@ const Fixtures = async () => {
 
   if (f.t === 'integration') {
     configs.push({
-      t: 'postgres',
+      t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
       logger: Logger({ t: 'noop' }),
     })
@@ -45,7 +45,7 @@ const Fixtures = async () => {
   return Promise.all(configs.map(Fixture))
 }
 
-describe('PubSubTopicBased', () => {
+describe('TopicBasedPubSub', () => {
   test('it works', async () => {
     for (const f of await Fixtures()) {
       const myEvent = randomMyEvent()

@@ -3,11 +3,11 @@ import { HttpServer } from '~/@/http-server'
 import { KeyValueDb, type IKeyValueDb } from '~/@/key-value-db'
 import type { ILogger } from '~/@/logger'
 import { Logger } from '~/@/logger'
-import { MigrationPolicy } from '~/@/migration-policy'
-import { IPubSubTopicBased, PubSubTopicBased } from '~/@/pub-sub-topic-based'
+import { ITopicBasedPubSub, TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import type { IRuntime } from '~/@/runtime'
 import { Runtime } from '~/@/runtime'
 import { type ISqlDb } from '~/@/sql-db'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
 import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
@@ -19,7 +19,6 @@ import { CONFIG_BACKEND } from '~/config/backend'
 import { CONFIG_SHARED } from '~/config/shared'
 import { ClientId } from '../../../@/wire/client-id'
 import { SessionId } from '../../../@/wire/session-id'
-import { BackendInstanceId } from './backend-instance/backend-instance-id'
 import type { AppBackendCtxBase } from './ctx'
 
 export type IFixtureAppBackendUnit = {
@@ -27,7 +26,7 @@ export type IFixtureAppBackendUnit = {
   ctx: AppBackendCtxBase
   runtime: IRuntime
   logger: ILogger
-  pubSubTopicBased: IPubSubTopicBased
+  pubSubTopicBased: ITopicBasedPubSub
   sqlDbSqlite: ISqlDb
   keyValueDbHashMap: IKeyValueDb
 }
@@ -44,7 +43,7 @@ export type IFixtureAppBackend = IFixtureAppBackendUnit | IFixtureAppBackendInte
 export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const logger = Logger({ t: 'noop' })
 
-  const pubSub = await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() })
+  const pubSub = TopicBasedPubSub({ t: 'in-memory', subscribersByTopic: new Map() })
 
   const runtime = Runtime({ t: 'process', logger, shutoffFGracePeriod: TimeSpan.seconds(0) })
 
@@ -68,11 +67,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const now = UnixMs.now()
 
-  const sleep = async () => {}
-
-  const backendInstanceId = BackendInstanceId.generate()
-
-  const migrationPolicy = MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
+  const migrationPolicy = SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
 
   const syncEngine = SyncEngineServer({ logger })
 
@@ -80,23 +75,20 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     fileSystem: FileSystem({ t: 'node' }),
     port: randomServerPort(),
     syncEngine,
-    backendRole: 'primary',
     env: 'test',
     keyValueDbDurable: keyValueDbHashMap,
     sqlDb: SQL_DB_NOOP,
     migrationPolicy,
     logger,
     now,
-    sleep,
     pubSub,
     userProfileDb: profileDb,
     runtime,
     httpServer,
-    backendInstanceId,
   }
 
   if (!CONFIG_SHARED.IS_INTEGRATION_TEST) {
-    const pubSubTopicBased = await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() })
+    const pubSubTopicBased = TopicBasedPubSub({ t: 'in-memory', subscribersByTopic: new Map() })
 
     return {
       t: 'unit',
@@ -127,8 +119,8 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     logger,
   })
 
-  const pubSubTopicBased = await PubSubTopicBased({
-    t: 'postgres',
+  const pubSubTopicBased = TopicBasedPubSub({
+    t: 'sql-db',
     logger,
     sqlDb: sqlDbPostgres,
   })

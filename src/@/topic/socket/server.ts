@@ -1,5 +1,6 @@
 import type { IHttpServer, IWebSocketConnection } from '~/@/http-server/interface'
 import { ILogger } from '~/@/logger'
+import { ITopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { PubSub, Sub } from '~/@/sub'
 import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -24,9 +25,9 @@ type Config<TContract extends ContractBase> = {
   contract: TContract
   httpServer: IHttpServer
   logger: ILogger
-  isProd: boolean
   endpoint: string
   codec: TopicMsgCodec
+  pubSub: ITopicBasedPubSub
 }
 
 export const initServer = <TContract extends ContractBase>(config: Config<TContract>): Client<TContract> => {

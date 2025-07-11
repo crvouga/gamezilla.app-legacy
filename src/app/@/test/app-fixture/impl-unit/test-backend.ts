@@ -2,10 +2,10 @@ import { FileSystem } from '~/@/file-system'
 import { HttpServer } from '~/@/http-server'
 import { KeyValueDb } from '~/@/key-value-db'
 import { ILogger, Logger } from '~/@/logger'
-import { MigrationPolicy } from '~/@/migration-policy'
-import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
+import { TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { Runtime } from '~/@/runtime'
 import { ISqlDb } from '~/@/sql-db'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { randomServerPort } from '~/@/test/random-server-port'
 import { TimeSpan } from '~/@/time/time-span'
@@ -18,7 +18,6 @@ import { ProfileBackend } from '~/app/profile/backend'
 import { SpacesBackend } from '~/app/spaces/backend'
 import { BackendCtxModule, topicContract } from '~/app/types'
 import { WireBackend } from '~/app/wire/backend'
-import { BackendInstanceId } from '../../../backend/backend-instance/backend-instance-id'
 import { AppBackendCtxBase } from '../../../backend/ctx'
 
 export const TestBackend = async (config: {
@@ -40,7 +39,7 @@ export const TestBackend = async (config: {
     logger,
   })
 
-  const pubSub = await PubSubTopicBased({ t: 'in-memory', subscribersByTopic: new Map() })
+  const pubSub = TopicBasedPubSub({ t: 'in-memory', subscribersByTopic: new Map() })
 
   const httpServer = HttpServer({
     t: 'noop',
@@ -55,24 +54,19 @@ export const TestBackend = async (config: {
 
   const now = UnixMs.now()
 
-  const backendInstanceId = BackendInstanceId.generate()
-
-  const migrationPolicy = MigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
+  const migrationPolicy = SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
 
   const syncEngine = SyncEngineServer({ logger })
 
   const ctxBase: AppBackendCtxBase = {
     port: randomServerPort(),
     syncEngine,
-    backendRole: 'primary',
     migrationPolicy,
     env: 'dev',
     sqlDb: config.sqlDb,
     keyValueDbDurable,
     logger,
     now,
-    backendInstanceId,
-    sleep: () => Promise.resolve(),
     pubSub,
     userProfileDb,
     httpServer,

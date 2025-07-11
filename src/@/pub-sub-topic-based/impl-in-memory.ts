@@ -1,30 +1,27 @@
 import { sleep } from '../promise/sleep'
 import { TimeSpan } from '../time/time-span'
-import { IPubSubTopicBased } from './interface'
+import { ITopicBasedPubSub } from './interface'
 
 export type Config = {
   t: 'in-memory'
-  subscribersByTopic: PubSubTopicBasedMap
+  subscribersByTopic?: TopicBasedPubSubMap
 }
 
-export type PubSubTopicBasedMap = Map<string, Set<(msg: string) => void>>
+export type TopicBasedPubSubMap = Map<string, Set<(msg: string) => void>>
 
-export const PubSubTopicBased = (config: Config): IPubSubTopicBased => {
+export const TopicBasedPubSub = (config: Config): ITopicBasedPubSub => {
+  const subscribersByTopic = config.subscribersByTopic ?? new Map()
   return {
     async pub(topic, msg) {
-      const subs = config.subscribersByTopic.get(topic)
-      if (!subs) {
-        return
-      }
+      const subs = subscribersByTopic.get(topic)
       for (const sub of subs) {
         sub(msg)
       }
       await sleep(TimeSpan.milliseconds(0))
     },
     async sub(topic, callback) {
-      const subs = config.subscribersByTopic.get(topic) ?? new Set()
-      config.subscribersByTopic.set(topic, subs)
-      subs.add(callback)
+      const subs = subscribersByTopic.get(topic) ?? new Set()
+      subscribersByTopic.set(topic, subs)
       await sleep(TimeSpan.milliseconds(0))
       return async () => {
         subs.delete(callback)
@@ -32,8 +29,7 @@ export const PubSubTopicBased = (config: Config): IPubSubTopicBased => {
       }
     },
     async unsub(topic) {
-      config.subscribersByTopic.delete(topic)
-      await sleep(TimeSpan.milliseconds(0))
+      subscribersByTopic.delete(topic)
     },
   }
 }

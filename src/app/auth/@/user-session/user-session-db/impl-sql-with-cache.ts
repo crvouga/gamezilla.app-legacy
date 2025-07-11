@@ -4,7 +4,7 @@ import { ISqlDb } from '~/@/sql-db'
 import { LRUCache } from '~/@/least-recently-used-cache'
 import { ILogger } from '~/@/logger'
 import { PubSub } from '~/@/pub-sub'
-import { IPubSubTopicBased } from '~/@/pub-sub-topic-based'
+import { ITopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import * as ImplSql from './impl-sql'
 import { WithCache } from './impl-with-cache'
 import type { IUserSessionDb } from './interface'
@@ -13,7 +13,7 @@ export type Config = {
   t: 'sql-with-cache'
   keyValueDb: IKeyValueDb
   sqlDb: ISqlDb
-  pubSubTopicBased: IPubSubTopicBased
+  pubSubTopicBased: ITopicBasedPubSub
   logger: ILogger
 }
 

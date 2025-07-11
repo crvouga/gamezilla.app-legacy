@@ -2,7 +2,7 @@ import { ascend } from '~/@/array/sorting'
 import { pipe } from '~/@/function/pipe'
 import { Uuid } from '~/@/id/uuid'
 import { ILogger } from '~/@/logger'
-import { IMigrationPolicy } from '~/@/migration-policy'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { isErr, isOk, Result, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
@@ -21,7 +21,7 @@ export type Config = {
   t: 'sql-db'
   sqlDb: ISqlDb
   logger: ILogger
-  migrationPolicy: IMigrationPolicy
+  migrationPolicy: ISqlDbMigrationPolicy
 }
 
 const Row = s.obj({

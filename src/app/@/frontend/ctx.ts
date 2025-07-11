@@ -5,7 +5,7 @@ import { IKeyBoard } from '~/@/keyboard'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { ILogger } from '~/@/logger'
-import { IMigrationPolicy } from '~/@/migration-policy'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { INavigation } from '~/@/navigation'
 import type { Screen } from '~/@/screens/generated/screens'
 import { ISqlDb } from '~/@/sql-db'
@@ -31,7 +31,7 @@ export type AppFrontendCtxBase = {
   screenSize: ScreenSize
   sqlDb: ISqlDb
   logger: ILogger
-  migrationPolicy: IMigrationPolicy
+  migrationPolicy: ISqlDbMigrationPolicy
   keyboard: IKeyBoard
   t: Translator
   navigatorLanguage: LanguageCodeISO_639_1

@@ -4,6 +4,7 @@ import { s } from '~/@/schema'
 import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
+import { TopicBasedPubSub } from '../pub-sub-topic-based'
 import { randomServerPort } from '../test/random-server-port'
 import { Topic } from './index'
 import { TopicMsgCodecJson } from './socket/topic-msg-codec'
@@ -40,14 +41,16 @@ const Fixture = async () => {
 
   const codec = TopicMsgCodecJson
 
+  const pubSub = TopicBasedPubSub({ t: 'in-memory' })
+
   const server = Topic.initServer({
     t: 'web-sockets',
     httpServer,
     logger: logger.child(['server']),
     contract,
-    isProd: false,
     endpoint,
     codec,
+    pubSub,
   })
 
   const reconnectionRate = TimeSpan.milliseconds(0)

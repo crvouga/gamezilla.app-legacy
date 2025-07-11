@@ -3,7 +3,7 @@ import { IKeyValueDb } from '~/@/key-value-db'
 import { ILogger } from '~/@/logger'
 import { isErr } from '~/@/result'
 import { s } from '~/@/schema'
-import { IMigrationPolicy } from '../interface'
+import { ISqlDbMigrationPolicy } from '../interface'
 
 export type Config = {
   t: 'dangerously-wipe-on-new-schema'
@@ -22,7 +22,7 @@ const hashSql = (sql: string[]) => {
   return btoa(deterministicJsonStringify(sql))
 }
 
-export const MigrationPolicy = (config: Config): IMigrationPolicy => {
+export const SqlDbMigrationPolicy = (config: Config): ISqlDbMigrationPolicy => {
   const logger = config.logger.child(['dangerously-wipe-on-new-schema'])
   return {
     async execute(input) {

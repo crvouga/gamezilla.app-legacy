@@ -1,20 +1,24 @@
 import * as ImplInMemory from './impl-in-memory'
+import * as ImplNats from './impl-nats'
 import * as ImplNoop from './impl-noop'
-import * as ImplPostgres from './impl-postgres'
-import { IPubSubTopicBased } from './interface'
+import * as ImplSqlDb from './impl-sql-db'
+import { ITopicBasedPubSub } from './interface'
 
-export type Config = ImplInMemory.Config | ImplPostgres.Config | ImplNoop.Config
+export type Config = ImplInMemory.Config | ImplSqlDb.Config | ImplNoop.Config | ImplNats.Config | ImplNats.Config
 
-export const PubSubTopicBased = async (config: Config): Promise<IPubSubTopicBased> => {
+export const TopicBasedPubSub = (config: Config): ITopicBasedPubSub => {
   switch (config.t) {
     case 'in-memory': {
-      return ImplInMemory.PubSubTopicBased(config)
+      return ImplInMemory.TopicBasedPubSub(config)
     }
-    case 'postgres': {
-      return ImplPostgres.PubSubTopicBased(config)
+    case 'sql-db': {
+      return ImplSqlDb.TopicBasedPubSub(config)
     }
     case 'noop': {
-      return ImplNoop.PubSubTopicBased(config)
+      return ImplNoop.TopicBasedPubSub(config)
+    }
+    case 'nats': {
+      return ImplNats.TopicBasedPubSub(config)
     }
   }
 }

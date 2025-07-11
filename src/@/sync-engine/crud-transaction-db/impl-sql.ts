@@ -1,5 +1,5 @@
 import { ILogger } from '~/@/logger'
-import { IMigrationPolicy } from '~/@/migration-policy'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { isErr, Ok } from '~/@/result'
 import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
@@ -12,7 +12,7 @@ import { ICrudTransactionDb } from './interface'
 export type Config = {
   t: 'sql-db'
   sqlDb: ISqlDb
-  migrationPolicy: IMigrationPolicy
+  migrationPolicy: ISqlDbMigrationPolicy
   logger: ILogger
 }
 

@@ -1,5 +1,5 @@
 import { Json } from '~/@/json/json'
-import { IMigrationPolicy } from '~/@/migration-policy'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { Err, isErr, Ok, Result, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
@@ -12,7 +12,7 @@ import { ISolutionsDb } from './interface'
 export type Config = {
   t: 'sql-db'
   sqlDb: ISqlDb
-  migrationPolicy: IMigrationPolicy
+  migrationPolicy: ISqlDbMigrationPolicy
 }
 
 const Row = s.obj({

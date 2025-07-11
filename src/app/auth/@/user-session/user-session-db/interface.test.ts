@@ -1,6 +1,6 @@
 import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
-import { PubSubTopicBased } from '~/@/pub-sub-topic-based'
+import { TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { unwrap } from '~/@/result'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserId } from '~/app/@/data/user-id'
@@ -59,7 +59,7 @@ const Fixtures = async () => {
       t: 'sql-with-cache',
       keyValueDb: f.keyValueDbHashMap,
       sqlDb: f.sqlDbPostgres,
-      pubSubTopicBased: await PubSubTopicBased({
+      pubSubTopicBased: TopicBasedPubSub({
         t: 'in-memory',
         subscribersByTopic: new Map(),
       }),

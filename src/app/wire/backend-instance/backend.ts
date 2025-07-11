@@ -5,6 +5,7 @@ import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { BackendInstance } from '~/app/@/backend/backend-instance/backend-instance'
 import { BackendInstanceDb } from '~/app/@/backend/backend-instance/backend-instance-db'
+import { BackendInstanceId } from '~/app/@/backend/backend-instance/backend-instance-id'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { rpcContract, type BackendCtxModule } from './types'
 
@@ -28,10 +29,12 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
 
   const event = await Sub.take(msgsServerStarted, s)
 
+  const backendInstanceId = BackendInstanceId.generate()
+
   ctx.logger.info('server started. recording backend instance started')
 
   const backendInstanceStarted: BackendInstance = {
-    backendInstanceId: ctx.backendInstanceId,
+    backendInstanceId,
     ipAddress: event.ipAddress,
     lastHeartbeatAt: event.startedAt,
     port: event.port,
@@ -47,7 +50,7 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
     serverStopped: (s) => Sub.take(msgsServerStopped, s),
     runtimeStopped: (s) => Sub.take(msgsRuntimeStopping, s),
     heartbeat: (s) => {
-      workerHeartbeat(s, input)
+      workerHeartbeat(s, { ...input, backendInstanceId })
       return p.neverResolve
     },
   })
@@ -64,18 +67,24 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   ctx.logger.info('recorded backend instance stopped')
 }
 
-const workerHeartbeat = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
+const workerHeartbeat = async (
+  s: AbortSignal,
+  input: { ctx: BackendCtxModule; backendInstanceId: BackendInstanceId },
+) => {
   while (true) {
     await heartbeat(s, input)
     await p.sleep(BackendInstance.HEARTBEAT, s)
   }
 }
 
-const heartbeat = async (_s: AbortSignal, input: { ctx: BackendCtxModule }): Promise<Result<string, unknown>> => {
+const heartbeat = async (
+  _s: AbortSignal,
+  input: { ctx: BackendCtxModule; backendInstanceId: BackendInstanceId },
+): Promise<Result<string, unknown>> => {
   const ctx = input.ctx
   ctx.logger.info('heartbeat')
 
-  const got = await ctx.backendInstanceDb.get(ctx.backendInstanceId)
+  const got = await ctx.backendInstanceDb.get(input.backendInstanceId)
 
   if (isErr(got)) {
     ctx.logger.error('heartbeat error', got.error)
