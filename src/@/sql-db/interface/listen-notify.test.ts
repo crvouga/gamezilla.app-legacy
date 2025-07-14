@@ -1,10 +1,10 @@
 import 'fake-indexeddb/auto'
 import { PgliteInstance } from '~/@/pglite/pglite-instance'
 import { sleep } from '~/@/promise/sleep'
+import { SecretString } from '~/@/secrets/secret-string'
 import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
-import { CONFIG_BACKEND } from '~/config/backend'
-import { CONFIG_SHARED } from '~/config/shared'
+import { IS_INTEGRATION_TEST } from '~/app/@/test/is-integration-test'
 import { Logger } from '../../logger'
 import { Config, SqlDb } from '../backend/impl'
 import { SqlDbNotification } from '../interface'
@@ -28,10 +28,13 @@ const Fixtures = async () => {
     })
   }
 
-  if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
+  const DATABASE_URL = SecretString.init('DATABASE_URL', process.env.DATABASE_URL)
+  if (!DATABASE_URL) throw new Error('DATABASE_URL is not set')
+
+  if (IS_INTEGRATION_TEST) {
     configs.push({
       t: 'postgres',
-      databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
+      databaseUrl: DATABASE_URL,
       logger: Logger({ t: 'noop' }),
     })
   }

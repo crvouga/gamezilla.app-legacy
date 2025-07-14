@@ -1,5 +1,4 @@
 import { TestClient } from '~/@/test-client'
-import { CONFIG_FRONTEND } from '~/config/frontend'
 import { AudioPlayer } from '../audio-player'
 import { Logger } from '../logger'
 import { TimeSpan } from '../time/time-span'
@@ -16,7 +15,7 @@ export const BaseFixture = async () => {
 
   document.body.innerHTML = '<div id="root"></div>'
   const root = document.getElementById('root')!
-  await VDomEngine.initialize(CONFIG_FRONTEND.VDOM_IMPL)
+  await VDomEngine.initialize('inferno')
 
   return {
     client,

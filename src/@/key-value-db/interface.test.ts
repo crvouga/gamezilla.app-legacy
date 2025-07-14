@@ -2,12 +2,12 @@ import { Ok, Result } from '~/@/result'
 import { Runtime } from '~/@/runtime'
 import { s } from '~/@/schema'
 import { describe, expect, test } from '~/@/test-runner'
-import { CONFIG_BACKEND } from '~/config/backend'
-import { CONFIG_SHARED } from '~/config/shared'
+import { IS_INTEGRATION_TEST } from '~/app/@/test/is-integration-test'
 import { FileSystem } from '../file-system'
 import { Uuid } from '../id/uuid'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
+import { SecretString } from '../secrets/secret-string'
 import { SqlDb } from '../sql-db/backend/impl'
 import { TimeSpan } from '../time/time-span'
 import { KeyValueDb } from './impl'
@@ -113,7 +113,10 @@ const Fixtures = async (): Promise<Fixture[]> => {
     }),
   })
 
-  if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
+  const DATABASE_URL = SecretString.init('DATABASE_URL', process.env.DATABASE_URL)
+  if (!DATABASE_URL) throw new Error('DATABASE_URL is not set')
+
+  if (IS_INTEGRATION_TEST) {
     fixtures.push({
       name: 'postgres',
       keyValueDb: KeyValueDb({
@@ -121,7 +124,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
         sqlDb: SqlDb({
           t: 'postgres',
           logger,
-          databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
+          databaseUrl: DATABASE_URL,
         }),
         logger,
       }),

@@ -7,7 +7,6 @@ import { ISqlDb } from '~/@/sql-db'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Env } from '~/app/@/data/env'
-import { CONFIG_BACKEND } from '~/config/backend'
 import type { IVerifySMS } from '../interface'
 import { VerifySMS } from './impl'
 import { VerificationAttemptDb } from './impl-in-house/verification-attempt'
@@ -102,11 +101,21 @@ export const VerifySMSFactory = {
   }): Promise<IVerifySMS> => {
     if (config.env === 'prod') {
       config.logger.info('Using Twilio for production')
+
+      const TWILIO_ACCOUNT_SID = process.env?.TWILIO_ACCOUNT_SID!
+      if (!TWILIO_ACCOUNT_SID) throw new Error('TWILIO_ACCOUNT_SID is not set')
+
+      const TWILIO_AUTH_TOKEN = SecretString.init('TWILIO_AUTH_TOKEN', process.env?.TWILIO_AUTH_TOKEN)!
+      if (!TWILIO_AUTH_TOKEN) throw new Error('TWILIO_AUTH_TOKEN is not set')
+
+      const TWILIO_MESSAGING_SERVICE_SID = process.env?.TWILIO_MESSAGING_SERVICE_SID!
+      if (!TWILIO_MESSAGING_SERVICE_SID) throw new Error('TWILIO_MESSAGING_SERVICE_SID is not set')
+
       return VerifySMSFactory.createTwilio({
         logger: config.logger,
-        twilioAccountSid: CONFIG_BACKEND.TWILIO_ACCOUNT_SID(),
-        twilioAuthToken: CONFIG_BACKEND.TWILIO_AUTH_TOKEN(),
-        twilioMessagingServiceSid: CONFIG_BACKEND.TWILIO_MESSAGING_SERVICE_SID(),
+        twilioAccountSid: TWILIO_ACCOUNT_SID,
+        twilioAuthToken: TWILIO_AUTH_TOKEN,
+        twilioMessagingServiceSid: TWILIO_MESSAGING_SERVICE_SID,
       })
     }
 

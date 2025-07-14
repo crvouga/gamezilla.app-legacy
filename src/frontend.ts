@@ -1,17 +1,24 @@
 import { Program } from '~/@/program/program'
 import { AppFrontend } from '~/app/frontend'
-import { CONFIG_FRONTEND } from '~/config/frontend'
 import { render, VDomEngine } from './@/vdom'
 import { VDomImpl } from './@/vdom/vdom-impl'
-import { CONFIG_SHARED } from './config/shared'
 
 const main = async () => {
-  console.table({ ...CONFIG_SHARED, ...CONFIG_FRONTEND })
+  const VDOM_IMPL = VDomImpl.getUrl({ fallback: 'inferno' })
+
+  const BACKEND_URL = process.env.BACKEND_URL
+  if (!BACKEND_URL) throw new Error('BACKEND_URL is not set')
+
+  const TOPIC_URL = process.env.TOPIC_URL
+  if (!TOPIC_URL) throw new Error('TOPIC_URL is not set')
 
   let root = initRoot()
-  await VDomEngine.initialize(CONFIG_FRONTEND.VDOM_IMPL)
+  await VDomEngine.initialize(VDOM_IMPL)
 
-  const ctx = await AppFrontend.initCtx()
+  const ctx = await AppFrontend.initCtx({
+    backendUrl: BACKEND_URL,
+    topicUrl: TOPIC_URL,
+  })
 
   const program = await Program.run({
     crash: (input) => console.error(input),

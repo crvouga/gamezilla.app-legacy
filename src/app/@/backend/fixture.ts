@@ -6,6 +6,7 @@ import { Logger } from '~/@/logger'
 import { ITopicBasedPubSub, TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import type { IRuntime } from '~/@/runtime'
 import { Runtime } from '~/@/runtime'
+import { SecretString } from '~/@/secrets/secret-string'
 import { type ISqlDb } from '~/@/sql-db'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { SqlDb } from '~/@/sql-db/backend/impl'
@@ -15,10 +16,9 @@ import { randomServerPort } from '~/@/test/random-server-port'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
-import { CONFIG_BACKEND } from '~/config/backend'
-import { CONFIG_SHARED } from '~/config/shared'
 import { ClientId } from '../../../@/wire/client-id'
 import { SessionId } from '../../../@/wire/session-id'
+import { IS_INTEGRATION_TEST } from '../test/is-integration-test'
 import type { AppBackendCtxBase } from './ctx'
 
 export type IFixtureAppBackendUnit = {
@@ -87,7 +87,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     httpServer,
   }
 
-  if (!CONFIG_SHARED.IS_INTEGRATION_TEST) {
+  if (!IS_INTEGRATION_TEST) {
     const pubSubTopicBased = TopicBasedPubSub({ t: 'in-memory', subscribersByTopic: new Map() })
 
     return {
@@ -101,9 +101,12 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     }
   }
 
+  const DATABASE_URL = SecretString.init('DATABASE_URL', process.env.DATABASE_URL)
+  if (!DATABASE_URL) throw new Error('DATABASE_URL is not set')
+
   const sqlDbPostgres = SqlDb({
     t: 'postgres',
-    databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
+    databaseUrl: DATABASE_URL,
     logger,
   })
 

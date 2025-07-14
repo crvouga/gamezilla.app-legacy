@@ -1,3 +1,5 @@
+import { DotEnv } from './@/dotenv/dotenv'
+import { FileSystem } from './@/file-system'
 import { HttpServer } from './@/http-server'
 import { Logger } from './@/logger'
 import { TopicBasedPubSub } from './@/pub-sub-topic-based'
@@ -5,9 +7,9 @@ import { Topic } from './@/topic'
 import { AppTypes } from './app'
 import { topicMsgCodec } from './app/@/topic-msg-codec'
 
-const RELAY_PORT = 8888
-
 const main = async () => {
+  await DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env'] })
+
   const logger = Logger({
     t: 'console',
     newLinePerMsg: true,
@@ -34,9 +36,12 @@ const main = async () => {
     pubSub,
   })
 
-  await httpServer.start(RELAY_PORT)
+  const TOPIC_PORT = Number(process.env.TOPIC_PORT)
+  if (isNaN(TOPIC_PORT)) throw new Error('TOPIC_PORT is not set')
 
-  logger.info('Relay server started')
+  await httpServer.start(TOPIC_PORT)
+
+  logger.info('Topic server started')
 }
 
 main()

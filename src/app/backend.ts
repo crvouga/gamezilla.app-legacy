@@ -6,14 +6,13 @@ import { Logger } from '~/@/logger'
 import { TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
+import { SecretString } from '~/@/secrets/secret-string'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Topic } from '~/@/topic'
-import { CONFIG_BACKEND } from '~/config/backend'
-import { CONFIG_SHARED } from '~/config/shared'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AuthBackend } from './auth/backend'
@@ -25,7 +24,13 @@ import * as AppTypes from './types'
 import { BackendCtxModule, rpcContract } from './types'
 import { WireBackend } from './wire/backend'
 
-const initCtx = async (config: { port: number }): Promise<BackendCtxModule> => {
+const initCtx = async (config: {
+  port: number
+  topicUrl: string
+  databaseUrl: SecretString
+  corsOrigins: string[]
+  isProd: boolean
+}): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'info' })
 
   const runtime = Runtime({
@@ -36,7 +41,7 @@ const initCtx = async (config: { port: number }): Promise<BackendCtxModule> => {
 
   const sqlDb = SqlDb({
     t: 'postgres',
-    databaseUrl: CONFIG_BACKEND.DATABASE_URL(),
+    databaseUrl: config.databaseUrl,
     logger,
   })
 
@@ -62,7 +67,7 @@ const initCtx = async (config: { port: number }): Promise<BackendCtxModule> => {
     logger,
   })
 
-  httpServer.registerMiddleware(AllowCORS.middleware(CONFIG_BACKEND.CORS_ORIGINS))
+  httpServer.registerMiddleware(AllowCORS.middleware(config.corsOrigins))
 
   const topic = Topic.initServer({
     t: 'web-sockets',
@@ -80,7 +85,7 @@ const initCtx = async (config: { port: number }): Promise<BackendCtxModule> => {
     logger,
   })
 
-  const env = CONFIG_SHARED.IS_PROD ? 'prod' : 'dev'
+  const env = config.isProd ? 'prod' : 'dev'
 
   const now = UnixMs.now()
 

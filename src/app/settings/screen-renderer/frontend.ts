@@ -5,7 +5,6 @@ import { VDomImpl } from '~/@/vdom/vdom-impl'
 import { BackScreenCmd } from '~/app/@/frontend/back-screen-cmd.$msg'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
-import { CONFIG_FRONTEND } from '~/config/frontend'
 import { APP_SOUND } from '../../@/frontend/app-sound'
 import type { FrontendModule } from '../types'
 import { ModelFrontend } from './types'
@@ -17,7 +16,7 @@ const TEST_ID = {
 }
 
 const init = (): { model: ModelFrontend } => {
-  const initialVDomImpl = CONFIG_FRONTEND.VDOM_IMPL
+  const initialVDomImpl = 'inferno' as const
 
   return {
     model: {

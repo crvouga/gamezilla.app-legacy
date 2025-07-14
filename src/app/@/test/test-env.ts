@@ -1,5 +1,3 @@
-import { CONFIG_SHARED } from '~/config/shared'
-
 export type ITestEnv =
   | {
       t: 'unit'
@@ -9,7 +7,7 @@ export type ITestEnv =
     }
 
 export const TestEnv = (): ITestEnv => {
-  if (CONFIG_SHARED.IS_INTEGRATION_TEST) {
+  if (process.env.IS_INTEGRATION_TEST === 'true') {
     return {
       t: 'integration',
     }

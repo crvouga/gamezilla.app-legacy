@@ -1,4 +1,4 @@
-const IS_PROD = import.meta.env?.NODE_ENV === 'production' || process.env.NODE_ENV === 'production'
+const IS_PROD = process.env.NODE_ENV === 'production'
 
 export const assert = <T>(condition: T, message: string) => {
   if (!condition && !IS_PROD) {

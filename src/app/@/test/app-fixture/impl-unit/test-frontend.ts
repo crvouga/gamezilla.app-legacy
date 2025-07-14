@@ -4,11 +4,11 @@ import { KeyValueDb } from '~/@/key-value-db'
 import { KeyBoard } from '~/@/keyboard'
 import { Translator } from '~/@/l18n/generated'
 import { ILogger, Logger } from '~/@/logger'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { Navigation } from '~/@/navigation'
 import { Program } from '~/@/program/program'
 import { RPC } from '~/@/rpc'
 import { ISqlDb } from '~/@/sql-db'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl-sql'
 import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TestClient } from '~/@/test-client'
@@ -25,7 +25,7 @@ import { ProfileFrontend } from '~/app/profile/frontend'
 import { SpacesFrontend } from '~/app/spaces/frontend'
 import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
-import { CONFIG_FRONTEND } from '~/config/frontend'
+
 import { AppFrontendCtxBase } from '../../../frontend/ctx'
 
 export const TestFrontend = async (config: {
@@ -128,7 +128,7 @@ export const TestFrontend = async (config: {
   await navigation.clear()
   document.body.innerHTML = '<div id="root"></div>'
   const root = document.getElementById('root')!
-  await VDomEngine.initialize(CONFIG_FRONTEND.VDOM_IMPL)
+  await VDomEngine.initialize('inferno')
 
   const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),

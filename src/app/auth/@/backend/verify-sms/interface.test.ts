@@ -1,8 +1,8 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
 import { PhoneNumber } from '~/@/phone-number'
 import { isErr, unwrap } from '~/@/result'
-import { CONFIG_BACKEND } from '~/config/backend'
+import { SecretString } from '~/@/secrets/secret-string'
+import { describe, expect, test } from '~/@/test-runner'
 import { Config, VerifySMS } from './impl'
 import { VerifySMSInHouseFixture } from './impl/impl-in-house/@/fixture'
 
@@ -23,12 +23,21 @@ const Fixtures = async () => {
 
   const TEST_TWILIO = false
   if (TEST_TWILIO) {
+    const TWILIO_ACCOUNT_SID = process.env?.TWILIO_ACCOUNT_SID!
+    if (!TWILIO_ACCOUNT_SID) throw new Error('TWILIO_ACCOUNT_SID is not set')
+
+    const TWILIO_AUTH_TOKEN = SecretString.init('TWILIO_AUTH_TOKEN', process.env?.TWILIO_AUTH_TOKEN)!
+    if (!TWILIO_AUTH_TOKEN) throw new Error('TWILIO_AUTH_TOKEN is not set')
+
+    const TWILIO_MESSAGING_SERVICE_SID = process.env?.TWILIO_MESSAGING_SERVICE_SID!
+    if (!TWILIO_MESSAGING_SERVICE_SID) throw new Error('TWILIO_MESSAGING_SERVICE_SID is not set')
+
     configs.push({
       t: 'twilio',
       logger: Logger({ t: 'console', namespace: ['verify-sms'], newLinePerMsg: true, maxLogLevel: 'info' }),
-      twilioAccountSid: CONFIG_BACKEND.TWILIO_ACCOUNT_SID(),
-      twilioAuthToken: CONFIG_BACKEND.TWILIO_AUTH_TOKEN(),
-      twilioMessagingServiceSid: CONFIG_BACKEND.TWILIO_MESSAGING_SERVICE_SID(),
+      twilioAccountSid: TWILIO_ACCOUNT_SID,
+      twilioAuthToken: TWILIO_AUTH_TOKEN,
+      twilioMessagingServiceSid: TWILIO_MESSAGING_SERVICE_SID,
     })
   }
 

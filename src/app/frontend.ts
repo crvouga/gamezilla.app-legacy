@@ -5,7 +5,6 @@ import { KeyValueDb } from '~/@/key-value-db'
 import { KeyBoard } from '~/@/keyboard'
 import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { Msg } from '~/@/msg/msg'
 import { Navigation } from '~/@/navigation'
 import { PgliteInstance } from '~/@/pglite/pglite-instance'
@@ -14,9 +13,9 @@ import { IPgliteInstance } from '~/@/pglite/types'
 import { Psql } from '~/@/psql'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { SqlDb } from '~/@/sql-db/frontend/impl'
 import { Sub } from '~/@/sub'
-
 import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl-sql'
 import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TimeSpan } from '~/@/time/time-span'
@@ -28,7 +27,6 @@ import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
 import { h } from '~/@/vdom/h'
 import { Viewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
-import { CONFIG_SHARED } from '~/config/shared'
 import { Logger } from '../@/logger'
 import { APP_SOUND } from './@/frontend/app-sound'
 import { AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/frontend/ctx'
@@ -48,7 +46,7 @@ import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract,
 import { BackendConnectionFrontend } from './wire/backend-connection/frontend'
 import { WireFrontend } from './wire/frontend'
 
-const initCtx = async (): Promise<FrontendCtxModule> => {
+const initCtx = async (config: { backendUrl: string; topicUrl: string }): Promise<FrontendCtxModule> => {
   const logger = Logger({
     t: 'console',
     namespace: ['frontend'],
@@ -65,7 +63,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   const rpc = RPC.initClient({
     t: 'http',
     contract,
-    serverUrl: CONFIG_SHARED.BACKEND_URL,
+    serverUrl: config.backendUrl,
     clientSessionId,
     httpClient,
   })
@@ -73,7 +71,7 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
   const topic = Topic.initClient({
     t: 'web-sockets',
     contract: topicContract,
-    serverUrl: CONFIG_SHARED.BACKEND_URL,
+    serverUrl: config.topicUrl,
     clientSessionId,
     logger,
     endpoint: '/topic',
@@ -94,9 +92,8 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     logger,
   })
 
-  const psql = Psql({ sqlDb })
   // @ts-ignore
-  window.q = psql.psql
+  window.q = Psql({ sqlDb }).psql
 
   const navigatorLanguage = LanguageCodeISO_639_1.getLangFromNavigator() ?? 'en'
 
@@ -110,11 +107,19 @@ const initCtx = async (): Promise<FrontendCtxModule> => {
     logger,
   })
 
-  const viewport = Viewport({ t: 'web-standard' })
+  const viewport = Viewport({
+    t: 'web-standard',
+  })
 
-  const keyboard = KeyBoard({ t: 'web-standard' })
+  const keyboard = KeyBoard({
+    t: 'web-standard',
+  })
 
-  const keyValueDb = KeyValueDb({ t: 'web-standard-storage', storage: localStorage, logger })
+  const keyValueDb = KeyValueDb({
+    t: 'web-standard-storage',
+    storage: localStorage,
+    logger,
+  })
 
   const migrationPolicy = SqlDbMigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
