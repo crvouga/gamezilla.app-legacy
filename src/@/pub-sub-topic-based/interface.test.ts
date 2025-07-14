@@ -1,5 +1,5 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { s } from '~/@/schema'
+import { describe, expect, test } from '~/@/test-runner'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Logger } from '../logger'
 
@@ -32,7 +32,7 @@ const encode = (myEvent: MyEvent) => JSON.stringify(myEvent)
 
 const Fixtures = async () => {
   const f = await FixtureAppBackend()
-  const configs: Config[] = [{ t: 'in-memory', subscribersByTopic: new Map() }]
+  const configs: Config[] = [{ t: 'in-memory' }]
 
   if (f.t === 'integration') {
     configs.push({
@@ -51,7 +51,7 @@ describe('TopicBasedPubSub', () => {
       const myEvent = randomMyEvent()
       const topic = Math.random().toString()
       let called = 0
-      const sub = () => {
+      const sub = async () => {
         called++
       }
       await f.pubSub.sub(topic, sub)

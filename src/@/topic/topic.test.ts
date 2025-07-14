@@ -43,7 +43,7 @@ const Fixture = async () => {
 
   const pubSub = TopicBasedPubSub({ t: 'in-memory' })
 
-  const server = Topic.initServer({
+  Topic.initServer({
     t: 'web-sockets',
     httpServer,
     logger: logger.child(['server']),
@@ -79,6 +79,7 @@ const Fixture = async () => {
     syncSubscriptionRate,
     codec,
   })
+
   const clientC = Topic.initClient({
     t: 'web-sockets',
     clientSessionId: ClientSessionId.generate(),
@@ -100,7 +101,7 @@ const Fixture = async () => {
     clientA,
     clientB,
     clientC,
-    server,
+
     async [Symbol.asyncDispose]() {
       await httpServer.stop()
     },
@@ -112,7 +113,6 @@ const sleep = () => new Promise((resolve) => setTimeout(resolve, 100))
 describe('Topic', () => {
   test('should work', async () => {
     await using f = await Fixture()
-    const gotServer: Msg[] = []
     const gotA: Msg[] = []
     const gotB: Msg[] = []
     const gotC: Msg[] = []
@@ -121,8 +121,6 @@ describe('Topic', () => {
     f.clientB.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
     f.clientC.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
-    await sleep()
-    f.server.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotServer.push(msg))
     await sleep()
     f.clientC.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
