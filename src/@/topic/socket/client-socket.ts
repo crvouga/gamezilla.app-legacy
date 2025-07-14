@@ -2,6 +2,7 @@ import { ILogger } from '~/@/logger'
 import { p } from '~/@/promise'
 import { PubSub, Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
+import { Url } from '~/@/url/url'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { Client, ClientNode, ContractBase } from '../types'
 import { PUB, SUB, SUB_ALL, ToClientMsg, ToServerMsg, UNSUB, UNSUB_ALL } from './msgs'
@@ -15,7 +16,7 @@ import { TopicSubscription } from './topic-subscription'
 export type Config<T extends ContractBase> = {
   t: 'web-sockets'
   contract: T
-  serverUrl: string
+  serverUrl: Url
   endpoint: string
   clientSessionId: ClientSessionId
   logger: ILogger

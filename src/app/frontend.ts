@@ -24,6 +24,7 @@ import { Topic } from '~/@/topic'
 import { IconGamepad, IconUserCircle } from '~/@/ui/icon'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
+import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
 import { Viewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
@@ -46,7 +47,7 @@ import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract,
 import { BackendConnectionFrontend } from './wire/backend-connection/frontend'
 import { WireFrontend } from './wire/frontend'
 
-const initCtx = async (config: { backendUrl: string; topicUrl: string }): Promise<FrontendCtxModule> => {
+const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<FrontendCtxModule> => {
   const logger = Logger({
     t: 'console',
     namespace: ['frontend'],

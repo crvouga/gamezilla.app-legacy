@@ -1,5 +1,6 @@
 import { Program } from '~/@/program/program'
 import { AppFrontend } from '~/app/frontend'
+import { Url } from './@/url/url'
 import { render, VDomEngine } from './@/vdom'
 import { VDomImpl } from './@/vdom/vdom-impl'
 
@@ -16,8 +17,8 @@ const main = async () => {
   await VDomEngine.initialize(VDOM_IMPL)
 
   const ctx = await AppFrontend.initCtx({
-    backendUrl: BACKEND_URL,
-    topicUrl: TOPIC_URL,
+    backendUrl: Url.derive(BACKEND_URL),
+    topicUrl: Url.derive(TOPIC_URL),
   })
 
   const program = await Program.run({

@@ -6,6 +6,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { TopicBasedPubSub } from '../pub-sub-topic-based'
 import { randomServerPort } from '../test/random-server-port'
+import { Url } from '../url/url'
 import { Topic } from './index'
 import { TopicMsgCodecJson } from './socket/topic-msg-codec'
 
@@ -37,7 +38,7 @@ const Fixture = async () => {
   const httpServer = HttpServer({ t: 'node', logger })
 
   const endpoint = '/topic'
-  const serverUrl = `http://localhost:${port}`
+  const serverUrl = Url.derive(`http://localhost:${port}`)
 
   const codec = TopicMsgCodecJson
 

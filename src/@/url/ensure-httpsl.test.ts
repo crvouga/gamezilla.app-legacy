@@ -1,34 +1,34 @@
 import { describe, expect, test } from '~/@/test-runner'
-import { ensureProtocol } from './ensure-protocol'
+import { Url } from './url'
 
-describe('ensureProtocol', () => {
+describe('Url.ensureHttps', () => {
   test('should return the same URL if it already has http:// protocol', () => {
     const url = 'http://example.com'
-    expect(ensureProtocol(url)).toEqual(url)
+    expect(Url.ensureHttps(url)).toEqual(url)
   })
 
   test('should return the same URL if it already has https:// protocol', () => {
     const url = 'https://example.com'
-    expect(ensureProtocol(url)).toEqual(url)
+    expect(Url.ensureHttps(url)).toEqual(url)
   })
 
   test('should add https:// protocol if URL has no protocol', () => {
     const url = 'example.com'
-    expect(ensureProtocol(url)).toEqual('https://' + url)
+    expect(Url.ensureHttps(url)).toEqual('https://' + url)
   })
 
   test('should handle URLs with subdomains', () => {
     const url = 'sub.example.com'
-    expect(ensureProtocol(url)).toEqual('https://' + url)
+    expect(Url.ensureHttps(url)).toEqual('https://' + url)
   })
 
   test('should handle URLs with paths', () => {
     const url = 'example.com/path'
-    expect(ensureProtocol(url)).toEqual('https://' + url)
+    expect(Url.ensureHttps(url)).toEqual('https://' + url)
   })
 
   test('should handle URLs with query parameters', () => {
     const url = 'example.com?param=value'
-    expect(ensureProtocol(url)).toEqual('https://' + url)
+    expect(Url.ensureHttps(url)).toEqual('https://' + url)
   })
 })
