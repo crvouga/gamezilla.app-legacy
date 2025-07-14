@@ -11,7 +11,7 @@ services:
     environment:
       - NODE_ENV=development
       - BACKEND_URL=http://localhost:5002
-      - TOPIC_URL=ws://topic:8888
+      - TOPIC_URL=ws://topic:5003
     ports:
       - '5173:80'
 
@@ -30,7 +30,7 @@ services:
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
-      - TOPIC_URL=ws://topic:8888
+      - TOPIC_URL=ws://topic:5003
       - PORT=5002
     extra_hosts:
       - 'host.docker.internal:host-gateway'
@@ -41,7 +41,7 @@ services:
       context: ../
       dockerfile: infra/topic.Dockerfile
     ports:
-      - '8888:8888'
+      - '5003:5003'
     environment:
       - NATS_URL=nats://nats:4222
 
@@ -51,7 +51,7 @@ services:
       dockerfile: infra/nats.Dockerfile
     ports:
       - '4222:4222'
-      - '8888:8888'
+      - '5003:5003'
 
   postgres:
     build:
