@@ -45,7 +45,7 @@
     "infra:up": "docker compose --env-file .env.local -f ./infra/docker-compose.yml up --build -d",
     "infra:up:e2e": "docker compose --profile e2e --env-file .env.local -f ./infra/docker-compose.yml up --build -d",
     "int": "pnpm vitest:int",
-    "kp": "pnpm exec kill-port 5173 && pnpm exec kill-port 5002 && pnpm exec kill-port 8088 && pnpm exec kill-port $PORT",
+    "kp": "pnpm exec kill-port 5173 && pnpm exec kill-port 5556 && pnpm exec kill-port 8088 && pnpm exec kill-port $PORT",
     "spec": "pnpm vitest:spec",
     "tc": "pnpm exec tsc --noEmit --watch",
     "topic": "pnpm exec tsx watch ./src/topic.ts",
