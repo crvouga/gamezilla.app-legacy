@@ -1,7 +1,7 @@
 name: gamezilla_app
 
 services:
-  frontend:
+  service-frontend:
     profiles: ['e2e']
     build:
       context: ../
@@ -13,7 +13,7 @@ services:
     ports:
       - '5173:80'
 
-  backend:
+  service-backend:
     profiles: ['e2e']
     build:
       context: ../
@@ -23,7 +23,9 @@ services:
     ports:
       - '5555:5555'
     depends_on:
-      postgres:
+      script-postgres-migration:
+        condition: service_completed_successfully
+      service-nats:
         condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
@@ -31,7 +33,7 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
-  topic:
+  service-topic:
     profiles: ['e2e']
     build:
       context: ../
@@ -41,7 +43,7 @@ services:
     environment:
       - NATS_URL=nats://nats:4222
 
-  nats:
+  service-nats:
     build:
       context: ../
       dockerfile: infra/nats.Dockerfile
@@ -53,7 +55,7 @@ services:
       timeout: 5s
       retries: 5
 
-  postgres:
+  service-postgres:
     build:
       context: ../
       dockerfile: infra/postgres.Dockerfile
@@ -112,8 +114,8 @@ services:
       dockerfile: infra/ci.Dockerfile
     command: pnpm int
     depends_on:
-      postgres:
-        condition: service_healthy
+      script-postgres-migration:
+        condition: service_completed_successfully
       nats:
         condition: service_healthy
 
@@ -130,6 +132,23 @@ services:
       context: ../
       dockerfile: infra/ci.Dockerfile
     command: tsc --noEmit
+
+  ci:
+    profiles: ['ci']
+    build:
+      context: ../
+      dockerfile: infra/ci.Dockerfile
+    depends_on:
+      check-unit-tests:
+        condition: service_healthy
+      check-e2e-tests:
+        condition: service_healthy
+      check-integration-tests:
+        condition: service_healthy
+      check-circular-dependencies:
+        condition: service_healthy
+      check-types:
+        condition: service_healthy
 
 volumes:
   postgres_data:
