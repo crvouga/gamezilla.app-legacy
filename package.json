@@ -36,7 +36,7 @@
     "e2e:setup": "pnpm exec playwright install --with-deps",
     "e2e:ui": "IS_PLAYWRIGHT_TEST=true pnpm exec playwright test --ui",
     "format": "pnpm exec sort-package-json && pnpm exec prettier --write .",
-    "frontend": "pnpm exec vite",
+    "frontend": "pnpm exec vite --open",
     "frontend:build": "pnpm exec vite build",
     "frontend:preview": "pnpm frontend:build && pnpm exec serve -s dist -p 5173",
     "i": "pnpm install",
