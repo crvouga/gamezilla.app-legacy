@@ -47,6 +47,11 @@ services:
       dockerfile: infra/nats.Dockerfile
     ports:
       - '4222:4222'
+    healthcheck:
+      test: ['CMD-SHELL', 'nats-server --version']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres:
     build:
@@ -66,6 +71,65 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  script-postgres-migration:
+    profiles: ['ci']
+    build:
+      context: ../
+      dockerfile: infra/ci.Dockerfile
+    command: pnpm db:up
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  check-unit-tests:
+    profiles: ['ci']
+    build:
+      context: ../
+      dockerfile: infra/ci.Dockerfile
+    command: pnpm unit
+
+  check-e2e-tests:
+    profiles: ['ci']
+    build:
+      context: ../
+      dockerfile: infra/ci.Dockerfile
+    command: pnpm e2e
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+      topic:
+        condition: service_healthy
+
+  check-integration-tests:
+    profiles: ['ci']
+    build:
+      context: ../
+      dockerfile: infra/ci.Dockerfile
+    command: pnpm int
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+
+  check-circular-dependencies:
+    profiles: ['ci']
+    build:
+      context: ../
+      dockerfile: infra/ci.Dockerfile
+    command: pnpm cir-deps
+
+  check-types:
+    profiles: ['ci']
+    build:
+      context: ../
+      dockerfile: infra/ci.Dockerfile
+    command: tsc --noEmit
 
 volumes:
   postgres_data:
