@@ -14,8 +14,13 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 ARG NODE_ENV
-
 ENV NODE_ENV=${NODE_ENV}
+
+ARG BACKEND_URL
+ENV BACKEND_URL=${BACKEND_URL}
+
+ARG TOPIC_URL
+ENV TOPIC_URL=${TOPIC_URL}
 
 RUN pnpm frontend:build
 
