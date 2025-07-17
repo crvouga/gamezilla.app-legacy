@@ -73,9 +73,7 @@ services:
 
   ci-postgres-migration:
     profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
+    image: gamezilla-app-ci
     command: pnpm db:up
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
@@ -85,16 +83,15 @@ services:
 
   ci-unit-tests:
     profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
+    image: gamezilla-app-ci
     command: pnpm unit
+    environment:
+      - BACKEND_URL=http://backend:5555
+      - TOPIC_URL=http://topic:5556
 
   ci-e2e-tests:
     profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
+    image: gamezilla-app-ci
     environment:
       - PLAYWRIGHT_BASE_URL=http://localhost:80
     command: sh -c "pnpm e2e:setup && pnpm e2e"
@@ -108,9 +105,7 @@ services:
 
   ci-int-tests:
     profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
+    image: gamezilla-app-ci
     command: pnpm int
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
@@ -120,23 +115,17 @@ services:
 
   ci-cir-deps:
     profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
+    image: gamezilla-app-ci
     command: pnpm cir-deps
 
   ci-type-check:
     profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
+    image: gamezilla-app-ci
     command: pnpm exec tsc --noEmit
 
   ci:
     profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
+    image: gamezilla-app-ci
     command: echo "All good to deploy"
     depends_on:
       ci-unit-tests:
