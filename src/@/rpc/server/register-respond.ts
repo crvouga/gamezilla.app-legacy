@@ -14,8 +14,9 @@ export const registerRespond = <T extends Base>(config: {
   server: Server<T>
   logger: ILogger
 }) => {
+  const logger_ = config.logger.child(['rpc'])
   config.httpServer.registerRespond(async (request, _, traceId) => {
-    const logger = config.logger.child([traceId])
+    const logger = logger_.child([traceId])
     try {
       logger.debug('Processing RPC request')
       const rpcName = new URL(request.url).searchParams.get('rpc-name')
