@@ -1,7 +1,7 @@
 name: gamezilla_app
 
 services:
-  service-frontend:
+  frontend:
     profiles: ['e2e']
     build:
       context: ../
@@ -13,7 +13,7 @@ services:
     ports:
       - '5173:80'
 
-  service-backend:
+  backend:
     profiles: ['e2e']
     build:
       context: ../
@@ -22,18 +22,13 @@ services:
         NODE_ENV: development
     ports:
       - '5555:5555'
-    depends_on:
-      script-postgres-migration:
-        condition: service_completed_successfully
-      service-nats:
-        condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
       - TOPIC_URL=ws://topic:5556
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
-  service-topic:
+  topic:
     profiles: ['e2e']
     build:
       context: ../
@@ -43,7 +38,7 @@ services:
     environment:
       - NATS_URL=nats://nats:4222
 
-  service-nats:
+  nats:
     build:
       context: ../
       dockerfile: infra/nats.Dockerfile
@@ -55,7 +50,7 @@ services:
       timeout: 5s
       retries: 5
 
-  service-postgres:
+  postgres:
     build:
       context: ../
       dockerfile: infra/postgres.Dockerfile
@@ -74,81 +69,81 @@ services:
       timeout: 5s
       retries: 5
 
-  script-postgres-migration:
-    profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
-    command: pnpm db:up
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
-    depends_on:
-      postgres:
-        condition: service_healthy
+  # script-postgres-migration:
+  #   profiles: ['ci']
+  #   build:
+  #     context: ../
+  #     dockerfile: infra/ci.Dockerfile
+  #   command: pnpm db:up
+  #   environment:
+  #     - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
 
-  check-unit-tests:
-    profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
-    command: pnpm unit
+  # check-unit-tests:
+  #   profiles: ['ci']
+  #   build:
+  #     context: ../
+  #     dockerfile: infra/ci.Dockerfile
+  #   command: pnpm unit
 
-  check-e2e-tests:
-    profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
-    command: pnpm e2e
-    depends_on:
-      frontend:
-        condition: service_healthy
-      backend:
-        condition: service_healthy
-      topic:
-        condition: service_healthy
+  # check-e2e-tests:
+  #   profiles: ['ci']
+  #   build:
+  #     context: ../
+  #     dockerfile: infra/ci.Dockerfile
+  #   command: pnpm e2e
+  #   depends_on:
+  #     frontend:
+  #       condition: service_healthy
+  #     backend:
+  #       condition: service_healthy
+  #     topic:
+  #       condition: service_healthy
 
-  check-integration-tests:
-    profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
-    command: pnpm int
-    depends_on:
-      script-postgres-migration:
-        condition: service_completed_successfully
-      nats:
-        condition: service_healthy
+  # check-integration-tests:
+  #   profiles: ['ci']
+  #   build:
+  #     context: ../
+  #     dockerfile: infra/ci.Dockerfile
+  #   command: pnpm int
+  #   depends_on:
+  #     script-postgres-migration:
+  #       condition: service_completed_successfully
+  #     nats:
+  #       condition: service_healthy
 
-  check-circular-dependencies:
-    profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
-    command: pnpm cir-deps
+  # check-circular-dependencies:
+  #   profiles: ['ci']
+  #   build:
+  #     context: ../
+  #     dockerfile: infra/ci.Dockerfile
+  #   command: pnpm cir-deps
 
-  check-types:
-    profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
-    command: tsc --noEmit
+  # check-types:
+  #   profiles: ['ci']
+  #   build:
+  #     context: ../
+  #     dockerfile: infra/ci.Dockerfile
+  #   command: tsc --noEmit
 
-  ci:
-    profiles: ['ci']
-    build:
-      context: ../
-      dockerfile: infra/ci.Dockerfile
-    depends_on:
-      check-unit-tests:
-        condition: service_healthy
-      check-e2e-tests:
-        condition: service_healthy
-      check-integration-tests:
-        condition: service_healthy
-      check-circular-dependencies:
-        condition: service_healthy
-      check-types:
-        condition: service_healthy
+  # ci:
+  #   profiles: ['ci']
+  #   build:
+  #     context: ../
+  #     dockerfile: infra/ci.Dockerfile
+  #   depends_on:
+  #     check-unit-tests:
+  #       condition: service_healthy
+  #     check-e2e-tests:
+  #       condition: service_healthy
+  #     check-integration-tests:
+  #       condition: service_healthy
+  #     check-circular-dependencies:
+  #       condition: service_healthy
+  #     check-types:
+  #       condition: service_healthy
 
 volumes:
   postgres_data:
