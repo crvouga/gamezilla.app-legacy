@@ -1,9 +1,7 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { Sub } from '~/@/sub'
 import { Time } from '~/@/time/time'
-import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
-import { BackendConnectionStatus } from '../../@/wire/backend-connection-status'
 import { PingId } from './ping-id'
 import { toPingRate } from './ping-rate'
 import { FrontendModule, initModel, Model, MsgFrontend, PingItem } from './types'
@@ -69,33 +67,8 @@ const pongs: FrontendModule['subscriptions'] = (input) => {
   )
 }
 
-const toBackendConnectionStatus = (model: Model): BackendConnectionStatus => {
-  const ping = CappedOrderedDict.valuesNewestFirst(model.pings).find((ping) => ping.pongAt)
-
-  if (!ping) return { t: 'connecting' }
-
-  if (!ping.pongAt) return { t: 'connecting' }
-
-  return {
-    t: 'connected',
-    averagePing: toAveragePing(model),
-    latestPing: UnixMs.diff(ping.pingAt, ping.pongAt),
-  }
-}
-
-const toAveragePing = (model: Model): TimeSpan => {
-  const pings = CappedOrderedDict.valuesNewestFirst(model.pings)
-  const total = pings.reduce(
-    (acc, ping) => (ping.pongAt ? acc + TimeSpan.toMilliseconds(UnixMs.diff(ping.pingAt, ping.pongAt)) : acc),
-    0,
-  )
-  const average = Math.floor(total / pings.length)
-  return TimeSpan.milliseconds(average)
-}
-
 export const BackendConnectionFrontend = {
   subscriptions,
   update,
   init,
-  toBackendConnectionStatus,
 }

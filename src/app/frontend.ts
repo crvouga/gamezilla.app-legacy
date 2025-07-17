@@ -44,7 +44,7 @@ import { ProfileFrontend } from './profile/frontend'
 import { SettingsFrontend } from './settings/frontend'
 import { SpacesFrontend } from './spaces/frontend'
 import { FrontendCtxModule, ModelFrontend, MsgFrontend, rpcContract as contract, topicContract } from './types'
-import { BackendConnectionFrontend } from './wire/backend-connection/frontend'
+import { toBackendConnectionStatus } from './wire/backend-connection/backend-connection-status'
 import { WireFrontend } from './wire/frontend'
 
 const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<FrontendCtxModule> => {
@@ -192,7 +192,7 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
     parentScreen: null,
     currentUserState,
     currentUser: currentUserState.t === 'logged-in' ? currentUserState.userAccount : null,
-    backendConnectionStatus: BackendConnectionFrontend.toBackendConnectionStatus(input.model.wire.backendConnection),
+    backendConnectionStatus: toBackendConnectionStatus(input.model.wire.backendConnection),
   }
 
   return baseCtx
