@@ -1,6 +1,5 @@
 import * as ImplHashMap from './impl-hash-map'
 import * as ImplSql from './impl-sql'
-
 import { IGuestSessionMappingDb } from './interface'
 
 export type Config = ImplHashMap.Config | ImplSql.Config

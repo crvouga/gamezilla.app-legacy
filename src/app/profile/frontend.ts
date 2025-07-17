@@ -20,6 +20,7 @@ const initCtx = (input: { ctx: AppFrontendCtxBase }): FrontendCtxModule => {
       t: 'sql',
       logger: input.ctx.logger,
       sqlDb: input.ctx.sqlDb,
+      migrationPolicy: input.ctx.migrationPolicy,
     }),
   }
 }

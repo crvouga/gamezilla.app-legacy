@@ -21,7 +21,7 @@ const main = async () => {
 
   const CORS_ORIGINS: string[] = []
   if (!IS_PROD) {
-    CORS_ORIGINS.push('http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000')
+    CORS_ORIGINS.push('http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'http://frontend:5173')
   }
 
   if (IS_PROD) {

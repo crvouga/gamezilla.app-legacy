@@ -16,6 +16,7 @@ import { Topic } from '~/@/topic'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AuthBackend } from './auth/backend'
+import { HealthCheckBackend } from './backend/health-check'
 import { HelloBackend } from './backend/hello'
 import { ProfileDb } from './profile/@/user-profile/user-profile-db'
 import { ProfileBackend } from './profile/backend'
@@ -54,6 +55,7 @@ const initCtx = async (config: {
     t: 'sql-db',
     sqlDb,
     logger,
+    migrationPolicy,
   })
 
   const pubSub = TopicBasedPubSub({
@@ -83,6 +85,7 @@ const initCtx = async (config: {
     t: 'sql',
     sqlDb,
     logger,
+    migrationPolicy,
   })
 
   const env = config.isProd ? 'prod' : 'dev'
@@ -144,10 +147,8 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
     server: AppBackend.rpc({ ctx: input.ctx }),
   })
 
-  HelloBackend.registerRespond({
-    ctx: input.ctx,
-    httpServer: input.ctx.httpServer,
-  })
+  HealthCheckBackend.registerRespond({ ctx: input.ctx, httpServer: input.ctx.httpServer })
+  HelloBackend.registerRespond({ ctx: input.ctx, httpServer: input.ctx.httpServer })
 
   input.ctx.httpServer.start(input.ctx.port)
 

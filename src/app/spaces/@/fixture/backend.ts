@@ -1,5 +1,7 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
+import { Logger } from '~/@/logger'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { Topic } from '~/@/topic'
 import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'
@@ -50,10 +52,12 @@ export const FixtureSpaceBackend = async () => {
   const backendCtx: BackendCtxModule = {
     ...f.ctx,
     ...GamesBackend.initCtx({ ctx: f.ctx }),
+
     spaceDb: await SpaceDb({
       t: 'sql-db',
       sqlDb: f.ctx.sqlDb,
       logger: f.ctx.logger,
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'never-run', logger: Logger({ t: 'noop' }) }),
     }),
     topic,
   }

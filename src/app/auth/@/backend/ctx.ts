@@ -20,17 +20,20 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
+    migrationPolicy: input.ctx.migrationPolicy,
   })
 
-  const userSessionDb = await UserSessionDb({
+  const userSessionDb = UserSessionDb({
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
+    migrationPolicy: input.ctx.migrationPolicy,
   })
 
   const guestSessionMappingDb = GuestSessionMappingDb({
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
+    migrationPolicy: input.ctx.migrationPolicy,
   })
 
   input.ctx.syncEngine.registerSync(UserAccountSync({ userAccountDb, logger: input.ctx.logger }))

@@ -49,18 +49,21 @@ const initCtx = async (input: {
   const guestSessionMappingDb = GuestSessionMappingDb({
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
+    migrationPolicy: input.ctx.migrationPolicy,
   })
 
   const userSessionDb = UserSessionDb({
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
+    migrationPolicy: input.ctx.migrationPolicy,
   })
 
   const userAccountDb = UserAccountDb({
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
+    migrationPolicy: input.ctx.migrationPolicy,
   })
 
   input.ctx.syncEngine.registerSync(UserAccountSync({ logger: input.ctx.logger, userAccountDb }))

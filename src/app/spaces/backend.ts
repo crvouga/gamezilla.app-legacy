@@ -16,6 +16,7 @@ const initCtx = async (input: {
     t: 'sql-db',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
+    migrationPolicy: input.ctx.migrationPolicy,
   })
 
   input.ctx.syncEngine.registerSync(SpaceSync({ spaceDb }))

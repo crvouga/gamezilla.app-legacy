@@ -5,6 +5,7 @@ import { Err, isErr, Ok, Result } from '~/@/result'
 import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { ISqlDb } from '~/@/sql-db'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { PubSub, Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { SpaceId } from '~/app/@/data/space-id'
@@ -17,6 +18,7 @@ export type Config = SpaceDbConfig & {
   t: 'sql-db'
   sqlDb: ISqlDb
   logger: ILogger
+  migrationPolicy: ISqlDbMigrationPolicy
 }
 
 export const Row = s.obj({
@@ -64,7 +66,7 @@ const parseRows = (rows: Row[], logger: ILogger): Space.Model[] => {
   return parsed
 }
 
-const QUERY_CREATE_TABLES = [
+const UP = [
   `
 CREATE TABLE IF NOT EXISTS space (
   id TEXT PRIMARY KEY,
@@ -90,15 +92,29 @@ CREATE TABLE IF NOT EXISTS space_projection_user (
   `,
 ]
 
+const DOWN = [
+  `
+DROP TABLE IF EXISTS space_projection_user
+  `,
+  `
+DROP TABLE IF EXISTS space_projection
+  `,
+  `
+DROP TABLE IF EXISTS space
+  `,
+]
+
 const toSpaceProjectionUserPrimaryKey = (spaceId: SpaceId, userId: UserId) => `${spaceId}-${userId}`
 
 export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
   const input: PubSub<SpaceDbInputMsg> = config.input ?? Sub.create()
   const output: PubSub<SpaceDbOutputMsg> = config.output ?? Sub.create()
 
-  for (const query of QUERY_CREATE_TABLES) {
-    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
-  }
+  config.migrationPolicy.execute({
+    up: UP,
+    down: DOWN,
+    sqlDb: config.sqlDb,
+  })
 
   input.sub(async (msg) => {
     switch (msg.t) {

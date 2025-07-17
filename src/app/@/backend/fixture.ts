@@ -114,11 +114,13 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     t: 'sql-db',
     sqlDb: sqlDbPostgres,
     logger,
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
   })
 
   const keyValueDbSqlite = KeyValueDb({
     t: 'sql-db',
     sqlDb: sqlDbSqlite,
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     logger,
   })
 

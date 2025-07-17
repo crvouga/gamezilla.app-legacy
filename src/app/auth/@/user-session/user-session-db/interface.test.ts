@@ -1,15 +1,16 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
 import { TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { unwrap } from '~/@/result'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
+import { describe, expect, test } from '~/@/test-runner'
+import { TimeSpan } from '~/@/time/time-span'
+import { UnixMs } from '~/@/time/unix-ms'
+import { ClientSessionId } from '~/@/wire/client-session-id'
+import { SessionId } from '~/@/wire/session-id'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserId } from '~/app/@/data/user-id'
 import { UserSession } from '../user-session'
 import { Config, UserSessionDb } from './impl'
-import { SessionId } from '~/@/wire/session-id'
-import { UnixMs } from '~/@/time/unix-ms'
-import { TimeSpan } from '~/@/time/time-span'
-import { ClientSessionId } from '~/@/wire/client-session-id'
 
 const Fixture = async (config: Config) => {
   const userSessionDb = await UserSessionDb(config)
@@ -46,6 +47,7 @@ const Fixtures = async () => {
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
     logger: Logger({ t: 'noop' }),
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
@@ -53,6 +55,7 @@ const Fixtures = async () => {
       t: 'sql',
       sqlDb: f.sqlDbPostgres,
       logger: Logger({ t: 'noop' }),
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     })
 
     configs.push({
@@ -64,6 +67,7 @@ const Fixtures = async () => {
         subscribersByTopic: new Map(),
       }),
       logger: Logger({ t: 'noop' }),
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     })
   }
 

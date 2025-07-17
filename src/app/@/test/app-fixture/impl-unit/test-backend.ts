@@ -36,6 +36,7 @@ export const TestBackend = async (config: {
   const keyValueDbDurable = KeyValueDb({
     t: 'sql-db',
     sqlDb: config.sqlDb,
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     logger,
   })
 
@@ -49,6 +50,7 @@ export const TestBackend = async (config: {
   const userProfileDb = ProfileDb({
     t: 'sql',
     sqlDb: config.sqlDb,
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     logger,
   })
 

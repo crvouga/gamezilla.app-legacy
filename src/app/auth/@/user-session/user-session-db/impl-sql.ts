@@ -5,6 +5,7 @@ import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
 import type { ISqlDb } from '~/@/sql-db'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
@@ -49,9 +50,10 @@ export type Config = {
   t: 'sql'
   sqlDb: ISqlDb
   logger: ILogger
+  migrationPolicy: ISqlDbMigrationPolicy
 }
 
-const CREATE_TABLE_SQL: string[] = [
+const UP: string[] = [
   `
   CREATE TABLE IF NOT EXISTS user_session (
     id TEXT NOT NULL,
@@ -64,19 +66,25 @@ const CREATE_TABLE_SQL: string[] = [
   `,
 ]
 
-export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
+const DOWN: string[] = [
+  `
+  DROP TABLE IF EXISTS user_session;
+  `,
+]
+
+export const UserSessionDb = (config: Config): IUserSessionDb => {
   const logger = config.logger.child(['impl-sql'])
 
-  for (const query of CREATE_TABLE_SQL) {
-    sqlDb.query({ schema: s.unknown, sql: query, vars: {} }).then(() => {
-      //
-    })
-  }
+  config.migrationPolicy.execute({
+    down: DOWN,
+    sqlDb: config.sqlDb,
+    up: UP,
+  })
 
   return {
     async findSessionIdsByUserId(userId: UserId) {
       logger.debug(`findSessionIdsByUserId: userId=${userId}`)
-      const queried = await sqlDb.query({
+      const queried = await config.sqlDb.query({
         schema: Row,
         sql: 'SELECT * FROM user_session WHERE ended_at_unix_ms IS NULL AND user_id = :user_id',
         vars: {
@@ -89,7 +97,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
 
     async findUserIdBySessionId(sessionId: SessionId) {
       logger.debug(`findUserIdBySessionId: sessionId=${sessionId}`)
-      const queried = await sqlDb.query({
+      const queried = await config.sqlDb.query({
         schema: Row,
         sql: 'SELECT * FROM user_session WHERE ended_at_unix_ms IS NULL AND session_id = :session_id',
         vars: {
@@ -122,7 +130,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
       }
 
       if (existing.value.items.length > 0) {
-        const updated = await sqlDb.query({
+        const updated = await config.sqlDb.query({
           schema: Row,
           sql: `UPDATE user_session SET session_id = :session_id, client_session_id = :client_session_id, user_id = :user_id WHERE id = :id`,
           vars: {
@@ -135,7 +143,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
         return Result.mapOk(updated, () => null)
       }
 
-      const inserted = await sqlDb.query({
+      const inserted = await config.sqlDb.query({
         schema: Row,
         sql: `INSERT INTO user_session (id, session_id, client_session_id, user_id, created_at_unix_ms) VALUES (:id, :session_id, :client_session_id, :user_id, :created_at_unix_ms)`,
         vars: {
@@ -151,7 +159,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
 
     async zapByUserId(userId) {
       logger.debug(`zapByUserId: userId=${userId}`)
-      const queried = await sqlDb.query({
+      const queried = await config.sqlDb.query({
         schema: Row,
         sql: 'UPDATE user_session SET ended_at_unix_ms = :ended_at_unix_ms WHERE user_id = :user_id',
         vars: {
@@ -164,7 +172,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
 
     async zapBySessionId(sessionId) {
       logger.debug(`zapBySessionId: sessionId=${sessionId}`)
-      const queried = await sqlDb.query({
+      const queried = await config.sqlDb.query({
         schema: Row,
         sql: 'UPDATE user_session SET ended_at_unix_ms = :ended_at_unix_ms WHERE session_id = :session_id',
         vars: {
@@ -190,7 +198,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
         sql.push('user_id = :user_id')
         sqlVars.user_id = input.updates.userId
       }
-      const updated = await sqlDb.query({
+      const updated = await config.sqlDb.query({
         schema: Row,
         sql: `UPDATE user_session SET ${sql.join(', ')} WHERE id = :id`,
         vars: {
@@ -204,9 +212,9 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
     async query(input) {
       const { sql, sqlCount, vars } = queryToSql(input)
 
-      const queried = await sqlDb.query({ schema: Row, sql, vars })
+      const queried = await config.sqlDb.query({ schema: Row, sql, vars })
 
-      const queriedCount = await sqlDb.query({
+      const queriedCount = await config.sqlDb.query({
         schema: s.obj({ total: s.or(s.num(), s.str()) }),
         sql: sqlCount,
         vars,
@@ -238,7 +246,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
 
     async zapByClientSessionId(clientSessionId) {
       logger.debug(`zapByClientSessionId: clientSessionId=${clientSessionId}`)
-      const queried = await sqlDb.query({
+      const queried = await config.sqlDb.query({
         schema: Row,
         sql: 'UPDATE user_session SET ended_at_unix_ms = :ended_at_unix_ms WHERE client_session_id = :client_session_id',
         vars: {
@@ -251,7 +259,7 @@ export const UserSessionDb = ({ sqlDb, ...config }: Config): IUserSessionDb => {
 
     sub(input, mapper) {
       const { sql, vars } = queryToSql(input)
-      const sub = sqlDb.sub({ schema: Row, sql, vars }, (rows) => mapper(rows.map(rowToUserSession)))
+      const sub = config.sqlDb.sub({ schema: Row, sql, vars }, (rows) => mapper(rows.map(rowToUserSession)))
       return sub
     },
   }

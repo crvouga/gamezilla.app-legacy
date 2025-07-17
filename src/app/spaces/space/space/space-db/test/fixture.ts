@@ -1,4 +1,6 @@
+import { Logger } from '~/@/logger'
 import { unwrap } from '~/@/result'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { Sub } from '~/@/sub'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceId } from '~/app/@/data/space-id'
@@ -43,6 +45,7 @@ export const Fixtures = async () => {
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
     logger: f.logger,
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
@@ -50,6 +53,7 @@ export const Fixtures = async () => {
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
       logger: f.logger,
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     })
   }
 

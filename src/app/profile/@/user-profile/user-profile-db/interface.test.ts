@@ -1,8 +1,9 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
 import { Ok, unwrap } from '~/@/result'
-import { UnixMs } from '~/@/time/unix-ms'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
+import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
+import { UnixMs } from '~/@/time/unix-ms'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserId } from '~/app/@/data/user-id'
 import { UserProfile } from '~/app/@/data/user-profile'
@@ -30,6 +31,7 @@ const Fixtures = async () => {
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
     logger: Logger({ t: 'console', namespace: ['profile-db'], newLinePerMsg: true, maxLogLevel: 'info' }),
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
@@ -38,6 +40,7 @@ const Fixtures = async () => {
       // sqlDb: f.dbConnPostgres,
       sqlDb: f.sqlDbPostgres,
       logger: Logger({ t: 'console', namespace: ['profile-db'], newLinePerMsg: true, maxLogLevel: 'info' }),
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     })
   }
 

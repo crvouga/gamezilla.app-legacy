@@ -5,6 +5,7 @@ import { Err, Ok, Result, isErr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
 import type { ISqlDb } from '~/@/sql-db'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { UnixMs } from '~/@/time/unix-ms'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
@@ -49,9 +50,10 @@ export type Config = {
   t: 'sql'
   sqlDb: ISqlDb
   logger: ILogger
+  migrationPolicy: ISqlDbMigrationPolicy
 }
 
-const CREATE_TABLES: string[] = [
+const UP: string[] = [
   `
   CREATE TABLE IF NOT EXISTS user_account (
     id TEXT NOT NULL PRIMARY KEY,
@@ -62,23 +64,31 @@ const CREATE_TABLES: string[] = [
   `,
 ]
 
-export const UserAccountDb = ({ sqlDb, logger }: Config): IUserAccountDb => {
-  const log = logger.child(['user-account-db'])
+const DOWN: string[] = [
+  `
+  DROP TABLE IF EXISTS user_account;
+  `,
+]
 
-  for (const query of CREATE_TABLES) {
-    sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
-  }
+export const UserAccountDb = (config: Config): IUserAccountDb => {
+  const logger = config.logger.child(['user-account-db'])
+
+  config.migrationPolicy.execute({
+    down: DOWN,
+    sqlDb: config.sqlDb,
+    up: UP,
+  })
 
   return {
     async findOneByUserId(input) {
-      log.debug(`Finding user account by userId=${input.userId}`)
+      logger.debug(`Finding user account by userId=${input.userId}`)
 
       if (!UserId.is(input.userId)) {
-        log.debug(`Invalid userId=${input.userId}`)
+        logger.debug(`Invalid userId=${input.userId}`)
         return Ok(null)
       }
 
-      const queried = await sqlDb.query({
+      const queried = await config.sqlDb.query({
         schema: Row,
         sql: `
         SELECT
@@ -97,32 +107,32 @@ export const UserAccountDb = ({ sqlDb, logger }: Config): IUserAccountDb => {
       })
 
       if (isErr(queried)) {
-        log.error(`Database error while finding by userId: ${queried.error}`)
+        logger.error(`Database error while finding by userId: ${queried.error}`)
         return queried
       }
 
       const row = queried.value[0] ?? null
 
       if (!row) {
-        log.debug(`No user account found for userId=${input.userId}`)
+        logger.debug(`No user account found for userId=${input.userId}`)
         return Ok(null)
       }
 
       const account = toAccount(row)
 
       if (isErr(account)) {
-        log.error(`Failed to parse account: ${account.error}`)
+        logger.error(`Failed to parse account: ${account.error}`)
         return account
       }
 
-      log.debug(`Found user account for userId=${input.userId}`)
+      logger.debug(`Found user account for userId=${input.userId}`)
       return account
     },
 
     async findOneByPhoneNumber(input) {
-      log.debug(`Finding user account by phoneNumber=${PhoneNumber.toString(input.phoneNumber)}`)
+      logger.debug(`Finding user account by phoneNumber=${PhoneNumber.toString(input.phoneNumber)}`)
 
-      const queried = await sqlDb.query({
+      const queried = await config.sqlDb.query({
         schema: Row,
         sql: `
 				SELECT
@@ -141,42 +151,42 @@ export const UserAccountDb = ({ sqlDb, logger }: Config): IUserAccountDb => {
       })
 
       if (isErr(queried)) {
-        log.error(`Database error while finding by phone number: ${queried.error}`)
+        logger.error(`Database error while finding by phone number: ${queried.error}`)
         return queried
       }
 
       const row = queried.value[0] ?? null
 
       if (!row) {
-        log.debug(`No user account found for phoneNumber=${PhoneNumber.toString(input.phoneNumber)}`)
+        logger.debug(`No user account found for phoneNumber=${PhoneNumber.toString(input.phoneNumber)}`)
         return Ok(null)
       }
 
       const account = toAccount(row)
 
       if (isErr(account)) {
-        log.error(`Failed to parse account: ${account.error}`)
+        logger.error(`Failed to parse account: ${account.error}`)
         return account
       }
 
-      log.debug(`Found user account for phoneNumber=${PhoneNumber.toString(input.phoneNumber)}`)
+      logger.debug(`Found user account for phoneNumber=${PhoneNumber.toString(input.phoneNumber)}`)
       return account
     },
     async upsert(input) {
-      log.debug(`Upserting user account for userId=${input.userId}`)
+      logger.debug(`Upserting user account for userId=${input.userId}`)
 
       const existing = await this.findOneByUserId({
         userId: input.userId,
       })
 
       if (isErr(existing)) {
-        log.error(`Failed to check for existing account: ${existing.error}`)
+        logger.error(`Failed to check for existing account: ${existing.error}`)
         return existing
       }
 
       if (existing.value) {
-        log.debug(`Updating existing user account for userId=${input.userId}`)
-        const updated = await sqlDb.query({
+        logger.debug(`Updating existing user account for userId=${input.userId}`)
+        const updated = await config.sqlDb.query({
           schema: s.unknown,
           sql: `
           UPDATE user_account SET
@@ -195,16 +205,16 @@ export const UserAccountDb = ({ sqlDb, logger }: Config): IUserAccountDb => {
         })
 
         if (isErr(updated)) {
-          log.error(`Failed to update user account: ${updated.error}`)
+          logger.error(`Failed to update user account: ${updated.error}`)
           return updated
         }
 
-        log.debug(`Successfully updated user account for userId=${input.userId}`)
+        logger.debug(`Successfully updated user account for userId=${input.userId}`)
         return Result.mapOk(updated, () => null)
       }
 
-      log.debug(`Inserting new user account for userId=${input.userId}`)
-      const inserted = await sqlDb.query({
+      logger.debug(`Inserting new user account for userId=${input.userId}`)
+      const inserted = await config.sqlDb.query({
         schema: s.unknown,
         sql: `
         INSERT INTO user_account (
@@ -228,11 +238,11 @@ export const UserAccountDb = ({ sqlDb, logger }: Config): IUserAccountDb => {
       })
 
       if (isErr(inserted)) {
-        log.error(`Failed to insert user account: ${inserted.error}`)
+        logger.error(`Failed to insert user account: ${inserted.error}`)
         return inserted
       }
 
-      log.debug(`Successfully inserted new user account for userId=${input.userId}`)
+      logger.debug(`Successfully inserted new user account for userId=${input.userId}`)
       return Result.mapOk(inserted, () => null)
     },
   }

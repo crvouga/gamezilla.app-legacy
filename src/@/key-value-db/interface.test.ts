@@ -8,6 +8,7 @@ import { Uuid } from '../id/uuid'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
 import { SecretString } from '../secrets/secret-string'
+import { SqlDbMigrationPolicy } from '../sql-db-migration-policy'
 import { SqlDb } from '../sql-db/backend/impl'
 import { TimeSpan } from '../time/time-span'
 import { KeyValueDb } from './impl'
@@ -110,6 +111,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
       t: 'sql-db',
       sqlDb: sqlDbSqlite,
       logger,
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     }),
   })
 
@@ -127,6 +129,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
           databaseUrl: DATABASE_URL,
         }),
         logger,
+        migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
       }),
     })
   }

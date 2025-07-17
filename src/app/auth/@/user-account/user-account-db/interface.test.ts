@@ -6,6 +6,8 @@ import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { Impl, UserAccountDb } from './impl'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
+import { Logger } from '~/@/logger'
 
 const Fixture = async (config: Impl) => {
   const userAccountDb = UserAccountDb(config)
@@ -27,10 +29,16 @@ const Fixtures = async () => {
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
     logger: f.logger,
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
-    configs.push({ t: 'sql', sqlDb: f.sqlDbPostgres, logger: f.logger })
+    configs.push({
+      t: 'sql',
+      sqlDb: f.sqlDbPostgres,
+      logger: f.logger,
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+    })
   }
 
   return Promise.all(configs.map(Fixture))

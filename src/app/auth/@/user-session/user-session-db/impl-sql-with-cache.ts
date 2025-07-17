@@ -1,10 +1,11 @@
 import { pipe } from '~/@/function/pipe'
-import { KeyValueDb, IKeyValueDb } from '~/@/key-value-db'
-import { ISqlDb } from '~/@/sql-db'
+import { IKeyValueDb, KeyValueDb } from '~/@/key-value-db'
 import { LRUCache } from '~/@/least-recently-used-cache'
 import { ILogger } from '~/@/logger'
 import { PubSub } from '~/@/pub-sub'
 import { ITopicBasedPubSub } from '~/@/pub-sub-topic-based'
+import { ISqlDb } from '~/@/sql-db'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import * as ImplSql from './impl-sql'
 import { WithCache } from './impl-with-cache'
 import type { IUserSessionDb } from './interface'
@@ -15,6 +16,7 @@ export type Config = {
   sqlDb: ISqlDb
   pubSubTopicBased: ITopicBasedPubSub
   logger: ILogger
+  migrationPolicy: ISqlDbMigrationPolicy
 }
 
 export const UserSessionDb = (config: Config): IUserSessionDb => {
@@ -49,11 +51,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       }),
   )
 
-  const userSessionDb = ImplSql.UserSessionDb({
-    t: 'sql',
-    sqlDb: config.sqlDb,
-    logger: config.logger,
-  })
+  const userSessionDb = ImplSql.UserSessionDb({ ...config, t: 'sql' })
 
   return WithCache({
     keyValueDb,

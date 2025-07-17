@@ -21,6 +21,8 @@ import { Spaces } from './space/spaces'
 import { StartSpaceFrontend } from './start-space/frontend'
 import { SyncFrontend } from './sync/frontend'
 import type { FrontendCtxModule, FrontendModule, ModelFrontend, rpcContract, topicContract } from './types'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
+import { Logger } from '~/@/logger'
 
 const TEST_ID = {
   ...ListSpacesFrontend.TEST_ID,
@@ -39,6 +41,7 @@ const initCtx = async (input: {
       t: 'sql-db',
       sqlDb: input.ctx.sqlDb,
       logger: input.ctx.logger,
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     }),
   }
 }

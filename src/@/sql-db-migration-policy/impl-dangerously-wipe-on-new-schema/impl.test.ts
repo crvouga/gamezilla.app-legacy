@@ -5,13 +5,13 @@ import { unwrap } from '~/@/result'
 import { s } from '~/@/schema'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { describe, expect, test } from '~/@/test-runner'
-import { SqlDbMigrationPolicy } from './impl'
+import { SqlDbMigrationPolicy } from '../impl'
 
 const Fixture = async () => {
   const logger = Logger({ t: 'noop' })
   const pglite = PgliteInstance({ t: 'in-memory' })
   const sqlDb = SqlDb({ t: 'pglite', pglite, logger })
-  const kvDb = KeyValueDb({ t: 'sql-db', sqlDb, logger })
+  const kvDb = KeyValueDb({ t: 'in-memory', logger })
   const migrationPolicy = SqlDbMigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
     kvDb,
@@ -24,11 +24,14 @@ const Fixture = async () => {
   }
 }
 
+const TABLE_NAME = 'test_dangerously_wipe_on_new_schema'
+const TABLE_NAME_2 = 'test_dangerously_wipe_on_new_schema_2'
+
 describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
   test('should run up migration when no previous schema exists', async () => {
     const f = await Fixture()
-    const up = ['CREATE TABLE test (id TEXT)']
-    const down = ['DROP TABLE test']
+    const up = [`CREATE TABLE ${TABLE_NAME} (id TEXT)`]
+    const down = [`DROP TABLE ${TABLE_NAME}`]
 
     await f.migrationPolicy.execute({
       sqlDb: f.sqlDb,
@@ -37,7 +40,7 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
     })
 
     const result = await f.sqlDb.query({
-      sql: 'SELECT * FROM test',
+      sql: `SELECT * FROM ${TABLE_NAME}`,
       schema: s.unknown,
       vars: {},
     })
@@ -47,8 +50,8 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
 
   test('should skip migration when schema has not changed', async () => {
     const f = await Fixture()
-    const up = ['CREATE TABLE test (id TEXT)']
-    const down = ['DROP TABLE test']
+    const up = [`CREATE TABLE ${TABLE_NAME} (id TEXT)`]
+    const down = [`DROP TABLE ${TABLE_NAME}`]
 
     // First run
     await f.migrationPolicy.execute({
@@ -66,7 +69,7 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
 
     // Verify table still exists
     const result = await f.sqlDb.query({
-      sql: 'SELECT * FROM test',
+      sql: `SELECT * FROM ${TABLE_NAME}`,
       schema: s.unknown,
       vars: {},
     })
@@ -76,8 +79,8 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
 
   test('should run down and up migrations when schema has changed', async () => {
     const f = await Fixture()
-    const initialUp = ['CREATE TABLE test (id TEXT)']
-    const initialDown = ['DROP TABLE test']
+    const initialUp = [`CREATE TABLE ${TABLE_NAME} (id TEXT)`]
+    const initialDown = [`DROP TABLE ${TABLE_NAME}`]
 
     // First run
     await f.migrationPolicy.execute({
@@ -87,8 +90,8 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
     })
 
     // Second run with modified schema
-    const modifiedUp = ['CREATE TABLE test (id TEXT, name TEXT)']
-    const modifiedDown = ['DROP TABLE test']
+    const modifiedUp = [`CREATE TABLE ${TABLE_NAME} (id TEXT, name TEXT)`]
+    const modifiedDown = [`DROP TABLE ${TABLE_NAME}`]
 
     await f.migrationPolicy.execute({
       sqlDb: f.sqlDb,
@@ -98,7 +101,7 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
 
     // Verify table exists with new schema
     const result = await f.sqlDb.query({
-      sql: 'SELECT * FROM test',
+      sql: `SELECT * FROM ${TABLE_NAME}`,
       schema: s.unknown,
       vars: {},
     })
@@ -111,14 +114,14 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
 
     unwrap(
       await f.sqlDb.query({
-        sql: 'CREATE TABLE my_test_test (id TEXT)',
+        sql: `CREATE TABLE ${TABLE_NAME} (id TEXT)`,
         schema: s.unknown,
         vars: {},
       }),
     )
 
-    const up = ['CREATE TABLE IF NOT EXISTS my_test_test (id TEXT, foo TEXT)']
-    const down = ['DROP TABLE IF EXISTS my_test_test']
+    const up = [`CREATE TABLE IF NOT EXISTS ${TABLE_NAME_2} (id TEXT, foo TEXT)`]
+    const down = [`DROP TABLE IF EXISTS ${TABLE_NAME_2}`]
 
     await f.migrationPolicy.execute({
       sqlDb: f.sqlDb,
@@ -127,14 +130,14 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
     })
 
     await f.sqlDb.query({
-      sql: 'INSERT INTO my_test_test (id, foo) VALUES (:id, :foo)',
+      sql: `INSERT INTO ${TABLE_NAME_2} (id, foo) VALUES (:id, :foo)`,
       schema: s.unknown,
       vars: { id: '1', foo: 'bar' },
     })
 
     unwrap(
       await f.sqlDb.query({
-        sql: 'SELECT id, foo FROM my_test_test',
+        sql: `SELECT id, foo FROM ${TABLE_NAME_2}`,
         schema: s.unknown,
         vars: {},
       }),

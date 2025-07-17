@@ -3,6 +3,7 @@ import { s } from '~/@/schema'
 import type { ILogger } from '../logger/interface'
 import { ParseError } from '../schema/schema/parse-error'
 import type { ISqlDb } from '../sql-db'
+import { ISqlDbMigrationPolicy } from '../sql-db-migration-policy'
 import { TimeSpan } from '../time/time-span'
 import { withDuration } from '../time/with-duration'
 import type { IKeyValueDb } from './interface'
@@ -18,9 +19,10 @@ export type Config = {
   t: 'sql-db'
   sqlDb: ISqlDb
   logger: ILogger
+  migrationPolicy: ISqlDbMigrationPolicy
 }
 
-const CREATE_TABLES: string[] = [
+const UP: string[] = [
   `
   CREATE TABLE IF NOT EXISTS key_value (
     id TEXT NOT NULL PRIMARY KEY,
@@ -28,11 +30,21 @@ const CREATE_TABLES: string[] = [
   );
   `,
 ]
+
+const DOWN: string[] = [
+  `
+  DROP TABLE IF EXISTS key_value;
+  `,
+]
+
 export const KeyValueDb = (config: Config): IKeyValueDb => {
   const logger = config.logger.child(['sql-db'])
-  for (const query of CREATE_TABLES) {
-    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
-  }
+
+  config.migrationPolicy.execute({
+    sqlDb: config.sqlDb,
+    up: UP,
+    down: DOWN,
+  })
 
   return {
     async get(key, schema) {

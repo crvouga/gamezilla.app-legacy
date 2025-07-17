@@ -23,10 +23,16 @@ services:
     ports:
       - '5555:5555'
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
       - TOPIC_URL=ws://topic:5556
+      - BACKEND_PORT=5555
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://backend:5555/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   topic:
     profiles: ['e2e', 'ci']
@@ -37,6 +43,12 @@ services:
       - '5556:5556'
     environment:
       - NATS_URL=nats://nats:4222
+      - TOPIC_PORT=5556
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://topic:5556/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   nats:
     build:
@@ -44,11 +56,6 @@ services:
       dockerfile: infra/nats.Dockerfile
     ports:
       - '4222:4222'
-    healthcheck:
-      test: ['CMD-SHELL', 'nats-server --version']
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   postgres:
     build:
@@ -69,26 +76,26 @@ services:
       timeout: 5s
       retries: 5
 
-  script-postgres-migration:
+  ci-postgres-migration:
     profiles: ['ci']
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
     command: pnpm db:up
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
     depends_on:
       postgres:
         condition: service_healthy
 
-  check-unit-tests:
+  ci-unit-tests:
     profiles: ['ci']
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
     command: pnpm unit
 
-  check-e2e-tests:
+  ci-e2e-tests:
     profiles: ['ci']
     build:
       context: ../
@@ -102,26 +109,26 @@ services:
       topic:
         condition: service_healthy
 
-  check-integration-tests:
+  ci-integration-tests:
     profiles: ['ci']
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
     command: pnpm int
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
     depends_on:
-      script-postgres-migration:
+      ci-postgres-migration:
         condition: service_completed_successfully
-      nats:
-        condition: service_healthy
 
-  check-circular-dependencies:
+  ci-circular-dependencies:
     profiles: ['ci']
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
     command: pnpm cir-deps
 
-  check-types:
+  ci-types:
     profiles: ['ci']
     build:
       context: ../
@@ -134,16 +141,16 @@ services:
       context: ../
       dockerfile: infra/ci.Dockerfile
     depends_on:
-      check-unit-tests:
-        condition: service_healthy
-      check-e2e-tests:
-        condition: service_healthy
-      check-integration-tests:
-        condition: service_healthy
-      check-circular-dependencies:
-        condition: service_healthy
-      check-types:
-        condition: service_healthy
+      ci-unit-tests:
+        condition: service_completed_successfully
+      ci-e2e-tests:
+        condition: service_completed_successfully
+      ci-integration-tests:
+        condition: service_completed_successfully
+      ci-circular-dependencies:
+        condition: service_completed_successfully
+      ci-types:
+        condition: service_completed_successfully
 
 volumes:
   postgres_data:

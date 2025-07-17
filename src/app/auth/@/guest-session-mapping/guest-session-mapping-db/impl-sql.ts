@@ -3,6 +3,7 @@ import { Ok, Result, isErr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
 import { ISqlDb } from '~/@/sql-db'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
@@ -33,6 +34,7 @@ const rowToEntity = (row: Row): Result<string, GuestSessionMapping> => {
 export type Config = {
   t: 'sql'
   sqlDb: ISqlDb
+  migrationPolicy: ISqlDbMigrationPolicy
 }
 
 GuestSessionMapping.fromUnknownRegister((data) => {
@@ -44,7 +46,7 @@ GuestSessionMapping.fromUnknownRegister((data) => {
   )
 })
 
-const CREATE_TABLE_QUERIES: string[] = [
+const UP: string[] = [
   `
   CREATE TABLE IF NOT EXISTS user_guest_session_mapping (
     id text NOT NULL PRIMARY KEY,
@@ -56,10 +58,18 @@ const CREATE_TABLE_QUERIES: string[] = [
   `,
 ]
 
+const DOWN: string[] = [
+  `
+  DROP TABLE IF EXISTS user_guest_session_mapping;
+  `,
+]
+
 export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb => {
-  for (const query of CREATE_TABLE_QUERIES) {
-    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
-  }
+  config.migrationPolicy.execute({
+    sqlDb: config.sqlDb,
+    up: UP,
+    down: DOWN,
+  })
 
   return {
     async findUserIdBySessionId(sessionId) {

@@ -8,6 +8,7 @@ const initCtx = async (input: { ctx: AppBackendCtxBase }): Promise<ProfileBacken
     t: 'sql',
     logger: input.ctx.logger,
     sqlDb: input.ctx.sqlDb,
+    migrationPolicy: input.ctx.migrationPolicy,
   })
 
   input.ctx.syncEngine.registerSync(UserProfileSync({ profileDb }))

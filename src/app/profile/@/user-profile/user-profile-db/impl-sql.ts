@@ -5,6 +5,7 @@ import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
 import type { ISqlDb } from '~/@/sql-db'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ProfileAvatar } from '~/app/@/data/profile-avatar'
 import { UserId } from '~/app/@/data/user-id'
@@ -26,7 +27,7 @@ const Row = s.obj({
 
 type Row = s.Infer<typeof Row>
 
-const CREATE_TABLES: string[] = [
+const UP: string[] = [
   `
   CREATE TABLE IF NOT EXISTS user_profile (
     id TEXT PRIMARY KEY,
@@ -37,6 +38,12 @@ const CREATE_TABLES: string[] = [
     created_at_unix_ms BIGINT NOT NULL,
     updated_at_unix_ms BIGINT NOT NULL
   );
+  `,
+]
+
+const DOWN: string[] = [
+  `
+  DROP TABLE IF EXISTS user_profile;
   `,
 ]
 
@@ -73,12 +80,15 @@ export type Config = {
   t: 'sql'
   sqlDb: ISqlDb
   logger: ILogger
+  migrationPolicy: ISqlDbMigrationPolicy
 }
 
 export const ProfileDb = (config: Config): IUserProfileDb => {
-  for (const query of CREATE_TABLES) {
-    config.sqlDb.query({ schema: s.unknown, sql: query, vars: {} })
-  }
+  config.migrationPolicy.execute({
+    sqlDb: config.sqlDb,
+    up: UP,
+    down: DOWN,
+  })
 
   return {
     async findByUserIds(userIds) {

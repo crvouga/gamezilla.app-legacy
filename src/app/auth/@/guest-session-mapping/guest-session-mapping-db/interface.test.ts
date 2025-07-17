@@ -1,5 +1,7 @@
-import { describe, expect, test } from '~/@/test-runner'
+import { Logger } from '~/@/logger'
 import { unwrap } from '~/@/result'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
+import { describe, expect, test } from '~/@/test-runner'
 import { SessionId } from '~/@/wire/session-id'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserId } from '~/app/@/data/user-id'
@@ -22,12 +24,14 @@ const Fixtures = async () => {
   configs.push({
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
     configs.push({
       t: 'sql',
       sqlDb: f.sqlDbPostgres,
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     })
   }
 
