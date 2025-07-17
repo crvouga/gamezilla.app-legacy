@@ -96,6 +96,8 @@ services:
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
+    environment:
+      - PLAYWRIGHT_BASE_URL=http://frontend:5173
     command: sh -c "pnpm e2e:setup && pnpm e2e"
     depends_on:
       frontend:
