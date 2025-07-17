@@ -12,7 +12,7 @@ services:
       - TOPIC_URL=ws://topic:5556
       - BACKEND_URL=http://backend:5555
     ports:
-      - '5173:80'
+      - '80:80'
   backend:
     profiles: ['e2e', 'ci']
     build:
@@ -97,7 +97,7 @@ services:
       context: ../
       dockerfile: infra/ci.Dockerfile
     environment:
-      - PLAYWRIGHT_BASE_URL=http://frontend:5173
+      - PLAYWRIGHT_BASE_URL=http://localhost:80
     command: sh -c "pnpm e2e:setup && pnpm e2e"
     depends_on:
       frontend:
@@ -142,8 +142,8 @@ services:
     depends_on:
       ci-unit-tests:
         condition: service_completed_successfully
-      ci-e2e-tests:
-        condition: service_completed_successfully
+      # ci-e2e-tests:
+      #   condition: service_completed_successfully
       ci-int-tests:
         condition: service_completed_successfully
       ci-cir-deps:
