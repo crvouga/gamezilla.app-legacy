@@ -2,17 +2,96 @@ name: CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   pull_request:
-    branches: [main]
+    branches: [main, master]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  ci:
-    name: CI
+  cir-dep-check:
+    name: Circular Dependency Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Circular dependency check
+        run: pnpm cir-deps
+
+  type-check:
+    name: Type Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm exec tsc --noEmit
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create .env file
+        run: |
+          cp .env.local .env
+
+      - name: Run unit tests
+        run: pnpm test
+
+  integration-tests:
+    name: Integration Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -34,23 +113,70 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Create .env file
-        run: cp .env.local .env
+        run: |
+          cp .env.local .env
 
-      - name: Run CI
-        run: pnpm run ci:run
+      - name: Start infrastructure
+        run: pnpm infra:up:e2e
 
-      - name: Upload CI logs
-        uses: actions/upload-artifact@v4
+      - name: Run database migrations
+        run: pnpm db:up
+
+      - name: Run integration tests
+        run: pnpm test:int
+
+      - name: Stop infrastructure
+        run: pnpm infra:down
+        if: always()
+
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          name: ci-docker-logs
-          path: ci_docker_logs.txt
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create .env file
+        run: |
+          cp .env.local .env
+
+      - name: Start infrastructure
+        run: pnpm infra:up:e2e
+
+      - name: Run database migrations
+        run: pnpm db:up
+
+      - name: Setup E2E tests
+        run: pnpm e2e:ci:setup
+
+      - name: Run E2E tests
+        run: pnpm e2e:ci
+
+      - name: Stop infrastructure
+        run: pnpm infra:down
+        if: always()
 
   deploy:
     name: Deploy
-    needs: [ci]
+    needs: [cir-dep-check, type-check, unit-tests, integration-tests, e2e-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -73,3 +199,6 @@ jobs:
         run: pnpm db:up
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Trigger Vercel Deploy Hook
+        run: curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
