@@ -22,7 +22,7 @@ export const FixtureHttp = async (): Promise<Fixture> => {
   logger ??= Logger({
     t: 'console',
     namespace: ['rpc', 'test'],
-    newLinePerMsg: true,
+    newLinePerMsg: false,
     maxLogLevel: 'info',
   })
 

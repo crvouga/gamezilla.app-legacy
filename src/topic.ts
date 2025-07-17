@@ -14,9 +14,9 @@ const main = async () => {
 
   const logger = Logger({
     t: 'console',
-    newLinePerMsg: true,
+    newLinePerMsg: false,
     namespace: ['topic'],
-    maxLogLevel: 'info',
+    maxLogLevel: 'debug',
   })
 
   const httpServer = HttpServer({

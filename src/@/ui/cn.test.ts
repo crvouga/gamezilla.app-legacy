@@ -4,7 +4,7 @@ import { cnFilter, cnLoop, cnParams } from './cn'
 
 const SHOULD_LOG = false
 const logger = SHOULD_LOG
-  ? Logger({ t: 'console', namespace: ['cn'], newLinePerMsg: true, maxLogLevel: 'info' })
+  ? Logger({ t: 'console', namespace: ['cn'], newLinePerMsg: false, maxLogLevel: 'info' })
   : Logger({ t: 'noop' })
 
 describe('cn performance', () => {

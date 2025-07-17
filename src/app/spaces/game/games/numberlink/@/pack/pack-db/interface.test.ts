@@ -27,7 +27,7 @@ const Fixtures = async () => {
   configs.push({
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
-    logger: Logger({ t: 'console', namespace: ['pack-db'], newLinePerMsg: true, maxLogLevel: 'info' }),
+    logger: Logger({ t: 'console', namespace: ['pack-db'], newLinePerMsg: false, maxLogLevel: 'info' }),
     migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
   })
 
@@ -35,7 +35,7 @@ const Fixtures = async () => {
     configs.push({
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
-      logger: Logger({ t: 'console', namespace: ['pack-db'], newLinePerMsg: true, maxLogLevel: 'info' }),
+      logger: Logger({ t: 'console', namespace: ['pack-db'], newLinePerMsg: false, maxLogLevel: 'info' }),
       migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     })
   }

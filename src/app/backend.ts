@@ -35,6 +35,8 @@ const initCtx = async (config: {
 }): Promise<BackendCtxModule> => {
   const logger = Logger({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'info' })
 
+  logger.info('Initializing backend context')
+
   const runtime = Runtime({
     t: 'process',
     shutoffFGracePeriod: TimeSpan.seconds(1),
@@ -141,6 +143,8 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
 }
 
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
+  input.ctx.logger.info('Starting backend worker')
+
   input.ctx.httpServer.registerMiddleware(LoggerMiddleware({ logger: input.ctx.logger }))
 
   RPC.registerRespond({

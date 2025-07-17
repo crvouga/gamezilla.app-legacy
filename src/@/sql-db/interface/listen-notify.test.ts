@@ -23,7 +23,7 @@ const Fixtures = async () => {
   if (SHOULD_TEST_PGLITE) {
     configs.push({
       t: 'pglite',
-      logger: Logger({ t: 'console', newLinePerMsg: true, namespace: ['sql-db'], maxLogLevel: 'debug' }),
+      logger: Logger({ t: 'console', newLinePerMsg: false, namespace: ['sql-db'], maxLogLevel: 'debug' }),
       pglite: PgliteInstance({ t: 'in-memory' }),
     })
   }

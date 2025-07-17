@@ -8,6 +8,7 @@ services:
       dockerfile: infra/frontend.Dockerfile
       args:
         NODE_ENV: development
+      no_cache: true
     environment:
       - TOPIC_URL=ws://topic:5556
     ports:
@@ -25,6 +26,7 @@ services:
       dockerfile: infra/backend.Dockerfile
       args:
         NODE_ENV: development
+      no_cache: true
     ports:
       - '5555:5555'
     environment:
@@ -47,6 +49,7 @@ services:
     build:
       context: ../
       dockerfile: infra/topic.Dockerfile
+      no_cache: true
     ports:
       - '5556:5556'
     environment:
@@ -159,7 +162,7 @@ services:
       no_cache: true
       args:
         BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
-    command: tsc --noEmit
+    command: pnpm exec tsc --noEmit
 
   ci:
     profiles: ['ci']

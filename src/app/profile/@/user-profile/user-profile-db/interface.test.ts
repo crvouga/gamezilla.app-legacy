@@ -30,7 +30,7 @@ const Fixtures = async () => {
   configs.push({
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
-    logger: Logger({ t: 'console', namespace: ['profile-db'], newLinePerMsg: true, maxLogLevel: 'info' }),
+    logger: Logger({ t: 'console', namespace: ['profile-db'], newLinePerMsg: false, maxLogLevel: 'info' }),
     migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
   })
 
@@ -39,7 +39,7 @@ const Fixtures = async () => {
       t: 'sql',
       // sqlDb: f.dbConnPostgres,
       sqlDb: f.sqlDbPostgres,
-      logger: Logger({ t: 'console', namespace: ['profile-db'], newLinePerMsg: true, maxLogLevel: 'info' }),
+      logger: Logger({ t: 'console', namespace: ['profile-db'], newLinePerMsg: false, maxLogLevel: 'info' }),
       migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     })
   }

@@ -51,7 +51,7 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
   const logger = Logger({
     t: 'console',
     namespace: ['frontend'],
-    newLinePerMsg: true,
+    newLinePerMsg: false,
     maxLogLevel: 'info',
   })
 

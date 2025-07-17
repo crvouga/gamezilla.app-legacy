@@ -8,8 +8,8 @@ export const LoggerMiddleware =
     const response = await next(request)
     const duration = Date.now() - startTime
     const status = response?.status || 404
-    const statusText = response?.statusText || 'Not Found'
-    const message = `${request.method} ${request.url} ${status} ${statusText} ${duration}ms`
+    const statusText = response?.statusText
+    const message = `${request.method} ${request.url} ${status} ${statusText || ''} ${duration}ms`
 
     if (status >= 500) {
       config.logger.error(message)
