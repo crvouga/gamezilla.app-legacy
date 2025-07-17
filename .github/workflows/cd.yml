@@ -37,7 +37,7 @@ jobs:
         run: cp .env.local .env
 
       - name: Run CI
-        run: pnpm run ci
+        run: pnpm run ci:run
 
       - name: Upload CI logs
         uses: actions/upload-artifact@v4
