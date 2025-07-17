@@ -13,12 +13,6 @@ services:
       - TOPIC_URL=ws://topic:5556
     ports:
       - '5173:80'
-    healthcheck:
-      test: ['CMD-SHELL', 'curl -f http://frontend:80/health || exit 1']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   backend:
     profiles: ['e2e', 'ci']
     build:
@@ -35,11 +29,6 @@ services:
       - BACKEND_PORT=5555
     extra_hosts:
       - 'host.docker.internal:host-gateway'
-    healthcheck:
-      test: ['CMD-SHELL', 'curl -f http://backend:5555/health || exit 1']
-      interval: 10s
-      timeout: 5s
-      retries: 3
     depends_on:
       ci-postgres-migration:
         condition: service_completed_successfully
@@ -55,11 +44,9 @@ services:
     environment:
       - NATS_URL=nats://nats:4222
       - TOPIC_PORT=5556
-    healthcheck:
-      test: ['CMD-SHELL', 'curl -f http://topic:5556/health || exit 1']
-      interval: 10s
-      timeout: 5s
-      retries: 3
+    depends_on:
+      nats:
+        condition: service_started
 
   nats:
     build:
@@ -120,14 +107,13 @@ services:
       no_cache: true
       args:
         BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
-    command: pnpm e2e
     depends_on:
       frontend:
-        condition: service_healthy
+        condition: service_started
       backend:
-        condition: service_healthy
+        condition: service_started
       topic:
-        condition: service_healthy
+        condition: service_started
 
   ci-int-tests:
     profiles: ['ci']
