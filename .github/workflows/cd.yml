@@ -19,14 +19,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Run CI via Docker Compose
         run: |
-          docker-compose -f ci/docker-compose.yml --profile ci up --build --abort-on-container-exit --exit-code-from ci || exit_code=$?
-          docker-compose -f ci/docker-compose.yml logs --no-color > ci_docker_logs.txt
+          docker compose -f infra/docker-compose.yml --profile ci up --build --abort-on-container-exit --exit-code-from ci || exit_code=$?
+          docker compose -f infra/docker-compose.yml logs --no-color > ci_docker_logs.txt
           exit ${exit_code:-0}
 
       - name: Upload CI logs
