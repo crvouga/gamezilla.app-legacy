@@ -12,6 +12,11 @@ services:
       - TOPIC_URL=ws://topic:5556
     ports:
       - '5173:80'
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://frontend:80/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     profiles: ['e2e', 'ci']
@@ -32,7 +37,10 @@ services:
       test: ['CMD-SHELL', 'curl -f http://backend:5555/health || exit 1']
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
+    depends_on:
+      ci-postgres-migration:
+        condition: service_completed_successfully
 
   topic:
     profiles: ['e2e', 'ci']
@@ -48,7 +56,7 @@ services:
       test: ['CMD-SHELL', 'curl -f http://topic:5556/health || exit 1']
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
 
   nats:
     build:
@@ -81,6 +89,9 @@ services:
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
+      no_cache: true
+      args:
+        BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
     command: pnpm db:up
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
@@ -93,6 +104,9 @@ services:
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
+      no_cache: true
+      args:
+        BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
     command: pnpm unit
 
   ci-e2e-tests:
@@ -100,6 +114,9 @@ services:
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
+      no_cache: true
+      args:
+        BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
     command: pnpm e2e
     depends_on:
       frontend:
@@ -109,11 +126,14 @@ services:
       topic:
         condition: service_healthy
 
-  ci-integration-tests:
+  ci-int-tests:
     profiles: ['ci']
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
+      no_cache: true
+      args:
+        BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
     command: pnpm int
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
@@ -121,18 +141,24 @@ services:
       ci-postgres-migration:
         condition: service_completed_successfully
 
-  ci-circular-dependencies:
+  ci-cir-deps:
     profiles: ['ci']
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
+      no_cache: true
+      args:
+        BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
     command: pnpm cir-deps
 
-  ci-types:
+  ci-type-check:
     profiles: ['ci']
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
+      no_cache: true
+      args:
+        BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
     command: tsc --noEmit
 
   ci:
@@ -140,16 +166,17 @@ services:
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
+      no_cache: true
     depends_on:
       ci-unit-tests:
         condition: service_completed_successfully
       ci-e2e-tests:
         condition: service_completed_successfully
-      ci-integration-tests:
+      ci-int-tests:
         condition: service_completed_successfully
-      ci-circular-dependencies:
+      ci-cir-deps:
         condition: service_completed_successfully
-      ci-types:
+      ci-type-check:
         condition: service_completed_successfully
 
 volumes:

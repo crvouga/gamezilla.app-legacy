@@ -1,6 +1,8 @@
 import { FileSystem } from '~/@/file-system'
+import { HealthCheck } from '~/@/health-check/health-check'
 import { HttpServer } from '~/@/http-server'
 import { AllowCORS } from '~/@/http-server/allow-cors'
+import { LoggerMiddleware } from '~/@/http-server/logger-middleware'
 import { KeyValueDb } from '~/@/key-value-db'
 import { Logger } from '~/@/logger'
 import { TopicBasedPubSub } from '~/@/pub-sub-topic-based'
@@ -16,7 +18,6 @@ import { Topic } from '~/@/topic'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AuthBackend } from './auth/backend'
-import { HealthCheckBackend } from './backend/health-check'
 import { HelloBackend } from './backend/hello'
 import { ProfileDb } from './profile/@/user-profile/user-profile-db'
 import { ProfileBackend } from './profile/backend'
@@ -140,6 +141,8 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
 }
 
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
+  input.ctx.httpServer.registerMiddleware(LoggerMiddleware({ logger: input.ctx.logger }))
+
   RPC.registerRespond({
     httpServer: input.ctx.httpServer,
     logger: input.ctx.logger,
@@ -147,7 +150,7 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
     server: AppBackend.rpc({ ctx: input.ctx }),
   })
 
-  HealthCheckBackend.registerRespond({ ctx: input.ctx, httpServer: input.ctx.httpServer })
+  HealthCheck.registerRespond({ httpServer: input.ctx.httpServer })
   HelloBackend.registerRespond({ ctx: input.ctx, httpServer: input.ctx.httpServer })
 
   input.ctx.httpServer.start(input.ctx.port)

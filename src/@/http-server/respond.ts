@@ -3,13 +3,12 @@ import { Middleware, Respond } from './interface'
 
 export const createRespond = (middlewares: Middleware[], responds: Respond[]): Respond => {
   const respond: Respond = async (request: Request, server: unknown, traceId: TraceId) => {
-    for (const middleware of middlewares) {
-      const response = await middleware(request, (request) => respondMain(request, server, traceId))
-      if (response) {
-        return response
-      }
+    let next = (request: Request) => respondMain(request, server, traceId)
+    for (const middleware of middlewares.reverse()) {
+      const current = next
+      next = (request) => middleware(request, current)
     }
-    return respondMain(request, server, traceId)
+    return next(request)
   }
 
   const respondMain: Respond = async (request: Request, server: unknown, traceId: TraceId) => {

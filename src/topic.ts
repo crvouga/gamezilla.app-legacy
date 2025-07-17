@@ -1,6 +1,8 @@
 import { DotEnv } from './@/dotenv/dotenv'
 import { FileSystem } from './@/file-system'
+import { HealthCheck } from './@/health-check/health-check'
 import { HttpServer } from './@/http-server'
+import { LoggerMiddleware } from './@/http-server/logger-middleware'
 import { Logger } from './@/logger'
 import { TopicBasedPubSub } from './@/pub-sub-topic-based'
 import { Topic } from './@/topic'
@@ -35,6 +37,10 @@ const main = async () => {
     codec: topicMsgCodec,
     pubSub,
   })
+
+  httpServer.registerMiddleware(LoggerMiddleware({ logger }))
+
+  HealthCheck.registerRespond({ httpServer })
 
   const TOPIC_PORT = Number(process.env.TOPIC_PORT)
   if (isNaN(TOPIC_PORT)) throw new Error('TOPIC_PORT is not set')
