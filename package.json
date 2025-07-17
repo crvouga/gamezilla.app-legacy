@@ -6,10 +6,10 @@
   "scripts": {
     "app": "pnpm exec concurrently \"pnpm run frontend\" \"pnpm run topic\" \"pnpm run backend\"",
     "backend": "pnpm exec tsx watch ./src/backend.ts",
-    "ci-base:publish": "docker build --platform linux/amd64 -f infra/ci-base.Dockerfile -t crvouga/gamezilla-app-ci-base:latest . && docker push crvouga/gamezilla-app-ci-base:latest",
+    "ci-base:publish": "docker build -f infra/ci-base.Dockerfile -t crvouga/gamezilla-app-ci-base:latest . && docker push crvouga/gamezilla-app-ci-base:latest",
     "ci": "pnpm ci:run",
     "ci:run": "pnpm ci:down && pnpm ci:build && pnpm ci:up && pnpm ci:logs",
-    "ci:build": "docker build --platform linux/amd64 -t gamezilla-app-ci -f infra/ci.Dockerfile .",
+    "ci:build": "docker build -t gamezilla-app-ci -f infra/ci.Dockerfile .",
     "ci:down": "docker compose --profile ci -f ./infra/docker-compose.yml down --volumes",
     "ci:up": "docker compose --profile ci -f ./infra/docker-compose.yml up --abort-on-container-exit --exit-code-from ci ci",
     "ci:logs": "docker compose --profile ci -f ./infra/docker-compose.yml logs > ci_docker_logs.txt",
