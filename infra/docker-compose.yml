@@ -8,7 +8,6 @@ services:
       dockerfile: infra/frontend.Dockerfile
       args:
         NODE_ENV: development
-      no_cache: true
     environment:
       - TOPIC_URL=ws://topic:5556
     ports:
@@ -20,7 +19,6 @@ services:
       dockerfile: infra/backend.Dockerfile
       args:
         NODE_ENV: development
-      no_cache: true
     ports:
       - '5555:5555'
     environment:
@@ -38,7 +36,6 @@ services:
     build:
       context: ../
       dockerfile: infra/topic.Dockerfile
-      no_cache: true
     ports:
       - '5556:5556'
     environment:
@@ -79,9 +76,6 @@ services:
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
-      no_cache: true
-      args:
-        BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
     command: pnpm db:up
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
@@ -94,9 +88,6 @@ services:
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
-      no_cache: true
-      args:
-        BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
     command: pnpm unit
 
   ci-e2e-tests:
@@ -104,9 +95,7 @@ services:
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
-      no_cache: true
-      args:
-        BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
+    command: pnpm e2e:setup && pnpm e2e
     depends_on:
       frontend:
         condition: service_started
@@ -120,9 +109,6 @@ services:
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
-      no_cache: true
-      args:
-        BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
     command: pnpm int
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
@@ -135,9 +121,6 @@ services:
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
-      no_cache: true
-      args:
-        BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
     command: pnpm cir-deps
 
   ci-type-check:
@@ -145,9 +128,6 @@ services:
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
-      no_cache: true
-      args:
-        BUILD_DATE: ${BUILD_DATE:-$(date +%s)}
     command: pnpm exec tsc --noEmit
 
   ci:
@@ -155,7 +135,7 @@ services:
     build:
       context: ../
       dockerfile: infra/ci.Dockerfile
-      no_cache: true
+    command: echo "All good to deploy"
     depends_on:
       ci-unit-tests:
         condition: service_completed_successfully

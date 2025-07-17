@@ -109,7 +109,7 @@ const Fixture = async () => {
   }
 }
 
-const sleep = () => new Promise((resolve) => setTimeout(resolve, 100))
+const sleep = () => new Promise((resolve) => setTimeout(resolve, 120))
 
 describe('Topic', () => {
   test('should work', async () => {
