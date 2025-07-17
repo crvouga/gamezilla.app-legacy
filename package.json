@@ -6,7 +6,8 @@
   "scripts": {
     "app": "pnpm exec concurrently \"pnpm run frontend\" \"pnpm run topic\" \"pnpm run backend\"",
     "backend": "pnpm exec tsx watch ./src/backend.ts",
-    "ci": "pnpm ci:down && pnpm ci:build && pnpm ci:up && pnpm ci:logs",
+    "ci": "pnpm ci:run",
+    "ci:run": "pnpm ci:down && pnpm ci:build && pnpm ci:up && pnpm ci:logs",
     "ci:build": "docker compose --profile ci -f ./infra/docker-compose.yml build --no-cache --pull",
     "ci:down": "docker compose --profile ci -f ./infra/docker-compose.yml down --volumes",
     "ci:up": "docker compose --profile ci -f ./infra/docker-compose.yml up --abort-on-container-exit --exit-code-from ci ci",
