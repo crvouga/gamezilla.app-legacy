@@ -1,6 +1,23 @@
 name: gamezilla_app
 
 services:
+  ci:
+    profiles: ['ci']
+    image: gamezilla-app-ci
+    command: echo "All good to deploy"
+    platform: linux/amd64
+    depends_on:
+      ci-unit-tests:
+        condition: service_completed_successfully
+      ci-e2e-tests:
+        condition: service_completed_successfully
+      ci-int-tests:
+        condition: service_completed_successfully
+      ci-cir-deps:
+        condition: service_completed_successfully
+      ci-type-check:
+        condition: service_completed_successfully
+
   frontend:
     profiles: ['e2e', 'ci']
     build:
@@ -12,6 +29,8 @@ services:
         TOPIC_URL: http://topic:5556
     ports:
       - '80:80'
+    platform: linux/amd64
+
   backend:
     profiles: ['e2e', 'ci']
     build:
@@ -30,6 +49,7 @@ services:
     depends_on:
       ci-postgres-migration:
         condition: service_completed_successfully
+    platform: linux/amd64
 
   topic:
     profiles: ['e2e', 'ci']
@@ -44,6 +64,7 @@ services:
     depends_on:
       nats:
         condition: service_started
+    platform: linux/amd64
 
   nats:
     build:
@@ -70,6 +91,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    platform: linux/amd64
 
   ci-postgres-migration:
     profiles: ['ci']
@@ -80,6 +102,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    platform: linux/amd64
 
   ci-unit-tests:
     profiles: ['ci']
@@ -88,6 +111,7 @@ services:
     environment:
       - BACKEND_URL=http://backend:5555
       - TOPIC_URL=http://topic:5556
+    platform: linux/amd64
 
   ci-e2e-tests:
     profiles: ['ci']
@@ -102,6 +126,7 @@ services:
         condition: service_started
       topic:
         condition: service_started
+    platform: linux/amd64
 
   ci-int-tests:
     profiles: ['ci']
@@ -112,29 +137,16 @@ services:
     depends_on:
       ci-postgres-migration:
         condition: service_completed_successfully
+    platform: linux/amd64
 
   ci-cir-deps:
     profiles: ['ci']
     image: gamezilla-app-ci
     command: pnpm cir-deps
+    platform: linux/amd64
 
   ci-type-check:
     profiles: ['ci']
     image: gamezilla-app-ci
     command: pnpm exec tsc --noEmit
-
-  ci:
-    profiles: ['ci']
-    image: gamezilla-app-ci
-    command: echo "All good to deploy"
-    depends_on:
-      ci-unit-tests:
-        condition: service_completed_successfully
-      # ci-e2e-tests:
-      #   condition: service_completed_successfully
-      ci-int-tests:
-        condition: service_completed_successfully
-      ci-cir-deps:
-        condition: service_completed_successfully
-      ci-type-check:
-        condition: service_completed_successfully
+    platform: linux/amd64
