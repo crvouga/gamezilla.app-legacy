@@ -38,5 +38,4 @@ tsconfig.tsbuildinfo
 
 coverage
 
-ci_docker_logs.txt
-ci_docker_logs.txt
+ci_logs.txt
