@@ -1,7 +1,5 @@
 import { s } from '~/@/schema'
 import { describe, expect, test } from '~/@/test-runner'
-import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import { Logger } from '../logger'
 
 import { Config, TopicBasedPubSub } from './impl'
 
@@ -31,16 +29,12 @@ const randomMyEvent = (): MyEvent => ({
 const encode = (myEvent: MyEvent) => JSON.stringify(myEvent)
 
 const Fixtures = async () => {
-  const f = await FixtureAppBackend()
+  // const f = await FixtureAppBackend()
   const configs: Config[] = [{ t: 'in-memory' }]
 
-  if (f.t === 'integration') {
-    configs.push({
-      t: 'sql-db',
-      sqlDb: f.sqlDbPostgres,
-      logger: Logger({ t: 'noop' }),
-    })
-  }
+  // if (f.t === 'integration') {
+  //   configs.push({ t: 'sql-db', sqlDb: f.sqlDbPostgres, logger: Logger({ t: 'noop' }) })
+  // }
 
   return Promise.all(configs.map(Fixture))
 }

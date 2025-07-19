@@ -17,7 +17,7 @@ const CI = Boolean(process.env.CI)
 export default defineConfig({
   testDir: './src',
   testMatch: '**/*.spec.ts',
-  timeout: 1000 * 30,
+  timeout: 1000 * 15,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

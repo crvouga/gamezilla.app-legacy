@@ -236,4 +236,15 @@ describe('SQL', () => {
     })
     expect(actual).toEqual(expected)
   })
+
+  test('work with strings with semi colons in them', async () => {
+    const expected = `SELECT * FROM users WHERE id IN ('user:1', 'user:2', 'user:3') OR id IN ('user:4', 'user:5', 'user:6')`
+    const actual = Sql.to(`SELECT * FROM users WHERE id IN (:user1, :user2, :user3) OR id IN (:ids)`, {
+      ids: Sql.commas(['user:4', 'user:5', 'user:6']),
+      user1: 'user:1',
+      user2: 'user:2',
+      user3: 'user:3',
+    })
+    expect(actual).toEqual(expected)
+  })
 })
