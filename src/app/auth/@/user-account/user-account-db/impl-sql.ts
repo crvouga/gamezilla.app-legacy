@@ -74,6 +74,7 @@ export const UserAccountDb = (config: Config): IUserAccountDb => {
   const logger = config.logger.child(['user-account-db'])
 
   config.migrationPolicy.execute({
+    logger,
     down: DOWN,
     sqlDb: config.sqlDb,
     up: UP,

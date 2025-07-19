@@ -23,9 +23,9 @@ const hashSql = (sql: string[]) => {
 }
 
 export const SqlDbMigrationPolicy = (config: Config): ISqlDbMigrationPolicy => {
-  const logger = config.logger.child(['dangerously-wipe-on-new-schema'])
   return {
     async execute(input) {
+      const logger = input.logger.child(['dangerously-wipe-on-new-schema'])
       const logPayload = {
         up: input.up,
         down: input.down,

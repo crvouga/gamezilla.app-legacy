@@ -19,7 +19,7 @@ services:
         condition: service_completed_successfully
 
   frontend:
-    profiles: ['e2e', 'ci']
+    profiles: ['ci']
     build:
       context: ../
       dockerfile: infra/frontend.Dockerfile
@@ -32,7 +32,7 @@ services:
     platform: ${DOCKER_PLATFORM}
 
   backend:
-    profiles: ['e2e', 'ci']
+    profiles: ['ci']
     build:
       context: ../
       dockerfile: infra/backend.Dockerfile
@@ -52,7 +52,7 @@ services:
     platform: ${DOCKER_PLATFORM}
 
   topic:
-    profiles: ['e2e', 'ci']
+    profiles: ['ci']
     build:
       context: ../
       dockerfile: infra/topic.Dockerfile
@@ -118,7 +118,7 @@ services:
     profiles: ['ci']
     image: gamezilla-app-ci
     environment:
-      - PLAYWRIGHT_BASE_URL=http://localhost:80
+      - PLAYWRIGHT_BASE_URL=http://frontend:80
     command: pnpm e2e
     depends_on:
       frontend:

@@ -34,6 +34,7 @@ DROP TABLE IF EXISTS todo
 export const TodoDb = (config: Config): ITodoDb => {
   return Db({
     t: 'sql-db',
+    logger: config.logger,
     parser: ITodoDb.schema,
     sqlDb: config.sqlDb,
     migration: {

@@ -72,16 +72,54 @@ const DOWN: string[] = [
   `,
 ]
 
-export const UserSessionDb = (config: Config): IUserSessionDb => {
+export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => {
   const logger = config.logger.child(['impl-sql'])
 
-  config.migrationPolicy.execute({
+  await config.migrationPolicy.execute({
+    logger,
     down: DOWN,
     sqlDb: config.sqlDb,
     up: UP,
   })
 
+  const query: IUserSessionDb['query'] = async (input) => {
+    const { sql, sqlCount, vars } = queryToSql(input)
+
+    const queried = await config.sqlDb.query({ schema: Row, sql, vars })
+
+    const queriedCount = await config.sqlDb.query({
+      schema: s.obj({ total: s.or(s.num(), s.str()) }),
+      sql: sqlCount,
+      vars,
+    })
+
+    const total = unwrapOr(
+      Result.mapOk(queriedCount, (rows) => {
+        const total = rows[0]?.total
+        if (typeof total === 'number') {
+          return total
+        }
+        if (typeof total === 'string') {
+          return parseInt(total)
+        }
+        return 0
+      }),
+      0,
+    )
+
+    return Result.mapOk(queried, (rows) => {
+      return {
+        items: rows.map(rowToUserSession),
+        total: total,
+        limit: input.pagination.limit,
+        offset: input.pagination.offset,
+      }
+    })
+  }
+
   return {
+    query,
+
     async findSessionIdsByUserId(userId: UserId) {
       logger.debug(`findSessionIdsByUserId: userId=${userId}`)
       const queried = await config.sqlDb.query({
@@ -115,7 +153,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
         `insert: userSession=${userSession.userSessionId} sessionId=${userSession.sessionId} clientSessionId=${userSession.clientSessionId} userId=${userSession.userId}`,
       )
 
-      const existing = await this.query({
+      const existing = await query({
         whereAnd: {
           userSessionId: {
             equals: userSession.userSessionId,
@@ -207,41 +245,6 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
         },
       })
       return Result.mapOk(updated, () => null)
-    },
-
-    async query(input) {
-      const { sql, sqlCount, vars } = queryToSql(input)
-
-      const queried = await config.sqlDb.query({ schema: Row, sql, vars })
-
-      const queriedCount = await config.sqlDb.query({
-        schema: s.obj({ total: s.or(s.num(), s.str()) }),
-        sql: sqlCount,
-        vars,
-      })
-
-      const total = unwrapOr(
-        Result.mapOk(queriedCount, (rows) => {
-          const total = rows[0]?.total
-          if (typeof total === 'number') {
-            return total
-          }
-          if (typeof total === 'string') {
-            return parseInt(total)
-          }
-          return 0
-        }),
-        0,
-      )
-
-      return Result.mapOk(queried, (rows) => {
-        return {
-          items: rows.map(rowToUserSession),
-          total: total,
-          limit: input.pagination.limit,
-          offset: input.pagination.offset,
-        }
-      })
     },
 
     async zapByClientSessionId(clientSessionId) {

@@ -23,7 +23,7 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
     migrationPolicy: input.ctx.migrationPolicy,
   })
 
-  const userSessionDb = UserSessionDb({
+  const userSessionDb = await UserSessionDb({
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
@@ -34,6 +34,7 @@ const init = async (input: { ctx: AppBackendCtxBase }): Promise<AuthBackendCtx> 
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
     migrationPolicy: input.ctx.migrationPolicy,
+    logger: input.ctx.logger,
   })
 
   input.ctx.syncEngine.registerSync(UserAccountSync({ userAccountDb, logger: input.ctx.logger }))

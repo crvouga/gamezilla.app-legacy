@@ -47,12 +47,13 @@ const initCtx = async (input: {
   rpc: RPC.Client<typeof rpcContract>
 }): Promise<FrontendCtxModule> => {
   const guestSessionMappingDb = GuestSessionMappingDb({
+    logger: input.ctx.logger,
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
     migrationPolicy: input.ctx.migrationPolicy,
   })
 
-  const userSessionDb = UserSessionDb({
+  const userSessionDb = await UserSessionDb({
     t: 'sql',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,

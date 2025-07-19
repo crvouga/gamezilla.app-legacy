@@ -60,6 +60,7 @@ const toFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): FlowFron
     t: 'sql-db',
     sqlDb: input.ctx.sqlDb,
     migrationPolicy: input.ctx.migrationPolicy,
+    logger: input.ctx.logger,
   })
   return {
     ...input.ctx,

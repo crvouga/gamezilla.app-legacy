@@ -21,6 +21,7 @@ const Fixture = async () => {
     sqlDb,
     kvDb,
     migrationPolicy,
+    logger,
   }
 }
 
@@ -34,6 +35,7 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
     const down = [`DROP TABLE ${TABLE_NAME}`]
 
     await f.migrationPolicy.execute({
+      logger: f.logger,
       sqlDb: f.sqlDb,
       up,
       down,
@@ -55,6 +57,7 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
 
     // First run
     await f.migrationPolicy.execute({
+      logger: f.logger,
       sqlDb: f.sqlDb,
       up,
       down,
@@ -62,6 +65,7 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
 
     // Second run with same schema
     await f.migrationPolicy.execute({
+      logger: f.logger,
       sqlDb: f.sqlDb,
       up,
       down,
@@ -84,6 +88,7 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
 
     // First run
     await f.migrationPolicy.execute({
+      logger: f.logger,
       sqlDb: f.sqlDb,
       up: initialUp,
       down: initialDown,
@@ -94,6 +99,7 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
     const modifiedDown = [`DROP TABLE ${TABLE_NAME}`]
 
     await f.migrationPolicy.execute({
+      logger: f.logger,
       sqlDb: f.sqlDb,
       up: modifiedUp,
       down: modifiedDown,
@@ -124,6 +130,7 @@ describe('SqlDbMigrationPolicy DangerouslyWipeOnNewSchema', () => {
     const down = [`DROP TABLE IF EXISTS ${TABLE_NAME_2}`]
 
     await f.migrationPolicy.execute({
+      logger: f.logger,
       sqlDb: f.sqlDb,
       up,
       down,

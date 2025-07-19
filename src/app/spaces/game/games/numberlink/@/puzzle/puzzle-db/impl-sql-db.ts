@@ -42,7 +42,12 @@ const DOWN: string[] = [
 ]
 
 export const PuzzleDb = (config: Config): IPuzzleDb => {
-  config.migrationPolicy.execute({ sqlDb: config.sqlDb, up: UP, down: DOWN })
+  config.migrationPolicy.execute({
+    sqlDb: config.sqlDb,
+    up: UP,
+    down: DOWN,
+    logger: config.logger,
+  })
 
   return {
     async get(puzzleId) {

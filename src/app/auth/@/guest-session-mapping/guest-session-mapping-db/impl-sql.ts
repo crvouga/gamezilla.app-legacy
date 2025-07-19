@@ -11,6 +11,7 @@ import { UserId } from '~/app/@/data/user-id'
 import { GuestSessionMapping } from '../guest-session-mapping'
 import { GuestSessionMappingId } from '../guest-session-mapping-id'
 import { IGuestSessionMappingDb } from './interface'
+import { ILogger } from '~/@/logger'
 
 export const Row = s.obj({
   id: GuestSessionMappingId,
@@ -35,6 +36,7 @@ export type Config = {
   t: 'sql'
   sqlDb: ISqlDb
   migrationPolicy: ISqlDbMigrationPolicy
+  logger: ILogger
 }
 
 GuestSessionMapping.fromUnknownRegister((data) => {
@@ -65,7 +67,9 @@ const DOWN: string[] = [
 ]
 
 export const GuestSessionMappingDb = (config: Config): IGuestSessionMappingDb => {
+  const logger = config.logger.child(['guest-session-mapping-db'])
   config.migrationPolicy.execute({
+    logger,
     sqlDb: config.sqlDb,
     up: UP,
     down: DOWN,

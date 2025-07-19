@@ -1,4 +1,5 @@
 import { Json } from '~/@/json/json'
+import { ILogger } from '~/@/logger'
 import { Err, isErr, Ok, Result, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
@@ -13,6 +14,7 @@ export type Config = {
   t: 'sql-db'
   sqlDb: ISqlDb
   migrationPolicy: ISqlDbMigrationPolicy
+  logger: ILogger
 }
 
 const Row = s.obj({
@@ -44,7 +46,12 @@ const rowToSolutions = (row: Row): Result<string, Solutions> => {
 }
 
 export const SolutionsDb = (config: Config): ISolutionsDb => {
-  config.migrationPolicy.execute({ down: DOWN, up: UP, sqlDb: config.sqlDb })
+  config.migrationPolicy.execute({
+    down: DOWN,
+    up: UP,
+    sqlDb: config.sqlDb,
+    logger: config.logger,
+  })
 
   return {
     async get(hash) {

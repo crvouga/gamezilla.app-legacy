@@ -168,6 +168,7 @@ export const PackDb = (config: Config): IPackDb => {
   const logger = config.logger.child(['pack db impl sql'])
 
   config.migrationPolicy.execute({
+    logger,
     up: UP,
     down: DOWN,
     sqlDb: config.sqlDb,

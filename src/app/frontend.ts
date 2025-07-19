@@ -52,7 +52,7 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
     t: 'console',
     namespace: ['frontend'],
     newLinePerMsg: false,
-    maxLogLevel: 'info',
+    maxLogLevel: 'debug',
   })
 
   const clientSessionId = ClientSessionIdStorage().get()

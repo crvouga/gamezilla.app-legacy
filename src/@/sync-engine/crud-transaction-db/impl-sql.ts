@@ -60,7 +60,9 @@ CREATE TABLE IF NOT EXISTS crud_transaction_entry (
 const DOWN = [`DROP TABLE IF EXISTS crud_transaction_entry`, `DROP TABLE IF EXISTS crud_transaction`]
 
 export const CrudTransactionDb = (config: Config): ICrudTransactionDb => {
+  const logger = config.logger.child(['crud-transaction-db'])
   config.migrationPolicy.execute({
+    logger,
     up: UP,
     down: DOWN,
     sqlDb: config.sqlDb,

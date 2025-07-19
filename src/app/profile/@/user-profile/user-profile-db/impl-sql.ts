@@ -85,6 +85,7 @@ export type Config = {
 
 export const ProfileDb = (config: Config): IUserProfileDb => {
   config.migrationPolicy.execute({
+    logger: config.logger,
     sqlDb: config.sqlDb,
     up: UP,
     down: DOWN,

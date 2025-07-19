@@ -1,9 +1,10 @@
 import { DbErr } from '~/@/db/interface/error'
-import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
+import { ILogger } from '~/@/logger'
 import { isErr, mapErr, Ok, Result, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ascend } from '~/@/sort'
 import { Sql } from '~/@/sql'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { Sub } from '~/@/sub'
 import { IDb } from '../../interface'
@@ -23,6 +24,7 @@ export type Config<
   sqlDb: ISqlDb
   viewName: string
   primaryKey: string
+  logger: ILogger
   migration?: {
     up: string[]
     down: string[]
@@ -44,6 +46,7 @@ export const Db = <
   config: Config<TEntity, TRelated, TRow>,
 ): IDb.IDb<TEntity, TRelated> => {
   const run = config.migration?.policy.execute({
+    logger: config.logger,
     sqlDb: config.sqlDb,
     up: config.migration.up,
     down: config.migration.down,

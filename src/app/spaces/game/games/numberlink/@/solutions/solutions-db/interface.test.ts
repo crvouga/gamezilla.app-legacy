@@ -29,6 +29,7 @@ const Fixtures = async () => {
   configs.push({
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
+    logger: f.logger,
     migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
   })
 
@@ -36,6 +37,7 @@ const Fixtures = async () => {
     configs.push({
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
+      logger: f.logger,
       migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
     })
   }

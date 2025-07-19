@@ -41,6 +41,7 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
   const logger = config.logger.child(['sql-db'])
 
   config.migrationPolicy.execute({
+    logger,
     sqlDb: config.sqlDb,
     up: UP,
     down: DOWN,

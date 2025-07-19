@@ -42,8 +42,8 @@ describe('verify code', () => {
 
   test('go to space screen after verifying code', async (e) => {
     await using f = await Fixture(e)
-    const [sendCodeError] = await f.frontend.find(`[role='alert'][data-error='true']`)
-    expect(sendCodeError).toBeFalsy()
+    const [sendCodeInfo] = await f.frontend.find(`[role='alert'][data-info='true']`)
+    expect(sendCodeInfo).toBeTruthy()
     await doVerifyCode(f)
     const screen = await f.frontend.findByTestId(SpacesFrontend.TEST_ID.SPACE_LIST_SCREEN)
     expect(screen).toBeTruthy()

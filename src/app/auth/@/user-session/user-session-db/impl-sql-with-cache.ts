@@ -19,7 +19,7 @@ export type Config = {
   migrationPolicy: ISqlDbMigrationPolicy
 }
 
-export const UserSessionDb = (config: Config): IUserSessionDb => {
+export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => {
   const keyValueDb = pipe(
     config.keyValueDb,
     (keyValueDb) =>
@@ -51,7 +51,7 @@ export const UserSessionDb = (config: Config): IUserSessionDb => {
       }),
   )
 
-  const userSessionDb = ImplSql.UserSessionDb({ ...config, t: 'sql' })
+  const userSessionDb = await ImplSql.UserSessionDb({ ...config, t: 'sql' })
 
   return WithCache({
     keyValueDb,
