@@ -1,7 +1,7 @@
 import { Logger } from '~/@/logger'
 import { TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { unwrap } from '~/@/result'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'

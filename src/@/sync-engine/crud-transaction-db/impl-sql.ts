@@ -1,5 +1,5 @@
 import { ILogger } from '~/@/logger'
-import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { isErr, Ok } from '~/@/result'
 import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'

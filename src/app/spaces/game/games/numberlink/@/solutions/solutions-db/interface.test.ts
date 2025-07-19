@@ -1,6 +1,6 @@
 import { Logger } from '~/@/logger'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
 import { Ok } from '~/@/result'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { describe, expect, test } from '~/@/test-runner'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { VariantGridShorthand } from '../../variant/grid'

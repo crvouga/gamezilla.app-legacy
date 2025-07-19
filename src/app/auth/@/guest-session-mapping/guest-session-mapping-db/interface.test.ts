@@ -1,6 +1,6 @@
 import { Logger } from '~/@/logger'
 import { unwrap } from '~/@/result'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { describe, expect, test } from '~/@/test-runner'
 import { SessionId } from '~/@/wire/session-id'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'

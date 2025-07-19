@@ -1,6 +1,6 @@
 import { Logger } from '~/@/logger'
 import { unwrap } from '~/@/result'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { Sub } from '~/@/sub'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceId } from '~/app/@/data/space-id'

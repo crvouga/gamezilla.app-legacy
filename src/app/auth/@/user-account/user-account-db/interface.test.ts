@@ -6,7 +6,7 @@ import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
 import { Impl, UserAccountDb } from './impl'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { Logger } from '~/@/logger'
 
 const Fixture = async (config: Impl) => {

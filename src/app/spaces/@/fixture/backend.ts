@@ -1,7 +1,7 @@
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { Logger } from '~/@/logger'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { Topic } from '~/@/topic'
 import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'

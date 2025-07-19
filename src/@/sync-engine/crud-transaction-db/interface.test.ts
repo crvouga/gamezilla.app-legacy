@@ -1,5 +1,5 @@
 import { Logger } from '~/@/logger'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { PgliteInstance } from '~/@/pglite/pglite-instance'
 import { SqlDb } from '~/@/sql-db/backend/impl'
 import { describe, expect, test } from '~/@/test-runner'
