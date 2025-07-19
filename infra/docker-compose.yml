@@ -119,7 +119,7 @@ services:
     image: gamezilla-app-ci
     environment:
       - PLAYWRIGHT_BASE_URL=http://localhost:80
-    command: sh -c "pnpm e2e:setup && pnpm e2e"
+    command: pnpm e2e
     depends_on:
       frontend:
         condition: service_started
