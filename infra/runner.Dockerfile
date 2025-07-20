@@ -1,4 +1,4 @@
-FROM crvouga/gamezilla-app-ci-base:latest
+FROM crvouga/runner-base:latest
 
 WORKDIR /app
 

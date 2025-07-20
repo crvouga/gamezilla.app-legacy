@@ -3,7 +3,7 @@ name: gamezilla_app
 services:
   ci:
     profiles: ['ci']
-    image: gamezilla-app-ci
+    image: runner
     command: echo "All good to deploy"
     depends_on:
       ci-unit-tests:
@@ -90,7 +90,7 @@ services:
 
   ci-postgres-migration:
     profiles: ['ci']
-    image: gamezilla-app-ci
+    image: runner
     command: pnpm db:up
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
@@ -100,7 +100,7 @@ services:
 
   ci-unit-tests:
     profiles: ['ci']
-    image: gamezilla-app-ci
+    image: runner
     command: pnpm unit
     environment:
       - BACKEND_URL=http://backend:5555
@@ -108,7 +108,7 @@ services:
 
   ci-e2e-tests:
     profiles: ['ci']
-    image: gamezilla-app-ci
+    image: runner
     environment:
       - PLAYWRIGHT_BASE_URL=http://frontend:80
     command: pnpm e2e
@@ -122,7 +122,7 @@ services:
 
   ci-int-tests:
     profiles: ['ci']
-    image: gamezilla-app-ci
+    image: runner
     command: pnpm int
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
@@ -132,10 +132,10 @@ services:
 
   ci-cir-deps:
     profiles: ['ci']
-    image: gamezilla-app-ci
+    image: runner
     command: pnpm cir-deps
 
   ci-type-check:
     profiles: ['ci']
-    image: gamezilla-app-ci
+    image: runner
     command: pnpm exec tsc --noEmit
