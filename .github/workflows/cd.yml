@@ -151,7 +151,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: [type-check, unit-tests, integration-tests, circular-deps]
+    needs: [type-check, unit-tests, integration-tests, circular-deps, e2e-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     if: github.ref == 'refs/heads/main'
