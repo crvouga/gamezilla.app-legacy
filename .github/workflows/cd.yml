@@ -33,12 +33,17 @@ jobs:
           echo "Building runner image..."
           docker build --platform linux/amd64 -f infra/runner.Dockerfile -t runner .
 
+      - name: Build service images
+        run: |
+          echo "Building service images..."
+          docker compose --profile ci -f ./infra/docker-compose.yml build
+
       - name: Run CI
         run: |
           echo "Cleaning up existing containers..."
           docker compose --profile ci -f ./infra/docker-compose.yml down
           echo "Running CI pipeline..."
-          docker compose --profile ci -f ./infra/docker-compose.yml up --build --abort-on-container-exit --exit-code-from ci ci
+          docker compose --profile ci -f ./infra/docker-compose.yml up --abort-on-container-exit --exit-code-from ci ci
 
       - name: Collect CI logs
         if: always()
