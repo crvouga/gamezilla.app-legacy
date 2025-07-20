@@ -29,7 +29,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     phoneNumber: PhoneNumber.random(),
     role: 'normal',
   }
-  const keyValueDb = KeyValueDb({ t: 'in-memory' })
+  const keyValueDb = KeyValueDb.init({ t: 'in-memory' })
   const migrationPolicy = SqlDbMigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
     logger: Logger.init({ t: 'noop' }),

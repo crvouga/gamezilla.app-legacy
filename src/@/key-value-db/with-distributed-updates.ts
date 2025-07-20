@@ -23,14 +23,14 @@ export type DistributedUpdate =
       e: [string, unknown][]
     }
 
-export type Config = {
+export type WithDistributedUpdates = {
   t: 'with-distributed-updates'
   logger: ILogger
   keyValueDb: IKeyValueDb
   pubSub: PubSub<DistributedUpdate>
 }
 
-export const withDistributedUpdates = (config: Config): IKeyValueDb & { unsubscribe: () => void } => {
+const init = (config: WithDistributedUpdates): IKeyValueDb & { unsubscribe: () => void } => {
   const logger = config.logger.child(['with-distributed-updates'])
   const unsubscribe = config.pubSub.sub((update) => {
     switch (update.t) {
@@ -81,4 +81,8 @@ export const withDistributedUpdates = (config: Config): IKeyValueDb & { unsubscr
       return config.keyValueDb.zap(key)
     },
   }
+}
+
+export const WithDistributedUpdates = {
+  init,
 }

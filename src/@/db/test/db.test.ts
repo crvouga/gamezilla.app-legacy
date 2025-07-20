@@ -13,7 +13,7 @@ import { ITodoDb } from './todo-db/interface'
 const Fixture = async () => {
   const pglite = PgliteInstance({ t: 'in-memory' })
   const sqlDb = BackendSqlDb.init({ t: 'pglite', pglite, logger: Logger.init({ t: 'noop' }) })
-  const kvDb = KeyValueDb({ t: 'in-memory' })
+  const kvDb = KeyValueDb.init({ t: 'in-memory' })
   const logger = Logger.init({ t: 'noop' })
   const todoDb = TodoDb.init({
     t: 'sql-db',

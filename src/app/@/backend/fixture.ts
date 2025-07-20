@@ -48,7 +48,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const httpServer = HttpServer.init({ t: 'node', logger })
 
-  const keyValueDbHashMap = KeyValueDb({ t: 'hash-map' })
+  const keyValueDbHashMap = KeyValueDb.init({ t: 'hash-map' })
 
   const fs = FileSystem.init({ t: 'node' })
 
@@ -109,14 +109,14 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     logger,
   })
 
-  const keyValueDbPostgres = KeyValueDb({
+  const keyValueDbPostgres = KeyValueDb.init({
     t: 'sql-db',
     sqlDb: sqlDbPostgres,
     logger,
     migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
   })
 
-  const keyValueDbSqlite = KeyValueDb({
+  const keyValueDbSqlite = KeyValueDb.init({
     t: 'sql-db',
     sqlDb: sqlDbSqlite,
     migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),

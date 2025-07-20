@@ -6,13 +6,13 @@ import type { IKeyValueDb } from './interface'
 
 const MAX_LEN = 1000
 
-export type Config = {
+export type ImplWebStandardStorage = {
   t: 'web-standard-storage'
   storage: Storage
   logger: ILogger
 }
 
-export const KeyValueDb = (config: Config): IKeyValueDb => {
+const init = (config: ImplWebStandardStorage): IKeyValueDb => {
   const logger = config.logger.child(['web-standard-storage'])
 
   return {
@@ -116,4 +116,8 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
       }
     },
   }
+}
+
+export const ImplWebStandardStorage = {
+  init,
 }

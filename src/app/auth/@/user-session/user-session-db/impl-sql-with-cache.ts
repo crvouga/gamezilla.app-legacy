@@ -23,11 +23,11 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
   const keyValueDb = pipe(
     config.keyValueDb,
     (keyValueDb) =>
-      KeyValueDb({
+      KeyValueDb.init({
         ...config,
         t: 'with-cache',
         source: keyValueDb,
-        cache: KeyValueDb({
+        cache: KeyValueDb.init({
           ...config,
           t: 'with-distributed-invalidations',
           pubSub: PubSub({
@@ -35,7 +35,7 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
             pubSubTopicBased: config.pubSubTopicBased,
             topic: 'user-session-db-cache-invalidation',
           }),
-          cache: KeyValueDb({
+          cache: KeyValueDb.init({
             t: 'hash-map',
             map: LRUCache({ maxCapacity: 2000 }),
           }),
@@ -43,7 +43,7 @@ export const UserSessionDb = async (config: Config): Promise<IUserSessionDb> => 
       }),
 
     (keyValueDb) =>
-      KeyValueDb({
+      KeyValueDb.init({
         ...config,
         t: 'with-reduced-parsing',
         keyValueDb,

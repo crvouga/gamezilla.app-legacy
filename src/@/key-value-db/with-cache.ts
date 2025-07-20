@@ -2,14 +2,14 @@ import { Result } from '~/@/result'
 import { ILogger } from '../logger'
 import { IKeyValueDb } from './interface'
 
-export type Config = {
+export type WithCache = {
   t: 'with-cache'
   cache: IKeyValueDb
   source: IKeyValueDb
   logger: ILogger
 }
 
-export const withCache = (config: Config): IKeyValueDb => {
+const init = (config: WithCache): IKeyValueDb => {
   const logger = config.logger.child(['with-cache'])
   return {
     async get(key, schema) {
@@ -71,4 +71,8 @@ export const withCache = (config: Config): IKeyValueDb => {
       return config.cache.zap(key)
     },
   }
+}
+
+export const WithCache = {
+  init,
 }

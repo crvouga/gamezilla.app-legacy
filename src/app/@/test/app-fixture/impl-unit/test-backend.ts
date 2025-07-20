@@ -33,7 +33,7 @@ export const TestBackend = async (config: {
     logger,
   })
 
-  const keyValueDbDurable = KeyValueDb({
+  const keyValueDbDurable = KeyValueDb.init({
     t: 'sql-db',
     sqlDb: config.sqlDb,
     migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),

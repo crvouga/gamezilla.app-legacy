@@ -2,8 +2,8 @@ import { Err, Ok, Result, isErr } from '~/@/result'
 import { s } from '~/@/schema'
 import type { ILogger } from '../logger/interface'
 import { ParseError } from '../schema/schema/parse-error'
-import type { ISqlDb } from '../sql-db/interface'
 import { ISqlDbMigrationPolicy } from '../sql-db-migration-policy/interface'
+import type { ISqlDb } from '../sql-db/interface'
 import { TimeSpan } from '../time/time-span'
 import { withDuration } from '../time/with-duration'
 import type { IKeyValueDb } from './interface'
@@ -15,7 +15,7 @@ const Row = s.obj({
   value: s.str(),
 })
 
-export type Config = {
+export type ImplSqlDb = {
   t: 'sql-db'
   sqlDb: ISqlDb
   logger: ILogger
@@ -37,7 +37,7 @@ const DOWN: string[] = [
   `,
 ]
 
-export const KeyValueDb = (config: Config): IKeyValueDb => {
+const init = (config: ImplSqlDb): IKeyValueDb => {
   const logger = config.logger.child(['sql-db'])
 
   config.migrationPolicy.execute({
@@ -213,4 +213,8 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
       }
     },
   }
+}
+
+export const ImplSqlDb = {
+  init,
 }

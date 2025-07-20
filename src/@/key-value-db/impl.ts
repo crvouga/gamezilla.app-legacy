@@ -1,67 +1,70 @@
 import { Logger } from '../logger'
-import * as ImplHashMap from './impl-hash-map'
-import * as ImplInMemory from './impl-in-memory'
-import * as ImplSqlDb from './impl-sql-db'
-import * as ImplWebStandardStorage from './impl-web-standard-storage'
+import { ImplHashMap } from './impl-hash-map'
+import { ImplInMemory } from './impl-in-memory'
+import { ImplSqlDb } from './impl-sql-db'
+import { ImplWebStandardStorage } from './impl-web-standard-storage'
 import type { IKeyValueDb } from './interface'
-import * as WithCache from './with-cache'
-import * as WithDistributedInvalidations from './with-distributed-invalidations'
-import * as WithDistributedUpdates from './with-distributed-updates'
-import * as WithNamespace from './with-namespace'
-import * as WithReducedParsing from './with-reduced-parsing'
-import * as WithThrottledWrites from './with-throttled-writes'
+import { WithCache } from './with-cache'
+import { WithDistributedInvalidations } from './with-distributed-invalidations'
+import { WithDistributedUpdates } from './with-distributed-updates'
+import { WithNamespace } from './with-namespace'
+import { WithReducedParsing } from './with-reduced-parsing'
+import { WithThrottledWrites } from './with-throttled-writes'
 
 export type Config =
-  | ImplHashMap.Config
-  | ImplSqlDb.Config
-  | ImplInMemory.Config
-  | WithCache.Config
-  | WithDistributedUpdates.Config
-  | WithReducedParsing.Config
-  | WithThrottledWrites.Config
-  | WithDistributedInvalidations.Config
-  | ImplWebStandardStorage.Config
+  | ImplHashMap
+  | ImplSqlDb
+  | ImplInMemory
+  | WithCache
+  | WithDistributedUpdates
+  | WithReducedParsing
+  | WithThrottledWrites
+  | WithDistributedInvalidations
+  | ImplWebStandardStorage
 
-export const KeyValueDb = (configInput: Config): IKeyValueDb => {
-  const logger = configInput.logger?.child(['key-value-db']) ?? Logger.init({ t: 'noop' })
-  const config: Config = { ...configInput, logger }
+const init = (config_: Config): IKeyValueDb => {
+  const logger = config_.logger?.child(['key-value-db']) ?? Logger.init({ t: 'noop' })
+  const config: Config = { ...config_, logger }
   switch (config.t) {
     case 'hash-map': {
-      return ImplHashMap.KeyValueDb(config)
+      return ImplHashMap.init(config)
     }
 
     case 'sql-db': {
-      return ImplSqlDb.KeyValueDb(config)
+      return ImplSqlDb.init(config)
     }
 
     case 'with-cache': {
-      return WithCache.withCache(config)
+      return WithCache.init(config)
     }
 
     case 'with-distributed-updates': {
-      return WithDistributedUpdates.withDistributedUpdates(config)
+      return WithDistributedUpdates.init(config)
     }
 
     case 'with-reduced-parsing': {
-      return WithReducedParsing.withReducedParsing(config)
+      return WithReducedParsing.init(config)
     }
 
     case 'with-throttled-writes': {
-      return WithThrottledWrites.withThrottledWrites(config)
+      return WithThrottledWrites.init(config)
     }
 
     case 'with-distributed-invalidations': {
-      return WithDistributedInvalidations.withDistributedInvalidations(config)
+      return WithDistributedInvalidations.init(config)
     }
 
     case 'in-memory': {
-      return ImplInMemory.KeyValueDb(config)
+      return ImplInMemory.init(config)
     }
 
     case 'web-standard-storage': {
-      return ImplWebStandardStorage.KeyValueDb(config)
+      return ImplWebStandardStorage.init(config)
     }
   }
 }
 
-KeyValueDb.withNamespace = WithNamespace.withNamespace
+export const KeyValueDb = {
+  init,
+  withNamespace: WithNamespace,
+}

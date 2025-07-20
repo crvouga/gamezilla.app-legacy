@@ -3,14 +3,14 @@ import { s } from '~/@/schema'
 import { ILogger } from '../logger'
 import type { IKeyValueDb } from './interface'
 
-export type Config = {
+export type WithReducedParsing = {
   t: 'with-reduced-parsing'
   keyValueDb: IKeyValueDb
   verifiedKeys: Set<string>
   logger: ILogger
 }
 
-export const withReducedParsing = ({ keyValueDb, verifiedKeys, ...config }: Config): IKeyValueDb => {
+const init = ({ keyValueDb, verifiedKeys, ...config }: WithReducedParsing): IKeyValueDb => {
   const logger = config.logger.child(['with-reduced-parsing'])
   return {
     ...keyValueDb,
@@ -53,4 +53,8 @@ export const withReducedParsing = ({ keyValueDb, verifiedKeys, ...config }: Conf
       return got
     },
   }
+}
+
+export const WithReducedParsing = {
+  init,
 }

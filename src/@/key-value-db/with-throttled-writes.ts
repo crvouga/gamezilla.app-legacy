@@ -4,7 +4,7 @@ import type { ILogger } from '../logger/interface'
 import { TimeSpan } from '../time/time-span'
 import type { IKeyValueDb } from './interface'
 
-export type Config = {
+export type WithThrottledWrites = {
   t: 'with-throttled-writes'
   keyValueDb: IKeyValueDb
   throttle: TimeSpan
@@ -12,7 +12,7 @@ export type Config = {
   runtime: IRuntime
 }
 
-export const withThrottledWrites = ({ keyValueDb, throttle, runtime, ...config }: Config): IKeyValueDb => {
+const init = ({ keyValueDb, throttle, runtime, ...config }: WithThrottledWrites): IKeyValueDb => {
   const logger = config.logger.child(['with-throttled-writes'])
   const throttleMs = TimeSpan.toMilliseconds(throttle)
   const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
@@ -86,4 +86,8 @@ export const withThrottledWrites = ({ keyValueDb, throttle, runtime, ...config }
       return Ok(null)
     },
   }
+}
+
+export const WithThrottledWrites = {
+  init,
 }

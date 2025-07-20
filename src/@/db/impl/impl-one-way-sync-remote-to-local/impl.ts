@@ -30,10 +30,10 @@ export type Config<TEntity extends Record<string, unknown>, TRelated extends Rec
 export const Db = <TEntity extends Record<string, unknown>, TRelated extends Record<string, unknown>>(
   config: Config<TEntity, TRelated>,
 ): IDb.IDb<TEntity, TRelated> => {
-  const kvDb = KeyValueDb({
+  const kvDb = KeyValueDb.init({
     t: 'with-cache',
     source: config.kvDb,
-    cache: KeyValueDb({ t: 'hash-map', map: new Map() }),
+    cache: KeyValueDb.init({ t: 'hash-map', map: new Map() }),
     logger: config.logger,
   })
 

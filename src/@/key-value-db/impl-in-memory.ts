@@ -1,10 +1,14 @@
+import { ImplHashMap } from './impl-hash-map'
 import type { IKeyValueDb } from './interface'
-import * as ImplHashMap from './impl-hash-map'
 
-export type Config = Omit<ImplHashMap.Config, 't'> & {
+export type ImplInMemory = Omit<ImplHashMap, 't'> & {
   t: 'in-memory'
 }
 
-export const KeyValueDb = (config: Config): IKeyValueDb => {
-  return ImplHashMap.KeyValueDb({ ...config, t: 'hash-map' })
+const init = (config: ImplInMemory): IKeyValueDb => {
+  return ImplHashMap.init({ ...config, t: 'hash-map' })
+}
+
+export const ImplInMemory = {
+  init,
 }

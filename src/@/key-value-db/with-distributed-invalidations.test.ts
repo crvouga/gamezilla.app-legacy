@@ -6,7 +6,7 @@ import { PubSub } from '../pub-sub'
 import { TopicBasedPubSub } from '../pub-sub-topic-based'
 import { TopicBasedPubSubMap } from '../pub-sub-topic-based/impl-in-memory'
 import { KeyValueDb } from './impl'
-import { withNamespace } from './with-namespace'
+import { WithNamespace } from './with-namespace'
 
 const MyEvent = s.obj({
   id: s.str(),
@@ -32,18 +32,18 @@ const Fixture = async () => {
 
   const make = async (id: string) => {
     const loggerChild = logger.child([id])
-    return withNamespace({
+    return WithNamespace({
       namespace: ['my-event'],
       schema: MyEvent,
-      keyValueDb: KeyValueDb({
+      keyValueDb: KeyValueDb.init({
         t: 'with-cache',
-        source: KeyValueDb({
+        source: KeyValueDb.init({
           t: 'hash-map',
           logger: logger.child(['source']),
           map: sourceMap,
         }),
         logger: loggerChild,
-        cache: KeyValueDb({
+        cache: KeyValueDb.init({
           t: 'with-distributed-invalidations',
           pubSub: PubSub({
             t: 'pub-sub-topic-based',
@@ -54,7 +54,7 @@ const Fixture = async () => {
             topic: 'my-event-cache-invalidation',
           }),
           logger: loggerChild,
-          cache: KeyValueDb({
+          cache: KeyValueDb.init({
             t: 'hash-map',
             map: new Map(),
             logger: loggerChild,

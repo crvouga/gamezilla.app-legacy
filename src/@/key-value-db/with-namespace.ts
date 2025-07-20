@@ -2,7 +2,7 @@ import { Task } from '~/@/promise/task'
 import type { Schema } from '~/@/schema/schema'
 import { IKeyValueDb } from './interface'
 
-export const withNamespace = <TKey extends string = string, TValue = unknown>(config: {
+export const WithNamespace = <TKey extends string = string, TValue = unknown>(config: {
   keyValueDb: IKeyValueDb
   namespace: string[]
   schema: Schema<TValue>

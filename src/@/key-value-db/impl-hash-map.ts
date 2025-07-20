@@ -4,13 +4,13 @@ import { ILogger } from '../logger'
 import { ParseError } from '../schema/schema/parse-error'
 import type { IKeyValueDb } from './interface'
 
-export type Config = {
+export type ImplHashMap = {
   t: 'hash-map'
   map?: Map<string, unknown>
   logger?: ILogger
 }
 
-export const KeyValueDb = (config: Config): IKeyValueDb => {
+const init = (config: ImplHashMap): IKeyValueDb => {
   const logger = config.logger ? config.logger.child(['hash-map']) : null
   const hashMap = config?.map ?? new Map<string, unknown>()
   return {
@@ -75,4 +75,8 @@ export const KeyValueDb = (config: Config): IKeyValueDb => {
       return Ok(null)
     },
   }
+}
+
+export const ImplHashMap = {
+  init,
 }

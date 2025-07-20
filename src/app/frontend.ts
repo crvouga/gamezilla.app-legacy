@@ -116,7 +116,7 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
     t: 'web-standard',
   })
 
-  const keyValueDb = KeyValueDb({
+  const keyValueDb = KeyValueDb.init({
     t: 'web-standard-storage',
     storage: localStorage,
     logger,

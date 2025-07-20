@@ -55,7 +55,7 @@ const initCtx = async (config: {
     logger,
   })
 
-  const keyValueDbDurable = KeyValueDb({
+  const keyValueDbDurable = KeyValueDb.init({
     t: 'sql-db',
     sqlDb,
     logger,

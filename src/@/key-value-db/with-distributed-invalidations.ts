@@ -30,14 +30,14 @@ const decode = (str: string): DistributedUpdate => {
   return JSON.parse(str)
 }
 
-export type Config = {
+export type WithDistributedInvalidations = {
   t: 'with-distributed-invalidations'
   logger: ILogger
   cache: IKeyValueDb
   pubSub: IPubSub
 }
 
-export const withDistributedInvalidations = (config: Config): IKeyValueDb & { unsubscribe: () => void } => {
+const init = (config: WithDistributedInvalidations): IKeyValueDb & { unsubscribe: () => void } => {
   const logger = config.logger.child(['with-distributed-invalidations'])
 
   const unsubscribePromise = config.pubSub.sub(async (encoded) => {
@@ -104,4 +104,8 @@ export const withDistributedInvalidations = (config: Config): IKeyValueDb & { un
       return config.cache.zap(key)
     },
   }
+}
+
+export const WithDistributedInvalidations = {
+  init,
 }

@@ -11,7 +11,7 @@ const Fixture = async () => {
   const logger = Logger.init({ t: 'noop' })
   const pglite = PgliteInstance({ t: 'in-memory' })
   const sqlDb = BackendSqlDb.init({ t: 'pglite', pglite, logger })
-  const kvDb = KeyValueDb({ t: 'in-memory', logger })
+  const kvDb = KeyValueDb.init({ t: 'in-memory', logger })
   const migrationPolicy = SqlDbMigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
     kvDb,
