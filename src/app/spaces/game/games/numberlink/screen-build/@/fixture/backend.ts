@@ -16,14 +16,14 @@ const initCtx = async (ctx: SpaceBackendCtx): Promise<NumberlinkBackendCtx> => {
         numberlinkPackDb: PackDb({
           t: 'sql-db',
           sqlDb: f.sqlDbPostgres,
-          logger: Logger({ t: 'noop' }),
-          migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+          logger: Logger.init({ t: 'noop' }),
+          migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
         }),
         numberlinkPuzzleDb: PuzzleDb({
           t: 'sql-db',
           sqlDb: f.sqlDbPostgres,
-          logger: Logger({ t: 'noop' }),
-          migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+          logger: Logger.init({ t: 'noop' }),
+          migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
         }),
       }
     }

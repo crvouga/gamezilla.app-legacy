@@ -1,10 +1,10 @@
 import type { ILogger } from './interface'
 
-export type Config = {
+export type ImplNoop = {
   t: 'noop'
 }
 
-export const Logger = (config: Config): ILogger => {
+const init = (config: ImplNoop): ILogger => {
   return {
     info() {},
     warn() {},
@@ -14,10 +14,14 @@ export const Logger = (config: Config): ILogger => {
     noop() {},
     fatal() {},
     child() {
-      return Logger(config)
+      return init(config)
     },
     setMaxLogLevel() {
-      return Logger(config)
+      return init(config)
     },
   }
+}
+
+export const ImplNoop = {
+  init,
 }

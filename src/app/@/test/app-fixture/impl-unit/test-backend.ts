@@ -10,7 +10,7 @@ import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { randomServerPort } from '~/@/test/random-server-port'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
-import { Topic } from '~/@/topic'
+import { ITopicClient } from '~/@/topic/topic-client/types'
 import { AuthBackend } from '~/app/auth/backend'
 import { AppBackend } from '~/app/backend'
 import { ProfileDb } from '~/app/profile/@/user-profile/user-profile-db'
@@ -22,7 +22,7 @@ import { AppBackendCtxBase } from '../../../backend/ctx'
 
 export const TestBackend = async (config: {
   sqlDb: ISqlDb
-  topic: Topic.Client<typeof topicContract>
+  topic: ITopicClient<typeof topicContract>
   logger: ILogger
 }) => {
   const logger = config.logger.child(['backend'])
@@ -36,13 +36,13 @@ export const TestBackend = async (config: {
   const keyValueDbDurable = KeyValueDb({
     t: 'sql-db',
     sqlDb: config.sqlDb,
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     logger,
   })
 
-  const pubSub = TopicBasedPubSub({ t: 'in-memory', subscribersByTopic: new Map() })
+  const pubSub = TopicBasedPubSub.init({ t: 'in-memory', subscribersByTopic: new Map() })
 
-  const httpServer = HttpServer({
+  const httpServer = HttpServer.init({
     t: 'noop',
     logger,
   })
@@ -50,13 +50,13 @@ export const TestBackend = async (config: {
   const userProfileDb = ProfileDb({
     t: 'sql',
     sqlDb: config.sqlDb,
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     logger,
   })
 
   const now = UnixMs.now()
 
-  const migrationPolicy = SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
+  const migrationPolicy = SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) })
 
   const syncEngine = SyncEngineServer({ logger })
 

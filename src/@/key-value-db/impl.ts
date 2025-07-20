@@ -23,7 +23,7 @@ export type Config =
   | ImplWebStandardStorage.Config
 
 export const KeyValueDb = (configInput: Config): IKeyValueDb => {
-  const logger = configInput.logger?.child(['key-value-db']) ?? Logger({ t: 'noop' })
+  const logger = configInput.logger?.child(['key-value-db']) ?? Logger.init({ t: 'noop' })
   const config: Config = { ...configInput, logger }
   switch (config.t) {
     case 'hash-map': {

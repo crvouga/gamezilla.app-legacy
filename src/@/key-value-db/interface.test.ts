@@ -19,7 +19,7 @@ type Fixture = {
   keyValueDb: IKeyValueDb
 }
 const Fixtures = async (): Promise<Fixture[]> => {
-  const logger = Logger({ t: 'noop' })
+  const logger = Logger.init({ t: 'noop' })
 
   const fixtures: Fixture[] = []
 
@@ -111,7 +111,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
       t: 'sql-db',
       sqlDb: sqlDbSqlite,
       logger,
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     }),
   })
 
@@ -129,7 +129,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
           databaseUrl: DATABASE_URL,
         }),
         logger,
-        migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+        migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
       }),
     })
   }

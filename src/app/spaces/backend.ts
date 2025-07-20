@@ -1,5 +1,5 @@
 import { RPC } from '~/@/rpc'
-import { Topic } from '~/@/topic'
+import { ITopicClient } from '~/@/topic/topic-client/types'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { GameBackend } from './game/backend'
 import { ListSpacesBackend } from './list-spaces/backend'
@@ -10,7 +10,7 @@ import { type BackendCtxModule, rpcContract, topicContract } from './types'
 
 const initCtx = async (input: {
   ctx: AppBackendCtxBase
-  topic: Topic.Client<typeof topicContract>
+  topic: ITopicClient<typeof topicContract>
 }): Promise<BackendCtxModule> => {
   const spaceDb = await SpaceDb({
     t: 'sql-db',

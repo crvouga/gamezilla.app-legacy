@@ -17,7 +17,7 @@ describe('AlgoSolveAsync', () => {
     const solution = unwrap(
       await AlgoSolveAsync.solve({
         model: numberlink,
-        logger: Logger({ t: 'noop' }),
+        logger: Logger.init({ t: 'noop' }),
         maxDuration: TimeSpan.seconds(10),
       }),
     )
@@ -50,7 +50,7 @@ describe('AlgoSolveAsync', () => {
 
     const solvePromise = AlgoSolveAsync.solve({
       model: numberlink,
-      logger: Logger({ t: 'noop' }),
+      logger: Logger.init({ t: 'noop' }),
       maxDuration: TimeSpan.seconds(10),
       abortSignal: abortController.signal,
     })

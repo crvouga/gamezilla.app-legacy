@@ -30,7 +30,7 @@ const Fixtures = async () => {
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
     logger: f.logger,
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
@@ -38,7 +38,7 @@ const Fixtures = async () => {
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
       logger: f.logger,
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     })
   }
 
@@ -56,7 +56,7 @@ describe('SolutionsDb', () => {
       const hash = SolutionHash.init(numberlink)
       const zapped = await f.solutionsDb.zap(hash)
 
-      const solutions = await Solutions.find({ models: [numberlink], logger: Logger({ t: 'noop' }) })
+      const solutions = await Solutions.find({ models: [numberlink], logger: Logger.init({ t: 'noop' }) })
 
       const before = await f.solutionsDb.get(hash)
       const put = await f.solutionsDb.put(solutions)
@@ -77,7 +77,7 @@ describe('SolutionsDb', () => {
         [' ', ' ', 'A'],
       ])
       const hash = SolutionHash.init(numberlink)
-      const solutions = await Solutions.find({ models: [numberlink], logger: Logger({ t: 'noop' }) })
+      const solutions = await Solutions.find({ models: [numberlink], logger: Logger.init({ t: 'noop' }) })
       await f.solutionsDb.put(solutions)
 
       const before = await f.solutionsDb.get(hash)

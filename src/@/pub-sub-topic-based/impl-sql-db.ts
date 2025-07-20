@@ -1,16 +1,16 @@
-import { ISqlDb } from '../sql-db'
 import { ILogger } from '../logger'
 import { sleep } from '../promise/sleep'
+import { ISqlDb } from '../sql-db'
 import { TimeSpan } from '../time/time-span'
 import { ITopicBasedPubSub } from './interface'
 
-export type Config = {
+export type ImplSqlDb = {
   t: 'sql-db'
   sqlDb: ISqlDb
   logger: ILogger
 }
 
-export const TopicBasedPubSub = (config: Config): ITopicBasedPubSub => {
+const init = (config: ImplSqlDb): ITopicBasedPubSub => {
   const unlistenByTopic = new Map<string, Set<() => void>>()
 
   return {
@@ -47,4 +47,8 @@ export const TopicBasedPubSub = (config: Config): ITopicBasedPubSub => {
       config.logger.debug(`unsub: topic=${topic}`)
     },
   }
+}
+
+export const ImplSqlDb = {
+  init,
 }

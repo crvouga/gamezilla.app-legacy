@@ -32,14 +32,14 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
   const keyValueDb = KeyValueDb({ t: 'in-memory' })
   const migrationPolicy = SqlDbMigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
-    logger: Logger({ t: 'noop' }),
+    logger: Logger.init({ t: 'noop' }),
     kvDb: keyValueDb,
   })
   const syncEngine = SyncEngineClient({
-    logger: Logger({ t: 'noop' }),
+    logger: Logger.init({ t: 'noop' }),
     crudTransactionDb: CrudTransactionDb({
       t: 'sql-db',
-      logger: Logger({ t: 'noop' }),
+      logger: Logger.init({ t: 'noop' }),
       migrationPolicy,
       sqlDb: SQL_DB_NOOP,
     }),
@@ -49,13 +49,13 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     keyValueDb,
     migrationPolicy,
     keyboard: KeyBoard({ t: 'noop' }),
-    audioPlayer: AudioPlayer({ t: 'fake', logger: Logger({ t: 'noop' }) }),
-    navigation: Navigation({ t: 'in-memory', logger: Logger({ t: 'noop' }) }),
+    audioPlayer: AudioPlayer({ t: 'fake', logger: Logger.init({ t: 'noop' }) }),
+    navigation: Navigation({ t: 'in-memory', logger: Logger.init({ t: 'noop' }) }),
     viewport: Viewport({ t: 'noop' }),
     clientSessionId: ClientSessionId.generate(),
     parentScreen: null,
     sqlDb: SQL_DB_NOOP,
-    logger: Logger({ t: 'noop' }),
+    logger: Logger.init({ t: 'noop' }),
     currentScreen: input?.currentScreen ?? {
       n: 'auth',
       t: 'login',

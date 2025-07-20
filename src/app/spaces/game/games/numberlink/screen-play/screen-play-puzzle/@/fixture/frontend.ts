@@ -32,7 +32,7 @@
 
 //   const solutions = await Solutions.find({
 //     models: [puzzle.model, nextPuzzle.model, prevPuzzle.model],
-//     logger: Logger({ t: 'noop' }),
+//     logger: Logger.init({ t: 'noop' }),
 //   })
 //   const ctx: FlowFrontendCtx = {
 //     ...f.ctx,

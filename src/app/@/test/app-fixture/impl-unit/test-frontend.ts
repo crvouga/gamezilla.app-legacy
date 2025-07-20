@@ -14,7 +14,6 @@ import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TestClient } from '~/@/test-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
-import { Topic } from '~/@/topic'
 import { h, render, VDomEngine } from '~/@/vdom/h'
 import { Viewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
@@ -26,11 +25,12 @@ import { SpacesFrontend } from '~/app/spaces/frontend'
 import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
 
+import { ITopicClient } from '~/@/topic/topic-client/types'
 import { AppFrontendCtxBase } from '../../../frontend/ctx'
 
 export const TestFrontend = async (config: {
   rpcServer: RPC.Server<typeof rpcContract>
-  topic: Topic.Client<typeof topicContract>
+  topic: ITopicClient<typeof topicContract>
   sqlDb: ISqlDb
   logger: ILogger
 }) => {
@@ -60,16 +60,16 @@ export const TestFrontend = async (config: {
 
   const keyValueDb = KeyValueDb({ t: 'web-standard-storage', storage: localStorage, logger })
 
-  const migrationPolicy = SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
+  const migrationPolicy = SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) })
 
   const syncEngine = SyncEngineClient({
     crudTransactionDb: CrudTransactionDb({
       t: 'sql-db',
-      logger: Logger({ t: 'noop' }),
+      logger: Logger.init({ t: 'noop' }),
       migrationPolicy,
       sqlDb: config.sqlDb,
     }),
-    logger: Logger({ t: 'noop' }),
+    logger: Logger.init({ t: 'noop' }),
   })
 
   const ctxBase: AppFrontendCtxBase = {

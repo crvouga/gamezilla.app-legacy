@@ -11,7 +11,7 @@ import { toStatus } from './mode-play'
 
 const Fixture = async (input: { numberlink: NumberlinkVariant.Model }) => {
   const ctx: ModePlay.Ctx = ModePlay.initCtx({
-    solutions: await Solutions.find({ models: [input.numberlink], logger: Logger({ t: 'noop' }) }),
+    solutions: await Solutions.find({ models: [input.numberlink], logger: Logger.init({ t: 'noop' }) }),
     numberlink: input.numberlink,
   })
 
@@ -331,7 +331,7 @@ describe('NumberlinkModePlay', () => {
     const model = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
-        solutions: await Solutions.find({ models: [numberlink], logger: Logger({ t: 'noop' }) }),
+        solutions: await Solutions.find({ models: [numberlink], logger: Logger.init({ t: 'noop' }) }),
       },
     ]).model
 
@@ -415,7 +415,7 @@ describe('NumberlinkModePlay', () => {
     const before = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
-        solutions: await Solutions.find({ models: [f.numberlink], logger: Logger({ t: 'noop' }) }),
+        solutions: await Solutions.find({ models: [f.numberlink], logger: Logger.init({ t: 'noop' }) }),
       },
     ])
     const after = f.update(before.model, [
@@ -452,7 +452,7 @@ describe('NumberlinkModePlay', () => {
     const output = f.update(f.init, [
       {
         t: 'user-clicked-use-hint',
-        solutions: await Solutions.find({ models: [f.numberlink], logger: Logger({ t: 'noop' }) }),
+        solutions: await Solutions.find({ models: [f.numberlink], logger: Logger.init({ t: 'noop' }) }),
       },
     ])
     expect(output.events?.some((e) => e.t === 'used-hint')).toEqual(true)

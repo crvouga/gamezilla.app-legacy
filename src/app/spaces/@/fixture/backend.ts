@@ -2,7 +2,7 @@ import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
 import { Logger } from '~/@/logger'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
-import { Topic } from '~/@/topic'
+import { TopicClient } from '~/@/topic/topic-client/topic-client'
 import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
@@ -43,7 +43,7 @@ export const FixtureSpaceBackend = async () => {
 
   const ctx: SpaceBackendCtx = { ...f.ctx }
 
-  const topic = Topic.initClient({
+  const topic = TopicClient.init({
     t: 'local',
     contract: SpacesTypes.topicContract,
     logger: f.ctx.logger,
@@ -57,7 +57,7 @@ export const FixtureSpaceBackend = async () => {
       t: 'sql-db',
       sqlDb: f.ctx.sqlDb,
       logger: f.ctx.logger,
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'never-run', logger: Logger({ t: 'noop' }) }),
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'never-run', logger: Logger.init({ t: 'noop' }) }),
     }),
     topic,
   }

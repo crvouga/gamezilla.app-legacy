@@ -24,7 +24,7 @@ describe('UseHint', () => {
 //       {
 //         msg: {
 //           t: 'user-clicked-use-hint',
-//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
+//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) }),
 //         },
 //       },
 //     ])
@@ -47,13 +47,13 @@ describe('UseHint', () => {
 //       {
 //         msg: {
 //           t: 'user-clicked-use-hint',
-//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
+//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) }),
 //         },
 //       },
 //       {
 //         msg: {
 //           t: 'user-clicked-use-hint',
-//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
+//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) }),
 //         },
 //       },
 //     ])
@@ -74,7 +74,7 @@ describe('UseHint', () => {
 //       {
 //         msg: {
 //           t: 'user-clicked-use-hint',
-//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
+//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) }),
 //         },
 //       },
 //     ])
@@ -94,19 +94,19 @@ describe('UseHint', () => {
 //       {
 //         msg: {
 //           t: 'user-clicked-use-hint',
-//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
+//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) }),
 //         },
 //       },
 //       {
 //         msg: {
 //           t: 'user-clicked-use-hint',
-//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
+//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) }),
 //         },
 //       },
 //       {
 //         msg: {
 //           t: 'user-clicked-use-hint',
-//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
+//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) }),
 //         },
 //       },
 //     ])
@@ -128,7 +128,7 @@ describe('UseHint', () => {
 //       {
 //         msg: {
 //           t: 'user-clicked-use-hint',
-//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
+//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) }),
 //         },
 //       },
 //     ])
@@ -161,7 +161,7 @@ describe('UseHint', () => {
 //         {
 //           msg: {
 //             t: 'user-clicked-use-hint',
-//             solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
+//             solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) }),
 //           },
 //         },
 //       ],
@@ -180,7 +180,7 @@ describe('UseHint', () => {
 //       {
 //         msg: {
 //           t: 'user-clicked-use-hint',
-//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
+//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) }),
 //         },
 //       },
 //     ])
@@ -202,7 +202,7 @@ describe('UseHint', () => {
 //       {
 //         msg: {
 //           t: 'user-clicked-use-hint',
-//           solutions: await Solutions.find({ models: [before], logger: Logger({ t: 'noop' }) }),
+//           solutions: await Solutions.find({ models: [before], logger: Logger.init({ t: 'noop' }) }),
 //         },
 //       },
 //     ])
@@ -237,7 +237,7 @@ describe('UseHint', () => {
 //       {
 //         msg: {
 //           t: 'user-clicked-use-hint',
-//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) }),
+//           solutions: await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) }),
 //         },
 //       },
 //     ])
@@ -269,7 +269,7 @@ describe('UseHint', () => {
 //       {
 //         msg: {
 //           t: 'user-clicked-use-hint',
-//           solutions: await Solutions.find({ models: [numberlink], logger: Logger({ t: 'noop' }) }),
+//           solutions: await Solutions.find({ models: [numberlink], logger: Logger.init({ t: 'noop' }) }),
 //         },
 //       },
 //     ])
@@ -318,7 +318,7 @@ describe('UseHint', () => {
 //       ]),
 //     })
 
-//     const solutions = await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) })
+//     const solutions = await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) })
 
 //     const output = f.update(f.init, [
 //       { msg: { t: 'user-clicked-use-hint', solutions } },

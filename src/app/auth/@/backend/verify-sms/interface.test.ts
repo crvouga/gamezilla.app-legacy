@@ -34,7 +34,7 @@ const Fixtures = async () => {
 
     configs.push({
       t: 'twilio',
-      logger: Logger({ t: 'console', namespace: ['verify-sms'], newLinePerMsg: false, maxLogLevel: 'info' }),
+      logger: Logger.init({ t: 'console', namespace: ['verify-sms'], newLinePerMsg: false, maxLogLevel: 'info' }),
       twilioAccountSid: TWILIO_ACCOUNT_SID,
       twilioAuthToken: TWILIO_AUTH_TOKEN,
       twilioMessagingServiceSid: TWILIO_MESSAGING_SERVICE_SID,

@@ -10,7 +10,7 @@ export const BaseFixture = async () => {
     t: 'happydom',
     maxWait: TimeSpan.milliseconds(1000),
     poll: TimeSpan.milliseconds(10),
-    audioPlayer: AudioPlayer({ t: 'fake', logger: Logger({ t: 'noop' }) }),
+    audioPlayer: AudioPlayer({ t: 'fake', logger: Logger.init({ t: 'noop' }) }),
   })
 
   document.body.innerHTML = '<div id="root"></div>'

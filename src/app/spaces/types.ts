@@ -1,5 +1,6 @@
 import { RPC } from '~/@/rpc'
-import { Topic } from '~/@/topic'
+import { TopicContract } from '~/@/topic/topic-contract'
+import { ITopicClient } from '~/@/topic/topic-client/types'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { UserId } from '~/app/@/data/user-id'
@@ -51,14 +52,14 @@ export type MsgFrontend =
   | CurrentSpaceMiniPlayerTypes.MsgFrontend
   | SyncTypes.MsgFrontend
 
-export const topicContract = Topic.combineContracts([SyncTypes.topicContract])
+export const topicContract = TopicContract.combine([SyncTypes.topicContract])
 
 export const rpcContract = RPC.combineContracts([SyncTypes.rpcContract, ListSpacesTypes.rpcContract])
 
 export type MsgBackend = SyncTypes.MsgBackend
 
 export type FrontendCtxModule = AppFrontendCtxBase & {
-  topic: Topic.Client<typeof topicContract>
+  topic: ITopicClient<typeof topicContract>
   rpc: RPC.Client<typeof rpcContract>
   space?: Space | null
   spaceDb: ISpaceDb
@@ -67,7 +68,7 @@ export type FrontendCtxModule = AppFrontendCtxBase & {
 export type BackendCtxModule = AppBackendCtxBase &
   GameTypes.GamesBackendCtxModule & {
     spaceDb: ISpaceDb
-    topic: Topic.Client<typeof topicContract>
+    topic: ITopicClient<typeof topicContract>
   }
 
 export type FrontendModule = AppFrontendModule<{

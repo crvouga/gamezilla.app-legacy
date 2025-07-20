@@ -1,5 +1,5 @@
 import { RPC } from '~/@/rpc'
-import { Topic } from '~/@/topic'
+import { ITopicClient } from '~/@/topic/topic-client/types'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { BackendConnectionBackend } from './backend-connection/backend'
 import { BackendInstanceBackend } from './backend-instance/backend'
@@ -7,7 +7,7 @@ import { rpcContract, topicContract, type BackendCtxModule } from './types'
 
 const initCtx = async (input: {
   ctx: AppBackendCtxBase
-  topic: Topic.Client<typeof topicContract>
+  topic: ITopicClient<typeof topicContract>
 }): Promise<BackendCtxModule> => {
   return {
     ...input.ctx,

@@ -18,7 +18,7 @@ describe('UseHintFrontend', () => {
 //     const r = f.render(<UseHintFrontend.TestView dispatch={() => {}} ctx={f.ctx} model={f.init} {...input} />)
 //     return r
 //   }
-//   const solutions = await Solutions.find({ models: [f.ctx.numberlink], logger: Logger({ t: 'noop' }) })
+//   const solutions = await Solutions.find({ models: [f.ctx.numberlink], logger: Logger.init({ t: 'noop' }) })
 //   f.ctx = {
 //     ...f.ctx,
 //     solutions,

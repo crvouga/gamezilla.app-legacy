@@ -109,7 +109,7 @@ describe('ScreenPlayPuzzleSpace', () => {
         ? ModePlay.init({
             ctx: ModePlay.initCtx({
               numberlink: f.nextPuzzle.c.model,
-              solutions: await Solutions.find({ models: [f.nextPuzzle.c.model], logger: Logger({ t: 'noop' }) }),
+              solutions: await Solutions.find({ models: [f.nextPuzzle.c.model], logger: Logger.init({ t: 'noop' }) }),
             }),
           })
         : null,
@@ -246,7 +246,7 @@ describe('ScreenPlayPuzzleSpace', () => {
 
     const ctx = ModePlay.initCtx({
       numberlink: f.puzzle.model,
-      solutions: await Solutions.find({ models: [f.puzzle.model], logger: Logger({ t: 'noop' }) }),
+      solutions: await Solutions.find({ models: [f.puzzle.model], logger: Logger.init({ t: 'noop' }) }),
     })
 
     expect(before.modePlay).toEqual(ModePlay.init({ ctx }))

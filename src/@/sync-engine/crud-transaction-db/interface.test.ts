@@ -6,7 +6,7 @@ import { describe, expect, test } from '~/@/test-runner'
 import { CrudTransactionDb } from './impl-sql'
 
 export const Fixture = () => {
-  const logger = Logger({ t: 'noop' })
+  const logger = Logger.init({ t: 'noop' })
   const sqlDb = SqlDb({ t: 'pglite', pglite: PgliteInstance({ t: 'in-memory' }), logger })
   const migrationPolicy = SqlDbMigrationPolicy({ t: 'always-run', logger })
   const crudTransactionDb = CrudTransactionDb({ t: 'sql-db', sqlDb, migrationPolicy, logger })

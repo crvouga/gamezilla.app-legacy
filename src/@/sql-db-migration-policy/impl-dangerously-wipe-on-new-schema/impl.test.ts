@@ -8,14 +8,14 @@ import { describe, expect, test } from '~/@/test-runner'
 import { SqlDbMigrationPolicy } from '../impl'
 
 const Fixture = async () => {
-  const logger = Logger({ t: 'noop' })
+  const logger = Logger.init({ t: 'noop' })
   const pglite = PgliteInstance({ t: 'in-memory' })
   const sqlDb = SqlDb({ t: 'pglite', pglite, logger })
   const kvDb = KeyValueDb({ t: 'in-memory', logger })
   const migrationPolicy = SqlDbMigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',
     kvDb,
-    logger: Logger({ t: 'noop' }),
+    logger: Logger.init({ t: 'noop' }),
   })
   return {
     sqlDb,

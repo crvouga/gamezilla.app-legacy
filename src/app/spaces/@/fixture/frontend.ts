@@ -30,7 +30,7 @@
 //   const topic = Topic.initClient({
 //     t: 'local',
 //     contract: SpacesTypes.topicContract,
-//     logger: Logger({ t: 'noop' }),
+//     logger: Logger.init({ t: 'noop' }),
 //   })
 
 //   const rpc = RPC.initClient({
@@ -55,7 +55,7 @@
 //   const spaceDb = await SpaceDb({
 //     t: 'sql-db',
 //     sqlDb: f.ctx.sqlDb,
-//     logger: Logger({ t: 'noop' }),
+//     logger: Logger.init({ t: 'noop' }),
 
 //   })
 
@@ -121,7 +121,7 @@
 //   const topic = Topic.initClient({
 //     t: 'local',
 //     contract: SpacesTypes.topicContract,
-//     logger: Logger({ t: 'noop' }),
+//     logger: Logger.init({ t: 'noop' }),
 //   })
 
 //   const rpc = RPC.initClient({
@@ -146,7 +146,7 @@
 //   const spaceDb = await SpaceDb({
 //     t: 'sql-db',
 //     sqlDb: f.ctx.sqlDb,
-//     logger: Logger({ t: 'noop' }),
+//     logger: Logger.init({ t: 'noop' }),
 
 //   })
 

@@ -40,34 +40,34 @@ const Fixtures = async () => {
   configs.push({
     t: 'in-memory',
     simulateLatency: async () => {},
-    logger: Logger({ t: 'noop' }),
+    logger: Logger.init({ t: 'noop' }),
   })
 
   configs.push({
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
-    logger: Logger({ t: 'noop' }),
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+    logger: Logger.init({ t: 'noop' }),
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
     configs.push({
       t: 'sql',
       sqlDb: f.sqlDbPostgres,
-      logger: Logger({ t: 'noop' }),
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+      logger: Logger.init({ t: 'noop' }),
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     })
 
     configs.push({
       t: 'sql-with-cache',
       keyValueDb: f.keyValueDbHashMap,
       sqlDb: f.sqlDbPostgres,
-      pubSubTopicBased: TopicBasedPubSub({
+      pubSubTopicBased: TopicBasedPubSub.init({
         t: 'in-memory',
         subscribersByTopic: new Map(),
       }),
-      logger: Logger({ t: 'noop' }),
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+      logger: Logger.init({ t: 'noop' }),
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     })
   }
 

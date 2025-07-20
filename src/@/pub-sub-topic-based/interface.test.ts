@@ -1,10 +1,9 @@
 import { s } from '~/@/schema'
 import { describe, expect, test } from '~/@/test-runner'
+import { TopicBasedPubSub } from './impl'
 
-import { Config, TopicBasedPubSub } from './impl'
-
-const Fixture = async (config: Config) => {
-  const pubSub = TopicBasedPubSub(config)
+const Fixture = async (config: TopicBasedPubSub) => {
+  const pubSub = TopicBasedPubSub.init(config)
   return {
     ...config,
     pubSub,
@@ -30,10 +29,10 @@ const encode = (myEvent: MyEvent) => JSON.stringify(myEvent)
 
 const Fixtures = async () => {
   // const f = await FixtureAppBackend()
-  const configs: Config[] = [{ t: 'in-memory' }]
+  const configs: TopicBasedPubSub[] = [{ t: 'in-memory' }]
 
   // if (f.t === 'integration') {
-  //   configs.push({ t: 'sql-db', sqlDb: f.sqlDbPostgres, logger: Logger({ t: 'noop' }) })
+  //   configs.push({ t: 'sql-db', sqlDb: f.sqlDbPostgres, logger: Logger.init({ t: 'noop' }) })
   // }
 
   return Promise.all(configs.map(Fixture))

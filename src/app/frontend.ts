@@ -20,7 +20,7 @@ import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl-sql'
 import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
-import { Topic } from '~/@/topic'
+import { TopicClient } from '~/@/topic/topic-client/topic-client'
 import { IconGamepad, IconUserCircle } from '~/@/ui/icon'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
 import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
@@ -48,7 +48,7 @@ import { toBackendConnectionStatus } from './wire/backend-connection/backend-con
 import { WireFrontend } from './wire/frontend'
 
 const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<FrontendCtxModule> => {
-  const logger = Logger({
+  const logger = Logger.init({
     t: 'console',
     namespace: ['frontend'],
     newLinePerMsg: false,
@@ -69,7 +69,7 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
     httpClient,
   })
 
-  const topic = Topic.initClient({
+  const topic = TopicClient.init({
     t: 'web-sockets',
     contract: topicContract,
     serverUrl: config.topicUrl,

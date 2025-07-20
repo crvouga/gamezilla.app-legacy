@@ -23,7 +23,7 @@ export const VerifySMSInHouseFixture = async (input?: {
   hashing?: IHashing
   verificationDb?: IVerificationDb
 }) => {
-  const sms = SMSFake({ logger: Logger({ t: 'noop' }) })
+  const sms = SMSFake({ logger: Logger.init({ t: 'noop' }) })
   const CODE = '123456'
   const WRONG_CODE = '42'
   const verificationCodeGenerator =
@@ -32,7 +32,7 @@ export const VerifySMSInHouseFixture = async (input?: {
       t: 'fake',
       code: CODE,
     })
-  const logger = Logger({ t: 'noop' })
+  const logger = Logger.init({ t: 'noop' })
   const verificationDb = input?.verificationDb ?? VerificationDb({ t: 'hash-map' })
   const verificationAttemptDb = VerificationAttemptDb({
     t: 'hash-map',

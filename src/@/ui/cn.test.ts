@@ -4,8 +4,8 @@ import { cnFilter, cnLoop, cnParams } from './cn'
 
 const SHOULD_LOG = false
 const logger = SHOULD_LOG
-  ? Logger({ t: 'console', namespace: ['cn'], newLinePerMsg: false, maxLogLevel: 'info' })
-  : Logger({ t: 'noop' })
+  ? Logger.init({ t: 'console', namespace: ['cn'], newLinePerMsg: false, maxLogLevel: 'info' })
+  : Logger.init({ t: 'noop' })
 
 describe('cn performance', () => {
   test('should be fast for typical usage', () => {

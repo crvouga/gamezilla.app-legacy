@@ -41,13 +41,13 @@ export type IFixtureAppBackendIntegration = Omit<IFixtureAppBackendUnit, 't'> & 
 export type IFixtureAppBackend = IFixtureAppBackendUnit | IFixtureAppBackendIntegration
 
 export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
-  const logger = Logger({ t: 'noop' })
+  const logger = Logger.init({ t: 'noop' })
 
-  const pubSub = TopicBasedPubSub({ t: 'in-memory', subscribersByTopic: new Map() })
+  const pubSub = TopicBasedPubSub.init({ t: 'in-memory', subscribersByTopic: new Map() })
 
   const runtime = Runtime({ t: 'process', logger, shutoffFGracePeriod: TimeSpan.seconds(0) })
 
-  const httpServer = HttpServer({ t: 'node', logger })
+  const httpServer = HttpServer.init({ t: 'node', logger })
 
   const keyValueDbHashMap = KeyValueDb({ t: 'hash-map' })
 
@@ -67,7 +67,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const now = UnixMs.now()
 
-  const migrationPolicy = SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) })
+  const migrationPolicy = SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) })
 
   const syncEngine = SyncEngineServer({ logger })
 
@@ -88,7 +88,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   }
 
   if (!IS_INTEGRATION_TEST) {
-    const pubSubTopicBased = TopicBasedPubSub({ t: 'in-memory', subscribersByTopic: new Map() })
+    const pubSubTopicBased = TopicBasedPubSub.init({ t: 'in-memory', subscribersByTopic: new Map() })
 
     return {
       t: 'unit',
@@ -114,17 +114,17 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     t: 'sql-db',
     sqlDb: sqlDbPostgres,
     logger,
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
   })
 
   const keyValueDbSqlite = KeyValueDb({
     t: 'sql-db',
     sqlDb: sqlDbSqlite,
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     logger,
   })
 
-  const pubSubTopicBased = TopicBasedPubSub({
+  const pubSubTopicBased = TopicBasedPubSub.init({
     t: 'sql-db',
     logger,
     sqlDb: sqlDbPostgres,

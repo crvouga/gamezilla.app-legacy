@@ -1,7 +1,8 @@
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { s } from '~/@/schema'
 import { UnixMs } from '~/@/time/unix-ms'
-import { Topic } from '~/@/topic'
+import { TopicContract } from '~/@/topic/topic-contract'
+import { ITopicClient } from '~/@/topic/topic-client/types'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
@@ -33,7 +34,7 @@ export type PingPongMsg = s.Infer<typeof PingPongMsg>
 
 export type MsgFrontend = { t: 'ping'; pingId: PingId; now: UnixMs } | { t: 'pong'; pingId: PingId; now: UnixMs }
 
-export const topicContract = Topic.initContract({
+export const topicContract = TopicContract.init({
   ping: {
     params: ClientSessionId,
     msg: PingPongMsg,
@@ -45,11 +46,11 @@ export const topicContract = Topic.initContract({
 })
 
 export type FrontendCtxModule = AppFrontendCtxBase & {
-  topic: Topic.Client<typeof topicContract>
+  topic: ITopicClient<typeof topicContract>
 }
 
 export type BackendCtxModule = AppBackendCtxBase & {
-  topic: Topic.Client<typeof topicContract>
+  topic: ITopicClient<typeof topicContract>
 }
 
 export type FrontendModule = AppFrontendModule<{

@@ -1,13 +1,13 @@
 import { ITopicBasedPubSub } from './interface'
 
-export type Config = {
+export type ImplInMemory = {
   t: 'in-memory'
   subscribersByTopic?: TopicBasedPubSubMap
 }
 
 export type TopicBasedPubSubMap = Map<string, Set<(msg: string) => unknown>>
 
-export const TopicBasedPubSub = (config: Config): ITopicBasedPubSub => {
+const init = (config: ImplInMemory): ITopicBasedPubSub => {
   const subscribersByTopic: TopicBasedPubSubMap = config.subscribersByTopic ?? new Map()
   return {
     async pub(topic, msg) {
@@ -27,4 +27,8 @@ export const TopicBasedPubSub = (config: Config): ITopicBasedPubSub => {
       subscribersByTopic.delete(topic)
     },
   }
+}
+
+export const ImplInMemory = {
+  init,
 }

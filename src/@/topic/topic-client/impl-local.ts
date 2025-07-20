@@ -1,27 +1,28 @@
 import { ILogger } from '~/@/logger'
 import { PubSub, Sub } from '~/@/sub'
-import { Client, ClientNode, ContractBase } from '../types'
-import { Topic, TopicName, toTopic } from './topic'
-import { TopicNameSubscription } from './topic-name-subscription'
-import { TopicSubscription } from './topic-subscription'
+import { ContractBase } from '../topic-contract'
+import { TopicNameSubscription } from '../topic-name-subscription'
+import { TopicName, TopicString } from '../topic-string'
+import { TopicSubscription } from '../topic-subscription'
+import { TopicClientNode, ITopicClient } from './types'
 
-export type Config<TContract extends ContractBase> = {
+export type ImplLocal<TContract extends ContractBase> = {
   t: 'local'
   contract: TContract
   logger: ILogger
 }
 
-export const initClient = <TContract extends ContractBase>(config: Config<TContract>): Client<TContract> => {
-  const subscriptionsByTopic = new Map<Topic, TopicSubscription>()
+const init = <TContract extends ContractBase>(config: ImplLocal<TContract>): ITopicClient<TContract> => {
+  const subscriptionsByTopic = new Map<TopicString, TopicSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
   const client = Object.entries(config.contract)
     .map(([topicName_, _topic]) => {
       const topicName = topicName_ as TopicName
 
-      const clientNode: ClientNode<TContract, typeof topicName> = {
+      const clientNode: TopicClientNode<TContract, typeof topicName> = {
         pub(topicParams, msg) {
-          const topic = toTopic(topicName, topicParams)
+          const topic = TopicString.init(topicName, topicParams)
 
           const subscription = subscriptionsByTopic.get(topic)
 
@@ -36,7 +37,7 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
           subscriptionByName.pubSub.pub(msg)
         },
         sub(topicParams, mapper) {
-          const topic = toTopic(topicName, topicParams)
+          const topic = TopicString.init(topicName, topicParams)
 
           const subscription = subscriptionsByTopic.get(topic)
 
@@ -82,7 +83,11 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
     .reduce((acc, [topicName, topic]) => {
       acc[topicName as keyof TContract] = topic
       return acc
-    }, {} as Client<TContract>)
+    }, {} as ITopicClient<TContract>)
 
   return client
+}
+
+export const ImplLocal = {
+  init,
 }

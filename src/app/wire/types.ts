@@ -1,5 +1,6 @@
 import { RPC } from '~/@/rpc'
-import { Topic } from '~/@/topic'
+import { TopicContract } from '~/@/topic/topic-contract'
+import { ITopicClient } from '~/@/topic/topic-client/types'
 import { AppFrontendModule } from '../@/architecture/app-frontend'
 import { AppBackendCtxBase } from '../@/backend/ctx'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
@@ -17,10 +18,10 @@ export type MsgFrontend =
 
 export const rpcContract = RPC.combineContracts([BackendInstanceTypes.rpcContract])
 
-export const topicContract = Topic.combineContracts([BackendConnectionTypes.topicContract])
+export const topicContract = TopicContract.combine([BackendConnectionTypes.topicContract])
 
 export type FrontendCtxModule = AppFrontendCtxBase & {
-  topic: Topic.Client<typeof topicContract>
+  topic: ITopicClient<typeof topicContract>
   rpc: RPC.Client<typeof rpcContract>
 }
 

@@ -3,10 +3,10 @@ import { Result } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { RPCError } from '~/@/rpc/error'
 import { s } from '~/@/schema'
-import { Topic } from '~/@/topic'
+import { TopicContract } from '~/@/topic/topic-contract'
 import { SpaceId } from '~/app/@/data/space-id'
-import { Space } from '../space/space'
 import { MsgSpace } from '../space/msg-space'
+import { Space } from '../space/space'
 
 export type MsgFrontend =
   | {
@@ -23,7 +23,7 @@ export type MsgBackend = {
   c: WithEventMeta<MsgSpace>
 }
 
-export const topicContract = Topic.initContract({
+export const topicContract = TopicContract.init({
   'spaces/msg': {
     params: SpaceId,
     msg: WithEventMeta(MsgSpace),

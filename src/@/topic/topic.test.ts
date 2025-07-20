@@ -7,15 +7,17 @@ import { ClientSessionId } from '~/@/wire/client-session-id'
 import { TopicBasedPubSub } from '../pub-sub-topic-based'
 import { randomServerPort } from '../test/random-server-port'
 import { Url } from '../url/url'
-import { Topic } from './index'
-import { TopicMsgCodecJson } from './socket/topic-msg-codec'
+import { TopicClient } from './topic-client/topic-client'
+import { TopicContract } from './topic-contract'
+import { TopicMsgCodecJson } from './topic-msg-codec'
+import { TopicServer } from './topic-server'
 
 const Msg = s.obj({
   name: s.str(),
 })
 type Msg = s.Infer<typeof Msg>
 
-const contract = Topic.initContract({
+const contract = TopicContract.init({
   someTopic: {
     params: s.obj({
       id: s.str(),
@@ -33,18 +35,18 @@ const contract = Topic.initContract({
 const Fixture = async () => {
   const port = randomServerPort()
   let logger: ILogger
-  logger ??= Logger({ t: 'noop' })
-  logger ??= Logger({ t: 'console', newLinePerMsg: false, namespace: ['test'], maxLogLevel: 'info' })
-  const httpServer = HttpServer({ t: 'node', logger })
+  logger ??= Logger.init({ t: 'noop' })
+  logger ??= Logger.init({ t: 'console', newLinePerMsg: false, namespace: ['test'], maxLogLevel: 'info' })
+  const httpServer = HttpServer.init({ t: 'node', logger })
 
   const endpoint = '/topic'
   const serverUrl = Url.derive(`http://localhost:${port}`)
 
   const codec = TopicMsgCodecJson
 
-  const pubSub = TopicBasedPubSub({ t: 'in-memory' })
+  const pubSub = TopicBasedPubSub.init({ t: 'in-memory' })
 
-  Topic.initServer({
+  const server = TopicServer.init({
     t: 'web-sockets',
     httpServer,
     logger: logger.child(['server']),
@@ -57,9 +59,13 @@ const Fixture = async () => {
   const reconnectionRate = TimeSpan.milliseconds(0)
   const syncSubscriptionRate = TimeSpan.milliseconds(0)
 
-  const clientA = Topic.initClient({
+  const clientSessionIdA = ClientSessionId.generate()
+  const clientSessionIdB = ClientSessionId.generate()
+  const clientSessionIdC = ClientSessionId.generate()
+
+  const clientA = TopicClient.init({
     t: 'web-sockets',
-    clientSessionId: ClientSessionId.generate(),
+    clientSessionId: clientSessionIdA,
     contract,
     serverUrl,
     endpoint,
@@ -69,9 +75,9 @@ const Fixture = async () => {
     codec,
   })
 
-  const clientB = Topic.initClient({
+  const clientB = TopicClient.init({
     t: 'web-sockets',
-    clientSessionId: ClientSessionId.generate(),
+    clientSessionId: clientSessionIdB,
     contract,
     serverUrl,
     endpoint,
@@ -81,9 +87,9 @@ const Fixture = async () => {
     codec,
   })
 
-  const clientC = Topic.initClient({
+  const clientC = TopicClient.init({
     t: 'web-sockets',
-    clientSessionId: ClientSessionId.generate(),
+    clientSessionId: clientSessionIdC,
     contract,
     serverUrl,
     endpoint,
@@ -99,6 +105,7 @@ const Fixture = async () => {
     port,
     httpServer,
     contract,
+    server,
     clientA,
     clientB,
     clientC,
@@ -111,12 +118,13 @@ const Fixture = async () => {
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 200))
 
-describe.skip('Topic', () => {
+describe('Topic', () => {
   test('should work', async () => {
     await using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
     const gotC: Msg[] = []
+    await sleep()
     f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
     f.clientB.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
@@ -125,6 +133,7 @@ describe.skip('Topic', () => {
     await sleep()
     f.clientC.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
+
     expect(gotA).toEqual([{ name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
     expect(gotC).toEqual([{ name: 'John' }, { name: 'John' }])

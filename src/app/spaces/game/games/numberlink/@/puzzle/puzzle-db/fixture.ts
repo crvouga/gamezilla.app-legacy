@@ -22,16 +22,16 @@ export const BaseFixtures = async () => {
   configs.push({
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
-    logger: Logger({ t: 'noop' }),
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+    logger: Logger.init({ t: 'noop' }),
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
     configs.push({
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
-      logger: Logger({ t: 'noop' }),
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+      logger: Logger.init({ t: 'noop' }),
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     })
   }
 

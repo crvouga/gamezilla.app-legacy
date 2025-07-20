@@ -5,7 +5,7 @@ import { NotAsked } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { Sub } from '~/@/sub'
-import { Topic } from '~/@/topic'
+import { ITopicClient } from '~/@/topic/topic-client/types'
 import { AppFrontendCtxBase, isAppFrontendCtx } from '../@/frontend/ctx'
 import { EndSpaceFrontend } from './end-space/frontend'
 import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/frontend'
@@ -31,7 +31,7 @@ const TEST_ID = {
 const initCtx = async (input: {
   ctx: AppFrontendCtxBase
   rpc: RPC.Client<typeof rpcContract>
-  topic: Topic.Client<typeof topicContract>
+  topic: ITopicClient<typeof topicContract>
 }): Promise<FrontendCtxModule> => {
   return {
     ...input.ctx,
@@ -41,7 +41,7 @@ const initCtx = async (input: {
       t: 'sql-db',
       sqlDb: input.ctx.sqlDb,
       logger: input.ctx.logger,
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     }),
   }
 }

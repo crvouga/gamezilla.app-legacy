@@ -21,7 +21,7 @@ const Fixtures = async () => {
   configs.push({
     t: 'better-sqlite3',
     databasePath: ':memory:',
-    logger: Logger({ t: 'noop' }),
+    logger: Logger.init({ t: 'noop' }),
     fs: FileSystem({ t: 'node' }),
   })
 
@@ -29,7 +29,7 @@ const Fixtures = async () => {
 
   configs.push({
     t: 'pglite',
-    logger: Logger({ t: 'noop' }),
+    logger: Logger.init({ t: 'noop' }),
     pglite,
   })
 

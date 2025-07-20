@@ -1,11 +1,12 @@
 import { RPC } from '~/@/rpc'
-import { Topic } from '~/@/topic'
+import { TopicContract } from '~/@/topic/topic-contract'
+import { ITopicClient } from '~/@/topic/topic-client/types'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { AppFrontendCtxBase } from './@/frontend/ctx'
 import { AuthTypes } from './auth'
 import { FrontendTypes } from './frontend/index'
-import { SettingsTypes } from './settings'
 import { ProfileTypes } from './profile'
+import { SettingsTypes } from './settings'
 import { SpacesTypes } from './spaces'
 import { WireTypes } from './wire'
 
@@ -28,14 +29,14 @@ export type MsgFrontend =
 
 export const rpcContract = RPC.combineContracts([WireTypes.rpcContract, AuthTypes.rpcContract, SpacesTypes.rpcContract])
 
-export const topicContract = Topic.combineContracts([WireTypes.topicContract, SpacesTypes.topicContract])
+export const topicContract = TopicContract.combine([WireTypes.topicContract, SpacesTypes.topicContract])
 
 export type BackendCtxModule = AppBackendCtxBase &
   WireTypes.BackendCtxModule &
   ProfileTypes.BackendCtxModule &
   SpacesTypes.BackendCtxModule &
   AuthTypes.BackendCtxModule & {
-    topic: Topic.Client<typeof topicContract>
+    topic: ITopicClient<typeof topicContract>
   }
 
 export type FrontendCtxModule = AppFrontendCtxBase &
@@ -44,5 +45,5 @@ export type FrontendCtxModule = AppFrontendCtxBase &
   SpacesTypes.FrontendCtxModule &
   WireTypes.FrontendCtxModule & {
     rpc: RPC.Client<typeof rpcContract>
-    topic: Topic.Client<typeof topicContract>
+    topic: ITopicClient<typeof topicContract>
   }

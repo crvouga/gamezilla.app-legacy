@@ -4,16 +4,17 @@ import { PubSub, Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { Url } from '~/@/url/url'
 import { ClientSessionId } from '~/@/wire/client-session-id'
-import { Client, ClientNode, ContractBase } from '../types'
-import { PUB, SUB, SUB_ALL, ToClientMsg, ToServerMsg, UNSUB, UNSUB_ALL } from './msgs'
-import { Socket } from './socket'
-import { toWebSocketUrl } from './to-websocket-url'
-import { Topic, TopicName, toTopic } from './topic'
-import { TopicMsgCodec } from './topic-msg-codec'
-import { TopicNameSubscription } from './topic-name-subscription'
-import { TopicSubscription } from './topic-subscription'
+import { PUB, SUB, SUB_ALL, ToClientMsg, ToServerMsg, UNSUB, UNSUB_ALL } from '../msgs'
+import { Socket } from '../socket'
+import { toWebSocketUrl } from '../to-websocket-url'
+import { ContractBase } from '../topic-contract'
+import { TopicMsgCodec } from '../topic-msg-codec'
+import { TopicNameSubscription } from '../topic-name-subscription'
+import { TopicName, TopicString } from '../topic-string'
+import { TopicSubscription } from '../topic-subscription'
+import { TopicClientNode, ITopicClient } from './types'
 
-export type Config<T extends ContractBase> = {
+export type ImplWebSockets<T extends ContractBase> = {
   t: 'web-sockets'
   contract: T
   serverUrl: Url
@@ -27,16 +28,16 @@ export type Config<T extends ContractBase> = {
   codec: TopicMsgCodec
 }
 
-export const initClient = <TContract extends ContractBase>(config: Config<TContract>): Client<TContract> => {
+const init = <TContract extends ContractBase>(config: ImplWebSockets<TContract>): ITopicClient<TContract> => {
   const clientCore = initClientCore(config)
 
   const client = Object.entries(config.contract)
     .map(([topicName_, _topic]) => {
       const topicName = topicName_ as TopicName
 
-      const clientNode: ClientNode<TContract, typeof topicName> = {
+      const clientNode: TopicClientNode<TContract, typeof topicName> = {
         pub(topicParams, msg) {
-          const topic = toTopic(topicName, topicParams)
+          const topic = TopicString.init(topicName, topicParams)
 
           clientCore.msgsToServer.pub([PUB, topicName, topicParams, msg])
 
@@ -47,7 +48,7 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
           subscription.pubSub.pub(msg)
         },
         sub(topicParams, mapper) {
-          const topic = toTopic(topicName, topicParams)
+          const topic = TopicString.init(topicName, topicParams)
 
           const subscription = clientCore.subscriptionsByTopic.get(topic)
 
@@ -93,15 +94,15 @@ export const initClient = <TContract extends ContractBase>(config: Config<TContr
     .reduce((acc, [topicName, topic]) => {
       acc[topicName as keyof TContract] = topic
       return acc
-    }, {} as Client<TContract>)
+    }, {} as ITopicClient<TContract>)
 
   return client
 }
 
-const initClientCore = <TContract extends ContractBase>(config: Config<TContract>) => {
+const initClientCore = <TContract extends ContractBase>(config: ImplWebSockets<TContract>) => {
   const logger = config.logger.child(['topic', 'client'])
   const msgsToServer = Sub.create<ToServerMsg>()
-  const subscriptionsByTopic = new Map<Topic, TopicSubscription>()
+  const subscriptionsByTopic = new Map<TopicString, TopicSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
   const worker = async () => {
@@ -166,7 +167,6 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
         // @ts-expect-error
         encoded,
       )
-      // logger.debug('worker sender receiver send', msg)
     }
     workerSender(s, send)
     workerReceiver(s, socket)
@@ -244,7 +244,7 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
 
       switch (fromServerParsed[0]) {
         case PUB: {
-          const topic = toTopic(fromServerParsed[1], fromServerParsed[2])
+          const topic = TopicString.init(fromServerParsed[1], fromServerParsed[2])
           const subscription = subscriptionsByTopic.get(topic)
           if (!subscription) return
           subscription.pubSub.pub(fromServerParsed[3])
@@ -261,4 +261,8 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
     subscriptionsByTopicName,
     msgsToServer,
   }
+}
+
+export const ImplWebSockets = {
+  init,
 }

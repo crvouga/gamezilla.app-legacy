@@ -29,7 +29,7 @@ export const FixtureScreenPuzzlePlaySpace = async (input?: { numberlink?: Number
 
   const solutions = await Solutions.find({
     models: [prevPuzzle, puzzle, nextPuzzle].map((p) => p.model),
-    logger: Logger({ t: 'noop' }),
+    logger: Logger.init({ t: 'noop' }),
   })
 
   const ctx: NumberlinkSpaceCtx = {

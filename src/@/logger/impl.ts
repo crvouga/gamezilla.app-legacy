@@ -1,17 +1,21 @@
-import * as ImplConsole from './impl-console'
-import * as ImplNoop from './impl-noop'
+import { ImplConsole } from './impl-console'
+import { ImplNoop } from './impl-noop'
 import type { ILogger } from './interface'
 
-export type Config = ImplConsole.Config | ImplNoop.Config
+export type Logger = ImplConsole | ImplNoop
 
-export const Logger = (config: Config): ILogger => {
+const init = (config: Logger): ILogger => {
   switch (config.t) {
     case 'console': {
-      return ImplConsole.Logger(config)
+      return ImplConsole.init(config)
     }
 
     case 'noop': {
-      return ImplNoop.Logger(config)
+      return ImplNoop.init(config)
     }
   }
+}
+
+export const Logger = {
+  init,
 }

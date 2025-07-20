@@ -1,10 +1,10 @@
-import { Contract, Topic } from './types'
+import { Contract, TopicContractItem } from './topic-contract'
 
 type Prettify<T> = {
   [K in keyof T]: T[K]
 } & {}
 
-type Base = Record<string, Topic<any, any>>
+type Base = Record<string, TopicContractItem<any, any>>
 
 export function combineContracts<A extends Base>(contracts: [A]): Contract<Prettify<A>>
 export function combineContracts<A extends Base, B extends Base>(contracts: [A, B]): Contract<Prettify<A & B>>

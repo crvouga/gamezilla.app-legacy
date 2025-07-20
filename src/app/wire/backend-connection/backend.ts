@@ -1,12 +1,12 @@
 import { Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
-import { Topic } from '~/@/topic'
+import { ITopicClient } from '~/@/topic/topic-client/types'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { BackendCtxModule, topicContract } from './types'
 
 const initCtx = async (input: {
   ctx: AppBackendCtxBase
-  topic: Topic.Client<typeof topicContract>
+  topic: ITopicClient<typeof topicContract>
 }): Promise<BackendCtxModule> => {
   return {
     ...input.ctx,

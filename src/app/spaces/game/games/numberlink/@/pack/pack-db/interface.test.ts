@@ -27,16 +27,16 @@ const Fixtures = async () => {
   configs.push({
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
-    logger: Logger({ t: 'console', namespace: ['pack-db'], newLinePerMsg: false, maxLogLevel: 'info' }),
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+    logger: Logger.init({ t: 'console', namespace: ['pack-db'], newLinePerMsg: false, maxLogLevel: 'info' }),
+    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
     configs.push({
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
-      logger: Logger({ t: 'console', namespace: ['pack-db'], newLinePerMsg: false, maxLogLevel: 'info' }),
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger({ t: 'noop' }) }),
+      logger: Logger.init({ t: 'console', namespace: ['pack-db'], newLinePerMsg: false, maxLogLevel: 'info' }),
+      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     })
   }
 

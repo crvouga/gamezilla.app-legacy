@@ -2,7 +2,7 @@ import { Eff } from '~/@/eff'
 import { Msg } from '~/@/msg/msg'
 import { RPC } from '~/@/rpc'
 import { Sub } from '~/@/sub'
-import { Topic } from '~/@/topic'
+import { ITopicClient } from '~/@/topic/topic-client/types'
 import { AppFrontendCtxBase } from '../@/frontend/ctx'
 import { BackendConnectionFrontend } from './backend-connection/frontend'
 import { BackendInstanceFrontend } from './backend-instance/frontend'
@@ -11,7 +11,7 @@ import type { FrontendCtxModule, FrontendModule, MsgFrontend, rpcContract, topic
 const initCtx = (input: {
   ctx: AppFrontendCtxBase
   rpc: RPC.Client<typeof rpcContract>
-  topic: Topic.Client<typeof topicContract>
+  topic: ITopicClient<typeof topicContract>
 }): FrontendCtxModule => {
   return {
     ...input.ctx,

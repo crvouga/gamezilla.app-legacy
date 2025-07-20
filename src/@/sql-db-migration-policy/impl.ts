@@ -7,7 +7,7 @@ import { ISqlDbMigrationPolicy } from './interface'
 export type Config = ImplDangerouslyWipeOnNewSchema.Config | ImplNeverRun.Config | ImplAlwaysRun.Config
 
 export const SqlDbMigrationPolicy = (config: Config): ISqlDbMigrationPolicy => {
-  const configLogger = 'logger' in config ? config.logger : Logger({ t: 'noop' })
+  const configLogger = 'logger' in config ? config.logger : Logger.init({ t: 'noop' })
   const logger = configLogger.child(['migration-policy'])
   switch (config.t) {
     case 'never-run':

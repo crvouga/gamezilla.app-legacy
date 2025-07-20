@@ -7,7 +7,7 @@ import { PhoneNumber } from '../phone-number'
 
 const Fixture = async () => {
   const f = await FixtureAppBackend()
-  const logger = Logger({ t: 'noop' })
+  const logger = Logger.init({ t: 'noop' })
   const phoneNumber = unwrap(PhoneNumber.fromString('+14802098698'))
   switch (f.t) {
     case 'integration': {

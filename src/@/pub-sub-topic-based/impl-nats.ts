@@ -1,12 +1,12 @@
 import { ILogger } from '../logger'
 import { ITopicBasedPubSub } from './interface'
 
-export type Config = {
+export type ImplNats = {
   t: 'nats'
   logger: ILogger
 }
 
-export const TopicBasedPubSub = (_config: Config): ITopicBasedPubSub => {
+const init = (_config: ImplNats): ITopicBasedPubSub => {
   return {
     async pub(_topic, _msg) {
       throw new Error('not implemented')
@@ -18,4 +18,8 @@ export const TopicBasedPubSub = (_config: Config): ITopicBasedPubSub => {
       throw new Error('not implemented')
     },
   }
+}
+
+export const ImplNats = {
+  init,
 }

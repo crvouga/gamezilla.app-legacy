@@ -1,15 +1,15 @@
-import { Logger as LoggerNoop } from './impl-noop'
+import { ImplNoop } from './impl-noop'
 import { ILogger } from './interface'
 import { LogLevel } from './log-level'
 
-export type Config = {
+export type ImplConsole = {
   t: 'console'
   newLinePerMsg: boolean
   namespace: [string, ...string[]]
   maxLogLevel: LogLevel
 }
 
-export const Logger = (config: Config): ILogger => {
+const init = (config: ImplConsole): ILogger => {
   const timestamp = () => new Date().toISOString()
 
   const log =
@@ -36,13 +36,17 @@ export const Logger = (config: Config): ILogger => {
     trace: log('trace', '\x1b[90m', console.trace),
     fatal: log('fatal', '\x1b[41m', console.error),
     noop() {
-      return LoggerNoop({ t: 'noop' })
+      return ImplNoop.init({ t: 'noop' })
     },
     child(namespace) {
-      return Logger({ ...config, namespace: [...config.namespace, ...namespace] })
+      return init({ ...config, namespace: [...config.namespace, ...namespace] })
     },
     setMaxLogLevel(level) {
-      return Logger({ ...config, maxLogLevel: level })
+      return init({ ...config, maxLogLevel: level })
     },
   }
+}
+
+export const ImplConsole = {
+  init,
 }

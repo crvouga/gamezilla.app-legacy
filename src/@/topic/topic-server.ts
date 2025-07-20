@@ -1,111 +1,47 @@
-import type { IHttpServer, IWebSocketConnection } from '~/@/http-server/interface'
-import { ILogger } from '~/@/logger'
-import { ITopicBasedPubSub } from '~/@/pub-sub-topic-based'
-import { PubSub, Sub } from '~/@/sub'
+import type { IWebSocketConnection } from '~/@/http-server/interface'
 import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
-import { Client, ClientNode, ContractBase } from '../types'
 import { PUB, SUB, SUB_ALL, ToClientMsgMany, ToClientMsgOne, ToServerMsg, UNSUB, UNSUB_ALL } from './msgs'
-import { Topic, TopicName, toTopic } from './topic'
-import { TopicMsgCodec } from './topic-msg-codec'
+import { ServerConfig } from './server-config'
+import { ContractBase } from './topic-contract'
 import { TopicNameSubscription } from './topic-name-subscription'
+import { TopicName, TopicString } from './topic-string'
 import { TopicSubscription } from './topic-subscription'
+import { TopicClientData } from './topic-client/types'
 
-export type BackendWebSocketData = {
-  clientId: ClientId
-  sessionId: SessionId
-  clientSessionId: ClientSessionId
+type ServerSubscription = {
+  clients: Set<ClientId>
 }
 
-type Config<TContract extends ContractBase> = {
-  t: 'web-sockets'
-  contract: TContract
-  httpServer: IHttpServer
-  logger: ILogger
-  endpoint: string
-  codec: TopicMsgCodec
-  pubSub: ITopicBasedPubSub
+export type ITopicServer = {
+  subscriptionsByTopic: Map<TopicString, TopicSubscription & ServerSubscription>
+  subscriptionsByTopicName: Map<TopicName, TopicNameSubscription & ServerSubscription>
+  clients: Map<ClientId, TopicClientData>
+  publishTopicName: (
+    topicName: TopicName,
+    encodedMsg: string | Buffer,
+    decodedMsg: ToClientMsgMany,
+    sourceConnection: IWebSocketConnection<TopicClientData> | null,
+  ) => void
+  publishTopic: (
+    topic: TopicString,
+    encodedMsg: string | Buffer,
+    decodedMsg: ToClientMsgMany,
+    sourceConnection: IWebSocketConnection<TopicClientData> | null,
+  ) => void
 }
 
-export const initServer = <TContract extends ContractBase>(config: Config<TContract>): Client<TContract> => {
-  const serverCore = initServerCore(config)
+const init = <TContract extends ContractBase>(config: ServerConfig<TContract>): ITopicServer => {
+  const subscriptionsByTopic = new Map<TopicString, TopicSubscription & ServerSubscription>()
+  const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription & ServerSubscription>()
 
-  const client = Object.entries(config.contract)
-    .map(([topicName_, _topic]) => {
-      const topicName = topicName_ as TopicName
-
-      const clientNode: ClientNode<TContract, typeof topicName> = {
-        pub(topicParams, msg) {
-          const topic = toTopic(topicName, topicParams)
-
-          const decodedMsg: ToClientMsgMany = [PUB, topicName, topicParams, msg]
-          const encodedMsg = config.codec.encode(decodedMsg) as string | Buffer
-
-          serverCore.publishTopicName(topicName, encodedMsg, decodedMsg, null)
-          serverCore.publishTopic(topic, encodedMsg, decodedMsg, null)
-        },
-        sub(topicParams, mapper) {
-          const topic = toTopic(topicName, topicParams)
-
-          const subscription = serverCore.subscriptionsByTopic.get(topic)
-
-          if (subscription) return subscription.pubSub
-
-          const pubSub = Sub.create<any>()
-
-          const pubSubMapped: PubSub<any> = {
-            ...pubSub,
-            sub: (s) => pubSub.sub((m) => s(mapper(m))),
-          }
-
-          serverCore.subscriptionsByTopic.set(topic, {
-            topicName,
-            topicParams,
-            pubSub: pubSubMapped,
-          })
-
-          return pubSubMapped
-        },
-
-        subAll(mapper) {
-          const subscription = serverCore.subscriptionsByTopicName.get(topicName)
-
-          if (subscription) return subscription.pubSub
-
-          const pubSub = Sub.create<any>()
-
-          const pubSubMapped: PubSub<any> = {
-            ...pubSub,
-            sub: (s) => pubSub.sub((m) => s(mapper(m))),
-          }
-
-          serverCore.subscriptionsByTopicName.set(topicName, {
-            topicName,
-            pubSub: pubSubMapped,
-          })
-
-          return pubSubMapped
-        },
-      }
-      return [topicName, clientNode] as const
-    })
-    .reduce((acc, [topicName, topic]) => {
-      acc[topicName as keyof TContract] = topic
-      return acc
-    }, {} as Client<TContract>)
-
-  return client
-}
-
-const initServerCore = <TContract extends ContractBase>(config: Config<TContract>) => {
-  const subscriptionsByTopic = new Map<string, TopicSubscription>()
-  const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
+  const clients = new Map<ClientId, TopicClientData>()
 
   // Register WebSocket handler with the HTTP server
-  const wsServer = config.httpServer.registerWebSocketHandler<BackendWebSocketData>(config.endpoint, {
+  const wsServer = config.httpServer.registerWebSocketHandler<TopicClientData>(config.endpoint, {
     async onConnection(_connection, request) {
       const maybeSessionId = SessionIdHttp.fromRequest(request)
       const sessionId = maybeSessionId ? maybeSessionId : SessionId.generate()
@@ -115,11 +51,15 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
 
       const clientId = ClientId.generate()
 
-      return {
+      const topicClientData: TopicClientData = {
         clientId,
         sessionId,
         clientSessionId,
       }
+
+      clients.set(clientId, topicClientData)
+
+      return topicClientData
     },
 
     async onMessage(connection, message) {
@@ -128,13 +68,13 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
 
         switch (decodedMsg[0]) {
           case SUB: {
-            const topic = toTopic(decodedMsg[1], decodedMsg[2])
+            const topic = TopicString.init(decodedMsg[1], decodedMsg[2])
             connection.subscribe(topic)
             send(connection, decodedMsg)
             return
           }
           case UNSUB: {
-            const topic = toTopic(decodedMsg[1], decodedMsg[2])
+            const topic = TopicString.init(decodedMsg[1], decodedMsg[2])
             connection.unsubscribe(topic)
             send(connection, decodedMsg)
             return
@@ -152,7 +92,7 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
             return
           }
           case PUB: {
-            const topic = toTopic(decodedMsg[1], decodedMsg[2])
+            const topic = TopicString.init(decodedMsg[1], decodedMsg[2])
             publishTopic(topic, message, decodedMsg, connection)
             publishTopicName(decodedMsg[1], message, decodedMsg, connection)
             return
@@ -172,16 +112,16 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
     },
   })
 
-  const send = (connection: IWebSocketConnection<BackendWebSocketData>, decodedMsg: ToClientMsgOne) => {
+  const send = (connection: IWebSocketConnection<TopicClientData>, decodedMsg: ToClientMsgOne) => {
     const encodedMsg = config.codec.encode(decodedMsg)
     connection.send(encodedMsg as string | Buffer)
   }
 
   const publishTopic = (
-    topic: Topic,
+    topic: TopicString,
     encodedMsg: string | Buffer,
     decodedMsg: ToClientMsgMany,
-    sourceConnection: IWebSocketConnection<BackendWebSocketData> | null,
+    sourceConnection: IWebSocketConnection<TopicClientData> | null,
   ) => {
     // Publish to all connections subscribed to this topic
     wsServer.publish(topic, encodedMsg)
@@ -199,7 +139,7 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
     topicName: TopicName,
     encodedMsg: string | Buffer,
     decodedMsg: ToClientMsgMany,
-    sourceConnection: IWebSocketConnection<BackendWebSocketData> | null,
+    sourceConnection: IWebSocketConnection<TopicClientData> | null,
   ) => {
     // Publish to all connections subscribed to this topic name
     wsServer.publish(topicName, encodedMsg)
@@ -218,5 +158,10 @@ const initServerCore = <TContract extends ContractBase>(config: Config<TContract
     subscriptionsByTopicName,
     publishTopic,
     publishTopicName,
+    clients,
   }
+}
+
+export const TopicServer = {
+  init,
 }

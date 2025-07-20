@@ -19,7 +19,7 @@ const Fixtures = async function* () {
     yield {
       ...f,
       puzzleWithEmptySolutions,
-      withSolutions: WithSolutions({ puzzleDb: f.puzzleDb, logger: Logger({ t: 'noop' }) }),
+      withSolutions: WithSolutions({ puzzleDb: f.puzzleDb, logger: Logger.init({ t: 'noop' }) }),
     }
   }
 }

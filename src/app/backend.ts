@@ -14,7 +14,8 @@ import { SqlDb } from '~/@/sql-db/backend/impl'
 import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
-import { Topic } from '~/@/topic'
+import { TopicClient } from '~/@/topic/topic-client/topic-client'
+import { TopicServer } from '~/@/topic/topic-server'
 import { AppBackendCtxBase } from './@/backend/ctx'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { AuthBackend } from './auth/backend'
@@ -33,7 +34,7 @@ const initCtx = async (config: {
   corsOrigins: string[]
   isProd: boolean
 }): Promise<BackendCtxModule> => {
-  const logger = Logger({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'info' })
+  const logger = Logger.init({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'info' })
 
   logger.info('Initializing backend context')
 
@@ -61,20 +62,20 @@ const initCtx = async (config: {
     migrationPolicy,
   })
 
-  const pubSub = TopicBasedPubSub({
+  const pubSub = TopicBasedPubSub.init({
     t: 'sql-db',
     sqlDb,
     logger,
   })
 
-  const httpServer = HttpServer({
+  const httpServer = HttpServer.init({
     t: 'node',
     logger,
   })
 
   httpServer.registerMiddleware(AllowCORS.middleware(config.corsOrigins))
 
-  const topic = Topic.initServer({
+  const topicServer = TopicServer.init({
     t: 'web-sockets',
     contract: AppTypes.topicContract,
     endpoint: '/topic',
@@ -82,6 +83,13 @@ const initCtx = async (config: {
     logger,
     codec: topicMsgCodec,
     pubSub,
+  })
+
+  const topicClient = TopicClient.init({
+    t: 'for-server',
+    contract: AppTypes.topicContract,
+    codec: topicMsgCodec,
+    server: topicServer,
   })
 
   const userProfileDb = ProfileDb({
@@ -117,9 +125,9 @@ const initCtx = async (config: {
     port: config.port,
   }
 
-  const wire = await WireBackend.initCtx({ ctx: ctxBase, topic })
+  const wire = await WireBackend.initCtx({ ctx: ctxBase, topic: topicClient })
   const profile = await ProfileBackend.initCtx({ ctx: ctxBase })
-  const spaces = await SpacesBackend.initCtx({ ctx: ctxBase, topic })
+  const spaces = await SpacesBackend.initCtx({ ctx: ctxBase, topic: topicClient })
   const auth = await AuthBackend.initCtx({ ctx: ctxBase })
 
   const ctx: BackendCtxModule = {
@@ -128,7 +136,7 @@ const initCtx = async (config: {
     ...spaces,
     ...profile,
     ...wire,
-    topic,
+    topic: topicClient,
   }
 
   return ctx

@@ -5,30 +5,30 @@ import { HttpServer } from './@/http-server'
 import { LoggerMiddleware } from './@/http-server/logger-middleware'
 import { Logger } from './@/logger'
 import { TopicBasedPubSub } from './@/pub-sub-topic-based'
-import { Topic } from './@/topic'
+import { TopicServer } from './@/topic/topic-server'
 import { AppTypes } from './app'
 import { topicMsgCodec } from './app/@/topic-msg-codec'
 
 const main = async () => {
   await DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env'] })
 
-  const logger = Logger({
+  const logger = Logger.init({
     t: 'console',
     newLinePerMsg: false,
     namespace: ['topic'],
     maxLogLevel: 'debug',
   })
 
-  const httpServer = HttpServer({
+  const httpServer = HttpServer.init({
     t: 'node',
     logger,
   })
 
-  const pubSub = TopicBasedPubSub({
+  const pubSub = TopicBasedPubSub.init({
     t: 'in-memory',
   })
 
-  Topic.initServer({
+  TopicServer.init({
     t: 'web-sockets',
     contract: AppTypes.topicContract,
     endpoint: '/topic',

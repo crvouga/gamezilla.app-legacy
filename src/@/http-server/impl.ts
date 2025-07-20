@@ -3,7 +3,7 @@ import * as ImplNoop from './impl-noop'
 
 export type Config = ImplNode.Config | ImplNoop.Config
 
-export const HttpServer = (config: Config) => {
+const init = (config: Config) => {
   const logger = config.logger.child(['backend'])
   switch (config.t) {
     case 'node': {
@@ -14,4 +14,8 @@ export const HttpServer = (config: Config) => {
       return ImplNoop.HttpServer({ ...config, logger })
     }
   }
+}
+
+export const HttpServer = {
+  init,
 }

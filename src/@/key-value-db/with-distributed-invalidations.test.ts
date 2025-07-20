@@ -1,6 +1,6 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { Ok } from '~/@/result'
 import { s } from '~/@/schema'
+import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
 import { TopicBasedPubSub } from '../pub-sub-topic-based'
@@ -25,7 +25,7 @@ const randomMyEvent = (): MyEvent => ({
 })
 
 const Fixture = async () => {
-  const logger = Logger({ t: 'noop' })
+  const logger = Logger.init({ t: 'noop' })
 
   const pubSubMap: TopicBasedPubSubMap = new Map()
   const sourceMap = new Map<string, MyEvent>()
@@ -45,9 +45,9 @@ const Fixture = async () => {
         logger: loggerChild,
         cache: KeyValueDb({
           t: 'with-distributed-invalidations',
-          pubSub: await PubSub({
+          pubSub: PubSub({
             t: 'pub-sub-topic-based',
-            pubSubTopicBased: TopicBasedPubSub({
+            pubSubTopicBased: TopicBasedPubSub.init({
               t: 'in-memory',
               subscribersByTopic: pubSubMap,
             }),

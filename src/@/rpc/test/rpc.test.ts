@@ -1,13 +1,14 @@
-import { describe, expect, test } from '~/@/test-runner'
+import { HttpClient } from '~/@/http-client'
 import { HttpServer } from '~/@/http-server'
 import { AllowCORS } from '~/@/http-server/allow-cors'
-import { ILogger, Logger } from '~/@/logger'
+import { ILogger } from '~/@/logger'
+import { Logger } from '~/@/logger/impl'
 import { isErr, Ok } from '~/@/result'
+import { describe, expect, test } from '~/@/test-runner'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { SessionId } from '~/@/wire/session-id'
 import * as RPC from '../rpc'
 import { contract, server } from './test-contract'
-import { HttpClient } from '~/@/http-client'
 
 type Fixture = {
   client: RPC.Client<typeof contract>
@@ -18,15 +19,15 @@ export const FixtureHttp = async (): Promise<Fixture> => {
   const port = 1234
 
   let logger: ILogger
-  logger ??= Logger({ t: 'noop' })
-  logger ??= Logger({
+  logger ??= Logger.init({ t: 'noop' })
+  logger ??= Logger.init({
     t: 'console',
     namespace: ['rpc', 'test'],
     newLinePerMsg: false,
     maxLogLevel: 'info',
   })
 
-  const httpServer = HttpServer({ t: 'node', logger })
+  const httpServer = HttpServer.init({ t: 'node', logger })
 
   httpServer.registerMiddleware(AllowCORS.middleware(['http://localhost:2222']))
 

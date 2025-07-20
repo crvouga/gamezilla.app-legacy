@@ -1,10 +1,10 @@
 import { ITopicBasedPubSub } from './interface'
 
-export type Config = {
+export type ImplNoop = {
   t: 'noop'
 }
 
-export const TopicBasedPubSub = (_config: Config): ITopicBasedPubSub => {
+const init = (_config: ImplNoop): ITopicBasedPubSub => {
   return {
     async pub(_topic, _msg) {},
     async sub(_topic, _callback) {
@@ -12,4 +12,8 @@ export const TopicBasedPubSub = (_config: Config): ITopicBasedPubSub => {
     },
     async unsub(_topic) {},
   }
+}
+
+export const ImplNoop = {
+  init,
 }
