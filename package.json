@@ -15,7 +15,7 @@
     "cg:watch": "pnpm exec tsx watch cg",
     "check": "pnpm cir-deps && pnpm exec tsc",
     "check-imports": "pnpm exec tsx scripts/check-imports.ts",
-    "ci": "pnpm ci:run",
+    "ci": "cp .env.local .env && pnpm ci:run",
     "ci:down": "docker compose --profile ci -f ./infra/docker-compose.yml down",
     "ci:logs": "mkdir -p ci-logs && pnpm ci:logs:docker && (pnpm ci:logs:test-results || true)",
     "ci:logs:docker": "docker compose --profile ci -f ./infra/docker-compose.yml logs > ci-logs/docker-compose.txt",
