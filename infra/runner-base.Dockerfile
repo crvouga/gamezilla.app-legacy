@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/playwright:latest
+FROM mcr.microsoft.com/playwright:v1.41.1-jammy
 
 WORKDIR /app
 
-RUN npm install -g pnpm@latest
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 

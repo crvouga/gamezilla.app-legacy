@@ -80,27 +80,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: Build runner base image
-        run: |
-          echo "Building runner base image..."
-          docker build --platform linux/amd64 -f infra/runner-base.Dockerfile -t crvouga/runner-base:latest .
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
 
-      - name: Build runner image
-        run: |
-          echo "Building runner image..."
-          docker build --platform linux/amd64 -f infra/runner.Dockerfile -t runner .
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Run database migrations
-        run: |
-          echo "Running database migrations..."
-          docker run --platform linux/amd64 --rm runner npx dbmate up --url ${{ secrets.DATABASE_URL }} > migrations.txt 2>&1
-
-      - name: Upload migration logs
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: migrations.txt
-          path: migrations.txt
+        run: pnpm db:up
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
