@@ -122,6 +122,9 @@ jobs:
       - name: Start e2e infra
         run: pnpm e2e:up
 
+      - name: Migrate database
+        run: pnpm db:up
+
       - name: Setup e2e
         run: pnpm e2e:ci:setup
 
