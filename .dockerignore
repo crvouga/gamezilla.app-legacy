@@ -6,10 +6,6 @@ pnpm-debug.log*
 lerna-debug.log*
 
 .DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
 .git
 .gitignore

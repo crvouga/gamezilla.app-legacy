@@ -45,22 +45,29 @@ jobs:
           echo "Running CI pipeline..."
           docker compose --profile ci -f ./infra/docker-compose.yml up --abort-on-container-exit --exit-code-from ci ci
 
-      - name: Collect CI logs
+      - name: Collect docker compose logs
         if: always()
         run: |
-          echo "Creating logs directory..."
-          mkdir -p ci-logs
-          echo "Collecting docker compose logs..."
-          docker compose --profile ci -f ./infra/docker-compose.yml logs > ci-logs/docker-compose.txt
-          echo "Collecting e2e test results..."
-          docker cp $(docker ps -aqf name=ci-e2e-tests):/app/test-results ./ci-logs/test-results || true
+          docker compose --profile ci -f ./infra/docker-compose.yml logs > docker-compose.txt
 
-      - name: Upload CI logs
+      - name: Upload docker compose logs
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ci-logs
-          path: ci-logs/
+          name: docker-compose.txt
+          path: docker-compose.txt
+
+      - name: Copy e2e test results
+        if: always()
+        run: |
+          docker cp $(docker ps -aqf name=ci-e2e-tests):/app/test-results/. ./ || true
+
+      - name: Upload e2e test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
 
   deploy:
     name: Deploy
@@ -88,14 +95,12 @@ jobs:
 
       - name: Run database migrations
         run: |
-          echo "Creating cd-logs directory..."
-          mkdir -p cd-logs
           echo "Running database migrations..."
-          docker run --platform linux/amd64 --rm runner npx dbmate up --url ${{ secrets.DATABASE_URL }} > cd-logs/migrations.txt 2>&1
+          docker run --platform linux/amd64 --rm runner npx dbmate up --url ${{ secrets.DATABASE_URL }} > migrations.txt 2>&1
 
-      - name: Upload CD logs
+      - name: Upload migration logs
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cd-logs
-          path: cd-logs/
+          name: migrations.txt
+          path: migrations.txt
