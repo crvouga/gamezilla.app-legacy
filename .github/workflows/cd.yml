@@ -52,7 +52,7 @@ jobs:
           name: ci-logs
           path: ci-logs/
 
-  deploy:
+  cd:
     name: Deploy
     needs: [ci]
     runs-on: ubuntu-latest
