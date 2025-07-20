@@ -20,10 +20,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Run CI
         run: |
           echo "Building runner image..."
-          docker build -f infra/runner.Dockerfile -t runner .
+          docker build --platform linux/amd64 -f infra/runner.Dockerfile -t runner .
           echo "Cleaning up existing containers..."
           docker compose --profile ci -f ./infra/docker-compose.yml down
           echo "Running CI pipeline..."
@@ -57,12 +60,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Run CD
         run: |
           echo "Building runner image for deployment..."
-          docker build -f infra/runner.Dockerfile -t runner .
+          docker build --platform linux/amd64 -f infra/runner.Dockerfile -t runner .
           echo "Running database migrations..."
-          docker run --rm -e DATABASE_URL=${{ secrets.DATABASE_URL }} runner pnpm db:up > cd-logs.txt 2>&1
+          docker run --platform linux/amd64 --rm -e DATABASE_URL=${{ secrets.DATABASE_URL }} runner pnpm db:up > cd-logs.txt 2>&1
 
       - name: Upload CD logs
         uses: actions/upload-artifact@v4
