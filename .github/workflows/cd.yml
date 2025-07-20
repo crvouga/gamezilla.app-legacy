@@ -57,8 +57,8 @@ jobs:
           name: ci-logs
           path: ci-logs/
 
-  cd:
-    name: CD
+  deploy:
+    name: Deploy
     needs: [ci]
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -76,16 +76,21 @@ jobs:
           echo "Building runner base image..."
           docker build --platform linux/amd64 -f infra/runner-base.Dockerfile -t crvouga/runner-base:latest .
 
-      - name: Run CD
+      - name: Build runner image
         run: |
-          echo "Building runner image for deployment..."
+          echo "Building runner image..."
           docker build --platform linux/amd64 -f infra/runner.Dockerfile -t runner .
+
+      - name: Run database migrations
+        run: |
+          echo "Creating cd-logs directory..."
+          mkdir -p cd-logs
           echo "Running database migrations..."
-          docker run --platform linux/amd64 --rm -e DATABASE_URL=${{ secrets.DATABASE_URL }} runner pnpm db:up > cd-logs.txt 2>&1
+          docker run --platform linux/amd64 --rm runner npx dbmate up --url ${{ secrets.DATABASE_URL }} > cd-logs/migrations.txt 2>&1
 
       - name: Upload CD logs
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: cd-logs
-          path: cd-logs.txt
+          path: cd-logs/
