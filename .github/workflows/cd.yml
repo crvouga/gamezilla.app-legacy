@@ -20,23 +20,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: latest
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
+      - name: Build CI image
+        run: docker build -f infra/ci.Dockerfile -t gamezilla-app-ci --platform linux/amd64 .
 
       - name: Run CI
-        run: pnpm run ci
+        run: |
+          docker compose --profile ci -f ./infra/docker-compose.yml down
+          docker compose --profile ci -f ./infra/docker-compose.yml up --build --abort-on-container-exit --exit-code-from ci ci
 
-      - name: Run CI Logs
-        run: pnpm ci:logs
+      - name: Collect CI logs
         if: always()
+        run: |
+          mkdir -p ci-logs
+          docker compose --profile ci -f ./infra/docker-compose.yml logs > ci-logs/docker-compose.txt
+          docker cp $(docker ps -aqf name=ci-e2e-tests):/app/test-results ./ci-logs/test-results || true
 
       - name: Upload CI logs
         uses: actions/upload-artifact@v4

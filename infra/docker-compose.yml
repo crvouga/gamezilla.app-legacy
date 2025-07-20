@@ -5,7 +5,6 @@ services:
     profiles: ['ci']
     image: gamezilla-app-ci
     command: echo "All good to deploy"
-    platform: ${DOCKER_PLATFORM}
     depends_on:
       ci-unit-tests:
         condition: service_completed_successfully
@@ -29,7 +28,6 @@ services:
         TOPIC_URL: http://topic:5556
     ports:
       - '80:80'
-    platform: ${DOCKER_PLATFORM}
 
   backend:
     profiles: ['ci']
@@ -49,7 +47,6 @@ services:
     depends_on:
       ci-postgres-migration:
         condition: service_completed_successfully
-    platform: ${DOCKER_PLATFORM}
 
   topic:
     profiles: ['ci']
@@ -64,13 +61,11 @@ services:
     depends_on:
       nats:
         condition: service_started
-    platform: ${DOCKER_PLATFORM}
 
   nats:
     image: nats:latest
     ports:
       - '4222:4222'
-    platform: ${DOCKER_PLATFORM}
 
   postgres:
     image: postgres:latest
@@ -88,7 +83,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    platform: ${DOCKER_PLATFORM}
 
   ci-postgres-migration:
     profiles: ['ci']
@@ -99,7 +93,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    platform: ${DOCKER_PLATFORM}
 
   ci-unit-tests:
     profiles: ['ci']
@@ -108,7 +101,6 @@ services:
     environment:
       - BACKEND_URL=http://backend:5555
       - TOPIC_URL=http://topic:5556
-    platform: ${DOCKER_PLATFORM}
 
   ci-e2e-tests:
     profiles: ['ci']
@@ -123,7 +115,6 @@ services:
         condition: service_started
       topic:
         condition: service_started
-    platform: ${DOCKER_PLATFORM}
 
   ci-int-tests:
     profiles: ['ci']
@@ -134,16 +125,13 @@ services:
     depends_on:
       ci-postgres-migration:
         condition: service_completed_successfully
-    platform: ${DOCKER_PLATFORM}
 
   ci-cir-deps:
     profiles: ['ci']
     image: gamezilla-app-ci
     command: pnpm cir-deps
-    platform: ${DOCKER_PLATFORM}
 
   ci-type-check:
     profiles: ['ci']
     image: gamezilla-app-ci
     command: pnpm exec tsc --noEmit
-    platform: ${DOCKER_PLATFORM}
