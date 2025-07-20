@@ -5,12 +5,13 @@ import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { TopicBasedPubSub } from '../pub-sub-topic-based'
+import { eventually } from '../test/eventually'
 import { randomServerPort } from '../test/random-server-port'
 import { Url } from '../url/url'
 import { TopicClient } from './topic-client/topic-client'
 import { TopicContract } from './topic-contract'
-import { TopicMsgCodecJson } from './topic-msg-codec'
-import { TopicServer } from './topic-server'
+import { TopicMsgCodec } from './topic-msg-codec'
+import { TopicServer } from './topic-server/topic-server'
 
 const Msg = s.obj({
   name: s.str(),
@@ -42,7 +43,7 @@ const Fixture = async () => {
   const endpoint = '/topic'
   const serverUrl = Url.derive(`http://localhost:${port}`)
 
-  const codec = TopicMsgCodecJson
+  const codec = TopicMsgCodec.init({ t: 'json' })
 
   const pubSub = TopicBasedPubSub.init({ t: 'in-memory' })
 
@@ -109,7 +110,6 @@ const Fixture = async () => {
     clientA,
     clientB,
     clientC,
-
     async [Symbol.asyncDispose]() {
       await httpServer.stop()
     },
@@ -124,19 +124,19 @@ describe('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
     const gotC: Msg[] = []
-    await sleep()
     f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
-    await sleep()
     f.clientB.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
-    await sleep()
     f.clientC.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
     await sleep()
-    f.clientC.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
-
-    expect(gotA).toEqual([{ name: 'John' }])
-    expect(gotB).toEqual([{ name: 'John' }])
-    expect(gotC).toEqual([{ name: 'John' }, { name: 'John' }])
+    await sleep()
+    await sleep()
+    f.clientC.someTopic.pub({ id: '123' }, { name: 'John' })
+    await eventually(() => {
+      expect(gotA).toEqual([{ name: 'John' }])
+      expect(gotB).toEqual([{ name: 'John' }])
+      expect(gotC).toEqual([{ name: 'John' }, { name: 'John' }])
+    })
   })
 
   test('should not receive messages after unsubscribing', async () => {

@@ -1,3 +1,3 @@
-import { TopicMsgCodec, TopicMsgCodecJson } from '~/@/topic/topic-msg-codec'
+import { TopicMsgCodec } from '~/@/topic/topic-msg-codec'
 
-export const topicMsgCodec: TopicMsgCodec = TopicMsgCodecJson
+export const topicMsgCodec = TopicMsgCodec.init({ t: 'json' })

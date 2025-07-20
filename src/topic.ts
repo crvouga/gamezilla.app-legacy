@@ -5,7 +5,7 @@ import { HttpServer } from './@/http-server'
 import { LoggerMiddleware } from './@/http-server/logger-middleware'
 import { Logger } from './@/logger'
 import { TopicBasedPubSub } from './@/pub-sub-topic-based'
-import { TopicServer } from './@/topic/topic-server'
+import { TopicServer } from './@/topic/topic-server/topic-server'
 import { AppTypes } from './app'
 import { topicMsgCodec } from './app/@/topic-msg-codec'
 

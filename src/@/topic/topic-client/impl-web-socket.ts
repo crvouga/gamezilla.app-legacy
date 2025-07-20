@@ -8,7 +8,7 @@ import { PUB, SUB, SUB_ALL, ToClientMsg, ToServerMsg, UNSUB, UNSUB_ALL } from '.
 import { Socket } from '../socket'
 import { toWebSocketUrl } from '../to-websocket-url'
 import { ContractBase } from '../topic-contract'
-import { TopicMsgCodec } from '../topic-msg-codec'
+import { ITopicMsgCodec } from '../topic-msg-codec'
 import { TopicNameSubscription } from '../topic-name-subscription'
 import { TopicName, TopicString } from '../topic-string'
 import { TopicSubscription } from '../topic-subscription'
@@ -21,11 +21,9 @@ export type ImplWebSockets<T extends ContractBase> = {
   endpoint: string
   clientSessionId: ClientSessionId
   logger: ILogger
-  //
   reconnectionRate: TimeSpan
   syncSubscriptionRate: TimeSpan
-  //
-  codec: TopicMsgCodec
+  codec: ITopicMsgCodec
 }
 
 const init = <TContract extends ContractBase>(config: ImplWebSockets<TContract>): ITopicClient<TContract> => {

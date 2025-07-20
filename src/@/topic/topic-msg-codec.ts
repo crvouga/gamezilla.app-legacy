@@ -1,10 +1,19 @@
-export type TopicMsgCodec = {
+export type ITopicMsgCodec = {
   encode: (msg: unknown) => unknown
   decodeMessageClient: (event: MessageEvent<any>) => Promise<unknown> | unknown
   decodeMessageServer: (event: string | Buffer<ArrayBufferLike>) => Promise<unknown> | unknown
 }
 
-export const TopicMsgCodecJson: TopicMsgCodec = {
+export type TopicMsgCodec =
+  | {
+      t: 'json'
+    }
+  | {
+      t: 'error'
+      error: Error
+    }
+
+const initJson: ITopicMsgCodec = {
   encode: (msg) => {
     return JSON.stringify(msg)
   },
@@ -41,7 +50,7 @@ export const TopicMsgCodecJson: TopicMsgCodec = {
   },
 }
 
-export const TopicMsgCodecError: TopicMsgCodec = {
+const initError: ITopicMsgCodec = {
   encode: (_msg) => {
     throw new Error('CodecError: encode not implemented')
   },
@@ -51,4 +60,17 @@ export const TopicMsgCodecError: TopicMsgCodec = {
   decodeMessageClient: (_event) => {
     throw new Error('CodecError: mapEvent not implemented')
   },
+}
+
+const init = (config: TopicMsgCodec): ITopicMsgCodec => {
+  switch (config.t) {
+    case 'json':
+      return initJson
+    case 'error':
+      return initError
+  }
+}
+
+export const TopicMsgCodec = {
+  init,
 }
