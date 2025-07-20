@@ -8,8 +8,8 @@ services:
       dockerfile: infra/frontend.Dockerfile
       args:
         NODE_ENV: development
-        BACKEND_URL: http://backend:5555
-        TOPIC_URL: http://topic:5556
+        BACKEND_URL: http://backend:5002
+        TOPIC_URL: http://topic:5003
     ports:
       - '5173:80'
 
@@ -21,11 +21,11 @@ services:
       args:
         NODE_ENV: development
     ports:
-      - '5555:5555'
+      - '5002:5002'
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
-      - TOPIC_URL=ws://topic:5556
-      - BACKEND_PORT=5555
+      - TOPIC_URL=ws://topic:5003
+      - BACKEND_PORT=5002
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
@@ -35,10 +35,10 @@ services:
       context: ../
       dockerfile: infra/topic.Dockerfile
     ports:
-      - '5556:5556'
+      - '5003:5003'
     environment:
       - NATS_URL=nats://nats:4222
-      - TOPIC_PORT=5556
+      - TOPIC_PORT=5003
     depends_on:
       nats:
         condition: service_started

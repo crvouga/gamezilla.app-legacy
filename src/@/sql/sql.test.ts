@@ -86,11 +86,11 @@ describe('SQL', () => {
   })
 
   test('should handle parameter with overlapping names', async () => {
-    const expected = "SELECT * FROM users WHERE phone_number = '555-555-5556' AND phone_number_country = 'US'"
+    const expected = "SELECT * FROM users WHERE phone_number = '555-555-5003' AND phone_number_country = 'US'"
     const actual = Sql.to(
       'SELECT * FROM users WHERE phone_number = :phone_number AND phone_number_country = :phone_number_country',
       {
-        phone_number: '555-555-5556',
+        phone_number: '555-555-5003',
         phone_number_country: 'US',
       },
     )

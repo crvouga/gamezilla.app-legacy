@@ -45,7 +45,7 @@
     "infra:down": "docker compose --profile ci -f ./infra/docker-compose.yml down",
     "infra:up": "docker compose -f ./infra/docker-compose.yml up --build -d",
     "int": "pnpm vitest:int",
-    "kp": "pnpm exec kill-port 5173 && pnpm exec kill-port 5556 && pnpm exec kill-port 8088 && pnpm exec kill-port $PORT",
+    "kp": "pnpm exec kill-port 5173 && pnpm exec kill-port 5003 && pnpm exec kill-port 8088 && pnpm exec kill-port $PORT",
     "runner-base:build": "docker build -f infra/runner-base.Dockerfile -t crvouga/runner-base:latest . && docker push crvouga/runner-base:latest",
     "runner:build": "docker build -f infra/runner.Dockerfile -t runner .",
     "spec": "pnpm vitest:spec",
