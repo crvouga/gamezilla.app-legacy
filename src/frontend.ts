@@ -19,10 +19,10 @@ const main = async () => {
 
   const windowProtocol = HttpProtocol.fromWindow() ?? 'https'
 
-  const ctx = await AppFrontend.initCtx({
-    backendUrl: Url.derive(BACKEND_URL, windowProtocol),
-    topicUrl: Url.derive(TOPIC_URL, windowProtocol),
-  })
+  const backendUrl = Url.derive(BACKEND_URL, windowProtocol)
+  const topicUrl = Url.derive(TOPIC_URL, windowProtocol)
+
+  const ctx = await AppFrontend.initCtx({ backendUrl, topicUrl })
 
   const program = await Program.run({
     crash: (input) => console.error(input),
