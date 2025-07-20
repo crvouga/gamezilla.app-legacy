@@ -114,12 +114,9 @@ const initClientCore = <TContract extends ContractBase>(config: ImplWebSockets<T
         await workerSocket(abortController.signal, socket)
 
         socket.close()
-
-        await p.sleep(config.reconnectionRate, abortController.signal)
       } catch (e) {
         logger.error('worker error', e)
         abortController.abort()
-        await p.sleep(config.reconnectionRate, abortController.signal)
       } finally {
         logger.info('restarting connection')
         await p.sleep(config.reconnectionRate, abortController.signal)

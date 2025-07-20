@@ -7,12 +7,15 @@ import { VDomImpl } from './@/vdom/vdom-impl'
 
 const main = async () => {
   const VDOM_IMPL = VDomImpl.getUrl({ fallback: 'inferno' })
+  console.log('VDOM_IMPL', VDOM_IMPL)
 
   const BACKEND_URL = process.env.BACKEND_URL
   if (!BACKEND_URL) throw new Error('BACKEND_URL is not set')
+  console.log('BACKEND_URL', BACKEND_URL)
 
   const TOPIC_URL = process.env.TOPIC_URL
   if (!TOPIC_URL) throw new Error('TOPIC_URL is not set')
+  console.log('TOPIC_URL', TOPIC_URL)
 
   let root = initRoot()
   await VDomEngine.initialize(VDOM_IMPL)
