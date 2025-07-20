@@ -23,10 +23,18 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Run CI
+      - name: Build runner base image
+        run: |
+          echo "Building runner base image..."
+          docker build --platform linux/amd64 -f infra/runner-base.Dockerfile -t crvouga/runner-base:latest .
+
+      - name: Build runner image
         run: |
           echo "Building runner image..."
           docker build --platform linux/amd64 -f infra/runner.Dockerfile -t runner .
+
+      - name: Run CI
+        run: |
           echo "Cleaning up existing containers..."
           docker compose --profile ci -f ./infra/docker-compose.yml down
           echo "Running CI pipeline..."
@@ -62,6 +70,11 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Build runner base image
+        run: |
+          echo "Building runner base image..."
+          docker build --platform linux/amd64 -f infra/runner-base.Dockerfile -t crvouga/runner-base:latest .
 
       - name: Run CD
         run: |
