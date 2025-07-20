@@ -41,7 +41,7 @@ jobs:
           path: ci-logs/
 
   cd:
-    name: Deploy
+    name: CD
     needs: [ci]
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -51,7 +51,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run database migrations
+      - name: Run CD
         run: |
           docker build -f infra/runner.Dockerfile -t runner .
           docker run --rm -e DATABASE_URL=${{ secrets.DATABASE_URL }} runner pnpm db:up
