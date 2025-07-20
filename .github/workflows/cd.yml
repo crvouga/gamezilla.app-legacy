@@ -86,8 +86,44 @@ jobs:
       - name: Create env file
         run: cp .env.local .env
 
+      - name: Start infra
+        run: pnpm infra:up
+
+      - name: Migrate database
+        run: pnpm db:up
+
       - name: Run integration tests
         run: pnpm run int
+
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create env file
+        run: cp .env.local .env
+
+      - name: Start e2e infra
+        run: pnpm e2e:up
+
+      - name: Run e2e tests
+        run: pnpm run e2e:ci
 
   circular-deps:
     name: Circular Dependencies Check
