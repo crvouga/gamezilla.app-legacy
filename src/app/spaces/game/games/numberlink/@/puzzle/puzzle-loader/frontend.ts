@@ -8,7 +8,7 @@ import { Clickable, ClickableTransparent } from '~/@/ui/clickable'
 import { EmptyState } from '~/@/ui/empty-state'
 import { Gutter } from '~/@/ui/gutter'
 import { IconPuzzlePiece } from '~/@/ui/icon'
-import { SpinnerBlock } from '~/@/ui/spinner'
+import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
 import { AddPuzzlesCmd } from '../../frontend/add-puzzles-cmd.$msg'
@@ -54,9 +54,8 @@ const update: FrontendModule['update'] = (input) => {
 }
 
 const watch = <TMsg>(ctx: FlowFrontendCtxBase, query: PuzzleQuery | null, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
-  if (!query) {
-    return Sub.none()
-  }
+  if (!query) return Sub.none()
+
   return Sub.map(ctx.puzzleDb.sub(query), (puzzles) => map({ t: 'got-puzzle-db-puzzles', query, puzzles }))
 }
 
@@ -123,7 +122,7 @@ const ViewList = (input: {
           label: input.ctx.t('game.numberlink.no-puzzles'),
         }),
 
-      isLoading && h(SpinnerBlock, {}),
+      isLoading && h(Spinner, {}),
 
       h(Gutter, { variant: 'screen' }),
     ]),
