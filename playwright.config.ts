@@ -28,7 +28,7 @@ export default defineConfig({
   // workers: '100%',
   workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: CI ? 'github' : 'list',
+  reporter: 'list',
   /* Maximum number of test failures before stopping */
   maxFailures: 1,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
