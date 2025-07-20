@@ -8,8 +8,8 @@ services:
       dockerfile: infra/frontend.Dockerfile
       args:
         NODE_ENV: development
-        BACKEND_URL: http://backend:5002
-        TOPIC_URL: http://topic:5003
+        BACKEND_URL: http://localhost:5002
+        TOPIC_URL: http://localhost:5003
     ports:
       - '5173:80'
 
@@ -24,7 +24,7 @@ services:
       - '5002:5002'
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
-      - TOPIC_URL=ws://topic:5003
+      - TOPIC_URL=ws://localhost:5003
       - BACKEND_PORT=5002
     extra_hosts:
       - 'host.docker.internal:host-gateway'
