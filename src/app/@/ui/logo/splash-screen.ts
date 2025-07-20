@@ -16,7 +16,6 @@ export const SplashScreen = (input: { reason: TranslatedText }) => {
           text: input.reason,
           variant: 'caption',
           color: 'text-secondary',
-          class: 'fixed bottom-10 left-1/2 -translate-x-1/2',
         }),
     ].filter(Boolean),
   )
