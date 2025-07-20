@@ -28,7 +28,7 @@
     "db:new": "pnpm exec dbmate new",
     "db:up": "pnpm exec dbmate up",
     "e2e": "IS_PLAYWRIGHT_TEST=true pnpm exec playwright test --project=chromium",
-    "e2e:up": "docker compose -f ./infra/docker-compose.yml up --build -d --profile e2e",
+    "e2e:up": "docker compose --profile e2e -f ./infra/docker-compose.yml up --build -d",
     "e2e:ci": "IS_PLAYWRIGHT_TEST=true pnpm exec playwright test --project=chromium",
     "e2e:ci:setup": "IS_PLAYWRIGHT_TEST=true pnpm exec playwright install --with-deps chromium",
     "e2e:codegen": "IS_PLAYWRIGHT_TEST=true pnpm exec playwright codegen",

@@ -28,9 +28,6 @@ services:
       - BACKEND_PORT=5555
     extra_hosts:
       - 'host.docker.internal:host-gateway'
-    depends_on:
-      ci-postgres-migration:
-        condition: service_completed_successfully
 
   topic:
     profiles: ['e2e']
@@ -47,7 +44,6 @@ services:
         condition: service_started
 
   nats:
-    profiles: ['ci', 'local']
     build:
       context: ../
       dockerfile: infra/nats.Dockerfile
@@ -55,7 +51,6 @@ services:
       - '4222:4222'
 
   postgres:
-    profiles: ['ci', 'local']
     build:
       context: ../
       dockerfile: infra/postgres.Dockerfile
