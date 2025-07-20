@@ -47,6 +47,7 @@ export type ITopicServer = {
 }
 
 const init = <TContract extends ContractBase>(config: TopicServer<TContract>): ITopicServer => {
+  const logger = config.logger.child(['topic-server'])
   const subscriptionsByTopic = new Map<TopicString, TopicSubscription & ServerSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription & ServerSubscription>()
 
@@ -77,6 +78,8 @@ const init = <TContract extends ContractBase>(config: TopicServer<TContract>): I
     async onMessage(connection, message) {
       try {
         const decodedMsg: ToServerMsg = config.codec.decodeMessageServer(message) as ToServerMsg
+
+        logger.debug('received', decodedMsg)
 
         switch (decodedMsg[0]) {
           case SUB: {
@@ -126,6 +129,7 @@ const init = <TContract extends ContractBase>(config: TopicServer<TContract>): I
 
   const send = (connection: IWebSocketConnection<TopicClientData>, decodedMsg: ToClientMsgOne) => {
     const encodedMsg = config.codec.encode(decodedMsg)
+    logger.debug('send', encodedMsg)
     connection.send(encodedMsg as string | Buffer)
   }
 

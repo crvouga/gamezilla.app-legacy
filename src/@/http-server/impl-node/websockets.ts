@@ -174,10 +174,8 @@ export function initializeWebSocketServer<TData = any>({
       // Handle messages
       ws.on('message', async (message) => {
         try {
-          logger.debug('Received WebSocket message', { connectionId })
-          if (handler.onMessage) {
-            await handler.onMessage(connection, Buffer.from(message as any))
-          }
+          await handler.onMessage?.(connection, Buffer.from(message as any))
+
           wsServer.events.pub({
             t: 'message',
             connection,

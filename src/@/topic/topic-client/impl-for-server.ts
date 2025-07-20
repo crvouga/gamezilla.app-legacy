@@ -5,12 +5,14 @@ import { ITopicMsgCodec } from '../topic-msg-codec'
 import { ITopicServer } from '../topic-server/topic-server'
 import { TopicName, TopicString } from '../topic-string'
 import { ITopicClient, TopicClientNode } from './types'
+import { ILogger } from '~/@/logger'
 
 export type ImplForServer<TContract extends ContractBase> = {
   t: 'for-server'
   server: ITopicServer
   contract: TContract
   codec: ITopicMsgCodec
+  logger: ILogger
 }
 
 const init = <TContract extends ContractBase>(config: ImplForServer<TContract>): ITopicClient<TContract> => {
