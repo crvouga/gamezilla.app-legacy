@@ -41,7 +41,7 @@ const Fixture = async () => {
   const httpServer = HttpServer.init({ t: 'node', logger })
 
   const endpoint = '/topic'
-  const serverUrl = Url.derive(`http://localhost:${port}`)
+  const serverUrl = Url.derive(`http://localhost:${port}`, 'http')
 
   const codec = TopicMsgCodec.init({ t: 'json' })
 

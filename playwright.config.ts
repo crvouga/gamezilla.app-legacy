@@ -5,7 +5,7 @@ import { Url } from './src/@/url/url'
 
 DotEnv.load({ fs: FileSystem.init({ t: 'node' }), paths: ['.env'] })
 
-const PLAYWRIGHT_BASE_URL = Url.derive(process.env.PLAYWRIGHT_BASE_URL ?? '')
+const PLAYWRIGHT_BASE_URL = Url.derive(process.env.PLAYWRIGHT_BASE_URL ?? '', 'https')
 
 if (!PLAYWRIGHT_BASE_URL) throw new Error('PLAYWRIGHT_BASE_URL is not set')
 
