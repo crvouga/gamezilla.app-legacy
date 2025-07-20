@@ -1,5 +1,6 @@
 import { Program } from '~/@/program/program'
 import { AppFrontend } from '~/app/frontend'
+import { HttpProtocol } from './@/http/protocol'
 import { Url } from './@/url/url'
 import { render, VDomEngine } from './@/vdom'
 import { VDomImpl } from './@/vdom/vdom-impl'
@@ -16,9 +17,11 @@ const main = async () => {
   let root = initRoot()
   await VDomEngine.initialize(VDOM_IMPL)
 
+  const windowProtocol = HttpProtocol.fromWindow() ?? 'https'
+
   const ctx = await AppFrontend.initCtx({
-    backendUrl: Url.derive(BACKEND_URL),
-    topicUrl: Url.derive(TOPIC_URL),
+    backendUrl: Url.derive(BACKEND_URL, windowProtocol),
+    topicUrl: Url.derive(TOPIC_URL, windowProtocol),
   })
 
   const program = await Program.run({

@@ -1,23 +1,33 @@
 import { Brand } from '../brand/brand'
+import { HttpProtocol } from '../http/protocol'
 
 export type Url = Brand<string, 'Url'>
 
-const derive = (input: string): Url => {
-  return ensureHttp(input) as Url
+const derive = (input: string, protocol: HttpProtocol): Url => {
+  switch (protocol) {
+    case 'http':
+      return ensureHttp(input)
+    case 'https':
+      return ensureHttps(input)
+  }
 }
 
-const ensureHttps = (url: string) => {
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url
-  }
-  return 'https://' + url
+const of = (input: string): Url => {
+  return input as Url
 }
 
-const ensureHttp = (url: string) => {
+const ensureHttps = (url: string): Url => {
   if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url
+    return of(url)
   }
-  return 'http://' + url
+  return of('https://' + url)
+}
+
+const ensureHttp = (url: string): Url => {
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return of(url)
+  }
+  return of('http://' + url)
 }
 
 export const Url = {
