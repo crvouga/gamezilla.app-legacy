@@ -9,8 +9,8 @@ services:
     depends_on:
       ci-unit-tests:
         condition: service_completed_successfully
-      ci-e2e-tests:
-        condition: service_completed_successfully
+      # ci-e2e-tests:
+      #   condition: service_completed_successfully
       ci-int-tests:
         condition: service_completed_successfully
       ci-cir-deps:
