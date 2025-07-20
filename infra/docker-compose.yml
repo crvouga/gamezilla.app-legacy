@@ -1,24 +1,8 @@
 name: gamezilla_app
 
 services:
-  ci:
-    profiles: ['ci']
-    image: runner
-    command: echo "All good to deploy"
-    depends_on:
-      ci-unit-tests:
-        condition: service_completed_successfully
-      # ci-e2e-tests:
-      #   condition: service_completed_successfully
-      ci-int-tests:
-        condition: service_completed_successfully
-      ci-cir-deps:
-        condition: service_completed_successfully
-      ci-type-check:
-        condition: service_completed_successfully
-
   frontend:
-    profiles: ['ci']
+    profiles: ['e2e']
     build:
       context: ../
       dockerfile: infra/frontend.Dockerfile
@@ -30,7 +14,7 @@ services:
       - '80:80'
 
   backend:
-    profiles: ['ci']
+    profiles: ['e2e']
     build:
       context: ../
       dockerfile: infra/backend.Dockerfile
@@ -49,7 +33,7 @@ services:
         condition: service_completed_successfully
 
   topic:
-    profiles: ['ci']
+    profiles: ['e2e']
     build:
       context: ../
       dockerfile: infra/topic.Dockerfile
@@ -89,55 +73,3 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-  ci-postgres-migration:
-    profiles: ['ci']
-    image: runner
-    command: pnpm db:up
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-  ci-unit-tests:
-    profiles: ['ci']
-    image: runner
-    command: pnpm unit
-    environment:
-      - BACKEND_URL=http://backend:5555
-      - TOPIC_URL=http://topic:5556
-
-  ci-e2e-tests:
-    profiles: ['ci']
-    image: runner
-    environment:
-      - PLAYWRIGHT_BASE_URL=http://frontend:80
-    command: pnpm e2e
-    depends_on:
-      frontend:
-        condition: service_started
-      backend:
-        condition: service_started
-      topic:
-        condition: service_started
-
-  ci-int-tests:
-    profiles: ['ci']
-    image: runner
-    command: pnpm int
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
-    depends_on:
-      ci-postgres-migration:
-        condition: service_completed_successfully
-
-  ci-cir-deps:
-    profiles: ['ci']
-    image: runner
-    command: pnpm cir-deps
-
-  ci-type-check:
-    profiles: ['ci']
-    image: runner
-    command: pnpm exec tsc --noEmit
