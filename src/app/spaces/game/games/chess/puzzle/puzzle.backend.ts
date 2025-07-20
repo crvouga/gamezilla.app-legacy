@@ -1,4 +1,4 @@
-import type { ISqlDb } from '~/@/sql-db'
+import type { ISqlDb } from '~/@/sql-db/interface'
 import { Eff } from '~/@/eff'
 import { eq } from '~/@/equals/equals'
 import { pipe } from '~/@/function/pipe'

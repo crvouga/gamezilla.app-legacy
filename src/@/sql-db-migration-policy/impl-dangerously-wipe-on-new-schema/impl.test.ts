@@ -3,14 +3,14 @@ import { Logger } from '~/@/logger'
 import { PgliteInstance } from '~/@/pglite/pglite-instance'
 import { unwrap } from '~/@/result'
 import { s } from '~/@/schema'
-import { SqlDb } from '~/@/sql-db/backend/impl'
+import { BackendSqlDb } from '~/@/sql-db/backend-impl'
 import { describe, expect, test } from '~/@/test-runner'
 import { SqlDbMigrationPolicy } from '../impl'
 
 const Fixture = async () => {
   const logger = Logger.init({ t: 'noop' })
   const pglite = PgliteInstance({ t: 'in-memory' })
-  const sqlDb = SqlDb({ t: 'pglite', pglite, logger })
+  const sqlDb = BackendSqlDb.init({ t: 'pglite', pglite, logger })
   const kvDb = KeyValueDb({ t: 'in-memory', logger })
   const migrationPolicy = SqlDbMigrationPolicy({
     t: 'dangerously-wipe-on-new-schema',

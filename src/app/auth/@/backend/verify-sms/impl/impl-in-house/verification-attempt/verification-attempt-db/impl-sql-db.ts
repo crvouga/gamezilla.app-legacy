@@ -1,7 +1,7 @@
 import { Result, isErr } from '~/@/result'
 import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
-import type { ISqlDb } from '~/@/sql-db'
+import type { ISqlDb } from '~/@/sql-db/interface'
 import { VerificationId } from '../../verification/verification-id'
 import { VerificationAttemptId } from '../verification-attempt-id'
 import type { IVerificationAttemptDb, WhereClause } from './interface'

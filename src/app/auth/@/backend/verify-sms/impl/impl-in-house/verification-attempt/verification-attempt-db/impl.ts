@@ -1,4 +1,4 @@
-import { ISqlDb } from '~/@/sql-db'
+import { ISqlDb } from '~/@/sql-db/interface'
 import type { IVerificationAttemptDb } from './interface'
 import { VerificationAttemptDbHashMap } from './impl-hash-map'
 import { VerificationAttemptDbSqlDb } from './impl-sql-db'

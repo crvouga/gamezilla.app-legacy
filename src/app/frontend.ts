@@ -14,7 +14,7 @@ import { Psql } from '~/@/psql'
 import { RPC } from '~/@/rpc'
 import { Screen } from '~/@/screens/generated/screens'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
-import { SqlDb } from '~/@/sql-db/frontend/impl'
+import { FrontendSqlDb } from '~/@/sql-db/frontend-impl'
 import { Sub } from '~/@/sub'
 import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl-sql'
 import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
@@ -87,7 +87,7 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
   pglite ??= PgliteInstance({ t: 'in-memory' })
   pglite ??= PgliteWorkerInstance({ t: 'in-memory' })
 
-  const sqlDb = SqlDb({
+  const sqlDb = FrontendSqlDb.init({
     t: 'pglite',
     pglite,
     logger,

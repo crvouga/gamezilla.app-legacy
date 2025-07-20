@@ -2,11 +2,11 @@ import { Ok } from '~/@/result'
 import { Sub } from '../sub'
 import type { ISqlDb } from './interface'
 
-export type Config = {
+export type ImplNoop = {
   t: 'noop'
 }
 
-export const SqlDb = (_config: Config): ISqlDb => {
+const init = (_config: ImplNoop): ISqlDb => {
   return {
     aggregate: {
       StringConcat: (column, separator) => `GROUP_CONCAT(${column}, '${separator}')`,
@@ -26,4 +26,6 @@ export const SqlDb = (_config: Config): ISqlDb => {
   }
 }
 
-export const SQL_DB_NOOP = SqlDb({ t: 'noop' })
+export const ImplNoop = {
+  init,
+}

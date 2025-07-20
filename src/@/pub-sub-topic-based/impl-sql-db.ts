@@ -1,6 +1,6 @@
 import { ILogger } from '../logger'
 import { sleep } from '../promise/sleep'
-import { ISqlDb } from '../sql-db'
+import { ISqlDb } from '../sql-db/interface'
 import { TimeSpan } from '../time/time-span'
 import { ITopicBasedPubSub } from './interface'
 

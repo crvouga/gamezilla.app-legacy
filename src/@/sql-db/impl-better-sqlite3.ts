@@ -3,14 +3,14 @@ import { Err, isErr, Ok } from '~/@/result'
 import type { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
 import { TimeSpan } from '~/@/time/time-span'
-import type { IFileSystem } from '../../file-system/interface'
-import { deterministicJsonStringify } from '../../json/deterministic-stringify'
-import type { ILogger } from '../../logger/interface'
-import { PubSub, Sub } from '../../sub'
-import type { ISqlDb } from '../interface'
+import type { IFileSystem } from '../file-system/interface'
+import { deterministicJsonStringify } from '../json/deterministic-stringify'
+import type { ILogger } from '../logger/interface'
+import { PubSub, Sub } from '../sub'
+import type { ISqlDb } from './interface'
 const Database = (DatabaseNamespace as any).default || DatabaseNamespace
 
-export type Config = {
+export type ImplBetterSqlite3 = {
   t: 'better-sqlite3'
   databasePath: string
   logger: ILogger
@@ -24,7 +24,7 @@ export type Config = {
   pollInterval?: TimeSpan
 }
 
-export const SqlDb = (config: Config): ISqlDb => {
+const init = (config: ImplBetterSqlite3): ISqlDb => {
   const logger = config.logger.child(['better-sqlite3'])
 
   // Ensure directory exists if using file-based database
@@ -215,3 +215,7 @@ const cleanSql = (str: string) =>
     .replace(/\n/g, ' ')
     // remove multiple spaces
     .replace(/ +/g, ' ')
+
+export const ImplBetterSqlite3 = {
+  init,
+}

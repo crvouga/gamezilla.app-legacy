@@ -1,6 +1,6 @@
 import { unwrap } from '~/@/result'
 import { s } from '../schema'
-import { ISqlDb } from '../sql-db'
+import { ISqlDb } from '../sql-db/interface'
 import { Command } from './types'
 
 const SQL_SUMMARY = `

@@ -1,11 +1,10 @@
+import { KeyValueDb } from '~/@/key-value-db'
 import { Logger } from '~/@/logger'
+import { PgliteInstance } from '~/@/pglite/pglite-instance'
 import { unwrap } from '~/@/result'
 import { ascend } from '~/@/sort'
+import { BackendSqlDb } from '~/@/sql-db/backend-impl'
 import { describe, expect, test } from '~/@/test-runner'
-
-import { KeyValueDb } from '~/@/key-value-db'
-import { PgliteInstance } from '~/@/pglite/pglite-instance'
-import { SqlDb } from '~/@/sql-db/backend/impl'
 import { InferQueryInput } from '../interface/db'
 import { Todo } from './todo'
 import { TodoDb } from './todo-db/impl-sql'
@@ -13,10 +12,10 @@ import { ITodoDb } from './todo-db/interface'
 
 const Fixture = async () => {
   const pglite = PgliteInstance({ t: 'in-memory' })
-  const sqlDb = SqlDb({ t: 'pglite', pglite, logger: Logger.init({ t: 'noop' }) })
+  const sqlDb = BackendSqlDb.init({ t: 'pglite', pglite, logger: Logger.init({ t: 'noop' }) })
   const kvDb = KeyValueDb({ t: 'in-memory' })
   const logger = Logger.init({ t: 'noop' })
-  const todoDb = TodoDb({
+  const todoDb = TodoDb.init({
     t: 'sql-db',
     sqlDb,
     logger,

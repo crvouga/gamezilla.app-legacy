@@ -1,7 +1,7 @@
 import type { IFileSystem } from '~/@/file-system'
 import { Result } from '~/@/result'
 import { s } from '~/@/schema'
-import type { ISqlDb } from '~/@/sql-db'
+import type { ISqlDb } from '~/@/sql-db/interface'
 import { PuzzleDb, type PuzzleRow } from '../puzzle-db/puzzle-db-impl'
 
 //

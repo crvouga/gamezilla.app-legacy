@@ -6,18 +6,18 @@ import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
 import { IS_INTEGRATION_TEST } from '~/app/@/test/is-integration-test'
 import { Logger } from '../../logger'
-import { Config, SqlDb } from '../backend/impl'
+import { BackendSqlDb } from '../backend-impl'
 import { SqlDbNotification } from '../interface'
 
-const Fixture = async (config: Config) => {
-  const sqlDb = SqlDb(config)
+const Fixture = async (config: BackendSqlDb) => {
+  const sqlDb = BackendSqlDb.init(config)
   return {
     sqlDb,
   }
 }
 
 const Fixtures = async () => {
-  const configs: Config[] = []
+  const configs: BackendSqlDb[] = []
 
   const SHOULD_TEST_PGLITE = false
   if (SHOULD_TEST_PGLITE) {

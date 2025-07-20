@@ -9,7 +9,7 @@ import { Sleep } from '../promise/sleep'
 import { PubSub, Sub } from '../sub'
 import type { ISqlDb } from './interface'
 
-export type Config = {
+export type ImplPostgres = {
   t: 'postgres'
   databaseUrl: SecretString
   logger: ILogger
@@ -18,7 +18,7 @@ export type Config = {
 
 let postgresClient: postgres.Sql<{}>
 
-export const SqlDb = (config: Config): ISqlDb => {
+const init = (config: ImplPostgres): ISqlDb => {
   const logger = config.logger.child(['postgres'])
 
   postgresClient ??= postgres(config.databaseUrl.dangerouslyReadValue(), {
@@ -146,4 +146,8 @@ export const SqlDb = (config: Config): ISqlDb => {
       }
     },
   }
+}
+
+export const ImplPostgres = {
+  init,
 }

@@ -1,6 +1,6 @@
 import { s } from '~/@/schema'
-import type { ISqlDb } from '../sql-db'
-import type { ILogger } from '../logger/interface'
+import type { ILogger } from '../logger'
+import type { ISqlDb } from '../sql-db/interface'
 import { IPubSub } from './interface'
 
 export type Config = {

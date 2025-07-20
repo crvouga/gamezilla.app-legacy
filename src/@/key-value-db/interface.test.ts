@@ -9,7 +9,7 @@ import { Logger } from '../logger'
 import { PubSub } from '../pub-sub'
 import { SecretString } from '../secrets/secret-string'
 import { SqlDbMigrationPolicy } from '../sql-db-migration-policy/impl'
-import { SqlDb } from '../sql-db/backend/impl'
+import { BackendSqlDb } from '../sql-db/backend-impl'
 import { TimeSpan } from '../time/time-span'
 import { KeyValueDb } from './impl'
 import { IKeyValueDb } from './interface'
@@ -98,7 +98,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
     }),
   })
 
-  const sqlDbSqlite = SqlDb({
+  const sqlDbSqlite = BackendSqlDb.init({
     t: 'better-sqlite3',
     databasePath: ':memory:',
     logger,
@@ -123,7 +123,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
       name: 'postgres',
       keyValueDb: KeyValueDb({
         t: 'sql-db',
-        sqlDb: SqlDb({
+        sqlDb: BackendSqlDb.init({
           t: 'postgres',
           logger,
           databaseUrl: DATABASE_URL,

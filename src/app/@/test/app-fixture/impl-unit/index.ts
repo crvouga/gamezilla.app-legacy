@@ -1,8 +1,8 @@
 import { FileSystem } from '~/@/file-system'
 import { ILogger, Logger } from '~/@/logger'
 import { PgliteInstance } from '~/@/pglite/pglite-instance'
-import { ISqlDb } from '~/@/sql-db'
-import { SqlDb } from '~/@/sql-db/backend/impl'
+import { BackendSqlDb } from '~/@/sql-db/backend-impl'
+import { ISqlDb } from '~/@/sql-db/interface'
 import { TopicClient } from '~/@/topic/topic-client/topic-client'
 import { AppTypes } from '~/app'
 import { IFixtureApp } from '../interface'
@@ -17,8 +17,8 @@ export const FixtureAppUnitTestE2E = async (): Promise<IFixtureApp> => {
   const fs = FileSystem.init({ t: 'node' })
 
   let sqlDb: ISqlDb
-  sqlDb ??= SqlDb({ t: 'pglite', pglite: PgliteInstance({ t: 'in-memory' }), logger })
-  sqlDb ??= SqlDb({ t: 'better-sqlite3', databasePath: ':memory:', logger, fs })
+  sqlDb ??= BackendSqlDb.init({ t: 'pglite', pglite: PgliteInstance({ t: 'in-memory' }), logger })
+  sqlDb ??= BackendSqlDb.init({ t: 'better-sqlite3', databasePath: ':memory:', logger, fs })
 
   const topic = TopicClient.init({ t: 'local', contract: AppTypes.topicContract, logger })
 

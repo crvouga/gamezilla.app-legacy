@@ -7,13 +7,13 @@ import { IPgliteInstance, IPgliteWorkerInstance } from '../pglite/types'
 import { PubSub, Sub } from '../sub'
 import { ISqlDb } from './interface'
 
-export type Config = {
+export type ImplPglite = {
   t: 'pglite'
   pglite: Promise<IPgliteInstance | IPgliteWorkerInstance>
   logger: ILogger
 }
 
-export const SqlDb = (config: Config): ISqlDb => {
+const init = (config: ImplPglite): ISqlDb => {
   const logger = config.logger.child(['pglite'])
 
   const query: ISqlDb['query'] = async (input) => {
@@ -131,4 +131,8 @@ export const SqlDb = (config: Config): ISqlDb => {
       return unlisten
     },
   }
+}
+
+export const ImplPglite = {
+  init,
 }

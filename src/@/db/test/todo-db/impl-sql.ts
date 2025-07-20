@@ -1,12 +1,12 @@
 import { Db } from '~/@/db/impl/impl'
 import { IKeyValueDb } from '~/@/key-value-db'
 import { ILogger } from '~/@/logger'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { s } from '~/@/schema'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { ITodoDb } from './interface'
 
-export type Config = {
+export type TodoDb = {
   t: 'sql-db'
   sqlDb: ISqlDb
   logger: ILogger
@@ -31,7 +31,7 @@ DROP TABLE IF EXISTS todo
 `,
 ]
 
-export const TodoDb = (config: Config): ITodoDb => {
+const init = (config: TodoDb): ITodoDb => {
   return Db({
     t: 'sql-db',
     logger: config.logger,
@@ -89,4 +89,8 @@ export const TodoDb = (config: Config): ITodoDb => {
       }
     },
   })
+}
+
+export const TodoDb = {
+  init,
 }

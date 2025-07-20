@@ -7,10 +7,9 @@ import { ITopicBasedPubSub, TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import type { IRuntime } from '~/@/runtime'
 import { Runtime } from '~/@/runtime'
 import { SecretString } from '~/@/secrets/secret-string'
-import { type ISqlDb } from '~/@/sql-db'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
-import { SqlDb } from '~/@/sql-db/backend/impl'
-import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
+import { BackendSqlDb } from '~/@/sql-db/backend-impl'
+import type { ISqlDb } from '~/@/sql-db/interface'
 import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { randomServerPort } from '~/@/test/random-server-port'
 import { TimeSpan } from '~/@/time/time-span'
@@ -53,7 +52,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const fs = FileSystem.init({ t: 'node' })
 
-  const sqlDbSqlite = SqlDb({
+  const sqlDbSqlite = BackendSqlDb.init({
     t: 'better-sqlite3',
     databasePath: ':memory:',
     logger,
@@ -77,7 +76,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
     syncEngine,
     env: 'test',
     keyValueDbDurable: keyValueDbHashMap,
-    sqlDb: SQL_DB_NOOP,
+    sqlDb: BackendSqlDb.init({ t: 'noop' }),
     migrationPolicy,
     logger,
     now,
@@ -104,7 +103,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const DATABASE_URL = SecretString.init('DATABASE_URL', process.env.DATABASE_URL)
   if (!DATABASE_URL) throw new Error('DATABASE_URL is not set')
 
-  const sqlDbPostgres = SqlDb({
+  const sqlDbPostgres = BackendSqlDb.init({
     t: 'postgres',
     databaseUrl: DATABASE_URL,
     logger,

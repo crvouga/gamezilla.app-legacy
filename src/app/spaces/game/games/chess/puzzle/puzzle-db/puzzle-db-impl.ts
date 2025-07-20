@@ -1,7 +1,7 @@
 import { NonEmpty } from '~/@/array/non-empty'
 import { Err, Ok, Result } from '~/@/result'
 import { s } from '~/@/schema'
-import type { ISqlDb } from '~/@/sql-db'
+import type { ISqlDb } from '~/@/sql-db/interface'
 import { UserId } from '~/app/@/data/user-id'
 import { type MoveInput, uciMoveToMoveInput } from '../../@/chess'
 import { EloRating } from '../elo-rating'

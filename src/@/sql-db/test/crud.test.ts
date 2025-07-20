@@ -7,17 +7,17 @@ import { IS_INTEGRATION_TEST } from '~/app/@/test/is-integration-test'
 import { Logger } from '../../logger'
 import { isErr, isOk } from '../../result'
 import { s } from '../../schema'
-import { Config, SqlDb } from '../backend/impl'
+import { BackendSqlDb } from '../backend-impl'
 
-const Fixture = async (config: Config) => {
-  const sqlDb = SqlDb(config)
+const Fixture = async (config: BackendSqlDb) => {
+  const sqlDb = BackendSqlDb.init(config)
   return {
     sqlDb,
   }
 }
 
 const Fixtures = async () => {
-  const configs: Config[] = []
+  const configs: BackendSqlDb[] = []
 
   const SHOULD_TEST_SQLITE = true
 

@@ -4,11 +4,11 @@ import { KeyValueDb } from '~/@/key-value-db'
 import { KeyBoard } from '~/@/keyboard'
 import { Translator } from '~/@/l18n/generated'
 import { Logger } from '~/@/logger'
-import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { Navigation } from '~/@/navigation'
 import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screens/generated/screens'
-import { SQL_DB_NOOP } from '~/@/sql-db/impl-noop'
+import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
+import { FrontendSqlDb } from '~/@/sql-db/frontend-impl'
 import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl-sql'
 import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TimeSpan } from '~/@/time/time-span'
@@ -41,7 +41,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
       t: 'sql-db',
       logger: Logger.init({ t: 'noop' }),
       migrationPolicy,
-      sqlDb: SQL_DB_NOOP,
+      sqlDb: FrontendSqlDb.init({ t: 'noop' }),
     }),
   })
   const ctx: AppFrontendCtx = {
@@ -54,7 +54,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     viewport: Viewport({ t: 'noop' }),
     clientSessionId: ClientSessionId.generate(),
     parentScreen: null,
-    sqlDb: SQL_DB_NOOP,
+    sqlDb: FrontendSqlDb.init({ t: 'noop' }),
     logger: Logger.init({ t: 'noop' }),
     currentScreen: input?.currentScreen ?? {
       n: 'auth',

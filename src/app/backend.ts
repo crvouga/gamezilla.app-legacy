@@ -10,7 +10,7 @@ import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
 import { SecretString } from '~/@/secrets/secret-string'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
-import { SqlDb } from '~/@/sql-db/backend/impl'
+import { BackendSqlDb } from '~/@/sql-db/backend-impl'
 import { SyncEngineServer } from '~/@/sync-engine/sync-engine-server'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -44,7 +44,7 @@ const initCtx = async (config: {
     logger,
   })
 
-  const sqlDb = SqlDb({
+  const sqlDb = BackendSqlDb.init({
     t: 'postgres',
     databaseUrl: config.databaseUrl,
     logger,
