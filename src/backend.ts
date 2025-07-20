@@ -4,7 +4,7 @@ import { FileSystem } from './@/file-system'
 import { SecretString } from './@/secrets/secret-string'
 
 const main = async () => {
-  await DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env'] })
+  await DotEnv.load({ fs: FileSystem.init({ t: 'node' }), paths: ['.env'] })
 
   const BACKEND_PORT = Number(process.env.BACKEND_PORT)
   if (isNaN(BACKEND_PORT)) {

@@ -1,12 +1,16 @@
-import * as ImplNode from './impl-node'
+import { ImplNode } from './impl-node'
 import { IFileSystem } from './interface'
 
-export type Config = ImplNode.Config
+export type FileSystem = ImplNode
 
-export const FileSystem = (config: Config): IFileSystem => {
+const init = (config: FileSystem): IFileSystem => {
   switch (config.t) {
     case 'node': {
-      return ImplNode.FileSystem(config)
+      return ImplNode.init(config)
     }
   }
+}
+
+export const FileSystem = {
+  init,
 }

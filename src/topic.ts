@@ -12,7 +12,7 @@ import { topicMsgCodec } from './app/@/topic-msg-codec'
 import { BackendConnectionBackend } from './app/wire/backend-connection/backend'
 
 const main = async () => {
-  await DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env'] })
+  await DotEnv.load({ fs: FileSystem.init({ t: 'node' }), paths: ['.env'] })
 
   const logger = Logger.init({
     t: 'console',
@@ -43,7 +43,7 @@ const main = async () => {
   const topicClient = TopicClient.init({
     t: 'for-server',
     contract: AppTypes.topicContract,
-    server: topicServer,
+    topicServer: topicServer,
     logger: logger.child(['topic-client']),
     codec: topicMsgCodec,
   })

@@ -12,7 +12,7 @@ const initCtx = async (input: {
   return {
     ...input.ctx,
     ...(await BackendInstanceBackend.initCtx(input)),
-    ...(await BackendConnectionBackend.initCtx(input)),
+    topic: input.topic,
   }
 }
 
@@ -24,7 +24,7 @@ const rpc = (input: { ctx: BackendCtxModule }) => {
 
 const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
   BackendInstanceBackend.worker(s, input)
-  BackendConnectionBackend.worker(s, input)
+  BackendConnectionBackend.worker(s, { topicClient: input.ctx.topic })
 }
 
 export const WireBackend = {

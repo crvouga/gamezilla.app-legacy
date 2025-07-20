@@ -14,7 +14,7 @@ export const FixtureAppUnitTestE2E = async (): Promise<IFixtureApp> => {
   logger ??= Logger.init({ t: 'noop' })
   logger ??= Logger.init({ t: 'console', namespace: ['fixture'], newLinePerMsg: false, maxLogLevel: 'info' })
 
-  const fs = FileSystem({ t: 'node' })
+  const fs = FileSystem.init({ t: 'node' })
 
   let sqlDb: ISqlDb
   sqlDb ??= SqlDb({ t: 'pglite', pglite: PgliteInstance({ t: 'in-memory' }), logger })

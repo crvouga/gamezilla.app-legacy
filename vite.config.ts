@@ -4,7 +4,7 @@ import { defineConfig } from 'vite'
 import { DotEnv } from './src/@/dotenv/dotenv'
 import { FileSystem } from './src/@/file-system'
 
-await DotEnv.load({ fs: FileSystem({ t: 'node' }), paths: ['.env'] })
+await DotEnv.load({ fs: FileSystem.init({ t: 'node' }), paths: ['.env'] })
 
 const BACKEND_URL = process.env.BACKEND_URL
 if (!BACKEND_URL) throw new Error('BACKEND_URL is not set')

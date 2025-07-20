@@ -22,7 +22,7 @@ const Fixtures = async () => {
     t: 'better-sqlite3',
     databasePath: ':memory:',
     logger: Logger.init({ t: 'noop' }),
-    fs: FileSystem({ t: 'node' }),
+    fs: FileSystem.init({ t: 'node' }),
   })
 
   const pglite = PgliteInstance({ t: 'in-memory' })

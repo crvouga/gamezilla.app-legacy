@@ -9,14 +9,14 @@ import { ILogger } from '~/@/logger'
 
 export type ImplForServer<TContract extends ContractBase> = {
   t: 'for-server'
-  server: ITopicServer
+  topicServer: ITopicServer
   contract: TContract
   codec: ITopicMsgCodec
   logger: ILogger
 }
 
 const init = <TContract extends ContractBase>(config: ImplForServer<TContract>): ITopicClient<TContract> => {
-  const serverCore = config.server
+  const { topicServer } = config
 
   const client = Object.entries(config.contract)
     .map(([topicName_, _topic]) => {
@@ -29,13 +29,13 @@ const init = <TContract extends ContractBase>(config: ImplForServer<TContract>):
           const decodedMsg: ToClientMsgMany = [PUB, topicName, topicParams, msg]
           const encodedMsg = config.codec.encode(decodedMsg) as string | Buffer
 
-          serverCore.publishTopicName(topicName, encodedMsg, decodedMsg, null)
-          serverCore.publishTopic(topic, encodedMsg, decodedMsg, null)
+          topicServer.publishTopicName(topicName, encodedMsg, decodedMsg, null)
+          topicServer.publishTopic(topic, encodedMsg, decodedMsg, null)
         },
         sub(topicParams, mapper) {
           const topic = TopicString.init(topicName, topicParams)
 
-          const subscription = serverCore._subscriptionsByTopic.get(topic)
+          const subscription = topicServer._subscriptionsByTopic.get(topic)
 
           if (subscription) return subscription.pubSub
 
@@ -46,7 +46,7 @@ const init = <TContract extends ContractBase>(config: ImplForServer<TContract>):
             sub: (s) => pubSub.sub((m) => s(mapper(m))),
           }
 
-          serverCore._subscriptionsByTopic.set(topic, {
+          topicServer._subscriptionsByTopic.set(topic, {
             topicName,
             topicParams,
             pubSub: pubSubMapped,
@@ -57,7 +57,7 @@ const init = <TContract extends ContractBase>(config: ImplForServer<TContract>):
         },
 
         subAll(mapper) {
-          const subscription = serverCore._subscriptionsByTopicName.get(topicName)
+          const subscription = topicServer._subscriptionsByTopicName.get(topicName)
 
           if (subscription) return subscription.pubSub
 
@@ -68,7 +68,7 @@ const init = <TContract extends ContractBase>(config: ImplForServer<TContract>):
             sub: (s) => pubSub.sub((m) => s(mapper(m))),
           }
 
-          serverCore._subscriptionsByTopicName.set(topicName, {
+          topicServer._subscriptionsByTopicName.set(topicName, {
             topicName,
             pubSub: pubSubMapped,
             clients: new Set(),

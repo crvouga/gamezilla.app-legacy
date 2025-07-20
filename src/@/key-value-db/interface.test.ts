@@ -93,7 +93,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
         t: 'with-distributed-invalidations',
         cache: KeyValueDb({ t: 'hash-map' }),
         logger,
-        pubSub: await PubSub({ t: 'in-memory' }),
+        pubSub: PubSub({ t: 'in-memory' }),
       }),
     }),
   })
@@ -102,7 +102,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
     t: 'better-sqlite3',
     databasePath: ':memory:',
     logger,
-    fs: FileSystem({ t: 'node' }),
+    fs: FileSystem.init({ t: 'node' }),
   })
 
   fixtures.push({

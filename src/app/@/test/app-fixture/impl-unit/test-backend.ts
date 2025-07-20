@@ -73,7 +73,7 @@ export const TestBackend = async (config: {
     userProfileDb,
     httpServer,
     runtime,
-    fileSystem: FileSystem({ t: 'node' }),
+    fileSystem: FileSystem.init({ t: 'node' }),
   }
 
   const wire = await WireBackend.initCtx({ ctx: ctxBase, topic: config.topic })

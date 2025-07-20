@@ -89,7 +89,8 @@ const initCtx = async (config: {
     t: 'for-server',
     contract: AppTypes.topicContract,
     codec: topicMsgCodec,
-    server: topicServer,
+    topicServer,
+    logger: logger.child(['topic-client']),
   })
 
   const userProfileDb = ProfileDb({
@@ -107,7 +108,7 @@ const initCtx = async (config: {
     logger,
   })
 
-  const fileSystem = FileSystem({ t: 'node' })
+  const fileSystem = FileSystem.init({ t: 'node' })
 
   const ctxBase: AppBackendCtxBase = {
     fileSystem,

@@ -51,7 +51,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
 
   const keyValueDbHashMap = KeyValueDb({ t: 'hash-map' })
 
-  const fs = FileSystem({ t: 'node' })
+  const fs = FileSystem.init({ t: 'node' })
 
   const sqlDbSqlite = SqlDb({
     t: 'better-sqlite3',
@@ -72,7 +72,7 @@ export const FixtureAppBackend = async (): Promise<IFixtureAppBackend> => {
   const syncEngine = SyncEngineServer({ logger })
 
   const ctx: AppBackendCtxBase = {
-    fileSystem: FileSystem({ t: 'node' }),
+    fileSystem: FileSystem.init({ t: 'node' }),
     port: randomServerPort(),
     syncEngine,
     env: 'test',

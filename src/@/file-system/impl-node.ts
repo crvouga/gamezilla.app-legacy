@@ -1,11 +1,11 @@
 import { promises as fs } from 'fs'
 import { IFileSystem } from './interface'
 
-export type Config = {
+export type ImplNode = {
   t: 'node'
 }
 
-export const FileSystem = (_config: Config): IFileSystem => {
+const init = (_config: ImplNode): IFileSystem => {
   return {
     async exists(path) {
       try {
@@ -42,4 +42,8 @@ export const FileSystem = (_config: Config): IFileSystem => {
       }
     },
   }
+}
+
+export const ImplNode = {
+  init,
 }
