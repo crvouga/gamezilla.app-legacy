@@ -120,6 +120,10 @@ const initClientCore = <TContract extends ContractBase>(config: Config<TContract
       } catch (e) {
         logger.error('worker error', e)
         abortController.abort()
+        await p.sleep(config.reconnectionRate, abortController.signal)
+      } finally {
+        logger.info('restarting connection')
+        await p.sleep(config.reconnectionRate, abortController.signal)
       }
     }
   }
