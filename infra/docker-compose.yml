@@ -63,12 +63,16 @@ services:
         condition: service_started
 
   nats:
-    image: nats:latest
+    build:
+      context: ../
+      dockerfile: infra/nats.Dockerfile
     ports:
       - '4222:4222'
 
   postgres:
-    image: postgres:latest
+    build:
+      context: ../
+      dockerfile: infra/postgres.Dockerfile
     restart: always
     environment:
       POSTGRES_USER: postgres
