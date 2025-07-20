@@ -37,11 +37,16 @@ jobs:
       - name: Run CI
         run: pnpm run ci
 
+      - name: Run CI Logs
+        run: pnpm ci:logs
+        if: always()
+
       - name: Upload CI logs
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: ci-logs
-          path: ci_logs.txt
+          path: ci-logs/
 
   deploy:
     name: Deploy
