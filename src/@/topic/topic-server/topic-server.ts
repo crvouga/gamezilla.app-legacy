@@ -11,7 +11,7 @@ import { SessionId } from '~/@/wire/session-id'
 import { SessionIdHttp } from '~/@/wire/session-id-http'
 import { PUB, SUB, SUB_ALL, ToClientMsgMany, ToClientMsgOne, ToServerMsg, UNSUB, UNSUB_ALL } from '../msgs'
 import { TopicClientData } from '../topic-client/types'
-import { ContractBase } from '../topic-contract'
+import { TopicContractBase } from '../topic-contract'
 import { ITopicMsgCodec } from '../topic-msg-codec'
 import { TopicNameSubscription } from '../topic-name-subscription'
 import { TopicName, TopicParams, TopicString } from '../topic-string'
@@ -21,7 +21,7 @@ type ServerSubscription = {
   clients: Set<ClientId | undefined>
 }
 
-export type TopicServer<TContract extends ContractBase> = {
+export type TopicServer<TContract extends TopicContractBase> = {
   t: 'web-sockets'
   contract: TContract
   httpServer: IHttpServer
@@ -31,7 +31,7 @@ export type TopicServer<TContract extends ContractBase> = {
   pubSub: ITopicBasedPubSub
 }
 
-export type ITopicServer<TContract extends ContractBase> = {
+export type ITopicServer<TContract extends TopicContractBase> = {
   _subscriptionsByTopic: Map<TopicString, TopicSubscription & ServerSubscription>
   _subscriptionsByTopicName: Map<TopicName, TopicNameSubscription & ServerSubscription>
   _clients: Map<ClientId, TopicClientData>
@@ -54,7 +54,7 @@ export type ITopicServer<TContract extends ContractBase> = {
   ) => void
 }
 
-const init = <TContract extends ContractBase>(config: TopicServer<TContract>): ITopicServer<TContract> => {
+const init = <TContract extends TopicContractBase>(config: TopicServer<TContract>): ITopicServer<TContract> => {
   const logger = config.logger.child(['topic-server'])
   const subscriptionsByTopic = new Map<TopicString, TopicSubscription & ServerSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription & ServerSubscription>()

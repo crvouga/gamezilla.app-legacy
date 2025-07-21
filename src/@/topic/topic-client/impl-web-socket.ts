@@ -7,14 +7,14 @@ import { ClientSessionId } from '~/@/wire/client-session-id'
 import { PUB, SUB, SUB_ALL, ToClientMsg, ToServerMsg, UNSUB, UNSUB_ALL } from '../msgs'
 import { Socket } from '../socket'
 import { toWebSocketUrl } from '../to-websocket-url'
-import { ContractBase } from '../topic-contract'
+import { TopicContractBase } from '../topic-contract'
 import { ITopicMsgCodec } from '../topic-msg-codec'
 import { TopicNameSubscription } from '../topic-name-subscription'
 import { TopicName, TopicString } from '../topic-string'
 import { TopicSubscription } from '../topic-subscription'
 import { TopicClientNode, ITopicClient } from './types'
 
-export type ImplWebSockets<T extends ContractBase> = {
+export type ImplWebSockets<T extends TopicContractBase> = {
   t: 'web-sockets'
   contract: T
   serverUrl: Url
@@ -26,7 +26,7 @@ export type ImplWebSockets<T extends ContractBase> = {
   codec: ITopicMsgCodec
 }
 
-const init = <TContract extends ContractBase>(config: ImplWebSockets<TContract>): ITopicClient<TContract> => {
+const init = <TContract extends TopicContractBase>(config: ImplWebSockets<TContract>): ITopicClient<TContract> => {
   const clientCore = initClientCore(config)
 
   const client = Object.entries(config.contract)
@@ -97,7 +97,7 @@ const init = <TContract extends ContractBase>(config: ImplWebSockets<TContract>)
   return client
 }
 
-const initClientCore = <TContract extends ContractBase>(config: ImplWebSockets<TContract>) => {
+const initClientCore = <TContract extends TopicContractBase>(config: ImplWebSockets<TContract>) => {
   const logger = config.logger.child(['topic', 'client'])
   const msgsToServer = Sub.create<ToServerMsg>()
   const subscriptionsByTopic = new Map<TopicString, TopicSubscription>()
@@ -116,9 +116,9 @@ const initClientCore = <TContract extends ContractBase>(config: ImplWebSockets<T
         socket.close()
       } catch (e) {
         logger.error('worker error', e)
-        abortController.abort()
       } finally {
         logger.info('restarting connection')
+        abortController.abort('reconnecting')
         await p.sleep(config.reconnectionRate, abortController.signal)
       }
     }

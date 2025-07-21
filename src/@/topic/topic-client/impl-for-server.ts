@@ -1,13 +1,13 @@
 import { ILogger } from '~/@/logger'
 import { PubSub, Sub } from '~/@/sub'
 import { PUB, ToClientMsgMany } from '../msgs'
-import { ContractBase } from '../topic-contract'
+import { TopicContractBase } from '../topic-contract'
 import { ITopicMsgCodec } from '../topic-msg-codec'
 import { ITopicServer } from '../topic-server/topic-server'
 import { TopicName, TopicString } from '../topic-string'
 import { ITopicClient, TopicClientNode } from './types'
 
-export type ImplForServer<TContract extends ContractBase> = {
+export type ImplForServer<TContract extends TopicContractBase> = {
   t: 'for-server'
   topicServer: ITopicServer<TContract>
   contract: TContract
@@ -15,7 +15,7 @@ export type ImplForServer<TContract extends ContractBase> = {
   logger: ILogger
 }
 
-const init = <TContract extends ContractBase>(config: ImplForServer<TContract>): ITopicClient<TContract> => {
+const init = <TContract extends TopicContractBase>(config: ImplForServer<TContract>): ITopicClient<TContract> => {
   const { topicServer } = config
 
   const client = Object.entries(config.contract)

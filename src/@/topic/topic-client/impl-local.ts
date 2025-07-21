@@ -1,18 +1,18 @@
 import { ILogger } from '~/@/logger'
 import { PubSub, Sub } from '~/@/sub'
-import { ContractBase } from '../topic-contract'
+import { TopicContractBase } from '../topic-contract'
 import { TopicNameSubscription } from '../topic-name-subscription'
 import { TopicName, TopicString } from '../topic-string'
 import { TopicSubscription } from '../topic-subscription'
 import { TopicClientNode, ITopicClient } from './types'
 
-export type ImplLocal<TContract extends ContractBase> = {
+export type ImplLocal<TContract extends TopicContractBase> = {
   t: 'local'
   contract: TContract
   logger: ILogger
 }
 
-const init = <TContract extends ContractBase>(config: ImplLocal<TContract>): ITopicClient<TContract> => {
+const init = <TContract extends TopicContractBase>(config: ImplLocal<TContract>): ITopicClient<TContract> => {
   const subscriptionsByTopic = new Map<TopicString, TopicSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription>()
 
