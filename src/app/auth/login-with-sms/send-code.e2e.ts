@@ -4,6 +4,7 @@ import { describe, expect, test, TestRunnerEnv } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
 import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
 import { doClickBackButton } from '~/app/@/test/flows/do-click-back-button'
+import { doDismissAlert } from '~/app/@/test/flows/do-dismiss-alert'
 import { doOpenSendCodeScreen } from './test/do-open-send-code-screen'
 import { doSendCode } from './test/do-send-code'
 
@@ -44,15 +45,13 @@ describe('send code', () => {
   test('show alert on sending code', async (e) => {
     await using f = await Fixture(e)
     await doSendCode(f)
-    const [alert] = await f.frontend.find(`[role='alert'][data-info='true']`)
-    expect(alert).toBeTruthy()
+    await doDismissAlert(f.frontend, 'info')
   })
 
   test('should error alert when phone number is invalid', async (e) => {
     await using f = await Fixture(e)
     await doSendCode(f, { phoneNumber: '123' })
-    const [alert] = await f.frontend.find(`[role='alert'][data-error='true']`)
-    expect(alert).toBeTruthy()
+    await doDismissAlert(f.frontend, 'error')
   })
 
   test('play sound on sending code', async (e) => {

@@ -3,6 +3,7 @@ import { describe, expect, test, TestRunnerEnv } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
 import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
 import { doClickBackButton } from '~/app/@/test/flows/do-click-back-button'
+import { doDismissAlert } from '~/app/@/test/flows/do-dismiss-alert'
 import { SpacesFrontend } from '~/app/spaces/frontend'
 import { AuthFrontend } from '../frontend'
 import { doOpenSendCodeScreen } from './test/do-open-send-code-screen'
@@ -42,8 +43,7 @@ describe('verify code', () => {
 
   test('go to space screen after verifying code', async (e) => {
     await using f = await Fixture(e)
-    const [sendCodeInfo] = await f.frontend.find(`[role='alert'][data-info='true']`)
-    expect(sendCodeInfo).toBeTruthy()
+    await doDismissAlert(f.frontend, 'info')
     await doVerifyCode(f)
     const screen = await f.frontend.findByTestId(SpacesFrontend.TEST_ID.SPACE_LIST_SCREEN)
     expect(screen).toBeTruthy()
@@ -63,21 +63,18 @@ describe('verify code', () => {
       await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
     }
     await doVerifyCode(f, { code: '123' })
-    const [error] = await f.frontend.find(`[role='alert'][data-error='true']`)
-    expect(error).toBeTruthy()
+    await doDismissAlert(f.frontend, 'error')
   })
 
   test.skip('show alert on verifying code', async (e) => {
     await using f = await Fixture(e)
     await doVerifyCode(f)
-    const [alert] = await f.frontend.find(`[role='alert'][data-info='true']`)
-    expect(alert).toBeTruthy()
+    await doDismissAlert(f.frontend, 'info')
   })
 
   test('show error alert when code is wrong', async (e) => {
     await using f = await Fixture(e)
     await doVerifyCode(f, { code: '111' })
-    const [error] = await f.frontend.find(`[role='alert'][data-error='true']`)
-    expect(error).toBeTruthy()
+    await doDismissAlert(f.frontend, 'error')
   })
 })
