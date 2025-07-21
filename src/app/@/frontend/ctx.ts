@@ -5,9 +5,9 @@ import { IKeyBoard } from '~/@/keyboard'
 import type { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { ILogger } from '~/@/logger'
-import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { INavigation } from '~/@/navigation'
 import type { Screen } from '~/@/screens/generated/screens'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { ISyncEngine } from '~/@/sync-engine/sync-engine-server'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -15,6 +15,7 @@ import { IViewport, ViewportVisibility } from '~/@/viewport'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { BackendConnectionStatus } from '~/app/@/wire/backend-connection-status'
 import { UserSession } from '~/app/auth/@/user-session/user-session'
+import { QueryCache } from '~/app/frontend/query-cache/query-cache'
 import { UserAccount } from '../data/user-account'
 import { UserId } from '../data/user-id'
 import { UserProfile } from '../data/user-profile'
@@ -51,6 +52,7 @@ export type AppFrontendCtxBase = {
   navigation: INavigation
   backendConnectionStatus: BackendConnectionStatus
   syncEngine: ISyncEngine
+  queryCache: QueryCache
 }
 
 export type AppFrontendCtx = AppFrontendCtxBase & {
