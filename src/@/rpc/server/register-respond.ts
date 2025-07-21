@@ -1,6 +1,6 @@
 import { IHttpServer } from '~/@/http-server'
 import { ILogger } from '~/@/logger'
-import { attempt, isErr } from '~/@/result'
+import { isErr } from '~/@/result'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
 import { SessionId } from '~/@/wire/session-id'
@@ -123,12 +123,6 @@ const handleRequest = async (input: {
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (error) {
-    const requestBody = await attempt(() => input.request.text())
-    if (isErr(requestBody)) {
-      input.logger.error('Error reading request body:', requestBody.error)
-    } else {
-      input.logger.debug('Request body:', requestBody.value)
-    }
     input.logger.error('Error handling request:', error)
     return new Response(JSON.stringify({ error: String(error) }), { status: 400 })
   }

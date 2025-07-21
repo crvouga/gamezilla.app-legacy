@@ -14,9 +14,15 @@ export type ImplAllowSubDomains = {
 
 const init = (config: ImplAllowSubDomains): ICorsPolicy => {
   return {
-    updateResponse(response, request) {
+    map(response, request) {
+      const newResponse = new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: new Headers(response.headers),
+      })
+
       const origin = request.headers.get('Origin')
-      if (!origin) return
+      if (!origin) return newResponse
 
       try {
         const originUrl = new URL(origin)
@@ -37,21 +43,27 @@ const init = (config: ImplAllowSubDomains): ICorsPolicy => {
         const isSameAsServer = config.allowServerDomain && originHost === serverHost
 
         if (isAllowed || isSameAsServer) {
-          response.headers.set('Access-Control-Allow-Origin', origin)
-          response.headers.set('Access-Control-Allow-Credentials', 'true')
-          response.headers.set(
+          newResponse.headers.set('Access-Control-Allow-Origin', origin)
+          newResponse.headers.set('Access-Control-Allow-Credentials', 'true')
+          newResponse.headers.set(
             'Access-Control-Allow-Headers',
             request.headers.get('Access-Control-Request-Headers') ?? 'Content-Type, Authorization',
           )
-          response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD')
+          newResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD')
 
           if (request.method === 'OPTIONS') {
-            response.headers.set('Access-Control-Max-Age', '3600')
+            newResponse.headers.set('Access-Control-Max-Age', '3600')
+            return new Response(null, {
+              status: 204,
+              headers: newResponse.headers,
+            })
           }
         }
       } catch {
         // Invalid Origin, do nothing
       }
+
+      return newResponse
     },
   }
 }

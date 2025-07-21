@@ -16,7 +16,7 @@ describe('ImplAllowSubDomains', () => {
       },
     })
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Allow-Origin')).toEqual('http://example.com')
     expect(response.headers.get('Access-Control-Allow-Credentials')).toEqual('true')
@@ -36,7 +36,7 @@ describe('ImplAllowSubDomains', () => {
       },
     })
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Allow-Origin')).toEqual('http://sub.example.com')
   })
@@ -56,7 +56,7 @@ describe('ImplAllowSubDomains', () => {
       },
     })
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Allow-Origin')).toEqual('http://localhost:3000')
   })
@@ -76,7 +76,7 @@ describe('ImplAllowSubDomains', () => {
       },
     })
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Max-Age')).toEqual('3600')
   })
@@ -95,7 +95,7 @@ describe('ImplAllowSubDomains', () => {
       },
     })
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Allow-Origin')).toEqual(null)
   })
@@ -110,7 +110,7 @@ describe('ImplAllowSubDomains', () => {
     const response = new Response()
     const request = new Request('http://test.com')
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Allow-Origin')).toEqual(null)
   })
@@ -129,7 +129,7 @@ describe('ImplAllowSubDomains', () => {
       },
     })
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Allow-Origin')).toEqual(null)
   })

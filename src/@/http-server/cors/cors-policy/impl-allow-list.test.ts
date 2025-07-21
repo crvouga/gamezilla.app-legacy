@@ -15,7 +15,7 @@ describe('ImplAllowList', () => {
       },
     })
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Allow-Origin')).toEqual('example.com')
     expect(response.headers.get('Access-Control-Allow-Credentials')).toEqual('true')
@@ -34,7 +34,7 @@ describe('ImplAllowList', () => {
       },
     })
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Allow-Methods')).toEqual('GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD')
     expect(response.headers.get('Access-Control-Allow-Headers')).toEqual('Content-Type, Authorization')
@@ -54,7 +54,7 @@ describe('ImplAllowList', () => {
       },
     })
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Max-Age')).toEqual('3600')
   })
@@ -72,7 +72,7 @@ describe('ImplAllowList', () => {
       },
     })
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Allow-Origin')).toEqual(null)
   })
@@ -86,7 +86,7 @@ describe('ImplAllowList', () => {
     const response = new Response()
     const request = new Request('http://test.com')
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Allow-Origin')).toEqual(null)
   })
@@ -106,7 +106,7 @@ describe('ImplAllowList', () => {
       },
     })
 
-    policy.updateResponse(response, request)
+    policy.map(response, request)
 
     expect(response.headers.get('Access-Control-Allow-Headers')).toEqual('X-Custom-Header')
   })

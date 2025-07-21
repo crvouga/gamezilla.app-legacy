@@ -13,7 +13,7 @@ const middleware =
     }
 
     if (response) {
-      policy.updateResponse(response, request)
+      response = policy.map(response, request)
     }
 
     return response

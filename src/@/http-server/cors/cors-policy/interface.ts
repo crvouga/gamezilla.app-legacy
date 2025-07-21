@@ -4,5 +4,5 @@ export type ICorsPolicy = {
    * @param response - The response to update.
    * @param request - The request that triggered the response.
    */
-  updateResponse: (response: Response, request: Request) => void
+  map: (response: Response, request: Request) => Response
 }
