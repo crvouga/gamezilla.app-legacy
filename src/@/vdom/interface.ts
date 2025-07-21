@@ -1,4 +1,4 @@
-import { AriaRole } from './aria-role'
+import { AriaRole } from '../html/aria-role'
 import { VDom } from './vdom'
 
 export type Tag =

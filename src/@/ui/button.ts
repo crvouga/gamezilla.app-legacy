@@ -51,6 +51,7 @@ export const Button = (input: ButtonInput) => {
         input.loading && 'cursor-wait opacity-70',
       ),
       role: 'button',
+      'aria-label': input.text ?? '',
       onClick: (e) =>
         input.onClick?.({
           currentTarget: e.currentTarget as HTMLButtonElement,

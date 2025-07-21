@@ -1,4 +1,4 @@
-import { AriaRole } from '../vdom/aria-role'
+import { AriaRole } from '../html/aria-role'
 import { VDom } from '../vdom/vdom'
 import { h } from '~/@/vdom/h'
 import { cn } from './cn'

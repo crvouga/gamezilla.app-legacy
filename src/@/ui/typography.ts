@@ -1,5 +1,5 @@
 import type { TranslatedText } from '~/@/l18n'
-import { AriaRole } from '~/@/vdom/aria-role'
+import { AriaRole } from '~/@/html/aria-role'
 import { cn } from './cn'
 import { h } from '~/@/vdom/h'
 

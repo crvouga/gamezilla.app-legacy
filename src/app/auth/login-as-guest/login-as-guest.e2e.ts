@@ -40,7 +40,7 @@ const doContinueAsGuest = async (f: IFixtureApp) => {
   const screen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.LOGIN_SCREEN)
   expect(screen).toBeTruthy()
   //
-  const button = await f.frontend.findByTestId(AuthFrontend.TEST_ID.CONTINUE_AS_GUEST_BUTTON)
+  const button = await f.frontend.findByRole('button', 'Continue as guest')
   expect(button).toBeTruthy()
   await button!.do({ t: 'click' })
 }

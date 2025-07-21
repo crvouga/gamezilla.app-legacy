@@ -1,5 +1,6 @@
 import { PlayedAudioRecord } from '../audio-player'
 import { TimeSpan } from '../time/time-span'
+import { AriaRole } from '../html/aria-role'
 
 export type TestAction =
   | { t: 'keydown'; key: string }
@@ -32,6 +33,7 @@ export type ITestClientBase = IFindable & {
 
 export type ITestClient = ITestClientBase & {
   findByTestId: (testId: string) => Promise<ITestNode | null>
+  findByRole: (role: AriaRole, label?: string, config?: FindConfig) => Promise<ITestNode | null>
 }
 
 export const fromBase = (base: ITestClientBase): ITestClient => {
@@ -39,6 +41,11 @@ export const fromBase = (base: ITestClientBase): ITestClient => {
     ...base,
     findByTestId: async (testId) => {
       const [node] = await base.find(`[data-testid="${testId}"]`)
+      return node ?? null
+    },
+    findByRole: async (role, label, config) => {
+      const css = `[role="${role}"]${label ? `[aria-label="${label}" i]` : ''}`
+      const [node] = await base.find(css, config)
       return node ?? null
     },
   }

@@ -1,7 +1,7 @@
 import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
 import { VDom } from '~/@/vdom/vdom'
-import { AriaRole } from '../vdom/aria-role'
+import { AriaRole } from '../html/aria-role'
 
 export const SURFACE_CLASS_NAME = 'bg-black border border-neutral-700'
 
