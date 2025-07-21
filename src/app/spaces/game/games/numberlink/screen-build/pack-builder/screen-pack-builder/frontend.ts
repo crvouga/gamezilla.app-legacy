@@ -53,7 +53,7 @@ const ViewScreen: FrontendModule['View'] = (input) => {
   }
 }
 
-export const ScreenPackBuilderFrontend: Pick<FrontendModule, 'update' | 'View' | 'subscriptions'> = {
+export const ScreenPackBuilderFrontend = {
   update,
   subscriptions,
   View,
