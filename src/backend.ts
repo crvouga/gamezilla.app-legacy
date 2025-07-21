@@ -17,7 +17,7 @@ const main = async () => {
   const DATABASE_URL = SecretString.init('DATABASE_URL', process.env.DATABASE_URL)
   if (!DATABASE_URL) throw new Error('DATABASE_URL is not set')
 
-  const IS_PROD = process.env.NODE_ENV === 'production'
+  const IS_PROD = process.env.NODE_ENV?.includes('production') ?? false
 
   const CORS_ORIGINS: string[] = []
   if (!IS_PROD) {

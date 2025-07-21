@@ -1,4 +1,4 @@
-const IS_PROD = process.env.NODE_ENV === 'production'
+const IS_PROD = process.env.NODE_ENV?.includes('production') ?? false
 
 export const assert = <T>(condition: T, message: string) => {
   if (!condition && !IS_PROD) {
