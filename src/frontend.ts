@@ -6,7 +6,7 @@ import { render, VDomEngine } from './@/vdom'
 import { VDomImpl } from './@/vdom/vdom-impl'
 
 const main = async () => {
-  const VDOM_IMPL = VDomImpl.getUrl({ fallback: 'inferno' })
+  const VDOM_IMPL = VDomImpl.getUrl()
   console.log('VDOM_IMPL', VDOM_IMPL)
 
   const BACKEND_URL = process.env.BACKEND_URL

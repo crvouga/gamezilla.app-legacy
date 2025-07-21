@@ -24,12 +24,14 @@ const from = (s: unknown): VDomImpl | null => {
 
 const SEARCH_PARAM_KEY = 'vdom'
 
-const getUrl = (config: { fallback: VDomImpl }): VDomImpl => {
-  if (typeof window === 'undefined') return config.fallback
+const FALLBACK: VDomImpl = 'inferno'
+
+const getUrl = (): VDomImpl => {
+  if (typeof window === 'undefined') return FALLBACK
   const searchParams = new URLSearchParams(window.location.search)
   const vdomImplParam = searchParams.get(SEARCH_PARAM_KEY)
   const vdomImpl = VDomImpl.from(vdomImplParam)
-  return vdomImpl ?? config.fallback
+  return vdomImpl ?? FALLBACK
 }
 
 const setUrl = (vdomImpl: VDomImpl) => {

@@ -26,6 +26,7 @@ import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
 
 import { ITopicClient } from '~/@/topic/topic-client/types'
+import { VDomImpl } from '~/@/vdom/vdom-impl'
 import { AppFrontendCtxBase } from '../../../frontend/ctx'
 
 export const TestFrontend = async (config: {
@@ -128,7 +129,8 @@ export const TestFrontend = async (config: {
   await navigation.clear()
   document.body.innerHTML = '<div id="root"></div>'
   const root = document.getElementById('root')!
-  await VDomEngine.initialize('inferno')
+  const vdomImpl = VDomImpl.getUrl()
+  await VDomEngine.initialize(vdomImpl)
 
   const program = await Program.run({
     init: () => AppFrontend.init({ ctx }),

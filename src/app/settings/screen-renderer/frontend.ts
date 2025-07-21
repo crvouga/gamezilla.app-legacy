@@ -16,7 +16,7 @@ const TEST_ID = {
 }
 
 const init = (): { model: ModelFrontend } => {
-  const initialVDomImpl = 'inferno' as const
+  const initialVDomImpl = VDomImpl.getUrl()
 
   return {
     model: {
