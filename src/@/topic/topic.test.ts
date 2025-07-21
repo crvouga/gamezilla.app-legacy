@@ -155,15 +155,23 @@ describe('Topic', () => {
     await using f = await Fixture()
     const gotA: Msg[] = []
     const gotB: Msg[] = []
-    await sleep()
     f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
-    await sleep()
     f.clientB.topic.someTopic.sub({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
-    await sleep()
+    await eventually(() =>
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientA.clientSessionId),
+      ).toEqual(true),
+    )
+    await eventually(() =>
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '456' }, (c) => c.clientSessionId === f.clientB.clientSessionId),
+      ).toEqual(true),
+    )
     f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
-    await sleep()
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
-    expect(gotB).toEqual([])
+    await eventually(() => {
+      expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
+      expect(gotB).toEqual([])
+    })
   })
 
   test('should handle multiple messages in sequence', async () => {
