@@ -1,6 +1,9 @@
 import type { IHttpServer, IWebSocketConnection } from '~/@/http-server/interface'
 import { ILogger } from '~/@/logger'
 import { ITopicBasedPubSub } from '~/@/pub-sub-topic-based'
+import { isErr } from '~/@/result'
+import { s } from '~/@/schema'
+import { Sub } from '~/@/sub'
 import { ClientId } from '~/@/wire/client-id'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { ClientSessionIdHttp } from '~/@/wire/client-session-id-http'
@@ -11,11 +14,11 @@ import { TopicClientData } from '../topic-client/types'
 import { ContractBase } from '../topic-contract'
 import { ITopicMsgCodec } from '../topic-msg-codec'
 import { TopicNameSubscription } from '../topic-name-subscription'
-import { TopicName, TopicString } from '../topic-string'
+import { TopicName, TopicParams, TopicString } from '../topic-string'
 import { TopicSubscription } from '../topic-subscription'
 
 type ServerSubscription = {
-  clients: Set<ClientId>
+  clients: Set<ClientId | undefined>
 }
 
 export type TopicServer<TContract extends ContractBase> = {
@@ -28,10 +31,15 @@ export type TopicServer<TContract extends ContractBase> = {
   pubSub: ITopicBasedPubSub
 }
 
-export type ITopicServer = {
+export type ITopicServer<TContract extends ContractBase> = {
   _subscriptionsByTopic: Map<TopicString, TopicSubscription & ServerSubscription>
   _subscriptionsByTopicName: Map<TopicName, TopicNameSubscription & ServerSubscription>
   _clients: Map<ClientId, TopicClientData>
+  isSubscribed: <TTopicName extends keyof TContract>(
+    topicName: TTopicName,
+    topicParams: s.Infer<TContract[TTopicName]['params']>,
+    match: (client: TopicClientData) => boolean,
+  ) => boolean
   publishTopicName: (
     topicName: TopicName,
     encodedMsg: string | Buffer,
@@ -46,12 +54,37 @@ export type ITopicServer = {
   ) => void
 }
 
-const init = <TContract extends ContractBase>(config: TopicServer<TContract>): ITopicServer => {
+const init = <TContract extends ContractBase>(config: TopicServer<TContract>): ITopicServer<TContract> => {
   const logger = config.logger.child(['topic-server'])
   const subscriptionsByTopic = new Map<TopicString, TopicSubscription & ServerSubscription>()
   const subscriptionsByTopicName = new Map<TopicName, TopicNameSubscription & ServerSubscription>()
-
   const clients = new Map<ClientId, TopicClientData>()
+
+  const getSubscriptionByTopic = (topicName: TopicName, topicParams: TopicParams) => {
+    const topicString = TopicString.init(topicName, topicParams)
+    const got = subscriptionsByTopic.get(topicString)
+    if (got) return got
+    const newSub: TopicSubscription & ServerSubscription = {
+      clients: new Set(),
+      pubSub: Sub.create(),
+      topicName,
+      topicParams,
+    }
+    subscriptionsByTopic.set(topicString, newSub)
+    return newSub
+  }
+
+  const getSubscriptionByTopicName = (topicName: TopicName) => {
+    const got = subscriptionsByTopicName.get(topicName)
+    if (got) return got
+    const newSub: TopicNameSubscription & ServerSubscription = {
+      clients: new Set(),
+      pubSub: Sub.create(),
+      topicName,
+    }
+    subscriptionsByTopicName.set(topicName, newSub)
+    return newSub
+  }
 
   // Register WebSocket handler with the HTTP server
   const wsServer = config.httpServer.registerWebSocketHandler<TopicClientData>(config.endpoint, {
@@ -86,24 +119,28 @@ const init = <TContract extends ContractBase>(config: TopicServer<TContract>): I
             const topic = TopicString.init(decodedMsg[1], decodedMsg[2])
             connection.subscribe(topic)
             send(connection, decodedMsg)
+            getSubscriptionByTopic(decodedMsg[1], decodedMsg[2]).clients.add(connection.data?.clientId)
             return
           }
           case UNSUB: {
             const topic = TopicString.init(decodedMsg[1], decodedMsg[2])
             connection.unsubscribe(topic)
             send(connection, decodedMsg)
+            getSubscriptionByTopic(decodedMsg[1], decodedMsg[2]).clients.delete(connection.data?.clientId)
             return
           }
           case SUB_ALL: {
             const topicName = decodedMsg[1]
             connection.subscribe(topicName)
             send(connection, decodedMsg)
+            getSubscriptionByTopicName(topicName).clients.add(connection.data?.clientId)
             return
           }
           case UNSUB_ALL: {
             const topicName = decodedMsg[1]
             connection.unsubscribe(topicName)
             send(connection, decodedMsg)
+            getSubscriptionByTopicName(topicName).clients.delete(connection.data?.clientId)
             return
           }
           case PUB: {
@@ -169,10 +206,36 @@ const init = <TContract extends ContractBase>(config: TopicServer<TContract>): I
     })
   }
 
+  const isSubscribed: ITopicServer<TContract>['isSubscribed'] = (topicName, topicParams, match) => {
+    const maybeTopicName = TopicName.parse(topicName)
+
+    if (isErr(maybeTopicName)) return false
+    const maybeTopicParams = TopicParams.parse(topicParams)
+    if (isErr(maybeTopicParams)) return false
+
+    const topicString = TopicString.init(maybeTopicName.value, maybeTopicParams.value)
+    const subscription = subscriptionsByTopic.get(topicString)
+
+    if (!subscription) return false
+
+    for (const clientId of subscription.clients) {
+      if (!clientId) continue
+
+      const client = clients.get(clientId)
+
+      if (!client) continue
+
+      if (match(client)) return true
+    }
+
+    return false
+  }
+
   return {
     _subscriptionsByTopic: subscriptionsByTopic,
     _subscriptionsByTopicName: subscriptionsByTopicName,
     _clients: clients,
+    isSubscribed,
     publishTopic,
     publishTopicName,
   }

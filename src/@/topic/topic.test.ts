@@ -18,7 +18,7 @@ const Msg = s.obj({
 })
 type Msg = s.Infer<typeof Msg>
 
-const contract = TopicContract.init({
+const topicContract = TopicContract.init({
   someTopic: {
     params: s.obj({
       id: s.str(),
@@ -32,6 +32,9 @@ const contract = TopicContract.init({
     msg: Msg,
   },
 })
+
+const RECONNECTION_RATE = TimeSpan.milliseconds(0)
+const SYNC_SUBSCRIPTION_RATE = TimeSpan.milliseconds(0)
 
 const Fixture = async () => {
   const port = randomServerPort()
@@ -47,66 +50,43 @@ const Fixture = async () => {
 
   const pubSub = TopicBasedPubSub.init({ t: 'in-memory' })
 
-  const server = TopicServer.init({
+  const topicServer = TopicServer.init({
     t: 'web-sockets',
     httpServer,
     logger: logger.child(['server']),
-    contract,
+    contract: topicContract,
     endpoint,
     codec,
     pubSub,
   })
 
-  const reconnectionRate = TimeSpan.milliseconds(0)
-  const syncSubscriptionRate = TimeSpan.milliseconds(0)
+  const initClient = () => {
+    const clientSessionId = ClientSessionId.generate()
+    const topic = TopicClient.init({
+      t: 'web-sockets',
+      clientSessionId,
+      contract: topicContract,
+      serverUrl,
+      endpoint,
+      logger: logger.child(['clientA']),
+      reconnectionRate: RECONNECTION_RATE,
+      syncSubscriptionRate: SYNC_SUBSCRIPTION_RATE,
+      codec,
+    })
+    return { topic, clientSessionId }
+  }
 
-  const clientSessionIdA = ClientSessionId.generate()
-  const clientSessionIdB = ClientSessionId.generate()
-  const clientSessionIdC = ClientSessionId.generate()
-
-  const clientA = TopicClient.init({
-    t: 'web-sockets',
-    clientSessionId: clientSessionIdA,
-    contract,
-    serverUrl,
-    endpoint,
-    logger: logger.child(['clientA']),
-    reconnectionRate,
-    syncSubscriptionRate,
-    codec,
-  })
-
-  const clientB = TopicClient.init({
-    t: 'web-sockets',
-    clientSessionId: clientSessionIdB,
-    contract,
-    serverUrl,
-    endpoint,
-    logger: logger.child(['clientB']),
-    reconnectionRate,
-    syncSubscriptionRate,
-    codec,
-  })
-
-  const clientC = TopicClient.init({
-    t: 'web-sockets',
-    clientSessionId: clientSessionIdC,
-    contract,
-    serverUrl,
-    endpoint,
-    logger: logger.child(['clientC']),
-    reconnectionRate,
-    syncSubscriptionRate,
-    codec,
-  })
+  const clientA = initClient()
+  const clientB = initClient()
+  const clientC = initClient()
 
   await httpServer.start(port)
 
   return {
     port,
     httpServer,
-    contract,
-    server,
+    topicContract,
+    topicServer,
     clientA,
     clientB,
     clientC,
@@ -124,14 +104,25 @@ describe('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
     const gotC: Msg[] = []
-    f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
-    f.clientB.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
-    f.clientC.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
-    await sleep()
-    await sleep()
-    await sleep()
-    await sleep()
-    f.clientC.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientB.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientC.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
+    await eventually(() =>
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientA.clientSessionId),
+      ).toEqual(true),
+    )
+    await eventually(() =>
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientB.clientSessionId),
+      ).toEqual(true),
+    )
+    await eventually(() =>
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientC.clientSessionId),
+      ).toEqual(true),
+    )
+    f.clientC.topic.someTopic.pub({ id: '123' }, { name: 'John' })
     await eventually(() => {
       expect(gotA).toEqual([{ name: 'John' }])
       expect(gotB).toEqual([{ name: 'John' }])
@@ -142,12 +133,11 @@ describe('Topic', () => {
   test('should not receive messages after unsubscribing', async () => {
     await using f = await Fixture()
     const gotA: Msg[] = []
-
-    const unsub = f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    const unsub = f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
     unsub()
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
     expect(gotA).toEqual([])
   })
@@ -157,11 +147,11 @@ describe('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
     await sleep()
-    f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
-    f.clientB.someTopic.sub({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientB.topic.someTopic.sub({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([])
@@ -171,13 +161,13 @@ describe('Topic', () => {
     await using f = await Fixture()
     const gotA: Msg[] = []
     await sleep()
-    f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'Jane' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Jane' })
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'Bob' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Bob' })
     await sleep()
     await sleep()
     await sleep()
@@ -198,17 +188,17 @@ describe('Topic', () => {
     const gotC: Msg[] = []
 
     await sleep()
-    f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
-    f.clientB.someTopic.sub({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientB.topic.someTopic.sub({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientC.someTopic.sub({ id: '789' }, (x) => x).sub((msg) => gotC.push(msg))
+    f.clientC.topic.someTopic.sub({ id: '789' }, (x) => x).sub((msg) => gotC.push(msg))
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
-    f.clientB.someTopic.pub({ id: '456' }, { name: 'Jane' })
+    f.clientB.topic.someTopic.pub({ id: '456' }, { name: 'Jane' })
     await sleep()
-    f.clientC.someTopic.pub({ id: '789' }, { name: 'Bob' })
+    f.clientC.topic.someTopic.pub({ id: '789' }, { name: 'Bob' })
     await sleep()
 
     expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
@@ -222,18 +212,18 @@ describe('Topic', () => {
     const gotB: Msg[] = []
 
     await sleep()
-    const unsubA = f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    const unsubA = f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
-    f.clientB.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientB.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
     await sleep()
     unsubA()
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'Jane' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Jane' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }])
@@ -245,15 +235,15 @@ describe('Topic', () => {
     const gotB: Msg[] = []
 
     await sleep()
-    f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
-    f.clientB.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientB.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'Jane' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Jane' })
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'Bob' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Bob' })
     await sleep()
 
     expect(gotA).toEqual([
@@ -273,11 +263,11 @@ describe('Topic', () => {
     const gotB: Msg[] = []
 
     await sleep()
-    f.clientA.nestedSomeTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientA.topic.nestedSomeTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
-    f.clientB.nestedSomeTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientB.topic.nestedSomeTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.nestedSomeTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.nestedSomeTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
 
     expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
@@ -291,13 +281,13 @@ describe('Topic', () => {
     const gotC: Msg[] = []
 
     await sleep()
-    const unsubA = f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    const unsubA = f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
-    const unsubB = f.clientB.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    const unsubB = f.clientB.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientC.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
+    f.clientC.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
@@ -307,7 +297,7 @@ describe('Topic', () => {
     await sleep()
     unsubB()
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'Jane' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Jane' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
@@ -321,13 +311,13 @@ describe('Topic', () => {
     const gotB: Msg[] = []
 
     await sleep()
-    f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA1.push(msg))
+    f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA1.push(msg))
     await sleep()
-    f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA2.push(msg))
+    f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA2.push(msg))
     await sleep()
-    f.clientB.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientB.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
 
     expect(gotA1).toEqual([{ name: 'John' }, { name: 'John' }])
@@ -341,13 +331,13 @@ describe('Topic', () => {
     const gotB: Msg[] = []
 
     await sleep()
-    f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
-    f.clientB.someTopic.sub({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientB.topic.someTopic.sub({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
-    f.clientA.someTopic.pub({ id: '456' }, { name: 'Jane' })
+    f.clientA.topic.someTopic.pub({ id: '456' }, { name: 'Jane' })
     await sleep()
 
     expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
@@ -360,11 +350,11 @@ describe('Topic', () => {
     const gotB: Msg[] = []
 
     await sleep()
-    f.clientA.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
+    f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     await sleep()
-    f.clientB.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
+    f.clientB.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
     expect(gotB).toEqual([{ name: 'John' }])
@@ -373,7 +363,7 @@ describe('Topic', () => {
     await sleep()
     await f.httpServer.start(f.port)
     await sleep()
-    f.clientA.someTopic.pub({ id: '123' }, { name: 'Jane' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Jane' })
     await sleep()
     expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }, { name: 'Jane' }, { name: 'Jane' }])
     expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }])

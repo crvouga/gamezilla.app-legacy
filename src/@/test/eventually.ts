@@ -26,17 +26,21 @@
  */
 export const eventually = async (
   fn: () => Promise<void> | void,
-  config: { timeoutMs?: number; intervalMs?: number } = {},
+  config: { intervalMs?: number; minimalSuccesses?: number; maxAttempts?: number } = {},
 ) => {
-  const { timeoutMs = 200, intervalMs = 10 } = config
-  const deadline = Date.now() + timeoutMs
-  while (true) {
+  const { intervalMs = 50, minimalSuccesses = 3, maxAttempts = 10 } = config
+  let successes = 0
+  let err: unknown
+  for (let i = 0; i < maxAttempts; i++) {
     try {
       await fn()
-      return
+      successes++
+      if (successes >= minimalSuccesses) return
     } catch (err) {
-      if (Date.now() > deadline) throw err
+      err = err
+    } finally {
       await new Promise((r) => setTimeout(r, intervalMs))
     }
   }
+  throw err
 }
