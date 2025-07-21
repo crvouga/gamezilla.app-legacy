@@ -21,7 +21,7 @@ export const TextField = (input: {
   onClear?: () => void
   onChange: (value: string) => void
 }) => {
-  return h('label', { class: 'flex w-full flex-col gap-1' }, [
+  return h('div', { class: 'flex w-full flex-col gap-1' }, [
     h('label', { htmlFor: input.id, class: cn('text-base', input.error && 'text-red-500') }, [input.label]),
     h(
       'div',

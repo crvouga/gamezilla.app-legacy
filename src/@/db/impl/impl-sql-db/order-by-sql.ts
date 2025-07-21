@@ -3,7 +3,7 @@ import { OrderBy } from '../../interface/query-input/order-by'
 
 export const toOrderBySql = <TEntity extends Record<string, unknown>>(
   orderBy: OrderBy<TEntity>,
-  fieldToSqlColumn: (field: keyof TEntity) => string | number | symbol | null
+  fieldToSqlColumn: (field: keyof TEntity) => string | number | symbol | null,
 ): string => {
   const sql = orderBy
     .flatMap((o): string[] => {

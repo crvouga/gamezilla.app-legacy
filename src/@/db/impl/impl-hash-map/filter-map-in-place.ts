@@ -5,7 +5,7 @@ import { Indexes } from './indexes'
 export const filterMapInPlace = <TEntity extends Record<string, unknown>>(
   entities: Map<EntityField, TEntity>,
   indexes: Indexes,
-  where: Where<TEntity>
+  where: Where<TEntity>,
 ): void => {
   switch (where.op) {
     case 'in': {

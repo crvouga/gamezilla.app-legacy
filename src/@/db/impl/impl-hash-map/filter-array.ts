@@ -2,7 +2,7 @@ import { Where } from '../../interface/query-input/where'
 
 export const filterArray = <TEntity extends Record<string, unknown>>(
   entities: TEntity[],
-  where: Where<TEntity>
+  where: Where<TEntity>,
 ): TEntity[] => {
   switch (where.op) {
     case 'in': {

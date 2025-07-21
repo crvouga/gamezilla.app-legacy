@@ -5,6 +5,7 @@ import { eventually } from '~/@/test/eventually'
 import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
 import { doClickBackButton } from '~/app/@/test/flows/do-click-back-button'
 import { doDismissAlert } from '~/app/@/test/flows/do-dismiss-alert'
+import { doExpectAlert } from '~/app/@/test/flows/do-expect-alert'
 import { doOpenSendCodeScreen } from './test/do-open-send-code-screen'
 import { doSendCode } from './test/do-send-code'
 
@@ -38,7 +39,7 @@ describe('send code', () => {
   test('go to verify code screen', async (e) => {
     await using f = await Fixture(e)
     await doSendCode(f)
-    const [screen] = await f.frontend.find(`[data-testid='auth/verify-code-screen']`)
+    const screen = await f.frontend.findByTestId('auth/verify-code-screen')
     expect(screen).toBeTruthy()
   })
 
@@ -51,7 +52,7 @@ describe('send code', () => {
   test('should error alert when phone number is invalid', async (e) => {
     await using f = await Fixture(e)
     await doSendCode(f, { phoneNumber: '123' })
-    await doDismissAlert(f.frontend, 'error')
+    await doExpectAlert(f.frontend, 'error')
   })
 
   test('play sound on sending code', async (e) => {

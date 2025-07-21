@@ -4,7 +4,7 @@ import { Where } from '../../interface/query-input/where'
 export const filterMap = <TEntity extends Record<string, unknown>>(
   entities: Map<EntityField, TEntity>,
   indexes: Map<EntityField, Map<string, Set<EntityField>>>,
-  where: Where<TEntity>
+  where: Where<TEntity>,
 ): Map<EntityField, TEntity> => {
   switch (where.op) {
     case 'in': {

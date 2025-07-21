@@ -40,7 +40,7 @@ export default defineConfig({
     /* Record video on test failure */
     video: 'retain-on-failure',
     /* Headless mode is disabled in CI */
-    headless: true,
+    headless: CI ? false : true,
   },
   /* Configure projects for major browsers */
   projects: [

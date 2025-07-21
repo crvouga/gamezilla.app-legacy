@@ -14,7 +14,7 @@ export const logSlowQuery = (input: {
   if (duration > SLOW_QUERY_THRESHOLD) {
     input.logger.warn(
       `query took: ${duration.toFixed(2)} ms, total records: ${input.entityCount}; ${input.filteredCount} filtered`,
-      input.query
+      input.query,
     )
   }
 }

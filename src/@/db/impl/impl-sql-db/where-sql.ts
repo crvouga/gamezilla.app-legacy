@@ -3,7 +3,7 @@ import { Where } from '../../interface/query-input/where'
 
 export const toWhereSql = <TEntity extends Record<string, unknown>>(
   where: Where<TEntity>,
-  columnToSqlColumn: (column: keyof TEntity) => string | number | symbol | null
+  columnToSqlColumn: (column: keyof TEntity) => string | number | symbol | null,
 ): string => {
   switch (where.op) {
     case 'in': {
