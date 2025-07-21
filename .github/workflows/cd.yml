@@ -87,7 +87,7 @@ jobs:
         run: cp .env.local .env
 
       - name: Start infra
-        run: pnpm infra:up
+        run: pnpm local:up
 
       - name: Wait for infra to be ready
         run: sleep 10
