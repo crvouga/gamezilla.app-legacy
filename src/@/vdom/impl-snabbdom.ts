@@ -30,7 +30,11 @@ export const initSnabbdom = (): VirtualDomEngine => {
       try {
         oldVNode = patch(oldVNode ?? node, vDom as any)
       } catch (e) {
-        console.error(e)
+        document.body.innerHTML = ''
+        document.body.appendChild(node)
+        oldVNode = null
+        oldVNode = patch(oldVNode ?? node, vDom as any)
+        // console.error(e)
       }
     },
     createPortal: (vDom, _container) => {
