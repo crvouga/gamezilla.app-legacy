@@ -228,7 +228,14 @@ const init = (config: ImplSqlDb): IPackDb => {
           game_numberlink_pack_item ON game_numberlink_pack_item.pack_id = game_numberlink_pack.id
         ${sqlWhere.str}
         GROUP BY
-          game_numberlink_pack.id
+          game_numberlink_pack.id,
+          game_numberlink_pack.name,
+          game_numberlink_pack.created_at_unix_ms,
+          game_numberlink_pack.created_by_user_id,
+          game_numberlink_pack.last_updated_at_unix_ms,
+          game_numberlink_pack.last_updated_by_user_id,
+          game_numberlink_pack.deleted_at_unix_ms,
+          game_numberlink_pack.deleted_by_user_id
         ${sqlOrder.str}
         ${sqlPagination.str};
 			`
