@@ -134,12 +134,21 @@ describe('Topic', () => {
     await using f = await Fixture()
     const gotA: Msg[] = []
     const unsub = f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
-    await sleep()
+    await eventually(() =>
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientA.clientSessionId),
+      ).toEqual(true),
+    )
     unsub()
-    await sleep()
+    await eventually(() =>
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientA.clientSessionId),
+      ).toEqual(false),
+    )
     f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
-    await sleep()
-    expect(gotA).toEqual([])
+    await eventually(() => {
+      expect(gotA).toEqual([])
+    })
   })
 
   test('should not receive messages for different topic params', async () => {

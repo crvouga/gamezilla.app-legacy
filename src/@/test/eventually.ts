@@ -30,17 +30,18 @@ export const eventually = async (
 ) => {
   const { intervalMs = 50, minimalSuccesses = 3, maxAttempts = 10 } = config
   let successes = 0
-  let err: unknown
-  for (let i = 0; i < maxAttempts; i++) {
+  let attempts = 0
+  while (true) {
     try {
       await fn()
       successes++
       if (successes >= minimalSuccesses) return
-    } catch (err) {
-      err = err
+    } catch (e) {
+      if (attempts >= maxAttempts - 1) throw e
+      successes = 0
     } finally {
       await new Promise((r) => setTimeout(r, intervalMs))
+      attempts++
     }
   }
-  throw err
 }
