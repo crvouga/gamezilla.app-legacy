@@ -51,7 +51,6 @@ const toPuzzleQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }):
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  console.log('subscriptions', toPuzzleQuery(input))
   return PuzzleDbQueryCache.sub(input.ctx.puzzleDb, toPuzzleQuery(input), (c) => ({ t: 'got-msg-out', c }))
 }
 

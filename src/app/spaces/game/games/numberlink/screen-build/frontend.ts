@@ -114,29 +114,18 @@ const ViewFeedItem: FrontendModule['ViewFeedItem'] = () => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  switch (input.modelSpace.screen.t) {
-    case 'screen-main-menu': {
-      return ScreenMainMenuFrontend.subscriptions(input)
-    }
-    case 'screen-pack-builder-open': {
-      return ScreenPackBuilderOpenFrontend.subscriptions(input)
-    }
-    case 'screen-puzzle-builder': {
-      return ScreenPuzzleBuilderFrontend.subscriptions(input)
-    }
-    case 'screen-puzzle-builder-open': {
-      return ScreenPuzzleBuilderOpenFrontend.subscriptions(input)
-    }
-    case 'screen-pack-builder': {
-      if (!input.modelSpace.screenPackBuilder) {
-        return Sub.none()
-      }
-      return Sub.map(
-        ScreenPackBuilderFrontend.subscriptions({ ...input, modelSpace: input.modelSpace.screenPackBuilder }),
-        (c): MsgFrontend => ({ t: 'got-screen-pack-builder-msg', c }),
-      )
-    }
-  }
+  return Sub.batch([
+    ScreenMainMenuFrontend.subscriptions(input),
+    ScreenPackBuilderOpenFrontend.subscriptions(input),
+    ScreenPuzzleBuilderFrontend.subscriptions(input),
+    ScreenPuzzleBuilderOpenFrontend.subscriptions(input),
+    input.modelSpace.screenPackBuilder
+      ? Sub.map(
+          ScreenPackBuilderFrontend.subscriptions({ ...input, modelSpace: input.modelSpace.screenPackBuilder }),
+          (c): MsgFrontend => ({ t: 'got-screen-pack-builder-msg', c }),
+        )
+      : Sub.none(),
+  ])
 }
 
 export const ScreenBuildFrontend = {

@@ -9,7 +9,6 @@ import { PuzzleQuery } from './puzzle-db/interface-query'
 
 const sub = <TMsg>(puzzleDb: IPuzzleDb, query: PuzzleQuery, mapper: (m: unknown) => TMsg): Sub<TMsg> => {
   return puzzleDb.sub(query, (puzzles) => {
-    console.log('PuzzleDbQueryCache.sub', puzzles)
     return mapper(
       GotQueryCacheMsg.init({
         entities: indexBy(puzzles, (c) => c.id),
