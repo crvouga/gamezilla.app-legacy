@@ -1,19 +1,19 @@
 import { IAudioPlayer } from '../audio-player'
 import { TimeSpan } from '../time/time-span'
-import type { ITestClientBase, ITestNode, TestAction, FindConfig } from './interface'
+import { findByRole, findByTestId, type FindConfig, type ITestNode, type TestAction } from './interface'
 import { isElementVisible } from './is-element-visible'
 
-export type BaseConfig = {
+export type ImplWindowBase = {
   maxWait: TimeSpan
   poll: TimeSpan
   audioPlayer: IAudioPlayer
 }
 
-export type Config = {
+export type ImplWindow = ImplWindowBase & {
   t: 'window'
-} & BaseConfig
+}
 
-export const TestClient = (config: Config): ITestClientBase => {
+const init = (config: ImplWindow): ITestNode => {
   return {
     async audio() {
       return config.audioPlayer.played()
@@ -27,6 +27,24 @@ export const TestClient = (config: Config): ITestClientBase => {
         onPoll: queryConfig?.onPoll ?? (() => {}),
         onDone: queryConfig?.onDone ?? (() => {}),
       })
+    },
+    async attr(name) {
+      return document.documentElement.getAttribute(name) ?? null
+    },
+    async findByTestId(testId) {
+      return findByTestId(elementToTestNode(document.documentElement), testId)
+    },
+    async findByRole(role, label) {
+      return findByRole(elementToTestNode(document.documentElement), role, label)
+    },
+    async text() {
+      return null
+    },
+    async do(_action) {
+      return
+    },
+    async isVisible() {
+      return true
     },
   }
 }
@@ -85,6 +103,15 @@ export const elementToTestNode = (node: Element): ITestNode => {
         onDone: queryConfig?.onDone ?? (() => {}),
       })
     },
+    async findByTestId(testId) {
+      return findByTestId(elementToTestNode(node), testId)
+    },
+    async findByRole(role, label) {
+      return findByRole(elementToTestNode(node), role, label)
+    },
+    async audio() {
+      return []
+    },
     async do(action: TestAction) {
       switch (action.t) {
         case 'keydown': {
@@ -110,4 +137,8 @@ export const elementToTestNode = (node: Element): ITestNode => {
       }
     },
   }
+}
+
+export const ImplWindow = {
+  init,
 }

@@ -1,3 +1,4 @@
+import { ILogger } from '~/@/logger'
 import { PubSub, Sub } from '~/@/sub'
 import { PUB, ToClientMsgMany } from '../msgs'
 import { ContractBase } from '../topic-contract'
@@ -5,11 +6,10 @@ import { ITopicMsgCodec } from '../topic-msg-codec'
 import { ITopicServer } from '../topic-server/topic-server'
 import { TopicName, TopicString } from '../topic-string'
 import { ITopicClient, TopicClientNode } from './types'
-import { ILogger } from '~/@/logger'
 
 export type ImplForServer<TContract extends ContractBase> = {
   t: 'for-server'
-  topicServer: ITopicServer
+  topicServer: ITopicServer<TContract>
   contract: TContract
   codec: ITopicMsgCodec
   logger: ILogger

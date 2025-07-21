@@ -206,7 +206,8 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
               'button',
               {
                 type: 'button',
-                'aria-label': input.ctx.t('app.close'),
+                role: 'button',
+                'aria-label': input.ctx.t('app.dismiss'),
                 onClick: () => input.dispatch({ t: 'clicked-dismiss-button', toastId: input.toast.toastId }),
               },
               [h(IconXMark, { class: 'h-5 w-5' })],

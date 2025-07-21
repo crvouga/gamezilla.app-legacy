@@ -1,19 +1,19 @@
 import { Locator, type Page } from '@playwright/test'
 import type { PlayedAudioRecord } from '../audio-player'
 import { TimeSpan } from '../time/time-span'
-import type { ITestClientBase, ITestNode, TestAction } from './interface'
+import { findByRole, findByTestId, type ITestNode, type TestAction } from './interface'
 
 export type BaseConfig = {
   maxWait: TimeSpan
   poll: TimeSpan
 }
 
-export type Config = {
+export type ImplPlaywright = BaseConfig & {
   t: 'playwright'
   getPage: () => Page
-} & BaseConfig
+}
 
-export const TestClient = (config: Config): ITestClientBase => {
+const init = (config: ImplPlaywright): ITestNode => {
   return {
     async audio(): Promise<PlayedAudioRecord[]> {
       return []
@@ -26,6 +26,24 @@ export const TestClient = (config: Config): ITestClientBase => {
         onDone: queryConfig?.onDone ?? (() => {}),
         getPage: config.getPage,
       })
+    },
+    async findByTestId(testId) {
+      return findByTestId(this, testId)
+    },
+    async findByRole(role, label) {
+      return findByRole(this, role, label)
+    },
+    async text() {
+      return null
+    },
+    async attr(_name) {
+      return null
+    },
+    async do(_action) {
+      return
+    },
+    async isVisible() {
+      return true
     },
   }
 }
@@ -80,9 +98,18 @@ const locatorToTestNode = (locator: Locator): ITestNode => {
         getPage: () => locator.page(),
       })
     },
+    async findByTestId(testId) {
+      return findByTestId(locatorToTestNode(locator), testId)
+    },
+    async findByRole(role, label) {
+      return findByRole(locatorToTestNode(locator), role, label)
+    },
     async text() {
       const text = await locator.textContent()
       return text
+    },
+    async audio() {
+      return []
     },
     async isVisible() {
       const element = await locator.elementHandle()
@@ -144,4 +171,8 @@ const locatorToTestNode = (locator: Locator): ITestNode => {
       }
     },
   }
+}
+
+export const ImplPlaywright = {
+  init,
 }

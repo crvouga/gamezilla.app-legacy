@@ -3,7 +3,7 @@ import { Iso3166Alpha2Code } from '~/@/country/iso-3166-alpha-2-code'
 import { describe, expect, test, TestRunnerEnv } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
 import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
-import { doClickBackButton } from '~/app/@/test/setup/do-click-back-button'
+import { doClickBackButton } from '~/app/@/test/flows/do-click-back-button'
 import { doOpenSendCodeScreen } from './test/do-open-send-code-screen'
 import { doSendCode } from './test/do-send-code'
 

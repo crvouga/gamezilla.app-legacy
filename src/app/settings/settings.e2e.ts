@@ -1,6 +1,6 @@
 import { describe, expect, test } from '~/@/test-runner'
 import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
-import { doClickBackButton } from '../@/test/setup/do-click-back-button'
+import { doClickBackButton } from '../@/test/flows/do-click-back-button'
 import { AuthFrontend } from '../auth/frontend'
 import { doOpenRendererScreen } from './@/test/do-open-renderer-screen'
 import { doOpenSettingsScreen } from './@/test/do-open-settings-screen'

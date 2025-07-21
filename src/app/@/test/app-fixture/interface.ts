@@ -1,6 +1,6 @@
-import { ITestClient } from '~/@/test-client'
+import { ITestNode } from '~/@/test-client'
 
 export type IFixtureApp = {
-  frontend: ITestClient
+  frontend: ITestNode
   [Symbol.asyncDispose]: () => Promise<void>
 }

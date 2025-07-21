@@ -79,6 +79,7 @@ export const translations: Text = {
   'app.add': '追加',
   'app.apply': '適用',
   'app.calculate': '計算',
+  'app.dismiss': '閉じる',
   'app.find': '検索',
   'app.join': '参加',
   'app.load': '読み込み',

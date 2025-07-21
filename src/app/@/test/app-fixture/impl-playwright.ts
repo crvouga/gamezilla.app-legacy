@@ -4,7 +4,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { IFixtureApp } from './interface'
 
 export const FixtureAppPlaywrightE2E = async (config: { getPage: () => Page }): Promise<IFixtureApp> => {
-  const client = await TestClient({
+  const client = await TestClient.init({
     t: 'playwright',
     getPage: config.getPage,
     maxWait: TimeSpan.seconds(15),

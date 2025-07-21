@@ -7,8 +7,8 @@ import { ILogger, Logger } from '~/@/logger'
 import { Navigation } from '~/@/navigation'
 import { Program } from '~/@/program/program'
 import { RPC } from '~/@/rpc'
-import { ISqlDb } from '~/@/sql-db/interface'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
+import { ISqlDb } from '~/@/sql-db/interface'
 import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl-sql'
 import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TestClient } from '~/@/test-client'
@@ -118,7 +118,7 @@ export const TestFrontend = async (config: {
     topic: config.topic,
   }
 
-  const client = await TestClient({
+  const client = await TestClient.init({
     t: 'happydom',
     maxWait: TimeSpan.milliseconds(5000),
     poll: TimeSpan.milliseconds(1),

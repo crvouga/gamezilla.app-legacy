@@ -1,13 +1,17 @@
 import { GlobalRegistrator } from '@happy-dom/global-registrator'
-import * as ImplWindow from './impl-window'
-import type { ITestClientBase } from './interface'
+import { ImplWindow, ImplWindowBase } from './impl-window'
+import type { ITestNode } from './interface'
 
-export type Config = ImplWindow.BaseConfig & {
+export type ImplHappyDom = ImplWindowBase & {
   t: 'happydom'
 }
 
 GlobalRegistrator.register()
-export const TestClient = (config: Config): ITestClientBase => {
-  const testClient = ImplWindow.TestClient({ ...config, t: 'window' })
-  return testClient
+
+const init = (config: ImplHappyDom): ITestNode => {
+  return ImplWindow.init({ ...config, t: 'window' })
+}
+
+export const ImplHappyDom = {
+  init,
 }

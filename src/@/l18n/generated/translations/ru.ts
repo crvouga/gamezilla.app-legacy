@@ -80,6 +80,7 @@ export const translations: Text = {
   'app.add': 'Добавить',
   'app.apply': 'Применить',
   'app.calculate': 'Вычислить',
+  'app.dismiss': 'Закрыть',
   'app.find': 'Найти',
   'app.join': 'Присоединиться',
   'app.load': 'Загрузить',

@@ -3,8 +3,9 @@ import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
 import { FixtureAppE2E } from '~/app/@/test/app-fixture'
 import { IFixtureApp } from '~/app/@/test/app-fixture/interface'
-import { AuthFrontend } from '../frontend'
+import { doDismissAlert } from '~/app/@/test/flows/do-dismiss-alert'
 import { SpacesFrontend } from '~/app/spaces/frontend'
+import { AuthFrontend } from '../frontend'
 
 const Fixture = FixtureAppE2E
 
@@ -19,8 +20,7 @@ describe('login as guest', () => {
   test('show alert on login as guest', async (e) => {
     await using f = await Fixture(e)
     await doContinueAsGuest(f)
-    const [alert] = await f.frontend.find(`[role='alert'][data-info='true']`)
-    expect(alert).toBeTruthy()
+    await doDismissAlert(f.frontend, 'info')
   })
 
   test('sound', async (e) => {

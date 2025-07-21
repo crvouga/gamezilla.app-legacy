@@ -81,6 +81,7 @@ export const translations: Text = {
   'app.add': 'إضافة',
   'app.apply': 'تطبيق',
   'app.calculate': 'حساب',
+  'app.dismiss': 'رفض',
   'app.find': 'بحث',
   'app.join': 'انضم',
   'app.load': 'تحميل',

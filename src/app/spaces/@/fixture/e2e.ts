@@ -1,6 +1,6 @@
 import { expect, TestRunnerEnv } from '~/@/test-runner'
 import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
-import { doLoginWithSms } from '~/app/@/test/setup/do-login-with-sms'
+import { doLoginWithSms } from '~/app/@/test/flows/do-login-with-sms'
 import { SpacesFrontend } from '../../frontend'
 
 export const FixtureSpacesE2E = async (e: TestRunnerEnv) => {

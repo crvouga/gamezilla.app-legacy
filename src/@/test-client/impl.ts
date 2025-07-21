@@ -1,28 +1,28 @@
-import * as ImplHappyDom from './impl-happydom'
-import * as ImplJsdom from './impl-jsdom'
-import * as ImplPlaywright from './impl-playwright'
-import * as ImplWindow from './impl-window'
-import { fromBase, ITestClient, ITestClientBase } from './interface'
+import { ImplHappyDom } from './impl-happydom'
+import { ImplJsdom } from './impl-jsdom'
+import { ImplPlaywright } from './impl-playwright'
+import { ImplWindow } from './impl-window'
+import { ITestNode } from './interface'
 
-export type Config = ImplHappyDom.Config | ImplJsdom.Config | ImplPlaywright.Config | ImplWindow.Config
+export type TestClient = ImplHappyDom | ImplJsdom | ImplPlaywright | ImplWindow
 
-export const TestClientBase = async (config: Config): Promise<ITestClientBase> => {
+const init = async (config: TestClient): Promise<ITestNode> => {
   switch (config.t) {
     case 'happydom': {
-      return ImplHappyDom.TestClient(config)
+      return ImplHappyDom.init(config)
     }
     case 'jsdom': {
-      return ImplJsdom.TestClient(config)
+      return ImplJsdom.init(config)
     }
     case 'playwright': {
-      return ImplPlaywright.TestClient(config)
+      return ImplPlaywright.init(config)
     }
     case 'window': {
-      return ImplWindow.TestClient(config)
+      return ImplWindow.init(config)
     }
   }
 }
 
-export const TestClient = async (config: Config): Promise<ITestClient> => {
-  return fromBase(await TestClientBase(config))
+export const TestClient = {
+  init,
 }

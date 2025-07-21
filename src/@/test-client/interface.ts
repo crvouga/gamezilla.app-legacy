@@ -1,6 +1,6 @@
 import { PlayedAudioRecord } from '../audio-player'
-import { TimeSpan } from '../time/time-span'
 import { AriaRole } from '../html/aria-role'
+import { TimeSpan } from '../time/time-span'
 
 export type TestAction =
   | { t: 'keydown'; key: string }
@@ -9,15 +9,15 @@ export type TestAction =
   | { t: 'change'; value: string }
   | { t: 'submit' }
 
-export type IFindable = {
+export type ITestNode = {
   find: (selector: string, config?: FindConfig) => Promise<ITestNode[]>
-}
-
-export type ITestNode = IFindable & {
+  findByTestId: (testId: string) => Promise<ITestNode | null>
+  findByRole: (role: AriaRole, label?: string, config?: FindConfig) => Promise<ITestNode | null>
   text: () => Promise<string | null>
   attr: (name: string) => Promise<string | null>
   do: (action: TestAction) => Promise<void>
   isVisible: () => Promise<boolean>
+  audio: () => Promise<PlayedAudioRecord[]>
 }
 
 export type FindConfig = {
@@ -27,26 +27,18 @@ export type FindConfig = {
   onDone?: () => void
 }
 
-export type ITestClientBase = IFindable & {
-  audio: () => Promise<PlayedAudioRecord[]>
+export const findByTestId = async (node: ITestNode, testId: string): Promise<ITestNode | null> => {
+  const [found] = await node.find(`[data-testid="${testId}"]`)
+  return found ?? null
 }
 
-export type ITestClient = ITestClientBase & {
-  findByTestId: (testId: string) => Promise<ITestNode | null>
-  findByRole: (role: AriaRole, label?: string, config?: FindConfig) => Promise<ITestNode | null>
-}
-
-export const fromBase = (base: ITestClientBase): ITestClient => {
-  return {
-    ...base,
-    findByTestId: async (testId) => {
-      const [node] = await base.find(`[data-testid="${testId}"]`)
-      return node ?? null
-    },
-    findByRole: async (role, label, config) => {
-      const css = `[role="${role}"]${label ? `[aria-label="${label}" i]` : ''}`
-      const [node] = await base.find(css, config)
-      return node ?? null
-    },
-  }
+export const findByRole = async (
+  node: ITestNode,
+  role: AriaRole,
+  label?: string,
+  config?: FindConfig,
+): Promise<ITestNode | null> => {
+  const css = `[role="${role}"]${label ? `[aria-label="${label}" i]` : ''}`
+  const [found] = await node.find(css, config)
+  return found ?? null
 }

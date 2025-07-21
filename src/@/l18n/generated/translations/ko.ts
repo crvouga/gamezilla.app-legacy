@@ -79,6 +79,7 @@ export const translations: Text = {
   'app.add': '추가',
   'app.apply': '적용',
   'app.calculate': '계산',
+  'app.dismiss': '닫기',
   'app.find': '찾기',
   'app.join': '참여',
   'app.load': '불러오기',

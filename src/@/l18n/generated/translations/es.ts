@@ -79,6 +79,7 @@ export const translations: Text = {
   'app.add': 'Añadir',
   'app.apply': 'Aplicar',
   'app.calculate': 'Calcular',
+  'app.dismiss': 'Descartar',
   'app.find': 'Buscar',
   'app.join': 'Unirse',
   'app.load': 'Cargar',

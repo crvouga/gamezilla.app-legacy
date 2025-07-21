@@ -6,7 +6,7 @@ import { render, VDomEngine } from '../vdom/h'
 import { VDom } from '../vdom/vdom'
 
 export const BaseFixture = async () => {
-  const client = await TestClient({
+  const client = await TestClient.init({
     t: 'happydom',
     maxWait: TimeSpan.milliseconds(1000),
     poll: TimeSpan.milliseconds(10),

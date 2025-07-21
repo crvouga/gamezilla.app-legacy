@@ -79,6 +79,7 @@ export const translations: Text = {
   'app.add': '添加',
   'app.apply': '应用',
   'app.calculate': '计算',
+  'app.dismiss': '关闭',
   'app.find': '查找',
   'app.join': '加入',
   'app.load': '加载',
