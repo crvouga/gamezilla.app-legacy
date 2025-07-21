@@ -3,6 +3,7 @@ import { TEST_ID_CONTINUE_WITH_PHONE_BUTTON, TEST_ID_LOGIN_SCREEN } from '~/app/
 import { TEST_ID_SEND_CODE_SCREEN, TEST_ID_VERIFY_CODE_SCREEN } from '~/app/auth/login-with-sms/frontend'
 import { TEST_ID_SPACE_LIST_SCREEN } from '~/app/spaces/list-spaces/frontend'
 import { IFixtureApp } from '../app-fixture/interface'
+import { doDismissAlert } from './do-dismiss-alert'
 
 const randomPhoneNumber = (): number => {
   const base = 480_209_0000
@@ -35,6 +36,7 @@ const doSendCode = async (f: IFixtureApp) => {
   const [sendCodeButton] = await f.frontend.find(`button[type='submit']`)
   expect(sendCodeButton).toBeTruthy()
   await sendCodeButton!.do({ t: 'click' })
+  await doDismissAlert(f.frontend, 'info')
 }
 
 const doVerifyCode = async (f: IFixtureApp) => {
@@ -46,4 +48,5 @@ const doVerifyCode = async (f: IFixtureApp) => {
   const [verifyCodeButton] = await f.frontend.find(`button[type='submit']`)
   expect(verifyCodeButton).toBeTruthy()
   await verifyCodeButton!.do({ t: 'click' })
+  await doDismissAlert(f.frontend, 'info')
 }
