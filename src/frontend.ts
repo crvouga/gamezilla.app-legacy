@@ -2,7 +2,7 @@ import { Program } from '~/@/program/program'
 import { AppFrontend } from '~/app/frontend'
 import { HttpProtocol } from './@/http/protocol'
 import { Url } from './@/url/url'
-import { render, VDomEngine } from './@/vdom'
+import { h, render, VDomEngine } from './@/vdom'
 import { VDomImpl } from './@/vdom/vdom-impl'
 
 const main = async () => {
@@ -32,7 +32,7 @@ const main = async () => {
     init: () => AppFrontend.init({ ctx }),
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
-    render: (input) => render(AppFrontend.View({ ...input, ctx }), root),
+    render: (input) => render(h(AppFrontend.View, { ...input, ctx }), root),
   })
 
   VDomEngine.event.sub(async (input) => {
