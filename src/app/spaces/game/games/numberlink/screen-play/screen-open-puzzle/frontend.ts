@@ -100,7 +100,7 @@ const View: FrontendModule['View'] = (input) => {
           }),
         puzzleIds: pack.puzzleIds,
         onClickPuzzleCell: ({ puzzleIndex, puzzleId }) => {
-          const puzzle = input.ctx.puzzles[puzzleId]
+          const puzzle = PuzzleDbQueryCache.entity(input.ctx, puzzleId)
           input.dispatch({
             t: 'got-msg-space',
             c: {

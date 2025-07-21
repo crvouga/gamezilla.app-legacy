@@ -4,6 +4,7 @@ import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { PackPuzzleGridUI } from '../../../../@/pack/pack-puzzle-grid-ui'
+import { PuzzleDbQueryCache } from '../../../../@/puzzle/puzzle-db-query-cache'
 import { ScreenPackBuildSpace } from '../space/space'
 import type { FrontendModule } from '../types'
 
@@ -54,7 +55,7 @@ const View: FrontendModule['View'] = (input) => {
           })
         },
         onClickPuzzleCell: ({ puzzleIndex, puzzleId }) => {
-          const puzzle = input.ctx.puzzles[puzzleId]
+          const puzzle = PuzzleDbQueryCache.entity(input.ctx, puzzleId)
           input.dispatch({
             t: 'got-msg-space',
             c: {

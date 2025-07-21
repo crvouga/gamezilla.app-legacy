@@ -13,10 +13,11 @@ import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowOkSmall } from '~/app/@/frontend/show-ok-small'
 import { ScreenAction, ScreenActionLocation } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SurfaceLayout } from '~/app/@/ui/surface/layout/surface-layout'
+import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { AddPuzzlesCmd } from '../../../../@/frontend/add-puzzles-cmd.$msg'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { IPuzzleDb } from '../../../../@/puzzle/puzzle-db'
+import { PuzzleDbQueryCache } from '../../../../@/puzzle/puzzle-db-query-cache'
 import { PuzzleId } from '../../../../@/puzzle/puzzle-id'
 import { PuzzleName } from '../../../../@/puzzle/puzzle-name'
 import type { FrontendModule } from '../../../types'
@@ -103,17 +104,14 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
 
   switch (input.msgSpace?.t) {
     case 'user-edited-puzzle-name': {
-      const puzzlesNew = {
-        ...input.ctx.puzzles,
-      }
-      const puzzle = puzzlesNew[input.msgSpace.puzzleId]
-
-      if (puzzle && PuzzleName.is(input.msgSpace.newName)) {
-        puzzlesNew[input.msgSpace.puzzleId] = {
-          ...puzzle,
-          name: input.msgSpace.newName,
-        }
-      }
+      const puzzle = PuzzleDbQueryCache.entity(input.ctx, input.msgSpace.puzzleId)
+      const puzzlePatched: Puzzle | null =
+        puzzle && PuzzleName.is(input.msgSpace.newName)
+          ? {
+              ...puzzle,
+              name: input.msgSpace.newName,
+            }
+          : null
 
       return {
         model: {
@@ -122,7 +120,9 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
           puzzleBuilderOpened: null,
         },
         msgOut: [
-          AddPuzzlesCmd.init(puzzlesNew, input),
+          ...(puzzlePatched
+            ? [GotQueryCacheMsg.init({ t: 'got-entity', id: input.msgSpace.puzzleId, entity: puzzlePatched })]
+            : []),
           isOk(input.msgSpace.edited)
             ? ShowOkSmall.init(input.ctx.t('game.numberlink.saved-name'))
             : ShowErrorSmall.init(input.ctx.t('app.something-went-wrong')),

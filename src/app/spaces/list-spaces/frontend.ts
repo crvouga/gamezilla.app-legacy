@@ -42,9 +42,9 @@ const update: SpaceFrontendModule['update'] = (input) => {
   if (ScreenChangedEvt.is(input.msgIn)) {
     return {
       model: input.model,
-      async eff(dispatch) {
-        const spaces = await input.ctx.rpc['spaces.list-spaces.list']({ pagination: { limit: 100, offset: 0 } })
-        dispatch({ t: 'list-spaces.list-spaces-response', spaces })
+      async eff(_dispatch) {
+        // const spaces = await input.ctx.rpc['spaces.list-spaces.list']({ pagination: { limit: 100, offset: 0 } })
+        // dispatch({ t: 'list-spaces.list-spaces-response', spaces })
       },
     }
   }

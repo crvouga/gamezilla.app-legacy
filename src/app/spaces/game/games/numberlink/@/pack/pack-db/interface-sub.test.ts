@@ -1,4 +1,5 @@
 import { describe, expect, test } from '~/@/test-runner'
+import { eventually } from '~/@/test/eventually'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Pack } from '../pack'
 import { PackDb } from './impl'
@@ -25,16 +26,22 @@ describe(`PackDb.sub`, () => {
       const pack = await Pack.random()
       let results: Pack[] = []
       f.packDb
-        .sub({
-          where: { createdBy: { equals: pack.createdBy } },
-          order: { createdAt: 'asc' },
-          pagination: { limit: 10, offset: 0 },
-        })
+        .sub(
+          {
+            where: { createdBy: { equals: pack.createdBy } },
+            order: { createdAt: 'asc' },
+            pagination: { limit: 10, offset: 0 },
+          },
+          (packs) => packs,
+        )
         .sub((packs) => {
           results = packs
         })
+
       await f.packDb.put(pack)
-      expect(results).toEqual([pack])
+      await eventually(() => {
+        expect(results).toEqual([pack])
+      })
     }
   })
 })

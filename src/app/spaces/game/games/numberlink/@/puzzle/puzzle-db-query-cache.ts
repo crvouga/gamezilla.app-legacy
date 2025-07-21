@@ -6,6 +6,7 @@ import { QueryCache } from '~/app/frontend/query-cache/query-cache'
 import { Puzzle } from './puzzle'
 import { IPuzzleDb } from './puzzle-db/interface'
 import { PuzzleQuery } from './puzzle-db/interface-query'
+import { PuzzleId } from './puzzle-id'
 
 const sub = <TMsg>(puzzleDb: IPuzzleDb, query: PuzzleQuery, mapper: (m: unknown) => TMsg): Sub<TMsg> => {
   return puzzleDb.sub(query, (puzzles) => {
@@ -27,6 +28,13 @@ const read = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): Puzzle[] => 
   return entities
 }
 
+const entity = (ctx: { queryCache: QueryCache }, id: PuzzleId | undefined | null): Puzzle | null => {
+  if (!id) return null
+  const entity = ctx.queryCache.entities[id]
+  if (!entity) return null
+  return entity as Puzzle
+}
+
 const isLoading = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): boolean => {
   const queryKey = deterministicJsonStringify(query)
   return ctx.queryCache.results[queryKey] === undefined
@@ -39,6 +47,7 @@ const isEmpty = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): boolean =
 
 export const PuzzleDbQueryCache = {
   sub,
+  entity,
   read,
   isLoading,
   isEmpty,

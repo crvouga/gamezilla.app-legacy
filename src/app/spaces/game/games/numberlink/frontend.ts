@@ -7,13 +7,9 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/cover-art'
-import { AddPacksCmd } from './@/frontend/add-packs-cmd.$msg'
-import { AddPuzzlesCmd } from './@/frontend/add-puzzles-cmd.$msg'
 import { AddSolutionsCmd } from './@/frontend/add-solutions-cmd.$msg'
 import type { FlowFrontendCtx } from './@/frontend/ctx'
 import { IPackDb, PackDb } from './@/pack/pack-db'
-import { PackLoaderTypes } from './@/pack/pack-loader'
-import { PackLoaderFrontend } from './@/pack/pack-loader/frontend'
 import { IPuzzleDb, PuzzleDb } from './@/puzzle/puzzle-db'
 import { HintCalculatorTypes } from './@/solutions/hint-calculator'
 import { HintCalculatorFrontend } from './@/solutions/hint-calculator/frontend'
@@ -29,12 +25,9 @@ import type { FrontendModule, MsgFrontend } from './types'
 const init: FrontendModule['init'] = {
   screenBuild: ScreenBuildFrontend.init,
   screenPlay: ScreenPlayFrontend.init,
-  packLoader: PackLoaderTypes.initFrontend,
   hintCalculator: HintCalculatorTypes.initFrontend,
   solutionsLoader: SolutionsLoaderTypes.initFrontend,
   solutions: Solutions.init,
-  puzzles: {},
-  packs: {},
 }
 
 let puzzleDb: IPuzzleDb
@@ -64,9 +57,6 @@ const toFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): FlowFron
     puzzleDb,
     packDb,
     solutionsDb,
-    packs: input.model.packs,
-    puzzles: input.model.puzzles,
-    packLoader: input.model.packLoader,
     solutions: input.model.solutions,
     hintCalculator: input.model.hintCalculator,
     solutionsLoader: input.model.solutionsLoader,
@@ -82,27 +72,9 @@ const update: FrontendModule['update'] = (input) => {
     (model) => updateFromCmd({ ...input, model }),
     (model) => updateScreenPlay({ ...input, model }),
     (model) => updateScreenBuild({ ...input, model }),
-    (model) => updatePackLoader({ ...input, model }),
     (model) => updateHintCalculator({ ...input, model }),
     (model) => updateSolutionsLoader({ ...input, model }),
   )
-}
-
-const updatePackLoader: FrontendModule['update'] = (input) => {
-  const ctx = toFrontendCtx(input)
-
-  const updated = PackLoaderFrontend.update({
-    ctx,
-    model: input.model.packLoader,
-    msg: input.msg?.t === 'got-pack-loader-msg' ? input.msg.c : null,
-    msgIn: input.msgIn,
-  })
-
-  return {
-    model: { ...input.model, packLoader: updated.model },
-    eff: Eff.tag('got-pack-loader-msg', updated.eff),
-    msgOut: updated.msgOut,
-  }
 }
 
 const updateHintCalculator: FrontendModule['update'] = (input) => {
@@ -219,21 +191,10 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
 
 const updateFromCmd: FrontendModule['update'] = (input) => {
   const { msgIn } = input
-  if (AddPacksCmd.is(msgIn)) {
-    return {
-      model: { ...input.model, packs: { ...input.model.packs, ...msgIn.packs } },
-    }
-  }
 
   if (AddSolutionsCmd.is(msgIn)) {
     return {
       model: { ...input.model, solutions: Solutions.merge(msgIn.solutions, input.model.solutions) },
-    }
-  }
-
-  if (AddPuzzlesCmd.is(msgIn)) {
-    return {
-      model: { ...input.model, puzzles: { ...input.model.puzzles, ...msgIn.puzzles } },
     }
   }
 

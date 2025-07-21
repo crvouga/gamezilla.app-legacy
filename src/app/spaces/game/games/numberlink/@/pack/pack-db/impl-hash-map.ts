@@ -2,7 +2,7 @@ import { Ok, Result, unwrapOr } from '~/@/result'
 import { PubSub, Sub } from '~/@/sub'
 import type { Pack } from '../pack'
 import type { IPackDb } from './interface'
-import { PacksDbQuery } from './interface-query'
+import { PackQuery } from './interface-query'
 
 const db = new Map<string, Pack>()
 
@@ -11,7 +11,7 @@ export type ImplHashMap = {
 }
 
 const init = (_config: ImplHashMap): IPackDb => {
-  const queries = new Map<string, PacksDbQuery>()
+  const queries = new Map<string, PackQuery>()
   const subs = new Map<string, PubSub<Pack[]>>()
 
   const list: IPackDb['list'] = async (input) => {
@@ -30,7 +30,7 @@ const init = (_config: ImplHashMap): IPackDb => {
 
   const notify = async () => {
     for (const query of queries.values()) {
-      const queryKey = PacksDbQuery.toKey(query)
+      const queryKey = PackQuery.toKey(query)
       const sub = subs.get(queryKey)
       if (sub) {
         const listed = unwrapOr(await list(query), {
@@ -48,16 +48,16 @@ const init = (_config: ImplHashMap): IPackDb => {
       return Ok(db.get(id) ?? null)
     },
 
-    sub(input) {
-      const queryKey = PacksDbQuery.toKey(input)
+    sub(input, mapper) {
+      const queryKey = PackQuery.toKey(input)
       queries.set(queryKey, input)
       const sub = subs.get(queryKey) ?? Sub.create()
       subs.set(queryKey, sub)
-      return sub
+      return Sub.map(sub, mapper)
     },
 
     async count(input) {
-      const query: PacksDbQuery = {
+      const query: PackQuery = {
         order: { createdAt: 'asc' },
         pagination: { limit: 0, offset: 0 },
         where: input.where,

@@ -9,6 +9,7 @@ import { ParentScreenProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { ModePlay } from '../../../../@/mode-play'
 import { ModePlayFrontend } from '../../../../@/mode-play/frontend'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
+import { PuzzleDbQueryCache } from '../../../../@/puzzle/puzzle-db-query-cache'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
 import type { FrontendModule, MsgFrontend } from '../types'
 
@@ -125,11 +126,11 @@ const toParentScreenProps = (input: Parameters<FrontendModule['View']>[0]): Pare
   const pack = input.modelSpace.pack
 
   const previousPuzzleId = pack.puzzleIds[screen.puzzleIndex - 1]
-  const previousPuzzle = previousPuzzleId ? input.ctx.puzzles[previousPuzzleId] : null
+  const previousPuzzle = PuzzleDbQueryCache.entity(input.ctx, previousPuzzleId)
   const canGoPrevious = screen.puzzleIndex - 1 >= 0
 
   const nextPuzzleId = pack.puzzleIds[screen.puzzleIndex + 1]
-  const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
+  const nextPuzzle = PuzzleDbQueryCache.entity(input.ctx, nextPuzzleId)
   const canGoNext = screen.puzzleIndex + 1 < pack.puzzleIds.length
 
   const onNextPuzzle = () => {

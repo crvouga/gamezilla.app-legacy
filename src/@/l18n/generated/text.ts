@@ -50,7 +50,7 @@ import type { Text as Text47 } from '../../../app/spaces/game/games/numberlink/@
 import type { Text as Text48 } from '../../../app/spaces/game/games/numberlink/@/l18n/next-pack.$l18n'
 import type { Text as Text49 } from '../../../app/spaces/game/games/numberlink/@/mode-edit/$l18n'
 import type { Text as Text50 } from '../../../app/spaces/game/games/numberlink/@/mode-play/$l18n'
-import type { Text as Text51 } from '../../../app/spaces/game/games/numberlink/@/pack/pack-loader/$l18n'
+import type { Text as Text51 } from '../../../app/spaces/game/games/numberlink/@/pack/pack-list/$l18n'
 import type { Text as Text52 } from '../../../app/spaces/game/games/numberlink/@/pack/pack-name.$l18n'
 import type { Text as Text53 } from '../../../app/spaces/game/games/numberlink/@/puzzle/puzzle-list/$l18n'
 import type { Text as Text54 } from '../../../app/spaces/game/games/numberlink/@/puzzle/puzzle-name/$l18n'

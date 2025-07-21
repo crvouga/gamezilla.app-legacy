@@ -4,9 +4,9 @@ import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { PackLoaderFrontend } from '../../../@/pack/pack-loader/frontend'
-import { GotPackLoaderMsg } from '../../../@/pack/pack-loader/got-pack-loader-msg.$msg'
-import type { FrontendModule, MsgFrontend } from '../../types'
+import { PackDbQueryCache } from '../../../@/pack/pack-db-query-cache'
+import { PackList } from '../../../@/pack/pack-list/pack-list'
+import type { FrontendModule } from '../../types'
 import { PackCreateNewFrontend } from './button-create-new-pack/frontend'
 
 const update: FrontendModule['update'] = (input) => {
@@ -50,11 +50,10 @@ const toQuery = (input: { currentUserId: UserId; offset: number }) => {
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  const query = toQuery({ currentUserId: input.ctx.currentUser.userId, offset: 0 })
-  return PackLoaderFrontend.watch(
-    input.ctx,
-    query,
-    (c): MsgFrontend => ({ t: 'got-msg-out', c: GotPackLoaderMsg.init(c) }),
+  return PackDbQueryCache.sub(
+    input.ctx.packDb,
+    toQuery({ currentUserId: input.ctx.currentUser.userId, offset: 0 }),
+    (c) => ({ t: 'got-msg-out', c }),
   )
 }
 
@@ -79,9 +78,8 @@ const View: FrontendModule['View'] = (input) => {
     },
     postAction: PackCreateNewFrontend.viewCreateAction(input),
     renderBody: () =>
-      h(PackLoaderFrontend.ViewList, {
+      h(PackList.View, {
         ...input,
-        model: input.ctx.packLoader,
         query: query,
         onQueryChanged: (query) => {
           console.log('query changed', query)

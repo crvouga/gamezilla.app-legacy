@@ -6,8 +6,8 @@ import { isErr, isOk, Result, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
-import type { ISqlDb } from '~/@/sql-db/interface'
 import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
+import type { ISqlDb } from '~/@/sql-db/interface'
 import { UnixMs } from '~/@/time/unix-ms'
 import { UserId } from '~/app/@/data/user-id'
 import { OrderClause, WhereClause } from '../../puzzle/puzzle-db/interface-query'
@@ -208,7 +208,7 @@ const init = (config: ImplSqlDb): IPackDb => {
       return Result.mapOk(queried, (rows) => ensureNumber(rows[0]?.count))
     },
 
-    sub(input) {
+    sub(input, mapper) {
       const sqlWhere = toSqlWhere(input.where)
       const sqlOrder = toSqlOrder(input.order)
       const sqlPagination = Sql.pagination(input.pagination)
@@ -240,13 +240,13 @@ const init = (config: ImplSqlDb): IPackDb => {
         ${sqlPagination.str};
 			`
 
-      return config.sqlDb.sub({ schema: Row, sql, vars }, (packRows) => {
-        const packs = packRows.flatMap((row) => {
+      return config.sqlDb.sub({ schema: Row, sql, vars }, (rows) => {
+        const packs: Pack[] = rows.flatMap((row) => {
           const puzzleIds = puzzleIdCsvToArray(row.puzzle_ids_csv ?? '')
           const pack = rowToPack(row, [])
           return pack ? [{ ...pack, puzzleIds }] : []
         })
-        return packs
+        return mapper(packs)
       })
     },
 

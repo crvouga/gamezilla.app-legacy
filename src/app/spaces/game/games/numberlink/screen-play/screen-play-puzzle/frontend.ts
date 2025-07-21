@@ -15,6 +15,7 @@ import { ProfileListItem } from '../../../@/ui/list-item-profile'
 import { PrebuiltActions } from '../../../@/ui/prebuilt-actions'
 import { ModePlay } from '../../@/mode-play'
 import { ModePlayFrontend } from '../../@/mode-play/frontend'
+import { PuzzleDbQueryCache } from '../../@/puzzle/puzzle-db-query-cache'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
 import type { FrontendModule, MsgFrontend } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
@@ -102,7 +103,7 @@ const ViewHosting: FrontendModule['View'] = (input) => {
 
   const nextPuzzleIndex = puzzleIndex + 1
   const nextPuzzleId = input.modelSpace.screen.pack.puzzleIds[nextPuzzleIndex]
-  const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
+  const nextPuzzle = PuzzleDbQueryCache.entity(input.ctx, nextPuzzleId)
 
   const onNextPuzzle = () => {
     input.dispatch({
@@ -262,7 +263,7 @@ const ViewSolvedModal: FrontendModule['View'] = (input) => {
 
   const nextPuzzleIndex = puzzleIndex + 1
   const nextPuzzleId = input.modelSpace.screen.pack.puzzleIds[nextPuzzleIndex]
-  const nextPuzzle = nextPuzzleId ? input.ctx.puzzles[nextPuzzleId] : null
+  const nextPuzzle = PuzzleDbQueryCache.entity(input.ctx, nextPuzzleId)
 
   const isLastPuzzle = ScreenPlayPuzzleSpace.isLastPuzzle(input.modelSpace.screen)
   const isSolvedPuzzleDialogOpen = isSolved && input.modelSpace.screen.opened === 'puzzle-complete'

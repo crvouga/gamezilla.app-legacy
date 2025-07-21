@@ -1,7 +1,6 @@
 import { descend } from '~/@/array/sorting'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { ClickableTransparent } from '~/@/ui/clickable'
@@ -10,59 +9,20 @@ import { IconBox } from '~/@/ui/icon'
 import { SpinnerBlock } from '~/@/ui/spinner-block'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
-import { AddPacksCmd } from '../../frontend/add-packs-cmd.$msg'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import type { Pack } from '../pack'
-import { PacksDbQuery } from '../pack-db/interface-query'
-import { PackId } from '../pack-id'
-import { GotPackLoaderMsg } from './got-pack-loader-msg.$msg'
-import { ModelFrontend, MsgFrontend, initFrontend, type FrontendModule } from './types'
+import { PackDbQueryCache } from '../pack-db-query-cache'
+import { PackQuery } from '../pack-db/interface-query'
 
-const update: FrontendModule['update'] = (input) => {
-  if (GotPackLoaderMsg.is(input.msgIn)) {
-    return update({ ...input, msgIn: null, msg: input.msgIn.c.msg })
-  }
-
-  switch (input.msg?.t) {
-    case 'got-pack-db-packs': {
-      return {
-        model: {
-          ...input.model,
-          results: {
-            ...input.model.results,
-            [PacksDbQuery.toKey(input.msg.query)]: input.msg.packs.map((p) => p.id),
-          },
-        },
-        msgCmd: [
-          AddPacksCmd.init(
-            input.msg.packs.reduce<{ [k: PackId]: Pack }>((acc, p) => ({ ...acc, [p.id]: p }), {}),
-            input.msg,
-          ),
-        ],
-      }
-    }
-  }
-
-  return { model: input.model }
-}
-
-const watch = <TMsg>(ctx: FlowFrontendCtxBase, query: PacksDbQuery, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
-  return Sub.map(ctx.packDb.sub(query), (packs) => map({ t: 'got-pack-db-packs', query, packs }))
-}
-
-const ViewList = (input: {
+const View = (input: {
   ctx: FlowFrontendCtxBase
-  query: PacksDbQuery
-  model: ModelFrontend
-  onQueryChanged: (query: PacksDbQuery) => void
+  query: PackQuery
+  onQueryChanged: (query: PackQuery) => void
   onClick: (pack: Pack) => void
 }) => {
-  const queryKey = PacksDbQuery.toKey(input.query)
-  const packIds = input.model.results[queryKey] ?? []
-  const packs = packIds.flatMap((id) => (input.ctx.packs[id] ? [input.ctx.packs[id]] : []))
-
-  const isLoading = !(queryKey in input.model.results)
-  const isEmpty = !isLoading && packs.length === 0
+  const packs = PackDbQueryCache.read(input.ctx, input.query)
+  const isLoading = PackDbQueryCache.isLoading(input.ctx, input.query)
+  const isEmpty = PackDbQueryCache.isEmpty(input.ctx, input.query)
 
   return h('div', { class: 'relative flex w-full flex-1 flex-col gap-2 overflow-hidden' }, [
     h(
@@ -123,9 +83,6 @@ const toListItemSecondaryText = (input: { ctx: { now: UnixMs; t: Translator }; p
   )
 }
 
-export const PackLoaderFrontend = {
-  watch,
-  initFrontend,
-  update,
-  ViewList,
+export const PackList = {
+  View,
 }

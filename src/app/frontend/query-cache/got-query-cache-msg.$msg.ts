@@ -1,12 +1,19 @@
 import { isOk } from '~/@/result'
 import { s } from '~/@/schema'
 
-export const Msg = s.obj({
-  t: s.l('got-entities'),
-  query: s.dict(s.str(), s.unknown),
-  entities: s.dict(s.str(), s.dict(s.str(), s.unknown)),
-  results: s.arr(s.str()),
-})
+export const Msg = s.or(
+  s.obj({
+    t: s.l('got-entities'),
+    query: s.dict(s.str(), s.unknown),
+    entities: s.dict(s.str(), s.dict(s.str(), s.unknown)),
+    results: s.arr(s.str()),
+  }),
+  s.obj({
+    t: s.l('got-entity'),
+    id: s.str(),
+    entity: s.dict(s.str(), s.unknown),
+  }),
+)
 
 export type Msg = s.Infer<typeof Msg>
 

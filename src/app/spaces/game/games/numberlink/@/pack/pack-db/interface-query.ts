@@ -26,9 +26,9 @@ const schema = s.obj({
   order: OrderClause,
 })
 
-export type PacksDbQuery = s.Infer<typeof schema>
+export type PackQuery = s.Infer<typeof schema>
 
-const toKey = (input: PacksDbQuery): string => {
+const toKey = (input: PackQuery): string => {
   return [
     'limit',
     input.pagination.limit,
@@ -43,7 +43,7 @@ const toKey = (input: PacksDbQuery): string => {
   ].join(':')
 }
 
-export const PacksDbQuery = {
+export const PackQuery = {
   ...schema,
   toKey,
 }
