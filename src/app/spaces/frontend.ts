@@ -58,8 +58,7 @@ const init: FrontendModule['init'] = (_input) => {
 }
 
 const update: FrontendModule['update'] = (input) => {
-  const updated = updateLoop(input, updateChild(input))
-  return updated
+  return updateLoop(input, updateChild(input))
 }
 
 const updateLoop = (input: Input, acc: Output): Output => {

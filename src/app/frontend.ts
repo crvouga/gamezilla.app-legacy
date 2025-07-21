@@ -237,9 +237,7 @@ const init = (input: { ctx: FrontendCtxModule }): { model: ModelFrontend; eff?: 
 
   const msgOut = Msg.batch(PreloadSoundsCmd.init(Object.values(APP_SOUND)))
 
-  const updated = updateLoop(input.ctx, { model, eff, msgOut })
-
-  return updated
+  return updateLoop(input.ctx, { model, eff, msgOut })
 }
 
 const update = (input: {
@@ -250,17 +248,13 @@ const update = (input: {
   model: ModelFrontend
   eff?: Eff<MsgFrontend>
 } => {
-  const updatedChild = updateChild(input)
-  const updated = updateLoop(input.ctx, updatedChild)
-
-  return updated
+  return updateLoop(input.ctx, updateChild(input))
 }
 
 const updateLoop = (ctx: FrontendCtxModule, acc: ReturnType<typeof updateChild>): ReturnType<typeof updateChild> => {
   const [msgOut, ...msgOutRest] = acc.msgOut
 
   if (msgOut) {
-    console.log('msgOut', msgOut)
     const updatedOut = updateChild({ ctx, model: acc.model, msgIn: msgOut })
 
     return updateLoop(ctx, {
