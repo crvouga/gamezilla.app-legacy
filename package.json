@@ -46,7 +46,6 @@
     "infra:up": "docker compose -f ./infra/docker-compose.yml up --build -d",
     "int": "pnpm vitest:int",
     "kp": "pnpm exec kill-port 5173 && pnpm exec kill-port 5003 && pnpm exec kill-port 8088 && pnpm exec kill-port $PORT",
-    "spec": "pnpm vitest:spec",
     "tc": "pnpm exec tsc --noEmit --watch",
     "topic": "pnpm exec tsx watch ./src/topic.ts",
     "unit": "pnpm vitest",
@@ -54,7 +53,7 @@
     "vitest:coverage": "IS_VITEST_TEST=true NODE_ENV=test vitest run --coverage",
     "vitest:int": "IS_INTEGRATION_TEST=true IS_VITEST_TEST=true NODE_ENV=test vitest run",
     "vitest:int:coverage": "IS_INTEGRATION_TEST=true IS_VITEST_TEST=true NODE_ENV=test vitest run --coverage",
-    "vitest:spec": "IS_VITEST_TEST=true NODE_ENV=test vitest run .spec.ts",
+    "vitest:e2e": "IS_VITEST_TEST=true NODE_ENV=test vitest run .e2e.ts",
     "viz-bundle": "pnpm exec vite-bundle-visualizer"
   },
   "prettier": {
