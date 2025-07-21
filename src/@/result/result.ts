@@ -171,6 +171,14 @@ const flatMapOk = <TError, A, B>(
   }
 }
 
+export const attempt = async <TError, TValue>(fn: () => Promise<TValue>): Promise<ResultInternal<TError, TValue>> => {
+  try {
+    return Ok(await fn())
+  } catch (error) {
+    return Err(error as TError)
+  }
+}
+
 export const ResultInternal = {
   is,
   Ok,
