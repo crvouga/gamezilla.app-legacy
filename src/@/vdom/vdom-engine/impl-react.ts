@@ -1,9 +1,9 @@
 import { createElement, Fragment, StrictMode } from 'react'
 import { createPortal } from 'react-dom'
 import { createRoot } from 'react-dom/client'
-import { VDOM_FRAGMENT_KEY } from './fragment'
-import { VirtualDomEngine } from './interface'
-import { kebabObjectToCamelObject } from './style'
+import { VDOM_FRAGMENT_KEY } from '../fragment'
+import { kebabObjectToCamelObject } from '../style'
+import { IVirtualDomEngine } from './interface'
 
 const propMap = new Map<string, string>()
 propMap.set('class', 'className')
@@ -15,7 +15,11 @@ propMap.set('clip-rule', 'clipRule')
 propMap.set('fill-rule', 'fillRule')
 const propMapKeys = Array.from(propMap.keys())
 
-export const initReact = (): VirtualDomEngine => {
+export type ImplReact = {
+  t: 'react'
+}
+
+const init = (_config: ImplReact): IVirtualDomEngine => {
   let reactRoot: ReturnType<typeof createRoot> | undefined
   return {
     render: (vDom, node) => {
@@ -49,4 +53,8 @@ export const initReact = (): VirtualDomEngine => {
       return createElement(tag, props, ...children) as any
     },
   }
+}
+
+export const ImplReact = {
+  init,
 }

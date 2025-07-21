@@ -1,9 +1,13 @@
 import { Fragment, render } from 'preact'
 import { createElement, createPortal } from 'preact/compat'
-import { VDOM_FRAGMENT_KEY } from './fragment'
-import { VirtualDomEngine } from './interface'
+import { VDOM_FRAGMENT_KEY } from '../fragment'
+import { IVirtualDomEngine } from './interface'
 
-export const initPreact = (): VirtualDomEngine => {
+export type ImplPreact = {
+  t: 'preact'
+}
+
+const init = (_config: ImplPreact): IVirtualDomEngine => {
   return {
     render: (vDom, node) => {
       render(vDom as any, node)
@@ -21,4 +25,8 @@ export const initPreact = (): VirtualDomEngine => {
       return createElement(tag, props, ...children) as any
     },
   }
+}
+
+export const ImplPreact = {
+  init,
 }

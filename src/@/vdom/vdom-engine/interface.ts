@@ -1,5 +1,5 @@
-import { AriaRole } from '../html/aria-role'
-import { VDom } from './vdom'
+import { AriaRole } from '../../html/aria-role'
+import { VDom } from '../vdom'
 
 export type Tag =
   | 'div'
@@ -73,7 +73,7 @@ export type IRender = (vDom: VDom, node: RenderNode) => void
 
 export type ICreatePortal = (vDom: VDom, container: RenderNode) => VDom
 
-export type VirtualDomEngine = {
+export type IVirtualDomEngine = {
   render: IRender
   createPortal: ICreatePortal
   createElement: ICreateElement

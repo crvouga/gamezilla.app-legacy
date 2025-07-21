@@ -1,9 +1,13 @@
 import { createPortal, Fragment, render } from 'inferno'
 import { createElement } from 'inferno-create-element'
-import { VDOM_FRAGMENT_KEY } from './fragment'
-import { VirtualDomEngine } from './interface'
+import { VDOM_FRAGMENT_KEY } from '../fragment'
+import { IVirtualDomEngine } from './interface'
 
-export const initInferno = (): VirtualDomEngine => {
+export type ImplInferno = {
+  t: 'inferno'
+}
+
+const init = (_config: ImplInferno): IVirtualDomEngine => {
   return {
     render: (vDom, node) => {
       render(vDom, node)
@@ -18,4 +22,8 @@ export const initInferno = (): VirtualDomEngine => {
       return createElement(tag, props, children) as any
     },
   }
+}
+
+export const ImplInferno = {
+  init,
 }

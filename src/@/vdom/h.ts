@@ -1,2 +1,2 @@
-export * from './interface'
-export * from './impl'
+export * from './vdom-engine/interface'
+export * from './vdom-engine/impl'

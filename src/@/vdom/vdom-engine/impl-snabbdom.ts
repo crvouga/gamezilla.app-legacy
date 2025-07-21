@@ -9,14 +9,18 @@ import {
   propsModule,
   styleModule,
 } from 'snabbdom'
-import { VDOM_FRAGMENT_KEY } from './fragment'
-import { VirtualDomEngine } from './interface'
+import { VDOM_FRAGMENT_KEY } from '../fragment'
+import { IVirtualDomEngine } from './interface'
 
 // Reusable objects to reduce allocations
 let reusableAttrs: Attrs = {}
 let reusableOn: On = {}
 
-export const initSnabbdom = (): VirtualDomEngine => {
+export type ImplSnabbdom = {
+  t: 'snabbdom'
+}
+
+const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
   const patch = init([styleModule, attributesModule, propsModule, eventListenersModule], undefined, {
     experimental: {
       fragments: true,
@@ -34,7 +38,7 @@ export const initSnabbdom = (): VirtualDomEngine => {
         document.body.appendChild(node)
         oldVNode = null
         oldVNode = patch(oldVNode ?? node, vDom as any)
-        // console.error(e)
+        console.error(e)
       }
     },
     createPortal: (vDom, _container) => {
@@ -92,6 +96,10 @@ export const initSnabbdom = (): VirtualDomEngine => {
       }
     },
   }
+}
+
+export const ImplSnabbdom = {
+  init: init_,
 }
 
 // Cache for event name transformations to avoid repeated string operations
