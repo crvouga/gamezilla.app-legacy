@@ -25,8 +25,8 @@ export default defineConfig({
   /* Disable retries on CI to ensure failures cause job to fail */
   retries: 0,
   /* Run maximum parallel workers */
-  // workers: '100%',
-  workers: 1,
+  workers: '100%',
+  // workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'list',
   /* Maximum number of test failures before stopping */
