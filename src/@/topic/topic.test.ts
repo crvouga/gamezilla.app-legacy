@@ -132,21 +132,11 @@ describe('Topic', () => {
     f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
     f.clientB.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     f.clientC.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
-    await eventually(() =>
-      expect(
-        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientA.clientSessionId),
-      ).toEqual(true),
-    )
-    await eventually(() =>
-      expect(
-        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientB.clientSessionId),
-      ).toEqual(true),
-    )
-    await eventually(() =>
-      expect(
-        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientC.clientSessionId),
-      ).toEqual(true),
-    )
+    await eventually(() => {
+      expect(f.isSubscribedClientA('someTopic', { id: '123' })).toEqual(true)
+      expect(f.isSubscribedClientB('someTopic', { id: '123' })).toEqual(true)
+      expect(f.isSubscribedClientC('someTopic', { id: '123' })).toEqual(true)
+    })
     f.clientC.topic.someTopic.pub({ id: '123' }, { id: 1 })
     await eventually(() => {
       expect(gotA).toEqual([{ id: 1 }])
