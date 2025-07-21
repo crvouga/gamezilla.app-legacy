@@ -1,9 +1,9 @@
 import { expect } from '~/@/test-runner'
 import { IFixtureApp } from '~/app/@/test/app-fixture/interface'
-import { AuthFrontend } from '../../frontend'
+import { TEST_ID_VERIFY_CODE_SCREEN } from '../frontend'
 
 export const doVerifyCode = async (f: IFixtureApp, config?: { code?: string }) => {
-  const screen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
+  const screen = await f.frontend.findByTestId(TEST_ID_VERIFY_CODE_SCREEN)
   expect(screen).toBeTruthy()
   //
   const [input] = await f.frontend.find(`input[type='tel']`)

@@ -4,8 +4,8 @@ import { eventually } from '~/@/test/eventually'
 import { FixtureAppE2E } from '~/app/@/test/app-fixture'
 import { IFixtureApp } from '~/app/@/test/app-fixture/interface'
 import { doDismissAlert } from '~/app/@/test/flows/do-dismiss-alert'
-import { SpacesFrontend } from '~/app/spaces/frontend'
-import { AuthFrontend } from '../frontend'
+import { TEST_ID_SPACE_LIST_SCREEN } from '~/app/spaces/list-spaces/frontend'
+import { TEST_ID_LOGIN_SCREEN } from '../frontend'
 
 const Fixture = FixtureAppE2E
 
@@ -13,7 +13,7 @@ describe('login as guest', () => {
   test('login as guest screen', async (e) => {
     await using f = await Fixture(e)
     await doContinueAsGuest(f)
-    const screen = await f.frontend.findByTestId(SpacesFrontend.TEST_ID.SPACE_LIST_SCREEN)
+    const screen = await f.frontend.findByTestId(TEST_ID_SPACE_LIST_SCREEN)
     expect(screen).toBeTruthy()
   })
 
@@ -37,7 +37,7 @@ describe('login as guest', () => {
 })
 
 const doContinueAsGuest = async (f: IFixtureApp) => {
-  const screen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.LOGIN_SCREEN)
+  const screen = await f.frontend.findByTestId(TEST_ID_LOGIN_SCREEN)
   expect(screen).toBeTruthy()
   //
   const button = await f.frontend.findByRole('button', 'Continue as guest')

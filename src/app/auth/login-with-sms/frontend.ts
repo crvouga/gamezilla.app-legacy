@@ -19,11 +19,6 @@ import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { AuthScreenFormLayout } from '../@/frontend/ui/auth-screen-form-layout'
 import { FrontendModule, ModelFrontend, toSendErrorMessage, toVerifyErrorMessage } from './types'
 
-const TEST_ID = {
-  SEND_CODE_SCREEN: 'auth/send-code-screen',
-  VERIFY_CODE_SCREEN: 'auth/verify-code-screen',
-}
-
 const init: ModelFrontend = {
   code: '',
   codeError: null,
@@ -223,9 +218,11 @@ const View: FrontendModule['View'] = (input) => {
   }
 }
 
+export const TEST_ID_SEND_CODE_SCREEN = 'auth/send-code-screen'
+
 const ViewSendCode: FrontendModule['View'] = (input) => {
   return h(AuthScreenFormLayout, {
-    testId: TEST_ID.SEND_CODE_SCREEN,
+    testId: TEST_ID_SEND_CODE_SCREEN,
     ctx: input.ctx,
     title: input.ctx.t('auth-sms.send-code'),
     onBack: () => {
@@ -264,13 +261,15 @@ const ViewSendCode: FrontendModule['View'] = (input) => {
   })
 }
 
+export const TEST_ID_VERIFY_CODE_SCREEN = 'auth/verify-code-screen'
+
 const ViewVerifyCode: FrontendModule['View'] = (input) => {
   if (input.ctx.currentScreen.t !== 'verify-code') return null
 
   const phoneNumber = input.ctx.currentScreen.phoneNumber
 
   return h(AuthScreenFormLayout, {
-    testId: TEST_ID.VERIFY_CODE_SCREEN,
+    testId: TEST_ID_VERIFY_CODE_SCREEN,
     ctx: input.ctx,
     title: input.ctx.t('auth-sms.verify-code'),
     onBack: () => {
@@ -313,5 +312,4 @@ export const LoginWithSMSFrontend = {
   init,
   update,
   View,
-  TEST_ID,
 }

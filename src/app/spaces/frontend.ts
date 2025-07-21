@@ -24,10 +24,6 @@ import { StartSpaceFrontend } from './start-space/frontend'
 import { SyncFrontend } from './sync/frontend'
 import type { FrontendCtxModule, FrontendModule, ModelFrontend, rpcContract, topicContract } from './types'
 
-const TEST_ID = {
-  ...ListSpacesFrontend.TEST_ID,
-}
-
 const initCtx = async (input: {
   ctx: AppFrontendCtxBase
   rpc: RPC.Client<typeof rpcContract>
@@ -160,5 +156,4 @@ export const SpacesFrontend = {
   subscriptions,
   View,
   ViewCurrentSpaceMiniPlayer,
-  TEST_ID,
 }

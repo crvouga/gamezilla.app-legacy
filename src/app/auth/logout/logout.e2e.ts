@@ -4,8 +4,9 @@ import { FixtureAppE2E, IFixtureApp } from '~/app/@/test/app-fixture'
 import { doLoginWithSms } from '~/app/@/test/flows/do-login-with-sms'
 import { doSubmitForm } from '~/app/@/test/flows/do-submit-form'
 import { doOpenSettingsScreen } from '~/app/settings/@/test/do-open-settings-screen'
-import { SettingsFrontend } from '~/app/settings/frontend'
-import { AuthFrontend } from '../frontend'
+import { TEST_ID_LOGOUT_LIST_ITEM_BUTTON } from '~/app/settings/frontend'
+import { TEST_ID_LOGIN_SCREEN } from '../frontend'
+import { TEST_ID_LOGOUT_CONFIRMATION } from './frontend'
 
 export const Fixture = FixtureAppE2E
 
@@ -16,22 +17,22 @@ describe('logout', () => {
     await doOpenSettingsScreen(f)
     const logoutConfirmation = await doOpenLogoutConfirmation(f)
     await doSubmitForm(logoutConfirmation)
-    const after = await f.frontend.findByTestId(AuthFrontend.TEST_ID.LOGIN_SCREEN)
+    const after = await f.frontend.findByTestId(TEST_ID_LOGIN_SCREEN)
     expect(after).toBeTruthy()
   })
 })
 
 const doOpenLogoutConfirmation = async (f: IFixtureApp) => {
-  const before = await f.frontend.findByTestId(AuthFrontend.TEST_ID.LOGOUT_CONFIRMATION)
+  const before = await f.frontend.findByTestId(TEST_ID_LOGOUT_CONFIRMATION)
   await eventually(async () => expect(await before?.isVisible()).toBeFalsy())
   await doClickLogoutListItem(f)
-  const after = await f.frontend.findByTestId(AuthFrontend.TEST_ID.LOGOUT_CONFIRMATION)
+  const after = await f.frontend.findByTestId(TEST_ID_LOGOUT_CONFIRMATION)
   await eventually(async () => expect(await after?.isVisible()).toBeTruthy())
   return after!
 }
 
 const doClickLogoutListItem = async (f: IFixtureApp) => {
-  const logoutListItem = await f.frontend.findByTestId(SettingsFrontend.TEST_ID.LOGOUT_LIST_ITEM_BUTTON)
+  const logoutListItem = await f.frontend.findByTestId(TEST_ID_LOGOUT_LIST_ITEM_BUTTON)
   expect(logoutListItem).toBeTruthy()
   await logoutListItem!.do({ t: 'click' })
 }

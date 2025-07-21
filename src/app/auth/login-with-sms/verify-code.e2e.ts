@@ -4,8 +4,8 @@ import { eventually } from '~/@/test/eventually'
 import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
 import { doClickBackButton } from '~/app/@/test/flows/do-click-back-button'
 import { doDismissAlert } from '~/app/@/test/flows/do-dismiss-alert'
-import { SpacesFrontend } from '~/app/spaces/frontend'
-import { AuthFrontend } from '../frontend'
+import { TEST_ID_SPACE_LIST_SCREEN } from '~/app/spaces/list-spaces/frontend'
+import { TEST_ID_SEND_CODE_SCREEN, TEST_ID_VERIFY_CODE_SCREEN } from './frontend'
 import { doOpenSendCodeScreen } from './test/do-open-send-code-screen'
 import { doSendCode } from './test/do-send-code'
 import { doVerifyCode } from './test/do-verify-code'
@@ -21,10 +21,10 @@ describe('verify code', () => {
     await using f = await Fixture(e)
     await doOpenSendCodeScreen(f)
     await doSendCode(f)
-    const verifyCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
+    const verifyCodeScreen = await f.frontend.findByTestId(TEST_ID_VERIFY_CODE_SCREEN)
     expect(verifyCodeScreen).toBeTruthy()
     await doClickBackButton(f)
-    const sendCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.SEND_CODE_SCREEN)
+    const sendCodeScreen = await f.frontend.findByTestId(TEST_ID_SEND_CODE_SCREEN)
     expect(sendCodeScreen).toBeTruthy()
   })
 
@@ -33,7 +33,7 @@ describe('verify code', () => {
     await using f = await Fixture(e)
     await doOpenSendCodeScreen(f)
     await doSendCode(f)
-    const verifyCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
+    const verifyCodeScreen = await f.frontend.findByTestId(TEST_ID_VERIFY_CODE_SCREEN)
     expect(verifyCodeScreen).toBeTruthy()
     const before = await f.frontend.audio()
     await doClickBackButton(f)
@@ -50,7 +50,7 @@ describe('verify code', () => {
     await doSendCode(f)
     await doDismissAlert(f.frontend, 'info')
     await doVerifyCode(f)
-    const screen = await f.frontend.findByTestId(SpacesFrontend.TEST_ID.SPACE_LIST_SCREEN)
+    const screen = await f.frontend.findByTestId(TEST_ID_SPACE_LIST_SCREEN)
     expect(screen).toBeTruthy()
   })
 
@@ -59,7 +59,7 @@ describe('verify code', () => {
     await doOpenSendCodeScreen(f)
     await doSendCode(f)
     await doVerifyCode(f, { code: '111' })
-    const verifyCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
+    const verifyCodeScreen = await f.frontend.findByTestId(TEST_ID_VERIFY_CODE_SCREEN)
     expect(verifyCodeScreen).toBeTruthy()
   })
 
@@ -69,7 +69,7 @@ describe('verify code', () => {
     await doSendCode(f)
     for (let i = 0; i < 5; i++) {
       await doVerifyCode(f, { code: '111' })
-      await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
+      await f.frontend.findByTestId(TEST_ID_VERIFY_CODE_SCREEN)
     }
     await doVerifyCode(f, { code: '123' })
     await doDismissAlert(f.frontend, 'error')

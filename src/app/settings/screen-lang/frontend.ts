@@ -13,11 +13,6 @@ import { AppFrontendCtxBase } from '../../@/frontend/ctx'
 import { FrontendModule } from '../types'
 import { ModelFrontend, MsgFrontend } from './types'
 
-const TEST_ID = {
-  LANG_SCREEN_OPEN_BUTTON: 'settings/lang-screen-open-button',
-  LANG_SCREEN: 'settings/lang-screen',
-}
-
 const LANG_STORAGE_KEY = 'lang'
 
 const init = (input: { ctx: AppFrontendCtxBase }): { model: ModelFrontend } => {
@@ -65,10 +60,12 @@ const subscriptions: FrontendModule['subscriptions'] = (_input) => {
   return Sub.none()
 }
 
+export const TEST_ID_LANG_SCREEN = 'settings/lang-screen'
+
 const View: FrontendModule['View'] = (input) => {
   return ScreenLayout({
     id: 'setting-choose-lang',
-    dataTestId: TEST_ID.LANG_SCREEN,
+    dataTestId: TEST_ID_LANG_SCREEN,
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
     navBar: {
@@ -123,6 +120,5 @@ export const ScreenLangFrontend = {
   init,
   update,
   subscriptions,
-  TEST_ID,
   View,
 }

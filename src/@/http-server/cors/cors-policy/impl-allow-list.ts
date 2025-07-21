@@ -14,23 +14,26 @@ const init = (config: ImplAllowList): ICorsPolicy => {
         headers: new Headers(response.headers),
       })
 
-      const origin = config.allowList.find((origin) => request.headers.get('Origin')?.includes(origin)) ?? null
-      if (origin) {
-        newResponse.headers.set('Access-Control-Allow-Origin', origin)
-      }
-      newResponse.headers.set('Access-Control-Allow-Credentials', 'true')
-      newResponse.headers.set(
-        'Access-Control-Allow-Headers',
-        request.headers.get('Access-Control-Request-Headers') ?? 'Content-Type, Authorization',
-      )
-      newResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD')
+      const origin = request.headers.get('Origin')
+      const isAllowed = origin && config.allowList.some((allowed) => allowed === origin.replace(/^https?:\/\//, ''))
 
-      if (request.method === 'OPTIONS') {
-        newResponse.headers.set('Access-Control-Max-Age', '3600')
-        return new Response(null, {
-          status: 204,
-          headers: newResponse.headers,
-        })
+      if (isAllowed) {
+        const allowedOrigin = config.allowList.find((allowed) => allowed === origin.replace(/^https?:\/\//, ''))!
+        newResponse.headers.set('Access-Control-Allow-Origin', allowedOrigin)
+        newResponse.headers.set('Access-Control-Allow-Credentials', 'true')
+        newResponse.headers.set(
+          'Access-Control-Allow-Headers',
+          response.headers.get('Access-Control-Request-Headers') ?? 'Content-Type, Authorization',
+        )
+        newResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD')
+
+        if (request.method === 'OPTIONS') {
+          newResponse.headers.set('Access-Control-Max-Age', '3600')
+          return new Response(null, {
+            status: 204,
+            headers: newResponse.headers,
+          })
+        }
       }
 
       return newResponse

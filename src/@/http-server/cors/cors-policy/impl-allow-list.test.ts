@@ -15,10 +15,10 @@ describe('ImplAllowList', () => {
       },
     })
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Allow-Origin')).toEqual('example.com')
-    expect(response.headers.get('Access-Control-Allow-Credentials')).toEqual('true')
+    expect(mappedResponse.headers.get('Access-Control-Allow-Origin')).toEqual('example.com')
+    expect(mappedResponse.headers.get('Access-Control-Allow-Credentials')).toEqual('true')
   })
 
   test('sets CORS headers for allowed origin', () => {
@@ -34,10 +34,12 @@ describe('ImplAllowList', () => {
       },
     })
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Allow-Methods')).toEqual('GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD')
-    expect(response.headers.get('Access-Control-Allow-Headers')).toEqual('Content-Type, Authorization')
+    expect(mappedResponse.headers.get('Access-Control-Allow-Methods')).toEqual(
+      'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD',
+    )
+    expect(mappedResponse.headers.get('Access-Control-Allow-Headers')).toEqual('Content-Type, Authorization')
   })
 
   test('handles OPTIONS request', () => {
@@ -54,9 +56,9 @@ describe('ImplAllowList', () => {
       },
     })
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Max-Age')).toEqual('3600')
+    expect(mappedResponse.headers.get('Access-Control-Max-Age')).toEqual('3600')
   })
 
   test('does not set origin header for disallowed origin', () => {
@@ -72,9 +74,9 @@ describe('ImplAllowList', () => {
       },
     })
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Allow-Origin')).toEqual(null)
+    expect(mappedResponse.headers.get('Access-Control-Allow-Origin')).toEqual(null)
   })
 
   test('handles missing Origin header', () => {
@@ -86,9 +88,9 @@ describe('ImplAllowList', () => {
     const response = new Response()
     const request = new Request('http://test.com')
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Allow-Origin')).toEqual(null)
+    expect(mappedResponse.headers.get('Access-Control-Allow-Origin')).toEqual(null)
   })
 
   test('uses custom Access-Control-Request-Headers when provided', () => {
@@ -106,8 +108,8 @@ describe('ImplAllowList', () => {
       },
     })
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Allow-Headers')).toEqual('X-Custom-Header')
+    expect(mappedResponse.headers.get('Access-Control-Allow-Headers')).toEqual('X-Custom-Header')
   })
 })

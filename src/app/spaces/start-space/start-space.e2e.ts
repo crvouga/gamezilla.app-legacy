@@ -2,15 +2,16 @@ import { difference } from '~/@/array/difference'
 import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
 import { FixtureSpacesE2E } from '../@/fixture/e2e'
+import { TEST_ID_SPACE_SCREEN } from '../space/frontend'
 
 const Fixture = FixtureSpacesE2E
 
 describe('start space', () => {
   test('click start space button', async (e) => {
     await using f = await Fixture(e)
-    const [spaceSpaceFab] = await f.frontend.find(`[data-fab='true']`)
+    const [spaceSpaceFab] = await f.frontend!.find(`[data-fab='true']`)
     await spaceSpaceFab!.do({ t: 'click' })
-    const [screen] = await f.frontend.find(`[data-testid='spaces/space-screen']`)
+    const screen = await f.frontend.findByTestId(TEST_ID_SPACE_SCREEN)
     expect(screen).toBeTruthy()
   })
 
@@ -18,7 +19,8 @@ describe('start space', () => {
     if (e.e2e) return
     await using f = await Fixture(e)
     const before = await f.frontend.audio()
-    const [spaceSpaceFab] = await f.frontend.find(`[data-fab='true']`)
+    const [spaceSpaceFab] = await f.frontend!.find(`[data-fab='true']`)
+    await spaceSpaceFab!.do({ t: 'click' })
     await spaceSpaceFab!.do({ t: 'click' })
     await eventually(async () => {
       const after = await f.frontend.audio()

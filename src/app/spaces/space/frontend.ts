@@ -11,6 +11,8 @@ import { LeaveSpaceFrontend } from '../leave-space/frontend'
 import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../types'
 import { Spaces } from './spaces'
 
+export const TEST_ID_SPACE_SCREEN = 'spaces/space-screen'
+
 const View = (input: {
   model: ModelFrontend
   ctx: FrontendCtxModule
@@ -52,7 +54,7 @@ const View = (input: {
         topic: input.ctx.topic,
         rpc: input.ctx.rpc,
         parentScreen: {
-          dataTestId: 'spaces/space-screen',
+          dataTestId: TEST_ID_SPACE_SCREEN,
           id: 'space-screen',
           parentScreen: null,
           actionBar: {

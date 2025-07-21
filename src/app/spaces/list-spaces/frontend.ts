@@ -14,9 +14,7 @@ import { Spaces } from '../space/spaces'
 import { StartSpaceFrontend } from '../start-space/frontend'
 import { ViewSpaceCard } from './space-card/space-card'
 
-const TEST_ID = {
-  SPACE_LIST_SCREEN: 'spaces/space-list-screen',
-}
+export const TEST_ID_SPACE_LIST_SCREEN = 'spaces/space-list-screen'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
@@ -60,7 +58,7 @@ const View: SpaceFrontendModule['View'] = (input) => {
   const spaces = Spaces.toSpaceProjections(input.model.spaces)
 
   return h(ScreenLayout, {
-    dataTestId: TEST_ID.SPACE_LIST_SCREEN,
+    dataTestId: TEST_ID_SPACE_LIST_SCREEN,
     parentScreen: input.ctx.parentScreen,
     id: 'list-spaces',
     ctx: input.ctx,
@@ -101,7 +99,6 @@ const subscriptions: SpaceFrontendModule['subscriptions'] = (_input) => {
 }
 
 export const ListSpacesFrontend = {
-  TEST_ID,
   update,
   View,
   subscriptions,

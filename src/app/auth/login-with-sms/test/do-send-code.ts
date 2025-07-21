@@ -1,10 +1,10 @@
-import { IFixtureApp } from '~/app/@/test/app-fixture/interface'
-import { AuthFrontend } from '../../frontend'
-import { randomPhoneNumber } from './random-phone-number'
 import { expect } from '~/@/test-runner'
+import { IFixtureApp } from '~/app/@/test/app-fixture/interface'
+import { TEST_ID_SEND_CODE_SCREEN } from '../frontend'
+import { randomPhoneNumber } from './random-phone-number'
 
 export const doSendCode = async (f: IFixtureApp, config?: { phoneNumber?: string }) => {
-  const screen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.SEND_CODE_SCREEN)
+  const screen = await f.frontend.findByTestId(TEST_ID_SEND_CODE_SCREEN)
   expect(screen).toBeTruthy()
 
   const [input] = await f.frontend.find(`input[type='tel']`)

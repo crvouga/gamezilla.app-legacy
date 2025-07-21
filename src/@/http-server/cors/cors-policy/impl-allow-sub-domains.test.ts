@@ -16,10 +16,10 @@ describe('ImplAllowSubDomains', () => {
       },
     })
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Allow-Origin')).toEqual('http://example.com')
-    expect(response.headers.get('Access-Control-Allow-Credentials')).toEqual('true')
+    expect(mappedResponse.headers.get('Access-Control-Allow-Origin')).toEqual('http://example.com')
+    expect(mappedResponse.headers.get('Access-Control-Allow-Credentials')).toEqual('true')
   })
 
   test('allows subdomain match', () => {
@@ -36,9 +36,9 @@ describe('ImplAllowSubDomains', () => {
       },
     })
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Allow-Origin')).toEqual('http://sub.example.com')
+    expect(mappedResponse.headers.get('Access-Control-Allow-Origin')).toEqual('http://sub.example.com')
   })
 
   test('allows server domain when enabled', () => {
@@ -56,9 +56,9 @@ describe('ImplAllowSubDomains', () => {
       },
     })
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Allow-Origin')).toEqual('http://localhost:3000')
+    expect(mappedResponse.headers.get('Access-Control-Allow-Origin')).toEqual('http://localhost:3000')
   })
 
   test('handles OPTIONS request', () => {
@@ -76,9 +76,9 @@ describe('ImplAllowSubDomains', () => {
       },
     })
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Max-Age')).toEqual('3600')
+    expect(mappedResponse.headers.get('Access-Control-Max-Age')).toEqual('3600')
   })
 
   test('does not set headers for disallowed origin', () => {
@@ -95,9 +95,9 @@ describe('ImplAllowSubDomains', () => {
       },
     })
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Allow-Origin')).toEqual(null)
+    expect(mappedResponse.headers.get('Access-Control-Allow-Origin')).toEqual(null)
   })
 
   test('handles missing Origin header', () => {
@@ -110,9 +110,9 @@ describe('ImplAllowSubDomains', () => {
     const response = new Response()
     const request = new Request('http://test.com')
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Allow-Origin')).toEqual(null)
+    expect(mappedResponse.headers.get('Access-Control-Allow-Origin')).toEqual(null)
   })
 
   test('handles invalid Origin URL', () => {
@@ -129,8 +129,8 @@ describe('ImplAllowSubDomains', () => {
       },
     })
 
-    policy.map(response, request)
+    const mappedResponse = policy.map(response, request)
 
-    expect(response.headers.get('Access-Control-Allow-Origin')).toEqual(null)
+    expect(mappedResponse.headers.get('Access-Control-Allow-Origin')).toEqual(null)
   })
 })

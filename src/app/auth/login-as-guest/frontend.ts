@@ -1,8 +1,8 @@
-import { h } from '~/@/vdom/h'
 import { isErr, Loading, NotAsked, Ok, Result, unwrapOr } from '~/@/result'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Button } from '~/@/ui/button'
 import { IconUserCircle } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserAccount } from '~/app/@/data/user-account'
 import { UserId } from '~/app/@/data/user-id'
@@ -14,10 +14,6 @@ import { GuestSessionMappingId } from '../@/guest-session-mapping/guest-session-
 import { UserSession } from '../@/user-session/user-session'
 import { UserSessionId } from '../@/user-session/user-session-id'
 import type { FrontendModule, ModelFrontend } from './types'
-
-const TEST_ID = {
-  CONTINUE_AS_GUEST_BUTTON: 'auth/continue-as-guest-button',
-}
 
 const init: ModelFrontend = {
   request: NotAsked,
@@ -111,9 +107,11 @@ const continueAsGuest = async (input: {
   return Ok(guestAccount)
 }
 
+export const TEST_ID_CONTINUE_AS_GUEST_BUTTON = 'auth/continue-as-guest-button'
+
 const ViewButton: FrontendModule['View'] = (input) => {
   return h(Button, {
-    dataTestId: TEST_ID.CONTINUE_AS_GUEST_BUTTON,
+    dataTestId: TEST_ID_CONTINUE_AS_GUEST_BUTTON,
     onClick: () => input.dispatch({ t: 'clicked-continue-as-guest-button' }),
     renderIconStart: (iconInput) => h(IconUserCircle, iconInput),
     text: input.ctx.t('auth.continue-as-guest'),
@@ -124,5 +122,4 @@ export const ContinueAsGuestFrontend = {
   init,
   update,
   ViewButton,
-  TEST_ID,
 }

@@ -26,14 +26,6 @@ import { LoginWithSMSFrontend } from './login-with-sms/frontend'
 import { LogoutFrontend } from './logout/frontend'
 import { FrontendCtxModule, FrontendModule, ModelFrontend, MsgFrontend, rpcContract } from './types'
 
-const TEST_ID = {
-  ...LogoutFrontend.TEST_ID,
-  ...LoginWithSMSFrontend.TEST_ID,
-  ...ContinueAsGuestFrontend.TEST_ID,
-  LOGIN_SCREEN: 'auth/login-screen',
-  CONTINUE_WITH_PHONE_BUTTON: 'auth/continue-with-phone-button',
-}
-
 //
 //
 //
@@ -231,11 +223,15 @@ const View: FrontendModule['View'] = (input) => {
   }
 }
 
+export const TEST_ID_CONTINUE_WITH_PHONE_BUTTON = 'auth/continue-with-phone-button'
+
+export const TEST_ID_LOGIN_SCREEN = 'auth/login-screen'
+
 const ViewLoginScreen: FrontendModule['View'] = (input) => {
   return h(
     AuthScreenLayout,
     {
-      testId: TEST_ID.LOGIN_SCREEN,
+      testId: TEST_ID_LOGIN_SCREEN,
       ctx: input.ctx,
       center: true,
     },
@@ -246,7 +242,7 @@ const ViewLoginScreen: FrontendModule['View'] = (input) => {
         Button({
           onClick: () => input.dispatch({ t: 'clicked-login-with-phone' }),
           size: 'lg',
-          dataTestId: TEST_ID.CONTINUE_WITH_PHONE_BUTTON,
+          dataTestId: TEST_ID_CONTINUE_WITH_PHONE_BUTTON,
           class: 'w-full',
           renderIconStart: (iconInput) => h(IconMobilePhone, iconInput),
           text: input.ctx.t('auth.continue-with-phone'),
@@ -315,5 +311,4 @@ export const AuthFrontend = {
   ViewModals,
   ViewCurrentUserListItem,
   initCtx,
-  TEST_ID,
 }

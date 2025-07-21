@@ -1,7 +1,7 @@
 import { describe, expect, test } from '~/@/test-runner'
 import { FixtureAppE2E } from '~/app/@/test/app-fixture/impl'
 import { doClickBackButton } from '../@/test/flows/do-click-back-button'
-import { AuthFrontend } from '../auth/frontend'
+import { TEST_ID_LOGIN_SCREEN } from '../auth/frontend'
 import { doOpenRendererScreen } from './@/test/do-open-renderer-screen'
 import { doOpenSettingsScreen } from './@/test/do-open-settings-screen'
 
@@ -17,7 +17,7 @@ describe('settings', () => {
     await using f = await Fixture(e)
     await doOpenSettingsScreen(f)
     await doClickBackButton(f)
-    const screen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.LOGIN_SCREEN)
+    const screen = await f.frontend.findByTestId(TEST_ID_LOGIN_SCREEN)
     expect(screen).toBeTruthy()
   })
 

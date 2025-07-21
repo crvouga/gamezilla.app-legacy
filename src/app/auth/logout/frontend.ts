@@ -7,10 +7,6 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { SurfaceConfirmation } from '~/app/@/ui/surface/confirmation/surface-confirmation'
 import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
 
-const TEST_ID = {
-  LOGOUT_CONFIRMATION: 'auth/logout-confirmation',
-}
-
 const init: ModelFrontend = {
   opened: null,
   request: NotAsked,
@@ -55,10 +51,12 @@ const update: FrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
+export const TEST_ID_LOGOUT_CONFIRMATION = 'auth/logout-confirmation'
+
 const View = (input: { ctx: AppFrontendCtxBase; model: ModelFrontend; dispatch: (msg: MsgFrontend) => void }) => {
   return h(SurfaceConfirmation, {
     ctx: input.ctx,
-    testId: TEST_ID.LOGOUT_CONFIRMATION,
+    testId: TEST_ID_LOGOUT_CONFIRMATION,
     ariaLabel: input.ctx.t('auth.logout-of-gamezilla.app'),
     open: input.model.opened === 'logged-out',
     title: input.ctx.t('auth.logout-of-gamezilla.app'),
@@ -77,5 +75,4 @@ export const LogoutFrontend = {
   init,
   View,
   update,
-  TEST_ID,
 }

@@ -9,12 +9,6 @@ import { APP_SOUND } from '../../@/frontend/app-sound'
 import type { FrontendModule } from '../types'
 import { ModelFrontend } from './types'
 
-const TEST_ID = {
-  RENDERER_SCREEN_OPEN_BUTTON: 'settings/renderer-screen-open-button',
-  RENDERER_SCREEN: 'settings/renderer-screen',
-  RENDERER_MENU_ITEM: (vDomImpl: VDomImpl) => `settings/renderer-menu-item-${vDomImpl}`,
-}
-
 const init = (): { model: ModelFrontend } => {
   const initialVDomImpl = VDomImpl.getUrl()
 
@@ -56,10 +50,13 @@ const update: FrontendModule['update'] = (input) => {
   }
 }
 
+export const TEST_ID_RENDERER_SCREEN = 'settings/renderer-screen'
+export const TEST_ID_RENDERER_MENU_ITEM = (vDomImpl: VDomImpl) => `settings/renderer-menu-item-${vDomImpl}`
+
 const View: FrontendModule['View'] = (input) => {
   return ScreenLayout({
     id: 'setting-renderer',
-    dataTestId: TEST_ID.RENDERER_SCREEN,
+    dataTestId: TEST_ID_RENDERER_SCREEN,
     ctx: input.ctx,
     parentScreen: input.ctx.parentScreen,
     navBar: {
@@ -79,7 +76,7 @@ const View: FrontendModule['View'] = (input) => {
             key: vDomImpl,
             primary: VDomImpl.toName(vDomImpl),
             secondary: isDefault && false ? input.ctx.t('l18n.default') : undefined,
-            dataTestId: TEST_ID.RENDERER_MENU_ITEM(vDomImpl),
+            dataTestId: TEST_ID_RENDERER_MENU_ITEM(vDomImpl),
             onClick: () => input.dispatch({ t: 'renderer.clicked-renderer', vDomImpl }),
             end: () => RadioInputIcon({ class: 'size-7', status: isSelected ? 'selected' : 'unselected' }),
             selected: isSelected,
@@ -92,6 +89,5 @@ const View: FrontendModule['View'] = (input) => {
 export const ScreenRendererFrontend = {
   init,
   update,
-  TEST_ID,
   View,
 }
