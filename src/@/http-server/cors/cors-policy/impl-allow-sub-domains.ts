@@ -34,7 +34,8 @@ const init = (config: ImplAllowSubDomains): ICorsPolicy => {
           const cleanDomain = domain.replace(/^https?:\/\//, '').split(':')[0]
           return (
             originHost === cleanDomain || // exact match
-            originHost.endsWith(`.${cleanDomain}`) // subdomain match
+            originHost.endsWith(`.${cleanDomain}`) || // subdomain match
+            cleanDomain?.endsWith(`.${originHost}`) // parent domain match
           )
         })
 
@@ -47,7 +48,7 @@ const init = (config: ImplAllowSubDomains): ICorsPolicy => {
           newResponse.headers.set('Access-Control-Allow-Credentials', 'true')
           newResponse.headers.set(
             'Access-Control-Allow-Headers',
-            request.headers.get('Access-Control-Request-Headers') ?? 'Content-Type, Authorization',
+            response.headers.get('Access-Control-Request-Headers') ?? 'Content-Type, Authorization',
           )
           newResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD')
 
