@@ -57,11 +57,11 @@ const UP: string[] = [
   CREATE TABLE IF NOT EXISTS game_numberlink_pack (
       id TEXT NOT NULL,
       name TEXT NOT NULL,
-      created_at_unix_ms INT NOT NULL,
+      created_at_unix_ms BIGINT NOT NULL,
       created_by_user_id TEXT NOT NULL,
-      last_updated_at_unix_ms INT NOT NULL,
+      last_updated_at_unix_ms BIGINT NOT NULL,
       last_updated_by_user_id TEXT NOT NULL,
-      deleted_at_unix_ms INT,
+      deleted_at_unix_ms BIGINT,
       deleted_by_user_id TEXT
   );
   `,
@@ -70,10 +70,10 @@ const UP: string[] = [
       id TEXT NOT NULL,
       pack_id TEXT NOT NULL,
       puzzle_id TEXT NOT NULL,
-      "position" INT NOT NULL,
-      created_at_unix_ms INT NOT NULL,
+      "position" BIGINT NOT NULL,
+      created_at_unix_ms BIGINT NOT NULL,
       created_by_user_id TEXT NOT NULL,
-      deleted_at_unix_ms INT,
+      deleted_at_unix_ms BIGINT,
       deleted_by_user_id TEXT
   );
   `,
