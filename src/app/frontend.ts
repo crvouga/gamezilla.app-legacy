@@ -260,6 +260,7 @@ const updateLoop = (ctx: FrontendCtxModule, acc: ReturnType<typeof updateChild>)
   const [msgOut, ...msgOutRest] = acc.msgOut
 
   if (msgOut) {
+    console.log('msgOut', msgOut)
     const updatedOut = updateChild({ ctx, model: acc.model, msgIn: msgOut })
 
     return updateLoop(ctx, {

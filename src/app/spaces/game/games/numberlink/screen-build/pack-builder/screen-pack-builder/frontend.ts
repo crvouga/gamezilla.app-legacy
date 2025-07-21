@@ -5,7 +5,6 @@ import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
-import { AddPacksCmd } from '../../../@/frontend/add-packs-cmd.$msg'
 import { ScreenAddPuzzle } from './screen-add-puzzle/frontend'
 import { ScreenPuzzlePlay } from './screen-play-puzzle/frontend'
 import { ScreenPuzzleGrid } from './screen-puzzle-grid/frontend'
@@ -20,7 +19,6 @@ const update: FrontendModule['update'] = (input) => {
     (model) => ScreenAddPuzzle.update({ ...input, model }),
     (model) => ScreenPuzzleGrid.update({ ...input, model }),
     (model) => ScreenPuzzlePlay.update({ ...input, model }),
-    (model) => updateRecordPack({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
   )
 }
@@ -32,10 +30,11 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 export const TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN = 'numberlink-pack-builder-screen'
 
 const View: FrontendModule['View'] = (input) => {
-  return h('div', { 'data-testid': TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN }, [
-    h(ViewScreen, input),
-    h(EditPackNameFrontend.ViewSurface, input),
-  ])
+  return h(
+    'div',
+    { class: 'w-full h-full flex flex-col flex-1', 'data-testid': TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN },
+    [h(ViewScreen, input), h(EditPackNameFrontend.ViewSurface, input)],
+  )
 }
 
 const ViewScreen: FrontendModule['View'] = (input) => {
@@ -101,21 +100,4 @@ const ButtonExitBuilder: Pick<FrontendModule, 'update' | 'View'> = {
         }),
     })
   },
-}
-
-const updateRecordPack: FrontendModule['update'] = (input) => {
-  if (!AddPacksCmd.is(input.msgIn) && input.modelSpace?.pack) {
-    return {
-      model: input.model,
-      msgOut: [
-        AddPacksCmd.init(
-          {
-            [input.modelSpace.pack.id]: input.modelSpace.pack,
-          },
-          input,
-        ),
-      ],
-    }
-  }
-  return { model: input.model }
 }

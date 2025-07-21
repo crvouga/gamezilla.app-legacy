@@ -5,6 +5,7 @@ import { UnixMs } from '~/@/time/unix-ms'
 import { PingId } from './ping-id'
 import { toPingRate } from './ping-rate'
 import { FrontendModule, initModel, Model, MsgFrontend, PingItem } from './types'
+import { TimeSpan } from '~/@/time/time-span'
 
 const init: FrontendModule['init'] = (_input) => {
   const model = initModel()
@@ -57,7 +58,11 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
 
 const pings: FrontendModule['subscriptions'] = (input) => {
   const pingRate = toPingRate(input.model)
-  return Time.interval('pings', pingRate, (now): MsgFrontend => ({ t: 'ping', now, pingId: PingId.generate() }))
+  return Time.interval(
+    `pings${TimeSpan.toMilliseconds(pingRate)}`,
+    pingRate,
+    (now): MsgFrontend => ({ t: 'ping', now, pingId: PingId.generate() }),
+  )
 }
 
 const pongs: FrontendModule['subscriptions'] = (input) => {

@@ -7,12 +7,13 @@ const toErrorMessage = (expected: string, actual: string, actualValue: string) =
   return `Expected: ${expected}.\nActual Type: ${actual}.\nActual Value: ${actualValue}\n`
 }
 
-const safeJsonStringify = (input: unknown): string => {
-  try {
-    return JSON.stringify(input)
-  } catch (error) {
-    return String(input)
-  }
+const safeJsonStringify = (_input: unknown): string => {
+  return '[object]'
+  // try {
+  //   return JSON.stringify(input)
+  // } catch (error) {
+  //   return String(input)
+  // }
 }
 
 export const is =

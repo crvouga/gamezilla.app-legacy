@@ -22,6 +22,7 @@ const update: FrontendModule['update'] = (input) => {
 
 const View: FrontendModule['View'] = (input) => {
   const packBuilder = input.modelSpace
+
   if (!packBuilder) return null
 
   return h(ScreenLayout, {
