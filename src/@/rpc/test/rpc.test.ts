@@ -36,6 +36,7 @@ export const FixtureHttp = async (): Promise<Fixture> => {
         t: 'allow-sub-domains',
         allowedDomains: [],
         allowServerDomain: true,
+        logger,
       }),
     ),
   )

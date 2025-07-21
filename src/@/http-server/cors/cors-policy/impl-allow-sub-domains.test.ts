@@ -1,3 +1,4 @@
+import { Logger } from '~/@/logger'
 import { describe, expect, test } from '~/@/test-runner'
 import { ImplAllowSubDomains } from './impl-allow-sub-domains'
 
@@ -7,6 +8,7 @@ describe('ImplAllowSubDomains', () => {
       t: 'allow-sub-domains',
       allowedDomains: ['example.com'],
       allowServerDomain: false,
+      logger: Logger.init({ t: 'noop' }),
     })
 
     const response = new Response()
@@ -27,6 +29,7 @@ describe('ImplAllowSubDomains', () => {
       t: 'allow-sub-domains',
       allowedDomains: ['example.com'],
       allowServerDomain: false,
+      logger: Logger.init({ t: 'noop' }),
     })
 
     const response = new Response()
@@ -46,6 +49,7 @@ describe('ImplAllowSubDomains', () => {
       t: 'allow-sub-domains',
       allowedDomains: [],
       allowServerDomain: true,
+      logger: Logger.init({ t: 'noop' }),
     })
 
     const response = new Response()
@@ -66,6 +70,7 @@ describe('ImplAllowSubDomains', () => {
       t: 'allow-sub-domains',
       allowedDomains: ['example.com'],
       allowServerDomain: false,
+      logger: Logger.init({ t: 'noop' }),
     })
 
     const response = new Response()
@@ -86,6 +91,7 @@ describe('ImplAllowSubDomains', () => {
       t: 'allow-sub-domains',
       allowedDomains: ['example.com'],
       allowServerDomain: false,
+      logger: Logger.init({ t: 'noop' }),
     })
 
     const response = new Response()
@@ -105,6 +111,7 @@ describe('ImplAllowSubDomains', () => {
       t: 'allow-sub-domains',
       allowedDomains: ['example.com'],
       allowServerDomain: false,
+      logger: Logger.init({ t: 'noop' }),
     })
 
     const response = new Response()
@@ -120,6 +127,7 @@ describe('ImplAllowSubDomains', () => {
       t: 'allow-sub-domains',
       allowedDomains: ['example.com'],
       allowServerDomain: false,
+      logger: Logger.init({ t: 'noop' }),
     })
 
     const response = new Response()

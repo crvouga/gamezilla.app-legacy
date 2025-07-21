@@ -79,6 +79,7 @@ const initCtx = async (config: {
         t: 'allow-sub-domains',
         allowedDomains: [],
         allowServerDomain: true,
+        logger,
       }),
     ),
   )
