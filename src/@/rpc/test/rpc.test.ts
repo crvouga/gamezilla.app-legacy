@@ -1,6 +1,7 @@
 import { HttpClient } from '~/@/http-client'
 import { HttpServer } from '~/@/http-server'
-import { AllowCORS } from '~/@/http-server/allow-cors'
+import { Cors } from '~/@/http-server/cors/cors'
+import { CorsPolicy } from '~/@/http-server/cors/cors-policy/impl'
 import { ILogger } from '~/@/logger'
 import { Logger } from '~/@/logger/impl'
 import { isErr, Ok } from '~/@/result'
@@ -29,7 +30,15 @@ export const FixtureHttp = async (): Promise<Fixture> => {
 
   const httpServer = HttpServer.init({ t: 'node', logger })
 
-  httpServer.registerMiddleware(AllowCORS.middleware(['http://localhost:2222']))
+  httpServer.registerMiddleware(
+    Cors.middleware(
+      CorsPolicy.init({
+        t: 'allow-sub-domains',
+        allowedDomains: [],
+        allowServerDomain: true,
+      }),
+    ),
+  )
 
   const clientSessionId = ClientSessionId.generate()
 

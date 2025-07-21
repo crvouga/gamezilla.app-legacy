@@ -1,7 +1,8 @@
 import { FileSystem } from '~/@/file-system'
 import { HealthCheck } from '~/@/health-check/health-check'
 import { HttpServer } from '~/@/http-server'
-import { AllowCORS } from '~/@/http-server/allow-cors'
+import { Cors } from '~/@/http-server/cors/cors'
+import { CorsPolicy } from '~/@/http-server/cors/cors-policy/impl'
 import { LoggerMiddleware } from '~/@/http-server/logger-middleware'
 import { KeyValueDb } from '~/@/key-value-db'
 import { Logger } from '~/@/logger'
@@ -73,7 +74,15 @@ const initCtx = async (config: {
     logger,
   })
 
-  httpServer.registerMiddleware(AllowCORS.middleware(config.corsOrigins))
+  httpServer.registerMiddleware(
+    Cors.middleware(
+      CorsPolicy.init({
+        t: 'allow-sub-domains',
+        allowedDomains: [],
+        allowServerDomain: true,
+      }),
+    ),
+  )
 
   const topicServer = TopicServer.init({
     t: 'web-sockets',
