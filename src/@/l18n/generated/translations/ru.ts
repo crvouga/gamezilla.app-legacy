@@ -170,7 +170,7 @@ export const translations: Text = {
   'spaces.ended-space-other-user': (username) =>
     `${username} \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`,
   'spaces.space-ended': 'Пространство завершено',
-  'spaces.see-profile': 'Посмотреть профиль',
+  'app.see-profile': 'Посмотреть профиль',
   'connect-four': 'Соедините четыре',
   numberlink: 'Намберлинк',
   'tic-tac-toe': 'Крестики-нолики',

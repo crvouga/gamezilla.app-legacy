@@ -161,7 +161,7 @@ export const translations: Text = {
   'spaces.ended-space-current-user': 'Espace terminé',
   'spaces.ended-space-other-user': (username) => `${username} a termin\xE9 l'espace`,
   'spaces.space-ended': 'Espace terminé',
-  'spaces.see-profile': 'Voir le profil',
+  'app.see-profile': 'Voir le profil',
   'connect-four': 'Connectez Quatre',
   numberlink: 'Numberlink',
   'tic-tac-toe': 'Morpion',

@@ -1,9 +1,11 @@
+import { Sub } from '~/@/sub'
 import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { FlowFrontendCtx } from '../../../../@/frontend/ctx'
+import { PuzzleDbQueryCache } from '../../../../@/puzzle/puzzle-db-query-cache'
 import { PuzzleQuery } from '../../../../@/puzzle/puzzle-db/interface-query'
 import { PuzzleLoaderFrontend } from '../../../../@/puzzle/puzzle-loader/frontend'
 import { GotPuzzleLoaderMsg } from '../../../../@/puzzle/puzzle-loader/got-puzzle-loader-msg.$msg'
@@ -70,13 +72,14 @@ const toQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }): Puzzl
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  // PuzzleDbQueryCache.sub(input.ctx.puzzleDb, toQuery(input), (c) => ({ t: 'got-msg-out', c }))
-
-  return PuzzleLoaderFrontend.watch(
-    input.ctx,
-    toQuery(input),
-    (c): MsgFrontend => ({ t: 'got-msg-out', c: GotPuzzleLoaderMsg.init(c) }),
-  )
+  return Sub.batch([
+    PuzzleLoaderFrontend.watch(
+      input.ctx,
+      toQuery(input),
+      (c): MsgFrontend => ({ t: 'got-msg-out', c: GotPuzzleLoaderMsg.init(c) }),
+    ),
+    PuzzleDbQueryCache.sub(input.ctx.puzzleDb, toQuery(input), (c) => ({ t: 'got-msg-out', c })),
+  ])
 }
 
 const View: FrontendModule['View'] = (input) => {

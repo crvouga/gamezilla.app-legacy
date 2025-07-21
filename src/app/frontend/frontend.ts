@@ -7,6 +7,7 @@ import { PreloadSoundsCmd } from '../@/frontend/preload-sounds-cmd.$msg'
 import { CopyToClipboardFrontend } from './copy-to-clipboard'
 import { CurrentScreenFrontend } from './current-screen'
 import { FocusFrontend } from './focus'
+import { QueryCache } from './query-cache/query-cache'
 import { ScreenSizeFrontend } from './screen-size'
 import { ToasterFrontend } from './toaster'
 import { type ModelFrontend, type MsgFrontend } from './types'
@@ -33,6 +34,7 @@ const init = (input: {
     visibility: visibility.model,
     screenSize: screenSize.model,
     copyToClipboard: copyToClipboard.model,
+    queryCache: QueryCache.init,
   }
 
   const initialEff = Eff.batch<MsgFrontend>([screen.eff, Eff.tag('toast', toast.eff)])
@@ -91,8 +93,14 @@ const update = (input: {
     msgIn: input.msgIn,
   })
 
+  const queryCache = QueryCache.update({
+    model: input.model.queryCache,
+    msgIn: input.msgIn,
+  })
+
   return {
     model: {
+      queryCache: queryCache.model,
       focus: focus.model,
       visibility: visibility.model,
       currentScreen: screen.model,

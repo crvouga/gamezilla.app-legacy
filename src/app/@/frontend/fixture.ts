@@ -9,13 +9,14 @@ import { PhoneNumber } from '~/@/phone-number'
 import type { Screen } from '~/@/screens/generated/screens'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { FrontendSqlDb } from '~/@/sql-db/frontend-impl'
-import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl-sql'
+import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl'
 import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Viewport } from '~/@/viewport'
 import { ClientSessionId } from '~/@/wire/client-session-id'
 import { UserSession } from '~/app/auth/@/user-session/user-session'
+import { QueryCache } from '~/app/frontend/query-cache/query-cache'
 import { UserAccount } from '../data/user-account'
 import { UserId } from '../data/user-id'
 import { UserProfile } from '../data/user-profile'
@@ -37,7 +38,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
   })
   const syncEngine = SyncEngineClient({
     logger: Logger.init({ t: 'noop' }),
-    crudTransactionDb: CrudTransactionDb({
+    crudTransactionDb: CrudTransactionDb.init({
       t: 'sql-db',
       logger: Logger.init({ t: 'noop' }),
       migrationPolicy,
@@ -81,6 +82,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     httpClient: HttpClient({
       t: 'fetch',
     }),
+    queryCache: QueryCache.init,
   }
 
   return {

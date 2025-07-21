@@ -148,7 +148,7 @@ const ViewSurfaces = (
           }),
       },
     },
-    ariaLabel: input.ctx.t('spaces.see-profile'),
+    ariaLabel: input.ctx.t('app.see-profile'),
     id: 'user-preview',
     open: input.model.opened === 'people.person-preview-surface',
     onClose: () => input.dispatch({ t: 'people-action.closed-surface' }),

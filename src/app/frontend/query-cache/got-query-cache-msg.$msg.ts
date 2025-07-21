@@ -1,6 +1,14 @@
 import { isOk } from '~/@/result'
 import { s } from '~/@/schema'
-import { Msg } from './query-cache'
+
+export const Msg = s.obj({
+  t: s.l('got-entities'),
+  query: s.dict(s.str(), s.unknown),
+  entities: s.dict(s.str(), s.dict(s.str(), s.unknown)),
+  results: s.arr(s.str()),
+})
+
+export type Msg = s.Infer<typeof Msg>
 
 const schema = s.obj({
   t: s.l('got-query-cache-msg'),

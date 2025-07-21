@@ -159,7 +159,7 @@ export const translations: Text = {
   'spaces.ended-space-current-user': '空间已结束',
   'spaces.ended-space-other-user': (username) => `${username} \u5DF2\u7ED3\u675F\u7A7A\u95F4`,
   'spaces.space-ended': '空间已结束',
-  'spaces.see-profile': '查看个人资料',
+  'app.see-profile': '查看个人资料',
   'connect-four': '连接四',
   numberlink: '数字连接',
   'tic-tac-toe': '井字棋',

@@ -165,7 +165,7 @@ export const translations: Text = {
   'spaces.ended-space-other-user': (username) =>
     `${username} \u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F`,
   'spaces.space-ended': 'スペースが終了しました',
-  'spaces.see-profile': 'プロフィールを見る',
+  'app.see-profile': 'プロフィールを見る',
   'connect-four': 'フォーをつなげる',
   numberlink: 'ナンバーリンク',
   'tic-tac-toe': '三目並べ',

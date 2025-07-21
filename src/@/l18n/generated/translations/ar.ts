@@ -172,7 +172,7 @@ export const translations: Text = {
   'spaces.ended-space-other-user': (username) =>
     `${username} \u0627\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0633\u0627\u062D\u0629`,
   'spaces.space-ended': 'تم انهاء المساحة',
-  'spaces.see-profile': 'مشاهدة الملف الشخصي',
+  'app.see-profile': 'مشاهدة الملف الشخصي',
   'connect-four': 'ربط أربعة',
   numberlink: 'نمبرلينك',
   'tic-tac-toe': 'لعبة إكس أو',

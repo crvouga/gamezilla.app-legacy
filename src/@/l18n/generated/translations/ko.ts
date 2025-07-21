@@ -163,7 +163,7 @@ export const translations: Text = {
   'spaces.ended-space-current-user': '공간 종료됨',
   'spaces.ended-space-other-user': (username) => `${username} \uACF5\uAC04 \uC885\uB8CC\uB428`,
   'spaces.space-ended': '공간 종료됨',
-  'spaces.see-profile': '프로필 보기',
+  'app.see-profile': '프로필 보기',
   'connect-four': '네 개 연결',
   numberlink: '넘버링크',
   'tic-tac-toe': '틱택토',

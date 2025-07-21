@@ -1,15 +1,15 @@
 import { ILogger } from '~/@/logger'
-import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { isErr, Ok } from '~/@/result'
 import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { ISqlDb } from '~/@/sql-db/interface'
 import { CrudTransaction } from '../crud-transaction/crud-transaction'
 import { CrudTransactionEntry } from '../crud-transaction/crud-transaction-entry'
 import { CrudTransactionEntryOp } from '../crud-transaction/crud-transaction-entry-op'
 import { ICrudTransactionDb } from './interface'
 
-export type Config = {
+export type ImplSqlDb = {
   t: 'sql-db'
   sqlDb: ISqlDb
   migrationPolicy: ISqlDbMigrationPolicy
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS crud_transaction_entry (
 
 const DOWN = [`DROP TABLE IF EXISTS crud_transaction_entry`, `DROP TABLE IF EXISTS crud_transaction`]
 
-export const CrudTransactionDb = (config: Config): ICrudTransactionDb => {
+const init = (config: ImplSqlDb): ICrudTransactionDb => {
   const logger = config.logger.child(['crud-transaction-db'])
   config.migrationPolicy.execute({
     logger,
@@ -180,4 +180,8 @@ export const CrudTransactionDb = (config: Config): ICrudTransactionDb => {
       return Ok(null)
     },
   }
+}
+
+export const ImplSqlDb = {
+  init,
 }

@@ -9,24 +9,24 @@ import { Program } from '~/@/program/program'
 import { RPC } from '~/@/rpc'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { ISqlDb } from '~/@/sql-db/interface'
-import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl-sql'
+import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl'
 import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TestClient } from '~/@/test-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
+import { ITopicClient } from '~/@/topic/topic-client/types'
 import { h, render, VDomEngine } from '~/@/vdom/h'
+import { VDomImpl } from '~/@/vdom/vdom-impl'
 import { Viewport } from '~/@/viewport'
 import { ClientSessionIdStorage } from '~/@/wire/client-session-id-storage'
 import { SessionId } from '~/@/wire/session-id'
 import { AuthFrontend } from '~/app/auth/frontend'
 import { AppFrontend } from '~/app/frontend'
+import { QueryCache } from '~/app/frontend/query-cache/query-cache'
 import { ProfileFrontend } from '~/app/profile/frontend'
 import { SpacesFrontend } from '~/app/spaces/frontend'
 import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
-
-import { ITopicClient } from '~/@/topic/topic-client/types'
-import { VDomImpl } from '~/@/vdom/vdom-impl'
 import { AppFrontendCtxBase } from '../../../frontend/ctx'
 
 export const TestFrontend = async (config: {
@@ -64,7 +64,7 @@ export const TestFrontend = async (config: {
   const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) })
 
   const syncEngine = SyncEngineClient({
-    crudTransactionDb: CrudTransactionDb({
+    crudTransactionDb: CrudTransactionDb.init({
       t: 'sql-db',
       logger: Logger.init({ t: 'noop' }),
       migrationPolicy,
@@ -102,6 +102,7 @@ export const TestFrontend = async (config: {
       averagePing: TimeSpan.milliseconds(100),
       latestPing: TimeSpan.milliseconds(100),
     },
+    queryCache: QueryCache.init,
   }
 
   const auth = await AuthFrontend.initCtx({ ctx: ctxBase, rpc })

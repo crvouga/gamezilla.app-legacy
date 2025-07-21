@@ -1,6 +1,7 @@
 import { CopyToClipboardFrontend } from './copy-to-clipboard'
 import { CurrentScreenFrontend } from './current-screen'
 import { FocusFrontend } from './focus'
+import { QueryCache } from './query-cache/query-cache'
 import { ScreenSizeFrontend } from './screen-size'
 import { ToasterFrontend } from './toaster'
 import { VisibilityFrontend } from './visibility'
@@ -12,6 +13,7 @@ export type ModelFrontend = {
   screenSize: ScreenSizeFrontend.Model
   copyToClipboard: CopyToClipboardFrontend.Model
   focus: FocusFrontend.Model
+  queryCache: QueryCache
 }
 
 export type MsgFrontend =

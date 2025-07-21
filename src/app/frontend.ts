@@ -16,7 +16,7 @@ import { Screen } from '~/@/screens/generated/screens'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { FrontendSqlDb } from '~/@/sql-db/frontend-impl'
 import { Sub } from '~/@/sub'
-import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl-sql'
+import { CrudTransactionDb } from '~/@/sync-engine/crud-transaction-db/impl'
 import { SyncEngineClient } from '~/@/sync-engine/sync-engine-client'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
@@ -39,6 +39,7 @@ import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
 import { FrontendFrontend } from './frontend/frontend'
+import { QueryCache } from './frontend/query-cache/query-cache'
 import { ToasterFrontend } from './frontend/toaster'
 import { ProfileFrontend } from './profile/frontend'
 import { SettingsFrontend } from './settings/frontend'
@@ -130,7 +131,7 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
 
   const syncEngine = SyncEngineClient({
     logger: logger.setMaxLogLevel('debug'),
-    crudTransactionDb: CrudTransactionDb({ t: 'sql-db', logger, sqlDb, migrationPolicy }),
+    crudTransactionDb: CrudTransactionDb.init({ t: 'sql-db', logger, sqlDb, migrationPolicy }),
   })
 
   const ctx: AppFrontendCtxBase = {
@@ -158,6 +159,7 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
     httpClient,
     backendConnectionStatus: { t: 'connecting' },
     keyValueDb,
+    queryCache: QueryCache.init,
   }
 
   const auth = await AuthFrontend.initCtx({ ctx, rpc })

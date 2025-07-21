@@ -14,14 +14,15 @@ import { MsgShared as MsgShared11 } from '../../../app/@/frontend/replace-screen
 import { MsgShared as MsgShared12 } from '../../../app/@/frontend/screen-changed-evt.$msg'
 import { MsgShared as MsgShared13 } from '../../../app/@/frontend/show-toast-cmd.$msg'
 import { MsgShared as MsgShared14 } from '../../../app/@/frontend/viewport-visibility-changed-evt.$msg'
-import { MsgShared as MsgShared15 } from '../../../app/spaces/game/games/numberlink/@/frontend/add-packs-cmd.$msg'
-import { MsgShared as MsgShared16 } from '../../../app/spaces/game/games/numberlink/@/frontend/add-puzzles-cmd.$msg'
-import { MsgShared as MsgShared17 } from '../../../app/spaces/game/games/numberlink/@/frontend/add-solutions-cmd.$msg'
-import { MsgShared as MsgShared18 } from '../../../app/spaces/game/games/numberlink/@/pack/pack-loader/got-pack-loader-msg.$msg'
-import { MsgShared as MsgShared19 } from '../../../app/spaces/game/games/numberlink/@/puzzle/puzzle-loader/got-puzzle-loader-msg.$msg'
-import { MsgShared as MsgShared20 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/got-hint-calculator-msg.$msg'
-import { MsgShared as MsgShared21 } from '../../../app/spaces/game/games/numberlink/@/solutions/solutions-loader/got-solutions-loader-msg.$msg'
-import { MsgShared as MsgShared22 } from '../../../app/spaces/space/space-loader/got-space-loader-msg.$msg'
+import { MsgShared as MsgShared15 } from '../../../app/frontend/query-cache/got-query-cache-msg.$msg'
+import { MsgShared as MsgShared16 } from '../../../app/spaces/game/games/numberlink/@/frontend/add-packs-cmd.$msg'
+import { MsgShared as MsgShared17 } from '../../../app/spaces/game/games/numberlink/@/frontend/add-puzzles-cmd.$msg'
+import { MsgShared as MsgShared18 } from '../../../app/spaces/game/games/numberlink/@/frontend/add-solutions-cmd.$msg'
+import { MsgShared as MsgShared19 } from '../../../app/spaces/game/games/numberlink/@/pack/pack-loader/got-pack-loader-msg.$msg'
+import { MsgShared as MsgShared20 } from '../../../app/spaces/game/games/numberlink/@/puzzle/puzzle-loader/got-puzzle-loader-msg.$msg'
+import { MsgShared as MsgShared21 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/got-hint-calculator-msg.$msg'
+import { MsgShared as MsgShared22 } from '../../../app/spaces/game/games/numberlink/@/solutions/solutions-loader/got-solutions-loader-msg.$msg'
+import { MsgShared as MsgShared23 } from '../../../app/spaces/space/space-loader/got-space-loader-msg.$msg'
 
 export type MsgShared =
   | MsgShared0
@@ -47,3 +48,4 @@ export type MsgShared =
   | MsgShared20
   | MsgShared21
   | MsgShared22
+  | MsgShared23

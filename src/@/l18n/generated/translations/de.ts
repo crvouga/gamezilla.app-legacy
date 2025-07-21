@@ -162,7 +162,7 @@ export const translations: Text = {
   'spaces.ended-space-current-user': 'Raum beendet',
   'spaces.ended-space-other-user': (username) => `${username} Raum beendet`,
   'spaces.space-ended': 'Raum beendet',
-  'spaces.see-profile': 'Profil anzeigen',
+  'app.see-profile': 'Profil anzeigen',
   'connect-four': 'Vier gewinnt',
   numberlink: 'Numberlink',
   'tic-tac-toe': 'Tic Tac Toe',

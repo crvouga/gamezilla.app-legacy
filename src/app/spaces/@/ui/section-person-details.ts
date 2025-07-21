@@ -31,7 +31,7 @@ export const SectionPersonDetails = (input: {
     ),
 
     h('div', { class: 'w-full px-4 pb-8' }, [
-      h(Button, { onClick: input.onOpenDetails, class: 'w-full', text: input.ctx.t('spaces.see-profile') }),
+      h(Button, { onClick: input.onOpenDetails, class: 'w-full', text: input.ctx.t('app.see-profile') }),
     ]),
   ])
 }
