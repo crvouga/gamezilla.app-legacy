@@ -11,6 +11,8 @@ propMap.set('stroke-linecap', 'strokeLinecap')
 propMap.set('stroke-linejoin', 'strokeLinejoin')
 propMap.set('stroke-width', 'strokeWidth')
 propMap.set('stroke-opacity', 'strokeOpacity')
+propMap.set('clip-rule', 'clipRule')
+propMap.set('fill-rule', 'fillRule')
 const propMapKeys = Array.from(propMap.keys())
 
 export const initReact = (): VirtualDomEngine => {

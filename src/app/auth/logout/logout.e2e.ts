@@ -23,14 +23,10 @@ describe('logout', () => {
 
 const doOpenLogoutConfirmation = async (f: IFixtureApp) => {
   const before = await f.frontend.findByTestId(AuthFrontend.TEST_ID.LOGOUT_CONFIRMATION)
-  await eventually(async () => {
-    expect(await before?.isVisible()).toBeFalsy()
-  })
+  await eventually(async () => expect(await before?.isVisible()).toBeFalsy())
   await doClickLogoutListItem(f)
   const after = await f.frontend.findByTestId(AuthFrontend.TEST_ID.LOGOUT_CONFIRMATION)
-  await eventually(async () => {
-    expect(await after?.isVisible()).toBeTruthy()
-  })
+  await eventually(async () => expect(await after?.isVisible()).toBeTruthy())
   return after!
 }
 
