@@ -95,6 +95,7 @@ describe('verify code', () => {
     await using f = await Fixture(e)
     await doOpenSendCodeScreen(f)
     await doSendCode(f)
+    await doDismissAlert(f.frontend, 'info')
     const [codeInput] = await f.frontend.find(`input[type='tel']`)
     expect(codeInput).toBeTruthy()
     const value = await codeInput!.inputValue()
