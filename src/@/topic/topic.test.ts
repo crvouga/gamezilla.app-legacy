@@ -231,22 +231,33 @@ describe('Topic', () => {
     const gotA: Msg[] = []
     const gotB: Msg[] = []
 
-    await sleep()
     const unsubA = f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
-    await sleep()
+
     f.clientB.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
-    await sleep()
+    await eventually(() => {
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientA.clientSessionId),
+      ).toEqual(true)
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientB.clientSessionId),
+      ).toEqual(true)
+    })
     f.clientA.topic.someTopic.pub({ id: '123' }, { id: 1 })
-    await sleep()
-    expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
-    expect(gotB).toEqual([{ id: 1 }])
-    await sleep()
+    await eventually(() => {
+      expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
+      expect(gotB).toEqual([{ id: 1 }])
+    })
     unsubA()
-    await sleep()
+    await eventually(() => {
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientA.clientSessionId),
+      ).toEqual(false)
+    })
     f.clientA.topic.someTopic.pub({ id: '123' }, { id: 2 })
-    await sleep()
-    expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
-    expect(gotB).toEqual([{ id: 1 }, { id: 2 }])
+    await eventually(() => {
+      expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
+      expect(gotB).toEqual([{ id: 1 }, { id: 2 }])
+    })
   })
 
   test('should handle multiple messages on the same topic', async () => {
