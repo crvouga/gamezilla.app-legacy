@@ -69,6 +69,7 @@ const GameTile = (input: { gameName: GameName; ctx: SpaceFrontendCtx; dispatch: 
       Clickable,
       {
         type: 'button',
+        role: 'button',
         'aria-label': input.gameName,
         onClick: () => input.dispatch({ t: 'game.clicked-game-tile', gameName: input.gameName }),
       },

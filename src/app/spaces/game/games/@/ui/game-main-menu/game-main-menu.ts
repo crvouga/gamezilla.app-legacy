@@ -70,6 +70,7 @@ export const View = (props: {
   dispatch: (msg: Msg) => void
   renderCoverArt: (input: { class: string }) => VDom
   buttons: MainMenuButton[]
+  dataTestId?: string
 }) => {
   const isSpectating = props.ctx.currentUser.userId !== props.ctx.space.hostId
 
@@ -77,6 +78,7 @@ export const View = (props: {
     return h(ScreenLayoutHostSettingUpGame, {
       parentScreen: props.ctx.parentScreen,
       ctx: props.ctx,
+      dataTestId: props.dataTestId,
       navBar: { title: props.title, back: { onClick: props.onBack } },
     })
   }
@@ -84,11 +86,12 @@ export const View = (props: {
   return h(ScreenLayoutGameCoverArt, {
     id: 'game-main-menu',
     parentScreen: props.ctx.parentScreen,
+    dataTestId: props.dataTestId,
     ctx: props.ctx,
     navBar: { title: props.title, back: { onClick: props.onBack } },
     renderCoverArt: props.renderCoverArt,
     renderBody: () =>
-      h('div', { class: 'flex w-full flex-col gap-6 px-6' }, [
+      h('div', { class: 'flex w-full flex-col gap-6 px-6', role: 'menu' }, [
         ...props.buttons.map((button) =>
           h(ViewMainMenuButton, {
             key: `${button.title}${button.description}`,
@@ -100,22 +103,31 @@ export const View = (props: {
 }
 
 const ViewMainMenuButton = (props: MainMenuButton) => {
-  return h(ClickablePaper, { class: 'flex w-full items-center gap-4 rounded p-6', onClick: props.onClick }, [
-    props.renderIcon({ class: 'aspect-square size-12' }),
-    h('div', { class: 'flex flex-1 flex-col gap-1 text-left' }, [
-      h(Typography, {
-        variant: 'title',
-        text: props.title,
-        class: 'font-bold',
-      }),
-      props.description &&
+  return h(
+    ClickablePaper,
+    {
+      class: 'flex w-full items-center gap-4 rounded p-6',
+      onClick: props.onClick,
+      role: 'menuitem',
+      'aria-label': props.title,
+    },
+    [
+      props.renderIcon({ class: 'aspect-square size-12' }),
+      h('div', { class: 'flex flex-1 flex-col gap-1 text-left' }, [
         h(Typography, {
-          variant: 'label',
-          text: props.description,
-          class: 'text-secondary',
+          variant: 'title',
+          text: props.title,
+          class: 'font-bold',
         }),
-    ]),
-  ])
+        props.description &&
+          h(Typography, {
+            variant: 'label',
+            text: props.description,
+            class: 'text-secondary',
+          }),
+      ]),
+    ],
+  )
 }
 
 export const buttons = {

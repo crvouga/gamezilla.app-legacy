@@ -1,14 +1,14 @@
 import type { Page } from '@playwright/test'
 import { TestClient } from '~/@/test-client'
-import { TimeSpan } from '~/@/time/time-span'
 import { IFixtureApp } from './interface'
+import { MAX_WAIT, POLL } from './test-max-wait'
 
 export const FixtureAppPlaywrightE2E = async (config: { getPage: () => Page }): Promise<IFixtureApp> => {
   const client = await TestClient.init({
     t: 'playwright',
     getPage: config.getPage,
-    maxWait: TimeSpan.seconds(15),
-    poll: TimeSpan.milliseconds(500),
+    maxWait: MAX_WAIT,
+    poll: POLL,
   })
 
   const cleanUp = async () => {

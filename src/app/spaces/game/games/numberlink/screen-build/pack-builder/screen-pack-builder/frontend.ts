@@ -29,8 +29,13 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch([ScreenAddPuzzle.subscriptions(input), ScreenPuzzlePlay.subscriptions(input)])
 }
 
+export const TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN = 'numberlink-pack-builder-screen'
+
 const View: FrontendModule['View'] = (input) => {
-  return h('div', {}, [h(ViewScreen, input), h(EditPackNameFrontend.ViewSurface, input)])
+  return h('div', { 'data-testid': TEST_ID_NUMBERLINK_PACK_BUILDER_SCREEN }, [
+    h(ViewScreen, input),
+    h(EditPackNameFrontend.ViewSurface, input),
+  ])
 }
 
 const ViewScreen: FrontendModule['View'] = (input) => {

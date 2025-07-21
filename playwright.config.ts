@@ -38,7 +38,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     /* Record video on test failure */
-    video: 'retain-on-failure',
+    video: 'on',
     /* Headless mode is disabled in CI */
     headless: true,
   },

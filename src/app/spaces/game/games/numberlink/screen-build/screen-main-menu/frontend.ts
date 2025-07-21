@@ -1,11 +1,11 @@
 import { Sub } from '~/@/sub'
 import { IconBox, IconPuzzlePiece, IconScrewdriverWrench } from '~/@/ui/icon'
+import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../../../@/ui/game-main-menu'
 import type { FrontendModule } from '../types'
-import { h } from '~/@/vdom/h'
 
 const update: FrontendModule['update'] = (input) => {
   return GameFrontendModule.andThen({ model: input.model }, (model) => updateFromMsgSpace({ ...input, model }))
@@ -35,8 +35,11 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
   }
 }
 
+export const TEST_ID_NUMBERLINK_BUILD_MAIN_MENU_SCREEN = 'numberlink-build-main-menu-screen'
+
 const View: FrontendModule['View'] = (input) => {
   return h(GameMainMenu.View, {
+    dataTestId: TEST_ID_NUMBERLINK_BUILD_MAIN_MENU_SCREEN,
     ctx: input.ctx,
     dispatch: (c) => input.dispatch(c),
     onBack: () =>

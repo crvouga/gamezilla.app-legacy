@@ -147,14 +147,6 @@ const updateGame: SpaceFrontendModule['update'] = (input) => {
   }
 }
 
-//
-//
-//
-//
-//
-//
-//
-
 const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
   return subscriptionsCurrentUserGame(input)
 }
@@ -188,14 +180,6 @@ const subscriptionsCurrentUserGame: SpaceFrontendModule['subscriptions'] = (inpu
 
   return sub
 }
-
-//
-//
-//
-//
-//
-//
-//
 
 const View: SpaceFrontendModule['View'] = (input) => {
   if (!input.ctx.space) return null

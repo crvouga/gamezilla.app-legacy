@@ -20,11 +20,13 @@ export const ScreenLayoutHostSettingUpGame = (input: {
     t: Translator
     screenSize: ScreenSize
   }
+  dataTestId?: string
   renderCoverArt?: (input: { class: string }) => VDom
 }) => {
   return h(ScreenLayoutGameCoverArt, {
     id: 'host-setting-up-game',
     parentScreen: input.parentScreen,
+    dataTestId: input.dataTestId,
     ctx: input.ctx,
     navBar: input.navBar,
     renderCoverArt: input.renderCoverArt,

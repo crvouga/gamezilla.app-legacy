@@ -58,9 +58,12 @@ const subscriptions: FrontendModule['subscriptions'] = (input) => {
   )
 }
 
+export const TEST_ID_NUMBERLINK_PACK_BUILDER_OPEN_SCREEN = 'numberlink-pack-builder-open-screen'
+
 const View: FrontendModule['View'] = (input) => {
   const query = toQuery({ currentUserId: input.ctx.currentUser.userId, offset: 0 })
   return h(ScreenLayout, {
+    dataTestId: TEST_ID_NUMBERLINK_PACK_BUILDER_OPEN_SCREEN,
     parentScreen: input.ctx.parentScreen,
     id: 'screen-pack-builder-open',
     ctx: input.ctx,

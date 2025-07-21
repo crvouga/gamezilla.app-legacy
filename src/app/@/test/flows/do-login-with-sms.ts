@@ -1,15 +1,10 @@
 import { expect } from '~/@/test-runner'
 import { TEST_ID_CONTINUE_WITH_PHONE_BUTTON, TEST_ID_LOGIN_SCREEN } from '~/app/auth/frontend'
 import { TEST_ID_SEND_CODE_SCREEN, TEST_ID_VERIFY_CODE_SCREEN } from '~/app/auth/login-with-sms/frontend'
+import { randomPhoneNumber } from '~/app/auth/login-with-sms/test/random-phone-number'
 import { TEST_ID_SPACE_LIST_SCREEN } from '~/app/spaces/list-spaces/frontend'
 import { IFixtureApp } from '../app-fixture/interface'
 import { doDismissAlert } from './do-dismiss-alert'
-
-const randomPhoneNumber = (): number => {
-  const base = 480_209_0000
-  const random4 = Math.floor(Math.random() * 10000)
-  return base + random4
-}
 
 export const doLoginWithSms = async (f: IFixtureApp) => {
   await doContinueWithPhone(f)

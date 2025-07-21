@@ -28,6 +28,7 @@ import { SpacesFrontend } from '~/app/spaces/frontend'
 import { FrontendCtxModule, rpcContract, topicContract } from '~/app/types'
 import { WireFrontend } from '~/app/wire/frontend'
 import { AppFrontendCtxBase } from '../../../frontend/ctx'
+import { MAX_WAIT, POLL } from '../test-max-wait'
 
 export const TestFrontend = async (config: {
   rpcServer: RPC.Server<typeof rpcContract>
@@ -122,8 +123,8 @@ export const TestFrontend = async (config: {
 
   const client = await TestClient.init({
     t: 'happydom',
-    maxWait: TimeSpan.milliseconds(5000),
-    poll: TimeSpan.milliseconds(1),
+    maxWait: MAX_WAIT,
+    poll: POLL,
     audioPlayer: ctx.audioPlayer,
   })
 

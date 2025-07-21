@@ -316,10 +316,13 @@ const View: FrontendModule['View'] = (input) => {
   }
 }
 
+export const TEST_ID_NUMBERLINK_MAIN_MENU_SCREEN = 'numberlink-main-menu-screen'
+
 const ViewMainMenu: FrontendModule['View'] = (input) => {
   const ctx = toFrontendCtx(input)
 
   return h(GameMainMenu.View, {
+    dataTestId: TEST_ID_NUMBERLINK_MAIN_MENU_SCREEN,
     renderCoverArt: (input) => h(CoverArt, input),
     ctx,
     title: ctx.t('numberlink'),
