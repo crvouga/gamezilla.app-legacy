@@ -12,9 +12,10 @@ import { TopicClient } from './topic-client/topic-client'
 import { TopicContract } from './topic-contract'
 import { TopicMsgCodec } from './topic-msg-codec'
 import { TopicServer } from './topic-server/topic-server'
+import { ascend } from '../array/sorting'
 
 const Msg = s.obj({
-  name: s.str(),
+  id: s.num(),
 })
 type Msg = s.Infer<typeof Msg>
 
@@ -122,11 +123,11 @@ describe('Topic', () => {
         f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientC.clientSessionId),
       ).toEqual(true),
     )
-    f.clientC.topic.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientC.topic.someTopic.pub({ id: '123' }, { id: 1 })
     await eventually(() => {
-      expect(gotA).toEqual([{ name: 'John' }])
-      expect(gotB).toEqual([{ name: 'John' }])
-      expect(gotC).toEqual([{ name: 'John' }, { name: 'John' }])
+      expect(gotA).toEqual([{ id: 1 }])
+      expect(gotB).toEqual([{ id: 1 }])
+      expect(gotC).toEqual([{ id: 1 }, { id: 1 }])
     })
   })
 
@@ -145,7 +146,7 @@ describe('Topic', () => {
         f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientA.clientSessionId),
       ).toEqual(false),
     )
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 1 })
     await eventually(() => {
       expect(gotA).toEqual([])
     })
@@ -167,9 +168,9 @@ describe('Topic', () => {
         f.topicServer.isSubscribed('someTopic', { id: '456' }, (c) => c.clientSessionId === f.clientB.clientSessionId),
       ).toEqual(true),
     )
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 1 })
     await eventually(() => {
-      expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
+      expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
       expect(gotB).toEqual([])
     })
   })
@@ -177,25 +178,20 @@ describe('Topic', () => {
   test('should handle multiple messages in sequence', async () => {
     await using f = await Fixture()
     const gotA: Msg[] = []
-    await sleep()
     f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
-    await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
-    await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Jane' })
-    await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Bob' })
-    await sleep()
-    await sleep()
-    await sleep()
-    expect(gotA).toEqual([
-      { name: 'John' },
-      { name: 'John' },
-      { name: 'Jane' },
-      { name: 'Jane' },
-      { name: 'Bob' },
-      { name: 'Bob' },
-    ])
+    await eventually(() =>
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientA.clientSessionId),
+      ).toEqual(true),
+    )
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 1 })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 2 })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 3 })
+    await eventually(() => {
+      const actual = gotA.toSorted(ascend((x) => x.id))
+      const expected = [{ id: 1 }, { id: 1 }, { id: 2 }, { id: 2 }, { id: 3 }, { id: 3 }].toSorted(ascend((x) => x.id))
+      expect(actual).toEqual(expected)
+    })
   })
 
   test('should handle multiple subscribers with different topic params', async () => {
@@ -204,23 +200,30 @@ describe('Topic', () => {
     const gotB: Msg[] = []
     const gotC: Msg[] = []
 
-    await sleep()
     f.clientA.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotA.push(msg))
-    await sleep()
     f.clientB.topic.someTopic.sub({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
-    await sleep()
     f.clientC.topic.someTopic.sub({ id: '789' }, (x) => x).sub((msg) => gotC.push(msg))
-    await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
-    await sleep()
-    f.clientB.topic.someTopic.pub({ id: '456' }, { name: 'Jane' })
-    await sleep()
-    f.clientC.topic.someTopic.pub({ id: '789' }, { name: 'Bob' })
-    await sleep()
 
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
-    expect(gotB).toEqual([{ name: 'Jane' }, { name: 'Jane' }])
-    expect(gotC).toEqual([{ name: 'Bob' }, { name: 'Bob' }])
+    await eventually(() => {
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '123' }, (c) => c.clientSessionId === f.clientA.clientSessionId),
+      ).toEqual(true)
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '456' }, (c) => c.clientSessionId === f.clientB.clientSessionId),
+      ).toEqual(true)
+      expect(
+        f.topicServer.isSubscribed('someTopic', { id: '789' }, (c) => c.clientSessionId === f.clientC.clientSessionId),
+      ).toEqual(true)
+    })
+
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 1 })
+    f.clientB.topic.someTopic.pub({ id: '456' }, { id: 2 })
+    f.clientC.topic.someTopic.pub({ id: '789' }, { id: 3 })
+    await eventually(() => {
+      expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
+      expect(gotB).toEqual([{ id: 2 }, { id: 2 }])
+      expect(gotC).toEqual([{ id: 3 }, { id: 3 }])
+    })
   })
 
   test('should handle unsubscribe correctly', async () => {
@@ -233,17 +236,17 @@ describe('Topic', () => {
     await sleep()
     f.clientB.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 1 })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
-    expect(gotB).toEqual([{ name: 'John' }])
+    expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
+    expect(gotB).toEqual([{ id: 1 }])
     await sleep()
     unsubA()
     await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Jane' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 2 })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
-    expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }])
+    expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
+    expect(gotB).toEqual([{ id: 1 }, { id: 2 }])
   })
 
   test('should handle multiple messages on the same topic', async () => {
@@ -256,22 +259,15 @@ describe('Topic', () => {
     await sleep()
     f.clientB.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 1 })
     await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Jane' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 2 })
     await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Bob' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 3 })
     await sleep()
 
-    expect(gotA).toEqual([
-      { name: 'John' },
-      { name: 'John' },
-      { name: 'Jane' },
-      { name: 'Jane' },
-      { name: 'Bob' },
-      { name: 'Bob' },
-    ])
-    expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }, { name: 'Bob' }])
+    expect(gotA).toEqual([{ id: 1 }, { id: 1 }, { id: 2 }, { id: 2 }, { id: 3 }, { id: 3 }])
+    expect(gotB).toEqual([{ id: 1 }, { id: 2 }, { id: 3 }])
   })
 
   test('should handle nested topics correctly', async () => {
@@ -284,11 +280,11 @@ describe('Topic', () => {
     await sleep()
     f.clientB.topic.nestedSomeTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.topic.nestedSomeTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.nestedSomeTopic.pub({ id: '123' }, { id: 1 })
     await sleep()
 
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
-    expect(gotB).toEqual([{ name: 'John' }])
+    expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
+    expect(gotB).toEqual([{ id: 1 }])
   })
 
   test('should handle multiple unsubscribes correctly', async () => {
@@ -304,21 +300,21 @@ describe('Topic', () => {
     await sleep()
     f.clientC.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotC.push(msg))
     await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 1 })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
-    expect(gotB).toEqual([{ name: 'John' }])
-    expect(gotC).toEqual([{ name: 'John' }])
+    expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
+    expect(gotB).toEqual([{ id: 1 }])
+    expect(gotC).toEqual([{ id: 1 }])
     await sleep()
     unsubA()
     await sleep()
     unsubB()
     await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Jane' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 2 })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
-    expect(gotB).toEqual([{ name: 'John' }])
-    expect(gotC).toEqual([{ name: 'John' }, { name: 'Jane' }])
+    expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
+    expect(gotB).toEqual([{ id: 1 }])
+    expect(gotC).toEqual([{ id: 1 }, { id: 2 }])
   })
 
   test('should handle multiple subscriptions to the same topic correctly', async () => {
@@ -334,12 +330,12 @@ describe('Topic', () => {
     await sleep()
     f.clientB.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 1 })
     await sleep()
 
-    expect(gotA1).toEqual([{ name: 'John' }, { name: 'John' }])
-    expect(gotA2).toEqual([{ name: 'John' }, { name: 'John' }])
-    expect(gotB).toEqual([{ name: 'John' }])
+    expect(gotA1).toEqual([{ id: 1 }, { id: 1 }])
+    expect(gotA2).toEqual([{ id: 1 }, { id: 1 }])
+    expect(gotB).toEqual([{ id: 1 }])
   })
 
   test('should handle different topic parameters correctly', async () => {
@@ -352,13 +348,13 @@ describe('Topic', () => {
     await sleep()
     f.clientB.topic.someTopic.sub({ id: '456' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 1 })
     await sleep()
-    f.clientA.topic.someTopic.pub({ id: '456' }, { name: 'Jane' })
+    f.clientA.topic.someTopic.pub({ id: '456' }, { id: 2 })
     await sleep()
 
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
-    expect(gotB).toEqual([{ name: 'Jane' }])
+    expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
+    expect(gotB).toEqual([{ id: 2 }])
   })
 
   test('should handle reconnection correctly', async () => {
@@ -371,18 +367,18 @@ describe('Topic', () => {
     await sleep()
     f.clientB.topic.someTopic.sub({ id: '123' }, (x) => x).sub((msg) => gotB.push(msg))
     await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'John' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 1 })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }])
-    expect(gotB).toEqual([{ name: 'John' }])
+    expect(gotA).toEqual([{ id: 1 }, { id: 1 }])
+    expect(gotB).toEqual([{ id: 1 }])
     await sleep()
     await f.httpServer.stop()
     await sleep()
     await f.httpServer.start(f.port)
     await sleep()
-    f.clientA.topic.someTopic.pub({ id: '123' }, { name: 'Jane' })
+    f.clientA.topic.someTopic.pub({ id: '123' }, { id: 2 })
     await sleep()
-    expect(gotA).toEqual([{ name: 'John' }, { name: 'John' }, { name: 'Jane' }, { name: 'Jane' }])
-    expect(gotB).toEqual([{ name: 'John' }, { name: 'Jane' }])
+    expect(gotA).toEqual([{ id: 1 }, { id: 1 }, { id: 2 }, { id: 2 }])
+    expect(gotB).toEqual([{ id: 1 }, { id: 2 }])
   })
 })

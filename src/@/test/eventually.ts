@@ -28,7 +28,7 @@ export const eventually = async (
   fn: () => Promise<void> | void,
   config: { intervalMs?: number; minimalSuccesses?: number; maxAttempts?: number } = {},
 ) => {
-  const { intervalMs = 50, minimalSuccesses = 3, maxAttempts = 10 } = config
+  const { intervalMs = 10, minimalSuccesses = 3, maxAttempts = 10 } = config
   let successes = 0
   let attempts = 0
   while (true) {
