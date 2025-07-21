@@ -32,7 +32,6 @@ const initCtx = async (config: {
   port: number
   topicUrl: string
   databaseUrl: SecretString
-  corsOrigins: string[]
   isProd: boolean
 }): Promise<BackendCtxModule> => {
   const logger = Logger.init({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'info' })

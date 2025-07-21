@@ -19,20 +19,10 @@ const main = async () => {
 
   const IS_PROD = process.env.NODE_ENV?.includes('production') ?? false
 
-  const CORS_ORIGINS: string[] = []
-  if (!IS_PROD) {
-    CORS_ORIGINS.push('http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'http://frontend:5173')
-  }
-
-  if (IS_PROD) {
-    CORS_ORIGINS.push('https://www.gamezilla.app')
-  }
-
   const ctx = await AppBackend.initCtx({
     port: BACKEND_PORT,
     topicUrl: TOPIC_URL,
     databaseUrl: DATABASE_URL,
-    corsOrigins: CORS_ORIGINS,
     isProd: IS_PROD,
   })
 
