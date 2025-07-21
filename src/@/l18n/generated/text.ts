@@ -63,26 +63,25 @@ import type { Text as Text60 } from '../../../app/spaces/game/games/numberlink/@
 import type { Text as Text61 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-hints-loaded.$l18n'
 import type { Text as Text62 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/no-solutions-found.$l18n'
 import type { Text as Text63 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/solutions-found.$l18n'
-import type { Text as Text64 } from '../../../app/spaces/game/games/numberlink/@/solutions/solutions-loader/$l18n'
-import type { Text as Text65 } from '../../../app/spaces/game/games/numberlink/screen-build/$l18n'
-import type { Text as Text66 } from '../../../app/spaces/game/games/numberlink/screen-build/pack-builder/screen-pack-builder/$l18n'
-import type { Text as Text67 } from '../../../app/spaces/game/games/numberlink/screen-build/pack-builder/screen-pack-builder-open/$l18n'
-import type { Text as Text68 } from '../../../app/spaces/game/games/numberlink/screen-build/pack-builder/screen-pack-builder-open/button-create-new-pack/$l18n'
-import type { Text as Text69 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder/$l18n'
-import type { Text as Text70 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder/surface-delete-forever/$l18n'
-import type { Text as Text71 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder/surface-edit-puzzle-name/$l18n'
-import type { Text as Text72 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder-open/button-create-new-puzzle/$l18n'
-import type { Text as Text73 } from '../../../app/spaces/game/games/numberlink/screen-build/screen-main-menu/$l18n'
-import type { Text as Text74 } from '../../../app/spaces/game/games/numberlink/screen-play/screen-open-pack/$l18n'
-import type { Text as Text75 } from '../../../app/spaces/game/games/numberlink/screen-play/screen-play-puzzle/button-copy-puzzle/$l18n'
-import type { Text as Text76 } from '../../../app/spaces/game/games/numberlink/screen-play/screen-play-puzzle/last-puzzle/$l18n'
-import type { Text as Text77 } from '../../../app/spaces/game/games/tic-tac-toe/@/tic-tac-toe.$l18n'
-import type { Text as Text78 } from '../../../app/spaces/join-space/$l18n'
-import type { Text as Text79 } from '../../../app/spaces/leave-space/$l18n'
-import type { Text as Text80 } from '../../../app/spaces/list-spaces/$l18n'
-import type { Text as Text81 } from '../../../app/spaces/list-spaces/space-card/$l18n'
-import type { Text as Text82 } from '../../../app/spaces/start-space/$l18n'
-import type { Text as Text83 } from '../../../app/wire/$l18n'
+import type { Text as Text64 } from '../../../app/spaces/game/games/numberlink/screen-build/$l18n'
+import type { Text as Text65 } from '../../../app/spaces/game/games/numberlink/screen-build/pack-builder/screen-pack-builder/$l18n'
+import type { Text as Text66 } from '../../../app/spaces/game/games/numberlink/screen-build/pack-builder/screen-pack-builder-open/$l18n'
+import type { Text as Text67 } from '../../../app/spaces/game/games/numberlink/screen-build/pack-builder/screen-pack-builder-open/button-create-new-pack/$l18n'
+import type { Text as Text68 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder/$l18n'
+import type { Text as Text69 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder/surface-delete-forever/$l18n'
+import type { Text as Text70 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder/surface-edit-puzzle-name/$l18n'
+import type { Text as Text71 } from '../../../app/spaces/game/games/numberlink/screen-build/puzzle-builder/screen-puzzle-builder-open/button-create-new-puzzle/$l18n'
+import type { Text as Text72 } from '../../../app/spaces/game/games/numberlink/screen-build/screen-main-menu/$l18n'
+import type { Text as Text73 } from '../../../app/spaces/game/games/numberlink/screen-play/screen-open-pack/$l18n'
+import type { Text as Text74 } from '../../../app/spaces/game/games/numberlink/screen-play/screen-play-puzzle/button-copy-puzzle/$l18n'
+import type { Text as Text75 } from '../../../app/spaces/game/games/numberlink/screen-play/screen-play-puzzle/last-puzzle/$l18n'
+import type { Text as Text76 } from '../../../app/spaces/game/games/tic-tac-toe/@/tic-tac-toe.$l18n'
+import type { Text as Text77 } from '../../../app/spaces/join-space/$l18n'
+import type { Text as Text78 } from '../../../app/spaces/leave-space/$l18n'
+import type { Text as Text79 } from '../../../app/spaces/list-spaces/$l18n'
+import type { Text as Text80 } from '../../../app/spaces/list-spaces/space-card/$l18n'
+import type { Text as Text81 } from '../../../app/spaces/start-space/$l18n'
+import type { Text as Text82 } from '../../../app/wire/$l18n'
 
 export type Text = Text0 &
   Text1 &
@@ -166,5 +165,4 @@ export type Text = Text0 &
   Text79 &
   Text80 &
   Text81 &
-  Text82 &
-  Text83
+  Text82

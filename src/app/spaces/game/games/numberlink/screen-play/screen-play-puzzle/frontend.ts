@@ -17,6 +17,8 @@ import { ModePlay } from '../../@/mode-play'
 import { ModePlayFrontend } from '../../@/mode-play/frontend'
 import { PuzzleDbQueryCache } from '../../@/puzzle/puzzle-db-query-cache'
 import { PuzzleResult } from '../../@/puzzle/puzzle-result'
+import { SolutionHash } from '../../@/solutions/solution-hash/solution-hash'
+import { SolutionsDbQueryCache } from '../../@/solutions/solutions-db-query-cache'
 import type { FrontendModule, MsgFrontend } from '../types'
 import * as CopyPuzzleFrontend from './button-copy-puzzle/frontend'
 import { LastPuzzleFrontend } from './last-puzzle/frontend'
@@ -63,7 +65,10 @@ const updateFromMsgSpace: FrontendModule['update'] = (input) => {
 
       const playCtx = ModePlay.initCtx({
         numberlink: input.modelSpace.screen.puzzleResult.c.model,
-        solutions: input.ctx.solutions,
+        solutions: SolutionsDbQueryCache.read(
+          input.ctx,
+          SolutionHash.init(input.modelSpace.screen.puzzleResult.c.model),
+        ),
       })
       const modePlay = input.modelSpace.screen.modePlay ?? ModePlay.init({ ctx: playCtx })
       const output = ModePlay.update({ msg: input.msgSpace.c, model: modePlay, ctx: playCtx })
@@ -154,7 +159,10 @@ const ViewHosting: FrontendModule['View'] = (input) => {
                 model:
                   modePlay ??
                   ModePlay.init({
-                    ctx: ModePlay.initCtx({ numberlink: puzzle.c.model, solutions: input.ctx.solutions }),
+                    ctx: ModePlay.initCtx({
+                      numberlink: puzzle.c.model,
+                      solutions: SolutionsDbQueryCache.read(input.ctx, SolutionHash.init(puzzle.c.model)),
+                    }),
                   }),
                 dispatch: (c) =>
                   input.dispatch({
@@ -244,7 +252,10 @@ const ViewSpectating: FrontendModule['View'] = (input) => {
                 model:
                   modePlay ??
                   ModePlay.init({
-                    ctx: ModePlay.initCtx({ numberlink: puzzle.c.model, solutions: input.ctx.solutions }),
+                    ctx: ModePlay.initCtx({
+                      numberlink: puzzle.c.model,
+                      solutions: SolutionsDbQueryCache.read(input.ctx, SolutionHash.init(puzzle.c.model)),
+                    }),
                   }),
                 dispatch: () => {},
                 showSolvedAnimation: true,

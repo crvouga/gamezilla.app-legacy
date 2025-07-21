@@ -19,8 +19,7 @@ import { MsgShared as MsgShared16 } from '../../../app/spaces/game/games/numberl
 import { MsgShared as MsgShared17 } from '../../../app/spaces/game/games/numberlink/@/frontend/add-puzzles-cmd.$msg'
 import { MsgShared as MsgShared18 } from '../../../app/spaces/game/games/numberlink/@/frontend/add-solutions-cmd.$msg'
 import { MsgShared as MsgShared19 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/got-hint-calculator-msg.$msg'
-import { MsgShared as MsgShared20 } from '../../../app/spaces/game/games/numberlink/@/solutions/solutions-loader/got-solutions-loader-msg.$msg'
-import { MsgShared as MsgShared21 } from '../../../app/spaces/space/space-loader/got-space-loader-msg.$msg'
+import { MsgShared as MsgShared20 } from '../../../app/spaces/space/space-loader/got-space-loader-msg.$msg'
 
 export type MsgShared =
   | MsgShared0
@@ -44,4 +43,3 @@ export type MsgShared =
   | MsgShared18
   | MsgShared19
   | MsgShared20
-  | MsgShared21

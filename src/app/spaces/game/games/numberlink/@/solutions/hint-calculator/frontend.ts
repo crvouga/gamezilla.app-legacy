@@ -15,6 +15,7 @@ import { AlgoSolveAsync } from '../algo-solve-async'
 import { problemToString } from '../algo-solve-async/algo-solve-async'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
+import { SolutionsDbQueryCache } from '../solutions-db-query-cache'
 import { GotHintCalculatorMsg } from './got-hint-calculator-msg.$msg'
 import { FindSolutionRequest, FoundSolutionResult, initFrontend, ModelFrontend, type FrontendModule } from './types'
 
@@ -102,7 +103,8 @@ const viewActions = (input: Parameters<FrontendModule['View']>[0]): ScreenAction
   const { numberlink } = input.ctx
   if (!numberlink) return []
   const hash = SolutionHash.init(numberlink)
-  const hasSolution = Solutions.selectOne(input.ctx.solutions, hash) !== null
+  const solutions = SolutionsDbQueryCache.read(input.ctx, hash)
+  const hasSolution = solutions.length > 0
   if (hasSolution) return []
   return [
     {

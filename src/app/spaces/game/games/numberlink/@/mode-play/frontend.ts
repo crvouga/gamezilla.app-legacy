@@ -12,8 +12,7 @@ import { Numberlink } from '../numberlink'
 import { HintCalculatorFrontend } from '../solutions/hint-calculator/frontend'
 import { GotHintCalculatorMsg } from '../solutions/hint-calculator/got-hint-calculator-msg.$msg'
 import { SolutionHash } from '../solutions/solution-hash/solution-hash'
-import { SolutionsLoaderFrontend } from '../solutions/solutions-loader/frontend'
-import { GotSolutionsLoaderMsg } from '../solutions/solutions-loader/got-solutions-loader-msg.$msg'
+import { SolutionsDbQueryCache } from '../solutions/solutions-db-query-cache'
 import { NumberlinkVariant, NumberlinkVariantBoard } from '../variant'
 import { ModePlayFrontendCtx } from './frontend/ctx'
 import { Model, Msg, toNumberlink } from './mode-play'
@@ -140,10 +139,7 @@ const subscriptions = <TMsg>(
 ): Sub<TMsg> => {
   const solutionHash = SolutionHash.init(input.ctx.numberlink)
   if (!solutionHash) return Sub.none()
-  return Sub.map(
-    SolutionsLoaderFrontend.watch(input.ctx, solutionHash, (c) => GotSolutionsLoaderMsg.init(c)),
-    map,
-  )
+  return SolutionsDbQueryCache.sub(input.ctx.solutionsDb, solutionHash, map)
 }
 
 const TestView = (input: {

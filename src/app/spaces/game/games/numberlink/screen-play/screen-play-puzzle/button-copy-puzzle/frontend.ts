@@ -10,6 +10,8 @@ import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ModePlay } from '../../../@/mode-play'
+import { SolutionHash } from '../../../@/solutions/solution-hash/solution-hash'
+import { SolutionsDbQueryCache } from '../../../@/solutions/solutions-db-query-cache'
 import { VariantGridShorthand } from '../../../@/variant/grid'
 import type { FrontendModule, MsgFrontend } from '../../types'
 
@@ -33,7 +35,10 @@ export const update: FrontendModule['update'] = (input) => {
         ModePlay.init({
           ctx: ModePlay.initCtx({
             numberlink: input.modelSpace.screen.puzzleResult.c.model,
-            solutions: input.ctx.solutions,
+            solutions: SolutionsDbQueryCache.read(
+              input.ctx,
+              SolutionHash.init(input.modelSpace.screen.puzzleResult.c.model),
+            ),
           }),
         })
 

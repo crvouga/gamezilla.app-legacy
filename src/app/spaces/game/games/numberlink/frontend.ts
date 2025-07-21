@@ -7,17 +7,13 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { CoverArt } from './@/cover-art'
-import { AddSolutionsCmd } from './@/frontend/add-solutions-cmd.$msg'
 import type { FlowFrontendCtx } from './@/frontend/ctx'
 import { IPackDb, PackDb } from './@/pack/pack-db'
 import { IPuzzleDb, PuzzleDb } from './@/puzzle/puzzle-db'
 import { HintCalculatorTypes } from './@/solutions/hint-calculator'
 import { HintCalculatorFrontend } from './@/solutions/hint-calculator/frontend'
-import { Solutions } from './@/solutions/solutions'
 import { SolutionsDb } from './@/solutions/solutions-db/impl'
 import { ISolutionsDb } from './@/solutions/solutions-db/interface'
-import { SolutionsLoaderTypes } from './@/solutions/solutions-loader'
-import { SolutionsLoaderFrontend } from './@/solutions/solutions-loader/frontend'
 import { ScreenBuildFrontend } from './screen-build/frontend'
 import { ScreenPlayFrontend } from './screen-play/frontend'
 import type { FrontendModule, MsgFrontend } from './types'
@@ -26,8 +22,6 @@ const init: FrontendModule['init'] = {
   screenBuild: ScreenBuildFrontend.init,
   screenPlay: ScreenPlayFrontend.init,
   hintCalculator: HintCalculatorTypes.initFrontend,
-  solutionsLoader: SolutionsLoaderTypes.initFrontend,
-  solutions: Solutions.init,
 }
 
 let puzzleDb: IPuzzleDb
@@ -57,9 +51,7 @@ const toFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): FlowFron
     puzzleDb,
     packDb,
     solutionsDb,
-    solutions: input.model.solutions,
     hintCalculator: input.model.hintCalculator,
-    solutionsLoader: input.model.solutionsLoader,
   }
 }
 
@@ -69,11 +61,9 @@ const update: FrontendModule['update'] = (input) => {
     (model) => GameMainMenu.update({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromMsgSpace({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model }),
     (model) => updateScreenPlay({ ...input, model }),
     (model) => updateScreenBuild({ ...input, model }),
     (model) => updateHintCalculator({ ...input, model }),
-    (model) => updateSolutionsLoader({ ...input, model }),
   )
 }
 
@@ -90,23 +80,6 @@ const updateHintCalculator: FrontendModule['update'] = (input) => {
   return {
     model: { ...input.model, hintCalculator: updated.model },
     eff: Eff.tag('got-hint-calculator-msg', updated.eff),
-    msgOut: updated.msgOut,
-  }
-}
-
-const updateSolutionsLoader: FrontendModule['update'] = (input) => {
-  const ctx = toFrontendCtx(input)
-
-  const updated = SolutionsLoaderFrontend.update({
-    ctx,
-    model: input.model.solutionsLoader,
-    msg: input.msg?.t === 'got-solutions-loader-msg' ? input.msg.c : null,
-    msgIn: input.msgIn,
-  })
-
-  return {
-    model: { ...input.model, solutionsLoader: updated.model },
-    eff: Eff.tag('got-solutions-loader-msg', updated.eff),
     msgOut: updated.msgOut,
   }
 }
@@ -188,27 +161,6 @@ const updateFromMsg: FrontendModule['update'] = (input) => {
     }
   }
 }
-
-const updateFromCmd: FrontendModule['update'] = (input) => {
-  const { msgIn } = input
-
-  if (AddSolutionsCmd.is(msgIn)) {
-    return {
-      model: { ...input.model, solutions: Solutions.merge(msgIn.solutions, input.model.solutions) },
-    }
-  }
-
-  return { model: input.model }
-}
-
-//
-//
-//
-//
-//
-//
-//
-//
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   switch (input.modelSpace.mode) {

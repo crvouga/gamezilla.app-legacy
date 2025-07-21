@@ -11,6 +11,8 @@ import { ModePlayFrontend } from '../../../../@/mode-play/frontend'
 import { Puzzle } from '../../../../@/puzzle/puzzle'
 import { PuzzleDbQueryCache } from '../../../../@/puzzle/puzzle-db-query-cache'
 import { PuzzleResult } from '../../../../@/puzzle/puzzle-result'
+import { SolutionHash } from '../../../../@/solutions/solution-hash/solution-hash'
+import { SolutionsDbQueryCache } from '../../../../@/solutions/solutions-db-query-cache'
 import type { FrontendModule, MsgFrontend } from '../types'
 
 const update: FrontendModule['update'] = (input) => {
@@ -56,8 +58,10 @@ const update: FrontendModule['update'] = (input) => {
 
       if (!puzzle) return { model: input.model }
 
+      const solutions = SolutionsDbQueryCache.read(input.ctx, SolutionHash.init(puzzle.model))
+
       const updated = ModePlay.update({
-        ctx: ModePlay.initCtx({ numberlink: puzzle.model, solutions: input.ctx.solutions }),
+        ctx: ModePlay.initCtx({ numberlink: puzzle.model, solutions }),
         model: modePlay,
         msg: input.msgSpace.c,
       })

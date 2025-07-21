@@ -14,6 +14,8 @@ import { ModeEdit } from '../../../@/mode-edit'
 import { ModeEditFrontend } from '../../../@/mode-edit/frontend'
 import { ModePlay } from '../../../@/mode-play'
 import { ModePlayFrontend } from '../../../@/mode-play/frontend'
+import { SolutionHash } from '../../../@/solutions/solution-hash/solution-hash'
+import { SolutionsDbQueryCache } from '../../../@/solutions/solutions-db-query-cache'
 import { BoardLayout } from '../../../@/ui/board-layout'
 import { NumberlinkVariantBoard } from '../../../@/variant'
 import * as BuilderTypes from '../../types'
@@ -98,10 +100,12 @@ const updateFromMsgSpace: BuilderTypes.FrontendModule['update'] = (input) => {
       if (input.modelSpace.screenPuzzleBuilder?.mode.t !== 'play') return { model: input.model }
 
       const numberlink = ScreenPuzzleBuilderSpace.toNumberlink(input.modelSpace.screenPuzzleBuilder)
+      const solutions = SolutionsDbQueryCache.read(input.ctx, SolutionHash.init(numberlink))
+
       const updated = ModePlay.update({
         msg: input.msgSpace.c,
         model: input.modelSpace.screenPuzzleBuilder.modePlay,
-        ctx: ModePlay.initCtx({ numberlink: numberlink, solutions: input.ctx.solutions }),
+        ctx: ModePlay.initCtx({ numberlink: numberlink, solutions }),
       })
 
       return {

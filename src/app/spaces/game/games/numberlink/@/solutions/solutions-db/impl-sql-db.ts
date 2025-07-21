@@ -163,7 +163,7 @@ const init = (config: ImplSqlDb): ISolutionsDb => {
       return Ok(null)
     },
 
-    sub(hash) {
+    sub(hash, mapper) {
       return config.sqlDb.sub(
         {
           schema: Row,
@@ -181,11 +181,12 @@ const init = (config: ImplSqlDb): ISolutionsDb => {
           vars: { id: hash },
         },
         (rows) => {
-          return rows.flatMap((row) => {
+          const solutions = rows.flatMap((row) => {
             const solutions = rowToSolutions(row)
             if (isErr(solutions)) return []
             return solutions.value
           })
+          return mapper(solutions)
         },
       )
     },

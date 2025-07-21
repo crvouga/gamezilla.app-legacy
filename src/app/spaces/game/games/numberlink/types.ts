@@ -5,15 +5,11 @@ import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-
 import { GameMainMenu } from '../@/ui/game-main-menu'
 import { NumberlinkBackendCtx } from './@/backend/ctx'
 import { HintCalculatorTypes } from './@/solutions/hint-calculator'
-import { Solutions } from './@/solutions/solutions'
-import { SolutionsLoaderTypes } from './@/solutions/solutions-loader'
 import { BuildTypes } from './screen-build'
 import { PlayTypes } from './screen-play'
 
 export type ModelFrontend = {
-  solutions: Solutions
   hintCalculator: HintCalculatorTypes.ModelFrontend
-  solutionsLoader: SolutionsLoaderTypes.ModelFrontend
   screenBuild: BuildTypes.ModelFrontend
   screenPlay: PlayTypes.ModelFrontend
 }
@@ -26,7 +22,6 @@ export type MsgFrontend =
   | { t: 'got-msg-space'; c: MsgSpace }
   | { t: 'got-screen-build-msg'; c: BuildTypes.MsgFrontend }
   | { t: 'got-screen-play-msg'; c: PlayTypes.MsgFrontend }
-  | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgFrontend }
   | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgFrontend }
 
 const MODE = ['build', 'play'] as const

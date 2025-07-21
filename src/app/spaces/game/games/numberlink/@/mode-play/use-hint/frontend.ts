@@ -4,7 +4,7 @@ import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-pro
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { AlgoIsSolved } from '../../solutions/algo-is-solved/algo-is-solved'
 import { SolutionHash } from '../../solutions/solution-hash/solution-hash'
-import { Solutions } from '../../solutions/solutions'
+import { SolutionsDbQueryCache } from '../../solutions/solutions-db-query-cache'
 import { ModePlayFrontendCtx } from '../frontend/ctx'
 import { Model, Msg, toNumberlink } from './use-hint'
 
@@ -18,7 +18,8 @@ const viewAction = (input: {
   if (!input.ctx.numberlink) return []
   const numberlink = toNumberlink(input.model, input.ctx.numberlink)
   const hash = SolutionHash.init(numberlink)
-  const hasSolution = Solutions.selectOne(input.ctx.solutions, hash) !== null
+  const solutions = SolutionsDbQueryCache.read(input.ctx, hash)
+  const hasSolution = solutions.length > 0
   if (!hasSolution) return []
   const isSolved = AlgoIsSolved.isSolved(numberlink)
 
@@ -31,7 +32,7 @@ const viewAction = (input: {
       onClick: () => {
         const numberlink = toNumberlink(input.model, input.ctx.numberlink)
         const hash = SolutionHash.init(numberlink)
-        const solutions = Solutions.limit(input.ctx.solutions, hash)
+        const solutions = SolutionsDbQueryCache.read(input.ctx, hash)
         input.dispatch({ t: 'user-clicked-use-hint', solutions })
       },
       testId: TEST_ID_USE_HINT_ACTION,

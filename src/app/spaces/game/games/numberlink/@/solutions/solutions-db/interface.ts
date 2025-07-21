@@ -7,5 +7,5 @@ export type ISolutionsDb = {
   get: (hash: SolutionHash) => Promise<Result<string, Solution[]>>
   put: (solutions: Solution[]) => Promise<Result<string, null>>
   zap: (hash: SolutionHash) => Promise<Result<string, null>>
-  sub: (hash: SolutionHash) => Sub<Solution[]>
+  sub: <T>(hash: SolutionHash, mapper: (m: Solution[]) => T) => Sub<T>
 }
