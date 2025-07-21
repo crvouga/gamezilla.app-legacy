@@ -8,8 +8,8 @@ export const FixtureFlowBackend = async () => {
 
   const ctx: NumberlinkBackendCtx = {
     ...f.ctx,
-    numberlinkPackDb: PackDb({ t: 'hash-map' }),
-    numberlinkPuzzleDb: PuzzleDb({ t: 'hash-map' }),
+    numberlinkPackDb: PackDb.init({ t: 'hash-map' }),
+    numberlinkPuzzleDb: PuzzleDb.init({ t: 'hash-map' }),
   }
 
   return {

@@ -6,13 +6,13 @@ import { PuzzleDb } from './@/puzzle/puzzle-db'
 import { PuzzleSync } from './@/puzzle/puzzle-db-sync'
 
 const initCtx = (input: { ctx: SpaceBackendCtx }): NumberlinkBackendCtx => {
-  const numberlinkPuzzleDb = PuzzleDb({
+  const numberlinkPuzzleDb = PuzzleDb.init({
     t: 'sql-db',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,
     migrationPolicy: input.ctx.migrationPolicy,
   })
-  const numberlinkPackDb = PackDb({
+  const numberlinkPackDb = PackDb.init({
     t: 'sql-db',
     sqlDb: input.ctx.sqlDb,
     logger: input.ctx.logger,

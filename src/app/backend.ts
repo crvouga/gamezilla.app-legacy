@@ -50,7 +50,7 @@ const initCtx = async (config: {
     logger,
   })
 
-  const migrationPolicy = SqlDbMigrationPolicy({
+  const migrationPolicy = SqlDbMigrationPolicy.init({
     t: 'never-run',
     logger,
   })

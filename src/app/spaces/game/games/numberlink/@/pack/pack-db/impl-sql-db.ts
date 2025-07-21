@@ -17,7 +17,7 @@ import { PackId } from '../pack-id'
 import { PackName } from '../pack-name'
 import type { IPackDb } from './interface'
 
-export type Config = {
+export type ImplSqlDb = {
   t: 'sql-db'
   sqlDb: ISqlDb
   logger: ILogger
@@ -164,7 +164,7 @@ const puzzleIdCsvToArray = (puzzleIdCsv: string): PuzzleId[] => {
   })
 }
 
-export const PackDb = (config: Config): IPackDb => {
+const init = (config: ImplSqlDb): IPackDb => {
   const logger = config.logger.child(['pack db impl sql'])
 
   config.migrationPolicy.execute({
@@ -431,4 +431,8 @@ export const PackDb = (config: Config): IPackDb => {
       return Result.mapOk(queried, () => null)
     },
   }
+}
+
+export const ImplSqlDb = {
+  init,
 }

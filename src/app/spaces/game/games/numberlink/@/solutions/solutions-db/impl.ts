@@ -1,16 +1,20 @@
-import * as ImplSqlDb from './impl-sql-db'
-import * as ImplKeyValueDb from './impl-key-value-db'
+import { ImplKeyValueDb } from './impl-key-value-db'
+import { ImplSqlDb } from './impl-sql-db'
 import { ISolutionsDb } from './interface'
 
-export type Config = ImplKeyValueDb.Config | ImplSqlDb.Config
+export type SolutionsDb = ImplKeyValueDb | ImplSqlDb
 
-export const SolutionsDb = (config: Config): ISolutionsDb => {
+const init = (config: SolutionsDb): ISolutionsDb => {
   switch (config.t) {
     case 'key-value-db': {
-      return ImplKeyValueDb.SolutionsDb(config)
+      return ImplKeyValueDb.init(config)
     }
     case 'sql-db': {
-      return ImplSqlDb.SolutionsDb(config)
+      return ImplSqlDb.init(config)
     }
   }
+}
+
+export const SolutionsDb = {
+  init,
 }

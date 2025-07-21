@@ -60,7 +60,7 @@ export const TestFrontend = async (config: {
 
   const keyValueDb = KeyValueDb.init({ t: 'web-standard-storage', storage: localStorage, logger })
 
-  const migrationPolicy = SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) })
+  const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) })
 
   const syncEngine = SyncEngineClient({
     crudTransactionDb: CrudTransactionDb({

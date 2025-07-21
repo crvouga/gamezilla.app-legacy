@@ -8,7 +8,7 @@ import { CrudTransactionDb } from './impl-sql'
 export const Fixture = () => {
   const logger = Logger.init({ t: 'noop' })
   const sqlDb = BackendSqlDb.init({ t: 'pglite', pglite: PgliteInstance({ t: 'in-memory' }), logger })
-  const migrationPolicy = SqlDbMigrationPolicy({ t: 'always-run', logger })
+  const migrationPolicy = SqlDbMigrationPolicy.init({ t: 'always-run', logger })
   const crudTransactionDb = CrudTransactionDb({ t: 'sql-db', sqlDb, migrationPolicy, logger })
   return {
     crudTransactionDb,

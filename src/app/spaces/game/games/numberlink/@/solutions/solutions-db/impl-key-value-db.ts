@@ -1,17 +1,17 @@
 import { IKeyValueDb, KeyValueDb } from '~/@/key-value-db'
-import { s } from '~/@/schema'
 import { isErr, Ok } from '~/@/result'
+import { s } from '~/@/schema'
 import { Sub } from '~/@/sub'
 import { Solution } from '../solution'
-import { ISolutionsDb } from './interface'
 import { Solutions } from '../solutions'
+import { ISolutionsDb } from './interface'
 
-export type Config = {
+export type ImplKeyValueDb = {
   t: 'key-value-db'
   keyValueDb: IKeyValueDb
 }
 
-export const SolutionsDb = (config: Config): ISolutionsDb => {
+const init = (config: ImplKeyValueDb): ISolutionsDb => {
   const solutionsByHash = KeyValueDb.withNamespace({
     keyValueDb: config.keyValueDb,
     namespace: ['game', 'flow', 'solutions-by-hash'],
@@ -45,4 +45,8 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
       return Sub.none()
     },
   }
+}
+
+export const ImplKeyValueDb = {
+  init,
 }

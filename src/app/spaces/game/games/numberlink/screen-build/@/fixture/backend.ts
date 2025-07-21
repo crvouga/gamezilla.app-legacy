@@ -13,25 +13,25 @@ const initCtx = async (ctx: SpaceBackendCtx): Promise<NumberlinkBackendCtx> => {
     case 'integration': {
       return {
         ...ctx,
-        numberlinkPackDb: PackDb({
+        numberlinkPackDb: PackDb.init({
           t: 'sql-db',
           sqlDb: f.sqlDbPostgres,
           logger: Logger.init({ t: 'noop' }),
-          migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+          migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
         }),
-        numberlinkPuzzleDb: PuzzleDb({
+        numberlinkPuzzleDb: PuzzleDb.init({
           t: 'sql-db',
           sqlDb: f.sqlDbPostgres,
           logger: Logger.init({ t: 'noop' }),
-          migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+          migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
         }),
       }
     }
     case 'unit': {
       return {
         ...ctx,
-        numberlinkPackDb: PackDb({ t: 'hash-map' }),
-        numberlinkPuzzleDb: PuzzleDb({ t: 'hash-map' }),
+        numberlinkPackDb: PackDb.init({ t: 'hash-map' }),
+        numberlinkPuzzleDb: PuzzleDb.init({ t: 'hash-map' }),
       }
     }
   }

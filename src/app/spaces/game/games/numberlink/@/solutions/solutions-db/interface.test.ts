@@ -6,10 +6,10 @@ import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { VariantGridShorthand } from '../../variant/grid'
 import { SolutionHash } from '../solution-hash/solution-hash'
 import { Solutions } from '../solutions'
-import { Config, SolutionsDb } from './impl'
+import { SolutionsDb } from './impl'
 
-const Fixture = async (config: Config) => {
-  const solutionsDb = SolutionsDb(config)
+const Fixture = async (config: SolutionsDb) => {
+  const solutionsDb = SolutionsDb.init(config)
 
   return {
     solutionsDb,
@@ -19,7 +19,7 @@ const Fixture = async (config: Config) => {
 const Fixtures = async () => {
   const f = await FixtureAppBackend()
 
-  const configs: Config[] = []
+  const configs: SolutionsDb[] = []
 
   configs.push({
     t: 'key-value-db',
@@ -30,7 +30,7 @@ const Fixtures = async () => {
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
     logger: f.logger,
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
@@ -38,7 +38,7 @@ const Fixtures = async () => {
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
       logger: f.logger,
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+      migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     })
   }
 

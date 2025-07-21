@@ -1,6 +1,6 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { Logger } from '~/@/logger'
 import { Result } from '~/@/result'
+import { describe, expect, test } from '~/@/test-runner'
 import { WithSolutions } from '.'
 import { VariantGridShorthand } from '../../../variant/grid'
 import { Puzzle } from '../../puzzle'

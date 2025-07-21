@@ -4,17 +4,24 @@ import { ImplDangerouslyWipeOnNewSchema } from './impl-dangerously-wipe-on-new-s
 import { ImplNeverRun } from './impl-never-run'
 import { ISqlDbMigrationPolicy } from './interface'
 
-export type Config = ImplDangerouslyWipeOnNewSchema.Config | ImplNeverRun.Config | ImplAlwaysRun.Config
+export type SqlDbMigrationPolicy = ImplDangerouslyWipeOnNewSchema | ImplNeverRun | ImplAlwaysRun
 
-export const SqlDbMigrationPolicy = (config: Config): ISqlDbMigrationPolicy => {
+const init = (config: SqlDbMigrationPolicy): ISqlDbMigrationPolicy => {
   const configLogger = 'logger' in config ? config.logger : Logger.init({ t: 'noop' })
   const logger = configLogger.child(['migration-policy'])
   switch (config.t) {
-    case 'never-run':
-      return ImplNeverRun.SqlDbMigrationPolicy({ ...config })
-    case 'dangerously-wipe-on-new-schema':
-      return ImplDangerouslyWipeOnNewSchema.SqlDbMigrationPolicy({ ...config, logger })
-    case 'always-run':
-      return ImplAlwaysRun.SqlDbMigrationPolicy({ ...config, logger })
+    case 'never-run': {
+      return ImplNeverRun.init({ ...config })
+    }
+    case 'dangerously-wipe-on-new-schema': {
+      return ImplDangerouslyWipeOnNewSchema.init({ ...config, logger })
+    }
+    case 'always-run': {
+      return ImplAlwaysRun.init({ ...config, logger })
+    }
   }
+}
+
+export const SqlDbMigrationPolicy = {
+  init,
 }

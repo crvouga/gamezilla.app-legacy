@@ -122,7 +122,7 @@ const initCtx = async (config: { backendUrl: Url; topicUrl: Url }): Promise<Fron
     logger,
   })
 
-  const migrationPolicy = SqlDbMigrationPolicy({
+  const migrationPolicy = SqlDbMigrationPolicy.init({
     t: 'dangerously-wipe-on-new-schema',
     kvDb: keyValueDb,
     logger: logger.setMaxLogLevel('debug'),

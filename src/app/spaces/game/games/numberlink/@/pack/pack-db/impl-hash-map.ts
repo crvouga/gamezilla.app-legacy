@@ -6,11 +6,11 @@ import { PacksDbQuery } from './interface-query'
 
 const db = new Map<string, Pack>()
 
-export type Config = {
+export type ImplHashMap = {
   t: 'hash-map'
 }
 
-export const PackDb = (_config: Config): IPackDb => {
+const init = (_config: ImplHashMap): IPackDb => {
   const queries = new Map<string, PacksDbQuery>()
   const subs = new Map<string, PubSub<Pack[]>>()
 
@@ -94,4 +94,8 @@ export const PackDb = (_config: Config): IPackDb => {
       return Ok(null)
     },
   }
+}
+
+export const ImplHashMap = {
+  init,
 }

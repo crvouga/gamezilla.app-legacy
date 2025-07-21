@@ -15,11 +15,11 @@ const calls = {
 
 const ERROR_EVERY = Number.POSITIVE_INFINITY
 
-export type Config = {
+export type ImplHashMap = {
   t: 'hash-map'
 }
 
-export const PuzzleDb = (_config: Config): IPuzzleDb => {
+const init = (_config: ImplHashMap): IPuzzleDb => {
   return {
     async get(id) {
       calls.get++
@@ -130,4 +130,8 @@ export const PuzzleDb = (_config: Config): IPuzzleDb => {
       return Sub.create()
     },
   }
+}
+
+export const ImplHashMap = {
+  init,
 }

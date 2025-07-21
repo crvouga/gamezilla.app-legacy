@@ -47,7 +47,7 @@ const Fixtures = async () => {
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
     logger: Logger.init({ t: 'noop' }),
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
@@ -55,7 +55,7 @@ const Fixtures = async () => {
       t: 'sql',
       sqlDb: f.sqlDbPostgres,
       logger: Logger.init({ t: 'noop' }),
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+      migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     })
 
     configs.push({
@@ -67,7 +67,7 @@ const Fixtures = async () => {
         subscribersByTopic: new Map(),
       }),
       logger: Logger.init({ t: 'noop' }),
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+      migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     })
   }
 

@@ -1,9 +1,9 @@
 import type { ILogger } from '~/@/logger'
-import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import { Pagination } from '~/@/query/query'
 import { Ok, Result, isErr } from '~/@/result'
 import { s } from '~/@/schema'
 import { Sql } from '~/@/sql'
+import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
 import type { ISqlDb } from '~/@/sql-db/interface'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Puzzle } from '../puzzle'
@@ -11,7 +11,7 @@ import type { IPuzzleDb } from './interface'
 import { OrderClause, PuzzleQuery, WhereClause } from './interface-query'
 import { Row } from './sql/row'
 
-export type Config = {
+export type ImplSqlDb = {
   t: 'sql-db'
   logger: ILogger
   sqlDb: ISqlDb
@@ -41,7 +41,7 @@ const DOWN: string[] = [
   `,
 ]
 
-export const PuzzleDb = (config: Config): IPuzzleDb => {
+const init = (config: ImplSqlDb): IPuzzleDb => {
   config.migrationPolicy.execute({
     sqlDb: config.sqlDb,
     up: UP,
@@ -371,4 +371,8 @@ const toSqlPagination = (input: { pagination: Pagination }) => {
     variables,
     str,
   }
+}
+
+export const ImplSqlDb = {
+  init,
 }

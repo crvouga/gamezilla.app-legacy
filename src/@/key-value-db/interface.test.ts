@@ -111,7 +111,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
       t: 'sql-db',
       sqlDb: sqlDbSqlite,
       logger,
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+      migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     }),
   })
 
@@ -129,7 +129,7 @@ const Fixtures = async (): Promise<Fixture[]> => {
           databaseUrl: DATABASE_URL,
         }),
         logger,
-        migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+        migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
       }),
     })
   }

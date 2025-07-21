@@ -3,9 +3,9 @@ import { IKeyValueDb } from '~/@/key-value-db'
 import { ILogger } from '~/@/logger'
 import { isErr } from '~/@/result'
 import { s } from '~/@/schema'
-import { ISqlDbMigrationPolicy } from '../interface'
+import { ISqlDbMigrationPolicy } from './interface'
 
-export type Config = {
+export type ImplDangerouslyWipeOnNewSchema = {
   t: 'dangerously-wipe-on-new-schema'
   kvDb: IKeyValueDb
   logger: ILogger
@@ -22,7 +22,7 @@ const hashSql = (sql: string[]) => {
   return btoa(deterministicJsonStringify(sql))
 }
 
-export const SqlDbMigrationPolicy = (config: Config): ISqlDbMigrationPolicy => {
+const init = (config: ImplDangerouslyWipeOnNewSchema): ISqlDbMigrationPolicy => {
   return {
     async execute(input) {
       const logger = input.logger.child(['dangerously-wipe-on-new-schema'])
@@ -123,4 +123,8 @@ export const SqlDbMigrationPolicy = (config: Config): ISqlDbMigrationPolicy => {
       logger.debug('new schema written', { input, entryNew })
     },
   }
+}
+
+export const ImplDangerouslyWipeOnNewSchema = {
+  init,
 }

@@ -4,13 +4,13 @@ import { Err, isErr, Ok, Result, unwrapOr } from '~/@/result'
 import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
 import { Sql } from '~/@/sql'
-import { ISqlDb } from '~/@/sql-db/interface'
 import { ISqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/interface'
+import { ISqlDb } from '~/@/sql-db/interface'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Solutions } from '../solutions'
 import { ISolutionsDb } from './interface'
 
-export type Config = {
+export type ImplSqlDb = {
   t: 'sql-db'
   sqlDb: ISqlDb
   migrationPolicy: ISqlDbMigrationPolicy
@@ -45,7 +45,7 @@ const rowToSolutions = (row: Row): Result<string, Solutions> => {
   return Ok(parsed.value)
 }
 
-export const SolutionsDb = (config: Config): ISolutionsDb => {
+const init = (config: ImplSqlDb): ISolutionsDb => {
   config.migrationPolicy.execute({
     down: DOWN,
     up: UP,
@@ -190,4 +190,8 @@ export const SolutionsDb = (config: Config): ISolutionsDb => {
       )
     },
   }
+}
+
+export const ImplSqlDb = {
+  init,
 }

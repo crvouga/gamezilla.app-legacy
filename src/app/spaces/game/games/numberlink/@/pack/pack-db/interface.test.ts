@@ -7,10 +7,10 @@ import { UserId } from '~/app/@/data/user-id'
 import { PuzzleId } from '../../puzzle/puzzle-id'
 import { Pack } from '../pack'
 import { PackName } from '../pack-name'
-import { Config, PackDb } from './impl'
+import { PackDb } from './impl'
 
-const Fixture = (config: Config) => {
-  const packDb = PackDb(config)
+const Fixture = (config: PackDb) => {
+  const packDb = PackDb.init(config)
   return {
     packDb,
   }
@@ -18,7 +18,7 @@ const Fixture = (config: Config) => {
 
 const Fixtures = async () => {
   const f = await FixtureAppBackend()
-  const configs: Config[] = []
+  const configs: PackDb[] = []
 
   configs.push({
     t: 'hash-map',
@@ -28,7 +28,7 @@ const Fixtures = async () => {
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
     logger: Logger.init({ t: 'console', namespace: ['pack-db'], newLinePerMsg: false, maxLogLevel: 'info' }),
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
@@ -36,7 +36,7 @@ const Fixtures = async () => {
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
       logger: Logger.init({ t: 'console', namespace: ['pack-db'], newLinePerMsg: false, maxLogLevel: 'info' }),
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+      migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     })
   }
 

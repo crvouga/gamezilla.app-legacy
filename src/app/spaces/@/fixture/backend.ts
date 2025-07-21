@@ -57,7 +57,7 @@ export const FixtureSpaceBackend = async () => {
       t: 'sql-db',
       sqlDb: f.ctx.sqlDb,
       logger: f.ctx.logger,
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'never-run', logger: Logger.init({ t: 'noop' }) }),
+      migrationPolicy: SqlDbMigrationPolicy.init({ t: 'never-run', logger: Logger.init({ t: 'noop' }) }),
     }),
     topic,
   }

@@ -1,16 +1,20 @@
-import * as ImplHashMap from './impl-hash-map'
-import * as ImplSqlDb from './impl-sql-db'
+import { ImplHashMap } from './impl-hash-map'
+import { ImplSqlDb } from './impl-sql-db'
 import type { IPackDb } from './interface'
 
-export type Config = ImplHashMap.Config | ImplSqlDb.Config
+export type PackDb = ImplHashMap | ImplSqlDb
 
-export const PackDb = (config: Config): IPackDb => {
+const init = (config: PackDb): IPackDb => {
   switch (config.t) {
     case 'hash-map': {
-      return ImplHashMap.PackDb(config)
+      return ImplHashMap.init(config)
     }
     case 'sql-db': {
-      return ImplSqlDb.PackDb(config)
+      return ImplSqlDb.init(config)
     }
   }
+}
+
+export const PackDb = {
+  init,
 }

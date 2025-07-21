@@ -1,10 +1,10 @@
 import { Logger } from '~/@/logger'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
-import { Config, PuzzleDb } from './impl'
+import { PuzzleDb } from './impl'
 
-const BaseFixture = (config: Config) => {
-  const puzzleDb = PuzzleDb(config)
+const BaseFixture = (config: PuzzleDb) => {
+  const puzzleDb = PuzzleDb.init(config)
   return {
     puzzleDb,
   }
@@ -13,25 +13,27 @@ const BaseFixture = (config: Config) => {
 export const BaseFixtures = async () => {
   const f = await FixtureAppBackend()
 
-  const configs: Config[] = []
+  const configs: PuzzleDb[] = []
 
   configs.push({
     t: 'hash-map',
   })
 
+  const logger = Logger.init({ t: 'noop' })
+
   configs.push({
     t: 'sql-db',
     sqlDb: f.sqlDbSqlite,
-    logger: Logger.init({ t: 'noop' }),
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+    logger,
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger }),
   })
 
   if (f.t === 'integration') {
     configs.push({
       t: 'sql-db',
       sqlDb: f.sqlDbPostgres,
-      logger: Logger.init({ t: 'noop' }),
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+      logger,
+      migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger }),
     })
   }
 

@@ -30,7 +30,7 @@ export const FixtureAppFrontend = async (input?: { currentScreen?: Screen }) => 
     role: 'normal',
   }
   const keyValueDb = KeyValueDb.init({ t: 'in-memory' })
-  const migrationPolicy = SqlDbMigrationPolicy({
+  const migrationPolicy = SqlDbMigrationPolicy.init({
     t: 'dangerously-wipe-on-new-schema',
     logger: Logger.init({ t: 'noop' }),
     kvDb: keyValueDb,

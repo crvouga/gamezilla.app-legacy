@@ -1,15 +1,19 @@
 import { ILogger } from '~/@/logger'
-import { ISqlDbMigrationPolicy } from '../interface'
+import { ISqlDbMigrationPolicy } from './interface'
 
-export type Config = {
+export type ImplNeverRun = {
   t: 'never-run'
   logger: ILogger
 }
 
-export const SqlDbMigrationPolicy = (config: Config): ISqlDbMigrationPolicy => {
+const init = (config: ImplNeverRun): ISqlDbMigrationPolicy => {
   return {
     async execute(_input) {
       config.logger.debug('never-run, skipping migration')
     },
   }
+}
+
+export const ImplNeverRun = {
+  init,
 }

@@ -1,16 +1,20 @@
-import * as ImplHashMap from './impl-hash-map'
-import * as ImplSqlDb from './impl-sql-db'
+import { ImplHashMap } from './impl-hash-map'
+import { ImplSqlDb } from './impl-sql-db'
 import type { IPuzzleDb } from './interface'
 
-export type Config = ImplHashMap.Config | ImplSqlDb.Config
+export type PuzzleDb = ImplHashMap | ImplSqlDb
 
-export const PuzzleDb = (config: Config): IPuzzleDb => {
+const init = (config: PuzzleDb): IPuzzleDb => {
   switch (config.t) {
     case 'hash-map': {
-      return ImplHashMap.PuzzleDb(config)
+      return ImplHashMap.init(config)
     }
     case 'sql-db': {
-      return ImplSqlDb.PuzzleDb(config)
+      return ImplSqlDb.init(config)
     }
   }
+}
+
+export const PuzzleDb = {
+  init,
 }

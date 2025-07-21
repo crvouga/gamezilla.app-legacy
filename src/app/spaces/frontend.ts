@@ -41,7 +41,7 @@ const initCtx = async (input: {
       t: 'sql-db',
       sqlDb: input.ctx.sqlDb,
       logger: input.ctx.logger,
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+      migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     }),
   }
 }

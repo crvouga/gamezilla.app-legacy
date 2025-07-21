@@ -1,10 +1,10 @@
 import { describe, expect, test } from '~/@/test-runner'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { Pack } from '../pack'
-import { Config, PackDb } from './impl'
+import { PackDb } from './impl'
 
-const Fixture = (config: Config) => {
-  const packDb = PackDb(config)
+const Fixture = (config: PackDb) => {
+  const packDb = PackDb.init(config)
   return {
     packDb,
   }
@@ -12,7 +12,7 @@ const Fixture = (config: Config) => {
 
 const Fixtures = async () => {
   await FixtureAppBackend()
-  const configs: Config[] = []
+  const configs: PackDb[] = []
 
   configs.push({ t: 'hash-map' })
 

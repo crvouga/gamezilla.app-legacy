@@ -5,14 +5,14 @@ import { unwrap } from '~/@/result'
 import { s } from '~/@/schema'
 import { BackendSqlDb } from '~/@/sql-db/backend-impl'
 import { describe, expect, test } from '~/@/test-runner'
-import { SqlDbMigrationPolicy } from '../impl'
+import { SqlDbMigrationPolicy } from './impl'
 
 const Fixture = async () => {
   const logger = Logger.init({ t: 'noop' })
   const pglite = PgliteInstance({ t: 'in-memory' })
   const sqlDb = BackendSqlDb.init({ t: 'pglite', pglite, logger })
   const kvDb = KeyValueDb.init({ t: 'in-memory', logger })
-  const migrationPolicy = SqlDbMigrationPolicy({
+  const migrationPolicy = SqlDbMigrationPolicy.init({
     t: 'dangerously-wipe-on-new-schema',
     kvDb,
     logger: Logger.init({ t: 'noop' }),

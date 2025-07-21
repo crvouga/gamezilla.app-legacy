@@ -31,7 +31,7 @@ const Fixtures = async () => {
     t: 'sql',
     sqlDb: f.sqlDbSqlite,
     logger: Logger.init({ t: 'console', namespace: ['profile-db'], newLinePerMsg: false, maxLogLevel: 'info' }),
-    migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+    migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
   })
 
   if (f.t === 'integration') {
@@ -40,7 +40,7 @@ const Fixtures = async () => {
       // sqlDb: f.dbConnPostgres,
       sqlDb: f.sqlDbPostgres,
       logger: Logger.init({ t: 'console', namespace: ['profile-db'], newLinePerMsg: false, maxLogLevel: 'info' }),
-      migrationPolicy: SqlDbMigrationPolicy({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
+      migrationPolicy: SqlDbMigrationPolicy.init({ t: 'always-run', logger: Logger.init({ t: 'noop' }) }),
     })
   }
 

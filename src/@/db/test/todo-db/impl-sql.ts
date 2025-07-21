@@ -38,7 +38,7 @@ const init = (config: TodoDb): ITodoDb => {
     parser: ITodoDb.schema,
     sqlDb: config.sqlDb,
     migration: {
-      policy: SqlDbMigrationPolicy({
+      policy: SqlDbMigrationPolicy.init({
         t: 'dangerously-wipe-on-new-schema',
         logger: config.logger,
         kvDb: config.kvDb,
