@@ -39,6 +39,9 @@ const init = (config: ImplPlaywright): ITestNode => {
     async attr(_name) {
       return null
     },
+    async inputValue() {
+      return null
+    },
     async do(_action) {
       return
     },
@@ -110,6 +113,10 @@ const locatorToTestNode = (locator: Locator): ITestNode => {
     },
     async audio() {
       return []
+    },
+    async inputValue() {
+      const value = await locator.inputValue()
+      return value
     },
     async isVisible() {
       const element = await locator.elementHandle()

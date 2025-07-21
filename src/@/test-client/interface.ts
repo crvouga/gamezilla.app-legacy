@@ -14,6 +14,7 @@ export type ITestNode = {
   findByTestId: (testId: string) => Promise<ITestNode | null>
   findByRole: (role: AriaRole, label?: string, config?: FindConfig) => Promise<ITestNode | null>
   text: () => Promise<string | null>
+  inputValue: () => Promise<string | null>
   attr: (name: string) => Promise<string | null>
   do: (action: TestAction) => Promise<void>
   isVisible: () => Promise<boolean>

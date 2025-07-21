@@ -12,14 +12,15 @@ import { doVerifyCode } from './test/do-verify-code'
 
 const Fixture = async (e: TestRunnerEnv) => {
   const f = await FixtureAppE2E(e)
-  await doOpenSendCodeScreen(f)
-  await doSendCode(f)
+
   return { ...f }
 }
 
 describe('verify code', () => {
   test('verify code screen back button', async (e) => {
     await using f = await Fixture(e)
+    await doOpenSendCodeScreen(f)
+    await doSendCode(f)
     const verifyCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
     expect(verifyCodeScreen).toBeTruthy()
     await doClickBackButton(f)
@@ -30,6 +31,8 @@ describe('verify code', () => {
   test('verify code screen back button play sound', async (e) => {
     if (e.e2e) return
     await using f = await Fixture(e)
+    await doOpenSendCodeScreen(f)
+    await doSendCode(f)
     const verifyCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
     expect(verifyCodeScreen).toBeTruthy()
     const before = await f.frontend.audio()
@@ -43,6 +46,8 @@ describe('verify code', () => {
 
   test('go to space screen after verifying code', async (e) => {
     await using f = await Fixture(e)
+    await doOpenSendCodeScreen(f)
+    await doSendCode(f)
     await doDismissAlert(f.frontend, 'info')
     await doVerifyCode(f)
     const screen = await f.frontend.findByTestId(SpacesFrontend.TEST_ID.SPACE_LIST_SCREEN)
@@ -51,6 +56,8 @@ describe('verify code', () => {
 
   test('enter wrong code does stays on verify code screen', async (e) => {
     await using f = await Fixture(e)
+    await doOpenSendCodeScreen(f)
+    await doSendCode(f)
     await doVerifyCode(f, { code: '111' })
     const verifyCodeScreen = await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
     expect(verifyCodeScreen).toBeTruthy()
@@ -58,6 +65,8 @@ describe('verify code', () => {
 
   test('fail for correct code after enough wrong attempts', async (e) => {
     await using f = await Fixture(e)
+    await doOpenSendCodeScreen(f)
+    await doSendCode(f)
     for (let i = 0; i < 5; i++) {
       await doVerifyCode(f, { code: '111' })
       await f.frontend.findByTestId(AuthFrontend.TEST_ID.VERIFY_CODE_SCREEN)
@@ -68,13 +77,27 @@ describe('verify code', () => {
 
   test.skip('show alert on verifying code', async (e) => {
     await using f = await Fixture(e)
+    await doOpenSendCodeScreen(f)
+    await doSendCode(f)
     await doVerifyCode(f)
     await doDismissAlert(f.frontend, 'info')
   })
 
   test('show error alert when code is wrong', async (e) => {
     await using f = await Fixture(e)
+    await doOpenSendCodeScreen(f)
+    await doSendCode(f)
     await doVerifyCode(f, { code: '111' })
     await doDismissAlert(f.frontend, 'error')
+  })
+
+  test('code input should be empty after code was sent', async (e) => {
+    await using f = await Fixture(e)
+    await doOpenSendCodeScreen(f)
+    await doSendCode(f)
+    const [codeInput] = await f.frontend.find(`input[type='tel']`)
+    expect(codeInput).toBeTruthy()
+    const value = await codeInput!.inputValue()
+    expect(value).toEqual('')
   })
 })

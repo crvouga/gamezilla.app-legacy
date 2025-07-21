@@ -48,8 +48,9 @@ export const TextField = (input: {
           'auto-correct': 'off',
           'auto-save': 'off',
           step: input.step,
-          value: input.value,
-          defaultValue: input.value,
+          key: input.id,
+          // value: input.value,
+          // defaultValue: input.value,
           onInput: (e: { preventDefault: () => void; currentTarget: { value: string } }) => {
             e.preventDefault()
             const valueNew = eventToInputValue(e)

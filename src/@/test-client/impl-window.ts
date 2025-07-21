@@ -15,6 +15,9 @@ export type ImplWindow = ImplWindowBase & {
 
 const init = (config: ImplWindow): ITestNode => {
   return {
+    async inputValue() {
+      return null
+    },
     async audio() {
       return config.audioPlayer.played()
     },
@@ -86,6 +89,12 @@ const find = async (
 
 export const elementToTestNode = (node: Element): ITestNode => {
   return {
+    async inputValue() {
+      if ('value' in node && typeof node.value === 'string') {
+        return node.value
+      }
+      return null
+    },
     async text() {
       return node.textContent ?? null
     },
