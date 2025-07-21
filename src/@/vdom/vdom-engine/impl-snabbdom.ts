@@ -12,10 +12,6 @@ import {
 import { VDOM_FRAGMENT_KEY } from '../fragment'
 import { IVirtualDomEngine } from './interface'
 
-// Reusable objects to reduce allocations
-let reusableAttrs: Attrs = {}
-let reusableOn: On = {}
-
 export type ImplSnabbdom = {
   t: 'snabbdom'
 }
@@ -46,6 +42,10 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
     },
     createElement: (tag: any, props: any, children: any) => {
       try {
+        // Reusable objects to reduce allocations
+        let reusableAttrs: Attrs = {}
+        let reusableOn: On = {}
+
         children = processChildren(children ?? props?.children)
 
         if (typeof tag === 'function') {
@@ -55,10 +55,6 @@ const init_ = (_config: ImplSnabbdom): IVirtualDomEngine => {
         if (tag === VDOM_FRAGMENT_KEY) {
           return fragment(children)
         }
-
-        // Clear reusable objects
-        reusableAttrs = {}
-        reusableOn = {}
 
         let hasAttrs = false
         let hasEvents = false
