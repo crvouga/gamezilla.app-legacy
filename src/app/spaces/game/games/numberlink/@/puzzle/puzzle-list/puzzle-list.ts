@@ -1,6 +1,5 @@
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
-import { Sub } from '~/@/sub'
 import { TimeSpan } from '~/@/time/time-span'
 import { UnixMs } from '~/@/time/unix-ms'
 import { Checkbox, CheckboxState } from '~/@/ui/checkbox/checkbox'
@@ -11,71 +10,26 @@ import { IconPuzzlePiece } from '~/@/ui/icon'
 import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
-import { AddPuzzlesCmd } from '../../frontend/add-puzzles-cmd.$msg'
 import { FlowFrontendCtxBase } from '../../frontend/ctx-base'
 import { NumberlinkVariantBoard } from '../../variant'
 import { Puzzle } from '../puzzle'
 import { PuzzleQuery } from '../puzzle-db/interface-query'
 import { PuzzleId } from '../puzzle-id'
-import { GotPuzzleLoaderMsg } from './got-puzzle-loader-msg.$msg'
-import { QueryForm } from './query-form'
-import type { FrontendModule, ModelFrontend, MsgFrontend } from './types'
+import { QueryForm } from './puzzle-list-query-form'
+import { PuzzleDbQueryCache } from '../puzzle-db-query-cache'
 
-const update: FrontendModule['update'] = (input) => {
-  if (GotPuzzleLoaderMsg.is(input.msgIn)) {
-    return update({
-      ...input,
-      msgIn: null,
-      msg: input.msgIn.c.msg,
-    })
-  }
-
-  switch (input.msg?.t) {
-    case 'got-puzzle-db-puzzles': {
-      return {
-        model: {
-          ...input.model,
-          results: {
-            ...input.model.results,
-            [PuzzleQuery.toKey(input.msg.query)]: input.msg.puzzles.map((p) => p.id),
-          },
-        },
-        msgOut: [
-          AddPuzzlesCmd.init(
-            input.msg.puzzles.reduce<{ [k: PuzzleId]: Puzzle }>((acc, p) => ({ ...acc, [p.id]: p }), {}),
-            input.msg,
-          ),
-        ],
-      }
-    }
-  }
-
-  return { model: input.model }
-}
-
-const watch = <TMsg>(ctx: FlowFrontendCtxBase, query: PuzzleQuery | null, map: (m: MsgFrontend) => TMsg): Sub<TMsg> => {
-  if (!query) return Sub.none()
-
-  return Sub.map(ctx.puzzleDb.sub(query), (puzzles) => map({ t: 'got-puzzle-db-puzzles', query, puzzles }))
-}
-
-const ViewList = (input: {
+const View = (input: {
   selectable?: boolean
   selected?: PuzzleId[]
   ctx: FlowFrontendCtxBase
   query: PuzzleQuery
-  model: ModelFrontend
   onQueryChanged: (query: PuzzleQuery) => void
   onItemClick: (puzzle: Puzzle) => void
   onHeaderCheckboxClick?: (allPuzzleIds: PuzzleId[]) => void
 }) => {
-  const queryKey = PuzzleQuery.toKey(input.query)
-  const puzzleIds = input.model.results[queryKey] ?? []
-  const puzzles = puzzleIds.flatMap((id) => (input.ctx.puzzles[id] ? [input.ctx.puzzles[id]] : []))
-
-  const isLoading = !(queryKey in input.model.results)
-  const isEmpty = !isLoading && puzzles.length === 0
-
+  const puzzles = PuzzleDbQueryCache.read(input.ctx, input.query)
+  const isLoading = PuzzleDbQueryCache.isLoading(input.ctx, input.query)
+  const isEmpty = PuzzleDbQueryCache.isEmpty(input.ctx, input.query)
   const totalCount = puzzles.length
   const selectedCount = Math.min(input.selected?.length ?? 0, totalCount)
 
@@ -87,7 +41,7 @@ const ViewList = (input: {
         Clickable,
         {
           class: 'flex w-fit items-center gap-4 px-4 py-2',
-          onClick: () => input.onHeaderCheckboxClick?.(puzzleIds),
+          onClick: () => input.onHeaderCheckboxClick?.(puzzles.map((p) => p.id)),
         },
         [
           h(Checkbox, { state: toTopLevelCheckboxState({ totalCount, selectedCount }) }),
@@ -204,8 +158,6 @@ const toListItemSecondaryText = (input: {
   }
 }
 
-export const PuzzleLoaderFrontend = {
-  update,
-  watch,
-  ViewList,
+export const PuzzleList = {
+  View,
 }

@@ -15,8 +15,6 @@ import { IPackDb, PackDb } from './@/pack/pack-db'
 import { PackLoaderTypes } from './@/pack/pack-loader'
 import { PackLoaderFrontend } from './@/pack/pack-loader/frontend'
 import { IPuzzleDb, PuzzleDb } from './@/puzzle/puzzle-db'
-import { PuzzleLoaderTypes } from './@/puzzle/puzzle-loader'
-import { PuzzleLoaderFrontend } from './@/puzzle/puzzle-loader/frontend'
 import { HintCalculatorTypes } from './@/solutions/hint-calculator'
 import { HintCalculatorFrontend } from './@/solutions/hint-calculator/frontend'
 import { Solutions } from './@/solutions/solutions'
@@ -31,7 +29,6 @@ import type { FrontendModule, MsgFrontend } from './types'
 const init: FrontendModule['init'] = {
   screenBuild: ScreenBuildFrontend.init,
   screenPlay: ScreenPlayFrontend.init,
-  puzzleLoader: PuzzleLoaderTypes.initFrontend,
   packLoader: PackLoaderTypes.initFrontend,
   hintCalculator: HintCalculatorTypes.initFrontend,
   solutionsLoader: SolutionsLoaderTypes.initFrontend,
@@ -69,7 +66,6 @@ const toFrontendCtx = (input: Parameters<FrontendModule['update']>[0]): FlowFron
     solutionsDb,
     packs: input.model.packs,
     puzzles: input.model.puzzles,
-    puzzleLoader: input.model.puzzleLoader,
     packLoader: input.model.packLoader,
     solutions: input.model.solutions,
     hintCalculator: input.model.hintCalculator,
@@ -87,26 +83,9 @@ const update: FrontendModule['update'] = (input) => {
     (model) => updateScreenPlay({ ...input, model }),
     (model) => updateScreenBuild({ ...input, model }),
     (model) => updatePackLoader({ ...input, model }),
-    (model) => updatePuzzleLoader({ ...input, model }),
     (model) => updateHintCalculator({ ...input, model }),
     (model) => updateSolutionsLoader({ ...input, model }),
   )
-}
-
-const updatePuzzleLoader: FrontendModule['update'] = (input) => {
-  const ctx = toFrontendCtx(input)
-
-  const updated = PuzzleLoaderFrontend.update({
-    ctx,
-    model: input.model.puzzleLoader,
-    msgIn: input.msgIn,
-  })
-
-  return {
-    model: { ...input.model, puzzleLoader: updated.model },
-    eff: Eff.tag('got-puzzle-loader-msg', updated.eff),
-    msgOut: updated.msgOut,
-  }
 }
 
 const updatePackLoader: FrontendModule['update'] = (input) => {

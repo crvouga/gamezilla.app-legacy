@@ -4,10 +4,10 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { GameFrontendModule } from '~/app/spaces/game/games/@/architecture/game-frontend-v2'
 import { FlowFrontendCtx } from '../../../@/frontend/ctx'
+import { PuzzleDbQueryCache } from '../../../@/puzzle/puzzle-db-query-cache'
 import { PuzzleQuery } from '../../../@/puzzle/puzzle-db/interface-query'
-import { PuzzleLoaderFrontend } from '../../../@/puzzle/puzzle-loader/frontend'
-import { GotPuzzleLoaderMsg } from '../../../@/puzzle/puzzle-loader/got-puzzle-loader-msg.$msg'
-import type { FrontendModule, ModelSpace, MsgFrontend } from '../../types'
+import { PuzzleList } from '../../../@/puzzle/puzzle-list/puzzle-list'
+import type { FrontendModule, ModelSpace } from '../../types'
 import { CreateNewPuzzleFrontend } from './button-create-new-puzzle/frontend'
 
 const update: FrontendModule['update'] = (input) => {
@@ -51,12 +51,8 @@ const toPuzzleQuery = (input: { ctx: FlowFrontendCtx; modelSpace: ModelSpace }):
 }
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
-  const query = toPuzzleQuery(input)
-  return PuzzleLoaderFrontend.watch(
-    input.ctx,
-    query,
-    (c): MsgFrontend => ({ t: 'got-msg-out', c: GotPuzzleLoaderMsg.init(c) }),
-  )
+  console.log('subscriptions', toPuzzleQuery(input))
+  return PuzzleDbQueryCache.sub(input.ctx.puzzleDb, toPuzzleQuery(input), (c) => ({ t: 'got-msg-out', c }))
 }
 
 const View: FrontendModule['View'] = (input) => {
@@ -77,10 +73,9 @@ const View: FrontendModule['View'] = (input) => {
     },
     postAction: CreateNewPuzzleFrontend.viewCreateAction(input),
     renderBody: () =>
-      h(PuzzleLoaderFrontend.ViewList, {
+      h(PuzzleList.View, {
         ctx: input.ctx,
-        model: input.ctx.puzzleLoader,
-        query: query,
+        query,
         onQueryChanged: (query) => {
           input.dispatch({
             t: 'got-msg-space',

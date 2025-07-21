@@ -9,7 +9,6 @@ import type { PackId } from './@/pack/pack-id'
 import { PackLoaderTypes } from './@/pack/pack-loader'
 import type { Puzzle } from './@/puzzle/puzzle'
 import type { PuzzleId } from './@/puzzle/puzzle-id'
-import { PuzzleLoaderTypes } from './@/puzzle/puzzle-loader'
 import { HintCalculatorTypes } from './@/solutions/hint-calculator'
 import { Solutions } from './@/solutions/solutions'
 import { SolutionsLoaderTypes } from './@/solutions/solutions-loader'
@@ -26,8 +25,6 @@ export type ModelFrontend = {
   puzzles: { [puzzleId: PuzzleId]: Puzzle }
   packs: { [packId: PackId]: Pack }
   solutions: Solutions
-  //
-  puzzleLoader: PuzzleLoaderTypes.ModelFrontend
   packLoader: PackLoaderTypes.ModelFrontend
   hintCalculator: HintCalculatorTypes.ModelFrontend
   solutionsLoader: SolutionsLoaderTypes.ModelFrontend
@@ -50,7 +47,6 @@ export type MsgFrontend =
   | { t: 'got-screen-build-msg'; c: BuildTypes.MsgFrontend }
   | { t: 'got-screen-play-msg'; c: PlayTypes.MsgFrontend }
   | { t: 'got-pack-loader-msg'; c: PackLoaderTypes.MsgFrontend }
-  | { t: 'got-puzzle-loader-msg'; c: PuzzleLoaderTypes.MsgFrontend }
   | { t: 'got-solutions-loader-msg'; c: SolutionsLoaderTypes.MsgFrontend }
   | { t: 'got-hint-calculator-msg'; c: HintCalculatorTypes.MsgFrontend }
 

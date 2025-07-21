@@ -74,9 +74,9 @@ const init = (config: ImplPglite): ISqlDb => {
     sub(input, mapper) {
       const queryKey = deterministicJsonStringify({ sql: input.sql, vars: input.vars })
 
-      const sub = subsByQuery.get(queryKey)
-
       type Row = s.Infer<typeof input.schema>
+
+      const sub = subsByQuery.get(queryKey)
 
       if (sub) {
         return Sub.map(sub as Sub<Row[]>, mapper)

@@ -54,7 +54,6 @@ const View = (input: { query: Model; ctx: FlowFrontendCtxBase; onChange: (query:
           size: 'sm',
           renderStartIcon: (input) => h(IconUserCircle, input),
           label: input.ctx.t('app.created-by-you'),
-          // onClick: () => dispatch({ t: 'toggled-created-by-you', userId: input.ctx.currentUser.userId })
         }),
 
       h('div', { class: 'flex-1' }),

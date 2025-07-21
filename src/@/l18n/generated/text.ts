@@ -52,7 +52,7 @@ import type { Text as Text49 } from '../../../app/spaces/game/games/numberlink/@
 import type { Text as Text50 } from '../../../app/spaces/game/games/numberlink/@/mode-play/$l18n'
 import type { Text as Text51 } from '../../../app/spaces/game/games/numberlink/@/pack/pack-loader/$l18n'
 import type { Text as Text52 } from '../../../app/spaces/game/games/numberlink/@/pack/pack-name.$l18n'
-import type { Text as Text53 } from '../../../app/spaces/game/games/numberlink/@/puzzle/puzzle-loader/$l18n'
+import type { Text as Text53 } from '../../../app/spaces/game/games/numberlink/@/puzzle/puzzle-list/$l18n'
 import type { Text as Text54 } from '../../../app/spaces/game/games/numberlink/@/puzzle/puzzle-name/$l18n'
 import type { Text as Text55 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/find-solutions-confirmation-body.$l18n'
 import type { Text as Text56 } from '../../../app/spaces/game/games/numberlink/@/solutions/hint-calculator/l18n/find-solutions.$l18n'

@@ -266,14 +266,19 @@ const init = (config: ImplSqlDb): IPuzzleDb => {
       })
     },
 
-    sub(input: PuzzleQuery) {
+    sub<T>(input: PuzzleQuery, mapper: (puzzles: Puzzle[]) => T) {
       const sql = toQuerySql(input)
-      return config.sqlDb.sub({ schema: Row, sql: sql.str, vars: sql.variables }, (rows) => {
-        return rows.flatMap((row) => {
+      const sub = config.sqlDb.sub({ schema: Row, sql: sql.str, vars: sql.variables }, (rows) => {
+        const puzzles: Puzzle[] = []
+        for (const row of rows) {
           const puzzle = Row.rowToPuzzle(row)
-          return puzzle ? [puzzle] : []
-        })
+          if (puzzle) {
+            puzzles.push(puzzle)
+          }
+        }
+        return mapper(puzzles)
       })
+      return sub
     },
   }
 }

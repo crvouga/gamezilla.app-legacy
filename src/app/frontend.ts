@@ -195,6 +195,7 @@ const toCtx = (input: { model: ModelFrontend; ctx: FrontendCtxModule }): Fronten
     currentUserState,
     currentUser: currentUserState.t === 'logged-in' ? currentUserState.userAccount : null,
     backendConnectionStatus: toBackendConnectionStatus(input.model.wire.backendConnection),
+    queryCache: input.model.frontend.queryCache,
   }
 
   return baseCtx

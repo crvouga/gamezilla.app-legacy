@@ -1,3 +1,4 @@
+import { indexBy } from '~/@/array/index-by'
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { Sub } from '~/@/sub'
 import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
@@ -7,32 +8,39 @@ import { IPuzzleDb } from './puzzle-db/interface'
 import { PuzzleQuery } from './puzzle-db/interface-query'
 
 const sub = <TMsg>(puzzleDb: IPuzzleDb, query: PuzzleQuery, mapper: (m: unknown) => TMsg): Sub<TMsg> => {
-  return Sub.map(puzzleDb.sub(query), (_c) =>
-    mapper(
+  return puzzleDb.sub(query, (puzzles) => {
+    console.log('PuzzleDbQueryCache.sub', puzzles)
+    return mapper(
       GotQueryCacheMsg.init({
-        entities: {},
+        entities: indexBy(puzzles, (c) => c.id),
         query,
-        results: [],
+        results: puzzles.map((c) => c.id),
         t: 'got-entities',
       }),
-    ),
-  )
+    )
+  })
 }
 
-const read = (queryCache: QueryCache, query: PuzzleQuery): Puzzle[] => {
+const read = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): Puzzle[] => {
   const queryKey = deterministicJsonStringify(query)
-  const results = queryCache.results[queryKey]
-  const entities = results?.map((id) => queryCache.entities[id] as Puzzle) ?? []
+  const results = ctx.queryCache.results[queryKey]
+  const entities = results?.map((id) => ctx.queryCache.entities[id] as Puzzle) ?? []
   return entities
 }
 
-const isLoading = (queryCache: QueryCache, query: PuzzleQuery): boolean => {
+const isLoading = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): boolean => {
   const queryKey = deterministicJsonStringify(query)
-  return queryCache.results[queryKey] === undefined
+  return ctx.queryCache.results[queryKey] === undefined
+}
+
+const isEmpty = (ctx: { queryCache: QueryCache }, query: PuzzleQuery): boolean => {
+  const puzzles = read(ctx, query)
+  return !isLoading(ctx, query) && puzzles.length === 0
 }
 
 export const PuzzleDbQueryCache = {
   sub,
   read,
   isLoading,
+  isEmpty,
 }
