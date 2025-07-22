@@ -17,7 +17,7 @@ const createDiscNode = ({
   y: number
   player: 'player-one' | 'player-two'
 }) => {
-  const circle = document.createElementNS('http://www.w3.org/2000/svg', Circle)
+  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
 
   circle.setAttribute('id', toDiscId({ x, y }))
   circle.setAttribute('cx', `${x}`)

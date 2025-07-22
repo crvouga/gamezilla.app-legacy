@@ -54,7 +54,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
         const strokeWidth = 0.1 * scale
 
         if (slot === 'O') {
-          return h(Circle, { r, cx, cy, stroke: gameTheme.naught, strokeWidth, fill: 'transparent' })
+          return h(Circle, { r, cx, cy, stroke: gameTheme.naught, 'stroke-width': strokeWidth, fill: 'transparent' })
         }
 
         if (slot === 'X') {
@@ -301,7 +301,7 @@ const Naught = ({
   cx: number
   cy: number
 }) => {
-  return h(Circle, { r, cx, cy, stroke: color, strokeWidth, fill: 'transparent' })
+  return h(Circle, { r, cx, cy, stroke: color, 'stroke-width': strokeWidth, fill: 'transparent' })
 }
 
 export const PlayerTypeIcon = ({ playerType, class: class_ }: { playerType: PlayerType; class?: string }) => {
