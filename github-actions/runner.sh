@@ -5,6 +5,9 @@ set -e
 dockerd &
 sleep 3 # Give docker some time to start
 
+# Register binfmt handlers for multi-platform support
+docker run --rm --privileged tonistiigi/binfmt --install all
+
 if [ -z "$GITHUB_RUNNER_TOKEN" ]; then
   echo "GITHUB_RUNNER_TOKEN must be set"
   exit 1
