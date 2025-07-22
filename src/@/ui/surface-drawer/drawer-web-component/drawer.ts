@@ -15,7 +15,7 @@ export const DrawerWebComponent = (input: DrawerProps) => {
       h(
         Surface,
         {
-          'aria-hidden': !input.open,
+          // 'aria-hidden': !input.open,
           role: 'dialog',
           'aria-label': input.ariaLabel,
           class: cn(
