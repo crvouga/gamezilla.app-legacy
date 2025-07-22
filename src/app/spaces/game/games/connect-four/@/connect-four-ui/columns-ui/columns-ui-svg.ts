@@ -7,6 +7,7 @@ import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { G } from '~/@/vdom/primitives/svg/g'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Defs } from '~/@/vdom/primitives/svg/defs'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
 
 type SvgIds = {
   playerOneGradient: string
@@ -44,7 +45,7 @@ export const ViewColumnsSvg = ({
         G,
         { transform: 'translate(0.5, 0.5)' },
         model?.discs?.map(({ item: disc, state }) =>
-          h('circle', {
+          h(Circle, {
             id: disc.id,
             key: disc.id,
             cx: disc.x,
@@ -145,7 +146,7 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
 const SvgDefs = ({ ids }: { ids: SvgIds }) => {
   return h(Defs, {}, [
     h('pattern', { id: ids.holePattern, patternUnits: 'userSpaceOnUse', width: 1, height: 1 }, [
-      h('circle', { cx: 0.5, cy: 0.5, r: 0.425, fill: 'black' }),
+      h(Circle, { cx: 0.5, cy: 0.5, r: 0.425, fill: 'black' }),
     ]),
     h('mask', { id: ids.holeMask }, [
       h(Rect, { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: 'white' }),

@@ -15,6 +15,7 @@ import { BoardLayout } from '../ui/board-layout'
 import { Color } from '../ui/color'
 import { NumberlinkVariantBoard, NumberlinkVariantDimensions } from '../variant'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
 
 const View = (input: {
   ctx: AppFrontendCtx
@@ -130,7 +131,7 @@ const ViewStatus: typeof View = (input) => {
 
 const ViewTerminal = ({ groupId, class: class_ }: { class: string; groupId: GroupId }) => {
   const color = Color.groupIdToHex(groupId)
-  return h(Svg, { class: class_, viewBox: '-1 -1 2 2' }, [h('circle', { cx: '0', cy: '0', r: '0.8', fill: color })])
+  return h(Svg, { class: class_, viewBox: '-1 -1 2 2' }, [h(Circle, { cx: '0', cy: '0', r: '0.8', fill: color })])
 }
 
 export const ModeEditFrontend = {

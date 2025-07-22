@@ -260,7 +260,7 @@ export const create = ({
 }
 
 const makeDisc = ({ x, y, player, svgDefIds }: { x: number; y: number; player: PlayerType; svgDefIds: SvgDefIds }) => {
-  const disc = document.createElementNS(SVG_NS, 'circle')
+  const disc = document.createElementNS(SVG_NS, Circle)
   disc.setAttribute('data-position', `${x},${y}`)
   disc.setAttribute('data-player', player)
   disc.setAttribute('r', '0.5')
@@ -339,7 +339,7 @@ const createSvgDefs = (ids: SvgDefIds) => {
   holePattern.setAttribute('height', '1')
 
   //
-  const circle = document.createElementNS(svgNS, 'circle')
+  const circle = document.createElementNS(svgNS, Circle)
   circle.setAttribute('cx', '0.5')
   circle.setAttribute('cy', '0.5')
   circle.setAttribute('r', '0.425')

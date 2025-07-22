@@ -16,6 +16,7 @@ import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { Path } from '~/@/vdom/primitives/svg/path'
 import { G } from '~/@/vdom/primitives/svg/g'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
 
 //
 //
@@ -452,14 +453,14 @@ export const Chessboard = (input: ChessboardInput) => {
         {},
         CHECKERS.map((checker) => {
           const square = positionToSquare(checker, input.orientation ?? 'w')
-          return h('circle', {
+          return h(Circle, {
             key: checker.id,
             id: square ? toLegalMoveDotId(square) : undefined,
             cx: checker.x * SCALE + SCALE / 2,
             cy: checker.y * SCALE + SCALE / 2,
             class: 'pointer-events-none',
             r: (SCALE * 1) / 4,
-            fillOpacity: '0.5',
+            'fill-opacity': '0.5',
             fill: 'none',
           })
         }),
@@ -470,14 +471,14 @@ export const Chessboard = (input: ChessboardInput) => {
         {},
         CHECKERS.map((checker) => {
           const square = positionToSquare(checker, input.orientation ?? 'w')
-          return h('circle', {
+          return h(Circle, {
             key: checker.id,
             id: square ? toDropZoneId(square) : undefined,
             cx: checker.x * SCALE + SCALE / 2,
             cy: checker.y * SCALE + SCALE / 2,
             class: 'pointer-events-none',
             r: SCALE * 1.25,
-            fillOpacity: '0.2',
+            'fill-opacity': '0.2',
             fill: 'none',
           })
         }),
@@ -864,11 +865,11 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
             stroke: 'none',
           },
           [
-            h('circle', { cx: '6', cy: '12', r: '2.75' }),
-            h('circle', { cx: '14', cy: '9', r: '2.75' }),
-            h('circle', { cx: '22.5', cy: '8', r: '2.75' }),
-            h('circle', { cx: '31', cy: '9', r: '2.75' }),
-            h('circle', { cx: '39', cy: '12', r: '2.75' }),
+            h(Circle, { cx: '6', cy: '12', r: '2.75' }),
+            h(Circle, { cx: '14', cy: '9', r: '2.75' }),
+            h(Circle, { cx: '22.5', cy: '8', r: '2.75' }),
+            h(Circle, { cx: '31', cy: '9', r: '2.75' }),
+            h(Circle, { cx: '39', cy: '12', r: '2.75' }),
           ],
         ),
         h(Path, {

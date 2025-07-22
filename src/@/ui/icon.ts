@@ -1,7 +1,8 @@
 import { h } from '~/@/vdom/h'
-import { cn } from './cn'
-import { Svg } from '../vdom/primitives/svg/svg'
+import { Circle } from '../vdom/primitives/svg/circle'
 import { Path } from '../vdom/primitives/svg/path'
+import { Svg } from '../vdom/primitives/svg/svg'
+import { cn } from './cn'
 
 export type Props = {
   class?: string
@@ -934,14 +935,14 @@ export const IconCircle = (input: Props) => {
       class: input.class,
     },
     [
-      h('circle', {
+      h(Circle, {
         r: '8',
         cx: '12',
         cy: '12',
         fill: 'none',
         stroke: 'currentColor',
-        strokeWidth: 2,
-        strokeLinecap: 'round',
+        'stroke-width': '2',
+        'stroke-linecap': 'round',
       }),
     ],
   )

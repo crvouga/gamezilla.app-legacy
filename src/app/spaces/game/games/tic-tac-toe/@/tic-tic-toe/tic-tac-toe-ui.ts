@@ -1,4 +1,8 @@
 import { h } from '~/@/vdom/h'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
+import { G } from '~/@/vdom/primitives/svg/g'
+import { Line } from '~/@/vdom/primitives/svg/line'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
 import {
   Empty,
@@ -12,9 +16,6 @@ import {
   toSlot,
   toWins,
 } from './tic-tac-toe'
-import { G } from '~/@/vdom/primitives/svg/g'
-import { Rect } from '~/@/vdom/primitives/svg/rect'
-import { Line } from '~/@/vdom/primitives/svg/line'
 
 export const gameTheme = {
   background: '#14BDAC',
@@ -53,7 +54,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
         const strokeWidth = 0.1 * scale
 
         if (slot === 'O') {
-          return h('circle', { r, cx, cy, stroke: gameTheme.naught, strokeWidth, fill: 'transparent' })
+          return h(Circle, { r, cx, cy, stroke: gameTheme.naught, strokeWidth, fill: 'transparent' })
         }
 
         if (slot === 'X') {
@@ -300,7 +301,7 @@ const Naught = ({
   cx: number
   cy: number
 }) => {
-  return h('circle', { r, cx, cy, stroke: color, strokeWidth, fill: 'transparent' })
+  return h(Circle, { r, cx, cy, stroke: color, strokeWidth, fill: 'transparent' })
 }
 
 export const PlayerTypeIcon = ({ playerType, class: class_ }: { playerType: PlayerType; class?: string }) => {

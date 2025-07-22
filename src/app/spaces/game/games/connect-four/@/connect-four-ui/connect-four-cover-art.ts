@@ -5,6 +5,7 @@ import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { COLUMN_COUNT, MAX_COLUMN_HEIGHT } from '../connect-four'
 import { gameTheme } from './shared'
 import { Defs } from '~/@/vdom/primitives/svg/defs'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
 
 const coverArtId = Uuid.generate()
 
@@ -23,7 +24,7 @@ export const CoverArt = (input: { class?: string }) => {
   return h(Svg, { width: '100%', viewBox: '0 0 2 2', ...input }, [
     h(Defs, {}, [
       h('pattern', { id: ids.holePattern, patternUnits: 'userSpaceOnUse', width: 1, height: 1 }, [
-        h('circle', { cx: 0.5, cy: 0.5, r: 0.425, fill: 'black' }),
+        h(Circle, { cx: 0.5, cy: 0.5, r: 0.425, fill: 'black' }),
       ]),
 
       h('mask', { id: ids.holeMask }, [
@@ -49,13 +50,13 @@ export const CoverArt = (input: { class?: string }) => {
 
     h(Rect, { x: 0, y: 0, width: 2, height: 2, fill: gameTheme.primary.darker }),
 
-    h('circle', { cx: 0.5, cy: 0, r: 0.5, fill: playerOneFill }),
+    h(Circle, { cx: 0.5, cy: 0, r: 0.5, fill: playerOneFill }),
 
-    h('circle', { cx: 1.5, cy: 0.5, r: 0.5, fill: playerTwoFill }),
+    h(Circle, { cx: 1.5, cy: 0.5, r: 0.5, fill: playerTwoFill }),
 
-    h('circle', { cx: 1.5, cy: 1.5, r: 0.5, fill: playerOneFill }),
+    h(Circle, { cx: 1.5, cy: 1.5, r: 0.5, fill: playerOneFill }),
 
-    h('circle', { cx: 0.5, cy: 1.5, r: 0.5, fill: playerTwoFill }),
+    h(Circle, { cx: 0.5, cy: 1.5, r: 0.5, fill: playerTwoFill }),
 
     h(Rect, {
       x: 0,

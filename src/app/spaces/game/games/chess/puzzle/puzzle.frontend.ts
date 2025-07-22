@@ -44,6 +44,7 @@ import {
   updateSpace,
 } from './puzzle.types'
 import { Line } from '~/@/vdom/primitives/svg/line'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
 
 //
 //
@@ -491,7 +492,7 @@ const ViewStatusBar = (input: { model: ModelFrontend }) => {
 
 const TickingClock = (input: { sec: number }) => {
   return h(Svg, { class: 'h-5 w-5', viewBox: '-1 -1 2 2', stroke: 'currentColor', 'stroke-width': '0.2' }, [
-    h('circle', { cx: '0', cy: '0', r: '0.9' }),
+    h(Circle, { cx: '0', cy: '0', r: '0.9' }),
     h(Line, {
       stroke: input.sec % 4 === 0 ? undefined : 'transparent',
       x1: '0',

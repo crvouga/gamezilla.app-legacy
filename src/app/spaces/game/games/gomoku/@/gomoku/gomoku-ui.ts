@@ -7,6 +7,7 @@ import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { type Board, type Bounds, type Stone, allPositions, bounds, presetToStars } from './gomoku'
 import type { Position } from './gomoku-position'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
 
 const backgroundColor = '#C88655'
 const lineColor = Hex.darken(backgroundColor, 0.3)
@@ -29,7 +30,7 @@ export const stoneToColor = (stone: Stone): string => {
 
 export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
   return h(Svg, { viewBox: '-1 -1 2 2' }, [
-    h('circle', {
+    h(Circle, {
       cx: 0,
       cy: 0,
       r: 0.9,
@@ -157,7 +158,7 @@ export const ViewBoard = ({
           G,
           {},
           stars.map((pos) =>
-            h('circle', {
+            h(Circle, {
               key: [pos.x, pos.y].join(', '),
               cx: pos.x,
               cy: pos.y,
@@ -174,7 +175,7 @@ export const ViewBoard = ({
           }
 
           return [
-            h('circle', {
+            h(Circle, {
               key: [x, y, stone].join('-'),
               cx: x,
               cy: y,
@@ -188,7 +189,7 @@ export const ViewBoard = ({
           G,
           {},
           allPositions.map(({ x, y }) =>
-            h('circle', {
+            h(Circle, {
               key: [x, y].join(', '),
               cx: x,
               cy: y,

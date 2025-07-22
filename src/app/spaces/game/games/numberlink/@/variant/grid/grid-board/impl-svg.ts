@@ -14,6 +14,7 @@ import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
 import { Line } from '~/@/vdom/primitives/svg/line'
+import { Circle } from '~/@/vdom/primitives/svg/circle'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
@@ -159,7 +160,7 @@ const ViewPipeline = (
         'stroke-linecap': 'round',
         'stroke-width': EDGE_STROKE_WIDTH,
       }),
-      h('circle', {
+      h(Circle, {
         cx: terminal.start.x,
         cy: terminal.start.y,
         r: TERMINAL_NODE_RADIUS,
@@ -168,7 +169,7 @@ const ViewPipeline = (
       shouldShowUsedHint && HintCheckmark({ x: terminal.start.x, y: terminal.start.y }),
       terminal.end &&
         h(G, {}, [
-          h('circle', {
+          h(Circle, {
             cx: terminal.end.x,
             cy: terminal.end.y,
             r: TERMINAL_NODE_RADIUS,
