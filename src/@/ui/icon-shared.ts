@@ -1,4 +1,5 @@
 import { h } from '~/@/vdom/h'
+import { Svg } from '../vdom/primitives/svg'
 
 export type IconInput = {
   class?: string
@@ -6,5 +7,5 @@ export type IconInput = {
 }
 
 export const IconShared = (props: { class?: string; children: string }) => {
-  return h('svg', { class: props.class, fill: 'currentColor', viewBox: '0 0 24 24' }, [props.children])
+  return h(Svg, { class: props.class, fill: 'currentColor', viewBox: '0 0 24 24' }, [props.children])
 }

@@ -6,6 +6,7 @@ import { h } from '~/@/vdom/h'
 import type { VDom } from '~/@/vdom/vdom'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { ScreenLayoutProps } from '~/app/@/ui/screen/layout/screen-layout-props'
+import { Svg } from '~/@/vdom/primitives/svg'
 
 export const ScreenLayoutGameCoverArt = (
   input: ScreenLayoutProps & {
@@ -35,7 +36,7 @@ const renderDefaultCoverArt = (input: { class: string }) => {
     },
     [
       h(
-        'svg',
+        Svg,
         {
           xmlns: 'http://www.w3.org/2000/svg',
           viewBox: '0 0 640 512',

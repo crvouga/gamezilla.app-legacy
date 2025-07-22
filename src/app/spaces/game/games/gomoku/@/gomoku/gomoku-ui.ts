@@ -3,6 +3,7 @@ import { Hex } from '~/@/hex/hex'
 import { cn } from '~/@/ui/cn'
 import { type Board, type Bounds, type Stone, allPositions, bounds, presetToStars } from './gomoku'
 import type { Position } from './gomoku-position'
+import { Svg } from '~/@/vdom/primitives/svg'
 
 const backgroundColor = '#C88655'
 const lineColor = Hex.darken(backgroundColor, 0.3)
@@ -24,7 +25,7 @@ export const stoneToColor = (stone: Stone): string => {
 }
 
 export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
-  return h('svg', { viewBox: '-1 -1 2 2' }, [
+  return h(Svg, { viewBox: '-1 -1 2 2' }, [
     h('circle', {
       cx: 0,
       cy: 0,
@@ -99,7 +100,7 @@ export const ViewBoard = ({
   const viewBox = [boundsView.lower.x, boundsView.lower.y, width, height].join(' ')
 
   return h(
-    'svg',
+    Svg,
     {
       width: '100%',
       viewBox,

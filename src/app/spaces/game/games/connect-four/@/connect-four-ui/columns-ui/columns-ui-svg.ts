@@ -3,6 +3,7 @@ import { h } from '~/@/vdom/h'
 import { COLUMN_COUNT, type Columns, MAX_COLUMN_HEIGHT, type Pos2d, isColumnIndex, winToId } from '../../connect-four'
 import { gameTheme } from '../shared'
 import type { Model, ViewColumnsInput } from './shared'
+import { Svg } from '~/@/vdom/primitives/svg'
 
 type SvgIds = {
   playerOneGradient: string
@@ -32,7 +33,7 @@ export const ViewColumnsSvg = ({
   const playerOneFill = `url(#${ids.playerOneGradient})`
   const playerTwoFill = `url(#${ids.playerTwoGradient})`
 
-  return h('svg', { id, width: '100%', viewBox: `0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}` }, [
+  return h(Svg, { id, width: '100%', viewBox: `0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}` }, [
     h(SvgDefs, { ids }),
     h('g', { transform: `translate(0, ${MAX_COLUMN_HEIGHT}) scale(1,-1)` }, [
       h('rect', { x: 0, y: 0, width: COLUMN_COUNT, height: MAX_COLUMN_HEIGHT, fill: gameTheme.primary.darker }),
@@ -99,7 +100,7 @@ const angleBetween = (a: Pos2d, b: Pos2d): number => (Math.atan2(b.y - a.y, b.x 
 
 const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
   return h(
-    'svg',
+    Svg,
     {
       x: 0,
       y: 0,

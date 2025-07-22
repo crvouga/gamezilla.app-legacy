@@ -1,4 +1,5 @@
 import { h } from '~/@/vdom/h'
+import { Svg } from '~/@/vdom/primitives/svg'
 import {
   Empty,
   MAX_X,
@@ -23,7 +24,7 @@ export const gameTheme = {
 const scale = 1_000
 
 export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position: Position) => void }) => {
-  return h('svg', { width: '100%', viewBox: [0, 0, MAX_X * scale, MAX_Y * scale].join(' ') }, [
+  return h(Svg, { width: '100%', viewBox: [0, 0, MAX_X * scale, MAX_Y * scale].join(' ') }, [
     h('rect', { x: '0', y: '0', width: '100%', height: '100%', fill: gameTheme.background }),
     h(
       'g',
@@ -300,7 +301,7 @@ const Naught = ({
 }
 
 export const PlayerTypeIcon = ({ playerType, class: class_ }: { playerType: PlayerType; class?: string }) => {
-  return h('svg', { viewBox: '-1 -1 2 2', fill: 'currentColor', class: class_ }, [
+  return h(Svg, { viewBox: '-1 -1 2 2', fill: 'currentColor', class: class_ }, [
     h(ViewSlot, {
       key: playerType,
       cx: 0,
@@ -326,7 +327,7 @@ export const CoverArt = (input: { class?: string }) => {
     { x1: 0, y1: 1, x2: 3, y2: 1 },
   ] as const
 
-  return h('svg', { width: '100%', viewBox: '0 0 2 2', ...input }, [
+  return h(Svg, { width: '100%', viewBox: '0 0 2 2', ...input }, [
     h('rect', { x: 0, y: 0, width: 2, height: 2, fill: gameTheme.background }),
     LINES.map((line, index) => h('line', { key: index, ...line, stroke: gameTheme.line, 'stroke-width': 0.1 })),
     positions.map(([{ column, row }, slot], index) =>

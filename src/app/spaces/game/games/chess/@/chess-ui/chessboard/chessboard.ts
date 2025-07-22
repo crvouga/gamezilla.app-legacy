@@ -12,6 +12,7 @@ import {
   squareToChecker,
   toLowercaseSquare,
 } from '../../chess'
+import { Svg } from '~/@/vdom/primitives/svg'
 
 //
 //
@@ -135,8 +136,13 @@ const TOUCHED_Y_OFFSET = SCALE
 //
 //
 
-const onDragStartOrMove = (input: ChessboardInput) => (e: MouseEvent | TouchEvent) => {
-  e.preventDefault()
+const onDragStartOrMove = (input: ChessboardInput) => (e: unknown) => {
+  if (e instanceof MouseEvent) {
+    e.preventDefault()
+  } else if (e instanceof TouchEvent) {
+    e.preventDefault()
+  } else {
+  }
 
   let clientX: number
   let clientY: number
@@ -259,7 +265,7 @@ const hideSourceCheckerUI = (orientation: Color) => {
   }
 }
 
-const onDragEnd = (input: ChessboardInput) => () => {
+const onDragEnd = (input: ChessboardInput) => (_e: unknown) => {
   if (!touched) {
     return
   }
@@ -315,8 +321,7 @@ const onDragEnd = (input: ChessboardInput) => () => {
 }
 
 const onPieceDragStart =
-  (input: { input: ChessboardInput; source: { x: number; y: number }; piece: Piece }) =>
-  (e: MouseEvent | TouchEvent) => {
+  (input: { input: ChessboardInput; source: { x: number; y: number }; piece: Piece }) => (e: unknown) => {
     const square = positionToSquare(input.source, input.input.orientation ?? 'w')
 
     if (!square) {
@@ -330,6 +335,10 @@ const onPieceDragStart =
         piece: input.piece,
       })
     ) {
+      return
+    }
+
+    if (!(e instanceof MouseEvent) && !(e instanceof TouchEvent)) {
       return
     }
 
@@ -365,7 +374,7 @@ const toLegalMoveDotId = (square: Square) => {
   return `legal-move-dot-${square}`
 }
 
-const onDragCancel = (input: ChessboardInput) => () => {
+const onDragCancel = (input: ChessboardInput) => (_e: unknown) => {
   hideSourceCheckerUI(input.orientation ?? 'w')
   setVisibleDropZoneNode(null)
   setLegalMoveDotsFill(input, 'none')
@@ -388,13 +397,15 @@ export const Chessboard = (input: ChessboardInput) => {
   }
 
   return h(
-    'svg',
+    Svg,
     {
       width: '100%',
       viewBox: `0 0 ${WIDTH} ${HEIGHT}`,
-      onContextMenu: (e: MouseEvent) => {
-        e.preventDefault()
-        e.stopPropagation()
+      onContextMenu: (e: unknown) => {
+        if (e instanceof MouseEvent) {
+          e.preventDefault()
+          e.stopPropagation()
+        }
       },
       class: 'touch-none overflow-visible select-none',
       preserveAspectRatio: 'xMinYMin meet',
@@ -474,7 +485,7 @@ export const Chessboard = (input: ChessboardInput) => {
         {},
         pieces?.map(({ piece, x, y }) => {
           return h(
-            'svg',
+            Svg,
             {
               key: [piece, x, y, input.model?.fen].join(','),
               x: SCALE * x,

@@ -1,5 +1,6 @@
 import { h } from '~/@/vdom/h'
 import { cn } from './cn'
+import { Svg } from '../vdom/primitives/svg'
 
 export type Props = {
   class?: string
@@ -7,7 +8,7 @@ export type Props = {
 }
 
 export const IconArrowRightCircle = (input: Props) => {
-  return h('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', fill: 'currentColor', ...input }, [
     h('path', {
       d: 'M0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM281 385c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l71-71L136 280c-13.3 0-24-10.7-24-24s10.7-24 24-24l182.1 0-71-71c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0L393 239c9.4 9.4 9.4 24.6 0 33.9L281 385z',
     }),
@@ -15,7 +16,7 @@ export const IconArrowRightCircle = (input: Props) => {
 }
 
 export const IconArrowDownShortWide = (input: Props) => {
-  return h('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 576 512', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 576 512', fill: 'currentColor', ...input }, [
     h('path', {
       d: 'M151.6 469.6C145.5 476.2 137 480 128 480s-17.5-3.8-23.6-10.4l-88-96c-11.9-13-11.1-33.3 2-45.2s33.3-11.1 45.2 2L96 365.7 96 64c0-17.7 14.3-32 32-32s32 14.3 32 32l0 301.7 32.4-35.4c11.9-13 32.2-13.9 45.2-2s13.9 32.2 2 45.2l-88 96zM320 32l32 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-32 0c-17.7 0-32-14.3-32-32s14.3-32 32-32zm0 128l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-96 0c-17.7 0-32-14.3-32-32s14.3-32 32-32zm0 128l160 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-160 0c-17.7 0-32-14.3-32-32s14.3-32 32-32zm0 128l224 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-224 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z',
     }),
@@ -24,7 +25,7 @@ export const IconArrowDownShortWide = (input: Props) => {
 
 export const IconArrowLeft = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
@@ -47,7 +48,7 @@ export const IconArrowLeft = (input: Props) => {
  * @returns 
  */
 export const IconArrowRightOnRect = (input: Props) => {
-  return h('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', fill: 'currentColor', ...input }, [
     h('path', {
       d: 'M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z',
     }),
@@ -55,11 +56,11 @@ export const IconArrowRightOnRect = (input: Props) => {
 }
 
 export const IconArrowLeftOnRect = (input: Props) => {
-  return h(IconArrowRightOnRect, { ...input,class: cn(input.class,"origin-center rotate-180deg"),})
+  return h(IconArrowRightOnRect, { ...input, class: cn(input.class, 'origin-center rotate-180deg') })
 }
 
 export const IconArrowRight = (input: Props) => {
-  return h('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 448 512', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 448 512', fill: 'currentColor', ...input }, [
     h('path', {
       d: 'M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z',
     }),
@@ -67,7 +68,7 @@ export const IconArrowRight = (input: Props) => {
 }
 
 export const IconArrowRotateLeft = (input: Props) => {
-  return h('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 512 512', fill: 'currentColor', ...input }, [
     h('title', {}, ['Arrow Rotate Left']),
     h('path', {
       d: 'M125.7 160H176c17.7 0 32 14.3 32 32s-14.3 32-32 32H48c-17.7 0-32-14.3-32-32V64c0-17.7 14.3-32 32-32s32 14.3 32 32v51.2L97.6 97.6c87.5-87.5 229.3-87.5 316.8 0s87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3s-163.8-62.5-226.3 0L125.7 160z',
@@ -76,7 +77,7 @@ export const IconArrowRotateLeft = (input: Props) => {
 }
 
 export const IconArrowRotateRight = (input: Props) => {
-  return h('svg', { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', viewBox: '0 0 512 512', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', viewBox: '0 0 512 512', ...input }, [
     h('path', {
       d: 'M463.5 224H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5z',
     }),
@@ -85,7 +86,7 @@ export const IconArrowRotateRight = (input: Props) => {
 
 export const IconBars3 = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     { xmlns: 'http://www.w3.org/2000/svg', fill: 'none', viewBox: '0 0 24 24', stroke: 'currentColor', ...input },
     [
       h('path', {
@@ -98,7 +99,7 @@ export const IconBars3 = (input: Props) => {
 }
 
 export const IconBox = (input: Props) => {
-  return h('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 448 512', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 448 512', fill: 'currentColor', ...input }, [
     h('path', {
       d: 'M50.7 58.5L0 160H208V32H93.7C75.5 32 58.9 42.3 50.7 58.5zM240 160H448L397.3 58.5C389.1 42.3 372.5 32 354.3 32H240V160zm208 32H0V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192z',
     }),
@@ -106,7 +107,7 @@ export const IconBox = (input: Props) => {
 }
 
 export const IconCheckmarkCircle = (input: Props) => {
-  return h('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', fill: 'currentColor', ...input }, [
+  return h(Svg, { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', fill: 'currentColor', ...input }, [
     h('path', {
       'fill-rule': 'evenodd',
       d: 'M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z',
@@ -117,7 +118,7 @@ export const IconCheckmarkCircle = (input: Props) => {
 
 export const IconCheckmark = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
@@ -135,7 +136,7 @@ export const IconCheckmark = (input: Props) => {
 
 export const IconChevronDown = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
@@ -153,7 +154,7 @@ export const IconChevronDown = (input: Props) => {
 
 export const IconChevronLeft = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       height: '1em',
@@ -172,7 +173,7 @@ export const IconChevronLeft = (input: Props) => {
 
 export const IconChevronRight = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       height: '1em',
@@ -191,7 +192,7 @@ export const IconChevronRight = (input: Props) => {
 
 export const IconClock = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
@@ -208,7 +209,7 @@ export const IconClock = (input: Props) => {
 
 export const IconCopy = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
@@ -225,7 +226,7 @@ export const IconCopy = (input: Props) => {
 
 export const IconCrown = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       height: '1em',
@@ -244,7 +245,7 @@ export const IconCrown = (input: Props) => {
 
 export const IconDeleteForever = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
@@ -262,7 +263,7 @@ export const IconDeleteForever = (input: Props) => {
 
 export const IconDoorOpen = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 576 512',
@@ -279,7 +280,7 @@ export const IconDoorOpen = (input: Props) => {
 
 export const IconEllipsisVertical = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 128 512',
@@ -297,7 +298,7 @@ export const IconEllipsisVertical = (input: Props) => {
 
 export const IconEnvelope = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
@@ -317,7 +318,7 @@ export const IconEnvelope = (input: Props) => {
 
 export const IconExpand = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
@@ -334,7 +335,7 @@ export const IconExpand = (input: Props) => {
 
 export const IconFlag = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
@@ -352,7 +353,7 @@ export const IconFlag = (input: Props) => {
 
 export const IconFloppyDisk = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 448 512',
@@ -370,7 +371,7 @@ export const IconFloppyDisk = (input: Props) => {
 
 export const IconGamepad = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
@@ -388,7 +389,7 @@ export const IconGamepad = (input: Props) => {
 
 export const IconGear = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
@@ -405,7 +406,7 @@ export const IconGear = (input: Props) => {
 
 export const IconGoogle = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       fill: 'currentColor',
@@ -424,7 +425,7 @@ export const IconGoogle = (input: Props) => {
 
 export const IconHome = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 576 512',
@@ -441,7 +442,7 @@ export const IconHome = (input: Props) => {
 
 export const IconInfoCircle = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
@@ -460,7 +461,7 @@ export const IconInfoCircle = (input: Props) => {
 
 export const IconLanguage = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
@@ -477,7 +478,7 @@ export const IconLanguage = (input: Props) => {
 
 export const IconLightbulb = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 384 512',
@@ -494,7 +495,7 @@ export const IconLightbulb = (input: Props) => {
 
 export const IconMagnifyingGlass = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
@@ -513,7 +514,7 @@ export const IconMagnifyingGlass = (input: Props) => {
 
 export const IconMobilePhone = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
@@ -533,7 +534,7 @@ export const IconMobilePhone = (input: Props) => {
 
 export const IconPenToSquare = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
@@ -553,7 +554,7 @@ export const IconPenToSquare = (input: Props) => {
 
 export const IconPen = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
@@ -571,7 +572,7 @@ export const IconPen = (input: Props) => {
 
 export const IconPhone = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
@@ -590,7 +591,7 @@ export const IconPhone = (input: Props) => {
 
 export const IconPlay = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
@@ -609,7 +610,7 @@ export const IconPlay = (input: Props) => {
 
 export const IconPlus = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       fill: 'none',
@@ -630,7 +631,7 @@ export const IconPlus = (input: Props) => {
 
 export const IconPowerOff = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
@@ -647,7 +648,7 @@ export const IconPowerOff = (input: Props) => {
 
 export const IconPuzzlePiece = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
@@ -664,7 +665,7 @@ export const IconPuzzlePiece = (input: Props) => {
 
 export const IconQuestionMark = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       height: '1em',
@@ -682,7 +683,7 @@ export const IconQuestionMark = (input: Props) => {
 
 export const IconRightLeft = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
@@ -700,7 +701,7 @@ export const IconRightLeft = (input: Props) => {
 
 export const IconRobot = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
@@ -717,7 +718,7 @@ export const IconRobot = (input: Props) => {
 
 export const IconScrewdriverWrench = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 512 512',
@@ -735,7 +736,7 @@ export const IconScrewdriverWrench = (input: Props) => {
 
 export const IconSpinner = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       fill: 'currentColor',
@@ -761,7 +762,7 @@ export const IconSpinner = (input: Props) => {
 
 export const IconUserCircle = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
@@ -781,7 +782,7 @@ export const IconUserCircle = (input: Props) => {
 
 export const IconUserGroup = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
@@ -798,7 +799,7 @@ export const IconUserGroup = (input: Props) => {
 
 export const IconUserPen = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
@@ -815,7 +816,7 @@ export const IconUserPen = (input: Props) => {
 
 export const IconUsers = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
@@ -832,7 +833,7 @@ export const IconUsers = (input: Props) => {
 
 export const IconVolumeHigh = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
@@ -850,7 +851,7 @@ export const IconVolumeHigh = (input: Props) => {
 
 export const IconVolumeXMark = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 576 512',
@@ -868,7 +869,7 @@ export const IconVolumeXMark = (input: Props) => {
 
 export const IconXMark = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 384 512',
@@ -886,7 +887,7 @@ export const IconXMark = (input: Props) => {
 
 export const IconExclamationCircle = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 24 24',
@@ -905,7 +906,7 @@ export const IconExclamationCircle = (input: Props) => {
 
 export const IconCode = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: '0 0 640 512',
@@ -922,7 +923,7 @@ export const IconCode = (input: Props) => {
 
 export const IconCircle = (input: Props) => {
   return h(
-    'svg',
+    Svg,
     {
       viewBox: '0 0 24 24',
       fill: 'none',

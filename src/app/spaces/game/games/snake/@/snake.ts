@@ -5,6 +5,7 @@ import { TimeSpan } from '~/@/time/time-span'
 import { h } from '~/@/vdom/h'
 import { Direction } from './direction'
 import { Position } from './position'
+import { Svg } from '~/@/vdom/primitives/svg'
 
 //
 //
@@ -259,7 +260,7 @@ export const CoverArt = () => {
 
   const food: Model['food'] = { x: 2, y: 2 }
 
-  return h('svg', { width: '100%', viewBox: toViewBox(bounds) }, [
+  return h(Svg, { width: '100%', viewBox: toViewBox(bounds) }, [
     ...Position.range(bounds).map(({ x, y }, index) =>
       h('rect', {
         key: `${x} ${y} ${index}`,

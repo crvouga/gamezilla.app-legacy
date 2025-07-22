@@ -22,6 +22,7 @@ import {
   toGhostPiece,
   toPiece,
 } from './tetris.types'
+import { Svg } from '~/@/vdom/primitives/svg'
 
 //
 //
@@ -358,7 +359,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       }),
     ]),
 
-    /* v('svg', {
+    /* v(Svg, {
       width: '100%',
       viewBox: [0, 0, columnCount, rowCount].join(', '),
     }, [
@@ -525,7 +526,7 @@ const theme = {
 
 export const CoverArt = () => {
   return h(
-    'svg',
+    Svg,
     {
       width: '100%',
       viewBox: [0, 0, 4, 4].join(', '),

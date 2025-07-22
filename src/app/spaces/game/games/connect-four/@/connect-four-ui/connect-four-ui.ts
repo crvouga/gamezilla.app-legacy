@@ -2,6 +2,7 @@ import { Uuid } from '~/@/id/uuid'
 import { h } from '~/@/vdom/h'
 import type { PlayerType } from '../connect-four'
 import { gameTheme } from './shared'
+import { Svg } from '~/@/vdom/primitives/svg'
 
 export const PlayerIcon = ({ playerType, ...input }: { playerType: PlayerType; key?: string; class?: string }) => {
   switch (playerType) {
@@ -41,7 +42,7 @@ export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string })
 
 export const PlayerOneIcon = (input: { key?: string; class?: string }) => {
   const playerOneId = Uuid.generate()
-  return h('svg', { viewBox: '-1 -1 2 2', ...input }, [
+  return h(Svg, { viewBox: '-1 -1 2 2', ...input }, [
     h(ViewPlayerOneGradientDef, { cx: 0, cy: 0, r: 1, gradientId: playerOneId }),
     h('circle', { cx: 0, cy: 0, r: 1, fill: `url(#${playerOneId})` }),
   ])
@@ -49,7 +50,7 @@ export const PlayerOneIcon = (input: { key?: string; class?: string }) => {
 
 export const PlayerTwoIcon = (input: { key?: string; class?: string }) => {
   const playerTwoId = Uuid.generate()
-  return h('svg', { viewBox: '-1 -1 2 2', ...input }, [
+  return h(Svg, { viewBox: '-1 -1 2 2', ...input }, [
     h(ViewPlayerTwoGradientDef, { gradientId: playerTwoId }),
     h('circle', { cx: 0, cy: 0, r: 1, fill: `url(#${playerTwoId})` }),
   ])

@@ -3,6 +3,7 @@ import { memoize } from '~/@/function/memoize'
 import { Random } from '~/@/random/random'
 import { h } from '~/@/vdom/h'
 import { Direction, Position } from './position'
+import { Svg } from '~/@/vdom/primitives/svg'
 
 //
 //
@@ -185,7 +186,7 @@ const viewBox = [
 ].join(' ')
 
 export const CoverArt = () => {
-  return h('svg', { viewBox, width: '100%', class: 'border' }, [
+  return h(Svg, { viewBox, width: '100%', class: 'border' }, [
     h('rect', {
       x: coverArtMaze.lower.x,
       y: coverArtMaze.lower.y,

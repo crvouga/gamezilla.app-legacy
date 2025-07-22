@@ -1,8 +1,8 @@
+import { h } from '~/@/vdom/h'
 import { BoardInput } from '../../../ui/board'
 import type * as VariantGrid from '../grid'
 import { VariantGridBoardCanvas } from './impl-canvas'
 import { VariantGridBoardSvg } from './impl-svg'
-import { h } from '~/@/vdom/h'
 
 type VariantGridUIImpl = 'svg' | 'canvas'
 

@@ -7,6 +7,7 @@ import { NodeId } from '../../../numberlink/node-id'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
+import { Svg } from '~/@/vdom/primitives/svg'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
@@ -40,7 +41,7 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
   }
 
   return h(
-    'svg',
+    Svg,
     {
       class: cn(
         'aspect-square h-full max-h-full w-full touch-none overflow-hidden select-none',
@@ -48,9 +49,11 @@ const View = (input: BoardInput<VariantGrid.Model>) => {
         input.disabled && 'pointer-events-none',
         input.class,
       ),
-      onContextMenu: (e: Event) => {
-        e.stopPropagation()
-        e.preventDefault()
+      onContextMenu: (e: unknown) => {
+        if (e instanceof Event) {
+          e.stopPropagation()
+          e.preventDefault()
+        }
       },
       viewBox: `${0} ${0} ${input.model.width} ${input.model.height}`,
       onTouchMove,

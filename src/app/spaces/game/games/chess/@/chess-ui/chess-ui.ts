@@ -1,4 +1,5 @@
 import { h } from '~/@/vdom/h'
+import { Svg } from '~/@/vdom/primitives/svg'
 
 export const toChecker = ({ x, y }: { x: number; y: number }): 'Light' | 'Dark' => {
   if ((isEven(x) && isOdd(y)) || (isOdd(x) && isEven(y))) {
@@ -30,7 +31,7 @@ export const PawnIcon = (input: { stroke?: string }) => {
 
 export const PlayerIcon = ({ class: class_, color }: { class?: string; color: 'w' | 'b' }) => {
   return h(
-    'svg',
+    Svg,
     {
       viewBox: '0 0 45 45',
       class: class_,
