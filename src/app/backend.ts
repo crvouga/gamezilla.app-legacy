@@ -5,7 +5,7 @@ import { Cors } from '~/@/http-server/cors/cors'
 import { CorsPolicy } from '~/@/http-server/cors/cors-policy/impl'
 import { LoggerMiddleware } from '~/@/http-server/logger-middleware'
 import { KeyValueDb } from '~/@/key-value-db'
-import { Logger } from '~/@/logger'
+import { ILogger } from '~/@/logger'
 import { TopicBasedPubSub } from '~/@/pub-sub-topic-based'
 import { RPC } from '~/@/rpc'
 import { Runtime } from '~/@/runtime'
@@ -33,8 +33,9 @@ const initCtx = async (config: {
   topicUrl: string
   databaseUrl: SecretString
   isProd: boolean
+  logger: ILogger
 }): Promise<BackendCtxModule> => {
-  const logger = Logger.init({ t: 'console', namespace: ['backend'], newLinePerMsg: false, maxLogLevel: 'info' })
+  const logger = config.logger.child(['app'])
 
   logger.info('Initializing backend context')
 

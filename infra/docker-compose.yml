@@ -24,7 +24,7 @@ services:
       - '${BACKEND_PORT:?BACKEND_PORT is required}:${BACKEND_PORT:?BACKEND_PORT is required}'
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:?POSTGRES_USER is required}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:${POSTGRES_PORT:?POSTGRES_PORT is required}/${POSTGRES_DB:?POSTGRES_DB is required}?sslmode=disable
-      - TOPIC_URL=ws://localhost:${TOPIC_PORT:?TOPIC_PORT is required}
+      - TOPIC_URL=ws://topic:${TOPIC_PORT:?TOPIC_PORT is required}
       - BACKEND_PORT=${BACKEND_PORT:?BACKEND_PORT is required}
     extra_hosts:
       - 'host.docker.internal:host-gateway'
