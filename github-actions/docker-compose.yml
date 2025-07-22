@@ -9,4 +9,9 @@ services:
       GITHUB_RUNNER_TOKEN: ${GITHUB_RUNNER_TOKEN}
       GITHUB_RUNNER_URL: ${GITHUB_RUNNER_URL:-https://github.com/crvouga/gamezilla.app}
     privileged: true
+    volumes:
+      - runner_data:/home/runner
     restart: always
+
+volumes:
+  runner_data:
