@@ -1,6 +1,8 @@
 import { TranslatedText } from '~/@/l18n'
-import { Box } from '~/@/vdom/primitives/box'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { TextInput } from '~/@/vdom/primitives/text-input'
+import { Touchable } from '~/@/vdom/primitives/touchable'
 import type { VDom } from '~/@/vdom/vdom'
 import { cn } from './cn'
 import { IconXMark } from './icon'
@@ -35,7 +37,7 @@ export const TextField = (input: {
         ),
       },
       [
-        h('input', {
+        h(TextInput, {
           role: 'textbox',
           'data-testid': input.testId,
           'aria-label': input.label,
@@ -52,8 +54,15 @@ export const TextField = (input: {
           key: input.id,
           // value: input.value,
           // defaultValue: input.value,
-          onInput: (e: { preventDefault: () => void; currentTarget: { value: string } }) => {
-            e.preventDefault()
+          onInput: (e: unknown) => {
+            if (
+              typeof e === 'object' &&
+              e !== null &&
+              'preventDefault' in e &&
+              typeof e.preventDefault === 'function'
+            ) {
+              e.preventDefault()
+            }
             const valueNew = eventToInputValue(e)
             input.onChange(valueNew)
           },
@@ -66,7 +75,7 @@ export const TextField = (input: {
           input.value &&
           input.value?.toString().length > 0 &&
           h(
-            'button',
+            Touchable,
             {
               class: 'rounded-md px-3 ring-blue-500 outline-none focus:ring-2',
               'aria-label': 'Clear input',
@@ -100,8 +109,17 @@ export const TextField = (input: {
   ])
 }
 
-const eventToInputValue = (e: { preventDefault: () => void; currentTarget: { value: string } }): string => {
-  let valueNew: string = e.currentTarget.value
+const eventToInputValue = (e: unknown): string => {
+  let valueNew: string =
+    typeof e === 'object' &&
+    e !== null &&
+    'currentTarget' in e &&
+    e.currentTarget !== null &&
+    typeof e.currentTarget === 'object' &&
+    'value' in e.currentTarget &&
+    typeof e.currentTarget.value === 'string'
+      ? e.currentTarget.value
+      : ''
 
   if (valueNew.length === 0) {
     valueNew =

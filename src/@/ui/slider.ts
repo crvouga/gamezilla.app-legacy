@@ -20,24 +20,28 @@ export const Slider = ({
 }) => {
   return h(Box, {}, [
     h(Typography, { variant: 'label', text: label }),
-    h('input', {
-      type: 'range',
-      min: min,
-      max: max,
-      value: value,
-      step: step,
-      onInput: (msgEvt: { target?: { value?: string } }) => {
-        if (!msgEvt.target) {
-          return
-        }
-        const val = 'value' in msgEvt.target ? msgEvt.target.value : ''
-        const parsed = typeof val === 'string' ? Number.parseFloat(val) : Number.NaN
-        if (Number.isNaN(parsed)) {
-          return
-        }
-        onInput?.(parsed)
+    h(
+      // @ts-ignore
+      'input',
+      {
+        type: 'range',
+        min: min,
+        max: max,
+        value: value,
+        step: step,
+        onInput: (msgEvt: { target?: { value?: string } }) => {
+          if (!msgEvt.target) {
+            return
+          }
+          const val = 'value' in msgEvt.target ? msgEvt.target.value : ''
+          const parsed = typeof val === 'string' ? Number.parseFloat(val) : Number.NaN
+          if (Number.isNaN(parsed)) {
+            return
+          }
+          onInput?.(parsed)
+        },
+        class: 'h-2 w-full cursor-pointer appearance-none rounded-lg bg-blue-500',
       },
-      class: 'h-2 w-full cursor-pointer appearance-none rounded-lg bg-blue-500',
-    }),
+    ),
   ])
 }

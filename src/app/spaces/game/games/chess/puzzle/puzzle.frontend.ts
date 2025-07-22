@@ -1,5 +1,4 @@
 import { Eff } from '~/@/eff'
-import { Box } from '~/@/vdom/primitives/box'
 import { TranslatedText } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { isErr } from '~/@/result'
@@ -18,6 +17,8 @@ import { Paper } from '~/@/ui/paper'
 import { Spinner } from '~/@/ui/spinner'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Svg } from '~/@/vdom/primitives/svg'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
@@ -42,7 +43,6 @@ import {
   toPlayerColor,
   updateSpace,
 } from './puzzle.types'
-import { Svg } from '~/@/vdom/primitives/svg'
 
 //
 //
@@ -254,7 +254,7 @@ export const View = ({
             class: '-mb-1/2 text-xs',
           }),
           h(Box, { class: 'flex items-center gap-1' }, [
-            h('p', { class: 'text-xl font-semibold' }, [model.profile?.eloRating ?? '...']),
+            h(Box, { class: 'text-xl font-semibold' }, [model.profile?.eloRating ?? '...']),
 
             model.t === 'solved' &&
               !model.hasLost &&

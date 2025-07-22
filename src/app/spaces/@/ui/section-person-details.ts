@@ -1,8 +1,9 @@
 import { Avatar } from '~/@/ui/avatar'
-import { Box } from '~/@/vdom/primitives/box'
 import { Button } from '~/@/ui/button'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Touchable } from '~/@/vdom/primitives/touchable'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { ViewHostChip } from '~/app/spaces/@/ui/host-chip'
@@ -15,7 +16,7 @@ export const SectionPersonDetails = (input: {
 }) => {
   return h(Box, {}, [
     h(
-      'button',
+      Touchable,
       {
         type: 'button',
         class: 'flex w-full flex-col items-center justify-center gap-2 p-4',

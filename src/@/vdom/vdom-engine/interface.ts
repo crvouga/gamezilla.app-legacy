@@ -2,12 +2,6 @@ import { AriaRole } from '../../html/aria-role'
 import { VDom } from '../vdom'
 
 export type Tag =
-  | 'div'
-  | 'button'
-  | 'input'
-  | 'p'
-  | 'a'
-  | 'svg'
   | 'label'
   | 'form'
   | 'span'

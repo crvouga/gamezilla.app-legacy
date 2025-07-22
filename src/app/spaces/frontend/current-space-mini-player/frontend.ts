@@ -1,10 +1,11 @@
 import { Avatar } from '~/@/ui/avatar'
-import { Box } from '~/@/vdom/primitives/box'
 import { cn } from '~/@/ui/cn'
 import { IconXMark } from '~/@/ui/icon'
 import { IconButton } from '~/@/ui/icon-button'
 import { Typography } from '~/@/ui/typography'
 import { h } from '~/@/vdom/h'
+import { Box } from '~/@/vdom/primitives/box'
+import { Touchable } from '~/@/vdom/primitives/touchable'
 import { UserProfile } from '~/app/@/data/user-profile'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { AppFrontendCtx } from '~/app/@/frontend/ctx'
@@ -69,7 +70,7 @@ const View = (input: {
     },
     [
       h(
-        'button',
+        Touchable,
         {
           type: 'button',
           class: 'flex flex-1 items-center gap-3 overflow-hidden',

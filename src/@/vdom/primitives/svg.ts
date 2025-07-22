@@ -45,5 +45,6 @@ export const Svg = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
+  // @ts-ignore
   return h('svg', input, children)
 }

@@ -3,7 +3,7 @@ import { sleep } from '~/@/promise/sleep'
 import { type Result } from '~/@/result'
 import { IconVolumeHigh, IconVolumeXMark } from '~/@/ui/icon'
 import { ListItem } from '~/@/ui/list-item'
-import { ToggleButton } from '~/@/ui/toggle-button'
+import { SwitchButton } from '~/@/ui/switch-button'
 import { h } from '~/@/vdom/h'
 import { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
@@ -11,6 +11,7 @@ import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PreloadSoundsCmd } from '~/app/@/frontend/preload-sounds-cmd.$msg'
 import { ViewportVisibilityChangedEvt } from '~/app/@/frontend/viewport-visibility-changed-evt.$msg'
+
 type Module = AppFrontendModule<{
   Ctx: AppFrontendCtxBase
   Model: Model
@@ -154,6 +155,11 @@ export const ViewSoundListItem = (input: {
       }),
     icon: (inputIcon) => (input.model.muted ? h(IconVolumeXMark, inputIcon) : h(IconVolumeHigh, inputIcon)),
     primary: input.model.muted ? input.ctx.t('sound.sound-off') : input.ctx.t('sound.sound-on'),
-    end: () => h(ToggleButton, { label: 'toggle sound', checked: !input.model.muted, id: 'toggle-sound' }),
+    end: () =>
+      h(SwitchButton, {
+        label: 'toggle sound',
+        checked: !input.model.muted,
+        onToggle: () => input.dispatch({ t: 'sound.toggle-mute' }),
+      }),
   })
 }

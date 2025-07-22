@@ -15,6 +15,7 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenSize } from '~/app/@/ui/screen/screen-size'
 import { APP_SOUND } from '../../@/frontend/app-sound'
+import { Touchable } from '~/@/vdom/primitives/touchable'
 
 type Ctx = {
   now: UnixMs
@@ -194,7 +195,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
             input.toast.text,
             errorMsg &&
               h(
-                'button',
+                Touchable,
                 {
                   type: 'button',
                   class: 'font-bold',
@@ -204,7 +205,7 @@ const Toast = (input: { ctx: Ctx; toast: Toast; dispatch: (m: Msg) => void }) =>
                 ['See Error'],
               ),
             h(
-              'button',
+              Touchable,
               {
                 type: 'button',
                 role: 'button',

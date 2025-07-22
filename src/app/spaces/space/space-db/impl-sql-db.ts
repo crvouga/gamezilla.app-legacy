@@ -112,7 +112,7 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
   const input: PubSub<SpaceDbInputMsg> = config.input ?? Sub.create()
   const output: PubSub<SpaceDbOutputMsg> = config.output ?? Sub.create()
 
-  config.migrationPolicy.execute({
+  await config.migrationPolicy.execute({
     logger: config.logger,
     up: UP,
     down: DOWN,
