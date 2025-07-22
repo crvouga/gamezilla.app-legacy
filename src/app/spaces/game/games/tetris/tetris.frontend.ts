@@ -365,7 +365,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       viewBox: [0, 0, columnCount, rowCount].join(', '),
     }, [
       ...range(1, Board.toColumnCount(model.spaceModel.board)).map(x =>
-        v('line', {
+        v(Line, {
           key: x,
           x1: x,
           y1: 0,
@@ -377,7 +377,7 @@ export const View = ({ dispatch }: { model: Model; dispatch: (msg: Msg) => void 
       ),
 
       ...range(1, Board.toRowCount(model.spaceModel.board)).map(y =>
-        v('line', {
+        v(Line, {
           key: y,
           x1: 0,
           y1: y,

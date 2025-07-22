@@ -3,9 +3,10 @@ import { memoize } from '~/@/function/memoize'
 import { Random } from '~/@/random/random'
 import { h } from '~/@/vdom/h'
 import { G } from '~/@/vdom/primitives/svg/g'
+import { Line } from '~/@/vdom/primitives/svg/line'
+import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { Direction, Position } from './position'
-import { Rect } from '~/@/vdom/primitives/svg/rect'
 
 //
 //
@@ -205,7 +206,7 @@ export const CoverArt = () => {
           stroke: '#fff',
         },
         [
-          h('line', {
+          h(Line, {
             x1: a.x + 1 / 2,
             y1: a.y + 1 / 2,
             x2: b.x + 1 / 2,

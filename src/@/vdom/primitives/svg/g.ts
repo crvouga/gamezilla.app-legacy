@@ -53,5 +53,6 @@ export const G = ({
   onContextMenu?: (event: unknown) => void
   opacity?: number | string
 }) => {
+  // @ts-ignore
   return h('g', input, children)
 }

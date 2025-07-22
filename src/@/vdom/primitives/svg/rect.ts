@@ -59,5 +59,6 @@ export const Rect = ({
   onPointerClick?: (event: unknown) => void
   opacity?: number | string
 }) => {
+  // @ts-ignore
   return h('rect', input, children)
 }

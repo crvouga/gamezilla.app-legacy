@@ -20,6 +20,7 @@ import {
   type MsgToFrontend,
   initShared,
 } from './types'
+import { Line } from '~/@/vdom/primitives/svg/line'
 
 //
 //
@@ -210,7 +211,7 @@ export const View = ({
       h(Rect, { x: model.lower.x, y: model.lower.y, width: '100%', height: '100%', fill: '#000' }),
       ...maze.edges.map(([a, b]) =>
         h(G, { key: [a.x, a.y, b.x, b.y].join('-'), 'stroke-width': '0.1', stroke: '#fff' }, [
-          h('line', {
+          h(Line, {
             x1: a.x + 1 / 2,
             y1: a.y + 1 / 2,
             x2: b.x + 1 / 2,

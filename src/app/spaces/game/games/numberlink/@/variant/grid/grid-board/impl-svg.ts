@@ -6,12 +6,14 @@ import { G } from '~/@/vdom/primitives/svg/g'
 import { Path } from '~/@/vdom/primitives/svg/path'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
+import { Text } from '~/@/vdom/primitives/svg/text'
 import type { VDom } from '~/@/vdom/vdom'
 import { Numberlink } from '../../../numberlink'
 import { NodeId } from '../../../numberlink/node-id'
 import { BoardInput } from '../../../ui/board'
 import { Color } from '../../../ui/color'
 import * as VariantGrid from '../grid'
+import { Line } from '~/@/vdom/primitives/svg/line'
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
@@ -215,23 +217,17 @@ const WithPadding = (input: {
 const ViewAutocompleteEdge = (input: BoardInput<VariantGrid.Model>) => {
   return (
     input.autocompleteEdge &&
-    h(
-      G,
-      {
-        transform: 'translate(0.5, 0.5)',
-      },
-      [
-        h('line', {
-          x1: input.model.positions[input.autocompleteEdge.sourceId]?.x,
-          y1: input.model.positions[input.autocompleteEdge.sourceId]?.y,
-          x2: input.model.positions[input.autocompleteEdge.targetId]?.x,
-          y2: input.model.positions[input.autocompleteEdge.targetId]?.y,
-          stroke: Color.groupIdToHex(input.autocompleteEdge.groupId),
-          'stroke-width': EDGE_STROKE_WIDTH,
-          strokeOpacity: 0.5,
-        }),
-      ],
-    )
+    h(G, { transform: 'translate(0.5, 0.5)' }, [
+      h(Line, {
+        x1: input.model.positions[input.autocompleteEdge.sourceId]?.x,
+        y1: input.model.positions[input.autocompleteEdge.sourceId]?.y,
+        x2: input.model.positions[input.autocompleteEdge.targetId]?.x,
+        y2: input.model.positions[input.autocompleteEdge.targetId]?.y,
+        stroke: Color.groupIdToHex(input.autocompleteEdge.groupId),
+        'stroke-width': EDGE_STROKE_WIDTH,
+        'stroke-opacity': 0.5,
+      }),
+    ])
   )
 }
 
@@ -243,13 +239,13 @@ const ViewCoordinates = (input: BoardInput<VariantGrid.Model>) => {
       { transform: 'translate(0, 1)' },
       map(VariantGrid.yieldNodes(input.model), (node) => {
         return h(
-          'text',
+          Text,
           {
             class: 'pointer-events-none',
             key: node.nodeId,
             x: node.x,
             y: node.y,
-            fontSize: '0.2',
+            'font-size': '0.2',
             fill: '#fff',
           },
           [`${node.x},${node.y}`],

@@ -14,6 +14,7 @@ import {
 } from './tic-tac-toe'
 import { G } from '~/@/vdom/primitives/svg/g'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
+import { Line } from '~/@/vdom/primitives/svg/line'
 
 export const gameTheme = {
   background: '#14BDAC',
@@ -32,7 +33,7 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
       G,
       {},
       lines.map((line, index) =>
-        h('line', {
+        h(Line, {
           key: index,
           x1: line.x1 * scale,
           y1: line.y1 * scale,
@@ -58,9 +59,9 @@ export const ViewBoard = ({ board, onClick }: { board: Model; onClick: (position
         if (slot === 'X') {
           return h(G, { 'stroke-width': strokeWidth, stroke: gameTheme.cross }, [
             // direction: \
-            h('line', { x1: cx - r, y1: cy - r, x2: cx + r, y2: cy + r }),
+            h(Line, { x1: cx - r, y1: cy - r, x2: cx + r, y2: cy + r }),
             // direction: /
-            h('line', { x1: cx + r, y1: cy - r, x2: cx - r, y2: cy + r }),
+            h(Line, { x1: cx + r, y1: cy - r, x2: cx - r, y2: cy + r }),
           ])
         }
 
@@ -96,13 +97,13 @@ const ViewWins = (input: { board: Model }) => {
       const leftMost = winningGroup[0]
       const rightMost = winningGroup[winningGroup.length - 1] ?? leftMost
 
-      return h('line', {
+      return h(Line, {
         key,
         x1: (leftMost.column + 1 / 2) * scale,
         y1: (leftMost.row + 1 / 2) * scale,
         x2: (rightMost.column + 1 / 2) * scale,
         y2: (rightMost.row + 1 / 2) * scale,
-        strokeWidth,
+        'stroke-width': strokeWidth,
         stroke: gameTheme.cross,
       })
     }),
@@ -280,9 +281,9 @@ const Cross = ({
 }) => {
   return h(G, { 'stroke-width': strokeWidth, stroke: color }, [
     // direction: \
-    h('line', { x1: cx - r, y1: cy - r, x2: cx + r, y2: cy + r }),
+    h(Line, { x1: cx - r, y1: cy - r, x2: cx + r, y2: cy + r }),
     // direction: /
-    h('line', { x1: cx + r, y1: cy - r, x2: cx - r, y2: cy + r }),
+    h(Line, { x1: cx + r, y1: cy - r, x2: cx - r, y2: cy + r }),
   ])
 }
 
@@ -331,7 +332,7 @@ export const CoverArt = (input: { class?: string }) => {
 
   return h(Svg, { width: '100%', viewBox: '0 0 2 2', ...input }, [
     h(Rect, { x: 0, y: 0, width: 2, height: 2, fill: gameTheme.background }),
-    LINES.map((line, index) => h('line', { key: index, ...line, stroke: gameTheme.line, 'stroke-width': 0.1 })),
+    LINES.map((line, index) => h(Line, { key: index, ...line, stroke: gameTheme.line, 'stroke-width': 0.1 })),
     positions.map(([{ column, row }, slot], index) =>
       h(ViewSlot, { key: index, slot, cx: Number(column) + 0.5, cy: Number(row) + 0.5, r: 0.3 }),
     ),

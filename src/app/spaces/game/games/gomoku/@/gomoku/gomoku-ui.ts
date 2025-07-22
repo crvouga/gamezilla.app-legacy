@@ -2,6 +2,7 @@ import { Hex } from '~/@/hex/hex'
 import { cn } from '~/@/ui/cn'
 import { h } from '~/@/vdom/h'
 import { G } from '~/@/vdom/primitives/svg/g'
+import { Line } from '~/@/vdom/primitives/svg/line'
 import { Rect } from '~/@/vdom/primitives/svg/rect'
 import { Svg } from '~/@/vdom/primitives/svg/svg'
 import { type Board, type Bounds, type Stone, allPositions, bounds, presetToStars } from './gomoku'
@@ -130,7 +131,7 @@ export const ViewBoard = ({
             lower: 1,
             upper: bounds_.upper.y,
           }).map((x) =>
-            h('line', {
+            h(Line, {
               key: `x${x}`,
               x1: x,
               y1: bounds_.lower.y,
@@ -142,7 +143,7 @@ export const ViewBoard = ({
             lower: 1,
             upper: bounds.upper.x,
           }).map((y) =>
-            h('line', {
+            h(Line, {
               key: `y${y}`,
               x1: bounds_.lower.x,
               y1: y,
