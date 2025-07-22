@@ -195,7 +195,8 @@ CREATE TABLE public.space (
 CREATE TABLE public.space_projection (
     id text NOT NULL,
     host_user_id text NOT NULL,
-    game_id text
+    game_id text,
+    type text NOT NULL
 );
 
 
@@ -564,4 +565,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250609231740'),
     ('20250609232555'),
     ('20250616011319'),
-    ('20250617205957');
+    ('20250617205957'),
+    ('20250722031153');
