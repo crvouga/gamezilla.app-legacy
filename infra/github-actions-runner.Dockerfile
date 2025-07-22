@@ -46,5 +46,4 @@ RUN chmod +x ./github-actions-runner.sh
 RUN usermod -aG docker runner \
  && chown -R runner:runner /home/runner
 
-USER runner
 ENTRYPOINT ["./github-actions-runner.sh"]
