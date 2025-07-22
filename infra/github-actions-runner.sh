@@ -1,10 +1,13 @@
 #!/bin/bash
 set -e
 
-if [ -z "$GITHUB_RUNNER_TOKEN" ] || [ -z "$GITHUB_RUNNER_URL" ]; then
-  echo "GITHUB_RUNNER_TOKEN and GITHUB_RUNNER_URL must be set"
+if [ -z "$GITHUB_RUNNER_TOKEN" ]; then
+  echo "GITHUB_RUNNER_TOKEN must be set"
   exit 1
 fi
+
+# Set default URL if not provided
+GITHUB_RUNNER_URL=${GITHUB_RUNNER_URL:-"https://github.com/crvouga/gamezilla.app"}
 
 # Configure the runner
 ./config.sh --unattended \
