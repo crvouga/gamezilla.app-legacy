@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  type-check:
-    name: Type Check
+  test:
+    name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -31,87 +31,21 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Create env file
+        run: pnpm run env:ci
 
       - name: Run type checker
         run: pnpm exec tsc
 
-  circular-deps:
-    name: Circular Dependencies Check
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
       - name: Check circular dependencies
         run: pnpm run cir-deps
-
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Create env file
-        run: pnpm run env:ci
 
       - name: Run unit tests
         run: pnpm run unit
 
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Create env file
-        run: pnpm run env:ci
-
       - name: Start infra
-        run: pnpm local:up
+        run: pnpm e2e:up
 
       - name: Wait for infra to be ready
         run: sleep 10
@@ -121,39 +55,6 @@ jobs:
 
       - name: Run integration tests
         run: pnpm run int
-
-  e2e-tests:
-    name: E2E Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Create env file
-        run: pnpm run env:ci
-
-      - name: Start e2e infra
-        run: pnpm e2e:up
-
-      - name: Wait for infra to be ready
-        run: sleep 10
-
-      - name: Run db:up
-        run: pnpm run db:up
 
       - name: Setup e2e
         run: pnpm e2e:ci:setup
@@ -171,7 +72,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: [e2e-tests, integration-tests, unit-tests, circular-deps, type-check]
+    needs: [test]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: github.ref == 'refs/heads/main'
