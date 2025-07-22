@@ -22,10 +22,6 @@ services:
         NODE_ENV: ${NODE_ENV:?NODE_ENV is required}
     ports:
       - '${BACKEND_PORT:?BACKEND_PORT is required}:${BACKEND_PORT:?BACKEND_PORT is required}'
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:?POSTGRES_USER is required}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:${POSTGRES_PORT:?POSTGRES_PORT is required}/${POSTGRES_DB:?POSTGRES_DB is required}?sslmode=disable
-      - TOPIC_URL=ws://topic:${TOPIC_PORT:?TOPIC_PORT is required}
-      - BACKEND_PORT=${BACKEND_PORT:?BACKEND_PORT is required}
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
@@ -36,9 +32,6 @@ services:
       dockerfile: infra/topic.Dockerfile
     ports:
       - '${TOPIC_PORT:?TOPIC_PORT is required}:${TOPIC_PORT:?TOPIC_PORT is required}'
-    environment:
-      - NATS_URL=nats://nats:${NATS_PORT:?NATS_PORT is required}
-      - TOPIC_PORT=${TOPIC_PORT:?TOPIC_PORT is required}
     depends_on:
       nats:
         condition: service_started
