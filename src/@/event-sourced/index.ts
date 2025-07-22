@@ -1,10 +1,11 @@
 import { assert } from '~/@/assert'
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { eq } from '~/@/equals/equals'
-import { s } from '~/@/schema'
 import { LamportClock, LamportTimestamp } from '~/@/lamport-clock'
-import { EventId, EventMeta, type WithEventId, type WithEventMeta } from './event'
+import { s } from '~/@/schema'
 import { ascend } from '../array/sorting'
+import { UnixMs } from '../time/unix-ms'
+import { EventId, EventMeta, type WithEventId, type WithEventMeta } from './event'
 
 export type EventSourced<TEvent, TProjection> = {
   clock: LamportClock
@@ -12,6 +13,7 @@ export type EventSourced<TEvent, TProjection> = {
   eventIds: Record<EventId, EventId>
   snapshots: CappedOrderedDict<EventId, TProjection>
   initial: TProjection
+  lastUpdatedAt?: UnixMs | null | undefined
 }
 
 export type EventSourcedConfig<TEvent, TProjection> = {
@@ -28,6 +30,7 @@ const schema = <TEvent, TProjection>(
     clock: LamportClock,
     snapshots: CappedOrderedDict.schema(EventId, projectionParser),
     initial: projectionParser,
+    lastUpdatedAt: s.maybe(UnixMs),
   })
 }
 
@@ -40,6 +43,7 @@ const init = <TEvent, TProjection>(initial: TProjection): EventSourced<TEvent, T
     snapshots: CappedOrderedDict.init({ maxSize: SNAPSHOTS_MAX_SIZE }),
     eventIds: {},
     initial: initial,
+    lastUpdatedAt: UnixMs.now(),
   }
 }
 
@@ -50,6 +54,7 @@ const initFromSnapshot = <TEvent, TProjection>(
   const initial: EventSourced<TEvent, TProjection> = {
     ...init(snapshot),
     events: events,
+    lastUpdatedAt: UnixMs.now(),
   }
 
   for (const event of events) {
@@ -106,6 +111,7 @@ const startFromLatestSnapshot = <TEvent, TProjection>(
         clock: model.clock,
         snapshots: CappedOrderedDict.add(snapshots, event.eventId, snapshot),
         initial: snapshot,
+        lastUpdatedAt: model.lastUpdatedAt,
       }
     }
   }
@@ -116,6 +122,7 @@ const startFromLatestSnapshot = <TEvent, TProjection>(
     clock: model.clock,
     snapshots: snapshots,
     initial: model.initial,
+    lastUpdatedAt: model.lastUpdatedAt,
   }
 }
 
@@ -196,12 +203,15 @@ const appendEvent = <TEvent, TProjection>(
   // Add new snapshot
   //
 
+  const lastUpdatedAt = UnixMs.now()
+
   const snapshot = toProjection(config, {
     clock: model.clock,
     events: newEvents,
     snapshots: newSnapshots,
     eventIds: newEventIds,
     initial: model.initial,
+    lastUpdatedAt,
   })
 
   newSnapshots = CappedOrderedDict.add(newSnapshots, event.eventId, snapshot)
@@ -221,6 +231,7 @@ const appendEvent = <TEvent, TProjection>(
     events: newEvents,
     eventIds: newEventIds,
     initial: model.initial,
+    lastUpdatedAt,
   }
 
   //
@@ -262,7 +273,10 @@ const toProjection = <TEvent, TProjection>(
   return projection
 }
 
-const toEvent = <TEvent, TProjection>(model: EventSourced<TEvent, TProjection>, eventId: EventId) => {
+const toEvent = <TEvent, TProjection>(
+  model: EventSourced<TEvent, TProjection>,
+  eventId: EventId,
+): WithEventMeta<TEvent> | null => {
   const event = model.events.find((e) => e.eventId === eventId)
 
   if (!event) {
@@ -299,6 +313,7 @@ const mergeLeft = <TEvent, TProjection>(
       ...right.eventIds,
     },
     initial: left.initial,
+    lastUpdatedAt: left.lastUpdatedAt,
   }
 }
 

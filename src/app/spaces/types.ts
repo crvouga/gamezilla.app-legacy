@@ -13,10 +13,8 @@ import { GameTypes } from './game'
 import { JoinSpaceTypes } from './join-space'
 import { LeaveSpaceTypes } from './leave-space'
 import { ListSpacesTypes } from './list-spaces'
-import { SpaceLoaderTypes } from './space/space-loader'
 import { ISpaceDb } from './space/space-db/interface'
 import { SpaceProjectionStarted } from './space/space-projection'
-import { Spaces } from './space/spaces'
 import { StartSpaceTypes } from './start-space'
 import { SyncTypes } from './sync'
 
@@ -29,32 +27,28 @@ type Opened =
   | 'leave-space.confirmation'
 
 type ModelFrontendBase = {
-  spaces: Spaces.Model
   openedPreviewUserId: UserId | null
   opened: Opened
 }
 
-export type ModelFrontend = SpaceLoaderTypes.ModelFrontend &
-  ListSpacesTypes.ModelFrontend &
-  GameTypes.ModelFrontend &
-  ModelFrontendBase
+export type ModelFrontend = ModelFrontendBase & GameTypes.ModelFrontend
 
 export type MsgFrontend =
-  | SpaceLoaderTypes.MsgFrontend
+  | { t: 'got-msg-out'; c: unknown }
   | PeopleActionTypes.MsgFrontend
   | LeaveSpaceTypes.MsgFrontend
   | EndSpaceTypes.MsgFrontend
-  | ListSpacesTypes.MsgFrontend
   | GameTypes.MsgFrontend
   | JoinSpaceTypes.MsgFrontend
   | ExitSpaceActionTypes.MsgFrontend
   | StartSpaceTypes.MsgFrontend
   | CurrentSpaceMiniPlayerTypes.MsgFrontend
   | SyncTypes.MsgFrontend
+  | ListSpacesTypes.MsgFrontend
 
 export const topicContract = TopicContract.combine([SyncTypes.topicContract])
 
-export const rpcContract = RPC.combineContracts([SyncTypes.rpcContract, ListSpacesTypes.rpcContract])
+export const rpcContract = RPC.combineContracts([SyncTypes.rpcContract])
 
 export type MsgBackend = SyncTypes.MsgBackend
 

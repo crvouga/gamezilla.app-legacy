@@ -7,11 +7,13 @@ export const Msg = s.or(
     query: s.dict(s.str(), s.unknown),
     entities: s.dict(s.str(), s.dict(s.str(), s.unknown)),
     results: s.arr(s.str()),
+    lastUpdatedAtKey: s.str(),
   }),
   s.obj({
     t: s.l('got-entity'),
     id: s.str(),
     entity: s.dict(s.str(), s.unknown),
+    lastUpdatedAtKey: s.str(),
   }),
 )
 

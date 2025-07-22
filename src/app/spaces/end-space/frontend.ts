@@ -9,8 +9,9 @@ import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
 import { SpaceFrontendModule } from '../frontend/space-frontend'
+import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace } from '../space/msg-space'
-import { Spaces } from '../space/spaces'
+import { Space } from '../space/space'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -25,7 +26,11 @@ const updateFromAppEvent: SpaceFrontendModule['update'] = (input) => {
   if (CurrentUserLoggedOutEvt.is(input.msgIn)) {
     if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-    const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
+    const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
+
+    if (!currentUserSpace) return { model: input.model }
+
+    const currentUserSpaceId = Space.toSpaceId(currentUserSpace)
 
     if (!currentUserSpaceId) return { model: input.model }
 
@@ -45,7 +50,13 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
     case 'user-ended-space': {
       if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+      const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
+
+      if (!currentUserSpace) return { model: input.model }
+
+      const currentUserSpaceId = Space.toSpaceId(currentUserSpace)
+
+      if (!currentUserSpaceId) return { model: input.model }
 
       const msgSpace = input.msgSpace
 
@@ -99,7 +110,11 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
     case 'end-space.clicked-end-space-button': {
       if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
+      const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
+
+      if (!currentUserSpace) return { model: input.model }
+
+      const currentUserSpaceId = Space.toSpaceId(currentUserSpace)
 
       if (!currentUserSpaceId) return { model: input.model }
 
@@ -120,15 +135,21 @@ const updateEndSpaceButton: SpaceFrontendModule['update'] = (input) => {
 }
 
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
-  const spaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+  if (!input.ctx.currentUser?.userId) return null
 
-  if (!spaceId) return null
+  const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
+
+  if (!currentUserSpace) return null
+
+  const currentUserSpaceId = Space.toSpaceId(currentUserSpace)
+
+  if (!currentUserSpaceId) return null
 
   return {
     id: input.ctx.t('spaces.end'),
     icon: (inputIcon) => h(IconArrowLeftOnRect, { ...inputIcon }),
     label: input.ctx.t('spaces.end'),
-    onClick: () => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId }),
+    onClick: () => input.dispatch({ t: 'end-space.clicked-end-space-button', spaceId: currentUserSpaceId }),
     color: 'danger',
   }
 }

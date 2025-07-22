@@ -1,9 +1,15 @@
 import { s } from '~/@/schema'
+import { UnixMs } from '~/@/time/unix-ms'
 import { Numberlink } from '../numberlink'
-import { Pipe } from '../numberlink/numberlink'
 import { GroupId } from '../numberlink/group-id'
+import { Pipe } from '../numberlink/numberlink'
 
-const schema = Numberlink.Model
+const schema = s.and(
+  Numberlink.Model,
+  s.obj({
+    lastUpdatedAt: UnixMs,
+  }),
+)
 
 export type Solution = s.Infer<typeof schema>
 
@@ -21,6 +27,7 @@ const fromNumberlink = (model: Numberlink.Model): Solution => {
     nodes: model.nodes,
     terminalsByGroupId: model.terminalsByGroupId,
     terminalHash: model.terminalHash,
+    lastUpdatedAt: UnixMs.now(),
   }
 }
 
@@ -32,9 +39,12 @@ const toSolvedNumberlink = (solution: Solution): Numberlink.Model => {
   }
 }
 
+const key = (key: keyof Solution) => key
+
 export const Solution = {
   ...schema,
   toPipelineByGroupId,
   fromNumberlink,
   toSolvedNumberlink,
+  key,
 }

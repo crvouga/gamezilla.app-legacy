@@ -7,8 +7,9 @@ import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenAction } from '~/app/@/ui/screen/action-bar/screen-action-bar-props'
 import { SpaceFrontendModule } from '../frontend/space-frontend'
+import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace } from '../space/msg-space'
-import { Spaces } from '../space/spaces'
+import { Space } from '../space/space'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -18,33 +19,37 @@ const update: SpaceFrontendModule['update'] = (input) => {
   )
 }
 
-const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: msgSpace, ctx }) => {
-  switch (msgSpace?.t) {
+const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
+  switch (input.msgSpace?.t) {
     case 'user-left-space': {
-      if (!ctx.currentUser?.userId) return { model }
+      if (!input.ctx.currentUser?.userId) return { model: input.model }
 
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId(model.spaces, ctx.currentUser?.userId)
+      const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
 
-      if (msgSpace.spaceId !== currentUserSpaceId) return { model }
+      if (!currentUserSpace) return { model: input.model }
 
-      if (msgSpace.userId !== ctx.currentUser?.userId) {
-        const username = ctx.profilesByUserId[msgSpace.userId]?.username
+      const currentUserSpaceId = Space.toSpaceId(currentUserSpace)
+
+      if (input.msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
+
+      if (input.msgSpace.userId !== input.ctx.currentUser?.userId) {
+        const username = input.ctx.profilesByUserId[input.msgSpace.userId]?.username
         return {
-          model,
+          model: input.model,
           msgOut: [
             PlaySoundCmd.init(APP_SOUND.navBackward),
             username
-              ? ShowToastCmd.init(ctx.t('spaces.other-user-left', username))
-              : ShowToastCmd.init(ctx.t('spaces.current-user-left')),
+              ? ShowToastCmd.init(input.ctx.t('spaces.other-user-left', username))
+              : ShowToastCmd.init(input.ctx.t('spaces.current-user-left')),
           ],
         }
       }
 
       return {
-        model,
+        model: input.model,
         msgOut: [
           PlaySoundCmd.init(APP_SOUND.navBackward),
-          ShowToastCmd.init(ctx.t('spaces.current-user-left')),
+          ShowToastCmd.init(input.ctx.t('spaces.current-user-left')),
           PushScreenCmd.init({
             n: 'spaces',
             t: 'space-list',
@@ -53,7 +58,7 @@ const updateFromMsgSpace: SpaceFrontendModule['update'] = ({ model, msgSpace: ms
       }
     }
   }
-  return { model }
+  return { model: input.model }
 }
 
 const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg }) => {
@@ -61,7 +66,11 @@ const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg
     case 'leave-space.clicked-leave-space-button': {
       if (!ctx.currentUser?.userId) return { model }
 
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId(model.spaces, ctx.currentUser.userId)
+      const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(ctx)
+
+      if (!currentUserSpace) return { model }
+
+      const currentUserSpaceId = Space.toSpaceId(currentUserSpace)
 
       if (!currentUserSpaceId) return { model }
 
@@ -86,8 +95,16 @@ const updateLeaveSpaceButton: SpaceFrontendModule['update'] = ({ ctx, model, msg
 }
 
 const viewAction = (input: Parameters<SpaceFrontendModule['View']>[0]): ScreenAction | null => {
-  const spaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+  if (!input.ctx.currentUser?.userId) return null
+
+  const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
+
+  if (!currentUserSpace) return null
+
+  const spaceId = Space.toSpaceId(currentUserSpace)
+
   if (!spaceId) return null
+
   return {
     id: input.ctx.t('spaces.leave'),
     icon: (inputIcon) => h(IconArrowLeftOnRect, inputIcon),

@@ -6,7 +6,6 @@ import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
-import { ShowErrorSmall } from '~/app/@/frontend/show-error-small'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import { SectionTitle } from '~/app/@/ui/section/section-title'
@@ -17,8 +16,9 @@ import { SectionPersonDetails } from '../@/ui/section-person-details'
 import { SpaceFrontendModule } from '../frontend/space-frontend'
 import { GameName } from '../game/games/@/game-name'
 import { GameCoverArt } from '../game/games/cover-art'
+import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace } from '../space/msg-space'
-import { Spaces } from '../space/spaces'
+import { Space } from '../space/space'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -77,22 +77,11 @@ const updateFromJoinSpaceButton: SpaceFrontendModule['update'] = (input) => {
 const updateFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
   switch (input.msgSpace?.t) {
     case 'user-joined-space': {
-      const error = Spaces.toErrorByEvenId(input.model.spaces, input.msgSpace.eventId)
+      const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
 
-      switch (error?.t) {
-        case 'user-already-in-a-space': {
-          if (error.userId === input.ctx.currentUser?.userId) {
-            return {
-              model: input.model,
-              msgOut: ShowErrorSmall.init(input.ctx.t("spaces.you're-already-in-a-space")),
-            }
-          }
+      if (!currentUserSpace) return { model: input.model }
 
-          return { model: input.model }
-        }
-      }
-
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+      const currentUserSpaceId = Space.toSpaceId(currentUserSpace)
 
       if (input.msgSpace.spaceId !== currentUserSpaceId) return { model: input.model }
 
@@ -130,12 +119,8 @@ const view: SpaceFrontendModule['View'] = (input) => {
 
   if (!space) return h('div', {}, ['No space'])
 
-  const spaceState = Spaces.toSpaceStarted(input.model.spaces, space?.spaceId)
-
-  if (!spaceState) return h('div', {}, ['Space is not started'])
-
   const spaceCtx: SpaceFrontendCtx = { ...input.ctx, space, currentUser }
-  const hostProfile = input.ctx.profilesByUserId[spaceState.hostId]
+  const hostProfile = input.ctx.profilesByUserId[space.hostId]
 
   return h(ScreenLayout, {
     dataTestId: 'spaces/join-space',
@@ -161,7 +146,7 @@ const view: SpaceFrontendModule['View'] = (input) => {
     },
     renderBody: () =>
       h('div', { class: 'flex w-full flex-col gap-6' }, [
-        spaceState.game && h(SectionGame, { ctx: input.ctx, gameName: spaceState.game.t }),
+        space.game && h(SectionGame, { ctx: input.ctx, gameName: space.game.t }),
 
         h(SectionPeopleList, {
           ctx: spaceCtx,

@@ -15,6 +15,7 @@ const sub = <TMsg>(packDb: IPackDb, query: PackQuery, mapper: (m: unknown) => TM
         query,
         results: packs.map((c) => c.id),
         t: 'got-entities',
+        lastUpdatedAtKey: Pack.key('lastUpdatedAt'),
       }),
     )
   })

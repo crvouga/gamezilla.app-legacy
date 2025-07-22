@@ -1,4 +1,4 @@
-import type { Task } from '~/@/promise/task'
+import { Result } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { Paginated } from '~/app/@/data/pagination'
 import { UserId } from '~/app/@/data/user-id'
@@ -7,10 +7,10 @@ import type { PackId } from '../pack-id'
 import { PackQuery, WhereClause } from './interface-query'
 
 export type IPackDb = {
-  count: (input: { where: WhereClause }) => Task<string, number>
-  list: (input: PackQuery) => Task<string, Paginated<Pack>>
+  count: (input: { where: WhereClause }) => Promise<Result<string, number>>
+  list: (input: PackQuery) => Promise<Result<string, Paginated<Pack>>>
   sub: <T>(input: PackQuery, mapper: (m: Pack[]) => T) => Sub<T>
-  get: (id: PackId) => Task<string, Pack | null>
-  put: (pack: Pack) => Task<string, Pack>
-  zap: (input: { id: PackId; deletedBy: UserId }) => Task<string, null>
+  get: (id: PackId) => Promise<Result<string, Pack | null>>
+  put: (pack: Pack) => Promise<Result<string, Pack>>
+  zap: (input: { id: PackId; deletedBy: UserId }) => Promise<Result<string, null>>
 }

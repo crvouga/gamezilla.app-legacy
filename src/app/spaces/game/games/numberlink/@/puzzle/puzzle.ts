@@ -74,11 +74,14 @@ const random = async (input?: {
 
 const fromUnknown = FromUnknown<Puzzle>()
 
+const key = (key: keyof Puzzle) => key
+
 export const Puzzle = {
   ...schema,
   ...fromUnknown,
   create,
   random,
+  key,
 }
 
 Puzzle.fromUnknownRegister((data) => pipe(data, schema.parse, (x) => Result.mapErr(x, ParseError.toString)))

@@ -28,6 +28,7 @@ const sub = <TMsg>(
         query,
         results: solutions.map(SolutionHash.init),
         t: 'got-entities',
+        lastUpdatedAtKey: Solution.key('lastUpdatedAt'),
       }),
     )
   })

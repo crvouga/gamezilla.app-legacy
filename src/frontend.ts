@@ -4,6 +4,7 @@ import { HttpProtocol } from './@/http/protocol'
 import { Url } from './@/url/url'
 import { h, render, VDomEngine } from './@/vdom'
 import { VDomImpl } from './@/vdom/vdom-impl'
+import { DebuggerReduxDevTools } from './@/program/debugger'
 
 const main = async () => {
   const VDOM_IMPL = VDomImpl.getUrl()
@@ -33,7 +34,7 @@ const main = async () => {
     update: (input) => AppFrontend.update({ ...input, ctx }),
     subscriptions: (input) => AppFrontend.subscriptions({ ...input, ctx }),
     render: (input) => render(h(AppFrontend.View, { ...input, ctx }), root),
-    // debugger: DebuggerReduxDevTools,
+    debugger: DebuggerReduxDevTools,
   })
 
   VDomEngine.event.sub(async (input) => {

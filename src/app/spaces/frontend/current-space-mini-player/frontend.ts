@@ -11,14 +11,21 @@ import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { GameCoverArt } from '../../game/games/cover-art'
 import { SPACE_CARD_GRADIENT_CLASS_NAME } from '../../list-spaces/space-card/space-card-gradient'
-import { Spaces } from '../../space/spaces'
+import { CurrentUserSpaceLoader } from '../../space/current-user-space-loader'
+import { Space } from '../../space/space'
 import type { ModelFrontend, MsgFrontend } from '../../types'
 import type { SpaceFrontendModule } from '../space-frontend'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   switch (input.msg?.t) {
     case 'current-space-bar.clicked-current-space-bottom-bar': {
-      const currentUsersSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+      if (!input.ctx.currentUser?.userId) return { model: input.model }
+
+      const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
+
+      if (!currentUserSpace) return { model: input.model }
+
+      const currentUsersSpaceId = Space.toSpaceId(currentUserSpace)
 
       if (!currentUsersSpaceId) return { model: input.model }
 
@@ -40,8 +47,9 @@ const View = (input: {
   model: ModelFrontend
   dispatch: (msg: MsgFrontend) => void
 }) => {
-  const userSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser.userId)
-  const space = Spaces.toSpaceStarted(input.model.spaces, userSpaceId)
+  const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
+
+  const space = Space.toSpaceStarted(currentUserSpace)
 
   if (!space) return null
 

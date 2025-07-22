@@ -19,6 +19,19 @@ const init: QueryCache = {
   entities: {},
 }
 
+const mergeEntities = (
+  lastUpdatedAtKey: string,
+  existing: Record<string, unknown>,
+  incoming: Record<string, unknown>,
+) => {
+  const existingLastUpdatedAt = existing[lastUpdatedAtKey]
+  const incomingLastUpdatedAt = incoming[lastUpdatedAtKey]
+  if (existingLastUpdatedAt && incomingLastUpdatedAt && existingLastUpdatedAt > incomingLastUpdatedAt) {
+    return existing
+  }
+  return { ...existing, ...incoming }
+}
+
 const update = (input: {
   model: QueryCache
   msgIn: unknown
@@ -30,7 +43,11 @@ const update = (input: {
       case 'got-entities': {
         const entitiesNew = { ...input.model.entities }
         for (const entityId in input.msgIn.c.entities) {
-          entitiesNew[entityId] = { ...(entitiesNew[entityId] ?? {}), ...input.msgIn.c.entities[entityId] }
+          entitiesNew[entityId] = mergeEntities(
+            input.msgIn.c.lastUpdatedAtKey,
+            entitiesNew[entityId] ?? {},
+            input.msgIn.c.entities[entityId] ?? {},
+          )
         }
         const queryKey = deterministicJsonStringify(input.msgIn.c.query)
         const queriesNew = {
@@ -51,8 +68,14 @@ const update = (input: {
       }
 
       case 'got-entity': {
-        const entitiesNew = { ...input.model.entities }
-        entitiesNew[input.msgIn.c.id] = { ...(entitiesNew[input.msgIn.c.id] ?? {}), ...input.msgIn.c.entity }
+        const entitiesNew = {
+          ...input.model.entities,
+          [input.msgIn.c.id]: mergeEntities(
+            input.msgIn.c.lastUpdatedAtKey,
+            input.model.entities[input.msgIn.c.id] ?? {},
+            input.msgIn.c.entity,
+          ),
+        }
         return {
           model: {
             ...input.model,

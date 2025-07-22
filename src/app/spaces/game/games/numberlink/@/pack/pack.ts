@@ -103,6 +103,8 @@ const random = async (input?: { createdBy?: UserId; puzzleIds?: PuzzleId[] }): P
 
 const fromUnknown = FromUnknown<Pack>()
 
+const key = (key: keyof Pack) => key
+
 export const Pack = {
   ...schema,
   ...fromUnknown,
@@ -115,6 +117,7 @@ export const Pack = {
   remove,
   removePuzzleAtIndex,
   random,
+  key,
 }
 
 Pack.fromUnknownRegister((data) => pipe(data, schema.parse, (x) => Result.mapErr(x, ParseError.toString)))

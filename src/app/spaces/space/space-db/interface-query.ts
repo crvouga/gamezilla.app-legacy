@@ -14,6 +14,9 @@ const schema = s.partialObj({
     userId: s.partialObj({
       in: s.arr(UserId),
     }),
+    type: s.partialObj({
+      '=': s.enumeration(['started', 'ended'] as const),
+    }),
   }),
   limit: s.num(),
   offset: s.num(),

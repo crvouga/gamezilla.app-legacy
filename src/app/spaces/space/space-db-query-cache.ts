@@ -1,6 +1,7 @@
 import { indexBy } from '~/@/array/index-by'
 import { deterministicJsonStringify } from '~/@/json/deterministic-stringify'
 import { Sub } from '~/@/sub'
+import { SpaceId } from '~/app/@/data/space-id'
 import { GotQueryCacheMsg } from '~/app/frontend/query-cache/got-query-cache-msg.$msg'
 import { QueryCache } from '~/app/frontend/query-cache/query-cache'
 import { Space } from './space'
@@ -15,6 +16,7 @@ const sub = <TMsg>(spaceDb: ISpaceDb, query: SpaceDbQuery, mapper: (m: unknown) 
         query,
         results: spaces.map((c) => Space.toSpaceId(c) ?? ''),
         t: 'got-entities',
+        lastUpdatedAtKey: Space.key('lastUpdatedAt'),
       }),
     )
   })
@@ -23,7 +25,10 @@ const sub = <TMsg>(spaceDb: ISpaceDb, query: SpaceDbQuery, mapper: (m: unknown) 
 const read = (ctx: { queryCache: QueryCache }, query: SpaceDbQuery): Space[] => {
   const queryKey = deterministicJsonStringify(query)
   const results = ctx.queryCache.results[queryKey]
-  const entities = results?.map((id) => ctx.queryCache.entities[id] as Space) ?? []
+  const entities = (results?.map((id) => ctx.queryCache.entities[id] as Space) ?? []).filter((space) => {
+    const spaceProjection = Space.toSpaceProjection(space)
+    return spaceProjection?.type === 'started'
+  })
   return entities
 }
 
@@ -37,9 +42,14 @@ const isEmpty = (ctx: { queryCache: QueryCache }, query: SpaceDbQuery): boolean 
   return !isLoading(ctx, query) && spaces.length === 0
 }
 
+const entity = (ctx: { queryCache: QueryCache }, spaceId: SpaceId): Space | null => {
+  return ctx.queryCache.entities[spaceId] as Space | null
+}
+
 export const SpaceDbQueryCache = {
   sub,
   read,
   isLoading,
   isEmpty,
+  entity,
 }

@@ -2,7 +2,7 @@ import { difference } from '~/@/array/difference'
 import { describe, expect, test } from '~/@/test-runner'
 import { eventually } from '~/@/test/eventually'
 import { FixtureSpacesE2E } from '../@/fixture/e2e'
-import { TEST_ID_SPACE_SCREEN } from '../space/frontend'
+import { TEST_ID_SPACE_SCREEN } from '../space/screen-space'
 
 const Fixture = FixtureSpacesE2E
 

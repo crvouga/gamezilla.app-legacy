@@ -1,9 +1,10 @@
-import { EventSourced } from '~/@/event-sourced'
 import { isErr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { BackendConnectedEvt } from '~/app/@/frontend/backend-connected-evt.$msg'
 import { SpaceFrontendModule } from '../frontend/space-frontend'
-import { Spaces } from '../space/spaces'
+import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
+import { Space } from '../space/space'
+import { SpaceDbQueryCache } from '../space/space-db-query-cache'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -31,7 +32,11 @@ const outputMsgSpaces: SpaceFrontendModule['update'] = (input) => {
 const publishMsgSpace: SpaceFrontendModule['update'] = (input) => {
   if (!input.msgSpace) return { model: input.model }
 
-  const spaceEventWithMeta = Spaces.toEventWithMeta(input.model.spaces, input.msgSpace.spaceId, input.msgSpace.eventId)
+  const space = SpaceDbQueryCache.entity(input.ctx, input.msgSpace.spaceId)
+
+  if (!space) return { model: input.model }
+
+  const spaceEventWithMeta = Space.toSpaceEventWithMeta(space, input.msgSpace.eventId)
 
   if (!spaceEventWithMeta) return { model: input.model }
 
@@ -45,23 +50,14 @@ const publishMsgSpace: SpaceFrontendModule['update'] = (input) => {
 
 const updateSync: SpaceFrontendModule['update'] = (input) => {
   if (BackendConnectedEvt.is(input.msgIn)) {
-    const currentUserId = input.ctx.currentUser?.userId
-
-    if (!currentUserId) return { model: input.model }
-
-    const currentUserSpace = Spaces.toSpaceByUserId({
-      model: input.model.spaces,
-      userId: currentUserId,
-    })
+    const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
 
     if (!currentUserSpace) return { model: input.model }
-
-    const space = EventSourced.startFromLatestSnapshot(currentUserSpace)
 
     return {
       model: input.model,
       async eff(dispatch) {
-        const synced = await input.ctx.rpc['spaces.sync.sync']({ space })
+        const synced = await input.ctx.rpc['spaces.sync.sync']({ space: currentUserSpace })
         dispatch({ t: 'sync.synced', synced })
       },
     }
@@ -77,9 +73,9 @@ const updateSynced: SpaceFrontendModule['update'] = (input) => {
 
       if (isErr(synced)) return { model: input.model }
 
-      const merged = Spaces.merge(input.model.spaces, [synced.value.space])
+      const space = Space.toSpaceStarted(synced.value.space)
 
-      return { model: { ...input.model, spaces: merged } }
+      return { model: { ...input.model, spaces: [space] } }
     }
   }
 
@@ -87,7 +83,7 @@ const updateSynced: SpaceFrontendModule['update'] = (input) => {
 }
 
 const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
-  const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, input.ctx.currentUser?.userId)
+  const currentUserSpaceId = CurrentUserSpaceLoader.toCurrentUserSpaceId(input.ctx)
 
   if (!currentUserSpaceId) return Sub.none()
 

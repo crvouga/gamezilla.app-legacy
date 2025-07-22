@@ -1,13 +1,17 @@
 import { Eff } from '~/@/eff'
+import { EventSourced } from '~/@/event-sourced'
 import { Logger } from '~/@/logger'
 import { Msg } from '~/@/msg/msg'
-import { NotAsked } from '~/@/result'
 import { RPC } from '~/@/rpc'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { Sub } from '~/@/sub'
+import { throttleByKey } from '~/@/throttle/throttle'
+import { TimeSpan } from '~/@/time/time-span'
 import { ITopicClient } from '~/@/topic/topic-client/types'
 import { h } from '~/@/vdom'
+import { SpaceId } from '~/app/@/data/space-id'
 import { AppFrontendCtxBase, isAppFrontendCtx } from '../@/frontend/ctx'
+import { GotQueryCacheMsg } from '../frontend/query-cache/got-query-cache-msg.$msg'
 import { EndSpaceFrontend } from './end-space/frontend'
 import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/frontend'
 import { ExitSpaceAction } from './frontend/exit-space-action/frontend'
@@ -17,10 +21,11 @@ import { GameFrontend } from './game/frontend'
 import { JoinSpaceFrontend } from './join-space/frontend'
 import { LeaveSpaceFrontend } from './leave-space/frontend'
 import { ListSpacesFrontend } from './list-spaces/frontend'
-import { SpaceFrontend } from './space/frontend'
-import { SpaceLoaderFrontend } from './space/space-loader/frontend'
-import { SpaceDb } from './space/space-db'
-import { Spaces } from './space/spaces'
+import { CurrentUserSpaceLoader } from './space/current-user-space-loader'
+import { ScreenSpace } from './space/screen-space'
+import { Space } from './space/space'
+import { ISpaceDb, SpaceDb } from './space/space-db'
+import { SpaceDbQueryCache } from './space/space-db-query-cache'
 import { StartSpaceFrontend } from './start-space/frontend'
 import { SyncFrontend } from './sync/frontend'
 import type { FrontendCtxModule, FrontendModule, ModelFrontend, rpcContract, topicContract } from './types'
@@ -46,12 +51,9 @@ const initCtx = async (input: {
 
 const init: FrontendModule['init'] = (_input) => {
   const model: ModelFrontend = {
-    ...SpaceLoaderFrontend.init,
-    spaces: Spaces.init,
     games: {},
     opened: null,
     openedPreviewUserId: null,
-    listSpacesRequest: NotAsked,
   }
 
   return {
@@ -81,10 +83,6 @@ const updateLoop = (input: Input, acc: Output): Output => {
 }
 
 const updateChild: SpaceFrontendModule['update'] = (input) => {
-  if (input.msgSpace && Spaces.hasEvent(input.model.spaces, input.msgSpace.spaceId, input.msgSpace.eventId)) {
-    return { model: input.model }
-  }
-
   return SpaceFrontendModule.andThen(
     { model: input.model },
     (model) => EndSpaceFrontend.update({ ...input, model }),
@@ -98,24 +96,71 @@ const updateChild: SpaceFrontendModule['update'] = (input) => {
     (model) => ExitSpaceAction.update({ ...input, model }),
     (model) => CurrentSpaceMiniPlayer.update({ ...input, model }),
     (model) => PeopleActionFrontend.update({ ...input, model }),
-    (model) => SpaceLoaderFrontend.update({ ...input, model }),
+    (model) => {
+      switch (input.msg?.t) {
+        case 'got-msg-out': {
+          return { model: input.model, msgOut: [input.msg.c] }
+        }
+        default: {
+          return { model }
+        }
+      }
+    },
   )
 }
 
-const updateSpacesFromMsgSpace: SpaceFrontendModule['update'] = ({ msgSpace, model }) => {
-  if (!msgSpace) return { model }
+const updateSpacesFromMsgSpace: SpaceFrontendModule['update'] = (input) => {
+  const { msgSpace } = input
 
-  const updated = Spaces.update({ model: model.spaces, msgSpace })
+  if (!msgSpace) return { model: input.model }
 
-  return { model: { ...model, spaces: updated.model } }
+  const space = SpaceDbQueryCache.entity(input.ctx, msgSpace.spaceId) ?? Space.init
+
+  const spaceNew = Space.append(space, msgSpace)
+
+  return {
+    model: input.model,
+    msgOut: [
+      GotQueryCacheMsg.init({
+        t: 'got-entity',
+        id: msgSpace.spaceId,
+        entity: spaceNew,
+        lastUpdatedAtKey: Space.key('lastUpdatedAt'),
+      }),
+    ],
+    async eff() {
+      switch (msgSpace.t) {
+        case 'game': {
+          upsertSpaceThrottled(input.ctx.spaceDb, msgSpace.spaceId, spaceNew)
+          return
+        }
+        default: {
+          upsertSpace(input.ctx.spaceDb, msgSpace.spaceId, spaceNew)
+          return
+        }
+      }
+    },
+  }
 }
+
+const upsertSpace = async (spaceDb: ISpaceDb, _spaceId: SpaceId, space: Space) => {
+  await spaceDb.upsert(EventSourced.startFromLatestSnapshot(space))
+}
+
+const upsertSpaceThrottled = throttleByKey({
+  fn: upsertSpace,
+  keyFn: (_spaceDb, spaceId, _space) => spaceId,
+  throttle: TimeSpan.seconds(1),
+  behavior: 'use-latest',
+})
 
 const subscriptions: FrontendModule['subscriptions'] = (input) => {
   return Sub.batch([
     GameFrontend.subscriptions(input),
     SyncFrontend.subscriptions(input),
     ListSpacesFrontend.subscriptions(input),
-    SpaceLoaderFrontend.subscriptions(input),
+    CurrentUserSpaceLoader.subscriptions(input),
+    ScreenSpace.subscriptions(input),
   ])
 }
 
@@ -128,7 +173,7 @@ const View: FrontendModule['View'] = (input) => {
         }
         case 'space': {
           if (isAppFrontendCtx(input.ctx)) {
-            return h(SpaceFrontend.View, {
+            return h(ScreenSpace.View, {
               spaceId: input.ctx.currentScreen.spaceId,
               ctx: input.ctx,
               dispatch: input.dispatch,

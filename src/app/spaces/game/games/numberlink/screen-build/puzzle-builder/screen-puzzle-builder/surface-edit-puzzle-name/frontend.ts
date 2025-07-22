@@ -121,7 +121,14 @@ const updateFormButtons: FrontendModule['update'] = (input) => {
         },
         msgOut: [
           ...(puzzlePatched
-            ? [GotQueryCacheMsg.init({ t: 'got-entity', id: input.msgSpace.puzzleId, entity: puzzlePatched })]
+            ? [
+                GotQueryCacheMsg.init({
+                  t: 'got-entity',
+                  id: input.msgSpace.puzzleId,
+                  entity: puzzlePatched,
+                  lastUpdatedAtKey: Puzzle.key('lastUpdatedAt'),
+                }),
+              ]
             : []),
           isOk(input.msgSpace.edited)
             ? ShowOkSmall.init(input.ctx.t('game.numberlink.saved-name'))

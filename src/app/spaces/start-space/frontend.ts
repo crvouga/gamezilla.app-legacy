@@ -8,7 +8,9 @@ import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
 import { ShowToastCmd } from '~/app/@/frontend/show-toast-cmd.$msg'
 import { PostActionProps } from '~/app/@/ui/screen/layout/screen-layout-props'
 import { SpaceFrontendModule } from '../frontend/space-frontend'
+import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
 import { MsgSpace } from '../space/msg-space'
+import { Space } from '../space/space'
 
 const update: SpaceFrontendModule['update'] = (input) => {
   return SpaceFrontendModule.andThen(
@@ -74,11 +76,9 @@ const updateStartSpaceButton: SpaceFrontendModule['update'] = (input) => {
 
 export const viewStartSpaceButton = (input: Parameters<SpaceFrontendModule['View']>[0]): PostActionProps | null => {
   if (!input.ctx.currentUser?.userId) return null
-
-  const currentUserSpaceId = input.model.spaces.indexSpaceIdByUserId[input.ctx.currentUser.userId]
-
-  if (currentUserSpaceId) return null
-
+  const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
+  const currentUserSpaceProjection = currentUserSpace ? Space.toSpaceProjection(currentUserSpace) : null
+  if (currentUserSpaceProjection?.type === 'started') return null
   return {
     onSubmit: () => input.dispatch({ t: 'start-space.clicked-start-space-button', spaceId: SpaceId.generate() }),
     submitText: input.ctx.t('spaces.start-space'),

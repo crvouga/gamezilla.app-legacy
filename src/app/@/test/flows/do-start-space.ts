@@ -1,6 +1,6 @@
 import { expect } from '~/@/test-runner'
 import { TEST_ID_SPACE_LIST_SCREEN } from '~/app/spaces/list-spaces/frontend'
-import { TEST_ID_SPACE_SCREEN } from '~/app/spaces/space/frontend'
+import { TEST_ID_SPACE_SCREEN } from '~/app/spaces/space/screen-space'
 import { IFixtureApp } from '../app-fixture/interface'
 import { doDismissAlert } from './do-dismiss-alert'
 

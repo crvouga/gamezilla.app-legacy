@@ -1,3 +1,5 @@
+import { Sub } from '~/@/sub'
+import { SpinnerBlock } from '~/@/ui/spinner-block'
 import { h } from '~/@/vdom/h'
 import type { SpaceId } from '~/app/@/data/space-id'
 import { ScreenTitleButton } from '~/app/@/ui/screen/title-button/screen-title-button'
@@ -5,13 +7,21 @@ import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { EndSpaceFrontend } from '../end-space/frontend'
 import { ExitSpaceAction } from '../frontend/exit-space-action/frontend'
 import { PeopleActionFrontend } from '../frontend/people-action/frontend'
+import { SpaceFrontendModule } from '../frontend/space-frontend'
 import { GameFrontend } from '../game/frontend'
 import { JoinSpaceFrontend } from '../join-space/frontend'
 import { LeaveSpaceFrontend } from '../leave-space/frontend'
 import type { FrontendCtxModule, ModelFrontend, MsgFrontend } from '../types'
-import { Spaces } from './spaces'
+import { Space } from './space'
+import { SpaceDbQueryCache } from './space-db-query-cache'
+import { SpaceDbQuery } from './space-db/interface-query'
+import { SpaceProjection } from './space-projection'
 
 export const TEST_ID_SPACE_SCREEN = 'spaces/space-screen'
+
+const toQuery = (spaceId: SpaceId): SpaceDbQuery => {
+  return { where: { spaceId: { '=': spaceId } } }
+}
 
 const View = (input: {
   model: ModelFrontend
@@ -19,9 +29,17 @@ const View = (input: {
   dispatch: (m: MsgFrontend) => void
   spaceId: SpaceId
 }) => {
-  const spaceState = Spaces.toSpaceProjection(input.model.spaces, input.spaceId)
+  const query = toQuery(input.spaceId)
 
-  switch (spaceState.type) {
+  const isLoading = SpaceDbQueryCache.isLoading(input.ctx, query)
+
+  if (isLoading) return h(ViewSpaceLoading, input)
+
+  const space = SpaceDbQueryCache.entity(input.ctx, input.spaceId)
+
+  const spaceProjection = space ? Space.toSpaceProjection(space) : SpaceProjection.init
+
+  switch (spaceProjection.type) {
     case 'initial': {
       return h(ViewSpaceNotFound, input)
     }
@@ -35,9 +53,9 @@ const View = (input: {
 
       if (!currentUser) return null
 
-      const spaceCtx: SpaceFrontendCtx & FrontendCtxModule = { ...input.ctx, currentUser, space: spaceState }
+      const spaceCtx: SpaceFrontendCtx & FrontendCtxModule = { ...input.ctx, currentUser, space: spaceProjection }
 
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId(input.model.spaces, currentUser.userId)
+      const currentUserSpaceId = spaceProjection.spaceId
 
       const isNotJoined = currentUserSpaceId !== spaceCtx.space.spaceId
 
@@ -80,6 +98,10 @@ const View = (input: {
   }
 }
 
+const ViewSpaceLoading = (_input: { ctx: FrontendCtxModule; dispatch: (m: MsgFrontend) => void }) => {
+  return h(SpinnerBlock, {})
+}
+
 const ViewSpaceNotFound = (input: { ctx: FrontendCtxModule; dispatch: (m: MsgFrontend) => void }) => {
   return h(ScreenTitleButton, {
     title: input.ctx.t('spaces.space-not-found'),
@@ -88,6 +110,15 @@ const ViewSpaceNotFound = (input: { ctx: FrontendCtxModule; dispatch: (m: MsgFro
   })
 }
 
-export const SpaceFrontend = {
+const subscriptions: SpaceFrontendModule['subscriptions'] = (input) => {
+  const spaceId = input.ctx.currentScreen.t === 'space' ? input.ctx.currentScreen.spaceId : null
+
+  if (!spaceId) return Sub.none()
+
+  return SpaceDbQueryCache.sub(input.ctx.spaceDb, toQuery(spaceId), (c): MsgFrontend => ({ t: 'got-msg-out', c }))
+}
+
+export const ScreenSpace = {
   View,
+  subscriptions,
 }

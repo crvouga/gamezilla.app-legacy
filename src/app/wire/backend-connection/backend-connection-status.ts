@@ -5,7 +5,7 @@ import { BackendConnectionStatus } from '~/app/@/wire/backend-connection-status'
 import { Model } from './types'
 
 export const toBackendConnectionStatus = (model: Model): BackendConnectionStatus => {
-  const ping = CappedOrderedDict.valuesNewestFirst(model.pings).find((ping) => ping.pongAt)
+  const ping = CappedOrderedDict.valuesNewestFirst(model.pings).find((ping) => ping.pongAt !== null)
 
   if (!ping) return { t: 'connecting' }
 

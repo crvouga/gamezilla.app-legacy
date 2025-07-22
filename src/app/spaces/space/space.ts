@@ -1,19 +1,24 @@
 import { EventSourced, EventSourcedConfig } from '~/@/event-sourced'
-import { EventId, WithEventId } from '~/@/event-sourced/event'
+import { EventId, WithEventId, WithEventMeta } from '~/@/event-sourced/event'
 import { FromUnknown } from '~/@/from-unknown/from-unknown'
 import { pipe } from '~/@/function/pipe'
 import { Result } from '~/@/result'
 import { s } from '~/@/schema'
 import { ParseError } from '~/@/schema/schema/parse-error'
+import { UnixMs } from '~/@/time/unix-ms'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { MsgSpace } from './msg-space'
 import { SpaceProjection, SpaceProjectionStarted } from './space-projection'
 
 const schema = EventSourced.schema(MsgSpace, SpaceProjection.schema)
+
 export type Space = s.Infer<typeof schema>
 
-const init: Space = EventSourced.init(SpaceProjection.init)
+const init: Space = {
+  ...EventSourced.init(SpaceProjection.init),
+  lastUpdatedAt: UnixMs.now(),
+}
 
 const config: EventSourcedConfig<MsgSpace, SpaceProjection> = {
   reducer: SpaceProjection.updateSpace,
@@ -23,7 +28,7 @@ const append = (model: Space, msg: WithEventId<MsgSpace>): Space => {
   return EventSourced.appendEvent(config, model, msg)
 }
 
-const random = (input?: { hostId?: UserId; spaceId?: SpaceId; guestIds?: UserId[] }) => {
+const random = (input?: { hostId?: UserId; spaceId?: SpaceId; guestIds?: UserId[] }): Space => {
   const spaceId = input?.spaceId ?? SpaceId.generate()
   const hostId = input?.hostId ?? UserId.generate()
   const guestIds = input?.guestIds ?? []
@@ -78,6 +83,14 @@ const { fromUnknownRegister, fromUnknown } = FromUnknown<Space>()
 
 fromUnknownRegister((data) => pipe(data, schema.parse, (x) => Result.mapErr(x, ParseError.toString)))
 
+const toSpaceEventWithMeta = (model: Space, eventId: EventId): WithEventMeta<MsgSpace> | null => {
+  const event = EventSourced.toEvent(model, eventId)
+  if (!event) return null
+  return event
+}
+
+const key = (key: keyof Space) => key
+
 export const Space = {
   schema,
   init,
@@ -89,4 +102,6 @@ export const Space = {
   toSpaceProjection,
   toSpaceStarted,
   toUserIds,
+  toSpaceEventWithMeta,
+  key,
 }

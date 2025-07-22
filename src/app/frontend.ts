@@ -3,7 +3,7 @@ import { Eff } from '~/@/eff'
 import { HttpClient } from '~/@/http-client'
 import { KeyValueDb } from '~/@/key-value-db'
 import { KeyBoard } from '~/@/keyboard'
-import { LanguageCodeISO_639_1, TranslatedText } from '~/@/l18n'
+import { LanguageCodeISO_639_1 } from '~/@/l18n'
 import { Translator } from '~/@/l18n/generated'
 import { Msg } from '~/@/msg/msg'
 import { Navigation } from '~/@/navigation'
@@ -23,6 +23,7 @@ import { UnixMs } from '~/@/time/unix-ms'
 import { TopicClient } from '~/@/topic/topic-client/topic-client'
 import { IconGamepad, IconUserCircle } from '~/@/ui/icon'
 import { IntersectionObserverEmitter } from '~/@/ui/intersection-observer'
+import { SpinnerBlock } from '~/@/ui/spinner-block'
 import { DrawerPortalExit } from '~/@/ui/surface-drawer/drawer-portal-exit'
 import { Url } from '~/@/url/url'
 import { h } from '~/@/vdom/h'
@@ -34,7 +35,6 @@ import { AppFrontendCtx, AppFrontendCtxBase, isAppFrontendCtx } from './@/fronte
 import { PreloadSoundsCmd } from './@/frontend/preload-sounds-cmd.$msg'
 import { topicMsgCodec } from './@/topic-msg-codec'
 import { ViewAppRoot } from './@/ui/app-root/app-root'
-import { SplashScreen } from './@/ui/logo/splash-screen'
 import { ParentScreenProps } from './@/ui/screen/layout/screen-layout-props'
 import { toCurrentUserState } from './auth/current-user/frontend'
 import { AuthFrontend } from './auth/frontend'
@@ -410,7 +410,7 @@ const ViewScreen = (input: { ctx: FrontendCtxModule; model: ModelFrontend; dispa
       const currentUser = toCurrentUserState({ model: input.model.auth.currentUser, ctx: input.ctx })
       switch (currentUser.t) {
         case 'loading':
-          return h(SplashScreen, { reason: TranslatedText.of('Loading current user...') })
+          return h(SpinnerBlock, {})
         case 'logged-out':
           return h(ViewScreenLoggedOut, { model: input.model, dispatch: input.dispatch, ctx: input.ctx })
         case 'logged-in':

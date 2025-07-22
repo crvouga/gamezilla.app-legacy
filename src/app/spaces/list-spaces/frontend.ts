@@ -1,4 +1,3 @@
-import { unwrapOr } from '~/@/result'
 import { Sub } from '~/@/sub'
 import { EmptyState } from '~/@/ui/empty-state'
 import { Gutter } from '~/@/ui/gutter'
@@ -7,10 +6,10 @@ import { h } from '~/@/vdom/h'
 import { APP_SOUND } from '~/app/@/frontend/app-sound'
 import { PlaySoundCmd } from '~/app/@/frontend/play-sound-cmd.$msg'
 import { PushScreenCmd } from '~/app/@/frontend/push-screen-cmd.$msg'
-import { ScreenChangedEvt } from '~/app/@/frontend/screen-changed-evt.$msg'
 import { ScreenLayout } from '~/app/@/ui/screen/layout/screen-layout'
 import type { SpaceFrontendModule } from '../frontend/space-frontend'
-import { Spaces } from '../space/spaces'
+import { CurrentUserSpaceLoader } from '../space/current-user-space-loader'
+import { Space } from '../space/space'
 import { StartSpaceFrontend } from '../start-space/frontend'
 import { ViewSpaceCard } from './space-card/space-card'
 
@@ -27,26 +26,6 @@ const update: SpaceFrontendModule['update'] = (input) => {
         ],
       }
     }
-    case 'list-spaces.list-spaces-response': {
-      const spacesNew = unwrapOr(input.msg.spaces, { spaces: [] }).spaces
-      return {
-        model: {
-          ...input.model,
-          listSpacesRequest: input.msg.spaces,
-          spaces: Spaces.merge(input.model.spaces, spacesNew),
-        },
-      }
-    }
-  }
-
-  if (ScreenChangedEvt.is(input.msgIn)) {
-    return {
-      model: input.model,
-      async eff(_dispatch) {
-        // const spaces = await input.ctx.rpc['spaces.list-spaces.list']({ pagination: { limit: 100, offset: 0 } })
-        // dispatch({ t: 'list-spaces.list-spaces-response', spaces })
-      },
-    }
   }
 
   return { model: input.model }
@@ -55,7 +34,11 @@ const update: SpaceFrontendModule['update'] = (input) => {
 const View: SpaceFrontendModule['View'] = (input) => {
   if (!input.ctx.currentUser?.userId) return null
 
-  const spaces = Spaces.toSpaceProjections(input.model.spaces)
+  const currentUserSpace = CurrentUserSpaceLoader.toCurrentUserSpace(input.ctx)
+
+  const spaces = currentUserSpace ? [currentUserSpace] : []
+
+  const spaceProjections = spaces.map((space) => Space.toSpaceProjection(space))
 
   return h(ScreenLayout, {
     dataTestId: TEST_ID_SPACE_LIST_SCREEN,
@@ -79,14 +62,24 @@ const View: SpaceFrontendModule['View'] = (input) => {
           class: 'flex flex-1 flex-col gap-4 overflow-y-auto p-6',
         },
         [
-          ...spaces.map((state) =>
-            h(ViewSpaceCard, {
-              key: state.spaceId,
-              ctx: { ...input.ctx, currentUser: input.ctx.currentUser },
-              onClick: () => input.dispatch({ t: 'list-spaces.clicked-space-card', spaceId: state.spaceId }),
-              state: state,
-            }),
-          ),
+          ...spaceProjections.flatMap((spaceProjection) => {
+            switch (spaceProjection.type) {
+              case 'ended':
+              case 'initial':
+                return []
+              case 'started': {
+                return [
+                  h(ViewSpaceCard, {
+                    key: spaceProjection.spaceId,
+                    ctx: { ...input.ctx, currentUser: input.ctx.currentUser },
+                    onClick: () =>
+                      input.dispatch({ t: 'list-spaces.clicked-space-card', spaceId: spaceProjection.spaceId }),
+                    state: spaceProjection,
+                  }),
+                ]
+              }
+            }
+          }),
           h(Gutter, { variant: 'screen' }),
         ],
       )

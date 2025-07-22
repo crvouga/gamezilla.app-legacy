@@ -13,7 +13,7 @@ export const DrawerComponent = (props: DrawerProps) => {
       'div',
       {
         id: props.id,
-        // 'aria-hidden': props.open ? 'false' : 'true',
+        'aria-hidden': props.open ? 'false' : 'true',
         'data-testid': props.testId,
         role: 'dialog',
         'aria-label': props.ariaLabel,

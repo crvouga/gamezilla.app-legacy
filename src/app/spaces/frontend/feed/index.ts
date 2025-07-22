@@ -5,23 +5,18 @@ import { FeedItem } from '../../@/feed-item'
 import { GamesFrontend } from '../../game/games/frontend'
 import { MsgSpace } from '../../space/msg-space'
 import { SpaceProjection, SpaceProjectionStarted } from '../../space/space-projection'
-import { Spaces } from '../../space/spaces'
 import type { ModelFrontend, MsgFrontend } from '../../types'
 
 const View = ({
   spaceState,
   ctx,
-  model,
 }: {
   spaceState: SpaceProjection
   dispatch: (m: MsgFrontend) => void
   model: ModelFrontend
   ctx: SpaceFrontendCtx
 }) => {
-  const msgEvt: WithEventId<MsgSpace> | null =
-    spaceState.type === 'started'
-      ? Spaces.toEventWithMeta(model.spaces, spaceState.spaceId, spaceState.latestEventId)
-      : null
+  const msgEvt: WithEventId<MsgSpace> | null = null
 
   return h('div', { class: 'flex h-6 w-full items-center justify-center p-1' }, [
     spaceState.type === 'started' && msgEvt ? h(ViewFeedItem, { ctx, msgEvt, state: spaceState }) : null,

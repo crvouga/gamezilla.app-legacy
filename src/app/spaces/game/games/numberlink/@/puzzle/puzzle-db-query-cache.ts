@@ -16,6 +16,7 @@ const sub = <TMsg>(puzzleDb: IPuzzleDb, query: PuzzleQuery, mapper: (m: unknown)
         query,
         results: puzzles.map((c) => c.id),
         t: 'got-entities',
+        lastUpdatedAtKey: Puzzle.key('lastUpdatedAt'),
       }),
     )
   })

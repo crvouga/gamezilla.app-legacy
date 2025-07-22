@@ -24,7 +24,7 @@ export const Dialog = (input: {
         input.open ? 'opacity-100' : 'pointer-events-none opacity-0',
       ),
       'data-open': input.open ? 'true' : 'false',
-      // 'aria-hidden': input.open ? 'false' : 'true',
+      'aria-hidden': input.open ? 'false' : 'true',
       'data-testid': input.testId,
       onClick: (e: { target: any; currentTarget: any }) => {
         if (e.target === e.currentTarget) {

@@ -81,7 +81,8 @@ CREATE TABLE IF NOT EXISTS space (
 CREATE TABLE IF NOT EXISTS space_projection (
   id TEXT PRIMARY KEY,
   host_user_id TEXT NOT NULL,
-  game_id TEXT
+  game_id TEXT,
+  type TEXT NOT NULL
 )
   `,
   `
@@ -249,11 +250,12 @@ const upsertProjection = async (
   if (found.value.length === 0) {
     const inserted = await config.sqlDb.query({
       schema: s.unknown,
-      sql: `INSERT INTO space_projection (id, host_user_id, game_id) VALUES (:id, :host_user_id, :game_id)`,
+      sql: `INSERT INTO space_projection (id, host_user_id, game_id, type) VALUES (:id, :host_user_id, :game_id, :type)`,
       vars: {
         id: spaceId,
         host_user_id: snapshot.type === 'initial' ? null : snapshot.hostId,
         game_id: snapshot.type === 'initial' ? null : (snapshot.game?.t ?? null),
+        type: snapshot.type,
       },
     })
 
@@ -264,11 +266,12 @@ const upsertProjection = async (
 
   const updated = await config.sqlDb.query({
     schema: s.unknown,
-    sql: `UPDATE space_projection SET host_user_id = :host_user_id, game_id = :game_id WHERE id = :id`,
+    sql: `UPDATE space_projection SET host_user_id = :host_user_id, game_id = :game_id, type = :type WHERE id = :id`,
     vars: {
       id: spaceId,
       host_user_id: snapshot.type === 'initial' ? null : snapshot.hostId,
       game_id: snapshot.type === 'initial' ? null : (snapshot.game?.t ?? null),
+      type: snapshot.type,
     },
   })
 
@@ -346,6 +349,11 @@ const toSqlWhere = (input: SpaceDbQuery) => {
   if (input.where?.hostId?.['=']) {
     clauses.push(`host_user_id = :host_user_id`)
     vars['host_user_id'] = input.where.hostId['=']
+  }
+
+  if (input.where?.type?.['=']) {
+    clauses.push(`type = :type`)
+    vars['type'] = input.where.type['=']
   }
 
   const whereUserIdIn = input.where?.userId?.in
