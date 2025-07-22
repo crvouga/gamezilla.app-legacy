@@ -1,10 +1,11 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { CappedOrderedDict } from '~/@/capped-ordered-dict/capped-ordered-dict'
 import { sleep } from '~/@/promise/sleep'
 import { unwrap } from '~/@/result'
 import { Sub } from '~/@/sub'
+import { describe, expect, test } from '~/@/test-runner'
 import { TimeSpan } from '~/@/time/time-span'
-import { Space, SpaceProjection } from '../..'
+import { Space } from '../../space'
+import { SpaceProjectionStarted } from '../../space-projection'
 import { SpaceDbOutputMsg } from '../interface'
 import { Fixtures } from './fixture'
 
@@ -27,7 +28,7 @@ describe('SpaceDb - invalid data', () => {
   })
 })
 
-const toInvalidSpaceModel = (space: Space.Model) => {
+const toInvalidSpaceModel = (space: Space) => {
   const latestEventId = space.snapshots._orderNewestFirst[0]
 
   if (!latestEventId) throw new Error('latestEventId not found')
@@ -36,7 +37,7 @@ const toInvalidSpaceModel = (space: Space.Model) => {
 
   if (!latestSnapshot) throw new Error('latestSnapshot not found')
 
-  const invalidSnapshot: Partial<SpaceProjection.Started> = {
+  const invalidSnapshot: Partial<SpaceProjectionStarted> = {
     game: undefined,
     hostId: undefined,
     latestEventId: undefined,
@@ -46,7 +47,7 @@ const toInvalidSpaceModel = (space: Space.Model) => {
     visibility: undefined,
   }
 
-  const corrupted: Space.Model = {
+  const corrupted: Space = {
     ...space,
     snapshots: CappedOrderedDict.add(
       space.snapshots,

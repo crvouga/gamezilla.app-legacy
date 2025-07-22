@@ -1,7 +1,7 @@
 import { Result } from '~/@/result'
 import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
-import { Space } from '../space'
+import { Space } from '../space/space'
 import { SpaceDbQuery } from '../space/space-db/interface-query'
 
 export type ModelFrontend = {
@@ -21,7 +21,7 @@ export const MsgFrontend = s.or(
   }),
   s.obj({
     t: s.l('space-loader.got-spaces'),
-    spaces: s.arr(Space.Model),
+    spaces: s.arr(Space.schema),
   }),
 )
 export type MsgFrontend = s.Infer<typeof MsgFrontend>

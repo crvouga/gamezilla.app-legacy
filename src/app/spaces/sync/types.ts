@@ -6,7 +6,7 @@ import { s } from '~/@/schema'
 import { TopicContract } from '~/@/topic/topic-contract'
 import { SpaceId } from '~/app/@/data/space-id'
 import { MsgSpace } from '../space/msg-space'
-import { Space } from '../space/space'
+import { Space } from '../space/space/space'
 
 export type MsgFrontend =
   | {
@@ -15,7 +15,7 @@ export type MsgFrontend =
     }
   | {
       t: 'sync.synced'
-      synced: Result<RPCError, { space: Space.Model }>
+      synced: Result<RPCError, { space: Space }>
     }
 
 export type MsgBackend = {
@@ -30,17 +30,17 @@ export const topicContract = TopicContract.init({
   },
   'spaces/snapshot': {
     params: SpaceId,
-    msg: Space.Model,
+    msg: Space.schema,
   },
 })
 
 export const rpcContract = RPC.initContract({
   'spaces.sync.sync': {
     input: s.obj({
-      space: Space.Model,
+      space: Space.schema,
     }),
     output: s.obj({
-      space: Space.Model,
+      space: Space.schema,
     }),
   },
 })

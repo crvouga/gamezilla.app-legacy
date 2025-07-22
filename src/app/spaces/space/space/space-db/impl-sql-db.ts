@@ -10,7 +10,8 @@ import { PubSub, Sub } from '~/@/sub'
 import { UnixMs } from '~/@/time/unix-ms'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { Space, SpaceProjection } from '..'
+import { Space } from '../space'
+import { SpaceProjection } from '../space-projection'
 import type { ISpaceDb, SpaceDbConfig, SpaceDbInputMsg, SpaceDbOutputMsg } from './interface'
 import { SpaceDbQuery } from './interface-query'
 
@@ -31,13 +32,13 @@ export const Row = s.obj({
 
 export type Row = s.Infer<typeof Row>
 
-const parseRow = (row: Row, logger: ILogger): Result<string, Space.Model> => {
+const parseRow = (row: Row, logger: ILogger): Result<string, Space> => {
   if (typeof row.model === 'string') {
     const json = Json.parse(row.model)
 
     if (isErr(json)) return Err('Failed to parse model as json')
 
-    const space = Space.Model.parse(json.value)
+    const space = Space.schema.parse(json.value)
 
     if (isErr(space)) {
       logger.error('Errored parsing model as space', space.error)
@@ -47,7 +48,7 @@ const parseRow = (row: Row, logger: ILogger): Result<string, Space.Model> => {
     return Ok(space.value)
   }
 
-  const space = Space.Model.parse(row.model)
+  const space = Space.schema.parse(row.model)
 
   if (isErr(space)) {
     logger.error('Errored parsing model as space', space.error)
@@ -57,7 +58,7 @@ const parseRow = (row: Row, logger: ILogger): Result<string, Space.Model> => {
   return Ok(space.value)
 }
 
-const parseRows = (rows: Row[], logger: ILogger): Space.Model[] => {
+const parseRows = (rows: Row[], logger: ILogger): Space[] => {
   const parsed = rows.flatMap((row) => {
     const parsed = parseRow(row, logger)
     if (isErr(parsed)) return []
@@ -185,7 +186,7 @@ export const SpaceDb = async (config: Config): Promise<ISpaceDb> => {
   }
 }
 
-const upsertSpace = async (config: Config, spaceId: SpaceId, space: Space.Model): Promise<Result<string, null>> => {
+const upsertSpace = async (config: Config, spaceId: SpaceId, space: Space): Promise<Result<string, null>> => {
   const found = await config.sqlDb.query({
     schema: s.unknown,
     sql: `SELECT * FROM space WHERE id = :id`,
@@ -233,7 +234,7 @@ const upsertSpace = async (config: Config, spaceId: SpaceId, space: Space.Model)
 const upsertProjection = async (
   config: Config,
   spaceId: SpaceId,
-  snapshot: SpaceProjection.Model,
+  snapshot: SpaceProjection,
 ): Promise<Result<string, null>> => {
   const found = await config.sqlDb.query({
     schema: s.unknown,

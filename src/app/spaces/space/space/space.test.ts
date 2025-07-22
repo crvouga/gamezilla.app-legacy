@@ -1,9 +1,9 @@
-import { describe, expect, test } from '~/@/test-runner'
 import { withEventId } from '~/@/event-sourced/event'
 import { pipe } from '~/@/function/pipe'
+import { describe, expect, test } from '~/@/test-runner'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { Space } from '.'
+import { Space } from './space'
 
 describe('Space', () => {
   test('staring space', () => {

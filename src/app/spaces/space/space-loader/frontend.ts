@@ -4,7 +4,7 @@ import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
 import { SpaceFrontendModule } from '../../frontend/space-frontend'
-import { Space } from '../space'
+import { Space } from '../space/space'
 import { ISpaceDb } from '../space/space-db/interface'
 import { Spaces } from '../spaces'
 import { ModelFrontend, MsgFrontend } from './types'
@@ -43,12 +43,7 @@ const update: SpaceFrontendModule['update'] = (input) => {
   return { model: input.model }
 }
 
-const upsertSpace = async (
-  spaceDb: ISpaceDb,
-  spaceId: SpaceId,
-  space: Space.Model,
-  dispatch: (m: MsgFrontend) => void,
-) => {
+const upsertSpace = async (spaceDb: ISpaceDb, spaceId: SpaceId, space: Space, dispatch: (m: MsgFrontend) => void) => {
   const spaceNew = EventSourced.startFromLatestSnapshot(space)
   const upserted = await spaceDb.upsert(spaceNew)
   dispatch({ t: 'space-loader.upserted', spaceId, upserted })

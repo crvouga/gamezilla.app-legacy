@@ -5,7 +5,7 @@ import { Sub } from '~/@/sub'
 import { throttleByKey } from '~/@/throttle/throttle'
 import { TimeSpan } from '~/@/time/time-span'
 import { SpaceId } from '~/app/@/data/space-id'
-import { Space } from '../space/space'
+import { Space } from '../space/space/space'
 import { BackendCtxModule } from '../types'
 import { rpcContract } from './types'
 
@@ -58,13 +58,13 @@ const worker = async (s: AbortSignal, input: { ctx: BackendCtxModule }) => {
 
   const msgSpaceSub = ctx.topic['spaces/msg'].subAll((c) => c)
 
-  const spaceCache = new Map<SpaceId, Space.Model>()
+  const spaceCache = new Map<SpaceId, Space>()
 
   const upsertSpace = throttleByKey({
     behavior: 'use-latest',
     throttle: TimeSpan.seconds(3),
     keyFn: (spaceId, _space) => spaceId,
-    fn: (_spaceId: SpaceId, space: Space.Model) => ctx.spaceDb.upsert(space),
+    fn: (_spaceId: SpaceId, space: Space) => ctx.spaceDb.upsert(space),
   })
 
   Sub.takeEvery(s, msgSpaceSub, async (msgSpace) => {

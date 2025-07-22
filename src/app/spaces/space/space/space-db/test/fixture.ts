@@ -5,7 +5,7 @@ import { Sub } from '~/@/sub'
 import { FixtureAppBackend } from '~/app/@/backend/fixture'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
-import { Space } from '../..'
+import { Space } from '../../space'
 import { Config, SpaceDb } from '../impl'
 import { SpaceDbInputMsg, SpaceDbOutputMsg } from '../interface'
 

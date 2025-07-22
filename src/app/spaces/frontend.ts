@@ -6,6 +6,7 @@ import { RPC } from '~/@/rpc'
 import { SqlDbMigrationPolicy } from '~/@/sql-db-migration-policy/impl'
 import { Sub } from '~/@/sub'
 import { ITopicClient } from '~/@/topic/topic-client/types'
+import { h } from '~/@/vdom'
 import { AppFrontendCtxBase, isAppFrontendCtx } from '../@/frontend/ctx'
 import { EndSpaceFrontend } from './end-space/frontend'
 import { CurrentSpaceMiniPlayer } from './frontend/current-space-mini-player/frontend'
@@ -33,6 +34,7 @@ const initCtx = async (input: {
     ...input.ctx,
     rpc: input.rpc,
     topic: input.topic,
+    space: null,
     spaceDb: await SpaceDb({
       t: 'sql-db',
       sqlDb: input.ctx.sqlDb,
@@ -122,11 +124,11 @@ const View: FrontendModule['View'] = (input) => {
     case 'spaces': {
       switch (input.ctx.currentScreen.t) {
         case 'space-list': {
-          return ListSpacesFrontend.View({ dispatch: input.dispatch, ctx: input.ctx, model: input.model })
+          return h(ListSpacesFrontend.View, { dispatch: input.dispatch, ctx: input.ctx, model: input.model })
         }
         case 'space': {
           if (isAppFrontendCtx(input.ctx)) {
-            return SpaceFrontend.View({
+            return h(SpaceFrontend.View, {
               spaceId: input.ctx.currentScreen.spaceId,
               ctx: input.ctx,
               dispatch: input.dispatch,

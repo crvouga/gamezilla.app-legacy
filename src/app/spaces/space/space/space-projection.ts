@@ -12,13 +12,13 @@ import { MsgSpace } from '../msg-space'
 //
 //
 
-export const Initial = s.obj({
+export const SpaceProjectionInitial = s.obj({
   type: s.l('initial'),
   latestEventId: s.maybe(EventId),
 })
-export type Initial = s.Infer<typeof Initial>
+export type SpaceProjectionInitial = s.Infer<typeof SpaceProjectionInitial>
 
-export const Started = s.obj({
+export const SpaceProjectionStarted = s.obj({
   type: s.l('started'),
   game: s.maybe(Game.ModelSpace),
   latestEventId: EventId,
@@ -27,9 +27,9 @@ export const Started = s.obj({
   hostId: UserId,
   users: s.dict(UserId, UserId),
 })
-export type Started = s.Infer<typeof Started>
+export type SpaceProjectionStarted = s.Infer<typeof SpaceProjectionStarted>
 
-export const Ended = s.obj({
+export const SpaceProjectionEnded = s.obj({
   type: s.l('ended'),
   latestEventId: EventId,
   game: s.maybe(Game.ModelSpace),
@@ -38,12 +38,12 @@ export const Ended = s.obj({
   hostId: UserId,
   users: s.dict(UserId, UserId),
 })
-export type Ended = s.Infer<typeof Ended>
+export type SpaceProjectionEnded = s.Infer<typeof SpaceProjectionEnded>
 
-export const Model = s.or(Initial, Started, Ended)
-export type Model = s.Infer<typeof Model>
+const schema = s.or(SpaceProjectionInitial, SpaceProjectionStarted, SpaceProjectionEnded)
+export type SpaceProjection = s.Infer<typeof schema>
 
-export const init: Model = {
+const init: SpaceProjection = {
   type: 'initial',
   latestEventId: null,
 }
@@ -54,7 +54,7 @@ export const init: Model = {
 //
 //
 
-export const toUserIds = (state: Model): UserId[] => {
+const toUserIds = (state: SpaceProjection): UserId[] => {
   switch (state.type) {
     case 'initial':
     case 'ended': {
@@ -74,7 +74,7 @@ export const toUserIds = (state: Model): UserId[] => {
 //
 //
 
-export const updateSpace = (state: Model, msgSpace: WithEventMeta<MsgSpace>): Model => {
+const updateSpace = (state: SpaceProjection, msgSpace: WithEventMeta<MsgSpace>): SpaceProjection => {
   switch (state.type) {
     case 'ended': {
       return state
@@ -182,4 +182,26 @@ export const updateSpace = (state: Model, msgSpace: WithEventMeta<MsgSpace>): Mo
       }
     }
   }
+}
+
+const random = (input?: { spaceId?: SpaceId; hostId?: UserId; guestIds?: UserId[] }): SpaceProjectionStarted => {
+  return {
+    type: 'started',
+    game: null,
+    latestEventId: EventId.generate(),
+    visibility: 'public',
+    spaceId: input?.spaceId ?? SpaceId.generate(),
+    hostId: input?.hostId ?? UserId.generate(),
+    users: {
+      [input?.hostId ?? UserId.generate()]: input?.hostId ?? UserId.generate(),
+    },
+  }
+}
+
+export const SpaceProjection = {
+  schema,
+  init,
+  updateSpace,
+  toUserIds,
+  random,
 }

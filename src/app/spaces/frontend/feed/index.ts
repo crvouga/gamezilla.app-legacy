@@ -1,10 +1,10 @@
-import { h } from '~/@/vdom/h'
 import { WithEventId } from '~/@/event-sourced/event'
+import { h } from '~/@/vdom/h'
 import { SpaceFrontendCtx } from '~/app/spaces/@/frontend/ctx'
 import { FeedItem } from '../../@/feed-item'
 import { GamesFrontend } from '../../game/games/frontend'
 import { MsgSpace } from '../../space/msg-space'
-import { SpaceProjection } from '../../space/space'
+import { SpaceProjection, SpaceProjectionStarted } from '../../space/space/space-projection'
 import { Spaces } from '../../space/spaces'
 import type { ModelFrontend, MsgFrontend } from '../../types'
 
@@ -13,12 +13,12 @@ const View = ({
   ctx,
   model,
 }: {
-  spaceState: SpaceProjection.Model
+  spaceState: SpaceProjection
   dispatch: (m: MsgFrontend) => void
   model: ModelFrontend
   ctx: SpaceFrontendCtx
 }) => {
-  const msgEvt =
+  const msgEvt: WithEventId<MsgSpace> | null =
     spaceState.type === 'started'
       ? Spaces.toEventWithMeta(model.spaces, spaceState.spaceId, spaceState.latestEventId)
       : null
@@ -35,7 +35,7 @@ const ViewFeedItem = ({
 }: {
   ctx: SpaceFrontendCtx
   msgEvt: WithEventId<MsgSpace>
-  state: SpaceProjection.Started
+  state: SpaceProjectionStarted
 }) => {
   switch (msgEvt.t) {
     case 'game': {

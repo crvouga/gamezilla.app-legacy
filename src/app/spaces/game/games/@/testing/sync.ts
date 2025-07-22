@@ -1,3 +1,4 @@
+import { EventId } from '~/@/event-sourced/event'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import type { SpaceCtx } from '~/app/spaces/@/space/ctx'
@@ -11,6 +12,9 @@ const guestUserId = 'test-guest-user-id' as UserId
 export const SpaceGameSpaceFixture = async () => {
   const ctx: SpaceCtx = {
     space: {
+      game: null,
+      latestEventId: EventId.generate(),
+      type: 'started',
       hostId: hostUserId,
       spaceId: currentSpaceId,
       users: {

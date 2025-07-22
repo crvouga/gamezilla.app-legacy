@@ -1,11 +1,10 @@
 import { RPC } from '~/@/rpc'
-import { TopicContract } from '~/@/topic/topic-contract'
 import { ITopicClient } from '~/@/topic/topic-client/types'
+import { TopicContract } from '~/@/topic/topic-contract'
 import type { AppFrontendModule } from '~/app/@/architecture/app-frontend'
 import { AppBackendCtxBase } from '~/app/@/backend/ctx'
 import { UserId } from '~/app/@/data/user-id'
 import { AppFrontendCtxBase } from '~/app/@/frontend/ctx'
-import { Space } from './@/space/space'
 import { EndSpaceTypes } from './end-space'
 import { CurrentSpaceMiniPlayerTypes } from './frontend/current-space-mini-player'
 import { ExitSpaceActionTypes } from './frontend/exit-space-action'
@@ -16,6 +15,7 @@ import { LeaveSpaceTypes } from './leave-space'
 import { ListSpacesTypes } from './list-spaces'
 import { SpaceLoaderTypes } from './space/space-loader'
 import { ISpaceDb } from './space/space/space-db/interface'
+import { SpaceProjectionStarted } from './space/space/space-projection'
 import { Spaces } from './space/spaces'
 import { StartSpaceTypes } from './start-space'
 import { SyncTypes } from './sync'
@@ -61,7 +61,7 @@ export type MsgBackend = SyncTypes.MsgBackend
 export type FrontendCtxModule = AppFrontendCtxBase & {
   topic: ITopicClient<typeof topicContract>
   rpc: RPC.Client<typeof rpcContract>
-  space?: Space | null
+  space: SpaceProjectionStarted | null
   spaceDb: ISpaceDb
 }
 

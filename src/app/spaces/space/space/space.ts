@@ -8,22 +8,22 @@ import { ParseError } from '~/@/schema/schema/parse-error'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { MsgSpace } from '../msg-space'
-import * as SpaceProjection from './space-projection'
+import { SpaceProjection, SpaceProjectionStarted } from './space-projection'
 
-export const Model = EventSourced.schema(MsgSpace, SpaceProjection.Model)
-export type Model = s.Infer<typeof Model>
+const schema = EventSourced.schema(MsgSpace, SpaceProjection.schema)
+export type Space = s.Infer<typeof schema>
 
-export const init: Model = EventSourced.init(SpaceProjection.init)
+const init: Space = EventSourced.init(SpaceProjection.init)
 
-const config: EventSourcedConfig<MsgSpace, SpaceProjection.Model> = {
+const config: EventSourcedConfig<MsgSpace, SpaceProjection> = {
   reducer: SpaceProjection.updateSpace,
 }
 
-export const append = (model: Model, msg: WithEventId<MsgSpace>): Model => {
+const append = (model: Space, msg: WithEventId<MsgSpace>): Space => {
   return EventSourced.appendEvent(config, model, msg)
 }
 
-export const random = (input?: { hostId?: UserId; spaceId?: SpaceId; guestIds?: UserId[] }) => {
+const random = (input?: { hostId?: UserId; spaceId?: SpaceId; guestIds?: UserId[] }) => {
   const spaceId = input?.spaceId ?? SpaceId.generate()
   const hostId = input?.hostId ?? UserId.generate()
   const guestIds = input?.guestIds ?? []
@@ -51,29 +51,42 @@ export const random = (input?: { hostId?: UserId; spaceId?: SpaceId; guestIds?: 
   )
 }
 
-export const toSpaceId = (model: Model): SpaceId | null => {
+const toSpaceId = (model: Space): SpaceId | null => {
   const state = EventSourced.toProjection(config, model)
   if (state.type === 'initial') return null
   return state.spaceId
 }
 
-export const toSpaceProjection = (model: Model): SpaceProjection.Model => {
+const toSpaceProjection = (model: Space): SpaceProjection => {
   return EventSourced.toProjection(config, model)
 }
 
-export const toSpaceStarted = (model: Model | null | undefined): SpaceProjection.Started | null => {
+const toSpaceStarted = (model: Space | null | undefined): SpaceProjectionStarted | null => {
   if (!model) return null
   const projection = toSpaceProjection(model)
   if (projection.type !== 'started') return null
   return projection
 }
 
-export const toUserIds = (model: Model): UserId[] => {
+const toUserIds = (model: Space): UserId[] => {
   const projection = toSpaceProjection(model)
   const userIds = SpaceProjection.toUserIds(projection)
   return userIds
 }
 
-export const { fromUnknownRegister, fromUnknown } = FromUnknown<Model>()
+const { fromUnknownRegister, fromUnknown } = FromUnknown<Space>()
 
-fromUnknownRegister((data) => pipe(data, Model.parse, (x) => Result.mapErr(x, ParseError.toString)))
+fromUnknownRegister((data) => pipe(data, schema.parse, (x) => Result.mapErr(x, ParseError.toString)))
+
+export const Space = {
+  schema,
+  init,
+  append,
+  random,
+  fromUnknownRegister,
+  fromUnknown,
+  toSpaceId,
+  toSpaceProjection,
+  toSpaceStarted,
+  toUserIds,
+}

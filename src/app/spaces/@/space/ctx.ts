@@ -1,5 +1,5 @@
-import { Space } from './space'
+import { SpaceProjectionStarted } from '../../space/space/space-projection'
 
 export type SpaceCtx = {
-  space: Space
+  space: SpaceProjectionStarted
 }

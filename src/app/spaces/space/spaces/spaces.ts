@@ -4,7 +4,8 @@ import { s } from '~/@/schema'
 import { SpaceId } from '~/app/@/data/space-id'
 import { UserId } from '~/app/@/data/user-id'
 import { MsgSpace } from '../msg-space'
-import { Space, SpaceProjection } from '../space'
+import { Space } from '../space/space'
+import { SpaceProjection, SpaceProjectionStarted } from '../space/space-projection'
 
 export const SpaceError = s.obj({
   t: s.l('user-already-in-a-space'),
@@ -13,7 +14,7 @@ export const SpaceError = s.obj({
 export type SpaceError = s.Infer<typeof SpaceError>
 
 export const Model = s.obj({
-  spaces: s.dict(SpaceId, Space.Model),
+  spaces: s.dict(SpaceId, Space.schema),
   indexSpaceIdByUserId: s.dict(UserId, SpaceId),
   errors: s.dict(EventId, SpaceError),
 })
@@ -29,7 +30,7 @@ export const toSpaceIdByUserId = (model: Model, userId: UserId | null | undefine
   return userId ? (model.indexSpaceIdByUserId[userId] ?? null) : null
 }
 
-export const toSpace = (model: Model, spaceId: SpaceId): Space.Model | null => {
+export const toSpace = (model: Model, spaceId: SpaceId): Space | null => {
   return model.spaces[spaceId] ?? null
 }
 
@@ -42,7 +43,7 @@ export const hasEvent = (model: Model, spaceId: SpaceId, eventId: EventId): bool
   return Boolean(space && EventSourced.hasEvent(space, eventId))
 }
 
-export const toSpaceByUserId = ({ model, userId }: { model: Model; userId: UserId }): Space.Model | null => {
+export const toSpaceByUserId = ({ model, userId }: { model: Model; userId: UserId }): Space | null => {
   const spaceId = model.indexSpaceIdByUserId[userId]
 
   if (!spaceId) return null
@@ -64,7 +65,7 @@ export const toEventWithMeta = (model: Model, spaceId: SpaceId, eventId?: EventI
   return EventSourced.toEvent(space, eventId)
 }
 
-export const toSpaceProjection = (model: Model, spaceId?: SpaceId | null | undefined): SpaceProjection.Model => {
+export const toSpaceProjection = (model: Model, spaceId?: SpaceId | null | undefined): SpaceProjection => {
   if (!spaceId) return SpaceProjection.init
 
   const spaceModel = model.spaces[spaceId]
@@ -76,8 +77,8 @@ export const toSpaceProjection = (model: Model, spaceId?: SpaceId | null | undef
   return spaceState
 }
 
-export const toSpaceProjections = (model: Model): SpaceProjection.Started[] => {
-  const spaces: SpaceProjection.Started[] = []
+export const toSpaceProjections = (model: Model): SpaceProjectionStarted[] => {
+  const spaces: SpaceProjectionStarted[] = []
   for (const spaceId in model.spaces) {
     const started = toSpaceStarted(model, spaceId as SpaceId)
     if (started) {
@@ -87,7 +88,7 @@ export const toSpaceProjections = (model: Model): SpaceProjection.Started[] => {
   return spaces
 }
 
-export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceProjection.Started | null => {
+export const toSpaceStarted = (model: Model, spaceId?: SpaceId | null): SpaceProjectionStarted | null => {
   if (!spaceId) return null
 
   const spaceModel = model.spaces[spaceId]
@@ -227,11 +228,11 @@ const append = (input: {
   }
 }
 
-export const merge = (model: Model, spaces: Space.Model[]): Model => {
+export const merge = (model: Model, spaces: Space[]): Model => {
   return spaces.reduce(mergeOne, model)
 }
 
-const mergeOne = (model: Model, space: Space.Model): Model => {
+const mergeOne = (model: Model, space: Space): Model => {
   const spaceId = Space.toSpaceId(space)
 
   const maybeCurrentSpace = spaceId ? model.spaces[spaceId] : null
@@ -253,7 +254,7 @@ const mergeOne = (model: Model, space: Space.Model): Model => {
 
 const updateIndexSpaceIdByUserId = (
   spaceIdByUserId: Model['indexSpaceIdByUserId'],
-  space: Space.Model,
+  space: Space,
 ): Model['indexSpaceIdByUserId'] => {
   const spaceState = Space.toSpaceStarted(space)
 
