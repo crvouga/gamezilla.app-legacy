@@ -7,11 +7,11 @@ services:
       context: ../
       dockerfile: infra/frontend.Dockerfile
       args:
-        NODE_ENV: development
-        BACKEND_URL: http://localhost:5002
-        TOPIC_URL: http://localhost:5003
+        NODE_ENV: ${NODE_ENV:?NODE_ENV is required}
+        BACKEND_URL: ${BACKEND_URL:?BACKEND_URL is required}
+        TOPIC_URL: ${TOPIC_URL:?TOPIC_URL is required}
     ports:
-      - '5173:80'
+      - '${FRONTEND_PORT:?FRONTEND_PORT is required}:80'
 
   backend:
     profiles: ['e2e']
@@ -19,13 +19,13 @@ services:
       context: ../
       dockerfile: infra/backend.Dockerfile
       args:
-        NODE_ENV: development
+        NODE_ENV: ${NODE_ENV:?NODE_ENV is required}
     ports:
-      - '5002:5002'
+      - '${BACKEND_PORT:?BACKEND_PORT is required}:${BACKEND_PORT:?BACKEND_PORT is required}'
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
-      - TOPIC_URL=ws://localhost:5003
-      - BACKEND_PORT=5002
+      - DATABASE_URL=postgresql://${POSTGRES_USER:?POSTGRES_USER is required}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:${POSTGRES_PORT:?POSTGRES_PORT is required}/${POSTGRES_DB:?POSTGRES_DB is required}?sslmode=disable
+      - TOPIC_URL=ws://localhost:${TOPIC_PORT:?TOPIC_PORT is required}
+      - BACKEND_PORT=${BACKEND_PORT:?BACKEND_PORT is required}
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
@@ -35,10 +35,10 @@ services:
       context: ../
       dockerfile: infra/topic.Dockerfile
     ports:
-      - '5003:5003'
+      - '${TOPIC_PORT:?TOPIC_PORT is required}:${TOPIC_PORT:?TOPIC_PORT is required}'
     environment:
-      - NATS_URL=nats://nats:4222
-      - TOPIC_PORT=5003
+      - NATS_URL=nats://nats:${NATS_PORT:?NATS_PORT is required}
+      - TOPIC_PORT=${TOPIC_PORT:?TOPIC_PORT is required}
     depends_on:
       nats:
         condition: service_started
@@ -48,7 +48,7 @@ services:
       context: ../
       dockerfile: infra/nats.Dockerfile
     ports:
-      - '4222:4222'
+      - '${NATS_PORT:?NATS_PORT is required}:${NATS_PORT:?NATS_PORT is required}'
 
   postgres:
     build:
@@ -56,15 +56,20 @@ services:
       dockerfile: infra/postgres.Dockerfile
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
+      POSTGRES_PORT: ${POSTGRES_PORT:?POSTGRES_PORT is required}
     ports:
-      - '5432:5432'
+      - '${POSTGRES_PORT:?POSTGRES_PORT is required}:${POSTGRES_PORT:?POSTGRES_PORT is required}'
     tmpfs:
       - /var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:?POSTGRES_USER is required} -p ${POSTGRES_PORT:?POSTGRES_PORT is required}',
+        ]
       interval: 10s
       timeout: 5s
       retries: 5

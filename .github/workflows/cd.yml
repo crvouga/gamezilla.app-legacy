@@ -57,7 +57,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Create env file
-        run: cp .env.local .env
+        run: cp .env.ci .env
 
       - name: Run unit tests
         run: pnpm run unit
@@ -84,7 +84,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Create env file
-        run: cp .env.local .env
+        run: cp .env.ci .env
 
       - name: Start infra
         run: pnpm local:up
@@ -120,7 +120,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Create env file
-        run: cp .env.local .env
+        run: cp .env.ci .env
 
       - name: Start e2e infra
         run: pnpm e2e:up
