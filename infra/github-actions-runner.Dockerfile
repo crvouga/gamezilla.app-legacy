@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM --platform=linux/amd64 ubuntu:22.04
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -17,7 +17,7 @@ WORKDIR /home/runner
 
 # Set runner version and arch
 ENV RUNNER_VERSION=2.326.0
-ENV RUNNER_ARCH=arm64
+ENV RUNNER_ARCH=x64
 ENV RUNNER_FILENAME=actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VERSION}.tar.gz
 ENV RUNNER_URL=https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/${RUNNER_FILENAME}
 
