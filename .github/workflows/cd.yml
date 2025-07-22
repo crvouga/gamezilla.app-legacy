@@ -111,8 +111,6 @@ jobs:
         run: pnpm run env:ci
 
       - name: Start infra
-        env:
-          COMPOSE_PROJECT_NAME: gamezilla_app_ci_${{ github.run_id }}
         run: pnpm local:up
 
       - name: Wait for infra to be ready
@@ -149,8 +147,6 @@ jobs:
         run: pnpm run env:ci
 
       - name: Start e2e infra
-        env:
-          COMPOSE_PROJECT_NAME: gamezilla_app_ci_${{ github.run_id }}
         run: pnpm e2e:up
 
       - name: Wait for infra to be ready
