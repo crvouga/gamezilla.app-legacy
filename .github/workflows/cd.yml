@@ -35,6 +35,30 @@ jobs:
       - name: Run type checker
         run: pnpm exec tsc
 
+  circular-deps:
+    name: Circular Dependencies Check
+    runs-on: self-hosted
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check circular dependencies
+        run: pnpm run cir-deps
+
   unit-tests:
     name: Unit Tests
     runs-on: self-hosted
@@ -66,6 +90,7 @@ jobs:
     name: Integration Tests
     runs-on: self-hosted
     timeout-minutes: 10
+    needs: [unit-tests, circular-deps, type-check]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -146,33 +171,9 @@ jobs:
           path: test-results/
           retention-days: 7
 
-  circular-deps:
-    name: Circular Dependencies Check
-    runs-on: self-hosted
-    timeout-minutes: 10
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Check circular dependencies
-        run: pnpm run cir-deps
-
   deploy:
     name: Deploy
-    needs: [type-check, unit-tests, integration-tests, circular-deps, e2e-tests]
+    needs: [e2e-tests]
     runs-on: self-hosted
     timeout-minutes: 10
     if: github.ref == 'refs/heads/main'
