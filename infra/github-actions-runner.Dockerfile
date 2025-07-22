@@ -27,6 +27,7 @@ RUN curl -o ${RUNNER_FILENAME} -L ${RUNNER_URL} \
  && rm ${RUNNER_FILENAME}
 
 COPY infra/github-actions-runner.sh .
+RUN chmod +x ./github-actions-runner.sh
 
 RUN chown -R runner:runner /home/runner
 USER runner
